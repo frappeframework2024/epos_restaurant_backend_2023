@@ -6,8 +6,8 @@
     <v-row>
         <v-col md="3">
             <v-card :subtitle="$t('Working Day and Cashier Shift Report')">
-                <v-card-text>
-                    <ComPlaceholder :loading="workingDayReportsTmp.loading === true || workingDayReports === null " :is-not-empty="workingDayReports?.length > 0">
+                <v-card-text> 
+                    <ComPlaceholder :loading="workingDayReports === null " :is-not-empty="workingDayReports?.length > 0">
                         <template v-for="(c, index) in workingDayReports" :key="index">
                             <v-card :color="activeReport.report_id == c.name ? 'info' : 'default'" :variant="activeReport.report_id == c.name || c.cashier_shifts.find(r=>r.name == activeReport.report_id) ? 'tonal' : 'text'" class="bg-gray-200 my-2 subtitle-opacity-1" @click="onWorkingDay(c)">
                                 <template v-slot:title>
@@ -50,20 +50,20 @@
                     </ComPlaceholder>
                 </v-card-text>
             </v-card>
-        </v-col>
-        
+        </v-col> 
         <v-col md="9">
             <v-card>
                 <template #title>
                     <div class="px-1 py-2 -m-1">
                         <div class="flex justify-between">
                             <div> 
-                                <div v-if="!cashierShiftReports.loading && cashierShiftReports.data?.length > 0 && activeReport.name == 'Cashier Shift'"> 
-                                    <v-btn v-for="(r, index) in cashierShiftReports.data" :key="index" :color="activeReport.preview_report == r.name ? 'info' : 'default'" class="m-1" @click="onPrintFormat(r)">{{$t(r.title)  }}</v-btn>
+                                <div v-if="cashierShiftReports?.length > 0 && activeReport.name == 'Cashier Shift'"> 
+                                    <v-btn v-for="(r, index) in cashierShiftReports" :key="index" :color="activeReport.preview_report == r.name ? 'info' : 'default'" class="m-1" @click="onPrintFormat(r)">{{$t(r.title)  }}</v-btn>
                                 </div>
                                 <div v-else-if="workingDay?.length > 0 && activeReport.name == 'Working Day'">                                    
                                     <v-btn v-for="(r, index) in workingDay" :key="index" class="m-1" :color="activeReport.preview_report == r.name ? 'info' : 'default'" @click="onPrintFormat(r)">{{ $t(r.title)  }}</v-btn>
                                 </div>
+                               
                             </div>
                             <div class="flex items-center"> 
                                 <v-select 
@@ -116,17 +116,21 @@
 </PageLayout>
 </template>
 <script setup>
-import { createResource, inject, computed,ref,saleDetailDialog,onUnmounted, reactive} from '@/plugin'
+import { inject, computed,ref,saleDetailDialog,onUnmounted, reactive} from '@/plugin'
 import Enumerable from 'linq'
-
 import PageLayout from '@/components/layout/PageLayout.vue';
 import { createToaster } from '@meforma/vue-toaster';
 import { onMounted } from 'vue';
+ 
+
 const gv = inject('$gv');
+const frappe = inject('$frappe');
 const moment = inject('$moment');
 const pos_profile = localStorage.getItem("pos_profile");
 const serverUrl = window.location.protocol + "//" + window.location.hostname + ":" + gv.setting.pos_setting.backend_port;
 const toaster = createToaster({position:"top"});
+const call = frappe.call();
+const db = frappe.db();
  
 let filter = reactive({
     product_category: 'All Product Categories',
@@ -156,54 +160,91 @@ const printUrl = computed(()=>{
     return `${serverUrl}/printview?doctype=${activeReport.value.doc_type}&name=${activeReport.value.report_id}&product_category=${activeReport.value.filter.product_category}&format=${activeReport.value.print_report_name}&no_letterhead=0&show_toolbar=0&letterhead=${activeReport.value.letterhead}&settings=%7B%7D&_lang=${activeReport.value.lang}`
 })
 
-const lang = gv.setting.lang
-let workingDayReports = ref({})
-const workingDayReportsTmp = createResource({
-    url: "epos_restaurant_2023.api.api.get_working_day_list_report",
-    auto: true,
-    onSuccess(doc){
+const lang = gv.setting.lang;
 
-        if(doc.length > 0){
-            workingDayReports.value = Enumerable.from(doc).orderByDescending("$.creation").toArray()
-            activeReport.value.report_id = workingDayReports.value[0].name
-            const workingDayTemp = createResource({
-                url: 'frappe.client.get_list',
-                params: {
-                    doctype: "Print Format",
-                    fields: ['*'],
-                    filters: {
-                        show_in_pos_report: 1,
-                        doc_type: 'Working Day'
-                    },
-                    order_by: 'sort_order asc'
-                },
-                auto: true,
-                onSuccess(doc){
-                    activeReport.value.preview_report = doc[0].name
-                    activeReport.value.name = "Working Day"
-                    activeReport.value.doc_type = doc[0].doc_type
-                    activeReport.value.print_report_name = doc[0].print_report_name || doc[0].name
-                    workingDay.value = doc
-                    
+let workingDayReports = ref({});
+let cashierShiftReports = ref([])
+
+
+onMounted(()=>{
+    // init data
+    _onInit()
+});
+
+
+let working_day_print_format = [];
+let cashier_shift_print_format = [];
+ 
+async function _onInit() {
+    const param = {business_branch:gv.setting.business_branch, pos_profile:pos_profile}; 
+    const result = await  call.get("epos_restaurant_2023.api.api.get_working_day_list_report",param).then((wd)=>{  
+        if (wd.message.length > 0){
+            workingDayReports.value = Enumerable.from(wd.message).orderByDescending("$.creation").toArray();      
+            activeReport.value.report_id = workingDayReports.value[0].name;
+
+          return  db.getDocList("POS Print Format Setting",
+            {
+                fields: ['name', 'print_format_doc_type','sort_order','print_report_name','title'],
+                filters: [
+                    ["print_format_doc_type","in",["Working Day","Cashier Shift"]],
+                    ["show_in_pos_report","=",1]
+            ],
+                orderBy: {
+                    field: 'sort_order',
+                    order: 'asc',
                 }
+            }).then(async (pf)=>{ 
+                let _filters = []
+                pf.forEach((p)=>{
+                    _filters.push(p.name)
+                });
+                const print_format = await  db.getDocList("Print Format",{
+                    fields:["*"],
+                    filters: [["name","in",_filters]],
+                }) 
+                print_format.forEach((p)=>{
+                    const _pf = pf.filter(x=>x.name==p.name);
+                    p.print_report_name = _pf[0]?.print_report_name??"";
+                    p.title = _pf[0]?.title??"";
+                })
+                return print_format 
             })
-        }
-    }
-})
-const cashierShiftReports = createResource({
-    url: 'frappe.client.get_list',
-    params: {
-        doctype: "Print Format",
-        fields: ['name', 'doc_type', 'print_report_name', 'title'],
-        filters: {
-            show_in_pos_report: 1,
-            doc_type: 'Cashier Shift'
-        },
-        order_by: 'sort_order asc'
-    },
-    auto: true,
+        } 
+    });
     
-})
+    result.forEach((r)=>{
+        if(r.doc_type=="Working Day"){
+            working_day_print_format.push(r);
+        }else if(r.doc_type == "Cashier Shift"){
+            cashier_shift_print_format.push(r);
+        }
+    }); 
+
+    //check if working day print format have value     
+    if(working_day_print_format.length > 0){
+
+        activeReport.value.preview_report = working_day_print_format[0].name;
+        activeReport.value.name = "Working Day";
+        activeReport.value.doc_type = working_day_print_format[0].doc_type;
+        activeReport.value.print_report_name = working_day_print_format[0].print_report_name || working_day_print_format[0].name;
+        workingDay.value = working_day_print_format; 
+    }
+
+
+    //check if cashier shift print format have value
+    if(cashier_shift_print_format.length>0){
+        cashier_shift_print_format.forEach((cs)=>{
+           const _data = {
+                "name":cs.name,
+                "doc_type":cs.doc_type,
+                "print_report_name":cs.print_report_name,
+                "title":cs.title,
+            }
+            cashierShiftReports.value.push(_data)
+        })
+    } 
+    
+}
 
 
 function getCashierShifts(working_day){   
@@ -214,12 +255,13 @@ function getCashierShifts(working_day){
  
 
 function onCashierShift(data){
+    console.log(cashierShiftReports.value)
     if(data && data.name){
         activeReport.value.name = 'Cashier Shift'
         activeReport.value.report_id = data?.name
-        activeReport.value.preview_report = cashierShiftReports.data[0]?.name
-        activeReport.value.doc_type = cashierShiftReports.data[0]?.doc_type 
-        activeReport.value.print_report_name = cashierShiftReports.data[0]?.print_report_name || cashierShiftReports?.data[0]?.name
+        activeReport.value.preview_report = cashierShiftReports.value[0]?.name
+        activeReport.value.doc_type = cashierShiftReports.value[0]?.doc_type 
+        activeReport.value.print_report_name = cashierShiftReports.value[0]?.print_report_name || cashierShiftReports?.value[0]?.name
     }else{
         toast.error($t('Report is unavailable.'), { position: 'top' });
     }
@@ -231,14 +273,15 @@ function onPrintFormat(value){
   
 }
 
-function onWorkingDay(working_day){
-    activeReport.value.name = 'Working Day'
-    activeReport.value.report_id = working_day.name
-    activeReport.value.preview_report = workingDay.value[0]?.name
-    activeReport.value.doc_type = workingDay.value[0]?.doc_type 
-    const print_report_name = workingDay.value.filter(r=>r.name == working_day.name)
+function onWorkingDay(working_day){ 
+
+    activeReport.value.name = 'Working Day';
+    activeReport.value.report_id = working_day.name;
+    activeReport.value.preview_report = workingDay.value[0]?.name;
+    activeReport.value.doc_type = workingDay.value[0]?.doc_type ;
+    const print_report_name = workingDay.value.filter(r=>r.name == working_day.name);
     
-    activeReport.value.print_report_name = workingDay[0]?.print_report_name || workingDay[0]?.name
+    activeReport.value.print_report_name = workingDay[0]?.print_report_name || workingDay[0]?.name;
 }
 
 function onRefresh(){

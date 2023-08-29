@@ -36,7 +36,7 @@ if (currency) {
 
 const amount = computed(() => {
     let n = (props.value);
-    if ((typeof n) == 'number') {
+    if ((typeof n) == 'number') { 
         return   Number(n.toFixed(currency.currency_precision));
     } else {
         return  0

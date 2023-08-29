@@ -15,6 +15,7 @@
   "pos_receipt_file_name",
   "receipt_height",
   "receipt_width",
+  "print_format_doc_type",
   "column_break_yxpe",
   "receipt_margin_top",
   "receipt_margin_right",
@@ -144,11 +145,18 @@
    "fieldname": "sort_order",
    "fieldtype": "Int",
    "label": "Sort Order"
+  },
+  {
+   "fetch_from": "print_format.doc_type",
+   "fieldname": "print_format_doc_type",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Print Format Doc Type"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-08-28 15:59:00.127691",
+ "modified": "2023-08-29 10:12:07.391291",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Print Format Setting",

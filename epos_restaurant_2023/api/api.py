@@ -6,27 +6,31 @@ from frappe.utils import today, add_to_date
 from datetime import datetime, timedelta
 from frappe import _
 @frappe.whitelist(allow_guest=True)
-def check_username(pin_code):
+def check_username(pin_code):    
     if pin_code:    
         pin_code = (str( base64.b64encode(pin_code.encode("utf-8")).decode("utf-8")))
-        data = frappe.db.sql("select name,full_name,pos_user_permission from `tabUser` where pos_pin_code='{}' and allow_login_to_pos=1 limit 1".format(pin_code),as_dict=1)
-        if data:
-            permission= frappe.get_doc("POS User Permission",data[0]["pos_user_permission"])      
-            return {"username":data[0]["name"],"full_name":data[0]["full_name"],"permission":permission} 
+        users = frappe.db.sql("select user_id, pos_permission from `tabEmployee` where pos_pin_code = '{}' and allow_login = 1 and allow_login_to_epos = 1 limit 1".format(pin_code), as_dict = 1)
+        if users:
+            data = frappe.db.sql("select name,full_name from `tabUser` where name='{}' limit 1".format(users[0].user_id),as_dict=1)
+            if data:
+                permission= frappe.get_doc("POS User Permission",users[0]["pos_permission"])      
+                return {"username":data[0]["name"],"full_name":data[0]["full_name"],"permission":permission} 
         
     frappe.throw(_("Invalid PIN Code"))
 
 @frappe.whitelist(allow_guest=True)
-def get_user_info(name=""):
-   
+def get_user_info(name=""):   
     if  name=="":
         name = frappe.session.user
     if name == "Guest":
         frappe.throw("Please login to start using epos system")
-    data = frappe.db.sql("select name,full_name,user_image,role_profile_name,pos_user_permission from `tabUser` where name='{}'".format(name),as_dict=1)
-    if data:
-        permission= frappe.get_doc("POS User Permission",data[0]["pos_user_permission"])      
-        return {"username":data[0]["name"],"full_name":data[0]["full_name"],"photo":data[0]["user_image"],"role":data[0]["pos_user_permission"],"permission":permission} 
+
+    users = frappe.db.sql("select user_id, pos_permission from `tabEmployee` where user_id = '{}' ".format(name), as_dict = 1)
+    if users:
+        data = frappe.db.sql("select name,full_name,user_image,role_profile_name from `tabUser` where name='{}'".format(name),as_dict=1)
+        if data:
+            permission= frappe.get_doc("POS User Permission",users[0]["pos_permission"])      
+            return {"username":data[0]["name"],"full_name":data[0]["full_name"],"photo":data[0]["user_image"],"role":users[0]["pos_permission"],"permission":permission} 
 
 
 
@@ -89,7 +93,7 @@ def get_system_settings(pos_profile="", device_name=''):
             })
     
     #get currency
-    currencies = frappe.db.sql("select name,symbol,custom_currency_precision,symbol_on_right,custom_pos_currency_format from `tabCurrency` where enabled=1", as_dict=1)
+    currencies = frappe.db.sql("select name,symbol,custom_currency_precision as currency_precision,symbol_on_right, custom_pos_currency_format as pos_currency_format  from `tabCurrency` where enabled=1", as_dict=1)
     
 
     #get price rule
@@ -100,6 +104,7 @@ def get_system_settings(pos_profile="", device_name=''):
     lang = frappe.get_list('Language',fields=['language_code', 'language_name'],filters={
         'enabled': 1
     })
+ 
     pos_setting={
         "business_branch":profile.business_branch,
         "business_name_en":pos_config.business_name_en,

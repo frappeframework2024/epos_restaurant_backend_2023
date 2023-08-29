@@ -121,7 +121,7 @@ const auth = inject("$auth");
 const gv = inject('$gv');
 const sale = inject('$sale');
 const { mobile } = useDisplay();
-const toast = createToaster()
+const toast = createToaster({position:"top"})
 const router = useRouter();
 const store = useStore();
 

@@ -21,9 +21,8 @@
  "fields": [
   {
    "fieldname": "report_name",
-   "fieldtype": "Link",
-   "label": "Report Name",
-   "options": "Print Format"
+   "fieldtype": "Data",
+   "label": "Report Name"
   },
   {
    "description": "Use comma separator of filter key. eg start_date,end_date,business_source,",
@@ -81,7 +80,7 @@
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-08-17 12:13:37.423493",
+ "modified": "2023-08-29 10:00:54.367799",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "System Report",
