@@ -35,6 +35,11 @@ def get_system_settings(pos_profile="", device_name=''):
     if not frappe.db.exists("POS Profile",pos_profile):
         frappe.throw("Invalid POS Profile name")
     
+    if not frappe.db.exists("POS Station",device_name):
+        frappe.throw("Invalid POS Station")
+
+    pos_station = frappe.get_doc("POS Station",device_name)
+    
     profile = frappe.get_doc("POS Profile",pos_profile)
     pos_config = frappe.get_doc("POS Config",profile.pos_config)
     pos_branding = frappe.get_doc("POS Branding", profile.pos_branding)
@@ -166,31 +171,65 @@ def get_system_settings(pos_profile="", device_name=''):
     default_customer = frappe.get_doc("Customer", profile.default_customer)
     
     #get default print format
-    print_format_query = """"select 
-        name,
-        print_invoice_copies, 
-        print_receipt_copies,
-        pos_invoice_file_name, 
-        pos_receipt_file_name, 
-        receipt_height, 
-        receipt_width,
-        receipt_margin_top, 
-        receipt_margin_left,
-        receipt_margin_right,
-        receipt_margin_bottom  
-    from `tabPrint Format` 
-    where doc_type='Sale' 
-    and show_in_pos=1 
-    and disabled=0 and name='{}'""".format(profile.default_pos_receipt)
+    _pos_print_format = frappe.get_list("POS Print Format Setting",fields=[
+        "name",
+        "title",
+        "print_format",
+        "print_report_name",
+        "show_in_pos_report",
+        "show_in_pos",
+        "print_invoice_copies", 
+        "print_receipt_copies",
+        "pos_invoice_file_name",
+        "pos_receipt_file_name", 
+        "receipt_height", 
+        "receipt_width",
+        "receipt_margin_top", 
+        "receipt_margin_left",
+        "receipt_margin_right",
+        "receipt_margin_bottom",
+        "show_in_pos_closed_sale",
+        "report_options"])
+    
+    _pos_print_format_data = []
+    for p in _pos_print_format:
+        pf = frappe.get_doc("Print Format", p.print_format)
+        _data = {
+            "name":p.print_format,
+            "title":p.title,
+            "doc_type":pf.doc_type,
+            "print_report_name":p.print_report_name,
+            "default_print_language":pf.default_print_language,
+            "show_in_pos_report":p.show_in_pos_report,
+            "show_in_pos":p.show_in_pos,
+            "print_invoice_copies":p.print_invoice_copies, 
+            "print_receipt_copies":p.print_receipt_copies,
+            "pos_invoice_file_name":p.pos_invoice_file_name,
+            "pos_receipt_file_name":p.pos_receipt_file_name, 
+            "receipt_height":p.receipt_height, 
+            "receipt_width":p.receipt_width,
+            "receipt_margin_top":p.receipt_margin_top, 
+            "receipt_margin_left":p.receipt_margin_left,
+            "receipt_margin_right":p.receipt_margin_right,
+            "receipt_margin_bottom":p.receipt_margin_bottom,
+            "show_in_pos_closed_sale":p.show_in_pos_closed_sale,
+            "report_options":p.report_options
+        }
+        _pos_print_format_data.append(_data)
 
-    print_format = frappe.db.sql(print_format_query, as_dict=True)
+
+
+ 
+
     default_pos_receipt=None
-    if print_format:
-        default_pos_receipt = print_format[0]
+    if _pos_print_format_data:
+        _receipt_setting = list(filter(lambda x: x["name"] == profile.default_pos_receipt,_pos_print_format_data))
+        if _receipt_setting:
+            default_pos_receipt = _receipt_setting[0]
 
-    #get report list
-    report_format_fields = ["name","title","doc_type","print_report_name","default_print_language","show_in_pos_report","show_in_pos","print_invoice_copies", "print_receipt_copies","pos_invoice_file_name","pos_receipt_file_name", "receipt_height", "receipt_width","receipt_margin_top", "receipt_margin_left","receipt_margin_right","receipt_margin_bottom","show_in_pos_closed_sale","report_options" ]
-    reports = frappe.get_list("Print Format",fields=report_format_fields , filters={"doc_type":["in",["Cashier Shift","Working Day","Sale","POS Profile"]]},order_by="sort_order")
+ 
+    #get report list   
+    reports = _pos_print_format_data
     letter_heads = frappe.get_list("Letter Head",fields=["name","is_default"],filters={"disabled":0})
     letter_heads.append({"name":"No Letterhead","is_default":0})
 
@@ -261,7 +300,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "lang": lang,
         "reports":reports,
         "letter_heads":letter_heads,
-        "device_setting":frappe.get_doc("POS Station",device_name),
+        "device_setting":pos_station,
         "shortcut_key":shortcut_keys
     }
 

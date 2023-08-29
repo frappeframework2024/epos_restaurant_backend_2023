@@ -143,7 +143,7 @@ cursor: pointer;
     margin-right: 1rem;
 } */
 .isemtyIcon{
-        background-image: url("icons/icon-no-notic-r-comment.svg");   
+        background-image: url("../icons/icon-no-notic-r-comment.svg");   
         height: 55px;
         background-repeat: no-repeat;
         background-position: center; 
