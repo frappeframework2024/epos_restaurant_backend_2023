@@ -100,10 +100,10 @@ def get_system_settings(pos_profile="", device_name=''):
     price_rules = []
     for pr in pos_config.price_rules:
         price_rules.append({"price_rule":pr.price_rule})
-    # get lang
-    lang = frappe.get_list('Language',fields=['language_code', 'language_name'],filters={
-        'enabled': 1
-    })
+    # get lang 
+    lang = frappe.db.sql("select language_code,language_name from `tabLanguage` where enabled = 1",as_dict = 1)
+    
+ 
  
     pos_setting={
         "business_branch":profile.business_branch,
@@ -236,8 +236,10 @@ def get_system_settings(pos_profile="", device_name=''):
  
     #get report list   
     reports = _pos_print_format_data
-    letter_heads = frappe.get_list("Letter Head",fields=["name","is_default"],filters={"disabled":0})
+
+    letter_heads = frappe.db.sql("select name,is_default from `tabLetter Head` where disabled = 0",as_dict = 1)
     letter_heads.append({"name":"No Letterhead","is_default":0})
+ 
 
     #get tax rules 
     tax_rules = []
