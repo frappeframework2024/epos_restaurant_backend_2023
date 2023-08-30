@@ -266,8 +266,7 @@ export default class Sale {
             }
             else{
                 tax_rule = JSON.parse(p.tax_rule_data);
-            }            
-
+            }     
             const make_order_auth = JSON.parse(localStorage.getItem('make_order_auth'));
             const now = new Date();
 
@@ -1051,6 +1050,7 @@ export default class Sale {
                             this.printWaitingOrderAfterPayment = true;
                             await this.newSaleResource.submit({ doc: this.sale })
                         } else {
+                            
                             await this.saleResource.setValue.submit(this.sale);
                         }
 
@@ -1083,7 +1083,7 @@ export default class Sale {
                         if (this.newSaleResource == null) {
                             this.createNewSaleResource();
                         }
-                        this.printWaitingOrderAfterPayment = true;
+                        this.printWaitingOrderAfterPayment = true; 
                         await this.newSaleResource.submit({ doc: this.sale })
                     } else {
                         await this.saleResource.setValue.submit(this.sale);

@@ -179,6 +179,7 @@ def get_system_settings(pos_profile="", device_name=''):
     _pos_print_format = frappe.get_list("POS Print Format Setting",fields=[
         "name",
         "title",
+        "print_format_doc_type",
         "print_format",
         "print_report_name",
         "show_in_pos_report",
@@ -313,10 +314,6 @@ def get_system_settings(pos_profile="", device_name=''):
 
 @frappe.whitelist(allow_guest=True)
 def get_tables_number(table_group,device_name):
-    # data =  frappe.get_all("Tables Number",
-    #             fields=["name as id","tbl_number as tbl_no","shape","sale_type","default_discount","height as h","width as w","price_rule","discount_type"],
-    #             filters={"tbl_group":table_group}
-    #         )
     data = frappe.db.sql("select name as id, shape, tbl_number as tbl_no,sale_type, default_discount,height as h, width as w, price_rule,discount_type from `tabTables Number` where tbl_group='{}' order by sort_order, tbl_number".format(table_group), as_dict=1)
 
     background_color = frappe.db.get_default("default_table_number_background_color")
@@ -429,8 +426,24 @@ def save_table_position(device_name, table_group):
 
 @frappe.whitelist()
 def get_pos_print_format(doctype):
-    data = frappe.db.sql("select name,print_invoice_copies, print_receipt_copies,pos_invoice_file_name, pos_receipt_file_name, receipt_height, receipt_width,receipt_margin_top, receipt_margin_left,receipt_margin_right,receipt_margin_bottom  from `tabPrint Format` where doc_type='{}' and show_in_pos=1 and disabled=0".format(doctype), as_dict=True)
-    
+    # pos_print_format = 
+    sql = """select 
+            name,
+            print_invoice_copies, 
+            print_receipt_copies,
+            pos_invoice_file_name, 
+            pos_receipt_file_name, 
+            receipt_height, 
+            receipt_width,
+            receipt_margin_top, 
+            receipt_margin_left,
+            receipt_margin_right,
+            receipt_margin_bottom  
+        from `tabPOS Print Format Setting` 
+        where print_format_doc_type='{}' 
+        and show_in_pos=1""".format(doctype)
+
+    data = frappe.db.sql(sql, as_dict=True)    
     if data:
        return data
     else:

@@ -58,13 +58,12 @@
                         <div class="flex justify-between">
                             <div> 
                                 <div v-if="cashierShiftReports?.length > 0 && activeReport.name == 'Cashier Shift'"> 
-                                    <v-btn v-for="(r, index) in cashierShiftReports" :key="index" :color="activeReport.preview_report == r.name ? 'info' : 'default'" class="m-1" @click="onPrintFormat(r)">{{$t(r.title)  }}</v-btn>
+                                    <v-btn v-for="(r, index) in cashierShiftReports.sort((a, b) => a.sort_order - b.sort_order )" :key="index" :color="activeReport.preview_report == r.name ? 'info' : 'default'" class="m-1" @click="onPrintFormat(r)">{{$t(r.title)  }}</v-btn>
                                 </div>
                                 <div v-else-if="workingDay?.length > 0 && activeReport.name == 'Working Day'">                                    
-                                    <v-btn v-for="(r, index) in workingDay" :key="index" class="m-1" :color="activeReport.preview_report == r.name ? 'info' : 'default'" @click="onPrintFormat(r)">{{ $t(r.title)  }}</v-btn>
-                                </div>
-                               
-                            </div>
+                                    <v-btn v-for="(r, index) in workingDay.sort((a, b) => a.sort_order - b.sort_order )" :key="index" class="m-1" :color="activeReport.preview_report == r.name ? 'info' : 'default'" @click="onPrintFormat(r)">{{ $t(r.title)  }}</v-btn>
+                                </div> 
+                            </div> 
                             <div class="flex items-center"> 
                                 <v-select 
                                 prepend-inner-icon="mdi-content-paste"
@@ -206,6 +205,7 @@ async function _onInit() {
                     const _pf = pf.filter(x=>x.name==p.name);
                     p.print_report_name = _pf[0]?.print_report_name??"";
                     p.title = _pf[0]?.title??"";
+                    p.sort_order = _pf[0]?.sort_order??0;
                 })
                 return print_format 
             })
@@ -222,6 +222,7 @@ async function _onInit() {
 
     //check if working day print format have value     
     if(working_day_print_format.length > 0){
+        working_day_print_format = working_day_print_format.sort((a, b) => a.sort_order - b.sort_order )
 
         activeReport.value.preview_report = working_day_print_format[0].name;
         activeReport.value.name = "Working Day";
@@ -233,6 +234,9 @@ async function _onInit() {
 
     //check if cashier shift print format have value
     if(cashier_shift_print_format.length>0){
+
+        cashier_shift_print_format = cashier_shift_print_format.sort((a, b) => a.sort_order - b.sort_order );
+
         cashier_shift_print_format.forEach((cs)=>{
            const _data = {
                 "name":cs.name,

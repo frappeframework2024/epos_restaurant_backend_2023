@@ -73,13 +73,13 @@
    "label": "Currency Symbol"
   },
   {
-   "fetch_from": "currency.currency_precision",
+   "fetch_from": "currency.custom_currency_precision",
    "fieldname": "currency_precision",
    "fieldtype": "Int",
    "label": "Currency Precision"
   },
   {
-   "fetch_from": "currency.pos_currency_format",
+   "fetch_from": "currency.custom_pos_currency_format",
    "fieldname": "currency_format",
    "fieldtype": "Data",
    "label": "Currency Format"
@@ -135,7 +135,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-08-07 10:43:15.190512",
+ "modified": "2023-08-30 10:07:41.022211",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Sale Payment",
