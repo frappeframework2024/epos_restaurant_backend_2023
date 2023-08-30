@@ -1,30 +1,16 @@
-const http = require('http');
-const socketio = require('socket.io');
+const { readFileSync } = require("fs");
+const { createServer } = require("https");
+const { Server } = require("socket.io");
 
+const httpsServer = createServer({
+  key: readFileSync("/etc/letsencrypt/live/www.ebad.ewebcloudserver.com/privkey.pem"),
+  cert: readFileSync("/etc/letsencrypt/live/www.ebad.ewebcloudserver.com/cert.pem")
+});
 
+const io = new Server(httpsServer, { /* options */ });
 
-
-const express = require('express');
-const app = express();
-const http = require('http');
-const fs = require('fs');
-var options = {
-    key: fs.readFileSync('/etc/letsencrypt/live/www.ebad.ewebcloudserver.com/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/www.ebad.ewebcloudserver.com/cert.pem')
-};
-var port = process.env.PORT || 3000;
-
-http.createServer(function (req, res) {
-    res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url});
-    res.end();
-})
-var server = http.createServer(options, app);
-
-const io = require('socket.io')(httpsServer);
-
-io.on('connection', (socket) => {
-
-  
+io.on("connection", (socket) => {
+ 
   socket.on("UpdateTable",(arg)=>{
     io.emit("UpdateData",arg)
   })
@@ -68,6 +54,6 @@ io.on('connection', (socket) => {
 
 });
 
-httpsServer.listen(port, () => {
+httpsServer.listen(3000, () => {
   console.log('Server started on port 3000');
 });

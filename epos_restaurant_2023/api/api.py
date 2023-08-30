@@ -239,6 +239,7 @@ def get_system_settings(pos_profile="", device_name=''):
 
     letter_heads = frappe.db.sql("select name,is_default from `tabLetter Head` where disabled = 0",as_dict = 1)
     letter_heads.append({"name":"No Letterhead","is_default":0})
+
  
 
     #get tax rules 
