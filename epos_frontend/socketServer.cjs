@@ -1,13 +1,31 @@
-const http = require('https');
+const http = require('http');
 const socketio = require('socket.io');
 
-const server = http.createServer();
+
+
+
+const express = require('express');
+const app = express();
+const http = require('http');
+const fs = require('fs');
+var options = {
+    key: fs.readFileSync('/etc/letsencrypt/live/www.ebad.ewebcloudserver.com/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/www.ebad.ewebcloudserver.com/cert.pem')
+};
+var port = process.env.PORT || 3000;
+
+http.createServer(function (req, res) {
+    res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url});
+    res.end();
+})
+var server = http.createServer(options, app);
+
+const io = require('socket.io')(httpsServer);
+
+
+
+
  
-const io = require('socket.io')(server, {
-  cors: {
-    origin: '*',
-  }
-});
 
 io.on('connection', (socket) => {
 
@@ -55,9 +73,6 @@ io.on('connection', (socket) => {
 
 });
 
-
-
-
-server.listen(3000, () => {
+httpsServer.listen(port, () => {
   console.log('Server started on port 3000');
 });
