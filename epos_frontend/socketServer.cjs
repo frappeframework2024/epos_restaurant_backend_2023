@@ -22,11 +22,6 @@ var server = http.createServer(options, app);
 
 const io = require('socket.io')(httpsServer);
 
-
-
-
- 
-
 io.on('connection', (socket) => {
 
   
