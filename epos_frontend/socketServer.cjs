@@ -1,16 +1,15 @@
-const { readFileSync } = require("fs");
-const { createServer } = require("https");
-const { Server } = require("socket.io");
+var fs = require('fs');
 
-const httpsServer = createServer({
-  key: readFileSync("/etc/letsencrypt/live/www.ebad.ewebcloudserver.com/privkey.pem"),
-  cert: readFileSync("/etc/letsencrypt/live/www.ebad.ewebcloudserver.com/cert.pem")
-});
+var options = {
+  key: fs.readFileSync("/etc/letsencrypt/live/www.ebad.ewebcloudserver.com/privkey.pem"),
+  cert: fs.readFileSync("/etc/letsencrypt/live/www.ebad.ewebcloudserver.com/cert.pem")
+};
 
-const io = new Server(httpsServer, { /* options */ });
+var app = require('https').createServer(options);
+var io = require('socket.io').listen(app);
+app.listen(3000);
 
-io.on("connection", (socket) => {
- 
+io.sockets.on('connection', function (socket) {
   socket.on("UpdateTable",(arg)=>{
     io.emit("UpdateData",arg)
   })
@@ -52,8 +51,4 @@ io.on("connection", (socket) => {
     io.emit("RefreshData",arg)
   })
 
-});
-
-httpsServer.listen(3000, () => {
-  console.log('Server started on port 3000');
 });
