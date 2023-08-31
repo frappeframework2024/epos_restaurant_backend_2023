@@ -1,13 +1,23 @@
 var fs = require('fs');
 
 var options = {
-  key: fs.readFileSync("/etc/letsencrypt/live/www.ebad.ewebcloudserver.com/privkey.pem"),
-  cert: fs.readFileSync("/etc/letsencrypt/live/www.ebad.ewebcloudserver.com/cert.pem")
+    key: fs.readFileSync("/etc/letsencrypt/live/www.ebad.ewebcloudserver.com/privkey.pem"),
+    cert: fs.readFileSync("/etc/letsencrypt/live/www.ebad.ewebcloudserver.com/cert.pem"),
+    ca: fs.readFileSync("/etc/letsencrypt/live/www.ebad.ewebcloudserver.com/chain.pem"),
+    rejectUnauthorized: false,
+    requestCert: true,
+    agent: false
 };
 
-var app = require('https').createServer(options);
-var io = require('socket.io').listen(app);
-app.listen(3000);
+
+var httpsServer = require('https').createServer(options);
+var ioServer = require('socket.io');
+
+var io = new ioServer();
+
+io.attach(httpsServer);
+
+httpsServer.listen(3000);
 
 io.sockets.on('connection', function (socket) {
   socket.on("UpdateTable",(arg)=>{
@@ -50,5 +60,4 @@ io.sockets.on('connection', function (socket) {
     //arg data sould be json format {property:"Property name","action":"refersh_city_ledger"}
     io.emit("RefreshData",arg)
   })
-
 });
