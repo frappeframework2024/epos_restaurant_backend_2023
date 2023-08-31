@@ -1,25 +1,17 @@
-var fs = require('fs');
+const http = require('http');
+const socketio = require('socket.io');
 
-var options = {
-    key: fs.readFileSync("/etc/letsencrypt/live/www.ebad.ewebcloudserver.com/privkey.pem"),
-    cert: fs.readFileSync("/etc/letsencrypt/live/www.ebad.ewebcloudserver.com/cert.pem"),
-    ca: fs.readFileSync("/etc/letsencrypt/live/www.ebad.ewebcloudserver.com/chain.pem"),
-    rejectUnauthorized: false,
-    requestCert: true,
-    agent: false
-};
+const server = http.createServer();
+ 
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*',
+  }
+});
 
-var httpServer = require('http').createServer();
-var httpsServer = require('https').createServer(options);
-var ioServer = require('socket.io');
+io.on('connection', (socket) => {
 
-var io = new ioServer();
-io.attach(httpServer);
-io.attach(httpsServer);
-httpServer.listen(3112);
-httpsServer.listen(3111);
-
-io.sockets.on('connection', function (socket) {
+  
   socket.on("UpdateTable",(arg)=>{
     io.emit("UpdateData",arg)
   })
@@ -60,4 +52,12 @@ io.sockets.on('connection', function (socket) {
     //arg data sould be json format {property:"Property name","action":"refersh_city_ledger"}
     io.emit("RefreshData",arg)
   })
+
+});
+
+
+
+
+server.listen(3000, () => {
+  console.log('Server started on port 3000');
 });

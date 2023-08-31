@@ -175,3 +175,8 @@ cursor: pointer;
     width: 100%;
     margin-bottom: 10px;
 }
+.print-format-gutter .profile{
+    height: 100px;
+    width: 100px;
+    margin-top: 15px;
+}
