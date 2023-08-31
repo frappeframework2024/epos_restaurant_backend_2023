@@ -9,15 +9,15 @@ var options = {
     agent: false
 };
 
-
+var httpServer = require('http').createServer();
 var httpsServer = require('https').createServer(options);
 var ioServer = require('socket.io');
 
 var io = new ioServer();
-
+io.attach(httpServer);
 io.attach(httpsServer);
-
-
+httpServer.listen(3112);
+httpsServer.listen(3111);
 
 io.sockets.on('connection', function (socket) {
   socket.on("UpdateTable",(arg)=>{
@@ -61,5 +61,3 @@ io.sockets.on('connection', function (socket) {
     io.emit("RefreshData",arg)
   })
 });
-
-httpsServer.listen(3000);
