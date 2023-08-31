@@ -17,7 +17,7 @@ var io = new ioServer();
 
 io.attach(httpsServer);
 
-httpsServer.listen(3000);
+
 
 io.sockets.on('connection', function (socket) {
   socket.on("UpdateTable",(arg)=>{
@@ -61,3 +61,5 @@ io.sockets.on('connection', function (socket) {
     io.emit("RefreshData",arg)
   })
 });
+
+httpsServer.listen(3000);
