@@ -253,6 +253,7 @@ def reset_data():
             frappe.db.sql("delete from `tabPrice Rule`")
             frappe.db.sql("delete from `tabRevenue Group`")
             frappe.db.sql("delete from `tabPayment Type Group`")
+
             # frappe.db.sql("delete from `tabPOS Profile Payment Type`")
             frappe.db.sql("delete from `tabProduct`")
             frappe.db.sql("delete from `tabProduct Category`")
@@ -283,8 +284,8 @@ def reset_data():
 
             #update 
             frappe.db.sql("update `tabCurrency` set enabled = 1, name='RIEL', currency_name='RIEL' where name='KHR'")
-            frappe.db.sql("update `tabCurrency` set pos_currency_format='#,###,##0. ៛', currency_precision=0 where name in ('KHR','RIEL')")
-            frappe.db.sql("update `tabCurrency` set pos_currency_format = '$ #,###,##0.00',currency_precision=2  where name='USD'")
+            frappe.db.sql("update `tabCurrency` set custom_pos_currency_format='#,###,##0. ៛', custom_currency_precision=0 where name in ('KHR','RIEL')")
+            frappe.db.sql("update `tabCurrency` set custom_pos_currency_format = '$ #,###,##0.00',custom_currency_precision=2  where name='USD'")
 
             frappe.db.commit()
             return {"You was cleared all data and configuration."}
@@ -325,10 +326,3 @@ def create_predefine_data():
 def get_server_name():
     server_name = socket.gethostname()
     return server_name
-
-@frappe.whitelist()
-def my_test():
-    if frappe.local.request.method == "POST":
-        return "Yes"
-    else:
-        return "No"

@@ -176,7 +176,13 @@ cursor: pointer;
     margin-bottom: 10px;
 }
 .print-format-gutter .profile{
-    height: 100px;
-    width: 100px;
-    margin-top: 15px;
+    width: 100px !important;
+    height: 100px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 20px;
+    object-fit: cover;
 }
