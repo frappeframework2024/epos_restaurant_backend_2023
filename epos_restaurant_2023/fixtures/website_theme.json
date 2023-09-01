@@ -1,13 +1,13 @@
 [
  {
   "background_color": null,
-  "button_gradients": 0,
+  "button_gradients": 1,
   "button_rounded_corners": 1,
-  "button_shadows": 0,
+  "button_shadows": 1,
   "custom": 0,
   "custom_overrides": ".social-logins, .forgot-password-message{\n    display:none!important;\n}\n",
   "custom_scss": "",
-  "dark_color": null,
+  "dark_color": "black",
   "docstatus": 0,
   "doctype": "Website Theme",
   "font_properties": "wght:400;500;600;700;800",
@@ -16,13 +16,13 @@
   "ignored_apps": [],
   "js": "",
   "light_color": null,
-  "modified": "2023-08-27 19:59:01.827223",
+  "modified": "2023-08-28 11:45:49.115851",
   "module": "Website",
   "name": "ESTC Theme",
   "primary_color": null,
-  "text_color": null,
+  "text_color": "",
   "theme": "ESTC Theme",
-  "theme_scss": "$enable-shadows: false;\n$enable-gradients: false;\n$enable-rounded: true;\n\n// Bootstrap Variable Overrides\n.social-logins, .forgot-password-message{\n    display:none!important;\n}\n\n\n// Import themes from installed apps\n@import \"frappe/public/scss/website.bundle\";\n\n\n\n// Custom Theme\n\n\n:root {\n\t}\n",
+  "theme_scss": "$dark: #4463F0;$enable-shadows: true;\n$enable-gradients: true;\n$enable-rounded: true;\n\n// Bootstrap Variable Overrides\n.social-logins, .forgot-password-message{\n    display:none!important;\n}\n\n\n// Import themes from installed apps\n@import \"frappe/public/scss/website.bundle\";\n\n\n\n// Custom Theme\n\n\n:root {\n\t}\n",
   "theme_url": "/files/website_theme/estc_theme_style.css"
  }
 ]
