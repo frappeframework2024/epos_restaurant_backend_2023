@@ -253,7 +253,7 @@ function OnDeleteOrder() {
     gv.authorize("delete_bill_required_password", "delete_bill", "delete_bill_required_note", "Delete Bill Note").then(async (v) => {
         if (v) {
             if (v.show_confirm == 1) {
-                if (await confirm({ title: 'Delete Sale Order', text: 'Are you sure you want delete this sale order?' }) == false) {
+                if (await confirm({ title: $t("Delete Sale Order"), text: $t("msg.are you sure to delete this sale order") }) == false) {
                     return;
                 }
             }
