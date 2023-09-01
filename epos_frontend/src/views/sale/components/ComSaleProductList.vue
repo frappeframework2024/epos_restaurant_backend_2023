@@ -130,14 +130,14 @@ function getMenuName(sp) {
     const mlang = localStorage.getItem('mLang');
     if(mlang != null){
         if(mlang=="en"){
-            return sp.product_name;
+            return `${sp.product_code} - ${sp.product_name}` ;
         }else{
-            return sp.product_name_kh;
+            return `${sp.product_code} - ${sp.product_name_kh}`;
         }
         
     }else{
         localStorage.setItem('mLang','en');
-        return sp.product_name;
+        return `${sp.product_code} - ${sp.product_name}`;
     }
 }
 
