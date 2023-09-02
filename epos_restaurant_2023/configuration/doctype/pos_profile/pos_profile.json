@@ -206,13 +206,12 @@
    "fieldname": "default_pos_receipt",
    "fieldtype": "Link",
    "label": "Default POS Receipt",
-   "options": "POS Print Format Setting",
-   "reqd": 1
+   "options": "POS Print Format Setting"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-08-28 16:22:28.330348",
+ "modified": "2023-09-02 09:24:28.680674",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Profile",
