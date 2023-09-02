@@ -5,14 +5,16 @@
    "label": "Sale Revenue"
   }
  ],
- "content": "[{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Selling</b></span>\",\"col\":12}},{\"type\":\"chart\",\"data\":{\"chart_name\":\"Sale Revenue\",\"col\":12}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Your Shortcut</span>\",\"col\":12}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale Payment\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale Quotation\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Customer\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Product\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Working Day\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Cashier Shift\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale Dashboard\",\"col\":3}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent Transaction</b></span>\",\"col\":12}},{\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Payment\",\"col\":6}},{\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Sale\",\"col\":6}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Master Data and Report</span>\",\"col\":12}},{\"type\":\"card\",\"data\":{\"card_name\":\"Products\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Customer\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Promotion\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"SPA Reports\",\"col\":4}}]",
+ "content": "[{\"id\":\"CyUIlLr0wh\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Today Sale Revenue\",\"col\":3}},{\"id\":\"QExVrLgvR6\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Sale Revenue\",\"col\":12}},{\"id\":\"AwesiJ6Vi9\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Your Shortcut</span>\",\"col\":12}},{\"id\":\"QHwQadLHMq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale\",\"col\":3}},{\"id\":\"mdV2LoP0iu\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale Payment\",\"col\":3}},{\"id\":\"kByUN4bYKT\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale Quotation\",\"col\":3}},{\"id\":\"Hqkn4cFL92\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Customer\",\"col\":3}},{\"id\":\"ROvZJNJypZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Product\",\"col\":3}},{\"id\":\"dT9w77DcRM\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Working Day\",\"col\":3}},{\"id\":\"0ceVnO9aAD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Cashier Shift\",\"col\":3}},{\"id\":\"sPjfD8QUBk\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale Dashboard\",\"col\":3}},{\"id\":\"-OYVyxx_nw\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent Transaction</b></span>\",\"col\":12}},{\"id\":\"d-N8Emdqp3\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Payment\",\"col\":6}},{\"id\":\"Cx7YgoDvsS\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Sale\",\"col\":6}},{\"id\":\"ssMzU0nGr-\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"pKuCJrptFt\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Master Data and Report</span>\",\"col\":12}},{\"id\":\"Cbwx1nPz-b\",\"type\":\"card\",\"data\":{\"card_name\":\"Products\",\"col\":4}},{\"id\":\"o5NcrIhNMY\",\"type\":\"card\",\"data\":{\"card_name\":\"Customer\",\"col\":4}},{\"id\":\"LdZoVj0O8t\",\"type\":\"card\",\"data\":{\"card_name\":\"Promotion\",\"col\":4}},{\"id\":\"yNWSakd5Go\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"id\":\"Hkg_RBUEdV\",\"type\":\"card\",\"data\":{\"card_name\":\"SPA Reports\",\"col\":4}}]",
  "creation": "2022-12-05 11:30:48.741371",
+ "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
  "for_user": "",
  "hide_custom": 0,
  "icon": "retail",
  "idx": 0,
+ "is_hidden": 0,
  "label": "Selling",
  "links": [
   {
@@ -256,25 +258,27 @@
    "type": "Link"
   }
  ],
- "modified": "2023-08-25 09:11:09.392010",
+ "modified": "2023-09-02 15:06:04.338357",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Selling",
+ "number_cards": [
+  {
+   "label": "Today Sale Revenue",
+   "number_card_name": "Today Sale Revenue"
+  }
+ ],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
  "quick_lists": [
   {
    "document_type": "Sale Payment",
-   "label": "Recent Payment",
-   "sub_title_fields": "customer,customer_name,payment_type",
-   "total_amount_field": "payment_amount"
+   "label": "Recent Payment"
   },
   {
    "document_type": "Sale",
-   "label": "Recent Sale",
-   "sub_title_fields": "customer,customer_name",
-   "total_amount_field": "grand_total"
+   "label": "Recent Sale"
   }
  ],
  "roles": [],
