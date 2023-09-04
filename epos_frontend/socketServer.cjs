@@ -1,22 +1,16 @@
-const https = require('http');
+const http = require('http');
 const socketio = require('socket.io');
-const fs = require('fs');
 
-const options = {
-  key: fs.readFileSync('privkey.pem'),
-  cert: fs.readFileSync('cert.pem')
-};
-
-const server = https.createServer(options);
+const server = http.createServer();
  
 const io = require('socket.io')(server, {
+  path: '/socketserver/socket.io',
   cors: {
     origin: '*',
   }
 });
 
 io.on('connection', (socket) => {
-
   
   socket.on("UpdateTable",(arg)=>{
     io.emit("UpdateData",arg)
