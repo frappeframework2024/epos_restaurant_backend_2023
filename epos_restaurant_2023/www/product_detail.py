@@ -1,7 +1,7 @@
 import frappe
 from py_linq import Enumerable
 def get_context(context):
- 
+    context.no_cache = 1
     product = frappe.get_doc("Product",frappe.form_dict.product_code)
     min_price = product.price or 0
     max_price = product.price or 0
