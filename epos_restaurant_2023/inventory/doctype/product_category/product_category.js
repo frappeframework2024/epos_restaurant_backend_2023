@@ -9,7 +9,7 @@ frappe.ui.form.on("Product Category", {
         frm.set_query('parent_product_category', () => {
             return {
                 filters: {
-                    is_group: 0
+                    is_group: 1
                 }
             }
         });
