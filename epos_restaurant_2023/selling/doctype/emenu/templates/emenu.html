@@ -100,7 +100,9 @@
 </div>
 </div>
 
-<h1>{{doc.footer_description}}</h1>
+{% if doc.footer_description %}
+<h1>{{doc.footer_description }}</h1>
+{%endif%}
 
 {% endblock %}
 
