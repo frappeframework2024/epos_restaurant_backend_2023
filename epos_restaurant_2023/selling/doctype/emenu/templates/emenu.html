@@ -1,9 +1,9 @@
 {% extends "templates/emenu_layout1.html" %}
 
+{% block title %} {{doc.welcome_title}} {% endblock %}
+
 {% block style%}
 {{css}}
-
-
 {% endblock %}
 
 {% block page_content %}
@@ -19,57 +19,80 @@
                 </div>
             </div>  
             <div class="flex justify-between gap-4">
-                <div>
-                    <p>Sign Up | Login</p>
-                </div>
-                <div><i class="bi bi-0-circle-fill"></i></div>
+                <div class="d-flex align-items-center"><i class="fas fa-shopping-cart main-color"></i></div>
             </div>
         </div>
     </div>
 </div>
-<div class="owl-carousel owl-theme mb-5" id="slid_banner">
+<div class="owl-carousel owl-theme mb-3" id="slid_banner">
     {%for s in doc.slideshow%}
         <div class="item">
-            <img src="{{s.photo}}"/>
+            {% if s.has_detail_view != 0 %}
+            <a class="popup-with-move-anim" href="#{{s.name}}">
+                <img src="{{s.photo}}"/>
+            </a>
+            <div id="{{s.name}}" class="zoom-anim-dialog mfp-hide small-dialog rounded overflow-hidden">
+                <img src="{{s.photo}}" class="w-100" style="object-fit: cover;height:30vh;object-position: top;"/>
+                <div class="px-4">
+                    <p>{{s.description}}</p>
+                </div>
+
+                <div class="p-4">
+                    <div class="p-4 rounded" style="box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
+                        <h6 class="m-0 text-center mb-2 main-color">{{doc.emenu_app_name}}</h6>
+                        <p class="text-center t-paragraph">Booking Table: 012 548 487 <br/>
+                        Address: No.6, Krous Village, Svay Dangkum Communt, Siemreap, Cambodia<br/>
+                        Wifi: ThankYou</p>
+                    </div>
+                </div>
+
+            </div>
+            {% else %}
+                <img src="{{s.photo}}"/>
+            {% endif %}
         </div>
     {%endfor%}
 </div>
 <div class="container">
-    <h2>{{doc.welcome_description}}</h2>
+    <h1>{{doc.welcome_title}}</h1>
+    <div>
+
+        {{doc.welcome_description}}
+    </div>
+
     <hr />
  
-    <ul>
+    <ul class="d-flex gap-3" style="flex-wrap: wrap">
        {% if (doc.popular_product | length) >0 %}
-            <li><a href="#popular_product">Popular Products</a></li>
+            <li class="bg-white px-3 py-2 rounded-pill" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;"><a class="main-color" href="#popular_product">Popular Products</a></li>
         {%endif%}
 
         {% for m in doc.pos_menu_selections %}
-        <li> <a href="#{{m.name}}">{{m.menu}}</a></li>
+        <li class="bg-white px-3 py-2 rounded-pill" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;"> <a class="main-color" href="#{{m.name}}">{{m.menu}}</a></li>
         {%endfor%}
     </ul>
-
- 
-
     <hr>
     {% if (doc.popular_product | length) >0 %}
         <h2 id="popular_product">Popular Products</h2>
         {% for p in doc.popular_product %}
-        <div onclick="showProduct({{p.product_code}})">
+        <a class="product_detail" href="/product_detail?product_code={{p.product_code}}">
             <img src="{{p.photo}}" style="width: 100px;" />
             {{p.product_code}} | {{p.product_name_en}} {{p.product_name_kh}} | price: {{p.price}} | {{p.photo}}
 
-        </div>
+        </a>
+        <br>
         {%endfor%}
     {%endif%}
 
     {% for m in doc.pos_menu_selections %}
     <h2 id="{{m.name}}">{{m.menu}}</h2>
     {%for p in products|selectattr('pos_menu', 'equalto', m.menu)|list %}
-    <div onclick="showProduct({{p.product_code}})">
+     <a class="product_detail" href="/product_detail?product_code={{p.product_code}}">
         <img src="{{p.photo}}" style="width: 100px;" />
         {{p.product_code}} | {{p.product_name_en}} {{p.product_name_kh}} | price: {{p.price}} | {{p.photo}}
 
-    </div>
+    </a>
+    <br>
     {%endfor%}
 
     {%endfor%}
@@ -84,9 +107,4 @@
 
 
 
-{% block script %}
-function showProduct(p){
-
-alert("show modal of product " + p)
-}
-{%endblock%}
+ 

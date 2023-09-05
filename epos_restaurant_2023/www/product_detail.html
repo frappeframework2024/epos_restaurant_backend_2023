@@ -1,7 +1,55 @@
+ <div style="background: #fff;">
+<!-- photo general info and price -->
 <h1>Product Detail</h1>
- <img src="{{doc.photo}}" alt="">
+ <img src="{{doc.photo or "/files/no_image.jpg"}}" alt="">
+ <br/>
 {{doc.product_name_en}}
 <br/>
 {{doc.product_category}}
+<br/>
+{% if min_price == max_price %}
+Single Price: {{ frappe.format(doc.price,{"fieldtype":"Currency"})}}
+{%else%}
+multiple price Price: {{ frappe.format(min_price,{"fieldtype":"Currency"})}}  to {{ frappe.format(max_price,{"fieldtype":"Currency"})}}
+{%endif%}
+<br/>
+Category: {{doc.product_category}}
 
- 
+<!-- Portion and size price -->
+<hr>
+{%if (doc.product_price | length) > 0%}
+    <h2>Portion and Size</h2>
+    {% for p in doc.product_price%}
+        <div>
+            {{p.portion}} - {{frappe.format(p.price,{"fieldtype":"Currency"})}}
+        </div>
+    {%endfor%}
+{%endif%}
+
+<hr>
+<!-- Modifier -->
+{%if (doc.product_modifiers | length) > 0%}
+    <h2>Modifier</h2>
+    {% for c in doc.product_modifiers|unique(attribute="modifier_category") %}
+
+        <h3>{{ c.modifier_category }}</h3>
+        {%for m in doc.product_modifiers|selectattr('modifier_category', 'equalto', c.modifier_category)|list %}
+            <div>
+                {{m.modifier_code}} - {{frappe.format(m.price,{"fieldtype":"Currency"})}}
+            </div>
+        {%endfor%}
+    {% endfor %}
+    
+{%endif%}
+
+
+{% if doc.description %}
+
+<h2>Detail</h2>
+{{doc.description}}
+{%endif%}
+
+
+
+
+</div>
