@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<title>{{ title | striptags }}</title>
+    {{ include_style('website.bundle.css') }}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
+	<style type="text/css">
+		.header{
+			background-color: #fff;
+			box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
+			position: sticky;
+			top: 0;
+			z-index: 1000000000;
+			width: 100%;
+		}
+		#slid_banner{
+			height: 50vh;
+		}
+		#slid_banner .owl-stage-outer,
+		#slid_banner .owl-stage,
+		#slid_banner .owl-item,
+		#slid_banner .item{
+			height: 100%;
+		}
+		#slid_banner .item img{
+			object-fit: cover;
+			height: 100%;
+			width: 100%;
+			object-position: top;
+		}
+		#slid_banner .owl-nav{
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 100%;
+			display: flex;
+			justify-content: space-between;
+		}
+		#slid_banner .owl-nav button{
+			color: #000;
+			width: 50px;
+			height: 50px;
+			background: #fff;
+			border-radius: 50%;
+		}
+		#slid_banner .owl-dots{
+			position: absolute;
+			bottom: 0;
+			left: 50%;
+			transform: translateX(-50%);
+		}
+
+
+        {%- block style -%}{%- endblock -%}
+    </style>
+   
+	<script>
+		window.frappe = {};
+		frappe.ready_events = [];
+		frappe.ready = function(fn) {
+			frappe.ready_events.push(fn);
+             
+		}
+		
+	</script>
+
+</head>
+<body>
+	<!-- <h1>Emenu</h1> -->
+	{%- block page_content -%}{%- endblock -%}
+
+		<!-- js should be loaded in body! -->
+
+	<script>
+		frappe.boot = {{ boot }}
+		// for backward compatibility of some libs
+		frappe.sys_defaults = frappe.boot.sysdefaults;
+	</script>
+	{{ include_script('frappe-web.bundle.js') }}
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+   
+    <script>
+		 {%- block script -%}{%- endblock -%}
+	</script>
+	<script>
+		$( function() {
+			$('#slid_banner').owlCarousel({
+				loop:true,
+				nav:true,
+				items:1,
+				navText: ['&#8592;','&#8594;']
+			})
+		})
+	</script>
+   
+</body>
+</html>
