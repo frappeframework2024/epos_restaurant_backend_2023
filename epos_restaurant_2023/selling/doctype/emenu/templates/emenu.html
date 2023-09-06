@@ -97,7 +97,7 @@
                                         <div class="item-tt-txt">{{p.product_name_en}} </div>
                                         <div class="item-tt-txt">{{p.product_name_kh}}</div>
                                     </div>
-                                    <div class="text-end" style="font-weight: 600;">From USD {{p.price}}</div>
+                                    <div class="text-end" style="font-weight: 600;">From {{frappe.format(p.price,{"fieldtype":"Currency"})}}</div>
                                 </div>
                                 <!-- {{p.product_code}} -->
                                 <!-- {{p.photo}} -->

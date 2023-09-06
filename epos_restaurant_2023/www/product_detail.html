@@ -1,57 +1,61 @@
-<div style="background: #fff;">
+<div class="rounded overflow-hidden" style="background: #fff;max-width: 600px;margin: 20px auto;">
     <!-- photo general info and price -->
     <!-- <h1>Product Detail</h1> -->
-    {{doc.prices}}
-    <img src="{{doc.photo or " /files/no_image.jpg"}}" alt="">
-    <br />
-    {{doc.product_name_en}}
-    <br />
-    {{doc.product_category}}
-    <br />
-    {% if min_price == max_price %}
-    Single Price: {{ frappe.format(doc.price,{"fieldtype":"Currency"})}}
-    {%else%}
-    multiple price Price: {{ frappe.format(min_price,{"fieldtype":"Currency"})}} to {{
-    frappe.format(max_price,{"fieldtype":"Currency"})}}
-    {%endif%}
-    <br />
-    Category: {{doc.product_category}}
-
-    <!-- Portion and size price -->
-    <hr>
-    {%if (doc.product_price | length) > 0%}
-    <h2>Portion and Size</h2>
-    {% for p in doc.product_price%}
+    <!-- {{doc.prices}} -->
+    
     <div>
-        {{p.portion}} - {{frappe.format(p.price,{"fieldtype":"Currency"})}}
+        <img src="{{doc.photo or " /files/no_image.jpg"}}" alt="">
     </div>
-    {%endfor%}
-    {%endif%}
+    <div class="p-3">
+        <div class="el-shadow p-2 rounded">
+            <div class="flex justify-between">
+                <div>
+                    <h2 class="text-capitalize" style="max-width:300px">{{doc.product_name_en}}</h2>
+                </div>
+                <div>
+                    {% if min_price == max_price %}
+                        <p>From {{ frappe.format(doc.price,{"fieldtype":"Currency"})}}</p>
+                    {%else%}
+                        <p>From {{ frappe.format(min_price,{"fieldtype":"Currency"})}} to {{
+                        frappe.format(max_price,{"fieldtype":"Currency"})}}</p>
+                    {%endif%}
+                </div>
+            </div>
+            <p>{{doc.product_category}}</p>
+        </div>
+        <!-- Portion and size price -->
+        <hr>
+        {%if (doc.product_price | length) > 0%}
+        <h3>Portion and Size</h3>
+        {% for p in doc.product_price%}
+        <div>
+            {{p.portion}} - {{frappe.format(p.price,{"fieldtype":"Currency"})}}
+        </div>
+        {%endfor%}
+        {%endif%}
 
-    <hr>
-    <!-- Modifier -->
-    {%if (doc.product_modifiers | length) > 0%}
-    <h2>Modifier</h2>
-    {% for c in doc.product_modifiers|unique(attribute="modifier_category") %}
+        <hr>
+        <!-- Modifier -->
+        {%if (doc.product_modifiers | length) > 0%}
+        <h3>Modifier</h3>
+        {% for c in doc.product_modifiers|unique(attribute="modifier_category") %}
 
-    <h3>{{ c.modifier_category }}</h3>
-    {%for m in doc.product_modifiers|selectattr('modifier_category', 'equalto', c.modifier_category)|list %}
-    <div>
-        {{m.modifier_code}} - {{frappe.format(m.price,{"fieldtype":"Currency"})}}
+        <h4>{{ c.modifier_category }}</h4>
+        {%for m in doc.product_modifiers|selectattr('modifier_category', 'equalto', c.modifier_category)|list %}
+        <div>
+            {{m.modifier_code}} - {{frappe.format(m.price,{"fieldtype":"Currency"})}}
+        </div>
+        {%endfor%}
+        {% endfor %}
+
+        {%endif%}
+
+
+        {% if doc.description %}
+
+        <h3>Detail</h3>
+        {{doc.description}}
+        {%endif%}
+
     </div>
-    {%endfor%}
-    {% endfor %}
-
-    {%endif%}
-
-
-    {% if doc.description %}
-
-    <h2>Detail</h2>
-    {{doc.description}}
-    {%endif%}
-
-
-
-
 </div>
