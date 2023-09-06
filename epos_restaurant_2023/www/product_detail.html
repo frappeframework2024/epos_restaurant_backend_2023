@@ -29,7 +29,7 @@
         <h5>Portion and Size</h5>
         <ul class="pt-si">
             {% for p in doc.product_price%}
-                <li>{{p.portion}} - {{frappe.format(p.price,{"fieldtype":"Currency"})}}</li>
+                <li><p>{{p.portion}} - {{frappe.format(p.price,{"fieldtype":"Currency"})}}</p></li>
             {%endfor%}
         </ul>
         {%endif%}
