@@ -13,6 +13,7 @@
   "emenu_app_name",
   "column_break_nodn",
   "logo",
+  "enable_cache",
   "section_break_3",
   "slideshow",
   "section_break_5",
@@ -273,13 +274,19 @@
    "fieldtype": "Table",
    "label": "Popular Prodsuct",
    "options": "eMenu Popular Products"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_cache",
+   "fieldtype": "Check",
+   "label": "Enable Cache"
   }
  ],
  "has_web_view": 1,
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-09-05 14:14:18.884663",
+ "modified": "2023-09-06 14:39:21.726321",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu",

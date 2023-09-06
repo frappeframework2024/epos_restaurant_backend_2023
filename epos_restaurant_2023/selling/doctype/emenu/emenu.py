@@ -24,5 +24,5 @@ class eMenu(WebsiteGenerator):
 				where pos_menu in %(pos_menu)s
 			"""
 			data = frappe.db.sql(sql,filter,as_dict=1)
-
+		context.no_cache = not  (self.enable_cache or 0)
 		context.products = data

@@ -57,6 +57,9 @@
 		body {
 			font-family: 'Open Sans', sans-serif;
 		}
+		body, html{
+			height: unset;
+		}
 		h2{
 			font-size: 24px;
 		}
@@ -68,6 +71,9 @@
 			top: 0;
 			z-index: 10000;
 			width: 100%;
+		}
+		hr{
+			background-color: #c1c1c1;
 		}
 
 		#slid_banner {
@@ -261,7 +267,7 @@
 			line-height: 0;
 			box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px !important;
 		}
-		p{
+		p, ol li{
 			color: #767676;
 			line-height: 1.571428571;
 			font-weight: 400;
@@ -276,7 +282,7 @@
 		}
 		.nav-pro-wrapper{
 			position: sticky;
-			top: 94px;
+			/* top: 94px; */
 			z-index: 10000;
 		}
 		.item-tt-txt{
@@ -292,6 +298,17 @@
 			-webkit-columns: 2;
 			-moz-columns: 2;
 		}
+		h5.header5-cs{
+			font-size: 1rem;
+		}
+		.items-my-mfp-slide-bottom .modal-pp-items{
+			background: #fff;
+			max-width: 600px;
+			margin: 20px auto;
+			position: relative;
+		}
+
+
 		@media (max-width: 991.98px) {
 		}
 		@media (min-width: 992px) {
@@ -344,6 +361,12 @@
  
 	<script>
 		$(function () {
+			$(window).scroll(function(){
+				var hd = $('.header').height()
+				$('.nav-pro-wrapper').css('top', `calc(100% - ${hd})`);
+			})
+
+			
 			$('#slid_banner').owlCarousel({
 				loop: true,
 				nav: true,
@@ -374,7 +397,7 @@
 						cache: true
 					}
 				},
-				mainClass: 'my-mfp-slide-bottom',
+				mainClass: 'my-mfp-slide-bottom items-my-mfp-slide-bottom',
 				overflowY: 'scroll' // as we know that popup content is tall we set scroll overflow by default to avoid jump
 			});
 			
