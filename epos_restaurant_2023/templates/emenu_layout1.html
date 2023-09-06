@@ -282,7 +282,7 @@
 		}
 		.nav-pro-wrapper{
 			position: sticky;
-			/* top: 94px; */
+			/* top: var(--top); */
 			z-index: 10000;
 		}
 		.item-tt-txt{
@@ -306,6 +306,9 @@
 			max-width: 600px;
 			margin: 20px auto;
 			position: relative;
+		}
+		#nav_menu_slide .item a{
+			white-space: nowrap;
 		}
 
 
@@ -362,8 +365,10 @@
 	<script>
 		$(function () {
 			$(window).scroll(function(){
-				var hd = $('.header').height()
-				$('.nav-pro-wrapper').css('top', `calc(100% - ${hd})`);
+				var headerHeight = $('.header').height();
+				// var topValue = `calc(100% - ${headerHeight}px)`;
+				$('.nav-pro-wrapper').css('top', headerHeight);
+				console.log(topValue)
 			})
 
 			
@@ -374,6 +379,18 @@
 				navText: ['&#8592;', '&#8594;']
 			})
 
+			$('#nav_menu_slide').owlCarousel({
+				items:10,
+				loop:false,
+				center:false,
+				margin:10,
+				URLhashListener:true,
+				autoplayHoverPause:true,
+				startPosition: 'URLHash',
+				dots: false,
+				nav: true,
+				loop: true
+			})
 			//banner popup
 			$('.popup-with-move-anim').magnificPopup({
 				type: 'inline',

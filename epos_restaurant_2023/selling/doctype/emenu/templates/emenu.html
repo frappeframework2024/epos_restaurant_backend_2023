@@ -36,7 +36,6 @@
             <div class="px-4">
                 <p>{{s.description}}</p>
             </div>
-
             <div class="p-4">
                 <div class="p-4 rounded" style="box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
                     <h6 class="m-0 text-center mb-2 main-color">{{doc.emenu_app_name}}</h6>
@@ -45,7 +44,6 @@
                         Wifi: ThankYou</p>
                 </div>
             </div>
-
         </div>
         {% else %}
         <img loading="lazy" src="{{s.photo}}" />
@@ -56,24 +54,23 @@
 <div class="container">
     <h1>{{doc.welcome_title}}</h1>
     <div>
-
         {{doc.welcome_description}}
     </div>
 </div>
 
 <div class="py-3 my-3 nav-pro-wrapper border border-start-0 border-end-0 border-bottom-0 bg-white" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
     <nav class="container">
-        <ul class="d-flex gap-3 mb-0" style="flex-wrap: wrap">
+        <div class="d-flex gap-3 mb-0 owl-carousel owl-theme" id="nav_menu_slide" style="flex-wrap: wrap">
             {% if (doc.popular_product | length) >0 %}
-            <li class="bg-white px-3 py-2 rounded-pill" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;"><a
-                    class="main-color nav-pro" href="#popular_product">Popular Products</a></li>
+            <div class="bg-white px-3 py-2 rounded-pill item" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;"><a
+                    class="main-color nav-pro" href="#popular_product">Popular Products</a></div>
             {%endif%}
 
             {% for m in doc.pos_menu_selections %}
-            <li class="bg-white px-3 py-2 rounded-pill" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;"> <a
-                    class="main-color nav-pro" href="#{{m.name}}">{{m.menu}}</a></li>
+            <div class="bg-white px-3 py-2 rounded-pill item" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;"> <a
+                    class="main-color nav-pro" href="#{{m.name}}">{{m.menu}}</a></div>
             {%endfor%}
-        </ul>
+        </div>
     </nav>
 </div>
 
