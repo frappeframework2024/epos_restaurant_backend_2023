@@ -37,6 +37,12 @@
 			text-decoration: 0;
 			font-weight: 500;
 		}
+		a:hover{
+			text-decoration: none;
+		}
+		.img{
+			object-fit: cover;
+		}
 
 		h1,
 		h2,
@@ -46,10 +52,14 @@
 		h6 {
 			font-weight: 600;
 			font-family: 'Open Sans', sans-serif;
+			margin: 0;
 		}
 
 		body {
 			font-family: 'Open Sans', sans-serif;
+		}
+		h2{
+			font-size: 24px;
 		}
 
 		.header {
@@ -252,7 +262,7 @@
 			line-height: 0;
 			box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px !important;
 		}
-		.t-paragraph{
+		p{
 			color: #767676;
 			line-height: 1.571428571;
 			font-weight: 400;
@@ -265,6 +275,32 @@
 		.mfp-wrap{
 			z-index: 100000;
 		}
+		.nav-pro-wrapper{
+			position: sticky;
+			top: 94px;
+			z-index: 10000;
+		}
+		.item-tt-txt{
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+		@media (max-width: 991.98px) {
+			.items-inner-1{
+
+			}
+		}
+		@media (min-width: 992px) {
+			.items-inner-1{
+				height: 140px;
+			}
+		}
+		@media (max-width: 1200px) {
+			.item-tt-txt{
+				width: 290px;
+			}
+		}
+
 
 
 			{%- block style -%}{%- endblock -%}
@@ -340,6 +376,38 @@
 			
 		})
 		{%- block script -%} {%- endblock -%}
+
+		// var sections = $('section')
+		// , nav = $('nav')
+		// , nav_height = nav.outerHeight();
+
+		// $(window).on('scroll', function () {
+		// var cur_pos = $(this).scrollTop();
+		
+		// sections.each(function() {
+		// 	var top = $(this).offset().top - nav_height,
+		// 		bottom = top + $(this).outerHeight();
+			
+		// 	if (cur_pos >= top && cur_pos <= bottom) {
+		// 	nav.find('a.nav-pro').removeClass('active');
+		// 	sections.removeClass('active');
+			
+		// 	$(this).addClass('active');
+		// 	nav.find('a.nav-pro[href="#'+$(this).attr('id')+'"]').addClass('active');
+		// 	}
+		// });
+		// });
+
+		// nav.find('a.nav-pro').on('click', function () {
+		// var $el = $(this)
+		// 	, id = $el.attr('href');
+		
+		// $('html, body').animate({
+		// 	scrollTop: $(id).offset().top - nav_height
+		// }, 500);
+		
+		// return false;
+		// });
 	</script>
 
 </body>

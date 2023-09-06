@@ -73,7 +73,6 @@
 
 
 						//create new sale
-						console.log(sale)
 					} 
 
 				})
