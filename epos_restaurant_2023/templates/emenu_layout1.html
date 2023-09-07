@@ -443,7 +443,7 @@
 
 			// Cache menu links and sections
 			var menuLinks = $('.nav-pro-wrapper a');
-			var sections = $('.scroll-section');
+			var sections = $('.sections-content .scroll-section');
 			var headerHeight = $('.header').outerHeight();
 			var menuHeight = $('.nav-pro-wrapper').outerHeight();
 			var headerPlusMenu = headerHeight + menuHeight;
@@ -459,24 +459,20 @@
 					if (scrollPosition >= sectionTop) {
 						var targetId = section.attr('id');
 						var correspondingLink = menuLinks.filter('[href="#' + targetId + '"]');
-						var sectionScrollLink = $(this).filter('[id="' + targetId + '"]');
+						var sectionScrollLink = sections.filter('[id="' + targetId + '"]');
 
 
-						// $(this).removeClass('active');
+						sections.removeClass('active');
 						sectionScrollLink.addClass('active');
-
-
+						
 						menuLinks.removeClass('active');
 						correspondingLink.addClass('active');
-
-
-						console.log(sectionScrollLink)
-
-						// if ($(this).hasClass('active')){
-						// 	$(this).css('padding-top', headerPlusMenu)
-						// }else{
-						// 	$(this).css('padding-top', '')
-						// }
+						
+						if (sectionScrollLink.hasClass('active')){
+							sectionScrollLink.css('padding-top', headerPlusMenu)
+						}else{
+							sectionScrollLink.css('padding-top', '0')
+						}
 
 					}
 				});

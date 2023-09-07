@@ -906,9 +906,9 @@
   "docstatus": 0,
   "doctype": "Predefine Data",
   "is_single": 1,
-  "modified": "2023-09-02 11:42:16.754347",
+  "modified": "2023-09-07 13:47:55.391474",
   "name": "d1b8266d82",
-  "sort": 36,
+  "sort": 1000,
   "title": "ePOS Settings"
  },
  {
@@ -1026,9 +1026,9 @@
   "docstatus": 0,
   "doctype": "Predefine Data",
   "is_single": 0,
-  "modified": "2023-04-13 15:16:34.014781",
+  "modified": "2023-09-07 13:47:45.688894",
   "name": "412d4bae08",
-  "sort": 300,
+  "sort": 320,
   "title": "Admin Permission"
  },
  {
@@ -1038,9 +1038,9 @@
   "docstatus": 0,
   "doctype": "Predefine Data",
   "is_single": 0,
-  "modified": "2023-04-13 15:17:52.619246",
+  "modified": "2023-09-07 13:48:08.883663",
   "name": "a3c4f15d80",
-  "sort": 300,
+  "sort": 320,
   "title": "Cashier Permission"
  },
  {
