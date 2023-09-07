@@ -131,7 +131,7 @@
                             <div class="rounded row p-3 items-inner-1 m-0" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
                                 <div class="col-12 col-lg-3 p-0 h-100">
                                     {% if p.pos_menu != 'SOFT DRINK' %}
-                                    <img loading="lazy" class="rounded img" src="{{p.photo}}" style="height:100%;width: 100%;"/>
+                                    <img loading="lazy" class="rounded img" src="{{p.photo or "/files/no_image.jpg"}}" style="height:100%;width: 100%;"/>
                                     {% else %}
                                     <img loading="lazy" class="rounded" src="{{p.photo or "/files/no_image.jpg"}}" style="height:100%;"/>
                                     {% endif %}
