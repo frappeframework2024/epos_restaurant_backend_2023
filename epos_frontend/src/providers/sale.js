@@ -243,9 +243,8 @@ export default class Sale {
             this.updateSaleProduct(sp);
         } else {
             this.clearSelected();
-            
             let tax_rule ="";  
-            console.log(p)
+            
             if((p.tax_rule||"")=="" || p.tax_rule == "None"){
                 if(this.sale.name==undefined){
                     tax_rule = JSON.parse(JSON.stringify(this.setting.tax_rule)) ;
@@ -270,7 +269,7 @@ export default class Sale {
                 tax_rule = JSON.parse(p.tax_rule_data);
             }   
             
-            console.log(tax_rule)
+            
             const make_order_auth = JSON.parse(localStorage.getItem('make_order_auth'));
             const now = new Date();
 
