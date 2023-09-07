@@ -8105,6 +8105,11 @@ vue-template-compiler@^2.5.13:
     de-indent "^1.0.2"
     he "^1.2.0"
 
+vue-use-active-scroll@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/vue-use-active-scroll/-/vue-use-active-scroll-1.0.0.tgz#055e64b8bfa359610c4269180273ec6d6ca40d3d"
+  integrity sha512-Mm8uWoANdZcQqZVKnMOMccXbKeqazUiHu8wyaNvUyPk5/gZai51dmU9habzbZ+w1V8xAqSJGh9/cyvAuNrToGA==
+
 vue3-avatar@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/vue3-avatar/-/vue3-avatar-1.0.1.tgz#0a762db03259b3c803e70ebf982ceff179d527a5"

@@ -12,5 +12,6 @@ class Drivers(Document):
 			file.attached_to_name = self.name
 			file.attached_to_field = 'photo'
 			file.attached_to_doctype = 'Drivers'
+			
 			file.save()
 			frappe.db.commit()

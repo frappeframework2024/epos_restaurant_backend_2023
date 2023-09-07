@@ -3,6 +3,7 @@
 <html lang="en">
 
 <head>
+	<link rel="icon" type="image/x-icon" href="../../../../sites/assets/images/favicon.ico">
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -22,7 +23,7 @@
 		rel="stylesheet">
 	<style type="text/css">
 		:root {
-			--main-color: #db3b76;
+    		--main-color: #db3b76;
 		}
 
 		.main-color {
@@ -131,8 +132,8 @@
 
 
 		/**
- 		* Fade-zoom animation for first dialog
- 		*/
+		* Fade-zoom animation for first dialog
+		*/
 
 		/* start state */
 		.my-mfp-zoom-in .zoom-anim-dialog {
@@ -196,8 +197,8 @@
 
 
 		/**
- * Fade-move animation for second dialog
- */
+		* Fade-move animation for second dialog
+		*/
 
 		/* at start */
 		.my-mfp-slide-bottom .zoom-anim-dialog {
@@ -307,9 +308,40 @@
 			margin: 20px auto;
 			position: relative;
 		}
-		#nav_menu_slide .item a{
+		.main-color.nav-pro.active{
+			color: var(--main-color);
+			border-bottom: 2px solid var(--main-color);
+		}
+		.modal-img img{
+			height: 400px;
+			width: 100%;
+			object-fit: cover;
+		}
+		.wrapper-title-modal h2{
+			max-width: 393px;
+			font-size: 20px;
+		}
+		.navigt a{
 			white-space: nowrap;
 		}
+		.navigt{
+			overflow-x: auto;
+		}
+		.modal-pirc p{
+			white-space: nowrap;
+		}
+
+		.main-color.nav-pro{
+			background: #fff;
+			border: 1px solid #c1c1c1;
+		}
+		::-webkit-scrollbar-thumb {
+			background-color: transparent; /* Hide the thumb */
+		}
+		.genre-desc .ql-editor.read-mode *{
+			text-align: center;
+		}
+
 
 
 		@media (max-width: 991.98px) {
@@ -325,9 +357,7 @@
 			}
 		}
 
-
-
-			{%- block style -%}{%- endblock -%}
+		{%- block style -%}{%- endblock -%}
 	</style>
 
 	<script>
@@ -343,6 +373,7 @@
 </head>
 
 <body>
+	<Button id="xx" style="position: fixed;z-index: 9999999;">xxx</Button>
 	<!-- <h1>Emenu</h1> -->
 	{%- block page_content -%}{%- endblock -%}
 
@@ -366,9 +397,7 @@
 		$(function () {
 			$(window).scroll(function(){
 				var headerHeight = $('.header').height();
-				// var topValue = `calc(100% - ${headerHeight}px)`;
 				$('.nav-pro-wrapper').css('top', headerHeight);
-				console.log(topValue)
 			})
 
 			
@@ -379,18 +408,10 @@
 				navText: ['&#8592;', '&#8594;']
 			})
 
-			$('#nav_menu_slide').owlCarousel({
-				items:10,
-				loop:false,
-				center:false,
-				margin:10,
-				URLhashListener:true,
-				autoplayHoverPause:true,
-				startPosition: 'URLHash',
-				dots: false,
-				nav: true,
-				loop: true
+			$('#navi-slide-menu').owlCarousel({
+				items:5
 			})
+
 			//banner popup
 			$('.popup-with-move-anim').magnificPopup({
 				type: 'inline',
@@ -417,41 +438,29 @@
 				mainClass: 'my-mfp-slide-bottom items-my-mfp-slide-bottom',
 				overflowY: 'scroll' // as we know that popup content is tall we set scroll overflow by default to avoid jump
 			});
+
+			$(window).scroll(function() {
+				var scrollDistance = $(window).scrollTop()
+
+				// Assign active class to nav links while scolling
+				$('.scroll-section').each(function(i) {
+					console.log($(this).position().top + $(this).text())
+					if (($(this).position().top - 100) <= scrollDistance) {
+						$('.navigt a.active').removeClass('active')
+						$('.navigt a').eq(i).addClass('active')
+					}
+				});
+			}).scroll();
 			
+			$("#xx").click(function() {
+				var activeElement = $("nav.container a.active");
+				console.log(activeElement)
+					var container = $("nav.container");
+					container.scrollTo(500)
+				});
+
 		})
 		{%- block script -%} {%- endblock -%}
-
-		// var sections = $('section')
-		// , nav = $('nav')
-		// , nav_height = nav.outerHeight();
-
-		// $(window).on('scroll', function () {
-		// var cur_pos = $(this).scrollTop();
-		
-		// sections.each(function() {
-		// 	var top = $(this).offset().top - nav_height,
-		// 		bottom = top + $(this).outerHeight();
-			
-		// 	if (cur_pos >= top && cur_pos <= bottom) {
-		// 	nav.find('a.nav-pro').removeClass('active');
-		// 	sections.removeClass('active');
-			
-		// 	$(this).addClass('active');
-		// 	nav.find('a.nav-pro[href="#'+$(this).attr('id')+'"]').addClass('active');
-		// 	}
-		// });
-		// });
-
-		// nav.find('a.nav-pro').on('click', function () {
-		// var $el = $(this)
-		// 	, id = $el.attr('href');
-		
-		// $('html, body').animate({
-		// 	scrollTop: $(id).offset().top - nav_height
-		// }, 500);
-		
-		// return false;
-		// });
 	</script>
 
 </body>

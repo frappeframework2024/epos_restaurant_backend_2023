@@ -20,6 +20,7 @@
     "socket.io-client": "^2.4.0",
     "vue": "^3.2.47",
     "vue-router": "^4",
+    "vue-use-active-scroll": "^1.0.0",
     "vue3-avatar": "^1.0.1",
     "vuetify": "^3.1.13"
   },

@@ -284,6 +284,7 @@
    "label": "Unit Category"
   },
   {
+   "default": "0",
    "fieldname": "price",
    "fieldtype": "Currency",
    "label": "Price"
@@ -526,6 +527,7 @@
    "label": "Prices"
   },
   {
+   "default": "0",
    "fieldname": "sort_order",
    "fieldtype": "Int",
    "label": "Sort Order"
@@ -561,7 +563,7 @@
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2023-09-06 10:11:20.637356",
+ "modified": "2023-09-06 19:05:00.578953",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Product",

@@ -186,3 +186,9 @@ cursor: pointer;
     margin-top: 20px;
     object-fit: cover;
 }
+.ttl{
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    text-align: end;
+    color: #9E9E9E;
+}
