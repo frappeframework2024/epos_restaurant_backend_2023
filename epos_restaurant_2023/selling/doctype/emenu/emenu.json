@@ -52,7 +52,8 @@
   "banner_section",
   "height_banner",
   "background_color_banner",
-  "background_image_banner"
+  "background_image_banner",
+  "favicon"
  ],
  "fields": [
   {
@@ -280,13 +281,18 @@
    "fieldname": "enable_cache",
    "fieldtype": "Check",
    "label": "Enable Cache"
+  },
+  {
+   "fieldname": "favicon",
+   "fieldtype": "Attach Image",
+   "label": "Favicon"
   }
  ],
  "has_web_view": 1,
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-09-06 14:39:21.726321",
+ "modified": "2023-09-07 17:10:17.824257",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu",
