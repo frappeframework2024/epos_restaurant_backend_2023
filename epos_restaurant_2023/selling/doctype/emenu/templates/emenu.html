@@ -27,10 +27,10 @@
         <div class="item">
             {% if s.has_detail_view != 0 %}
             <a class="popup-with-move-anim" href="#{{s.name}}">
-                <img src="{{s.photo}}" />
+                <img src="{{s.photo or "/files/no_image.jpg"}}" />
             </a>
             <div id="{{s.name}}" class="zoom-anim-dialog mfp-hide small-dialog rounded overflow-hidden">
-                <img loading="lazy" src="{{s.photo}}" class="w-100" style="object-fit: cover;height:30vh;object-position: top;" />
+                <img loading="lazy" src="{{s.photo or "/files/no_image.jpg"}}" class="w-100" style="object-fit: cover;height:30vh;object-position: top;" />
                 <div class="px-4 pt-4">
                     <p>{{s.description}}</p>
                 </div>
@@ -42,7 +42,7 @@
                 </div>
             </div>
             {% else %}
-            <img loading="lazy" src="{{s.photo}}" />
+            <img loading="lazy" src="{{s.photo or "/files/no_image.jpg"}}" />
             {% endif %}
         </div>
         {%endfor%}
