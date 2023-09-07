@@ -19,7 +19,7 @@ class eMenu(WebsiteGenerator):
 					product_name_en,
 					product_name_kh,
 					price,
-					ifnull(photo,'no_image.jpg') as photo
+					ifnull(photo,'files/no_image.jpg') as photo
 				from `tabTemp Product Menu`
 				where pos_menu in %(pos_menu)s
 			"""

@@ -123,14 +123,14 @@
             {% for m in doc.pos_menu_selections %}
                 <div class="scroll-section" id="{{m.name}}">
                     <div class="mt-4 mb-3">
-                        <h2>{{m.menu}} xx</h2>
+                        <h2>{{m.menu}} </h2>
                     </div>
                     <div class="row">
                         {%for p in products|selectattr('pos_menu', 'equalto', m.menu)|list %}
                         <a class="product_detail col-12 col-lg-6 mb-3 text-dark" href="/product_detail?product_code={{p.product_code}}">
                             <div class="rounded row p-3 items-inner-1 m-0" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
                                 <div class="col-12 col-lg-3 p-0 h-100">
-                                 xx
+                                 
                                     <img loading="lazy" class="rounded" src="{{p.photo or "/files/no_image.jpg"}}" style="height:100%;"/>
                                    
                                 </div>
