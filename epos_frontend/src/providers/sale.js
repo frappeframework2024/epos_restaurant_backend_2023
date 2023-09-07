@@ -245,6 +245,7 @@ export default class Sale {
             this.clearSelected();
             
             let tax_rule ="";  
+            console.log(p)
             if((p.tax_rule||"")=="" || p.tax_rule == "None"){
                 if(this.sale.name==undefined){
                     tax_rule = JSON.parse(JSON.stringify(this.setting.tax_rule)) ;
