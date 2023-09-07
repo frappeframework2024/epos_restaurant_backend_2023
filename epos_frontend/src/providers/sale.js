@@ -243,8 +243,8 @@ export default class Sale {
             this.updateSaleProduct(sp);
         } else {
             this.clearSelected();
-            let tax_rule ="";   
-            if((p.tax_rule||"")==""){
+            let tax_rule ="";  
+            if((p.tax_rule||"")=="" || p.tax_rule == "None"){
                 if(this.sale.name==undefined){
                     tax_rule = JSON.parse(JSON.stringify(this.setting.tax_rule)) ;
                 }
@@ -391,6 +391,7 @@ export default class Sale {
 
     //on sale product apply tax setting
     onSaleProductApplyTax(tax_rule, sp){
+      
         sp.tax_rule = tax_rule.name||"";
         sp.tax_1_rate = tax_rule.tax_1_rate||0;
         sp.percentage_of_price_to_calculate_tax_1 = tax_rule.percentage_of_price_to_calculate_tax_1||100;

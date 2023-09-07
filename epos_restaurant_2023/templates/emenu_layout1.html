@@ -401,6 +401,8 @@
 			})
 
 			
+
+			
 			$('#slid_banner').owlCarousel({
 				loop: true,
 				nav: true,
@@ -439,19 +441,36 @@
 				overflowY: 'scroll' // as we know that popup content is tall we set scroll overflow by default to avoid jump
 			});
 
-			$(window).scroll(function() {
-				var scrollDistance = $(window).scrollTop()
+			// Cache menu links and sections
+			var menuLinks = $('.nav-pro-wrapper a');
+			var sections = $('.scroll-section');
+			var headerHeight = $('.header').outerHeight();
+			var menuHeight = $('.nav-pro-wrapper').outerHeight();
+			var headerPlusMenu = headerHeight + menuHeight;
 
-				// Assign active class to nav links while scolling
-				$('.scroll-section').each(function(i) {
-					console.log($(this).position().top + $(this).text())
-					if (($(this).position().top - 100) <= scrollDistance) {
-						$('.navigt a.active').removeClass('active')
-						$('.navigt a').eq(i).addClass('active')
+			// Handle scroll event
+			$(window).scroll(function() {
+				var scrollPosition = $(this).scrollTop();
+
+				sections.each(function() {
+					var section = $(this);
+					var sectionTop = section.offset().top - headerPlusMenu; // Adjust the offset as needed
+
+					if (scrollPosition >= sectionTop) {
+						var targetId = section.attr('id');
+						var correspondingLink = menuLinks.filter('[href="#' + targetId + '"]');
+						menuLinks.removeClass('active');
+						correspondingLink.addClass('active');
+						$(this).css('padding-top', headerPlusMenu)
 					}
 				});
-			}).scroll();
+			});
+
+			// $(window).on('load', function (){
+			// 	$('.section-main-wraper').css('margin-top', headerHeight)
+			// })
 			
+
 			$("#xx").click(function() {
 				var activeElement = $("nav.container a.active");
 				console.log(activeElement)
