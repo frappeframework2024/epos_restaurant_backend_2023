@@ -459,9 +459,15 @@
 					if (scrollPosition >= sectionTop) {
 						var targetId = section.attr('id');
 						var correspondingLink = menuLinks.filter('[href="#' + targetId + '"]');
+
+						var sectionScrollLink = $(this).filter('[id="' + targetId + '"]');
+
+						sections.removeClass('active');
+						sectionScrollLink.addClass('active');
+
 						menuLinks.removeClass('active');
 						correspondingLink.addClass('active');
-						$(this).css('padding-top', headerPlusMenu)
+						console.log(sections.siblings('.active').css('padding-top', headerPlusMenu))
 					}
 				});
 			});
