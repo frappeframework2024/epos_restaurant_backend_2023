@@ -460,16 +460,23 @@
 						var targetId = section.attr('id');
 						var correspondingLink = menuLinks.filter('[href="#' + targetId + '"]');
 						var sectionScrollLink = $(this).filter('[id="' + targetId + '"]');
-						sections.removeClass('active');
+
+
+						// $(this).removeClass('active');
 						sectionScrollLink.addClass('active');
+
+
 						menuLinks.removeClass('active');
 						correspondingLink.addClass('active');
 
-						if (sectionScrollLink.hasClass('active')){
-							sectionScrollLink.css('padding-top', headerPlusMenu)
-						}else{
-							sectionScrollLink.css('padding-top', 0)
-						}
+
+						console.log(sectionScrollLink)
+
+						// if ($(this).hasClass('active')){
+						// 	$(this).css('padding-top', headerPlusMenu)
+						// }else{
+						// 	$(this).css('padding-top', '')
+						// }
 
 					}
 				});

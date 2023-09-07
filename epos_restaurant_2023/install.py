@@ -277,7 +277,6 @@ def reset_data():
             # frappe.db.sql("delete from `tabPOS Profile Table Group`")
             # frappe.db.sql("delete from `tabRestaurant Table`")
             frappe.db.sql("delete from `tabBusiness Branch`")
-            frappe.db.sql("delete from `tabCurrency` where name not in('USD','KHR','RIEL')")
             frappe.db.sql("delete from `tabPrint Format`")
             frappe.db.sql("delete from `tabPOS Branding`")
             frappe.db.sql("delete from `tabPOS Station`")
@@ -286,6 +285,7 @@ def reset_data():
             frappe.db.sql("update `tabCurrency` set enabled = 1, name='RIEL', currency_name='RIEL' where name='KHR'")
             frappe.db.sql("update `tabCurrency` set custom_pos_currency_format='#,###,##0. ៛', custom_currency_precision=0 where name in ('KHR','RIEL')")
             frappe.db.sql("update `tabCurrency` set custom_pos_currency_format = '$ #,###,##0.00',custom_currency_precision=2  where name='USD'")
+            frappe.db.sql("delete from `tabCurrency` where name not in('USD','KHR','RIEL')")
 
             frappe.db.commit()
             return {"You was cleared all data and configuration."}
