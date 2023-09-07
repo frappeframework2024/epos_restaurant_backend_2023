@@ -48,11 +48,6 @@
         {%endfor%}
     </div>
 
-    <div class="test-btn" >
-        <button id="test_btn">Button</button>
-    </div>
-
-
     <div class="container">
         <div class="into-section">
             <h1>{{doc.welcome_title}}</h1>
@@ -62,16 +57,28 @@
         </div>
     </div>
 
-    <div class="py-3 my-3 nav-pro-wrapper border border-start-0 border-end-0 border-bottom-0 bg-white" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
+    <div class="py-3 my-3 nav-pro-wrapper border border-start-0 border-end-0 border-bottom-0 bg-white el-shadow">
         <nav class="container">
-            <div class="d-flex gap-2 mb-0 navigt">
-                {% if (doc.popular_product | length) >0 %}
-                <a class="bg-white px-3 py-1 rounded-pill main-color nav-pro" href="#popular_product"><p>Popular Products</p></a>
-                {%endif%}
+            <div class="position-relative">
+                <div class="tab-bar">
+                    <div class="left-arrow">
+                        <p><i class="fas fa-chevron-left"></i></p>
+                    </div>
 
-                {% for m in doc.pos_menu_selections %}
-                <a class="bg-white px-3 py-1 rounded-pill main-color nav-pro" href="#{{m.name}}"><p>{{m.menu}}</p></a>
-                {%endfor%}
+                    <div class="d-flex gap-2 mb-0 navigt tabs">
+                        {% if (doc.popular_product | length) >0 %}
+                        <a class="bg-white px-3 py-1 rounded-pill main-color nav-pro tab" href="#popular_product"><p>Popular Products</p></a>
+                        {%endif%}
+
+                        {% for m in doc.pos_menu_selections %}
+                        <a class="bg-white px-3 py-1 rounded-pill main-color nav-pro tab" href="#{{m.name}}"><p>{{m.menu}}</p></a>
+                        {%endfor%}
+                    </div>
+
+                    <div class="right-arrow active">
+                        <p><i class="fas fa-chevron-right"></i></p>
+                    </div>
+                </div>
             </div>
         </nav>
     </div>
@@ -81,7 +88,7 @@
         <div class="sections sections-content">
             {% if (doc.popular_product | length) >0 %}
             <div class="scroll-section" id="popular_product">
-                <div class="mb-3">
+                <div class="mt-4 mb-3">
                     <h2><i class="fas fa-fire main-color"></i> Popular Products</h2>
                     <p>Our signature dishes</p>
                 </div>

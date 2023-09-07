@@ -325,7 +325,7 @@
 			white-space: nowrap;
 		}
 		.navigt{
-			overflow-x: auto;
+			overflow-x: hidden;
 		}
 		.modal-pirc p{
 			white-space: nowrap;
@@ -341,7 +341,86 @@
 		.genre-desc .ql-editor.read-mode *{
 			text-align: center;
 		}
-
+		.scroll-section {
+			scroll-margin-top: 180px;
+		}
+		.right-arrow.active i,
+		.left-arrow.active i{
+			color: var(--main-color);
+			
+		}
+		.nav-pro-wrapper .tab-bar {
+		background: #fff;
+		overflow: hidden;
+		padding-right: 25px;
+		}
+		.nav-pro-wrapper .left-arrow,
+		.nav-pro-wrapper .right-arrow {
+		position: absolute;
+		width: 100px;
+		height: 100%;
+		top: 0;
+		display: none;
+		align-items: center;
+		padding: 0 10px;
+		pointer-events: none;
+		}
+		.nav-pro-wrapper .right-arrow {
+		right: 0;
+		justify-content: flex-end;
+		background: linear-gradient(to left, #fff 20%, transparent);
+		}
+		.nav-pro-wrapper .left-arrow {
+		background: linear-gradient(to right, #fff 20%, transparent);
+		}
+		.nav-pro-wrapper .right-arrow.active,
+		.nav-pro-wrapper .left-arrow.active {
+		display: flex;
+		}
+		.nav-pro-wrapper i {
+		padding: 8px;
+		cursor: pointer;
+		pointer-events: auto;
+		}
+		.nav-pro-wrapper div.tabs {
+		display: flex;
+		gap: 16px;
+		margin: 0;
+		list-style: none;
+		overflow-x: scroll;
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+		scroll-behavior: smooth;
+		}
+		.nav-pro-wrapper div.tabs.dragging {
+		scroll-behavior: auto;
+		cursor: pointer;
+		}
+		.nav-pro-wrapper div.tabs::-webkit-scrollbar {
+		display: none;
+		}
+		.nav-pro-wrapper a.tab {
+		display: inline-block;
+		height: 32px;
+		font-size: 13px;
+		font-weight: 500;
+		color: rgba(0, 0, 0, 0.6);
+		line-height: 32px;
+		padding: 0 12px;
+		border-radius: 16px;
+		background-color: #e4e4e4;
+		margin-right: 5px;
+		user-select: none;
+		white-space: nowrap;
+		text-decoration: none;
+		}
+		.nav-pro-wrapper a.tab.active {
+		border: 1px solid var(--main-color);
+		background: #fff;
+		}
+		.nav-pro-wrapper a.tab.active p{
+			color: var(--main-color);
+		}
 
 
 		@media (max-width: 991.98px) {
@@ -373,7 +452,6 @@
 </head>
 
 <body>
-	<Button id="xx" style="position: fixed;z-index: 9999999;">xxx</Button>
 	<!-- <h1>Emenu</h1> -->
 	{%- block page_content -%}{%- endblock -%}
 
@@ -444,9 +522,6 @@
 			// Cache menu links and sections
 			var menuLinks = $('.nav-pro-wrapper a');
 			var sections = $('.sections-content .scroll-section');
-			var headerHeight = $('.header').outerHeight();
-			var menuHeight = $('.nav-pro-wrapper').outerHeight();
-			var headerPlusMenu = headerHeight + menuHeight;
 
 			// Handle scroll event
 			$(window).scroll(function() {
@@ -454,44 +529,91 @@
 
 				sections.each(function() {
 					var section = $(this);
-					var sectionTop = section.offset().top - headerPlusMenu; // Adjust the offset as needed
-
+					var sectionTop = section.offset().top - 220; // Adjust the offset as needed
 					if (scrollPosition >= sectionTop) {
 						var targetId = section.attr('id');
 						var correspondingLink = menuLinks.filter('[href="#' + targetId + '"]');
-						var sectionScrollLink = sections.filter('[id="' + targetId + '"]');
-
-
-						sections.removeClass('active');
-						sectionScrollLink.addClass('active');
-						
 						menuLinks.removeClass('active');
 						correspondingLink.addClass('active');
-						
-						if (sectionScrollLink.hasClass('active')){
-							sectionScrollLink.css('padding-top', headerPlusMenu)
-						}else{
-							sectionScrollLink.css('padding-top', '0')
-						}
-
 					}
 				});
 			});
-
-			// $(window).on('load', function (){
-			// 	$('.section-main-wraper').css('margin-top', headerHeight)
-			// })
-			
-
-			$("#xx").click(function() {
-				var activeElement = $("nav.container a.active");
-				console.log(activeElement)
-					var container = $("nav.container");
-					container.scrollTo(500)
-				});
-
-		})
+		});
 		{%- block script -%} {%- endblock -%}
+
+
+		const tabs = document.querySelectorAll(".nav-pro-wrapper a.tab");
+		const scrollRightArrow = document.querySelector(
+		".nav-pro-wrapper .right-arrow"
+		);
+		const scrollLeftArrow = document.querySelector(
+		".nav-pro-wrapper .left-arrow"
+		);
+		const tabList = document.querySelector(".nav-pro-wrapper div.tabs");
+		const leftArrowContainer = document.querySelector(
+		".nav-pro-wrapper .left-arrow"
+		);
+		const rightArrowContainer = document.querySelector(
+		".nav-pro-wrapper .right-arrow"
+		);
+
+
+		//Function to activate the left scroll button
+		const manageLeftbtn = () => {
+		if (tabList.scrollLeft >= 20) {
+			leftArrowContainer.classList.add("active");
+		} else {
+			leftArrowContainer.classList.remove("active");
+		}
+
+		let maxScroll = tabList.scrollWidth - tabList.clientWidth - 20;
+		if (tabList.scrollLeft >= maxScroll) {
+			rightArrowContainer.classList.remove("active");
+		} else {
+			rightArrowContainer.classList.add("active");
+		}
+		};
+
+
+		// Scroll the tab list to the right
+		scrollRightArrow.addEventListener("click", () => {
+			tabList.scrollLeft += 300;
+			manageLeftbtn();
+			console.log(scrollRightArrow)
+			console.log(tabList)
+			
+		});
+
+		// Scroll the tab list to the left
+		scrollLeftArrow.addEventListener("click", () => {
+			tabList.scrollLeft -= 300;
+			manageLeftbtn();
+			console.log(scrollLeftArrow)
+		});
+
+		// Listen to scroll event to activate the buttons
+		tabList.addEventListener("scroll", manageLeftbtn);
+
+		// Adding the dragging functionality
+		let drag = false;
+		const dragging = (e) => {
+		// Add the event parameter
+		if (!drag) return;
+		tabList.classList.add("dragging");
+		tabList.scrollLeft -= e.movementX;
+		};
+
+		tabList.addEventListener("mousedown", () => {
+		drag = true;
+		tabList.addEventListener("mousemove", dragging); // Add mousemove listener here
+		});
+
+		document.addEventListener("mouseup", () => {
+		drag = false;
+		tabList.removeEventListener("mousemove", dragging); // Remove mousemove listener here
+		tabList.classList.remove("dragging");
+		});
+
 	</script>
 
 </body>
