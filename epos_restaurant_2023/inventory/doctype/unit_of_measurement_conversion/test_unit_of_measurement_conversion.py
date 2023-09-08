@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestUnitofMeasurementConversion(FrappeTestCase):
+class TestUnitofMeasurementConversion():
 	pass

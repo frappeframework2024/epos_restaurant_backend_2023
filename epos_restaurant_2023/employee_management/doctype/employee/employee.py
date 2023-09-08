@@ -11,6 +11,7 @@ class Employee(Document):
 			self.pos_pin_code = str( base64.b64encode(self.password.encode("utf-8")).decode("utf-8"))
 
 	def on_update(self):
+		
 		 
 		if self.allow_login:
 			if self.user_id:
@@ -21,6 +22,7 @@ class Employee(Document):
 				doc.first_name = self.employee_name
 				doc.role_profile_name = self.role_profile
 				doc.module_profile = self.module_profile
+				doc.user_image = self.photo
 				
 				if self.password:
 					doc.new_password = self.password
@@ -47,6 +49,7 @@ class Employee(Document):
 						"module_profile": self.module_profile,
 						"user_type": "System User",
 						"new_password":self.password,
+						"user_image" : self.photo
 						
 					}
 				).insert()

@@ -78,10 +78,6 @@
 			background-color: #c1c1c1;
 		}
 
-		#slid_banner {
-			height: 50vh;
-		}
-
 		#slid_banner .owl-stage-outer,
 		#slid_banner .owl-stage,
 		#slid_banner .owl-item,
@@ -425,9 +421,16 @@
 		.logo img{
 			height: 60px;
 		}
+		#slid_banner {
+			height: 50vh;
+		}
 
 
 		@media (max-width: 991.98px) {
+			#slid_banner .owl-nav button{
+				width: 30px;
+    			height: 30px;
+			}
 		}
 		@media (min-width: 992px) {
 			.items-inner-1{
@@ -478,14 +481,13 @@
  
 	<script>
 		$(function () {
+
+			// console.log($('.navigt.tabs').outerWidth())
+
 			$(window).scroll(function(){
 				var headerHeight = $('.header').height();
-				console.log(headerHeight)
 				$('.nav-pro-wrapper').css('top', headerHeight);
 			})
-
-			
-
 			
 			$('#slid_banner').owlCarousel({
 				loop: true,
@@ -532,7 +534,6 @@
 			// Handle scroll event
 			$(window).scroll(function() {
 				var scrollPosition = $(this).scrollTop();
-
 				sections.each(function() {
 					var section = $(this);
 					var sectionTop = section.offset().top - 220; // Adjust the offset as needed
@@ -564,20 +565,55 @@
 		);
 
 
+		
+
+
 		//Function to activate the left scroll button
 		const manageLeftbtn = () => {
-		if (tabList.scrollLeft >= 20) {
-			leftArrowContainer.classList.add("active");
-		} else {
-			leftArrowContainer.classList.remove("active");
-		}
+			if (tabList.scrollLeft >= 20) {
+				leftArrowContainer.classList.add("active");
+			} else {
+				leftArrowContainer.classList.remove("active");
+			}
 
-		let maxScroll = tabList.scrollWidth - tabList.clientWidth - 20;
-		if (tabList.scrollLeft >= maxScroll) {
-			rightArrowContainer.classList.remove("active");
-		} else {
-			rightArrowContainer.classList.add("active");
-		}
+			// console.log(tabList.scrollWidth)
+
+			let maxScroll = tabList.scrollWidth - tabList.clientWidth - 20;
+			if (tabList.scrollLeft >= maxScroll) {
+				rightArrowContainer.classList.remove("active");
+			} else {
+				rightArrowContainer.classList.add("active");
+			}
+
+			
+			const activeMenuItem = document.querySelector('.tab-bar a.tab.nav-pro.active');
+			console.log(activeMenuItem)
+			
+
+			if (activeMenuItem) {
+				const menuContainer = document.querySelector('.tab-bar');
+				// console.log(menuContainer)
+				const menu = document.querySelector('.navigt.tabs');
+				// console.log(menu , 'Menu')
+				const containerWidth = menuContainer.clientWidth;
+				console.log(containerWidth, 'tab-bar')
+				const menuItemWidth = activeMenuItem.offsetWidth;
+				console.log(menuItemWidth, 'navigt a.active')
+				const menuItemOffset = activeMenuItem.offsetLeft;
+				console.log(menuItemOffset, 'navigt a.active offsetleft')
+
+				// Check if the active menu item is outside the visible clientWidth
+				if (menuItemOffset + menuItemWidth > containerWidth) {
+					// Calculate the new scrollLeft to keep the active item in view
+					const newScrollLeft = menuItemOffset - (containerWidth - menuItemWidth) / 2;
+					
+					// Apply the new scrollLeft to the menu container
+					menuContainer.scrollLeft = newScrollLeft;
+				}
+			}
+
+
+			
 		};
 
 
@@ -585,16 +621,12 @@
 		scrollRightArrow.addEventListener("click", () => {
 			tabList.scrollLeft += 300;
 			manageLeftbtn();
-			console.log(scrollRightArrow)
-			console.log(tabList)
-			
 		});
 
 		// Scroll the tab list to the left
 		scrollLeftArrow.addEventListener("click", () => {
 			tabList.scrollLeft -= 300;
 			manageLeftbtn();
-			console.log(scrollLeftArrow)
 		});
 
 		// Listen to scroll event to activate the buttons

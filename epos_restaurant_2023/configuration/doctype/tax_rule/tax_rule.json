@@ -10,6 +10,8 @@
  "field_order": [
   "tax_rule_name",
   "is_rate_include_tax",
+  "column_break_jigf",
+  "category",
   "section_break_2",
   "tax_1_name",
   "tax_1_rate",
@@ -188,11 +190,21 @@
    "fieldname": "is_rate_include_tax",
    "fieldtype": "Check",
    "label": "Is Rate Include Tax"
+  },
+  {
+   "fieldname": "column_break_jigf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "category",
+   "fieldtype": "Select",
+   "label": "Category",
+   "options": "\nRoom Tax\nSpa Tax"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-01 02:58:53.105561",
+ "modified": "2023-09-08 11:07:46.277664",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Tax Rule",
