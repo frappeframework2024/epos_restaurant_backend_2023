@@ -537,12 +537,12 @@
 				sections.each(function() {
 					var section = $(this);
 					var sectionTop = section.offset().top - 220; // Adjust the offset as needed
-					if (scrollPosition >= sectionTop) {
-						var targetId = section.attr('id');
-						var correspondingLink = menuLinks.filter('[href="#' + targetId + '"]');
-						menuLinks.removeClass('active');
-						correspondingLink.addClass('active');
-					}
+					// if (scrollPosition >= sectionTop) {
+					// 	var targetId = section.attr('id');
+					// 	var correspondingLink = menuLinks.filter('[href="#' + targetId + '"]');
+					// 	menuLinks.removeClass('active');
+					// 	correspondingLink.addClass('active');
+					// }
 				});
 			});
 		});
@@ -565,7 +565,12 @@
 		);
 
 
-		
+		// Function to remove "active" class from all tabs
+		const removeActiveClasses = () => {
+			tabs.forEach((tab) => {
+				tab.classList.remove("active");
+			});
+		};
 
 
 		//Function to activate the left scroll button
@@ -575,46 +580,22 @@
 			} else {
 				leftArrowContainer.classList.remove("active");
 			}
-
-			// console.log(tabList.scrollWidth)
-
 			let maxScroll = tabList.scrollWidth - tabList.clientWidth - 20;
 			if (tabList.scrollLeft >= maxScroll) {
 				rightArrowContainer.classList.remove("active");
 			} else {
 				rightArrowContainer.classList.add("active");
 			}
-
-			
-			const activeMenuItem = document.querySelector('.tab-bar a.tab.nav-pro.active');
-			console.log(activeMenuItem)
-			
-
-			if (activeMenuItem) {
-				const menuContainer = document.querySelector('.tab-bar');
-				// console.log(menuContainer)
-				const menu = document.querySelector('.navigt.tabs');
-				// console.log(menu , 'Menu')
-				const containerWidth = menuContainer.clientWidth;
-				console.log(containerWidth, 'tab-bar')
-				const menuItemWidth = activeMenuItem.offsetWidth;
-				console.log(menuItemWidth, 'navigt a.active')
-				const menuItemOffset = activeMenuItem.offsetLeft;
-				console.log(menuItemOffset, 'navigt a.active offsetleft')
-
-				// Check if the active menu item is outside the visible clientWidth
-				if (menuItemOffset + menuItemWidth > containerWidth) {
-					// Calculate the new scrollLeft to keep the active item in view
-					const newScrollLeft = menuItemOffset - (containerWidth - menuItemWidth) / 2;
-					
-					// Apply the new scrollLeft to the menu container
-					menuContainer.scrollLeft = newScrollLeft;
-				}
-			}
-
-
-			
 		};
+
+		// Add "active" class to clicked tab and remove from others
+		tabs.forEach((tab) => {
+			tab.addEventListener("click", () => {
+				tabList.scrollLeft += 300;
+				removeActiveClasses();
+				tab.classList.add("active");
+			});
+		});
 
 
 		// Scroll the tab list to the right
@@ -631,6 +612,8 @@
 
 		// Listen to scroll event to activate the buttons
 		tabList.addEventListener("scroll", manageLeftbtn);
+		// tabList.addEventListener("scroll", activeSlideMenu);
+		// window.addEventListener("scroll", activeSlideMenu);
 
 		// Adding the dragging functionality
 		let drag = false;

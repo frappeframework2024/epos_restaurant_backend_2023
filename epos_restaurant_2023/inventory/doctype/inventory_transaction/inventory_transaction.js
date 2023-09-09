@@ -2,7 +2,9 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Inventory Transaction", {
-	setup(frm) {
-        alert('hello')
+	refresh(frm) {
+        frm.add_custom_button('Product', () => {
+            frappe.set_route('product', frm.doc.product_code);
+        })
 	},
 });

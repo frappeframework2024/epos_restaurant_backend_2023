@@ -213,6 +213,7 @@ fixtures = [
     {"dt": "Numbers"},
     {"dt": "Custom Field"},
     {"dt": "Predefine Data"},
+    {"dt": "Custom HTML Block"},
     {"dt": "POS Translation","filters": [["is_standard", "=", "1"]]},
     {"dt": "Website Theme","filters": [["name", "=", "ESTC Theme"]]},
 ]
