@@ -309,6 +309,7 @@
   {
    "fieldname": "user_id",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "User ID",
    "no_copy": 1
   },
@@ -322,6 +323,7 @@
   {
    "fieldname": "pos_pin_code",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "POS Pin Code",
    "no_copy": 1,
    "unique": 1
@@ -336,7 +338,7 @@
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-08-28 18:23:31.042672",
+ "modified": "2023-09-09 14:53:04.752629",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee",
