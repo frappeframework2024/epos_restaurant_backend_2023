@@ -126,18 +126,21 @@ const props = defineProps({
 });
 
 
-function getMenuName(sp) {
+function getMenuName(sp) { 
     const mlang = localStorage.getItem('mLang');
+    let code = gv.setting.show_item_code_in_sale_screen == 0 ? "":`${sp.product_code} - `;
+ 
     if(mlang != null){
         if(mlang=="en"){
-            return `${sp.product_code} - ${sp.product_name}` ;
+             
+            return `${code}${sp.product_name}` ;
         }else{
-            return `${sp.product_code} - ${sp.product_name_kh}`;
+            return `${code}${sp.product_name_kh}`;
         }
         
     }else{
         localStorage.setItem('mLang','en');
-        return `${sp.product_code} - ${sp.product_name}`;
+        return `${code}${sp.product_name}`;
     }
 }
 

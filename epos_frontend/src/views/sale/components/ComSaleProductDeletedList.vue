@@ -5,13 +5,13 @@
             <v-avatar v-if="sp.product_photo">
                 <v-img :src="sp.product_photo"></v-img>
             </v-avatar>
-            <avatar v-else :name="sp.product_name" class="mr-4" size="40"></avatar>
+            <avatar v-else :name="getMenuName(sp)" class="mr-4" size="40"></avatar>
         </template>
         <template v-slot:default>
             <div class="text-sm">
                 <div class="flex">
                     <div class="grow">
-                        <div> {{ sp.product_name }}<v-chip class="ml-1" size="x-small" color="error" variant="outlined" v-if="sp.portion">{{ sp.portion }}</v-chip>
+                        <div> {{ getMenuName(sp) }}<v-chip class="ml-1" size="x-small" color="error" variant="outlined" v-if="sp.portion">{{ sp.portion }}</v-chip>
                             <v-chip v-if="sp.is_free" size="x-small" color="success" variant="outlined">{{ $t('Free') }}</v-chip> 
                             <ComChip :tooltip="sp.happy_hours_promotion_title" v-if="sp.happy_hour_promotion && sp.discount > 0" size="x-small" variant="outlined" color="orange" text-color="white" prepend-icon="mdi-tag-multiple">
                                 <span>{{ sp.discount }}%</span>        
@@ -86,6 +86,22 @@
         readonly: Boolean,
         saleCustomerDisplay: Object
     });
+
+    function getMenuName(sp) { 
+        const mlang = localStorage.getItem('mLang');
+        let code = gv.setting.show_item_code_in_sale_screen == 0 ? "":`${sp.product_code} - `;
+        if(mlang != null){
+            if(mlang=="en"){
+                return `${code}${sp.product_name}` ;
+            }else{
+                return `${code}${sp.product_name_kh}`;
+            }
+            
+        }else{
+            localStorage.setItem('mLang','en');
+            return `${code}${sp.product_name}`;
+        }
+    }
 
 
 

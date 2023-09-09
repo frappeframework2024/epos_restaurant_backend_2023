@@ -164,6 +164,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "cash_in_check_out_required_password":pos_config.cash_in_check_out_required_password,
         "print_waiting_order_after_submit_order":pos_config.print_waiting_order_after_submit_order,
         "print_new_deleted_sale_product":pos_config.print_new_deleted_sale_product,
+        "show_item_code_in_sale_screen":pos_config.show_item_code_in_sale_screen,
         "check_delete_item_require_passord_from_product":pos_config.check_delete_item_require_passord_from_product,
         
         }
@@ -293,6 +294,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "print_working_day_sale_product_summary_after_close_working_day":pos_config.print_working_day_sale_product_summary_after_close_working_day,
         "print_new_deleted_sale_product":pos_config.print_new_deleted_sale_product,
         "pos_sale_order_background_image":pos_branding.pos_sale_order_background_image,
+        "show_item_code_in_sale_screen":pos_config.show_item_code_in_sale_screen,
         "shift_types":shift_types,
         "currencies":currencies,
         "default_currency":frappe.db.get_default("currency"),
