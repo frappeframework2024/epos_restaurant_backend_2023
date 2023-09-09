@@ -80,7 +80,7 @@
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-08-29 10:00:54.367799",
+ "modified": "2023-09-09 15:22:15.222479",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "System Report",
@@ -110,6 +110,7 @@
    "share": 1
   }
  ],
+ "search_fields": "report_name",
  "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
