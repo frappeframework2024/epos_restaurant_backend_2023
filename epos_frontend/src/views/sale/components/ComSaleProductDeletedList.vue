@@ -5,13 +5,13 @@
             <v-avatar v-if="sp.product_photo">
                 <v-img :src="sp.product_photo"></v-img>
             </v-avatar>
-            <avatar v-else :name="getMenuName(sp)" class="mr-4" size="40"></avatar>
+            <avatar v-else :name="sp.product_name" class="mr-4" size="40"></avatar>
         </template>
         <template v-slot:default>
             <div class="text-sm">
                 <div class="flex">
                     <div class="grow">
-                        <div> {{ getMenuName(sp) }}<v-chip class="ml-1" size="x-small" color="error" variant="outlined" v-if="sp.portion">{{ sp.portion }}</v-chip>
+                        <div  v-if="!sale.load_menu_lang"> {{ getMenuName(sp) }}<v-chip class="ml-1" size="x-small" color="error" variant="outlined" v-if="sp.portion">{{ sp.portion }}</v-chip>
                             <v-chip v-if="sp.is_free" size="x-small" color="success" variant="outlined">{{ $t('Free') }}</v-chip> 
                             <ComChip :tooltip="sp.happy_hours_promotion_title" v-if="sp.happy_hour_promotion && sp.discount > 0" size="x-small" variant="outlined" color="orange" text-color="white" prepend-icon="mdi-tag-multiple">
                                 <span>{{ sp.discount }}%</span>        

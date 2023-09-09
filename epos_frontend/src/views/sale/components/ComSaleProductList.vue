@@ -9,7 +9,7 @@
                 <v-avatar v-if="sp.product_photo">
                     <v-img :src="sp.product_photo"></v-img>
                 </v-avatar>
-                <avatar v-else :name="getMenuName(sp)" class="mr-4" size="40"></avatar>
+                <avatar v-else :name="sp.product_name" class="mr-4" size="40"></avatar>
             </template>
             <template v-slot:default>
                 <div class="text-sm">

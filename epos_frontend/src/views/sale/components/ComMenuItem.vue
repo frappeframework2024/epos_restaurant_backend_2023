@@ -49,7 +49,7 @@
                 </span>
             </div>
             <div class="p-1 rounded-md absolute bottom-1 right-1 left-1 bg-gray-50 bg-opacity-90 text-sm text-center">
-                <span v-if="!sale.load_menu_lang">{{ data.name }} - {{ getMenuName(data) }}</span>                
+                <span v-if="!sale.load_menu_lang">{{ getMenuName(data,true) }}</span>                
             </div>
         </div>
     </div>
@@ -60,6 +60,7 @@ import Enumerable from 'linq'
 // import ComPriceOnMenu from '../ComPriceOnMenu.vue';
 const props = defineProps({ data: Object })
 const sale = inject("$sale");
+const gv = inject("$gv");
 const product = inject("$product");
 const toaster = createToaster({position: 'top'})
 const frappe = inject("$frappe")
@@ -102,18 +103,19 @@ const minPrice = computed(() => {
     return 0
 })
 
-function getMenuName(menu) {
+function getMenuName(menu,is_item = false) {
     const mlang = localStorage.getItem('mLang');
+    let code = !is_item ? "": (gv.setting.show_item_code_in_sale_screen == 0 ? "":`${menu.name} - `);
     if(mlang != null){
         if(mlang=="en"){
-            return menu.name_en;
+            return `${code}${menu.name_en}` ;
         }else{
-            return menu.name_kh;
+            return  `${code}${menu.name_kh}` ;
         }
         
     }else{
         localStorage.setItem('mLang','en');
-        return menu.name_en;
+        return  `${code}${menu.name_en}` ;
     }
 }
 
