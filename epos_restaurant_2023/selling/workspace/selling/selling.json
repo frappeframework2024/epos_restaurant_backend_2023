@@ -5,7 +5,7 @@
    "label": "Sale Revenue"
   }
  ],
- "content": "[{\"id\":\"CyUIlLr0wh\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Today Sale Revenue\",\"col\":3}},{\"id\":\"QExVrLgvR6\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Sale Revenue\",\"col\":12}},{\"id\":\"AwesiJ6Vi9\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Your Shortcut</span>\",\"col\":12}},{\"id\":\"QHwQadLHMq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale\",\"col\":3}},{\"id\":\"mdV2LoP0iu\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale Payment\",\"col\":3}},{\"id\":\"kByUN4bYKT\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale Quotation\",\"col\":3}},{\"id\":\"Hqkn4cFL92\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Customer\",\"col\":3}},{\"id\":\"ROvZJNJypZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Product\",\"col\":3}},{\"id\":\"dT9w77DcRM\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Working Day\",\"col\":3}},{\"id\":\"0ceVnO9aAD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Cashier Shift\",\"col\":3}},{\"id\":\"sPjfD8QUBk\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale Dashboard\",\"col\":3}},{\"id\":\"-OYVyxx_nw\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent Transaction</b></span>\",\"col\":12}},{\"id\":\"d-N8Emdqp3\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Payment\",\"col\":6}},{\"id\":\"Q0x1a5ONu5\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Recent Sale Order\",\"col\":6}},{\"id\":\"ssMzU0nGr-\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"pKuCJrptFt\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Master Data and Report</span>\",\"col\":12}},{\"id\":\"Cbwx1nPz-b\",\"type\":\"card\",\"data\":{\"card_name\":\"Products\",\"col\":4}},{\"id\":\"o5NcrIhNMY\",\"type\":\"card\",\"data\":{\"card_name\":\"Customer\",\"col\":4}},{\"id\":\"LdZoVj0O8t\",\"type\":\"card\",\"data\":{\"card_name\":\"Promotion\",\"col\":4}},{\"id\":\"yNWSakd5Go\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"id\":\"Hkg_RBUEdV\",\"type\":\"card\",\"data\":{\"card_name\":\"SPA Reports\",\"col\":4}}]",
+ "content": "[{\"id\":\"CyUIlLr0wh\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Today Sale Revenue\",\"col\":4}},{\"id\":\"7MB_bbFIua\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Today Order\",\"col\":4}},{\"id\":\"hP11yerq9r\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Today Sale Quantity\",\"col\":4}},{\"id\":\"a1B9Q40m9U\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"MTD Sale Revenue\",\"col\":4}},{\"id\":\"wMfJIBhsWM\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"MTD Order\",\"col\":4}},{\"id\":\"sfR2b2IM8Y\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"MTD Sale Quantity\",\"col\":4}},{\"id\":\"QExVrLgvR6\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Sale Revenue\",\"col\":12}},{\"id\":\"AwesiJ6Vi9\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Your Shortcut</span>\",\"col\":12}},{\"id\":\"QHwQadLHMq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale\",\"col\":3}},{\"id\":\"mdV2LoP0iu\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale Payment\",\"col\":3}},{\"id\":\"kByUN4bYKT\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale Quotation\",\"col\":3}},{\"id\":\"Hqkn4cFL92\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Customer\",\"col\":3}},{\"id\":\"ROvZJNJypZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Product\",\"col\":3}},{\"id\":\"dT9w77DcRM\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Working Day\",\"col\":3}},{\"id\":\"0ceVnO9aAD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Cashier Shift\",\"col\":3}},{\"id\":\"sPjfD8QUBk\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale Dashboard\",\"col\":3}},{\"id\":\"-OYVyxx_nw\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent Transaction</b></span>\",\"col\":12}},{\"id\":\"Q0x1a5ONu5\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Recent Sale Order\",\"col\":12}},{\"id\":\"ssMzU0nGr-\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"pKuCJrptFt\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Master Data and Report</span>\",\"col\":12}},{\"id\":\"Cbwx1nPz-b\",\"type\":\"card\",\"data\":{\"card_name\":\"Products\",\"col\":4}},{\"id\":\"o5NcrIhNMY\",\"type\":\"card\",\"data\":{\"card_name\":\"Customer\",\"col\":4}},{\"id\":\"LdZoVj0O8t\",\"type\":\"card\",\"data\":{\"card_name\":\"Promotion\",\"col\":4}},{\"id\":\"yNWSakd5Go\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"id\":\"Hkg_RBUEdV\",\"type\":\"card\",\"data\":{\"card_name\":\"SPA Reports\",\"col\":4}}]",
  "creation": "2022-12-05 11:30:48.741371",
  "custom_blocks": [
   {
@@ -263,7 +263,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-09-08 15:31:01.927657",
+ "modified": "2023-09-12 16:29:01.028990",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Selling",
@@ -271,17 +271,32 @@
   {
    "label": "Today Sale Revenue",
    "number_card_name": "Today Sale Revenue"
+  },
+  {
+   "label": "Today Order",
+   "number_card_name": "Today Order"
+  },
+  {
+   "label": "Today Sale Quantity",
+   "number_card_name": "Today Sale Quantity"
+  },
+  {
+   "label": "MTD Order",
+   "number_card_name": "MTD Order"
+  },
+  {
+   "label": "MTD Sale Quantity",
+   "number_card_name": "MTD Sale Quantity"
+  },
+  {
+   "label": "MTD Sale Revenue",
+   "number_card_name": "MTD Sale Revenue"
   }
  ],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
- "quick_lists": [
-  {
-   "document_type": "Sale Payment",
-   "label": "Recent Payment"
-  }
- ],
+ "quick_lists": [],
  "roles": [],
  "sequence_id": 3.0,
  "shortcuts": [
