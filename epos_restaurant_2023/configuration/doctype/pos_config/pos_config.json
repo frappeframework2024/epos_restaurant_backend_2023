@@ -37,6 +37,8 @@
   "print_new_deleted_sale_product",
   "check_delete_item_require_passord_from_product",
   "show_item_code_in_sale_screen",
+  "show_button_tip",
+  "tip_account_code",
   "number_of_day_cashier_can_view_report",
   "close_business_day_on",
   "alert_close_working_day_after",
@@ -547,12 +549,25 @@
    "fieldtype": "Check",
    "label": "Show Item Code In Sale Screen",
    "options": "0"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_button_tip",
+   "fieldtype": "Check",
+   "label": "Show Button Tip",
+   "options": "0"
+  },
+  {
+   "fieldname": "tip_account_code",
+   "fieldtype": "Link",
+   "label": "Tip Account Code",
+   "options": "Account Code"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-09-09 14:23:39.334341",
+ "modified": "2023-09-12 09:56:24.620329",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

@@ -76,12 +76,13 @@
   
 <script setup>
 
-import { inject, ref, computed, onUnmounted, createDocumentResource, useRouter, createResource, confirm,smallViewSaleProductListModal } from '@/plugin';
+import { inject, ref, computed, onUnmounted, createDocumentResource, useRouter, createResource, confirm,smallViewSaleProductListModal,i18n } from '@/plugin';
 import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 import { useDisplay } from 'vuetify';
 const { mobile } = useDisplay();
 const router = useRouter();
 const gv = inject("$gv")
+const { t: $t } = i18n.global;  
 const inject_sale = inject("$sale");
 const tableLayout = inject("$tableLayout");
 const socket = inject("$socket");
@@ -178,6 +179,7 @@ async function onPrint() {
         setting: gv.setting?.pos_setting,
         sale: sale.doc
     }
+ 
     if (localStorage.getItem("is_window") == "1") {
 
         if (activeReport.value.pos_receipt_file_name != "" && activeReport.value.pos_receipt_file_name != null) {

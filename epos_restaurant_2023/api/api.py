@@ -165,6 +165,8 @@ def get_system_settings(pos_profile="", device_name=''):
         "print_waiting_order_after_submit_order":pos_config.print_waiting_order_after_submit_order,
         "print_new_deleted_sale_product":pos_config.print_new_deleted_sale_product,
         "show_item_code_in_sale_screen":pos_config.show_item_code_in_sale_screen,
+        "show_button_tip":pos_config.show_button_tip,
+        "tip_account_code":pos_config.tip_account_code,
         "check_delete_item_require_passord_from_product":pos_config.check_delete_item_require_passord_from_product,
         
         }
@@ -295,6 +297,8 @@ def get_system_settings(pos_profile="", device_name=''):
         "print_new_deleted_sale_product":pos_config.print_new_deleted_sale_product,
         "pos_sale_order_background_image":pos_branding.pos_sale_order_background_image,
         "show_item_code_in_sale_screen":pos_config.show_item_code_in_sale_screen,
+        "show_button_tip":pos_config.show_button_tip,
+        "tip_account_code":pos_config.tip_account_code,
         "shift_types":shift_types,
         "currencies":currencies,
         "default_currency":frappe.db.get_default("currency"),
@@ -467,12 +471,12 @@ def get_pos_letter_head(doctype):
 
 @frappe.whitelist()
 def get_close_shift_summary(cashier_shift):
-    
     data = []
     doc = frappe.get_doc("Cashier Shift",cashier_shift)
     
     #get close amount by payment type
     sql = "select payment_type, currency,sum(input_amount + (fee_amount * exchange_rate)) as input_amount, sum(payment_amount + fee_amount) as payment_amount from `tabSale Payment` where cashier_shift='{}' and docstatus=1 group by payment_type, currency".format(cashier_shift)
+    
     
     payments = frappe.db.sql(sql, as_dict=1)
 
@@ -602,8 +606,8 @@ def get_cash_float(data):
                 "different_amount": total_different_amount or 0
             })	
             
-		result.append(_result)	
-	
+		result.append(_result)
+           
 	return result
 
 

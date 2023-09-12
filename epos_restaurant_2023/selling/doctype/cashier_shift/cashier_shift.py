@@ -260,8 +260,31 @@ class CashierShift(Document):
 						
 						doc = frappe.get_doc(data)
 						doc.insert()
-						
 
+				## tip revenue
+				tip_query = """select 
+					sum(coalesce(tip_amount,0)) as tip_amount, 
+					coalesce(tip_account_code,'') as tip_account_code 
+				from `tabSale` 
+				where docstatus = 1 and cashier_shift = '{}' 
+				and outlet = '{}' 
+				and shift_name = '{}'""".format(self.name,self.outlet,self.shift_name)
+				tips = frappe.db.sql(tip_query, as_dict = 1)	
+
+				for t in tips:
+					if t.tip_account_code:
+						doc_tip = frappe.get_doc({
+											'doctype': 'Folio Transaction',
+											'property':self.business_branch,
+											'working_day':self.working_day,
+											'posting_date':self.posting_date,
+											'transaction_type': "Cashier Shift",
+											'transaction_number': self.name,
+											'reference_number':self.name,
+											"input_amount":t.tip_amount,
+											"account_code":t.tip_account_code
+										})
+						doc_tip.insert() 
 				#commit data
 				frappe.db.commit()		
 

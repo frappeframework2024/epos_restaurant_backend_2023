@@ -37,7 +37,7 @@
         </template>
         <template #action>
             <v-row class="!m-0">
-                <v-col class="!p-0" cols="12" md="8">
+                <v-col class="!p-0" cols="12" md="4">
                     <div class="h-full flex items-center" v-if="!mobile">
                         <ComSelectPaymentPrinter @onClick="onSelectedReceipt" :selected="selectedReceipt.name" />
                     </div>
@@ -46,10 +46,15 @@
                     </div>
                 </v-col>
                 <v-col class="!p-0" cols="12" md="4">
+                    <div  v-if="gv.setting.show_button_tip==1" class="border rounded-sm px-2 py-4 text-center cursor-pointer bg-orange-100 hover:bg-orange-300 flex justify-center items-center m-1" @click="onTipPressed">
+                         <span>{{ $t('TIP') }}</span>
+                    </div>
+                </v-col>
+
+                <v-col class="!p-0" cols="12" md="4">
                     <v-row class="!m-0">
                         <v-col class="!p-0" cols="6">
-                            <div class="p-1">
-
+                            <div class="p-1" >
                                 <v-btn size="small" class="w-full" color="primary" @click="onPayment" stacked
                                     prepend-icon="mdi-printer">
                                     <span>{{ $t('Payment with Print') }}</span>
@@ -135,6 +140,17 @@ async function onPayment() {
         }
     })
 }
+
+function onTipPressed(){ 
+    if(parseFloat(sale.paymentInputNumber)>0){
+        sale.sale.tip_amount = parseFloat(sale.paymentInputNumber);
+        sale.sale.tip_account_code = gv.setting.tip_account_code;
+    }   
+    else{
+        toaster.warning($t('msg.Please input amount for TIP'));
+    }  
+}
+
 async function onPaymentWithoutPrint() {
     if (sale.sale.payment.filter(r => r.required_customer == 1).length > 0) {
         if (sale.sale.customer == sale.setting.customer) {
