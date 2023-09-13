@@ -120,9 +120,11 @@ onMounted(() => {
 })
 
 function onClose() {    
-    sale.sale.total_paid = backup.value.total_paid
-    sale.sale.balance = backup.value.balance
-    sale.sale.changed_amount = backup.value.changed_amount
+    sale.sale.total_paid = backup.value.total_paid;
+    sale.sale.balance = backup.value.balance;
+    sale.sale.changed_amount = backup.value.changed_amount;
+    sale.sale.tip_amount = 0;
+    sale.sale.tip_account_code = "";
     emit("resolve", false);
 }
 
