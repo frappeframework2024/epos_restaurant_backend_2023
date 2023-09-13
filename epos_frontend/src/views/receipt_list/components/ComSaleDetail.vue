@@ -204,8 +204,6 @@ async function onPrint() {
             window.close();
         }
     }
-    window.open(printPreviewUrl.value + "&trigger_print=1").print();
-    window.close();
 }
 
 function onOpenOrder() {
