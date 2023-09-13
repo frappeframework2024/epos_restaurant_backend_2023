@@ -101,6 +101,7 @@ const selectedLetterhead = ref(getDefaultLetterHead());
 const selectedLang = ref(gv.setting.lang[0].language_code);
 const activeReport = ref(JSON.parse(JSON.stringify(gv.setting.reports.filter(r => r.doc_type == "Sale" && r.show_in_pos == 1)[0])));
 const isLoading = ref(false);
+ 
 
 let deletedSaleProducts =[];
 let productPrinters = [];
@@ -179,6 +180,7 @@ async function onPrint() {
         setting: gv.setting?.pos_setting,
         sale: sale.doc
     }
+  
  
     if (localStorage.getItem("is_window") == "1") {
 
@@ -188,10 +190,18 @@ async function onPrint() {
             }
             return;
         }
+        else{
+            window.open(printPreviewUrl.value + "&trigger_print=1").print();
+            window.close();
+        }
     } else {
         if (activeReport.value.pos_receipt_file_name != "" && activeReport.value.pos_receipt_file_name != null) {
             socket.emit('PrintReceipt', JSON.stringify(data));
             return;
+        }
+        else{
+            window.open(printPreviewUrl.value + "&trigger_print=1").print();
+            window.close();
         }
     }
     window.open(printPreviewUrl.value + "&trigger_print=1").print();
