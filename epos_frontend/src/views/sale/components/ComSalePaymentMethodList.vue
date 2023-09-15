@@ -58,13 +58,9 @@ async function onPaymentTypeClick(pt)  {
 
 
     if(pt.allow_change==0 &&  parseFloat(sale.paymentInputNumber) > (balance.value * pt.exchange_rate)){
-        //sale.paymentInputNumber = balance.value *  pt.exchange_rate;
-        sale.paymentInputNumber = balance.value 
+        sale.paymentInputNumber = balance.value *  pt.exchange_rate;
     }
-    
- 
-    if(sale.is_payment_first_load){
-       
+    else  if(sale.is_payment_first_load){       
         sale.paymentInputNumber = sale.paymentInputNumber * pt.exchange_rate;
     }   
  
