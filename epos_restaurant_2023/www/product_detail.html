@@ -15,7 +15,7 @@
                 </div>
                 <div class="modal-pirc">
                     {% if min_price == max_price %}
-                        <p>Pice {{ frappe.format(doc.price,{"fieldtype":"Currency"})}}</p>
+                        <p>Price {{ frappe.format(doc.price,{"fieldtype":"Currency"})}}</p>
                     {%else%}
                         <p>Price {{ frappe.format(min_price,{"fieldtype":"Currency"})}} &#8594; {{
                         frappe.format(max_price,{"fieldtype":"Currency"})}}</p>
