@@ -1252,7 +1252,7 @@ export default class Sale {
             sale: doc,
             station_device_printing:(this.setting?.device_setting?.station_device_printing)||"",
         } 
-      
+        console.log(data)
         if (receipt.pos_receipt_file_name && localStorage.getItem("is_window")) {
             window.chrome.webview.postMessage(JSON.stringify(data));
         } else {           

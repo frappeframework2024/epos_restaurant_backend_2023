@@ -900,18 +900,6 @@
   "title": "Root Menu"
  },
  {
-  "data": "{\r\n    \"name\": \"ePOS Settings\",\r\n    \"epos_app_name\": \"ePOS 2023\",\r\n    \"tax_1_name\": \"SC\",\r\n    \"tax_2_name\": \"PL\",\r\n    \"tax_3_name\": \"VAT\",\r\n    \"backend_port\": \"1213\",\r\n    \"changed_payment_type\": \"Cash Dollar\",\r\n    \"country\": \"Cambodia\",\r\n    \"default_table_number_background_color\": \"#4F9DD9\",\r\n    \"specific_business_branch\": 0,\r\n    \"specific_pos_profile\": 0,\r\n    \"number_of_day_cashier_can_view_report\": 7,\r\n    \"doctype\": \"ePOS Settings\",\r\n    \"emenu\": [],\r\n    \"currency\": \"USD\",\r\n    \"exchange_rate_main_currency\": \"USD\",\r\n    \"second_currency\": \"RIEL\"\r\n}",
-  "doc_name": "ePOS Settings",
-  "doc_type": "ePOS Settings",
-  "docstatus": 0,
-  "doctype": "Predefine Data",
-  "is_single": 1,
-  "modified": "2023-09-07 13:47:55.391474",
-  "name": "d1b8266d82",
-  "sort": 1000,
-  "title": "ePOS Settings"
- },
- {
   "data": "{\r\n    \"business_branch\": \"Main Branch\",\r\n    \"pos_profile_name\": \"Main POS Profile\",\r\n    \"outlet\": \"Main Outlet\",\r\n    \"stock_location\": \"Main Warehouse\",\r\n    \"price_rule\": \"Normal Rate\",\r\n    \"tax_rule\": \"\",\r\n    \"default_pos_menu\": \"Root Menu\",\r\n    \"default_sale_type\": \"Dine In\",\r\n    \"pos_config\": \"Main POS Config\",\r\n    \"pos_branding\": \"Main POS Branding\",\r\n    \"waiting_number_prefix\": \"WN.-.####\",\r\n    \"reset_waiting_number_after\": \"Close Working Day\",\r\n    \"default_payment_type\": \"Cash Dollar\",\r\n    \"second_currency_payment_type\": \"Cash Riel\",\r\n    \"default_customer\": \"000001\",\r\n    \"doctype\": \"POS Profile\",\r\n    \"pos_menus\": [\r\n        {\r\n            \"pos_menu\": \"Root Menu\",\r\n            \"parent\": \"Main POS Profile\",\r\n            \"parentfield\": \"pos_menus\",\r\n            \"parenttype\": \"POS Profile\",\r\n            \"doctype\": \"POS Profile Root Menu\"\r\n        }\r\n    ],\r\n    \"table_groups\": [\r\n        {\r\n            \"doctype\": \"POS Table Group\",\r\n            \"parent\": \"Main POS Profile\",\r\n            \"parentfield\": \"table_groups\",\r\n            \"parenttype\": \"POS Profile\",\r\n            \"table_group\": \"Main Group\"\r\n        }\r\n    ]\r\n}",
   "doc_name": "Main POS Profile",
   "doc_type": "POS Profile",

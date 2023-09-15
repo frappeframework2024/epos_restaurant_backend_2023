@@ -537,12 +537,6 @@
 				sections.each(function() {
 					var section = $(this);
 					var sectionTop = section.offset().top - 220; // Adjust the offset as needed
-					// if (scrollPosition >= sectionTop) {
-					// 	var targetId = section.attr('id');
-					// 	var correspondingLink = menuLinks.filter('[href="#' + targetId + '"]');
-					// 	menuLinks.removeClass('active');
-					// 	correspondingLink.addClass('active');
-					// }
 				});
 			});
 		});
@@ -591,10 +585,9 @@
 		// Add "active" class to clicked tab and remove from others
 		tabs.forEach((tab) => {
 			tab.addEventListener("click", () => {
-				tabList.scrollLeft += 300;
+				// tabList.scrollLeft += 300;
 				removeActiveClasses();
 				tab.classList.add("active");
-				alert(tab)
 			});
 		});
 
@@ -613,8 +606,6 @@
 
 		// Listen to scroll event to activate the buttons
 		tabList.addEventListener("scroll", manageLeftbtn);
-		// tabList.addEventListener("scroll", activeSlideMenu);
-		// window.addEventListener("scroll", activeSlideMenu);
 
 		// Adding the dragging functionality
 		let drag = false;
