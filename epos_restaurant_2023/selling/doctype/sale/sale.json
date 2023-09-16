@@ -177,6 +177,7 @@
    "fieldtype": "Section Break"
   },
   {
+   "allow_bulk_edit": 1,
    "fieldname": "sale_products",
    "fieldtype": "Table",
    "label": "Sale Product",
@@ -837,7 +838,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2023-09-12 09:24:05.151497",
+ "modified": "2023-09-16 10:49:30.520119",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

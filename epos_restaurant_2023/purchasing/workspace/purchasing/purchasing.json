@@ -1,18 +1,15 @@
 {
- "charts": [
-  {
-   "chart_name": "Purchase Order Trend",
-   "label": "Purchase Order Trend"
-  }
- ],
- "content": "[{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Purchasing</b></span>\",\"col\":12}},{\"type\":\"chart\",\"data\":{\"chart_name\":\"Purchase Order Trend\",\"col\":12}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Your Shortcut</b></span>\",\"col\":12}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order Payment\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Vendor\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Product\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Purchase Order\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Purchase Order Payment\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":3}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent Transaction</b></span>\",\"col\":12}},{\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Purchase Order\",\"col\":6}},{\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Payment\",\"col\":6}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"card\",\"data\":{\"card_name\":\"Vendor\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Products\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}}]",
+ "charts": [],
+ "content": "[{\"id\":\"9Cy6NEc9Q6\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Purchasing</b></span>\",\"col\":12}},{\"id\":\"QyVcW2lj7j\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Purchase Order Trend\",\"col\":12}},{\"id\":\"N5rDPLl0M-\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Your Shortcut</b></span>\",\"col\":12}},{\"id\":\"EjQenWovHy\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"id\":\"uGSB1TxiKZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order Payment\",\"col\":3}},{\"id\":\"4CCisrBqUo\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Vendor\",\"col\":3}},{\"id\":\"zjzmrxGkQ9\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Product\",\"col\":3}},{\"id\":\"P8ReSc0acH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Purchase Order\",\"col\":3}},{\"id\":\"0Z1BCXK9Ph\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Purchase Order Payment\",\"col\":3}},{\"id\":\"q3jMcb17Ou\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":3}},{\"id\":\"SccCXbd9Us\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent Transaction</b></span>\",\"col\":12}},{\"id\":\"75oZvEIWLp\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Purchase Order\",\"col\":6}},{\"id\":\"pVl691b9n7\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Payment\",\"col\":6}},{\"id\":\"rQj_s9SS03\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"hz8GQ9MPtW\",\"type\":\"card\",\"data\":{\"card_name\":\"Vendor\",\"col\":4}},{\"id\":\"WNitUXrlSw\",\"type\":\"card\",\"data\":{\"card_name\":\"Products\",\"col\":4}},{\"id\":\"Zae8PipQ4R\",\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}}]",
  "creation": "2022-12-03 16:46:43.868577",
+ "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
  "for_user": "",
  "hide_custom": 0,
  "icon": "tag",
  "idx": 0,
+ "is_hidden": 0,
  "label": "Purchasing",
  "links": [
   {
@@ -140,10 +137,11 @@
    "type": "Link"
   }
  ],
- "modified": "2023-08-18 16:01:17.123923",
+ "modified": "2023-09-16 10:50:13.064523",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchasing",
+ "number_cards": [],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
