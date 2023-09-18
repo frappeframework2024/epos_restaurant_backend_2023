@@ -80,6 +80,7 @@ async function onPrintReport(r) {
     sale.pos_receipt = r;
 
     const u = JSON.parse(localStorage.getItem('make_order_auth'));
+    
     let msg = `User ${u.name} was Printed Bill`; 
     sale.auditTrailLogs.push({
         doctype:"Comment",
