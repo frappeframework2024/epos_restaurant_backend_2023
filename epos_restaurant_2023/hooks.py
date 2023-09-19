@@ -113,26 +113,31 @@ after_migrate = "epos_restaurant_2023.migrate.after_migrate"
 #	}
 # }
 
-# Scheduled Tasks
-# ---------------
+#Scheduled Tasks
+#---------------
 
-# scheduler_events = {
-#	"all": [
-#		"epos_restaurant_2023.tasks.all"
-#	],
-#	"daily": [
-#		"epos_restaurant_2023.tasks.daily"
-#	],
-#	"hourly": [
-#		"epos_restaurant_2023.tasks.hourly"
-#	],
-#	"weekly": [
-#		"epos_restaurant_2023.tasks.weekly"
-#	],
-#	"monthly": [
-#		"epos_restaurant_2023.tasks.monthly"
-#	],
-# }
+scheduler_events = {
+    "cron": {
+		"0 */12 * * *":[
+				"epos_restaurant_2023.ftp.ftp_backup.execute_backup_command",
+		]
+	},
+	# "all": [
+	# 	"epos_restaurant_2023.tasks.all"
+	# ],
+	# "daily": [
+	# 	"epos_restaurant_2023.tasks.daily"
+	# ],
+	# "hourly": [
+	# 	"epos_restaurant_2023.tasks.hourly"
+	# ],
+	# "weekly": [
+	# 	"epos_restaurant_2023.tasks.weekly"
+	# ],
+	# "monthly": [
+	# 	"epos_restaurant_2023.tasks.monthly"
+	# ],
+}
 
 # Testing
 # -------

@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"7z7RYx9dzG\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Configuration</span>\",\"col\":12}},{\"id\":\"_pNGdyTinj\",\"type\":\"card\",\"data\":{\"card_name\":\"Business Information\",\"col\":4}},{\"id\":\"J-OJFh6VxN\",\"type\":\"card\",\"data\":{\"card_name\":\"Payment Type &amp; Currency\",\"col\":4}},{\"id\":\"e4jiYS-tOz\",\"type\":\"card\",\"data\":{\"card_name\":\"Table &amp; Group\",\"col\":4}},{\"id\":\"ku_osJ3fpo\",\"type\":\"card\",\"data\":{\"card_name\":\"POS Setting\",\"col\":4}},{\"id\":\"NuJi_RLqo9\",\"type\":\"card\",\"data\":{\"card_name\":\"Sale Setting\",\"col\":4}},{\"id\":\"-H90PEMxkk\",\"type\":\"card\",\"data\":{\"card_name\":\"Inventory Setting\",\"col\":4}},{\"id\":\"l79NlRidFj\",\"type\":\"card\",\"data\":{\"card_name\":\"SPA Setting\",\"col\":4}},{\"id\":\"yyrIv8juKo\",\"type\":\"card\",\"data\":{\"card_name\":\"Other Setting\",\"col\":4}},{\"id\":\"7NgLSykUaJ\",\"type\":\"card\",\"data\":{\"card_name\":\"Revenue Setting\",\"col\":4}}]",
+ "content": "[{\"id\":\"7z7RYx9dzG\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Configuration</span>\",\"col\":12}},{\"id\":\"_pNGdyTinj\",\"type\":\"card\",\"data\":{\"card_name\":\"Business Information\",\"col\":4}},{\"id\":\"J-OJFh6VxN\",\"type\":\"card\",\"data\":{\"card_name\":\"Payment Type &amp; Currency\",\"col\":4}},{\"id\":\"e4jiYS-tOz\",\"type\":\"card\",\"data\":{\"card_name\":\"Table &amp; Group\",\"col\":4}},{\"id\":\"ku_osJ3fpo\",\"type\":\"card\",\"data\":{\"card_name\":\"POS Setting\",\"col\":4}},{\"id\":\"NuJi_RLqo9\",\"type\":\"card\",\"data\":{\"card_name\":\"Sale Setting\",\"col\":4}},{\"id\":\"-H90PEMxkk\",\"type\":\"card\",\"data\":{\"card_name\":\"Inventory Setting\",\"col\":4}},{\"id\":\"l79NlRidFj\",\"type\":\"card\",\"data\":{\"card_name\":\"SPA Setting\",\"col\":4}},{\"id\":\"7NgLSykUaJ\",\"type\":\"card\",\"data\":{\"card_name\":\"Revenue Setting\",\"col\":4}},{\"id\":\"yyrIv8juKo\",\"type\":\"card\",\"data\":{\"card_name\":\"Other Setting\",\"col\":4}}]",
  "creation": "2022-12-05 00:50:50.260305",
  "custom_blocks": [],
  "docstatus": 0,
@@ -237,84 +237,6 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Other Setting",
-   "link_count": 7,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Country",
-   "link_count": 0,
-   "link_to": "Country",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Province",
-   "link_count": 0,
-   "link_to": "Province",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Revenue Group",
-   "link_count": 0,
-   "link_to": "Revenue Group",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Kitchen Group",
-   "link_count": 0,
-   "link_to": "Kitchen Group",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Category Note",
-   "link_count": 0,
-   "link_to": "Category Note",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Printer",
-   "link_count": 0,
-   "link_to": "Printer",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Print Barcode",
-   "link_count": 0,
-   "link_to": "Print Barcode",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Business Information",
    "link_count": 3,
    "onboard": 0,
@@ -493,9 +415,97 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Other Setting",
+   "link_count": 8,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Country",
+   "link_count": 0,
+   "link_to": "Country",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Province",
+   "link_count": 0,
+   "link_to": "Province",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Revenue Group",
+   "link_count": 0,
+   "link_to": "Revenue Group",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Kitchen Group",
+   "link_count": 0,
+   "link_to": "Kitchen Group",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Category Note",
+   "link_count": 0,
+   "link_to": "Category Note",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Printer",
+   "link_count": 0,
+   "link_to": "Printer",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Print Barcode",
+   "link_count": 0,
+   "link_to": "Print Barcode",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "FTP Backup",
+   "link_count": 0,
+   "link_to": "FTP Backup",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2023-08-28 16:24:19.084612",
+ "modified": "2023-09-19 16:52:32.983965",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Configuration",

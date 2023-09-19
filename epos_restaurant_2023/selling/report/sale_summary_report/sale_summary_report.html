@@ -1,0 +1,77 @@
+<h1 style="text-align: center">Sale Summary Report </h1>
+<div style="text-align: center; margin-bottom: 20px;">
+Date: {{filters.start_date}} - {{filters.end_date}}
+{% if filters.business_branch !="" %}
+    / Business Branch: {{filters.business_branch}}
+{% endif %}
+{% if filters.outlet !="" %}
+    / Outlet: {{filters.outlet}}
+{% endif %}
+{% if filters.product_group !="" %}
+    / Product Group: {{filters.product_group}}
+{% endif %}
+{% if filters.product_category !="" %}
+    / Product Category: {{filters.product_category}}
+{% endif %}
+{% if filters.customer_group !="" %}
+    / Customer Group: {{filters.customer_group}}
+{% endif %}
+{% if filters.customer %}
+    / Customer: {{filters.customer}}
+{% endif %}
+</div>
+<!-- {%for d in report.raw_data.report_summary%}
+    {{d.label}}: {{d.value}}
+{%endfor%} -->
+
+<!-- {% console.log(report) %} -->
+
+<table class="report-list" style="width: 100%;">
+    <thead>
+        <tr style="border-bottom: solid 1px black!important;">
+            <th>Nº</th>
+            {% for c in report.columns %}
+                <th class="text-{{c.align }}">{{ __(c.label) }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% var i = 1 %}
+        {% for d in data %}
+        <tr>
+            <td>
+                {% if i != data.length %}
+                {{i}}
+                {% endif %}
+            </td>
+            {% for c in report.columns %}
+                <td class="text-{{c.align }}">
+                    {% if d[c.fieldname] %}
+                         {{ d[c.fieldname]}}
+                    {% endif %}
+                    {% if (c.fieldname == "row_group" &&  d[c.fieldname] == undefined) %}
+                    <div style="text-align: right;"><b>Total</b></div>
+                    {% endif %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% i++ %}
+        {%endfor%}
+    </tbody>
+</table>
+
+<style media="print">
+.report-list td,.report-list th {
+    padding: 3px !important;
+    font-size: 14px !important;
+    padding: 3px 0px !important;
+}
+.report-list thead tr th {
+    color: #000;
+    font-weight: 600;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+}
+</style>
+
+ 
