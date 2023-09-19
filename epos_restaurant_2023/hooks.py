@@ -118,7 +118,7 @@ after_migrate = "epos_restaurant_2023.migrate.after_migrate"
 
 scheduler_events = {
     "cron": {
-		"0 */12 * * *":[
+		"*/1 * * * *":[
 				"epos_restaurant_2023.epos_restaurant_2023.ftp.ftp_backup.execute_backup_command",
 		]
 	},
