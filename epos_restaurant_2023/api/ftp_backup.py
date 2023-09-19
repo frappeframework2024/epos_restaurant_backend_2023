@@ -10,17 +10,17 @@ import asyncio
 from datetime import datetime
 from frappe import conf
 @frappe.whitelist()
-def execute_backup_command():
+def execute_backup_command(): 
     frappe.enqueue(run_backup_command,queue="long")
     return "Added To Queue"
 
 @frappe.whitelist()
-def run_backup_command():
-    setting = frappe.get_doc('System Settings')
+def run_backup_command():   
+    setting = frappe.get_doc('FTP Backup')
     site_name = cstr(frappe.local.site)
     folder = setting.ftp_backup_path
     if folder is None or folder == '' :
-        folder = frappe.utils.get_site_path(conf.get("backup_path", "private/backups"))
+        folder = frappe.utils.get_site_path(conf.get("backup_path", "private/backups"))       
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         try:
@@ -56,7 +56,7 @@ async def run_bench_command(command, kwargs=None):
 @frappe.whitelist()
 def upload_to_ftp():
     folder_name = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
-    setting = frappe.get_doc('System Settings')
+    setting = frappe.get_doc('FTP Backup')
     site_name = setting.ftp_folder_name if setting.ftp_folder_name != '' else cstr(frappe.local.site)# if setting.ftp_folder_name==''?
     backup_folder = setting.ftp_backup_path
     if backup_folder is None or backup_folder == '' :
