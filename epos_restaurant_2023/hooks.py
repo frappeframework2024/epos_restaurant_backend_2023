@@ -121,22 +121,7 @@ scheduler_events = {
 		"*/1 * * * *":[
 				"epos_restaurant_2023.api.ftp_backup.execute_backup_command",
 		]
-	},
-	# "all": [
-	# 	"epos_restaurant_2023.tasks.all"
-	# ],
-	# "daily": [
-	# 	"epos_restaurant_2023.tasks.daily"
-	# ],
-	# "hourly": [
-	# 	"epos_restaurant_2023.tasks.hourly"
-	# ],
-	# "weekly": [
-	# 	"epos_restaurant_2023.tasks.weekly"
-	# ],
-	# "monthly": [
-	# 	"epos_restaurant_2023.tasks.monthly"
-	# ],
+	}
 }
 
 # Testing
@@ -221,6 +206,7 @@ fixtures = [
     {"dt": "Custom HTML Block"},
     {"dt": "POS Translation","filters": [["is_standard", "=", "1"]]},
     {"dt": "Website Theme","filters": [["name", "=", "ESTC Theme"]]},
+    {"dt": "Print Style","filters": [["name", "=", "Default Style"]]},
 ]
 
 website_route_rules = [
