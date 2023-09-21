@@ -24,11 +24,10 @@ Date: {{filters.start_date}} - {{filters.end_date}}
     {{d.label}}: {{d.value}}
 {%endfor%} -->
 
-<!-- {% console.log(report) %} -->
-
+<!-- {% console.log(report.f) %} -->
 <table class="report-list" style="width: 100%;">
     <thead>
-        <tr style="border-bottom: solid 1px black!important; background-color: rgb(216, 216, 216);">
+        <tr style="border-bottom: solid 1px black!important; background-color: rgb(216, 216, 216); font-size: 13px;">
             <th>Nº</th>
             {% for c in report.columns %}
                 <th class="text-{{c.align }}">{{ __(c.label) }}</th>
@@ -40,40 +39,52 @@ Date: {{filters.start_date}} - {{filters.end_date}}
         {% for d in data %}
         <tr style="padding-top: 10px; padding-bottom: 10px;">
             <td>
-                {% if i != data.length %}
-                {{i}}
+                {% if d.is_group != 1 %}
+                    {% if i != data.length %}
+                    {{i}}
+                    {% endif %}
                 {% endif %}
             </td>
             {% for c in report.columns %}
-                <td class="text-{{c.align}}">
-                    {% if c.fieldtype == "Currency" %}
-                    {{format_currency(d[c.fieldname],frappe.defaults.get_default("pos_currency_symbol"),frappe.defaults.get_default("currency_precision_in_report"))}}
-                    {% else %}
-                    {{ d[c.fieldname]}} 
-                    {% endif %}
-                    
-                    {% if c.fieldname == "row_group" && d[c.fieldname] == undefined %}
+            {% if d.is_group == 1 %}
+            {% i = 0 %}
+            <td class="text-{{c.align}}" style="font-weight: bold; font-size: 11px; padding-left: 15px !important;">
+                {% if c.fieldtype == "Currency" %}
+                    {{format_currency(d[c.fieldname],frappe.defaults.get_default("currency"),frappe.boot.docs[4].number_format)}}
+                {% else %}
+                    {{ d[c.fieldname]}}
+                {% endif %}
+                {% if c.fieldname == "row_group" && d[c.fieldname] == undefined %}
                     <div style="text-align: center; font-size: 12px;"><b>Total</b></div>
-                    {% endif %}
-                </td>
+                {% endif %}
+            </td>
+            {% else %}
+            <td class="text-{{c.align}}">
+                {% if c.fieldtype == "Currency" %}
+                    {{format_currency(d[c.fieldname],frappe.defaults.get_default("currency"),frappe.defaults.get_default("currency"),frappe.boot.docs[4].number_format)}}
+                {% else %}
+                    {{ d[c.fieldname]}} 
+                {% endif %}
+                {% if c.fieldname == "row_group" && d[c.fieldname] == undefined %}
+                    <div style="text-align: center; font-size: 12px;"><b>Total</b></div>
+                {% endif %}
+            </td>
+            {% endif %}
             {% endfor %}
         </tr>
         {% i++ %}
         {%endfor%}
     </tbody>
 </table>
-<div id="footer">
-    This is a footer. Page <span id="current-page-placeholder">
-</div>
-
+<!-- {% console.log(data) %} -->
+<footer class="footer"> 
+    <p>Printed by: {{frappe.user.name}} on {{frappe.datetime.str_to_user(frappe.datetime.get_datetime_as_string())}}</p>
+</footer>
 <style media="print">
 .report-list td,.report-list {
     padding: 3px !important;
-    font-size: 10px !important;
+    /* font-size: 10px !important; */
     padding: 3px 0px !important;
-}
-.report-list thead {
-    font-size: 12px !important;
 }
 .report-list tr th {
     color: #000;
@@ -81,12 +92,10 @@ Date: {{filters.start_date}} - {{filters.end_date}}
     padding-top: 4px !important;
     padding-bottom: 4px !important;
 }
-#footer{
-    background-color: orange !important; 
+.footer{
     position: absolute !important;
-    left: 0 !important;
-    bottom: 0 !important;
-    height: 100px !important;
+    bottom: 0;
+    height: 18px !important;
     width: 100% !important;
     overflow: hidden !important;
 }

@@ -26,7 +26,7 @@ class WorkingDay(Document):
 
 			pending_orders = frappe.db.sql("select name from `tabSale` where docstatus = 0 and working_day = '{}'".format(self.name), as_dict=1)
 			if pending_orders:
-				frappe.throw("Please close all pending order before close close working day.")
+				frappe.throw("Please close all pending order before closing working day.")
 
 			#check reset waiting number
 			pos_profile = frappe.get_doc("POS Profile", self.pos_profile)
