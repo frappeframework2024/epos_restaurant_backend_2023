@@ -71,7 +71,7 @@ def get_dynamic_columns(filters):
 	#dynmic report file
 	columns = []
 	if filters.column_group =="Payment Type":
-		payment_types = frappe.db.get_list("Payment Type")
+		payment_types = frappe.db.get_list("Payment Type",filters=[{"payment_type_group":['!=', "On Account"]},{"disabled":0}])
 		for p in payment_types:
 			columns.append({
        					"label":p.name,
@@ -86,23 +86,8 @@ def get_dynamic_columns(filters):
                   		"align":"center"
                     	})
 	elif filters.column_group =="Payment Type Group":
-		payment_types = frappe.db.get_list("Payment Type Group")
+		payment_types = frappe.db.get_list("Payment Type Group",filters=[{"name":['!=', "On Account"]}])
 		for p in payment_types:
-			columns.append({
-						"label":p.name,
-						"fieldname":"{}".format(p.name.replace(" ", "_").lower()), 
-						"fieldtype":"Float",
-						"align":"center",
-						})
-		columns.append({
-						"label":"Total Payment",
-						"fieldname":"total_payment", 
-						"fieldtype":"Currency",
-						"align":"center",
-						})
-	elif filters.column_group =="Currency":
-		datas = frappe.db.get_list("Currency")
-		for p in datas:
 			columns.append({
 						"label":p.name,
 						"fieldname":"{}".format(p.name.replace(" ", "_").lower()), 

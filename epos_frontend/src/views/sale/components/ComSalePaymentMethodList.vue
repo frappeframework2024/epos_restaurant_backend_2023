@@ -18,8 +18,7 @@ const sale = inject("$sale")
 const { t: $t } = i18n.global;  
 const toaster = createToaster({ position: "top" });
 
-async function onPaymentTypeClick(pt)  { 
-    
+async function onPaymentTypeClick(pt) { 
     let room = null;
     let folio = null; 
     if(pt.payment_type_group=="Pay to Room" ){ 
@@ -54,15 +53,17 @@ async function onPaymentTypeClick(pt)  {
 
     if(mobile.value){
         sale.is_payment_first_load = false;
-    } 
+    }  
 
-
-    if(pt.allow_change==0 &&  parseFloat(sale.paymentInputNumber) > (balance.value * pt.exchange_rate)){
+    if(pt.allow_change==0 &&  parseFloat(sale.paymentInputNumber) > parseFloat(balance.value * pt.exchange_rate)){
         sale.paymentInputNumber = balance.value *  pt.exchange_rate;
+        
     }
     else  if(sale.is_payment_first_load){       
         sale.paymentInputNumber = sale.paymentInputNumber * pt.exchange_rate;
-    }   
+       
+    }
+
  
 
     sale.onAddPayment(pt, sale.paymentInputNumber,fee_amount,room,folio);

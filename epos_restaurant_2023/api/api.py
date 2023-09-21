@@ -121,7 +121,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "exchange_rate_main_currency":frappe.db.get_default("exchange_rate_main_currency"),
         "main_currency_symbol":main_currency.symbol,
         "main_currency_format":main_currency.custom_pos_currency_format,
-        "main_currency_precision":frappe.db.get_default("currency_precision"),
+        "main_currency_precision":main_currency.custom_currency_precision,
         "second_currency_name":second_currency.name,
         "second_currency_symbol":second_currency.symbol,
         "second_currency_format":second_currency.custom_pos_currency_format,
@@ -168,7 +168,6 @@ def get_system_settings(pos_profile="", device_name=''):
         "show_button_tip":pos_config.show_button_tip,
         "tip_account_code":pos_config.tip_account_code,
         "check_delete_item_require_passord_from_product":pos_config.check_delete_item_require_passord_from_product,
-        
         }
     
     #get default customre
