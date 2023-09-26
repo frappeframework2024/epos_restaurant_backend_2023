@@ -5,14 +5,16 @@
    "label": "Monthly Expense vs Payment"
   }
  ],
- "content": "[{\"type\":\"chart\",\"data\":{\"chart_name\":\"Monthly Expense vs Payment\",\"col\":12}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Expense</span>\",\"col\":12}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Expenses\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Expense\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Expense Payment\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Expense Payment\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":3}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent Transaction</b></span>\",\"col\":12}},{\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Expense\",\"col\":6}},{\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Expense Payment\",\"col\":6}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"card\",\"data\":{\"card_name\":\"Configuration\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}}]",
+ "content": "[{\"id\":\"DzzXAAYd20\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Monthly Expense vs Payment\",\"col\":12}},{\"id\":\"he0HBLhSr3\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Expense</span>\",\"col\":12}},{\"id\":\"qQriRgdLkX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Expenses\",\"col\":3}},{\"id\":\"2OFtYUfVWx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Expense\",\"col\":3}},{\"id\":\"olrBtffvmQ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Expense Payment\",\"col\":3}},{\"id\":\"5cNK2KS0vS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Expense Payment\",\"col\":3}},{\"id\":\"vYQv3Q7kJO\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":3}},{\"id\":\"YJBGlSjgtS\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Zmwnu224e6\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent Transaction</b></span>\",\"col\":12}},{\"id\":\"fjC12PoRZi\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Expense\",\"col\":6}},{\"id\":\"e962-fl1St\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Expense Payment\",\"col\":6}},{\"id\":\"vxmaAifiGc\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"1QZTf_DnrQ\",\"type\":\"card\",\"data\":{\"card_name\":\"Configuration\",\"col\":4}},{\"id\":\"hN_bRBVU7O\",\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}}]",
  "creation": "2022-12-03 15:55:08.589531",
+ "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
  "for_user": "",
  "hide_custom": 0,
  "icon": "color-energy-points",
  "idx": 0,
+ "is_hidden": 0,
  "label": "Expenses",
  "links": [
   {
@@ -92,28 +94,26 @@
    "type": "Link"
   }
  ],
- "modified": "2023-06-05 15:08:50.759336",
+ "modified": "2023-09-23 09:29:30.186518",
  "modified_by": "Administrator",
  "module": "Expense",
  "name": "Expenses",
+ "number_cards": [],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
  "quick_lists": [
   {
    "document_type": "Expense Payment",
-   "label": "Recent Expense Payment",
-   "total_amount_field": "payment_amount"
+   "label": "Recent Expense Payment"
   },
   {
    "document_type": "Expense",
-   "label": "Recent Expense",
-   "sub_title_fields": "vendor_code,vendor_name",
-   "total_amount_field": "total_amount"
+   "label": "Recent Expense"
   }
  ],
  "roles": [],
- "sequence_id": 5.0,
+ "sequence_id": 4.0,
  "shortcuts": [
   {
    "color": "Grey",

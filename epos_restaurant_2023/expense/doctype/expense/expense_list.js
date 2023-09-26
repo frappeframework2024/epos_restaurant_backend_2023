@@ -5,7 +5,6 @@ frappe.listview_settings['Expense'] = {
     has_indicator_for_draft: false,
 
     get_indicator(doc) {
-        console.log(doc)
         if(doc.balance==0){ 
             return [__("Paid"), "green"];
         }else if(doc.total_paid>0 && doc.balance>0){

@@ -17,13 +17,13 @@
   "product_category",
   "product_group",
   "revenue_group",
-  "tax_rule",
   "column_break_6",
   "kitchen_group",
   "unit",
   "unit_category",
   "stock_location",
   "opening_quantity",
+  "tax_rule",
   "sort_order",
   "is_inventory_product",
   "is_combo_menu",
@@ -40,6 +40,12 @@
   "delete_from_pos_require_password",
   "column_break_17",
   "is_open_product",
+  "gym_setting_section",
+  "track_visit",
+  "number_of_times",
+  "column_break_lqov",
+  "track_expired_visit",
+  "duration_expired_visit",
   "pochasing_section",
   "vendor",
   "cost",
@@ -557,13 +563,44 @@
    "fieldtype": "Check",
    "hidden": 1,
    "label": "Delete from POS Require Password"
+  },
+  {
+   "fieldname": "gym_setting_section",
+   "fieldtype": "Section Break",
+   "label": "GYM Setting"
+  },
+  {
+   "default": "0",
+   "fieldname": "track_visit",
+   "fieldtype": "Check",
+   "label": "Track Visit"
+  },
+  {
+   "fieldname": "number_of_times",
+   "fieldtype": "Int",
+   "label": "Number of Times"
+  },
+  {
+   "fieldname": "column_break_lqov",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "track_expired_visit",
+   "fieldtype": "Check",
+   "label": "Track Expired Visit"
+  },
+  {
+   "fieldname": "duration_expired_visit",
+   "fieldtype": "Int",
+   "label": "Duration (Months)"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2023-09-21 14:11:33.089691",
+ "modified": "2023-09-23 09:12:28.309048",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Product",

@@ -5,12 +5,13 @@ import frappe
 from frappe import utils
 from frappe import _
 from frappe.model.document import Document
+from frappe.utils.data import getdate
 
 class Expense(Document):
 	def validate(self):
 		
 		#validate expense dsate
-		if self.posting_date>utils.today():
+		if getdate(self.posting_date)>getdate(utils.today()):
 			frappe.throw(_("Expense date cannot greater than current date"))
 
 		#validate amount

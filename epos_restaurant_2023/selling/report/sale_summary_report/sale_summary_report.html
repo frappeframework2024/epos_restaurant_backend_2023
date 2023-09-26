@@ -41,7 +41,7 @@ Date: {{filters.start_date}} - {{filters.end_date}}
             <td>
                 {% if d.is_group != 1 %}
                     {% if i != data.length %}
-                    {{i}}
+                        {{i}}
                     {% endif %}
                 {% endif %}
             </td>
@@ -76,45 +76,62 @@ Date: {{filters.start_date}} - {{filters.end_date}}
         {%endfor%}
     </tbody>
 </table>
-
-<div class="d-flex">
+{% console.log(d) %}
+<div class="text">
     <div>
-        <div>Prepared By</div><div>.............................</div>
+        <div>Prepared By</div><div class="text_">.............................</div>
     </div>
     <div>
-        <div>Check By</div><div>.............................</div>
+        <div>Check By</div><div class="text_">.............................</div>
     </div>
     <div>
-        <div>Approve By</div><div>.............................</div>
+        <div>Approve By</div><div class="text_">.............................</div>
     </div>
     
 </div>
 
 <!-- {% console.log(data) %} -->
-<!-- <footer class="footer"> 
-    <p>Printed by: {{frappe.user.name}} on {{frappe.datetime.str_to_user(frappe.datetime.get_datetime_as_string())}}</p>
-</footer> -->
+<footer> 
+    <div class="divfooter">
+        <p>Printed by: {{frappe.user.name}} on {{frappe.datetime.str_to_user(frappe.datetime.get_datetime_as_string())}}</p>
+    </div>
+</footer>
 <style>
+    .text {
+        display: grid;
+        grid-template-columns: auto auto auto;
+        text-align: center;
+        margin-top: 30px;
+    }
+    .text_ {
+        margin-top: 50px;
+    }
+    .footer {
+        margin-top: 30px;
+    }
     @media print{
-        .report-list td,.report-list {
+        div.divfooter{
+            position: fixed;
+            bottom: 0;
+        }
+    .report-list td,.report-list {
     padding: 3px !important;
     /* font-size: 10px !important; */
-    padding: 3px 0px !important;
-}
-.report-list tr th {
-    color: #000;
-    font-weight: 400;
-    padding-top: 4px !important;
-    padding-bottom: 4px !important;
-}
-.footer{
-    position: absolute !important;
-    bottom: 0;
-    height: 18px !important;
-    width: 100% !important;
-    overflow: hidden !important;
-}
+    /* padding: 3px 0px !important; */
     }
-
+    .report-list tr th {
+        color: #000;
+        font-weight: 400;
+        padding-top: 4px !important;
+        padding-bottom: 4px !important;
+    }
+    .footer{
+        position: absolute !important;
+        bottom: 0;
+        height: 18px !important;
+        width: 100% !important;
+        overflow: hidden !important;
+    }
+}
 </style>
 

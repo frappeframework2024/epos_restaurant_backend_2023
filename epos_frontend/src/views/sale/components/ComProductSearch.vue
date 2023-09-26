@@ -9,6 +9,7 @@
                 prepend-inner-icon="mdi-magnify"
                 v-model="product.searchProductKeywordStore"
                 v-debounce="onSearch"
+                @onInput="onSearch"
                 @keydown="onKeyDown"
                 :ref="control"
                 />
@@ -54,8 +55,7 @@ function onSearch(key) {
 
 function onKeyDown(event) {
       if(event.key =="Enter"){
-        if (!sale.isBillRequested()) {
-        
+        if (!sale.isBillRequested()) {        
        
         const searchProductResource = createResource({
                 url: "epos_restaurant_2023.api.product.get_product_by_barcode",

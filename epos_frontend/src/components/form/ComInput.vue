@@ -184,15 +184,12 @@ const updateValue = (event) => {
     emit('update:modelValue', value)
 }
 
-async function onDialog() {
- 
-    const keys = await keyboardDialog({title: props.title,type: props.type, value:props.modelValue});
- 
+async function onDialog() { 
+    const keys = await keyboardDialog({title: props.title,type: props.type, value:props.modelValue}); 
     if(typeof keys == 'boolean' && keys == false){
         return
     }
-    else {
-         
+    else {         
         emit('onInput',keys)
         emit('update:modelValue', keys)
     }

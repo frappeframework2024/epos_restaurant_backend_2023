@@ -7,12 +7,14 @@
  ],
  "content": "[{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Inventory</span>\",\"col\":12}},{\"type\":\"chart\",\"data\":{\"chart_name\":\"Stock Values\",\"col\":12}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Product\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Modifier Group\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Modifier Category\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Modifier Item\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Production\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Take\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Adjustment\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Transfer\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Inventory Transaction\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Location Product\",\"col\":3}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent Transaction</b></span>\",\"col\":12}},{\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Inventory Transaction\",\"col\":6}},{\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Stock Adjustment Transaction\",\"col\":6}},{\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Purchase Order Transaction\",\"col\":4}},{\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Stock Transfer Transaction\",\"col\":4}},{\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Stock Take Transaction\",\"col\":4}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"card\",\"data\":{\"card_name\":\"Configuration\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Summary Report\",\"col\":4}}]",
  "creation": "2022-12-06 10:52:34.110072",
+ "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
  "for_user": "",
  "hide_custom": 0,
  "icon": "stock",
  "idx": 0,
+ "is_hidden": 0,
  "label": "Inventory",
  "links": [
   {
@@ -180,10 +182,11 @@
    "type": "Link"
   }
  ],
- "modified": "2023-07-19 09:20:26.335883",
+ "modified": "2023-09-22 22:03:38.357339",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Inventory",
+ "number_cards": [],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
@@ -194,8 +197,7 @@
   },
   {
    "document_type": "Inventory Transaction",
-   "label": "Inventory Transaction",
-   "sub_title_fields": "product_code,stock_location,balance"
+   "label": "Inventory Transaction"
   },
   {
    "document_type": "Purchase Order",
@@ -211,7 +213,7 @@
   }
  ],
  "roles": [],
- "sequence_id": 4.0,
+ "sequence_id": 3.0,
  "shortcuts": [
   {
    "color": "Orange",
