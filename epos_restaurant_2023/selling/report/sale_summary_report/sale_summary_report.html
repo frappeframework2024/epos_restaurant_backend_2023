@@ -76,12 +76,27 @@ Date: {{filters.start_date}} - {{filters.end_date}}
         {%endfor%}
     </tbody>
 </table>
+
+<div class="d-flex">
+    <div>
+        <div>Prepared By</div><div>.............................</div>
+    </div>
+    <div>
+        <div>Check By</div><div>.............................</div>
+    </div>
+    <div>
+        <div>Approve By</div><div>.............................</div>
+    </div>
+    
+</div>
+
 <!-- {% console.log(data) %} -->
-<footer class="footer"> 
+<!-- <footer class="footer"> 
     <p>Printed by: {{frappe.user.name}} on {{frappe.datetime.str_to_user(frappe.datetime.get_datetime_as_string())}}</p>
-</footer>
-<style media="print">
-.report-list td,.report-list {
+</footer> -->
+<style>
+    @media print{
+        .report-list td,.report-list {
     padding: 3px !important;
     /* font-size: 10px !important; */
     padding: 3px 0px !important;
@@ -99,5 +114,7 @@ Date: {{filters.start_date}} - {{filters.end_date}}
     width: 100% !important;
     overflow: hidden !important;
 }
+    }
+
 </style>
 
