@@ -1,6 +1,6 @@
 <template>
     <div :class="small ? 'px-2' : 'px-6'">
-        <div class="search-box my-0 mx-auto" :class="small ? 'w-full' : 'max-w-[350px]'">           
+        <div class="search-box my-0 mx-auto" :class="small ? 'w-full' : 'max-w-[350px]'">  
             <ComInput
                 autofocus
                 keyboard
