@@ -2,6 +2,10 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Membership Card", { 
+    refresh(frm) {
+       // frm.set_df_property('expired_date', 'read_only', frm.doc.__islocal ? 0 : 1)
+	},
+
     membership_type:function(frm){        
         frm.doc.expired_date ="";
         frm.refresh_field("expired_date");

@@ -1,0 +1,21 @@
+{
+  "name": "gym",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build --base=/assets/epos_restaurant_2023/gym/ && yarn copy-html-entry",
+    "preview": "vite preview",
+    "copy-html-entry": "cp ../epos_restaurant_2023/public/gym/index.html ../epos_restaurant_2023/www/gym.html"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.5.1",
+    "vue": "^3.3.4",
+    "vue-router": "^4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.2.3",
+    "vite": "^4.4.5"
+  }
+}

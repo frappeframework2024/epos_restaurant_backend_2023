@@ -76,21 +76,6 @@ Date: {{filters.start_date}} - {{filters.end_date}}
         {%endfor%}
     </tbody>
 </table>
-{% console.log(d) %}
-<div class="text">
-    <div>
-        <div>Prepared By</div><div class="text_">.............................</div>
-    </div>
-    <div>
-        <div>Check By</div><div class="text_">.............................</div>
-    </div>
-    <div>
-        <div>Approve By</div><div class="text_">.............................</div>
-    </div>
-    
-</div>
-
-<!-- {% console.log(data) %} -->
 <footer> 
     <div class="divfooter">
         <p>Printed by: {{frappe.user.name}} on {{frappe.datetime.str_to_user(frappe.datetime.get_datetime_as_string())}}</p>

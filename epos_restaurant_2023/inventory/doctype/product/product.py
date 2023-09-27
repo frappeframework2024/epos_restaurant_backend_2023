@@ -166,6 +166,9 @@ class Product(Document):
 		#add_product_to_temp_menu(self)
 		frappe.enqueue("epos_restaurant_2023.inventory.doctype.product.product.add_product_to_temp_menu", queue='short', self=self)
 
+	def on_trash(self):
+		frappe.db.sql("delete from `tabTemp Product Menu` where product_code='{}'".format(self.name))
+	 
 
 	@frappe.whitelist()
 	def get_product_summary_information(self):

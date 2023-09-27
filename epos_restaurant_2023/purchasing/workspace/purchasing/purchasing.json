@@ -137,7 +137,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-09-22 22:03:38.626336",
+ "modified": "2023-09-27 12:04:50.302846",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchasing",
@@ -156,7 +156,7 @@
   }
  ],
  "roles": [],
- "sequence_id": 6.0,
+ "sequence_id": 8.0,
  "shortcuts": [
   {
    "color": "Green",
