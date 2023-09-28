@@ -5,7 +5,7 @@
 	</div>
 </template>
 
-
+ 
 <script>
 export default {
 	inject: ['$auth']

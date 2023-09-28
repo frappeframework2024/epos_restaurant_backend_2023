@@ -7,6 +7,10 @@ from frappe.model.document import Document
 
 class PurchaseOrderPayment(Document):
 	def validate(self):
+		currency_precision = frappe.db.get_single_value('System Settings', 'currency_precision')
+		if currency_precision=='':
+			currency_precision = "2"
+
 		if (self.exchange_rate or 0) ==0 or self.currency == frappe.db.get_default("currency"):
 			self.exchange_rate = 1
    
@@ -22,16 +26,14 @@ class PurchaseOrderPayment(Document):
 			frappe.throw("This purchase order is not submitted yet")
 
 		#check paid amount cannot over balance
-		if self.payment_amount > self.balance:
+		if round(self.payment_amount  , int(currency_precision)) - round(self.balance  , int(currency_precision)) > 0 :
 			frappe.throw("Payment amount cannot greater than purchase balance")
 
 	def on_submit(self):
 		update_purchase_order(self)
 
-	
 	def on_cancel(self):
 		update_purchase_order(self)
-
 
 def update_purchase_order(self):
 	data = frappe.db.sql("select  ifnull(sum(payment_amount),0)  as total_paid from `tabPurchase Order Payment` where docstatus=1 and purchase_order='{}'".format(self.purchase_order))

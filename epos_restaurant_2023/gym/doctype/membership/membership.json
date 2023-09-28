@@ -1,0 +1,190 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "hash",
+ "creation": "2023-09-28 15:29:33.205252",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "information_section",
+  "customer_code",
+  "customer",
+  "duration_type",
+  "membership_duration",
+  "price",
+  "column_break_qwqf",
+  "membership",
+  "duration_base_on",
+  "start_date",
+  "end_date",
+  "family_shared_section",
+  "count_members",
+  "table_uyvm",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Member",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_qwqf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "membership",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Membership",
+   "options": "Membership Options",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "membership.duration_type",
+   "fieldname": "duration_type",
+   "fieldtype": "Data",
+   "label": "Duration Type"
+  },
+  {
+   "fieldname": "information_section",
+   "fieldtype": "Section Break",
+   "label": "Information"
+  },
+  {
+   "fetch_from": "membership.membership_duration",
+   "fieldname": "membership_duration",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Membership Duration",
+   "options": "Membership"
+  },
+  {
+   "fetch_from": "membership.cost",
+   "fetch_if_empty": 1,
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "label": "Price"
+  },
+  {
+   "fetch_from": "membership.membership_duration_base_on",
+   "fieldname": "duration_base_on",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Duration Base on"
+  },
+  {
+   "default": "Today",
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "label": "Start Date"
+  },
+  {
+   "fieldname": "end_date",
+   "fieldtype": "Date",
+   "label": "End Date"
+  },
+  {
+   "fieldname": "family_shared_section",
+   "fieldtype": "Section Break",
+   "label": "Family Shared"
+  },
+  {
+   "default": "2",
+   "fieldname": "count_members",
+   "fieldtype": "Int",
+   "label": "Count Members"
+  },
+  {
+   "fetch_from": "customer.naming_series",
+   "fieldname": "customer_code",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Member Code"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Membership",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "description": "Assign member to table list",
+   "fieldname": "table_uyvm",
+   "fieldtype": "Table",
+   "options": "Membership Family"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2023-09-28 16:04:47.762981",
+ "modified_by": "Administrator",
+ "module": "GYM",
+ "name": "Membership",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Master Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

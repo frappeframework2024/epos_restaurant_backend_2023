@@ -3,9 +3,7 @@
 
 # import frappe
 from frappe.model.document import Document
-# from datetime import timedelta, datetime
 
 
-class MembershipCard(Document):
+class Membership(Document):
 	pass
- 
