@@ -51,6 +51,7 @@ const emit = defineEmits(["resolve"]);
 
 const db = frappe.db();
 const call = frappe.call();
+const payment_promises = ref([])
 
 const props = defineProps({
     params: {
@@ -97,80 +98,51 @@ async function onQuickPay(isPrint=true) {
 
     if (await confirmDialog({ title: $t("Quick Pay"), text: $t('msg.are you sure to process quick pay and close order') })) {
         isLoading.value = true;
-        const promises = [];
-        props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").forEach(async (d) => {
-              promises.push(submitQuickPay(d,isPrint));  
-            await db.getDoc("Sale",d.name).then(async (s)=> {
-                let payment = [];
-                payment.push({
-                        payment_type: sale.setting?.default_payment_type,
-                        input_amount: s.grand_total,
-                        amount: s.grand_total
-                }); 
-
-               
-            });   
-            // promises.push({
-            //     sale:d.name,
-            //     payment_type: sale.setting?.default_payment_type
-            // })
-                
-        });
-      
-    
         
+        props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").forEach(async (d) => {
+       
+            payment_promises.value.push({
+                sale:d.name,
+                payment_type: sale.setting?.default_payment_type
+            })                 
+        });
+        Promise.all(payment_promises.value).then(async () => {
+            await call.get('epos_restaurant_2023.api.api.on_sale_quick_pay', {
+                data:JSON.stringify(payment_promises.value)
+            }).then((res)=>{
+                props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").forEach(async (d) =>{ 
+                    const _sale = res.message.filter((r)=>r.name == d.name)
+                    if(_sale.length>0){
+                        d.sale_status = "Closed";
+                        d.sale_status_color = sale.setting.sale_status.find(r => r.name == 'Closed').background_color;
+                        const data = {
+                            action: "print_receipt",
+                            print_setting:  sale.setting?.default_pos_receipt,
+                            setting: sale.setting?.pos_setting,
+                            sale: _sale[0]
+                        }
+                        console.log(data)
 
-        Promise.all(promises).then(async () => {
+                        if (localStorage.getItem("is_window") == "1" && isPrint) {
+                            window.chrome.webview.postMessage(JSON.stringify(data));
+                        } 
+                    } 
+                  
+                });
 
-        //   call.get('epos_restaurant_2023.api.api.on_sale_quick_pay', {
-        //         data:JSON.stringify(sale_list)
-        //     }).then((res)=>{
-        //         console.log(res)
-        //     });
+
+                toaster.success($t('msg.Payment successfully'));
+                tableLayout.getSaleList();            
+                isLoading.value = false;
+                emit('resolve', true);
+            }).catch((r)=>{
+                toaster.error(r.message); 
+                isLoading.value = false;
+            }); 
            
-            toaster.success($t('msg.Payment successfully'));
-            tableLayout.getSaleList();
-            
-            isLoading.value = false;
-            emit('resolve', true);
         })        
     }
 }
-
-async function submitQuickPay(d,isPrint){   
-
-
-    await db.getDoc("Sale",d.name).then(async (s)=> {
-        let payment = [];
-        payment.push({
-                payment_type: sale.setting?.default_payment_type,
-                input_amount: s.grand_total,
-                amount: s.grand_total
-        }); 
-
-        await db.updateDoc('Sale', s.name, {
-                payment:payment,
-                docstatus:1,
-                sale_status:'Closed'
-            }).then((doc)=>{
-                d.sale_status = "Closed";
-                d.sale_status_color = sale.setting.sale_status.find(r => r.name == 'Closed').background_color;
-                const data = {
-                        action: "print_receipt",
-                        print_setting:  sale.setting?.default_pos_receipt,
-                        setting: sale.setting?.pos_setting,
-                        sale: doc
-                    }
-                if (localStorage.getItem("is_window") == "1" && isPrint) {
-                    window.chrome.webview.postMessage(JSON.stringify(data));
-                } 
-            });
-
-    }); 
- 
-}
-
-
 async function PrintReceipt(d, r) {
     const resource = createResource({
         url: 'frappe.client.get',

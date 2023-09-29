@@ -19,6 +19,6 @@ class Membership(Document):
 
 	def on_submit(self):
 
-		doc = frappe.get_doc('Customer')
+		# doc = frappe.get_doc('Customer')
 		pass
 

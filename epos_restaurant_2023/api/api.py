@@ -876,18 +876,18 @@ def on_sale_quick_pay(data):
     result = []
     for s in sales:
         doc =  frappe.get_doc('Sale',s['sale'])
-        doc.payment = [{
-            'payment_type':s['payment_type'],
-            'input_amount':doc.grand_total,
-            'amount':doc.grand_total
-        }]
+        doc.append ('payment', {
+                'payment_type':s['payment_type'],
+                'input_amount':doc.grand_total,
+                'amount':doc.grand_total
+            })          
+ 
         doc.docstatus = 1
         doc.sale_status = 'Closed'
         doc.save()
+        result.append(doc)
     frappe.db.commit()
-
- 
-
+    
     return result
 
 
