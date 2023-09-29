@@ -121,8 +121,6 @@ async function onQuickPay(isPrint=true) {
                             setting: sale.setting?.pos_setting,
                             sale: _sale[0]
                         }
-                        console.log(data)
-
                         if (localStorage.getItem("is_window") == "1" && isPrint) {
                             window.chrome.webview.postMessage(JSON.stringify(data));
                         } 
