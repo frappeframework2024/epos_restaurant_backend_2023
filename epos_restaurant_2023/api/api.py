@@ -868,7 +868,27 @@ def update_customer_bill_counter(pos_profile, counter):
     frappe.db.sql("update  `tabSeries` set current={} where name='{}'".format(counter, prefix))
     frappe.db.commit()
 
-   
+
+
+@frappe.whitelist()
+def on_sale_quick_pay(data):
+    sales = json.loads(data)
+    result = []
+    for s in sales:
+        doc =  frappe.get_doc('Sale',s['sale'])
+        doc.payment = [{
+            'payment_type':s['payment_type'],
+            'input_amount':doc.grand_total,
+            'amount':doc.grand_total
+        }]
+        doc.docstatus = 1
+        doc.sale_status = 'Closed'
+        doc.save()
+    frappe.db.commit()
+
+ 
+
+    return result
 
 
 

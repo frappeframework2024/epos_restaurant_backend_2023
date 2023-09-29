@@ -41,12 +41,17 @@ const { t: $t } = i18n.global;
 const isLoading = ref(false);
 const { mobile } = useDisplay()
 const sale = inject("$sale")
+const frappe = inject("$frappe")
 const gv = inject("$gv")
 const tableLayout = inject("$tableLayout")
 const router = useRouter()
 const toaster = createToaster({ position: "top" });
 const isDesktop = localStorage.getItem('is_window');
-const emit = defineEmits(["resolve"])
+const emit = defineEmits(["resolve"]);
+
+const db = frappe.db();
+const call = frappe.call();
+
 const props = defineProps({
     params: {
         type: Object,
@@ -94,53 +99,75 @@ async function onQuickPay(isPrint=true) {
         isLoading.value = true;
         const promises = [];
         props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").forEach(async (d) => {
-              promises.push(submitQuickPay(d,isPrint));
-            
-        });
+              promises.push(submitQuickPay(d,isPrint));  
+            await db.getDoc("Sale",d.name).then(async (s)=> {
+                let payment = [];
+                payment.push({
+                        payment_type: sale.setting?.default_payment_type,
+                        input_amount: s.grand_total,
+                        amount: s.grand_total
+                }); 
 
-        Promise.all(promises).then(() => {
+               
+            });   
+            // promises.push({
+            //     sale:d.name,
+            //     payment_type: sale.setting?.default_payment_type
+            // })
+                
+        });
+      
+    
+        
+
+        Promise.all(promises).then(async () => {
+
+        //   call.get('epos_restaurant_2023.api.api.on_sale_quick_pay', {
+        //         data:JSON.stringify(sale_list)
+        //     }).then((res)=>{
+        //         console.log(res)
+        //     });
+           
             toaster.success($t('msg.Payment successfully'));
             tableLayout.getSaleList();
+            
             isLoading.value = false;
             emit('resolve', true);
         })        
     }
 }
 
-async function submitQuickPay(d,isPrint){
+async function submitQuickPay(d,isPrint){   
 
-    const resource = createDocumentResource({
-        doctype: "Sale",
-        name: d.name,
 
-    });
-    await resource.get.fetch().then(async (v)=>{
-        const payment = [];
+    await db.getDoc("Sale",d.name).then(async (s)=> {
+        let payment = [];
         payment.push({
-            payment_type: sale.setting?.default_payment_type,
-            input_amount: v.grand_total,
-            amount: v.grand_total
-        })
-         
-		await resource.setValue.submit({
-            payment:payment,
-            docstatus:1,
-            sale_status:'Closed'
-        }).then((doc)=>{
-            d.sale_status = "Closed";
-            d.sale_status_color = sale.setting.sale_status.find(r => r.name == 'Closed').background_color;
+                payment_type: sale.setting?.default_payment_type,
+                input_amount: s.grand_total,
+                amount: s.grand_total
+        }); 
 
-            const data = {
-                    action: "print_receipt",
-                    print_setting:  sale.setting?.default_pos_receipt,
-                    setting: sale.setting?.pos_setting,
-                    sale: doc
-                }
-            if (localStorage.getItem("is_window") == "1" && isPrint) {
-                window.chrome.webview.postMessage(JSON.stringify(data));
-            }          
-        })        
-	})   
+        await db.updateDoc('Sale', s.name, {
+                payment:payment,
+                docstatus:1,
+                sale_status:'Closed'
+            }).then((doc)=>{
+                d.sale_status = "Closed";
+                d.sale_status_color = sale.setting.sale_status.find(r => r.name == 'Closed').background_color;
+                const data = {
+                        action: "print_receipt",
+                        print_setting:  sale.setting?.default_pos_receipt,
+                        setting: sale.setting?.pos_setting,
+                        sale: doc
+                    }
+                if (localStorage.getItem("is_window") == "1" && isPrint) {
+                    window.chrome.webview.postMessage(JSON.stringify(data));
+                } 
+            });
+
+    }); 
+ 
 }
 
 
