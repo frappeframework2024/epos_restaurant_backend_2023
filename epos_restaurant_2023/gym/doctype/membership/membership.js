@@ -31,6 +31,9 @@ frappe.ui.form.on("Membership", {
     },
     discount:function(frm){
         on_price_value_changed(frm,true)
+    },
+    count_members:function(frm){
+        on_count_members_value_changed(frm,true)
     }
 });
 
@@ -117,8 +120,10 @@ function on_membership_type_value_changed(frm,changed=false){
     frm.set_df_property('family_shared_section', 'hidden', 0);
     if(frm.doc.membership_type=="" || frm.doc.membership_type=="Single Member" || frm.doc.membership_type==undefined){
         frm.set_df_property('family_shared_section', 'hidden', 1); 
-    } 
+    }
     if(changed){
+        frm.doc.count_members = 0;
+        frm.refresh_field("count_members");   
         frm.refresh_field("family_shared_section");   
     }
 }
@@ -166,5 +171,21 @@ function on_update_grand_total(frm, changed=false){
     if(changed){
         frm.refresh_field("balance");  
         frm.refresh_field("grand_total");  
+    }
+}
+
+function on_count_members_value_changed(frm,changed=false){
+    if(changed){
+        frappe.db.get_doc("Membership Options",frm.doc.membership).then((r)=>{
+            if((frm.doc.count_members||1) > 1){ 
+              var number_of_member =  r.family_members_table.filter((x)=>x.number_of_member == frm.doc.count_members);
+              if(number_of_member.length>0){
+                frm.doc.price = number_of_member[0].cost;
+                on_update_grand_total(frm,changed);
+                frm.refresh_field("price");   
+              }
+            }
+       })
+        
     }
 }

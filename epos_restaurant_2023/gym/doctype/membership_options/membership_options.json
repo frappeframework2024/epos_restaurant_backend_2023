@@ -13,7 +13,7 @@
   "pricing_section",
   "cost",
   "family_pricing_section",
-  "table_lois",
+  "family_members_table",
   "column_break_umac",
   "duration_section",
   "duration_type",
@@ -59,12 +59,6 @@
    "fieldname": "family_pricing_section",
    "fieldtype": "Section Break",
    "label": "Family Pricing"
-  },
-  {
-   "fieldname": "table_lois",
-   "fieldtype": "Table",
-   "label": "Family Members",
-   "options": "Membership Family Pricing"
   },
   {
    "default": "Limited Duration",
@@ -133,11 +127,17 @@
    "fieldtype": "Select",
    "label": "Per",
    "options": "Day\nWeek\nMonth\nYear"
+  },
+  {
+   "fieldname": "family_members_table",
+   "fieldtype": "Table",
+   "label": "Family Members",
+   "options": "Membership Family Pricing"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-09-28 15:32:06.103047",
+ "modified": "2023-09-30 17:18:11.068787",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership Options",
