@@ -1,13 +1,10 @@
 <template>
-	<div>
-		<button v-if="$auth.isLoggedIn" @click="$auth.logout()">Logout</button>
-		<router-view />
-	</div>
+	<Home/>
 </template>
 
  
-<script>
-export default {
-	inject: ['$auth']
-};
+<script setup>
+import Home from './views/Home.vue';
+
+ 
 </script>

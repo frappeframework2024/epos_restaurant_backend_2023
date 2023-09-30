@@ -159,7 +159,8 @@ function on_update_grand_total(frm, changed=false){
     }else{
         frm.doc.grand_total = ((frm.doc.price||0) - (frm.doc.discount||0))
     }
-    frm.doc.balance =  (frm.doc.grand_total||0) - (frm.total_paid||0); 
+ 
+    frm.doc.balance =  (frm.doc.grand_total||0) - (frm.doc.total_paid||0); 
     frm.set_df_property('grand_total', 'read_only', 1);    
 
     if(changed){
