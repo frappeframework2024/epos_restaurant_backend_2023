@@ -1,10 +1,10 @@
 <template>
-	<Home/>
+	<CheckIn/>
 </template>
 
  
 <script setup>
-import Home from './views/Home.vue';
+import CheckIn from '@/views/CheckIn.vue';
 
  
 </script>

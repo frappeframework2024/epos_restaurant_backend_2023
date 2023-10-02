@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../views/Home.vue";
+import CheckIn from "@/views/CheckIn.vue";
 
 const routes = [
-  { path: "/", redirect: '/gym' },
-  { path: "/gym",name: "Home",component: Home,}
+  { path: "/", redirect: '/gym/check-in' },
+  { path: "/gym/check-in",name: "CheckIn",component: CheckIn,}
 ];
 
 const router = createRouter({

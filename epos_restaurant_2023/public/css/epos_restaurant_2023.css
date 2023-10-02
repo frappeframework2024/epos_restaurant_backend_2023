@@ -36,3 +36,6 @@
 .nav-item.dropdown.dropdown-help.dropdown-mobile.d-none.d-lg-block{
     display: none !important;
 }
+.navbar.navbar-expand.sticky-top #navbar-breadcrumbs li a{
+    color: #fff !important;
+}
