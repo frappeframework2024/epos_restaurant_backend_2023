@@ -1033,15 +1033,15 @@
  },
  {
   "data": "{\r\n    \"docstatus\": 1,\r\n    \"posting_date\": \"2023-04-17\",\r\n    \"from_currency\": \"USD\",\r\n    \"to_currency\": \"KHR\",\r\n    \"exchange_rate_input\": 4000,\r\n    \"exchange_rate\": 4000,\r\n    \"doctype\": \"Currency Exchange\"\r\n}",
-  "doc_name": "USD to RIEL",
+  "doc_name": "USD to KHR",
   "doc_type": "Currency Exchange",
   "docstatus": 0,
   "doctype": "Predefine Data",
   "is_single": 0,
-  "modified": "2023-09-23 14:34:56.139913",
+  "modified": "2023-10-02 14:38:01.703241",
   "name": "478efdb2c7",
   "sort": 400,
-  "title": "Currency Exchange USD to RIEL"
+  "title": "Currency Exchange USD to KHR"
  },
  {
   "data": "{\r\n    \"tbl_number\": \"T01\",\r\n    \"tbl_group\": \"Main Group\",\r\n    \"width\": 100,\r\n    \"height\": 85,\r\n    \"shape\": \"Rectangle\",\r\n    \"discount_type\": \"Percent\",\r\n    \"default_discount\": 0,\r\n    \"require_check_in\": 0,\r\n    \"sort_order\": 1,\r\n    \"doctype\": \"Tables Number\"\r\n}",
