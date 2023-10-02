@@ -209,6 +209,7 @@ fixtures = [
     {"dt": "Custom HTML Block"},
     {"dt": "POS Translation","filters": [["is_standard", "=", "1"]]},
     {"dt": "Website Theme","filters": [["name", "=", "ESTC Theme"]]},
+    {"dt": "Color"},
     {"dt": "Print Style","filters": [["name", "=", "Default Style"]]},
 ]
 
