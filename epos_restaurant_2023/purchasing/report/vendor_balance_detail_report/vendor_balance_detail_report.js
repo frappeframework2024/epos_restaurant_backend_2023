@@ -12,7 +12,14 @@ frappe.query_reports["Vendor Balance Detail Report"] = {
 			}
 			 
 		},
-	 
+		{
+			fieldname: "vendor",
+			label: __("Vendor"),
+			fieldtype: "MultiSelectList",
+			get_data: function(txt) {
+				return frappe.db.get_link_options('Vendor', txt);
+			}
+		},
 		{
 			"fieldname":"start_date",
 			"label": __("Start Date"),

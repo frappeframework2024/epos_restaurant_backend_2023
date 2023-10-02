@@ -13,6 +13,7 @@
   "posting_date",
   "customer_code",
   "customer",
+  "member_name",
   "duration_type",
   "membership_duration",
   "column_break_qwqf",
@@ -237,6 +238,15 @@
    "fieldname": "membership_family_table",
    "fieldtype": "Table",
    "options": "Membership Family"
+  },
+  {
+   "fetch_from": "customer.customer_name_en",
+   "fieldname": "member_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Member Name",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -248,7 +258,7 @@
    "link_fieldname": "membership"
   }
  ],
- "modified": "2023-09-30 17:18:44.602848",
+ "modified": "2023-10-02 10:50:18.893083",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership",
@@ -316,6 +326,7 @@
    "write": 1
   }
  ],
+ "search_fields": "member_name,membership_type",
  "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",

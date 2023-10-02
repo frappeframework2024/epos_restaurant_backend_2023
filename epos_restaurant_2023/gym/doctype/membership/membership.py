@@ -8,6 +8,20 @@ from frappe.model.document import Document
 
 class Membership(Document):
 	def validate(self):
+		if self.membership_type =="Family Shared":
+			if self.count_members <=1:
+				frappe.throw("Your counter member not allow value less than zero(0).")
+			
+			if not self.membership_family_table :
+				frappe.throw("Please add members to list for Family Shared")
+
+			elif len(self.membership_family_table) >= self.count_members:
+				frappe.throw("List of members cannot allow more than {}".format(self.count_members - 1))
+			elif len(self.membership_family_table) < (self.count_members - 1):
+				frappe.throw("Member list not enough, please add more")
+		
+
+
 		if self.discount_type=="Percent":
 			self.grand_total = (self.price or 0) - ((self.price or 0) * (self.discount or 0)/100)
 		else:
