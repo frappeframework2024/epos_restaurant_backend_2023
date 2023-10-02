@@ -9,5 +9,27 @@
   "roles": [],
   "script": "let parser = new DOMParser(); // create a DOMParser object\r\n \r\n\t\t\t\r\nfrappe.db.get_list('Sale', {\r\n    fields: ['name','posting_date', 'customer','grand_total','total_quantity','creation'],\r\n    limit:15,\r\n    order_by:\"creation desc\"\r\n    \r\n}).then(data => {\r\n    let table    = document.createElement(\"table\");\r\n    let tbody = document.createElement(\"tbody\");\r\n    let tr = document.createElement(\"tr\");\r\n    let th = document.createElement(\"th\");\r\n    let td = document.createElement(\"td\");\r\n    \r\n    th.innerHTML = \"Sale No\" \r\n    tr.appendChild(th)\r\n    \r\n    th = document.createElement(\"th\");\r\n    th.innerHTML = \"Posting Date\" \r\n    tr.appendChild(th)\r\n    \r\n     th = document.createElement(\"th\");\r\n    th.innerHTML = \"Creation\" \r\n    tr.appendChild(th)\r\n    \r\n    th = document.createElement(\"th\");\r\n    th.innerHTML = \"Quantity\" \r\n    tr.appendChild(th)\r\n    \r\n    th = document.createElement(\"th\");\r\n    th.innerHTML = \"Amount\" \r\n    tr.appendChild(th)\r\n    \r\n    \r\n    tbody.appendChild(tr)\r\n\r\n    \r\n    data.forEach((r)=>{\r\n        //sale number\r\n        tr = document.createElement(\"tr\");\r\n        td = document.createElement(\"td\");\r\n        td.textContent  = r.name;\r\n        tr.appendChild(td)\r\n        //sale date\r\n\r\n        td = document.createElement(\"td\");\r\n        td.textContent =frappe.format( r.posting_date,{fieldtype:\"Date\"});\r\n        tr.appendChild(td)\r\n        \r\n        td = document.createElement(\"td\");\r\n        td.textContent =frappe.format( r.creation,{fieldtype:\"Datetime\"});\r\n        tr.appendChild(td)\r\n        \r\n         //qauntity\r\n        td = document.createElement(\"td\");\r\n        td.appendChild(parser.parseFromString(frappe.format( r.total_quantity,{fieldtype:\"Float\"}), \"text/html\").querySelector(\"div\"));\r\n        tr.appendChild(td)\r\n        \r\n        //amount\r\n        td = document.createElement(\"td\");\r\n        td.appendChild(parser.parseFromString(frappe.format( r.grand_total,{fieldtype:\"Currency\"}), \"text/html\").querySelector(\"div\"));\r\n        tr.appendChild(td)\r\n        \r\n        tr.addEventListener('click', function() {\r\n        \r\n            frappe.set_route('Form', 'Sale',r.name)\r\n        });\r\n\r\n        tbody.appendChild(tr)\r\n        \r\n    })\r\n    table.appendChild(tbody)\r\n    \r\n    let recentSale = root_element.querySelector('#recent-sale-order');\r\n    recentSale.innerHTML = \"\"\r\n    recentSale.appendChild(table);\r\n    \r\n})",
   "style": "table{\r\n    width:100%;\r\n}\r\n td,th {\r\n  border: 1px solid #ddd;\r\n  padding: 8px;\r\n}\r\n\r\ntr:nth-child(even){background-color: #f2f2f2;}\r\n\r\ntr:hover {background-color: #ddd; cursor:pointer}\r\n\r\nth {\r\n  padding-top: 12px;\r\n  padding-bottom: 12px;\r\n  text-align: left;\r\n  background-color: #9b0000a8;\r\n  color: white;\r\n}"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom HTML Block",
+  "html": "<iframe src='http://192.168.10.19:5577/gym/check-in/' style=\"width:100%; height:550px\"/>",
+  "modified": "2023-10-02 11:02:35.252738",
+  "name": "Member Check In",
+  "private": 0,
+  "roles": [],
+  "script": null,
+  "style": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom HTML Block",
+  "html": null,
+  "modified": "2023-09-22 23:07:51.098427",
+  "name": "Sidebar Menu",
+  "private": 0,
+  "roles": [],
+  "script": "let default_sidebar = document.querySelector('.layout-side-section');\r\ndefault_sidebar.remove()\r\n\r\nlet element = document.querySelector('.sidebar_menu');\r\n\r\nif(element){\r\n    element.remove();\r\n}\r\n\r\n\r\nlet my_menu = document.createElement(\"div\")\r\nmy_menu.classList.add(\"sidebar_menu\")\r\n\r\n\r\nfrappe.db.get_list('App Sidebar Menu', {\r\n    fields: ['name','parent_app_sidebar_menu', 'title','url','icon'],\r\n    limit:10000,\r\n    order_by:\"sort_order\"\r\n    \r\n}).then(result => {\r\n    console.log(result)\r\n    \r\n    let main_menu = document.createElement(\"ul\")\r\n    main_menu.classList.add(\"main_menu\")\r\n    result.filter(r=>r.parent_app_sidebar_menu=='root_menu').forEach(m=>{\r\n        let li = document.createElement(\"li\")\r\n        li.textContent = m.title\r\n        \r\n        //get child menu\r\n        if(result.filter(r=>r.parent_app_sidebar_menu==m.name).length>0){\r\n            let sub_menu = document.createElement(\"ul\")\r\n            sub_menu.classList.add(\"sub_menu\")\r\n            result.filter(r=>r.parent_app_sidebar_menu==m.name).forEach(s=>{\r\n                   let sub_li = document.createElement(\"li\")\r\n                    sub_li.textContent = s.title\r\n                    sub_menu.appendChild(sub_li)\r\n                    \r\n            })\r\n            li.appendChild(sub_menu)\r\n            \r\n        }\r\n        \r\n    \r\n        main_menu.appendChild(li)\r\n        \r\n                \r\n    })\r\n    my_menu.appendChild(main_menu)    \r\n    console.log(main_menu)\r\n    document.querySelector(\"body\").prepend(my_menu)\r\n    \r\n\r\n    \r\n})\r\n\r\n\r\n",
+  "style": ""
  }
 ]
