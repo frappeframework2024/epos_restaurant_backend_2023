@@ -14,7 +14,9 @@
     "linq": "^4.0.1",
     "socket.io-client": "^4.5.1",
     "vue": "^3.3.4",
-    "vue-router": "^4"
+    "vue-router": "^4",
+    "vuetify": "^3.1.2",
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",

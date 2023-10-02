@@ -14,24 +14,36 @@ def membership_check_in(code):
     if not check_member:
         return False
 
-
-    member = frappe.get_doc("Customer",code)
+    cus = frappe.get_doc("Customer",code)
+    member = {
+        "name":cus.name,
+        "customer_code_name":cus.customer_code_name,
+        "customer_name_en":cus.customer_name_en,
+        "customer_name_kh":cus.customer_name_kh,
+        "customer_group":cus.customer_group,
+        "date_of_birth":cus.date_of_birth,
+        "gender":cus.gender,
+        "phone_number":cus.phone_number
+    }
     data_membership = frappe.db.get_list("Membership",fields=[ "name","docstatus"], filters=[{'customer':code},{'docstatus':1}])
     if len(data_membership) <= 0:
         membership_family = frappe.db.sql("select member,parent from `tabMembership Family` where member = '{}' and docstatus = 1".format(code),as_dict=1)
         if len(membership_family) <= 0:
             return False
         
-        return membership_family
+        data_membership = frappe.db.get_list("Membership",fields=[ "name","docstatus"], filters=[{'name':membership_family[0].parent},{'docstatus':1}])
     
-
+         
     memberships =[]
     for child in data_membership:
         m = frappe.get_doc("Membership",child.name)
+        # membership_family_table = m.membership_family_table
+        # if m.customer != member["name"]:
+        #     membership_family_table = filter(lambda x: x.member == member["name"], m.membership_family_table) 
         memberships.append({   
             "name":m.name,             
-            "member_name":m.member_name,
-            "customer":m.customer,
+            # "member_name":m.member_name,
+            # "customer":m.customer,
             "duration_type":m.duration_type,
             "membership_duration":m.membership_duration,
             "membership":m.membership,
@@ -42,7 +54,7 @@ def membership_check_in(code):
             "access_type":m.access_type,
             "duration":m.duration,
             "per_duration":m.per_duration,
-            "membership_family_table":m.membership_family_table
+            # "membership_family_table":membership_family_table
         })
  
     data = {
