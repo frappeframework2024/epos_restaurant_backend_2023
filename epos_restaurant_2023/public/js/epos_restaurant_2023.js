@@ -1,51 +1,27 @@
 window.addEventListener('load', function () {
  
-    if (frappe.session.user != 'Administrator'){
-        const getParent = document.querySelector('#page-Workspaces')
-        if(getParent){ 
-            const childElement = getParent.querySelector('.flex.col.page-actions.justify-content-end')
-            childElement.style.display = 'none'
-        }
-    }
+    removeButtomCustom()
+
+    setFullScreenButton()
+
+    removeGanttKanban()
 
     const navBar = document.querySelector('body')
     navBar.classList.add('full-width');
 
 
     frappe.router.on('change', () => {
-        if (frappe.session.user == 'Administrator'){
-            const getParent = document.querySelector('#page-Workspaces')
-            if(getParent){ 
-                const customActions = getParent.querySelector('.custom-actions')
-                const standardActions = getParent.querySelector('.standard-actions')
-                if (customActions){
-                    customActions.remove()
-                }
-                if (standardActions){ 
-                    standardActions.remove()
-                }
-            }
-        }
+        removeButtomCustom()
 
-        this.setTimeout(function(){
-       
-            let kanban = document.querySelector('[data-view="Kanban"]')
-            let gantt = document.querySelector('[data-view="Gantt"]')
-            if (kanban){
-                kanban.remove()
-            }
-            if (gantt){
-                gantt.remove()
-            }
-        },2000)
+        removeGanttKanban()
 
         setFullScreenButton()
+
+        const navBar = document.querySelector('body')
+        navBar.classList.add('full-width');
         
     })
 
-    setFullScreenButton()
-    
-    
 })
 
 function setFullScreenButton () {
@@ -83,4 +59,32 @@ function setFullScreenButton () {
     }
 }
  
- 
+function removeButtomCustom (){
+    if (frappe.session.user != 'Administrator'){
+        const getParent = document.querySelector('#page-Workspaces')
+        if(getParent){ 
+            const customActions = getParent.querySelector('.custom-actions')
+            const standardActions = getParent.querySelector('.standard-actions')
+            if (customActions){
+                customActions.remove()
+            }
+            if (standardActions){ 
+                standardActions.remove()
+            }
+        }
+    }
+}
+
+function removeGanttKanban () {
+    this.setTimeout(function(){
+       
+        let kanban = document.querySelector('[data-view="Kanban"]')
+        let gantt = document.querySelector('[data-view="Gantt"]')
+        if (kanban){
+            kanban.remove()
+        }
+        if (gantt){
+            gantt.remove()
+        }
+    },2000)
+}

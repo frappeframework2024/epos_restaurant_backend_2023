@@ -26,6 +26,7 @@ import Button from 'primevue/button';
 import AutoComplete from 'primevue/autocomplete';
 import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
+import ComIsLoadingPanel from '@/components/ComIsLoadingPanel.vue';
 
 const app = createApp(App);
 
@@ -47,6 +48,8 @@ window.call = frappe.call()
 app.component('DynamicDialog', DynamicDialog);
 app.component('Button', Button);
 app.component('AutoComplete', AutoComplete)
+
+app.component('ComIsLoadingPanel', ComIsLoadingPanel)
 
 app.component('Toast', Toast);
 

@@ -1,65 +1,68 @@
 
 <template>
-  <div class="container p-3 h-screen">
+<ComIsLoadingPanel :isLoading="is_busy"/>
+  <div class="h-full">
     <div class="inner h-full">
-      <div class="grid mt-0 h-full">
-        <div class="col-12 md:col-12 lg:col-6 h-full h-item">
-          <div class="bg-white border-round-lg p-4 h-full flex flex-column"
-            style="background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);">
-            <div v-if="1==0" class="card flex justify-content-center">
-              <Calendar v-model="date" showIcon inputStyle="border-radius: 50px 0 0 50px;text-align:center"
-                class="date-pick" dateFormat="yy/mm/dd" />
-            </div>
-            <!-- ===== -->
-            <div class="mt-3">
-              <div class="wrapper">
-                <div class="tab-wrapper">
-                  <ul class="tabs">
-                    <li class="tab-link" v-for="(item, index) in tap" :key="index" @click="currentTab(index)" :class="curTap === index ? 'active' : ''" :data-tab="index">{{ item }}</li>
-                  </ul>
-                </div>
-                <div class="content-wrapper">
-                  <div id="tab-1" class="tab-content" :class="curTap == 0 ? 'active' : ''">
-                    <div id="phone" class="mt-5">
-                      <div id="wrapper">
-                        <h1 class="text-center mb-3 text-white">Check In</h1>
-                        <form action="" method="GET" @submit.prevent="onCheckInClick">
-                          <div class="card flex justify-content-center">
-                            <!-- <input type="text" class="dial-up-input key mb-5" placeholder="Enter check-in code..."> -->
-                            <InputText type="text" class="dial-up-input key mb-5" v-model="checkInCode"
-                              placeholder="Enter check-in code..." />
-                          </div>
-                          <div class="flex justify-content-center w-full">
-                            <div>
-                              <div class="key dial" rel="1" @click="onKeyDialClick('1')">1</div>
-                              <div class="key dial" rel="2" @click="onKeyDialClick('2')">2</div>
-                              <div class="key dial" rel="3" @click="onKeyDialClick('3')">3</div>
-                              <div class="clear"></div>
-                              <div class="key dial" rel="4" @click="onKeyDialClick('4')">4</div>
-                              <div class="key dial" rel="5" @click="onKeyDialClick('5')">5</div>
-                              <div class="key dial" rel="6" @click="onKeyDialClick('6')">6</div>
-                              <div class="clear"></div>
-                              <div class="key dial" rel="7" @click="onKeyDialClick('7')">7</div>
-                              <div class="key dial" rel="8" @click="onKeyDialClick('8')">8</div>
-                              <div class="key dial" rel="9" @click="onKeyDialClick('9')">9</div>
-                              <div class="clear"></div>
-                              <div class="key dial special" rel="*" @click="onKeyDialClick('backspace')"><i class="pi pi-times"></i></div>
-                              <div class="key dial" rel="1" @click="onKeyDialClick('0')">0</div>
-                              <div class="key dial special" rel="#" @click="onCheckInClick"><i class="pi pi-check"></i></div>
+      <div class="grid m-0 h-full">
+        <div class="col-12 p-0 md:col-12 lg:col-6 h-item">
+          <div class="h-full">
+            <div class="bg-white p-4 h-full flex flex-column"
+              style="background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);">
+              <div v-if="1==0" class="card flex justify-content-center">
+                <Calendar v-model="date" showIcon inputStyle="border-radius: 50px 0 0 50px;text-align:center"
+                  class="date-pick" dateFormat="yy/mm/dd" />
+              </div>
+              <!-- ===== -->
+              <div class="mt-3">
+                <div class="wrapper">
+                  <div class="tab-wrapper">
+                    <ul class="tabs">
+                      <li class="tab-link" v-for="(item, index) in tap" :key="index" @click="currentTab(index)" :class="curTap === index ? 'active' : ''" :data-tab="index">{{ item }}</li>
+                    </ul>
+                  </div>
+                  <div class="content-wrapper">
+                    <div id="tab-1" class="tab-content" :class="curTap == 0 ? 'active' : ''">
+                      <div id="phone" class="mt-5">
+                        <div id="wrapper">
+                          <h1 class="text-center mb-3 text-white">Check In</h1>
+                          <form action="" method="GET" @submit.prevent="onCheckInClick">
+                            <div class="card flex justify-content-center">
+                              <!-- <input type="text" class="dial-up-input key mb-5" placeholder="Enter check-in code..."> -->
+                              <InputText type="text" class="dial-up-input key mb-5" v-model="checkInCode"
+                                placeholder="Enter check-in code..." />
                             </div>
-                          </div>
-                          <div class="clear"></div>
-                          <div class="flex mt-3 justify-content-center">
-                            <button type="submit" class="px-3 btn" >Check In<i class="pi pi-sign-in ml-2"></i></button>
-                          </div>
-                          <div class="clear"></div>
-                        </form>
+                            <div class="flex justify-content-center w-full">
+                              <div>
+                                <div class="key dial" rel="1" @click="onKeyDialClick('1')">1</div>
+                                <div class="key dial" rel="2" @click="onKeyDialClick('2')">2</div>
+                                <div class="key dial" rel="3" @click="onKeyDialClick('3')">3</div>
+                                <div class="clear"></div>
+                                <div class="key dial" rel="4" @click="onKeyDialClick('4')">4</div>
+                                <div class="key dial" rel="5" @click="onKeyDialClick('5')">5</div>
+                                <div class="key dial" rel="6" @click="onKeyDialClick('6')">6</div>
+                                <div class="clear"></div>
+                                <div class="key dial" rel="7" @click="onKeyDialClick('7')">7</div>
+                                <div class="key dial" rel="8" @click="onKeyDialClick('8')">8</div>
+                                <div class="key dial" rel="9" @click="onKeyDialClick('9')">9</div>
+                                <div class="clear"></div>
+                                <div class="key dial special" rel="*" @click="onKeyDialClick('backspace')"><i class="pi pi-times"></i></div>
+                                <div class="key dial" rel="1" @click="onKeyDialClick('0')">0</div>
+                                <div class="key dial special" rel="#" @click="onCheckInClick"><i class="pi pi-check"></i></div>
+                              </div>
+                            </div>
+                            <div class="clear"></div>
+                            <div class="flex mt-3 justify-content-center">
+                              <button type="submit" class="px-3 btn" >Check In<i class="pi pi-sign-in ml-2"></i></button>
+                            </div>
+                            <div class="clear"></div>
+                          </form>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div id="tab-2" class="tab-content" :class="curTap == 1 ? 'active' : ''">
-                    <div class="mt-5 flex justify-content-center">
-                        <ComAutoComplete doctype="Customer" @onSelected="onSelectCustomer"  placeholder="Enter Name..." />
+                    <div id="tab-2" class="tab-content" :class="curTap == 1 ? 'active' : ''">
+                      <div class="mt-5 flex justify-content-center">
+                          <ComAutoComplete doctype="Customer" @onSelected="onSelectCustomer"  placeholder="Enter Name..." />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -67,14 +70,16 @@
             </div>
           </div>
         </div>
-        <div class="col-12 md:col-12 lg:col-6 h-full h-item">
-          <div class="bg-white border-round-lg p-4 flex-column flex justify-content-between h-full">
-            <h3 class="mb-3">Recent Checked-Ins</h3>
-            <div class="scroll-item-cart">
-                <ComRecentCheckIn/> 
-            </div>
-            <div class="btn-view-all flex justify-content-end pt-3">
-              <button type="submit" class="px-3 btn"><i class="pi pi-eye mr-2"></i>View all Member Check In </button>
+        <div class="col-12 p-0 md:col-12 lg:col-6 h-item">
+          <div class="h-full">
+            <div class="bg-white p-4 flex-column flex justify-content-between h-full">
+              <h3 class="mb-3">Recent Checked-Ins</h3>
+              <div class="scroll-item-cart">
+                  <ComRecentCheckIn/> 
+              </div>
+              <div class="btn-view-all flex justify-content-end pt-3">
+                <button type="submit" class="px-3 btn"><i class="pi pi-eye mr-2"></i>View all Member Check In </button>
+              </div>
             </div>
           </div>
         </div>
@@ -92,7 +97,13 @@ import ComCheckInMembership from '@/views/components/ComCheckInMembership.vue';
 import ComAutoComplete from '@/components/ComAutoComplete.vue';
 import ComRecentCheckIn from '@/views/components/ComRecentCheckIn.vue';
 import { useDialog } from 'primevue/usedialog';
+import { useToast } from "primevue/usetoast";
+
+
 const dialog = useDialog();
+const toast = useToast();
+
+
 const isFullscreen = ref(false)
  
 const is_busy = ref(false)
@@ -126,14 +137,10 @@ function onCheckInClick(){
     }  
     is_busy.value = true; 
     window.call.get("epos_restaurant_2023.api.gym.membership_check_in",param)
-    .then((res)=>{
+    .then((res)=>{ 
       is_busy.value = false
       if(res.message){ 
         data.value = res.message;
-        data.value.membership.forEach((r)=>{
-          r.selected = false
-        });    
-
         const dialogRef = dialog.open(ComCheckInMembership, {
               data: data.value,
               props: {
@@ -155,6 +162,9 @@ function onCheckInClick(){
 
       }else{
         data.value = null
+        checkInCode.value = "";
+        toast.add({ severity: 'warn', summary: 'Member Code', detail: 'You input code is invalide member', life: 3000 });
+   
       }     
     })
     .catch((error)=>{

@@ -58,7 +58,20 @@ def membership_check_in(code,check_in_date):
         if len(data_query) > 0:
            already_checked = list(filter(lambda x: x.membership == m.name and m.access_type != "Unlimited", data_query)) 
            locked =  True if len(already_checked) > 0 else False
-               
+
+        ## get total checked in  
+        sql = """select count(`name`) as total_check_in from `tabMembership Check In Items` 
+					where member = '{}' 
+					and  membership = '{}' 
+					and docstatus = 1 """.format(code, m.name)
+		
+		 
+        exec = frappe.db.sql(sql, as_dict=1)
+        # frappe.throw(str(exec))
+        # frappe.throw(str(sql))
+        count = 0
+        if exec:
+            count = (exec[0].total_check_in or 0)
 
         memberships.append({   
             "name":m.name,             
@@ -75,7 +88,8 @@ def membership_check_in(code,check_in_date):
             "duration":m.duration,
             "per_duration":m.per_duration,
             "selected":False,
-            "locked":locked
+            "locked":locked,
+            "total_checked_in":count
         })
  
     data = {
@@ -89,15 +103,27 @@ def membership_check_in(code,check_in_date):
 
 @frappe.whitelist()
 def check_in_submit_data(data):
-
     doc = frappe.get_doc(json.loads(data))
     doc.insert()
 
     #submit doctype
     doc.submit()
-
-    frappe.db.commit()
-    
-
+    frappe.db.commit()  
     return doc
-    
+
+
+@frappe.whitelist()
+def get_recent_checked_ins():
+    query = """select 
+        concat(m.member,'-', m.member_name) as member, 
+        m.check_in_date, 
+        i.creation, 
+        i.membership,
+        i.membership_name,
+        i.membership_type 
+    from `tabMembership Check In Items` i 
+    inner join `tabMembership Check In` m on m.name = i.parent  
+    where m.docstatus = 1 and i.docstatus = 1
+    order by i.creation desc limit 15"""
+    docs = frappe.db.sql(query,as_dict=1)
+    return docs

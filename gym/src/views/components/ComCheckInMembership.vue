@@ -23,7 +23,8 @@
                   <div class="grid">
                     <div class="col">
                       <div class="mb-2">
-                        <span class="text-base">{{ d.membership_type }}</span> <span v-if="d.locked">| <label class="text-xs text-white bg-green-200 border-round-3xl px-2 white-space-nowrap" style="background-color: #033d2299 !important;">Checked-In</label></span>
+                        
+                        <span class="text-base">{{ d.name }} - {{ d.membership_type }}</span> 
                       </div>
                       <p class="m-0 text-400 text-xs">{{ d.membership }}</p>
                       <template v-if="d.duration_type == 'Limited Duration'">
@@ -34,11 +35,17 @@
                         <p class="text-400 text-xs">{{ `Duration: ${d.duration_type}` }}</p>
                       </template>
                     </div>
-                    <div class="col-3 flex justify-content-end" >
+                    <div class="col-4 flex justify-content-end" >
                       <div class="flex flex-column justify-content-between"> 
-                        <Checkbox v-if="!d.locked" v-model="d.selected" :binary="true" :disabled="d.locked"  @click="onMembershipSelected(d)" />
+                        <div class="flex justify-content-end">
+                          <Checkbox v-if="!d.locked" v-model="d.selected" :binary="true" :disabled="d.locked"  @click="onMembershipSelected(d)" />
+                        </div>
                         <div>
-                          <p class="text-3xl flex align-items-center h-full">2</p>
+                          <span>
+                            <label class="text-xs text-white bg-green-200 border-round-3xl p-2 " style="background-color: #033d2299 !important;">Checked-In <span class="bg-green-500 px-1 border-round-xs">{{ d.total_checked_in }}</span></label>
+                            <span class=""></span>
+                          </span>
+                          
                         </div>
                       </div>
                     </div>
@@ -277,7 +284,7 @@ function onCheckInClick() {
   })
 
   check.forEach((c) => {
-    submite_data.value.membership_check_in_item.push({ "membership": c.name })
+    submite_data.value.membership_check_in_item.push({ "membership": c.name,"member":data.value.member.name })
   }) 
   call.get('epos_restaurant_2023.api.gym.check_in_submit_data',{"data":submite_data.value}).then((res)=>{
       data.value = null;
