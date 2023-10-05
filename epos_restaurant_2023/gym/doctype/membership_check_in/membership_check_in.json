@@ -10,6 +10,10 @@
  "field_order": [
   "naming_series",
   "member",
+  "member_name",
+  "photo",
+  "gender",
+  "date_of_birth",
   "column_break_hhyk",
   "check_in_date",
   "amended_from",
@@ -18,10 +22,11 @@
  ],
  "fields": [
   {
+   "default": "CI.YYYY.####",
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Document Number",
-   "options": "CI.yyyy.####"
+   "options": "CI.YYYY.####"
   },
   {
    "fieldname": "amended_from",
@@ -36,6 +41,7 @@
    "default": "Today",
    "fieldname": "check_in_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Check In Date"
   },
   {
@@ -60,12 +66,39 @@
    "label": "Member",
    "options": "Customer",
    "reqd": 1
+  },
+  {
+   "fetch_from": "member.customer_name_en",
+   "fieldname": "member_name",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Member Name"
+  },
+  {
+   "fetch_from": "member.photo",
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Photo"
+  },
+  {
+   "fetch_from": "member.gender",
+   "fieldname": "gender",
+   "fieldtype": "Data",
+   "label": "Gender"
+  },
+  {
+   "fetch_from": "member.date_of_birth",
+   "fieldname": "date_of_birth",
+   "fieldtype": "Date",
+   "label": "Date of Birth"
   }
  ],
+ "image_field": "photo",
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-10-02 10:38:58.964922",
+ "modified": "2023-10-04 18:40:22.241156",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership Check In",

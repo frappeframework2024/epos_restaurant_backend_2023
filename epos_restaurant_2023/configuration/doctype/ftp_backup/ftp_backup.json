@@ -43,7 +43,7 @@
   },
   {
    "fieldname": "ftp_password",
-   "fieldtype": "Password",
+   "fieldtype": "Data",
    "label": "Password"
   },
   {
@@ -55,7 +55,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-09-19 16:54:44.256249",
+ "modified": "2023-10-04 10:25:44.728602",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "FTP Backup",

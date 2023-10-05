@@ -9,7 +9,7 @@ from frappe import _
 
 
 @frappe.whitelist()
-def membership_check_in(code): 
+def membership_check_in(code,check_in_date):  
     check_member = frappe.db.exists("Customer",code) 
     if not check_member:
         return False
@@ -23,23 +23,43 @@ def membership_check_in(code):
         "customer_group":cus.customer_group,
         "date_of_birth":cus.date_of_birth,
         "gender":cus.gender,
-        "phone_number":cus.phone_number
+        "phone_number":cus.phone_number,
+        "photo":cus.photo
     }
     data_membership = frappe.db.get_list("Membership",fields=[ "name","docstatus"], filters=[{'customer':code},{'docstatus':1}])
-    if len(data_membership) <= 0:
-        membership_family = frappe.db.sql("select member,parent from `tabMembership Family` where member = '{}' and docstatus = 1".format(code),as_dict=1)
-        if len(membership_family) <= 0:
-            return False
-        
-        data_membership = frappe.db.get_list("Membership",fields=[ "name","docstatus"], filters=[{'name':membership_family[0].parent},{'docstatus':1}])
+    # if len(data_membership) <= 0:
+    membership_family = frappe.db.sql("select member,parent from `tabMembership Family` where member = '{}' and docstatus = 1".format(code),as_dict=1)
+    if len(membership_family) > 0:
+        _data_membership = frappe.db.get_list("Membership",fields=[ "name","docstatus"], filters=[{'name':membership_family[0].parent},{'docstatus':1}])
+        for d in _data_membership:
+            data_membership.append(d)
     
-         
+
+    query = """select
+                DISTINCT
+                a.membership
+            from `tabMembership Check In Items` as a 
+            inner join `tabMembership Check In` as b on b.name = a.parent
+            where b.docstatus = 1 
+                and a.docstatus = 1
+                and b.check_in_date ='{}' 
+                and b.member = '{}'
+            group by 
+                a.membership""".format(check_in_date,code)
+    data_query = frappe.db.sql(query,as_dict=1) 
     memberships =[]
     for child in data_membership:
         m = frappe.get_doc("Membership",child.name)
         # membership_family_table = m.membership_family_table
         # if m.customer != member["name"]:
         #     membership_family_table = filter(lambda x: x.member == member["name"], m.membership_family_table) 
+
+        locked = False
+        if len(data_query) > 0:
+           already_checked = list(filter(lambda x: x.membership == m.name and m.access_type != "Unlimited", data_query)) 
+           locked =  True if len(already_checked) > 0 else False
+               
+
         memberships.append({   
             "name":m.name,             
             # "member_name":m.member_name,
@@ -54,12 +74,30 @@ def membership_check_in(code):
             "access_type":m.access_type,
             "duration":m.duration,
             "per_duration":m.per_duration,
-            # "membership_family_table":membership_family_table
+            "selected":False,
+            "locked":locked
         })
  
     data = {
+        'check_in_date':check_in_date,
         'member':member,
         'membership':memberships
     }
     return data
    
+
+
+@frappe.whitelist()
+def check_in_submit_data(data):
+
+    doc = frappe.get_doc(json.loads(data))
+    doc.insert()
+
+    #submit doctype
+    doc.submit()
+
+    frappe.db.commit()
+    
+
+    return doc
+    

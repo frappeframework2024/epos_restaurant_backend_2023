@@ -1,17 +1,5 @@
 [
  {
-  "data": "{\r\n    \"name\": \"Cashier Shift Sale Product Summary\",\r\n    \"title\": \"Sale Product Summary\",\r\n    \"print_format\": \"Cashier Shift Sale Product Summary\",\r\n    \"receipt_height\": 11.69,\r\n    \"receipt_width\": 3.14,\r\n    \"print_format_doc_type\": \"Cashier Shift\",\r\n    \"receipt_margin_top\": 0,\r\n    \"receipt_margin_right\": 0,\r\n    \"receipt_margin_bottom\": 0,\r\n    \"receipt_margin_left\": 0,\r\n    \"print_receipt_copies\": 1,\r\n    \"print_invoice_copies\": 1,\r\n    \"sort_order\": 1,\r\n    \"show_in_pos\": 1,\r\n    \"show_in_pos_report\": 1,\r\n    \"show_in_pos_closed_sale\": 0,\r\n    \"doctype\": \"POS Print Format Setting\",\r\n    \"__last_sync_on\": \"2023-09-01T07:17:30.354Z\"\r\n}",
-  "doc_name": "Cashier Shift Sale Product Summary",
-  "doc_type": "POS Print Format Setting",
-  "docstatus": 0,
-  "doctype": "Predefine Data",
-  "is_single": 0,
-  "modified": "2023-10-02 14:56:29.942377",
-  "name": "eb7dd3f2fb",
-  "sort": 350,
-  "title": "Cashier Shift Sale Product Summary"
- },
- {
   "data": "{\n  \"category_note_name_en\": \"Delete Bill Note\",\n  \"category_note_name_kh\": \"Delete Bill Note\",\n  \"disabled\": 0,\n  \"multiple_selected\": 0,\n  \"doctype\": \"Category Note\",\n  \"notes\": [\n    {\n      \"note\": \"Wrong Order\",\n      \"parent\": \"Delete Bill Note\",\n      \"parentfield\": \"notes\",\n      \"parenttype\": \"Category Note\",\n      \"doctype\": \"Cashier Notes\"\n    },\n    {\n      \"note\": \"Guest Leave\",\n      \"parent\": \"Delete Bill Note\",\n      \"parentfield\": \"notes\",\n      \"parenttype\": \"Category Note\",\n      \"doctype\": \"Cashier Notes\"\n    },\n    {\n      \"note\": \"Cashier Error\",\n      \"parent\": \"Delete Bill Note\",\n      \"parentfield\": \"notes\",\n      \"parenttype\": \"Category Note\",\n      \"doctype\": \"Cashier Notes\"\n    }\n  ]\n}",
   "doc_name": "Delete Bill Note",
   "doc_type": "Category Note",
@@ -1678,5 +1666,17 @@
   "name": "8074d1e1e2",
   "sort": 20,
   "title": "Other"
+ },
+ {
+  "data": "{\r\n    \"name\": \"Cashier Shift Sale Product Summary\",\r\n    \"title\": \"Sale Product Summary\",\r\n    \"print_format\": \"Cashier Shift Sale Product Summary\",\r\n    \"receipt_height\": 11.69,\r\n    \"receipt_width\": 3.14,\r\n    \"print_format_doc_type\": \"Cashier Shift\",\r\n    \"receipt_margin_top\": 0,\r\n    \"receipt_margin_right\": 0,\r\n    \"receipt_margin_bottom\": 0,\r\n    \"receipt_margin_left\": 0,\r\n    \"print_receipt_copies\": 1,\r\n    \"print_invoice_copies\": 1,\r\n    \"sort_order\": 1,\r\n    \"show_in_pos\": 1,\r\n    \"show_in_pos_report\": 1,\r\n    \"show_in_pos_closed_sale\": 0,\r\n    \"doctype\": \"POS Print Format Setting\",\r\n    \"__last_sync_on\": \"2023-09-01T07:17:30.354Z\"\r\n}",
+  "doc_name": "Cashier Shift Sale Product Summary",
+  "doc_type": "POS Print Format Setting",
+  "docstatus": 0,
+  "doctype": "Predefine Data",
+  "is_single": 0,
+  "modified": "2023-10-02 14:56:29.942377",
+  "name": "eb7dd3f2fb",
+  "sort": 350,
+  "title": "Cashier Shift Sale Product Summary"
  }
 ]
