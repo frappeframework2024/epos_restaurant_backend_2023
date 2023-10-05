@@ -99,12 +99,20 @@
                       <i class="pi pi-check-circle text-500"></i>
                     </div>
                     <div>
-                      <strong class="text-500">Time4 Training</strong>
-                      <p class="text-500 text-xs mb-0">90 Minutes</p>
+                      <strong class="text-500">{{ d.name }} - {{ d.membership_type }}</strong>
+                      <p class="text-500 text-xs mb-0">{{ d.membership }}</p>
                     </div>
                   </div>
                   <div class="flex align-items-end">
-                    <p class="text-end text-500 text-xs m-0">Strength & Conditioning</p>
+                    <p class="text-end text-500 text-xs m-0">
+                      <template v-if="d.access_type == 'Unlimited'">
+                        <span>Access: {{ d.access_type }}</span>
+                      </template>
+                      <template v-else>
+                        <span>Access: {{ `${d.duration} ${d.access_type.toLowerCase()} /
+                                    ${d.per_duration.toLowerCase()}` }}</span>
+                      </template>
+                    </p>
                   </div>
                 </div>
                </div> 
@@ -112,7 +120,7 @@
             </div>
           </div>
           <div class="flex justify-content-end mt-2">
-            <Button class="btn" style="line-height: 1.5;" @click="onCheckInClick">Confirm Check-In</Button>
+            <Button class="btn" style="line-height: 1.5;" :disabled="dataSelected.length<=0" @click="onCheckInClick">Confirm Check-In</Button>
           </div>
         </div>
       </div>
