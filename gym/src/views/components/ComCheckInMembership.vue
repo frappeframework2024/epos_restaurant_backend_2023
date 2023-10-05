@@ -1,5 +1,6 @@
 <template>
   <template v-if="data != null">
+     
     <div class="grid">
       <div class="col-5 bg-cyan-900 border-round-left-sm overflow-auto" style="height: calc(100vh - 12em);">
         <div class="flex flex-column">
@@ -90,7 +91,8 @@
               <p class="text-500 m-0 text-sm">Choose the items you are checking into:</p>
             </div>
             <div class="overflow-auto pr-4" style="height: calc(100vh - 23em);margin-right: -1.5rem;">
-              <div class="items-gym border-bottom-1 border-300 pb-3 mb-3">
+              <div v-for="(d, index) in dataSelected" :key="index"> 
+               <div class="items-gym border-bottom-1 border-300 pb-3 mb-3">
                 <div class="flex w-full justify-content-between">
                   <div class="flex">
                     <div class="flex h-full align-items-center mr-3">
@@ -105,146 +107,17 @@
                     <p class="text-end text-500 text-xs m-0">Strength & Conditioning</p>
                   </div>
                 </div>
-              </div>
-            
-              <div class="items-gym border-bottom-1 border-300 pb-3 mb-3">
-                <div class="flex w-full justify-content-between">
-                  <div class="flex">
-                    <div class="flex h-full align-items-center mr-3">
-                      <i class="pi pi-check-circle text-500"></i>
-                    </div>
-                    <div>
-                      <strong class="text-500">Time4 Training</strong>
-                      <p class="text-500 text-xs mb-0">90 Minutes</p>
-                    </div>
-                  </div>
-                  <div class="flex align-items-end">
-                    <p class="text-end text-500 text-xs m-0">Strength & Conditioning</p>
-                  </div>
-                </div>
-              </div>
-             
-              <div class="items-gym border-bottom-1 border-300 pb-3 mb-3">
-                <div class="flex w-full justify-content-between">
-                  <div class="flex">
-                    <div class="flex h-full align-items-center mr-3">
-                      <i class="pi pi-check-circle text-500"></i>
-                    </div>
-                    <div>
-                      <strong class="text-500">Time4 Training</strong>
-                      <p class="text-500 text-xs mb-0">90 Minutes</p>
-                    </div>
-                  </div>
-                  <div class="flex align-items-end">
-                    <p class="text-end text-500 text-xs m-0">Strength & Conditioning</p>
-                  </div>
-                </div>
-              </div>
-              <div class="items-gym border-bottom-1 border-300 pb-3 mb-3">
-                <div class="flex w-full justify-content-between">
-                  <div class="flex">
-                    <div class="flex h-full align-items-center mr-3">
-                      <i class="pi pi-check-circle text-500"></i>
-                    </div>
-                    <div>
-                      <strong class="text-500">Time4 Training</strong>
-                      <p class="text-500 text-xs mb-0">90 Minutes</p>
-                    </div>
-                  </div>
-                  <div class="flex align-items-end">
-                    <p class="text-end text-500 text-xs m-0">Strength & Conditioning</p>
-                  </div>
-                </div>
-              </div>
-              <div class="items-gym border-bottom-1 border-300 pb-3 mb-3">
-                <div class="flex w-full justify-content-between">
-                  <div class="flex">
-                    <div class="flex h-full align-items-center mr-3">
-                      <i class="pi pi-check-circle text-500"></i>
-                    </div>
-                    <div>
-                      <strong class="text-500">Time4 Training</strong>
-                      <p class="text-500 text-xs mb-0">90 Minutes</p>
-                    </div>
-                  </div>
-                  <div class="flex align-items-end">
-                    <p class="text-end text-500 text-xs m-0">Strength & Conditioning</p>
-                  </div>
-                </div>
-              </div>
-              <div class="items-gym border-bottom-1 border-300 pb-3 mb-3">
-                <div class="flex w-full justify-content-between">
-                  <div class="flex">
-                    <div class="flex h-full align-items-center mr-3">
-                      <i class="pi pi-check-circle text-500"></i>
-                    </div>
-                    <div>
-                      <strong class="text-500">Time4 Training</strong>
-                      <p class="text-500 text-xs mb-0">90 Minutes</p>
-                    </div>
-                  </div>
-                  <div class="flex align-items-end">
-                    <p class="text-end text-500 text-xs m-0">Strength & Conditioning</p>
-                  </div>
-                </div>
-              </div>
-              <div class="items-gym border-bottom-1 border-300 pb-3 mb-3">
-                <div class="flex w-full justify-content-between">
-                  <div class="flex">
-                    <div class="flex h-full align-items-center mr-3">
-                      <i class="pi pi-check-circle text-500"></i>
-                    </div>
-                    <div>
-                      <strong class="text-500">Time4 Training</strong>
-                      <p class="text-500 text-xs mb-0">90 Minutes</p>
-                    </div>
-                  </div>
-                  <div class="flex align-items-end">
-                    <p class="text-end text-500 text-xs m-0">Strength & Conditioning</p>
-                  </div>
-                </div>
-              </div>
-              <div class="items-gym border-bottom-1 border-300 pb-3 mb-3">
-                <div class="flex w-full justify-content-between">
-                  <div class="flex">
-                    <div class="flex h-full align-items-center mr-3">
-                      <i class="pi pi-check-circle text-500"></i>
-                    </div>
-                    <div>
-                      <strong class="text-500">Time4 Training</strong>
-                      <p class="text-500 text-xs mb-0">90 Minutes</p>
-                    </div>
-                  </div>
-                  <div class="flex align-items-end">
-                    <p class="text-end text-500 text-xs m-0">Strength & Conditioning</p>
-                  </div>
-                </div>
-              </div>
-              <div class="items-gym border-bottom-1 border-300 pb-3 mb-3">
-                <div class="flex w-full justify-content-between">
-                  <div class="flex">
-                    <div class="flex h-full align-items-center mr-3">
-                      <i class="pi pi-check-circle text-500"></i>
-                    </div>
-                    <div>
-                      <strong class="text-500">Time4 Training</strong>
-                      <p class="text-500 text-xs mb-0">90 Minutes</p>
-                    </div>
-                  </div>
-                  <div class="flex align-items-end">
-                    <p class="text-end text-500 text-xs m-0">Strength & Conditioning</p>
-                  </div>
-                </div>
-              </div>
-              
+               </div> 
+              </div>             
             </div>
           </div>
-          <div class="flex justify-content-end mt-3">
-            <Button @click="onCheckInClick">Confirm Check-In</Button>
+          <div class="flex justify-content-end mt-2">
+            <Button class="btn" style="line-height: 1.5;" @click="onCheckInClick">Confirm Check-In</Button>
           </div>
         </div>
       </div>
     </div>
+ 
   </template>
 </template>
 <script setup>
@@ -259,6 +132,8 @@ const call = frappe.call();
 const dialogRef = inject("dialogRef");
 const data = ref(null)
 
+const dataSelected = ref([])
+
 
 onMounted(() => {
   data.value = dialogRef.value.data
@@ -267,6 +142,9 @@ onMounted(() => {
 function onMembershipSelected(m) {
   if (!m.locked)
     m.selected = !m.selected
+
+
+  dataSelected.value = data.value.membership.filter((r) => r.selected)
 }
 
 function onCheckInClick() {
@@ -299,6 +177,9 @@ function onCheckInClick() {
 .profile.popup {
   width: 100px !important;
   height: 100px !important;
+}
+.text-500{
+  color: #4b535b !important;
 }
 
 .member-checkin * {

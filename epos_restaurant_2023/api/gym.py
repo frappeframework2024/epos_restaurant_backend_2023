@@ -115,12 +115,14 @@ def check_in_submit_data(data):
 @frappe.whitelist()
 def get_recent_checked_ins():
     query = """select 
-        concat(m.member,'-', m.member_name) as member, 
+        concat(m.member,'-', m.member_name) as member_name, 
+        m.photo,
         m.check_in_date, 
         i.creation, 
         i.membership,
         i.membership_name,
-        i.membership_type 
+        i.membership_type ,
+        i.check_in_number
     from `tabMembership Check In Items` i 
     inner join `tabMembership Check In` m on m.name = i.parent  
     where m.docstatus = 1 and i.docstatus = 1

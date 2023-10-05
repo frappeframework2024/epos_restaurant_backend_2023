@@ -1,7 +1,7 @@
 
 <template>
 <ComIsLoadingPanel :isLoading="is_busy"/>
-  <div class="h-full">
+  <div style="height: 100vh;">
     <div class="inner h-full">
       <div class="grid m-0 h-full">
         <div class="col-12 p-0 md:col-12 lg:col-6 h-item">
@@ -75,7 +75,7 @@
             <div class="bg-white p-4 flex-column flex justify-content-between h-full">
               <h3 class="mb-3">Recent Checked-Ins</h3>
               <div class="scroll-item-cart">
-                  <ComRecentCheckIn/> 
+                  <ComRecentCheckIn v-if="is_load_recent_check_in"/> 
               </div>
               <div class="btn-view-all flex justify-content-end pt-3">
                 <button type="submit" class="px-3 btn"><i class="pi pi-eye mr-2"></i>View all Member Check In </button>
@@ -113,6 +113,7 @@ const curTap = ref(0);
 const checkInCode = ref("");
 const data = ref(null);
 const tap = ref(['Enter Code', 'Name Search'])
+const is_load_recent_check_in = ref(true)
 
 const currentTab = (index) => {
   curTap.value = index
@@ -155,7 +156,14 @@ function onCheckInClick(){
               onClose: (options) => { 
                   const data = options.data;
                   if (data) {
-                    console.log(data)
+                    toast.add({ severity: 'success', summary: 'Check In', detail: 'Check In successfully.', life: 3000 });
+                    checkInCode.value = "";
+                    is_load_recent_check_in.value = false
+                    setTimeout(() => {
+                      is_load_recent_check_in.value = true;
+                      console.log(data)
+                    }, 50); 
+                  
                   }
               }
           });
@@ -297,9 +305,9 @@ h6 {
 }
 
 .profile {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  /* border-radius: 50%; */
   overflow: hidden;
 }
 

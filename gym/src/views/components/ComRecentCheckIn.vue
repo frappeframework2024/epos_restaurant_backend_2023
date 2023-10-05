@@ -7,25 +7,19 @@
                   </div>
                   <div class="profile-info">
                     <h4>{{ d.member_name }}</h4>
-                    <p class="m-0">Yog</p>
-                    <label class="date">Oct 3, 12:00am</label>
+                    <p class="m-0"> <strong> {{ d.membership_type }}</strong></p>
+                    <p class="m-0">{{ d.membership_name }}</p>
+                    <label class="date">{{ moment(d.creation).format("DD-MM-YYYY hh:mm:ss A") }}</label>
                   </div>
                 </div>
               </div>
 </template>
 
 <script setup>
+  import moment from "moment"
   import { ref, inject } from "vue"
-  const data = ref()
-  window.db.getDocList("Membership Check In",
-      {
-          fields:["name","member_name","photo","gender","date_of_birth"],
-          orderBy: {
-              field: 'creation',
-              order: 'desc',
-          },
-      }
-  ).then(r => {
-      data.value = r
+  const data = ref([])
+  window.call.get("epos_restaurant_2023.api.gym.get_recent_checked_ins").then(res => {
+      data.value = res.message
   })
 </script>
