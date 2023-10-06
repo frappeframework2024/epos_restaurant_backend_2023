@@ -6,10 +6,12 @@ from frappe.model.document import Document
 from frappe import utils
 from frappe import _
 from datetime import datetime
+from frappe.utils.data import strip
 
 class Customer(Document):
 	def validate(self):
-		 
+
+
 		if self.date_of_birth:
 			if datetime.strptime(str(self.date_of_birth), "%Y-%m-%d").date() >datetime.strptime(utils.today(), "%Y-%m-%d").date():
 				frappe.throw(_("Date of birth cannot be greater than the current time"))
@@ -30,6 +32,24 @@ class Customer(Document):
 	# 		else:
 	# 			# remove profile
 	# 			frappe.db.set_value('Customer', self.name,{'photo':''})
+
+	def autoname(self):
+		from frappe.model.naming import set_name_by_naming_series, get_default_naming_series,make_autoname
+
+		if strip(self.customer_code) =="":
+			set_name_by_naming_series(self)
+			self.customer_code = self.name		
+
+		self.customer_code = strip(self.customer_code)
+		self.name = self.customer_code
+
+
+	def after_rename(self, old_name,new_name,merge):  
+		frappe.db.set_value('Customer', new_name, {
+			'customer_code_name': "{} - {}".format(new_name,self.customer_name_en),
+			'customer_code': new_name		
+		}) 
+		
   
 @frappe.whitelist()
 def get_customer_order_summary(customer):
