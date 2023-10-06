@@ -25,10 +25,9 @@
                       <div id="phone" class="mt-5">
                         <div id="wrapper">
                           <h1 class="text-center mb-3 text-white">Check In</h1>
-                          <form action="" method="GET" @submit.prevent="onCheckInClick">
-                            <div class="card flex justify-content-center">
-                              <!-- <input type="text" class="dial-up-input key mb-5" placeholder="Enter check-in code..."> -->
-                              <InputText type="text" class="dial-up-input key mb-5" v-model="checkInCode"
+                          <form action="" method="GET" @submit.prevent="onCheckInClick" v-focustrap>
+                            <div class="card flex justify-content-center" > 
+                              <InputText type="text" class="dial-up-input key mb-5" v-model="checkInCode" autofocus 
                                 placeholder="Enter check-in code..." />
                             </div>
                             <div class="flex justify-content-center w-full">
@@ -78,7 +77,7 @@
                   <ComRecentCheckIn v-if="is_load_recent_check_in"/> 
               </div>
               <div class="btn-view-all flex justify-content-end pt-3">
-                <button type="submit" class="px-3 btn"><i class="pi pi-eye mr-2"></i>View all Member Check In </button>
+                <button  class="px-3 btn" @click="onViewAllMemberCheckInClick"><i class="pi pi-eye mr-2" ></i>View all Member Check In </button>
               </div>
             </div>
           </div>
@@ -182,14 +181,21 @@ function onCheckInClick(){
 }
 
 function onSelectCustomer(data){
+  if(data.value == undefined){
+    return
+  } 
   checkInCode.value = data.value
-  onCheckInClick()
+  onCheckInClick();
+  checkInCode.value = ""
+}
+
+function onViewAllMemberCheckInClick(){
+  window.parent.postMessage("message","*")
 }
 
 window.addEventListener("message", receiveMessageFromIframe, false);
 
-	function receiveMessageFromIframe(event) {
-		
+	function receiveMessageFromIframe(event) {		
 		isFullscreen.value = true
 	}
 

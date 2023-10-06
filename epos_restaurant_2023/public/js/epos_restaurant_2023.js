@@ -25,7 +25,7 @@ window.addEventListener('load', function () {
 })
 
 function setFullScreenButton () {
-    if ((frappe.get_route()) == 'Workspaces,Member Check In'){
+    if ((frappe.get_route()) == 'Workspaces,Check In'){
         if (!document.querySelector('#btn-full-screen')){
             let btn = this.document.createElement('button')
             btn.setAttribute('id', 'btn-full-screen')

@@ -208,7 +208,7 @@ fixtures = [
     {"dt": "Predefine Data"},
     {"dt": "Custom HTML Block"},
     {"dt": "POS Translation","filters": [["is_standard", "=", "1"]]},
-    {"dt": "Website Theme","filters": [["name", "=", "ESTC Theme"]]},
+    {"dt": "Website Theme","filters": [["name", "=", "estc theme"]]},
     {"dt": "Color"},
     {"dt": "Print Style","filters": [["name", "=", "Default Style"]]},
 ]

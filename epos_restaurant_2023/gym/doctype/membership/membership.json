@@ -13,6 +13,7 @@
   "posting_date",
   "customer_code",
   "customer",
+  "photo",
   "member_name",
   "duration_type",
   "membership_duration",
@@ -247,8 +248,16 @@
    "in_standard_filter": 1,
    "label": "Member Name",
    "reqd": 1
+  },
+  {
+   "fetch_from": "customer.photo",
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Photo"
   }
  ],
+ "image_field": "photo",
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [
@@ -258,7 +267,7 @@
    "link_fieldname": "membership"
   }
  ],
- "modified": "2023-10-02 10:50:18.893083",
+ "modified": "2023-10-06 09:28:15.504231",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership",
