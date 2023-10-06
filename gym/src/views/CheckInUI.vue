@@ -1,5 +1,5 @@
 
-<template>
+<template >
 <ComIsLoadingPanel :isLoading="is_busy"/>
   <div style="height: 100vh;">
     <div class="inner h-full">
@@ -71,7 +71,7 @@
         </div>
         <div class="col-12 p-0 md:col-12 lg:col-6 h-item">
           <div class="h-full">
-            <div class="bg-white p-4 flex-column flex justify-content-between h-full">
+            <div class="bg-white p-4 h-full">
               <h3 class="mb-3">Recent Check-In</h3>
               <div class="scroll-item-cart">
                   <ComRecentCheckIn v-if="is_load_recent_check_in"/> 
@@ -89,7 +89,7 @@
 
 <script setup>
   import moment from 'moment';
-import { ref, inject } from 'vue'
+import { ref, inject, onMounted } from 'vue'
 import Calendar from 'primevue/calendar';
 import InputText from 'primevue/inputtext';
 import ComCheckInMembership from '@/views/components/ComCheckInMembership.vue';
@@ -118,6 +118,10 @@ const currentTab = (index) => {
   curTap.value = index
 }
 
+
+onMounted(()=>{ 
+  window.parent.postMessage("full_screen","*")
+})
 
 function onKeyDialClick(n){
   if(n=="backspace"){
@@ -190,7 +194,7 @@ function onSelectCustomer(data){
 }
 
 function onViewAllMemberCheckInClick(){
-  window.parent.postMessage("message","*")
+  window.parent.postMessage("view_all_recent_membership_check_in","*")
 }
 
 window.addEventListener("message", receiveMessageFromIframe, false);
@@ -334,7 +338,7 @@ h6 {
 
 .scroll-item-cart {
   overflow: auto;
-  height: 33rem;
+  height: calc(100vh - 147px);
 }
 
 button.btn {
