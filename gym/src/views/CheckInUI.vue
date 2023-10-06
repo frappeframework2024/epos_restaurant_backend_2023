@@ -73,7 +73,7 @@
         <div class="col-12 p-0 md:col-12 lg:col-6 h-item">
           <div class="h-full">
             <div class="bg-white p-4 flex-column flex justify-content-between h-full">
-              <h3 class="mb-3">Recent Checked-Ins</h3>
+              <h3 class="mb-3">Recent Check-In</h3>
               <div class="scroll-item-cart">
                   <ComRecentCheckIn v-if="is_load_recent_check_in"/> 
               </div>
@@ -176,7 +176,8 @@ function onCheckInClick(){
       }     
     })
     .catch((error)=>{
-      console.log(error)
+      console.log(error);
+      is_busy.value = false; 
     })
 }
 
