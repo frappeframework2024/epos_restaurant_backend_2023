@@ -334,7 +334,7 @@ h6 {
 
 .scroll-item-cart {
   overflow: auto;
-  height: calc(100vh - 242px);
+  height: 33rem;
 }
 
 button.btn {

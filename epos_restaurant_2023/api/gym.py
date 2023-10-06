@@ -113,8 +113,10 @@ def check_in_submit_data(data):
 
 
 @frappe.whitelist()
-def get_recent_checked_ins():
+def get_recent_checked_ins(limit=15):
     query = """select 
+        i.name,
+        m.name as membership_check_in,
         concat(m.member,'-', m.member_name) as member_name, 
         m.photo,
         m.check_in_date, 
@@ -126,6 +128,6 @@ def get_recent_checked_ins():
     from `tabMembership Check In Items` i 
     inner join `tabMembership Check In` m on m.name = i.parent  
     where m.docstatus = 1 and i.docstatus = 1
-    order by i.creation desc limit 15"""
+    order by i.creation desc limit {}""".format(limit)
     docs = frappe.db.sql(query,as_dict=1)
     return docs
