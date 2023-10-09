@@ -46,8 +46,8 @@
  {
   "docstatus": 0,
   "doctype": "Custom HTML Block",
-  "html": "<iframe src='/gym/check-in-ui' style=\"width:100%;border:0\"/>\n\n",
-  "modified": "2023-10-06 17:17:14.836089",
+  "html": "<iframe src='http://192.168.10.19:5577/gym/check-in-ui' style=\"width:100%;border:0\"/>\n\n",
+  "modified": "2023-10-09 13:58:27.089064",
   "name": "Member Check In",
   "private": 0,
   "roles": [],

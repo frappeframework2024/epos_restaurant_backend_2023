@@ -89,6 +89,7 @@
   },
   {
    "fetch_from": "member.date_of_birth",
+   "fetch_if_empty": 1,
    "fieldname": "date_of_birth",
    "fieldtype": "Date",
    "label": "Date of Birth"
@@ -98,7 +99,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-10-04 18:40:22.241156",
+ "modified": "2023-10-07 15:02:18.588950",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership Check In",

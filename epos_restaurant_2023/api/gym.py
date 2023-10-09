@@ -82,6 +82,7 @@ def membership_check_in(code,check_in_date):
             "membership":m.membership,
             "membership_type":m.membership_type,
             "duration_base_on":m.duration_base_on,
+            "posting_date":m.posting_date,
             "start_date":m.start_date,
             "end_date":m.end_date,
             "access_type":m.access_type,

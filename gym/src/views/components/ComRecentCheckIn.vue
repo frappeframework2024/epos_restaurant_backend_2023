@@ -21,7 +21,7 @@
   import moment from "moment"
   import { ref, inject } from "vue"
   const data = ref([])
-  window.call.get("epos_restaurant_2023.api.gym.get_recent_checked_ins").then(res => {
+  window.call.get("epos_restaurant_2023.api.gym.get_recent_checked_ins",{"limit":10}).then(res => {
       data.value = res.message
   })
 </script>

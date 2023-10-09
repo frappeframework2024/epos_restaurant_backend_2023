@@ -5,20 +5,27 @@
       <div class="col-5 bg-cyan-900 border-round-left-sm overflow-auto" style="height: calc(100vh - 12em);">
         <div class="flex flex-column">
           <div>
-            <p class="text-white text-center m-3 text-4xl">Welcome back!</p>
+            <p class="text-white text-center m-3 text-3xl">Welcome back!</p>
             <div class="flex w-full justify-content-center">
               <div class="profile popup">
                 <img class="w-full h-full" :src="data?.member?.photo ? data?.member?.photo : '/src/assets/images/d-profile.jpeg'">
               </div>
             </div>
-            <h2 class="text-center text-white my-3">{{ data.member.customer_name_en }}</h2>
+            <h3 class="text-center text-white my-3">{{ `${data.member.customer_name_en== data.member.customer_name_kh?data.member.customer_name_en: data.member.customer_name_en + ' ('+data.member.customer_name_kh+')'}` }}</h3>
+            <h5 class="text-center text-white my-3">{{ `${data.member.name}` }}</h5>
+         
             <div style="width:50%;border-color: #e9ecef33 !important;" class="border-1 m-auto"></div>
-            <p class="text-center my-3"><strong class="text-white">Membership</strong></p>
+            <h3 class="text-center my-3"><strong class="text-white">Membership</strong></h3>
           </div>
+   
           <div>
+
+            <h4 class="text-center my-3" v-if="data.membership.length<=0"><i><strong class="text-white">Not Available</strong></i></h4>
+
             <div class="member-checkin inner-items p-2 mb-2 border-round-sm" v-for="(d, index) in data.membership" :key="index"
             :style="`background: ${d.locked ? 'rgb(255 255 255 / 7%)' : '#ffffff2b'};border: 1px solid ${d.selected ? 'green' : 'transparent'};`"
             >
+
               <div :disabled="d.locked"  @click="onMembershipSelected(d)" :style="!d.locked?'cursor: pointer':'cursor: hand'" >
                 <div class="item-inner-text pb-2 mb-2">
                   <div class="grid">
@@ -27,6 +34,7 @@
                         
                         <span class="text-base">{{ d.name }} - {{ d.membership_type }}</span> 
                       </div>
+                      <p class="text-400 text-xs">Register on: {{ d.posting_date }}</p> 
                       <p class="m-0 text-400 text-xs">{{ d.membership }}</p>
                       <template v-if="d.duration_type == 'Limited Duration'">
                         <p class="text-400 text-xs">{{ `${d.duration_type} : ${d.membership_duration} ${d.duration_base_on}` }}</p>
@@ -35,6 +43,7 @@
                       <template v-else>
                         <p class="text-400 text-xs">{{ `Duration: ${d.duration_type}` }}</p>
                       </template>
+                    
                     </div>
                     <div class="col-4 flex justify-content-end" >
                       <div class="flex flex-column justify-content-between"> 
@@ -120,7 +129,7 @@
             </div>
           </div>
           <div class="flex justify-content-end mt-2">
-            <Button class="btn" style="line-height: 1.5;" :disabled="dataSelected.length<=0" @click="onCheckInClick">Confirm Check-In</Button>
+            <Button class="btn" label="Confirm Check-In"  :loading="is_processing" style="line-height: 1.5;" :disabled="dataSelected.length<=0 || is_processing" @click="onCheckInClick"/>
           </div>
         </div>
       </div>
@@ -140,10 +149,12 @@ const call = frappe.call();
 const dialogRef = inject("dialogRef");
 const data = ref(null)
 
-const dataSelected = ref([])
+const dataSelected = ref([]);
+const is_processing = ref(false)
 
 
 onMounted(() => {
+  is_processing.value = false;
   data.value = dialogRef.value.data
 })
 
@@ -156,10 +167,14 @@ function onMembershipSelected(m) {
 }
 
 function onCheckInClick() {
+
+
+
   const check = data.value.membership.filter((r) => r.selected);
   if (check.length <= 0) {
     return
   } 
+  is_processing.value = true;
 
   const submite_data = ref(
     {
@@ -167,15 +182,21 @@ function onCheckInClick() {
     "member": data.value.member.name,
     "check_in_date": data.value.check_in_date,    
     "membership_check_in_item": []
-  })
+  });
 
   check.forEach((c) => {
-    submite_data.value.membership_check_in_item.push({ "membership": c.name,"member":data.value.member.name })
-  }) 
+    submite_data.value.membership_check_in_item.push({ 
+      "membership": c.name,
+      "member":data.value.member.name 
+    })
+  });
+
   call.get('epos_restaurant_2023.api.gym.check_in_submit_data',{"data":submite_data.value}).then((res)=>{
       data.value = null;
       dialogRef.value.close(res.message);
+      is_processing.value = false;
   }).catch((error) => {
+    is_processing.value = false;
     console.log({'submit_data_bug':error})
   });
  

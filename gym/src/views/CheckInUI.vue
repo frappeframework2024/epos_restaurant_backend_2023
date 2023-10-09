@@ -27,6 +27,7 @@
                           <h1 class="text-center mb-3 text-white">Check In</h1>
                           <form action="" method="GET" @submit.prevent="onCheckInClick" v-focustrap>
                             <div class="card flex justify-content-center" > 
+                              
                               <InputText type="text" class="dial-up-input key mb-5" v-model="checkInCode" autofocus 
                                 placeholder="Enter check-in code..." />
                             </div>
@@ -44,7 +45,7 @@
                                 <div class="key dial" rel="8" @click="onKeyDialClick('8')">8</div>
                                 <div class="key dial" rel="9" @click="onKeyDialClick('9')">9</div>
                                 <div class="clear"></div>
-                                <div class="key dial special" rel="*" @click="onKeyDialClick('backspace')"><i class="pi pi-times"></i></div>
+                                <div class="key dial special" rel="*" @click="onKeyDialClick('backspace')"><i class="pi pi-delete-left"></i></div>
                                 <div class="key dial" rel="1" @click="onKeyDialClick('0')">0</div>
                                 <div class="key dial special" rel="#" @click="onCheckInClick"><i class="pi pi-check"></i></div>
                               </div>
@@ -88,8 +89,9 @@
 </template>
 
 <script setup>
-  import moment from 'moment';
-import { ref, inject, onMounted } from 'vue'
+
+import moment from 'moment';
+import { ref, onMounted } from 'vue'
 import Calendar from 'primevue/calendar';
 import InputText from 'primevue/inputtext';
 import ComCheckInMembership from '@/views/components/ComCheckInMembership.vue';
@@ -134,6 +136,10 @@ function onKeyDialClick(n){
 }
 
 function onCheckInClick(){
+  if(checkInCode.value==""){
+    toast.add({ severity: 'warn', summary: 'Member Code', detail: 'Please input member code.', life: 3000 });
+    return
+  }
   
   const param = {
       'code':checkInCode.value, 
@@ -144,7 +150,28 @@ function onCheckInClick(){
     .then((res)=>{ 
       is_busy.value = false
       if(res.message){ 
-        data.value = res.message;
+        
+        data.value = {
+          "check_in_date":res.message.check_in_date,
+          "member":res.message.member,
+          "membership":[],
+        } 
+
+        const now = new Date(moment().format('YYYY-MM-DD'))
+        res.message.membership.forEach(d => {
+          if(d.duration_type == "Limited Duration"){ 
+            const start_date = new Date(d.start_date);
+            const end_date = new Date(d.end_date);
+            if(start_date <= now){
+              if(now <= end_date){
+                data.value.membership.push(d)
+              }
+            } 
+          }else{
+            data.value.membership.push(d)
+          }
+        }); 
+        
         const dialogRef = dialog.open(ComCheckInMembership, {
               data: data.value,
               props: {
@@ -164,7 +191,6 @@ function onCheckInClick(){
                     is_load_recent_check_in.value = false
                     setTimeout(() => {
                       is_load_recent_check_in.value = true;
-                      console.log(data)
                     }, 50); 
                   
                   }
@@ -174,7 +200,7 @@ function onCheckInClick(){
       }else{
         data.value = null
         checkInCode.value = "";
-        toast.add({ severity: 'warn', summary: 'Member Code', detail: 'You input code is invalide member', life: 3000 });
+        toast.add({ severity: 'warn', summary: 'Member Code', detail: 'You input code is invalide member.', life: 3000 });
    
       }     
     })
