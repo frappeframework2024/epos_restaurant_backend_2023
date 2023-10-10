@@ -27,6 +27,7 @@
   "price",
   "discount_type",
   "discount",
+  "total_discount",
   "column_break_higk",
   "grand_total",
   "total_paid",
@@ -256,6 +257,14 @@
    "fieldtype": "Attach Image",
    "hidden": 1,
    "label": "Photo"
+  },
+  {
+   "default": "0",
+   "fetch_from": ".cost",
+   "fieldname": "total_discount",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "label": "Total Discount"
   }
  ],
  "image_field": "photo",
@@ -268,7 +277,7 @@
    "link_fieldname": "membership"
   }
  ],
- "modified": "2023-10-10 10:45:08.702762",
+ "modified": "2023-10-10 11:35:43.953902",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership",

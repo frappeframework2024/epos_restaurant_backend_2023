@@ -40,16 +40,14 @@ io.on('connection', (socket) => {
   // })
 
   socket.on("RefreshReservationDetail",(reservation)=>{
- 
     io.emit("RefreshReservationDetail",reservation)
   })
 
   socket.on("UpdateCashierShift",(arg)=>{
     io.emit("UpdateCashierShift",arg)
   })
-
+  
   socket.on("RefreshData",(arg)=>{
-    //arg data sould be json format {property:"Property name","action":"refersh_city_ledger"}
     io.emit("RefreshData",arg)
   })
   

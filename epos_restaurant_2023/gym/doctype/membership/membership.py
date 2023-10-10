@@ -23,9 +23,11 @@ class Membership(Document):
 
 
 		if self.discount_type=="Percent":
-			self.grand_total = (self.price or 0) - ((self.price or 0) * (self.discount or 0)/100)
+			self.total_discount = ((self.price or 0) * (self.discount or 0)/100)
+			self.grand_total = (self.price or 0) - self.total_discount
 		else:
-			self.grand_total = (self.price or 0) - (self.price or 0) - (self.discount or 0)
+			self.total_discount =  (self.discount or 0)
+			self.grand_total = (self.price or 0) - self.total_discount
 		
 		#update date balance
 		self.balance = self.grand_total - (self.total_paid or 0)
