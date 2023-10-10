@@ -58,7 +58,7 @@ def validate(filters):
 
 				
 
-def get_columns(filters):
+def get_columns(filters): 
 	columns = []
 	columns.append({'fieldname':'row_group','label':filters.row_group,'fieldtype':'Data','align':'left','width':250})
 
@@ -260,6 +260,7 @@ def get_conditions(filters,group_filter=None):
 	return conditions
 
 def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
+	
 	row_group = [d["fieldname"] for d in get_row_groups() if d["label"]==filters.row_group][0]
 
 	if(parent_row_group!=None):
@@ -299,7 +300,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 	
 	return data
  
-def get_report_group_data(filters):
+def get_report_group_data(filters): 
 	parent = get_report_data(filters, filters.parent_row_group, 0)
 	data=[] 
 	for p in parent:

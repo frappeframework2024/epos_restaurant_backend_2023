@@ -31,13 +31,11 @@ io.on('connection', (socket) => {
   })
 
 
-  //edoor raise event
+ 
   socket.on("RefresheDoorDashboard",(arg)=>{
     io.emit("RefresheDoorDashboard",arg)
   })
-  // socket.on("RefreshNightAuditStep",(arg)=>{
-  //   io.emit("RefreshNightAuditStep",arg)
-  // })
+ 
 
   socket.on("RefreshReservationDetail",(reservation)=>{
     io.emit("RefreshReservationDetail",reservation)
@@ -46,10 +44,23 @@ io.on('connection', (socket) => {
   socket.on("UpdateCashierShift",(arg)=>{
     io.emit("UpdateCashierShift",arg)
   })
-  
+
   socket.on("RefreshData",(arg)=>{
     io.emit("RefreshData",arg)
   })
+
+  socket.on("Housekeeping",(arg)=>{
+    io.emit("Housekeeping",arg)
+  })
+  
+  socket.on("ComHousekeepingStatistic",(arg)=>{
+    io.emit("ComHousekeepingStatistic",arg)
+  })
+  
+  socket.on("ComHousekeepingStatus",(arg)=>{
+    io.emit("ComHousekeepingStatus",arg)
+  })
+
   
 });
 

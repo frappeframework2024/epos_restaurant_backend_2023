@@ -36,7 +36,8 @@
   "section_break_onij",
   "is_foc",
   "account_code",
-  "currency_precision"
+  "currency_precision",
+  "currency_format"
  ],
  "fields": [
   {
@@ -216,12 +217,19 @@
    "fieldtype": "Int",
    "hidden": 1,
    "label": "Currency Precision"
+  },
+  {
+   "fetch_from": "currency.custom_pos_currency_format",
+   "fieldname": "currency_format",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Currency Format"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-09-30 11:32:53.739405",
+ "modified": "2023-10-10 13:54:48.456728",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership Payment",

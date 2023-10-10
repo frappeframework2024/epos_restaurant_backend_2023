@@ -23,21 +23,10 @@ def execute(filters=None):
 	return get_columns(filters), report_data, None, None, None,skip_total_row
 
 def validate(filters):
-	# if not filters.business_branch:
-	# 	filters.business_branch = frappe.db.get_list("Business Branch",pluck='name')
-  
-	# if not filters.outlet:
-	# 	filters.outlet = frappe.db.get_list("Outlet",pluck='name')  
-
 	if filters.start_date and filters.end_date:
 		if filters.start_date > filters.end_date:
 			frappe.throw("The 'Start Date' ({}) must be before the 'End Date' ({})".format(filters.start_date, filters.end_date))
 
-
-
-	if filters.row_group and filters.parent_row_group:
-		if(filters.row_group == filters.parent_row_group):
-			frappe.throw("Parent row group and row group can not be the same")
 
 
 def get_columns(filters):
@@ -91,15 +80,3 @@ def get_report_data(filters):
 
 	return data
  
-
-def get_report_summary(data,filters):
-	report_summary = [] 
-	report_summary.append({"label":_("Quantity"),"value":Enumerable(data).sum(lambda x: x.total_quantity or 0),"indicator":"blue"})	
-	report_summary.append({"label":_("Sub Total"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.sub_total or 0)),"indicator":"blue"})	
-	report_summary.append({"label":_("Discount"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.total_discount or 0)),"indicator":"red"})	
-	report_summary.append({"label":_("Tax"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.total_tax or 0)),"indicator":"red"})	
-	report_summary.append({"label":_("Cost"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.total_cost or 0)),"indicator":"orange"})	
-	report_summary.append({"label":_("Total Amount"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.grand_total or 0)),"indicator":"green"})	
-	report_summary.append({"label":_("Profit"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.profit or 0)),"indicator":"green"})	
-
-	return report_summary

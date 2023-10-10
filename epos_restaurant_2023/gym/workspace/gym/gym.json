@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"w7I827Pgmp\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Today Check In\",\"col\":3}},{\"id\":\"ItAD4rr_Ej\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"MTD Check In\",\"col\":3}},{\"id\":\"7GUv2ReinR\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"New Member(s)\",\"col\":3}},{\"id\":\"U2mMpdZHGY\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"MTD Member(s)\",\"col\":3}},{\"id\":\"P1wb-ex_fW\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Today Expired\",\"col\":4}},{\"id\":\"0lGEyBDvo7\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Next Week Expired\",\"col\":4}},{\"id\":\"HrMxr1okIC\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"MTD Expired\",\"col\":4}},{\"id\":\"YxSRo2YpE6\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Your Shortcut</span>\",\"col\":12}},{\"id\":\"WPIsoMdLKf\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Membership Option\",\"col\":3}},{\"id\":\"5Snzfrj7gr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Register Member\",\"col\":3}},{\"id\":\"KUbfKpywkW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Register Membership\",\"col\":3}},{\"id\":\"Xulno1LT16\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Members\",\"col\":3}},{\"id\":\"VQMElVz0d2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Membership List\",\"col\":3}},{\"id\":\"8Ko8EXX7eS\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Recent Check-In</span>\",\"col\":12}},{\"id\":\"D1ka3JVrnf\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Recent Membership Check In\",\"col\":12}},{\"id\":\"gdZYJwwbOA\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Master Data and Reports</b></span>\",\"col\":12}},{\"id\":\"W1khZpJEDs\",\"type\":\"card\",\"data\":{\"card_name\":\"Membership Setup\",\"col\":4}},{\"id\":\"DLCKxyrr0e\",\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}}]",
+ "content": "[{\"id\":\"w7I827Pgmp\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Today Check In\",\"col\":3}},{\"id\":\"ItAD4rr_Ej\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"MTD Check In\",\"col\":3}},{\"id\":\"7GUv2ReinR\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"New Member(s)\",\"col\":3}},{\"id\":\"U2mMpdZHGY\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"MTD Member(s)\",\"col\":3}},{\"id\":\"P1wb-ex_fW\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Today Expired\",\"col\":4}},{\"id\":\"0lGEyBDvo7\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Next Week Expired\",\"col\":4}},{\"id\":\"HrMxr1okIC\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"MTD Expired\",\"col\":4}},{\"id\":\"YxSRo2YpE6\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Your Shortcut</span>\",\"col\":12}},{\"id\":\"WPIsoMdLKf\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Membership Option\",\"col\":3}},{\"id\":\"5Snzfrj7gr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Register Member\",\"col\":3}},{\"id\":\"KUbfKpywkW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Register Membership\",\"col\":3}},{\"id\":\"Xulno1LT16\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Members\",\"col\":3}},{\"id\":\"VQMElVz0d2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Membership List\",\"col\":3}},{\"id\":\"8Ko8EXX7eS\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Recent Check-In</span>\",\"col\":12}},{\"id\":\"D1ka3JVrnf\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Recent Membership Check In\",\"col\":12}},{\"id\":\"gdZYJwwbOA\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Master Data and Reports</b></span>\",\"col\":12}},{\"id\":\"W1khZpJEDs\",\"type\":\"card\",\"data\":{\"card_name\":\"Member & Membership Setup\",\"col\":3}},{\"id\":\"DLCKxyrr0e\",\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":3}}]",
  "creation": "2023-09-27 12:03:04.946999",
  "custom_blocks": [
   {
@@ -17,34 +17,6 @@
  "is_hidden": 0,
  "label": "Gym",
  "links": [
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Membership Setup",
-   "link_count": 2,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Membership Options",
-   "link_count": 0,
-   "link_to": "Membership Options",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Members",
-   "link_count": 0,
-   "link_to": "Customer",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
   {
    "hidden": 0,
    "is_query_report": 0,
@@ -72,9 +44,37 @@
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Member & Membership Setup",
+   "link_count": 2,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Membership Options",
+   "link_count": 0,
+   "link_to": "Membership Options",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Members",
+   "link_count": 0,
+   "link_to": "Customer",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2023-10-10 11:56:14.731365",
+ "modified": "2023-10-10 12:04:45.208093",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Gym",
