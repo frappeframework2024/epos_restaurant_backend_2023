@@ -52,6 +52,7 @@ io.on('connection', (socket) => {
     //arg data sould be json format {property:"Property name","action":"refersh_city_ledger"}
     io.emit("RefreshData",arg)
   })
+  
 });
 
 

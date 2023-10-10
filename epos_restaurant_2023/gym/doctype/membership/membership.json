@@ -165,7 +165,7 @@
   {
    "fetch_from": "membership.duration",
    "fieldname": "duration",
-   "fieldtype": "Data",
+   "fieldtype": "Int",
    "label": "Duration"
   },
   {
@@ -268,7 +268,7 @@
    "link_fieldname": "membership"
   }
  ],
- "modified": "2023-10-06 10:46:40.119635",
+ "modified": "2023-10-10 10:45:08.702762",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership",

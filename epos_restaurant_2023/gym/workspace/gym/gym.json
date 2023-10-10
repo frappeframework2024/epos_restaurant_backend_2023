@@ -17,7 +17,7 @@
  "is_hidden": 0,
  "label": "Gym",
  "links": [],
- "modified": "2023-10-06 17:01:44.678743",
+ "modified": "2023-10-09 16:07:04.533820",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Gym",
@@ -59,17 +59,17 @@
  "sequence_id": 1.0,
  "shortcuts": [
   {
-   "color": "Green",
-   "doc_view": "List",
-   "label": "Membership Option",
-   "link_to": "Membership Options",
-   "type": "DocType"
-  },
-  {
    "color": "Grey",
    "doc_view": "List",
    "label": "Membership List",
    "link_to": "Membership",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Membership Option",
+   "link_to": "Membership Options",
    "type": "DocType"
   },
   {

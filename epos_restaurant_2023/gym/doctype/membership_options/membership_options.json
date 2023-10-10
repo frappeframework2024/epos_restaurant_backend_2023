@@ -73,7 +73,7 @@
    "fieldname": "access_type",
    "fieldtype": "Select",
    "label": "Access Type",
-   "options": "Unlimited\nDays"
+   "options": "Unlimited\nTimes"
   },
   {
    "default": "1",
@@ -126,7 +126,7 @@
    "fieldname": "per_duration",
    "fieldtype": "Select",
    "label": "Per",
-   "options": "Day\nWeek\nMonth\nYear"
+   "options": "Day"
   },
   {
    "fieldname": "family_members_table",
@@ -137,7 +137,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-10-03 09:23:36.918314",
+ "modified": "2023-10-10 10:27:06.287827",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership Options",
