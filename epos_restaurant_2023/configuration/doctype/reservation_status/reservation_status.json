@@ -8,6 +8,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "alias",
   "reservation_status",
   "color",
   "is_active_reservation",
@@ -56,11 +57,19 @@
    "fieldname": "allow_user_to_edit_information",
    "fieldtype": "Check",
    "label": "Allow user to edit information"
+  },
+  {
+   "fieldname": "alias",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Alias",
+   "reqd": 1,
+   "unique": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-20 23:52:24.866706",
+ "modified": "2023-10-10 16:08:48.073062",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Reservation Status",

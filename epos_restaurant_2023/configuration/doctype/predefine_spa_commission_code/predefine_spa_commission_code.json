@@ -1,14 +1,17 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "hash",
+ "autoname": "field:commission_title",
  "creation": "2023-07-28 14:04:43.315916",
  "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "commission_value"
+  "commission_title",
+  "commission_value",
+  "column_break_fttp",
+  "is_standard"
  ],
  "fields": [
   {
@@ -17,15 +20,35 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Commission Value"
+  },
+  {
+   "default": "0",
+   "fieldname": "commission_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Commission Title",
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_fttp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_standard",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Standard"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-28 14:50:20.127610",
+ "modified": "2023-10-11 09:44:09.665156",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Predefine SPA Commission Code",
- "naming_rule": "Random",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -54,7 +77,10 @@
   }
  ],
  "quick_entry": 1,
+ "search_fields": "commission_value",
+ "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "commission_title"
 }

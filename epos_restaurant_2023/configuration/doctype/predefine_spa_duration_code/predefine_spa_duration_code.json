@@ -10,6 +10,7 @@
  "field_order": [
   "duration_title",
   "duration_value",
+  "commission",
   "commission_value",
   "is_overtime"
  ],
@@ -29,6 +30,7 @@
   },
   {
    "default": "0",
+   "fetch_from": "commission.commission_value",
    "fieldname": "commission_value",
    "fieldtype": "Currency",
    "in_list_view": 1,
@@ -38,12 +40,21 @@
    "default": "0",
    "fieldname": "is_overtime",
    "fieldtype": "Check",
+   "in_list_view": 1,
    "label": "Is Overtime"
+  },
+  {
+   "default": "0",
+   "fieldname": "commission",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Commission",
+   "options": "Predefine SPA Commission Code"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-28 16:08:31.246525",
+ "modified": "2023-10-11 09:59:26.716712",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Predefine SPA Duration Code",
@@ -76,7 +87,10 @@
   }
  ],
  "quick_entry": 1,
+ "search_fields": "duration_title",
+ "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "duration_title"
 }

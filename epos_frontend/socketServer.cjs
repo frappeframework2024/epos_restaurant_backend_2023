@@ -61,6 +61,58 @@ io.on('connection', (socket) => {
     io.emit("ComHousekeepingStatus",arg)
   })
 
+  socket.on("Frontdesk",(arg)=>{
+    io.emit("Frontdesk",arg)
+  })
+
+  socket.on("ComIframeModal",(arg)=>{
+    io.emit("ComIframeModal",arg)
+  })
+
+  socket.on("ComGuestLedger",(arg)=>{
+    io.emit("ComGuestLedger",arg)
+  })
+  
+  socket.on("Dashboard",(arg)=>{
+    io.emit("Dashboard",arg)
+  })
+
+
+  socket.on("CityLedgerAccount",(arg)=>{
+    io.emit("CityLedgerAccount",arg)
+  })
+
+
+  socket.on("RoomInventory",(arg)=>{
+    io.emit("RoomInventory",arg)
+  })
+
+
+  socket.on("GuestLedgerTransaction",(arg)=>{
+    io.emit("GuestLedgerTransaction",arg)
+  })
+
+
+  socket.on("RunNightAudit",(arg)=>{
+    io.emit("RunNightAudit",arg)
+  })
+
+
+  socket.on("GuestDetail",(arg)=>{
+    io.emit("GuestDetail",arg)
+  })
+
+
+  socket.on("ReservationList",(arg)=>{
+    io.emit("ReservationList",arg)
+  })
+
+
+  socket.on("ReservationStayDetail",(arg)=>{
+    io.emit("ReservationStayDetail",arg)
+  })
+
+
   
 });
 

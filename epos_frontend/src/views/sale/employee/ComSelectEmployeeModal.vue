@@ -120,10 +120,10 @@
         </template>
         <template #action> 
             <div class="mx-3">
-                <v-btn @click="onChooseEmployee" class="bg-zinc-200 border">
+                <v-btn @click="onChooseEmployee" class="bg-deep-purple-darken-4 border">
                     {{$t('Choose Employee')}}
                 </v-btn> 
-                <v-btn @click="onConfirm" class="bg-zinc-200 border">
+                <v-btn @click="onConfirm" class="bg-teal-darken-4 border">
                     {{$t('Accept')}}
                 </v-btn>
             </div>

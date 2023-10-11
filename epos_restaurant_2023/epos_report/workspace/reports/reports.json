@@ -5,7 +5,7 @@
    "label": "Sale Revenue"
   }
  ],
- "content": "[{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reports</span>\",\"col\":12}},{\"type\":\"chart\",\"data\":{\"chart_name\":\"Sale Revenue\",\"col\":12}},{\"type\":\"card\",\"data\":{\"card_name\":\"Sales Report\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Purchase Order\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Stock Take &amp; Stock Transfer\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Expense\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"SPA Reports\",\"col\":4}}]",
+ "content": "[{\"id\":\"HKKd39rO3u\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reports</span>\",\"col\":12}},{\"id\":\"NBiVl7GGy3\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Sale Revenue\",\"col\":12}},{\"id\":\"Skat7JO3Ll\",\"type\":\"card\",\"data\":{\"card_name\":\"Sales Report\",\"col\":4}},{\"id\":\"hGWI3yjPOg\",\"type\":\"card\",\"data\":{\"card_name\":\"Purchase Order\",\"col\":4}},{\"id\":\"L0StVr44OP\",\"type\":\"card\",\"data\":{\"card_name\":\"Stock Take &amp; Stock Transfer\",\"col\":4}},{\"id\":\"6ieXc-xxdR\",\"type\":\"card\",\"data\":{\"card_name\":\"Expense\",\"col\":4}},{\"id\":\"pTBSPwfKKb\",\"type\":\"card\",\"data\":{\"card_name\":\"SPA Reports\",\"col\":4}}]",
  "creation": "2022-12-17 18:04:27.765490",
  "custom_blocks": [],
  "docstatus": 0,
@@ -203,7 +203,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Sales Report",
-   "link_count": 8,
+   "link_count": 9,
    "onboard": 0,
    "type": "Card Break"
   },
@@ -286,9 +286,19 @@
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Sale Tip Report",
+   "link_count": 0,
+   "link_to": "Sale Tip Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2023-10-02 11:06:17.764747",
+ "modified": "2023-10-11 09:06:26.106768",
  "modified_by": "Administrator",
  "module": "ePOS Report",
  "name": "Reports",

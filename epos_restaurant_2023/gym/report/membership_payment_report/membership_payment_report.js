@@ -9,13 +9,12 @@ frappe.query_reports["Membership Payment Report"] = {
 			"fieldtype": "Select",
 			"options": ["Fiscal Year", "Date Range"],
 			"default": ["Fiscal Year"],
-			"reqd": 1,
-			on_change: function() {
+			"reqd": 1, 
+			on_change: function() {	 
 				let filter_based_on = frappe.query_report.get_filter_value('filter_based_on');
 				frappe.query_report.toggle_filter_display('from_fiscal_year', filter_based_on === 'Date Range');
 				frappe.query_report.toggle_filter_display('start_date', filter_based_on === 'Fiscal Year');
 				frappe.query_report.toggle_filter_display('end_date', filter_based_on === 'Fiscal Year');
-
 				frappe.query_report.refresh();
 			}
 		},
@@ -38,9 +37,15 @@ frappe.query_reports["Membership Payment Report"] = {
 		{
 			"fieldname":"from_fiscal_year",
 			"label": __("Start Year"),
-			"fieldtype": "Int",
-			
+			"fieldtype": "Int",			
 			"default": (new Date()).getFullYear()
 		}
-	]
+	],
+	onload(frm){
+		let filter_based_on = frappe.query_report.get_filter_value('filter_based_on');
+		frappe.query_report.toggle_filter_display('from_fiscal_year', filter_based_on === 'Date Range');
+		frappe.query_report.toggle_filter_display('start_date', filter_based_on === 'Fiscal Year');
+		frappe.query_report.toggle_filter_display('end_date', filter_based_on === 'Fiscal Year');
+		frappe.query_report.refresh();
+    },
 };

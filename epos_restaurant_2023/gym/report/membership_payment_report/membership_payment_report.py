@@ -100,7 +100,7 @@ def get_conditions(filters):
 def get_row_groups():
 	return  [
 		{
-			"fieldname":"date_format(a.posting_date,'%%d/%%m/%%Y')",
+			"fieldname":"date_format(a.posting_date,'%%Y/%%m/%%d')",
 			"label":"Date",
 			"parent_row_group_filter_field":"row_group"
 		}
