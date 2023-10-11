@@ -37,8 +37,8 @@ io.on('connection', (socket) => {
   })
  
 
-  socket.on("RefreshReservationDetail",(reservation)=>{
-    io.emit("RefreshReservationDetail",reservation)
+  socket.on("ReservationDetail",(reservation)=>{
+    io.emit("ReservationDetail",reservation)
   })
 
   socket.on("UpdateCashierShift",(arg)=>{
