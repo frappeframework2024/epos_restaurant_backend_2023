@@ -87,8 +87,7 @@
   },
   {
    "allow_in_quick_entry": 1,
-   "fetch_from": "product_code.cost",
-   "fetch_if_empty": 1,
+   "default": "1",
    "fieldname": "cost",
    "fieldtype": "Currency",
    "in_list_view": 1,
@@ -226,7 +225,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-04-17 11:25:28.445985",
+ "modified": "2023-10-11 17:34:11.764019",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order Products",

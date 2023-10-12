@@ -31,12 +31,6 @@ io.on('connection', (socket) => {
   })
 
 
- 
-  socket.on("RefresheDoorDashboard",(arg)=>{
-    io.emit("RefresheDoorDashboard",arg)
-  })
- 
-
   socket.on("ReservationDetail",(reservation)=>{
     io.emit("ReservationDetail",reservation)
   })
@@ -112,12 +106,17 @@ io.on('connection', (socket) => {
     io.emit("ReservationStayDetail",arg)
   })
 
+  socket.on("ReservationStayList",(arg)=>{
+    io.emit("ReservationStayList",arg)
+  })
+
+  socket.on("ChartDoughnut",(arg)=>{
+    io.emit("ChartDoughnut",arg)
+  })
+
 
   
 });
-
-
-
 
 server.listen(3000, () => {
   console.log('Server started on port 3000');
