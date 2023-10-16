@@ -131,6 +131,17 @@ def reset_sale_transaction():
 
     if frappe.local.request.method == "POST":
         if frappe.session.user == 'Administrator':
+
+            #gym
+            frappe.db.sql("delete from `tabMembership Payment`")
+            frappe.db.sql("delete from `tabMembership Check In Items`")
+            frappe.db.sql("delete from `tabMembership Check In`")
+            frappe.db.sql("delete from `tabMembership Family Pricing`")
+            frappe.db.sql("delete from `tabMembership Family`")
+            frappe.db.sql("delete from `tabMembership`")
+            #end gym
+
+
             frappe.db.sql("delete from `tabCash Transaction`")
             frappe.db.sql("delete from `tabSale Product Deleted`")
             frappe.db.sql("delete from `tabSale Product SPA Commission`")            
@@ -198,6 +209,9 @@ def reset_data():
             frappe.db.sql("update `tabSeries` set current = 0")
             frappe.db.sql("update `tabLanguage` set enabled =0 where name not in ('kh','en')")
             frappe.db.sql(" update `tabRole` set desk_access = 0 where name = 'Sales User'")
+
+            #gym
+            frappe.db.sql("delete from `tabMembership Options`")
         
 
             # delete 
