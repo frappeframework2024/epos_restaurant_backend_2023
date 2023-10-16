@@ -135,6 +135,19 @@ export default class Sale {
             created_by:make_order_auth.name     
         }  
         this.onSaleApplyTax(tax_rule,this.sale); 
+
+        //audit-trail 
+        const u = JSON.parse(localStorage.getItem('make_order_auth')); 
+        let msg = `User ${u.name} was created new sale`;     
+        this.auditTrailLogs.push({
+            doctype:"Comment",
+            subject:"Create New Sale",
+            comment_type:"Comment",
+            reference_doctype:"Sale",
+            reference_name:"New",
+            comment_by: u.name,
+            content:msg
+        }) ;
     }
 
     async LoadSaleData(name) {         
@@ -661,7 +674,7 @@ export default class Sale {
                         msg += `${v.note==""?'':', Reason: '+v.note }`;
                         this.auditTrailLogs.push({
                             doctype:"Comment",
-                            subject:"Delete Sale Product",
+                            subject:"Change Price",
                             comment_type:"Comment",
                             reference_doctype:"Sale",
                             reference_name:"New",
