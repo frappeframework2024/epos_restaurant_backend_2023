@@ -139,8 +139,17 @@ def reset_sale_transaction():
             frappe.db.sql("delete from `tabMembership Family Pricing`")
             frappe.db.sql("delete from `tabMembership Family`")
             frappe.db.sql("delete from `tabMembership`")
-            #end gym
+           
+            doctypes = ["Membership","Membership Check In","Membership Payment"]
+            for d in doctypes:                 
+                formats =  frappe.get_meta(d).get_field("naming_series").options
+                if formats:
+                    for f in formats.split("\n"):
+                        for n in range(2022, 2030):
+                            format_text = replace_format(f,str(n))                            
+                            frappe.db.sql("update `tabSeries` set current=  0 where name='{}'".format(format_text) ) 
 
+            #end gym
 
             frappe.db.sql("delete from `tabCash Transaction`")
             frappe.db.sql("delete from `tabSale Product Deleted`")

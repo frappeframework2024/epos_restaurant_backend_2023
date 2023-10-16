@@ -22,11 +22,11 @@
  ],
  "fields": [
   {
-   "default": "CI.YYYY.####",
+   "default": "MCI.YYYY.####",
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Document Number",
-   "options": "CI.YYYY.####"
+   "options": "MCI.YYYY.####"
   },
   {
    "fieldname": "amended_from",
@@ -99,7 +99,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-10-07 15:02:18.588950",
+ "modified": "2023-10-16 10:13:56.324845",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership Check In",
