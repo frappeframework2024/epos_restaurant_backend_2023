@@ -158,8 +158,12 @@ const show_button_change_price = computed(()=>{
 
 function onReorder(sp) {
     if (!sale.isBillRequested()) { 
+        const u = JSON.parse(localStorage.getItem('make_order_auth')); 
+        let is_append = false;
+
         if ((sp.sale_product_status == "New" && sp.append_quantity ==1) || sale.setting.pos_setting.allow_change_quantity_after_submit == 1 ) {
-            sale.updateQuantity(sp, sp.quantity + 1)
+            sale.updateQuantity(sp, sp.quantity + 1);
+            is_append = true; 
         } else {
             let strFilter = `$.product_code=='${sp.product_code}' && $.append_quantity ==1 && $.price==${sp.price} && $.portion=='${sp.portion}'  && $.modifiers=='${sp.modifiers}'  && $.unit=='${sp.unit}'  && $.is_free==0`
 
@@ -170,12 +174,27 @@ function onReorder(sp) {
             if (sale_product != undefined) {
                 sale_product.quantity = parseFloat(sale_product.quantity) + 1;
                 sale.updateSaleProduct(sp);
+                is_append = true;
+
 
             } else {
                 setTimeout(() => {
                     sale.cloneSaleProduct(sp, sp.quantity + 1);
                 }, 100);
             }
+        }
+
+        if(is_append){
+            let msg = `User ${u.name} was append a quantity to item: ${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;     
+            sale.auditTrailLogs.push({
+                doctype:"Comment",
+                subject:"Append Quantity",
+                comment_type:"Comment",
+                reference_doctype:"Sale",
+                reference_name:"New",
+                comment_by: u.name,
+                content:msg
+            }) ;
         }
     }
 }

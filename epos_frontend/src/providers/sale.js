@@ -248,12 +248,14 @@ export default class Sale {
         }
         
         let sp = Enumerable.from(this.sale.sale_products).where(strFilter).firstOrDefault()
-
+        let is_new_sale_product = true;
+        let new_sale_product;
         if (sp != undefined) {
             sp.quantity = parseFloat(sp.quantity) + 1;
             this.clearSelected();
             sp.selected = true;
             this.updateSaleProduct(sp);
+            is_new_sale_product = false;
         } else {
             this.clearSelected();
             let tax_rule ="";  
@@ -333,12 +335,41 @@ export default class Sale {
             this.onSaleProductApplyTax(tax_rule,saleProduct); 
             this.sale.sale_products.push(saleProduct);
             this.updateSaleProduct(saleProduct);
+
+
+            new_sale_product = saleProduct;
         }
-        this.updateSaleSummary()
+        this.updateSaleSummary();
+
+        const u = JSON.parse(localStorage.getItem('make_order_auth')); 
+        if(is_new_sale_product){
+            let msg = `User ${u.name} was create new sale item: ${new_sale_product.product_name}${(new_sale_product.portion||"")=="" ? "":`(${new_sale_product.portion})`} ${new_sale_product.modifiers}`;     
+            this.auditTrailLogs.push({
+                doctype:"Comment",
+                subject:"New Sale Item",
+                comment_type:"Comment",
+                reference_doctype:"Sale",
+                reference_name:"New",
+                comment_by: u.name,
+                content:msg
+            }) ;
+
+        }else{
+            let msg = `User ${u.name} was append a quantity to item: ${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;     
+            this.auditTrailLogs.push({
+                doctype:"Comment",
+                subject:"Append Quantity",
+                comment_type:"Comment",
+                reference_doctype:"Sale",
+                reference_name:"New",
+                comment_by: u.name,
+                content:msg
+            }) ;
+        }
     }
     
     cloneSaleProduct(sp, quantity) {
-        const make_order_auth = JSON.parse(localStorage.getItem('make_order_auth'));
+        const u = JSON.parse(localStorage.getItem('make_order_auth'));
         this.clearSelected();
         const sp_copy = JSON.parse(JSON.stringify(sp));
         sp_copy.selected = true;
@@ -346,14 +377,25 @@ export default class Sale {
         sp_copy.sale_product_status = "New";
         sp_copy.name = "";
         sp_copy.deleted_quantity = 0;
-        sp_copy.order_by = make_order_auth.name;
+        sp_copy.order_by = u.name;
         sp_copy.order_time = this.getOrderTime();
         sp_copy.creation = sp_copy.order_time;
         sp_copy.modified = sp_copy.order_time;
 
         this.updateSaleProduct(sp_copy);
         this.sale.sale_products.push(sp_copy);
-        this.updateSaleSummary()
+        this.updateSaleSummary();
+
+        let msg = `User ${u.name} was create new sale item: ${sp_copy.product_name}${(sp_copy.portion||"")=="" ? "":`(${sp_copy.portion})`} ${sp_copy.modifiers}`;     
+        this.auditTrailLogs.push({
+            doctype:"Comment",
+            subject:"New Sale Item",
+            comment_type:"Comment",
+            reference_doctype:"Sale",
+            reference_name:"New",
+            comment_by: u.name,
+            content:msg
+        });
     }
 
     getOrderTime() {
@@ -705,6 +747,8 @@ export default class Sale {
                         quantity = 1
                     }
                     this.updateQuantity(sp, quantity);
+
+                    
                 } else {
                     sp.selected = false;
                     //do add record
