@@ -15,14 +15,13 @@
                 'background-image': 'url(' + encodeURIComponent(data.photo).replace(/%2F/g, '/') + ')'
             }" @click="onClickMenu(data.name)">
         <div class="absolute top-0 bottom-0 right-0 left-0">
-            <avatar class="!h-full !w-full" :name="data.name_en" :rounded="false" :color="data.background_color"
+            <avatar class="!h-full !w-full" :name="data.name_en" :rounded="false" :background="data.background_color" :color="data.text_color"
                 v-if="!data.photo"></avatar>
         </div>
         <div class="block relative p-2 w-full h-full">
             <div class="absolute right-1 top-1">
-                <v-icon color="white">mdi-folder-open</v-icon>
-            </div>
-
+                <v-icon :color="data.text_color">mdi-folder-open</v-icon>
+            </div> 
             <div class="p-1 rounded-md absolute bottom-1 right-1 left-1 bg-gray-50 bg-opacity-70 text-sm text-center">
                 <span class="text-black" v-if="!sale.load_menu_lang">{{ getMenuName(data) }}</span>
             </div>
