@@ -115,6 +115,16 @@ io.on('connection', (socket) => {
   })
 
 
+  socket.on("TodaySummary",(arg)=>{
+    io.emit("TodaySummary",arg)
+  })
+
+
+  socket.on("GuestList",(arg)=>{
+    io.emit("GuestList",arg)
+  })
+
+
   
 });
 
