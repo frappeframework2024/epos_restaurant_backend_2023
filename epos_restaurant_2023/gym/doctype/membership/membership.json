@@ -61,7 +61,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Membership",
+   "label": "Membership Option",
    "options": "Membership Options",
    "reqd": 1
   },
@@ -277,7 +277,7 @@
    "link_fieldname": "membership"
   }
  ],
- "modified": "2023-10-10 11:35:43.953902",
+ "modified": "2023-10-16 08:35:21.737199",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership",
