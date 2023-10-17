@@ -745,15 +745,31 @@ export default class Sale {
                 if (this.setting.pos_setting.allow_change_quantity_after_submit == 1 || sp.sale_product_status == "New") {
                     if (quantity == 0) {
                         quantity = 1
-                    }
+                    }  
+
+                    const u = JSON.parse(localStorage.getItem('make_order_auth')); 
+                    let msg = `User ${u.name} change quantity on: ${sp.product_code}-${sp.product_name}.${sp.portion} ${sp.modifiers}`; 
+                    msg += `, From : ${sp.quantity} to ${quantity}` ;
+                    this.auditTrailLogs.push({
+                        doctype:"Comment",
+                        subject:"Change Quantity",
+                        comment_type:"Comment",
+                        reference_doctype:"Sale",
+                        reference_name:"New",
+                        comment_by: u.name,
+                        content:msg
+                    }) ;
+                    
+
                     this.updateQuantity(sp, quantity);
 
-                    
                 } else {
                     sp.selected = false;
                     //do add record
                     if (quantity > sp.quantity) {
                         this.cloneSaleProduct(sp, quantity);
+
+
                     } else {
                         if (sp.quantity - quantity > 0) {
                             //do delete record
@@ -761,6 +777,19 @@ export default class Sale {
                                 if (v) {
                                     sp.deleted_item_note = v.note;
                                     this.onRemoveSaleProduct(sp, sp.quantity - quantity, v.user);
+                                    let msg = `User ${v.user} delete Item: ${sp.product_code}-${sp.product_name}.${sp.portion} ${sp.modifiers}`; 
+                                    msg += `, Qty: ${quantity}`;
+                                    msg += `, Amount: ${ numberFormat(gv.getCurrnecyFormat,sp.amount)}`;
+                                    msg += `${(sp.deleted_item_note||"")==""?'':', Reason: '+sp.deleted_item_note }`;
+                                    this.auditTrailLogs.push({
+                                        doctype:"Comment",
+                                        subject:"Delete Sale Product",
+                                        comment_type:"Comment",
+                                        reference_doctype:"Sale",
+                                        reference_name:"New",
+                                        comment_by:v.user,
+                                        content:msg
+                                    }); 
                                 }
 
                             });
