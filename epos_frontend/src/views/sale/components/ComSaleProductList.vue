@@ -1,4 +1,5 @@
 <template> 
+ 
     <v-list class="!p-0">
         <v-list-item v-for="sp, index in (readonly == true ? getSaleProducts(groupKey) : sale.getSaleProducts(groupKey))"
             :key="index" @click="!readonly ? { click: sale.onSelectSaleProduct(sp) } : {}"
@@ -94,16 +95,20 @@
                         <v-chip color="red" class="mx-1 grow text-center justify-center" variant="elevated" size="small"
                         @click="sale.onRemoveItem(sp,gv,numberFormat)">{{ $t('Delete') }}</v-chip>
 
-                        <ComSaleProductButtonMore :sale-product="sp" />
+                        <ComSaleProductButtonMore :sale-product="sp"  />
                     </div>
 
                 </div>
+                  
             </template>
         </v-list-item>
     </v-list>
+
+
+    
 </template>
 <script setup>
-import {computed, inject, defineProps, createToaster,keypadWithNoteDialog,i18n } from '@/plugin'
+import {computed, inject, defineProps, createToaster,i18n,ref } from '@/plugin'
 
 import ComSaleProductButtonMore from './ComSaleProductButtonMore.vue';
 import ComQuantityInput from '../../../components/form/ComQuantityInput.vue';
@@ -124,6 +129,9 @@ const props = defineProps({
     readonly: Boolean,
     saleCustomerDisplay: Object
 });
+
+ 
+
 
 
 function getMenuName(sp) { 

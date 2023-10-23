@@ -51,12 +51,33 @@
             </v-list-item>
             <v-list-item prepend-icon="mdi-cash-100" :title="$t('Tax Setting')" v-if="saleProduct.product_tax_rule"  @click="sale.onSaleProductChangeTaxSetting(saleProduct,gv)">
             </v-list-item>
+            
+            <v-list-item prepend-icon="mdi-cash-100" :title="$t('Printer')"    @click="onSelectPrinter()">
+            </v-list-item>
+            
         </v-list>
     </v-menu>
+    <v-dialog
+      v-model="showDialogSelectPrinter"
+      width="auto"
+    >
+      <v-card title="Select Printers">
+        
+        <v-card-text>
+         
+         <v-btn class="mr-2" :color="p.selected?'warning':'default'" v-for="(p, index) in printerList" :key="index" @click="onSelectPritnerForPrint(p)">{{ p.printer }}</v-btn>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="error"  @click="dialog = false">Close</v-btn>
+          <v-btn color="success"  @click="onConfirmSelectPrinter">Confirm</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
 </template>
 
 <script setup>
-import { defineProps, inject,keypadWithNoteDialog,i18n } from '@/plugin'
+import { defineProps, inject,keypadWithNoteDialog,i18n,ref } from '@/plugin'
 import {createToaster} from '@meforma/vue-toaster';
 const { t: $t } = i18n.global;  
 
@@ -69,9 +90,48 @@ const props = defineProps({
     saleProduct: Object
 });
 
+const showDialogSelectPrinter = ref(false)
+
+
+
+const printerList = ref([])
+
+
+
 const toaster = createToaster({ position: "top" });
 function onRemoveNote() {
     props.saleProduct.note = "";
+}
+
+
+function onSelectPrinter(){
+
+
+    if(props.saleProduct.backup_printers){
+        printerList.value =  JSON.parse(props.saleProduct.backup_printers)
+    }
+    else{
+        printerList.value =  JSON.parse(props.saleProduct.printers)
+        props.saleProduct.backup_printers = props.saleProduct.printers
+    }
+    printerList.value.forEach(r=>r.selected =true)
+   
+
+    showDialogSelectPrinter.value = true
+
+}
+
+function onSelectPritnerForPrint(p){
+
+p.selected = !p.selected
+
+
+}
+
+function onConfirmSelectPrinter(){
+props.saleProduct.printers = JSON.stringify( printerList.value.filter(r=>r.selected==true))
+showDialogSelectPrinter.value = false
+
 }
 
 function onSaleProductFree() {

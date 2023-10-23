@@ -82,6 +82,8 @@ def get_context(context):
 		"folio":frappe.form_dict.folio,
 		"reservation":frappe.form_dict.reservation,
 		"reservation_stay":frappe.form_dict.reservation_stay,
+		"orientation":frappe.form_dict.orientation or "Portrait",
+
 	}
 
 

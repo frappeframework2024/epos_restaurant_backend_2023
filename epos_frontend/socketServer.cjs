@@ -125,6 +125,33 @@ io.on('connection', (socket) => {
   })
 
 
+  socket.on("GuestType",(arg)=>{
+    io.emit("GuestType",arg)
+  })
+
+
+  socket.on("FolioTransactionDetail",(arg)=>{
+    io.emit("FolioTransactionDetail",arg)
+  })
+
+
+  socket.on("FolioTransactionList",(arg)=>{
+    io.emit("FolioTransactionList",arg)
+  })
+
+  socket.on("ComCityLedgerDetail",(arg)=>{
+    io.emit("ComCityLedgerDetail",arg)
+  })
+
+  socket.on("ComBusinessSource",(arg)=>{
+    io.emit("ComBusinessSource",arg)
+  })
+
+  socket.on("Reports",(arg)=>{
+    io.emit("Reports",arg)
+  })
+  
+
   
 });
 
