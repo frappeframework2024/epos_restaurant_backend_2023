@@ -87,6 +87,7 @@
    "options": "Membership"
   },
   {
+   "default": "0",
    "fetch_from": "membership.cost",
    "fetch_if_empty": 1,
    "fieldname": "price",
@@ -177,11 +178,13 @@
    "label": "Per"
   },
   {
+   "default": "0",
    "fetch_from": ".cost",
    "fieldname": "grand_total",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Grand Total"
+   "label": "Grand Total",
+   "options": "Company:company:default_currency"
   },
   {
    "default": "0",
@@ -199,6 +202,7 @@
    "options": "Percent\nAmount"
   },
   {
+   "default": "0",
    "fetch_from": ".cost",
    "fieldname": "total_paid",
    "fieldtype": "Currency",
@@ -207,6 +211,7 @@
    "read_only": 1
   },
   {
+   "default": "0",
    "fetch_from": ".cost",
    "fieldname": "balance",
    "fieldtype": "Currency",
@@ -284,7 +289,7 @@
    "link_fieldname": "membership"
   }
  ],
- "modified": "2023-10-26 09:13:28.958473",
+ "modified": "2023-10-26 10:50:41.532710",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership",
