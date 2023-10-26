@@ -124,8 +124,7 @@ async function onQuickPay(isPrint=true) {
                         if (localStorage.getItem("is_window") == "1" && isPrint) {
                             window.chrome.webview.postMessage(JSON.stringify(data));
                         } 
-                    } 
-                  
+                    }                   
                 });
 
 
