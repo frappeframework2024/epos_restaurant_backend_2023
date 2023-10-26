@@ -276,7 +276,7 @@ async function onCancelPrintBill() {
       sale.auditTrailLogs.push({
           doctype:"Comment",
           subject:"Cancel Print Bill",
-          comment_type:"Comment",
+          comment_type:"Info",
           reference_doctype:"Sale",
           reference_name:"New",
           comment_by:v.user,

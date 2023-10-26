@@ -105,7 +105,11 @@ io.on('connection', (socket) => {
   socket.on("ReservationStayDetail",(arg)=>{
     io.emit("ReservationStayDetail",arg)
   })
-
+  
+  socket.on("CommentAndNotice",(arg)=>{
+    io.emit("CommentAndNotice",arg)
+  })
+  
   socket.on("ReservationStayList",(arg)=>{
     io.emit("ReservationStayList",arg)
   })

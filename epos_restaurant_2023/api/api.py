@@ -717,7 +717,7 @@ def edit_sale_order(name,auth):
     doc = frappe.get_doc({
         'doctype': 'Comment',
         'subject': 'Delete sale order',
-        "comment_type":"Comment",
+        "comment_type":"Info",
         "reference_doctype":"Sale",
         "reference_name":sale_doc.name,
         "comment_by":auth["username"],
@@ -759,7 +759,7 @@ def delete_sale(name,auth):
     doc = frappe.get_doc({
         'doctype': 'Comment',
         'subject': 'Delete sale order',
-        "comment_type":"Comment",
+        "comment_type":"Info",
         "reference_doctype":"Sale",
         "reference_name":sale_doc.name,
         "comment_by":auth["username"],

@@ -142,7 +142,7 @@ export default class Sale {
         this.auditTrailLogs.push({
             doctype:"Comment",
             subject:"Create New Sale",
-            comment_type:"Comment",
+            comment_type:"Info",
             reference_doctype:"Sale",
             reference_name:"New",
             comment_by: u.name,
@@ -347,7 +347,7 @@ export default class Sale {
             this.auditTrailLogs.push({
                 doctype:"Comment",
                 subject:"New Sale Item",
-                comment_type:"Comment",
+                comment_type:"Info",
                 reference_doctype:"Sale",
                 reference_name:"New",
                 comment_by: u.name,
@@ -359,7 +359,7 @@ export default class Sale {
             this.auditTrailLogs.push({
                 doctype:"Comment",
                 subject:"Append Quantity",
-                comment_type:"Comment",
+                comment_type:"Info",
                 reference_doctype:"Sale",
                 reference_name:"New",
                 comment_by: u.name,
@@ -390,7 +390,7 @@ export default class Sale {
         this.auditTrailLogs.push({
             doctype:"Comment",
             subject:"New Sale Item",
-            comment_type:"Comment",
+            comment_type:"Info",
             reference_doctype:"Sale",
             reference_name:"New",
             comment_by: u.name,
@@ -658,7 +658,7 @@ export default class Sale {
                             this.auditTrailLogs.push({
                                 doctype:"Comment",
                                 subject:"Delete Sale Product",
-                                comment_type:"Comment",
+                                comment_type:"Info",
                                 reference_doctype:"Sale",
                                 reference_name:"New",
                                 comment_by:v.user,
@@ -679,7 +679,7 @@ export default class Sale {
                 this.auditTrailLogs.push({
                     doctype:"Comment",
                     subject:"Delete Sale Product",
-                    comment_type:"Comment",
+                    comment_type:"Info",
                     reference_doctype:"Sale",
                     reference_name:"New",
                     comment_by: u.name,
@@ -717,7 +717,7 @@ export default class Sale {
                         this.auditTrailLogs.push({
                             doctype:"Comment",
                             subject:"Change Price",
-                            comment_type:"Comment",
+                            comment_type:"Info",
                             reference_doctype:"Sale",
                             reference_name:"New",
                             comment_by:v.user,
@@ -753,7 +753,7 @@ export default class Sale {
                     this.auditTrailLogs.push({
                         doctype:"Comment",
                         subject:"Change Quantity",
-                        comment_type:"Comment",
+                        comment_type:"Info",
                         reference_doctype:"Sale",
                         reference_name:"New",
                         comment_by: u.name,
@@ -784,7 +784,7 @@ export default class Sale {
                                     this.auditTrailLogs.push({
                                         doctype:"Comment",
                                         subject:"Delete Sale Product",
-                                        comment_type:"Comment",
+                                        comment_type:"Info",
                                         reference_doctype:"Sale",
                                         reference_name:"New",
                                         comment_by:v.user,

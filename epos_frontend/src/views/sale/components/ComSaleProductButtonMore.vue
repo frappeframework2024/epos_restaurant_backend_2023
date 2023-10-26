@@ -57,23 +57,21 @@
             
         </v-list>
     </v-menu>
-    <v-dialog
-      v-model="showDialogSelectPrinter"
-      width="auto"
-    >
-      <v-card title="Select Printers">
-        
-        <v-card-text>
-         
-         <v-btn class="mr-2" :color="p.selected?'warning':'default'" v-for="(p, index) in printerList" :key="index" @click="onSelectPritnerForPrint(p)">{{ p.printer }}</v-btn>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn color="error"  @click="dialog = false">Close</v-btn>
-          <v-btn color="success"  @click="onConfirmSelectPrinter">Confirm</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
+        <v-dialog
+        v-model="showDialogSelectPrinter"
+        width="auto">
+            <v-card title="Select Printers">
+                
+                <v-card-text>
+                
+                <v-btn class="mr-2" :color="p.selected?'warning':'default'" v-for="(p, index) in printerList" :key="index" @click="onSelectPritnerForPrint(p)">{{ p.printer }}</v-btn>
+                </v-card-text>
+                <v-card-actions>
+                <v-btn color="error"  @click="dialog = false">Close</v-btn>
+                <v-btn color="success"  @click="onConfirmSelectPrinter">Confirm</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
 </template>
 
 <script setup>

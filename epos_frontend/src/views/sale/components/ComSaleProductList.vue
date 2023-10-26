@@ -5,7 +5,6 @@
             :key="index" @click="!readonly ? { click: sale.onSelectSaleProduct(sp) } : {}"
             class="!border-t !border-gray-300 !mb-0 !p-2"
             :class="{ 'selected': (sp.selected && !readonly), 'submitted relative': sp.sale_product_status == 'Submitted', 'item-list': !readonly }">
-
             <template v-slot:prepend> 
                 <v-avatar v-if="sp.product_photo">
                     <v-img :src="sp.product_photo"></v-img>
@@ -197,7 +196,7 @@ function onReorder(sp) {
             sale.auditTrailLogs.push({
                 doctype:"Comment",
                 subject:"Append Quantity",
-                comment_type:"Comment",
+                comment_type:"Info",
                 reference_doctype:"Sale",
                 reference_name:"New",
                 comment_by: u.name,

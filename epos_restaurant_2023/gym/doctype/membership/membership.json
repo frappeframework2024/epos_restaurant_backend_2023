@@ -23,6 +23,7 @@
   "duration_base_on",
   "start_date",
   "end_date",
+  "personal_trainer",
   "pricing_section",
   "price",
   "discount_type",
@@ -265,6 +266,12 @@
    "fieldtype": "Currency",
    "hidden": 1,
    "label": "Total Discount"
+  },
+  {
+   "fieldname": "personal_trainer",
+   "fieldtype": "Link",
+   "label": "Personal Trainer",
+   "options": "Trainer"
   }
  ],
  "image_field": "photo",
@@ -277,7 +284,7 @@
    "link_fieldname": "membership"
   }
  ],
- "modified": "2023-10-16 08:35:21.737199",
+ "modified": "2023-10-26 09:13:28.958473",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership",
