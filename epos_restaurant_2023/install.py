@@ -221,6 +221,7 @@ def reset_data():
 
             #gym
             frappe.db.sql("delete from `tabMembership Options`")
+            frappe.db.sql("delete from `tabTrainer`")
         
 
             # delete 
