@@ -135,6 +135,7 @@ function onDiscountClick(discount_type){
                 gv.authorize("discount_item_required_password", "discount_item", "discount_item_required_note", "Discount Item Note", "", true).then((v) => {
                     if (v) {
                         sale.onDiscount(
+                            gv,
                             `${props.saleProduct.product_name} Discount`,
                             props.saleProduct.amount,
                             props.saleProduct.discount,

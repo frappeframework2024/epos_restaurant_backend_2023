@@ -65,12 +65,16 @@
   "delete_item_required_note",
   "section_break_34",
   "discount_item_required_password",
+  "cancel_discount_item_required_password",
   "section_break_36",
   "discount_item_required_note",
+  "cancel_discount_item_required_note",
   "section_break_38",
   "discount_sale_required_password",
+  "cancel_discount_sale_required_password",
   "column_break_40",
   "discount_sale_required_note",
+  "cancel_discount_sale_required_note",
   "section_break_42",
   "change_tax_setting_required_password",
   "section_break_60",
@@ -562,12 +566,36 @@
    "fieldtype": "Link",
    "label": "Tip Account Code",
    "options": "Account Code"
+  },
+  {
+   "default": "0",
+   "fieldname": "cancel_discount_sale_required_password",
+   "fieldtype": "Check",
+   "label": "Cancel Discount Sale Required Password"
+  },
+  {
+   "default": "0",
+   "fieldname": "cancel_discount_sale_required_note",
+   "fieldtype": "Check",
+   "label": "Cancel Discount Sale Required Note"
+  },
+  {
+   "default": "0",
+   "fieldname": "cancel_discount_item_required_password",
+   "fieldtype": "Check",
+   "label": "Cancel Discount Item Required Password"
+  },
+  {
+   "default": "0",
+   "fieldname": "cancel_discount_item_required_note",
+   "fieldtype": "Check",
+   "label": "Cancel Discount Item Required Note"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-09-12 09:56:24.620329",
+ "modified": "2023-10-26 16:32:33.190454",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

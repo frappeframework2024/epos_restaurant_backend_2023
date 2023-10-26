@@ -14,22 +14,24 @@
   "make_order",
   "delete_bill",
   "edit_closed_receipt",
+  "change_tax_setting",
   "cancel_print_bill",
   "discount_sale",
+  "cancel_discount_sale",
   "column_break_6",
   "free_item",
   "change_item_price",
   "delete_item",
   "discount_item",
-  "change_tax_setting",
+  "cancel_discount_item",
   "reset_custom_bill_number_counter",
   "column_break_13",
-  "open_cashdrawer",
   "start_working_day",
   "close_working_day",
   "start_cashier_shift",
   "close_cashier_shift",
   "cash_in_check_out",
+  "open_cashdrawer",
   "section_break_7",
   "discount_codes"
  ],
@@ -168,30 +170,29 @@
    "fieldname": "pos_permission_tab",
    "fieldtype": "Tab Break",
    "label": "POS Permission"
+  },
+  {
+   "default": "1",
+   "fieldname": "cancel_discount_sale",
+   "fieldtype": "Check",
+   "label": "Cancel Discount Sale"
+  },
+  {
+   "default": "1",
+   "fieldname": "cancel_discount_item",
+   "fieldtype": "Check",
+   "label": "Cancel Discount Item"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-08-28 18:22:53.236909",
+ "modified": "2023-10-26 16:03:03.574820",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "POS User Permission",
  "naming_rule": "By fieldname",
  "owner": "Administrator",
- "permissions": [
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "System Manager",
-   "share": 1,
-   "write": 1
-  }
- ],
+ "permissions": [],
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

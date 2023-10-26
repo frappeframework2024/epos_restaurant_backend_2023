@@ -135,8 +135,9 @@ showDialogSelectPrinter.value = false
 function onSaleProductFree() {
     if (!sale.isBillRequested()) {
         gv.authorize("free_item_required_password", "free_item", "free_item_required_note", "Free Item Note", props.saleProduct.product_code).then((v) => {
-            if (v) {
-                props.saleProduct.free_note = v.note
+            if (v) { 
+                props.saleProduct.free_note = v.note;
+                props.saleProduct.free_by = v.user;
                 sale.onSaleProductFree(props.saleProduct);
             }
         });
@@ -179,7 +180,11 @@ function onSaleProductDiscount(discount_type) {
         if (!sale.isBillRequested()) {
             gv.authorize("discount_item_required_password", "discount_item", "discount_item_required_note","Discount Item Note","",true).then((v) => {
                 if (v) {
+                    props.saleProduct.temp_discount_by = v.user;
+                    props.saleProduct.temp_discount_note = v.note;
+
                     sale.onDiscount(
+                        gv,
                         `${props.saleProduct.product_name} Discount`,
                         props.saleProduct.amount,
                         props.saleProduct.discount,
@@ -199,12 +204,34 @@ function onSaleProductDiscount(discount_type) {
 }
 function onSaleProductCancelDiscount() {
     if (!sale.isBillRequested()) {
-        props.saleProduct.discount = 0;
-        props.saleProduct.discount_type = 'Amount'
-        props.saleProduct.happy_hour_promotion = ''
-        props.saleProduct.happy_hours_promotion_title = ''
-        sale.updateSaleProduct(props.saleProduct)
-        sale.updateSaleSummary();
+        gv.authorize("cancel_discount_item_required_password", "cancel_discount_item", "cancel_discount_item_required_note","Cancel Discount Item Note","",false).then((v) => {
+            if (v) {
+                let sp = props.saleProduct;
+                props.saleProduct.discount = 0;
+                props.saleProduct.discount_type = 'Amount'
+                props.saleProduct.happy_hour_promotion = ''
+                props.saleProduct.happy_hours_promotion_title = ''
+                sale.updateSaleProduct(props.saleProduct)
+                sale.updateSaleSummary();
+
+
+                            //audit trail
+                let item_description=`${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
+                let msg = `User ${v.user} remove discount on item: ${item_description} `;          
+                msg += `${( v.note||"")==""?'':', Reason: '+ v.note }`;
+                sale.auditTrailLogs.push({
+                    doctype:"Comment",
+                    subject:"Remove Discount Sale Product",
+                    comment_type:"Info",
+                    reference_doctype:"Sale",
+                    reference_name:"New",
+                    comment_by:v.user,
+                    content:msg,
+                    custom_item_description: `${item_description}`,
+                    custom_note: v.note
+                }); 
+            }
+        });
     }
 }
 

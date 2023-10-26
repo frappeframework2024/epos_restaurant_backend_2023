@@ -89,7 +89,9 @@ async function onPrintReport(r) {
         reference_doctype:"Sale",
         reference_name:"New",
         comment_by:u.name,
-        content:msg
+        content:msg,
+        custom_item_description: "",
+        custom_note:""
     })  ; 
 
     await sale.onSubmit().then(async (value) => {
@@ -115,7 +117,9 @@ async function onCancelPrintBill() {
           reference_doctype:"Sale",
           reference_name:"New",
           comment_by:v.user,
-          content:msg
+          content:msg,
+          custom_item_description: "",
+          custom_note:v.note
       }); 
     }
   });

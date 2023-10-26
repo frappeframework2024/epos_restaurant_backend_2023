@@ -146,7 +146,9 @@ export default class Sale {
             reference_doctype:"Sale",
             reference_name:"New",
             comment_by: u.name,
-            content:msg
+            content:msg,
+            custom_item_description: '',
+            custom_note:''
         }) ;
     }
 
@@ -343,7 +345,8 @@ export default class Sale {
 
         const u = JSON.parse(localStorage.getItem('make_order_auth')); 
         if(is_new_sale_product){
-            let msg = `User ${u.name} was create new sale item: ${new_sale_product.product_name}${(new_sale_product.portion||"")=="" ? "":`(${new_sale_product.portion})`} ${new_sale_product.modifiers}`;     
+            let item_description = `${new_sale_product.product_code}-${new_sale_product.product_name}${(new_sale_product.portion||"")=="" ? "":`(${new_sale_product.portion})`} ${new_sale_product.modifiers}`;
+            let msg = `User ${u.name} was create new sale item: ${item_description}`;     
             this.auditTrailLogs.push({
                 doctype:"Comment",
                 subject:"New Sale Item",
@@ -351,11 +354,14 @@ export default class Sale {
                 reference_doctype:"Sale",
                 reference_name:"New",
                 comment_by: u.name,
-                content:msg
+                content:msg,
+                custom_item_description: item_description,
+                custom_note:''
             }) ;
 
         }else{
-            let msg = `User ${u.name} was append a quantity to item: ${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;     
+            let item_description =`${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
+            let msg = `User ${u.name} was append a quantity to item:  ${item_description}`;     
             this.auditTrailLogs.push({
                 doctype:"Comment",
                 subject:"Append Quantity",
@@ -363,7 +369,9 @@ export default class Sale {
                 reference_doctype:"Sale",
                 reference_name:"New",
                 comment_by: u.name,
-                content:msg
+                content:msg,                
+                custom_item_description: item_description,
+                custom_note:''
             }) ;
         }
     }
@@ -386,7 +394,8 @@ export default class Sale {
         this.sale.sale_products.push(sp_copy);
         this.updateSaleSummary();
 
-        let msg = `User ${u.name} was create new sale item: ${sp_copy.product_name}${(sp_copy.portion||"")=="" ? "":`(${sp_copy.portion})`} ${sp_copy.modifiers}`;     
+        let item_description = `${sp_copy.product_code}-${sp_copy.product_name}${(sp_copy.portion||"")=="" ? "":`(${sp_copy.portion})`} ${sp_copy.modifiers}`;
+        let msg = `User ${u.name} was create new sale item: ${item_description}`;     
         this.auditTrailLogs.push({
             doctype:"Comment",
             subject:"New Sale Item",
@@ -394,7 +403,9 @@ export default class Sale {
             reference_doctype:"Sale",
             reference_name:"New",
             comment_by: u.name,
-            content:msg
+            content:msg,
+            custom_item_description: item_description,
+            custom_note:''
         });
     }
 
@@ -651,7 +662,8 @@ export default class Sale {
                             sp.deleted_quantity = (sp.deleted_quantity||0) + result.number;
                             this.onRemoveSaleProduct(sp, result.number, v.user);  
     
-                            let msg = `User ${v.user} delete Item: ${sp.product_code}-${sp.product_name}.${sp.portion} ${sp.modifiers}`; 
+                            let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
+                            let msg = `User ${v.user} delete Item: ${item_description}`; 
                             msg += `, Qty: ${result.number}`;
                             msg += `, Amount: ${ numberFormat(gv.getCurrnecyFormat,sp.amount)}`;
                             msg += `${result.note==""?'':', Reason: '+result.note }`;
@@ -662,7 +674,9 @@ export default class Sale {
                                 reference_doctype:"Sale",
                                 reference_name:"New",
                                 comment_by:v.user,
-                                content:msg
+                                content:msg,
+                                custom_item_description:`${result.number} x ${item_description}` ,
+                                custom_note: result.note
                             })  ;                    
     
                         } 
@@ -672,8 +686,9 @@ export default class Sale {
     
                 const u = JSON.parse(localStorage.getItem('make_order_auth')); 
                 this.onRemoveSaleProduct(sp, sp.quantity,u.name);
-    
-                let msg = `User ${u.name} delete Item: ${sp.product_code}-${sp.product_name}.${sp.portion} ${sp.modifiers}`; 
+
+                let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`
+                let msg = `User ${u.name} delete item: ${item_description}`; 
                 msg += `, Qty: ${sp.quantity}`;
                 msg += `, Amount: ${ numberFormat(gv.getCurrnecyFormat,sp.amount)}`;
                 this.auditTrailLogs.push({
@@ -683,7 +698,9 @@ export default class Sale {
                     reference_doctype:"Sale",
                     reference_name:"New",
                     comment_by: u.name,
-                    content:msg
+                    content:msg,
+                    custom_item_description: `${sp.quantity} x ${item_description}` ,
+                    custom_note:''
                 }) ;
             }
     
@@ -711,7 +728,8 @@ export default class Sale {
                         this.updateSaleProduct(sp);
                         this.updateSaleSummary();
 
-                        let msg = `User ${v.user} Change Price on Item: ${sp.product_code}-${sp.product_name}.${sp.portion} ${sp.modifiers}`; 
+                        let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
+                        let msg = `User ${v.user} change price on item: ${item_description}`; 
                         msg += `, from: ${numberFormat(gv.getCurrnecyFormat,price)} to ${numberFormat(gv.getCurrnecyFormat,sp.price)}`;
                         msg += `${v.note==""?'':', Reason: '+v.note }`;
                         this.auditTrailLogs.push({
@@ -721,7 +739,9 @@ export default class Sale {
                             reference_doctype:"Sale",
                             reference_name:"New",
                             comment_by:v.user,
-                            content:msg
+                            content:msg,
+                            custom_item_description: `${item_description} (from: ${numberFormat(gv.getCurrnecyFormat,price)} to ${numberFormat(gv.getCurrnecyFormat,sp.price)})` ,
+                            custom_note:v.note
                         }) ;                        
 
                     }
@@ -748,8 +768,10 @@ export default class Sale {
                     }  
 
                     const u = JSON.parse(localStorage.getItem('make_order_auth')); 
-                    let msg = `User ${u.name} change quantity on: ${sp.product_code}-${sp.product_name}.${sp.portion} ${sp.modifiers}`; 
-                    msg += `, From : ${sp.quantity} to ${quantity}` ;
+
+                    let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
+                    let msg = `User ${u.name} change quantity on: ${item_description}`; 
+                    msg += `, from : ${sp.quantity} to ${quantity}` ;
                     this.auditTrailLogs.push({
                         doctype:"Comment",
                         subject:"Change Quantity",
@@ -757,7 +779,9 @@ export default class Sale {
                         reference_doctype:"Sale",
                         reference_name:"New",
                         comment_by: u.name,
-                        content:msg
+                        content:msg,
+                        custom_item_description: `${item_description} (from : ${sp.quantity} to ${quantity})`,
+                        custom_note:""
                     }) ;
                     
 
@@ -777,7 +801,9 @@ export default class Sale {
                                 if (v) {
                                     sp.deleted_item_note = v.note;
                                     this.onRemoveSaleProduct(sp, sp.quantity - quantity, v.user);
-                                    let msg = `User ${v.user} delete Item: ${sp.product_code}-${sp.product_name}.${sp.portion} ${sp.modifiers}`; 
+
+                                    let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
+                                    let msg = `User ${v.user} delete Item: ${item_description}`; 
                                     msg += `, Qty: ${quantity}`;
                                     msg += `, Amount: ${ numberFormat(gv.getCurrnecyFormat,sp.amount)}`;
                                     msg += `${(sp.deleted_item_note||"")==""?'':', Reason: '+sp.deleted_item_note }`;
@@ -788,7 +814,9 @@ export default class Sale {
                                         reference_doctype:"Sale",
                                         reference_name:"New",
                                         comment_by:v.user,
-                                        content:msg
+                                        content:msg,
+                                        custom_item_description: `${quantity} x ${item_description}` ,
+                                        custom_note:v.note
                                     }); 
                                 }
 
@@ -828,9 +856,11 @@ export default class Sale {
             if (freeQty > sp.quantity) {
                 freeQty = sp.quantity;
             }
+            let free_by = sp.free_by||"";
+            let free_note = sp.free_note;             
 
             if (freeQty == sp.quantity) {
-                sp.is_free = 1;
+                sp.is_free = true;
                 sp.backup_modifier_price = sp.modifiers_price
                 sp.backup_product_price = sp.price
                 sp.price = 0;
@@ -838,7 +868,7 @@ export default class Sale {
                 this.updateSaleProduct(sp);
                 this.updateSaleSummary();
             }
-            else {
+            else { 
                 let freeSaleProduct = JSON.parse(JSON.stringify(sp))
                 freeSaleProduct.quantity = freeQty;
                 freeSaleProduct.backup_product_price = sp.price
@@ -846,18 +876,34 @@ export default class Sale {
                 freeSaleProduct.price = 0;
                 freeSaleProduct.modifiers_price = 0;
                 freeSaleProduct.selected = false;
-                freeSaleProduct.is_free = true;
+                freeSaleProduct.is_free = true;  
                 this.updateSaleProduct(freeSaleProduct);
-                this.sale.sale_products.push(freeSaleProduct)
+                this.sale.sale_products.push(freeSaleProduct);               
 
                 //old record 
-
+                sp.free_note = "";
                 sp.quantity = sp.quantity - freeQty;
                 this.updateSaleProduct(sp);
 
-            }
+            } 
+            this.updateSaleSummary(); 
 
-            this.updateSaleSummary();
+             //audit trail
+             let item_description=`${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
+             let msg = `User ${free_by} free on item: ${item_description}`; 
+             msg += `, Qty: ${freeQty}`;             
+             msg += `${(free_note||"")==""?'':', Reason: '+free_note }`;
+             this.auditTrailLogs.push({
+                    doctype:"Comment",
+                    subject:"Free Sale Product",
+                    comment_type:"Info",
+                    reference_doctype:"Sale",
+                    reference_name:"New",
+                    comment_by:free_by,
+                    content:msg,
+                    custom_item_description: `${freeQty} x ${item_description}` ,
+                    custom_note:free_note
+             }); 
         }
         this.dialogActiveState=false;
 
@@ -901,7 +947,8 @@ export default class Sale {
         const resp = await this.onChangeTaxSetting($t('Change Tax Setting'),sp.product_tax_rule,sp.change_tax_setting_note, gv,sp);     
     }
     
-    async onDiscount(title, amount, discount_value, discount_type, discount_codes,discount_note, sp, category_note_name) {
+    async onDiscount(gv, title, amount, discount_value, discount_type, discount_codes,discount_note, sp, category_note_name) {
+       
         const result = await saleProductDiscountDialog({
             title: title,
             value: amount,
@@ -914,40 +961,85 @@ export default class Sale {
                 category_note_name: category_note_name
             }
         })
-        this.dialogActiveState=false
-        if (result != false) {
-            
-            
+         
+       
+        this.dialogActiveState=false ;
+    
+        if (result != false) {  
             if (sp) {
-                sp.discount = result.discount
-                sp.discount_type = result.discount_type
-                sp.discount_note = result.discount_note
-                this.updateSaleProduct(sp)
+                sp.discount = result.discount;
+                sp.discount_type = result.discount_type;
+                sp.discount_note = result.discount_note;
+                this.updateSaleProduct(sp);
+
+                //discount sale product audit
+                this.onDiscountSaleProductAudit(sp,gv,result);
+
             } else {
                 if(result.revenue_group.length>0){
                     this.sale.discount = 0;
                     this.sale.sale_products.forEach(sp => {
                         if(sp.allow_discount){
                             if(result.revenue_group.includes(sp.revenue_group)){                             
-                                sp.discount = result.discount
-                                sp.discount_type = result.discount_type
-                                sp.discount_note = result.discount_note
-                                this.updateSaleProduct(sp)
+                                sp.discount = result.discount;
+                                sp.discount_type = result.discount_type;
+                                sp.discount_note = result.discount_note;
+                                this.updateSaleProduct(sp);
+
+                                //disoucnt sale product audit
+                                this.onDiscountSaleProductAudit(sp,gv,result);
                             }
                         }
                     });
                 }
-                else{ 
+                else{  
+                    this.sale.discount = result.discount;
+                    this.sale.discount_type = result.discount_type;
+                    this.sale.discount_note = result.discount_note;
 
-                    this.sale.discount = result.discount
-                    this.sale.discount_type = result.discount_type
-                    this.sale.discount_note = result.discount_note
+                    
+
+                    //sale discount audit
+                    let discount =  this.sale.discount_type =="Percent"? `${ this.sale.discount} %` : numberFormat(gv.getCurrnecyFormat, this.sale.discount);                //audit trail
+                    let msg = `User ${this.sale.temp_discount_by} discount (${discount}) on Bill`;          
+                    msg += `${( result.discount_note||"")==""?'':', Reason: '+ result.discount_note }`;
+                    this.auditTrailLogs.push({
+                        doctype:"Comment",
+                        subject:"Sale Discount",
+                        comment_type:"Info",
+                        reference_doctype:"Sale",
+                        reference_name:"New",
+                        comment_by:this.sale.temp_discount_by,
+                        content:msg,
+                        custom_item_description:`Discount (${discount})`,
+                        custom_note: result.discount_note
+                    }); 
                 }
             }
             this.updateSaleSummary()
         }
         this.dialogActiveState=false;
     }
+
+
+    onDiscountSaleProductAudit(sp,gv,result){
+        let discount = sp.discount_type =="Percent"? `${sp.discount} %` : numberFormat(gv.getCurrnecyFormat,sp.discount);                //audit trail
+        let item_description=`${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
+        let msg = `User ${sp.temp_discount_by} discount (${discount}) on item: ${item_description} `;          
+        msg += `${( result.discount_note||"")==""?'':', Reason: '+ result.discount_note }`;
+        this.auditTrailLogs.push({
+            doctype:"Comment",
+            subject:"Discount Sale Product",
+            comment_type:"Info",
+            reference_doctype:"Sale",
+            reference_name:"New",
+            comment_by:sp.temp_discount_by,
+            content:msg,
+            custom_item_description: `${item_description} (discount: ${discount})`,
+            custom_note: result.discount_note
+        }); 
+    }
+
     async onSaleProductSetSeatNumber(sp) {
         if (!this.isBillRequested()) {
             const result = await keyboardDialog({ title: $t("Set Seat Number"), type: 'number', value: sp.seat_number })
@@ -965,7 +1057,26 @@ export default class Sale {
             sp.modifiers_price = sp.backup_modifier_price
             sp.free_note = ''
             this.updateSaleProduct(sp)
-            this.updateSaleSummary()
+            this.updateSaleSummary();
+
+
+            //audit trail
+            const u = JSON.parse(localStorage.getItem('make_order_auth')); 
+            let item_description=`${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
+            let msg = `User ${u.name} remove free on item: ${item_description} `;
+            msg += `, Qty: ${sp.quantity}`;       
+            this.auditTrailLogs.push({
+                doctype:"Comment",
+                subject:"Remove Free Sale Product",
+                comment_type:"Info",
+                reference_doctype:"Sale",
+                reference_name:"New",
+                comment_by: u.name,
+                content:msg,
+                custom_item_description: `${sp.quantity} x ${item_description}`,
+                custom_note:""
+            }); 
+
         }
     }
 
@@ -1144,6 +1255,25 @@ export default class Sale {
                             
                             await this.saleResource.setValue.submit(this.sale);
                         }
+
+
+                        
+                        //audit trail 
+                        const u = JSON.parse(localStorage.getItem('make_order_auth'));
+                        let msg = `User ${u.name} quick pay`;          
+                        this.auditTrailLogs.push({
+                            doctype:"Comment",
+                            subject:"Quick Payment",
+                            comment_type:"Info",
+                            reference_doctype:"Sale",
+                            reference_name:"New",
+                            comment_by:u.name,
+                            content:msg,
+                            custom_item_description: "",
+                            custom_note: ""
+                        }); 
+
+
 
                         this.submitToAuditTrail(this.sale);
 
@@ -1338,8 +1468,7 @@ export default class Sale {
             setting: this.setting?.pos_setting,
             sale: doc,
             station_device_printing:(this.setting?.device_setting?.station_device_printing)||"",
-        } 
-        console.log(data)
+        }
         if (receipt.pos_receipt_file_name && localStorage.getItem("is_window")) {
             window.chrome.webview.postMessage(JSON.stringify(data));
         } else {           

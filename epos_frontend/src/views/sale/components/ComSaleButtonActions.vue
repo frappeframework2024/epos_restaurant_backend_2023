@@ -205,9 +205,13 @@ function onSaleDiscount(discount_type) {
         resolve(false);
     }
     else if (!sale.isBillRequested()) { 
+      
         gv.authorize("discount_sale_required_password", "discount_sale", "discount_sale_required_note", "Discount Sale Note", "", true).then((v) => {
             if (v) {
+
+                sale.sale.temp_discount_by = v.user;
                 sale.onDiscount(
+                  gv,
                     `Discount`,
                     sale.sale.sale_discountable_amount,
                     sale.sale.discount,
@@ -280,7 +284,9 @@ async function onCancelPrintBill() {
           reference_doctype:"Sale",
           reference_name:"New",
           comment_by:v.user,
-          content:msg
+          content:msg,
+          custom_item_description: "",
+          custom_note:v.note
       })  ; 
     }
   })

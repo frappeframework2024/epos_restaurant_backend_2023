@@ -158,7 +158,8 @@ async function onPayment() {
   
   const result = await paymentDialog({})
   sale.dialogActiveState=false
-  if (result) {
+  if (result) { 
+    
     product.onClearKeyword()
     sale.newSale();
     if (onRedirectSaleType()) {

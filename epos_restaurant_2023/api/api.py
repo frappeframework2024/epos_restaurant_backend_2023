@@ -143,8 +143,13 @@ def get_system_settings(pos_profile="", device_name=''):
         "delete_item_required_note":pos_config.delete_item_required_note,
         "discount_item_required_password":pos_config.discount_item_required_password,
         "discount_item_required_note":pos_config.discount_item_required_note,
+        "cancel_discount_item_required_password":pos_config.cancel_discount_item_required_password,
+        "cancel_discount_item_required_note":pos_config.cancel_discount_item_required_note,
+
         "discount_sale_required_password":pos_config.discount_sale_required_password,
+        "cancel_discount_sale_required_password":pos_config.cancel_discount_sale_required_password,
         "discount_sale_required_note":pos_config.discount_sale_required_note,
+        "cancel_discount_sale_required_note":pos_config.cancel_discount_sale_required_note,
         "delete_bill_required_password":pos_config.delete_bill_required_password,
         "delete_bill_required_note":pos_config.delete_bill_required_note,
         "change_tax_setting_required_password":pos_config.change_tax_setting_required_password,

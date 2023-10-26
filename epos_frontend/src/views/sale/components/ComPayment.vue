@@ -128,6 +128,7 @@ function onClose() {
 }
 
 async function onPayment() {
+ 
     if (sale.sale.payment.filter(r => r.required_customer == 1).length > 0) {
         if (sale.sale.customer == sale.setting.customer) {
             toaster.warning($t("msg.Please select customer for payment type")+" " + sale.sale.payment.filter(r => r.required_customer == 1)[0].payment_type);
@@ -136,6 +137,9 @@ async function onPayment() {
     }
     sale.pos_receipt = selectedReceipt.value;
     sale.message = $t("msg.Payment successfully");
+
+    onPaymentAudit()  ;
+
     sale.onSubmitPayment(true).then((v) => {
         if (v) {            
             emit("resolve", true);
@@ -169,12 +173,36 @@ async function onPaymentWithoutPrint() {
     sale.pos_receipt = undefined;
     sale.message = $t("msg.Payment successfully");
 
-
+    onPaymentAudit();
+   
     sale.onSubmitPayment(false).then((v) => {
         if (v) {
             emit("resolve", true);
         }
     })
+}
+
+function onPaymentAudit(){
+    const u = JSON.parse(localStorage.getItem('make_order_auth')); 
+    let msg = `User ${u.name} process payment`; 
+    let _payment_type ="";
+    sale.sale.payment.forEach(sp => {
+        _payment_type += `${sp.payment_type }: ${sp.input_amount}\n`
+    });
+    
+    msg += `Payment Types: ${_payment_type}`
+    sale.auditTrailLogs.push({
+        doctype:"Comment",
+        subject:"Payment",
+        comment_type:"Info",
+        reference_doctype:"Sale",
+        reference_name:"New",
+        comment_by:u.name,
+        content:msg,
+        custom_item_description: "",
+        custom_note:""
+    });  
+
 }
 
 onUnmounted(() => {

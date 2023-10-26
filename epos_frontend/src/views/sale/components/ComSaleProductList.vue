@@ -192,7 +192,9 @@ function onReorder(sp) {
         }
 
         if(is_append){
-            let msg = `User ${u.name} was append a quantity to item: ${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;     
+
+            let item_description =`${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
+            let msg = `User ${u.name} was append a quantity to item: ${item_description}`;     
             sale.auditTrailLogs.push({
                 doctype:"Comment",
                 subject:"Append Quantity",
@@ -200,7 +202,9 @@ function onReorder(sp) {
                 reference_doctype:"Sale",
                 reference_name:"New",
                 comment_by: u.name,
-                content:msg
+                content:msg,
+                custom_item_description: item_description,
+                custom_note:""
             }) ;
         }
     }

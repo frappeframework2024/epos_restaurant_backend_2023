@@ -22,8 +22,6 @@ const sale = inject('$sale')
 const gv = inject("$gv")
 const toaster = createToaster({ position: "top" });
 
-
-
 function onSaleDiscount(discount_type) {
     sale.dialogActiveState=true;
     if (sale.sale.sale_products.length == 0) {
@@ -32,8 +30,10 @@ function onSaleDiscount(discount_type) {
     }
     else if (!sale.isBillRequested()) { 
         gv.authorize("discount_sale_required_password", "discount_sale", "discount_sale_required_note", "Discount Sale Note", "", true).then((v) => {
-            if (v) {
+            if (v) {  
+                sale.sale.temp_discount_by = v.user; 
                 sale.onDiscount(
+                    gv,
                    $t('Discount'),
                     sale.sale.sale_discountable_amount,
                     sale.sale.discount,
@@ -48,8 +48,27 @@ function onSaleDiscount(discount_type) {
     }
 }
 function onSaleCancelDiscount() {
-    sale.sale.discount = 0;
-    sale.sale.discount_type = 'Amount'
-    sale.updateSaleSummary();
+    gv.authorize("cancel_discount_sale_required_password", "cancel_discount_sale", "cancel_discount_sale_required_note", "Cancel Discount Sale Note", "", false).then((v) => {
+        if (v) {  
+            sale.sale.discount = 0;
+            sale.sale.discount_type = 'Amount'
+            sale.updateSaleSummary(); 
+
+            //audit trail 
+            let msg = `User ${v.user} cancel discount on Bill`;          
+            msg += `${( v.note||"")==""?'':', Reason: '+ v.note }`;
+            sale.auditTrailLogs.push({
+                doctype:"Comment",
+                subject:"Cancel Discount Sale",
+                comment_type:"Info",
+                reference_doctype:"Sale",
+                reference_name:"New",
+                comment_by:v.user,
+                content:msg,
+                custom_item_description: "",
+                custom_note: v.note
+            }); 
+        }
+    });   
 }
 </script>
