@@ -184,6 +184,10 @@ function on_count_members_value_changed(frm,changed=false){
                 on_update_grand_total(frm,changed);
                 frm.refresh_field("price");   
               }
+            }else{
+                frm.doc.price = (r.cost||0)
+                on_update_grand_total(frm,changed);
+                frm.refresh_field("price");   
             }
        })
         
