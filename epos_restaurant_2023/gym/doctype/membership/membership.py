@@ -12,7 +12,7 @@ class Membership(Document):
 			if self.count_members <=0:
 				frappe.throw("Your counter member not allow value less than zero(0).")
 			
-			if not self.membership_family_table :
+			if not self.membership_family_table and self.count_members > 1:
 				frappe.throw("Please add members to list for Family Shared")
 
 			elif len(self.membership_family_table) >= self.count_members:
