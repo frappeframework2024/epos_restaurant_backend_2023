@@ -1668,6 +1668,30 @@
   "title": "Other"
  },
  {
+  "data": "{\r\n    \"category_note_name_en\": \"Cancel Discount Sale Note\",\r\n    \"category_note_name_kh\": \"Cancel Discount Sale Note\",\r\n    \"disabled\": 0,\r\n    \"multiple_selected\": 0,\r\n    \"doctype\": \"Category Note\",\r\n    \"notes\": [\r\n        {\r\n            \"note\": \"Wrong Discount\",\r\n            \"product_code\": null,\r\n            \"parent\": \"Cancel Discount Sale Note\",\r\n            \"parentfield\": \"notes\",\r\n            \"parenttype\": \"Category Note\",\r\n            \"doctype\": \"Cashier Notes\"\r\n        }\r\n    ]\r\n}",
+  "doc_name": "Cancel Discount Sale Note",
+  "doc_type": "Category Note",
+  "docstatus": 0,
+  "doctype": "Predefine Data",
+  "is_single": 0,
+  "modified": "2023-10-26 15:31:02.090036",
+  "name": "6d689364ba",
+  "sort": 80,
+  "title": "Cancel Discount Sale Note"
+ },
+ {
+  "data": "{\r\n    \"category_note_name_en\": \"Cancel Discount Item Note\",\r\n    \"category_note_name_kh\": \"Cancel Discount Item Note\",\r\n    \"disabled\": 0,\r\n    \"multiple_selected\": 0,\r\n    \"doctype\": \"Category Note\",\r\n    \"notes\": [\r\n        {\r\n            \"note\": \"Wrong Discount\",\r\n            \"product_code\": null,\r\n            \"parent\": \"Cancel Discount Item Note\",\r\n            \"parentfield\": \"notes\",\r\n            \"parenttype\": \"Category Note\",\r\n            \"doctype\": \"Cashier Notes\"\r\n        }\r\n    ]\r\n}",
+  "doc_name": "Cancel Discount Item Note",
+  "doc_type": "Category Note",
+  "docstatus": 0,
+  "doctype": "Predefine Data",
+  "is_single": 0,
+  "modified": "2023-10-26 15:33:16.286237",
+  "name": "21767855dc",
+  "sort": 80,
+  "title": "Cancel Discount Item Note"
+ },
+ {
   "data": "{\r\n    \"name\": \"Cashier Shift Sale Product Summary\",\r\n    \"title\": \"Sale Product Summary\",\r\n    \"print_format\": \"Cashier Shift Sale Product Summary\",\r\n    \"receipt_height\": 11.69,\r\n    \"receipt_width\": 3.14,\r\n    \"print_format_doc_type\": \"Cashier Shift\",\r\n    \"receipt_margin_top\": 0,\r\n    \"receipt_margin_right\": 0,\r\n    \"receipt_margin_bottom\": 0,\r\n    \"receipt_margin_left\": 0,\r\n    \"print_receipt_copies\": 1,\r\n    \"print_invoice_copies\": 1,\r\n    \"sort_order\": 1,\r\n    \"show_in_pos\": 1,\r\n    \"show_in_pos_report\": 1,\r\n    \"show_in_pos_closed_sale\": 0,\r\n    \"doctype\": \"POS Print Format Setting\",\r\n    \"__last_sync_on\": \"2023-09-01T07:17:30.354Z\"\r\n}",
   "doc_name": "Cashier Shift Sale Product Summary",
   "doc_type": "POS Print Format Setting",
