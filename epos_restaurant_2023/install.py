@@ -136,7 +136,6 @@ def reset_sale_transaction():
             frappe.db.sql("delete from `tabMembership Payment`")
             frappe.db.sql("delete from `tabMembership Check In Items`")
             frappe.db.sql("delete from `tabMembership Check In`")
-            frappe.db.sql("delete from `tabMembership Family Pricing`")
             frappe.db.sql("delete from `tabMembership Family`")
             frappe.db.sql("delete from `tabMembership`")
            
@@ -220,6 +219,7 @@ def reset_data():
             frappe.db.sql(" update `tabRole` set desk_access = 0 where name = 'Sales User'")
 
             #gym
+            frappe.db.sql("delete from `tabMembership Family Pricing`")
             frappe.db.sql("delete from `tabMembership Options`")
             frappe.db.sql("delete from `tabTrainer`")
         
