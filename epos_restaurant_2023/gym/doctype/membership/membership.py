@@ -9,7 +9,7 @@ from frappe.model.document import Document
 class Membership(Document):
 	def validate(self):
 		if self.membership_type =="Family Shared":
-			if self.count_members <=1:
+			if self.count_members <=0:
 				frappe.throw("Your counter member not allow value less than zero(0).")
 			
 			if not self.membership_family_table :
