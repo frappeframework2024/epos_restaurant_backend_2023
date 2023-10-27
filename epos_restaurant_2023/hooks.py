@@ -184,8 +184,7 @@ scheduler_events = {
 
 
 fixtures = [
-    # {"dt": "Help Category"},
-    # {"dt": "Help Article"},
+   
     # {"dt": "Print Format", "filters": [["standard", "=", "Yes"]]},
     # {"dt": "Payment Type", "filters": [["is_standard", "=", "1"]]},
     # {"dt": "Payment Type Group", "filters": [["is_standard", "=", "1"]]},
@@ -212,6 +211,8 @@ fixtures = [
     {"dt": "Website Theme","filters": [["name", "=", "estc theme"]]},
     {"dt": "Color"},
     {"dt": "Print Style","filters": [["name", "=", "Default Style"]]},
+    {"dt": "Help Category"},
+    {"dt": "Help Article"},
 ]
 
 website_route_rules = [
