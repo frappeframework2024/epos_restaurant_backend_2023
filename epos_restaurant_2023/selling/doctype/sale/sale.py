@@ -449,7 +449,7 @@ def add_payment_to_sale_payment(self):
 			payment_type = frappe.db.get_default("changed_payment_type")			
 			pos_config_data = frappe.get_doc('POS Config', pos_config)
 			pos_config_payment_type = Enumerable(pos_config_data.payment_type).where(lambda x:x.payment_type==payment_type)
-			account_code = ""
+			account_code = "" 
 			if pos_config_payment_type:
 				account_code = pos_config_payment_type[0].account_code
 			doc = frappe.get_doc({
@@ -458,7 +458,7 @@ def add_payment_to_sale_payment(self):
 					'posting_date':self.posting_date,
 					'payment_type': payment_type,
 					'sale':self.name,
-					'input_amount':self.changed_amount * -1,
+					'input_amount':(self.changed_amount * self.exchange_rate ) * -1,
 					"docstatus":1,
 					"check_valid_payment_amount":0,
 					"pos_profile":self.pos_profile,
