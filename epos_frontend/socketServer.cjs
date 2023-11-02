@@ -154,6 +154,14 @@ io.on('connection', (socket) => {
   socket.on("Reports",(arg)=>{
     io.emit("Reports",arg)
   })
+
+  socket.on("ComHousekeepingRoomDetailPanel",(arg)=>{
+    io.emit("ComHousekeepingRoomDetailPanel",arg)
+  })
+
+  socket.on("RoomBlockList",(arg)=>{
+    io.emit("RoomBlockList",arg)
+  })
   
 
   

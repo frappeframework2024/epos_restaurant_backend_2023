@@ -90,14 +90,6 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2023-10-27 16:16:56.617401",
-  "name": "Ayutthaya",
-  "note": "Ayutthaya",
-  "province": "Ayutthaya"
- },
- {
-  "docstatus": 0,
-  "doctype": "Province",
   "modified": "2023-10-27 16:17:03.710680",
   "name": "Kanchanaburi",
   "note": "Kanchanaburi",
@@ -154,14 +146,6 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2023-10-27 16:15:49.820107",
-  "name": "New Delhi",
-  "note": "New Delhi",
-  "province": "New Delhi"
- },
- {
-  "docstatus": 0,
-  "doctype": "Province",
   "modified": "2023-10-27 16:16:30.188280",
   "name": "Bangkok",
   "note": "Bangkok",
@@ -194,10 +178,10 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2023-10-27 16:16:08.917947",
-  "name": "Kolkata",
-  "note": "Kolkata",
-  "province": "Kolkata"
+  "modified": "2023-10-27 16:16:56.617401",
+  "name": "Ayutthaya",
+  "note": "Ayutthaya",
+  "province": "Ayutthaya"
  },
  {
   "docstatus": 0,
@@ -210,10 +194,10 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2023-10-27 16:14:09.370456",
-  "name": "Chongqing",
-  "note": "Chongqing",
-  "province": "Chongqing"
+  "modified": "2023-10-27 16:15:49.820107",
+  "name": "New Delhi",
+  "note": "New Delhi",
+  "province": "New Delhi"
  },
  {
   "docstatus": 0,
@@ -226,10 +210,18 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2023-03-26 16:48:58.237585",
-  "name": "Battam Bang",
-  "note": null,
-  "province": "Battam Bang"
+  "modified": "2023-10-27 16:13:43.698305",
+  "name": "Shenzhen",
+  "note": "Shenzhen",
+  "province": "Shenzhen"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Province",
+  "modified": "2023-10-27 16:14:09.370456",
+  "name": "Chongqing",
+  "note": "Chongqing",
+  "province": "Chongqing"
  },
  {
   "docstatus": 0,
@@ -242,10 +234,18 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2023-10-27 16:13:43.698305",
-  "name": "Shenzhen",
-  "note": "Shenzhen",
-  "province": "Shenzhen"
+  "modified": "2023-03-26 16:48:58.237585",
+  "name": "Battam Bang",
+  "note": null,
+  "province": "Battam Bang"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Province",
+  "modified": "2023-10-27 16:16:08.917947",
+  "name": "Kolkata",
+  "note": "Kolkata",
+  "province": "Kolkata"
  },
  {
   "docstatus": 0,
