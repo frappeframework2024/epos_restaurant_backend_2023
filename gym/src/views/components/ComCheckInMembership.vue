@@ -197,7 +197,7 @@ function onCheckInClick() {
       is_processing.value = false;
   }).catch((error) => {
     is_processing.value = false;
-    console.log({'submit_data_bug':error})
+ 
   });
  
 }

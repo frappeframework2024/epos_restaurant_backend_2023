@@ -31,8 +31,9 @@ class PurchaseOrder(Document):
 		self.total_discount = (self.product_discount or 0) + (self.po_discount or 0)
 		self.grand_total =( sub_total - (self.total_discount or 0))
 		self.balance = self.grand_total  - (self.total_paid or 0)
-		if self.balance == 0:
-			frappe.throw("Total amount is 0")
+		# if not self.is_new():
+		# 	if self.balance == 0 and self.grand_total > 0:
+		# 		frappe.throw("Total amount is 0")
 
 	def on_submit(self):
 		#update_inventory_on_submit(self)

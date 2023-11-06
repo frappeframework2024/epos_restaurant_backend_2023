@@ -56,12 +56,12 @@ export default class Sale {
 
 
     onSaleOrderClick(){
-        console.log("Sale Order Click ")
+   
     }
 
     onAddtoCart(p,qty = 1, portion=null,modifiers=null){
         toaster.warning(p.name_en)
-        console.log({"product":p,"portion":portion,"modifiers":modifiers})
+      
     }
 
 

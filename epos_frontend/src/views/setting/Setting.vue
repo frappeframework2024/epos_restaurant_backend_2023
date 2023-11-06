@@ -65,7 +65,7 @@ async function onResetCounter() {
                  counter:result
                 })
             .then((d) => {
-                 console.log(d)
+
                 toaster.success($t('msg.Reset counter successfully'));
             }).catch((err)=>{
              
@@ -94,7 +94,7 @@ if (result) {
              counter:result
             })
         .then((d) => {
-             console.log(d)
+
             toaster.success($t('msg.Reset counter successfully'));
         }).catch((err)=>{
          

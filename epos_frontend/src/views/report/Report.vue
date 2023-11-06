@@ -259,7 +259,7 @@ function getCashierShifts(working_day){
  
 
 function onCashierShift(data){
-    console.log(cashierShiftReports.value)
+
     if(data && data.name){
         activeReport.value.name = 'Cashier Shift'
         activeReport.value.report_id = data?.name

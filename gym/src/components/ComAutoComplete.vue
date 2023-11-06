@@ -140,7 +140,7 @@ async function getData(keyword) {
     if (props.filters) {
         apiParams.filters = JSON.parse(JSON.stringify(props.filters))
     }
-    console.log
+ 
     await call.get('frappe.desk.search.search_link', apiParams).then((result) => {
         options.value = result.results
         options.value = options.value.map(r => r.label == '' || r.label == null ? { ...r, label: r.value } : r)

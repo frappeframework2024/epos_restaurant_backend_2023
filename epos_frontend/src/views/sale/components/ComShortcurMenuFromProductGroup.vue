@@ -49,7 +49,7 @@
         shortcut.value = docs
     })
     .catch((error)=>{
-        console.log(error)
+   
     })
   
     function onShortCutMenuClick(name) {

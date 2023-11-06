@@ -185,7 +185,7 @@ function onFilter(){
         activeReport.value.filter = {
             product_category: filter.product_category
         }
-        console.log(activeReport.value)
+   
         onRefresh()
     }else{
         activeReport.value.filter.product_category = ''

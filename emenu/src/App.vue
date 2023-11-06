@@ -60,7 +60,7 @@
 							sale.sale_type = gv.pos_profile.default_sale_type;
 							sale.table_id = table.name;
 							sale.tbl_number = table.tbl_number;
-						}).catch(er=>console.log(er))
+						}).catch(er=>{})
 						
 
 						
@@ -77,7 +77,7 @@
 
 				})
 				.catch((err)=>{
-					console.log({"_working_day_or_shift ":err})
+				 
 					not_found.value = true; 
 				}) 
 			}

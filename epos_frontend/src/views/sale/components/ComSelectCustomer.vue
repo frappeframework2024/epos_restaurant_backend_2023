@@ -251,7 +251,7 @@ async function onAddCustomer() {
 function onClearPromotionProduct(){
     // remove old promotion
     sale.sale.sale_products.forEach((s) => { 
-        console.log(s.happy_hour_promotion)
+
         if(s.happy_hour_promotion){
             s.discount_type = ''
             s.discount = 0

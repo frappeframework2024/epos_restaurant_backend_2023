@@ -28,7 +28,7 @@ const show_thankyou = ref(false)
 
 socket.on("ShowOrderInCustomerDisplay", async (arg, show) => {
     data.value = arg;
-    console.log(data.value)
+
     if (Object.entries(data.value).length > 0) {
         dataThankYou.value = JSON.parse(JSON.stringify(data.value))
     }

@@ -74,8 +74,7 @@ function onKeyDown(event) {
                 p.price = portions[0].price
                 p.unit = portions[0].unit
             }
-            console.log(check_modifiers)
-            console.log(portions)
+
             if (check_modifiers || portions?.length > 1) {
                 product.setSelectedProduct(doc);
 

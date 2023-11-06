@@ -84,7 +84,7 @@ async function onSaleOrderClick(s) {
             emit("resolve", { action: "reload_sale", name: res.message.data.name })   
             
         }).catch((error) => {
-            console.log(error)
+       
             isLoading.value = false;
         });
     }

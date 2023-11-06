@@ -8,7 +8,7 @@
     const fdb = inject('$fdb')
  
     fdb.getDoc('Customer', '000001')
-    .then((doc) => console.log(doc))
+    .then((doc) =>{})
     .catch((error) => console.error(error));
 </script>
 <style lang="">
