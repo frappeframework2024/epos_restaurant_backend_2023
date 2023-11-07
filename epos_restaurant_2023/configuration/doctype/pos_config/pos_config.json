@@ -81,6 +81,8 @@
   "change_tax_setting_required_note",
   "section_break_63",
   "open_order_required_password",
+  "column_break_ladb",
+  "order_station_open_order_required_password",
   "section_break_44",
   "change_price_rule_require_password",
   "section_break_53",
@@ -590,12 +592,22 @@
    "fieldname": "cancel_discount_item_required_note",
    "fieldtype": "Check",
    "label": "Cancel Discount Item Required Note"
+  },
+  {
+   "fieldname": "column_break_ladb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "order_station_open_order_required_password",
+   "fieldtype": "Check",
+   "label": "Order Station Open Order Required Password"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-10-26 16:32:33.190454",
+ "modified": "2023-11-07 19:46:01.126728",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

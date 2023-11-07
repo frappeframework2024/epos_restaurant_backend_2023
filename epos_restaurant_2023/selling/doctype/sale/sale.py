@@ -37,13 +37,13 @@ class Sale(Document):
 				from frappe.model.naming import make_autoname
 				self.waiting_number = make_autoname(self.waiting_number_prefix)
  
-			if not self.custom_bill_number:
-				if self.pos_profile:
-					pos_config = frappe.db.get_value("POS Profile",self.pos_profile,"pos_config")
-					bill_number_prefix = frappe.db.get_value("POS Config",pos_config,"pos_bill_number_prefix")
-					if bill_number_prefix:
-						from frappe.model.naming import make_autoname
-						self.custom_bill_number = make_autoname(bill_number_prefix)
+			# if not self.custom_bill_number:
+			# 	if self.pos_profile:
+			# 		pos_config = frappe.db.get_value("POS Profile",self.pos_profile,"pos_config")
+			# 		bill_number_prefix = frappe.db.get_value("POS Config",pos_config,"pos_bill_number_prefix")
+			# 		if bill_number_prefix:
+			# 			from frappe.model.naming import make_autoname
+			# 			self.custom_bill_number = make_autoname(bill_number_prefix)
 
 
 		if self.discount_type =="Percent" and self.discount> 100:
@@ -196,6 +196,17 @@ class Sale(Document):
 		on_get_revenue_account_code(self)
 		self.append_quantity = None
 		self.scan_barcode = None
+
+		# generate custom bill format
+		if not self.custom_bill_number:
+				if self.pos_profile:
+					pos_config = frappe.db.get_value("POS Profile",self.pos_profile,"pos_config")
+					bill_number_prefix = frappe.db.get_value("POS Config",pos_config,"pos_bill_number_prefix")
+					if bill_number_prefix:
+						from frappe.model.naming import make_autoname
+						self.custom_bill_number = make_autoname(bill_number_prefix)
+		## end generate custom bill format
+
 		for d in self.sale_products:
 			if d.is_inventory_product:
 				if d.unit !=d.base_unit:
@@ -206,8 +217,8 @@ class Sale(Document):
 	def on_submit(self):
 		create_folio_transaction_from_pos_trnasfer(self) 
 		# update_inventory_on_submit(self)			
-		add_payment_to_sale_payment(self)
-		
+		add_payment_to_sale_payment(self) 
+
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.create_folio_transaction_from_pos_trnasfer", queue='short', self=self)
 		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit", queue='short', self=self)
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.add_payment_to_sale_payment", queue='short', self=self)
