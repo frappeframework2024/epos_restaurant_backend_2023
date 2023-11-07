@@ -13,6 +13,7 @@
   "stock_location",
   "unit",
   "quantity",
+  "reorder_level",
   "cost",
   "total_cost"
  ],
@@ -80,11 +81,18 @@
    "fieldname": "product_name",
    "fieldtype": "Data",
    "label": "Product Name"
+  },
+  {
+   "fieldname": "reorder_level",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Reorder level",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-06-26 10:33:58.842306",
+ "modified": "2023-11-07 10:46:37.039631",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Location Product",
