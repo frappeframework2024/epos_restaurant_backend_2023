@@ -86,13 +86,12 @@
    "fieldname": "reorder_level",
    "fieldtype": "Float",
    "in_list_view": 1,
-   "label": "Reorder level",
-   "read_only": 1
+   "label": "Reorder level"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-11-07 10:46:37.039631",
+ "modified": "2023-11-07 16:07:57.010582",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Location Product",
