@@ -5,7 +5,7 @@
    "label": "Stock Values"
   }
  ],
- "content": "[{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Inventory</span>\",\"col\":12}},{\"type\":\"chart\",\"data\":{\"chart_name\":\"Stock Values\",\"col\":12}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Product\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Modifier Group\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Modifier Category\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Modifier Item\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Production\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Take\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Adjustment\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Transfer\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Inventory Transaction\",\"col\":3}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Location Product\",\"col\":3}},{\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent Transaction</b></span>\",\"col\":12}},{\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Inventory Transaction\",\"col\":6}},{\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Stock Adjustment Transaction\",\"col\":6}},{\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Purchase Order Transaction\",\"col\":4}},{\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Stock Transfer Transaction\",\"col\":4}},{\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Stock Take Transaction\",\"col\":4}},{\"type\":\"spacer\",\"data\":{\"col\":12}},{\"type\":\"card\",\"data\":{\"card_name\":\"Configuration\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"type\":\"card\",\"data\":{\"card_name\":\"Summary Report\",\"col\":4}}]",
+ "content": "[{\"id\":\"q4v0GMk0PH\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Inventory</span>\",\"col\":12}},{\"id\":\"m4LNRhZkiv\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Stock Values\",\"col\":12}},{\"id\":\"wcGVDGLB0y\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Product\",\"col\":3}},{\"id\":\"W-4Bt9XtUY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Modifier Group\",\"col\":3}},{\"id\":\"4t0c7rn5z_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Modifier Category\",\"col\":3}},{\"id\":\"9RWkoNxQPq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Modifier Item\",\"col\":3}},{\"id\":\"qX9rIgy1cx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Production\",\"col\":3}},{\"id\":\"i_lI6vofYN\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Take\",\"col\":3}},{\"id\":\"loZstyAoMz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Adjustment\",\"col\":3}},{\"id\":\"WynT32K-wt\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Transfer\",\"col\":3}},{\"id\":\"6xdVVCdbHL\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"id\":\"8jQmh5nakU\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Inventory Transaction\",\"col\":3}},{\"id\":\"Aa6vA6V-Mi\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Location Product\",\"col\":3}},{\"id\":\"PxU9Ho1GYx\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent Transaction</b></span>\",\"col\":12}},{\"id\":\"oSxaTPxEMJ\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Inventory Transaction\",\"col\":6}},{\"id\":\"sw4Xf5qRb3\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Stock Adjustment Transaction\",\"col\":6}},{\"id\":\"ZRJp8CWklr\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Purchase Order Transaction\",\"col\":4}},{\"id\":\"TbvhMIKkA_\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Stock Transfer Transaction\",\"col\":4}},{\"id\":\"raUOAAq5ip\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Stock Take Transaction\",\"col\":4}},{\"id\":\"4gu51YucNU\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"TAamvxFYMr\",\"type\":\"card\",\"data\":{\"card_name\":\"Configuration\",\"col\":4}},{\"id\":\"_3jjBJB3ED\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"id\":\"lxJRk4MTAz\",\"type\":\"card\",\"data\":{\"card_name\":\"Summary Report\",\"col\":4}}]",
  "creation": "2022-12-06 10:52:34.110072",
  "custom_blocks": [],
  "docstatus": 0,
@@ -127,7 +127,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Reports",
-   "link_count": 5,
+   "link_count": 6,
    "onboard": 0,
    "type": "Card Break"
   },
@@ -180,9 +180,19 @@
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Low Stock Report",
+   "link_count": 0,
+   "link_to": "Low Stock Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2023-10-02 11:06:16.525961",
+ "modified": "2023-11-08 09:21:21.355002",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Inventory",
