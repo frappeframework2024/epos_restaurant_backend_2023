@@ -66,14 +66,6 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2023-10-27 16:15:14.192287",
-  "name": "Chennai",
-  "note": "Chennai",
-  "province": "Chennai"
- },
- {
-  "docstatus": 0,
-  "doctype": "Province",
   "modified": "2023-10-27 16:15:40.869660",
   "name": "Mumbai",
   "note": "Mumbai",
@@ -170,6 +162,14 @@
  {
   "docstatus": 0,
   "doctype": "Province",
+  "modified": "2023-10-27 16:15:14.192287",
+  "name": "Chennai",
+  "note": "Chennai",
+  "province": "Chennai"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Province",
   "modified": "2023-10-27 16:15:32.493158",
   "name": "Hyderabad",
   "note": "Hyderabad",
@@ -178,26 +178,10 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2023-10-27 16:16:56.617401",
-  "name": "Ayutthaya",
-  "note": "Ayutthaya",
-  "province": "Ayutthaya"
- },
- {
-  "docstatus": 0,
-  "doctype": "Province",
   "modified": "2022-12-05 20:47:13.698038",
   "name": "Phnom Penh",
   "note": null,
   "province": "Phnom Penh"
- },
- {
-  "docstatus": 0,
-  "doctype": "Province",
-  "modified": "2023-10-27 16:15:49.820107",
-  "name": "New Delhi",
-  "note": "New Delhi",
-  "province": "New Delhi"
  },
  {
   "docstatus": 0,
@@ -226,6 +210,14 @@
  {
   "docstatus": 0,
   "doctype": "Province",
+  "modified": "2023-10-27 16:15:49.820107",
+  "name": "New Delhi",
+  "note": "New Delhi",
+  "province": "New Delhi"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Province",
   "modified": "2023-10-27 16:16:37.014224",
   "name": "Chiang Mai",
   "note": "Chiang Mai",
@@ -238,6 +230,14 @@
   "name": "Battam Bang",
   "note": null,
   "province": "Battam Bang"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Province",
+  "modified": "2023-10-27 16:16:56.617401",
+  "name": "Ayutthaya",
+  "note": "Ayutthaya",
+  "province": "Ayutthaya"
  },
  {
   "docstatus": 0,

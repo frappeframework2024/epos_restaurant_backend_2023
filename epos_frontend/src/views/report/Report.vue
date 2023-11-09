@@ -175,10 +175,21 @@ let working_day_print_format = [];
 let cashier_shift_print_format = [];
  
 async function _onInit() {
-    const param = {business_branch:gv.setting.business_branch, pos_profile:pos_profile}; 
+    // const param = {business_branch:gv.setting.business_branch, pos_profile:pos_profile}; 
+    const param = {business_branch:gv.setting.business_branch, pos_profile:""}; 
     const result = await  call.get("epos_restaurant_2023.api.api.get_working_day_list_report",param).then((wd)=>{  
         if (wd.message.length > 0){
-            workingDayReports.value = Enumerable.from(wd.message).orderByDescending("$.creation").toArray();      
+            let _reports = Enumerable.from(wd.message).orderByDescending("$.creation").toArray();  
+            let _report_data = []
+            _reports.forEach((_r)=>{
+                let _report_by_pos_profiles = _r.cashier_shifts.filter((r)=>r.pos_profile==pos_profile);
+                if((_report_by_pos_profiles?.length??0)>0){
+                    _r.cashier_shifts = _report_by_pos_profiles;
+                    _report_data.push(_r);
+                }
+                
+            }) ;
+            workingDayReports.value =    _report_data;
             activeReport.value.report_id = workingDayReports.value[0].name;
 
           return  db.getDocList("POS Print Format Setting",
@@ -298,20 +309,12 @@ function onPrint(){
 } 
 const reportClickHandler = async function (e) {
     if(e.isTrusted && typeof(e.data) == 'string'){
-      
         const data = e.data.split("|")
-        
         if(data.length>0){
-      
             if(data[0]=="view_sale_detail"){
-                saleDetailDialog({
-            name:data[1]
-            });
-            
+                saleDetailDialog({ name:data[1]});
             }
-        
         }
-        
     }
 };
 
