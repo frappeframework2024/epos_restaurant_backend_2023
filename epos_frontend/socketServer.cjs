@@ -162,6 +162,10 @@ io.on('connection', (socket) => {
   socket.on("RoomBlockList",(arg)=>{
     io.emit("RoomBlockList",arg)
   })
+
+  socket.on("FolioTransactionList",(arg)=>{
+    io.emit("FolioTransactionList",arg)
+  })
   
 
   
