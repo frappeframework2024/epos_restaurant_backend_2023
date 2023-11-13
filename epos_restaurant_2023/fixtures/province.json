@@ -186,14 +186,6 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2023-10-27 16:18:23.385678",
-  "name": "Nha Trang",
-  "note": "Nha Trang",
-  "province": "Nha Trang"
- },
- {
-  "docstatus": 0,
-  "doctype": "Province",
   "modified": "2023-10-27 16:13:43.698305",
   "name": "Shenzhen",
   "note": "Shenzhen",
@@ -210,6 +202,22 @@
  {
   "docstatus": 0,
   "doctype": "Province",
+  "modified": "2023-10-27 16:16:37.014224",
+  "name": "Chiang Mai",
+  "note": "Chiang Mai",
+  "province": "Chiang Mai"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Province",
+  "modified": "2023-10-27 16:18:23.385678",
+  "name": "Nha Trang",
+  "note": "Nha Trang",
+  "province": "Nha Trang"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Province",
   "modified": "2023-10-27 16:15:49.820107",
   "name": "New Delhi",
   "note": "New Delhi",
@@ -218,10 +226,10 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2023-10-27 16:16:37.014224",
-  "name": "Chiang Mai",
-  "note": "Chiang Mai",
-  "province": "Chiang Mai"
+  "modified": "2023-10-27 16:16:08.917947",
+  "name": "Kolkata",
+  "note": "Kolkata",
+  "province": "Kolkata"
  },
  {
   "docstatus": 0,
@@ -238,14 +246,6 @@
   "name": "Ayutthaya",
   "note": "Ayutthaya",
   "province": "Ayutthaya"
- },
- {
-  "docstatus": 0,
-  "doctype": "Province",
-  "modified": "2023-10-27 16:16:08.917947",
-  "name": "Kolkata",
-  "note": "Kolkata",
-  "province": "Kolkata"
  },
  {
   "docstatus": 0,
