@@ -50,8 +50,11 @@
   "bank_fee_account",
   "section_break_24",
   "require_city_ledger_account",
-  "transfers_section",
   "require_select_a_folio",
+  "column_break_ywaq",
+  "target_document",
+  "target_account_code",
+  "target_account_type",
   "printing_section",
   "show_print_preview",
   "column_break_41",
@@ -61,11 +64,17 @@
   "account_code_name",
   "account_group",
   "system_setting_tab",
-  "show_in_folio_tab",
-  "show_in_deposit_tab",
-  "show_in_city_ledger",
+  "is_guest_folio_account",
   "is_housekeeping_account",
-  "is_city_ledger_account"
+  "is_city_ledger_account",
+  "is_deposit_ledger_account",
+  "is_desk_folio_account",
+  "account_group_setting_column",
+  "show_in_guest_folio",
+  "show_in_desk_folio",
+  "show_in_city_ledger",
+  "show_in_deposit_ledger",
+  "show_in_payable_ledger"
  ],
  "fields": [
   {
@@ -305,7 +314,7 @@
    "collapsible": 1,
    "fieldname": "section_break_24",
    "fieldtype": "Section Break",
-   "label": "City Ledger"
+   "label": "City Ledger and Transfer"
   },
   {
    "default": "0",
@@ -371,33 +380,9 @@
   },
   {
    "default": "0",
-   "fieldname": "show_in_folio_tab",
-   "fieldtype": "Check",
-   "label": "Show In Folio Tab"
-  },
-  {
-   "default": "0",
-   "fieldname": "show_in_deposit_tab",
-   "fieldtype": "Check",
-   "label": "Show In Deposit Tab"
-  },
-  {
-   "collapsible": 1,
-   "fieldname": "transfers_section",
-   "fieldtype": "Section Break",
-   "label": "Transfers"
-  },
-  {
-   "default": "0",
    "fieldname": "require_select_a_folio",
    "fieldtype": "Check",
    "label": "Require Select a Folio"
-  },
-  {
-   "default": "0",
-   "fieldname": "show_in_city_ledger",
-   "fieldtype": "Check",
-   "label": "Show in City Ledger"
   },
   {
    "default": "0",
@@ -420,12 +405,88 @@
    "fieldname": "show_payment_by",
    "fieldtype": "Check",
    "label": "Show payment by"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_deposit_ledger_account",
+   "fieldtype": "Check",
+   "label": "Is Deposit Ledger Account"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_guest_folio_account",
+   "fieldtype": "Check",
+   "label": "Is Guest Folio Account"
+  },
+  {
+   "fieldname": "column_break_ywaq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "target_account_code",
+   "fieldtype": "Link",
+   "label": "Target Account Code",
+   "options": "Account Code"
+  },
+  {
+   "fetch_from": "target_account_code.type",
+   "fieldname": "target_account_type",
+   "fieldtype": "Data",
+   "label": "Target Account Type"
+  },
+  {
+   "fieldname": "target_document",
+   "fieldtype": "Select",
+   "label": "Target Document",
+   "options": "\nCity Ledger\nReservation Folio\nDesk Folio\nDeposit Ledger\nPayable Ledger"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_desk_folio_account",
+   "fieldtype": "Check",
+   "label": "Is Desk Folio Account"
+  },
+  {
+   "description": "We use this option to config account group visibility in folio action. ",
+   "fieldname": "account_group_setting_column",
+   "fieldtype": "Column Break",
+   "label": "Account Group Setting"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_in_guest_folio",
+   "fieldtype": "Check",
+   "label": "Show In Guest Folio"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_in_desk_folio",
+   "fieldtype": "Check",
+   "label": "Show In Desk Folio"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_in_city_ledger",
+   "fieldtype": "Check",
+   "label": "Show In City Ledger"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_in_deposit_ledger",
+   "fieldtype": "Check",
+   "label": "Show In Deposit Ledger"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_in_payable_ledger",
+   "fieldtype": "Check",
+   "label": "Show In Payable Ledger"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-11-10 10:14:10.074002",
+ "modified": "2023-11-15 23:24:26.309245",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

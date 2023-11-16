@@ -20,19 +20,24 @@ class AccountCode(Document):
 			
 			if not tax_rule.tax_3_account and tax_rule.tax_3_rate>0:
 				frappe.throw("{} don't have account code.".format(tax_rule.tax_3_name))
+
+		if self.target_account_code:
+			if self.target_account_type==self.type:
+				frappe.throw("Target account type must be different from current accont type")
+				
+
 			
 	def on_update(self):
 		apps = frappe.get_installed_apps()
 		if "edoor" in apps:
 			update_tax_to_related_transaction({"account_code":self.name})
 
+
 @frappe.whitelist()
 def update_tax_to_related_transaction(data):
 	working_day_data = frappe.db.sql("select max(posting_date) as posting_date from `tabWorking Day`",as_dict=1)
 	working_day = working_day_data[0]["posting_date"]
- 
 
-	 
 	#update to room_rate
 	sql="select name from `tabRate Type` where account_code='{}'".format(data["account_code"])
 	account_doc = frappe.get_doc("Account Code", data["account_code"])

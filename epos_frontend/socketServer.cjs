@@ -166,6 +166,22 @@ io.on('connection', (socket) => {
   socket.on("FolioTransactionList",(arg)=>{
     io.emit("FolioTransactionList",arg)
   })
+  socket.on("ComDepositLedgerDetail",(arg)=>{
+    io.emit("ComDepositLedgerDetail",arg)
+  })
+  
+  socket.on("DepositLedger",(arg)=>{
+    io.emit("DepositLedger",arg)
+  })
+
+  socket.on("ComDeskFolioDetail",(arg)=>{
+    io.emit("ComDeskFolioDetail",arg)
+  })
+  
+  socket.on("DeskFolio",(arg)=>{
+    io.emit("DeskFolio",arg)
+  })
+
   
 
   

@@ -1329,7 +1329,7 @@ export default class Sale {
             if (this.pos_receipt == undefined || this.pos_receipt == null) {
                 this.pos_receipt = this.setting?.default_pos_receipt;
             }
-            this.onPrintReceipt(this.pos_receipt, "print_receipt", doc);
+            this.onPrintReceipt(this.pos_receipt, "print_invoice", doc);
             this.onPrintToKitchen(doc);
         }
         else if (this.action == "quick_pay") {
