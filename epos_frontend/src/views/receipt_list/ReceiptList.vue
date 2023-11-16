@@ -35,6 +35,7 @@ async function onCallback(data) {
 }
 const headers = ref([
   { title: $t('No'), align: 'start',key: 'name',callback: true},
+  { title: $t('Invoice No'), align: 'start',key: 'custom_bill_number',callback: true},
   { title: $t('Customer Name'), align: 'start', key: 'customer', template: '{customer}-{customer_name}', callback: true },
   { title: $t('Table'), align: 'start', key: 'tbl_number' },
   { title: $t('Date'), align: 'center', key: 'posting_date', fieldtype: "Date" },
