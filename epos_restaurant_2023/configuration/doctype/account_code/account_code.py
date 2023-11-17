@@ -7,6 +7,7 @@ from frappe.model.document import Document
 
 class AccountCode(Document):
 	def validate(self):
+
 		self.account_code_name = self.code + ' - ' + self.account_name
 		#check if account code have tax rule
 		if self.tax_rule:
@@ -31,6 +32,11 @@ class AccountCode(Document):
 		apps = frappe.get_installed_apps()
 		if "edoor" in apps:
 			update_tax_to_related_transaction({"account_code":self.name})
+
+			#update account code sort order
+ 
+
+
 
 
 @frappe.whitelist()

@@ -7,6 +7,10 @@ from frappe.model.document import Document
 
 class SalePayment(Document):
 	def validate(self):
+		# check if payment type is on-account
+		if self.payment_type_group == "On Account":
+			frappe.throw("Payment {} {}".format(self.payment_type,_("is not allow to process pay")))
+
 		if (self.exchange_rate or 0) ==0 or self.currency == frappe.db.get_default("currency"):
 			self.exchange_rate = 1
    
@@ -42,7 +46,7 @@ def update_sale(self):
 
 	
 	if data and sale_amount:
-		balance =round(sale_amount  , int(currency_precision))-  round(data[0][0]    , int(currency_precision))  
+		balance =round(sale_amount,int(currency_precision))-round(data[0][0], int(currency_precision))  
 
 		if balance<0:
 			balance = 0
@@ -50,4 +54,6 @@ def update_sale(self):
 			'total_paid': data[0][0] ,
 			'balance': balance  
 		})
+
+		# update customer balance 
 
