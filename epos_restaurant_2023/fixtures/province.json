@@ -10,14 +10,6 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2023-10-27 16:12:29.706732",
-  "name": "Chicago",
-  "note": "Chicago",
-  "province": "Chicago"
- },
- {
-  "docstatus": 0,
-  "doctype": "Province",
   "modified": "2023-10-27 16:12:53.580366",
   "name": "Houston",
   "note": "Houston",
@@ -114,14 +106,6 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2022-12-05 20:47:21.564060",
-  "name": "Siem Reap",
-  "note": null,
-  "province": "Siem Reap"
- },
- {
-  "docstatus": 0,
-  "doctype": "Province",
   "modified": "2023-10-27 16:12:10.672206",
   "name": "New York",
   "note": "New York",
@@ -134,6 +118,14 @@
   "name": "San Francisco",
   "note": "San Francisco",
   "province": "San Francisco"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Province",
+  "modified": "2023-10-27 16:12:29.706732",
+  "name": "Chicago",
+  "note": "Chicago",
+  "province": "Chicago"
  },
  {
   "docstatus": 0,
@@ -178,6 +170,14 @@
  {
   "docstatus": 0,
   "doctype": "Province",
+  "modified": "2022-12-05 20:47:21.564060",
+  "name": "Siem Reap",
+  "note": null,
+  "province": "Siem Reap"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Province",
   "modified": "2022-12-05 20:47:13.698038",
   "name": "Phnom Penh",
   "note": null,
@@ -210,18 +210,18 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2023-10-27 16:18:23.385678",
-  "name": "Nha Trang",
-  "note": "Nha Trang",
-  "province": "Nha Trang"
- },
- {
-  "docstatus": 0,
-  "doctype": "Province",
   "modified": "2023-10-27 16:15:49.820107",
   "name": "New Delhi",
   "note": "New Delhi",
   "province": "New Delhi"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Province",
+  "modified": "2023-10-27 16:18:23.385678",
+  "name": "Nha Trang",
+  "note": "Nha Trang",
+  "province": "Nha Trang"
  },
  {
   "docstatus": 0,
