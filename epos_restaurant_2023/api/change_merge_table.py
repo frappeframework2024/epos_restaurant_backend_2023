@@ -18,6 +18,8 @@ def on_merge_order(old_sale, new_sale):
     
     #update field in old sale of sale product 
     for c in change_table_sale_products:
+        c.move_from_sale_printed  = 0
+        c.move_from_sale = old_sale
         c.parent = new_sale   
 
 
@@ -33,6 +35,16 @@ def on_merge_order(old_sale, new_sale):
 
     msg =""
     if old_doc.name:
+        try:
+            sql = "select name from `tabExtra Notification Log` where doctype_name = 'Sale' and doc_name='{}' ".format(old_sale)           
+            data  =  frappe.db.sql(sql,as_dict=1)    
+            if data:  
+                for d in data:
+                    frappe.db.sql("delete from `tabExtra Notification Log` where name = '{}'".format(d.name))                  
+        except:
+            pass
+      
+
         frappe.delete_doc("Sale",old_sale)
         msg = "Sale document has been deleted"
 

@@ -34,6 +34,7 @@
   "print_working_day_summary_after_close_working_day",
   "print_working_day_sale_product_summary_after_close_working_day",
   "print_waiting_order_after_submit_order",
+  "print_sale_product_merged_table",
   "print_new_deleted_sale_product",
   "check_delete_item_require_passord_from_product",
   "show_item_code_in_sale_screen",
@@ -602,12 +603,18 @@
    "fieldname": "order_station_open_order_required_password",
    "fieldtype": "Check",
    "label": "Order Station Open Order Required Password"
+  },
+  {
+   "default": "1",
+   "fieldname": "print_sale_product_merged_table",
+   "fieldtype": "Check",
+   "label": "Print Sale Product Merged Table"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-11-07 19:46:01.126728",
+ "modified": "2023-11-20 09:34:59.802209",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

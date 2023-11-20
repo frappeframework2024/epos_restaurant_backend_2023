@@ -41,7 +41,6 @@ export default class Sale {
             sale_products: []
         };
 
-
         this.vueInstance=null;
         this.vue=null;
         this.newSaleResource = null;
@@ -56,10 +55,11 @@ export default class Sale {
         //before submit order or close order
         this.productPrinters = [];
 
+        //temporary all sale products merged bill
+        this.mergedSaleProducts = [];
+
         //temporary all deleted sale product, we use this for send data to kitchen printers
-        this.deletedSaleProducts = []
-
-
+        this.deletedSaleProducts = [];
 
         //sale product deleted show in screen sale item list
         this.deletedSaleProductsDisplay = [];
@@ -1237,10 +1237,20 @@ export default class Sale {
                             payment_type: this.setting?.default_payment_type,
                             input_amount: this.sale.grand_total,
                             amount: this.sale.grand_total
-                        })
-                        
-                        socket.emit("ShowOrderInCustomerDisplay", this.sale, "paid");
+                        });
 
+                                              
+                        socket.emit("ShowOrderInCustomerDisplay", this.sale, "paid");
+                        const now = new Date();     
+                        const u = JSON.parse(localStorage.getItem('make_order_auth'));  
+                        this.sale.paid_by = u.name;
+                        this.sale.paid_date = moment(now).format('yyyy-MM-DD HH:mm:ss.SSS');
+
+                        if ((this.sale.printed_by||"")==""){
+                            this.sale.printed_by = u.name;
+                            this.sale.printed_date = moment(now).format('yyyy-MM-DD HH:mm:ss.SSS');
+                        }
+                        
                         this.sale.sale_status = "Submitted";
                         this.sale.docstatus = 1;
                         this.action = "quick_pay";
@@ -1255,11 +1265,7 @@ export default class Sale {
                             
                             await this.saleResource.setValue.submit(this.sale);
                         }
-
-
                         
-                        //audit trail 
-                        const u = JSON.parse(localStorage.getItem('make_order_auth'));
                         let msg = `User ${u.name} quick pay`;          
                         this.auditTrailLogs.push({
                             doctype:"Comment",
@@ -1272,11 +1278,8 @@ export default class Sale {
                             custom_item_description: "",
                             custom_note: ""
                         }); 
-
-
-
+                        
                         this.submitToAuditTrail(this.sale);
-
                         resolve(true);
                     }
                 }
@@ -1297,6 +1300,18 @@ export default class Sale {
 
                     socket.emit("ShowOrderInCustomerDisplay", this.sale, "paid");
                     this.generateProductPrinters();
+
+                    const now = new Date();     
+                    const u = JSON.parse(localStorage.getItem('make_order_auth'));  
+                    this.sale.paid_by = u.name;
+                    this.sale.paid_date = moment(now).format('yyyy-MM-DD HH:mm:ss.SSS');
+
+                    if ( (this.sale.printed_by||"")==""){
+                        this.sale.printed_by = u.name;
+                        this.sale.printed_date = moment(now).format('yyyy-MM-DD HH:mm:ss.SSS');
+                    }
+
+                    
                     this.sale.sale_status = "Closed";
                     this.sale.docstatus = 1;
                     this.action = "payment";
@@ -1417,6 +1432,7 @@ export default class Sale {
             });
         });  
 
+       
 
         if(this.setting.pos_setting.print_new_deleted_sale_product){
             //generate deleted product to product printer list

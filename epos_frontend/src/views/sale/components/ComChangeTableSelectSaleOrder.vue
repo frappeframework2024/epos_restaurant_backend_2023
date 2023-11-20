@@ -69,8 +69,7 @@ async function onSaleOrderClick(s) {
             old_sale: sale.sale.name,
             new_sale: s.name,
         };
-        call
-        .get('epos_restaurant_2023.api.change_merge_table.on_merge_order', params)
+        call.get('epos_restaurant_2023.api.change_merge_table.on_merge_order', params)
         .then((res) =>{ 
             isLoading.value = false;
             if(res.message.alert!=""){
@@ -82,6 +81,41 @@ async function onSaleOrderClick(s) {
                 }});
             isLoading.value = false;
             emit("resolve", { action: "reload_sale", name: res.message.data.name })   
+
+
+             // check if print items merge bill
+            if(sale.setting.pos_setting.print_sale_product_merged_table){                  
+                sale.sale.sale_products.filter(r => (r.move_from_sale||"") != "" && (r.move_from_sale_printed||0)==0 && JSON.parse(r.printers).length > 0)
+                .forEach((r) => {          
+                    const pritners = JSON.parse(r.printers);
+                    pritners.forEach((p) => {
+                        sale.productPrinters.push({
+                            move_from_sale_printed: 1,
+                            printer: p.printer,
+                            group_item_type: p.group_item_type,
+                            is_label_printer: p.is_label_printer==1,
+                            product_code: r.product_code,
+                            product_name_en: r.product_name,
+                            product_name_kh: r.product_name_kh,
+                            portion: r.portion,
+                            unit: r.unit,
+                            modifiers: r.modifiers,
+                            note: r.note,
+                            quantity: r.quantity,
+                            is_deleted: false,
+                            is_free: r.is_free == 1,
+                            combo_menu:r.combo_menu,
+                            order_by:r.order_by,
+                            creation:r.creation,
+                            modified:r.modified
+                        });
+                    });
+                });
+
+                sale.onPrintToKitchen(sale.sale);
+            }
+
+
             
         }).catch((error) => {
        

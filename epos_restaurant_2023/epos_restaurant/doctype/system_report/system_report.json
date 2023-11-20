@@ -16,7 +16,9 @@
   "is_group",
   "old_parent",
   "parent_system_report",
-  "sort_order"
+  "sort_order",
+  "default_audit_date",
+  "default_filter"
  ],
  "fields": [
   {
@@ -75,12 +77,24 @@
    "fieldname": "sort_order",
    "fieldtype": "Int",
    "label": "Sort Order"
+  },
+  {
+   "description": "We use this field to identify the audit date that past to night audit report. \nPlease use this option for night audit report only.\n",
+   "fieldname": "default_audit_date",
+   "fieldtype": "Select",
+   "label": "Default Audit Date",
+   "options": "\nCurrent Audit Date\nPrevious Audit Date"
+  },
+  {
+   "fieldname": "default_filter",
+   "fieldtype": "Small Text",
+   "label": "Default Filter"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-09-09 15:22:15.222479",
+ "modified": "2023-11-20 10:53:18.167658",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "System Report",

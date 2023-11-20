@@ -96,16 +96,24 @@ function getTable(tables,keyword) {
 
 
 async function onSelectTable(t) {
-   if(t.sales?.length==0){    
+   if(t.sales?.length==0){  
+        sale.sale.sale_products?.forEach((r)=>{
+            r.move_from_table = sale.sale.tbl_number;
+        });
         sale.sale.table_id = t.id;
         sale.sale.tbl_number = t.tbl_no;
         toaster.success($t('msg.Change to table')+": " + t.tbl_no);
         emit("resolve", true)
+
+        console.log(sale.sale)
    }
    else {
     const result = await changeTableSelectSaleOrderDialog({data:t});
     if(result){
         if(result.action=="create_new_bill"){
+            sale.sale.sale_products?.forEach((r)=>{
+                r.move_from_table = sale.sale.tbl_number;
+            });
             sale.sale.table_id = t.id;
             sale.sale.tbl_number = t.tbl_no;
             toaster.success($t('msg.Change to table')+": " + t.tbl_no);

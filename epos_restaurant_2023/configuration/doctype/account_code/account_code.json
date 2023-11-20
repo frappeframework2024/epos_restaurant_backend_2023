@@ -49,10 +49,8 @@
   "column_break_22",
   "bank_fee_account",
   "section_break_24",
-  "require_city_ledger_account",
-  "require_select_a_folio",
-  "column_break_ywaq",
   "target_document",
+  "column_break_ywaq",
   "target_account_code",
   "target_account_type",
   "printing_section",
@@ -317,12 +315,6 @@
    "label": "City Ledger and Transfer"
   },
   {
-   "default": "0",
-   "fieldname": "require_city_ledger_account",
-   "fieldtype": "Check",
-   "label": "Require select a city ledger account"
-  },
-  {
    "collapsible": 1,
    "fieldname": "printing_section",
    "fieldtype": "Section Break",
@@ -377,12 +369,6 @@
    "fieldname": "system_setting_tab",
    "fieldtype": "Tab Break",
    "label": "System Setting"
-  },
-  {
-   "default": "0",
-   "fieldname": "require_select_a_folio",
-   "fieldtype": "Check",
-   "label": "Require Select a Folio"
   },
   {
    "default": "0",
@@ -486,7 +472,7 @@
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-11-15 23:24:26.309245",
+ "modified": "2023-11-18 08:34:24.380532",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

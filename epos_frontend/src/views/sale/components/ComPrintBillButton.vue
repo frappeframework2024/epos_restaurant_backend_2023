@@ -47,6 +47,7 @@
 <script setup>
 import { defineProps, defineEmits, createToaster, inject, useRouter, confirm,i18n } from "@/plugin"
 import { useDisplay } from 'vuetify';
+import moment from '@/utils/moment.js';
 
 const { t: $t } = i18n.global;
 
@@ -73,13 +74,15 @@ async function onPrintReport(r) {
   if (sale.sale.sale_products?.length == 0) {
     toaster.warning($t("msg.Please select a menu item to submit order"));
   } else {
-     
- 
+    const now = new Date();     
+    const u = JSON.parse(localStorage.getItem('make_order_auth'));
+    
+    sale.sale.printed_by = u.name;
+    sale.sale.printed_date = moment(now).format('yyyy-MM-DD HH:mm:ss.SSS');
+
     sale.sale.sale_status = "Bill Requested";
     sale.action = "print_bill";
-    sale.pos_receipt = r;
-
-    const u = JSON.parse(localStorage.getItem('make_order_auth'));
+    sale.pos_receipt = r;    
     
     let msg = `User ${u.name} was Printed Bill`; 
     sale.auditTrailLogs.push({

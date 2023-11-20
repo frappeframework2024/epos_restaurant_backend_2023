@@ -117,13 +117,19 @@
   "sale_status",
   "sale_status_color",
   "sale_status_priority",
-  "column_break_36",
   "exchange_rate",
+  "column_break_36",
   "note",
   "is_foc",
   "seat_number",
   "waiting_number_prefix",
   "waiting_number",
+  "section_break_oszl",
+  "printed_by",
+  "printed_date",
+  "column_break_rrof",
+  "paid_by",
+  "paid_date",
   "inventory_transacton_tab",
   "inventory_transaction"
  ],
@@ -826,6 +832,34 @@
    "label": "Tip Account Code",
    "options": "Account Code",
    "read_only": 1
+  },
+  {
+   "fieldname": "printed_by",
+   "fieldtype": "Data",
+   "label": "Printed By"
+  },
+  {
+   "fieldname": "section_break_oszl",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "printed_date",
+   "fieldtype": "Datetime",
+   "label": "Printed Date"
+  },
+  {
+   "fieldname": "column_break_rrof",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "paid_by",
+   "fieldtype": "Data",
+   "label": "Paid By"
+  },
+  {
+   "fieldname": "paid_date",
+   "fieldtype": "Datetime",
+   "label": "Paid Date"
   }
  ],
  "image_field": "photo",
@@ -838,7 +872,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2023-09-16 10:49:30.520119",
+ "modified": "2023-11-20 09:05:08.388444",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",
