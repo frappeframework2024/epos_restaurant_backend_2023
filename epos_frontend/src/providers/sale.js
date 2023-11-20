@@ -1440,9 +1440,7 @@ export default class Sale {
                 this.productPrinters.push(x);
             })
         }
-
-       
-
+        
         if(this.setting.pos_setting.print_new_deleted_sale_product){
             //generate deleted product to product printer list
             this.deletedSaleProducts.filter(r => JSON.parse(r.printers).length > 0).forEach((r) => {
@@ -1470,10 +1468,6 @@ export default class Sale {
                 });
             });
         }
-
-
-    
-
     }
 
 
