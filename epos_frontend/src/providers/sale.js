@@ -53,10 +53,10 @@ export default class Sale {
 
         //user this variable to temporary store product that need to send to kitchen pritner 
         //before submit order or close order
-        this.productPrinters = [];
+        this.productPrinters = [];     
 
-        //temporary all sale products merged bill
-        this.mergedSaleProducts = [];
+        //temporary all sale products change bill
+        this.changeTableSaleProducts = [];
 
         //temporary all deleted sale product, we use this for send data to kitchen printers
         this.deletedSaleProducts = [];
@@ -132,7 +132,7 @@ export default class Sale {
             commission: 0,
             commission_note: '',
             commission_amount: 0,
-            created_by:make_order_auth.name     
+            created_by:make_order_auth.name
         }  
         this.onSaleApplyTax(tax_rule,this.sale); 
 
@@ -152,7 +152,9 @@ export default class Sale {
         }) ;
     }
 
-    async LoadSaleData(name) {         
+    async LoadSaleData(name) {    
+        this.changeTableSaleProducts=[];
+
         return new Promise(async (resolve) => {
             const parent = this;
             this.saleResource = createDocumentResource({
@@ -1432,6 +1434,13 @@ export default class Sale {
             });
         });  
 
+        //generate sale product print when change table
+        if((this.changeTableSaleProducts?.length||0) > 0){
+            this.changeTableSaleProducts.forEach(x=>{
+                this.productPrinters.push(x);
+            })
+        }
+
        
 
         if(this.setting.pos_setting.print_new_deleted_sale_product){
@@ -1462,6 +1471,8 @@ export default class Sale {
             });
         }
 
+
+    
 
     }
 

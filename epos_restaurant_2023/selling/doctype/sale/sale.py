@@ -30,6 +30,13 @@ class Sale(Document):
 		# 	if self.posting_date>utils.today():
 		# 		frappe.throw(_("Sale date cannot greater than current date"))
 		
+		# printed_date
+		if not self.printed_date:
+			self.printed_date = datetime.datetime.now()
+
+		# paid date
+		if not self.paid_date:
+			self.paid_date = datetime.datetime.now()
 
 		# set waiting number
 		if self.is_new():

@@ -107,7 +107,9 @@ async function onSaleOrderClick(s) {
                             combo_menu:r.combo_menu,
                             order_by:r.order_by,
                             creation:r.creation,
-                            modified:r.modified
+                            modified:r.modified,
+                            move_from_sale: r.move_from_sale,
+                            move_from_table:r.move_from_table
                         });
                     });
                 });

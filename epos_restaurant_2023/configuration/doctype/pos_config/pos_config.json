@@ -35,6 +35,7 @@
   "print_working_day_sale_product_summary_after_close_working_day",
   "print_waiting_order_after_submit_order",
   "print_sale_product_merged_table",
+  "print_sale_product_change_table",
   "print_new_deleted_sale_product",
   "check_delete_item_require_passord_from_product",
   "show_item_code_in_sale_screen",
@@ -539,7 +540,7 @@
    "label": "POS Bill Number Prefix"
   },
   {
-   "default": "1",
+   "default": "0",
    "fieldname": "print_new_deleted_sale_product",
    "fieldtype": "Check",
    "label": "Print New Deleted Sale Product"
@@ -605,16 +606,22 @@
    "label": "Order Station Open Order Required Password"
   },
   {
-   "default": "1",
+   "default": "0",
    "fieldname": "print_sale_product_merged_table",
    "fieldtype": "Check",
    "label": "Print Sale Product Merged Table"
+  },
+  {
+   "default": "0",
+   "fieldname": "print_sale_product_change_table",
+   "fieldtype": "Check",
+   "label": "Print Sale Product Change Table"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-11-20 09:34:59.802209",
+ "modified": "2023-11-20 14:33:36.757790",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",
