@@ -18,6 +18,7 @@
   "type",
   "use_folio_balance_as_default_amount",
   "allow_enter_quantity",
+  "show_quantity_in_report",
   "show_in_shortcut_menu",
   "icon",
   "sort_order",
@@ -53,6 +54,9 @@
   "column_break_ywaq",
   "target_account_code",
   "target_account_type",
+  "inventory_section",
+  "required_select_product",
+  "column_break_cwiz",
   "printing_section",
   "show_print_preview",
   "column_break_41",
@@ -363,6 +367,7 @@
    "default": "0",
    "fieldname": "is_group",
    "fieldtype": "Check",
+   "in_standard_filter": 1,
    "label": "Is Group"
   },
   {
@@ -467,12 +472,33 @@
    "fieldname": "show_in_payable_ledger",
    "fieldtype": "Check",
    "label": "Show In Payable Ledger"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_quantity_in_report",
+   "fieldtype": "Check",
+   "label": "Show Quantity in Report"
+  },
+  {
+   "fieldname": "inventory_section",
+   "fieldtype": "Section Break",
+   "label": "Inventory"
+  },
+  {
+   "default": "0",
+   "fieldname": "required_select_product",
+   "fieldtype": "Check",
+   "label": "Required Select Product"
+  },
+  {
+   "fieldname": "column_break_cwiz",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-11-18 08:34:24.380532",
+ "modified": "2023-11-22 09:16:56.329995",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

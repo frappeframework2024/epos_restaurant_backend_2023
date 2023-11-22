@@ -468,15 +468,17 @@ def add_payment_to_sale_payment(self):
 			pos_config_data = frappe.get_doc('POS Config', pos_config)
 			pos_config_payment_type = Enumerable(pos_config_data.payment_type).where(lambda x:x.payment_type==payment_type)
 			account_code = "" 
+			exchange_rate = 1
 			if pos_config_payment_type:
 				account_code = pos_config_payment_type[0].account_code
+				exchange_rate = pos_config_payment_type[0].exchange_rate
 			doc = frappe.get_doc({
 					'doctype': 'Sale Payment',
 					"transaction_type":"Changed",
 					'posting_date':self.posting_date,
 					'payment_type': payment_type,
 					'sale':self.name,
-					'input_amount':(self.changed_amount * self.exchange_rate ) * -1,
+					'input_amount':(self.changed_amount * exchange_rate ) * -1,
 					"docstatus":1,
 					"check_valid_payment_amount":0,
 					"pos_profile":self.pos_profile,
@@ -547,8 +549,10 @@ def add_sale_product_spa_commission(self):
 			
 				
 def create_folio_transaction_from_pos_trnasfer(self):
+
 	for p in self.payment:
 		if p.folio_number and not p.use_room_offline:
+
 			data = {
 					'doctype': 'Folio Transaction',
 					'posting_date':self.posting_date,

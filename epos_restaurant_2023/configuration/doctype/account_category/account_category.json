@@ -1,6 +1,5 @@
 {
  "actions": [],
- "allow_import": 1,
  "allow_rename": 1,
  "autoname": "field:account_category",
  "creation": "2023-06-25 12:07:08.292190",
@@ -24,7 +23,6 @@
    "bold": 1,
    "fieldname": "sort_order",
    "fieldtype": "Int",
-   "in_list_view": 1,
    "label": "Sort Order"
   },
   {
@@ -35,7 +33,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-24 10:40:55.031552",
+ "modified": "2023-11-21 13:48:27.568001",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Category",
