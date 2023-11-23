@@ -178,7 +178,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Reports",
-   "link_count": 9,
+   "link_count": 10,
    "onboard": 0,
    "type": "Card Break"
   },
@@ -271,9 +271,19 @@
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Sale Audit Trail Report",
+   "link_count": 0,
+   "link_to": "Sale Audit Trail Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2023-10-11 09:07:27.221181",
+ "modified": "2023-11-23 15:23:29.349375",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Selling",

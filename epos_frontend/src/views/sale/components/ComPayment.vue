@@ -184,7 +184,7 @@ async function onPaymentWithoutPrint() {
 
 function onPaymentAudit(){
     const u = JSON.parse(localStorage.getItem('make_order_auth')); 
-    let msg = `User ${u.name} process payment`; 
+    let msg = `${u.name} process payment `; 
     let _payment_type ="";
     sale.sale.payment.forEach(sp => {
         _payment_type += `${sp.payment_type }: ${sp.input_amount}\n`

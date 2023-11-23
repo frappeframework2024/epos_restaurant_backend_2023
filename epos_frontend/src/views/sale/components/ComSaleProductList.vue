@@ -194,7 +194,7 @@ function onReorder(sp) {
         if(is_append){
 
             let item_description =`${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
-            let msg = `User ${u.name} was append a quantity to item: ${item_description}`;     
+            let msg = `${u.name} was append a quantity to item: ${item_description}`;     
             sale.auditTrailLogs.push({
                 doctype:"Comment",
                 subject:"Append Quantity",

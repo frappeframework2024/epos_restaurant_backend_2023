@@ -55,7 +55,7 @@ function onSaleCancelDiscount() {
             sale.updateSaleSummary(); 
 
             //audit trail 
-            let msg = `User ${v.user} cancel discount on Bill`;          
+            let msg = `${v.user} cancel discount on Bill`;          
             msg += `${( v.note||"")==""?'':', Reason: '+ v.note }`;
             sale.auditTrailLogs.push({
                 doctype:"Comment",

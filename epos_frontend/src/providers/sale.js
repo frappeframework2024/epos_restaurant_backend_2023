@@ -138,7 +138,7 @@ export default class Sale {
 
         //audit-trail 
         const u = JSON.parse(localStorage.getItem('make_order_auth')); 
-        let msg = `User ${u.name} was created new sale`;     
+        let msg = `${u.name} was created new sale`;     
         this.auditTrailLogs.push({
             doctype:"Comment",
             subject:"Create New Sale",
@@ -348,7 +348,7 @@ export default class Sale {
         const u = JSON.parse(localStorage.getItem('make_order_auth')); 
         if(is_new_sale_product){
             let item_description = `${new_sale_product.product_code}-${new_sale_product.product_name}${(new_sale_product.portion||"")=="" ? "":`(${new_sale_product.portion})`} ${new_sale_product.modifiers}`;
-            let msg = `User ${u.name} was create new sale item: ${item_description}`;     
+            let msg = `${u.name} was create new sale item: ${item_description}`;     
             this.auditTrailLogs.push({
                 doctype:"Comment",
                 subject:"New Sale Item",
@@ -363,7 +363,7 @@ export default class Sale {
 
         }else{
             let item_description =`${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
-            let msg = `User ${u.name} was append a quantity to item:  ${item_description}`;     
+            let msg = `${u.name} was append a quantity to item:  ${item_description}`;     
             this.auditTrailLogs.push({
                 doctype:"Comment",
                 subject:"Append Quantity",
@@ -397,7 +397,7 @@ export default class Sale {
         this.updateSaleSummary();
 
         let item_description = `${sp_copy.product_code}-${sp_copy.product_name}${(sp_copy.portion||"")=="" ? "":`(${sp_copy.portion})`} ${sp_copy.modifiers}`;
-        let msg = `User ${u.name} was create new sale item: ${item_description}`;     
+        let msg = `${u.name} was create new sale item: ${item_description}`;     
         this.auditTrailLogs.push({
             doctype:"Comment",
             subject:"New Sale Item",
@@ -665,7 +665,7 @@ export default class Sale {
                             this.onRemoveSaleProduct(sp, result.number, v.user);  
     
                             let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
-                            let msg = `User ${v.user} delete Item: ${item_description}`; 
+                            let msg = `${v.user} delete item: ${item_description}`; 
                             msg += `, Qty: ${result.number}`;
                             msg += `, Amount: ${ numberFormat(gv.getCurrnecyFormat,sp.amount)}`;
                             msg += `${result.note==""?'':', Reason: '+result.note }`;
@@ -690,7 +690,7 @@ export default class Sale {
                 this.onRemoveSaleProduct(sp, sp.quantity,u.name);
 
                 let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`
-                let msg = `User ${u.name} delete item: ${item_description}`; 
+                let msg = `${u.name} delete item: ${item_description}`; 
                 msg += `, Qty: ${sp.quantity}`;
                 msg += `, Amount: ${ numberFormat(gv.getCurrnecyFormat,sp.amount)}`;
                 this.auditTrailLogs.push({
@@ -731,7 +731,7 @@ export default class Sale {
                         this.updateSaleSummary();
 
                         let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
-                        let msg = `User ${v.user} change price on item: ${item_description}`; 
+                        let msg = `${v.user} change price on item: ${item_description}`; 
                         msg += `, from: ${numberFormat(gv.getCurrnecyFormat,price)} to ${numberFormat(gv.getCurrnecyFormat,sp.price)}`;
                         msg += `${v.note==""?'':', Reason: '+v.note }`;
                         this.auditTrailLogs.push({
@@ -772,7 +772,7 @@ export default class Sale {
                     const u = JSON.parse(localStorage.getItem('make_order_auth')); 
 
                     let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
-                    let msg = `User ${u.name} change quantity on: ${item_description}`; 
+                    let msg = `${u.name} change quantity on: ${item_description}`; 
                     msg += `, from : ${sp.quantity} to ${quantity}` ;
                     this.auditTrailLogs.push({
                         doctype:"Comment",
@@ -805,7 +805,7 @@ export default class Sale {
                                     this.onRemoveSaleProduct(sp, sp.quantity - quantity, v.user);
 
                                     let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
-                                    let msg = `User ${v.user} delete Item: ${item_description}`; 
+                                    let msg = `${v.user} delete item: ${item_description}`; 
                                     msg += `, Qty: ${quantity}`;
                                     msg += `, Amount: ${ numberFormat(gv.getCurrnecyFormat,sp.amount)}`;
                                     msg += `${(sp.deleted_item_note||"")==""?'':', Reason: '+sp.deleted_item_note }`;
@@ -892,7 +892,7 @@ export default class Sale {
 
              //audit trail
              let item_description=`${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
-             let msg = `User ${free_by} free on item: ${item_description}`; 
+             let msg = `${free_by} free on item: ${item_description}`; 
              msg += `, Qty: ${freeQty}`;             
              msg += `${(free_note||"")==""?'':', Reason: '+free_note }`;
              this.auditTrailLogs.push({
@@ -1003,7 +1003,7 @@ export default class Sale {
 
                     //sale discount audit
                     let discount =  this.sale.discount_type =="Percent"? `${ this.sale.discount} %` : numberFormat(gv.getCurrnecyFormat, this.sale.discount);                //audit trail
-                    let msg = `User ${this.sale.temp_discount_by} discount (${discount}) on Bill`;          
+                    let msg = `${this.sale.temp_discount_by} discount (${discount}) on Bill`;          
                     msg += `${( result.discount_note||"")==""?'':', Reason: '+ result.discount_note }`;
                     this.auditTrailLogs.push({
                         doctype:"Comment",
@@ -1027,7 +1027,7 @@ export default class Sale {
     onDiscountSaleProductAudit(sp,gv,result){
         let discount = sp.discount_type =="Percent"? `${sp.discount} %` : numberFormat(gv.getCurrnecyFormat,sp.discount);                //audit trail
         let item_description=`${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
-        let msg = `User ${sp.temp_discount_by} discount (${discount}) on item: ${item_description} `;          
+        let msg = `${sp.temp_discount_by} discount (${discount}) on item: ${item_description} `;          
         msg += `${( result.discount_note||"")==""?'':', Reason: '+ result.discount_note }`;
         this.auditTrailLogs.push({
             doctype:"Comment",
@@ -1065,7 +1065,7 @@ export default class Sale {
             //audit trail
             const u = JSON.parse(localStorage.getItem('make_order_auth')); 
             let item_description=`${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
-            let msg = `User ${u.name} remove free on item: ${item_description} `;
+            let msg = `${u.name} remove free on item: ${item_description} `;
             msg += `, Qty: ${sp.quantity}`;       
             this.auditTrailLogs.push({
                 doctype:"Comment",
@@ -1268,7 +1268,7 @@ export default class Sale {
                             await this.saleResource.setValue.submit(this.sale);
                         }
                         
-                        let msg = `User ${u.name} quick pay`;          
+                        let msg = `${u.name} quick pay`;          
                         this.auditTrailLogs.push({
                             doctype:"Comment",
                             subject:"Quick Payment",

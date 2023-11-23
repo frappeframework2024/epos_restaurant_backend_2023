@@ -275,7 +275,7 @@ async function onCancelPrintBill() {
       sale.sale.sale_status = "Submitted";
       sale.sale.sale_status_color = setting.sale_status.find(r => r.name == 'Submitted').background_color;
 
-      let msg = `User ${v.user} was Cancelled Print Bill`; 
+      let msg = `${v.user} was Cancelled Print Bill`; 
       msg += `${v.note==""?'':', Reason: '+v.note }`;
       sale.auditTrailLogs.push({
           doctype:"Comment",

@@ -217,7 +217,7 @@ function onSaleProductCancelDiscount() {
 
                             //audit trail
                 let item_description=`${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
-                let msg = `User ${v.user} remove discount on item: ${item_description} `;          
+                let msg = `${v.user} remove discount on item: ${item_description} `;          
                 msg += `${( v.note||"")==""?'':', Reason: '+ v.note }`;
                 sale.auditTrailLogs.push({
                     doctype:"Comment",
