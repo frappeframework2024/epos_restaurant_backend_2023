@@ -178,8 +178,6 @@
    "options": "Account Code"
   },
   {
-   "collapsible": 1,
-   "collapsible_depends_on": "eval:doc.price> 0",
    "fieldname": "price_section",
    "fieldtype": "Section Break",
    "label": "Price"
@@ -192,7 +190,6 @@
   },
   {
    "allow_in_quick_entry": 1,
-   "collapsible": 1,
    "fieldname": "discount_section",
    "fieldtype": "Section Break",
    "label": "Discount"
@@ -217,7 +214,6 @@
    "options": "Account Code"
   },
   {
-   "collapsible": 1,
    "fieldname": "tax_section",
    "fieldtype": "Section Break",
    "label": "Tax"
@@ -260,7 +256,6 @@
    "label": "Tax Rule Data"
   },
   {
-   "collapsible": 1,
    "fieldname": "payment_information_section",
    "fieldtype": "Section Break",
    "label": "Payment Information"
@@ -279,7 +274,6 @@
    "options": "Payment Type Group"
   },
   {
-   "collapsible": 1,
    "fieldname": "bank_fee_section",
    "fieldtype": "Section Break",
    "label": "Bank Fee"
@@ -313,13 +307,11 @@
    "options": "Account Code"
   },
   {
-   "collapsible": 1,
    "fieldname": "section_break_24",
    "fieldtype": "Section Break",
    "label": "City Ledger and Transfer"
   },
   {
-   "collapsible": 1,
    "fieldname": "printing_section",
    "fieldtype": "Section Break",
    "label": "Printing"
@@ -498,7 +490,7 @@
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-11-22 09:16:56.329995",
+ "modified": "2023-11-23 19:26:49.662771",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",
