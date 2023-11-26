@@ -464,7 +464,7 @@ def add_payment_to_sale_payment(self):
    
 		if (self.changed_amount or 0)>0:
 			pos_config = frappe.db.get_value('POS Profile', self.pos_profile, 'pos_config')			
-			payment_type = frappe.db.get_default("changed_payment_type")			
+			payment_type = frappe.db.get_single_value("ePOS Settings","changed_payment_type")			
 			pos_config_data = frappe.get_doc('POS Config', pos_config)
 			pos_config_payment_type = Enumerable(pos_config_data.payment_type).where(lambda x:x.payment_type==payment_type)
 			account_code = "" 

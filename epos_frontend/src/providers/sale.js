@@ -1391,6 +1391,7 @@ export default class Sale {
     }
 
     onPrintToKitchen(doc) {
+ 
         const data = {
             action: "print_to_kitchen",
             setting: this.setting?.pos_setting,
