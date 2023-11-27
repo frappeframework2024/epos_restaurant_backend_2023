@@ -40,6 +40,7 @@
   "tax_rule_data",
   "payment_information_section",
   "show_payment_information",
+  "payment_type",
   "payment_type_group",
   "column_break_lmwf",
   "show_payment_by",
@@ -268,10 +269,10 @@
    "label": "Show payment information"
   },
   {
+   "fetch_from": "payment_type.payment_type_group",
    "fieldname": "payment_type_group",
-   "fieldtype": "Link",
-   "label": "Payment Type Group",
-   "options": "Payment Type Group"
+   "fieldtype": "Data",
+   "label": "Payment Type Group"
   },
   {
    "fieldname": "bank_fee_section",
@@ -485,12 +486,18 @@
   {
    "fieldname": "column_break_cwiz",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "payment_type",
+   "fieldtype": "Link",
+   "label": "Payment Type",
+   "options": "Payment Type"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-11-23 19:26:49.662771",
+ "modified": "2023-11-26 19:54:16.356601",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

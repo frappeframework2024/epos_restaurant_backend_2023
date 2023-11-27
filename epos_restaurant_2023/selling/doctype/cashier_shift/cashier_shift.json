@@ -29,7 +29,9 @@
   "closed_date",
   "column_break_10",
   "closed_note",
-  "outlet"
+  "outlet",
+  "cash_count_tab",
+  "cash_count"
  ],
  "fields": [
   {
@@ -162,11 +164,22 @@
    "fieldname": "is_edoor_shift",
    "fieldtype": "Check",
    "label": "Is eDoor Shift"
+  },
+  {
+   "fieldname": "cash_count_tab",
+   "fieldtype": "Tab Break",
+   "label": "Cash Count"
+  },
+  {
+   "fieldname": "cash_count",
+   "fieldtype": "Table",
+   "label": "Cash Count",
+   "options": "Cashier Shift Cash Count"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-19 16:40:37.344296",
+ "modified": "2023-11-27 14:36:30.312972",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Cashier Shift",
@@ -201,5 +214,6 @@
  "search_fields": "posting_date,working_day,business_branch,pos_profile",
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1
 }

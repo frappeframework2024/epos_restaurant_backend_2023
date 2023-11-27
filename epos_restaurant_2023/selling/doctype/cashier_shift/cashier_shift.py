@@ -30,6 +30,8 @@ class CashierShift(Document):
 			c.close_amount = float(c.input_close_amount) / exchange_rate
 			c.system_close_amount = float(c.input_system_close_amount) / exchange_rate
 
+			c.different_amount = (c.close_amount or 0) - (c.system_close_amount or 0)
+
    
 		self.total_opening_amount = Enumerable(self.cash_float).sum(lambda x: x.opening_amount)
 		self.total_system_close_amount = Enumerable(self.cash_float).sum(lambda x: x.system_close_amount)
@@ -38,6 +40,7 @@ class CashierShift(Document):
 
 		# check if close shift then check 
 		if self.is_closed==1:
+			self.closed_date = frappe.utils.now()
 			pos_profile = frappe.get_doc("POS Profile", self.pos_profile)
 			if pos_profile.reset_waiting_number_after=="Close Cashier Shift":
 				prefix = pos_profile.waiting_number_prefix.replace('.','').replace("#",'')
