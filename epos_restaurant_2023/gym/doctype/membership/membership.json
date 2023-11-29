@@ -23,8 +23,11 @@
   "duration_base_on",
   "start_date",
   "end_date",
+  "tracking_limited",
+  "max_access",
   "personal_trainer",
   "pricing_section",
+  "regular_price",
   "price",
   "discount_type",
   "discount",
@@ -277,6 +280,29 @@
    "fieldtype": "Link",
    "label": "Personal Trainer",
    "options": "Trainer"
+  },
+  {
+   "default": "0",
+   "fetch_from": "membership.tracking_limited",
+   "fieldname": "tracking_limited",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Tracking Limited"
+  },
+  {
+   "default": "0",
+   "fetch_from": "membership.max_access",
+   "fieldname": "max_access",
+   "fieldtype": "Int",
+   "label": "Max Access"
+  },
+  {
+   "default": "0",
+   "fetch_from": "membership.cost",
+   "fieldname": "regular_price",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "label": "Regular Price"
   }
  ],
  "image_field": "photo",
@@ -289,7 +315,7 @@
    "link_fieldname": "membership"
   }
  ],
- "modified": "2023-10-26 10:50:41.532710",
+ "modified": "2023-11-29 15:55:41.432755",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership",

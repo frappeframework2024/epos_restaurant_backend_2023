@@ -16,6 +16,7 @@
   "show_start_close_working_day",
   "show_start_close_cashier_shift",
   "show_option_payment",
+  "show_option_quick_pay",
   "show_sale_more_action_menu",
   "show_reference_button_in_more_menu",
   "show_button_customer_display",
@@ -136,11 +137,17 @@
    "fieldname": "show_setting_menu",
    "fieldtype": "Check",
    "label": "Show Setting Menu"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_option_quick_pay",
+   "fieldtype": "Check",
+   "label": "Show Option Quick Pay"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-08-19 14:43:18.717551",
+ "modified": "2023-11-29 16:32:20.533978",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

@@ -34,6 +34,10 @@ frappe.ui.form.on("Membership", {
     },
     count_members:function(frm){
         on_count_members_value_changed(frm,true)
+    },
+    tracking_limited:function(frm){
+        on_tracking_limited_changed(frm,true);
+       
     }
 });
 
@@ -41,6 +45,7 @@ function on_membership_value_changed(frm,changed=false){
     on_duration_type_value_changed(frm,changed);
     on_membership_type_value_changed(frm,changed);
     on_access_type_value_changed(frm,changed);
+    on_tracking_limited_changed(frm,changed);
 
     if(frm.doc.membership != "" && frm.doc.membership!=undefined){
         if(changed){
@@ -192,4 +197,13 @@ function on_count_members_value_changed(frm,changed=false){
        })
         
     }
+}
+
+function on_tracking_limited_changed(frm,changed){
+    frm.set_df_property('max_access', 'hidden', 1);
+    if(frm.doc.tracking_limited==1){
+        frm.set_df_property('max_access', 'hidden', 0);
+
+    }
+    frm.refresh_field("max_access");
 }

@@ -36,7 +36,7 @@
       </v-btn>
 
 
-      <v-btn v-if="device_setting.show_option_payment ==1" :stacked="!mobile" size="small" color="error" class="m-0-1 grow" :height="mobile ? '35px' : undefined" :variant="mobile ? 'tonal' : 'elevated'"
+      <v-btn v-if="device_setting.show_option_quick_pay ==1" :stacked="!mobile" size="small" color="error" class="m-0-1 grow" :height="mobile ? '35px' : undefined" :variant="mobile ? 'tonal' : 'elevated'"
         :prepend-icon="mobile ? '' : 'mdi-currency-usd'" @click="onQuickPay">
         {{ $t('Quick Pay') }}
       </v-btn>
@@ -116,7 +116,7 @@ whenever(ctrl_u, () => {
   onAddCommission();
 })
 whenever(ctrl_q, () =>{
-  if(gv.device_setting.show_option_payment==0){
+  if(gv.device_setting.show_option_quick_pay==0){
     return;
   }
   onQuickPay();
