@@ -185,31 +185,14 @@ scheduler_events = {
 
 fixtures = [
    
-    # {"dt": "Print Format", "filters": [["standard", "=", "Yes"]]},
-    # {"dt": "Payment Type", "filters": [["is_standard", "=", "1"]]},
-    # {"dt": "Payment Type Group", "filters": [["is_standard", "=", "1"]]},
-    # {"dt": "Revenue Group", "filters": [["is_standard", "=", "1"]]},
-    # {"dt": "Price Rule", "filters": [["is_standard", "=", "1"]]},
-    # {"dt": "Sale Type", "filters": [["is_standard", "=", "1"]]},
-    # {"dt": "Kitchen Group", "filters": [["is_standard", "=", "1"]]},
-    # {"dt": "Business Branch", "filters": [["is_standard", "=", "1"]]},
-    # {"dt": "Printer", "filters": [["is_standard", "=", "1"]]},
-    # {"dt": "Stock Location", "filters": [["is_standard", "=", "1"]]},
-    # {"dt": "Customer Group", "filters": [["is_standard", "=", "1"]]},
-    # {"dt": "Unit Category", "filters": [["is_standard", "=", "1"]]},
-    # {"dt": "Unit Of Measurement", "filters": [["is_standard", "=", "1"]]},
-    # {"dt": "Unit of Measurement Conversion", "filters": [["is_standard", "=", "1"]]},
-    # {"dt": "Sale Status"},
     {"dt": "Province"},
-    # {"dt": "Outlet","filters": [["is_standard", "=", "1"]]},
     {"dt": "Numbers"},
     {"dt": "Custom Field"},
     {"dt": "Predefine Data"},
     {"dt": "Custom HTML Block"},
     {"dt": "POS Translation","filters": [["is_standard", "=", "1"]]},
     {"dt": "Predefine SPA Commission Code","filters": [["is_standard", "=", "1"]]},
-    # {"dt": "Website Theme","filters": [["name", "=", "estc theme"]]}, 
-    # {"dt": "Color"},
+
     {"dt": "Print Style","filters": [["name", "=", "Default Style"]]},
 ]
 

@@ -3,6 +3,7 @@
       v-model="select"
       :clearable="clearable"
       v-model:search="search"
+      :label="label"
       :loading="doctypeResource.loading"
       :items="items"
       density="compact"
@@ -36,6 +37,10 @@ import { watch,reactive, ref, defineProps, onMounted, createResource } from '@/p
 let props = defineProps({ 
   doctype: String,
   placeholder:String,
+  label: {
+    type: String,
+    default: ""
+  },
   clearable: {
     type: Boolean,
     default: true

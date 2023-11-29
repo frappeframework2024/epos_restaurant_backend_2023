@@ -9,7 +9,7 @@
  "hide_custom": 0,
  "icon": "hr",
  "idx": 0,
- "is_hidden": 0,
+ "is_hidden": 1,
  "label": "Tour Management",
  "links": [
   {
@@ -263,7 +263,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-10-02 11:06:17.226339",
+ "modified": "2023-11-29 10:58:21.001100",
  "modified_by": "Administrator",
  "module": "Tour Managements",
  "name": "Tour Management",

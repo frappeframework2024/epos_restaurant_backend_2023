@@ -9,7 +9,7 @@
  "hide_custom": 0,
  "icon": "getting-started",
  "idx": 0,
- "is_hidden": 0,
+ "is_hidden": 1,
  "label": "Configuration",
  "links": [
   {
@@ -505,7 +505,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-10-02 11:06:17.538573",
+ "modified": "2023-11-29 10:58:15.038023",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Configuration",

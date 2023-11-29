@@ -7,6 +7,14 @@
             <div>         
                 <v-row>
                     <v-col cols="12" sm="6"  md="6" >
+                        <ComInput v-model="customer.customer_code" :required="true" keyboard :label="$t('Customer Code')"/>    
+                    </v-col>
+
+                    <v-col cols="12" sm="6"  md="6">
+                        <ComAutoComplete :label="$t('Customer Group')" v-model="customer.customer_group" :placeholder="$t('Customer Group')"  doctype="Customer Group" variant="solo"/> 
+                    </v-col>
+
+                    <v-col cols="12" sm="6"  md="6" >
                         <ComInput v-model="customer.customer_name_en" :required="true" keyboard :label="$t('Customer Name En')"/>    
                     </v-col>
                     
@@ -14,8 +22,17 @@
                         <ComInput v-model="customer.customer_name_kh" keyboard :label="$t('Customer Name Kh')"/>
                     </v-col>
                     <v-col cols="12" sm="6"  md="6">
-                        <ComAutoComplete v-model="customer.customer_group" :placeholder="$t('Customer Group')"  doctype="Customer Group" variant="solo"/> 
-                    </v-col>
+                        <v-select 
+                            density="compact"
+                            v-model="customer.gender" 
+                            :items="gender?.options?.split('\n')"
+                            hide-no-data
+                            hide-details 
+                            clearable
+                            :label="$t('Gender')"
+                            variant="solo"
+                        ></v-select>
+                    </v-col> 
                     <v-col cols="12" sm="6"  md="6">
                         <ComInput v-model="customer.date_of_birth" type="date" :label="$t('Date of Birth')"/>
                     </v-col>
@@ -24,20 +41,11 @@
                     <v-col cols="12" sm="6"  md="6">
                         <ComInput v-model="customer.company_name" keyboard :label="$t('Company Name')"/>
                     </v-col>
-                    <v-col cols="12" sm="6"  md="6">
-
-                        <v-select 
-                            density="compact"
-                            v-model="customer.gender" 
-                            :placeholder="$t('Gender')"
-                            :items="gender?.options?.split('\n')"
-                            hide-no-data
-                            hide-details 
-                            clearable
-                            variant="solo"
-                        ></v-select>
-                    </v-col> 
-                </v-row>
+                    <v-col>
+                        <ComInput v-model="customer.jobs" keyboard :label="$t('Jobs')"/> 
+                    </v-col>
+                    
+                </v-row> 
                 <p class="font-weight-bold  pt-6 pb-2">
                     {{ $t('Contact Information') }}
                 </p>
@@ -53,11 +61,13 @@
                         <ComInput v-model="customer.email_address" keyboard :label="$t('Email Address')"/> 
                     </v-col>
                     <v-col cols="12" sm="6"  md="6"> 
-                        <ComAutoComplete v-model="customer.province" feild="province" :placeholder="$t('Province')" doctype="Province" variant="solo"/>
+                        <ComAutoComplete :label="$t('Province')" v-model="customer.province" feild="province" :placeholder="$t('Province')" doctype="Province" variant="solo"/>
                    </v-col>
                    <v-col cols="12" sm="6"  md="6">
-                        <ComAutoComplete v-model="customer.country" feild="country_name" :placeholder="$t('Country')" doctype="Country" variant="solo"/>
+                        <ComAutoComplete :label="$t('Country')"  v-model="customer.country" feild="country_name" :placeholder="$t('Country')" doctype="Country" variant="solo"/>
                     </v-col>
+
+                   
                 </v-row>
                 <p class="font-weight-bold pt-6 pb-2">
                     {{ $t('Address and Note') }}
