@@ -3,6 +3,7 @@
 
 frappe.ui.form.on("Membership Options", {
 	refresh(frm) {
+        on_tracking_limited_changed(frm);       
         on_membership_type_changed(frm);
         on_duration_type_changed(frm);
         on_access_type_changed(frm);
@@ -16,6 +17,9 @@ frappe.ui.form.on("Membership Options", {
     },
     access_type:function(frm){
         on_access_type_changed(frm)
+    },
+    tracking_limited:function(frm){
+        on_tracking_limited_changed(frm)
     }
 });
 
@@ -50,4 +54,13 @@ function on_access_type_changed(frm){
     }
     frm.refresh_field("per_duration");
     frm.refresh_field("duration");
+}
+
+function on_tracking_limited_changed(frm){
+    frm.set_df_property('max_access', 'hidden', 1)
+    if(frm.doc.tracking_limited==1){
+        frm.set_df_property('max_access', 'hidden', 0)
+    }
+    frm.refresh_field("max_access");
+    
 }

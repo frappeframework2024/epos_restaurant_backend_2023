@@ -20,6 +20,8 @@
   "membership_duration",
   "column_break_eccz",
   "membership_duration_base_on",
+  "tracking_limited",
+  "max_access",
   "access_to_training_section",
   "column_break_illp",
   "access_type",
@@ -133,11 +135,23 @@
    "fieldtype": "Table",
    "label": "Family Members",
    "options": "Membership Family Pricing"
+  },
+  {
+   "default": "0",
+   "fieldname": "tracking_limited",
+   "fieldtype": "Check",
+   "label": "Tracking Limited"
+  },
+  {
+   "default": "1",
+   "fieldname": "max_access",
+   "fieldtype": "Int",
+   "label": "Max Access"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-10-10 10:27:06.287827",
+ "modified": "2023-11-29 11:55:18.842099",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership Options",
