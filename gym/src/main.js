@@ -16,7 +16,7 @@ import App from "./App.vue";
 import PrimeVue from 'primevue/config';
 
 import router from './router';
-
+import { show_alert } from '@/utils/index.js';
 
 import { FrappeApp } from 'frappe-js-sdk';
 import DialogService from 'primevue/dialogservice';
@@ -43,6 +43,9 @@ app.use(ToastService);
 app.provide("$frappe", frappe);
 window.db = frappe.db()
 window.call = frappe.call()
+window.auth = frappe.auth()
+
+window.show_alert =show_alert
 
 
 app.component('DynamicDialog', DynamicDialog);

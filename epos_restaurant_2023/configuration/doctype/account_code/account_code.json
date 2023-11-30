@@ -72,6 +72,7 @@
   "is_city_ledger_account",
   "is_deposit_ledger_account",
   "is_desk_folio_account",
+  "is_payable_ledger_account",
   "account_group_setting_column",
   "show_in_guest_folio",
   "show_in_desk_folio",
@@ -492,12 +493,18 @@
    "fieldtype": "Link",
    "label": "Payment Type",
    "options": "Payment Type"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_payable_ledger_account",
+   "fieldtype": "Check",
+   "label": "Is Payable Ledger Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-11-26 19:54:16.356601",
+ "modified": "2023-11-30 11:14:08.149075",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

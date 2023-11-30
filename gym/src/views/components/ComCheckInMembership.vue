@@ -34,6 +34,7 @@
                         
                         <span class="text-base">{{ d.name }} - {{ d.membership_type }}</span> 
                       </div>
+                      
                       <p class="text-400 text-xs">Register on: {{ d.posting_date }}</p> 
                       <p class="m-0 text-400 text-xs">{{ d.membership }}</p>
                       <template v-if="d.duration_type == 'Limited Duration'">
@@ -43,7 +44,10 @@
                       <template v-else>
                         <p class="text-400 text-xs">{{ `Duration: ${d.duration_type}` }}</p>
                       </template>
-                    
+                      
+                      <p class="mt-1" v-if="d.locked">
+                        <label class="text-xs text-white bg-green-200 border-round-3xl pl-2 pr-2 pt-1 pb-1" style="background-color: rgba(247, 162, 5, 0.863) !important;">Not Available</label>
+                      </p>
                     </div>
                     <div class="col-4 flex justify-content-end" >
                       <div class="flex flex-column justify-content-between"> 
@@ -64,29 +68,30 @@
                 </div>
               </div>
               <div class="access-dropdown">
-                <template v-if="d.access_type == 'Unlimited'">
-                  <div class="card">
-                    <Accordion :activeIndex="1">
-                      <AccordionTab header="Access Details">
-                        <p>
-                          <span>{{ d.access_type }}</span>
-                        </p>
-                      </AccordionTab>
-                    </Accordion>
-                  </div>
-                </template>
-                <template v-else>
-                  <div class="card">
-                    <Accordion :activeIndex="1">
-                      <AccordionTab header="Access Details">
-                        <p>
-                          <span>Access {{ `${d.duration} ${d.access_type.toLowerCase()} /
-                                    ${d.per_duration.toLowerCase()}` }}</span>
-                        </p>
-                      </AccordionTab>
-                    </Accordion>
-                  </div>
-                </template>
+                <Accordion :activeIndex="1">
+                  <AccordionTab header="Access Details">
+                    <div class="card">
+                      <p>
+                        <template v-if="d.tracking_limited == 1">
+                          <span v-if="d.duration_type == 'Limited Duration'">
+                            Max Accessable:  {{`${d.max_access} time(s) in ${d.membership_duration} ${d.duration_base_on}`}}
+                          </span>
+                          <span v-else>
+                            Max Accessable: {{`${d.max_access} time(s)  ${d.duration_type}`}}
+                          </span>
+                        </template>
+                        <template v-else>
+                          <template v-if="d.access_type == 'Unlimited'"> 
+                            <span>{{ d.access_type }}</span>
+                          </template>
+                          <template v-else>
+                            <span>Access {{ `${d.duration} ${d.access_type.toLowerCase()} / ${d.per_duration.toLowerCase()}` }}</span>
+                          </template>
+                        </template>  
+                      </p>
+                    </div>
+                  </AccordionTab>
+                </Accordion>                               
               </div>
             </div>
           </div>
@@ -114,13 +119,23 @@
                   </div>
                   <div class="flex align-items-end">
                     <p class="text-end text-500 text-xs m-0">
-                      <template v-if="d.access_type == 'Unlimited'">
-                        <span>Access: {{ d.access_type }}</span>
+                      <template v-if="d.tracking_limited == 1">
+                        <span v-if="d.duration_type == 'Limited Duration'">
+                            Max Accessable:  {{`${d.max_access} time(s) in ${d.membership_duration} ${d.duration_base_on}`}}
+                          </span>
+                          <span v-else>
+                            Max Accessable: {{`${d.max_access} time(s)  ${d.duration_type}`}}
+                          </span>
                       </template>
                       <template v-else>
-                        <span>Access: {{ `${d.duration} ${d.access_type.toLowerCase()} /
-                                    ${d.per_duration.toLowerCase()}` }}</span>
-                      </template>
+                        <template v-if="d.access_type == 'Unlimited'">
+                          <span>Access: {{ d.access_type }}</span>
+                        </template>
+                        <template v-else>
+                          <span>Access: {{ `${d.duration} ${d.access_type.toLowerCase()} /
+                                      ${d.per_duration.toLowerCase()}` }}</span>
+                        </template>
+                      </template>                     
                     </p>
                   </div>
                 </div>
@@ -176,22 +191,22 @@ function onCheckInClick() {
   } 
   is_processing.value = true;
 
-  const submite_data = ref(
-    {
+  const submit_data = ref([]);
+
+  check.forEach((c) => {
+    submit_data.value.push({
     "doctype": "Membership Check In",
     "member": data.value.member.name,
     "check_in_date": data.value.check_in_date,    
-    "membership_check_in_item": []
-  });
-
-  check.forEach((c) => {
-    submite_data.value.membership_check_in_item.push({ 
+    "membership_check_in_item": [{
       "membership": c.name,
       "member":data.value.member.name 
-    })
+    }]}) 
   });
 
-  call.get('epos_restaurant_2023.api.gym.check_in_submit_data',{"data":submite_data.value}).then((res)=>{
+ 
+
+  call.get('epos_restaurant_2023.api.gym.check_in_submit_data',{"data":JSON.stringify(submit_data.value) }).then((res)=>{
       data.value = null;
       dialogRef.value.close(res.message);
       is_processing.value = false;

@@ -182,6 +182,14 @@ io.on('connection', (socket) => {
     io.emit("DeskFolio",arg)
   })
 
+  socket.on("ComPayableLedgerDetail",(arg)=>{
+    io.emit("ComPayableLedgerDetail",arg)
+  })
+
+  socket.on("PayableLedger",(arg)=>{
+    io.emit("PayableLedger",arg)
+  })
+
   
 
   
