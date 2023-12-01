@@ -17,6 +17,7 @@
   "input_different_amount",
   "different_amount",
   "currency",
+  "pos_currency_format",
   "currency_symbol",
   "currency_precision",
   "payment_type_group"
@@ -111,12 +112,18 @@
    "fieldname": "input_different_amount",
    "fieldtype": "Float",
    "label": "Input Different Amount"
+  },
+  {
+   "fetch_from": "currency.custom_pos_currency_format",
+   "fieldname": "pos_currency_format",
+   "fieldtype": "Data",
+   "label": "POS Currency Format"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-09-04 14:17:08.159076",
+ "modified": "2023-12-01 20:20:06.266046",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Cashier Shift Cash Float",
