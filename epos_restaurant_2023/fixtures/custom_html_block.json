@@ -35,8 +35,8 @@
  {
   "docstatus": 0,
   "doctype": "Custom HTML Block",
-  "html": "<!--development-->\n<!--<iframe src='http://192.168.10.19:5577/gym/check-in-ui' style=\"width:100%;border:0\"/>-->\n\n\n<!--production-->\n<iframe src='/gym/check-in-ui' style=\"width:100%;border:0\"/>\n\n\n",
-  "modified": "2023-10-23 14:29:04.822530",
+  "html": "<!--development-->\n<iframe src='http://192.168.10.19:5577/gym/check-in-ui' style=\"width:100%;border:0\"/>\n\n\n<!--production-->\n<!--<iframe src='/gym/check-in-ui' style=\"width:100%;border:0\"/>-->\n\n\n",
+  "modified": "2023-11-29 16:20:14.467522",
   "name": "Member Check In",
   "private": 0,
   "roles": [],
