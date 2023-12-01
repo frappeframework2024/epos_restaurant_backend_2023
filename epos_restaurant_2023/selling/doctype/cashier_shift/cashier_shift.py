@@ -32,7 +32,9 @@ class CashierShift(Document):
 
 			c.different_amount = (c.close_amount or 0) - (c.system_close_amount or 0)
 
-   
+		for c in self.cash_count:
+			c.total_base_currency_amount = c.total_amount / (c.exchange_rate or 1)
+			
 		self.total_opening_amount = Enumerable(self.cash_float).sum(lambda x: x.opening_amount)
 		self.total_system_close_amount = Enumerable(self.cash_float).sum(lambda x: x.system_close_amount)
 		self.total_close_amount = Enumerable(self.cash_float).sum(lambda x: x.close_amount)
