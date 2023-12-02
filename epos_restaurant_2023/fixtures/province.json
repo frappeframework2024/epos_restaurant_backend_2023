@@ -250,17 +250,17 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2023-10-27 16:16:48.191108",
-  "name": "Pattaya",
-  "note": "Pattaya",
-  "province": "Pattaya"
- },
- {
-  "docstatus": 0,
-  "doctype": "Province",
   "modified": "2023-10-27 16:15:23.843487",
   "name": "Bengaluru",
   "note": "Bengaluru",
   "province": "Bengaluru"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Province",
+  "modified": "2023-10-27 16:16:48.191108",
+  "name": "Pattaya",
+  "note": "Pattaya",
+  "province": "Pattaya"
  }
 ]
