@@ -21,7 +21,11 @@
   "default_discount",
   "price_rule",
   "require_check_in",
-  "sort_order"
+  "sort_order",
+  "default_customer",
+  "customer_photo",
+  "customer_name",
+  "customer_group"
  ],
  "fields": [
   {
@@ -114,12 +118,39 @@
    "fieldname": "is_foc",
    "fieldtype": "Check",
    "label": "Make FOC when Sale Discount 100%"
+  },
+  {
+   "fieldname": "default_customer",
+   "fieldtype": "Link",
+   "label": "Default Customer",
+   "options": "Customer"
+  },
+  {
+   "fetch_from": "default_customer.photo",
+   "fieldname": "customer_photo",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Customer Photo"
+  },
+  {
+   "fetch_from": "default_customer.customer_name_en",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Customer Name"
+  },
+  {
+   "fetch_from": "default_customer.customer_group",
+   "fieldname": "customer_group",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Customer Group"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-08-24 14:35:13.458620",
+ "modified": "2023-12-04 15:51:46.902985",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Tables Number",

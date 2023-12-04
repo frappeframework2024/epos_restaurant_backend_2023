@@ -108,17 +108,15 @@ function onTableClick(table, guest_cover) {
 }
 
 async function newSale(table) {
+
     let guest_cover = 0;
     if (gv.setting.use_guest_cover == 1) {
         const result = await keyboardDialog({ title: $t('Guest Cover'), type: 'number', value: guest_cover });
-
         if (typeof result == 'number') {
-
             guest_cover = parseInt(result);
             if (guest_cover == undefined || isNaN(guest_cover)) {
                 guest_cover = 0;
             }
-
         } else {
             return;
         }
@@ -127,6 +125,13 @@ async function newSale(table) {
     sale.sale.guest_cover = guest_cover;
     sale.sale.table_id = table.id
     sale.sale.tbl_number = table.tbl_no;
+    if((table.default_customer||"") != ""){
+        sale.sale.customer = table.default_customer;
+        sale.sale.customer_photo= table.customer_photo;
+        sale.sale.customer_name= table.customer_name;
+        sale.sale.customer_group= table.customer_group;
+    }    
+
     if (parseFloat(table.default_discount) > 0) {
         sale.sale.discount_type = table.discount_type;
         sale.sale.discount = parseFloat(table.default_discount);

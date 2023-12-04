@@ -79,7 +79,6 @@ export default class TableLayout {
 
             this.table_groups = JSON.parse(localStorage.getItem("table_groups"));
         }
-        
     }
     
     onResizeEnd(t) { 
