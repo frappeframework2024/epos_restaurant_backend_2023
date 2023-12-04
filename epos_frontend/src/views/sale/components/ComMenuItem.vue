@@ -178,7 +178,6 @@ async function onClickProduct() {
             if (portions?.length == 1) {
                 p.price = portions[0].price
                 p.unit = portions[0].unit
-                p.discount_type="Percent"
                 p.discount =  portions[0].default_discount || 0
               
 

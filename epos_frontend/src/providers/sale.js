@@ -323,7 +323,7 @@ export default class Sale {
                 is_free: 0,
                 sale_product_status: "New",
                 discount_type: "Percent",
-                discount: p.discount || 0,
+                discount:p.discount || 0,
                 order_by: make_order_auth.name,
                 order_time: this.getOrderTime(),
                 printers: p.printers,
