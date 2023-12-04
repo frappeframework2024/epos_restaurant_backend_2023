@@ -130,14 +130,12 @@ function onClickMenu(menu) {
     
 }
 
-
-
-
 function onBack(parent) {
     const parent_menu = product.posMenuResource.data?.find(r => r.name == parent).parent;
     product.parentMenu = parent_menu;
 }
 async function onClickProduct() {
+  
     if (!sale.isBillRequested()) {
       
         const p = JSON.parse(JSON.stringify(props.data));
@@ -176,12 +174,18 @@ async function onClickProduct() {
         else {
             const portions = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule);
             const check_modifiers = product.onCheckModifier(JSON.parse(p.modifiers));
+         
             if (portions?.length == 1) {
                 p.price = portions[0].price
                 p.unit = portions[0].unit
+                p.discount_type="Percent"
+                p.discount =  portions[0].default_discount || 0
+              
+
             }
 
             if (check_modifiers || portions?.length > 1) {
+              
                 product.setSelectedProduct(props.data);
 
                 let productPrices = await addModifierDialog();
@@ -191,6 +195,7 @@ async function onClickProduct() {
                         p.price = productPrices.portion.price;
                         p.portion = productPrices.portion.portion;
                         p.unit = productPrices.portion.unit
+                        p.discount =  productPrices.portion.default_discount || 0
                     }
                     p.modifiers = productPrices.modifiers.modifiers;
                     p.modifiers_data = productPrices.modifiers.modifiers_data;
@@ -205,6 +210,7 @@ async function onClickProduct() {
                 p.portion = "";
             }
         }
+ 
         sale.addSaleProduct(p);
 
     }

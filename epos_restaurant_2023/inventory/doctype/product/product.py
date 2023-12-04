@@ -158,7 +158,8 @@ class Product(Document):
 					'price_rule':p.price_rule, 
 					'portion':p.portion,
 					'unit':p.unit, 
-					'price_rule' : p.price_rule
+					'price_rule' : p.price_rule,
+					"default_discount":p.default_discount
 				})
 		self.prices = json.dumps(prices)	
 	
@@ -348,7 +349,8 @@ def add_product_to_temp_menu(self):
 					'price_rule':p.price_rule, 
 					'portion':p.portion,
 					  'unit':p.unit, 
-					  'price_rule' : p.price_rule
+					  'price_rule' : p.price_rule,
+					  'default_discount':p.default_discount
 					})
 			
 		#get product modifier

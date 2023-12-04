@@ -176,6 +176,7 @@ export default class Product {
     }
 
     setSelectedProduct(p) {
+        
         this.selectedProduct = p;
         this.prices = [];
         this.modifiers = [];
@@ -184,7 +185,7 @@ export default class Product {
         if (p.prices) {
             prices = JSON.parse(p.prices)
         }
-
+       
         prices.filter(r => r.branch == this.setting?.business_branch || r.branch == "").forEach((p) => {
             p.selected = false;
             this.prices.push(p)
