@@ -68,6 +68,6 @@ class Employee(Document):
 				doc.enabled = 0
 				doc.save()
 
-	def on_trash(self):
-		frappe.throw("delete me")
+	# def on_trash(self):
+	# 	frappe.throw("delete me")
 
