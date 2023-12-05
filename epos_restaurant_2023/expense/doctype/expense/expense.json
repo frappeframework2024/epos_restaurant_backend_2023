@@ -11,15 +11,17 @@
  "engine": "InnoDB",
  "field_order": [
   "naming_series",
+  "business_branch",
   "posting_date",
   "reference",
+  "column_break_xndt",
   "vendor_code",
-  "vendor_group",
   "vendor_name",
+  "vendor_group",
   "column_break_3",
-  "business_branch",
   "expense_by",
   "employee_name",
+  "exchange_rate",
   "expense_item_section",
   "expense_items",
   "section_break_8",
@@ -170,6 +172,16 @@
    "fieldname": "reference",
    "fieldtype": "Data",
    "label": "Reference"
+  },
+  {
+   "fieldname": "exchange_rate",
+   "fieldtype": "Float",
+   "label": "Exchange Rate",
+   "precision": "9"
+  },
+  {
+   "fieldname": "column_break_xndt",
+   "fieldtype": "Column Break"
   }
  ],
  "image_field": "attach_receipt",
@@ -182,7 +194,7 @@
    "link_fieldname": "expense"
   }
  ],
- "modified": "2023-01-03 17:15:40.227593",
+ "modified": "2023-12-05 14:36:23.375865",
  "modified_by": "Administrator",
  "module": "Expense",
  "name": "Expense",

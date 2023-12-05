@@ -9,5 +9,24 @@ frappe.ui.form.on("Account Code", {
                 filters: [["is_group","=",0]]
             }
         });
+        
+        frm.set_query("target_account_code", function() {
+            return {
+                filters: [["is_group","=",0]]
+            }
+        });
+
+        frm.set_query("bank_fee_account", function() {
+            return {
+                filters: [["is_group","=",0]]
+            }
+        });
+        
+        frm.set_query("parent_account_code", function() {
+            return {
+                filters: [["is_group","=",1]]
+            }
+        });
+
 	},
 });

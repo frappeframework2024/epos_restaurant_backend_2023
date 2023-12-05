@@ -147,8 +147,11 @@ io.on('connection', (socket) => {
     io.emit("ComCityLedgerDetail",arg)
   })
 
-  socket.on("ComBusinessSource",(arg)=>{
-    io.emit("ComBusinessSource",arg)
+  socket.on("BusinessSource",(arg)=>{
+    io.emit("BusinessSource",arg)
+  })
+  socket.on("ComBusinessSourceDetail",(arg)=>{
+    io.emit("ComBusinessSourceDetail",arg)
   })
 
   socket.on("Reports",(arg)=>{

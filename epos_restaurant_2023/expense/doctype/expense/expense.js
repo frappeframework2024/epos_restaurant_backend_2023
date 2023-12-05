@@ -5,6 +5,14 @@ frappe.ui.form.on("Expense", {
 	refresh(frm) {
 
 	},
+	setup(frm) {
+		if (frm.is_new()){
+			frappe.call("epos_restaurant_2023.api.api.get_exchange_rate").then(result=>{
+				frm.doc.exchange_rate = result.message
+				frm.refresh_field("exchange_rate");
+			})
+		}
+	}
     
 });
 
@@ -14,7 +22,16 @@ frappe.ui.form.on('Expense Item', {
 		update_expense_item_amount(frm,cdt,cdn);
 	},
     price(frm,cdt, cdn) {
+		let doc=  locals[cdt][cdn];
+		doc.price_second_currency =  doc.price * (frm.doc.exchange_rate || 1)
 		update_expense_item_amount(frm,cdt,cdn);
+		
+	},
+    price_second_currency(frm,cdt, cdn) {
+		let doc=  locals[cdt][cdn];
+		doc.price =  doc.price_second_currency / (frm.doc.exchange_rate || 1)
+		update_expense_item_amount(frm,cdt, cdn)
+
 	},
 
 })

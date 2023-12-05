@@ -920,3 +920,14 @@ def on_sale_quick_pay(data):
 
 
 
+@frappe.whitelist()
+def get_exchange_rate():
+    
+    main_currency = frappe.db.get_single_value("ePOS Settings", "currency")
+    second_currency = frappe.db.get_single_value("ePOS Settings", "second_currency")
+    data = frappe.db.sql("select exchange_rate  from `tabCurrency Exchange` where from_currency='{}' and to_currency='{}' and docstatus=1 order by posting_date, creation limit 1".format(main_currency, second_currency),as_dict=1)
+    exchange_rate = 1
+
+    if len(data):
+        exchange_rate = data[0]["exchange_rate"]    
+    return exchange_rate or 1
