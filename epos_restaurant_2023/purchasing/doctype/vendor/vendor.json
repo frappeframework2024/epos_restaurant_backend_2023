@@ -16,6 +16,7 @@
   "vendor_type",
   "vendor_group",
   "disabled",
+  "keyword",
   "section_break_5",
   "contact_name",
   "phone_number",
@@ -145,12 +146,18 @@
    "fieldname": "province",
    "fieldtype": "Data",
    "label": "Province"
+  },
+  {
+   "fieldname": "keyword",
+   "fieldtype": "Small Text",
+   "hidden": 1,
+   "label": "Keyword"
   }
  ],
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-10-18 09:23:31.796254",
+ "modified": "2023-12-06 16:20:21.071142",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Vendor",
@@ -242,10 +249,12 @@
    "write": 1
   }
  ],
- "search_fields": "company, phone_number",
+ "quick_entry": 1,
+ "search_fields": "company, phone_number,vendor_name,naming_series",
  "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "vendor_code_name"
+ "title_field": "vendor_code_name",
+ "track_changes": 1
 }

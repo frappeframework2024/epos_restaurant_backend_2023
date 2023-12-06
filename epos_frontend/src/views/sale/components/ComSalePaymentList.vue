@@ -1,5 +1,6 @@
 <template>
     <div>
+ 
         <ComPlaceholder :is-not-empty="sale.sale?.payment?.length > 0" icon="mdi-currency-usd" icon-size="30px" :text="$t('No Payment')">
             <div v-if="!is_removing" v-for="(p, index) in sale.sale.payment" :key="index">
                 <div class="flex items-center p-1 bg-white rounded-sm mb-1 border border-gray-600">
@@ -31,9 +32,13 @@
     </div>
 </template>
 <script setup>
-import { inject, ref } from '@/plugin';
+import { inject, ref,watch } from '@/plugin';
 const sale = inject('$sale')
+const socket = inject("$socket")
 
+watch(sale.sale.payment, async (newPayment, oldNewPayment) => {
+    socket.emit("ShowOrderInCustomerDisplay", sale.sale, "");
+})
 const is_removing = ref(false);
 
 async function  onRemovePayment(p) {

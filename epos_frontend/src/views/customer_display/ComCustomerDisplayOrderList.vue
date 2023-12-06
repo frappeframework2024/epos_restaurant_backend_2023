@@ -18,6 +18,7 @@
         </div>
         <div class="mt-auto">
             <div class="-mx-1 bg-blue-100 rounded-tl-md rounded-tr-md text-xs">
+              
                 <ComCustomerDisplaySummary :data="data"/>
                 <ComCustomerDisplaySummarPayment :data="(data)"/>
             </div>

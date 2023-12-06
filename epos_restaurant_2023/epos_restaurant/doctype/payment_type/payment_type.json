@@ -102,7 +102,7 @@
    "link_fieldname": "to_currency"
   }
  ],
- "modified": "2023-05-08 15:35:50.008343",
+ "modified": "2023-12-06 14:45:27.379748",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "Payment Type",
@@ -118,6 +118,18 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
    "share": 1,
    "write": 1
   },
@@ -154,6 +166,18 @@
    "read": 1,
    "report": 1,
    "role": "Sales Master Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "GYM User",
    "share": 1,
    "write": 1
   }

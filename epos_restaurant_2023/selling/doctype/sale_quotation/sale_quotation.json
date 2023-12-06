@@ -447,7 +447,7 @@
    "link_fieldname": "sale_quotation"
   }
  ],
- "modified": "2023-04-05 17:22:23.657828",
+ "modified": "2023-12-06 14:38:53.180026",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Quotation",
@@ -509,6 +509,18 @@
    "role": "Sales User",
    "share": 1,
    "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "GYM User",
+   "share": 1,
    "write": 1
   }
  ],

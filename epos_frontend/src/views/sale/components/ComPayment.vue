@@ -5,6 +5,7 @@
             {{ $t('Payment') }}
         </template>
         <template #bar_custom>
+
             <ComSelectPaymentPrinter @onClick="onSelectedReceipt" :selected="selectedReceipt.name" v-if="mobile" />
         </template>
         <template #content>
@@ -18,6 +19,7 @@
                     </v-col>
                     <v-col class="!p-1 h-full" md="4">
                         <div class="overflow-auto h-full">
+                            
                             <ComSalePaymentMethodList />
                         </div>
                     </v-col>
@@ -100,6 +102,7 @@ const toaster = createToaster({ position: "top" })
 const props = defineProps({
     params: Object
 })
+
 
 
 let backup = ref({})

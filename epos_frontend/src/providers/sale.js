@@ -247,20 +247,28 @@ export default class Sale {
         if (!this.setting?.pos_setting?.allow_change_quantity_after_submit) {
             strFilter = strFilter + ` && $.sale_product_status == 'New'`
         }
+
         if(p.is_combo_menu && p.use_combo_group){
             strFilter = strFilter + ` && $.combo_menu_data == '${p.combo_group_data}'`
         }
+        
+        if(p.is_open_product ==1 ){
+            strFilter = strFilter + ` && $.product_name== '${p.name_en}'`
+        }
+       
         
         let sp = Enumerable.from(this.sale.sale_products).where(strFilter).firstOrDefault()
         let is_new_sale_product = true;
         let new_sale_product;
         if (sp != undefined) {
+            // append quantity
             sp.quantity = parseFloat(sp.quantity) + 1;
             this.clearSelected();
             sp.selected = true;
             this.updateSaleProduct(sp);
             is_new_sale_product = false;
         } else {
+            // add new record to sale product
             this.clearSelected();
             let tax_rule ="";  
             
@@ -596,7 +604,7 @@ export default class Sale {
         }
 
         this.orderChanged = true;
-
+  
         socket.emit("ShowOrderInCustomerDisplay", this.sale, sale_status);
     }
 
