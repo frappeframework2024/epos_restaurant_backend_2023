@@ -8,7 +8,7 @@ frappe.ui.form.on("Purchase Order", {
 			callback: function(r){
 				if(r.message != undefined){
 					if(frm.doc.__islocal == undefined){
-						frm.doc.exchange_rate = frm.doc.exchange_rate||1						
+						frm.doc.exchange_rate = frm.doc.exchange_rate||r.message;						 				
 					}else{
 						frm.doc.exchange_rate = r.message
 					}				
