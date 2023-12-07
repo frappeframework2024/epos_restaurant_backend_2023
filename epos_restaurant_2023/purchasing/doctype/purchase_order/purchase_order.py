@@ -10,6 +10,7 @@ from py_linq import Enumerable
 from frappe.model.document import Document
 
 class PurchaseOrder(Document):
+		
 	def validate(self):
 		validate_po_discount(self)
 		#validate sale summary
@@ -117,3 +118,18 @@ def validate_po_discount(self):
 
 		d.total_discount = (d.po_discount_amount or 0) + (d.discount_amount or 0)
 		d.amount = (d.sub_total - d.discount_amount)
+
+@frappe.whitelist()
+def get_exchange_rate():    
+    main_currency = frappe.db.get_single_value("ePOS Settings", "currency")
+    exchange_rate_main_currency = frappe.db.get_single_value("ePOS Settings", "exchange_rate_main_currency")
+    second_currency = frappe.db.get_single_value("ePOS Settings", "second_currency")
+    if exchange_rate_main_currency == second_currency:
+        second_currency  = main_currency    
+    
+    data = frappe.db.sql("select exchange_rate  from `tabCurrency Exchange` where from_currency='{}' and to_currency='{}' and docstatus=1 order by posting_date desc, modified desc limit 1".format(exchange_rate_main_currency, second_currency),as_dict=1)
+    exchange_rate = 1
+
+    if len(data):
+        exchange_rate = data[0]["exchange_rate"]    
+    return exchange_rate or 1

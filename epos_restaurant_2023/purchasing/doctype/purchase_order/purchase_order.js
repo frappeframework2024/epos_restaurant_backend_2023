@@ -2,6 +2,33 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Purchase Order", {
+	onload(frm){
+		frappe.call({
+			method: "epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.get_exchange_rate",
+			callback: function(r){
+				if(r.message != undefined){
+					if(frm.doc.__islocal == undefined){
+						frm.doc.exchange_rate = frm.doc.exchange_rate||1						
+					}else{
+						frm.doc.exchange_rate = r.message
+					}				
+					 
+				}else {
+					frm.doc.exchange_rate = 1
+				}
+				frm.doc.purchase_order_products.forEach((r=>{
+					r.exchange_rate = frm.doc.exchange_rate;
+					r.cost_second_currency = r.exchange_rate * r.cost;
+				}))
+				 
+				frm.refresh_field('exchange_rate'); 
+			},
+			error: function(r) {
+				alert("load data fail");
+			},
+		});	
+			
+	},
     setup(frm){
         frm.set_query("product","purchase_order_products", function() {
             return {
@@ -41,9 +68,7 @@ frappe.ui.form.on("Purchase Order", {
 					error: function(r) {
 						alert("load data fail");
 					},
-				});	
-					
-					
+				});
 		}
 		frm.doc.scan_barcode = "";
 		frm.refresh_field('scan_barcode'); 
@@ -61,6 +86,8 @@ frappe.ui.form.on("Purchase Order", {
 		update_po_discount_to_po_product(frm);
 	}
 });
+
+
 frappe.ui.form.on('Purchase Order Products', {
 	product_code(frm,cdt, cdn) {
 		let doc=   locals[cdt][cdn];
@@ -72,7 +99,16 @@ frappe.ui.form.on('Purchase Order Products', {
 		update_purchase_order_products_amount(frm,cdt,cdn);
 	},
     cost(frm,cdt, cdn) {
+		let doc = locals[cdt][cdn];
+		doc.cost_second_currency = doc.cost * doc.exchange_rate;
 		update_purchase_order_products_amount(frm,cdt,cdn);
+	},
+	cost_second_currency(frm,cdt, cdn){
+	 
+		let doc = locals[cdt][cdn];
+		doc.cost = doc.cost_second_currency / (doc.exchange_rate||1);		
+		update_purchase_order_products_amount(frm,cdt,cdn);
+		// frm.refresh_field('purchase_order_products');
 	},
     business_branch(frm,cdt, cdn){
         let doc = locals[cdt][cdn];
@@ -180,7 +216,9 @@ function add_product_to_po_product(frm,p){
 }
 
 function update_po_product_amount(frm,doc){
+	doc.exchange_rate = frm.doc.exchange_rate;
 	doc.sub_total = doc.cost * doc.quantity;
+
 	
 	if(doc.discount){
 		if (doc.discount_type=="Percent"){
