@@ -7,8 +7,7 @@ frappe.query_reports["Membership Register Report"] = {
 			"fieldname":"start_date",
 			"label": __("Start Date"),
 			"fieldtype": "Date",
-			default:frappe.datetime.get_today(),
-			 
+			default:frappe.datetime.get_today(),			 
 			"reqd": 1
 		},
 		{
@@ -26,5 +25,19 @@ frappe.query_reports["Membership Register Report"] = {
 			"options":"Customer",
 			
 		},
+		{
+			"fieldname": "sort_by",
+			"label": __("Sort By"),
+			"fieldtype": "Select",
+			"options": "Member\nDate",
+			"default":"Date"
+		},
+		{
+			"fieldname": "sort_type",
+			"label": __("Sort Type"),
+			"fieldtype": "Select",
+			"options": "ASC\nDESC",
+			"default":"ASC"		
+		}
 	]
 };

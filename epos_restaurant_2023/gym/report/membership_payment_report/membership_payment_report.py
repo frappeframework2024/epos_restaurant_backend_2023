@@ -77,14 +77,19 @@ def get_report_data(filters):
 	return data
 
 def get_report_field_by_payment_type(filters ):
-    payment_types = frappe.db.get_list("Payment Type")
-    sqls=[]
-    for p in payment_types:
-        sqls.append("ifnull(sum(if(a.payment_type='{0}',a.input_amount,0)),0) as {1}".format(p.name,p.name.replace(" ", "_").lower()))
-        sqls.append("ifnull(sum(if(a.payment_type='{0}',a.input_amount/a.exchange_rate,0)),0) as base_{1}".format(p.name,p.name.replace(" ", "_").lower()))
+	payment_types = frappe.db.get_list("Payment Type")
+	sqls=[]
+	for p in payment_types:
+		payment_type = p.name.replace("-"," ")
+		payment_type = payment_type.replace("(", "_")
+		payment_type = payment_type.replace(")", "_")
+		payment_type = payment_type.replace(" ", "_")
+		sqls.append("ifnull(sum(if(a.payment_type='{0}',a.input_amount,0)),0) as {1}".format(p.name,payment_type.lower()))
+		sqls.append("ifnull(sum(if(a.payment_type='{0}',a.input_amount/a.exchange_rate,0)),0) as base_{1}".format(p.name,payment_type.lower()))
         
-    sqls.append("ifnull(sum(a.payment_amount),0) as total_payment")
-    return  ','.join(sqls)
+
+	sqls.append("ifnull(sum(a.payment_amount),0) as total_payment")
+	return  ','.join(sqls)
  
 
 def get_conditions(filters):

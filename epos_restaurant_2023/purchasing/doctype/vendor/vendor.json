@@ -157,7 +157,7 @@
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-06 16:20:21.071142",
+ "modified": "2023-12-06 16:33:26.703900",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Vendor",
@@ -250,7 +250,7 @@
   }
  ],
  "quick_entry": 1,
- "search_fields": "company, phone_number,vendor_name,naming_series",
+ "search_fields": "company, phone_number,vendor_name",
  "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
