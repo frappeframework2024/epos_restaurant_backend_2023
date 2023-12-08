@@ -192,8 +192,12 @@ io.on('connection', (socket) => {
   socket.on("PayableLedger",(arg)=>{
     io.emit("PayableLedger",arg)
   })
-
-  
+  socket.on("Vendor",(arg)=>{
+    io.emit("Vendor",arg)
+  })
+  socket.on("ComVendorDetail",(arg)=>{
+    io.emit("ComVendorDetail",arg)
+  })
 
   
 });
