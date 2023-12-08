@@ -4,7 +4,7 @@
  "allow_rename": 1,
  "autoname": "field:code",
  "creation": "2023-06-10 13:57:23.289724",
- "default_view": "List",
+ "default_view": "Tree",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -501,10 +501,11 @@
    "label": "Is Payable Ledger Account"
   }
  ],
+ "force_re_route_to_default_view": 1,
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-11-30 11:14:08.149075",
+ "modified": "2023-12-08 12:18:52.226305",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",
