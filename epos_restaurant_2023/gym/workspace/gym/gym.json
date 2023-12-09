@@ -14,7 +14,7 @@
  "hide_custom": 0,
  "icon": "today",
  "idx": 0,
- "is_hidden": 0,
+ "is_hidden": 1,
  "label": "Gym",
  "links": [
   {
@@ -84,7 +84,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-11-29 15:31:45.533681",
+ "modified": "2023-12-09 09:56:33.688892",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Gym",

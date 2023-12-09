@@ -1,10 +1,11 @@
 <template>
-    <ComModal :fullscreen="false" :persistent="true" @onClose="onClose" :titleOKButton="$t('Ok')" @onOk="onConfirm"
+    <ComModal :fullscreen="false" width="1400px" :persistent="true" @onClose="onClose" :titleOKButton="$t('Ok')" @onOk="onConfirm"
         :fill="false" contentClass="h-full">
         <template #title>
             {{ $t('Payment') }} {{ get_room_selected==""?"":(": #" + get_room_selected) }}
         </template>
         <template #content>
+            <v-text-field @input="onInputChange" v-model="keyword" label="Search" variant="solo"></v-text-field>
             <template v-if="params.data.use_room_offline" >  
                 <v-row no-gutters>
                     <v-col cols="12" class="pa-1" sm="3"  v-for="(r, index) in rooms" :key="index" @click="(()=>onOfflineRoomPressed(r))">
@@ -32,8 +33,8 @@
                 <hr/>
                 <template v-if="get_folio_data.length>0">
                     <v-row no-gutters>
-                        <v-col cols="12" class="pa-1" sm="6" v-for="(r, index) in get_folio_data" :key="index" @click="(()=>onOnlineFolioPressed(r))">
-                            <div :class="r.selected ? 'bg-indigo-lighten-2' : ''" class="btn-post-to-room cursor-pointer border border-stone-500 pa-1 rounded-sm">
+                        <v-col cols="12" class="pa-1" sm="4" v-for="(r, index) in get_folio_data" :key="index" @click="(()=>onOnlineFolioPressed(r))">
+                            <div :class="r.selected ? 'bg-indigo-lighten-2' : 'bg-deep-purple-lighten-5'" class="btn-post-to-room cursor-pointer border border-stone-500 pa-1 rounded-sm">
                                 <div>
                                     <span>{{ $t('Folio') }}: #{{ r.name }}</span>
                                 </div> 
@@ -75,6 +76,7 @@ const props = defineProps({
 
 const call = frappe.call();
 
+const selectedColumns = ref([])
 const rooms = ref([]);
 const folio_data = ref([]);
 const reservation_folio = ref({});
@@ -231,6 +233,19 @@ function uuidv4() {
   );
 }
 
+function onInputChange () {
+
+    alert(123)
+    // const check =  room_types.value.filter((r)=>r.selected);
+    // if(check.length >0){
+    //     if(check[0].name=="all"){
+    //         return folio_data.value;
+    //     }else{
+    //         const data = folio_data.value.filter((r)=>r.room_types.includes(check[0].type));
+    //         return data;
+    //     }
+    // }
+}
 
 </script>
 <style>
