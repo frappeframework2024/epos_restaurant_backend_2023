@@ -562,6 +562,8 @@ def create_folio_transaction_from_pos_trnasfer(self):
 					"input_amount":p.amount,
 					"account_code":p.account_code,
 					"property":self.business_branch,
+					"is_auto_post":1,
+					"sale": self.name,
 					"type":"Debit"
 				} 
 			doc = frappe.get_doc(data)

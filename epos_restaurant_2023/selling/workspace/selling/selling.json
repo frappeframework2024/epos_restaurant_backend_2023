@@ -195,6 +195,16 @@
   {
    "hidden": 0,
    "is_query_report": 1,
+   "label": "Top Sale Products",
+   "link_count": 0,
+   "link_to": "Top Sale Products Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
    "label": "Daily Sale Transaction",
    "link_count": 0,
    "link_to": "Daily Sale Transaction",
@@ -283,7 +293,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-11-23 15:23:29.349375",
+ "modified": "2023-12-10 01:02:42.749786",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Selling",

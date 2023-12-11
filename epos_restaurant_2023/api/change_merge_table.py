@@ -10,6 +10,7 @@ from frappe import _
 
 
 
+    
 @frappe.whitelist()
 def on_merge_order(old_sale, new_sale): 
     old_doc = frappe.get_doc("Sale",old_sale)
@@ -44,8 +45,8 @@ def on_merge_order(old_sale, new_sale):
         except:
             pass
       
-
         frappe.delete_doc("Sale",old_sale)
+       
         msg = "Sale document has been deleted"
 
     frappe.db.commit()
