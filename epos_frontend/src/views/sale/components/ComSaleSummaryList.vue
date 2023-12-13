@@ -41,23 +41,23 @@
       </div>
       <div class="flex justify-between mb-1" v-if="sale.sale.tax_1_amount > 0">
          
-          <div v-if="sale.sale.percentage_of_price_to_calculate_tax_1==100">{{ setting.tax_1_name }}{{sale.sale.tax_1_rate>0?"("+sale.sale.tax_1_rate+"%)":""}}</div>
-          <div v-else>{{ setting.tax_1_name }} ({{sale.sale.tax_1_rate+"%"}} {{$t('of')}} {{sale.sale.percentage_of_price_to_calculate_tax_1+"% "+$t('Revenue')}})</div>
+          <div v-if="sale.sale.percentage_of_price_to_calculate_tax_1==100">{{ getTaxData().tax_1_name }}{{sale.sale.tax_1_rate>0?"("+sale.sale.tax_1_rate+"%)":""}}</div>
+          <div v-else>{{ getTaxData().tax_1_name }} ({{sale.sale.tax_1_rate+"%"}} {{$t('of')}} {{sale.sale.percentage_of_price_to_calculate_tax_1+"% "+$t('Revenue')}})</div>
      
         <div class="font-bold">
           <CurrencyFormat :value="sale.sale.tax_1_amount" />
         </div>
       </div>
       <div class="flex justify-between mb-1" v-if="sale.sale.tax_2_amount > 0">        
-        <div v-if="sale.sale.percentage_of_price_to_calculate_tax_2==100">{{ setting.tax_2_name }} {{sale.sale.tax_2_rate>0?"("+sale.sale.tax_2_rate+"%)":""}}</div>
-        <div v-else>{{ setting.tax_2_name }} ({{sale.sale.tax_2_rate+"%"}} {{$t('of')}} {{sale.sale.percentage_of_price_to_calculate_tax_2+"% "+$t('Revenue')}})</div>
+        <div v-if="sale.sale.percentage_of_price_to_calculate_tax_2==100">{{ getTaxData().tax_2_name }} {{sale.sale.tax_2_rate>0?"("+sale.sale.tax_2_rate+"%)":""}}</div>
+        <div v-else>{{ getTaxData().tax_2_name }} ({{sale.sale.tax_2_rate+"%"}} {{$t('of')}} {{sale.sale.percentage_of_price_to_calculate_tax_2+"% "+$t('Revenue')}})</div>
         <div class="font-bold">
           <CurrencyFormat :value="sale.sale.tax_2_amount" />
         </div>
       </div>
       <div class="flex justify-between mb-1" v-if="sale.sale.tax_3_amount > 0">
-        <div v-if="sale.sale.percentage_of_price_to_calculate_tax_3==100">{{ setting.tax_3_name }} {{sale.sale.tax_3_rate>0?"("+sale.sale.tax_3_rate+"%)":""}}</div>
-          <div v-else>{{ setting.tax_3_name }} ({{sale.sale.tax_3_rate+"%"}} {{$t('of')}} {{sale.sale.percentage_of_price_to_calculate_tax_3+"% "+$t('Revenue')}})</div>
+        <div v-if="sale.sale.percentage_of_price_to_calculate_tax_3==100">{{ getTaxData().tax_3_name }} {{sale.sale.tax_3_rate>0?"("+sale.sale.tax_3_rate+"%)":""}}</div>
+          <div v-else>{{ getTaxData().tax_3_name }} ({{sale.sale.tax_3_rate+"%"}} {{$t('of')}} {{sale.sale.percentage_of_price_to_calculate_tax_3+"% "+$t('Revenue')}})</div>
         <div class="font-bold">
           <CurrencyFormat :value="sale.sale.tax_3_amount" />
         </div>
@@ -94,13 +94,29 @@
           {{sale.sale.reference_number}}
         </div>
       </div>
-  </div>
+  </div> 
 </template>
 
 
 <script setup>
-  import { inject } from 'vue'
+  import {ref, inject,onMounted } from '@/plugin'
   const sale = inject('$sale')
   const gv = inject("$gv")
-  const setting = gv.setting;
+  const setting = gv.setting; 
+  const data = ref([]);
+
+  onMounted(() => {       
+      data.value = JSON.parse(JSON.stringify(sale.setting.tax_rules));
+  })
+
+  function getTaxData(){ 
+    if(sale.sale.tax_rule||"" != ""){
+      const tax = data.value.filter((r)=>r.tax_rule == sale.sale.tax_rule); 
+      if(tax.length > 0){
+        return JSON.parse(tax[0].tax_rule_data); 
+      }      
+    } 
+    return null
+  } 
+
 </script> 

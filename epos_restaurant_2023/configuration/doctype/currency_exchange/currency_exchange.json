@@ -12,7 +12,10 @@
   "from_currency",
   "to_currency",
   "exchange_rate_input",
+  "change_exchange_rate_input",
+  "column_break_hpkp",
   "exchange_rate",
+  "change_exchange_rate",
   "amended_from"
  ],
  "fields": [
@@ -62,16 +65,37 @@
    "read_only": 1
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "exchange_rate_input",
    "fieldtype": "Float",
    "label": "Exchange Rate Input",
    "reqd": 1
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "change_exchange_rate_input",
+   "fieldtype": "Float",
+   "label": "Change Exchange Rate Input",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_hpkp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "change_exchange_rate",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Change Exchange Rate",
+   "precision": "9",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-05-03 09:34:15.748643",
+ "modified": "2023-12-13 10:59:39.223600",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Currency Exchange",

@@ -4,6 +4,10 @@
 
 .widget.shortcut-widget-box{
     background: #ebeef0!important;
+    padding: 10px!important;
+}
+.widget.shortcut-widget-box .es-icon{
+    display: none!important;
 }
 
 .widget.links-widget-box {

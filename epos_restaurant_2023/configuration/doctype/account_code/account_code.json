@@ -31,6 +31,7 @@
   "allow_discount",
   "column_break_12",
   "discount_account",
+  "discount_account_name",
   "tax_section",
   "allow_tax",
   "allow_user_to_change_tax",
@@ -499,12 +500,17 @@
    "fieldname": "is_payable_ledger_account",
    "fieldtype": "Check",
    "label": "Is Payable Ledger Account"
+  },
+  {
+   "fieldname": "discount_account_name",
+   "fieldtype": "Data",
+   "label": "Discount Account Name"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-12-08 14:53:38.233047",
+ "modified": "2023-12-12 14:19:55.914472",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

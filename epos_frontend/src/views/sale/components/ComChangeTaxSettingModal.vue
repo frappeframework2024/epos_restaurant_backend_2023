@@ -18,12 +18,10 @@
                                             <v-icon icon="mdi-checkbox-marked-circle-outline" color="success" v-if="item.selected"></v-icon>
                                             <v-icon icon="mdi-checkbox-blank-circle-outline" color="gray" v-else></v-icon>
                                             <span class="pl-2">{{ item.tax_rule}}</span>
-                                        </div>
-                                        <v-chip size="small" style="margin: 5px;"><strong>{{ sale.setting.tax_1_name }}</strong>: {{ getTax(item.tax_rule_data).tax_1_rate }}% of {{ getTax(item.tax_rule_data).percentage_of_price_to_calculate_tax_1 }}% Revenue</v-chip>
-                                        <v-chip size="small" style="margin: 5px;"><strong>{{ sale.setting.tax_2_name }}</strong>: {{ getTax(item.tax_rule_data).tax_2_rate }}% of {{ getTax(item.tax_rule_data).percentage_of_price_to_calculate_tax_2 }}% Revenue</v-chip>
-                                        <v-chip size="small" style="margin: 5px;"><strong>{{ sale.setting.tax_3_name }}</strong>: {{ getTax(item.tax_rule_data).tax_3_rate }}% of {{ getTax(item.tax_rule_data).percentage_of_price_to_calculate_tax_3 }}% Revenue</v-chip>
-                                      
-                                        
+                                        </div><!--sale.setting.tax_1_name -->
+                                        <v-chip v-if=" getTax(item.tax_rule_data).tax_1_rate > 0" size="small" style="margin: 5px;"><strong>{{ getTax(item.tax_rule_data).tax_1_name }}</strong>: {{ getTax(item.tax_rule_data).tax_1_rate }}% of {{ getTax(item.tax_rule_data).percentage_of_price_to_calculate_tax_1 }}% Revenue</v-chip>
+                                        <v-chip v-if=" getTax(item.tax_rule_data).tax_2_rate > 0" size="small" style="margin: 5px;"><strong>{{ getTax(item.tax_rule_data).tax_2_name }}</strong>: {{ getTax(item.tax_rule_data).tax_2_rate }}% of {{ getTax(item.tax_rule_data).percentage_of_price_to_calculate_tax_2 }}% Revenue</v-chip>
+                                        <v-chip v-if=" getTax(item.tax_rule_data).tax_3_rate > 0" size="small" style="margin: 5px;"><strong>{{ getTax(item.tax_rule_data).tax_3_name }}</strong>: {{ getTax(item.tax_rule_data).tax_3_rate }}% of {{ getTax(item.tax_rule_data).percentage_of_price_to_calculate_tax_3 }}% Revenue</v-chip>
                                 </div>
                             </div>
                         </div>

@@ -13,6 +13,8 @@ class Dates(Document):
 
 @frappe.whitelist()
 def generate_date(start_date, end_date):
+	frappe.db.sql("delete from `tabDates`;")
+	frappe.db.commit()	
 	start_date = parser.parse(start_date)
 	end_date = parser.parse(end_date)
 	d = start_date

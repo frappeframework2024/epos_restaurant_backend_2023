@@ -123,7 +123,10 @@ frappe.treeview_settings['Account Code'] = {
     // ignore fields even if mandatory
 
     onload: function(treeview) {
-        
+
+		treeview.page.add_inner_button(__("Print Account Code"), function() {
+            frappe.set_route('query-report', "Account Code Report");
+		});
     },
     post_render: function(treeview) {
         // triggered when tree is instanciated
@@ -136,5 +139,12 @@ frappe.treeview_settings['Account Code'] = {
     },
     // enable custom buttons beside each node
     extend_toolbar: true,
+    menu_items:[
+		{
+			label: __('New Company'),
+			action: function() { alert("123") },
+ 
+		}
+	],
 
 }

@@ -25,6 +25,9 @@ class AccountCode(Document):
 		if self.target_account_code:
 			if self.target_account_type==self.type:
 				frappe.throw("Target account type must be different from current accont type")
+
+		if self.discount_account:
+			self.discount_account_name = frappe.db.get_value("Account Code", self.discount_account,"account_name")
 				
 
 			

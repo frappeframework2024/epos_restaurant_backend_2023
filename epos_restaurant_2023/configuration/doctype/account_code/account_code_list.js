@@ -24,5 +24,10 @@ frappe.listview_settings['Account Code'] = {
                 
             )
         });
+
+        listview.page.add_menu_item('Print Account Code', function() {
+            frappe.set_route("query-report","Account Code Report")
+        });
+
     }
 };
