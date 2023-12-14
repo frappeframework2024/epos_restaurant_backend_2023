@@ -86,9 +86,17 @@ class Sale(Document):
 		if( frappe.db.get_default("exchange_rate_main_currency") !=frappe.db.get_default("currency") ):
 			to_currency = frappe.db.get_default("currency") 
 
-		sql_exchange_rate = "select exchange_rate,change_exchange_rate from `tabCurrency Exchange` where to_currency = 'KHR' and docstatus = 1 order by posting_date desc, modified desc limit 1"
-		exch = frappe.db.sql(sql_exchange_rate,as_dict=1)	 
-		if len(exch) > 0:
+		sql_exchange_rate = """select 
+									exchange_rate,
+									change_exchange_rate 
+								from `tabCurrency Exchange` 
+								where to_currency = '{}' 
+									and docstatus = 1 
+								order by 
+								posting_date desc, 
+								modified desc limit 1""".format(to_currency)
+		exch = frappe.db.sql(sql_exchange_rate,as_dict=1) 
+		if exch:
 			self.exchange_rate = exch[0].exchange_rate
 			self.change_exchange_rate = exch[0].change_exchange_rate	
 
@@ -154,6 +162,7 @@ class Sale(Document):
 		self.grand_total =( sub_total - (self.total_discount or 0))  + self.total_tax 
 	  
 		self.total_paid =  Enumerable(self.payment).where(lambda x: x.payment_type_group !='On Account').sum(lambda x: x.amount or 0)
+
 		self.total_fee =  Enumerable(self.payment).sum(lambda x: x.fee_amount or 0)
 		self.total_paid_with_fee = self.total_paid + (self.total_fee or 0)
 
@@ -448,6 +457,7 @@ def add_payment_to_sale_payment(self):
 							'payment_type': p.payment_type,
 							'currency':p.currency,
 							'exchange_rate':p.exchange_rate,
+							'change_exchange_rate':p.change_exchange_rate,
 							'sale':self.name,
 							'input_amount':p.input_amount,
 							"payment_amount":p.amount,
@@ -474,15 +484,15 @@ def add_payment_to_sale_payment(self):
 			exchange_rate = 1
 			if pos_config_payment_type:
 				account_code = pos_config_payment_type[0].account_code
-				exchange_rate = pos_config_payment_type[0].change_exchange_rate
-				
+				exchange_rate = pos_config_payment_type[0].change_exchange_rate		
+
 			doc = frappe.get_doc({
 					'doctype': 'Sale Payment',
 					"transaction_type":"Changed",
 					'posting_date':self.posting_date,
 					'payment_type': payment_type,
 					'sale':self.name,
-					'input_amount':(self.changed_amount * exchange_rate ) * -1,
+					'input_amount':(self.changed_amount * exchange_rate ) * -1, 
 					"docstatus":1,
 					"check_valid_payment_amount":0,
 					"pos_profile":self.pos_profile,
@@ -604,9 +614,11 @@ def on_get_revenue_account_code(self):
 
 def validate_pos_payment(self):
 	currency = frappe.db.get_default("currency")
+	
 	for d in self.payment:
 		d.exchange_rate = d.exchange_rate if d.currency != currency else 1
-		d.amount = (d.input_amount or 0 ) / (d.exchange_rate or 1)
+		d.change_exchange_rate = d.change_exchange_rate if d.currency != currency else 1		
+		d.amount = d.amount #(d.input_amount or 0 ) / (d.exchange_rate or 1)
 
 def validate_tax(doc):
 		if doc.tax_rule:

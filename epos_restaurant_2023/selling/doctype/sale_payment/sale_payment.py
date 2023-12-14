@@ -13,8 +13,17 @@ class SalePayment(Document):
 
 		if (self.exchange_rate or 0) ==0 or self.currency == frappe.db.get_default("currency"):
 			self.exchange_rate = 1
-   
-		self.payment_amount = self.input_amount /self.exchange_rate 
+			self.change_exchange_rate = 1
+		
+		currency_precision = frappe.db.get_single_value('System Settings', 'currency_precision')
+
+		if self.transaction_type =="Changed":
+			self.payment_amount = self.input_amount / self.change_exchange_rate 
+		else:
+			self.payment_amount = self.input_amount / self.exchange_rate 
+		
+		self.payment_amount = round(self.payment_amount,int(currency_precision))
+		
    		
 		if (self.payment_amount or 0) ==0:
 			frappe.throw(_("Please enter payment amount"))
@@ -51,7 +60,7 @@ def update_sale(self):
 		if balance<0:
 			balance = 0
 		frappe.db.set_value('Sale', self.sale,  {
-			'total_paid': data[0][0] ,
+			'total_paid': round(data[0][0],int(currency_precision)),
 			'balance': balance  
 		})
 

@@ -818,7 +818,7 @@
    "fieldname": "total_paid_with_fee",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Total Paid",
+   "label": "Total Paid with Fee",
    "read_only": 1
   },
   {
@@ -888,7 +888,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2023-12-14 10:12:20.671785",
+ "modified": "2023-12-14 14:48:15.147937",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",
