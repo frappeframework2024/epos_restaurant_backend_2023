@@ -30,6 +30,7 @@ export default class Sale {
         this.customer_name = '';
         this.customer_group = '';
         this.exchange_rate = 1;
+        this.change_exchange_rate = 1;
         this.guest_cover = 0;
         this.orderTime = undefined;
         this.router = useRouter();
@@ -108,6 +109,7 @@ export default class Sale {
             shift_name:this.shift_name,
             working_day: this.working_day,
             exchange_rate: this.exchange_rate,
+            change_exchange_rate: this.change_exchange_rate,
             table_id: this.table_id,
             tbl_number: this.tbl_number,
             pos_profile: this.setting?.pos_profile,
@@ -513,11 +515,11 @@ export default class Sale {
             sp.taxable_amount_2 = (sp.sub_total - sp.total_discount);
         }
 
+        sp.taxable_amount_2 *= ((sp.percentage_of_price_to_calculate_tax_2 || 0)/100);     
         //if cal tax2 taxable after add tax1
         if(sp.calculate_tax_2_after_adding_tax_1){
             sp.taxable_amount_2 += sp.tax_1_amount;
-        }
-        sp.taxable_amount_2 *= ((sp.percentage_of_price_to_calculate_tax_2 || 0)/100);       
+        }  
 
         //cal tax2 amount
         sp.tax_2_amount = sp.taxable_amount_2 * ((sp.tax_2_rate ||0)/100);
@@ -530,6 +532,8 @@ export default class Sale {
         if(sp.calculate_tax_3_after_discount){
             sp.taxable_amount_3 = (sp.sub_total - sp.total_discount);
         }
+        
+        sp.taxable_amount_3 *= ((sp.percentage_of_price_to_calculate_tax_3 ||0)/100);  
        
         //if cal tax3 taxable after add tax1
         if(sp.calculate_tax_3_after_adding_tax_1){
@@ -539,8 +543,7 @@ export default class Sale {
         //if cal tax3 taxable after add tax2
         if(sp.calculate_tax_3_after_adding_tax_2){
             sp.taxable_amount_3 += sp.tax_2_amount;
-        }
-        sp.taxable_amount_3 *= ((sp.percentage_of_price_to_calculate_tax_3 ||0)/100);    
+        }  
 
         //cal tax3 amount
         sp.tax_3_amount = sp.taxable_amount_3 * ((sp.tax_3_rate||0) /100);
@@ -551,6 +554,7 @@ export default class Sale {
     
     //on sale apply  tax setting
     onSaleApplyTax(tax_rule,s){
+
         s.tax_rule = tax_rule.name||"";
         s.tax_1_rate = tax_rule.tax_1_rate||0;
         s.percentage_of_price_to_calculate_tax_1 = tax_rule.percentage_of_price_to_calculate_tax_1||100;
@@ -1005,9 +1009,7 @@ export default class Sale {
                 else{  
                     this.sale.discount = result.discount;
                     this.sale.discount_type = result.discount_type;
-                    this.sale.discount_note = result.discount_note;
-
-                    
+                    this.sale.discount_note = result.discount_note;                    
 
                     //sale discount audit
                     let discount =  this.sale.discount_type =="Percent"? `${ this.sale.discount} %` : numberFormat(gv.getCurrnecyFormat, this.sale.discount);                //audit trail
@@ -1264,18 +1266,10 @@ export default class Sale {
                         this.sale.sale_status = "Submitted";
                         this.sale.docstatus = 1;
                         this.action = "quick_pay";
+
+                        let doc = JSON.parse(JSON.stringify(this.sale));
                         this.generateProductPrinters();
-                        if (this.getString(this.sale.name) == "") {
-                            if (this.newSaleResource == null) {
-                                this.createNewSaleResource();
-                            }
-                            this.printWaitingOrderAfterPayment = true;
-                            await this.newSaleResource.submit({ doc: this.sale })
-                        } else {
-                            
-                            await this.saleResource.setValue.submit(this.sale);
-                        }
-                        
+
                         let msg = `${u.name} quick pay`;          
                         this.auditTrailLogs.push({
                             doctype:"Comment",
@@ -1287,9 +1281,19 @@ export default class Sale {
                             content:msg,
                             custom_item_description: "",
                             custom_note: ""
-                        }); 
+                        });                         
+                    
                         
-                        this.submitToAuditTrail(this.sale);
+                        if (this.getString(this.sale.name) == "") {
+                            if (this.newSaleResource == null) {
+                                this.createNewSaleResource();
+                            }
+                            await this.newSaleResource.submit({ doc: doc });
+                        } 
+                        else {
+                            await this.saleResource.setValue.submit(doc);
+                        }                         
+                        this.submitToAuditTrail(doc);
                         resolve(true);
                     }
                 }
@@ -1596,11 +1600,14 @@ export default class Sale {
         this.sale.total_fee = total_fee;
         this.sale.balance = this.sale.grand_total - total_payment;
 
+        
+
         if (this.sale.balance < 0) {
             this.sale.balance = 0;
         }
 
-        this.sale.changed_amount = total_payment - this.sale.grand_total;
+        this.sale.changed_amount = total_payment - this.sale.grand_total; 
+        
         this.sale.changed_amount = Number(this.sale.changed_amount.toFixed(this.setting.pos_setting.main_currency_precision));
         if (this.sale.changed_amount <= 0) {
             this.sale.changed_amount = 0;

@@ -85,13 +85,16 @@ class Sale(Document):
 		to_currency = frappe.db.get_default("second_currency")
 		if( frappe.db.get_default("exchange_rate_main_currency") !=frappe.db.get_default("currency") ):
 			to_currency = frappe.db.get_default("currency") 
-			
-		exchange_rate = frappe.get_last_doc('Currency Exchange', filters={"to_currency": to_currency})# frappe.get_last_doc("Currency Exchange",{})
-		
-		if exchange_rate:
-			self.exchange_rate = exchange_rate.exchange_rate
+
+		sql_exchange_rate = "select exchange_rate,change_exchange_rate from `tabCurrency Exchange` where to_currency = 'KHR' and docstatus = 1 order by posting_date desc, modified desc limit 1"
+		exch = frappe.db.sql(sql_exchange_rate,as_dict=1)	 
+		if len(exch) > 0:
+			self.exchange_rate = exch[0].exchange_rate
+			self.change_exchange_rate = exch[0].change_exchange_rate	
+
 		else:
-			self.exchange_rate =1
+			self.exchange_rate = 1
+			self.change_exchange_rate  = 1
  
 		#validate sale product 
 		validate_sale_product(self)

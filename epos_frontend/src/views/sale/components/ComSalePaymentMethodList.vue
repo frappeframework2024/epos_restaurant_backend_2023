@@ -60,14 +60,11 @@ async function onPaymentTypeClick(pt) {
         
     }
     else  if(sale.is_payment_first_load){       
-        sale.paymentInputNumber = sale.paymentInputNumber * pt.exchange_rate;
-       
+        sale.paymentInputNumber = sale.paymentInputNumber * pt.exchange_rate;       
     }
 
- 
+    sale.onAddPayment(pt, sale.paymentInputNumber,fee_amount,room,folio);   
 
-    sale.onAddPayment(pt, sale.paymentInputNumber,fee_amount,room,folio);
-   
 }
 
 const balance = computed(()=>{
