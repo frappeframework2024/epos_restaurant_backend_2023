@@ -198,6 +198,9 @@ io.on('connection', (socket) => {
   socket.on("ComVendorDetail",(arg)=>{
     io.emit("ComVendorDetail",arg)
   })
+  socket.on("ComRunNightAudit",(arg)=>{
+    io.emit("ComRunNightAudit",arg)
+  })
 
   
 });

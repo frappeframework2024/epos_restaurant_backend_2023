@@ -11,6 +11,7 @@
 </template>
 <script setup>
 import { inject , payToRoomDialog,createToaster,i18n ,computed,keyboardDialog} from '@/plugin';
+import { onMounted } from 'vue';
 import { useDisplay } from 'vuetify'
 const {mobile} = useDisplay()
 const gv = inject("$gv")
@@ -19,6 +20,7 @@ const { t: $t } = i18n.global;
 const toaster = createToaster({ position: "top" });
 
 async function onPaymentTypeClick(pt) { 
+
     let room = null;
     let folio = null; 
     if(pt.payment_type_group=="Pay to Room" ){ 
@@ -62,6 +64,8 @@ async function onPaymentTypeClick(pt) {
     else  if(sale.is_payment_first_load){       
         sale.paymentInputNumber = sale.paymentInputNumber * pt.exchange_rate;       
     }
+
+  
 
     sale.onAddPayment(pt, sale.paymentInputNumber,fee_amount,room,folio);   
 

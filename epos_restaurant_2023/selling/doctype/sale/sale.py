@@ -474,7 +474,8 @@ def add_payment_to_sale_payment(self):
 			exchange_rate = 1
 			if pos_config_payment_type:
 				account_code = pos_config_payment_type[0].account_code
-				exchange_rate = pos_config_payment_type[0].exchange_rate
+				exchange_rate = pos_config_payment_type[0].change_exchange_rate
+				
 			doc = frappe.get_doc({
 					'doctype': 'Sale Payment',
 					"transaction_type":"Changed",

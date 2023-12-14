@@ -532,7 +532,7 @@ export default class Sale {
         if(sp.calculate_tax_3_after_discount){
             sp.taxable_amount_3 = (sp.sub_total - sp.total_discount);
         }
-        
+
         sp.taxable_amount_3 *= ((sp.percentage_of_price_to_calculate_tax_3 ||0)/100);  
        
         //if cal tax3 taxable after add tax1
@@ -1556,20 +1556,21 @@ export default class Sale {
         if (single_payment_type) {
             toaster.warning($t('msg.You cannot add other payment type with',[ single_payment_type.payment_type]));
         } else {
+            const precision = this.setting.pos_setting.main_currency_precision;
             if (paymentType.is_single_payment_type == 1) {
                 this.sale.payment = [];
-                amount = parseFloat(this.sale.grand_total);
+                amount = parseFloat(parseFloat(this.sale.grand_total).toFixed(precision));
             }
             if (!this.getNumber(amount) == 0) {
                 if((fee_amount||0)==0){
-                    fee_amount = parseFloat(amount / paymentType.exchange_rate) * (paymentType.fee_percentage/100);
-                }
-
+                    fee_amount = parseFloat(parseFloat(amount / paymentType.exchange_rate).toFixed(precision)) * (paymentType.fee_percentage/100);
+                } 
                 this.sale.payment.push({
                     payment_type: paymentType.payment_method,
                     input_amount: parseFloat(amount),
-                    amount: parseFloat(amount / paymentType.exchange_rate),
+                    amount: parseFloat(parseFloat(amount / paymentType.exchange_rate).toFixed(precision)),
                     exchange_rate: paymentType.exchange_rate,
+                    change_exchange_rate: paymentType.change_exchange_rate,
                     currency: paymentType.currency,
                     is_single_payment_type: paymentType.is_single_payment_type,
                     required_customer: paymentType.required_customer,                    
@@ -1582,7 +1583,7 @@ export default class Sale {
                 });
 
                 this.updatePaymentAmount();
-                this.paymentInputNumber = this.sale.balance.toFixed(this.setting.pos_setting.main_currency_precision);
+                this.paymentInputNumber = this.sale.balance.toFixed(precision);
 
             } else {
                 toaster.warning($t("msg.Please enter payment amount"));
@@ -1600,14 +1601,15 @@ export default class Sale {
         this.sale.total_fee = total_fee;
         this.sale.balance = this.sale.grand_total - total_payment;
 
-        
-
         if (this.sale.balance < 0) {
             this.sale.balance = 0;
         }
+        let change_amount = total_payment - this.sale.grand_total;
+        this.sale.changed_amount =  change_amount;
+        this.sale.second_changed_amount = change_amount * this.sale.change_exchange_rate;  
 
-        this.sale.changed_amount = total_payment - this.sale.grand_total; 
-        
+        this.sale.second_changed_amount = Number(this.sale.second_changed_amount.toFixed(this.setting.pos_setting.second_currency_precision));
+
         this.sale.changed_amount = Number(this.sale.changed_amount.toFixed(this.setting.pos_setting.main_currency_precision));
         if (this.sale.changed_amount <= 0) {
             this.sale.changed_amount = 0;

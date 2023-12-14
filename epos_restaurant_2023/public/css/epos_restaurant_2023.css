@@ -22,6 +22,7 @@
 }
 .navbar {
     background: #0181c0 !important;
+    height: 60px!important;
 }
 .desk-sidebar .standard-sidebar-item.selected{
     background-color: #ceeaf985 !important;

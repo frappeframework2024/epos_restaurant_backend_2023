@@ -54,9 +54,13 @@
                                 </div>
                             </div>
                             <div class="pt-4 pb-5">
+
                                 <ComTableView>
+
+                                  
                                     <template #header>
                                         <tr>
+                                            <th class="!bg-gray-100"></th>
                                             <th class="!bg-gray-100">{{ $t('No') }}</th>
                                             <th class="text-center !bg-gray-100">{{ $t('Image') }}</th>
                                             <th style="width: unset;" class="text-left !bg-gray-100">{{ $t('Description') }}</th>
@@ -68,6 +72,7 @@
                                     </template>
                                     <template #body>
                                         <tr v-for="(p, index) in saleProducts" :key="index">
+                                            <td><v-checkbox  v-model="p.is_check" /></td>
                                             <td>{{ index + 1 }}</td>
                                             <ComTdImage :photo="p.product_photo" :title="p.product_name"></ComTdImage>
                                             <td>
@@ -207,14 +212,13 @@ const emit = defineEmits(["resolve", "reject"])
 const setting = JSON.parse(localStorage.getItem('setting'))
 const sale = inject('$sale')
 let open = ref(true);
-const saleProducts = computed(() => {
-    return Enumerable.from(sale.sale.sale_products).groupBy(
+const saleProducts = ref( Enumerable.from(sale.sale.sale_products).groupBy(
         "{product_code:$.product_code,modifiers_price:$.modifiers_price,portion:$.portion,modifiers:$.modifiers,product_name:$.product_name,product_name_kh:$.product_name_kh,unit:$.unit,discount:$.discount,discount_type:$.discount_type,product_photo:$.product_photo,is_free:$.is_free,price:$.price}",
         "{quantity:$.quantity, amount: $.amount}",
         "{product_code:$.product_code,product_name:$.product_name,product_name_kh:$.product_name_kh,modifiers_price:$.modifiers_price,portion:$.portion,modifiers:$.modifiers,unit:$.unit,discount:$.discount,discount_type:$.discount_type,product_photo:$.product_photo,price:$.price,is_free:$.is_free, quantity: $$.sum('$.quantity'), amount: $$.sum('$.amount')}",
         "$.product_code+','+$.unit+','+$.quantity+','+$.is_free+','+$.portion+','+$.modifiers+',' + $.discount + ',' + $.discount_type + ',' + $.price + ',' + $.modifiers_price"
         ).toArray()
-})
+)
 function onClose() {
     emit('reject', false);
 }

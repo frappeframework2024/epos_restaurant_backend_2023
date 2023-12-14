@@ -25,7 +25,7 @@
         <div class="flex justify-between mb-2 text-lg" v-if="data.changed_amount > 0">
             <div>{{ $t('Change Amount') }}({{ gv.setting.pos_setting.second_currency_name }}):</div>
             <div style="margin: 0px; padding: 0px; font-size: 26px; font-weight: bold;">
-                <CurrencyFormat :value="data.changed_amount * data.exchange_rate"
+                <CurrencyFormat :value="data.second_changed_amount"
                     :currency="gv.setting.pos_setting.second_currency_name" />
             </div>
         </div>
