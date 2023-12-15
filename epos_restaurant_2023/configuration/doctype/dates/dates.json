@@ -1,6 +1,6 @@
 {
  "actions": [],
- "autoname": "autoincrement",
+ "autoname": "hash",
  "creation": "2022-12-16 19:56:10.323830",
  "default_view": "List",
  "doctype": "DocType",
@@ -19,11 +19,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-12-17 10:03:57.231340",
+ "modified": "2023-12-14 17:24:28.972816",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Dates",
- "naming_rule": "Autoincrement",
+ "naming_rule": "Random",
  "owner": "Administrator",
  "permissions": [
   {

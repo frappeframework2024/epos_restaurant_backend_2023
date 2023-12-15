@@ -26,6 +26,7 @@ frappe.listview_settings['Dates'] = {
                                 start_date:values.start_date,
                                 end_date:values.end_date
                             },
+                            freeze:true,
                             callback: function(r){
                                 d.hide();
                             },

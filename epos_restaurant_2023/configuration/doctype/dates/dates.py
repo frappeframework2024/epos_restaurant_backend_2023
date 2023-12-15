@@ -14,21 +14,14 @@ class Dates(Document):
 @frappe.whitelist()
 def generate_date(start_date, end_date):
 	frappe.db.sql("delete from `tabDates`;")
-	frappe.db.commit()	
+
 	start_date = parser.parse(start_date)
 	end_date = parser.parse(end_date)
 	d = start_date
  
 	while d<=end_date:
-		data = frappe.db.get_list("Dates",{"date":d},["date"])
-		if not data:
-			doc =frappe.get_doc(
-				{
-					"doctype":"Dates",
-					"date":d
-				}
-			)
-			doc.insert()
+		frappe.db.sql("insert into `tabDates` (name, creation, owner, modified, modified_by,date) values(uuid(),now(),'Administrator',now(),'Administrator', '{}')".format(d) )
+
 		d = add_days(d,1)
 
-	# frappe.db.commit()	
+	frappe.db.commit()	
