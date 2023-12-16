@@ -124,6 +124,7 @@ async function onOpenShift() {
         addCashierShiftResource.params = {
             doc: {
                 doctype: "Cashier Shift",
+                pos_station_opened:localStorage.getItem("device_name"),
                 working_day: working_day.data.name,
                 pos_profile: pos_profile,
                 opened_note: opened_note.value,

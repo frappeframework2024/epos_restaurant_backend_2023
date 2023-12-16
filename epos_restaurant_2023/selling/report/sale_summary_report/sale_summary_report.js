@@ -128,7 +128,6 @@ frappe.query_reports["Sale Summary Report"] = {
 			"label": __("Customer"),
 			"fieldtype": "Link",
 			"options":"Customer",
-			
 		},
 		{
 			"fieldname": "parent_row_group",
@@ -181,10 +180,7 @@ frappe.query_reports["Sale Summary Report"] = {
 
 		if (data && data.is_group==1) {
 			value = $(`<span>${value}</span>`);
-
 			var $value = $(value).css("font-weight", "bold");
-			
-
 			value = $value.wrap("<p></p>").parent().html();
 		}
 		

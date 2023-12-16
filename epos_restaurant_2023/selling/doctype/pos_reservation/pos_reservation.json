@@ -12,6 +12,7 @@
   "column_break_ygte",
   "reservation_date",
   "arrival_date",
+  "arrival_time",
   "reservation_status",
   "guest_inforamtion_section",
   "guest",
@@ -70,7 +71,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Reservation Status",
-   "options": "POS Reservation Status"
+   "options": "POS Reservation Status",
+   "read_only": 1
   },
   {
    "fieldname": "guest_inforamtion_section",
@@ -129,11 +131,19 @@
    "fieldname": "note",
    "fieldtype": "Small Text",
    "label": "Note"
+  },
+  {
+   "default": "Today",
+   "fieldname": "arrival_time",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "Arrival Time",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-16 10:02:32.308920",
+ "modified": "2023-12-16 14:53:16.034575",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Reservation",

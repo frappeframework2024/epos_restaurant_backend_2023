@@ -9,28 +9,32 @@
  "engine": "InnoDB",
  "field_order": [
   "naming_series",
-  "shift_name",
-  "working_day",
-  "posting_date",
   "business_branch",
+  "outlet",
   "pos_profile",
+  "working_day",
   "column_break_5",
-  "is_edoor_shift",
+  "posting_date",
+  "pos_station_opened",
+  "pos_station_closed",
+  "shift_name",
+  "column_break_izvc",
   "opened_note",
+  "is_closed",
+  "is_edoor_shift",
   "section_break_7",
   "cash_float",
   "section_break_10",
   "total_opening_amount",
   "total_system_close_amount",
+  "column_break_utze",
   "total_close_amount",
   "total_different_amount",
   "close_shift_information_section",
-  "is_closed",
   "closed_by",
   "closed_date",
   "column_break_10",
   "closed_note",
-  "outlet",
   "cash_count_tab",
   "cash_count"
  ],
@@ -181,11 +185,33 @@
    "fieldname": "closed_by",
    "fieldtype": "Data",
    "label": "Closed By"
+  },
+  {
+   "fieldname": "pos_station_opened",
+   "fieldtype": "Link",
+   "label": "POS Station Opened",
+   "options": "POS Station",
+   "read_only": 1
+  },
+  {
+   "fieldname": "pos_station_closed",
+   "fieldtype": "Link",
+   "label": "POS Station Closed",
+   "options": "POS Station",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_izvc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_utze",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-06 14:29:38.557325",
+ "modified": "2023-12-16 15:52:24.468404",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Cashier Shift",

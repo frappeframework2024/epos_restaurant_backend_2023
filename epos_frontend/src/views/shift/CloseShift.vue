@@ -117,12 +117,15 @@ const router = useRouter();
 const toaster = createToaster();
 const gv = inject('$gv');
 const sale = inject('$sale');
-const setting = gv.setting
+const setting = gv.setting;
+
+ 
 
 const current_date = moment(new Date).format('DD-MM-YYYY');
 let doc = ref({
     closed_note: "",
     is_closed: 1,
+    pos_station_closed:localStorage.getItem("device_name"),
     closed_date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
     cash_float: []
 })
