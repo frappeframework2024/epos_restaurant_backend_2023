@@ -8,6 +8,7 @@ doc.is_closed == 1 and doc.is_edoor_shift == 0
 Save
 
 
+
 *** Message Query ***
 
 {% set bus = frappe.get_doc('Business Information') %} {% set exch = frappe.db.sql("select exchange_rate,exchange_rate_input,to_currency,from_currency from `tabCurrency Exchange` where posting_date <= '{}' and from_currency <> to_currency order by posting_date  desc limit 1".format(doc.posting_date),as_dict=1) %}
