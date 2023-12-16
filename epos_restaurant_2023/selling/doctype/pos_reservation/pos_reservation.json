@@ -85,11 +85,13 @@
    "reqd": 1
   },
   {
+   "fetch_from": "guest.customer_name_en",
    "fieldname": "guest_name",
    "fieldtype": "Data",
    "label": "Guest Name"
   },
   {
+   "fetch_from": "guest.customer_group",
    "fieldname": "guest_type",
    "fieldtype": "Data",
    "label": "Guest Type"
@@ -131,7 +133,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-15 11:28:55.232802",
+ "modified": "2023-12-16 10:02:32.308920",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Reservation",
