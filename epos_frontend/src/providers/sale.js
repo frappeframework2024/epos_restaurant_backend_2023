@@ -316,6 +316,7 @@ export default class Sale {
                 discount_amount: 0,
                 sale_discount_amount: 0,
                 note: '',
+                regular_price: p.price,
                 price: p.price,
                 modifiers_price: this.getNumber(p.modifiers_price),
                 product_photo: p.photo,

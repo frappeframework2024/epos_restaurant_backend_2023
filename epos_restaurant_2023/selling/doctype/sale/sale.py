@@ -25,6 +25,11 @@ class Sale(Document):
 
 			if not self.cashier_shift: 
 				frappe.throw(_("Please start shift first"))
+		
+		if self.working_day:
+			working_day = frappe.get_doc("Working Day", self.working_day)
+			self.posting_date = working_day.posting_date
+		
 
 		# if self.posting_date:
 		# 	if self.posting_date>utils.today():
@@ -513,6 +518,7 @@ def validate_sale_product(self):
 			sale_discount = sale_discount or 0
 		
 	for d in self.sale_products:
+		d.regular_price = d.regular_price if d.regular_price else d.price
 		# validate product free
 		if(d.is_free and d.price > 0):
 			frappe.throw(_("Cannot set price becouse this product is free"))

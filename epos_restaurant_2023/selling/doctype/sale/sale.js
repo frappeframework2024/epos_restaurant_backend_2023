@@ -45,6 +45,19 @@ frappe.ui.form.on("Sale", {
 		}
 	},
 	working_day(frm){
+		if(frm.doc.working_day==""){
+			frm.doc.posting_date = undefined;
+			frm.set_df_property("posting_date","read_only", 0);
+			frm.refresh_field("posting_date");
+		}else{ 
+			frappe.db.get_doc('Working Day', frm.doc.working_day)
+			.then(doc => {
+				frm.doc.posting_date = doc.posting_date;
+				frm.set_df_property("posting_date","read_only", 1);
+				frm.refresh_field("posting_date");
+			});			
+		}
+		
 		set_query_cashier_shift(frm);
 	},
 	scan_barcode(frm){
