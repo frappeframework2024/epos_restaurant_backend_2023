@@ -6,6 +6,7 @@ from datetime import datetime
 from frappe.utils import add_days
 from frappe.model.document import Document
 from dateutil import parser
+from frappe.utils import random_string
 class Dates(Document):
 	def validate(frm):
 		pass
@@ -20,7 +21,7 @@ def generate_date(start_date, end_date):
 	d = start_date
  
 	while d<=end_date:
-		frappe.db.sql("insert into `tabDates` (name, creation, owner, modified, modified_by,date) values(uuid(),now(),'Administrator',now(),'Administrator', '{}')".format(d) )
+		frappe.db.sql("insert into `tabDates` (name, creation, owner, modified, modified_by,date) values('{}',now(),'Administrator',now(),'Administrator', '{}')".format(random_string(10),d) )
 
 		d = add_days(d,1)
 
