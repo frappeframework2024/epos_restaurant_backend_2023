@@ -172,7 +172,7 @@
    "options": "Product Category"
   },
   {
-   "fetch_from": "product_category.parent_product_category",
+   "fetch_from": "product_code.product_group",
    "fieldname": "product_group",
    "fieldtype": "Data",
    "label": "Product Group"
@@ -790,7 +790,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-11-20 11:54:11.608397",
+ "modified": "2023-12-18 10:02:10.577324",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",

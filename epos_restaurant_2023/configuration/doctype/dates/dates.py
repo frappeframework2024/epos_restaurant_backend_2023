@@ -19,10 +19,11 @@ def generate_date(start_date, end_date):
 	start_date = parser.parse(start_date)
 	end_date = parser.parse(end_date)
 	d = start_date
- 
+	i = 1
 	while d<=end_date:
-		frappe.db.sql("insert into `tabDates` (name, creation, owner, modified, modified_by,date) values('{}',now(),'Administrator',now(),'Administrator', '{}')".format(random_string(10),d) )
+		frappe.db.sql("insert into `tabDates` (name, creation, owner, modified, modified_by,date) values({},now(),'Administrator',now(),'Administrator', '{}')".format(i,d) )
 
 		d = add_days(d,1)
+		i = i +1
 
 	frappe.db.commit()	
