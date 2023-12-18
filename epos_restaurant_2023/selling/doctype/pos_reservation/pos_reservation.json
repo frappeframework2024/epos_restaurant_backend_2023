@@ -26,7 +26,14 @@
   "email_address",
   "guest_photo",
   "section_break_rrqs",
-  "note"
+  "note",
+  "products_tab",
+  "reservation_product_section",
+  "reservation_product",
+  "section_break_hgky",
+  "total_quantity",
+  "column_break_dxzp",
+  "total_amount"
  ],
  "fields": [
   {
@@ -105,16 +112,19 @@
    "fieldtype": "Column Break"
   },
   {
+   "fetch_from": "guest.phone_number",
    "fieldname": "phone_number",
    "fieldtype": "Data",
    "label": "Phone Number"
   },
   {
+   "fetch_from": "guest.phone_number_2",
    "fieldname": "phone_number_2",
    "fieldtype": "Data",
    "label": "Phone Number 2"
   },
   {
+   "fetch_from": "guest.email_address",
    "fieldname": "email_address",
    "fieldtype": "Data",
    "label": "Email Address"
@@ -143,6 +153,7 @@
    "reqd": 1
   },
   {
+   "default": "1",
    "fieldname": "total_guest",
    "fieldtype": "Int",
    "label": "Total Guest"
@@ -152,11 +163,46 @@
    "fieldname": "deposit_amount",
    "fieldtype": "Currency",
    "label": "Deposit Amount"
+  },
+  {
+   "fieldname": "products_tab",
+   "fieldtype": "Tab Break",
+   "label": "Products"
+  },
+  {
+   "fieldname": "reservation_product",
+   "fieldtype": "Table",
+   "label": "Reservation Product",
+   "options": "POS Reservation Item"
+  },
+  {
+   "fieldname": "section_break_hgky",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_quantity",
+   "fieldtype": "Float",
+   "label": "Total Quantity",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_dxzp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reservation_product_section",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-18 09:45:06.939439",
+ "modified": "2023-12-18 12:06:46.282406",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Reservation",

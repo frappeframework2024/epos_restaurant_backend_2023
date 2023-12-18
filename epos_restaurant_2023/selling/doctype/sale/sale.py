@@ -27,6 +27,9 @@ class Sale(Document):
 				frappe.throw(_("Please start shift first"))
 		
 		if self.working_day:
+			if not self.cashier_shift: 
+				frappe.throw(_("Sale cannot allow with cashier shift"))
+
 			working_day = frappe.get_doc("Working Day", self.working_day)
 			self.posting_date = working_day.posting_date
 		

@@ -1690,5 +1690,65 @@
   "name": "eb7dd3f2fb",
   "sort": 350,
   "title": "Cashier Shift Sale Product Summary"
+ },
+ {
+  "data": "{\r\n    \"name\": \"Reserved\",\r\n    \"reservation_status\": \"Reserved\",\r\n    \"color\": \"#ff7300\",\r\n    \"sort_order\": 0,\r\n    \"doctype\": \"POS Reservation Status\"\r\n}",
+  "doc_name": "Reserved",
+  "doc_type": "POS Reservation Status",
+  "docstatus": 0,
+  "doctype": "Predefine Data",
+  "is_single": 0,
+  "modified": "2023-12-18 13:41:52.624397",
+  "name": "77d5b76c3f",
+  "sort": 9,
+  "title": "Reserved"
+ },
+ {
+  "data": "{\r\n    \"name\": \"Confirmed\",\r\n    \"reservation_status\": \"Confirmed\",\r\n    \"color\": \"#CB2929\",\r\n    \"sort_order\": 1,\r\n    \"doctype\": \"POS Reservation Status\"\r\n}",
+  "doc_name": "Confirmed",
+  "doc_type": "POS Reservation Status",
+  "docstatus": 0,
+  "doctype": "Predefine Data",
+  "is_single": 0,
+  "modified": "2023-12-18 13:43:19.502860",
+  "name": "6c82dc7d5d",
+  "sort": 9,
+  "title": "Confirmed"
+ },
+ {
+  "data": "{\r\n    \"name\": \"No Show\",\r\n    \"reservation_status\": \"No Show\",\r\n    \"color\": \"#828205\",\r\n    \"sort_order\": 2,\r\n    \"doctype\": \"POS Reservation Status\"\r\n}",
+  "doc_name": "No Show",
+  "doc_type": "POS Reservation Status",
+  "docstatus": 0,
+  "doctype": "Predefine Data",
+  "is_single": 0,
+  "modified": "2023-12-18 13:44:01.715181",
+  "name": "0cc5d70b5d",
+  "sort": 9,
+  "title": "No Show"
+ },
+ {
+  "data": "{\r\n    \"name\": \"Checked Out\",\r\n    \"reservation_status\": \"Checked Out\",\r\n    \"color\": \"#4f4f4f\",\r\n    \"sort_order\": 4,\r\n    \"doctype\": \"POS Reservation Status\"\r\n}",
+  "doc_name": "Checked Out",
+  "doc_type": "POS Reservation Status",
+  "docstatus": 0,
+  "doctype": "Predefine Data",
+  "is_single": 0,
+  "modified": "2023-12-18 13:45:45.031446",
+  "name": "478e8db51f",
+  "sort": 9,
+  "title": "Checked Out"
+ },
+ {
+  "data": "{\r\n    \"name\": \"Void\",\r\n    \"reservation_status\": \"Void\",\r\n    \"color\": \"#ff0000\",\r\n    \"sort_order\": 5,\r\n    \"doctype\": \"POS Reservation Status\"\r\n}",
+  "doc_name": "Void",
+  "doc_type": "POS Reservation Status",
+  "docstatus": 0,
+  "doctype": "Predefine Data",
+  "is_single": 0,
+  "modified": "2023-12-18 13:46:30.104459",
+  "name": "fed434df62",
+  "sort": 9,
+  "title": "Void"
  }
 ]

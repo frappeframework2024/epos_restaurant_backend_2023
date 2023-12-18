@@ -218,6 +218,10 @@ def reset_data():
             frappe.db.sql("update `tabLanguage` set enabled =0 where name not in ('kh','en')")
             frappe.db.sql(" update `tabRole` set desk_access = 0 where name = 'Sales User'")
 
+            frappe.db.sql("delete from `tabPOS Reservation Item`")
+            frappe.db.sql("delete from `tabPOS Reservation`")
+            frappe.db.sql("delete from `tabPOS Reservation Status`")
+
             #gym
             frappe.db.sql("delete from `tabMembership Family Pricing`")
             frappe.db.sql("delete from `tabMembership Options`")

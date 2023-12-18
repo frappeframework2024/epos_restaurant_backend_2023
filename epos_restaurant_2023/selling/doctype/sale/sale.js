@@ -56,9 +56,21 @@ frappe.ui.form.on("Sale", {
 				frm.set_df_property("posting_date","read_only", 1);
 				frm.refresh_field("posting_date");
 			});			
-		}
-		
+		}		
 		set_query_cashier_shift(frm);
+	},
+	cashier_shift(frm){
+		frm.set_df_property("shift_name","read_only", 1);
+		if(frm.doc.cashier_shift==""){
+			frm.doc.shift_name = undefined;
+			frm.refresh_field("shift_name");
+		}else{ 
+			frappe.db.get_doc('Cashier Shift', frm.doc.cashier_shift)
+			.then(doc => {
+				frm.doc.shift_name = doc.shift_name;
+				frm.refresh_field("shift_name");
+			});			
+		}
 	},
 	scan_barcode(frm){
 		if(frm.doc.scan_barcode!=undefined){

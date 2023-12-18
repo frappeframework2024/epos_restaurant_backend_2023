@@ -11,12 +11,16 @@
   "product_name_kh",
   "column_break_laby",
   "product_group",
-  "product_category"
+  "product_category",
+  "quantity",
+  "regular_price",
+  "price"
  ],
  "fields": [
   {
    "fieldname": "product_code",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Product Code",
    "options": "Product"
   },
@@ -31,6 +35,7 @@
    "fetch_from": "product_code.product_name_kh",
    "fieldname": "product_name_kh",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Product Name Kh"
   },
   {
@@ -41,7 +46,6 @@
    "fetch_from": "product_code.product_group",
    "fieldname": "product_group",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Product Group"
   },
   {
@@ -49,12 +53,32 @@
    "fieldname": "product_category",
    "fieldtype": "Data",
    "label": "Product Category"
+  },
+  {
+   "default": "1",
+   "fieldname": "quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Quantity"
+  },
+  {
+   "default": "0",
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Price"
+  },
+  {
+   "fieldname": "regular_price",
+   "fieldtype": "Currency",
+   "label": "Regular Price",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-12-18 10:07:39.817353",
+ "modified": "2023-12-18 12:07:35.556596",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Reservation Item",

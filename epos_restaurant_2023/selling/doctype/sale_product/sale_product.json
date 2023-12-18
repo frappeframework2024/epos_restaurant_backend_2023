@@ -170,25 +170,29 @@
    "fieldname": "product_category",
    "fieldtype": "Link",
    "label": "Product Category",
-   "options": "Product Category"
+   "options": "Product Category",
+   "read_only": 1
   },
   {
    "fetch_from": "product_code.product_group",
    "fieldname": "product_group",
    "fieldtype": "Data",
-   "label": "Product Group"
+   "label": "Product Group",
+   "read_only": 1
   },
   {
    "fetch_from": "product_code.revenue_group",
    "fieldname": "revenue_group",
    "fieldtype": "Data",
-   "label": "Revenue Group"
+   "label": "Revenue Group",
+   "read_only": 1
   },
   {
    "fetch_from": "product_code.kitchen_group",
    "fieldname": "kitchen_group",
    "fieldtype": "Data",
-   "label": "Kitchen Group"
+   "label": "Kitchen Group",
+   "read_only": 1
   },
   {
    "default": "0",
@@ -798,7 +802,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-12-18 10:28:58.748280",
+ "modified": "2023-12-18 11:00:21.067982",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",
