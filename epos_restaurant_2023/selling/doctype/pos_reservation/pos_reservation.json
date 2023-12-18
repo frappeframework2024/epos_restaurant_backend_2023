@@ -9,6 +9,8 @@
   "naming_series",
   "reference_number",
   "table_id",
+  "total_guest",
+  "deposit_amount",
   "column_break_ygte",
   "reservation_date",
   "arrival_date",
@@ -139,11 +141,22 @@
    "in_list_view": 1,
    "label": "Arrival Time",
    "reqd": 1
+  },
+  {
+   "fieldname": "total_guest",
+   "fieldtype": "Int",
+   "label": "Total Guest"
+  },
+  {
+   "default": "0",
+   "fieldname": "deposit_amount",
+   "fieldtype": "Currency",
+   "label": "Deposit Amount"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-16 14:53:16.034575",
+ "modified": "2023-12-18 09:45:06.939439",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Reservation",
@@ -171,6 +184,18 @@
    "read": 1,
    "report": 1,
    "role": "Sales User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Product Manager",
    "share": 1,
    "write": 1
   }
