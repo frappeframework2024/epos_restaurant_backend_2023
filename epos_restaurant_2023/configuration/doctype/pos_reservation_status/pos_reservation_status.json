@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "reservation_status",
+  "background_color",
   "color",
   "sort_order"
  ],
@@ -18,9 +19,9 @@
    "unique": 1
   },
   {
+   "default": "#ffffff",
    "fieldname": "color",
    "fieldtype": "Color",
-   "in_list_view": 1,
    "label": "Color"
   },
   {
@@ -28,11 +29,18 @@
    "fieldtype": "Int",
    "in_list_view": 1,
    "label": "Sort Order"
+  },
+  {
+   "default": "red",
+   "fieldname": "background_color",
+   "fieldtype": "Color",
+   "in_list_view": 1,
+   "label": "Background Color"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-15 11:05:26.936135",
+ "modified": "2023-12-18 16:33:23.243121",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Reservation Status",

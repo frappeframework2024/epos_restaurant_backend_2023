@@ -15,11 +15,12 @@
   "show_button_cancel_print_bill",
   "show_start_close_working_day",
   "show_start_close_cashier_shift",
+  "show_button_pos_reservation",
+  "show_button_customer_display",
   "show_option_payment",
   "show_option_quick_pay",
   "show_sale_more_action_menu",
   "show_reference_button_in_more_menu",
-  "show_button_customer_display",
   "show_button_commission",
   "show_button_change_price_on_order_station",
   "show_keypad_in_sale_screen",
@@ -143,11 +144,17 @@
    "fieldname": "show_option_quick_pay",
    "fieldtype": "Check",
    "label": "Show Option Quick Pay"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_button_pos_reservation",
+   "fieldtype": "Check",
+   "label": "Show Button POS Reservation"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-11-29 16:32:20.533978",
+ "modified": "2023-12-19 09:56:23.622234",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

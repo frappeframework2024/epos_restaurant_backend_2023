@@ -6,16 +6,19 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "section_break_rtsw",
   "naming_series",
   "reference_number",
   "table_id",
   "total_guest",
-  "deposit_amount",
   "column_break_ygte",
   "reservation_date",
   "arrival_date",
   "arrival_time",
   "reservation_status",
+  "status",
+  "reservation_status_color",
+  "reservation_status_background_color",
   "guest_inforamtion_section",
   "guest",
   "guest_name",
@@ -78,10 +81,11 @@
    "default": "Reserved",
    "fieldname": "reservation_status",
    "fieldtype": "Link",
-   "in_list_view": 1,
+   "in_filter": 1,
+   "in_standard_filter": 1,
    "label": "Reservation Status",
    "options": "POS Reservation Status",
-   "read_only": 1
+   "reqd": 1
   },
   {
    "fieldname": "guest_inforamtion_section",
@@ -159,12 +163,6 @@
    "label": "Total Guest"
   },
   {
-   "default": "0",
-   "fieldname": "deposit_amount",
-   "fieldtype": "Currency",
-   "label": "Deposit Amount"
-  },
-  {
    "fieldname": "products_tab",
    "fieldtype": "Tab Break",
    "label": "Products"
@@ -198,11 +196,42 @@
   {
    "fieldname": "reservation_product_section",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_rtsw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fetch_from": ".",
+   "fieldname": "status",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Status"
+  },
+  {
+   "fetch_from": "reservation_status.color",
+   "fieldname": "reservation_status_color",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Reservation Status Color"
+  },
+  {
+   "fetch_from": "reservation_status.background_color",
+   "fieldname": "reservation_status_background_color",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Reservation Status Background Color"
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2023-12-18 12:06:46.282406",
+ "links": [
+  {
+   "group": "Deposit",
+   "link_doctype": "Sale Payment",
+   "link_fieldname": "pos_reservation"
+  }
+ ],
+ "modified": "2023-12-18 17:33:23.575743",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Reservation",

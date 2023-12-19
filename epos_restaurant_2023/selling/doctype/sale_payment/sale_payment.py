@@ -7,6 +7,13 @@ from frappe.model.document import Document
 
 class SalePayment(Document):
 	def validate(self):
+		#check if reservation deleted
+		if self.pos_reservation:
+			reservation = frappe.get_doc("POS Reservation", self.pos_reservation)
+			frappe.throw("The pos reservation {} was void.".format(self.pos_reservation))
+
+
+
 		# check if payment type is on-account
 		if self.payment_type_group == "On Account":
 			frappe.throw("Payment {} {}".format(self.payment_type,_("is not allow to process pay")))

@@ -25,6 +25,9 @@
   "column_break_20",
   "payment_amount",
   "fee_amount",
+  "reservation_section",
+  "pos_reservation",
+  "column_break_xqmm",
   "sale_information_section",
   "sale",
   "sale_date",
@@ -92,8 +95,7 @@
    "fieldtype": "Link",
    "in_standard_filter": 1,
    "label": "Sale",
-   "options": "Sale",
-   "reqd": 1
+   "options": "Sale"
   },
   {
    "fetch_from": "sale.posting_date",
@@ -350,12 +352,28 @@
    "label": "Change Exchange Rate",
    "precision": "9",
    "read_only": 1
+  },
+  {
+   "fieldname": "reservation_section",
+   "fieldtype": "Section Break",
+   "label": "Reservation"
+  },
+  {
+   "fieldname": "pos_reservation",
+   "fieldtype": "Link",
+   "label": "POS Reservation",
+   "options": "POS Reservation",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_xqmm",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-12-13 11:29:55.527254",
+ "modified": "2023-12-19 09:12:47.951025",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Payment",

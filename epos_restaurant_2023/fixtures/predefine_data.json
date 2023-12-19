@@ -1272,18 +1272,6 @@
   "title": "T01"
  },
  {
-  "data": "{\n  \"doctype\": \"Sale Status\",\n  \"sale_status\": \"Booked\",\n  \"background_color\": \"#761ACB\",\n  \"priority\": 2\n}",
-  "doc_name": "Booked",
-  "doc_type": "Sale Status",
-  "docstatus": 0,
-  "doctype": "Predefine Data",
-  "is_single": 0,
-  "modified": "2023-10-02 14:56:36.396050",
-  "name": "bd7759e5a8",
-  "sort": 60,
-  "title": "Booked"
- },
- {
   "data": "{\n  \"doctype\": \"Sale Type\",\n  \"sale_type_name\": \"Delivery\",\n  \"color\": \"#761ACB\",\n  \"is_order_use_table\": 0,\n  \"sort_order\": 2\n}",
   "doc_name": "Delivery",
   "doc_type": "Sale Type",
@@ -1692,63 +1680,75 @@
   "title": "Cashier Shift Sale Product Summary"
  },
  {
-  "data": "{\r\n    \"name\": \"Reserved\",\r\n    \"reservation_status\": \"Reserved\",\r\n    \"color\": \"#ff7300\",\r\n    \"sort_order\": 0,\r\n    \"doctype\": \"POS Reservation Status\"\r\n}",
+  "data": "{\r\n    \"name\": \"Reserved\",\r\n    \"reservation_status\": \"Reserved\",\r\n    \"background_color\": \"#ff7300\",\r\n    \"color\": \"#ffffff\",\r\n    \"sort_order\": 0,\r\n    \"doctype\": \"POS Reservation Status\"\r\n}",
   "doc_name": "Reserved",
   "doc_type": "POS Reservation Status",
   "docstatus": 0,
   "doctype": "Predefine Data",
   "is_single": 0,
-  "modified": "2023-12-18 13:41:52.624397",
+  "modified": "2023-12-18 16:14:41.157076",
   "name": "77d5b76c3f",
   "sort": 9,
   "title": "Reserved"
  },
  {
-  "data": "{\r\n    \"name\": \"Confirmed\",\r\n    \"reservation_status\": \"Confirmed\",\r\n    \"color\": \"#CB2929\",\r\n    \"sort_order\": 1,\r\n    \"doctype\": \"POS Reservation Status\"\r\n}",
+  "data": "{\r\n    \"name\": \"Confirmed\",\r\n    \"reservation_status\": \"Confirmed\",\r\n    \"background_color\": \"#CB2929\",\r\n    \"color\": \"#ffffff\",\r\n    \"sort_order\": 1,\r\n    \"doctype\": \"POS Reservation Status\"\r\n}",
   "doc_name": "Confirmed",
   "doc_type": "POS Reservation Status",
   "docstatus": 0,
   "doctype": "Predefine Data",
   "is_single": 0,
-  "modified": "2023-12-18 13:43:19.502860",
+  "modified": "2023-12-18 16:15:21.715650",
   "name": "6c82dc7d5d",
   "sort": 9,
   "title": "Confirmed"
  },
  {
-  "data": "{\r\n    \"name\": \"No Show\",\r\n    \"reservation_status\": \"No Show\",\r\n    \"color\": \"#828205\",\r\n    \"sort_order\": 2,\r\n    \"doctype\": \"POS Reservation Status\"\r\n}",
+  "data": "{\r\n    \"name\": \"No Show\",\r\n    \"reservation_status\": \"No Show\",\r\n    \"background_color\": \"#828205\",\r\n    \"color\": \"#ffffff\",\r\n    \"sort_order\": 2,\r\n    \"doctype\": \"POS Reservation Status\"\r\n}",
   "doc_name": "No Show",
   "doc_type": "POS Reservation Status",
   "docstatus": 0,
   "doctype": "Predefine Data",
   "is_single": 0,
-  "modified": "2023-12-18 13:44:01.715181",
+  "modified": "2023-12-18 16:15:49.054234",
   "name": "0cc5d70b5d",
   "sort": 9,
   "title": "No Show"
  },
  {
-  "data": "{\r\n    \"name\": \"Checked Out\",\r\n    \"reservation_status\": \"Checked Out\",\r\n    \"color\": \"#4f4f4f\",\r\n    \"sort_order\": 4,\r\n    \"doctype\": \"POS Reservation Status\"\r\n}",
+  "data": "{\r\n    \"name\": \"Checked Out\",\r\n    \"reservation_status\": \"Checked Out\",\r\n    \"background_color\": \"#4f4f4f\",\r\n    \"color\": \"#ffffff\",\r\n    \"sort_order\": 4,\r\n    \"doctype\": \"POS Reservation Status\"\r\n}",
   "doc_name": "Checked Out",
   "doc_type": "POS Reservation Status",
   "docstatus": 0,
   "doctype": "Predefine Data",
   "is_single": 0,
-  "modified": "2023-12-18 13:45:45.031446",
+  "modified": "2023-12-18 16:18:00.230651",
   "name": "478e8db51f",
   "sort": 9,
   "title": "Checked Out"
  },
  {
-  "data": "{\r\n    \"name\": \"Void\",\r\n    \"reservation_status\": \"Void\",\r\n    \"color\": \"#ff0000\",\r\n    \"sort_order\": 5,\r\n    \"doctype\": \"POS Reservation Status\"\r\n}",
+  "data": "{\r\n    \"name\": \"Void\",\r\n    \"reservation_status\": \"Void\",\r\n    \"background_color\": \"#ff0000\",\r\n    \"color\": \"#ffffff\",\r\n    \"sort_order\": 5,\r\n    \"doctype\": \"POS Reservation Status\"\r\n}",
   "doc_name": "Void",
   "doc_type": "POS Reservation Status",
   "docstatus": 0,
   "doctype": "Predefine Data",
   "is_single": 0,
-  "modified": "2023-12-18 13:46:30.104459",
+  "modified": "2023-12-18 16:18:37.130914",
   "name": "fed434df62",
   "sort": 9,
   "title": "Void"
+ },
+ {
+  "data": "{\r\n    \"name\": \"Dine-in\",\r\n    \"owner\": \"Administrator\",\r\n    \"reservation_status\": \"Dine-in\",\r\n    \"background_color\": \"#29CD42\",\r\n    \"color\": \"#ffffff\",\r\n    \"sort_order\": 3,\r\n    \"doctype\": \"POS Reservation Status\"\r\n}",
+  "doc_name": "Dine-in",
+  "doc_type": "POS Reservation Status",
+  "docstatus": 0,
+  "doctype": "Predefine Data",
+  "is_single": 0,
+  "modified": "2023-12-18 16:17:27.544788",
+  "name": "fd981a9b81",
+  "sort": 9,
+  "title": "Dine-in"
  }
 ]

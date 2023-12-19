@@ -510,7 +510,7 @@
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-12-14 10:06:50.728987",
+ "modified": "2023-12-19 09:48:51.431838",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",
@@ -562,6 +562,7 @@
   }
  ],
  "show_preview_popup": 1,
+ "show_title_field_in_link": 1,
  "sort_field": "sort_order",
  "sort_order": "ASC",
  "states": [],
