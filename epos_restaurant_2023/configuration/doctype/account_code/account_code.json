@@ -410,7 +410,7 @@
   },
   {
    "fieldname": "target_account_code",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "label": "Target Account Code",
    "options": "Account Code"
   },
@@ -510,7 +510,7 @@
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-12-19 17:24:42.637972",
+ "modified": "2023-12-19 17:39:45.353653",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

@@ -167,6 +167,11 @@
                   localStorage.setItem('make_order_auth',JSON.stringify(make_order_auth)); 
                  await db.getDoc("Tables Number",reservation.table_id).then(async (table)=>{                
                     sale.newSale();
+
+                    sale.sale.working_day = data.working_day.name;
+                    sale.sale.cashier_shift = data.cashier_shift.name;
+                    sale.sale.shift_name = data.cashier_shift.shift_name;
+
                     sale.sale.guest_cover = (reservation.total_guest||0);
                     sale.sale.table_id = reservation.table_id;
                     sale.sale.tbl_number = reservation.table_number;
@@ -190,8 +195,7 @@
                     sale.action = "hold_order";
 
                     await reservationProductConvert(reservation);
-
-                    
+ 
 
                     await sale.onSubmit().then(async (value) => {
                         if (value) {                
