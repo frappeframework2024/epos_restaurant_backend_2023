@@ -9,7 +9,9 @@
   "section_break_rtsw",
   "naming_series",
   "reference_number",
+  "property",
   "table_id",
+  "table_number",
   "total_guest",
   "column_break_ygte",
   "reservation_date",
@@ -221,6 +223,21 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Reservation Status Background Color"
+  },
+  {
+   "fieldname": "property",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Property",
+   "options": "Business Branch",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "table_id.tbl_number",
+   "fieldname": "table_number",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Table Number"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -231,7 +248,7 @@
    "link_fieldname": "pos_reservation"
   }
  ],
- "modified": "2023-12-18 17:33:23.575743",
+ "modified": "2023-12-19 11:35:59.958351",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Reservation",
@@ -275,6 +292,7 @@
    "write": 1
   }
  ],
+ "search_fields": "guest_name, phone_number",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

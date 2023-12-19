@@ -27,6 +27,7 @@
                         <ComButton @click="onPOS()" :title="$t('POS')" icon="mdi-cart-outline" class="bg-green-600 text-white" icon-color="#fff" />
                         <ComButton @click="onViewPendingOrder()" :title="$t('Pending Order')" icon="mdi-arrange-send-backward"  icon-color="#e99417" />
 
+                        <ComButton @click="onReservation()" :title="$t('Reservation')" icon="mdi mdi-calendar-text-outline" class="bg-teal-600 text-white" icon-color="#fff" />
 
                         <ComButton @click="onRoute('ClosedSaleList')" :title="$t('Closed Receipt')" v-if="device_setting?.is_order_station==0 && (gv.workingDay || gv.cashierShift)" icon="mdi-file-document"  icon-color="#e99417" />
                         
@@ -52,7 +53,7 @@
     
 </template>
 <script setup>
-import { useRouter, createResource, computed, createToaster,pendingSaleListDialog,inject,onMounted,printWifiPasswordModal,i18n } from '@/plugin'
+import { useRouter, createResource, computed, posReservationDialog, createToaster,pendingSaleListDialog,inject,onMounted,printWifiPasswordModal,i18n } from '@/plugin'
 import ComButton from '../components/ComButton.vue';
 import WorkingDayButton from './shift/components/WorkingDayButton.vue';
 import OpenShiftButton from './shift/components/OpenShiftButton.vue';
@@ -144,6 +145,26 @@ async function onPOS() {
         }
     })
 }
+
+async function onReservation(){
+    let working_day = '';
+    let cashier_shift = '';
+    await workingDayResource.fetch().then(async (wk)=>{
+        if(wk.name){
+            working_day = wk.name
+            await cashierShiftResource.fetch().then(async (cs)=>{
+                if(cs.cashier_shift?.name)
+                    cashier_shift = cs.cashier_shift.name
+                const result = await posReservationDialog({data:{working_day:working_day, cashier_shift: cashier_shift}})
+            })
+        }else{
+            toaster.warning($t("msg.Please start working day first"))
+        }
+        
+    })
+}
+
+
 
 function onOpenCustomerDisplay(){
     window.chrome.webview.postMessage(JSON.stringify({ action: "open_customer_display" }));

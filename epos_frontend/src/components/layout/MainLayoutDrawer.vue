@@ -50,6 +50,13 @@
             <v-list-item-title>{{$t('POS')}}</v-list-item-title>
           </v-list-item>
 
+          <v-list-item active-color="primary" v-if="(device_setting?.show_button_pos_reservation||0) == 1" @click="onReservation()">
+            <template v-slot:prepend>
+              <v-icon>mdi mdi-calendar-text-outline</v-icon>
+            </template>
+            <v-list-item-title>{{$t('Reservation')}}</v-list-item-title>
+          </v-list-item>
+
           <v-list-item active-color="primary" v-if="device_setting?.is_order_station==0 && (gv.workingDay || gv.cashierShift)" @click="onRoute('ClosedSaleList')">
             <template v-slot:prepend>
               <v-icon>mdi-file-document</v-icon>
@@ -135,21 +142,44 @@ function onLogout(){
     })
 }
 
-function onPOS(){
-    const setting = JSON.parse(localStorage.getItem('setting'))
-    if(setting.table_groups.length > 0){
-        router.push({ name: 'TableLayout' })
-    }
-    else{
-      gv.authorize("open_order_required_password","make_order").then((v)=>{
-          if(v){ 
-              const make_order_auth = {"username":v.username,"name":v.user,discount_codes:v.discount_codes }; 
-              localStorage.setItem('make_order_auth',JSON.stringify(make_order_auth));
+async function onPOS(){ 
+    const cashierShiftResource = createResource({
+      url: "epos_restaurant_2023.api.api.get_current_shift_information",
+      params: {
+          business_branch: gv.setting?.business_branch,
+          pos_profile: localStorage.getItem("pos_profile")
+      },
+  });
 
-              router.push({ name: 'AddSale' })
+  await cashierShiftResource.fetch().then(async (v) => {
+      if (v) {
+          if (v.working_day == null) {
+              toaster.warning($t("msg.Please start working day first"))
+          } else if (v.cashier_shift == null) {
+              toaster.warning($t("msg.Please start shift first"))
+          } else {
+            const setting = JSON.parse(localStorage.getItem('setting'))
+            if(setting.table_groups.length > 0){
+                router.push({ name: 'TableLayout' })
+            }
+            else{
+              gv.authorize("open_order_required_password","make_order").then((v)=>{
+                  if(v){ 
+                      const make_order_auth = {"username":v.username,"name":v.user,discount_codes:v.discount_codes }; 
+                      localStorage.setItem('make_order_auth',JSON.stringify(make_order_auth));
+
+                      router.push({ name: 'AddSale' })
+                  }
+              });                    
+            }
           }
-      });                    
-    }
+      }
+  })
+
+}
+
+function onReservation(){
+  //
 }
 
 function onStartWorkingDay() {

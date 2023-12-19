@@ -31,6 +31,7 @@ import ComChangeSaleTypeModal from '@/views/sale/components/ComChangeSaleTypeMod
 import ComAddCashDrawerModal from '@/views/cash_drawer/components/ComAddCashDrawerModal.vue'
 import ComChangeTableSelectSaleOrder from '@/views/sale/components/ComChangeTableSelectSaleOrder.vue'
 import ComPendingSaleList from '@/views/sale/ComPendingSaleList.vue'
+import ComPOSReservationList from '@/views/sale/ComPOSReservationList.vue'
 import ComInputNumber from '@/components/ComInputNumber.vue'
 import ComShortcutKeyHelp from '@/components/ComShortcutKeyHelp.vue'
 import ComAddCommission from '@/views/sale/components/ComAddCommissionModal.vue'
@@ -91,6 +92,7 @@ export  const addCashDrawerModalDialog = createPromiseDialog<params, object>(Com
 export  const changeTableSelectSaleOrderDialog = createPromiseDialog<params, object>(ComChangeTableSelectSaleOrder);
 export  const changePOSMenuDialog = createPromiseDialog<params, object>(ComChangePOSMenuModal);
 export  const pendingSaleListDialog = createPromiseDialog<params, object>(ComPendingSaleList);
+export  const posReservationDialog = createPromiseDialog<params, object>(ComPOSReservationList);
 export  const inputNumberDialog = createPromiseDialog<params, object>(ComInputNumber);
 export  const addCommissionDialog = createPromiseDialog<params, object>(ComAddCommission);
 export  const printWifiPasswordModal = createPromiseDialog<params, object>(ComPrintWifiPassword);
