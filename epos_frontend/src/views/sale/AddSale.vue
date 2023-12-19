@@ -179,6 +179,8 @@ onMounted(() => {
     socket.emit("ShowOrderInCustomerDisplay", sale.sale, "new");
 
 })
+
+
 function onCheckExpireHappyHoursPromotion(){
         createResource({
             url: 'epos_restaurant_2023.api.promotion.check_promotion',

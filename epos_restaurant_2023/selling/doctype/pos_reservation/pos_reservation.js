@@ -71,3 +71,85 @@ function set_df_propert(frm,field_name,property,property_value){
     frm.set_df_property(field_name,property, property_value);	
     frm.refresh_field(field_name);
 }
+
+frappe.ui.form.on('POS Reservation Item', {
+	reservation_product_remove: function(frm) {
+		updateSumTotal(frm);
+    },
+	product_code(frm,cdt, cdn) {
+		let doc=   locals[cdt][cdn];
+		get_product_code(frm,doc);
+	},
+	price(frm,cdt, cdn) {	
+		const row = locals[cdt][cdn];
+		if (row.allow_change_price==0 && row.price != row.base_price){
+			frappe.msgprint(__("This is not allow to change price"));
+			row.price = row.base_price;
+		}
+		update_reservation_product_amount(frm,row);
+		
+	},
+	quantity(frm,cdt, cdn) {
+		let row = locals[cdt][cdn];
+		update_reservation_product_amount(frm,row);
+	},
+
+	unit(frm,cdt, cdn) {
+			let row = locals[cdt][cdn];
+			if(row.product_code){ 				
+				get_product_price(frm,row).then((v)=>{
+					row.price = v;
+                    row.regular_price = v;
+					update_reservation_product_amount(frm,row)
+				});
+			}
+	},
+})
+
+function updateSumTotal(frm) {
+    const products =  frm.doc.reservation_product;
+    if(products==undefined){
+        return false;
+    }
+    
+    frm.set_value('total_amount', products.reduce((n, d) => n + (d.price * d.quantity),0));
+    frm.set_value('total_quantity', products.reduce((n, d) => n + d.quantity,0));  
+
+    frm.refresh_field('total_amount'); 
+}
+
+
+let get_product_price = function (frm,doc) {	
+	return new Promise(function(resolve, reject) {		
+		frappe.call({
+			method: "epos_restaurant_2023.inventory.doctype.product.product.get_product_price",
+			args: {
+				barcode:doc.product_code,
+				business_branch:frm.doc.property,
+				unit:doc.unit
+			},
+			callback: function(r){		
+				resolve(r.message.price)
+			},
+			error: function(r) {
+				reject("error")
+			},
+		});	
+	});
+}
+
+function get_product_code(frm,doc){
+    get_product_price(frm,doc).then((v)=>{
+        doc.price = v;
+        doc.regular_price = v;
+        update_reservation_product_amount(frm,doc);        
+    });
+
+}
+
+function update_reservation_product_amount(frm,doc){
+    doc.total_amount = doc.price * doc.quantity;
+    updateSumTotal(frm)
+	frm.refresh_field('reservation_product');
+}
+

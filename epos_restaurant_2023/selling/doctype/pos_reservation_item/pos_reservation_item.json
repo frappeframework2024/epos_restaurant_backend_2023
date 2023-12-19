@@ -10,11 +10,18 @@
   "product_name",
   "product_name_kh",
   "column_break_laby",
-  "product_group",
-  "product_category",
   "quantity",
   "regular_price",
-  "price"
+  "price",
+  "product_photo",
+  "column_break_powf",
+  "product_group",
+  "revenue_group",
+  "product_category",
+  "kitchen_group",
+  "unit",
+  "base_unit",
+  "base_price"
  ],
  "fields": [
   {
@@ -71,14 +78,61 @@
   {
    "fieldname": "regular_price",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Regular Price",
    "read_only": 1
+  },
+  {
+   "fetch_from": "product_code.revenue_group",
+   "fieldname": "revenue_group",
+   "fieldtype": "Data",
+   "label": "Revenue Group"
+  },
+  {
+   "fetch_from": "product_code.photo",
+   "fieldname": "product_photo",
+   "fieldtype": "Attach",
+   "hidden": 1,
+   "label": "Product Photo"
+  },
+  {
+   "fieldname": "column_break_powf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "product_code.kitchen_group",
+   "fieldname": "kitchen_group",
+   "fieldtype": "Data",
+   "label": "Kitchen Group"
+  },
+  {
+   "fetch_from": "product_code.unit",
+   "fetch_if_empty": 1,
+   "fieldname": "unit",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Unit",
+   "options": "Unit Of Measurement"
+  },
+  {
+   "fetch_from": "product_code.unit",
+   "fieldname": "base_unit",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Base Unit"
+  },
+  {
+   "default": "0",
+   "fieldname": "base_price",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "label": "Base Price"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-12-18 12:07:35.556596",
+ "modified": "2023-12-19 15:23:41.019481",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Reservation Item",

@@ -57,7 +57,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Table",
-   "options": "Tables Number"
+   "options": "Tables Number",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_ygte",
@@ -248,7 +249,7 @@
    "link_fieldname": "pos_reservation"
   }
  ],
- "modified": "2023-12-19 11:35:59.958351",
+ "modified": "2023-12-19 15:17:01.429532",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Reservation",

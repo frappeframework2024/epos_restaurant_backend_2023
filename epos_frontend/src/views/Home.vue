@@ -146,22 +146,20 @@ async function onPOS() {
     })
 }
 
-async function onReservation(){
-    let working_day = '';
-    let cashier_shift = '';
-    await workingDayResource.fetch().then(async (wk)=>{
-        if(wk.name){
-            working_day = wk.name
-            await cashierShiftResource.fetch().then(async (cs)=>{
-                if(cs.cashier_shift?.name)
-                    cashier_shift = cs.cashier_shift.name
-                const result = await posReservationDialog({data:{working_day:working_day, cashier_shift: cashier_shift}})
-            })
-        }else{
+async function onReservation(){ 
+    await cashierShiftResource.fetch().then(async (cs)=>{   
+        if (cs.working_day == null) {
             toaster.warning($t("msg.Please start working day first"))
-        }
-        
-    })
+        } else if (cs.cashier_shift == null) {
+                toaster.warning($t("msg.Please start shift first"))
+        } else {
+            const result = await posReservationDialog({
+            data: {
+                working_day:(cs.working_day?.name||""), 
+                cashier_shift: (cs.cashier_shift?.name||"")
+            }});
+        }    
+    });   
 }
 
 
@@ -170,22 +168,22 @@ function onOpenCustomerDisplay(){
     window.chrome.webview.postMessage(JSON.stringify({ action: "open_customer_display" }));
 }
 
-async function onViewPendingOrder() {
-    let working_day = '';
-    let cashier_shift = '';
-    await workingDayResource.fetch().then(async (wk)=>{
-        if(wk.name){
-            working_day = wk.name
-            await cashierShiftResource.fetch().then(async (cs)=>{
-                if(cs.cashier_shift?.name)
-                    cashier_shift = cs.cashier_shift.name
-                const result = await pendingSaleListDialog({data:{working_day:working_day, cashier_shift: cashier_shift}})
-            })
-        }else{
+async function onViewPendingOrder() { 
+    await cashierShiftResource.fetch().then(async (cs)=>{   
+        if (cs.working_day == null) {
             toaster.warning($t("msg.Please start working day first"))
-        }
-        
-    })
+        } else if (cs.cashier_shift == null) {
+                toaster.warning($t("msg.Please start shift first"))
+        } else {
+            const result = await pendingSaleListDialog({
+                    data: {
+                    working_day:(cs.working_day?.name||""), 
+                    cashier_shift: (cs.cashier_shift?.name||"")
+                }
+            });            
+        }    
+    });   
+
 }
 
 function onLogout() {
