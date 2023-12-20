@@ -38,7 +38,8 @@
   "section_break_hgky",
   "total_quantity",
   "column_break_dxzp",
-  "total_amount"
+  "total_amount",
+  "amended_from"
  ],
  "fields": [
   {
@@ -53,12 +54,12 @@
    "label": "Reference Number"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "table_id",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Table",
-   "options": "Tables Number",
-   "reqd": 1
+   "options": "Tables Number"
   },
   {
    "fieldname": "column_break_ygte",
@@ -73,6 +74,7 @@
    "reqd": 1
   },
   {
+   "allow_on_submit": 1,
    "default": "Today",
    "fieldname": "arrival_date",
    "fieldtype": "Date",
@@ -81,11 +83,12 @@
    "reqd": 1
   },
   {
+   "allow_on_submit": 1,
    "default": "Reserved",
    "fieldname": "reservation_status",
    "fieldtype": "Link",
+   "hidden": 1,
    "in_filter": 1,
-   "in_standard_filter": 1,
    "label": "Reservation Status",
    "options": "POS Reservation Status",
    "reqd": 1
@@ -152,7 +155,8 @@
    "label": "Note"
   },
   {
-   "default": "Today",
+   "allow_on_submit": 1,
+   "default": "Now",
    "fieldname": "arrival_time",
    "fieldtype": "Time",
    "in_list_view": 1,
@@ -171,6 +175,7 @@
    "label": "Products"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "reservation_product",
    "fieldtype": "Table",
    "label": "Reservation Product",
@@ -181,6 +186,7 @@
    "fieldtype": "Section Break"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "total_quantity",
    "fieldtype": "Float",
    "label": "Total Quantity",
@@ -191,6 +197,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "total_amount",
    "fieldtype": "Currency",
    "label": "Total Amount",
@@ -205,6 +212,7 @@
    "fieldtype": "Section Break"
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": ".",
    "fieldname": "status",
    "fieldtype": "Data",
@@ -212,6 +220,7 @@
    "label": "Status"
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "reservation_status.color",
    "fieldname": "reservation_status_color",
    "fieldtype": "Data",
@@ -219,6 +228,7 @@
    "label": "Reservation Status Color"
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "reservation_status.background_color",
    "fieldname": "reservation_status_background_color",
    "fieldtype": "Data",
@@ -234,14 +244,26 @@
    "reqd": 1
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "table_id.tbl_number",
    "fieldname": "table_number",
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Table Number"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "POS Reservation",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [
   {
    "group": "Deposit",
@@ -249,7 +271,7 @@
    "link_fieldname": "pos_reservation"
   }
  ],
- "modified": "2023-12-19 15:17:01.429532",
+ "modified": "2023-12-20 16:21:09.686766",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Reservation",
@@ -257,6 +279,7 @@
  "owner": "Administrator",
  "permissions": [
   {
+   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -266,9 +289,11 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "submit": 1,
    "write": 1
   },
   {
+   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -278,9 +303,11 @@
    "report": 1,
    "role": "Sales User",
    "share": 1,
+   "submit": 1,
    "write": 1
   },
   {
+   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -290,6 +317,7 @@
    "report": 1,
    "role": "Product Manager",
    "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],

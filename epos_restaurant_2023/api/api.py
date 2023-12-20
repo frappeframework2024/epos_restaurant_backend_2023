@@ -784,6 +784,17 @@ def delete_sale(name,auth):
     query = "update `tabSale Product SPA Commission` set is_deleted = 1  where sale = '{}'".format(name)
     frappe.db.sql(query)
 
+    # sale check if from pos reservation update status
+    if sale_doc.from_reservation:
+        if frappe.db.exists("POS Reservation", sale_doc.from_reservation):
+            frappe.db.sql("update `tabPOS Reservation` set workflow_state='Confirmed' where name='{0}'".format(sale_doc.from_reservation))
+            
+            reservation = frappe.get_doc("POS Reservation", sale_doc.from_reservation)
+            if reservation:
+                reservation.reservation_status = "Confirmed"
+                reservation.status = "Confirmed"
+                reservation.save()
+
 
     #add to comment
     doc = frappe.get_doc({

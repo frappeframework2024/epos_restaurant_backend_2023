@@ -91,6 +91,7 @@
    "label": "Referance"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "sale",
    "fieldtype": "Link",
    "in_standard_filter": 1,
@@ -99,6 +100,7 @@
    "reqd": 1
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "sale.posting_date",
    "fieldname": "sale_date",
    "fieldtype": "Date",
@@ -108,6 +110,7 @@
   },
   {
    "allow_in_quick_entry": 1,
+   "allow_on_submit": 1,
    "default": "0",
    "fetch_from": "sale.grand_total",
    "fieldname": "sale_amount",
@@ -121,6 +124,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "allow_on_submit": 1,
    "default": "0",
    "fetch_from": "sale.total_paid",
    "fieldname": "total_paid",
@@ -130,6 +134,7 @@
    "read_only": 1
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "sale.balance",
    "fieldname": "balance",
    "fieldtype": "Currency",
@@ -180,6 +185,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "sale.customer",
    "fieldname": "customer",
    "fieldtype": "Link",
@@ -187,6 +193,7 @@
    "options": "Customer"
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "sale.customer_name",
    "fieldname": "customer_name",
    "fieldtype": "Data",
@@ -227,12 +234,14 @@
    "label": "POS Profile"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "working_day",
    "fieldtype": "Link",
    "label": "Working Day",
    "options": "Working Day"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "cashier_shift",
    "fieldtype": "Link",
    "label": "Cashier Shift",
@@ -261,6 +270,7 @@
    "options": "Payment\nChanged"
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "sale.business_branch",
    "fieldname": "business_branch",
    "fieldtype": "Data",
@@ -271,12 +281,14 @@
    "fieldtype": "Column Break"
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "sale.outlet",
    "fieldname": "outlet",
    "fieldtype": "Data",
    "label": "Outlet"
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "customer.customer_group",
    "fieldname": "customer_group",
    "fieldtype": "Data",
@@ -374,7 +386,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-12-19 10:55:01.888559",
+ "modified": "2023-12-20 16:32:50.168286",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Payment",

@@ -17,6 +17,7 @@
   "product_category",
   "revenue_group",
   "kitchen_group",
+  "pos_reservation",
   "column_break_9",
   "unit",
   "base_unit",
@@ -797,12 +798,18 @@
    "hidden": 1,
    "in_list_view": 1,
    "label": "Regular Price"
+  },
+  {
+   "fieldname": "pos_reservation",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "POS Reservation"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-12-18 11:00:21.067982",
+ "modified": "2023-12-20 08:55:36.379462",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",

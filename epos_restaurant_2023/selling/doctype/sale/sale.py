@@ -249,13 +249,30 @@ class Sale(Document):
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.create_folio_transaction_from_pos_trnasfer", queue='short', self=self)
 		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit", queue='short', self=self)
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.add_payment_to_sale_payment", queue='short', self=self)
- 
-		
+
+		## set pos reservation status to checked out
+		if self.from_reservation:
+			if frappe.db.exists("POS Reservation", self.from_reservation):
+				frappe.db.set_value('POS Reservation', self.from_reservation, 'reservation_status', 'Checked Out')
+
 	
 	def on_cancel(self):
-		query = "update `tabSale Product SPA Commission` set is_deleted = 1  where sale = '{}'".format(self.name)			
-		frappe.db.sql(query)
+		on_sale_delete_update(self)
 		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel", queue='short', self=self)
+
+def on_sale_delete_update(self):
+	spa_commission = "update `tabSale Product SPA Commission` set is_deleted = 1  where sale = '{}'".format(self.name)			
+	frappe.db.sql(spa_commission)
+
+	if self.from_reservation:
+		if frappe.db.exists("POS Reservation", self.from_reservation):
+			
+			frappe.db.sql("update `tabPOS Reservation` set workflow_state='Confirmed' where name='{0}'".format(self.from_reservation))
+			reservation = frappe.get_doc("POS Reservation", self.from_reservation)
+			if reservation:
+				reservation.reservation_status = "Confirmed"
+				reservation.status = "Confirmed"
+				reservation.save()
 
 def generate_decimal(precision: int) -> Decimal:
     return Decimal('0.1') ** precision

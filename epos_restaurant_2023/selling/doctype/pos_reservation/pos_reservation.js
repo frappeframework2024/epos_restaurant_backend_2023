@@ -5,14 +5,19 @@ frappe.ui.form.on("POS Reservation", {
 	refresh(frm) { 
         if(frm.doc.__islocal){
             frm.doc.reservation_status = "Reserved";
-            frm.doc.status = "Reserved";
             frm.refresh_field("reservation_status");
+            frm.doc.status = "Reserved";
             frm.refresh_field("status");
-
+            set_df_propert(frm,"confirmed","hidden",1);
             set_query(frm,"reservation_status",[
                 ["POS Reservation Status","reservation_status","=","Reserved"]
             ]); 
+
+          
+
+            // Button action sc
         }else{
+             
             if(frm.doc.reservation_status == undefined || frm.doc.reservation_status == ""){
                 frm.doc.reservation_status = frm.doc.status;
                 frm.refresh_field("status");
@@ -40,7 +45,8 @@ frappe.ui.form.on("POS Reservation", {
             }   
             
             //set readonly
-            if(frm.doc.reservation_status == "Dine-in" || frm.doc.reservation_status == "Checked Out" || frm.doc.reservation_status == "Void"){
+            if(frm.doc.reservation_status == "Dine-in" || frm.doc.reservation_status == "Checked Out" || frm.doc.reservation_status == "Void" || frm.doc.reservation_status == "No Show"){
+                set_df_propert(frm,"property","read_only",1);
                 set_df_propert(frm,"table_id","read_only",1);
                 set_df_propert(frm,"total_guest","read_only",1);
                 set_df_propert(frm,"reservation_date","read_only",1);
@@ -54,8 +60,8 @@ frappe.ui.form.on("POS Reservation", {
 	},
  
     setup(frm) {  
-              
-    },
+        
+    }, 
     
 });
 

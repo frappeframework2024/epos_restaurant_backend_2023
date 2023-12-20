@@ -14,8 +14,23 @@ class POSReservation(Document):
 				self.reservation_status = "Reserved" 
 		
 		self.status = self.reservation_status
-	
+		
 
- 
+	def before_cancel(self): 
+		status = frappe.get_doc("POS Reservation Status",self.reservation_status)
+		self.status = self.reservation_status
+		self.reservation_status_color = status.color
+		self.reservation_status_background_color = status.background_color
+
+	def on_update_after_submit(self):
+		
+		if self.reservation_status == "Dine-in" or self.reservation_status == "Checked Out":
+			status = frappe.get_doc("POS Reservation Status",self.reservation_status) 
+			self.reservation_status_color = status.color
+			self.reservation_status_background_color = status.background_color
+			frappe.db.sql("update `tabPOS Reservation` set workflow_state='{1}' where name='{0}'".format(self.name, self.reservation_status))
+
+	def on_cancel(self):
+		pass
 			
 		

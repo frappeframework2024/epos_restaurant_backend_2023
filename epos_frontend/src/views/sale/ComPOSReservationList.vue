@@ -76,9 +76,9 @@
     </ComModal>
   </template>
   <script setup>
-  import { useRouter, defineProps, createResource, defineEmits, ref, inject, createToaster,i18n,onMounted,smallViewSaleProductListModal } from "@/plugin"
+  import { useRouter, defineProps, defineEmits, ref, inject, createToaster,i18n,onMounted } from "@/plugin"
   import ComModal from "../../components/ComModal.vue";
-  import { confirm } from '@/utils/dialog';
+  import { confirm,changeTableDialog } from '@/utils/dialog';
   import ComPlaceholder from "../../components/layout/components/ComPlaceholder.vue";
   import { useDisplay } from 'vuetify';  
   import moment from '@/utils/moment.js';
@@ -109,6 +109,10 @@
   }) 
 
   onMounted(()=>{ 
+    _onInit()
+  });
+
+  function _onInit(){
     const today =  moment(new Date()).format('yyyy-MM-DD')
     db.getDocList("POS Reservation",
     {
@@ -116,7 +120,7 @@
       filters:[
         ["property","=",gv.setting.business_branch],
         ["arrival_date","=",today],
-        ["status","in","Confirmed"]
+        ["reservation_status","in","Confirmed"]
       ],
       limit: 50,
       orderBy: {
@@ -135,14 +139,22 @@
     }).catch(err=>{
       isLoading.value = false;
     });
-  })
-   
+  }   
  
-   async function onCheckIn(reservation){ 
-    if (await confirm({ title: $t("Checked In"), text: $t("msg.are you sure to checked in this reservation") })) {
-      onConvertToSale(reservation)
-    }   
-   }
+  async function onCheckIn(reservation){ 
+      if((reservation.table_id||"") ==""){
+        const result = await changeTableDialog({"_is_reservation":true});
+        if(result){
+          reservation.table_id = result.id;
+          reservation.table_number = result.tbl_no;
+          
+          onConvertToSale(reservation);
+        }        
+      }
+      else if (await confirm({ title: $t("Checked In"), text: $t("msg.are you sure to checked in this reservation") })) {
+        onConvertToSale(reservation)
+      } 
+  }
 
 
 
@@ -165,8 +177,11 @@
                   isLoading.value = true;
                   const make_order_auth = {"username":v.username,"name":v.user,discount_codes:v.discount_codes }; 
                   localStorage.setItem('make_order_auth',JSON.stringify(make_order_auth)); 
+
+
                  await db.getDoc("Tables Number",reservation.table_id).then(async (table)=>{                
                     sale.newSale();
+                    sale.sale.from_reservation = reservation.name;
 
                     sale.sale.working_day = data.working_day.name;
                     sale.sale.cashier_shift = data.cashier_shift.name;
@@ -198,26 +213,32 @@
  
 
                     await sale.onSubmit().then(async (value) => {
-                        if (value) {                
-                          router.push({ 
-                              name: "AddSale",
-                              params: {
-                                  name: value.name
-                              }
-                          }).then(()=>{
-                            onClose();
-                          });                
+                        if (value) { 
+                          await  db.updateDoc('POS Reservation', reservation.name, {
+                            reservation_status: 'Dine-in',
+                            status:"Dine-in"
+                          });
+                          isLoading.value = false;
+                          sale.sale = value;                          
+                          router.push({
+                            name: "AddSale",
+                            params: {
+                              name:value.name
+                          }}).then(()=>{
+                            onClose(); 
+                          });
                         }
+                    }).catch(()=>{
+                      isLoading.value = false;
                     });
                   });
                   isLoading.value = false;
-
                 }                
             });           
         }
       })
       .catch((error) =>{
-        
+        isLoading.value = false;
       });     
    }
 
@@ -276,7 +297,8 @@
           is_combo_menu: _p.is_combo_menu,
           use_combo_group: _p.use_combo_group,
           product_tax_rule: "",
-          is_require_employee:_p.is_require_employee
+          is_require_employee:_p.is_require_employee,
+          pos_reservation: reservation.name
       }  
 
       sale.updateSaleProduct(saleProduct);      

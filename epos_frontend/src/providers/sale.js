@@ -1201,7 +1201,7 @@ export default class Sale {
 
     onSubmit() {
         return new Promise(async (resolve) => {
-            if (this.sale.sale_products.length == 0 && this.sale.name == undefined) {
+            if (this.sale.sale_products.length == 0 && this.sale.name == undefined && (this.sale.from_reservation||"")=="") {
                 toaster.warning($t('msg.Please select a menu item to submit order'));
                 resolve(false);
             }
@@ -1210,6 +1210,7 @@ export default class Sale {
             }
             else {
                 let doc = JSON.parse(JSON.stringify(this.sale));
+                let _sale = undefined;
                 this.generateProductPrinters();
                 if (this.sale.sale_status != "Hold Order") {
                     doc.sale_products.filter(r => r.sale_product_status == "New").forEach(x => {
@@ -1220,14 +1221,14 @@ export default class Sale {
                     if (this.newSaleResource == null) {
                         this.createNewSaleResource();
                     }
-                    await this.newSaleResource.submit({ doc: doc });
+                    _sale  =  await this.newSaleResource.submit({ doc: doc });
                 } 
                 else {
-                    await this.saleResource.setValue.submit(doc);
+                    _sale =  await this.saleResource.setValue.submit(doc);
                 }
                 this.submitToAuditTrail(doc);
                 //refresh tabl 
-                resolve(doc);
+                resolve(_sale);
             }
         })
     }

@@ -4,7 +4,7 @@
         <v-card>
             <ComToolbar @onClose="onClose">
                 <template #title>
-                   {{ $t('Change or Merge Table') }}
+                   {{ `${(params._is_reservation||false) ?$t('Assign Table') : $t('Change or Merge Table')}`  }}
                 </template>
             </ComToolbar>
             <div class="overflow-auto p-3 h-full">
@@ -17,7 +17,7 @@
                 </v-tabs>
                 <template v-if="tableLayout.table_groups">
                     <v-window v-model="tableLayout.tab">
-                        <template v-for="g in tableLayout.table_groups">
+                        <template v-for="g in tableLayout.table_groups"> 
                             <v-window-item :value="g.key">
                                 <div class="pa-4">
                                     <ComInput 
@@ -29,14 +29,22 @@
                                     :placeholder="$t('Search')" />
                                     <div class="grid gap-4 grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-6">
                                     <template v-for="(t, index) in getTable(g.tables, g.search_table_keyword)" :key="index">
-                                        <v-badge :content="t.sales?.length" color="error" v-if="t.sales?.length>0">
-                                            <v-btn  :color="t.background_color" @click="onSelectTable(t)" width="100%" height="100">
-                                            {{ t.tbl_no }}
+                                        <template v-if="(params._is_reservation||false)">
+                                            <v-btn  color="rgb(79, 157, 217)" @click="onSelectTable(t)" width="100%" height="100">
+                                                <span class = "text-white"> {{ t.tbl_no }}  </span>    
+                                                
                                             </v-btn>
-                                    </v-badge>
-                                    <v-btn v-else   :color="t.background_color" @click="onSelectTable(t)" width="100%" height="100">
-                                            {{ t.tbl_no }}
+                                        </template>
+                                        <template v-else>
+                                            <v-badge :content="t.sales?.length" color="error" v-if="t.sales?.length>0">
+                                                <v-btn  :color="t.background_color" @click="onSelectTable(t)" width="100%" height="100">
+                                                {{ t.tbl_no }}
+                                                </v-btn>
+                                            </v-badge>
+                                            <v-btn v-else   :color="t.background_color" @click="onSelectTable(t)" width="100%" height="100">
+                                                {{ t.tbl_no }}                                              
                                             </v-btn>
+                                        </template>
                                     </template>
                                 </div>
                             </div>
@@ -70,6 +78,8 @@ const props = defineProps({
     }
 })
 
+ 
+
 const emit = defineEmits(["resolve", "reject"])
 
 let open = ref(true);
@@ -80,54 +90,61 @@ function onClose() {
     emit("resolve", false)
 }
 
-
-
 function getTable(tables,keyword) {
-        if (keyword == "") {
-            return tables;
-        } else {
-
-            return tables.filter((r) => {
-                    return   String(r.tbl_no).toLocaleLowerCase().includes(keyword.toLocaleLowerCase());
-                });
-        }
+    if((props.params?._is_reservation||false) ){
+        tables = tables.filter((r)=> {
+            return   (r.sales?.length||0) ==0
+        });
+    }     
+    
+    if (keyword == "") {
+        return tables;
+    } else {
+        return tables.filter((r) => {
+            return   String(r.tbl_no).toLocaleLowerCase().includes(keyword.toLocaleLowerCase());
+        });
     }
+}
 
 
 
 async function onSelectTable(t) {
-   if(t.sales?.length==0){  
-
-        generateProductPrinterChangeTable(sale.sale.sale_products,  sale.sale.name, sale.sale.tbl_number);        
-
-        sale.sale.sale_products?.forEach((r)=>{
-            r.move_from_table = sale.sale.tbl_number;
-        });
-        sale.sale.table_id = t.id;
-        sale.sale.tbl_number = t.tbl_no;
-        toaster.success($t('msg.Change to table')+": " + t.tbl_no);
-        emit("resolve", true)
-   }
-   else {
-        const result = await changeTableSelectSaleOrderDialog({data:t});
-        if(result){
-            if(result.action=="create_new_bill"){
-                //
-                generateProductPrinterChangeTable(sale.sale.sale_products,  sale.sale.name, sale.sale.tbl_number);
-
+    if((props.params?._is_reservation||false) )
+    {
+        emit("resolve", t);
+    }
+    else{
+        if(t.sales?.length==0){  
+                generateProductPrinterChangeTable(sale.sale.sale_products,  sale.sale.name, sale.sale.tbl_number); 
                 sale.sale.sale_products?.forEach((r)=>{
                     r.move_from_table = sale.sale.tbl_number;
                 });
                 sale.sale.table_id = t.id;
                 sale.sale.tbl_number = t.tbl_no;
                 toaster.success($t('msg.Change to table')+": " + t.tbl_no);
-                emit("resolve", true);
-                
-            }else if(result.action=="reload_sale"){
-                emit("resolve", result)
-            }
+                emit("resolve", true)
         }
-   }
+        else {
+                const result = await changeTableSelectSaleOrderDialog({data:t});
+                if(result){
+                    if(result.action=="create_new_bill"){
+                        //
+                        generateProductPrinterChangeTable(sale.sale.sale_products,  sale.sale.name, sale.sale.tbl_number);
+
+                        sale.sale.sale_products?.forEach((r)=>{
+                            r.move_from_table = sale.sale.tbl_number;
+                        });
+                        sale.sale.table_id = t.id;
+                        sale.sale.tbl_number = t.tbl_no;
+                        toaster.success($t('msg.Change to table')+": " + t.tbl_no);
+                        emit("resolve", true);
+                        
+                    }else if(result.action=="reload_sale"){
+                        emit("resolve", result)
+                    }
+                }
+        }
+    }
 }
 
 

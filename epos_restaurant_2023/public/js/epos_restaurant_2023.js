@@ -88,3 +88,12 @@ function removeGanttKanban () {
         }
     },2000)
 }
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    var myTab = document.getElementById('myTab');
+    var lastChild = myTab.lastElementChild;
+    var lastChildLink = lastChild.querySelector('a');
+    
+    lastChildLink.click();
+});
