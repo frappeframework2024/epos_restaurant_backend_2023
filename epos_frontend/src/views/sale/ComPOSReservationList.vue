@@ -196,6 +196,11 @@
                     sale.sale.customer_name = reservation.guest_name;
                     sale.sale.customer_group = reservation.guest_type;
 
+                   await getDeposit(reservation).then((amount)=>
+                    {
+                      sale.sale.total_paid = amount
+                    })
+
                     if (table.sale_type) {
                         sale.sale.sale_type = table.sale_type
                     }
@@ -307,7 +312,24 @@
     }   
     
     sale.updateSaleSummary();
-  }
+}
+
+async function getDeposit(reservation){
+
+return await  db.getDocList("Sale Payment",{
+    fields:["payment_amount"], 
+    filters:[
+        ["pos_reservation","=",reservation.name],
+        ["docstatus","=",1]
+    ]
+  }).then((res)=>{
+    return res.reduce((i, item) => {
+      return i + item["payment_amount"];
+    }, 0);      
+  }).catch(()=>{
+    return 0
+  });
+}
   
   
   function onClose() {

@@ -96,8 +96,7 @@
    "fieldtype": "Link",
    "in_standard_filter": 1,
    "label": "Sale",
-   "options": "Sale",
-   "reqd": 1
+   "options": "Sale"
   },
   {
    "allow_on_submit": 1,
@@ -386,7 +385,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-12-20 16:32:50.168286",
+ "modified": "2023-12-20 16:39:16.990455",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Payment",

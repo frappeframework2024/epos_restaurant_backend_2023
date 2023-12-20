@@ -1,11 +1,3 @@
-// Copyright (c) 2022, Tes Pheakdey and contributors
-// For license information, please see license.txt
-
-// frappe.ui.form.on("Sale Payment", {
-// 	refresh(frm) {
-
-// 	},
-// });
 frappe.ui.form.on("Sale Payment", {
     onload(frm){
         if(frm.doc.__islocal){
@@ -18,6 +10,11 @@ frappe.ui.form.on("Sale Payment", {
             }else{
 
             }
+        }else{
+            if((frm.doc.pos_reservation||"") !="" ){
+                set_query(frm,"sale",[["Sale","docstatus", "=", 1], ["Sale","from_reservation", "=", frm.doc.pos_reservation], ["Sale","balance", ">=", 0.01]]);                
+                set_df_propert(frm,"transaction_type","read_only",1);
+            } 
         }
 
     },

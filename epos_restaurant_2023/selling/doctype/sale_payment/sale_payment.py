@@ -10,7 +10,15 @@ class SalePayment(Document):
 		#check if reservation deleted
 		if self.pos_reservation:
 			reservation = frappe.get_doc("POS Reservation", self.pos_reservation)
-			frappe.throw("The pos reservation {} was void.".format(self.pos_reservation))
+			if reservation.reservation_status != "Confirmed" and not self.sale:
+				frappe.throw("Payment not allow with this current reservation status. ({})".format(reservation.reservation_status))
+
+
+			# frappe.throw("The pos reservation {} was void.".format(self.pos_reservation))
+		else:
+			if not self.sale:
+				frappe.throw("Mandatory fields required in Sale Payment (Sale*)")
+
 
 
 
@@ -23,7 +31,6 @@ class SalePayment(Document):
 			self.change_exchange_rate = 1
 		
 		currency_precision = frappe.db.get_single_value('System Settings', 'currency_precision')
-
 		if self.transaction_type =="Changed":
 			self.payment_amount = self.input_amount / self.change_exchange_rate 
 		else:
@@ -35,16 +42,18 @@ class SalePayment(Document):
 		if (self.payment_amount or 0) ==0:
 			frappe.throw(_("Please enter payment amount"))
    
-		#validate expense if is a submitted expense
-		sale_status = frappe.db.get_value("Sale",self.sale,"docstatus")
-		
-		if not sale_status==1:
-			frappe.throw(_("This sale is not submitted yet"))
+		if self.sale:
+			#validate expense if is a submitted expense
+			sale_status = frappe.db.get_value("Sale",self.sale,"docstatus")
+			
+			if not sale_status==1:
+				frappe.throw(_("This sale is not submitted yet"))
 
-		#check paid amount cannot over balance
-		if self.check_valid_payment_amount:
-			if self.payment_amount > self.balance:
-				frappe.throw("Payment amount cannot greater than sale balance")
+			#check paid amount cannot over balance
+			if self.check_valid_payment_amount:
+				if self.payment_amount > self.balance:
+					frappe.throw("Payment amount cannot greater than sale balance")
+		
 
 	def on_submit(self):
 		update_sale(self)
