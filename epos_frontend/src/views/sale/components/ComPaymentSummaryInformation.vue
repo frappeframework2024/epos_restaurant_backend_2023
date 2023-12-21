@@ -9,6 +9,15 @@
         </div>
         <hr v-if="(sale.sale.tip_amount ||0) > 0"/>
 
+        <div class="mb-1 flex justify-between" v-if="sale.sale.deposit > 0">
+            <div>{{ $t('Deposit') }}:</div>
+            <div>
+                <CurrencyFormat :value="(sale.sale.deposit)" />
+            </div>
+        </div>
+        <hr v-if="(sale.sale.deposit ||0) > 0"/>
+
+
 
         <div class="mb-1 flex justify-between text-sm" v-if="(sale.sale.total_fee ||0) > 0">
             <div>{{ $t('Fee') }}:</div>

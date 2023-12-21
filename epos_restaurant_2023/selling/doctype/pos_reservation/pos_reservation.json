@@ -21,6 +21,7 @@
   "status",
   "reservation_status_color",
   "reservation_status_background_color",
+  "total_deposit",
   "guest_inforamtion_section",
   "guest",
   "guest_name",
@@ -260,6 +261,13 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "total_deposit",
+   "fieldtype": "Currency",
+   "label": "Total Deposit",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -271,7 +279,7 @@
    "link_fieldname": "pos_reservation"
   }
  ],
- "modified": "2023-12-20 16:21:09.686766",
+ "modified": "2023-12-21 10:15:56.423847",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Reservation",

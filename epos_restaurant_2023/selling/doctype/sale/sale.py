@@ -170,13 +170,14 @@ class Sale(Document):
 		self.grand_total =( sub_total - (self.total_discount or 0))  + self.total_tax 
 	  
 		self.total_paid =  Enumerable(self.payment).where(lambda x: x.payment_type_group !='On Account').sum(lambda x: x.amount or 0)
+		self.total_paid = (self.total_paid or 0) + (self.deposit or 0)
 
 		self.total_fee =  Enumerable(self.payment).sum(lambda x: x.fee_amount or 0)
 		self.total_paid_with_fee = self.total_paid + (self.total_fee or 0)
 
 
-	
-		self.balance = round(self.grand_total  , int(currency_precision))-  round((self.total_paid or 0)  , int(currency_precision))
+		_balance = round(self.grand_total  , int(currency_precision)) -  round((self.total_paid or 0)  , int(currency_precision))
+		self.balance = _balance
 		#self.balance =self.grand_total -(self.total_paid or 0) 
 		
 		if self.pos_profile:
@@ -246,14 +247,15 @@ class Sale(Document):
 		# update_inventory_on_submit(self)			
 		add_payment_to_sale_payment(self) 
 
+		## set pos reservation status to checked out
+		update_pos_reservation_status(self)
+
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.create_folio_transaction_from_pos_trnasfer", queue='short', self=self)
 		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit", queue='short', self=self)
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.add_payment_to_sale_payment", queue='short', self=self)
 
-		## set pos reservation status to checked out
-		if self.from_reservation:
-			if frappe.db.exists("POS Reservation", self.from_reservation):
-				frappe.db.set_value('POS Reservation', self.from_reservation, 'reservation_status', 'Checked Out')
+		
+		
 
 	
 	def on_cancel(self):
@@ -698,3 +700,14 @@ def validate_tax(doc):
 			doc.tax_3_amount=0
 			doc.total_tax =0
 		
+def update_pos_reservation_status(self):
+	if self.from_reservation:
+		if frappe.db.exists("POS Reservation", self.from_reservation):
+			status = frappe.get_doc("POS Reservation Status","Checked Out") 
+			frappe.db.set_value('POS Reservation', self.from_reservation,{
+				"reservation_status": 'Checked Out',
+				"status":"Checked Out",
+				"reservation_status_color":status.color,
+				"reservation_status_background_color": status.background_color,
+				"workflow_state": "Checked Out",
+			})

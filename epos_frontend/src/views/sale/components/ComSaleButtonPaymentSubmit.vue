@@ -6,14 +6,14 @@
           <div style="margin-bottom: 0px!important;" class="flex justify-between mb-2 text-lg">
             <div>{{ $t("Payment") }}</div>
             <div style="margin: 0px; padding: 0px; font-size: 26px; font-weight: bold;">
-              <CurrencyFormat :value="sale.sale.grand_total" />
+              <CurrencyFormat :value="(sale.sale.grand_total-sale.sale.deposit)" />
             </div>
           </div>
           <div class="flex justify-between">
             <div>{{ $t('Total Qty') }} : <span>{{ sale.sale.total_quantity ||0}}</span></div>
             <div>
               <ComExchangeRate />
-              <CurrencyFormat :value="sale.sale.grand_total * (sale.sale.exchange_rate || 1)"
+              <CurrencyFormat :value="((sale.sale.grand_total * (sale.sale.exchange_rate || 1)) - (sale.sale.deposit * (sale.sale.exchange_rate || 1)))"
                 :currency="sale.setting.pos_setting.second_currency_name" />
             </div>
           </div>

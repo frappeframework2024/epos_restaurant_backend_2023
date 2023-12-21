@@ -9,13 +9,13 @@
         <div class="flex justify-between mb-1 text-sm">
           <div>{{ $t('Payment') }}</div>
           <div style="font-size: 24px; font-weight: bold;">
-            <CurrencyFormat :value="sale.sale.grand_total" />
+            <CurrencyFormat :value="(sale.sale.grand_total - sale.sale.deposit)" />
           </div>
         </div>
         <div class="text-right">
           <div>
             <ComExchangeRate />
-            <CurrencyFormat :value="sale.sale.grand_total * sale.sale.exchange_rate"
+            <CurrencyFormat :value="((sale.sale.grand_total * (sale.sale.exchange_rate || 1)) - (sale.sale.deposit * (sale.sale.exchange_rate || 1)))"
               :currency="setting.pos_setting.second_currency_name" />
           </div>
         </div>

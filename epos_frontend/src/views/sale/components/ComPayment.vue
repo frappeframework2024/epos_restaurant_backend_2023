@@ -108,7 +108,7 @@ const props = defineProps({
 let backup = ref({})
 const selectedReceipt = ref({})
 selectedReceipt.value = gv.setting.default_pos_receipt;
-sale.paymentInputNumber = sale.sale?.grand_total.toFixed(sale.setting.pos_setting.main_currency_precision);
+sale.paymentInputNumber = ((sale.sale?.grand_total||0) - (sale.sale?.deposit||0)).toFixed(sale.setting.pos_setting.main_currency_precision);
 
 function onSelectedReceipt(r) {
     selectedReceipt.value = r;

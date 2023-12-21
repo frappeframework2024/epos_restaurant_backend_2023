@@ -1,6 +1,6 @@
 <template lang="">
   <div class="px-2">
-    <template v-if="(sale.sale.total_discount + sale.sale.total_tax) > 0">
+    <template v-if="(sale.sale.total_discount + sale.sale.total_tax + (sale.sale.deposit||0)) > 0">
       <div class="flex justify-between my-1">
         <div>
           {{$t('Sub Total')}}
@@ -68,6 +68,14 @@
           <CurrencyFormat :value="sale.sale.total_tax" />
         </div>
       </div>
+
+      <div class="flex justify-between" v-if="sale.sale.deposit > 0">
+        <div>{{$t('Deposit')}}</div>
+        <div class="font-bold">
+          <CurrencyFormat :value="sale.sale.deposit" />
+        </div>
+      </div>
+
     </template>
  
       <div class="flex justify-between my-1" v-if="sale.sale.note">

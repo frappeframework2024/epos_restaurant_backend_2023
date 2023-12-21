@@ -21,6 +21,8 @@ class POSReservation(Document):
 		self.status = self.reservation_status
 		self.reservation_status_color = status.color
 		self.reservation_status_background_color = status.background_color
+		self.total_deposit = 0
+	
 
 	def on_update_after_submit(self):
 		
@@ -31,6 +33,11 @@ class POSReservation(Document):
 			frappe.db.sql("update `tabPOS Reservation` set workflow_state='{1}' where name='{0}'".format(self.name, self.reservation_status))
 
 	def on_cancel(self):
-		pass
+		payments = frappe.get_list("Sale Payment",fields=["name"], filters={"pos_reservation":self.name,"docstatus":1})
+		for p in payments:
+			sale_payment = frappe.get_doc("Sale Payment", p.name)
+			sale_payment.cancel()
+			sale_payment.delete()
+
 			
 		

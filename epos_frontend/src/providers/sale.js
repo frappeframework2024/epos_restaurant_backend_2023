@@ -128,6 +128,7 @@ export default class Sale {
             guest_cover: this.guest_cover,
             discount: 0,
             sub_total: 0,
+            deposit:0,
             payment: [],
             // posting_date: moment(new Date()).format('yyyy-MM-DD'),
             commission_type: "Percent",
@@ -402,6 +403,7 @@ export default class Sale {
         sp_copy.order_time = this.getOrderTime();
         sp_copy.creation = sp_copy.order_time;
         sp_copy.modified = sp_copy.order_time;
+        sp_copy.pos_reservation = "";
 
         this.updateSaleProduct(sp_copy);
         this.sale.sale_products.push(sp_copy);
@@ -598,7 +600,7 @@ export default class Sale {
 
         //grand_total
         this.sale.grand_total = ((this.sale.sub_total||0) - (this.sale.total_discount||0) ) + (this.sale.total_tax||0);
-        this.sale.balance = this.sale.grand_total - - (this.sale.deposit||0);
+        this.sale.balance = this.sale.grand_total - (this.sale.deposit||0);
         
        
         // commission
@@ -1597,11 +1599,11 @@ export default class Sale {
 
     updatePaymentAmount() {
         const payments = Enumerable.from(this.sale.payment);
-        const total_payment = payments.sum("$.amount");
+        const total_payment = payments.sum("$.amount") + (this.sale.deposit||0);
         const total_fee = payments.sum("$.fee_amount");
-        this.sale.total_paid = total_payment;
+        this.sale.total_paid = total_payment ;
         this.sale.total_fee = total_fee;
-        this.sale.balance = this.sale.grand_total - total_payment;
+        this.sale.balance = (this.sale.grand_total||0)  - this.sale.total_paid;
 
         if (this.sale.balance < 0) {
             this.sale.balance = 0;

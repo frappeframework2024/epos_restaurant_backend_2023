@@ -768,8 +768,13 @@ def delete_sale(name,auth):
     payments = frappe.get_list("Sale Payment",fields=["name"], filters={"sale":name,"docstatus":1})
     for p in payments:
         sale_payment = frappe.get_doc("Sale Payment", p.name)
-        sale_payment.cancel()
-        sale_payment.delete()
+        # check  if reservation deposit
+        if sale_payment.is_reservation_deposit:
+            sale_payment.sale = ""
+            sale_payment.save()
+        else:
+            sale_payment.cancel()
+            sale_payment.delete()
     
     #then start to cancel sale
     sale_doc = frappe.get_doc("Sale",name)
@@ -950,3 +955,28 @@ def get_exchange_rate():
     if len(data):
         exchange_rate = data[0]["exchange_rate"]    
     return exchange_rate or 1
+
+
+# update sale payment of pos reservation 
+@frappe.whitelist()
+def update_pos_reservation_and_sale_payment(reservation_name,reservation_status,sale):
+    ## update pos reservation
+    _reservation = frappe.get_doc("POS Reservation",reservation_name)
+    _reservation.reservation_status = reservation_status
+    _reservation.status = reservation_status
+    _reservation.save()
+
+    # ## update sale payment
+    _sale_payments = frappe.db.get_list("Sale Payment",
+                                            filters={
+                                                "docstatus": 1,
+                                                "pos_reservation":reservation_name
+                                                },
+                                            fields=["name"]
+                                        )
+    
+    for _sp in _sale_payments:
+        _sale_payment = frappe.get_doc("Sale Payment",_sp["name"])
+        _sale_payment.sale = sale
+        _sale_payment.save()
+    frappe.db.commit()

@@ -3,10 +3,10 @@
         <div class="text-center">{{ $t('Total Amount') }}</div>
         <div class="flex justify-around">
             <div>
-                <CurrencyFormat :value="sale.sale.grand_total" />
+                <CurrencyFormat :value="(sale.sale.grand_total - sale.sale.deposit )" />
             </div>
             <div>
-                <CurrencyFormat :value="sale.sale.grand_total * sale.sale.exchange_rate"
+                <CurrencyFormat :value="((sale.sale.grand_total -sale.sale.deposit)* (sale.sale.exchange_rate||1) )"
                     :currency="gv.setting?.pos_setting?.second_currency_name" />
             </div>
         </div>
