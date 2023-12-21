@@ -119,18 +119,22 @@
     </div>
 </template>
 <script setup>
-import { useRouter, inject, createResource,i18n} from '@/plugin';
+import { useRouter, inject,posReservationDialog,i18n} from '@/plugin';
 import ComCurrentUserAvatar from './components/ComCurrentUserAvatar.vue';
 import { createToaster } from '@meforma/vue-toaster';
+import moment from '@/utils/moment.js';
  
 const { t: $t } = i18n.global; 
 
 const router = useRouter();
+const frappe = inject('$frappe');
 const auth = inject('$auth');
 const gv  = inject("$gv");
 const toaster = createToaster({position:'top'});
-
 const device_setting = JSON.parse(localStorage.getItem("device_setting"))
+
+const db = frappe.db();
+const call = frappe.call();
  
 function onRoute(page) {
     router.push({name:page});
@@ -142,44 +146,56 @@ function onLogout(){
     })
 }
 
-async function onPOS(){ 
-    const cashierShiftResource = createResource({
-      url: "epos_restaurant_2023.api.api.get_current_shift_information",
-      params: {
-          business_branch: gv.setting?.business_branch,
-          pos_profile: localStorage.getItem("pos_profile")
-      },
-  });
-
-  await cashierShiftResource.fetch().then(async (v) => {
-      if (v) {
-          if (v.working_day == null) {
-              toaster.warning($t("msg.Please start working day first"))
-          } else if (v.cashier_shift == null) {
-              toaster.warning($t("msg.Please start shift first"))
-          } else {
-            const setting = JSON.parse(localStorage.getItem('setting'))
-            if(setting.table_groups.length > 0){
-                router.push({ name: 'TableLayout' })
-            }
-            else{
-              gv.authorize("open_order_required_password","make_order").then((v)=>{
-                  if(v){ 
-                      const make_order_auth = {"username":v.username,"name":v.user,discount_codes:v.discount_codes }; 
-                      localStorage.setItem('make_order_auth',JSON.stringify(make_order_auth));
-
-                      router.push({ name: 'AddSale' })
-                  }
-              });                    
-            }
-          }
+function onPOS(){ 
+  call.get("epos_restaurant_2023.api.api.get_current_shift_information",{
+    business_branch: gv.setting?.business_branch,
+    pos_profile: localStorage.getItem("pos_profile")
+  }).then((data)=>{
+    const v = data.message;
+    if(v){
+      if (v.working_day == null) {
+          toaster.warning($t("msg.Please start working day first"))
+      } else if (v.cashier_shift == null) {
+          toaster.warning($t("msg.Please start shift first"))
+      } else {
+        const setting = JSON.parse(localStorage.getItem('setting'))
+        if(setting.table_groups.length > 0){
+            router.push({ name: 'TableLayout' })
+        }
+        else{
+          gv.authorize("open_order_required_password","make_order").then((v)=>{
+              if(v){ 
+                  const make_order_auth = {"username":v.username,"name":v.user,discount_codes:v.discount_codes }; 
+                  localStorage.setItem('make_order_auth',JSON.stringify(make_order_auth));
+                  router.push({ name: 'AddSale' })
+              }
+          });                    
+        }
       }
-  })
-
+    }
+  }); 
 }
 
 function onReservation(){
-  //
+  call.get("epos_restaurant_2023.api.api.get_current_shift_information",{
+    business_branch: gv.setting?.business_branch,
+    pos_profile: localStorage.getItem("pos_profile")
+  }).then(async (data)=>{
+    const cs = data.message;
+    if (cs.working_day == null) {
+        toaster.warning($t("msg.Please start working day first"))
+    } else if (cs.cashier_shift == null) {
+            toaster.warning($t("msg.Please start shift first"))
+    } else {
+        const today =  moment(new Date()).format('yyyy-MM-DD');
+        const result = await posReservationDialog({
+        data: {
+            working_day:(cs.working_day?.name||""), 
+            cashier_shift: (cs.cashier_shift?.name||""), 
+            posting_date: (cs.cashier_shift?.posting_date||today)
+        }});
+    } 
+  })
 }
 
 function onStartWorkingDay() {
@@ -193,22 +209,16 @@ function onStartWorkingDay() {
 
 async function onCloseWorkingDay() {
     gv.authorize("close_working_day_required_password", "close_working_day").then(async (v) => {
-        if (v) {
-            const cashierShiftResource = createResource({
-                url: "epos_restaurant_2023.api.api.get_current_cashier_shift",
-                params: {
-                    pos_profile: localStorage.getItem("pos_profile")
-                }
-            });
-
-            await cashierShiftResource.fetch().then(async (v) => {
-                if (v) {
-                    toaster.warning($t("msg.Please close shift first"))
-                } else {
-                    router.push({ name: "CloseWorkingDay" });
-                }
-
-            })
+        if (v) {            
+          call.get("epos_restaurant_2023.api.api.get_current_cashier_shift",{
+            pos_profile: localStorage.getItem("pos_profile")
+          }).then((_res)=>{
+            if(_res.message){
+              toaster.warning($t("msg.Please close shift first"))
+            }else{
+              router.push({ name: "CloseWorkingDay" });
+            }
+          })
         }
     });
 }

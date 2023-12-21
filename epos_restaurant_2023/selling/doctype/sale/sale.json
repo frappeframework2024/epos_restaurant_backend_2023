@@ -57,6 +57,7 @@
   "column_break_10",
   "grand_total",
   "total_fee",
+  "deposit",
   "total_paid",
   "total_paid_with_fee",
   "balance",
@@ -884,6 +885,12 @@
    "label": "From Reservation",
    "options": "POS Reservation",
    "read_only": 1
+  },
+  {
+   "fieldname": "deposit",
+   "fieldtype": "Currency",
+   "label": "Deposit",
+   "read_only": 1
   }
  ],
  "image_field": "photo",
@@ -896,7 +903,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2023-12-18 12:01:14.011384",
+ "modified": "2023-12-21 08:42:36.934981",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

@@ -588,7 +588,7 @@ export default class Sale {
         }
 
         this.sale.product_discount = this.getNumber(sp.sum("$.discount_amount"));
-        this.sale.total_discount = this.sale.product_discount + this.sale.sale_discount;
+        this.sale.total_discount = (this.sale.product_discount||0) + (this.sale.sale_discount||0);
 
         //tax
         this.sale.tax_1_amount = this.getNumber(sp.sum("$.tax_1_amount"));
@@ -597,8 +597,8 @@ export default class Sale {
         this.sale.total_tax = this.getNumber(sp.sum("$.total_tax"));
 
         //grand_total
-        this.sale.grand_total = (this.sale.sub_total - this.sale.total_discount) + this.sale.total_tax
-        this.sale.balance = this.sale.grand_total;
+        this.sale.grand_total = ((this.sale.sub_total||0) - (this.sale.total_discount||0) ) + (this.sale.total_tax||0);
+        this.sale.balance = this.sale.grand_total - - (this.sale.deposit||0);
         
        
         // commission
