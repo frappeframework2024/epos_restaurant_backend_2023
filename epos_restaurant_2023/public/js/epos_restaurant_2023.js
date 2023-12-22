@@ -5,7 +5,6 @@ window.addEventListener('load', function () {
     setFullScreenButton()
 
     removeGanttKanban()
-
     const navBar = document.querySelector('body')
     navBar.classList.add('full-width');
 
