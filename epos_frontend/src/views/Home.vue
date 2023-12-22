@@ -27,7 +27,7 @@
                         <ComButton @click="onPOS()" :title="$t('POS')" icon="mdi-cart-outline" class="bg-green-600 text-white" icon-color="#fff" />
                         <ComButton @click="onViewPendingOrder()" :title="$t('Pending Order')" icon="mdi-arrange-send-backward"  icon-color="#e99417" />
 
-                        <ComButton @click="onReservation()" :title="$t('Reservation')" icon="mdi mdi-calendar-text-outline" class="bg-teal-600 text-white" icon-color="#fff" />
+                        <ComButton @click="onReservation()" :title="$t('Reservation')" v-if="(device_setting?.show_button_pos_reservation||0) == 1" icon="mdi mdi-calendar-text-outline" class="bg-teal-600 text-white" icon-color="#fff" />
 
                         <ComButton @click="onRoute('ClosedSaleList')" :title="$t('Closed Receipt')" v-if="device_setting?.is_order_station==0 && (gv.workingDay || gv.cashierShift)" icon="mdi-file-document"  icon-color="#e99417" />
                         
