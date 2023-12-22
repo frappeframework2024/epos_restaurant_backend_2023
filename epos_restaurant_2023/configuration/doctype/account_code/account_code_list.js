@@ -8,6 +8,7 @@ frappe.listview_settings['Account Code'] = {
                 'Sort Order Account Code'
             );
             msg.$wrapper.find('.modal-dialog').css("max-width", "90%");
+            
         });
 
         

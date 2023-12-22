@@ -9,6 +9,7 @@
  "engine": "InnoDB",
  "field_order": [
   "photo",
+  "property_background_banner",
   "business_banch_name_en",
   "business_banch_name_kh",
   "property_code",
@@ -185,12 +186,17 @@
    "fieldtype": "Table",
    "label": "eDoor Letterhead",
    "options": "eDoor Letterhead"
+  },
+  {
+   "fieldname": "property_background_banner",
+   "fieldtype": "Attach Image",
+   "label": "Property Background Banner"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-06 14:48:29.819446",
+ "modified": "2023-12-22 08:56:41.746724",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",
