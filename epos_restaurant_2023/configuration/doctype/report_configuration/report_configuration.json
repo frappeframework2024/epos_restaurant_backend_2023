@@ -14,6 +14,7 @@
   {
    "fieldname": "report",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Report",
    "options": "Report"
   },
@@ -26,13 +27,14 @@
   {
    "fieldname": "property",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Property",
    "options": "Business Branch"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-14 17:58:46.757604",
+ "modified": "2023-12-23 14:20:17.162446",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Report Configuration",

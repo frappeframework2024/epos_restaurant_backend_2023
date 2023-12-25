@@ -32,6 +32,7 @@ import ComAddCashDrawerModal from '@/views/cash_drawer/components/ComAddCashDraw
 import ComChangeTableSelectSaleOrder from '@/views/sale/components/ComChangeTableSelectSaleOrder.vue'
 import ComPendingSaleList from '@/views/sale/ComPendingSaleList.vue'
 import ComPOSReservationList from '@/views/sale/ComPOSReservationList.vue'
+import ComPOSReservationCalendarDialog from '@/views/sale/ComPOSReservationDetailDialog.vue'
 import ComInputNumber from '@/components/ComInputNumber.vue'
 import ComShortcutKeyHelp from '@/components/ComShortcutKeyHelp.vue'
 import ComAddCommission from '@/views/sale/components/ComAddCommissionModal.vue'
@@ -100,6 +101,7 @@ export  const splitBillDialog = createPromiseDialog<params, object>(ComSplitBill
 export  const SaleProductComboMenuGroupModal = createPromiseDialog<params, object>(ComSaleProductComboMenuGroupModal);
 export  const changeTaxSettingModal = createPromiseDialog<params, object>(ComChangeTaxSettingModal);
 export  const ComSaleReferenceNumberDialog = createPromiseDialog<params, object>(ComSaleReferenceNumberModal);
+export  const posReservationCalendarDialog = createPromiseDialog<params, object>(ComPOSReservationCalendarDialog);
 export  const viewHappyHourPromotionModal = createPromiseDialog<params, object>(ComViewHappyHourPromotionModal);
 export  const ShortCutKeyHelpDialog = createPromiseDialog<params, object>(ComShortcutKeyHelp);
 export  const selectEmployeeDialog = createPromiseDialog<params, object>(ComSelectEmployeeModal);

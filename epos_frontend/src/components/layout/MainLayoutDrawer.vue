@@ -56,7 +56,12 @@
             </template>
             <v-list-item-title>{{$t('Reservation')}}</v-list-item-title>
           </v-list-item>
-
+          <v-list-item active-color="primary" v-if="(device_setting?.show_button_pos_reservation||0) == 1" @click="onReservationCalendar()">
+            <template v-slot:prepend>
+              <v-icon>mdi mdi-calendar-clock-outline</v-icon>
+            </template>
+            <v-list-item-title>{{$t('Reservation Calendar')}}</v-list-item-title>
+          </v-list-item>
           <v-list-item active-color="primary" v-if="device_setting?.is_order_station==0 && (gv.workingDay || gv.cashierShift)" @click="onRoute('ClosedSaleList')">
             <template v-slot:prepend>
               <v-icon>mdi-file-document</v-icon>
@@ -123,6 +128,7 @@ import { useRouter, inject,posReservationDialog,i18n} from '@/plugin';
 import ComCurrentUserAvatar from './components/ComCurrentUserAvatar.vue';
 import { createToaster } from '@meforma/vue-toaster';
 import moment from '@/utils/moment.js';
+
  
 const { t: $t } = i18n.global; 
 
@@ -196,6 +202,10 @@ function onReservation(){
         }});
     } 
   })
+}
+
+async function onReservationCalendar(){
+  router.push({ name: "POSReservationCalendar" });
 }
 
 function onStartWorkingDay() {

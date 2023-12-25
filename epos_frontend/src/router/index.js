@@ -3,6 +3,7 @@ import Home from "../views/Home.vue";
 import AddSale from "../views/sale/AddSale.vue";
 import AddSaleNoTable from "../views/sale/AddSaleNoTable.vue";
 import Sale from "../views/sale/Sale.vue";
+import POSReservationCalendar from "../views/sale/POSReservationCalendar.vue";
 import ClosedSaleList from "../views/sale/ClosedSaleList.vue";
 import TableLayout from "../views/sale/TableLayout.vue";
 import OpenShift from "../views/shift/OpenShift.vue";
@@ -33,6 +34,7 @@ const routes = [
   { path: "/epos_frontend/customer-detail/:name?", name: "CustomerDetail", component: CustomerDetail, },
   { path: "/epos_frontend/customer", name: "Customer", component: Customer, meta: { layout: 'main_layout' } },
   { path: "/epos_frontend/sale", name: "Sale", component: Sale, },
+  { path: "/epos_frontend/pos-reservation-calendar", name: "POSReservationCalendar", component: POSReservationCalendar, meta: { layout: "main_layout" } },
   { path: "/epos_frontend/table", name: "TableLayout", component: TableLayout, meta: { layout: 'main_layout' } },
   { path: "/epos_frontend/receipt-list", name: "ReceiptList", component: ReceiptList, meta: { layout: 'main_layout' } },
   { path: "/epos_frontend/open-shift", name: "OpenShift", component: OpenShift, meta: { layout: "main_layout" } },

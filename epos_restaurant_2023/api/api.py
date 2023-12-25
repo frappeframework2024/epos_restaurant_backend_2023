@@ -1,6 +1,7 @@
 import json
 import frappe
 import base64
+from frappe.utils.data import getdate
 from py_linq import Enumerable
 from frappe.utils import today, add_to_date
 from datetime import datetime, timedelta
@@ -406,6 +407,39 @@ def get_current_shift_information(business_branch, pos_profile):
         "working_day":get_current_working_day(business_branch),
         "cashier_shift":get_current_cashier_shift(pos_profile)
     }
+
+
+@frappe.whitelist()
+def get_resevation_calendar(business_branch,start,end):
+    sql = """select 
+                name, 
+                arrival_date as start,
+                arrival_time,
+                CONCAT(guest,'-',guest_name) as title,
+                phone_number,
+                total_deposit,
+                reservation_status_color as textColor,
+                reservation_status_background_color as backgroundColor,
+                reservation_status_background_color as borderColor 
+            from `tabPOS Reservation` 
+            where 
+                property='{0}' and 
+                arrival_date between '{1}' and '{2}'
+            order by arrival_time
+            """.format(business_branch,getdate(start),getdate(end))
+    data = frappe.db.sql(sql,as_dict=1)
+    return data
+
+@frappe.whitelist()
+def get_resevation_detail(name):
+    reservation = frappe.get_doc("POS Reservation",name)
+    payments = frappe.db.get_list("Sale Payment",
+    fields=['posting_date','payment_type','payment_amount','currency_precision','name','input_amount'],
+    filters={
+        'pos_reservation': name,
+        'docstatus':1
+    })
+    return {"reservation":reservation,"payment":payments}
 
 @frappe.whitelist()
 def get_current_cashier_shift(pos_profile):
