@@ -14,37 +14,9 @@
  "hide_custom": 0,
  "icon": "today",
  "idx": 0,
- "is_hidden": 1,
+ "is_hidden": 0,
  "label": "Gym",
  "links": [
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Report",
-   "link_count": 2,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Membership Report",
-   "link_count": 0,
-   "link_to": "Membership Register Report",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Membership Payment Report",
-   "link_count": 0,
-   "link_to": "Membership Payment Report",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
   {
    "hidden": 0,
    "is_query_report": 0,
@@ -82,9 +54,47 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Report",
+   "link_count": 3,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Membership Report",
+   "link_count": 0,
+   "link_to": "Membership Register Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Membership Payment Report",
+   "link_count": 0,
+   "link_to": "Membership Payment Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Member Report",
+   "link_count": 0,
+   "link_to": "Customer List",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2023-12-12 11:35:52.715732",
+ "modified": "2023-12-27 08:27:54.271305",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Gym",

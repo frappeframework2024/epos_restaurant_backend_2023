@@ -16,7 +16,6 @@ class CashierShift(Document):
 		
 		if self.is_new():
 			data = frappe.get_list("Cashier Shift",filters={"pos_profile":self.pos_profile,"business_branch":self.business_branch, "is_closed":0})
-			
 			if data:
 				frappe.throw("Cashier shift is already opened")
 				

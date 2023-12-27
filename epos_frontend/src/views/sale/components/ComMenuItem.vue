@@ -49,7 +49,7 @@
                 </span>
             </div>
             <div class="p-1 rounded-md absolute bottom-1 right-1 left-1 bg-gray-50 bg-opacity-90 text-sm text-center">
-                <span v-if="!sale.load_menu_lang">{{ getMenuName(data,true) }}</span>                
+                 <span v-if="!sale.load_menu_lang">{{ getMenuName(data,true) }}</span>    <span style="color:red; font-weight: bold;">  {{getTotalQuantityOrder(data)}}</span>
             </div>
         </div>
     </div>
@@ -65,6 +65,7 @@ const product = inject("$product");
 const toaster = createToaster({position: 'top'})
 const frappe = inject("$frappe")
 const db = frappe.db();
+
 
 // get image
 const image = computed(() => {
@@ -119,6 +120,14 @@ function getMenuName(menu,is_item = false) {
     }
 }
 
+function getTotalQuantityOrder(data){
+    const qty = sale.sale?.sale_products?.filter(r=>r.product_code == data.name ).reduce((n, d) => n + (d.quantity || 0), 0)
+    if (qty==0){
+        return ""
+    }else {
+        return " (" + qty + ")"
+    }
+}
 
 // end price menu
 

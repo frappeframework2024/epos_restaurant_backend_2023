@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_import": 1,
  "allow_rename": 1,
  "autoname": "field:category_note_name_en",
  "creation": "2022-12-09 14:25:27.016967",
@@ -51,7 +52,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-03-30 16:09:49.149609",
+ "modified": "2023-12-25 15:44:55.135323",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Category Note",
