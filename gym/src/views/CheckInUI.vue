@@ -183,7 +183,7 @@ function onCheckInClick(){
                       position:"top"
                   
                 },
-              onClose: (options) => { 
+              onClose: (options) => {  
                   const data = options.data;
                   if (data) {
                     toast.add({ severity: 'success', summary: 'Check In', detail: 'Check In successfully.', life: 3000 });
