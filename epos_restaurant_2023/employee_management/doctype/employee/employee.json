@@ -304,6 +304,7 @@
    "default": "0",
    "fieldname": "allow_login_to_edoor",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Allow Login to eDoor"
   },
   {
@@ -338,7 +339,7 @@
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-10-11 09:01:51.523458",
+ "modified": "2023-12-28 09:07:46.889103",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee",

@@ -94,7 +94,7 @@
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-11-20 10:53:18.167658",
+ "modified": "2023-12-29 14:53:04.206302",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "System Report",
@@ -126,8 +126,8 @@
  ],
  "search_fields": "report_name",
  "show_title_field_in_link": 1,
- "sort_field": "modified",
- "sort_order": "DESC",
+ "sort_field": "sort_order",
+ "sort_order": "ASC",
  "states": [],
  "title_field": "report_title"
 }
