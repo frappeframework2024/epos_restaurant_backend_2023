@@ -8,9 +8,15 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "device_info_section",
   "station_name",
+  "platform",
+  "device_id",
+  "column_break_uutk",
   "station_device_printing",
+  "is_used",
   "is_order_station",
+  "section_break_xdfa",
   "show_button_print_bill",
   "show_button_cancel_print_bill",
   "show_start_close_working_day",
@@ -25,7 +31,6 @@
   "show_button_change_price_on_order_station",
   "show_keypad_in_sale_screen",
   "show_deleted_sale_product_in_sale_screen",
-  "is_used",
   "show_button_change_sale_type",
   "show_setting_menu"
  ],
@@ -150,11 +155,39 @@
    "fieldname": "show_button_pos_reservation",
    "fieldtype": "Check",
    "label": "Show Button POS Reservation"
+  },
+  {
+   "fieldname": "device_info_section",
+   "fieldtype": "Section Break",
+   "label": "Device Info"
+  },
+  {
+   "fieldname": "section_break_xdfa",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "Windows",
+   "fieldname": "platform",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Platform",
+   "options": "Windows\nMobile\nTablet\nWeb"
+  },
+  {
+   "description": "Paste device-id from request license (DESKTOP). \nPaste Phone-IME (Android)",
+   "fieldname": "device_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Device ID"
+  },
+  {
+   "fieldname": "column_break_uutk",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-19 09:56:23.622234",
+ "modified": "2024-01-01 10:32:00.611169",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",
