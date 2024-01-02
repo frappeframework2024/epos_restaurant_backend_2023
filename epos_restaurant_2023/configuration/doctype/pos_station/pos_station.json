@@ -12,10 +12,12 @@
   "station_name",
   "platform",
   "device_id",
+  "license",
   "column_break_uutk",
   "station_device_printing",
   "is_used",
   "is_order_station",
+  "disabled",
   "section_break_xdfa",
   "show_button_print_bill",
   "show_button_cancel_print_bill",
@@ -163,7 +165,8 @@
   },
   {
    "fieldname": "section_break_xdfa",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Station Options"
   },
   {
    "default": "Windows",
@@ -183,11 +186,22 @@
   {
    "fieldname": "column_break_uutk",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "license",
+   "fieldtype": "Small Text",
+   "label": "License"
+  },
+  {
+   "default": "0",
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "label": "Disabled"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-01-01 10:32:00.611169",
+ "modified": "2024-01-01 10:51:23.098324",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

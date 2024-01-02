@@ -188,16 +188,14 @@
   },
   {
    "fieldname": "pos_station_opened",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "label": "POS Station Opened",
-   "options": "POS Station",
    "read_only": 1
   },
   {
    "fieldname": "pos_station_closed",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "label": "POS Station Closed",
-   "options": "POS Station",
    "read_only": 1
   },
   {
@@ -211,7 +209,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-16 15:52:24.468404",
+ "modified": "2024-01-01 10:56:59.951283",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Cashier Shift",
