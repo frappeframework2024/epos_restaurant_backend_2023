@@ -34,6 +34,7 @@ def get_columns(filters):
 		{"label":"Doc. #", "fieldname":"name","fieldtype":"Link","options":"Membership", "align":"center",},
 		{"label":"Member", "fieldname":"member","fieldtype":"Data","align":"left","width":150},
 		{"label":"Membership", "fieldname":"membership","fieldtype":"Data","align":"left"},
+		{"label":"Phone", "fieldname":"phone_number","fieldtype":"Data","align":"left"},
 		{"label":"Register",  "fieldname":"posting_date","fieldtype":"Date", "align":"center",},
 		{"label":"Duration", "fieldname":"duration_type","fieldtype":"Data","align":"left"},
 		{"label":"Start", "fieldname":"start_date","fieldtype":"Date","align":"center"},
@@ -78,6 +79,7 @@ def get_report_data(filters):
 				m.name,
 				m.customer,
 				concat(m.customer,' ~ ', m.member_name) as member,
+				concat(coalesce(c.phone_number,''),'-',coalesce(c.phone_number_2,'')) as phone_number,
 				m.membership,
 				m.membership_type,
 				m.duration_type,
@@ -92,6 +94,7 @@ def get_report_data(filters):
 				m.total_paid,
 				m.balance
 			from `tabMembership`   as m
+			inner join `tabCustomer` as c on m.customer = c.name
 			where m.docstatus != 2
 			{}""".format(get_conditions(filters))	
 	 
