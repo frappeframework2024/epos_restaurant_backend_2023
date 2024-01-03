@@ -78,8 +78,8 @@ def get_report_data(filters):
 	sql = """select 	
 				m.name,
 				m.customer,
-				concat(m.customer,' ~ ', m.member_name) as member,
-				concat(coalesce(c.phone_number,''),'-',coalesce(c.phone_number_2,'')) as phone_number,
+				concat(m.customer,' ', m.member_name) as member,
+				concat(coalesce(c.phone_number,''),' / ',coalesce(c.phone_number_2,'')) as phone_number,
 				m.membership,
 				m.membership_type,
 				m.duration_type,
