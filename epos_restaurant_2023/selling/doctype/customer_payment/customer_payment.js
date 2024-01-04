@@ -15,8 +15,7 @@ frappe.ui.form.on("Customer Payment", {
             filters: {
                 balance: ['>',0]
             }
-        }).then((data)=>{
-            console.log(data)
+        }).then((data)=>{ 
             frm.add_child('payment_invoice', {
                 invoice:data.name
             }).then((res)=>{

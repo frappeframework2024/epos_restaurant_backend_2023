@@ -5,6 +5,7 @@ import { noteDialog,changeTaxSettingModal,SaleProductComboMenuGroupModal, keyboa
 import { createToaster } from "@meforma/vue-toaster";
 import socket from '@/utils/socketio';
 import { FrappeApp } from 'frappe-js-sdk';
+import NumberFormat from 'number-format.js'
 
 const frappe = new FrappeApp();
 const { t: $t } = i18n.global;
@@ -822,7 +823,7 @@ export default class Sale {
                                     let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
                                     let msg = `${v.user} delete item: ${item_description}`; 
                                     msg += `, Qty: ${quantity}`;
-                                    msg += `, Amount: ${ numberFormat(gv.getCurrnecyFormat,sp.amount)}`;
+                                    msg += `, Amount: ${ NumberFormat(gv.getCurrnecyFormat,sp.amount)}`;
                                     msg += `${(sp.deleted_item_note||"")==""?'':', Reason: '+sp.deleted_item_note }`;
                                     this.auditTrailLogs.push({
                                         doctype:"Comment",
@@ -1008,7 +1009,7 @@ export default class Sale {
                             }
                         }
                     });
-                    
+
                 }
                 else{  
                     this.sale.discount = result.discount;
@@ -1017,7 +1018,7 @@ export default class Sale {
                                    
 
                     //sale discount audit
-                    let discount =  this.sale.discount_type =="Percent"? `${ this.sale.discount} %` : numberFormat(gv.getCurrnecyFormat, this.sale.discount);                //audit trail
+                    let discount =  this.sale.discount_type =="Percent"? `${ this.sale.discount} %` : NumberFormat(gv.getCurrnecyFormat, this.sale.discount);                //audit trail
                     let msg = `${this.sale.temp_discount_by} discount (${discount}) on Bill`;          
                     msg += `${( result.discount_note||"")==""?'':', Reason: '+ result.discount_note }`;
                     this.auditTrailLogs.push({
@@ -1040,7 +1041,7 @@ export default class Sale {
 
 
     onDiscountSaleProductAudit(sp,gv,result){
-        let discount = sp.discount_type =="Percent"? `${sp.discount} %` : numberFormat(gv.getCurrnecyFormat,sp.discount);                //audit trail
+        let discount = sp.discount_type =="Percent"? `${sp.discount} %` : NumberFormat(gv.getCurrnecyFormat,sp.discount);                //audit trail
         let item_description=`${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
         let msg = `${sp.temp_discount_by} discount (${discount}) on item: ${item_description} `;          
         msg += `${( result.discount_note||"")==""?'':', Reason: '+ result.discount_note }`;
