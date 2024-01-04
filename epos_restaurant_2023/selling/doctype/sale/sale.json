@@ -807,6 +807,7 @@
    "label": "Card"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "custom_bill_number",
    "fieldtype": "Data",
    "label": "Bill Number"
@@ -903,7 +904,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2023-12-21 08:42:36.934981",
+ "modified": "2024-01-04 15:29:20.375610",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",
