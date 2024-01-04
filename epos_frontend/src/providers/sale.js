@@ -1008,6 +1008,7 @@ export default class Sale {
                             }
                         }
                     });
+                    
                 }
                 else{  
                     this.sale.discount = result.discount;
