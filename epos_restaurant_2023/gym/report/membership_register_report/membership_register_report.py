@@ -32,9 +32,10 @@ def validate(filters):
 def get_columns(filters):
 	return [
 		{"label":"Doc. #", "fieldname":"name","fieldtype":"Link","options":"Membership", "align":"center",},
+		{"label":"Code", "fieldname":"customer","fieldtype":"Data","align":"left","width":100},
 		{"label":"Member", "fieldname":"member","fieldtype":"Data","align":"left","width":150},
 		{"label":"Membership", "fieldname":"membership","fieldtype":"Data","align":"left"},
-		{"label":"Phone", "fieldname":"phone_number","fieldtype":"Data","align":"left"},
+		{"label":"Phone", "fieldname":"phone_number","fieldtype":"Data","align":"left","width":150},
 		{"label":"Register",  "fieldname":"posting_date","fieldtype":"Date", "align":"center",},
 		{"label":"Duration", "fieldname":"duration_type","fieldtype":"Data","align":"left"},
 		{"label":"Start", "fieldname":"start_date","fieldtype":"Date","align":"center"},
@@ -67,8 +68,10 @@ def get_conditions(filters):
 			sort_by = "posting_date"
 			if filters.sort_by == "Date":
 				sort_by = "posting_date"
-			elif filters.sort_by == "Member":
+			elif filters.sort_by == "Member Code":
 				sort_by = "customer"
+			elif filters.sort_by == "Member":
+				sort_by = "member_name"
 
 			conditions += " order by {} {}".format(sort_by,filters.sort_type)
 
@@ -78,7 +81,7 @@ def get_report_data(filters):
 	sql = """select 	
 				m.name,
 				m.customer,
-				concat(m.customer,' ', m.member_name) as member,
+				m.member_name as member,
 				concat(coalesce(c.phone_number,''),' / ',coalesce(c.phone_number_2,'')) as phone_number,
 				m.membership,
 				m.membership_type,

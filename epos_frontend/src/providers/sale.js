@@ -1012,7 +1012,8 @@ export default class Sale {
                 else{  
                     this.sale.discount = result.discount;
                     this.sale.discount_type = result.discount_type;
-                    this.sale.discount_note = result.discount_note;                    
+                    this.sale.discount_note = result.discount_note;     
+                                   
 
                     //sale discount audit
                     let discount =  this.sale.discount_type =="Percent"? `${ this.sale.discount} %` : numberFormat(gv.getCurrnecyFormat, this.sale.discount);                //audit trail
@@ -1031,7 +1032,7 @@ export default class Sale {
                     }); 
                 }
             }
-            this.updateSaleSummary()
+            this.updateSaleSummary();
         }
         this.dialogActiveState=false;
     }

@@ -29,7 +29,7 @@ frappe.query_reports["Membership Register Report"] = {
 			"fieldname": "sort_by",
 			"label": __("Sort By"),
 			"fieldtype": "Select",
-			"options": "Member\nDate",
+			"options": "Member\nMember Code\nDate",
 			"default":"Date"
 		},
 		{
