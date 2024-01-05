@@ -117,15 +117,6 @@
   "name": "$1.00"
  },
  {
-  "commission_title": "$2.00",
-  "commission_value": 2.0,
-  "docstatus": 0,
-  "doctype": "Predefine SPA Commission Code",
-  "is_standard": 1,
-  "modified": "2023-10-11 09:37:41.621294",
-  "name": "$2.00"
- },
- {
   "commission_title": "$3.00",
   "commission_value": 3.0,
   "docstatus": 0,
@@ -142,5 +133,14 @@
   "is_standard": 1,
   "modified": "2023-10-11 09:37:32.417778",
   "name": "$1.50"
+ },
+ {
+  "commission_title": "$2.00",
+  "commission_value": 2.0,
+  "docstatus": 0,
+  "doctype": "Predefine SPA Commission Code",
+  "is_standard": 1,
+  "modified": "2023-10-11 09:37:41.621294",
+  "name": "$2.00"
  }
 ]

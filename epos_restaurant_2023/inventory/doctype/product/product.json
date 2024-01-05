@@ -550,7 +550,6 @@
    "default": "0",
    "fieldname": "is_require_employee",
    "fieldtype": "Check",
-   "hidden": 1,
    "label": "Is Require Employee"
   },
   {
@@ -565,7 +564,7 @@
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2023-12-23 10:12:33.725351",
+ "modified": "2024-01-04 17:00:37.142048",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Product",
