@@ -202,3 +202,16 @@ def get_recent_checked_ins(limit=15):
     order by i.creation desc limit {}""".format(today,limit)
     docs = frappe.db.sql(query,as_dict=1)
     return docs
+
+
+## get trainer link option report
+@frappe.whitelist()
+def get_trainer_link_option(name):
+    data = frappe.db.get_list("Trainer",fields=["name","trainer_name_en","trainer_name_kh","phone_numnber"])
+    if data:
+        result = []
+        for d in data:
+            name = d.trainer_name_en if d.trainer_name_kh == d.trainer_name_en else '{}-{}'.format(d.trainer_name_kh,d.trainer_name_en)
+            result.append({"value":d.name,'label':d.trainer_name_en,"description": '{}, {}'.format(name,d.phone_numnber)})
+        return result
+    return None

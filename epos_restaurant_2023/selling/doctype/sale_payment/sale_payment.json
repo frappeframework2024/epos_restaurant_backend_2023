@@ -396,7 +396,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-12-21 15:22:34.227135",
+ "modified": "2024-01-06 09:37:43.518771",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Payment",
@@ -445,5 +445,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1
 }

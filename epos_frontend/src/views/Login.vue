@@ -8,7 +8,7 @@
             <div
               class="app-info w-96 inline-block text-center rounded-lg pa-4 bg-gradient-to-t from-yellow-900 to-yellow-700 text-white shadow-sm">
               <div class="mb-3">
-                <img class="my-0 mx-auto" :src="setting?.logo" />
+                <img class="my-0 mx-auto" :src="setting?.logo" style="max-height: 150px;" />
               </div>
               <h1 class="font-bold mb-3">{{ setting?.app_name }}</h1>
               <v-divider></v-divider>

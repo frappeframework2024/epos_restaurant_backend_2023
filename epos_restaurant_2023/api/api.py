@@ -1014,3 +1014,5 @@ def update_pos_reservation_and_sale_payment(reservation_name,reservation_status,
         _sale_payment.sale = sale
         _sale_payment.save()
     frappe.db.commit()
+
+

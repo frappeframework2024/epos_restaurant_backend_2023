@@ -16,6 +16,7 @@
   "show_in_summary",
   "summary_indicator",
   "show_in_chart",
+  "show_in_chart_when_no_fields_selected",
   "align"
  ],
  "fields": [
@@ -90,12 +91,18 @@
    "fieldtype": "Select",
    "label": "Align",
    "options": "left\nright\ncenter"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_in_chart_when_no_fields_selected",
+   "fieldtype": "Check",
+   "label": "Show in Chart when No Fields Selected"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-12-25 10:06:28.115283",
+ "modified": "2024-01-06 11:59:51.941468",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Report Configuration Fields",

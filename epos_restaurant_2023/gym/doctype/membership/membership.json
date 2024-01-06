@@ -15,6 +15,10 @@
   "customer",
   "photo",
   "member_name",
+  "member_name_kh",
+  "gender",
+  "phone_number_1",
+  "phone_number_2",
   "duration_type",
   "membership_duration",
   "column_break_qwqf",
@@ -25,7 +29,18 @@
   "end_date",
   "tracking_limited",
   "max_access",
+  "note",
+  "trainer_section",
   "personal_trainer",
+  "trainer_name_en",
+  "trainer_name_kh",
+  "trainer_phone",
+  "trainer_gender",
+  "trainer_email",
+  "time_training",
+  "trainer_photo",
+  "column_break_ojpw",
+  "trainer_note",
   "pricing_section",
   "regular_price",
   "price",
@@ -105,6 +120,7 @@
    "label": "Duration Base on"
   },
   {
+   "allow_on_submit": 1,
    "default": "Today",
    "fieldname": "start_date",
    "fieldtype": "Date",
@@ -112,6 +128,7 @@
    "label": "Start Date"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "end_date",
    "fieldtype": "Date",
    "hidden": 1,
@@ -276,6 +293,7 @@
    "label": "Total Discount"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "personal_trainer",
    "fieldtype": "Link",
    "label": "Personal Trainer",
@@ -303,6 +321,117 @@
    "fieldtype": "Currency",
    "hidden": 1,
    "label": "Regular Price"
+  },
+  {
+   "fetch_from": "customer.customer_name_kh",
+   "fieldname": "member_name_kh",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Member Name Kh"
+  },
+  {
+   "fetch_from": "customer.gender",
+   "fieldname": "gender",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Gender"
+  },
+  {
+   "fetch_from": "customer.phone_number",
+   "fieldname": "phone_number_1",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Phone Number 1"
+  },
+  {
+   "fetch_from": "customer.phone_number_2",
+   "fieldname": "phone_number_2",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Phone Number 2"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
+  },
+  {
+   "fieldname": "trainer_section",
+   "fieldtype": "Section Break",
+   "label": "Trainer"
+  },
+  {
+   "allow_on_submit": 1,
+   "fetch_from": "personal_trainer.trainer_name_en",
+   "fieldname": "trainer_name_en",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Trainer Name En"
+  },
+  {
+   "allow_on_submit": 1,
+   "fetch_from": "personal_trainer.trainer_name_kh",
+   "fieldname": "trainer_name_kh",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Trainer Name Kh"
+  },
+  {
+   "allow_on_submit": 1,
+   "fetch_from": "personal_trainer.phone_number",
+   "fieldname": "trainer_phone",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Trainer Phone"
+  },
+  {
+   "allow_on_submit": 1,
+   "fetch_from": "personal_trainer.gender",
+   "fieldname": "trainer_gender",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Trainer Gender"
+  },
+  {
+   "allow_on_submit": 1,
+   "fetch_from": "personal_trainer.email_id",
+   "fieldname": "trainer_email",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Trainer Email"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "trainer_photo",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Trainer Photo"
+  },
+  {
+   "fieldname": "column_break_ojpw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "time_training",
+   "fieldtype": "Link",
+   "label": "Time Training",
+   "options": "GYM Training Time"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "trainer_note",
+   "fieldtype": "Small Text",
+   "label": "Trainer Note"
   }
  ],
  "image_field": "photo",
@@ -315,7 +444,7 @@
    "link_fieldname": "membership"
   }
  ],
- "modified": "2023-11-29 15:55:41.432755",
+ "modified": "2024-01-06 10:41:45.549474",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership",
@@ -347,39 +476,21 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Sales Manager",
-   "share": 1,
-   "submit": 1,
-   "write": 1
-  },
-  {
-   "amend": 1,
-   "cancel": 1,
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Sales Master Manager",
-   "share": 1,
-   "submit": 1,
-   "write": 1
-  },
-  {
-   "amend": 1,
-   "cancel": 1,
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
    "role": "Sales User",
    "share": 1,
    "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "GYM User",
+   "share": 1,
    "write": 1
   }
  ],
@@ -388,5 +499,6 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "membership"
+ "title_field": "membership",
+ "track_changes": 1
 }
