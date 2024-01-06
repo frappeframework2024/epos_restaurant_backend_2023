@@ -34,6 +34,7 @@ frappe.query_reports["Membership Register Report"] = {
 		{
 			"fieldname": "personal_trainer",
 			"label": __("Trainer"),
+			
 			"fieldtype": "MultiSelectList",
 			get_data: function(txt) {
 				frappe.call({

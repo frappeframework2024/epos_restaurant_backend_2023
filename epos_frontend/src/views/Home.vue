@@ -1,7 +1,7 @@
 <template>
     <div> 
         <div class="h-60 bg-no-repeat bg-cover"
-            v-bind:style="{ 'background-image': 'url(' + gv.setting.home_background + ')' }">
+            v-bind:style="{ 'background-image': 'url(' + gv.setting.home_background + ')','background-position':'center' }">
             <div class="wrap-overlay w-full h-full flex items-end justify-center">
                 <div>
                     <div class="text-center text-white mb-3">

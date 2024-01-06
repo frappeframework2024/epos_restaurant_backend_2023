@@ -207,11 +207,14 @@ def get_recent_checked_ins(limit=15):
 ## get trainer link option report
 @frappe.whitelist()
 def get_trainer_link_option(name):
-    data = frappe.db.get_list("Trainer",fields=["name","trainer_name_en","trainer_name_kh","phone_numnber"])
+    data = frappe.db.get_list("Trainer",fields=["name","trainer_name_en","trainer_name_kh","phone_number"])
     if data:
         result = []
         for d in data:
             name = d.trainer_name_en if d.trainer_name_kh == d.trainer_name_en else '{}-{}'.format(d.trainer_name_kh,d.trainer_name_en)
-            result.append({"value":d.name,'label':d.trainer_name_en,"description": '{}, {}'.format(name,d.phone_numnber)})
+            description = name
+            if d.phone_number:
+                description = '{}, {}'.format(name,d.phone_number)
+            result.append({"value":d.name,'label':d.trainer_name_en,"description": description})
         return result
     return None

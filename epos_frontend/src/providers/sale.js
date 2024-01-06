@@ -887,7 +887,8 @@ export default class Sale {
                 this.updateSaleSummary();
             }
             else { 
-                let freeSaleProduct = JSON.parse(JSON.stringify(sp))
+                let freeSaleProduct = JSON.parse(JSON.stringify(sp));
+                freeSaleProduct.name = "";
                 freeSaleProduct.quantity = freeQty;
                 freeSaleProduct.backup_product_price = sp.price
                 freeSaleProduct.backup_modifier_price = sp.modifiers_price
