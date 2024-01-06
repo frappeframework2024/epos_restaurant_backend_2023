@@ -115,8 +115,7 @@ class Sale(Document):
 		#validate sale product 
 		validate_sale_product(self)
 
-		#add sale product spa commission
-		add_sale_product_spa_commission(self)
+		
   
 		validate_pos_payment(self)
 		#validate sale summary
@@ -218,7 +217,12 @@ class Sale(Document):
 			self.sale_status_color = frappe.get_value("Sale Status","Closed","background_color")
 
 	def on_update(self):
-		pass
+		#add sale product spa commission
+		add_sale_product_spa_commission(self)
+
+	def after_insert(self):
+		#add sale product spa commission
+		add_sale_product_spa_commission(self)
 
 	def before_submit(self):
 		on_get_revenue_account_code(self)
