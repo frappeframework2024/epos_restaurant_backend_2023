@@ -169,7 +169,7 @@ const employees_selected = ref([])
 onMounted(async ()=>{
     employee_list.value = await  db.getDocList('Employee',{
                         fields: ['name', 'employee_name'],
-                        filters: [['disabled', '=', 0]],
+                        filters: [['disabled', '=', 0],['show_in_pos_assign_employee', '=', 1]],
                         limit: 250
                         }) 
 

@@ -13,6 +13,7 @@
   "date_of_birth",
   "column_break_4",
   "gender",
+  "show_in_pos_assign_employee",
   "disabled",
   "contact_information_section",
   "phone_number_1",
@@ -334,12 +335,18 @@
    "fieldtype": "Link",
    "label": "POS Permission",
    "options": "POS User Permission"
+  },
+  {
+   "default": "1",
+   "fieldname": "show_in_pos_assign_employee",
+   "fieldtype": "Check",
+   "label": "Show In POS Assign Employee"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-28 09:07:46.889103",
+ "modified": "2024-01-06 14:37:59.035593",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee",
