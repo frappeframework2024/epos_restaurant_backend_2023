@@ -26,7 +26,7 @@ frappe.query_reports["Membership Register Report"] = {
 			// "options":"Customer",
 			"fieldtype": "MultiSelectList",
 			get_data: function(txt) {
-				return frappe.db.get_link_options('Customer', txt,{"disabled": ['in',[1,0]]});
+				return frappe.db.get_link_options('Customer', txt);
 			},
 			"on_change": function (query_report) { },
 			
@@ -34,20 +34,9 @@ frappe.query_reports["Membership Register Report"] = {
 		{
 			"fieldname": "personal_trainer",
 			"label": __("Trainer"),
-			
 			"fieldtype": "MultiSelectList",
 			get_data: function(txt) {
-				frappe.call({
-					"method": 'epos_restaurant_2023.api.gym.get_trainer_link_option',
-					"args": {
-						"name": txt
-					},
-					callback: function (r) {
-						console.log(r)
-					}
-				});
-				const data = frappe.db.get_link_options('Trainer', txt,{"disabled": ['in',[0]]})
-				return data;
+				return frappe.db.get_link_options('Trainer', txt);
 			},
 			"on_change": function (query_report) { },
 			
@@ -78,16 +67,42 @@ frappe.query_reports["Membership Register Report"] = {
 				query_report.toggle_filter_display('end_date', is_all_transaction === 1 );
 				query_report.toggle_filter_display('start_date', is_all_transaction === 1 );				
 			}, 
+		},
+		{
+			"fieldname": "is_none_trainer",
+			"label": __("None Trainer"),
+			"fieldtype": "Check",
+			"default":"0"		,
+			"on_change": function (query_report) { 
+				let is_none_trainer = query_report.get_filter_value('is_none_trainer');
+				query_report.toggle_filter_display('personal_trainer', is_none_trainer === 1 );			
+			}, 
 		}
 	],
 	onload: function (report) {
 		report.page.add_inner_button("Preview Report", function () {
 			frappe.query_report.refresh();
 		});
+		
 
 		let is_all_transaction = report.get_filter_value('is_all_transaction');
-		report.toggle_filter_display('end_date', is_all_transaction === 1 );
-		report.toggle_filter_display('start_date', is_all_transaction === 1 );
+		if(is_all_transaction==1){
+			report.toggle_filter_display('end_date', is_all_transaction === 1 );
+			report.toggle_filter_display('start_date', is_all_transaction === 1 );
+		}else{
+			report.toggle_filter_display('end_date', is_all_transaction === 0 );
+			report.toggle_filter_display('start_date', is_all_transaction === 0 );
+		}
+
+		let is_none_trainer = report.get_filter_value('is_none_trainer'); 
+		if(is_none_trainer==1){
+			report.toggle_filter_display('personal_trainer', is_none_trainer === 0 );	
+		}else{
+			report.toggle_filter_display('personal_trainer', is_none_trainer === 1 );	
+		}
+		
 		report.refresh();
 	},
 };
+
+

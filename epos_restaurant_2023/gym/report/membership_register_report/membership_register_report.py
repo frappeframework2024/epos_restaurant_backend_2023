@@ -64,8 +64,11 @@ def get_conditions(filters):
 		start_date = filters.start_date
 		end_date = filters.end_date
 		conditions += " AND m.posting_date between '{}' AND '{}'".format(start_date,end_date)
-	if filters.get("personal_trainer"):
-		conditions += " AND m.personal_trainer in %(personal_trainer)s"
+	if not filters.is_none_trainer:
+		if filters.get("personal_trainer"):
+			conditions += " AND m.personal_trainer in %(personal_trainer)s"
+	else:
+		conditions += " AND coalesce(m.personal_trainer,'') = ''"
 
 	if filters.get("customer"):
 		conditions += " AND m.customer in %(customer)s"

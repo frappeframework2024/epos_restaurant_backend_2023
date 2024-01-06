@@ -16,7 +16,7 @@
   "gender",
   "phone_number",
   "email_id",
-  "disabled"
+  "is_disabled"
  ],
  "fields": [
   {
@@ -71,7 +71,7 @@
   },
   {
    "default": "0",
-   "fieldname": "disabled",
+   "fieldname": "is_disabled",
    "fieldtype": "Check",
    "label": "Disabled"
   }
@@ -79,7 +79,7 @@
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-01-06 10:48:15.210483",
+ "modified": "2024-01-06 17:12:00.886894",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Trainer",
