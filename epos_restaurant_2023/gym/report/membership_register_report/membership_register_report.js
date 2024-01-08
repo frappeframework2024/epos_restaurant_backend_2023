@@ -89,8 +89,7 @@ frappe.query_reports["Membership Register Report"] = {
 			report.toggle_filter_display('end_date', true );
 			report.toggle_filter_display('start_date', true);
 		}
-
-		is_all_transaction = report.get_filter_value('is_all_transaction');
+		
 		let is_none_trainer = report.get_filter_value('is_none_trainer'); 
 		if(is_none_trainer==0){
 			report.toggle_filter_display('personal_trainer', false );	
