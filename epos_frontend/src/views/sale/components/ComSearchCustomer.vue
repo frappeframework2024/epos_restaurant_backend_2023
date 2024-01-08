@@ -19,7 +19,7 @@
       <div class="px-4 pb-4">
         <ComPlaceholder :loading="customerResource.loading" :is-not-empty="customerResource.data"
           :text="$t('msg.There is not customer')" icon="mdi-account-outline">
-          <v-card v-for="(c, index) in customerResource.data.filter(r=>r.disabled == 0)" :key="index" :title="c.customer_name_en"
+          <v-card v-for="(c, index) in customerResource.data.filter(r=>(r.is_disabled||0) == 0)" :key="index" :title="c.customer_name_en"
             @click="onSelectCustomer(c)" class="mb-4">
             <template v-slot:subtitle>
               {{ c.name }}
@@ -128,7 +128,7 @@
   function getDataResourceParams (){
     return {  
         doctype: "Customer",
-        fields: ["name", "customer_name_en", "customer_name_kh", "customer_group", "date_of_birth", "gender", "phone_number", "photo", "default_discount","disabled"],
+        fields: ["name", "customer_name_en", "customer_name_kh", "customer_group", "date_of_birth", "gender", "phone_number", "photo", "default_discount","is_disabled"],
         order_by: "modified desc",
         or_filters: getFilter(),
         limit_page_length: 20
