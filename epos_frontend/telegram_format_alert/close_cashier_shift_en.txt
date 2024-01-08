@@ -40,7 +40,7 @@ CASH DRAWSER
     ______________{% if open_amount > 0%}
     {{_("Total Start Amount")}}: {{frappe.format_value(doc.total_opening_amount, "Currency")}} {%endif%}
     {{_("Total Cash Sale")}}: {{frappe.format_value(cash_sale[0].payment_amount, "Currency")}}
-                                 = {{frappe.utils.fmt_money((cash_sale[0].payment_amount) * exch[0].exchange_rate, currency=second_currency.name, precision=second_currency.custom_currency_precision)}}
+                                 = {{frappe.utils.fmt_money(((cash_sale[0].payment_amount) or 0) * (exch[0].exchange_rate or 0), currency=second_currency.name, precision=second_currency.custom_currency_precision)}}
     {% if doc.cash_float | selectattr("payment_type_group", "equalto", 'Cash')  | sum(attribute='close_amount') %}______________
     {{_("Closed Amount")}}: {{frappe.format_value(doc.cash_float | selectattr("payment_type_group", "equalto", 'Cash') | sum(attribute='close_amount'), "Currency")}} 
                                  = {{frappe.utils.fmt_money((doc.cash_float | selectattr("payment_type_group", "equalto", 'Cash') | sum(attribute='close_amount')) * exch[0].exchange_rate, currency=second_currency.name, precision=second_currency.custom_currency_precision)}}{% endif %}

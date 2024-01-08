@@ -11,7 +11,7 @@ Save
 *** Message Query ***
 
 {% set bus = frappe.get_doc('Business Information') %} {% set exch = frappe.db.sql("select exchange_rate,exchange_rate_input,to_currency,from_currency from `tabCurrency Exchange` where posting_date <= '{}' and from_currency <> to_currency order by posting_date  desc limit 1".format(doc.posting_date),as_dict=1) %}
-ពត៌មានបិទវេណ {%set main_currency = frappe.get_doc("Currency",frappe.db.get_default("currency"))%} {%set second_currency = frappe.get_doc("Currency",frappe.db.get_default("second_currency"))%} {% set data=frappe.db.sql("select name,grand_total,tbl_number from `tabSale` where cashier_shift='{}' and docstatus=1".format(doc.name),as_dict=1) %}
+ពត៌មានបិទវេណ {%set main_currency = frappe.get_doc("Currency",frappe.db.get_default("currency"))%} {%set second_currency = frappe.get_doc("Currency",frappe.db.get_default("second_currency"))%} {% set data=frappe.db.sql("select name,custom_bill_number,grand_total,tbl_number from `tabSale` where cashier_shift='{}' and docstatus=1".format(doc.name),as_dict=1) %}
   អ្នកបើកវេណ: {{frappe.db.get_value('User',doc.owner,'full_name')}}
   ថ្ងៃបើកវេណ: {{frappe.format(doc.creation,{"fieldtype":"Datetime"})}}
   អ្នកបិទវេណ: {{frappe.db.get_value('User',doc.modified_by,'full_name')}}
@@ -40,7 +40,7 @@ Save
     {{_("សរុបប្រាក់អាប់")}}: {{frappe.format_value(doc.total_opening_amount, "Currency")}} {%endif%}
     {% for t in cash_transactions %}{{t.transaction_status}}({{t.currency}}): {{frappe.utils.fmt_money(t.total_amount,currency=t.currency)}} {%endfor%}
     {{_("សរុបប្រាក់លក់បាន")}}: {{frappe.format_value(cash_sale[0].payment_amount, "Currency")}}
-                                 = {{frappe.utils.fmt_money((cash_sale[0].payment_amount) * exch[0].exchange_rate, currency=second_currency.name, precision=second_currency.custom_currency_precision)}}
+                                 = {{frappe.utils.fmt_money(((cash_sale[0].payment_amount) or 0) * (exch[0].exchange_rate or 0), currency=second_currency.name, precision=second_currency.custom_currency_precision)}}
     {% if doc.cash_float | selectattr("payment_type_group", "equalto", 'Cash')  | sum(attribute='close_amount') %}------------------------
     {{_("សរុបប្រាក់បិតបញ្ជី")}}: {{frappe.format_value(doc.cash_float | selectattr("payment_type_group", "equalto", 'Cash') | sum(attribute='close_amount'), "Currency")}} 
                                  = {{frappe.utils.fmt_money((doc.cash_float | selectattr("payment_type_group", "equalto", 'Cash') | sum(attribute='close_amount')) * exch[0].exchange_rate, currency=second_currency.name, precision=second_currency.custom_currency_precision)}}{% endif %}
@@ -60,4 +60,3 @@ Save
 {% endif %}
 ========================
 {{bus.business_name_en}}
-
