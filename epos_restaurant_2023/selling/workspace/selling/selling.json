@@ -313,7 +313,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-12-28 09:02:05.895439",
+ "modified": "2024-01-08 10:22:23.714954",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Selling",
@@ -359,6 +359,14 @@
    "type": "DocType"
   },
   {
+   "color": "Cyan",
+   "doc_view": "List",
+   "label": "Customer",
+   "link_to": "Customer",
+   "stats_filter": "[[\"Customer\",\"is_disabled\",\"=\",0,false]]",
+   "type": "DocType"
+  },
+  {
    "color": "Grey",
    "doc_view": "List",
    "label": "Reservation Booking",
@@ -396,14 +404,6 @@
    "label": "Sale Quotation",
    "link_to": "Sale Quotation",
    "stats_filter": "{\"posting_date\":[\"Timespan\",\"this month\"]}",
-   "type": "DocType"
-  },
-  {
-   "color": "Cyan",
-   "doc_view": "List",
-   "label": "Customer",
-   "link_to": "Customer",
-   "stats_filter": "{\"disabled\":[\"=\",0]}",
    "type": "DocType"
   },
   {
