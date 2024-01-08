@@ -145,10 +145,10 @@ function onBack(parent) {
     product.parentMenu = parent_menu;
 }
 async function onClickProduct() {
-  
     if (!sale.isBillRequested()) {
       
         const p = JSON.parse(JSON.stringify(props.data));
+        alert(p.is_timer_product)
         
         if (p.is_open_product == 1) {
          

@@ -80,28 +80,29 @@ frappe.query_reports["Membership Register Report"] = {
 		}
 	],
 	onload: function (report) {
+		let is_all_transaction = report.get_filter_value('is_all_transaction');
+		if(is_all_transaction==0){
+			report.toggle_filter_display('end_date', false );
+			report.toggle_filter_display('start_date', false);
+		}else{
+			
+			report.toggle_filter_display('end_date', true );
+			report.toggle_filter_display('start_date', true);
+		}
+
+		is_all_transaction = report.get_filter_value('is_all_transaction');
+		let is_none_trainer = report.get_filter_value('is_none_trainer'); 
+		if(is_none_trainer==0){
+			report.toggle_filter_display('personal_trainer', false );	
+		}else{
+			report.toggle_filter_display('personal_trainer',true );	
+		}
+
+
 		report.page.add_inner_button("Preview Report", function () {
-			frappe.query_report.refresh();
+			report.refresh();
 		});
 		
-
-		let is_all_transaction = report.get_filter_value('is_all_transaction');
-		if(is_all_transaction==1){
-			report.toggle_filter_display('end_date', is_all_transaction === 1 );
-			report.toggle_filter_display('start_date', is_all_transaction === 1 );
-		}else{
-			report.toggle_filter_display('end_date', is_all_transaction === 0 );
-			report.toggle_filter_display('start_date', is_all_transaction === 0 );
-		}
-
-		let is_none_trainer = report.get_filter_value('is_none_trainer'); 
-		if(is_none_trainer==1){
-			report.toggle_filter_display('personal_trainer', is_none_trainer === 0 );	
-		}else{
-			report.toggle_filter_display('personal_trainer', is_none_trainer === 1 );	
-		}
-		
-		report.refresh();
 	},
 };
 

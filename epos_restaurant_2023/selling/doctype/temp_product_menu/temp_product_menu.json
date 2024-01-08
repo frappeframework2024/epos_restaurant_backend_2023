@@ -23,6 +23,7 @@
   "is_open_product",
   "append_quantity",
   "is_require_employee",
+  "is_timer_product",
   "sort_order",
   "printers",
   "prices",
@@ -214,15 +215,22 @@
   },
   {
    "default": "0",
-   "fetch_from": "product_code.is_require_employee",
+   "fetch_from": "product_code.is_timer_product",
    "fieldname": "is_require_employee",
    "fieldtype": "Check",
    "label": "Is Require Employee"
+  },
+  {
+   "default": "0",
+   "fetch_from": "product_code.is_require_employee",
+   "fieldname": "is_timer_product",
+   "fieldtype": "Check",
+   "label": "Is Timer Product"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-06 14:35:03.922887",
+ "modified": "2024-01-07 13:59:14.906313",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Temp Product Menu",

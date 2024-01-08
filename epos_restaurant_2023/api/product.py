@@ -92,6 +92,7 @@ def get_products(parent_menu):
                 is_open_product,
                 is_inventory_product,
                 is_require_employee,
+                is_timer_product,
                 prices,
                 printers,
                 modifiers,
