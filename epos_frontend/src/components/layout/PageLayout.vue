@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-toolbar color="transparent" elevation="0">
+        <v-toolbar color="transparent" elevation="0" style="height:45px;" >
             <v-toolbar-title :class="mobile?'!text-sm':''">
                 <v-icon :size="mobile ?'small' : 'default'" v-if="icon!=''">{{ icon }}</v-icon>
                 {{ title }}
@@ -14,7 +14,7 @@
             </v-toolbar-items>
         </v-toolbar>
         <v-divider></v-divider>
-        <div :class="full ? 'page-full' : 'page-container'" class="mx-auto mt-4 mb-0">
+        <div :class="full ? 'page-full' : 'page-container'" class="mx-auto mt-2 mb-0">
             <slot name="default"></slot>
         </div>
     </div>
@@ -43,7 +43,7 @@ const props = defineProps({
         width: 100%;
     }
     .page-full {
-        max-width: calc(100% - 32px);
+        max-width: calc(100% - 10px);
         width: 100%;
     }
 </style>

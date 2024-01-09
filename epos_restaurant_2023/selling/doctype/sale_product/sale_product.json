@@ -86,6 +86,7 @@
   "allow_change_price",
   "is_inventory_product",
   "append_quantity",
+  "is_timer_product",
   "cost",
   "product_photo",
   "note",
@@ -117,7 +118,10 @@
   "is_require_employee",
   "employees",
   "delete_from_pos_require_password",
-  "move_from_sale_printed"
+  "move_from_sale_printed",
+  "time_in",
+  "time_out",
+  "time_stop"
  ],
  "fields": [
   {
@@ -162,12 +166,14 @@
   },
   {
    "fetch_from": "product_code.product_name_kh",
+   "fetch_if_empty": 1,
    "fieldname": "product_name_kh",
    "fieldtype": "Data",
    "label": "Product Name Kh"
   },
   {
    "fetch_from": "product_code.product_category",
+   "fetch_if_empty": 1,
    "fieldname": "product_category",
    "fieldtype": "Link",
    "label": "Product Category",
@@ -176,6 +182,7 @@
   },
   {
    "fetch_from": "product_code.product_group",
+   "fetch_if_empty": 1,
    "fieldname": "product_group",
    "fieldtype": "Data",
    "label": "Product Group",
@@ -183,6 +190,7 @@
   },
   {
    "fetch_from": "product_code.revenue_group",
+   "fetch_if_empty": 1,
    "fieldname": "revenue_group",
    "fieldtype": "Data",
    "label": "Revenue Group",
@@ -190,6 +198,7 @@
   },
   {
    "fetch_from": "product_code.kitchen_group",
+   "fetch_if_empty": 1,
    "fieldname": "kitchen_group",
    "fieldtype": "Data",
    "label": "Kitchen Group",
@@ -198,6 +207,7 @@
   {
    "default": "0",
    "fetch_from": "product_code.allow_discount",
+   "fetch_if_empty": 1,
    "fieldname": "allow_discount",
    "fieldtype": "Check",
    "label": "Allow Discount"
@@ -205,6 +215,7 @@
   {
    "default": "0",
    "fetch_from": "product_code.allow_free",
+   "fetch_if_empty": 1,
    "fieldname": "allow_free",
    "fieldtype": "Check",
    "label": "Allow Free"
@@ -220,6 +231,7 @@
   {
    "default": "0",
    "fetch_from": "product_code.allow_change_price",
+   "fetch_if_empty": 1,
    "fieldname": "allow_change_price",
    "fieldtype": "Check",
    "label": "Allow Change Price"
@@ -227,6 +239,7 @@
   {
    "default": "0",
    "fetch_from": "product_code.is_inventory_product",
+   "fetch_if_empty": 1,
    "fieldname": "is_inventory_product",
    "fieldtype": "Check",
    "label": "Is Inventory Product"
@@ -534,6 +547,7 @@
   {
    "default": "1",
    "fetch_from": "product_code.append_quantity",
+   "fetch_if_empty": 1,
    "fieldname": "append_quantity",
    "fieldtype": "Check",
    "label": "Append Quantity"
@@ -804,12 +818,36 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "POS Reservation"
+  },
+  {
+   "default": "1",
+   "fetch_from": "product_code.is_timer_product",
+   "fetch_if_empty": 1,
+   "fieldname": "is_timer_product",
+   "fieldtype": "Check",
+   "label": "Is Timer Product"
+  },
+  {
+   "fieldname": "time_in",
+   "fieldtype": "Datetime",
+   "label": "Time In"
+  },
+  {
+   "fieldname": "time_out",
+   "fieldtype": "Datetime",
+   "label": "Time Out"
+  },
+  {
+   "default": "0",
+   "fieldname": "time_stop",
+   "fieldtype": "Check",
+   "label": "Time Stop"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-12-20 08:55:36.379462",
+ "modified": "2024-01-09 11:03:09.522037",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",

@@ -46,19 +46,19 @@ export default class Product {
     }
 
     getPOSMenu() {
- 
         if (this.getString(this.searchProductKeyword) == "") {
             if (this.parentMenu) {
+                
                 return this.posMenuResource.data?.filter(r => r.parent == this.parentMenu)
             }
             else {
+                
                 let defaultMenu = this.currentRootPOSMenu ? this.currentRootPOSMenu : this.setting?.default_pos_menu;
                 if (localStorage.getItem('default_menu')) {
                     defaultMenu = localStorage.getItem('default_menu')
                 }
                 //group.orderByDescending("$.order_time").toArray();
-                
-                return   Enumerable.from(this.posMenuResource.data?.filter(r => r.parent == defaultMenu)).orderBy("$.sort_order").thenBy("$.name_en");
+                return   Enumerable.from(this.posMenuResource.data?.filter(r => r.parent == defaultMenu)).orderBy("$.type_index").thenBy("$.sort_order").thenBy("$.name_en");
 
             }
         } else {

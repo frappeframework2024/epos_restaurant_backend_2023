@@ -10,7 +10,7 @@
         <template v-if="tableLayout.table_groups">
             <v-window v-model="tableLayout.tab">
                 <ComArrangeTable  v-if="tableLayout.canArrangeTable"/>
-                <ComRenderTableNumber v-else/>
+                <ComRenderTableNumber v-else :tableStatusColor="table_status_color"/>
             </v-window>
         </template> 
         <ComSaleStatusInformation v-if="(table_status_color)"/>

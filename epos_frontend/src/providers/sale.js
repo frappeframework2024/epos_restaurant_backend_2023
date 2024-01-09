@@ -246,7 +246,7 @@ export default class Sale {
         //check for append quantity rule
         //product code, allow_append_qty,price, unit,modifier, portion, is_free,sale_product_status
         //and check system have feature to send to kitchen
-        let strFilter = `$.is_require_employee==0 && $.product_code=='${p.name}' && $.append_quantity ==1 && $.price==${p.price} && $.portion=='${this.getString(p.portion)}'  && $.modifiers=='${p.modifiers}'  && $.unit=='${p.unit}' && $.is_free==0 && $.note==''`
+        let strFilter = `$.is_timer_product == 0 && $.is_require_employee==0 && $.product_code=='${p.name}' && $.append_quantity ==1 && $.price==${p.price} && $.portion=='${this.getString(p.portion)}'  && $.modifiers=='${p.modifiers}'  && $.unit=='${p.unit}' && $.is_free==0 && $.note==''`
 
         if (!this.setting?.pos_setting?.allow_change_quantity_after_submit) {
             strFilter = strFilter + ` && $.sale_product_status == 'New'`

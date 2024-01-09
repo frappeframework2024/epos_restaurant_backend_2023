@@ -21,6 +21,7 @@ def get_product_by_menu(root_menu=""):
                     price_rule,
                     photo,
                     'menu' as type,
+                    1 as type_index,
                     sort_order
                 from `tabPOS Menu` 
                 where 
@@ -29,6 +30,9 @@ def get_product_by_menu(root_menu=""):
                 order by sort_order, name
                 """.format(root_menu)
         data = frappe.db.sql(sql,as_dict=1)
+
+        
+
         for d in data:
             menus.append(d)
             
@@ -36,6 +40,9 @@ def get_product_by_menu(root_menu=""):
                 menus.append(m)
             
             for m in get_products(d.name):
+                menus.append(m)
+        
+        for m in get_products(root_menu):
                 menus.append(m)
              
         return menus
@@ -54,6 +61,7 @@ def get_child_menus(parent_menu):
                 shortcut_menu,
                 price_rule,
                 'menu' as type,
+                2 as type_index,
                 sort_order
             from `tabPOS Menu` 
             where 
@@ -98,6 +106,7 @@ def get_products(parent_menu):
                 modifiers,
                 photo,
                 'product' as type,
+                3 as type_index,
                 append_quantity,
                 is_combo_menu,
                 use_combo_group,

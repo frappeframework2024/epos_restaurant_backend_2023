@@ -25,6 +25,8 @@
   "discount_item",
   "cancel_discount_item",
   "reset_custom_bill_number_counter",
+  "change_item_time_in",
+  "change_item_time_out",
   "column_break_13",
   "start_working_day",
   "close_working_day",
@@ -182,11 +184,23 @@
    "fieldname": "cancel_discount_item",
    "fieldtype": "Check",
    "label": "Cancel Discount Item"
+  },
+  {
+   "default": "0",
+   "fieldname": "change_item_time_in",
+   "fieldtype": "Check",
+   "label": "Change Item Time In"
+  },
+  {
+   "default": "0",
+   "fieldname": "change_item_time_out",
+   "fieldtype": "Check",
+   "label": "Change Item Time Out"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-02 16:07:45.550802",
+ "modified": "2024-01-09 09:15:35.921314",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "POS User Permission",

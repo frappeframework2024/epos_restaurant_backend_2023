@@ -6,8 +6,7 @@
                 <div class="text-white">{{ $t('Back') }}</div>
             </div>
         </div>
-    </div>
-
+    </div> 
     <div v-if="data.type == 'menu'" v-ripple
         class="relative h-full bg-cover bg-no-repeat rounded-lg shadow-lg cursor-pointer overflow-auto" v-bind:style="{
                 'background-color': data.background_color,
