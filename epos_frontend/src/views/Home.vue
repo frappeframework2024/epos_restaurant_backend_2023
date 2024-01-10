@@ -24,6 +24,7 @@
                         <WorkingDayButton  v-if="device_setting?.show_start_close_working_day==1 && device_setting?.is_order_station==0"/>
                         <OpenShiftButton  v-if="device_setting?.show_start_close_cashier_shift==1 && device_setting?.is_order_station==0"/>
                         
+                        
                         <ComButton @click="onPOS()" :title="$t('POS')" icon="mdi-cart-outline" class="bg-green-600 text-white" icon-color="#fff" />
                         <ComButton @click="onViewPendingOrder()" :title="$t('Pending Order')" icon="mdi-arrange-send-backward"  icon-color="#e99417" />
 
@@ -53,7 +54,7 @@
     
 </template>
 <script setup>
-import { useRouter, computed, posReservationDialog, createToaster,pendingSaleListDialog,inject,onMounted,printWifiPasswordModal,i18n } from '@/plugin'
+import { useRouter,SelectDateTime,computed, posReservationDialog, createToaster,pendingSaleListDialog,inject,onMounted,printWifiPasswordModal,i18n } from '@/plugin'
 import ComButton from '../components/ComButton.vue';
 import WorkingDayButton from './shift/components/WorkingDayButton.vue';
 import OpenShiftButton from './shift/components/OpenShiftButton.vue';
@@ -81,7 +82,6 @@ function isWindow(){
 const device_name = computed(() => {
     return localStorage.getItem('device_name')
 }) 
-
 
 
 //on init
@@ -193,7 +193,6 @@ function onLogout() {
     })
 }
     
-
 
 
 async function onPrintWifiPassword(){

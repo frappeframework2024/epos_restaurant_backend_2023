@@ -44,7 +44,7 @@ socket.on("PrintReceipt", (arg) => {
 			window.chrome.webview.postMessage(arg);
 		}
 	}
-})
+});
 
 const router = useRouter()
 const route = useRoute()
@@ -56,12 +56,27 @@ const isSaleLayout = computed(() => {
 })
 const isLoading = computed(() => {
 	return store.state.isLoading
-})
+});
+
+
+
+
+const _device = localStorage.getItem("device_name");
+
+if(_device == null || _device == undefined){
+	localStorage.removeItem("pos_profile");
+}
 
 if (!localStorage.getItem("pos_profile")) {
-	state.isLoading = false
-	router.push({ name: 'StartupConfig' })
+	state.isLoading = false;
+	if((_device||"") !=""){
+		localStorage.removeItem("device_name");
+	}
+	
+	router.push({ name: 'StartupConfig' });
 } else {
+	localStorage.removeItem("__startup_device");
+
 	state.isLoading = true;
 	createResource({
 		url: 'epos_restaurant_2023.api.api.get_system_settings',

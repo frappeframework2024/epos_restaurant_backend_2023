@@ -18,11 +18,12 @@
                 <slot name="content"></slot>
             </v-card-text>
             <v-card-actions v-if="$slots.action || !hideCloseButton || !hideOkButton" class="justify-end flex-wrap" :class="{'!p-0' : fill}">            
-                <slot name="action"></slot>
+                
                 <template v-if="!customActions">
                     <v-btn variant="flat" @click="onClose()" color="error" :disabled="loading" v-if="!hideCloseButton">
                         {{ $t('Close') }}
                     </v-btn>
+                    <slot name="action"></slot>
                     <v-btn variant="flat" type="button" color="primary" :disabled="loading" v-if="!hideOkButton" @click="onOK()">
                         {{ titleOKButton==""?$t("Save"):$t(titleOKButton) }}
                     </v-btn>

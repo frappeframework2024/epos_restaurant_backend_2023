@@ -43,11 +43,24 @@ frappe.ui.form.on("Product", {
                 if(r.message){
                     frm.set_value('product_variants',r.message);
                 }
-
             },
             async: true,
         });
-    }  ,
+    },
+    is_timer_product: function(frm) {
+        if(frm.doc.is_timer_product == 1 && (self.doc.is_new || len(self.doc.roundup_list) == 0)){
+            frm.call({
+                method: 'generate_roundup',
+                doc:frm.doc,
+                callback:function(r){
+                    if(r.message){
+                       frm.set_value("roundup_list",r.message)
+                    }
+                },
+                async: true,
+            });
+        }	
+   }
 });
 
 function print_barcode_button(frm) {

@@ -215,14 +215,14 @@
   },
   {
    "default": "0",
-   "fetch_from": "product_code.is_timer_product",
+   "fetch_from": "product_code.is_require_employee",
    "fieldname": "is_require_employee",
    "fieldtype": "Check",
    "label": "Is Require Employee"
   },
   {
    "default": "0",
-   "fetch_from": "product_code.is_require_employee",
+   "fetch_from": "product_code.is_timer_product",
    "fieldname": "is_timer_product",
    "fieldtype": "Check",
    "label": "Is Timer Product"
@@ -230,7 +230,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-01-07 13:59:14.906313",
+ "modified": "2024-01-09 14:04:35.560044",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Temp Product Menu",

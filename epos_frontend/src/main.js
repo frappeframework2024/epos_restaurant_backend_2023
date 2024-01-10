@@ -45,18 +45,18 @@ import store from "./store";
 import Toaster from "@meforma/vue-toaster";
 import {resourcesPlugin} from "./resources"
 import { FrappeApp } from 'frappe-js-sdk';
-import { setConfig, frappeRequest } from './resource'
+import { setConfig, frappeRequest } from './resource';
+
 setConfig('resourceFetcher', frappeRequest)
 
 
-import Datepicker from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css'
+
 import { createBottomSheet } from 'bottom-sheet-vue3'
 import 'bottom-sheet-vue3/style.css'
 // i18n
 import { i18n } from "./i18n";
-
-
+// import VueCryptojs from 'vue-cryptojs'
+ 
 
 const app = createApp(App);
 
@@ -163,7 +163,6 @@ router.beforeEach(async (to, from, next) => {
 });
 
 
-app.component('Datepicker', Datepicker);
 app.component('CurrencyFormat', CurrencyFormat);
 app.component('ComPlaceholder', ComPlaceholder);
 app.component('ComAutoComplete', ComAutoComplete);

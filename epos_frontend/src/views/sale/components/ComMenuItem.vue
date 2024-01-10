@@ -6,22 +6,22 @@
                 <div class="text-white">{{ $t('Back') }}</div>
             </div>
         </div>
-    </div> 
+    </div>
     <div v-if="data.type == 'menu'" v-ripple
         class="relative h-full bg-cover bg-no-repeat rounded-lg shadow-lg cursor-pointer overflow-auto" v-bind:style="{
-                'background-color': data.background_color,
-                'color': data.text_color,
-                'background-image': 'url(' + encodeURIComponent(data.photo).replace(/%2F/g, '/') + ')',
-                'background-size':'contain','background-position':'center center'
-            }" @click="onClickMenu(data.name)">
+            'background-color': data.background_color,
+            'color': data.text_color,
+            'background-image': 'url(' + encodeURIComponent(data.photo).replace(/%2F/g, '/') + ')',
+            'background-size': 'contain', 'background-position': 'center center'
+        }" @click="onClickMenu(data.name)">
         <div class="absolute top-0 bottom-0 right-0 left-0">
-            <avatar class="!h-full !w-full" :name="data.name_en" :rounded="false" :background="data.background_color" :color="data.text_color"
-                v-if="!data.photo"></avatar>
+            <avatar class="!h-full !w-full" :name="data.name_en" :rounded="false" :background="data.background_color"
+                :color="data.text_color" v-if="!data.photo"></avatar>
         </div>
         <div class="block relative p-2 w-full h-full">
             <div class="absolute right-1 top-1">
                 <v-icon :color="data.text_color">mdi-folder-open</v-icon>
-            </div> 
+            </div>
             <div class="p-1 rounded-md absolute bottom-1 right-1 left-1 bg-gray-50 bg-opacity-70 text-sm text-center">
                 <span class="text-black" v-if="!sale.load_menu_lang">{{ getMenuName(data) }}</span>
             </div>
@@ -30,10 +30,11 @@
     <!-- Product -->
     <div v-else-if="data.type == 'product'" v-ripple
         class="relative overflow-hidden h-full bg-cover bg-no-repeat rounded-lg shadow-lg cursor-pointer bg-gray-300 "
-        v-bind:style="{ 'background-image': 'url(' +  encodeURIComponent(image).replace(/%2F/g, '/') + ')','background-size':'contain','background-position':'center center' }" @click="onClickProduct()">
+        v-bind:style="{ 'background-image': 'url(' + encodeURIComponent(image).replace(/%2F/g, '/') + ')', 'background-size': 'contain', 'background-position': 'center center' }"
+        @click="onClickProduct()">
         <div class="absolute top-0 bottom-0 right-0 left-0" v-if="!image">
             <avatar class="!h-full !w-full" :name="data.name_en" :rounded="false" background="#f1f1f1"></avatar>
-        </div> 
+        </div>
         <div class="block relative p-2 w-full h-full">
             <div class="absolute left-0 top-0 bg-red-700 text-white p-1 rounded-tl-lg rounded-br-lg text-sm">
                 <span>
@@ -48,20 +49,21 @@
                 </span>
             </div>
             <div class="p-1 rounded-md absolute bottom-1 right-1 left-1 bg-gray-50 bg-opacity-90 text-sm text-center">
-                 <span v-if="!sale.load_menu_lang">{{ getMenuName(data,true) }}</span>    <span style="color:red; font-weight: bold;">  {{getTotalQuantityOrder(data)}}</span>
+                <span v-if="!sale.load_menu_lang">{{ getMenuName(data, true) }}</span> <span
+                    style="color:red; font-weight: bold;"> {{ getTotalQuantityOrder(data) }}</span>
             </div>
         </div>
     </div>
 </template>
 <script setup>
-import { computed, addModifierDialog, inject, keypadWithNoteDialog,SaleProductComboMenuGroupModal, createToaster } from '@/plugin'
+import { computed, addModifierDialog, SelectDateTime, inject, keypadWithNoteDialog, SaleProductComboMenuGroupModal, createToaster } from '@/plugin'
 import Enumerable from 'linq'
 // import ComPriceOnMenu from '../ComPriceOnMenu.vue';
 const props = defineProps({ data: Object })
 const sale = inject("$sale");
 const gv = inject("$gv");
 const product = inject("$product");
-const toaster = createToaster({position: 'top'})
+const toaster = createToaster({ position: 'top' })
 const frappe = inject("$frappe")
 const db = frappe.db();
 
@@ -103,27 +105,30 @@ const minPrice = computed(() => {
     return 0
 })
 
-function getMenuName(menu,is_item = false) {
+function getMenuName(menu, is_item = false) {
     const mlang = localStorage.getItem('mLang');
-    let code = !is_item ? "": (gv.setting.show_item_code_in_sale_screen == 0 ? "":`${menu.name} - `);
-    if(mlang != null){
-        if(mlang=="en"){
-            return `${code}${menu.name_en}` ;
-        }else{
-            return  `${code}${menu.name_kh}` ;
+    let code = !is_item ? "" : (gv.setting.show_item_code_in_sale_screen == 0 ? "" : `${menu.name} - `);
+    if (mlang != null) {
+        if (mlang == "en") {
+            return `${code}${menu.name_en}`;
+        } else {
+            return `${code}${menu.name_kh}`;
         }
-        
-    }else{
-        localStorage.setItem('mLang','en');
-        return  `${code}${menu.name_en}` ;
+
+    } else {
+        localStorage.setItem('mLang', 'en');
+        return `${code}${menu.name_en}`;
     }
 }
 
-function getTotalQuantityOrder(data){
-    const qty = sale.sale?.sale_products?.filter(r=>r.product_code == data.name ).reduce((n, d) => n + (d.quantity || 0), 0)
-    if (qty==0){
+function getTotalQuantityOrder(data) {
+    const qty = sale.sale?.sale_products?.filter(r => r.product_code == data.name).reduce((n, d) => n + (d.quantity || 0), 0);
+    if (qty == undefined) {
         return ""
-    }else {
+    }
+    if (qty == 0) {
+        return ""
+    } else {
         return " (" + qty + ")"
     }
 }
@@ -131,12 +136,12 @@ function getTotalQuantityOrder(data){
 // end price menu
 
 function onClickMenu(menu) {
-    if(sale.setting.pos_menus.length>0){
+    if (sale.setting.pos_menus.length > 0) {
         product.parentMenu = menu;
-    } else{    
-        product.getProductMenuByProductCategory(db,menu)
+    } else {
+        product.getProductMenuByProductCategory(db, menu)
     }
-    
+
 }
 
 function onBack(parent) {
@@ -145,132 +150,148 @@ function onBack(parent) {
 }
 async function onClickProduct() {
     if (!sale.isBillRequested()) {
-      
-        const p = JSON.parse(JSON.stringify(props.data));        
-        if (p.is_open_product == 1) {
-         
-            let productPrices = await keypadWithNoteDialog({
-                data: {
-                    title: `${p.name_en}`,
-                    label_input: 'Enter Price',
-                    note: "Open Menu Note",
-                    category_note_name: "Open Menu Note",
-                    number: 0,
-                    product_code: p.name
+
+        const p = JSON.parse(JSON.stringify(props.data));
+        if (!p.is_timer_product) {
+            if (p.is_open_product == 1) {
+
+                let productPrices = await keypadWithNoteDialog({
+                    data: {
+                        title: `${p.name_en}`,
+                        label_input: 'Enter Price',
+                        note: "Open Menu Note",
+                        category_note_name: "Open Menu Note",
+                        number: 0,
+                        product_code: p.name
+                    }
+                });
+
+                if (productPrices) {
+
+                    p.name_en = productPrices.note;
+                    p.price = productPrices.number;
+                    p.modifiers = '';
+                    sale.addSaleProduct(p);
+                    return
+                } else {
+                    return
                 }
-            });
-           
-            if (productPrices) {
+
+            }
+            else if (p.is_combo_menu) {
+                await onComboMenu(p)
+                p.modifiers = "";
+                p.portion = "";
+                p.modifiers_data = "[]";
+            }
+            else {
+                const portions = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule);
+                const check_modifiers = product.onCheckModifier(JSON.parse(p.modifiers));
+
+                if (portions?.length == 1) {
+                    p.price = portions[0].price
+                    p.unit = portions[0].unit
+                    p.discount = portions[0].default_discount || 0
+
+
+                }
+
+                if (check_modifiers || portions?.length > 1) {
+
+                    product.setSelectedProduct(props.data);
+
+                    let productPrices = await addModifierDialog();
+
+                    if (productPrices) {
+                        if (productPrices.portion != undefined) {
+                            p.price = productPrices.portion.price;
+                            p.portion = productPrices.portion.portion;
+                            p.unit = productPrices.portion.unit
+                            p.discount = productPrices.portion.default_discount || 0
+                        }
+                        p.modifiers = productPrices.modifiers.modifiers;
+                        p.modifiers_data = productPrices.modifiers.modifiers_data;
+                        p.modifiers_price = productPrices.modifiers.price
+
+                    } else {
+                        return;
+                    }
+                } else {
+                    p.modifiers = "";
+                    p.modifiers_data = "[]";
+                    p.portion = "";
+                }
+
+            }
+
+        } else {
+            let selectdatetime = await SelectDateTime();
+            if (selectdatetime) {
+                if (selectdatetime !='Set Later'){
+                    p.time_in = selectdatetime;
+                }else{
+                    p.time_in= undefined;
+                }
                 
-                p.name_en = productPrices.note;
-                p.price = productPrices.number;
-                p.modifiers = '';
-                sale.addSaleProduct(p);
-                return
             }else{
                 return
             }
-
         }
-        else if (p.is_combo_menu) {
-            await onComboMenu(p)
-            p.modifiers = "";
-            p.portion = "";
-            p.modifiers_data = "[]";
-        }
-        else {
-            const portions = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule);
-            const check_modifiers = product.onCheckModifier(JSON.parse(p.modifiers));
-         
-            if (portions?.length == 1) {
-                p.price = portions[0].price
-                p.unit = portions[0].unit
-                p.discount =  portions[0].default_discount || 0
-              
 
-            }
-
-            if (check_modifiers || portions?.length > 1) {
-              
-                product.setSelectedProduct(props.data);
-
-                let productPrices = await addModifierDialog();
-
-                if (productPrices) {
-                    if (productPrices.portion != undefined) {
-                        p.price = productPrices.portion.price;
-                        p.portion = productPrices.portion.portion;
-                        p.unit = productPrices.portion.unit
-                        p.discount =  productPrices.portion.default_discount || 0
-                    }
-                    p.modifiers = productPrices.modifiers.modifiers;
-                    p.modifiers_data = productPrices.modifiers.modifiers_data;
-                    p.modifiers_price = productPrices.modifiers.price
-
-                } else {
-                    return;
-                }
-            } else {
-                p.modifiers = "";
-                p.modifiers_data = "[]";
-                p.portion = "";
-            }
-        }
- 
         sale.addSaleProduct(p);
 
     }
 
 }
 
-async function onComboMenu(p){
+async function onComboMenu(p) {
     if (p.is_combo_menu && p.use_combo_group) {
         product.setSelectedComboMenu(p)
         const result = await SaleProductComboMenuGroupModal();
-        if(result){
-            
-            if(result.combo_groups.length > 0){
-                p.combo_menu = getSeperateNameComboGroup(p,result.combo_groups)
-                
+        if (result) {
+
+            if (result.combo_groups.length > 0) {
+                p.combo_menu = getSeperateNameComboGroup(p, result.combo_groups)
+
                 p.combo_group_data = JSON.stringify(result.combo_groups)
 
-            }else{
+            } else {
                 p.combo_menu = ''
                 p.combo_group_data = "[]"
             }
         }
-    } else { 
-        if(p.is_combo_menu && p.combo_menu_data){
+    } else {
+        if (p.is_combo_menu && p.combo_menu_data) {
             const combo_menu_data = JSON.parse(p.combo_menu_data)
             p.combo_menu = getSeperateName(combo_menu_data)
-            
-        }        
+
+        }
     }
 }
 
-function getSeperateNameComboGroup(p,list){
+function getSeperateNameComboGroup(p, list) {
     let combo_groups = JSON.parse(p.combo_group_data)
     let combo_menu_items = []
-    combo_groups.forEach((x)=>{
+    combo_groups.forEach((x) => {
         combo_menu_items.push('***' + x.pos_title + '***')
         let combo_menus = []
-        list.forEach(r=> {
-        
-            if(r.group == x.combo_group){
-                combo_menus.push( r.product_name + ' x' + r.quantity)
+        list.forEach(r => {
+
+            if (r.group == x.combo_group) {
+                combo_menus.push(r.product_name + ' x' + r.quantity)
             }
         })
-        
+
         combo_menu_items.push(combo_menus.join(", "))
     })
     return combo_menu_items.join("|")
 }
-function getSeperateName(list){
+function getSeperateName(list) {
     let combo_menus = []
-        list.forEach(r=> {
-            combo_menus.push( r.product_name + ' x' + r.quantity)
-        })
-        return combo_menus.join(", ")
+    list.forEach(r => {
+        combo_menus.push(r.product_name + ' x' + r.quantity)
+    })
+    return combo_menus.join(", ")
 }
 </script>
 

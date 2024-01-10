@@ -39,6 +39,8 @@ import ComAddCommission from '@/views/sale/components/ComAddCommissionModal.vue'
 import ComSaleReferenceNumberModal from '@/views/sale/components/ComSaleReferenceNumberModal.vue'
 import ComPrintWifiPassword from '@/components/ComPrintWifiPasswordModal.vue'
 import ComViewHappyHourPromotionModal from '@/views/sale/components/happy_hour_promotion/ComViewHappyHourPromotionModal.vue'
+import ComSelectDateTime from '@/views/sale/components/ComSelectDateTime.vue'
+import ComSetStopTimerModal from '@/views/sale/components/ComSetStopTimerModal.vue'
 
 import ComSplitBill from "@/views/sale/components/ComSplitBill.vue"
 import ComChangeTaxSettingModal from "@/views/sale/components/ComChangeTaxSettingModal.vue"
@@ -105,3 +107,5 @@ export  const posReservationCalendarDialog = createPromiseDialog<params, object>
 export  const viewHappyHourPromotionModal = createPromiseDialog<params, object>(ComViewHappyHourPromotionModal);
 export  const ShortCutKeyHelpDialog = createPromiseDialog<params, object>(ComShortcutKeyHelp);
 export  const selectEmployeeDialog = createPromiseDialog<params, object>(ComSelectEmployeeModal);
+export  const SelectDateTime = createPromiseDialog<params, object>(ComSelectDateTime);
+export  const stopTimerModal = createPromiseDialog<params, object>(ComSetStopTimerModal);

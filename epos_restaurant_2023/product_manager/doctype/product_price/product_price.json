@@ -14,6 +14,8 @@
   "cost",
   "price",
   "default_discount",
+  "start_time",
+  "end_time",
   "column_break_8",
   "barcode_preview"
  ],
@@ -84,12 +86,22 @@
    "fieldtype": "Percent",
    "in_list_view": 1,
    "label": "Default Discount"
+  },
+  {
+   "fieldname": "start_time",
+   "fieldtype": "Data",
+   "label": "Start Time"
+  },
+  {
+   "fieldname": "end_time",
+   "fieldtype": "Data",
+   "label": "End Time"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-12-04 16:11:51.964679",
+ "modified": "2024-01-10 11:12:26.800341",
  "modified_by": "Administrator",
  "module": "Product Manager",
  "name": "Product Price",

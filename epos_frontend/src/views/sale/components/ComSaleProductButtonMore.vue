@@ -9,6 +9,9 @@
                 @click="onEditSaleProduct(saleProduct)"></v-list-item>
 
             <template v-if="gv.device_setting.is_order_station==0">
+
+                <!-- free -->
+                <template v-if ="!saleProduct.is_timer_product">
                 <v-list-item prepend-icon="mdi-currency-usd-off" :title="$t('Free')" v-if="!saleProduct.is_free"
                     @click="onSaleProductFree()"></v-list-item>
 
@@ -18,7 +21,8 @@
                     </template>
                     <v-list-item-title class="text-red-700">{{ $t('Cancel Free') }}</v-list-item-title>
                 </v-list-item>
-
+                </template>
+                <!-- end free -->
                 <template v-if="!saleProduct.is_free">
                     <template v-if="!saleProduct.happy_hour_promotion">
                         <v-list-item prepend-icon="mdi-percent" :title="$t('Discount Percent')"
@@ -36,7 +40,7 @@
                 
             </template>
 
-            <template v-if="!(saleProduct.is_require_employee||false)">
+            <template v-if="!(saleProduct.is_require_employee||false) && !saleProduct.is_timer_product">
                 <v-list-item v-if="tableLayout.table_groups && tableLayout.table_groups.length > 0" prepend-icon="mdi-chair-school" :title="($t('Seat')+'#')"
                     @click="sale.onSaleProductSetSeatNumber(saleProduct)"></v-list-item>
             </template>
@@ -49,10 +53,10 @@
                 </template>
                 <v-list-item-title class="text-red-700">{{ $t('Remove Note') }}</v-list-item-title>
             </v-list-item>
-            <v-list-item prepend-icon="mdi-cash-100" :title="$t('Tax Setting')" v-if="saleProduct.product_tax_rule"  @click="sale.onSaleProductChangeTaxSetting(saleProduct,gv)">
+            <v-list-item  prepend-icon="mdi-cash-100" :title="$t('Tax Setting')" v-if="saleProduct.product_tax_rule"  @click="sale.onSaleProductChangeTaxSetting(saleProduct,gv)">
             </v-list-item>
             
-            <v-list-item prepend-icon="mdi-cash-100" :title="$t('Printer')"    @click="onSelectPrinter()">
+            <v-list-item v-if="!saleProduct.is_timer_product" prepend-icon="mdi-cash-100" :title="$t('Printer')"    @click="onSelectPrinter()">
             </v-list-item>
             
         </v-list>

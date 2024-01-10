@@ -304,7 +304,7 @@ export default class Sale {
             const make_order_auth = JSON.parse(localStorage.getItem('make_order_auth'));
             const now = new Date();
 
-            var saleProduct = {
+            const saleProduct = {
                 menu_product_name: p.menu_product_name,
                 product_code: p.name,
                 product_name: p.name_en,
@@ -346,9 +346,16 @@ export default class Sale {
                 combo_menu: p.combo_menu,
                 combo_menu_data: (p.combo_menu_data || p.combo_group_data),
                 product_tax_rule: (p.tax_rule=="None"?"":p.tax_rule),
-                is_require_employee:p.is_require_employee
+                is_require_employee:p.is_require_employee,
+                is_timer_product: p.is_timer_product || 0,
+                
+
             }       
-            
+            if (p.is_timer_product){
+                if  (p.time_in){ 
+                saleProduct.time_in = moment(p.time_in).format('yyyy-MM-DD HH:mm:ss');
+                }
+            }
             this.onSaleProductApplyTax(tax_rule,saleProduct); 
             this.sale.sale_products.push(saleProduct);
             this.updateSaleProduct(saleProduct);
@@ -433,6 +440,7 @@ export default class Sale {
             return this.orderTime
         }
     }
+
 
     onSelectSaleProduct(sp) {
         this.clearSelected();
@@ -637,9 +645,11 @@ export default class Sale {
                     if (v) {   
                         let result = false;                           
                         if(input==(-99999)){
+                            let hide_keypad = input==(-99999)?undefined:true
+                             
                             result = await keypadWithNoteDialog({ 
                                 data: { 
-                                    hide_keypad:input==(-99999)?undefined:true,
+                                    hide_keypad:hide_keypad,
                                     title: `${$t('Delete Item')} ${sp.product_name}`,
                                     label_input: $t('Enter Quantity'),
                                     note: "Delete Item Note",
@@ -650,6 +660,7 @@ export default class Sale {
                             });  
                         }
                         else{
+                            
                             if(gv.setting.pos_setting['delete_item_required_note'] == 1){
                                 result = await keypadWithNoteDialog({ 
                                     data: { 

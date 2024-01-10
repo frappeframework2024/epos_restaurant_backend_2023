@@ -375,16 +375,22 @@ def get_tables_number(table_group,device_name):
     return data
 
 @frappe.whitelist(allow_guest=True)
-def check_pos_profile(pos_profile_name, device_name):
+def check_pos_profile(pos_profile_name, device_name, is_used_validate=True):
 
     if not frappe.db.exists("POS Profile", pos_profile_name):
         frappe.throw("Invalid POS Profile")
 
     if not frappe.db.exists("POS Station", device_name):
-        frappe.throw("Invalid POS Station")    
+        frappe.throw("Invalid POS Station")   
+
     station =  frappe.get_doc("POS Station",device_name)
-    if station.is_used and not device_name=="Demo":
-        frappe.throw("This station is already used")
+    if station.disabled:
+        frappe.throw("This station was disabled.")
+        
+    if is_used_validate:
+        if station.is_used and not device_name=="Demo":
+            frappe.throw("This station is already used")
+
     frappe.db.sql("update `tabPOS Station` set is_used = 1 where name = '{}'".format(device_name))
     
     frappe.db.commit()
@@ -1016,3 +1022,8 @@ def update_pos_reservation_and_sale_payment(reservation_name,reservation_status,
     frappe.db.commit()
 
 
+
+# @frappe.whitelist()
+@frappe.whitelist(methods="POST")
+def get_time_product_estimate_price(sp=None):
+    return 10
