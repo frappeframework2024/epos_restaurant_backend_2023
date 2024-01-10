@@ -9,7 +9,6 @@
                     text="Please enter the time when the player started playing the game. If the player has not started playing yet, please click on the ‘Set Time In Later’ button."
                 ></v-alert>
             </div>
-            {{ time_in }}
             <input type="datetime-local" v-model="time_in.data" >
         </template>
         <template #action>
