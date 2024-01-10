@@ -35,6 +35,7 @@ import call from "./utils/call";
 
 import Auth from "./utils/auth";
 import Sale from "./providers/sale";
+import POSLicense from "./providers/pos_license";
 import TableLayout from "./providers/table_layout";
 import Gv from "./providers/gv";
 import Product from "./providers/product";
@@ -54,9 +55,7 @@ setConfig('resourceFetcher', frappeRequest)
 import { createBottomSheet } from 'bottom-sheet-vue3'
 import 'bottom-sheet-vue3/style.css'
 // i18n
-import { i18n } from "./i18n";
-// import VueCryptojs from 'vue-cryptojs'
- 
+import { i18n } from "./i18n"; 
 
 const app = createApp(App);
 
@@ -64,9 +63,10 @@ const frappe = new FrappeApp();
 const auth = reactive(new Auth());
 const gv = reactive(new Gv());
 const sale = reactive(new Sale());
+const pos_license = reactive(new POSLicense());
 const tableLayout = reactive(new TableLayout());
 const product = reactive(new Product());
-const screen = reactive(new Screen())
+const screen = reactive(new Screen());
 
 const vuetify = createVuetify({
 	components,
@@ -91,7 +91,7 @@ if((lang||"")==""){
 app.use(i18n);
 
 
- 
+  
 app.use(router);
 app.use(resourcesPlugin);
 app.use(vuetify);
@@ -106,6 +106,7 @@ app.use(Toaster, {
 // Global Properties,
 // components can inject this
 app.provide("$gv", gv);
+app.provide("$pos_license", pos_license);
 app.provide("$sale", sale);
 app.provide("$tableLayout", tableLayout);
 app.provide("$product", product);

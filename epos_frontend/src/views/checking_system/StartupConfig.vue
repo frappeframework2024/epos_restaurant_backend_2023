@@ -89,8 +89,7 @@
 
     const is_startup_device = ref(false);
 
-    onMounted(()=>{
-        var uuid = new DeviceUUID().get();
+    onMounted(()=>{ 
         // console.log(CryptoJS)
         // const cipher = CryptoJS.AES.encrypt("OUTDOM", CryptoJS.enc.Utf8.parse(key), {
         //         iv: CryptoJS.enc.Utf8.parse(iv),
@@ -135,20 +134,22 @@
                 if((_res.name||"") == ""){
                     _error = true;                   
                 }
-                if ((_res.name||"") == ""){
-                    _error = true;      
-                }
 
                 if(_error){
                     toast.warning('Invalid ID',{ position: 'top'});
                     return
+                }
+                
+                if ((_res.license||"") == ""){
+                    // toast.warning('The Device ID invalid license',{ position: 'top'});
+                    // return
                 }
 
                 if(_res.platform != "Web" ){
                     toast.warning('The Device ID not allow on current platform.',{ position: 'top'});
                     return
                 }
-
+                localStorage.setItem('_webuid',state.uid);
                 state.device_name = _res.name;
                 _onSave();
 
@@ -157,7 +158,7 @@
             }).catch((r)=>{
                 toast.warning('Invalid ID',{ position: 'top'});
                 return
-            })
+            });
         }
         else if((is_window||0) == 0 && (is_apk_ipa||0)!=0){
             _onSave()

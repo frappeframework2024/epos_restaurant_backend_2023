@@ -145,14 +145,13 @@ class Product(Document):
 						"note":"Opening Quantity"
 					}
 				)
-		
+
 
 	def before_save(self):
 		prices = []
 		if self.product_price:
 			
 			for p in self.product_price:
-				p.time_range = str(list(range(int(p.start_time),int(p.end_time))))
 				prices.append({
 					"price":p.price,
 					'branch':p.business_branch or "",
@@ -163,7 +162,6 @@ class Product(Document):
 					"default_discount":p.default_discount
 				})
 		self.prices = json.dumps(prices)	
-			
 	
 	def on_update(self):
 		#add_product_to_temp_menu(self)
@@ -194,13 +192,6 @@ class Product(Document):
 			"precision": frappe.db.get_default("float_precision"),
 			
 		}
-	
-	@frappe.whitelist()
-	def generate_roundup(self):
-		roundup=[]
-		for a in range(60):
-			roundup.append({"base_value":a,"roundup_value":a})
-		return roundup
 
 	@frappe.whitelist()
 	def generate_variant(self):

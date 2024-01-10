@@ -20,10 +20,14 @@
             @click="onUpdateQuantity(1)"></v-btn>
     </div>
     <div v-else>
+         
        
-        <div v-if="saleProduct.time_in">
+
+        <div v-if="saleProduct.time_in && !saleProduct.time_out_price">
             <span>{{stopwatch.hours.toString().padStart(2, '0') }}h</span>:<span>{{stopwatch.minutes.toString().padStart(2, '0')}}mn</span>:<span>{{stopwatch.seconds}}s</span>
         </div>
+        <v-btn v-else class="mx-1" size="small"  variant="tonal">{{
+            saleProduct.duration }}</v-btn>
       
     </div>
 </template>
@@ -43,7 +47,7 @@ const props = defineProps({
 })
 const sale = inject("$sale");
 const gv = inject("$gv");
-const autoStart = true;
+const autoStart = !props.saleProduct.time_out
 const stopwatch = useStopwatch(autoStart);
 
 if (props.saleProduct.is_timer_product){ 
@@ -65,7 +69,25 @@ watch(() => props.saleProduct.time_in, (newValue, oldValue) => {
     const duration = getTimeDiff( time_in,  new Date())
     stopwatch.hours = duration.hours
     stopwatch.minutes = duration.minutes
-    });
+});
+
+watch(() => props.saleProduct.time_out, (newValue, oldValue) => {
+    if (props.saleProduct.time_out){
+        const duration = getTimeDiff( new Date(props.saleProduct.time_in),  new Date(props.saleProduct.time_out))
+        stopwatch.hours = duration.hours
+        stopwatch.minutes = duration.minutes
+
+        setTimeout(function(){
+            stopwatch.pause()
+        },1000)
+              
+    }else{
+        const duration = getTimeDiff(new Date(props.saleProduct.time_in),  new Date())
+        stopwatch.hours = duration.hours
+        stopwatch.minutes = duration.minutes
+        stopwatch.start()
+    }
+});
 
 
 

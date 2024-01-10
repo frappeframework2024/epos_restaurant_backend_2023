@@ -26,8 +26,12 @@
       </div>
     </v-col>
     <v-col sm="12" md="6" lg="4" class="pa-0 relative">
+      
       <div class="h-full flex items-center justify-center bg-gray-100">
         <form @submit.prevent="onLogin">
+          <div v-if="pos_license.invalid_license" class="flex items-center justify-center p-2 mb-4 bg-red-100 text-red">
+            {{$t('Invalid License')}}
+          </div>
           <div class="w-73">
             <div>
               <div class="d-block d-md-none mt-4">
@@ -86,7 +90,7 @@
                 </div>
               </div>
               <div class="mt-6">
-                <v-btn type="submit" :loading="isLoading" size="x-large" class="w-full" color="primary">{{ $t("Login") }}</v-btn>
+                <v-btn type="submit" :loading="isLoading" size="x-large" class="w-full" color="primary" :disabled="pos_license.invalid_license">{{ $t("Login") }}</v-btn>
               </div> 
               <div class="mt-2">
                 <v-btn size="x-large" class="w-full" color="light"  @click="(()=>{ 
@@ -118,6 +122,7 @@ import { useDisplay } from 'vuetify';
 const { t: $t } = i18n.global; 
 
 const auth = inject("$auth");
+const pos_license = inject("$pos_license");
 const gv = inject('$gv');
 const sale = inject('$sale');
 const { mobile } = useDisplay();
@@ -175,6 +180,10 @@ function onDeleteBack() {
   state.password = state.password.substring(0, state.password.length - 1);
 }
 const onLogin = async () => {
+  if(pos_license.invalid_license){
+    return;
+  }
+
   if (!state.password) {
     toast.warning($t('msg.Invalid PIN Codex'), { position: 'top' });
     return

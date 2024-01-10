@@ -29,28 +29,29 @@
                             </div>
                             
                             <div v-if="!sp.is_timer_product">
-                                {{ sp.quantity }}
+                                {{ sp.quantity }} x 
                                 <CurrencyFormat :value="sp.price" />
                             </div>
                             <div v-else>
                                 
                                 <template v-if="sp.time_in">
+                                    {{ sp.reference_sale_product }}
                                     Time in: {{ moment(sp.time_in).format('hh:mm A') }}
-                                    <span v-if="condition">
-                                        <br /> 
-                                        Time Out : {{ moment(sp.time_out).format('DD-MM-yyyy hh:mm A') }} <br />
+                                    <span v-if="sp.time_out">
+                                        to 
+                                         {{ moment(sp.time_out).format('hh:mm A') }}
                                     </span>
                                     
                                 </template>
-                                
+                               
                             </div>
                             <div class="text-xs pt-1">
-                                <div v-if="sp.modifiers">
-                                    x ss
+                                <div v-if="sp.modifiers && !sp.is_timer_product">
                                     <span>{{ sp.modifiers }} (
                                         <CurrencyFormat :value="sp.modifiers_price * sp.quantity" />)
                                     </span>
                                 </div>
+
                                 <div v-if="sp.is_combo_menu">
                                     <div v-if="sp.use_combo_group && sp.combo_menu_data">
                                         <ComSaleProductComboMenuGroupItemDisplay :combo-menu-data="sp.combo_menu_data" />
@@ -84,7 +85,7 @@
 
                         <div class="flex-none text-right w-36">
                             <div class="text-lg">
-                                <ComTimerProductEstimatePrice v-if="sp.is_timer_product" :saleProduct="sp" />
+                                <ComTimerProductEstimatePrice v-if="sp.is_timer_product && !sp.time_out_price" :saleProduct="sp" />
                                 <CurrencyFormat v-else :value="(sp.amount - sp.total_tax)" />
                             </div>
                             <span v-if="sp.product_tax_rule && sp.total_tax > 0" class="text-xs">
@@ -97,13 +98,18 @@
                     </div>
 
                     <div v-if="sp.selected && !readonly" class="-mx-1 flex pt-1">
-                        <!-- start time  -->
-                        <v-chip color="green" v-if="sp.is_timer_product" class="mx-1 grow text-center justify-center" variant="elevated" size="small"
-                            @click="onStartTime(sp)">{{ $t('Start Timer') }}</v-chip>
-                        <!-- stop time -->
-                        <v-chip color="orange" v-if="sp.is_timer_product" class="mx-1 grow text-center justify-center" variant="elevated" size="small"
-                            @click="onStopTimer(sp)">{{ $t('Stop Timer') }}</v-chip>
+                        <template v-if="sp.is_timer_product" >
+                            <!-- start time  -->
+                            <v-chip color="green"  v-if="!sp.time_out && !sp.reference_sale_product" class="mx-1 grow text-center justify-center" variant="elevated" size="small"
+                                @click="onStartTime(sp)">{{ $t('Start Timer') }}</v-chip>
+                            <!-- stop time -->
+                            <v-chip color="orange"  v-if="!sp.time_out && !sp.reference_sale_product" class="mx-1 grow text-center justify-center" variant="elevated" size="small"
+                                @click="onStopTimer(sp)">{{ $t('Stop Timer') }}</v-chip>
 
+                            <v-chip color="green" v-if="sp.time_out" class="mx-1 grow text-center justify-center" variant="elevated" size="small"
+                                @click="onContinueTimer(sp)">{{ $t('Continue Timer') }}</v-chip>
+                        </template>
+                        
 
                         <v-chip v-if="show_button_change_price && !sp.is_timer_product" color="teal"
                             class="mx-1 grow text-center justify-center" variant="elevated" size="small"
@@ -123,7 +129,7 @@
                                 size="small" @click="sale.onAssignEmployee(sp)">{{ $t('Employee') }}</v-chip>
                         </template>
 
-                        <v-chip color="red" class="mx-1 grow text-center justify-center" variant="elevated" size="small"
+                        <v-chip v-if="!sp.reference_sale_product" color="red" class="mx-1 grow text-center justify-center" variant="elevated" size="small"
                             @click="sale.onRemoveItem(sp, gv, numberFormat)">{{ $t('Delete') }}</v-chip>
 
                         <ComSaleProductButtonMore :sale-product="sp" />
@@ -138,7 +144,7 @@
     </v-list>
 </template>
 <script setup>
-import { computed, inject, defineProps, createToaster, i18n, ref, SelectDateTime,stopTimerModal } from '@/plugin'
+import { computed, inject, defineProps,confirmDialog, createToaster, i18n, ref, SelectDateTime,stopTimerModal } from '@/plugin'
 
 import ComSaleProductButtonMore from './ComSaleProductButtonMore.vue';
 import ComQuantityInput from '../../../components/form/ComQuantityInput.vue';
@@ -154,6 +160,8 @@ const product = inject('$product');
 const gv = inject('$gv');
 const moment = inject('$moment');
 const toaster = createToaster({ position: 'top' });
+const frappe = inject("$frappe")
+const call = frappe.call()
 
 const props = defineProps({
     groupKey: Object,
@@ -269,7 +277,7 @@ function getEmployees(data) {
 }
 
 async function onStartTime(sp) {
-    let selectdatetime = await SelectDateTime({"data":sp.time_in});
+    let selectdatetime = await SelectDateTime({"time_in":sp.time_in});
     if (selectdatetime) {
         if (selectdatetime !='Set Later'){
             sp.time_in = moment(selectdatetime).format('yyyy-MM-DD HH:mm:ss');
@@ -280,8 +288,27 @@ async function onStartTime(sp) {
     }
 }
 async function onStopTimer(sp) {
-    sp.time_out=moment(new Date).format('YYYY-MM-DD HH:mm')
+    
     let stopTimer= await stopTimerModal(sp)
+    if(stopTimer){
+        sp.time_in = stopTimer.time_in
+        sp.time_out = stopTimer.time_out
+    }
+}
+async function onContinueTimer(sp){
+    
+    if (await confirmDialog({ title: $t("Continue Timer"), text: $t("Are you sure to continue timer?") })) {
+        sale.loading=true;
+        call.post("epos_restaurant_2023.api.timer_product.continue_timer", { sale_product: sp  }).then(async (result) =>  {
+            sp.time_out = undefined;
+            sale.sale = result.message
+            sale.loading=false;
+        }).catch((err)=>{
+            sale.loading=false;
+        })
+    }
+    
+    
 }
 
 </script>

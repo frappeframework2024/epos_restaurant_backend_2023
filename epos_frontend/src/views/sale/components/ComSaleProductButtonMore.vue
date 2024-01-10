@@ -5,7 +5,7 @@
                 size="small">{{ $t('More') }}</v-chip>
         </template>
         <v-list>
-            <v-list-item prepend-icon="mdi-pencil" :title="$t('Edit')" v-if="!(sale.setting.pos_setting.allow_change_quantity_after_submit == 1 || saleProduct.sale_product_status == 'Submitted')"
+            <v-list-item prepend-icon="mdi-pencil" :title="$t('Edit')" v-if="!saleProduct.is_timer_product &&  !(sale.setting.pos_setting.allow_change_quantity_after_submit == 1 || saleProduct.sale_product_status == 'Submitted')"
                 @click="onEditSaleProduct(saleProduct)"></v-list-item>
 
             <template v-if="gv.device_setting.is_order_station==0">

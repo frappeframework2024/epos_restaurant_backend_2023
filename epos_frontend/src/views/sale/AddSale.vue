@@ -1,6 +1,6 @@
 <template>
     <ComLoadingDialog
-        v-if="sale.newSaleResource?.loading || (sale.saleResource != null && sale.saleResource?.get.loading) || (sale.saleResource != null && sale.saleResource?.setValue.loading)" />
+        v-if="sale.loading || sale.newSaleResource?.loading || (sale.saleResource != null && sale.saleResource?.get.loading) || (sale.saleResource != null && sale.saleResource?.setValue.loading)" />
     <ComSmallAddSale v-if="mobile" />
     <div v-else style="height: calc(100vh - 64px)" id="tst">
         <div class="h-full ma-0 flex w-full">

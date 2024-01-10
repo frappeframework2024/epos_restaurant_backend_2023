@@ -113,6 +113,9 @@
   "time_in",
   "time_out",
   "time_stop",
+  "reference_sale_product",
+  "time_out_price",
+  "duration",
   "column_break_txhh",
   "cost",
   "product_photo",
@@ -847,12 +850,27 @@
   {
    "fieldname": "column_break_txhh",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reference_sale_product",
+   "fieldtype": "Data",
+   "label": "Reference Sale Product"
+  },
+  {
+   "fieldname": "time_out_price",
+   "fieldtype": "Datetime",
+   "label": "Time Out Price"
+  },
+  {
+   "fieldname": "duration",
+   "fieldtype": "Data",
+   "label": "Duration"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-01-09 14:16:15.651385",
+ "modified": "2024-01-10 15:54:52.514873",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",

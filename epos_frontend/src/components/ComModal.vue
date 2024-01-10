@@ -2,7 +2,6 @@
     
     <v-dialog v-model="open" v-bind:style="{'width':'100%','max-width': fullscreen ? 'auto' : width}" :fullscreen="mobileFullscreen ? mobile : fullscreen" :scrollable="scrollable" :persistent="persistent" @update:modelValue="onAction()">
         <v-card>
-    
             <ComToolbar @onPrint="onPrint()" :isPrint="isPrint" :isMoreMenu="isShowBarMoreButton" @onClose="onClose()" :disabled="loading">
                 <template #title>
                     <slot name="title"></slot>
@@ -24,7 +23,8 @@
                         {{ $t('Close') }}
                     </v-btn>
                     <slot name="action"></slot>
-                    <v-btn variant="flat" type="button" color="primary" :disabled="loading" v-if="!hideOkButton" @click="onOK()">
+                    
+                    <v-btn variant="flat" :loading="loading" type="button" color="primary" :disabled="loading" v-if="!hideOkButton" @click="onOK()">
                         {{ titleOKButton==""?$t("Save"):$t(titleOKButton) }}
                     </v-btn>
                 </template>

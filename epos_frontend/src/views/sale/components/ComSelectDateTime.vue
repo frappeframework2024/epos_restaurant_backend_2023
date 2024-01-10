@@ -9,7 +9,7 @@
                     text="Please enter the time when the player started playing the game. If the player has not started playing yet, please click on the ‘Set Time In Later’ button."
                 ></v-alert>
             </div>
-            <input type="datetime-local" v-model="time_in.data" >
+            <input type="datetime-local" v-model="date" >
         </template>
         <template #action>
                 <v-btn variant="flat" type="button" color="primary" :disabled="loading" v-if="!hideOkButton" @click="setTimeLaterClick()">
@@ -23,26 +23,30 @@ import { ref,computed } from '@/plugin'
 import { defineEmits } from 'vue';
 import { useDisplay } from 'vuetify';
 import moment from '@/utils/moment.js';
-
 const { mobile } = useDisplay()
 
 const props = defineProps({
     params:Object
 })
 
-const time_in=computed(()=>props.params)
 
 
 // const date = ref("2024-01-09 13:49");
 const default_date = moment(new Date).format('YYYY-MM-DD HH:mm')
-const date =  ref(default_date)
+
+const date =  ref(default_date + ":00")
+console.log(props.params)
+if (props.params?.time_in){
+    
+    date.value = props.params.time_in
+} 
 const emit = defineEmits(["click"])
 
 
 
 
 function onClick() {
-    emit("resolve",date.value);
+    emit("resolve",moment(date.value).format('yyyy-MM-DD HH:mm:ss'));
 }
 function setTimeLaterClick() {
     emit("resolve",'Set Later');

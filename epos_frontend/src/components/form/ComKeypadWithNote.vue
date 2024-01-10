@@ -4,6 +4,7 @@
             {{ params.data.title }}
         </template>
         <template #content>
+            hello world
             <div class="p-2">
             <v-row>
 

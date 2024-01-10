@@ -15,6 +15,7 @@ export default class Sale {
     constructor() {
         this.is_payment_first_load = false;
         this.load_menu_lang = false;
+        this.loading=false;
         this.mobile = false;
         this.platform = {};
         this.promotion = null;
@@ -319,7 +320,7 @@ export default class Sale {
                 sale_discount_amount: 0,
                 note: '',
                 regular_price: p.price,
-                price: p.price,
+                price: p.is_timer_product?0: p.price,
                 modifiers_price: this.getNumber(p.modifiers_price),
                 product_photo: p.photo,
                 selected: true,
@@ -646,7 +647,9 @@ export default class Sale {
                         let result = false;                           
                         if(input==(-99999)){
                             let hide_keypad = input==(-99999)?undefined:true
-                             
+                            if (!hide_keypad && sp.is_timer_product){
+                                hide_keypad = true
+                            }
                             result = await keypadWithNoteDialog({ 
                                 data: { 
                                     hide_keypad:hide_keypad,

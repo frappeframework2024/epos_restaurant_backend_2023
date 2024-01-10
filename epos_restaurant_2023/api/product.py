@@ -127,48 +127,6 @@ def get_products(parent_menu):
    
     return data
 
-@frappe.whitelist()
-def generate_times_table(product_code,start,end):
-
-    
-    ra = []
-    start_date = datetime.strptime(start,'%Y-%m-%d %H:%M:%S')
-    end_date = datetime.strptime(end,'%Y-%m-%d %H:%M:%S')
-    
-    start_date_time=""
-    end_date_time = ""
-
-    start_minute = ""
-    end_minute = ""
-    
-    if start_date.minute>0:
-        start_date_time = start_date.replace(microsecond=0, second=0, minute=0)
-        start_minute = start_date.minute
-    if end_date.minute>0:
-        end_date_time = end_date.replace(microsecond=0, second=0, minute=0)
-        end_minute = end_date.minute
-
-    end_time_delta = timedelta(hours=1)
-    is_last_item = 0
-    rat = pd.date_range(start=start_date_time, end = end_date_time, freq='H')
-    last_item = rat[-1]
-    for a in rat:
-        if a == last_item:
-            end_time_delta = timedelta(minutes=end_minute)
-            is_last_item = 1
-        ra.append({"product_code":product_code,
-                   "time_in":a + timedelta(minutes=start_minute),
-                   "time_out_price": "" if is_last_item == 1 else a + end_time_delta - timedelta(minutes=1),
-                   "time_out":a + end_time_delta,
-                   "amount":0})
-        if start_minute > 0 : start_minute = 0
-    
-    for b in ra:
-        price = frappe.db.sql("select coalesce(sum(price),0) price from `tabProduct Price` where start_time<='{}' and end_time>'{}'".format(b["time_in"].strftime("%H"),b["time_out"].strftime("%H")),as_dict=1)
-        b["amount"] = price[0]["price"]
-
-    return ra
-
 
 @frappe.whitelist()
 def get_product_variants(parent):

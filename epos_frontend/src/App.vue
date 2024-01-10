@@ -22,18 +22,22 @@ import { createToaster } from '@meforma/vue-toaster';
 import { FrappeApp } from 'frappe-js-sdk';
 
 
-const toaster = createToaster({position:'top'});
+const frappe = inject('$frappe');
+const call = frappe.call();
+
+const toast = createToaster({position:'top'});
 const gv = inject("$gv");
 const sale = inject("$sale");
+const pos_license = inject("$pos_license");
 const product = inject("$product");
 const tableLayout = inject("$tableLayout");
-const socket = inject("$socket")
-const auth = inject("$auth")
-const store = useStore()
-const screen = inject('$screen')
+const socket = inject("$socket");
+const auth = inject("$auth");
+const store = useStore();
+const screen = inject('$screen');
 let state = reactive({
 	isLoading: false
-})
+});
 
 socket.on("PrintReceipt", (arg) => {	
 	if(localStorage.getItem("is_window")=="1"){
@@ -59,10 +63,36 @@ const isLoading = computed(() => {
 });
 
 
+const is_window = localStorage.getItem("is_window");
+const is_apk_ipa = localStorage.getItem("apkipa");
+if((is_window||0) == 0 && (is_apk_ipa||0)==0){
+	const _webuid = localStorage.getItem("_webuid");
+	if((_webuid||0)==0){
+		localStorage.removeItem("device_name");
+	}else{
+		pos_license.invalid_license = false;
+		call.get("epos_restaurant_2023.api.pos_license.station_license",{"device_id":_webuid})
+		.then((res)=>{
+			const _res = res.message;  
+			// if((_res.name||"") == ""){
+			// 	pos_license.invalid_license = true;
+			// } 
+			// if((_res.pos_license||"") == ""){
+			// 	pos_license.invalid_license = true; 
+			// } 
 
+			// if(pos_license.invalid_license){
+			// 	onLogout();
+			// } 
+
+		}).catch((r)=>{
+			pos_license.invalid_license = true;
+			onLogout();			 
+		});
+	}
+}
 
 const _device = localStorage.getItem("device_name");
-
 if(_device == null || _device == undefined){
 	localStorage.removeItem("pos_profile");
 }
@@ -71,12 +101,11 @@ if (!localStorage.getItem("pos_profile")) {
 	state.isLoading = false;
 	if((_device||"") !=""){
 		localStorage.removeItem("device_name");
-	}
-	
+	}	
 	router.push({ name: 'StartupConfig' });
+
 } else {
 	localStorage.removeItem("__startup_device");
-
 	state.isLoading = true;
 	createResource({
 		url: 'epos_restaurant_2023.api.api.get_system_settings',
@@ -125,7 +154,7 @@ if (!localStorage.getItem("pos_profile")) {
 					state.isLoading = false;
 				}
 				else{
-					toaster.error(JSON.stringify(x))
+					toast.error(JSON.stringify(x))
 				}
 			}
 			state.isLoading = false;
@@ -184,7 +213,7 @@ function onResize() {
 function onLogout() {
     auth.logout().then((r) => {
         router.push({ name: 'Login' });
-    })
+    });
 }
  
 
