@@ -5,8 +5,10 @@
         </template>
         <template #content>  
             <div>
+                {{ $t("Timer Alert Message") }}
+                <!-- Please enter the time when the player started playing the game. If the player has not started playing yet, please click on the ‘Set Time In Later’ button. -->
                 <v-alert type="info"
-                    text="Please enter the time when the player started playing the game. If the player has not started playing yet, please click on the ‘Set Time In Later’ button."
+                    :text="$t('Timer Alert Message')"
                 ></v-alert>
             </div>
             <div class="w-100 text-center">

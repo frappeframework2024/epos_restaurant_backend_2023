@@ -586,7 +586,7 @@ export default class Sale {
     //update sale summary
     updateSaleSummary(sale_status = '') {
         const sp = Enumerable.from(this.sale.sale_products);
-        this.sale.total_quantity = this.getNumber(sp.sum("$.quantity"));
+        this.sale.total_quantity = this.getNumber(sp.where("$.is_timer_product == 0").sum("$.quantity"));
         this.sale.sub_total = this.getNumber(sp.sum("$.sub_total"));
         //calculate sale discount
         this.sale.sale_discountable_amount = this.getNumber(sp.where("$.allow_discount==1 && $.discount==0").sum("$.sub_total"));
@@ -1154,7 +1154,7 @@ export default class Sale {
         // child record will remove in  doctype event
         if (sp.is_timer_product && sp.name){
             this.sale.sale_products.filter(r=>r.reference_sale_product==sp.name).forEach(x=>{
-                this.sale.sale_products.splice(this.sale.sale_products.indexOf(sp), 1);
+                this.sale.sale_products.splice(this.sale.sale_products.indexOf(x), 1);
             })
         }
         
@@ -1265,7 +1265,7 @@ export default class Sale {
 
     async onSubmitQuickPay() {
        
-        if(this.sale.sale_products.filter(r=>!r.time_out_price).length>0){
+        if(this.sale.sale_products.filter(r=>!r.time_out_price && r.is_timer_product).length>0){
             toaster.warning($t('msg.Please stop timer on timer product'));
             return;
         }

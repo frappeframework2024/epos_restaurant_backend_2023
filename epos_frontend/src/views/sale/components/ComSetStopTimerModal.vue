@@ -22,10 +22,10 @@
                     <tr style="border: 1px solid #ccc">
                         <th class="text-left">{{$t("Time In")}}</th>
                         <th class="text-left">{{$t("Time Out")}}</th>
-                        <th class="text-left">{{$t("Time Duration")}}</th>
-                        <th class="text-center">{{$t("Time Minute")}}</th>
-                        <th class="text-right">{{$t("Time Price")}}</th>
-                        <th class="text-right">{{$t("Time Amount")}}</th>
+                        <th class="text-center">{{$t("Duration")}}</th>
+                        <th class="text-center">{{$t("Total Minutes")}}</th>
+                        <th class="text-right">{{$t("Price")}}</th>
+                        <th class="text-right">{{$t("Amount")}}</th>
                     </tr>
                     
                 </thead>
@@ -41,14 +41,14 @@
                             <br/>
                             {{ moment(data.time_out_price).format('hh:mm A') }}
                         </td>
-                        <td>{{ data.duration }}</td>
+                        <td class="text-center">{{ data.duration }}</td>
                         <td class="text-center">{{ data.total_minute }}</td>
                         <td class="text-right"><CurrencyFormat :value="data.price" /></td>
                         <td class="text-right"><CurrencyFormat :value="data.amount" /></td>
                     </tr>
                     <tr>
                         <td class="text-right" colspan="5"><strong>{{$t("Total")}}:</strong></td>
-                        <td class="text-right"><strong>{{ breakdownData.reduce((n, d) => n + (d.amount || 0), 0) }}</strong></td>
+                        <td class="text-right"><strong><CurrencyFormat :value="breakdownData.reduce((n, d) => n + (d.amount || 0), 0)" /> </strong></td>
                        
                     </tr>
                 </tbody>

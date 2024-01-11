@@ -6,7 +6,6 @@ from py_linq import Enumerable
 from frappe.utils import today, add_to_date
 import datetime
 from frappe import _
-import pandas as pd
 from frappe.utils.data import add_to_date,getdate
 from epos_restaurant_2023.inventory.inventory import get_uom_conversion
 
@@ -168,6 +167,8 @@ def stop_timer(sale_product):
             child_doc.is_timer_product = 1
             child_doc.duration = d["duration"]
             child_doc.portion = d["portion"]
+            child_doc.discount_type = sale_product["discount_type"]
+            child_doc.discount= sale_product["discount"]
             sale_doc.append("sale_products", child_doc)
 
 
