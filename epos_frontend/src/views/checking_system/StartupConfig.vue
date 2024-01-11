@@ -10,14 +10,13 @@
             class="mx-auto mt-12"
             color="grey-lighten-3"
             max-width="400"
-        > {{check}}
+        > {{check}} 
             <v-card-title v-if="(is_startup_device||0)==0">
                 <div class="text-center p-4">
                     ePOS System
                 </div>
             </v-card-title>
-            <v-card-text> 
-               
+            <v-card-text>                
                 <form @submit.prevent="onSave()">
                     <div v-if="(is_startup_device||0)==0">
                         <ComInput
@@ -113,8 +112,9 @@
     const is_apk_ipa = localStorage.getItem("apkipa");
 
    const check = computed(()=>{
+
     is_startup_device.value = false;
-        if((is_window||0)==1){
+        if((is_window||0)==1 || (is_apk_ipa||0)==1){
             state.device_name = localStorage.getItem("__startup_device");
             is_startup_device.value = true;
         }      

@@ -79,9 +79,9 @@ def update_stock_location_product(self):
 		else:
 			doc.cost = self.price
 	else:
-			doc.cost = self.ending_stock_value / balance
+			doc.cost = self.price
 
 	doc.quantity = self.balance
-	doc.total_cost =  self.ending_stock_value
+	doc.total_cost =  doc.quantity * doc.cost
 	
 	doc.save()

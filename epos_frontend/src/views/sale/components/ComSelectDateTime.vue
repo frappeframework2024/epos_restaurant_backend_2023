@@ -38,7 +38,7 @@ const props = defineProps({
 const default_date = moment(new Date).format('YYYY-MM-DD HH:mm')
 
 const date =  ref(default_date + ":00")
-console.log(props.params)
+
 if (props.params?.time_in){
     
     date.value = props.params.time_in

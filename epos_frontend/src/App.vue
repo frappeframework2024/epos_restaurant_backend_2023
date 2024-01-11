@@ -65,7 +65,7 @@ const isLoading = computed(() => {
 
 const is_window = localStorage.getItem("is_window");
 const is_apk_ipa = localStorage.getItem("apkipa");
-if((is_window||0) == 0 && (is_apk_ipa||0)==0){
+if((is_window||0) == 0 && (is_apk_ipa||0)==0){ 
 	const _webuid = localStorage.getItem("_webuid");
 	if((_webuid||0)==0){
 		localStorage.removeItem("device_name");

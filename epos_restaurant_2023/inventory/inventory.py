@@ -56,15 +56,35 @@ def check_uom_conversion(from_uom, to_uom):
 
 @frappe.whitelist(allow_guest=True)
 def calculate_average_cost(product_code,stock_location,quantity,cost):
-    data = frappe.db.sql("select name,cost,quantity from `tabStock Location Product` where stock_location='{}' and product_code='{}'".format(stock_location, product_code), as_dict=1)
-    current_qty = float(data[0]["quantity"])
-    current_cost = float(data[0]["cost"])
-    current_stock_cost = current_qty * current_cost
+    data = frappe.db.sql("select cost,quantity,name from `tabStock Location Product` where stock_location='{}' and product_code='{}'".format(stock_location, product_code), as_dict=1)
+    if data:
+        current_qty = float(data[0]["quantity"])
+        current_cost = float(data[0]["cost"])
+        current_stock_cost = current_qty * current_cost
+    else:
+        current_qty = 0
+        current_stock_cost = 0
 
     new_qty = float(quantity)
     new_cost = float(cost)
     new_stock_cost = new_cost * new_qty
 
-    avc = (current_stock_cost + new_stock_cost) / (current_qty + new_qty)
+    delta_cost = (current_stock_cost if current_stock_cost > 0 else 0) + new_stock_cost
+    delta_qty = (current_qty if current_qty > 0 else 0) + new_qty
+
+    avc = delta_cost / delta_qty
 
     return avc
+
+@frappe.whitelist(allow_guest=True)
+def get_last_inventory_transaction(product_code,stock_location,doc_name):
+    data = frappe.db.sql("SELECT price FROM `tabInventory Transaction` where stock_location='{}' and product_code='{}' and transaction_number <> '{}' and docstatus = 0 order by creation desc limit 1".format(stock_location,product_code,doc_name), as_dict=1)
+    if data:
+       return data[0]["price"]
+    else:
+        return frappe.db.get_value('Product', {"name":product_code}, ['cost']) or 0
+    
+@frappe.whitelist(allow_guest=True)
+def update_inventory_transaction_status(doc_name):
+    frappe.db.sql("update `tabInventory Transaction` set docstatus = 2 where transaction_number = '{}'".format(doc_name))
+    frappe.db.commit()

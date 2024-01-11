@@ -271,19 +271,41 @@ function getEmployees(data) {
     return []
 }
 
-async function onStartTime(sp) {
-    let selectdatetime = await SelectDateTime({"time_in":sp.time_in});
-    if (selectdatetime) {
-        if (selectdatetime !='Set Later'){
-            sp.time_in = moment(selectdatetime).format('yyyy-MM-DD HH:mm:ss');
-        }else{
-            sp.time_in= undefined;
-        }
-        
+async function onStartTime(sp) { 
+    if((sp.name||"")!="" && (sp.time_in||"")!=""){
+        gv.authorize("", "change_item_time_in").then(async (res) => {
+            if (res) {   
+                _onStartTimer(sp);
+            }
+        });
+    }else{
+        _onStartTimer(sp);
     }
+    
+}
+
+async function _onStartTimer(sp){
+    let selectdatetime = await SelectDateTime({"time_in":sp.time_in});
+            if (selectdatetime) {
+                if (selectdatetime !='Set Later'){
+                    sp.time_in = moment(selectdatetime).format('yyyy-MM-DD HH:mm:ss');
+                }else{
+                    sp.time_in= undefined;
+                }
+                
+            }
 }
 async function onStopTimer(sp) {
-    
+    gv.authorize("", "change_item_time_out").then(async (res) => {
+        if (res) {   
+            _onStopTimer(sp);
+        }
+    });
+
+
+   
+}
+async function _onStopTimer(sp){
     if (sale.sale.sale_products.filter(r=>!r.name).length>0){
         toaster.warning($t('msg.Please submit your order first'));
         return

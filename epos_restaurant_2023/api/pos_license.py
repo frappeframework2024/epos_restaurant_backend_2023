@@ -28,3 +28,7 @@ def station_license(device_id):
 @frappe.whitelist(allow_guest=True)
 def start_config_pos():
     pass
+
+@frappe.whitelist(allow_guest=True)
+def test():
+    return "ToDo Test"

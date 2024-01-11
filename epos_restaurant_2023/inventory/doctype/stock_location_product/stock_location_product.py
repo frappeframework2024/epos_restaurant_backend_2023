@@ -5,10 +5,7 @@ import frappe
 from frappe.model.document import Document
 
 class StockLocationProduct(Document):
-	def validate(self):
-          data = frappe.get_value('Stock Location Product', {"stock_location": self.stock_location, "product_code": self.product_code}, ['name'], as_dict=1)
-          if data:
-               frappe.throw("Stock Location Already Exist For This Product")
+	pass
 
 @frappe.whitelist()
 def get_stock_location_product(stock_location=None, product_code = None):
