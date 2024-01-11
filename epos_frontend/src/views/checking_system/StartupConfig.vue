@@ -121,11 +121,13 @@
    }) ;
 
    async function onSave() {
-        if(!state.uid || !state.pos_profile){
-            toast.warning('Field(s) cannot be blank.',{ position: 'top'});
-            return;
-        }
+        
         if((is_window||0) == 0 && (is_apk_ipa||0)==0){
+            if(!state.uid || !state.pos_profile){
+                toast.warning('Field(s) cannot be blank.',{ position: 'top'});
+                return;
+            }
+
             is_startup_device.value = false;
           await  call.get("epos_restaurant_2023.api.pos_license.station_license",{"device_id":state.uid})
             .then((res)=>{
@@ -170,7 +172,7 @@
     function _onSave(){        
         if(!state.device_name || !state.pos_profile)
         {
-            toast.warning('Invalid field',{ position: 'top'});
+            toast.warning('Field(s) cannot be blank.',{ position: 'top'});
             return
         }
         store.dispatch('startLoading')
