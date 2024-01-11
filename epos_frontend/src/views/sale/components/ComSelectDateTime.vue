@@ -7,7 +7,7 @@
             <div> 
                 <!-- Please enter the time when the player started playing the game. If the player has not started playing yet, please click on the ‘Set Time In Later’ button. -->
                 <v-alert type="info"
-                    :text="$t('Timer Alert Message')"
+                    :text="$t('msg.Timer Alert Message')"
                 ></v-alert>
             </div>
             <div class="w-100 text-center">

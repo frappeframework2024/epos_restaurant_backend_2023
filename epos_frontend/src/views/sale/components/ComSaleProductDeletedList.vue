@@ -17,11 +17,23 @@
                                 <span>{{ sp.discount }}%</span>        
                             </ComChip>                   
                             <ComHappyHour :saleProduct="sp" v-if="sp.is_render"/>
-                        </div>
-                        <div>
-                            {{ sp.deleted_quantity }} x
+                        </div> 
+                        <div v-if="!sp.is_timer_product">
+                            {{ sp.quantity }} x 
                             <CurrencyFormat :value="sp.price" />
                         </div>
+                        <div v-else>
+                            <template v-if="sp.time_in">
+                                {{$t("Time In")}}: {{ moment(sp.time_in).format('hh:mm A') }}
+                                <span v-if="sp.time_out">
+                                    {{$t("Time Out")}}
+                                        {{ moment(sp.time_out).format('hh:mm A') }}
+                                </span>
+                                
+                            </template>
+                            
+                        </div>
+
                         <div class="text-xs pt-1">
                             <div v-if="sp.modifiers">
                                 <span>{{ sp.modifiers }} (

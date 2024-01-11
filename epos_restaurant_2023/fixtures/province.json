@@ -138,14 +138,6 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2023-10-27 16:18:13.959875",
-  "name": "Da Nang",
-  "note": "Da Nang",
-  "province": "Da Nang"
- },
- {
-  "docstatus": 0,
-  "doctype": "Province",
   "modified": "2023-10-27 16:13:55.515125",
   "name": "Beijing",
   "note": "Beijing",
@@ -166,14 +158,6 @@
   "name": "Hyderabad",
   "note": "Hyderabad",
   "province": "Hyderabad"
- },
- {
-  "docstatus": 0,
-  "doctype": "Province",
-  "modified": "2022-12-05 20:47:21.564060",
-  "name": "Siem Reap",
-  "note": null,
-  "province": "Siem Reap"
  },
  {
   "docstatus": 0,
@@ -254,6 +238,22 @@
   "name": "Bengaluru",
   "note": "Bengaluru",
   "province": "Bengaluru"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Province",
+  "modified": "2023-10-27 16:18:13.959875",
+  "name": "Da Nang",
+  "note": "Da Nang",
+  "province": "Da Nang"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Province",
+  "modified": "2022-12-05 20:47:21.564060",
+  "name": "Siem Reap",
+  "note": null,
+  "province": "Siem Reap"
  },
  {
   "docstatus": 0,

@@ -34,7 +34,7 @@
                             </div>
                             <div v-else>
                                 <template v-if="sp.time_in">
-                                    {{$t("Time in")}}: {{ moment(sp.time_in).format('hh:mm A') }}
+                                    {{$t("Time In")}}: {{ moment(sp.time_in).format('hh:mm A') }}
                                     <span v-if="sp.time_out">
                                         {{$t("Time Out")}}
                                          {{ moment(sp.time_out).format('hh:mm A') }}

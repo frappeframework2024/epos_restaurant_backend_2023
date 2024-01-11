@@ -57,5 +57,14 @@ def check_uom_conversion(from_uom, to_uom):
 @frappe.whitelist(allow_guest=True)
 def calculate_average_cost(product_code,stock_location,quantity,cost):
     data = frappe.db.sql("select name,cost,quantity from `tabStock Location Product` where stock_location='{}' and product_code='{}'".format(stock_location, product_code), as_dict=1)
+    current_qty = float(data[0]["quantity"])
+    current_cost = float(data[0]["cost"])
+    current_stock_cost = current_qty * current_cost
 
-    return data
+    new_qty = float(quantity)
+    new_cost = float(cost)
+    new_stock_cost = new_cost * new_qty
+
+    avc = (current_stock_cost + new_stock_cost) / (current_qty + new_qty)
+
+    return avc

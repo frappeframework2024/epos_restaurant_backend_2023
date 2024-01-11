@@ -7,11 +7,11 @@
         <template #content>
             <div class="d-flex mb-3" style="justify-content: space-between;">
                 <div>
-                    <span class="ttl-size">Time IN: </span>
+                    <span class="ttl-size">{{ $t("Time In") }}: </span>
                     <input class="calendar-custom p-1" type="datetime-local" v-model="data.time_in" >
                 </div>
                 <div>
-                    <span class="ttl-size">Time OUT: </span>
+                    <span class="ttl-size">{{$t("Time Out")}}: </span>
                     <input class="calendar-custom p-1" type="datetime-local" v-model="data.time_out" >
                 </div>
             </div> 
