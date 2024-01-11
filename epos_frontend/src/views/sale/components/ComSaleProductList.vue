@@ -302,7 +302,7 @@ async function onContinueTimer(sp){
         return
     }
 
-    if (await confirmDialog({ title: $t("Continue Timer"), text: $t("Are you sure to continue timer?") })) {
+    if (await confirmDialog({ title: $t("Continue Timer"), text: $t("msg.Are you sure to continue timer") })) {
         sale.loading=true;
         call.post("epos_restaurant_2023.api.timer_product.continue_timer", { sale_product: sp  }).then(async (result) =>  {
             sp.time_out = undefined;

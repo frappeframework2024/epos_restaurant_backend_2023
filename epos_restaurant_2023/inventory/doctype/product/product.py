@@ -192,7 +192,12 @@ class Product(Document):
 			"precision": frappe.db.get_default("float_precision"),
 			
 		}
+	@frappe.whitelist()
+	def generate_roundup():
 
+		frappe.throw(str('ra'))
+		
+	
 	@frappe.whitelist()
 	def generate_variant(self):
 	
@@ -456,6 +461,7 @@ def update_product_to_temp_product_menu():
 		add_product_to_temp_menu(doc)
 	frappe.db.commit()
 	return "Done"
+
 
 
 @frappe.whitelist()
