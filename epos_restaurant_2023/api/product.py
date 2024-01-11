@@ -2,7 +2,6 @@
 import frappe
 import json
 from frappe.utils.response import json_handler
-import pandas as pd
 from datetime import datetime, timedelta
 @frappe.whitelist(allow_guest=True)
 def get_product_by_menu(root_menu=""):
