@@ -54,5 +54,6 @@ def check_uom_conversion(from_uom, to_uom):
     conversion =frappe.db.get_value('Unit of Measurement Conversion', {'from_uom': from_uom,"to_uom":to_uom}, ['conversion'])
     return conversion
 
+@frappe.whitelist
 def calculate_average_cost(product_code,stock_location,quantity,cost):
       data = frappe.db.sql("select name,cost,quantity from `tabStock Location Product` where stock_location='{}' and product_code='{}'".format(stock_location, product_code), as_dict=1)

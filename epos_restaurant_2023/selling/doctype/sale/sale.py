@@ -134,7 +134,7 @@ class Sale(Document):
 		if Enumerable(self.payment).where(lambda x: (x.is_foc or 0) ==1).count()>=1:
 			self.is_foc = 1
 
-		total_quantity = Enumerable(self.sale_products).sum(lambda x: x.quantity or 0)
+		total_quantity = Enumerable(self.sale_products).where(lambda x:(x.is_timer_product or 0) == 0).sum(lambda x: x.quantity or 0)
 		sub_total = Enumerable(self.sale_products).sum(lambda x: (x.quantity or 0)* (x.price or  0) + ((x.quantity or 0)*(x.modifiers_price or 0)))
   
 		sale_discountable_amount =Enumerable(self.sale_products).where(lambda x:x.allow_discount ==1 and (x.discount_amount or 0)==0).sum(lambda x: (x.quantity or 0)* (x.price or  0) + + ((x.quantity or 0)*(x.modifiers_price or 0)))
