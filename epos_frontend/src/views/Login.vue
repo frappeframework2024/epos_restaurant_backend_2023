@@ -185,7 +185,7 @@ const onLogin = async () => {
   }
 
   if (!state.password) {
-    toast.warning($t('msg.Invalid PIN Codex'), { position: 'top' });
+    toast.warning($t('msg.Invalid PIN Code'), { position: 'top' });
     return
   }
   store.dispatch('startLoading');

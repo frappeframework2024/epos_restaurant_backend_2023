@@ -1,22 +1,28 @@
 <template>
-    <ComModal :loading="is_loading" @onClose="onClose" @onOk="onStopClick" titleOKButton="Stop Timer">
+    <ComModal width="1000px" :loading="is_loading" @onClose="onClose" @onOk="onStopClick" titleOKButton="Stop Timer">
         
         <template #title>
             {{ $t('Stop Timer') }}
         </template>
         <template #content>
-            Time IN
-            <input type="datetime-local" v-model="data.time_in" >
-            Time OUT
-            <input type="datetime-local" v-model="data.time_out" >
+            <div class="d-flex mb-3" style="justify-content: space-between;">
+                <div>
+                    <span class="ttl-size">Time IN: </span>
+                    <input class="calendar-custom p-1" type="datetime-local" v-model="data.time_in" >
+                </div>
+                <div>
+                    <span class="ttl-size">Time OUT: </span>
+                    <input class="calendar-custom p-1" type="datetime-local" v-model="data.time_out" >
+                </div>
+            </div> 
             <hr/>
-            <div class="v-table__wrapper">
-                <table>
+            <div class="v-table__wrapper mt-3">
+                <table class="w-100">
                 <thead>
-                    <tr>
-                        <th>{{$t("Time In")}}</th>
-                        <th>{{$t("Time Out")}}</th>
-                        <th>{{$t("Time Duration")}}</th>
+                    <tr style="border: 1px solid #ccc">
+                        <th class="text-left">{{$t("Time In")}}</th>
+                        <th class="text-left">{{$t("Time Out")}}</th>
+                        <th class="text-left">{{$t("Time Duration")}}</th>
                         <th class="text-center">{{$t("Time Minute")}}</th>
                         <th class="text-right">{{$t("Time Price")}}</th>
                         <th class="text-right">{{$t("Time Amount")}}</th>
@@ -36,13 +42,13 @@
                             {{ moment(data.time_out_price).format('hh:mm A') }}
                         </td>
                         <td>{{ data.duration }}</td>
-                        <td>{{ data.total_minute }}</td>
-                        <td><CurrencyFormat :value="data.price" /></td>
-                        <td><CurrencyFormat :value="data.amount" /></td>
+                        <td class="text-center">{{ data.total_minute }}</td>
+                        <td class="text-right"><CurrencyFormat :value="data.price" /></td>
+                        <td class="text-right"><CurrencyFormat :value="data.amount" /></td>
                     </tr>
-                    <tr  >
-                        <td>{{$t("Total")}}</td>
-                        <td>{{ breakdownData.reduce((n, d) => n + (d.amount || 0), 0) }}</td>
+                    <tr>
+                        <td class="text-right" colspan="5"><strong>{{$t("Total")}}:</strong></td>
+                        <td class="text-right"><strong>{{ breakdownData.reduce((n, d) => n + (d.amount || 0), 0) }}</strong></td>
                        
                     </tr>
                 </tbody>
@@ -54,7 +60,7 @@
     </ComModal>
 </template>
 <script setup>
-import { ref,inject,onMounted,watch } from '@/plugin'
+import { ref,inject,onMounted,watch,createToaster ,i18n} from '@/plugin'
 import { defineEmits } from 'vue';
 import { useDisplay } from 'vuetify';
 import moment from '@/utils/moment.js';
@@ -69,11 +75,10 @@ const props = defineProps({
 })
 
 const breakdownData = ref([])
-
- 
+const toaster = createToaster({ position: 'top' });
 
 const emit = defineEmits(["click"])
-
+const { t: $t } = i18n.global;
 
 const data = ref(JSON.parse(JSON.stringify(props.params)))
 let is_loading=ref(false)
@@ -102,6 +107,16 @@ function onStopClick() {
         is_loading.value=false
     }).catch((err)=>{
         is_loading.value=false
+        if (err._server_messages){
+            const errors = JSON.parse(err._server_messages)
+           
+            if(errors && errors.length>0){
+                const error = JSON.parse(errors[0])
+                toaster.warning($t('msg.' + error.message));
+            }
+
+            
+        }
     })
     
 }
@@ -127,3 +142,24 @@ onMounted(() => {
 })
 
 </script>
+<style scoped>
+    .calendar-custom{ 
+        font-size: 24px;
+        color: #3468C0; 
+        border: 2px solid;
+        border-radius: 5px;
+    }
+    .calendar-custom:focus-visible{
+        outline: 0;
+    }
+    .ttl-size{
+        font-size: 24px;
+        color: #D63484;
+    }
+    table, th, td {
+        border: 1px solid #E5E1DA;
+    } 
+    td, th{
+        padding: 3px;
+    }
+</style>

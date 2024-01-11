@@ -122,6 +122,13 @@ def get_timer_product_breakdown(sale_product):
 
 @frappe.whitelist(methods="POST")
 def stop_timer(sale_product):
+    time_in =  datetime.datetime.strptime(str(sale_product["time_in"]), "%Y-%m-%d %H:%M:%S")
+    time_out =  datetime.datetime.strptime(str(sale_product["time_out"]), "%Y-%m-%d %H:%M:%S")
+
+    if time_out<=time_in:
+        frappe.throw("Time out must be greater than time in")
+        
+
     if "parent" not in sale_product:
          frappe.throw(_("Please submit order first"))
     
@@ -136,6 +143,7 @@ def stop_timer(sale_product):
     if len(data) == 0:
          frappe.throw(_("Sale product record not found"))
     base_record = data[0]
+    base_record.time_in = breawkdown_data[0]["time_in"]
     base_record.time_out_price = breawkdown_data[0]["time_out_price"]
     base_record.price = breawkdown_data[0]["base_price"]
     base_record.quantity = breawkdown_data[0]["total_minute"]

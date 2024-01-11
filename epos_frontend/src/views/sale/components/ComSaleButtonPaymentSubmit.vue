@@ -156,6 +156,13 @@ async function onPayment() {
       return;
   }
   
+  const check_stop_timer = sale.sale.sale_products.filter((sp)=>sp.is_timer_product && !sp.time_out_price )
+
+  if(check_stop_timer.length> 0){
+      toaster.warning($t('msg.Please stop timer on timer product'));
+      return;
+  }
+  
   const result = await paymentDialog({})
   sale.dialogActiveState=false
   if (result) { 

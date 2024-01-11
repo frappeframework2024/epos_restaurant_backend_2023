@@ -119,7 +119,9 @@ whenever(ctrl_q, () =>{
   if(gv.device_setting.show_option_quick_pay==0){
     return;
   }
-  onQuickPay();
+
+    onQuickPay();
+
 })
 
 
@@ -229,7 +231,7 @@ function onSaleDiscount(discount_type) {
 
 
 async function onQuickPay() {
-
+ 
   await sale.onSubmitQuickPay().then((value) => {
     if (value) {
       product.onClearKeyword()

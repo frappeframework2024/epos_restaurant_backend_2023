@@ -220,6 +220,10 @@ class Sale(Document):
 		#add sale product spa commission
 		add_sale_product_spa_commission(self)
 
+		#delete product that parent_sale_product not exists 
+		frappe.db.sql("delete from `tabSale Product` where parent='{0}' and ifnull(reference_sale_product,'')!='' and  ifnull(reference_sale_product,'') not in (select name from `tabSale Product` where parent='{0}')".format(self.name))
+
+
 	def after_insert(self):
 		#add sale product spa commission
 		add_sale_product_spa_commission(self)

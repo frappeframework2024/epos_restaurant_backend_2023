@@ -109,7 +109,14 @@ async function onSaleOrderClick(s) {
                             creation:r.creation,
                             modified:r.modified,
                             move_from_sale: r.move_from_sale,
-                            move_from_table:r.move_from_table
+                            move_from_table:r.move_from_table,
+                            is_timer_product: (r.is_timer_product||0),
+                            reference_sale_product: r.reference_sale_product,
+                            duration: r.duration,
+                            time_stop: (r.time_stop||0),
+                            time_in: r.time_in,
+                            time_out_price: r.time_out_price,
+                            time_out: r.time_out
                         });
                     });
                 });

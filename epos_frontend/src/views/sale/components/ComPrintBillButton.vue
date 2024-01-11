@@ -71,6 +71,11 @@ const toaster = createToaster({ position: 'top' });
 
 
 async function onPrintReport(r) {
+  if(sale.sale.sale_products.filter(r=>!r.time_out_price).length>0){
+            toaster.warning($t('msg.Please stop timer on timer product'));
+            return;
+    }
+
   if (sale.sale.sale_products?.length == 0) {
     toaster.warning($t("msg.Please select a menu item to submit order"));
   } else {

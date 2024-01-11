@@ -3,14 +3,16 @@
         <template #title>
             {{ $t('Timer') }}
         </template>
-        <template #content>
+        <template #content>  
             <div>
                 <v-alert type="info"
                     text="Please enter the time when the player started playing the game. If the player has not started playing yet, please click on the ‘Set Time In Later’ button."
                 ></v-alert>
             </div>
-            <input type="datetime-local" v-model="date" >
-        </template>
+            <div class="w-100 text-center">
+                <input class="calendar-custom mt-5" type="datetime-local" v-model="date" >
+            </div>
+        </template> 
         <template #action>
                 <v-btn variant="flat" type="button" color="primary" :disabled="loading" v-if="!hideOkButton" @click="setTimeLaterClick()">
                        {{$t("Set Time In Later")  }}
@@ -55,3 +57,15 @@ function onClose() {
     emit("resolve", false);
 }
 </script> 
+<style scoped>
+    .calendar-custom{ 
+        font-size: 42px;
+        color: #3468C0;
+        text-align: center;
+        border: 2px solid;
+        border-radius: 5px;
+    }
+    .calendar-custom:focus-visible{
+        outline: 0;
+    }
+</style>

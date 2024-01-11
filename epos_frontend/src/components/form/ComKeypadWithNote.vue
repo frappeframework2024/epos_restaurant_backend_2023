@@ -4,7 +4,9 @@
             {{ params.data.title }}
         </template>
         <template #content>
-            hello world
+            <span v-if="params.data.hide_keypad && !isDeleteNote">
+                Are your sure you want to you want to process this transaction?
+            </span>
             <div class="p-2">
             <v-row>
 

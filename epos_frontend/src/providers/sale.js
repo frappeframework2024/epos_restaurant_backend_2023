@@ -304,7 +304,7 @@ export default class Sale {
             
             const make_order_auth = JSON.parse(localStorage.getItem('make_order_auth'));
             const now = new Date();
-
+            const _now_format = moment(now).format('yyyy-MM-DD HH:mm:ss.SSS');
             const saleProduct = {
                 menu_product_name: p.menu_product_name,
                 product_code: p.name,
@@ -324,15 +324,15 @@ export default class Sale {
                 modifiers_price: this.getNumber(p.modifiers_price),
                 product_photo: p.photo,
                 selected: true,
-                modified: moment(now).format('yyyy-MM-DD HH:mm:ss.SSS'),
-                creation: moment(now).format('yyyy-MM-DD HH:mm:ss.SSS'),                
+                modified: _now_format,
+                creation: _now_format,                
                 append_quantity: p.append_quantity,
                 allow_discount: p.allow_discount,
                 allow_free: p.allow_free,
                 allow_change_price: p.allow_change_price,
                 is_open_product: p.is_open_product,
                 portion: this.getString(p.portion),
-                modifiers: p.modifiers || '',
+                modifiers: (p.modifiers || '')=="[]"?"":(p.modifiers || ''),
                 modifiers_data: p.modifiers_data,
                 is_free: 0,
                 sale_product_status: "New",
@@ -349,8 +349,7 @@ export default class Sale {
                 product_tax_rule: (p.tax_rule=="None"?"":p.tax_rule),
                 is_require_employee:p.is_require_employee,
                 is_timer_product: p.is_timer_product || 0,
-                
-
+                time_stop: 0
             }       
             if (p.is_timer_product){
                 if  (p.time_in){ 
@@ -1151,6 +1150,17 @@ export default class Sale {
             }
         } 
         
+        // check if product is timer peroduct then remove it child
+        // child record will remove in  doctype event
+        if (sp.is_timer_product && sp.name){
+            this.sale.sale_products.filter(r=>r.reference_sale_product==sp.name).forEach(x=>{
+                this.sale.sale_products.splice(this.sale.sale_products.indexOf(sp), 1);
+            })
+        }
+        
+        
+
+
         this.updateSaleProduct(sp);       
         this.updateSaleSummary();
     }
@@ -1254,6 +1264,11 @@ export default class Sale {
     }
 
     async onSubmitQuickPay() {
+       
+        if(this.sale.sale_products.filter(r=>!r.time_out_price).length>0){
+            toaster.warning($t('msg.Please stop timer on timer product'));
+            return;
+        }
         return new Promise(async (resolve) => {
             if (this.sale.sale_products.length == 0) {
                 toaster.warning($t('msg.Please select a menu item to process payment'));
@@ -1464,7 +1479,14 @@ export default class Sale {
                     combo_menu:r.combo_menu,
                     order_by:r.order_by,
                     creation:r.creation,
-                    modified:r.modified
+                    modified:r.modified,
+                    is_timer_product: (r.is_timer_product||0),
+                    reference_sale_product: r.reference_sale_product,
+                    duration: r.duration,
+                    time_stop: (r.time_stop||0),
+                    time_in: r.time_in,
+                    time_out_price: r.time_out_price,
+                    time_out: r.time_out
                 })
             });
         });  
@@ -1498,7 +1520,13 @@ export default class Sale {
                         deleted_note: r.deleted_item_note,
                         order_by: r.order_by,
                         creation: r.creation,
-                        modified: r.modified
+                        modified: r.modified,
+                        reference_sale_product: r.reference_sale_product,
+                        duration: r.duration,
+                        time_stop: (r.time_stop||0),
+                        time_in: r.time_in,
+                        time_out_price: r.time_out_price,
+                        time_out: r.time_out
                     })
                 });
             });

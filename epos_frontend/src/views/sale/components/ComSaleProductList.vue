@@ -33,9 +33,7 @@
                                 <CurrencyFormat :value="sp.price" />
                             </div>
                             <div v-else>
-                                
                                 <template v-if="sp.time_in">
-                                    {{ sp.reference_sale_product }}
                                     Time in: {{ moment(sp.time_in).format('hh:mm A') }}
                                     <span v-if="sp.time_out">
                                         to 
@@ -103,7 +101,7 @@
                             <v-chip color="green"  v-if="!sp.time_out && !sp.reference_sale_product" class="mx-1 grow text-center justify-center" variant="elevated" size="small"
                                 @click="onStartTime(sp)">{{ $t('Start Timer') }}</v-chip>
                             <!-- stop time -->
-                            <v-chip color="orange"  v-if="!sp.time_out && !sp.reference_sale_product" class="mx-1 grow text-center justify-center" variant="elevated" size="small"
+                            <v-chip color="orange"  v-if="sp.name && sp.time_in && !sp.time_out && !sp.reference_sale_product" class="mx-1 grow text-center justify-center" variant="elevated" size="small"
                                 @click="onStopTimer(sp)">{{ $t('Stop Timer') }}</v-chip>
 
                             <v-chip color="green" v-if="sp.time_out" class="mx-1 grow text-center justify-center" variant="elevated" size="small"
@@ -168,9 +166,6 @@ const props = defineProps({
     readonly: Boolean,
     saleCustomerDisplay: Object
 });
-
-
-
 
 
 function getMenuName(sp) {
@@ -289,6 +284,11 @@ async function onStartTime(sp) {
 }
 async function onStopTimer(sp) {
     
+    if (sale.sale.sale_products.filter(r=>!r.name).length>0){
+        toaster.warning($t('msg.Please submit your order first'));
+        return
+    }
+
     let stopTimer= await stopTimerModal(sp)
     if(stopTimer){
         sp.time_in = stopTimer.time_in
@@ -296,7 +296,11 @@ async function onStopTimer(sp) {
     }
 }
 async function onContinueTimer(sp){
-    
+    if (sale.sale.sale_products.filter(r=>!r.name).length>0){
+        toaster.warning($t('msg.Please submit your order first'));
+        return
+    }
+
     if (await confirmDialog({ title: $t("Continue Timer"), text: $t("Are you sure to continue timer?") })) {
         sale.loading=true;
         call.post("epos_restaurant_2023.api.timer_product.continue_timer", { sale_product: sp  }).then(async (result) =>  {
