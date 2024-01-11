@@ -48,7 +48,7 @@ frappe.ui.form.on("Product", {
         });
     },
     is_timer_product: function(frm) {
-        if(frm.doc.is_timer_product == 1 && (self.doc.is_new || len(self.doc.roundup_list) == 0)){
+        if(frm.doc.is_timer_product == 1 && (frm.is_new() || frm.doc.roundup_list.length == 0)){
             frm.call({
                 method: 'generate_roundup',
                 doc:frm.doc,

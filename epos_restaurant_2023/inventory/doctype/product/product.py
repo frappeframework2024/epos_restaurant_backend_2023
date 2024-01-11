@@ -193,11 +193,14 @@ class Product(Document):
 			
 		}
 	@frappe.whitelist()
-	def generate_roundup():
+	def generate_roundup(self):
+		ra = []
+		data = list(range(0,60))
+		for a in data:
+			ra.append({"base_value":a,"roundup_value":a})
 
-		frappe.throw(str('ra'))
+		return ra
 		
-	
 	@frappe.whitelist()
 	def generate_variant(self):
 	
