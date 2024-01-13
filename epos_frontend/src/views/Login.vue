@@ -29,9 +29,13 @@
       
       <div class="h-full flex items-center justify-center bg-gray-100">
         <form @submit.prevent="onLogin">
-          <div v-if="pos_license.invalid_license" class="flex items-center justify-center p-2 mb-4 bg-red-100 text-red">
-            {{$t('Invalid License')}}
-          </div>
+          <template v-if="pos_license.license != null"> 
+              <div v-if="pos_license.license.show_license_msg" class="flex items-center justify-center p-2 mb-4 bg-red-100 text-red" >
+                {{pos_license.license.message}}
+              </div>
+             
+          </template>
+          
           <div class="w-73">
             <div>
               <div class="d-block d-md-none mt-4">
@@ -89,8 +93,8 @@
 
                 </div>
               </div>
-              <div class="mt-6">
-                <v-btn type="submit" :loading="isLoading" size="x-large" class="w-full" color="primary" :disabled="pos_license.invalid_license">{{ $t("Login") }}</v-btn>
+              <div class="mt-4">
+                <v-btn type="submit" :loading="isLoading" size="x-large" class="w-full" color="primary" :disabled="!pos_license.license.status">{{ $t("Login") }}</v-btn>
               </div> 
               <div class="mt-2">
                 <v-btn size="x-large" class="w-full" color="light"  @click="(()=>{ 
@@ -101,6 +105,7 @@
               </div> 
               <div class="mt-4 text-center">
                 <p class="text-sm text-green-700">{{ setting?.pos_profile }}</p>
+                <p class="text-sm text-red-700">{{ device_name}}</p>
               </div> 
             </div>
           </div>
@@ -145,6 +150,10 @@ const isLoading = computed(() => {
   return store.state.isLoading;
 })
 
+const device_name  = computed(()=>{
+ return localStorage.getItem("device_name") ;
+});
+ 
 
 //on init
 onMounted(()=>{
@@ -180,8 +189,9 @@ function onDeleteBack() {
   state.password = state.password.substring(0, state.password.length - 1);
 }
 const onLogin = async () => {
-  if(pos_license.invalid_license){
-    return;
+   
+  if(!pos_license.license.status){
+    return
   }
 
   if (!state.password) {

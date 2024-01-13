@@ -11,12 +11,19 @@ from frappe import _
 
 
 @frappe.whitelist(allow_guest=True)
-def station_license(device_id): 
-    doc = frappe.db.get_list('POS Station',
-        filters={
+def station_license(device_id,platform=None): 
+    if not platform:
+        filters = {
             'disabled': 0,
+            'device_id':device_id,
+            'platform':platform
+            }
+    else:
+        filters = {'disabled': 0,
             'device_id':device_id
-        },
+            }
+    doc = frappe.db.get_list('POS Station',
+        filters=filters,
         fields=["name","license","platform"],
         as_list=False
     )

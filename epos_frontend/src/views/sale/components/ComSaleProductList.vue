@@ -296,14 +296,15 @@ async function _onStartTimer(sp){
             }
 }
 async function onStopTimer(sp) {
-    gv.authorize("", "change_item_time_out").then(async (res) => {
-        if (res) {   
-            _onStopTimer(sp);
-        }
-    });
-
-
-   
+    if((sp.name||"")!="" && (sp.time_out||"")!=""){
+        gv.authorize("", "change_item_time_out").then(async (res) => {
+            if (res) {   
+                _onStopTimer(sp);
+            }
+        });
+    }else{
+        _onStopTimer(sp);
+    }
 }
 async function _onStopTimer(sp){
     if (sale.sale.sale_products.filter(r=>!r.name).length>0){

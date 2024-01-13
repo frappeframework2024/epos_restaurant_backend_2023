@@ -69,26 +69,12 @@ if((is_window||0) == 0 && (is_apk_ipa||0)==0){
 	const _webuid = localStorage.getItem("_webuid");
 	if((_webuid||0)==0){
 		localStorage.removeItem("device_name");
-	}else{
-		pos_license.invalid_license = false;
-		call.get("epos_restaurant_2023.api.pos_license.station_license",{"device_id":_webuid})
-		.then((res)=>{
-			const _res = res.message;  
-			// if((_res.name||"") == ""){
-			// 	pos_license.invalid_license = true;
-			// } 
-			// if((_res.pos_license||"") == ""){
-			// 	pos_license.invalid_license = true; 
-			// } 
-
-			// if(pos_license.invalid_license){
-			// 	onLogout();
-			// } 
-
-		}).catch((r)=>{
-			pos_license.invalid_license = true;
-			onLogout();			 
-		});
+	}else{ 
+		 pos_license.onPOSLicenseCheck(_webuid).then((_res)=>{
+			if(_res.status == false){
+				onLogout();			
+			}
+		}); 
 	}
 }
 

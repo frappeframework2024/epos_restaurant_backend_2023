@@ -107,7 +107,11 @@ export default {
             this.drawer = !this.drawer;
         },
         onReload() {
-            location.reload()
+            location.reload();
+            const apkipa = localStorage.getItem('apkipa');
+            if((apkipa||0)==1){
+                window.ReactNativeWebView.postMessage("mobile_reload");
+            }
         },
         onLogout(){
             this.$auth.logout().then((r)=>{

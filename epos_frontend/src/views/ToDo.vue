@@ -1,15 +1,37 @@
 <template>
 <PageLayout icon="" title="">
-     
+     <v-btn @click="encrypt">
+        test
+     </v-btn>
+     encrypted = {{ encrypted }}
 </PageLayout>
 </template>
 <script setup>
 import {ref,confirmDialog} from "@/plugin"
 import PageLayout from '../components/layout/PageLayout.vue';
+import CryptoJS from 'crypto-js';
 import { createToaster } from "@meforma/vue-toaster";
 const toaster = createToaster({position:"top"});
 const todoList = ref([]);
 const toDo = ref("")
+
+const iv = 'sinasinasisinaaa'
+const key= ref('82f2ceed4c503896c8a291e560bd4325')
+const text= ref('HELLO')
+let encrypted=ref('')
+  function encrypt(){
+    encrypted.value = CryptoJS.AES.encrypt(text.value, CryptoJS.enc.Utf8.parse(key.value),{
+      iv: CryptoJS.enc.Utf8.parse(iv),
+        mode: CryptoJS.mode.CBC
+    })
+  }
+  function decrypt() {
+    console.log(encrypted.value)
+    text.value = CryptoJS.AES.decrypt(encrypted.value, CryptoJS.enc.Utf8.parse(key.value),{
+      iv: CryptoJS.enc.Utf8.parse(iv),
+        mode: CryptoJS.mode.CBC
+    })
+  }
 
 function addToDo(){
     todoList.value.push(
