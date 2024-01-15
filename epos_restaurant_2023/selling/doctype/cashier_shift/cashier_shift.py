@@ -7,7 +7,7 @@ from frappe.model.document import Document
 from frappe.model.naming import NamingSeries
 class CashierShift(Document):
 	def validate(self):
-		 
+		frappe.throw(str(self.flags.run_night_audit))
 		# #if close shift check current bill open 
 		# if self.is_closed==1:
 		# 	pending_orders = frappe.db.sql("select name from `tabSale` where docstatus = 0 and cashier_shift = '{}'".format(self.name), as_dict=1)

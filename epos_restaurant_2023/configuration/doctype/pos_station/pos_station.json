@@ -177,7 +177,7 @@
    "options": "Windows\nMobile\nTablet\nWeb"
   },
   {
-   "description": "Paste device-id from request license (DESKTOP). \nPaste Phone-IME (Android)",
+   "description": "Paste device-id from request license",
    "fieldname": "device_id",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -201,7 +201,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-01-01 10:51:23.098324",
+ "modified": "2024-01-15 09:16:31.802028",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

@@ -3,7 +3,14 @@
     <v-col md="6" lg="8" class="pa-0 d-sm-none d-none d-md-block">
       <div class="h-screen bg-cover bg-no-repeat bg-center"
         v-bind:style="{ 'background-image': 'url(' + setting?.login_background + ')' }">
-        <div class="h-full w-full p-10 flex justify-center items-center">
+        <div class="h-full w-full p-10 flex justify-center items-center position-relative">
+          <div class="position-absolute" style="top:50px">
+            <template v-if="pos_license.license != null "> 
+                <div v-if="pos_license.license.show_license_msg" class="py-4 flex items-center justify-center p-2 mb-4 bg-red-100 text-red rounded-lg" >
+                  <span style="font-size: 16px;" class="mr-1"><v-icon >mdi-alert-circle-outline</v-icon></span>{{pos_license.license.message}}<span style="font-size: 16px;" @click="onCloseMessage"><v-icon >mdi-close</v-icon></span>
+                </div> 
+            </template>
+          </div>
           <div>
             <div
               class="app-info w-96 inline-block text-center rounded-lg pa-4 bg-gradient-to-t from-yellow-900 to-yellow-700 text-white shadow-sm">
@@ -28,14 +35,12 @@
     <v-col sm="12" md="6" lg="4" class="pa-0 relative">
       
       <div class="h-full flex items-center justify-center bg-gray-100">
-        <form @submit.prevent="onLogin">
-          <template v-if="pos_license.license != null"> 
-              <div v-if="pos_license.license.show_license_msg" class="flex items-center justify-center p-2 mb-4 bg-red-100 text-red" >
-                {{pos_license.license.message}}
-              </div>
-             
+        <form @submit.prevent="onLogin"> 
+          <template v-if="pos_license.license != null && mobile"> 
+              <div v-if="pos_license.license.show_license_msg" class="flex items-center justify-center p-2 mb-4 bg-red-100 text-red rounded-lg w-full mx-5" >
+                <span style="font-size: 16px;" class="mr-1"><v-icon >mdi-alert-circle-outline</v-icon></span>{{pos_license.license.message}}<span style="font-size: 16px;" @click="onCloseMessage"><v-icon >mdi-close</v-icon></span>
+              </div> 
           </template>
-          
           <div class="w-73">
             <div>
               <div class="d-block d-md-none mt-4">
@@ -94,7 +99,7 @@
                 </div>
               </div>
               <div class="mt-4">
-                <v-btn type="submit" :loading="isLoading" size="x-large" class="w-full" color="primary" :disabled="!pos_license.license.status">{{ $t("Login") }}</v-btn>
+                <v-btn type="submit" :loading="isLoading" size="x-large" class="w-full" color="primary" :disabled="(pos_license.web_platform && !(pos_license.license?.status??false))">{{ $t("Login") }}</v-btn>
               </div> 
               <div class="mt-2">
                 <v-btn size="x-large" class="w-full" color="light"  @click="(()=>{ 
@@ -189,9 +194,10 @@ function onDeleteBack() {
   state.password = state.password.substring(0, state.password.length - 1);
 }
 const onLogin = async () => {
-   
-  if(!pos_license.license.status){
-    return
+  if(pos_license.web_platform){   
+    if(!pos_license.license.status){
+      return
+    }
   }
 
   if (!state.password) {

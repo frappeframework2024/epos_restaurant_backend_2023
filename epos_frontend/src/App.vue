@@ -65,11 +65,13 @@ const isLoading = computed(() => {
 
 const is_window = localStorage.getItem("is_window");
 const is_apk_ipa = localStorage.getItem("apkipa");
+pos_license.web_platform  = false;
 if((is_window||0) == 0 && (is_apk_ipa||0)==0){ 
+	pos_license.web_platform  = true;
 	const _webuid = localStorage.getItem("_webuid");
 	if((_webuid||0)==0){
 		localStorage.removeItem("device_name");
-	}else{ 
+	}else{ 		
 		 pos_license.onPOSLicenseCheck(_webuid).then((_res)=>{
 			if(_res.status == false){
 				onLogout();			

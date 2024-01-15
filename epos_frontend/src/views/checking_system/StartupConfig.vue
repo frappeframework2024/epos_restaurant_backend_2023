@@ -83,7 +83,7 @@
     const state = reactive({
         valid: true,
         device_name: '',
-        uid:'djntzagvec7tb3mvnv6ge990xhtwxg4zd0p3424drm14vmd9x92g',
+        uid:'',
         pos_profile: 'Main POS Profile',
         loading: true
     });
@@ -104,8 +104,10 @@
     const is_apk_ipa = localStorage.getItem("apkipa");
     
     const check = computed(()=>{
-    is_startup_device.value = false;
+        pos_license.web_platform  = false;
+        is_startup_device.value = false;
         if((is_window||0)==1 || (is_apk_ipa||0)==1){
+            pos_license.web_platform  = true;
             state.device_name = localStorage.getItem("__startup_device");
             is_startup_device.value = true;
         }      
@@ -113,18 +115,22 @@
 
  
    async function onSave() {
-        
+        pos_license.web_platform  = false;
         if((is_window||0) == 0 && (is_apk_ipa||0)==0){
+            pos_license.web_platform = true;
             if(!state.uid || !state.pos_profile){
                 toast.warning('Field(s) cannot be blank.',{ position: 'top'});
                 return;
             }
             is_startup_device.value = false;
-
             await pos_license.onPOSLicenseCheck(state.uid).then((_res)=>{
                 if(!_res.status){
                     toast.warning(_res.message,{ position: 'top'});
                     return;
+                }
+                if(_res.is_used){
+                    toast.warning(`${_res.device_name} is already used on other device.`,{ position: 'top'});
+                    return
                 }
                 localStorage.setItem('_webuid',state.uid);
                 state.device_name = _res.device_name;

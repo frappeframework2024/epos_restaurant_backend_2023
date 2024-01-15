@@ -14,6 +14,7 @@ const toaster = createToaster({ position: "top" });
 
 export default class POSLicense {
     constructor() { 
+        this.web_platform = false,
         this.license = null
     }
 
@@ -40,7 +41,6 @@ export default class POSLicense {
                     return this.license;
                 }else{ 
                     let response = { "status":false,"invalid_license": true,"show_license_msg":true, "device_name":res_data.name,"message":`Invalid license on ${res_data.name}`};
-                   
                     const _license =  this.decryptAES(this.decryptAES(res_data.license));
                     let arr = _license.split('|'); 
                     if(arr.length>0){
