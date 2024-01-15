@@ -6,11 +6,11 @@
         <v-btn @click="onViewPendingOrder">
             {{ $t('Pending Order') }}
         </v-btn> 
-          <v-btn  @click="onShowHideSaleStatus()">
-           {{ !status ? $t('Show Status'):$t("Hide Status") }}
-        </v-btn> 
+         
     </template>
+    
     {{ isShowTableStatus() }}
+  
     <v-btn :loading="tableLayout.saveTablePositionResource.loading" v-if="tableLayout.canArrangeTable"
         @click="onSaveTablePosition">
         {{ $t('Save Table Position') }}
@@ -37,15 +37,19 @@
                         <v-list-item-title>{{ $t('Arrange Table') }}</v-list-item-title>
                     </v-list-item>
                 </template>
+
                 <template v-if="mobile">
                     <v-list-item @click="onViewPendingOrder">
                         <v-list-item-title>{{$t('Pending Order')}}</v-list-item-title>
                     </v-list-item>
-                    <v-list-item @click="onShowHideSaleStatus">
-                        <v-list-item-title>   {{ !status ? $t('Show Status'):$t("Hide Status") }}</v-list-item-title>
-                    </v-list-item>
-                    
+                   
                 </template>
+                
+                <v-list-item @click="onShowHideSaleStatus">
+                        <v-list-item-title>   {{ !status ? $t('Show Status'):$t("Hide Status") }}</v-list-item-title>
+                </v-list-item>
+                    
+                
 
             </v-list>
         </v-card>

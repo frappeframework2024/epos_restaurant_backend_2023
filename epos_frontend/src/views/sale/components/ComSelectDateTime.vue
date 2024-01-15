@@ -69,4 +69,9 @@ function onClose() {
     .calendar-custom:focus-visible{
         outline: 0;
     }
+    @media (max-width: 768px) {
+        .calendar-custom{
+            font-size: 18px;
+        }
+    }
 </style>

@@ -64,9 +64,10 @@ def get_columns(filters):
 	columns = []
 	row_group = [d for d in get_row_groups() if d["label"]==filters.row_group][0]
  
- 
+	# frappe.throw(str(filters))
 	if filters.row_group == 'Sale Invoice':
 		columns.append({'fieldname':'row_group','label':filters.row_group,'fieldtype':'Link',"options":"Sale",'align':'left','width':250})
+		columns.append({'fieldname':'custom_bill_number','label':"Bill No",'fieldtype':'Data','align':'left','width':150})
 	else:
 		columns.append({'fieldname':'row_group','label':filters.row_group,'fieldtype':'Data','align':'left','width':250})
 	# if filters.row_group == "Product":
@@ -257,7 +258,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 	report_fields = get_report_field(filters)
 
 	if(row_group == "a.parent"):
-		sql = "select {} as row_group, coalesce(b.custom_bill_number,'') as custom_bill_number, {} as indent ".format(row_group, indent)
+		sql = "select {} as row_group, coalesce(b.custom_bill_number,'-') as custom_bill_number, {} as indent ".format(row_group, indent)
 	else:
 		sql = "select {} as row_group, {} as indent ".format(row_group, indent)
 	if filters.column_group != "None":
@@ -288,8 +289,8 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 			sql = sql + " ,{} AS 'total_{}' ".format(rf["sql_expression"],rf["fieldname"])
 
 	_row_group = row_group
-	# if row_group == "a.parent":
-	# 	_row_group = 'a.parent, coalesce(b.custom_bill_number,'')'
+	if row_group == "a.parent":
+		_row_group = "a.parent, coalesce(b.custom_bill_number,'-')"
 
 	sql = sql + """ {2}
 		FROM `tabSale Product` AS a
