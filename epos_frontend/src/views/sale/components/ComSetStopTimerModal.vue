@@ -5,14 +5,14 @@
             {{ $t('Stop Timer') }}
         </template>
         <template #content>
-            <div class="d-flex mb-3" style="justify-content: space-between;">
+            <div class="d-block d-md-flex mb-3" style="justify-content: space-between;">
                 <div>
                     <span class="ttl-size">{{ $t("Time In") }}: </span>
-                    <input class="calendar-custom p-1" type="datetime-local" v-model="data.time_in" >
+                    <input class="calendar-custom p-1 w-100" type="datetime-local" v-model="data.time_in" >
                 </div>
                 <div>
                     <span class="ttl-size">{{$t("Time Out")}}: </span>
-                    <input class="calendar-custom p-1" type="datetime-local" v-model="data.time_out" >
+                    <input class="calendar-custom p-1 w-100" type="datetime-local" v-model="data.time_out" >
                 </div>
             </div> 
             <hr/>
@@ -161,5 +161,10 @@ onMounted(() => {
     } 
     td, th{
         padding: 3px;
+    }
+    @media (max-width: 768px) {
+        .calendar-custom{
+            font-size: 18px;
+        }
     }
 </style>

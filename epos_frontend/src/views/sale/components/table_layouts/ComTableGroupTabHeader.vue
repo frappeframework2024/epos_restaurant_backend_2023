@@ -7,7 +7,7 @@
  
     <v-bottom-navigation align-tabs="center" v-if="tableLayout.table_groups && tableLayout.table_groups.length > 1">
         <v-tabs height="100%"  v-model="tableLayout.tab"  center-active>
-            <v-tab v-for="g in tableLayout.table_groups" :key="g.key" :value="g.key" :disabled="tableLayout.tab == g.key">
+            <v-tab style="text-transform: none;" v-for="g in tableLayout.table_groups" :key="g.key" :value="g.key" :disabled="tableLayout.tab == g.key">
                 {{ getGroupName(g) }}
             </v-tab>
         </v-tabs>
