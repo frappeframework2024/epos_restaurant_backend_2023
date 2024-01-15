@@ -28,6 +28,9 @@
                         {{ titleOKButton==""?$t("Save"):$t(titleOKButton) }}
                     </v-btn>
                 </template>
+                <template v-else>
+                    <slot name="action"></slot>
+                </template>
             </v-card-actions>
  
         </v-card>

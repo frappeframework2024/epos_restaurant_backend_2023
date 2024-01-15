@@ -7,6 +7,7 @@
     <template #content> 
       <ComLoadingDialog v-if="is_loading" />
           <ComSplitBillList :data="groupSales" /> 
+          
     </template>
     <template #action>
       <v-btn variant="flat" color="error" @click="onClose()">
