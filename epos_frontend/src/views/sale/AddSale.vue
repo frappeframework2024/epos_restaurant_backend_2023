@@ -55,23 +55,23 @@ import { useDisplay } from 'vuetify';
 
 const { t: $t } = i18n.global;
 
-const { mobile } = useDisplay()
+const { mobile } = useDisplay();
 
-const sale = inject("$sale")
-const gv = inject("$gv")
-const socket = inject("$socket")
+const sale = inject("$sale");
+const gv = inject("$gv");
+const socket = inject("$socket");
 
-const product = inject("$product")
-const frappe = inject("$frappe")
+const product = inject("$product");
+const frappe = inject("$frappe");
 const db = frappe.db();
-let openSearch = ref(false)
-const route = useRoute()
-const router = useRouter()
+let openSearch = ref(false);
+const route = useRoute();
+const router = useRouter();
 
-const toaster = createToaster({ position: "top" })
+const toaster = createToaster({ position: "top" });
 
 sale.vueInstance = getCurrentInstance();
-sale.vue = sale.vueInstance.appContext.config.globalProperties
+sale.vue = sale.vueInstance.appContext.config.globalProperties;
 
 sale.orderTime = null;
 sale.deletedSaleProducts = [];
@@ -83,7 +83,7 @@ sale.vue.$onKeyStroke('F1', (e) => {
         localStorage.setItem('dialogstate',1)
         ShortCutKeyHelpDialog()
     }  
-})
+});
 
 
 
@@ -104,7 +104,8 @@ function onSearchProduct(open) {
     openSearch.value = open
 }
 
-onMounted(() => {
+onMounted(() => { 
+
     if (sale.getString(route.params.name) == "") {
         if (sale.sale.sale_status == undefined) {
             if (sale.setting.table_groups.length > 0) {
@@ -144,7 +145,7 @@ onMounted(() => {
                 product.getProductMenuByProductCategory(db,'All Product Categories')
                 gv.confirm_close_working_day(data.working_day.posting_date);
                 
-                onCheckExpireHappyHoursPromotion()
+                onCheckExpireHappyHoursPromotion();
             }
         }
     })

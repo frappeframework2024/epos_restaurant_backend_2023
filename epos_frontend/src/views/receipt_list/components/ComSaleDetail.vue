@@ -236,6 +236,9 @@ function onEditOrder() {
     //check authorize and     check reason
     gv.authorize("edit_closed_receipt_required_password", "edit_closed_receipt", "edit_closed_receipt_required_note", "Edit Closed Receipt").then(async (v) => {
         if (v) {
+            const make_order_auth = {"username":v.username,"name":v.user,discount_codes:v.discount_codes }; 
+            localStorage.setItem('make_order_auth',JSON.stringify(make_order_auth));
+
             //cancel payment first
             isLoading.value = true;
             const cancelSaleResource = createResource({
@@ -262,15 +265,17 @@ function onEditOrder() {
 function OnDeleteOrder() {
     //check authorize and     check reason
     gv.authorize("delete_bill_required_password", "delete_bill", "delete_bill_required_note", "Delete Bill Note").then(async (v) => {
-        if (v) {
+        if (v) {  
             if (v.show_confirm == 1) {
                 if (await confirm({ title: $t("Delete Sale Order"), text: $t("msg.are you sure to delete this sale order") }) == false) {
                     return;
                 }
             }
+
+
             //cancel payment first
-            isLoading.value = true;
-            const _sale = JSON.parse(JSON.stringify(sale.sale));
+            isLoading.value = true;           
+            const _sale = JSON.parse(JSON.stringify(sale.doc));            
             generateSaleProductPrintToKitchen(_sale,v.note);
             const deleteSaleResource = createResource({
                 url: "epos_restaurant_2023.api.api.delete_sale",
@@ -295,20 +300,20 @@ function OnDeleteOrder() {
 }
 
 function generateSaleProductPrintToKitchen(doc,note){
-    this.deletedSaleProducts = [];
+    deletedSaleProducts = [];
     (doc.sale_products||[]).forEach((sp)=>{
         if(sp.sale_product_status=="Submitted"){
             sp.note = note;
             sp.deleted_item_note = "Bill Deleted";
-            this.deletedSaleProducts.push(sp);
+            deletedSaleProducts.push(sp);
         }
     });
 
     //generate deleted product to product printer list
-    this.deletedSaleProducts.filter(r => JSON.parse(r.printers).length > 0).forEach((r) => {
+    deletedSaleProducts.filter(r => JSON.parse(r.printers).length > 0).forEach((r) => {
             const pritners = JSON.parse(r.printers);
             pritners.forEach((p) => {
-                this.productPrinters.push({
+                productPrinters.push({
                     printer: p.printer,
                     group_item_type: p.group_item_type,
                     product_code: r.product_code,
@@ -334,9 +339,9 @@ function generateSaleProductPrintToKitchen(doc,note){
 function onProcessPrintToKitchen(doc){
     const data = {
             action: "print_to_kitchen",
-            setting: this.setting?.pos_setting,
+            setting: gv.setting?.pos_setting,
             sale: doc,
-            product_printers: this.productPrinters
+            product_printers: productPrinters
         }
 
         if (localStorage.getItem("is_window") == 1) {
@@ -344,8 +349,8 @@ function onProcessPrintToKitchen(doc){
         } else {
             socket.emit("PrintReceipt", JSON.stringify(data))
         }
-        this.deletedSaleProducts = [];
-        this.productPrinters = [];
+        deletedSaleProducts = [];
+        productPrinters = [];
 }
 
 

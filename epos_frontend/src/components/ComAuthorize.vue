@@ -63,12 +63,15 @@
   </v-dialog>
 </template>
 <script setup>
-import { ref, createResource, inject,i18n  } from "@/plugin"
+import { ref, inject,i18n  } from "@/plugin"
 import { createToaster } from "@meforma/vue-toaster";
 const { t: $t } = i18n.global; 
  
 
-const gv = inject("$gv")
+const gv = inject("$gv");
+const frappe = inject("$frappe");
+const call = frappe.call();
+
 const toaster = createToaster({ position: "top" })
 
 const props = defineProps({
@@ -100,29 +103,19 @@ function onOk() {
     toaster.warning($t("msg.Please enter your pin code"));
     return;
   }
- 
-  createResource({
-    url: 'epos_restaurant_2023.api.api.check_username',
-    auto: true,
-    params: {
-      "pin_code": number.value
-    },
-    async onSuccess(doc) {
-      
-      if (doc.permission[props.params.permissionCode] == 1) {
-       
-        emit('resolve', {name:doc.full_name, discount_codes:doc.permission.discount_codes,username:doc.username})
-      } else {
-        toaster.warning($t("msg.You do not have permission to perform this action"));
-      }
-    },
-   async onError(e){
-      if(e.error_text !=undefined){
-        toaster.warning($t(`msg.${$t(e.error_text[0])}`)); 
-      } 
-    }
-  })
 
+  call.get("epos_restaurant_2023.api.api.check_username",{"pin_code": number.value})
+  .then((res)=>{
+    const doc = res.message;
+    if (doc.permission[props.params.permissionCode] == 1) {
+       
+       emit('resolve', {name:doc.full_name, discount_codes:doc.permission.discount_codes,username:doc.username})
+     } else {
+       toaster.warning($t("msg.You do not have permission to perform this action"));
+     }
+  }).catch((e)=>{  
+    toaster.warning($t(`msg.${$t(e.exception.replace("frappe.exceptions.ValidationError: ",""))}`)); 
+  }); 
 }
 function onCancel() {
   emit('resolve', false);

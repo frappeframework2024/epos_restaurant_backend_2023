@@ -786,17 +786,18 @@ def edit_sale_order(name,auth):
        
     doc = frappe.get_doc({
         'doctype': 'Comment',
-        'subject': 'Delete sale order',
+        'subject': 'Edit Bill',
         "comment_type":"Info",
         "reference_doctype":"Sale",
         "reference_name":sale_doc.name,
-        "comment_by":auth["username"],
+        "comment_by":auth['full_name'],
+        "custom_note":auth["note"],
         "content":"User {0} edit sale order. Reason: {1}".format(auth['full_name'], auth["note"])
     })
     doc.insert()
 
 @frappe.whitelist()
-def delete_sale(name,auth):
+def delete_sale(name,auth): 
     sale_doc = frappe.get_doc("Sale",name)
     #validate cashier shift
     cashier_shift_doc = frappe.get_doc("Cashier Shift", sale_doc.cashier_shift)
@@ -848,7 +849,8 @@ def delete_sale(name,auth):
         "comment_type":"Info",
         "reference_doctype":"Sale",
         "reference_name":sale_doc.name,
-        "comment_by":auth["username"],
+        "comment_by":auth['full_name'],
+        "custom_note":auth["note"],
         "content":"User {0} delete sale order. Reason: {1}".format(auth['full_name'], auth["note"])
     })
     doc.insert()

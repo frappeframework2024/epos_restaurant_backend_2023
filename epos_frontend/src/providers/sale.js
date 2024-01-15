@@ -78,10 +78,12 @@ export default class Sale {
         this.tableSaleListResource = null;
         this.orderChanged = false;
         this.printWaitingOrderAfterPayment = false;
-        this.createNewSaleResource(); 
+
+       
+        this.createNewSaleResource();  
     }
-   
-    createNewSaleResource() {        
+ 
+    createNewSaleResource() {       
         const parent = this;
         this.newSaleResource = createResource({
             url: "frappe.client.insert",
@@ -99,8 +101,9 @@ export default class Sale {
         })
     }
 
-    async newSale() {
-        this.deletedSaleProductsDisplay=[]
+    async newSale() { 
+        this.auditTrailLogs = [];
+        this.deletedSaleProductsDisplay=[];
         const make_order_auth = JSON.parse(localStorage.getItem('make_order_auth'));
         const tax_rule = this.setting.tax_rule;
         this.orderChanged = false;
@@ -142,24 +145,26 @@ export default class Sale {
         this.onSaleApplyTax(tax_rule,this.sale); 
 
         //audit-trail 
-        const u = JSON.parse(localStorage.getItem('make_order_auth')); 
-        let msg = `${u.name} was created new sale`;     
-        this.auditTrailLogs.push({
-            doctype:"Comment",
-            subject:"Create New Sale",
-            comment_type:"Info",
-            reference_doctype:"Sale",
-            reference_name:"New",
-            comment_by: u.name,
-            content:msg,
-            custom_item_description: '',
-            custom_note:''
-        }) ;
+        if((this.name||"") == ""){
+            const u = make_order_auth; 
+            let msg = `${u.name} was created new sale`;     
+            this.auditTrailLogs.push({
+                doctype:"Comment",
+                subject:"Create New Sale",
+                comment_type:"Info",
+                reference_doctype:"Sale",
+                reference_name:"New",
+                comment_by: u.name,
+                content:msg,
+                custom_item_description: '',
+                custom_note:''
+            }) ;
+        } 
     }
 
     async LoadSaleData(name) {    
+        this.auditTrailLogs = [];
         this.changeTableSaleProducts=[];
-
         return new Promise(async (resolve) => {
             const parent = this;
             this.saleResource = createDocumentResource({
@@ -192,6 +197,7 @@ export default class Sale {
                 }
                 resolve(doc);
             });
+
             resolve(false);
         })
     }

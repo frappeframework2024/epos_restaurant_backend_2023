@@ -18,8 +18,10 @@ def execute(filters=None):
 
 def get_columns(filters):
 	columns = [
-		{'fieldname':'audit_date','fieldtype':'Date','align':'left','label':'Audit Date',"width":95 ,"show_in_report":1},
-		{'fieldname':'reference_name','align':'left','label':'Ref Name #',"width":100 ,"show_in_report":1},
+		{'fieldname':'audit_date','fieldtype':'Date','align':'left','label':'Audit Date',"width":105 ,"show_in_report":1},
+		{'fieldname':'creation','fieldtype':'Time','align':'left','label':'Audit Time',"width":105 ,"show_in_report":1},
+		{'fieldname':'reference_name','align':'left','label':'Ref Name #',"width":150 ,"show_in_report":1},
+		{'fieldname':'custom_bill_number','align':'left','label':'Bill No#',"width":150 ,"show_in_report":1},
 		{'fieldname':'subject','align':'left','label':'Subject',"width":170 ,"show_in_report":1},
 		{'fieldname':'content','align':'left','label':'Content',"width":500 ,"show_in_report":1},
 		{'fieldname':'item_desciption','align':'left','label':'Item Description',"width":350 ,"show_in_report":1},
@@ -30,29 +32,30 @@ def get_columns(filters):
 	return columns
 
 def get_filters(filters):
-	sql = " and cast(creation as date) between %(start_date)s and %(end_date)s"
+	sql = " and cast(c.creation as date) between %(start_date)s and %(end_date)s"
 	return sql
 
 def get_report_data(filters):
-	sql="""
-			select 
-				reference_name,
-				subject, 
-				custom_item_description as item_desciption,
-				cast(creation as date) as audit_date, 
-				modified , 
-				comment_by,
-				content,
-				custom_note as note 
-			from `tabComment` 
-			where reference_doctype ='Sale' and comment_type = 'Info' 
-			{}
-			order by 
-				creation, 
-				reference_name
-			asc
+	sql="""select 
+			c.reference_name,
+			coalesce(s.custom_bill_number,'-') as custom_bill_number,
+			c.subject, 
+			c.creation,
+			c.custom_item_description as item_desciption,
+			cast(c.creation as date) as audit_date, 
+			c.modified , 
+			c.comment_by,
+			c.content,
+			c.custom_note as note 
+		from `tabComment` c
+		left JOIN `tabSale` s on c.reference_name = s.name
+		where c.reference_doctype ='Sale' and c.comment_type = 'Info' 
+		{}
+		order by 
+			c.creation desc,
+			coalesce(s.custom_bill_number,'-')	desc,
+			c.reference_name desc
 		""".format(get_filters(filters))
-
-
+	
 	data =  frappe.db.sql(sql,filters,as_dict=1)
 	return data
