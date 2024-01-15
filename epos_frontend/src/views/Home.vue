@@ -1,17 +1,5 @@
-<template> 
-    <template v-if="pos_license.license != null && !mobile">
-        <div class="position-fixed" style="z-index: 10000;left:50%;transform: translateX(-50%);top:12px;"> 
-            <div v-if="pos_license.license.show_license_msg" class="flex items-center justify-center p-1 bg-red-100 text-red w-full rounded-lg">
-                <span style="font-size: 16px;" class="mr-1"><v-icon >mdi-alert-circle-outline</v-icon></span>{{pos_license.license.message}}<span style="font-size: 16px;" @click="onCloseMessage"><v-icon >mdi-close</v-icon></span>
-            </div> 
-        </div>
-    </template>
-    <div>   
-        <template v-if="pos_license.license != null && mobile">
-            <div v-if="pos_license.license.show_license_msg" class="flex items-center justify-center p-1 bg-red-100 text-red w-full" >
-                <span style="font-size: 16px;" class="mr-1"><v-icon >mdi-alert-circle-outline</v-icon></span>{{pos_license.license.message}}<span style="font-size: 16px;" @click="onCloseMessage"><v-icon >mdi-close</v-icon></span>
-            </div> 
-        </template>
+<template>  
+    <div>    
         <div class="h-60 bg-no-repeat bg-cover"
             v-bind:style="{ 'background-image': 'url(' + gv.setting.home_background + ')','background-position':'center' }"> 
             <div class="wrap-overlay w-full h-full flex items-end justify-center">
@@ -84,7 +72,7 @@ const { mobile } = useDisplay();
 
 
 const { t: $t } = i18n.global; 
-const toaster = createToaster({ position: "top" });
+const toaster = createToaster({ position: "top" }); 
 
 const router = useRouter();
 const device_setting = JSON.parse(localStorage.getItem("device_setting"));
@@ -96,11 +84,10 @@ function isWindow(){
 
 const device_name = computed(() => {
     return localStorage.getItem('device_name')
-}) 
-
-
+})
+ 
 //on init
-onMounted(async () => {
+onMounted(async () => { 
     localStorage.removeItem('make_order_auth');    
     call.get("epos_restaurant_2023.api.api.get_current_working_day",{business_branch: gv.setting?.business_branch})
     .then((_res)=>{

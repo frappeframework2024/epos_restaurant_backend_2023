@@ -255,9 +255,11 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 		row_group = [d["fieldname"] for d in get_row_groups() if d["label"]==parent_row_group][0]
 		
 	report_fields = get_report_field(filters)
-	
 
-	sql = "select {} as row_group, {} as indent ".format(row_group, indent)
+	if(row_group == "a.parent"):
+		sql = "select {} as row_group, coalesce(b.custom_bill_number,'') as custom_bill_number, {} as indent ".format(row_group, indent)
+	else:
+		sql = "select {} as row_group, {} as indent ".format(row_group, indent)
 	if filters.column_group != "None":
 		fields = get_fields(filters)
 		for f in fields:
@@ -284,6 +286,11 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 			sql = sql[0:len(sql)-1]
 		if not hide_columns or  rf["label"] not in hide_columns:
 			sql = sql + " ,{} AS 'total_{}' ".format(rf["sql_expression"],rf["fieldname"])
+
+	_row_group = row_group
+	# if row_group == "a.parent":
+	# 	_row_group = 'a.parent, coalesce(b.custom_bill_number,'')'
+
 	sql = sql + """ {2}
 		FROM `tabSale Product` AS a
 			INNER JOIN `tabSale` b on b.name = a.parent
@@ -292,7 +299,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 			{0}
 		GROUP BY 
 		{1} {2} {3}
-	""".format(get_conditions(filters,group_filter), row_group,item_code,groupdocstatus,normal_filter)
+	""".format(get_conditions(filters,group_filter), _row_group,item_code,groupdocstatus,normal_filter)
 	data = frappe.db.sql(sql,filters, as_dict=1)
 	return data
  
@@ -398,6 +405,7 @@ def get_report_chart(filters,data):
 
 def get_report_field(filters):
 	row_group = [d for d in get_row_groups() if d["label"]==filters.row_group][0]
+	
 	fields = []
 	fields.append({"label":"Quantity","short_label":"Qty", "fieldname":"quantity","fieldtype":"Float","indicator":"Grey","precision":2, "align":"center","chart_color":"#FF8A65","sql_expression":"SUM(a.quantity)"})
 	fields.append({"label":"Sub Total", "short_label":"Sub To.", "fieldname":"sub_total","fieldtype":"Currency","indicator":"Grey","precision":None, "align":"right","chart_color":"#dd5574","sql_expression":"SUM(a.sub_total)"})
@@ -431,6 +439,12 @@ def get_row_groups():
 		{
 			"fieldname":"a.parent",
 			"label":"Sale Invoice",
+			"parent_row_group_filter_field":"row_group",
+			"show_commission":True
+		},
+		{
+			"fieldname":"b.custom_bill_number",
+			"label":"Bill No",
 			"parent_row_group_filter_field":"row_group",
 			"show_commission":True
 		},

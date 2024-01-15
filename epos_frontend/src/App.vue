@@ -16,14 +16,16 @@ import SplashScreen from './components/SplashScreen.vue';
 import SaleLayout from './components/layout/SaleLayout.vue';
 import { PromiseDialogsWrapper } from 'vue-promise-dialogs';
 import { createResource } from '@/resource.js'
-import { reactive, computed, onMounted, inject } from 'vue'
+import { reactive, computed, onMounted, inject, i18n } from '@/plugin'
 import { useStore } from 'vuex'
 import { createToaster } from '@meforma/vue-toaster';
 import { FrappeApp } from 'frappe-js-sdk';
+import { useDisplay } from 'vuetify'; 
 
 
 const frappe = inject('$frappe');
 const call = frappe.call();
+const { t: $t } = i18n.global; 
 
 const toast = createToaster({position:'top'});
 const gv = inject("$gv");
@@ -38,6 +40,9 @@ const screen = inject('$screen');
 let state = reactive({
 	isLoading: false
 });
+ 
+const { mobile } = useDisplay();
+const licenseToaster = createToaster({ position: "top", duration: 1000*60*60, type: "error" });
 
 socket.on("PrintReceipt", (arg) => {	
 	if(localStorage.getItem("is_window")=="1"){
@@ -206,6 +211,13 @@ function onLogout() {
  
 
 onMounted(() => {
+	setTimeout(()=>{
+		if (pos_license.license != null){
+			if (pos_license.license.show_license_msg){
+				licenseToaster.warning($t(pos_license.license.message))
+			}
+		}   
+	}, 5000)
 	//check if NN user 
 	const current_user =  localStorage.getItem('current_user');
     if(current_user==null || current_user == undefined){

@@ -4,12 +4,7 @@
       <div class="h-screen bg-cover bg-no-repeat bg-center"
         v-bind:style="{ 'background-image': 'url(' + setting?.login_background + ')' }">
         <div class="h-full w-full p-10 flex justify-center items-center position-relative">
-          <div class="position-absolute" style="top:50px">
-            <template v-if="pos_license.license != null "> 
-                <div v-if="pos_license.license.show_license_msg" class="py-4 flex items-center justify-center p-2 mb-4 bg-red-100 text-red rounded-lg" >
-                  <span style="font-size: 16px;" class="mr-1"><v-icon >mdi-alert-circle-outline</v-icon></span>{{pos_license.license.message}}<span style="font-size: 16px;" @click="onCloseMessage"><v-icon >mdi-close</v-icon></span>
-                </div> 
-            </template>
+          <div class="position-absolute" style="top:50px"> 
           </div>
           <div>
             <div
@@ -36,11 +31,11 @@
       
       <div class="h-full flex items-center justify-center bg-gray-100">
         <form @submit.prevent="onLogin"> 
-          <template v-if="pos_license.license != null && mobile"> 
+          <!-- <template v-if="pos_license.license != null && mobile"> 
               <div v-if="pos_license.license.show_license_msg" class="flex items-center justify-center p-2 mb-4 bg-red-100 text-red rounded-lg w-full mx-5" >
                 <span style="font-size: 16px;" class="mr-1"><v-icon >mdi-alert-circle-outline</v-icon></span>{{pos_license.license.message}}<span style="font-size: 16px;" @click="onCloseMessage"><v-icon >mdi-close</v-icon></span>
               </div> 
-          </template>
+          </template> -->
           <div class="w-73">
             <div>
               <div class="d-block d-md-none mt-4">
