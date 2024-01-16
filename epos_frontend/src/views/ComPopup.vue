@@ -47,8 +47,7 @@ async function onOpen() {
     const result = await comPopup2Dialog({
         text: "Do you like my name is pheakdey?"
     });
-    if (result) {
-        alert(JSON.stringify(result))
+    if (result) { 
         // const data =JSON.parse(result.toString()) 
         // alert(data.name)
     }

@@ -202,6 +202,10 @@ io.on('connection', (socket) => {
     io.emit("ComRunNightAudit",arg)
   })
 
+  socket.on("ComRoomAvailable",(arg)=>{
+    io.emit("ComRoomAvailable",arg)
+  })
+
   
 });
 

@@ -30,8 +30,7 @@ onMounted(()=>{
   .catch((error) => console.error(error));
 })
 
-function onLogin(){
-    window.show_alert("u alert me")
+function onLogin(){ 
     window.auth
   .loginWithUsernamePassword({ username: 'Administrator', password: '123456' })
   .then((response) => alert("login succesas"))

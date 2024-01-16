@@ -8,6 +8,7 @@ frappe.query_reports["Sale Audit Trail Report"] = {
 			"label": __("Start Date"),
 			"fieldtype": "Date",
 			default:frappe.datetime.get_today(),
+			"on_change": function (query_report) { },
 			"reqd": 1
 		},
 		{
@@ -15,7 +16,13 @@ frappe.query_reports["Sale Audit Trail Report"] = {
 			"label": __("End Date"),
 			"fieldtype": "Date",
 			default:frappe.datetime.get_today(),
+			"on_change": function (query_report) { },
 			"reqd": 1
 		},
-	]
+	],
+	onload: function (report) {  
+		report.page.add_inner_button("Preview Report", function () {
+			report.refresh();
+		});		
+	},
 };
