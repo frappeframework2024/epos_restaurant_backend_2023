@@ -19,6 +19,35 @@ frappe.query_reports["Sale Audit Trail Report"] = {
 			"on_change": function (query_report) { },
 			"reqd": 1
 		},
+		{
+			"fieldname": "subject",
+			"label": __("Subject"),
+			"fieldtype": "MultiSelectList",
+			"on_change": function (query_report) { },
+			get_data: function(txt) {
+				return [
+					{"value":"Create New Sale","description":"Create New Sale"},
+					{"value":"New Sale Item","description":"New Sale Item"},
+					{"value":"Append Quantity","description":"Append Quantity"},
+					{"value":"Change Price","description":"Change Price"},
+					{"value":"Change Quantity","description":"Change Quantity"},
+					{"value":"Free Sale Product","description":"Free Sale Product"},
+					{"value":"Remove Free Sale Product","description":"Remove Free Sale Product"},
+					{"value":"Discount Sale Product","description":"Discount Sale Product"},
+					{"value":"Remove Discount Sale Product","description":"Remove Discount Sale Product"},
+					{"value":"Delete Sale Product","description":"Delete Sale Product"},
+					{"value":"Delete Not Submit Sale Product","description":"Delete Not Submit Sale Product"},
+					{"value":"Sale Discount","description":"Sale Discount"},
+					{"value":"Cancel Discount Sale","description":"Cancel Discount Sale"},
+					{"value":"Quick Payment","description":"Quick Payment"},
+					{"value":"Payment","description":"Payment"},
+					{"value":"Print Bill","description":"Print Bill"},
+					{"value":"Cancel Print Bill","description":"Cancel Print Bill"},
+					{"value":"Edit Bill","description":"Edit Bill"},
+					{"value":"Delete sale order","description":"Delete sale order"},
+				]
+			},
+		},
 	],
 	onload: function (report) {  
 		report.page.add_inner_button("Preview Report", function () {
