@@ -203,7 +203,8 @@ function onPaymentAudit(){
         comment_by:u.name,
         content:msg,
         custom_item_description: "",
-        custom_note:""
+        custom_note:"",
+        custom_amount: ((sale.sale.total_paid ||0) - (sale.sale.changed_amount||0))
     });  
 
 }

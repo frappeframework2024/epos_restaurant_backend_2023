@@ -201,6 +201,7 @@ function onReorder(sp) {
     if (!sale.isBillRequested()) {
         const u = JSON.parse(localStorage.getItem('make_order_auth'));
         let is_append = false;
+        let prev_sale_product = JSON.parse(JSON.stringify(sp));
 
         if ((sp.sale_product_status == "New" && sp.append_quantity == 1) || sale.setting.pos_setting.allow_change_quantity_after_submit == 1) {
             sale.updateQuantity(sp, sp.quantity + 1);
@@ -222,12 +223,12 @@ function onReorder(sp) {
                     sale.cloneSaleProduct(sp, sp.quantity + 1);
                 }, 100);
             }
-        }
+        } 
 
         if (is_append) {
 
             let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion || "") == "" ? "" : `(${sp.portion})`} ${sp.modifiers}`;
-            let msg = `${u.name} was append a quantity to item: ${item_description}`;
+            let msg = `${u.name} was append a quantity to item: ${item_description} (from ${prev_sale_product.quantity} to ${sp.quantity})`;
             sale.auditTrailLogs.push({
                 doctype: "Comment",
                 subject: "Append Quantity",
@@ -236,8 +237,9 @@ function onReorder(sp) {
                 reference_name: "New",
                 comment_by: u.name,
                 content: msg,
-                custom_item_description: item_description,
-                custom_note: ""
+                custom_item_description: `${(sp.quantity||0) - prev_sale_product.quantity} x ${item_description}`,
+                custom_note: "",
+                custom_amount: (sp.amount / ((sp.quantity||0)==0?1:sp.quantity)) * ((sp.quantity||0) - prev_sale_product.quantity)
             });
         }
     }

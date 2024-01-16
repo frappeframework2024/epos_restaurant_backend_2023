@@ -271,8 +271,10 @@ export default class Sale {
         let sp = Enumerable.from(this.sale.sale_products).where(strFilter).firstOrDefault()
         let is_new_sale_product = true;
         let new_sale_product;
+        let prev_sale_product;
         if (sp != undefined) {
             // append quantity
+            prev_sale_product = JSON.parse(JSON.stringify(sp));
             sp.quantity = parseFloat(sp.quantity) + 1;
             this.clearSelected();
             sp.selected = true;
@@ -383,13 +385,15 @@ export default class Sale {
                 reference_name:"New",
                 comment_by: u.name,
                 content:msg,
-                custom_item_description: item_description,
-                custom_note:''
+                custom_item_description: `${new_sale_product.quantity} x ${item_description}`,
+                custom_note:'',
+                custom_amount: new_sale_product.amount
             }) ;
 
         }else{
+
             let item_description =`${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
-            let msg = `${u.name} was append a quantity to item:  ${item_description}`;     
+            let msg = `${u.name} was append a quantity to item:  ${item_description} (from ${prev_sale_product.quantity} to ${sp.quantity})`;     
             this.auditTrailLogs.push({
                 doctype:"Comment",
                 subject:"Append Quantity",
@@ -398,8 +402,9 @@ export default class Sale {
                 reference_name:"New",
                 comment_by: u.name,
                 content:msg,                
-                custom_item_description: item_description,
-                custom_note:''
+                custom_item_description: `${(sp.quantity||0) - prev_sale_product.quantity} x ${item_description}`  ,
+                custom_note:'',
+                custom_amount :sp.amount / ((sp.quantity||0)==0?1:sp.quantity)
             }) ;
         }
     }
@@ -433,8 +438,9 @@ export default class Sale {
             reference_name:"New",
             comment_by: u.name,
             content:msg,
-            custom_item_description: item_description,
-            custom_note:''
+            custom_item_description:`${sp_copy.quantity} x ${item_description}` ,
+            custom_note:'',
+            custom_amount: sp_copy.amount
         });
     }
 
@@ -780,8 +786,9 @@ export default class Sale {
                             reference_name:"New",
                             comment_by:v.user,
                             content:msg,
-                            custom_item_description: `${item_description} (from: ${numberFormat(gv.getCurrnecyFormat,price)} to ${numberFormat(gv.getCurrnecyFormat,sp.price)})` ,
-                            custom_note:v.note
+                            custom_item_description: `${sp.quantity} x ${item_description} (from: ${numberFormat(gv.getCurrnecyFormat,price)} to ${numberFormat(gv.getCurrnecyFormat,sp.price)})` ,
+                            custom_note:v.note,
+                            custom_amount: sp.amount,
                         }) ;                        
 
                     }
@@ -808,10 +815,15 @@ export default class Sale {
                     }  
 
                     const u = JSON.parse(localStorage.getItem('make_order_auth')); 
-
                     let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
                     let msg = `${u.name} change quantity on: ${item_description}`; 
                     msg += `, from : ${sp.quantity} to ${quantity}` ;
+                    const curr_sp = JSON.parse(JSON.stringify(sp)); 
+
+                    //update quantity and sale product data
+                    this.updateQuantity(sp, quantity);
+
+                    //add to audit log
                     this.auditTrailLogs.push({
                         doctype:"Comment",
                         subject:"Change Quantity",
@@ -820,12 +832,11 @@ export default class Sale {
                         reference_name:"New",
                         comment_by: u.name,
                         content:msg,
-                        custom_item_description: `${item_description} (from : ${sp.quantity} to ${quantity})`,
-                        custom_note:""
+                        custom_item_description: `${quantity} x ${item_description} (from : ${curr_sp.quantity} to ${quantity})`,
+                        custom_note:"",
+                        custom_amount: sp.amount
                     }) ;
-                    
 
-                    this.updateQuantity(sp, quantity);
 
                 } else {
                     sp.selected = false;

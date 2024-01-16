@@ -182,7 +182,11 @@ function onReOrderPressed(){
     const value = validate.inupt<=0?1:validate.inupt;
 
     if (!sale.isBillRequested()) {
+
+        let is_append = false;
+        let prev_sale_product = JSON.parse(JSON.stringify(sp))
         if (sp.sale_product_status == "New" || sale.setting.pos_setting.allow_change_quantity_after_submit == 1) {
+            is_append = true;
             sale.updateQuantity(sp, sp.quantity + value)
         } else {
             let strFilter = `$.product_code=='${sp.product_code}' && $.append_quantity ==1 && $.price==${sp.price} && $.portion=='${sp.portion}'  && $.modifiers=='${sp.modifiers}'  && $.unit=='${sp.unit}'  && $.is_free==0`
@@ -194,6 +198,7 @@ function onReOrderPressed(){
             if (sale_product != undefined) {
                 sale_product.quantity = parseFloat(sale_product.quantity) + value;
                 sale.updateSaleProduct(sp);
+                is_append = true;
 
             } else {
                 setTimeout(() => {
@@ -201,6 +206,25 @@ function onReOrderPressed(){
                 }, 100);
             }
         }
+
+        if (is_append) {
+          const u = JSON.parse(localStorage.getItem('make_order_auth'));
+          let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion || "") == "" ? "" : `(${sp.portion})`} ${sp.modifiers}`;
+          let msg = `${u.name} was append a quantity to item: ${item_description} (from ${prev_sale_product.quantity} to ${sp.quantity})`;
+          sale.auditTrailLogs.push({
+              doctype: "Comment",
+              subject: "Append Quantity",
+              comment_type: "Info",
+              reference_doctype: "Sale",
+              reference_name: "New",
+              comment_by: u.name,
+              content: msg,
+              custom_item_description: `${value} x ${item_description}`,
+              custom_note: "",
+              custom_amount: (sp.amount / ((sp.quantity||0)==0?1:sp.quantity)) * value
+          });
+        }
+
         input.value = "";
     }
 }
@@ -216,11 +240,37 @@ function onChangeQuantityPressed(){
     
 
     if (sale.setting.pos_setting.allow_change_quantity_after_submit == 1 || sp.sale_product_status == "New") {
+        
         if (quantity == 0) {
             quantity = 1
-        }
+        } 
+
+
+        const u = JSON.parse(localStorage.getItem('make_order_auth')); 
+        let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
+        let msg = `${u.name} change quantity on: ${item_description}`; 
+        msg += `, from : ${sp.quantity} to ${quantity}` ;
+        let prev_sale_product = JSON.parse(JSON.stringify(sp));
+
+        //update quantity and sale product data
         sale.updateQuantity(sp, quantity);
         input.value = "";
+
+        //add to audit log
+        sale.auditTrailLogs.push({
+            doctype:"Comment",
+            subject:"Change Quantity",
+            comment_type:"Info",
+            reference_doctype:"Sale",
+            reference_name:"New",
+            comment_by: u.name,
+            content:msg,
+            custom_item_description: `${quantity} x ${item_description} (from : ${prev_sale_product.quantity} to ${quantity})`,
+            custom_note:"",
+            custom_amount: sp.amount
+        }) ;
+
+
     } else {
         sp.selected = false;
         //do add record
