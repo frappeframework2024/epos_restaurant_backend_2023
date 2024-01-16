@@ -799,6 +799,7 @@ def edit_sale_order(name,auth):
 @frappe.whitelist()
 def delete_sale(name,auth): 
     sale_doc = frappe.get_doc("Sale",name)
+    sale_amount = sale_doc.grand_total
     #validate cashier shift
     cashier_shift_doc = frappe.get_doc("Cashier Shift", sale_doc.cashier_shift)
     if cashier_shift_doc.is_closed==1:
@@ -851,6 +852,7 @@ def delete_sale(name,auth):
         "reference_name":sale_doc.name,
         "comment_by":auth['full_name'],
         "custom_note":auth["note"],
+        "custom_amount": sale_amount,
         "content":"User {0} delete sale order. Reason: {1}".format(auth['full_name'], auth["note"])
     })
     doc.insert()

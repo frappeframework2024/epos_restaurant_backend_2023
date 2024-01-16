@@ -713,7 +713,8 @@ export default class Sale {
                                 comment_by:v.user,
                                 content:msg,
                                 custom_item_description:`${result.number} x ${item_description}` ,
-                                custom_note: result.note
+                                custom_note: result.note,
+                                custom_amount: sp.amount
                             })  ;                    
     
                         } 
@@ -737,7 +738,8 @@ export default class Sale {
                         comment_by: u.name,
                         content:msg,
                         custom_item_description: `${sp.quantity} x ${item_description}` ,
-                        custom_note:''
+                        custom_note:'',
+                        custom_amount: sp.amount
                     }) ;
                 }
             }
@@ -854,7 +856,8 @@ export default class Sale {
                                         comment_by:v.user,
                                         content:msg,
                                         custom_item_description: `${quantity} x ${item_description}` ,
-                                        custom_note:v.note
+                                        custom_note:v.note,
+                                        custom_amount: sp.amount
                                     }); 
                                 }
 
