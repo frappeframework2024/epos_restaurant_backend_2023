@@ -721,24 +721,25 @@ export default class Sale {
                 });
             } else {
     
-                const u = JSON.parse(localStorage.getItem('make_order_auth')); 
-                this.onRemoveSaleProduct(sp, sp.quantity,u.name);
-
-                let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`
-                let msg = `${u.name} delete item: ${item_description}`; 
-                msg += `, Qty: ${sp.quantity}`;
-                msg += `, Amount: ${ numberFormat(gv.getCurrnecyFormat,sp.amount)}`;
-                this.auditTrailLogs.push({
-                    doctype:"Comment",
-                    subject:"Delete Sale Product",
-                    comment_type:"Info",
-                    reference_doctype:"Sale",
-                    reference_name:"New",
-                    comment_by: u.name,
-                    content:msg,
-                    custom_item_description: `${sp.quantity} x ${item_description}` ,
-                    custom_note:''
-                }) ;
+                if((sp.name||"") != ""){
+                    const u = JSON.parse(localStorage.getItem('make_order_auth')); 
+                    this.onRemoveSaleProduct(sp, sp.quantity,u.name);
+                    let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`
+                    let msg = `${u.name} delete item: ${item_description}`; 
+                    msg += `, Qty: ${sp.quantity}`;
+                    msg += `, Amount: ${ numberFormat(gv.getCurrnecyFormat,sp.amount)}`;
+                    this.auditTrailLogs.push({
+                        doctype:"Comment",
+                        subject:"Delete Not Submit Sale Product",
+                        comment_type:"Info",
+                        reference_doctype:"Sale",
+                        reference_name:"New",
+                        comment_by: u.name,
+                        content:msg,
+                        custom_item_description: `${sp.quantity} x ${item_description}` ,
+                        custom_note:''
+                    }) ;
+                }
             }
     
         }

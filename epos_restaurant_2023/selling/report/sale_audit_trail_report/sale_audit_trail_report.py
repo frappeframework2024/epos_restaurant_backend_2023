@@ -20,7 +20,7 @@ def get_columns(filters):
 	columns = [
 		{'fieldname':'audit_date','fieldtype':'Date','align':'left','label':'Audit Date',"width":105 ,"show_in_report":1},
 		{'fieldname':'creation','fieldtype':'Time','align':'left','label':'Audit Time',"width":105 ,"show_in_report":1},
-		{'fieldname':'reference_name','align':'left','label':'Ref Name #',"width":150 ,"show_in_report":1},
+		{'fieldname':'reference_name','align':'left','label':'Ref Name #','fieldtype':'Link','options':'Sale',"width":150 ,"show_in_report":1},
 		{'fieldname':'custom_bill_number','align':'left','label':'Bill No#',"width":150 ,"show_in_report":1},
 		{'fieldname':'subject','align':'left','label':'Subject',"width":170 ,"show_in_report":1},
 		{'fieldname':'content','align':'left','label':'Content',"width":500 ,"show_in_report":1},
