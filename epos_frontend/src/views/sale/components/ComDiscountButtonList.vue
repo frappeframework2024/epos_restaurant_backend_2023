@@ -66,7 +66,8 @@ function onSaleCancelDiscount() {
                 comment_by:v.user,
                 content:msg,
                 custom_item_description: "",
-                custom_note: v.note
+                custom_note: v.note,
+                custom_amount: (sale.sale.grand_total ||0) 
             }); 
         }
     });   

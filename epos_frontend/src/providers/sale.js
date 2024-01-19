@@ -1069,7 +1069,8 @@ export default class Sale {
                         comment_by:this.sale.temp_discount_by,
                         content:msg,
                         custom_item_description:`Discount (${discount})`,
-                        custom_note: result.discount_note
+                        custom_note: result.discount_note,
+                        custom_amount: (sale.sale.grand_total ||0) 
                     }); 
                 }
             }
@@ -1342,7 +1343,8 @@ export default class Sale {
                             comment_by:u.name,
                             content:msg,
                             custom_item_description: "",
-                            custom_note: ""
+                            custom_note: "",
+                            custom_amount: ((sale.sale.total_paid ||0) - (sale.sale.changed_amount||0))
                         });                         
                     
                         

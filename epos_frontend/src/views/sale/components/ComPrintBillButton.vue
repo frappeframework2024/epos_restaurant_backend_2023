@@ -99,7 +99,8 @@ async function onPrintReport(r) {
         comment_by:u.name,
         content:msg,
         custom_item_description: "",
-        custom_note:""
+        custom_note:"",
+        custom_amount: (sale.sale.grand_total ||0) 
     })  ; 
 
     await sale.onSubmit().then(async (value) => {
@@ -127,7 +128,8 @@ async function onCancelPrintBill() {
           comment_by:v.user,
           content:msg,
           custom_item_description: "",
-          custom_note:v.note
+          custom_note:v.note,
+          custom_amount: (sale.sale.grand_total ||0) 
       }); 
     }
   });
