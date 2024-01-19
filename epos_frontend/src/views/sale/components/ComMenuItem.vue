@@ -152,6 +152,8 @@ async function onClickProduct() {
     if (!sale.isBillRequested()) {
 
         const p = JSON.parse(JSON.stringify(props.data));
+        product.is_open_price = p.is_open_price
+
         if (!p.is_timer_product) {
             if (p.is_open_product == 1) {
 
@@ -186,6 +188,7 @@ async function onClickProduct() {
             }
             else {
                 const portions = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule);
+                
                 const check_modifiers = product.onCheckModifier(JSON.parse(p.modifiers));
 
                 if (portions?.length == 1) {
@@ -195,12 +198,18 @@ async function onClickProduct() {
 
 
                 }
+              
 
-                if (check_modifiers || portions?.length > 1) {
-
-                    product.setSelectedProduct(props.data);
-
+                if (check_modifiers || portions?.length > 1 || p.is_open_price)  {
+                    const pro_data = props.data
+                    if (p.is_open_price && portions.length==0){
+                        pro_data.prices = JSON.stringify( [{"price":p.price,"branch":"","price_rule":sale.sale.price_rule,"portion":"Normal","unit":p.unit,"default_discount":0}])                
+                    }
+                    
+                    product.setSelectedProduct(pro_data);
+                    
                     let productPrices = await addModifierDialog();
+                   
 
                     if (productPrices) {
                         if (productPrices.portion != undefined) {

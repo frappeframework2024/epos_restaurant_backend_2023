@@ -10,6 +10,7 @@ export default class Product {
         this.parentMenu = "";
         this.searchProductKeyword = "";
         this.searchProductKeywordStore = "";
+        this.is_open_price = 0;
         this.selectedProduct = {};
         this.prices = [];
         this.modifiers = [];
@@ -18,6 +19,7 @@ export default class Product {
         this.currentRootPOSMenu = null
         this.productCategory = "";
         this.menuProducts = []
+
         this.posMenuResource = createResource({
             url: 'epos_restaurant_2023.api.product.get_product_by_menu',
             params: {
@@ -103,6 +105,8 @@ export default class Product {
                     "use_combo_group",
                     "combo_menu_data",
                     "combo_group_data",
+                    "is_open_price",
+                    "is_timer_product",
                     'tax_rule',
                     'revenue_group',
                     'prices',

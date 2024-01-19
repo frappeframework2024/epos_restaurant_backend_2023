@@ -643,7 +643,7 @@ export default class Sale {
     }
 
     async onRemoveItem(sp,gv,numberFormat, input=(-99999)){
- 
+      
         if (!this.isBillRequested()) {        
             if (sp.sale_product_status == 'Submitted') {
                
@@ -727,7 +727,7 @@ export default class Sale {
                     }
                 });
             } else {
-    
+
                 if((sp.name||"") != ""){
                     const u = JSON.parse(localStorage.getItem('make_order_auth')); 
                     this.onRemoveSaleProduct(sp, sp.quantity,u.name);
@@ -747,6 +747,10 @@ export default class Sale {
                         custom_note:'',
                         custom_amount: sp.amount
                     }) ;
+                }else {
+                   
+                    this.sale.sale_products.splice(this.sale.sale_products.indexOf(sp), 1);
+                    
                 }
             }
     
