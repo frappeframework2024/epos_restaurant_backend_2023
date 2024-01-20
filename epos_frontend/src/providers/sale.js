@@ -1070,7 +1070,7 @@ export default class Sale {
                         content:msg,
                         custom_item_description:`Discount (${discount})`,
                         custom_note: result.discount_note,
-                        custom_amount: (sale.sale.grand_total ||0) 
+                        custom_amount: (this.sale.grand_total ||0) 
                     }); 
                 }
             }
@@ -1093,8 +1093,9 @@ export default class Sale {
             reference_name:"New",
             comment_by:sp.temp_discount_by,
             content:msg,
-            custom_item_description: `${item_description} (discount: ${discount})`,
-            custom_note: result.discount_note
+            custom_item_description: `${sp.quantity} x ${item_description} (discount: ${discount})`,
+            custom_note: result.discount_note,
+            custom_amount: sp.amount
         }); 
     }
 
@@ -1132,7 +1133,8 @@ export default class Sale {
                 comment_by: u.name,
                 content:msg,
                 custom_item_description: `${sp.quantity} x ${item_description}`,
-                custom_note:""
+                custom_note:"",
+                custom_amount : sp.amount
             }); 
 
         }
