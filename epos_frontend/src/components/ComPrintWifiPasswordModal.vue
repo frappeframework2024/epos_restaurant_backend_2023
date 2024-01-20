@@ -25,11 +25,16 @@ const wifi_password = ref("")
   function onClose() { 
     emit('resolve', false);
   }
-  
+  if (localStorage.key('wifi')){
+    wifi_password.value = localStorage.getItem('wifi')
+  }
   function onPrint(){
     if(!wifi_password.value){
       toast.warning($t('msg.Please enter WiFi password'))
-    }else {  
+    }else {
+      if (localStorage.key('wifi')){
+        localStorage.setItem('wifi',wifi_password.value)
+      }
       window.chrome.webview.postMessage(JSON.stringify({action:"print_wifi_password",setting:{wifi_password:wifi_password.value}}));
     emit('resolve', false);
     }
