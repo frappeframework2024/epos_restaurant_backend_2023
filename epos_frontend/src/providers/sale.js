@@ -1346,7 +1346,7 @@ export default class Sale {
                             content:msg,
                             custom_item_description: "",
                             custom_note: "",
-                            custom_amount: ((sale.sale.total_paid ||0) - (sale.sale.changed_amount||0))
+                            custom_amount: ((this.sale.total_paid ||0) - (this.sale.changed_amount||0))
                         });                         
                     
                         
