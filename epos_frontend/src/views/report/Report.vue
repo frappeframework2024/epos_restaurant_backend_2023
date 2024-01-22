@@ -180,7 +180,7 @@ async function _onInit() {
     const param = {business_branch:gv.setting.business_branch, pos_profile:""}; 
     const result = await  call.get("epos_restaurant_2023.api.api.get_working_day_list_report",param).then((wd)=>{  
         if (wd.message.length > 0){
-            let _reports = Enumerable.from(wd.message).orderByDescending("$.posting_date").toArray();  
+            let _reports = Enumerable.from(wd.message).orderByDescending("$.posting_date").thenByDescending("$.creation").toArray();  
             let _report_data = []
             _reports.forEach((_r)=>{
                 let _report_by_pos_profiles = _r.cashier_shifts.filter((r)=>r.pos_profile==pos_profile);
