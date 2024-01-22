@@ -732,13 +732,20 @@ def get_working_day_list_report(business_branch = '', pos_profile = ''):
 
     elif pos_profile:        
         filters.update({"pos_profile":["=", pos_profile] }) 
-    
-    wd = frappe.get_last_doc('Working Day',filters=filters)  
-    filters.update({
-        "posting_date":[">=", new_date],
-        "posting_date":["<=", wd.posting_date]
-    })    
-        
+
+    working_days = frappe.db.get_list('Working Day',filters=filters,order_by='posting_date desc',page_length=1) 
+    if working_days:
+        wd = frappe.get_doc('Working Day',working_days[0].name)  
+        filters.update({
+            "posting_date":[">=", new_date],
+            "posting_date":["<=", wd.posting_date]
+        })    
+    else:
+        filters.update({
+            "posting_date":[">=", new_date],
+            "posting_date":["<=", date]
+        })   
+
     working_day =frappe.db.get_list('Working Day',
         filters = filters,
         fields=["name","posting_date","creation","modified_by","owner","is_closed","closed_date"],

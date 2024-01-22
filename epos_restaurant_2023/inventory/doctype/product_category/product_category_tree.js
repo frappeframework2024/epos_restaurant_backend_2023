@@ -3,18 +3,6 @@ frappe.treeview_settings['Product Category'] = {
     title: 'Product Category',
     fields: [
         {
-            fieldtype:'Link', 
-            fieldname:'parent_product_category', 
-            label:__('Parent Product Category'), 
-            options:"Product Category",
-            get_query: function () {
-				return {
-					filters: [["Product Category", "is_group", "=", 1]]
-				};
-			},
-            reqd:true
-        },
-        {
             fieldtype:'Data', 
             fieldname:'product_category_name_en', 
             label:__('Product Category Name EN'),
@@ -31,6 +19,16 @@ frappe.treeview_settings['Product Category'] = {
             label:__('Revenue Group'), 
             options:"Revenue Group",
             reqd:true
+        },
+        {
+            fieldtype:'Color', 
+            fieldname:'text_color', 
+            label:__('Text Color')
+        },
+        {
+            fieldtype:'Color', 
+            fieldname:'background_color', 
+            label:__('Background Color')
         },
         {
             fieldtype:'Check', 

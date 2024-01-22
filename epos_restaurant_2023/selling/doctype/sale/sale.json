@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_import": 1,
  "allow_rename": 1,
  "autoname": "naming_series:",
  "creation": "2022-12-05 16:43:28.070749",
@@ -904,7 +905,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-01-04 15:29:20.375610",
+ "modified": "2024-01-20 15:29:03.613177",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

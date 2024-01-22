@@ -173,7 +173,7 @@ def reset_sale_transaction():
                     formats =  frappe.get_meta(d).get_field("naming_series").options
                     if formats:
                         for f in formats.split("\n"):
-                            for n in range(2022, 2030):
+                            for n in range(2022, 2130):
                                 format_text = replace_format(f,str(n))                            
                                 frappe.db.sql("update `tabSeries` set current=  0 where name='{}'".format(format_text) )       
 
