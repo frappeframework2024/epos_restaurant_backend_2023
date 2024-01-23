@@ -124,10 +124,14 @@ function assignCustomerToOrder(result,is_membership=false) {
         }
 
     }else{
-        sale.sale.card = result.card.card_code;
-        sale.sale.discount_type = result.card.discount_type;
-        sale.sale.discount = parseFloat(result.card.discount);
-        toaster.info($t('msg.This customer has default discount')+" " + sale.sale.discount + '%');
+        if((result.card?.card_code??"")!=""){
+            sale.sale.card = result.card.card_code;
+            sale.sale.discount_type = result.card.discount_type;
+            sale.sale.discount = parseFloat(result.card.discount);
+            toaster.info($t('msg.This customer has default discount')+" " + (sale.sale.discount||0) + '%');
+        }else{
+            toaster.success(`${result.name}-${result.customer_name_en} ${$t("was assigned to sale")}`);
+        }
     }
    
     sale.updateSaleSummary();

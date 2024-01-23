@@ -34,7 +34,7 @@ frappe.ui.form.on("Stock Take",{
 							}
 						}
 						else {
-							alert("faile")
+							alert("Fail")
 						}
 					},
 					error: function(r) {

@@ -26,7 +26,7 @@ frappe.ui.form.on("Stock Transfer", {
 							}
 						}
 						else {
-							alert("faile")
+							alert("Fail")
 						}
 					},
 					error: function(r) {

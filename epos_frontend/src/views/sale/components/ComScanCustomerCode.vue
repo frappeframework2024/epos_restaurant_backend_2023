@@ -37,18 +37,23 @@ async function onSeachCustomer() {
   if(customerCode.value!=""){
     loading.value = true;
     const data = await call.get('epos_restaurant_2023.api.api.get_customer_on_membership_scan', {"card":customerCode.value});
-    if(data.message != "Invalid Card"){     
-      const cards = data.message.card.filter((r)=>r.card_code==customerCode.value);
-      if(cards.length > 0){
-        const current_date = new Date();  
-        const d = moment(current_date).format("YYYY-MM-DD");    
-        if(getDate(cards[0].expiry) < getDate(d))  {
-          toaster.warning($t("msg.Card Number was expired"))
-        } else{
-          data.message.card = cards[0]
+    if(data.message != "Invalid Card"){  
+      if(data.message.card.length <= 0) {
+          data.message.card = []
           emit("resolve", data.message);
-        }
-      } 
+      } else{ 
+        const cards = data.message.card.filter((r)=>r.card_code==customerCode.value);
+        if(cards.length > 0){
+          const current_date = new Date();  
+          const d = moment(current_date).format("YYYY-MM-DD");    
+          if(getDate(cards[0].expiry) < getDate(d))  {
+            toaster.warning($t("msg.Card Number was expired"))
+          } else{
+            data.message.card = cards[0]
+            emit("resolve", data.message);
+          }
+        } 
+      }
     }
     loading.value = false;
   }

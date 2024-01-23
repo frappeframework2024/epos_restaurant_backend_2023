@@ -892,19 +892,25 @@ def get_filter_for_close_sale_list(business_branch,pos_profile):
 # get reservation folio
 @frappe.whitelist()
 def get_customer_on_membership_scan(card):
-    membership = frappe.get_all('Customer Card',
+    # get customer map code
+    cus =  frappe.db.exists("Customer",card)
+    if cus:
+        return frappe.get_doc("Customer",card) 
+    else:
+        membership = frappe.get_all('Customer Card',
 								filters=[
                                     ['card_code','=',card]
                                 ],
 								fields=['parent','card_name','card_code','discount_type','discount','expiry'],
 								limit=1
 							 )
-    if membership:
-        ms = membership[0]
-        customer = frappe.get_doc("Customer",ms["parent"]) 
-        if customer:
-            customer.card = customer.card
-            return customer
+        if membership:
+            ms = membership[0]
+            customer = frappe.get_doc("Customer",ms["parent"]) 
+            if customer:
+                customer.card = customer.card
+                return customer
+            
     return {"Invalid Card"}
 
 
