@@ -71,11 +71,13 @@
   {
    "fieldname": "employee_name",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Employee Name"
   },
   {
    "fieldname": "date_of_birth",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Date Of Birth"
   },
   {
@@ -346,7 +348,7 @@
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-01-06 14:37:59.035593",
+ "modified": "2024-01-23 14:05:41.441112",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee",
@@ -416,7 +418,9 @@
  ],
  "quick_entry": 1,
  "search_fields": "employee_name",
+ "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "employee_name"
 }
