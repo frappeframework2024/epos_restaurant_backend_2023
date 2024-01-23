@@ -32,6 +32,7 @@
   "edoor_setting_tab",
   "default_pos_profile",
   "default_letter_head",
+  "default_walk_in_business_source",
   "column_break_aeku",
   "edoor_letterhead",
   "cancellation_policy_section",
@@ -191,12 +192,18 @@
    "fieldname": "property_background_banner",
    "fieldtype": "Attach Image",
    "label": "Property Background Banner"
+  },
+  {
+   "fieldname": "default_walk_in_business_source",
+   "fieldtype": "Link",
+   "label": "Default Walk-In Business Source",
+   "options": "Business Source"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-22 08:56:41.746724",
+ "modified": "2024-01-23 16:30:09.834539",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",
