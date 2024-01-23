@@ -824,7 +824,7 @@
    "label": "POS Reservation"
   },
   {
-   "default": "1",
+   "default": "0",
    "fetch_from": "product_code.is_timer_product",
    "fetch_if_empty": 1,
    "fieldname": "is_timer_product",
@@ -870,7 +870,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-01-11 09:27:51.870418",
+ "modified": "2024-01-23 11:40:38.685123",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",
