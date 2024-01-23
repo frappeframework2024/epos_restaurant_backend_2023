@@ -1,5 +1,5 @@
 frappe.listview_settings['Product'] = {
-
+    hide_name_column: true, 
 
     onload(me) { 
         me.page.add_action_item('Assign Menu', function() {
