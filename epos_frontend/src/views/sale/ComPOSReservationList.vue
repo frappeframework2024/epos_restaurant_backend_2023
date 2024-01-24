@@ -55,7 +55,7 @@
 
                   <v-list-item :title="`${$t('Tour')}:`">
                     <template v-slot:append>
-                      {{ s.tour_name }} - {{ s.tour_name }}
+                        {{ s.tour_code }} - {{ s.tour_name }} 
                     </template>
                   </v-list-item>
 
