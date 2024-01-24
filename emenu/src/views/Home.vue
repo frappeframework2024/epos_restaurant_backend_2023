@@ -7,7 +7,6 @@
         <ComShortcutMenu @on-selected="onSelected($event)"/>
       </div>
       <div> 
-        xxx
           <ComCategoryCard :categories="categories"/> 
       </div>
     </div>

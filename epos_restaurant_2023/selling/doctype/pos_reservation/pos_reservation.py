@@ -25,7 +25,6 @@ class POSReservation(Document):
 	
 
 	def on_update_after_submit(self):
-		
 		if self.reservation_status == "Dine-in" or self.reservation_status == "Checked Out":
 			status = frappe.get_doc("POS Reservation Status",self.reservation_status) 
 			self.reservation_status_color = status.color

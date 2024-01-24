@@ -53,6 +53,12 @@
                     </template>
                   </v-list-item>
 
+                  <v-list-item :title="`${$t('Tour')}:`">
+                    <template v-slot:append>
+                      {{ s.tour_name }} - {{ s.tour_name }}
+                    </template>
+                  </v-list-item>
+
                   <v-list-item :title="`${$t('Total Qty')}:`" v-if="s.total_quantity>0">
                     <template v-slot:append>
                       {{ s.total_quantity }}

@@ -22,6 +22,7 @@
   "reservation_status_color",
   "reservation_status_background_color",
   "total_deposit",
+  "price",
   "guest_inforamtion_section",
   "guest",
   "guest_name",
@@ -31,6 +32,20 @@
   "phone_number_2",
   "email_address",
   "guest_photo",
+  "guest_information_section",
+  "custom_guest_name",
+  "nationality",
+  "column_break_bzao",
+  "guest_phone_number",
+  "section_break_gtak",
+  "tour_code",
+  "tour_phone_number",
+  "column_break_xdnr",
+  "tour_name",
+  "section_break_mpbx",
+  "guide_name",
+  "column_break_jjdv",
+  "guide_phone_number",
   "section_break_rrqs",
   "note",
   "products_tab",
@@ -46,12 +61,13 @@
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
-   "label": "Reservation Number",
+   "label": "Naming Series",
    "options": "PRes.YYYY.-.####"
   },
   {
    "fieldname": "reference_number",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Reference Number"
   },
   {
@@ -116,6 +132,7 @@
    "fetch_from": "guest.customer_group",
    "fieldname": "guest_type",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Guest Type"
   },
   {
@@ -132,12 +149,14 @@
    "fetch_from": "guest.phone_number_2",
    "fieldname": "phone_number_2",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Phone Number 2"
   },
   {
    "fetch_from": "guest.email_address",
    "fieldname": "email_address",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Email Address"
   },
   {
@@ -160,9 +179,9 @@
    "default": "Now",
    "fieldname": "arrival_time",
    "fieldtype": "Time",
+   "hidden": 1,
    "in_list_view": 1,
-   "label": "Arrival Time",
-   "reqd": 1
+   "label": "Arrival Time"
   },
   {
    "default": "1",
@@ -173,6 +192,7 @@
   {
    "fieldname": "products_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Products"
   },
   {
@@ -239,10 +259,10 @@
   {
    "fieldname": "property",
    "fieldtype": "Link",
+   "hidden": 1,
    "in_list_view": 1,
    "label": "Property",
-   "options": "Business Branch",
-   "reqd": 1
+   "options": "Business Branch"
   },
   {
    "allow_on_submit": 1,
@@ -266,8 +286,82 @@
    "allow_on_submit": 1,
    "fieldname": "total_deposit",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Total Deposit",
    "read_only": 1
+  },
+  {
+   "fieldname": "tour_code",
+   "fieldtype": "Data",
+   "label": "Tour Code"
+  },
+  {
+   "fieldname": "tour_name",
+   "fieldtype": "Data",
+   "label": "Tour Name"
+  },
+  {
+   "fieldname": "section_break_gtak",
+   "fieldtype": "Section Break",
+   "label": "Tour Information"
+  },
+  {
+   "fieldname": "column_break_xdnr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tour_phone_number",
+   "fieldtype": "Data",
+   "label": "Tour Phone Number "
+  },
+  {
+   "fieldname": "guest_information_section",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Guest Information"
+  },
+  {
+   "fieldname": "custom_guest_name",
+   "fieldtype": "Data",
+   "label": "Guest Name"
+  },
+  {
+   "fieldname": "column_break_bzao",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "guest_phone_number",
+   "fieldtype": "Data",
+   "label": "Guest Phone Number"
+  },
+  {
+   "fieldname": "section_break_mpbx",
+   "fieldtype": "Section Break",
+   "label": "Guide Information"
+  },
+  {
+   "fieldname": "guide_name",
+   "fieldtype": "Data",
+   "label": "Guide Name"
+  },
+  {
+   "fieldname": "column_break_jjdv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "guide_phone_number",
+   "fieldtype": "Data",
+   "label": "Guide Phone Number"
+  },
+  {
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "label": "Price"
+  },
+  {
+   "fieldname": "nationality",
+   "fieldtype": "Data",
+   "label": "Nationality"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -279,7 +373,7 @@
    "link_fieldname": "pos_reservation"
   }
  ],
- "modified": "2023-12-21 10:15:56.423847",
+ "modified": "2024-01-24 16:19:34.121794",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Reservation",
