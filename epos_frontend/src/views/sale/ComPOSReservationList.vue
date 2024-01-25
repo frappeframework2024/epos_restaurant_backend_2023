@@ -103,7 +103,7 @@
               </v-card-text>
               <v-card-actions class="pt-0 flex items-center justify-between absolute bottom-0 w-full">
 
-                <v-btn v-if="s.arrival_date <= current_date" variant="tonal" color="success" @click="onCheckIn(s)">
+                <v-btn v-if="s.arrival_date == current_date" variant="tonal" color="success" @click="onCheckIn(s)">
                   {{ $t('Checked In') }}
                 </v-btn>
               </v-card-actions>

@@ -312,6 +312,11 @@ class CashierShift(Document):
 
 		frappe.db.sql(query)
 
+	def on_update(self):
+		old_doc = self.get_doc_before_save()
+		if old_doc.is_closed ==0 and self.is_closed ==1:
+			submit_pos_data_to_folio_transaction(self)
+
 # get sale product revenue sum group by
 def get_sale_product_revenue(sale_products):
 	sale_product_revenue ={
@@ -363,6 +368,7 @@ def sum_revenue_by_field(sale_products,field_amount,field_account):
 
 
 def get_sale_payment(sale_payments):
+
 	result = []
 	groups = {}
 	for row in sale_payments:
@@ -396,3 +402,89 @@ def get_sale_payment(sale_payments):
 		result.append(_result)	
 	
 	return result
+
+def submit_pos_data_to_folio_transaction(self):
+	account_code_config = frappe.db.get_list("POS Account Code Config", filters={"outlet":self.outlet, "shift_name":self.shift_name})
+	config = None
+	if account_code_config:
+		config =  frappe.get_doc("POS Account Code Config",account_code_config[0].name)
+	if not config:
+		return
+	
+	#pos revenue
+	revenue_data =get_revenues(self)
+	# frappe.throw(str(revenue_data))
+	discount_data = []
+	for d in revenue_data:
+		account_code = [x.account_code for x in  config.pos_revenue_account_codes if x.revenue==d["revenue_group"]]
+		
+		if account_code:
+			account_code = account_code[0]
+			if (d['sub_total'] or 0 )> 0:
+				post_folio_transaction(self,account_code,d['sub_total'] or 0)
+
+		if (d["discount"] or 0)> 0:
+			discount_account_code = [x.discount_account for x in  config.pos_revenue_account_codes if x.revenue==d["revenue_group"]]
+			if discount_account_code:
+				discount_account_code = discount_account_code[0]
+				discount_data.append({"account_code":discount_account_code, "discount":d["discount"]})
+
+	
+
+				
+	# Discount
+	if len(discount_data)>0:
+		account_codes = set([d["account_code"] for d in discount_data]) 
+		for acc in account_codes:
+			post_folio_transaction(self,acc,sum([d['discount'] for d in discount_data if d["account_code"]==acc]))
+
+	#tax 1 
+	tax_1_amount = sum([d["tax_1_amount"] for d in revenue_data]) or 0
+	if tax_1_amount > 0 and config.tax_1_account:
+		post_folio_transaction(self, config.tax_1_account, tax_1_amount)
+		
+	#tax 2 
+	tax_2_amount = sum([d["tax_2_amount"] for d in revenue_data]) or 0
+	if tax_2_amount > 0 and config.tax_2_account:
+		post_folio_transaction(self, config.tax_2_account, tax_2_amount)
+	#tax 3 
+	tax_3_amount = sum([d["tax_3_amount"] for d in revenue_data]) or 0
+	if tax_3_amount > 0 and config.tax_3_account:
+		post_folio_transaction(self, config.tax_3_account, tax_3_amount)
+
+
+
+def post_folio_transaction(self,account_code, amount):
+	frappe.get_doc( 
+				{
+					'doctype': 'Folio Transaction',
+					'property':self.business_branch,
+					'working_day':self.working_day,
+					'posting_date':self.posting_date,
+					'transaction_type': "Cashier Shift",
+					'transaction_number': self.name,
+					'reference_number':self.name,
+					"input_amount":amount, 
+					"account_code":account_code,
+				} 
+			).insert()
+
+def get_revenues(self):
+	sql="""select 
+			sp.revenue_group,
+			sum(sp.sub_total) as sub_total,
+			sum(sp.total_discount) as discount,
+			sum(sp.tax_1_amount) as tax_1_amount,
+			sum(sp.tax_2_amount) as tax_2_amount,
+			sum(sp.tax_3_amount) as tax_3_amount
+
+		from `tabSale Product` sp 
+		inner join `tabSale` s on s.name = sp.parent
+		where
+			s.cashier_shift='{}' and 
+			s.docstatus=1
+		group by 
+			sp.revenue_group
+		""".format(self.name)
+	
+	return frappe.db.sql(sql,as_dict=1)
