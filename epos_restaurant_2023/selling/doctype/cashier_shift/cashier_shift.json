@@ -33,6 +33,7 @@
   "close_shift_information_section",
   "closed_by",
   "closed_date",
+  "is_run_night_audit",
   "column_break_10",
   "closed_note",
   "cash_count_tab",
@@ -205,11 +206,18 @@
   {
    "fieldname": "column_break_utze",
    "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_run_night_audit",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Is Run Night Audit"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-01-01 10:56:59.951283",
+ "modified": "2024-01-25 08:08:27.698237",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Cashier Shift",
