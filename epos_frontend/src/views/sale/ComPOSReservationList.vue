@@ -103,7 +103,7 @@
               </v-card-text>
               <v-card-actions class="pt-0 flex items-center justify-between absolute bottom-0 w-full">
 
-                <v-btn variant="tonal" color="success" @click="onCheckIn(s)">
+                <v-btn v-if="s.arrival_date <= current_date" variant="tonal" color="success" @click="onCheckIn(s)">
                   {{ $t('Checked In') }}
                 </v-btn>
               </v-card-actions>
@@ -115,7 +115,7 @@
   </ComModal>
 </template>
 <script setup>
-import { useRouter, defineProps, defineEmits, ref, inject, createToaster, i18n, onMounted } from "@/plugin"
+import { useRouter, defineProps, defineEmits, ref, inject, createToaster, i18n, onMounted,created } from "@/plugin"
 import ComModal from "../../components/ComModal.vue";
 import { confirm, changeTableDialog } from '@/utils/dialog';
 import ComPlaceholder from "../../components/layout/components/ComPlaceholder.vue";
@@ -139,6 +139,7 @@ const toaster = createToaster({ position: "top" });
 const db = frappe.db();
 const call = frappe.call();
 let filter_date = ref(moment(new Date()).format('yyyy-MM-DD'))
+let current_date = ref(moment(new Date()).format('yyyy-MM-DD'))
 
 
 const props = defineProps({
@@ -155,7 +156,6 @@ onMounted(() => {
 
 function _onInit() {
   isLoading.value = true;
-  const today = moment(new Date()).format('yyyy-MM-DD')
   db.getDocList("POS Reservation",
     {
       fields: ["name"],

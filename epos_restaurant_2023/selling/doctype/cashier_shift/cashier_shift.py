@@ -52,7 +52,7 @@ class CashierShift(Document):
 				naming_series.update_counter(0)
 
 			# check if have edoor app for generate FB revenue to Folio Transaction group by acc.code
-			if 'edoor' in frappe.get_installed_apps():
+			if 'edoor' in frappe.get_installed_apps() and self.is_edoor_shift == 0:
 				sales = frappe.db.get_list("Sale",filters=[
 												{"cashier_shift":self.name},
 												{"outlet":self.outlet},
