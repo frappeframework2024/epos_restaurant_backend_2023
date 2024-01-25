@@ -24,7 +24,9 @@
   "account_code",
   "use_room_offline",
   "fee_percentage",
-  "fee_amount"
+  "fee_amount",
+  "folio_transaction_type",
+  "folio_transaction_number"
  ],
  "fields": [
   {
@@ -144,12 +146,22 @@
   {
    "fieldname": "column_break_pzmx",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "folio_transaction_type",
+   "fieldtype": "Data",
+   "label": "Folio Transaction Type"
+  },
+  {
+   "fieldname": "folio_transaction_number",
+   "fieldtype": "Data",
+   "label": "Folio Transaction Number"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-12-13 11:31:30.985843",
+ "modified": "2024-01-25 16:15:10.832254",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Sale Payment",

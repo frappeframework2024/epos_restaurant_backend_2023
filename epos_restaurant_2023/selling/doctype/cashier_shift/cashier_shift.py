@@ -469,7 +469,27 @@ def post_folio_transaction(self,account_code, amount):
 				} 
 			).insert()
 
-def get_revenues(self):
+def get_payments(self):
+	sql="""select 
+			sp.revenue_group,
+			sum(sp.sub_total) as sub_total,
+			sum(sp.total_discount) as discount,
+			sum(sp.tax_1_amount) as tax_1_amount,
+			sum(sp.tax_2_amount) as tax_2_amount,
+			sum(sp.tax_3_amount) as tax_3_amount
+
+		from `tabSale Product` sp 
+		inner join `tabSale` s on s.name = sp.parent
+		where
+			s.cashier_shift='{}' and 
+			s.docstatus=1
+		group by 
+			sp.revenue_group
+		""".format(self.name)
+	
+	return frappe.db.sql(sql,as_dict=1)
+
+def get_payment(self):
 	sql="""select 
 			sp.revenue_group,
 			sum(sp.sub_total) as sub_total,

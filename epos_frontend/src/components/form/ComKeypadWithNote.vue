@@ -156,10 +156,12 @@ function onClose() {
 function onOK() {
     let selectedNote = getSelectedNote();
 
-    if (search.value) {
-
-        selectedNote = search.value;
+    if(selectedNote == ""){
+        if (search.value) {
+            selectedNote = search.value;
+        }
     }
+    
     if (props.params.data.category_note_name && (selectedNote == "" || selectedNote == undefined)) {
         toast.warning($t('msg.Please select or enter note'));
         return;
