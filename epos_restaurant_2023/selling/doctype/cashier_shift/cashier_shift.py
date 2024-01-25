@@ -41,9 +41,18 @@ class CashierShift(Document):
 
 		# check if close shift then check 
 		if self.is_closed==1:
+			if self.is_run_night_audit==1:
+				#validte if still have epos open
+				if frappe.db.exists("Cashier Shift",{"is_closed":0, "is_edoor_shift":0}):
+					frappe.throw("Please close pos cashier first")
+				#validate if staill have sale order pending
+				if frappe.db.exists("Sale",{"docstatus":0}):
+					frappe.throw("Please close all pending order in POS first")
+
+
 			if not self.closed_by:
 				self.closed_by = frappe.session.user
-				
+
 			self.closed_date = frappe.utils.now()
 			pos_profile = frappe.get_doc("POS Profile", self.pos_profile)
 			if pos_profile.reset_waiting_number_after=="Close Cashier Shift":

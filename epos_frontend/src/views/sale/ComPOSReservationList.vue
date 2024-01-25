@@ -115,7 +115,7 @@
   </ComModal>
 </template>
 <script setup>
-import { useRouter, defineProps, defineEmits, ref, inject, createToaster, i18n, onMounted,created } from "@/plugin"
+import { useRouter, defineProps, defineEmits, ref, inject, createToaster, i18n, onMounted } from "@/plugin"
 import ComModal from "../../components/ComModal.vue";
 import { confirm, changeTableDialog } from '@/utils/dialog';
 import ComPlaceholder from "../../components/layout/components/ComPlaceholder.vue";
@@ -156,31 +156,45 @@ onMounted(() => {
 
 function _onInit() {
   isLoading.value = true;
-  db.getDocList("POS Reservation",
-    {
-      fields: ["name"],
-      filters: [
-        ["property", "=", gv.setting.business_branch],
-        ["arrival_date", "=", filter_date.value],
-        ["reservation_status", "in", "Confirmed"]
-      ],
-      limit: 50,
-      orderBy: {
-        field: 'arrival_date',
-        order: 'desc',
-      },
-    }).then(doc => {
-      reservationData.value = [];
-      doc.forEach(d => {
-        db.getDoc("POS Reservation", d.name).then(r => {
-          reservationData.value.push(r);
-        })
-      });
+  call.get("epos_restaurant_2023.api.pos_reservation.get_pos_reservation_list",
+  {
+    "property":gv.setting.business_branch,
+    "arrival_date":filter_date.value
+  }).then((res)=>{
+    reservationData.value = [];
+    if(res.message){
+      reservationData.value = res.message;
+    }else{
 
-      isLoading.value = false;
-    }).catch(err => {
-      isLoading.value = false;
-    });
+    }
+    isLoading.value = false;
+  }).catch((err)=>  isLoading.value = false);
+
+  // db.getDocList("POS Reservation",
+  //   {
+  //     fields: ["name"],
+  //     filters: [
+  //       ["property", "=", gv.setting.business_branch],
+  //       ["arrival_date", "=", filter_date.value],
+  //       ["reservation_status", "in", "Confirmed"]
+  //     ],
+  //     limit: 50,
+  //     orderBy: {
+  //       field: 'arrival_date',
+  //       order: 'desc',
+  //     },
+  //   }).then(doc => {
+  //     reservationData.value = [];
+  //     doc.forEach(d => {
+  //       db.getDoc("POS Reservation", d.name).then(r => {
+  //         reservationData.value.push(r);
+  //       })
+  //     });
+
+  //     isLoading.value = false;
+  //   }).catch(err => {
+  //     isLoading.value = false;
+  //   });
 }
 
 function onClearSearch(){
