@@ -63,7 +63,9 @@ class CashierShift(Document):
 			# check if have edoor app for generate FB revenue to Folio Transaction group by acc.code
 			if 'edoor' in frappe.get_installed_apps() and self.is_edoor_shift == 0:
 				#validate account code for post to folio transaction
-				pass
+				validate_pos_account_code_config(self)
+				
+				
 				# sales = frappe.db.get_list("Sale",filters=[
 				# 								{"cashier_shift":self.name},
 				# 								{"outlet":self.outlet},
@@ -319,7 +321,10 @@ class CashierShift(Document):
 		old_doc = self.get_doc_before_save()
 		if old_doc:
 			if old_doc.is_closed ==0 and self.is_closed ==1:
-				submit_pos_data_to_folio_transaction(self)
+				# submit_pos_data_to_folio_transaction(self)
+				frappe.enqueue("epos_restaurant_2023.selling.doctype.cashier_shift.cashier_shift.submit_pos_data_to_folio_transaction", queue='short', self=self)
+
+
 
 # get sale product revenue sum group by
 def get_sale_product_revenue(sale_products):
@@ -407,6 +412,56 @@ def get_sale_payment(sale_payments):
 	
 	return result
 
+def validate_pos_account_code_config(self):
+	account_code_config = frappe.db.get_list("POS Account Code Config", filters={"outlet":self.outlet, "shift_name":self.shift_name})
+	config = None
+	if account_code_config:
+		config =  frappe.get_doc("POS Account Code Config",account_code_config[0].name)
+	if not config:
+		frappe.throw("There is no pos account code configuration for outlet {} and shift {}".format(self.outlet, self.shift_name))
+	
+	revenue_data = get_revenues(self)
+	
+	for d in revenue_data:
+		account_code = [x.account_code for x in  config.pos_revenue_account_codes if x.revenue==d["revenue_group"]]
+		if not account_code:
+			frappe.throw("There is no account code configuration for revenue group {}".format(d["revenue_group"]))
+		if (d["discount"] or 0)> 0:
+			discount_account_code = [x.discount_account for x in  config.pos_revenue_account_codes if x.revenue==d["revenue_group"]]
+			if not discount_account_code:
+				frappe.throw("There is no account code confiuration for discount amount of revenue group {}".format(d["revenue_group"]))
+
+	
+
+				
+	#tax 1 
+	tax_1_amount = sum([d["tax_1_amount"] for d in revenue_data]) or 0
+	if tax_1_amount > 0 and not config.tax_1_account:
+		frappe.throw("There is no account configuration for Tax 1")
+		
+	#tax 2 
+	tax_2_amount = sum([d["tax_2_amount"] for d in revenue_data]) or 0
+	if tax_2_amount > 0 and not config.tax_2_account:
+		frappe.throw("There is no account configuration for Tax 2")
+	#tax 3 
+	tax_3_amount = sum([d["tax_3_amount"] for d in revenue_data]) or 0
+	if tax_3_amount > 0 and not config.tax_3_account:
+		frappe.throw("There is no account configuration for Tax 3")
+
+
+	#post payment to folio transaction
+	payment_data= get_payments(self)
+	for p in payment_data:
+		account_code = [x for x in  config.pos_payment_type_account_codes if x.payment_type==p["payment_type"]]
+		if not account_code:
+			frappe.throw("Payment type {} does not have account code".format(p["payment_type"]))
+		
+		if (p["fee_amount"] or 0)> 0:
+			if not account_code[0].bank_fee_account:
+				frappe.throw("There is no account code configuration for bank fee amount of payment type {}".format(p["payment_type"]))
+ 
+
+@frappe.whitelist()
 def submit_pos_data_to_folio_transaction(self):
 	account_code_config = frappe.db.get_list("POS Account Code Config", filters={"outlet":self.outlet, "shift_name":self.shift_name})
 	config = None

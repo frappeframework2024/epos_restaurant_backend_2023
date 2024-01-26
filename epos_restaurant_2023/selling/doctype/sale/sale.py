@@ -251,6 +251,7 @@ class Sale(Document):
 
 	
 	def on_submit(self):
+		
 		create_folio_transaction_from_pos_trnasfer(self) 
 		# update_inventory_on_submit(self)			
 		add_payment_to_sale_payment(self) 
@@ -604,7 +605,10 @@ def create_folio_transaction_from_pos_trnasfer(self):
 
 	for p in self.payment:
 		if p.folio_transaction_type and p.folio_transaction_number :
-			
+			 
+			if not p.account_code:
+				frappe.throw("Please account code for Payment type {}".format(p.payment_type))
+
 			data = {
 					'doctype': 'Folio Transaction',
 					'posting_date':self.posting_date,
