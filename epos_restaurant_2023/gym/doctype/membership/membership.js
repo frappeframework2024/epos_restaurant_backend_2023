@@ -6,7 +6,14 @@ frappe.ui.form.on("Membership", {
            
 	},
     onload(frm){
+        if((frm.doc.end_date||"")!=""){
+            frm.doc.regular_end_date = frm.doc.regular_end_date|| new Date(frm.doc.end_date);
+        }
+
         on_membership_value_changed(frm)   
+    },
+    is_delay_access:function(frm){
+        on_is_delay_access_value_changed(frm,true)
     },
     membership:function(frm){
         on_membership_value_changed(frm,true )
@@ -36,8 +43,10 @@ frappe.ui.form.on("Membership", {
         on_count_members_value_changed(frm,true)
     },
     tracking_limited:function(frm){
-        on_tracking_limited_changed(frm,true);
-       
+        on_tracking_limited_changed(frm,true);       
+    },
+    delay_access:function(frm){
+        on_delay_access_value_changed(frm,true);
     }
 });
 
@@ -46,6 +55,7 @@ function on_membership_value_changed(frm,changed=false){
     on_membership_type_value_changed(frm,changed);
     on_access_type_value_changed(frm,changed);
     on_tracking_limited_changed(frm,changed);
+    on_is_delay_access_value_changed(frm,changed);
 
     if(frm.doc.membership != "" && frm.doc.membership!=undefined){
         if(changed){
@@ -94,26 +104,52 @@ function on_start_date_changed(frm,changed=false){
         frm.set_df_property('end_date', 'read_only', 0);
         const _date = new Date(frm.doc.start_date);  
         const _duration =   frm.doc.membership_duration;   
+        let _end_date = _date;
         switch(frm.doc.duration_base_on){
             case 'Day(s)':
-                frm.doc.end_date = new Date(_date.setDate(_date.getDate() + _duration));   
+                _end_date = new Date(_date.setDate(_date.getDate() + _duration));   
                 break
             case 'Week(s)':
-                frm.doc.end_date = new Date(_date.setDate(_date.getDate() + (_duration * 7) - 1));   
+                _end_date = new Date(_date.setDate(_date.getDate() + (_duration * 7) - 1));   
                 break;
             case 'Month(s)':
                 const new_month = new Date(_date.setMonth(_date.getMonth() +_duration)); 
-                frm.doc.end_date =  new Date(new_month.setDate(new_month.getDate() -1)); 
+                _end_date =  new Date(new_month.setDate(new_month.getDate() -1)); 
                 break;
             case 'Year(s)':
                 const new_year = new Date(_date.setFullYear(_date.getFullYear() +_duration)); 
-                frm.doc.end_date =  new Date(new_year.setDate(new_year.getDate() -1)); 
+                _end_date =  new Date(new_year.setDate(new_year.getDate() -1)); 
                 break;
             default:
-                frm.doc.end_date  = frm.doc.start_date;
+                _end_date  = frm.doc.start_date;
                 break;
-        }     
-   
+        }  
+
+        frm.set_df_property('regular_end_date', 'hidden', 0);
+        frm.doc.regular_end_date = new Date(_end_date);  
+        frm.refresh_field("regular_end_date"); 
+        frm.set_df_property('regular_end_date', 'hidden', 1);
+        
+
+        // check delay access
+        if(frm.doc.is_delay_access==1){
+            const _end = new Date(_end_date)
+            const _delay_access_value =   frm.doc.delay_access; 
+            switch(frm.doc.delay_access_base_on){
+                case 'Day(s)':
+                    _end_date = new Date(_end.setDate(_end.getDate() + _delay_access_value));   
+                    break;
+                case 'Month(s)':
+                    const _new_month = new Date(_end.setMonth(_end.getMonth() +_delay_access_value)); 
+                    _end_date =  new Date(_new_month.setDate(_new_month.getDate())); 
+                    break;
+                default:
+                    _end_date = _end_date;
+                    break;
+            }
+        }
+
+        frm.doc.end_date = _end_date;  
         frm.refresh_field("end_date"); 
        
     } 
@@ -206,4 +242,47 @@ function on_tracking_limited_changed(frm,changed){
 
     }
     frm.refresh_field("max_access");
+}
+
+
+function on_is_delay_access_value_changed(frm,changed){
+    if(frm.doc.__islocal==1){
+        frm.set_df_property('is_delay_access', 'hidden', 1);
+        frm.set_df_property('delay_access_base_on', 'hidden', 1);
+        frm.set_df_property('delay_access', 'hidden', 1);
+    }else{
+        if(frm.doc.is_delay_access==0){
+            frm.doc.end_date = frm.doc.regular_end_date;
+            frm.refresh_field("end_date"); 
+            frm.set_df_property('delay_access_base_on', 'hidden', 1);
+            frm.set_df_property('delay_access', 'hidden', 1);
+        }else{
+            
+            frm.set_df_property('delay_access_base_on', 'hidden', 0);
+            frm.set_df_property('delay_access', 'hidden', 0);
+            on_delay_access_value_changed(frm,changed)
+        } 
+    }
+}
+
+function on_delay_access_value_changed(frm, changed){
+    frm.set_df_property('end_date', 'read_only', 0);
+    const _date = new Date(frm.doc.regular_end_date);   
+    const _duration =   frm.doc.delay_access;   
+    let _end_date = _date;
+    switch(frm.doc.delay_access_base_on){
+        case 'Day(s)':
+            _end_date = new Date(_date.setDate(_date.getDate() + _duration));   
+            break;
+        case 'Month(s)':
+            const _new_month = new Date(_date.setMonth(_date.getMonth() +_duration)); 
+            _end_date =  new Date(_new_month.setDate(_new_month.getDate())); 
+            break;
+        default:
+            break;
+    }      
+    frm.doc.end_date = new Date(_end_date) ;   
+    frm.refresh_field("end_date"); 
+
+    frm.set_df_property('end_date', 'read_only', 1);
 }

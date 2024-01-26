@@ -9,12 +9,10 @@
   "column_break_mhkk",
   "shift_name",
   "section_break_rmof",
-  "tip_account",
-  "column_break_hvmf",
   "tax_1_account",
-  "column_break_dzko",
+  "column_break_hvmf",
   "tax_2_account",
-  "column_break_ypwz",
+  "column_break_dzko",
   "tax_3_account",
   "revenue_group_account_codes_section",
   "pos_revenue_account_codes",
@@ -47,12 +45,6 @@
    "fieldname": "section_break_rmof",
    "fieldtype": "Section Break",
    "label": "Account Codes"
-  },
-  {
-   "fieldname": "tip_account",
-   "fieldtype": "Link",
-   "label": "Tip Account",
-   "options": "Account Code"
   },
   {
    "fieldname": "revenue_group_account_codes_section",
@@ -91,10 +83,6 @@
    "options": "Account Code"
   },
   {
-   "fieldname": "column_break_ypwz",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "tax_3_account",
    "fieldtype": "Link",
    "label": "Tax 3 Account",
@@ -103,7 +91,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-01-25 11:51:35.951761",
+ "modified": "2024-01-26 15:08:25.126042",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Account Code Config",

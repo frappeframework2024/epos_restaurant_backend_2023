@@ -77,6 +77,13 @@ frappe.query_reports["Membership Register Report"] = {
 				let is_none_trainer = query_report.get_filter_value('is_none_trainer');
 				query_report.toggle_filter_display('personal_trainer', is_none_trainer === 1 );			
 			}, 
+		},
+		{
+			"fieldname": "group_by_reference_no",
+			"label": __("Group By Reference No"),
+			"fieldtype": "Check",
+			"default":"0"		,
+			"on_change": function (query_report) { }, 
 		}
 	],
 	onload: function (report) {
@@ -102,6 +109,18 @@ frappe.query_reports["Membership Register Report"] = {
 			report.refresh();
 		});
 		
+	},
+	"formatter": function(value, row, column, data, default_formatter) {
+	
+		value = default_formatter(value, row, column, data);
+
+		if (data && data.is_group==1) {
+			value = $(`<span>${value}</span>`);
+			var $value = $(value).css("font-weight", "bold");
+			value = $value.wrap("<p></p>").parent().html();
+		}
+		
+		return value;
 	},
 };
 

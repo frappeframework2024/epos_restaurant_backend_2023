@@ -56,7 +56,9 @@
   "account_code",
   "use_room_offline",
   "fee_percentage",
-  "currency_precision"
+  "currency_precision",
+  "folio_transaction_type",
+  "folio_transaction_number"
  ],
  "fields": [
   {
@@ -391,12 +393,22 @@
    "fieldtype": "Check",
    "label": "Is Reservation Deposit",
    "read_only": 1
+  },
+  {
+   "fieldname": "folio_transaction_type",
+   "fieldtype": "Data",
+   "label": "Folio Transaction Type"
+  },
+  {
+   "fieldname": "folio_transaction_number",
+   "fieldtype": "Data",
+   "label": "Folio Transaction Number"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-01-06 09:37:43.518771",
+ "modified": "2024-01-25 17:51:24.971517",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Payment",

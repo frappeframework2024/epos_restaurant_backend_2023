@@ -503,6 +503,8 @@ def add_payment_to_sale_payment(self):
 							"cashier_shift":self.cashier_shift,
 							"room_number":p.room_number,
 							"folio_number":p.folio_number,
+							"folio_transaction_number":p.folio_transaction_number,
+							"folio_transaction_type":p.folio_transaction_type,
 							"use_room_offline":p.use_room_offline,
 							"account_code":p.account_code,
 							"fee_amount":p.fee_amount,
@@ -601,20 +603,24 @@ def add_sale_product_spa_commission(self):
 def create_folio_transaction_from_pos_trnasfer(self):
 
 	for p in self.payment:
-		if p.folio_number and not p.use_room_offline:
-
+		if p.folio_transaction_type and p.folio_transaction_number :
+			
 			data = {
 					'doctype': 'Folio Transaction',
 					'posting_date':self.posting_date,
-					'transaction_type': 'Reservation Folio',
-					'transaction_number':p.folio_number,
+					'transaction_type': p.folio_transaction_type,
+					'transaction_number': p.folio_transaction_number,
 					'reference_number':self.name,
 					"input_amount":p.amount,
 					"account_code":p.account_code,
 					"property":self.business_branch,
 					"is_auto_post":1,
 					"sale": self.name,
-					"type":"Debit"
+					"type":"Debit",
+					"guest":self.customer,
+					"guest_name":self.customer_name,
+					"guest_type":self.customer_group,
+					"nationality": "" if not self.customer else  frappe.db.get_value("Customer",self.customer,"country")
 				} 
 			doc = frappe.get_doc(data)
 			doc.insert()	

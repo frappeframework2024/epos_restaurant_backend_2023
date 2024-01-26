@@ -10,7 +10,7 @@
     </div>
 </template>
 <script setup>
-import { inject , payToRoomDialog,createToaster,i18n ,computed,keyboardDialog} from '@/plugin';
+import { inject , payToRoomDialog,createToaster,payToCityLedgerDialog,payDeskfolioDialog,i18n ,computed,keyboardDialog} from '@/plugin';
 import { onMounted } from 'vue';
 import { useDisplay } from 'vuetify'
 const {mobile} = useDisplay()
@@ -22,7 +22,11 @@ const toaster = createToaster({ position: "top" });
 async function onPaymentTypeClick(pt) { 
 
     let room = null;
-    let folio = null; 
+    let folio_transaction_number = null
+    let folio_transaction_type=null
+    let folio = null
+    let city_ledger_name = null
+    let desk_folio = null
     if(pt.payment_type_group=="Pay to Room" ){ 
         if(sale.paymentInputNumber<=0){
             toaster.warning($t("msg.Please enter payment amount"));
@@ -38,8 +42,36 @@ async function onPaymentTypeClick(pt) {
             return
         }
         room = result.room;
-        folio = result.folio;      
-    } 
+        folio = result.folio;
+        folio_transaction_number =result.folio;
+        folio_transaction_type="Reservation Folio"
+    }
+    else if(pt.payment_type_group == "City Ledger"){
+        const result = await payToCityLedgerDialog({
+            data : pt
+        });
+        //if close
+        if(result == false){
+            return
+        }
+         
+        folio_transaction_number =result.folio_transaction_number;
+        folio_transaction_type="City Ledger"
+        city_ledger_name = result.city_ledger_name
+    }
+    else if(pt.payment_type_group == "Desk Folio"){
+        const result = await payDeskfolioDialog({
+            data : pt
+        });
+        //if close
+        if(result == false){
+            return
+        }
+         
+        folio_transaction_number =result.folio_transaction_number;
+        folio_transaction_type="Desk Folio"
+        desk_folio = result.desk_folio
+    }
 
 
     //check if payment exist manual fee
@@ -66,8 +98,9 @@ async function onPaymentTypeClick(pt) {
     }
 
   
-
-    sale.onAddPayment(pt, sale.paymentInputNumber,fee_amount,room,folio);   
+    const payment_obj={paymentType: pt, amount:sale.paymentInputNumber,fee_amount:fee_amount,room:room, folio : folio, folio_transaction_type:folio_transaction_type,folio_transaction_number:folio_transaction_number,city_ledger_name:city_ledger_name}  
+    // sale.onAddPayment(pt, sale.paymentInputNumber,fee_amount,room,folio,folio_transaction_type,folio_transaction_number);   
+    sale.onAddPayment(payment_obj);
 
 }
 

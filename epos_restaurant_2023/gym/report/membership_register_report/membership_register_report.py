@@ -15,7 +15,7 @@ def execute(filters=None):
 	#run this to update parent_product_group in table sales invoice item
 
 	report_data = []
-	skip_total_row=False
+	skip_total_row = True if filters.group_by_reference_no == 1 else False
  
 	
 	report_data = get_report_data(filters) 
@@ -30,32 +30,30 @@ def validate(filters):
 
 
 
-def get_columns(filters):
-	return [
-		{"label":"Doc. #", "fieldname":"name","fieldtype":"Link","options":"Membership", "align":"center",},
-		{"label":"Register",  "fieldname":"posting_date","fieldtype":"Date", "align":"center","width":120},
-		{"label":"Code", "fieldname":"customer","fieldtype":"Data","align":"left","width":100},
-		{"label":"Member", "fieldname":"member","fieldtype":"Data","align":"left","width":150},
-		{"label":"Gender", "fieldname":"gender","fieldtype":"Data","align":"center","width":70},
-		{"label":"Phone", "fieldname":"phone_number","fieldtype":"Data","align":"left","width":150},
-		{"label":"Membership", "fieldname":"membership","fieldtype":"Data","align":"left"},
-		{"label":"Duration", "fieldname":"duration_type","fieldtype":"Data","align":"left"},		
-		{"label":"Trainer", "fieldname":"trainer_name_en","fieldtype":"Data","align":"left"},
-		{"label":"Start", "fieldname":"start_date","fieldtype":"Date","align":"center","width":120},
-		{"label":"End", "fieldname":"end_date","fieldtype":"Date","align":"center","width":120},
-		{"label":"Training Time", "fieldname":"time_training","fieldtype":"Data","align":"center"},
-		{"label":"Accessable", "fieldname":"tracking","fieldtype":"Data","align":"left"},
-		# {"label":"Membership Type", "fieldname":"membership_type","fieldtype":"Data","align":"left"},	 
-  		{"label":"Price", "fieldname":"price","fieldtype":"Currency","align":"right"},  		
-		{"label":"Discount", "fieldname":"total_discount","fieldtype":"Currency","align":"right","width":100},
-		{"label":"Total Amt", "fieldname":"grand_total","fieldtype":"Currency","align":"right","width":100},
-		{"label":"Total Paid", "fieldname":"total_paid","fieldtype":"Currency","align":"right","width":100},
-		{"label":"Balance", "fieldname":"balance","fieldtype":"Currency","align":"right","width":100},	
-	]
- 
- 
+def get_columns(filters): 
+	columns = []
+	columns.append({"label":"Doc. #", "fieldname":"name","fieldtype":"Link","options":"Membership", "align":"center","width":120})
+	columns.append({"label":"Register",  "fieldname":"posting_date","fieldtype":"Date", "align":"center","width":120})
+	columns.append({"label":"Code", "fieldname":"customer","fieldtype":"Data","align":"left","width":100})
+	columns.append({"label":"Member", "fieldname":"member","fieldtype":"Data","align":"left","width":150})
+	columns.append({"label":"Gender", "fieldname":"gender","fieldtype":"Data","align":"center","width":70})
+	columns.append({"label":"Phone", "fieldname":"phone_number","fieldtype":"Data","align":"left","width":150})
+	if not filters.group_by_reference_no:
+		columns.append({"label":"Ref. #", "fieldname":"reference_no","fieldtype":"Data","align":"left","width":70})
 
-
+	columns.append({"label":"Membership", "fieldname":"membership","fieldtype":"Data","align":"left"})
+	columns.append({"label":"Duration", "fieldname":"duration_type","fieldtype":"Data","align":"left"})
+	columns.append({"label":"Trainer", "fieldname":"trainer_name_en","fieldtype":"Data","align":"left"})
+	columns.append({"label":"Start", "fieldname":"start_date","fieldtype":"Date","align":"center","width":120})
+	columns.append({"label":"End", "fieldname":"end_date","fieldtype":"Date","align":"center","width":120})
+	columns.append({"label":"Training Time", "fieldname":"time_training","fieldtype":"Data","align":"center"})
+	columns.append({"label":"Accessable", "fieldname":"tracking","fieldtype":"Data","align":"left"})
+	columns.append({"label":"Price", "fieldname":"price","fieldtype":"Currency","align":"right"})
+	columns.append({"label":"Discount", "fieldname":"total_discount","fieldtype":"Currency","align":"right","width":100})
+	columns.append({"label":"Total Amt", "fieldname":"grand_total","fieldtype":"Currency","align":"right","width":100})
+	columns.append({"label":"Total Paid", "fieldname":"total_paid","fieldtype":"Currency","align":"right","width":100})
+	columns.append({"label":"Balance", "fieldname":"balance","fieldtype":"Currency","align":"right","width":100})
+	return  columns 
  
 def get_conditions(filters):
 	
@@ -83,12 +81,50 @@ def get_conditions(filters):
 			elif filters.sort_by == "Member":
 				sort_by = "member_name"
 
-			conditions += " order by {} {}".format(sort_by,filters.sort_type)
+			conditions += " order by coalesce(reference_no,'N/A') {1},{0} {1}".format(sort_by,filters.sort_type)
+
+	 
 
 	return conditions
 
 def get_report_data(filters):	
-	sql = """select 	
+	child = get_data(filters) 
+	data = child
+	if filters.group_by_reference_no == 1:	
+		data = []	
+		sql = """select
+					0 as indent,
+					1 as is_group,
+					coalesce(m.reference_no,'N/A') as name,
+					sum(m.price) as price,
+					sum(m.total_discount) as total_discount,
+					sum(m.grand_total) as grand_total,
+					sum(m.total_paid) as total_paid,
+					sum(m.balance) as balance
+				from `tabMembership`   as m
+				where m.docstatus != 2
+				group by
+					coalesce(m.reference_no,'N/A')
+				{}""".format(get_conditions(filters))	
+		parent = frappe.db.sql(sql,as_dict=1)	
+		
+		for p in parent:
+			data.append(p) 
+			childrend = [x for x in  child if x.reference_no == p["name"]]
+			for c in childrend:
+				data.append(c) 
+
+	 
+
+
+	return data
+ 
+def get_data(filters):
+	indent = 1 if filters.group_by_reference_no == 1 else 0	
+	sql = """select 
+				{1} as indent,
+				0 as is_group,
+				coalesce(m.reference_no,'N/A') as reference_no,
 				m.name,
 				m.customer,
 				m.member_name as member,
@@ -113,9 +149,8 @@ def get_report_data(filters):
 				m.balance
 			from `tabMembership`   as m
 			where m.docstatus != 2
-			{}""".format(get_conditions(filters))	
-	 
+			{0}""".format(get_conditions(filters),indent)	
+	
 	data = frappe.db.sql(sql,filters, as_dict=1)
 
 	return data
- 

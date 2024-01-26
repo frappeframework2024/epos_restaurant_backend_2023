@@ -44,7 +44,10 @@
   function onMainCurrencyPrefineClick(n) {
     //get exchange rate
     const paymentType = Enumerable.from(gv.setting.payment_types).where(`$.payment_method=='${gv.setting.default_payment_type}'`).firstOrDefault();
-    sale.onAddPayment(paymentType,n);
+    const payment_obj={paymentType: paymentType, amount:n} 
+    sale.onAddPayment(payment_obj);
+    // sale.onAddPayment(paymentType,n);
+    
     emit('onSelected')
   }
   
@@ -56,7 +59,9 @@
       const paymentType = Enumerable.from(gv.setting.payment_types).where(`$.payment_method=='${secondCurrencyPaymentType}'`).firstOrDefault();
      
       if (paymentType) {
-        sale.onAddPayment(paymentType,n);
+        const payment_obj={paymentType: paymentType, amount:n}  
+        // sale.onAddPayment(paymentType,n);
+        sale.onAddPayment(payment_obj);
         emit('onSelected')
       } else {
         toaster.warning($t('msg.There is no default payment for second currency'));

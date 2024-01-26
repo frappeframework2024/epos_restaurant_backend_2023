@@ -11,6 +11,7 @@
   "information_section",
   "naming_series",
   "posting_date",
+  "reference_no",
   "customer_code",
   "customer",
   "photo",
@@ -21,12 +22,16 @@
   "phone_number_2",
   "duration_type",
   "membership_duration",
+  "is_delay_access",
+  "delay_access",
+  "delay_access_base_on",
   "column_break_qwqf",
   "membership",
   "membership_type",
   "duration_base_on",
   "start_date",
   "end_date",
+  "regular_end_date",
   "tracking_limited",
   "max_access",
   "note",
@@ -432,6 +437,43 @@
    "fieldname": "trainer_note",
    "fieldtype": "Small Text",
    "label": "Trainer Note"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fetch_from": ".",
+   "fieldname": "is_delay_access",
+   "fieldtype": "Check",
+   "label": "Is Delay Access"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "Month(s)",
+   "fieldname": "delay_access_base_on",
+   "fieldtype": "Select",
+   "label": "Delay Access Base On",
+   "options": "Day(s)\nMonth(s)"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fetch_from": ".",
+   "fieldname": "delay_access",
+   "fieldtype": "Int",
+   "label": "Delay Access "
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "regular_end_date",
+   "fieldtype": "Date",
+   "hidden": 1,
+   "label": "Regular End Date"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "reference_no",
+   "fieldtype": "Data",
+   "label": "Reference No"
   }
  ],
  "image_field": "photo",
@@ -444,7 +486,7 @@
    "link_fieldname": "membership"
   }
  ],
- "modified": "2024-01-06 10:41:45.549474",
+ "modified": "2024-01-26 14:01:12.917682",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership",

@@ -526,6 +526,7 @@ export default class Sale {
             sp.taxable_amount_1 = (sp.sub_total - sp.total_discount);
         }
         sp.taxable_amount_1 *= ((sp.percentage_of_price_to_calculate_tax_1 || 0)/100);
+        
 
         //cal tax 1 amount
         sp.tax_1_amount = sp.taxable_amount_1 * ((sp.tax_1_rate ||0)/100);
@@ -1053,7 +1054,23 @@ export default class Sale {
                 else{  
                     this.sale.discount = result.discount;
                     this.sale.discount_type = result.discount_type;
-                    this.sale.discount_note = result.discount_note;     
+                    this.sale.discount_note = result.discount_note;   
+                    const sale_discount = this.sale.discount;
+
+
+                    (this.sale.sale_products??[]).forEach(_sp => {
+                        if (sale_discount>0 && _sp.allow_discount && _sp.discount==0)	{		
+                            _sp.sale_discount_percent = sale_discount  ;
+                            _sp.sale_discount_amount = (sale_discount/100) * _sp.sub_total;
+                        }
+                        else{
+                            _sp.sale_discount_percent = 0  ;
+                            _sp.sale_discount_amount = 0;
+                        }
+                        _sp.total_discount = (_sp.sale_discount_amount || 0) + (_sp.discount_amount || 0);
+                        this.updateSaleProduct(_sp);
+                    });
+                   
                                    
 
                     //sale discount audit
@@ -1630,35 +1647,40 @@ export default class Sale {
         }
     }
 
-    onAddPayment(paymentType, amount,fee_amount=0,room=null, folio=null) {       
+    onAddPayment(data) {  
+        // data {paymentType: , amount:,fee_amount:0,room:null, folio = null, folio_transaction_type=null,folio_transaction_number}     
         const single_payment_type = this.sale.payment.find(r => r.is_single_payment_type == 1);
         if (single_payment_type) {
             toaster.warning($t('msg.You cannot add other payment type with',[ single_payment_type.payment_type]));
         } else {
             const precision = this.setting.pos_setting.main_currency_precision;
-            if (paymentType.is_single_payment_type == 1) {
+            if (data.paymentType.is_single_payment_type == 1) {
                 this.sale.payment = [];
-                amount = parseFloat(parseFloat(this.sale.grand_total).toFixed(precision));
+                data.amount = parseFloat(parseFloat(this.sale.grand_total).toFixed(precision));
             }
-            if (!this.getNumber(amount) == 0) {
-                if((fee_amount||0)==0){
-                    fee_amount = parseFloat(parseFloat(amount / paymentType.exchange_rate).toFixed(precision)) * (paymentType.fee_percentage/100);
+            if (!this.getNumber(data.amount) == 0) {
+                if((data.fee_amount||0)==0){
+                    data.fee_amount = parseFloat(parseFloat(data.amount / data.paymentType.exchange_rate).toFixed(precision)) * (data.paymentType.fee_percentage/100);
                 } 
+                
                 this.sale.payment.push({
-                    payment_type: paymentType.payment_method,
-                    input_amount: parseFloat(amount),
-                    amount: parseFloat(parseFloat(amount / paymentType.exchange_rate).toFixed(precision)),
-                    exchange_rate: paymentType.exchange_rate,
-                    change_exchange_rate: paymentType.change_exchange_rate,
-                    currency: paymentType.currency,
-                    is_single_payment_type: paymentType.is_single_payment_type,
-                    required_customer: paymentType.required_customer,                    
-                    use_room_offline:paymentType.use_room_offline,
-                    room_number:room,
-                    folio_number:folio,
-                    account_code:paymentType.account_code,
-                    fee_percentage:paymentType.fee_percentage,
-                    fee_amount:fee_amount
+                    payment_type: data.paymentType.payment_method,
+                    input_amount: parseFloat(data.amount),
+                    amount: parseFloat(parseFloat(data.amount / data.paymentType.exchange_rate).toFixed(precision)),
+                    exchange_rate: data.paymentType.exchange_rate,
+                    change_exchange_rate: data.paymentType.change_exchange_rate,
+                    currency: data.paymentType.currency,
+                    is_single_payment_type: data.paymentType.is_single_payment_type,
+                    required_customer: data.paymentType.required_customer,                    
+                    use_room_offline:data.paymentType.use_room_offline,
+                    room_number:data.room,
+                    folio_number:data.folio,
+                    account_code:data.paymentType.account_code,
+                    fee_percentage:data.paymentType.fee_percentage,
+                    fee_amount:data.fee_amount,
+                    folio_transaction_type:data.folio_transaction_type,
+                    folio_transaction_number:data.folio_transaction_number,
+                    city_ledger_name: data.city_ledger_name
                 });
 
                 this.updatePaymentAmount();

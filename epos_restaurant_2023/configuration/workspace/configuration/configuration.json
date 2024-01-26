@@ -303,34 +303,6 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Revenue Setting",
-   "link_count": 2,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Revenue Code",
-   "link_count": 0,
-   "link_to": "Revenue Code",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Revenue Group",
-   "link_count": 0,
-   "link_to": "Revenue Group",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "POS Setting",
    "link_count": 8,
    "onboard": 0,
@@ -503,9 +475,47 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Revenue Setting",
+   "link_count": 3,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Revenue Code",
+   "link_count": 0,
+   "link_to": "Revenue Code",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Revenue Group",
+   "link_count": 0,
+   "link_to": "Revenue Group",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "POS Account Code Config",
+   "link_count": 0,
+   "link_to": "POS Account Code Config",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2024-01-20 09:16:52.971749",
+ "modified": "2024-01-26 11:59:39.347419",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Configuration",

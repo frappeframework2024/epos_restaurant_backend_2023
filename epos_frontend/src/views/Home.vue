@@ -46,6 +46,7 @@
                         <ComButton v-if="isWindow()"  @click="onPrintWifiPassword" :title="$t('Wifi Password')" icon="mdi-wifi" icon-color="#e99417" /> 
                         
                         <ComButton @click="onLogout()" text-color="#fff" icon-color="#fff" :title="$t('Logout')" icon="mdi-logout" background-color="#b00020" />
+                        
                     </div>
                 </div>
             </div>
