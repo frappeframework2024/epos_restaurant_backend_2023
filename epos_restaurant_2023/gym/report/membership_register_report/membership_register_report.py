@@ -81,7 +81,7 @@ def get_conditions(filters):
 			elif filters.sort_by == "Member":
 				sort_by = "member_name"
 
-			conditions += " order by coalesce(reference_no,'N/A') {1},{0} {1}".format(sort_by,filters.sort_type)
+			conditions += " order by coalesce(reference_no,'N/A') DESC,{0} {1}".format(sort_by,filters.sort_type)
 
 	 
 

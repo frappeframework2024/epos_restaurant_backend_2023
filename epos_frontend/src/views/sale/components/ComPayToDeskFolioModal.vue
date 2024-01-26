@@ -28,26 +28,22 @@
                     @onInput="onSearchCityLedgerPhoneNumber"/>
                 </v-col>
             </v-row>
-
+            
             <v-row no-gutters>
                
                 <v-col cols="12" sm="12" md="12">
                     <div>
-                        <template v-if="city_ledgers.length > 0">
+                        <template v-if="desk_folio_list.length > 0">
                             <v-row no-gutters>
-                                <v-col cols="12" class="pa-1" sm="12" md="4" v-for="(r, index) in city_ledgers" :key="index"
-                                    @click="(() => onCityLedgerPressed(r))">
-                                    <div :class="selected_city_ledger?.name == r.name ? 'bg-indigo-lighten-2' : 'bg-deep-purple-lighten-5'"
+                                <v-col cols="12" class="pa-1" sm="12" md="4" v-for="(r, index) in desk_folio_list" :key="index"
+                                    @click="(() => onDeskFolioPressed(r))">
+                                    <div :class="selected_desk_folio?.name == r.name ? 'bg-indigo-lighten-2' : 'bg-deep-purple-lighten-5'"
                                         class="btn-post-to-room cursor-pointer border border-stone-500 pa-1 rounded-sm">
                                         <div>
-                                            <span><strong>{{ $t('City Ledger') }}:</strong> #{{ r.city_ledger_name }}</span>
+                                            <span><strong>{{ $t('Desk Folio Number') }}:</strong> #{{ r.name  }}</span>
                                         </div>
                                         <div>
-                                            <span><strong>{{ $t("City Ledger Type") }}:</strong> {{ r.city_ledger_type
-                                            }}</span>
-                                        </div>
-                                        <div>
-                                            <span><strong>{{ $t("Phone Number") }}:</strong> {{ r.phone_number }}</span>
+                                            <span><strong>{{ $t("Guest") }}:</strong> {{ r.guest_name }}</span>
                                         </div>
 
                                     </div>
@@ -83,7 +79,7 @@ const call = frappe.call();
 const db = frappe.db();
 
 
-const desk_folio_list = ref({});
+const desk_folio_list = ref([]);
 const selected_desk_folio = ref();
 
 
@@ -103,7 +99,10 @@ onMounted(() => {
 })
 
 function onGetDeskFolio(_filters = []) {
-    let custom_filter = [['property', '=', gv.setting?.business_branch], ['status', '=', 'Open']]
+    let custom_filter = [
+        ['property', '=', gv.setting?.business_branch], 
+        ['status', '=', 'Open']
+    ]
     if (_filters.length > 0) {
         custom_filter.push(_filters)
     }
@@ -129,9 +128,8 @@ function onConfirm() {
 
 
 }
-function onCityLedgerPressed(r) {
-
-    selected_city_ledger.value = r;
+function onDeskFolioPressed(r) {
+    selected_desk_folio.value = r;
 
 
 }

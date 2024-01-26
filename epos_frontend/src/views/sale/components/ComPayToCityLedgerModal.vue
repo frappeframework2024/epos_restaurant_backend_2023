@@ -23,7 +23,7 @@
                     keyboard
                     class="m-1"
                     v-model="search"
-                    :placeholder="$t('City Ledger Name')"
+                    :placeholder="$t('Phone Number')"
                     v-debounce="onSearchCityLedgerPhoneNumber"
                     @onInput="onSearchCityLedgerPhoneNumber"/>
                 </v-col>
