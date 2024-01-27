@@ -40,6 +40,7 @@ def membership_check_in(code,check_in_date):
     for child in data_membership:
         m = frappe.get_doc("Membership",child.name)
         locked = False
+        
         if m.access_type != "Unlimited":
             access = {
                 "per_duration":m.per_duration,
@@ -47,19 +48,19 @@ def membership_check_in(code,check_in_date):
                 "duration":m.duration
             }
             locked =  check_access_to_train(access,check_in_date,code,m)
-
+        
         ## get total checked in  
         sql = """select count(`name`) as total_check_in from `tabMembership Check In Items` 
-					where member = '{}' 
-					and  membership = '{}' 
-					and docstatus = 1 """.format(code, m.name)	
-		 
+					where  membership = '{}' 
+					and docstatus = 1 """.format( m.name)	
+        
+ 
         exec = frappe.db.sql(sql, as_dict=1)
         count = 0
         if exec:
             count = (exec[0].total_check_in or 0)
             if m.tracking_limited == 1:
-                locked = True if count == m.max_access else locked
+                locked = True if count >= m.max_access else locked
 
         memberships.append({   
             "name":m.name,           
@@ -99,8 +100,7 @@ def check_access_to_train(access,check_in_date,code,membership):
             inner join `tabMembership Check In` as b on b.name = a.parent
             where b.docstatus = 1 
                 and a.docstatus = 1
-                and b.member = '{}'
-                and a.membership = '{}' """.format(code,m.name)
+                and a.membership = '{}' """.format(m.name)
    
     date_format = '%Y-%m-%d'
     match access['per_duration']:

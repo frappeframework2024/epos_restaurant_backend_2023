@@ -43,6 +43,7 @@
   "trainer_gender",
   "trainer_email",
   "time_training",
+  "trainer_fee_percentage",
   "trainer_photo",
   "column_break_ojpw",
   "trainer_note",
@@ -68,6 +69,7 @@
  ],
  "fields": [
   {
+   "allow_on_submit": 1,
    "fieldname": "customer",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -151,6 +153,7 @@
    "label": "Count Members"
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "customer.naming_series",
    "fieldname": "customer_code",
    "fieldtype": "Data",
@@ -274,6 +277,7 @@
    "options": "Membership Family"
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "customer.customer_name_en",
    "fieldname": "member_name",
    "fieldtype": "Data",
@@ -283,6 +287,7 @@
    "reqd": 1
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "customer.photo",
    "fieldname": "photo",
    "fieldtype": "Attach Image",
@@ -328,6 +333,7 @@
    "label": "Regular Price"
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "customer.customer_name_kh",
    "fieldname": "member_name_kh",
    "fieldtype": "Data",
@@ -337,6 +343,7 @@
    "label": "Member Name Kh"
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "customer.gender",
    "fieldname": "gender",
    "fieldtype": "Data",
@@ -346,6 +353,7 @@
    "label": "Gender"
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "customer.phone_number",
    "fieldname": "phone_number_1",
    "fieldtype": "Data",
@@ -355,6 +363,7 @@
    "label": "Phone Number 1"
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "customer.phone_number_2",
    "fieldname": "phone_number_2",
    "fieldtype": "Data",
@@ -474,6 +483,13 @@
    "fieldname": "reference_no",
    "fieldtype": "Data",
    "label": "Reference No"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "trainer_fee_percentage",
+   "fieldtype": "Float",
+   "label": "Trainer Fee (%)"
   }
  ],
  "image_field": "photo",
@@ -486,7 +502,7 @@
    "link_fieldname": "membership"
   }
  ],
- "modified": "2024-01-26 14:01:12.917682",
+ "modified": "2024-01-27 10:41:17.231548",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership",

@@ -9,9 +9,8 @@ class MembershipCheckIn(Document):
 	def on_submit(self): 
 		for m in self.membership_check_in_item:			
 			sql = """select count(`name`) as total_check_in from `tabMembership Check In Items` 
-					where member = '{}' 
-					and  membership = '{}' 
-					and docstatus = 1 """.format(m.member, m.membership)
+					where membership = '{}' 
+					and docstatus = 1 """.format( m.membership)
 			
 		 
 			exec = frappe.db.sql(sql, as_dict=1)

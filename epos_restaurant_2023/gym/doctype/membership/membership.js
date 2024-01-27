@@ -6,10 +6,14 @@ frappe.ui.form.on("Membership", {
            
 	},
     onload(frm){
-        if((frm.doc.end_date||"")!=""){
-            frm.doc.regular_end_date = frm.doc.regular_end_date|| new Date(frm.doc.end_date);
+        if((frm.doc.end_date||"")!=""){           
+            if((frm.doc.regular_end_date||"")==""){
+                frm.set_df_property('regular_end_date', 'hidden', 0);
+                frm.doc.regular_end_date =frm.doc.end_date;
+                frm.set_df_property('regular_end_date', 'hidden', 1);
+            }            
         }
-
+console.log(frm.doc)
         on_membership_value_changed(frm)   
     },
     is_delay_access:function(frm){

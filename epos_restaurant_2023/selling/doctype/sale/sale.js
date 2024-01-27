@@ -2,6 +2,15 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Sale", {
+	onload(frm){
+		frm.set_query("tip_account_code", function() {
+            return {
+                filters: [
+                    ["Account Code","is_group", "=", 0]
+                ]
+            }
+        });
+	},
 	refresh(frm){
 		if(!frm.doc.__islocal && frm.doc.docstatus == 1){
 			frm.dashboard.add_indicator(__("Total Quantity: {0}",[frm.doc.total_quantity]) ,"blue");

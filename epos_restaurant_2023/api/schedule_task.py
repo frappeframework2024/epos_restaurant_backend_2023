@@ -6,16 +6,16 @@ from frappe import _
 
 @frappe.whitelist()
 def generate_audit_trail_from_version():
-    audit_trail_documents = frappe.db.get_list("Audit Trail Document", pluck='name')
+    audit_trail_documents = frappe.db.get_list("Audit Trail Document", pluck='name',filters={"is_epos_audit_trail":1})
     version_data = frappe.db.get_list('Version',
                         filters={
                             'ref_doctype': ["in",audit_trail_documents],
                             "custom_is_converted_to_audit_trail":0
                         },
                         fields=['name','ref_doctype', 'docname',"creation"],
-                        page_length=100
+                        page_length=20
                     )
- 
+  
     if len(version_data)> 0:
         for v in version_data:
             
@@ -39,8 +39,6 @@ def submit_update_audit_trail_from_version(doc):
         doctype = frappe.get_doc("Audit Trail Document", doc.ref_doctype)
         data = json.loads(doc.data)
         data_changed = []
-        if doc.ref_doctype == "Reservation Room Rate":
-            data_changed.append("<b>Date:</b> " +  frappe.db.get_value("Reservation Room Rate", doc.docname,"date").strftime('%d-%m-%Y'))
 
         for d in data["changed"]:
             if d[0] in [f.field_name for f in doctype.tracking_field] and ((d[1] or '')!='' or (d[2] or '')!=''):
@@ -72,11 +70,6 @@ def submit_update_audit_trail_from_version(doc):
                         data_changed.append(f'<b>{field.label}</b>: {d[1]} <b>to</b> {d[2]}')
 
 
-        if doc.ref_doctype == "Reservation Room Rate":
-            if len(data_changed)==1:
-                #we skip it cause have only 1 record is date
-                return
-
         if len(data_changed)>0:
             comment_doc = []
             comment_doc.append({
@@ -94,23 +87,7 @@ def submit_update_audit_trail_from_version(doc):
 
     
 def add_audit_trail(data,update_creation_date=False):
-    for d in data:
-        if not hasattr(d,"custom_property"):
-            doc = frappe.get_doc(d["reference_doctype"],d["reference_name"])
-            if hasattr(doc,"property"):
-                working_day = get_working_day(doc.property)
-                d["custom_posting_date"]= working_day["date_working_day"]
-                
-                if working_day["cashier_shift"]:
-                    d["custom_cashier_shift"]= working_day["cashier_shift"]["name"]
-                d["custom_property"]= doc.property
-            elif hasattr(doc,"business_branch"):
-                working_day = get_working_day(doc.business_branch)
-                
-                d["custom_posting_date"]= working_day["date_working_day"]
-                d["custom_property"]= doc.business_branch
-                if working_day["cashier_shift"]:
-                    d["custom_cashier_shift"]= working_day["cashier_shift"]["name"]
+    for d in data:      
 
         d["doctype"]="Comment"
         if not hasattr(d,"comment_type"):
@@ -123,18 +100,3 @@ def add_audit_trail(data,update_creation_date=False):
         if update_creation_date:
             frappe.db.sql("update `tabComment` set creation=%(creation)s where name=%(name)s",{"name":doc.name, "creation":d["creation"]})
 
-@frappe.whitelist()
-def get_working_day(property = ''):
-    working_day = frappe.db.sql("select  posting_date as date,name,pos_profile from `tabWorking Day` where business_branch = '{0}' order by creation desc limit 1".format(property),as_dict=1)
-    cashier_shift = None
-    if len(working_day)>0:
-        data = frappe.db.sql("select creation, shift_name,name from `tabCashier Shift` where business_branch = '{}' and working_day='{}' and pos_profile='{}' ORDER BY creation desc limit 1".format(property,working_day[0]["name"],working_day[0]["pos_profile"]),as_dict=1)
-        
-        if len(data)>0:
-            cashier_shift = data[0]
-        
-    return {
-        "date_working_day": working_day[0]["date"] if len(working_day)>0 else '',
-        "name":working_day[0]["name"] if len(working_day)>0 else '',
-        "cashier_shift":cashier_shift
-    }
