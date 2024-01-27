@@ -38,6 +38,8 @@ def get_filters(filters):
 
 	if filters.subject:
 		sql += " and c.`subject` in %(subject)s"
+	if filters.select_user:
+		sql += " and c.`comment_email` = %(select_user)s"
 	sql += " and cast(c.creation as date) between %(start_date)s and %(end_date)s"
 	return sql
 

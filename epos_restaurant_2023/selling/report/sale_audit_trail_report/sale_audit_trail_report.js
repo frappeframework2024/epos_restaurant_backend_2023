@@ -48,6 +48,13 @@ frappe.query_reports["Sale Audit Trail Report"] = {
 				]
 			},
 		},
+		{
+			"fieldname": "select_user",
+			"label": __("Select User"),
+			"fieldtype": "Link",
+			"options":"User",
+			"on_change": function (query_report){}
+		},
 	],
 	onload: function (report) {  
 		report.page.add_inner_button("Preview Report", function () {

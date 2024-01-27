@@ -59,7 +59,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Report",
-   "link_count": 3,
+   "link_count": 4,
    "onboard": 0,
    "type": "Card Break"
   },
@@ -92,9 +92,19 @@
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "GYM Audit Trail Report",
+   "link_count": 0,
+   "link_to": "GYM Audit Trail Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2024-01-26 09:11:21.306215",
+ "modified": "2024-01-27 15:18:32.332414",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Gym",

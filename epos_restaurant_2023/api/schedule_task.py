@@ -1,6 +1,7 @@
 import functools
 import re
 import json
+from datetime import datetime, timedelta
 import frappe
 from frappe import _
 
@@ -15,7 +16,7 @@ def generate_audit_trail_from_version():
                         fields=['name','ref_doctype', 'docname',"creation"],
                         page_length=20
                     )
-  
+    # return version_data
     if len(version_data)> 0:
         for v in version_data:
             
@@ -43,8 +44,27 @@ def submit_update_audit_trail_from_version(doc):
         for d in data["changed"]:
             if d[0] in [f.field_name for f in doctype.tracking_field] and ((d[1] or '')!='' or (d[2] or '')!=''):
                 field = [f  for f in doctype.tracking_field if f.field_name==d[0]][0]
+
                 if field.field_type=="Check":
                     data_changed.append(f'<b>{field.label}</b>: {"Yes" if d[1]==1 else "No"} <b>to</b> {"Yes" if d[2]==1 else "No"}')
+                elif field.field_name == 'docstatus':
+                    _from = "Draft"                    
+                    if d[1] == 0:
+                        _from = _from
+                    elif d[1] == 1:
+                        _from = "Submited"
+                    elif d[1] == 2: 
+                        _from = "Cancelled"
+
+                    _to = "Draft"
+                    if d[2] == 0:
+                        _to = _to
+                    elif d[2] == 1:
+                        _to = "Submited"
+                    elif d[2] == 2: 
+                        _to = "Cancelled"
+                    data_changed.append(f'<b>{field.label}</b>: {_from} <b>to</b> {_to}')
+
                 elif 'tax_' in field.field_name:
                     ref_doc = frappe.get_doc(doc.ref_doctype,doc.docname)
                     if field.field_name == 'tax_1_rate':
@@ -62,7 +82,7 @@ def submit_update_audit_trail_from_version(doc):
                         data_changed.append(f'<b>{ref_doc.tax_3_name}</b>: {d[1]}% <b>to</b> {d[2]}%')
                     elif field.field_name == 'tax_3_amount':
                         data_changed.append(f'<b>{ref_doc.tax_3_name} Amount </b>: {d[1]} <b>to</b> {d[2]}')
-                        
+                
                 else:
                     if field.hide_old_value==1:
                         data_changed.append(f'<b>{field.label}</b>: {d[2]}')
@@ -87,7 +107,15 @@ def submit_update_audit_trail_from_version(doc):
 
     
 def add_audit_trail(data,update_creation_date=False):
-    for d in data:      
+    for d in data:    
+        if frappe.db.exists(d["reference_doctype"],d["reference_name"]):
+            doc = frappe.get_doc(d["reference_doctype"],d["reference_name"])
+            # d["custom_posting_date"] = datetime.now()
+            if d["reference_doctype"] in ["Membership","Membership Payment"]:
+                d["custom_posting_date"]= doc.posting_date
+            else:
+                d["custom_posting_date"] = datetime.now()
+
 
         d["doctype"]="Comment"
         if not hasattr(d,"comment_type"):
