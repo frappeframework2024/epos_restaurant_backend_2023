@@ -121,10 +121,6 @@ scheduler_events = {
     "cron": {
 		"0 */12 * * *":[
 				"epos_restaurant_2023.api.ftp_backup.execute_backup_command",
-		],
-        
-        "*/1 * * * *": [
-				"epos_restaurant_2023.api.schedule_task.generate_audit_trail_from_version",
 		]
 	}
 

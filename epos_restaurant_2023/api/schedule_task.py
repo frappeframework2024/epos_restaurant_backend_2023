@@ -93,3 +93,48 @@ def submit_update_audit_trail_from_version(doc):
 
 
     
+def add_audit_trail(data,update_creation_date=False):
+    for d in data:
+        if not hasattr(d,"custom_property"):
+            doc = frappe.get_doc(d["reference_doctype"],d["reference_name"])
+            if hasattr(doc,"property"):
+                working_day = get_working_day(doc.property)
+                d["custom_posting_date"]= working_day["date_working_day"]
+                
+                if working_day["cashier_shift"]:
+                    d["custom_cashier_shift"]= working_day["cashier_shift"]["name"]
+                d["custom_property"]= doc.property
+            elif hasattr(doc,"business_branch"):
+                working_day = get_working_day(doc.business_branch)
+                
+                d["custom_posting_date"]= working_day["date_working_day"]
+                d["custom_property"]= doc.business_branch
+                if working_day["cashier_shift"]:
+                    d["custom_cashier_shift"]= working_day["cashier_shift"]["name"]
+
+        d["doctype"]="Comment"
+        if not hasattr(d,"comment_type"):
+            d["comment_type"]="Info"
+            
+        d["custom_is_audit_trail"]=1
+        d["comment_by"]:frappe.session.user.full_name
+
+        doc = frappe.get_doc(d).insert(ignore_permissions=True)
+        if update_creation_date:
+            frappe.db.sql("update `tabComment` set creation=%(creation)s where name=%(name)s",{"name":doc.name, "creation":d["creation"]})
+
+@frappe.whitelist()
+def get_working_day(property = ''):
+    working_day = frappe.db.sql("select  posting_date as date,name,pos_profile from `tabWorking Day` where business_branch = '{0}' order by creation desc limit 1".format(property),as_dict=1)
+    cashier_shift = None
+    if len(working_day)>0:
+        data = frappe.db.sql("select creation, shift_name,name from `tabCashier Shift` where business_branch = '{}' and working_day='{}' and pos_profile='{}' ORDER BY creation desc limit 1".format(property,working_day[0]["name"],working_day[0]["pos_profile"]),as_dict=1)
+        
+        if len(data)>0:
+            cashier_shift = data[0]
+        
+    return {
+        "date_working_day": working_day[0]["date"] if len(working_day)>0 else '',
+        "name":working_day[0]["name"] if len(working_day)>0 else '',
+        "cashier_shift":cashier_shift
+    }
