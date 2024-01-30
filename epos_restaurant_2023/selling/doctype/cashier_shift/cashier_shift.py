@@ -546,6 +546,7 @@ def post_folio_transaction(self,account_code, amount, folio_transaction_type=Non
 					'doctype': 'Folio Transaction',
 					'property':self.business_branch,
 					'working_day':self.working_day,
+					'cashier_shift':self.name,
 					'posting_date':self.posting_date,
 					'transaction_type': folio_transaction_type or  "Cashier Shift",
 					'transaction_number': folio_transaction_number or  self.name ,

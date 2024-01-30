@@ -136,7 +136,7 @@
    "label": "Business Name Kh"
   },
   {
-   "fetch_from": "business_branch.address_en",
+   "fetch_from": ".address_en",
    "fetch_if_empty": 1,
    "fieldname": "address",
    "fieldtype": "Data",
@@ -621,7 +621,7 @@
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-11-20 14:33:36.757790",
+ "modified": "2024-01-30 14:26:54.080376",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",
