@@ -318,6 +318,8 @@ class CashierShift(Document):
 		frappe.db.sql(query)
 
 	def on_update(self):
+		query ="update `tabSale` set  shift_name='{}' where cashier_shift='{}'".format(self.shift_name,self.name)
+		frappe.db.sql(query)
 
 		old_doc = self.get_doc_before_save()
 		if old_doc:
