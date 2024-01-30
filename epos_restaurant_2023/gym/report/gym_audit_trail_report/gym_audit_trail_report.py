@@ -23,7 +23,7 @@ def get_columns(filters):
 	columns = [
 		{'fieldname':'audit_date','fieldtype':'Date','align':'left','label':'Audit Date',"width":110 ,"show_in_report":1, "css_class":"text-center"},
 		{'fieldname':'reference_doctype','align':'left','label':'Ref Type #',"width":150 ,"show_in_report":1},
-		{'fieldname':'reference_name','align':'left','label':'Ref Name #',"width":120 ,"show_in_report":1,"css_class":"text-center"},
+		{'fieldname':'reference_name','fieldtype':'Dynamic Link',"options":"reference_doctype",'align':'left','label':'Ref Name #',"width":120 ,"show_in_report":1,"css_class":"text-center"},
 		{'fieldname':'subject','align':'left','label':'Subject',"width":150 ,"show_in_report":1},
 		{'fieldname':'content','align':'left','label':'Content',"width":550 ,"show_in_report":1},
 		{'fieldname':'comment_by','align':'left','label':'By',"width":150 ,"show_in_report":1},

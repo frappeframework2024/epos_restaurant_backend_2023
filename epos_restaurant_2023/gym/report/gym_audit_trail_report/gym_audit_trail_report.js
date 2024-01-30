@@ -64,4 +64,5 @@ frappe.query_reports["GYM Audit Trail Report"] = {
 		});
 		
 	},
+	
 };

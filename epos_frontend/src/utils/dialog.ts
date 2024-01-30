@@ -44,6 +44,7 @@ import ComViewHappyHourPromotionModal from '@/views/sale/components/happy_hour_p
 import ComSelectDateTime from '@/views/sale/components/ComSelectDateTime.vue'
 import ComSetStopTimerModal from '@/views/sale/components/ComSetStopTimerModal.vue'
 
+import ComChangeShiftName from "@/views/shift/components/ComSelectShiftName.vue"
 import ComSplitBill from "@/views/sale/components/ComSplitBill.vue"
 import ComChangeTaxSettingModal from "@/views/sale/components/ComChangeTaxSettingModal.vue"
 import ComSelectEmployeeModal from "@/views/sale/employee/ComSelectEmployeeModal.vue"
@@ -113,3 +114,4 @@ export  const ShortCutKeyHelpDialog = createPromiseDialog<params, object>(ComSho
 export  const selectEmployeeDialog = createPromiseDialog<params, object>(ComSelectEmployeeModal);
 export  const SelectDateTime = createPromiseDialog<params, object>(ComSelectDateTime);
 export  const stopTimerModal = createPromiseDialog<params, object>(ComSetStopTimerModal);
+export  const ChangeShiftNameModal = createPromiseDialog<params, object>(ComChangeShiftName);

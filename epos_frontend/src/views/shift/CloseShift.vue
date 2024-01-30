@@ -4,6 +4,7 @@
             #{{ cashierShiftResource?.doc?.name }}
         </template>
         <template #action>
+            <v-btn prepend-icon="mdi-file-edit" @click="onChangeShiftName">{{ $t('Change Shift Name') }}</v-btn>
             <v-btn prepend-icon="mdi-printer" @click="onOpenReport">{{ $t('Report') }}</v-btn>
         </template>
         <template #default>
@@ -101,7 +102,7 @@
 
 <script setup>
 import moment from '@/utils/moment.js';
-import { watch, onMounted, createDocumentResource, ref, createResource, useRouter, createToaster, computed, inject,pendingSaleListDialog ,i18n} from "@/plugin";
+import { watch, onMounted, createDocumentResource, ref, createResource, useRouter, createToaster, computed, inject ,ChangeShiftNameModal,i18n} from "@/plugin";
 import PageLayout from '../../components/layout/PageLayout.vue';
 
 import ComInput from '../../components/form/ComInput.vue';
@@ -109,14 +110,11 @@ import { printPreviewDialog, confirm } from '@/utils/dialog';
 import ComAlertPendingOrder from '../../components/layout/components/ComAlertPendingOrder.vue';
 import { useDisplay } from 'vuetify';
 
-const { t: $t } = i18n.global;  
-
-const { mobile } = useDisplay()
+const { t: $t } = i18n.global; 
 
 const router = useRouter();
 const toaster = createToaster();
 const gv = inject('$gv');
-const sale = inject('$sale');
 const setting = gv.setting;
 
  
@@ -213,6 +211,11 @@ async function onCloseShift() {
         doc.value.cash_float = cashierShiftSummary.value.data;
         cashierShiftResource.value.setValue.submit(doc.value)
     }
+}
+async function onChangeShiftName(){
+    const result = await ChangeShiftNameModal({data:cashierShiftInfo.data});
+    console.log(result)
+    cashierShiftInfo.data.shift_name = result.shift_name
 }
 function onOpenReport() {
     printPreviewDialog({ title:$t('Cashier Shift Report')+" #" + cashierShiftResource.value.doc.name, doctype: "Cashier Shift", name: cashierShiftResource.value.doc.name });

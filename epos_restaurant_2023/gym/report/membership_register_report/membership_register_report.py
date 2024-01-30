@@ -54,6 +54,22 @@ def get_columns(filters):
 	columns.append({"label":"Total Paid", "fieldname":"total_paid","fieldtype":"Currency","align":"right","width":100})
 	columns.append({"label":"Balance", "fieldname":"balance","fieldtype":"Currency","align":"right","width":100})
 	return  columns 
+
+def get_sort_order(filters):
+	order_by = ""
+	if not filters.sort_by is None:
+		if filters.sort_by != "":
+			sort_by = "posting_date"
+			if filters.sort_by == "Register Date":
+				sort_by = "posting_date"
+			elif filters.sort_by == "Member Code":
+				sort_by = "customer"
+			elif filters.sort_by == "Member":
+				sort_by = "member_name"
+
+			order_by += " order by coalesce(reference_no,'N/A') DESC,{0} {1}".format(sort_by,filters.sort_type)
+	return order_by
+
  
 def get_conditions(filters):
 	
@@ -69,21 +85,7 @@ def get_conditions(filters):
 		conditions += " AND coalesce(m.personal_trainer,'') = ''"
 
 	if filters.get("customer"):
-		conditions += " AND m.customer in %(customer)s"
-	
-	if not filters.sort_by is None:
-		if filters.sort_by != "":
-			sort_by = "posting_date"
-			if filters.sort_by == "Register Date":
-				sort_by = "posting_date"
-			elif filters.sort_by == "Member Code":
-				sort_by = "customer"
-			elif filters.sort_by == "Member":
-				sort_by = "member_name"
-
-			conditions += " order by coalesce(reference_no,'N/A') DESC,{0} {1}".format(sort_by,filters.sort_type)
-
-	 
+		conditions += " AND m.customer in %(customer)s" 
 
 	return conditions
 
@@ -103,9 +105,10 @@ def get_report_data(filters):
 					sum(m.balance) as balance
 				from `tabMembership`   as m
 				where m.docstatus != 2
+				{}
 				group by
 					coalesce(m.reference_no,'N/A')
-				{}""".format(get_conditions(filters))	
+				""".format(get_conditions(filters))	
 		parent = frappe.db.sql(sql,as_dict=1)	
 		
 		for p in parent:
@@ -122,7 +125,7 @@ def get_report_data(filters):
 def get_data(filters):
 	indent = 1 if filters.group_by_reference_no == 1 else 0	
 	sql = """select 
-				{1} as indent,
+				{2} as indent,
 				0 as is_group,
 				coalesce(m.reference_no,'N/A') as reference_no,
 				m.name,
@@ -149,7 +152,8 @@ def get_data(filters):
 				m.balance
 			from `tabMembership`   as m
 			where m.docstatus != 2
-			{0}""".format(get_conditions(filters),indent)	
+			{0}
+			{1}""".format(get_conditions(filters), get_sort_order(filters),indent)	
 	
 	data = frappe.db.sql(sql,filters, as_dict=1)
 

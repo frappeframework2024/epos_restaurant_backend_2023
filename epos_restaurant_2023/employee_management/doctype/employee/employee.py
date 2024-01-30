@@ -15,8 +15,8 @@ class Employee(Document):
 		 
 		if self.allow_login:
 			if self.user_id:
-				
 				doc = frappe.get_doc("User", self.user_id)
+				
 				doc.enabled = 1
 				doc.username = self.username
 				doc.first_name = self.employee_name
@@ -36,10 +36,11 @@ class Employee(Document):
 					# frappe.enqueue("epos_restaurant_2023.employee_management.doctype.employee.employee.set_password", queue='short', user_id=doc.name, password = self.password)
 
 			else:
+				
 				doc = frappe.get_doc({
 						"doctype":"User",
 						"enabled": 1,
-						"email": "{}@mail.com".format(self.username),
+						"email": self.email_address  if self.email_address else "{}@mail.com".format(self.username),
 						"first_name": self.employee_name,
 						"username": self.username,
 						"language": "en",
