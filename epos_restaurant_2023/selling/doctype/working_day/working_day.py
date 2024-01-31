@@ -36,21 +36,21 @@ class WorkingDay(Document):
 				prefix = pos_profile.waiting_number_prefix.replace('.','').replace("#",'')
 				naming_series = NamingSeries(prefix)
 				naming_series.update_counter(0)
-			self.send_mail_closed_day()
+			# self.send_mail_closed_day()
 
 
-	def send_mail_closed_day(self):
-		reports_name = ['Working Day Sale Transaction','Working Day Sale Summary V2','Working Day Sale Product Summary']
-		print_formats=[]
-		for name in reports_name:
-			print_formats.append({'fname':f"{name}_{self.posting_date}.pdf",'fcontent':frappe.get_print(doctype=self.doctype, name=self.name, print_format=name)})
-		download_pdf("Working Day", name, format=None, doc=None, no_letterhead=0)
+	# def send_mail_closed_day(self):
+	# 	reports_name = ['Working Day Sale Transaction','Working Day Sale Summary V2','Working Day Sale Product Summary']
+	# 	print_formats=[]
+	# 	for name in reports_name:
+	# 		print_formats.append({'fname':f"{name}_{self.posting_date}.pdf",'fcontent':frappe.get_print(doctype=self.doctype, name=self.name, print_format=name)})
+	# 	download_pdf("Working Day", name, format=None, doc=None, no_letterhead=0)
 
-		frappe.sendmail(
-			recipients='sengho.estc@gmail.com',
-			sender='sengho.kimsea@estccomputer.com',
-			subject=f'Closed Working Day In {self.posting_date}',
-			content='Working Day Was Close',
-			header=[f'Closed Working Day In {self.posting_date}', "green"],
-			attachments=print_formats
-		)
+	# 	frappe.sendmail(
+	# 		recipients='sengho.estc@gmail.com',
+	# 		sender='sengho.kimsea@estccomputer.com',
+	# 		subject=f'Closed Working Day In {self.posting_date}',
+	# 		content='Working Day Was Close',
+	# 		header=[f'Closed Working Day In {self.posting_date}', "green"],
+	# 		attachments=print_formats
+	# 	)
