@@ -313,8 +313,8 @@ class CashierShift(Document):
 				# 		doc_tip.insert() 
 				# #commit data
 				# frappe.db.commit()		
-			update_sale_data_to_google_sheet = frappe.db.get_value("Business Branch",self.business_branch,["update_sale_data_to_google_sheet"])
-			if update_sale_data_to_google_sheet==1:
+			upload_sale_data_to_google_sheet = frappe.db.get_value("Business Branch",self.business_branch,["upload_sale_data_to_google_sheet"])
+			if upload_sale_data_to_google_sheet==1:
 				frappe.enqueue("epos_restaurant_2023.api.api.upload_all_sale_data_to_google_sheet",start_date=self.posting_date,end_date = self.posting_date,business_branch=self.business_branch,cashier_shift=self.name)
 
 	def after_insert(self):	
