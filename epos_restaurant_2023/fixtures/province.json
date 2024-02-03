@@ -90,14 +90,6 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2023-10-27 16:18:05.808656",
-  "name": "Hanoi",
-  "note": "Hanoi",
-  "province": "Hanoi"
- },
- {
-  "docstatus": 0,
-  "doctype": "Province",
   "modified": "2023-10-27 16:12:10.672206",
   "name": "New York",
   "note": "New York",
@@ -234,22 +226,6 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2023-10-27 16:16:48.191108",
-  "name": "Pattaya",
-  "note": "Pattaya",
-  "province": "Pattaya"
- },
- {
-  "docstatus": 0,
-  "doctype": "Province",
-  "modified": "2022-12-05 20:47:21.564060",
-  "name": "Siem Reap",
-  "note": null,
-  "province": "Siem Reap"
- },
- {
-  "docstatus": 0,
-  "doctype": "Province",
   "modified": "2023-10-27 16:16:56.617401",
   "name": "Ayutthaya",
   "note": "Ayutthaya",
@@ -262,5 +238,29 @@
   "name": "Da Nang",
   "note": "Da Nang",
   "province": "Da Nang"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Province",
+  "modified": "2023-10-27 16:18:05.808656",
+  "name": "Hanoi",
+  "note": "Hanoi",
+  "province": "Hanoi"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Province",
+  "modified": "2022-12-05 20:47:21.564060",
+  "name": "Siem Reap",
+  "note": null,
+  "province": "Siem Reap"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Province",
+  "modified": "2023-10-27 16:16:48.191108",
+  "name": "Pattaya",
+  "note": "Pattaya",
+  "province": "Pattaya"
  }
 ]

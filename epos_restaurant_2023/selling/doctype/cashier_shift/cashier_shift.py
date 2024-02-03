@@ -7,13 +7,17 @@ from frappe.model.document import Document
 from frappe.model.naming import NamingSeries
 class CashierShift(Document):
 	def validate(self):
-		
 		# #if close shift check current bill open 
 		# if self.is_closed==1:
 		# 	pending_orders = frappe.db.sql("select name from `tabSale` where docstatus = 0 and cashier_shift = '{}'".format(self.name), as_dict=1)
 		# 	if pending_orders:
 		# 		frappe.throw("Please close all pending order before close cashier shift.")
-		if self.is_new():
+
+		if self.is_new() == 1:
+			if 'edoor' in frappe.get_installed_apps():
+				current_edoor_shift = frappe.get_list("Cashier Shift",filters={"business_branch":self.business_branch, "is_closed":0,"shift_name":self.shift_name,"is_edoor_shift":1,"name":['!=',self.name]},fields=['name', 'shift_type'])
+				if not current_edoor_shift:
+					frappe.throw("Invalid shift name please try again")
 			data = frappe.get_list("Cashier Shift",filters={"pos_profile":self.pos_profile,"business_branch":self.business_branch, "is_closed":0})
 			if data:
 				frappe.throw("Cashier shift is already opened")
@@ -60,6 +64,7 @@ class CashierShift(Document):
 				prefix = pos_profile.waiting_number_prefix.replace('.','').replace("#",'')
 				naming_series = NamingSeries(prefix)
 				naming_series.update_counter(0)
+			
 
 			# check if have edoor app for generate FB revenue to Folio Transaction group by acc.code
 			if 'edoor' in frappe.get_installed_apps() and self.is_edoor_shift == 0:
@@ -308,6 +313,9 @@ class CashierShift(Document):
 				# 		doc_tip.insert() 
 				# #commit data
 				# frappe.db.commit()		
+			update_sale_data_to_google_sheet = frappe.db.get_value("Business Branch",self.business_branch,["update_sale_data_to_google_sheet"])
+			if update_sale_data_to_google_sheet==1:
+				frappe.enqueue("epos_restaurant_2023.api.api.upload_all_sale_data_to_google_sheet",start_date=self.posting_date,end_date = self.posting_date,business_branch=self.business_branch,cashier_shift=self.name)
 
 	def after_insert(self):	
 		query ="update `tabSale` set working_day='{}', cashier_shift='{}', shift_name='{}' "
@@ -324,6 +332,25 @@ class CashierShift(Document):
 		old_doc = self.get_doc_before_save()
 		if old_doc:
 			if old_doc.is_closed ==0 and self.is_closed ==1:
+				current_sort = frappe.db.get_value("Shift Type",self.shift_name, "sort")
+				if self.is_edoor_shift==1 and current_sort != 3:
+					"""Create New Cashier Shift When Close Shift eDoor"""
+					new_shift = frappe.new_doc("Cashier Shift")
+					new_shift.business_branch = self.business_branch
+					new_shift.outlet = self.outlet
+					new_shift.pos_profile = self.pos_profile
+					new_shift.working_day = self.working_day
+					new_shift.posting_date = self.posting_date
+					new_shift.is_edoor_shift = self.is_edoor_shift
+					
+					next_shift_name = ""
+					if current_sort == 1:
+						next_shift_name = frappe.db.get_value("Shift Type",{'sort': 2} , "name")
+						new_shift.shift_name = next_shift_name
+					elif current_sort == 2:
+						next_shift_name = frappe.db.get_value("Shift Type",{'sort': 3} , "name")
+						new_shift.shift_name = next_shift_name
+					new_shift.insert()
 				# submit_pos_data_to_folio_transaction(self)
 				frappe.enqueue("epos_restaurant_2023.selling.doctype.cashier_shift.cashier_shift.submit_pos_data_to_folio_transaction", queue='short', self=self)
 

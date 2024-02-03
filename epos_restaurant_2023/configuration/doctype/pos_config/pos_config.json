@@ -39,6 +39,7 @@
   "print_new_deleted_sale_product",
   "check_delete_item_require_passord_from_product",
   "show_item_code_in_sale_screen",
+  "show_park_item",
   "show_button_tip",
   "tip_account_code",
   "number_of_day_cashier_can_view_report",
@@ -101,6 +102,8 @@
   "start_cashier_shift_required_password",
   "section_break_68",
   "close_cashier_shift_required_password",
+  "section_break_rrup",
+  "park_item_required_password",
   "section_break_70",
   "cash_in_check_out_required_password",
   "use_guest_cover"
@@ -616,12 +619,29 @@
    "fieldname": "print_sale_product_change_table",
    "fieldtype": "Check",
    "label": "Print Sale Product Change Table"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_park_item",
+   "fieldtype": "Check",
+   "label": "Show Park Item",
+   "options": "0"
+  },
+  {
+   "fieldname": "section_break_rrup",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "park_item_required_password",
+   "fieldtype": "Check",
+   "label": "Park Item Required Password"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-01-30 14:26:54.080376",
+ "modified": "2024-02-02 15:24:37.068374",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

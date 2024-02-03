@@ -131,8 +131,10 @@ app.config.globalProperties.$filter = {
 
  
 app.directive('debounce', vue3Debounce({ lock: true }))
+
 // Configure route gaurds
 router.beforeEach(async (to, from, next) => {
+	
 	if(!localStorage.getItem("pos_profile"))
 	{ 
 		if (to.matched.some((record) => !record.meta.isStartupConfig)){

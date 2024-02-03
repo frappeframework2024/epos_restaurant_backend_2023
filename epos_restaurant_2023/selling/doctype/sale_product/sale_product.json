@@ -47,6 +47,11 @@
   "discount_amount",
   "total_discount",
   "discount_note",
+  "parking_items_section",
+  "is_park",
+  "expired_date",
+  "column_break_yqex",
+  "is_redeem",
   "tax_tab",
   "tax_rule",
   "column_break_30",
@@ -865,12 +870,37 @@
    "fieldname": "duration",
    "fieldtype": "Data",
    "label": "Duration"
+  },
+  {
+   "fieldname": "parking_items_section",
+   "fieldtype": "Section Break",
+   "label": "Parking Items"
+  },
+  {
+   "fieldname": "is_park",
+   "fieldtype": "Data",
+   "label": "Is Park"
+  },
+  {
+   "fieldname": "expired_date",
+   "fieldtype": "Date",
+   "label": "Expired Date"
+  },
+  {
+   "fieldname": "column_break_yqex",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_redeem",
+   "fieldtype": "Check",
+   "label": "Is Redeem"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-01-23 11:40:38.685123",
+ "modified": "2024-02-02 15:21:19.414462",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",

@@ -23,6 +23,8 @@
   "note",
   "disabled",
   "is_standard",
+  "upload_sale_data_to_google_sheet",
+  "google_account_credentials",
   "bank_account_information_section",
   "bank_name",
   "account_name",
@@ -198,12 +200,25 @@
    "fieldtype": "Link",
    "label": "Default Walk-In Business Source",
    "options": "Business Source"
+  },
+  {
+   "fieldname": "google_account_credentials",
+   "fieldtype": "Code",
+   "label": "Google Account Credentials",
+   "options": "JSON",
+   "permlevel": 2
+  },
+  {
+   "default": "0",
+   "fieldname": "upload_sale_data_to_google_sheet",
+   "fieldtype": "Check",
+   "label": "Upload Sale Data To Google Sheet"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-01-23 16:30:09.834539",
+ "modified": "2024-02-01 16:37:49.908502",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",

@@ -56,6 +56,7 @@
   "tip_amount",
   "tip_account_code",
   "column_break_10",
+  "html_summary",
   "grand_total",
   "total_fee",
   "deposit",
@@ -64,6 +65,10 @@
   "balance",
   "changed_amount",
   "second_changed_amount",
+  "parking_items_section",
+  "reference_name",
+  "column_break_scjm",
+  "reference_bill_number",
   "section_break_43",
   "created_by",
   "pos_station_name",
@@ -900,6 +905,31 @@
    "fieldname": "guide",
    "fieldtype": "Data",
    "label": "Guide"
+  },
+  {
+   "fieldname": "html_summary",
+   "fieldtype": "HTML",
+   "hidden": 1,
+   "options": "Total Quantity: {{doc.total_quantity}}\n<br>\nGrand total: {{doc.grand_total}}\n"
+  },
+  {
+   "fieldname": "parking_items_section",
+   "fieldtype": "Section Break",
+   "label": "Parking Items"
+  },
+  {
+   "fieldname": "reference_name",
+   "fieldtype": "Data",
+   "label": "Reference Name"
+  },
+  {
+   "fieldname": "column_break_scjm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reference_bill_number",
+   "fieldtype": "Data",
+   "label": "Reference Bill Number"
   }
  ],
  "image_field": "photo",
@@ -912,7 +942,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-01-24 17:26:18.292471",
+ "modified": "2024-02-02 14:45:19.551072",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

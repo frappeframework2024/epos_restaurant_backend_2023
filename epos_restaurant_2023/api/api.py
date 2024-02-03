@@ -3,9 +3,13 @@ import frappe
 import base64
 from frappe.utils.data import getdate
 from py_linq import Enumerable
-from frappe.utils import today, add_to_date
+from frappe.utils import format_datetime
 from datetime import datetime, timedelta
 from frappe import _
+from frappe.desk.query_report import run
+
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 @frappe.whitelist(allow_guest=True)
 def check_username(pin_code):    
     if pin_code:    
@@ -1044,3 +1048,39 @@ def update_pos_reservation_and_sale_payment(reservation_name,reservation_status,
 @frappe.whitelist(methods="POST")
 def get_time_product_estimate_price(sp=None):
     return 10
+
+
+@frappe.whitelist()
+def upload_all_sale_data_to_google_sheet(business_branch,start_date,end_date,cashier_shift):
+    
+    cred_json = frappe.db.get_value("Business Branch",business_branch,"google_account_credentials")
+    response = run(
+			"Daily Sale Transaction Detail",
+			filters={"start_date": start_date, "end_date": end_date,"cashier_shift":cashier_shift},
+			
+		)
+    result = response.get("result")
+    columns = response.get("columns")
+
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(cred_json))
+    client = gspread.authorize(creds)
+    sheet = client.open('banteay_sora_sale_data').sheet1
+    if len(sheet.get_all_records()) <= 0:
+        sheet.append_rows([[obj.label for obj in columns]])
+    report_data = convert_to_nested_arrays(result,columns)
+    resp = sheet.append_rows(report_data)
+    return resp
+    # Append data to the Google Sheet
+
+
+def convert_to_nested_arrays(json_data,columns):
+    if(len(json_data) > 0):
+        keys = [{"fieldname": item["fieldname"], "fieldtype": item["fieldtype"]} for item in columns]
+        result = [[ format_datetime(entry[key['fieldname']],"dd-MM-yyyy hh:mm:ss a") if key['fieldtype'] == "Datetime" else entry[key['fieldname']] for key in keys] for entry in json_data]
+        return result
+    else:
+         return []
+
+    # Extract values for each key in each entry
+    
+   

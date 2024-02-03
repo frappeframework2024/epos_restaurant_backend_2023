@@ -411,7 +411,8 @@ function updateSumTotal(frm) {
 		
 
 		frm.set_value('balance',  frm.doc.grand_total - frm.doc.total_paid);
-		frm.refresh_field('grand_total'); 
+		frm.refresh_field('grand_total');  
+		frm.refresh_field('html_summary');  
 	
 		
 	
