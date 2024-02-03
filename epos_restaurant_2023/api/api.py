@@ -1053,7 +1053,7 @@ def get_time_product_estimate_price(sp=None):
 @frappe.whitelist()
 def upload_all_sale_data_to_google_sheet(business_branch,start_date,end_date,cashier_shift):
     
-    cred_json = frappe.db.get_value("Business Branch",business_branch,"google_account_credentials")
+    google_account_credentials,google_sheet_file = frappe.db.get_value("Business Branch",business_branch,['google_account_credentials', 'google_sheet_file'])
     response = run(
 			"Daily Sale Transaction Detail",
 			filters={"start_date": start_date, "end_date": end_date,"cashier_shift":cashier_shift},
@@ -1062,9 +1062,9 @@ def upload_all_sale_data_to_google_sheet(business_branch,start_date,end_date,cas
     result = response.get("result")
     columns = response.get("columns")
 
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(cred_json))
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(google_account_credentials))
     client = gspread.authorize(creds)
-    sheet = client.open('banteay_sora_sale_data').sheet1
+    sheet = client.open(google_sheet_file).sheet1
     if len(sheet.get_all_records()) <= 0:
         sheet.append_rows([[obj.label for obj in columns]])
     report_data = convert_to_nested_arrays(result,columns)

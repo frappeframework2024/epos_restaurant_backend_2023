@@ -25,6 +25,7 @@
   "is_standard",
   "upload_sale_data_to_google_sheet",
   "google_account_credentials",
+  "google_sheet_file",
   "bank_account_information_section",
   "bank_name",
   "account_name",
@@ -212,12 +213,17 @@
    "fieldname": "upload_sale_data_to_google_sheet",
    "fieldtype": "Check",
    "label": "Upload Sale Data To Google Sheet"
+  },
+  {
+   "fieldname": "google_sheet_file",
+   "fieldtype": "Data",
+   "label": "Google Sheet File"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-02-03 09:08:11.715586",
+ "modified": "2024-02-03 09:24:39.935458",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",
