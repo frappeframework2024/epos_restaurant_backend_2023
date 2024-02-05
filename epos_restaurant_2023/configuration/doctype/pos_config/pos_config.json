@@ -45,6 +45,7 @@
   "number_of_day_cashier_can_view_report",
   "close_business_day_on",
   "alert_close_working_day_after",
+  "park_item_days_expiry",
   "permission_and_note_tab",
   "delete_bill_required_password",
   "column_break_17",
@@ -636,12 +637,18 @@
    "fieldname": "park_item_required_password",
    "fieldtype": "Check",
    "label": "Park Item Required Password"
+  },
+  {
+   "default": "7",
+   "fieldname": "park_item_days_expiry",
+   "fieldtype": "Int",
+   "label": "Park Item Days Expiry"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-02-02 15:24:37.068374",
+ "modified": "2024-02-05 10:17:55.335425",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

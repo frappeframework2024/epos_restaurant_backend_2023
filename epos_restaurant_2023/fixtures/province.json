@@ -234,18 +234,18 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2023-10-27 16:18:13.959875",
-  "name": "Da Nang",
-  "note": "Da Nang",
-  "province": "Da Nang"
- },
- {
-  "docstatus": 0,
-  "doctype": "Province",
   "modified": "2023-10-27 16:18:05.808656",
   "name": "Hanoi",
   "note": "Hanoi",
   "province": "Hanoi"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Province",
+  "modified": "2023-10-27 16:18:13.959875",
+  "name": "Da Nang",
+  "note": "Da Nang",
+  "province": "Da Nang"
  },
  {
   "docstatus": 0,

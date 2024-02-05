@@ -966,6 +966,64 @@ export default class Sale {
         this.dialogActiveState=false;
 
     }
+
+    async onSaleProductPark(sp) {
+        let parkQty = 0;
+        const result = sp.quantity == 1 ? 1 : await keyboardDialog({ title: $t("Change Park Quantity"), type: 'number', value: sp.quantity });
+        if (result != false) {
+            parkQty = parseFloat(this.getNumber(result));
+            if (parkQty > sp.quantity) {
+                parkQty = sp.quantity;
+            }
+            let park_by = sp.free_by||"";
+
+            if (parkQty == sp.quantity) {
+                sp.is_park = true;
+                sp.backup_modifier_price = sp.modifiers_price
+                sp.backup_product_price = sp.price
+                parkSaleProduct.expired_date = moment(window.current_working_date).add(7, 'days').format('yyyy-MM-DD');
+                this.updateSaleProduct(sp);
+                this.updateSaleSummary();
+            }
+            else { 
+                let parkSaleProduct = JSON.parse(JSON.stringify(sp));
+                parkSaleProduct.name = "";
+                parkSaleProduct.quantity = parkQty;
+                parkSaleProduct.backup_product_price = sp.price
+                parkSaleProduct.backup_modifier_price = sp.modifiers_price
+                parkSaleProduct.selected = false;
+                parkSaleProduct.is_park = true;  
+                parkSaleProduct.expired_date = moment(window.current_working_date).add(7, 'days').format('yyyy-MM-DD');
+                this.updateSaleProduct(parkSaleProduct);
+                this.sale.sale_products.push(parkSaleProduct);               
+
+                //old record 
+                sp.quantity = sp.quantity - parkQty;
+                this.updateSaleProduct(sp);
+
+            } 
+            this.updateSaleSummary(); 
+
+             //audit trail
+             let item_description=`${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
+             let msg = `${free_by} park on item: ${item_description}`; 
+             msg += `, Qty: ${park_by}`;
+             this.auditTrailLogs.push({
+                    doctype:"Comment",
+                    subject:"Park Sale Product",
+                    comment_type:"Info",
+                    reference_doctype:"Sale",
+                    reference_name:"New",
+                    comment_by:park_by,
+                    content:msg,
+                    custom_item_description: `${park_by} x ${item_description}` ,
+                    custom_note:free_note
+             }); 
+        }
+        this.dialogActiveState=false;
+
+    }
+
     // change tax setting
     async onChangeTaxSetting(title, _tax_rule_name,_change_tax_setting_note,gv, sale_product){
         if(!this.isBillRequested()){

@@ -157,7 +157,7 @@ function onSaleProductPark() {
             if (v) { 
                 props.saleProduct.free_note = v.note;
                 props.saleProduct.free_by = v.user;
-                sale.onSaleProductFree(props.saleProduct);
+                sale.onSaleProductPark(props.saleProduct);
             }
         });
 

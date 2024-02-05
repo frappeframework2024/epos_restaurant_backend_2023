@@ -12,7 +12,6 @@
                 
             </template>
             <template v-slot:default>
-
                 <div class="text-sm">
                     <div class="flex">
                         <div class="grow">
@@ -20,6 +19,8 @@
                                     color="error" variant="outlined" v-if="sp.portion">{{ sp.portion }}</v-chip>
                                 <v-chip v-if="sp.is_free" size="x-small" color="success" variant="outlined">{{ $t('Free')
                                 }}</v-chip>
+                                <v-chip v-if="sp.is_park" size="x-small" color="error" variant="outlined">
+                                {{ $t('Park') }}</v-chip>
                                 <ComChip :tooltip="sp.happy_hours_promotion_title"
                                     v-if="sp.happy_hour_promotion && sp.discount > 0" size="x-small" variant="outlined"
                                     color="orange" text-color="white" prepend-icon="mdi-tag-multiple">
@@ -77,6 +78,9 @@
                                 }}</v-chip>
                                 <div class="text-gray-500" v-if="sp.note">
                                     {{ $t('Note') }}: <span>{{ sp.note }}</span>
+                                </div>
+                                <div class="text-gray-500" v-if="sp.is_park">
+                                    {{ $t('Expiry') + ": " + moment(sp.expired_date).format('DD-MM-yyyy')  }}
                                 </div>
                             </div>
                         </div>
