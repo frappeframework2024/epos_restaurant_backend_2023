@@ -45,6 +45,8 @@
                     @click="sale.onSaleProductSetSeatNumber(saleProduct)"></v-list-item>
             </template>
 
+            <v-list-item prepend-icon="mdi-parking" :title="$t('Park Item')" v-if="gv.device_setting.show_park_button==1"
+                @click="onSaleProductPark(saleProduct)"></v-list-item>
             <v-list-item prepend-icon="mdi-note-outline" :title="$t('Note')" v-if="!saleProduct.note"
                 @click="sale.onSaleProductNote(saleProduct)"></v-list-item>
             <v-list-item v-else @click="onRemoveNote">
@@ -148,6 +150,20 @@ function onSaleProductFree() {
 
     }
 }
+
+function onSaleProductPark() {
+    if (!sale.isBillRequested()) {
+        gv.authorize("park_item_required_password", "park_item", props.saleProduct.product_code).then((v) => {
+            if (v) { 
+                props.saleProduct.free_note = v.note;
+                props.saleProduct.free_by = v.user;
+                sale.onSaleProductFree(props.saleProduct);
+            }
+        });
+
+    }
+}
+
 sale.vue.$onKeyStroke('F8', (e) => {
     e.preventDefault()
     if(sale.dialogActiveState==false && props.saleProduct.selected == true){

@@ -34,6 +34,7 @@
   "show_keypad_in_sale_screen",
   "show_deleted_sale_product_in_sale_screen",
   "show_button_change_sale_type",
+  "show_park_button",
   "show_setting_menu"
  ],
  "fields": [
@@ -197,11 +198,17 @@
    "fieldname": "disabled",
    "fieldtype": "Check",
    "label": "Disabled"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_park_button",
+   "fieldtype": "Check",
+   "label": "Show Park Button"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-01-15 09:16:31.802028",
+ "modified": "2024-02-05 09:17:40.747845",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",
