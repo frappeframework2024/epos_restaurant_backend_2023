@@ -1,4 +1,4 @@
-<h1 style="text-align: center">Sale Summary Report </h1>
+<h1 style="text-align: center">{{report.page_title}}</h1>
 <div style="text-align: left; margin-bottom: 20px;">
 Date: {{filters.start_date}} - {{filters.end_date}}
 {% if filters.business_branch !="" %}
@@ -95,10 +95,11 @@ Date: {{filters.start_date}} - {{filters.end_date}}
     .footer {
         margin-top: 30px;
     }
+    
     @media print{
         div.divfooter{
             position: fixed;
-            bottom: 0;
+            bottom: -25px;
         }
     .report-list td,.report-list {
     padding: 3px !important;
