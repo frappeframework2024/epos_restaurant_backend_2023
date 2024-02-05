@@ -345,24 +345,25 @@ class CashierShift(Document):
 		if old_doc:
 			if old_doc.is_closed ==0 and self.is_closed ==1:
 				current_sort = frappe.db.get_value("Shift Type",self.shift_name, "sort")
-				if self.is_edoor_shift==1 and current_sort != 3:
-					"""Create New Cashier Shift When Close Shift eDoor"""
-					new_shift = frappe.new_doc("Cashier Shift")
-					new_shift.business_branch = self.business_branch
-					new_shift.outlet = self.outlet
-					new_shift.pos_profile = self.pos_profile
-					new_shift.working_day = self.working_day
-					new_shift.posting_date = self.posting_date
-					new_shift.is_edoor_shift = self.is_edoor_shift
-					
-					next_shift_name = ""
-					if current_sort == 1:
-						next_shift_name = frappe.db.get_value("Shift Type",{'sort': 2} , "name")
-						new_shift.shift_name = next_shift_name
-					elif current_sort == 2:
-						next_shift_name = frappe.db.get_value("Shift Type",{'sort': 3} , "name")
-						new_shift.shift_name = next_shift_name
-					new_shift.insert()
+				if self.is_edoor_shift==1 :
+					if current_sort != 3:
+						"""Create New Cashier Shift When Close Shift eDoor"""
+						new_shift = frappe.new_doc("Cashier Shift")
+						new_shift.business_branch = self.business_branch
+						new_shift.outlet = self.outlet
+						new_shift.pos_profile = self.pos_profile
+						new_shift.working_day = self.working_day
+						new_shift.posting_date = self.posting_date
+						new_shift.is_edoor_shift = self.is_edoor_shift
+						
+						next_shift_name = ""
+						if current_sort == 1:
+							next_shift_name = frappe.db.get_value("Shift Type",{'sort': 2} , "name")
+							new_shift.shift_name = next_shift_name
+						elif current_sort == 2:
+							next_shift_name = frappe.db.get_value("Shift Type",{'sort': 3} , "name")
+							new_shift.shift_name = next_shift_name
+						new_shift.insert()
 				# submit_pos_data_to_folio_transaction(self)
 				frappe.enqueue("epos_restaurant_2023.selling.doctype.cashier_shift.cashier_shift.submit_pos_data_to_folio_transaction", queue='short', self=self)
 
