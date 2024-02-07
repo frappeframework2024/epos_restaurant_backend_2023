@@ -245,8 +245,9 @@ def validate_pos_account_code_config(self):
 		account_code = [x.account_code for x in  config.pos_revenue_account_codes if x.revenue==d["revenue_group"]]
 		if not account_code:
 			frappe.throw("There is no account code configuration for revenue group {}".format(d["revenue_group"]))
+		
 		if (d["discount"] or 0)> 0:
-			discount_account_code = [x.discount_account for x in  config.pos_revenue_account_codes if x.revenue==d["revenue_group"]]
+			discount_account_code = [x.discount_account for x in  config.pos_revenue_account_codes if x.revenue==d["revenue_group"] and x.discount_account]
 			if not discount_account_code:
 				frappe.throw("There is no account code confiuration for discount amount of revenue group {}".format(d["revenue_group"]))
 
@@ -411,3 +412,4 @@ def get_payments(self):
 		""".format(self.name)
 	
 	return frappe.db.sql(sql,as_dict=1)
+
