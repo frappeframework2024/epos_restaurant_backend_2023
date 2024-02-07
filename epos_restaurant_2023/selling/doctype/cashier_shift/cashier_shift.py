@@ -105,6 +105,7 @@ class CashierShift(Document):
 			if old_doc:
 				if old_doc.is_closed ==0 and self.is_closed ==1:
 					current_sort = frappe.db.get_value("Shift Type",self.shift_name, "sort")
+					 
 					if self.is_edoor_shift==1 and  self.is_run_night_audit==0:
 						if current_sort != 3:
 							"""Create New Cashier Shift When Close Shift eDoor"""
