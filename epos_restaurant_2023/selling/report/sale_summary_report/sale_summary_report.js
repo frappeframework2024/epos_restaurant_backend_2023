@@ -10,6 +10,10 @@ frappe.query_reports["Sale Summary Report"] = {
 			frappe.query_report.toggle_filter_display('start_date', true  );
 			frappe.query_report.toggle_filter_display('end_date', true );
 		}
+		report.page.add_inner_button ("Preview Report", function () {
+			frappe.query_report.refresh();
+		});
+		setLinkField()
 	},
 	"filters": [
 		{
@@ -68,7 +72,7 @@ frappe.query_reports["Sale Summary Report"] = {
 			"label": __("Start Year"),
 			"fieldtype": "Int",
 			
-			"default": (new Date()).getFullYear()
+			"default": (new Date()).getFullYear(),
 		},
 		{
 			"fieldname": "pos_profile",
@@ -76,7 +80,8 @@ frappe.query_reports["Sale Summary Report"] = {
 			"fieldtype": "MultiSelectList",
 			get_data: function(txt) {
 				return frappe.db.get_link_options('POS Profile', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "outlet",
@@ -84,7 +89,8 @@ frappe.query_reports["Sale Summary Report"] = {
 			"fieldtype": "MultiSelectList",
 			get_data: function(txt) {
 				return frappe.db.get_link_options('Outlet', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "product_group",
@@ -93,7 +99,8 @@ frappe.query_reports["Sale Summary Report"] = {
 			get_data: function(txt) {
 				
 				return frappe.db.get_link_options('Product Category', txt,{"is_group":1});
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "product_category",
@@ -112,7 +119,8 @@ frappe.query_reports["Sale Summary Report"] = {
 						"parent_product_category":["in",group]
 					});
 				}
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "customer_group",
@@ -121,19 +129,23 @@ frappe.query_reports["Sale Summary Report"] = {
 			get_data: function(txt) {
 				
 				return frappe.db.get_link_options('Customer Group', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "customer",
 			"label": __("Customer"),
 			"fieldtype": "Link",
 			"options":"Customer",
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "parent_row_group",
 			"label": __("Parent Group By"),
 			"fieldtype": "Select",
 			"options": "\nCategory\nProduct Group\nRevenue Group\nBusiness Branch\nOutlet\nTable Group\nTable\nPOS Profile\nCustomer\nCustomer Group\nStock Location\nDate\n\Month\nYear\nSale Invoice\nWorking Day\nCashier Shift\nSale Type",
+			hide_in_filter:1,
+			"on_change": function (query_report) {},
 			
 		},
 		{
@@ -141,14 +153,25 @@ frappe.query_reports["Sale Summary Report"] = {
 			"label": __("Row Group By"),
 			"fieldtype": "Select",
 			"options": "Product\nCategory\nProduct Group\nRevenue Group\nBusiness Branch\nOutlet\nTable Group\nTable\nPOS Profile\nCustomer\nCustomer Group\nStock Location\nDate\n\Month\nYear\nSale Invoice\nWorking Day\nCashier Shift\nSale Type",
-			"default":"Category"
+			"default":"Category",
+			"on_change": function (query_report) {},
+		},
+		{
+			"fieldname": "include_foc",
+			"label": __("Include FOC"),
+			"fieldtype": "Check",
+			default:true,
+			hide_in_filter:1,
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "column_group",
 			"label": __("Column Group By"),
 			"fieldtype": "Select",
 			"options": "None\nDaily\nWeekly\nMonthly\nQuarterly\nHalf Yearly\nYearly",
-			"default":"None"
+			"default":"None",
+			hide_in_filter:1,
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "hide_columns",
@@ -164,13 +187,17 @@ frappe.query_reports["Sale Summary Report"] = {
 					{"value":"Profit","description":"Pofit"}
 				]
 			},
+			hide_in_filter:1,
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "chart_type",
 			"label": __("Chart Type"),
 			"fieldtype": "Select",
 			"options": "None\nbar\nline\npie",
-			"default":"bar"
+			"default":"bar",
+			hide_in_filter:1,
+			"on_change": function (query_report) {},
 		}
 
 	],
@@ -189,4 +216,25 @@ frappe.query_reports["Sale Summary Report"] = {
 	
 };
 
- 
+function setLinkField() {
+	const property = frappe.query_report.get_filter_value("property")
+	if (property) {
+		const room_type_filter = frappe.query_report.get_filter('room_types');
+		room_type_filter.df.get_query = function () {
+			return {
+				filters: {
+					"property": property
+				}
+			};
+		};
+		const business_source_filter = frappe.query_report.get_filter('business_source');
+		business_source_filter.df.get_query = function () {
+			return {
+				filters: {
+					"property": property
+				}
+			};
+		};
+
+	}
+}

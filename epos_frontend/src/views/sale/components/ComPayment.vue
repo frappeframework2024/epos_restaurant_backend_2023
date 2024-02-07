@@ -128,6 +128,10 @@ function onClose() {
     sale.sale.second_changed_amount = backup.value.second_changed_amount;
     sale.sale.tip_amount = 0;
     sale.sale.tip_account_code = "";
+    sale.sale.payment =  backup.value.payment;
+    sale.sale.sale_status = backup.value.sale_status;
+    sale.sale.docstatus = backup.value.docstatus;
+
     emit("resolve", false);
 }
 

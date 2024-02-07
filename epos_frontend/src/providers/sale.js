@@ -1469,17 +1469,17 @@ export default class Sale {
                     
                     this.sale.sale_status = "Closed";
                     this.sale.docstatus = 1;
+
                     this.action = "payment";
                     if (this.getString(this.sale.name) == "") {
                         if (this.newSaleResource == null) {
                             this.createNewSaleResource();
                         }
                         this.printWaitingOrderAfterPayment = true; 
-                        await this.newSaleResource.submit({ doc: this.sale })
+                        await this.newSaleResource.submit({ doc: this.sale });
                     } else {
                         await this.saleResource.setValue.submit(this.sale);
                     }
-
                     this.submitToAuditTrail(this.sale);
                     resolve(true);
                 }
