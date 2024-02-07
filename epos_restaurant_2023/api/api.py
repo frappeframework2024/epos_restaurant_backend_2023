@@ -1064,12 +1064,21 @@ def upload_all_sale_data_to_google_sheet(business_branch,start_date,end_date,cas
 
     creds = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(google_account_credentials))
     client = gspread.authorize(creds)
+    newsheet=client.create('Helo').share('sengho.camtech@gmail.com')
     sheet = client.open(google_sheet_file).sheet1
+    
     if len(sheet.get_all_records()) <= 0:
         sheet.append_rows([[obj.label for obj in columns]])
     report_data = convert_to_nested_arrays(result,columns)
     resp = sheet.append_rows(report_data)
-    return resp
+    sheet.format('A1:S1',{
+        "backgroundColor": {
+            "red": 0,
+            "green": 128,
+            "blue": 255
+        }
+    })
+    return newsheet
     # Append data to the Google Sheet
 
 

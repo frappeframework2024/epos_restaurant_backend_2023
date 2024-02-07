@@ -83,247 +83,7 @@ class CashierShift(Document):
 				validate_pos_account_code_config(self)
 				
 				
-				# sales = frappe.db.get_list("Sale",filters=[
-				# 								{"cashier_shift":self.name},
-				# 								{"outlet":self.outlet},
-				# 								{"shift_name":self.shift_name},
-				# 								{"docstatus":1}
-				# 							],
-				# 							limit=500,
-				# 							fields=["name"])
-				# sale_products = []
-				# sale_payments =[]
-				# for s in sales:
-				# 	# get sale product by sale
-				# 	sale  = frappe.get_doc('Sale',s['name'])
-				# 	for sp in sale.sale_products:
-				# 		sale_products.append({
-				# 			"sale_name":sale.name,
-				# 			"cashier_shift":sale.cashier_shift,
-				# 			"outlet":sale.outlet,
-				# 			"shift_name":sale.shift_name,
-				# 			"revenue_group":sp.revenue_group,
-				# 			"revenue_code":sp.revenue_code,
-				# 			"account_code":sp.account_code,
-				# 			"revenue_amount":sp.total_revenue,
-				# 			"discount_account":sp.discount_account,
-				# 			"discount_amount":(sp.discount_amount or 0) + (sp.sale_discount_amount or 0),
-				# 			"tax_1_account":sp.tax_1_account,
-				# 			"tax_1_amount":sp.tax_1_amount,
-				# 			"tax_2_account":sp.tax_2_account,
-				# 			"tax_2_amount":sp.tax_2_amount,
-				# 			"tax_3_account":sp.tax_3_account,
-				# 			"tax_3_amount":sp.tax_3_amount,
-				# 		})
-					
-				# 	#get sale payment data
-				# 	payments = frappe.db.get_list("Sale Payment",
-				# 				filters={"sale":s['name']},
-				# 				fields=["account_code","payment_type_group","payment_type","payment_amount","fee_amount"],
-				# 				as_list=False)
-					
-				# 	#get pos sale payment data
-				# 	pos_payments = frappe.db.get_all("POS Sale Payment",
-				# 				filters={
-				# 					'parent':s['name'],
-				# 					'payment_type_group':'On Account'
-				# 					},
-				# 				fields=["account_code","payment_type_group","payment_type","amount","fee_amount"],
-				# 				as_list=False)
-					
-				# 	#assign data to temp
-				# 	for p in payments:
-				# 		sale_payments.append({
-				# 			"sale_name":sale.name,
-				# 			"cashier_shift":sale.cashier_shift,
-				# 			"outlet":sale.outlet,
-				# 			"shift_name":sale.shift_name,
-				# 			"account_code":p.account_code,
-				# 			"payment_type_group":p.payment_type_group,
-				# 			"payment_type":p.payment_type,
-				# 			"payment_amount":p.payment_amount + (p.fee_amount or 0),
-				# 			"fee_amount":p.fee_amount or 0
-				# 		})
-					
-				# 	#assign data to temp get from pos sale payment  (on account pay transaction)
-				# 	for p in pos_payments:
-				# 		sale_payments.append({
-				# 			"sale_name":sale.name,
-				# 			"cashier_shift":sale.cashier_shift,
-				# 			"outlet":sale.outlet,
-				# 			"shift_name":sale.shift_name,
-				# 			"account_code":p.account_code,
-				# 			"payment_type_group":p.payment_type_group,
-				# 			"payment_type":p.payment_type,
-				# 			"payment_amount":p.amount + (p.fee_amount or 0),
-				# 			"fee_amount":p.fee_amount or 0
-				# 		})
-					
-				
-				# #create folio transaction buy account code transaction
-				# ## revenue sale revenue
-				# revenue = get_sale_product_revenue(sale_products)				 
-				# for g in revenue['revenue_group']:
-				# 	if g['account'] !="" and g['amount'] > 0:	
-				# 		data = {
-				# 				'doctype': 'Folio Transaction',
-				# 				'property':self.business_branch,
-				# 				'working_day':self.working_day,
-				# 				'posting_date':self.posting_date,
-				# 				'transaction_type': "Cashier Shift",
-				# 				'transaction_number': self.name,
-				# 				'reference_number':self.name,
-				# 				"input_amount":g['amount'],
-				# 				"account_code":g['account'],
-				# 				"type":"Debit"
-				# 			} 
-				# 		doc = frappe.get_doc(data)
-				# 		doc.insert()
-		
-							 
-				# ## get discount
-				# for g in revenue['discount']:
-				# 	if g['account'] !="" and g['amount'] > 0:						
-				# 		data = {
-				# 				'doctype': 'Folio Transaction',
-				# 				'property':self.business_branch,
-				# 				'working_day':self.working_day,
-				# 				'posting_date':self.posting_date,
-				# 				'transaction_type': "Cashier Shift",
-				# 				'transaction_number': self.name,
-				# 				'reference_number':self.name,
-				# 				"input_amount":g['amount'],
-				# 				"account_code":g['account'],
-				# 				"type":"Debit"
-				# 			} 
-				# 		doc = frappe.get_doc(data)
-				# 		doc.insert()
-				
-				# ## get tax 
-				# for g in revenue['tax_1']:
-				# 	if g['account'] !="" and g['amount'] > 0:	
-				# 		data = {
-				# 				'doctype': 'Folio Transaction',
-				# 				'property':self.business_branch,
-				# 				'working_day':self.working_day,
-				# 				'posting_date':self.posting_date,
-				# 				'transaction_type': "Cashier Shift",
-				# 				'transaction_number': self.name,
-				# 				'reference_number':self.name,
-				# 				"input_amount":g['amount'],
-				# 				"account_code":g['account'],
-				# 				"type":"Debit"
-				# 			} 
-				# 		doc = frappe.get_doc(data)
-				# 		doc.insert()
-
-				# ## get tax 2
-				# for g in revenue['tax_2']:
-				# 	if g['account'] !="" and g['amount'] > 0:
-				# 		data = {
-				# 				'doctype': 'Folio Transaction',
-				# 				'property':self.business_branch,
-				# 				'working_day':self.working_day,
-				# 				'posting_date':self.posting_date,
-				# 				'transaction_type': "Cashier Shift",
-				# 				'transaction_number': self.name,
-				# 				'reference_number':self.name,
-				# 				"input_amount":g['amount'],
-				# 				"account_code":g['account'],
-				# 				"type":"Debit"
-				# 			} 
-				# 		doc = frappe.get_doc(data)
-				# 		doc.insert()
-				
-				# ## get tax 3
-				# for g in revenue['tax_3']:
-				# 	if g['account'] !="" and g['amount'] > 0:	
-				# 		data = {
-				# 				'doctype': 'Folio Transaction',
-				# 				'property':self.business_branch,
-				# 				'working_day':self.working_day,
-				# 				'posting_date':self.posting_date,
-				# 				'transaction_type': "Cashier Shift",
-				# 				'transaction_number': self.name,
-				# 				'reference_number':self.name,
-				# 				"input_amount":g['amount'],
-				# 				"account_code":g['account'],
-				# 				"type":"Debit"
-				# 			} 
-				# 		doc = frappe.get_doc(data)
-				# 		doc.insert()
-				
-				
-				# ## revenue payment
-				# payment_revenue = get_sale_payment(sale_payments)
-				# for g in payment_revenue:
-				# 	if g['account'] !="" and g['amount'] > 0:
-				# 		## create folio transaction bank fee 
-				# 		if g['fee_amount'] > 0:
-				# 			account_code = frappe.get_doc("Account Code",str(g['account']))					
-
-				# 			if account_code.allow_bank_fee==1:
-				# 				if  account_code.bank_fee_account != "":
-				# 					doc_fee = frappe.get_doc({
-				# 							'doctype': 'Folio Transaction',
-				# 							'property':self.business_branch,
-				# 							'working_day':self.working_day,
-				# 							'posting_date':self.posting_date,
-				# 							'transaction_type': "Cashier Shift",
-				# 							'transaction_number': self.name,
-				# 							'reference_number':self.name,
-				# 							"input_amount":g['fee_amount'],
-				# 							"account_code":account_code.bank_fee_account
-				# 						})
-				# 					doc_fee.insert()
-
-				# 		##end create folio transaction bank fee
-
-				# 		tran_type = "Debit" 
-				# 		if g['payment_type_group'] =="Pay to Room":
-				# 			tran_type = "Credit"						
-				# 		data = {
-				# 				'doctype': 'Folio Transaction',
-				# 				'property':self.business_branch,
-				# 				'working_day':self.working_day,
-				# 				'posting_date':self.posting_date,
-				# 				'transaction_type': "Cashier Shift",
-				# 				'transaction_number': self.name,
-				# 				'reference_number':self.name,
-				# 				"input_amount":g['amount'],
-				# 				"account_code":g['account'],
-				# 				"type":tran_type
-				# 			} 
-						
-				# 		doc = frappe.get_doc(data)
-				# 		doc.insert()
-
-				# ## tip revenue
-				# tip_query = """select 
-				# 	sum(coalesce(tip_amount,0)) as tip_amount, 
-				# 	coalesce(tip_account_code,'') as tip_account_code 
-				# from `tabSale` 
-				# where docstatus = 1 and cashier_shift = '{}' 
-				# and outlet = '{}' 
-				# and shift_name = '{}'""".format(self.name,self.outlet,self.shift_name)
-				# tips = frappe.db.sql(tip_query, as_dict = 1)	
-
-				# for t in tips:
-				# 	if t.tip_account_code:
-				# 		doc_tip = frappe.get_doc({
-				# 							'doctype': 'Folio Transaction',
-				# 							'property':self.business_branch,
-				# 							'working_day':self.working_day,
-				# 							'posting_date':self.posting_date,
-				# 							'transaction_type': "Cashier Shift",
-				# 							'transaction_number': self.name,
-				# 							'reference_number':self.name,
-				# 							"input_amount":t.tip_amount,
-				# 							"account_code":t.tip_account_code
-				# 						})
-				# 		doc_tip.insert() 
-				# #commit data
-				# frappe.db.commit()		
+				       
 			
 			is_upload_sale_data_to_google_sheet = frappe.db.get_value("Business Branch",self.business_branch,["upload_sale_data_to_google_sheet"])
 			if is_upload_sale_data_to_google_sheet == 1:
@@ -340,48 +100,47 @@ class CashierShift(Document):
 	def on_update(self):
 		query ="update `tabSale` set  shift_name='{}' where cashier_shift='{}'".format(self.shift_name,self.name)
 		frappe.db.sql(query)
+		if 'edoor' in frappe.get_installed_apps():
+			old_doc = self.get_doc_before_save()
+			if old_doc:
+				if old_doc.is_closed ==0 and self.is_closed ==1:
+					current_sort = frappe.db.get_value("Shift Type",self.shift_name, "sort")
+					if self.is_edoor_shift==1 and  self.is_run_night_audit==0:
+						if current_sort != 3:
+							"""Create New Cashier Shift When Close Shift eDoor"""
+							new_shift_data = {
+								"doctype":"Cashier Shift",
+								"bussiness_branch": self.business_branch,
+								"outlet":self.outlet,
+								"pos_profile":self.pos_profile,
+								"working_day":self.working_day,
+								"is_edoor_shift":self.is_edoor_shift,
+								"cash_float":[]
+							}
+							
+	
+							if current_sort == 1:
+								next_shift_name = frappe.db.get_value("Shift Type",{'sort': 2} , "name")
+								new_shift_data["shift_name"] = next_shift_name
+							elif current_sort == 2:
+								next_shift_name = frappe.db.get_value("Shift Type",{'sort': 3} , "name")
+								new_shift_data["shift_name"] = next_shift_name
+							
+							pos_config = frappe.db.get_value("POS Profile", self.pos_profile, "pos_config")
+							pos_config = frappe.get_doc("POS Config", pos_config)
 
-		old_doc = self.get_doc_before_save()
-		if old_doc:
-			if old_doc.is_closed ==0 and self.is_closed ==1:
-				current_sort = frappe.db.get_value("Shift Type",self.shift_name, "sort")
-				if self.is_edoor_shift==1 :
-					if current_sort != 3:
-						"""Create New Cashier Shift When Close Shift eDoor"""
-						new_shift_data = {
-							"doctype":"Cashier Shift",
-							"bussiness_branch": self.business_branch,
-							"outlet":self.outlet,
-							"pos_profile":self.pos_profile,
-							"working_day":self.working_day,
-							"is_edoor_shift":self.is_edoor_shift,
-							"cash_float":[]
-						}
-						
- 
-						if current_sort == 1:
-							next_shift_name = frappe.db.get_value("Shift Type",{'sort': 2} , "name")
-							new_shift_data["shift_name"] = next_shift_name
-						elif current_sort == 2:
-							next_shift_name = frappe.db.get_value("Shift Type",{'sort': 3} , "name")
-							new_shift_data["shift_name"] = next_shift_name
-						
-						pos_config = frappe.db.get_value("POS Profile", self.pos_profile, "pos_config")
-						pos_config = frappe.get_doc("POS Config", pos_config)
+							for  c in pos_config.payment_type:
+								if c.allow_cash_float:
+									new_shift_data["cash_float"].append({
+										"payment_method":c.payment_type,
+										"currency":c.currency,
+										"input_amount":0
+									})
+							
+							frappe.get_doc(new_shift_data).insert()
 
-						for  c in pos_config.payment_type:
-							if c.allow_cash_float:
-								new_shift_data["cash_float"].append({
-									"payment_method":c.payment_type,
-									"currency":c.currency,
-									"input_amount":0
-								})
-						
-						frappe.get_doc(new_shift_data).insert()
-
-				# submit_pos_data_to_folio_transaction(self)
-				else:
-					frappe.enqueue("epos_restaurant_2023.selling.doctype.cashier_shift.cashier_shift.submit_pos_data_to_folio_transaction", queue='short', self=self)
+					else:
+						frappe.enqueue("epos_restaurant_2023.selling.doctype.cashier_shift.cashier_shift.submit_pos_data_to_folio_transaction", queue='short', self=self)
 
 
 

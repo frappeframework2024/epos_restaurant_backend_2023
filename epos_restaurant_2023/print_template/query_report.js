@@ -1484,11 +1484,14 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	print_report(print_settings) {
+
+
 		const custom_format = this.report_settings.html_format || null;
 		const filters_html = this.get_filters_html_for_print();
 		const landscape = print_settings.orientation == "Landscape";
 	 
 		if(this.chart_options){
+	 
 			let my_chart = document.createElement("div")
 				my_chart.setAttribute("id","my_chart")
 			if(landscape){ 
@@ -1527,6 +1530,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			});
 			document.querySelector("#my_chart")?.remove()
 		},this.chart_options?1000:100)
+		
 		
 	}
 
