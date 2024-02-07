@@ -83,7 +83,10 @@ if((is_window||0) == 0 && (is_apk_ipa||0)==0){
 			}
 		}); 
 	}
+
+	
 }
+
 
 const _device = localStorage.getItem("device_name");
 if(_device == null || _device == undefined){
