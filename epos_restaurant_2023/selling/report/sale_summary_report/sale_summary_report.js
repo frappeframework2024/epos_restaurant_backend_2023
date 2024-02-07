@@ -2,7 +2,7 @@
 // For license information, please see license.txt
 /* eslint-disable */
 frappe.query_reports["Sale Summary Report"] = {
-	onload: function() {
+	onload: function(report) {
 		if(frappe.query_report.get_filter_value('filter_based_on')=="This Month"){
 
 		
@@ -10,11 +10,15 @@ frappe.query_reports["Sale Summary Report"] = {
 			frappe.query_report.toggle_filter_display('start_date', true  );
 			frappe.query_report.toggle_filter_display('end_date', true );
 		}
-		report.page.add_inner_button ("Preview Report", function () {
+		report.page.add_inner_button("Preview Report", function () {
 			frappe.query_report.refresh();
 		});
-		setLinkField()
+		
 	},
+	
+		
+		
+	
 	"filters": [
 		{
 			fieldname: "business_branch",
@@ -22,7 +26,8 @@ frappe.query_reports["Sale Summary Report"] = {
 			fieldtype: "MultiSelectList",
 			get_data: function(txt) {
 				return frappe.db.get_link_options('Business Branch', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 			 
 		},
 		{
@@ -57,21 +62,22 @@ frappe.query_reports["Sale Summary Report"] = {
 			"fieldtype": "Date",
 			default:frappe.datetime.get_today(),
 	
-			"reqd": 1
+			"reqd": 1,
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname":"end_date",
 			"label": __("End Date"),
 			"fieldtype": "Date",
 			default:frappe.datetime.get_today(),
-		
+			"on_change": function (query_report) {},
 			"reqd": 1
 		},
 		{
 			"fieldname":"from_fiscal_year",
 			"label": __("Start Year"),
 			"fieldtype": "Int",
-			
+			"on_change": function (query_report) {},
 			"default": (new Date()).getFullYear(),
 		},
 		{
@@ -156,14 +162,7 @@ frappe.query_reports["Sale Summary Report"] = {
 			"default":"Category",
 			"on_change": function (query_report) {},
 		},
-		{
-			"fieldname": "include_foc",
-			"label": __("Include FOC"),
-			"fieldtype": "Check",
-			default:true,
-			hide_in_filter:1,
-			"on_change": function (query_report) {},
-		},
+		
 		{
 			"fieldname": "column_group",
 			"label": __("Column Group By"),
@@ -198,7 +197,15 @@ frappe.query_reports["Sale Summary Report"] = {
 			"default":"bar",
 			hide_in_filter:1,
 			"on_change": function (query_report) {},
-		}
+		},
+		{
+			"fieldname": "include_foc",
+			"label": __("Include FOC"),
+			"fieldtype": "Check",
+			default:false,
+			hide_in_filter:1,
+			"on_change": function (query_report) {},
+		},
 
 	],
 	"formatter": function(value, row, column, data, default_formatter) {
@@ -217,21 +224,13 @@ frappe.query_reports["Sale Summary Report"] = {
 };
 
 function setLinkField() {
-	const property = frappe.query_report.get_filter_value("property")
-	if (property) {
-		const room_type_filter = frappe.query_report.get_filter('room_types');
+	const business_branch = frappe.query_report.get_filter_value("business_branch")
+	if (business_branch) {
+		const room_type_filter = frappe.query_report.get_filter('pos_profile');
 		room_type_filter.df.get_query = function () {
 			return {
 				filters: {
-					"property": property
-				}
-			};
-		};
-		const business_source_filter = frappe.query_report.get_filter('business_source');
-		business_source_filter.df.get_query = function () {
-			return {
-				filters: {
-					"property": property
+					"business_branch": business_branch
 				}
 			};
 		};
