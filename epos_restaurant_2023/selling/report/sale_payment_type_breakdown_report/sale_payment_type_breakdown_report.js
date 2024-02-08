@@ -11,7 +11,8 @@ frappe.query_reports["Sale Payment Type Breakdown Report"] = {
 			fieldtype: "MultiSelectList",
 			get_data: function(txt) {
 				return frappe.db.get_link_options('Business Branch', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 			 
 		},
 		{
@@ -27,8 +28,9 @@ frappe.query_reports["Sale Payment Type Breakdown Report"] = {
 				frappe.query_report.toggle_filter_display('start_date', filter_based_on === 'Fiscal Year');
 				frappe.query_report.toggle_filter_display('end_date', filter_based_on === 'Fiscal Year');
 
-				frappe.query_report.refresh();
-			}
+				
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname":"start_date",
@@ -36,7 +38,8 @@ frappe.query_reports["Sale Payment Type Breakdown Report"] = {
 			"fieldtype": "Date",
 			default:frappe.datetime.get_today(),
 			"hidden": 1,
-			"reqd": 1
+			"reqd": 1,
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname":"end_date",
@@ -44,14 +47,16 @@ frappe.query_reports["Sale Payment Type Breakdown Report"] = {
 			"fieldtype": "Date",
 			default:frappe.datetime.get_today(),
 			"hidden": 1,
-			"reqd": 1
+			"reqd": 1,
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname":"from_fiscal_year",
 			"label": __("Start Year"),
 			"fieldtype": "Int",
-			
-			"default": (new Date()).getFullYear()
+			"on_change": function (query_report) {},
+			"default": (new Date()).getFullYear(),
+			hide_in_filter:1,
 		},
 		{
 			"fieldname": "pos_profile",
@@ -59,7 +64,8 @@ frappe.query_reports["Sale Payment Type Breakdown Report"] = {
 			"fieldtype": "MultiSelectList",
 			get_data: function(txt) {
 				return frappe.db.get_link_options('POS Profile', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "outlet",
@@ -67,7 +73,8 @@ frappe.query_reports["Sale Payment Type Breakdown Report"] = {
 			"fieldtype": "MultiSelectList",
 			get_data: function(txt) {
 				return frappe.db.get_link_options('Outlet', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "customer_group",
@@ -76,42 +83,56 @@ frappe.query_reports["Sale Payment Type Breakdown Report"] = {
 			get_data: function(txt) {
 				
 				return frappe.db.get_link_options('Customer Group', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "customer",
 			"label": __("Customer"),
 			"fieldtype": "Link",
 			"options":"Customer",
-			
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "parent_row_group",
 			"label": __("Parent Group By"),
 			"fieldtype": "Select",
 			"options": "\nBusiness Branch\nOutlet\nPOS Profile\nCustomer\nCustomer Group\nDate\n\Month\nYear",
-			
+			"on_change": function (query_report) {},
+			hide_in_filter:1,
 		},
 		{
 			"fieldname": "row_group",
 			"label": __("Row Group By"),
 			"fieldtype": "Select",
 			"options": "Business Branch\nOutlet\nPOS Profile\nCustomer\nCustomer Group\nDate\n\Month\nYear\nSale Invoice\nPayment Type",
-			"default":"Date"
+			"default":"Date",
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "column_group",
 			"label": __("Column Group By"),
 			"fieldtype": "Select",
 			"options": "Payment Type\nPayment Type Group",
-			"default":"Payment Type"
+			"default":"Payment Type",
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "chart_type",
 			"label": __("Chart Type"),
 			"fieldtype": "Select",
 			"options": "None\nbar\nline\npie",
-			"default":"bar"
+			"default":"bar",
+			hide_in_filter:1,
+			"on_change": function (query_report) {},
+		},
+		{
+			"fieldname": "show_summary",
+			"label": __("Show Summary"),
+			"fieldtype": "Check",
+			default:true,
+			hide_in_filter:1,
+			"on_change": function (query_report) {},
 		},
 	],
 	"formatter": function(value, row, column, data, default_formatter) {
@@ -128,6 +149,12 @@ frappe.query_reports["Sale Payment Type Breakdown Report"] = {
 		}
 		
 		return value;
+	},
+	onload: function(report) {
+		report.page.add_inner_button("Preview Report", function () {
+			frappe.query_report.refresh();
+		});
+		
 	},
 	
 };

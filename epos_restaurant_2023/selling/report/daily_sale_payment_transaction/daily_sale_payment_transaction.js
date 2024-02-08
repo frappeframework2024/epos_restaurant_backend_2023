@@ -10,7 +10,8 @@ frappe.query_reports["Daily Sale Payment Transaction"] = {
 			fieldtype: "MultiSelectList",
 			get_data: function(txt) {
 				return frappe.db.get_link_options('Business Branch', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 			 
 		},
 		
@@ -20,7 +21,8 @@ frappe.query_reports["Daily Sale Payment Transaction"] = {
 			"fieldtype": "Date",
 			default:frappe.datetime.get_today(),
 			 
-			"reqd": 1
+			"reqd": 1,
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname":"end_date",
@@ -28,7 +30,8 @@ frappe.query_reports["Daily Sale Payment Transaction"] = {
 			"fieldtype": "Date",
 			default:frappe.datetime.get_today(),
 			 
-			"reqd": 1
+			"reqd": 1,
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "payment_type_group",
@@ -37,7 +40,8 @@ frappe.query_reports["Daily Sale Payment Transaction"] = {
 			get_data: function(txt) {
 				
 				return frappe.db.get_link_options('Payment Type Group', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "payment_type",
@@ -45,7 +49,8 @@ frappe.query_reports["Daily Sale Payment Transaction"] = {
 			"fieldtype": "MultiSelectList",
 			get_data: function(txt) {
 				return frappe.db.get_link_options('Payment Type', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		
 		{
@@ -54,7 +59,8 @@ frappe.query_reports["Daily Sale Payment Transaction"] = {
 			"fieldtype": "MultiSelectList",
 			get_data: function(txt) {
 				return frappe.db.get_link_options('Outlet', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		
 		{
@@ -64,22 +70,31 @@ frappe.query_reports["Daily Sale Payment Transaction"] = {
 			get_data: function(txt) {
 				
 				return frappe.db.get_link_options('Customer Group', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "customer",
 			"label": __("Customer"),
 			"fieldtype": "Link",
 			"options":"Customer",
-			
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "sale",
 			"label": __("Sale"),
 			"fieldtype": "Link",
 			"options":"Sale",
-			
-		}
+			"on_change": function (query_report) {},
+		},
+		{
+			"fieldname": "show_summary",
+			"label": __("Show Summary"),
+			"fieldtype": "Check",
+			default:true,
+			hide_in_filter:1,
+			"on_change": function (query_report) {},
+		},
 
 	],
 	"formatter": function(value, row, column, data, default_formatter) {
@@ -96,6 +111,12 @@ frappe.query_reports["Daily Sale Payment Transaction"] = {
 		}
 		
 		return value;
+	},
+	onload: function(report) {
+		report.page.add_inner_button("Preview Report", function () {
+			frappe.query_report.refresh();
+		});
+		
 	},
 	
 };

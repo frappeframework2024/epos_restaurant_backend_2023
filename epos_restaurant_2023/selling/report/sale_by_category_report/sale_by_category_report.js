@@ -26,7 +26,8 @@ frappe.query_reports["Sale By Category Report"] = {
 				return {
 					"doctype": "Product Category"
 				}
-			}
+			},
+			"on_change": function (query_report) { }
 		},
 	],
 	"tree": true,

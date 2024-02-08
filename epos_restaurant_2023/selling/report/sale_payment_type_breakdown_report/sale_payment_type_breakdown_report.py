@@ -277,7 +277,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 				sql = strip(sql)
 				if sql[-1]!=",":
 					sql = sql + ','
-					sql = sql +	"SUM(if(a.posting_date between '{}' AND '{}',{},0)) as '{}_{}',".format(f["start_date"],f["end_date"],"a.payment_amount",f["fieldname"],rf["fieldname"])
+					sql = sql +	"SUM(if(a.posting_date between '{}' AND '{}',{},0)) as '{}_{}',".format(f["start_date"],f["end_date"],"a.payment_amount",f["fieldname"],f["fieldname"])
 				#end for
 		elif filters.column_group =="Payment Type":
 			sql = sql + get_report_field_by_payment_type(filters)
@@ -315,14 +315,15 @@ def get_report_group_data(filters):
  
 def get_report_summary(data,filters):
 	report_summary = []
-	columns = get_dynamic_columns(filters)
-	for f in columns:
-		value=sum(d[f["fieldname"]] for d in data if d["indent"]==0)
-		if f["fieldname"] == "total_payment":
-			value = frappe.utils.fmt_money(value)
-		else:
-			value = "{:.2f}".format(value)
-		report_summary.append({"label":f["label"],"value":value})	
+	if filters.show_summary:
+		columns = get_dynamic_columns(filters)
+		for f in columns:
+			value=sum(d[f["fieldname"]] for d in data if d["indent"]==0)
+			if f["fieldname"] == "total_payment":
+				value = frappe.utils.fmt_money(value)
+			else:
+				value = "{:.2f}".format(value)
+			report_summary.append({"label":f["label"],"value":value})	
 
 	return report_summary
 

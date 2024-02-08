@@ -4,7 +4,7 @@
 // For license information, please see license.txt
 /* eslint-disable */
 frappe.query_reports["Top Sale Products Report"] = {
-	onload: function() {
+	onload: function(report) {
 		if(frappe.query_report.get_filter_value('filter_based_on')=="This Month"){
 
 		
@@ -12,6 +12,11 @@ frappe.query_reports["Top Sale Products Report"] = {
 			frappe.query_report.toggle_filter_display('start_date', true  );
 			frappe.query_report.toggle_filter_display('end_date', true );
 		}
+		report.page.add_inner_button("Preview Report", function () {
+				frappe.query_report.refresh();
+			});
+			
+		
 	},
 	"filters": [
 		{
@@ -20,7 +25,8 @@ frappe.query_reports["Top Sale Products Report"] = {
 			fieldtype: "MultiSelectList",
 			get_data: function(txt) {
 				return frappe.db.get_link_options('Business Branch', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 			 
 		},
 		{
@@ -45,32 +51,32 @@ frappe.query_reports["Top Sale Products Report"] = {
 					frappe.query_report.toggle_filter_display('end_date', true );
 
 				}
-
-				frappe.query_report.refresh();
 	 
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname":"start_date",
 			"label": __("Start Date"),
 			"fieldtype": "Date",
 			default:frappe.datetime.get_today(),
-	
-			"reqd": 1
+			"reqd": 1,
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname":"end_date",
 			"label": __("End Date"),
 			"fieldtype": "Date",
 			default:frappe.datetime.get_today(),
-		
-			"reqd": 1
+			"reqd": 1,
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname":"from_fiscal_year",
 			"label": __("Start Year"),
 			"fieldtype": "Int",
 			hide_in_filter:1,
+			"on_change": function (query_report) {},
 			"default": (new Date()).getFullYear()
 		},
 		{
@@ -79,7 +85,8 @@ frappe.query_reports["Top Sale Products Report"] = {
 			"fieldtype": "MultiSelectList",
 			get_data: function(txt) {
 				return frappe.db.get_link_options('POS Profile', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "outlet",
@@ -87,7 +94,8 @@ frappe.query_reports["Top Sale Products Report"] = {
 			"fieldtype": "MultiSelectList",
 			get_data: function(txt) {
 				return frappe.db.get_link_options('Outlet', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "product_group",
@@ -96,7 +104,8 @@ frappe.query_reports["Top Sale Products Report"] = {
 			get_data: function(txt) {
 				
 				return frappe.db.get_link_options('Product Category', txt,{"is_group":1});
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "product_category",
@@ -115,7 +124,8 @@ frappe.query_reports["Top Sale Products Report"] = {
 						"parent_product_category":["in",group]
 					});
 				}
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "customer_group",
@@ -124,21 +134,23 @@ frappe.query_reports["Top Sale Products Report"] = {
 			get_data: function(txt) {
 				
 				return frappe.db.get_link_options('Customer Group', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "customer",
 			"label": __("Customer"),
 			"fieldtype": "Link",
 			"options":"Customer",
-			
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "parent_row_group",
 			"label": __("Parent Group By"),
 			"fieldtype": "Select",
 			"options": "\nCategory\nProduct Group\nRevenue Group\nBusiness Branch\nOutlet\nTable Group\nTable\nPOS Profile\nCustomer\nCustomer Group\nStock Location\nDate\n\Month\nYear\nSale Invoice\nWorking Day\nCashier Shift\nSale Type",
-			hide_in_filter:1
+			hide_in_filter:1,
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "row_group",
@@ -146,7 +158,8 @@ frappe.query_reports["Top Sale Products Report"] = {
 			"fieldtype": "Select",
 			"options": "Product\nCategory\nProduct Group\nRevenue Group\nBusiness Branch\nOutlet\nTable Group\nTable\nPOS Profile\nCustomer\nCustomer Group\nStock Location\nDate\n\Month\nYear\nSale Invoice\nWorking Day\nCashier Shift\nSale Type",
 			"default":"Category",
-			hide_in_filter:1
+			hide_in_filter:1,
+			"on_change": function (query_report) {},
 		},
 
 		{
@@ -164,6 +177,7 @@ frappe.query_reports["Top Sale Products Report"] = {
 					{"value":"Profit","description":"Pofit"}
 				]
 			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "chart_type",
@@ -171,7 +185,8 @@ frappe.query_reports["Top Sale Products Report"] = {
 			"fieldtype": "Select",
 			"options": "None\nbar\nline\npie",
 			"default":"bar",
-			hide_in_filter:1
+			hide_in_filter:1,
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "order_by",
@@ -179,7 +194,8 @@ frappe.query_reports["Top Sale Products Report"] = {
 			"fieldtype": "Select",
 			"options": "Amount\nQuantity",
 			"default":"Amount",
-			hide_in_filter:1
+			hide_in_filter:1,
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "order_type",
@@ -187,14 +203,25 @@ frappe.query_reports["Top Sale Products Report"] = {
 			"fieldtype": "Select",
 			"options": "ASC\nDESC",
 			"default":"DESC",
-			hide_in_filter:1
+			hide_in_filter:1,
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "top",
 			"label": __("Top"),
 			"fieldtype": "Int",
-			"default":10
-		}
+			"default":10,
+			"on_change": function (query_report) {},
+			hide_in_filter:1,
+		},
+		{
+			"fieldname": "show_summary",
+			"label": __("Show Summary"),
+			"fieldtype": "Check",
+			default:true,
+			hide_in_filter:1,
+			"on_change": function (query_report) {},
+		},
 
 
 	],

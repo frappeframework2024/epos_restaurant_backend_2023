@@ -52,16 +52,14 @@ frappe.query_reports["Sale Summary Report"] = {
 
 				}
 
-				frappe.query_report.refresh();
-	 
-			}
+			},
+			
 		},
 		{
 			"fieldname":"start_date",
 			"label": __("Start Date"),
 			"fieldtype": "Date",
 			default:frappe.datetime.get_today(),
-	
 			"reqd": 1,
 			"on_change": function (query_report) {},
 		},
@@ -70,8 +68,8 @@ frappe.query_reports["Sale Summary Report"] = {
 			"label": __("End Date"),
 			"fieldtype": "Date",
 			default:frappe.datetime.get_today(),
+			"reqd": 1,
 			"on_change": function (query_report) {},
-			"reqd": 1
 		},
 		{
 			"fieldname":"from_fiscal_year",
@@ -79,6 +77,7 @@ frappe.query_reports["Sale Summary Report"] = {
 			"fieldtype": "Int",
 			"on_change": function (query_report) {},
 			"default": (new Date()).getFullYear(),
+			hide_in_filter:1,
 		},
 		{
 			"fieldname": "pos_profile",
@@ -160,6 +159,7 @@ frappe.query_reports["Sale Summary Report"] = {
 			"fieldtype": "Select",
 			"options": "Product\nCategory\nProduct Group\nRevenue Group\nBusiness Branch\nOutlet\nTable Group\nTable\nPOS Profile\nCustomer\nCustomer Group\nStock Location\nDate\n\Month\nYear\nSale Invoice\nWorking Day\nCashier Shift\nSale Type",
 			"default":"Category",
+			hide_in_filter:1,
 			"on_change": function (query_report) {},
 		},
 		
@@ -202,7 +202,14 @@ frappe.query_reports["Sale Summary Report"] = {
 			"fieldname": "include_foc",
 			"label": __("Include FOC"),
 			"fieldtype": "Check",
-			default:false,
+			hide_in_filter:1,
+			"on_change": function (query_report) {},
+		},
+		{
+			"fieldname": "show_summary",
+			"label": __("Show Summary"),
+			"fieldtype": "Check",
+			default:true,
 			hide_in_filter:1,
 			"on_change": function (query_report) {},
 		},
@@ -223,17 +230,3 @@ frappe.query_reports["Sale Summary Report"] = {
 	
 };
 
-function setLinkField() {
-	const business_branch = frappe.query_report.get_filter_value("business_branch")
-	if (business_branch) {
-		const room_type_filter = frappe.query_report.get_filter('pos_profile');
-		room_type_filter.df.get_query = function () {
-			return {
-				filters: {
-					"business_branch": business_branch
-				}
-			};
-		};
-
-	}
-}

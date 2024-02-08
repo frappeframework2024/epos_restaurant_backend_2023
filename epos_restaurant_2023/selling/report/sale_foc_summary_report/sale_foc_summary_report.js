@@ -3,7 +3,7 @@
 /* eslint-disable */
 
 frappe.query_reports["Sale FOC Summary Report"] = {
-	onload: function() {
+	onload: function(report) {
 		if(frappe.query_report.get_filter_value('filter_based_on')=="This Month"){
 
 		
@@ -11,6 +11,9 @@ frappe.query_reports["Sale FOC Summary Report"] = {
 			frappe.query_report.toggle_filter_display('start_date', true  );
 			frappe.query_report.toggle_filter_display('end_date', true );
 		}
+		report.page.add_inner_button("Preview Report", function () {
+			frappe.query_report.refresh();
+		});
 	},
 	"filters": [
 		{
@@ -19,7 +22,8 @@ frappe.query_reports["Sale FOC Summary Report"] = {
 			fieldtype: "MultiSelectList",
 			get_data: function(txt) {
 				return frappe.db.get_link_options('Business Branch', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 			 
 		},
 		{
@@ -43,8 +47,6 @@ frappe.query_reports["Sale FOC Summary Report"] = {
 					frappe.query_report.toggle_filter_display('end_date', true );
 
 				}
-
-				frappe.query_report.refresh();
 	 
 			}
 		},
@@ -54,7 +56,8 @@ frappe.query_reports["Sale FOC Summary Report"] = {
 			"fieldtype": "Date",
 			default:frappe.datetime.get_today(),
 	
-			"reqd": 1
+			"reqd": 1,
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname":"end_date",
@@ -62,14 +65,17 @@ frappe.query_reports["Sale FOC Summary Report"] = {
 			"fieldtype": "Date",
 			default:frappe.datetime.get_today(),
 		
-			"reqd": 1
+			"reqd": 1,
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname":"from_fiscal_year",
 			"label": __("Start Year"),
 			"fieldtype": "Int",
 			
-			"default": (new Date()).getFullYear()
+			"default": (new Date()).getFullYear(),
+			"on_change": function (query_report) {},
+			hide_in_filter:1,
 		},
 		{
 			"fieldname": "pos_profile",
@@ -77,7 +83,8 @@ frappe.query_reports["Sale FOC Summary Report"] = {
 			"fieldtype": "MultiSelectList",
 			get_data: function(txt) {
 				return frappe.db.get_link_options('POS Profile', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "outlet",
@@ -85,7 +92,8 @@ frappe.query_reports["Sale FOC Summary Report"] = {
 			"fieldtype": "MultiSelectList",
 			get_data: function(txt) {
 				return frappe.db.get_link_options('Outlet', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "product_group",
@@ -94,7 +102,8 @@ frappe.query_reports["Sale FOC Summary Report"] = {
 			get_data: function(txt) {
 				
 				return frappe.db.get_link_options('Product Category', txt,{"is_group":1});
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "product_category",
@@ -113,7 +122,8 @@ frappe.query_reports["Sale FOC Summary Report"] = {
 						"parent_product_category":["in",group]
 					});
 				}
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "customer_group",
@@ -122,13 +132,15 @@ frappe.query_reports["Sale FOC Summary Report"] = {
 			get_data: function(txt) {
 				
 				return frappe.db.get_link_options('Customer Group', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "customer",
 			"label": __("Customer"),
 			"fieldtype": "Link",
 			"options":"Customer",
+			"on_change": function (query_report) {},
 			
 		},
 		{
@@ -136,21 +148,26 @@ frappe.query_reports["Sale FOC Summary Report"] = {
 			"label": __("Parent Group By"),
 			"fieldtype": "Select",
 			"options": "\nCategory\nProduct Group\nRevenue Group\nBusiness Branch\nOutlet\nTable Group\nTable\nPOS Profile\nCustomer\nCustomer Group\nStock Location\nDate\n\Month\nYear\nSale Invoice\nWorking Day\nCashier Shift\nSale Type",
-			
+			"on_change": function (query_report) {},
+			hide_in_filter:1,
 		},
 		{
 			"fieldname": "row_group",
 			"label": __("Row Group By"),
 			"fieldtype": "Select",
 			"options": "Product\nCategory\nProduct Group\nRevenue Group\nBusiness Branch\nOutlet\nTable Group\nTable\nPOS Profile\nCustomer\nCustomer Group\nStock Location\nDate\n\Month\nYear\nSale Invoice\nWorking Day\nCashier Shift\nSale Type",
-			"default":"Category"
+			"default":"Category",
+			"on_change": function (query_report) {},
+			hide_in_filter:1,
 		},
 		{
 			"fieldname": "column_group",
 			"label": __("Column Group By"),
 			"fieldtype": "Select",
 			"options": "None\nDaily\nWeekly\nMonthly\nQuarterly\nHalf Yearly\nYearly",
-			"default":"None"
+			"default":"None",
+			"on_change": function (query_report) {},
+			hide_in_filter:1,
 		},
 		{
 			"fieldname": "hide_columns",
@@ -166,14 +183,26 @@ frappe.query_reports["Sale FOC Summary Report"] = {
 					{"value":"Profit","description":"Pofit"}
 				]
 			},
+			"on_change": function (query_report) {},
+			hide_in_filter:1,
 		},
 		{
 			"fieldname": "chart_type",
 			"label": __("Chart Type"),
 			"fieldtype": "Select",
 			"options": "None\nbar\nline\npie",
-			"default":"bar"
-		}
+			"default":"bar",
+			"on_change": function (query_report) {},
+			hide_in_filter:1,
+		},
+		{
+			"fieldname": "show_summary",
+			"label": __("Show Summary"),
+			"fieldtype": "Check",
+			default:true,
+			hide_in_filter:1,
+			"on_change": function (query_report) {},
+		},
 
 	],
 	"formatter": function(value, row, column, data, default_formatter) {
