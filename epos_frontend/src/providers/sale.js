@@ -1863,7 +1863,7 @@ export default class Sale {
                 sp.employees = JSON.stringify(res);
                 sp.employee_names = ""; 
                 res.forEach(e=>{
-                    sp.employee_names +=    `${e.employee_name}, `;
+                    sp.employee_names +=    `${e.employee_name}(${e.duration_title}), `;
                 }) 
                 if(sp.employee_names != ""){
                     sp.employee_names  = sp.employee_names.substring(0,  sp.employee_names.length -2);
