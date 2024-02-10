@@ -179,12 +179,12 @@ onMounted(async ()=>{
         limit: 100
     })
     duration_commission_list.value = await db.getDocList('Predefine SPA Duration Code',{ 
-        fields: ['name', 'duration_title','duration_value','commission_value','is_overtime'],
+        fields: ['name', 'duration_title','mapping_value','duration_value','commission_value','is_overtime'],
         limit: 100
     })   
 
     duration_commission_list.value.forEach((d)=>{
-        if((props.params?.data.portion.toLowerCase()==d.duration_title.toLowerCase() && !d.is_overtime)){
+        if((props.params?.data.portion.toLowerCase()==d.mapping_value.toLowerCase() && !d.is_overtime)){
             d.is_selected = true;
             const com = commission_list.value.filter((r)=>r.commission_value==d.commission_value);
             if(com.length > 0){
