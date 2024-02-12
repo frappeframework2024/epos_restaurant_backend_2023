@@ -10,11 +10,11 @@
                 </v-list-item>
             </v-list>
         </v-menu>
-        <div v-else class="mx-2" v-if="printFormatResource.data?.length > 1">
+        <div v-else class="mx-2" v-if="(printFormatResource.data?.length??0) > 1">
             <v-chip :color="item.name == selected?'warning':''" class="m-1" @click="onSelectedReceipt(item)"
                 v-for="(item, index) in printFormatResource.data" :key="index">{{ item.name }}
             </v-chip>
-        </div>
+        </div> 
     </div>
 </template>
 <script setup>
