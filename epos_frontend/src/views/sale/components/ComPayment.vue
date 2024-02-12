@@ -40,8 +40,7 @@
         <template #action>
             <v-row class="!m-0">
                 <v-col class="!p-0" cols="12" md="4">
-                    <div class="h-full flex items-center" v-if="!mobile">
-                        {{ selectedReceipt.name }}
+                    <div class="h-full flex items-center" v-if="!mobile"> 
                         <ComSelectPaymentPrinter @onClick="onSelectedReceipt" :selected="selectedReceipt.name" />
                       
                     </div>
