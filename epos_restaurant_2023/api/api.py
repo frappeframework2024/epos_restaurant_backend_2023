@@ -1,3 +1,4 @@
+import copy
 import json
 import frappe
 import base64
@@ -79,6 +80,7 @@ def get_system_settings(pos_profile="", device_name=''):
     for p in pos_config.payment_type:
         payment_types.append({ 
             "account_code":p.account_code,
+            "cancel_order_adjustment_account_code":p.cancel_order_adjustment_account_code,
             "payment_method":p.payment_type,
             "payment_type_group":p.payment_type_group,
             "currency":p.currency,
@@ -781,6 +783,14 @@ def edit_sale_order(name,auth):
     
     #then start to cancel sale
     sale_doc = frappe.get_doc("Sale",name)
+
+    payments = copy.deepcopy(sale_doc.payment)
+    
+    for p in [d for d in payments if d.folio_transaction_number and d.folio_transaction_type and  not d.cancel_order_adjustment_account_code]:
+        frappe.throw("There is no cancel order adjustment account code for payment type {}. Please config it in POS Config Setting.".format(p.payment_type))
+
+
+
     sale_doc.payment=[]
     sale_doc.cancel()
 
@@ -793,6 +803,35 @@ def edit_sale_order(name,auth):
     sale_status_doc = frappe.get_doc("Sale Status","Submitted")
     frappe.db.sql("update `tabSale` set docstatus = 0, sale_status='Submitted', sale_status_color='{1}', sale_status_priority={2} where name='{0}'".format(name,sale_status_doc.background_color,sale_status_doc.priority))
     frappe.db.sql("update `tabSale Product` set docstatus = 0 where parent='{}'".format(name))
+
+
+    #check sale has payment type transfer to edoor and user cancel order 
+    # then we check payment type adjustment account then post adjustment account to edoor pms
+    if 'edoor' in frappe.get_installed_apps():
+        for p in [d for d in payments if d.folio_transaction_type and d.folio_transaction_number and d.cancel_order_adjustment_account_code]:
+            data = {
+                    'doctype': 'Folio Transaction',
+                    'posting_date':sale_doc.posting_date,
+                    'transaction_type': p.folio_transaction_type,
+                    'transaction_number': p.folio_transaction_number,
+                    'reference_number':sale_doc.name,
+                    "input_amount":p.amount,
+                    "account_code":p.cancel_order_adjustment_account_code,
+                    "property":sale_doc.business_branch,
+                    "is_auto_post":1,
+                    "sale": sale_doc.name,
+                    "type":"Credit",
+                    "guest":sale_doc.customer,
+                    "guest_name":sale_doc.customer_name,
+                    "guest_type":sale_doc.customer_group,
+                    "nationality": "" if not sale_doc.customer else  frappe.db.get_value("Customer",sale_doc.customer,"country")
+                } 
+            doc = frappe.get_doc(data)
+            doc.insert(ignore_permissions=True)	
+        
+           
+
+
     #add comment
        
     doc = frappe.get_doc({

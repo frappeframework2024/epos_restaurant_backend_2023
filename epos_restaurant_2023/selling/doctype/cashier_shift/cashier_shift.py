@@ -373,7 +373,7 @@ def post_folio_transaction(self,account_code, amount, folio_transaction_type=Non
 					"input_amount":amount, 
 					"account_code":account_code,
 				} 
-			).insert()
+			).insert(ignore_permissions=True)
 
 def get_revenues(self):
 	sql="""select 

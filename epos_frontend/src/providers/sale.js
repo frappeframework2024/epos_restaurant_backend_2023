@@ -1734,6 +1734,8 @@ export default class Sale {
                     room_number:data.room,
                     folio_number:data.folio,
                     account_code:data.paymentType.account_code,
+                    cancel_order_adjustment_account_code:data.paymentType.cancel_order_adjustment_account_code,
+
                     fee_percentage:data.paymentType.fee_percentage,
                     fee_amount:data.fee_amount,
                     folio_transaction_type:data.folio_transaction_type,

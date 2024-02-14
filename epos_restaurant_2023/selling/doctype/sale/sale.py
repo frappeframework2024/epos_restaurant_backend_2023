@@ -627,7 +627,7 @@ def create_folio_transaction_from_pos_trnasfer(self):
 					"nationality": "" if not self.customer else  frappe.db.get_value("Customer",self.customer,"country")
 				} 
 			doc = frappe.get_doc(data)
-			doc.insert()	
+			doc.insert(ignore_permissions=True)	
 
 def on_get_revenue_account_code(self):
 	for sp in self.sale_products:
