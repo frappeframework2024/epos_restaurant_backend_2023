@@ -122,6 +122,7 @@ async function onOpenShift() {
             ['pos_profile', '=', pos_profile],
             ['working_day', '=', working_day.data.name],
             ['shift_name', '=', shift_type.value],
+            ['show_in_pos', '=', 1],
             ['business_branch', '=', gv.setting.business_branch],
         ]
     }).then(async (res) => {

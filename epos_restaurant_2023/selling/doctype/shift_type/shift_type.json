@@ -12,7 +12,8 @@
   "start_time",
   "end_time",
   "last_sync_of_checkin",
-  "sort"
+  "sort",
+  "show_in_pos"
  ],
  "fields": [
   {
@@ -40,16 +41,22 @@
    "label": "Last Sync of Checkin"
   },
   {
-   "default": "0",
+   "default": "1",
    "fieldname": "sort",
    "fieldtype": "Int",
    "in_list_view": 1,
    "label": "Sort"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_in_pos",
+   "fieldtype": "Check",
+   "label": "show In POS"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-06-26 11:54:25.541600",
+ "modified": "2024-02-14 15:54:00.692085",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Shift Type",
