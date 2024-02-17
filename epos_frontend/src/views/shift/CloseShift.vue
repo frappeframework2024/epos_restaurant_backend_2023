@@ -21,6 +21,9 @@
                     <ComInput :label="$t('Close Date')" v-model="current_date" readonly></ComInput>
                 </v-col>
                 <v-col cols="12" md="6"> 
+                    <ComInput :label="$t('Shift Name')" v-model="cashierShiftResource.doc.shift_name" readonly/>
+                </v-col>
+                <v-col cols="12" md="6"> 
                     <ComInput :label="$t('POS Profile')" v-model="cashierShiftResource.doc.pos_profile" readonly/>
                 </v-col>
             </v-row>

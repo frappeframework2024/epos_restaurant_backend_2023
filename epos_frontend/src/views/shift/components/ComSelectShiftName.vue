@@ -3,7 +3,7 @@
         <template #title>{{ $t("Change Shift Name") }}</template>
         <template #content>
             <v-select :label="$t('Shift')" item-title="name" item-value="name" variant="solo" v-model="shift_type"
-                    density="compact" :items="gv.setting.shift_types"></v-select>
+                    density="compact" :items="gv.setting.shift_types.filter(shift_name => shift_name.show_in_pos == 1)"></v-select>
         </template>
     </ComModal>
 </template>

@@ -123,6 +123,13 @@ const currentTab = (index) => {
 
 onMounted(()=>{ 
   window.parent.postMessage("full_screen","*")
+  if(window.isMobile){
+        let elem = document.querySelectorAll(".p-dialog");
+        if (elem){
+            elem = elem[elem.length-1]
+            elem?.classList.add("p-dialog-maximized"); // adds the maximized class
+        }
+    }
 })
 
 function onKeyDialClick(n){
@@ -180,7 +187,11 @@ function onCheckInClick(){
                           width: '80vw'
                       },
                       modal: true,
-                      position:"top"
+                      position:"top",
+                      breakpoints:{
+                          '960px': '80vw',
+                          '640px': '100vw'
+                      },
                   
                 },
               onClose: (options) => {  

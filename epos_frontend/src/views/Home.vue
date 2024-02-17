@@ -36,6 +36,8 @@
                         <ComButton @click="onRoute('ReceiptList')" :title="$t('Receipt List')" v-if="device_setting?.is_order_station==0" icon="mdi-file-chart"  icon-color="#e99417" />
 
                         <ComButton @click="onRoute('Customer')" :title="$t('Customer')" v-if="device_setting?.is_order_station==0" icon-color="#e99417"  icon="mdi-account-multiple-outline" />
+
+                        <ComButton :title="$t('Park Item')" v-if="gv.device_setting.show_park_button" icon-color="#e99417"  icon="mdi-parking" />
                         <ComButton @click="onCashInCashOut" :title="$t('Cash Drawer')" v-if="device_setting?.is_order_station==0" icon-color="#e99417" icon="mdi-currency-usd" />
                         <ComButton v-if="isWindow() && device_setting?.is_order_station==0"  @click="onOpenCashDrawer" :title="$t('Open Cash Drawer')" icon="mdi-cash-multiple" icon-color="#e99417" />
                         

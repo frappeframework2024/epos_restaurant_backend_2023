@@ -12,7 +12,7 @@
             </v-col>
             <v-col cols="12" md="6">
                 <v-select :label="$t('Shift')" item-title="name" item-value="name" variant="solo" v-model="shift_type"
-                    density="compact" :items="gv.setting.shift_types"></v-select>
+                    density="compact" :items="gv.setting.shift_types.filter(shift_name => shift_name.show_in_pos == 1)"></v-select>
             </v-col>
         </v-row>
         <h1 class="my-4">{{ $t('Cash Float') }}</h1>
@@ -122,7 +122,7 @@ async function onOpenShift() {
             ['pos_profile', '=', pos_profile],
             ['working_day', '=', working_day.data.name],
             ['shift_name', '=', shift_type.value],
-            ['show_in_pos', '=', 1],
+            
             ['business_branch', '=', gv.setting.business_branch],
         ]
     }).then(async (res) => {

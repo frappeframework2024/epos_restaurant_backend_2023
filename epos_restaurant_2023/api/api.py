@@ -275,7 +275,7 @@ def get_system_settings(pos_profile="", device_name=''):
     shortcut_keys = frappe.db.get_list('Shortcut Key',fields=['name','key','description'])
 
     #get shift type
-    shift_types = frappe.db.sql("select name, sort from `tabShift Type`",as_dict=1)    
+    shift_types = frappe.db.sql("select name, sort,show_in_pos from `tabShift Type`",as_dict=1)    
     
 
     data={
