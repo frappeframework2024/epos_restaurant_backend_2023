@@ -18,6 +18,8 @@
   "cancel_print_bill",
   "discount_sale",
   "cancel_discount_sale",
+  "delete_voucher_top_up",
+  "add_voucher_top_up",
   "column_break_6",
   "free_item",
   "change_item_price",
@@ -203,11 +205,23 @@
    "fieldname": "park_item",
    "fieldtype": "Check",
    "label": "Park Item"
+  },
+  {
+   "default": "1",
+   "fieldname": "delete_voucher_top_up",
+   "fieldtype": "Check",
+   "label": "Delete Voucher Top Up"
+  },
+  {
+   "default": "1",
+   "fieldname": "add_voucher_top_up",
+   "fieldtype": "Check",
+   "label": "Add Voucher Top Up"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-02-02 15:25:41.303886",
+ "modified": "2024-02-19 17:27:40.138917",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "POS User Permission",

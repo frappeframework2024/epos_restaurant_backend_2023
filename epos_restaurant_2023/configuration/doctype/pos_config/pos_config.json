@@ -41,6 +41,7 @@
   "show_item_code_in_sale_screen",
   "show_park_item",
   "show_button_tip",
+  "allow_closed_working_day_when_has_pending_order",
   "tip_account_code",
   "number_of_day_cashier_can_view_report",
   "close_business_day_on",
@@ -101,6 +102,10 @@
   "close_working_day_required_password",
   "section_break_66",
   "start_cashier_shift_required_password",
+  "section_break_kktb",
+  "delete_voucher_top_up_required_password",
+  "column_break_twzh",
+  "add_voucher_top_up_required_password",
   "section_break_68",
   "close_cashier_shift_required_password",
   "section_break_rrup",
@@ -643,12 +648,39 @@
    "fieldname": "park_item_days_expiry",
    "fieldtype": "Int",
    "label": "Park Item Days Expiry"
+  },
+  {
+   "fieldname": "section_break_kktb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "delete_voucher_top_up_required_password",
+   "fieldtype": "Check",
+   "label": "Delete Voucher Top Up Required Password"
+  },
+  {
+   "fieldname": "column_break_twzh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "add_voucher_top_up_required_password",
+   "fieldtype": "Check",
+   "label": "Add Voucher Top Up Required Password"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_closed_working_day_when_has_pending_order",
+   "fieldtype": "Check",
+   "label": "Allow Closed Working Day When Has Pending Order",
+   "options": "0"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-02-05 10:17:55.335425",
+ "modified": "2024-02-20 10:03:38.579503",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

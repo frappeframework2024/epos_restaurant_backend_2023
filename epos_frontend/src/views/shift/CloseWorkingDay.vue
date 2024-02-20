@@ -8,20 +8,22 @@
         </template>
         <template #default>
             <div class="pa-4">
-                <ComAlertPendingOrder v-if="shiftInformation.data?.working_day" type="warning" :working_day="shiftInformation.data?.working_day?.name" @getPendingOrder="onGetPendingOrder($event)"/>
-              
+                <ComAlertPendingOrder v-if="shiftInformation.data?.working_day" type="warning"
+                    :working_day="shiftInformation.data?.working_day?.name" @getPendingOrder="onGetPendingOrder($event)" />
+
                 <v-row v-if="shiftInformation.data?.working_day">
                     <v-col cols="12" md="6">
-                        <ComInput :title="$t('POS Profile')" :label="$t('POS Profile')" v-model="shiftInformation.data.working_day.pos_profile"
-                            readonly></ComInput>
+                        <ComInput :title="$t('POS Profile')" :label="$t('POS Profile')"
+                            v-model="shiftInformation.data.working_day.pos_profile" readonly></ComInput>
 
                     </v-col>
                     <v-col md="6" cols="12">
-                        <ComInput :title="$t('Working Date')" :label="$t('Working Date')" v-model="working_date" readonly></ComInput>
+                        <ComInput :title="$t('Working Date')" :label="$t('Working Date')" v-model="working_date" readonly>
+                        </ComInput>
                     </v-col>
                     <v-col md="12">
-                        <ComInput class="mb-8" :title="$t('Enter Note')" keyboard :label="$t('Closed Note')" v-model="closed_note"
-                            type="textarea"></ComInput>
+                        <ComInput class="mb-8" :title="$t('Enter Note')" keyboard :label="$t('Closed Note')"
+                            v-model="closed_note" type="textarea"></ComInput>
 
                     </v-col>
                 </v-row>
@@ -38,11 +40,11 @@
 
 <script setup>
 import moment from '@/utils/moment.js';
-import { inject, printPreviewDialog, confirm, onMounted, createDocumentResource, ref, createResource, useRouter, createToaster, computed,i18n } from "@/plugin";
+import { inject, printPreviewDialog, confirm, onMounted, createDocumentResource, ref, createResource, useRouter, createToaster, computed, i18n } from "@/plugin";
 import PageLayout from '../../components/layout/PageLayout.vue';
 import ComAlertPendingOrder from '../../components/layout/components/ComAlertPendingOrder.vue';
 
-const { t: $t } = i18n.global; 
+const { t: $t } = i18n.global;
 const router = useRouter();
 const toaster = createToaster({ position: 'top' });
 const gv = inject('$gv')
@@ -94,7 +96,7 @@ onMounted(async () => {
                     }
                 }
                 await printPreviewDialog(
-                    { title: $t('Working Day Report')+" #" + doc.name, doctype: "Working Day", name: doc.name }
+                    { title: $t('Working Day Report') + " #" + doc.name, doctype: "Working Day", name: doc.name }
                 )
 
                 router.push({ name: "Home" });
@@ -108,8 +110,20 @@ onMounted(async () => {
     });
 })
 
-async function onCloseWorkingDay() { 
-    if(pendingOrder.value == 0){
+async function onCloseWorkingDay() {
+    if (gv.setting.pos_setting.allow_closed_working_day_when_has_pending_order == 0) {
+        if (pendingOrder.value == 0) {
+            if (await confirm({ title: $t("Close Working Day"), text: $t("msg.are you sure to close working day") })) {
+                workingDayResourceResource.value.setValue.submit({
+                    is_closed: 1,
+                    closed_note: closed_note.value,
+                    closed_date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+                })
+            }
+        } else {
+            toaster.warning($t(`msg.There are pending orders`, [pendingOrder.value]))
+        }
+    } else {
         if (await confirm({ title: $t("Close Working Day"), text: $t("msg.are you sure to close working day") })) {
             workingDayResourceResource.value.setValue.submit({
                 is_closed: 1,
@@ -117,15 +131,13 @@ async function onCloseWorkingDay() {
                 closed_date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
             })
         }
-    }else{
-        toaster.warning($t(`msg.There are pending orders`,[pendingOrder.value]))
     }
 }
 function onOpenReport() {
-    printPreviewDialog({ title: $t('Working Day Report')+" #" + shiftInformation.data.working_day.name, doctype: "Working Day", name: shiftInformation.data.working_day.name });
+    printPreviewDialog({ title: $t('Working Day Report') + " #" + shiftInformation.data.working_day.name, doctype: "Working Day", name: shiftInformation.data.working_day.name });
 }
 
-function onGetPendingOrder(r){
+function onGetPendingOrder(r) {
     pendingOrder.value = r
 }
 </script>

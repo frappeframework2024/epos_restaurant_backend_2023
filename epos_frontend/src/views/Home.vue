@@ -38,6 +38,7 @@
                         <ComButton @click="onRoute('Customer')" :title="$t('Customer')" v-if="device_setting?.is_order_station==0" icon-color="#e99417"  icon="mdi-account-multiple-outline" />
 
                         <ComButton :title="$t('Park Item')" v-if="gv.device_setting.show_park_button" icon-color="#e99417"  icon="mdi-parking" />
+                        <ComButton @click="onVoucherTopUp()" :title="$t('Top-Up Voucher')" v-if="gv.device_setting.show_top_up" icon-color="#e99417"  icon="mdi-wallet-plus" />
                         <ComButton @click="onCashInCashOut" :title="$t('Cash Drawer')" v-if="device_setting?.is_order_station==0" icon-color="#e99417" icon="mdi-currency-usd" />
                         <ComButton v-if="isWindow() && device_setting?.is_order_station==0"  @click="onOpenCashDrawer" :title="$t('Open Cash Drawer')" icon="mdi-cash-multiple" icon-color="#e99417" />
                         
@@ -164,6 +165,24 @@ function onReservation(){
                 posting_date: (_data.cashier_shift?.posting_date||today)
             }});
         }    
+    });
+}
+
+function onVoucherTopUp(){
+    call.get("epos_restaurant_2023.api.api.get_current_shift_information",{
+        business_branch: gv.setting?.business_branch,
+        pos_profile: localStorage.getItem("pos_profile")
+    }).then((_res)=>{
+        const _data = _res.message;
+        if(_data){
+            if (_data.working_day == null) {
+                toaster.warning($t("msg.Please start working day first"))
+            } else if (_data.cashier_shift == null) {
+                toaster.warning($t("msg.Please start shift first"))
+            } else {
+                    router.push({ name: 'VoucherTopUp' })
+            }
+        } 
     });
 }
 

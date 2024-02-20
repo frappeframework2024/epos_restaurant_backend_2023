@@ -184,6 +184,9 @@ def get_system_settings(pos_profile="", device_name=''):
         "show_item_code_in_sale_screen":pos_config.show_item_code_in_sale_screen,
         "show_button_tip":pos_config.show_button_tip,
         "tip_account_code":pos_config.tip_account_code,
+        "allow_closed_working_day_when_has_pending_order":pos_config.allow_closed_working_day_when_has_pending_order,
+        "delete_voucher_top_up_required_password":pos_config.delete_voucher_top_up_required_password,
+        "add_voucher_top_up_required_password":pos_config.add_voucher_top_up_required_password,
         "check_delete_item_require_passord_from_product":pos_config.check_delete_item_require_passord_from_product,
         }
     
