@@ -23,7 +23,10 @@ async function onAddVoucherTopUp() {
     
     gv.authorize("add_voucher_top_up_required_password","add_voucher_top_up").then(async (v)=>{
         if(v){
-            await AddVoucherTopUp ({title: $t("Add New"), value:  ''});                            
+            const result = await AddVoucherTopUp ({title: $t("Add New"), value:  ''});   
+            if (result == true){
+                onCallback()
+            }                      
         }
     })          
     
@@ -35,6 +38,7 @@ async function onCallback(data) {
         const result = await AddVoucherTopUp({
             name: data.data.name
         });
+        
     }
 }
 

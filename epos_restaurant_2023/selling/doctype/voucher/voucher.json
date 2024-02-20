@@ -1,12 +1,14 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "naming_series:",
  "creation": "2024-02-20 13:53:15.466175",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "voucher_information_tab",
   "section_break_oxqp",
+  "naming_series",
   "posting_date",
   "working_day",
   "cashier_shift",
@@ -47,6 +49,7 @@
   {
    "fieldname": "posting_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Posting Date"
   },
   {
@@ -92,6 +95,7 @@
    "fieldname": "customer",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Customer",
    "options": "Customer",
    "reqd": 1
@@ -104,6 +108,7 @@
    "fetch_from": "customer.customer_name_en",
    "fieldname": "customer_name",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Customer Name"
   },
   {
@@ -126,15 +131,23 @@
    "fieldtype": "Table",
    "label": "Payments",
    "options": "POS Voucher Payment"
+  },
+  {
+   "default": "VC-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "VC-.#####"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-02-20 14:00:57.676266",
+ "modified": "2024-02-20 14:45:38.672797",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Voucher",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {

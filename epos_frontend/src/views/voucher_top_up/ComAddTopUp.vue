@@ -90,7 +90,7 @@
                                         </v-chip>
                                     </td>
                                     <td class="text-left" style="width:65px">
-                                        <v-btn v-if="vh.docstatus!=1" icon="mdi-delete" size="small" color="error" variant="text" type="button" @click="deleteTopUp"/>
+                                        <v-btn :loading="vh.loading" v-if="vh.docstatus!=1" icon="mdi-delete" size="small" color="error" variant="text" type="button" @click="deleteTopUp"/>
                                     </td>
                                 </tr>
                             </tbody>
@@ -138,6 +138,7 @@ let customer = ref({})
 let actualAmount = ref({})
 let creditAmount = ref({})
 let balance = ref({})
+let loading = ref(false)
 
 onMounted(async () => {   
     call.get("epos_restaurant_2023.api.api.get_current_cashier_shift",{
@@ -154,8 +155,7 @@ onMounted(async () => {
         }
     });
 })
-
-watch(() => customer.value.customer, (newValue) => {
+function getCustomerVoucher(){
     db.getDocList(
         'Voucher',{
         fields: ['posting_date','actual_amount','credit_amount','balance','docstatus'],
@@ -176,8 +176,13 @@ watch(() => customer.value.customer, (newValue) => {
         balance.value = result.reduce((accumulator, currentValue) => {
             return accumulator + currentValue.balance;
         }, 0)
+        loading.value=false;
     });
+}
+watch(() => customer.value.customer, (newValue) => {
+    getCustomerVoucher()
 })
+
 
 function addTopUp(){
     if (customer.value.customer == undefined){
@@ -189,17 +194,21 @@ function addTopUp(){
         'working_day':workingDay.value.name,
         'posting_date':moment(workingDay.value.posting_date).format('YYYY-MM-DD'),
         'customer':customer.value.customer,
-        'creation':moment().format('YYYY-MM-DD HH:MM:SS')
+        'creation':moment().format('YYYY-MM-DD HH:MM:SS'),
+        'docstatus':0
     })
 }
 
 function onSave(){
+    loading.value=true;
     call.post("epos_restaurant_2023.selling.doctype.voucher.voucher.insert_voucher_multiple_row", {
         vouchers: voucherTopUps.value,
        
     }).then((result) => {
-      console.log(result)
+        getCustomerVoucher()
+        emit('resolve', true);
     }).catch((err) => {
+        loading.value=false;
     })
 }
 
