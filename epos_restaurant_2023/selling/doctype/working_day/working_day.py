@@ -28,7 +28,7 @@ class WorkingDay(Document):
 			#Validate Allow Closed Working Day when when has bill
 			pos_config = frappe.db.get_value('POS Profile', self.pos_profile, 'pos_config')
 			allow_closed_working_day_when_has_pending_order = frappe.db.get_value('POS Config', pos_config, 'allow_closed_working_day_when_has_pending_order')
-			if allow_closed_working_day_when_has_pending_order == 1:
+			if allow_closed_working_day_when_has_pending_order == 0:
 				pending_orders = frappe.db.sql("select name from `tabSale` where docstatus = 0 and working_day = '{}'".format(self.name), as_dict=1)
 				if pending_orders:
 					frappe.throw("Please close all pending order before closing working day.")
