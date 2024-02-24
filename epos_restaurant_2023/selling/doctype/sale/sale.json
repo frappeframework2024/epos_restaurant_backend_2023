@@ -11,6 +11,7 @@
  "field_order": [
   "photo",
   "naming_series",
+  "custom_bill_number_prefix",
   "custom_bill_number",
   "posting_date",
   "reference_number",
@@ -930,6 +931,13 @@
    "fieldname": "reference_bill_number",
    "fieldtype": "Data",
    "label": "Reference Bill Number"
+  },
+  {
+   "fieldname": "custom_bill_number_prefix",
+   "fieldtype": "Data",
+   "label": "Custom Bill Number Prefix",
+   "print_hide": 1,
+   "report_hide": 1
   }
  ],
  "image_field": "photo",
@@ -942,7 +950,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-02-02 14:45:19.551072",
+ "modified": "2024-02-23 17:33:20.095924",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",
