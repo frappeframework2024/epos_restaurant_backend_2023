@@ -75,6 +75,7 @@ def get_system_settings(pos_profile="", device_name=''):
     #main currency information
     main_currency = frappe.get_doc("Currency",frappe.db.get_default("currency"))
     second_currency = frappe.get_doc("Currency",frappe.db.get_default("second_currency"))
+    third_currency = frappe.get_doc("Currency",frappe.db.get_default("third_currency"))
 
     payment_types=[]
     for p in pos_config.payment_type:
@@ -134,6 +135,12 @@ def get_system_settings(pos_profile="", device_name=''):
         "second_currency_name":second_currency.name,
         "second_currency_symbol":second_currency.symbol,
         "second_currency_format":second_currency.custom_pos_currency_format,
+
+        "third_currency_precision":third_currency.custom_currency_precision,
+        "third_currency_name":third_currency.name,
+        "third_currency_symbol":third_currency.symbol,
+        "third_currency_format":third_currency.custom_pos_currency_format,
+
         "tax_1_name":doc.tax_1_name,
         "tax_2_name":doc.tax_2_name,
         "tax_3_name":doc.tax_3_name,
@@ -554,10 +561,22 @@ def get_close_shift_summary(cashier_shift):
     
     #get close amount by payment type
     sql = "select payment_type, currency,sum(input_amount + (fee_amount * exchange_rate)) as input_amount, sum(payment_amount + fee_amount) as payment_amount from `tabSale Payment` where cashier_shift='{}' and docstatus=1 group by payment_type, currency".format(cashier_shift)
-    
+    voucher_payment_sql = """SELECT 
+                                payment_type, 
+                                exchange_rate,
+                                currency,sum(input_amount) as input_amount, 
+                                sum(payment_amount) as payment_amount from `tabVoucher Payment` 
+                            WHERE 
+                                cashier_shift='{}' and 
+                                docstatus=1 
+                            group BY 
+                                payment_type,
+                                currency""".format(cashier_shift)
+
     
     payments = frappe.db.sql(sql, as_dict=1)
-
+    voucher_payments = frappe.db.sql(voucher_payment_sql, as_dict=1)
+    
     
     #get cash in out 
     sql = """select  
@@ -620,7 +639,19 @@ def get_close_shift_summary(cashier_shift):
                 "different_amount":0,
                 "currency":p.currency
             })
-            
+   
+    for voucher_payment in voucher_payments:
+        data.append({
+            "payment_method":voucher_payment.payment_type,
+            "exchange_rate":voucher_payment.exchange_rate,
+            "input_amount":0,
+            "opening_amount":0,
+            "input_close_amount":0,
+            "input_system_close_amount": voucher_payment.input_amount,
+            "system_close_amount": voucher_payment.payment_amount,
+            "different_amount":0,
+            "currency":voucher_payment.currency
+        })
     
         
     return get_cash_float(data)
@@ -981,6 +1012,7 @@ def get_reservation_folio(property):
                                  'rooms',
                                  'reservation',
                                  'guest_name',
+                                 'guest',
                                  'phone_number'
                                  ],
                             )
