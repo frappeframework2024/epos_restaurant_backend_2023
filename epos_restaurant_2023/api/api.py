@@ -387,17 +387,18 @@ def get_tables_number(table_group,device_name):
 @frappe.whitelist(allow_guest=True)
 def check_pos_profile(pos_profile_name, device_name, is_used_validate=True):
 
-    if not device_name == "Demo":
-        if not frappe.db.exists("POS Profile", pos_profile_name):
-            frappe.throw("Invalid POS Profile")
+ 
+    if not frappe.db.exists("POS Profile", pos_profile_name):
+        frappe.throw("Invalid POS Profile")
 
-        if not frappe.db.exists("POS Station", device_name):
-            frappe.throw("Invalid POS Station")   
+    if not frappe.db.exists("POS Station", device_name):
+        frappe.throw("Invalid POS Station")   
 
-        station =  frappe.get_doc("POS Station",device_name)
-        if station.disabled:
-            frappe.throw("This station was disabled.")
-            
+    station =  frappe.get_doc("POS Station",device_name)
+    if station.disabled:
+        frappe.throw("This station was disabled.")
+
+    if not device_name=="Demo":
         if is_used_validate:
             if station.is_used and not device_name=="Demo":
                 frappe.throw("This station is already used")
@@ -405,11 +406,8 @@ def check_pos_profile(pos_profile_name, device_name, is_used_validate=True):
         frappe.db.sql("update `tabPOS Station` set is_used = 1 where name = '{}'".format(device_name))
         
         frappe.db.commit()
-    else:
-        if not frappe.db.exists("POS Station", device_name):
-            frappe.throw("Invalid POS Station")   
-            
-        station =  frappe.get_doc("POS Station",device_name)
+    
+    
 
     return station
 

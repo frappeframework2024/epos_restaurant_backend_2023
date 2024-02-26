@@ -10,6 +10,7 @@
   "naming_series",
   "customer",
   "voucher",
+  "credit_amount",
   "column_break_oojx",
   "customer_name",
   "phone",
@@ -144,12 +145,18 @@
    "hidden": 1,
    "label": "Exchange Rate",
    "precision": "9"
+  },
+  {
+   "fetch_from": "voucher.credit_amount",
+   "fieldname": "credit_amount",
+   "fieldtype": "Currency",
+   "label": "Credit Amount"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-02-23 15:10:05.603711",
+ "modified": "2024-02-26 16:48:44.914898",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Voucher Payment",
