@@ -75,7 +75,6 @@ def get_system_settings(pos_profile="", device_name=''):
     #main currency information
     main_currency = frappe.get_doc("Currency",frappe.db.get_default("currency"))
     second_currency = frappe.get_doc("Currency",frappe.db.get_default("second_currency"))
-    third_currency = frappe.get_doc("Currency",frappe.db.get_default("third_currency"))
 
     payment_types=[]
     for p in pos_config.payment_type:
@@ -135,12 +134,6 @@ def get_system_settings(pos_profile="", device_name=''):
         "second_currency_name":second_currency.name,
         "second_currency_symbol":second_currency.symbol,
         "second_currency_format":second_currency.custom_pos_currency_format,
-
-        "third_currency_precision":third_currency.custom_currency_precision,
-        "third_currency_name":third_currency.name,
-        "third_currency_symbol":third_currency.symbol,
-        "third_currency_format":third_currency.custom_pos_currency_format,
-
         "tax_1_name":doc.tax_1_name,
         "tax_2_name":doc.tax_2_name,
         "tax_3_name":doc.tax_3_name,
