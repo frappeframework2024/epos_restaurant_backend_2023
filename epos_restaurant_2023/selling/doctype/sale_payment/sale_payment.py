@@ -53,6 +53,8 @@ class SalePayment(Document):
 
 	def on_submit(self):
 		update_sale(self)
+		if self.payment_type_group == "Voucher":
+			self.update_customer_voucher_balance()
 	
 	def on_cancel(self):
 		update_sale(self)
@@ -74,6 +76,29 @@ class SalePayment(Document):
 
 		update_sale(self)
 
+		# Update Customer Voucher Balance
+	def update_customer_voucher_balance(self):
+		if self.sale_amount != self.payment_amount and self.payment_type_group == "Voucher" :
+			frappe.throw("Payment amount must equal to grand total")
+		# get Customer Total Voucher Payment
+		voucher_payment_sql = """
+				select coalesce(sum(payment_amount),0) payment_amount from `tabSale Payment`
+				where customer = '{0}' and payment_type_group = '{1}' and docstatus = 1
+			""".format(self.customer,self.payment_type_group)
+		voucher_credit_sql = """ 
+							select 
+								coalesce(sum(credit_amount),0) credit_amount
+							from `tabVoucher`
+							where customer = '{}' and docstatus = 1
+							""".format(self.customer)
+		total_credit_amount =  frappe.db.sql(voucher_credit_sql,as_dict=1)
+		voucher_balance = frappe.db.get_value("Customer",self.customer,'voucher_balance')
+		if total_credit_amount[0].credit_amount <= 0 or voucher_balance < self.sale_amount:
+			frappe.throw("Customer has no credit amount for {}".format(self.payment_type))
+		total_voucher_payment = frappe.db.sql(voucher_payment_sql,as_dict=1)
+		frappe.db.set_value('Customer', self.customer, {
+			'voucher_balance': total_credit_amount[0].credit_amount - total_voucher_payment[0].payment_amount
+		})
 
 def update_sale(self):
 	currency_precision = frappe.db.get_single_value('System Settings', 'currency_precision')
@@ -112,7 +137,5 @@ def update_sale(self):
 				'balance': balance
 			})
 
-		# update customer balance 
-	
-	
-
+		# update customer balance
+		

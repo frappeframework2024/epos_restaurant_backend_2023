@@ -387,23 +387,29 @@ def get_tables_number(table_group,device_name):
 @frappe.whitelist(allow_guest=True)
 def check_pos_profile(pos_profile_name, device_name, is_used_validate=True):
 
-    if not frappe.db.exists("POS Profile", pos_profile_name):
-        frappe.throw("Invalid POS Profile")
+    if not device_name == "Demo":
+        if not frappe.db.exists("POS Profile", pos_profile_name):
+            frappe.throw("Invalid POS Profile")
 
-    if not frappe.db.exists("POS Station", device_name):
-        frappe.throw("Invalid POS Station")   
+        if not frappe.db.exists("POS Station", device_name):
+            frappe.throw("Invalid POS Station")   
 
-    station =  frappe.get_doc("POS Station",device_name)
-    if station.disabled:
-        frappe.throw("This station was disabled.")
+        station =  frappe.get_doc("POS Station",device_name)
+        if station.disabled:
+            frappe.throw("This station was disabled.")
+            
+        if is_used_validate:
+            if station.is_used and not device_name=="Demo":
+                frappe.throw("This station is already used")
+
+        frappe.db.sql("update `tabPOS Station` set is_used = 1 where name = '{}'".format(device_name))
         
-    if is_used_validate:
-        if station.is_used and not device_name=="Demo":
-            frappe.throw("This station is already used")
-
-    frappe.db.sql("update `tabPOS Station` set is_used = 1 where name = '{}'".format(device_name))
-    
-    frappe.db.commit()
+        frappe.db.commit()
+    else:
+        if not frappe.db.exists("POS Station", device_name):
+            frappe.throw("Invalid POS Station")   
+            
+        station =  frappe.get_doc("POS Station",device_name)
 
     return station
 
@@ -817,8 +823,10 @@ def edit_sale_order(name,auth):
     for p in [d for d in payments if d.folio_transaction_number and d.folio_transaction_type and  not d.cancel_order_adjustment_account_code]:
         frappe.throw("There is no cancel order adjustment account code for payment type {}. Please config it in POS Config Setting.".format(p.payment_type))
 
-
-
+    # Role back customer voucher balance
+    total_voucher_payment = sum(s.amount for s in sale_doc.payment) or 0
+    frappe.db.sql("Update `tabCustomer` set voucher_balance = voucher_balance + {0} where name = '{1}'".format(total_voucher_payment,sale_doc.customer))
+    
     sale_doc.payment=[]
     sale_doc.cancel()
 
