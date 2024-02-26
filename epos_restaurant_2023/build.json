@@ -1,0 +1,8 @@
+{
+    "js": [
+        "public/js/frappe.min.js",
+        "public/js/epos_restaurant_2023.js",
+        "public/templates/sale_summary_template.html"  
+      ]
+      
+}

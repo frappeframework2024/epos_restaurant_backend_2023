@@ -241,6 +241,10 @@ class Sale(Document):
 					if bill_number_prefix:
 						from frappe.model.naming import make_autoname
 						self.custom_bill_number = make_autoname(bill_number_prefix)
+				else:
+					if self.custom_bill_number_prefix:
+						from frappe.model.naming import make_autoname
+						self.custom_bill_number = make_autoname(self.custom_bill_number_prefix)
 		## end generate custom bill format
 
 		for d in self.sale_products:

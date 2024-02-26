@@ -239,7 +239,9 @@ function onConfirm(){
     else{
          emit("resolve", {
             "room":r.rooms,
-            "folio":r.name
+            "folio":r.name,
+            "guest":r.guest,
+            "guest_name":r.guest_name
         });
     }
     

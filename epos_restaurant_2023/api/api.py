@@ -372,8 +372,9 @@ def get_tables_number(table_group,device_name):
                          tbl_number""".format(table_group), as_dict=1)
 
     background_color = frappe.db.get_default("default_table_number_background_color")
-    for d in data:
-        d.background_color=background_color,
+    
+    for d in data: 
+        d.background_color=background_color
         d.default_bg_color=background_color
         position = frappe.db.sql("select x,y,h,w from `tabePOS Table Position` where device_name='{}' and tbl_number='{}' limit 1".format(device_name,d.tbl_no ), as_dict=1)
         if position:

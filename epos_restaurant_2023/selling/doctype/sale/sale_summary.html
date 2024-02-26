@@ -1,0 +1,131 @@
+<div class="container" style="background: #f5f3f5;
+    border-radius: 6px;padding:10px; ">
+  <div class="row">
+    <div class="col">
+      Total Quantity
+    </div>
+    <div class="col text-right">
+      <strong>{{total_quantity}}</strong>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      Sub Total
+    </div>
+    <div class="col text-right">
+      <strong>{{frappe.format(sub_total,{"fieldtype":"Currency"})}}</strong>
+    </div>
+  </div>
+  {% if product_discount %}
+  <div class="row">
+    <div class="col">
+      Product Discount
+    </div>
+    <div class="col text-right">
+      <strong>{{frappe.format(product_discount,{"fieldtype":"Currency"})}}</strong>
+    </div>
+  </div>
+  {%endif%}
+  {% if discount %}
+  <div class="row">
+    <div class="col">
+      Sale Discount {%if discount_type=="Percent"%} - {{discount}}%{%endif%}
+    </div>
+    <div class="col text-right">
+      <strong>{{frappe.format(sale_discount,{"fieldtype":"Currency"})}}</strong>
+    </div>
+  </div>
+  {%endif%}
+     
+  {% if sale_discount>0 && product_discount>0 %}
+  <div class="row">
+    <div class="col">
+      Total Discount
+    </div>
+    <div class="col text-right">
+      <strong>{{frappe.format(total_discount ,{"fieldtype":"Currency"})}}</strong>
+    </div>
+  </div>
+  {%endif%}
+
+  <!-- bank fee -->
+  {%if total_fee %}
+  <div class="row">
+    <div class="col">
+      {{__("Toal Bank Fee")}}
+    </div>
+    <div class="col text-right">
+      <strong>{{frappe.format(total_fee ,{"fieldtype":"Currency"})}}</strong>
+    </div>
+  </div>
+  {%endif%}
+  <!-- Tip -->
+  {%if tip_amount %}
+  <div class="row">
+    <div class="col">
+      {{__("Tip")}}
+    </div>
+    <div class="col text-right">
+      <strong>{{frappe.format(tip_amount ,{"fieldtype":"Currency"})}}</strong>
+    </div>
+  </div>
+  {%endif%}
+
+  <hr>
+  <div class="row">
+    <div class="col">
+      <strong>{{__("Grand Total")}}</strong>
+    </div>
+    <div class="col text-right">
+      <strong>{{frappe.format(grand_total ,{"fieldtype":"Currency"})}}</strong>
+    </div>
+  </div>
+  {%if total_paid %}
+  <div class="row">
+    <div class="col">
+      {{__("Paid Amount")}}
+    </div>
+    <div class="col text-right">
+      <strong data-bs-toggle="tooltip" data-bs-placement="top" title="Paid Amount by ">{{frappe.format(total_paid ,{"fieldtype":"Currency"})}}</strong>
+    </div>
+  </div>
+  {%endif%}
+  <!-- balance -->
+  {%if balance %}
+  <div class="row">
+    <div class="col">
+      {{__("Balance")}}
+    </div>
+    <div class="col text-right">
+      <strong>{{frappe.format(balance ,{"fieldtype":"Currency"})}}</strong>
+    </div>
+  </div>
+  {%endif%}
+  <!-- Change Amount -->
+  {%if changed_amount %}
+  <div class="row">
+    <div class="col">
+      {{__("Change Amount")}}
+    </div>
+    <div class="col text-right">
+      <strong>{{frappe.format(changed_amount ,{"fieldtype":"Currency"})}}</strong>
+    </div>
+  </div>
+  {%endif%}
+
+
+  <!-- Commission amount -->
+  {%if commission_amount %}
+  <hr>
+  <div class="row">
+    <div class="col">
+      {{__("Commission Amount")}}
+    </div>
+    <div class="col text-right">
+      <strong>{{frappe.format(commission_amount ,{"fieldtype":"Currency"})}}</strong>
+    </div>
+  </div>
+  {%endif%}
+  
+</div>
+

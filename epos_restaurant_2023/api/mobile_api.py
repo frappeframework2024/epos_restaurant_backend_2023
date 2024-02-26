@@ -5,6 +5,6 @@ import frappe
 def on_check_url():  
     return True
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=True) 
 def on_get_pos_configure(pos_profile="", device_name=''):  
-    return get_system_settings(pos_profile,device_name)
+    return get_system_settings(pos_profile,device_name) 

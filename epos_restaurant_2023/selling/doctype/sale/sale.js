@@ -3,6 +3,17 @@
 
 frappe.ui.form.on("Sale", {
 	onload(frm){
+		for (const key in frm.fields_dict) {
+			if( ["Currency","Data","Int","Link","Date","Datetime","Float"].includes(frm.fields_dict[key].df.fieldtype)){
+				frm.fields_dict[key].$wrapper.addClass('custom_control');
+			}
+
+		}
+		// frm.fields_dict.forEach(f => {
+			 
+		// 	f.$wrapper.addClass('custom_control');
+		// });
+
 		frm.set_query("tip_account_code", function() {
             return {
                 filters: [
@@ -12,6 +23,7 @@ frappe.ui.form.on("Sale", {
         });
 	},
 	refresh(frm){
+		
 		if(!frm.doc.__islocal && frm.doc.docstatus == 1){
 			frm.dashboard.add_indicator(__("Total Quantity: {0}",[frm.doc.total_quantity]) ,"blue");
 			frm.dashboard.add_indicator(__("Grand Total: {0}",[format_currency(frm.doc.grand_total)]) ,"blue");
@@ -32,6 +44,37 @@ frappe.ui.form.on("Sale", {
             document.getElementById('inventory_transaction').appendChild(iframe);
 
 		}
+
+
+		updateSummary(frm);
+
+		frm.add_custom_button(__('Apply Discount'), function () {
+			 
+			frappe.prompt([
+				{'fieldname': 'discount_type', 'fieldtype': 'Select', 'label': 'Discount Type', 'default': "Percent", "options":"Percent\nAmount"},
+				{'fieldname': 'discount_percent', 'fieldtype': 'Percent', 'label': 'Discount Percent',"depends_on": "eval:doc.discount_type=='Percent'",},
+				{'fieldname': 'discount_amount', 'fieldtype': 'Currency', 'label': 'Discount Amount',"depends_on": "eval:doc.discount_type=='Amount'"},
+				{'fieldname': 'discount_note', 'fieldtype': 'SmallText', 'label': 'Reason'}
+			],
+			function(d){
+				frm.doc.discount_type=d.discount_type;
+				if(d.discount_type=="Percent"){
+					frm.doc.discount=d.discount_percent;
+				}else {
+					frm.doc.discount=d.discount_amount;
+				}
+				frm.refresh_field("discount_type");
+				frm.refresh_field("discount");
+				updateSumTotal(frm);
+			},
+			'Discount',
+			"Apply Discount"
+			)
+		}, __("Actions"));
+
+	
+		
+
 	},
 	setup(frm) {
 		set_query(frm,"working_day",[["Working Day","is_closed", "=", 0]]);
@@ -248,6 +291,15 @@ frappe.ui.form.on('POS Sale Payment',{
 	}
 })
 
+
+function updateSummary(frm){
+	 
+	const html =frappe.render_template("sale_summary",frm.doc)
+		$(frm.fields_dict['html_summary'].wrapper).html(html);
+	frm.refresh_field('html_summary'); 
+	 
+}
+
 function update_payment_amount(frm){
 	$.each(frm.doc.payment,   function(i, d)  {
 		d.amount = d.input_amount / d.exchange_rate;
@@ -414,7 +466,7 @@ function updateSumTotal(frm) {
 		frm.refresh_field('grand_total');  
 		frm.refresh_field('html_summary');  
 	
-		
+		updateSummary(frm)
 	
 	
 }

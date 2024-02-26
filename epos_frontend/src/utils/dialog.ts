@@ -49,6 +49,8 @@ import ComSplitBill from "@/views/sale/components/ComSplitBill.vue"
 import ComChangeTaxSettingModal from "@/views/sale/components/ComChangeTaxSettingModal.vue"
 import ComSelectEmployeeModal from "@/views/sale/employee/ComSelectEmployeeModal.vue"
 import ComAddVoucherTopUp from "@/views/voucher_top_up/ComAddTopUp.vue"
+import ComVoucherTopUpDetail from "@/views/voucher_top_up/ComVoucherTopUpDetail.vue"
+import ComVoucherTopUpAddPayment from "@/views/voucher_top_up/ComVoucherTopUpAddPayment.vue"
 
 interface params {
     doctype?:String,
@@ -116,4 +118,6 @@ export  const selectEmployeeDialog = createPromiseDialog<params, object>(ComSele
 export  const SelectDateTime = createPromiseDialog<params, object>(ComSelectDateTime);
 export  const stopTimerModal = createPromiseDialog<params, object>(ComSetStopTimerModal);
 export  const ChangeShiftNameModal = createPromiseDialog<params, object>(ComChangeShiftName);
-export  const AddVoucherTopUp = createPromiseDialog<params, object>(ComAddVoucherTopUp);
+export  const AddVoucherTopUpDialog = createPromiseDialog<params, object>(ComAddVoucherTopUp);
+export  const VoucherTopUpDetailDialog = createPromiseDialog<params, object>(ComVoucherTopUpDetail);
+export  const VoucherTopUpAddPaymentDialog = createPromiseDialog<params, object>(ComVoucherTopUpAddPayment);

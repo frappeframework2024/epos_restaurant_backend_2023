@@ -42,30 +42,35 @@
   "section_break_7",
   "sale_products",
   "section_break_8",
-  "total_quantity",
-  "discount_type",
-  "discount",
-  "sale_discountable_amount",
-  "column_break_26",
-  "sub_total",
-  "product_discount",
-  "sale_discount",
-  "column_break_35",
-  "total_discount",
-  "discount_note",
-  "total_tax",
-  "tip_amount",
-  "tip_account_code",
+  "column_break_glqa",
+  "note",
   "column_break_10",
   "html_summary",
-  "grand_total",
-  "total_fee",
-  "deposit",
-  "total_paid",
-  "total_paid_with_fee",
-  "balance",
-  "changed_amount",
+  "hide_section_section",
+  "tip_account_code",
+  "total_discount",
+  "sale_discountable_amount",
+  "discount_note",
+  "column_break_lwws",
   "second_changed_amount",
+  "discount_type",
+  "sale_discount",
+  "discount",
+  "column_break_wpkq",
+  "changed_amount",
+  "total_quantity",
+  "total_tax",
+  "column_break_fwiq",
+  "balance",
+  "sub_total",
+  "tip_amount",
+  "product_discount",
+  "column_break_gfdz",
+  "total_paid_with_fee",
+  "total_paid",
+  "grand_total",
+  "deposit",
+  "total_fee",
   "parking_items_section",
   "reference_name",
   "column_break_scjm",
@@ -129,7 +134,6 @@
   "sale_status_color",
   "sale_status_priority",
   "column_break_36",
-  "note",
   "is_foc",
   "seat_number",
   "waiting_number_prefix",
@@ -302,6 +306,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "bold": 1,
    "fetch_from": "pos_profile.business_branch",
    "fetch_if_empty": 1,
    "fieldname": "business_branch",
@@ -367,10 +372,6 @@
    "in_standard_filter": 1,
    "label": "Discount Type",
    "options": "Percent\nAmount"
-  },
-  {
-   "fieldname": "column_break_26",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "product_discount",
@@ -576,10 +577,6 @@
    "fieldtype": "Currency",
    "label": "Tax 3 Amount",
    "read_only": 1
-  },
-  {
-   "fieldname": "column_break_35",
-   "fieldtype": "Column Break"
   },
   {
    "default": "0",
@@ -909,9 +906,7 @@
   },
   {
    "fieldname": "html_summary",
-   "fieldtype": "HTML",
-   "hidden": 1,
-   "options": "Total Quantity: {{doc.total_quantity}}\n<br>\nGrand total: {{doc.grand_total}}\n"
+   "fieldtype": "HTML"
   },
   {
    "fieldname": "parking_items_section",
@@ -938,6 +933,32 @@
    "label": "Custom Bill Number Prefix",
    "print_hide": 1,
    "report_hide": 1
+  },
+  {
+   "fieldname": "column_break_glqa",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "hide_section_section",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Hide Section"
+  },
+  {
+   "fieldname": "column_break_lwws",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_wpkq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_fwiq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_gfdz",
+   "fieldtype": "Column Break"
   }
  ],
  "image_field": "photo",
@@ -950,7 +971,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-02-23 17:33:20.095924",
+ "modified": "2024-02-25 20:48:26.267738",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

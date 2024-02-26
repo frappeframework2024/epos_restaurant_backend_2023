@@ -1488,6 +1488,7 @@ export default class Sale {
     }
 
     onProcessTaskAfterSubmit(doc) {
+
         if (this.action == "submit_order") {
             this.onPrintToKitchen(doc);
             //print waiting doc
