@@ -11,18 +11,15 @@
 <script setup>
 import { ref, AddVoucherTopUpDialog,VoucherTopUpDetailDialog,i18n,inject } from '@/plugin'
 import PageLayout from '@/components/layout/PageLayout.vue';
-import ComVoucherCard from './ComVoucherCard.vue'
 import ComTable from '@/components/table/ComTable.vue';
 import {useDisplay} from 'vuetify';
 
 const { t: $t } = i18n.global; 
 const gv = inject("$gv")
-const {mobile} = useDisplay()
 async function onAddVoucherTopUp() {
     
     gv.authorize("add_voucher_top_up_required_password","add_voucher_top_up").then(async (v)=>{
         if(v){
-            console.log(v)
             const result = await AddVoucherTopUpDialog ({title: $t("Add New"), value:  '',authUser:v});   
             if (result == true){
                 onCallback()

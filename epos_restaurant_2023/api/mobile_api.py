@@ -8,3 +8,7 @@ def on_check_url():
 @frappe.whitelist(allow_guest=True) 
 def on_get_pos_configure(pos_profile="", device_name=''):  
     return get_system_settings(pos_profile,device_name) 
+
+@frappe.whitelist(allow_guest=True) 
+def on_pos_users():  
+    return ""

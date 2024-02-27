@@ -27,9 +27,8 @@
                     <v-col cols="12" xs="12" md="4">
                         <div class="elevation-2 p-2 bg-success text-center">
                             <div>{{ $t('Balance') }}</div>
-                            <div>
-                                <CurrencyFormat :value="balance" />
-                            </div>
+                            <CurrencyFormat :value="balance" />
+                            
                         </div>
                     </v-col>
                 </v-row>
@@ -64,9 +63,7 @@
                                     <th class="text-right">
                                         {{ $t('Credit Amount') }}
                                     </th>
-                                    <th class="text-right">
-                                        {{ $t('Balance') }}
-                                    </th>
+                                   
                                     <th class="text-center">
                                         {{ $t('Status') }}
                                     </th>
@@ -91,9 +88,7 @@
                                         <ComInput :readonly="vh.docstatus == 1" v-model="vh.credit_amount" type="Number"
                                             :label="$t('Credit Amount')" />
                                     </td>
-                                    <td class="text-right">
-                                        <CurrencyFormat :value="vh.balance" />
-                                    </td>
+                                    
                                     <td class="text-center">
                                         <v-chip v-if="vh.docstatus == 1" color="success" density="comfortable" size="small">
                                             {{ $t("Submitted") }}
@@ -184,16 +179,10 @@ function getCustomerVoucher() {
             customer: customer.value.customer
         }).then((_res) => {
             if (_res.message) {
-                voucherTopUps.value = _res.message
-                actualAmount.value = _res.message.reduce((accumulator, currentValue) => {
-                    return accumulator + currentValue.actual_amount;
-                }, 0)
-                creditAmount.value = _res.message.reduce((accumulator, currentValue) => {
-                    return accumulator + currentValue.credit_amount;
-                }, 0)
-                balance.value = _res.message.reduce((accumulator, currentValue) => {
-                    return accumulator + currentValue.balance;
-                }, 0)
+                voucherTopUps.value = _res.message[0].voucher_list
+                actualAmount.value = _res.message[0].customer_voucher_summary.voucher_actual_amount
+                creditAmount.value = _res.message[0].customer_voucher_summary.voucher_credit_amount
+                balance.value = _res.message[0].customer_voucher_summary.voucher_balance
                 loading.value = false;
             }
         });

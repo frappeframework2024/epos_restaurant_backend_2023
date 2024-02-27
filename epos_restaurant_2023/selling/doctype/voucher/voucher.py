@@ -23,6 +23,7 @@ class Voucher(Document):
 
 @frappe.whitelist()
 def get_voucher_per_customer(customer):
+	customer_voucher_summary = frappe.db.get_value("Customer",customer,['voucher_actual_amount','voucher_credit_amount','voucher_balance'],as_dict=1)
 	vouchers = frappe.db.get_list("Voucher",
 			filters={
         'customer': customer,
@@ -33,8 +34,10 @@ def get_voucher_per_customer(customer):
 		for v in vouchers:
 			voucher = frappe.get_doc('Voucher',v.name)
 			voucher_list.append(voucher)
-		return voucher_list
+		return {"voucher_list":voucher_list,"customer_voucher_summary":customer_voucher_summary},
 	[]
+
+
 @frappe.whitelist()
 def insert_voucher_multiple_row(vouchers,posauthuser):
 	for v in vouchers:

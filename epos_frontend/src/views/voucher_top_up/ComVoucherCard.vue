@@ -11,7 +11,7 @@
             <div class="relative">
                 <div v-if="dataResource.loading" class="absolute left-0 right-0 top-0 bottom-0 z-10" style="background-color: #26262661;">
                     <div class="h-full w-full flex justify-center items-center">
-                        <div class="text-center">
+                    <div class="text-center">
                             <v-progress-circular indeterminate></v-progress-circular>
                             <div class="mt-1">{{ $t('Loading') }}...</div>
                         </div>
