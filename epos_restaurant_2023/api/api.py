@@ -280,7 +280,10 @@ def get_system_settings(pos_profile="", device_name=''):
     #get shift type
     shift_types = frappe.db.sql("select name, sort,show_in_pos from `tabShift Type`",as_dict=1)    
     
-
+    #check if epos system have exely integration then get setting
+    exely= frappe.get_doc("Exely Itegration Setting")
+    
+    
     data={
         "app_name":doc.epos_app_name,
         "specific_business_branch":doc.specific_business_branch,
@@ -337,7 +340,10 @@ def get_system_settings(pos_profile="", device_name=''):
         "reports":reports,
         "letter_heads":letter_heads,
         "device_setting":pos_station,
-        "shortcut_key":shortcut_keys
+        "shortcut_key":shortcut_keys,
+        "exely":{
+            "enabled":exely.enabled, "default_general_customer_id":exely.default_general_customer_id, "guest_api_endpoint":exely.guest_api_endpoint,"api_key":exely.api_key
+        }
     }
 
     return  data
@@ -365,10 +371,13 @@ def get_tables_number(table_group,device_name):
                          tbl_number""".format(table_group), as_dict=1)
 
     background_color = frappe.db.get_default("default_table_number_background_color")
+    text_color = frappe.db.get_default("default_table_number_text_color")
     
     for d in data: 
         d.background_color=background_color
         d.default_bg_color=background_color
+        d.text_color = text_color
+        d.default_text_color = text_color
         position = frappe.db.sql("select x,y,h,w from `tabePOS Table Position` where device_name='{}' and tbl_number='{}' limit 1".format(device_name,d.tbl_no ), as_dict=1)
         if position:
             for p in position:
@@ -826,6 +835,7 @@ def edit_sale_order(name,auth):
     frappe.db.sql("Update `tabCustomer` set voucher_balance = voucher_balance + {0} where name = '{1}'".format(total_voucher_payment,sale_doc.customer))
     
     sale_doc.payment=[]
+    # frappe.throw(str(sale_doc.docstatus))
     sale_doc.cancel()
 
 
@@ -879,6 +889,11 @@ def edit_sale_order(name,auth):
         "content":"User {0} edit sale order. Reason: {1}".format(auth['full_name'], auth["note"])
     })
     doc.insert()
+    
+    # check if sale have excely integration then submit cancell order
+    if sale_doc.exely_transaction_id:
+        frappe.enqueue("epos_restaurant_2023.api.exely.cancel_order", queue='short', transaction_id = sale_doc.exely_transaction_id, comment = auth["note"])
+  
 
 @frappe.whitelist()
 def delete_sale(name,auth): 
@@ -940,6 +955,13 @@ def delete_sale(name,auth):
         "content":"User {0} delete sale order. Reason: {1}".format(auth['full_name'], auth["note"])
     })
     doc.insert()
+    
+    
+    
+    # check if sale have excely integration then submit cancell order
+    if sale_doc.exely_transaction_id:
+        frappe.enqueue("epos_restaurant_2023.api.exely.cancel_order", queue='short', transaction_id = sale_doc.exely_transaction_id, comment = auth["note"])
+        
     
 @frappe.whitelist()
 def get_filter_for_close_sale_list(business_branch,pos_profile):

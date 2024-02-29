@@ -77,14 +77,12 @@
 
 <script setup>
 import { ref, inject, onMounted, i18n } from '@/plugin'
-import { createToaster } from "@meforma/vue-toaster";
 import ComModal from '../../components/ComModal.vue';
 const moment = inject('$moment')
 
 const { t: $t } = i18n.global;
 const frappe = inject('$frappe')
 const db = frappe.db();
-const call = frappe.call();
 
 const props = defineProps({
     params: {
@@ -93,15 +91,17 @@ const props = defineProps({
     },
 })
 
+
 const emit = defineEmits(["resolve"])
 
 const voucherTopUp = ref({})
 let loading = ref(false)
 
 onMounted(async () => {
+    
     db.getDoc('Voucher', props.params.name).then((result) => {
         voucherTopUp.value = result
-    loading.value = false;
+        loading.value = false;
 });
    
     

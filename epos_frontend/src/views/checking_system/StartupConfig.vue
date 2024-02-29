@@ -30,17 +30,7 @@
                             v-model="state.uid"
                             keyboard >
                         </ComInput> 
-                        <!-- <ComInput
-                            class="mb-2"
-                            density="compact"
-                            variant="solo"
-                            label="Device Name"
-                            prepend-inner-icon="mdi-cellphone-link"
-                            single-line
-                            hide-details
-                            v-model="state.device_name"
-                            keyboard >
-                        </ComInput>  -->
+                
                     </div>
                     <v-card-title v-else>
                         <div class="text-center p-4">

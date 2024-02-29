@@ -54,10 +54,9 @@ def insert_voucher_multiple_row(vouchers,posauthuser):
 			doc.payments=[]
 			if "payments" in v:
 				main_currency = frappe.db.get_single_value("ePOS Settings", "currency")
-				second_currency = frappe.db.get_value("Payment Type",payment['payment_type'],"Currency")
-				exchange_rate = get_exchange_rate(main_currency,second_currency)
-				frappe.throw(str(exchange_rate))
 				for payment in v['payments']:
+					second_currency = frappe.db.get_value("Payment Type",payment['payment_type'],"Currency")
+					exchange_rate = get_exchange_rate(main_currency,second_currency)
 					doc.append("payments", {
 						"payment_type": payment['payment_type'],
 						"reference_no": payment['reference_no'] if 'reference_no' in payment else '',
@@ -67,8 +66,14 @@ def insert_voucher_multiple_row(vouchers,posauthuser):
 					})
 				doc.total_paid = sum(p.payment_amount for p in doc.payments)
 			doc.save()
-			if len(doc.payments) > 0 and float(doc.total_paid) == float(doc.actual_amount):
+			frappe.throw(str(float(doc.total_paid or 0) > float(doc.actual_amount or 0)))
+			if len(doc.payments)>0 and float(doc.total_paid or 0) > float(doc.actual_amount or 0):
+				frappe.throw("Payment amount must equal to actual amount");
+			
+			if float(doc.total_paid or 0) == float(doc.actual_amount or 0):
 				doc.submit()
+
+			
 		else:
 			doc = frappe.get_doc({
 					"doctype": "Voucher",
@@ -100,7 +105,7 @@ def insert_voucher_multiple_row(vouchers,posauthuser):
 				doc.total_paid = sum(p.payment_amount for p in doc.payments) or 0
 			
 			doc.save()
-			if len(doc.payments) > 0 and float(doc.total_paid) == float(doc.actual_amount):
+			if float(doc.total_paid or 0) == float(doc.actual_amount or 0):
 				doc.submit()
 		
 	frappe.db.commit()

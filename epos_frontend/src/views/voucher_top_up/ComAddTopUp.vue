@@ -73,7 +73,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-if="voucherTopUps.length > 0" v-for="vh in voucherTopUps" :key="vh.name">
+                                <tr v-if="voucherTopUps.length > 0" v-for="(vh,index) in voucherTopUps" :key="vh.name">
                                     <td class="text-left">
                                         {{ vh.name }}
                                     </td>
@@ -101,7 +101,7 @@
                                         <v-btn :loading="vh.loading" icon="mdi-credit-card-outline" size="small"
                                             color="success" variant="text" type="button" @click="paymentTopUp(vh)" />
                                         <v-btn :loading="vh.loading" v-if="vh.docstatus != 1" icon="mdi-delete" size="small"
-                                            color="error" variant="text" type="button" @click="deleteTopUp(vh)" />
+                                            color="error" variant="text" type="button" @click="deleteTopUp(vh,index)" />
                                     </td>
                                 </tr>
                                 <tr v-else>
@@ -228,24 +228,35 @@ function onSave() {
         emit('resolve', true);
         toaster.success($t('Top up successfully'))
     }).catch((err) => {
-        toaster.warning($t('Top up failed'))
-        toaster.warning(err)
+        let jsonstring = JSON.parse(err['_server_messages']);
+        toaster.warning(JSON.parse(jsonstring[0]).message)
         loading.value = false;
     })
 }
 
 async function paymentTopUp(vh) {
     const result = await VoucherTopUpAddPaymentDialog({ title: $t(vh.name || "New Payment"), topup: vh });
-    vh.payments = result
+    if (result != false){
+        vh.payments = result
+    }
 }
 
-function deleteTopUp(vh) {
-    gv.authorize("delete_voucher_top_up_required_password","add_voucher_top_up").then(async (v)=>{
+function deleteTopUp(vh,idx) {
+    if (vh.name != undefined){
+        gv.authorize("delete_voucher_top_up_required_password","add_voucher_top_up").then(async (v)=>{
         if(v){
             db.deleteDoc('Voucher', vh.name)
-                .then((response) => console.log(response.message))
+                .then((response) => {
+                    console.log(response.message)
+                    getCustomerVoucher();
+                })
+            
         }
     })
+    }else{
+        voucherTopUps.value.splice(idx, 1);
+    }
+    
 }
 
 function onClose() {

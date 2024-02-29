@@ -20,13 +20,13 @@
         </template>
         <div class="text-h5 text-center mt-2">{{ customer.doc?.name }} - {{ customer.doc?.customer_name_en }}</div>
         <v-row no-gutters>
-          <v-col cols="6" sm="4">
+          <v-col cols="6" sm="3">
             <v-card class="pa-2 ma-2" elevation="2" color="primary">
               <div class="text-h6 text-center">{{ orderSummary.data?.total_visit||0 }}</div>
               <div class="text-body-1 text-center mt-2  text-sm">{{ $t('Total Visit') }}</div>
             </v-card>
           </v-col>
-          <v-col cols="6" sm="4">
+          <v-col cols="6" sm="3">
             <v-card class="pa-2 ma-2" elevation="2" color="warning">
               <div class="text-h6 text-center">
                 <CurrencyFormat :value="orderSummary.data?.total_annual_order" />
@@ -34,7 +34,7 @@
               <div class="text-body-1 text-center mt-2 text-sm">{{ $t('Total Annual Order') }}</div>
             </v-card>
           </v-col>
-          <v-col cols="12" sm="4">
+          <v-col cols="12" sm="3">
             <v-card class="pa-2 ma-2" elevation="2" color="success">
               <div class="text-h6 text-center">
                 <CurrencyFormat :value="orderSummary.data?.total_order" />
@@ -42,10 +42,20 @@
               <div class="text-body-1 text-center mt-2 text-sm">{{ $t('Total Order') }}</div>
             </v-card>
           </v-col>
+          <v-col cols="12" sm="3">
+            <v-card class="pa-2 ma-2" elevation="2" color="teal-darken-3">
+              <div class="text-h6 text-center">
+                <CurrencyFormat :value="orderSummary.data?.voucher_balance" />
+              </div>
+              <div class="text-body-1 text-center mt-2 text-sm">{{ $t('Voucher Balance') }}</div>
+            </v-card>
+          </v-col>
+          
         </v-row>
         <v-tabs v-model="tab" color="deep-purple-accent-4" align-tabs="start" class="ma-2">
           <v-tab value="about">{{ $t('About') }}</v-tab>
           <v-tab value="recentOrder">{{ $t('Recent Order') }}</v-tab>
+          <v-tab value="topup">{{ $t('Top Up History') }}</v-tab>
 
         </v-tabs>
         <v-window v-model="tab">
@@ -134,19 +144,56 @@
               </tbody>
             </v-table>
           </v-window-item>
+          <v-window-item value="topup">
+            <v-table fixed-header class="ma-2">
+              <thead>
+                <tr>
+                  <th class="text-left">
+                    {{ $t('No') }}
+                  </th>
+                  <th class="text-left">
+                    {{ $t('Actual Amount') }}
+                  </th>
+                  <th class="text-left">
+                    {{ $t('Credit') }}
+                  </th>
+                  <th class="text-left">
+                    {{ $t('Payment') }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody v-for=" d in topUpHistory" :key="name">
+                <tr :class="d.payments.length > 0?'v-align-top':'v-align-middle'" >
+                  <td>{{ d.name }}</td>
+                  <td class="pl-4"><CurrencyFormat :value="d.actual_amount" /></td>
+                  <td class="pl-4">
+                    <CurrencyFormat :value="d.credit_amount" />
+                  </td>
+                  <td>
+                    <div v-for="p in d.payments" :key="p.name">
+                      <CurrencyFormat :value="p.payment_amount" /> {{ p.payment_type }} 
+                    </div>
+                  </td>
+                 
+                </tr>
+              </tbody>
+            </v-table>
+          </v-window-item>
         </v-window>
       </div>
     </template>
   </ComModal>
 </template>
 <script setup>
-import { ref, defineProps, defineEmits, createDocumentResource, createResource, addCustomerDialog, useRouter, saleDetailDialog, computed,onMounted } from '@/plugin'
+import { ref, defineProps, inject,defineEmits, createDocumentResource, createResource, addCustomerDialog, useRouter, saleDetailDialog, computed,onMounted } from '@/plugin'
 import { Timeago } from 'vue2-timeago';
 import { useDisplay } from 'vuetify'
 import ComModal from '../../components/ComModal.vue';
 
 const background = JSON.parse(localStorage.getItem('setting')).login_background
 const { mobile } = useDisplay()
+const frappe = inject('$frappe')
+const call= frappe.call();
 const props = defineProps({
   params: {
     type: Object,
@@ -163,6 +210,7 @@ const customerPhoneNumber = computed(()=>{
   return customer.doc?.phone_number || '' + customer.doc?.phone_number_2 || ''
 })
 const tab = ref(null);
+let topUpHistory = ref([]);
 
 function onClose() {
   emit("resolve", false);
@@ -194,6 +242,8 @@ let orderSummary =  {
   }
 };
 
+
+
 onMounted(()=>{
       orderSummary = createResource( {
         url: 'epos_restaurant_2023.selling.doctype.customer.customer.get_customer_order_summary',
@@ -203,6 +253,13 @@ onMounted(()=>{
         auto: true
       }
     )
+    call.get('epos_restaurant_2023.selling.doctype.customer.customer.get_voucher_list_per_customer',
+      {
+        customer:props.params.name
+      },).then((result) => {
+        topUpHistory.value = result.message
+    });
+
 })
 
 
@@ -222,3 +279,11 @@ async function onSaleDetail(data) {
 }
 
 </script>
+<style>
+  .v-align-top{
+    vertical-align: top;
+  }
+  .v-align-middle{
+    vertical-align: middle;
+  }
+</style>

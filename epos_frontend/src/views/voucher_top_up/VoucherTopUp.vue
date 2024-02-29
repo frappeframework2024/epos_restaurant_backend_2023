@@ -9,10 +9,10 @@
   </PageLayout>
 </template>
 <script setup>
-import { ref, AddVoucherTopUpDialog,VoucherTopUpDetailDialog,i18n,inject } from '@/plugin'
+import { ref, AddVoucherTopUpDialog,VoucherTopUpDetailDialog,i18n,inject,customerDetailDialog } from '@/plugin'
 import PageLayout from '@/components/layout/PageLayout.vue';
 import ComTable from '@/components/table/ComTable.vue';
-import {useDisplay} from 'vuetify';
+
 
 const { t: $t } = i18n.global; 
 const gv = inject("$gv")
@@ -30,17 +30,26 @@ async function onAddVoucherTopUp() {
 }
 
 
-async function onCallback(data) { 
+async function onCallback(data) {
+    console.log(data.fieldname)
+    if (data.fieldname == 'name'){
         const result = await VoucherTopUpDetailDialog({
             name: data.data.name
         });
+    }else if (data.fieldname == 'customer'){
+       await customerDetailDialog({
+            name: data.data.customer
+        });
+    }
+        
+        
         
     
 }
 
 const headers = ref([
     { title: $t('Voucher'), align: 'start', key: 'name', callback: true },
-    { title: $t('Customer'), align: 'start', key: 'customer' },
+    { title: $t('Customer'), align: 'start', key: 'customer' ,callback: true},
     { title: $t('Customer Name'), align: 'start', key: 'customer_name' },
     { title: $t('Phone'), align: 'start', key: 'phone'},
     { title: $t('Amount'),fieldtype : 'Currency', align: 'end', key: 'actual_amount'},

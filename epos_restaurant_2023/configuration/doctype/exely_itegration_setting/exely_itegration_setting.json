@@ -1,0 +1,97 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-02-27 16:19:46.875062",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "enabled",
+  "api_key",
+  "provider_id",
+  "default_general_customer_id",
+  "column_break_krrw",
+  "guest_api_endpoint",
+  "post_service_api_endpoint",
+  "cancel_service_api_endpoint",
+  "section_break_mxbx",
+  "payment_types"
+ ],
+ "fields": [
+  {
+   "fieldname": "api_key",
+   "fieldtype": "Data",
+   "label": "API Key"
+  },
+  {
+   "fieldname": "provider_id",
+   "fieldtype": "Data",
+   "label": "Provider ID"
+  },
+  {
+   "fieldname": "column_break_krrw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_mxbx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "payment_types",
+   "fieldtype": "Table",
+   "label": "Payment Type Mapping",
+   "options": "Exely Integration Payment Type Mapping"
+  },
+  {
+   "fieldname": "guest_api_endpoint",
+   "fieldtype": "Data",
+   "label": "Guest Api Endpoint",
+   "length": 250
+  },
+  {
+   "fieldname": "post_service_api_endpoint",
+   "fieldtype": "Data",
+   "label": "Post Service Api Endpoint",
+   "length": 250
+  },
+  {
+   "fieldname": "cancel_service_api_endpoint",
+   "fieldtype": "Data",
+   "label": "Cancel Service Api Endpoint",
+   "length": 250
+  },
+  {
+   "fieldname": "default_general_customer_id",
+   "fieldtype": "Data",
+   "label": "Default General Customer ID"
+  },
+  {
+   "default": "0",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-02-28 09:22:53.143879",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "Exely Itegration Setting",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

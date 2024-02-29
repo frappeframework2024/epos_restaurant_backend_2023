@@ -146,8 +146,17 @@
   "column_break_rrof",
   "paid_by",
   "paid_date",
+  "integration_section",
+  "exely_guest_id",
+  "arrival",
+  "departure",
+  "room_number",
+  "column_break_iapd",
+  "exely_room_stay_id",
   "inventory_transacton_tab",
-  "inventory_transaction"
+  "inventory_transaction",
+  "integration_tab",
+  "exely_transaction_id"
  ],
  "fields": [
   {
@@ -959,6 +968,50 @@
   {
    "fieldname": "column_break_gfdz",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "integration_section",
+   "fieldtype": "Section Break",
+   "label": "Integration"
+  },
+  {
+   "fieldname": "exely_guest_id",
+   "fieldtype": "Data",
+   "label": "Exely Guest Id"
+  },
+  {
+   "fieldname": "column_break_iapd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "exely_room_stay_id",
+   "fieldtype": "Data",
+   "label": "Exely Room Stay ID"
+  },
+  {
+   "fieldname": "arrival",
+   "fieldtype": "Date",
+   "label": "Arrival"
+  },
+  {
+   "fieldname": "departure",
+   "fieldtype": "Date",
+   "label": "Departure"
+  },
+  {
+   "fieldname": "room_number",
+   "fieldtype": "Data",
+   "label": "Room Number"
+  },
+  {
+   "fieldname": "integration_tab",
+   "fieldtype": "Tab Break",
+   "label": "Integration"
+  },
+  {
+   "fieldname": "exely_transaction_id",
+   "fieldtype": "Data",
+   "label": "Exely Transaction ID"
   }
  ],
  "image_field": "photo",
@@ -971,7 +1024,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-02-25 20:48:26.267738",
+ "modified": "2024-02-29 08:42:41.836670",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

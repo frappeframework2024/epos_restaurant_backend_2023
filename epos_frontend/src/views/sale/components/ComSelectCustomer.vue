@@ -11,8 +11,16 @@
                             class="mr-4" size="40"></avatar>
                     </template>
                     <div class="px-2">
-                        <div class="font-bold">{{ sale.sale.customer_name }}</div>
-                        <div class="text-gray-400 text-sm">{{ subTitle }}</div>
+                        <div class="font-bold">{{ sale.sale.customer_name ||"" }}</div>
+                        <div class="text-gray-400 text-sm">{{ subTitle || "" }}</div>
+                        <div class="text-gray-400 text-sm" v-if="sale.sale.arrival">
+                            Stay: {{ moment(sale.sale.arrival).format("DD-MM-YYYY") }} to {{ moment(sale.sale.departure).format("DD-MM-YYYY") }}
+                        </div>
+                        
+                        <div class="text-gray-400 text-sm" v-if="sale.sale.room_number">
+                            Room: {{ sale.sale.room_number }}
+                        </div>
+
                     </div>
                     <div> 
                         <template v-if="customerPromotion?.length > 0">
@@ -46,6 +54,7 @@
 import { computed, inject, getCurrentInstance,searchCustomerDialog,createResource, customerDetailDialog, scanCustomerCodeDialog, confirmDialog, onMounted,createToaster,addCustomerDialog } from "@/plugin"
 import { whenever,useMagicKeys  } from '@vueuse/core';
 import { i18n } from "@/plugin"; 
+
 
 const { t: $t } = i18n.global;
 
@@ -86,19 +95,27 @@ async function onSearchCustomer() {
         const result = await searchCustomerDialog({});
         sale.dialogActiveState=false
         if (result) {
+            
             assignCustomerToOrder(result);
+
         }
     }
 }
 
 function assignCustomerToOrder(result,is_membership=false) {
     sale.sale.card ="";
-    sale.sale.customer = result.name;
+    sale.sale.customer = result.name || "";
     sale.sale.customer_name = result.customer_name_en;
     sale.sale.customer_photo = result.photo;
     sale.sale.phone_number = result.phone_number;
-    sale.sale.customer_group = result.customer_group;
+    sale.sale.customer_group = result.customer_group ;
     sale.sale.customer_default_discount = 0;
+    
+    sale.sale.exely_guest_id = result.guest_id ||""
+    sale.sale.exely_room_stay_id = result.stay_room_id || ""
+    sale.sale.arrival = result.arrival || ""
+    sale.sale.departure = result.departure || ""
+    sale.sale.room_number = result.room_number || ""
 
     if(!is_membership){
         sale.sale.customer_default_discount = result.default_discount;
@@ -143,12 +160,18 @@ const setting = computed(() => {
     return JSON.parse(localStorage.getItem('setting'))
 })
 const subTitle = computed(() => {
-    let title = sale.sale.customer;
+    let title = sale.sale.customer || "";
+    
     if((sale.sale.card || "") !=""){
         title = title + "("+sale.sale.card+")";
     }
     if (sale.sale.phone_number != "" && sale.sale.phone_number != undefined) {
-        title = title + " / " + sale.sale.phone_number
+        if (title){
+            title = title + " / " + sale.sale.phone_number
+        }else {
+            title = sale.sale.phone_number
+        }
+        
     }
 
 
@@ -237,6 +260,12 @@ async function onRemove() {
         sale.sale.customer = setting.value.customer
         sale.sale.customer_name = setting.value.customer_name
         sale.sale.customer_photo = setting.value.customer_photo
+        sale.sale.exely_guest_id = ""
+        sale.sale.exely_room_stay_id = ""
+        sale.sale.arrival = ""
+        sale.sale.departure = ""
+        sale.sale.room_number = ""
+        
     }
 }
 async function onAddCustomer() {

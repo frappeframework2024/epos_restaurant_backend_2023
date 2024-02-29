@@ -12,7 +12,10 @@ from frappe import _
 
 @frappe.whitelist(allow_guest=True)
 def station_license(device_id,platform="Windows"): 
-   
+    if device_id=="Demo":
+        doc=frappe.get_doc("POS Station","Demo")
+        return {"name":"Demo","license":doc.license,"platform":doc.platform,"is_used":0}
+    
     if not platform: 
         filters = {
             'disabled': 0,
@@ -31,6 +34,9 @@ def station_license(device_id,platform="Windows"):
         fields=["name","license","platform","is_used"],
         as_list=False
     )
+    
+    
+    
     if doc:
         return {"name":doc[0].name,"license":doc[0].license,"platform":doc[0].platform,"is_used":doc[0].is_used}
     else:

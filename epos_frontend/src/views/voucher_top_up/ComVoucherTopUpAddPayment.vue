@@ -113,13 +113,17 @@ function deletePayment(payment){
 }
 
 function onSave() {
-    
+    payments.value.forEach((e)=>{
+        if (e.payment_type == undefined || e.payment_type == ""){
+            toaster.success($t('Please select payment type'))
+        }
+    })
     let totalPaid = payments.value.reduce((n, d) => n + (d.payment_amount || 0), 0)
     emit('resolve', payments.value);
 }
 
 function onClose() {
-    emit('resolve', payments.value);
+    emit('resolve', false);
 }
 
 </script>

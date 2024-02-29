@@ -11,6 +11,8 @@ from py_linq import Enumerable
 from frappe.model.document import Document
 import datetime
 from decimal import Decimal
+from epos_restaurant_2023.api.exely import submit_order_to_exely
+
 class Sale(Document):
 	def validate(self):
  
@@ -266,8 +268,10 @@ class Sale(Document):
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.create_folio_transaction_from_pos_trnasfer", queue='short', self=self)
 		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit", queue='short', self=self)
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.add_payment_to_sale_payment", queue='short', self=self)
+		frappe.enqueue("epos_restaurant_2023.api.exely.submit_order_to_exely", queue='short', doc_name = self.name)
 
 		
+
 		
 
 	

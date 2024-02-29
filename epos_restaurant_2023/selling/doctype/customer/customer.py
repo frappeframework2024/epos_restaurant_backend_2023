@@ -71,9 +71,32 @@ def get_customer_order_summary(customer):
 	data = frappe.db.sql(sql, as_dict=1)
 	if data:
 		total_annual_order = data[0].total_amount
-  
+	voucher_balance = frappe.db.get_value("Customer",customer,'voucher_balance')
 	return {
 		"total_visit":int(total_visit or 0),
 		"total_order":float( total_order or 0),
-		"total_annual_order": float(total_annual_order  or 0)
+		"total_annual_order": float(total_annual_order  or 0),
+		"voucher_balance": float( voucher_balance or 0)
 	}
+
+@frappe.whitelist()
+def get_voucher_list_per_customer(customer):
+	vouchers = frappe.db.get_list("Voucher",
+		order_by='modified desc',
+		fields=['name', 'credit_amount','actual_amount'],
+		filters={
+			'customer': customer,
+			'docstatus':['!=','2']
+		},
+		page_length=5000)
+	for v in vouchers:
+		payments = frappe.db.get_list("Voucher Payment",
+			fields=['name', 'payment_type','payment_amount'],
+			filters={
+				'customer': customer,
+				'voucher': v.name,
+				'docstatus':['!=','2']
+			})
+		v['payments'] = payments or []
+	return vouchers
+	
