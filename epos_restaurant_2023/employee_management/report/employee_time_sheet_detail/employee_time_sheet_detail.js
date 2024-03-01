@@ -29,7 +29,7 @@ frappe.query_reports["Employee Time Sheet Detail"] = {
 					options:"Business Branch",
 					default: frappe.defaults.get_user_default("business_branch"),
 					"reqd": 1,
-
+					"on_change": function (query_report) {},
 					
 				},
 
@@ -38,7 +38,7 @@ frappe.query_reports["Employee Time Sheet Detail"] = {
 					"label": __("Start Date"),
 					"fieldtype": "Date",
 					default:frappe.datetime.get_today(),
-
+					"on_change": function (query_report) {},
 					"reqd": 1
 				},
 				{
@@ -46,14 +46,22 @@ frappe.query_reports["Employee Time Sheet Detail"] = {
 					"label": __("End Date"),
 					"fieldtype": "Date",
 					default:frappe.datetime.get_today(),
-
+					"on_change": function (query_report) {},
 					"reqd": 1
 				},
 				{
 					"fieldname":"sale_number",
 					"label": __("Sale Number"),
 					"fieldtype": "Link",
-					"options":"Sale",
+					options:"Sale",
+					"on_change": function (query_report) {},
+				},
+				{
+					"fieldname":"employee",
+					"label": __("Employee"),
+					"fieldtype": "Link",
+					options:"Employee",
+					"on_change": function (query_report) {},
 				},
 
 	],

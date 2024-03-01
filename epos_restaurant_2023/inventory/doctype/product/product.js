@@ -31,7 +31,6 @@ frappe.ui.form.on("Product", {
 			if( ["Currency","Data","Int","Link","Date","Datetime","Float","Select"].includes(frm.fields_dict[key].df.fieldtype)){
 				frm.fields_dict[key].$wrapper.addClass('custom_control');
 			}
-
 		}
         
         frm.set_query('product_category', () => {

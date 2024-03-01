@@ -61,10 +61,10 @@ def get_dynamic_columns(filters):
 ## on get report field
 def get_report_field(filters):
 	fields = []
-	fields.append({"label":"Date","short_label":"Date", "fieldname":"posting_date","fieldtype":"Data","indicator":"Grey","precision":2, "align":"left","chart_color":"#FF8A65",'width':250})
-	fields.append({"label":"Outlet","short_label":"Outlet", "fieldname":"outlet","fieldtype":"Data","indicator":"Grey","precision":2, "align":"left","chart_color":"#FF8A65",'width':250})
-	fields.append({"label":"Receipt #","short_label":"Receipt #", "fieldname":"sale","fieldtype":"Data","indicator":"Grey","precision":2, "align":"left","chart_color":"#FF8A65",'width':250})
-	fields.append({"label":"Room","short_label":"Room", "fieldname":"room","fieldtype":"Data","indicator":"Grey","precision":2, "align":"left","chart_color":"#FF8A65",'width':250})
+	fields.append({"label":"Date","short_label":"Date", "fieldname":"posting_date","fieldtype":"Date","indicator":"Grey","precision":2, "align":"center","chart_color":"#FF8A65",'width':250})
+	fields.append({"label":"Outlet","short_label":"Outlet", "fieldname":"outlet","fieldtype":"Data","indicator":"Grey","precision":2, "align":"center","chart_color":"#FF8A65",'width':250})
+	fields.append({"label":"Receipt #","short_label":"Receipt #", "fieldname":"sale","fieldtype":"Data","indicator":"Grey","precision":2, "align":"center","chart_color":"#FF8A65",'width':250})
+	fields.append({"label":"Room","short_label":"Room", "fieldname":"room","fieldtype":"Data","indicator":"Grey","precision":2, "align":"center","chart_color":"#FF8A65",'width':250})
 	fields.append({"label":"Employee","short_label":"Employee", "fieldname":"employee_name","fieldtype":"Data","indicator":"Grey","precision":2, "align":"left","chart_color":"#FF8A65",'width':250})
 	fields.append({"label":"Service Name","short_label":"Service", "fieldname":"product_name","fieldtype":"Data","indicator":"Grey","precision":2, "align":"left","chart_color":"#FF8A65",'width':250})
 	fields.append({"label":"Time In","short_label":"Time In", "fieldname":"time_in","fieldtype":"Time","indicator":"Grey","precision":2, "align":"right","chart_color":"#FF8A65",'width':150})
@@ -72,35 +72,44 @@ def get_report_field(filters):
 	fields.append({"label":"Duration","short_label":"Duration", "fieldname":"duration","fieldtype":"Data","indicator":"Red","precision":2, "align":"right","chart_color":"#2E7D32",'width':100})
 	fields.append({"label":"Total Amount","short_label":"Total Amt", "fieldname":"grand_total","fieldtype":"Currency","indicator":"Grey","precision":2, "align":"right","chart_color":"#FF8A65",'width':130})
 	fields.append({"label":"Commission Amount","short_label":"Com. Amt", "fieldname":"commission_amount","fieldtype":"Currency","indicator":"Grey","precision":2, "align":"right","chart_color":"#FF8A65",'width':130})
+	fields.append({"label":"Is Overtime","short_label":"Is Overtime", "fieldname":"is_overtime","fieldtype":"Data","indicator":"Grey","precision":2, "align":"right","chart_color":"#FF8A65",'width':130})
 	
 	return fields
 
 def get_report_data(filters):
 
-	sale = """ select 
+	
+	sql = """ select 
 					s.posting_date,
 					s.outlet,
 					s.name,
 					s.tbl_number as room,
-					s.time_in,
-					s.time_out,
-					s.grand_total
-				from `tabSale` s
-				"""
-	sql = """ select 
+					coalesce(s.time_in,'') as time_in,
+					coalesce(s.time_out,'') as time_out,
+					s.grand_total,
 					sp.posting_date,
-					sp.commission_amount,
 					sp.duration,
+					sp.commission_amount,
 					sp.employee_name,
-					sp.product_name
-				from `tabSale Product SPA Commission` sp
-				inner join `tabSale` s on sp.sale = s.name
+					sp.employee,
+					sp.product_name,
+					sp.sale,
+					if(sp.is_overtime=1,'Yes','No') as is_overtime
+				from `tabSale` s
+				inner join `tabSale Product SPA Commission` sp on sp.sale = s.name
 				where 
 					{}
 				""".format(get_filter_condition(filters))
-	data = frappe.db.sql(sql, as_dict=1)	
-
-
+	data = frappe.db.sql(sql, as_dict=1)
+	for d in data:
+		if d['duration'] < 60:
+			d['duration'] = '{}MIN'.format(int(d['duration']))
+		elif d['duration'] == 60:
+			d['duration'] = '{}H'.format(1)
+		else:
+			hour = int(d['duration'] / 60)
+			minute = int(d['duration'] % 60)
+			d['duration'] = '{}H : {}MIN'.format(hour,minute)
 	return data
 
 
@@ -110,8 +119,13 @@ def get_filter_condition(filters):
 	start_date = filters.start_date
 	end_date = filters.end_date
 	business_branch = filters.business_branch
+	sale = filters.sale_number
 	conditions += " AND sp.is_deleted = 0 "
 	conditions += " AND (sp.posting_date between '{}' AND '{}') ".format(start_date,end_date)
 	conditions += " AND sp.business_branch = '{}' ".format(business_branch)
+	if sale:
+		conditions += " AND coalesce(s.name,'') = '{}' ".format(sale)
+	if filters.employee:
+		conditions += " AND coalesce(sp.employee,'') = '{}' ".format(filters.employee)
 	
 	return conditions

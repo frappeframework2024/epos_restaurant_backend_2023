@@ -36,6 +36,7 @@ def get_pos_users(secret_key = False):
                 '' as api_secret
             from tabEmployee e
             inner join tabUser u on e.user_id = u.`name`"""
+            
 
     users = frappe.db.sql(sql, as_dict=1)
     if secret_key:
