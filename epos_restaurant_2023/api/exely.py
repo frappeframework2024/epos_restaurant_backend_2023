@@ -154,9 +154,9 @@ def cancel_order(transaction_id,comment):
                 'Content-Type': 'application/json'
     }
     
-    response = requests.delete(url,headers=headers, params= {"transactionId":transaction_id, "comment":comment})
+    response = requests.delete(url,headers=headers, data=json.dumps( {"transactionId":transaction_id, "comment":comment}))
     if response.status_code!=200:
         frappe.throw(str(response.text))
-
+    
     
     #return doc

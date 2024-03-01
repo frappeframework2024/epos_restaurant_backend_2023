@@ -4,7 +4,7 @@
 frappe.ui.form.on("Sale", {
 	onload(frm){
 		for (const key in frm.fields_dict) {
-			if( ["Currency","Data","Int","Link","Date","Datetime","Float"].includes(frm.fields_dict[key].df.fieldtype)){
+			if( ["Currency","Data","Int","Link","Date","Datetime","Float","Select"].includes(frm.fields_dict[key].df.fieldtype)){
 				frm.fields_dict[key].$wrapper.addClass('custom_control');
 			}
 

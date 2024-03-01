@@ -228,6 +228,8 @@ class Sale(Document):
 
 	def after_insert(self):
 		#add sale product spa commission
+		if not self.time_in:
+			pass	
 		add_sale_product_spa_commission(self)
 
 	def before_submit(self):
@@ -257,7 +259,9 @@ class Sale(Document):
 
 	
 	def on_submit(self):
-		
+		if not self.time_out:
+			pass
+
 		create_folio_transaction_from_pos_trnasfer(self) 
 		# update_inventory_on_submit(self)			
 		add_payment_to_sale_payment(self) 

@@ -6,9 +6,12 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "general_section",
   "report",
   "property",
-  "report_fields"
+  "report_fields",
+  "report_row_config_tab",
+  "row_configs"
  ],
  "fields": [
   {
@@ -30,11 +33,26 @@
    "in_list_view": 1,
    "label": "Property",
    "options": "Business Branch"
+  },
+  {
+   "fieldname": "general_section",
+   "fieldtype": "Section Break",
+   "label": "General"
+  },
+  {
+   "fieldname": "report_row_config_tab",
+   "fieldtype": "Tab Break",
+   "label": "Report Row Config"
+  },
+  {
+   "fieldname": "row_configs",
+   "fieldtype": "Table",
+   "options": "Report Row Config"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-23 14:20:17.162446",
+ "modified": "2024-02-29 18:19:37.436937",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Report Configuration",
