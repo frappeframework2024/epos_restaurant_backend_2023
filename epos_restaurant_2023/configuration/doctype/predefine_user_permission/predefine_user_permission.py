@@ -12,15 +12,14 @@ class PredefineUserPermission(Document):
     	})
 		for user in users:
 			for user_permission in self.permissions:
-				exist = frappe.db.exists("User Permission",{ "allow": user_permission.allow,'for_value':user_permission.for_value,'user':user})
-				frappe.throw(exist)
+				exist = frappe.db.exists("User Permission",{ "allow": user_permission.allow,'for_value':user_permission.for_value,'user':user.name})
 				if exist:
-					frappe.delete_doc('Task', exist)
+					frappe.delete_doc('User Permission', exist)
 				frappe.get_doc({
 					'doctype': 'User Permission',
-					'user':user,
+					'user':user.name,
 					'allow':user_permission.allow,
 					'for_value':user_permission.for_value,
 					'hide_descendants':user_permission.hide_descendants,
 					'apply_to_all_doctypes':user_permission.apply_to_all_document_types
-				}).insert(ignore_if_duplicate=True)
+				}).insert()
