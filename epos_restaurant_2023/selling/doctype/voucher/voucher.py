@@ -68,7 +68,7 @@ def insert_voucher_multiple_row(vouchers,posauthuser):
 			doc.save()
 			frappe.throw(str(float(doc.total_paid or 0) > float(doc.actual_amount or 0)))
 			if len(doc.payments)>0 and float(doc.total_paid or 0) > float(doc.actual_amount or 0):
-				frappe.throw("Payment amount must equal to actual amount");
+				frappe.throw("Payment amount must equal to actual amount")
 			
 			if float(doc.total_paid or 0) == float(doc.actual_amount or 0):
 				doc.submit()
