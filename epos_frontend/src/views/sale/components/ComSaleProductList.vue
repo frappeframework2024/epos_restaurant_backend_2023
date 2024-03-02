@@ -9,7 +9,7 @@
                     <v-img :src="sp.product_photo"></v-img>
                 </v-avatar>
                 <avatar v-else :name="sp.product_name" class="mr-4" size="40"></avatar>
-                
+
             </template>
             <template v-slot:default>
                 <div class="text-sm">
@@ -20,7 +20,7 @@
                                 <v-chip v-if="sp.is_free" size="x-small" color="success" variant="outlined">{{ $t('Free')
                                 }}</v-chip>
                                 <v-chip v-if="sp.is_park" size="x-small" color="error" variant="outlined">
-                                {{ $t('Park') }}</v-chip>
+                                    {{ $t('Park') }}</v-chip>
                                 <ComChip :tooltip="sp.happy_hours_promotion_title"
                                     v-if="sp.happy_hour_promotion && sp.discount > 0" size="x-small" variant="outlined"
                                     color="orange" text-color="white" prepend-icon="mdi-tag-multiple">
@@ -28,21 +28,21 @@
                                 </ComChip>
                                 <ComHappyHour :saleProduct="sp" v-if="sp.is_render" />
                             </div>
-                            
+
                             <div v-if="!sp.is_timer_product">
-                                {{ sp.quantity }} x 
+                                {{ sp.quantity }} x
                                 <CurrencyFormat :value="sp.price" />
                             </div>
                             <div v-else>
                                 <template v-if="sp.time_in">
-                                    {{$t("Time In")}}: {{ moment(sp.time_in).format('hh:mm A') }}
+                                    {{ $t("Time In") }}: {{ moment(sp.time_in).format('hh:mm A') }}
                                     <span v-if="sp.time_out">
-                                        {{$t("Time Out")}}
-                                         {{ moment(sp.time_out).format('hh:mm A') }}
+                                        {{ $t("Time Out") }}
+                                        {{ moment(sp.time_out).format('hh:mm A') }}
                                     </span>
-                                    
+
                                 </template>
-                               
+
                             </div>
                             <div class="text-xs pt-1">
                                 <div v-if="sp.modifiers && !sp.is_timer_product">
@@ -74,44 +74,50 @@
                                     </span>
 
                                 </div>
-                                <v-chip color="blue" size="x-small" v-if="sp.seat_number"> {{ $t('Seat') + "# " + sp.seat_number
+                                <v-chip color="blue" size="x-small" v-if="sp.seat_number"> {{ $t('Seat') + "# " +
+                                    sp.seat_number
                                 }}</v-chip>
                                 <div class="text-gray-500" v-if="sp.note">
                                     {{ $t('Note') }}: <span>{{ sp.note }}</span>
                                 </div>
                                 <div class="text-gray-500" v-if="sp.is_park">
-                                    {{ $t('Expiry') + ": " + moment(sp.expired_date).format('DD-MM-yyyy')  }}
+                                    {{ $t('Expiry') + ": " + moment(sp.expired_date).format('DD-MM-yyyy') }}
                                 </div>
                             </div>
                         </div>
 
                         <div class="flex-none text-right w-36">
                             <div class="text-lg">
-                                <ComTimerProductEstimatePrice v-if="sp.is_timer_product && !sp.time_out_price" :saleProduct="sp" />
+                                <ComTimerProductEstimatePrice v-if="sp.is_timer_product && !sp.time_out_price"
+                                    :saleProduct="sp" />
                                 <CurrencyFormat v-else :value="(sp.amount - sp.total_tax)" />
                             </div>
                             <span v-if="sp.product_tax_rule && sp.total_tax > 0" class="text-xs">
                                 {{ $t('Tax') }}:
                                 <CurrencyFormat :value="sp.total_tax" />
                             </span>
-                            
+
                             <ComQuantityInput v-if="!readonly" :sale-product="sp" />
                         </div>
                     </div>
 
                     <div v-if="sp.selected && !readonly" class="-mx-1 flex pt-1">
-                        <template v-if="sp.is_timer_product" >
+                        <template v-if="sp.is_timer_product">
                             <!-- start time  -->
-                            <v-chip color="green"  v-if="!sp.time_out && !sp.reference_sale_product" class="mx-1 grow text-center justify-center" variant="elevated" size="small"
+                            <v-chip color="green" v-if="!sp.time_out && !sp.reference_sale_product"
+                                class="mx-1 grow text-center justify-center" variant="elevated" size="small"
                                 @click="onStartTime(sp)">{{ $t('Start Timer') }}</v-chip>
                             <!-- stop time -->
-                            <v-chip color="orange"  v-if="sp.name && sp.time_in && !sp.time_out && !sp.reference_sale_product" class="mx-1 grow text-center justify-center" variant="elevated" size="small"
+                            <v-chip color="orange"
+                                v-if="sp.name && sp.time_in && !sp.time_out && !sp.reference_sale_product"
+                                class="mx-1 grow text-center justify-center" variant="elevated" size="small"
                                 @click="onStopTimer(sp)">{{ $t('Stop Timer') }}</v-chip>
 
-                            <v-chip color="green" v-if="sp.time_out" class="mx-1 grow text-center justify-center" variant="elevated" size="small"
-                                @click="onContinueTimer(sp)">{{ $t('Continue Timer') }}</v-chip>
+                            <v-chip color="green" v-if="sp.time_out" class="mx-1 grow text-center justify-center"
+                                variant="elevated" size="small" @click="onContinueTimer(sp)">{{ $t('Continue Timer')
+                                }}</v-chip>
                         </template>
-                        
+
 
                         <v-chip v-if="show_button_change_price && !sp.is_timer_product" color="teal"
                             class="mx-1 grow text-center justify-center" variant="elevated" size="small"
@@ -131,8 +137,9 @@
                                 size="small" @click="sale.onAssignEmployee(sp)">{{ $t('Employee') }}</v-chip>
                         </template>
 
-                        <v-chip v-if="!sp.reference_sale_product" color="red" class="mx-1 grow text-center justify-center" variant="elevated" size="small"
-                            @click="sale.onRemoveItem(sp, gv, numberFormat)">{{ $t('Delete') }}</v-chip>
+                        <v-chip v-if="!sp.reference_sale_product" color="red" class="mx-1 grow text-center justify-center"
+                            variant="elevated" size="small" @click="sale.onRemoveItem(sp, gv, numberFormat)">{{ $t('Delete')
+                            }}</v-chip>
 
                         <ComSaleProductButtonMore :sale-product="sp" />
                     </div>
@@ -146,7 +153,7 @@
     </v-list>
 </template>
 <script setup>
-import { computed, inject, defineProps,confirmDialog, createToaster, i18n, ref, SelectDateTime,stopTimerModal } from '@/plugin'
+import { computed, inject, defineProps, confirmDialog, createToaster, i18n, ref, SelectDateTime, stopTimerModal } from '@/plugin'
 
 import ComSaleProductButtonMore from './ComSaleProductButtonMore.vue';
 import ComQuantityInput from '../../../components/form/ComQuantityInput.vue';
@@ -227,7 +234,7 @@ function onReorder(sp) {
                     sale.cloneSaleProduct(sp, sp.quantity + 1);
                 }, 100);
             }
-        } 
+        }
 
         if (is_append) {
 
@@ -241,9 +248,9 @@ function onReorder(sp) {
                 reference_name: "New",
                 comment_by: u.name,
                 content: msg,
-                custom_item_description: `${(sp.quantity||0) - prev_sale_product.quantity} x ${item_description}`,
+                custom_item_description: `${(sp.quantity || 0) - prev_sale_product.quantity} x ${item_description}`,
                 custom_note: "",
-                custom_amount: (sp.amount / ((sp.quantity||0)==0?1:sp.quantity)) * ((sp.quantity||0) - prev_sale_product.quantity)
+                custom_amount: (sp.amount / ((sp.quantity || 0) == 0 ? 1 : sp.quantity)) * ((sp.quantity || 0) - prev_sale_product.quantity)
             });
         }
     }
@@ -277,72 +284,72 @@ function getEmployees(data) {
     return []
 }
 
-async function onStartTime(sp) { 
-    if((sp.name||"")!="" && (sp.time_in||"")!=""){
+async function onStartTime(sp) {
+    if ((sp.name || "") != "" && (sp.time_in || "") != "") {
         gv.authorize("", "change_item_time_in").then(async (res) => {
-            if (res) {   
+            if (res) {
                 _onStartTimer(sp);
             }
         });
-    }else{
+    } else {
         _onStartTimer(sp);
     }
-    
+
 }
 
-async function _onStartTimer(sp){
-    let selectdatetime = await SelectDateTime({"time_in":sp.time_in});
-            if (selectdatetime) {
-                if (selectdatetime !='Set Later'){
-                    sp.time_in = moment(selectdatetime).format('yyyy-MM-DD HH:mm:ss');
-                }else{
-                    sp.time_in= undefined;
-                }
-                
-            }
+async function _onStartTimer(sp) {
+    let selectdatetime = await SelectDateTime({ "time_in": sp.time_in });
+    if (selectdatetime) {
+        if (selectdatetime != 'Set Later') {
+            sp.time_in = moment(selectdatetime).format('yyyy-MM-DD HH:mm:ss');
+        } else {
+            sp.time_in = undefined;
+        }
+
+    }
 }
 async function onStopTimer(sp) {
-    if((sp.name||"")!="" && (sp.time_out||"")!=""){
+    if ((sp.name || "") != "" && (sp.time_out || "") != "") {
         gv.authorize("", "change_item_time_out").then(async (res) => {
-            if (res) {   
+            if (res) {
                 _onStopTimer(sp);
             }
         });
-    }else{
+    } else {
         _onStopTimer(sp);
     }
 }
-async function _onStopTimer(sp){
-    if (sale.sale.sale_products.filter(r=>!r.name).length>0){
+async function _onStopTimer(sp) {
+    if (sale.sale.sale_products.filter(r => !r.name).length > 0) {
         toaster.warning($t('msg.Please submit your order first'));
         return
     }
 
-    let stopTimer= await stopTimerModal(sp)
-    if(stopTimer){
+    let stopTimer = await stopTimerModal(sp)
+    if (stopTimer) {
         sp.time_in = stopTimer.time_in
         sp.time_out = stopTimer.time_out
     }
 }
-async function onContinueTimer(sp){
+async function onContinueTimer(sp) {
     if (!sale.isBillRequested()) {
-    if (sale.sale.sale_products.filter(r=>!r.name).length>0){
-        toaster.warning($t('msg.Please submit your order first'));
-        return
-    }
+        if (sale.sale.sale_products.filter(r => !r.name).length > 0) {
+            toaster.warning($t('msg.Please submit your order first'));
+            return
+        }
 
-    if (await confirmDialog({ title: $t("Continue Timer"), text: $t("msg.Are you sure to continue timer") })) {
-        sale.loading=true;
-        call.post("epos_restaurant_2023.api.timer_product.continue_timer", { sale_product: sp  }).then(async (result) =>  {
-            sp.time_out = undefined;
-            sale.sale = result.message
-            sale.loading=false;
-        }).catch((err)=>{
-            sale.loading=false;
-        })
+        if (await confirmDialog({ title: $t("Continue Timer"), text: $t("msg.Are you sure to continue timer") })) {
+            sale.loading = true;
+            call.post("epos_restaurant_2023.api.timer_product.continue_timer", { sale_product: sp }).then(async (result) => {
+                sp.time_out = undefined;
+                sale.sale = result.message
+                sale.loading = false;
+            }).catch((err) => {
+                sale.loading = false;
+            })
+        }
+
     }
-    
-}
 }
 
 </script>

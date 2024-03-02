@@ -2,7 +2,8 @@
     <ComLoadingDialog
         v-if="sale.loading || sale.newSaleResource?.loading || (sale.saleResource != null && sale.saleResource?.get.loading) || (sale.saleResource != null && sale.saleResource?.setValue.loading)" />
     <ComSmallAddSale v-if="mobile" />
-    <div v-else style="height: calc(100vh - 64px)" id="tst">
+    <ComAddSaleRetail   v-if="!mobile && sale.setting.table_groups.length ==0" />
+    <div v-if="!mobile && sale.setting.table_groups.length > 0" style="height: calc(100vh - 64px)" id="tst">
         <div class="h-full ma-0 flex w-full">
             <div class="flex-auto pa-0 h-full d-none d-sm-block" style="width: calc(100vw - 450px);"> 
                 <ComMenu :background-image="gv.setting.pos_sale_order_background_image" />
@@ -37,12 +38,14 @@
             </div>
         </div>
     </div>
+
 </template>
 <script setup>
 import { inject, useRoute, useRouter, ref, onMounted, onUnmounted, onBeforeRouteLeave, createResource,ShortCutKeyHelpDialog,i18n } from '@/plugin';
 import { getCurrentInstance } from 'vue';
 import ComMenu from './components/ComMenu.vue';
 import ComSelectCustomer from './components/ComSelectCustomer.vue';
+import ComAddSaleRetail from './components/ComAddSaleRetail.vue';
 import ComSaleInformation from '@/views/sale/components/ComSaleInformation.vue';
 import ComLoadingDialog from '../../components/ComLoadingDialog.vue';
 import ComSmallAddSale from './components/mobile_screen/ComSmallAddSale.vue';

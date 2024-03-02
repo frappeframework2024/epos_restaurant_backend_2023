@@ -169,8 +169,8 @@ async function onClickProduct() {
                 });
 
                 if (productPrices) {
-
                     p.name_en = productPrices.note;
+                    p.name_kh = productPrices.note;
                     p.price = productPrices.number;
                     p.modifiers = '';
                     sale.addSaleProduct(p);

@@ -1,0 +1,1 @@
+<template>select ed product info</template>

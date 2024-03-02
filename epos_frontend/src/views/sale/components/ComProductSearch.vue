@@ -54,18 +54,19 @@ function onSearch(key) {
 }
 
 function onKeyDown(event) {
-      if(event.key =="Enter"){
+    if(event.key =="Enter"){
+        alert(2)
         if (!sale.isBillRequested()) {        
-       
+            alert(888)
         const searchProductResource = createResource({
                 url: "epos_restaurant_2023.api.product.get_product_by_barcode",
                     params: {
                         barcode:product.searchProductKeywordStore
                     }
             });
-
+       
         searchProductResource.fetch().then(async (doc)=>{
-
+          
             const p = JSON.parse(JSON.stringify(doc));   
          
             const portions = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule);
@@ -110,6 +111,6 @@ function onKeyDown(event) {
         
       }
     }
-    }
+}
 
 </script>
