@@ -58,6 +58,8 @@ class SalePayment(Document):
 	
 	def on_cancel(self):
 		update_sale(self)
+		if self.payment_type_group == "Voucher":
+			self.update_customer_voucher_balance()
 
 	def before_update_after_submit(self):
 		if not self.sale:
