@@ -1,13 +1,14 @@
 <template>
     <v-app>
-        <v-app-bar :elevation="2" color="error" >
+        <v-app-bar :elevation="2" color="error">
             <v-app-bar-title>{{ appTitle }}</v-app-bar-title>
             <template #prepend>
                 <v-app-bar-nav-icon variant="text" @click.stop="onDrawer"></v-app-bar-nav-icon>
-                <v-btn icon  @click="onHome" >
-                    <v-icon >mdi-home-outline</v-icon> 
+                <v-btn icon @click="onHome">
+                    <v-icon>mdi-home-outline</v-icon>
                 </v-btn>
             </template>
+
             <template #append>
                 <ComTimeUpdate />
                 <v-btn icon="mdi-fullscreen" @click="onFullScreen()" v-if="!$gv.isFullscreen && isWindow"></v-btn>
@@ -17,18 +18,20 @@
                     <template v-slot:activator="{ props }">
                         <v-avatar :image="currentUser?.photo" v-bind="props" v-if="currentUser?.photo"
                             class="cursor-pointer"></v-avatar>
-                        <avatar v-else :name="currentUser?.full_name || 'No Name'" v-bind="props" class="cursor-pointer" size="40">
+                        <avatar v-else :name="currentUser?.full_name || 'No Name'" v-bind="props" class="cursor-pointer"
+                            size="40">
                         </avatar>
                     </template>
-                   
+
                     <v-card min-width="300">
-                   
+
                         <ComCurrentUserAvatar />
 
                         <v-divider></v-divider>
 
                         <v-list density="compact">
                             <v-list-item @click="onReload()">
+
                                 <template v-slot:prepend class="w-12">
                                     <v-icon icon="mdi-reload"></v-icon>
                                 </template>
@@ -36,6 +39,7 @@
                             </v-list-item>
                             <v-divider></v-divider>
                             <v-list-item @click="onLogout">
+
                                 <template v-slot:prepend class="w-12">
                                     <v-icon icon="mdi-logout"></v-icon>
                                 </template>
@@ -49,6 +53,7 @@
         </v-app-bar>
         <v-navigation-drawer v-model="drawer" temporary>
             <MainLayoutDrawer />
+
             <template v-slot:append>
                 <v-btn variant="tonal" prepend-icon="mdi-arrow-left" class="w-full" @click="onDrawer">
                     {{ $t('Close') }}
@@ -60,6 +65,7 @@
         </v-main>
     </v-app>
 </template>
+
 <script>
 import ComProductSearch from '../../views/sale/components/ComProductSearch.vue'
 import MainLayoutDrawer from './MainLayoutDrawer.vue';
@@ -71,7 +77,7 @@ import ComTimeUpdate from './components/ComTimeUpdate.vue';
 
 
 export default {
-    inject: ["$auth","$gv"],
+    inject: ["$auth", "$gv"],
     name: "MainLayout",
     computed: {
         appTitle() {
@@ -80,8 +86,8 @@ export default {
         currentUser() {
             return JSON.parse(localStorage.getItem('current_user'))
         },
-        isWindow(){
-            return localStorage.getItem('is_window')=='1';
+        isWindow() {
+            return localStorage.getItem('is_window') == '1';
         }
     },
     data() {
@@ -99,8 +105,8 @@ export default {
     },
     methods: {
 
-        onHome(){
-            this.$router.push({name: 'Home'})
+        onHome() {
+            this.$router.push({ name: 'Home' })
         },
 
         onDrawer() {
@@ -109,24 +115,25 @@ export default {
         onReload() {
             location.reload();
             const apkipa = localStorage.getItem('apkipa');
-            if((apkipa||0)==1){
+            if ((apkipa || 0) == 1) {
                 window.ReactNativeWebView.postMessage("mobile_reload");
             }
         },
-        onLogout(){
-            this.$auth.logout().then((r)=>{
-                this.$router.push({name: 'Login'})
+        onLogout() {
+            this.$auth.logout().then((r) => {
+                this.$router.push({ name: 'Login' })
             })
         },
-       
-        onFullScreen(){
-            window.chrome.webview.postMessage(JSON.stringify({action:"toggle_fullscreen", "is_full": this.$gv.isFullscreen?"0":"1"}));
-            this.$gv.isFullscreen = this.$gv.isFullscreen?false:true;
+
+        onFullScreen() {
+            window.chrome.webview.postMessage(JSON.stringify({ action: "toggle_fullscreen", "is_full": this.$gv.isFullscreen ? "0" : "1" }));
+            this.$gv.isFullscreen = this.$gv.isFullscreen ? false : true;
         }
-        
+
     },
 }
 </script>
+
 <style lang="">
-    
+
 </style>

@@ -11,7 +11,7 @@
                 v-debounce="onSearch"
                 @onInput="onSearch"
                 @keydown="onKeyDown"
-                ref="txtSearch"
+                :ref="txtSearch"
                 />
                 
         </div>
@@ -122,7 +122,11 @@ const actionClickHandler = async function (e) {
 
 if (e.isTrusted) {
     if(e.data.action=="set_focus_in_search_product"){
-        control.value.$el.focus();
+       const el = document.querySelector(".search-box input");
+       if(el){
+           
+            el.focus();
+       }
     }
 }
 }

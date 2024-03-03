@@ -12,7 +12,7 @@
                    {{ $t('Hold Order') }}
                 </v-btn>
               </v-list-item>
-              <v-list-item>
+              <v-list-item v-if="sale.setting.table_groups.length > 0">
                 <v-btn class="w-full" variant="flat" @click="onOk('submit')" color="success">
                  {{ $t('Submit Order') }}
                 </v-btn>
@@ -30,7 +30,9 @@
   
   <script setup>
   import {ref} from  "@/plugin"
+import { inject } from "vue";
   import { useDisplay } from 'vuetify'
+const sale =inject("$sale")
   const { mobile } = useDisplay()  
   const props = defineProps({
     params:{

@@ -319,7 +319,7 @@ async function onPayment() {
   const result = await paymentDialog({})
   sale.dialogActiveState=false
   if (result) { 
-    
+    window.postMessage({action:"set_focus_in_search_product"}, "*");
     product.onClearKeyword()
     sale.newSale();
 

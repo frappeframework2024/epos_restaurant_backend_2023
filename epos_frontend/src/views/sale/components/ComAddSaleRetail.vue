@@ -3,14 +3,13 @@
         <div class="v-col-12">
             <ComSaleInformation />
         </div>
-        <div class="v-row">
+        <div class="v-row pt-1">
             <div class="v-col-9">
-                <div class="flex flex-column justify-between product-detail-st" style="height: calc(-164px + 100vh)">
+                <div class="flex flex-column justify-between product-detail-st" style="height:calc(-144px + 100vh)">
                     <div class="first-div">
                         <ComSaleProductList />
                     </div>
                     <div class="second-div">
-                        <hr class="my-4">
                         <div class="v-row">
                             <div class="v-col-6">
                                 <ComSaleNote />

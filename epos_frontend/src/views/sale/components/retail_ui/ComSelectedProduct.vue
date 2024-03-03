@@ -3,9 +3,10 @@
     <!-- {{ sale?.selected_sale_product }} -->
     <div>
         <template v-if="sale?.selected_sale_product">
-            <div style="height:calc(-341px + 100vh);overflow-y:auto">
+            <div style="height:calc(-321px + 100vh);overflow-y:auto">
                 <div class="border p-3 rounded-md">
-                    <div class="product-image rounded-md overflow-hidden " style="height: 200px;">
+                    <div v-if="sale?.selected_sale_product?.product_photo"
+                        class="product-image rounded-md overflow-hidden " style="height: 200px;">
                         <img class="h-100 w-100" style="object-fit: cover;"
                             :src="sale?.selected_sale_product?.product_photo" />
                     </div>

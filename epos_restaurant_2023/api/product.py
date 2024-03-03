@@ -200,14 +200,14 @@ def get_product_by_barcode(barcode):
                         "is_open_price": product.is_open_price,
                         "is_timer_product": product.is_timer_product,
                         "is_inventory_product": product.is_inventory_product,
-                        "prices": product.prices,
+                        "prices":'[]',#we return empty array because tis barcode is product price barcode
                         "printers":json.dumps(([pr.printer,pr.group_item_type] for pr in product.printers),default=json_handler),
                         "modifiers": "[]",
                         "photo": product.photo,
                         "type": "product",
                         "append_quantity": 1,
                         "is_require_employee":product.is_require_employee,
-                        "revenue_group":p.revenue_group,
+                        "revenue_group":product.revenue_group,
                         "modifiers_data": json.dumps(([pr.business_branch,pr.modifier_category,pr.prefix,pr.modifier_code,pr.price] for pr in product.product_modifiers),default=json_handler),
                         "sort_order":product.sort_order
                     }
