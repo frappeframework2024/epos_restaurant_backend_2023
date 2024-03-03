@@ -2,11 +2,27 @@
     <v-tooltip :text="$t('Exchange Rate')" location="top">
         <template v-slot:activator="{ props }"> 
             <v-chip v-bind="props" color="white" class="m-1" rounded="pill" variant="elevated" size="x-small" >
-                <CurrencyFormat :value="1" :currency="gv.setting.pos_setting.exchange_rate_main_currency"  />  = 
-                <CurrencyFormat :value="exchange_rate" :currency="to_currency" />
+                <div class="dddd">
+                    <CurrencyFormat :value="1" :currency="gv.setting.pos_setting.exchange_rate_main_currency"  />  = 
+                    <CurrencyFormat :value="exchange_rate" :currency="to_currency" />
+                </div>
             </v-chip>
         </template>
     </v-tooltip>
+    <div class="exchage-rate-st p-4">
+        <div class="flex justify-between">
+            <div><v-icon icon="mdi-currency-usd" color="red" size="large"></v-icon></div>
+            <div>
+                <CurrencyFormat :value="1" :currency="gv.setting.pos_setting.exchange_rate_main_currency"  />  = 
+                <CurrencyFormat :value="exchange_rate" :currency="to_currency" />
+            </div>
+            <div>
+                <div class="">
+                    <v-icon icon="mdi-currency-usd" color="red" size="large"></v-icon>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 <script setup>
 import {inject,createResource,ref,computed} from "@/plugin"
@@ -68,3 +84,13 @@ const exchangeRateResource = createResource({
 })
 
 </script>
+<style scoped>
+.exchage-rate-st {
+    width: 100%;
+    background-color: green;
+    border-radius: 10px;
+}
+.exchage-rate-st .mdi-currency-usd {
+    font-size: 2.75rem;
+}
+</style>

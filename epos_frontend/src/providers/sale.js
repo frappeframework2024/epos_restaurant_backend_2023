@@ -1,6 +1,6 @@
 import Enumerable from 'linq'
 import moment from '@/utils/moment.js';
-import { noteDialog,changeTaxSettingModal,SaleProductComboMenuGroupModal, keyboardDialog,keypadWithNoteDialog, createResource,
+import { ref, noteDialog,changeTaxSettingModal,SaleProductComboMenuGroupModal, keyboardDialog,keypadWithNoteDialog, createResource,
     createDocumentResource, addModifierDialog, useRouter, confirmDialog,selectEmployeeDialog, saleProductDiscountDialog,i18n } from "@/plugin"
 import { createToaster } from "@meforma/vue-toaster";
 import socket from '@/utils/socketio';
@@ -8,6 +8,7 @@ import { FrappeApp } from 'frappe-js-sdk';
 import NumberFormat from 'number-format.js'
 
 const frappe = new FrappeApp();
+const db = frappe.db()
 const { t: $t } = i18n.global;
 const toaster = createToaster({ position: "top" });
 
@@ -50,6 +51,10 @@ export default class Sale {
         this.saleResource = null;
         this.paymentInputNumber = "";
         this.isPrintReceipt = false;
+        this.show_unit_in_select_portion  = false;
+        this.selected_sale_product =null;
+        this.selected_product=null
+
 
         //use this variable to show toast after database submit in resource
         this.message = undefined;
@@ -115,6 +120,8 @@ export default class Sale {
             working_day: this.working_day,
             exchange_rate: this.exchange_rate,
             change_exchange_rate: this.change_exchange_rate,
+            outlet:this.setting?.outlet,
+            stock_location:this.setting?.stock_location,
             table_id: this.table_id,
             tbl_number: this.tbl_number,
             pos_profile: this.setting?.pos_profile,
@@ -140,7 +147,8 @@ export default class Sale {
             commission: 0,
             commission_note: '',
             commission_amount: 0,
-            created_by:make_order_auth.name
+            created_by:make_order_auth.name,
+            
         }  
         this.onSaleApplyTax(tax_rule,this.sale); 
 
@@ -357,7 +365,8 @@ export default class Sale {
                 product_tax_rule: (p.tax_rule=="None"?"":p.tax_rule),
                 is_require_employee:p.is_require_employee,
                 is_timer_product: p.is_timer_product || 0,
-                time_stop: 0
+                time_stop: 0,
+                
             }       
             if (p.is_timer_product){
                 if  (p.time_in){ 
@@ -366,10 +375,16 @@ export default class Sale {
             }
             this.onSaleProductApplyTax(tax_rule,saleProduct); 
             this.sale.sale_products.push(saleProduct);
+            if(this.setting.table_groups.length == 0){
+                this.getSelectedProduct(saleProduct)
+                this.selected_sale_product = saleProduct    
+            }
+            
             this.updateSaleProduct(saleProduct);
 
 
             new_sale_product = saleProduct;
+            
         }
         this.updateSaleSummary();
 
@@ -409,6 +424,15 @@ export default class Sale {
         }
     }
     
+    getSelectedProduct(sp){
+        let sale =this
+        if(sp.product_code != this.selected_sale_product?.product_code){
+            db.getDoc('Product',sp.product_code)
+            .then((doc) => {
+                sale.selected_product = doc
+            })
+        }
+    }
     cloneSaleProduct(sp, quantity) {
         const u = JSON.parse(localStorage.getItem('make_order_auth'));
         this.clearSelected();
@@ -457,6 +481,7 @@ export default class Sale {
     onSelectSaleProduct(sp) {
         this.clearSelected();
         sp.selected = true;
+        this.selected_sale_product=sp
     }
 
     clearSelected() {       
@@ -1299,6 +1324,7 @@ export default class Sale {
                 if (result.portion != undefined) {
                     sp.portion = this.getString(result.portion.portion);
                     sp.price = this.getNumber(result.portion.price);
+                    sp.unit = this.getString(result.portion.unit);
                 }
 
                 if (result.modifiers != undefined) {

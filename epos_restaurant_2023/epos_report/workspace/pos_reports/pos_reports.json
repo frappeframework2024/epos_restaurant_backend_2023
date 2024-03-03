@@ -204,7 +204,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Sales Report",
-   "link_count": 9,
+   "link_count": 10,
    "onboard": 0,
    "type": "Card Break"
   },
@@ -297,9 +297,19 @@
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Sale Transaction",
+   "link_count": 0,
+   "link_to": "Sale Transaction",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2024-01-20 09:16:52.605615",
+ "modified": "2024-03-02 17:15:46.158336",
  "modified_by": "Administrator",
  "module": "ePOS Report",
  "name": "POS Reports",

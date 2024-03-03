@@ -1,91 +1,263 @@
 <template>
-  <v-table>
-    <thead>
-      <tr>
-        <th class="text-left">
-          មុខទំនិញ <br />
-          Product Description
-        </th>
-        <th class="text-left">
-          ចំនួន <br />
-          Quantity
-        </th>
-        <th class="text-center">
-          ឯកតា <br />
-          Unit
-        </th>
-        <th class="text-right">
-          តម្លៃ <br />
-          Price
-        </th>
-        <th class="text-right">
-          បញ្ចុះតម្លៃ <br />
-          Discount
-        </th>
-        <th class="text-right">
-          សរុបតម្លៃ <br />
-          Amount
-        </th>
+  <div class="table-sale-product-scroll">
+    <v-table>
+      <thead>
+        <tr>
+          <th class="text-left">
+            មុខទំនិញ <br />
+            Product Description
+          </th>
+          <th class="text-center">
+            ចំនួន <br />
+            Quantity
+          </th>
+          <th class="text-center">
+            ឯកតា <br />
+            Unit
+          </th>
+          <th class="text-right">
+            តម្លៃ <br />
+            Price
+          </th>
+          <th class="text-right">
+            បញ្ចុះតម្លៃ <br />
+            Discount
+          </th>
+          <th class="text-right">
+            សរុបតម្លៃ <br />
+            Amount
+          </th>
+          <th class="text-center">
+          </th>
 
-      </tr>
-    </thead>
-    <tbody> 
-      <tr v-for="sp  in sale.sale.sale_products"> 
-        <td>
-          <div class="d-flex align-center">
-            <div>
-              <avatar :name="sp.name || 'No Name'" v-bind="props" class="cursor-pointer mr-2" size="40"></avatar>
-            </div>
-            <div>
-              <p>{{sp.name}}</p>
-              <p>My Best Selling Product Name</p>
-              <p class="italic underline" style="color:#ccc;">Note</p>
-            </div>
-          </div>
-        </td>
-        <td>
-          <!-- <ComInput type="number" v-model="price" autofocus /> -->
-          <div class="flex gap-2 border rounded justify-center">
-            <div><v-icon icon="mdi-plus-circle-outline" color="green"></v-icon></div>
-            <div>2</div>
-            <div><v-icon icon="mdi-minus-circle-outline" color="red"></v-icon></div>
-          </div>
-        </td>
-        <td class="text-center">
-          <span class="link_line_action overflow-hidden">Can</span>
-        </td>
-        <td class="text-end">
-          <span class="link_line_action overflow-hidden"><CurrencyFormat :value="25"/></span>
-        </td>
-        <td class="text-end">
-          <span class="link_line_action overflow-hidden">10% / <CurrencyFormat :value="25"/></span>
-        </td>
-        <td class="text-end">
-          <span class="link_line_action overflow-hidden"><CurrencyFormat :value="250"/></span>
-        </td>
+        </tr>
+      </thead>
+      <tbody>
+        <template v-if="sale.sale?.sale_products?.length > 0">
+          <tr v-for="sp  in sale.getSaleProducts(undefined)" @click="sale.onSelectSaleProduct(sp)"
+            :class="sp.selected ? 'selected' : ''">
+            <td>
+              <div class="d-flex align-center gap-3">
+                <div>
 
-      </tr>
-    </tbody>
-  </v-table>
-  <!-- {{ sale.sale.sale_products }} -->
+                  <v-avatar :image="sp?.product_photo" v-bind="props" v-if="sp?.product_photo"
+                    class="cursor-pointer"></v-avatar>
+                  <avatar v-else :name="sp.product_name || 'No Name'" v-bind="props" class="cursor-pointer mr-2"
+                    size="40"></avatar>
+                </div>
+                <div>
+                  <p>{{ sp.product_code }}</p>
+                  <p>{{ sp.product_name }}</p>
+                  <p v-if="sp.product_name != sp.product_name_kh">{{ sp.product_name_kh }}</p>
+                  <p v-if="!sp.note" class="italic underline" style="color:#ccc;" @click="sale.onSaleProductNote(sp)">
+                    {{ $t("Add Note") }}</p>
+                  <p v-else class="italic" @click="sale.onSaleProductNote(sp)">{{ sp.note }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="text-center">
+              <div class="flex justify-center">
+                <div class="flex gap-2 border rounded justify-center py-1" style="width:5rem">
+                  <div><v-icon icon="mdi-minus-circle-outline" color="red" @click="onUpdateQuantity(sp, -1)"></v-icon>
+                  </div>
+                  <div>{{ sp.quantity }}</div>
+                  <div><v-icon icon="mdi-plus-circle-outline" color="green" @click="onUpdateQuantity(sp, 1)"></v-icon>
+                  </div>
+
+                </div>
+              </div>
+            </td>
+            <td class="text-center">
+              <span class="link_line_action overflow-hidden" @click="onEditSaleProduct(sp)">{{ sp.unit }}</span>
+            </td>
+            <td class="text-end">
+              <span class="link_line_action overflow-hidden" style="min-width:4rem"
+                @click="sale.onChangePrice(sp, gv, numberFormat)">
+                <CurrencyFormat :value="sp.price" />
+              </span>
+            </td>
+            <td class="text-end">
+              <span class="link_line_action overflow-hidden" style="min-width:4rem">
+                <template v-if="sp.discount">
+                  <span v-if="sp.discount_type == 'Percent'">
+                    {{ sp.discount }} % /
+                  </span>
+
+
+                  <CurrencyFormat :value="sp.discount_amount" />
+                </template>
+
+                <template v-else>{{ $t("Apply Discount") }}</template>
+
+                <v-menu activator="parent">
+                  <v-list>
+                    <v-list-item @click="onSaleProductDiscount(sp, 'Percent')">
+                      <v-list-item-title>{{ $t("Discount Percent") }} (%)</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="onSaleProductDiscount(sp, 'Amount')">
+                      <v-list-item-title>{{ $t("Discount Amount") }} ($)</v-list-item-title>
+                    </v-list-item>
+                    <v-divider v-if="sp.discount > 0" inset></v-divider>
+                    <v-list-item v-if="sp.discount > 0" @click="onSaleProductCancelDiscount(sp)">
+                      <v-list-item-title class="text-orange-700">{{ $t("Cancel Discount") }}</v-list-item-title>
+                    </v-list-item>
+
+                  </v-list>
+                </v-menu>
+              </span>
+            </td>
+            <td class="text-end">
+              <span style="min-width:4rem">
+                <CurrencyFormat :value="sp.amount" />
+              </span>
+            </td>
+            <td class="text-center"><v-icon icon="mdi-delete" color="red" @click="sale.onRemoveItem(sp, gv, numberFormat)"></v-icon></td>
+          </tr>
+        </template>
+
+        <template v-else>
+          <tr class="empty-data-st">
+            <td colspan="6">
+              <div class="text-center"><v-icon icon="mdi-cart-outline" color="blue"></v-icon></div>
+              <div class="text-center">There is no product selected, please search or scan barcode</div>
+            </td>
+          </tr>
+        </template>
+      </tbody>
+    </v-table>
+  </div>
 </template>
+
 <script setup>
 import { ref, inject } from "@/plugin"
 import ComCurrentUserAvatar from '@/components/layout/components/ComCurrentUserAvatar.vue'
+import { createToaster } from '@meforma/vue-toaster';
 
 
-const sale = inject("$sale")
-</script>
-<style scoped>
-  .link_line_action {
-      border: 1px dashed #4338ca;
-      border-radius: 10px;
-      padding: 0 5px;
-      color: var(--bg-purple-cs);
-      cursor: pointer;
-      display: inline-block;
-      width: 100%;
-      white-space: nowrap;
-      text-overflow: ellipsis;
+import { i18n } from '@/i18n';
+const { t: $t } = i18n.global;
+
+const numberFormat = inject('$numberFormat');
+const sale = inject('$sale');
+const product = inject('$product');
+const gv = inject('$gv');
+
+const toaster = createToaster({ position: 'top-right', maxToasts: 2, duration: 3000 });
+
+
+
+
+
+function onUpdateQuantity(sp, param) {
+  if (sp.quantity <= 1 && param == -1) {
+    return
   }
+  sale.updateQuantity(sp, sp.quantity + param)
+}
+
+
+function onEditSaleProduct(sp) {
+
+  product.setModifierSelection(sp);
+  if (sp.is_combo_menu && sp.use_combo_group) {
+    product.setComboGroupSelection(sp)
+  }
+
+  if ((sp.is_combo_menu && sp.use_combo_group) || product.modifiers.length > 0 || product.prices.filter(r => r.price_rule == sale.setting.price_rule && (r.branch == sale.setting.business_branch || r.branch == '')).length > 1) {
+    sale.OnEditSaleProduct(sp)
+  }
+  else {
+    toaster.warning($t("msg.This item has no option to edit"))
+  }
+
+}
+
+
+function onSaleProductDiscount(sp, discount_type) {
+  if (sp.allow_discount) {
+    if (!sale.isBillRequested()) {
+      gv.authorize("discount_item_required_password", "discount_item", "discount_item_required_note", "Discount Item Note", "", true).then((v) => {
+        if (v) {
+          sp.temp_discount_by = v.user;
+          sp.temp_discount_note = v.note;
+
+          sale.onDiscount(
+            gv,
+            `${sp.product_name} Discount`,
+            sp.amount,
+            sp.discount,
+            discount_type,
+            v.discount_codes,
+            sp.discount_note,
+            sp,
+            v.category_note_name
+          );
+        }
+      });
+    }
+  }
+  else {
+    toaster.warning($t('msg.This item is not allow to discount'));
+  }
+}
+
+
+
+function onSaleProductCancelDiscount(sp) {
+
+  sp.discount = 0;
+  sp.discount_type = 'Percent'
+  sp.happy_hour_promotion = ''
+  sp.happy_hours_promotion_title = ''
+  sale.updateSaleProduct(sp)
+  sale.updateSaleSummary();
+
+}
+
+
+
+
+
+
+
+</script>
+
+<style scoped>
+.selected,
+.item-list:hover {
+  background-color: #ffebcc !important;
+}
+
+
+.link_line_action {
+  border: 1px dashed #4338ca;
+  border-radius: 10px;
+  padding: 0 5px;
+  color: var(--bg-purple-cs);
+  cursor: pointer;
+  display: inline-block;
+  width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.table-sale-product-scroll {
+  overflow-y: scroll;
+  position: relative;
+}
+
+.empty-data-st {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.empty-data-st .mdi-cart-outline {
+  font-size: 5rem;
+}
 </style>

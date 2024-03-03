@@ -1,43 +1,17 @@
 <template>
     <div class="py-2 flex flex-wrap">
-        <div class="v-row">
-            <div class="v-col">
-                <div class="v-row">
-                    <div class="v-col-auto">
-                        ss
-                        <v-icon class="mdi-minus"></v-icon>
-                    </div>
-                    <div class="v-col">
-                        <small>
-{{ $t('POS Profile') }}                            
-                        </small>
-<div>
-  {{ sale.sale.pos_profile }}  
-</div>
-                    </div>
-                </div>
-            </div>
-            <div class="v-col">
-                <ComChip v-if="sale.working_day_resource?.loading" :tooltip="$t('Working Day')" prepend-icon="mdi-spin mdi-loading">{{ $t('Loading') }}...</ComChip>
-        <ComChip v-else :tooltip="$t('Working Day')" prepend-icon="mdi-calendar">{{ sale.sale.working_day }}</ComChip>
-            </div>
-            <div class="v-col">
-                <ComChip v-if="sale.cashier_shift_resource?.loading" :tooltip="$t('Cashier Shift')" prepend-icon="mdi-spin mdi-loading">{{ $t('Loading') }}...</ComChip>
-                <ComChip v-else :tooltip="$t('Cashier Shift')" prepend-icon="mdi-calendar-clock">{{ sale.sale.cashier_shift }}</ComChip>
-            </div>
+       
+        <div class="v-row ga-3">
+        <ComSaleInformationbox bgColor="bg-blue-400" title="POS Profile" :value="sale.sale.pos_profile" size="large" icon="mdi-cash-register" />
+        <ComSaleInformationbox bgColor="bg-blue-400" title="Outlet/WareHouse" :value="sale.sale.outlet + '/' + sale.sale.stock_location" size="large" icon="mdi-store" />
+        <ComSaleInformationbox bgColor="bg-blue-400" title="Working Day" :value="sale.sale.working_day" size="large" icon="mdi-calendar" />
+        <ComSaleInformationbox bgColor="bg-blue-400" title="Cashier Shift" :value="sale.sale.cashier_shift" size="large" icon="mdi-clock-time-nine-outline" />
+        <ComSaleInformationbox bgColor="bg-blue-400" title="Price Rule" :value="sale.sale.price_rule" size="large" icon="mdi-currency-usd" />
         </div>
-    
-        
-
-
-        <ComChip v-if="setting.table_groups && setting.table_groups.length > 0 && setting.use_guest_cover == 1" :tooltip="$t('Guest Cover')" prepend-icon="mdi-account-multiple-outline" @onClick="onUpdateGuestCover()">{{ sale.sale.guest_cover }}</ComChip>
-        <ComChip v-if="setting.table_groups && setting.table_groups.length > 0 && sale.sale.seat_number" :tooltip="($t('Seat')+' #')" prepend-icon="mdi-chair-school" @onClick="onUpdateSeatNumber()">{{ sale.sale.seat_number }}</ComChip>
-        <ComChip :tooltip="$t('Price Rule')" prepend-icon="mdi-bulletin-board" @onClick="onChangePriceRule()">{{ sale.sale.price_rule }}</ComChip>
-
     </div>
 </template>
 <script setup>
-import ComSaleTypeChip from '@/views/sale/components/ComSaleTypeChip.vue';
+import ComSaleInformationbox from '@/views/sale/components/retail_ui/ComSaleInformationbox.vue';
 
 import { inject,keyboardDialog,changePriceRuleDialog, createToaster,i18n ,computed } from '@/plugin';
  

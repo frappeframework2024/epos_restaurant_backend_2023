@@ -23,26 +23,19 @@
   
         <ComDiscountButton v-if="gv.device_setting.is_order_station==0"/>
         
-        <v-btn v-if="setting.table_groups && setting.table_groups.length > 0 && !mobile" :variant="mobile ? 'tonal' : 'elevated'"
+        <v-btn  :variant="mobile ? 'tonal' : 'elevated'"
           :color="mobile ? 'primary' : ''" :stacked="!mobile" size="small" class="m-0-1 grow"
-          :prepend-icon="mobile ? '' : 'mdi-plus'" @click="onSubmitAndNew">
-          {{ $t('Submit and New') }}
+          :prepend-icon="mobile ? '' : 'mdi-content-save'" @click="onSubmitAndNew">
+          {{ $t('Save Order') }}
         </v-btn>
         
-        <v-btn v-if="setting.table_groups && setting.table_groups.length > 0 && mobile"  :height="mobile ? '35px' : undefined" :variant="mobile ? 'tonal' : 'elevated'"
-          :color="mobile ? 'primary' : ''" :stacked="!mobile" size="small" class="m-0-1 grow" 
-          :prepend-icon="mobile ? '' : 'mdi-plus'" @click="onSubmitAndNew">
-          {{$t('Submit and New')}}
-        </v-btn>
-  
-  
         <v-btn v-if="device_setting.show_option_quick_pay ==1" :stacked="!mobile" size="small" color="error" class="m-0-1 grow" :height="mobile ? '35px' : undefined" :variant="mobile ? 'tonal' : 'elevated'"
-          :prepend-icon="mobile ? '' : 'mdi-currency-usd'" @click="onQuickPay">
+          :prepend-icon="mobile ? '' : 'mdi-lightning-bolt'" @click="onQuickPay">
           {{ $t('Quick Pay Cash') }}
         </v-btn>
 
         <v-btn  :stacked="!mobile" size="small" color="success" class="m-0-1 grow" :height="mobile ? '35px' : undefined" :variant="mobile ? 'tonal' : 'elevated'"
-          :prepend-icon="mobile ? '' : 'mdi-currency-usd'" @click="onQuickPay">
+          :prepend-icon="mobile ? '' : 'mdi-currency-usd'" @click="onPayment">
           {{ $t('Payment') }}
         </v-btn>
       
@@ -51,7 +44,8 @@
     </div>
   </template>
   <script setup>
-  import { inject, useRouter,ref,changePriceRuleDialog,changeSaleTypeModalDialog,ComSaleReferenceNumberDialog,addCommissionDialog,i18n } from '@/plugin';
+  
+  import { inject, useRouter,ref,paymentDialog,changePriceRuleDialog,changeSaleTypeModalDialog,ComSaleReferenceNumberDialog,addCommissionDialog,i18n } from '@/plugin';
   import ComDiscountButton from '@/views/sale/components/ComDiscountButton.vue';
   import ComPrintBillButton from '@/views/sale/components/ComPrintBillButton.vue';
   import { createToaster } from '@meforma/vue-toaster';
@@ -129,7 +123,18 @@
   
   })
   
-  
+  sale.vue.$onKeyStroke('F12', (e) => {
+    e.preventDefault();
+    
+    if(gv.device_setting.show_option_payment==0){
+        return;
+    }
+    
+    if(sale.dialogActiveState==false){
+      onPayment();
+    } 
+})
+
   
   sale.vue.$onKeyStroke('F10',(e)=>{ 
     e.preventDefault();
@@ -300,6 +305,52 @@
   
   }
   
+
+  
+async function onPayment() {
+  sale.dialogActiveState=true
+  if (device_setting.show_option_payment==0){
+    return
+  }
+
+  if (sale.sale.sale_products.length == 0) {
+    toaster.warning($t('msg.Please select a Product to process payment'));
+    return
+  }
+
+  
+  const result = await paymentDialog({})
+  sale.dialogActiveState=false
+  if (result) { 
+    
+    product.onClearKeyword()
+    sale.newSale();
+
+    if (onRedirectSaleType()) {
+     
+        router.push({ name: "AddSale" });
+        call.get('epos_restaurant_2023.api.api.get_current_shift_information',{
+              business_branch: sale.setting?.business_branch,
+              pos_profile: localStorage.getItem("pos_profile")
+              }).then((data)=>{
+                if (data.message.cashier_shift == null) {
+                  toaster.warning($t("msg.Please start shift first"));
+                  router.push({ name: "OpenShift" });
+              } else if (data.message.working_day == null) {
+                  toaster.warning($t('msg.Please start working day first'));
+                  router.push({ name: "StartWorkingDay" });
+              } else {
+                  sale.sale.working_day = data.message.working_day.name;
+                  sale.sale.cashier_shift = data.message.cashier_shift.name;
+                  sale.sale.shift_name = data.message.cashier_shift.shift_name;
+                  gv.confirm_close_working_day(data.message.working_day.posting_date);
+                  onCheckExpireHappyHoursPromotion();
+              }
+            })
+      }
+  }
+}
+
   
   
   

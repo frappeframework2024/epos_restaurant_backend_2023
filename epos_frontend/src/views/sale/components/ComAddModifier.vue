@@ -37,7 +37,7 @@
                                 <div class="m-1"
                                     v-for="(item, i) in product.prices.filter(r => r.price_rule == sale.sale.price_rule)"
                                     :key="i">
-                                    <ComPortionItem :portion="item" @click="product.onSelectPortion(item)" />
+                                    <ComPortionItem :showUnit="sale.show_unit_in_select_portion" :portion="item" @click="product.onSelectPortion(item)" />
                                 </div>
                             </div>
                         </v-expansion-panel-text>
@@ -82,7 +82,9 @@ const props = defineProps({
     }
 })
 const product = inject("$product")
+
 const sale = inject("$sale")
+ 
 product.keyword = "";
 let keyword = ref()
 const panelPortion = ref([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])

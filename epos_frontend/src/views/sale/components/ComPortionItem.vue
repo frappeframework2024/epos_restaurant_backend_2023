@@ -6,7 +6,8 @@
         >
         <v-icon start icon="mdi-checkbox-marked-circle-outline" v-if="portion.selected" color="orange"></v-icon>
         <span>
-            {{ portion.portion }} <CurrencyFormat :value="portion.price"></CurrencyFormat>
+         
+            {{ showUnit?portion.unit:portion.portion }} <CurrencyFormat :value="portion.price"></CurrencyFormat>
         </span>
     </v-chip> 
 </template>
@@ -15,9 +16,11 @@ import { defineProps,defineEmits } from 'vue';
 import { useDisplay } from 'vuetify';
 const { mobile } = useDisplay()
 const props = defineProps({
-    portion:Object
+    portion:Object,
+    showUnit:Boolean
 })
 const emit = defineEmits(["click"])
+ 
 function onClick(){
     emit("click");
 }

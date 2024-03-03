@@ -183,36 +183,37 @@ def get_product_by_barcode(barcode):
     else:
         
         data  = frappe.db.sql("select name,price,unit,parent from `tabProduct Price` where barcode='{}'".format(barcode),as_dict=1)
-        product = frappe.get_doc('Product', data[0].parent)
-        return {
-                    "menu_product_name": product.name,
-                    "name": product.name,
-                    "name_en": product.product_name_en,
-                    "name_kh": product.product_name_kh,
-                    "parent": product.product_category,
-                    "price": data[0].price,
-                    "unit": data[0].unit,
-                    "allow_discount": product.allow_discount,
-                    "allow_change_price": product.allow_change_price,
-                    "allow_free": product.allow_free,
-                    "is_open_product": product.is_open_product,
-                    "is_open_price": product.is_open_price,
-                    "is_timer_product": product.is_timer_product,
-                    "is_inventory_product": product.is_inventory_product,
-                    "prices": product.prices,
-                    "printers":json.dumps(([pr.printer,pr.group_item_type] for pr in product.printers),default=json_handler),
-                    "modifiers": "[]",
-                    "photo": product.photo,
-                    "type": "product",
-                    "append_quantity": 1,
-                    "is_require_employee":product.is_require_employee,
-                    "revenue_group":p.revenue_group,
-                    "modifiers_data": json.dumps(([pr.business_branch,pr.modifier_category,pr.prefix,pr.modifier_code,pr.price] for pr in product.product_modifiers),default=json_handler),
-                    "sort_order":product.sort_order
-                }
+        if data:
+            product = frappe.get_doc('Product', data[0].parent)
+            return {
+                        "menu_product_name": product.name,
+                        "name": product.name,
+                        "name_en": product.product_name_en,
+                        "name_kh": product.product_name_kh,
+                        "parent": product.product_category,
+                        "price": data[0].price,
+                        "unit": data[0].unit,
+                        "allow_discount": product.allow_discount,
+                        "allow_change_price": product.allow_change_price,
+                        "allow_free": product.allow_free,
+                        "is_open_product": product.is_open_product,
+                        "is_open_price": product.is_open_price,
+                        "is_timer_product": product.is_timer_product,
+                        "is_inventory_product": product.is_inventory_product,
+                        "prices": product.prices,
+                        "printers":json.dumps(([pr.printer,pr.group_item_type] for pr in product.printers),default=json_handler),
+                        "modifiers": "[]",
+                        "photo": product.photo,
+                        "type": "product",
+                        "append_quantity": 1,
+                        "is_require_employee":product.is_require_employee,
+                        "revenue_group":p.revenue_group,
+                        "modifiers_data": json.dumps(([pr.business_branch,pr.modifier_category,pr.prefix,pr.modifier_code,pr.price] for pr in product.product_modifiers),default=json_handler),
+                        "sort_order":product.sort_order
+                    }
         
 
-    frappe.throw("Product Not Found")
+    frappe.throw("Product Code {} Not Found".format(barcode))
     
 @frappe.whitelist(methods="POST")
 def get_product_price_by_price_rule(products, business_branch, price_rule="Normal Rate"):

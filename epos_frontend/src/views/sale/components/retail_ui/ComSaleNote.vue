@@ -1,5 +1,5 @@
 <template>
-
+<label class="bold">Sale Note</label>
 <ComInput  type="textarea" keyboard v-model="sale.sale.note" placeholder="Add Note"/>
 
 </template>
