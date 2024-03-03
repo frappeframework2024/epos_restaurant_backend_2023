@@ -11,16 +11,17 @@
                 v-debounce="onSearch"
                 @onInput="onSearch"
                 @keydown="onKeyDown"
-                :ref="control"
+                ref="txtSearch"
                 />
                 
         </div>
     </div>
 </template>
 <script setup>
-import { inject,ref, defineProps,createResource ,addModifierDialog }   from '@/plugin';
+import { inject,ref, defineProps,createResource ,addModifierDialog,onUnmounted, onMounted }   from '@/plugin';
 import ComInput from '../../../components/form/ComInput.vue';
 import { createToaster } from '@meforma/vue-toaster';
+
 const product =inject("$product") 
 const sale=inject("$sale") 
 const frappe = inject("$frappe")
@@ -114,5 +115,25 @@ function onKeyDown(event) {
       }
     }
 }
+
+ 
+
+const actionClickHandler = async function (e) {
+
+if (e.isTrusted) {
+    if(e.data.action=="set_focus_in_search_product"){
+        control.value.$el.focus();
+    }
+}
+}
+
+onMounted(()=>{
+    window.addEventListener('message', actionClickHandler, false);
+})
+
+onUnmounted(() => {
+    window.removeEventListener('message', actionClickHandler, false);
+})
+
 
 </script>

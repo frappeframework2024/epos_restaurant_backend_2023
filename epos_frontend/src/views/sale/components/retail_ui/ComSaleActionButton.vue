@@ -67,6 +67,8 @@
   const toaster = createToaster({ position: "top" })
   const emit = defineEmits(["onSubmitAndNew", 'onClose'])
   const device_setting = JSON.parse(localStorage.getItem("device_setting"))
+  const frappe = inject('$frappe');
+  const call = frappe.call();
   
   const { ctrl_p } = useMagicKeys({
       passive: false,
@@ -246,16 +248,11 @@
       if (value) {
         product.onClearKeyword()
         sale.newSale();
-        if(onRedirectSaleType()){
-          if (sale.setting.table_groups.length > 0) {
-            router.push({ name: "TableLayout" });
-          } else {
-            sale.getTableSaleList();
-          }
-        }
+        onRedirectSaleType()
         //this code is send message to modal saleproduct list in mobile view
         //we use this below code to send signal close modal when complete task
         window.postMessage("close_modal", "*");
+        window.postMessage({action:"set_focus_in_search_product"}, "*");
   
       }
     });
@@ -333,6 +330,9 @@ async function onPayment() {
               business_branch: sale.setting?.business_branch,
               pos_profile: localStorage.getItem("pos_profile")
               }).then((data)=>{
+
+               
+
                 if (data.message.cashier_shift == null) {
                   toaster.warning($t("msg.Please start shift first"));
                   router.push({ name: "OpenShift" });
@@ -343,8 +343,9 @@ async function onPayment() {
                   sale.sale.working_day = data.message.working_day.name;
                   sale.sale.cashier_shift = data.message.cashier_shift.name;
                   sale.sale.shift_name = data.message.cashier_shift.shift_name;
+               
                   gv.confirm_close_working_day(data.message.working_day.posting_date);
-                  onCheckExpireHappyHoursPromotion();
+                  
               }
             })
       }

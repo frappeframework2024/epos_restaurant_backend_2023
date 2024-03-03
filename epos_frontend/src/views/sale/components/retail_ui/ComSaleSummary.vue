@@ -66,7 +66,6 @@
       <CurrencyFormat :value="((sale.sale.grand_total * (sale.sale.exchange_rate || 1)) - (sale.sale.deposit * (sale.sale.exchange_rate || 1)))"
                 :currency="sale.setting.pos_setting.second_currency_name" />
                 
-                
     </ComLabelValue>
 
 

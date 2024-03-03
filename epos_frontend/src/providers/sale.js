@@ -112,6 +112,8 @@ export default class Sale {
         const make_order_auth = JSON.parse(localStorage.getItem('make_order_auth'));
         const tax_rule = this.setting.tax_rule;
         this.orderChanged = false;
+        this.selected_product = null
+        this.selected_sale_product = null
         this.sale = {
             doctype: "Sale",
             sale_status: "New",

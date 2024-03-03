@@ -10,7 +10,7 @@
             <v-btn variant="flat" @click="onClose" color="error" v-if="!params.hide_cancel">
               {{ $t('Cancel') }}
             </v-btn>
-            <v-btn variant="flat" @click="onOk" color="primary">
+            <v-btn variant="flat" @click="onOk"  ref="okBtn" color="primary">
                 {{ $t('Ok') }}
             </v-btn>
         </v-card-actions>
@@ -20,7 +20,8 @@
 
 <script setup>
 import {ref} from  "@/plugin"
-
+import { onMounted } from "vue";
+const okBtn = ref(null);
 const props = defineProps({
   params:{
     type:Object,
@@ -36,7 +37,7 @@ function onClose(){
 function onOk(){
   emit('resolve', true);
 }
-
-
-
+onMounted(()=>{
+  okBtn.value.$el.focus();
+})
 </script>

@@ -1,5 +1,6 @@
 <template>
-  <div class="table-sale-product-scroll">
+  <div :class="sale.sale?.sale_products?.length > 0 ? 'table-sale-product-scroll' : ' empty-no-scroll'"
+    :style="sale.sale?.sale_products?.length > 0 ? 'max-height:calc(-424px + 100vh)' : ''">
     <v-table>
       <thead>
         <tr>
@@ -32,7 +33,7 @@
 
         </tr>
       </thead>
-      <tbody>
+      <tbody class="table-pro">
         <template v-if="sale.sale?.sale_products?.length > 0">
           <tr v-for="sp  in sale.getSaleProducts(undefined)" @click="sale.onSelectSaleProduct(sp)"
             :class="sp.selected ? 'selected' : ''">
@@ -111,7 +112,9 @@
                 <CurrencyFormat :value="sp.amount" />
               </span>
             </td>
-            <td class="text-center"><v-icon icon="mdi-delete" color="red" @click="sale.onRemoveItem(sp, gv, numberFormat)"></v-icon></td>
+            <td class="text-center"><v-icon icon="mdi-delete" color="red"
+                @click="sale.onRemoveItem(sp, gv, numberFormat)"></v-icon>
+            </td>
           </tr>
         </template>
 
@@ -143,7 +146,8 @@ const product = inject('$product');
 const gv = inject('$gv');
 
 const toaster = createToaster({ position: 'top-right', maxToasts: 2, duration: 3000 });
-
+const frappe = inject('$frappe');
+const db = frappe.db()
 
 
 
@@ -157,18 +161,21 @@ function onUpdateQuantity(sp, param) {
 
 
 function onEditSaleProduct(sp) {
+  db.getDoc("Product", sp.product_code).then(doc => {
+    product.prices = doc.product_price
+    product.setModifierSelection(sp);
+    if (sp.is_combo_menu && sp.use_combo_group) {
+      product.setComboGroupSelection(sp)
+    }
 
-  product.setModifierSelection(sp);
-  if (sp.is_combo_menu && sp.use_combo_group) {
-    product.setComboGroupSelection(sp)
-  }
+    if ((sp.is_combo_menu && sp.use_combo_group) || product.modifiers.length > 0 || product.prices.filter(r => r.price_rule == sale.setting.price_rule && (r.branch == sale.setting.business_branch || r.branch == '')).length > 1) {
+      sale.OnEditSaleProduct(sp)
+    }
+    else {
+      toaster.warning($t("msg.This item has no option to edit"))
+    }
+  })
 
-  if ((sp.is_combo_menu && sp.use_combo_group) || product.modifiers.length > 0 || product.prices.filter(r => r.price_rule == sale.setting.price_rule && (r.branch == sale.setting.business_branch || r.branch == '')).length > 1) {
-    sale.OnEditSaleProduct(sp)
-  }
-  else {
-    toaster.warning($t("msg.This item has no option to edit"))
-  }
 
 }
 
@@ -222,7 +229,7 @@ function onSaleProductCancelDiscount(sp) {
 
 </script>
 
-<style scoped>
+<style>
 .selected,
 .item-list:hover {
   background-color: #ffebcc !important;
@@ -246,7 +253,7 @@ tr:nth-child(even) {
 }
 
 .table-sale-product-scroll {
-  overflow-y: scroll;
+  overflow-y: auto;
   position: relative;
 }
 
@@ -259,5 +266,17 @@ tr:nth-child(even) {
 
 .empty-data-st .mdi-cart-outline {
   font-size: 5rem;
+}
+
+.empty-no-scroll {
+  overflow-y: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.table-sale-product-scroll .v-table>.v-table__wrapper>table {
+  overflow: hidden !important;
 }
 </style>

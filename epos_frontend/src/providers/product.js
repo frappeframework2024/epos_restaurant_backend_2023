@@ -238,6 +238,7 @@ export default class Product {
 
     }
     setModifierSelection(sp) {
+        
         Enumerable.from(this.prices).where("$.selected==true").forEach("$.selected = false");
         const portion = Enumerable.from(this.prices).where(`$.portion=='${sp.portion}'`).firstOrDefault();
         if (portion != undefined) {
