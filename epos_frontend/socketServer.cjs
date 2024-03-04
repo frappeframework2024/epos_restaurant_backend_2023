@@ -205,6 +205,9 @@ io.on('connection', (socket) => {
   socket.on("ComRoomAvailable",(arg)=>{
     io.emit("ComRoomAvailable",arg)
   })
+  socket.on("PrintVoucherSlip",(arg)=>{
+    io.emit("PrintVoucherSlip",arg)
+  })
 
   
 });

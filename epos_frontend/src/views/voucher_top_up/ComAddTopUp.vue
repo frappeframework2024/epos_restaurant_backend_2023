@@ -217,6 +217,21 @@ function addTopUp() {
     })
 }
 
+function onPrintVoucherSlip(doc) {
+ 
+    const data = {
+        action: "print_voucher_slip",
+        setting: this.setting?.pos_setting,
+        voucher: doc
+    }
+
+    if (localStorage.getItem("is_window") == 1) {
+        window.chrome.webview.postMessage(JSON.stringify(data));
+    } else {
+        socket.emit("PrintVoucherSlip", JSON.stringify(data))
+    }
+}
+
 function onSave() {
     loading.value = true;
 
@@ -224,7 +239,8 @@ function onSave() {
         vouchers: voucherTopUps.value.filter((v) => v.docstatus == 0),
         posauthuser:props.params.authUser.user
     }).then((result) => {
-        getCustomerVoucher()
+        getCustomerVoucher(result.message[0])
+        onPrintVoucherSlip
         emit('resolve', true);
         toaster.success($t('Top up successfully'))
     }).catch((err) => {

@@ -40,6 +40,7 @@ def get_voucher_per_customer(customer):
 
 @frappe.whitelist()
 def insert_voucher_multiple_row(vouchers,posauthuser):
+	created_vouchers=[]
 	for v in vouchers:
 		if "name" in v:
 			doc = frappe.get_doc('Voucher',v["name"])
@@ -66,13 +67,12 @@ def insert_voucher_multiple_row(vouchers,posauthuser):
 					})
 				doc.total_paid = sum(p.payment_amount for p in doc.payments)
 			doc.save()
-			frappe.throw(str(float(doc.total_paid or 0) > float(doc.actual_amount or 0)))
 			if len(doc.payments)>0 and float(doc.total_paid or 0) > float(doc.actual_amount or 0):
 				frappe.throw("Payment amount must equal to actual amount")
 			
 			if float(doc.total_paid or 0) == float(doc.actual_amount or 0):
 				doc.submit()
-
+				created_vouchers.append(doc)
 			
 		else:
 			doc = frappe.get_doc({
@@ -107,8 +107,9 @@ def insert_voucher_multiple_row(vouchers,posauthuser):
 			doc.save()
 			if float(doc.total_paid or 0) == float(doc.actual_amount or 0):
 				doc.submit()
-		
+				created_vouchers.append(doc)
 	frappe.db.commit()
+	return created_vouchers
 
 def get_exchange_rate(base_currency, second_currency):
 	sql = "select exchange_rate from `tabCurrency Exchange` where from_currency='{}' and to_currency = '{}' and docstatus=1 order by posting_date desc, modified desc limit 1"
