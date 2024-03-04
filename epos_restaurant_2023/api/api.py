@@ -814,7 +814,14 @@ def get_working_day_list_report(business_branch = '', pos_profile = ''):
 
 
 @frappe.whitelist()
-def edit_sale_order(name,auth):
+def edit_sale_order(name,auth=None,note=None):
+    if not auth:
+        auth = frappe.db.get_value("Employee",{'user_id': frappe.session.user},['user_id','employee_name as full_name','name','pos_permission'], as_dict=1)
+
+        edit_closed_receipt = frappe.db.get_value('POS User Permission',auth.pos_permission,'edit_closed_receipt')
+        auth['note'] = (note if note else '')
+        if edit_closed_receipt != 1:
+            frappe.throw(_("You don't permission to permform this action"))
     #check if sale already have payment then cancel sale payment first
     payments = frappe.get_list("Sale Payment",fields=["name"], filters={"sale":name,"docstatus":1})
     for p in payments:
@@ -877,7 +884,6 @@ def edit_sale_order(name,auth):
 
 
     #add comment
-       
     doc = frappe.get_doc({
         'doctype': 'Comment',
         'subject': 'Edit Bill',

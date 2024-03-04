@@ -1,6 +1,5 @@
 <template>
-    <!-- select ed product info -->
-    <!-- {{ sale?.selected_sale_product }} -->
+
     <div>
         <template v-if="sale?.selected_sale_product">
             <div style="height:calc(-321px + 100vh);overflow-y:auto">
@@ -36,19 +35,31 @@
                     <ComLabelValue label="Sub Total">
                         <CurrencyFormat :value="sale?.selected_sale_product?.sub_total" />
                     </ComLabelValue>
-                    <ComLabelValue :label="`Discount ${sale?.selected_sale_product?.total_discount}`">
-                        <CurrencyFormat :value="sale?.selected_sale_product?.total_discount" />
+                    <ComLabelValue v-if="sale.selected_sale_product.discount_amount > 0">
+
+                        <template v-slot:label>
+                            {{ $t("Discount") }}
+                            <span
+                                v-if="sale.selected_sale_product.discount > 0 && sale.selected_sale_product.discount_type == 'Percent'">{{
+            sale.selected_sale_product.discount }}%</span>
+                        </template>
+                        <CurrencyFormat :value="sale.selected_sale_product.discount_amount" />
                     </ComLabelValue>
                     <ComLabelValue label="Total Amount">
                         <CurrencyFormat :value="sale?.selected_sale_product?.total_revenue" />
                     </ComLabelValue>
+                    <template v-if="sale.selected_product?.product?.is_inventory_product==1">
                     <h2 style="font-size: 20px">Inventory</h2>
-                    <ComLabelValue label="Warehouse 1" value="10 units">
+                    <ComLabelValue v-for="(inv, index) in sale.selected_product.invenotry" :key="index"
+                        >
+                        <template #label>
+                                {{ inv.stock_location }} <br/>
+                                {{ $t("Re-order level") }} : {{ inv.reorder_level }}
+                        </template>
+                        {{ inv.quantity }} {{ inv.unit }} 
                     </ComLabelValue>
-                    <ComLabelValue label="Warehouse 2" value="10 units">
-                    </ComLabelValue>
-                    <ComLabelValue label="Total On Hand" value="10 units">
-                    </ComLabelValue>
+
+                </template>
                 </div>
             </div>
         </template>
@@ -58,7 +69,7 @@
                 <div class="flex h-100 w-100 justify-center items-center">
                     <div class="text-center n-data-str">
                         <v-icon icon="mdi-database-remove" color="red" size="large"></v-icon><br />
-                        No Data
+                        No Product Selected
                     </div>
                 </div>
             </div>
@@ -68,15 +79,13 @@
 
 
 
-
-    <!-- <hr />
-    <h1>Product Info</h1> -->
-    <!-- {{ sale?.selected_product }} -->
 </template>
 
 <script setup>
-import { inject, ref, watch, onMounted } from '@/plugin';
+import { inject, ref, watch, onMounted, i18n } from '@/plugin';
 import ComLabelValue from "@/views/sale/components/retail_ui/ComLabelValue.vue"
+
+const { t: $t } = i18n.global;
 const sale = inject("$sale") 
 </script>
 

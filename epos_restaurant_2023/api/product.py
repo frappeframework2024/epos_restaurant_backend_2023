@@ -231,3 +231,10 @@ def get_product_price_by_price_rule(products, business_branch, price_rule="Norma
         p["price"] = price
         
     return products
+
+@frappe.whitelist()
+def get_product_detail_information(product_code):
+    doc = frappe.get_doc("Product",product_code)
+    inventory = frappe.db.sql("select stock_location,unit,quantity,reorder_level from `tabStock Location Product` where product_code='{}'".format(product_code),as_dict=1)
+    
+    return {"product":doc,"invenotry":inventory}

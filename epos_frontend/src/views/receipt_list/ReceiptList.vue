@@ -1,7 +1,11 @@
 <template>
     <PageLayout :title="$t('Receipt List')" icon="mdi-file-chart" full>
       <ComReceiptListCard :headers="headers" doctype="Sale" extra-fields="customer_name,sale_status_color" @callback="onCallback" v-if="mobile"/>
-      <ComTable :headers="headers" doctype="Sale" extra-fields="customer_name,sale_status_color" business-branch-field="business_branch" pos-profile-field="pos_profile" @callback="onCallback" v-else/>
+      <ComTable :headers="headers" doctype="Sale" :default-filter="defaltFilter" extra-fields="customer_name,sale_status_color" business-branch-field="business_branch" pos-profile-field="pos_profile" @callback="onCallback" v-else>
+          <template v-slot:kpi>
+           
+          </template>
+      </ComTable>
     </PageLayout>
 </template>
 <script setup>
@@ -15,6 +19,7 @@ const { t: $t } = i18n.global;
 
 const {mobile} = useDisplay()
 const router = useRouter()
+const defaltFilter = ref({'pos_profile': ['=', 'Main']})
 async function onCallback(data) {
  
  if(data.fieldname=="name"){

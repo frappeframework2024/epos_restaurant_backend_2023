@@ -9,6 +9,7 @@ import NumberFormat from 'number-format.js'
 
 const frappe = new FrappeApp();
 const db = frappe.db()
+const call = frappe.call()
 const { t: $t } = i18n.global;
 const toaster = createToaster({ position: "top" });
 
@@ -290,6 +291,12 @@ export default class Sale {
             sp.selected = true;
             this.updateSaleProduct(sp);
             is_new_sale_product = false;
+
+            if(this.setting.table_groups.length == 0){
+                this.getSelectedProduct(sp)
+                this.selected_sale_product = sp    
+            }
+
         } else {
             // add new record to sale product
             this.clearSelected();
@@ -429,9 +436,9 @@ export default class Sale {
     getSelectedProduct(sp){
         let sale =this
         if(sp.product_code != this.selected_sale_product?.product_code){
-            db.getDoc('Product',sp.product_code)
-            .then((doc) => {
-                sale.selected_product = doc
+            call.get('epos_restaurant_2023.api.product.get_product_detail_information',{product_code:sp.product_code})
+            .then((data) => {
+                sale.selected_product = data.message
             })
         }
     }
@@ -483,7 +490,12 @@ export default class Sale {
     onSelectSaleProduct(sp) {
         this.clearSelected();
         sp.selected = true;
-        this.selected_sale_product=sp
+
+        // we check if user use retail system when user click on order product we get product information
+        if(this.setting.table_groups.length == 0){
+            this.getSelectedProduct(sp)
+            this.selected_sale_product = sp    
+        }
     }
 
     clearSelected() {       

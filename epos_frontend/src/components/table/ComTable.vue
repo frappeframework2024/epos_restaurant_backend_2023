@@ -8,6 +8,9 @@
                 <div v-else class="h-12"></div>
             </div>
             <div>
+                <slot name="kpi"></slot>
+            </div>
+            <div>
                 <div class="relative">
                     <div v-if="!dataResource.data || dataResource.loading" class="absolute left-0 right-0 top-0 bottom-0 z-10" style="background-color: #26262661;">
                         <div class="h-full w-full flex justify-center items-center">
@@ -122,6 +125,7 @@ const props = defineProps({
         type: String,
         default: ''
     },
+    defaltFilter:Object,
     extraFields: String,
     businessBranchField: String,
     posProfileField: String

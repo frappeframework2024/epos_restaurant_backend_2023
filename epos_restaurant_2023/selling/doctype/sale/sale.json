@@ -78,6 +78,7 @@
   "section_break_43",
   "created_by",
   "pos_station_name",
+  "pos_config",
   "column_break_45",
   "closed_by",
   "closed_date",
@@ -363,7 +364,6 @@
   {
    "fieldname": "pos_profile",
    "fieldtype": "Link",
-   "in_standard_filter": 1,
    "label": "POS Profile",
    "options": "POS Profile"
   },
@@ -1024,6 +1024,12 @@
    "fieldname": "time_out",
    "fieldtype": "Time",
    "label": "Time Out"
+  },
+  {
+   "fetch_from": "pos_profile.pos_config",
+   "fieldname": "pos_config",
+   "fieldtype": "Data",
+   "label": "POS Config"
   }
  ],
  "image_field": "photo",
@@ -1036,7 +1042,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-03-01 10:00:09.133497",
+ "modified": "2024-03-04 10:37:42.314242",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

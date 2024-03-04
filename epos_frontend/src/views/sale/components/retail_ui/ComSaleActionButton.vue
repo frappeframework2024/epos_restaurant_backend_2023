@@ -247,8 +247,13 @@
     await sale.onSubmitQuickPay().then((value) => {
       if (value) {
         product.onClearKeyword()
+
         sale.newSale();
-        onRedirectSaleType()
+        
+        if(onRedirectSaleType()){
+          checkCashierShift()
+        }
+        
         //this code is send message to modal saleproduct list in mobile view
         //we use this below code to send signal close modal when complete task
         window.postMessage("close_modal", "*");
@@ -325,7 +330,13 @@ async function onPayment() {
 
     if (onRedirectSaleType()) {
      
-        router.push({ name: "AddSale" });
+       checkCashierShift();
+      }
+  }
+}
+
+function checkCashierShift(){
+  router.push({ name: "AddSale" });
         call.get('epos_restaurant_2023.api.api.get_current_shift_information',{
               business_branch: sale.setting?.business_branch,
               pos_profile: localStorage.getItem("pos_profile")
@@ -348,8 +359,7 @@ async function onPayment() {
                   
               }
             })
-      }
-  }
+
 }
 
   

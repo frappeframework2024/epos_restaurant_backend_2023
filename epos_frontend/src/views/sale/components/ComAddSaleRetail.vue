@@ -31,7 +31,7 @@
                 <div class="m-3"></div>
                 <ComSelectCustomer padding="p-3" />
                 <div class="m-3"></div>
-                <ComSelectedProduct />
+                <ComSelectedProduct v-if="sale.sale?.sale_products?.filter(r=>r.selected).length>0"/>
             </div>
         </div>
     </div>

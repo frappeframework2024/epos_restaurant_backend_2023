@@ -1,4 +1,5 @@
 <template>
+
   <div :class="sale.sale?.sale_products?.length > 0 ? 'table-sale-product-scroll' : ' empty-no-scroll'"
     :style="sale.sale?.sale_products?.length > 0 ? 'max-height:calc(-424px + 100vh)' : ''">
     <v-table>
@@ -69,7 +70,7 @@
               </div>
             </td>
             <td class="text-center">
-              <span class="link_line_action overflow-hidden" @click="onEditSaleProduct(sp)">{{ sp.unit }}</span>
+              <ComProductUnit :sale_product="sp"/>
             </td>
             <td class="text-end">
               <span class="link_line_action overflow-hidden" style="min-width:4rem"
@@ -134,10 +135,12 @@
 <script setup>
 import { ref, inject } from "@/plugin"
 import ComCurrentUserAvatar from '@/components/layout/components/ComCurrentUserAvatar.vue'
+import ComProductUnit from '@/views/sale/components/retail_ui/ComProductUnit.vue'
 import { createToaster } from '@meforma/vue-toaster';
 
 
 import { i18n } from '@/i18n';
+
 const { t: $t } = i18n.global;
 
 const numberFormat = inject('$numberFormat');
@@ -159,25 +162,6 @@ function onUpdateQuantity(sp, param) {
   sale.updateQuantity(sp, sp.quantity + param)
 }
 
-
-function onEditSaleProduct(sp) {
-  db.getDoc("Product", sp.product_code).then(doc => {
-    product.prices = doc.product_price
-    product.setModifierSelection(sp);
-    if (sp.is_combo_menu && sp.use_combo_group) {
-      product.setComboGroupSelection(sp)
-    }
-
-    if ((sp.is_combo_menu && sp.use_combo_group) || product.modifiers.length > 0 || product.prices.filter(r => r.price_rule == sale.setting.price_rule && (r.branch == sale.setting.business_branch || r.branch == '')).length > 1) {
-      sale.OnEditSaleProduct(sp)
-    }
-    else {
-      toaster.warning($t("msg.This item has no option to edit"))
-    }
-  })
-
-
-}
 
 
 function onSaleProductDiscount(sp, discount_type) {
