@@ -82,7 +82,7 @@ function onFetch(_filters){
    
   ).then((res)=>{
     if (res.message.length > 0){
-      summary = res.message[0]
+      summary.value = res.message[0]
     }
     
   })

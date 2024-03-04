@@ -13,6 +13,7 @@
             </template>
             <template v-slot:default>
                 <div class="text-sm">
+                    
                     <div class="flex">
                         <div class="grow">
                             <div v-if="!sale.load_menu_lang"> {{ getMenuName(sp) }}<v-chip class="ml-1" size="x-small"
@@ -77,6 +78,10 @@
                                 <v-chip color="blue" size="x-small" v-if="sp.seat_number"> {{ $t('Seat') + "# " +
                                     sp.seat_number
                                 }}</v-chip>
+                                <div class="text-gray-500">
+                                    <v-icon icon="mdi-clock" size="small" class="mr-1"></v-icon><span>{{ moment(sp.creation).format('hh:mm:ss A') }}</span>
+                                </div>
+                               
                                 <div class="text-gray-500" v-if="sp.note">
                                     {{ $t('Note') }}: <span>{{ sp.note }}</span>
                                 </div>

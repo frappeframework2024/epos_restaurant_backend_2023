@@ -441,7 +441,7 @@ def get_current_shift_information(business_branch, pos_profile):
 @frappe.whitelist()
 def receipt_list_summary(filter):
     python_object = ast.literal_eval(filter)
-    sql = """select sum(grand_total) grand_total,sum(total_discount) total_discount,sum(sub_total) sub_total,sum(total_paid) total_paid from `tabSale` {}"""
+    sql = """select sum(grand_total) grand_total,sum(total_discount) total_discount,sum(sub_total) sub_total,sum(total_paid - changed_amount) total_paid from `tabSale` {}"""
     sql_conditions = []
     for condition in python_object:
         key, value = condition.popitem()

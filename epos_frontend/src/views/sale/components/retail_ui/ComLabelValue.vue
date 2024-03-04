@@ -3,7 +3,7 @@
         <div class="flex justify-between my-1 border-b">
             <div v-if="label">{{ $t(label) }}</div>
             <div v-else><slot name="label"></slot></div>
-            <div class="font-bold">
+            <div class="text-subtitle-1">
                 <template v-if="value">
                     {{ value }}
                 </template>    
