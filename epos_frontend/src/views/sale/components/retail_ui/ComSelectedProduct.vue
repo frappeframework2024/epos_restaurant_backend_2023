@@ -3,9 +3,9 @@
     <div>
         <template v-if="sale?.selected_sale_product">
             <div style="height:calc(-321px + 100vh);overflow-y:auto">
-                <div class="border p-3 rounded-md">
+                <div class="border p-3 rounded-md searc-pro-res">
                     <div v-if="sale?.selected_sale_product?.product_photo"
-                        class="product-image rounded-md overflow-hidden " style="height: 200px;">
+                    class="product-image rounded-md overflow-hidden" style="width: 300px;">
                         <img class="h-100 w-100" style="object-fit: cover;"
                             :src="sale?.selected_sale_product?.product_photo" />
                     </div>
@@ -92,5 +92,12 @@ const sale = inject("$sale")
 <style scoped>
 .n-data-str {
     font-size: 30px;
+}
+.searc-pro-res {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    align-items: center;
 }
 </style>

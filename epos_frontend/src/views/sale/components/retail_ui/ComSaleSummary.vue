@@ -58,13 +58,13 @@
       <CurrencyFormat :value="sale.sale.commission_amount" />
     </ComLabelValue>
     <ComLabelValue>
-      <template v-slot:label>{{$t("Grand Total")}} ({{sale.setting.pos_setting.main_currency_name}}) </template>      
-      <CurrencyFormat :value="(sale.sale.grand_total-sale.sale.deposit)" />
+      <template v-slot:label> <div class="text-h6" style="color:green"> {{$t("Grand Total")}} ({{sale.setting.pos_setting.main_currency_name}}) </div></template>      
+      <div style="color:green"><CurrencyFormat :value="(sale.sale.grand_total-sale.sale.deposit)" /></div>
     </ComLabelValue>
     <ComLabelValue>
-      <template v-slot:label>{{$t("Grand Total")}} ({{sale.setting.pos_setting.second_currency_name}}) </template>      
-      <CurrencyFormat :value="((sale.sale.grand_total * (sale.sale.exchange_rate || 1)) - (sale.sale.deposit * (sale.sale.exchange_rate || 1)))"
-                :currency="sale.setting.pos_setting.second_currency_name" />
+      <template v-slot:label> <div class="text-h6" style="color:green">{{$t("Grand Total")}} ({{sale.setting.pos_setting.second_currency_name}}) </div></template>      
+      <div style="color:green"><CurrencyFormat :value="((sale.sale.grand_total * (sale.sale.exchange_rate || 1)) - (sale.sale.deposit * (sale.sale.exchange_rate || 1)))"
+                :currency="sale.setting.pos_setting.second_currency_name" /></div>
                 
     </ComLabelValue>
 

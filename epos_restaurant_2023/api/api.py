@@ -8,6 +8,7 @@ from frappe.utils import format_datetime
 from datetime import datetime, timedelta
 from frappe import _
 from frappe.desk.query_report import run
+import ast
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -439,9 +440,20 @@ def get_current_shift_information(business_branch, pos_profile):
 
 @frappe.whitelist()
 def receipt_list_summary(filter):
-    frappe.throw(filter)
-    sql = """select sum(grand_total) grand_total,sum(total_discount) total_discount,sum(sub_total) sub_total,sum(total_paid) total_paid, from `tabSale` """
-    frappe.db.sql(sql)
+    python_object = ast.literal_eval(filter)
+    sql = """select sum(grand_total) grand_total,sum(total_discount) total_discount,sum(sub_total) sub_total,sum(total_paid) total_paid from `tabSale` {}"""
+    sql_conditions = []
+    for condition in python_object:
+        key, value = condition.popitem()
+        operator, operand = value
+        if operator == "=":
+            sql_conditions.append(f"{key} = '{operand}'")
+        elif operator == "in":
+            sql_conditions.append(f"{key} IN {tuple(operand)}")
+
+    sql_query = " AND ".join(sql_conditions)
+    data = frappe.db.sql(sql.format("where " + sql_query),as_dict=1)
+    return data
 
 @frappe.whitelist()
 def get_resevation_calendar(business_branch,start,end):

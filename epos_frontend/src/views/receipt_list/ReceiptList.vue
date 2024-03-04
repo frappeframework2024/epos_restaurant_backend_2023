@@ -6,14 +6,14 @@
             <v-row no-gutters>
           <v-col cols="6" sm="3">
             <v-card class="pa-2 ma-2" elevation="2" color="primary">
-              <div class="text-h6 text-center">{{120}}</div>
+              <div class="text-h6 text-center"><CurrencyFormat :value="summary.sub_total" /></div>
               <div class="text-body-1 text-center mt-2  text-sm">{{ $t('Sub Total') }}</div>
             </v-card>
           </v-col>
           <v-col cols="6" sm="3">
             <v-card class="pa-2 ma-2" elevation="2" color="warning">
               <div class="text-h6 text-center">
-                <CurrencyFormat :value="2" />
+                <CurrencyFormat :value="summary.total_discount" />
               </div>
               <div class="text-body-1 text-center mt-2 text-sm">{{ $t('Total Discount') }}</div>
             </v-card>
@@ -21,7 +21,7 @@
           <v-col cols="12" sm="3">
             <v-card class="pa-2 ma-2" elevation="2" color="success">
               <div class="text-h6 text-center">
-                <CurrencyFormat :value="20" />
+                <CurrencyFormat :value="summary.grand_total" />
               </div>
               <div class="text-body-1 text-center mt-2 text-sm">{{ $t('Grand Total') }}</div>
             </v-card>
@@ -29,7 +29,7 @@
           <v-col cols="12" sm="3">
             <v-card class="pa-2 ma-2" elevation="2" color="teal-darken-3">
               <div class="text-h6 text-center">
-                <CurrencyFormat :value="60" />
+                <CurrencyFormat :value="summary.total_paid" />
               </div>
               <div class="text-body-1 text-center mt-2 text-sm">{{ $t('Total Paid') }}</div>
             </v-card>
@@ -46,12 +46,11 @@ import PageLayout from '@/components/layout/PageLayout.vue';
 import ComTable from '@/components/table/ComTable.vue';
 import {useDisplay} from 'vuetify' 
 import ComReceiptListCard from './components/ComReceiptListCard.vue';
+let summary = ref({})
 const frappe = inject('$frappe');
 const call = frappe.call();
 const { t: $t } = i18n.global; 
-
 const {mobile} = useDisplay()
-const router = useRouter()
 async function onCallback(data) {
  
  if(data.fieldname=="name"){
@@ -82,6 +81,9 @@ function onFetch(_filters){
   }
    
   ).then((res)=>{
+    if (res.message.length > 0){
+      summary = res.message[0]
+    }
     
   })
 }

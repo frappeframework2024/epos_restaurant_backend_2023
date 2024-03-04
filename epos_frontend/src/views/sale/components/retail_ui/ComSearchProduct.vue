@@ -22,18 +22,16 @@
                             <v-btn class="h-100 w-100">DESC</v-btn>
                         </v-col>
 
-                    </v-row>
+                    </v-row> 
                     <br/>
-                    
-                        
-                    <hr>
+                     
                     <!-- {{ keyword }} -->
                     <v-row>
                         <v-col cols="8">
                         <div style="height:calc(100vh - 225px);" class="overflow-auto">
                             <div class="flex flex-column h-100">
                                 <div>
-                                    <v-table>
+                                    <v-table style="border-top: 1px solid #ccc">
                                         <thead>
                                             <tr>
                                                 <th class="text-left">Photo</th>
@@ -92,7 +90,7 @@
                         </div>
                     </v-col>
                     <v-col>
-                        <div class="h-100 p-2" style="border-left: 1px solid #ccc;">
+                        <div class="h-100 p-2 pt-0"  >
                             <ComSearchSelectedProduct/>
                         </div>
                     </v-col>

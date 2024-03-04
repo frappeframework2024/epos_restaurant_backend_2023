@@ -2,7 +2,7 @@
 
     <div style="height:calc(-241px + 100vh);" class="overflow-auto"> 
             <div>
-                <div class="border p-3 rounded-md">
+                <div class="border p-3 rounded-md searc-pro-res">
                     <div
                         class="product-image rounded-md overflow-hidden" style="width: 300px;">
                         <img class="h-100 w-100" style="object-fit: cover;"
@@ -10,9 +10,9 @@
                     </div>
                     <br />
                     <div class="text-center">
-                        <strong>001</strong>
+                        <strong>001 / Spegati ស្ពៃ</strong>
                         <br />
-                        <strong>Spegati</strong>
+                        <strong>Tasty food</strong>
                     </div>
                 </div> 
                 <div class="border p-2 rounded-md mt-3">
@@ -26,10 +26,10 @@
                     <ComLabelValue label="Regular Price">
                         <CurrencyFormat :value="sale?.selected_sale_product?.regular_price" />
                     </ComLabelValue> 
-                    <ComLabelValue label="Regular Price">
+                    <ComLabelValue label="Sub Total">
                         <CurrencyFormat :value="sale?.selected_sale_product?.regular_price" />
                     </ComLabelValue> 
-                    <ComLabelValue label="Regular Price">
+                    <ComLabelValue label="Total Amount">
                         <CurrencyFormat :value="sale?.selected_sale_product?.regular_price" />
                     </ComLabelValue> 
                 </div>
@@ -61,5 +61,12 @@ const sale = inject("$sale")
 <style scoped>
 .n-data-str {
     font-size: 30px;
+}
+.searc-pro-res {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    align-items: center;
 }
 </style>

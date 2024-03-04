@@ -29,7 +29,7 @@
             <template #title v-if="!mobile">
                 <div class="flex gap-1 justify-center sale-search-cs">
                     <div>
-                        <ComProductSearch />
+                        <ComProductSearch small/>
                     </div>
                     <div>
                         
