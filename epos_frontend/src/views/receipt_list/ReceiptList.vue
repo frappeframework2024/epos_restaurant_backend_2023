@@ -3,7 +3,7 @@
       <ComReceiptListCard :headers="headers" doctype="Sale" extra-fields="customer_name,sale_status_color" @callback="onCallback" v-if="mobile"/>
       <ComTable :headers="headers" doctype="Sale" :default-filter="defaltFilter" extra-fields="customer_name,sale_status_color" business-branch-field="business_branch" pos-profile-field="pos_profile" @callback="onCallback" v-else>
           <template v-slot:kpi>
-           
+           ss
           </template>
       </ComTable>
     </PageLayout>
