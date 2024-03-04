@@ -51,7 +51,7 @@ const props = defineProps({
         require: true
     }
 })
-const toaster = createToaster({position: 'top'})
+const toaster = createToaster({position: 'top-right'})
 const product = inject("$product")
 product.keyword = "";
 let keyword = ref()

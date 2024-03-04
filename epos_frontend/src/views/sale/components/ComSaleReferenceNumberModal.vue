@@ -19,7 +19,7 @@
 <script setup>
 import { ref,defineEmits,createToaster } from '@/plugin'
 import ComInput from '@/components/form/ComInput.vue';
-const toaster = createToaster({ position: 'top' })
+const toaster = createToaster({ position: 'top-right' })
 const props = defineProps({
     params: {
         type: Object,

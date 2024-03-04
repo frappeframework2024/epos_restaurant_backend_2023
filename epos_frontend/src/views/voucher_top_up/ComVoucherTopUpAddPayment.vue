@@ -71,7 +71,7 @@ import { ref, inject, i18n } from '@/plugin'
 import { createToaster } from "@meforma/vue-toaster";
 import ComInput from '../../components/form/ComInput.vue';
 const moment = inject('$moment')
-const toaster = createToaster({position:'top'});
+const toaster = createToaster({position:'top-right'});
 const { t: $t } = i18n.global;
 const gv = inject('$gv')
 const frappe = inject('$frappe')

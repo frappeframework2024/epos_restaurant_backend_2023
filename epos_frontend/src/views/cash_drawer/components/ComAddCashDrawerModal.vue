@@ -54,7 +54,7 @@ const props = defineProps({
     params: Object
 })
 
-const toaster = createToaster({ position: 'top' })
+const toaster = createToaster({ position: 'top-right' })
 const payment_types = JSON.parse(localStorage.getItem('setting')).payment_types;
 const default_payment_type = JSON.parse(localStorage.getItem('setting')).default_payment_type;
 const current_date = moment(new Date).format('DD-MM-YYYY');

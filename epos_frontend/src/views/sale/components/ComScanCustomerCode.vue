@@ -24,7 +24,7 @@ const frappe = inject('$frappe');
 const call = frappe.call()
 const { mobile } = useDisplay()
 let customerCode = ref("");
-const toaster = createToaster({ position: "top" })
+const toaster = createToaster({ position: "top-right" })
 
 const loading = ref(false)
 

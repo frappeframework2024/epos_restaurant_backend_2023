@@ -87,7 +87,7 @@ const emit = defineEmits(['resolve'])
  const { mobile } = useDisplay()
 
 
-const toaster = createToaster({ position: "top" })
+const toaster = createToaster({ position: "top-right" })
 
 let discount_note = ref(props.params.data.discount_note)
 let discount_type = ref(props.params.data.discount_type)

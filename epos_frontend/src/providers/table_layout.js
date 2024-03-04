@@ -6,7 +6,7 @@ import { createToaster } from "@meforma/vue-toaster";
 const { t: $t } = i18n.global;
 
  
-const toaster = createToaster({ position: "top" });
+const toaster = createToaster({ position: "top-right" });
 export default class TableLayout {
     constructor() {
         this.isLoading = false;

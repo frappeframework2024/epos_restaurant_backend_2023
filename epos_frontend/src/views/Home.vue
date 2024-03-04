@@ -74,7 +74,7 @@ const { mobile } = useDisplay();
 
 
 const { t: $t } = i18n.global; 
-const toaster = createToaster({ position: "top" }); 
+const toaster = createToaster({ position: "top-right" }); 
 
 const router = useRouter();
 const device_setting = JSON.parse(localStorage.getItem("device_setting"));

@@ -76,7 +76,7 @@ const gv = inject("$gv")
 
 const serverUrl = window.location.protocol + "//" + window.location.hostname + ":" + gv.setting.pos_setting.backend_port;
 
-const toaster = createToaster({position:"top"})
+const toaster = createToaster({position:"top-right"})
 
 const props = defineProps({
     params: {

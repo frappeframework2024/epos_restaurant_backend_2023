@@ -68,7 +68,7 @@ import socket from '@/utils/socketio';
 const { t: $t } = i18n.global;
 
 const { mobile } = useDisplay()
-const toaster = createToaster({ position: 'top' })
+const toaster = createToaster({ position: 'top-right' })
 const router = useRouter();
 const sale = inject('$sale')
 const gv = inject('$gv')

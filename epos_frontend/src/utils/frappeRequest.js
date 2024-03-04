@@ -33,7 +33,7 @@ export function frappeRequest(options) {
       }
     },
     transformResponse: async (response, options) => {
-      const toaster = createToaster({position:"top"});
+      const toaster = createToaster({position:"top-right"});
       let url = options.url
       if (response.ok) {
         try{

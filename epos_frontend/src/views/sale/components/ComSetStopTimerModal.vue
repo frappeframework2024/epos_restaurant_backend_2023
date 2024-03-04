@@ -75,7 +75,7 @@ const props = defineProps({
 })
 
 const breakdownData = ref([])
-const toaster = createToaster({ position: 'top' });
+const toaster = createToaster({ position: 'top-right' });
 
 const emit = defineEmits(["click"])
 const { t: $t } = i18n.global;

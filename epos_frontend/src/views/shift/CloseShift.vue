@@ -116,7 +116,7 @@ import { useDisplay } from 'vuetify';
 const { t: $t } = i18n.global; 
 
 const router = useRouter();
-const toaster = createToaster();
+const toaster = createToaster({position:"top-right"});
 const gv = inject('$gv');
 const setting = gv.setting;
 

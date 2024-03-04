@@ -108,7 +108,7 @@ const isLoading = ref(true);
 const frappe = inject("$frappe");
 const emit = defineEmits(["resolve"])
 const gv = inject('$gv');
-const toaster = createToaster({ position: "top" });
+const toaster = createToaster({ position: "top-right" });
 
 const db = frappe.db();
 const call = frappe.call();

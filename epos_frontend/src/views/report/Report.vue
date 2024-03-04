@@ -128,7 +128,7 @@ const frappe = inject('$frappe');
 const moment = inject('$moment');
 const pos_profile = localStorage.getItem("pos_profile");
 const serverUrl = window.location.protocol + "//" + window.location.hostname + ":" + gv.setting.pos_setting.backend_port;
-const toaster = createToaster({position:"top"});
+const toaster = createToaster({position:"top-right"});
 const call = frappe.call();
 const db = frappe.db();
  

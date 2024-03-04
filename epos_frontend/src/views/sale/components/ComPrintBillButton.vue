@@ -67,7 +67,7 @@ const props = defineProps({
   }
 });
 const emit = defineEmits(["onPrint"]);
-const toaster = createToaster({ position: 'top' });
+const toaster = createToaster({ position: 'top-right' });
 
 
 async function onPrintReport(r) {

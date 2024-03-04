@@ -55,7 +55,7 @@ import { ref,defineEmits,createToaster,confirmDialog,onMounted, computed, inject
 import ComInput from '@/components/form/ComInput.vue';
 
 const { t: $t } = i18n.global;  
-const toaster = createToaster({ position: 'top' })
+const toaster = createToaster({ position: 'top-right' })
 const sale = inject('$sale')
 const props = defineProps({
     params: {

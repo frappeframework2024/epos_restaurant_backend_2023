@@ -79,7 +79,7 @@ import { addCashDrawerModalDialog, createResource, ref, onMounted, inject, creat
 import { useDisplay } from 'vuetify';
 
 const { mobile } = useDisplay()
-const toaster = createToaster({ position: 'top' })
+const toaster = createToaster({ position: 'top-right' })
 let transactions = ref({})
 let dataResource = {};
 let cashBalanceResource = ref({});

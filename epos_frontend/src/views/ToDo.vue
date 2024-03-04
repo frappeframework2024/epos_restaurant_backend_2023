@@ -11,7 +11,7 @@ import {ref,confirmDialog} from "@/plugin"
 import PageLayout from '../components/layout/PageLayout.vue';
 import CryptoJS from 'crypto-js';
 import { createToaster } from "@meforma/vue-toaster";
-const toaster = createToaster({position:"top"});
+const toaster = createToaster({position:"top-right"});
 const todoList = ref([]);
 const toDo = ref("")
 

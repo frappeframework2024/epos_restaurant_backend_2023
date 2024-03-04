@@ -134,7 +134,7 @@ const router = useRouter();
 const emit = defineEmits(["resolve"])
 const gv = inject('$gv');
 const sale = inject("$sale");
-const toaster = createToaster({ position: "top" });
+const toaster = createToaster({ position: "top-right" });
 
 const db = frappe.db();
 const call = frappe.call();

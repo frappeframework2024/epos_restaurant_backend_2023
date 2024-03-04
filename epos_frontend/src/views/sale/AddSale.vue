@@ -71,7 +71,7 @@ let openSearch = ref(false);
 const route = useRoute();
 const router = useRouter();
 
-const toaster = createToaster({ position: "top" });
+const toaster = createToaster({ position: "top-right" });
 
 sale.vueInstance = getCurrentInstance();
 sale.vue = sale.vueInstance.appContext.config.globalProperties;

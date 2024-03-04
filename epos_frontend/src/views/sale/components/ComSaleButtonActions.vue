@@ -65,7 +65,7 @@ const socket = inject("$socket")
 const product = inject("$product")
 const gv = inject("$gv")
 const setting = gv.setting;
-const toaster = createToaster({ position: "top" })
+const toaster = createToaster({ position: "top-right" })
 const emit = defineEmits(["onSubmitAndNew", 'onClose'])
 const device_setting = JSON.parse(localStorage.getItem("device_setting"))
 

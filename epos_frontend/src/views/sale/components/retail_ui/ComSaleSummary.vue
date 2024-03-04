@@ -1,7 +1,7 @@
 <template lang="">
   <div class="border p-2 rounded-md">
-    <ComLabelValue label="Total QTY/សរុបចំនួន" :value="sale.sale.total_quantity"/>
-    <ComLabelValue label="Sub Total/សរុបរង">
+    <ComLabelValue label="Total QTY" :value="sale.sale.total_quantity"/>
+    <ComLabelValue label="Sub Total">
 
       <CurrencyFormat :value="sale.sale.sub_total" />
     </ComLabelValue>
@@ -16,7 +16,7 @@
       </template>
       <CurrencyFormat :value="sale.sale.sale_discount" />
     </ComLabelValue>
-    <ComLabelValue v-if="sale.sale.total_discount>0" label="Total Discount">
+    <ComLabelValue v-if="sale.sale.sale_discount>0 && sale.sale.product_discount" label="Total Discount">
       <CurrencyFormat :value="sale.sale.total_discount" />
     </ComLabelValue>
     

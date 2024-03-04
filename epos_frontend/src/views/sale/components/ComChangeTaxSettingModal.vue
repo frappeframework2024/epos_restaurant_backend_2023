@@ -43,7 +43,7 @@ const { mobile } = useDisplay()
 const props = defineProps({
     params:Object
 })
-const toaster = createToaster({ position: "top" })
+const toaster = createToaster({ position: "top-right" })
 const sale = inject('$sale')
 let note = ref(props.params.data.note) 
 const data = ref([])

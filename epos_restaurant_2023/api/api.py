@@ -437,6 +437,11 @@ def get_current_shift_information(business_branch, pos_profile):
         "cashier_shift":get_current_cashier_shift(pos_profile)
     }
 
+@frappe.whitelist()
+def receipt_list_summary(filter):
+    frappe.throw(filter)
+    sql = """select sum(grand_total) grand_total,sum(total_discount) total_discount,sum(sub_total) sub_total,sum(total_paid) total_paid, from `tabSale` """
+    frappe.db.sql(sql)
 
 @frappe.whitelist()
 def get_resevation_calendar(business_branch,start,end):

@@ -30,7 +30,7 @@ const router = useRouter()
 const pos_profile = localStorage.getItem("pos_profile");
 const note = ref("")
 const current_date = moment(new Date).format('DD-MM-YYYY');
-const toaster = createToaster({ /* options */ });
+const toaster = createToaster({position:"top-right" });
 
 const { t: $t } = i18n.global; 
 

@@ -36,7 +36,7 @@ const props = defineProps({
     sale_product: Object
 })
 import { createToaster } from '@meforma/vue-toaster';
-const toaster = createToaster({ position: "left" });
+const toaster = createToaster({ position: "top-right" });
 const frappe = inject("$frappe")
 const db = frappe.db()
 const prices = ref([])

@@ -41,7 +41,7 @@ import { useStopwatch } from 'vue-timer-hook';
 
 const numberFormat = inject('$numberFormat');
 const { t: $t } = i18n.global;  
-const toaster = createToaster({ position: "top" })
+const toaster = createToaster({ position: "top-right" })
 const props = defineProps({
     saleProduct: Object
 })

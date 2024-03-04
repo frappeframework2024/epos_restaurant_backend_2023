@@ -10,7 +10,7 @@ const frappe = new FrappeApp();
 const key =CryptoJS.enc.Latin1.parse('NiQNF6jOiU7Kf4GaW4Y5Htb18sO3zWrf');
 const iv = CryptoJS.enc.Latin1.parse('KiKlmSo2wWmdKXAs');
 
-const toaster = createToaster({ position: "top" });
+const toaster = createToaster({ position: "top-right" });
 
 export default class POSLicense {
     constructor() { 

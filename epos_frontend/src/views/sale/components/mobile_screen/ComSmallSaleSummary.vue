@@ -52,7 +52,7 @@ const router = useRouter()
 const sale = inject("$sale")
 const gv = inject("$gv")
 const setting = gv.setting;
-const toaster = createToaster({ position: "top" })
+const toaster = createToaster({ position: "top-right" })
 const device_setting = JSON.parse(localStorage.getItem("device_setting"))
 async function onSubmit() {
   if (!sale.isBillRequested()) {

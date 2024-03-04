@@ -168,7 +168,7 @@ const sale = inject('$sale');
 const product = inject('$product');
 const gv = inject('$gv');
 const moment = inject('$moment');
-const toaster = createToaster({ position: 'top' });
+const toaster = createToaster({ position: 'top-right' });
 const frappe = inject("$frappe")
 const call = frappe.call()
 

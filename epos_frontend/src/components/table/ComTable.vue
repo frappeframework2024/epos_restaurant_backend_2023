@@ -112,7 +112,7 @@ import { createResource, reactive, defineEmits, watch,inject,ref, onUnmounted } 
 import ComFilter from '../ComFilter.vue';
 
 let filter = reactive({});
-const emit = defineEmits(['callback'])
+const emit = defineEmits(['callback','onFetch'])
 const moment = inject('$moment')
 const gv = inject('$gv')
 const order = ref({})
@@ -208,6 +208,7 @@ function getFilter(){
         filters[props.businessBranchField] = ["=", gv.setting.business_branch]
     }
     filters["docstatus"] = ["in",[1,0]]
+    emit('onFetch', filters)
     return filters
 }
  
@@ -229,6 +230,7 @@ function getFieldName() {
             fieldnames.push(r)
         })
     }
+    
     return fieldnames;
 
 }

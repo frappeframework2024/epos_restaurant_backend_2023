@@ -94,7 +94,7 @@ const emit = defineEmits(["resolve"])
 const gv = inject('$gv');
 const sale = inject("$sale");
 const tableLayout = inject("$tableLayout");
-const toaster = createToaster({ position: "top" });
+const toaster = createToaster({ position: "top-right" });
 
 const props = defineProps({
   params: {

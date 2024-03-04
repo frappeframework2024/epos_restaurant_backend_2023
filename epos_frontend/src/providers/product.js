@@ -2,7 +2,7 @@ import Enumerable from 'linq'
 import { keyboardDialog, createResource } from "@/plugin"
 import { createToaster } from "@meforma/vue-toaster";
 
-const toaster = createToaster({ position: "top" });
+const toaster = createToaster({ position: "top-right" });
 
 export default class Product {
     constructor() {

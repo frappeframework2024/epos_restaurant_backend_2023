@@ -33,7 +33,7 @@ const sale = inject("$sale");
 
 const router = useRouter();
 const isLoading = ref(false);
-const toaster = createToaster({ position: "top" })
+const toaster = createToaster({ position: "top-right" })
 const frappe = inject("$frappe");
 const props = defineProps({
     params: {

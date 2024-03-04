@@ -61,7 +61,7 @@ import { useDisplay } from 'vuetify';
 const { t: $t } = i18n.global;
 
 const { mobile, platform } = useDisplay()
-const toaster = createToaster({ position: "top" });
+const toaster = createToaster({ position: "top-right" });
 const tableLayout = inject("$tableLayout");
 const gv = inject("$gv");
 const sale = inject("$sale");

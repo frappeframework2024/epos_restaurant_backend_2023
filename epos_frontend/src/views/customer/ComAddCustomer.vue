@@ -98,7 +98,7 @@ import ComModal from '../../components/ComModal.vue';
 
 const { t: $t } = i18n.global;  
  
-const toaster = createToaster({ position: "top" });
+const toaster = createToaster({ position: "top-right" });
 const gv = inject('$gv')
  
 

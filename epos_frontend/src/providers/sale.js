@@ -11,7 +11,7 @@ const frappe = new FrappeApp();
 const db = frappe.db()
 const call = frappe.call()
 const { t: $t } = i18n.global;
-const toaster = createToaster({ position: "top" });
+const toaster = createToaster({ position: "top-right" });
 
 export default class Sale {
     constructor() {

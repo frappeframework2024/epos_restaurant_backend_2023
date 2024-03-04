@@ -102,7 +102,7 @@ const printerList = ref([])
 
 
 
-const toaster = createToaster({ position: "top" });
+const toaster = createToaster({ position: "top-right" });
 function onRemoveNote() {
     props.saleProduct.note = "";
 }

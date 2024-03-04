@@ -1,5 +1,5 @@
 import { createToaster } from '@meforma/vue-toaster';	
-const toaster = createToaster({position:'top'});
+const toaster = createToaster({position:'top-right'});
 export default class Sale {
     constructor() {   
         this.working_day={};

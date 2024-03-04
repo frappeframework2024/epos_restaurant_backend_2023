@@ -136,7 +136,7 @@ const router = useRouter();
 const frappe = inject('$frappe');
 const auth = inject('$auth');
 const gv  = inject("$gv");
-const toaster = createToaster({position:'top'});
+const toaster = createToaster({position:'top-right'});
 const device_setting = JSON.parse(localStorage.getItem("device_setting"))
 
 const db = frappe.db();

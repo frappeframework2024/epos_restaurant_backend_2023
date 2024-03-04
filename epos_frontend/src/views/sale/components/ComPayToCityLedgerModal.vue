@@ -91,7 +91,7 @@ const frappe = inject("$frappe")
 const { t: $t } = i18n.global;
 
 const emit = defineEmits(['resolve'])
-const toaster = createToaster({ position: "top" })
+const toaster = createToaster({ position: "top-right" })
 const props = defineProps({
     params: Object
 })

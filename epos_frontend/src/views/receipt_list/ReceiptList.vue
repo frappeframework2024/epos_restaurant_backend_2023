@@ -1,25 +1,57 @@
 <template>
     <PageLayout :title="$t('Receipt List')" icon="mdi-file-chart" full>
       <ComReceiptListCard :headers="headers" doctype="Sale" extra-fields="customer_name,sale_status_color" @callback="onCallback" v-if="mobile"/>
-      <ComTable :headers="headers" doctype="Sale" :default-filter="defaltFilter" extra-fields="customer_name,sale_status_color" business-branch-field="business_branch" pos-profile-field="pos_profile" @callback="onCallback" v-else>
+      <ComTable :headers="headers" doctype="Sale" :default-filter="defaltFilter" extra-fields="customer_name,sale_status_color" @onFetch="onFetch" business-branch-field="business_branch" pos-profile-field="pos_profile" @callback="onCallback"  v-else>
           <template v-slot:kpi>
-           ss
+            <v-row no-gutters>
+          <v-col cols="6" sm="3">
+            <v-card class="pa-2 ma-2" elevation="2" color="primary">
+              <div class="text-h6 text-center">{{120}}</div>
+              <div class="text-body-1 text-center mt-2  text-sm">{{ $t('Sub Total') }}</div>
+            </v-card>
+          </v-col>
+          <v-col cols="6" sm="3">
+            <v-card class="pa-2 ma-2" elevation="2" color="warning">
+              <div class="text-h6 text-center">
+                <CurrencyFormat :value="2" />
+              </div>
+              <div class="text-body-1 text-center mt-2 text-sm">{{ $t('Total Discount') }}</div>
+            </v-card>
+          </v-col>
+          <v-col cols="12" sm="3">
+            <v-card class="pa-2 ma-2" elevation="2" color="success">
+              <div class="text-h6 text-center">
+                <CurrencyFormat :value="20" />
+              </div>
+              <div class="text-body-1 text-center mt-2 text-sm">{{ $t('Grand Total') }}</div>
+            </v-card>
+          </v-col>
+          <v-col cols="12" sm="3">
+            <v-card class="pa-2 ma-2" elevation="2" color="teal-darken-3">
+              <div class="text-h6 text-center">
+                <CurrencyFormat :value="60" />
+              </div>
+              <div class="text-body-1 text-center mt-2 text-sm">{{ $t('Total Paid') }}</div>
+            </v-card>
+          </v-col>
+          
+        </v-row>
           </template>
       </ComTable>
     </PageLayout>
 </template>
 <script setup>
-import { ref, useRouter, saleDetailDialog, customerDetailDialog,i18n} from '@/plugin'
+import { ref, useRouter, saleDetailDialog, customerDetailDialog,i18n,inject} from '@/plugin'
 import PageLayout from '@/components/layout/PageLayout.vue';
 import ComTable from '@/components/table/ComTable.vue';
 import {useDisplay} from 'vuetify' 
 import ComReceiptListCard from './components/ComReceiptListCard.vue';
-
+const frappe = inject('$frappe');
+const call = frappe.call();
 const { t: $t } = i18n.global; 
 
 const {mobile} = useDisplay()
 const router = useRouter()
-const defaltFilter = ref({'pos_profile': ['=', 'Main']})
 async function onCallback(data) {
  
  if(data.fieldname=="name"){
@@ -38,6 +70,22 @@ async function onCallback(data) {
     })
   }
 }
+
+function onFetch(_filters){
+  let filters =[]
+  Object.keys(_filters).forEach(key => {
+    filters.push({[key]:_filters[key]})
+  });
+  console.log(JSON.stringify(filters) )
+  call.get("epos_restaurant_2023.api.api.receipt_list_summary",{
+    filter:JSON.stringify(filters)
+  }
+   
+  ).then((res)=>{
+    
+  })
+}
+
 const headers = ref([
   { title: $t('No'), align: 'start',key: 'name',callback: true},
   { title: $t('Invoice No'), align: 'start',key: 'custom_bill_number',callback: true},

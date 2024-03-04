@@ -46,7 +46,7 @@ import ComAlertPendingOrder from '../../components/layout/components/ComAlertPen
 
 const { t: $t } = i18n.global;
 const router = useRouter();
-const toaster = createToaster({ position: 'top' });
+const toaster = createToaster({ position: 'top-right' });
 const gv = inject('$gv')
 const closed_note = ref("")
 let pendingOrder = ref(0)

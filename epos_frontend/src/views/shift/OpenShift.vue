@@ -64,7 +64,7 @@ const totalCashFloat = computed(() => {
 const db = frappe.db()
 
 const router = useRouter();
-const toaster = createToaster();
+const toaster = createToaster({position:"top-right"});
 
 
 const working_day = createResource({

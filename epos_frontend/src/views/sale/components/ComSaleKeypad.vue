@@ -72,7 +72,7 @@
 <script setup>
 import {computed, inject,createToaster, ref,i18n } from '@/plugin';
 import Enumerable from 'linq';
-const toaster = createToaster({ position: "top" });
+const toaster = createToaster({ position: "top-right" });
 
 const numberFormat = inject('$numberFormat');
 const sale = inject("$sale")

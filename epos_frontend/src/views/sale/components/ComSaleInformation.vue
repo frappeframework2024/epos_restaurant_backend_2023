@@ -32,7 +32,7 @@ import { inject, keyboardDialog, changePriceRuleDialog, createToaster, i18n, com
 const { t: $t } = i18n.global;
 
 
-const toaster = createToaster({ position: 'top' })
+const toaster = createToaster({ position: 'top-right' })
 const sale = inject("$sale")
 const product = inject("$product")
 const setting = JSON.parse(localStorage.getItem("setting"))

@@ -64,7 +64,7 @@
   const product = inject("$product")
   const gv = inject("$gv")
   const setting = gv.setting;
-  const toaster = createToaster({ position: "top" })
+  const toaster = createToaster({ position: "top-right" })
   const emit = defineEmits(["onSubmitAndNew", 'onClose'])
   const device_setting = JSON.parse(localStorage.getItem("device_setting"))
   const frappe = inject('$frappe');
@@ -249,7 +249,7 @@
         product.onClearKeyword()
 
         sale.newSale();
-        
+        sale.tableSaleListResource.fetch();
         if(onRedirectSaleType()){
           checkCashierShift()
         }
@@ -327,7 +327,7 @@ async function onPayment() {
     window.postMessage({action:"set_focus_in_search_product"}, "*");
     product.onClearKeyword()
     sale.newSale();
-
+    sale.tableSaleListResource.fetch();
     if (onRedirectSaleType()) {
      
        checkCashierShift();
@@ -366,6 +366,7 @@ function checkCashierShift(){
   
   
   async function onSubmitAndNew() {
+ 
     //check if newsale recource3 is null then 
     //reinitalize newsaleresxource
     // backup old sale
@@ -413,13 +414,13 @@ function checkCashierShift(){
       newSale();
     }
   
-    sale.getTableSaleList();
+    sale.tableSaleListResource.fetch();
   
     if(mobile){
       window.postMessage("close_modal", "*");
     }
     emit('onSubmitAndNew')
-  
+ 
    
   }
   
@@ -437,24 +438,7 @@ function checkCashierShift(){
     sale.sale.sale_status = "New";
     sale.sale.discount_type = 'Percent';
     sale.sale.discount = 0;
-    const tableGroups = JSON.parse(localStorage.getItem("table_groups"));
-    const tables = (Enumerable.from(tableGroups).selectMany("$.tables").toArray())
-    let table = tables.filter(r => r.id == sale.sale.table_id);
-    if (table) {
-      table = table[0];
-  
-      if (parseFloat(table.default_discount) > 0) {
-  
-        sale.sale.discount_type = table.discount_type;
-        sale.sale.discount = parseFloat(table.default_discount);
-        if (table.discount_type == "Percent") {
-          toaster.info($t("msg.This table have discount",[table.default_discount + '%']) )
-        } else {
-          toaster.info($t("msg.This table have discount",[( table.default_discount + ' ' + sale.setting.pos_setting.main_currency_name)]))
-        }
-      }
-    }
-  
+ 
   
   
     sale.updateSaleSummary();

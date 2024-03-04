@@ -34,7 +34,7 @@ import ComSplitBillList from './split_bill/ComSplitBillList.vue';
 const { t: $t } = i18n.global; 
 
 const emit = defineEmits(["resolve", "reject"])
-const toaster = createToaster({ position: 'top' })
+const toaster = createToaster({ position: 'top-right' })
 const sale = inject('$sale')
 const resource = ref({})
 const props = defineProps({

@@ -63,7 +63,7 @@ const tableLayout = inject("$tableLayout");
 const emit = defineEmits(['onShowHide'])
 const router = useRouter()
 const { mobile } = useDisplay()
-const toaster = createToaster({position: 'top'})
+const toaster = createToaster({position: 'top-right'})
 const posProfile = localStorage.getItem('pos_profile')
 
 

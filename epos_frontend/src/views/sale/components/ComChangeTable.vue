@@ -69,7 +69,7 @@ const { mobile } = useDisplay()
 
 const tableLayout = inject("$tableLayout");
 const sale = inject("$sale");
-const toaster = createToaster({ position: "top" })
+const toaster = createToaster({ position: "top-right" })
 
 const props = defineProps({
     params: {

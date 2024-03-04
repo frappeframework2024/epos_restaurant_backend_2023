@@ -54,7 +54,7 @@ import { createToaster } from "@meforma/vue-toaster";
 const gv = inject("$gv")
 const sale = inject("$sale")
 let exchange_rate = ref(1);
-const toaster = createToaster({ position: "top" });
+const toaster = createToaster({ position: "top-right" });
 
 const to_currency = computed(() => {
     if (gv.setting.pos_setting.exchange_rate_main_currency != gv.setting.pos_setting.main_currency_name) {

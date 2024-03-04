@@ -20,7 +20,7 @@ const { t: $t } = i18n.global;
  
 
 const gv = inject("$gv")
-const toaster = createToaster({ position: "top" });
+const toaster = createToaster({ position: "top-right" });
 const router = useRouter();
 
 const current_working_day = createResource({

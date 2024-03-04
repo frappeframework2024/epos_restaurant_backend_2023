@@ -20,7 +20,7 @@ const { t: $t } = i18n.global;
 
 const sale = inject('$sale')
 const gv = inject("$gv")
-const toaster = createToaster({ position: "top" });
+const toaster = createToaster({ position: "top-right" });
 
 function onSaleDiscount(discount_type) {
     sale.dialogActiveState=true;

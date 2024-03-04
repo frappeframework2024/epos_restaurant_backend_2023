@@ -18,7 +18,7 @@
     const store = useStore()
     const auth = inject('$auth')
     const router = useRouter()
-    const toaster = createToaster({position: 'top'})
+    const toaster = createToaster({position: 'top-right'})
     const isLoading = computed(() => {
         return store.state.isLoading
     })

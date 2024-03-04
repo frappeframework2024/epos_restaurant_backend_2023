@@ -50,7 +50,7 @@ const { t: $t } = i18n.global;
 const frappe = inject('$frappe');
 const call = frappe.call();
 const counter = ref(123)
-const toaster = createToaster({ position: 'top' }); 
+const toaster = createToaster({ position: 'top-right' }); 
 
 async function onResetCounter() {
 

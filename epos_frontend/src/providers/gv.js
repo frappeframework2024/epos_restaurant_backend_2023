@@ -5,7 +5,7 @@ import moment from '@/utils/moment.js';
 
 const { t: $t } = i18n.global; 
  
-const toaster = createToaster({ position: "top" });
+const toaster = createToaster({ position: "top-right" });
  
 export default class Gv {
 	constructor() {

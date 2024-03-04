@@ -9,12 +9,10 @@
 import { useDisplay } from 'vuetify'
 import {searchSaleDialog, inject,useRouter,i18n} from '@/plugin';
 const { t: $t } = i18n.global;
-// import { createToaster } from '@meforma/vue-toaster'; 
+
 const { mobile } = useDisplay()
 const sale = inject('$sale')
 const router = useRouter();
-// const socket = inject('$socket');
-// const toaster = createToaster({position:"top"});
 
 const setting = JSON.parse(localStorage.getItem("setting"))
 async function onSearchSale(){

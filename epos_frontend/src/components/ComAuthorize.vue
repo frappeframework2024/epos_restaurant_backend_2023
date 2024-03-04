@@ -72,7 +72,7 @@ const gv = inject("$gv");
 const frappe = inject("$frappe");
 const call = frappe.call();
 
-const toaster = createToaster({ position: "top" })
+const toaster = createToaster({ position: "top-right" })
 
 const props = defineProps({
   params: {

@@ -46,7 +46,7 @@ const route = useRoute();
 const emit = defineEmits(["resolve"])
 const gv = inject('$gv')
 const sale = inject('$sale')
-const toaster = createToaster({ position: "top" })
+const toaster = createToaster({ position: "top-right" })
 const posProfile = localStorage.getItem('pos_profile')
 const props = defineProps({
     params: {

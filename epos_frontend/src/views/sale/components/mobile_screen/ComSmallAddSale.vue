@@ -37,7 +37,7 @@ import ComMenu from '../ComMenu.vue';
 // import ComSelectCustomer from '../ComSelectCustomer.vue';
 import ComProductSearch from '../ComProductSearch.vue';
 
-const toaster = createToaster({ position: "top" });
+const toaster = createToaster({ position: "top-right" });
 const { t: $t } = i18n.global;
 
 const sale = inject('$sale');

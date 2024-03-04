@@ -51,7 +51,7 @@ const emit = defineEmits('closeModel')
 const props = defineProps({
   isMobile: Boolean
 })
-const toaster = createToaster({ position: "top" })
+const toaster = createToaster({ position: "top-right" })
 
 async function onToHomePage(){
   const sp = Enumerable.from(sale.sale.sale_products);

@@ -85,7 +85,7 @@ const filter = ref({
 
 let resultFilter = ref({})
 
-const toaster = createToaster({ position: "top" })
+const toaster = createToaster({ position: "top-right" })
 const reportUrl = ref("");
 
 const activeReport = ref(gv.setting.reports.filter(r => r.show_in_pos_closed_sale == 1 && r.doc_type == 'POS Profile')[0]);

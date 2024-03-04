@@ -63,7 +63,7 @@ const props = defineProps({ data: Object })
 const sale = inject("$sale");
 const gv = inject("$gv");
 const product = inject("$product");
-const toaster = createToaster({ position: 'top' })
+const toaster = createToaster({ position: 'top-right' })
 const frappe = inject("$frappe")
 const db = frappe.db();
 

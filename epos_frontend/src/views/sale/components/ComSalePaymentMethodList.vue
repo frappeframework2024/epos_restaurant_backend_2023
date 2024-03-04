@@ -16,7 +16,7 @@ const {mobile} = useDisplay()
 const gv = inject("$gv")
 const sale = inject("$sale")
 const { t: $t } = i18n.global;  
-const toaster = createToaster({ position: "top" });
+const toaster = createToaster({ position: "top-right" });
 
 async function onPaymentTypeClick(pt) { 
 

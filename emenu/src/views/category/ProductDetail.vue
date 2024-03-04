@@ -51,7 +51,7 @@
     import { createToaster } from '@meforma/vue-toaster';
     import Enumerable from 'linq';
 	
-	const toaster = createToaster({position:'top'});
+	const toaster = createToaster({position:'top-right'});
  
     const props = defineProps({
         product: Object

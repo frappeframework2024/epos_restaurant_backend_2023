@@ -91,7 +91,7 @@
     const product = inject('$product');
     const gv = inject('$gv');
     const moment = inject('$moment');
-    const toaster = createToaster({ position: 'top' });
+    const toaster = createToaster({ position: 'top-right' });
 
     const props = defineProps({
         groupKey: Object,

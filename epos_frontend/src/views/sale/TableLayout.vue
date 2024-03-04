@@ -28,7 +28,7 @@ import ComRenderTableNumber from './components/table_layouts/ComRenderTableNumbe
 
 const { t: $t } = i18n.global; 
 
-const toaster = createToaster({position:"top"});
+const toaster = createToaster({position:"top-right"});
 const tableLayout = inject("$tableLayout");
 const socket = inject("$socket");
 

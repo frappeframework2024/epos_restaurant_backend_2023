@@ -33,7 +33,7 @@
   const sale = inject("$sale")
   const gv = inject("$gv")
   const screen = inject("$screen")
-  const toaster = createToaster({ position: "top" });
+  const toaster = createToaster({ position: "top-right" });
   const emit = defineEmits('onSelected')
   const props = defineProps({
     isMobile: {

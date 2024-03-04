@@ -45,7 +45,7 @@ const frappe = inject("$frappe")
 const gv = inject("$gv")
 const tableLayout = inject("$tableLayout")
 const router = useRouter()
-const toaster = createToaster({ position: "top" });
+const toaster = createToaster({ position: "top-right" });
 const isDesktop = localStorage.getItem('is_window');
 const emit = defineEmits(["resolve"]);
 

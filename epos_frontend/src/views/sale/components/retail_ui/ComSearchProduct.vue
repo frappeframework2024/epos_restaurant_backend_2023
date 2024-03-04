@@ -1,13 +1,11 @@
 <template>
-    <ComModal @onClose="onClose(false)" :loading="true" :fullscreen="true" :hide-ok-button="true" :hide-close-button="true">
+    <ComModal @onClose="onClose(false)" :loading="loading" :fullscreen="true" :hide-ok-button="true" :hide-close-button="true">
         <template #title>
             {{ params.title }}
         </template>
-
-
-
+           
         <template #content>
-            <div class="search-box my-0 mx-auto" :class="data.length > 0 ? 'w-full' : 'max-w-[350px]'">
+            <div class="search-box my-0 mx-auto" :class="data.length > 0 ? 'w-full' : 'max-w-[350px]'"> 
                 <ComInput autofocus keyboard variant="outlined" :placeholder="$t('Search...')"
                         prepend-inner-icon="mdi-magnify" v-model="keyword" v-debounce="onSearch" /> <br/>
                 <template v-if="data.length > 0">
@@ -30,67 +28,77 @@
                         
                     <hr>
                     <!-- {{ keyword }} -->
-                    <v-table>
-                        <thead>
-                            <tr>
-                                <th class="text-left">Photo</th>
-                                <th class="text-left">Name</th>
-                                <th class="text-left">Product Name</th> 
-                                <th class="text-right">Price</th> 
-                                <th class="text-left">Product Category</th> 
-                                <th></th>
-                            </tr> 
-                        </thead>
-                        <tbody>
-                            <tr v-for="(p, index) in data" :key="index" >
-                                <td class="text-left">
-                                    <div class="">
-                                        <div class="p-2">
-                                            <v-img :width="50" :height="50" aspect-ratio="16/9" cover :src="p.photo"></v-img>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>{{ p.name }}</td>
-                                <td style="max-width: 30rem;" class="overflow-hidden">
-                                    <div class="elp-pro-name">
-                                        <v-tooltip v-if="p.product_name_en != p.product_name_kh" :text="`${p.product_name_en}${p.product_name_kh}`">
-                                            <template v-slot:activator="{ props }">
-                                                <div class="elp-pro-name" v-bind="props">{{ p.product_name_en }} <template v-if="p.product_name_en != p.product_name_kh">{{ p.product_name_kh }}</template></div>
-                                            </template>
-                                        </v-tooltip>
-                                        <v-tooltip v-else :text="`${p.product_name_en}`">
-                                            <template v-slot:activator="{ props }">
-                                                <div class="elp-pro-name" v-bind="props">{{ p.product_name_en }} <template v-if="p.product_name_en != p.product_name_kh">{{ p.product_name_kh }}</template></div>
-                                            </template>
-                                        </v-tooltip>
-                                    </div>
-                                </td>
-                                <td class="text-right"><CurrencyFormat :value="p.price" /></td> 
-                                <td>{{ p.product_category }}</td>
-                                <td> 
-                                    <v-btn>Select Product</v-btn>
-                                </td>
-
-
-                                
-                                <!-- <hr> -->
-                                <!-- {{ p }}  -->
-                            </tr>
-                        </tbody> 
-                    </v-table> 
+                    <v-row>
+                        <v-col cols="8">
+                        <div style="height:calc(100vh - 225px);" class="overflow-auto">
+                            <div class="flex flex-column h-100">
+                                <div>
+                                    <v-table>
+                                        <thead>
+                                            <tr>
+                                                <th class="text-left">Photo</th>
+                                                <th class="text-left">Name</th>
+                                                <th class="text-left">Product Name</th> 
+                                                <th class="text-right">Price</th> 
+                                                <th class="text-left">Product Category</th> 
+                                                <th></th>
+                                            </tr> 
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(p, index) in data" :key="index" >
+                                                <td class="text-left">
+                                                    <div class="">
+                                                        <div class="p-2">
+                                                            <v-img :width="50" :height="50" aspect-ratio="16/9" cover :src="p.photo"></v-img>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>{{ p.name }}</td>
+                                                <td style="max-width: 30rem;" class="overflow-hidden">
+                                                    <div class="elp-pro-name">
+                                                        <v-tooltip v-if="p.product_name_en != p.product_name_kh" :text="`${p.product_name_en}${p.product_name_kh}`">
+                                                            <template v-slot:activator="{ props }">
+                                                                <div class="elp-pro-name" v-bind="props">{{ p.product_name_en }} <template v-if="p.product_name_en != p.product_name_kh">{{ p.product_name_kh }}</template></div>
+                                                            </template>
+                                                        </v-tooltip>
+                                                        <v-tooltip v-else :text="`${p.product_name_en}`">
+                                                            <template v-slot:activator="{ props }">
+                                                                <div class="elp-pro-name" v-bind="props">{{ p.product_name_en }} <template v-if="p.product_name_en != p.product_name_kh">{{ p.product_name_kh }}</template></div>
+                                                            </template>
+                                                        </v-tooltip>
+                                                    </div>
+                                                </td>
+                                                <td class="text-right"><CurrencyFormat :value="p.price" /></td> 
+                                                <td>{{ p.product_category }}</td>
+                                                <td> 
+                                                    <v-btn>Select Product</v-btn>
+                                                </td> 
+                                            </tr>
+                                        </tbody> 
+                                    </v-table> 
+                                </div>
+                                <div>  
+                                    <template v-if="data.length > 0">
+                                        <div class="text-center">
+                                            <v-pagination
+                                            v-model="page"
+                                            :length="4"
+                                            rounded="circle"
+                                            ></v-pagination> 
+                                        </div> 
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </v-col>
+                    <v-col>
+                        <div class="h-100 p-2" style="border-left: 1px solid #ccc;">
+                            <ComSearchSelectedProduct/>
+                        </div>
+                    </v-col>
+                    </v-row>
                 </template>
-            </div> 
-            <div>  
-                <template v-if="data.length > 0">
-                    <div class="text-center">
-                        <v-pagination
-                        v-model="page"
-                        :length="4"
-                        rounded="circle"
-                        ></v-pagination> 
-                    </div> 
-                </template>
-            </div>
+            </div>  
         </template>
     </ComModal>
 </template>
@@ -99,13 +107,14 @@
 
 import { inject, ref, computed, onUnmounted, reactive, i18n } from '@/plugin'
 import { createToaster } from '@meforma/vue-toaster';
+import ComSearchSelectedProduct from './ComSearchSelectedProduct.vue';
 const gv = inject("$gv")
 const frappe = inject('$frappe');
 const db = frappe.db()
 const data = ref([])
 const { t: $t } = i18n.global;
 const keyword = ref("")
-const toaster = createToaster({ position: "top" })
+const toaster = createToaster({ position: "top-right" })
 const loading = ref(false)
 
 const props = defineProps({
@@ -130,10 +139,12 @@ function onSearch() {
     })
         .then((docs) => {
             data.value = docs
-            loading.value = true 
+            loading.value = false 
 
         })
-        .catch((error) => console.error(error));
+        .catch((error) => {
+            loading.value = false
+        });
 
 }
 
