@@ -13,6 +13,7 @@ from frappe.utils import (
     is_html,
     add_to_date,
 )
+from escpos import *
 
 @frappe.whitelist(allow_guest=True)
 def on_check_url():  
@@ -97,8 +98,9 @@ def get_pos_users(secret_key = False):
     return users
 
 
-def get_context(doc):
-    return {"doc": doc, "nowdate": nowdate, "frappe.utils": frappe.utils}
+def get_print_context(doc):
+    setting = frappe.get_doc("POS Config", frappe.db.get_value("POS Profile",doc.pos_profile, "pos_config"))
+    return {"doc": doc, "nowdate": nowdate, "frappe.utils": frappe.utils,"setting":setting}
 
 
  
@@ -137,7 +139,7 @@ def trim(file_path):
 def get_bill_image(name):
     doc = frappe.get_doc("Sale", name)
     template,css = frappe.db.get_value("POS Receipt Template","Receipt En",["template","style"])
-    html=frappe.render_template(template, get_context(doc))
+    html=frappe.render_template(template, get_print_context(doc))
 
     chrome_path = "/usr/bin/google-chrome"
 
@@ -154,7 +156,13 @@ def get_bill_image(name):
 
  
     image_path = '{}/bill_image.png'.format(frappe.get_site_path())
+    
     trim(image_path)
+    p = printer.Network("192.168.10.80")
+    p.image(image_path)
+    p.cut()
+    p.close()
+        
     with open(image_path, "rb") as image_file:
         image_data = image_file.read()
         encoded_data = base64.b64encode(image_data).decode("utf-8")
