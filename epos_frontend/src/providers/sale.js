@@ -1700,6 +1700,8 @@ export default class Sale {
         }
         if (receipt.pos_receipt_file_name && localStorage.getItem("is_window")) {
             window.chrome.webview.postMessage(JSON.stringify(data));
+        } else if((localStorage.getItem("flutterWrapper")||0) == 1){
+            flutterChannel.postMessage(JSON.stringify(data));
         } else {           
             if (receipt.pos_receipt_file_name) {
                 socket.emit('PrintReceipt', JSON.stringify(data));
@@ -1707,6 +1709,7 @@ export default class Sale {
             else {
                 this.onOpenBrowserPrint("Sale", doc.name, receipt.name)
             }
+            
         }
     }
 
@@ -1722,7 +1725,11 @@ export default class Sale {
 
                 if (localStorage.getItem("is_window") == "1") {
                     window.chrome.webview.postMessage(JSON.stringify(data));
-                } else {
+                } 
+                else if((localStorage.getItem("flutterWrapper")||0) == 1){
+                    flutterChannel.postMessage(JSON.stringify(data));
+                }
+                else {
                     socket.emit('PrintReceipt', JSON.stringify(data));
                 }
                 this.printWaitingOrderAfterPayment = false;

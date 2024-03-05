@@ -89,6 +89,7 @@
 
     const is_window = localStorage.getItem("is_window");
     const is_apk_ipa = localStorage.getItem("apkipa");
+  
     
     const check = computed(()=>{
         pos_license.web_platform  = false;
@@ -101,8 +102,9 @@
    }) ;
 
  
-   async function onSave() { 
-    // WebViewBridge.postMessage("mobile print");
+   async function onSave() {      
+
+    // flutterChannel.postMessage("flutter.reload");
 
     // return ;
         pos_license.web_platform  = false;

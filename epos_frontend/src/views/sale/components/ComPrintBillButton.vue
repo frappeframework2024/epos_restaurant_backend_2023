@@ -106,7 +106,7 @@ async function onPrintReport(r) {
     await sale.onSubmit().then(async (value) => {
       if (value) {
         router.push({ name: "TableLayout" });
-        window.postMessage("close_modal", "*");
+        window.postMessage("close_modal", "*"); 
       }
     });
   }

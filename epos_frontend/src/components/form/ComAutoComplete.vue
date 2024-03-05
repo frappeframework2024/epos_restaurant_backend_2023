@@ -31,6 +31,7 @@
       :subtitle="getSubTitle(item.raw)">
     </v-list-item> 
   </template>
+  
   </v-autocomplete> 
 </template>
 <script setup>

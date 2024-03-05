@@ -450,6 +450,8 @@ def receipt_list_summary(filter):
             sql_conditions.append(f"{key} = '{operand}'")
         elif operator == "in":
             sql_conditions.append(f"{key} IN {tuple(operand)}")
+        elif operator == "between":
+            sql_conditions.append(f"{key} IN {tuple(operand)}")
 
     sql_query = " AND ".join(sql_conditions)
     data = frappe.db.sql(sql.format("where " + sql_query),as_dict=1)
