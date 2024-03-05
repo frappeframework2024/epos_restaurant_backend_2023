@@ -31,8 +31,7 @@
                     <div>
                         <ComProductSearch small/>
                     </div>
-                    <div>
-                        
+                    <div v-if="!mobile && sale.setting.table_groups.length==0"> 
                         <v-btn class="advanced-btn h-100 " @click="onAdvanceSearch">
                             Advance Search
                         </v-btn>

@@ -47,7 +47,7 @@
                                                     <td class="text-left">
                                                         <div class="">
                                                             <div class="p-2">
-                                                                <v-img :width="50" :height="50" aspect-ratio="16/9"
+                                                                <v-img :width="150" :height="150" aspect-ratio="16/9"
                                                                     cover :src="p.photo"></v-img>
                                                             </div>
                                                         </div>

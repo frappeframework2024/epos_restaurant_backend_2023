@@ -16,7 +16,6 @@ frappe.listview_settings['Sale'] = {
                 return [__("Unpaid"), "red"];
             }
         }
-      
-        
     },
+    
 }

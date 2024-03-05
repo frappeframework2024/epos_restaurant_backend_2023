@@ -52,20 +52,17 @@
                     <div class="text-right">
                         <v-btn type="sumbit" class="w-full" color="primary" :loading="store.state.isLoading">Save</v-btn>
                     </div>
+                   
                 </form>
+              
             </v-card-text>
         </v-card>
     </v-container>
 </template>
 <script setup>
     import {reactive, createResource, createToaster, useStore, inject,onMounted,ref,computed} from '@/plugin';
-    import ComToolbar from '@/components/ComToolbar.vue'; 
-    import CryptoJS from 'crypto-js';    
-    const pos_license = inject('$pos_license');
-
-    const frappe = inject('$frappe');
-    const call = frappe.call();
-
+    import ComToolbar from '@/components/ComToolbar.vue';  
+    const pos_license = inject('$pos_license'); 
     const auth = inject('$auth');
     const toast = createToaster();
     const store = useStore(); 
@@ -104,7 +101,10 @@
    }) ;
 
  
-   async function onSave() {
+   async function onSave() { 
+    // window.WebViewBridge.postMessage("mobile print");
+
+    // return ;
         pos_license.web_platform  = false;
         if((is_window||0) == 0 && (is_apk_ipa||0)==0){
             pos_license.web_platform = true;

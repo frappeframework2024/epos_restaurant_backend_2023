@@ -186,9 +186,10 @@ function onVoucherTopUp(){
 }
 
 async function onViewPendingOrder() { 
-    window.ReactNativeWebView.postMessage("mobile_print");
+    // // window.ReactNativeWebView.postMessage("mobile_print");
+    // window.WebViewBridge.postMessage("mobile print");
 
-    return;
+    // return;
     call.get("epos_restaurant_2023.api.api.get_current_shift_information",{
         business_branch: gv.setting?.business_branch,
         pos_profile: localStorage.getItem("pos_profile")

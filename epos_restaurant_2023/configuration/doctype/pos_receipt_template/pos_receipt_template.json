@@ -1,0 +1,56 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:receipt_name",
+ "creation": "2024-03-04 22:13:34.586882",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "receipt_name",
+  "template",
+  "style"
+ ],
+ "fields": [
+  {
+   "fieldname": "receipt_name",
+   "fieldtype": "Data",
+   "label": "Receipt Name",
+   "unique": 1
+  },
+  {
+   "fieldname": "template",
+   "fieldtype": "Code",
+   "label": "Template"
+  },
+  {
+   "fieldname": "style",
+   "fieldtype": "Code",
+   "label": "Style"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-03-04 22:50:47.055104",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "POS Receipt Template",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

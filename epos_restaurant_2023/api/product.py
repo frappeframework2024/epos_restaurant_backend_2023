@@ -134,14 +134,15 @@ def get_product_variants(parent):
     if data :
         return data
 
+
 @frappe.whitelist()
 def get_product_by_barcode(barcode):
     #step 1 check barcard in tabProduct if have product return 
     #step 2 if product not exist check barcode from product price if exist retrun
-    # step 3 both not exist then throw product not exist
-    
+    # step 3 both not exist then throw product not exist    
     #check if barcode have in product
-    data  = frappe.db.sql("select name from `tabProduct` where name='{}'".format(barcode),as_dict=1)
+    data  = frappe.db.sql("select name from `tabProduct` where name='{0}' or product_code_2='{0}' or product_code_3='{0}'".format(barcode),as_dict=1)
+    
     if data:
             if data[0].name:
                 p = frappe.get_doc('Product', data[0].name)
@@ -178,7 +179,7 @@ def get_product_by_barcode(barcode):
                     "sort_order":p.sort_order
                 }
             else:
-                frappe.throw("Item No Name ?")
+                frappe.throw("Item No Name?")
                 
     else:
         

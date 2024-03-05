@@ -1,7 +1,8 @@
 <template lang="">
   <div class="border p-2 rounded-md">
     <ComLabelValue label="Total QTY" :value="sale.sale.total_quantity"/>
-    <ComLabelValue label="Sub Total">
+    <!-- sub total -->
+    <ComLabelValue v-if="sale.sale.sub_total!=sale.sale.grand_total" label="Sub Total">
 
       <CurrencyFormat :value="sale.sale.sub_total" />
     </ComLabelValue>

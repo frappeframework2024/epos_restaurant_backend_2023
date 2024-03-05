@@ -16,6 +16,7 @@
       item-value="name"
       :menu-props="{ maxHeight: 500 }"
       @click:clear="onClear"
+      @update:modelValue="onSelected"
   >
 
   <template v-slot:item="{ props, item }">
@@ -48,6 +49,10 @@ let props = defineProps({
   variant: {
     type: String,
     default: 'solo'
+  },
+  autoFetch:{
+    type:Boolean,
+    default:true
   }
 })
 const emit = defineEmits(['onSelected'])
@@ -77,6 +82,14 @@ function  doctypeParams(){
 function onClear(){
   select.value ="";
 }
+
+function onSelected(){
+
+  emit("onSelected",select.value)
+  
+  
+}
+
 onMounted(async () => {
   let metaResource = createResource({
     url: "epos_restaurant_2023.api.api.get_meta",
@@ -101,7 +114,11 @@ onMounted(async () => {
     });
   }
 
-  doctypeResource.fetch();
+  if(props.autoFetch==true){
+
+    doctypeResource.fetch();
+  }
+  
 
   watch(search, (currentValue, oldValue) => {
     if(currentValue!=oldValue ){ 

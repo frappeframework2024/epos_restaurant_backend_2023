@@ -1,6 +1,12 @@
 frappe.listview_settings['Product'] = {
     hide_name_column: true, 
-
+    add_fields: ['photo'],
+    formatters: {
+        photo: function (value, field, doc) {
+            console.log(value)
+            return `<img src='${doc.photo || "/files/placeholder.jpg"}' style='border-radius: 50%;height:35px; margin-right:10px;margin-left:5px'/>`;
+        },
+    },
     onload(me) { 
         me.page.add_action_item('Assign Menu', function() {
             let d = new frappe.ui.Dialog({
