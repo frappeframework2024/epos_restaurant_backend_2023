@@ -102,7 +102,7 @@
 
  
    async function onSave() { 
-    // window.WebViewBridge.postMessage("mobile print");
+    // WebViewBridge.postMessage("mobile print");
 
     // return ;
         pos_license.web_platform  = false;
