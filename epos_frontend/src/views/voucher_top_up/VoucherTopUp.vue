@@ -31,8 +31,8 @@ async function onAddVoucherTopUp() {
 
 
 async function onCallback(data) {
-    console.log(data.fieldname)
-    if (data.fieldname == 'name'){
+    if(data){
+        if (data.fieldname == 'name'){
         const result = await VoucherTopUpDetailDialog({
             name: data.data.name
         });
@@ -41,6 +41,8 @@ async function onCallback(data) {
             name: data.data.customer
         });
     }
+    }
+    
         
         
         

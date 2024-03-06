@@ -1,3 +1,4 @@
+import json
 import frappe
 from PIL import Image, ImageChops
 from html2image import Html2Image
@@ -15,9 +16,9 @@ from frappe.utils import (
 from escpos import *
 
 
-def get_print_context(doc):
+def get_print_context(doc, sale_products= []):
     setting = frappe.get_doc("POS Config", frappe.db.get_value("POS Profile",doc.pos_profile, "pos_config"))
-    return {"doc": doc, "nowdate": nowdate, "frappe.utils": frappe.utils,"setting":setting,"frappe":frappe}
+    return {"doc": doc,"sale_products": sale_products,"nowdate": nowdate, "frappe.utils": frappe.utils,"setting":setting,"frappe":frappe}
 
 
  
@@ -54,26 +55,52 @@ def trim(file_path):
     
 
 @frappe.whitelist(allow_guest=True)
-def print_bill(name):
+def print_bill(name,file_name ):
     doc = frappe.get_doc("Sale", name)
-    template,css,width,fixed_height = frappe.db.get_value("POS Receipt Template","Receipt En",["template","style","width","fixed_height"])
+    template,css,width,fixed_height = frappe.db.get_value("POS Receipt Template",file_name,["template","style","width","fixed_height"])
     html= frappe.render_template(template, get_print_context(doc))
 
-    chrome_path = "/usr/bin/google-chrome"
-
-    # Set the CHROME_PATH environment variable
-    os.environ['CHROME_PATH'] = chrome_path
     height = fixed_height
     if len(doc.sale_products) > 0:
         height += len(doc.sale_products) * 75
+
+    return capture(html=html,css=css,height=height,width=width,imnage='bill_image.png')
+
+ 
+@frappe.whitelist(allow_guest=True,methods="POST")
+def print_kitchen_order(data): 
+    if not frappe.db.exists("Sale", data["sale"]):
+        return ""    
+    doc_sale = frappe.get_doc("Sale", data["sale"])
+    template,css,width,fixed_height = frappe.db.get_value("POS Receipt Template","Kitchen Order",["template","style","width","fixed_height"])
+
+   
+    html = frappe.render_template(template, get_print_context(doc=doc_sale,sale_products =  data["products"]))
+ 
+    # return products 
+ 
+    height = fixed_height
+    if len(data["products"]) > 0:
+        height += len(data["products"]) * 75 
+
+    return capture(html=html,css=css,height=height,width=width,imnage='kitchen_order.png')
+ 
+       
+
+
+@frappe.whitelist(allow_guest=True)
+def capture(height,width,html,css,imnage):
+    chrome_path = "/usr/bin/google-chrome"
+    # Set the CHROME_PATH environment variable
+    os.environ['CHROME_PATH'] = chrome_path
+    height = height 
     hti = Html2Image()
     hti.chrome_path=chrome_path
     hti.output_path =frappe.get_site_path() 
     hti.size=(width, height)
-    hti.screenshot(html_str=html, css_str=css, save_as='bill_image.png')
-   
-    image_path = '{}/bill_image.png'.format(frappe.get_site_path())
-    
+
+    hti.screenshot(html_str=html, css_str=css, save_as='{}'.format(imnage))   
+    image_path = '{}/{}'.format(frappe.get_site_path(),imnage)    
     trim(image_path)
   
 
@@ -81,9 +108,3 @@ def print_bill(name):
         image_data = image_file.read()
         encoded_data = base64.b64encode(image_data).decode("utf-8")
     return encoded_data
- 
-@frappe.whitelist(allow_guest=True)
-def print_kitchen_order():
-    # result = get_html_and_style(doc="")    
-
-    return ""

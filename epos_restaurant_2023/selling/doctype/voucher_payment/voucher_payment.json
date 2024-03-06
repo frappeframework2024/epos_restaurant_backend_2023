@@ -24,7 +24,8 @@
   "input_amount",
   "amended_from",
   "currency",
-  "exchange_rate"
+  "exchange_rate",
+  "currency_format"
  ],
  "fields": [
   {
@@ -151,12 +152,18 @@
    "fieldname": "credit_amount",
    "fieldtype": "Currency",
    "label": "Credit Amount"
+  },
+  {
+   "fetch_from": "currency.custom_pos_currency_format",
+   "fieldname": "currency_format",
+   "fieldtype": "Data",
+   "label": "Currency Format"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-02-26 16:48:44.914898",
+ "modified": "2024-03-06 15:33:50.568897",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Voucher Payment",

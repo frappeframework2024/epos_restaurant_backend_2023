@@ -2,8 +2,10 @@
     <ComModal @onClose="onClose" :mobileFullscreen="true" hideOkButton>
         <template #title>
             {{ voucherTopUp.customer }} - {{ voucherTopUp.customer_name }}
-           
         </template>
+        <template #bar_custom>
+      <v-btn append-icon="mdi-printer" @click="onPrinterVoucherClick">{{ $t('Print') }}</v-btn>
+    </template>
         <template #content>
             <div  v-if="voucherTopUp">
                 <div>
@@ -83,7 +85,7 @@ const moment = inject('$moment')
 const { t: $t } = i18n.global;
 const frappe = inject('$frappe')
 const db = frappe.db();
-
+const gv = inject('$gv')
 const props = defineProps({
     params: {
         type: Object,
@@ -100,12 +102,49 @@ let loading = ref(false)
 onMounted(async () => {
     
     db.getDoc('Voucher', props.params.name).then((result) => {
-        voucherTopUp.value = result
-        loading.value = false;
-});
-   
-    
+            voucherTopUp.value = result
+            loading.value = false;
+    });
 })
+
+function onPrinterVoucherClick(){
+    onPrintVoucher('rpt_voucher','print_voucher_slip',voucherTopUp.value)
+}
+
+async function onPrintVoucher(receipt, action, doc) {
+        const data = {
+            action: action,
+            setting: gv.setting?.pos_setting,
+            voucher: doc,
+            station_device_printing:(gv.setting?.device_setting?.station_device_printing)||"",
+        }
+        if (localStorage.getItem("is_window")) {
+            window.chrome.webview.postMessage(JSON.stringify(data));
+        } else {           
+            if (receipt.pos_receipt_file_name) {
+                socket.emit('PrintReceipt', JSON.stringify(data));
+            }
+            else {
+                onOpenBrowserPrint("Voucher", action.name,  action.name)
+            }
+        }
+    }
+
+    function onOpenBrowserPrint(doctype, docname, filename) {
+        const url = getPrintReportPath(doctype, docname, filename, 1)        
+        window.open(url).print();
+        window.close();
+    }
+    function getPrintReportPath(doctype, name, reportName, isPrint = 0) {
+        let url = "";
+         
+        const serverUrl = window.location.protocol + "//" + window.location.hostname + ":" + this.setting?.pos_setting?.backend_port;
+        url = serverUrl + "/printview?doctype=" + doctype + "&name=" + name + "&format=" + reportName + "&no_letterhead=0&letterhead=Defualt%20Letter%20Head&settings=%7B%7D&_lang=en&d=" + new Date()
+        if (isPrint) {
+            url = url + "&trigger_print=" + isPrint
+        }        
+        return url;
+    }
 
 
 function onClose() {

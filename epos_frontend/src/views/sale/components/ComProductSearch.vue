@@ -3,7 +3,7 @@
     <div :class="small ? 'px-2' : 'px-6'">
         <div class="search-box my-0 mx-auto" :class="small ? 'w-full' : 'max-w-[350px]'">
             <ComInput
-                :autofocus="!mobile"
+                :autofocus="!getIsMobile()"
                 keyboard
                 variant="outlined"
                 :placeholder="$t('Search...')"
@@ -30,6 +30,7 @@ import ComInput from '../../../components/form/ComInput.vue';
 import { createToaster } from '@meforma/vue-toaster';
 import ComAutoComplete from '@/components/form/ComAutoComplete.vue';
 import { useDisplay } from 'vuetify';
+import { computed } from 'vue';
 const product = inject("$product")
 const sale = inject("$sale")
 const frappe = inject("$frappe")
@@ -47,6 +48,10 @@ const props = defineProps({
 const selected_product = ref()
 
 const doSearch = ref(true)
+
+function getIsMobile() {
+    return  localStorage.getItem("flutterWrapper")==1 || mobile;
+}
 
 function onSearch(key) {
     if (sale.setting.table_groups.length > 0) {

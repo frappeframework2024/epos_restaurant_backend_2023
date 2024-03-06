@@ -239,8 +239,7 @@ function onSave() {
         vouchers: voucherTopUps.value.filter((v) => v.docstatus == 0),
         posauthuser:props.params.authUser.user
     }).then((result) => {
-        getCustomerVoucher(result.message[0])
-        onPrintVoucherSlip
+        onPrintVoucher('rpt_voucher','print_voucher_slip',result.message[0])
         emit('resolve', true);
         toaster.success($t('Top up successfully'))
     }).catch((err) => {
@@ -249,6 +248,42 @@ function onSave() {
         loading.value = false;
     })
 }
+
+async function onPrintVoucher(receipt, action, doc) {
+        const data = {
+            action: action,
+            setting: gv.setting?.pos_setting,
+            voucher: doc,
+            station_device_printing:(gv.setting?.device_setting?.station_device_printing)||"",
+        }
+        if (localStorage.getItem("is_window")) {
+            window.chrome.webview.postMessage(JSON.stringify(data));
+        } else {           
+            if (receipt.pos_receipt_file_name) {
+                socket.emit('PrintReceipt', JSON.stringify(data));
+            }
+            else {
+                onOpenBrowserPrint("Voucher", action.name,  action.name)
+            }
+        }
+    }
+
+    function onOpenBrowserPrint(doctype, docname, filename) {
+        const url = getPrintReportPath(doctype, docname, filename, 1)        
+        window.open(url).print();
+        window.close();
+    }
+    function getPrintReportPath(doctype, name, reportName, isPrint = 0) {
+        let url = "";
+         
+        const serverUrl = window.location.protocol + "//" + window.location.hostname + ":" + this.setting?.pos_setting?.backend_port;
+        url = serverUrl + "/printview?doctype=" + doctype + "&name=" + name + "&format=" + reportName + "&no_letterhead=0&letterhead=Defualt%20Letter%20Head&settings=%7B%7D&_lang=en&d=" + new Date()
+        if (isPrint) {
+            url = url + "&trigger_print=" + isPrint
+        }        
+        return url;
+    }
+
 
 async function paymentTopUp(vh) {
     const result = await VoucherTopUpAddPaymentDialog({ title: $t(vh.name || "New Payment"), topup: vh });

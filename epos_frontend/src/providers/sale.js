@@ -1585,21 +1585,47 @@ export default class Sale {
         this.auditTrailLogs = [];
     }
 
-    onPrintToKitchen(doc) {
- 
+    onPrintToKitchen(doc) { 
         const data = {
             action: "print_to_kitchen",
             setting: this.setting?.pos_setting,
             sale: doc,
             product_printers: this.productPrinters,
             station_device_printing:(this.setting?.device_setting?.station_device_printing)||"",
-        }
+        } 
+
 
         if (localStorage.getItem("is_window") == 1) {
             window.chrome.webview.postMessage(JSON.stringify(data));
         }        
         else if((localStorage.getItem("flutterWrapper")||0) == 1){ 
-            flutterChannel.postMessage(JSON.stringify(data));   
+            if(this.productPrinters.length > 0){
+                var printers =  (this.setting?.device_setting?.station_printers);
+                if(printers.length <=0){
+                    // toaster.warning($t("Printer not yet configt for this device"))
+                }else{ 
+                    let products_ = {
+                        action: "print_to_kitchen",
+                        sale : doc,
+                        printers:[]
+                    }  
+                    products_.printers = [] ;                
+                    printers.forEach((p)=>{                    
+                        products_.printers.push({
+                            "printer":{
+                                "printer_name":p.printer_name,
+                                "ip_address":p.ip_address,
+                                "port":p.port,
+                                "cashier_printer":p.cashier_printer,
+                                "is_label_printer":p.is_label_printer,
+                            },                        
+                            "products": data.product_printers.filter((x)=>x.printer== p.printer_name)
+                        });
+                    });
+                    
+                    flutterChannel.postMessage(JSON.stringify(products_));                       
+                } 
+            }  
         }
         else {
             socket.emit("PrintReceipt", JSON.stringify(data))

@@ -1,10 +1,9 @@
 <template>
   <div class="h-full">
     <div class="overflow-auto h-full p-2">
-      <div class="mb-4">
-     
+      <div class="mb-4"> 
 
-                <v-text-field :readonly="mobile" type="text" class="mb-2" density="compact" variant="solo" autofocus 
+                <v-text-field :readonly="mobile" type="text" class="mb-2" density="compact" variant="solo" :autofocus="!isMobile()"
                     append-inner-icon="mdi-arrow-left" single-line hide-details v-model="sale.paymentInputNumber " @input="onInput"
                     @click:append-inner="onBackspace()"></v-text-field>
         <div>
@@ -58,7 +57,9 @@ import { inject ,reactive} from "@/plugin"
 import ComPaymentCurrencyPrefine from "./ComPaymentCurrencyPrefine.vue";
 const sale = inject("$sale") 
 
-
+function isMobile(){
+  return localStorage.getItem("flutterWrapper")==1;
+}
 
 function numpad_click(n) {
   if(sale.is_payment_first_load){

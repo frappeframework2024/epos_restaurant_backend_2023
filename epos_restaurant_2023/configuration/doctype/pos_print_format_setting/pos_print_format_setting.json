@@ -10,6 +10,7 @@
  "field_order": [
   "title",
   "print_format",
+  "pos_receipt_template",
   "print_report_name",
   "pos_invoice_file_name",
   "pos_receipt_file_name",
@@ -154,11 +155,17 @@
    "in_standard_filter": 1,
    "label": "Print Format Doc Type",
    "options": "DocType"
+  },
+  {
+   "fieldname": "pos_receipt_template",
+   "fieldtype": "Link",
+   "label": "POS Receipt Template",
+   "options": "POS Receipt Template"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-08-30 11:44:28.330852",
+ "modified": "2024-03-06 12:08:33.455413",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Print Format Setting",

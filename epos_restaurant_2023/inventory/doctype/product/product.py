@@ -164,7 +164,7 @@ class Product(Document):
 		self.prices = json.dumps(prices)	
 	
 	def on_update(self):
-		#add_product_to_temp_menu(self)
+		# add_product_to_temp_menu(self)
 		frappe.enqueue("epos_restaurant_2023.inventory.doctype.product.product.add_product_to_temp_menu", queue='short', self=self)
 
 	def on_trash(self):
@@ -338,6 +338,7 @@ def get_product_cost_by_stock(product_code=None, stock_location=None):
 
 def add_product_to_temp_menu(self):
 	frappe.db.sql("delete from `tabTemp Product Menu` where product_code='{}'".format(self.name))
+ 
 
 	if self.pos_menus and not self.disabled and self.allow_sale:
 		printers = []
@@ -345,6 +346,8 @@ def add_product_to_temp_menu(self):
 			printers.append({
 				"printer":p.printer_name,
 				"group_item_type":p.group_item_type,
+				"ip_address":p.ip_address,
+				"port":int(p.port),
 				"is_label_printer":p.is_label_printer
 				})
 	
