@@ -204,6 +204,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "name",
         "title",
         "print_format_doc_type",
+        "pos_receipt_template",
         "print_format",
         "print_report_name",
         "show_in_pos_report",
@@ -228,6 +229,7 @@ def get_system_settings(pos_profile="", device_name=''):
             "name":p.print_format,
             "title":p.title,
             "doc_type":pf.doc_type,
+            "pos_receipt_template":p.pos_receipt_template,
             "print_report_name":p.print_report_name,
             "default_print_language":pf.default_print_language,
             "show_in_pos_report":p.show_in_pos_report,
@@ -860,8 +862,7 @@ def edit_sale_order(name,auth=None,note=None):
 
     # Role back customer voucher balance
     total_voucher_payment = sum(s.amount for s in sale_doc.payment) or 0
-    frappe.db.sql("Update `tabCustomer` set voucher_balance = voucher_balance + {0} where name = '{1}'".format(total_voucher_payment,sale_doc.customer))
-    
+
     sale_doc.payment=[]
     # frappe.throw(str(sale_doc.docstatus))
     sale_doc.cancel()
