@@ -56,20 +56,20 @@ def trim(file_path):
 @frappe.whitelist(allow_guest=True)
 def print_bill(name):
     doc = frappe.get_doc("Sale", name)
-    template,css,width,height = frappe.db.get_value("POS Receipt Template","Receipt En",["template","style","width","height"])
+    template,css,width,fixed_height = frappe.db.get_value("POS Receipt Template","Receipt En",["template","style","width","fixed_height"])
     html= frappe.render_template(template, get_print_context(doc))
 
     chrome_path = "/usr/bin/google-chrome"
 
     # Set the CHROME_PATH environment variable
     os.environ['CHROME_PATH'] = chrome_path
-    height = 570
+    height = fixed_height
     if len(doc.sale_products) > 0:
         height += len(doc.sale_products) * 75
     hti = Html2Image()
     hti.chrome_path=chrome_path
     hti.output_path =frappe.get_site_path() 
-    hti.size=(670, height)
+    hti.size=(width, height)
     hti.screenshot(html_str=html, css_str=css, save_as='bill_image.png')
    
     image_path = '{}/bill_image.png'.format(frappe.get_site_path())

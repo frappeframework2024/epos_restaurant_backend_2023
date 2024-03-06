@@ -3,7 +3,10 @@
         <div class="mb-3">
             <v-row>
                 <v-col cols="12" sm="6">
-                    <v-text-field :label="$t('Working Date')" v-model="current_date" variant="solo" readonly :hide-details="true"></v-text-field>
+                    
+                    <v-text-field v-if="gv.setting.pos_setting.allow_change_date_when_start_working_day=='0'" :label="$t('Working Date')" v-model="current_date" variant="solo" readonly :hide-details="true"></v-text-field>
+                    <ComInput v-else type="date" v-model="open_date"  class="m-1" :label="$t('Working Day')"></ComInput>
+
                 </v-col>
             <v-col cols="12" sm="6">
                     <v-text-field :label="$t('POS Profile')" v-model="pos_profile" variant="solo" readonly :hide-details="true"></v-text-field>
@@ -34,7 +37,9 @@ const toaster = createToaster({position:"top-right" });
 
 const { t: $t } = i18n.global; 
 
- 
+const open_date =ref(moment().format("YYYY-MM-DD"))
+
+
 createResource({
     url: "epos_restaurant_2023.api.api.get_current_working_day",
     params: {
@@ -59,7 +64,7 @@ async function onStartWorking() {
                 doc:{
                     doctype:"Working Day",
                     pos_profile:pos_profile,
-                    posting_date:moment(new Date).format('YYYY-MM-DD'),
+                    posting_date:moment(open_date.value).format('YYYY-MM-DD'),
                     note:note.value
                 }
             },

@@ -18,6 +18,7 @@
 
                     </v-col>
                     <v-col md="6" cols="12">
+                       
                         <ComInput :title="$t('Working Date')" :label="$t('Working Date')" v-model="working_date" readonly>
                         </ComInput>
                     </v-col>
@@ -50,6 +51,8 @@ const toaster = createToaster({ position: 'top-right' });
 const gv = inject('$gv')
 const closed_note = ref("")
 let pendingOrder = ref(0)
+
+
 const working_date = computed(() => {
     return moment(shiftInformation.data?.working_day?.posting_date).format('DD-MM-YYYY');
 })
@@ -62,7 +65,7 @@ const shiftInformation = createResource({
         pos_profile: localStorage.getItem("pos_profile")
     },
     onSuccess(data) {
-
+    
         if (data.cashier_shift != null) {
             toaster.warning($t("msg.Please close shift first"));
             router.push({ name: "Home" });
@@ -70,6 +73,7 @@ const shiftInformation = createResource({
             toaster.warning($t("msg.Please start working day first"));
             router.push({ name: "Home" });
         }
+         
     }
 })
 

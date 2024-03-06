@@ -189,6 +189,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "delete_voucher_top_up_required_password":pos_config.delete_voucher_top_up_required_password,
         "add_voucher_top_up_required_password":pos_config.add_voucher_top_up_required_password,
         "check_delete_item_require_passord_from_product":pos_config.check_delete_item_require_passord_from_product,
+        "allow_change_date_when_start_working_day":doc.allow_change_date_when_start_working_day
         }
     
     #get default customre

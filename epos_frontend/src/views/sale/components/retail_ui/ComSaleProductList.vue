@@ -117,9 +117,10 @@
                 <CurrencyFormat :value="sp.amount" />
               </span>
             </td>
-            <td class="text-center"><v-icon icon="mdi-delete" color="red"
-                @click="sale.onRemoveItem(sp, gv, numberFormat)"></v-icon>
-
+            <td class="text-center">
+              <v-btn class="ma-2" icon="mdi-delete" color="red"  variant="text"  @click="sale.onRemoveItem(sp, gv, numberFormat)">
+                  </v-btn>
+            
               <v-menu>
                 <template v-slot:activator="{ props }">
 

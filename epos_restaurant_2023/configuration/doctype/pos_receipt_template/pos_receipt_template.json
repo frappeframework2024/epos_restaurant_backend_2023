@@ -11,7 +11,7 @@
   "style",
   "column_break_ejte",
   "width",
-  "height"
+  "fixed_height"
  ],
  "fields": [
   {
@@ -41,14 +41,15 @@
    "label": "Width"
   },
   {
-   "fieldname": "height",
+   "default": "500",
+   "fieldname": "fixed_height",
    "fieldtype": "Int",
-   "label": "Height"
+   "label": "Fixed Height"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-03-06 10:55:11.388177",
+ "modified": "2024-03-06 11:13:46.903033",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Receipt Template",
