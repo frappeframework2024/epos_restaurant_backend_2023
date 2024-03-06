@@ -677,7 +677,7 @@ export default class Sale {
     }
 
     updateQuantity(sp, n) {
-        sp.quantity = n;
+        sp.quantity = n ;
         this.updateSaleProduct(sp)
         this.updateSaleSummary();
     }
@@ -1691,7 +1691,7 @@ export default class Sale {
     }
 
     async onPrintReceipt(receipt, action, doc) {
-        const data = {
+        let data = {
             action: action,
             print_setting: receipt,
             setting: this.setting?.pos_setting,
@@ -1701,7 +1701,22 @@ export default class Sale {
         if (receipt.pos_receipt_file_name && localStorage.getItem("is_window")) {
             window.chrome.webview.postMessage(JSON.stringify(data));
         } else if((localStorage.getItem("flutterWrapper")||0) == 1){
-            flutterChannel.postMessage(JSON.stringify(data));
+          var printer =  (this.setting?.device_setting?.station_printers).filter((e)=>e.cashier_printer == 1);
+          if(printer.length <=0){
+            toaster.warning($t("Printer not yet configt for this device"))
+          }else{  
+            data.printer = {
+                "printer_name":printer[0].printer_name,
+                "ip_address":printer[0].ip_address,
+                "port":printer[0].port,
+                "cashier_printer":printer[0].cashier_printer,
+                "is_label_printer":printer[0].is_label_printer
+            }
+            flutterChannel.postMessage(JSON.stringify(data));                       
+          }
+          
+
+            // flutterChannel.postMessage(JSON.stringify(data));
         } else {           
             if (receipt.pos_receipt_file_name) {
                 socket.emit('PrintReceipt', JSON.stringify(data));

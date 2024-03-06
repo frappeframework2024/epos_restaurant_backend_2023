@@ -48,9 +48,12 @@
                     size="40"></avatar>
                 </div>
                 <div>
-                  <p>{{ sp.product_code }}</p>
-                  <p>{{ sp.product_name }}</p>
+                  <p>{{ sp.product_code }} </p>
+                  <p>{{ sp.product_name }} <v-chip v-if="sp.quantity<0" variant="outlined" color="red">
+                      {{ $t("Return") }}
+                    </v-chip></p>
                   <p v-if="sp.product_name != sp.product_name_kh">{{ sp.product_name_kh }}</p>
+                 
                   <p v-if="!sp.note" class="italic underline" style="color:#ccc;" @click="sale.onSaleProductNote(sp)">
                     {{ $t("Add Note") }}</p>
                   <p v-else class="italic" @click="sale.onSaleProductNote(sp)">{{ sp.note }}</p>
@@ -67,10 +70,11 @@
                   </div>
 
                 </div>
+
               </div>
             </td>
             <td class="text-center">
-              <ComProductUnit :sale_product="sp"/>
+              <ComProductUnit :sale_product="sp" />
             </td>
             <td class="text-end">
               <span class="link_line_action overflow-hidden" style="min-width:4rem"
@@ -115,6 +119,28 @@
             </td>
             <td class="text-center"><v-icon icon="mdi-delete" color="red"
                 @click="sale.onRemoveItem(sp, gv, numberFormat)"></v-icon>
+
+              <v-menu>
+                <template v-slot:activator="{ props }">
+
+                  <v-btn class="ma-2" icon="mdi-dots-vertical" variant="text"  v-bind="props">
+                  </v-btn>
+                </template>
+                <v-list>
+                  <v-list-item v-if="sp.quantity > 0" @click="onReturn(sp)">
+                    <v-list-item-title>{{ $t("Mark as Return Product") }}</v-list-item-title>
+                  </v-list-item>
+
+                  <v-list-item v-else @click="onReturn(sp)">
+                    <v-list-item-title>{{ $t("Mark as Selling Product") }}</v-list-item-title>
+                  </v-list-item>
+
+
+                </v-list>
+              </v-menu>
+
+ 
+
             </td>
           </tr>
         </template>
@@ -156,13 +182,28 @@ const db = frappe.db()
 
 
 function onUpdateQuantity(sp, param) {
-  if (sp.quantity <= 1 && param == -1) {
-    return
+
+  param = param * ((sp.is_return || 0) == 0 ? 1 : -1)
+
+
+  if (!sp.is_return) {
+    if (sp.quantity <= 1 && param == -1) {
+      return
+    }
+  } else {
+    if (sp.quantity == -1 && param == 1) {
+      return
+    }
   }
+
   sale.updateQuantity(sp, sp.quantity + param)
 }
 
+function onReturn(sp) {
+  sp.is_return = !sp.is_return 
+  sale.updateQuantity(sp, sp.quantity * -1)
 
+}
 
 function onSaleProductDiscount(sp, discount_type) {
   if (sp.allow_discount) {

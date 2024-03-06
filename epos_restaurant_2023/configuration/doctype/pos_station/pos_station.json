@@ -36,7 +36,9 @@
   "show_button_change_sale_type",
   "show_park_button",
   "show_top_up",
-  "show_setting_menu"
+  "show_setting_menu",
+  "printers_tab",
+  "station_printers"
  ],
  "fields": [
   {
@@ -211,11 +213,22 @@
    "fieldname": "show_top_up",
    "fieldtype": "Check",
    "label": "Show Top Up"
+  },
+  {
+   "fieldname": "printers_tab",
+   "fieldtype": "Tab Break",
+   "label": "Printers"
+  },
+  {
+   "fieldname": "station_printers",
+   "fieldtype": "Table",
+   "label": "Station Printers",
+   "options": "Station Printers"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-02-19 13:37:47.722250",
+ "modified": "2024-03-05 17:18:32.280593",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",
