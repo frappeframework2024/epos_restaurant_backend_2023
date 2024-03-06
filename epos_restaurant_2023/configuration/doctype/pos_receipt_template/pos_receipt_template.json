@@ -8,7 +8,10 @@
  "field_order": [
   "receipt_name",
   "template",
-  "style"
+  "style",
+  "column_break_ejte",
+  "width",
+  "height"
  ],
  "fields": [
   {
@@ -26,11 +29,26 @@
    "fieldname": "style",
    "fieldtype": "Code",
    "label": "Style"
+  },
+  {
+   "fieldname": "column_break_ejte",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "570",
+   "fieldname": "width",
+   "fieldtype": "Int",
+   "label": "Width"
+  },
+  {
+   "fieldname": "height",
+   "fieldtype": "Int",
+   "label": "Height"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-03-04 22:50:47.055104",
+ "modified": "2024-03-06 10:55:11.388177",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Receipt Template",

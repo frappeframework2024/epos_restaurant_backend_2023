@@ -1,4 +1,4 @@
-<template>
+<template>  
   <v-row class="mt-0 mb-0 h-screen">
     <v-col md="6" lg="8" class="pa-0 d-sm-none d-none d-md-block">
       <div class="h-screen bg-cover bg-no-repeat bg-center"

@@ -3,7 +3,7 @@
     <div :class="small ? 'px-2' : 'px-6'">
         <div class="search-box my-0 mx-auto" :class="small ? 'w-full' : 'max-w-[350px]'">
             <ComInput
-                autofocus
+                :autofocus="!mobile"
                 keyboard
                 variant="outlined"
                 :placeholder="$t('Search...')"
@@ -29,10 +29,11 @@ import { inject, ref, defineProps, createResource, addModifierDialog, onUnmounte
 import ComInput from '../../../components/form/ComInput.vue';
 import { createToaster } from '@meforma/vue-toaster';
 import ComAutoComplete from '@/components/form/ComAutoComplete.vue';
-
+import { useDisplay } from 'vuetify';
 const product = inject("$product")
 const sale = inject("$sale")
 const frappe = inject("$frappe")
+const { mobile } = useDisplay();
 const db = frappe.db();
 let control = ref(null)
 const toaster = createToaster({ position: 'top-right', maxToasts: 2, duration: 1000 });

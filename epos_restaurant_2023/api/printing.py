@@ -3,6 +3,7 @@ from PIL import Image, ImageChops
 from html2image import Html2Image
 import numpy as np
 import os
+from frappe.www.printview import get_html_and_style
 from frappe.utils import get_site_name
 import base64
 from frappe.utils import (
@@ -55,18 +56,20 @@ def trim(file_path):
 @frappe.whitelist(allow_guest=True)
 def print_bill(name):
     doc = frappe.get_doc("Sale", name)
-    template,css = frappe.db.get_value("POS Receipt Template","Receipt En",["template","style"])
+    template,css,width,height = frappe.db.get_value("POS Receipt Template","Receipt En",["template","style","width","height"])
     html= frappe.render_template(template, get_print_context(doc))
 
     chrome_path = "/usr/bin/google-chrome"
 
     # Set the CHROME_PATH environment variable
     os.environ['CHROME_PATH'] = chrome_path
-     
+    height = 570
+    if len(doc.sale_products) > 0:
+        height += len(doc.sale_products) * 75
     hti = Html2Image()
     hti.chrome_path=chrome_path
     hti.output_path =frappe.get_site_path() 
-    hti.size=(570, 10000)
+    hti.size=(670, height)
     hti.screenshot(html_str=html, css_str=css, save_as='bill_image.png')
    
     image_path = '{}/bill_image.png'.format(frappe.get_site_path())
@@ -79,3 +82,8 @@ def print_bill(name):
         encoded_data = base64.b64encode(image_data).decode("utf-8")
     return encoded_data
  
+@frappe.whitelist(allow_guest=True)
+def print_kitchen_order():
+    # result = get_html_and_style(doc="")    
+
+    return ""

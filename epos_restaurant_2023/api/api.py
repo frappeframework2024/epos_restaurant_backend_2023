@@ -349,6 +349,7 @@ def get_system_settings(pos_profile="", device_name=''):
 
     return  data
 
+
 @frappe.whitelist(allow_guest=True)
 def get_tables_number(table_group,device_name):
     data = frappe.db.sql("""select 

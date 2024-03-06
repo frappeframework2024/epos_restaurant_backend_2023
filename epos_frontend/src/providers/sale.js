@@ -767,7 +767,7 @@ export default class Sale {
                     }
                 });
             } else {
-
+              
                 if((sp.name||"") != ""){
                     const u = JSON.parse(localStorage.getItem('make_order_auth')); 
                     this.onRemoveSaleProduct(sp, sp.quantity,u.name);
@@ -790,6 +790,7 @@ export default class Sale {
                 }else {
                    
                     this.sale.sale_products.splice(this.sale.sale_products.indexOf(sp), 1);
+                    this.updateSaleSummary();
                     
                 }
             }
@@ -1302,7 +1303,7 @@ export default class Sale {
         
         
 
-
+    
         this.updateSaleProduct(sp);       
         this.updateSaleSummary();
     }
@@ -1596,7 +1597,11 @@ export default class Sale {
 
         if (localStorage.getItem("is_window") == 1) {
             window.chrome.webview.postMessage(JSON.stringify(data));
-        } else {
+        }        
+        else if((localStorage.getItem("flutterWrapper")||0) == 1){ 
+            flutterChannel.postMessage(JSON.stringify(data));   
+        }
+        else {
             socket.emit("PrintReceipt", JSON.stringify(data))
         }
         this.productPrinters = [];
@@ -1714,9 +1719,6 @@ export default class Sale {
             }
             flutterChannel.postMessage(JSON.stringify(data));                       
           }
-          
-
-            // flutterChannel.postMessage(JSON.stringify(data));
         } else {           
             if (receipt.pos_receipt_file_name) {
                 socket.emit('PrintReceipt', JSON.stringify(data));

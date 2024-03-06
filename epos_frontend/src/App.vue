@@ -113,9 +113,10 @@ if (!localStorage.getItem("pos_profile")) {
 		},
 		cache: "get_system_settings",
 		auto: true,
-		onSuccess(doc) {
+		onSuccess(doc) { 
+			
 			state.isLoading = false;
-			localStorage.setItem("setting", JSON.stringify(doc));
+			localStorage.setItem("setting", JSON.stringify(doc)); 
 			gv.setting = doc;
 			sale.setting = doc;
 			product.setting = doc;
