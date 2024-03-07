@@ -90,8 +90,8 @@ def get_pos_users(secret_key = False):
 ## MOBILE SERVER PRINTING GENERATE BASE_64 IMAGE
 ### print invoice or receipt
 @frappe.whitelist(allow_guest=True)
-def get_bill_image(station, name,template):
-   return print_bill(station=station,name=name,template=template)
+def get_bill_image(station, name,template, reprint=0):
+   return print_bill(station=station,name=name,template=template,reprint=reprint)
 
 ### print waiting slip
 @frappe.whitelist(allow_guest=True)

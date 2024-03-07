@@ -16,9 +16,9 @@ from frappe.utils import (
 from escpos import *
 
 
-def get_print_context(doc, sale_products= []):
+def get_print_context(doc, reprint=0, sale_products= []):
     setting = frappe.get_doc("POS Config", frappe.db.get_value("POS Profile",doc.pos_profile, "pos_config"))
-    return {"doc": doc,"sale_products": sale_products,"nowdate": nowdate, "frappe.utils": frappe.utils,"setting":setting,"frappe":frappe}
+    return {"doc": doc,"reprint":reprint, "sale_products": sale_products,"nowdate": nowdate, "frappe.utils": frappe.utils,"setting":setting,"frappe":frappe}
 
 
  
@@ -86,10 +86,10 @@ def capture(height,width,html,css,image):
 
 ## print invoice or receipt
 @frappe.whitelist(allow_guest=True)
-def print_bill(station, name,template ):
-    doc = frappe.get_doc("Sale", name)
+def print_bill(station, name,template, reprint ):
+    doc = frappe.get_doc("Sale", name) 
     data_template,css,width,fixed_height = frappe.db.get_value("POS Receipt Template",template,["template","style","width","fixed_height"])
-    html= frappe.render_template(data_template, get_print_context(doc))
+    html= frappe.render_template(data_template, get_print_context(doc,reprint))
     height = fixed_height
     if len(doc.sale_products) > 0:
         height += len(doc.sale_products) * 75

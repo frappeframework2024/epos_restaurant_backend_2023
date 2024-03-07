@@ -3,7 +3,7 @@
         icon="mdi-cart-outline" :text="$t('Empty Data')">
         <div>   
             
-            <template v-if="gv.device_setting.show_deleted_sale_product_in_sale_screen==1">
+            <!-- <template v-if="gv.device_setting.show_deleted_sale_product_in_sale_screen==1">
              
                 <span v-for="(g, index) in sale.getSaleProductDeletedGroupByKey()" :key="index">       
                         <div class="bg-red-700 text-white flex items-center justify-between" style="font-size: 10px; padding: 2px;">
@@ -14,7 +14,7 @@
                         </div>
                         <ComSaleProductDeletedList :group-key="g" />
                 </span>
-            </template>
+            </template> -->
             
             <span v-for="(g, index) in sale.getSaleProductGroupByKey()" :key="index">     
                     <div class="bg-red-700 text-white flex items-center justify-between" style="font-size: 10px; padding: 2px;">

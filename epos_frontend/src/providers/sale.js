@@ -1,7 +1,9 @@
 import Enumerable from 'linq'
 import moment from '@/utils/moment.js';
-import { ref, noteDialog,changeTaxSettingModal,SaleProductComboMenuGroupModal, keyboardDialog,keypadWithNoteDialog, createResource,
-    createDocumentResource, addModifierDialog, useRouter, confirmDialog,selectEmployeeDialog, saleProductDiscountDialog,i18n } from "@/plugin"
+import {
+    ref, noteDialog, changeTaxSettingModal, SaleProductComboMenuGroupModal, keyboardDialog, keypadWithNoteDialog, createResource,
+    createDocumentResource, addModifierDialog, useRouter, confirmDialog, selectEmployeeDialog, saleProductDiscountDialog, i18n
+} from "@/plugin"
 import { createToaster } from "@meforma/vue-toaster";
 import socket from '@/utils/socketio';
 import { FrappeApp } from 'frappe-js-sdk';
@@ -17,13 +19,13 @@ export default class Sale {
     constructor() {
         this.is_payment_first_load = false;
         this.load_menu_lang = false;
-        this.loading=false;
+        this.loading = false;
         this.mobile = false;
         this.platform = {};
         this.promotion = null;
         this.working_day = "";
         this.cashier_shift = "";
-        this.shift_name="";
+        this.shift_name = "";
         this.setting = null;
         this.tbl_number = null;
         this.table_id = null;
@@ -46,15 +48,15 @@ export default class Sale {
             sale_products: []
         };
 
-        this.vueInstance=null;
-        this.vue=null;
+        this.vueInstance = null;
+        this.vue = null;
         this.newSaleResource = null;
         this.saleResource = null;
         this.paymentInputNumber = "";
         this.isPrintReceipt = false;
-        this.show_unit_in_select_portion  = false;
-        this.selected_sale_product =null;
-        this.selected_product=null
+        this.show_unit_in_select_portion = false;
+        this.selected_sale_product = null;
+        this.selected_product = null
 
 
         //use this variable to show toast after database submit in resource
@@ -62,7 +64,7 @@ export default class Sale {
 
         //user this variable to temporary store product that need to send to kitchen pritner 
         //before submit order or close order
-        this.productPrinters = [];     
+        this.productPrinters = [];
 
         //temporary all sale products change bill
         this.changeTableSaleProducts = [];
@@ -79,17 +81,17 @@ export default class Sale {
         this.auditTrailResource = createResource({
             url: "frappe.client.insert"
         });
-        this.dialogActiveState=false;
+        this.dialogActiveState = false;
         //use this resource to load sale list in current table number
         this.tableSaleListResource = null;
         this.orderChanged = false;
         this.printWaitingOrderAfterPayment = false;
 
-       
-        this.createNewSaleResource();  
+
+        this.createNewSaleResource();
     }
- 
-    createNewSaleResource() {       
+
+    createNewSaleResource() {
         const parent = this;
         this.newSaleResource = createResource({
             url: "frappe.client.insert",
@@ -107,9 +109,9 @@ export default class Sale {
         })
     }
 
-    async newSale() { 
+    async newSale() {
         this.auditTrailLogs = [];
-        this.deletedSaleProductsDisplay=[];
+        this.deletedSaleProductsDisplay = [];
         const make_order_auth = JSON.parse(localStorage.getItem('make_order_auth'));
         const tax_rule = this.setting.tax_rule;
         this.orderChanged = false;
@@ -119,12 +121,12 @@ export default class Sale {
             doctype: "Sale",
             sale_status: "New",
             cashier_shift: this.cashier_shift,
-            shift_name:this.shift_name,
+            shift_name: this.shift_name,
             working_day: this.working_day,
             exchange_rate: this.exchange_rate,
             change_exchange_rate: this.change_exchange_rate,
-            outlet:this.setting?.outlet,
-            stock_location:this.setting?.stock_location,
+            outlet: this.setting?.outlet,
+            stock_location: this.setting?.stock_location,
             table_id: this.table_id,
             tbl_number: this.tbl_number,
             pos_profile: this.setting?.pos_profile,
@@ -143,39 +145,39 @@ export default class Sale {
             guest_cover: this.guest_cover,
             discount: 0,
             sub_total: 0,
-            deposit:0,
+            deposit: 0,
             payment: [],
             // posting_date: moment(new Date()).format('yyyy-MM-DD'),
             commission_type: "Percent",
             commission: 0,
             commission_note: '',
             commission_amount: 0,
-            created_by:make_order_auth.name,
-            
-        }  
-        this.onSaleApplyTax(tax_rule,this.sale); 
+            created_by: make_order_auth.name,
+
+        }
+        this.onSaleApplyTax(tax_rule, this.sale);
 
         //audit-trail 
-        if((this.name||"") == ""){
-            const u = make_order_auth; 
-            let msg = `${u.name} was created new sale`;     
+        if ((this.name || "") == "") {
+            const u = make_order_auth;
+            let msg = `${u.name} was created new sale`;
             this.auditTrailLogs.push({
-                doctype:"Comment",
-                subject:"Create New Sale",
-                comment_type:"Info",
-                reference_doctype:"Sale",
-                reference_name:"New",
+                doctype: "Comment",
+                subject: "Create New Sale",
+                comment_type: "Info",
+                reference_doctype: "Sale",
+                reference_name: "New",
                 comment_by: u.name,
-                content:msg,
+                content: msg,
                 custom_item_description: '',
-                custom_note:''
-            }) ;
-        } 
+                custom_note: ''
+            });
+        }
     }
 
-    async LoadSaleData(name) {    
+    async LoadSaleData(name) {
         this.auditTrailLogs = [];
-        this.changeTableSaleProducts=[];
+        this.changeTableSaleProducts = [];
         return new Promise(async (resolve) => {
             const parent = this;
             this.saleResource = createDocumentResource({
@@ -196,7 +198,7 @@ export default class Sale {
                         }
                     },
                 },
-            });           
+            });
 
             await this.saleResource.get.fetch().then(async (doc) => {
                 this.onLoadDeleteSaleProducts(doc.name);
@@ -245,12 +247,12 @@ export default class Sale {
             return []
         } else {
 
-            const sale_products = this.deletedSaleProductsDisplay.filter((r)=>r.show_in_list);
-          
+            const sale_products = this.deletedSaleProductsDisplay.filter((r) => r.show_in_list);
+
             const group = Enumerable.from(sale_products).groupBy("{order_by:$.order_by,order_time:$.order_time}", "", "{order_by:$.order_by,order_time:$.order_time}", "$.order_by+','+$.order_time");
             return group.orderByDescending("$.order_time").toArray();
         }
-    }    
+    }
 
     getSaleProducts(groupByKey) {
         if (groupByKey) {
@@ -260,7 +262,7 @@ export default class Sale {
         }
     }
 
-    addSaleProduct(p) { 
+    addSaleProduct(p) {
         //check for append quantity rule
         //product code, allow_append_qty,price, unit,modifier, portion, is_free,sale_product_status
         //and check system have feature to send to kitchen
@@ -270,15 +272,15 @@ export default class Sale {
             strFilter = strFilter + ` && $.sale_product_status == 'New'`
         }
 
-        if(p.is_combo_menu && p.use_combo_group){
+        if (p.is_combo_menu && p.use_combo_group) {
             strFilter = strFilter + ` && $.combo_menu_data == '${p.combo_group_data}'`
         }
-        
-        if(p.is_open_product ==1 ){
+
+        if (p.is_open_product == 1) {
             strFilter = strFilter + ` && $.product_name== '${p.name_en}'`
         }
-       
-        
+
+
         let sp = Enumerable.from(this.sale.sale_products).where(strFilter).firstOrDefault()
         let is_new_sale_product = true;
         let new_sale_product;
@@ -292,41 +294,41 @@ export default class Sale {
             this.updateSaleProduct(sp);
             is_new_sale_product = false;
 
-            if(this.setting.table_groups.length == 0){
+            if (this.setting.table_groups.length == 0) {
                 this.getSelectedProduct(sp)
-                this.selected_sale_product = sp    
+                this.selected_sale_product = sp
             }
 
         } else {
             // add new record to sale product
             this.clearSelected();
-            let tax_rule ="";  
-            
-            if((p.tax_rule||"")=="" || p.tax_rule == "None"){
-                if(this.sale.name==undefined){
-                    tax_rule = JSON.parse(JSON.stringify(this.setting.tax_rule)) ;
-                }
-                else{
+            let tax_rule = "";
+
+            if ((p.tax_rule || "") == "" || p.tax_rule == "None") {
+                if (this.sale.name == undefined) {
                     tax_rule = JSON.parse(JSON.stringify(this.setting.tax_rule));
-                    if(tax_rule.name==undefined){
+                }
+                else {
+                    tax_rule = JSON.parse(JSON.stringify(this.setting.tax_rule));
+                    if (tax_rule.name == undefined) {
                         //
-                    }else{
-                        if((this.sale.tax_rule||"")!=tax_rule.name){
-                           const _tax_rules = this.setting.tax_rules.filter((r)=>r.tax_rule==(this.sale.tax_rule||""));
-                           if(_tax_rules.length>0){
-                                tax_rule = JSON.parse(JSON.stringify( _tax_rules[0].tax_rule_data));
-                           }else{
-                                tax_rule ={}
-                           }
+                    } else {
+                        if ((this.sale.tax_rule || "") != tax_rule.name) {
+                            const _tax_rules = this.setting.tax_rules.filter((r) => r.tax_rule == (this.sale.tax_rule || ""));
+                            if (_tax_rules.length > 0) {
+                                tax_rule = JSON.parse(JSON.stringify(_tax_rules[0].tax_rule_data));
+                            } else {
+                                tax_rule = {}
+                            }
                         }
                     }
-                }                 
+                }
             }
-            else{
+            else {
                 tax_rule = JSON.parse(p.tax_rule_data);
-            }   
-            
-            
+            }
+
+
             const make_order_auth = JSON.parse(localStorage.getItem('make_order_auth'));
             const now = new Date();
             const _now_format = moment(now).format('yyyy-MM-DD HH:mm:ss.SSS');
@@ -335,7 +337,7 @@ export default class Sale {
                 product_code: p.name,
                 product_name: p.name_en,
                 product_name_kh: p.name_kh,
-                revenue_group:p.revenue_group,
+                revenue_group: p.revenue_group,
                 unit: p.unit,
                 quantity: 1,
                 sub_total: 0,
@@ -345,24 +347,24 @@ export default class Sale {
                 sale_discount_amount: 0,
                 note: '',
                 regular_price: p.price,
-                price: p.is_timer_product?0: p.price,
+                price: p.is_timer_product ? 0 : p.price,
                 modifiers_price: this.getNumber(p.modifiers_price),
                 product_photo: p.photo,
                 selected: true,
                 modified: _now_format,
-                creation: _now_format,                
+                creation: _now_format,
                 append_quantity: p.append_quantity,
                 allow_discount: p.allow_discount,
                 allow_free: p.allow_free,
                 allow_change_price: p.allow_change_price,
                 is_open_product: p.is_open_product,
                 portion: this.getString(p.portion),
-                modifiers: (p.modifiers || '')=="[]"?"":(p.modifiers || ''),
+                modifiers: (p.modifiers || '') == "[]" ? "" : (p.modifiers || ''),
                 modifiers_data: p.modifiers_data,
                 is_free: 0,
                 sale_product_status: "New",
                 discount_type: "Percent",
-                discount:p.discount || 0,
+                discount: p.discount || 0,
                 order_by: make_order_auth.name,
                 order_time: this.getOrderTime(),
                 printers: p.printers,
@@ -371,75 +373,75 @@ export default class Sale {
                 use_combo_group: p.use_combo_group,
                 combo_menu: p.combo_menu,
                 combo_menu_data: (p.combo_menu_data || p.combo_group_data),
-                product_tax_rule: (p.tax_rule=="None"?"":p.tax_rule),
-                is_require_employee:p.is_require_employee,
+                product_tax_rule: (p.tax_rule == "None" ? "" : p.tax_rule),
+                is_require_employee: p.is_require_employee,
                 is_timer_product: p.is_timer_product || 0,
                 time_stop: 0,
-                
-            }       
-            if (p.is_timer_product){
-                if  (p.time_in){ 
-                saleProduct.time_in = moment(p.time_in).format('yyyy-MM-DD HH:mm:ss');
+
+            }
+            if (p.is_timer_product) {
+                if (p.time_in) {
+                    saleProduct.time_in = moment(p.time_in).format('yyyy-MM-DD HH:mm:ss');
                 }
             }
-            this.onSaleProductApplyTax(tax_rule,saleProduct); 
+            this.onSaleProductApplyTax(tax_rule, saleProduct);
             this.sale.sale_products.push(saleProduct);
-            if(this.setting.table_groups.length == 0){
+            if (this.setting.table_groups.length == 0) {
                 this.getSelectedProduct(saleProduct)
-                this.selected_sale_product = saleProduct    
+                this.selected_sale_product = saleProduct
             }
-            
+
             this.updateSaleProduct(saleProduct);
 
 
             new_sale_product = saleProduct;
-            
+
         }
         this.updateSaleSummary();
 
-        const u = JSON.parse(localStorage.getItem('make_order_auth')); 
-        if(is_new_sale_product){
-            let item_description = `${new_sale_product.product_code}-${new_sale_product.product_name}${(new_sale_product.portion||"")=="" ? "":`(${new_sale_product.portion})`} ${new_sale_product.modifiers}`;
-            let msg = `${u.name} was create new sale item: ${item_description}`;     
+        const u = JSON.parse(localStorage.getItem('make_order_auth'));
+        if (is_new_sale_product) {
+            let item_description = `${new_sale_product.product_code}-${new_sale_product.product_name}${(new_sale_product.portion || "") == "" ? "" : `(${new_sale_product.portion})`} ${new_sale_product.modifiers}`;
+            let msg = `${u.name} was create new sale item: ${item_description}`;
             this.auditTrailLogs.push({
-                doctype:"Comment",
-                subject:"New Sale Item",
-                comment_type:"Info",
-                reference_doctype:"Sale",
-                reference_name:"New",
+                doctype: "Comment",
+                subject: "New Sale Item",
+                comment_type: "Info",
+                reference_doctype: "Sale",
+                reference_name: "New",
                 comment_by: u.name,
-                content:msg,
+                content: msg,
                 custom_item_description: `${new_sale_product.quantity} x ${item_description}`,
-                custom_note:'',
+                custom_note: '',
                 custom_amount: new_sale_product.amount
-            }) ;
+            });
 
-        }else{
+        } else {
 
-            let item_description =`${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
-            let msg = `${u.name} was append a quantity to item:  ${item_description} (from ${prev_sale_product.quantity} to ${sp.quantity})`;     
+            let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion || "") == "" ? "" : `(${sp.portion})`} ${sp.modifiers}`;
+            let msg = `${u.name} was append a quantity to item:  ${item_description} (from ${prev_sale_product.quantity} to ${sp.quantity})`;
             this.auditTrailLogs.push({
-                doctype:"Comment",
-                subject:"Append Quantity",
-                comment_type:"Info",
-                reference_doctype:"Sale",
-                reference_name:"New",
+                doctype: "Comment",
+                subject: "Append Quantity",
+                comment_type: "Info",
+                reference_doctype: "Sale",
+                reference_name: "New",
                 comment_by: u.name,
-                content:msg,                
-                custom_item_description: `${(sp.quantity||0) - prev_sale_product.quantity} x ${item_description}`  ,
-                custom_note:'',
-                custom_amount :sp.amount / ((sp.quantity||0)==0?1:sp.quantity)
-            }) ;
+                content: msg,
+                custom_item_description: `${(sp.quantity || 0) - prev_sale_product.quantity} x ${item_description}`,
+                custom_note: '',
+                custom_amount: sp.amount / ((sp.quantity || 0) == 0 ? 1 : sp.quantity)
+            });
         }
     }
-    
-    getSelectedProduct(sp){
-        let sale =this
-        if(sp.product_code != this.selected_sale_product?.product_code){
-            call.get('epos_restaurant_2023.api.product.get_product_detail_information',{product_code:sp.product_code})
-            .then((data) => {
-                sale.selected_product = data.message
-            })
+
+    getSelectedProduct(sp) {
+        let sale = this
+        if (sp.product_code != this.selected_sale_product?.product_code) {
+            call.get('epos_restaurant_2023.api.product.get_product_detail_information', { product_code: sp.product_code })
+                .then((data) => {
+                    sale.selected_product = data.message
+                })
         }
     }
     cloneSaleProduct(sp, quantity) {
@@ -461,18 +463,18 @@ export default class Sale {
         this.sale.sale_products.push(sp_copy);
         this.updateSaleSummary();
 
-        let item_description = `${sp_copy.product_code}-${sp_copy.product_name}${(sp_copy.portion||"")=="" ? "":`(${sp_copy.portion})`} ${sp_copy.modifiers}`;
-        let msg = `${u.name} was create new sale item: ${item_description}`;     
+        let item_description = `${sp_copy.product_code}-${sp_copy.product_name}${(sp_copy.portion || "") == "" ? "" : `(${sp_copy.portion})`} ${sp_copy.modifiers}`;
+        let msg = `${u.name} was create new sale item: ${item_description}`;
         this.auditTrailLogs.push({
-            doctype:"Comment",
-            subject:"New Sale Item",
-            comment_type:"Info",
-            reference_doctype:"Sale",
-            reference_name:"New",
+            doctype: "Comment",
+            subject: "New Sale Item",
+            comment_type: "Info",
+            reference_doctype: "Sale",
+            reference_name: "New",
             comment_by: u.name,
-            content:msg,
-            custom_item_description:`${sp_copy.quantity} x ${item_description}` ,
-            custom_note:'',
+            content: msg,
+            custom_item_description: `${sp_copy.quantity} x ${item_description}`,
+            custom_note: '',
             custom_amount: sp_copy.amount
         });
     }
@@ -492,19 +494,19 @@ export default class Sale {
         sp.selected = true;
 
         // we check if user use retail system when user click on order product we get product information
-        if(this.setting.table_groups.length == 0){
+        if (this.setting.table_groups.length == 0) {
             this.getSelectedProduct(sp)
-            this.selected_sale_product = sp    
+            this.selected_sale_product = sp
         }
     }
 
-    clearSelected() {       
+    clearSelected() {
         Enumerable.from(this.sale.sale_products).where(`$.selected==true`).forEach("$.selected=false");
     }
 
     updateSaleProduct(sp) {
         //set property for re render comhappyhour check
-        sp.is_render = false; 
+        sp.is_render = false;
         //end
         sp.sub_total = sp.quantity * sp.price + sp.quantity * sp.modifiers_price;
         sp.discount = parseFloat(sp.discount)
@@ -534,105 +536,105 @@ export default class Sale {
     }
 
     //on sale product apply tax setting
-    onSaleProductApplyTax(tax_rule, sp){
-      
-        sp.tax_rule = tax_rule.name||"";
-        sp.tax_1_rate = tax_rule.tax_1_rate||0;
-        sp.percentage_of_price_to_calculate_tax_1 = tax_rule.percentage_of_price_to_calculate_tax_1||100;
-        sp.calculate_tax_1_after_discount = tax_rule.calculate_tax_1_after_discount||false;
+    onSaleProductApplyTax(tax_rule, sp) {
 
-        sp.tax_2_rate = tax_rule.tax_2_rate||0;
-        sp.percentage_of_price_to_calculate_tax_2 = tax_rule.percentage_of_price_to_calculate_tax_2||100;
-        sp.calculate_tax_2_after_discount = tax_rule.calculate_tax_2_after_discount||false;
-        sp.calculate_tax_2_after_adding_tax_1 = tax_rule.calculate_tax_2_after_adding_tax_1||false;
+        sp.tax_rule = tax_rule.name || "";
+        sp.tax_1_rate = tax_rule.tax_1_rate || 0;
+        sp.percentage_of_price_to_calculate_tax_1 = tax_rule.percentage_of_price_to_calculate_tax_1 || 100;
+        sp.calculate_tax_1_after_discount = tax_rule.calculate_tax_1_after_discount || false;
 
-        sp.tax_3_rate = tax_rule.tax_3_rate||0;
-        sp.percentage_of_price_to_calculate_tax_3 = tax_rule.percentage_of_price_to_calculate_tax_3||100;
-        sp.calculate_tax_3_after_discount = tax_rule.calculate_tax_3_after_discount||false;
-        sp.calculate_tax_3_after_adding_tax_1 = tax_rule.calculate_tax_3_after_adding_tax_1||false;
-        sp.calculate_tax_3_after_adding_tax_2 = tax_rule.calculate_tax_3_after_adding_tax_2||false;
+        sp.tax_2_rate = tax_rule.tax_2_rate || 0;
+        sp.percentage_of_price_to_calculate_tax_2 = tax_rule.percentage_of_price_to_calculate_tax_2 || 100;
+        sp.calculate_tax_2_after_discount = tax_rule.calculate_tax_2_after_discount || false;
+        sp.calculate_tax_2_after_adding_tax_1 = tax_rule.calculate_tax_2_after_adding_tax_1 || false;
+
+        sp.tax_3_rate = tax_rule.tax_3_rate || 0;
+        sp.percentage_of_price_to_calculate_tax_3 = tax_rule.percentage_of_price_to_calculate_tax_3 || 100;
+        sp.calculate_tax_3_after_discount = tax_rule.calculate_tax_3_after_discount || false;
+        sp.calculate_tax_3_after_adding_tax_1 = tax_rule.calculate_tax_3_after_adding_tax_1 || false;
+        sp.calculate_tax_3_after_adding_tax_2 = tax_rule.calculate_tax_3_after_adding_tax_2 || false;
         this.updateSaleProduct(sp);
     }
 
     //on calculate tax
-    onCalculateTax(sp){        
+    onCalculateTax(sp) {
 
         //tax 1
-        sp.taxable_amount_1 = sp.sub_total;     
+        sp.taxable_amount_1 = sp.sub_total;
         //tax 1 taxable amount
         //if cal tax1 taxable after disc.
-        if(sp.calculate_tax_1_after_discount){
+        if (sp.calculate_tax_1_after_discount) {
             sp.taxable_amount_1 = (sp.sub_total - sp.total_discount);
         }
-        sp.taxable_amount_1 *= ((sp.percentage_of_price_to_calculate_tax_1 || 0)/100);
-        
+        sp.taxable_amount_1 *= ((sp.percentage_of_price_to_calculate_tax_1 || 0) / 100);
+
 
         //cal tax 1 amount
-        sp.tax_1_amount = sp.taxable_amount_1 * ((sp.tax_1_rate ||0)/100);
+        sp.tax_1_amount = sp.taxable_amount_1 * ((sp.tax_1_rate || 0) / 100);
 
-        
+
         //tax 2
         //tax 2 taxable amount
         sp.taxable_amount_2 = sp.sub_total;
         //if cal tax2 taxable after disc.
-        if(sp.calculate_tax_2_after_discount){
+        if (sp.calculate_tax_2_after_discount) {
             sp.taxable_amount_2 = (sp.sub_total - sp.total_discount);
         }
 
-        sp.taxable_amount_2 *= ((sp.percentage_of_price_to_calculate_tax_2 || 0)/100);     
+        sp.taxable_amount_2 *= ((sp.percentage_of_price_to_calculate_tax_2 || 0) / 100);
         //if cal tax2 taxable after add tax1
-        if(sp.calculate_tax_2_after_adding_tax_1){
+        if (sp.calculate_tax_2_after_adding_tax_1) {
             sp.taxable_amount_2 += sp.tax_1_amount;
-        }  
+        }
 
         //cal tax2 amount
-        sp.tax_2_amount = sp.taxable_amount_2 * ((sp.tax_2_rate ||0)/100);
+        sp.tax_2_amount = sp.taxable_amount_2 * ((sp.tax_2_rate || 0) / 100);
 
 
         //tax 3
         //tax 3 taxable amount
         sp.taxable_amount_3 = sp.sub_total;
         //if cal tax3 taxable after disc.
-        if(sp.calculate_tax_3_after_discount){
+        if (sp.calculate_tax_3_after_discount) {
             sp.taxable_amount_3 = (sp.sub_total - sp.total_discount);
         }
 
-        sp.taxable_amount_3 *= ((sp.percentage_of_price_to_calculate_tax_3 ||0)/100);  
-       
+        sp.taxable_amount_3 *= ((sp.percentage_of_price_to_calculate_tax_3 || 0) / 100);
+
         //if cal tax3 taxable after add tax1
-        if(sp.calculate_tax_3_after_adding_tax_1){
+        if (sp.calculate_tax_3_after_adding_tax_1) {
             sp.taxable_amount_3 += sp.tax_1_amount;
         }
 
         //if cal tax3 taxable after add tax2
-        if(sp.calculate_tax_3_after_adding_tax_2){
+        if (sp.calculate_tax_3_after_adding_tax_2) {
             sp.taxable_amount_3 += sp.tax_2_amount;
-        }  
+        }
 
         //cal tax3 amount
-        sp.tax_3_amount = sp.taxable_amount_3 * ((sp.tax_3_rate||0) /100);
+        sp.tax_3_amount = sp.taxable_amount_3 * ((sp.tax_3_rate || 0) / 100);
 
         sp.total_tax = sp.tax_1_amount + sp.tax_2_amount + sp.tax_3_amount;
 
     }
-    
-    //on sale apply  tax setting
-    onSaleApplyTax(tax_rule,s){
 
-        s.tax_rule = tax_rule.name||"";
-        s.tax_1_rate = tax_rule.tax_1_rate||0;
-        s.percentage_of_price_to_calculate_tax_1 = tax_rule.percentage_of_price_to_calculate_tax_1||100;
-        s.tax_2_rate  = tax_rule.tax_2_rate||0;
-        s.percentage_of_price_to_calculate_tax_2 = tax_rule.percentage_of_price_to_calculate_tax_2||100;
-        s.tax_3_rate = tax_rule.tax_3_rate||0;
-        s.percentage_of_price_to_calculate_tax_3 = tax_rule.percentage_of_price_to_calculate_tax_3||100;
+    //on sale apply  tax setting
+    onSaleApplyTax(tax_rule, s) {
+
+        s.tax_rule = tax_rule.name || "";
+        s.tax_1_rate = tax_rule.tax_1_rate || 0;
+        s.percentage_of_price_to_calculate_tax_1 = tax_rule.percentage_of_price_to_calculate_tax_1 || 100;
+        s.tax_2_rate = tax_rule.tax_2_rate || 0;
+        s.percentage_of_price_to_calculate_tax_2 = tax_rule.percentage_of_price_to_calculate_tax_2 || 100;
+        s.tax_3_rate = tax_rule.tax_3_rate || 0;
+        s.percentage_of_price_to_calculate_tax_3 = tax_rule.percentage_of_price_to_calculate_tax_3 || 100;
 
         //update tax setting of sale product
-        (s.sale_products||[]).forEach((sp)=>{
-            if((sp.product_tax_rule||"")==""){
-                this.onSaleProductApplyTax(tax_rule,sp);
+        (s.sale_products || []).forEach((sp) => {
+            if ((sp.product_tax_rule || "") == "") {
+                this.onSaleProductApplyTax(tax_rule, sp);
             }
-        });        
+        });
     }
 
     //update sale summary
@@ -651,7 +653,7 @@ export default class Sale {
         }
 
         this.sale.product_discount = this.getNumber(sp.sum("$.discount_amount"));
-        this.sale.total_discount = (this.sale.product_discount||0) + (this.sale.sale_discount||0);
+        this.sale.total_discount = (this.sale.product_discount || 0) + (this.sale.sale_discount || 0);
 
         //tax
         this.sale.tax_1_amount = this.getNumber(sp.sum("$.tax_1_amount"));
@@ -660,10 +662,10 @@ export default class Sale {
         this.sale.total_tax = this.getNumber(sp.sum("$.total_tax"));
 
         //grand_total
-        this.sale.grand_total = ((this.sale.sub_total||0) - (this.sale.total_discount||0) ) + (this.sale.total_tax||0);
-        this.sale.balance = this.sale.grand_total - (this.sale.deposit||0);
-        
-       
+        this.sale.grand_total = ((this.sale.sub_total || 0) - (this.sale.total_discount || 0)) + (this.sale.total_tax || 0);
+        this.sale.balance = this.sale.grand_total - (this.sale.deposit || 0);
+
+
         // commission
         if (this.sale.commission_type == "Percent") {
             this.sale.commission_amount = (this.sale.grand_total * this.sale.commission / 100);
@@ -672,215 +674,215 @@ export default class Sale {
         }
 
         this.orderChanged = true;
-  
+
         socket.emit("ShowOrderInCustomerDisplay", this.sale, sale_status);
     }
 
     updateQuantity(sp, n) {
-        sp.quantity = n ;
+        sp.quantity = n;
         this.updateSaleProduct(sp)
         this.updateSaleSummary();
     }
 
-    async onRemoveItem(sp,gv,numberFormat, input=(-99999)){
-      
-        if (!this.isBillRequested()) {        
+    async onRemoveItem(sp, gv, numberFormat, input = (-99999)) {
+
+        if (!this.isBillRequested()) {
             if (sp.sale_product_status == 'Submitted') {
-               
+
                 let authorize_key = "delete_item_required_password"
-                if(gv.setting.pos_setting['check_delete_item_require_passord_from_product'] ==1 && sp.delete_from_pos_require_password==0 ){
+                if (gv.setting.pos_setting['check_delete_item_require_passord_from_product'] == 1 && sp.delete_from_pos_require_password == 0) {
                     authorize_key = "delete_item_required_password_dont_check" //we change this authorize key is just for when delete item do not show popup password
                 }
-                
 
-                gv.authorize(authorize_key, "delete_item","delete_item_required_note", "Delete Item Note", sp.product_code, true).then(async (v) => {
-                    if (v) {   
-                        let result = false;                           
-                        if(input==(-99999)){
-                            let hide_keypad = input==(-99999)?undefined:true
-                            if (!hide_keypad && sp.is_timer_product){
+
+                gv.authorize(authorize_key, "delete_item", "delete_item_required_note", "Delete Item Note", sp.product_code, true).then(async (v) => {
+                    if (v) {
+                        let result = false;
+                        if (input == (-99999)) {
+                            let hide_keypad = input == (-99999) ? undefined : true
+                            if (!hide_keypad && sp.is_timer_product) {
                                 hide_keypad = true
                             }
-                            result = await keypadWithNoteDialog({ 
-                                data: { 
-                                    hide_keypad:hide_keypad,
+                            result = await keypadWithNoteDialog({
+                                data: {
+                                    hide_keypad: hide_keypad,
                                     title: `${$t('Delete Item')} ${sp.product_name}`,
                                     label_input: $t('Enter Quantity'),
                                     note: "Delete Item Note",
                                     category_note_name: v.category_note_name,
-                                    number: input==(-99999)? sp.quantity:input,
+                                    number: input == (-99999) ? sp.quantity : input,
                                     product_code: sp.product_code
-                                } 
-                            });  
+                                }
+                            });
                         }
-                        else{
-                            
-                            if(gv.setting.pos_setting['delete_item_required_note'] == 1){
-                                result = await keypadWithNoteDialog({ 
-                                    data: { 
-                                        hide_keypad:true,
+                        else {
+
+                            if (gv.setting.pos_setting['delete_item_required_note'] == 1) {
+                                result = await keypadWithNoteDialog({
+                                    data: {
+                                        hide_keypad: true,
                                         title: `${$t('Delete Item')} ${sp.product_name}`,
                                         label_input: $t('Enter Quantity'),
                                         note: "Delete Item Note",
                                         category_note_name: v.category_note_name,
-                                        number:input,
+                                        number: input,
                                         product_code: sp.product_code
-                                    } 
-                                }); 
-                            }else{
-                                 result = {            
+                                    }
+                                });
+                            } else {
+                                result = {
                                     number: input,
-                                    note:'',
-                                } 
+                                    note: '',
+                                }
                             }
-                           
+
                         }
 
-                        if(result){
-                            if(sp.quantity < result.number){
+                        if (result) {
+                            if (sp.quantity < result.number) {
                                 result.number = sp.quantity;
-                            } 
-                              
+                            }
+
                             sp.deleted_item_note = result.note;
-                            sp.deleted_quantity = (sp.deleted_quantity||0) + result.number;
-                            this.onRemoveSaleProduct(sp, result.number, v.user);  
-    
-                            let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
-                            let msg = `${v.user} delete item: ${item_description}`; 
+                            sp.deleted_quantity = (sp.deleted_quantity || 0) + result.number;
+                            this.onRemoveSaleProduct(sp, result.number, v.user);
+
+                            let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion || "") == "" ? "" : `(${sp.portion})`} ${sp.modifiers}`;
+                            let msg = `${v.user} delete item: ${item_description}`;
                             msg += `, Qty: ${result.number}`;
-                            msg += `, Amount: ${ numberFormat(gv.getCurrnecyFormat,sp.amount)}`;
-                            msg += `${result.note==""?'':', Reason: '+result.note }`;
+                            msg += `, Amount: ${numberFormat(gv.getCurrnecyFormat, sp.amount)}`;
+                            msg += `${result.note == "" ? '' : ', Reason: ' + result.note}`;
                             this.auditTrailLogs.push({
-                                doctype:"Comment",
-                                subject:"Delete Sale Product",
-                                comment_type:"Info",
-                                reference_doctype:"Sale",
-                                reference_name:"New",
-                                comment_by:v.user,
-                                content:msg,
-                                custom_item_description:`${result.number} x ${item_description}` ,
+                                doctype: "Comment",
+                                subject: "Delete Sale Product",
+                                comment_type: "Info",
+                                reference_doctype: "Sale",
+                                reference_name: "New",
+                                comment_by: v.user,
+                                content: msg,
+                                custom_item_description: `${result.number} x ${item_description}`,
                                 custom_note: result.note,
                                 custom_amount: sp.amount
-                            })  ;                    
-    
-                        } 
+                            });
+
+                        }
                     }
                 });
             } else {
-              
-                if((sp.name||"") != ""){
-                    const u = JSON.parse(localStorage.getItem('make_order_auth')); 
-                    this.onRemoveSaleProduct(sp, sp.quantity,u.name);
-                    let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`
-                    let msg = `${u.name} delete item: ${item_description}`; 
+
+                if ((sp.name || "") != "") {
+                    const u = JSON.parse(localStorage.getItem('make_order_auth'));
+                    this.onRemoveSaleProduct(sp, sp.quantity, u.name);
+                    let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion || "") == "" ? "" : `(${sp.portion})`} ${sp.modifiers}`
+                    let msg = `${u.name} delete item: ${item_description}`;
                     msg += `, Qty: ${sp.quantity}`;
-                    msg += `, Amount: ${ numberFormat(gv.getCurrnecyFormat,sp.amount)}`;
+                    msg += `, Amount: ${numberFormat(gv.getCurrnecyFormat, sp.amount)}`;
                     this.auditTrailLogs.push({
-                        doctype:"Comment",
-                        subject:"Delete Not Submit Sale Product",
-                        comment_type:"Info",
-                        reference_doctype:"Sale",
-                        reference_name:"New",
+                        doctype: "Comment",
+                        subject: "Delete Not Submit Sale Product",
+                        comment_type: "Info",
+                        reference_doctype: "Sale",
+                        reference_name: "New",
                         comment_by: u.name,
-                        content:msg,
-                        custom_item_description: `${sp.quantity} x ${item_description}` ,
-                        custom_note:'',
+                        content: msg,
+                        custom_item_description: `${sp.quantity} x ${item_description}`,
+                        custom_note: '',
                         custom_amount: sp.amount
-                    }) ;
-                }else {
-                   
+                    });
+                } else {
+
                     this.sale.sale_products.splice(this.sale.sale_products.indexOf(sp), 1);
                     this.updateSaleSummary();
-                    
+
                 }
             }
-    
+
         }
     }
 
-    async onChangePrice(sp,gv,numberFormat, input=(-99999)) {
+    async onChangePrice(sp, gv, numberFormat, input = (-99999)) {
         if (!this.isBillRequested()) {
-            gv.authorize("change_item_price_required_password", "change_item_price", "change_item_price_required_note", "Change Item Price Note", sp.product_code).then(async(v) => {
+            gv.authorize("change_item_price_required_password", "change_item_price", "change_item_price_required_note", "Change Item Price Note", sp.product_code).then(async (v) => {
                 if (v) {
                     let result = false;
-                    if(input==(-99999)){
-                        input = await keyboardDialog({ title:$t("Change Price"), type: 'number', value: sp.price });
+                    if (input == (-99999)) {
+                        input = await keyboardDialog({ title: $t("Change Price"), type: 'number', value: sp.price });
                         result = input;
                     }
-                    else{
+                    else {
                         result = input;
-                    } 
-                    
-                    if (result != false) {  
+                    }
+
+                    if (result != false) {
                         const price = sp.price;
                         sp.change_price_note = v.note
-                        sp.price = parseFloat(this.getNumber(result));  
+                        sp.price = parseFloat(this.getNumber(result));
 
                         this.updateSaleProduct(sp);
                         this.updateSaleSummary();
 
-                        let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
-                        let msg = `${v.user} change price on item: ${item_description}`; 
-                        msg += `, from: ${numberFormat(gv.getCurrnecyFormat,price)} to ${numberFormat(gv.getCurrnecyFormat,sp.price)}`;
-                        msg += `${v.note==""?'':', Reason: '+v.note }`;
+                        let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion || "") == "" ? "" : `(${sp.portion})`} ${sp.modifiers}`;
+                        let msg = `${v.user} change price on item: ${item_description}`;
+                        msg += `, from: ${numberFormat(gv.getCurrnecyFormat, price)} to ${numberFormat(gv.getCurrnecyFormat, sp.price)}`;
+                        msg += `${v.note == "" ? '' : ', Reason: ' + v.note}`;
                         this.auditTrailLogs.push({
-                            doctype:"Comment",
-                            subject:"Change Price",
-                            comment_type:"Info",
-                            reference_doctype:"Sale",
-                            reference_name:"New",
-                            comment_by:v.user,
-                            content:msg,
-                            custom_item_description: `${sp.quantity} x ${item_description} (from: ${numberFormat(gv.getCurrnecyFormat,price)} to ${numberFormat(gv.getCurrnecyFormat,sp.price)})` ,
-                            custom_note:v.note,
+                            doctype: "Comment",
+                            subject: "Change Price",
+                            comment_type: "Info",
+                            reference_doctype: "Sale",
+                            reference_name: "New",
+                            comment_by: v.user,
+                            content: msg,
+                            custom_item_description: `${sp.quantity} x ${item_description} (from: ${numberFormat(gv.getCurrnecyFormat, price)} to ${numberFormat(gv.getCurrnecyFormat, sp.price)})`,
+                            custom_note: v.note,
                             custom_amount: sp.amount,
-                        }) ;                        
+                        });
 
                     }
-                    this.dialogActiveState=false; 
-                   
+                    this.dialogActiveState = false;
+
                 }
             });
-        } 
+        }
     }
-    
+
     async onChangeQuantity(sp, gv) {
-        if(this.setting.pos_setting.allow_change_quantity_after_submit == 1 || sp.sale_product_status == 'Submitted'){
+        if (this.setting.pos_setting.allow_change_quantity_after_submit == 1 || sp.sale_product_status == 'Submitted') {
             return;
         }
 
         if (!this.isBillRequested()) {
-            const result = await keyboardDialog({ title:$t("Change Quantity"), type: 'number', value: sp.quantity });
+            const result = await keyboardDialog({ title: $t("Change Quantity"), type: 'number', value: sp.quantity });
             if (result) {
-                
+
                 let quantity = this.getNumber(result);
                 if (this.setting.pos_setting.allow_change_quantity_after_submit == 1 || sp.sale_product_status == "New") {
                     if (quantity == 0) {
                         quantity = 1
-                    }  
+                    }
 
-                    const u = JSON.parse(localStorage.getItem('make_order_auth')); 
-                    let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
-                    let msg = `${u.name} change quantity on: ${item_description}`; 
-                    msg += `, from : ${sp.quantity} to ${quantity}` ;
-                    const curr_sp = JSON.parse(JSON.stringify(sp)); 
+                    const u = JSON.parse(localStorage.getItem('make_order_auth'));
+                    let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion || "") == "" ? "" : `(${sp.portion})`} ${sp.modifiers}`;
+                    let msg = `${u.name} change quantity on: ${item_description}`;
+                    msg += `, from : ${sp.quantity} to ${quantity}`;
+                    const curr_sp = JSON.parse(JSON.stringify(sp));
 
                     //update quantity and sale product data
                     this.updateQuantity(sp, quantity);
 
                     //add to audit log
                     this.auditTrailLogs.push({
-                        doctype:"Comment",
-                        subject:"Change Quantity",
-                        comment_type:"Info",
-                        reference_doctype:"Sale",
-                        reference_name:"New",
+                        doctype: "Comment",
+                        subject: "Change Quantity",
+                        comment_type: "Info",
+                        reference_doctype: "Sale",
+                        reference_name: "New",
                         comment_by: u.name,
-                        content:msg,
+                        content: msg,
                         custom_item_description: `${quantity} x ${item_description} (from : ${curr_sp.quantity} to ${quantity})`,
-                        custom_note:"",
+                        custom_note: "",
                         custom_amount: sp.amount
-                    }) ;
+                    });
 
 
                 } else {
@@ -898,31 +900,31 @@ export default class Sale {
                                     sp.deleted_item_note = v.note;
                                     this.onRemoveSaleProduct(sp, sp.quantity - quantity, v.user);
 
-                                    let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
-                                    let msg = `${v.user} delete item: ${item_description}`; 
+                                    let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion || "") == "" ? "" : `(${sp.portion})`} ${sp.modifiers}`;
+                                    let msg = `${v.user} delete item: ${item_description}`;
                                     msg += `, Qty: ${quantity}`;
-                                    msg += `, Amount: ${ NumberFormat(gv.getCurrnecyFormat,sp.amount)}`;
-                                    msg += `${(sp.deleted_item_note||"")==""?'':', Reason: '+sp.deleted_item_note }`;
+                                    msg += `, Amount: ${NumberFormat(gv.getCurrnecyFormat, sp.amount)}`;
+                                    msg += `${(sp.deleted_item_note || "") == "" ? '' : ', Reason: ' + sp.deleted_item_note}`;
                                     this.auditTrailLogs.push({
-                                        doctype:"Comment",
-                                        subject:"Delete Sale Product",
-                                        comment_type:"Info",
-                                        reference_doctype:"Sale",
-                                        reference_name:"New",
-                                        comment_by:v.user,
-                                        content:msg,
-                                        custom_item_description: `${quantity} x ${item_description}` ,
-                                        custom_note:v.note,
+                                        doctype: "Comment",
+                                        subject: "Delete Sale Product",
+                                        comment_type: "Info",
+                                        reference_doctype: "Sale",
+                                        reference_name: "New",
+                                        comment_by: v.user,
+                                        content: msg,
+                                        custom_item_description: `${quantity} x ${item_description}`,
+                                        custom_note: v.note,
                                         custom_amount: sp.amount
-                                    }); 
+                                    });
                                 }
 
                             });
                         }
-                    } 
+                    }
                 }
             }
-            this.dialogActiveState=false;
+            this.dialogActiveState = false;
         }
     }
 
@@ -953,8 +955,8 @@ export default class Sale {
             if (freeQty > sp.quantity) {
                 freeQty = sp.quantity;
             }
-            let free_by = sp.free_by||"";
-            let free_note = sp.free_note;             
+            let free_by = sp.free_by || "";
+            let free_note = sp.free_note;
 
             if (freeQty == sp.quantity) {
                 sp.is_free = true;
@@ -965,7 +967,7 @@ export default class Sale {
                 this.updateSaleProduct(sp);
                 this.updateSaleSummary();
             }
-            else { 
+            else {
                 let freeSaleProduct = JSON.parse(JSON.stringify(sp));
                 freeSaleProduct.name = "";
                 freeSaleProduct.quantity = freeQty;
@@ -974,36 +976,36 @@ export default class Sale {
                 freeSaleProduct.price = 0;
                 freeSaleProduct.modifiers_price = 0;
                 freeSaleProduct.selected = false;
-                freeSaleProduct.is_free = true;  
+                freeSaleProduct.is_free = true;
                 this.updateSaleProduct(freeSaleProduct);
-                this.sale.sale_products.push(freeSaleProduct);               
+                this.sale.sale_products.push(freeSaleProduct);
 
                 //old record 
                 sp.free_note = "";
                 sp.quantity = sp.quantity - freeQty;
                 this.updateSaleProduct(sp);
 
-            } 
-            this.updateSaleSummary(); 
+            }
+            this.updateSaleSummary();
 
-             //audit trail
-             let item_description=`${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
-             let msg = `${free_by} free on item: ${item_description}`; 
-             msg += `, Qty: ${freeQty}`;             
-             msg += `${(free_note||"")==""?'':', Reason: '+free_note }`;
-             this.auditTrailLogs.push({
-                    doctype:"Comment",
-                    subject:"Free Sale Product",
-                    comment_type:"Info",
-                    reference_doctype:"Sale",
-                    reference_name:"New",
-                    comment_by:free_by,
-                    content:msg,
-                    custom_item_description: `${freeQty} x ${item_description}` ,
-                    custom_note:free_note
-             }); 
+            //audit trail
+            let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion || "") == "" ? "" : `(${sp.portion})`} ${sp.modifiers}`;
+            let msg = `${free_by} free on item: ${item_description}`;
+            msg += `, Qty: ${freeQty}`;
+            msg += `${(free_note || "") == "" ? '' : ', Reason: ' + free_note}`;
+            this.auditTrailLogs.push({
+                doctype: "Comment",
+                subject: "Free Sale Product",
+                comment_type: "Info",
+                reference_doctype: "Sale",
+                reference_name: "New",
+                comment_by: free_by,
+                content: msg,
+                custom_item_description: `${freeQty} x ${item_description}`,
+                custom_note: free_note
+            });
         }
-        this.dialogActiveState=false;
+        this.dialogActiveState = false;
 
     }
 
@@ -1015,7 +1017,7 @@ export default class Sale {
             if (parkQty > sp.quantity) {
                 parkQty = sp.quantity;
             }
-            let park_by = sp.free_by||"";
+            let park_by = sp.free_by || "";
 
             if (parkQty == sp.quantity) {
                 sp.is_park = true;
@@ -1025,52 +1027,52 @@ export default class Sale {
                 this.updateSaleProduct(sp);
                 this.updateSaleSummary();
             }
-            else { 
+            else {
                 let parkSaleProduct = JSON.parse(JSON.stringify(sp));
                 parkSaleProduct.name = "";
                 parkSaleProduct.quantity = parkQty;
                 parkSaleProduct.backup_product_price = sp.price
                 parkSaleProduct.backup_modifier_price = sp.modifiers_price
                 parkSaleProduct.selected = false;
-                parkSaleProduct.is_park = true;  
+                parkSaleProduct.is_park = true;
                 parkSaleProduct.expired_date = moment(window.current_working_date).add(7, 'days').format('yyyy-MM-DD');
                 this.updateSaleProduct(parkSaleProduct);
-                this.sale.sale_products.push(parkSaleProduct);               
+                this.sale.sale_products.push(parkSaleProduct);
 
                 //old record 
                 sp.quantity = sp.quantity - parkQty;
                 this.updateSaleProduct(sp);
 
-            } 
-            this.updateSaleSummary(); 
+            }
+            this.updateSaleSummary();
 
-             //audit trail
-             let item_description=`${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
-             let msg = `${free_by} park on item: ${item_description}`; 
-             msg += `, Qty: ${park_by}`;
-             this.auditTrailLogs.push({
-                    doctype:"Comment",
-                    subject:"Park Sale Product",
-                    comment_type:"Info",
-                    reference_doctype:"Sale",
-                    reference_name:"New",
-                    comment_by:park_by,
-                    content:msg,
-                    custom_item_description: `${park_by} x ${item_description}` ,
-                    custom_note:free_note
-             }); 
+            //audit trail
+            let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion || "") == "" ? "" : `(${sp.portion})`} ${sp.modifiers}`;
+            let msg = `${free_by} park on item: ${item_description}`;
+            msg += `, Qty: ${park_by}`;
+            this.auditTrailLogs.push({
+                doctype: "Comment",
+                subject: "Park Sale Product",
+                comment_type: "Info",
+                reference_doctype: "Sale",
+                reference_name: "New",
+                comment_by: park_by,
+                content: msg,
+                custom_item_description: `${park_by} x ${item_description}`,
+                custom_note: free_note
+            });
         }
-        this.dialogActiveState=false;
+        this.dialogActiveState = false;
 
     }
 
     // change tax setting
-    async onChangeTaxSetting(title, _tax_rule_name,_change_tax_setting_note,gv, sale_product){
-        if(!this.isBillRequested()){
-            this.dialogActiveState=true
+    async onChangeTaxSetting(title, _tax_rule_name, _change_tax_setting_note, gv, sale_product) {
+        if (!this.isBillRequested()) {
+            this.dialogActiveState = true
             // const tax_rule_name = tax_rule
-            await  gv.authorize("change_tax_setting_required_password", "change_tax_setting", "change_tax_setting_required_note", "Change Tax Setting", "", true).then(async (v) => {
-                if(v){ 
+            await gv.authorize("change_tax_setting_required_password", "change_tax_setting", "change_tax_setting_required_note", "Change Tax Setting", "", true).then(async (v) => {
+                if (v) {
                     const resp = await changeTaxSettingModal({
                         title: title,
                         data: {
@@ -1079,32 +1081,32 @@ export default class Sale {
                             category_note_name: v.category_note_name
                         }
                     })
-                    this.sale.dialogActiveState=false 
+                    this.sale.dialogActiveState = false
 
-                    if(resp != false){ 
-                        const _tax_rule = JSON.parse(resp.tax_rule.tax_rule_data);   
-                        if(sale_product){ 
+                    if (resp != false) {
+                        const _tax_rule = JSON.parse(resp.tax_rule.tax_rule_data);
+                        if (sale_product) {
                             sale_product.product_tax_rule = _tax_rule.name;
-                            this.onSaleProductApplyTax(_tax_rule,sale_product); 
+                            this.onSaleProductApplyTax(_tax_rule, sale_product);
                             // this.onCalculateTax(sale_product);
                             this.updateSaleProduct(sale_product);
                         }
-                        else{
+                        else {
                             this.onSaleApplyTax(_tax_rule, this.sale);
                         }
-                        this.updateSaleSummary(); 
+                        this.updateSaleSummary();
                     }
                 }
             });
         }
     }
 
-    async  onSaleProductChangeTaxSetting(sp,gv){
-        const resp = await this.onChangeTaxSetting($t('Change Tax Setting'),sp.product_tax_rule,sp.change_tax_setting_note, gv,sp);     
+    async onSaleProductChangeTaxSetting(sp, gv) {
+        const resp = await this.onChangeTaxSetting($t('Change Tax Setting'), sp.product_tax_rule, sp.change_tax_setting_note, gv, sp);
     }
-    
-    async onDiscount(gv, title, amount, discount_value, discount_type, discount_codes,discount_note, sp, category_note_name) {
-       
+
+    async onDiscount(gv, title, amount, discount_value, discount_type, discount_codes, discount_note, sp, category_note_name) {
+
         const result = await saleProductDiscountDialog({
             title: title,
             value: amount,
@@ -1117,11 +1119,11 @@ export default class Sale {
                 category_note_name: category_note_name
             }
         })
-         
-       
-        this.dialogActiveState=false ;
-    
-        if (result != false) {  
+
+
+        this.dialogActiveState = false;
+
+        if (result != false) {
             if (sp) {
                 sp.discount = result.discount;
                 sp.discount_type = result.discount_type;
@@ -1129,89 +1131,89 @@ export default class Sale {
                 this.updateSaleProduct(sp);
 
                 //discount sale product audit
-                this.onDiscountSaleProductAudit(sp,gv,result);
+                this.onDiscountSaleProductAudit(sp, gv, result);
 
             } else {
-                if(result.revenue_group.length>0){
+                if (result.revenue_group.length > 0) {
                     this.sale.discount = 0;
                     this.sale.sale_products.forEach(sp => {
-                        if(sp.allow_discount){
-                            if(result.revenue_group.includes(sp.revenue_group)){                             
+                        if (sp.allow_discount) {
+                            if (result.revenue_group.includes(sp.revenue_group)) {
                                 sp.discount = result.discount;
                                 sp.discount_type = result.discount_type;
                                 sp.discount_note = result.discount_note;
                                 this.updateSaleProduct(sp);
 
                                 //disoucnt sale product audit
-                                this.onDiscountSaleProductAudit(sp,gv,result);
+                                this.onDiscountSaleProductAudit(sp, gv, result);
                             }
                         }
                     });
 
                 }
-                else{  
+                else {
                     this.sale.discount = result.discount;
                     this.sale.discount_type = result.discount_type;
-                    this.sale.discount_note = result.discount_note;   
+                    this.sale.discount_note = result.discount_note;
                     const sale_discount = this.sale.discount;
 
 
-                    (this.sale.sale_products??[]).forEach(_sp => {
-                        if (sale_discount>0 && _sp.allow_discount && _sp.discount==0)	{		
-                            _sp.sale_discount_percent = sale_discount  ;
-                            _sp.sale_discount_amount = (sale_discount/100) * _sp.sub_total;
+                    (this.sale.sale_products ?? []).forEach(_sp => {
+                        if (sale_discount > 0 && _sp.allow_discount && _sp.discount == 0) {
+                            _sp.sale_discount_percent = sale_discount;
+                            _sp.sale_discount_amount = (sale_discount / 100) * _sp.sub_total;
                         }
-                        else{
-                            _sp.sale_discount_percent = 0  ;
+                        else {
+                            _sp.sale_discount_percent = 0;
                             _sp.sale_discount_amount = 0;
                         }
                         _sp.total_discount = (_sp.sale_discount_amount || 0) + (_sp.discount_amount || 0);
                         this.updateSaleProduct(_sp);
                     });
-                   
-                                   
+
+
 
                     //sale discount audit
-                    let discount =  this.sale.discount_type =="Percent"? `${ this.sale.discount} %` : NumberFormat(gv.getCurrnecyFormat, this.sale.discount);                //audit trail
-                    let msg = `${this.sale.temp_discount_by} discount (${discount}) on Bill`;          
-                    msg += `${( result.discount_note||"")==""?'':', Reason: '+ result.discount_note }`;
+                    let discount = this.sale.discount_type == "Percent" ? `${this.sale.discount} %` : NumberFormat(gv.getCurrnecyFormat, this.sale.discount);                //audit trail
+                    let msg = `${this.sale.temp_discount_by} discount (${discount}) on Bill`;
+                    msg += `${(result.discount_note || "") == "" ? '' : ', Reason: ' + result.discount_note}`;
                     this.auditTrailLogs.push({
-                        doctype:"Comment",
-                        subject:"Sale Discount",
-                        comment_type:"Info",
-                        reference_doctype:"Sale",
-                        reference_name:"New",
-                        comment_by:this.sale.temp_discount_by,
-                        content:msg,
-                        custom_item_description:`Discount (${discount})`,
+                        doctype: "Comment",
+                        subject: "Sale Discount",
+                        comment_type: "Info",
+                        reference_doctype: "Sale",
+                        reference_name: "New",
+                        comment_by: this.sale.temp_discount_by,
+                        content: msg,
+                        custom_item_description: `Discount (${discount})`,
                         custom_note: result.discount_note,
-                        custom_amount: (this.sale.grand_total ||0) 
-                    }); 
+                        custom_amount: (this.sale.grand_total || 0)
+                    });
                 }
             }
             this.updateSaleSummary();
         }
-        this.dialogActiveState=false;
+        this.dialogActiveState = false;
     }
 
 
-    onDiscountSaleProductAudit(sp,gv,result){
-        let discount = sp.discount_type =="Percent"? `${sp.discount} %` : NumberFormat(gv.getCurrnecyFormat,sp.discount);                //audit trail
-        let item_description=`${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
-        let msg = `${sp.temp_discount_by} discount (${discount}) on item: ${item_description} `;          
-        msg += `${( result.discount_note||"")==""?'':', Reason: '+ result.discount_note }`;
+    onDiscountSaleProductAudit(sp, gv, result) {
+        let discount = sp.discount_type == "Percent" ? `${sp.discount} %` : NumberFormat(gv.getCurrnecyFormat, sp.discount);                //audit trail
+        let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion || "") == "" ? "" : `(${sp.portion})`} ${sp.modifiers}`;
+        let msg = `${sp.temp_discount_by} discount (${discount}) on item: ${item_description} `;
+        msg += `${(result.discount_note || "") == "" ? '' : ', Reason: ' + result.discount_note}`;
         this.auditTrailLogs.push({
-            doctype:"Comment",
-            subject:"Discount Sale Product",
-            comment_type:"Info",
-            reference_doctype:"Sale",
-            reference_name:"New",
-            comment_by:sp.temp_discount_by,
-            content:msg,
+            doctype: "Comment",
+            subject: "Discount Sale Product",
+            comment_type: "Info",
+            reference_doctype: "Sale",
+            reference_name: "New",
+            comment_by: sp.temp_discount_by,
+            content: msg,
             custom_item_description: `${sp.quantity} x ${item_description} (discount: ${discount})`,
             custom_note: result.discount_note,
             custom_amount: sp.amount
-        }); 
+        });
     }
 
     async onSaleProductSetSeatNumber(sp) {
@@ -1235,22 +1237,22 @@ export default class Sale {
 
 
             //audit trail
-            const u = JSON.parse(localStorage.getItem('make_order_auth')); 
-            let item_description=`${sp.product_code}-${sp.product_name}${(sp.portion||"")=="" ? "":`(${sp.portion})`} ${sp.modifiers}`;
+            const u = JSON.parse(localStorage.getItem('make_order_auth'));
+            let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion || "") == "" ? "" : `(${sp.portion})`} ${sp.modifiers}`;
             let msg = `${u.name} remove free on item: ${item_description} `;
-            msg += `, Qty: ${sp.quantity}`;       
+            msg += `, Qty: ${sp.quantity}`;
             this.auditTrailLogs.push({
-                doctype:"Comment",
-                subject:"Remove Free Sale Product",
-                comment_type:"Info",
-                reference_doctype:"Sale",
-                reference_name:"New",
+                doctype: "Comment",
+                subject: "Remove Free Sale Product",
+                comment_type: "Info",
+                reference_doctype: "Sale",
+                reference_name: "New",
                 comment_by: u.name,
-                content:msg,
+                content: msg,
                 custom_item_description: `${sp.quantity} x ${item_description}`,
-                custom_note:"",
-                custom_amount : sp.amount
-            }); 
+                custom_note: "",
+                custom_amount: sp.amount
+            });
 
         }
     }
@@ -1268,15 +1270,15 @@ export default class Sale {
         return val;
     }
 
-    onRemoveSaleProduct(sp, quantity,username) {
+    onRemoveSaleProduct(sp, quantity, username) {
         if (sp.quantity == quantity) {
             if (sp.sale_product_status == 'Submitted') {
                 sp.show_in_list = true;
                 const sp_data = JSON.parse(JSON.stringify(sp));
                 sp_data.created_by = username;
-                this.deletedSaleProducts.push(sp_data) ;
+                this.deletedSaleProducts.push(sp_data);
                 this.deletedSaleProductsDisplay.push(sp_data);
-                
+
             }
             this.sale.sale_products.splice(this.sale.sale_products.indexOf(sp), 1);
 
@@ -1291,28 +1293,28 @@ export default class Sale {
 
                 this.deletedSaleProductsDisplay.push(deletedRecord);
             }
-        } 
-        
+        }
+
         // check if product is timer peroduct then remove it child
         // child record will remove in  doctype event
-        if (sp.is_timer_product && sp.name){
-            this.sale.sale_products.filter(r=>r.reference_sale_product==sp.name).forEach(x=>{
+        if (sp.is_timer_product && sp.name) {
+            this.sale.sale_products.filter(r => r.reference_sale_product == sp.name).forEach(x => {
                 this.sale.sale_products.splice(this.sale.sale_products.indexOf(x), 1);
             })
         }
-        
-        
 
-    
-        this.updateSaleProduct(sp);       
+
+
+
+        this.updateSaleProduct(sp);
         this.updateSaleSummary();
     }
 
     async OnEditSaleProduct(sp) {
-        if(sp.is_combo_menu && sp.use_combo_group){
+        if (sp.is_combo_menu && sp.use_combo_group) {
             const result = await SaleProductComboMenuGroupModal();
-            if(result){
-                if(result.combo_groups.length > 0){
+            if (result) {
+                if (result.combo_groups.length > 0) {
                     let combo_menu_items = ''
                     if (result.combo_groups.length > 0) {
                         result.combo_groups.forEach(r => {
@@ -1320,11 +1322,11 @@ export default class Sale {
                         });
                         sp.combo_menu = combo_menu_items.slice(0, combo_menu_items.length - 2)
                         sp.combo_menu_data = JSON.stringify(result.combo_groups)
-                    }else{
+                    } else {
                         sp.combo_menu = ''
                         sp.combo_group_data = '[]'
                     }
-                }else{
+                } else {
                     sp.combo_menu = ''
                     sp.combo_group_data = "[]"
                 }
@@ -1333,7 +1335,7 @@ export default class Sale {
                 toaster.success($t("msg.Update successfully"))
             }
         }
-        else{
+        else {
             const result = await addModifierDialog();
             if (result) {
                 if (result.portion != undefined) {
@@ -1375,7 +1377,7 @@ export default class Sale {
 
     onSubmit() {
         return new Promise(async (resolve) => {
-            if (this.sale.sale_products.length == 0 && this.sale.name == undefined && (this.sale.from_reservation||"")=="") {
+            if (this.sale.sale_products.length == 0 && this.sale.name == undefined && (this.sale.from_reservation || "") == "") {
                 toaster.warning($t('msg.Please select a menu item to submit order'));
                 resolve(false);
             }
@@ -1395,10 +1397,10 @@ export default class Sale {
                     if (this.newSaleResource == null) {
                         this.createNewSaleResource();
                     }
-                    _sale  =  await this.newSaleResource.submit({ doc: doc });
-                } 
+                    _sale = await this.newSaleResource.submit({ doc: doc });
+                }
                 else {
-                    _sale =  await this.saleResource.setValue.submit(doc);
+                    _sale = await this.saleResource.setValue.submit(doc);
                 }
                 this.submitToAuditTrail(doc);
                 //refresh tabl 
@@ -1408,8 +1410,8 @@ export default class Sale {
     }
 
     async onSubmitQuickPay() {
-       
-        if(this.sale.sale_products.filter(r=>!r.time_out_price && r.is_timer_product).length>0){
+
+        if (this.sale.sale_products.filter(r => !r.time_out_price && r.is_timer_product).length > 0) {
             toaster.warning($t('msg.Please stop timer on timer product'));
             return;
         }
@@ -1418,13 +1420,13 @@ export default class Sale {
                 toaster.warning($t('msg.Please select a menu item to process payment'));
                 resolve(false);
             } else {
-               const check_employee = this.sale.sale_products.filter((sp)=>sp.is_require_employee && (JSON.parse(sp.employees||"[]")).length <=0)
-               if(check_employee.length> 0){
+                const check_employee = this.sale.sale_products.filter((sp) => sp.is_require_employee && (JSON.parse(sp.employees || "[]")).length <= 0)
+                if (check_employee.length > 0) {
                     toaster.warning($t('msg.Please assign employee to items'));
                     resolve(false);
-               }
-               else{
-                    if (await confirmDialog({ title: $t("Quick Pay"), text:$t('msg.are you sure to process quick pay and close order')  })) {
+                }
+                else {
+                    if (await confirmDialog({ title: $t("Quick Pay"), text: $t('msg.are you sure to process quick pay and close order') })) {
                         this.sale.payment = [];
                         this.sale.payment.push({
                             payment_type: this.setting?.default_payment_type,
@@ -1432,18 +1434,18 @@ export default class Sale {
                             amount: this.sale.grand_total
                         });
 
-                                              
+
                         socket.emit("ShowOrderInCustomerDisplay", this.sale, "paid");
-                        const now = new Date();     
-                        const u = JSON.parse(localStorage.getItem('make_order_auth'));  
+                        const now = new Date();
+                        const u = JSON.parse(localStorage.getItem('make_order_auth'));
                         this.sale.paid_by = u.name;
                         this.sale.paid_date = moment(now).format('yyyy-MM-DD HH:mm:ss.SSS');
 
-                        if ((this.sale.printed_by||"")==""){
+                        if ((this.sale.printed_by || "") == "") {
                             this.sale.printed_by = u.name;
                             this.sale.printed_date = moment(now).format('yyyy-MM-DD HH:mm:ss.SSS');
                         }
-                        
+
                         this.sale.sale_status = "Submitted";
                         this.sale.docstatus = 1;
                         this.action = "quick_pay";
@@ -1451,30 +1453,30 @@ export default class Sale {
                         let doc = JSON.parse(JSON.stringify(this.sale));
                         this.generateProductPrinters();
 
-                        let msg = `${u.name} quick pay`;          
+                        let msg = `${u.name} quick pay`;
                         this.auditTrailLogs.push({
-                            doctype:"Comment",
-                            subject:"Quick Payment",
-                            comment_type:"Info",
-                            reference_doctype:"Sale",
-                            reference_name:"New",
-                            comment_by:u.name,
-                            content:msg,
+                            doctype: "Comment",
+                            subject: "Quick Payment",
+                            comment_type: "Info",
+                            reference_doctype: "Sale",
+                            reference_name: "New",
+                            comment_by: u.name,
+                            content: msg,
                             custom_item_description: "",
                             custom_note: "",
-                            custom_amount: ((this.sale.total_paid ||0) - (this.sale.changed_amount||0))
-                        });                         
-                    
-                        
+                            custom_amount: ((this.sale.total_paid || 0) - (this.sale.changed_amount || 0))
+                        });
+
+
                         if (this.getString(this.sale.name) == "") {
                             if (this.newSaleResource == null) {
                                 this.createNewSaleResource();
                             }
                             await this.newSaleResource.submit({ doc: doc });
-                        } 
+                        }
                         else {
                             await this.saleResource.setValue.submit(doc);
-                        }                         
+                        }
                         this.submitToAuditTrail(doc);
                         resolve(true);
                     }
@@ -1497,17 +1499,17 @@ export default class Sale {
                     socket.emit("ShowOrderInCustomerDisplay", this.sale, "paid");
                     this.generateProductPrinters();
 
-                    const now = new Date();     
-                    const u = JSON.parse(localStorage.getItem('make_order_auth'));  
+                    const now = new Date();
+                    const u = JSON.parse(localStorage.getItem('make_order_auth'));
                     this.sale.paid_by = u.name;
                     this.sale.paid_date = moment(now).format('yyyy-MM-DD HH:mm:ss.SSS');
 
-                    if ( (this.sale.printed_by||"")==""){
+                    if ((this.sale.printed_by || "") == "") {
                         this.sale.printed_by = u.name;
                         this.sale.printed_date = moment(now).format('yyyy-MM-DD HH:mm:ss.SSS');
                     }
 
-                    
+
                     this.sale.sale_status = "Closed";
                     this.sale.docstatus = 1;
 
@@ -1516,7 +1518,7 @@ export default class Sale {
                         if (this.newSaleResource == null) {
                             this.createNewSaleResource();
                         }
-                        this.printWaitingOrderAfterPayment = true; 
+                        this.printWaitingOrderAfterPayment = true;
                         await this.newSaleResource.submit({ doc: this.sale });
                     } else {
                         await this.saleResource.setValue.submit(this.sale);
@@ -1536,7 +1538,7 @@ export default class Sale {
             if (this.setting.pos_setting.print_waiting_order_after_submit_order) {
                 this.onPrintWaitingOrder(doc);
             }
-        } 
+        }
         else if (this.action == "print_bill") {
             if (this.pos_receipt == undefined || this.pos_receipt == null) {
                 this.pos_receipt = this.setting?.default_pos_receipt;
@@ -1550,7 +1552,7 @@ export default class Sale {
             if (this.printWaitingOrderAfterPayment) {
                 this.onPrintWaitingOrder(doc);
             }
-        } 
+        }
         else if (this.action == "payment") {
             if (this.isPrintReceipt == true) {
                 this.onPrintReceipt(this.pos_receipt, "print_receipt", doc);
@@ -1566,9 +1568,9 @@ export default class Sale {
         }
 
         //create deleted sale product to database;
-        this.deletedSaleProducts.forEach((r) =>{
+        this.deletedSaleProducts.forEach((r) => {
             this.onCreateDeletedSaleProduct(r);
-        });        
+        });
 
         this.submitToAuditTrail(doc);
         this.sale = {};
@@ -1585,70 +1587,70 @@ export default class Sale {
         this.auditTrailLogs = [];
     }
 
-    onPrintToKitchen(doc, products=null) { 
+    onPrintToKitchen(doc, products = null) {
 
-        var _productPrinters = products?? this.productPrinters;
+        var _productPrinters = products ?? this.productPrinters;
         const data = {
             action: "print_to_kitchen",
             setting: this.setting?.pos_setting,
             sale: doc,
             product_printers: _productPrinters,
-            station_device_printing:(this.setting?.device_setting?.station_device_printing)||"",
-        }  
+            station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
+        }
 
         if (localStorage.getItem("is_window") == 1) {
             window.chrome.webview.postMessage(JSON.stringify(data));
-        }        
-        else if((localStorage.getItem("flutterWrapper")||0) == 1){ 
-            if(_productPrinters.length > 0){
-                var printers =  (this.setting?.device_setting?.station_printers);
-                if(printers.length <=0){
+        }
+        else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
+            if (_productPrinters.length > 0) {
+                var printers = (this.setting?.device_setting?.station_printers);
+                if (printers.length <= 0) {
                     // toaster.warning($t("Printer not yet configt for this device"))
-                }else{ 
+                } else {
                     let products_ = {
                         action: "print_to_kitchen",
-                        sale : doc,
-                        printers:[]
-                    }  
-                    products_.printers = [] ;                
-                    printers.forEach((p)=>{                    
+                        sale: doc,
+                        printers: []
+                    }
+                    products_.printers = [];
+                    printers.forEach((p) => {
                         products_.printers.push({
-                            "station":this.setting?.device_setting?.name??"",
-                            "printer":{
-                                "printer_name":p.printer_name,
-                                "group_item_type":p.group_item_type,
-                                "ip_address":p.ip_address,
-                                "port":p.port,
-                                "cashier_printer":p.cashier_printer,
-                                "is_label_printer":p.is_label_printer,
-                            },                        
-                            "products": data.product_printers.filter((x)=>x.printer== p.printer_name)
+                            "station": this.setting?.device_setting?.name ?? "",
+                            "printer": {
+                                "printer_name": p.printer_name,
+                                "group_item_type": p.group_item_type,
+                                "ip_address": p.ip_address,
+                                "port": p.port,
+                                "cashier_printer": p.cashier_printer,
+                                "is_label_printer": p.is_label_printer,
+                            },
+                            "products": data.product_printers.filter((x) => x.printer == p.printer_name)
                         });
                     });
-                    
-                    flutterChannel.postMessage(JSON.stringify(products_));                       
-                } 
-            }  
+
+                    flutterChannel.postMessage(JSON.stringify(products_));
+                }
+            }
         }
         else {
             socket.emit("PrintReceipt", JSON.stringify(data))
         }
 
         //reset product printer
-        if(products==null){
+        if (products == null) {
             this.productPrinters = [];
         }
     }
 
     generateProductPrinters() {
-        this.productPrinters =  [];
-        this.sale.sale_products.filter(r => r.sale_product_status == 'New' && JSON.parse(r.printers).length > 0).forEach((r) => {          
+        this.productPrinters = [];
+        this.sale.sale_products.filter(r => r.sale_product_status == 'New' && JSON.parse(r.printers).length > 0).forEach((r) => {
             const pritners = JSON.parse(r.printers);
             pritners.forEach((p) => {
                 this.productPrinters.push({
                     printer: p.printer,
                     group_item_type: p.group_item_type,
-                    is_label_printer: p.is_label_printer==1,
+                    is_label_printer: p.is_label_printer == 1,
                     product_code: r.product_code,
                     product_name_en: r.product_name,
                     product_name_kh: r.product_name_kh,
@@ -1659,29 +1661,29 @@ export default class Sale {
                     quantity: r.quantity,
                     is_deleted: false,
                     is_free: r.is_free == 1,
-                    combo_menu:r.combo_menu,
-                    order_by:r.order_by,
-                    creation:r.creation,
-                    modified:r.modified,
-                    is_timer_product: (r.is_timer_product||0),
+                    combo_menu: r.combo_menu,
+                    order_by: r.order_by,
+                    creation: r.creation,
+                    modified: r.modified,
+                    is_timer_product: (r.is_timer_product || 0),
                     reference_sale_product: r.reference_sale_product,
                     duration: r.duration,
-                    time_stop: (r.time_stop||0),
+                    time_stop: (r.time_stop || 0),
                     time_in: r.time_in,
                     time_out_price: r.time_out_price,
                     time_out: r.time_out
                 })
             });
-        });  
+        });
 
         //generate sale product print when change table
-        if((this.changeTableSaleProducts?.length||0) > 0){
-            this.changeTableSaleProducts.forEach(x=>{
+        if ((this.changeTableSaleProducts?.length || 0) > 0) {
+            this.changeTableSaleProducts.forEach(x => {
                 this.productPrinters.push(x);
             })
         }
-        
-        if(this.setting.pos_setting.print_new_deleted_sale_product){
+
+        if (this.setting.pos_setting.print_new_deleted_sale_product) {
             //generate deleted product to product printer list
             this.deletedSaleProducts.filter(r => JSON.parse(r.printers).length > 0).forEach((r) => {
                 const pritners = JSON.parse(r.printers);
@@ -1689,7 +1691,7 @@ export default class Sale {
                     this.productPrinters.push({
                         printer: p.printer,
                         group_item_type: p.group_item_type,
-                        is_label_printer: p.is_label_printer==1,
+                        is_label_printer: p.is_label_printer == 1,
                         product_code: r.product_code,
                         product_name_en: r.product_name,
                         product_name_kh: r.product_name_kh,
@@ -1706,7 +1708,7 @@ export default class Sale {
                         modified: r.modified,
                         reference_sale_product: r.reference_sale_product,
                         duration: r.duration,
-                        time_stop: (r.time_stop||0),
+                        time_stop: (r.time_stop || 0),
                         time_in: r.time_in,
                         time_out_price: r.time_out_price,
                         time_out: r.time_out
@@ -1719,12 +1721,12 @@ export default class Sale {
 
     getPrintReportPath(doctype, name, reportName, isPrint = 0) {
         let url = "";
-         
+
         const serverUrl = window.location.protocol + "//" + window.location.hostname + ":" + this.setting?.pos_setting?.backend_port;
         url = serverUrl + "/printview?doctype=" + doctype + "&name=" + name + "&format=" + reportName + "&no_letterhead=0&letterhead=Defualt%20Letter%20Head&settings=%7B%7D&_lang=en&d=" + new Date()
         if (isPrint) {
             url = url + "&trigger_print=" + isPrint
-        }        
+        }
         return url;
     }
 
@@ -1734,33 +1736,33 @@ export default class Sale {
             print_setting: receipt,
             setting: this.setting?.pos_setting,
             sale: doc,
-            station_device_printing:(this.setting?.device_setting?.station_device_printing)||"",
-            station:(this.setting?.device_setting?.name)||"",
+            station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
+            station: (this.setting?.device_setting?.name) || "",
         }
         if (receipt.pos_receipt_file_name && localStorage.getItem("is_window")) {
             window.chrome.webview.postMessage(JSON.stringify(data));
-        } else if((localStorage.getItem("flutterWrapper")||0) == 1){
-          var printer =  (this.setting?.device_setting?.station_printers).filter((e)=>e.cashier_printer == 1);
-          if(printer.length <=0){
-            toaster.warning($t("Printer not yet configt for this device"))
-          }else{  
-            data.printer = {
-                "printer_name":printer[0].printer_name,
-                "ip_address":printer[0].ip_address,
-                "port":printer[0].port,
-                "cashier_printer":printer[0].cashier_printer,
-                "is_label_printer":printer[0].is_label_printer
-            } 
-            flutterChannel.postMessage(JSON.stringify(data));                       
-          }
-        } else {           
+        } else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
+            var printer = (this.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+            if (printer.length <= 0) {
+                toaster.warning($t("Printer not yet configt for this device"))
+            } else {
+                data.printer = {
+                    "printer_name": printer[0].printer_name,
+                    "ip_address": printer[0].ip_address,
+                    "port": printer[0].port,
+                    "cashier_printer": printer[0].cashier_printer,
+                    "is_label_printer": printer[0].is_label_printer
+                }
+                flutterChannel.postMessage(JSON.stringify(data));
+            }
+        } else {
             if (receipt.pos_receipt_file_name) {
                 socket.emit('PrintReceipt', JSON.stringify(data));
             }
             else {
                 this.onOpenBrowserPrint("Sale", doc.name, receipt.name)
             }
-            
+
         }
     }
 
@@ -1771,13 +1773,13 @@ export default class Sale {
                     action: "print_waiting_order",
                     setting: this.setting?.pos_setting,
                     sale: doc,
-                    station_device_printing:(this.setting?.device_setting?.station_device_printing)||"",
+                    station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
                 }
 
                 if (localStorage.getItem("is_window") == "1") {
                     window.chrome.webview.postMessage(JSON.stringify(data));
-                } 
-                else if((localStorage.getItem("flutterWrapper")||0) == 1){
+                }
+                else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
                     flutterChannel.postMessage(JSON.stringify(data));
                 }
                 else {
@@ -1790,13 +1792,13 @@ export default class Sale {
     }
 
     onOpenBrowserPrint(doctype, docname, filename) {
-        const url = this.getPrintReportPath(doctype, docname, filename, 1)        
+        const url = this.getPrintReportPath(doctype, docname, filename, 1)
         window.open(url).print();
         window.close();
     }
 
     isBillRequested() {
-        if (this.sale.sale_status == 'Bill Requested') {            
+        if (this.sale.sale_status == 'Bill Requested') {
             toaster.warning($t('msg.this sale order is already print bill please cancel print bill first'));
             return true;
         } else {
@@ -1804,11 +1806,11 @@ export default class Sale {
         }
     }
 
-    onAddPayment(data) {  
+    onAddPayment(data) {
         // data {paymentType: , amount:,fee_amount:0,room:null, folio = null, folio_transaction_type=null,folio_transaction_number}     
         const single_payment_type = this.sale.payment.find(r => r.is_single_payment_type == 1);
         if (single_payment_type) {
-            toaster.warning($t('msg.You cannot add other payment type with',[ single_payment_type.payment_type]));
+            toaster.warning($t('msg.You cannot add other payment type with', [single_payment_type.payment_type]));
         } else {
             const precision = this.setting.pos_setting.main_currency_precision;
             if (data.paymentType.is_single_payment_type == 1) {
@@ -1816,10 +1818,10 @@ export default class Sale {
                 data.amount = parseFloat(parseFloat(this.sale.grand_total).toFixed(precision));
             }
             if (!this.getNumber(data.amount) == 0) {
-                if((data.fee_amount||0)==0){
-                    data.fee_amount = parseFloat(parseFloat(data.amount / data.paymentType.exchange_rate).toFixed(precision)) * (data.paymentType.fee_percentage/100);
-                } 
-                
+                if ((data.fee_amount || 0) == 0) {
+                    data.fee_amount = parseFloat(parseFloat(data.amount / data.paymentType.exchange_rate).toFixed(precision)) * (data.paymentType.fee_percentage / 100);
+                }
+
                 this.sale.payment.push({
                     payment_type: data.paymentType.payment_method,
                     input_amount: parseFloat(data.amount),
@@ -1828,17 +1830,17 @@ export default class Sale {
                     change_exchange_rate: data.paymentType.change_exchange_rate,
                     currency: data.paymentType.currency,
                     is_single_payment_type: data.paymentType.is_single_payment_type,
-                    required_customer: data.paymentType.required_customer,                    
-                    use_room_offline:data.paymentType.use_room_offline,
-                    room_number:data.room,
-                    folio_number:data.folio,
-                    account_code:data.paymentType.account_code,
-                    cancel_order_adjustment_account_code:data.paymentType.cancel_order_adjustment_account_code,
+                    required_customer: data.paymentType.required_customer,
+                    use_room_offline: data.paymentType.use_room_offline,
+                    room_number: data.room,
+                    folio_number: data.folio,
+                    account_code: data.paymentType.account_code,
+                    cancel_order_adjustment_account_code: data.paymentType.cancel_order_adjustment_account_code,
 
-                    fee_percentage:data.paymentType.fee_percentage,
-                    fee_amount:data.fee_amount,
-                    folio_transaction_type:data.folio_transaction_type,
-                    folio_transaction_number:data.folio_transaction_number,
+                    fee_percentage: data.paymentType.fee_percentage,
+                    fee_amount: data.fee_amount,
+                    folio_transaction_type: data.folio_transaction_type,
+                    folio_transaction_number: data.folio_transaction_number,
                     city_ledger_name: data.city_ledger_name
                 });
 
@@ -1855,18 +1857,18 @@ export default class Sale {
 
     updatePaymentAmount() {
         const payments = Enumerable.from(this.sale.payment);
-        const total_payment = payments.sum("$.amount") + (this.sale.deposit||0);
+        const total_payment = payments.sum("$.amount") + (this.sale.deposit || 0);
         const total_fee = payments.sum("$.fee_amount");
-        this.sale.total_paid = total_payment ;
+        this.sale.total_paid = total_payment;
         this.sale.total_fee = total_fee;
-        this.sale.balance = (this.sale.grand_total||0)  - this.sale.total_paid;
+        this.sale.balance = (this.sale.grand_total || 0) - this.sale.total_paid;
 
         if (this.sale.balance < 0) {
             this.sale.balance = 0;
         }
         let change_amount = total_payment - this.sale.grand_total;
-        this.sale.changed_amount =  change_amount;
-        this.sale.second_changed_amount = change_amount * this.sale.change_exchange_rate;  
+        this.sale.changed_amount = change_amount;
+        this.sale.second_changed_amount = change_amount * this.sale.change_exchange_rate;
 
         this.sale.second_changed_amount = Number(this.sale.second_changed_amount.toFixed(this.setting.pos_setting.second_currency_precision));
 
@@ -1876,99 +1878,99 @@ export default class Sale {
         }
 
         this.action
-    } 
+    }
 
-    isOrdered(message = $t('msg.please save or submit your current order first',[ $t( 'Submit') +" "+$t('or') +" "+ $t('Save')])){
-        if((this.sale.sale_products || []).length > 0 ){
+    isOrdered(message = $t('msg.please save or submit your current order first', [$t('Submit') + " " + $t('or') + " " + $t('Save')])) {
+        if ((this.sale.sale_products || []).length > 0) {
             const sp = Enumerable.from(this.sale.sale_products);
             if (sp.where("$.name==undefined").toArray().length > 0) {
                 toaster.warning(message);
                 return true
-            } 
+            }
         }
         return false
     }
-    
-    getShortCutKey(name){
-        let key =  this.setting.shortcut_key.filter(item => item.name == name).map(item => item.key)
-        return key[0];    
+
+    getShortCutKey(name) {
+        let key = this.setting.shortcut_key.filter(item => item.name == name).map(item => item.key)
+        return key[0];
     }
 
     //
-   async onLoadDeleteSaleProducts(sale_id){
-       //frappe db
+    async onLoadDeleteSaleProducts(sale_id) {
+        //frappe db
         const db = frappe.db();
-        await  db.getDocList('Sale Product Deleted', {
+        await db.getDocList('Sale Product Deleted', {
             fields: ['*'],
             filters: [['sale_doc', '=', sale_id]],
             limit: 100
-          }).then((docs) => {
+        }).then((docs) => {
             this.deletedSaleProductsDisplay = [];
-            if((this.sale.sale_products||[]).length > 0){
-                (this.sale.sale_products||[]).forEach((sp)=>{
-                  const  doc = docs.filter((d)=>d.sale_product_id == sp.name);
-                    if(doc.length > 0){
+            if ((this.sale.sale_products || []).length > 0) {
+                (this.sale.sale_products || []).forEach((sp) => {
+                    const doc = docs.filter((d) => d.sale_product_id == sp.name);
+                    if (doc.length > 0) {
                         sp.deleted_quantity = doc.reduce((a, i) => a + i.quantity, 0);
                         doc[0].removed = true;
-                    }   
-                });               
-            } 
+                    }
+                });
+            }
 
-            docs.forEach((d)=>{
-                if(d.removed == undefined){
+            docs.forEach((d) => {
+                if (d.removed == undefined) {
                     const _sp = JSON.parse(d.sale_product);
                     _sp.show_in_list = true;
                     this.deletedSaleProductsDisplay.push(_sp);
                 }
             });
-          }).catch((error) =>{});      
+        }).catch((error) => { });
     }
-    
-    onCreateDeletedSaleProduct(data){
-        if((this.sale.name||"") != ""){
+
+    onCreateDeletedSaleProduct(data) {
+        if ((this.sale.name || "") != "") {
             const db = frappe.db();
             data.deleted_quantity = data.quantity;
             this.updateSaleProduct(data)
             db.createDoc('Sale Product Deleted', {
-                sale_product_id:data.name,
-                product_name:`${data.product_name }${data.portion?'.'+data.portion:''}${data.modifiers?' '+data.modifiers:''}`,
-                sale_doc:this.sale.name,
-                sale_product:data,
+                sale_product_id: data.name,
+                product_name: `${data.product_name}${data.portion ? '.' + data.portion : ''}${data.modifiers ? ' ' + data.modifiers : ''}`,
+                sale_doc: this.sale.name,
+                sale_product: data,
                 quantity: data.quantity,
                 amount: data.total_revenue,
-                deleted_by: data.created_by            
-            }).then((doc) => {})
-            .catch((error) => {});
+                deleted_by: data.created_by
+            }).then((doc) => { })
+                .catch((error) => { });
         }
     }
 
-    onChangeMenuLanguage(){
+    onChangeMenuLanguage() {
         this.load_menu_lang = true;
-        const mlang = localStorage.getItem('mLang');   
-        if(mlang !=null){
-            if(mlang=="en"){
-                localStorage.setItem('mLang',"kh");
-            }else{
-                localStorage.setItem('mLang',"en");
+        const mlang = localStorage.getItem('mLang');
+        if (mlang != null) {
+            if (mlang == "en") {
+                localStorage.setItem('mLang', "kh");
+            } else {
+                localStorage.setItem('mLang', "en");
             }
-        }else{
-            localStorage.setItem('mLang',"en");
-        } 
+        } else {
+            localStorage.setItem('mLang', "en");
+        }
     }
 
 
     async onAssignEmployee(sp) {
-        if(!this.isBillRequested()){
-            const res = await selectEmployeeDialog({"data":sp})
-            if(res){
+        if (!this.isBillRequested()) {
+            const res = await selectEmployeeDialog({ "data": sp })
+            if (res) {
                 sp.employees = JSON.stringify(res);
-                sp.employee_names = ""; 
-                res.forEach(e=>{
-                    sp.employee_names +=    `${e.employee_name}(${e.duration_title}), `;
-                }) 
-                if(sp.employee_names != ""){
-                    sp.employee_names  = sp.employee_names.substring(0,  sp.employee_names.length -2);
-                } 
+                sp.employee_names = "";
+                res.forEach(e => {
+                    sp.employee_names += `${e.employee_name}(${e.duration_title}), `;
+                })
+                if (sp.employee_names != "") {
+                    sp.employee_names = sp.employee_names.substring(0, sp.employee_names.length - 2);
+                }
             }
         }
     }

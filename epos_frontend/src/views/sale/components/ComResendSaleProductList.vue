@@ -1,9 +1,9 @@
 <template>
     <v-list class="!p-0">
         <v-list-item v-for="sp, index in (readonly == true ? getSaleProducts(groupKey) : sale.getSaleProducts(groupKey))"
-            :key="index" @click="toggleSelection(sp.selected)"
+            :key="index" @click="toggleSelection(sp)"
             class="!border-t !border-gray-300 !mb-0 !p-2"
-            :class="{ 'selected': (sp.selected && !readonly), 'submitted relative': sp.sale_product_status == 'Submitted', 'item-list': !readonly }">
+            :class="{ 'selected': sp.selected, 'submitted relative': sp.sale_product_status == 'Submitted', 'item-list': !readonly }">
             <template v-slot:prepend>
                 <v-avatar v-if="sp.product_photo">
                     <v-img :src="sp.product_photo"></v-img>
@@ -12,8 +12,7 @@
 
             </template>
             <template v-slot:default>
-                <div class="text-sm"> 
-                    {{ sp.selected }}
+                <div class="text-sm">  
                     <div class="flex">
                         <div class="grow">
                             <div v-if="!sale.load_menu_lang"> {{ getMenuName(sp) }}<v-chip class="ml-1" size="x-small"
@@ -78,9 +77,9 @@
                                 <v-chip color="blue" size="x-small" v-if="sp.seat_number"> {{ $t('Seat') + "# " +
                                     sp.seat_number
                                 }}</v-chip>
-                                <div class="text-gray-500">
+                                <!-- <div class="text-gray-500">
                                     <v-icon icon="mdi-clock" size="small" class="mr-1"></v-icon><span>{{ moment(sp.creation).format('hh:mm:ss A') }}</span>
-                                </div>
+                                </div> -->
                                
                                 <div class="text-gray-500" v-if="sp.note">
                                     {{ $t('Note') }}: <span>{{ sp.note }}</span>
@@ -102,7 +101,7 @@
                                 <CurrencyFormat :value="sp.total_tax" />
                             </span>
 
-                            <ComQuantityInput v-if="!readonly" :sale-product="sp" />
+                            <!-- <ComQuantityInput v-if="!readonly" :sale-product="sp" /> -->
                         </div>
                     </div>
                 </div>
@@ -137,9 +136,8 @@ const props = defineProps({
     saleCustomerDisplay: Object
 });
 
-function toggleSelection (selected = false) {
-    alert(selected)
-    selected = !selected
+function toggleSelection(sp) {
+    sp.selected = !sp.selected
 }
 
 function getMenuName(sp) {

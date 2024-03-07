@@ -1,10 +1,10 @@
 <template>
-    <ComModal @onClose="onClose(false)" :fullscreen="true" :isPrint="true" @onPrint="onPrint()" :hide-ok-button="true"
+    <ComModal @onClose="onClose(false)" :fullscreen="true" :isPrint="sale.doc.docstatus==1" @onPrint="onPrint()" :hide-ok-button="true"
         :hide-close-button="true" :isShowBarMoreButton="canOpenOrder || canEdit || canDelete">
         <template #title>
             {{ $t('Sale Detail') }} #{{ params.name }}
         </template>
-        <template #bar_more_button>
+        <template #bar_more_button> 
             <v-list density="compact">
                 <v-list-item @click="onOpenOrder()" v-if="canOpenOrder">
                     <template v-slot:prepend>
@@ -27,7 +27,7 @@
             </v-list>
         </template>
 
-        <template #content>
+        <template #content> 
             <ComLoadingDialog v-if="isLoading" />
             <v-card>
                 <template #title>
@@ -174,16 +174,14 @@ function onRefresh() {
 }
 
 async function onPrint() {
-    const data = {
+    let data = {
         action: "print_receipt",
         print_setting: activeReport.value,
         setting: gv.setting?.pos_setting,
         sale: sale.doc
     } 
  
-    if (localStorage.getItem("is_window") == "1") {
-
-       
+    if (localStorage.getItem("is_window") == "1") {       
         if (activeReport.value.pos_receipt_file_name != "" && activeReport.value.pos_receipt_file_name != null) {
             if (await confirm({ title:$t("Print Receipt"), text: $t("msg.Are you sure to print receipt") })) {
                 window.chrome.webview.postMessage(JSON.stringify(data));
@@ -194,7 +192,26 @@ async function onPrint() {
             window.open(printPreviewUrl.value + "&trigger_print=1").print();
             window.close();
         }
-    } else {
+    } 
+    else if((localStorage.getItem("flutterWrapper")||0) == 1){
+        if (await confirm({ title:$t("Print Receipt"), text: $t("msg.Are you sure to print receipt") })) {  
+            var printer =  (gv.setting?.device_setting?.station_printers).filter((e)=>e.cashier_printer == 1);
+            if(printer.length <=0){
+                toaster.warning($t("Printer not yet configt for this device"))
+            }else{ 
+                data.reprint = 1; 
+                data.printer = {
+                    "printer_name":printer[0].printer_name,
+                    "ip_address":printer[0].ip_address,
+                    "port":printer[0].port,
+                    "cashier_printer":printer[0].cashier_printer,
+                    "is_label_printer":printer[0].is_label_printer
+                } 
+                flutterChannel.postMessage(JSON.stringify(data));                       
+            }
+        }
+    }
+    else {
      
         if (activeReport.value.pos_receipt_file_name != "" && activeReport.value.pos_receipt_file_name != null) {
             socket.emit('PrintReceipt', JSON.stringify(data));
