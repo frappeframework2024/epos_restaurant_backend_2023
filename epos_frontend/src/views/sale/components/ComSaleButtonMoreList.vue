@@ -40,8 +40,11 @@
     <v-list-item v-if="setting.table_groups && setting.table_groups.length > 0" prepend-icon="mdi-chair-school"
         :title="$t('Seat') + '#'" @click="onSeatNumber()" />
 
+    <v-list-item prepend-icon="mdi-printer-outline" :title="$t('Re-send')" @click="onResend()" />
+
     <v-list-item prepend-icon="mdi-cash-100" :title="$t('Tax Setting')" @click="onChangeTaxSetting()"
         v-if="sale.setting.tax_rules.length > 0" />
+
     <v-list-item v-if="sale.sale.sale_products?.filter(r => r.name == undefined).length > 0" @click="onClearOrder()">
         <template #prepend>
             <v-icon color="error" icon="mdi-autorenew"></v-icon>
@@ -59,7 +62,7 @@
 <script setup>
 import { computed,
     useRouter,onMounted, splitBillDialog, addCommissionDialog, ComSaleReferenceNumberDialog, viewBillModelModel, ref, inject, confirm, createResource,
-    keyboardDialog, changeTableDialog, changePriceRuleDialog, changeSaleTypeModalDialog, createToaster, changePOSMenuDialog, i18n
+    keyboardDialog, changeTableDialog, changePriceRuleDialog, changeSaleTypeModalDialog, createToaster, changePOSMenuDialog, i18n, ResendDialog
 } from "@/plugin"
 import { useDisplay } from 'vuetify'
 import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
@@ -364,6 +367,10 @@ async function onSplitBill() {
 
 async function onChangeTaxSetting() {
     const resp = await sale.onChangeTaxSetting($t('Change Tax Setting'), sale.sale.tax_rule, sale.sale.change_tax_setting_note, gv);
+}
+
+function onResend () {
+    ResendDialog($t('Change Tax Setting')); 
 }
 
 

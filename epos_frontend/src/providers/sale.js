@@ -1585,20 +1585,22 @@ export default class Sale {
         this.auditTrailLogs = [];
     }
 
-    onPrintToKitchen(doc) { 
+    onPrintToKitchen(doc, products=null) { 
+
+        var _productPrinters = products?? this.productPrinters;
         const data = {
             action: "print_to_kitchen",
             setting: this.setting?.pos_setting,
             sale: doc,
-            product_printers: this.productPrinters,
+            product_printers: _productPrinters,
             station_device_printing:(this.setting?.device_setting?.station_device_printing)||"",
         }  
-        
+
         if (localStorage.getItem("is_window") == 1) {
             window.chrome.webview.postMessage(JSON.stringify(data));
         }        
         else if((localStorage.getItem("flutterWrapper")||0) == 1){ 
-            if(this.productPrinters.length > 0){
+            if(_productPrinters.length > 0){
                 var printers =  (this.setting?.device_setting?.station_printers);
                 if(printers.length <=0){
                     // toaster.warning($t("Printer not yet configt for this device"))
@@ -1614,6 +1616,7 @@ export default class Sale {
                             "station":this.setting?.device_setting?.name??"",
                             "printer":{
                                 "printer_name":p.printer_name,
+                                "group_item_type":p.group_item_type,
                                 "ip_address":p.ip_address,
                                 "port":p.port,
                                 "cashier_printer":p.cashier_printer,
@@ -1630,11 +1633,15 @@ export default class Sale {
         else {
             socket.emit("PrintReceipt", JSON.stringify(data))
         }
-        this.productPrinters = [];
+
+        //reset product printer
+        if(products==null){
+            this.productPrinters = [];
+        }
     }
 
     generateProductPrinters() {
-        this.productPrinters =  this.productPrinters.filter((p)=>(p.reprint??false));
+        this.productPrinters =  [];
         this.sale.sale_products.filter(r => r.sale_product_status == 'New' && JSON.parse(r.printers).length > 0).forEach((r) => {          
             const pritners = JSON.parse(r.printers);
             pritners.forEach((p) => {

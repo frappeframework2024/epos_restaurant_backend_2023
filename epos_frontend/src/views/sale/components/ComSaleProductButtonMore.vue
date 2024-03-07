@@ -126,9 +126,13 @@ p.selected = !p.selected
 
 function onConfirmSelectPrinter(){
     if (!sale.isBillRequested()){ 
-
-        var resendProductData = []
+        var printers = printerList.value.filter(r=>r.selected==true);
+        // props.saleProduct.printers = JSON.stringify(printers );
+        showDialogSelectPrinter.value = false; 
         
+        var r = props.saleProduct;
+        //resend product to kot
+        var resendProductData = []        
         printers.forEach((p)=>{
             resendProductData.push({
                 printer: p.printer,
@@ -157,7 +161,13 @@ function onConfirmSelectPrinter(){
                 reprint:true,
             })
         });
- 
+
+        if(resendProductData.length>0){
+            sale.onPrintToKitchen(sale.sale,resendProductData)
+        }
+
+        toaster.success($t("Product was re-send"));
+
     }
 }
 

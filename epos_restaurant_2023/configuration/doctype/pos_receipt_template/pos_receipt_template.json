@@ -7,11 +7,13 @@
  "engine": "InnoDB",
  "field_order": [
   "receipt_name",
-  "template",
-  "style",
-  "column_break_ejte",
   "width",
-  "fixed_height"
+  "column_break_mpzb",
+  "fixed_height",
+  "section_break_pdgf",
+  "template",
+  "section_break_novm",
+  "style"
  ],
  "fields": [
   {
@@ -31,10 +33,6 @@
    "label": "Style"
   },
   {
-   "fieldname": "column_break_ejte",
-   "fieldtype": "Column Break"
-  },
-  {
    "default": "570",
    "fieldname": "width",
    "fieldtype": "Int",
@@ -45,11 +43,23 @@
    "fieldname": "fixed_height",
    "fieldtype": "Int",
    "label": "Fixed Height"
+  },
+  {
+   "fieldname": "section_break_novm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_mpzb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_pdgf",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-03-06 11:13:46.903033",
+ "modified": "2024-03-07 17:00:55.902937",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Receipt Template",

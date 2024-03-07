@@ -52,74 +52,76 @@ import ComAddVoucherTopUp from "@/views/voucher_top_up/ComAddTopUp.vue"
 import ComVoucherTopUpDetail from "@/views/voucher_top_up/ComVoucherTopUpDetail.vue"
 import ComVoucherTopUpAddPayment from "@/views/voucher_top_up/ComVoucherTopUpAddPayment.vue"
 import ComSearchProduct from "@/views/sale/components/retail_ui/ComSearchProduct.vue"
+import ComResendDialog from "@/views/sale/components/ComResendDialog.vue";
 
 interface params {
-    doctype?:String,
-    name?:String,
+    doctype?: String,
+    name?: String,
     text?: String,
     title?: String,
     type?: String,
-    report?:String, 
-    value?:String,
-    print:{
-            type:Boolean,
-            default:0
-        },
-    data:Object,//use in comSelectSaleOrder
-    table:Object, //use in comSelectSaleOrder
-    permissionCode:String
+    report?: String,
+    value?: String,
+    print: {
+        type: Boolean,
+        default: 0
+    },
+    data: Object,//use in comSelectSaleOrder
+    table: Object, //use in comSelectSaleOrder
+    permissionCode: String
 }
 
-export  const comPopupDialog = createPromiseDialog<params, object>(ComPopup);
-export  const comPopup2Dialog = createPromiseDialog<params, object>(ComPopup2);
-export  const saleDetailDialog = createPromiseDialog<params, object>(ComSaleDetail);
-export  const printPreviewDialog = createPromiseDialog<params, object>(ComPrintPreview);
-export  const confirm = createPromiseDialog<params, object>(ComConfirm);
-export  const confirmDialog = createPromiseDialog<params, object>(ComConfirm);
-export  const keyboardDialog = createPromiseDialog<params, object>(ComModelKeyboard);
-export  const selectSaleOrderDialog = createPromiseDialog<params, object>(ComSelectSaleOrder);
-export  const addModifierDialog = createPromiseDialog<params, object>(ComAddModifier);
-export  const customerDetailDialog = createPromiseDialog<params, object>(CustomerDetail);
-export  const addCustomerDialog = createPromiseDialog<params, object>(ComAddCustomer);
-export  const confirmBackToTableLayout = createPromiseDialog<params, object>(ComConfirmBackToTableLayout);
-export  const searchCustomerDialog = createPromiseDialog<params, object>(ComSearchCustomer);
-export  const saleProductNoteModalDialog = createPromiseDialog<params, object>(ComSaleProductNoteModal);
-export  const scanCustomerCodeDialog= createPromiseDialog<params, object>(ComScanCustomerCode);
-export  const authorizeDialog= createPromiseDialog<params, object>(ComAuthorize);
-export  const noteDialog= createPromiseDialog<params, object>(ComNote);
-export  const saleProductDiscountDialog = createPromiseDialog<params, object>(ComSaleProductDiscountModal);
-export  const paymentDialog = createPromiseDialog<params, object>(ComPayment);
-export  const payToRoomDialog = createPromiseDialog<params, object>(ComPayToRoomModal);
-export  const payToCityLedgerDialog = createPromiseDialog<params, object>(ComPayToCityLedgerModal);
-export  const payDeskfolioDialog = createPromiseDialog<params, object>(ComPayToDeskFolioModal);
-export  const keypadWithNoteDialog = createPromiseDialog<params, object>(ComKeypadWithNote);
-export  const viewBillModelModel = createPromiseDialog<params, object>(ComViewBillModal);
-export  const smallViewSaleProductListModal = createPromiseDialog<params, object>(ComSmallViewSaleProductListModal);
-export  const smallCurrencyPrefineModel = createPromiseDialog<params, object>(ComSmallCurrencyPrefineModel);
-export  const changeTableDialog = createPromiseDialog<params, object>(ComChangeTable);
-export  const changePriceRuleDialog = createPromiseDialog<params, object>(ComChangePriceRuleModal);
-export  const searchSaleDialog = createPromiseDialog<params, object>(ComSearchSaleModal);
-export  const changeSaleTypeModalDialog = createPromiseDialog<params, object>(ComChangeSaleTypeModal);
-export  const addCashDrawerModalDialog = createPromiseDialog<params, object>(ComAddCashDrawerModal);
-export  const changeTableSelectSaleOrderDialog = createPromiseDialog<params, object>(ComChangeTableSelectSaleOrder);
-export  const changePOSMenuDialog = createPromiseDialog<params, object>(ComChangePOSMenuModal);
-export  const pendingSaleListDialog = createPromiseDialog<params, object>(ComPendingSaleList);
-export  const posReservationDialog = createPromiseDialog<params, object>(ComPOSReservationList);
-export  const inputNumberDialog = createPromiseDialog<params, object>(ComInputNumber);
-export  const addCommissionDialog = createPromiseDialog<params, object>(ComAddCommission);
-export  const printWifiPasswordModal = createPromiseDialog<params, object>(ComPrintWifiPassword);
-export  const splitBillDialog = createPromiseDialog<params, object>(ComSplitBill);
-export  const SaleProductComboMenuGroupModal = createPromiseDialog<params, object>(ComSaleProductComboMenuGroupModal);
-export  const changeTaxSettingModal = createPromiseDialog<params, object>(ComChangeTaxSettingModal);
-export  const ComSaleReferenceNumberDialog = createPromiseDialog<params, object>(ComSaleReferenceNumberModal);
-export  const posReservationCalendarDialog = createPromiseDialog<params, object>(ComPOSReservationCalendarDialog);
-export  const viewHappyHourPromotionModal = createPromiseDialog<params, object>(ComViewHappyHourPromotionModal);
-export  const ShortCutKeyHelpDialog = createPromiseDialog<params, object>(ComShortcutKeyHelp);
-export  const selectEmployeeDialog = createPromiseDialog<params, object>(ComSelectEmployeeModal);
-export  const SelectDateTime = createPromiseDialog<params, object>(ComSelectDateTime);
-export  const stopTimerModal = createPromiseDialog<params, object>(ComSetStopTimerModal);
-export  const ChangeShiftNameModal = createPromiseDialog<params, object>(ComChangeShiftName);
-export  const AddVoucherTopUpDialog = createPromiseDialog<params, object>(ComAddVoucherTopUp);
-export  const VoucherTopUpDetailDialog = createPromiseDialog<params, object>(ComVoucherTopUpDetail);
-export  const VoucherTopUpAddPaymentDialog = createPromiseDialog<params, object>(ComVoucherTopUpAddPayment);
-export  const SearchProductDialog = createPromiseDialog<params, object>(ComSearchProduct);
+export const comPopupDialog = createPromiseDialog<params, object>(ComPopup);
+export const comPopup2Dialog = createPromiseDialog<params, object>(ComPopup2);
+export const saleDetailDialog = createPromiseDialog<params, object>(ComSaleDetail);
+export const printPreviewDialog = createPromiseDialog<params, object>(ComPrintPreview);
+export const confirm = createPromiseDialog<params, object>(ComConfirm);
+export const confirmDialog = createPromiseDialog<params, object>(ComConfirm);
+export const keyboardDialog = createPromiseDialog<params, object>(ComModelKeyboard);
+export const selectSaleOrderDialog = createPromiseDialog<params, object>(ComSelectSaleOrder);
+export const addModifierDialog = createPromiseDialog<params, object>(ComAddModifier);
+export const customerDetailDialog = createPromiseDialog<params, object>(CustomerDetail);
+export const addCustomerDialog = createPromiseDialog<params, object>(ComAddCustomer);
+export const confirmBackToTableLayout = createPromiseDialog<params, object>(ComConfirmBackToTableLayout);
+export const searchCustomerDialog = createPromiseDialog<params, object>(ComSearchCustomer);
+export const saleProductNoteModalDialog = createPromiseDialog<params, object>(ComSaleProductNoteModal);
+export const scanCustomerCodeDialog = createPromiseDialog<params, object>(ComScanCustomerCode);
+export const authorizeDialog = createPromiseDialog<params, object>(ComAuthorize);
+export const noteDialog = createPromiseDialog<params, object>(ComNote);
+export const saleProductDiscountDialog = createPromiseDialog<params, object>(ComSaleProductDiscountModal);
+export const paymentDialog = createPromiseDialog<params, object>(ComPayment);
+export const payToRoomDialog = createPromiseDialog<params, object>(ComPayToRoomModal);
+export const payToCityLedgerDialog = createPromiseDialog<params, object>(ComPayToCityLedgerModal);
+export const payDeskfolioDialog = createPromiseDialog<params, object>(ComPayToDeskFolioModal);
+export const keypadWithNoteDialog = createPromiseDialog<params, object>(ComKeypadWithNote);
+export const viewBillModelModel = createPromiseDialog<params, object>(ComViewBillModal);
+export const smallViewSaleProductListModal = createPromiseDialog<params, object>(ComSmallViewSaleProductListModal);
+export const smallCurrencyPrefineModel = createPromiseDialog<params, object>(ComSmallCurrencyPrefineModel);
+export const changeTableDialog = createPromiseDialog<params, object>(ComChangeTable);
+export const changePriceRuleDialog = createPromiseDialog<params, object>(ComChangePriceRuleModal);
+export const searchSaleDialog = createPromiseDialog<params, object>(ComSearchSaleModal);
+export const changeSaleTypeModalDialog = createPromiseDialog<params, object>(ComChangeSaleTypeModal);
+export const addCashDrawerModalDialog = createPromiseDialog<params, object>(ComAddCashDrawerModal);
+export const changeTableSelectSaleOrderDialog = createPromiseDialog<params, object>(ComChangeTableSelectSaleOrder);
+export const changePOSMenuDialog = createPromiseDialog<params, object>(ComChangePOSMenuModal);
+export const pendingSaleListDialog = createPromiseDialog<params, object>(ComPendingSaleList);
+export const posReservationDialog = createPromiseDialog<params, object>(ComPOSReservationList);
+export const inputNumberDialog = createPromiseDialog<params, object>(ComInputNumber);
+export const addCommissionDialog = createPromiseDialog<params, object>(ComAddCommission);
+export const printWifiPasswordModal = createPromiseDialog<params, object>(ComPrintWifiPassword);
+export const splitBillDialog = createPromiseDialog<params, object>(ComSplitBill);
+export const SaleProductComboMenuGroupModal = createPromiseDialog<params, object>(ComSaleProductComboMenuGroupModal);
+export const changeTaxSettingModal = createPromiseDialog<params, object>(ComChangeTaxSettingModal);
+export const ComSaleReferenceNumberDialog = createPromiseDialog<params, object>(ComSaleReferenceNumberModal);
+export const posReservationCalendarDialog = createPromiseDialog<params, object>(ComPOSReservationCalendarDialog);
+export const viewHappyHourPromotionModal = createPromiseDialog<params, object>(ComViewHappyHourPromotionModal);
+export const ShortCutKeyHelpDialog = createPromiseDialog<params, object>(ComShortcutKeyHelp);
+export const selectEmployeeDialog = createPromiseDialog<params, object>(ComSelectEmployeeModal);
+export const SelectDateTime = createPromiseDialog<params, object>(ComSelectDateTime);
+export const stopTimerModal = createPromiseDialog<params, object>(ComSetStopTimerModal);
+export const ChangeShiftNameModal = createPromiseDialog<params, object>(ComChangeShiftName);
+export const AddVoucherTopUpDialog = createPromiseDialog<params, object>(ComAddVoucherTopUp);
+export const VoucherTopUpDetailDialog = createPromiseDialog<params, object>(ComVoucherTopUpDetail);
+export const VoucherTopUpAddPaymentDialog = createPromiseDialog<params, object>(ComVoucherTopUpAddPayment);
+export const SearchProductDialog = createPromiseDialog<params, object>(ComSearchProduct);
+export const ResendDialog = createPromiseDialog<params, object>(ComResendDialog); 

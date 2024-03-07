@@ -1,6 +1,6 @@
 from epos_restaurant_2023.api.product import get_product_by_menu
 from epos_restaurant_2023.api.api import get_system_settings
-from epos_restaurant_2023.api.printing import get_print_context, print_bill,print_kitchen_order
+from epos_restaurant_2023.api.printing import get_print_context, print_bill,print_kitchen_order,print_waiting_slip,print_voucher_invoice
 import frappe
 
 @frappe.whitelist(allow_guest=True)
@@ -87,20 +87,40 @@ def get_pos_users(secret_key = False):
 
 
 
+## MOBILE SERVER PRINTING GENERATE BASE_64 IMAGE
+### print invoice or receipt
 @frappe.whitelist(allow_guest=True)
 def get_bill_image(station, name,template):
    return print_bill(station=station,name=name,template=template)
 
+### print waiting slip
+@frappe.whitelist(allow_guest=True)
+def get_waiting_slip_image(station, name):
+   return print_waiting_slip(station=station,name=name)
+
+### print voucher invoice 
+@frappe.whitelist(allow_guest=True)
+def get_voucher_invoice_image(station, name):
+    return print_voucher_invoice(station=station,name=name)
+
+### print kitchen order
 @frappe.whitelist(allow_guest=True,methods="POST")
 def get_kot_image(station, sale, products,printer): 
    return print_kitchen_order(station=station, sale=sale, products=products,printer=printer)
 
+
+## END MOBILE SERVER PRINTING GENERATE BASE_64 IMAGE
+
+
+## WINDOW SERVER PRINTING GENERATE HTML
 @frappe.whitelist(allow_guest=True)
 def get_bill_template(name):
     doc = frappe.get_doc("Sale", name)
     template,css = frappe.db.get_value("POS Receipt Template","Receipt En",["template","style"])
     html= frappe.render_template(template, get_print_context(doc))
     return {"html":html,"css":css}
+
+## END WINDOW SERVER PRINTING GENERATE HTML
     
 
  

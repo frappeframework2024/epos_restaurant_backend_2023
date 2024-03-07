@@ -1,7 +1,6 @@
 <template>
 
     <div>
-        {{ sale?.selected_sale_product }}
         <template v-if="sale?.selected_sale_product">
             <div style="height:calc(-321px + 100vh);overflow-y:auto">
                 <div class="border p-3 rounded-md searc-pro-res">

@@ -52,8 +52,39 @@ def trim(file_path):
 
     # Save the cropped image
     cropped.save(file_path)
-    
 
+
+@frappe.whitelist(allow_guest=True)
+def capture(height,width,html,css,image):
+    chrome_path = "/usr/bin/google-chrome"
+    # Set the CHROME_PATH environment variable
+    os.environ['CHROME_PATH'] = chrome_path
+    height = height 
+    hti = Html2Image()
+    hti.chrome_path=chrome_path
+    hti.output_path =frappe.get_site_path() 
+    hti.size=(width, height)
+
+    hti.screenshot(html_str=html, css_str=css, save_as='{}'.format(image))   
+    image_path = '{}/{}'.format(frappe.get_site_path(),image)    
+    trim(image_path)
+  
+
+    with open(image_path, "rb") as image_file:
+        image_data = image_file.read()
+        encoded_data = base64.b64encode(image_data).decode("utf-8")
+
+    try:
+        if os.path.isfile(image_path):
+            os.remove(image_path)
+    except OSError as e:
+        pass
+
+    return encoded_data 
+
+
+
+## print invoice or receipt
 @frappe.whitelist(allow_guest=True)
 def print_bill(station, name,template ):
     doc = frappe.get_doc("Sale", name)
@@ -62,9 +93,40 @@ def print_bill(station, name,template ):
     height = fixed_height
     if len(doc.sale_products) > 0:
         height += len(doc.sale_products) * 75
-    return capture(html=html,css=css,height=height,width=width,imnage='{}_bill_image.png'.format(station))
 
- 
+    hash_generate = frappe.generate_hash(length=15)
+    return capture(html=html,css=css,height=height,width=width,image='{}_invoice_{}.png'.format(station,hash_generate))
+
+## print waiting slip
+@frappe.whitelist(allow_guest=True)
+def print_voucher_invoice(station, name):
+    return ""
+    doc = frappe.get_doc("Sale", name)
+    data_template,css,width,fixed_height = frappe.db.get_value("POS Receipt Template","Voucher Slip",["template","style","width","fixed_height"])
+    html= frappe.render_template(data_template, get_print_context(doc))
+    height = fixed_height
+    if len(doc.sale_products) > 0:
+        height += len(doc.sale_products) * 75
+        
+    hash_generate = frappe.generate_hash(length=15)
+    return capture(html=html,css=css,height=height,width=width,image='{}_voucher_slip_{}.png'.format(station,hash_generate))
+       
+
+## print waiting slip
+@frappe.whitelist(allow_guest=True)
+def print_waiting_slip(station, name):
+    doc = frappe.get_doc("Sale", name)
+    data_template,css,width,fixed_height = frappe.db.get_value("POS Receipt Template","Waiting Slip",["template","style","width","fixed_height"])
+    html= frappe.render_template(data_template, get_print_context(doc))
+    height = fixed_height
+    if len(doc.sale_products) > 0:
+        height += len(doc.sale_products) * 75
+        
+    hash_generate = frappe.generate_hash(length=15)
+    return capture(html=html,css=css,height=height,width=width,image='{}_waiting_slip_{}.png'.format(station,hash_generate))
+       
+
+## print kitchen order
 @frappe.whitelist(allow_guest=True,methods="POST")
 def print_kitchen_order(station, sale, products,printer): 
     if not frappe.db.exists("Sale",sale):
@@ -77,28 +139,6 @@ def print_kitchen_order(station, sale, products,printer):
     if len(products) > 0:
         height += len(products) * 75 
 
-    return capture(html=html,css=css,height=height,width=width,imnage='{}_{}_kitchen_order.png'.format(station,printer))
- 
-       
+    hash_generate = frappe.generate_hash(length=15)
+    return capture(html=html,css=css,height=height,width=width,image='{}_{}_kitchen_order_{}.png'.format(station,printer,hash_generate))
 
-
-@frappe.whitelist(allow_guest=True)
-def capture(height,width,html,css,imnage):
-    chrome_path = "/usr/bin/google-chrome"
-    # Set the CHROME_PATH environment variable
-    os.environ['CHROME_PATH'] = chrome_path
-    height = height 
-    hti = Html2Image()
-    hti.chrome_path=chrome_path
-    hti.output_path =frappe.get_site_path() 
-    hti.size=(width, height)
-
-    hti.screenshot(html_str=html, css_str=css, save_as='{}'.format(imnage))   
-    image_path = '{}/{}'.format(frappe.get_site_path(),imnage)    
-    trim(image_path)
-  
-
-    with open(image_path, "rb") as image_file:
-        image_data = image_file.read()
-        encoded_data = base64.b64encode(image_data).decode("utf-8")
-    return encoded_data
