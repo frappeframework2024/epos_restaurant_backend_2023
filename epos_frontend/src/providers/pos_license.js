@@ -53,6 +53,7 @@ export default class POSLicense {
                                 if(expired_date < now){ 
                                      response = { 
                                         "status":true, 
+                                        "expired":true,
                                         "device_name":res_data.name,
                                         "show_license_msg":true,
                                         "message":`${res_data.name} expired ${ Math.floor((now - expired_date) / (1000 * 60 * 60 * 24))+1}day(s) ago. Please contact to system administrator for solve.` 
@@ -102,7 +103,7 @@ export default class POSLicense {
                             }
                         }else{
                              response = { 
-                                    "status":true, 
+                                    "status":false, 
                                     "device_name":res_data.name,
                                     "show_license_msg":true,
                                     "message":`Invalid device station. Please contact to system administrator for solve.`

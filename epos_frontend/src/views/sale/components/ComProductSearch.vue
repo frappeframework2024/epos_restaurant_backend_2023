@@ -54,7 +54,7 @@ function getIsMobile() {
 }
 
 function onSearch(key) {
-    if (sale.setting.table_groups.length > 0) {
+    if (sale.setting.use_retail_ui == 0) {
 
 
         if (key) {

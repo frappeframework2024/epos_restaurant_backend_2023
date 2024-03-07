@@ -93,8 +93,8 @@
 
                 </div>
               </div>
-              <div class="mt-4">
-                <v-btn type="submit" :loading="isLoading" size="x-large" class="w-full" color="primary" :disabled="(pos_license.web_platform && !(pos_license.license?.status??false))">{{ $t("Login") }}</v-btn>
+              <div class="mt-4"> 
+                <v-btn type="submit" :loading="isLoading" size="x-large" class="w-full" color="primary" :disabled="(pos_license.web_platform && (!(pos_license.license?.status??false) || (pos_license.license?.expired??false)))">{{ $t("Login") }}</v-btn>
               </div> 
               <div class="mt-2">
                 <v-btn size="x-large" class="w-full" color="light"  @click="(()=>{ 
@@ -190,7 +190,7 @@ function onDeleteBack() {
 }
 const onLogin = async () => {
   if(pos_license.web_platform){   
-    if(!pos_license.license.status){
+    if((!pos_license.license.status??false) || (pos_license.license?.expired??false)){
       return
     }
   }
