@@ -79,7 +79,9 @@
   "show_in_desk_folio",
   "show_in_city_ledger",
   "show_in_deposit_ledger",
-  "show_in_payable_ledger"
+  "show_in_payable_ledger",
+  "reporting_tab",
+  "flash_report_revenue_group"
  ],
  "fields": [
   {
@@ -505,12 +507,23 @@
    "fieldname": "discount_account_name",
    "fieldtype": "Data",
    "label": "Discount Account Name"
+  },
+  {
+   "fieldname": "reporting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Reporting"
+  },
+  {
+   "fieldname": "flash_report_revenue_group",
+   "fieldtype": "Link",
+   "label": "Flash Report Revenue Group",
+   "options": "Flash Report Key"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-12-19 17:39:45.353653",
+ "modified": "2024-03-07 10:18:59.548162",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

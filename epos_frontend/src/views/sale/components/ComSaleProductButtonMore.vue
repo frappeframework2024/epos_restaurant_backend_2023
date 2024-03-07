@@ -58,7 +58,7 @@
             <v-list-item  prepend-icon="mdi-cash-100" :title="$t('Tax Setting')" v-if="saleProduct.product_tax_rule"  @click="sale.onSaleProductChangeTaxSetting(saleProduct,gv)">
             </v-list-item>
             
-            <v-list-item v-if="!saleProduct.is_timer_product" prepend-icon="mdi-cash-100" :title="$t('Printer')"    @click="onSelectPrinter()">
+            <v-list-item v-if="!saleProduct.is_timer_product" prepend-icon="mdi-printer-outline" :title="$t('Re-Send')"    @click="onSelectPrinter()">
             </v-list-item>
             
         </v-list>
@@ -66,15 +66,15 @@
         <v-dialog
         v-model="showDialogSelectPrinter"
         width="auto">
-            <v-card title="Select Printers">
+            <v-card :title="$t('Select Printers')">
                 
                 <v-card-text>
                 
-                <v-btn class="mr-2" :color="p.selected?'warning':'default'" v-for="(p, index) in printerList" :key="index" @click="onSelectPritnerForPrint(p)">{{ p.printer }}</v-btn>
+                <v-btn class="mr-2" :color="p.selected?'red':'default'" v-for="(p, index) in printerList" :key="index" @click="onSelectPritnerForPrint(p)">{{ p.printer }}</v-btn>
                 </v-card-text>
                 <v-card-actions>
-                <v-btn color="error"  @click="dialog = false">Close</v-btn>
-                <v-btn color="success"  @click="onConfirmSelectPrinter">Confirm</v-btn>
+                <v-btn color="error"  @click="showDialogSelectPrinter = false">{{ $t("Close")}}</v-btn>
+                <v-btn color="success"  @click="onConfirmSelectPrinter">{{  $t("Confirm") }}</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -94,13 +94,8 @@ const props = defineProps({
     saleProduct: Object
 });
 
-const showDialogSelectPrinter = ref(false)
-
-
-
-const printerList = ref([])
-
-
+const showDialogSelectPrinter = ref(false);
+const printerList = ref([]);
 
 const toaster = createToaster({ position: "top-right" });
 function onRemoveNote() {
@@ -108,21 +103,18 @@ function onRemoveNote() {
 }
 
 
-function onSelectPrinter(){
-
-
-    if(props.saleProduct.backup_printers){
-        printerList.value =  JSON.parse(props.saleProduct.backup_printers)
+function onSelectPrinter(){ 
+    if (!sale.isBillRequested()){
+        if(props.saleProduct.backup_printers){
+            printerList.value =  JSON.parse(props.saleProduct.backup_printers)
+        }
+        else{
+            printerList.value =  JSON.parse(props.saleProduct.printers)
+            props.saleProduct.backup_printers = props.saleProduct.printers
+        }
+        printerList.value.forEach(r=>r.selected =true);
+        showDialogSelectPrinter.value = true;
     }
-    else{
-        printerList.value =  JSON.parse(props.saleProduct.printers)
-        props.saleProduct.backup_printers = props.saleProduct.printers
-    }
-    printerList.value.forEach(r=>r.selected =true)
-   
-
-    showDialogSelectPrinter.value = true
-
 }
 
 function onSelectPritnerForPrint(p){
@@ -133,9 +125,40 @@ p.selected = !p.selected
 }
 
 function onConfirmSelectPrinter(){
-props.saleProduct.printers = JSON.stringify( printerList.value.filter(r=>r.selected==true))
-showDialogSelectPrinter.value = false
+    if (!sale.isBillRequested()){ 
 
+        var resendProductData = []
+        
+        printers.forEach((p)=>{
+            resendProductData.push({
+                printer: p.printer,
+                group_item_type: p.group_item_type,
+                is_label_printer: p.is_label_printer==1,
+                product_code: r.product_code,
+                product_name_en: r.product_name,
+                product_name_kh: r.product_name_kh,
+                portion: r.portion,
+                unit: r.unit,
+                modifiers: r.modifiers,
+                note: r.note,
+                quantity: r.quantity,
+                is_deleted: false,
+                is_free: r.is_free == 1,
+                deleted_note: r.deleted_item_note,
+                order_by: r.order_by,
+                creation: r.creation,
+                modified: r.modified,
+                reference_sale_product: r.reference_sale_product,
+                duration: r.duration,
+                time_stop: (r.time_stop||0),
+                time_in: r.time_in,
+                time_out_price: r.time_out_price,
+                time_out: r.time_out,
+                reprint:true,
+            })
+        });
+ 
+    }
 }
 
 function onSaleProductFree() {

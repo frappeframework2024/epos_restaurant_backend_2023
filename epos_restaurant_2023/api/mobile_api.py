@@ -88,12 +88,12 @@ def get_pos_users(secret_key = False):
 
 
 @frappe.whitelist(allow_guest=True)
-def get_bill_image(name,file_name):
-   return print_bill(name,file_name)
+def get_bill_image(station, name,template):
+   return print_bill(station=station,name=name,template=template)
 
 @frappe.whitelist(allow_guest=True,methods="POST")
-def get_kot_image(sale, products,printer): 
-   return print_kitchen_order(sale=sale, products=products,printer=printer)
+def get_kot_image(station, sale, products,printer): 
+   return print_kitchen_order(station=station, sale=sale, products=products,printer=printer)
 
 @frappe.whitelist(allow_guest=True)
 def get_bill_template(name):

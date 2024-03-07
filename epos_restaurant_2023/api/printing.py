@@ -55,36 +55,29 @@ def trim(file_path):
     
 
 @frappe.whitelist(allow_guest=True)
-def print_bill(name,file_name ):
+def print_bill(station, name,template ):
     doc = frappe.get_doc("Sale", name)
-    template,css,width,fixed_height = frappe.db.get_value("POS Receipt Template",file_name,["template","style","width","fixed_height"])
-    html= frappe.render_template(template, get_print_context(doc))
-
+    data_template,css,width,fixed_height = frappe.db.get_value("POS Receipt Template",template,["template","style","width","fixed_height"])
+    html= frappe.render_template(data_template, get_print_context(doc))
     height = fixed_height
     if len(doc.sale_products) > 0:
         height += len(doc.sale_products) * 75
-
-    return capture(html=html,css=css,height=height,width=width,imnage='bill_image.png')
+    return capture(html=html,css=css,height=height,width=width,imnage='{}_bill_image.png'.format(station))
 
  
 @frappe.whitelist(allow_guest=True,methods="POST")
-def print_kitchen_order(sale, products,printer): 
+def print_kitchen_order(station, sale, products,printer): 
     if not frappe.db.exists("Sale",sale):
         return ""    
     doc_sale = frappe.get_doc("Sale", sale)
-    template,css,width,fixed_height = frappe.db.get_value("POS Receipt Template","Kitchen Order",["template","style","width","fixed_height"])
-
-   
-    html = frappe.render_template(template, get_print_context(doc=doc_sale,sale_products =  products))
- 
-    # return products 
-    
- 
+    data_template,css,width,fixed_height = frappe.db.get_value("POS Receipt Template","Kitchen Order",["template","style","width","fixed_height"])   
+    html = frappe.render_template(data_template, get_print_context(doc=doc_sale,sale_products =  products))
+    # return products  
     height = fixed_height
     if len(products) > 0:
         height += len(products) * 75 
 
-    return capture(html=html,css=css,height=height,width=width,imnage='{}_kitchen_order.png'.format(printer))
+    return capture(html=html,css=css,height=height,width=width,imnage='{}_{}_kitchen_order.png'.format(station,printer))
  
        
 

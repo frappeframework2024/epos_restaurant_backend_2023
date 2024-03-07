@@ -1592,9 +1592,8 @@ export default class Sale {
             sale: doc,
             product_printers: this.productPrinters,
             station_device_printing:(this.setting?.device_setting?.station_device_printing)||"",
-        } 
-
-
+        }  
+        
         if (localStorage.getItem("is_window") == 1) {
             window.chrome.webview.postMessage(JSON.stringify(data));
         }        
@@ -1612,6 +1611,7 @@ export default class Sale {
                     products_.printers = [] ;                
                     printers.forEach((p)=>{                    
                         products_.printers.push({
+                            "station":this.setting?.device_setting?.name??"",
                             "printer":{
                                 "printer_name":p.printer_name,
                                 "ip_address":p.ip_address,
@@ -1634,7 +1634,7 @@ export default class Sale {
     }
 
     generateProductPrinters() {
-        this.productPrinters = [];
+        this.productPrinters =  this.productPrinters.filter((p)=>(p.reprint??false));
         this.sale.sale_products.filter(r => r.sale_product_status == 'New' && JSON.parse(r.printers).length > 0).forEach((r) => {          
             const pritners = JSON.parse(r.printers);
             pritners.forEach((p) => {
@@ -1728,6 +1728,7 @@ export default class Sale {
             setting: this.setting?.pos_setting,
             sale: doc,
             station_device_printing:(this.setting?.device_setting?.station_device_printing)||"",
+            station:(this.setting?.device_setting?.name)||"",
         }
         if (receipt.pos_receipt_file_name && localStorage.getItem("is_window")) {
             window.chrome.webview.postMessage(JSON.stringify(data));
@@ -1742,7 +1743,7 @@ export default class Sale {
                 "port":printer[0].port,
                 "cashier_printer":printer[0].cashier_printer,
                 "is_label_printer":printer[0].is_label_printer
-            }
+            } 
             flutterChannel.postMessage(JSON.stringify(data));                       
           }
         } else {           
