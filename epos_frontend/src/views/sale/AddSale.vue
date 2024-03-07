@@ -2,8 +2,10 @@
     <ComLoadingDialog
         v-if="sale.loading || sale.newSaleResource?.loading || (sale.saleResource != null && sale.saleResource?.get.loading) || (sale.saleResource != null && sale.saleResource?.setValue.loading)" />
     <ComSmallAddSale v-if="mobile" />
-    <ComAddSaleRetail   v-if="!mobile && sale.setting.table_groups.length ==0" />
-    <div v-if="!mobile && sale.setting.table_groups.length > 0" style="height: calc(100vh - 64px)" id="tst">
+    
+    <ComAddSaleRetail   v-if="!mobile && sale.setting.use_retail_ui == 1" />
+    <div v-if="!mobile && sale.setting.use_retail_ui==0" style="height: calc(100vh - 64px)" id="tst">
+        
         <div class="h-full ma-0 flex w-full">
             <div class="flex-auto pa-0 h-full d-none d-sm-block" style="width: calc(100vw - 450px);"> 
                 <ComMenu :background-image="gv.setting.pos_sale_order_background_image" />

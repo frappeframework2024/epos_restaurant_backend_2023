@@ -92,8 +92,8 @@ def get_bill_image(name,file_name):
    return print_bill(name,file_name)
 
 @frappe.whitelist(allow_guest=True,methods="POST")
-def get_kot_image(data): 
-   return print_kitchen_order(data)
+def get_kot_image(sale, products,printer): 
+   return print_kitchen_order(sale=sale, products=products,printer=printer)
 
 @frappe.whitelist(allow_guest=True)
 def get_bill_template(name):

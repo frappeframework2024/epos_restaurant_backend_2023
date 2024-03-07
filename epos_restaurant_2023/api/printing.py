@@ -68,22 +68,23 @@ def print_bill(name,file_name ):
 
  
 @frappe.whitelist(allow_guest=True,methods="POST")
-def print_kitchen_order(data): 
-    if not frappe.db.exists("Sale", data["sale"]):
+def print_kitchen_order(sale, products,printer): 
+    if not frappe.db.exists("Sale",sale):
         return ""    
-    doc_sale = frappe.get_doc("Sale", data["sale"])
+    doc_sale = frappe.get_doc("Sale", sale)
     template,css,width,fixed_height = frappe.db.get_value("POS Receipt Template","Kitchen Order",["template","style","width","fixed_height"])
 
    
-    html = frappe.render_template(template, get_print_context(doc=doc_sale,sale_products =  data["products"]))
+    html = frappe.render_template(template, get_print_context(doc=doc_sale,sale_products =  products))
  
     # return products 
+    
  
     height = fixed_height
-    if len(data["products"]) > 0:
-        height += len(data["products"]) * 75 
+    if len(products) > 0:
+        height += len(products) * 75 
 
-    return capture(html=html,css=css,height=height,width=width,imnage='kitchen_order.png')
+    return capture(html=html,css=css,height=height,width=width,imnage='{}_kitchen_order.png'.format(printer))
  
        
 
