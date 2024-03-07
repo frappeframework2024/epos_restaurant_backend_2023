@@ -1,0 +1,57 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-02-23 16:26:54.102386",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "allow",
+  "for_value",
+  "hide_descendants",
+  "apply_to_all_document_types"
+ ],
+ "fields": [
+  {
+   "fieldname": "allow",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Allow",
+   "options": "DocType",
+   "reqd": 1
+  },
+  {
+   "fieldname": "for_value",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "label": "For Value",
+   "options": "allow",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "hide_descendants",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Hide Descendants"
+  },
+  {
+   "default": "1",
+   "fieldname": "apply_to_all_document_types",
+   "fieldtype": "Check",
+   "label": " Apply To All Document Types"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-03-07 15:01:30.096468",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "Predefine User Permission Doctype",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
