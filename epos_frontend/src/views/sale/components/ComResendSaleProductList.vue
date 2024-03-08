@@ -13,6 +13,7 @@
             </template>
             <template v-slot:default>
                 <div class="text-sm">  
+                    {{ sp.selected }}
                     <div class="flex">
                         <div class="grow">
                             <div v-if="!sale.load_menu_lang"> {{ getMenuName(sp) }}<v-chip class="ml-1" size="x-small"
@@ -100,8 +101,7 @@
                                 {{ $t('Tax') }}:
                                 <CurrencyFormat :value="sp.total_tax" />
                             </span>
-
-                            <!-- <ComQuantityInput v-if="!readonly" :sale-product="sp" /> -->
+ 
                         </div>
                     </div>
                 </div>
@@ -111,30 +111,24 @@
     </v-list>
 </template>
 <script setup>
-import { computed, inject, defineProps, confirmDialog, createToaster, i18n, ref, SelectDateTime, stopTimerModal } from '@/plugin'
-
-import ComSaleProductButtonMore from './ComSaleProductButtonMore.vue';
-import ComQuantityInput from '../../../components/form/ComQuantityInput.vue';
+import { inject, defineProps, i18n } from '@/plugin'
+  
 import Enumerable from 'linq';
 import ComSaleProductComboMenuGroupItemDisplay from './combo_menu/ComSaleProductComboMenuGroupItemDisplay.vue';
 import ComHappyHour from './happy_hour_promotion/ComHappyHour.vue';
 import ComTimerProductEstimatePrice from '@/views/sale/components/ComTimerProductEstimatePrice.vue';
 
-const { t: $t } = i18n.global;
-const numberFormat = inject('$numberFormat');
-const sale = inject('$sale');
-const product = inject('$product');
+const { t: $t } = i18n.global; 
+const sale = inject('$sale'); 
 const gv = inject('$gv');
-const moment = inject('$moment');
-const toaster = createToaster({ position: 'top-right' });
-const frappe = inject("$frappe")
-const call = frappe.call()
+const moment = inject('$moment');  
 
 const props = defineProps({
     groupKey: Object,
     readonly: Boolean,
     saleCustomerDisplay: Object
 });
+
 
 function toggleSelection(sp) {
     sp.selected = !sp.selected
@@ -160,8 +154,8 @@ function getMenuName(sp) {
  
 
 
-function getSaleProducts(groupByKey) {
-    if (props.saleCustomerDisplay && props.saleCustomerDisplay.sale_products) {
+function getSaleProducts(groupByKey) { 
+    if (saleProducts) {
         if (groupByKey) {
             return Enumerable.from(props.saleCustomerDisplay.sale_products).where(`$.order_by=='${groupByKey.order_by}' && $.order_time=='${groupByKey.order_time}'`).orderByDescending("$.modified").toArray()
         } else {
@@ -171,23 +165,7 @@ function getSaleProducts(groupByKey) {
     return [];
 }
 
-
-
-function getEmployees(data) {
-    if ((data || "") != "") {
-        const result = JSON.parse(data);
-        if (result) {
-            if (result.length > 0) {
-                result.forEach((e) => {
-                    e.employee_display_name = e.employee_name + '(' + e.duration_title + ')';
-                })
-            }
-        }
-        return result;
-    }
-    return []
-}
-
+ 
  
  
 

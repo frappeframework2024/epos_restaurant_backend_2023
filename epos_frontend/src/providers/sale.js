@@ -242,6 +242,18 @@ export default class Sale {
         }
     }
 
+
+    getReSendSaleProductGroupByKey() {
+        if (!this.sale.sale_products) {
+            return []
+        } else {
+            var saleProducts = JSON.parse(JSON.stringify( this.sale.sale_products));
+            console.log(saleProducts)
+            const group = Enumerable.from(saleProducts).groupBy("{order_by:$.order_by,order_time:$.order_time}", "", "{order_by:$.order_by,order_time:$.order_time}", "$.order_by+','+$.order_time");
+            return group.orderByDescending("$.order_time").toArray();
+        }
+    }
+
     getSaleProductDeletedGroupByKey() {
         if (!this.deletedSaleProductsDisplay) {
             return []
@@ -253,6 +265,16 @@ export default class Sale {
             return group.orderByDescending("$.order_time").toArray();
         }
     }
+
+    getReSendSaleProducts(groupByKey) {
+        let saleProducts = JSON.parse(JSON.stringify(this.sale.sale_products));
+        if (groupByKey) {
+            return Enumerable.from(saleProducts).where(`$.order_by=='${groupByKey.order_by}' && $.order_time=='${groupByKey.order_time}'`).orderByDescending("$.modified").toArray()
+        } else {
+            return Enumerable.from(saleProducts).orderByDescending("$.modified").toArray()
+        }
+    }
+
 
     getSaleProducts(groupByKey) {
         if (groupByKey) {
