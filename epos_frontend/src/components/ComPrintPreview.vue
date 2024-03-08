@@ -12,14 +12,14 @@
                 <template #title>
                     <div class="px-1 py-2 -m-1"> 
                         <div class="flex justify-between">
-                            <div> 
+                            <div style="max-width:810px;overflow-x:auto;"> 
                                      <v-btn 
                                         v-for="(r, index) in gv.setting.reports.filter(r=>r.doc_type==params.doctype && r.show_in_pos == 1)" :key="index"  
                                         :color="activeReport.name == r.name ? 'info' : 'default'"
                                         class="m-1" @click="onViewReport(r)">{{ r.title }}</v-btn>
                                  
                             </div>
-                            <div class="flex items-center"> 
+                            <div class="flex items-center"  > 
                                 <v-select 
                                 prepend-inner-icon="mdi-content-paste"
                                 density="compact"

@@ -55,45 +55,47 @@
             <v-card>
                 <template #title>
                     <div class="px-1 py-2 -m-1">
-                        <div class="flex justify-between">
-                            <div> 
+                        <v-row>
+                            <v-col> 
                                 <div v-if="cashierShiftReports?.length > 0 && activeReport.name == 'Cashier Shift'"> 
                                     <v-btn v-for="(r, index) in cashierShiftReports.sort((a, b) => a.sort_order - b.sort_order )" :key="index" :color="activeReport.preview_report == r.name ? 'info' : 'default'" class="m-1" @click="onPrintFormat(r)">{{$t(r.title)  }}</v-btn>
                                 </div>
                                 <div v-else-if="workingDay?.length > 0 && activeReport.name == 'Working Day'">                                    
                                     <v-btn v-for="(r, index) in workingDay.sort((a, b) => a.sort_order - b.sort_order )" :key="index" class="m-1" :color="activeReport.preview_report == r.name ? 'info' : 'default'" @click="onPrintFormat(r)">{{ $t(r.title)  }}</v-btn>
                                 </div> 
-                            </div> 
-                            <div class="flex items-center"> 
-                                <v-select 
-                                prepend-inner-icon="mdi-content-paste"
-                                density="compact"
-                                v-model="activeReport.letterhead"
-                                :items= gv.setting.letter_heads
-                                item-title="name"
-                                item-value="name"
-                                hide-no-data
-                                hide-details
-                                variant="solo"
-                                class="mx-1"
-                                @update:modelValue="onRefresh"
-                                ></v-select>
-                                <v-select 
-                                prepend-inner-icon="mdi-google-translate"
-                                density="compact"
-                                v-model="activeReport.lang"
-                                :items="lang" 
-                                item-title="language_name"
-                                item-value="language_code"
-                                hide-no-data
-                                hide-details
-                                variant="solo"
-                                class="mx-1"
-                                @update:modelValue="onRefresh"
-                                ></v-select>
-                                <v-icon class="mx-1" icon="mdi-refresh" size="small" @click="onRefresh"/>
-                            </div>
-                        </div>
+                            </v-col> 
+                            <v-col cols="12" lg="5">
+                                <div class="flex items-center col-4"> 
+                                    <v-select 
+                                    prepend-inner-icon="mdi-content-paste"
+                                    density="compact"
+                                    v-model="activeReport.letterhead"
+                                    :items= gv.setting.letter_heads
+                                    item-title="name"
+                                    item-value="name"
+                                    hide-no-data
+                                    hide-details
+                                    variant="solo"
+                                    class="mx-1"
+                                    @update:modelValue="onRefresh"
+                                    ></v-select>
+                                    <v-select 
+                                    prepend-inner-icon="mdi-google-translate"
+                                    density="compact"
+                                    v-model="activeReport.lang"
+                                    :items="lang" 
+                                    item-title="language_name"
+                                    item-value="language_code"
+                                    hide-no-data
+                                    hide-details
+                                    variant="solo"
+                                    class="mx-1"
+                                    @update:modelValue="onRefresh"
+                                    ></v-select>
+                                    <v-icon class="mx-1" icon="mdi-refresh" size="small" @click="onRefresh"/>
+                                </div>
+                            </v-col>
+                        </v-row>
                         <div class="flex pt-2 px-2 items-center border-t border-gray-300 mt-2" v-if="activeReport.preview_report == 'Working Day Inventory Transaction' || activeReport.preview_report == 'Cashier Inventory Transaction'">
                             <div class="flex-grow">
                                 <div style="max-width: 250px;">

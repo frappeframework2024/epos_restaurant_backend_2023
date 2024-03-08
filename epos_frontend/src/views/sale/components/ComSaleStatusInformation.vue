@@ -1,5 +1,5 @@
 <template>
-    <div class="-mx-2" v-if="sale_status">
+    <div class="h-100 flex align-center" v-if="sale_status">
         <v-chip
             v-for="(s, index) in sale_status" :key="index"
             class="ma-2"
