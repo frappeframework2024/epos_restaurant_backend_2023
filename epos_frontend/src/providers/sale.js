@@ -75,6 +75,8 @@ export default class Sale {
         //sale product deleted show in screen sale item list
         this.deletedSaleProductsDisplay = [];
 
+        this.reSendSaleProductKOT = [];
+
         //tempporary store autditrail list and will submit to database after submit
         //auditrail login is store in tabComment
         this.auditTrailLogs = [];
@@ -175,7 +177,7 @@ export default class Sale {
         }
     }
 
-    async LoadSaleData(name) {
+    async LoadSaleData(name) { 
         this.auditTrailLogs = [];
         this.changeTableSaleProducts = [];
         return new Promise(async (resolve) => {
@@ -186,7 +188,8 @@ export default class Sale {
                 name: name,
                 setValue: {
                     onSuccess(doc) {
-                        parent.sale = doc;
+                        parent.sale = doc; 
+                        console.log("xxxx")
                         parent.onProcessTaskAfterSubmit(doc);
                         parent.action = "";
                         if (parent.message != undefined) {
@@ -200,9 +203,16 @@ export default class Sale {
                 },
             });
 
+        
+
             await this.saleResource.get.fetch().then(async (doc) => {
                 this.onLoadDeleteSaleProducts(doc.name);
                 this.sale = doc;
+
+                
+                //add sale product to temp resend sale product to kitchen order
+                this.reSendSaleProductKOT = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r)=>(r.name??"")!="")));  
+
                 this.action = "";
                 //check if current table dont hanve any sale list data then load it
                 if (!this.tableSaleListResource?.data) {
@@ -244,12 +254,10 @@ export default class Sale {
 
 
     getReSendSaleProductGroupByKey() {
-        if (!this.sale.sale_products) {
+        if (!this.reSendSaleProductKOT) {
             return []
-        } else {
-            var saleProducts = JSON.parse(JSON.stringify( this.sale.sale_products));
-            console.log(saleProducts)
-            const group = Enumerable.from(saleProducts).groupBy("{order_by:$.order_by,order_time:$.order_time}", "", "{order_by:$.order_by,order_time:$.order_time}", "$.order_by+','+$.order_time");
+        } else { 
+            const group = Enumerable.from(this.reSendSaleProductKOT).groupBy("{order_by:$.order_by,order_time:$.order_time}", "", "{order_by:$.order_by,order_time:$.order_time}", "$.order_by+','+$.order_time");
             return group.orderByDescending("$.order_time").toArray();
         }
     }
@@ -266,12 +274,11 @@ export default class Sale {
         }
     }
 
-    getReSendSaleProducts(groupByKey) {
-        let saleProducts = JSON.parse(JSON.stringify(this.sale.sale_products));
+    getReSendSaleProducts(groupByKey) { 
         if (groupByKey) {
-            return Enumerable.from(saleProducts).where(`$.order_by=='${groupByKey.order_by}' && $.order_time=='${groupByKey.order_time}'`).orderByDescending("$.modified").toArray()
+            return Enumerable.from(this.reSendSaleProductKOT).where(`$.order_by=='${groupByKey.order_by}' && $.order_time=='${groupByKey.order_time}'`).orderByDescending("$.modified").toArray()
         } else {
-            return Enumerable.from(saleProducts).orderByDescending("$.modified").toArray()
+            return Enumerable.from(this.reSendSaleProductKOT).orderByDescending("$.modified").toArray()
         }
     }
 
@@ -555,6 +562,9 @@ export default class Sale {
 
         //set property for re render comhappyhour check
         sp.is_render = true;
+
+
+       
     }
 
     //on sale product apply tax setting
@@ -698,6 +708,9 @@ export default class Sale {
         this.orderChanged = true;
 
         socket.emit("ShowOrderInCustomerDisplay", this.sale, sale_status);
+
+         //add sale product to temp resend sale product to kitchen order
+         this.reSendSaleProductKOT = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r)=>(r.name??"")!="")));  
     }
 
     updateQuantity(sp, n) {
@@ -1796,13 +1809,27 @@ export default class Sale {
                     setting: this.setting?.pos_setting,
                     sale: doc,
                     station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
+                    station: (this.setting?.device_setting?.name) || "",
                 }
 
                 if (localStorage.getItem("is_window") == "1") {
                     window.chrome.webview.postMessage(JSON.stringify(data));
                 }
-                else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
-                    flutterChannel.postMessage(JSON.stringify(data));
+                else if ((localStorage.getItem("flutterWrapper") || 0) == 1) { 
+                    var printer = (this.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+                    if (printer.length <= 0) {
+                        // toaster.warning($t("Printer not yet configt for this device"))
+                    } else {
+                        data.printer = {
+                            "printer_name": printer[0].printer_name,
+                            "ip_address": printer[0].ip_address,
+                            "port": printer[0].port,
+                            "cashier_printer": printer[0].cashier_printer,
+                            "is_label_printer": printer[0].is_label_printer
+                        }
+                        flutterChannel.postMessage(JSON.stringify(data));
+                        
+                    }
                 }
                 else {
                     socket.emit('PrintReceipt', JSON.stringify(data));

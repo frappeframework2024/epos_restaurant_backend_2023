@@ -102,11 +102,7 @@
    }) ;
 
  
-   async function onSave() {      
-
-    // flutterChannel.postMessage("flutter.reload");
-
-    // return ;
+   async function onSave() {    
         pos_license.web_platform  = false;
         if((is_window||0) == 0 && (is_apk_ipa||0)==0){
             pos_license.web_platform = true;

@@ -116,7 +116,7 @@
 </PageLayout>
 </template>
 <script setup>
-import { inject, computed,ref,saleDetailDialog,onUnmounted, reactive} from '@/plugin'
+import { inject, computed,ref,saleDetailDialog,onUnmounted, reactive,i18n} from '@/plugin'
 import Enumerable from 'linq'
 import PageLayout from '@/components/layout/PageLayout.vue';
 import { createToaster } from '@meforma/vue-toaster';
@@ -128,9 +128,11 @@ const frappe = inject('$frappe');
 const moment = inject('$moment');
 const pos_profile = localStorage.getItem("pos_profile");
 const serverUrl = window.location.protocol + "//" + window.location.hostname + ":" + gv.setting.pos_setting.backend_port;
-const toaster = createToaster({position:"top-right"});
+
 const call = frappe.call();
 const db = frappe.db();
+const toaster = createToaster({ position: "top-right" });
+const { t: $t } = i18n.global; 
  
 let filter = reactive({
     product_category: 'All Product Categories',
@@ -290,7 +292,6 @@ function onPrintFormat(value){
 }
 
 function onWorkingDay(working_day){ 
-
     activeReport.value.name = 'Working Day';
     activeReport.value.report_id = working_day.name;
     activeReport.value.preview_report = workingDay.value[0]?.name;
@@ -304,9 +305,35 @@ function onRefresh(){
     document.getElementById("report-view").contentWindow.location.replace(printPreviewUrl.value)
 }
 
-function onPrint(){
-    window.open(printUrl.value + "&trigger_print=1").print();
-    window.close();
+function onPrint(){ 
+    if ((localStorage.getItem("flutterWrapper") || 0) == 1) { 
+        var printers = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+        if (printers.length <= 0) {
+            // toaster.warning($t("Printer not yet configt for this device"))
+        } else { 
+            let data ={
+                action : "print_report",
+                doc: activeReport.value.doc_type,
+                name: activeReport.value.report_id,
+                print_format: activeReport.value.print_report_name,
+                printer : {
+                    "printer_name": printers[0].printer_name,
+                    "ip_address": printers[0].ip_address,
+                    "port": printers[0].port,
+                    "cashier_printer": printers[0].cashier_printer,
+                    "is_label_printer": printers[0].is_label_printer
+                }
+            }        
+            flutterChannel.postMessage(JSON.stringify(data));
+        }
+        toaster.success($t("Report is printing"))
+    }
+    else{
+        if((localStorage.getItem("apkipa") ||0)==0){
+            window.open(printUrl.value + "&trigger_print=1").print();
+            window.close();
+        }
+    }
 } 
 const reportClickHandler = async function (e) {
     if(e.isTrusted && typeof(e.data) == 'string'){

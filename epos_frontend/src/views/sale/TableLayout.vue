@@ -1,7 +1,7 @@
 <template>
     <PageLayout :title="$t('Table Layout')" full icon="mdi-cart-outline">
         <template #centerCotent>
-            <ComTableGroupTabHeader />
+            <ComTableGroupTabHeader :tableSaleColor="table_status_color"/>
         </template>
         <template #action>
             <ComTableLayoutActionButton @onShowHide="onTableStatusHidden"/>
@@ -12,16 +12,14 @@
                 <ComArrangeTable  v-if="tableLayout.canArrangeTable"/>
                 <ComRenderTableNumber v-else :tableStatusColor="table_status_color"/>
             </v-window>
-        </template> 
-        <ComSaleStatusInformation v-if="(table_status_color)"/>
+        </template>  
+        <!-- <ComSaleStatusInformation v-if="(table_status_color)"/> -->
     </PageLayout>
 </template>
 <script setup>
 import PageLayout from '../../components/layout/PageLayout.vue';
 import { inject, createResource, useRouter,createToaster,onMounted , onUnmounted,ref,i18n} from "@/plugin";
-import ComTableGroupTabHeader from './components/table_layouts/ComTableGroupTabHeader.vue';
-import ComSaleStatusInformation from './components/ComSaleStatusInformation.vue';
- 
+import ComTableGroupTabHeader from './components/table_layouts/ComTableGroupTabHeader.vue'; 
 import ComTableLayoutActionButton from './components/table_layouts/ComTableLayoutActionButton.vue';
 import ComArrangeTable from './components/table_layouts/ComArrangeTable.vue';
 import ComRenderTableNumber from './components/table_layouts/ComRenderTableNumber.vue';

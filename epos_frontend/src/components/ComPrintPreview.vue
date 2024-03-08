@@ -70,13 +70,14 @@
   
 <script setup>
 
-import { inject, ref,computed,saleDetailDialog, onUnmounted,reactive } from '@/plugin'
+import { inject, ref,computed,saleDetailDialog, onUnmounted,reactive,i18n } from '@/plugin'
 import { createToaster } from '@meforma/vue-toaster';
 const gv = inject("$gv")
 
 const serverUrl = window.location.protocol + "//" + window.location.hostname + ":" + gv.setting.pos_setting.backend_port;
 
-const toaster = createToaster({position:"top-right"})
+const toaster = createToaster({ position: "top-right" });
+const { t: $t } = i18n.global; 
 
 const props = defineProps({
     params: {
@@ -144,18 +145,42 @@ function onRefresh(){
  
 }
 
-function onPrint() {
-    if (localStorage.getItem("is_window")==1) {
-        if(props.params.doctype =="Sale" && activeReport.value.pos_receipt_file_name !="" && activeReport.value.pos_receipt_file_name !=null){
-          
-            window.chrome.webview.postMessage("doc");
-            return;
+function onPrint() { 
+    if ((localStorage.getItem("flutterWrapper") || 0) == 1) { 
+        var printers = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+        if (printers.length <= 0) {
+            // toaster.warning($t("Printer not yet configt for this device"))
+        } else {
+            let data ={
+                action : "print_report",
+                doc: props.params.doctype,
+                name:props.params.name,
+                print_format:activeReport.value.name,
+                printer : {
+                    "printer_name": printers[0].printer_name,
+                    "ip_address": printers[0].ip_address,
+                    "port": printers[0].port,
+                    "cashier_printer": printers[0].cashier_printer,
+                    "is_label_printer": printers[0].is_label_printer
+                }
+            }
+           
+            flutterChannel.postMessage(JSON.stringify(data));
         }
-        
+        toaster.success($t("Report is printing"))
     }
-    
-    window.open(printPreviewUrl.value + "&trigger_print=1").print();
-    window.close();
+    else{
+        if (localStorage.getItem("is_window")==1) {
+            if(props.params.doctype =="Sale" && activeReport.value.pos_receipt_file_name !="" && activeReport.value.pos_receipt_file_name !=null){            
+                window.chrome.webview.postMessage("doc");
+                return;
+            }            
+        }
+        if((localStorage.getItem("apkipa") ||0)==0){
+            window.open(printPreviewUrl.value + "&trigger_print=1").print();
+            window.close();
+        }
+    }
 
 }
 

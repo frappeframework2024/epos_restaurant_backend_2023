@@ -17,6 +17,8 @@
   "receipt_height",
   "receipt_width",
   "print_format_doc_type",
+  "printing_fixed_height",
+  "printing_fixed_width",
   "column_break_yxpe",
   "receipt_margin_top",
   "receipt_margin_right",
@@ -161,11 +163,23 @@
    "fieldtype": "Link",
    "label": "POS Receipt Template",
    "options": "POS Receipt Template"
+  },
+  {
+   "default": "3000",
+   "fieldname": "printing_fixed_height",
+   "fieldtype": "Int",
+   "label": "Printing Fixed Height"
+  },
+  {
+   "default": "320",
+   "fieldname": "printing_fixed_width",
+   "fieldtype": "Int",
+   "label": "Printing Fixed Width"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-03-06 12:08:33.455413",
+ "modified": "2024-03-08 16:23:21.029769",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Print Format Setting",

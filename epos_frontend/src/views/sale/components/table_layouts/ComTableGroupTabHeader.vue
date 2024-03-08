@@ -12,14 +12,20 @@
             </v-tab>
         </v-tabs>
     </v-bottom-navigation> 
+
+    <ComSaleStatusInformation />
  
 </template>
 <script setup>
 import { inject } from '@/plugin';
 import { useDisplay } from 'vuetify'
+import ComSaleStatusInformation from './components/ComSaleStatusInformation.vue';
 const tableLayout = inject("$tableLayout");
 const { mobile } = useDisplay()
 
+const props = defineProps({
+    tableSaleColor: Boolean
+})
 
 
 function getGroupName (g){

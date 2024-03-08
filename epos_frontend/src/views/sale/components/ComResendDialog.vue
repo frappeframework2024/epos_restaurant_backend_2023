@@ -1,6 +1,5 @@
 <template>
-    <ComModal @onClose="onClose(false)" :loading="loading" :fullscreen="false" :hide-ok-button="true"
-        :hide-close-button="true"> 
+    <ComModal @onClose="onClose" :loading="loading" :fullscreen="false"> 
         <template #title>
             Helllo Resend
         </template>
@@ -10,6 +9,12 @@
     </ComModal>
 </template>
 <script setup>
-    import ComResendGroupSaleProductList from "@/views/sale/components/ComResendGroupSaleProductList.vue";
+import ComResendGroupSaleProductList from "@/views/sale/components/ComResendGroupSaleProductList.vue";
+
+const emit = defineEmits(["resolve"]);
+
+function onClose() {
+    emit("resolve", false);
+}
 
 </script>

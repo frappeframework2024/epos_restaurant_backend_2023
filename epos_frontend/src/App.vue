@@ -52,9 +52,7 @@ socket.on("PrintReceipt", (arg) => {
 		if(data.sale.pos_profile == localStorage.getItem("pos_profile") && station_device_printing == data.station_device_printing){
 			window.chrome.webview.postMessage(arg);
 		}
-	}else if((localStorage.getItem("apkipa")||0) == 1){
-		flutterChannel.postMessage("helllo")
-	}
+	} 
 });
 
 const router = useRouter()

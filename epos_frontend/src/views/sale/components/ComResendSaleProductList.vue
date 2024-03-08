@@ -1,9 +1,8 @@
 <template>
     <v-list class="!p-0">
-        <v-list-item v-for="sp, index in (readonly == true ? getSaleProducts(groupKey) : sale.getSaleProducts(groupKey))"
-            :key="index" @click="toggleSelection(sp)"
-            class="!border-t !border-gray-300 !mb-0 !p-2"
-            :class="{ 'selected': sp.selected, 'submitted relative': sp.sale_product_status == 'Submitted', 'item-list': !readonly }">
+        <v-list-item v-for="sp, index in (readonly == true ? getSaleProducts(groupKey) : sale.getReSendSaleProducts(groupKey))"
+            :key="index"
+            class="!border-t !border-gray-300 !mb-0 !p-2">
             <template v-slot:prepend>
                 <v-avatar v-if="sp.product_photo">
                     <v-img :src="sp.product_photo"></v-img>
@@ -12,24 +11,22 @@
 
             </template>
             <template v-slot:default>
-                <div class="text-sm">  
-                    {{ sp.selected }}
+                <div class="text-sm">   
                     <div class="flex">
                         <div class="grow">
-                            <div v-if="!sale.load_menu_lang"> {{ getMenuName(sp) }}<v-chip class="ml-1" size="x-small"
-                                    color="error" variant="outlined" v-if="sp.portion">{{ sp.portion }}</v-chip>
-                                <v-chip v-if="sp.is_free" size="x-small" color="success" variant="outlined">{{ $t('Free')
-                                }}</v-chip>
-                                <v-chip v-if="sp.is_park" size="x-small" color="error" variant="outlined">
-                                    {{ $t('Park') }}</v-chip>
-                                <ComChip :tooltip="sp.happy_hours_promotion_title"
-                                    v-if="sp.happy_hour_promotion && sp.discount > 0" size="x-small" variant="outlined"
+                            <div v-if="!sale.load_menu_lang"> 
+                                {{ getMenuName(sp) }}
+                                <v-chip class="ml-1" size="x-small" color="error" variant="outlined" v-if="sp.portion">{{ sp.portion }}</v-chip>
+                                <v-chip v-if="sp.is_free" size="x-small" color="success" variant="outlined">{{ $t('Free')}}</v-chip>
+                                <v-chip v-if="sp.is_park" size="x-small" color="error" variant="outlined">{{ $t('Park') }}</v-chip>
+                                <ComChip :tooltip="sp.happy_hours_promotion_title" v-if="sp.happy_hour_promotion && sp.discount > 0" size="x-small" variant="outlined"
                                     color="orange" text-color="white" prepend-icon="mdi-tag-multiple">
                                     <span>{{ sp.discount }}%</span>
                                 </ComChip>
-                                <ComHappyHour :saleProduct="sp" v-if="sp.is_render" />
+                                <ComHappyHour :saleProduct="sp" v-if="sp.is_render" /> 
                             </div>
-
+  
+                             
                             <div v-if="!sp.is_timer_product">
                                 {{ sp.quantity }} x
                                 <CurrencyFormat :value="sp.price" />
@@ -40,58 +37,18 @@
                                     <span v-if="sp.time_out">
                                         {{ $t("Time Out") }}
                                         {{ moment(sp.time_out).format('hh:mm A') }}
-                                    </span>
-
+                                    </span> 
+                                </template> 
+                            </div> 
+ 
+                            <div class="flex gap-1 py-1">
+                                <template v-for="printer,index in sp.temp_printers">  
+                                    <v-chip size="small" :class="{ 'selected': printer.selected}" @click="toggleSelection(printer)" >{{  printer.printer}}</v-chip> 
                                 </template>
-
-                            </div>
-                            <div class="text-xs pt-1">
-                                <div v-if="sp.modifiers && !sp.is_timer_product">
-                                    <span>{{ sp.modifiers }} (
-                                        <CurrencyFormat :value="sp.modifiers_price * sp.quantity" />)
-                                    </span>
-                                </div>
-
-                                <div v-if="sp.is_combo_menu">
-                                    <div v-if="sp.use_combo_group && sp.combo_menu_data">
-                                        <ComSaleProductComboMenuGroupItemDisplay :combo-menu-data="sp.combo_menu_data" />
-                                    </div>
-                                    <span v-else>{{ sp.combo_menu }}</span>
-                                </div>
-                                <div v-if="sp.discount > 0 && !sp.is_free">
-                                    <span class="text-red-500">
-                                        {{ $t('Discount') }} :
-                                        <span v-if="sp.discount_type == 'Percent'">{{ sp.discount }}%</span>
-                                        <CurrencyFormat v-else :value="parseFloat(sp.discount)" />
-                                    </span>
-                                </div>
-
-                                <div v-if="(sp.is_require_employee || 0) == 1">
-                                    <span v-for="emp, idx in getEmployees(sp.employees)" :key="idx" class="text-gray-500">
-                                        <v-chip class="m-0.5" size="x-small" variant="outlined" color="primary"
-                                            text-color="white">
-                                            {{ emp.employee_display_name }}
-                                        </v-chip>
-                                    </span>
-
-                                </div>
-                                <v-chip color="blue" size="x-small" v-if="sp.seat_number"> {{ $t('Seat') + "# " +
-                                    sp.seat_number
-                                }}</v-chip>
-                                <!-- <div class="text-gray-500">
-                                    <v-icon icon="mdi-clock" size="small" class="mr-1"></v-icon><span>{{ moment(sp.creation).format('hh:mm:ss A') }}</span>
-                                </div> -->
-                               
-                                <div class="text-gray-500" v-if="sp.note">
-                                    {{ $t('Note') }}: <span>{{ sp.note }}</span>
-                                </div>
-                                <div class="text-gray-500" v-if="sp.is_park">
-                                    {{ $t('Expiry') + ": " + moment(sp.expired_date).format('DD-MM-yyyy') }}
-                                </div>
                             </div>
                         </div>
 
-                        <div class="flex-none text-right w-36">
+                        <div class="flex-none text-right w-36"> 
                             <div class="text-lg">
                                 <ComTimerProductEstimatePrice v-if="sp.is_timer_product && !sp.time_out_price"
                                     :saleProduct="sp" />
@@ -100,12 +57,10 @@
                             <span v-if="sp.product_tax_rule && sp.total_tax > 0" class="text-xs">
                                 {{ $t('Tax') }}:
                                 <CurrencyFormat :value="sp.total_tax" />
-                            </span>
- 
-                        </div>
-                    </div>
-                </div>
-
+                            </span>   
+                        </div> 
+                    </div> 
+                </div> 
             </template>
         </v-list-item>
     </v-list>
@@ -130,8 +85,8 @@ const props = defineProps({
 });
 
 
-function toggleSelection(sp) {
-    sp.selected = !sp.selected
+function toggleSelection(printer) { 
+    printer.selected = !(printer.selected??false)
 }
 
 function getMenuName(sp) {

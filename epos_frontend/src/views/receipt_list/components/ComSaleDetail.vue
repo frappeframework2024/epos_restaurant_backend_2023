@@ -178,7 +178,8 @@ async function onPrint() {
         action: "print_receipt",
         print_setting: activeReport.value,
         setting: gv.setting?.pos_setting,
-        sale: sale.doc
+        sale: sale.doc,
+        station: (this.setting?.device_setting?.name) || "",
     } 
  
     if (localStorage.getItem("is_window") == "1") {       

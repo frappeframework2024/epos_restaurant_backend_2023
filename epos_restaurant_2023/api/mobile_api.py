@@ -1,7 +1,15 @@
 from epos_restaurant_2023.api.product import get_product_by_menu
 from epos_restaurant_2023.api.api import get_system_settings
-from epos_restaurant_2023.api.printing import get_print_context, print_bill,print_kitchen_order,print_waiting_slip,print_voucher_invoice
+from epos_restaurant_2023.api.printing import (
+    get_print_context, 
+    print_bill,
+    print_kitchen_order,
+    print_waiting_slip,
+    print_voucher_invoice,
+    print_from_print_format
+    )
 import frappe
+
 
 @frappe.whitelist(allow_guest=True)
 def on_check_url():  
@@ -107,6 +115,12 @@ def get_voucher_invoice_image(station, name):
 @frappe.whitelist(allow_guest=True,methods="POST")
 def get_kot_image(station, sale, products,printer): 
    return print_kitchen_order(station=station, sale=sale, products=products,printer=printer)
+
+### print report from print format 
+@frappe.whitelist(allow_guest=True,methods="POST")
+def get_print_report_image(data): 
+    return print_from_print_format(data)
+ 
 
 
 ## END MOBILE SERVER PRINTING GENERATE BASE_64 IMAGE

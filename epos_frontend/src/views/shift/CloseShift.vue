@@ -217,11 +217,12 @@ async function onCloseShift() {
 }
 async function onChangeShiftName(){
     const result = await ChangeShiftNameModal({data:cashierShiftInfo.data});
-    console.log(result)
     cashierShiftInfo.data.shift_name = result.shift_name
 }
-function onOpenReport() {
+function onOpenReport() { 
     printPreviewDialog({ title:$t('Cashier Shift Report')+" #" + cashierShiftResource.value.doc.name, doctype: "Cashier Shift", name: cashierShiftResource.value.doc.name });
+     
+    
 }
 
 </script>

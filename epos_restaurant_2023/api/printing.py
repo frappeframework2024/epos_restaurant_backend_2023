@@ -4,14 +4,11 @@ from PIL import Image, ImageChops
 from html2image import Html2Image
 import numpy as np
 import os
-from frappe.www.printview import get_html_and_style
-from frappe.utils import get_site_name
+from frappe.www.printview import get_print_format_doc, set_link_titles,get_rendered_template,get_print_style
+from epos_restaurant_2023.api.print_report_css.custom_style import get_css_boostrap
 import base64
 from frappe.utils import (
     nowdate,
-    parse_val,
-    is_html,
-    add_to_date,
 )
 from escpos import *
 
@@ -44,8 +41,8 @@ def trim(file_path):
 
     # Find the bounding box of the white area
     coords = np.argwhere(~mask)
-    y_min, x_min = coords.min(axis=0)
-    y_max, x_max = coords.max(axis=0) + 1
+    y_min, x_min = coords.min(axis=0)      
+    y_max, x_max = coords.max(axis=0)
 
     # Crop the image using the bounding box
     cropped = image.crop((x_min, y_min, x_max, y_max+30))
@@ -142,3 +139,36 @@ def print_kitchen_order(station, sale, products,printer):
     hash_generate = frappe.generate_hash(length=15)
     return capture(html=html,css=css,height=height,width=width,image='{}_{}_kitchen_order_{}.png'.format(station,printer,hash_generate))
 
+
+
+
+### print report from print format 
+@frappe.whitelist(allow_guest=True,methods="POST")
+def print_from_print_format(data):
+    width, height = frappe.get_value("POS Print Format Setting",data["print_format"],["printing_fixed_width","printing_fixed_height"] )
+    document = frappe.get_doc(data["doc"], data["name"])
+    print_format = get_print_format_doc(data["print_format"], meta=document.meta)
+    frappe.flags.ignore_print_permissions = True  
+    
+    set_link_titles(document)
+    try:
+        html = get_rendered_template(
+            doc=document,
+            print_format=print_format,
+            meta=document.meta
+            )
+    except frappe.TemplateNotFoundError:
+        frappe.clear_last_message()
+        html = None
+    if not html:
+        return "" 
+    html = frappe.render_template(html) 
+    html = "{}".format(html)
+    css = """"""
+    css += "{}".format(get_css_boostrap()) 
+    css += get_print_style( print_format=print_format)    
+
+    hash_generate =  frappe.generate_hash(length=15)
+    # hash_generate =  ""
+    return capture(html=html,css=css,height=height,width=width,image='report_{}.png'.format(hash_generate))
+    
