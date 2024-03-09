@@ -138,6 +138,7 @@ router.beforeEach(async (to, from, next) => {
 	if(!localStorage.getItem("pos_profile"))
 	{ 
 		if (to.matched.some((record) => !record.meta.isStartupConfig)){
+			
 			next({name:"StartupConfig", query: { route: to.path }})
 		}else{
 			next()

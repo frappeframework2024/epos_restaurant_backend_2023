@@ -115,8 +115,15 @@ export default {
         onReload() {
             location.reload();
             const apkipa = localStorage.getItem('apkipa');
+            const flutterChannel = localStorage.getItem('flutterChannel');
             if ((apkipa || 0) == 1) {
-                window.ReactNativeWebView.postMessage("mobile_reload");
+                if((flutterChannel||0)==1){
+                    flutterChannel.postMessage("mobile_reload");
+                }
+                 else{
+                    window.ReactNativeWebView.postMessage("mobile_reload");
+                }
+               
             }
         },
         onLogout() {

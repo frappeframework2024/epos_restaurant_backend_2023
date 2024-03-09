@@ -10,7 +10,7 @@
             class="mx-auto mt-12"
             color="grey-lighten-3"
             max-width="400"
-        > {{check}}  
+        > {{check}}  {{save_startup_config}}
             <v-card-title v-if="(is_startup_device||0)==0">
                 <div class="text-center p-4">
                     ePOS System
@@ -89,8 +89,6 @@
 
     const is_window = localStorage.getItem("is_window");
     const is_apk_ipa = localStorage.getItem("apkipa");
-  
-    
     const check = computed(()=>{
         pos_license.web_platform  = false;
         is_startup_device.value = false;
@@ -99,7 +97,14 @@
             state.device_name = localStorage.getItem("__startup_device");
             is_startup_device.value = true;
         }      
-   }) ;
+   });
+
+ const save_startup_config =  computed(()=>{
+    if((localStorage.getItem("flutterWrapper")??0)==1 && (localStorage.getItem("apkipa")??0)==1){
+        _onSave();        
+      return  flutterWrapper.postMessage("save_startup_config");
+    } 
+   });
 
  
    async function onSave() {    

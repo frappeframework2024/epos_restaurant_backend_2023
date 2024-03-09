@@ -138,8 +138,7 @@ const auth = inject('$auth');
 const gv  = inject("$gv");
 const toaster = createToaster({position:'top-right'});
 const device_setting = JSON.parse(localStorage.getItem("device_setting"))
-
-const db = frappe.db();
+ 
 const call = frappe.call();
  
 function onRoute(page) {

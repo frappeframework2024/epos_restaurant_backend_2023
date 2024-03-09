@@ -133,7 +133,18 @@ function onDrawer() {
     drawer.value = !drawer.value;
 }
 function onReload() {
-    location.reload()
+    location.reload();
+    const apkipa = localStorage.getItem('apkipa');
+    const flutterChannel = localStorage.getItem('flutterChannel');
+    if ((apkipa || 0) == 1) {
+        if((flutterChannel||0)==1){
+            flutterChannel.postMessage("mobile_reload");
+        }
+            else{
+            window.ReactNativeWebView.postMessage("mobile_reload");
+        }
+        
+    }
 }
 
 async function onAdvanceSearch(){
