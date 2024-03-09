@@ -1,11 +1,11 @@
 import Enumerable from 'linq'
 
-import {  createResource,i18n } from "@/plugin"
+import { createResource, i18n } from "@/plugin"
 import { createToaster } from "@meforma/vue-toaster";
 
 const { t: $t } = i18n.global;
 
- 
+
 const toaster = createToaster({ position: "top-right" });
 export default class TableLayout {
     constructor() {
@@ -23,34 +23,34 @@ export default class TableLayout {
     }
 
     //end constructor
-    initSaveTablePositionResource(){
+    initSaveTablePositionResource() {
         const parent = this;
         this.saveTablePositionResource = createResource({
             url: "epos_restaurant_2023.api.api.save_table_position",
             onSuccess(d) {
                 toaster.success($t("msg.Save successfully"));
-               
+
                 localStorage.setItem("table_groups", JSON.stringify(parent.table_groups));
                 parent.onEnableArrangeTable(false);
-        
+
             }
         })
     }
 
-    getSaleList(){
+    getSaleList() {
         const parent = this;
         this.saleListResource = createResource({
             url: "frappe.client.get_list",
             params: {
                 doctype: "Sale",
-                fields: ["name", "creation", "grand_total", "total_quantity", "tbl_group", "tbl_number", "guest_cover", "grand_total", "sale_status", "sale_status_color", "sale_status_priority", "customer", "customer_name", "phone_number","customer_photo"],
+                fields: ["name", "creation", "grand_total", "total_quantity", "tbl_group", "tbl_number", "guest_cover", "grand_total", "sale_status", "sale_status_color", "sale_status_priority", "customer", "customer_name", "phone_number", "customer_photo"],
                 filters: {
                     pos_profile: localStorage.getItem("pos_profile"),
                     docstatus: 0
                 },
-                limit_page_length:500,
+                limit_page_length: 500,
             },
-            auto:true,
+            auto: true,
             onSuccess(data) {
                 parent.table_groups.forEach(function (g) {
                     g.tables.forEach(function (t) {
@@ -60,7 +60,7 @@ export default class TableLayout {
                             t.grand_total = t.sales.reduce((n, r) => n + r.grand_total, 0)
                             t.background_color = t.sales.sort((a, b) => a.sale_status_priority - b.sale_status_priority)[0].sale_status_color;
                             t.creation = Enumerable.from(t.sales).orderBy("$.creation").select("$.creation").toArray()[0]
-                        }else{
+                        } else {
                             t.guest_cover = 0;
                             t.grand_total = 0;
                             t.creation = null;
@@ -69,30 +69,29 @@ export default class TableLayout {
 
                     })
                 })
-                 
+
             }
         });
     }
 
-    getTableGroups(){ 
-        if(localStorage.getItem("table_groups")!='null' && localStorage.getItem("table_groups")!='undefined'){
-
+    getTableGroups() {
+        if (localStorage.getItem("table_groups") != 'null' && localStorage.getItem("table_groups") != 'undefined') {
             this.table_groups = JSON.parse(localStorage.getItem("table_groups"));
         }
     }
-    
-    onResizeEnd(t) { 
+
+    onResizeEnd(t) {
         return function (d) {
             t.h = d.h;
             t.w = d.w;
             t.x = d.x;
             t.y = d.y;
-    
+
         }
     }
 
-    onEnableArrangeTable(status) {      
-                this.canArrangeTable = status;
+    onEnableArrangeTable(status) {
+        this.canArrangeTable = status;
     }
 }
 

@@ -101,10 +101,11 @@
 
  const save_startup_config =  computed(()=>{
     if((localStorage.getItem("flutterWrapper")??0)==1 && (localStorage.getItem("apkipa")??0)==1){
-        state.pos_profile = (localStorage.getItem('pos_profile')??"");
+        state.pos_profile = (localStorage.getItem('__pos_profile')??"");
         if(state.pos_profile != ""){
-            _onSave();        
+           if(_onSave()){        
             flutterWrapper.postMessage("save_startup_config");
+           }
         }
     } 
    });
@@ -144,7 +145,7 @@
         if(!state.device_name || !state.pos_profile)
         {
             toast.warning('Field(s) cannot be blank.',{ position: 'top'});
-            return
+            return false;
         }
         store.dispatch('startLoading')
         createResource({
@@ -160,9 +161,11 @@
                 localStorage.setItem('device_setting', JSON.stringify( doc));
                 localStorage.setItem('pos_profile',state.pos_profile);
                 location.reload();
+                return true;
             },
             onError(){
                 store.dispatch('endLoading')
+                return false;
             }
         })
     }

@@ -1,5 +1,6 @@
 <template>
     <PageLayout :title="$t('Table Layout')" full icon="mdi-cart-outline">
+ 
         <template #centerCotent>
             <ComTableGroupTabHeader :tableSaleColor="table_status_color"/>
         </template>
@@ -22,6 +23,7 @@ import ComTableGroupTabHeader from './components/table_layouts/ComTableGroupTabH
 import ComTableLayoutActionButton from './components/table_layouts/ComTableLayoutActionButton.vue';
 import ComArrangeTable from './components/table_layouts/ComArrangeTable.vue';
 import ComRenderTableNumber from './components/table_layouts/ComRenderTableNumber.vue';
+import { computed } from 'vue';
 
 const { t: $t } = i18n.global; 
 
@@ -32,12 +34,19 @@ const socket = inject("$socket");
 const table_status_color = ref(false);
 const router = useRouter();
 
+ 
+const tabIndex = computed(()=>{
+    tableLayout.tab = localStorage.getItem("__tblLayoutIndex");
+})
+
 socket.on("RefreshTable", () => {
   tableLayout.getSaleList(); 
 })
 
+
 //on init
-onMounted(async ()=>{
+onMounted(async ()=>{ 
+    tableLayout.tab = localStorage.getItem("__tblLayoutIndex")
     localStorage.removeItem('make_order_auth');
     const cashierShiftResource = createResource({
         url: "epos_restaurant_2023.api.api.get_current_cashier_shift",

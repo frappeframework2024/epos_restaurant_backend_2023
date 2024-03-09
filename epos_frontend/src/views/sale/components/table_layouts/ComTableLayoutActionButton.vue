@@ -75,6 +75,8 @@ function onRefreshSale() {
 
 function onEnableArrageTable(){
     tableLayout.canArrangeTable = true;
+    tableLayout.tab = localStorage.getItem("__tblLayoutIndex");
+   
 }
 
 async function onViewPendingOrder() {

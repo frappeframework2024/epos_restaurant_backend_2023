@@ -71,7 +71,7 @@ const props = defineProps({
     tableStatusColor: Boolean
 });
 
-
+tableLayout.tab = localStorage.getItem("__tblLayoutIndex")
 
 
 function getTimeDifference(date) {

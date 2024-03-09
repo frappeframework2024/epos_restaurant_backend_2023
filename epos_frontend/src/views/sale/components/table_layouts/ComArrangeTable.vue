@@ -22,5 +22,7 @@
     import { inject } from '@/plugin';
 
     const tableLayout = inject("$tableLayout");
+    tableLayout.tab = localStorage.getItem("__tblLayoutIndex")
+
      
 </script>
