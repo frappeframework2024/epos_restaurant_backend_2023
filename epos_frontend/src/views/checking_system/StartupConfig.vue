@@ -101,8 +101,11 @@
 
  const save_startup_config =  computed(()=>{
     if((localStorage.getItem("flutterWrapper")??0)==1 && (localStorage.getItem("apkipa")??0)==1){
-        _onSave();        
-      return  flutterWrapper.postMessage("save_startup_config");
+        state.pos_profile = (localStorage.getItem('pos_profile')??"");
+        if(state.pos_profile != ""){
+            _onSave();        
+            flutterWrapper.postMessage("save_startup_config");
+        }
     } 
    });
 

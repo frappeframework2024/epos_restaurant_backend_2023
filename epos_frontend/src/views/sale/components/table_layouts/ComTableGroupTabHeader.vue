@@ -19,7 +19,7 @@
             </v-col>
             <v-col cols="4"></v-col>
         </v-row>
-    </v-bottom-navigation>  
+    </v-bottom-navigation> 
  
 </template>
 <script setup>
@@ -35,7 +35,7 @@ const props = defineProps({
 
 
 function getGroupName (g){
-    const l = localStorage.getItem("lang")
+    const l = localStorage.getItem("lang")  
     if(l!=null){
         if(l=="kh"){
             return g.table_group_kh;
@@ -44,7 +44,6 @@ function getGroupName (g){
             return g.table_group;
         }
     }
-    return g.table_group
-
-}
+    return g.table_group 
+} 
 </script>

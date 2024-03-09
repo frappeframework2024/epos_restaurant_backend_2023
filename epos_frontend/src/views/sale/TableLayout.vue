@@ -12,8 +12,7 @@
                 <ComArrangeTable  v-if="tableLayout.canArrangeTable"/>
                 <ComRenderTableNumber v-else :tableStatusColor="table_status_color"/>
             </v-window>
-        </template>  
-        <!-- <ComSaleStatusInformation v-if="(table_status_color)"/> -->
+        </template>
     </PageLayout>
 </template>
 <script setup>
