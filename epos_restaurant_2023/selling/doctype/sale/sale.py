@@ -280,7 +280,8 @@ class Sale(Document):
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.create_folio_transaction_from_pos_trnasfer", queue='short', self=self)
 		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit", queue='short', self=self)
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.add_payment_to_sale_payment", queue='short', self=self)
-		frappe.enqueue("epos_restaurant_2023.api.exely.submit_order_to_exely", queue='short', doc_name = self.name)
+		if frappe.db.get_single_value("Exely Itegration Setting","enabled")==1:
+			frappe.enqueue("epos_restaurant_2023.api.exely.submit_order_to_exely", queue='short', doc_name = self.name)
 
 		
 

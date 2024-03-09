@@ -11,43 +11,47 @@
 
                 <template #title>
                     <div class="px-1 py-2 -m-1"> 
-                        <div class="flex justify-between">
-                            <div style="max-width:810px;overflow-x:auto;"> 
-                                     <v-btn 
-                                        v-for="(r, index) in gv.setting.reports.filter(r=>r.doc_type==params.doctype && r.show_in_pos == 1)" :key="index"  
-                                        :color="activeReport.name == r.name ? 'info' : 'default'"
-                                        class="m-1" @click="onViewReport(r)">{{ r.title }}</v-btn>
-                                 
-                            </div>
-                            <div class="flex items-center"  > 
-                                <v-select 
-                                prepend-inner-icon="mdi-content-paste"
-                                density="compact"
-                                v-model="selectedLetterhead"
-                                :items=gv.setting.letter_heads
-                                item-title="name"
-                                item-value="name"
-                                hide-no-data
-                                hide-details
-                                variant="solo"
-                                class="mx-1"
-                                ></v-select>
-                                <v-select 
-                                prepend-inner-icon="mdi-google-translate"
-                                density="compact"
-                                v-model="selectedLang"
-                                :items="gv.setting.lang" 
-                                item-title="language_name"
-                                item-value="language_code"
-                                hide-no-data
-                                hide-details
-                                variant="solo"
-                                class="mx-1"
-                               
-                                ></v-select>
-                                <v-icon class="mx-1" icon="mdi-refresh" size="small" @click="onRefresh()"/>
-                            </div>
-                        </div>
+                        <v-row>
+                            <v-col>
+                                <div style="overflow-x:auto;"> 
+                                        <v-btn 
+                                            v-for="(r, index) in gv.setting.reports.filter(r=>r.doc_type==params.doctype && r.show_in_pos == 1)" :key="index"  
+                                            :color="activeReport.name == r.name ? 'info' : 'default'"
+                                            class="m-1" @click="onViewReport(r)">{{ r.title }}</v-btn>
+                                    
+                                </div>
+                            </v-col>
+                            <v-col cols="12" md="6" lg="4"> 
+                                <div class="flex items-center"  > 
+                                    <v-select 
+                                    prepend-inner-icon="mdi-content-paste"
+                                    density="compact"
+                                    v-model="selectedLetterhead"
+                                    :items=gv.setting.letter_heads
+                                    item-title="name"
+                                    item-value="name"
+                                    hide-no-data
+                                    hide-details
+                                    variant="solo"
+                                    class="mx-1"
+                                    ></v-select>
+                                    <v-select 
+                                    prepend-inner-icon="mdi-google-translate"
+                                    density="compact"
+                                    v-model="selectedLang"
+                                    :items="gv.setting.lang" 
+                                    item-title="language_name"
+                                    item-value="language_code"
+                                    hide-no-data
+                                    hide-details
+                                    variant="solo"
+                                    class="mx-1"
+                                
+                                    ></v-select>
+                                    <v-icon class="mx-1" icon="mdi-refresh" size="small" @click="onRefresh()"/>
+                                </div>
+                            </v-col>
+                        </v-row>
                         <div class="flex pt-2 px-2 items-center border-t border-gray-300 mt-2" v-if="activeReport.title == 'Inventory Transaction'">
                             <div class="flex-grow">
                                 <div style="max-width: 250px;">

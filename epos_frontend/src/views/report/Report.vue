@@ -57,12 +57,14 @@
                     <div class="px-1 py-2 -m-1">
                         <v-row>
                             <v-col> 
-                                <div v-if="cashierShiftReports?.length > 0 && activeReport.name == 'Cashier Shift'"> 
-                                    <v-btn v-for="(r, index) in cashierShiftReports.sort((a, b) => a.sort_order - b.sort_order )" :key="index" :color="activeReport.preview_report == r.name ? 'info' : 'default'" class="m-1" @click="onPrintFormat(r)">{{$t(r.title)  }}</v-btn>
+                                <div class="overflow-x-auto">
+                                    <div v-if="cashierShiftReports?.length > 0 && activeReport.name == 'Cashier Shift'"> 
+                                        <v-btn v-for="(r, index) in cashierShiftReports.sort((a, b) => a.sort_order - b.sort_order )" :key="index" :color="activeReport.preview_report == r.name ? 'info' : 'default'" class="m-1" @click="onPrintFormat(r)">{{$t(r.title)  }}</v-btn>
+                                    </div>
+                                    <div v-else-if="workingDay?.length > 0 && activeReport.name == 'Working Day'">                                    
+                                        <v-btn v-for="(r, index) in workingDay.sort((a, b) => a.sort_order - b.sort_order )" :key="index" class="m-1" :color="activeReport.preview_report == r.name ? 'info' : 'default'" @click="onPrintFormat(r)">{{ $t(r.title)  }}</v-btn>
+                                    </div> 
                                 </div>
-                                <div v-else-if="workingDay?.length > 0 && activeReport.name == 'Working Day'">                                    
-                                    <v-btn v-for="(r, index) in workingDay.sort((a, b) => a.sort_order - b.sort_order )" :key="index" class="m-1" :color="activeReport.preview_report == r.name ? 'info' : 'default'" @click="onPrintFormat(r)">{{ $t(r.title)  }}</v-btn>
-                                </div> 
                             </v-col> 
                             <v-col cols="12" lg="5">
                                 <div class="flex items-center col-4"> 
