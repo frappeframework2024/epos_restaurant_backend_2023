@@ -179,7 +179,7 @@ async function onPrint() {
         print_setting: activeReport.value,
         setting: gv.setting?.pos_setting,
         sale: sale.doc,
-        station: (sale.setting?.device_setting?.name) || "",
+        station: (gv.setting?.device_setting?.name) || "",
     } 
  
     if (localStorage.getItem("is_window") == "1") {       
