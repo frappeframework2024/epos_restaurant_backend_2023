@@ -2,3 +2,5 @@
 py-linq
 gspread
 oauth2client
+numpy
+html2image
