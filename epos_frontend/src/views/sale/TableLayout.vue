@@ -13,8 +13,10 @@
                 <ComArrangeTable  v-if="tableLayout.canArrangeTable"/>
                 <ComRenderTableNumber v-else :tableStatusColor="table_status_color"/>
             </v-window>
-        </template>
+        </template> 
     </PageLayout>
+    <ComSaleStatusInformation />
+    
 </template>
 <script setup>
 import PageLayout from '../../components/layout/PageLayout.vue';

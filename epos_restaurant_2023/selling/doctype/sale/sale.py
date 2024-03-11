@@ -272,7 +272,7 @@ class Sale(Document):
 
 		create_folio_transaction_from_pos_trnasfer(self) 
 		# update_inventory_on_submit(self)			
-		add_payment_to_sale_payme	nt(self) 
+		add_payment_to_sale_payment(self) 
 
 		## set pos reservation status to checked out
 		update_pos_reservation_status(self)
