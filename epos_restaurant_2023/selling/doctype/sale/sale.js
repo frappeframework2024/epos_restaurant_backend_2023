@@ -345,6 +345,7 @@ frappe.ui.form.on('POS Sale Payment', {
 function updateSummary(frm) {
 
 	const html = frappe.render_template("sale_summary", frm.doc)
+	
 	$(frm.fields_dict['html_summary'].wrapper).html(html);
 	frm.refresh_field('html_summary');
 

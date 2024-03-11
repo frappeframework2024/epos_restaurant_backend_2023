@@ -32,9 +32,11 @@ const tableLayout = inject("$tableLayout");
 const socket = inject("$socket");
 
 const table_status_color = ref(false);
-const router = useRouter();
+const router = useRouter(); 
+if(localStorage.getItem("__tblLayoutIndex")==null){
+    localStorage.setItem("__tblLayoutIndex",tableLayout.table_groups[0].key) 
+}
 
- 
 const tabIndex = computed(()=>{
     tableLayout.tab = localStorage.getItem("__tblLayoutIndex");
 })
