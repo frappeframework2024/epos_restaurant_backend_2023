@@ -1,0 +1,73 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-02-29 17:11:45.290736",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "group",
+  "field_name",
+  "custom_name",
+  "is_bold",
+  "show_in_report",
+  "formula",
+  "fieldtype"
+ ],
+ "fields": [
+  {
+   "fieldname": "group",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Group"
+  },
+  {
+   "fieldname": "field_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Field Name"
+  },
+  {
+   "fieldname": "custom_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Custom Name"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_bold",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Bold"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_in_report",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Show In Report"
+  },
+  {
+   "fieldname": "formula",
+   "fieldtype": "Code",
+   "label": "Formula"
+  },
+  {
+   "fieldname": "fieldtype",
+   "fieldtype": "Data",
+   "label": "Fieldtype"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-03-12 13:37:05.004593",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "Report Row Config",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
