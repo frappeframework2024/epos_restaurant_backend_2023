@@ -12,6 +12,32 @@ import ast
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+
+import os
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import quote_plus
+
+@frappe.whitelist()
+def search_image_from_google(keyword):
+    url = f"https://www.google.com/search?q={quote_plus(keyword)}&tbm=isch"
+    response = requests.get(url)
+
+    # Parse the HTML content
+    soup = BeautifulSoup(response.content, "html.parser")
+    image_tags = soup.find_all("img")
+    urls=[]
+ 
+    for i, img in enumerate(image_tags):
+        img_url = img.get("src")
+
+        if img_url and "https" in img_url:
+            urls.append(img_url)
+    return urls
+
+ 
+
+
 @frappe.whitelist(allow_guest=True)
 def check_username(pin_code):    
     if pin_code:    

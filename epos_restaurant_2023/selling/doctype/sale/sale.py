@@ -227,21 +227,20 @@ class Sale(Document):
 			self.sale_status_color = frappe.get_value("Sale Status","Closed","background_color")
 
 	def on_update(self):
+		
 		#add sale product spa commission
 		add_sale_product_spa_commission(self)
 
 		#delete product that parent_sale_product not exists 
 		frappe.db.sql("delete from `tabSale Product` where parent='{0}' and ifnull(reference_sale_product,'')!='' and  ifnull(reference_sale_product,'') not in (select name from `tabSale Product` where parent='{0}')".format(self.name))
+		
 		#update profit for commission
-		self.sale_grand_total = self.grand_total
-		self.sale_profit = self.profit
 		total_cost = 0
-		cost_datas = frappe.db.sql("select sum(cost * quantity) from `tabSale Product` where parent='{}'".format(self.name))
-		if cost_datas:
-			total_cost = cost_datas[0][0]
+		for p in self.sale_products:
+			total_cost += get_product_cost(self.stock_location, p.product_code) * p.quantity
+		self.sale_grand_total = self.grand_total
+		self.sale_profit = self.grand_total - total_cost
 		frappe.db.sql("update `tabSale` set total_cost = {0} , profit=grand_total - {0} where name='{1}'".format(total_cost, self.name))
-
-
 
 	def after_insert(self):
 		#add sale product spa commission
@@ -291,8 +290,6 @@ class Sale(Document):
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.add_payment_to_sale_payment", queue='short', self=self)
 		if frappe.db.get_single_value("Exely Itegration Setting","enabled")==1:
 			frappe.enqueue("epos_restaurant_2023.api.exely.submit_order_to_exely", queue='short', doc_name = self.name)
-
-		
 
 		
 

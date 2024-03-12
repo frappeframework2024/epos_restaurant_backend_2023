@@ -1046,22 +1046,26 @@
    "label": "Sale Commission"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "sale_commission_to",
    "fieldtype": "Link",
    "label": "Sale Commission To",
    "options": "Employee"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "sale_commission_amount",
    "fieldtype": "Data",
    "label": "Sale Commission Amount"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "sale_commission_percent",
    "fieldtype": "Data",
    "label": "Sale Commission Percent"
   },
   {
+   "allow_on_submit": 1,
    "default": "Profit",
    "fieldname": "sale_commission_based_on",
    "fieldtype": "Select",
@@ -1069,12 +1073,14 @@
    "options": "Profit\nGrand Total"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "sale_grand_total",
    "fieldtype": "Currency",
    "label": "Sale Grand Total",
    "read_only": 1
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "sale_profit",
    "fieldtype": "Currency",
    "label": "Sale Profit",
@@ -1095,7 +1101,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-03-12 09:04:31.311378",
+ "modified": "2024-03-12 16:49:26.977757",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

@@ -283,7 +283,7 @@ frappe.ui.form.on("Sale", {
 	},
 	sale_commission_percent(frm) {
 		if(frm.doc.sale_commission_based_on == "Profit"){
-			frm.set_value('sale_commission_amount',frm.doc.profit*(frm.doc.sale_commission_percent/100))
+			frm.set_value('sale_commission_amount',frm.doc.sale_profit*(frm.doc.sale_commission_percent/100))
 		}
 		else{
 			frm.set_value('sale_commission_amount',frm.doc.grand_total*(frm.doc.sale_commission_percent/100))
@@ -292,12 +292,21 @@ frappe.ui.form.on("Sale", {
 	},
 	sale_commission_amount(frm) {
 		if(frm.doc.sale_commission_based_on == "Profit"){
-			frm.set_value('sale_commission_percent',frm.doc.sale_commission_amount*100/frm.doc.profit)
+			frm.set_value('sale_commission_percent',frm.doc.sale_commission_amount*100/frm.doc.sale_profit)
 		}
 		else{
 			frm.set_value('sale_commission_percent',frm.doc.sale_commission_amount*100/frm.doc.grand_total)
 		}
 		frm.refresh_field('sale_commission_percent')
+	},
+	sale_commission_based_on(frm){
+		if(frm.doc.sale_commission_based_on == "Profit"){
+			frm.set_value('sale_commission_amount',frm.doc.sale_profit*(frm.doc.sale_commission_percent/100))
+		}
+		else{
+			frm.set_value('sale_commission_amount',frm.doc.grand_total*(frm.doc.sale_commission_percent/100))
+		}
+		frm.refresh_field('sale_commission_amount')
 	}
 });
 
@@ -345,9 +354,12 @@ frappe.ui.form.on('Sale Product', {
 	},
 	product_code(frm, cdt, cdn) {
 		let row = locals[cdt][cdn];
-	},
+	}
 })
-
+frappe.ui.form.on("Sale", "refresh", function(frm) {
+	console.log(frm.sale_commission_to)
+	frm.set_df_property("sale_commission_to", "read_only", frm.sale_commission_to == undefined && frm.docstatus == 1 ? 0 : 1);
+}),
 frappe.ui.form.on('POS Sale Payment', {
 	input_amount(frm) {
 		update_payment_amount(frm);

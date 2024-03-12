@@ -1,6 +1,7 @@
 // Copyright (c) 2022, Tes Pheakdey and contributors
 // For license information, please see license.txt
-
+let dialogGoogleSearch = undefined
+let myForm = undefined
 frappe.ui.form.on("Product", {
    
     refresh(frm){
@@ -23,7 +24,11 @@ frappe.ui.form.on("Product", {
 
         set_product_indicator(frm);
 
-            frm.set_df_property('naming_series', 'reqd', 0)
+        frm.set_df_property('naming_series', 'reqd', 0)
+        
+        add_search_image_from_google_button(frm)
+    
+
 
     },
     setup(frm){
@@ -40,6 +45,9 @@ frappe.ui.form.on("Product", {
                 }
             }
         });
+        // set form to public to reload when change photo from google search
+        myForm = frm
+        window.addEventListener('message', savePhoto, false);
     },
     generate_variant(frm){
         frm.call({
@@ -66,8 +74,73 @@ frappe.ui.form.on("Product", {
                 async: true,
             });
         }	
-   }
+   },
+ 
 });
+
+function add_search_image_from_google_button(frm){
+    if (!frm.is_new()){
+        frm.add_custom_button(__('Search Image From Google'), function () {
+
+            dialogGoogleSearch = new frappe.ui.Dialog({
+                title: 'Search Image from Google',
+                fields: [
+                    {
+                        label: 'Keyword',
+                        fieldname: 'keyword',
+                        fieldtype: 'Data',
+                        default:frm.doc.product_name_en,
+                        onchange: function(e) {
+                         
+                            frappe.call({method:"epos_restaurant_2023.api.api.search_image_from_google",args:{keyword:this.value}}).then(result=>{
+                                const html = frappe.render_template("search_image",{images: result.message})
+                                dialogGoogleSearch.set_value("result",html);
+                                
+                            })
+                        }
+                    },
+                    {
+                        label: 'Search Result',
+                        fieldname: 'result',
+                        fieldtype: 'HTML',
+                        options:"<p>Please enter keyword </p>"
+                    },
+
+                    
+                    // Add other fields as needed
+                ],
+                size: 'extra-large', // Choose from 'small', 'large', or 'extra-large'
+               
+            });
+                 
+            dialogGoogleSearch.show()
+         
+            setTimeout(function(){
+                frappe.call({method:"epos_restaurant_2023.api.api.search_image_from_google",args:{keyword:frm.doc.product_name_en}}).then(result=>{
+                    const html = frappe.render_template("search_image",{images: result.message})
+                    dialogGoogleSearch.set_value("result",html);
+                    
+                })
+            },1000)
+           
+            
+		});
+
+    }
+}
+
+function savePhoto(e){  
+    if (e.isTrusted) {
+         frappe.db.set_value("Product",myForm.doc.name, "photo",e.data.url).then(r=>{
+            myForm.reload_doc()
+         })
+         dialogGoogleSearch.hide()
+    };
+}
+
+
+ 
+
 
 function print_barcode_button(frm) {
     frappe.db.get_list('Print Barcode', {
