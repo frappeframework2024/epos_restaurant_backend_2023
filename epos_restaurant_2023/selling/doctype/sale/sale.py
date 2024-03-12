@@ -232,6 +232,15 @@ class Sale(Document):
 
 		#delete product that parent_sale_product not exists 
 		frappe.db.sql("delete from `tabSale Product` where parent='{0}' and ifnull(reference_sale_product,'')!='' and  ifnull(reference_sale_product,'') not in (select name from `tabSale Product` where parent='{0}')".format(self.name))
+		#update profit for commission
+		self.sale_grand_total = self.grand_total
+		self.sale_profit = self.profit
+		total_cost = 0
+		cost_datas = frappe.db.sql("select sum(cost * quantity) from `tabSale Product` where parent='{}'".format(self.name))
+		if cost_datas:
+			total_cost = cost_datas[0][0]
+		frappe.db.sql("update `tabSale` set total_cost = {0} , profit=grand_total - {0} where name='{1}'".format(total_cost, self.name))
+
 
 
 	def after_insert(self):

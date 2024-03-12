@@ -109,6 +109,14 @@
   "tax_3_amount",
   "section_break_75",
   "change_tax_setting_note",
+  "sale_commission_tab",
+  "sale_grand_total",
+  "sale_commission_to",
+  "sale_commission_percent",
+  "sale_commission_amount",
+  "column_break_oyso",
+  "sale_profit",
+  "sale_commission_based_on",
   "commission_section",
   "agent_name",
   "column_break_93",
@@ -385,6 +393,7 @@
    "options": "Percent\nAmount"
   },
   {
+   "default": "0",
    "fieldname": "product_discount",
    "fieldtype": "Currency",
    "label": "Product Discount",
@@ -1030,6 +1039,50 @@
    "fieldname": "pos_config",
    "fieldtype": "Data",
    "label": "POS Config"
+  },
+  {
+   "fieldname": "sale_commission_tab",
+   "fieldtype": "Tab Break",
+   "label": "Sale Commission"
+  },
+  {
+   "fieldname": "sale_commission_to",
+   "fieldtype": "Link",
+   "label": "Sale Commission To",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "sale_commission_amount",
+   "fieldtype": "Data",
+   "label": "Sale Commission Amount"
+  },
+  {
+   "fieldname": "sale_commission_percent",
+   "fieldtype": "Data",
+   "label": "Sale Commission Percent"
+  },
+  {
+   "default": "Profit",
+   "fieldname": "sale_commission_based_on",
+   "fieldtype": "Select",
+   "label": "Sale Commission Based On",
+   "options": "Profit\nGrand Total"
+  },
+  {
+   "fieldname": "sale_grand_total",
+   "fieldtype": "Currency",
+   "label": "Sale Grand Total",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sale_profit",
+   "fieldtype": "Currency",
+   "label": "Sale Profit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_oyso",
+   "fieldtype": "Column Break"
   }
  ],
  "image_field": "photo",
@@ -1042,7 +1095,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-03-04 10:37:42.314242",
+ "modified": "2024-03-12 09:04:31.311378",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

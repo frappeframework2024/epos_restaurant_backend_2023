@@ -280,8 +280,25 @@ frappe.ui.form.on("Sale", {
 			updateSumTotal(frm);
 
 		});
+	},
+	sale_commission_percent(frm) {
+		if(frm.doc.sale_commission_based_on == "Profit"){
+			frm.set_value('sale_commission_amount',frm.doc.profit*(frm.doc.sale_commission_percent/100))
+		}
+		else{
+			frm.set_value('sale_commission_amount',frm.doc.grand_total*(frm.doc.sale_commission_percent/100))
+		}
+		frm.refresh_field('sale_commission_amount')
+	},
+	sale_commission_amount(frm) {
+		if(frm.doc.sale_commission_based_on == "Profit"){
+			frm.set_value('sale_commission_percent',frm.doc.sale_commission_amount*100/frm.doc.profit)
+		}
+		else{
+			frm.set_value('sale_commission_percent',frm.doc.sale_commission_amount*100/frm.doc.grand_total)
+		}
+		frm.refresh_field('sale_commission_percent')
 	}
-
 });
 
 frappe.ui.form.on('Sale Product', {
@@ -482,7 +499,7 @@ function updateSumTotal(frm) {
 
 	frm.set_value('sub_total', products.reduce((n, d) => n + d.sub_total, 0));
 	frm.set_value('total_quantity', products.reduce((n, d) => n + d.quantity, 0));
-	frm.set_value('product_discount', products.reduce((n, d) => n + d.discount_amount, 0));
+	frm.set_value('product_discount', products.reduce((n, d) => n + d.discount_amount || 0, 0));
 	frm.set_value('sale_discountable_amount', products.reduce((n, d) => n + (d.allow_discount == 0 || d.discount_amount > 0 ? 0 : d.sub_total), 0));
 
 	let discount = 0;
