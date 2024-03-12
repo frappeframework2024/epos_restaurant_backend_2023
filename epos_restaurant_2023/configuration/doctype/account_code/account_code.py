@@ -7,7 +7,6 @@ from frappe.model.document import Document
 
 class AccountCode(Document):
 	def validate(self):
-		
 		self.account_code_name = self.code + ' - ' + self.account_name
 		#check if account code have tax rule
 		if self.tax_rule:
@@ -29,28 +28,11 @@ class AccountCode(Document):
 		if self.discount_account:
 			self.discount_account_name = frappe.db.get_value("Account Code", self.discount_account,"account_name")
 				
-
-			
+    
 	def on_update(self):
 		apps = frappe.get_installed_apps()
 		if "edoor" in apps:
 			update_tax_to_related_transaction({"account_code":self.name})
-
-			# #update account code sort order
-			# parent_account_code =""
-			# parent_account_name =""
-			# account_group =""
-			# account_group_name =""
-			# if self.is_group == 0:
-			# 	parent_account_code = self.parent_account_code
-			# 	parent_account_name, account_group = frappe.db.get_value("Account Code", parent_account_code,["Account Name","parent_account_code"])
-			# 	account_group_name =  frappe.db.get_value("Account Code", account_group,"Account Name")
-
-
-			# else:
-			# 	#level 2
-			# 	if self.parent_account_code !='All Account Code':
-					
 
 			
  

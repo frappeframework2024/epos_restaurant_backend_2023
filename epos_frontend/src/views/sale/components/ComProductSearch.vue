@@ -80,7 +80,6 @@ function onSelectProduct(p) {
 }
 function onKeyDown(event) {
     if (event.key == "Enter") {
-
         if (!sale.isBillRequested()) {
             onSearchProductByBarcode(product.searchProductKeywordStore)
         }

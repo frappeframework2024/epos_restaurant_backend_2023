@@ -139,7 +139,7 @@ class CashierShift(Document):
 									})
 							
 							frappe.get_doc(new_shift_data).insert()
-
+					
 					else:
 						frappe.enqueue("epos_restaurant_2023.selling.doctype.cashier_shift.cashier_shift.submit_pos_data_to_folio_transaction", queue='short', self=self)
 
