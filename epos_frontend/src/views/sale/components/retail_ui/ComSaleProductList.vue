@@ -21,7 +21,7 @@
             តម្លៃ <br />
             Price
           </th>
-          <th class="text-right">
+          <th class="text-right none-discount-field">
             បញ្ចុះតម្លៃ <br />
             Discount
           </th>
@@ -38,21 +38,26 @@
         <template v-if="sale.sale?.sale_products?.length > 0">
           <tr v-for="sp  in sale.getSaleProducts(undefined)" @click="sale.onSelectSaleProduct(sp)"
             :class="sp.selected ? 'selected' : ''">
-            <td>
+            <td style="max-width: 15rem;" class="overflow-hidden">
               <div class="d-flex align-center gap-3">
-                <div>
-
+                <div> 
                   <v-avatar :image="sp?.product_photo" v-bind="props" v-if="sp?.product_photo"
                     class="cursor-pointer"></v-avatar>
                   <avatar v-else :name="sp.product_name || 'No Name'" v-bind="props" class="cursor-pointer mr-2"
                     size="40"></avatar>
                 </div>
-                <div>
-                  <p>{{ sp.product_code }} </p>
-                  <p>{{ sp.product_name }} <v-chip v-if="sp.quantity<0" variant="outlined" color="red">
-                      {{ $t("Return") }}
-                    </v-chip></p>
-                  <p v-if="sp.product_name != sp.product_name_kh">{{ sp.product_name_kh }}</p>
+                <div> 
+                  <p>{{ sp.product_code }} </p> 
+                  <div style="width:12rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                    <p>{{ sp.product_name }} <v-chip v-if="sp.quantity<0" variant="outlined" color="red">
+                        {{ $t("Return") }}
+                      </v-chip>
+                    </p>
+                  </div>
+                  <div style="width:12rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                    <p v-if="sp.product_name != sp.product_name_kh">{{ sp.product_name_kh }}</p>
+                  </div>
+                  
                  
                   <p v-if="!sp.note" class="italic underline" style="color:#ccc;" @click="sale.onSaleProductNote(sp)">
                     {{ $t("Add Note") }}</p>
@@ -82,7 +87,7 @@
                 <CurrencyFormat :value="sp.price" />
               </span>
             </td>
-            <td class="text-end">
+            <td class="text-end none-discount-field">
               <span class="link_line_action overflow-hidden" style="min-width:4rem">
                 <template v-if="sp.discount">
                   <span v-if="sp.discount_type == 'Percent'">
@@ -118,7 +123,7 @@
               </span>
             </td>
             <td class="text-center">
-              <v-btn class="ma-2" icon="mdi-delete" color="red"  variant="text"  @click="sale.onRemoveItem(sp, gv, numberFormat)">
+              <v-btn class="ma-2 hidden-delete-btn" icon="mdi-delete" color="red"  variant="text"  @click="sale.onRemoveItem(sp, gv, numberFormat)">
                   </v-btn>
             
               <v-menu>
@@ -304,5 +309,10 @@ tr:nth-child(even) {
 
 .table-sale-product-scroll .v-table>.v-table__wrapper>table {
   overflow: hidden !important;
+}
+@media (max-width: 1024px) {
+  .none-discount-field {
+    display: none;
+  }
 }
 </style>
