@@ -8,6 +8,8 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "language_name",
+  "flag",
   "translate_key",
   "translate_text",
   "is_standard"
@@ -29,11 +31,21 @@
    "fieldname": "is_standard",
    "fieldtype": "Check",
    "label": "Is Standard"
+  },
+  {
+   "fieldname": "language_name",
+   "fieldtype": "Data",
+   "label": "Language Name"
+  },
+  {
+   "fieldname": "flag",
+   "fieldtype": "Data",
+   "label": "Flag"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-05-31 15:08:30.379701",
+ "modified": "2024-03-13 11:28:10.611530",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Translation",

@@ -38,11 +38,11 @@
                 <CurrencyFormat :value="1" :currency="gv.setting.pos_setting.exchange_rate_main_currency" /> =
                 <CurrencyFormat :value="exchange_rate" :currency="to_currency" />
             </div>
-            <div>
+            <!-- <div>
                 <div class="opacity-0">
                     <v-icon icon="mdi-currency-usd" color="red" size="large"></v-icon>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
@@ -128,6 +128,11 @@ const exchangeRateResource = createResource({
 @media (max-width: 1366.98px) {
     .exchange-curr-size {
         font-size: 20px;
+    }
+}
+@media (max-width: 1024px) {
+    .exchange-curr-size {
+        font-size: 17px;
     }
 }
 </style>

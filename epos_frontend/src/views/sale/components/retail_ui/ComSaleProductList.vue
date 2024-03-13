@@ -47,16 +47,16 @@
                     size="40"></avatar>
                 </div>
                 <div> 
-                  <p>{{ sp.product_code }} </p> 
-                  <div style="width:12rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-                    <p>{{ sp.product_name }} <v-chip v-if="sp.quantity<0" variant="outlined" color="red">
-                        {{ $t("Return") }}
-                      </v-chip>
-                    </p>
-                  </div>
-                  <div style="width:12rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-                    <p v-if="sp.product_name != sp.product_name_kh">{{ sp.product_name_kh }}</p>
-                  </div>
+                  <p>{{ sp.product_code }} </p>  
+                    <p style="width:12rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                      {{ sp.product_name }} 
+                      <v-chip v-if="sp.quantity<0" variant="outlined" color="red">{{ $t("Return") }}</v-chip>
+                      <v-tooltip activator="parent" location="start">{{ sp.product_name }} </v-tooltip>
+                    </p>  
+                    <p style="width:12rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" v-if="sp.product_name != sp.product_name_kh">
+                      {{ sp.product_name_kh }}
+                      <v-tooltip activator="parent" location="start">{{ sp.product_name_kh }} </v-tooltip>
+                    </p> 
                   
                  
                   <p v-if="!sp.note" class="italic underline" style="color:#ccc;" @click="sale.onSaleProductNote(sp)">
@@ -87,7 +87,7 @@
                 <CurrencyFormat :value="sp.price" />
               </span>
             </td>
-            <td class="text-end none-discount-field">
+            <td class="text-end">
               <span class="link_line_action overflow-hidden" style="min-width:4rem">
                 <template v-if="sp.discount">
                   <span v-if="sp.discount_type == 'Percent'">
@@ -122,10 +122,9 @@
                 <CurrencyFormat :value="sp.amount" />
               </span>
             </td>
-            <td class="text-center">
+            <td class="text-center op-option-btn">
               <v-btn class="ma-2 hidden-delete-btn" icon="mdi-delete" color="red"  variant="text"  @click="sale.onRemoveItem(sp, gv, numberFormat)">
-                  </v-btn>
-            
+                  </v-btn> 
               <v-menu>
                 <template v-slot:activator="{ props }">
 
@@ -141,12 +140,12 @@
                     <v-list-item-title>{{ $t("Mark as Selling Product") }}</v-list-item-title>
                   </v-list-item>
 
-
+                  
+                  <v-list-item @click="sale.onRemoveItem(sp, gv, numberFormat)">
+                    <v-list-item-title>{{ $t("Remove Item") }}</v-list-item-title>
+                  </v-list-item> 
                 </v-list>
-              </v-menu>
-
- 
-
+              </v-menu> 
             </td>
           </tr>
         </template>
@@ -313,7 +312,16 @@ tr:nth-child(even) {
 @media (max-width: 1024px) {
   .none-discount-field, .hidden-delete-btn {
     display: none;
+  } 
+  .table-pro tr td.op-option-btn {
+    width:50px
   }
-
+}
+.table-pro tr td {
+  padding: 0 6px !important;
+}
+.op-option-btn .v-btn--icon.v-btn--density-default {
+  width: auto !important;
+  height: auto !important;
 }
 </style>

@@ -2,7 +2,7 @@
 
     <div>
         <template v-if="sale?.selected_sale_product">
-            <div style="height:calc(-321px + 100vh);overflow-y:auto">
+            <div class="selected-pro">
                 <div class="border p-3 rounded-md searc-pro-res">
                     <div v-if="sale?.selected_sale_product?.product_photo"
                     class="product-image rounded-md overflow-hidden" style="width: 300px;">
@@ -100,4 +100,18 @@ const sale = inject("$sale")
     width: 100%;
     align-items: center;
 }
+.selected-pro {
+    height:calc(-321px + 100vh);
+    overflow-y:auto
+}
+
+@media (max-width: 1024px) {
+    .product-image {
+        width: auto !important;
+    }
+    .selected-pro {
+        height: calc(-301px + 100vh); 
+    }
+}
+
 </style>

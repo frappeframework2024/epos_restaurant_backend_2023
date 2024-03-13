@@ -1,5 +1,5 @@
 <template>
-    <div class="border border-gray-600 rounded-md" :class="padding ? padding : 'p-1'">
+    <div class="border border-gray-600 rounded-md guest-pro-scne" :class="padding ? padding : 'p-1'">
         <div class="flex">
             <div class="flex-auto cursor-pointer" @click="onSearchCustomer">
                 <div class="flex items-center">
@@ -312,3 +312,17 @@ onMounted(() => {
 })
 
 </script>
+<style> 
+@media (max-width: 1024px) {
+    .guest-pro-scne {
+        padding: 5px !important;
+    } 
+    .guest-pro-scne .v-btn--icon {
+        font-size: 10px;
+    }
+    .guest-pro-scne .font-bold {
+        font-size: smaller;
+    }
+}
+    
+</style>

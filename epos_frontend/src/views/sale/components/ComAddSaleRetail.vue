@@ -5,7 +5,7 @@
         </div>
         <div class="v-row pt-1">
             <div class="v-col-9">
-                <div class="flex flex-column justify-between product-detail-st" style="height:calc(-144px + 100vh)">
+                <div class="flex flex-column justify-between product-detail-st">
                     <div class="first-div">
                         <ComSaleProductList />
                     </div>
@@ -57,8 +57,13 @@ sale.show_unit_in_select_portion = true
 .product-detail-st .first-div {
     flex: 1;
 }
+.product-detail-st {
+        height: calc(-144px + 100vh);
+    }
 
-/* .product-detail-st .second-div {
-    height: 272px;
-} */
+@media (max-width: 1024px) {
+    .product-detail-st {
+        height:calc(-168px + 100vh);
+    } 
+}
 </style>
