@@ -311,8 +311,9 @@ tr:nth-child(even) {
   overflow: hidden !important;
 }
 @media (max-width: 1024px) {
-  .none-discount-field {
+  .none-discount-field, .hidden-delete-btn {
     display: none;
   }
+
 }
 </style>
