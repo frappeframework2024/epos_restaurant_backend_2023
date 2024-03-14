@@ -45,15 +45,14 @@ def on_save(data):
                 'Authorization': 'token fdad19c1e00297c:608a34efdd29106'
             }
     server_url = server_url + f"api/resource/{data['document_type']}/{data['document_name']}"
-
     response = requests.get(server_url,headers=headers)
 
-    data = json.loads(response.text)
-    doc = frappe.get_doc(data['data'])
-    if frappe.db.exists(data['document_type'],data['document_name']):
+    response_data = json.loads(response.text)
+    doc = frappe.get_doc(response_data['data'])
+    if frappe.db.exists(doc.doctype,doc.name):
         doc.save()
     else:
         doc["__newname"]=doc.name;
         doc.insert()
-    return data['data']
+    return response_data['data']
     
