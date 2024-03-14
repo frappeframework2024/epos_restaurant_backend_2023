@@ -47,8 +47,13 @@ def on_save(data):
     server_url = server_url + f"api/resource/{data['document_type']}/{data['document_name']}"
 
     response = requests.get(server_url,headers=headers)
+
     data = json.loads(response.text)
     doc = frappe.get_doc(data['data'])
-    doc.save()
+    if frappe.exist(data['document_type'],data['document_name']):
+        doc.save()
+    else:
+        doc["__newname"]=doc.name;
+        doc.insert()
     return data['data']
     
