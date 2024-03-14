@@ -50,7 +50,7 @@ def on_save(data):
 
     data = json.loads(response.text)
     doc = frappe.get_doc(data['data'])
-    if frappe.exist(data['document_type'],data['document_name']):
+    if frappe.db.exist(data['document_type'],data['document_name']):
         doc.save()
     else:
         doc["__newname"]=doc.name;
