@@ -29,7 +29,7 @@ def sync_data_to_client():
     headers = {
                 'Authorization': 'token fdad19c1e00297c:608a34efdd29106'
             }
-    server_url = server_url + "api/resource/Data For Sync" + '?fields=["name","document_name","document_type"]&limit_page_length=100000000'
+    server_url = server_url + "api/resource/Data For Sync" + '?fields=["name","document_name","document_type"]&limit_page_length=100000000&order_by=creation desc'
     response = requests.get(server_url,headers=headers)
     
     if response.status_code==200:
