@@ -297,7 +297,9 @@ frappe.ui.form.on("Sale", {
 		else{
 			frm.set_value('sale_commission_percent',frm.doc.sale_commission_amount*100/frm.doc.grand_total)
 		}
+		frm.set_value('sale_commission_balance',frm.doc.sale_commission_amount)
 		frm.refresh_field('sale_commission_percent')
+		frm.refresh_field('sale_commission_balance')
 	},
 	sale_commission_based_on(frm){
 		if(frm.doc.sale_commission_based_on == "Profit"){
@@ -306,7 +308,9 @@ frappe.ui.form.on("Sale", {
 		else{
 			frm.set_value('sale_commission_amount',frm.doc.grand_total*(frm.doc.sale_commission_percent/100))
 		}
+		frm.set_value('sale_commission_balance',frm.doc.sale_commission_amount)
 		frm.refresh_field('sale_commission_amount')
+		frm.refresh_field('sale_commission_balance')
 	}
 });
 
@@ -357,8 +361,10 @@ frappe.ui.form.on('Sale Product', {
 	}
 })
 frappe.ui.form.on("Sale", "refresh", function(frm) {
-	console.log(frm.sale_commission_to)
-	frm.set_df_property("sale_commission_to", "read_only", frm.sale_commission_to == undefined && frm.docstatus == 1 ? 0 : 1);
+	frm.set_df_property("sale_commission_to", "read_only", (frm.doc.sale_commission_to ?? "") == "" && (frm.doc.docstatus == 1 || frm.doc.docstatus == 0) ? 0 : 1);
+	frm.set_df_property("sale_commission_percent", "read_only", frm.doc.sale_commission_paid_amount > 0 ? 1 : 0);
+	frm.set_df_property("sale_commission_amount", "read_only", frm.doc.sale_commission_paid_amount > 0 ? 1 : 0);
+	frm.set_df_property("sale_commission_based_on", "read_only", frm.doc.sale_commission_paid_amount > 0 ? 1 : 0);
 }),
 frappe.ui.form.on('POS Sale Payment', {
 	input_amount(frm) {
