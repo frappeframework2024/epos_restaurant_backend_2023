@@ -121,6 +121,7 @@ def get_system_settings(pos_profile="", device_name=''):
             "change_exchange_rate":p.change_exchange_rate if p.currency != main_currency.name else 1.0,
             "required_customer":p.required_customer,
             "is_foc":p.is_foc,
+            "pos_currency_format":p.pos_currency_format,
             "use_room_offline":p.use_room_offline,
             "rooms":p.rooms,
             "is_manual_fee":p.is_manual_fee,

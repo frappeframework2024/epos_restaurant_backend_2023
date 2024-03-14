@@ -1,0 +1,64 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-03-14 08:47:34.333799",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "server_url",
+  "section_break_pqge",
+  "sync_to_client",
+  "section_break_ydyy",
+  "sync_to_server"
+ ],
+ "fields": [
+  {
+   "fieldname": "sync_to_client",
+   "fieldtype": "Table",
+   "label": "Sync To Client",
+   "options": "Sync To Client Setting"
+  },
+  {
+   "fieldname": "section_break_ydyy",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "sync_to_server",
+   "fieldtype": "Table",
+   "label": "Sync To Server",
+   "options": "Sync To Server Setting"
+  },
+  {
+   "fieldname": "server_url",
+   "fieldtype": "Data",
+   "label": "Server URL"
+  },
+  {
+   "fieldname": "section_break_pqge",
+   "fieldtype": "Section Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-03-14 10:08:19.975513",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "ePOS Sync Setting",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

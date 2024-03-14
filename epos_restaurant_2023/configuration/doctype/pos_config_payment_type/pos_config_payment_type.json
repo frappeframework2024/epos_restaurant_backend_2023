@@ -17,6 +17,7 @@
   "change_exchange_rate",
   "currency",
   "currency_symbol",
+  "pos_currency_format",
   "column_break_wgpz",
   "locale",
   "currency_precision",
@@ -156,12 +157,18 @@
    "fieldtype": "Link",
    "label": "Cancel Order Adjustment Account Code  ",
    "options": "Account Code"
+  },
+  {
+   "fetch_from": "currency.custom_pos_currency_format",
+   "fieldname": "pos_currency_format",
+   "fieldtype": "Data",
+   "label": "POS Currency Format"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-02-13 14:59:58.139121",
+ "modified": "2024-03-14 12:09:35.461968",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config Payment Type",
