@@ -30,7 +30,6 @@ frappe.query_reports["Sale Payment Type Breakdown Report"] = {
 
 				
 			},
-			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname":"start_date",
