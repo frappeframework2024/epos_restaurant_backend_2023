@@ -35,7 +35,7 @@ def sync_data_to_client():
     if response.status_code==200:
         data = json.loads(response.text)
 
-    for d in data:
+    for d in data['data']:
         frappe.enqueue('epos_restaurant_2023.api.sync_api.on_save',data = d)
     return data['data']
 
