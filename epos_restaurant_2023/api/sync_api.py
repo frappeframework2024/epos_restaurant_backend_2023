@@ -44,7 +44,7 @@ def on_save(data):
     headers = {
                 'Authorization': 'token fdad19c1e00297c:608a34efdd29106'
             }
-    server_url = server_url + f"api/resource/{data['document_type']}/{data['name']}"
+    server_url = server_url + f"api/resource/{data.document_type}/{data.document_name}"
 
     response = requests.get(server_url,headers=headers)
     data = json.loads(response.text)
