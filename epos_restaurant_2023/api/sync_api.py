@@ -54,18 +54,19 @@ def on_save(data):
     headers = {
                 'Authorization': 'token fdad19c1e00297c:608a34efdd29106'
             }
-        for d in data:
-            server_url = server_url + f"api/resource/{data['document_type']}/{data['document_name']}"
-            response = requests.get(server_url,headers=headers)
-            response_data = json.loads(response.text)
-            
-            if frappe.db.exists(data['document_type'],data['document_name']):
-                row = response_data['data']
-                doc = frappe.get_doc(row)
-                doc.save(ignore_permissions=True, ignore_links=True)
-            else:
-                row = response_data['data']
-                row["__newname"] = row["name"]
-                doc = frappe.get_doc(row)
-                doc.insert(ignore_permissions=True, ignore_links=True)
+    for d in data:
+        frappe.throw(str(d))
+        server_url = server_url + f"api/resource/{data['document_type']}/{data['document_name']}"
+        response = requests.get(server_url,headers=headers)
+        response_data = json.loads(response.text)
+        
+        if frappe.db.exists(data['document_type'],data['document_name']):
+            row = response_data['data']
+            doc = frappe.get_doc(row)
+            doc.save(ignore_permissions=True, ignore_links=True)
+        else:
+            row = response_data['data']
+            row["__newname"] = row["name"]
+            doc = frappe.get_doc(row)
+            doc.insert(ignore_permissions=True, ignore_links=True)
     
