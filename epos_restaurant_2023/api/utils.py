@@ -35,7 +35,7 @@ def generate_data_for_sync_record_on_delete(doc, method=None, *args, **kwargs):
 def sync_data_to_server_on_submit(doc, method=None, *args, **kwargs):
     setting =frappe.get_doc("ePOS Sync Setting")
     if setting.enable ==1:
-        if doc.doctype in [d.document_type for d in setting.sync_to_client if d.event == 'on_submit']:
+        if doc.doctype in [d.document_type for d in setting.sync_to_server if d.event == 'on_submit']:
             frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc)        
             
 
