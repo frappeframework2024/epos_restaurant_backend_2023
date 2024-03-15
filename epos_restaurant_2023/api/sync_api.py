@@ -38,13 +38,13 @@ def sync_data_to_client():
         data_for_sync = json.loads(response.text)
         data_for_sync = data_for_sync['message']
         doctype_for_sync = frappe.db.sql('select document_type,total_record_per_sync from `tabSync To Client Setting` order by idx',as_dict=1)
-        a=[]
         for d in doctype_for_sync:
             filter_data = list(filter(lambda x: x["document_type"] == d.document_type,data_for_sync))
+            
             small_arrays = [filter_data[i:i+d.total_record_per_sync] for i in range(0, len(data_for_sync), d.total_record_per_sync)]
             if len(small_arrays) > 0:
-                on_save(small_arrays)
-                # frappe.enqueue('epos_restaurant_2023.api.sync_api.on_save(small_arrays)',data=small_arrays) 
+                
+                frappe.enqueue('epos_restaurant_2023.api.sync_api.on_save',data=small_arrays) 
     else:
         return response.text
 
@@ -55,18 +55,23 @@ def on_save(data):
                 'Authorization': 'token fdad19c1e00297c:608a34efdd29106'
             }
     for d in data:
-        frappe.throw(str(d))
-        server_url = server_url + f"api/resource/{data['document_type']}/{data['document_name']}"
-        response = requests.get(server_url,headers=headers)
-        response_data = json.loads(response.text)
-        
-        if frappe.db.exists(data['document_type'],data['document_name']):
-            row = response_data['data']
-            doc = frappe.get_doc(row)
-            doc.save(ignore_permissions=True, ignore_links=True)
-        else:
-            row = response_data['data']
-            row["__newname"] = row["name"]
-            doc = frappe.get_doc(row)
-            doc.insert(ignore_permissions=True, ignore_links=True)
+        if len(d)> 0:
+            for row in d:
+                server_url = server_url + f"api/resource/{row['document_type']}/{row['document_name']}"
+                response = requests.get(server_url,headers=headers)
+                if response.status_code==200:
+                    response_data = json.loads(response.text)
+                    
+                    if frappe.db.exists(row['document_type'],row['document_name']):
+                        row = response_data['data']
+                        doc = frappe.get_doc(row)
+                        doc.save()
+                    else:
+                        row = response_data['data']
+                        row["__newname"] = row["name"]
+                        doc = frappe.get_doc(row)
+                        doc.insert(ignore_permissions=True, ignore_links=True)
+                    return doc
+                else:
+                    return response.raw
     
