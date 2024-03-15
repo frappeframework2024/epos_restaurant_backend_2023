@@ -48,7 +48,9 @@ def on_save(data):
     response = requests.get(server_url,headers=headers)
 
     response_data = json.loads(response.text)
-    doc = frappe.get_doc(response_data['data'])
+    row = response_data['data']
+    row["__newname"] = row["name"]
+    doc = frappe.get_doc(row)
     if frappe.db.exists(doc.doctype,doc.name):
         doc.save()
     else:
