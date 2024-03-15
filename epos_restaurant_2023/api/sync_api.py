@@ -48,13 +48,15 @@ def on_save(data):
     response = requests.get(server_url,headers=headers)
 
     response_data = json.loads(response.text)
-    row = response_data['data']
-    row["__newname"] = row["name"]
-    doc = frappe.get_doc(row)
-    if frappe.db.exists(doc.doctype,doc.name):
-        doc.save()
+    
+    if frappe.db.exists(data['document_type'],data['document_name']):
+        row = response_data['data']
+        doc = frappe.get_doc(row)
+        doc.save(ignore_permissions=True, ignore_links=True)
     else:
-        doc["__newname"]=doc.name;
-        doc.insert()
+        row = response_data['data']
+        row["__newname"] = row["name"]
+        doc = frappe.get_doc(row)
+        doc.insert(ignore_permissions=True, ignore_links=True)
     return response_data['data']
     
