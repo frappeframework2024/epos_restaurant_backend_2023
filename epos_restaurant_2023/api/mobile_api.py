@@ -21,8 +21,53 @@ def on_get_pos_configure(pos_profile="", device_name=''):
     return get_system_settings(pos_profile,device_name) 
 
 @frappe.whitelist(allow_guest=True,methods='POST') 
-def get_menu_product(root_menu=""):  
-    return get_product_by_menu(root_menu,mobile=1)
+def get_menu_product(root_menu=""):
+    if root_menu == "":
+        return []
+    menus  = get_menu(root_menu)
+    
+    return menus
+    #return get_product_by_menu(root_menu,mobile=1)
+
+### get menu tree
+def get_menu(parent, is_child = 0):
+    menus = []
+    type_index = 1
+    if is_child == 1:
+        menus.append({"type":"back","parent":parent})
+        type_index = 2
+
+    sql = """select 
+            name,
+            pos_menu_name_en as name_en,
+            pos_menu_name_kh as name_kh,
+            parent_pos_menu as parent,
+            photo,
+            text_color,
+            background_color,
+            shortcut_menu,
+            price_rule,
+            photo,
+            'menu' as type,
+            {0} as type_index,
+            sort_order
+        from `tabPOS Menu` 
+        where 
+            parent_pos_menu='{1}' and
+            disabled = 0 
+        order by sort_order, name
+        """.format(type_index, parent)
+    parent = frappe.db.sql(sql,as_dict=1)
+    for p in parent:
+        menus.append(p)
+        children = get_menu(p["name"], is_child=1)
+        if len(children)>0:
+            for c in children:
+                menus.append(c)
+
+    return menus
+
+
 
 @frappe.whitelist(allow_guest=True) 
 def get_pos_users(secret_key = False):  
@@ -46,8 +91,7 @@ def get_pos_users(secret_key = False):
                 '' as api_secret
             from tabEmployee e
             inner join tabUser u on e.user_id = u.`name`"""
-            
-
+    
     users = frappe.db.sql(sql, as_dict=1)
     if secret_key:
         for u in users: 

@@ -31,7 +31,6 @@ def generate_data_for_sync_record_on_delete(doc, method=None, *args, **kwargs):
                     }).insert(ignore_permissions=True)
             
 
-
 @frappe.whitelist()
 def sync_data_to_server_on_submit(doc, method=None, *args, **kwargs):
     setting =frappe.get_doc("ePOS Sync Setting")
