@@ -31,7 +31,7 @@ def sync_data_to_client():
     headers = {
                 'Authorization': 'token fdad19c1e00297c:608a34efdd29106'
             }
-    server_url = server_url + "api/method/epos_restaurant_2023.api.sync_api.get_data_for_sync"
+    server_url = server_url + "/api/method/epos_restaurant_2023.api.sync_api.get_data_for_sync"
     response = requests.get(server_url,headers=headers)
     
     if response.status_code==200:
@@ -43,8 +43,8 @@ def sync_data_to_client():
             
             small_arrays = [filter_data[i:i+d.total_record_per_sync] for i in range(0, len(data_for_sync), d.total_record_per_sync)]
             if len(small_arrays) > 0:
-                
-                frappe.enqueue('epos_restaurant_2023.api.sync_api.on_save',data=small_arrays) 
+            #  a =   on_save(small_arrays)
+                frappe.enqueue('epos_restaurant_2023.api.sync_api.on_save',data=small_arrays)
     else:
         return response.text
 
@@ -54,18 +54,19 @@ def on_save(data):
     headers = {
                 'Authorization': 'token fdad19c1e00297c:608a34efdd29106'
             }
+    c=[]
     for d in data:
         if len(d)> 0:
             for row in d:
-                server_url = server_url + f"api/resource/{row['document_type']}/{row['document_name']}"
-                response = requests.get(server_url,headers=headers)
+                c.append(server_url + f"/api/resource/{row['document_type']}/{row['document_name']}")
+                response = requests.get(server_url + f"/api/resource/{row['document_type']}/{row['document_name']}",headers=headers)
                 if response.status_code==200:
                     response_data = json.loads(response.text)
                     
                     if frappe.db.exists(row['document_type'],row['document_name']):
                         row = response_data['data']
                         doc = frappe.get_doc(row)
-                        doc.save()
+                        doc.save(ignore_version=True)
                     else:
                         row = response_data['data']
                         row["__newname"] = row["name"]
