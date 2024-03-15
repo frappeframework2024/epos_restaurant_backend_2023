@@ -4,8 +4,7 @@
             <div>{{ params.title ?? $t("Discount") }}</div>
         </template>
         <template #content>
-            <div>
-              
+            <div>  
       <v-chip-group
         v-model="selectedGroup"
         column
@@ -132,7 +131,7 @@ function onOK(){
     if(discount.value <= 0){
         toaster.warning($t('msg.Please select a discount'));
     }
-    else if(discount_type.value == 'Amount' && discountAmount.value < discount.value){
+    else if(discount_type.value == 'Amount' && Math.abs(discountAmount.value) < Math.abs(discount.value)){
         toaster.warning(`${$t('Max discount')} ${maxDiscountPercent.value * 100}% : ${discountAmount.value}$ `);
     }
     else if(categoryNoteName.value && !discount_note.value){

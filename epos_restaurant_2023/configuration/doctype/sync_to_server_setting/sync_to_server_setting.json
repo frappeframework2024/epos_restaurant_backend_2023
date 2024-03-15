@@ -7,7 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "document_type",
-  "sort_order"
+  "event"
  ],
  "fields": [
   {
@@ -18,16 +18,16 @@
    "options": "DocType"
   },
   {
-   "fieldname": "sort_order",
-   "fieldtype": "Int",
+   "fieldname": "event",
+   "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Sort Order"
+   "label": "Event"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-03-14 08:51:29.033382",
+ "modified": "2024-03-15 12:08:14.112292",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Sync To Server Setting",

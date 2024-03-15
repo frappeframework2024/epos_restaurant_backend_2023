@@ -3,7 +3,7 @@
   <div :class="sale.sale?.sale_products?.length > 0 ? 'table-sale-product-scroll' : ' empty-no-scroll'"
     :style="sale.sale?.sale_products?.length > 0 ? 'max-height:calc(-424px + 100vh)' : ''">
     <v-table>
-      <thead>
+      <thead class="h-head">
         <tr>
           <th class="text-left">
             មុខទំនិញ <br />
@@ -42,9 +42,9 @@
               <div class="d-flex align-center gap-3">
                 <div> 
                   <v-avatar :image="sp?.product_photo" v-bind="props" v-if="sp?.product_photo"
+                    class="cursor-pointer"></v-avatar> 
+                  <v-avatar :image="placeholderImage" v-bind="props" v-else
                     class="cursor-pointer"></v-avatar>
-                  <avatar v-else :name="sp.product_name || 'No Name'" v-bind="props" class="cursor-pointer mr-2"
-                    size="40"></avatar>
                 </div>
                 <div> 
                   <p>{{ sp.product_code }} </p>  
@@ -57,6 +57,15 @@
                       {{ sp.product_name_kh }}
                       <v-tooltip activator="parent" location="start">{{ sp.product_name_kh }} </v-tooltip>
                     </p> 
+
+                    <div class="visib-dis">
+                    <template v-if="sp.discount">Discount: 
+                      <span v-if="sp.discount_type == 'Percent'">
+                        {{ sp.discount }} % /
+                      </span>  
+                      <CurrencyFormat :value="sp.discount_amount" />
+                    </template>
+                    </div>
                   
                  
                   <p v-if="!sp.note" class="italic underline" style="color:#ccc;" @click="sale.onSaleProductNote(sp)">
@@ -67,11 +76,11 @@
             </td>
             <td class="text-center">
               <div class="flex justify-center">
-                <div class="flex gap-2 border rounded justify-center py-1" style="width:5rem">
-                  <div><v-icon icon="mdi-minus-circle-outline" color="red" @click="onUpdateQuantity(sp, -1)"></v-icon>
+                <div class="flex gap-2 border rounded justify-center py-1" >
+                  <div><v-icon size="small" icon="mdi-minus-circle-outline" color="red" @click="onUpdateQuantity(sp, -1)"></v-icon>
                   </div>
-                  <div>{{ sp.quantity }}</div>
-                  <div><v-icon icon="mdi-plus-circle-outline" color="green" @click="onUpdateQuantity(sp, 1)"></v-icon>
+                  <div class="text-sm link_line_action overflow-hidden" @click="onChangeQTY(sp)">{{ sp.quantity }}</div>
+                  <div><v-icon size="small" icon="mdi-plus-circle-outline" color="green" @click="onUpdateQuantity(sp, 1)"></v-icon>
                   </div>
 
                 </div>
@@ -87,8 +96,8 @@
                 <CurrencyFormat :value="sp.price" />
               </span>
             </td>
-            <td class="text-end">
-              <span class="link_line_action overflow-hidden" style="min-width:4rem">
+            <td class="text-end none-discount-field">
+              <span class=" " style="min-width:4rem">
                 <template v-if="sp.discount">
                   <span v-if="sp.discount_type == 'Percent'">
                     {{ sp.discount }} % /
@@ -98,7 +107,9 @@
                   <CurrencyFormat :value="sp.discount_amount" />
                 </template>
 
-                <template v-else>{{ $t("Apply Discount") }}</template>
+                <!-- <template v-else>{{ $t("Apply Discount") }}</template> -->
+                <v-icon v-else color="blue-darken-2" icon="mdi-sale" size="large"></v-icon>
+
 
                 <v-menu activator="parent">
                   <v-list>
@@ -131,19 +142,26 @@
                   <v-btn class="ma-2" icon="mdi-dots-vertical" variant="text"  v-bind="props">
                   </v-btn>
                 </template>
-                <v-list>
+                <v-list> 
+                  <v-list-item @click="onSaleProductDiscount(sp, 'Percent')">
+                      <v-list-item-title>{{ $t("Discount Percent") }} (%)</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="onSaleProductDiscount(sp, 'Amount')">
+                      <v-list-item-title>{{ $t("Discount Amount") }} ($)</v-list-item-title>
+                    </v-list-item>
+                    <v-divider v-if="sp.discount > 0" inset></v-divider>
+                    <v-list-item v-if="sp.discount > 0" @click="onSaleProductCancelDiscount(sp)">
+                      <v-list-item-title class="text-orange-700">{{ $t("Cancel Discount") }}</v-list-item-title>
+                    </v-list-item> 
                   <v-list-item v-if="sp.quantity > 0" @click="onReturn(sp)">
                     <v-list-item-title>{{ $t("Mark as Return Product") }}</v-list-item-title>
-                  </v-list-item>
-
+                  </v-list-item> 
                   <v-list-item v-else @click="onReturn(sp)">
                     <v-list-item-title>{{ $t("Mark as Selling Product") }}</v-list-item-title>
-                  </v-list-item>
-
-                  
+                  </v-list-item> 
                   <v-list-item @click="sale.onRemoveItem(sp, gv, numberFormat)">
                     <v-list-item-title>{{ $t("Remove Item") }}</v-list-item-title>
-                  </v-list-item> 
+                  </v-list-item>  
                 </v-list>
               </v-menu> 
             </td>
@@ -168,6 +186,7 @@ import { ref, inject } from "@/plugin"
 import ComCurrentUserAvatar from '@/components/layout/components/ComCurrentUserAvatar.vue'
 import ComProductUnit from '@/views/sale/components/retail_ui/ComProductUnit.vue'
 import { createToaster } from '@meforma/vue-toaster';
+import placeholderImage from '@/assets/images/placeholder.webp'
 
 
 import { i18n } from '@/i18n';
@@ -217,11 +236,11 @@ function onSaleProductDiscount(sp, discount_type) {
         if (v) {
           sp.temp_discount_by = v.user;
           sp.temp_discount_note = v.note;
-
+          
           sale.onDiscount(
             gv,
             `${sp.product_name} Discount`,
-            sp.amount,
+            sp.quantity * sp.price,
             sp.discount,
             discount_type,
             v.discount_codes,
@@ -252,7 +271,12 @@ function onSaleProductCancelDiscount(sp) {
 }
 
 
-
+function onChangeQTY (sp) {
+  if ( sale.dialogActiveState == false) {
+            sale.dialogActiveState = true;
+            sale.onChangeQuantity(sp, gv)
+        }
+}
 
 
 
@@ -317,11 +341,17 @@ tr:nth-child(even) {
     width:50px
   }
 }
-.table-pro tr td {
+.table-pro tr td,
+.h-head tr th {
   padding: 0 6px !important;
 }
 .op-option-btn .v-btn--icon.v-btn--density-default {
   width: auto !important;
   height: auto !important;
+}
+@media (min-width: 1024.98px) {
+  .visib-dis{
+    display: none;
+  }
 }
 </style>

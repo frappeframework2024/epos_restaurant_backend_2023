@@ -4,7 +4,7 @@ import json
 from frappe.utils.response import json_handler
 from datetime import datetime, timedelta
 @frappe.whitelist(allow_guest=True)
-def get_product_by_menu(root_menu=""):
+def get_product_by_menu(root_menu="", mobile = 0):
     if root_menu=="":
         return []
     else:
@@ -30,24 +30,25 @@ def get_product_by_menu(root_menu=""):
                 order by sort_order, name
                 """.format(root_menu)
         data = frappe.db.sql(sql,as_dict=1)
-
         
-
         for d in data:
             menus.append(d)
+            child_menus = get_child_menus(d.name, mobile=mobile)
             
-            for m in get_child_menus(d.name):
+            for m in child_menus:
                 menus.append(m)
             
-            for m in get_products(d.name):
+            menu_products = get_products(d.name,mobile=mobile)
+            for m in menu_products:
                 menus.append(m)
         
-        for m in get_products(root_menu):
+        menu_products = get_products(root_menu,mobile=mobile)
+        for m in menu_products:
                 menus.append(m)
              
         return menus
 
-def get_child_menus(parent_menu):
+def get_child_menus(parent_menu, mobile= 0):
     menus = []
     menus.append({"type":"back","parent":parent_menu})
     sql = """select 
@@ -70,22 +71,19 @@ def get_child_menus(parent_menu):
             order by sort_order, name
             """.format(parent_menu)
     data = frappe.db.sql(sql,as_dict=1)
-    for d in data:
-        
+    for d in data:        
         menus.append(d)
-     
-        for m in get_child_menus(d.name):
+        child_menus = get_child_menus(d.name,mobile=mobile)
+        for m in child_menus:
             menus.append(m)
         
-        for m in get_products(d.name):
-            menus.append(m)
-        
+        for m in get_products(d.name,mobile=mobile):
+            menus.append(m)       
         
     return menus
 
 
-def get_products(parent_menu):
-     
+def get_products(parent_menu,mobile=0):     
     sql = """select 
                 name as menu_product_name,
                 product_code as name,

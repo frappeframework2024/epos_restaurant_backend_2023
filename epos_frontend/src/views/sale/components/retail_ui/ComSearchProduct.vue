@@ -30,7 +30,7 @@
                             <div style="height:calc(100vh - 225px);" class="overflow-auto">
                                 <div class="flex flex-column h-100">
                                     <div>
-                                        <v-table style="border-top: 1px solid #ccc">
+                                        <v-table class="responsive-table" style="border-top: 1px solid #ccc">
                                             <thead>
                                                 <tr>
                                                     <th class="text-left">{{$t("Photo")}}</th>
@@ -47,8 +47,10 @@
                                                     <td class="text-left">
                                                         <div class="">
                                                             <div class="p-2">
-                                                                <v-img :width="150" :height="150" aspect-ratio="16/9"
+                                                                <v-img v-if="p.photo" class="img-fluid-res rounded" :width="150" aspect-ratio="1"
                                                                     cover :src="p.photo"></v-img>
+                                                                <v-img v-else class="img-fluid-res rounded" :width="150" aspect-ratio="1"
+                                                                    cover :src="placeholderImage"></v-img>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -57,19 +59,15 @@
                                                         <template v-if="p.product_code_3"> <br/> {{ p.product_code_3 }}</template>
                                                     </td>
                                                     <td style="max-width: 30rem;" class="overflow-hidden">
-                                                        <div class="elp-pro-name">
-                                                            <v-tooltip v-if="p.product_name_en != p.product_name_kh"
-                                                                :text="`${p.product_name_en}${p.product_name_kh}`">
+                                                        <div class="">
+                                                            <v-tooltip location="top" v-if="p.product_name_en != p.product_name_kh"
+                                                                :text="`${p.product_name_en} ${p.product_name_kh}`">
                                                                 <template v-slot:activator="{ props }">
-                                                                    <div class="elp-pro-name" v-bind="props">{{
-        p.product_name_en }} <template
-                                                                            v-if="p.product_name_en != p.product_name_kh">{{
-        p.product_name_kh }}</template>
+                                                                    <div class="elp-pro-name" v-bind="props">{{p.product_name_en }} <template v-if="p.product_name_en != p.product_name_kh">{{p.product_name_kh }}</template>
                                                                     </div>
                                                                 </template>
                                                             </v-tooltip>
-                                                            <v-tooltip v-else :text="`${p.product_name_en}`">
-
+                                                            <v-tooltip location="top" v-else :text="`${p.product_name_en}`"> 
                                                                 <template v-slot:activator="{ props }">
                                                                     <div class="elp-pro-name" v-bind="props">{{
                                                                         p.product_name_en }} <template
@@ -89,7 +87,9 @@
                                                         {{ p.unit }}
                                                     </td>
                                                     <td>
-                                                        <v-btn @click="onSelectProduct(p)" >Select Product</v-btn>
+                                                        <v-btn class="text-lg" @click="onSelectProduct(p)" >Select Product 
+                                                            <span style="color:red; font-weight: bold;">{{ getTotalQuantityOrder(p) }}</span>
+                                                        </v-btn>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -127,6 +127,7 @@
 import { inject, ref, computed, onMounted, reactive, i18n,addModifierDialog } from '@/plugin'
 import { createToaster } from '@meforma/vue-toaster';
 import ComSearchSelectedProduct from './ComSearchSelectedProduct.vue';
+import placeholderImage from '@/assets/images/placeholder.webp'
 const sale=inject("$sale")
 const product=inject("$product")
 
@@ -227,10 +228,7 @@ async function onSelectProduct(d){
 
          sale.addSaleProduct(p);
          toaster.success($t("Add product to order successfully"))
-    })
-       
-         
-         
+    })     
 }
 
 
@@ -238,15 +236,27 @@ onMounted(() => {
  
     call.get("epos_restaurant_2023.api.api.get_meta", { "doctype": "Product" }).then((data) => {
         meta.value = data.message
-    })
- 
+    }) 
 })
+
+function getTotalQuantityOrder(data) {
+    const qty = sale.sale?.sale_products?.filter(r => r.product_code == data.name).reduce((n, d) => n + (d.quantity || 0), 0);
+    console.log(qty)
+    if (qty == undefined) {
+        return ""
+    }
+    if (qty == 0) {
+        return ""
+    } else {
+        return " (" + qty + ")"
+    }
+}
 
 </script>
 
 <style>
 .elp-pro-name {
-    width: 30rem;
+    width: 25rem;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -254,5 +264,17 @@ onMounted(() => {
 
 .invs-det .v-input__details {
     display: none !important;
+}
+@media (max-width:1024.98px) {
+    .elp-pro-name {
+        width: 13rem;
+    }
+    .img-fluid-res {
+        width: 90px !important;
+    }
+    .responsive-table tr th, 
+    .responsive-table tr td{
+        padding: 0 5px !important;
+    }
 }
 </style>

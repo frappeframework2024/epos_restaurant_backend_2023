@@ -177,7 +177,7 @@ export default class Sale {
         }
     }
 
-    async LoadSaleData(name) { 
+    async LoadSaleData(name) {
         this.auditTrailLogs = [];
         this.changeTableSaleProducts = [];
         return new Promise(async (resolve) => {
@@ -188,7 +188,7 @@ export default class Sale {
                 name: name,
                 setValue: {
                     onSuccess(doc) {
-                        parent.sale = doc; 
+                        parent.sale = doc;
                         console.log("xxxx")
                         parent.onProcessTaskAfterSubmit(doc);
                         parent.action = "";
@@ -203,15 +203,15 @@ export default class Sale {
                 },
             });
 
-        
+
 
             await this.saleResource.get.fetch().then(async (doc) => {
                 this.onLoadDeleteSaleProducts(doc.name);
                 this.sale = doc;
 
-                
+
                 //add sale product to temp resend sale product to kitchen order
-                this.reSendSaleProductKOT = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r)=>(r.name??"")!="")));  
+                this.reSendSaleProductKOT = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "")));
 
                 this.action = "";
                 //check if current table dont hanve any sale list data then load it
@@ -256,7 +256,7 @@ export default class Sale {
     getReSendSaleProductGroupByKey() {
         if (!this.reSendSaleProductKOT) {
             return []
-        } else { 
+        } else {
             const group = Enumerable.from(this.reSendSaleProductKOT).groupBy("{order_by:$.order_by,order_time:$.order_time}", "", "{order_by:$.order_by,order_time:$.order_time}", "$.order_by+','+$.order_time");
             return group.orderByDescending("$.order_time").toArray();
         }
@@ -274,7 +274,7 @@ export default class Sale {
         }
     }
 
-    getReSendSaleProducts(groupByKey) { 
+    getReSendSaleProducts(groupByKey) {
         if (groupByKey) {
             return Enumerable.from(this.reSendSaleProductKOT).where(`$.order_by=='${groupByKey.order_by}' && $.order_time=='${groupByKey.order_time}'`).orderByDescending("$.modified").toArray()
         } else {
@@ -551,6 +551,7 @@ export default class Sale {
             sp.discount_amount = 0;
             //check if sale have discount then add discount to sale
         }
+        sp.discount_amount = Math.abs(sp.discount_amount || 0) * (sp.is_return ? -1 : 1)
         if (sp.sale_discount_percent) {
             sp.sale_discount_amount = (sp.sub_total * sp.sale_discount_percent / 100);
         }
@@ -564,7 +565,7 @@ export default class Sale {
         sp.is_render = true;
 
 
-       
+
     }
 
     //on sale product apply tax setting
@@ -709,8 +710,8 @@ export default class Sale {
 
         socket.emit("ShowOrderInCustomerDisplay", this.sale, sale_status);
 
-         //add sale product to temp resend sale product to kitchen order
-         this.reSendSaleProductKOT = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r)=>(r.name??"")!="")));  
+        //add sale product to temp resend sale product to kitchen order
+        this.reSendSaleProductKOT = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "")));
     }
 
     updateQuantity(sp, n) {
@@ -1815,7 +1816,7 @@ export default class Sale {
                 if (localStorage.getItem("is_window") == "1") {
                     window.chrome.webview.postMessage(JSON.stringify(data));
                 }
-                else if ((localStorage.getItem("flutterWrapper") || 0) == 1) { 
+                else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
                     var printer = (this.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
                     if (printer.length <= 0) {
                         // toaster.warning($t("Printer not yet configt for this device"))
@@ -1828,7 +1829,7 @@ export default class Sale {
                             "is_label_printer": printer[0].is_label_printer
                         }
                         flutterChannel.postMessage(JSON.stringify(data));
-                        
+
                     }
                 }
                 else {

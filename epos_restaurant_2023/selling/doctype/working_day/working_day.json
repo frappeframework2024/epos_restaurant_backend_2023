@@ -19,6 +19,7 @@
   "closed_date",
   "outlet",
   "column_break_11",
+  "closed_by",
   "closed_note"
  ],
  "fields": [
@@ -91,11 +92,17 @@
    "fieldname": "closed_note",
    "fieldtype": "Small Text",
    "label": "Closed Note"
+  },
+  {
+   "fetch_from": ".outlet",
+   "fieldname": "closed_by",
+   "fieldtype": "Data",
+   "label": "Closed By"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-06 14:32:37.364571",
+ "modified": "2024-03-13 13:56:39.878544",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Working Day",

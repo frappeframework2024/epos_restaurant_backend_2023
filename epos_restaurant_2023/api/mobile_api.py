@@ -20,9 +20,9 @@ def on_check_url():
 def on_get_pos_configure(pos_profile="", device_name=''):  
     return get_system_settings(pos_profile,device_name) 
 
-@frappe.whitelist(allow_guest=True) 
+@frappe.whitelist(allow_guest=True,methods='POST') 
 def get_menu_product(root_menu=""):  
-    return get_product_by_menu(root_menu)
+    return get_product_by_menu(root_menu,mobile=1)
 
 @frappe.whitelist(allow_guest=True) 
 def get_pos_users(secret_key = False):  

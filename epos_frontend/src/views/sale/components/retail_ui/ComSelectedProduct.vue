@@ -1,6 +1,6 @@
 <template>
 
-    <div>
+    <div> 
         <template v-if="sale?.selected_sale_product">
             <div class="selected-pro">
                 <div class="border p-3 rounded-md searc-pro-res">
@@ -8,6 +8,9 @@
                     class="product-image rounded-md overflow-hidden" style="width: 300px;">
                         <img class="h-100 w-100" style="object-fit: cover;"
                             :src="sale?.selected_sale_product?.product_photo" />
+                    </div>
+                    <div v-else class="product-image rounded-md overflow-hidden" style="width: 300px;"> 
+                        <v-img width="100%" aspect-ratio="16/9" cover :src="placeholderImage"></v-img>
                     </div>
                     <br />
                     <div class="text-center">
@@ -84,6 +87,7 @@
 <script setup>
 import { inject, ref, watch, onMounted, i18n } from '@/plugin';
 import ComLabelValue from "@/views/sale/components/retail_ui/ComLabelValue.vue"
+import placeholderImage from '@/assets/images/placeholder.webp'
 
 const { t: $t } = i18n.global;
 const sale = inject("$sale") 

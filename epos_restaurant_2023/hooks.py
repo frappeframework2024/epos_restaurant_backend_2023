@@ -108,13 +108,14 @@ after_migrate = "epos_restaurant_2023.migrate.after_migrate"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-#	"*": {
-#		"on_update": "method",
-#		"on_cancel": "method",
-#		"on_trash": "method"
-#	}
-# }
+doc_events = {
+	"*": {
+		"on_update": ["epos_restaurant_2023.api.utils.generate_data_for_sync_record"],
+		# "on_cancel": "method",
+        "on_trash": "epos_restaurant_2023.api.utils.generate_data_for_sync_record_on_delete",
+        "on_submit":["epos_restaurant_2023.api.utils.sync_data_to_server_on_submit"]
+	}
+}
 
 #Scheduled Tasks
 #---------------
