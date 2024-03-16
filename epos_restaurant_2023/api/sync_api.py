@@ -79,6 +79,7 @@ def on_save(doc):
    
 
 
+
 # *******************SERVER API**************************
 @frappe.whitelist()
 def generate_init_data_sync_to_client(business_branch):
@@ -118,7 +119,7 @@ def get_data_for_sync(business_branch):
             
             return_data.append(client_doctype)
             
-            
+    frappe.db.sql("delete from `tabData For Sync` where is_synced=1 and business_branch='{}'".format(business_branch))       
     frappe.db.commit()
     return return_data
       

@@ -10,6 +10,7 @@
  "field_order": [
   "device_info_section",
   "station_name",
+  "business_branch",
   "platform",
   "device_id",
   "license",
@@ -224,11 +225,17 @@
    "fieldtype": "Table",
    "label": "Station Printers",
    "options": "Station Printers"
+  },
+  {
+   "fieldname": "business_branch",
+   "fieldtype": "Link",
+   "label": "Business Branch",
+   "options": "Business Branch"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-03-05 17:18:32.280593",
+ "modified": "2024-03-16 16:16:23.948605",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

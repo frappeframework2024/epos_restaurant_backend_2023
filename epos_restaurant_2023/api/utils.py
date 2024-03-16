@@ -21,15 +21,24 @@ def generate_data_for_sync_record_on_delete(doc, method=None, *args, **kwargs):
     if setting.enable ==1:
         if doc.doctype in [d.document_type for d in setting.sync_to_client]:
             frappe.db.sql("delete from `tabData For Sync` where document_type='{}' and document_name='{}'".format(doc.doctype,doc.name))
-            for b in setting.sync_business_branches:
-                if not frappe.db.exists("Data For Sync",{"business_branch":b.business_branch,"document_type":doc.doctype,"document_name":doc.name}):
-                    frappe.get_doc({
-                        "doctype":"Data For Sync",
-                        "business_branch":b.business_branch,
-                        "document_type":doc.doctype,
-                        "document_name":doc.name,
-                        "is_deleted":1
-                    }).insert(ignore_permissions=True)
+            if "business_branch" in doc:
+                frappe.get_doc({
+                            "doctype":"Data For Sync",
+                            "business_branch":doc.business_branch,
+                            "document_type":doc.doctype,
+                            "document_name":doc.name,
+                            "is_deleted":1
+                        }).insert(ignore_permissions=True)
+            else:
+                for b in setting.sync_business_branches:
+                    if not frappe.db.exists("Data For Sync",{"business_branch":b.business_branch,"document_type":doc.doctype,"document_name":doc.name}):
+                        frappe.get_doc({
+                            "doctype":"Data For Sync",
+                            "business_branch":b.business_branch,
+                            "document_type":doc.doctype,
+                            "document_name":doc.name,
+                            "is_deleted":1
+                        }).insert(ignore_permissions=True)
             
 @frappe.whitelist()
 def sync_data_to_server_on_submit(doc, method=None, *args, **kwargs):
@@ -49,7 +58,7 @@ def sync_data_to_server(doc):
                 'Authorization': 'token {}'.format(token),
                 "Content-Type":"application/json"
             }
-    server_url = server_url + "api/method/epos_restaurant_2023.api.utils.save_sync_data"
+    server_url = server_url + "/api/method/epos_restaurant_2023.api.utils.save_sync_data"
 
     response = requests.post(server_url,headers=headers,json={"doc":frappe.as_json(doc)})
     return response.text
