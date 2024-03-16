@@ -1,7 +1,7 @@
 import json
 import frappe
 import requests
-from frappe.utils import today, add_to_date
+from frappe.utils import now, add_to_date
 
 @frappe.whitelist()
 def generate_init_data_sync_to_client(business_branch):
@@ -74,7 +74,7 @@ def on_save(data):
 def insert(row,response_data):
     if frappe.db.exists(row['document_type'],row['document_name']):
         row = response_data['data']
-        row['modified'] = add_to_date(days=100)
+        row['modified'] = add_to_date(now(),days=100)
         doc = frappe.get_doc(row)
         doc.save(ignore_version=True)
     else:
