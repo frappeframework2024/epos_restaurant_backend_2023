@@ -49,13 +49,14 @@ def get_sync_data_from_server(doctype, data):
         data = json.loads(response.text)
         data = data["message"]
         for doc in data:
-            on_save(doc)
+            if "business_branch" in doc:
+                if doc["business_branch"] == setting.current_client_branch:
+                    on_save(doc)
+            else:
+                on_save(doc)
+            
         frappe.db.commit()
 
-
-@frappe.whitelist()
-def delete_sync_data(doctype,data):
-    pass
 
 def on_save(doc):
     doc["__newname"] = doc["name"]
@@ -75,6 +76,14 @@ def on_save(doc):
         
         doc.insert(ignore_permissions=True, ignore_links=True)
     
+@frappe.whitelist()
+def delete_sync_record(doctype,name):
+    frappe.db.sql("delete from `tab{}` where name='{}'".format(doctype,name))
+    meta = frappe.get_meta(doctype)
+
+    for child in [d for d in meta.fields if d.fieldtype=="Table"]:
+        frappe.db.sql("delete from `tab{}` where parent='{}'".format(child.options,name))
+    frappe.db.commit()
         
    
 
