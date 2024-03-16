@@ -24,7 +24,7 @@ def get_data_for_sync():
     data = frappe.db.get_all('Data For Sync',fields=['document_name', 'name','document_type'],filters={
         'is_synced': 1
     })
-    frappe.db.sql("Delete From `tabData For Sync` where is_synced=1 where business_branch='{}'".format(setting.current_client_branch))
+    frappe.db.sql("Delete From `tabData For Sync` where is_synced=1 and business_branch='{}'".format(setting.current_client_branch))
     frappe.db.commit()
     return data
 
@@ -57,11 +57,9 @@ def on_save(data):
     headers = {
                 'Authorization': 'token fdad19c1e00297c:608a34efdd29106'
             }
-    c=[]
     for d in data:
         if len(d)> 0:
             for row in d:
-                c.append(server_url + f"/api/resource/{row['document_type']}/{row['document_name']}")
                 response = requests.get(server_url + f"/api/resource/{row['document_type']}/{row['document_name']}",headers=headers)
                 if response.status_code==200:
                     response_data = json.loads(response.text)
