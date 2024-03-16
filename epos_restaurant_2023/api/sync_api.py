@@ -30,9 +30,10 @@ def get_data_for_sync():
 
 @frappe.whitelist()
 def sync_data_to_client():
+    setting = frappe.get_doc("ePOS Sync Setting")
     server_url = frappe.db.get_single_value('ePOS Sync Setting','server_url')
     headers = {
-                'Authorization': 'token fdad19c1e00297c:608a34efdd29106'
+                'Authorization': f'token {setting.access_token}'
             }
     server_url = server_url + "/api/method/epos_restaurant_2023.api.sync_api.get_data_for_sync"
     response = requests.get(server_url,headers=headers)
