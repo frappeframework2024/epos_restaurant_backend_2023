@@ -6,7 +6,10 @@
  "engine": "InnoDB",
  "field_order": [
   "enable",
+  "section_break_yxlq",
   "server_url",
+  "column_break_xoof",
+  "current_client_branch",
   "section_break_pqge",
   "sync_to_client",
   "section_break_ydyy",
@@ -61,12 +64,26 @@
    "fieldname": "access_token",
    "fieldtype": "Data",
    "label": "Access Token"
+  },
+  {
+   "fieldname": "column_break_xoof",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "current_client_branch",
+   "fieldtype": "Link",
+   "label": "Current Client Branch",
+   "options": "Business Branch"
+  },
+  {
+   "fieldname": "section_break_yxlq",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-03-15 12:03:57.720002",
+ "modified": "2024-03-16 08:40:07.431534",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "ePOS Sync Setting",
