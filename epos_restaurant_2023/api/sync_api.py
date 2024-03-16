@@ -18,11 +18,14 @@ def generate_init_data_sync_to_client(business_branch):
 
 @frappe.whitelist()
 def get_data_for_sync():
-    frappe.db.sql('Update `tabData For Sync` set is_synced = 1')
+    setting = frappe.get_doc("ePOS Sync Setting")
+    frappe.db.sql("Update `tabData For Sync` set is_synced = 1 where business_branch='{}'".format(setting.current_client_branch))
+    frappe.db.commit()
     data = frappe.db.get_all('Data For Sync',fields=['document_name', 'name','document_type'],filters={
         'is_synced': 1
     })
-    frappe.db.sql('Delete From `tabData For Sync` where is_synced=1')
+    frappe.db.sql("Delete From `tabData For Sync` where is_synced=1 where business_branch='{}'".format(setting.current_client_branch))
+    frappe.db.commit()
     return data
 
 @frappe.whitelist()
@@ -62,17 +65,20 @@ def on_save(data):
                 response = requests.get(server_url + f"/api/resource/{row['document_type']}/{row['document_name']}",headers=headers)
                 if response.status_code==200:
                     response_data = json.loads(response.text)
-                    
-                    if frappe.db.exists(row['document_type'],row['document_name']):
-                        row = response_data['data']
-                        doc = frappe.get_doc(row)
-                        doc.save(ignore_version=True)
-                    else:
-                        row = response_data['data']
-                        row["__newname"] = row["name"]
-                        doc = frappe.get_doc(row)
-                        doc.insert(ignore_permissions=True, ignore_links=True)
-                    return doc
+                    frappe.enqueue('epos_restaurant_2023.api.sync_api.insert',row=row,response_data=response_data)
+                    # insert(row,response_data)
                 else:
                     return response.raw
-    
+                
+
+def insert(row,response_data):
+    if frappe.db.exists(row['document_type'],row['document_name']):
+        row = response_data['data']
+        doc = frappe.get_doc(row)
+        doc.save(ignore_version=True)
+    else:
+        row = response_data['data']
+        row["__newname"] = row["name"]
+        doc = frappe.get_doc(row)
+        doc.insert(ignore_permissions=True, ignore_links=True)
+    return doc
