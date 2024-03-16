@@ -15,6 +15,9 @@ from epos_restaurant_2023.api.exely import submit_order_to_exely
 
 class Sale(Document):
 	def validate(self):
+		if self.flags.ignore_validate == True:
+			return 
+
 		if not frappe.db.get_default('exchange_rate_main_currency'):
 			frappe.throw('Main Exchange Currency not yet config. Please contact to system administrator for solve')
    
@@ -227,7 +230,8 @@ class Sale(Document):
 			self.sale_status_color = frappe.get_value("Sale Status","Closed","background_color")
 
 	def on_update(self):
-		
+		if self.flags.ignore_on_update == True:
+			return 
 		#add sale product spa commission
 		add_sale_product_spa_commission(self)
 
@@ -243,12 +247,16 @@ class Sale(Document):
 		frappe.db.sql("update `tabSale` set total_cost = {0} , profit=grand_total - {0} where name='{1}'".format(total_cost, self.name))
 
 	def after_insert(self):
+		if self.flags.ignore_after_insert == True:
+			return 
 		#add sale product spa commission
 		if not self.time_in:
 			pass	
 		add_sale_product_spa_commission(self)
 
 	def before_submit(self):
+		if self.flags.ignore_before_submit == True:
+			return 
 		on_get_revenue_account_code(self)
 		self.append_quantity = None
 		self.scan_barcode = None
@@ -275,6 +283,8 @@ class Sale(Document):
 
 	
 	def on_submit(self):
+		if self.flags.ignore_on_submit == True:
+			return 
 		if not self.time_out:
 			pass
 
@@ -295,6 +305,8 @@ class Sale(Document):
 
 	
 	def on_cancel(self):
+		if self.flags.on_cancel == True:
+			return 
 		on_sale_delete_update(self)
 		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel", queue='short', self=self)
 

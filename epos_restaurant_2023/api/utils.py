@@ -1,5 +1,6 @@
 import frappe
 import requests
+import json
 @frappe.whitelist()
 def generate_data_for_sync_record(doc, method=None, *args, **kwargs):
     setting =frappe.get_doc("ePOS Sync Setting")
@@ -30,7 +31,6 @@ def generate_data_for_sync_record_on_delete(doc, method=None, *args, **kwargs):
                         "is_deleted":1
                     }).insert(ignore_permissions=True)
             
-
 @frappe.whitelist()
 def sync_data_to_server_on_submit(doc, method=None, *args, **kwargs):
     setting =frappe.get_doc("ePOS Sync Setting")
@@ -39,35 +39,45 @@ def sync_data_to_server_on_submit(doc, method=None, *args, **kwargs):
             frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc)        
             
 
-           
+ 
+                          
 @frappe.whitelist()
 def sync_data_to_server(doc):
-     
     server_url = frappe.db.get_single_value('ePOS Sync Setting','server_url')
     token = frappe.db.get_single_value('ePOS Sync Setting','access_token')
     headers = {
-                'Authorization': 'token {}'.format(token)
+                'Authorization': 'token {}'.format(token),
+                "Content-Type":"application/json"
             }
     server_url = server_url + "api/method/epos_restaurant_2023.api.utils.save_sync_data"
-    response = requests.get(server_url,headers=headers,data=doc)
-    if response.status_code ==200:
-        pass
-    #   can be update is sync = true
+
+    response = requests.post(server_url,headers=headers,json={"doc":frappe.as_json(doc)})
+    return response.text
+     
     
     
     
 
 @frappe.whitelist(methods="POST")
 def save_sync_data(doc):
-    doc = frappe.get_doc(doc)
+    
+    doc = json.loads(doc)
+    doc = frappe.get_doc(doc) 
     doc.flags.ignore_validate = True
     doc.flags.ignore_insert = True
-    doc.flags.ignore_update = True
+    doc.flags.ignore_after_insert = True
+    doc.flags.ignore_on_update = True
+    doc.flags.ignore_before_submit = True
+    doc.flags.ignore_on_submit = True
+    doc.flags.ignore_on_cancel = True
     
     if frappe.db.exists(doc.doctype, doc.name):
-        doc.save()
+      
+        doc.save(ignore_permissions=True, ignore_links=True)
+        
     else:  
-        doc.insert()
+      
+        doc.insert(ignore_permissions=True, ignore_links=True)
         
     
 

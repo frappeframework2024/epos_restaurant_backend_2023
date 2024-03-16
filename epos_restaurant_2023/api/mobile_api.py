@@ -24,21 +24,23 @@ def on_get_pos_configure(pos_profile="", device_name=''):
 def get_menu_product(root_menu=""):
     if root_menu == "":
         return []
-    menus  = get_menu(root_menu)
+    menus  = get_menu(root_menu,root_menu)
     
     return menus
     #return get_product_by_menu(root_menu,mobile=1)
 
 ### get menu tree
-def get_menu(parent, is_child = 0):
+@frappe.whitelist() 
+def get_menu(root_menu, parent, is_child = 0):
     menus = []
     type_index = 1
     if is_child == 1:
-        menus.append({"type":"back","parent":parent})
+        menus.append({"name_en":"Back","name_kh":"Back", "text_color":"#ffffff","background_color":"#858585","root_menu":root_menu, "type":"back","parent":parent})
         type_index = 2
 
     sql = """select 
             name,
+            '{0}' as root_menu,
             pos_menu_name_en as name_en,
             pos_menu_name_kh as name_kh,
             parent_pos_menu as parent,
@@ -49,25 +51,88 @@ def get_menu(parent, is_child = 0):
             price_rule,
             photo,
             'menu' as type,
-            {0} as type_index,
+            {1} as type_index,
+            cast(0 as int) as have_product,
             sort_order
         from `tabPOS Menu` 
         where 
-            parent_pos_menu='{1}' and
+            parent_pos_menu='{2}' and
             disabled = 0 
         order by sort_order, name
-        """.format(type_index, parent)
-    parent = frappe.db.sql(sql,as_dict=1)
-    for p in parent:
+        """.format(root_menu,type_index, parent)
+    
+    parent_menus = frappe.db.sql(sql,as_dict=1)
+    for p in parent_menus:
         menus.append(p)
-        children = get_menu(p["name"], is_child=1)
+
+        sql_product = """select cast(count(name) as int) as total_products from `tabTemp Product Menu` where pos_menu='{}'""".format(p['name'])
+        products = frappe.db.sql(sql_product, as_dict=1) 
+        if products[0]["total_products"] > 0:
+            p['have_product'] = 1
+            
+        children = get_menu(root_menu, p["name"], is_child=1)
         if len(children)>0:
-            for c in children:
+            for c in children:                
                 menus.append(c)
 
     return menus
 
+### get product by menu
+@frappe.whitelist(allow_guest=True,methods='POST') 
+def get_product_list(root_menu="", pos_menu = ""):
+    if root_menu == "" or pos_menu == "":
+        return [] 
+    else:
+        sql = "select count(name) as total_menus from `tabPOS Menu` where parent_pos_menu = '{}'".format(root_menu)
+        menus = frappe.db.sql(sql,as_dict=1)
+        if menus[0]["total_menus"] <= 0:
+            return []
+        return get_product(root_menu,pos_menu)
 
+### get product 
+@frappe.whitelist() 
+def get_product(root_menu, pos_menu):
+    sql = """select 
+                name as menu_product_name,
+                product_code as name,
+                product_name_en as name_en,
+                product_name_kh as name_kh,
+                '{1}' as root_menu,
+                '{0}' as parent,
+                price,
+                unit,
+                allow_discount,
+                allow_change_price,
+                allow_free,
+                is_open_product,
+                is_inventory_product,
+                is_require_employee,
+                is_timer_product,
+                is_open_price,
+                prices,
+                printers,
+                modifiers,
+                photo,
+                'product' as type,
+                3 as type_index,
+                append_quantity,
+                is_combo_menu,
+                use_combo_group,
+                combo_menu_data,
+                combo_group_data,
+                tax_rule,
+                sort_order,
+                tax_rule_data,
+                revenue_group,
+                sort_order
+            from  `tabTemp Product Menu` 
+            where 
+                pos_menu='{0}' 
+            order by sort_order
+            """.format(pos_menu,root_menu)
+    
+    data = frappe.db.sql(sql,as_dict=1)
+    return data
 
 @frappe.whitelist(allow_guest=True) 
 def get_pos_users(secret_key = False):  
