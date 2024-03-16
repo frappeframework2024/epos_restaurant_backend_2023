@@ -1,3 +1,8 @@
+import os
+import numpy as np
+import base64
+from PIL import Image
+
 from epos_restaurant_2023.api.product import get_product_by_menu
 from epos_restaurant_2023.api.api import get_system_settings
 from epos_restaurant_2023.api.printing import (
@@ -62,7 +67,7 @@ def get_menu(root_menu, parent, is_child = 0):
         """.format(root_menu,type_index, parent)
     
     parent_menus = frappe.db.sql(sql,as_dict=1)
-    for p in parent_menus:
+    for p in parent_menus: 
         menus.append(p)
 
         sql_product = """select cast(count(name) as int) as total_products from `tabTemp Product Menu` where pos_menu='{}'""".format(p['name'])
@@ -76,6 +81,34 @@ def get_menu(root_menu, parent, is_child = 0):
                 menus.append(c)
 
     return menus
+
+@frappe.whitelist(allow_guest=True,methods='POST') 
+def get_base64_image(image_name):
+    if not image_name:
+        return ""
+
+    if not frappe.db.exists("File", {"file_url": image_name}):
+        return ""
+
+    _file = frappe.get_doc("File", {"file_url": image_name}) 
+    image = Image.open(_file.get_full_path())
+    image_path = '{}/resize_{}'.format(frappe.get_site_path(),_file.file_name)    
+
+    base_width= 90
+    wpercent = (base_width / float(image.size[0]))
+    hsize = int((float(image.size[1]) * float(wpercent)))
+    image = image.resize((base_width, hsize), Image.Resampling.LANCZOS)    
+    image.save(image_path,optimize=True, quality=95)
+    with open(image_path, "rb") as image_file:
+        image_data = image_file.read()
+        encoded_data = base64.b64encode(image_data).decode("utf-8") 
+    try:
+        if os.path.isfile(image_path):
+            os.remove(image_path)
+    except OSError as e:
+        pass
+    return encoded_data
+
 
 ### get product by menu
 @frappe.whitelist(allow_guest=True,methods='POST') 
@@ -132,6 +165,7 @@ def get_product(root_menu, pos_menu):
             """.format(pos_menu,root_menu)
     
     data = frappe.db.sql(sql,as_dict=1)
+    
     return data
 
 @frappe.whitelist(allow_guest=True) 

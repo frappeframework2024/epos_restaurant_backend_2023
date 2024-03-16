@@ -16,7 +16,9 @@ import os
 
 class Product(Document):
 	def validate(self):
-		# frappe.throw("hello world")
+		if self.flags.ignore_validate==True:
+			return 
+
 		if self.is_combo_menu==1:
 			self.is_recipe=0
 			if self.is_inventory_product:
@@ -120,6 +122,9 @@ class Product(Document):
 			self.price = Enumerable(self.product_price).min(lambda x: x.price)
 
 	def autoname(self):
+		if self.flags.ignore_autoname==True:
+			return 
+
 		from frappe.model.naming import set_name_by_naming_series, get_default_naming_series,make_autoname
 
 		if strip(self.naming_series) !="" and strip(self.product_code) =="":
@@ -131,6 +136,9 @@ class Product(Document):
 		 
   
 	def after_insert(self):
+		if self.flags.ignore_after_insert==True:
+			return 
+
 		if self.is_inventory_product:
 			if self.opening_quantity and self.opening_quantity>0:
 				add_to_inventory_transaction(
@@ -148,6 +156,8 @@ class Product(Document):
 
 
 	def before_save(self):
+		if self.flags.ignore_before_save==True:
+			return 
 		prices = []
 		if self.product_price:
 			
@@ -164,10 +174,14 @@ class Product(Document):
 		self.prices = json.dumps(prices)	
 	
 	def on_update(self):
+		if self.flags.ignore_on_update==True:
+			return 
 		# add_product_to_temp_menu(self)
 		frappe.enqueue("epos_restaurant_2023.inventory.doctype.product.product.add_product_to_temp_menu", queue='short', self=self)
 
 	def on_trash(self):
+		if self.flags.ignore_on_trash==True:
+			return 
 		frappe.db.sql("delete from `tabTemp Product Menu` where product_code='{}'".format(self.name))
 	 
 

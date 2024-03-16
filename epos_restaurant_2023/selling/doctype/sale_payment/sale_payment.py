@@ -7,6 +7,9 @@ from frappe.model.document import Document
 
 class SalePayment(Document):
 	def validate(self):
+		if self.flags.ignore_validate==True:
+			return
+       
 		#check if reservation deleted
 		if self.pos_reservation:
 			reservation = frappe.get_doc("POS Reservation", self.pos_reservation)			
@@ -52,16 +55,23 @@ class SalePayment(Document):
 		
 
 	def on_submit(self):
+		if self.flags.ignore_on_submit==True:
+			return
+       
 		update_sale(self)
 		if self.payment_type_group == "Voucher":
 			self.update_customer_voucher_balance()
 	
 	def on_cancel(self):
+		if self.flags.ignore_on_cancel==True:
+			return
 		update_sale(self)
 		if self.payment_type_group == "Voucher":
 			self.update_customer_voucher_balance()
 
 	def before_update_after_submit(self):
+		if self.flags.ignore_before_update_after_submit==True:
+			return
 		if not self.sale:
 			self.sale_date = None
 			self.customer = None

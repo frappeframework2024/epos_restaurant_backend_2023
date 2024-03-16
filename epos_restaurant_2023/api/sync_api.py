@@ -3,6 +3,83 @@ import frappe
 import requests
 from frappe.utils import now, add_to_date
 
+
+# ********************Client API *********************
+
+# this method for for schedult task
+@frappe.whitelist()
+def get_all_data_for_sync_from_server():
+    setting = frappe.get_doc("ePOS Sync Setting")
+    if setting.enable==1 and   setting.server_url and setting.current_client_branch:
+        server_url = setting.server_url
+        headers = {
+                    'Authorization': f'token {setting.access_token}'
+                }
+        server_url = server_url + "/api/method/epos_restaurant_2023.api.sync_api.get_data_for_sync?business_branch=" + setting.current_client_branch
+       
+        response = requests.get(server_url,headers=headers)
+        
+        if response.status_code==200:
+            data_for_sync = json.loads(response.text)
+            data_for_sync = data_for_sync['message']
+            for d in data_for_sync:
+                submit_sync_data_to_rq_job(d) 
+        else:
+            return response.tex
+
+
+def submit_sync_data_to_rq_job(data):
+    for d in data["update"]:
+        frappe.enqueue('epos_restaurant_2023.api.sync_api.get_sync_data_from_server',doctype=data["doctype"],data=d)
+    
+    # delete sync data 
+    if data["delete"]:
+        frappe.enqueue('epos_restaurant_2023.api.sync_api.delete_sync_data',doctype=data["doctype"],data=data["delete"])
+
+ 
+@frappe.whitelist()
+def get_sync_data_from_server(doctype, data):
+    setting = frappe.get_doc("ePOS Sync Setting")
+    headers = {
+                'Authorization': f'token {setting.access_token}'
+            }
+    server_url = setting.server_url + "/api/method/epos_restaurant_2023.api.sync_api.get_doctype_data"
+    response = requests.post(server_url,headers=headers,json={"doctype":doctype, "names":data})
+    if response.status_code == 200:
+        data = json.loads(response.text)
+        data = data["message"]
+        for doc in data:
+            on_save(doc)
+        frappe.db.commit()
+
+
+@frappe.whitelist()
+def delete_sync_data(doctype,data):
+    pass
+
+def on_save(doc):
+    doc["__newname"] = doc["name"]
+    doc = frappe.get_doc(doc)
+    doc.flags.ignore_validate = True
+    doc.flags.ignore_insert = True
+    doc.flags.ignore_after_insert = True
+    doc.flags.ignore_on_update = True
+    doc.flags.ignore_before_submit = True
+    doc.flags.ignore_on_submit = True
+    doc.flags.ignore_on_cancel = True
+    
+    if frappe.db.exists(doc.doctype, doc.name):
+        frappe.db.sql("update `tab{}` set modified='{}',creation='{}' where name='{}'".format(doc.doctype, doc.modified,doc.creation, doc.name))
+        doc.save(ignore_permissions=True)
+    else:  
+        
+        doc.insert(ignore_permissions=True, ignore_links=True)
+    
+        
+   
+
+
+# *******************SERVER API**************************
 @frappe.whitelist()
 def generate_init_data_sync_to_client(business_branch):
     if business_branch == "" or not business_branch:
@@ -15,71 +92,40 @@ def generate_init_data_sync_to_client(business_branch):
             frappe.db.sql(sql)
         frappe.db.commit()
 
+
     
 
 @frappe.whitelist()
-def get_data_for_sync():
+def get_data_for_sync(business_branch):
     setting = frappe.get_doc("ePOS Sync Setting")
-    frappe.db.sql("Update `tabData For Sync` set is_synced = 1 where business_branch='{}'".format(setting.current_client_branch))
+    frappe.db.sql("Update `tabData For Sync` set is_synced = 1 where business_branch='{}'".format(business_branch))
     frappe.db.commit()
-    data = frappe.db.get_all('Data For Sync',fields=['document_name', 'name','document_type'],filters={
-        'is_synced': 1
-    })
-    frappe.db.sql("Delete From `tabData For Sync` where is_synced=1 and business_branch='{}'".format(setting.current_client_branch))
-    frappe.db.commit()
-    return data
-
-@frappe.whitelist()
-def sync_data_to_client():
-    setting = frappe.get_doc("ePOS Sync Setting")
-    server_url = frappe.db.get_single_value('ePOS Sync Setting','server_url')
-    headers = {
-                'Authorization': f'token {setting.access_token}'
-            }
-    server_url = server_url + "/api/method/epos_restaurant_2023.api.sync_api.get_data_for_sync"
-    response = requests.get(server_url,headers=headers)
+    data = frappe.db.sql( "select distinct document_type, document_name,is_deleted  from `tabData For Sync` where is_synced=1 and business_branch='{}'".format(business_branch),as_dict=1) 
     
-    if response.status_code==200:
-        data_for_sync = json.loads(response.text)
-        data_for_sync = data_for_sync['message']
-        doctype_for_sync = frappe.db.sql('select document_type,total_record_per_sync from `tabSync To Client Setting` order by idx',as_dict=1)
-        for d in doctype_for_sync:
-            filter_data = list(filter(lambda x: x["document_type"] == d.document_type,data_for_sync))
+    return_data = []
+    sync_doctypes = set([d["document_type"] for d in data])
+    for dt in setting.sync_to_client:
+        if dt.document_type in sync_doctypes:
+            client_doctype = {"doctype":dt.document_type}
+            # update data 
+            breakdown_data =[d["document_name"] for d in data if d["document_type"] == dt.document_type and d["is_deleted"]==0]
+             
             
-            small_arrays = [filter_data[i:i+d.total_record_per_sync] for i in range(0, len(data_for_sync), d.total_record_per_sync)]
-            if len(small_arrays) > 0:
-            #  a =   on_save(small_arrays)
-                frappe.enqueue('epos_restaurant_2023.api.sync_api.on_save',data=small_arrays)
-    else:
-        return response.text
-
-def on_save(data):
-    setting = frappe.get_doc("ePOS Sync Setting")
-    server_url = frappe.db.get_single_value('ePOS Sync Setting','server_url')
-    headers = {
-                'Authorization': f'token {setting.access_token}'
-            }
-    for d in data:
-        if len(d)> 0:
-            for row in d:
-                response = requests.get(server_url + f"/api/resource/{row['document_type']}/{row['document_name']}",headers=headers)
-                if response.status_code==200:
-                    response_data = json.loads(response.text)
-                    frappe.enqueue('epos_restaurant_2023.api.sync_api.insert',row=row,response_data=response_data)
-                    # insert(row,response_data)
-                else:
-                    return response.raw
-                
-
-def insert(row,response_data):
-    if frappe.db.exists(row['document_type'],row['document_name']):
-        row = response_data['data']
-        row['modified'] = add_to_date(now(),days=100)
-        doc = frappe.get_doc(row)
-        doc.save(ignore_version=True)
-    else:
-        row = response_data['data']
-        row["__newname"] = row["name"]
-        doc = frappe.get_doc(row)
-        doc.insert(ignore_permissions=True, ignore_links=True)
-    return doc
+            client_doctype["update"] =[breakdown_data[i:i+dt.total_record_per_sync] for i in range(0, len(breakdown_data), dt.total_record_per_sync)]
+            client_doctype["delete"] =set([d["document_name"] for d in data if d["document_type"] == dt.document_type and d["is_deleted"]==1])
+            
+            
+            
+            return_data.append(client_doctype)
+            
+            
+    frappe.db.commit()
+    return return_data
+      
+@frappe.whitelist(methods="POST")
+def get_doctype_data(doctype,names):
+    data = []
+    for d in names:
+        if frappe.db.exists(doctype,d):
+            data.append(frappe.get_doc(doctype,d))
+    return data
