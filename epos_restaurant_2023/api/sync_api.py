@@ -1,6 +1,7 @@
 import json
 import frappe
 import requests
+from frappe.utils import now
 
 @frappe.whitelist()
 def generate_init_data_sync_to_client(business_branch):
@@ -53,10 +54,10 @@ def sync_data_to_client():
         return response.text
 
 def on_save(data):
-   
+    setting = frappe.get_doc("ePOS Sync Setting")
     server_url = frappe.db.get_single_value('ePOS Sync Setting','server_url')
     headers = {
-                'Authorization': 'token fdad19c1e00297c:608a34efdd29106'
+                'Authorization': f'token {setting.access_token}'
             }
     for d in data:
         if len(d)> 0:
@@ -73,6 +74,7 @@ def on_save(data):
 def insert(row,response_data):
     if frappe.db.exists(row['document_type'],row['document_name']):
         row = response_data['data']
+        row['modified'] = now()
         doc = frappe.get_doc(row)
         doc.save(ignore_version=True)
     else:
