@@ -69,21 +69,21 @@ def on_save(doc):
     doc.flags.ignore_on_submit = True
     doc.flags.ignore_on_cancel = True
     
-    if frappe.db.exists(doc.doctype, doc.name):
-        frappe.db.sql("update `tab{}` set modified='{}',creation='{}' where name='{}'".format(doc.doctype, doc.modified,doc.creation, doc.name))
-        doc.save(ignore_permissions=True)
-    else:  
-        
-        doc.insert(ignore_permissions=True, ignore_links=True)
+    delete_doc(doc.doctype,doc.name)
+    doc.insert(ignore_permissions=True, ignore_links=True)
     
-@frappe.whitelist()
-def delete_sync_record(doctype,name):
+
+def delete_doc(doctype,name):
     frappe.db.sql("delete from `tab{}` where name='{}'".format(doctype,name))
     meta = frappe.get_meta(doctype)
 
     for child in [d for d in meta.fields if d.fieldtype=="Table"]:
         frappe.db.sql("delete from `tab{}` where parent='{}'".format(child.options,name))
     frappe.db.commit()
+
+@frappe.whitelist()
+def delete_sync_record(doctype,name):
+    pass
         
    
 
