@@ -7,6 +7,8 @@ from frappe.utils.nestedset import NestedSet
 
 class POSMenu(NestedSet):
     def validate(self):
+        if self.flags.ignore_validate == True:
+            return 
         # if self.pos_menu_name_en == "Root Menu":
         #     frappe.throw("Root Menu is not allow to change.")
 
@@ -34,10 +36,14 @@ class POSMenu(NestedSet):
                     self.title_kh = self.title_en
 
     def on_trash(self):
+        if self.flags.ignore_on_trash == True:
+            return 
         if self.pos_menu_name_en == "Root Menu":
             frappe.throw("Root Menu is not allow to change.")
 
     def after_rename(self, old_name,new_name,merge):
+        if self.flags.ignore_after_rename == True:
+            return 
         update_pos_menu_path(old_name)
         frappe.db.set_value("POS Menu",new_name,"pos_menu_path",get_menu_path(new_name))
 

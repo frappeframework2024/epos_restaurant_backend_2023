@@ -7,6 +7,8 @@ from frappe.model.document import Document
 
 class UnitofMeasurementConversion(Document):
 	def validate(self):
+		if self.flags.ignore_validate == True:
+			return 
 			exist = frappe.db.exists("Unit of Measurement Conversion",{"from_uom":self.from_uom,"to_uom":self.to_uom})
 			if exist:
 				if self.is_new():

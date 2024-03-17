@@ -6,7 +6,11 @@ from epos_restaurant_2023.inventory.inventory import check_uom_conversion
 from frappe.model.document import Document
 
 class UnitOfMeasurement(Document):
+    
 	def after_insert(self):
+		if self.flags.ignore_after_insert == True:
+			return 
+
 		if not check_uom_conversion(self.unit_name,self.unit_name ):
 			doc = frappe.get_doc({
 				'doctype': 'Unit of Measurement Conversion',

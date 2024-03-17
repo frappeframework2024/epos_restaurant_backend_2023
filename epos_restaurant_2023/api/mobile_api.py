@@ -94,7 +94,7 @@ def get_base64_image(image_name):
     image = Image.open(_file.get_full_path())
     image_path = '{}/resize_{}'.format(frappe.get_site_path(),_file.file_name)    
 
-    base_width= 90
+    base_width= 110
     wpercent = (base_width / float(image.size[0]))
     hsize = int((float(image.size[1]) * float(wpercent)))
     image = image.resize((base_width, hsize), Image.Resampling.LANCZOS)    
@@ -165,7 +165,7 @@ def get_product(root_menu, pos_menu):
             """.format(pos_menu,root_menu)
     
     data = frappe.db.sql(sql,as_dict=1)
-    
+
     return data
 
 @frappe.whitelist(allow_guest=True) 
