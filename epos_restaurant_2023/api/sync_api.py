@@ -63,22 +63,9 @@ def get_sync_data_from_server(doctype, data):
 
 @frappe.whitelist()
 def rename_sync_data(doctype, data):
-    setting = frappe.get_doc("ePOS Sync Setting")
-    headers = {
-                'Authorization': f'token {setting.access_token}'
-            }
-    server_url = setting.server_url + "/api/method/epos_restaurant_2023.api.sync_api.get_doctype_for_rename"
-    response = requests.post(server_url,headers=headers,json={"doctype":doctype, "data":data})
-    if response.status_code == 200:
-        data = json.loads(response.text)
-        data = data["message"]
-        for doc in data:
-            if doc['doc'].get("business_branch"):
-                if doc['doc']["business_branch"] == setting.current_client_branch:
-                    frappe.enqueue('epos_restaurant_2023.api.sync_api.on_rename',doc=doc)
-            else:
-                frappe.enqueue('epos_restaurant_2023.api.sync_api.on_rename',doc=doc)
-        frappe.db.commit()
+    for d in data:
+        frappe.rename_doc(doctype,d['old_name'],d['name'])
+    frappe.db.commit()
 
 
 def on_save(doc):
@@ -149,7 +136,7 @@ def get_data_for_sync(business_branch):
     setting = frappe.get_doc("ePOS Sync Setting")
     frappe.db.sql("Update `tabData For Sync` set is_synced = 1 where business_branch='{}'".format(business_branch))
     frappe.db.commit()
-    data = frappe.db.sql( "select distinct document_type, document_name,is_deleted,is_renamed,old_name  from `tabData For Sync` where is_synced=1 and business_branch='{}'".format(business_branch),as_dict=1) 
+    data = frappe.db.sql( "select distinct document_type, document_name,is_deleted,is_renamed,old_name  from `tabData For Sync` where is_synced=1 and business_branch='{}' order by creation".format(business_branch),as_dict=1) 
     
     return_data = []
     sync_doctypes = set([d["document_type"] for d in data])

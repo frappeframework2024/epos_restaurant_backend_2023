@@ -110,9 +110,11 @@ def save_sync_data(doc):
     doc.flags.ignore_before_update_after_submit = True
     
     if frappe.db.exists(doc.doctype, doc.name):
-        doc.save(ignore_permissions=True, ignore_links=True)
+        doc.save(ignore_permissions=True)
     else:  
         doc.insert(ignore_permissions=True, ignore_links=True)
+        # for action in actions_after_save:
+        #  frappe.enqueue(action, queue='short', self=doc)
         
     
     frappe.db.sql(sql)
