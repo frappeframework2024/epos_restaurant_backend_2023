@@ -99,17 +99,18 @@
             </td>
             <td class="text-end none-discount-field">
               <span class="" style="width:auto">
-                <span v-if="sp.discount" class="link_line_action overflow-hidden w-auto">
-                  <span v-if="sp.discount_type == 'Percent'">
-                    {{ sp.discount }} % /
-                  </span> 
-                  <CurrencyFormat :value="sp.discount_amount" />
-                </span>
+                <template v-if="!sp.is_free">
+                  <span v-if="sp.discount" class="link_line_action overflow-hidden w-auto">
+                    <span v-if="sp.discount_type == 'Percent'">
+                      {{ sp.discount }} % /
+                    </span> 
+                    <CurrencyFormat :value="sp.discount_amount" />
+                  </span>
 
-                <!-- <template v-else><span style="width:auto;" class="link_line_action overflow-hidden">{{ $t("Apply Discount") }}</span></template> -->
-                <span v-else class="w-auto link_line_action overflow-hidden"><v-icon color="blue-darken-2" icon="mdi-sale" size="small"></v-icon></span>
-
-
+                  <!-- <template v-else><span style="width:auto;" class="link_line_action overflow-hidden">{{ $t("Apply Discount") }}</span></template> -->
+                  <span v-else class="w-auto link_line_action overflow-hidden"><v-icon color="blue-darken-2" icon="mdi-sale" size="small"></v-icon></span>
+                </template>
+ 
                 <v-menu activator="parent">
                   <v-list>
                     <v-list-item @click="onSaleProductDiscount(sp, 'Percent')">
@@ -165,13 +166,10 @@
 
                   <!-- free -->
                    
-                  <v-list-item prepend-icon="mdi-currency-usd-off" :title="$t('Free')" v-if="!sp.is_free"
+                  <v-list-item :title="$t('Free')" v-if="!sp.is_free"
                       @click="onSaleProductFree(sp)"></v-list-item>
 
-                  <v-list-item v-else @click="sale.onSaleProductCancelFree(sp)">
-                      <template v-slot:prepend>
-                          <v-icon icon="mdi-currency-usd-off" color="error"></v-icon>
-                      </template>
+                  <v-list-item v-else @click="sale.onSaleProductCancelFree(sp)"> 
                       <v-list-item-title class="text-red-700">{{ $t('Cancel Free') }}</v-list-item-title>
                   </v-list-item> 
                 <!-- end free -->

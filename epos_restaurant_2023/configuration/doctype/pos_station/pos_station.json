@@ -230,12 +230,13 @@
    "fieldname": "business_branch",
    "fieldtype": "Link",
    "label": "Business Branch",
-   "options": "Business Branch"
+   "options": "Business Branch",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-03-16 16:16:23.948605",
+ "modified": "2024-03-18 14:44:20.294764",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

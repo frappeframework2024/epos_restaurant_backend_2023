@@ -40,7 +40,7 @@
     <v-list-item v-if="setting.table_groups && setting.table_groups.length > 0" prepend-icon="mdi-chair-school"
         :title="$t('Seat') + '#'" @click="onSeatNumber()" />
 
-    <v-list-item prepend-icon="mdi-printer-outline" :title="$t('Re-send')" @click="onResend()" />
+    <!-- <v-list-item prepend-icon="mdi-printer-outline" :title="$t('Re-send')" @click="onResend()" /> -->
 
     <v-list-item prepend-icon="mdi-cash-100" :title="$t('Tax Setting')" @click="onChangeTaxSetting()"
         v-if="sale.setting.tax_rules.length > 0" />
