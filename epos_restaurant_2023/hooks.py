@@ -1,11 +1,13 @@
 from . import __version__ as app_version
-
+import frappe
 app_name = "epos_restaurant_2023"
 app_title = "ePOS Restaurant"
 app_publisher = "Tes Pheakdey"
 app_description = "epos restaurant 2023 by ESTC "
 app_email = "pheakdey.micronet@gmail.com"
 app_license = "MIT"
+
+
 
 # Includes in <head>
 # ------------------
@@ -110,14 +112,31 @@ after_migrate = "epos_restaurant_2023.migrate.after_migrate"
 
 doc_events = {
 	"*": {
-		"on_update": [
-            "epos_restaurant_2023.api.utils.generate_data_for_sync_record"
-        ],
-		# "on_cancel": "method",
-        "on_trash": "epos_restaurant_2023.api.utils.generate_data_for_sync_record_on_delete",
+		# "on_update": [
+        #     "epos_restaurant_2023.api.utils.generate_data_for_sync_record"
+        # ],
+		# # "on_cancel": "method",
+        # "on_trash": "epos_restaurant_2023.api.utils.generate_data_for_sync_record_on_delete",
         "on_submit":["epos_restaurant_2023.api.utils.sync_data_to_server_on_submit"]
 	}
 }
+
+setting =frappe.get_doc("ePOS Sync Setting")
+if setting.enable ==1:
+    for d in  setting.sync_to_client:
+        doc_events[d.document_type] = {
+            "on_update": [
+                "epos_restaurant_2023.api.utils.generate_data_for_sync_record"
+            ],
+            # "on_cancel": "method",
+            "on_trash": "epos_restaurant_2023.api.utils.generate_data_for_sync_record_on_delete",
+	}
+        
+    for d in setting.sync_to_server:
+        doc_events[d.document_type] = {
+            "on_submit":["epos_restaurant_2023.api.utils.sync_data_to_server_on_submit"]
+        }
+
 
 #Scheduled Tasks
 #---------------
