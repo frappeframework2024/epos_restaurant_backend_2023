@@ -105,7 +105,7 @@ const sale = inject("$sale")
     align-items: center;
 }
 .selected-pro {
-    height:calc(-321px + 100vh);
+    height:calc(-300px + 100vh);
     overflow-y:auto
 }
 

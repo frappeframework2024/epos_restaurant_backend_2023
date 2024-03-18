@@ -8,8 +8,11 @@
   "business_branch",
   "document_type",
   "document_name",
+  "old_name",
   "column_break_cawv",
-  "is_synced"
+  "is_synced",
+  "is_deleted",
+  "is_renamed"
  ],
  "fields": [
   {
@@ -40,11 +43,28 @@
    "fieldname": "is_synced",
    "fieldtype": "Check",
    "label": "Is Synced"
+  },
+  {
+   "fieldname": "old_name",
+   "fieldtype": "Data",
+   "label": "Old Name"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_deleted",
+   "fieldtype": "Check",
+   "label": "Is Deleted"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_renamed",
+   "fieldtype": "Check",
+   "label": "Is Renamed"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-03-14 10:53:42.964227",
+ "modified": "2024-03-18 11:45:32.354071",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Data For Sync",

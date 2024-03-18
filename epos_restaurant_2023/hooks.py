@@ -121,43 +121,43 @@ doc_events = {
 	}
 }
 
-# setting =frappe.get_doc("ePOS Sync Setting")
-# if setting.enable ==1:
-#     for d in  setting.sync_to_client:
-#         doc_events[d.document_type] = {
-#             "on_update": [
-#                 "epos_restaurant_2023.api.utils.generate_data_for_sync_record"
-#             ],
-#             "after_rename": [
-#                 "epos_restaurant_2023.api.utils.generate_data_for_sync_record_on_rename"
-#             ],
-#             # "on_cancel": "method",
-#             "on_trash": "epos_restaurant_2023.api.utils.generate_data_for_sync_record_on_delete",
-# 	}
+setting =frappe.get_doc("ePOS Sync Setting")
+if setting.enable ==1:
+    for d in  setting.sync_to_client:
+        doc_events[d.document_type] = {
+            "on_update": [
+                "epos_restaurant_2023.api.utils.generate_data_for_sync_record"
+            ],
+            "after_rename": [
+                "epos_restaurant_2023.api.utils.generate_data_for_sync_record_on_rename"
+            ],
+            # "on_cancel": "method",
+            "on_trash": "epos_restaurant_2023.api.utils.generate_data_for_sync_record_on_delete",
+	}
         
-#     for d in setting.sync_to_server:
-#         doc_events[d.document_type] = {
-#             "on_submit":["epos_restaurant_2023.api.utils.sync_data_to_server_on_submit"]
-#         }
+    for d in setting.sync_to_server:
+        doc_events[d.document_type] = {
+            "on_submit":["epos_restaurant_2023.api.utils.sync_data_to_server_on_submit"]
+        }
 
 
 #Scheduled Tasks
 #---------------
 
-# scheduler_events = {
-#     "cron": {
-#       "*/1 * * * *": [
-# 				"epos_restaurant_2023.api.schedule_task.generate_audit_trail_from_version",
-# 				"epos_restaurant_2023.api.sync_api.get_all_data_for_sync_from_server"
+scheduler_events = {
+    "cron": {
+      "*/1 * * * *": [
+				"epos_restaurant_2023.api.schedule_task.generate_audit_trail_from_version",
+				"epos_restaurant_2023.api.sync_api.get_all_data_for_sync_from_server"
 
-# 			],
-#       "0 */12 * * *":[
-#           "epos_restaurant_2023.api.ftp_backup.execute_backup_command",
-#       ]
-# 	}
+			],
+      "0 */12 * * *":[
+          "epos_restaurant_2023.api.ftp_backup.execute_backup_command",
+      ]
+	}
 
     
-# }
+}
 
 # Testing
 # -------

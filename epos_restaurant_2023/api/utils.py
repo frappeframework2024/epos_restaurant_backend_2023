@@ -21,7 +21,7 @@ def generate_data_for_sync_record_on_delete(doc, method=None, *args, **kwargs):
     if setting.enable ==1:
         if doc.doctype in [d.document_type for d in setting.sync_to_client]:
             frappe.db.sql("delete from `tabData For Sync` where document_type='{}' and document_name='{}'".format(doc.doctype,doc.name))
-            if "business_branch" in doc:
+            if doc.get("business_branch"):
                 frappe.get_doc({
                             "doctype":"Data For Sync",
                             "business_branch":doc.business_branch,
@@ -39,6 +39,32 @@ def generate_data_for_sync_record_on_delete(doc, method=None, *args, **kwargs):
                             "document_name":doc.name,
                             "is_deleted":1
                         }).insert(ignore_permissions=True)
+
+@frappe.whitelist()
+def generate_data_for_sync_record_on_rename(doc ,method=None, *args, **kwargs):
+    setting =frappe.get_doc("ePOS Sync Setting")
+    doc_name = {'old_name': args[0], 'name': args[1]}
+    frappe.db.sql("delete from `tabData For Sync` where document_type='{}' and document_name='{}' ".format(doc.doctype,doc.name))
+    if doc.get("business_branch"):
+        frappe.get_doc({
+                    "doctype":"Data For Sync",
+                    "business_branch":doc.business_branch,
+                    "document_type":doc.doctype,
+                    "old_name":doc_name['old_name'],
+                    "document_name":doc_name['name'],
+                    "is_renamed":1
+                }).insert(ignore_permissions=True)
+    else:
+        for b in setting.sync_business_branches:
+            if not frappe.db.exists("Data For Sync",{"business_branch":b.business_branch,"document_type":doc.doctype,"document_name":doc.name}):
+                frappe.get_doc({
+                    "doctype":"Data For Sync",
+                    "business_branch":b.business_branch,
+                    "document_type":doc.doctype,
+                    "old_name":doc_name['old_name'],
+                    "document_name":doc_name['name'],
+                    "is_renamed":1
+                }).insert(ignore_permissions=True)
             
 @frappe.whitelist()
 def sync_data_to_server_on_submit(doc, method=None, *args, **kwargs):

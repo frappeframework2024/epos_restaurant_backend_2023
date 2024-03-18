@@ -1,5 +1,5 @@
 <template>
-    <span class="link_line_action overflow-hidden" @click="getProductUnit">{{ sale_product.unit }}
+    <span style="width:auto" class="ml-1 link_line_action overflow-hidden" @click="getProductUnit">{{ sale_product.unit }}
 
         <v-menu activator="parent">
 
