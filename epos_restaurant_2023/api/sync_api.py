@@ -75,10 +75,9 @@ def rename_sync_data(doctype, data):
         for doc in data:
             if doc['doc'].get("business_branch"):
                 if doc['doc']["business_branch"] == setting.current_client_branch:
-                    on_save(doc)
+                    on_rename(doc)
             else:
-                on_save(doc)
-            
+                on_rename(doc)
         frappe.db.commit()
 
 
@@ -106,7 +105,7 @@ def on_rename(doc):
     doc.flags.ignore_on_submit = True
     doc.flags.ignore_on_cancel = True
     
-    frappe.rename_doc(doc['doc']['doctype'],doc['old_name'],[doc['doc']['name']])
+    frappe.rename_doc(doc['doc']['doctype'],doc['old_name'],[doc['doc']['doctype']])
     
 
 def delete_doc(doctype,name):
@@ -125,7 +124,7 @@ def delete_sync_data(doctype,data):
     for child in [d for d in meta.fields if d.fieldtype=="Table"]:
         frappe.db.sql("delete from `tab{}` where parent='{}'".format(child.options,name))
         
-    frappe.db.commit()
+   
 
 
 
