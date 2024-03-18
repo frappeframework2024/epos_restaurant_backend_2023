@@ -75,9 +75,9 @@ def rename_sync_data(doctype, data):
         for doc in data:
             if doc['doc'].get("business_branch"):
                 if doc['doc']["business_branch"] == setting.current_client_branch:
-                    on_rename(doc)
+                    frappe.enqueue('epos_restaurant_2023.api.sync_api.on_rename',doc=doc)
             else:
-                on_rename(doc)
+                frappe.enqueue('epos_restaurant_2023.api.sync_api.on_rename',doc=doc)
         frappe.db.commit()
 
 
