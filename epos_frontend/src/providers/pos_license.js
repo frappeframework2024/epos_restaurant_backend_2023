@@ -32,13 +32,15 @@ export default class POSLicense {
                 };
                 return this.license;
             } else{ 
-                // if(res_data.name == "Demo"){
-                //     return  { 
-                //         "status":true, 
-                //         "device_name":res_data.name,
-                //         "message":``
-                //     }; 
-                // }
+                if( res_data.name.toLowerCase() == "demo"){
+                    this.license ={ 
+                        "status":true, 
+                        "device_name":res_data.name,
+                        "message":``
+                    }
+                    return  this.license; 
+                }
+                
                 if ((res_data.license||"") == "" || res_data.license==undefined){
                     this.license =   {
                         "status":false,

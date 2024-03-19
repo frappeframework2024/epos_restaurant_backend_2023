@@ -77,16 +77,17 @@ if((is_window||0) == 0 && (is_apk_ipa||0)==0){
 	if((_webuid||0)==0){
 		localStorage.removeItem("device_name");
 	}else{ 		
-		 pos_license.onPOSLicenseCheck(_webuid).then((_res)=>{
-
-			if(_res.status == false){
-				onLogout();			
-				localStorage.clear();
-				router.reload();
-			}else if(_res.status == true && _res.expired == true){
-				onLogout();		  	
-			}
-		}); 
+ 
+			pos_license.onPOSLicenseCheck(_webuid).then((_res)=>{
+				if(_res.status == false){
+					onLogout();			
+					localStorage.clear();
+					router.reload();
+				}else if(_res.status == true && _res.expired == true){
+					onLogout();		  	
+				}
+			}); 
+		 
 	};
 
 	
