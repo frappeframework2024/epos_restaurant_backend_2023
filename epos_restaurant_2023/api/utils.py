@@ -128,6 +128,7 @@ def save_sync_data(doc,extra_action=None):
     
     doc = json.loads(doc)
     doc["__newname"] = doc["name"]
+
     doc = frappe.get_doc(doc) 
     sql = "update `tab{}` set creation='{}', owner='{}', modified='{}', modified_by='{}' where name='{}'".format(doc.doctype, doc.creation,doc.owner, doc.modified, doc.modified_by,doc.name)
     doc.flags.ignore_validate = True
@@ -138,7 +139,7 @@ def save_sync_data(doc,extra_action=None):
     doc.flags.ignore_on_submit = True
     doc.flags.ignore_on_cancel = True
     doc.flags.ignore_before_update_after_submit = True
-
+    doc.docstatus = 0
     delete_doc(doc.doctype, doc.name)
     doc.insert(ignore_permissions=True, ignore_links=True)
     
