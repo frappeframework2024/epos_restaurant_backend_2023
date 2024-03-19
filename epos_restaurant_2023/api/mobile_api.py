@@ -270,15 +270,7 @@ def get_print_report_image(data):
 ## END MOBILE SERVER PRINTING GENERATE BASE_64 IMAGE
 
 
-## WINDOW SERVER PRINTING GENERATE HTML
-@frappe.whitelist(allow_guest=True)
-def get_bill_template(name):
-    doc = frappe.get_doc("Sale", name)
-    template,css = frappe.db.get_value("POS Receipt Template","Receipt En",["template","style"])
-    html= frappe.render_template(template, get_print_context(doc))
-    return {"html":html,"css":css}
 
-## END WINDOW SERVER PRINTING GENERATE HTML
     
 
  

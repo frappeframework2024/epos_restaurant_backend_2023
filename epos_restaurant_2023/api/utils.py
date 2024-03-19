@@ -18,7 +18,7 @@ def generate_data_for_sync_record(doc, method=None, *args, **kwargs):
 
             if doc.doctype in [d.document_type for d in setting.sync_to_server]:
                 if doc.doctype in [d.document_type for d in setting.sync_to_server if d.event == 'on_update']:
-                    frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,event="update")
+                    frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,action="update")
             
                 # frappe.db.commit()
 @frappe.whitelist()
@@ -79,7 +79,7 @@ def sync_data_to_server_on_submit(doc, method=None, *args, **kwargs):
     if setting.enable ==1:
         if doc.doctype in [d.document_type for d in setting.sync_to_server if d.event == 'on_submit']:
             doctype = [d for d in setting.sync_to_server if d.event == 'on_submit' and d.document_type==doc.doctype][0] 
-            frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,extra_action=doctype.extra_action or [],event="submit") 
+            frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,extra_action=doctype.extra_action or [],action="submit") 
 
 
 @frappe.whitelist()
@@ -87,7 +87,7 @@ def sync_data_to_server_on_delete(doc, method=None, *args, **kwargs):
     setting =frappe.get_doc("ePOS Sync Setting")
     if setting.enable ==1:
         if doc.doctype in [d.document_type for d in setting.sync_to_server if d.event == 'on_delete']:
-            frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,event="delete") 
+            frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,action="delete") 
 
 
 
@@ -99,7 +99,7 @@ def sync_data_to_server_on_cancel(doc, method=None, *args, **kwargs):
             doctype = [d for d in setting.sync_to_server if d.event == 'on_cancel' and d.document_type==doc.doctype][0] 
             # sync_data_to_server(doc=doc,extra_action=doctype.extra_action or [])
             doc['docstatus'] = 0
-            frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,extra_action=doctype.extra_action or [],event="cancel")  
+            frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,extra_action=doctype.extra_action or [],action="cancel")  
             
 @frappe.whitelist()
 def sync_comment_to_server(doc, method=None, *args, **kwargs):
@@ -107,11 +107,11 @@ def sync_comment_to_server(doc, method=None, *args, **kwargs):
     if setting.enable ==1:
         if doc.reference_doctype in [d.document_type for d in setting.sync_to_server]:
           
-            frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,event="update")  
+            frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='long', doc=doc,action="update")  
  
                           
 @frappe.whitelist()
-def sync_data_to_server(doc,extra_action=None,event="update"):
+def sync_data_to_server(doc,extra_action=None,action="update"):
     
     server_url = frappe.db.get_single_value('ePOS Sync Setting','server_url')
     token = frappe.db.get_single_value('ePOS Sync Setting','access_token')
@@ -121,7 +121,7 @@ def sync_data_to_server(doc,extra_action=None,event="update"):
             }
     server_url = server_url + "/api/method/epos_restaurant_2023.api.utils.save_sync_data"
 
-    response = requests.post(server_url,headers=headers,json={"doc":frappe.as_json(doc),"extra_action":extra_action,event:event })
+    response = requests.post(server_url,headers=headers,json={"doc":frappe.as_json(doc),"extra_action":extra_action,action:action })
     if response.status_code==200:
         meta = frappe.get_meta(doc.doctype)
         if len([d for d in meta.fields if d.fieldname=="is_synced"])>0:
@@ -134,7 +134,7 @@ def sync_data_to_server(doc,extra_action=None,event="update"):
     
 
 @frappe.whitelist(methods="POST")
-def save_sync_data(doc,extra_action=None,event="update"):
+def save_sync_data(doc,extra_action=None,action="update"):
     
     doc = json.loads(doc)
     doc["__newname"] = doc["name"]
@@ -150,7 +150,7 @@ def save_sync_data(doc,extra_action=None,event="update"):
     doc.flags.ignore_on_cancel = True
     doc.flags.ignore_before_update_after_submit = True
     delete_doc(doc.doctype, doc.name)
-    if event != "delete":
+    if action != "delete":
         doc.insert(ignore_permissions=True, ignore_links=True)
         if extra_action:
             for action in json.loads(extra_action) :
