@@ -111,7 +111,6 @@ def sync_data_to_server(doc,extra_action=None):
     server_url = server_url + "/api/method/epos_restaurant_2023.api.utils.save_sync_data"
 
     response = requests.post(server_url,headers=headers,json={"doc":frappe.as_json(doc),"extra_action":extra_action })
-    frappe.throw(str(response.text))
     if response.status_code==200:
         meta = frappe.get_meta(doc.doctype)
         if len([d for d in meta.fields if d.fieldname=="is_synced"])>0:
