@@ -371,7 +371,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "lang": lang,
         "reports":reports,
         "letter_heads":letter_heads,
-        "device_setting":pos_station,
+        "device_setting":pos_station, 
         "shortcut_key":shortcut_keys,
         "exely":{
             "enabled":exely.enabled, "default_general_customer_id":exely.default_general_customer_id, "guest_api_endpoint":exely.guest_api_endpoint,"api_key":exely.api_key

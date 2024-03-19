@@ -110,16 +110,19 @@ after_migrate = "epos_restaurant_2023.migrate.after_migrate"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		# "on_update": [
-#         #     "epos_restaurant_2023.api.utils.generate_data_for_sync_record"
-#         # ],
-# 		# # "on_cancel": "method",
-#         # "on_trash": "epos_restaurant_2023.api.utils.generate_data_for_sync_record_on_delete",
-#         "on_submit":["epos_restaurant_2023.api.utils.sync_data_to_server_on_submit"]
-# 	}
-# }
+doc_events = {
+	"*": {
+		"on_update": [
+            "epos_restaurant_2023.api.utils.generate_data_for_sync_record"
+        ],
+        "after_rename": [
+                "epos_restaurant_2023.api.utils.generate_data_for_sync_record_on_rename"
+            ],
+		# "on_cancel": "method",
+        "on_trash": "epos_restaurant_2023.api.utils.generate_data_for_sync_record_on_delete",
+        "on_submit":["epos_restaurant_2023.api.utils.sync_data_to_server_on_submit"]
+	}
+}
 
 # setting =frappe.get_doc("ePOS Sync Setting")
 # if setting.enable ==1:
