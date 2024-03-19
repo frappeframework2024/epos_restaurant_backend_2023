@@ -166,17 +166,13 @@
 
                   <!-- free -->
                    
-                  <v-list-item :title="$t('Free')" v-if="!sp.is_free"
+                  <v-list-item :title="$t('Mark as Free Item')" v-if="!sp.is_free"
                       @click="onSaleProductFree(sp)"></v-list-item>
 
                   <v-list-item v-else @click="sale.onSaleProductCancelFree(sp)"> 
                       <v-list-item-title class="text-red-700">{{ $t('Cancel Free') }}</v-list-item-title>
                   </v-list-item> 
-                <!-- end free -->
-
-
-
-
+                <!-- end free --> 
                 </v-list>
               </v-menu> 
             </td>

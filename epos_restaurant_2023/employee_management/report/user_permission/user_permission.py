@@ -16,15 +16,24 @@ def get_report_field(filters):
 	return fields
 
 def get_report_data(filters):
+	
 	sql = """
-			select employee_name,module_profile,role_profile,user_id from `tabEmployee`
+			select employee_name,module_profile,role_profile,user_id,pos_permission from `tabEmployee`
 		"""
 	employees = frappe.db.sql(sql,as_dict=1)
 	role_profiles = list(set([d['role_profile'] for d in employees])) 
+	pos_permission = list(set([d['pos_permission'] for d in employees if d['pos_permission'] is not None])) 
 	has_role_sql = """
 				select role,parent from `tabHas Role` where parenttype = 'Role Profile' and parent in {}
 			""".format(tuple(role_profiles))
 	has_role_list = frappe.db.sql(has_role_sql,as_dict=1) or []
+	pos_permission_sql = """
+				select * from `tabPOS User Permission` where name in {}
+			""".format(tuple(pos_permission))
+	pos_permission_list = frappe.db.sql(pos_permission_sql,as_dict=1) or []
+	filtered_values = [key for d in pos_permission_list for key, value in d.items() if value == 1]
+	title_case_strings = [string.replace('_', ' ').title() for string in filtered_values]
+	frappe.throw(str(title_case_strings))
 	report_data=[]
 	
 	for emp in employees:
@@ -48,18 +57,36 @@ def get_report_data(filters):
 						})
 		allowed=[]
 		block_modules = frappe.get_doc("Module Profile", {"module_profile_name": emp.module_profile})
+		# frappe.throw(str(block_modules))
 		block_modules = [d.module for d in block_modules.get("block_modules")]
+		
+		
 		if len(block_modules) > 0:
 			allowed = frappe.db.sql("select name from `tabModule Def` where name not in {}".format(tuple(block_modules)),as_dict=1)
 		else:
 			allowed = frappe.db.sql("select name from `tabModule Def`",as_dict=1)
-
+		if len(allowed) > 0:
+			report_data.append({
+							"indent":0,
+							"employee_name": "<strong>" +emp.module_profile +"</strong>",
+							"is_group":1,
+						})
+		
 		for allow  in allowed:
 			report_data.append({
 							"indent":1,
 							"employee_name": allow.name,
 							"is_group":0,
 						})
+		if filters.allow_login_in_pos:
+			if emp.pos_permission:
+				report_data.append({
+								"indent":0,
+								"employee_name": "<strong>" + emp.pos_permission + "</strong>",
+								"is_group":1,
+							})
+			else:
+				pass
 	return report_data
 
 	

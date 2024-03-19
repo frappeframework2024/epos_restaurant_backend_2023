@@ -38,6 +38,8 @@
   "show_park_button",
   "show_top_up",
   "show_setting_menu",
+  "show_button_resend",
+  "show_wifi_button",
   "printers_tab",
   "station_printers"
  ],
@@ -232,11 +234,23 @@
    "label": "Business Branch",
    "options": "Business Branch",
    "reqd": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "show_button_resend",
+   "fieldtype": "Check",
+   "label": "Show Button Resend"
+  },
+  {
+   "default": "1",
+   "fieldname": "show_wifi_button",
+   "fieldtype": "Check",
+   "label": "Show WiFi Button"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-03-18 14:44:20.294764",
+ "modified": "2024-03-19 10:09:32.581809",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",
