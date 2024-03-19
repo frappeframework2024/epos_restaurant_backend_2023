@@ -23,6 +23,7 @@ def generate_data_for_sync_record(doc, method=None, *args, **kwargs):
                 # frappe.db.commit()
 @frappe.whitelist()
 def generate_data_for_sync_record_on_delete(doc, method=None, *args, **kwargs):
+
     setting =frappe.get_doc("ePOS Sync Setting")
     if setting.enable ==1:
         if doc.doctype in [d.document_type for d in setting.sync_to_client]:
@@ -86,21 +87,12 @@ def sync_data_to_server_on_submit(doc, method=None, *args, **kwargs):
 def sync_data_to_server_on_delete(doc, method=None, *args, **kwargs):
     setting =frappe.get_doc("ePOS Sync Setting")
     if setting.enable ==1:
-        if doc.doctype in [d.document_type for d in setting.sync_to_server if d.event == 'on_delete']:
-            frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,action="delete") 
+        frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,action="delete") 
 
 
 
-@frappe.whitelist()
-def sync_data_to_server_on_cancel(doc, method=None, *args, **kwargs):
-    setting =frappe.get_doc("ePOS Sync Setting")
-    if setting.enable ==1:
-        if doc.doctype in [d.document_type for d in setting.sync_to_server if d.event == 'on_cancel']:
-            doctype = [d for d in setting.sync_to_server if d.event == 'on_cancel' and d.document_type==doc.doctype][0] 
-            # sync_data_to_server(doc=doc,extra_action=doctype.extra_action or [])
-            doc['docstatus'] = 0
-            frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,extra_action=doctype.extra_action or [],action="cancel")  
-            
+ 
+
 @frappe.whitelist()
 def sync_comment_to_server(doc, method=None, *args, **kwargs):
     setting =frappe.get_doc("ePOS Sync Setting")
@@ -149,12 +141,19 @@ def save_sync_data(doc,extra_action=None,action="update"):
     doc.flags.ignore_on_submit = True
     doc.flags.ignore_on_cancel = True
     doc.flags.ignore_before_update_after_submit = True
+    if action =="cancel":
+        doc.docstatus= 0
+
     delete_doc(doc.doctype, doc.name)
     if action != "delete":
         doc.insert(ignore_permissions=True, ignore_links=True)
         if extra_action:
             for action in json.loads(extra_action) :
                 frappe.enqueue(action, queue='short', self=doc)
+
+
+    if action =="cancel":
+        frappe.db.sql("update tabSale set docstatus = 2 where name = '{}'".format(doc.name))
     frappe.db.commit()
 
 
@@ -169,4 +168,5 @@ def delete_doc(doctype,name):
 @frappe.whitelist()
 def ping():
     return "pong"
+
 

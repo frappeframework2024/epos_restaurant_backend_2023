@@ -879,6 +879,9 @@ def edit_sale_order(name,auth=None,note=None):
         sale_payment = frappe.get_doc("Sale Payment", p.name)
         sale_payment.cancel()
         sale_payment.delete()
+        from epos_restaurant_2023.api.utils import sync_data_to_server_on_delete
+
+        sync_data_to_server_on_delete(doc= sale_payment)
     
     #then start to cancel sale
     sale_doc = frappe.get_doc("Sale",name)
@@ -946,6 +949,11 @@ def edit_sale_order(name,auth=None,note=None):
     })
     doc.insert()
     
+
+    if frappe.db.get_single_value("ePOS Sync Setting",'enable') == 1:
+        from epos_restaurant_2023.api.utils import sync_data_to_server_on_submit
+        sync_data_to_server_on_submit(doc= frappe.get_doc('Sale',sale_doc.name))
+
     # check if sale have excely integration then submit cancell order
     if sale_doc.exely_transaction_id:
         frappe.enqueue("epos_restaurant_2023.api.exely.cancel_order", queue='short', transaction_id = sale_doc.exely_transaction_id, comment = auth["note"])
@@ -1012,6 +1020,11 @@ def delete_sale(name,auth):
     })
     doc.insert()
     
+
+
+    if frappe.db.get_single_value("ePOS Sync Setting",'enable') == 1:
+         frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=frappe.get_doc("Sale",sale_doc.name),extra_action=["epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit"],action="cancel")  
+
     
     
     # check if sale have excely integration then submit cancell order
