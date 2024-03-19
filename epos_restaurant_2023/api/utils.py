@@ -78,7 +78,7 @@ def sync_data_to_server_on_submit(doc, method=None, *args, **kwargs):
     setting =frappe.get_doc("ePOS Sync Setting")
     if setting.enable ==1:
         if doc.doctype in [d.document_type for d in setting.sync_to_server if d.event == 'on_submit']:
-            doctype = [d for d in setting.sync_to_server if d.event == 'on_submit' and d.doctype==doc.doctype][0] 
+            doctype = [d for d in setting.sync_to_server if d.event == 'on_submit' and d.document_type==doc.doctype][0] 
             frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,extra_action=doctype.extra_action or [])     
             
 
@@ -94,7 +94,7 @@ def sync_data_to_server(doc,extra_action):
             }
     server_url = server_url + "/api/method/epos_restaurant_2023.api.utils.save_sync_data"
 
-    response = requests.post(server_url,headers=headers,json={"doc":frappe.as_json(doc),"extra_action":json.dumps(extra_action) })
+    response = requests.post(server_url,headers=headers,json={"doc":frappe.as_json(doc),"extra_action":extra_action })
     return response.text
      
     
@@ -102,7 +102,7 @@ def sync_data_to_server(doc,extra_action):
     
 
 @frappe.whitelist(methods="POST")
-def save_sync_data(doc,extra_action=[]):
+def save_sync_data(doc,extra_action=None):
     
     doc = json.loads(doc)
     doc["__newname"] = doc["name"]
@@ -121,8 +121,9 @@ def save_sync_data(doc,extra_action=[]):
         doc.save(ignore_permissions=True)
     else:  
         doc.insert(ignore_permissions=True, ignore_links=True)
-        for action in extra_action:
-            frappe.enqueue(action, queue='short', self=doc)
+        if extra_action:
+            for action in json.loads(extra_action) :
+                frappe.enqueue(action, queue='short', self=doc)
         
     
     frappe.db.sql(sql)
