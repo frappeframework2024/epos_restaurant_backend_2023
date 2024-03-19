@@ -31,9 +31,11 @@ def get_report_data(filters):
 				select * from `tabPOS User Permission` where name in {}
 			""".format(tuple(pos_permission))
 	pos_permission_list = frappe.db.sql(pos_permission_sql,as_dict=1) or []
-	filtered_values = [key for d in pos_permission_list for key, value in d.items() if value == 1]
-	title_case_strings = [string.replace('_', ' ').title() for string in filtered_values]
-	frappe.throw(str(title_case_strings))
+	
+	# title_case_strings = [string.replace('_', ' ').title() for string in filtered_values]
+	keys_by_name = {}
+	
+	
 	report_data=[]
 	
 	for emp in employees:
@@ -87,6 +89,19 @@ def get_report_data(filters):
 							})
 			else:
 				pass
+			for d in pos_permission_list:
+				name = d['name']
+				keys = [key for key, value in d.items() if value == 1]
+				keys_by_name[name] = keys
+			for name, keys in keys_by_name.items():
+				if emp.pos_permission == name:
+					for k in keys:
+						report_data.append({
+								"indent":1,
+								"employee_name": k.replace('_', ' ').title(),
+								"is_group":1,
+							})
+
 	return report_data
 
 	

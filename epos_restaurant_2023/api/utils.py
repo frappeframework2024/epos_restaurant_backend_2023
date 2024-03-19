@@ -79,7 +79,15 @@ def sync_data_to_server_on_submit(doc, method=None, *args, **kwargs):
     if setting.enable ==1:
         if doc.doctype in [d.document_type for d in setting.sync_to_server if d.event == 'on_submit']:
             doctype = [d for d in setting.sync_to_server if d.event == 'on_submit' and d.document_type==doc.doctype][0] 
-            frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,extra_action=doctype.extra_action or [])     
+            frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,extra_action=doctype.extra_action or [])   
+
+@frappe.whitelist()
+def sync_data_to_server_on_cancel(doc, method=None, *args, **kwargs):
+    setting =frappe.get_doc("ePOS Sync Setting")
+    if setting.enable ==1:
+        if doc.doctype in [d.document_type for d in setting.sync_to_server if d.event == 'on_cancel']:
+            doctype = [d for d in setting.sync_to_server if d.event == 'on_cancel' and d.document_type==doc.doctype][0] 
+            frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,extra_action=doctype.extra_action or [])    
             
 
  
@@ -95,6 +103,11 @@ def sync_data_to_server(doc,extra_action):
     server_url = server_url + "/api/method/epos_restaurant_2023.api.utils.save_sync_data"
 
     response = requests.post(server_url,headers=headers,json={"doc":frappe.as_json(doc),"extra_action":extra_action })
+    if response.status_code==200:
+        meta = frappe.get_meta(doc.doctype)
+        if len([d for d in meta.fields if d.fieldname=="is_synced"]>0):
+            frappe.db.sql("update `tab{}` set is_synced = 1 where name = '{}'".format(doc.doctype,doc.name))
+            frappe.db.commit()
     return response.text
      
     
@@ -121,9 +134,10 @@ def save_sync_data(doc,extra_action=None):
         doc.save(ignore_permissions=True)
     else:  
         doc.insert(ignore_permissions=True, ignore_links=True)
-        if extra_action:
-            for action in json.loads(extra_action) :
-                frappe.enqueue(action, queue='short', self=doc)
+    
+    if extra_action:
+        for action in json.loads(extra_action) :
+            frappe.enqueue(action, queue='short', self=doc)
         
     
     frappe.db.sql(sql)

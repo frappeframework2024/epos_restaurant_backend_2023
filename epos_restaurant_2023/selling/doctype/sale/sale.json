@@ -82,6 +82,7 @@
   "column_break_45",
   "closed_by",
   "closed_date",
+  "is_synced",
   "payments_tab",
   "payment",
   "tax_tab",
@@ -1105,6 +1106,12 @@
    "fieldtype": "Currency",
    "label": "Sale Commission Balance",
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_synced",
+   "fieldtype": "Check",
+   "label": "Is Synced"
   }
  ],
  "image_field": "photo",
@@ -1117,7 +1124,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-03-14 10:43:14.221674",
+ "modified": "2024-03-19 12:29:31.800320",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

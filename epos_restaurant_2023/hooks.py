@@ -118,7 +118,7 @@ doc_events = {
         "after_rename": [
                 "epos_restaurant_2023.api.utils.generate_data_for_sync_record_on_rename"
             ],
-		# "on_cancel": "method",
+		"on_cancel": "epos_restaurant_2023.api.utils.sync_data_to_server_on_cancel",
         "on_trash": "epos_restaurant_2023.api.utils.generate_data_for_sync_record_on_delete",
         "on_submit":["epos_restaurant_2023.api.utils.sync_data_to_server_on_submit"]
 	}
