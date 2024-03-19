@@ -142,6 +142,7 @@ def save_sync_data(doc,extra_action=None,action="update"):
     doc.flags.ignore_on_cancel = True
     doc.flags.ignore_before_update_after_submit = True
     if action =="cancel":
+        frappe.throw("u do canc el")
         doc.docstatus= 0
 
     delete_doc(doc.doctype, doc.name)
