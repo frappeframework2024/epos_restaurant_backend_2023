@@ -70,6 +70,10 @@ def rename_sync_data(doctype, data):
 
 def on_save(doc):
     doc["__newname"] = doc["name"]
+    meta = frappe.get_meta(doc['doctype'])
+    for f in [d for d in  meta.fields if d.fieldtype=='Attach Image']:
+        if doc[f.fieldname]:
+            doc[f.fieldname] = "{}{}".format(frappe.db.get_single_value("ePOS Sync Setting","server_url") ,doc[f.fieldname])
     doc = frappe.get_doc(doc)
     doc.flags.ignore_validate = True
     doc.flags.ignore_insert = True
@@ -80,7 +84,9 @@ def on_save(doc):
     doc.flags.ignore_on_cancel = True
     
     delete_doc(doc.doctype,doc.name)
+    
     doc.insert(ignore_permissions=True, ignore_links=True)
+
 
 
 def on_rename(doc):
