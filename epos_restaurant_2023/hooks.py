@@ -37,6 +37,7 @@ app_include_js = "/assets/epos_restaurant_2023/js/epos_restaurant_2023.js"
 # doctype_js = {"doctype" : "public/js/doctype.js"}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
+doctype_list_js = {"Translation": "public/js/translation_list.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
 # Home Pages
@@ -121,7 +122,10 @@ doc_events = {
 		"on_cancel": "epos_restaurant_2023.api.utils.sync_data_to_server_on_cancel",
         "on_trash": "epos_restaurant_2023.api.utils.generate_data_for_sync_record_on_delete",
         "on_submit":["epos_restaurant_2023.api.utils.sync_data_to_server_on_submit"]
-	}
+	},
+    "Comment":{
+        "after_insert":"epos_restaurant_2023.api.utils.sync_comment_to_server"
+    }
 }
 
 # setting =frappe.get_doc("ePOS Sync Setting")

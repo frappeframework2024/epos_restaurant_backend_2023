@@ -1244,4 +1244,19 @@ def convert_to_nested_arrays(json_data,columns):
 
     # Extract values for each key in each entry
     
-   
+       
+
+@frappe.whitelist()
+def update_language():
+    data = frappe.db.sql("select distinct language,source_text, translated_text from `tabTranslation`",as_dict=1)
+    for lang in set([d["language"] for d in data]):
+        if frappe.db.exists("POS Translation", lang):
+            doc = frappe.get_doc("POS Translation", lang)
+            translate_text =  json.loads( doc.translate_text or "{}")
+            for d in [x for x in data if x["language"]==lang]:
+                translate_text[d["source_text"]] = d["translated_text"]
+            doc.translate_text = json.dumps(translate_text)
+            doc.save()
+    frappe.db.commit()
+    
+                

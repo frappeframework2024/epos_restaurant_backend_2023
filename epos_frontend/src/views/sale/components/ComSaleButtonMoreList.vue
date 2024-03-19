@@ -98,7 +98,7 @@ onMounted(() => {
 const onLoadMenuLabel = computed(()=>{
     const mlang = localStorage.getItem('mLang');   
     if(mlang!=null){
-        if(mlang=="kh"){
+        if(mlang=="km"){
             return $t("Default");
         }else{
            return  $t("Second");

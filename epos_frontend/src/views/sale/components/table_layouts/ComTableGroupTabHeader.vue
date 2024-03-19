@@ -36,7 +36,7 @@ const props = defineProps({
 function getGroupName (g){
     const l = localStorage.getItem("lang")  
     if(l!=null){
-        if(l=="kh"){
+        if(l=="km"){
             return g.table_group_kh;
         }
         else{

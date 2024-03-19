@@ -305,7 +305,8 @@ class Sale(Document):
 
 	
 	def on_cancel(self):
-		if self.flags.on_cancel == True:
+		
+		if self.flags.ignore_on_cancel == True:
 			return 
 		on_sale_delete_update(self)
 		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel", queue='short', self=self)

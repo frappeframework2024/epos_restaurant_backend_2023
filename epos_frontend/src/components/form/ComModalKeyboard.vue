@@ -17,7 +17,7 @@
                 <ComKeypad v-if="params.type == 'number'" @onChange="onKey($event)" :input="input" />
                 <div v-else>
                     <ComKeyboard @onChange="onKey($event)" @onKeyPress="onKeyPress($event)" :input="input" lang="en" v-if="lang == 'en'"/>
-                    <ComKeyboard @onChange="onKey($event)" @onKeyPress="onKeyPress($event)" :input="input" lang="kh" v-if="lang == 'kh'"/>
+                    <ComKeyboard @onChange="onKey($event)" @onKeyPress="onKeyPress($event)" :input="input" lang="km" v-if="lang == 'km'"/>
                 </div>
                 <div>
                     <div class="text-right pt-4">

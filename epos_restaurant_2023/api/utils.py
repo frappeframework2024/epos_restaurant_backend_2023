@@ -83,17 +83,25 @@ def sync_data_to_server_on_submit(doc, method=None, *args, **kwargs):
 
 @frappe.whitelist()
 def sync_data_to_server_on_cancel(doc, method=None, *args, **kwargs):
+    
     setting =frappe.get_doc("ePOS Sync Setting")
     if setting.enable ==1:
         if doc.doctype in [d.document_type for d in setting.sync_to_server if d.event == 'on_cancel']:
             doctype = [d for d in setting.sync_to_server if d.event == 'on_cancel' and d.document_type==doc.doctype][0] 
             frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,extra_action=doctype.extra_action or [])    
             
-
+@frappe.whitelist()
+def sync_comment_to_server(doc, method=None, *args, **kwargs):
+    setting =frappe.get_doc("ePOS Sync Setting")
+    if setting.enable ==1:
+        if doc.reference_doctype in [d.document_type for d in setting.sync_to_server]:
+          
+            frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc)  
  
                           
 @frappe.whitelist()
 def sync_data_to_server(doc,extra_action):
+    frappe.throw(frappe.as_json(doc))
     server_url = frappe.db.get_single_value('ePOS Sync Setting','server_url')
     token = frappe.db.get_single_value('ePOS Sync Setting','access_token')
     headers = {
@@ -105,7 +113,7 @@ def sync_data_to_server(doc,extra_action):
     response = requests.post(server_url,headers=headers,json={"doc":frappe.as_json(doc),"extra_action":extra_action })
     if response.status_code==200:
         meta = frappe.get_meta(doc.doctype)
-        if len([d for d in meta.fields if d.fieldname=="is_synced"]>0):
+        if len([d for d in meta.fields if d.fieldname=="is_synced"])>0:
             frappe.db.sql("update `tab{}` set is_synced = 1 where name = '{}'".format(doc.doctype,doc.name))
             frappe.db.commit()
     return response.text
@@ -116,7 +124,7 @@ def sync_data_to_server(doc,extra_action):
 
 @frappe.whitelist(methods="POST")
 def save_sync_data(doc,extra_action=None):
-    
+    frappe.throw(frappe.as_json(doc))
     doc = json.loads(doc)
     doc["__newname"] = doc["name"]
     doc = frappe.get_doc(doc) 

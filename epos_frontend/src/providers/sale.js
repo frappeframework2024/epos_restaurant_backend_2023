@@ -1999,7 +1999,7 @@ export default class Sale {
         const mlang = localStorage.getItem('mLang');
         if (mlang != null) {
             if (mlang == "en") {
-                localStorage.setItem('mLang', "kh");
+                localStorage.setItem('mLang', "km");
             } else {
                 localStorage.setItem('mLang', "en");
             }
