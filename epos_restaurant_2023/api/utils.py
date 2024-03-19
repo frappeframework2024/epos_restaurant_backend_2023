@@ -15,6 +15,11 @@ def generate_data_for_sync_record(doc, method=None, *args, **kwargs):
                             "document_type":doc.doctype,
                             "document_name":doc.name
                         }).insert(ignore_permissions=True)
+
+            if doc.doctype in [d.document_type for d in setting.sync_to_server]:
+                if doc.doctype in [d.document_type for d in setting.sync_to_server if d.event == 'on_update']:
+                    frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc)
+            
                 # frappe.db.commit()
 @frappe.whitelist()
 def generate_data_for_sync_record_on_delete(doc, method=None, *args, **kwargs):
