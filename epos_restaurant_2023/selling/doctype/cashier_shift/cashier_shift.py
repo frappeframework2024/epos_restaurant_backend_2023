@@ -12,7 +12,8 @@ class CashierShift(Document):
 		# 	pending_orders = frappe.db.sql("select name from `tabSale` where docstatus = 0 and cashier_shift = '{}'".format(self.name), as_dict=1)
 		# 	if pending_orders:
 		# 		frappe.throw("Please close all pending order before close cashier shift.")
-
+		if self.flags.ignore_validate == True:
+			return
 		if self.is_new() == 1:
 			if 'edoor' in frappe.get_installed_apps():
 				if self.is_edoor_shift==0:
@@ -90,6 +91,8 @@ class CashierShift(Document):
 				frappe.enqueue("epos_restaurant_2023.api.api.upload_all_sale_data_to_google_sheet",start_date=self.posting_date,end_date = self.posting_date,business_branch=self.business_branch,cashier_shift=self.name)
 
 	def after_insert(self):	
+		if self.flags.ignore_after_insert == True:
+			return
 		query ="update `tabSale` set working_day='{}', cashier_shift='{}', shift_name='{}' "
 		query = query + " where docstatus = 0 and pos_profile = '{}'"
 
@@ -98,6 +101,8 @@ class CashierShift(Document):
 		frappe.db.sql(query)
 
 	def on_update(self):
+		if self.flags.ignore_on_update == True:
+			return
 		query ="update `tabSale` set  shift_name='{}' where cashier_shift='{}'".format(self.shift_name,self.name)
 		frappe.db.sql(query)
 		if 'edoor' in frappe.get_installed_apps():

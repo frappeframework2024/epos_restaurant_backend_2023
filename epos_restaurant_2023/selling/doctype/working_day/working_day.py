@@ -9,7 +9,8 @@ from frappe.utils.print_format import download_pdf
 class WorkingDay(Document):
     
 	def validate(self):
-
+		if self.flags.ignore_validate == True:
+			return
 	 
 
 		if self.is_new():

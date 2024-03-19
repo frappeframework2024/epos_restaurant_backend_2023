@@ -11,14 +11,15 @@ from frappe.utils.data import strip
 class Customer(Document):
 	def validate(self):
 
-		
+		if self.flags.ignore_validate == True:
+			return
 		if self.date_of_birth:
 			if datetime.strptime(str(self.date_of_birth), "%Y-%m-%d").date() >datetime.strptime(utils.today(), "%Y-%m-%d").date():
 				frappe.throw(_("Date of birth cannot be greater than the current time"))
 
 		if not self.customer_name_kh:
 			self.customer_name_kh = self.customer_name_en
-   
+
 		self.customer_code_name = "{} - {}".format(self.name,self.customer_name_en)
 	# def on_update(self):
 	# 	if hasattr(self,'attach'):
@@ -34,17 +35,22 @@ class Customer(Document):
 	# 			frappe.db.set_value('Customer', self.name,{'photo':''})
 
 	def autoname(self):
+		if self.flags.ignore_autoname == True:
+			return
+		
 		from frappe.model.naming import set_name_by_naming_series, get_default_naming_series,make_autoname
 
 		if strip(self.customer_code) =="":
 			set_name_by_naming_series(self)
-			self.customer_code = self.name		
+			self.customer_code = self.name	
 
 		self.customer_code = strip(self.customer_code)
 		self.name = self.customer_code
 
 
 	def after_rename(self, old_name,new_name,merge):  
+		if self.flags.ignore_after_rename == True:
+			return
 		frappe.db.set_value('Customer', new_name, {
 			'customer_code_name': "{} - {}".format(new_name,self.customer_name_en),
 			'customer_code': new_name		
