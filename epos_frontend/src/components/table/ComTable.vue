@@ -49,11 +49,20 @@
                                     </span>
                                 </template>
                                 <template v-else-if="h.fieldtype=='Status'"> 
-                                    <v-chip v-if="doctype=='Sale'" :color="item.raw[h.color_field]" size="small"> {{ item.raw[h.key] }}</v-chip>
+                                    <template v-if="h.key=='is_synced'">
+
+                                        <v-chip v-if="item.raw[h.key]==1" compact color="success" size="small">{{ $t("Synced") }}</v-chip>
+                                        <v-chip v-else color="error" compact size="small">{{ $t("Not Synced") }}</v-chip>
+                                       
+                                    </template>
+                                    <template v-else>
+                                        <v-chip v-if="doctype=='Sale'" :color="item.raw[h.color_field]" size="small"> {{ item.raw[h.key] }}</v-chip>
                                     <template v-else>
                                         <v-chip v-if="item.raw[h.key]" color="success" size="small">{{ $t('Enabled') }}</v-chip>
                                         <v-chip v-else color="error" size="small">{{ $t('Disabled') }}</v-chip>
                                     </template>
+                                    </template>
+                                    
                                 </template>
                                 <template v-else-if="h.fieldtype=='HTML'">
                                     <component :is="getFieldValue(h,item.raw)"></component>

@@ -84,7 +84,9 @@ def get_system_settings(pos_profile="", device_name=''):
     sale_types = frappe.get_list("Sale Type",fields=['name', 'sale_type_name','color','is_order_use_table','sort_order','inactive'],order_by="sort_order",filters={"inactive":0})
 
     
+    epos_sync_setting = frappe.get_doc("ePOS Sync Setting")
     
+        
     doc = frappe.get_doc('ePOS Settings')
     table_groups = []
     for g in profile.table_groups:
@@ -218,9 +220,9 @@ def get_system_settings(pos_profile="", device_name=''):
         "delete_voucher_top_up_required_password":pos_config.delete_voucher_top_up_required_password,
         "add_voucher_top_up_required_password":pos_config.add_voucher_top_up_required_password,
         "check_delete_item_require_passord_from_product":pos_config.check_delete_item_require_passord_from_product,
-        "allow_change_date_when_start_working_day":doc.allow_change_date_when_start_working_day
+        "allow_change_date_when_start_working_day":doc.allow_change_date_when_start_working_day,
+        "is_client_side_sync_setting":epos_sync_setting.client_side
         }
-    
     #get default customre
     
     if not profile.default_customer:

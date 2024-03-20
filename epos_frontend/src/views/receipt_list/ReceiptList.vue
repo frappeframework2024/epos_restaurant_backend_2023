@@ -49,6 +49,7 @@ import {useDisplay} from 'vuetify'
 import ComReceiptListCard from './components/ComReceiptListCard.vue';
 let summary = ref({})
 const frappe = inject('$frappe');
+const gv = inject('$gv');
 const call = frappe.call();
 const { t: $t } = i18n.global; 
 const {mobile} = useDisplay()
@@ -100,8 +101,10 @@ const headers = ref([
   { title: $t('Total Paid'), align: 'end', key: 'total_paid_with_fee', fieldtype: "Currency" },
   { title: $t('Balance'), align: 'end', key: 'balance', fieldtype: "Currency" },
   { title: $t('Status'), align: 'center', key: 'sale_status', fieldtype: "Status",color_field:"sale_status_color" }
-  // { title: $t('Is Synced'), align: 'center', key: 'is_synced', fieldtype: "Status",template:`<v-chip color="success" size="small">{is_synced}</v-chip>` }
 ])
+if (gv.setting.pos_setting.is_client_side_sync_setting==1){
+    headers.value.push({ title: $t('Is Synced'), align: 'center', key: 'is_synced', fieldtype: "Status"})
+}
 
  
 </script>
