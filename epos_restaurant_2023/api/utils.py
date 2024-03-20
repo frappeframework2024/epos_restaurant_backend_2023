@@ -210,7 +210,7 @@ def re_run_fail_jobs():
         jobs =  sorted(jobs, key=lambda j: j.modified, reverse=order_desc)
         jobs = [d for d in jobs if "exc_info" in d]
         job_names=["epos_restaurant_2023.api.utils."]
-        jobs = [d for d in jobs  if  ( d["job_name"] in job_names or  "Deadlock found when trying"  in  d["exc_info"]  or "Lock wait timeout exceeded"  in  d["exc_info"] or "Document has been modified after you have opened it" in d["exc_info"] ) ]
+        jobs = [d for d in jobs  if  ( d["job_name"] in job_names or  "Deadlock found when trying"  in  d["exc_info"] or 'Network is unreachable' in d['exc_info'] or "Lock wait timeout exceeded"  in  d["exc_info"] or "Document has been modified after you have opened it" in d["exc_info"] ) ]
         job_ids = []
         
         for j in jobs:
