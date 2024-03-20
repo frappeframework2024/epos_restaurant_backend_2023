@@ -6,10 +6,7 @@ frappe.ui.form.on("ePOS Sync Setting", {
         frm.add_custom_button(__('Init Data From Server'), function(){
            frappe.call({
             method: "epos_restaurant_2023.api.sync_api.generate_init_data_sync_to_client",
-            args: {
-                business_branch: frm.doc.current_client_branch
-               
-            },
+            
             callback: function (r) {
                 frappe.show_alert({message:__("Data init success."), indicator:"green"});
             }

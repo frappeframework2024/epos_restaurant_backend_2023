@@ -113,13 +113,14 @@ def sync_data_to_server(doc,extra_action=None,action="update"):
             }
     server_url = server_url + "/api/method/epos_restaurant_2023.api.utils.save_sync_data"
 
-    response = requests.post(server_url,headers=headers,json={"doc":frappe.as_json(doc),"extra_action":extra_action,action:action })
+    response = requests.post(server_url,headers=headers,json={"doc":frappe.as_json(doc),"extra_action":extra_action,"action":action })
     if response.status_code==200:
         meta = frappe.get_meta(doc.doctype)
         if len([d for d in meta.fields if d.fieldname=="is_synced"])>0:
             frappe.db.sql("update `tab{}` set is_synced = 1 where name = '{}'".format(doc.doctype,doc.name))
             frappe.db.commit()
-    return response.text
+    else:
+        frappe.throw(str(response.text))
      
     
     
@@ -142,15 +143,14 @@ def save_sync_data(doc,extra_action=None,action="update"):
     doc.flags.ignore_on_cancel = True
     doc.flags.ignore_before_update_after_submit = True
     if action =="cancel":
-        frappe.throw("u do canc el")
         doc.docstatus= 0
 
     delete_doc(doc.doctype, doc.name)
     if action != "delete":
         doc.insert(ignore_permissions=True, ignore_links=True)
         if extra_action:
-            for action in json.loads(extra_action) :
-                frappe.enqueue(action, queue='short', self=doc)
+            for act in json.loads(extra_action) :
+                frappe.enqueue(act, queue='short', self=doc)
 
 
     if action =="cancel":

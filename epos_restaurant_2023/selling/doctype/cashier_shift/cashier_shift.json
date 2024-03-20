@@ -36,6 +36,7 @@
   "is_run_night_audit",
   "column_break_10",
   "closed_note",
+  "is_synced",
   "cash_count_tab",
   "cash_count"
  ],
@@ -213,11 +214,17 @@
    "fieldtype": "Check",
    "hidden": 1,
    "label": "Is Run Night Audit"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_synced",
+   "fieldtype": "Check",
+   "label": "Is Synced"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-01-25 08:08:27.698237",
+ "modified": "2024-03-20 08:50:08.324118",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Cashier Shift",

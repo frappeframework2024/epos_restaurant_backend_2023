@@ -20,7 +20,8 @@
   "outlet",
   "column_break_11",
   "closed_by",
-  "closed_note"
+  "closed_note",
+  "is_synced"
  ],
  "fields": [
   {
@@ -98,11 +99,17 @@
    "fieldname": "closed_by",
    "fieldtype": "Data",
    "label": "Closed By"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_synced",
+   "fieldtype": "Check",
+   "label": "Is Synced"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-03-13 13:56:39.878544",
+ "modified": "2024-03-20 08:50:36.001535",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Working Day",

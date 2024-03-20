@@ -81,7 +81,9 @@ def get_system_settings(pos_profile="", device_name=''):
     pos_config = frappe.get_doc("POS Config",profile.pos_config)
     pos_branding = frappe.get_doc("POS Branding", profile.pos_branding)
 
-    sale_types = frappe.get_list("Sale Type",fields=['name', 'sale_type_name','color','is_order_use_table','sort_order'],order_by="sort_order")
+    sale_types = frappe.get_list("Sale Type",fields=['name', 'sale_type_name','color','is_order_use_table','sort_order','inactive'],order_by="sort_order",filters={"inactive":0})
+
+    
     
     doc = frappe.get_doc('ePOS Settings')
     table_groups = []
@@ -1023,7 +1025,7 @@ def delete_sale(name,auth):
 
 
     if frappe.db.get_single_value("ePOS Sync Setting",'enable') == 1:
-         frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=frappe.get_doc("Sale",sale_doc.name),extra_action=["epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit"],action="cancel")  
+         frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=frappe.get_doc("Sale",sale_doc.name),extra_action=["epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel"],action="cancel")  
 
     
     

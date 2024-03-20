@@ -55,6 +55,9 @@
                                         <v-chip v-else color="error" size="small">{{ $t('Disabled') }}</v-chip>
                                     </template>
                                 </template>
+                                <template v-else-if="h.fieldtype=='HTML'">
+                                    <component :is="getFieldValue(h,item.raw)"></component>
+                                </template>
                                 <template v-else-if="!h.fieldtype">
                                     <template v-if="h.template">
                                         <div @click="callback(h, item.raw)" v-html="getFieldValue(h, item.raw)"  :class="{'text-blue-600 cursor-pointer':h.callback}"></div>
@@ -180,7 +183,11 @@ let dataResource = createResource({
     url: 'frappe.client.get_list',
     params: getDataResourceParams(),      
 })
-
+function renderTemplate(template){
+    return template.replace(/{\s*([^}]+)\s*}/g, (match, p1) => {
+            return eval(p1);
+      });
+}
 function getDataResourceParams (){
  
     return {  

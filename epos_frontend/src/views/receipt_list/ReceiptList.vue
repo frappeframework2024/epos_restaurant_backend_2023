@@ -1,6 +1,7 @@
 <template>
     <PageLayout :title="$t('Receipt List')" icon="mdi-file-chart" full>
       <ComReceiptListCard :headers="headers" doctype="Sale" extra-fields="customer_name,sale_status_color" @callback="onCallback" v-if="mobile"/>
+      
       <ComTable :headers="headers" doctype="Sale" :default-filter="defaltFilter" extra-fields="customer_name,sale_status_color" @onFetch="onFetch" business-branch-field="business_branch" pos-profile-field="pos_profile" @callback="onCallback"  v-else>
           <template v-slot:kpi>
             <v-row no-gutters>
@@ -75,7 +76,6 @@ function onFetch(_filters){
   Object.keys(_filters).forEach(key => {
     filters.push({[key]:_filters[key]})
   });
-  console.log(JSON.stringify(filters) )
   call.get("epos_restaurant_2023.api.api.receipt_list_summary",{
     filter:JSON.stringify(filters)
   }
@@ -99,7 +99,8 @@ const headers = ref([
   { title: $t('Total Discount'), align: 'end', key: 'total_discount', fieldtype: "Currency" },
   { title: $t('Total Paid'), align: 'end', key: 'total_paid_with_fee', fieldtype: "Currency" },
   { title: $t('Balance'), align: 'end', key: 'balance', fieldtype: "Currency" },
-  { title: $t('Status'), align: 'center', key: 'sale_status', fieldtype: "Status", color_field:"sale_status_color" },
+  { title: $t('Status'), align: 'center', key: 'sale_status', fieldtype: "Status",color_field:"sale_status_color" }
+  // { title: $t('Is Synced'), align: 'center', key: 'is_synced', fieldtype: "Status",template:`<v-chip color="success" size="small">{is_synced}</v-chip>` }
 ])
 
  

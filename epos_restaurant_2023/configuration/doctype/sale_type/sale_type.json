@@ -13,7 +13,8 @@
   "column_break_3",
   "is_order_use_table",
   "sort_order",
-  "is_standard"
+  "is_standard",
+  "inactive"
  ],
  "fields": [
   {
@@ -55,11 +56,17 @@
    "fieldname": "is_standard",
    "fieldtype": "Check",
    "label": "Is Standard"
+  },
+  {
+   "default": "0",
+   "fieldname": "inactive",
+   "fieldtype": "Check",
+   "label": "Inactive"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-04-25 15:12:30.477195",
+ "modified": "2024-03-20 10:37:14.476368",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Sale Type",

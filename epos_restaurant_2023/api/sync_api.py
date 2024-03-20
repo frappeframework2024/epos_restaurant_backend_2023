@@ -125,9 +125,7 @@ def delete_sync_data(doctype,data):
 
 # *******************SERVER API**************************
 @frappe.whitelist()
-def generate_init_data_sync_to_client(business_branch):
-    if business_branch == "" or not business_branch:
-        frappe.throw('Invalid Business Branch')
+def generate_init_data_sync_to_client():
     setting = frappe.get_doc("ePOS Sync Setting")
     if setting.enable==1:
         for d in setting.sync_to_client:
