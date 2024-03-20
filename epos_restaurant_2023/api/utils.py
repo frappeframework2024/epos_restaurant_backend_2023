@@ -218,7 +218,7 @@ def re_run_fail_jobs():
                 job =   json.loads(j["arguments"])
                 #Retry Here
                 if job['job_name'] == "epos_restaurant_2023.api.utils.sync_data_to_server":
-                    sync_data_to_server( frappe.get_doc(job['kwargs']['doc']),extra_action=job['kwargs']['extra_action'] if job['kwargs'].get('extra_action') else '[]',action=job['kwargs']['action'])
+                    sync_data_to_server(frappe.get_doc(job['kwargs']['doc']),extra_action=job['kwargs']['extra_action'] if job['kwargs'].get('extra_action') else '[]',action=job['kwargs']['action'])
                        
 
                 job_ids.append(j["job_id"])
