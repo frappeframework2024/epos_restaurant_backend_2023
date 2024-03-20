@@ -23,7 +23,7 @@ def get_bill_template(name,template, reprint=0):
     html= frappe.render_template(data_template, get_print_context(doc,reprint))
     return {"html":html,"css":css}
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=True,methods='POST')
 def get_kot_template(sale, products): 
     if not frappe.db.exists("Sale",sale):
         return ""    

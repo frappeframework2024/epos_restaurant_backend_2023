@@ -1641,7 +1641,10 @@ export default class Sale {
                 var groupKeys = "{printer:$.printer,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port,is_label_printer:$.is_label_printer}"
                 var groupFields ="$.printer+','+$.group_item_type+','+$.ip_address+','+$.port+','+$.is_label_printer";
                 var printers  = Enumerable.from(data.product_printers).groupBy(groupKeys,"", groupKeys, groupFields).toArray();     
-                printers.forEach((o)=>data.printers.push(o));
+                printers.forEach((p)=>{
+                    data.printers.push(p);
+                    data.printers.products = data.product_printers.filter((x) => x.printer == p.printer)
+                });
                 window.chrome.webview.postMessage(JSON.stringify(data));
             }           
         }
