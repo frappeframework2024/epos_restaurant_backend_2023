@@ -52,6 +52,17 @@ def trim(file_path):
 
 
 @frappe.whitelist(allow_guest=True)
+def capture_url(url=""):
+    chrome_path = "/usr/bin/google-chrome"
+    # Set the CHROME_PATH environment variable
+    os.environ['CHROME_PATH'] = chrome_path
+ 
+    hti = Html2Image()
+    hti.chrome_path=chrome_path
+    hti.output_path =frappe.get_site_path() 
+    hti.screenshot_url('https://www.python.org/', 'python_org.png')
+
+@frappe.whitelist(allow_guest=True)
 def capture(height,width,html,css,image):
     chrome_path = "/usr/bin/google-chrome"
     # Set the CHROME_PATH environment variable

@@ -10,7 +10,7 @@ from frappe.utils.data import strip
 
 class Customer(Document):
 	def validate(self):
-
+		
 		if self.flags.ignore_validate == True:
 			return
 		if self.date_of_birth:

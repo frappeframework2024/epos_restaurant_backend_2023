@@ -17,10 +17,20 @@ import frappe
 
 ## WINDOW SERVER PRINTING GENERATE HTML
 @frappe.whitelist(allow_guest=True)
-def get_bill_template(station, name,template, reprint=0):
-    doc = frappe.get_doc("Sale", name)
-    data_template,css = frappe.db.get_value("POS Receipt Template","Receipt En",["template","style"])
-    html= frappe.render_template(data_template, get_print_context(doc))
+def get_bill_template(name,template, reprint=0):
+    doc = frappe.get_doc("Sale", name) 
+    data_template,css = frappe.db.get_value("POS Receipt Template",template,["template","style"])
+    html= frappe.render_template(data_template, get_print_context(doc,reprint))
+    return {"html":html,"css":css}
+
+@frappe.whitelist(allow_guest=True)
+def get_kot_template(sale, products,printer): 
+    if not frappe.db.exists("Sale",sale):
+        return ""    
+    doc_sale = frappe.get_doc("Sale", sale)
+    data_template,css = frappe.db.get_value("POS Receipt Template","Kitchen Order",["template","style"])   
+    html = frappe.render_template(data_template, get_print_context(doc=doc_sale,sale_products =  products))
+    
     return {"html":html,"css":css}
 
 ## END WINDOW SERVER PRINTING GENERATE HTML

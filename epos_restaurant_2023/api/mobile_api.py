@@ -258,6 +258,7 @@ def get_voucher_invoice_image(station, name):
 ### print kitchen order
 @frappe.whitelist(allow_guest=True,methods="POST")
 def get_kot_image(station, sale, products,printer): 
+   
    return print_kitchen_order(station=station, sale=sale, products=products,printer=printer)
 
 ### print report from print format 

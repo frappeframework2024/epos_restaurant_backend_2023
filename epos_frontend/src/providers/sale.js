@@ -1632,12 +1632,21 @@ export default class Sale {
             sale: doc,
             product_printers: _productPrinters,
             station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
+            printers:[]
         }
 
         if (localStorage.getItem("is_window") == 1) {
-            window.chrome.webview.postMessage(JSON.stringify(data));
+            if((data.product_printers??[]).length > 0){
+                //"{order_by:$.order_by,order_time:$.order_time}", "", "{order_by:$.order_by,order_time:$.order_time}", "$.order_by+','+$.order_time"
+                var groupKeys = "{printer:$.printer,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port,is_label_printer:$.is_label_printer}"
+                var groupFields ="$.printer+','+$.group_item_type+','+$.ip_address+','+$.port+','+$.is_label_printer";
+                var printers  = Enumerable.from(data.product_printers).groupBy(groupKeys,"", groupKeys, groupFields).toArray();     
+                printers.forEach((o)=>data.printers.push(o));
+                window.chrome.webview.postMessage(JSON.stringify(data));
+            }           
         }
-        else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
+        else 
+        if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
             if (_productPrinters.length > 0) {
                 var printers = (this.setting?.device_setting?.station_printers);
                 if (printers.length <= 0) {
@@ -1687,6 +1696,8 @@ export default class Sale {
                     printer: p.printer,
                     group_item_type: p.group_item_type,
                     is_label_printer: p.is_label_printer == 1,
+                    ip_address: p.ip_address,
+                    port: p.port,
                     product_code: r.product_code,
                     product_name_en: r.product_name,
                     product_name_kh: r.product_name_kh,

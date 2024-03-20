@@ -159,6 +159,10 @@ scheduler_events = {
 				"epos_restaurant_2023.api.sync_api.get_all_data_for_sync_from_server"
 
 			],
+      "*/5 * * * *": [
+				"epos_restaurant_2023.api.utils.re_run_fail_jobs"
+
+			],
       "0 */12 * * *":[
           "epos_restaurant_2023.api.ftp_backup.execute_backup_command",
       ]
