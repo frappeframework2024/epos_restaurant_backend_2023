@@ -24,7 +24,7 @@ def get_bill_template(name,template, reprint=0):
     return {"html":html,"css":css}
 
 @frappe.whitelist(allow_guest=True)
-def get_kot_template(sale, products,printer): 
+def get_kot_template(sale, products): 
     if not frappe.db.exists("Sale",sale):
         return ""    
     doc_sale = frappe.get_doc("Sale", sale)
