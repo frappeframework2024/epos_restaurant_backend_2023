@@ -23,7 +23,10 @@ let saleTypeResource = createResource({
   url: "frappe.client.get_list",
   params: {
     doctype: "Sale Type",
-    fields: ["name", "color", "is_order_use_table"],
+    fields: ["name", "color", "is_order_use_table","inactive"],
+    filters: {
+      "inactive": 0
+    }
 
   },
   cache: "sale_type",

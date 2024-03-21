@@ -9,12 +9,13 @@
     </div>
     <div v-if="data.type == 'menu'" v-ripple
         class="relative h-full bg-cover bg-no-repeat rounded-lg shadow-lg cursor-pointer overflow-auto" v-bind:style="{
-            'background-color': data.background_color,
-            'color': data.text_color,
-            'background-image': 'url(' + encodeURIComponent(data.photo).replace(/%2F/g, '/') + ')',
-            'background-size': 'contain', 'background-position': 'center center'
-        }" @click="onClickMenu(data.name)">
+        'background-color': data.background_color,
+        'color': data.text_color,
+        'background-image': 'url(' + encodeURIComponent(data.photo).replace(/%2F/g, '/') + ')',
+        'background-size': 'contain', 'background-position': 'center center'
+    }" @click="onClickMenu(data.name)">
         <div class="absolute top-0 bottom-0 right-0 left-0">
+
             <avatar class="!h-full !w-full" :name="data.name_en" :rounded="false" :background="data.background_color"
                 :color="data.text_color" v-if="!data.photo"></avatar>
         </div>
@@ -23,21 +24,24 @@
                 <v-icon :color="data.text_color">mdi-folder-open</v-icon>
             </div>
             <div class="p-1 rounded-md absolute bottom-1 right-1 left-1 bg-gray-50 bg-opacity-70 text-sm text-center">
+
                 <span class="text-black" v-if="!sale.load_menu_lang">{{ getMenuName(data) }}</span>
             </div>
         </div>
     </div>
     <!-- Product -->
+    
     <div v-else-if="data.type == 'product'" v-ripple
         class="relative overflow-hidden h-full bg-cover bg-no-repeat rounded-lg shadow-lg cursor-pointer bg-gray-300 "
         v-bind:style="{ 'background-image': 'url(' + image + ')', 'background-size': 'contain', 'background-position': 'center center' }"
         @click="onClickProduct()">
         <div class="absolute top-0 bottom-0 right-0 left-0" v-if="!image">
+
             <avatar class="!h-full !w-full" :name="data.name_en" :rounded="false" background="#f1f1f1"></avatar>
         </div>
         <div class="block relative p-2 w-full h-full">
             <div class="absolute left-0 top-0 bg-red-700 text-white p-1 rounded-tl-lg rounded-br-lg text-sm">
-                <span>
+                <div>
                     <span v-if="productPrices.length > 1">
                         <span>
                             <CurrencyFormat :value="minPrice" />
@@ -46,14 +50,27 @@
                         </span>
                     </span>
                     <CurrencyFormat v-else :value="showPrice" />
-                </span>
+                </div>
+                <div>
+                   
+                    <v-btn @click="popup" density="compact" id="menu-activator" icon="mdi-plus"></v-btn>
+                    <v-menu activator="#menu-activator">
+                        <v-list>
+                            <v-list-item>
+                                <v-list-item-title>{{ $t("Upload Image") }}</v-list-item-title>
+                            </v-list-item>
+                        </v-list>
+                    </v-menu>
+                </div>
             </div>
+
             <div class="p-1 rounded-md absolute bottom-1 right-1 left-1 bg-gray-50 bg-opacity-90 text-sm text-center">
                 <span v-if="!sale.load_menu_lang">{{ getMenuName(data, true) }}</span> <span
                     style="color:red; font-weight: bold;"> {{ getTotalQuantityOrder(data) }}</span>
             </div>
         </div>
     </div>
+    
 </template>
 <script setup>
 import { computed, addModifierDialog, SelectDateTime, inject, keypadWithNoteDialog, SaleProductComboMenuGroupModal, createToaster } from '@/plugin'
@@ -144,6 +161,10 @@ function onClickMenu(menu) {
 
 }
 
+function popup(){
+    alert('hellow world')
+}
+
 function onBack(parent) {
     const parent_menu = product.posMenuResource.data?.find(r => r.name == parent).parent;
     product.parentMenu = parent_menu;
@@ -188,7 +209,7 @@ async function onClickProduct() {
             }
             else {
                 const portions = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule);
-                
+
                 const check_modifiers = product.onCheckModifier(JSON.parse(p.modifiers));
 
                 if (portions?.length == 1) {
@@ -198,18 +219,18 @@ async function onClickProduct() {
 
 
                 }
-              
 
-                if (check_modifiers || portions?.length > 1 || p.is_open_price)  {
+
+                if (check_modifiers || portions?.length > 1 || p.is_open_price) {
                     const pro_data = props.data
-                    if (p.is_open_price && portions.length==0){
-                        pro_data.prices = JSON.stringify( [{"price":p.price,"branch":"","price_rule":sale.sale.price_rule,"portion":"Normal","unit":p.unit,"default_discount":0}])                
+                    if (p.is_open_price && portions.length == 0) {
+                        pro_data.prices = JSON.stringify([{ "price": p.price, "branch": "", "price_rule": sale.sale.price_rule, "portion": "Normal", "unit": p.unit, "default_discount": 0 }])
                     }
-                    
+
                     product.setSelectedProduct(pro_data);
-                    
+
                     let productPrices = await addModifierDialog();
-                   
+
 
                     if (productPrices) {
                         if (productPrices.portion != undefined) {
@@ -236,13 +257,13 @@ async function onClickProduct() {
         } else {
             let selectdatetime = await SelectDateTime();
             if (selectdatetime) {
-                if (selectdatetime !='Set Later'){
+                if (selectdatetime != 'Set Later') {
                     p.time_in = selectdatetime;
-                }else{
-                    p.time_in= undefined;
+                } else {
+                    p.time_in = undefined;
                 }
-                
-            }else{
+
+            } else {
                 return
             }
         }
@@ -303,5 +324,3 @@ function getSeperateName(list) {
     return combo_menus.join(", ")
 }
 </script>
-
- 
