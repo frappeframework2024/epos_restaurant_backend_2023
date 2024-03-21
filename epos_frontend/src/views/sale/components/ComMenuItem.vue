@@ -51,7 +51,7 @@
                     </span>
                     <CurrencyFormat v-else :value="showPrice" />
                 </div>
-                <!-- <div>
+                <div>
                    
                     <v-btn @click="popup" density="compact" id="menu-activator" icon="mdi-plus"></v-btn>
                     <v-menu activator="#menu-activator">
@@ -61,7 +61,7 @@
                             </v-list-item>
                         </v-list>
                     </v-menu>
-                </div> -->
+                </div>
             </div>
 
             <div class="p-1 rounded-md absolute bottom-1 right-1 left-1 bg-gray-50 bg-opacity-90 text-sm text-center">

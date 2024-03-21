@@ -125,20 +125,20 @@ async function onQuickPay(isPrint=true) {
                         }
                         if (localStorage.getItem("is_window") == "1" && isPrint) {
                             window.chrome.webview.postMessage(JSON.stringify(data));
-                        } else if(){
-                            var printer = (this.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
-            if (printer.length <= 0) {
-                toaster.warning($t("Printer not yet configt for this device"))
-            } else {
-                data.printer = {
-                    "printer_name": printer[0].printer_name,
-                    "ip_address": printer[0].ip_address,
-                    "port": printer[0].port,
-                    "cashier_printer": printer[0].cashier_printer,
-                    "is_label_printer": printer[0].is_label_printer
-                }
-                flutterChannel.postMessage(JSON.stringify(data));
-            }
+                        } else if((localStorage.getItem("flutterWrapper")||0) == 1 && isPrint){
+                            var printer = (sale.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+                            if (printer.length <= 0) {
+                                //
+                            } else {
+                                data.printer = {
+                                    "printer_name": printer[0].printer_name,
+                                    "ip_address": printer[0].ip_address,
+                                    "port": printer[0].port,
+                                    "cashier_printer": printer[0].cashier_printer,
+                                    "is_label_printer": printer[0].is_label_printer
+                                }
+                                flutterChannel.postMessage(JSON.stringify(data));
+                            }
                         }
                     }                   
                 });
@@ -169,11 +169,26 @@ async function PrintReceipt(d, r) {
                     action: "print_receipt",
                     print_setting: r,
                     setting: sale.setting?.pos_setting,
-                    sale: doc
+                    sale: doc,
+                    station_device_printing: (sale.setting?.device_setting?.station_device_printing) || "",
+                    station: (sale.setting?.device_setting?.name) || "", 
                 }
-
                 if (localStorage.getItem("is_window") == "1") {
                     window.chrome.webview.postMessage(JSON.stringify(data));
+                }else if((localStorage.getItem("flutterWrapper")||0) == 1){
+                    var printer = (sale.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+                    if (printer.length <= 0) {
+                        //
+                    } else {
+                        data.printer = {
+                            "printer_name": printer[0].printer_name,
+                            "ip_address": printer[0].ip_address,
+                            "port": printer[0].port,
+                            "cashier_printer": printer[0].cashier_printer,
+                            "is_label_printer": printer[0].is_label_printer
+                        }
+                        flutterChannel.postMessage(JSON.stringify(data));
+                    }
                 }
             }
             d.sale_status = "Bill Requested";
