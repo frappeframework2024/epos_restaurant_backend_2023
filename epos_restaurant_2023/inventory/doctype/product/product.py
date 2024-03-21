@@ -563,3 +563,12 @@ def clear_all_printer_from_product(products):
 		product.save()
 
 	frappe.db.commit()
+
+@frappe.whitelist()
+def clear_all_menus_from_product(products):
+	for p in products.split(","):
+		product = frappe.get_doc("Product",p)
+		product.pos_menus = []
+		product.save()
+
+	frappe.db.commit()

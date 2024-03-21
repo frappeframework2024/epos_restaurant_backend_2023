@@ -1,6 +1,5 @@
-import os
 import numpy as np
-import base64
+import json
 from PIL import Image
 
 from epos_restaurant_2023.api.product import get_product_by_menu
@@ -28,9 +27,11 @@ def get_kot_template(sale, products):
     if not frappe.db.exists("Sale",sale):
         return ""    
     doc_sale = frappe.get_doc("Sale", sale)
+    _products = products
+    if type(products) is str:
+        _products  = json.loads(products)
     data_template,css = frappe.db.get_value("POS Receipt Template","Kitchen Order",["template","style"])   
-    html = frappe.render_template(data_template, get_print_context(doc=doc_sale,sale_products =  products))
-    
+    html = frappe.render_template(data_template, get_print_context(doc=doc_sale,sale_products = _products))    
     return {"html":html,"css":css}
 
 ## END WINDOW SERVER PRINTING GENERATE HTML

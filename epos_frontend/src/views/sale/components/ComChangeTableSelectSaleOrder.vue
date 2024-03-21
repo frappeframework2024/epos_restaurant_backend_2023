@@ -82,7 +82,6 @@ async function onSaleOrderClick(s) {
             isLoading.value = false;
             emit("resolve", { action: "reload_sale", name: res.message.data.name })   
 
-
              // check if print items merge bill
             if(sale.setting.pos_setting.print_sale_product_merged_table){                  
                 sale.sale.sale_products.filter(r => (r.move_from_sale||"") != "" && (r.move_from_sale_printed||0)==0 && JSON.parse(r.printers).length > 0)
@@ -94,6 +93,8 @@ async function onSaleOrderClick(s) {
                             printer: p.printer,
                             group_item_type: p.group_item_type,
                             is_label_printer: p.is_label_printer==1,
+                            ip_address: p.ip_address,
+                            port: p.port,
                             product_code: r.product_code,
                             product_name_en: r.product_name,
                             product_name_kh: r.product_name_kh,

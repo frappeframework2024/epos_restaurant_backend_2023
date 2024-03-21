@@ -1750,6 +1750,8 @@ export default class Sale {
                         printer: p.printer,
                         group_item_type: p.group_item_type,
                         is_label_printer: p.is_label_printer == 1,
+                        ip_address: p.ip_address,
+                        port: p.port,
                         product_code: r.product_code,
                         product_name_en: r.product_name,
                         product_name_kh: r.product_name_kh,

@@ -36,6 +36,24 @@ frappe.listview_settings['Product'] = {
             d.show();          
         });
 
+        me.page.add_action_item('Remove All Menus', function() {
+            frappe.confirm("Are you sure you want to remove all menus from the selected products?",
+                function(){
+                    const selected =  me.get_checked_items() ;
+                    const result = selected.map(item => item.name).join(',');                
+                    frappe.call({
+                        method: "epos_restaurant_2023.inventory.doctype.product.product.clear_all_menus_from_product",
+                        args: {
+                            "products": result,
+                        },
+                        callback: function(r) {
+                            frappe.msgprint("Remove all menu successfully")                    
+                        }
+                    });
+                }
+            );
+        });
+
         //assign Printer
         me.page.add_action_item('Assign Printer', function() {
             let d = new frappe.ui.Dialog({
@@ -112,5 +130,7 @@ frappe.listview_settings['Product'] = {
                 }
             );
         });
+        
+        
     }
 }
