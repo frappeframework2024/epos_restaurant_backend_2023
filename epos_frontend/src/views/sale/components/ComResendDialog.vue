@@ -1,10 +1,10 @@
 <template>
-    <ComModal @onClose="onClose" :loading="loading" :fullscreen="false"> 
+    <ComModal @onClose="onClose" :loading="loading" :fullscreen="false">
         <template #title>
-            Helllo Resend
+            Resend
         </template>
         <template #content>
-            <ComResendGroupSaleProductList/>
+            <ComResendGroupSaleProductList />
         </template>
     </ComModal>
 </template>

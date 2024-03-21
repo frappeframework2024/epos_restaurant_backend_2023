@@ -334,8 +334,17 @@ function onPrint(){
     }
     else{
         if((localStorage.getItem("apkipa") ||0)==0){
-            window.open(printUrl.value + "&trigger_print=1").print();
-            window.close();
+
+            let data ={
+                action : "print_report",                
+                 doc: activeReport.value.doc_type,
+                name: activeReport.value.report_id,
+                print_format: activeReport.value.print_report_name,
+            }
+            window.chrome.webview.postMessage(JSON.stringify(data));
+            toaster.success($t("Report is printing"))
+            // window.open(printUrl.value + "&trigger_print=1").print();
+            // window.close();
         }
     }
 } 

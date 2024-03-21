@@ -175,15 +175,27 @@ function onPrint() {
     }
     else{
         if (localStorage.getItem("is_window")==1) {
-            if(props.params.doctype =="Sale" && activeReport.value.pos_receipt_file_name !="" && activeReport.value.pos_receipt_file_name !=null){            
+            let data ={
+                action : "print_report",                
+                doc: props.params.doctype,
+                name:props.params.name,
+                print_format:activeReport.value.name,
+            }
+            if(props.params.doctype =="Sale" && activeReport.value.pos_receipt_file_name !="" && activeReport.value.pos_receipt_file_name !=null){                  
                 window.chrome.webview.postMessage("doc");
                 return;
-            }            
+            }  
+
+            window.chrome.webview.postMessage(JSON.stringify(data));
+            toaster.success($t("Report is printing"))
         }
-        if((localStorage.getItem("apkipa") ||0)==0){
-            window.open(printPreviewUrl.value + "&trigger_print=1").print();
-            window.close();
-        }
+
+
+        // if((localStorage.getItem("apkipa") ||0)==0){
+
+        //     // window.open(printPreviewUrl.value + "&trigger_print=1").print();
+        //     // window.close();
+        // }
     }
 
 }

@@ -70,4 +70,10 @@ def get_wifi_template(password):
     html= frappe.render_template(data_template, {"password":password})
     return {"html":html,"css":css}
 
+## print report Print Format
+@frappe.whitelist(allow_guest=True,methods='POST')
+def get_report_from_print_format_template(data):    
+    return print_from_print_format(data,is_html=True)
+
+
 ## END WINDOW SERVER PRINTING GENERATE HTML

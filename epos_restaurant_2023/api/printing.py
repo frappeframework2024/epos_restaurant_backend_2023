@@ -158,7 +158,7 @@ def print_kitchen_order(station, sale, products,printer):
 
 ### print report from print format 
 @frappe.whitelist(allow_guest=True,methods="POST")
-def print_from_print_format(data):
+def print_from_print_format(data, is_html=False):
     width, height = frappe.get_value("POS Print Format Setting",data["print_format"],["printing_fixed_width","printing_fixed_height"] )
     document = frappe.get_doc(data["doc"], data["name"])
     print_format = get_print_format_doc(data["print_format"], meta=document.meta)
@@ -180,9 +180,11 @@ def print_from_print_format(data):
     html = "{}".format(html)
     css = """"""
     css += "{}".format(get_css_boostrap()) 
-    css += get_print_style( print_format=print_format)    
+    css += get_print_style( print_format=print_format)   
 
-    hash_generate =  frappe.generate_hash(length=15)
-    # hash_generate =  ""
-    return capture(html=html,css=css,height=height,width=width,image='report_{}.png'.format(hash_generate))
+    if is_html:
+        return {"html":html,"css":css}
+    else: 
+        hash_generate =  frappe.generate_hash(length=15)
+        return capture(html=html,css=css,height=height,width=width,image='report_{}.png'.format(hash_generate))
     
