@@ -62,7 +62,7 @@ def capture(height,width,html,css,image):
     hti.chrome_path=chrome_path
     hti.output_path =frappe.get_site_path() 
     hti.size=(width, height)
-    
+
     css += """body{
         background:red;
     }"""  
@@ -87,8 +87,10 @@ def capture(height,width,html,css,image):
 ## print invoice or receipt
 @frappe.whitelist(allow_guest=True)
 def get_receipt_html(name,template ):
+     
     doc = frappe.get_doc("Sale", name) 
-    data_template,css,width,fixed_height = frappe.db.get_value("POS Receipt Template",template,["template","style","width","fixed_height"])
+  
+    data_template = frappe.db.get_value("POS Receipt Template",template,["template"])
     html= frappe.render_template(data_template, get_print_context(doc,0))
     return html
    

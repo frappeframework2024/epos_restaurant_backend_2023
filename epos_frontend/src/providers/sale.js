@@ -1624,7 +1624,6 @@ export default class Sale {
     }
 
     onPrintToKitchen(doc, products = null) {
-
         var _productPrinters = products ?? this.productPrinters;
         const data = {
             action: "print_to_kitchen",
@@ -1635,30 +1634,28 @@ export default class Sale {
             printers:[]
         }
 
-        if (localStorage.getItem("is_window") == 1) {
-            if((data.product_printers??[]).length > 0){
-                //"{order_by:$.order_by,order_time:$.order_time}", "", "{order_by:$.order_by,order_time:$.order_time}", "$.order_by+','+$.order_time"
-                var groupKeys = "{printer:$.printer,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port,is_label_printer:$.is_label_printer,usb_printing:$.usb_printing}"
-                var groupFields ="$.printer+','+$.group_item_type+','+$.ip_address+','+$.port+','+$.is_label_printer+','+$.usb_printing";
-                var printers  = Enumerable.from(data.product_printers).groupBy(groupKeys,"", groupKeys, groupFields).toArray();     
-                printers.forEach((p)=>{
-                    data.printers.push({
-                        "printer_name":p.printer,
-                        "group_item_type":p.group_item_type,
-                        "ip_address":p.ip_address,
-                        "port":p.port,
-                        "is_label_printer":p.is_label_printer,
-                        "usb_printing":p.usb_printing??0,
-                        "products":data.product_printers.filter((x) => x.printer == p.printer)
-                    });                    
-                });
+        var groupKeys = "{printer:$.printer,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port,is_label_printer:$.is_label_printer,usb_printing:$.usb_printing}"
+        var groupFields ="$.printer+','+$.group_item_type+','+$.ip_address+','+$.port+','+$.is_label_printer+','+$.usb_printing";
+        var printers  = Enumerable.from(data.product_printers).groupBy(groupKeys,"", groupKeys, groupFields).toArray();     
+        printers.forEach((p)=>{
+            data.printers.push({
+                "printer_name":p.printer,
+                "group_item_type":p.group_item_type,
+                "ip_address":p.ip_address,
+                "port":p.port,
+                "is_label_printer":p.is_label_printer,
+                "usb_printing":p.usb_printing??0,
+                "products":data.product_printers.filter((x) => x.printer == p.printer)
+            });                    
+        });
 
-                //
+
+        if (localStorage.getItem("is_window") == 1) {
+            if((data.product_printers??[]).length > 0){ 
                 window.chrome.webview.postMessage(JSON.stringify(data));
             }           
         }
-        else 
-        if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
+        else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
             if (_productPrinters.length > 0) {
                 var printers = (this.setting?.device_setting?.station_printers);
                 if (printers.length <= 0) {

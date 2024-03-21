@@ -15,12 +15,39 @@ from epos_restaurant_2023.api.printing import (
 import frappe
 
 ## WINDOW SERVER PRINTING GENERATE HTML
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=True, methods="POST")
 def get_bill_template(name,template, reprint=0):
+    if not frappe.db.exists("Sale",name):
+        return ""    
     doc = frappe.get_doc("Sale", name) 
     data_template,css = frappe.db.get_value("POS Receipt Template",template,["template","style"])
     html= frappe.render_template(data_template, get_print_context(doc,reprint))
     return {"html":html,"css":css}
+
+
+## print waiting slip
+@frappe.whitelist(allow_guest=True,methods='POST')
+def get_waiting_slip_template(name):
+    if not frappe.db.exists("Sale",name):
+        return ""    
+    doc = frappe.get_doc("Sale", name)
+    data_template,css = frappe.db.get_value("POS Receipt Template","Waiting Slip",["template","style"])
+    html= frappe.render_template(data_template, get_print_context(doc))
+    return {"html":html,"css":css}
+
+
+@frappe.whitelist(allow_guest=True, methods="POST")
+def get_voucher_template(name):
+    if not frappe.db.exists("Voucher",name):
+        return ""    
+    doc = frappe.get_doc("Voucher", name) 
+    working_day = frappe.get_doc("Working Day",doc.working_day)
+
+    doc.pos_profile = working_day.pos_profile
+    data_template,css = frappe.db.get_value("POS Receipt Template","Voucher Reciept",["template","style"])
+    html= frappe.render_template(data_template, get_print_context(doc))
+    return {"html":html,"css":css}
+
 
 @frappe.whitelist(allow_guest=True,methods='POST')
 def get_kot_template(sale, products): 
@@ -34,15 +61,13 @@ def get_kot_template(sale, products):
     html = frappe.render_template(data_template, get_print_context(doc=doc_sale,sale_products = _products))    
     return {"html":html,"css":css}
 
-## print waiting slip
-@frappe.whitelist(allow_guest=True)
-def get_waiting_slip_template( name,methods='POST'):
-    if not frappe.db.exists("Sale",name):
-        return ""    
-    doc = frappe.get_doc("Sale", name)
-    data_template,css = frappe.db.get_value("POS Receipt Template","Waiting Slip",["template","style"])
-    html= frappe.render_template(data_template, get_print_context(doc))
-    return {"html":html,"css":css}
 
+
+## print waiting slip
+@frappe.whitelist(allow_guest=True,methods='POST')
+def get_wifi_template(password):    
+    data_template,css = frappe.db.get_value("POS Receipt Template","WiFi",["template","style"]) 
+    html= frappe.render_template(data_template, {"password":password})
+    return {"html":html,"css":css}
 
 ## END WINDOW SERVER PRINTING GENERATE HTML
