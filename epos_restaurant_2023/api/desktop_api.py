@@ -34,4 +34,15 @@ def get_kot_template(sale, products):
     html = frappe.render_template(data_template, get_print_context(doc=doc_sale,sale_products = _products))    
     return {"html":html,"css":css}
 
+## print waiting slip
+@frappe.whitelist(allow_guest=True)
+def get_waiting_slip_template( name,methods='POST'):
+    if not frappe.db.exists("Sale",name):
+        return ""    
+    doc = frappe.get_doc("Sale", name)
+    data_template,css = frappe.db.get_value("POS Receipt Template","Waiting Slip",["template","style"])
+    html= frappe.render_template(data_template, get_print_context(doc))
+    return {"html":html,"css":css}
+
+
 ## END WINDOW SERVER PRINTING GENERATE HTML

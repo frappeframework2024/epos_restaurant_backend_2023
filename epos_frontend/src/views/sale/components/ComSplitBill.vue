@@ -31,7 +31,7 @@ import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 import { ref,onMounted, defineEmits, createToaster, createResource, inject,i18n } from '@/plugin'
 import ComSplitBillList from './split_bill/ComSplitBillList.vue';
 
-const { t: $t } = i18n.global; 
+const { t: $t } = i18n.global;
 
 const emit = defineEmits(["resolve", "reject"])
 const toaster = createToaster({ position: 'top-right' })

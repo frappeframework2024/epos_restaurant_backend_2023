@@ -51,16 +51,6 @@ def trim(file_path):
     cropped.save(file_path)
 
 
-@frappe.whitelist(allow_guest=True)
-def capture_url(url=""):
-    chrome_path = "/usr/bin/google-chrome"
-    # Set the CHROME_PATH environment variable
-    os.environ['CHROME_PATH'] = chrome_path
- 
-    hti = Html2Image()
-    hti.chrome_path=chrome_path
-    hti.output_path =frappe.get_site_path() 
-    hti.screenshot_url('https://www.python.org/', 'python_org.png')
 
 @frappe.whitelist(allow_guest=True)
 def capture(height,width,html,css,image):
@@ -72,6 +62,10 @@ def capture(height,width,html,css,image):
     hti.chrome_path=chrome_path
     hti.output_path =frappe.get_site_path() 
     hti.size=(width, height)
+    
+    css += """body{
+        background:red;
+    }"""  
 
     hti.screenshot(html_str=html, css_str=css, save_as='{}'.format(image))   
     image_path = '{}/{}'.format(frappe.get_site_path(),image)    
@@ -90,7 +84,14 @@ def capture(height,width,html,css,image):
 
     return encoded_data 
 
-
+## print invoice or receipt
+@frappe.whitelist(allow_guest=True)
+def get_receipt_html(name,template ):
+    doc = frappe.get_doc("Sale", name) 
+    data_template,css,width,fixed_height = frappe.db.get_value("POS Receipt Template",template,["template","style","width","fixed_height"])
+    html= frappe.render_template(data_template, get_print_context(doc,0))
+    return html
+   
 
 ## print invoice or receipt
 @frappe.whitelist(allow_guest=True)

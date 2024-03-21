@@ -30,7 +30,7 @@
         </div>
     </div>
     <!-- Product -->
-    
+
     <div v-else-if="data.type == 'product'" v-ripple
         class="relative overflow-hidden h-full bg-cover bg-no-repeat rounded-lg shadow-lg cursor-pointer bg-gray-300 "
         v-bind:style="{ 'background-image': 'url(' + image + ')', 'background-size': 'contain', 'background-position': 'center center' }"
@@ -40,7 +40,8 @@
             <avatar class="!h-full !w-full" :name="data.name_en" :rounded="false" background="#f1f1f1"></avatar>
         </div>
         <div class="block relative p-2 w-full h-full">
-            <div class="absolute left-0 top-0 bg-red-700 text-white p-1 rounded-tl-lg rounded-br-lg text-sm">
+            <div>
+                <div class="absolute left-0 top-0 bg-red-700 text-white p-1 rounded-tl-lg rounded-br-lg text-sm">
                 <div>
                     <span v-if="productPrices.length > 1">
                         <span>
@@ -51,30 +52,38 @@
                     </span>
                     <CurrencyFormat v-else :value="showPrice" />
                 </div>
-                <div>
-                   
-                    <v-btn @click="popup" density="compact" id="menu-activator" icon="mdi-plus"></v-btn>
-                    <v-menu activator="#menu-activator">
+                
+            </div>
+            <div class="menu-dropdown-icon">
+                    <v-menu transition="scale-transition">
+                        <template v-slot:activator="{ props }">
+                            <v-btn size="small" variant="text" :id="data.menu_product_name"  v-bind="props" icon="mdi-dots-vertical">
+
+                            </v-btn>
+                        </template>
+
                         <v-list>
-                            <v-list-item>
+                            <v-list-item @click="uploadImage(data)">
                                 <v-list-item-title>{{ $t("Upload Image") }}</v-list-item-title>
                             </v-list-item>
                         </v-list>
                     </v-menu>
                 </div>
             </div>
-
+            
             <div class="p-1 rounded-md absolute bottom-1 right-1 left-1 bg-gray-50 bg-opacity-90 text-sm text-center">
                 <span v-if="!sale.load_menu_lang">{{ getMenuName(data, true) }}</span> <span
-                    style="color:red; font-weight: bold;"> {{ getTotalQuantityOrder(data) }}</span>
+                    style="color:red; font-weight: bold;">
+                    {{ getTotalQuantityOrder(data) }}</span>
             </div>
         </div>
     </div>
-    
+
 </template>
 <script setup>
-import { computed, addModifierDialog, SelectDateTime, inject, keypadWithNoteDialog, SaleProductComboMenuGroupModal, createToaster } from '@/plugin'
+import { computed, addModifierDialog, SelectDateTime, i18n,inject, keypadWithNoteDialog,SelectGoogleImageDialog, SaleProductComboMenuGroupModal, createToaster } from '@/plugin'
 import Enumerable from 'linq'
+const { t: $t } = i18n.global; 
 // import ComPriceOnMenu from '../ComPriceOnMenu.vue';
 const props = defineProps({ data: Object })
 const sale = inject("$sale");
@@ -160,8 +169,25 @@ function onClickMenu(menu) {
     }
 
 }
+async function uploadImage(data) {
+    const res = await SelectGoogleImageDialog({
 
-function popup(event){
+        title:$t("Upload Image") + " "  + data.name_en,
+        keyword:data.name_en
+    })
+    if(res){
+        db.updateDoc('Product', data.name, {
+            photo: res.image,
+        })
+            .then((doc) => {
+                data.photo = res.image
+                toaster.success($t("msg.Update successfully"))
+            }
+               
+            )
+        }
+}
+function activate_menu(event) {
     event.stopPropagation();
 }
 
@@ -324,3 +350,12 @@ function getSeperateName(list) {
     return combo_menus.join(", ")
 }
 </script>
+<style>
+.menu-dropdown-icon{
+    position: absolute;
+    right: 10px;
+    top: -5px;
+}
+
+        
+</style>

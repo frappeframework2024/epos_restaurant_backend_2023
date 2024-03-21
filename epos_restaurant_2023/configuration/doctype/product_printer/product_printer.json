@@ -11,7 +11,8 @@
   "ip_address",
   "port",
   "group_item_type",
-  "is_label_printer"
+  "is_label_printer",
+  "usb_printing"
  ],
  "fields": [
   {
@@ -52,12 +53,19 @@
    "fieldname": "port",
    "fieldtype": "Data",
    "label": "Port"
+  },
+  {
+   "default": "0",
+   "fetch_from": "printer.usb_printing",
+   "fieldname": "usb_printing",
+   "fieldtype": "Check",
+   "label": "USB Printing"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-03-06 14:34:05.128764",
+ "modified": "2024-03-21 10:54:27.439456",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Product Printer",

@@ -200,14 +200,14 @@ async function onPrint() {
             var printer =  (gv.setting?.device_setting?.station_printers).filter((e)=>e.cashier_printer == 1);
             if(printer.length <=0){
                 toaster.warning($t("Printer not yet configt for this device"))
-            }else{ 
-                
+            }else{                 
                 data.printer = {
                     "printer_name":printer[0].printer_name,
                     "ip_address":printer[0].ip_address,
                     "port":printer[0].port,
                     "cashier_printer":printer[0].cashier_printer,
-                    "is_label_printer":printer[0].is_label_printer
+                    "is_label_printer":printer[0].is_label_printer,
+                    "usb_printing": printer[0].usb_printing,
                 } 
                 flutterChannel.postMessage(JSON.stringify(data));                       
             }

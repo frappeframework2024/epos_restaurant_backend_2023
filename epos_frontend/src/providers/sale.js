@@ -1638,16 +1638,17 @@ export default class Sale {
         if (localStorage.getItem("is_window") == 1) {
             if((data.product_printers??[]).length > 0){
                 //"{order_by:$.order_by,order_time:$.order_time}", "", "{order_by:$.order_by,order_time:$.order_time}", "$.order_by+','+$.order_time"
-                var groupKeys = "{printer:$.printer,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port,is_label_printer:$.is_label_printer}"
-                var groupFields ="$.printer+','+$.group_item_type+','+$.ip_address+','+$.port+','+$.is_label_printer";
+                var groupKeys = "{printer:$.printer,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port,is_label_printer:$.is_label_printer,usb_printing:$.usb_printing}"
+                var groupFields ="$.printer+','+$.group_item_type+','+$.ip_address+','+$.port+','+$.is_label_printer+','+$.usb_printing";
                 var printers  = Enumerable.from(data.product_printers).groupBy(groupKeys,"", groupKeys, groupFields).toArray();     
                 printers.forEach((p)=>{
                     data.printers.push({
-                        "printer":p.printer,
+                        "printer_name":p.printer,
                         "group_item_type":p.group_item_type,
                         "ip_address":p.ip_address,
                         "port":p.port,
                         "is_label_printer":p.is_label_printer,
+                        "usb_printing":p.usb_printing??0,
                         "products":data.product_printers.filter((x) => x.printer == p.printer)
                     });                    
                 });
@@ -1679,6 +1680,7 @@ export default class Sale {
                                 "port": p.port,
                                 "cashier_printer": p.cashier_printer,
                                 "is_label_printer": p.is_label_printer,
+                                "usb_printing":p.usb_printing,
                             },
                             "products": data.product_printers.filter((x) => x.printer == p.printer_name)
                         });
@@ -1709,6 +1711,7 @@ export default class Sale {
                     is_label_printer: p.is_label_printer == 1,
                     ip_address: p.ip_address,
                     port: p.port,
+                    usb_printing:p.usb_printing,
                     product_code: r.product_code,
                     product_name_en: r.product_name,
                     product_name_kh: r.product_name_kh,
@@ -1752,6 +1755,7 @@ export default class Sale {
                         is_label_printer: p.is_label_printer == 1,
                         ip_address: p.ip_address,
                         port: p.port,
+                        usb_printing:p.usb_printing,
                         product_code: r.product_code,
                         product_name_en: r.product_name,
                         product_name_kh: r.product_name_kh,
@@ -1811,7 +1815,8 @@ export default class Sale {
                     "ip_address": printer[0].ip_address,
                     "port": printer[0].port,
                     "cashier_printer": printer[0].cashier_printer,
-                    "is_label_printer": printer[0].is_label_printer
+                    "is_label_printer": printer[0].is_label_printer,
+                    "usb_printing": printer[0].usb_printing,
                 }
                 flutterChannel.postMessage(JSON.stringify(data));
             }
@@ -1850,7 +1855,8 @@ export default class Sale {
                             "ip_address": printer[0].ip_address,
                             "port": printer[0].port,
                             "cashier_printer": printer[0].cashier_printer,
-                            "is_label_printer": printer[0].is_label_printer
+                            "is_label_printer": printer[0].is_label_printer,
+                            "usb_printing": printer[0].usb_printing,
                         }
                         flutterChannel.postMessage(JSON.stringify(data));
 

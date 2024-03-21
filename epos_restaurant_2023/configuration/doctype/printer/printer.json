@@ -15,6 +15,7 @@
   "port",
   "business_branch_printer",
   "is_label_printer",
+  "usb_printing",
   "is_standard"
  ],
  "fields": [
@@ -76,11 +77,17 @@
    "fieldname": "is_label_printer",
    "fieldtype": "Check",
    "label": "Is Label Printer"
+  },
+  {
+   "default": "0",
+   "fieldname": "usb_printing",
+   "fieldtype": "Check",
+   "label": "USB Printing"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-28 08:46:13.870017",
+ "modified": "2024-03-21 10:51:44.709734",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Printer",
