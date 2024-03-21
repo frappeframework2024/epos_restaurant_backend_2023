@@ -180,6 +180,7 @@ async function onPrint() {
         setting: gv.setting?.pos_setting,
         sale: sale.doc,
         station: (gv.setting?.device_setting?.name) || "",
+        reprint : 1
     } 
  
     if (localStorage.getItem("is_window") == "1") {       
@@ -200,7 +201,7 @@ async function onPrint() {
             if(printer.length <=0){
                 toaster.warning($t("Printer not yet configt for this device"))
             }else{ 
-                data.reprint = 1; 
+                
                 data.printer = {
                     "printer_name":printer[0].printer_name,
                     "ip_address":printer[0].ip_address,
