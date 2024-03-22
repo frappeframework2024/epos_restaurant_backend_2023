@@ -1056,12 +1056,14 @@ export default class Sale {
             let park_by = sp.free_by || "";
 
             if (parkQty == sp.quantity) {
-                sp.is_park = true;
                 sp.backup_modifier_price = sp.modifiers_price
                 sp.backup_product_price = sp.price
-                parkSaleProduct.expired_date = moment(window.current_working_date).add(7, 'days').format('yyyy-MM-DD');
+                sp.is_park = 1
+                parkSaleProduct.expired_date = moment(window.current_working_date).add(this.setting.pos_setting.park_item_days_expiry, 'days').format('yyyy-MM-DD');
                 this.updateSaleProduct(sp);
                 this.updateSaleSummary();
+                
+                
             }
             else {
                 let parkSaleProduct = JSON.parse(JSON.stringify(sp));
@@ -1071,7 +1073,7 @@ export default class Sale {
                 parkSaleProduct.backup_modifier_price = sp.modifiers_price
                 parkSaleProduct.selected = false;
                 parkSaleProduct.is_park = true;
-                parkSaleProduct.expired_date = moment(window.current_working_date).add(7, 'days').format('yyyy-MM-DD');
+                parkSaleProduct.expired_date = moment(window.current_working_date).add(this.setting.pos_setting.park_item_days_expiry, 'days').format('yyyy-MM-DD');
                 this.updateSaleProduct(parkSaleProduct);
                 this.sale.sale_products.push(parkSaleProduct);
 

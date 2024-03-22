@@ -6,7 +6,7 @@ from epos_restaurant_2023.inventory.inventory import add_to_inventory_transactio
 import frappe
 from frappe import utils
 from frappe import _
-from frappe.utils.data import fmt_money
+from frappe.utils.data import getdate,fmt_money
 from py_linq import Enumerable
 from frappe.model.document import Document
 import datetime
@@ -769,3 +769,16 @@ def update_pos_reservation_status(self):
 				"reservation_status_background_color": status.background_color,
 				"workflow_state": "Checked Out",
 			})
+
+
+@frappe.whitelist()
+def get_park_item_to_redeem(business_branch):
+	from epos_restaurant_2023.api.api import get_current_working_day
+	
+	current_working_day = get_current_working_day(business_branch=business_branch)
+	park_item_list = frappe.db.get_all("Sale Product",fields="*" ,filters={
+        'is_park': 1,
+		'is_redeem':0,
+		'expired_date': ['>=', getdate(str(current_working_day['posting_date'])).strftime('%Y-%m-%d')]
+    },)
+	return park_item_list

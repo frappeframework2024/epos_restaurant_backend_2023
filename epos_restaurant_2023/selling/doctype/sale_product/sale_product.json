@@ -879,11 +879,6 @@
    "label": "Parking Items"
   },
   {
-   "fieldname": "is_park",
-   "fieldtype": "Data",
-   "label": "Is Park"
-  },
-  {
    "fieldname": "expired_date",
    "fieldtype": "Date",
    "label": "Expired Date"
@@ -908,12 +903,18 @@
    "fieldname": "is_return",
    "fieldtype": "Check",
    "label": "Is Return"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_park",
+   "fieldtype": "Check",
+   "label": "Is Park"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-03-06 08:16:38.139780",
+ "modified": "2024-03-22 09:09:19.577606",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",

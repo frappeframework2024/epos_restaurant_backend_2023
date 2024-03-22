@@ -243,6 +243,7 @@ fixtures = [
     {"dt": "Workflow Action Master"},
     {"dt": "Workflow State"},
     {"dt": "Workflow"},
+    {"dt": "Translation"}
 ]
 
 website_route_rules = [

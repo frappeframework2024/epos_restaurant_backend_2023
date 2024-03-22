@@ -54,6 +54,7 @@ import ComVoucherTopUpAddPayment from "@/views/voucher_top_up/ComVoucherTopUpAdd
 import ComSearchProduct from "@/views/sale/components/retail_ui/ComSearchProduct.vue"
 import ComResendDialog from "@/views/sale/components/ComResendDialog.vue";
 import ComSelectGoogleImageDialog from "@/views/sale/components/ComSelectGoogleImageModal.vue";
+import ComRedeemParkItemDialog from "@/views/sale/components/ComRedeemParkItemDialog.vue";
 
 interface params {
     doctype?: String,
@@ -126,4 +127,5 @@ export const VoucherTopUpDetailDialog = createPromiseDialog<params, object>(ComV
 export const VoucherTopUpAddPaymentDialog = createPromiseDialog<params, object>(ComVoucherTopUpAddPayment);
 export const SearchProductDialog = createPromiseDialog<params, object>(ComSearchProduct);
 export const ResendDialog = createPromiseDialog<params, object>(ComResendDialog); 
-export const SelectGoogleImageDialog = createPromiseDialog<params, object>(ComSelectGoogleImageDialog); 
+export const SelectGoogleImageDialog = createPromiseDialog<params, object>(ComSelectGoogleImageDialog);
+export const RedeemParkItemDialog = createPromiseDialog<params, object>(ComRedeemParkItemDialog);
