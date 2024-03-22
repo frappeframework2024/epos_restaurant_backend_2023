@@ -1059,7 +1059,7 @@ export default class Sale {
                 sp.backup_modifier_price = sp.modifiers_price
                 sp.backup_product_price = sp.price
                 sp.is_park = 1
-                parkSaleProduct.expired_date = moment(window.current_working_date).add(this.setting.pos_setting.park_item_days_expiry, 'days').format('yyyy-MM-DD');
+                sp.expired_date = moment(window.current_working_date).add(this.setting.pos_setting.park_item_days_expiry, 'days').format('yyyy-MM-DD');
                 this.updateSaleProduct(sp);
                 this.updateSaleSummary();
                 

@@ -776,9 +776,20 @@ def get_park_item_to_redeem(business_branch):
 	from epos_restaurant_2023.api.api import get_current_working_day
 	
 	current_working_day = get_current_working_day(business_branch=business_branch)
+
 	park_item_list = frappe.db.get_all("Sale Product",fields="*" ,filters={
         'is_park': 1,
 		'is_redeem':0,
 		'expired_date': ['>=', getdate(str(current_working_day['posting_date'])).strftime('%Y-%m-%d')]
     },)
-	return park_item_list
+	result_dict = []
+	sales=[]
+	for item in park_item_list:
+		sales.append(item.parent)
+
+	for s in set(sales):
+		park_items = [d for d in park_item_list if d.parent == s] or []
+		result_dict.append({"sale":s,"products":park_items })
+
+
+	return result_dict
