@@ -22,6 +22,9 @@ JOB_STATUSES = ["queued", "started", "failed", "finished", "deferred", "schedule
 @frappe.whitelist()
 def generate_data_for_sync_record(doc, method=None, *args, **kwargs):
     if doc.doctype != "Data For Sync":
+        if not frappe.db.exists("DocType","ePOS Sync Setting"):
+            return
+        
         setting =frappe.get_doc("ePOS Sync Setting")
         if setting.enable ==1:
             if doc.doctype in [d.document_type for d in setting.sync_to_client]:
@@ -41,7 +44,8 @@ def generate_data_for_sync_record(doc, method=None, *args, **kwargs):
                 # frappe.db.commit()
 @frappe.whitelist()
 def generate_data_for_sync_record_on_delete(doc, method=None, *args, **kwargs):
-
+    if not frappe.db.exists("DocType","ePOS Sync Setting"):
+        return
     setting =frappe.get_doc("ePOS Sync Setting")
     if setting.enable ==1:
         if doc.doctype in [d.document_type for d in setting.sync_to_client]:
@@ -67,6 +71,8 @@ def generate_data_for_sync_record_on_delete(doc, method=None, *args, **kwargs):
 
 @frappe.whitelist()
 def generate_data_for_sync_record_on_rename(doc ,method=None, *args, **kwargs):
+    if not frappe.db.exists("DocType","ePOS Sync Setting"):
+        return
     setting =frappe.get_doc("ePOS Sync Setting")
     if setting.enable == 1:
         doc_name = {'old_name': args[0], 'name': args[1]}
@@ -94,6 +100,8 @@ def generate_data_for_sync_record_on_rename(doc ,method=None, *args, **kwargs):
             
 @frappe.whitelist()
 def sync_data_to_server_on_submit(doc, method=None, *args, **kwargs):
+    if not frappe.db.exists("DocType","ePOS Sync Setting"):
+        return
     setting =frappe.get_doc("ePOS Sync Setting")
     if setting.enable ==1:
         if doc.doctype in [d.document_type for d in setting.sync_to_server if d.event == 'on_submit']:
@@ -103,6 +111,8 @@ def sync_data_to_server_on_submit(doc, method=None, *args, **kwargs):
 
 @frappe.whitelist()
 def sync_data_to_server_on_delete(doc, method=None, *args, **kwargs):
+    if not frappe.db.exists("DocType","ePOS Sync Setting"):
+        return
     setting =frappe.get_doc("ePOS Sync Setting")
     if setting.enable ==1:
         frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,action="delete") 
@@ -113,6 +123,8 @@ def sync_data_to_server_on_delete(doc, method=None, *args, **kwargs):
 
 @frappe.whitelist()
 def sync_comment_to_server(doc, method=None, *args, **kwargs):
+    if not frappe.db.exists("DocType","ePOS Sync Setting"):
+        return
     setting =frappe.get_doc("ePOS Sync Setting")
     if setting.enable ==1:
         if doc.reference_doctype in [d.document_type for d in setting.sync_to_server]:

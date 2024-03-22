@@ -125,6 +125,8 @@ class Sale(Document):
 			self.exchange_rate = 1
 			self.change_exchange_rate  = 1
  
+		# if len([d for d in self.sale_products if d.is_park == 1]) > 0 and 
+
 		#validate sale product 
 		validate_sale_product(self)
 
@@ -774,16 +776,23 @@ def update_pos_reservation_status(self):
 @frappe.whitelist()
 def get_park_item_to_redeem(business_branch):
 	from epos_restaurant_2023.api.api import get_current_working_day
-	
-	current_working_day = get_current_working_day(business_branch=business_branch)
-
-	park_item_list = frappe.db.get_all("Sale Product",fields="*" ,filters={
-        'is_park': 1,
-		'is_redeem':0,
-		'expired_date': ['>=', getdate(str(current_working_day['posting_date'])).strftime('%Y-%m-%d')]
-    },)
 	result_dict = []
 	sales=[]
+	current_working_day = get_current_working_day(business_branch=business_branch)
+	sql = """
+			select 
+				*,
+				(SELECT customer FROM `tabSale` s WHERE s.name = a.parent) AS customer
+			from `tabSale Product`
+			where 
+				is_park = 1 and 
+				is_redeem = 0 and 
+				expired_date >= '{0}' and
+				docstatus = 1 and 
+				parent in (select name from `tabSale` where business_branch='{1}') 
+		""".format(getdate(str(current_working_day['posting_date'])).strftime('%Y-%m-%d'),business_branch)
+	park_item_list = frappe.db.sql(sql,as_dict=1)
+	
 	for item in park_item_list:
 		sales.append(item.parent)
 
