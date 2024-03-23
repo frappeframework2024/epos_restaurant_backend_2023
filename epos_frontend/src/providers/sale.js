@@ -189,7 +189,6 @@ export default class Sale {
                 setValue: {
                     onSuccess(doc) {
                         parent.sale = doc;
-                        console.log("xxxx")
                         parent.onProcessTaskAfterSubmit(doc);
                         parent.action = "";
                         if (parent.message != undefined) {
