@@ -1044,7 +1044,10 @@ export default class Sale {
         this.dialogActiveState = false;
 
     }
-
+    async onRemoveParkItem(sp){
+        sp.is_park = 0
+        sp.expired_date=''
+    }
     async onSaleProductPark(sp) {
         let parkQty = 0;
         const result = sp.quantity == 1 ? 1 : await keyboardDialog({ title: $t("Change Park Quantity"), type: 'number', value: sp.quantity });
@@ -1056,7 +1059,6 @@ export default class Sale {
             let park_by = sp.free_by || "";
 
             if (parkQty == sp.quantity) {
-                sp.backup_modifier_price = sp.modifiers_price
                 sp.backup_product_price = sp.price
                 sp.is_park = 1
                 sp.expired_date = moment(window.current_working_date).add(this.setting.pos_setting.park_item_days_expiry, 'days').format('yyyy-MM-DD');
@@ -1636,8 +1638,8 @@ export default class Sale {
             printers:[]
         }
 
-        var groupKeys = "{printer:$.printer,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port,is_label_printer:$.is_label_printer,usb_printing:$.usb_printing}"
-        var groupFields ="$.printer+','+$.group_item_type+','+$.ip_address+','+$.port+','+$.is_label_printer+','+$.usb_printing";
+        var groupKeys = "{printer:$.printer,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port}"
+        var groupFields ="$.printer+','+$.group_item_type+','+$.ip_address+','+$.port";
         var printers  = Enumerable.from(data.product_printers).groupBy(groupKeys,"", groupKeys, groupFields).toArray();     
         printers.forEach((p)=>{
             data.printers.push({

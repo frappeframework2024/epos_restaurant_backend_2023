@@ -124,9 +124,9 @@ class Sale(Document):
 		else:
 			self.exchange_rate = 1
 			self.change_exchange_rate  = 1
- 
-		# if len([d for d in self.sale_products if d.is_park == 1]) > 0 and 
-
+		default_customer = frappe.db.get_value("POS Profile",self.pos_profile,'default_customer')
+		if len([d for d in self.sale_products if d.is_park == 1]) > 0 and self.customer == default_customer:
+			frappe.throw("Please select a customer for park")
 		#validate sale product 
 		validate_sale_product(self)
 

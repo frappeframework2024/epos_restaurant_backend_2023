@@ -13,9 +13,9 @@ from frappe.utils import (
 from escpos import *
 
 
-def get_print_context(doc, reprint=0, sale_products= []):
+def get_print_context(doc, reprint=0, sale_products= [],printer_name=None):
     setting = frappe.get_doc("POS Config", frappe.db.get_value("POS Profile",doc.pos_profile, "pos_config"))
-    return {"doc": doc,"reprint":reprint, "sale_products": sale_products,"nowdate": nowdate, "frappe.utils": frappe.utils,"setting":setting,"frappe":frappe}
+    return {"doc": doc,"reprint":reprint,"printer_name":printer_name, "sale_products": sale_products,"nowdate": nowdate, "frappe.utils": frappe.utils,"setting":setting,"frappe":frappe}
 
 
  
@@ -177,10 +177,14 @@ def print_from_print_format(data, is_html=False):
     if not html:
         return "" 
     html = frappe.render_template(html) 
-    html = "{}".format(html)
+    html = "<div class='print-format'>{}</div>".format(html)
     css = """"""
-    css += "{}".format(get_css_boostrap()) 
     css += get_print_style( print_format=print_format)   
+    css += "{}".format(get_css_boostrap()) 
+
+    # ## get print style css 
+    print_style = frappe.db.get_single_value('Print Settings','print_style')
+    css += frappe.get_value("Print Style",print_style,['css'])
 
     if is_html:
         return {"html":html,"css":css}
