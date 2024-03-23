@@ -1057,14 +1057,16 @@
   },
   {
    "allow_on_submit": 1,
+   "default": 0,
    "fieldname": "sale_commission_amount",
-   "fieldtype": "Data",
+   "fieldtype": "Float",
    "label": "Sale Commission Amount"
   },
   {
    "allow_on_submit": 1,
+   "default": 0,
    "fieldname": "sale_commission_percent",
-   "fieldtype": "Data",
+   "fieldtype": "Float",
    "label": "Sale Commission Percent"
   },
   {
@@ -1124,7 +1126,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-03-19 12:29:31.800320",
+ "modified": "2024-03-23 09:28:00.897327",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",
