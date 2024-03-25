@@ -115,6 +115,8 @@ def submit_order_to_exely(doc_name):
                     'x-api-key': setting.api_key,
                     'Content-Type': 'application/json'
                 }
+        
+ 
         response = requests.post(url, data=json.dumps(doc),headers=headers)
         if response.status_code==200:
             raw= json.loads(response.text)

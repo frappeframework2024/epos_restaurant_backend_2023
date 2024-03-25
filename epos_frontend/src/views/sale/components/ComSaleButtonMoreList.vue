@@ -44,7 +44,12 @@
 
     <v-list-item prepend-icon="mdi-cash-100" :title="$t('Tax Setting')" @click="onChangeTaxSetting()"
         v-if="sale.setting.tax_rules.length > 0" />
-
+    <v-list-item  v-if="device_setting.show_park_button==1" @click="onRedeemClick()">
+        <template #prepend>
+            <v-icon icon="mdi-parking"></v-icon>
+        </template>
+        <v-list-item-title class="text-red-700">{{ $t('Redeem Item') }} {{ showSplitBill }}</v-list-item-title>
+    </v-list-item>
     <v-list-item v-if="sale.sale.sale_products?.filter(r => r.name == undefined).length > 0" @click="onClearOrder()">
         <template #prepend>
             <v-icon color="error" icon="mdi-autorenew"></v-icon>
@@ -58,9 +63,11 @@
         </template>
         <v-list-item-title class="text-red-700">{{ $t('Delete Bill') }} {{ showSplitBill }}</v-list-item-title>
     </v-list-item>
+
+    
 </template>
 <script setup>
-import { computed,
+import { computed,RedeemParkItemDialog,
     useRouter,onMounted, splitBillDialog, addCommissionDialog, ComSaleReferenceNumberDialog, viewBillModelModel, ref, inject, confirm, createResource,
     keyboardDialog, changeTableDialog, changePriceRuleDialog, changeSaleTypeModalDialog, createToaster, changePOSMenuDialog, i18n, ResendDialog
 } from "@/plugin"
@@ -371,6 +378,23 @@ async function onChangeTaxSetting() {
 
 function onResend () {
     ResendDialog($t('Change Tax Setting')); 
+}
+
+function onRedeemClick(){ 
+    call.get("epos_restaurant_2023.api.api.get_current_shift_information",{
+        business_branch: gv.setting?.business_branch,
+        pos_profile: localStorage.getItem("pos_profile")
+    }).then(async (_res)=>{
+        const _data = _res.message;
+        if (_data.working_day == null) {
+            toaster.warning($t("msg.Please start working day first"))
+        } else if (_data.cashier_shift == null) {
+                toaster.warning($t("msg.Please start shift first"))
+        } else {
+            const today =  moment(new Date()).format('yyyy-MM-DD');
+            const result = await RedeemParkItemDialog();
+        }    
+    });
 }
 
 

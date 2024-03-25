@@ -105,7 +105,8 @@ class SalePayment(Document):
 							""".format(self.customer)
 		total_credit_amount =  frappe.db.sql(voucher_credit_sql,as_dict=1)
 		voucher_balance = frappe.db.get_value("Customer",self.customer,'voucher_balance')
-		if total_credit_amount[0].credit_amount <= 0 or voucher_balance < self.sale_amount:
+
+		if (total_credit_amount[0].credit_amount <= 0 or voucher_balance < self.sale_amount) and self.docstatus == 1 :
 			frappe.throw("Customer has no credit amount for {}".format(self.payment_type))
 		total_voucher_payment = frappe.db.sql(voucher_payment_sql,as_dict=1)
 		frappe.db.set_value('Customer', self.customer, {

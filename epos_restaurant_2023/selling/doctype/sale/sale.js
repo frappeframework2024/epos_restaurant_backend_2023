@@ -84,7 +84,8 @@ frappe.ui.form.on("Sale", {
 				
 								args: {
 									name: frm.doc.name,
-									note:d.note
+									note:d.note,
+									
 								}, callback: function (r) { 
 									frm.reload_doc()
 									frappe.show_alert({

@@ -15,7 +15,7 @@
         'background-size': 'contain', 'background-position': 'center center'
     }" @click="onClickMenu(data.name)">
         <div class="absolute top-0 bottom-0 right-0 left-0">
-
+           
             <avatar class="!h-full !w-full" :name="data.name_en" :rounded="false" :background="data.background_color"
                 :color="data.text_color" v-if="!data.photo"></avatar>
         </div>
@@ -33,7 +33,7 @@
 
     <div v-else-if="data.type == 'product'" v-ripple
         class="relative overflow-hidden h-full bg-cover bg-no-repeat rounded-lg shadow-lg cursor-pointer bg-gray-300 "
-        v-bind:style="{ 'background-image':'url(' + encodeURIComponent(image).replace(/%2F/g, '/') + ')', 'background-size': 'contain', 'background-position': 'center center' }"
+        v-bind:style="{ 'background-image':'url(' + encodeURIComponent(image).replace(/%2F/g, '/').replace(/%3A/g,':').replace(/%3F/g,'?').replace(/%3D/g,'=').replace(/%26/g,'&') + ')', 'background-size': 'contain', 'background-position': 'center center' }"
         @click="onClickProduct()">
         <div class="absolute top-0 bottom-0 right-0 left-0" v-if="!image">
 
@@ -72,6 +72,7 @@
             </div>
             
             <div class="p-1 rounded-md absolute bottom-1 right-1 left-1 bg-gray-50 bg-opacity-90 text-sm text-center">
+            
                 <span v-if="!sale.load_menu_lang">{{ getMenuName(data, true) }}</span> <span
                     style="color:red; font-weight: bold;">
                     {{ getTotalQuantityOrder(data) }}</span>
