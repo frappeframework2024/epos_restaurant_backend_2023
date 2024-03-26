@@ -3,6 +3,7 @@
         <template #action>
             <v-btn v-if="showPrintPopUp" @click="onPrintWithChoosePrinter()"> {{$t("Choose Printer") }}</v-btn>
             <v-btn icon="mdi-printer" @click="onPrint()"></v-btn>
+            <!-- <v-btn icon="mdi-printer-eye" @click="NetworkPrinter()"></v-btn> -->
         </template>
     <v-row>
         <v-col md="3">
@@ -321,6 +322,10 @@ function onRefresh(){
 function onPrintWithChoosePrinter(){
      window.open(printUrl.value + "&trigger_print=1").print();
             window.close();
+}
+
+async function NetworkPrinter(){
+    await  call.get("epos_restaurant_2023.api.printing.Direct_print_Network")
 }
 
 function onPrint(){ 

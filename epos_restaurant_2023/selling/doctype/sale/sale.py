@@ -787,24 +787,25 @@ def get_park_item_to_redeem(business_branch):
 			select 
 				a.*,
 				s.customer_name,
-				s.customer
+				s.customer,
+				s.phone_number
 			from `tabSale Product` a
 			inner join `tabSale` s on a.parent = s.name
 			where 
 				is_park = 1 and
 				is_redeem = 0 and 
-				expired_date < '{0}' and
+				expired_date >= '{0}' and
 				s.docstatus = 1 and 
 				s.business_branch='{1}'
 		""".format(getdate(str(current_working_day['posting_date'])).strftime('%Y-%m-%d'),business_branch)
 	park_item_list = frappe.db.sql(sql,as_dict=1)
 	
 	for item in park_item_list:
-		sales.append(item.parent)
+		sales.append({"sale":item.parent,"customer":item.customer,"customer_name": item.customer_name,"phone_number":item.phone_number})
 
-	for s in set(sales):
-		park_items = [d for d in park_item_list if d.parent == s] or []
-		result_dict.append({"sale":s,"products":park_items })
+	for s in sales:
+		park_items = [d for d in park_item_list if d.parent == s["sale"]] or []
+		result_dict.append({"sale":s["sale"],"customer_name":s["customer_name"],"customer_code":s["customer"],"phone":s["phone_number"],"products":park_items })
 
 
 	return result_dict

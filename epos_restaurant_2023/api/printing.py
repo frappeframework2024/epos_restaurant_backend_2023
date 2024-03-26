@@ -195,7 +195,7 @@ def print_from_print_format(data, is_html=False):
         return capture(html=html,css=css,height=height,width=width,image='report_{}.png'.format(hash_generate))
 
 @frappe.whitelist()
-def Direct_print_Network(html="",css="",width=550,height=20000,pinter_ip="192.168.10.80"):
+def Direct_print_Network(html="<h1>Welcome Back!</h1><h1>Welcome Back!</h1><h1>Welcome Back!</h1><h1>Welcome Back!</h1><h1>Welcome Back!</h1><h1>Welcome Back!</h1><h1>Welcome Back!</h1>",css="body {background: white;}",width=550,height=20000,pinter_ip="192.168.10.80"):
     name = str(uuid.uuid4())
     hti = Html2Image()
     hti.output_path =frappe.get_site_path() + "/file/"
