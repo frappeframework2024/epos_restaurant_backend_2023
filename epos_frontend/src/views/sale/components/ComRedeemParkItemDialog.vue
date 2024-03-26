@@ -4,16 +4,16 @@
             {{ $t('Redeem Item') }}
         </template>
         <template #content>
-            <v-row cols="12" class="d-flex flex-wrap">
+            <v-row cols="12" class="d-flex flex-wrap" v-if="parkItemList.length > 0">
                 <v-col lg="4" v-for="(s, index) in parkItemList" :key="index">
                     <v-card >
                         <v-card-title class="!p-0">
                             <v-toolbar height="48">
                                 <v-toolbar-title class="text">
-                                    <span class="font-bold text-sm">#{{ s.sale }}</span>
+                                    <span class="font-bold text-sm">#{{ s.sale }} ({{ s.customer_name }})</span>
                                 </v-toolbar-title>
                                 <template v-slot:append>
-                                    <v-chip size="small" class="ma-2">
+                                    <v-chip size="small" color="success" class="ma-2">
                                         {{ $t("EXP") }}:
                                         {{ moment(s.expired_date).format("DD-MMM-YYYY") }}
                                     </v-chip>
@@ -44,7 +44,10 @@
                 </v-col>
 
             </v-row>
-
+            <div v-else class="text-center">
+              <h1 class="mt-2">{{ $t("No Data") }}</h1>
+              <v-icon size="x-large" icon="mdi-file-document-outline"></v-icon>
+            </div>
         </template>
     </ComModal>
 </template>

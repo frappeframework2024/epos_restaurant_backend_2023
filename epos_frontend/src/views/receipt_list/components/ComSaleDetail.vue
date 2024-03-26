@@ -1,10 +1,10 @@
 <template>
-    <ComModal @onClose="onClose(false)" :fullscreen="true" :isPrint="sale.doc.docstatus==1" @onPrint="onPrint()" :hide-ok-button="true"
-        :hide-close-button="true" :isShowBarMoreButton="canOpenOrder || canEdit || canDelete">
+    <ComModal @onClose="onClose(false)" :fullscreen="true" :isPrint="sale.doc.docstatus == 1" @onPrint="onPrint()"
+        :hide-ok-button="true" :hide-close-button="true" :isShowBarMoreButton="canOpenOrder || canEdit || canDelete">
         <template #title>
             {{ $t('Sale Detail') }} #{{ params.name }}
         </template>
-        <template #bar_more_button> 
+        <template #bar_more_button>
             <v-list density="compact">
                 <v-list-item @click="onOpenOrder()" v-if="canOpenOrder">
                     <template v-slot:prepend>
@@ -27,7 +27,7 @@
             </v-list>
         </template>
 
-        <template #content> 
+        <template #content>
             <ComLoadingDialog v-if="isLoading" />
             <v-card>
                 <template #title>
@@ -36,10 +36,19 @@
                             <v-col cols="12" sm="12" md="7" lg="7" xl="8">
                                 <v-tabs show-arrows>
                                     <v-tab
-                                        v-for="(r, index) in gv.setting.reports.filter(r => r.doc_type == 'Sale' && r.show_in_pos == 1)"
+                                        v-for="(r, index) in gv.setting.reports.filter(r => r.doc_type == 'Sale' && r.show_in_pos == 1 && r.business_branch == gv.setting.business_branch)"
                                         :key="index" @click="onPrintFormat(r)">
                                         {{ $t(r.title) }}
                                     </v-tab>
+                                    <template
+                                        v-if="gv.setting.reports.filter(r => r.doc_type == 'Sale' && r.show_in_pos == 1 && r.business_branch == '').length > 0">
+                                        <v-tab
+                                            v-for="(r, index) in gv.setting.reports.filter(r => r.doc_type == 'Sale' && r.show_in_pos == 1 && r.business_branch == '')"
+                                            :key="index" @click="onPrintFormat(r)">
+                                            {{ $t(r.title) }}
+                                        </v-tab>
+                                    </template>
+
                                 </v-tabs>
                             </v-col>
                             <v-col cols="12" sm="12" md="5" lg="5" xl="4">
@@ -48,8 +57,8 @@
                                         <v-col cols="12" sm="7">
                                             <v-select prepend-inner-icon="mdi-content-paste" density="compact"
                                                 v-model="selectedLetterhead" :items=gv.setting.letter_heads
-                                                item-title="name" item-value="name" hide-no-data hide-details variant="solo"
-                                                class="mx-1"></v-select>
+                                                item-title="name" item-value="name" hide-no-data hide-details
+                                                variant="solo" class="mx-1"></v-select>
                                         </v-col>
                                         <v-col cols="12" sm="5">
                                             <div class="flex items-center">
@@ -57,7 +66,8 @@
                                                     v-model="selectedLang" :items="gv.setting.lang"
                                                     item-title="language_name" item-value="language_code" hide-no-data
                                                     hide-details variant="solo" class="mx-1"></v-select>
-                                                <v-icon class="mx-1" icon="mdi-refresh" size="small" @click="onRefresh()" />
+                                                <v-icon class="mx-1" icon="mdi-refresh" size="small"
+                                                    @click="onRefresh()" />
                                             </div>
                                         </v-col>
                                     </v-row>
@@ -73,16 +83,16 @@
         </template>
     </ComModal>
 </template>
-  
+
 <script setup>
 
-import { inject, ref, computed, onUnmounted, createDocumentResource, useRouter, createResource, confirm,smallViewSaleProductListModal,i18n } from '@/plugin';
+import { inject, ref, computed, onUnmounted, createDocumentResource, useRouter, createResource, confirm, smallViewSaleProductListModal, i18n } from '@/plugin';
 import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 import { useDisplay } from 'vuetify';
 const { mobile } = useDisplay();
 const router = useRouter();
 const gv = inject("$gv")
-const { t: $t } = i18n.global;  
+const { t: $t } = i18n.global;
 const inject_sale = inject("$sale");
 const tableLayout = inject("$tableLayout");
 const socket = inject("$socket");
@@ -101,9 +111,9 @@ const selectedLetterhead = ref(getDefaultLetterHead());
 const selectedLang = ref(gv.setting.lang[0].language_code);
 const activeReport = ref(JSON.parse(JSON.stringify(gv.setting.reports.filter(r => r.doc_type == "Sale" && r.show_in_pos == 1)[0])));
 const isLoading = ref(false);
- 
 
-let deletedSaleProducts =[];
+
+let deletedSaleProducts = [];
 let productPrinters = [];
 
 const sale = createDocumentResource({
@@ -180,46 +190,46 @@ async function onPrint() {
         setting: gv.setting?.pos_setting,
         sale: sale.doc,
         station: (gv.setting?.device_setting?.name) || "",
-        reprint : 1
-    } 
- 
-    if (localStorage.getItem("is_window") == "1") {       
+        reprint: 1
+    }
+
+    if (localStorage.getItem("is_window") == "1") {
         if (activeReport.value.pos_receipt_file_name != "" && activeReport.value.pos_receipt_file_name != null) {
-            if (await confirm({ title:$t("Print Receipt"), text: $t("msg.Are you sure to print receipt") })) {
+            if (await confirm({ title: $t("Print Receipt"), text: $t("msg.Are you sure to print receipt") })) {
                 window.chrome.webview.postMessage(JSON.stringify(data));
             }
             return;
         }
-        else{
+        else {
             window.open(printPreviewUrl.value + "&trigger_print=1").print();
             window.close();
         }
-    } 
-    else if((localStorage.getItem("flutterWrapper")||0) == 1){
-        if (await confirm({ title:$t("Print Receipt"), text: $t("msg.Are you sure to print receipt") })) {  
-            var printer =  (gv.setting?.device_setting?.station_printers).filter((e)=>e.cashier_printer == 1);
-            if(printer.length <=0){
+    }
+    else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
+        if (await confirm({ title: $t("Print Receipt"), text: $t("msg.Are you sure to print receipt") })) {
+            var printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+            if (printer.length <= 0) {
                 toaster.warning($t("Printer not yet configt for this device"))
-            }else{                 
+            } else {
                 data.printer = {
-                    "printer_name":printer[0].printer_name,
-                    "ip_address":printer[0].ip_address,
-                    "port":printer[0].port,
-                    "cashier_printer":printer[0].cashier_printer,
-                    "is_label_printer":printer[0].is_label_printer,
+                    "printer_name": printer[0].printer_name,
+                    "ip_address": printer[0].ip_address,
+                    "port": printer[0].port,
+                    "cashier_printer": printer[0].cashier_printer,
+                    "is_label_printer": printer[0].is_label_printer,
                     "usb_printing": printer[0].usb_printing,
-                } 
-                flutterChannel.postMessage(JSON.stringify(data));                       
+                }
+                flutterChannel.postMessage(JSON.stringify(data));
             }
         }
     }
     else {
-     
+
         if (activeReport.value.pos_receipt_file_name != "" && activeReport.value.pos_receipt_file_name != null) {
             socket.emit('PrintReceipt', JSON.stringify(data));
             return;
         }
-        else{
+        else {
             window.open(printPreviewUrl.value + "&trigger_print=1").print();
             window.close();
         }
@@ -228,22 +238,22 @@ async function onPrint() {
 
 function onOpenOrder() {
     gv.authorize("open_order_required_password", "make_order").then(async (v) => {
-        if(v){
-            const make_order_auth = {"username":v.username,"name":v.user,discount_codes:v.discount_codes }; 
-            if(mobile.value){
-                await inject_sale.LoadSaleData(props.params.name).then(async (_sale)=>{
-                    localStorage.setItem('make_order_auth',JSON.stringify(make_order_auth));
+        if (v) {
+            const make_order_auth = { "username": v.username, "name": v.user, discount_codes: v.discount_codes };
+            if (mobile.value) {
+                await inject_sale.LoadSaleData(props.params.name).then(async (_sale) => {
+                    localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth));
                     emit('resolve', "open_order");
-                    const result =  await smallViewSaleProductListModal ({title: props.params.name ? props.params.name : $t('New Sale'), data: {from_table: true}});                      
-                    if(result){   
+                    const result = await smallViewSaleProductListModal({ title: props.params.name ? props.params.name : $t('New Sale'), data: { from_table: true } });
+                    if (result) {
                         tableLayout.saleListResource.fetch();
-                    }else{
-                        localStorage.removeItem('make_order_auth'); 
-                    }                                          
+                    } else {
+                        localStorage.removeItem('make_order_auth');
+                    }
                 });
-            } 
-            else{
-                localStorage.setItem('make_order_auth',JSON.stringify(make_order_auth));               
+            }
+            else {
+                localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth));
                 router.push({ name: "AddSale", params: { name: props.params.name } });
                 emit('resolve', "open_order");
             }
@@ -255,8 +265,8 @@ function onEditOrder() {
     //check authorize and     check reason
     gv.authorize("edit_closed_receipt_required_password", "edit_closed_receipt", "edit_closed_receipt_required_note", "Edit Closed Receipt").then(async (v) => {
         if (v) {
-            const make_order_auth = {"username":v.username,"name":v.user,discount_codes:v.discount_codes }; 
-            localStorage.setItem('make_order_auth',JSON.stringify(make_order_auth));
+            const make_order_auth = { "username": v.username, "name": v.user, discount_codes: v.discount_codes };
+            localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth));
 
             //cancel payment first
             isLoading.value = true;
@@ -284,7 +294,7 @@ function onEditOrder() {
 function OnDeleteOrder() {
     //check authorize and     check reason
     gv.authorize("delete_bill_required_password", "delete_bill", "delete_bill_required_note", "Delete Bill Note").then(async (v) => {
-        if (v) {  
+        if (v) {
             if (v.show_confirm == 1) {
                 if (await confirm({ title: $t("Delete Sale Order"), text: $t("msg.are you sure to delete this sale order") }) == false) {
                     return;
@@ -293,9 +303,9 @@ function OnDeleteOrder() {
 
 
             //cancel payment first
-            isLoading.value = true;           
-            const _sale = JSON.parse(JSON.stringify(sale.doc));            
-            generateSaleProductPrintToKitchen(_sale,v.note);
+            isLoading.value = true;
+            const _sale = JSON.parse(JSON.stringify(sale.doc));
+            generateSaleProductPrintToKitchen(_sale, v.note);
             const deleteSaleResource = createResource({
                 url: "epos_restaurant_2023.api.api.delete_sale",
                 params: {
@@ -318,10 +328,10 @@ function OnDeleteOrder() {
 
 }
 
-function generateSaleProductPrintToKitchen(doc,note){
+function generateSaleProductPrintToKitchen(doc, note) {
     deletedSaleProducts = [];
-    (doc.sale_products||[]).forEach((sp)=>{
-        if(sp.sale_product_status=="Submitted"){
+    (doc.sale_products || []).forEach((sp) => {
+        if (sp.sale_product_status == "Submitted") {
             sp.note = note;
             sp.deleted_item_note = "Bill Deleted";
             deletedSaleProducts.push(sp);
@@ -330,46 +340,46 @@ function generateSaleProductPrintToKitchen(doc,note){
 
     //generate deleted product to product printer list
     deletedSaleProducts.filter(r => JSON.parse(r.printers).length > 0).forEach((r) => {
-            const pritners = JSON.parse(r.printers);
-            pritners.forEach((p) => {
-                productPrinters.push({
-                    printer: p.printer,
-                    group_item_type: p.group_item_type,
-                    product_code: r.product_code,
-                    product_name_en: r.product_name,
-                    product_name_kh: r.product_name_kh,
-                    portion: r.portion,
-                    unit: r.unit,
-                    modifiers: r.modifiers,
-                    note: r.note,
-                    quantity: r.quantity,
-                    is_deleted: true,
-                    is_free: r.is_free == 1,
-                    deleted_note: r.deleted_item_note,
-                    order_by: r.order_by,
-                    creation: r.creation,
-                    modified: r.modified
-                })
-            });
+        const pritners = JSON.parse(r.printers);
+        pritners.forEach((p) => {
+            productPrinters.push({
+                printer: p.printer,
+                group_item_type: p.group_item_type,
+                product_code: r.product_code,
+                product_name_en: r.product_name,
+                product_name_kh: r.product_name_kh,
+                portion: r.portion,
+                unit: r.unit,
+                modifiers: r.modifiers,
+                note: r.note,
+                quantity: r.quantity,
+                is_deleted: true,
+                is_free: r.is_free == 1,
+                deleted_note: r.deleted_item_note,
+                order_by: r.order_by,
+                creation: r.creation,
+                modified: r.modified
+            })
         });
+    });
 }
 
 
-function onProcessPrintToKitchen(doc){
+function onProcessPrintToKitchen(doc) {
     const data = {
-            action: "print_to_kitchen",
-            setting: gv.setting?.pos_setting,
-            sale: doc,
-            product_printers: productPrinters
-        }
+        action: "print_to_kitchen",
+        setting: gv.setting?.pos_setting,
+        sale: doc,
+        product_printers: productPrinters
+    }
 
-        if (localStorage.getItem("is_window") == 1) {
-            window.chrome.webview.postMessage(JSON.stringify(data));
-        } else {
-            socket.emit("PrintReceipt", JSON.stringify(data))
-        }
-        deletedSaleProducts = [];
-        productPrinters = [];
+    if (localStorage.getItem("is_window") == 1) {
+        window.chrome.webview.postMessage(JSON.stringify(data));
+    } else {
+        socket.emit("PrintReceipt", JSON.stringify(data))
+    }
+    deletedSaleProducts = [];
+    productPrinters = [];
 }
 
 
@@ -399,4 +409,3 @@ onUnmounted(() => {
 })
 
 </script>
-

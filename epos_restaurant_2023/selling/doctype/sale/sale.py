@@ -786,12 +786,13 @@ def get_park_item_to_redeem(business_branch):
 	sql = """
 			select 
 				*,
+				s.customer_name,
 				(SELECT customer FROM `tabSale` s WHERE s.name = a.parent) AS customer
-			from `tabSale Product`
+			from `tabSale Product` a
 			where 
-				is_park = 1 and 
+				is_park = 1 and
 				is_redeem = 0 and 
-				expired_date >= '{0}' and
+				expired_date < '{0}' and
 				docstatus = 1 and 
 				parent in (select name from `tabSale` where business_branch='{1}') 
 		""".format(getdate(str(current_working_day['posting_date'])).strftime('%Y-%m-%d'),business_branch)

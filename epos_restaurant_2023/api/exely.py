@@ -142,7 +142,8 @@ def get_service_detail(data):
                 "amount":d.amount,
                 "currency":currency
             },
-            "vat":d.total_tax
+            "vat":d.total_tax,
+            "vatKind":"None"
         })
     return services
 

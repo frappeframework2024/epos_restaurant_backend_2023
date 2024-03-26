@@ -234,6 +234,7 @@ def get_system_settings(pos_profile="", device_name=''):
     #get default print format
     _pos_print_format = frappe.get_list("POS Print Format Setting",fields=[
         "name",
+        "business_branch",
         "title",
         "print_format_doc_type",
         "pos_receipt_template",
@@ -245,9 +246,9 @@ def get_system_settings(pos_profile="", device_name=''):
         "print_receipt_copies",
         "pos_invoice_file_name",
         "pos_receipt_file_name", 
-        "receipt_height", 
+        "receipt_height",
         "receipt_width",
-        "receipt_margin_top", 
+        "receipt_margin_top",
         "receipt_margin_left",
         "receipt_margin_right",
         "receipt_margin_bottom",
@@ -277,7 +278,8 @@ def get_system_settings(pos_profile="", device_name=''):
             "receipt_margin_right":p.receipt_margin_right,
             "receipt_margin_bottom":p.receipt_margin_bottom,
             "show_in_pos_closed_sale":p.show_in_pos_closed_sale,
-            "report_options":p.report_options
+            "report_options":p.report_options,
+            "business_branch":p.business_branch or ""
         }
         _pos_print_format_data.append(_data)
 

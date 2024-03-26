@@ -44,7 +44,8 @@
 
     <v-list-item prepend-icon="mdi-cash-100" :title="$t('Tax Setting')" @click="onChangeTaxSetting()"
         v-if="sale.setting.tax_rules.length > 0" />
-    <v-list-item  v-if="device_setting.show_park_button==1" @click="onRedeemClick()">
+    <!-- v-if="device_setting.show_park_button==1"  -->
+    <v-list-item  @click="onRedeemClick()">
         <template #prepend>
             <v-icon icon="mdi-parking"></v-icon>
         </template>
@@ -76,7 +77,7 @@ import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 import socket from '@/utils/socketio';
 
 const { t: $t } = i18n.global;
-
+const moment = inject("$moment")
 const { mobile } = useDisplay()
 const toaster = createToaster({ position: 'top-right' })
 const router = useRouter();
@@ -85,6 +86,7 @@ const gv = inject('$gv')
 const product = inject('$product')
 const frappe = inject("$frappe")
 const db = frappe.db();
+const call = frappe.call();
 const setting = JSON.parse(localStorage.getItem("setting"))
 const isWindow = localStorage.getItem('is_window') == 1
 const isLoading = ref(false);

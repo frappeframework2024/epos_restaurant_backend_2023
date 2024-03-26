@@ -8,6 +8,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "business_branch",
   "title",
   "print_format",
   "pos_receipt_template",
@@ -175,11 +176,18 @@
    "fieldname": "printing_fixed_width",
    "fieldtype": "Int",
    "label": "Printing Fixed Width"
+  },
+  {
+   "fieldname": "business_branch",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Business Branch",
+   "options": "Business Branch"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-03-08 16:23:21.029769",
+ "modified": "2024-03-26 10:44:52.698676",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Print Format Setting",
