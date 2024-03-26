@@ -1,6 +1,7 @@
  <template>
     <PageLayout class="pb-4" :title="`${$t(activeReport.doc_type)} #${activeReport.report_id}`" icon="mdi-chart-bar" full>
         <template #action>
+            <v-btn v-if="showPrintPopUp" @click="onPrintWithChoosePrinter()"> {{$t("Choose Printer") }}</v-btn>
             <v-btn icon="mdi-printer" @click="onPrint()"></v-btn>
         </template>
     <v-row>
@@ -172,6 +173,14 @@ let workingDayReports = ref({});
 let cashierShiftReports = ref([])
 
 
+const showPrintPopUp = computed(()=>{
+    if((localStorage.getItem("flutterWrapper")||0) == 0 &&  (localStorage.getItem("apkipa")||0) == 0){
+        return true;
+    }
+    return false;
+});
+
+
 onMounted(()=>{
     // init data
     _onInit()
@@ -307,6 +316,11 @@ function onWorkingDay(working_day){
 
 function onRefresh(){
     document.getElementById("report-view").contentWindow.location.replace(printPreviewUrl.value)
+}
+
+function onPrintWithChoosePrinter(){
+     window.open(printUrl.value + "&trigger_print=1").print();
+            window.close();
 }
 
 function onPrint(){ 

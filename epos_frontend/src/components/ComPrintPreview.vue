@@ -1,5 +1,5 @@
 <template>
-    <ComModal @onClose="onClose(false)" :fullscreen="true" :isPrint="true" @onPrint="onPrint()"  :hide-ok-button="true" :hide-close-button="true">
+    <ComModal @onClose="onClose(false)" :fullscreen="true" :isPrint="true" @onPrintWithChoosePrinter="onPrintWithChoosePrinter()" @onPrint="onPrint()"  :hide-ok-button="true" :hide-close-button="true">
         <template #title>
             {{ params.title }}
         </template>
@@ -93,6 +93,8 @@ const selectedLetterhead = ref(getDefaultLetterHead());
 const selectedLang = ref(gv.setting.lang[0].language_code);
 const activeReport = ref(gv.setting.reports.filter(r=>r.doc_type==props.params.doctype)[0]) ;
  
+
+
 let filter = reactive({
     product_category: 'All Product Categories',
     product_category_filter: ''
@@ -147,6 +149,11 @@ function onRefresh(){
   
     document.getElementById("report-view").contentWindow.location.replace(printPreviewUrl.value)
  
+}
+
+function onPrintWithChoosePrinter(){
+        window.open(printPreviewUrl.value + "&trigger_print=1").print();
+    window.close();
 }
 
 function onPrint() { 

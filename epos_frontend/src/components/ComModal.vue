@@ -2,7 +2,7 @@
     
     <v-dialog v-model="open" v-bind:style="{'width':'100%','max-width': fullscreen ? 'auto' : width}" :fullscreen="mobileFullscreen ? mobile : fullscreen" :scrollable="scrollable" :persistent="persistent" @update:modelValue="onAction()">
         <v-card>
-            <ComToolbar @onPrint="onPrint()" :isPrint="isPrint" :isMoreMenu="isShowBarMoreButton" @onClose="onClose()" :disabled="loading">
+            <ComToolbar @onPrint="onPrint()"  @onPrintWithChoosePrinter="onPrintWithChoosePrinter()" :isPrint="isPrint" :isMoreMenu="isShowBarMoreButton" @onClose="onClose()" :disabled="loading">
                 <template #title>
                     <slot name="title"></slot>
                 </template>
@@ -115,6 +115,11 @@ function onOK() {
 function onPrint() {
     emit('onPrint')
 }
+
+function onPrintWithChoosePrinter() {
+    emit('onPrintWithChoosePrinter')
+}
+
 function onAction($event){
     // close
     if(props.persistent == false && $event == undefined){

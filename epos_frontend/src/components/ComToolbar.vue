@@ -4,6 +4,10 @@
             <slot name="title"></slot> 
         </v-toolbar-title>
         <v-toolbar-items>
+            <v-btn  @click="$emit('onPrintWithChoosePrinter')" v-if="isPrint && showPrintPopUp" :disabled="disabled">
+                {{ $t("Choose Printer") }}
+            </v-btn> 
+
             <v-btn icon @click="$emit('onPrint')" v-if="isPrint" :disabled="disabled">
                 <v-icon>mdi-printer</v-icon>
             </v-btn> 
@@ -26,7 +30,17 @@
     </v-toolbar>
 </template>
 <script setup>
+import {  computed} from '@/plugin'
 import { useDisplay } from 'vuetify'
+
+const showPrintPopUp = computed(()=>{
+    if((localStorage.getItem("flutterWrapper")||0) == 0 &&  (localStorage.getItem("apkipa")||0) == 0){
+        return true;
+    }
+    return false;
+});
+
+
 const { mobile } = useDisplay()
 const props = defineProps({
     color: {
