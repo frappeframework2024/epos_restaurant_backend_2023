@@ -44,12 +44,11 @@
 
     <v-list-item prepend-icon="mdi-cash-100" :title="$t('Tax Setting')" @click="onChangeTaxSetting()"
         v-if="sale.setting.tax_rules.length > 0" />
-    <!-- v-if="device_setting.show_park_button==1"  -->
-    <v-list-item  @click="onRedeemClick()">
+    <v-list-item v-if="device_setting.show_park_button==1"  @click="onRedeemClick()">
         <template #prepend>
             <v-icon icon="mdi-parking"></v-icon>
         </template>
-        <v-list-item-title class="text-red-700">{{ $t('Redeem Item') }} {{ showSplitBill }}</v-list-item-title>
+        <v-list-item-title>{{ $t('Redeem Item') }} {{ showSplitBill }}</v-list-item-title>
     </v-list-item>
     <v-list-item v-if="sale.sale.sale_products?.filter(r => r.name == undefined).length > 0" @click="onClearOrder()">
         <template #prepend>

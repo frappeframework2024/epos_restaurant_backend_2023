@@ -785,16 +785,17 @@ def get_park_item_to_redeem(business_branch):
 	current_working_day = get_current_working_day(business_branch=business_branch)
 	sql = """
 			select 
-				*,
+				a.*,
 				s.customer_name,
-				(SELECT customer FROM `tabSale` s WHERE s.name = a.parent) AS customer
+				s.customer
 			from `tabSale Product` a
+			inner join `tabSale` s on a.parent = s.name
 			where 
 				is_park = 1 and
 				is_redeem = 0 and 
 				expired_date < '{0}' and
-				docstatus = 1 and 
-				parent in (select name from `tabSale` where business_branch='{1}') 
+				s.docstatus = 1 and 
+				s.business_branch='{1}'
 		""".format(getdate(str(current_working_day['posting_date'])).strftime('%Y-%m-%d'),business_branch)
 	park_item_list = frappe.db.sql(sql,as_dict=1)
 	

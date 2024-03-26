@@ -5,8 +5,10 @@ from html2image import Html2Image
 import numpy as np
 import os
 from frappe.www.printview import get_print_format_doc, set_link_titles,get_rendered_template,get_print_style
+from escpos.printer import Network
 from epos_restaurant_2023.api.print_report_css.custom_style import get_css_boostrap
 import base64
+import uuid
 from frappe.utils import (
     nowdate,
 )
@@ -191,4 +193,17 @@ def print_from_print_format(data, is_html=False):
     else: 
         hash_generate =  frappe.generate_hash(length=15)
         return capture(html=html,css=css,height=height,width=width,image='report_{}.png'.format(hash_generate))
-    
+
+@frappe.whitelist()
+def Direct_print_Network(html="",css="",width=550,height=20000,pinter_ip="192.168.10.80"):
+    name = str(uuid.uuid4())
+    hti = Html2Image()
+    hti.output_path =frappe.get_site_path() + "/file/"
+    hti.size=(width, height)
+    hti.screenshot(html_str=html, css_str=css, save_as='{}'.format(name+".PNG"))   
+    image_path = '{}'.format(frappe.get_site_path()+"/file/"+name+".PNG")    
+    trim(image_path)
+    printer = Network(pinter_ip)
+    printer.image(frappe.get_site_path()+"/file/"+name+".PNG")
+    printer.cut()
+    printer.close()
