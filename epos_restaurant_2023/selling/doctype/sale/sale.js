@@ -283,8 +283,11 @@ frappe.ui.form.on("Sale", {
 		});
 	},
 	sale_commission_percent(frm) {
-		if(frm.doc.sale_commission_based_on == "Profit"){
+		if(frm.doc.sale_commission_based_on == "First Cost Profit"){
 			frm.set_value('sale_commission_amount',frm.doc.sale_profit*(frm.doc.sale_commission_percent/100))
+		}
+		else if(frm.doc.sale_commission_based_on == "Second Cost Profit"){
+			frm.set_value('sale_commission_amount',frm.doc.second_sale_profit*(frm.doc.sale_commission_percent/100))
 		}
 		else{
 			frm.set_value('sale_commission_amount',frm.doc.grand_total*(frm.doc.sale_commission_percent/100))
@@ -292,8 +295,11 @@ frappe.ui.form.on("Sale", {
 		frm.refresh_field('sale_commission_amount')
 	},
 	sale_commission_amount(frm) {
-		if(frm.doc.sale_commission_based_on == "Profit"){
+		if(frm.doc.sale_commission_based_on == "First Cost Profit"){
 			frm.set_value('sale_commission_percent',frm.doc.sale_commission_amount*100/frm.doc.sale_profit)
+		}
+		else if(frm.doc.sale_commission_based_on == "Second Cost Profit"){
+			frm.set_value('sale_commission_percent',frm.doc.sale_commission_amount*100/frm.doc.second_sale_profit)
 		}
 		else{
 			frm.set_value('sale_commission_percent',frm.doc.sale_commission_amount*100/frm.doc.grand_total)
@@ -303,8 +309,11 @@ frappe.ui.form.on("Sale", {
 		frm.refresh_field('sale_commission_balance')
 	},
 	sale_commission_based_on(frm){
-		if(frm.doc.sale_commission_based_on == "Profit"){
+		if(frm.doc.sale_commission_based_on == "First Cost Profit"){
 			frm.set_value('sale_commission_amount',frm.doc.sale_profit*(frm.doc.sale_commission_percent/100))
+		}
+		else if(frm.doc.sale_commission_based_on == "Second Cost Profit"){
+			frm.set_value('sale_commission_amount',frm.doc.second_sale_profit*(frm.doc.sale_commission_percent/100))
 		}
 		else{
 			frm.set_value('sale_commission_amount',frm.doc.grand_total*(frm.doc.sale_commission_percent/100))

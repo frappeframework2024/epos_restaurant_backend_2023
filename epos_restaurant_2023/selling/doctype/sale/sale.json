@@ -112,6 +112,7 @@
   "change_tax_setting_note",
   "sale_commission_tab",
   "sale_grand_total",
+  "second_sale_profit",
   "sale_commission_to",
   "sale_commission_percent",
   "sale_commission_amount",
@@ -136,6 +137,7 @@
   "amended_from",
   "column_break_75",
   "profit",
+  "second_profit",
   "section_break_74",
   "sale_type",
   "sale_type_color",
@@ -1057,25 +1059,25 @@
   },
   {
    "allow_on_submit": 1,
-   "default": 0,
+   "default": "0",
    "fieldname": "sale_commission_amount",
    "fieldtype": "Float",
    "label": "Sale Commission Amount"
   },
   {
    "allow_on_submit": 1,
-   "default": 0,
+   "default": "0",
    "fieldname": "sale_commission_percent",
    "fieldtype": "Float",
    "label": "Sale Commission Percent"
   },
   {
    "allow_on_submit": 1,
-   "default": "Profit",
+   "default": "First Cost Profit",
    "fieldname": "sale_commission_based_on",
    "fieldtype": "Select",
    "label": "Sale Commission Based On",
-   "options": "Profit\nGrand Total"
+   "options": "First Cost Profit\nSecond Cost Profit\nGrand Total"
   },
   {
    "allow_on_submit": 1,
@@ -1114,6 +1116,19 @@
    "fieldname": "is_synced",
    "fieldtype": "Check",
    "label": "Is Synced"
+  },
+  {
+   "default": "0",
+   "fieldname": "second_profit",
+   "fieldtype": "Currency",
+   "label": "Second Profit"
+  },
+  {
+   "default": "0",
+   "fieldname": "second_sale_profit",
+   "fieldtype": "Currency",
+   "label": "Second Sale Profit",
+   "read_only": 1
   }
  ],
  "image_field": "photo",
@@ -1126,7 +1141,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-03-23 09:28:00.897327",
+ "modified": "2024-03-26 08:52:23.966822",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

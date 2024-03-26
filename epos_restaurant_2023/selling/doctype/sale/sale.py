@@ -243,11 +243,14 @@ class Sale(Document):
 		
 		#update profit for commission
 		total_cost = 0
+		total_second_cost = 0
 		for p in self.sale_products:
 			total_cost += get_product_cost(self.stock_location, p.product_code) * p.quantity
+			total_second_cost += frappe.db.get_value('Product',{'product_code':p.product_code}, ['secondary_cost'])* p.quantity
 		self.sale_grand_total = self.grand_total
 		self.sale_profit = self.grand_total - total_cost
-		frappe.db.sql("update `tabSale` set total_cost = {0} , profit=grand_total - {0} where name='{1}'".format(total_cost, self.name))
+		self.second_sale_profit = self.grand_total - total_second_cost
+		frappe.db.sql("update `tabSale` set total_cost = {0} , profit=grand_total - {0} , second_profit = grand_total - {1} where name='{2}'".format(total_cost,total_second_cost, self.name))
 
 	def after_insert(self):
 		if self.flags.ignore_after_insert == True:

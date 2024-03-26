@@ -47,6 +47,7 @@
   "pochasing_section",
   "vendor",
   "cost",
+  "secondary_cost",
   "column_break_23",
   "allow_sale",
   "allow_purchase",
@@ -607,13 +608,18 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Product Code 3"
+  },
+  {
+   "fieldname": "secondary_cost",
+   "fieldtype": "Currency",
+   "label": "Secondary Cost"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-03-05 08:34:03.699697",
+ "modified": "2024-03-26 08:37:47.662362",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Product",
