@@ -81,7 +81,10 @@
   "show_in_deposit_ledger",
   "show_in_payable_ledger",
   "reporting_tab",
-  "flash_report_revenue_group"
+  "flash_report_revenue_group",
+  "tax_invoice_configuration_tab",
+  "tax_invoice_group_by_key",
+  "tax_invoice_description_template"
  ],
  "fields": [
   {
@@ -518,12 +521,27 @@
    "fieldtype": "Link",
    "label": "Flash Report Revenue Group",
    "options": "Flash Report Key"
+  },
+  {
+   "fieldname": "tax_invoice_configuration_tab",
+   "fieldtype": "Tab Break",
+   "label": "Tax Invoice Configuration"
+  },
+  {
+   "fieldname": "tax_invoice_description_template",
+   "fieldtype": "Small Text",
+   "label": "Tax Invoice Description Template"
+  },
+  {
+   "fieldname": "tax_invoice_group_by_key",
+   "fieldtype": "Data",
+   "label": "Tax Invoice Group by Key"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-03-07 10:18:59.548162",
+ "modified": "2024-03-27 11:42:33.925028",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

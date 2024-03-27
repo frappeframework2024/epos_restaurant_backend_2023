@@ -7,15 +7,16 @@
  "engine": "InnoDB",
  "field_order": [
   "section_break_5vya",
-  "naming_series",
-  "sale",
   "employee",
-  "commission_amount",
-  "paid_amount",
-  "balance",
-  "column_break_dyfp",
-  "note",
-  "amended_from"
+  "sale_start_date",
+  "naming_series",
+  "column_break_tlzf",
+  "posting_date",
+  "sale_end_date",
+  "amended_from",
+  "sale_commissions_section",
+  "get_sales",
+  "employee_commission_sale"
  ],
  "fields": [
   {
@@ -26,42 +27,10 @@
    "fetch_from": "sale.sale_commission_to",
    "fieldname": "employee",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Employee",
    "options": "Employee",
-   "read_only": 1
-  },
-  {
-   "fieldname": "sale",
-   "fieldtype": "Link",
-   "label": "Sale",
-   "options": "Sale"
-  },
-  {
-   "fetch_from": "sale.sale_commission_amount",
-   "fieldname": "commission_amount",
-   "fieldtype": "Currency",
-   "label": "Commission Amount",
-   "read_only": 1
-  },
-  {
-   "fieldname": "paid_amount",
-   "fieldtype": "Currency",
-   "label": "Paid Amount"
-  },
-  {
-   "fieldname": "balance",
-   "fieldtype": "Currency",
-   "label": "Balance",
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_dyfp",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "note",
-   "fieldtype": "Long Text",
-   "label": "Note"
+   "reqd": 1
   },
   {
    "fieldname": "amended_from",
@@ -79,12 +48,52 @@
    "hidden": 1,
    "label": "Naming Series",
    "options": "ECP-.YYYY.-.#####"
+  },
+  {
+   "fieldname": "employee_commission_sale",
+   "fieldtype": "Table",
+   "options": "Employee Commission Sale"
+  },
+  {
+   "fieldname": "column_break_tlzf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sale_commissions_section",
+   "fieldtype": "Section Break",
+   "label": "Sale Commissions"
+  },
+  {
+   "fieldname": "get_sales",
+   "fieldtype": "Button",
+   "label": "Get Sales"
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Posting Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sale_start_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Sale Start Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sale_end_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Sale End Date",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-03-14 09:28:01.120675",
+ "modified": "2024-03-27 09:32:01.423451",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee Commission Payment",

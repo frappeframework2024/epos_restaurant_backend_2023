@@ -246,7 +246,7 @@ class Sale(Document):
 		total_second_cost = 0
 		for p in self.sale_products:
 			total_cost += get_product_cost(self.stock_location, p.product_code) * p.quantity
-			total_second_cost += frappe.db.get_value('Product',{'product_code':p.product_code}, ['secondary_cost'])* p.quantity
+			total_second_cost += (frappe.db.get_value('Product',{'product_code':p.product_code}, ['secondary_cost'])* p.quantity)
 		self.sale_grand_total = self.grand_total
 		self.sale_profit = self.grand_total - total_cost
 		self.second_sale_profit = self.grand_total - total_second_cost

@@ -2,12 +2,12 @@
     <ComLoadingDialog
         v-if="sale.loading || sale.newSaleResource?.loading || (sale.saleResource != null && sale.saleResource?.get.loading) || (sale.saleResource != null && sale.saleResource?.setValue.loading)" />
     <ComSmallAddSale v-if="mobile" />
-    
-    <ComAddSaleRetail   v-if="!mobile && sale.setting.use_retail_ui == 1" />
-    <div v-if="!mobile && sale.setting.use_retail_ui==0" style="height: calc(100vh - 64px)" id="tst">
-        
+
+    <ComAddSaleRetail v-if="!mobile && sale.setting.use_retail_ui == 1" />
+    <div v-if="!mobile && sale.setting.use_retail_ui == 0" style="height: calc(100vh - 64px)" id="tst">
+
         <div class="h-full ma-0 flex w-full">
-            <div class="flex-auto pa-0 h-full d-none d-sm-block" style="width: calc(100vw - 450px);"> 
+            <div class="flex-auto pa-0 h-full d-none d-sm-block" style="width: calc(100vw - 450px);">
                 <ComMenu :background-image="gv.setting.pos_sale_order_background_image" />
             </div>
             <div style="width: 450px;" class="h-full pa-0">
@@ -31,8 +31,8 @@
                     <div class="mt-auto">
                         <div class="-mx-1 bg-blue-100 rounded-tl-md rounded-tr-md text-xs">
                             <ComSaleSummaryList />
-                        
-                            <ComSaleKeyPad v-if="gv.device_setting.show_keypad_in_sale_screen==1"/>
+
+                            <ComSaleKeyPad v-if="gv.device_setting.show_keypad_in_sale_screen == 1" />
                             <ComSaleButtonPaymentSubmit />
                         </div>
                     </div>
@@ -43,7 +43,7 @@
 
 </template>
 <script setup>
-import { inject, useRoute, useRouter, ref, onMounted, onUnmounted, onBeforeRouteLeave, createResource,ShortCutKeyHelpDialog,i18n } from '@/plugin';
+import { inject, useRoute, useRouter, ref, onMounted, onUnmounted, onBeforeRouteLeave, createResource, ShortCutKeyHelpDialog, i18n } from '@/plugin';
 import { getCurrentInstance } from 'vue';
 import ComMenu from './components/ComMenu.vue';
 import ComSelectCustomer from './components/ComSelectCustomer.vue';
@@ -83,25 +83,25 @@ sale.deletedSaleProducts = [];
 
 sale.vue.$onKeyStroke('F1', (e) => {
     e.preventDefault();
-    
-    if(localStorage.getItem('dialogstate') === null){
-        localStorage.setItem('dialogstate',1)
+
+    if (localStorage.getItem('dialogstate') === null) {
+        localStorage.setItem('dialogstate', 1)
         ShortCutKeyHelpDialog()
-    }  
+    }
 });
 
 
 
 sale.orderTime = "";
 if (product.posMenuResource.data?.length == 0) {
-    if(product.setting.pos_menus.length>0){
+    if (product.setting.pos_menus.length > 0) {
         product.loadPOSMenu();
-    }else{
-        
-        product.getProductMenuByProductCategory(db,"All Product Categories")
+    } else {
+
+        product.getProductMenuByProductCategory(db, "All Product Categories")
         product.loadPOSMenu();
     }
-    
+
 }
 
 // small device
@@ -109,7 +109,7 @@ function onSearchProduct(open) {
     openSearch.value = open
 }
 
-onMounted(() => { 
+onMounted(() => {
 
     if (sale.getString(route.params.name) == "") {
         if (sale.sale.sale_status == undefined) {
@@ -147,9 +147,9 @@ onMounted(() => {
                 // sale.working_day = data.working_day.name;
                 // sale.cashier_shift = data.cashier_shift.name;
                 // sale.shift_name = data.cashier_shift.shift_name;
-                product.getProductMenuByProductCategory(db,'All Product Categories')
+                product.getProductMenuByProductCategory(db, 'All Product Categories')
                 gv.confirm_close_working_day(data.working_day.posting_date);
-                
+
                 onCheckExpireHappyHoursPromotion();
             }
         }
@@ -187,20 +187,20 @@ onMounted(() => {
 })
 
 
-function onCheckExpireHappyHoursPromotion(){
-        createResource({
-            url: 'epos_restaurant_2023.api.promotion.check_promotion',
-            auto: true,
-            params: { 
-                check_time: 1,
-                business_branch: gv.setting.business_branch || ''
-            },
-            onSuccess(doc) {
-                gv.promotion = doc
-                sale.promotion = doc
-            }
-        });
-  
+function onCheckExpireHappyHoursPromotion() {
+    createResource({
+        url: 'epos_restaurant_2023.api.promotion.check_promotion',
+        auto: true,
+        params: {
+            check_time: 1,
+            business_branch: gv.setting.business_branch || ''
+        },
+        onSuccess(doc) {
+            gv.promotion = doc
+            sale.promotion = doc
+        }
+    });
+
 }
 onBeforeRouteLeave(() => {
     return !sale.isOrdered()
@@ -220,9 +220,9 @@ onUnmounted(() => {
 })
 
 
-function getCustomerScrollWidth(){
+function getCustomerScrollWidth() {
     const is_window = localStorage.getItem('is_window');
-    if(is_window==1){
+    if (is_window == 1) {
         return 'scrollbar';
     }
     return '';
@@ -230,11 +230,9 @@ function getCustomerScrollWidth(){
 
 </script>
 
- 
+
 <style>
-
-    .scrollbar::-webkit-scrollbar {
-        width: 17px;
-    }
-
+.scrollbar::-webkit-scrollbar {
+    width: 17px;
+}
 </style>

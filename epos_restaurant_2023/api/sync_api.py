@@ -72,8 +72,10 @@ def on_save(doc):
     doc["__newname"] = doc["name"]
     meta = frappe.get_meta(doc['doctype'])
     for f in [d for d in  meta.fields if d.fieldtype=='Attach Image']:
-        if doc[f.fieldname]:
-            doc[f.fieldname] = "{}{}".format(frappe.db.get_single_value("ePOS Sync Setting","server_url") ,doc[f.fieldname])
+        if doc.get(f.fieldname):
+            doc[f.fieldname]=""
+            if doc[f.fieldname]:
+                doc[f.fieldname] = "{}{}".format(frappe.db.get_single_value("ePOS Sync Setting","server_url") ,doc[f.fieldname])
 
             
     doc = frappe.get_doc(doc)
@@ -130,7 +132,7 @@ def generate_init_data_sync_to_client():
     if setting.enable==1:
         for d in setting.sync_to_client:
             
-            sql = """Insert Into `tabData For Sync` (business_branch,name,document_name,document_type) select  '{1}',UUID(),a.name,'{0}' from `tab{0}` as a""".format(d.document_type,business_branch)
+            sql = """Insert Into `tabData For Sync` (business_branch,name,document_name,document_type) select  '{1}',UUID(),a.name,'{0}' from `tab{0}` as a""".format(d.document_type)
             frappe.db.sql(sql)
         frappe.db.commit()
 

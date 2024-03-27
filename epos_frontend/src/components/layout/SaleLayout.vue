@@ -29,9 +29,9 @@
             <template #title v-if="!mobile">
                 <div class="flex gap-1 justify-center sale-search-cs">
                     <div>
-                        <ComProductSearch small/>
+                        <ComProductSearch small />
                     </div>
-                    <div v-if="!mobile && sale.setting.use_retail_ui==1"> 
+                    <div v-if="!mobile && sale.setting.use_retail_ui == 1">
                         <v-btn class="advanced-btn h-100 " @click="onAdvanceSearch">
                             Advance Search
                         </v-btn>
@@ -137,18 +137,18 @@ function onReload() {
     const apkipa = localStorage.getItem('apkipa');
     const flutterChannel = localStorage.getItem('flutterChannel');
     if ((apkipa || 0) == 1) {
-        if((flutterChannel||0)==1){
+        if ((flutterChannel || 0) == 1) {
             flutterChannel.postMessage("mobile_reload");
         }
-            else{
+        else {
             window.ReactNativeWebView.postMessage("mobile_reload");
         }
-        
+
     }
 }
 
-async function onAdvanceSearch(){
-    const result = await SearchProductDialog({title:"Search Product"})
+async function onAdvanceSearch() {
+    const result = await SearchProductDialog({ title: "Search Product" })
 }
 function onLogout() {
     const isOrdered = sale.isOrdered()
