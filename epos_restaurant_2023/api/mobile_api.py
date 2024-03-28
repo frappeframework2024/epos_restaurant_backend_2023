@@ -1,4 +1,6 @@
 import os
+import uuid
+from html2image import Html2Image
 import numpy as np
 import base64
 from PIL import Image
@@ -14,7 +16,7 @@ from epos_restaurant_2023.api.printing import (
     print_from_print_format
     )
 import frappe
-
+from escpos.printer import Network
 
 @frappe.whitelist(allow_guest=True)
 def on_check_url():  
@@ -266,7 +268,51 @@ def get_kot_image(station, sale, products,printer):
 def get_print_report_image(data): 
     return print_from_print_format(data)
  
+@frappe.whitelist(allow_guest=True)
+def print_bill_to_network_printer(name,template, reprint=0):
+    if not frappe.db.exists("Sale",name):
+        return ""    
+    doc = frappe.get_doc("Sale", name) 
+    data_template,css,width = frappe.db.get_value("POS Receipt Template",template,["template","style","width"])
+    html= frappe.render_template(data_template, get_print_context(doc,reprint))
+    name = str(uuid.uuid4())+".PNG"
+    path = frappe.get_site_path()+"/file/"
 
+    HTMLtoImage(20000,width,html,css,path,name)
+
+    printer_config = frappe.db.sql("select * from `tabPrinter` where printer_name = '{}'".format("Cashier Printer"),as_dict=1)
+    if printer_config: 
+        printer = Network(printer_config[0].ip_address)
+        printer.image(path+name)
+        printer.cut()
+        printer.close()
+        os.remove(path+name)
+
+def HTMLtoImage(height,width,html,css,path,image):
+    hti = Html2Image()
+    hti.output_path =path
+    hti.size=(width, height)
+    hti.screenshot(html_str=html, css_str=css, save_as='{}'.format(image))   
+    image_path = '{}/{}'.format(path,image)    
+    trim(image_path)
+
+def trim(file_path):
+    image = Image.open(file_path)
+    image = image.convert("RGB")
+    pixels = np.array(image)
+    red_min = np.array([200, 0, 0])
+    red_max = np.array([255, 50, 50])
+    white_min = np.array([240, 240, 240])
+    white_max = np.array([255, 255, 255])
+    mask = np.logical_or(
+        np.all(np.logical_and(pixels >= red_min, pixels <= red_max), axis=-1),
+        np.all(np.logical_and(pixels >= white_min, pixels <= white_max), axis=-1)
+    )
+    coords = np.argwhere(~mask)
+    y_min, x_min = coords.min(axis=0)      
+    y_max, x_max = coords.max(axis=0)
+    cropped = image.crop((x_min, y_min, x_max, y_max+30))
+    cropped.save(file_path)
 
 ## END MOBILE SERVER PRINTING GENERATE BASE_64 IMAGE
 

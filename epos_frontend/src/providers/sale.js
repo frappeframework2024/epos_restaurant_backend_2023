@@ -1821,13 +1821,13 @@ export default class Sale {
                 flutterChannel.postMessage(JSON.stringify(data));
             }
         } else {
+            await  call.get("epos_restaurant_2023.api.mobile_api.print_bill_to_network_printer",{"name":doc.name,"template":"Receipt En","reprint":0})
             if (receipt.pos_receipt_file_name) {
                 socket.emit('PrintReceipt', JSON.stringify(data));
             }
             else {
                 this.onOpenBrowserPrint("Sale", doc.name, receipt.name)
             }
-
         }
     }
 
