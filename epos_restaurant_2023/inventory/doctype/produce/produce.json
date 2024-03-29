@@ -1,0 +1,132 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2024-03-28 11:38:16.905189",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "posting_date",
+  "product",
+  "column_break_clwb",
+  "unit",
+  "base_unit",
+  "column_break_ghmh",
+  "quantity",
+  "stock_location",
+  "section_break_yjda",
+  "product_items",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Posting Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "product",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Product",
+   "options": "Product",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "product.unit",
+   "fieldname": "unit",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Unit",
+   "options": "Unit Of Measurement",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_yjda",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_clwb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_ghmh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "product_items",
+   "fieldtype": "Table",
+   "options": "Produce Item"
+  },
+  {
+   "default": "1",
+   "fieldname": "quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Quantity",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "stock_location",
+   "fieldtype": "Link",
+   "label": "Stock Location",
+   "options": "Stock Location",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "product.unit",
+   "fieldname": "base_unit",
+   "fieldtype": "Link",
+   "label": "Base Unit",
+   "options": "Unit Of Measurement",
+   "read_only": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "PCE.YYYY.-.#####"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Produce",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-03-28 14:43:59.919633",
+ "modified_by": "Administrator",
+ "module": "Inventory",
+ "name": "Produce",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

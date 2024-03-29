@@ -16,6 +16,10 @@
   "email",
   "phone_number_1",
   "phone_number_2",
+  "street",
+  "commune",
+  "district",
+  "vattin_number",
   "data_9",
   "province",
   "address_en",
@@ -38,6 +42,9 @@
   "default_walk_in_business_source",
   "column_break_aeku",
   "edoor_letterhead",
+  "tax_invoice_setting_section",
+  "allow_generate_tax_invoice",
+  "tax_invoice_number_format",
   "cancellation_policy_section",
   "cancellation_policy"
  ],
@@ -218,12 +225,48 @@
    "fieldname": "google_sheet_file",
    "fieldtype": "Data",
    "label": "Google Sheet File"
+  },
+  {
+   "fieldname": "tax_invoice_setting_section",
+   "fieldtype": "Section Break",
+   "label": "Tax Invoice Setting"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_generate_tax_invoice",
+   "fieldtype": "Check",
+   "label": "Allow Generate Tax Invoice"
+  },
+  {
+   "fieldname": "tax_invoice_number_format",
+   "fieldtype": "Data",
+   "label": "Tax Invoice Number Format"
+  },
+  {
+   "fieldname": "street",
+   "fieldtype": "Data",
+   "label": "Street"
+  },
+  {
+   "fieldname": "commune",
+   "fieldtype": "Data",
+   "label": "Commune"
+  },
+  {
+   "fieldname": "district",
+   "fieldtype": "Data",
+   "label": "District"
+  },
+  {
+   "fieldname": "vattin_number",
+   "fieldtype": "Data",
+   "label": "Vattin number"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-02-03 09:24:39.935458",
+ "modified": "2024-03-28 17:07:13.268232",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",

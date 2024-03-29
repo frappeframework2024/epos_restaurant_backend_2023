@@ -23,6 +23,7 @@
   "company_name",
   "market_source",
   "market_segment",
+  "vattin_number",
   "column_break_5",
   "customer_group",
   "gender",
@@ -333,13 +334,18 @@
    "fieldname": "exely_guest_id",
    "fieldtype": "Data",
    "label": "Exely Guest ID"
+  },
+  {
+   "fieldname": "vattin_number",
+   "fieldtype": "Data",
+   "label": "Vattin Number"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-02-28 14:34:26.513581",
+ "modified": "2024-03-28 14:26:33.904181",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

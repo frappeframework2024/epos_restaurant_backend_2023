@@ -4,7 +4,7 @@
             <slot name="title"></slot> 
         </v-toolbar-title>
         <v-toolbar-items>
-            <v-btn  @click="$emit('onPrintWithChoosePrinter')" v-if="isPrint && showPrintPopUp" :disabled="disabled">
+            <v-btn  @click="$emit('onPrintWithChoosePrinter')" v-if="showChoosePrinter && showPrintPopUp" :disabled="disabled">
                 {{ $t("Choose Printer") }}
             </v-btn> 
 
@@ -60,6 +60,10 @@ const props = defineProps({
         default: true
     },
     isPrint:{
+        type: Boolean,
+        default: false
+    },
+    showChoosePrinter:{
         type: Boolean,
         default: false
     }

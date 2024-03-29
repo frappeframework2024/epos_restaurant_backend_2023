@@ -144,6 +144,7 @@ const canDelete = computed(() => {
     return (sale.doc?.docstatus == 1 || sale.doc?.docstatus == 0) && sale.doc?.cashier_shift == cashierShiftInfo?.data?.name;
 })
 
+
 const printPreviewUrl = computed(() => {
     let letterhead = "";
     if (selectedLetterhead.value == "") {

@@ -1,5 +1,5 @@
 <template>
-    <ComModal @onClose="onClose(false)" :fullscreen="true" :isPrint="true" @onPrintWithChoosePrinter="onPrintWithChoosePrinter()" @onPrint="onPrint()"  :hide-ok-button="true" :hide-close-button="true">
+    <ComModal @onClose="onClose(false)" :fullscreen="true" :isPrint="true" :showChoosePrinter="true" @onPrintWithChoosePrinter="onPrintWithChoosePrinter()" @onPrint="onPrint()"  :hide-ok-button="true" :hide-close-button="true">
         <template #title>
             {{ params.title }}
         </template>
