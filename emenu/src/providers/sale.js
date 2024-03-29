@@ -61,6 +61,7 @@ export default class Sale {
 
     onAddtoCart(p,qty = 1, portion=null,modifiers=null){
         toaster.warning(p.name_en)
+        
       
     }
 

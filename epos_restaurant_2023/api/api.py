@@ -257,31 +257,32 @@ def get_system_settings(pos_profile="", device_name=''):
     
     _pos_print_format_data = []
     for p in _pos_print_format:
-        pf = frappe.get_doc("Print Format", p.print_format)
-        _data = {
-            "name":p.print_format,
-            "title":p.title,
-            "doc_type":pf.doc_type,
-            "pos_receipt_template":p.pos_receipt_template,
-            "print_report_name":p.print_report_name,
-            "default_print_language":pf.default_print_language,
-            "show_in_pos_report":p.show_in_pos_report,
-            "show_in_pos":p.show_in_pos,
-            "print_invoice_copies":p.print_invoice_copies, 
-            "print_receipt_copies":p.print_receipt_copies,
-            "pos_invoice_file_name":p.pos_invoice_file_name,
-            "pos_receipt_file_name":p.pos_receipt_file_name, 
-            "receipt_height":p.receipt_height, 
-            "receipt_width":p.receipt_width,
-            "receipt_margin_top":p.receipt_margin_top, 
-            "receipt_margin_left":p.receipt_margin_left,
-            "receipt_margin_right":p.receipt_margin_right,
-            "receipt_margin_bottom":p.receipt_margin_bottom,
-            "show_in_pos_closed_sale":p.show_in_pos_closed_sale,
-            "report_options":p.report_options,
-            "business_branch":p.business_branch or ""
-        }
-        _pos_print_format_data.append(_data)
+        if (p.business_branch or '') == '' or p.business_branch == profile.business_branch:
+            pf = frappe.get_doc("Print Format", p.print_format)
+            _data = {
+                "name":p.print_format,
+                "title":p.title,
+                "doc_type":pf.doc_type,
+                "pos_receipt_template":p.pos_receipt_template,
+                "print_report_name":p.print_report_name,
+                "default_print_language":pf.default_print_language,
+                "show_in_pos_report":p.show_in_pos_report,
+                "show_in_pos":p.show_in_pos,
+                "print_invoice_copies":p.print_invoice_copies, 
+                "print_receipt_copies":p.print_receipt_copies,
+                "pos_invoice_file_name":p.pos_invoice_file_name,
+                "pos_receipt_file_name":p.pos_receipt_file_name, 
+                "receipt_height":p.receipt_height, 
+                "receipt_width":p.receipt_width,
+                "receipt_margin_top":p.receipt_margin_top, 
+                "receipt_margin_left":p.receipt_margin_left,
+                "receipt_margin_right":p.receipt_margin_right,
+                "receipt_margin_bottom":p.receipt_margin_bottom,
+                "show_in_pos_closed_sale":p.show_in_pos_closed_sale,
+                "report_options":p.report_options,
+                "business_branch":p.business_branch or ""
+            }
+            _pos_print_format_data.append(_data)
 
 
 

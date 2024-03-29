@@ -2,6 +2,7 @@
     <v-btn :loading="tableLayout.saleListResource.loading" icon color="info" @click="onRefreshSale">
         <v-icon>mdi-cached</v-icon>
     </v-btn>
+    
     <template v-if="!mobile">
         <v-btn @click="onViewPendingOrder">
             {{ $t('Pending Order') }}
@@ -18,7 +19,7 @@
     <v-menu>
         <template v-slot:activator="{ props }">
             <v-btn v-bind="props">
-                <v-icon>mdi-dots-vertical</v-icon>
+                <v-icon>mdi-dots-vertical</v-icon>  
             </v-btn>
         </template>
         <v-card>
@@ -49,8 +50,6 @@
                         <v-list-item-title>   {{ !status ? $t('Show Status'):$t("Hide Status") }}</v-list-item-title>
                 </v-list-item>
                     
-                
-
             </v-list>
         </v-card>
     </v-menu>
