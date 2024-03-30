@@ -361,7 +361,7 @@ def add_product_to_temp_menu(self):
 					"printer":p.printer_name,
 					"group_item_type":p.group_item_type,
 					"ip_address":p.ip_address,
-					"port":int(p.port),
+					"port":int(p.port or 0),
 					"is_label_printer":p.is_label_printer,
 					"usb_printing":p.usb_printing,
 				})

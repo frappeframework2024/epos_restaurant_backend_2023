@@ -99,7 +99,9 @@ const socket = inject("$socket");
 const emit = defineEmits(["resolve"])
 const triggerPrint = ref(0);
 const serverUrl = window.location.protocol + "//" + window.location.hostname + ":" + gv.setting.pos_setting.backend_port;
-
+import { FrappeApp } from 'frappe-js-sdk';
+const frappe = new FrappeApp();
+const call = frappe.call()
 
 const props = defineProps({
     params: {
@@ -193,7 +195,6 @@ async function onPrint() {
         station: (gv.setting?.device_setting?.name) || "",
         reprint: 1
     }
-
     if (localStorage.getItem("is_window") == "1") {
         if (activeReport.value.pos_receipt_file_name != "" && activeReport.value.pos_receipt_file_name != null) {
             if (await confirm({ title: $t("Print Receipt"), text: $t("msg.Are you sure to print receipt") })) {
@@ -225,16 +226,21 @@ async function onPrint() {
         }
     }
     else {
-
-        if (activeReport.value.pos_receipt_file_name != "" && activeReport.value.pos_receipt_file_name != null) {
-            socket.emit('PrintReceipt', JSON.stringify(data));
-            return;
+        try{
+            await  call.get("epos_restaurant_2023.api.mobile_api.print_bill_to_network_printer",{"name":sale.doc.name,"template":"Receipt En","reprint":0})
         }
-        else {
-            window.open(printPreviewUrl.value + "&trigger_print=1").print();
-            window.close();
+        catch(err){
+            if (activeReport.value.pos_receipt_file_name != "" && activeReport.value.pos_receipt_file_name != null) {
+                socket.emit('PrintReceipt', JSON.stringify(data));
+                return;
+            }
+            else {
+                window.open(printPreviewUrl.value + "&trigger_print=1").print();
+                window.close();
+            }
         }
     }
+    console.log("yeet")
 }
 
 function onOpenOrder() {

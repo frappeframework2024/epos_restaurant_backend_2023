@@ -112,7 +112,7 @@ class Sale(Document):
 									exchange_rate,
 									change_exchange_rate 
 								from `tabCurrency Exchange` 
-								where to_currency = '{}' 
+								where to_currency = '{}' and to_currency != from_currency
 									and docstatus = 1 
 								order by 
 								posting_date desc, 
