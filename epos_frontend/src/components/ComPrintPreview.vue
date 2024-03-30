@@ -154,17 +154,15 @@ function onPrintWithChoosePrinter(){
 
  
 function onExport(){
-    
+
     let  letterhead = "";
     if(selectedLetterhead.value==""){
            letterhead = getDefaultLetterHead();
     }else {
         letterhead = selectedLetterhead.value;
     }
-
     const exportUrl =`${serverUrl}/api/method/frappe.utils.print_format.download_pdf?doctype=${activeReport.value.doc_type}&name=${props.params.name}&format=${activeReport.value.name}&product_category=${activeReport.value.filter?.product_category || ''}&no_letterhead=0&show_toolbar=0&letterhead=${letterhead}&settings=%7B%7D&_lang=${selectedLang.value}`; 
     
-    console.log(exportUrl);
     window.open(exportUrl);
     window.close();
 }
