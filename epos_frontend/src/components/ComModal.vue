@@ -2,8 +2,8 @@
     
     <v-dialog v-model="open" v-bind:style="{'width':'100%','max-width': fullscreen ? 'auto' : width}" :fullscreen="mobileFullscreen ? mobile : fullscreen" :scrollable="scrollable" :persistent="persistent" @update:modelValue="onAction()">
         <v-card>
-            <ComToolbar @onPrint="onPrint()"  @onExport="onExport()" @onPrintWithChoosePrinter="onPrintWithChoosePrinter()" :showChoosePrinter="showChoosePrinter" :isPrint="isPrint" :isMoreMenu="isShowBarMoreButton" @onClose="onClose()" :disabled="loading">
-                <template #title>
+            <ComToolbar @onPrint="onPrint()" @onExport="onExport()" @onPrintWithChoosePrinter="onPrintWithChoosePrinter()" :showChoosePrinter="showChoosePrinter" :isPrint="isPrint" :isExport="isExport"  :isMoreMenu="isShowBarMoreButton" @onClose="onClose()" :disabled="loading">
+                <template #title> 
                     <slot name="title"></slot>
                 </template>
                 <template #action>
@@ -42,6 +42,7 @@ import { defineEmits, ref, defineProps,i18n} from '@/plugin'
 import ComToolbar from './ComToolbar.vue'
 import { useDisplay } from 'vuetify';
 
+
  
 
 const { t: $t } = i18n.global;  
@@ -50,6 +51,10 @@ const open = ref(true)
 const emit = defineEmits(["onClose","onOK"])
 const props =defineProps({
     loading: {
+        type: Boolean,
+        default: false
+    },
+    isExport:{
         type: Boolean,
         default: false
     },
@@ -96,7 +101,7 @@ const props =defineProps({
     isPrint: {
         type: Boolean,
         default: false
-    },
+    }, 
     showChoosePrinter: {
         type: Boolean,
         default: false
@@ -110,6 +115,8 @@ const props =defineProps({
         default: false
     }
 })
+ 
+
 function onClose(value) {
     emit('onClose');
 }

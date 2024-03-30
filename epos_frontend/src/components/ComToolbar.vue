@@ -7,7 +7,8 @@
             <v-btn  @click="$emit('onPrintWithChoosePrinter')" v-if="showChoosePrinter && showPrintPopUp" :disabled="disabled">
                 {{ $t("Choose Printer") }}
             </v-btn> 
-            <v-btn  @click="$emit('onExport')" v-if="isPrint" :disabled="disabled">
+            <v-btn  @click="$emit('onExport')" v-if="isExport" :disabled="disabled">
+                
                 {{ $t("PDF") }}
             </v-btn> 
             <v-btn icon @click="$emit('onPrint')" v-if="isPrint" :disabled="disabled">
@@ -62,6 +63,10 @@ const props = defineProps({
         default: true
     },
     isPrint:{
+        type: Boolean,
+        default: false
+    }, 
+    isExport:{
         type: Boolean,
         default: false
     },
