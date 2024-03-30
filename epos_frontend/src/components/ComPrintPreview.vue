@@ -1,10 +1,9 @@
 <template>
-    <ComModal @onClose="onClose(false)" :fullscreen="true" :isPrint="true" :showChoosePrinter="true" @onPrintWithChoosePrinter="onPrintWithChoosePrinter()" @onPrint="onPrint()"  :hide-ok-button="true" :hide-close-button="true">
+    <ComModal @onClose="onClose(false)" :fullscreen="true" :isPrint="true" :showChoosePrinter="true" @onExport="onExport()" @onPrintWithChoosePrinter="onPrintWithChoosePrinter()" @onPrint="onPrint()"  :hide-ok-button="true" :hide-close-button="true">
         <template #title>
             {{ params.title }}
-        </template>
-        <template #bar_more_button>
-          
+        </template> 
+        <template #bar_more_button> 
         </template>
         <template #content>
             <v-card>
@@ -128,7 +127,6 @@ const emit = defineEmits(["resolve"])
  
 const triggerPrint = ref(0)
 
-
 if (props.params.print) {
     triggerPrint.value = 1;
 } else {
@@ -145,14 +143,29 @@ function onClose(isClose) {
     emit('resolve', isClose);
 }
 
-function onRefresh(){
-  
-    document.getElementById("report-view").contentWindow.location.replace(printPreviewUrl.value)
- 
+function onRefresh(){  
+    document.getElementById("report-view").contentWindow.location.replace(printPreviewUrl.value) 
 }
 
 function onPrintWithChoosePrinter(){
         window.open(printPreviewUrl.value + "&trigger_print=1").print();
+    window.close();
+}
+
+ 
+function onExport(){
+    
+    let  letterhead = "";
+    if(selectedLetterhead.value==""){
+           letterhead = getDefaultLetterHead();
+    }else {
+        letterhead = selectedLetterhead.value;
+    }
+
+    const exportUrl =`${serverUrl}/api/method/frappe.utils.print_format.download_pdf?doctype=${activeReport.value.doc_type}&name=${props.params.name}&format=${activeReport.value.name}&product_category=${activeReport.value.filter?.product_category || ''}&no_letterhead=0&show_toolbar=0&letterhead=${letterhead}&settings=%7B%7D&_lang=${selectedLang.value}`; 
+    
+    console.log(exportUrl);
+    window.open(exportUrl);
     window.close();
 }
 

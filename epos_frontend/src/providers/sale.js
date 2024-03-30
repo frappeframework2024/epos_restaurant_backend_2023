@@ -1309,7 +1309,7 @@ export default class Sale {
         return val;
     }
 
-    onRemoveSaleProduct(sp, quantity, username) {
+    onRemoveSaleProduct(sp, quantity, username) {   
         if (sp.quantity == quantity) {
             if (sp.sale_product_status == 'Submitted') {
                 sp.show_in_list = true;

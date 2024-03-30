@@ -7,7 +7,9 @@
             <v-btn  @click="$emit('onPrintWithChoosePrinter')" v-if="showChoosePrinter && showPrintPopUp" :disabled="disabled">
                 {{ $t("Choose Printer") }}
             </v-btn> 
-
+            <v-btn  @click="$emit('onExport')" v-if="isPrint" :disabled="disabled">
+                {{ $t("PDF") }}
+            </v-btn> 
             <v-btn icon @click="$emit('onPrint')" v-if="isPrint" :disabled="disabled">
                 <v-icon>mdi-printer</v-icon>
             </v-btn> 

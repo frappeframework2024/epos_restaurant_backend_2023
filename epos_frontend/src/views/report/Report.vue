@@ -2,6 +2,7 @@
     <PageLayout class="pb-4" :title="`${$t(activeReport.doc_type)} #${activeReport.report_id}`" icon="mdi-chart-bar" full>
         <template #action>
             <v-btn v-if="showPrintPopUp" @click="onPrintWithChoosePrinter()"> {{$t("Choose Printer") }}</v-btn>
+            <v-btn  @click="onExport()">{{ $t("PDF") }}</v-btn>
             <v-btn icon="mdi-printer" @click="onPrint()"></v-btn>
             <!-- <v-btn icon="mdi-printer-eye" @click="NetworkPrinter()"></v-btn> -->
         </template>
@@ -322,6 +323,11 @@ function onRefresh(){
 function onPrintWithChoosePrinter(){
      window.open(printUrl.value + "&trigger_print=1").print();
             window.close();
+}
+function onExport(){
+    var exportUrl =   `${serverUrl}/api/method/frappe.utils.print_format.download_pdf?doctype=${activeReport.value.doc_type}&name=${activeReport.value.report_id}&product_category=${activeReport.value.filter.product_category}&format=${activeReport.value.print_report_name}&no_letterhead=0&show_toolbar=0&letterhead=${activeReport.value.letterhead}&settings=%7B%7D&_lang=${activeReport.value.lang}`
+    window.open(exportUrl);
+    window.close();
 }
 
 async function NetworkPrinter(){
