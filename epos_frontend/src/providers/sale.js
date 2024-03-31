@@ -1641,15 +1641,20 @@ export default class Sale {
         var groupFields ="$.printer+','+$.group_item_type+','+$.ip_address+','+$.port";
         var printers  = Enumerable.from(data.product_printers).groupBy(groupKeys,"", groupKeys, groupFields).toArray();     
         printers.forEach((p)=>{
-            data.printers.push({
-                "printer_name":p.printer,
-                "group_item_type":p.group_item_type,
-                "ip_address":p.ip_address,
-                "port":p.port,
-                "is_label_printer":p.is_label_printer,
-                "usb_printing":p.usb_printing??0,
-                "products":data.product_printers.filter((x) => x.printer == p.printer)
-            });                    
+            var _printer = data.product_printers.filter((x) => x.printer == p.printer)
+            if(_printer.length >0 ){
+                data.printers.push({
+                    "printer_name":_printer[0].printer,
+                    "group_item_type":_printer[0].group_item_type,
+                    "ip_address":_printer[0].ip_address,
+                    "port":_printer[0].port,
+                    "is_label_printer":_printer[0].is_label_printer??0,
+                    "usb_printing":_printer[0].usb_printing??0,
+                    "products":_printer
+                });    
+                
+                
+            }           
         });
 
 
