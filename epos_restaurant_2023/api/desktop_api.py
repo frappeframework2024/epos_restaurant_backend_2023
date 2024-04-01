@@ -62,6 +62,18 @@ def get_kot_template(sale, printer_name, products):
     return {"html":html,"css":css}
 
 
+## get Sticker Lable 
+@frappe.whitelist(allow_guest=True,methods='POST')
+def get_lable_order_template(sale, printer_name, products): 
+    if not frappe.db.exists("Sale",sale):
+        return ""    
+    doc_sale = frappe.get_doc("Sale", sale)
+    _products = products
+    if type(products) is str:
+        _products  = json.loads(products)
+    data_template,css = frappe.db.get_value("POS Receipt Template","Lable Sticker",["template","style"])   
+    html = frappe.render_template(data_template, get_print_context(doc=doc_sale,sale_products = _products,printer_name=printer_name))    
+    return {"html":html,"css":css}
 
 ## print waiting slip
 @frappe.whitelist(allow_guest=True,methods='POST')

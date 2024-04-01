@@ -20,6 +20,7 @@
   "old_parent",
   "show_in_pos_shortcut_menu",
   "allow_sale",
+  "sort",
   "background_color",
   "text_color",
   "photo"
@@ -128,6 +129,12 @@
    "fieldname": "allow_sale",
    "fieldtype": "Check",
    "label": "Allow Sale"
+  },
+  {
+   "default": "0",
+   "fieldname": "sort",
+   "fieldtype": "Int",
+   "label": "Sort"
   }
  ],
  "image_field": "photo",
@@ -135,7 +142,7 @@
  "is_tree": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-01-09 10:31:51.771729",
+ "modified": "2024-04-01 10:39:36.403784",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Product Category",
