@@ -1648,7 +1648,7 @@ export default class Sale {
                     "group_item_type":_printer[0].group_item_type,
                     "ip_address":_printer[0].ip_address,
                     "port":_printer[0].port,
-                    "is_label_printer":_printer[0].is_label_printer??0,
+                    "is_label_printer":(_printer[0].is_label_printer??false) ? 1 : 0,
                     "usb_printing":_printer[0].usb_printing??0,
                     "products":_printer
                 });    
