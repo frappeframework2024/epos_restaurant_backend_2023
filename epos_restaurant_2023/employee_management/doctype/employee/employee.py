@@ -7,11 +7,14 @@ from frappe.model.document import Document
 
 class Employee(Document):
 	def validate(self):
+		if self.flags.ignore_validate == True:
+			return
 		if self.password:
 			self.pos_pin_code = str( base64.b64encode(self.password.encode("utf-8")).decode("utf-8"))
 
 	def on_update(self):
-		
+		if self.flags.ignore_on_update == True:
+			return 
 		 
 		if self.allow_login:
 			if self.user_id:
