@@ -5,16 +5,11 @@
             {{ $t('Payment') }} {{ get_room_selected==""?"":(": #" + get_room_selected) }}
         </template>
         <template #content>
-        <ComInput 
-        requiredAutofocus
-          ref="searchTextField"
-          keyboard
-          class="m-1"
-          v-model="keyword"
-          :placeholder="$t('Search')"  /> 
+            <ComInput requiredAutofocus ref="searchTextField"  keyboard class="m-1" v-model="keyword" :placeholder="$t('Search')"/>
+ 
             <template v-if="params.data.use_room_offline" >  
                 <v-row no-gutters>
-                    <v-col cols="12" class="pa-2" sm="3"  v-for="(r, index) in rooms" :key="index" @click="(()=>onOfflineRoomPressed(r))">
+                    <v-col cols="12" class="pa-2" sm="3"  v-for="(r, index) in getRoomOffline" :key="index" @click="(()=>onOfflineRoomPressed(r))">
                         <div :class="r.selected ? 'bg-indigo-lighten-2' : ''" class="cursor-pointer border border-stone-500 pa-3 rounded-sm">
                             <div>
                                 <span>{{$t("Room")}}: {{ r.room_name }}</span>
@@ -96,7 +91,11 @@ const folio_data = ref([]);
 const reservation_folio = ref({});
 const room_types = ref([]);
 
-const keyword = ref("")
+const keyword = ref("") 
+
+const getRoomOffline = computed(() => {    
+    return rooms.value.filter((r)=>r.room_name.toLowerCase().includes(keyword.value.toLowerCase()));
+})
 
 onMounted(()=>{
     if(props.params.data.use_room_offline){
@@ -165,8 +164,6 @@ const get_folio_data = computed(()=>{
             if(data.length>0){
                 data = data.filter((r)=>(r.name + ' ' + r.rooms + ' ' + r.guest_name).toLowerCase().includes(keyword.value.toLowerCase()));
             }
-           
-            
             return data;
         }
     }
@@ -189,10 +186,6 @@ const get_room_selected = computed(()=>{
     
     return "";
 })
-
-
-
-
 
 function onOfflineRoomPressed(room){   
     rooms.value.forEach((r)=>{       
@@ -258,12 +251,7 @@ function uuidv4() {
   );
 }
 
-function onInputChange(x) {
-    console.log(folio_data.value)
-    console.log(x)
-    console.log(folio_data.value.filter((r)=>r.name.includes(x))); 
-}
-
+ 
 </script>
 <style>
 .btn-post-to-room{
