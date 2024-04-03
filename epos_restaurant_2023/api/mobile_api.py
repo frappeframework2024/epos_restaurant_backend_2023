@@ -159,7 +159,8 @@ def get_product(root_menu, pos_menu):
                 sort_order,
                 tax_rule_data,
                 revenue_group,
-                sort_order
+                sort_order,
+                is_empty_stock_warning
             from  `tabTemp Product Menu` 
             where 
                 pos_menu='{0}' 

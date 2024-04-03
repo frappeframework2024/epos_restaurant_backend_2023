@@ -18,7 +18,7 @@
     </template>
   </template>
 
-  
+
   <template v-else>
     <v-list-item @click="onToHomePage()" v-if="isMobile">
       <template v-slot:prepend class="w-12">
@@ -53,7 +53,7 @@ const props = defineProps({
 })
 const toaster = createToaster({ position: "top-right" })
 
-async function onToHomePage(){
+async function onToHomePage() {
   const sp = Enumerable.from(sale.sale.sale_products);
 
   if (sp.where("$.name==undefined").toArray().length > 0) {
@@ -150,4 +150,4 @@ async function onToTableLayout() {
     }
   }
 }
-</script> 
+</script>

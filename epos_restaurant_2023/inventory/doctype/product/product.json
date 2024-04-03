@@ -36,6 +36,7 @@
   "append_quantity",
   "column_break_13",
   "allow_free",
+  "is_empty_stock_warning",
   "is_require_employee",
   "column_break_15",
   "allow_change_price",
@@ -613,13 +614,19 @@
    "fieldname": "secondary_cost",
    "fieldtype": "Currency",
    "label": "Secondary Cost"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_empty_stock_warning",
+   "fieldtype": "Check",
+   "label": "Is Empty Stock Warning "
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-03-28 10:46:20.938286",
+ "modified": "2024-04-03 11:14:38.556913",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Product",

@@ -19,6 +19,7 @@
   "allow_discount",
   "allow_free",
   "allow_change_price",
+  "is_empty_stock_warning",
   "is_inventory_product",
   "is_open_product",
   "append_quantity",
@@ -234,11 +235,18 @@
    "fieldname": "is_open_price",
    "fieldtype": "Check",
    "label": "Is Open Price"
+  },
+  {
+   "default": "0",
+   "fetch_from": "product_code.is_empty_stock_warning",
+   "fieldname": "is_empty_stock_warning",
+   "fieldtype": "Check",
+   "label": "Is Empty Stock Warning "
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-01-17 15:48:43.627593",
+ "modified": "2024-04-03 11:15:32.914624",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Temp Product Menu",

@@ -1,64 +1,71 @@
 <template>
-    
-    <v-dialog v-model="open" v-bind:style="{'width':'100%','max-width': fullscreen ? 'auto' : width}" :fullscreen="mobileFullscreen ? mobile : fullscreen" :scrollable="scrollable" :persistent="persistent" @update:modelValue="onAction()">
+
+    <v-dialog v-model="open" v-bind:style="{ 'width': '100%', 'max-width': fullscreen ? 'auto' : width }"
+        :fullscreen="mobileFullscreen ? mobile : fullscreen" :scrollable="scrollable" :persistent="persistent"
+        @update:modelValue="onAction()">
         <v-card>
-            <ComToolbar @onPrint="onPrint()" @onExport="onExport()" @onPrintWithChoosePrinter="onPrintWithChoosePrinter()" :showChoosePrinter="showChoosePrinter" :isPrint="isPrint" :isExport="isExport"  :isMoreMenu="isShowBarMoreButton" @onClose="onClose()" :disabled="loading">
-                <template #title> 
+            <ComToolbar @onPrint="onPrint()" @onExport="onExport()"
+                @onPrintWithChoosePrinter="onPrintWithChoosePrinter()" :showChoosePrinter="showChoosePrinter"
+                :isPrint="isPrint" :isExport="isExport" :isMoreMenu="isShowBarMoreButton" @onClose="onClose()"
+                :disabled="loading">
+                <template #title>
                     <slot name="title"></slot>
                 </template>
                 <template #action>
                     <slot name="bar_custom"></slot>
                 </template>
-                <template #more_menu> 
+                <template #more_menu>
                     <slot name="bar_more_button"></slot>
                 </template>
             </ComToolbar>
-            <v-card-text :class="fill ? '!p-0' : '!p-2'" class="!overflow-x-hidden"> 
+            <v-card-text :class="fill ? '!p-0' : '!p-2'" class="!overflow-x-hidden">
                 <slot name="content"></slot>
             </v-card-text>
-            <v-card-actions v-if="$slots.action || !hideCloseButton || !hideOkButton" class="justify-end flex-wrap" :class="{'!p-0' : fill}">            
-                
+            <v-card-actions v-if="$slots.action || !hideCloseButton || !hideOkButton" class="justify-end flex-wrap"
+                :class="{ '!p-0': fill }">
+
                 <template v-if="!customActions">
                     <v-btn variant="flat" @click="onClose()" color="error" :disabled="loading" v-if="!hideCloseButton">
-                        {{ $t('Close') }}
+                        {{ titleCloseButton == "" ? $t("Close") : $t(titleCloseButton) }}
                     </v-btn>
                     <slot name="action"></slot>
-                    
-                    <v-btn variant="flat" :loading="loading" type="button" color="primary" :disabled="loading" v-if="!hideOkButton" @click="onOK()">
-                        {{ titleOKButton==""?$t("Save"):$t(titleOKButton) }}
+
+                    <v-btn variant="flat" :loading="loading" type="button" color="primary" :disabled="loading"
+                        v-if="!hideOkButton" @click="onOK()">
+                        {{ titleOKButton == "" ? $t("Save") : $t(titleOKButton) }}
                     </v-btn>
                 </template>
                 <template v-else>
                     <slot name="action"></slot>
                 </template>
             </v-card-actions>
- 
+
         </v-card>
-     </v-dialog>
- 
+    </v-dialog>
+
 </template>
 <script setup>
-import { defineEmits, ref, defineProps,i18n} from '@/plugin'
+import { defineEmits, ref, defineProps, i18n } from '@/plugin'
 import ComToolbar from './ComToolbar.vue'
 import { useDisplay } from 'vuetify';
 
 
- 
 
-const { t: $t } = i18n.global;  
+
+const { t: $t } = i18n.global;
 const { mobile } = useDisplay()
 const open = ref(true)
-const emit = defineEmits(["onClose","onOK"])
-const props =defineProps({
+const emit = defineEmits(["onClose", "onOK"])
+const props = defineProps({
     loading: {
         type: Boolean,
         default: false
     },
-    isExport:{
+    isExport: {
         type: Boolean,
         default: false
     },
-    hideOkButton:{
+    hideOkButton: {
         type: Boolean,
         default: false
     },
@@ -70,10 +77,14 @@ const props =defineProps({
         type: String,
         default: "800px"
     },
-    titleOKButton:  {
+    titleOKButton: {
         type: String,
         default: ""
-    }, 
+    },
+    titleCloseButton: {
+        type: String,
+        default: ""
+    },
     fullscreen: {
         type: Boolean,
         default: false
@@ -94,14 +105,14 @@ const props =defineProps({
         type: Boolean,
         default: false
     },
-    isShowBarMoreButton:{
+    isShowBarMoreButton: {
         type: Boolean,
         default: false
     },
     isPrint: {
         type: Boolean,
         default: false
-    }, 
+    },
     showChoosePrinter: {
         type: Boolean,
         default: false
@@ -115,7 +126,7 @@ const props =defineProps({
         default: false
     }
 })
- 
+
 
 function onClose(value) {
     emit('onClose');
@@ -134,12 +145,12 @@ function onPrintWithChoosePrinter() {
     emit('onPrintWithChoosePrinter')
 }
 
-function onAction($event){
+function onAction($event) {
     // close
-    if(props.persistent == false && $event == undefined){
+    if (props.persistent == false && $event == undefined) {
         emit('onClose')
     }
- 
-} 
+
+}
 
 </script>

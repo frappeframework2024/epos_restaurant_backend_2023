@@ -15,7 +15,7 @@
         'background-size': 'contain', 'background-position': 'center center'
     }" @click="onClickMenu(data.name)">
         <div class="absolute top-0 bottom-0 right-0 left-0">
-           
+
             <avatar class="!h-full !w-full" :name="data.name_en" :rounded="false" :background="data.background_color"
                 :color="data.text_color" v-if="!data.photo"></avatar>
         </div>
@@ -33,7 +33,7 @@
 
     <div v-else-if="data.type == 'product'" v-ripple
         class="relative overflow-hidden h-full bg-cover bg-no-repeat rounded-lg shadow-lg cursor-pointer bg-gray-300 "
-        v-bind:style="{ 'background-image':'url(' + encodeURIComponent(image).replace(/%2F/g, '/').replace(/%3A/g,':').replace(/%3F/g,'?').replace(/%3D/g,'=').replace(/%26/g,'&') + ')', 'background-size': 'contain', 'background-position': 'center center' }"
+        v-bind:style="{ 'background-image': 'url(' + encodeURIComponent(image).replace(/%2F/g, '/').replace(/%3A/g, ':').replace(/%3F/g, '?').replace(/%3D/g, '=').replace(/%26/g, '&') + ')', 'background-size': 'contain', 'background-position': 'center center' }"
         @click="onClickProduct()">
         <div class="absolute top-0 bottom-0 right-0 left-0" v-if="!image">
 
@@ -42,22 +42,23 @@
         <div class="block relative p-2 w-full h-full">
             <div>
                 <div class="absolute left-0 top-0 bg-red-700 text-white p-1 rounded-tl-lg rounded-br-lg text-sm">
-                <div>
-                    <span v-if="productPrices.length > 1">
-                        <span>
-                            <CurrencyFormat :value="minPrice" />
-                        </span> <v-icon icon="mdi-arrow-right" size="x-small" /> <span>
-                            <CurrencyFormat :value="maxPrice" />
+                    <div>
+                        <span v-if="productPrices.length > 1">
+                            <span>
+                                <CurrencyFormat :value="minPrice" />
+                            </span> <v-icon icon="mdi-arrow-right" size="x-small" /> <span>
+                                <CurrencyFormat :value="maxPrice" />
+                            </span>
                         </span>
-                    </span>
-                    <CurrencyFormat v-else :value="showPrice" />
+                        <CurrencyFormat v-else :value="showPrice" />
+                    </div>
+
                 </div>
-                
-            </div>
-            <div class="menu-dropdown-icon">
+                <div class="menu-dropdown-icon">
                     <v-menu transition="scale-transition">
                         <template v-slot:activator="{ props }">
-                            <v-btn size="small" variant="text" :id="data.menu_product_name"  v-bind="props" icon="mdi-dots-vertical">
+                            <v-btn size="small" variant="text" :id="data.menu_product_name" v-bind="props"
+                                icon="mdi-dots-vertical">
 
                             </v-btn>
                         </template>
@@ -70,9 +71,9 @@
                     </v-menu>
                 </div>
             </div>
-            
+
             <div class="p-1 rounded-md absolute bottom-1 right-1 left-1 bg-gray-50 bg-opacity-90 text-sm text-center">
-            
+
                 <span v-if="!sale.load_menu_lang">{{ getMenuName(data, true) }}</span> <span
                     style="color:red; font-weight: bold;">
                     {{ getTotalQuantityOrder(data) }}</span>
@@ -82,9 +83,9 @@
 
 </template>
 <script setup>
-import { computed, addModifierDialog, SelectDateTime, i18n,inject, keypadWithNoteDialog,SelectGoogleImageDialog, SaleProductComboMenuGroupModal, createToaster } from '@/plugin'
+import { computed, addModifierDialog, SelectDateTime, i18n, inject, keypadWithNoteDialog, SelectGoogleImageDialog, SaleProductComboMenuGroupModal, createToaster, EmptyStockProductDialog } from '@/plugin'
 import Enumerable from 'linq'
-const { t: $t } = i18n.global; 
+const { t: $t } = i18n.global;
 // import ComPriceOnMenu from '../ComPriceOnMenu.vue';
 const props = defineProps({ data: Object })
 const sale = inject("$sale");
@@ -173,10 +174,10 @@ function onClickMenu(menu) {
 async function uploadImage(data) {
     const res = await SelectGoogleImageDialog({
 
-        title:$t("Upload Image") + " "  + data.name_en,
-        keyword:data.name_en
+        title: $t("Upload Image") + " " + data.name_en,
+        keyword: data.name_en
     })
-    if(res){
+    if (res) {
         db.updateDoc('Product', data.name, {
             photo: res.image,
         })
@@ -184,9 +185,9 @@ async function uploadImage(data) {
                 data.photo = res.image
                 toaster.success($t("msg.Update successfully"))
             }
-               
+
             )
-        }
+    }
 }
 function activate_menu(event) {
     event.stopPropagation();
@@ -201,6 +202,14 @@ async function onClickProduct() {
 
         const p = JSON.parse(JSON.stringify(props.data));
         product.is_open_price = p.is_open_price
+
+        if (p.is_empty_stock_warning == 1) {
+            //message dialog confirmation   
+            let emptyConfirm = await EmptyStockProductDialog();
+            if (!emptyConfirm) {
+                return
+            }
+        }
 
         if (!p.is_timer_product) {
             if (p.is_open_product == 1) {
@@ -295,6 +304,7 @@ async function onClickProduct() {
             }
         }
 
+
         sale.addSaleProduct(p);
 
     }
@@ -352,11 +362,9 @@ function getSeperateName(list) {
 }
 </script>
 <style>
-.menu-dropdown-icon{
+.menu-dropdown-icon {
     position: absolute;
     right: 10px;
     top: -5px;
 }
-
-        
 </style>
