@@ -17,6 +17,9 @@ from escpos import *
 
 def get_print_context(doc, reprint=0, sale_products= [],printer_name=None):
     setting = frappe.get_doc("POS Config", frappe.db.get_value("POS Profile",doc.pos_profile, "pos_config"))
+    
+    for sp in [d for d in sale_products if "combo_menu_data" in d and d["combo_menu_data"]]:
+        sp["combo_menu_data"] = json.loads(sp["combo_menu_data"])
     return {"doc": doc,"reprint":reprint,"printer_name":printer_name, "sale_products": sale_products,"nowdate": nowdate, "frappe.utils": frappe.utils,"setting":setting,"frappe":frappe}
 
 

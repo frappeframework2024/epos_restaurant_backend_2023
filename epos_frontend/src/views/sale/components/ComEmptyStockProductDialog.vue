@@ -1,7 +1,7 @@
 <template>
     <ComModal @onClose="onClose" titleOKButton="Yes" titleCloseButton="No" @onOk="onOk" width="350px">
         <template #title>
-            Confirm
+            {{ $t('Confirm') }}
         </template>
         <template #content>
             <p class="text-center"> {{ $t('The product is currently out of stock.') }}<br />

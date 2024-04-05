@@ -20,6 +20,7 @@
   "allow_enter_quantity",
   "show_quantity_in_report",
   "show_in_shortcut_menu",
+  "is_package",
   "icon",
   "sort_order",
   "lft",
@@ -67,6 +68,8 @@
   "note",
   "account_code_name",
   "account_group",
+  "packageinclusion_tab",
+  "packages",
   "system_setting_tab",
   "is_guest_folio_account",
   "is_housekeeping_account",
@@ -151,7 +154,6 @@
   },
   {
    "default": "0",
-   "depends_on": "eval:doc.parent_account_code==\"All Account Code\"",
    "fieldname": "show_in_shortcut_menu",
    "fieldtype": "Check",
    "label": "Show in Shortcut Menu"
@@ -569,12 +571,30 @@
   {
    "fieldname": "column_break_lnjf",
    "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.is_package==0 && !doc.__islocal",
+   "fieldname": "packageinclusion_tab",
+   "fieldtype": "Tab Break",
+   "label": "Package/Inclusion"
+  },
+  {
+   "fieldname": "packages",
+   "fieldtype": "Table",
+   "label": "Packages",
+   "options": "Package Item"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_package",
+   "fieldtype": "Check",
+   "label": "Is Package"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-03-27 17:24:36.313457",
+ "modified": "2024-04-04 17:51:00.853428",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

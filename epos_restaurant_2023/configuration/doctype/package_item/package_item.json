@@ -1,0 +1,79 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-04-04 15:33:20.437933",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "account_code",
+  "type",
+  "posting_rule",
+  "charge_rule",
+  "rate",
+  "adult_rate",
+  "child_rate"
+ ],
+ "fields": [
+  {
+   "fieldname": "account_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Account Code",
+   "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Account Code\"},\"is_group\",\"=\",0]]",
+   "options": "Account Code"
+  },
+  {
+   "default": "Everyday",
+   "fieldname": "posting_rule",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Posting Rule",
+   "options": "Everyday\nEveryday Except Checked In Date\nEveryday Except Checked Out Date\nChecked In Date\nChecked Out Date"
+  },
+  {
+   "default": "Stay",
+   "fieldname": "charge_rule",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Charge Rule",
+   "options": "Stay\nAdult\nChild\nPax"
+  },
+  {
+   "description": "ss",
+   "fieldname": "rate",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Rate"
+  },
+  {
+   "fieldname": "adult_rate",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Adult Rate"
+  },
+  {
+   "fieldname": "child_rate",
+   "fieldtype": "Currency",
+   "label": "Child Rate"
+  },
+  {
+   "fetch_from": "account_code.type",
+   "fieldname": "type",
+   "fieldtype": "Data",
+   "label": "Type"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-04-04 18:04:01.354145",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "Package Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -73,7 +73,6 @@ def on_save(doc):
     meta = frappe.get_meta(doc['doctype'])
     for f in [d for d in  meta.fields if d.fieldtype=='Attach Image']:
         if doc.get(f.fieldname):
-            doc[f.fieldname]=""
             if doc[f.fieldname]:
                 doc[f.fieldname] = "{}{}".format(frappe.db.get_single_value("ePOS Sync Setting","server_url") ,doc[f.fieldname])
 

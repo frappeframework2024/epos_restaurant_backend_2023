@@ -107,6 +107,7 @@ async function onSaleOrderClick(s) {
                             is_deleted: false,
                             is_free: r.is_free == 1,
                             combo_menu:r.combo_menu,
+                            combo_menu_data:r.combo_menu_data,
                             order_by:r.order_by,
                             creation:r.creation,
                             modified:r.modified,

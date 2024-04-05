@@ -1728,6 +1728,7 @@ export default class Sale {
                     is_deleted: false,
                     is_free: r.is_free == 1,
                     combo_menu: r.combo_menu,
+                    combo_menu_data:r.combo_menu_data,
                     order_by: r.order_by,
                     creation: r.creation,
                     modified: r.modified,
@@ -1741,7 +1742,7 @@ export default class Sale {
                 })
             });
         });
-
+        
         //generate sale product print when change table
         if ((this.changeTableSaleProducts?.length || 0) > 0) {
             this.changeTableSaleProducts.forEach(x => {
@@ -1771,6 +1772,8 @@ export default class Sale {
                         quantity: r.quantity,
                         is_deleted: true,
                         is_free: r.is_free == 1,
+                        combo_menu: r.combo_menu,
+                        combo_menu_data:r.combo_menu_data,
                         deleted_note: r.deleted_item_note,
                         order_by: r.order_by,
                         creation: r.creation,

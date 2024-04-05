@@ -296,6 +296,10 @@ function generateSaleProductPrintToKitchen(doc, note) {
             productPrinters.push({
                 printer: p.printer,
                 group_item_type: p.group_item_type,
+                is_label_printer: p.is_label_printer == 1,
+                ip_address: p.ip_address,
+                port: p.port,
+                usb_printing:p.usb_printing,
                 product_code: r.product_code,
                 product_name_en: r.product_name,
                 product_name_kh: r.product_name_kh,
@@ -306,7 +310,18 @@ function generateSaleProductPrintToKitchen(doc, note) {
                 quantity: r.quantity,
                 is_deleted: true,
                 is_free: r.is_free == 1,
-                deleted_note: r.deleted_item_note
+                combo_menu: r.combo_menu,
+                combo_menu_data:r.combo_menu_data,
+                deleted_note: r.deleted_item_note,
+                order_by: r.order_by,
+                creation: r.creation,
+                modified: r.modified,
+                reference_sale_product: r.reference_sale_product,
+                duration: r.duration,
+                time_stop: (r.time_stop || 0),
+                time_in: r.time_in,
+                time_out_price: r.time_out_price,
+                time_out: r.time_out
             })
         });
     });
