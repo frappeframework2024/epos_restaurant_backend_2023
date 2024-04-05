@@ -357,3 +357,19 @@ def remove_failed_jobs(failed_jobs):
         for job_ids in create_batch(failed_jobs, 100):
             for job in Job.fetch_many(job_ids=job_ids, connection=conn):
                 job and fail_registry.remove(job, delete_job=True)
+
+
+@frappe.whitelist()
+def update_temp_menu_product_photo_schedule():
+    setting =frappe.get_doc("ePOS Sync Setting")
+    if setting.enable == 1 and setting.client_side == 1: 
+        data = frappe.db.sql("""
+                            Update `tabTemp Product Menu`
+                                set photo = concat('{}',photo)
+                            where 
+                                photo is not null and 
+                                photo not like 'http://%' and 
+                                photo not like 'https://%'
+                            """.format(setting.server_url))
+        frappe.db.commit()
+        return data
