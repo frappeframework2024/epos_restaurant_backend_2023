@@ -9,6 +9,7 @@
     </ComModal>
 </template>
 <script setup>
+import { changeTableDialog } from '@/plugin'
 import ComMoveItemGroupSaleProductList from '@/views/sale/components/ComMoveItemGroupSaleProductList.vue'
 const props = defineProps({
     params: {
@@ -21,7 +22,8 @@ const emit = defineEmits(["resolve"]);
 function onClose() {
     emit("resolve", false);
 }
-function onOk() {
-    emit("resolve", true);
+async function onOk() {
+    changeTableDialog({});
+    emit("resolve", false);
 }
 </script>

@@ -1035,7 +1035,7 @@ def delete_sale(name,auth):
 
 
     if frappe.db.get_single_value("ePOS Sync Setting",'enable') == 1:
-         frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=frappe.get_doc("Sale",sale_doc.name),extra_action=["epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel"],action="cancel")  
+         frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=frappe.get_doc("Sale",sale_doc.name),extra_action='["epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel"]',action="cancel")  
 
     
     
