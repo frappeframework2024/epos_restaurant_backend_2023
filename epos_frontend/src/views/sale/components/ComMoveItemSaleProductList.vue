@@ -121,7 +121,6 @@ function getSaleProducts(groupByKey) {
     return [];
 }
 
-
 function onSelected(sp) {
     if ((sp.total_selected || 0) >= sp.quantity) {
         sp.total_selected = 0;
