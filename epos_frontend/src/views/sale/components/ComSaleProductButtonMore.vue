@@ -58,7 +58,7 @@
             <v-list-item  prepend-icon="mdi-cash-100" :title="$t('Tax Setting')" v-if="saleProduct.product_tax_rule"  @click="sale.onSaleProductChangeTaxSetting(saleProduct,gv)">
             </v-list-item>
             
-            <v-list-item v-if="!saleProduct.is_timer_product" prepend-icon="mdi-printer-outline" :title="$t('Re-Send')"    @click="onSelectPrinter()">
+            <v-list-item v-if="productPrinter" prepend-icon="mdi-printer-outline" :title="$t('Re-Send')"    @click="onSelectPrinter()">
             </v-list-item>
             
         </v-list>
@@ -83,6 +83,7 @@
 <script setup>
 import { defineProps, inject,keypadWithNoteDialog,i18n,ref } from '@/plugin'
 import {createToaster} from '@meforma/vue-toaster';
+import { computed } from 'vue';
 const { t: $t } = i18n.global;  
 
 const product = inject('$product');
@@ -101,6 +102,25 @@ const toaster = createToaster({ position: "top-right" });
 function onRemoveNote() {
     props.saleProduct.note = "";
 }
+
+const productPrinter = computed( ()=>{
+    if((gv.device_setting.show_button_resend||0)==1){ 
+        if(sale.sale.sale_status != 'Submitted' || sale.sale.sale_products.find(r => r.sale_product_status != 'Submitted')){
+            return false;
+        }
+
+        if(props.saleProduct.printers){
+            var printers = JSON.parse(props.saleProduct.printers);
+            if(printers.length<=0){
+                return false;
+            }
+
+            return (!props.saleProduct.is_timer_product && (props.saleProduct.name||'')!='');
+        }
+        return false;
+    }
+    return false;
+});
 
 
 function onSelectPrinter(){ 

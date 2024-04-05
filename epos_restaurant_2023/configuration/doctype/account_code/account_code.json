@@ -573,7 +573,7 @@
    "fieldtype": "Column Break"
   },
   {
-   "depends_on": "eval:doc.is_package==0 && !doc.__islocal",
+   "depends_on": "eval:doc.is_package==1 && !doc.__islocal",
    "fieldname": "packageinclusion_tab",
    "fieldtype": "Tab Break",
    "label": "Package/Inclusion"
@@ -594,7 +594,7 @@
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-04-04 17:51:00.853428",
+ "modified": "2024-04-05 09:42:54.908961",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

@@ -1,6 +1,7 @@
 <template>
     <v-list class="!p-0">
-        <v-list-item v-for="sp, index in (readonly == true ? getSaleProducts(groupKey) : sale.getSaleProducts(groupKey))"
+        <v-list-item
+            v-for="sp, index in (readonly == true ? getSaleProducts(groupKey) : sale.getSaleProducts(groupKey))"
             :key="index" @click="!readonly ? { click: sale.onSelectSaleProduct(sp) } : {}"
             class="!border-t !border-gray-300 !mb-0 !p-2"
             :class="{ 'selected': (sp.selected && !readonly), 'submitted relative': sp.sale_product_status == 'Submitted', 'item-list': !readonly }">
@@ -13,13 +14,14 @@
             </template>
             <template v-slot:default>
                 <div class="text-sm">
-                    
+
                     <div class="flex">
                         <div class="grow">
                             <div v-if="!sale.load_menu_lang"> {{ getMenuName(sp) }}<v-chip class="ml-1" size="x-small"
                                     color="error" variant="outlined" v-if="sp.portion">{{ sp.portion }}</v-chip>
-                                <v-chip v-if="sp.is_free" size="x-small" color="success" variant="outlined">{{ $t('Free')
-                                }}</v-chip>
+                                <v-chip v-if="sp.is_free" size="x-small" color="success" variant="outlined">{{
+                $t('Free')
+            }}</v-chip>
                                 <v-chip v-if="sp.is_park" size="x-small" color="error" variant="outlined">
                                     {{ $t('Park') }}</v-chip>
                                 <ComChip :tooltip="sp.happy_hours_promotion_title"
@@ -54,7 +56,8 @@
 
                                 <div v-if="sp.is_combo_menu">
                                     <div v-if="sp.use_combo_group && sp.combo_menu_data">
-                                        <ComSaleProductComboMenuGroupItemDisplay :combo-menu-data="sp.combo_menu_data" />
+                                        <ComSaleProductComboMenuGroupItemDisplay
+                                            :combo-menu-data="sp.combo_menu_data" />
                                     </div>
                                     <span v-else>{{ sp.combo_menu }}</span>
                                 </div>
@@ -67,7 +70,8 @@
                                 </div>
 
                                 <div v-if="(sp.is_require_employee || 0) == 1">
-                                    <span v-for="emp, idx in getEmployees(sp.employees)" :key="idx" class="text-gray-500">
+                                    <span v-for="emp, idx in getEmployees(sp.employees)" :key="idx"
+                                        class="text-gray-500">
                                         <v-chip class="m-0.5" size="x-small" variant="outlined" color="primary"
                                             text-color="white">
                                             {{ emp.employee_display_name }}
@@ -75,13 +79,11 @@
                                     </span>
 
                                 </div>
-                                <v-chip color="blue" size="x-small" v-if="sp.seat_number"> {{ $t('Seat') + "# " +
-                                    sp.seat_number
-                                }}</v-chip>
+                                <v-chip color="blue" size="x-small" v-if="sp.seat_number"> {{ $t('Seat') + "# " + sp.seat_number }}</v-chip>
                                 <div class="text-gray-500">
                                     <v-icon icon="mdi-clock" size="small" class="mr-1"></v-icon><span>{{ moment(sp.creation).format('hh:mm:ss A') }}</span>
                                 </div>
-                               
+
                                 <div class="text-gray-500" v-if="sp.note">
                                     {{ $t('Note') }}: <span>{{ sp.note }}</span>
                                 </div>
@@ -131,8 +133,8 @@
                         <template v-if="(sp.is_require_employee || 0) == 0 && !sp.is_timer_product">
                             <v-chip
                                 :disabled="sale.setting.pos_setting.allow_change_quantity_after_submit == 1 || sp.sale_product_status == 'Submitted' || sp.append_quantity == 0"
-                                color="teal" class="mx-1 grow text-center justify-center" variant="elevated" size="small"
-                                @click="sale.onChangeQuantity(sp)">{{ $t('Qty') }}</v-chip>
+                                color="teal" class="mx-1 grow text-center justify-center" variant="elevated"
+                                size="small" @click="sale.onChangeQuantity(sp)">{{ $t('Qty') }}</v-chip>
 
                             <v-chip color="teal" class="mx-1 grow text-center justify-center" variant="elevated"
                                 size="small" @click="onReorder(sp)">{{ $t('Re-Order') }}</v-chip>
@@ -142,8 +144,9 @@
                                 size="small" @click="sale.onAssignEmployee(sp)">{{ $t('Employee') }}</v-chip>
                         </template>
 
-                        <v-chip v-if="!sp.reference_sale_product" color="red" class="mx-1 grow text-center justify-center"
-                            variant="elevated" size="small" @click="sale.onRemoveItem(sp, gv, numberFormat)">{{ $t('Delete')
+                        <v-chip v-if="!sp.reference_sale_product" color="red"
+                            class="mx-1 grow text-center justify-center" variant="elevated" size="small"
+                            @click="sale.onRemoveItem(sp, gv, numberFormat)">{{ $t('Delete')
                             }}</v-chip>
 
                         <ComSaleProductButtonMore :sale-product="sp" />
@@ -377,4 +380,3 @@ async function onContinueTimer(sp) {
     border-radius: 12px;
 }
 </style>
- 

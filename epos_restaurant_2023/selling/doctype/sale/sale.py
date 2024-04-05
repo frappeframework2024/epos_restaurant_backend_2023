@@ -15,8 +15,8 @@ from epos_restaurant_2023.api.exely import submit_order_to_exely
 
 class Sale(Document):
 	def validate(self):
-		if self.flags.ignore_validate == True:
-			return 
+		
+
 
 		if not frappe.db.get_default('exchange_rate_main_currency'):
 			frappe.throw('Main Exchange Currency not yet config. Please contact to system administrator for solve')

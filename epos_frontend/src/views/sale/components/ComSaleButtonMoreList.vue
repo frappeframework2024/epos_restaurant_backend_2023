@@ -1,9 +1,10 @@
 <template>
     <ComLoadingDialog v-if="isLoading" />
-    <v-list-item v-if="device_setting.show_reference_button_in_more_menu ==1" prepend-icon="mdi-format-list-bulleted" :title="($t('Reference') + ' #')" @click="onReferenceNumber()" />
+    <v-list-item v-if="device_setting.show_reference_button_in_more_menu == 1" prepend-icon="mdi-format-list-bulleted"
+        :title="($t('Reference') + ' #')" @click="onReferenceNumber()" />
     <v-list-item prepend-icon="mdi-eye-outline" :title="$t('View Bill')" @click="onViewBill()"
         v-if="sale.sale.sale_products.length > 0" />
-    
+
     <v-list-item @click="onRemoveSaleNote()" v-if="sale.sale.note">
         <template v-slot:prepend>
             <v-icon icon="mdi-note-outline" color="error"></v-icon>
@@ -12,15 +13,17 @@
     </v-list-item>
     <v-list-item prepend-icon="mdi-note-outline" :title="$t('Note')" @click="sale.onSaleNote(sale.sale)" v-else />
 
-    
-    <v-list-item prepend-icon="mdi-currency-usd" :title="$t('Commission')" v-if="gv.device_setting.show_button_commission==1" @click="onAddCommission()" />
+
+    <v-list-item prepend-icon="mdi-currency-usd" :title="$t('Commission')"
+        v-if="gv.device_setting.show_button_commission == 1" @click="onAddCommission()" />
 
 
     <v-list-item prepend-icon="mdi-bulletin-board" :title="$t('Change Price Rule')" @click="onChangePriceRule()" />
     <v-list-item v-if="setting.table_groups && setting.table_groups.length > 0" prepend-icon="mdi-silverware"
         :title="$t('Change POS Menu')" @click="onChangePOSMenu()" />
 
-    <v-list-item v-if="isWindow && gv.device_setting.is_order_station == 0" prepend-icon="mdi-cash-100"  :title="$t('Open Cash Drawer')" @click="onOpenCashDrawer()" />
+    <v-list-item v-if="isWindow && gv.device_setting.is_order_station == 0" prepend-icon="mdi-cash-100"
+        :title="$t('Open Cash Drawer')" @click="onOpenCashDrawer()" />
 
     <v-list-item v-if="setting.table_groups && setting.table_groups.length > 0" prepend-icon="mdi-grid-large"
         :title="$t('Change or Merge Table')" @click="onChangeTable()" />
@@ -28,23 +31,28 @@
     <v-list-item v-if="setting.table_groups && setting.table_groups.length > 0" prepend-icon="mdi-cash-100"
         :title="$t('Split Bill')" @click="onSplitBill()" />
 
+    <v-list-item v-if="device_setting.show_move_item_button" prepend-icon="mdi-cash-100" :title="$t('Move Item(s)')"
+        @click="onMoveItem()" />
+
     <v-list-item v-if="setting.table_groups && setting.table_groups.length > 0 && setting.use_guest_cover == 1"
         prepend-icon="mdi-account-multiple-outline" :title="`${$t('Change Guest Cover')} (${sale.sale.guest_cover})`"
         @click="onUpdateGuestCover()" />
 
-    <v-list-item v-if="gv.device_setting.show_button_change_sale_type==1" prepend-icon="mdi-cart" :title="$t('Change Sale Type')"
-        @click="onChangeSaleType()" />
+    <v-list-item v-if="gv.device_setting.show_button_change_sale_type == 1" prepend-icon="mdi-cart"
+        :title="$t('Change Sale Type')" @click="onChangeSaleType()" />
 
-    <v-list-item prepend-icon="mdi-translate" :title="($t('Menu Language') +'('+ onLoadMenuLabel +')') "  @click="onChangeMenuLanguage()" />
+    <v-list-item prepend-icon="mdi-translate" :title="($t('Menu Language') + '(' + onLoadMenuLabel + ')')"
+        @click="onChangeMenuLanguage()" />
 
     <v-list-item v-if="setting.table_groups && setting.table_groups.length > 0" prepend-icon="mdi-chair-school"
         :title="$t('Seat') + '#'" @click="onSeatNumber()" />
 
-    <v-list-item v-if="device_setting.show_button_resend==1" prepend-icon="mdi-printer-outline" :title="$t('Re-Send')" @click="onResend()" />
+    <v-list-item v-if="(device_setting.show_button_resend || 0) == 1" prepend-icon="mdi-printer-outline"
+        :title="$t('Re-Send')" @click="onResend()" />
 
     <v-list-item prepend-icon="mdi-cash-100" :title="$t('Tax Setting')" @click="onChangeTaxSetting()"
         v-if="sale.setting.tax_rules.length > 0" />
-    <v-list-item v-if="device_setting.show_park_button==1"  @click="onRedeemClick()">
+    <v-list-item v-if="device_setting.show_park_button == 1" @click="onRedeemClick()">
         <template #prepend>
             <v-icon icon="mdi-parking"></v-icon>
         </template>
@@ -64,12 +72,13 @@
         <v-list-item-title class="text-red-700">{{ $t('Delete Bill') }} {{ showSplitBill }}</v-list-item-title>
     </v-list-item>
 
-    
+
 </template>
 <script setup>
-import { computed,RedeemParkItemDialog,
-    useRouter,onMounted, splitBillDialog, addCommissionDialog, ComSaleReferenceNumberDialog, viewBillModelModel, ref, inject, confirm, createResource,
-    keyboardDialog, changeTableDialog, changePriceRuleDialog, changeSaleTypeModalDialog, createToaster, changePOSMenuDialog, i18n, ResendDialog
+import {
+    computed, RedeemParkItemDialog,
+    useRouter, onMounted, splitBillDialog, addCommissionDialog, ComSaleReferenceNumberDialog, viewBillModelModel, ref, inject, confirm, createResource,
+    keyboardDialog, changeTableDialog, changePriceRuleDialog, changeSaleTypeModalDialog, createToaster, changePOSMenuDialog, i18n, ResendDialog, MoveItemModal
 } from "@/plugin"
 import { useDisplay } from 'vuetify'
 import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
@@ -94,7 +103,7 @@ const device_setting = JSON.parse(localStorage.getItem("device_setting"))
 let deletedSaleProducts = [];
 let productPrinters = [];
 
-let count_sale_type = ref({}) 
+let count_sale_type = ref({})
 
 
 onMounted(() => {
@@ -103,15 +112,15 @@ onMounted(() => {
     })
 });
 
-const onLoadMenuLabel = computed(()=>{
-    const mlang = localStorage.getItem('mLang');   
-    if(mlang!=null){
-        if(mlang=="km"){
+const onLoadMenuLabel = computed(() => {
+    const mlang = localStorage.getItem('mLang');
+    if (mlang != null) {
+        if (mlang == "km") {
             return $t("Default");
-        }else{
-           return  $t("Second");
+        } else {
+            return $t("Second");
         }
-    }else{
+    } else {
         return $t("Second");
     }
 })
@@ -137,11 +146,11 @@ async function onUpdateGuestCover() {
     }
 }
 
-async function onChangeMenuLanguage(){
-    sale.onChangeMenuLanguage()   ;
-  await  setTimeout(function() {
-            sale.load_menu_lang = false;
-    },1);      
+async function onChangeMenuLanguage() {
+    sale.onChangeMenuLanguage();
+    await setTimeout(function () {
+        sale.load_menu_lang = false;
+    }, 1);
 }
 
 async function onChangeTable() {
@@ -241,7 +250,7 @@ async function onDeleteBill() {
                 if (await confirm({ title: $t('Delete Sale Order'), text: $t('msg.are you sure to delete this sale order') }) == false) {
                     // window.postMessage("close_modal", "*");
                     return;
-                } 
+                }
             }
 
             //cancel payment first
@@ -279,6 +288,7 @@ async function onDeleteBill() {
 }
 
 
+// generate print kot when delete bill 
 function generateSaleProductPrintToKitchen(doc, note) {
     deletedSaleProducts = [];
     (doc.sale_products || []).forEach((sp) => {
@@ -299,7 +309,7 @@ function generateSaleProductPrintToKitchen(doc, note) {
                 is_label_printer: p.is_label_printer == 1,
                 ip_address: p.ip_address,
                 port: p.port,
-                usb_printing:p.usb_printing,
+                usb_printing: p.usb_printing,
                 product_code: r.product_code,
                 product_name_en: r.product_name,
                 product_name_kh: r.product_name_kh,
@@ -311,7 +321,7 @@ function generateSaleProductPrintToKitchen(doc, note) {
                 is_deleted: true,
                 is_free: r.is_free == 1,
                 combo_menu: r.combo_menu,
-                combo_menu_data:r.combo_menu_data,
+                combo_menu_data: r.combo_menu_data,
                 deleted_note: r.deleted_item_note,
                 order_by: r.order_by,
                 creation: r.creation,
@@ -346,13 +356,15 @@ function onProcessPrintToKitchen(doc) {
 }
 
 async function onClearOrder() {
-    if (await confirm({ title: $t('Cancel sale order'), text: $t('msg.are your sure to cancel this sale order') })) {
-        const sale_products = JSON.parse(JSON.stringify(sale.sale.sale_products.filter(r => r.name != undefined)));
-        sale.sale.sale_products = sale_products || [];
-        sale.updateSaleSummary();
-        //add to audit trail log 
-        //future update
+    if (!sale.isBillRequested()) {
+        if (await confirm({ title: $t('Cancel sale order'), text: $t('msg.are your sure to cancel this sale order') })) {
+            const sale_products = JSON.parse(JSON.stringify(sale.sale.sale_products.filter(r => r.name != undefined)));
+            sale.sale.sale_products = sale_products || [];
+            sale.updateSaleSummary();
+            //add to audit trail log 
+            //future update
 
+        }
     }
 
 
@@ -389,29 +401,56 @@ async function onSplitBill() {
 }
 
 async function onChangeTaxSetting() {
-    const resp = await sale.onChangeTaxSetting($t('Change Tax Setting'), sale.sale.tax_rule, sale.sale.change_tax_setting_note, gv);
+    if (!sale.isBillRequested()) {
+        const resp = await sale.onChangeTaxSetting($t('Change Tax Setting'), sale.sale.tax_rule, sale.sale.change_tax_setting_note, gv);
+    }
 }
 
-function onResend () {
-    ResendDialog($t('Change Tax Setting')); 
-}
-
-function onRedeemClick(){ 
-    call.get("epos_restaurant_2023.api.api.get_current_shift_information",{
-        business_branch: gv.setting?.business_branch,
-        pos_profile: localStorage.getItem("pos_profile")
-    }).then(async (_res)=>{
-        const _data = _res.message;
-        if (_data.working_day == null) {
-            toaster.warning($t("msg.Please start working day first"))
-        } else if (_data.cashier_shift == null) {
-                toaster.warning($t("msg.Please start shift first"))
+function onResend() {
+    if (!sale.isBillRequested()) {
+        if (sale.sale.sale_products.length == 0) {
+            toaster.warning($t("msg.Please select a menu item to continue"));
+            return;
+        }
+        else if (sale.sale.sale_status != 'Submitted' || sale.sale.sale_products.find(r => r.sale_product_status != 'Submitted')) {
+            toaster.warning($t('msg.please save or submit your current order first', [$t('Submit')]))
         } else {
-            const today =  moment(new Date()).format('yyyy-MM-DD');
-            const result = await RedeemParkItemDialog();
-        }    
-    });
+            ResendDialog($t('Re-Send'));
+        }
+    }
 }
 
+function onRedeemClick() {
+    if (!sale.isBillRequested()) {
+        call.get("epos_restaurant_2023.api.api.get_current_shift_information", {
+            business_branch: gv.setting?.business_branch,
+            pos_profile: localStorage.getItem("pos_profile")
+        }).then(async (_res) => {
+            const _data = _res.message;
+            if (_data.working_day == null) {
+                toaster.warning($t("msg.Please start working day first"))
+            } else if (_data.cashier_shift == null) {
+                toaster.warning($t("msg.Please start shift first"))
+            } else {
+                const today = moment(new Date()).format('yyyy-MM-DD');
+                const result = await RedeemParkItemDialog();
+            }
+        });
+    }
+}
+
+async function onMoveItem() {
+    if (!sale.isBillRequested()) {
+        if (sale.sale.sale_products.length == 0) {
+            toaster.warning($t("msg.Please select a menu item to continue"));
+            return;
+        }
+        else if (sale.sale.sale_status != 'Submitted' || sale.sale.sale_products.find(r => r.sale_product_status != 'Submitted')) {
+            toaster.warning($t('msg.please save or submit your current order first', [$t('Submit')]))
+        } else {
+            const res = await MoveItemModal({ title: $t('Move Item') });
+        }
+    }
+}
 
 </script>

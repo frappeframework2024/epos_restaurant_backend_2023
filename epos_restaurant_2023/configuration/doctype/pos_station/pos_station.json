@@ -40,6 +40,7 @@
   "show_setting_menu",
   "show_button_resend",
   "show_wifi_button",
+  "show_move_item_button",
   "printers_tab",
   "station_printers"
  ],
@@ -246,11 +247,17 @@
    "fieldname": "show_wifi_button",
    "fieldtype": "Check",
    "label": "Show WiFi Button"
+  },
+  {
+   "default": "1",
+   "fieldname": "show_move_item_button",
+   "fieldtype": "Check",
+   "label": "Show Move Item Button"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-03-19 10:09:32.581809",
+ "modified": "2024-04-05 09:31:37.841646",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

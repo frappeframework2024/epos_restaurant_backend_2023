@@ -11,18 +11,14 @@
                         <div><v-icon icon="mdi-account-outline" size="small" class="mr-1"></v-icon>{{ g.order_by }}</div>
                     </div>
                     <ComResendSaleProductList :group-key="g" />
-            </span>
-
-          
-
+            </span> 
         </div>
     </ComPlaceholder>
 </template>
 <script setup>
 import { inject } from 'vue'
 import moment from '@/utils/moment.js';
-import ComResendSaleProductList from './ComResendSaleProductList.vue';
-import ComSaleProductDeletedList from './ComSaleProductDeletedList.vue';
+import ComResendSaleProductList from './ComResendSaleProductList.vue'; 
 
 const sale = inject('$sale')
 const gv = inject('$gv')

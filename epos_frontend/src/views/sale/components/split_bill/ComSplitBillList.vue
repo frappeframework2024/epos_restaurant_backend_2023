@@ -1,4 +1,4 @@
-<template lang=""> 
+<template lang="">
     <div>
         <div class="flex -m-1 overflow-auto py-1">
             <v-btn variant="tonal" class="m-1" :color="!g.visibled ? 'error' : 'gray'" :prepend-icon="!(g.visibled) ? 'mdi-eye-off':'mdi-eye'" 
@@ -24,60 +24,64 @@
                                 
                             </v-btn> 
                         </template>
-                    </v-toolbar>
-                </v-card-title>
-                <v-card-text class="!pt-0 !pr-0 !pb-14 !pl-0">       
-                    <v-list>
-                        <v-list-item class="!p-0" v-for="(sp, _index) in g.sale.sale_products" :key="_index"  @click="onSelected(sp)">                       
-                            <div class="text-sm relative px-2 border-b" >
-                                <v-badge :content="sp.total_selected" style="margin-top:-10px; margin-right:2px" color="success" class="absolute top-2 right-2" v-if="sp.total_selected > 0"></v-badge>
-                        
-                                <div class="flex" style="margin-top:10px;">
-                                    <div class="grow">
-                                        <div> {{ sp.product_name }}<v-chip class="ml-1" size="x-small"
-                                                color="error" variant="outlined" v-if="sp.portion">{{ sp.portion }}</v-chip> <v-chip
-                                                v-if="sp.is_free" size="x-small" color="success" variant="outlined">Free</v-chip>
-                                        </div> 
-                                        <div class="text-xs pt-1"> 
-                                            <div v-if="sp.modifiers">
-                                                <span>{{ sp.modifiers }} (<CurrencyFormat :value="sp.modifiers_price * sp.quantity" />)
-                                                </span>
-                                            </div>
-                                            <div class="text-red-500" v-if="sp.discount > 0">
-                                                {{$t('Discount')}} :
-                                                <span v-if="sp.discount_type == 'Percent'">{{
-                                                    sp.discount
-                                                }}%</span>
-                                                <CurrencyFormat v-else :value="parseFloat(sp.discount)" />
-                                            </div>
-                                            <v-chip color="blue" size="x-small" v-if="sp.seat_number">Seat# {{
-                                                sp.seat_number
-                                            }}</v-chip>
-                                            <div class="text-gray-500" v-if="sp.note">
-                                                {{$t('Note')}}: <span>{{ sp.note }}</span>
-                                            </div> 
-                                        </div>
-                                    </div>
-                                    <div class="flex-none text-right w-36"> 
-                                        <div class="">
-                                            <div class="text-sm"> 
-                                                {{ sp.quantity }} x <CurrencyFormat :value="sp.price" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>                                
-                            </div>     
-                        </v-list-item>
-                        <v-divider></v-divider>
-                    </v-list>
-                </v-card-text>
-                <v-card-actions style="min-height:8px !important" class="!p-0 flex items-center justify-between absolute bottom-0 w-full bg-gray-300"></v-card-actions>
-            </v-card>
-            {{ showDownload()}}
-        </div>
-    </div>
+</v-toolbar>
+</v-card-title>
+<v-card-text class="!pt-0 !pr-0 !pb-14 !pl-0">
+    <v-list>
+        <v-list-item class="!p-0" v-for="(sp, _index) in g.sale.sale_products" :key="_index" @click="onSelected(sp)">
+            <div class="text-sm relative px-2 border-b">
+                <v-badge :content="sp.total_selected" style="margin-top:-10px; margin-right:2px" color="success"
+                    class="absolute top-2 right-2" v-if="sp.total_selected > 0"></v-badge>
+
+                <div class="flex" style="margin-top:10px;">
+                    <div class="grow">
+                        <div> {{ sp.product_name }}<v-chip class="ml-1" size="x-small" color="error" variant="outlined"
+                                v-if="sp.portion">{{ sp.portion }}</v-chip> <v-chip v-if="sp.is_free" size="x-small"
+                                color="success" variant="outlined">Free</v-chip>
+                        </div>
+                        <div class="text-xs pt-1">
+                            <div v-if="sp.modifiers">
+                                <span>{{ sp.modifiers }} (
+                                    <CurrencyFormat :value="sp.modifiers_price * sp.quantity" />)
+                                </span>
+                            </div>
+                            <div class="text-red-500" v-if="sp.discount > 0">
+                                {{$t('Discount')}} :
+                                <span v-if="sp.discount_type == 'Percent'">{{
+                                    sp.discount
+                                    }}%</span>
+                                <CurrencyFormat v-else :value="parseFloat(sp.discount)" />
+                            </div>
+                            <v-chip color="blue" size="x-small" v-if="sp.seat_number">Seat# {{
+                                sp.seat_number
+                                }}</v-chip>
+                            <div class="text-gray-500" v-if="sp.note">
+                                {{$t('Note')}}: <span>{{ sp.note }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex-none text-right w-36">
+                        <div class="">
+                            <div class="text-sm">
+                                {{ sp.quantity }} x
+                                <CurrencyFormat :value="sp.price" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </v-list-item>
+        <v-divider></v-divider>
+    </v-list>
+</v-card-text>
+<v-card-actions style="min-height:8px !important"
+    class="!p-0 flex items-center justify-between absolute bottom-0 w-full bg-gray-300"></v-card-actions>
+</v-card>
+{{ showDownload()}}
+</div>
+</div>
 </template>
-<script setup> 
+<script setup>
 
 
 const props = defineProps({

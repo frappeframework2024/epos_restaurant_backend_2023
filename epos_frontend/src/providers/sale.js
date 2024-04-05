@@ -210,8 +210,7 @@ export default class Sale {
 
 
                 //add sale product to temp resend sale product to kitchen order
-                this.reSendSaleProductKOT = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "")));
-
+                this.reSendSaleProductKOT = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "" && ((r.printers||"[]") != "[]")  ))); 
                 this.action = "";
                 //check if current table dont hanve any sale list data then load it
                 if (!this.tableSaleListResource?.data) {
@@ -710,7 +709,7 @@ export default class Sale {
         socket.emit("ShowOrderInCustomerDisplay", this.sale, sale_status);
 
         //add sale product to temp resend sale product to kitchen order
-        this.reSendSaleProductKOT = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "")));
+        this.reSendSaleProductKOT = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "" && ((r.printers||"[]") != "[]"))));
     }
 
     updateQuantity(sp, n) {

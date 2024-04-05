@@ -1,6 +1,7 @@
 import json
 import frappe
 import requests
+import re
 
 
 # ********************Client API *********************
@@ -73,9 +74,8 @@ def on_save(doc):
     meta = frappe.get_meta(doc['doctype'])
     for f in [d for d in  meta.fields if d.fieldtype=='Attach Image']:
         if doc.get(f.fieldname):
-            if doc[f.fieldname]:
+            if doc[f.fieldname] and  not is_url(doc[f.fieldname]):
                 doc[f.fieldname] = "{}{}".format(frappe.db.get_single_value("ePOS Sync Setting","server_url") ,doc[f.fieldname])
-
             
     doc = frappe.get_doc(doc)
     doc.flags.ignore_validate = True
@@ -178,3 +178,16 @@ def get_doctype_for_rename(doctype,data):
         if frappe.db.exists(doctype,d['name']):
             data.append({'old_name':d['old_name'],'doc':frappe.get_doc(doctype,d)})
     return data
+
+
+
+
+
+def is_url(url):
+    # Regular expression pattern to match URLs
+    url_pattern = re.compile(r'https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+')
+    # Check if the given string matches the URL pattern
+    if url_pattern.match(url):
+        return True
+    else:
+        return False
