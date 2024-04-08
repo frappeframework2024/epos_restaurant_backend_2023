@@ -36,6 +36,7 @@
   "print_waiting_order_after_submit_order",
   "print_sale_product_merged_table",
   "print_sale_product_change_table",
+  "print_sale_product_move_item",
   "print_new_deleted_sale_product",
   "check_delete_item_require_passord_from_product",
   "show_item_code_in_sale_screen",
@@ -675,12 +676,18 @@
    "fieldtype": "Check",
    "label": "Allow Closed Working Day When Has Pending Order",
    "options": "0"
+  },
+  {
+   "default": "0",
+   "fieldname": "print_sale_product_move_item",
+   "fieldtype": "Check",
+   "label": "Print Sale Product Move Item"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-03-18 15:06:52.233630",
+ "modified": "2024-04-06 13:54:40.841139",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

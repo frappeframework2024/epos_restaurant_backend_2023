@@ -141,6 +141,7 @@
   },
   {
    "fetch_from": "product_code.photo",
+   "fetch_if_empty": 1,
    "fieldname": "photo",
    "fieldtype": "Data",
    "label": "photo"
@@ -246,7 +247,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-04-03 11:15:32.914624",
+ "modified": "2024-04-05 16:46:48.285701",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Temp Product Menu",

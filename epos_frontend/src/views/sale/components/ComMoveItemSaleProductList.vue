@@ -15,8 +15,10 @@
                         <div class="grow">
                             <div v-if="!sale.load_menu_lang">
                                 {{ getMenuName(sp) }}
-                                <v-chip color="success" variant="flat" size="x-small">{{ sp.total_selected || 0
-                                    }}</v-chip>
+                                <v-chip v-if="(sp.total_selected || '') != 0" color="success" variant="flat"
+                                    size="x-small">{{
+            sp.total_selected || 0
+        }}</v-chip>
                                 <v-chip class="ml-1" size="x-small" color="error" variant="outlined"
                                     v-if="sp.portion">{{ sp.portion }}</v-chip>
                                 <v-chip v-if="sp.is_free" size="x-small" color="success" variant="outlined">{{

@@ -58,6 +58,8 @@ import ComRedeemParkItemDialog from "@/views/sale/components/ComRedeemParkItemDi
 import ComEmptyStockProductDialog from "@/views/sale/components/ComEmptyStockProductDialog.vue";
 import ComMoveItemModal from "@/views/sale/components/ComMoveItemModal.vue";
 import ComMoveItemChangeTable from "@/views/sale/components/ComMoveItemChangeTable.vue";
+import ComEditPOSMenu from "@/views/setting/ComEditPOSMenu.vue";
+import ComMoveItemSelectOrder from "@/views/sale/components/ComMoveItemSelectOrder.vue";
 
 interface params {
     doctype?: String,
@@ -135,3 +137,5 @@ export const RedeemParkItemDialog = createPromiseDialog<params, object>(ComRedee
 export const EmptyStockProductDialog = createPromiseDialog<params, object>(ComEmptyStockProductDialog);
 export const MoveItemModal = createPromiseDialog<params, object>(ComMoveItemModal);
 export const MoveItemChangeTable = createPromiseDialog<params, object>(ComMoveItemChangeTable);
+export const EditPOSMenuDialog = createPromiseDialog<params, object>(ComEditPOSMenu);
+export const MoveItemSelectOrderDialog = createPromiseDialog<params, object>(ComMoveItemSelectOrder);

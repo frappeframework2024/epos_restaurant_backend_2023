@@ -71,6 +71,7 @@
                             </v-col> 
                             <v-col cols="12" lg="5">
                                 <div class="flex items-center col-4"> 
+                                    {{activeReport.letterhead}}
                                     <v-select 
                                     prepend-inner-icon="mdi-content-paste"
                                     density="compact"
@@ -114,7 +115,7 @@
                     </div>
                 </template>
                 <v-card-text style="height: calc(100vh - 230px)">
-
+                    {{ printPreviewUrl }}
                     <iframe v-if="(activeReport.doc_type !='')" id="report-view" height="100%" width="100%" :src="printPreviewUrl"></iframe>
                 </v-card-text>
             </v-card>

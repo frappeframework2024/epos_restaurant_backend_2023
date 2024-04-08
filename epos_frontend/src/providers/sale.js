@@ -69,6 +69,8 @@ export default class Sale {
         //temporary all sale products change bill
         this.changeTableSaleProducts = [];
 
+        this.moveItemSaleProducts = [];
+
         //temporary all deleted sale product, we use this for send data to kitchen printers
         this.deletedSaleProducts = [];
 
@@ -183,6 +185,7 @@ export default class Sale {
     async LoadSaleData(name) {
         this.auditTrailLogs = [];
         this.changeTableSaleProducts = [];
+        this.moveItemSaleProducts = [];
         return new Promise(async (resolve) => {
             const parent = this;
             this.saleResource = createDocumentResource({
@@ -1763,6 +1766,12 @@ export default class Sale {
         //generate sale product print when change table
         if ((this.changeTableSaleProducts?.length || 0) > 0) {
             this.changeTableSaleProducts.forEach(x => {
+                this.productPrinters.push(x);
+            })
+        }
+
+        if ((this.moveItemSaleProducts?.length || 0) > 0) {
+            this.moveItemSaleProducts.forEach(x => {
                 this.productPrinters.push(x);
             })
         }

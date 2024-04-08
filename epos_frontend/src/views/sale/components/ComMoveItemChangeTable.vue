@@ -4,7 +4,7 @@
         <v-card>
             <ComToolbar @onClose="onClose">
                 <template #title>
-                    {{ `${(params._is_reservation || false) ? $t('Assign Table') : $t('Change or Merge Table')}` }}
+                    {{ $t("Move Item to Table") }}
                 </template>
             </ComToolbar>
             <div class="overflow-auto p-3 h-full">
@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import { ref, defineEmits, inject, changeTableSelectSaleOrderDialog, i18n } from '@/plugin'
+import { ref, defineEmits, inject, MoveItemSelectOrderDialog, i18n } from '@/plugin'
 import ComToolbar from '@/components/ComToolbar.vue';
 import { createToaster } from '@meforma/vue-toaster';
 import ComInput from '../../../components/form/ComInput.vue';
@@ -109,73 +109,24 @@ function getTable(tables, keyword) {
 
 
 async function onSelectTable(t) {
-    if ((props.params?._is_reservation || false)) {
-        emit("resolve", t);
+
+    if (t.sales?.length == 0) {
+        emit("resolve", { "table": t, "con": "new_bill" })
     }
     else {
-        if (t.sales?.length == 0) {
-            generateProductPrinterChangeTable(sale.sale.sale_products, sale.sale.name, sale.sale.tbl_number);
-            sale.sale.sale_products?.forEach((r) => {
-                r.move_from_table = sale.sale.tbl_number;
-            });
-            sale.sale.table_id = t.id;
-            sale.sale.tbl_number = t.tbl_no;
-            toaster.success($t('msg.Change to table') + ": " + t.tbl_no);
-            emit("resolve", true)
-        }
-        else {
-            const result = await changeTableSelectSaleOrderDialog({ data: t });
-            if (result) {
-                if (result.action == "create_new_bill") {
-                    //
-                    generateProductPrinterChangeTable(sale.sale.sale_products, sale.sale.name, sale.sale.tbl_number);
+        const result = await MoveItemSelectOrderDialog({ data: t });
+        if (result) {
+            if (result.action == "create_new_bill") {
+                emit("resolve", { "table": t, "con": "new_bill" })
 
-                    sale.sale.sale_products?.forEach((r) => {
-                        r.move_from_table = sale.sale.tbl_number;
-                    });
-                    sale.sale.table_id = t.id;
-                    sale.sale.tbl_number = t.tbl_no;
-                    toaster.success($t('msg.Change to table') + ": " + t.tbl_no);
-                    emit("resolve", true);
-
-                } else if (result.action == "reload_sale") {
-                    emit("resolve", result)
-                }
+            } else if (result.action == "merge_item") {
+                emit("resolve", { "table": t, "con": "merge_item", sale: result.sale })
             }
         }
     }
 }
 
 
-function generateProductPrinterChangeTable(sale_products, old_sale, old_table) {
-    if (sale.setting.pos_setting.print_sale_product_change_table) {
-        sale_products?.forEach((r) => {
-            const pritners = JSON.parse(r.printers);
-            pritners.forEach((p) => {
-                sale.changeTableSaleProducts.push({
-                    printer: p.printer,
-                    group_item_type: p.group_item_type,
-                    is_label_printer: p.is_label_printer == 1,
-                    product_code: r.product_code,
-                    product_name_en: r.product_name,
-                    product_name_kh: r.product_name_kh,
-                    portion: r.portion,
-                    unit: r.unit,
-                    modifiers: r.modifiers,
-                    note: r.note,
-                    quantity: r.quantity,
-                    is_free: r.is_free == 1,
-                    order_by: r.order_by,
-                    creation: r.creation,
-                    modified: r.modified,
-                    move_from_table: old_table,
-                    move_from_sale: old_sale,
-                });
-            });
-        });
-
-    }
-}
 
 
 </script>

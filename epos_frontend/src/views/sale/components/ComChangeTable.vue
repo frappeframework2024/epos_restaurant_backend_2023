@@ -153,9 +153,14 @@ function generateProductPrinterChangeTable(sale_products, old_sale, old_table) {
             const pritners = JSON.parse(r.printers);
             pritners.forEach((p) => {
                 sale.changeTableSaleProducts.push({
+                    move_from_table: old_table,
+                    move_from_sale: old_sale,
                     printer: p.printer,
                     group_item_type: p.group_item_type,
                     is_label_printer: p.is_label_printer == 1,
+                    ip_address: p.ip_address,
+                    port: p.port,
+                    usb_printing: p.usb_printing,
                     product_code: r.product_code,
                     product_name_en: r.product_name,
                     product_name_kh: r.product_name_kh,
@@ -164,12 +169,20 @@ function generateProductPrinterChangeTable(sale_products, old_sale, old_table) {
                     modifiers: r.modifiers,
                     note: r.note,
                     quantity: r.quantity,
+                    is_deleted: false,
                     is_free: r.is_free == 1,
+                    combo_menu: r.combo_menu,
+                    combo_menu_data: r.combo_menu_data,
                     order_by: r.order_by,
                     creation: r.creation,
                     modified: r.modified,
-                    move_from_table: old_table,
-                    move_from_sale: old_sale,
+                    is_timer_product: (r.is_timer_product || 0),
+                    reference_sale_product: r.reference_sale_product,
+                    duration: r.duration,
+                    time_stop: (r.time_stop || 0),
+                    time_in: r.time_in,
+                    time_out_price: r.time_out_price,
+                    time_out: r.time_out
                 });
             });
         });

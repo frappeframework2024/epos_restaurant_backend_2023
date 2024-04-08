@@ -2,18 +2,20 @@
   <div>
     <div>
       <div class="flex">
-        <div class="flex-grow cursor-pointer bg-green-600 text-white px-2 py-0  hover:bg-green-700" @click="onPayment()">
+        <div class="flex-grow cursor-pointer bg-green-600 text-white px-2 py-0  hover:bg-green-700"
+          @click="onPayment()">
           <div style="margin-bottom: 0px!important;" class="flex justify-between mb-2 text-lg">
             <div>{{ $t("Payment") }}</div>
             <div style="margin: 0px; padding: 0px; font-size: 26px; font-weight: bold;">
-              <CurrencyFormat :value="(sale.sale.grand_total-sale.sale.deposit)" />
+              <CurrencyFormat :value="(sale.sale.grand_total - sale.sale.deposit)" />
             </div>
           </div>
           <div class="flex justify-between">
-            <div>{{ $t('Total Qty') }} : <span>{{ sale.sale.total_quantity ||0}}</span></div>
+            <div>{{ $t('Total Qty') }} : <span>{{ sale.sale.total_quantity || 0 }}</span></div>
             <div>
               <ComExchangeRate />
-              <CurrencyFormat :value="((sale.sale.grand_total * (sale.sale.exchange_rate || 1)) - (sale.sale.deposit * (sale.sale.exchange_rate || 1)))"
+              <CurrencyFormat
+                :value="((sale.sale.grand_total * (sale.sale.exchange_rate || 1)) - (sale.sale.deposit * (sale.sale.exchange_rate || 1)))"
                 :currency="sale.setting.pos_setting.second_currency_name" />
             </div>
           </div>
@@ -37,10 +39,10 @@
   </div>
 </template>
 <script setup>
-import { inject, useRouter, paymentDialog,searchSaleDialog, createToaster,i18n } from '@/plugin';
+import { inject, useRouter, paymentDialog, searchSaleDialog, createToaster, i18n } from '@/plugin';
 import ComExchangeRate from './ComExchangeRate.vue';
-import { whenever,useMagicKeys  } from '@vueuse/core';
-const { t: $t } = i18n.global;  
+import { whenever, useMagicKeys } from '@vueuse/core';
+const { t: $t } = i18n.global;
 
 const sale = inject("$sale")
 const gv = inject("$gv")
@@ -54,29 +56,29 @@ const call = frappe.call();
 
 
 sale.vue.$onKeyStroke('F12', (e) => {
-    e.preventDefault();
-    if(gv.device_setting.show_option_payment==0){
-        return;
-    }
-    
-    if(sale.dialogActiveState==false){
-      onPayment();
-    } 
+  e.preventDefault();
+  if (gv.device_setting.show_option_payment == 0) {
+    return;
+  }
+
+  if (sale.dialogActiveState == false) {
+    onPayment();
+  }
 })
 
 const { ctrl_o } = useMagicKeys({
-    passive: false,
-    onEventFired(e) {
-      if (e.ctrlKey && e.key === 'o' && e.type === 'keydown')
-        e.preventDefault()
-    },
+  passive: false,
+  onEventFired(e) {
+    if (e.ctrlKey && e.key === 'o' && e.type === 'keydown')
+      e.preventDefault()
+  },
 })
 const { ctrl_s } = useMagicKeys({
-    passive: false,
-    onEventFired(e) {
-      if (e.ctrlKey && e.key === 's' && e.type === 'keydown')
-        e.preventDefault()
-    },
+  passive: false,
+  onEventFired(e) {
+    if (e.ctrlKey && e.key === 's' && e.type === 'keydown')
+      e.preventDefault()
+  },
 })
 
 whenever(ctrl_o, () => onSearchSale())
@@ -86,36 +88,36 @@ whenever(ctrl_s, () => onSubmit())
 
 
 const setting = JSON.parse(localStorage.getItem("setting"))
-async function onSearchSale(){
-    sale.dialogActiveState=true;
-    let msg = $t('msg.please save or submit your current order first',[(setting.table_groups && setting.table_groups.length > 0 ? $t( 'Submit') : $t('Save'))]);
-    const isOrdered = sale.isOrdered(msg)    
-    if(isOrdered == false) {
-        const result = await searchSaleDialog({ })
-        sale.dialogActiveState=false;
-        if(result != false){ 
-            router.push({
-                name: "AddSale", params: {
-                    name: result.name
-                }
-            });
-
-            sale.LoadSaleData(result.name)
+async function onSearchSale() {
+  sale.dialogActiveState = true;
+  let msg = $t('msg.please save or submit your current order first', [(setting.table_groups && setting.table_groups.length > 0 ? $t('Submit') : $t('Save'))]);
+  const isOrdered = sale.isOrdered(msg)
+  if (isOrdered == false) {
+    const result = await searchSaleDialog({})
+    sale.dialogActiveState = false;
+    if (result != false) {
+      router.push({
+        name: "AddSale", params: {
+          name: result.name
         }
+      });
+
+      sale.LoadSaleData(result.name)
     }
+  }
 }
 
 async function onSubmit() {
   if (!sale.isBillRequested()) {
     const action = sale.action;
     const message = sale.message;
-    const sale_status = sale.sale.sale_status; 
+    const sale_status = sale.sale.sale_status;
     sale.action = "submit_order";
     sale.message = $t("msg.Submit order successfully");
-    sale.sale.sale_status = "Submitted"; 
-   
+    sale.sale.sale_status = "Submitted";
+
     await sale.onSubmit().then((doc) => {
-      product.onClearKeyword(); 
+      product.onClearKeyword();
       if (doc) {
         if (onRedirectSaleType()) {
           if (tableLayout.table_groups.length > 0) {
@@ -127,30 +129,30 @@ async function onSubmit() {
             router.push({ name: "AddSale" });
             sale.tableSaleListResource.fetch();
 
-            call.get('epos_restaurant_2023.api.api.get_current_shift_information',{
+            call.get('epos_restaurant_2023.api.api.get_current_shift_information', {
               business_branch: sale.setting?.business_branch,
               pos_profile: localStorage.getItem("pos_profile")
-              }).then((data)=>{
-                if (data.message.cashier_shift == null) {
-                  toaster.warning($t("msg.Please start shift first"));
-                  router.push({ name: "OpenShift" });
+            }).then((data) => {
+              if (data.message.cashier_shift == null) {
+                toaster.warning($t("msg.Please start shift first"));
+                router.push({ name: "OpenShift" });
               } else if (data.message.working_day == null) {
-                  toaster.warning($t('msg.Please start working day first'));
-                  router.push({ name: "StartWorkingDay" });
+                toaster.warning($t('msg.Please start working day first'));
+                router.push({ name: "StartWorkingDay" });
               } else {
-                  sale.sale.working_day = data.message.working_day.name;
-                  sale.sale.cashier_shift = data.message.cashier_shift.name;
-                  sale.sale.shift_name = data.message.cashier_shift.shift_name;
-                  gv.confirm_close_working_day(data.message.working_day.posting_date);
-                  // onCheckExpireHappyHoursPromotion();
+                sale.sale.working_day = data.message.working_day.name;
+                sale.sale.cashier_shift = data.message.cashier_shift.name;
+                sale.sale.shift_name = data.message.cashier_shift.shift_name;
+                gv.confirm_close_working_day(data.message.working_day.posting_date);
+                // onCheckExpireHappyHoursPromotion();
               }
             })
           }
         }
-      }else{ 
-        sale.action =  action;
+      } else {
+        sale.action = action;
         sale.message = message;
-        sale.sale.sale_status =  sale_status;
+        sale.sale.sale_status = sale_status;
       }
     });
   }
@@ -159,12 +161,12 @@ async function onSubmit() {
 
 
 async function onPayment() {
-  sale.dialogActiveState=true
-  if (device_setting.show_option_payment==0){
+  sale.dialogActiveState = true
+  if (device_setting.show_option_payment == 0) {
     return
   }
 
-  if (sale.sale.sale_products.length == 0) {
+  if (sale.sale.sale_products.length == 0 && (sale.sale.name || '') == '') {
     toaster.warning($t('msg.Please select a menu item to process payment'));
     return
   }
@@ -172,23 +174,23 @@ async function onPayment() {
     return;
   }
 
-  const check_employee = sale.sale.sale_products.filter((sp)=>sp.is_require_employee && (JSON.parse(sp.employees||"[]")).length <=0)
-  if(check_employee.length> 0){
-      toaster.warning($t('msg.Please assign employee to items'));
-      return;
+  const check_employee = sale.sale.sale_products.filter((sp) => sp.is_require_employee && (JSON.parse(sp.employees || "[]")).length <= 0)
+  if (check_employee.length > 0) {
+    toaster.warning($t('msg.Please assign employee to items'));
+    return;
   }
-  
-  const check_stop_timer = sale.sale.sale_products.filter((sp)=>sp.is_timer_product && !sp.time_out_price )
 
-  if(check_stop_timer.length> 0){
-      toaster.warning($t('msg.Please stop timer on timer product'));
-      return;
+  const check_stop_timer = sale.sale.sale_products.filter((sp) => sp.is_timer_product && !sp.time_out_price)
+
+  if (check_stop_timer.length > 0) {
+    toaster.warning($t('msg.Please stop timer on timer product'));
+    return;
   }
-  
+
   const result = await paymentDialog({})
-  sale.dialogActiveState=false
-  if (result) { 
-    
+  sale.dialogActiveState = false
+  if (result) {
+
     product.onClearKeyword()
     sale.newSale();
 
@@ -198,25 +200,25 @@ async function onPayment() {
       } else {
         sale.tableSaleListResource.fetch();
         router.push({ name: "AddSale" });
-        
-        call.get('epos_restaurant_2023.api.api.get_current_shift_information',{
-              business_branch: sale.setting?.business_branch,
-              pos_profile: localStorage.getItem("pos_profile")
-              }).then((data)=>{
-                if (data.message.cashier_shift == null) {
-                  toaster.warning($t("msg.Please start shift first"));
-                  router.push({ name: "OpenShift" });
-              } else if (data.message.working_day == null) {
-                  toaster.warning($t('msg.Please start working day first'));
-                  router.push({ name: "StartWorkingDay" });
-              } else {
-                  sale.sale.working_day = data.message.working_day.name;
-                  sale.sale.cashier_shift = data.message.cashier_shift.name;
-                  sale.sale.shift_name = data.message.cashier_shift.shift_name;
-                  gv.confirm_close_working_day(data.message.working_day.posting_date);
-                  // onCheckExpireHappyHoursPromotion();
-              }
-            })
+
+        call.get('epos_restaurant_2023.api.api.get_current_shift_information', {
+          business_branch: sale.setting?.business_branch,
+          pos_profile: localStorage.getItem("pos_profile")
+        }).then((data) => {
+          if (data.message.cashier_shift == null) {
+            toaster.warning($t("msg.Please start shift first"));
+            router.push({ name: "OpenShift" });
+          } else if (data.message.working_day == null) {
+            toaster.warning($t('msg.Please start working day first'));
+            router.push({ name: "StartWorkingDay" });
+          } else {
+            sale.sale.working_day = data.message.working_day.name;
+            sale.sale.cashier_shift = data.message.cashier_shift.name;
+            sale.sale.shift_name = data.message.cashier_shift.shift_name;
+            gv.confirm_close_working_day(data.message.working_day.posting_date);
+            // onCheckExpireHappyHoursPromotion();
+          }
+        })
       }
     }
   }
