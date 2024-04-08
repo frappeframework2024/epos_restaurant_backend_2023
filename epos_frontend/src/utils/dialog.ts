@@ -57,6 +57,7 @@ import ComSelectGoogleImageDialog from "@/views/sale/components/ComSelectGoogleI
 import ComRedeemParkItemDialog from "@/views/sale/components/ComRedeemParkItemDialog.vue";
 import ComEmptyStockProductDialog from "@/views/sale/components/ComEmptyStockProductDialog.vue";
 import ComMoveItemModal from "@/views/sale/components/ComMoveItemModal.vue";
+import ComMoveItemChangeTable from "@/views/sale/components/ComMoveItemChangeTable.vue";
 
 interface params {
     doctype?: String,
@@ -133,3 +134,4 @@ export const SelectGoogleImageDialog = createPromiseDialog<params, object>(ComSe
 export const RedeemParkItemDialog = createPromiseDialog<params, object>(ComRedeemParkItemDialog);
 export const EmptyStockProductDialog = createPromiseDialog<params, object>(ComEmptyStockProductDialog);
 export const MoveItemModal = createPromiseDialog<params, object>(ComMoveItemModal);
+export const MoveItemChangeTable = createPromiseDialog<params, object>(ComMoveItemChangeTable);

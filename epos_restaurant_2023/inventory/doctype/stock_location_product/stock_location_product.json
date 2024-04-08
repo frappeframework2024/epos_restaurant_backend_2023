@@ -15,7 +15,9 @@
   "quantity",
   "reorder_level",
   "cost",
-  "total_cost"
+  "total_cost",
+  "has_expired_date",
+  "expired_date"
  ],
  "fields": [
   {
@@ -87,11 +89,24 @@
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Reorder level"
+  },
+  {
+   "default": "0",
+   "fetch_from": "product_code.has_expired_date_product",
+   "fieldname": "has_expired_date",
+   "fieldtype": "Check",
+   "label": "Has Expired Date"
+  },
+  {
+   "fetch_from": "product_code.expired_date",
+   "fieldname": "expired_date",
+   "fieldtype": "Date",
+   "label": "Expired Date"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-11-07 16:07:57.010582",
+ "modified": "2024-04-05 15:14:48.950129",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Location Product",

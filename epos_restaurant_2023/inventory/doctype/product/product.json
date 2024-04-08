@@ -31,6 +31,8 @@
   "is_combo_menu",
   "is_recipe",
   "disabled",
+  "has_expired_date_product",
+  "expired_date",
   "pos_setting_section",
   "allow_discount",
   "append_quantity",
@@ -620,13 +622,25 @@
    "fieldname": "is_empty_stock_warning",
    "fieldtype": "Check",
    "label": "Is Empty Stock Warning "
+  },
+  {
+   "default": "0",
+   "fieldname": "has_expired_date_product",
+   "fieldtype": "Check",
+   "label": "Has Expired Date Product"
+  },
+  {
+   "depends_on": "eval:doc.has_expired_date_product==1",
+   "fieldname": "expired_date",
+   "fieldtype": "Date",
+   "label": "Expired Date"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-04-03 11:14:38.556913",
+ "modified": "2024-04-05 15:12:20.458072",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Product",

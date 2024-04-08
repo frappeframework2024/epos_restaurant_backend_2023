@@ -77,6 +77,9 @@ export default class Sale {
 
         this.reSendSaleProductKOT = [];
 
+        //Move product item
+        this.moveItemSaleProduct = [];
+
         //tempporary store autditrail list and will submit to database after submit
         //auditrail login is store in tabComment
         this.auditTrailLogs = [];
@@ -210,7 +213,11 @@ export default class Sale {
 
 
                 //add sale product to temp resend sale product to kitchen order
-                this.reSendSaleProductKOT = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "" && ((r.printers||"[]") != "[]")  ))); 
+                this.reSendSaleProductKOT = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "" && ((r.printers || "[]") != "[]"))));
+
+                //add sale to move item
+                this.moveItemSaleProduct = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "")));
+
                 this.action = "";
                 //check if current table dont hanve any sale list data then load it
                 if (!this.tableSaleListResource?.data) {
@@ -277,6 +284,14 @@ export default class Sale {
             return Enumerable.from(this.reSendSaleProductKOT).where(`$.order_by=='${groupByKey.order_by}' && $.order_time=='${groupByKey.order_time}'`).orderByDescending("$.modified").toArray()
         } else {
             return Enumerable.from(this.reSendSaleProductKOT).orderByDescending("$.modified").toArray()
+        }
+    }
+
+    getMoveItemSaleProducts(groupByKey) {
+        if (groupByKey) {
+            return Enumerable.from(this.moveItemSaleProduct).where(`$.order_by=='${groupByKey.order_by}' && $.order_time=='${groupByKey.order_time}'`).orderByDescending("$.modified").toArray()
+        } else {
+            return Enumerable.from(this.moveItemSaleProduct).orderByDescending("$.modified").toArray()
         }
     }
 
@@ -709,7 +724,10 @@ export default class Sale {
         socket.emit("ShowOrderInCustomerDisplay", this.sale, sale_status);
 
         //add sale product to temp resend sale product to kitchen order
-        this.reSendSaleProductKOT = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "" && ((r.printers||"[]") != "[]"))));
+        this.reSendSaleProductKOT = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "" && ((r.printers || "[]") != "[]"))));
+
+        //add sale to move item
+        this.moveItemSaleProduct = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "")));
     }
 
     updateQuantity(sp, n) {
@@ -1042,9 +1060,9 @@ export default class Sale {
         this.dialogActiveState = false;
 
     }
-    async onRemoveParkItem(sp){
+    async onRemoveParkItem(sp) {
         sp.is_park = 0
-        sp.expired_date=''
+        sp.expired_date = ''
     }
     async onSaleProductPark(sp) {
         let parkQty = 0;
@@ -1062,8 +1080,8 @@ export default class Sale {
                 sp.expired_date = moment(window.current_working_date).add(this.setting.pos_setting.park_item_days_expiry, 'days').format('yyyy-MM-DD');
                 this.updateSaleProduct(sp);
                 this.updateSaleSummary();
-                
-                
+
+
             }
             else {
                 let parkSaleProduct = JSON.parse(JSON.stringify(sp));
@@ -1308,7 +1326,7 @@ export default class Sale {
         return val;
     }
 
-    onRemoveSaleProduct(sp, quantity, username) {   
+    onRemoveSaleProduct(sp, quantity, username) {
         if (sp.quantity == quantity) {
             if (sp.sale_product_status == 'Submitted') {
                 sp.show_in_list = true;
@@ -1633,34 +1651,34 @@ export default class Sale {
             sale: doc,
             product_printers: _productPrinters,
             station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
-            printers:[]
+            printers: []
         }
 
         var groupKeys = "{printer:$.printer,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port}"
-        var groupFields ="$.printer+','+$.group_item_type+','+$.ip_address+','+$.port";
-        var printers  = Enumerable.from(data.product_printers).groupBy(groupKeys,"", groupKeys, groupFields).toArray();     
-        printers.forEach((p)=>{
+        var groupFields = "$.printer+','+$.group_item_type+','+$.ip_address+','+$.port";
+        var printers = Enumerable.from(data.product_printers).groupBy(groupKeys, "", groupKeys, groupFields).toArray();
+        printers.forEach((p) => {
             var _printer = data.product_printers.filter((x) => x.printer == p.printer)
-            if(_printer.length >0 ){
+            if (_printer.length > 0) {
                 data.printers.push({
-                    "printer_name":_printer[0].printer,
-                    "group_item_type":_printer[0].group_item_type,
-                    "ip_address":_printer[0].ip_address,
-                    "port":_printer[0].port,
-                    "is_label_printer":(_printer[0].is_label_printer??false) ? 1 : 0,
-                    "usb_printing":_printer[0].usb_printing??0,
-                    "products":_printer
-                });    
-                
-                
-            }           
+                    "printer_name": _printer[0].printer,
+                    "group_item_type": _printer[0].group_item_type,
+                    "ip_address": _printer[0].ip_address,
+                    "port": _printer[0].port,
+                    "is_label_printer": (_printer[0].is_label_printer ?? false) ? 1 : 0,
+                    "usb_printing": _printer[0].usb_printing ?? 0,
+                    "products": _printer
+                });
+
+
+            }
         });
 
 
         if (localStorage.getItem("is_window") == 1) {
-            if((data.product_printers??[]).length > 0){ 
+            if ((data.product_printers ?? []).length > 0) {
                 window.chrome.webview.postMessage(JSON.stringify(data));
-            }           
+            }
         }
         else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
             if (_productPrinters.length > 0) {
@@ -1684,7 +1702,7 @@ export default class Sale {
                                 "port": p.port,
                                 "cashier_printer": p.cashier_printer,
                                 "is_label_printer": p.is_label_printer,
-                                "usb_printing":p.usb_printing,
+                                "usb_printing": p.usb_printing,
                             },
                             "products": data.product_printers.filter((x) => x.printer == p.printer_name)
                         });
@@ -1715,7 +1733,7 @@ export default class Sale {
                     is_label_printer: p.is_label_printer == 1,
                     ip_address: p.ip_address,
                     port: p.port,
-                    usb_printing:p.usb_printing,
+                    usb_printing: p.usb_printing,
                     product_code: r.product_code,
                     product_name_en: r.product_name,
                     product_name_kh: r.product_name_kh,
@@ -1727,7 +1745,7 @@ export default class Sale {
                     is_deleted: false,
                     is_free: r.is_free == 1,
                     combo_menu: r.combo_menu,
-                    combo_menu_data:r.combo_menu_data,
+                    combo_menu_data: r.combo_menu_data,
                     order_by: r.order_by,
                     creation: r.creation,
                     modified: r.modified,
@@ -1741,7 +1759,7 @@ export default class Sale {
                 })
             });
         });
-        
+
         //generate sale product print when change table
         if ((this.changeTableSaleProducts?.length || 0) > 0) {
             this.changeTableSaleProducts.forEach(x => {
@@ -1760,7 +1778,7 @@ export default class Sale {
                         is_label_printer: p.is_label_printer == 1,
                         ip_address: p.ip_address,
                         port: p.port,
-                        usb_printing:p.usb_printing,
+                        usb_printing: p.usb_printing,
                         product_code: r.product_code,
                         product_name_en: r.product_name,
                         product_name_kh: r.product_name_kh,
@@ -1772,7 +1790,7 @@ export default class Sale {
                         is_deleted: true,
                         is_free: r.is_free == 1,
                         combo_menu: r.combo_menu,
-                        combo_menu_data:r.combo_menu_data,
+                        combo_menu_data: r.combo_menu_data,
                         deleted_note: r.deleted_item_note,
                         order_by: r.order_by,
                         creation: r.creation,
@@ -1828,10 +1846,10 @@ export default class Sale {
                 flutterChannel.postMessage(JSON.stringify(data));
             }
         } else {
-            try{
-                await  call.get("epos_restaurant_2023.api.mobile_api.print_bill_to_network_printer",{"name":doc.name,"template":"Receipt En","reprint":0})
+            try {
+                await call.get("epos_restaurant_2023.api.mobile_api.print_bill_to_network_printer", { "name": doc.name, "template": "Receipt En", "reprint": 0 })
             }
-            catch(err){
+            catch (err) {
                 if (receipt.pos_receipt_file_name) {
                     socket.emit('PrintReceipt', JSON.stringify(data));
                 }

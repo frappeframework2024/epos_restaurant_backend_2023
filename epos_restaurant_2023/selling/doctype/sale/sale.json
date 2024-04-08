@@ -184,6 +184,7 @@
    "report_hide": 1
   },
   {
+   "allow_on_submit": 1,
    "default": "Today",
    "fetch_from": ".posting_date",
    "fieldname": "posting_date",
@@ -342,12 +343,14 @@
    "reqd": 1
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "working_day",
    "fieldtype": "Link",
    "label": "Working Day",
    "options": "Working Day"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "cashier_shift",
    "fieldtype": "Link",
    "label": "Cashier Shift",
@@ -1141,7 +1144,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-03-26 08:52:23.966822",
+ "modified": "2024-04-05 16:07:48.812520",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",
