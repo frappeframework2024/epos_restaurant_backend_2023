@@ -35,7 +35,7 @@
 
                 <div class="flex" style="margin-top:10px;">
                     <div class="grow">
-                        <div> {{ sp.product_name }}<v-chip class="ml-1" size="x-small" color="error" variant="outlined"
+                        <div> {{ getMenuName(sp)  }}<v-chip class="ml-1" size="x-small" color="error" variant="outlined"
                                 v-if="sp.portion">{{ sp.portion }}</v-chip> <v-chip v-if="sp.is_free" size="x-small"
                                 color="success" variant="outlined">Free</v-chip>
                         </div>
@@ -82,8 +82,9 @@
 </div>
 </template>
 <script setup>
+import {inject} from '@/plugin'
 
-
+const gv = inject('$gv')
 const props = defineProps({
     data: Object
 });
@@ -191,6 +192,23 @@ function onDeleteBillPressed(group) {
         else {
             group.deleted = true;
         }
+    }
+}
+
+
+function getMenuName(product) {
+    const mlang = localStorage.getItem('mLang');
+    let code = (gv.setting.show_item_code_in_sale_screen == 0 ? "" : `${product.name} - `);
+    if (mlang != null) {
+        if (mlang == "en") {
+            return `${code}${product.product_name}`;
+        } else {
+            return `${code}${product.product_name_kh}`;
+        }
+
+    } else {
+        localStorage.setItem('mLang', 'en');
+        return `${code}${product.product_name}`;
     }
 }
 

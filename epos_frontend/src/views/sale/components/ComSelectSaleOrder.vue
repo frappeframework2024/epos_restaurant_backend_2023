@@ -1,6 +1,5 @@
-
 <template>
-    <ComModal  :fullscreen="mobile" @onClose="onClose" width="1200px" :hideOkButton="true" :hideCloseButton="true">
+    <ComModal :fullscreen="mobile" @onClose="onClose" width="1200px" :hideOkButton="true" :hideCloseButton="true">
         <template #title>
             {{ $t('Table') }}#: {{ params.table.tbl_no }}
         </template>
@@ -15,28 +14,23 @@
             </ComPlaceholder>
         </template>
         <template #action>
-            <ComSelectSaleOrderAction
-                :isDesktop="isDesktop"
-                :is-bill-requested="isDesktop && params.data.filter(r =>r.sale_status == 'Bill Requested' ).length > 0"
-                @onClose="onClose"
-                @onNewOrder="onNewOrder"
-                @onQuickPay="onQuickPay"
-                @onPrintAllBill="onPrintAllBill"
-                @onCancelPrintBill="onCancelPrintBill"
-                />
+            <ComSelectSaleOrderAction :isDesktop="isDesktop"
+                :is-bill-requested="params.data.filter(r => r.sale_status == 'Bill Requested').length == params.data.length"
+                @onClose="onClose" @onNewOrder="onNewOrder" @onQuickPay="onQuickPay" @onPrintAllBill="onPrintAllBill"
+                @onCancelPrintBill="onCancelPrintBill" />
         </template>
     </ComModal>
-    
+
 </template>
 <script setup>
-import { inject, ref, useRouter, confirmDialog,  createDocumentResource ,createResource,smallViewSaleProductListModal,i18n,onMounted } from '@/plugin'
+import { inject, ref, useRouter, confirmDialog, createDocumentResource, createResource, smallViewSaleProductListModal, i18n, onMounted } from '@/plugin'
 import { useDisplay } from 'vuetify'
 import ComSaleListItem from './ComSaleListItem.vue';
 import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 import { createToaster } from "@meforma/vue-toaster";
 import ComSelectSaleOrderAction from './ComSelectSaleOrderAction.vue';
 
-const { t: $t } = i18n.global; 
+const { t: $t } = i18n.global;
 
 const isLoading = ref(false);
 const { mobile } = useDisplay()
@@ -73,15 +67,16 @@ async function onPrintAllBill(r) {
         return;
     }
 
-    if (await confirmDialog({ title:$t('Print all Receipts'), text:$t('msg.are you sure to print all receipts') })) {
+    if (await confirmDialog({ title: $t('Print all Receipts'), text: $t('msg.are you sure to print all receipts') })) {
         let promises = [];
         isLoading.value = true;
-        props.params.data.filter(r => r.sale_status == "Submitted").forEach(async (d) => {
+        props.params.data.filter(r => r.sale_status == "Submitted").forEach(async (d) => { 
             promises.push(PrintReceipt(d, r));
         });
-        
+
         Promise.all(promises).then(() => {
             toaster.success($t('msg.All receipts has been sent to printer successfully'));
+
             tableLayout.getSaleList();
             isLoading.value = false;
             emit('resolve', true);
@@ -90,42 +85,42 @@ async function onPrintAllBill(r) {
 
 }
 
-async function onQuickPay(isPrint=true) {
-     if (props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested" ).length == 0) {
+async function onQuickPay(isPrint = true) {
+    if (props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").length == 0) {
         toaster.warning($t("msg.There are no bills to settle"));
         return;
     }
 
     if (await confirmDialog({ title: $t("Quick Pay"), text: $t('msg.are you sure to process quick pay and close order') })) {
         isLoading.value = true;
-        
+
         props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").forEach(async (d) => {
-       
+
             payment_promises.value.push({
-                sale:d.name,
+                sale: d.name,
                 payment_type: sale.setting?.default_payment_type
-            })                 
+            })
         });
         Promise.all(payment_promises.value).then(async () => {
             await call.get('epos_restaurant_2023.api.api.on_sale_quick_pay', {
-                data:JSON.stringify(payment_promises.value)
-            }).then((res)=>{
-                props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").forEach(async (d) =>{ 
-                    const _sale = res.message.filter((r)=>r.name == d.name)
-                    if(_sale.length>0){
+                data: JSON.stringify(payment_promises.value)
+            }).then((res) => {
+                props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").forEach(async (d) => {
+                    const _sale = res.message.filter((r) => r.name == d.name)
+                    if (_sale.length > 0) {
                         d.sale_status = "Closed";
                         d.sale_status_color = sale.setting.sale_status.find(r => r.name == 'Closed').background_color;
                         const data = {
                             action: "print_receipt",
-                            print_setting:  sale.setting?.default_pos_receipt,
+                            print_setting: sale.setting?.default_pos_receipt,
                             setting: sale.setting?.pos_setting,
                             sale: _sale[0],
                             station_device_printing: (sale.setting?.device_setting?.station_device_printing) || "",
-                            station: (sale.setting?.device_setting?.name) || "",                            
+                            station: (sale.setting?.device_setting?.name) || "",
                         }
                         if (localStorage.getItem("is_window") == "1" && isPrint) {
                             window.chrome.webview.postMessage(JSON.stringify(data));
-                        } else if((localStorage.getItem("flutterWrapper")||0) == 1 && isPrint){
+                        } else if ((localStorage.getItem("flutterWrapper") || 0) == 1 && isPrint) {
                             var printer = (sale.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
                             if (printer.length <= 0) {
                                 //
@@ -140,20 +135,20 @@ async function onQuickPay(isPrint=true) {
                                 flutterChannel.postMessage(JSON.stringify(data));
                             }
                         }
-                    }                   
+                    }
                 });
 
 
                 toaster.success($t('msg.Payment successfully'));
-                tableLayout.getSaleList();            
+                tableLayout.getSaleList();
                 isLoading.value = false;
                 emit('resolve', true);
-            }).catch((r)=>{
-                toaster.error(r.message); 
+            }).catch((r) => {
+                toaster.error(r.message);
                 isLoading.value = false;
-            }); 
-           
-        })        
+            });
+
+        })
     }
 }
 async function PrintReceipt(d, r) {
@@ -165,31 +160,44 @@ async function PrintReceipt(d, r) {
         },
         async onSuccess(doc) {
             if (doc.sale_products.length > 0) {
-                const data = {
+                let data = {
                     action: "print_receipt",
                     print_setting: r,
                     setting: sale.setting?.pos_setting,
                     sale: doc,
                     station_device_printing: (sale.setting?.device_setting?.station_device_printing) || "",
-                    station: (sale.setting?.device_setting?.name) || "", 
+                    station: (sale.setting?.device_setting?.name) || "",
                 }
-                if (localStorage.getItem("is_window") == "1") {
+
+
+                if (r.pos_receipt_file_name && localStorage.getItem("is_window")) {
                     window.chrome.webview.postMessage(JSON.stringify(data));
-                }else if((localStorage.getItem("flutterWrapper")||0) == 1){
-                    var printer = (sale.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+                    console.log(data)
+                } else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
+                    var printer = (sale.setting?.device_setting?.Sstation_printers).filter((e) => e.cashier_printer == 1);
                     if (printer.length <= 0) {
-                        //
+                         
                     } else {
                         data.printer = {
                             "printer_name": printer[0].printer_name,
                             "ip_address": printer[0].ip_address,
                             "port": printer[0].port,
                             "cashier_printer": printer[0].cashier_printer,
-                            "is_label_printer": printer[0].is_label_printer
+                            "is_label_printer": printer[0].is_label_printer,
+                            "usb_printing": printer[0].usb_printing,
                         }
                         flutterChannel.postMessage(JSON.stringify(data));
                     }
-                }
+                } else {
+                   
+                        if (r.pos_receipt_file_name) {
+                            socket.emit('PrintReceipt', JSON.stringify(data));
+                        }
+                        else {
+                            this.onOpenBrowserPrint("Sale", doc.name, r.name)
+                        }
+                    
+                } 
             }
             d.sale_status = "Bill Requested";
         },
@@ -228,7 +236,7 @@ async function onCancelPrintBill() {
             Promise.all(promises).then(() => {
                 toaster.success($t('msg.Cancel print successfully'));
                 tableLayout.getSaleList();
-                isLoading.value = false;               
+                isLoading.value = false;
             });
         }
     })
@@ -236,29 +244,29 @@ async function onCancelPrintBill() {
 }
 
 
-async function submitCancelPrintBill(d){
+async function submitCancelPrintBill(d) {
     const resource = createDocumentResource({
         doctype: "Sale",
         name: d.name,
     });
-    await resource.get.fetch().then(async (v)=>{
-		await resource.setValue.submit({
-            sale_status:'Submitted'
-        }).then((data)=>{
+    await resource.get.fetch().then(async (v) => {
+        await resource.setValue.submit({
+            sale_status: 'Submitted'
+        }).then((data) => {
             d.sale_status = "Submitted";
             d.sale_status_color = sale.setting.sale_status.find(r => r.name == 'Submitted').background_color;
         });
-	})
+    })
 }
 
 async function openOrder(s) {
-    if(mobile.value){
-        await sale.LoadSaleData(s.name).then(async (v)=>{
-            localStorage.setItem('make_order_auth',JSON.stringify(props.params.make_order_auth));
-            const result =  await smallViewSaleProductListModal ({title: s.name ? s.name : 'New Sale', data: {from_table: true}});            
+    if (mobile.value) {
+        await sale.LoadSaleData(s.name).then(async (v) => {
+            localStorage.setItem('make_order_auth', JSON.stringify(props.params.make_order_auth));
+            const result = await smallViewSaleProductListModal({ title: s.name ? s.name : 'New Sale', data: { from_table: true } });
         })
-    }else{       
-        localStorage.setItem('make_order_auth',JSON.stringify(props.params.make_order_auth));
+    } else {
+        localStorage.setItem('make_order_auth', JSON.stringify(props.params.make_order_auth));
         router.push({ name: "AddSale", params: { name: s.name } });
     }
     emit('resolve', false);

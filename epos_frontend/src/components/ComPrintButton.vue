@@ -1,23 +1,22 @@
 <template>
-    <v-btn v-if="printFormatResource.loading" class="ma-2"  icon="mdi-printer" :loading="printFormatResource.loading" ></v-btn>
+    <v-btn v-if="loading" class="ma-2"  icon="mdi-printer" :loading="loading" ></v-btn>
     <template v-else>
-        <v-btn v-if="printFormatResource.data.length==1"  class="grow" variant="flat" color="info"  :loading="printFormatResource.loading" @click="onPrintReport(printFormatResource.data[0])" >
+        <v-btn v-if="printFormatResource.length==1"  class="grow" variant="flat" color="info"  :loading="loading" @click="onPrintReport(printFormatResource[0])" >
         {{ title }}
         </v-btn>
         <v-menu v-else>
-        <template v-slot:activator="{ props }">
-
-            <v-btn v-if="title==''" icon @click="$emit('onClose')" :loading="printFormatResource.loading" v-bind="props">
+        <template v-slot:activator="{ props }"> 
+            <v-btn v-if="title==''" icon @click="$emit('onClose')" :loading="loading" v-bind="props">
                 <v-icon>mdi-printer</v-icon>
             </v-btn>
-            <v-btn v-else  @click="$emit('onClose')" :loading="printFormatResource.loading" v-bind="props">
+            <v-btn v-else  @click="$emit('onClose')" :loading="loading" v-bind="props">
                 {{ title }}
             </v-btn>
 
             
         </template>
-        <v-list v-if="printFormatResource.data">
-            <v-list-item v-for="(r, index) in printFormatResource.data" :key="index"  @click="onPrintReport(r)">
+        <v-list v-if="printFormatResource">
+            <v-list-item v-for="(r, index) in printFormatResource" :key="index"  @click="onPrintReport(r)">
                 <v-list-item-title>{{ r.name }}</v-list-item-title>
             </v-list-item>
 
@@ -27,7 +26,13 @@
        
 </template>
 <script setup>
-    import {defineProps,defineEmits, createResource} from "@/plugin"
+    import {defineProps,defineEmits,onMounted,ref,inject,computed} from "@/plugin"
+    const gv = inject("$gv")
+    const frappe = inject("$frappe")
+    const call = frappe.call();
+    const loading = ref(false)
+
+
     const props = defineProps({
         doctype:String,
         title:{
@@ -35,16 +40,21 @@
             default:""
         }
     });
-    const emit = defineEmits(["onPrint"])
-
-    const printFormatResource = createResource({
-        url: "epos_restaurant_2023.api.api.get_pos_print_format",
-        params: {
-            doctype:props.doctype
-        },
-        cache:["print_format",props.doctype],
-        auto: true,
+    const printFormatResource = ref([])
+    const emit = defineEmits(["onPrint"]);
+    onMounted(() => {
+	    loading.value=true
+        call.get("epos_restaurant_2023.api.api.get_pos_print_format",{
+        business_branch:gv.business_branch,
+        doctype:props.doctype
+    }).then((result) =>{
+        
+        printFormatResource.value = result.message 
+        loading.value=false
     })
+    });
+
+   
 
     function onPrintReport(r){
          emit('onPrint', r);

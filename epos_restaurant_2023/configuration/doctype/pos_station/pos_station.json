@@ -145,7 +145,7 @@
    "label": "Show button change sale type"
   },
   {
-   "fieldname": "station_device_printing",
+   "fieldname": "",
    "fieldtype": "Data",
    "label": "Station Device Printing"
   },

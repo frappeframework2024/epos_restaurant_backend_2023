@@ -2,6 +2,7 @@
     <PageLayout :title="$t('Table Layout')" full icon="mdi-cart-outline">
  
         <template #centerCotent>
+            
             <ComTableGroupTabHeader :tableSaleColor="table_status_color"/>
         </template>
         <template #action>

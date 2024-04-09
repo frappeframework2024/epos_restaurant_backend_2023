@@ -59,7 +59,7 @@
                         <template v-slot:activator="{ props }">
                             <v-btn size="small" variant="text" :id="data.menu_product_name" v-bind="props"
                                 icon="mdi-dots-vertical">
-
+                            
                             </v-btn>
                         </template>
 

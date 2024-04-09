@@ -30,6 +30,7 @@
         <v-window-item v-else :value="g.key" v-bind:style="{ 'min-height': 'auto' }" class="mt-2 mb-4">
             <v-row>
                 <v-col cols="6" v-for="(t, index) in g.tables" :key="index">
+                
                     <div v-bind:style="{ 'height': '75px', 'background-color': t.background_color }"
                         class="text-center text-gray-100 cursor-pointer  rounded-lg" @click="onTableClick(t)">
                         <v-badge :content="t.sales?.length" color="error" style="float:right;" class="mr-2"
@@ -43,7 +44,7 @@
                                 </div>
                                 <div v-if="t.creation" class="text-xs">
                                     <v-icon icon="mdi-clock" size="x-small"></v-icon>
-                                    <Timeago :long="false" :datetime="t.creation" />
+                                    {{ getTimeDifference(t.creation) }}
                                 </div>
                             </div>
                         </div>
@@ -55,7 +56,6 @@
 </template>
 <script setup>
 import { inject, useRouter, createToaster, selectSaleOrderDialog, keyboardDialog, smallViewSaleProductListModal, i18n } from '@/plugin';
-import { Timeago } from 'vue2-timeago'
 import { useDisplay } from 'vuetify';
 
 const { t: $t } = i18n.global;
@@ -69,7 +69,7 @@ const moment = inject("$moment");
 const router = useRouter();
 const props = defineProps({
     tableStatusColor: Boolean
-});
+}); 
 
 tableLayout.tab = localStorage.getItem("__tblLayoutIndex")
 
@@ -100,6 +100,7 @@ function onTableClick(table, guest_cover) {
             }
             else if (table.sales.length == 1) {
                 if (mobile.value) {
+                    
                     await sale.LoadSaleData(table.sales[0].name).then(async (_sale) => {
                         localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth));
                         const result = await smallViewSaleProductListModal({ title: sale.sale.name ? sale.sale.name : $t('New Sale'), data: { from_table: true } });

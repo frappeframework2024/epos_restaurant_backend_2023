@@ -162,6 +162,7 @@ const workingDay = ref(null)
 
 
 const printPreviewUrl = computed(()=>{
+    console.log(serverUrl)
     return `${serverUrl}/printview?doctype=${activeReport.value.doc_type}&name=${activeReport.value.report_id}&product_category=${activeReport.value.filter.product_category}&format=${activeReport.value.preview_report}&no_letterhead=0&show_toolbar=0&letterhead=${activeReport.value.letterhead}&settings=%7B%7D&_lang=${activeReport.value.lang}`
 })
 

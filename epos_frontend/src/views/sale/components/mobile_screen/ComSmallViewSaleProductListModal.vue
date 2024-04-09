@@ -10,6 +10,7 @@
             <ComPrintBillButton doctype="Sale" :title="$t('Print Bill')" :isMobile="true" />
         </template>
         <template #content>
+            
             <template v-if="!gv.device_setting.is_order_station"> 
                 <div class="m-1">
                     <ComSelectCustomer/>
@@ -25,6 +26,7 @@
             <ComSmallSaleSummary @onClose="onGoHome()" @onSubmitAndNew="onSubmitAndNew()"/>
         </template>
     </ComModal>
+    
 </template>
 <script setup>
 import { defineProps, defineEmits, inject,useRouter,onUnmounted } from '@/plugin'
@@ -40,12 +42,13 @@ const sale = inject('$sale')
 const gv = inject('$gv')
 const emit = defineEmits(['resolve'])
 const router = useRouter();
-
+const tableLayout = inject("$tableLayout");
 function onGoHome(){
     if(onRedirectSaleType()){
         if (gv.setting.table_groups.length > 0) {
         sale.sale = {};
         router.push({ name: 'TableLayout' }).then(()=>{
+            tableLayout.saleListResource.fetch();
             emit('resolve', true)
         });
         }

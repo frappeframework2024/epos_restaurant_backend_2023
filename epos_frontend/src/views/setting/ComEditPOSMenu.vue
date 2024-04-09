@@ -6,11 +6,10 @@
         </template>
         <template #content>
         <div class="grid grid-cols-3 gap-3 w-full mt-3">
-         <div class="col-6 w-full shadow-lg  pb-4 rounded-lg
-         ">
+         <div class="col-6 w-full shadow-lg  pb-4 rounded-lg" >
             <div class="text-center text-lg bg-blue-100 rounded-t-lg
              p-3 font-bold mb-3"> Menu </div>
-            <div class="px-3 mx-3">
+            <div class="mx-3" style="max-height: 80vh;overflow: auto;">
                 <tree v-if="posMenuData" :nodes="posMenuData" :config="config" @nodeFocus="onSelectNode"></tree>
             </div>
          </div>
@@ -19,27 +18,31 @@
              p-3 font-bold mb-3"> Edit Menu </div>
             <div v-if="selectedNode">
         <div class="px-3 mx-3">
-            <div  class="grid  gap-3 w-full"> 
-      
-                    <div v-for="item in product.posMenuResource.data.filter(r=>r.parent==selectedNode.name && r.type != 'back')" :key="item.menu_product_name">
-                        <div class="flex p-1 relative w-full bg-blue-50 rounded-lg shadow-xl border cursor-move">
-                            <div class="absolute top-2 right-2 rounded-lg flex justify-center items-center bg-white text-black w-7 h-7"> {{ item.sort_order }} </div>
-                            <div  class="overflow-hidden flex justify-center items-center  w-20 bg-white h-full rounded-lg h-20">
-                                <img v-if="item.photo" class="w-auto" :src="item.photo" />
+            <div  class="grid  gap-3 w-full" style="max-height: 80vh;overflow: auto;"> 
+                <div   v-sortable>
+                <div :data-name="a.sort_order" v-for="(a, index) in product.posMenuResource.data.filter(r=>r.parent==selectedNode.name && r.type != 'back')" :key="index" class="list-group">
+    <div class="list-group-item">{{ a.name }}</div>
+                </div>
+            </div>
+                <table>
+
+                    <tr  v-for="item in product.posMenuResource.data.filter(r=>r.parent==selectedNode.name && r.type != 'back')" :key="item.menu_product_name" class="bg-blue-50 rounded-lg shadow-lg border cursor-move p-2">
+                        <td class="w-20"> <div style="border: 2px solid #b1b1b1;" class="overflow-hidden flex justify-center items-center m-2  w-20 bg-white h-full rounded-lg h-20">  
+                            <img v-if="item.photo" class="w-auto" :src="item.photo"   />
                                 <span v-else class="mt-auto mb-auto text-xl h-18 text-slate-400">
                                     {{ getShortName(item?.name) }} 
                                 </span>
                             </div>
-                            <div class="relative mt-1 ms-2 text-sm">
-                                <label>En Product Name</label><br>
-                                <input style="border: 2px solid #c8c8c8;padding: 2px ;border-radius:5px;" class="border-2" type="text" v-model="item.name_en" />
-                            </div>
-                            <div class="relative mt-1 ms-2 text-sm">
-                                <label>KH Product Name</label><br>
-                                <input style="border: 2px solid #c8c8c8;padding: 2px ;border-radius:5px;" class="border-2" type="text" v-model="item.name_kh" />
-                            </div>
-                        </div>
-                    </div>     
+                        </td>
+                        <td class="p-2">
+                            <label>En Product Name</label>
+                            <input class="border-2 input_text_style w-full" type="text" v-model="item.name_en" /></td>
+                        <td class="p-2">
+                            <label>KH Product Name</label>
+                            <input  class="border-2 input_text_style w-full" type="text" v-model="item.name_kh" /></td>
+                    </tr>
+                </table>
+    
             </div> 
         </div>
 
@@ -60,6 +63,7 @@ import { createToaster } from "@meforma/vue-toaster";
 import ComInput from '../../components/form/ComInput.vue';
 import Tree from "vue3-treeview";
 import "vue3-treeview/dist/style.css";
+
 function getShortName(longName) {  
     if (longName === null || longName === undefined) {
     return ''; 
@@ -73,6 +77,7 @@ function getShortName(longName) {
 }
 const config = ref({
   roots: ["0"],
+
 });
 
 
@@ -158,5 +163,27 @@ function onClose() {
     emit('resolve', false);
 }
 </script>
-
+<style scoped>
+.input_text_style{
+    border: 1px solid rgb(200, 200, 200);
+    padding: 5px;
+    border-radius: 6px;
+    background: white;
+}
+::v-deep .node-wrapper {
+    border-radius: 10px;
+    padding: 7px;
+    cursor: pointer;
+    }
+::v-deep .node-wrapper:focus {
+    background-color: rgb(172, 207, 254);
+}
+::v-deep .tree-node{
+    background-color: rgb(219 234 254);
+    border-radius: 10px;
+}
+::v-deep .node-wrapper:hover{
+    background-color: rgb(172, 207, 254); 
+}
+</style>
 

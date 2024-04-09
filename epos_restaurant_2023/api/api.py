@@ -587,24 +587,32 @@ def save_table_position(device_name, table_group):
                 doc.insert()
 
 @frappe.whitelist()
-def get_pos_print_format(doctype):
-    # pos_print_format = 
-    sql = """select 
-            name,
-            print_invoice_copies, 
-            print_receipt_copies,
-            pos_invoice_file_name, 
-            pos_receipt_file_name, 
-            receipt_height, 
-            receipt_width,
-            receipt_margin_top, 
-            receipt_margin_left,
-            receipt_margin_right,
-            receipt_margin_bottom  
-        from `tabPOS Print Format Setting` 
-        where print_format_doc_type='{}' 
-        and show_in_pos=1""".format(doctype)
+def get_pos_print_format(doctype,business_branch=None):    
 
+    # pos_print_format =  
+    sql = """select 
+                name,
+                title,
+                pos_receipt_template,
+                print_invoice_copies, 
+                print_receipt_copies,
+                pos_invoice_file_name, 
+                pos_receipt_file_name, 
+                receipt_height, 
+                receipt_width,
+                receipt_margin_top, 
+                receipt_margin_left,
+                receipt_margin_right,
+                receipt_margin_bottom ,
+                show_in_pos_closed_sale ,
+                business_branch,
+                report_options
+            from `tabPOS Print Format Setting` 
+            where print_format_doc_type='{}'
+            and show_in_pos = 1 """.format(doctype)
+    if business_branch:
+        sql += " and business_branch = '{}'".format(business_branch)
+    
     data = frappe.db.sql(sql, as_dict=True)    
     if data:
        return data

@@ -67,6 +67,7 @@ async function onSubmit() {
 
     await sale.onSubmit().then((doc) => {
       if (doc) {
+        
         emit('onClose')
       }else{
         sale.action = action;
