@@ -3,16 +3,6 @@
 
 frappe.ui.form.on("Sale", {
 	onload(frm) {
-		for (const key in frm.fields_dict) {
-			if (["Currency", "Data", "Int", "Link", "Date", "Datetime", "Float", "Select"].includes(frm.fields_dict[key].df.fieldtype)) {
-				frm.fields_dict[key].$wrapper.addClass('custom_control');
-			}
-
-		}
-		// frm.fields_dict.forEach(f => {
-
-		// 	f.$wrapper.addClass('custom_control');
-		// });
 
 		frm.set_query("tip_account_code", function () {
 			return {
@@ -134,6 +124,13 @@ frappe.ui.form.on("Sale", {
 		set_query(frm, "stock_location", [["Stock Location", "business_branch", "=", frm.doc.business_branch]]);
 		set_query(frm, "outlet", [["Outlet", "business_branch", "=", frm.doc.business_branch]]);
 
+		for (const key in frm.fields_dict) {
+			if (["Currency", "Data", "Int", "Link", "Date", "Datetime", "Float", "Select"].includes(frm.fields_dict[key].df.fieldtype)) {
+				frm.fields_dict[key].$wrapper.addClass('custom_control');
+			}
+
+		}
+		
 	},
 	business_branch(frm) {
 		set_query(frm, "stock_location", [["Stock Location", "business_branch", "=", frm.doc.business_branch]]);

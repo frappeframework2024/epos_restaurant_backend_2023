@@ -1295,3 +1295,10 @@ def update_language():
     frappe.db.commit()
     
                 
+
+# get pos profile
+@frappe.whitelist()
+def get_pos_profile(pos_profile=""):
+    profile = [frappe.get_doc('POS Profile', item.name).as_dict() for item in frappe.get_all('POS Profile')]
+    
+    return profile

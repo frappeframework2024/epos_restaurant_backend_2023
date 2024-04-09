@@ -318,7 +318,7 @@ def get_html_and_style(
 	except frappe.TemplateNotFoundError:
 		frappe.clear_last_message()
 		html = None
-
+		
 	return {"html": html, "style": get_print_style(style=style, print_format=print_format)}
 
 

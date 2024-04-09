@@ -23,6 +23,8 @@
   "column_break_7",
   "business_branch",
   "stock_location",
+  "has_expired_date",
+  "expired_date",
   "section_break_13",
   "beginning_stock_value",
   "quantity_on_hand",
@@ -224,11 +226,22 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Portion"
+  },
+  {
+   "default": "0",
+   "fieldname": "has_expired_date",
+   "fieldtype": "Check",
+   "label": "Has Expired Date Product"
+  },
+  {
+   "fieldname": "expired_date",
+   "fieldtype": "Date",
+   "label": "Expired Date"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-28 17:27:00.126592",
+ "modified": "2024-04-09 11:59:41.941294",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Inventory Transaction",

@@ -92,13 +92,13 @@
   },
   {
    "default": "0",
-   "fetch_from": "product_code.has_expired_date_product",
+   "fetch_from": ".",
    "fieldname": "has_expired_date",
    "fieldtype": "Check",
    "label": "Has Expired Date"
   },
   {
-   "fetch_from": "product_code.expired_date",
+   "fetch_from": ".",
    "fieldname": "expired_date",
    "fieldtype": "Date",
    "label": "Expired Date"
@@ -106,7 +106,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-04-05 15:14:48.950129",
+ "modified": "2024-04-09 12:15:59.528559",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Location Product",

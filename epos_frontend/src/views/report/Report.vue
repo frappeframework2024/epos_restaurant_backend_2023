@@ -4,7 +4,6 @@
             <v-btn v-if="showPrintPopUp" @click="onPrintWithChoosePrinter()"> {{$t("Choose Printer") }}</v-btn>
             <v-btn  @click="onExport()">{{ $t("PDF") }}</v-btn>
             <v-btn icon="mdi-printer" @click="onPrint()"></v-btn>
-            <!-- <v-btn icon="mdi-printer-eye" @click="NetworkPrinter()"></v-btn> -->
         </template>
     <v-row>
         <v-col md="3">
@@ -115,7 +114,6 @@
                     </div>
                 </template>
                 <v-card-text style="height: calc(100vh - 230px)">
-                    {{ printPreviewUrl }}
                     <iframe v-if="(activeReport.doc_type !='')" id="report-view" height="100%" width="100%" :src="printPreviewUrl"></iframe>
                 </v-card-text>
             </v-card>
@@ -163,12 +161,12 @@ const workingDay = ref(null)
 
 const printPreviewUrl = computed(()=>{
     console.log(serverUrl)
-    return `${serverUrl}/printview?doctype=${activeReport.value.doc_type}&name=${activeReport.value.report_id}&product_category=${activeReport.value.filter.product_category}&format=${activeReport.value.preview_report}&no_letterhead=0&show_toolbar=0&letterhead=${activeReport.value.letterhead}&settings=%7B%7D&_lang=${activeReport.value.lang}`
+    return `${serverUrl}/printview?doctype=${activeReport.value.doc_type}&name=${activeReport.value.report_id}&product_category=${activeReport.value.filter.product_category}&pos_profile=${pos_profile}&outlet=${gv.setting.outlet}&format=${activeReport.value.preview_report}&no_letterhead=0&show_toolbar=0&letterhead=${activeReport.value.letterhead}&settings=%7B%7D&_lang=${activeReport.value.lang}`
 })
 
 
 const printUrl = computed(()=>{
-    return `${serverUrl}/printview?doctype=${activeReport.value.doc_type}&name=${activeReport.value.report_id}&product_category=${activeReport.value.filter.product_category}&format=${activeReport.value.print_report_name}&no_letterhead=0&show_toolbar=0&letterhead=${activeReport.value.letterhead}&settings=%7B%7D&_lang=${activeReport.value.lang}`
+    return `${serverUrl}/printview?doctype=${activeReport.value.doc_type}&name=${activeReport.value.report_id}&product_category=${activeReport.value.filter.product_category}&pos_profile=${pos_profile}&outlet=${gv.setting.outlet}&format=${activeReport.value.print_report_name}&no_letterhead=0&show_toolbar=0&letterhead=${activeReport.value.letterhead}&settings=%7B%7D&_lang=${activeReport.value.lang}`
 })
 
 const lang = gv.setting.lang;
@@ -332,10 +330,7 @@ function onExport(){
     window.close();
 }
 
-async function NetworkPrinter(){
-    await  call.get("epos_restaurant_2023.api.printing.Direct_print_Network")
-}
-
+ 
 function onPrint(){ 
     if ((localStorage.getItem("flutterWrapper") || 0) == 1) { 
         var printers = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);

@@ -1,8 +1,8 @@
 <template>
     <ComLoadingDialog v-if="isLoading" />
     <div class="two-col-list">
-        <v-list-item v-if="device_setting.show_reference_button_in_more_menu == 1"
-            prepend-icon="mdi-format-list-bulleted" :title="($t('Reference') + ' #')" @click="onReferenceNumber()" />
+        <v-list-item v-if="device_setting.show_reference_button_in_more_menu == 1" prepend-icon="mdi-format-list-bulleted"
+            :title="($t('Reference') + ' #')" @click="onReferenceNumber()" />
         <v-list-item prepend-icon="mdi-eye-outline" :title="$t('View Bill')" @click="onViewBill()"
             v-if="sale.sale.sale_products.length > 0" />
 
@@ -36,8 +36,8 @@
             @click="onMoveItem()" />
 
         <v-list-item v-if="setting.table_groups && setting.table_groups.length > 0 && setting.use_guest_cover == 1"
-            prepend-icon="mdi-account-multiple-outline"
-            :title="`${$t('Change Guest Cover')} (${sale.sale.guest_cover})`" @click="onUpdateGuestCover()" />
+            prepend-icon="mdi-account-multiple-outline" :title="`${$t('Change Guest Cover')} (${sale.sale.guest_cover})`"
+            @click="onUpdateGuestCover()" />
 
         <v-list-item v-if="gv.device_setting.show_button_change_sale_type == 1" prepend-icon="mdi-cart"
             :title="$t('Change Sale Type')" @click="onChangeSaleType()" />
@@ -60,17 +60,16 @@
             <v-list-item-title>{{ $t('Redeem Item') }} {{ showSplitBill }}</v-list-item-title>
         </v-list-item>
 
-        <v-list-item v-if="sale.sale.sale_products?.filter(r => r.name == undefined).length > 0"
-            @click="onClearOrder()">
+        <v-list-item v-if="sale.sale.sale_products?.filter(r => r.name == undefined).length > 0" @click="onClearOrder()">
             <template #prepend>
                 <v-icon color="error" icon="mdi-autorenew"></v-icon>
             </template>
             <v-list-item-title class="text-orange-700">{{ $t('Cancel Order') }}</v-list-item-title>
         </v-list-item>
-        
-        <v-list-item v-if="(device_setting?.show_edit_menu_button || 0)==1" @click="onEditPOSMenu()">
+
+        <v-list-item v-if="(device_setting?.show_edit_menu_button || 0) == 1" @click="onEditPOSMenu()">
             <template #prepend>
-                <v-icon   icon="mdi-file-edit"></v-icon>
+                <v-icon icon="mdi-file-edit"></v-icon>
             </template>
             <v-list-item-title>{{ $t('Edit Menu Item') }}</v-list-item-title>
         </v-list-item>
@@ -88,11 +87,11 @@
 import {
     computed, RedeemParkItemDialog,
     useRouter, onMounted, splitBillDialog, addCommissionDialog, ComSaleReferenceNumberDialog, viewBillModelModel, ref, inject, confirm, createResource,
-    keyboardDialog, changeTableDialog, 
+    keyboardDialog, changeTableDialog,
     changePriceRuleDialog,
     changeSaleTypeModalDialog,
-    createToaster, 
-    changePOSMenuDialog, 
+    createToaster,
+    changePOSMenuDialog,
     i18n, ResendDialog,
     MoveItemModal,
     EditPOSMenuDialog
@@ -183,7 +182,7 @@ async function onChangeTable() {
             return;
         }
 
-        const result = await changeTableDialog({});
+        const result = await changeTableDialog({ pos_profile: localStorage.getItem('pos_profile') });
         if (result) {
             if (result.action == "reload_sale") {
                 await sale.LoadSaleData(result.name);
@@ -473,7 +472,7 @@ async function onMoveItem() {
 async function onEditPOSMenu() {
 
 
-            const res = await EditPOSMenuDialog({ title: $t('Edit Menu Item') });
+    const res = await EditPOSMenuDialog({ title: $t('Edit Menu Item') });
 }
 
 </script>

@@ -4,7 +4,7 @@ import json
 def add_to_inventory_transaction(data):
  
     doc = frappe.get_doc(data)
-    # frappe.throw(str(json.dumps(data)))
+    
     doc.insert()
     
 

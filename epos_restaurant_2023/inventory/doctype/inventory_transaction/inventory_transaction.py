@@ -66,8 +66,12 @@ def add_stock_location_product(self):
 			"total_cost" :  cost * (self.balance or 0)
 		}
 	)
-
-	doc.insert()
+ 	# when purchase order if product have expire date then we update expire date to stock location product
+	# when add product and put opening balance and product has expire date
+	if self.has_expired_date:
+		doc.expired_date = self.expired_date
+		doc.has_expired_date = self.has_expired_date
+	doc.insert(ignore_permissions=True, ignore_links=True)
 
 def update_stock_location_product(self):
 	doc = frappe.get_doc("Stock Location Product",self.stock_location_product_name )
@@ -83,5 +87,10 @@ def update_stock_location_product(self):
 
 	doc.quantity = self.balance
 	doc.total_cost =  doc.quantity * doc.cost
-	
-	doc.save()
+	# when purchase order if product have expire date then we update expire date to stock location product
+	# when add product and put opening balance and product has expire date
+	if self.has_expired_date:
+		doc.expired_date = self.expired_date
+		doc.has_expired_date = self.has_expired_date
+		
+	doc.save(ignore_permissions=True)

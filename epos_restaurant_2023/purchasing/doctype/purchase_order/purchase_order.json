@@ -10,12 +10,12 @@
  "field_order": [
   "naming_series",
   "posting_date",
-  "column_break_2",
   "referance",
-  "section_break_6",
+  "column_break_2",
   "vendor",
+  "vendor_name",
   "phone_number",
-  "column_break_7",
+  "column_break_dclp",
   "stock_location",
   "business_branch",
   "amended_from",
@@ -26,6 +26,11 @@
   "append_quantity",
   "section_break_13",
   "purchase_order_products",
+  "section_break_ctql",
+  "column_break_fgou",
+  "note",
+  "column_break_ekeq",
+  "html_summary",
   "section_break_7",
   "total_quantity",
   "discount_type",
@@ -42,8 +47,6 @@
   "total_paid",
   "balance",
   "attach_receipt",
-  "vendor_name",
-  "vendor_number_phone",
   "vendor_group"
  ],
  "fields": [
@@ -118,6 +121,7 @@
    "fieldname": "total_paid",
    "fieldtype": "Currency",
    "label": "Total Paid",
+   "no_copy": 1,
    "read_only": 1
   },
   {
@@ -125,12 +129,14 @@
    "fieldname": "balance",
    "fieldtype": "Currency",
    "label": "Balance",
+   "no_copy": 1,
    "options": "Company:company:default_currency",
    "read_only": 1
   },
   {
    "fieldname": "section_break_7",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "hidden": 1
   },
   {
    "fieldname": "referance",
@@ -196,14 +202,6 @@
    "label": "Phone Number"
   },
   {
-   "fieldname": "column_break_7",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "section_break_6",
-   "fieldtype": "Section Break"
-  },
-  {
    "fieldname": "purchase_order_products",
    "fieldtype": "Table",
    "label": "Purchase Order Products",
@@ -214,15 +212,7 @@
    "fetch_from": "vendor.vendor_name",
    "fieldname": "vendor_name",
    "fieldtype": "Data",
-   "hidden": 1,
    "label": "Vendor Name"
-  },
-  {
-   "fetch_from": "vendor.phone_number",
-   "fieldname": "vendor_number_phone",
-   "fieldtype": "Data",
-   "hidden": 1,
-   "label": "Vendor Number Phone"
   },
   {
    "default": "0",
@@ -278,6 +268,32 @@
    "fieldtype": "Float",
    "label": "Exchange Rate",
    "read_only": 1
+  },
+  {
+   "fieldname": "column_break_dclp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_ctql",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_fgou",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_ekeq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "html_summary",
+   "fieldtype": "HTML"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
   }
  ],
  "image_field": "attach_receipt",
@@ -290,7 +306,7 @@
    "link_fieldname": "purchase_order"
   }
  ],
- "modified": "2023-12-07 15:13:48.555390",
+ "modified": "2024-04-09 16:12:53.345387",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order",

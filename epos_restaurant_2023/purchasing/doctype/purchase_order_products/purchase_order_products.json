@@ -37,7 +37,7 @@
   "product_category",
   "product_group",
   "select_variant",
-  "has_expired_date_product",
+  "has_expired_date",
   "expired_date"
  ],
  "fields": [
@@ -242,21 +242,23 @@
    "read_only": 1
   },
   {
-   "default": "0",
-   "fieldname": "has_expired_date_product",
-   "fieldtype": "Check",
-   "label": "Has Expired Date Product"
-  },
-  {
    "fieldname": "expired_date",
    "fieldtype": "Date",
    "label": "Expired Date"
+  },
+  {
+   "default": "0",
+   "fetch_from": "product_code.has_expired_date",
+   "fieldname": "has_expired_date",
+   "fieldtype": "Check",
+   "label": "Has Expired Date",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-04-05 15:16:50.053505",
+ "modified": "2024-04-09 15:53:21.703451",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order Products",

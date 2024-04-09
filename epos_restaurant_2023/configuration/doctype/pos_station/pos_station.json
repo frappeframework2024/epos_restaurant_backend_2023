@@ -42,6 +42,7 @@
   "show_wifi_button",
   "show_move_item_button",
   "show_edit_menu_button",
+  "allow_switch_pos_profile",
   "printers_tab",
   "station_printers"
  ],
@@ -143,11 +144,6 @@
    "fieldname": "show_button_change_sale_type",
    "fieldtype": "Check",
    "label": "Show button change sale type"
-  },
-  {
-   "fieldname": "",
-   "fieldtype": "Data",
-   "label": "Station Device Printing"
   },
   {
    "default": "0",
@@ -260,11 +256,22 @@
    "fieldname": "show_edit_menu_button",
    "fieldtype": "Check",
    "label": "Show Edit Menu Button"
+  },
+  {
+   "fieldname": "station_device_printing",
+   "fieldtype": "Data",
+   "label": "Station Device Printing"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_switch_pos_profile",
+   "fieldtype": "Check",
+   "label": "Allow Switch POS Profile"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-04-06 10:48:50.816958",
+ "modified": "2024-04-09 14:28:12.787237",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

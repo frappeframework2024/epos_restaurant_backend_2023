@@ -146,11 +146,12 @@ class Product(Document):
 						"doctype":"Inventory Transaction",
 						"transaction_date":datetime.now(),
 						"product_code":self.name,
-
 						"stock_location":self.stock_location,
 						"in_quantity":self.opening_quantity,
 						"price":self.cost,
-						"note":"Opening Quantity"
+						"note":"Opening Quantity",
+						"has_expired_date":self.has_expired_date,
+						"expired_date":self.expired_date
 					}
 				)
 
@@ -193,12 +194,14 @@ class Product(Document):
 					filters={
 						'product_code': self.name
 					},
-					fields=['stock_location', 'quantity','unit'],
+					fields=['name','stock_location', 'quantity','unit',"expired_date", "has_expired_date"],
 				)
 
 		if stock_data:
 			for d in stock_data:
-				stock_information.append({"stock_location": d.stock_location, "quantity":d.quantity,"unit":d.unit})
+				expired_date = "" if not d.has_expired_date  or not d.expired_date else frappe.format(d.expired_date,{"fieldtype":"Date"})
+				stock_information.append({"name":d.name, "stock_location": d.stock_location, "quantity":d.quantity,"unit":d.unit,"expired_date":expired_date})
+	
 
 		return {
 			"total_annual_sale":get_product_annual_sale(self),
@@ -573,3 +576,14 @@ def clear_all_menus_from_product(products):
 		product.save()
 
 	frappe.db.commit()
+
+
+@frappe.whitelist()
+def update_expire_date(data):
+	data = json.loads(data)
+	for d in data["stock_location_product"]:
+		if d["new_expired_date"]:
+			frappe.db.set_value("Stock Location Product",d["name"], "expired_date", d["new_expired_date"])
+	frappe.db.commit()
+	frappe.msgprint("Update expire date successfully")
+ 

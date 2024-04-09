@@ -1,13 +1,22 @@
 <template>
-    <v-dialog :scrollable="false" v-model="open" :fullscreen="mobile"
-        :style="mobile ? '' : 'width: 100%;max-width:800px'">
+    <v-dialog :scrollable="false" v-model="open" :fullscreen="mobile" :style="mobile ? '' : 'width: 100%;max-width:800px'">
         <v-card>
             <ComToolbar @onClose="onClose">
                 <template #title>
-                    {{ `${(params._is_reservation || false) ? $t('Assign Table') : $t('Change or Merge Table')}` }}
+                    <div class="flex justify-between align-center">
+                        <div>
+                            {{ `${(params._is_reservation || false) ? $t('Assign Table') : $t('Change or Merge Table')}` }}
+                            <br /><span style="font-size:14px;">{{ params.pos_profile }}</span>
+                        </div>
+                        <div v-if="gv.device_setting.allow_switch_pos_profile == 1">
+                            <v-select prepend-inner-icon="mdi-desktop-classic" density="compact" item-title="name"
+                                v-model="_pos_profile" :items="switch_pos_station" item-value="name" hide-no-data
+                                hide-details variant="solo" class="mx-1"></v-select>
+                        </div>
+                    </div>
                 </template>
             </ComToolbar>
-            <div class="overflow-auto p-3 h-full">
+            <div class="overflow-auto p-3 h-full" v-if="params.pos_profile == _pos_profile">
                 <v-tabs align-tabs="center" v-if="tableLayout.table_groups && tableLayout.table_groups.length > 1"
                     v-model="tableLayout.tab">
                     <v-tab v-for="g in tableLayout.table_groups" :key="g.key" :value="g.key">
@@ -53,23 +62,38 @@
                     </v-window>
                 </template>
             </div>
+            <div v-else>
+                dddddd
+            </div>
         </v-card>
     </v-dialog>
 </template>
 
 <script setup>
-import { ref, defineEmits, inject, changeTableSelectSaleOrderDialog, i18n } from '@/plugin'
+import { ref, defineEmits, inject, changeTableSelectSaleOrderDialog, i18n, onMounted } from '@/plugin'
 import ComToolbar from '@/components/ComToolbar.vue';
 import { createToaster } from '@meforma/vue-toaster';
 import ComInput from '../../../components/form/ComInput.vue';
 import { useDisplay } from 'vuetify';
 const { t: $t } = i18n.global;
+const frappe = inject('$frappe');
+const db = frappe.db();
+
+const call = frappe.call();
+
+const gv = inject('$gv')
 
 const { mobile } = useDisplay()
+
+const switch_pos_station = ref([])
 
 const tableLayout = inject("$tableLayout");
 const sale = inject("$sale");
 const toaster = createToaster({ position: "top-right" })
+
+const _pos_profile = ref('')
+
+const loading = ref(false)
 
 const props = defineProps({
     params: {
@@ -190,5 +214,20 @@ function generateProductPrinterChangeTable(sale_products, old_sale, old_table) {
     }
 }
 
+onMounted(() => {
+    _pos_profile.value = props.params.pos_profile
+    loading.value = false
+    call
+        .get("epos_restaurant_2023.api.api.get_pos_profile", {})
+        .then((result) => {
+            loading.value = false
+            switch_pos_station.value = result.message.filter((r) => r.is_edoor_profile != 1)
+        })
+        .catch((error) => {
+            loading.value = false
+        });
+
+
+})
 
 </script>

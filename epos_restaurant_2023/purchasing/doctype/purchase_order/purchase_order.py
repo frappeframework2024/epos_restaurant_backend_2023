@@ -37,7 +37,7 @@ class PurchaseOrder(Document):
 		# 		frappe.throw("Total amount is 0")
 
 	def on_submit(self):
-		#update_inventory_on_submit(self)
+		# update_inventory_on_submit(self)
 		frappe.enqueue("epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.update_inventory_on_submit", queue='short', self=self)
 	
 	def on_cancel(self):
@@ -71,6 +71,8 @@ def update_inventory_on_submit(self):
 				"uom_conversion":uom_conversion,
 				"price":calculate_average_cost(p.product_code,self.stock_location,(p.quantity / uom_conversion),p.cost),
 				'note': 'New purchase order submitted.',
+				"has_expired_date":p.has_expired_date,
+				"expired_date":p.expired_date,
     			'action': 'Submit'
 			})
 

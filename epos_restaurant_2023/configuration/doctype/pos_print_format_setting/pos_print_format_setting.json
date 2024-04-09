@@ -31,6 +31,7 @@
   "show_in_pos",
   "show_in_pos_report",
   "show_in_pos_closed_sale",
+  "disabled",
   "other_tab",
   "report_options"
  ],
@@ -183,11 +184,17 @@
    "in_list_view": 1,
    "label": "Business Branch",
    "options": "Business Branch"
+  },
+  {
+   "default": "0",
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "label": "Disabled"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-03-26 10:44:52.698676",
+ "modified": "2024-04-09 15:32:28.883325",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Print Format Setting",

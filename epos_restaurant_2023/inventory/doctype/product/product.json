@@ -30,7 +30,7 @@
   "column_break_xtet",
   "is_combo_menu",
   "is_recipe",
-  "has_expired_date_product",
+  "has_expired_date",
   "expired_date",
   "sort_order",
   "disabled",
@@ -625,13 +625,7 @@
    "label": "Is Empty Stock Warning "
   },
   {
-   "default": "0",
-   "fieldname": "has_expired_date_product",
-   "fieldtype": "Check",
-   "label": "Has Expired Date Product"
-  },
-  {
-   "depends_on": "eval:doc.has_expired_date_product==1",
+   "depends_on": "eval:doc.has_expired_date==1 && doc.__islocal",
    "fieldname": "expired_date",
    "fieldtype": "Date",
    "label": "Expired Date"
@@ -639,13 +633,20 @@
   {
    "fieldname": "column_break_xtet",
    "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.is_inventory_product==1",
+   "fieldname": "has_expired_date",
+   "fieldtype": "Check",
+   "label": "Has Expired Date"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-04-09 08:42:34.979449",
+ "modified": "2024-04-09 12:24:19.485749",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Product",
