@@ -40,12 +40,15 @@ async function onPaymentTypeClick(pt) {
         if(result == false){
             return
         }
-        room = result.room;
-        folio = result.folio;
-        folio_transaction_number =result.folio;
-        folio_transaction_type="Reservation Folio"
-        sale.sale.customer = result.guest
-        sale.sale.customer_name = result.guest_name
+        if (pt.use_room_offline == 0){
+            room = result.room;
+            folio = result.folio;
+            folio_transaction_number =result.folio;
+            folio_transaction_type="Reservation Folio"
+            sale.sale.customer = result.guest
+            sale.sale.customer_name = result.guest_name
+        }
+        
     }
     else if(pt.payment_type_group == "City Ledger"){
         const result = await payToCityLedgerDialog({

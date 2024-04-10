@@ -19,11 +19,7 @@
             <div v-if="selectedNode">
         <div class="px-3 mx-3">
             <div  class="grid  gap-3 w-full" style="max-height: 80vh;overflow: auto;"> 
-            <div v-sortable>
-                <div :data-name="a.sort_order" v-for="(a, index) in product.posMenuResource.data.filter(r=>r.parent==selectedNode.name && r.type != 'back')" :key="index" class="list-group">
-                    <div class="list-group-item">{{ a.name }}</div>
-                </div>
-            </div>
+
                 <table>
 
                     <tr  v-for="item in product.posMenuResource.data.filter(r=>r.parent==selectedNode.name && r.type != 'back')" :key="item.menu_product_name" class="bg-blue-50 rounded-lg shadow-lg border cursor-move p-2">

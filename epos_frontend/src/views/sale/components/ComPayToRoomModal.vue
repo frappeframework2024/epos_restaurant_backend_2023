@@ -217,7 +217,7 @@ function onConfirm(){
     }else{
         room =folio_data.value.filter((r)=>r.selected||false)
     }
-  
+    
     if(room.length <=0){
         toaster.warning($t("msg.Please select a room to continue"))
         return
@@ -230,6 +230,7 @@ function onConfirm(){
         });
     }
     else{
+        
          emit("resolve", {
             "room":r.rooms,
             "folio":r.name,
