@@ -83,7 +83,9 @@ def update_to_stock(cancel = False, self=None, p=None):
 		"uom_conversion":uom_conversion,
 		"price":p.base_cost,
 		'note': "New stock transfer from {} to {} submitted.".format(self.from_stock_location,self.to_stock_location),
-		"action": "Cancel" if cancel else "Submit"
+		"action": "Cancel" if cancel else "Submit",
+		"has_expired_date":p.has_expired_date,
+		"expired_date":p.expired_date
 	})
 def update_from_stock(cancel = False, self=None, p=None):
 	uom_conversion = get_uom_conversion(p.base_unit, p.unit)

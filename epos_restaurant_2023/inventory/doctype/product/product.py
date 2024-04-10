@@ -263,7 +263,7 @@ class Product(Document):
 
 
 @frappe.whitelist()
-def get_product(barcode,business_branch=None,price_rule=None, unit=None,portion = None,allow_sale=None,allow_purchase=None):
+def get_product(barcode,business_branch=None,stock_location = None,price_rule=None, unit=None,portion = None,allow_sale=None,allow_purchase=None):
 	try:
 		frappe.flags.mute_messages = True
 		p = frappe.get_doc("Product",{"product_code":barcode,"disabled":0},["*"])
@@ -285,7 +285,7 @@ def get_product(barcode,business_branch=None,price_rule=None, unit=None,portion 
 			if p.tax_rule:
 				tax_rule = frappe.get_doc("Tax Rule", p.tax_rule, cache = True)
 			
-			return {
+			data = {
 				"status":0,#success
 				"product_code": p.product_code,
 				"product_name_en":p.product_name_en,
@@ -297,8 +297,14 @@ def get_product(barcode,business_branch=None,price_rule=None, unit=None,portion 
 				"allow_change_price":p.allow_change_price,
 				"is_inventory_product":p.is_inventory_product,
 				"tax_rule":p.tax_rule,
-				"tax_rule_doc":tax_rule
+				"tax_rule_doc":tax_rule,
+				"has_expired_date":p.has_expired_date
+
 			}
+			if p.has_expired_date and p.is_inventory_product and stock_location:
+				data["expired_date"] = get_product_expired_date(p.name,stock_location)
+				
+			return data
 		else:
 			return {
 				"status":404,
@@ -312,7 +318,12 @@ def get_product(barcode,business_branch=None,price_rule=None, unit=None,portion 
 		
 	finally:
 		frappe.flags.mute_messages = False
-  
+
+def get_product_expired_date(product_code, stock_location):
+    sql = ("select min(expired_date) as expired_date from `tabStock Location Product` where product_code=%(product_code)s and stock_location=%(stock_location)s")
+    data = frappe.db.sql(sql, {"stock_location":stock_location, "product_code":product_code},as_dict=1)
+    return data[0]["expired_date"]
+    
 @frappe.whitelist()
 def get_product_price(product=None,barcode=None,unit=None, business_branch=None,price_rule=None,portion=None):
 	uom_conversion = 1
@@ -349,6 +360,13 @@ def get_product_annual_sale(self):
 @frappe.whitelist()
 def get_product_cost_by_stock(product_code=None, stock_location=None):
 	result = frappe.db.sql("select cost from `tabStock Location Product` where stock_location='{}' and product_code='{}'".format(stock_location, product_code), as_dict=1)
+	if result:
+		return result[0]
+	return {'cost':0}
+
+@frappe.whitelist()
+def get_stock_location_product_info(product_code=None, stock_location=None):
+	result = frappe.db.sql("select cost,expired_date from `tabStock Location Product` where stock_location='{}' and product_code='{}'".format(stock_location, product_code), as_dict=1)
 	if result:
 		return result[0]
 	return {'cost':0}

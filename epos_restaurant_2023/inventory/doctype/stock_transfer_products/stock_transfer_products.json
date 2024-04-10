@@ -78,7 +78,8 @@
    "fetch_from": "product_code.is_inventory_product",
    "fieldname": "is_inventory_product",
    "fieldtype": "Check",
-   "label": "Is Inventory Product"
+   "label": "Is Inventory Product",
+   "read_only": 1
   },
   {
    "fetch_from": "product_code.product_category",
@@ -106,7 +107,8 @@
    "fetch_from": "product_code.has_expired_date",
    "fieldname": "has_expired_date",
    "fieldtype": "Check",
-   "label": "Has Expired Date"
+   "label": "Has Expired Date",
+   "read_only": 1
   },
   {
    "fieldname": "expired_date",
@@ -118,7 +120,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-04-10 12:15:16.597159",
+ "modified": "2024-04-10 12:49:09.662433",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Transfer Products",

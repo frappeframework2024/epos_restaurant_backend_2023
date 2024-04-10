@@ -17,8 +17,10 @@ frappe.ui.form.on("Stock Transfer", {
 					args: {
 						barcode:frm.doc.scan_barcode,
 						business_branch:frm.doc.business_branch,
+						stock_location:frm.doc.from_stock_location
 					},
 					callback: function(r){
+						console.log(r)
 						if(r.message!=undefined){
 							if(r.message.status ==0){ 
 								let row_exist = check_row_exist(frm,barcode);
@@ -32,9 +34,7 @@ frappe.ui.form.on("Stock Transfer", {
 								frappe.show_alert({message:r.message.message, indicator:"orange"});
 							}
 						}
-						else {
-							alert("Fail")
-						}
+						 
 					},
 					error: function(r) {
 						alert("load data fail");
@@ -70,13 +70,7 @@ frappe.ui.form.on("Stock Transfer", {
 frappe.ui.form.on('Stock Transfer Products', {
 	product_code(frm,cdt, cdn) {
 		let doc=   locals[cdt][cdn];
-        // frm.set_query("unit","stock_transfer_products", function() {
-        //     return {
-        //         filters: [
-        //             ["Unit Of Measurement","unit_category", "=", doc.unit_category]
-        //         ]
-        //     }
-        // });
+        
 		product_code(frm,cdt,cdn);
         frm.refresh_field('stock_transfer_products');
 	},
@@ -165,6 +159,11 @@ function add_product_to_po_product(frm,p){
 		doc.unit = p.unit;
 		doc.product_name = p.product_name_en;
         doc.is_inventory_product = p.is_inventory_product;
+        doc.has_expired_date = p.has_expired_date;
+		if (p.expired_date){
+			doc.expired_date = p.expired_date
+		}
+		
 		product_by_scan(frm,doc)
 	} 
 }
@@ -175,8 +174,11 @@ async function update_stock_from(frm){
 		
 		if(d.doc.product_code!=undefined)
 		{
-			get_product_cost(frm,d.doc).then((v)=>{
-				d.doc.cost = v;
+			get_stock_location_product_infor(frm,d.doc).then((v)=>{
+				d.doc.cost = v.cost;
+				if (v.expired_date){
+					d.doc.expired_date = v.expired_date
+				}
 				d.doc.amount = d.doc.cost * d.doc.quantity;
 				frm.refresh_field('stock_transfer_products');
 				updateSumTotal(frm);
@@ -189,32 +191,39 @@ async function update_stock_from(frm){
 
 function product_code(frm,cdt,cdn){
 	let doc = locals[cdt][cdn]
-	get_product_cost(frm,doc).then((v)=>{
-		doc.cost = v;
+	get_stock_location_product_infor(frm,doc).then((v)=>{
+		doc.cost = v.cost;
+		if (v.expired_date){
+			doc.expired_date = v.expired_date
+		}
+		
 		
 		frm.refresh_field('stock_transfer_products');
 		update_stock_transfer_products_amount(frm,cdt,cdn)
 	});
 }
 function product_by_scan(frm,doc){
-	get_product_cost(frm,doc).then((v)=>{
-		doc.cost = v;
+	get_stock_location_product_infor(frm,doc).then((v)=>{
+		doc.cost = v.cost;
+		if (v.expired_date){
+			doc.expired_date = v.expired_date
+		}
 		doc.amount=doc.quantity * doc.cost;
 		frm.refresh_field('stock_transfer_products');
 		updateSumTotal(frm);
 	});
 }
 
-let get_product_cost = function (frm,doc) {
+let get_stock_location_product_infor = function (frm,doc) {
 	return new Promise(function(resolve, reject) {
 		frappe.call({
-			method: "epos_restaurant_2023.inventory.doctype.product.product.get_product_cost_by_stock",
+			method: "epos_restaurant_2023.inventory.doctype.product.product.get_stock_location_product_info",
 			args: {
 				stock_location:frm.doc.from_stock_location,
 				product_code: doc.product_code
 			},
 			callback: function(r){
-				resolve(r.message.cost)
+				resolve(r.message)
 			},
 			error: function(r) {
 				reject("error")
