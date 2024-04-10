@@ -70,7 +70,6 @@
                             </v-col> 
                             <v-col cols="12" lg="5">
                                 <div class="flex items-center col-4"> 
-                                    {{activeReport.letterhead}}
                                     <v-select 
                                     prepend-inner-icon="mdi-content-paste"
                                     density="compact"
