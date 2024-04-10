@@ -10,13 +10,12 @@
  "field_order": [
   "naming_series",
   "posting_date",
-  "column_break_3",
   "referance",
+  "column_break_3",
   "amended_from",
-  "section_break_6",
   "from_stock_location",
   "from_business_branch",
-  "column_break_9",
+  "column_break_mcua",
   "to_stock_location",
   "to_business_branch",
   "section_break_12",
@@ -26,11 +25,10 @@
   "section_break_16",
   "stock_transfer_products",
   "section_break_14",
-  "total_quantity",
+  "note",
   "column_break_15",
-  "total_amount",
-  "section_break_18",
-  "note"
+  "total_quantity",
+  "total_amount"
  ],
  "fields": [
   {
@@ -110,14 +108,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "section_break_6",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "column_break_9",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "section_break_12",
    "fieldtype": "Section Break"
   },
@@ -140,10 +130,6 @@
   },
   {
    "fieldname": "section_break_14",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "section_break_18",
    "fieldtype": "Section Break"
   },
   {
@@ -174,12 +160,16 @@
   {
    "fieldname": "section_break_16",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_mcua",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-04-08 16:56:00.309486",
+ "modified": "2024-04-10 12:11:48.276809",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Transfer",

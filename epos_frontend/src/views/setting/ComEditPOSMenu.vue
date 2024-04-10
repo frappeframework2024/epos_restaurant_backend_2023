@@ -19,15 +19,16 @@
             <div v-if="selectedNode">
         <div class="px-3 mx-3">
             <div  class="grid  gap-3 w-full" style="max-height: 80vh;overflow: auto;"> 
-                <div   v-sortable>
+            <div v-sortable>
                 <div :data-name="a.sort_order" v-for="(a, index) in product.posMenuResource.data.filter(r=>r.parent==selectedNode.name && r.type != 'back')" :key="index" class="list-group">
-    <div class="list-group-item">{{ a.name }}</div>
+                    <div class="list-group-item">{{ a.name }}</div>
                 </div>
             </div>
                 <table>
 
                     <tr  v-for="item in product.posMenuResource.data.filter(r=>r.parent==selectedNode.name && r.type != 'back')" :key="item.menu_product_name" class="bg-blue-50 rounded-lg shadow-lg border cursor-move p-2">
-                        <td class="w-20"> <div style="border: 2px solid #b1b1b1;" class="overflow-hidden flex justify-center items-center m-2  w-20 bg-white h-full rounded-lg h-20">  
+                        <td class="w-20"> 
+                            <div style="border: 2px solid #b1b1b1;" class="overflow-hidden flex justify-center items-center m-2  w-20 bg-white h-full rounded-lg h-20">  
                             <img v-if="item.photo" class="w-auto" :src="item.photo"   />
                                 <span v-else class="mt-auto mb-auto text-xl h-18 text-slate-400">
                                     {{ getShortName(item?.name) }} 
@@ -49,9 +50,6 @@
 </div>
          </div>
         </div>    
-
-         
- 
         </template>
     </ComModal>
 </template>

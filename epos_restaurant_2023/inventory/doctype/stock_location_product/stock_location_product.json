@@ -17,7 +17,8 @@
   "cost",
   "total_cost",
   "has_expired_date",
-  "expired_date"
+  "expired_date",
+  "product_category"
  ],
  "fields": [
   {
@@ -102,11 +103,17 @@
    "fieldname": "expired_date",
    "fieldtype": "Date",
    "label": "Expired Date"
+  },
+  {
+   "fetch_from": "product_code.product_category",
+   "fieldname": "product_category",
+   "fieldtype": "Data",
+   "label": "Product Category"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-04-09 12:15:59.528559",
+ "modified": "2024-04-09 17:31:58.073022",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Location Product",

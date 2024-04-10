@@ -1,0 +1,42 @@
+{
+ "add_total_row": 1,
+ "columns": [],
+ "creation": "2024-04-09 17:12:15.868911",
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 2,
+ "is_standard": "Yes",
+ "letter_head": "",
+ "letterhead": null,
+ "modified": "2024-04-10 12:03:01.288772",
+ "modified_by": "Administrator",
+ "module": "Inventory",
+ "name": "Product Quantity",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "Product",
+ "report_name": "Product Quantity",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Product Manager"
+  },
+  {
+   "role": "Sales User"
+  },
+  {
+   "role": "Sales Manager"
+  },
+  {
+   "role": "Stock User"
+  },
+  {
+   "role": "Stock Manager"
+  }
+ ]
+}

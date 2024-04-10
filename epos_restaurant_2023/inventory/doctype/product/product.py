@@ -582,7 +582,7 @@ def clear_all_menus_from_product(products):
 def update_expire_date(data):
 	data = json.loads(data)
 	for d in data["stock_location_product"]:
-		if d["new_expired_date"]:
+		if "new_expired_date" in d and   d["new_expired_date"]:
 			frappe.db.set_value("Stock Location Product",d["name"], "expired_date", d["new_expired_date"])
 	frappe.db.commit()
 	frappe.msgprint("Update expire date successfully")
