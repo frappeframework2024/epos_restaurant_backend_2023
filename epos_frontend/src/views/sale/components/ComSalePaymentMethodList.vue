@@ -40,8 +40,9 @@ async function onPaymentTypeClick(pt) {
         if(result == false){
             return
         }
+        room = result.room;
         if (pt.use_room_offline == 0){
-            room = result.room;
+            
             folio = result.folio;
             folio_transaction_number =result.folio;
             folio_transaction_type="Reservation Folio"

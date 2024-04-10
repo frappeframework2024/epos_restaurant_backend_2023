@@ -228,7 +228,7 @@ onMounted(() => {
 })
 
 function switchPOSProfil(data) {
-
+ console.log(data)
 }
 
 </script>
