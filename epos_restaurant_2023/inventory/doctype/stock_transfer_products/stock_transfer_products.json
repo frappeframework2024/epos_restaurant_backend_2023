@@ -16,7 +16,9 @@
   "amount",
   "is_inventory_product",
   "product_category",
-  "product_group"
+  "product_group",
+  "has_expired_date",
+  "expired_date"
  ],
  "fields": [
   {
@@ -98,12 +100,25 @@
    "fieldname": "base_cost",
    "fieldtype": "Currency",
    "label": "Base Cost"
+  },
+  {
+   "default": "0",
+   "fetch_from": "product_code.has_expired_date",
+   "fieldname": "has_expired_date",
+   "fieldtype": "Check",
+   "label": "Has Expired Date"
+  },
+  {
+   "fieldname": "expired_date",
+   "fieldtype": "Date",
+   "label": "Expired Date",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-04-26 19:14:06.068895",
+ "modified": "2024-04-10 12:15:16.597159",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Transfer Products",
