@@ -1295,9 +1295,38 @@ def update_language():
     frappe.db.commit()
     
                 
-
 # get pos profile
 @frappe.whitelist()
-def get_pos_profile(pos_profile=""):
-    profile = [frappe.get_doc('POS Profile', item.name).as_dict() for item in frappe.get_all('POS Profile')]
-    return profile
+def get_pos_profiles():
+    docs = frappe.db.sql("select `name` from `tabPOS Profile` where is_edoor_profile = 0", as_dict=1)
+    return docs
+    
+# get pos profile
+@frappe.whitelist(methods='POST')
+def get_tables_groups_other_pos_profile(pos_profile):
+    docs = frappe.db.sql("select * from `tabCashier Shift` where pos_profile = '{}' and is_closed = 0 and is_edoor_shift = 0".format(pos_profile), as_dict=1)
+    result = None
+    if len( docs) > 0:
+        result = {
+            "cashier_shift":docs[0],
+            "table_groups":get_table_group_in_pos_profile(pos_profile)
+        } 
+    return result
+    
+
+ 
+@frappe.whitelist( methods='POST')
+def get_table_group_in_pos_profile(pos_profile=""):
+    profile = frappe.get_doc("POS Profile", pos_profile)
+    table_groups = []
+    for g in profile.table_groups:
+        _group = frappe.get_doc("Table Group",g.table_group,fields=["photo","table_group_name_kh"])        
+        table_groups.append({
+            "key":g.table_group.lower().replace(" ","_"),
+            "table_group":g.table_group,
+            "table_group_kh":_group.table_group_name_kh,
+            "background":_group.photo,
+            "tables":get_tables_number(g.table_group, ""),#device_name = ''
+            "search_table_keyword":""
+            })
+    return table_groups

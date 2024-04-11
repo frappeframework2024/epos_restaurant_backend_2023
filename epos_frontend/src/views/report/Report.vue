@@ -59,6 +59,8 @@
                     <div class="px-1 py-2 -m-1">
                         <v-row>
                             <v-col> 
+                                {{activeReport?.preview_report ?? "NULL"}}
+                                {{activeReport?.print_report_name ?? "NULL print_report_name"}}
                                 <div class="overflow-x-auto">
                                     <div v-if="cashierShiftReports?.length > 0 && activeReport.name == 'Cashier Shift'"> 
                                         <v-btn v-for="(r, index) in cashierShiftReports.sort((a, b) => a.sort_order - b.sort_order )" :key="index" :color="activeReport.preview_report == r.name ? 'info' : 'default'" class="m-1" @click="onPrintFormat(r)">{{$t(r.title)  }}</v-btn>
@@ -324,7 +326,7 @@ function onPrintWithChoosePrinter(){
             window.close();
 }
 function onExport(){
-    var exportUrl =   `${serverUrl}/api/method/frappe.utils.print_format.download_pdf?doctype=${activeReport.value.doc_type}&name=${activeReport.value.report_id}&product_category=${activeReport.value.filter.product_category}&format=${activeReport.value.print_report_name}&no_letterhead=0&show_toolbar=0&letterhead=${activeReport.value.letterhead}&settings=%7B%7D&_lang=${activeReport.value.lang}`
+    var exportUrl =   `${serverUrl}/api/method/frappe.utils.print_format.download_pdf?doctype=${activeReport.value.doc_type}&name=${activeReport.value.report_id}&pos_profile=${pos_profile}&outlet=${gv.setting.outlet}&product_category=${activeReport.value.filter.product_category}&format=${activeReport.value.print_report_name}&no_letterhead=0&show_toolbar=0&letterhead=${activeReport.value.letterhead}&settings=%7B%7D&_lang=${activeReport.value.lang}`
     window.open(exportUrl);
     window.close();
 }
@@ -358,9 +360,11 @@ function onPrint(){
 
             let data ={
                 action : "print_report",                
-                 doc: activeReport.value.doc_type,
+                doc: activeReport.value.doc_type,
                 name: activeReport.value.report_id,
                 print_format: activeReport.value.print_report_name,
+                pos_profile:pos_profile,
+                outlet:gv.setting.outlet
             }
             window.chrome.webview.postMessage(JSON.stringify(data));
             toaster.success($t("Report is printing"))

@@ -13,8 +13,8 @@ export default class TableLayout {
         this.setting = null;
         this.tab = null;
         this.currentView = "table_group";
-        this.table_groups = [];
-        this.tableGroupTabs = [];
+        this.table_groups = [];  
+        this.tempTableGroups =[];
         this.canArrangeTable = false;
         this.getTableGroups();
         this.saleListResource = null;
@@ -29,15 +29,13 @@ export default class TableLayout {
             url: "epos_restaurant_2023.api.api.save_table_position",
             onSuccess(d) {
                 toaster.success($t("msg.Save successfully"));
-
                 localStorage.setItem("table_groups", JSON.stringify(parent.table_groups));
                 parent.onEnableArrangeTable(false);
-
             }
         })
     }
 
-    getSaleList() {
+    getSaleList(pos_profile = "") {
         const parent = this;
         this.saleListResource = createResource({
             url: "frappe.client.get_list",
@@ -45,13 +43,15 @@ export default class TableLayout {
                 doctype: "Sale",
                 fields: ["name", "creation", "grand_total", "total_quantity", "tbl_group", "tbl_number", "guest_cover", "grand_total", "sale_status", "sale_status_color", "sale_status_priority", "customer", "customer_name", "phone_number", "customer_photo"],
                 filters: {
-                    pos_profile: localStorage.getItem("pos_profile"),
+                    pos_profile: pos_profile == ""? localStorage.getItem("pos_profile") : pos_profile,
                     docstatus: 0
                 },
                 limit_page_length: 500,
             },
             auto: true,
             onSuccess(data) {
+
+                
                 parent.table_groups.forEach(function (g) {
                     g.tables.forEach(function (t) {
                         t.sales = data.filter(r => r.tbl_group == g.table_group && r.tbl_number == t.tbl_no)
@@ -65,18 +65,45 @@ export default class TableLayout {
                             t.grand_total = 0;
                             t.creation = null;
                             t.background_color = t.default_bg_color;
-                        }
+                        } 
+                    }) 
+                })
 
-                    })
+                parent.tempTableGroups.forEach(function (g) {
+                    g.tables.forEach(function (t) {
+                        t.sales = data.filter(r => r.tbl_group == g.table_group && r.tbl_number == t.tbl_no)
+                        if (t.sales.length > 0) {
+                            t.guest_cover = t.sales.reduce((n, r) => n + r.guest_cover, 0)
+                            t.grand_total = t.sales.reduce((n, r) => n + r.grand_total, 0)
+                            t.background_color = t.sales.sort((a, b) => a.sale_status_priority - b.sale_status_priority)[0].sale_status_color;
+                            t.creation = Enumerable.from(t.sales).orderBy("$.creation").select("$.creation").toArray()[0]
+                        } else {
+                            t.guest_cover = 0;
+                            t.grand_total = 0;
+                            t.creation = null;
+                            t.background_color = t.default_bg_color;
+                        } 
+                    }) 
                 })
 
             }
         });
     }
 
-    getTableGroups() {
+
+    getTempTableGroup(table_groups = undefined, pos_profile=""){ 
+        if(pos_profile==""){
+            this.getTableGroups();            
+        }else{
+            this.tempTableGroups = table_groups
+        }
+
+    }
+
+    getTableGroups() { 
         if (localStorage.getItem("table_groups") != 'null' && localStorage.getItem("table_groups") != 'undefined') {
             this.table_groups = JSON.parse(localStorage.getItem("table_groups"));
+            this.tempTableGroups = this.table_groups;
         }
     }
 

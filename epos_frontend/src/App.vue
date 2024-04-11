@@ -33,13 +33,14 @@ const sale = inject("$sale");
 const pos_license = inject("$pos_license");
 const product = inject("$product");
 const tableLayout = inject("$tableLayout");
+
 const socket = inject("$socket");
 const auth = inject("$auth");
 const store = useStore();
 const screen = inject('$screen');
 let state = reactive({
 	isLoading: false
-});
+}); 
  
 const { mobile } = useDisplay();
 const licenseToaster = createToaster({ position: "top", duration: 1000*60*60, type: "error" });

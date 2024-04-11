@@ -6,7 +6,8 @@
                 <template #title>
                     <div class="flex justify-between align-center">
                         <div>
-                            {{ `${(params._is_reservation || false) ? $t('Assign Table') : $t('Change or Merge Table')}` }}
+                            {{ `${(params._is_reservation || false) ? $t('Assign Table') : $t('Change or Merge Table')}`
+                            }}
                             <br /><span style="font-size:14px;">{{ params.pos_profile }}</span>
                         </div>
                         <div v-if="gv.device_setting.allow_switch_pos_profile == 1">
@@ -17,16 +18,17 @@
                     </div>
                 </template>
             </ComToolbar>
+
             <div class="overflow-auto p-3 h-full">
-                <v-tabs align-tabs="center" v-if="tableLayout.table_groups && tableLayout.table_groups.length > 1"
-                    v-model="tableLayout.tab">
-                    <v-tab v-for="g in tableLayout.table_groups" :key="g.key" :value="g.key">
+                <v-tabs v-model="tableGroups.key" align-tabs="center" v-if="tableGroups && tableGroups.length > 1">
+                    {{ tableGroups.key }}
+                    <v-tab v-for="g in tableGroups" :key="g.key" :value="g.key">
                         {{ g.table_group }}
                     </v-tab>
                 </v-tabs>
-                <template v-if="tableLayout.table_groups">
+                <!--<template v-if="tableLayout.tempTableGroups">
                     <v-window v-model="tableLayout.tab">
-                        <template v-for="g in tableLayout.table_groups">
+                        <template v-for="g in tableLayout.tempTableGroups">
                             <v-window-item :value="g.key">
                                 <div class="pa-4">
                                     <ComInput v-model="g.search_table_keyword" autofocus ref="searchTextField" keyboard
@@ -61,21 +63,21 @@
                             </v-window-item>
                         </template>
                     </v-window>
-                </template>
+                </template> -->
             </div>
         </v-card>
     </v-dialog>
 </template>
 
 <script setup>
-import { ref, defineEmits, inject, changeTableSelectSaleOrderDialog, i18n, onMounted, } from '@/plugin'
+import { ref, defineEmits, inject, changeTableSelectSaleOrderDialog, i18n, onMounted } from '@/plugin'
 import ComToolbar from '@/components/ComToolbar.vue';
 import { createToaster } from '@meforma/vue-toaster';
 import ComInput from '../../../components/form/ComInput.vue';
 import { useDisplay } from 'vuetify';
+import { computed } from 'vue';
 const { t: $t } = i18n.global;
 const frappe = inject('$frappe');
-const db = frappe.db();
 
 const call = frappe.call();
 
@@ -92,6 +94,7 @@ const toaster = createToaster({ position: "top-right" })
 const _pos_profile = ref('')
 
 const loading = ref(false)
+const tab = ref('')
 
 const props = defineProps({
     params: {
@@ -100,13 +103,11 @@ const props = defineProps({
     }
 })
 
-const tableTab = ref([])
 
 
 const emit = defineEmits(["resolve", "reject"])
 
 let open = ref(true);
-tableLayout.getSaleList();
 
 
 function onClose() {
@@ -213,13 +214,19 @@ function generateProductPrinterChangeTable(sale_products, old_sale, old_table) {
     }
 }
 
+tableLayout.getSaleList();
 onMounted(() => {
+    console.log(tableGroups)
+
+    tableLayout.tab = tableLayout.table_groups[0].key
+    tableLayout.getTempTableGroup();
     _pos_profile.value = props.params.pos_profile
     loading.value = true
     call
-        .get("epos_restaurant_2023.api.api.get_pos_profile", {})
+        .get("epos_restaurant_2023.api.api.get_pos_profiles")
         .then((result) => {
-            switch_pos_station.value = result.message.filter((r) => r.is_edoor_profile != 1)
+
+            switch_pos_station.value = result.message
             loading.value = false
         })
         .catch((error) => {
@@ -227,8 +234,33 @@ onMounted(() => {
         });
 })
 
+
+const tableGroups = computed(() => {
+    return tableLayout.tempTableGroups;
+})
+
 function switchPOSProfil(data) {
- console.log(data)
+    let pos_profile = localStorage.getItem("pos_profile");
+    if (pos_profile == data) {
+        tableLayout.getTempTableGroup();
+        tableLayout.getSaleList();
+        console.log(tableLayout.table_groups[0].key)
+    } else {
+
+        call.post('epos_restaurant_2023.api.api.get_tables_groups_other_pos_profile', { "pos_profile": data })
+            .then((res) => {
+                if (res.message == undefined) {
+                    _pos_profile.value = pos_profile;
+                    toaster.warning(`${data} shift didn't opened`);
+                } else {
+                    tableLayout.getTempTableGroup(res.message.table_groups, data);
+                    tableLayout.getSaleList(data);
+                    console.log(tableLayout.tab)
+                }
+            })
+
+    }
 }
+
 
 </script>
