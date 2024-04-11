@@ -13,6 +13,17 @@ from epos_restaurant_2023.api.printing import (
     print_from_print_format
     )
 import frappe
+@frappe.whitelist()
+def dome():
+    return print_from_print_format(data = {
+                "action" : "print_report",                
+                "doc": "Working Day",
+                "name":"WD2024-0008",
+                "print_format": "Working Day Sale Summary",
+                "pos_profile":"Main POS Profile",
+                "outlet":"Main Outlet"
+            })
+    
 
 ## WINDOW SERVER PRINTING GENERATE HTML
 @frappe.whitelist(allow_guest=True, methods="POST")

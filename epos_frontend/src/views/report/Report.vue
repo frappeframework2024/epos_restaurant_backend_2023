@@ -59,8 +59,6 @@
                     <div class="px-1 py-2 -m-1">
                         <v-row>
                             <v-col> 
-                                {{activeReport?.preview_report ?? "NULL"}}
-                                {{activeReport?.print_report_name ?? "NULL print_report_name"}}
                                 <div class="overflow-x-auto">
                                     <div v-if="cashierShiftReports?.length > 0 && activeReport.name == 'Cashier Shift'"> 
                                         <v-btn v-for="(r, index) in cashierShiftReports.sort((a, b) => a.sort_order - b.sort_order )" :key="index" :color="activeReport.preview_report == r.name ? 'info' : 'default'" class="m-1" @click="onPrintFormat(r)">{{$t(r.title)  }}</v-btn>
@@ -71,6 +69,7 @@
                                 </div>
                             </v-col> 
                             <v-col cols="12" lg="5">
+                                ss
                                 <div class="flex items-center col-4"> 
                                     <v-select 
                                     prepend-inner-icon="mdi-content-paste"
@@ -192,7 +191,7 @@ onMounted(()=>{
 
 let working_day_print_format = [];
 let cashier_shift_print_format = [];
- 
+let a = ref({})
 async function _onInit() {
     // const param = {business_branch:gv.setting.business_branch, pos_profile:pos_profile}; 
     const param = {business_branch:gv.setting.business_branch, pos_profile:""}; 

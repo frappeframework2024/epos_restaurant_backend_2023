@@ -4,7 +4,7 @@ from PIL import Image, ImageChops
 from html2image import Html2Image
 import numpy as np
 import os
-from frappe.www.printview import get_print_format_doc, set_link_titles,get_rendered_template,get_print_style
+from epos_restaurant_2023.www.printview import get_print_format_doc, set_link_titles,get_rendered_template,get_print_style
 from escpos.printer import Network
 from epos_restaurant_2023.api.print_report_css.custom_style import get_css_boostrap
 import base64
@@ -164,6 +164,7 @@ def print_kitchen_order(station, sale, products,printer):
 ### print report from print format 
 @frappe.whitelist(allow_guest=True,methods="POST")
 def print_from_print_format(data, is_html=False):
+ 
     width, height = frappe.get_value("POS Print Format Setting",data["print_format"],["printing_fixed_width","printing_fixed_height"] )
     document = frappe.get_doc(data["doc"], data["name"])
     print_format = get_print_format_doc(data["print_format"], meta=document.meta)
@@ -174,7 +175,8 @@ def print_from_print_format(data, is_html=False):
         html = get_rendered_template(
             doc=document,
             print_format=print_format,
-            meta=document.meta
+            meta=document.meta,
+            pos_profile= data["pos_profile"]
             )
     except frappe.TemplateNotFoundError:
         frappe.clear_last_message()
