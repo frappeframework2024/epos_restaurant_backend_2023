@@ -194,7 +194,10 @@ def get_recent_checked_ins(limit=15):
         i.membership,
         i.membership_name,
         i.membership_type ,
-        i.check_in_number
+        i.check_in_number,
+        m.is_check_out,
+        m.check_in_date_time,
+        m.check_out_date_time
     from `tabMembership Check In Items` i 
     inner join `tabMembership Check In` m on m.name = i.parent  
     where m.docstatus = 1 and i.docstatus = 1
@@ -218,3 +221,29 @@ def get_trainer_link_option(name):
             result.append({"value":d.name,'label':d.trainer_name_en,"description": description})
         return result
     return None
+
+# get membership-checked-in for check out
+@frappe.whitelist()
+def get_membership_checked_in_for_check_out(member_code):
+    result = []
+    sql = "select `name` from `tabMembership Check In` where docstatus = 1 and is_check_out = 0 and member = '{}'".format(member_code)
+    docs = frappe.db.sql(sql, as_dict=1)
+    if len(docs) > 0:
+        for d in docs:
+            doc = frappe.get_doc("Membership Check In",d["name"])
+            if doc.membership_check_in_item:
+                for i  in doc.membership_check_in_item: 
+                    result.append({
+                        "name":doc.name,
+                        "member":i.member,
+                        "member_name":doc.member_name,
+                        "membership":i.membership,
+                        "membership_name":i.membership_name,
+                        "membership_type":i.membership_type,
+                        "photo":doc.photo,
+                        "check_in_date_time":doc.check_in_date_time,
+                        "is_check_out": doc.is_check_out,
+                    })
+
+        return result
+    return result

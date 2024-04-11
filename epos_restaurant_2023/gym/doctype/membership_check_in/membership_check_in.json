@@ -16,6 +16,9 @@
   "date_of_birth",
   "column_break_hhyk",
   "check_in_date",
+  "check_in_date_time",
+  "is_check_out",
+  "check_out_date_time",
   "amended_from",
   "section_break_nhnl",
   "membership_check_in_item"
@@ -41,7 +44,7 @@
    "default": "Today",
    "fieldname": "check_in_date",
    "fieldtype": "Date",
-   "in_list_view": 1,
+   "hidden": 1,
    "label": "Check In Date"
   },
   {
@@ -93,13 +96,33 @@
    "fieldname": "date_of_birth",
    "fieldtype": "Date",
    "label": "Date of Birth"
+  },
+  {
+   "default": "Today",
+   "fieldname": "check_in_date_time",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Check In Date Time"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "check_out_date_time",
+   "fieldtype": "Datetime",
+   "label": "Check Out Date Time"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "is_check_out",
+   "fieldtype": "Check",
+   "label": "Is Check Out"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-10-16 10:13:56.324845",
+ "modified": "2024-04-11 15:38:40.204321",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership Check In",

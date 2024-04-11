@@ -104,47 +104,75 @@
               <h3>Check-In Items</h3>
               <p class="text-500 m-0 text-sm">Choose the items you are checking into:</p>
             </div>
-            <div class="overflow-auto pr-4" style="height: calc(100vh - 23em);margin-right: -1.5rem;">
-              <div v-for="(d, index) in dataSelected" :key="index"> 
-               <div class="items-gym border-bottom-1 border-300 pb-3 mb-3">
-                <div class="flex w-full justify-content-between">
-                  <div class="flex">
-                    <div class="flex h-full align-items-center mr-3">
-                      <i class="pi pi-check-circle text-500"></i>
+            <div class="overflow-auto pr-4" style="height: calc(100vh - 23em);margin-right: -1.5rem;"> 
+
+              <template v-if=" dataCheckOut.filter((r)=>(r.is_check_out||0) == 0).length > 0"> 
+   
+                <h4 style="color:red">Pending Check Out</h4>
+                <hr/>
+                  <div  v-for="(d, index) in dataCheckOut.filter((r)=>(r.is_check_out||0) == 0)" :key="index">  
+                    <div class="items-gym border-bottom-1 border-300 pb-3 mb-3">
+                      <div class="flex w-full justify-content-between">
+                        <div class="flex">
+                          <div class="flex h-full align-items-center mr-3">
+                              <!-- <i class="pi pi-check-circle text-500"></i> -->
+                            </div>
+                            <div class="profile-info">
+                              <strong class="text-500">{{ d.membership }} - {{ d.membership_type }}</strong>
+                              <p class="m-0">{{ d.membership_name }}  </p>
+                              <label class="date">Checked In: {{ moment(d.check_in_date_time).format("DD-MM-YYYY hh:mm:ss A") }}</label>
+                            </div>                          
+                        </div> 
+                        <div class="flex align-items-end">
+                          <Button  label="Check-Out" severity="warning" style="line-height: 1.5;" raised  @click="(()=>onCheckOutClick(d))"></Button> 
+                        </div> 
+                      </div>
                     </div>
-                    <div>
-                      <strong class="text-500">{{ d.name }} - {{ d.membership_type }}</strong>
-                      <p class="text-500 text-xs mb-0">{{ d.membership }}</p>
+                </div>  
+              </template>
+                 
+                  <h4 style="color:green">For Check-In</h4>
+                  <hr/>
+                  <div v-for="(d, index) in dataSelected" :key="index"> 
+                  <div class="items-gym border-bottom-1 border-300 pb-3 mb-3">
+                    <div class="flex w-full justify-content-between">
+                      <div class="flex">
+                        <div class="flex h-full align-items-center mr-3">
+                          <i class="pi pi-check-circle text-500"></i>
+                        </div>
+                        <div>
+                          <strong class="text-500">{{ d.name }} - {{ d.membership_type }}</strong>
+                          <p class="text-500 text-xs mb-0">{{ d.membership }}</p>
+                        </div>
+                      </div>
+                      <div class="flex align-items-end">
+                        <p class="text-end text-500 text-xs m-0">
+                          <template v-if="d.tracking_limited == 1">
+                            <span v-if="d.duration_type == 'Limited Duration'">
+                                Max Accessable:  {{`${d.max_access} time(s) in ${d.membership_duration} ${d.duration_base_on}`}}
+                              </span>
+                              <span v-else>
+                                Max Accessable: {{`${d.max_access} time(s)  ${d.duration_type}`}}
+                              </span>
+                          </template>
+                          <template v-else>
+                            <template v-if="d.access_type == 'Unlimited'">
+                              <span>Access: {{ d.access_type }}</span>
+                            </template>
+                            <template v-else>
+                              <span>Access: {{ `${d.duration} ${d.access_type.toLowerCase()} /
+                                          ${d.per_duration.toLowerCase()}` }}</span>
+                            </template>
+                          </template>                     
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div class="flex align-items-end">
-                    <p class="text-end text-500 text-xs m-0">
-                      <template v-if="d.tracking_limited == 1">
-                        <span v-if="d.duration_type == 'Limited Duration'">
-                            Max Accessable:  {{`${d.max_access} time(s) in ${d.membership_duration} ${d.duration_base_on}`}}
-                          </span>
-                          <span v-else>
-                            Max Accessable: {{`${d.max_access} time(s)  ${d.duration_type}`}}
-                          </span>
-                      </template>
-                      <template v-else>
-                        <template v-if="d.access_type == 'Unlimited'">
-                          <span>Access: {{ d.access_type }}</span>
-                        </template>
-                        <template v-else>
-                          <span>Access: {{ `${d.duration} ${d.access_type.toLowerCase()} /
-                                      ${d.per_duration.toLowerCase()}` }}</span>
-                        </template>
-                      </template>                     
-                    </p>
-                  </div>
-                </div>
-               </div> 
-              </div>             
+                  </div> 
+                  </div>   
             </div>
           </div>
           <div class="flex justify-content-end mt-2">
-            <Button class="btn" label="Confirm Check-In"  :loading="is_processing" style="line-height: 1.5;" :disabled="dataSelected.length<=0 || is_processing" @click="onCheckInClick"/>
+            <Button class="btn" label="Confirm Check-In"  :loading="is_processing" style="line-height: 1.5;" :disabled="dataSelected.length<=0 || is_processing" @click="onCheckInClick"></Button>
           </div>
         </div>
       </div>
@@ -157,33 +185,55 @@ import { inject, onMounted, ref } from 'vue';
 import Accordion from 'primevue/accordion';
 import AccordionTab from 'primevue/accordiontab';
 import Checkbox from 'primevue/checkbox';
+import moment from "moment";
+import { useToast } from "primevue/usetoast";
+
+const toast = useToast();
+
 const frappe = inject("$frappe")
  
 const call = frappe.call();
+const db = frappe.db();
 
 const dialogRef = inject("dialogRef");
 const data = ref(null)
 
 const dataSelected = ref([]);
+const dataCheckOut = ref([]);
 const is_processing = ref(false)
 
 
-onMounted(() => {
+onMounted(async () => {
   is_processing.value = false;
-  data.value = dialogRef.value.data
+  data.value = dialogRef.value.data 
+  await getDataToCheckOut();
+
 })
+
+async function getDataToCheckOut(){
+  call.get("epos_restaurant_2023.api.gym.get_membership_checked_in_for_check_out",
+  {
+    member_code: data.value.member.name
+  }).then((r)=>{
+    dataCheckOut.value = r.message;
+  })
+}
 
 function onMembershipSelected(m) {
   if (!m.locked)
     m.selected = !m.selected
-
-
   dataSelected.value = data.value.membership.filter((r) => r.selected)
 }
 
-function onCheckInClick() {
+function onCheckOutClick(param){
+  db.updateDoc("Membership Check In",param.name,{"is_check_out":1, "check_out_date_time": moment().format('YYYY-MM-DD HH:mm:ss')}).then((r)=>{
+    param.is_check_out = 1;
+    toast.add({ severity: 'success', summary: 'Check Out', detail: param.name + " was checked-out", life: 3000 });
+    dialogRef.value.close("checkout");
+  })
+}
 
-
+function onCheckInClick() { 
 
   const check = data.value.membership.filter((r) => r.selected);
   if (check.length <= 0) {
@@ -198,6 +248,8 @@ function onCheckInClick() {
     "doctype": "Membership Check In",
     "member": data.value.member.name,
     "check_in_date": data.value.check_in_date,    
+    "check_in_date_time":data.value.check_in_date_time,
+    "is_check_out":0,
     "membership_check_in_item": [{
       "membership": c.name,
       "member":data.value.member.name 

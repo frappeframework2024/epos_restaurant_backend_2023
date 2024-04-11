@@ -24,12 +24,12 @@
                     <div id="tab-1" class="tab-content" :class="curTap == 0 ? 'active' : ''">
                       <div id="phone" class="mt-5">
                         <div id="wrapper">
-                          <h1 class="text-center mb-3 text-white">Check In</h1>
+                          <h1 class="text-center mb-3 text-white">Check In / Out</h1>
                           <form action="" method="GET" @submit.prevent="onCheckInClick" v-focustrap>
                             <div class="card flex justify-content-center" > 
                               
                               <InputText type="text" class="dial-up-input key mb-5" v-model="checkInCode" autofocus 
-                                placeholder="Enter check-in code..." />
+                                placeholder="Enter code..." />
                             </div>
                             <div class="flex justify-content-center w-full">
                               <div>
@@ -52,7 +52,7 @@
                             </div>
                             <div class="clear"></div>
                             <div class="flex mt-3 justify-content-center">
-                              <button type="submit" class="px-3 btn" >Check In<i class="pi pi-sign-in ml-2"></i></button>
+                              <button type="submit" class="px-3 btn" >Check In / Out<i class="pi pi-sign-in ml-2"></i></button>
                             </div>
                             <div class="clear"></div>
                           </form>
@@ -78,7 +78,7 @@
                   <ComRecentCheckIn v-if="is_load_recent_check_in"/> 
               </div>
               <div class="btn-view-all flex justify-content-end pt-3">
-                <button  class="px-3 btn" @click="onViewAllMemberCheckInClick"><i class="pi pi-eye mr-2" ></i>View all Member Check In </button>
+                <button  class="px-3 btn" @click="onViewAllMemberCheckInClick"><i class="pi pi-eye mr-2" ></i>View all Member Check In/Out </button>
               </div>
             </div>
           </div>
@@ -160,6 +160,7 @@ function onCheckInClick(){
         
         data.value = {
           "check_in_date":res.message.check_in_date,
+          "check_in_date_time": moment().format('YYYY-MM-DD HH:mm:ss'),
           "member":res.message.member,
           "membership":[],
         } 
@@ -182,7 +183,7 @@ function onCheckInClick(){
         const dialogRef = dialog.open(ComCheckInMembership, {
               data: data.value,
               props: {
-                      header: 'Check-In',
+                      header: 'Check-In/Out',
                       style: {
                           width: '80vw'
                       },
@@ -197,8 +198,12 @@ function onCheckInClick(){
               onClose: (options) => {  
                   const data = options.data;
                   if (data) {
-                    toast.add({ severity: 'success', summary: 'Check In', detail: 'Check In successfully.', life: 3000 });
-                    checkInCode.value = "";
+                    if(data=="checkout"){
+// /
+                    }else{
+                    toast.add({ severity: 'success', summary: 'Check In', detail: 'Check In successfully.', life: 3000 }); 
+                  }
+                  checkInCode.value = "";
                     is_load_recent_check_in.value = false
                     setTimeout(() => {
                       is_load_recent_check_in.value = true;

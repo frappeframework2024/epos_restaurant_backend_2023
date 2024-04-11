@@ -20,13 +20,17 @@
             </ComToolbar>
 
             <div class="overflow-auto p-3 h-full">
-                <v-tabs align-tabs="center" v-if="tableGroups && tableGroups.length > 1" v-model="tableLayout.tab">
+                {{tableTapName}}
+                <v-tabs align-tabs="center" v-if="tableGroups && tableGroups.length > 1" :v-model="tableTapName">
+                    {{tableTapName}}
                     <v-tab v-for="g in tableGroups" :key="g.key" :value="g.key">
                         {{ g.table_group }}
+                        {{tableTapName}}
                     </v-tab>
                 </v-tabs>
+                <button @click="clearTableTapName">Clear tableTapName</button>
                 <template v-if="tableLayout.tempTableGroups">
-                    <v-window v-model="tableLayout.tab">
+                    <v-window v-model="tableTapName">
                         <template v-for="g in tableLayout.tempTableGroups">
                             <v-window-item :value="g.key">
                                 <div class="pa-4">
@@ -40,7 +44,6 @@
                                                 <v-btn color="rgb(79, 157, 217)" @click="onSelectTable(t)" width="100%"
                                                     height="100">
                                                     <span class="text-white"> {{ t.tbl_no }} </span>
-
                                                 </v-btn>
                                             </template>
                                             <template v-else>
@@ -73,6 +76,7 @@ import { ref, defineEmits, inject, changeTableSelectSaleOrderDialog, i18n, onMou
 import ComToolbar from '@/components/ComToolbar.vue';
 import { createToaster } from '@meforma/vue-toaster';
 import ComInput from '../../../components/form/ComInput.vue';
+
 import { useDisplay } from 'vuetify';
 import { computed } from 'vue';
 const { t: $t } = i18n.global;
@@ -87,15 +91,13 @@ const { mobile } = useDisplay()
 const switch_pos_station = ref([])
 
 const tableLayout = inject("$tableLayout");
+const tableTapName = ref()
 const sale = inject("$sale");
 const toaster = createToaster({ position: "top-right" })
-
-const current_pos_profile = localStorage.getItem('pos_profile')
 
 const _pos_profile = ref('')
 
 const loading = ref(false)
-const tab_first = ref('')
 
 const props = defineProps({
     params: {
@@ -103,8 +105,6 @@ const props = defineProps({
         require: true
     }
 })
-
-
 
 const emit = defineEmits(["resolve", "reject"])
 
@@ -217,13 +217,12 @@ function generateProductPrinterChangeTable(sale_products, old_sale, old_table) {
 
 tableLayout.getSaleList();
 onMounted(() => {
+
     tableLayout.getTempTableGroup();
     _pos_profile.value = props.params.pos_profile
-
-    if (current_pos_profile == _pos_profile) {
-        tableLayout.tab = tableLayout.table_groups[0].key;
-    }
-
+    tableTapName.value = ref('down_stair');
+    tableLayout.tab = tableLayout?.table_groups[0].key;
+console.log(tableLayout.tab)
     loading.value = true
     call
         .get("epos_restaurant_2023.api.api.get_pos_profiles")
@@ -242,10 +241,15 @@ const tableGroups = computed(() => {
     return tableLayout.tempTableGroups;
 })
 
-
-function switchPOSProfil(data) {
-    let pos_profile = localStorage.getItem("pos_profile");
+const clearTableTapName = () => {
+  tableTapName.value = '';
+};
+const switchPOSProfil = (data) => {
+   
+    let pos_profile = localStorage.getItem("pos_profile")
     if (pos_profile == data) {
+        // tableLayout.tab = tableLayout.table_groups[0].key
+        tableTapName.value = '';
         tableLayout.getTempTableGroup();
         tableLayout.getSaleList();
     } else {
@@ -257,12 +261,14 @@ function switchPOSProfil(data) {
                     _pos_profile.value = pos_profile;
                     toaster.warning(`${data} shift didn't opened`);
                 } else {
+                    // tableLayout.tab = res.message.table_groups[0].key;
+             
                     tableLayout.getTempTableGroup(res.message.table_groups, data);
                     tableLayout.getSaleList(data);
-                }
+                    clearTableTapName();
+                }      
             })
-
     }
-}
-
+   
+} 
 </script>
