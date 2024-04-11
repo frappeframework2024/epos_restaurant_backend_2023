@@ -69,22 +69,24 @@ export default class TableLayout {
                     }) 
                 })
 
-                parent.tempTableGroups.forEach(function (g) {
-                    g.tables.forEach(function (t) {
-                        t.sales = data.filter(r => r.tbl_group == g.table_group && r.tbl_number == t.tbl_no)
-                        if (t.sales.length > 0) {
-                            t.guest_cover = t.sales.reduce((n, r) => n + r.guest_cover, 0)
-                            t.grand_total = t.sales.reduce((n, r) => n + r.grand_total, 0)
-                            t.background_color = t.sales.sort((a, b) => a.sale_status_priority - b.sale_status_priority)[0].sale_status_color;
-                            t.creation = Enumerable.from(t.sales).orderBy("$.creation").select("$.creation").toArray()[0]
-                        } else {
-                            t.guest_cover = 0;
-                            t.grand_total = 0;
-                            t.creation = null;
-                            t.background_color = t.default_bg_color;
-                        } 
-                    }) 
-                })
+                if(parent.tempTableGroups){
+                    parent.tempTableGroups.forEach(function (g) {
+                        g.tables.forEach(function (t) {
+                            t.sales = data.filter(r => r.tbl_group == g.table_group && r.tbl_number == t.tbl_no)
+                            if (t.sales.length > 0) {
+                                t.guest_cover = t.sales.reduce((n, r) => n + r.guest_cover, 0)
+                                t.grand_total = t.sales.reduce((n, r) => n + r.grand_total, 0)
+                                t.background_color = t.sales.sort((a, b) => a.sale_status_priority - b.sale_status_priority)[0].sale_status_color;
+                                t.creation = Enumerable.from(t.sales).orderBy("$.creation").select("$.creation").toArray()[0]
+                            } else {
+                                t.guest_cover = 0;
+                                t.grand_total = 0;
+                                t.creation = null;
+                                t.background_color = t.default_bg_color;
+                            } 
+                        }) 
+                    })
+                }
 
             }
         });

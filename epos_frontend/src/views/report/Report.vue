@@ -69,7 +69,6 @@
                                 </div>
                             </v-col> 
                             <v-col cols="12" lg="5">
-                                ss
                                 <div class="flex items-center col-4"> 
                                     <v-select 
                                     prepend-inner-icon="mdi-content-paste"

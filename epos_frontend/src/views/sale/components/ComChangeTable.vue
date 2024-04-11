@@ -20,13 +20,12 @@
             </ComToolbar>
 
             <div class="overflow-auto p-3 h-full">
-                <v-tabs v-model="tableGroups.key" align-tabs="center" v-if="tableGroups && tableGroups.length > 1">
-                    {{ tableGroups.key }}
+                <v-tabs align-tabs="center" v-if="tableGroups && tableGroups.length > 1" v-model="tableLayout.tab">
                     <v-tab v-for="g in tableGroups" :key="g.key" :value="g.key">
                         {{ g.table_group }}
                     </v-tab>
                 </v-tabs>
-                <!--<template v-if="tableLayout.tempTableGroups">
+                <template v-if="tableLayout.tempTableGroups">
                     <v-window v-model="tableLayout.tab">
                         <template v-for="g in tableLayout.tempTableGroups">
                             <v-window-item :value="g.key">
@@ -63,7 +62,7 @@
                             </v-window-item>
                         </template>
                     </v-window>
-                </template> -->
+                </template>
             </div>
         </v-card>
     </v-dialog>
@@ -91,10 +90,12 @@ const tableLayout = inject("$tableLayout");
 const sale = inject("$sale");
 const toaster = createToaster({ position: "top-right" })
 
+const current_pos_profile = localStorage.getItem('pos_profile')
+
 const _pos_profile = ref('')
 
 const loading = ref(false)
-const tab = ref('')
+const tab_first = ref('')
 
 const props = defineProps({
     params: {
@@ -216,11 +217,13 @@ function generateProductPrinterChangeTable(sale_products, old_sale, old_table) {
 
 tableLayout.getSaleList();
 onMounted(() => {
-    console.log(tableGroups)
-
-    tableLayout.tab = tableLayout.table_groups[0].key
     tableLayout.getTempTableGroup();
     _pos_profile.value = props.params.pos_profile
+
+    if (current_pos_profile == _pos_profile) {
+        tableLayout.tab = tableLayout.table_groups[0].key;
+    }
+
     loading.value = true
     call
         .get("epos_restaurant_2023.api.api.get_pos_profiles")
@@ -239,28 +242,27 @@ const tableGroups = computed(() => {
     return tableLayout.tempTableGroups;
 })
 
+
 function switchPOSProfil(data) {
     let pos_profile = localStorage.getItem("pos_profile");
     if (pos_profile == data) {
         tableLayout.getTempTableGroup();
         tableLayout.getSaleList();
-        console.log(tableLayout.table_groups[0].key)
     } else {
-
+        loading.value = true
         call.post('epos_restaurant_2023.api.api.get_tables_groups_other_pos_profile', { "pos_profile": data })
             .then((res) => {
+                loading.value = false
                 if (res.message == undefined) {
                     _pos_profile.value = pos_profile;
                     toaster.warning(`${data} shift didn't opened`);
                 } else {
                     tableLayout.getTempTableGroup(res.message.table_groups, data);
                     tableLayout.getSaleList(data);
-                    console.log(tableLayout.tab)
                 }
             })
 
     }
 }
-
 
 </script>
