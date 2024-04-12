@@ -51,9 +51,9 @@ socket.on("RefreshTable", () => {
 })
 
 
-//on init
 onMounted(async ()=>{ 
     tableLayout.tab = localStorage.getItem("__tblLayoutIndex")
+   
 
     let tableGroupLength = JSON.parse(localStorage.getItem("table_groups"))
     if (tableGroupLength.length == 1) {

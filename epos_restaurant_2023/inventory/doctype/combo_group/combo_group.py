@@ -32,6 +32,7 @@ class ComboGroup(Document):
 		if description:
 			self.description = ','.join(description)
 		
+		
 
 	def on_update(self):
 		#frappe.throw("you save me")

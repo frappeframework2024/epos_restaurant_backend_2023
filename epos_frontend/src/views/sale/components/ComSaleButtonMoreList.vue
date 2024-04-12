@@ -171,6 +171,7 @@ async function onChangeMenuLanguage() {
 }
 
 async function onChangeTable() {
+     
     if (!sale.isBillRequested()) {
         if (sale.sale.sale_products.length == 0 && sale.sale.name == undefined) {
             toaster.warning($t("msg.Please select a menu item to continue"));

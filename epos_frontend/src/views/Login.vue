@@ -1,10 +1,10 @@
-<template>  
+<template>
   <v-row class="mt-0 mb-0 h-screen">
     <v-col md="6" lg="8" class="pa-0 d-sm-none d-none d-md-block">
       <div class="h-screen bg-cover bg-no-repeat bg-center"
         v-bind:style="{ 'background-image': 'url(' + setting?.login_background + ')' }">
         <div class="h-full w-full p-10 flex justify-center items-center position-relative">
-          <div class="position-absolute" style="top:50px"> 
+          <div class="position-absolute" style="top:50px">
           </div>
           <div>
             <div
@@ -16,21 +16,21 @@
               <v-divider></v-divider>
               <div class="py-3">
                 <v-list lines="one" bg-color="transparent">
-                  <v-list-item class="mb-2" :title="setting?.business_branch" :subtitle="$t('Business')" ></v-list-item>
+                  <v-list-item class="mb-2" :title="setting?.business_branch" :subtitle="$t('Business')"></v-list-item>
                   <v-list-item class="mb-2" :title="setting?.pos_profile" :subtitle='$t("POS Profile")'></v-list-item>
-                  <v-list-item class="mb-2" :title="setting?.phone_number"  :subtitle='$t("Phone Number")'></v-list-item>
+                  <v-list-item class="mb-2" :title="setting?.phone_number" :subtitle='$t("Phone Number")'></v-list-item>
                   <v-list-item :title="setting?.address" :subtitle="$t('Address')"></v-list-item>
                 </v-list>
-              </div> 
+              </div>
             </div>
           </div>
         </div>
       </div>
     </v-col>
     <v-col sm="12" md="6" lg="4" class="pa-0 relative">
-      
+
       <div class="h-full flex items-center justify-center bg-gray-100">
-        <form @submit.prevent="onLogin"> 
+        <form @submit.prevent="onLogin">
           <!-- <template v-if="pos_license.license != null && mobile"> 
               <div v-if="pos_license.license.show_license_msg" class="flex items-center justify-center p-2 mb-4 bg-red-100 text-red rounded-lg w-full mx-5" >
                 <span style="font-size: 16px;" class="mr-1"><v-icon >mdi-alert-circle-outline</v-icon></span>{{pos_license.license.message}}<span style="font-size: 16px;" @click="onCloseMessage"><v-icon >mdi-close</v-icon></span>
@@ -50,15 +50,15 @@
               </div>
               <div class="mb-3">
                 <div class="relative">
-                  <v-text-field :readonly="mobile" type="password" density="compact" variant="solo" autofocus :label="$t('Password')"
-                    append-inner-icon="mdi-arrow-left" single-line hide-details v-model="state.password" height="200"
-                    @click:append-inner="onDeleteBack()"></v-text-field>
+                  <v-text-field :readonly="mobile" type="password" density="compact" variant="solo" autofocus
+                    :label="$t('Password')" append-inner-icon="mdi-arrow-left" single-line hide-details
+                    v-model="state.password" height="200" @click:append-inner="onDeleteBack()"></v-text-field>
                 </div>
               </div>
               <div>
                 <div class="grid grid-cols-3 gap-3">
                   <v-btn @click="onNumPressed('1')" size="x-large">
-                  1
+                    1
                   </v-btn>
                   <v-btn @click="onNumPressed('2')" size="x-large">
                     2
@@ -93,26 +93,49 @@
 
                 </div>
               </div>
-              <div class="mt-4"> 
-                <v-btn type="submit" :loading="isLoading" size="x-large" class="w-full" color="primary" :disabled="(pos_license.web_platform && (!(pos_license.license?.status??false) || (pos_license.license?.expired??false)))">{{ $t("Login") }}</v-btn>
-              </div> 
-              <div class="mt-2">
-                <v-btn size="x-large" class="w-full" color="light"  @click="(()=>{ 
-                    $i18n.locale=($i18n.locale=='kh'?'en':'km');
-                    onChangeLang( $i18n.locale) 
+              <div class="mt-4">
+                <v-btn type="submit" :loading="isLoading" size="x-large" class="w-full" color="primary"
+                  :disabled="(pos_license.web_platform && (!(pos_license.license?.status ?? false) || (pos_license.license?.expired ?? false)))">{{
+                    $t("Login") }}</v-btn>
+              </div>
+              <template v-if="languages?.length <= 2">
+                <div class="mt-2">
+                  <v-btn size="x-large" class="w-full" color="light" @click="(() => {
+                    $i18n.locale = ($i18n.locale == 'kh' ? 'en' : 'km');
+                    onChangeLang($i18n.locale)
 
-                })">{{ $i18n.locale=="en"?"ខ្មែរ":"English" }}</v-btn>
-              </div> 
+                  })">{{ $i18n.locale == "en" ? "ខ្មែរ" : "English" }}</v-btn>
+                </div>
+              </template>
+              <template v-else-if="languages?.length >= 3">
+                <div class="mt-2">
+                  <v-menu>
+                    <template v-slot:activator="{ props }">
+                      <v-btn size="x-large" class="w-full" color="light" v-bind="props">
+                        {{ languageDisplay == null ? $i18n.locale == "en" ? "English" : "English" : languageDisplay }}
+                      </v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-item @click="onChangeLang(item.name, item.language_name)"
+                        v-for="(item, index) in languages" :key="index" :value="index">
+                        <v-list-item-title>{{ item.language_name }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </div>
+              </template>
               <div class="mt-4 text-center">
                 <p class="text-sm text-green-700">{{ setting?.pos_profile }}</p>
-                <p class="text-sm text-red-700">{{ device_name}}</p>
-              </div> 
+                <p class="text-sm text-red-700">{{ device_name }}</p>
+              </div>
             </div>
           </div>
         </form>
 
         <div class="fixed bottom-8 " v-if="isWindow()">
-          <v-btn block  class="w-full" prepend-icon="mdi-window-close"  size="x-large" color="error" @click="onExitWindow()"> {{ $t("Exit") }}</v-btn>
+          <v-btn block class="w-full" prepend-icon="mdi-window-close" size="x-large" color="error"
+            @click="onExitWindow()"> {{
+              $t("Exit") }}</v-btn>
         </div>
       </div>
     </v-col>
@@ -120,23 +143,26 @@
 
 </template>
 <script setup>
-import { reactive, inject, computed, useStore, useRouter, createResource, createToaster,i18n } from '@/plugin';
+import { reactive, inject, computed, useStore, useRouter, createResource, createToaster, i18n, ref } from '@/plugin';
 import { onMounted } from 'vue';
-import { useDisplay } from 'vuetify'; 
+import { useDisplay } from 'vuetify';
+const frappe = inject("$frappe");
+const db = frappe.db();
 
-const { t: $t } = i18n.global; 
+const { t: $t } = i18n.global;
 
 const auth = inject("$auth");
 const pos_license = inject("$pos_license");
 const gv = inject('$gv');
 const sale = inject('$sale');
 const { mobile } = useDisplay();
-const toast = createToaster({position:"top"})
+const toast = createToaster({ position: "top" })
 const router = useRouter();
 const store = useStore();
+const languages = ref()
+const languageDisplay = ref('')
 
 store.state.isLoading = false;
-
 
 let state = reactive({
   username: "",
@@ -150,22 +176,31 @@ const isLoading = computed(() => {
   return store.state.isLoading;
 })
 
-const device_name  = computed(()=>{
- return localStorage.getItem("device_name") ;
+const device_name = computed(() => {
+  return localStorage.getItem("device_name");
 });
- 
+
 
 //on init
-onMounted(()=>{
+onMounted(() => {
   localStorage.removeItem('current_user');
   localStorage.removeItem('make_order_auth');
+
+  db.getDocList("POS Translation", {
+    fields: ["name", "language_name", "flag"]
+  }).then((r) => {
+    languages.value = r
+  })
+
+  languageDisplay.value = localStorage.getItem('__language_name')
 })
 
-
-
-function onChangeLang(code){
+function onChangeLang(code, language_name) {
+  localStorage.setItem('__language_name', language_name)
   localStorage.setItem('lang', code);
-  location.reload(); 
+  if (languageDisplay.value != language_name) {
+    location.reload();
+  }
 }
 
 function onNumPressed(n) {
@@ -182,15 +217,15 @@ function onClearPressed() {
 }
 
 function isWindow() {
-  return localStorage.getItem("is_window") == "1"; 
-} 
+  return localStorage.getItem("is_window") == "1";
+}
 
 function onDeleteBack() {
   state.password = state.password.substring(0, state.password.length - 1);
 }
 const onLogin = async () => {
-  if(pos_license.web_platform){   
-    if((!pos_license.license.status??false) || (pos_license.license?.expired??false)){
+  if (pos_license.web_platform) {
+    if ((!pos_license.license.status ?? false) || (pos_license.license?.expired ?? false)) {
       return
     }
   }
@@ -211,7 +246,7 @@ const onLogin = async () => {
     async onSuccess(doc) {
       store.dispatch('startLoading');
       state.username = doc.username;
-      
+
       if (state.username && state.password) {
         let res = await auth.login(state.username, state.password);
         if (res) {
@@ -223,12 +258,12 @@ const onLogin = async () => {
         }
       }
     },
-    onError(x) {  
-      if(!is_error){
+    onError(x) {
+      if (!is_error) {
         is_error = true;
         store.dispatch('endLoading');
         toast.warning($t('msg.Invalid PIN Code'), { position: 'top' });
-      } 
+      }
     }
   })
 
@@ -250,20 +285,20 @@ function getCurrentUserInfo(user) {
   })
 }
 
-function checkPromotionDay(){ 
+function checkPromotionDay() {
   // check promotion 
-	createResource({
-		url: 'epos_restaurant_2023.api.promotion.check_promotion',
-		cache: "check_promotion",
-		auto: true,
-		params: {
-			business_branch: gv.setting.business_branch
-		},
-		onSuccess(doc) {
-			gv.promotion = doc;
-			sale.promotion = doc;
-		}
-	});
+  createResource({
+    url: 'epos_restaurant_2023.api.promotion.check_promotion',
+    cache: "check_promotion",
+    auto: true,
+    params: {
+      business_branch: gv.setting.business_branch
+    },
+    onSuccess(doc) {
+      gv.promotion = doc;
+      sale.promotion = doc;
+    }
+  });
 }
 function onExitWindow() {
   const data = {

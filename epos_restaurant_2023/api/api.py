@@ -1330,3 +1330,42 @@ def get_table_group_in_pos_profile(pos_profile=""):
             "search_table_keyword":""
             })
     return table_groups
+
+@frappe.whitelist( methods='POST')
+def change_table_between_outlet(sale, new_pos_profile,new_table_id):
+ 
+    sale_doc = frappe.get_doc("Sale",sale)
+    if sale_doc.docstatus !=0:
+        frappe.throw(_("This sale order is not allow to change table"))
+    
+    cashier_shift_doc = get_cashier_shift_by_pos_profile(new_pos_profile)
+    
+    if not cashier_shift_doc:
+        frappe.throw(_("This pos profile {} do not have cashier shift opened".format(new_pos_profile)))    
+    if cashier_shift_doc.is_closed == 1:
+        frappe.throw(_("This cashier shift {} is already closed".format(cashier_shift_doc.name)))
+    
+    sale_doc.outlet = cashier_shift_doc.outlet
+    sale_doc.stock_location = frappe.db.get_value("POS Profile",new_pos_profile,"stock_location")
+    sale_doc.table_id = new_table_id
+    table_number,table_group= frappe.db.get_value("Tables Number",new_table_id, ["tbl_number","tbl_group"])
+    sale_doc.tbl_number = table_number
+    sale_doc.tbl_group =table_group
+    sale_doc.pos_profile = new_pos_profile
+
+  
+    sale_doc.cashier_shift = cashier_shift_doc.name
+    sale_doc.working_day = cashier_shift_doc.working_day
+    sale_doc.shift_name = cashier_shift_doc.shift_name
+    sale_doc.save()
+    
+    frappe.db.commit()
+    
+    return sale_doc
+
+    
+    
+def get_cashier_shift_by_pos_profile(pos_profile):
+    doc=frappe.get_last_doc("Cashier Shift", {"pos_profile":pos_profile,"is_closed":0}, "creation")
+    return doc
+    

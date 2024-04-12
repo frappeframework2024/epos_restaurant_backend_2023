@@ -1,84 +1,88 @@
 <template>
-    <v-dialog :scrollable="false" :loading="loading" v-model="open" :fullscreen="mobile"
-        :style="mobile ? '' : 'width: 100%;max-width:800px'">
-        <v-card>
-            <ComToolbar @onClose="onClose">
-                <template #title>
-                    <div class="flex justify-between align-center">
-                        <div>
-                            {{ `${(params._is_reservation || false) ? $t('Assign Table') : $t('Change or Merge Table')}`
-                            }}
-                            <br /><span style="font-size:14px;">{{ params.pos_profile }}</span>
-                        </div>
-                        <div v-if="gv.device_setting.allow_switch_pos_profile == 1">
-                            <v-select @update:modelValue="switchPOSProfil" prepend-inner-icon="mdi-desktop-classic"
-                                density="compact" item-title="name" v-model="_pos_profile" :items="switch_pos_station"
-                                item-value="name" hide-no-data hide-details variant="solo" class="mx-1"></v-select>
-                        </div>
-                    </div>
-                </template>
-            </ComToolbar>
+    <ComModal :mobileFullscreen="true" @onClose="onClose" :hideOkButton="true" :hideCloseButton="true">
+        <template #title>
+            <div class="flex justify-between align-center">
+                <div>
+                    {{ `${(params._is_reservation || false) ? $t('Assign Table') : $t('Change or Merge Table')}`
+                    }}
+                    <br /><span style="font-size:14px;">{{ params.pos_profile }}</span>
+                </div>
+                <div v-if="gv.device_setting.allow_switch_pos_profile == 1">
+                    <v-select @update:modelValue="switchPOSProfil" prepend-inner-icon="mdi-desktop-classic"
+                        density="compact" item-title="name" v-model="_pos_profile" :items="switch_pos_station"
+                        item-value="name" hide-no-data hide-details variant="solo" class="mx-1"></v-select>
+                </div>
+            </div>
 
-            <div class="overflow-auto p-3 h-full">
-                {{tableTapName}}
-                <v-tabs align-tabs="center" v-if="tableGroups && tableGroups.length > 1" :v-model="tableTapName">
-                    {{tableTapName}}
-                    <v-tab v-for="g in tableGroups" :key="g.key" :value="g.key">
-                        {{ g.table_group }}
-                        {{tableTapName}}
-                    </v-tab>
-                </v-tabs>
-                <button @click="clearTableTapName">Clear tableTapName</button>
-                <template v-if="tableLayout.tempTableGroups">
-                    <v-window v-model="tableTapName">
-                        <template v-for="g in tableLayout.tempTableGroups">
-                            <v-window-item :value="g.key">
-                                <div class="pa-4">
-                                    <ComInput v-model="g.search_table_keyword" autofocus ref="searchTextField" keyboard
-                                        class="my-2 mb-4" :placeholder="$t('Search')" />
-                                    <div
-                                        class="grid gap-4 grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-6">
-                                        <template v-for="(t, index) in getTable(g.tables, g.search_table_keyword)"
-                                            :key="index">
-                                            <template v-if="(params._is_reservation || false)">
-                                                <v-btn color="rgb(79, 157, 217)" @click="onSelectTable(t)" width="100%"
-                                                    height="100">
-                                                    <span class="text-white"> {{ t.tbl_no }} </span>
-                                                </v-btn>
-                                            </template>
-                                            <template v-else>
-                                                <v-badge :content="t.sales?.length" color="error"
-                                                    v-if="t.sales?.length > 0">
-                                                    <v-btn :color="t.background_color" @click="onSelectTable(t)"
-                                                        width="100%" height="100">
-                                                        {{ t.tbl_no }}
-                                                    </v-btn>
-                                                </v-badge>
-                                                <v-btn v-else :color="t.background_color" @click="onSelectTable(t)"
+        </template>
+        <template #content>
+            <ComLoadingDialog v-if="loading" />
+            <v-tabs align-tabs="center" v-if="tableGroups && tableGroups.length > 1" v-model="tableLayout.tab">
+                <v-tab v-for="g in tableGroups" :key="g.key" :value="g.key">
+                    {{ g.table_group }}
+                </v-tab>
+            </v-tabs>
+            <template v-if="tableLayout.tempTableGroups">
+                <v-window v-model="tableLayout.tab">
+                    <template v-for="g in tableLayout.tempTableGroups">
+                        <v-window-item :value="g.key">
+                            <div class="pa-4">
+                                <ComInput v-model="g.search_table_keyword" autofocus ref="searchTextField" keyboard
+                                    class="my-2 mb-4" :placeholder="$t('Search')" />
+                                <div
+                                    class="grid gap-4 grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-6">
+                                    <template v-for="(t, index) in getTable(g.tables, g.search_table_keyword)"
+                                        :key="index">
+                                        <template v-if="(params._is_reservation || false)">
+                                            <v-btn color="rgb(79, 157, 217)" @click="onSelectTable(t)" width="100%"
+                                                height="100">
+                                                <span class="text-white"> {{ t.tbl_no }} </span>
+                                            </v-btn>
+                                        </template>
+                                        <template v-else>
+                                            <v-badge :content="t.sales?.length" color="error"
+                                                v-if="t.sales?.length > 0">
+                                                <v-btn :color="t.background_color" @click="onSelectTable(t)"
                                                     width="100%" height="100">
                                                     {{ t.tbl_no }}
                                                 </v-btn>
-                                            </template>
+                                            </v-badge>
+                                            <v-btn v-else :color="t.background_color" @click="onSelectTable(t)"
+                                                width="100%" height="100">
+                                                {{ t.tbl_no }}
+                                            </v-btn>
                                         </template>
-                                    </div>
+                                    </template>
                                 </div>
-                            </v-window-item>
-                        </template>
-                    </v-window>
-                </template>
-            </div>
+                            </div>
+                        </v-window-item>
+                    </template>
+                </v-window>
+            </template>
+        </template>
+
+    </ComModal>
+    <!-- <v-dialog :scrollable="false" :loading="loading" v-model="open" :fullscreen="mobile"
+        :style="mobile ? '' : 'width: 100%;max-width:800px'">
+        <v-card>
+            
+
+            
         </v-card>
-    </v-dialog>
+    </v-dialog> -->
 </template>
 
 <script setup>
-import { ref, defineEmits, inject, changeTableSelectSaleOrderDialog, i18n, onMounted } from '@/plugin'
+import { confirm, ref, useRoute, useRouter, defineEmits, inject, changeTableSelectSaleOrderDialog, i18n, onMounted } from '@/plugin'
 import ComToolbar from '@/components/ComToolbar.vue';
 import { createToaster } from '@meforma/vue-toaster';
 import ComInput from '../../../components/form/ComInput.vue';
-
+import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 import { useDisplay } from 'vuetify';
 import { computed } from 'vue';
+const route = useRoute();
+const router = useRouter();
+
 const { t: $t } = i18n.global;
 const frappe = inject('$frappe');
 
@@ -91,7 +95,6 @@ const { mobile } = useDisplay()
 const switch_pos_station = ref([])
 
 const tableLayout = inject("$tableLayout");
-const tableTapName = ref()
 const sale = inject("$sale");
 const toaster = createToaster({ position: "top-right" })
 
@@ -139,20 +142,38 @@ async function onSelectTable(t) {
     }
     else {
         if (t.sales?.length == 0) {
+
             generateProductPrinterChangeTable(sale.sale.sale_products, sale.sale.name, sale.sale.tbl_number);
             sale.sale.sale_products?.forEach((r) => {
                 r.move_from_table = sale.sale.tbl_number;
             });
             sale.sale.table_id = t.id;
             sale.sale.tbl_number = t.tbl_no;
-            toaster.success($t('msg.Change to table') + ": " + t.tbl_no);
-            emit("resolve", true)
+
+            if (_pos_profile.value == sale.sale.pos_profile) {
+                toaster.success($t('msg.Change to table') + ": " + t.tbl_no);
+                emit("resolve", true)
+
+            } else {
+                await changeTableBetweenOutlet(t).then(r => {
+
+
+                    emit("resolve", true)
+                }).catch((error) => {
+                    return
+                });
+
+            }
+
+
+
+
         }
         else {
             const result = await changeTableSelectSaleOrderDialog({ data: t });
             if (result) {
                 if (result.action == "create_new_bill") {
-                    //
+
                     generateProductPrinterChangeTable(sale.sale.sale_products, sale.sale.name, sale.sale.tbl_number);
 
                     sale.sale.sale_products?.forEach((r) => {
@@ -160,11 +181,27 @@ async function onSelectTable(t) {
                     });
                     sale.sale.table_id = t.id;
                     sale.sale.tbl_number = t.tbl_no;
-                    toaster.success($t('msg.Change to table') + ": " + t.tbl_no);
-                    emit("resolve", true);
+                    if (sale.sale.pos_profile == _pos_profile.value) {
+                        toaster.success($t('msg.Change to table') + ": " + t.tbl_no);
+                        emit("resolve", true);
+                    } else {
+                        await changeTableBetweenOutlet(t).then(r => {
+                            emit("resolve", true)
+                        }).catch((error) => {
+                            return
+                        });
+                    }
+
 
                 } else if (result.action == "reload_sale") {
-                    emit("resolve", result)
+                    if (sale.sale.pos_profile == _pos_profile) {
+                        emit("resolve", result)
+                    } else {
+                        emit("resolve", true)
+                        router.push({ name: 'TableLayout' })
+
+                    }
+
                 }
             }
         }
@@ -220,9 +257,11 @@ onMounted(() => {
 
     tableLayout.getTempTableGroup();
     _pos_profile.value = props.params.pos_profile
-    tableTapName.value = ref('down_stair');
-    tableLayout.tab = tableLayout?.table_groups[0].key;
-console.log(tableLayout.tab)
+    setTimeout(() => {
+        tableLayout.tab = tableLayout.table_groups[0].key;
+    }, 100);
+
+
     loading.value = true
     call
         .get("epos_restaurant_2023.api.api.get_pos_profiles")
@@ -241,34 +280,75 @@ const tableGroups = computed(() => {
     return tableLayout.tempTableGroups;
 })
 
-const clearTableTapName = () => {
-  tableTapName.value = '';
-};
-const switchPOSProfil = (data) => {
-   
+
+function switchPOSProfil(data) {
+
     let pos_profile = localStorage.getItem("pos_profile")
     if (pos_profile == data) {
-        // tableLayout.tab = tableLayout.table_groups[0].key
-        tableTapName.value = '';
+
+
         tableLayout.getTempTableGroup();
         tableLayout.getSaleList();
+        setTimeout(() => {
+            tableLayout.tab = tableLayout.table_groups[0].key
+        }, 100);
+
     } else {
         loading.value = true
         call.post('epos_restaurant_2023.api.api.get_tables_groups_other_pos_profile', { "pos_profile": data })
             .then((res) => {
+
                 loading.value = false
                 if (res.message == undefined) {
                     _pos_profile.value = pos_profile;
                     toaster.warning(`${data} shift didn't opened`);
                 } else {
-                    // tableLayout.tab = res.message.table_groups[0].key;
-             
+
                     tableLayout.getTempTableGroup(res.message.table_groups, data);
                     tableLayout.getSaleList(data);
-                    clearTableTapName();
-                }      
+
+                    setTimeout(() => {
+                        tableLayout.tab = res.message.table_groups[0].key;
+                    }, 100);
+                }
             })
     }
-   
-} 
+
+}
+
+async function changeTableBetweenOutlet(t) {
+    if (await confirm({ title: $t("Change Table"), text: $t("msg.Are your sure you to change this order to table number " + t.tbl_no) })) {
+        return new Promise((resolve, reject) => {
+            loading.value = true
+            call.post("epos_restaurant_2023.api.api.change_table_between_outlet", {
+                sale: sale.sale.name,
+                new_pos_profile: _pos_profile.value,
+                new_table_id: t.id
+            }).then((result) => {
+                router.push({ name: 'TableLayout' })
+                toaster.success($t('msg.Change to table') + ": " + t.tbl_no);
+                loading.value = false
+                // send message  to event listener to  close all modal that open  
+                window.postMessage("close_modal", "*")
+                tableLayout.tab = localStorage.getItem("__tblLayoutIndex")
+
+                //TODO Send change table information to product printer 
+                resolve(result)
+
+            }).catch(error => {
+                loading.value = false
+                gv.showServerMessage(error)
+                reject(error)
+
+            })
+        });
+
+
+
+    } else {
+        reject(false)
+    }
+}
+
+
 </script>

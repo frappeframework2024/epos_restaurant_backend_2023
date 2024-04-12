@@ -150,7 +150,7 @@ function onSelectNode(n){
     selectedNode.value = n
 }
 function onSave() {
-     alert("save")
+     
 }
    
 function onClose() {
