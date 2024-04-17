@@ -90,6 +90,7 @@ function onFetch(_filters){
 }
 
 const headers = ref([
+  { title: $t('#'), align: 'start',key: 'idx'},
   { title: $t('No'), align: 'start',key: 'name',callback: true},
   { title: $t('Invoice No'), align: 'start',key: 'custom_bill_number',callback: true},
   { title: $t('Customer Name'), align: 'start', key: 'customer', template: '{customer}-{customer_name}', callback: true },

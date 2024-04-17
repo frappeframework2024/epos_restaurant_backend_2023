@@ -79,7 +79,8 @@ function onSend() {
                 time_stop: (r.time_stop || 0),
                 time_in: r.time_in,
                 time_out_price: r.time_out_price,
-                time_out: r.time_out
+                time_out: r.time_out,
+                reprint:true,
             })
         }) 
     });   

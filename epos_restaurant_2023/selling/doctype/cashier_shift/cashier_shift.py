@@ -424,7 +424,17 @@ def get_combo_menu_revenue(self=None, name=None):
 	revenue_data = []
 	for d in data:
 		revenue_data = revenue_data  + get_combo_menu_data_revenue_breakdown(d)
-	return revenue_data
+	group_revenue_data = []
+	for r in set([d["revenue_group"] for d in revenue_data]):
+		group_revenue_data.append({
+			"revenue_group":r,
+			"sub_total":sum([d["sub_total"] for d in revenue_data if d["revenue_group"] == r]),
+			"discount":sum([d["discount"] for d in revenue_data if d["revenue_group"] == r]),
+			"tax_1_amount":sum([d["tax_1_amount"] for d in revenue_data if d["revenue_group"] == r]),
+			"tax_2_amount":sum([d["tax_2_amount"] for d in revenue_data if d["revenue_group"] == r]),
+			"tax_3_amount":sum([d["tax_3_amount"] for d in revenue_data if d["revenue_group"] == r]),
+		})
+	return group_revenue_data
 
 def get_combo_menu_data_revenue_breakdown(revenue_data):
 	data = json.loads(revenue_data["combo_menu_data"])
@@ -432,14 +442,36 @@ def get_combo_menu_data_revenue_breakdown(revenue_data):
 	for c in data:
 		combo_revenue ={"product_code":c["product_code"], 
 						"revenue_group": frappe.db.get_value("Product",c["product_code"],"revenue_group") ,
-						"sub_total":c["quantity"] * c["price"]
-						} 
+						"sub_total":c["quantity"] * c["price"],
+						"discount":0,
+						"tax_1_amount":0,
+						"tax_2_amount":0,
+						"tax_3_amount":0
+					} 
+		# calculate discount
+		if revenue_data["discount"] > 0:
+			combo_revenue["discount"] = combo_revenue["sub_total"] * (revenue_data["discount"] / revenue_data["sub_total"])
+   
+		if revenue_data["tax_1_amount"] > 0:
+			combo_revenue["tax_1_amount"] = combo_revenue["tax_1_amount"] * (revenue_data["tax_1_amount"] / revenue_data["sub_total"])
+   
+		if revenue_data["tax_2_amount"] > 0:
+			combo_revenue["tax_2_amount"] = combo_revenue["tax_2_amount"] * (revenue_data["tax_2_amount"] / revenue_data["sub_total"])
+   
+		if revenue_data["tax_3_amount"] > 0:
+			combo_revenue["tax_3_amount"] = combo_revenue["tax_3_amount"] * (revenue_data["tax_3_amount"] / revenue_data["sub_total"])
+   
+		
 		combo_item_revenues.append(combo_revenue)
 
   
 	base_revenue ={"revenue_group":revenue_data.revenue_group}
 	base_revenue["sub_total"] = revenue_data["sub_total"] -  sum(d["sub_total"] for d in combo_item_revenues)
- 
+	base_revenue["discount"] = revenue_data["discount"] -  sum(d["discount"] for d in combo_item_revenues)
+	base_revenue["tax_1_amount"] = revenue_data["tax_1_amount"] -  sum(d["tax_1_amount"] for d in combo_item_revenues)
+	base_revenue["tax_2_amount"] = revenue_data["tax_2_amount"] -  sum(d["tax_2_amount"] for d in combo_item_revenues)
+	base_revenue["tax_3_amount"] = revenue_data["tax_3_amount"] -  sum(d["tax_3_amount"] for d in combo_item_revenues)
+	
 	return   [base_revenue] + combo_item_revenues
 
 
