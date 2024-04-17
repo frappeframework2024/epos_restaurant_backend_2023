@@ -167,17 +167,17 @@ function onExport(){
     window.close();
 }
 
-function onPrint() { 
+function onPrint(){
     if ((localStorage.getItem("flutterWrapper") || 0) == 1) { 
         var printers = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
         if (printers.length <= 0) {
             // toaster.warning($t("Printer not yet configt for this device"))
-        } else {
+        } else { 
             let data ={
                 action : "print_report",
-                doc: props.params.doctype,
-                name:props.params.name,
-                print_format:activeReport.value.name,
+                doc: activeReport.value.doc_type,
+                name: activeReport.value.report_id,
+                print_format: activeReport.value.print_report_name,
                 printer : {
                     "printer_name": printers[0].printer_name,
                     "ip_address": printers[0].ip_address,
@@ -185,38 +185,80 @@ function onPrint() {
                     "cashier_printer": printers[0].cashier_printer,
                     "is_label_printer": printers[0].is_label_printer
                 }
-            }
-           
+            }        
             flutterChannel.postMessage(JSON.stringify(data));
         }
         toaster.success($t("Report is printing"))
     }
     else{
-        if (localStorage.getItem("is_window")==1) {
+        if((localStorage.getItem("apkipa") ||0)==0){
+
             let data ={
                 action : "print_report",                
-                doc: props.params.doctype,
-                name:props.params.name,
-                print_format:activeReport.value.name,
+                doc: activeReport.value.doc_type,
+                name: activeReport.value.report_id,
+                print_format: activeReport.value.print_report_name,
+                pos_profile:pos_profile,
+                outlet:gv.setting.outlet
             }
-            if(props.params.doctype =="Sale" && activeReport.value.pos_receipt_file_name !="" && activeReport.value.pos_receipt_file_name !=null){                  
-                window.chrome.webview.postMessage("doc");
-                return;
-            }  
-
             window.chrome.webview.postMessage(JSON.stringify(data));
             toaster.success($t("Report is printing"))
+            // window.open(printUrl.value + "&trigger_print=1").print();
+            // window.close();
         }
-
-
-        // if((localStorage.getItem("apkipa") ||0)==0){
-
-        //     // window.open(printPreviewUrl.value + "&trigger_print=1").print();
-        //     // window.close();
-        // }
     }
+} 
 
-}
+// function onPrint() { 
+//     if ((localStorage.getItem("flutterWrapper") || 0) == 1) { 
+//         var printers = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+//         if (printers.length <= 0) {
+//             // toaster.warning($t("Printer not yet configt for this device"))
+//         } else {
+//             let data ={
+//                 action : "print_report",
+//                 doc: props.params.doctype,
+//                 name:props.params.name,
+//                 print_format:activeReport.value.name,
+//                 printer : {
+//                     "printer_name": printers[0].printer_name,
+//                     "ip_address": printers[0].ip_address,
+//                     "port": printers[0].port,
+//                     "cashier_printer": printers[0].cashier_printer,
+//                     "is_label_printer": printers[0].is_label_printer
+//                 }
+//             }
+           
+//             flutterChannel.postMessage(JSON.stringify(data));
+//         }
+//         toaster.success($t("Report is printing"))
+//     }
+//     else{
+//         if (localStorage.getItem("is_window")==1) {
+//             let data ={
+//                 action : "print_report",                
+//                 doc: props.params.doctype,
+//                 name:props.params.name,
+//                 print_format:activeReport.value.name,
+//             }
+//             if(props.params.doctype =="Sale" && activeReport.value.pos_receipt_file_name !="" && activeReport.value.pos_receipt_file_name !=null){                  
+//                 window.chrome.webview.postMessage("doc");
+//                 return;
+//             }  
+
+//             window.chrome.webview.postMessage(JSON.stringify(data));
+//             toaster.success($t("Report is printing"))
+//         }
+
+
+//         // if((localStorage.getItem("apkipa") ||0)==0){
+
+//         //     // window.open(printPreviewUrl.value + "&trigger_print=1").print();
+//         //     // window.close();
+//         // }
+//     }
+
+// }
 
 
 const reportClickHandler = async function (e) {

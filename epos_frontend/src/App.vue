@@ -52,6 +52,7 @@ socket.on("PrintReceipt", (arg) => {
 		const data = JSON.parse(arg) ;	
 		if(data.sale.pos_profile == localStorage.getItem("pos_profile") && station_device_printing == data.station_device_printing){
 			window.chrome.webview.postMessage(arg);
+			
 		}
 	} 
 });

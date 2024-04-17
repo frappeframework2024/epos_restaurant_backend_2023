@@ -8,7 +8,7 @@
     <v-row>
         <v-col md="3">
             <v-card :subtitle="$t('Working Day and Cashier Shift Report')">
-                <v-card-text> 
+                <v-card-text class="report-list-container"> 
                     <ComPlaceholder :loading="workingDayReports === null " :is-not-empty="workingDayReports?.length > 0">
                         <template v-for="(c, index) in workingDayReports" :key="index">
                             <v-card :color="activeReport.report_id == c.name ? 'info' : 'default'" :variant="activeReport.report_id == c.name || c.cashier_shifts.find(r=>r.name == activeReport.report_id) ? 'tonal' : 'text'" class="bg-gray-200 my-2 subtitle-opacity-1" @click="onWorkingDay(c)">
@@ -150,7 +150,7 @@ const activeReport = ref({
     report_id: '',
     doc_type: '',
     lang: 'en',
-    letterhead: 'Defualt Letter Head',
+    letterhead: 'Default Letter Head',
     filter: {
         product_category : ''
     }
@@ -400,4 +400,9 @@ onUnmounted(() => {
 <style>
 .subtitle-opacity-1 .v-card-subtitle {
     opacity: 1 !important;
-}</style>
+}
+.report-list-container{
+    height:calc(100vh - 200px);
+    overflow: auto;
+}
+</style>

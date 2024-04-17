@@ -1692,13 +1692,19 @@ export default class Sale {
                     let products_ = {
                         action: "print_to_kitchen",
                         sale: doc,
-                        printers: []
+                        printers: [],
+                        setting: this.setting?.pos_setting,
+                        station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
                     }
+                    let productUSBPrinter = JSON.parse(JSON.stringify(products_));
+
                     products_.printers = [];
-                    printers.forEach((p) => {
-                        products_.printers.push({
-                            "station": this.setting?.device_setting?.name ?? "",
-                            "printer": {
+                    productUSBPrinter.printers = []
+
+                    printers.forEach((p) => { 
+
+                        if(p.usb_printing == 1){
+                            productUSBPrinter.printers.push({
                                 "printer_name": p.printer_name,
                                 "group_item_type": p.group_item_type,
                                 "ip_address": p.ip_address,
@@ -1706,12 +1712,35 @@ export default class Sale {
                                 "cashier_printer": p.cashier_printer,
                                 "is_label_printer": p.is_label_printer,
                                 "usb_printing": p.usb_printing,
-                            },
-                            "products": data.product_printers.filter((x) => x.printer == p.printer_name)
-                        });
+                                "products": data.product_printers.filter((x) => x.printer == p.printer_name)
+                            });
+
+                        }else{
+                            products_.printers.push({
+                                "station": this.setting?.device_setting?.name ?? "",
+                                "printer": {
+                                    "printer_name": p.printer_name,
+                                    "group_item_type": p.group_item_type,
+                                    "ip_address": p.ip_address,
+                                    "port": p.port,
+                                    "cashier_printer": p.cashier_printer,
+                                    "is_label_printer": p.is_label_printer,
+                                    "usb_printing": p.usb_printing,
+                                },
+                                "products": data.product_printers.filter((x) => x.printer == p.printer_name)
+                            });
+                        }
                     });
 
-                    flutterChannel.postMessage(JSON.stringify(products_));
+                    //trigger printer network
+                    if(products_.printers.length > 0){
+                        flutterChannel.postMessage(JSON.stringify(products_));
+                    }
+
+                    //trigger print usb print
+                    if(productUSBPrinter.printers.length > 0){ 
+                        socket.emit("PrintReceipt", JSON.stringify(productUSBPrinter))
+                    }                    
                 }
             }
         }
@@ -1728,8 +1757,8 @@ export default class Sale {
     generateProductPrinters() {
         this.productPrinters = [];
         this.sale.sale_products.filter(r => r.sale_product_status == 'New' && JSON.parse(r.printers).length > 0).forEach((r) => {
-            const pritners = JSON.parse(r.printers);
-            pritners.forEach((p) => {
+            const printers = JSON.parse(r.printers);
+            printers.forEach((p) => {
                 this.productPrinters.push({
                     printer: p.printer,
                     group_item_type: p.group_item_type,
@@ -1779,8 +1808,8 @@ export default class Sale {
         if (this.setting.pos_setting.print_new_deleted_sale_product) {
             //generate deleted product to product printer list
             this.deletedSaleProducts.filter(r => JSON.parse(r.printers).length > 0).forEach((r) => {
-                const pritners = JSON.parse(r.printers);
-                pritners.forEach((p) => {
+                const printers = JSON.parse(r.printers);
+                printers.forEach((p) => {
                     this.productPrinters.push({
                         printer: p.printer,
                         group_item_type: p.group_item_type,

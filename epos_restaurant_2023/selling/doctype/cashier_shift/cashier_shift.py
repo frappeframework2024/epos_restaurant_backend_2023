@@ -123,8 +123,6 @@ class CashierShift(Document):
 								"is_edoor_shift":self.is_edoor_shift,
 								"cash_float":[]
 							}
-							
-	
 							if current_sort == 1:
 								next_shift_name = frappe.db.get_value("Shift Type",{'sort': 2} , "name")
 								new_shift_data["shift_name"] = next_shift_name
@@ -392,7 +390,7 @@ def get_revenues(self):
 		inner join `tabSale` s on s.name = sp.parent
 		where
 			s.cashier_shift='{}' and 
-			s.docstatus=1
+			s.docstatus=1 
 		group by 
 			sp.revenue_group
 		""".format(self.name)
@@ -401,7 +399,49 @@ def get_revenues(self):
  
 
 
+@frappe.whitelist()
+def get_combo_menu_revenue(self=None, name=None):
+	sql="""select 
+			sp.revenue_group,
+			sp.sub_total,
+			sp.total_discount as discount,
+			sp.tax_1_amount,
+			sp.tax_2_amount,
+			sp.tax_3_amount,
+			sp.combo_menu_data
+		from `tabSale Product` sp 
+		inner join `tabSale` s on s.name = sp.parent
+		where
+			s.cashier_shift='{}' and 
+			s.docstatus=1  and 
+			sp.is_combo_menu = 1
+		
+		""".format(name or self.name)
+	
+	
  
+	data = frappe.db.sql(sql, as_dict=1)
+	revenue_data = []
+	for d in data:
+		revenue_data = revenue_data  + get_combo_menu_data_revenue_breakdown(d)
+	return revenue_data
+
+def get_combo_menu_data_revenue_breakdown(revenue_data):
+	data = json.loads(revenue_data["combo_menu_data"])
+	combo_item_revenues  =[]
+	for c in data:
+		combo_revenue ={"product_code":c["product_code"], 
+						"revenue_group": frappe.db.get_value("Product",c["product_code"],"revenue_group") ,
+						"sub_total":c["quantity"] * c["price"]
+						} 
+		combo_item_revenues.append(combo_revenue)
+
+  
+	base_revenue ={"revenue_group":revenue_data.revenue_group}
+	base_revenue["sub_total"] = revenue_data["sub_total"] -  sum(d["sub_total"] for d in combo_item_revenues)
+ 
+	return   [base_revenue] + combo_item_revenues
+
 
 def get_payments(self):
 	sql="""select 

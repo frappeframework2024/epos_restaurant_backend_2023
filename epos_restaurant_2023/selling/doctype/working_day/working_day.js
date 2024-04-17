@@ -3,11 +3,10 @@
 
 frappe.ui.form.on("Working Day", {
     onload: function(frm) {
-       
+        
     },
 	refresh(frm) {
-        
-        frm.remove_custom_button('Print')
+        console.log(frappe.pages)
 	},
     posting_date(frm){
         
