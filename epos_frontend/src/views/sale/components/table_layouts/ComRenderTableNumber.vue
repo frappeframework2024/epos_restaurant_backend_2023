@@ -1,8 +1,8 @@
 <template>
     <template v-for="g in tableLayout.table_groups"> 
         <v-window-item :value="g.key"
-            v-bind:style="{ 'background-image': 'url(' + g.background + ')', 'min-height': `calc(100vh - ${!tableStatusColor?174:174}px)`, 'background-size': '100% 100%' }"
-            class="bg-center overflow-auto" v-if="!mobile">
+            v-bind:style="{ 'background-image': 'url(' + g.background + ')', 'min-height': `calc(100vh - ${!tableStatusColor && tableLayout.table_groups.length <= 1 ? 118:174}px)`, 'background-size': '100% 100%' }"
+            class="bg-center overflow-auto relative table-bg" v-if="!mobile">
             <template v-for="(t, index) in g.tables" :key="index">
                 <div v-bind:style="{ 'height': t.h + 'px', 'width': t.w + 'px', 'left': t.x + 'px', 'top': t.y + 'px', 'background-color': t.background_color, 'position': 'absolute', 'box-sizing': 'border-box' }"
                     class="text-center text-gray-100 cursor-pointer" :class="t.shape == 'Circle' ? 'shape-circle' : ''"
@@ -187,6 +187,22 @@ async function newSale(table) {
 
 
 </script>
-<style scoped>.shape-circle {
+<style scoped>
+.shape-circle {
     border-radius: 100%;
-}</style>
+}
+@media (max-width: 1920.98px) {
+    .table-bg {
+        background-size: 1920px 1080px !important;
+        background-attachment: local;
+        background-position: center center;
+    }
+}
+@media (min-width: 1921px) {
+    .table-bg {
+        background-size: 100% 1080px !important;
+        background-attachment: local;
+        background-position: center center;
+    }
+}
+</style>

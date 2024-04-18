@@ -1,5 +1,6 @@
 <template>
-    <PageLayout :title="$t('Table Layout')" full icon="mdi-cart-outline">
+    <PageLayout :title="$t('Table Layout')" full icon="mdi-cart-outline"
+        v-bind:style="{ height: mobile ? 'calc(100% - 56px)' : '' }">
         <template #centerCotent>
             <ComTableGroupTabHeader :tableSaleColor="table_status_color" />
         </template>
@@ -15,6 +16,7 @@
         </template>
     </PageLayout>
     <ComSaleStatusInformation v-if="table_status_color && getKeyIndex" />
+    <ComSaleStatusInformation v-if="table_status_color && mobile && !getKeyIndex" />
 </template>
 <script setup>
 import PageLayout from '../../components/layout/PageLayout.vue';
@@ -25,6 +27,8 @@ import ComArrangeTable from './components/table_layouts/ComArrangeTable.vue';
 import ComRenderTableNumber from './components/table_layouts/ComRenderTableNumber.vue';
 import ComSaleStatusInformation from '@/views/sale/components/ComSaleStatusInformation.vue';
 import { computed } from 'vue';
+import { useDisplay } from 'vuetify'
+const { mobile } = useDisplay()
 
 const { t: $t } = i18n.global;
 
