@@ -1,10 +1,10 @@
 <template>
     <div>
         <v-progress-linear v-if="dataResource.loading" style="position: absolute; z-index: 9999999999;" indeterminate
-                color="blue-lighten-3"></v-progress-linear>
+            color="blue-lighten-3"></v-progress-linear>
         <div>
             <div class="bg-gray-50 p-2 elevation-1">
-                <ComFilter v-if="!meta.loading" :meta="meta" @onFilter="onFilter" @onRefresh="onRefresh"/>
+                <ComFilter v-if="!meta.loading" :meta="meta" @onFilter="onFilter" @onRefresh="onRefresh" />
                 <div v-else class="h-12"></div>
             </div>
             <div>
@@ -12,7 +12,8 @@
             </div>
             <div>
                 <div class="relative">
-                    <div v-if="!dataResource.data || dataResource.loading" class="absolute left-0 right-0 top-0 bottom-0 z-10" style="background-color: #26262661;">
+                    <div v-if="!dataResource.data || dataResource.loading"
+                        class="absolute left-0 right-0 top-0 bottom-0 z-10" style="background-color: #26262661;">
                         <div class="h-full w-full flex justify-center items-center">
                             <div class="text-center">
                                 <v-progress-circular indeterminate></v-progress-circular>
@@ -21,62 +22,148 @@
                         </div>
                     </div>
                     <div v-else>
-                        <v-data-table
-                            v-if="dataResource?.data?.length > 0 && !dataResource.loading"
-                            :headers="getHeaders()" 
-                            :items="dataResource.data"
-                            :items-per-page="pagerOption.itemPerPage"
-                            item-value="name"
-                            class="elevation-1">
-                            <template v-for="h in headers" v-slot:[`item.${h.key}`]="{ item }">
+                        <v-data-table v-if="dataResource?.data?.length > 0 && !dataResource.loading" :hover="true"
+                            :headers="getHeaders()" :items="dataResource.data" :items-per-page="pagerOption.itemPerPage"
+                            item-value="name" class="elevation-1">
+                            <template v-slot="wrapper">
+                                <thead>
+                                    <tr>
+                                        <th v-if="showIndex==true" class="v-data-table__td v-data-table-column--align-center">
+                                            {{ $t('No #') }}
+                                        </th>
+                                        <th v-for="h in headers" :class="getColumnAlignment(h.align)">
+                                            {{ h.title }}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tr v-for="(item,idx) in dataResource.data" class="v-data-table__tr">
+                                    <th v-if="showIndex==true" class="text-center">
+                                            {{ calculateRowNumber(_tempPagerOption.currentPage,_tempPagerOption.itemPerPage,idx) }}
+                                            
+                                        </th>
+                                    <td v-for="h in headers" :class="getColumnAlignment(h.align)">
+                                        <template v-if="h.fieldtype == 'Currency'">
+                                            <div @click="callback(h, item)"
+                                                :class="{ 'text-blue-600 cursor-pointer': h.callback }">
+                                                <CurrencyFormat :value="item[h.key]" />
+
+                                            </div>
+                                        </template>
+                                        <template v-if="h.fieldtype == 'Image'">
+                                            <div class="text-center">
+                                                <v-avatar v-if="item[h.key]">
+                                                    <v-img :src="item[h.key]"></v-img>
+                                                </v-avatar>
+                                                <avatar v-else :name="item[h.placeholder]" class="my-0 mx-auto"
+                                                    size="40"></avatar>
+                                            </div>
+                                        </template>
+                                        <template v-else-if="h.fieldtype == 'Date'">
+
+                                            <span @click="callback(h, item)"
+                                                :class="{ 'text-blue-600 cursor-pointer': h.callback }">
+                                                {{ moment(item[h.key]).format('DD-MM-YYYY') }}
+                                            </span>
+                                        </template>
+                                        <template v-else-if="h.fieldtype == 'Status'">
+                                            <template v-if="h.key == 'is_synced'">
+
+                                                <v-chip v-if="item[h.key] == 1" compact color="success" size="small">{{
+                                                    $t("Synced") }}</v-chip>
+                                                <v-chip v-else color="error" compact size="small">{{ $t("Not Synced")
+                                                    }}</v-chip>
+
+                                            </template>
+                                            <template v-else>
+                                                <v-chip v-if="doctype == 'Sale'" :color="item[h.color_field]"
+                                                    size="small">
+                                                    {{
+                                                        item[h.key] }}</v-chip>
+                                                <template v-else>
+                                                    <v-chip v-if="item[h.key]" color="success" size="small">{{
+                                                        $t('Enabled')
+                                                        }}</v-chip>
+                                                    <v-chip v-else color="error" size="small">{{ $t('Disabled')
+                                                        }}</v-chip>
+                                                </template>
+                                            </template>
+
+                                        </template>
+                                        <template v-else-if="h.fieldtype == 'HTML'">
+                                            <component :is="getFieldValue(h, item)"></component>
+                                        </template>
+                                        <template v-else-if="!h.fieldtype">
+                                            <template v-if="h.template">
+                                                <div @click="callback(h, item)" v-html="getFieldValue(h, item)"
+                                                    :class="{ 'text-blue-600 cursor-pointer': h.callback }"></div>
+                                            </template>
+                                            <span @click="callback(h, item)"
+                                                :class="{ 'text-blue-600 cursor-pointer': h.callback }" v-else>
+                                                {{ item[h.key] }}
+                                            </span>
+                                        </template>
+                                    </td>
+                                </tr>
+                            </template>
+                            <!-- <template v-for="h in headers" v-slot:[`item.${h.key}`]="{ item }">
                                 <template v-if="h.fieldtype == 'Image'">
                                     <div class="text-center">
                                         <v-avatar v-if="item.raw[h.key]">
                                             <v-img :src="item.raw[h.key]"></v-img>
                                         </v-avatar>
-                                        <avatar v-else :name="item.raw[h.placeholder]" class="my-0 mx-auto" size="40"></avatar>
+                                        <avatar v-else :name="item.raw[h.placeholder]" class="my-0 mx-auto" size="40">
+                                        </avatar>
                                     </div>
                                 </template>
                                 <template v-if="h.fieldtype == 'Currency'">
-                                    <div @click="callback(h, item.raw)" :class="{'text-blue-600 cursor-pointer':h.callback}">
-                                        <CurrencyFormat :value="item.raw[h.key]"/>
+                                    <div @click="callback(h, item.raw)"
+                                        :class="{ 'text-blue-600 cursor-pointer': h.callback }">
+                                        <CurrencyFormat :value="item.raw[h.key]" />
                                     </div>
                                 </template>
-                                <template v-else-if="h.fieldtype=='Date'">
+                                <template v-else-if="h.fieldtype == 'Date'">
 
-                                    <span @click="callback(h, item.raw)" :class="{'text-blue-600 cursor-pointer':h.callback}">
-                                        {{  moment(item.raw[h.key]).format('DD-MM-YYYY') }}
+                                    <span @click="callback(h, item.raw)"
+                                        :class="{ 'text-blue-600 cursor-pointer': h.callback }">
+                                        {{ moment(item.raw[h.key]).format('DD-MM-YYYY') }}
                                     </span>
                                 </template>
-                                <template v-else-if="h.fieldtype=='Status'"> 
-                                    <template v-if="h.key=='is_synced'">
+                                <template v-else-if="h.fieldtype == 'Status'">
+                                    <template v-if="h.key == 'is_synced'">
 
-                                        <v-chip v-if="item.raw[h.key]==1" compact color="success" size="small">{{ $t("Synced") }}</v-chip>
-                                        <v-chip v-else color="error" compact size="small">{{ $t("Not Synced") }}</v-chip>
-                                       
+                                        <v-chip v-if="item.raw[h.key] == 1" compact color="success" size="small">{{
+                                            $t("Synced") }}</v-chip>
+                                        <v-chip v-else color="error" compact size="small">{{ $t("Not Synced")
+                                            }}</v-chip>
+
                                     </template>
                                     <template v-else>
-                                        <v-chip v-if="doctype=='Sale'" :color="item.raw[h.color_field]" size="small"> {{ item.raw[h.key] }}</v-chip>
-                                    <template v-else>
-                                        <v-chip v-if="item.raw[h.key]" color="success" size="small">{{ $t('Enabled') }}</v-chip>
-                                        <v-chip v-else color="error" size="small">{{ $t('Disabled') }}</v-chip>
+                                        <v-chip v-if="doctype == 'Sale'" :color="item.raw[h.color_field]" size="small">
+                                            {{
+                                                item.raw[h.key] }}</v-chip>
+                                        <template v-else>
+                                            <v-chip v-if="item.raw[h.key]" color="success" size="small">{{ $t('Enabled')
+                                                }}</v-chip>
+                                            <v-chip v-else color="error" size="small">{{ $t('Disabled') }}</v-chip>
+                                        </template>
                                     </template>
-                                    </template>
-                                    
+
                                 </template>
-                                <template v-else-if="h.fieldtype=='HTML'">
-                                    <component :is="getFieldValue(h,item.raw)"></component>
+                                <template v-else-if="h.fieldtype == 'HTML'">
+                                    <component :is="getFieldValue(h, item.raw)"></component>
                                 </template>
                                 <template v-else-if="!h.fieldtype">
                                     <template v-if="h.template">
-                                        <div @click="callback(h, item.raw)" v-html="getFieldValue(h, item.raw)"  :class="{'text-blue-600 cursor-pointer':h.callback}"></div>
+                                        <div @click="callback(h, item.raw)" v-html="getFieldValue(h, item.raw)"
+                                            :class="{ 'text-blue-600 cursor-pointer': h.callback }"></div>
                                     </template>
-                                    <span @click="callback(h, item.raw)" :class="{'text-blue-600 cursor-pointer':h.callback}" v-else>
+                                    <span @click="callback(h, item.raw)"
+                                        :class="{ 'text-blue-600 cursor-pointer': h.callback }" v-else>
                                         {{ item.raw[h.key] }}
                                     </span>
                                 </template>
-                                
-                            </template>
+
+                            </template> -->
                         </v-data-table>
                         <div class="p-6 text-center elevation-1 text-gray-400" v-else>
                             <div><v-icon icon="mdi-package-variant" style="font-size:60px"></v-icon></div>
@@ -86,29 +173,18 @@
                 </div>
             </div>
             <div>
-                <div class="text-center items-center pt-2" v-if="countResource.data"> 
+                <div class="text-center items-center pt-2" v-if="countResource.data">
                     <v-row justify="center" align="center" class="m-0">
                         <v-col cols="2">
                             <div class="w-24">
-                                <v-select
-                                size="small"
-                                label=""
-                                :items="[5,10,20,30,40,50,100]"
-                                v-model="pagerOption.itemPerPage"
-                                hide-no-data
-                                hide-details
-                                variant="underlined"
-                                ></v-select>
+                                <v-select size="small" label="" :items="[5, 10, 20, 30, 40, 50, 100]"
+                                    v-model="pagerOption.itemPerPage" hide-no-data hide-details
+                                    variant="underlined"></v-select>
                             </div>
                         </v-col>
-                        <v-col cols="8"> 
-                            <v-pagination
-                            size="small"
-                            v-model="pagerOption.currentPage"
-                            class="my-4"
-                            :length="totalPage"
-                            total-visible="8"
-                            ></v-pagination> 
+                        <v-col cols="8">
+                            <v-pagination size="small" v-model="pagerOption.currentPage" class="my-4"
+                                :length="totalPage" total-visible="8"></v-pagination>
                         </v-col>
                         <v-col cols="2"></v-col>
                     </v-row>
@@ -117,14 +193,14 @@
         </div>
     </div>
 </template>
-  
+
 <script setup>
 import { VDataTable } from 'vuetify/labs/VDataTable'
-import { createResource, reactive, defineEmits, watch,inject,ref, onUnmounted } from '@/plugin'
+import { createResource, reactive, defineEmits, watch, inject, ref, onUnmounted } from '@/plugin'
 import ComFilter from '../ComFilter.vue';
 
 let filter = reactive({});
-const emit = defineEmits(['callback','onFetch'])
+const emit = defineEmits(['callback', 'onFetch'])
 const moment = inject('$moment')
 const gv = inject('$gv')
 const order = ref({})
@@ -137,13 +213,21 @@ const props = defineProps({
         type: String,
         default: ''
     },
-    defaltFilter:Object,
+    showIndex: Boolean,
+    defaltFilter: Object,
     extraFields: String,
     businessBranchField: String,
     posProfileField: String
 })
- 
+
 let pagerOption = reactive({
+    itemPerPage: 20,
+    currentPage: 1,
+    orderBy: '',
+    filters: {}
+})
+
+let _tempPagerOption = reactive({
     itemPerPage: 20,
     currentPage: 1,
     orderBy: '',
@@ -153,19 +237,19 @@ let pagerOption = reactive({
 let totalRecord = ref(0)
 let totalPage = ref(0)
 
-function getHeaders(){
+function getHeaders() {
     let h = props.headers;
-    h.forEach((r)=>{
-        r.sortable=false;
+    h.forEach((r) => {
+        r.sortable = false;
     });
     return h;
 }
 const meta = createResource({
     url: "epos_restaurant_2023.api.api.get_meta",
-    params:{
+    params: {
         doctype: props.doctype,
     },
-    
+
     auto: true,
     async onSuccess(data) {
         order.value = data;
@@ -176,65 +260,78 @@ const meta = createResource({
     }
 })
 
+
+
 let countResource = createResource({
     url: 'frappe.client.get_count',
-    params:getCountResourceParams(),
+    params: getCountResourceParams(),
     auto: true,
     onSuccess(r) {
         totalRecord.value = r
-        totalPage.value = Math.ceil(r/pagerOption.itemPerPage)
-        dataResource.params =   getDataResourceParams()
+        totalPage.value = Math.ceil(r / pagerOption.itemPerPage)
+        dataResource.params = getDataResourceParams()
         dataResource.fetch()
     }
 })
 
 let dataResource = createResource({
     url: 'frappe.client.get_list',
-    params: getDataResourceParams(),      
+    params: getDataResourceParams(),
+    async onSuccess(data) {
+        
+        _tempPagerOption=JSON.parse(JSON.stringify(pagerOption)) 
+    }
 })
-function renderTemplate(template){
+function renderTemplate(template) {
     return template.replace(/{\s*([^}]+)\s*}/g, (match, p1) => {
-            return eval(p1);
-      });
+        return eval(p1);
+    });
 }
-function getDataResourceParams (){
- 
-    return {  
-         doctype: props.doctype,
-            fields: getFieldName(),
-            filters: getFilter(),
-            order_by: pagerOption.orderBy ? pagerOption.orderBy : order.value.sort_field && order.value.sort_order ? order.value?.sort_field + ' ' + order.value?.sort_order : '',
-            limit_page_length: pagerOption.itemPerPage,
-            limit_start: ( (pagerOption.currentPage -1) * pagerOption.itemPerPage )
-        }
+function getDataResourceParams() {
+
+    return {
+        doctype: props.doctype,
+        fields: getFieldName(),
+        filters: getFilter(),
+        order_by: pagerOption.orderBy ? pagerOption.orderBy : order.value.sort_field && order.value.sort_order ? order.value?.sort_field + ' ' + order.value?.sort_order : '',
+        limit_page_length: pagerOption.itemPerPage,
+        limit_start: ((pagerOption.currentPage - 1) * pagerOption.itemPerPage)
+    }
 }
-function getCountResourceParams (){
-    return {   
-            doctype: props.doctype, 
-            filters: getFilter()
-        }
+function calculateRowNumber(currentPage,perPage,idx){
+    return currentPage * perPage + 1 + idx - perPage
+}
+function getCountResourceParams() {
+    return {
+        doctype: props.doctype,
+        filters: getFilter()
+    }
+}
+function getColumnAlignment(align) {
+    return 'pa-1 text-' + align
 }
 
-function getFilter(){
+function getFilter() {
     let filters = JSON.parse(JSON.stringify(pagerOption.filters))
-    if(gv.setting.specific_pos_profile && props.posProfileField){
+    if (gv.setting.specific_pos_profile && props.posProfileField) {
         filters[props.posProfileField] = ["=", localStorage.getItem('pos_profile')]
     }
-    else if(gv.setting.specific_business_branch && props.businessBranchField){
+    else if (gv.setting.specific_business_branch && props.businessBranchField) {
         filters[props.businessBranchField] = ["=", gv.setting.business_branch]
     }
-    filters["docstatus"] = ["in",[1,0]]
+    filters["docstatus"] = ["in", [1, 0]]
     emit('onFetch', filters)
     return filters
 }
- 
-watch(pagerOption , (currentValue) => {
-    setTimeout(function(){
+
+watch(pagerOption, (currentValue) => {
+    setTimeout(function () {
         dataResource.params = getDataResourceParams()
         dataResource.fetch()
         countResource.params = getCountResourceParams()
         countResource.fetch()
-    },500);
+        
+    }, 500);
 })
 function getFieldName() {
     let fieldnames = []
@@ -246,7 +343,7 @@ function getFieldName() {
             fieldnames.push(r)
         })
     }
-    
+
     return fieldnames;
 
 }
@@ -281,7 +378,7 @@ function callback(header, data) {
 
 }
 
-function onFilter($event, orderBy){
+function onFilter($event, orderBy) {
     pagerOption.currentPage = 1;
     pagerOption.filters = $event;
     pagerOption.orderBy = orderBy;
@@ -308,7 +405,7 @@ function onRefresh() {
 
 const pageListener = async function (e) {
     if (e.isTrusted && typeof (e.data) == 'string') {
-        if(e.data=="refresh"){
+        if (e.data == "refresh") {
             dataResource.fetch()
         }
 
@@ -321,7 +418,7 @@ window.addEventListener('message', pageListener, false);
 
 onUnmounted(() => {
     window.removeEventListener('message', pageListener, false);
-}) 
+})
 
 
 </script>
@@ -329,16 +426,19 @@ onUnmounted(() => {
 .v-data-table-footer {
     display: none !important;
 }
+
 .v-table__wrapper table {
     white-space: nowrap;
 }
+
 .v-data-table-header__content {
     display: inline-block !important;
 }
-.v-data-table .v-table__wrapper > table > thead > tr > td.v-data-table-column--align-center,
-.v-data-table .v-table__wrapper > table > thead > tr th.v-data-table-column--align-center,
-.v-data-table .v-table__wrapper > table tbody > tr > td.v-data-table-column--align-center,
-.v-data-table .v-table__wrapper > table tbody > tr th.v-data-table-column--align-center {
-  text-align: center;
+
+.v-data-table .v-table__wrapper>table>thead>tr>td.v-data-table-column--align-center,
+.v-data-table .v-table__wrapper>table>thead>tr th.v-data-table-column--align-center,
+.v-data-table .v-table__wrapper>table tbody>tr>td.v-data-table-column--align-center,
+.v-data-table .v-table__wrapper>table tbody>tr th.v-data-table-column--align-center {
+    text-align: center;
 }
 </style>

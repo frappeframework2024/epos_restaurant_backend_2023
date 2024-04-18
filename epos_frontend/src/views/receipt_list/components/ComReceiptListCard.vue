@@ -189,11 +189,19 @@ function getDataResourceParams (){
     if (gv.customerMeta == undefined){
         gv.customerMeta={sort_order:'creation',sort_field:'desc'}
     }
+    console.log("x125" , {  
+         doctype: props.doctype,
+            fields: getFieldName(),
+            filters: pagerOption.filters,
+            order_by: 'creation' + ' ' + gv.customerMeta?.sort_order || 'desc',
+            limit_page_length: pagerOption.itemPerPage,
+            limit_start: ( (pagerOption.currentPage -1) * pagerOption.itemPerPage )
+        })
     return {  
          doctype: props.doctype,
             fields: getFieldName(),
             filters: pagerOption.filters,
-            order_by: pagerOption.orderBy ? pagerOption.orderBy : gv.customerMeta?.sort_field || 'creation' + ' ' + gv.customerMeta?.sort_order || 'desc',
+            order_by:'creation' + ' ' + gv.customerMeta?.sort_order || 'desc',
             limit_page_length: pagerOption.itemPerPage,
             limit_start: ( (pagerOption.currentPage -1) * pagerOption.itemPerPage )
         }

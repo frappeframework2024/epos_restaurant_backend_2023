@@ -76,7 +76,7 @@
 import { inject, ref,computed,saleDetailDialog, onUnmounted,reactive,i18n } from '@/plugin'
 import { createToaster } from '@meforma/vue-toaster';
 const gv = inject("$gv")
-
+const pos_profile = localStorage.getItem("pos_profile");
 const serverUrl = window.location.protocol + "//" + window.location.hostname + ":" + gv.setting.pos_setting.backend_port;
 
 const toaster = createToaster({ position: "top-right" });
@@ -196,11 +196,12 @@ function onPrint(){
             let data ={
                 action : "print_report",                
                 doc: activeReport.value.doc_type,
-                name: activeReport.value.report_id,
+                name: props.params.name,
                 print_format: activeReport.value.print_report_name,
                 pos_profile:pos_profile,
                 outlet:gv.setting.outlet
             }
+            console.log(data)
             window.chrome.webview.postMessage(JSON.stringify(data));
             toaster.success($t("Report is printing"))
             // window.open(printUrl.value + "&trigger_print=1").print();
@@ -213,7 +214,7 @@ function onPrint(){
 //     if ((localStorage.getItem("flutterWrapper") || 0) == 1) { 
 //         var printers = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
 //         if (printers.length <= 0) {
-//             // toaster.warning($t("Printer not yet configt for this device"))
+//             toaster.warning($t("Printer not yet configt for this device"))
 //         } else {
 //             let data ={
 //                 action : "print_report",
@@ -251,11 +252,11 @@ function onPrint(){
 //         }
 
 
-//         // if((localStorage.getItem("apkipa") ||0)==0){
+//         if((localStorage.getItem("apkipa") ||0)==0){
 
-//         //     // window.open(printPreviewUrl.value + "&trigger_print=1").print();
-//         //     // window.close();
-//         // }
+//             window.open(printPreviewUrl.value + "&trigger_print=1").print();
+//             window.close();
+//         }
 //     }
 
 // }
