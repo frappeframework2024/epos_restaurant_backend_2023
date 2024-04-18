@@ -5,8 +5,56 @@
             <v-btn  @click="onExport()">{{ $t("PDF") }}</v-btn>
             <v-btn icon="mdi-printer" @click="onPrint()"></v-btn>
         </template>
-    <v-row>
-        <v-col md="3">
+    <v-row> 
+        <v-navigation-drawer v-model="drawer" location="left" temporary style="width:90%">
+            <v-card :subtitle="$t('Working Day and Cashier Shift Report')">
+                <v-card-text class="report-list-container"> 
+                    <ComPlaceholder :loading="workingDayReports === null " :is-not-empty="workingDayReports?.length > 0">
+                        <template v-for="(c, index) in workingDayReports" :key="index">
+                            <v-card :color="activeReport.report_id == c.name ? 'info' : 'default'" :variant="activeReport.report_id == c.name || c.cashier_shifts.find(r=>r.name == activeReport.report_id) ? 'tonal' : 'text'" class="bg-gray-200 my-2 subtitle-opacity-1" @click="onWorkingDay(c)">
+                                <template v-slot:title>
+                                    <div class="flex justify-between">
+                                        <div>{{ c.name }}</div>
+                                        <div>
+                                            <v-chip v-if="c.is_closed" color="error" size="small"
+                                                variant="elevated">{{ $t('Closed') }}</v-chip>
+                                            <v-chip v-else color="success" size="small" variant="elevated">{{ $t('Opening') }}</v-chip>
+                                        </div>
+                                    </div>
+                                </template>
+                                <template v-slot:subtitle>
+                                    <div>
+                                        <div><v-icon icon="mdi-calendar" size="x-small" /> <span class="font-bold">{{
+                                            c.posting_date
+                                        }}</span> {{ $t('was opening by') }} <span class="font-bold">{{ c.owner }}</span></div>
+                                        <div v-if="c.is_closed">
+                                            <v-icon icon="mdi-calendar-multiple" size="x-small" /> <span
+                                                class="font-bold">{{ c.closed_date }}</span> {{ $t('was closed by') }} <span
+                                                class="font-bold">{{ c.modified_by }}</span>
+                                        </div>
+                                        <div><v-icon icon="mdi-note-text" size="x-small"></v-icon> {{ $t('Total Shift') }}: <span
+                                                class="font-bold">{{getCashierShifts(c).length }}</span></div>
+                                    </div>
+                                </template>
+                            </v-card>
+                            <div v-if="activeReport.report_id == c.name || getCashierShifts(c).find(r=>r.name == activeReport.report_id)">
+                                <div class="-m-1">
+                                    <v-btn :color="item.name == activeReport.report_id ? 'info' : 'default'" variant="tonal" stacked class="m-1" v-for="(item, index) in getCashierShifts(c)" :key="index" @click="onCashierShift(item)">
+                                        <div>{{ moment(item.creation).format('h:mm:ss A') }}</div>
+                                        <div class="text-xs">#{{ item.name }}</div>
+                                    </v-btn>
+                                </div>
+                            </div>
+                            <div class="pt-2">
+                                <hr/>
+                            </div>
+                        </template>
+                    </ComPlaceholder>
+                </v-card-text>
+            </v-card>
+        </v-navigation-drawer> 
+
+        <v-col md="3" class="d-none d-md-block"> 
             <v-card :subtitle="$t('Working Day and Cashier Shift Report')">
                 <v-card-text class="report-list-container"> 
                     <ComPlaceholder :loading="workingDayReports === null " :is-not-empty="workingDayReports?.length > 0">
@@ -54,6 +102,12 @@
             </v-card>
         </v-col> 
         <v-col md="9">
+            <!-- Hamburger Nav -->
+            <div class="d-flex justify-between items-center d-block d-md-none" style="padding: 0rem 1rem 0rem 0rem">
+                <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+                <v-icon icon="mdi-refresh" size="small" @click="onRefresh"/>
+            </div>
+            <!-- Hamburger Nav -->
             <v-card>
                 <template #title>
                     <div class="px-1 py-2 -m-1">
@@ -69,34 +123,36 @@
                                 </div>
                             </v-col> 
                             <v-col cols="12" lg="5">
-                                <div class="flex items-center col-4"> 
-                                    <v-select 
-                                    prepend-inner-icon="mdi-content-paste"
-                                    density="compact"
-                                    v-model="activeReport.letterhead"
-                                    :items= gv.setting.letter_heads
-                                    item-title="name"
-                                    item-value="name"
-                                    hide-no-data
-                                    hide-details
-                                    variant="solo"
-                                    class="mx-1"
-                                    @update:modelValue="onRefresh"
-                                    ></v-select>
-                                    <v-select 
-                                    prepend-inner-icon="mdi-google-translate"
-                                    density="compact"
-                                    v-model="activeReport.lang"
-                                    :items="lang" 
-                                    item-title="language_name"
-                                    item-value="language_code"
-                                    hide-no-data
-                                    hide-details
-                                    variant="solo"
-                                    class="mx-1"
-                                    @update:modelValue="onRefresh"
-                                    ></v-select>
-                                    <v-icon class="mx-1" icon="mdi-refresh" size="small" @click="onRefresh"/>
+                                <div class="overflow-x-auto">
+                                    <div class="d-block d-md-flex items-center col-4"> 
+                                        <v-select 
+                                        prepend-inner-icon="mdi-content-paste"
+                                        density="compact"
+                                        v-model="activeReport.letterhead"
+                                        :items= gv.setting.letter_heads
+                                        item-title="name"
+                                        item-value="name"
+                                        hide-no-data
+                                        hide-details
+                                        variant="solo"
+                                        class="mx-1 mb-2 mb-md-0"
+                                        @update:modelValue="onRefresh"
+                                        ></v-select>
+                                        <v-select 
+                                        prepend-inner-icon="mdi-google-translate"
+                                        density="compact"
+                                        v-model="activeReport.lang"
+                                        :items="lang" 
+                                        item-title="language_name"
+                                        item-value="language_code"
+                                        hide-no-data
+                                        hide-details
+                                        variant="solo"
+                                        class="mx-1"
+                                        @update:modelValue="onRefresh"
+                                        ></v-select>
+                                        <v-icon class="d-none d-md-block mx-1" icon="mdi-refresh" size="small" @click="onRefresh"/>
+                                    </div>
                                 </div>
                             </v-col>
                         </v-row>
@@ -156,7 +212,7 @@ const activeReport = ref({
     }
 })
 const workingDay = ref(null)
-
+const drawer = ref(false)
 
 const printPreviewUrl = computed(()=>{
     return `${serverUrl}/printview?doctype=${activeReport.value.doc_type}&name=${activeReport.value.report_id}&product_category=${activeReport.value.filter.product_category}&pos_profile=${pos_profile}&outlet=${gv.setting.outlet}&format=${activeReport.value.preview_report}&no_letterhead=0&show_toolbar=0&letterhead=${activeReport.value.letterhead}&settings=%7B%7D&_lang=${activeReport.value.lang}`
