@@ -405,6 +405,7 @@ function onPrint(){
                 }
             }        
             flutterChannel.postMessage(JSON.stringify(data));
+            console.log(JSON.stringify(data))
         }
         toaster.success($t("Report is printing"))
     }
