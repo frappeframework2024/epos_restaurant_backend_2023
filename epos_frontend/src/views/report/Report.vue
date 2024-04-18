@@ -404,8 +404,9 @@ function onPrint(){
                     "is_label_printer": printers[0].is_label_printer
                 }
             }        
-            flutterChannel.postMessage(JSON.stringify(data));
             console.log(JSON.stringify(data))
+            flutterChannel.postMessage(JSON.stringify(data));
+            
         }
         toaster.success($t("Report is printing"))
     }
