@@ -415,7 +415,7 @@ function onPrint(){
                 action : "print_report",                
                 doc: activeReport.value.doc_type,
                 name: activeReport.value.report_id,
-                print_format: activeReport.value.print_report_name,
+                print_format: activeReport.value.print_report_name || '',
                 pos_profile:pos_profile,
                 outlet:gv.setting.outlet
             }
