@@ -422,6 +422,7 @@ export default class Sale {
                 is_require_employee: p.is_require_employee,
                 is_timer_product: p.is_timer_product || 0,
                 time_stop: 0,
+                kod_status:"Pending"
 
             }
             if (p.is_timer_product) {
@@ -1675,7 +1676,11 @@ export default class Sale {
 
 
             }
+
+            // We send this to refresh kitchen order display
+            socket.emit("SubmitKOD",{"screen_name":_printer[0].printer})
         });
+
 
 
         if (localStorage.getItem("is_window") == 1) {
@@ -1740,12 +1745,14 @@ export default class Sale {
                     //trigger print usb print
                     if(productUSBPrinter.printers.length > 0){ 
                         socket.emit("PrintReceipt", JSON.stringify(productUSBPrinter))
+                      
                     }                    
                 }
             }
         }
         else {
             socket.emit("PrintReceipt", JSON.stringify(data))
+          
         }
 
         //reset product printer
@@ -1884,17 +1891,17 @@ export default class Sale {
                 flutterChannel.postMessage(JSON.stringify(data));
             }
         } else {
-            // try {
-            //     await call.get("epos_restaurant_2023.api.mobile_api.print_bill_to_network_printer", { "name": doc.name, "template": receipt.pos_receipt_template, "reprint": 0 })
-            // }
-            // catch (err) {
+            if((gv.setting?.device_setting?.platform) == "Web") {
+               await call.get("epos_restaurant_2023.api.mobile_api.print_bill_to_network_printer", { "name": doc.name,"reprint": 0 })
+            }
+            else{
                 if (receipt.pos_receipt_file_name) {
                     socket.emit('PrintReceipt', JSON.stringify(data));
                 }
                 else {
                     this.onOpenBrowserPrint("Sale", doc.name, receipt.name)
                 }
-            // }
+            }
         }
     }
 

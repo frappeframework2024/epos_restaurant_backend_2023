@@ -122,6 +122,8 @@
   "time_out_price",
   "duration",
   "is_return",
+  "kod_status",
+  "kod_status_update_time",
   "column_break_txhh",
   "cost",
   "product_photo",
@@ -909,12 +911,24 @@
    "fieldname": "is_park",
    "fieldtype": "Check",
    "label": "Is Park"
+  },
+  {
+   "default": "Pending",
+   "fieldname": "kod_status",
+   "fieldtype": "Select",
+   "label": "KOD Status",
+   "options": "Pending\nProcessing\nHold\nDone"
+  },
+  {
+   "fieldname": "kod_status_update_time",
+   "fieldtype": "Datetime",
+   "label": "kod_status_update_time"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-03-25 12:27:25.244824",
+ "modified": "2024-04-18 22:36:50.578298",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",

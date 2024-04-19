@@ -1,7 +1,7 @@
 <template>
-    <template v-for="g in tableLayout.table_groups"> 
+    <template v-for="g in tableLayout.table_groups">
         <v-window-item :value="g.key"
-            v-bind:style="{ 'background-image': 'url(' + g.background + ')', 'min-height': `calc(100vh - ${!tableStatusColor && tableLayout.table_groups.length <= 1 ? 118:174}px)`, 'background-size': '100% 100%' }"
+            v-bind:style="{ 'background-image': 'url(' + g.background + ')', 'min-height': `calc(100vh - ${!tableStatusColor && tableLayout.table_groups.length <= 1 ? 118 : 174}px)`, 'background-size': '100% 100%', 'min-width': 'calc(100vw - 0px)' }"
             class="bg-center overflow-auto relative table-bg" v-if="!mobile">
             <template v-for="(t, index) in g.tables" :key="index">
                 <div v-bind:style="{ 'height': t.h + 'px', 'width': t.w + 'px', 'left': t.x + 'px', 'top': t.y + 'px', 'background-color': t.background_color, 'position': 'absolute', 'box-sizing': 'border-box' }"
@@ -11,8 +11,9 @@
                         v-if="t.sales?.length > 1"></v-badge>
                     <div class="flex items-center justify-center h-full">
                         <div>
-                            <div><span class="font-bold">{{ t.tbl_no }}</span><span v-if="t.guest_cover">({{ t.guest_cover
-                            }})</span></div>
+                            <div><span class="font-bold">{{ t.tbl_no }}</span><span v-if="t.guest_cover">({{
+                                t.guest_cover
+                                    }})</span></div>
                             <div v-if="t.grand_total">
                                 <CurrencyFormat :value="t.grand_total"></CurrencyFormat>
                             </div>
@@ -30,7 +31,7 @@
         <v-window-item v-else :value="g.key" v-bind:style="{ 'min-height': 'auto' }" class="mt-2 mb-4">
             <v-row>
                 <v-col cols="6" v-for="(t, index) in g.tables" :key="index">
-                
+
                     <div v-bind:style="{ 'height': '75px', 'background-color': t.background_color }"
                         class="text-center text-gray-100 cursor-pointer  rounded-lg" @click="onTableClick(t)">
                         <v-badge :content="t.sales?.length" color="error" style="float:right;" class="mr-2"
@@ -69,7 +70,7 @@ const moment = inject("$moment");
 const router = useRouter();
 const props = defineProps({
     tableStatusColor: Boolean
-}); 
+});
 
 tableLayout.tab = localStorage.getItem("__tblLayoutIndex")
 
@@ -79,12 +80,12 @@ function getTimeDifference(date) {
     const diff = now - moment(date).toDate();
     const hours = Math.floor(diff / 3600000);
     const minutes = Math.floor((diff % 3600000) / 60000);
-    
+
     if (minutes <= 0 && hours <= 0) {
         return "just now"
     } else {
-        if (hours==0){
-            return `${minutes} mn`; 
+        if (hours == 0) {
+            return `${minutes} mn`;
         }
         return `${hours} h ${minutes} mn`;
     }
@@ -100,7 +101,7 @@ function onTableClick(table, guest_cover) {
             }
             else if (table.sales.length == 1) {
                 if (mobile.value) {
-                    
+
                     await sale.LoadSaleData(table.sales[0].name).then(async (_sale) => {
                         localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth));
                         const result = await smallViewSaleProductListModal({ title: sale.sale.name ? sale.sale.name : $t('New Sale'), data: { from_table: true } });
@@ -191,6 +192,7 @@ async function newSale(table) {
 .shape-circle {
     border-radius: 100%;
 }
+
 @media (max-width: 1920.98px) {
     .table-bg {
         background-size: 1920px 1080px !important;
@@ -198,6 +200,7 @@ async function newSale(table) {
         background-position: center center;
     }
 }
+
 @media (min-width: 1921px) {
     .table-bg {
         background-size: 100% 1080px !important;

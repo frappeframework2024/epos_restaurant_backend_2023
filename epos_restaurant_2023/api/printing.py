@@ -174,6 +174,7 @@ def print_from_print_format(data, is_html=False):
     try:
         html = get_rendered_template(
             doc=document,
+            letterhead=data['letterhead'] or "",
             print_format=print_format,
             meta=document.meta,
             pos_profile= data["pos_profile"]

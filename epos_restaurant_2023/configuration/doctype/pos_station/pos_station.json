@@ -44,6 +44,8 @@
   "show_edit_menu_button",
   "allow_switch_pos_profile",
   "printers_tab",
+  "default_kod_id",
+  "default_kod",
   "station_printers"
  ],
  "fields": [
@@ -267,11 +269,23 @@
    "fieldname": "allow_switch_pos_profile",
    "fieldtype": "Check",
    "label": "Allow Switch POS Profile"
+  },
+  {
+   "fetch_from": "default_kod_id.printer_name",
+   "fieldname": "default_kod",
+   "fieldtype": "Data",
+   "label": "Default KOD"
+  },
+  {
+   "fieldname": "default_kod_id",
+   "fieldtype": "Link",
+   "label": "Default KOD ID",
+   "options": "Printer"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-04-09 14:28:12.787237",
+ "modified": "2024-04-18 10:40:09.890251",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

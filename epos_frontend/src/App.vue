@@ -1,9 +1,12 @@
 <template>
 	<SplashScreen v-if="state.isLoading" />
+	
 	<v-sheet v-else id="app-container" v-resize="onResize">
+		<!-- {{ layout }} -->
 		<v-progress-linear class="progress_bar" v-if="isLoading" indeterminate color="teal"></v-progress-linear>
-		<MainLayout v-if="isMainLayout" />
-		<SaleLayout v-else-if="isSaleLayout" />
+		<MainLayout v-if="layout=='main_layout'" />
+		<SaleLayout v-else-if="layout=='sale_layout'" />
+		<KitchenOrderDisplayLayout v-else-if="layout=='kitchen_order_display_layout'" />
 		<BlankLayout v-else />
 		<PromiseDialogsWrapper />
 	</v-sheet>
@@ -12,6 +15,7 @@
 import { useRouter, useRoute, routeLocationKey } from 'vue-router'
 import MainLayout from './components/layout/MainLayout.vue';
 import BlankLayout from './components/layout/BlankLayout.vue';
+import KitchenOrderDisplayLayout from '@/components/layout/KitchenOrderDisplayLayout.vue';
 import SplashScreen from './components/SplashScreen.vue';
 import SaleLayout from './components/layout/SaleLayout.vue';
 import { PromiseDialogsWrapper } from 'vue-promise-dialogs';
@@ -59,12 +63,11 @@ socket.on("PrintReceipt", (arg) => {
 
 const router = useRouter()
 const route = useRoute()
-const isMainLayout = computed(() => {
-	return route.meta.layout == "main_layout"
+
+const layout = computed(() => {
+	return route.meta.layout  || "blank_layout"
 })
-const isSaleLayout = computed(() => {
-	return route.meta.layout == "sale_layout"
-})
+
 const isLoading = computed(() => {
 	return store.state.isLoading
 });

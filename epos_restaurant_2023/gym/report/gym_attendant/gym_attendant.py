@@ -27,8 +27,9 @@ def validate(filters):
 
 def get_columns(filters): 
 	columns = []
-	columns.append({"label":"Member", "fieldname":"member","fieldtype":"Link","options":"Customer", "align":"left","width":120})
-	columns.append({"label":"Member Name",  "fieldname":"customer_name_en","fieldtype":"Data", "align":"left","width":250})
+	columns.append({"label":"Code", "fieldname":"member","fieldtype":"Link","options":"Customer", "align":"left","width":100})
+	columns.append({"label":"Name", "fieldname":"member_name","fieldtype":"Data", "align":"left","width":150})
+	columns.append({"label":"Membership",  "fieldname":"membership_name","fieldtype":"Data", "align":"left","width":250})
 	columns.append({"label":"Check In",  "fieldname":"check_in_date_time","fieldtype":"Datetime", "align":"center","width":150})
 	columns.append({"label":"Check Out",  "fieldname":"check_out_date_time","fieldtype":"Datetime", "align":"center","width":150})
 	return columns
@@ -37,22 +38,25 @@ def get_columns(filters):
  
 def get_conditions(filters):
 	conditions=''
-	conditions += " AND Date(check_in_date_time) between %(start_date)s AND %(end_date)s"
+	conditions += " AND date(m.check_in_date_time) between %(start_date)s AND %(end_date)s"
 	if len(filters['member']) > 0:
 		conditions += " AND m.member in %(member)s"
 	return conditions
 
 def get_report_data(filters):	
-	columns = get_columns(filters)
-	columns_as_string = ','.join([c['fieldname'] for c in columns]) 
+	# columns = get_columns(filters)
+	# columns_as_string = ','.join([c['fieldname'] for c in columns]) 
 	data = []	
-	sql = """select
-			{0}
-			from `tabMembership Check In` as m
-			inner join `tabCustomer` c on c.name = m.member
-			where m.docstatus = 1
-			{1}
-			order by check_in_date_time
-			""".format(columns_as_string,get_conditions(filters))
+	sql = """select 
+				m.member,
+				m.member_name,
+				i.membership_name,
+				m.check_in_date_time,
+				m.check_out_date_time,
+				i.check_in_number
+			from `tabMembership Check In Items` i
+			inner join `tabMembership Check In` m  on m.name = i.parent
+			where m.docstatus = 1 {0}
+			order by m.check_in_date_time""".format(get_conditions(filters))
 	data = frappe.db.sql(sql,filters,as_dict=1)	
 	return data

@@ -124,7 +124,7 @@
 
 <script setup>
 
-import { inject, ref, computed, onMounted, reactive, i18n,addModifierDialog } from '@/plugin'
+import { inject, ref, computed, onMounted, reactive, i18n,addModifierDialog,createResource } from '@/plugin'
 import { createToaster } from '@meforma/vue-toaster';
 import ComSearchSelectedProduct from './ComSearchSelectedProduct.vue';
 import placeholderImage from '@/assets/images/placeholder.webp'
@@ -144,7 +144,14 @@ const selectedProduct = ref()
 const meta = ref({})
 
 const sortOrder = ref({ field: "product_name_en", order: "asc" })
-
+let customerPromotion = computed({
+    get() {
+        return gv.getPromotionByCustomerGroup(sale.sale.customer_group)
+    },
+    set(newValue) {
+        return newValue
+    }
+})
 const props = defineProps({
     params: {
         type: Object,
@@ -225,10 +232,92 @@ async function onSelectProduct(d){
              p.modifiers_data = "[]";
              p.portion = "";
          }
-
          sale.addSaleProduct(p);
+         // ***apply promotion discount***
+         sale.sale.customer_default_discount = result.default_discount;
+
+        if (sale.promotion) {
+            customerPromotion.value = gv.getPromotionByCustomerGroup(sale.sale.customer_group)
+            //sale.promotion.customer_groups.filter(r=>r.customer_group_name_en == result.customer_group).length > 0
+            if (customerPromotion.value && customerPromotion.value.length > 0) {
+                customerPromotion.value.forEach((r) => {
+                    toaster.info(`${$t('msg.This customer has happy hour promotion')} ${r.promotion_name} : ${((r.percentage_discount || 0))}%`);
+                })
+                updateProductAfterSelectCustomer(customerPromotion.value)
+            }
+            else {
+                onClearPromotionProduct()
+            }
+
+        }
+        console.log(customerPromotion.value)
+        if ((customerPromotion.value || []).length <= 0) {
+            sale.sale.discount_type = "Percent";
+            sale.sale.discount = parseFloat(customerPromotion.value.percentage_discount);
+            toaster.info($t('msg.This customer has default discount') + " " + sale.sale.discount + '%');
+        }
+        sale.updateSaleSummary();
+
+         /// ***end apply promtion discount***
+         
          toaster.success($t("Add product to order successfully"))
     })     
+}
+
+function updateProductAfterSelectCustomer(pro) {
+    const promotions = JSON.parse(JSON.stringify(pro))
+    if (sale.sale.sale_products.length > 0) {
+        let product_checks = []
+        sale.sale.sale_products.forEach((r) => {
+            product_checks.push({
+                product_code: r.product_code,
+                order_time: r.order_time
+            })
+        })
+        createResource({
+            url: 'epos_restaurant_2023.api.promotion.get_promotion_products',
+            auto: true,
+            params: {
+                products: product_checks,
+                promotions: promotions
+            },
+            onSuccess(doc) {
+                if (doc) {
+                    onClearPromotionProduct()
+                    /// update products promotion
+                    doc.product_promotions.forEach(r => {
+                        let sale_products = sale.sale.sale_products.filter(x => x.product_code == r.product_code)
+                        sale_products.forEach((s) => {
+                            if (moment(s.order_time).format('HH:mm:ss') == r.order_time && s.is_free == false) {
+                                s.discount_type = 'Percent'
+                                s.discount = r.percentage_discount
+                                s.happy_hours_promotion_title = r.promotion_title
+                                s.happy_hour_promotion = r.promotion_name
+                            }
+                            sale.updateSaleProduct(s)
+                        })
+                    })
+
+                    // remove expire promotion
+                    if (doc.expire_promotion.length > 0) {
+                        doc.expire_promotion.forEach((p) => {
+                            toaster.warning(`${p.promotion_name} ${$t('msg.was expired')}`)
+                            const index = gv.promotion.findIndex(r => r.name == p.name)
+                            if (index > -1) {
+                                gv.promotion.splice(index, 1);
+                                sale.promotion.splice(index, 1);
+                            }
+                        })
+
+                    }
+                } else {
+                    gv.promotion = null
+                    sale.promotion = null
+                }
+                sale.updateSaleSummary();
+            }
+        });
+    }
 }
 
 

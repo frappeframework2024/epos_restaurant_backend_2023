@@ -396,6 +396,9 @@ function onPrint(){
                 doc: activeReport.value.doc_type,
                 name: activeReport.value.report_id,
                 print_format: activeReport.value.print_report_name,
+                pos_profile:pos_profile,
+                outlet:gv.setting.outlet,
+                letterhead:activeReport.value.letterhead,
                 printer : {
                     "printer_name": printers[0].printer_name,
                     "ip_address": printers[0].ip_address,
@@ -403,8 +406,7 @@ function onPrint(){
                     "cashier_printer": printers[0].cashier_printer,
                     "is_label_printer": printers[0].is_label_printer
                 }
-            }        
-            console.log(JSON.stringify(data))
+            }
             flutterChannel.postMessage(JSON.stringify(data));
             
         }
@@ -419,7 +421,8 @@ function onPrint(){
                 name: activeReport.value.report_id,
                 print_format: activeReport.value.print_report_name || '',
                 pos_profile:pos_profile,
-                outlet:gv.setting.outlet
+                outlet:gv.setting.outlet,
+                letterhead:activeReport.value.letterhead
             }
             window.chrome.webview.postMessage(JSON.stringify(data));
             toaster.success($t("Report is printing"))

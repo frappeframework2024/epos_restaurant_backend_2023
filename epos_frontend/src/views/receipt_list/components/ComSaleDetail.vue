@@ -226,10 +226,10 @@ async function onPrint() {
         }
     }
     else {
-        try{
-            await  call.get("epos_restaurant_2023.api.mobile_api.print_bill_to_network_printer",{"name":sale.doc.name,"template":"Receipt En","reprint":0})
+        if((gv.setting?.device_setting?.platform) == "Web"){
+            await  call.get("epos_restaurant_2023.api.mobile_api.print_bill_to_network_printer",{"name":sale.doc.name,"reprint":1})
         }
-        catch(err){
+        else{
             if (activeReport.value.pos_receipt_file_name != "" && activeReport.value.pos_receipt_file_name != null) {
                 socket.emit('PrintReceipt', JSON.stringify(data));
                 return;
@@ -240,7 +240,6 @@ async function onPrint() {
             }
         }
     }
-    console.log("yeet")
 }
 
 function onOpenOrder() {

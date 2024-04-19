@@ -4,7 +4,6 @@ from html2image import Html2Image
 import numpy as np
 import base64
 from PIL import Image
-
 from epos_restaurant_2023.api.product import get_product_by_menu
 from epos_restaurant_2023.api.api import get_system_settings
 from epos_restaurant_2023.api.printing import (
@@ -270,24 +269,27 @@ def get_print_report_image(data):
     return print_from_print_format(data)
  
 @frappe.whitelist(allow_guest=True)
-def print_bill_to_network_printer(name,template, reprint=0):
+def print_bill_to_network_printer(name, reprint=0):
     if not frappe.db.exists("Sale",name):
-        return ""    
-    doc = frappe.get_doc("Sale", name) 
-    data_template,css,width = frappe.db.get_value("POS Receipt Template",template,["template","style","width"])
-    html= frappe.render_template(data_template, get_print_context(doc,reprint))
-    name = str(uuid.uuid4())+".PNG"
-    path = frappe.get_site_path()+"/file/"
-
-    HTMLtoImage(20000,width,html,css,path,name)
-
-    printer_config = frappe.db.sql("select * from `tabPrinter` where printer_name = '{}'".format("Cashier Printer"),as_dict=1)
-    if printer_config: 
-        printer = Network(printer_config[0].ip_address)
-        printer.image(path+name)
-        printer.cut()
-        printer.close()
-        os.remove(path+name)
+        return ""
+    template_name = frappe.db.sql("select name from `tabPOS Receipt Template` where is_web_receipt = 1 order by modified desc limit 1",as_dict=1)
+    if template_name:
+        sale_product = frappe.db.sql("select count(*) item from `tabSale Product` where parent = '{}'".format(name),as_dict=1)
+        printer_config = frappe.db.sql("select ip_address from `tabPrinter` where is_web_printer = 1 order by modified desc limit 1",as_dict=1)
+        doc = frappe.get_doc("Sale", name) 
+        data_template,css,width,fixed_height = frappe.db.get_value("POS Receipt Template",template_name[0].name,["template","style","width","fixed_height"])
+        html= frappe.render_template(data_template, get_print_context(doc,reprint))
+        img_name = str(uuid.uuid4())+".PNG"
+        path = frappe.get_site_path()+"/file/"
+        HTMLtoImage((sale_product[0].item * 65 + fixed_height),width,html,css,path,img_name)
+        if printer_config: 
+            printer = Network(printer_config[0].ip_address)
+            printer.image(path+img_name)
+            printer.cut()
+            printer.close()
+            os.remove(path+img_name)
+    else:
+        frappe.throw("No Web Template Found")
 
 def HTMLtoImage(height,width,html,css,path,image):
     hti = Html2Image()

@@ -22,6 +22,7 @@ import Report from "@/views/report/Report.vue"
 import VoucherTopUp from "@/views/voucher_top_up/VoucherTopUp.vue"
 import ServerError from "@/views/checking_system/ServerError.vue"
 import CustomerDisplay from "@/views/customer_display/CustomerDisplay.vue"
+import KitchenOrderDisplay from "@/views/kitchen_order_display/KitchenOrderDisplay.vue"
 import authRoutes from './auth';
 import Setting from '@/views/setting/Setting.vue';
 
@@ -51,6 +52,7 @@ const routes = [
   { path: "/epos_frontend/server-error", name: "ServerError", component: ServerError },
   { path: "/epos_frontend/closed-sale-list", name: "ClosedSaleList", component: ClosedSaleList, meta: { layout: "main_layout" } },
   { path: "/epos_frontend/customer-display", name: "CustomerDisplay", component: CustomerDisplay },
+  { path: "/epos_frontend/kod", name: "KitchenOrderDisplay", component: KitchenOrderDisplay,meta: { layout: 'kitchen_order_display_layout' } },
   { path: "/epos_frontend/add-quite-sale/:sale_type?", name: "AddSaleNoTable", component: AddSaleNoTable, meta: { layout: "main_layout" } },
   ...authRoutes,
 ];

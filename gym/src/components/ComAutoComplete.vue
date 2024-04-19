@@ -142,6 +142,7 @@ async function getData(keyword) {
     }
  
     await call.get('frappe.desk.search.search_link', apiParams).then((result) => {
+        
         options.value = result.message
         options.value = options.value.map(r => r.label == '' || r.label == null ? { ...r, label: r.value } : r)
         if (props.isAddNew) {

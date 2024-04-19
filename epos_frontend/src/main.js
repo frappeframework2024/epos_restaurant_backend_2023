@@ -1,4 +1,3 @@
-
 import './index.css';
 import { createApp, reactive } from "vue";
 
@@ -35,6 +34,7 @@ import call from "./utils/call";
 
 import Auth from "./utils/auth";
 import Sale from "./providers/sale";
+import KOD from "./providers/kod";
 import POSLicense from "./providers/pos_license";
 import TableLayout from "./providers/table_layout";
 import Gv from "./providers/gv";
@@ -63,6 +63,7 @@ const frappe = new FrappeApp();
 const auth = reactive(new Auth());
 const gv = reactive(new Gv());
 const sale = reactive(new Sale());
+const kod = reactive(new KOD());
 const pos_license = reactive(new POSLicense());
 const tableLayout = reactive(new TableLayout());
 const product = reactive(new Product());
@@ -108,6 +109,7 @@ app.use(Toaster, {
 app.provide("$gv", gv);
 app.provide("$pos_license", pos_license);
 app.provide("$sale", sale);
+app.provide("$kod", kod);
 app.provide("$tableLayout", tableLayout);
 app.provide("$product", product);
 app.provide("$numberFormat",NumberFormat)

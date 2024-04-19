@@ -13,7 +13,11 @@
   "section_break_pdgf",
   "template",
   "section_break_novm",
-  "style"
+  "style",
+  "section_break_rbxy",
+  "is_web_receipt",
+  "header_height",
+  "footer_height"
  ],
  "fields": [
   {
@@ -55,11 +59,31 @@
   {
    "fieldname": "section_break_pdgf",
    "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_web_receipt",
+   "fieldtype": "Check",
+   "label": "Is Web Receipt"
+  },
+  {
+   "fieldname": "section_break_rbxy",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "header_height",
+   "fieldtype": "Data",
+   "label": "Header Height"
+  },
+  {
+   "fieldname": "footer_height",
+   "fieldtype": "Data",
+   "label": "Footer Height"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-03-07 17:00:55.902937",
+ "modified": "2024-04-17 17:23:59.368464",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Receipt Template",

@@ -390,12 +390,13 @@ def get_revenues(self):
 		inner join `tabSale` s on s.name = sp.parent
 		where
 			s.cashier_shift='{}' and 
-			s.docstatus=1 
+			s.docstatus=1 and 
+			coalesce(sp.is_combo_menu,0) = 0
 		group by 
 			sp.revenue_group
 		""".format(self.name)
-	
-	return frappe.db.sql(sql,as_dict=1)
+	data =   frappe.db.sql(sql,as_dict=1)
+	return data + get_combo_menu_revenue(name=self.name)
  
 
 
@@ -408,7 +409,8 @@ def get_combo_menu_revenue(self=None, name=None):
 			sp.tax_1_amount,
 			sp.tax_2_amount,
 			sp.tax_3_amount,
-			sp.combo_menu_data
+			sp.combo_menu_data,
+			sp.quantity
 		from `tabSale Product` sp 
 		inner join `tabSale` s on s.name = sp.parent
 		where
@@ -442,7 +444,7 @@ def get_combo_menu_data_revenue_breakdown(revenue_data):
 	for c in data:
 		combo_revenue ={"product_code":c["product_code"], 
 						"revenue_group": frappe.db.get_value("Product",c["product_code"],"revenue_group") ,
-						"sub_total":c["quantity"] * c["price"],
+						"sub_total":revenue_data["quantity"] * c["quantity"] * c["price"],
 						"discount":0,
 						"tax_1_amount":0,
 						"tax_2_amount":0,

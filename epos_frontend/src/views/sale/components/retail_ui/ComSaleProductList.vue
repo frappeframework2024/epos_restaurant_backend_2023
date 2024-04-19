@@ -55,12 +55,12 @@
                   </p> 
 
                   <div class="visib-dis">
-                  <template v-if="sp.discount">Discount: 
-                    <span class="" v-if="sp.discount_type == 'Percent'">
-                      {{ sp.discount }} % /
-                    </span>  
-                    <CurrencyFormat :value="sp.discount_amount" />
-                  </template>
+                    <template v-if="sp.discount">Discount: 
+                        <span class="" v-if="sp.discount_type == 'Percent'">
+                          {{ sp.discount }} % /
+                        </span>  
+                        <CurrencyFormat :value="sp.discount_amount" />
+                    </template>
                   </div> 
                   <p v-if="!sp.note" class="italic underline" style="color:#ccc;" @click="sale.onSaleProductNote(sp)">
                     {{ $t("Add Note") }}</p>
@@ -110,7 +110,7 @@
                   <!-- <template v-else><span style="width:auto;" class="link_line_action overflow-hidden">{{ $t("Apply Discount") }}</span></template> -->
                   <span v-else class="w-auto link_line_action overflow-hidden"><v-icon color="blue-darken-2" icon="mdi-sale" size="small"></v-icon></span>
                 </template>
- 
+
                 <v-menu activator="parent">
                   <v-list>
                     <v-list-item @click="onSaleProductDiscount(sp, 'Percent')">

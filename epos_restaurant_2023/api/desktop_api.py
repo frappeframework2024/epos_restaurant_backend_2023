@@ -21,7 +21,8 @@ def dome():
                 "name":"WD2024-0008",
                 "print_format": "Working Day Sale Summary",
                 "pos_profile":"Main POS Profile",
-                "outlet":"Main Outlet"
+                "outlet":"Main Outlet",
+                "letterhead":"Downtown Letterhead"
             })
     
 
