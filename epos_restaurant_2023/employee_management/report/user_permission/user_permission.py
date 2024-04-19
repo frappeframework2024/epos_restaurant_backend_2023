@@ -18,7 +18,7 @@ def get_report_field(filters):
 def get_report_data(filters):
 	
 	sql = """
-			select employee_name,module_profile,role_profile,user_id,pos_permission from `tabEmployee`
+			select employee_name,module_profile,role_profile,user_id,pos_permission from `tabEmployee` where disabled = 0
 		"""
 	employees = frappe.db.sql(sql,as_dict=1)
 	role_profiles = list(set([d['role_profile'] for d in employees])) 

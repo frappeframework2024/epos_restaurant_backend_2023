@@ -752,6 +752,7 @@ export default class Sale {
 
 
                 gv.authorize(authorize_key, "delete_item", "delete_item_required_note", "Delete Item Note", sp.product_code, true).then(async (v) => {
+                   
                     if (v) {
                         let result = false;
                         if (input == (-99999)) {
@@ -798,7 +799,7 @@ export default class Sale {
                             if (sp.quantity < result.number) {
                                 result.number = sp.quantity;
                             }
-
+                          
                             sp.deleted_item_note = result.note;
                             sp.deleted_quantity = (sp.deleted_quantity || 0) + result.number;
                             this.onRemoveSaleProduct(sp, result.number, v.user);
@@ -1856,7 +1857,9 @@ export default class Sale {
     getPrintReportPath(doctype, name, reportName, isPrint = 0) {
         let url = "";
 
-        const serverUrl = window.location.protocol + "//" + window.location.hostname + ":" + this.setting?.pos_setting?.backend_port;
+        const serverUrl = window.location.protocol + "//" + window.location.hostname + (window.location.protocol =="https:"? "": (":"+ this.setting?.pos_setting?.backend_port));
+
+        
         url = serverUrl + "/printview?doctype=" + doctype + "&name=" + name + "&format=" + reportName + "&no_letterhead=0&letterhead=Defualt%20Letter%20Head&settings=%7B%7D&_lang=en&d=" + new Date()
         if (isPrint) {
             url = url + "&trigger_print=" + isPrint
@@ -2085,6 +2088,7 @@ export default class Sale {
             const db = frappe.db();
             data.deleted_quantity = data.quantity;
             this.updateSaleProduct(data)
+           
             db.createDoc('Sale Product Deleted', {
                 sale_product_id: data.name,
                 product_name: `${data.product_name}${data.portion ? '.' + data.portion : ''}${data.modifiers ? ' ' + data.modifiers : ''}`,
@@ -2092,9 +2096,23 @@ export default class Sale {
                 sale_product: data,
                 quantity: data.quantity,
                 amount: data.total_revenue,
-                deleted_by: data.created_by
+                deleted_by: data.created_by,
+                order_time:data.order_time,
+                kod_status:data.kod_status,
+                printers:data.printers,
+                deleted_note:data.deleted_item_note,
+                portion:data.portion,
+                modifiers:data.modifiers,
+                combo_menu_data:data.combo_menu_data,
+                combo_menu:data.combo_menu,
+                product_name_kh:data.product_name_kh,
+                note:data.note,
+                order_by:data.order_by,
+                is_free:data.is_free
             }).then((doc) => { })
-                .catch((error) => { });
+                .catch((error) => { 
+                    console.log(error)
+                });
         }
     }
 

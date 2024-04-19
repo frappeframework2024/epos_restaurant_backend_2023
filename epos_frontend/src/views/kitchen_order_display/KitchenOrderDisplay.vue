@@ -7,7 +7,7 @@
 <div class="bg-white border px-2 pt-2">
         <div class="grid grid-cols-4 gap-2">
 <div class="col-span-3">
-    <div class="masonry-container gap-2 pe-5">
+    <div class="grid grid-cols-3 gap-2 pe-5">
       
       <ComKodBill v-for="(d, index) in kod.pending_orders" :key="index" :data="d" />
     </div>
@@ -44,7 +44,7 @@ const { t: $t } = i18n.global;
 socket.on("SubmitKOD", (args) => {
     if(args.screen_name == screen_name){
      
-      kod.getKODData(setting.pos_setting.business_branch, screen_name)
+      kod.getKODData()
        
     }
     
@@ -72,8 +72,7 @@ onUnmounted(() => {
   display: flex;
   flex-flow: column wrap;
   align-content: space-between;
-  height: 80vh;
+  height: 1300px;
   counter-reset: items;
-  overflow: auto
 }
 </style>

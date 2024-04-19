@@ -22,7 +22,8 @@ export default class KOD {
        this.pending_orders=[],
        this.pending_order_items=[],
        this.loading = false
-       this.recent_done_order_items = []
+       this.recent_done_order_items = [],
+       this.group_order_by = "sale_number"
     }
     
 
@@ -30,7 +31,8 @@ export default class KOD {
         this.loading = true;
         call.get("epos_restaurant_2023.api.kod.get_kod_menu_item",{
             business_branch:this.business_branch,
-            screen_name:this.screen_name
+            screen_name:this.screen_name,
+            group_by:this.group_order_by
         }).then(r=>{
             this.kpi = r.message.kpi
             this.pending_orders = r.message.pending_orders

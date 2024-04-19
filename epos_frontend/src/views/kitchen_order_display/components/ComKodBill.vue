@@ -1,7 +1,8 @@
 <template>
-    <div class="bg-white border shadow rounded-lg item" >
+    <div :class="data.css_class" class="bg-white border-x-2 border-b-2 shadow rounded-lg item" >
     <div :class="data.css_class" class="rounded-t-lg p-2 text-white">
         <div class="flex justify-between">
+
         <div class="flex item-center gap-2">
        
              <v-icon style="font-size: 20px;">mdi-table-furniture</v-icon>
@@ -16,15 +17,23 @@
         </div>
         <hr class="my-2">
         <div class="flex justify-between">
-            <div class="flex item-center gap-2 whitespace-nowrap">
-<v-icon class="text-white" style="font-size: 20px;">mdi-account-outline</v-icon>      {{ data.customer }}
-            </div>
+                <div class="flex item-center gap-2 whitespace-nowrap">
+                    <v-icon class="text-white" style="font-size: 20px;">mdi-account-outline</v-icon>{{ data.customer }}
+                </div>
             <div class="flex item-center gap-2 whitespace-nowrap">
                 <v-icon class="text-white" style="font-size: 20px;">mdi-calendar-clock</v-icon>      
-{{moment(data.order_time).format('HH:mm:ss') }}   
-
- </div>
-     </div>
+                {{moment(data.order_time).format('HH:mm:ss') }}
+            </div>
+        </div>
+        <div class="flex justify-between">
+                <div class="flex item-center gap-2 whitespace-nowrap">
+                    <v-icon class="text-white" style="font-size: 20px;">mdi-file-document</v-icon>{{ data.sale_number }}
+                </div>
+            <div class="flex item-center gap-2 whitespace-nowrap">
+                <v-icon class="text-white" style="font-size: 20px;">mdi-tag</v-icon>      
+                {{data.sale_type }}
+            </div>
+        </div>
         
     </div>
     <div class="p-2">
@@ -72,7 +81,7 @@ const props = defineProps({
         background:red;
         border-color: rgba(255, 0, 0, 0.71);
     }
-    .item {
+    /* .item {
   width: 33.33%;
   position: relative;
   color: #fff;
@@ -81,5 +90,5 @@ const props = defineProps({
 .item:nth-of-type(4n+1) { order: 1; }
 .item:nth-of-type(4n+2) { order: 2; }
 .item:nth-of-type(4n+3) { order: 3; }
-.item:nth-of-type(4n)   { order: 4; }
+.item:nth-of-type(4n)   { order: 4; } */
 </style>

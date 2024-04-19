@@ -147,9 +147,9 @@ def sync_data_to_server(doc,extra_action=None,action="update"):
 
         response = requests.post(server_url,headers=headers,json={"doc":frappe.as_json(doc),"extra_action":extra_action,"action":action })
         if response.status_code==200:
-            meta = frappe.get_meta(doc.doctype)
+            meta = frappe.get_meta(doc['doctype'])
             if len([d for d in meta.fields if d.fieldname=="is_synced"])>0:
-                frappe.db.sql("update `tab{}` set is_synced = 1 where name = '{}'".format(doc.doctype,doc.name))
+                frappe.db.sql("update `tab{}` set is_synced = 1 where name = '{}'".format(doc['doctype'],doc['name']))
                 frappe.db.commit()
         else:
             frappe.throw(str(response.text))
@@ -227,7 +227,7 @@ def re_run_fail_jobs():
         jobs =  sorted(jobs, key=lambda j: j.modified, reverse=order_desc)
         jobs = [d for d in jobs if "exc_info" in d]
         job_names=["epos_restaurant_2023.api.utils."]
-        jobs = [d for d in jobs  if  ( d["job_name"] in job_names or  "Deadlock found when trying"  in  d["exc_info"] or 'Network is unreachable' in d['exc_info'] or "Lock wait timeout exceeded"  in  d["exc_info"] or "Document has been modified after you have opened it" in d["exc_info"] or "zerobalance" in d["exc_info"] or "Task exceeded maximum timeout value" in d["exc_info"]) ]
+        jobs = [d for d in jobs  if  ( d["job_name"] in job_names or  "Deadlock found when trying"  in  d["exc_info"] or 'Network is unreachable' in d['exc_info'] or "Lock wait timeout exceeded"  in  d["exc_info"] or "Document has been modified after you have opened it" in d["exc_info"] or "zerobalance" in d["exc_info"] or "Task exceeded maximum timeout value" in d["exc_info"] or "timedout" in d["exc_info"]) ]
         job_ids = []
         
         for j in jobs:
@@ -235,7 +235,8 @@ def re_run_fail_jobs():
                 job =   json.loads(j["arguments"])
                 #Retry Here
                 if job['job_name'] == "epos_restaurant_2023.api.utils.sync_data_to_server":
-                    sync_data_to_server(frappe.get_doc(job['kwargs']['doc']),extra_action=job['kwargs']['extra_action'] if job['kwargs'].get('extra_action') else '[]',action=job['kwargs']['action'])
+                    frappe.enqueue('epos_restaurant_2023.api.utils.sync_data_to_server',doc=frappe.get_doc(job['kwargs']['doc']),extra_action=job['kwargs']['extra_action'] if job['kwargs'].get('extra_action') else '[]',action=job['kwargs']['action'])
+                    # sync_data_to_server(frappe.get_doc(job['kwargs']['doc']),extra_action=job['kwargs']['extra_action'] if job['kwargs'].get('extra_action') else '[]',action=job['kwargs']['action'])
                        
 
                 job_ids.append(j["job_id"])
