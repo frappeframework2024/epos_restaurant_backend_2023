@@ -16,7 +16,7 @@
                                 <ComInput keyboard type="number"
                                     v-if="f.fieldtype == 'Int' || f.fieldtype == 'Float' || f.fieldtype == 'Currency'" v-model="f.value"
                                     :label="$t(f.label)" variant="solo" class="m-1"/>
-                                <ComInput type="date" v-if="f.fieldtype == 'Date'" v-model="f.value" class="m-1" :label="$t(f.label)"></ComInput>
+                                <ComInput type="date" v-if="f.fieldtype == 'Date' || f.fieldtype == 'Datetime'" v-model="f.value" class="m-1" :label="$t(f.label)"></ComInput>
                                 <ComAutoComplete v-model="f.value" v-if="f.fieldtype == 'Link'" :doctype="f.options"   variant="solo"  :label="$t(f.label)" :placeholder="$t(f.label)" class="m-1"/>
                                 <v-select 
                                     density="compact"
