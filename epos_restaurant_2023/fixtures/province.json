@@ -234,18 +234,18 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2023-10-27 16:16:56.617401",
-  "name": "Ayutthaya",
-  "note": "Ayutthaya",
-  "province": "Ayutthaya"
- },
- {
-  "docstatus": 0,
-  "doctype": "Province",
   "modified": "2023-10-27 16:16:48.191108",
   "name": "Pattaya",
   "note": "Pattaya",
   "province": "Pattaya"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Province",
+  "modified": "2023-10-27 16:16:56.617401",
+  "name": "Ayutthaya",
+  "note": "Ayutthaya",
+  "province": "Ayutthaya"
  },
  {
   "docstatus": 0,

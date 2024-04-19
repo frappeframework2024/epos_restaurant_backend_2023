@@ -169,6 +169,10 @@ def get_recent_done(business_branch, screen_name):
 def change_status(sale_product_names, status):
     sql="update `tabSale Product` set kod_status_update_time=now(), kod_status=%(status)s where name in %(sale_product_names)s"
     frappe.db.sql(sql,{"sale_product_names":sale_product_names, "status":status})
+    
+    sql="update `tabSale Product Deleted` set hide_in_kod=1  where sale_product_id in %(sale_product_names)s"
+    frappe.db.sql(sql,{"sale_product_names":sale_product_names})
+    
     frappe.db.commit()
 
 
@@ -182,7 +186,7 @@ def get_deleted_order(business_branch,screen_name,cashier_shift = None):
         cashier_shift = get_open_cashier_shift(business_branch)
     sql = """
         select 
-            sp.name,
+            sp.sale_product_id as name,
             s.name as sale_number,
             s.tbl_number as table_no,
             s.outlet,
@@ -210,8 +214,8 @@ def get_deleted_order(business_branch,screen_name,cashier_shift = None):
             s.business_branch = %(business_branch)s and 
             s.cashier_shift in %(cashier_shift)s and 
             sp.printers like %(screen_name)s and 
-            sp.kod_status in ('Pending','Processing')  and 
-            s.docstatus= 0 
+            sp.kod_status in ('Pending','Processing')  and  
+            sp.hide_in_kod=0 
         order by sp.order_time 
     """
     data = frappe.db.sql(sql,{"business_branch":business_branch,"screen_name":'%{}%'.format(screen_name),"cashier_shift":cashier_shift}, as_dict=1)

@@ -224,7 +224,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-03-20 08:50:08.324118",
+ "modified": "2024-04-19 14:41:57.657156",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Cashier Shift",
@@ -268,7 +268,7 @@
    "write": 1
   }
  ],
- "search_fields": "posting_date,working_day,business_branch,pos_profile",
+ "search_fields": "posting_date,working_day,business_branch,pos_profile,shift_name",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
