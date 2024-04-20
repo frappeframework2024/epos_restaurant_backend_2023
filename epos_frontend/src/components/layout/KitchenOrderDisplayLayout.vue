@@ -19,37 +19,7 @@
 
             <template #append>
                 <ComKodSetting/>
-                <v-menu >
-      <template v-slot:activator="{ props }">
-        <v-icon  v-bind="props">mdi-cog</v-icon>
-      </template>
-      <v-list>
-        <v-list-item>
-            <v-list-item-title>
-                Group By
-            </v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-            <v-list-item-title>Show Menu Name</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-            <v-list-item-title>Show Item Status</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-            <v-list-item-title>
-
-                <label for="default-range" class="block">Change font</label>
-                <v-range
-    v-model="kod.setting.default_font_size"
-    step="1"
-    thumb-label="always"
-  ></v-range>
-{{kod.setting.default_font_size}}
-
-            </v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-menu>
+       
                 <v-btn :loading="kod.loading" @click="kod.getKODData(setting.pos_setting.business_branch, screen_name)"> <v-icon>mdi-refresh</v-icon></v-btn>
                 <ComTimeUpdate />
                 <template v-if="isWindow">

@@ -1,18 +1,14 @@
 <template>
     <v-dialog max-width="500">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn
-        v-bind="activatorProps"
-        color="surface-variant"
-        text="Setting"
-        variant="flat"
-      ></v-btn>
+      <v-icon  v-bind="activatorProps">mdi-cog</v-icon>
+     
     </template>
   
     <template v-slot:default="{ isActive }">
-      <v-card title="Dialog">
+      <v-card :title="$t('Setting')">
         <v-card-text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          hello
         </v-card-text>
   
         <v-card-actions>
@@ -29,4 +25,7 @@
   
 </template>
 <script setup>
+  import { inject,ref, i18n } from '@/plugin';
+  const { t: $t } = i18n.global;
+
 </script>
