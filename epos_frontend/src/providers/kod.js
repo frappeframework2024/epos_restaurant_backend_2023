@@ -12,7 +12,7 @@ const frappe = new FrappeApp();
 const db = frappe.db()
 const call = frappe.call()
 const { t: $t } = i18n.global;
-const toaster = createToaster({ position: "top-right" });
+const toaster = createToaster({ position: "top-right",duration:20 });
 
 export default class KOD {
     constructor() {
@@ -23,7 +23,15 @@ export default class KOD {
        this.pending_order_items=[],
        this.loading = false
        this.recent_done_order_items = [],
-       this.group_order_by = "sale_number"
+       this.group_order_by = "sale_number",
+        this.setting= {
+            default_font_size:14,
+            min_font_size:10,
+            max_font_size:30,
+            font_size:14,
+            show_menu_language:"khmer",
+            default_group_by:"sale_number"
+        }
     }
     
 
@@ -50,6 +58,22 @@ export default class KOD {
         data.data.change_status=data.status
  
         call.post("epos_restaurant_2023.api.kod.change_status",{
+            status:data.status,
+            sale_product_names: data.sale_product_names,
+            hide_in_kod: data.hide_in_kod || 0
+        }).then(r=>{
+            data.data.loading = true
+            this.getKODData()
+        }).catch(err=>{
+            data.data.loading = true
+        })
+    }
+    
+    onCloseOrder(data){
+       
+        data.data.loading = true
+        data.data.change_status=data.status
+        call.post("epos_restaurant_2023.api.kod.close_order",{
             status:data.status,
             sale_product_names: data.sale_product_names
         }).then(r=>{

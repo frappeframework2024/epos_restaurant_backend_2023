@@ -1,18 +1,43 @@
 <template>
-<div>
-    <div class="shadow w-full rouend-lg h-full p-2">
-        <div class="font-bold">
-            Pending Item
-            <div v-for="(p, index) in kod.pending_order_items" :key="index">
-                <ComKodMenuItem :data="p"/>
+<div class="h-full shadow-md rounded-lg border">
+    <div class=" w-full  h-full p-2">
+        
+
+<div class="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700">
+    <ul class="flex flex-wrap -mb-px">
+    <li class="me-2">
+      <a @click="activateTab('pending')" class="inline-block p-1  rounded-t-lg dark:text-blue-500 dark:border-blue-500" :class="{'active border-b-2 border-blue-600 text-blue-600 ': activeTab === 'pending' }">Pending
+        <span class="inline-flex items-center justify-center w-4 h-4 text-xs font-semibold text-blue-800 bg-blue-200 rounded-full">
+{{kod.pending_order_items.length}}
+</span>
+    </a>
+    </li>
+    <li class="me-2">
+      <a @click="activateTab('processing')" class="inline-block p-1 rounded-t-lg dark:text-blue-500 dark:border-blue-500" :class="{'active border-b-2 border-blue-600 text-blue-600 ': activeTab === 'processing' }">Processing</a>
+      <span class="inline-flex items-center justify-center w-4 h-4 text-xs font-semibold text-blue-800 bg-blue-200 rounded-full">
+{{ kod.pending_order_items.filter(r=>r.kod_status=='Processing').length }}
+</span>
+    </li>
+    <li class="me-2">
+      <a @click="activateTab('done')" class="inline-block p-1 rounded-t-lg dark:text-blue-500 dark:border-blue-500" :class="{ 'active border-b-2 border-blue-600 text-blue-600 ': activeTab === 'done' }">Recent Done</a>
+     
+    </li>
+  </ul>
+</div>
+
+        <div class="pt-2">
+            <div v-if="activeTab === 'pending'" v-for="(p, index) in kod.pending_order_items" :key="index">
+                <ComKodMenuItem :isSummary="true"  :data="p"/>
+              
+            </div>  <div>
+                  <v-icon v-if="kod.pending_order_items<1" class="text-black">mdi-inbox</v-icon>
+                </div>
+            <div v-if="activeTab === 'processing'" v-for="(p, index) in kod.pending_order_items.filter(r=>r.kod_status=='Processing')" :key="index">
+                <ComKodMenuItem :isSummary="true" :data="p"/>
+
             </div>
-            <h1>Processing</h1>
-            <div style="background: blue;" v-for="(p, index) in kod.pending_order_items.filter(r=>r.kod_status=='Processing')" :key="index">
-                <ComKodMenuItem :data="p"/>
-            </div>
-            <h1>Recent Done</h1>
-            <div style="background:red;" v-for="(p, index) in kod.recent_done_order_items" :key="index">
-                <ComKodMenuItem :data="p"/>
+            <div v-if="activeTab === 'done'" v-for="(p, index) in kod.recent_done_order_items" :key="index">
+                <ComKodMenuItem :isSummary="true" :data="p"/>
             </div>
         </div>
 </div>
@@ -21,7 +46,11 @@
 <script setup>
 import { ref,inject } from 'vue';
 import ComKodMenuItem from "@/views/kitchen_order_display/components/ComKodMenuItem.vue"
+const activeTab = ref('pending');
 
+const activateTab = (tab) => {
+  activeTab.value = tab;
+};
 const currentTab = ref(1);
 const kod = inject("$kod")
 

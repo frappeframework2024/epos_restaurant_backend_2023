@@ -212,13 +212,19 @@ onBeforeRouteLeave(() => {
 });
 
 onUnmounted(() => {
-
+    if (sale.kod_messages.length>0){
+        sale.kod_messages.forEach(s=>{
+            socket.emit("SubmitKOD",{screen_name:s.screen_name,message:s.message})
+        })
+        
+    }
     sale.sale = {}
     sale.working_day_resource = null;
     sale.cashier_shift_resource = null;
     sale.newSaleResource = null;
     sale.saleResource = null;
     sale.tableSaleListResource = null;
+    sale.kod_messages = [];
 
     socket.emit("ShowOrderInCustomerDisplay", {}, true);
 

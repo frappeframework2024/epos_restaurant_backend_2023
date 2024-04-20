@@ -20,7 +20,7 @@
                                 <ComAutoComplete v-model="f.value" v-if="f.fieldtype == 'Link'" :doctype="f.options"   variant="solo"  :label="$t(f.label)" :placeholder="$t(f.label)" class="m-1"/>
                                 <v-select 
                                     density="compact"
-                                    v-if="f.fieldtype == 'Select'" 
+                                    v-if="f.fieldtype == 'Select'"
                                     v-model="f.value" 
                                     :label="$t(f.label)"
                                     :items="f.options.split('\n')"

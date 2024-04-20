@@ -270,7 +270,7 @@ async function onDeleteBill() {
                     return;
                 }
             }
-
+           
             //cancel payment first
             isLoading.value = true;
 
@@ -369,6 +369,15 @@ function onProcessPrintToKitchen(doc) {
     } else {
         socket.emit("PrintReceipt", JSON.stringify(data))
     }
+
+    if(productPrinters.length>0){
+        [...new Set(productPrinters.map(r=>r.printer))].forEach(p=>{
+              
+             socket.emit("SubmitKOD",{"screen_name":p})
+        })
+    }
+    
+
     deletedSaleProducts = [];
     productPrinters = [];
 }

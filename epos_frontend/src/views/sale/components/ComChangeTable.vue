@@ -91,7 +91,7 @@ const call = frappe.call();
 const gv = inject('$gv')
 
 const { mobile } = useDisplay()
-
+const socket = inject("$socket")
 const switch_pos_station = ref([])
 
 const tableLayout = inject("$tableLayout");
@@ -141,33 +141,38 @@ async function onSelectTable(t) {
         emit("resolve", t);
     }
     else {
+        const screens = sale.getScreenNames(sale.sale.sale_products)
         if (t.sales?.length == 0) {
 
             generateProductPrinterChangeTable(sale.sale.sale_products, sale.sale.name, sale.sale.tbl_number);
+           
+           
             sale.sale.sale_products?.forEach((r) => {
                 r.move_from_table = sale.sale.tbl_number;
             });
             sale.sale.table_id = t.id;
+            const old_table_number = sale.sale.tbl_number 
             sale.sale.tbl_number = t.tbl_no;
+            
 
             if (_pos_profile.value == sale.sale.pos_profile) {
                 toaster.success($t('msg.Change to table') + ": " + t.tbl_no);
                 emit("resolve", true)
-
+                // add queue message to kod
+                if (sale.sale.name){
+                    addKODQueueMessage(screens, old_table_number, t.tbl_no)
+                }
+                
             } else {
                 await changeTableBetweenOutlet(t).then(r => {
-
-
+                    if (sale.sale.name){
+                        addKODQueueMessage(screens, old_table_number, t.tbl_no)
+                    }
                     emit("resolve", true)
                 }).catch((error) => {
                     return
                 });
-
             }
-
-
-
-
         }
         else {
             const result = await changeTableSelectSaleOrderDialog({ data: t });
@@ -180,13 +185,23 @@ async function onSelectTable(t) {
                         r.move_from_table = sale.sale.tbl_number;
                     });
                     sale.sale.table_id = t.id;
+                    const old_table_number = sale.sale.tbl_number
                     sale.sale.tbl_number = t.tbl_no;
                     if (sale.sale.pos_profile == _pos_profile.value) {
                         toaster.success($t('msg.Change to table') + ": " + t.tbl_no);
                         emit("resolve", true);
+                        // add queue message to kod
+                        if (sale.sale.name){
+                          
+                            addKODQueueMessage(screens, old_table_number, t.tbl_no)
+                        }
+                        
                     } else {
                         await changeTableBetweenOutlet(t).then(r => {
                             emit("resolve", true)
+                            if (sale.sale.name){
+                                addKODQueueMessage(screens, old_table_number, t.tbl_no)
+                            }
                         }).catch((error) => {
                             return
                         });
@@ -194,13 +209,25 @@ async function onSelectTable(t) {
 
 
                 } else if (result.action == "reload_sale") {
+                    // send message to kod
+                    screens.forEach(s => {
+                         socket.emit("SubmitKOD",
+                         {
+                                screen_name: s,
+                                message: $t("Order from table") + " " + sale.sale.tbl_number + " " + $t("merge to table") + " " + t.tbl_no
+                            }
+                        )
+                    })
+
                     if (sale.sale.pos_profile == _pos_profile) {
                         emit("resolve", result)
+
                     } else {
                         emit("resolve", true)
                         router.push({ name: 'TableLayout' })
 
                     }
+
 
                 }
             }
@@ -208,11 +235,29 @@ async function onSelectTable(t) {
     }
 }
 
+function addKODQueueMessage(screens, old_table, new_table) {
+    // when change table we not update to db yet, 
+    // so this message is alert to kod screen when user submit order
+    // or payment
+    screens.forEach(s => {
+        sale.kod_messages = sale.kod_messages.filter(r=>r.key!="change_table_message")
+        sale.kod_messages.push(
+            {
+                key:"change_table_message",
+                screen_name: s,
+                message: $t("Change table from") + " " + old_table + " " + $t("to") + " " + new_table
+            }
+        )
+    })
+
+
+}
 
 function generateProductPrinterChangeTable(sale_products, old_sale, old_table) {
     if (sale.setting.pos_setting.print_sale_product_change_table) {
         sale_products?.forEach((r) => {
             const pritners = JSON.parse(r.printers);
+           
             pritners.forEach((p) => {
                 sale.changeTableSaleProducts.push({
                     move_from_table: old_table,
@@ -248,6 +293,7 @@ function generateProductPrinterChangeTable(sale_products, old_sale, old_table) {
                 });
             });
         });
+        
 
     }
 }

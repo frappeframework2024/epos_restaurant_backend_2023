@@ -105,65 +105,7 @@
                                     </td>
                                 </tr>
                             </template>
-                            <!-- <template v-for="h in headers" v-slot:[`item.${h.key}`]="{ item }">
-                                <template v-if="h.fieldtype == 'Image'">
-                                    <div class="text-center">
-                                        <v-avatar v-if="item.raw[h.key]">
-                                            <v-img :src="item.raw[h.key]"></v-img>
-                                        </v-avatar>
-                                        <avatar v-else :name="item.raw[h.placeholder]" class="my-0 mx-auto" size="40">
-                                        </avatar>
-                                    </div>
-                                </template>
-                                <template v-if="h.fieldtype == 'Currency'">
-                                    <div @click="callback(h, item.raw)"
-                                        :class="{ 'text-blue-600 cursor-pointer': h.callback }">
-                                        <CurrencyFormat :value="item.raw[h.key]" />
-                                    </div>
-                                </template>
-                                <template v-else-if="h.fieldtype == 'Date'">
-
-                                    <span @click="callback(h, item.raw)"
-                                        :class="{ 'text-blue-600 cursor-pointer': h.callback }">
-                                        {{ moment(item.raw[h.key]).format('DD-MM-YYYY') }}
-                                    </span>
-                                </template>
-                                <template v-else-if="h.fieldtype == 'Status'">
-                                    <template v-if="h.key == 'is_synced'">
-
-                                        <v-chip v-if="item.raw[h.key] == 1" compact color="success" size="small">{{
-                                            $t("Synced") }}</v-chip>
-                                        <v-chip v-else color="error" compact size="small">{{ $t("Not Synced")
-                                            }}</v-chip>
-
-                                    </template>
-                                    <template v-else>
-                                        <v-chip v-if="doctype == 'Sale'" :color="item.raw[h.color_field]" size="small">
-                                            {{
-                                                item.raw[h.key] }}</v-chip>
-                                        <template v-else>
-                                            <v-chip v-if="item.raw[h.key]" color="success" size="small">{{ $t('Enabled')
-                                                }}</v-chip>
-                                            <v-chip v-else color="error" size="small">{{ $t('Disabled') }}</v-chip>
-                                        </template>
-                                    </template>
-
-                                </template>
-                                <template v-else-if="h.fieldtype == 'HTML'">
-                                    <component :is="getFieldValue(h, item.raw)"></component>
-                                </template>
-                                <template v-else-if="!h.fieldtype">
-                                    <template v-if="h.template">
-                                        <div @click="callback(h, item.raw)" v-html="getFieldValue(h, item.raw)"
-                                            :class="{ 'text-blue-600 cursor-pointer': h.callback }"></div>
-                                    </template>
-                                    <span @click="callback(h, item.raw)"
-                                        :class="{ 'text-blue-600 cursor-pointer': h.callback }" v-else>
-                                        {{ item.raw[h.key] }}
-                                    </span>
-                                </template>
-
-                            </template> -->
+                          
                         </v-data-table>
                         <div class="p-6 text-center elevation-1 text-gray-400" v-else>
                             <div><v-icon icon="mdi-package-variant" style="font-size:60px"></v-icon></div>

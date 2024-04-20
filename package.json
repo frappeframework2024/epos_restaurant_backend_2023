@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/eposrestaurant2023/epos_restaurant_backend_2023#readme",
   "dependencies": {
+    "@yeger/vue-masonry-wall": "^5.0.10",
     "vue3-sortablejs": "^1.0.7"
   }
 }

@@ -14,34 +14,46 @@
              {{ kod.getHour(data.minute_diff) }}
          </div>
         
-        </div>
-        <hr class="my-2">
+    </div>
+    </div>
+<div :style="{ 'font-size': kod.setting.font_size + 'px' }" class="rounded-t-lg p-2 text-black">
         <div class="flex justify-between">
                 <div class="flex item-center gap-2 whitespace-nowrap">
-                    <v-icon class="text-white" style="font-size: 20px;">mdi-account-outline</v-icon>{{ data.customer }}
+                    <v-icon class="text-black" style="font-size: 20px;">mdi-account-outline</v-icon>{{ data.customer }}
                 </div>
             <div class="flex item-center gap-2 whitespace-nowrap">
-                <v-icon class="text-white" style="font-size: 20px;">mdi-calendar-clock</v-icon>      
+                <v-icon class="text-black" style="font-size: 20px;">mdi-calendar-clock</v-icon>      
                 {{moment(data.order_time).format('HH:mm:ss') }}
             </div>
         </div>
         <div class="flex justify-between">
                 <div class="flex item-center gap-2 whitespace-nowrap">
-                    <v-icon class="text-white" style="font-size: 20px;">mdi-file-document</v-icon>{{ data.sale_number }}
+                    <v-icon class="text-black" style="font-size: 20px;">mdi-file-document</v-icon>{{ data.sale_number }}
                 </div>
             <div class="flex item-center gap-2 whitespace-nowrap">
-                <v-icon class="text-white" style="font-size: 20px;">mdi-tag</v-icon>      
+                <v-icon class="text-black" style="font-size: 20px;">mdi-tag</v-icon>      
                 {{data.sale_type }}
             </div>
         </div>
         
     </div>
+    <hr>
     <div class="p-2">
-          <div  v-for="(p, index) in data.items" :key="index">
+          <div  v-for="(p, index) in data.items.filter(r=>!r.deleted)" :key="index">
             <ComKodMenuItem :data="p"/>
         </div>
+        <div class="border-b-2 border-red-600 mb-2" v-if="data.items.filter(r=>r.deleted).length>0">
+            <div  class="w-full border-b-2 border-red-600 mb-2"> <span
+                class="bg-red text-white text-xs font-medium me-2 px-2.5 py-0.5 rounded-t-lg dark:bg-red-900 dark:text-red-300"><v-icon
+                    class="text-white" style="font-size: 14px;">mdi-delete</v-icon> {{ $t('Deleted') }}</span></div>
+            <div  v-for="(p, index) in data.items.filter(r=>r.deleted)" :key="index">
+            <ComKodMenuItem :data="p" />
+        </div>
+
+        </div>
+        
        
-        <v-btn :loading="data.loading" @click="onChangeStatus('Done')">Done</v-btn>
+        <v-btn :loading="data.loading" @click="onChangeStatus('Done')" block>Close</v-btn>
     </div>
    </div>  
 </template>
@@ -56,7 +68,7 @@ const props = defineProps({
     const { t: $t } = i18n.global;
     async function onChangeStatus(status){
         if (await confirmDialog({ title: $t("Mark as Done"), text: $t('Are you sure you want to mark as Done for all menus?') })) {
-        kod.onChangeStatus({
+        kod.onCloseOrder({
             status:status,
             data:props.data,
             sale_product_names:props.data.items.map(r => r.name)
@@ -74,21 +86,15 @@ const props = defineProps({
     }
     
     .warn{
-        background:rgb(236, 236, 1);
-        border-color: rgba(236, 236, 1, 0.693);
+        background: #ffc107;
+    border-color: #ffc107;
     }
     .error{
         background:red;
         border-color: rgba(255, 0, 0, 0.71);
     }
-    /* .item {
-  width: 33.33%;
-  position: relative;
-  color: #fff;
-  box-sizing: border-box;
+    .done{
+    background: rgb(160, 160, 160);
+    border-color: rgb(160, 160, 160);
 }
-.item:nth-of-type(4n+1) { order: 1; }
-.item:nth-of-type(4n+2) { order: 2; }
-.item:nth-of-type(4n+3) { order: 3; }
-.item:nth-of-type(4n)   { order: 4; } */
 </style>

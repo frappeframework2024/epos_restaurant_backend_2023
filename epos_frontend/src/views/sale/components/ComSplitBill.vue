@@ -31,7 +31,7 @@ import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 
 import { ref, onMounted, defineEmits, createToaster, createResource, inject, i18n } from '@/plugin'
 import ComSplitBillList from './split_bill/ComSplitBillList.vue';
-
+const socket = inject("$socket")
 const { t: $t } = i18n.global;
 
 const emit = defineEmits(["resolve", "reject"])
@@ -213,6 +213,9 @@ function onSave() {
   is_loading.value = true;
 
   let _active_sales = groupSales.value.filter((r) => r.deleted == false);
+  const screens = sale.getScreenNames(_active_sales.flatMap(r=>r.sale.sale_products));
+
+  
   _active_sales.forEach((a) => {
 
     //check if empty sale products in sale
@@ -254,6 +257,12 @@ function onSave() {
       is_loading.value = false;
       sale.sale = doc;
       toaster.success($t('msg.Split bill successfully'));
+      screens.forEach(s=>{
+        socket.emit("SubmitKOD",{
+          screen_name:s,
+          message: $t("Orders in table") + " " + sale.sale.tbl_number + " " + $t("has been splited")
+        })
+      })
       emit("resolve", true);
     },
     onError(err) {

@@ -135,8 +135,86 @@
   {
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Inventory Reports",
+   "link_count": 7,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Stock Value Report",
+   "link_count": 0,
+   "link_to": "Stock Value Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Stock Take Transaction",
+   "link_count": 0,
+   "link_to": "Stock Take Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Stock Transfer Transaction",
+   "link_count": 0,
+   "link_to": "Stock Transfer Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Stock Take Summary",
+   "link_count": 0,
+   "link_to": "Stock Take Summary Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Stock Transfer Summary",
+   "link_count": 0,
+   "link_to": "Stock Transfer Summary Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Inventory Movement",
+   "link_count": 0,
+   "link_to": "Inventory Movement Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Product Quantity",
+   "link_count": 0,
+   "link_to": "Product Quantity",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Sales Report",
-   "link_count": 10,
+   "link_count": 11,
    "onboard": 0,
    "type": "Card Break"
   },
@@ -242,84 +320,16 @@
   },
   {
    "hidden": 0,
-   "is_query_report": 0,
-   "label": "Inventory Reports",
-   "link_count": 7,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
    "is_query_report": 1,
-   "label": "Stock Value Report",
+   "label": "Sale Summary Report V2",
    "link_count": 0,
-   "link_to": "Stock Value Report",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Stock Take Transaction",
-   "link_count": 0,
-   "link_to": "Stock Take Report",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Stock Transfer Transaction",
-   "link_count": 0,
-   "link_to": "Stock Transfer Report",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Stock Take Summary",
-   "link_count": 0,
-   "link_to": "Stock Take Summary Report",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Stock Transfer Summary",
-   "link_count": 0,
-   "link_to": "Stock Transfer Summary Report",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Inventory Movement",
-   "link_count": 0,
-   "link_to": "Inventory Movement Report",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Product Quantity",
-   "link_count": 0,
-   "link_to": "Product Quantity",
+   "link_to": "Sale Summary Report V2",
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
   }
  ],
- "modified": "2024-04-10 11:59:29.232752",
+ "modified": "2024-04-20 16:06:57.825241",
  "modified_by": "Administrator",
  "module": "ePOS Report",
  "name": "POS Reports",

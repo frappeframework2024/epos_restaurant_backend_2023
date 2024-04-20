@@ -157,6 +157,8 @@
   "section_break_oszl",
   "printed_by",
   "printed_date",
+  "deleted_by",
+  "deleted_note",
   "column_break_rrof",
   "paid_by",
   "paid_date",
@@ -1132,6 +1134,16 @@
    "fieldtype": "Currency",
    "label": "Second Sale Profit",
    "read_only": 1
+  },
+  {
+   "fieldname": "deleted_by",
+   "fieldtype": "Data",
+   "label": "Deleted By"
+  },
+  {
+   "fieldname": "deleted_note",
+   "fieldtype": "Data",
+   "label": "Deleted Note"
   }
  ],
  "image_field": "photo",
@@ -1144,7 +1156,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-04-12 11:54:33.482094",
+ "modified": "2024-04-20 12:06:29.600712",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

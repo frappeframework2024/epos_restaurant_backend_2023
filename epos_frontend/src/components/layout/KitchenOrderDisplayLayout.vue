@@ -2,39 +2,62 @@
     <v-app>
         <v-app-bar :elevation="2" color="error">
             <template #prepend>
-                <v-app-bar-nav-icon size="small" variant="text" @click.stop="onDrawer()"></v-app-bar-nav-icon>
-                <template v-if="mobile">
-                    <v-btn icon @click="onBack('TableLayout')" v-if="gv.setting.table_groups.length > 0">
-                        <v-icon>mdi-arrow-left</v-icon>
-                    </v-btn>
-                    <v-btn icon @click="onBack('Home')" v-else>
-                        <v-icon>mdi-home-outline</v-icon>
-                    </v-btn>
-                </template>
+                <!-- <v-app-bar-nav-icon size="small" variant="text" @click.stop="onDrawer()"></v-app-bar-nav-icon> -->
+                
+                    
+                <v-btn icon @click="onBack('Home')">
+                    <v-icon>mdi-home-outline</v-icon>
+                </v-btn>
+              
                 <v-app-bar-title>
                     <div :class="mobile ? 'text-xs' : ''">
-                        POS
-                        <span v-if="sale.sale.tbl_number">- {{ sale.sale.tbl_number }}</span>
-                        <span v-if="sale.sale.sale_status == 'New'"> - {{ $t('New') }}</span>
-                        <span v-else> - {{ sale.sale.name }}</span>
-
-                        <v-chip class="ml-2" variant="elevated" v-if="sale.sale.name"
-                            :color="sale.sale.sale_status_color" :size="mobile ? 'x-small' : 'default'">
-                            {{ sale.sale.sale_status }}
-                        </v-chip>
+                        Kitchen Order Display(KOD) - {{ screen_name }}
                     </div>
                 </v-app-bar-title>
             </template>
 
 
             <template #append>
+                <ComKodSetting/>
+                <v-menu >
+      <template v-slot:activator="{ props }">
+        <v-icon  v-bind="props">mdi-cog</v-icon>
+      </template>
+      <v-list>
+        <v-list-item>
+            <v-list-item-title>
+                Group By
+            </v-list-item-title>
+        </v-list-item>
+        <v-list-item>
+            <v-list-item-title>Show Menu Name</v-list-item-title>
+        </v-list-item>
+        <v-list-item>
+            <v-list-item-title>Show Item Status</v-list-item-title>
+        </v-list-item>
+        <v-list-item>
+            <v-list-item-title>
+
+                <label for="default-range" class="block">Change font</label>
+                <v-range
+    v-model="kod.setting.default_font_size"
+    step="1"
+    thumb-label="always"
+  ></v-range>
+{{kod.setting.default_font_size}}
+
+            </v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+                <v-btn :loading="kod.loading" @click="kod.getKODData(setting.pos_setting.business_branch, screen_name)"> <v-icon>mdi-refresh</v-icon></v-btn>
                 <ComTimeUpdate />
                 <template v-if="isWindow">
+                   
                     <v-btn :icon="(!gv.isFullscreen ? 'mdi-fullscreen' : 'mdi-fullscreen-exit')"
                         @click="onFullScreen()"></v-btn>
                 </template>
-                <ComSaleNotivication />
-
+                
 
                 <v-menu :location="location">
 
@@ -88,16 +111,18 @@ import ComProductSearch from '../../views/sale/components/ComProductSearch.vue'
 import MainLayoutDrawer from './MainLayoutDrawer.vue';
 import ComTimeUpdate from './components/ComTimeUpdate.vue';
 import ComCurrentUserAvatar from './components/ComCurrentUserAvatar.vue';
-import ComSaleNotivication from './ComSaleNotification.vue';
+import ComKodSetting from '@/views/kitchen_order_display/components/ComKodSetting.vue';
 
 import { useDisplay } from 'vuetify';
 import { useRouter, ref, inject, confirmBackToTableLayout, SearchProductDialog } from '@/plugin';
 
 import { computed } from 'vue';
 import Enumerable from 'linq';
+const kod = inject("$kod")
+const setting = JSON.parse(localStorage.getItem("setting"))
+const screen_name = JSON.parse(localStorage.getItem("device_setting")).default_kod
 const emit = defineEmits('closeModel')
 
-const sale = inject("$sale")
 const auth = inject("$auth")
 const gv = inject("$gv")
 

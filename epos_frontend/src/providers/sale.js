@@ -93,9 +93,11 @@ export default class Sale {
         this.tableSaleListResource = null;
         this.orderChanged = false;
         this.printWaitingOrderAfterPayment = false;
-
+        this.kod_messages=[] //key, screen, message
+        
 
         this.createNewSaleResource();
+        
     }
 
     createNewSaleResource() {
@@ -2145,4 +2147,19 @@ export default class Sale {
             }
         }
     }
+
+    
+    getScreenNames(sale_products) {
+        let printers =[]
+        sale_products?.forEach((r) => {
+         
+            printers = printers.concat(JSON.parse(r.printers).map(r=>r.printer));
+            
+        });
+
+        return [...new Set(printers)]
+        
+    
+    }
+
 }

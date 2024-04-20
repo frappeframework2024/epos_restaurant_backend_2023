@@ -1009,7 +1009,7 @@ def delete_sale(name,auth):
     if sale_doc.docstatus ==1:
         sale_doc.cancel()
     else:        
-        frappe.db.sql("update `tabSale` set docstatus = 2  where name='{0}'".format(name))
+        frappe.db.sql("update `tabSale` set docstatus = 2,deleted_by=%(deleted_by)s,deleted_note=%(deleted_note)s  where name=%(name)s",{"name":name,"deleted_by":auth["full_name"],"deleted_note":auth["note"]})
         frappe.db.sql("update `tabSale Product` set docstatus = 2 where parent='{}'".format(name))
     
     #update sale product spa deleted

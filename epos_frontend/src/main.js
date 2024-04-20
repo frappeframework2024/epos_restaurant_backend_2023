@@ -47,7 +47,7 @@ import Toaster from "@meforma/vue-toaster";
 import {resourcesPlugin} from "./resources"
 import { FrappeApp } from 'frappe-js-sdk';
 import { setConfig, frappeRequest } from './resource';
-
+import MasonryWall from '@yeger/vue-masonry-wall'
 setConfig('resourceFetcher', frappeRequest)
 
 
@@ -102,7 +102,7 @@ app.use(createBottomSheet())
 app.use(Toaster, {
 	position: "top",
 })
- 
+app.use(MasonryWall) 
  
 // Global Properties,
 // components can inject this
