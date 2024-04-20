@@ -799,7 +799,6 @@ export default class Sale {
                             if (sp.quantity < result.number) {
                                 result.number = sp.quantity;
                             }
-                          
                             sp.deleted_item_note = result.note;
                             sp.deleted_quantity = (sp.deleted_quantity || 0) + result.number;
                             this.onRemoveSaleProduct(sp, result.number, v.user);
@@ -2084,11 +2083,11 @@ export default class Sale {
     }
 
     onCreateDeletedSaleProduct(data) {
+        
         if ((this.sale.name || "") != "") {
             const db = frappe.db();
             data.deleted_quantity = data.quantity;
             this.updateSaleProduct(data)
-           
             db.createDoc('Sale Product Deleted', {
                 sale_product_id: data.name,
                 product_name: `${data.product_name}${data.portion ? '.' + data.portion : ''}${data.modifiers ? ' ' + data.modifiers : ''}`,

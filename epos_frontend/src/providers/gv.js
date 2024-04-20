@@ -46,7 +46,7 @@ export default class Gv {
 			if (is_auth_required) {
 				const result = await authorizeDialog({ permissionCode: permissionCode });				
 				if (result) {	
-					
+				
 					
 					if(requiredNoteKey && categoryNoteName){						
 						//check if require note 
@@ -54,7 +54,7 @@ export default class Gv {
 
 						if(this.setting.pos_setting[requiredNoteKey] == 1){							
 							if(inlineNote){	
-								resolve({category_note_name: categoryNoteName,discount_codes:result.discount_codes})
+								resolve({user:result.name,category_note_name: categoryNoteName,discount_codes:result.discount_codes,username:result.username})
 							}else{
 								const resultNote = await noteDialog({name:categoryNoteName,data:{product_code:product_code}}) ;
 								if(resultNote){
