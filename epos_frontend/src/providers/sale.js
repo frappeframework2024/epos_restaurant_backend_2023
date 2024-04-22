@@ -93,11 +93,11 @@ export default class Sale {
         this.tableSaleListResource = null;
         this.orderChanged = false;
         this.printWaitingOrderAfterPayment = false;
-        this.kod_messages=[] //key, screen, message
-        
+        this.kod_messages = [] //key, screen, message
+
 
         this.createNewSaleResource();
-        
+
     }
 
     createNewSaleResource() {
@@ -310,7 +310,6 @@ export default class Sale {
     }
 
     addSaleProduct(p) {
-        console.log(p)
         //check for append quantity rule
         //product code, allow_append_qty,price, unit,modifier, portion, is_free,sale_product_status
         //and check system have feature to send to kitchen
@@ -425,7 +424,7 @@ export default class Sale {
                 is_require_employee: p.is_require_employee,
                 is_timer_product: p.is_timer_product || 0,
                 time_stop: 0,
-                kod_status:"Pending"
+                kod_status: "Pending"
 
             }
             if (p.is_timer_product) {
@@ -755,7 +754,7 @@ export default class Sale {
 
 
                 gv.authorize(authorize_key, "delete_item", "delete_item_required_note", "Delete Item Note", sp.product_code, true).then(async (v) => {
-                   
+
                     if (v) {
                         let result = false;
                         if (input == (-99999)) {
@@ -1681,7 +1680,7 @@ export default class Sale {
             }
 
             // We send this to refresh kitchen order display
-            socket.emit("SubmitKOD",{"screen_name":_printer[0].printer})
+            socket.emit("SubmitKOD", { "screen_name": _printer[0].printer })
         });
 
 
@@ -1709,9 +1708,9 @@ export default class Sale {
                     products_.printers = [];
                     productUSBPrinter.printers = []
 
-                    printers.forEach((p) => { 
+                    printers.forEach((p) => {
 
-                        if(p.usb_printing == 1){
+                        if (p.usb_printing == 1) {
                             productUSBPrinter.printers.push({
                                 "printer_name": p.printer_name,
                                 "group_item_type": p.group_item_type,
@@ -1723,7 +1722,7 @@ export default class Sale {
                                 "products": data.product_printers.filter((x) => x.printer == p.printer_name)
                             });
 
-                        }else{
+                        } else {
                             products_.printers.push({
                                 "station": this.setting?.device_setting?.name ?? "",
                                 "printer": {
@@ -1741,21 +1740,21 @@ export default class Sale {
                     });
 
                     //trigger printer network
-                    if(products_.printers.length > 0){
+                    if (products_.printers.length > 0) {
                         flutterChannel.postMessage(JSON.stringify(products_));
                     }
 
                     //trigger print usb print
-                    if(productUSBPrinter.printers.length > 0){ 
+                    if (productUSBPrinter.printers.length > 0) {
                         socket.emit("PrintReceipt", JSON.stringify(productUSBPrinter))
-                      
-                    }                    
+
+                    }
                 }
             }
         }
         else {
             socket.emit("PrintReceipt", JSON.stringify(data))
-          
+
         }
 
         //reset product printer
@@ -1859,9 +1858,9 @@ export default class Sale {
     getPrintReportPath(doctype, name, reportName, isPrint = 0) {
         let url = "";
 
-        const serverUrl = window.location.protocol + "//" + window.location.hostname + (window.location.protocol =="https:"? "": (":"+ this.setting?.pos_setting?.backend_port));
+        const serverUrl = window.location.protocol + "//" + window.location.hostname + (window.location.protocol == "https:" ? "" : (":" + this.setting?.pos_setting?.backend_port));
 
-        
+
         url = serverUrl + "/printview?doctype=" + doctype + "&name=" + name + "&format=" + reportName + "&no_letterhead=0&letterhead=Defualt%20Letter%20Head&settings=%7B%7D&_lang=en&d=" + new Date()
         if (isPrint) {
             url = url + "&trigger_print=" + isPrint
@@ -1896,10 +1895,10 @@ export default class Sale {
                 flutterChannel.postMessage(JSON.stringify(data));
             }
         } else {
-            if((this.setting?.device_setting?.platform) == "Web") {
-               await call.get("epos_restaurant_2023.api.mobile_api.print_bill_to_network_printer", { "name": doc.name,"reprint": 0 })
+            if ((this.setting?.device_setting?.platform) == "Web") {
+                await call.get("epos_restaurant_2023.api.mobile_api.print_bill_to_network_printer", { "name": doc.name, "reprint": 0 })
             }
-            else{
+            else {
                 if (receipt.pos_receipt_file_name) {
                     socket.emit('PrintReceipt', JSON.stringify(data));
                 }
@@ -2086,7 +2085,7 @@ export default class Sale {
     }
 
     onCreateDeletedSaleProduct(data) {
-        
+
         if ((this.sale.name || "") != "") {
             const db = frappe.db();
             data.deleted_quantity = data.quantity;
@@ -2099,20 +2098,20 @@ export default class Sale {
                 quantity: data.quantity,
                 amount: data.total_revenue,
                 deleted_by: data.created_by,
-                order_time:data.order_time,
-                kod_status:data.kod_status,
-                printers:data.printers,
-                deleted_note:data.deleted_item_note,
-                portion:data.portion,
-                modifiers:data.modifiers,
-                combo_menu_data:data.combo_menu_data,
-                combo_menu:data.combo_menu,
-                product_name_kh:data.product_name_kh,
-                note:data.note,
-                order_by:data.order_by,
-                is_free:data.is_free
+                order_time: data.order_time,
+                kod_status: data.kod_status,
+                printers: data.printers,
+                deleted_note: data.deleted_item_note,
+                portion: data.portion,
+                modifiers: data.modifiers,
+                combo_menu_data: data.combo_menu_data,
+                combo_menu: data.combo_menu,
+                product_name_kh: data.product_name_kh,
+                note: data.note,
+                order_by: data.order_by,
+                is_free: data.is_free
             }).then((doc) => { })
-                .catch((error) => { 
+                .catch((error) => {
                     console.log(error)
                 });
         }
@@ -2149,18 +2148,18 @@ export default class Sale {
         }
     }
 
-    
+
     getScreenNames(sale_products) {
-        let printers =[]
+        let printers = []
         sale_products?.forEach((r) => {
-         
-            printers = printers.concat(JSON.parse(r.printers).map(r=>r.printer));
-            
+
+            printers = printers.concat(JSON.parse(r.printers).map(r => r.printer));
+
         });
 
         return [...new Set(printers)]
-        
-    
+
+
     }
 
 }

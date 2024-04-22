@@ -3,7 +3,6 @@
      <v-menu v-else >
       <template v-slot:activator="{ props }">
         <v-btn
-          color="success"
          
           v-bind="props"
         >

@@ -98,6 +98,7 @@
               </template>
             </td>
             <td class="text-end none-discount-field">
+              <ComHappyHour :saleProduct="sp" v-if="sp.is_render"/>
               <span class="" style="width:auto">
                 <template v-if="!sp.is_free">
                   <span v-if="sp.discount" class="link_line_action overflow-hidden w-auto">
@@ -198,8 +199,7 @@ import ComCurrentUserAvatar from '@/components/layout/components/ComCurrentUserA
 import ComProductUnit from '@/views/sale/components/retail_ui/ComProductUnit.vue'
 import { createToaster } from '@meforma/vue-toaster';
 import placeholderImage from '@/assets/images/placeholder.webp'
-
-
+import ComHappyHour from '@/views/sale/components/happy_hour_promotion/ComHappyHour.vue';
 import { i18n } from '@/i18n';
 
 const { t: $t } = i18n.global;

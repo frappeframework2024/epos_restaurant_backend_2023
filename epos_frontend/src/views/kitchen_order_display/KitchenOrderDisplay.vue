@@ -1,32 +1,41 @@
 <template>
-  
-    <div class="w-full h-full bg-slate-100">
 
-        <ComKodKpi />
-       
-<div class="bg-white border p-2">
-        <div :class="kod.setting.show_item_status ? 'grid-cols-4' : 'grid-cols' " class="grid gap-2">
-<div class="col-span-3">
-    <MasonryWall :items="kod.pending_orders" :columnWidth="kod.setting.column_width" :gap="10">
-    <template #default="{ item }">
-<ComKodBill :data="item" />
-    </template>
-  </MasonryWall>
-</div>
-<div v-if="kod.setting.show_item_status" class="col-span-1">
-<ComSummaryItemStatus />
-</div>
-</div>
+  <div class="w-full h-full bg-slate-100">
+    <div class="grid-cols-1 md:grid-flow-col grid p-2 gap-2">
+      <ComFilterSaleType />
+      <ComKodKpi />
     </div>
+    <div class="bg-white border p-2">
+      <div :class="kod.setting.show_item_status ? 'grid-cols-4' : 'grid-cols'" class="grid gap-2">
+        <div class="col-span-3 h-full shadow-md rounded-lg border p-2">
+          <MasonryWall :items="kod.pending_orders" :columnWidth="kod.setting.column_width" :gap="10">
+            <template #default="{ item }">
+              <ComKodBill :data="item" />
+            </template>
+          </MasonryWall>
+          <div v-if="kod.pending_orders.length < 1" class="text-slate-500 m-auto flex w-full h-full flex-col">
+            <div class=" m-auto">
+  <v-icon  style="font-size: 50px;" >mdi-inbox</v-icon>
+              <div class="text-center">{{ $t('No Data') }} </div>   
+            </div>    
+          </div>  
+
+        </div>
+        <div v-if="kod.setting.show_item_status" class="col-span-1">
+          <ComSummaryItemStatus />
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 <script setup>
 
-import { inject,  ref, onMounted, onUnmounted, i18n } from '@/plugin';
+import { inject, ref, onMounted, onUnmounted, i18n } from '@/plugin';
 
 import ComKodBill from "@/views/kitchen_order_display/components/ComKodBill.vue"
 import ComSummaryItemStatus from "@/views/kitchen_order_display/components/ComSummaryItemStatus.vue"
 import ComKodKpi from "@/views/kitchen_order_display/components/ComKodKpi.vue"
+import ComFilterSaleType from "@/views/kitchen_order_display/components/ComFilterSaleType.vue"
 import { createToaster } from '@meforma/vue-toaster';
 const socket = inject("$socket");
 const gv = inject("$gv")
@@ -39,43 +48,43 @@ const audioRef = ref(null);
 const { t: $t } = i18n.global;
 const toaster = createToaster({ position: "top-right" });
 
- 
-socket.on("SubmitKOD", (args) => { 
-    if(args.screen_name == kod.screen_name){
-      if(args.message){
-        toaster.warning(args.message);
-      } 
-      kod.getKODData()  
-      if (localStorage.getItem("is_window") == "1") {       
-          window.chrome.webview.postMessage(JSON.stringify({action:"play_sound"}));
-      }else{
-        const flutterChannel = localStorage.getItem('flutterChannel');
-        if ((flutterChannel || 0) == 1) {
-            flutterChannel.postMessage(JSON.stringify({action:"play_sound"}));
-        }
-      } 
-    }    
+
+socket.on("SubmitKOD", (args) => {
+  if (args.screen_name == kod.screen_name) {
+    if (args.message) {
+      toaster.warning(args.message);
+    }
+    kod.getKODData()
+    if (localStorage.getItem("is_window") == "1") {
+      window.chrome.webview.postMessage(JSON.stringify({ action: "play_sound" }));
+    } 
+
+      if ((localStorage.getItem('flutterWrapper') || 0) == 1) {
+        flutterChannel.postMessage(JSON.stringify({ action: "play_sound" }));
+      }
+   
+  }
 })
 
 
 
-onMounted(()=>{
-  kod.business_branch =  setting.pos_setting.business_branch
+onMounted(() => {
+  kod.business_branch = setting.pos_setting.business_branch
   kod.screen_name = screen_name
-    kod.getKODData()
+  kod.getKODData()
 
-  setInterval(function(){
+  setInterval(function () {
     kod.getKODData()
-  }, 1000*60)
+  }, 1000 * 60)
 })
 
 onUnmounted(() => {
-    socket.off('SubmitKOD');
+  socket.off('SubmitKOD');
 })
 
 </script>
 <style scoped>
-.masonry-container{
+.masonry-container {
   display: flex;
   flex-flow: column wrap;
   align-content: space-between;

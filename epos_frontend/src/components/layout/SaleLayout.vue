@@ -135,10 +135,9 @@ function onDrawer() {
 function onReload() {
     location.reload();
     const apkipa = localStorage.getItem('apkipa');
-    const flutterChannel = localStorage.getItem('flutterChannel');
     if ((apkipa || 0) == 1) {
-        if ((flutterChannel || 0) == 1) {
-            flutterChannel.postMessage(JSON.stringify({"action":"mobile_reload"}));
+        if ((localStorage.getItem('flutterWrapper') || 0) == 1) {
+            flutterChannel.postMessage(JSON.stringify({ "action": "mobile_reload" }));
         }
         else {
             window.ReactNativeWebView.postMessage("mobile_reload");

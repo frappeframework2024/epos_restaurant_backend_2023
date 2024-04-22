@@ -1251,7 +1251,6 @@ def upload_all_sale_data_to_google_sheet(business_branch,start_date,end_date,cas
 
     creds = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(google_account_credentials))
     client = gspread.authorize(creds)
-    newsheet=client.create('Helo').share('sengho.camtech@gmail.com')
     sheet = client.open(google_sheet_file).sheet1
     
     if len(sheet.get_all_records()) <= 0:

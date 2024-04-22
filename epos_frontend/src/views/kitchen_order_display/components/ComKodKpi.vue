@@ -1,5 +1,5 @@
 <template>
-    <div class="grid-cols-4 grid p-2 gap-2">
+   
         <ComKodKpiBox
       name="New Order"
       :quantity="kod.kpi.new_order"
@@ -18,17 +18,16 @@
       name="Processing Order"
       :quantity="kod.kpi.processing_order"
       iconName="mdi-progress-clock"
-      bgColorClass="bg-lime-300"
+      bgColorClass="bg-sky-500"
       :iconSize="30"
     />
     <ComKodKpiBox
       name="Done"
       :quantity="kod.kpi.done"
       iconName="mdi-checkbox-marked"
-      bgColorClass="bg-green-300"
+      bgColorClass="bg-blue-500"
       :iconSize="30"
     />
-        </div>
 </template>
 <script setup>
 import ComKodKpiBox from "@/views/kitchen_order_display/components/ComKodKpiBox.vue"

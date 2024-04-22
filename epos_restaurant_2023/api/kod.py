@@ -1,11 +1,17 @@
 import frappe 
 from functools import lru_cache
 
-@frappe.whitelist()
-def get_kod_menu_item(business_branch, screen_name,group_by="order_time"):
+@frappe.whitelist(methods="POST")
+def get_kod_menu_item(business_branch, screen_name,group_by="order_time",sale_types=None):
+    
     open_cashier_shift = get_open_cashier_shift(business_branch)
     setting = frappe.get_doc("Kitchen Order Display Setting")
+    
+    if not sale_types:
+        sale_types = frappe.db.get_list("Sale Type",pluck='name')
+        
     data = []
+    
     sql = """
         select 
             sp.name,
@@ -36,17 +42,18 @@ def get_kod_menu_item(business_branch, screen_name,group_by="order_time"):
             s.business_branch = %(business_branch)s and 
             s.cashier_shift in %(cashier_shift)s and 
             sp.printers like %(screen_name)s and 
+            s.sale_type in %(sale_types)s and
             sp.hide_in_kod = 0
         order by sp.order_time 
     """
  
-    data = frappe.db.sql(sql,{"business_branch":business_branch,"screen_name":'%{}%'.format(screen_name),"cashier_shift":open_cashier_shift}, as_dict=1)
+    data = frappe.db.sql(sql,{"business_branch":business_branch,"screen_name":'%{}%'.format(screen_name),"cashier_shift":open_cashier_shift,"sale_types":sale_types}, as_dict=1)
     data = data + get_deleted_order(business_branch, screen_name, open_cashier_shift)
     return {
-            "kpi":get_kpi(data,business_branch, screen_name),
+            "kpi":get_kpi(data,business_branch, screen_name,sale_types,open_cashier_shift),
             "pending_orders":group_pending_kod_order(data, group_by),
             "pending_order_items": [{ **d, "css_class":get_css_class(d["minute_diff"],setting) } for d in data if d["deleted"] == 0 and d["kod_status"]!='Done'],
-            "recent_done":get_recent_done(business_branch, screen_name)
+            "recent_done":get_recent_done(business_branch, screen_name,sale_types)
     }
 
 def group_pending_kod_order(data,group_by="order_time"):
@@ -107,18 +114,18 @@ def get_css_class(duration,setting):
     
     return "error"
 
-def get_kpi(data, business_branch, screen_name):
+def get_kpi(data, business_branch, screen_name,sale_types,cashier_shifts):
     setting = frappe.get_doc("Kitchen Order Display Setting")
     kpi = {
         "new_order":len([d for d in data if d["kod_status"] in ["Pending","Processing"] and  d["minute_diff"]<= int(setting.new_order_duration)]),
         "pending_order":len([d for d in data if d["kod_status"] == "Pending"]),
         "processing_order":len([d for d in data if d['kod_status']=="Processing"]),
-        "done":get_total_done(business_branch,screen_name),
+        "done":get_total_done(business_branch,screen_name,sale_types,cashier_shifts),
     }
     
     return kpi
 
-def get_total_done(business_branch, screen_name):
+def get_total_done(business_branch, screen_name,sale_types,cashier_shifts):
     sql="""
             select 
                 count(sp.name)  as total
@@ -126,14 +133,15 @@ def get_total_done(business_branch, screen_name):
             inner join `tabSale` s on s.name = sp.parent
             where 
                 kod_status='Done' and 
-                s.business_branch ='{}' and 
-                sp.printers like '%{}%'  
-            """.format(business_branch, screen_name)
-    data = frappe.db.sql(sql,as_dict=1)
+                s.business_branch = %(business_branch)s and 
+                s.sale_type in %(sale_types)s and  
+                s.cashier_shift in %(cashier_shifts)s and 
+                sp.printers like %(screen_name)s  
+            """
+    data = frappe.db.sql(sql,{"business_branch":business_branch,"screen_name":'%{}%'.format(screen_name),"cashier_shifts":cashier_shifts,"sale_types":sale_types},as_dict=1)
     return data[0]["total"]
 
-def get_recent_done(business_branch, screen_name):
-    
+def get_recent_done(business_branch, screen_name,sale_types):
     cashier_shift =  get_open_cashier_shift(business_branch) 
     sql = """
         select 
@@ -162,12 +170,13 @@ def get_recent_done(business_branch, screen_name):
             s.business_branch = %(business_branch)s and 
             sp.printers like %(screen_name)s and  
             s.cashier_shift in %(cashier_shift)s and 
+            s.sale_type in %(sale_types)s and 
             sp.kod_status ='Done'
         order by sp.kod_status_update_time desc
         limit 20
     """
  
-    data = frappe.db.sql(sql,{"business_branch":business_branch,"screen_name":'%{}%'.format(screen_name),"cashier_shift":cashier_shift}, as_dict=1)
+    data = frappe.db.sql(sql,{"business_branch":business_branch,"screen_name":'%{}%'.format(screen_name),"cashier_shift":cashier_shift,"sale_types":sale_types}, as_dict=1)
     return data
 
 @frappe.whitelist(methods="POST")
@@ -196,7 +205,7 @@ def get_open_cashier_shift(business_branch):
     return set([d["name"] for d in  frappe.db.sql(sql,as_dict=1)])
      
      
-def get_deleted_order(business_branch,screen_name,cashier_shift = None):
+def get_deleted_order(business_branch,screen_name,cashier_shift = None,sale_types=None):
     if not cashier_shift:
         cashier_shift = get_open_cashier_shift(business_branch)
     sql = """
@@ -229,11 +238,12 @@ def get_deleted_order(business_branch,screen_name,cashier_shift = None):
             s.business_branch = %(business_branch)s and 
             s.cashier_shift in %(cashier_shift)s and 
             sp.printers like %(screen_name)s and 
+            s.sale_type like %(sale_types)s and 
             sp.kod_status in ('Pending','Processing')  and  
             sp.hide_in_kod=0 
         order by sp.order_time 
     """
-    data = frappe.db.sql(sql,{"business_branch":business_branch,"screen_name":'%{}%'.format(screen_name),"cashier_shift":cashier_shift}, as_dict=1)
+    data = frappe.db.sql(sql,{"business_branch":business_branch,"screen_name":'%{}%'.format(screen_name),"cashier_shift":cashier_shift,"sale_types":sale_types}, as_dict=1)
     
     return data
     

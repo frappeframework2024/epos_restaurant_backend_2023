@@ -1,21 +1,25 @@
 <template>
     <div @click="onChangeStatus(data.kod_status == 'Done' ? 'Pending' : 'Done') "
 
-        class="cursor-pointer mb-3 rounded-lg px-2 pb-1 relative bg-slate-100" :class="(data.kod_status == 'Done' && !isSummary ) ? 'opacity-60' : '' , data.loading ? 'pointer-events-none' : ''  " >
+        class="cursor-pointer mb-3 rounded-lg px-2 pb-1 relative bg-slate-100" :class="(data.kod_status == 'Done' && !isSummary ) ? 'opacity-75' : '' , data.loading ? 'pointer-events-none' : ''  " >
  <template v-if="isSummary">
         <div  :style="{ 'font-size': kod.setting.font_size - 3 + 'px' }" class="flex gap-2 pt-1 flex-wrap">
             <div class="flex item-center gap-2 bg-slate-300 rounded-full px-2">
                 <v-icon class="m-auto" style="font-size:15px;">mdi-table-furniture</v-icon>
                 {{ data.table_no }} <template v-if="kod.setting.show_outlet_name" >- {{ data.outlet }} </template> 
             </div> 
-            <div class="flex item-center gap-2 whitespace-nowrap bg-slate-300 rounded-full px-2">
+            
+              <div class="flex item-center gap-2 whitespace-nowrap bg-slate-300 rounded-full px-2">
                 <v-icon class="text-black m-auto" style="font-size: 15px;">mdi-tag</v-icon>      
                 {{data.sale_type }}
             </div>
+            <template v-if="!kod.setting.hide_order_information">
             <div  class="flex item-center gap-2 whitespace-nowrap bg-slate-300 rounded-full px-2">
                 <v-icon class="text-black m-auto" style="font-size: 15px;">mdi-calendar-clock</v-icon>      
                 {{moment(data.order_time).format('HH:mm:ss') }}
-            </div>
+            </div>  
+            </template>
+            
             <div :class="data.css_class ? data.css_class : 'bg-slate-500'" class="flex item-center gap-1 rounded-full px-2 text-white">
                 <v-icon class="text-white m-auto" style="font-size: 12px;" >mdi-timer</v-icon> 
                 <div class="m-auto">
@@ -24,12 +28,12 @@
                
             </div>
         </div> 
-      </template>   
-        <hr v-if="isSummary" class="my-1">  
-        <div class="relative" :class="(kod.group_order_by != 'order_time' && !isSummary)  ? 'pt-6':'pt-1' " >
-        <div v-if="kod.group_order_by != 'order_time'" :class="data.css_class ? data.css_class : 'bg-slate-500'"
+      </template>  
+        <hr v-if="isSummary" class="my-1"> 
+        <div class="relative" :class="(kod.setting.default_group_by != 'order_time' && !isSummary)  ? 'pt-6':'pt-1' " >
+        <div v-if="kod.setting.default_group_by != 'order_time'" :class="data.css_class ? data.css_class : 'bg-slate-500'"
             class="whitespace-normal rounded-md text-white px-1 inline-block absolute top-1">
-            <div v-if="!isSummary" class="flex">
+            <div v-if="(kod.setting.default_group_by != 'order_time' && !isSummary)" class="flex">
                 <v-icon style="font-size:10px;">mdi-timer</v-icon>
                 <span  style="font-size:10px;" class="ms-1">{{ kod.getHour(data.minute_diff) }}</span>
             </div>
@@ -41,9 +45,8 @@
                 <div v-if="!data.loading" @click="onChangeStatus(data.kod_status == 'Done' ? 'Pending' : 'Done')">
                     <v-icon v-if="data.kod_status == 'Pending'" style="font-size:15px;"  class="-mr-1 opacity-50">mdi-checkbox-blank-circle-outline</v-icon>
                     <v-icon v-if="data.kod_status == 'Processing'" style="font-size:17px;"  class="-mr-1 opacity-50 text-green-600">mdi-timer</v-icon>
-                    <v-icon v-if="data.kod_status == 'Done'" style="font-size:15px;"  class="-mr-1 opacity-70 text-green-500">mdi-checkbox-marked-circle-outline</v-icon>
+                    <v-icon v-if="data.kod_status == 'Done'" style="font-size:20px;"  class="-mr-1 opacity-70 text-green-500">mdi-checkbox-marked-circle-outline</v-icon>
                 </div>
-                
                 <div v-else>
                     <v-progress-circular
     indeterminate
@@ -86,13 +89,13 @@
             </div>
         </div>
         <div
-            :style="{ 'text-decoration': data.deleted ? 'line-through' : '', 'font-size': kod.setting.font_size + 2 + 'px' }"   :class="(kod.group_order_by == 'order_time' || isSummary) ? 'pe-9' : ''" >
-            {{ data.quantity }} <v-icon class="text-black" style="font-size: 20px;">mdi-close</v-icon> {{
+            :style="{ 'text-decoration': data.deleted ? 'line-through' : '', 'font-size': kod.setting.font_size + 2 + 'px' }"   :class="(kod.group_order_by == 'order_time' || isSummary) ? 'pe-9' : '' , data.kod_status == 'Done' ? 'text-slate-200' : '' " >
+            {{ data.quantity }} <v-icon  style="font-size: 20px;">mdi-close</v-icon> {{
                 
                 kod.setting.show_menu_language=='khmer'? data.product_name_kh:data.product_name
 
             }} {{ getPortion() }}         
-            <template v-if="data.is_free" > <v-chip size="x-small" class="ma-2" color="success" variant="outlined"
+            <template v-if="data.is_free" > <v-chip size="x-small" class="m-0" color="success" variant="outlined"
     >
     {{ $t('Free') }}
     </v-chip></template>
@@ -108,16 +111,16 @@
 
         </div>
 
-        <hr v-if="data.note || data.deleted_note" class="my-2">
+        <hr v-if="data.note || data.deleted_note" class="my-1">
 
         <div>
             <div v-if="data.note">
-                <div class="w-full bg-white text-sm p-2 rounded-lg">
+                <div :style="{'font-size':(kod.setting.font_size) + 'px'}" class="w-full bg-white p-2 rounded-lg break-words">
                     {{ data.note }}
                 </div>
             </div>
             <div v-if="data.deleted_note">
-                <div class="w-full bg-white text-sm p-2 rounded-lg">
+                <div :style="{'font-size':(kod.setting.font_size) + 'px'}" class="w-full bg-white p-2 rounded-lg break-words">
                     {{ data.deleted_note }}
                 </div>
             </div>
@@ -172,8 +175,8 @@ function onHideOrder(status) {
 </script>
 <style scoped>
 .new {
-    background: green;
-    border-color: rgba(0, 128, 0, 0.609);
+    background: rgb(74 222 128);
+    border-color: rgb(74 222 128);
 }
 
 .warn {
@@ -182,8 +185,8 @@ function onHideOrder(status) {
 }
 
 .error {
-    background: red;
-    border-color: rgba(255, 0, 0, 0.71);
+    background: #f87171;
+    border-color: #f87171;
 }
 .done{
     background: rgb(160, 160, 160);

@@ -8,6 +8,7 @@
              <v-icon style="font-size: 20px;">mdi-table-furniture</v-icon>
             {{ data.table_no }} 
             <span v-if="kod.setting.show_outlet_name">- {{ data.outlet }} </span>
+            <span v-if="kod.setting.hide_order_information==1">- {{ $t(data.sale_type) }} </span>
             
         </div>
             
@@ -18,7 +19,7 @@
         
     </div>
     </div>
-<div :style="{ 'font-size': kod.setting.font_size + 'px' }" class="rounded-t-lg p-2 text-black">
+<div v-if="kod.setting.hide_order_information==0" :style="{ 'font-size': kod.setting.font_size + 'px' }" class="rounded-t-lg p-2 text-black">
         <div class="flex justify-between">
                 <div class="flex item-center gap-2 whitespace-nowrap">
                     <v-icon class="text-black" style="font-size: 20px;">mdi-account-outline</v-icon>{{ data.customer }}
@@ -34,7 +35,7 @@
                 </div>
             <div class="flex item-center gap-2 whitespace-nowrap">
                 <v-icon class="text-black" style="font-size: 20px;">mdi-tag</v-icon>      
-                {{data.sale_type }}
+                {{ $t(data.sale_type) }}
             </div>
         </div>
         
@@ -56,8 +57,8 @@
         
         <v-btn :loading="data.loading" @click="onChangeStatus('Done')" block>
             <template></template>
-            <span v-if="data?.items.filter(r=>r.kod_status != 'Done').length>0">Done all</span>
-            <span v-else >Close</span>
+            <span v-if="data?.items.filter(r=>r.kod_status != 'Done').length>0"> {{ $t('Done all')}} </span>
+            <span v-else >{{ $t('Close') }} </span>
             </v-btn>
     </div>
    </div>  
@@ -86,8 +87,8 @@ const props = defineProps({
 </script>
 <style scoped>
     .new{
-        background: green;
-        border-color: rgba(0, 128, 0, 0.609);
+        background: rgb(74 222 128);
+        border-color: rgb(74 222 128);
     }
     
     .warn{
@@ -95,8 +96,8 @@ const props = defineProps({
     border-color: #ffc107;
     }
     .error{
-        background:red;
-        border-color: rgba(255, 0, 0, 0.71);
+        background:#f87171;
+        border-color: #f87171;
     }
     .done{
     background: rgb(160, 160, 160);

@@ -23,7 +23,7 @@ export default class KOD {
        this.pending_order_items=[],
        this.loading = false
        this.recent_done_order_items = [],
- 
+        this.selected_sale_types = []
         this.setting= {
             default_font_size:14,
             min_font_size:10,
@@ -33,17 +33,19 @@ export default class KOD {
             default_group_by:"sale_number",
             show_outlet_name:false,
             show_item_status:true,
-            column_width:300
+            column_width:300,
+            hide_order_information:0
         }
     }
     
 
     getKODData(){
         this.loading = true;
-        call.get("epos_restaurant_2023.api.kod.get_kod_menu_item",{
+        call.post("epos_restaurant_2023.api.kod.get_kod_menu_item",{
             business_branch:this.business_branch,
             screen_name:this.screen_name,
-            group_by:this.setting.default_group_by
+            group_by:this.setting.default_group_by,
+            sale_types:this.selected_sale_types
         }).then(r=>{
             this.kpi = r.message.kpi
             this.pending_orders = r.message.pending_orders

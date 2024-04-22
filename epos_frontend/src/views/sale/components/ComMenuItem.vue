@@ -304,7 +304,6 @@ async function onClickProduct() {
             }
         }
 
-
         sale.addSaleProduct(p);
 
     }

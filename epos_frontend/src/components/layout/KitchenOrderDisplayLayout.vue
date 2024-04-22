@@ -3,32 +3,34 @@
         <v-app-bar :elevation="2" color="error">
             <template #prepend>
                 <!-- <v-app-bar-nav-icon size="small" variant="text" @click.stop="onDrawer()"></v-app-bar-nav-icon> -->
-                
-                    
+
+
                 <v-btn icon @click="onBack('Home')">
                     <v-icon>mdi-home-outline</v-icon>
                 </v-btn>
-              
+
                 <v-app-bar-title>
                     <div :class="mobile ? 'text-xs' : ''">
-                        Kitchen Order Display(KOD) - <ComChangeScreen/>
+                        Kitchen Order Display(KOD) -
+                        <ComChangeScreen />
                     </div>
                 </v-app-bar-title>
             </template>
 
 
             <template #append>
-                 
-                <ComKodSetting/>
-       
-                <v-btn :loading="kod.loading" @click="kod.getKODData(setting.pos_setting.business_branch, screen_name)"> <v-icon>mdi-refresh</v-icon></v-btn>
+
+                <ComKodSetting />
+
+                <v-btn :loading="kod.loading" @click="kod.getKODData(setting.pos_setting.business_branch, screen_name)">
+                    <v-icon>mdi-refresh</v-icon></v-btn>
                 <ComTimeUpdate />
                 <template v-if="isWindow">
-                   
+
                     <v-btn :icon="(!gv.isFullscreen ? 'mdi-fullscreen' : 'mdi-fullscreen-exit')"
                         @click="onFullScreen()"></v-btn>
                 </template>
-                
+
 
                 <v-menu :location="location">
 
@@ -120,10 +122,9 @@ function onDrawer() {
 function onReload() {
     location.reload();
     const apkipa = localStorage.getItem('apkipa');
-    const flutterChannel = localStorage.getItem('flutterChannel');
     if ((apkipa || 0) == 1) {
-        if ((flutterChannel || 0) == 1) {
-            flutterChannel.postMessage(JSON.stringify({"action":"mobile_reload"}));
+        if ((localStorage.getItem('flutterWrapper') || 0) == 1) {
+            flutterChannel.postMessage(JSON.stringify({ "action": "mobile_reload" }));
         }
         else {
             window.ReactNativeWebView.postMessage("mobile_reload");
@@ -150,9 +151,9 @@ function onBack(_router) {
     router.push({ name: _router })
 }
 
-onMounted(()=>{
-    const kod_setting = JSON.parse( localStorage.getItem("kod_setting"))
-    if(kod_setting){
+onMounted(() => {
+    const kod_setting = JSON.parse(localStorage.getItem("kod_setting"))
+    if (kod_setting) {
         kod.setting = kod_setting
     }
 })

@@ -1,6 +1,6 @@
 <template>
   <div class="text-center pa-4">
-    <v-dialog v-model="isOpen" max-width="400" persistent>
+    <v-dialog v-model="isOpen" max-width="500" persistent>
       <template v-slot:activator="{ props: activatorProps }">
 
         <v-icon v-bind="activatorProps" @click="onOpen">mdi-cog</v-icon>
@@ -34,6 +34,9 @@
   <v-checkbox v-model="kod.setting.show_item_status" label="Show Item Status" hide-details></v-checkbox>
 </div>
           </div>
+          <div>
+  <v-checkbox v-model="kod.setting.hide_order_information" :label="$t('Hide order information')" hide-details></v-checkbox>
+</div>
         </v-card-text>
         <template v-slot:actions>
           <v-spacer></v-spacer>
