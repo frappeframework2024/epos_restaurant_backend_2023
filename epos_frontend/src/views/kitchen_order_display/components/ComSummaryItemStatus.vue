@@ -26,19 +26,35 @@
 </div>
 
         <div class="pt-2">
-            <div v-if="activeTab === 'pending'" v-for="(p, index) in kod.pending_order_items" :key="index">
+          <template v-if="activeTab === 'pending'">
+            <div  v-for="(p, index) in kod.pending_order_items" :key="index">
                 <ComKodMenuItem :isSummary="true"  :data="p"/>
-              
-            </div>  <div>
-                  <v-icon v-if="kod.pending_order_items<1" class="text-black">mdi-inbox</v-icon>
-                </div>
-            <div v-if="activeTab === 'processing'" v-for="(p, index) in kod.pending_order_items.filter(r=>r.kod_status=='Processing')" :key="index">
+                
+            </div>  
+            <div v-if="kod.pending_order_items.length <1" class="text-slate-500 m-auto flex w-full h-full mt-8 flex-col">
+              <v-icon  style="font-size: 50px;" class=" m-auto">mdi-inbox</v-icon>
+              <div class="text-center">No Data</div>             
+            </div>  
+          </template>  
+          <template v-if="activeTab === 'processing'">
+            <div  v-for="(p, index) in kod.pending_order_items.filter(r=>r.kod_status=='Processing')" :key="index">
                 <ComKodMenuItem :isSummary="true" :data="p"/>
-
             </div>
-            <div v-if="activeTab === 'done'" v-for="(p, index) in kod.recent_done_order_items" :key="index">
+            <div v-if="kod.pending_order_items.filter(r=>r.kod_status=='Processing').length <1" class="text-slate-500 m-auto flex w-full h-full mt-8 flex-col">
+              <v-icon  style="font-size: 50px;" class=" m-auto">mdi-inbox</v-icon>
+              <div class="text-center">No Data</div>             
+            </div>  
+          </template>
+          <template v-if="activeTab === 'done'">
+             <div  v-for="(p, index) in kod.recent_done_order_items" :key="index">
                 <ComKodMenuItem :isSummary="true" :data="p"/>
             </div>
+            <div v-if="kod.recent_done_order_items.length <1" class="text-slate-500 m-auto flex w-full h-full mt-8 flex-col">
+              <v-icon  style="font-size: 50px;" class=" m-auto">mdi-inbox</v-icon>
+              <div class="text-center">No Data</div>             
+            </div> 
+          </template>
+           
         </div>
 </div>
 </div>

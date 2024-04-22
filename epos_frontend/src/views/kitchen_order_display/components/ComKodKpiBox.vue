@@ -5,14 +5,16 @@
         <v-icon class="m-auto text-white" :style="{ fontSize: iconSize + 'px' }">{{ iconName }}</v-icon>    
       </div>
       <div class="col-span-3 ms-2 text-white">
-        <div class="font-semibold">{{ name }}</div>
-        <div class="font-semibold text-lg">{{ quantity }}</div>
+        <div :style="{ 'font-size': kod.setting.font_size + 'px' }" class="font-semibold">{{ $t(name || '') }}</div>
+        <div :style="{ 'font-size': kod.setting.font_size + 4 + 'px' }" class="font-semibold">{{ quantity }}</div>
       </div>
     </div>
   </template>
   
   <script setup>  
-
+  import { inject, ref, i18n } from '@/plugin';
+  const { t: $t } = i18n.global;
+const kod = inject("$kod")
   const props = defineProps({
     name: String,
     quantity: [Number, String],

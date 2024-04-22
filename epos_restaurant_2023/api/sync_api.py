@@ -15,7 +15,7 @@ def get_all_data_for_sync_from_server():
         headers = {
                     'Authorization': f'token {setting.access_token}'
                 }
-        server_url = server_url + "/api/method/epos_restaurant_2023.api.sync_api.get_data_for_sync?business_branch=" + setting.current_client_branch
+        server_url = server_url + "/api/method/epos_restaurant_2023.api.sync_api.get_data_for_sync"
        
         response = requests.get(server_url,headers=headers)
         
@@ -139,11 +139,16 @@ def generate_init_data_sync_to_client():
     
 
 @frappe.whitelist()
-def get_data_for_sync(business_branch):
+def get_data_for_sync(business_branch=None):
     setting = frappe.get_doc("ePOS Sync Setting")
-    frappe.db.sql("Update `tabData For Sync` set is_synced = 1 where business_branch='{}'".format(business_branch))
+    if business_branch:
+        frappe.db.sql("Update `tabData For Sync` set is_synced = 1")
+        data = frappe.db.sql( "select distinct document_type, document_name,is_deleted,is_renamed,old_name  from `tabData For Sync` where is_synced=1 order by creation",as_dict=1) 
+    else:
+        frappe.db.sql("Update `tabData For Sync` set is_synced = 1 where business_branch='{}'".format(business_branch))
+        data = frappe.db.sql( "select distinct document_type, document_name,is_deleted,is_renamed,old_name  from `tabData For Sync` where is_synced=1 and business_branch='{}' order by creation".format(business_branch),as_dict=1) 
     frappe.db.commit()
-    data = frappe.db.sql( "select distinct document_type, document_name,is_deleted,is_renamed,old_name  from `tabData For Sync` where is_synced=1 and business_branch='{}' order by creation".format(business_branch),as_dict=1) 
+    
     
     return_data = []
     sync_doctypes = set([d["document_type"] for d in data])

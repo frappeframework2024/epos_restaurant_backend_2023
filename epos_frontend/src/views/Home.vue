@@ -34,6 +34,7 @@
                         
                         
                         <ComButton @click="onRoute('ReceiptList')" :title="$t('Receipt List')" v-if="device_setting?.is_order_station==0" icon="mdi-file-chart"  icon-color="#e99417" />
+                        <ComButton @click="onRoute('KitchenOrderDisplay')" :title="$t('KOD Screen')" v-if="device_setting?.show_button_kod_screen==1" icon="mdi-monitor"  icon-color="#e99417" />
 
                         <ComButton @click="onRoute('Customer')" :title="$t('Customer')" v-if="device_setting?.is_order_station==0" icon-color="#e99417"  icon="mdi-account-multiple-outline" />
                         <!-- <ComButton :title="$t('Park Item')" @click="onRedeemClick()" v-if="device_setting.show_park_button==1" icon-color="#e99417"  icon="mdi-parking" /> -->
@@ -47,6 +48,7 @@
 
                         <ComButton v-if="isWindow() && device_setting?.show_wifi_button==1"  @click="onPrintWifiPassword" :title="$t('Wifi Password')" icon="mdi-wifi" icon-color="#e99417" /> 
                         
+                        <ComButton @click="playMusic()" text-color="#fff" icon-color="#fff" :title="$t('Play')" icon="mdi-logout" background-color="#b00020" />
                         <ComButton @click="onLogout()" text-color="#fff" icon-color="#fff" :title="$t('Logout')" icon="mdi-logout" background-color="#b00020" />
                         
                     </div>
@@ -235,7 +237,9 @@ function onLogout() {
         router.push({ name: 'Login' })
     })
 }
-    
+function playMusic() {
+    window.chrome.webview.postMessage(JSON.stringify({ action: "play_sound" }));
+}   
 
 
 async function onPrintWifiPassword(){

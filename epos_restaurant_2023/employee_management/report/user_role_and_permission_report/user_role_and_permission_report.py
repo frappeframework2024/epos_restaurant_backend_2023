@@ -23,7 +23,7 @@ def get_columns(filters):
 			"fieldname": c["fieldname"],
 			"label":c["label"],
 			"fieldtype":"Data",
-			"align":"center"
+			"align":"left"
 		}) 
 
 	return columns
@@ -59,7 +59,13 @@ def get_report_data(filters):
 					where hr.parenttype = 'Role Profile' and e.name in %(user)s"""
 	has_roles = frappe.db.sql(has_role_sql,filters, as_dict= 1)	
 
-	data.append({"indent":0,"permission":"Role Profile"})
+	role_profile_header = {"indent":0,"permission":"Role Profile"}
+	for c in data_columns:
+		_col = [d for d in has_roles if d["parent"]== c["role_profile"]]
+		if _col:
+			role_profile_header.update({c["fieldname"]:c["role_profile"]})
+
+	data.append(role_profile_header)
 	for role in roles:
 		for c in data_columns:
 			value = [d for d in has_roles if d["parent"]== c["role_profile"] and d["role"]== role["permission"]]
@@ -84,7 +90,15 @@ def get_report_data(filters):
 					where bm.parenttype = 'Module Profile' and e.name in %(user)s"""
 	block_modules = frappe.db.sql(block_module_sql,filters, as_dict= 1)	
 	
-	data.append({"indent":0,"permission":"Module Profile"})
+ 
+	module_profile_header = {"indent":0,"permission":"Module Profile"}
+	for c in data_columns:
+		_col = [d for d in block_modules if d["parent"]== c["module_profile"]]
+		if _col:
+			module_profile_header.update({c["fieldname"]:c["module_profile"]})
+
+	data.append(module_profile_header)
+
 	for module in modules:
 		for c in data_columns:
 			value = [d for d in block_modules if d["parent"]== c["module_profile"] and d["module"] == module["permission"]]
@@ -115,7 +129,13 @@ def get_report_data(filters):
 								where e.name in %(user)s"""
 	pos_user_permissions = frappe.db.sql(pos_user_permission_sql,filters,as_dict = 1) 	 
 
-	data.append({"indent":0,"permission":"POS Permission"})
+	pos_permission_header = {"indent":0,"permission":"POS Permission"}
+	for c in data_columns:
+		_col = [d for d in pos_user_permissions if d["pos_user_permission"]== c["pos_permission"]]
+		if _col:
+			pos_permission_header.update({c["fieldname"]:c["pos_permission"]})
+	data.append(pos_permission_header)
+
 	for pos_permission in pos_permissions:
 		for c in data_columns:
 			value = [d for d in pos_user_permissions if d["pos_user_permission"] == c["pos_permission"]]

@@ -43,6 +43,7 @@
   "show_move_item_button",
   "show_edit_menu_button",
   "allow_switch_pos_profile",
+  "show_button_kod_screen",
   "printers_tab",
   "default_kod_id",
   "default_kod",
@@ -281,11 +282,17 @@
    "fieldtype": "Link",
    "label": "Default KOD ID",
    "options": "Printer"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_button_kod_screen",
+   "fieldtype": "Check",
+   "label": "Show Button KOD Screen"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-04-18 10:40:09.890251",
+ "modified": "2024-04-20 16:56:13.197450",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

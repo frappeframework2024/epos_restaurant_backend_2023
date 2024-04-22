@@ -4,7 +4,7 @@ from functools import lru_cache
 @frappe.whitelist()
 def get_kod_menu_item(business_branch, screen_name,group_by="order_time"):
     open_cashier_shift = get_open_cashier_shift(business_branch)
-    
+    setting = frappe.get_doc("Kitchen Order Display Setting")
     data = []
     sql = """
         select 
@@ -45,7 +45,7 @@ def get_kod_menu_item(business_branch, screen_name,group_by="order_time"):
     return {
             "kpi":get_kpi(data,business_branch, screen_name),
             "pending_orders":group_pending_kod_order(data, group_by),
-            "pending_order_items": [d for d in data if d["deleted"] == 0 and d["kod_status"]!='Done'],
+            "pending_order_items": [{ **d, "css_class":get_css_class(d["minute_diff"],setting) } for d in data if d["deleted"] == 0 and d["kod_status"]!='Done'],
             "recent_done":get_recent_done(business_branch, screen_name)
     }
 

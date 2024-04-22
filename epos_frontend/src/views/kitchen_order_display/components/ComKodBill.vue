@@ -6,7 +6,9 @@
         <div class="flex item-center gap-2">
        
              <v-icon style="font-size: 20px;">mdi-table-furniture</v-icon>
-            {{ data.table_no }} - {{ data.outlet }} 
+            {{ data.table_no }} 
+            <span v-if="kod.setting.show_outlet_name">- {{ data.outlet }} </span>
+            
         </div>
             
          <div class="flex item-center gap-2">

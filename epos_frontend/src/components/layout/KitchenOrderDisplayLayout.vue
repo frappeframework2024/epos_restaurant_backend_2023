@@ -11,13 +11,14 @@
               
                 <v-app-bar-title>
                     <div :class="mobile ? 'text-xs' : ''">
-                        Kitchen Order Display(KOD) - {{ screen_name }}
+                        Kitchen Order Display(KOD) - <ComChangeScreen/>
                     </div>
                 </v-app-bar-title>
             </template>
 
 
             <template #append>
+                 
                 <ComKodSetting/>
        
                 <v-btn :loading="kod.loading" @click="kod.getKODData(setting.pos_setting.business_branch, screen_name)"> <v-icon>mdi-refresh</v-icon></v-btn>
@@ -77,20 +78,22 @@
 </template>
 
 <script setup>
-import ComProductSearch from '../../views/sale/components/ComProductSearch.vue'
+
 import MainLayoutDrawer from './MainLayoutDrawer.vue';
 import ComTimeUpdate from './components/ComTimeUpdate.vue';
 import ComCurrentUserAvatar from './components/ComCurrentUserAvatar.vue';
 import ComKodSetting from '@/views/kitchen_order_display/components/ComKodSetting.vue';
+import ComChangeScreen from '@/views/kitchen_order_display/components/ComChangeScreen.vue';
 
 import { useDisplay } from 'vuetify';
-import { useRouter, ref, inject, confirmBackToTableLayout, SearchProductDialog } from '@/plugin';
+import { useRouter, ref, inject, onMounted } from '@/plugin';
 
 import { computed } from 'vue';
-import Enumerable from 'linq';
+
 const kod = inject("$kod")
 const setting = JSON.parse(localStorage.getItem("setting"))
 const screen_name = JSON.parse(localStorage.getItem("device_setting")).default_kod
+
 const emit = defineEmits('closeModel')
 
 const auth = inject("$auth")
@@ -129,11 +132,8 @@ function onReload() {
     }
 }
 
-async function onAdvanceSearch() {
-    const result = await SearchProductDialog({ title: "Search Product" })
-}
+
 function onLogout() {
-    const isOrdered = sale.isOrdered()
     if (isOrdered == false) {
         auth.logout().then((r) => {
             router.push({ name: 'Login' })
@@ -146,39 +146,16 @@ function onFullScreen() {
     gv.isFullscreen = gv.isFullscreen ? false : true;
 }
 
-
-
-async function onBack(_router) {
-
-    const sp = Enumerable.from(sale.sale.sale_products);
-    if (sp.where("$.name==undefined").toArray().length > 0) {
-        let result = await confirmBackToTableLayout({});
-        if (result) {
-            if (result == "hold" || result == "submit") {
-                if (result == "hold") {
-                    sale.sale.sale_status = "Hold Order";
-                    sale.action = "hold_order";
-                } else {
-                    sale.sale.sale_status = "Submitted";
-                    sale.action = "submit_order";
-                }
-                await sale.onSubmit().then(async (value) => {
-                    if (value) {
-                        router.push({ name: _router })
-                    }
-                });
-            } else {
-                //continue
-                sale.sale = {};
-                router.push({ name: _router })
-            }
-        }
-    } else {
-        sale.sale = {};
-        router.push({ name: _router })
-    }
+function onBack(_router) {
+    router.push({ name: _router })
 }
 
+onMounted(()=>{
+    const kod_setting = JSON.parse( localStorage.getItem("kod_setting"))
+    if(kod_setting){
+        kod.setting = kod_setting
+    }
+})
 
 </script>
 

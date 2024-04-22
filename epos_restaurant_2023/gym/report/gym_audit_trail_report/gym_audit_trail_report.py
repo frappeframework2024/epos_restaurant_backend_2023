@@ -66,11 +66,12 @@ def get_report_data(filters):
 				c.reference_doctype,
 				c.subject,
 				c.content,
-				c.comment_by, 
+				coalesce(c.comment_by,u.full_name) as comment_by, 
 				c.reference_name,
 				c.comment_email,
 				c.modified 
 			from `tabComment` c
+			right join `tabUser` u on u.`name` = c.owner
 
 			where 
 				1=1

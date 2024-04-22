@@ -5,21 +5,15 @@
         <ComKodKpi />
        
 <div class="bg-white border p-2">
-        <div class="grid grid-cols-4 gap-2">
+        <div :class="kod.setting.show_item_status ? 'grid-cols-4' : 'grid-cols' " class="grid gap-2">
 <div class="col-span-3">
-    <div class="grid grid-cols-3 gap-2 pe-5">
-      
-     
-    </div>
-    <MasonryWall :items="kod.pending_orders" :columnWidth="300" :gap="10">
-    <!-- Slot for rendering each item in the masonry wall -->
+    <MasonryWall :items="kod.pending_orders" :columnWidth="kod.setting.column_width" :gap="10">
     <template #default="{ item }">
 <ComKodBill :data="item" />
-      
     </template>
   </MasonryWall>
 </div>
-<div class="col-span-1">
+<div v-if="kod.setting.show_item_status" class="col-span-1">
 <ComSummaryItemStatus />
 </div>
 </div>
@@ -44,19 +38,21 @@ const screen_name = JSON.parse(localStorage.getItem("device_setting")).default_k
 const audioRef = ref(null);
 const { t: $t } = i18n.global;
 const toaster = createToaster({ position: "top-right" });
+const flutterChannel = localStorage.getItem('flutterChannel');
 
  
-socket.on("SubmitKOD", (args) => {
-    console.log(args);
-    if(args.screen_name == screen_name){
+socket.on("SubmitKOD", (args) => { 
+    if(args.screen_name == kod.screen_name){
       if(args.message){
         toaster.warning(args.message);
+      } 
+      kod.getKODData() 
+
+      // flutterChannel.postMessage("play_sound")
+      if (localStorage.getItem("is_window") == "1") {
+          window.chrome.webview.postMessage(JSON.stringify({action:"play_sound"}));
       }
-      
-      kod.getKODData()
-       
-    }
-    
+    }    
 })
 
 

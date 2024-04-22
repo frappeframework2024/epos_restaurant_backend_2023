@@ -310,6 +310,7 @@ export default class Sale {
     }
 
     addSaleProduct(p) {
+        console.log(p)
         //check for append quantity rule
         //product code, allow_append_qty,price, unit,modifier, portion, is_free,sale_product_status
         //and check system have feature to send to kitchen
@@ -1895,7 +1896,7 @@ export default class Sale {
                 flutterChannel.postMessage(JSON.stringify(data));
             }
         } else {
-            if((gv.setting?.device_setting?.platform) == "Web") {
+            if((this.setting?.device_setting?.platform) == "Web") {
                await call.get("epos_restaurant_2023.api.mobile_api.print_bill_to_network_printer", { "name": doc.name,"reprint": 0 })
             }
             else{

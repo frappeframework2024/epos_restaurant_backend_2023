@@ -293,6 +293,8 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 	_row_group = row_group
 	if row_group == "a.parent":
 		_row_group = "a.parent, coalesce(b.custom_bill_number,'-')"
+	elif filters.row_group=="Product And Price":
+		_row_group = "concat(a.product_code,'-',a.product_name),a.price"
 
 	sql = sql + """ {2}
 		FROM `tabSale Product` AS a
@@ -540,6 +542,11 @@ def get_row_groups():
 		{
 			"fieldname":"concat(a.product_code,'-',a.product_name)",
 			"label":"Product",
+			"show_commission":False
+		},
+		{
+			"fieldname":"concat(a.product_code,'-',a.product_name)",
+			"label":"Product And Price",
 			"show_commission":False
 		},
   		{

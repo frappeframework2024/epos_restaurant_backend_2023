@@ -15,9 +15,6 @@ frappe.ui.form.on("ePOS Sync Setting", {
         frm.add_custom_button(__('Manual Sync From Server'), function(){
             frappe.call({
              method: "epos_restaurant_2023.api.sync_api.get_all_data_for_sync_from_server",
-             args: {
-                 business_branch: frm.doc.current_client_branch
-             },
              callback: function (r) {
                  frappe.show_alert({message:__("Sync Successed."), indicator:"green"});
              }

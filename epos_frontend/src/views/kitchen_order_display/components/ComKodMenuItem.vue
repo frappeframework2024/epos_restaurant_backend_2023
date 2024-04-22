@@ -1,29 +1,28 @@
 <template>
     <div @click="onChangeStatus(data.kod_status == 'Done' ? 'Pending' : 'Done') "
-        class=" mb-3 rounded-lg px-2 pb-1 relative bg-slate-100" :class="data.kod_status == 'Done' ? 'opacity-75' : ''  " >
+        class=" mb-3 rounded-lg px-2 pb-1 relative bg-slate-100" :class="(data.kod_status == 'Done' && !isSummary ) ? 'opacity-60' : ''  " >
  <template v-if="isSummary">
-        <div  :style="{ 'font-size': kod.setting.font_size + 'px' }" class="flex justify-between ">
-            <div class="flex item-center gap-2">
+        <div  :style="{ 'font-size': kod.setting.font_size - 3 + 'px' }" class="flex gap-2 pt-1 flex-wrap">
+            <div class="flex item-center gap-2 bg-slate-300 rounded-full px-2">
                 <v-icon class="m-auto" style="font-size:15px;">mdi-table-furniture</v-icon>
-                {{ data.table_no }} - {{ data.outlet }} 
+                {{ data.table_no }} <template v-if="kod.setting.show_outlet_name" >- {{ data.outlet }} </template> 
             </div> 
-            <div class="flex item-center gap-1">
-                <v-icon class="text-black m-auto" style="font-size: 15px;">mdi-timer</v-icon> 
-                {{ kod.getHour(data.minute_diff) }}
-            </div>
-           
-        </div> 
-        <div  :style="{ 'font-size': kod.setting.font_size + 'px' }" class="flex justify-between">
-            <div class="flex item-center gap-2 whitespace-nowrap">
+            <div class="flex item-center gap-2 whitespace-nowrap bg-slate-300 rounded-full px-2">
                 <v-icon class="text-black m-auto" style="font-size: 15px;">mdi-tag</v-icon>      
                 {{data.sale_type }}
             </div>
-            <div class="flex item-center gap-2 whitespace-nowrap">
+            <div  class="flex item-center gap-2 whitespace-nowrap bg-slate-300 rounded-full px-2">
                 <v-icon class="text-black m-auto" style="font-size: 15px;">mdi-calendar-clock</v-icon>      
                 {{moment(data.order_time).format('HH:mm:ss') }}
             </div>
-           
-        </div>  
+            <div :class="data.css_class ? data.css_class : 'bg-slate-500'" class="flex item-center gap-1 rounded-full px-2 text-white">
+                <v-icon class="text-white m-auto" style="font-size: 12px;" >mdi-timer</v-icon> 
+                <div class="m-auto">
+                    {{ kod.getHour(data.minute_diff) }} 
+                </div>
+               
+            </div>
+        </div> 
       </template>   
         <hr v-if="isSummary" class="my-1">  
         <div class="relative" :class="(kod.group_order_by != 'order_time' && !isSummary)  ? 'pt-6':'pt-1' " >
@@ -31,13 +30,15 @@
             class="whitespace-normal rounded-md text-white px-1 inline-block absolute top-1">
             <div v-if="!isSummary" class="flex">
                 <v-icon style="font-size:10px;">mdi-timer</v-icon>
-                <span style="font-size:10px;" class="ms-1">{{ kod.getHour(data.minute_diff) }}</span>
+                <span  style="font-size:10px;" class="ms-1">{{ kod.getHour(data.minute_diff) }}</span>
             </div>
         </div>
+
         <div class="w-5 h-5 rounded-md absolute top-0 right-3 ">
             <div class="flex">
                 <div @click="onChangeStatus(data.kod_status == 'Done' ? 'Pending' : 'Done')">
                     <v-icon v-if="data.kod_status == 'Pending'" style="font-size:15px;"  class="-mr-1 opacity-50">mdi-checkbox-blank-circle-outline</v-icon>
+                    <v-icon v-if="data.kod_status == 'Processing'" style="font-size:17px;"  class="-mr-1 opacity-50 text-green-600">mdi-timer</v-icon>
                     <v-icon v-if="data.kod_status == 'Done'" style="font-size:15px;"  class="-mr-1 opacity-70 text-green-500">mdi-checkbox-marked-circle-outline</v-icon>
                 </div>
                 <div>
@@ -75,7 +76,7 @@
             </div>
         </div>
         <div
-            :style="{ 'text-decoration': data.deleted ? 'line-through' : '', 'font-size': kod.setting.font_size + 2 + 'px' }">
+            :style="{ 'text-decoration': data.deleted ? 'line-through' : '', 'font-size': kod.setting.font_size + 2 + 'px' }"   :class="(kod.group_order_by == 'order_time' || isSummary) ? 'pe-9' : ''" >
             {{ data.quantity }} <v-icon class="text-black" style="font-size: 20px;">mdi-close</v-icon> {{
                 
                 kod.setting.show_menu_language=='khmer'? data.product_name_kh:data.product_name
