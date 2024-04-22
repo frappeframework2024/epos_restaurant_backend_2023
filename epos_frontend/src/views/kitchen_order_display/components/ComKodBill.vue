@@ -54,8 +54,11 @@
 
         </div>
         
-       
-        <v-btn :loading="data.loading" @click="onChangeStatus('Done')" block>Close</v-btn>
+        <v-btn :loading="data.loading" @click="onChangeStatus('Done')" block>
+            <template></template>
+            <span v-if="data?.items.filter(r=>r.kod_status != 'Done').length>0">Done all</span>
+            <span v-else >Close</span>
+            </v-btn>
     </div>
    </div>  
 </template>

@@ -46,12 +46,14 @@ socket.on("SubmitKOD", (args) => {
       if(args.message){
         toaster.warning(args.message);
       } 
-      kod.getKODData() 
-
-      // flutterChannel.postMessage("play_sound")
-      if (localStorage.getItem("is_window") == "1") {
+      kod.getKODData()  
+      if (localStorage.getItem("is_window") == "1") {       
           window.chrome.webview.postMessage(JSON.stringify({action:"play_sound"}));
-      }
+      }else{
+        if ((flutterChannel || 0) == 1) {
+            flutterChannel.postMessage(JSON.stringify({action:"play_sound"}));
+        }
+      } 
     }    
 })
 

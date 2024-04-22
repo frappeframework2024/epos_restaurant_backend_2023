@@ -118,7 +118,7 @@ export default {
             const flutterChannel = localStorage.getItem('flutterChannel');
             if ((apkipa || 0) == 1) {
                 if((flutterChannel||0)==1){
-                    flutterChannel.postMessage("mobile_reload");
+                    flutterChannel.postMessage(JSON.stringify({"action":"mobile_reload"}));
                 }
                  else{
                     window.ReactNativeWebView.postMessage("mobile_reload");

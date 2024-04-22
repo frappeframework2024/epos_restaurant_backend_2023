@@ -22,7 +22,7 @@
           </v-slider>
           </div>
           <div class="-mt-4">
-            <div>Font Size <span class="px-3 bg-slate-100 rounded-lg">{{ kod.setting.column_width.toFixed(2) }}</span> px </div>
+            <div>Column Width <span class="px-3 bg-slate-100 rounded-lg">{{ kod.setting.column_width.toFixed(2) }}</span> px </div>
            <v-slider v-model="kod.setting.column_width" :max="500" :min="200" class="align-center">
           </v-slider> 
           </div>

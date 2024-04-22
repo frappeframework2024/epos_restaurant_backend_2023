@@ -1,5 +1,6 @@
 <template>
-     <v-menu>
+     <span v-if="screens.length<=1">{{ kod.screen_name }}</span>
+     <v-menu v-else >
       <template v-slot:activator="{ props }">
         <v-btn
           color="success"
