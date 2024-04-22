@@ -1264,7 +1264,6 @@ def upload_all_sale_data_to_google_sheet(business_branch,start_date,end_date,cas
             "blue": 255
         }
     })
-    return newsheet
     # Append data to the Google Sheet
 
 
