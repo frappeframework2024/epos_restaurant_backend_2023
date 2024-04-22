@@ -235,8 +235,7 @@ function onLogout() {
     auth.logout().then((r) => {
         router.push({ name: 'Login' })
     })
-}
-  
+}  
 
 
 async function onPrintWifiPassword(){

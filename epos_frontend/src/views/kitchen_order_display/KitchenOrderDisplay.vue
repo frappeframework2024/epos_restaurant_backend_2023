@@ -38,7 +38,6 @@ const screen_name = JSON.parse(localStorage.getItem("device_setting")).default_k
 const audioRef = ref(null);
 const { t: $t } = i18n.global;
 const toaster = createToaster({ position: "top-right" });
-const flutterChannel = localStorage.getItem('flutterChannel');
 
  
 socket.on("SubmitKOD", (args) => { 
@@ -50,6 +49,7 @@ socket.on("SubmitKOD", (args) => {
       if (localStorage.getItem("is_window") == "1") {       
           window.chrome.webview.postMessage(JSON.stringify({action:"play_sound"}));
       }else{
+        const flutterChannel = localStorage.getItem('flutterChannel');
         if ((flutterChannel || 0) == 1) {
             flutterChannel.postMessage(JSON.stringify({action:"play_sound"}));
         }
