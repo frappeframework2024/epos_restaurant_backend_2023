@@ -1,0 +1,3 @@
+[post_model_sync]
+# Patches added in this section will be executed after doctypes are migrated
+frappe.patches.v11_0.drop_column_apply_user_permissions

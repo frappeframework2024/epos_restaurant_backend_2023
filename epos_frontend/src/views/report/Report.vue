@@ -467,4 +467,7 @@ onUnmounted(() => {
     height:calc(100vh - 200px);
     overflow: auto;
 }
+.v-card-subtitle {
+    white-space: normal !important;
+}
 </style>
