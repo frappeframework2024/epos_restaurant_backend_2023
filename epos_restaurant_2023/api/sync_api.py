@@ -116,11 +116,11 @@ def delete_doc(doctype,name):
 
 @frappe.whitelist()
 def delete_sync_data(doctype,data):
-    frappe.db.sql("delete from  `tab{}` where name in %(names)s")
+    frappe.db.sql("delete from  `tab{}` where name in %(data)s".format(doctype),data)
     meta = frappe.get_meta(doctype)
 
     for child in [d for d in meta.fields if d.fieldtype=="Table"]:
-        frappe.db.sql("delete from `tab{}` where parent='{}'".format(child.options,name))
+        frappe.db.sql("delete from `tab{0}` where parent='{1}'".format(child.options,doctype))
         
    
 
@@ -132,10 +132,10 @@ def generate_init_data_sync_to_client():
     setting = frappe.get_doc("ePOS Sync Setting")
     if setting.enable==1:
         for d in setting.sync_to_client:
-            
-            sql = """Insert Into `tabData For Sync` (business_branch,name,document_name,document_type) select  '{1}',UUID(),a.name,'{0}' from `tab{0}` as a""".format(d.document_type)
-            frappe.db.sql(sql)
-        frappe.db.commit()
+            for bus in setting.sync_business_branches:
+                sql = """Insert Into `tabData For Sync` (business_branch,name,document_name,document_type) select  '{1}',UUID(),a.name,'{0}' from `tab{0}` as a""".format(d.document_type,bus.business_branch)
+                frappe.db.sql(sql)
+            frappe.db.commit()
 
 
     
