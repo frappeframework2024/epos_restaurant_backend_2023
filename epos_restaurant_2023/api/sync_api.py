@@ -44,6 +44,8 @@ def submit_sync_data_to_rq_job(data):
 
 @frappe.whitelist()
 def get_sync_data_from_server(doctype, data):
+    if doc.flags.disable_generate_data_for_sync:
+        return
     setting = frappe.get_doc("ePOS Sync Setting")
     headers = {
                 'Authorization': f'token {setting.access_token}'

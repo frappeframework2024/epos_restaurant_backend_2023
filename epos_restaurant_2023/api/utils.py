@@ -21,6 +21,8 @@ JOB_STATUSES = ["queued", "started", "failed", "finished", "deferred", "schedule
 
 @frappe.whitelist()
 def generate_data_for_sync_record(doc, method=None, *args, **kwargs):
+    if doc.flags.disable_generate_data_for_sync:
+        return
     if doc.doctype != "Data For Sync":
         if not frappe.db.exists("DocType","ePOS Sync Setting"):
             return
@@ -174,6 +176,7 @@ def save_sync_data(doc,extra_action=None,action="update"):
     doc.flags.ignore_on_submit = True
     doc.flags.ignore_on_cancel = True
     doc.flags.ignore_before_update_after_submit = True
+    doc.flags.disable_generate_data_for_sync = True
     if action =="cancel":
         doc.docstatus= 0
 

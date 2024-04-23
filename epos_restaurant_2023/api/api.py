@@ -433,12 +433,12 @@ def get_tables_number(table_group,device_name):
         else:
             d.x = x
             d.y = y 
-            
+
         i += 1 
         x += 110
         if i >=10:
             x = 10
-            y += 100
+            y += 110
             i = 0
         ##
 
