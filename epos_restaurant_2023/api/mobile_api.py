@@ -274,14 +274,15 @@ def print_bill_to_network_printer(name, reprint=0):
         return ""
     template_name = frappe.db.sql("select name from `tabPOS Receipt Template` where is_web_receipt = 1 order by modified desc limit 1",as_dict=1)
     if template_name:
-        sale_product = frappe.db.sql("select count(*) item from `tabSale Product` where parent = '{}'".format(name),as_dict=1)
+        sale_product = frappe.db.sql("select count(*) item from `tabSale Product` where parent = '{}' and docstatus = 1".format(name),as_dict=1)
         printer_config = frappe.db.sql("select ip_address from `tabPrinter` where is_web_printer = 1 order by modified desc limit 1",as_dict=1)
         doc = frappe.get_doc("Sale", name) 
-        data_template,css,width,fixed_height = frappe.db.get_value("POS Receipt Template",template_name[0].name,["template","style","width","fixed_height"])
+        data_template,css,width,header_height,footer_height,item_height = frappe.db.get_value("POS Receipt Template",template_name[0].name,["template","style","width","header_height","footer_height","item_height"])
         html= frappe.render_template(data_template, get_print_context(doc,reprint))
         img_name = str(uuid.uuid4())+".PNG"
         path = frappe.get_site_path()+"/file/"
-        HTMLtoImage((sale_product[0].item * 65 + fixed_height),width,html,css,path,img_name)
+        height = (header_height + (sale_product[0].item * item_height) + footer_height)
+        HTMLtoImage(height,width,html,css,path,img_name)
         if printer_config: 
             printer = Network(printer_config[0].ip_address)
             printer.image(path+img_name)
