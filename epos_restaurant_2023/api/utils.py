@@ -149,7 +149,7 @@ def sync_data_to_server(doc,extra_action=None,action="update"):
         if response.status_code==200:
             meta = frappe.get_meta(doc.get("doctype"))
             if len([d for d in meta.fields if d.fieldname=="is_synced"])>0:
-                frappe.db.sql("update `tab{}` set is_synced = 1 where name = '{}'".format(doc['doctype'],doc['name']))
+                frappe.db.sql("update `tab{}` set is_synced = 1 where name = '{}'".format(doc.get("doctype"),doc.get('name')))
                 frappe.db.commit()
         else:
             frappe.throw(str(response.text))

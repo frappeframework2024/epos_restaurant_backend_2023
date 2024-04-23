@@ -415,7 +415,9 @@ def get_tables_number(table_group,device_name):
 
     background_color = frappe.db.get_default("default_table_number_background_color")
     text_color = frappe.db.get_default("default_table_number_text_color")
-    
+    i = 0
+    x = 10
+    y = 10 
     for d in data: 
         d.background_color=background_color
         d.default_bg_color=background_color
@@ -424,16 +426,22 @@ def get_tables_number(table_group,device_name):
         position = frappe.db.sql("select x,y,h,w from `tabePOS Table Position` where device_name='{}' and tbl_number='{}' limit 1".format(device_name,d.tbl_no ), as_dict=1)
         if position:
             for p in position:
-                d.x = p.x or 0
-                # if d.x < 0:
-                #     d.x = 0
-                    
-                # if d.y<0:
-                #     d.y=0
-                
-                d.y = p.y or 0
+                d.x = p.x or x
+                d.y = p.y or y 
                 d.w = p.w or 100
                 d.h = p.h or 100
+        else:
+            d.x = x
+            d.y = y 
+            
+        i += 1 
+        x += 110
+        if i >=10:
+            x = 10
+            y += 100
+            i = 0
+        ##
+
     return data
 
 @frappe.whitelist(allow_guest=True)
