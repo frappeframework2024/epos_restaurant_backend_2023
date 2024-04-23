@@ -29,10 +29,10 @@
         <v-list-item v-if="setting.table_groups && setting.table_groups.length > 0" prepend-icon="mdi-grid-large"
             :title="$t('Change or Merge Table')" @click="onChangeTable()" />
 
-        <v-list-item v-if="setting.table_groups && setting.table_groups.length > 0" prepend-icon="mdi-cash-100"
+        <v-list-item v-if="setting.table_groups && setting.table_groups.length > 0" prepend-icon="mdi-note-text"
             :title="$t('Split Bill')" @click="onSplitBill()" />
 
-        <v-list-item v-if="device_setting.show_move_item_button" prepend-icon="mdi-cash-100" :title="$t('Move Item(s)')"
+        <v-list-item v-if="device_setting.show_move_item_button" prepend-icon="mdi-folder-move" :title="$t('Move Item(s)')"
             @click="onMoveItem()" />
 
         <v-list-item v-if="setting.table_groups && setting.table_groups.length > 0 && setting.use_guest_cover == 1"
@@ -51,8 +51,9 @@
         <v-list-item v-if="(device_setting.show_button_resend || 0) == 1" prepend-icon="mdi-printer-outline"
             :title="$t('Re-Send')" @click="onResend()" />
 
-        <v-list-item prepend-icon="mdi-cash-100" :title="$t('Tax Setting')" @click="onChangeTaxSetting()"
+        <v-list-item prepend-icon="mdi-apple-keyboard-command" :title="$t('Tax Setting')" @click="onChangeTaxSetting()"
             v-if="sale.setting.tax_rules.length > 0" />
+            
         <v-list-item v-if="device_setting.show_park_button == 1" @click="onRedeemClick()">
             <template #prepend>
                 <v-icon icon="mdi-parking"></v-icon>
