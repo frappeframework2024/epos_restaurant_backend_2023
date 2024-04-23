@@ -1255,7 +1255,9 @@ def upload_all_sale_data_to_google_sheet(business_branch,start_date,end_date,cas
     
     if len(sheet.get_all_records()) <= 0:
         sheet.append_rows([[obj.label for obj in columns]])
+    
     report_data = convert_to_nested_arrays(result,columns)
+    return report_data
     resp = sheet.append_rows(report_data)
     sheet.format('A1:S1',{
         "backgroundColor": {
@@ -1268,9 +1270,28 @@ def upload_all_sale_data_to_google_sheet(business_branch,start_date,end_date,cas
 
 
 def convert_to_nested_arrays(json_data,columns):
+    # data = json.loads(json_data)
+   
+    # Get the keys dynamically from the first entry
+    
     if(len(json_data) > 0):
         keys = [{"fieldname": item["fieldname"], "fieldtype": item["fieldtype"]} for item in columns]
-        result = [[ format_datetime(entry[key['fieldname']],"dd-MM-yyyy hh:mm:ss a") if key['fieldtype'] == "Datetime" else entry[key['fieldname']] for key in keys] for entry in json_data]
+        result = [
+            [
+                format_datetime(
+                    entry[key['fieldname']],
+                    "dd-MM-yyyy hh:mm:ss a"
+                ) if key['fieldtype'] == "Datetime" else
+                format_datetime(
+                    entry[key['fieldname']],
+                    "dd-MM-yyyy"
+                ) if key['fieldtype'] == "Date" else
+                entry[key['fieldname']]
+                for key in keys
+            ]
+    for entry in json_data
+]
+        
         return result
     else:
          return []

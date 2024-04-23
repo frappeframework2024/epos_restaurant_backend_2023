@@ -1,12 +1,12 @@
 <template>
 
   <div class="w-full h-full bg-slate-100">
-    <div class="grid-cols-1 md:grid-flow-col grid p-2 gap-2">
+    <div class="grid-cols-1 md:grid-flow-col xl:grid-cols-5 grid p-2 gap-2">
       <ComFilterSaleType />
       <ComKodKpi />
     </div>
     <div class="bg-white border p-2">
-      <div :class="kod.setting.show_item_status ? 'grid-cols-4' : 'grid-cols'" class="grid gap-2">
+      <div :class="kod.setting.show_item_status ? 'grid-cols-1 md:grid-cols-4' : 'grid-cols'" class="grid gap-2">
         <div class="col-span-3 h-full shadow-md rounded-lg border p-2">
           <MasonryWall :items="kod.pending_orders" :columnWidth="kod.setting.column_width" :gap="10">
             <template #default="{ item }">

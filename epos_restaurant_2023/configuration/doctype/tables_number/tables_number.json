@@ -68,7 +68,6 @@
    "fieldname": "require_check_in",
    "fieldtype": "Check",
    "hidden": 1,
-   "in_list_view": 1,
    "label": "Require Check in"
   },
   {
@@ -150,7 +149,7 @@
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-06 14:46:41.620255",
+ "modified": "2024-04-23 09:22:34.281507",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Tables Number",
