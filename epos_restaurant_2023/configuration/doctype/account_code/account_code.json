@@ -60,6 +60,7 @@
   "inventory_section",
   "required_select_product",
   "column_break_cwiz",
+  "default_product_filter",
   "printing_section",
   "show_print_preview",
   "column_break_41",
@@ -589,12 +590,17 @@
    "fieldname": "is_package",
    "fieldtype": "Check",
    "label": "Is Package"
+  },
+  {
+   "fieldname": "default_product_filter",
+   "fieldtype": "Small Text",
+   "label": "Default Product Filter"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-04-05 09:42:54.908961",
+ "modified": "2024-04-24 15:32:34.779985",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",
