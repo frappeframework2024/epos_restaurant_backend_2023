@@ -166,7 +166,7 @@ def save_sync_data(doc,extra_action=None,action="update"):
     doc = json.loads(doc)
     doc["__newname"] = doc["name"]
 
-    doc = frappe.get_doc(doc) 
+    doc = frappe.get_doc(doc)
     
     doc.flags.ignore_validate = True
     doc.flags.ignore_insert = True
@@ -188,7 +188,6 @@ def save_sync_data(doc,extra_action=None,action="update"):
         doc.insert(ignore_permissions=True, ignore_links=True)
         if extra_action:
             # action is string
-           
             for act in json.loads(extra_action):
                 frappe.enqueue(act, queue='short', self=doc)
 
@@ -245,11 +244,12 @@ def re_run_fail_jobs():
                        
 
                 job_ids.append(j["job_id"])
+                remove_failed_jobs(job_ids)
             except Exception as e:
                 frappe.throw(str(e))
             
         
-        remove_failed_jobs(job_ids)
+        
 
         return job_ids
 
