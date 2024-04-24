@@ -183,6 +183,8 @@ def save_sync_data(doc,extra_action=None,action="update"):
     delete_doc(doc.doctype, doc.name)
 
     if action != "delete":
+        if doc.get("is_synced"):
+            doc.is_synced = 1
         doc.insert(ignore_permissions=True, ignore_links=True)
         if extra_action:
             # action is string

@@ -60,7 +60,7 @@
                                         </template>
                                         <template v-else-if="h.fieldtype == 'Date'">
 
-                                            <span @click="callback(h, item)"
+                                            <span v-if="item[h.key] != null" @click="callback(h, item)"
                                                 :class="{ 'text-blue-600 cursor-pointer': h.callback }">
                                                 {{ moment(item[h.key]).format('DD-MM-YYYY') }}
                                             </span>
@@ -309,7 +309,7 @@ function getFieldValue(header, data) {
 
 }
 
-function callback(header, data) {
+function callback(header, data) { 
     if (header.callback) {
         var obj = {
             fieldname: header.key,
