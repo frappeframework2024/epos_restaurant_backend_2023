@@ -17,7 +17,7 @@ def get_all_data_for_sync_from_server():
                 }
         server_url = server_url + "/api/method/epos_restaurant_2023.api.sync_api.get_data_for_sync"
        
-        response = requests.get(server_url,headers=headers)
+        response = requests.get(server_url,headers=headers,json={"business_branch": setting.current_client_branch})
         
         if response.status_code==200:
             data_for_sync = json.loads(response.text)
@@ -44,8 +44,7 @@ def submit_sync_data_to_rq_job(data):
 
 @frappe.whitelist()
 def get_sync_data_from_server(doctype, data):
-    if doc.flags.disable_generate_data_for_sync:
-        return
+    
     setting = frappe.get_doc("ePOS Sync Setting")
     headers = {
                 'Authorization': f'token {setting.access_token}'
@@ -72,6 +71,8 @@ def rename_sync_data(doctype, data):
 
 
 def on_save(doc):
+    if doc.flags.disable_generate_data_for_sync:
+        return
     doc["__newname"] = doc["name"]
     meta = frappe.get_meta(doc['doctype'])
     for f in [d for d in  meta.fields if d.fieldtype=='Attach Image']:
