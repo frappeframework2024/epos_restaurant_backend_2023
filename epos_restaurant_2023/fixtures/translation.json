@@ -6017,5 +6017,18 @@
   "name": "bb075f627c",
   "source_text": "Unblock",
   "translated_text": "ឈប់បិទបន្ទប់"
+ },
+ {
+  "context": null,
+  "contributed": 0,
+  "contribution_docname": null,
+  "contribution_status": "",
+  "docstatus": 0,
+  "doctype": "Translation",
+  "language": "zh",
+  "modified": "2024-04-24 14:31:00.098922",
+  "name": "4b58f3dfe2",
+  "source_text": "Total Quantity",
+  "translated_text": "总计数量"
  }
 ]
