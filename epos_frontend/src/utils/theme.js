@@ -30,6 +30,9 @@ export const mainTheme = {
       'submitorderhover':'#1D4ED8',
       'saletable':'#ECFEFF',
       'border-text': '#fff',
+      'totaldiscount': '#FB8C00',
+      'grandtotalbtn':'#4CAF50',
+      'textaction':'#2563EB'
     },
     variables: {
       'border-color': '#000000',
@@ -63,11 +66,11 @@ export const mainTheme = {
 	  'surface-variant': '#424242',
 	  'on-surface-variant': '#EEEEEE',
 	  primary: '#1abc9c',
+    info:'#1abc9c',
 	  'primary-darken-1': '#1F5592',
-	  secondary: '#48A9A6',
+	  secondary: '#1abc9c',
 	  'secondary-darken-1': '#018786',
 	  error: '#B00020',
-	  info: '#2196F3',
 	  success: '#4CAF50',
 	  warning: '#FB8C00',
     'appbar':"#1abc9c",
@@ -85,6 +88,9 @@ export const mainTheme = {
     'submitorderhover':'#148f77',
     'saletable':'#1abc9c',
     'border-text': '#fff',
+    'totaldiscount': '#1abc9c',
+    'grandtotalbtn':'#1abc9c',
+    'textaction':'#1abc9c'
 	},
 	variables: {
 	  'border-color': '#000000',

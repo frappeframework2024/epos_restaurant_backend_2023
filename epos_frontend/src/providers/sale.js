@@ -1713,6 +1713,7 @@ export default class Sale {
                             "usb_printing": p.usb_printing,
                             "products": temp_sale_products
                         });
+                      
 
                     } else {
                         kotProducts.printers.push({

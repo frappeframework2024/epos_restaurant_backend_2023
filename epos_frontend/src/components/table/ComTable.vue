@@ -44,7 +44,7 @@
                                     <td v-for="h in headers" :class="getColumnAlignment(h.align)">
                                         <template v-if="h.fieldtype == 'Currency'">
                                             <div @click="callback(h, item)"
-                                                :class="{ 'text-blue-600 cursor-pointer': h.callback }">
+                                                :class="{ 'text-textaction cursor-pointer': h.callback }">
                                                 <CurrencyFormat :value="item[h.key]" />
 
                                             </div>
@@ -61,7 +61,7 @@
                                         <template v-else-if="h.fieldtype == 'Date'">
 
                                             <span v-if="item[h.key] != null" @click="callback(h, item)"
-                                                :class="{ 'text-blue-600 cursor-pointer': h.callback }">
+                                                :class="{ 'text-textaction cursor-pointer': h.callback }">
                                                 {{ moment(item[h.key]).format('DD-MM-YYYY') }}
                                             </span>
                                         </template>
@@ -95,10 +95,10 @@
                                         <template v-else-if="!h.fieldtype">
                                             <template v-if="h.template">
                                                 <div @click="callback(h, item)" v-html="getFieldValue(h, item)"
-                                                    :class="{ 'text-blue-600 cursor-pointer': h.callback }"></div>
+                                                    :class="{ 'text-textaction cursor-pointer': h.callback }"></div>
                                             </template>
                                             <span @click="callback(h, item)"
-                                                :class="{ 'text-blue-600 cursor-pointer': h.callback }" v-else>
+                                                :class="{ 'text-textaction cursor-pointer': h.callback }" v-else>
                                                 {{ item[h.key] }}
                                             </span>
                                         </template>

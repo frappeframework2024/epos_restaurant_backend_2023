@@ -37,11 +37,13 @@ const wifi_password = ref("")
       }
 
       if((gv.setting?.device_setting?.use_server_network_printing||0)==1){
+       
           var printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
           if (printer.length <= 0) {
               toaster.warning($t("Printer not yet configt for this device"))
               return // not printer
           } 
+          
           if(printer[0].usb_printing == 0){
               const body ={
                   "data":{
@@ -56,7 +58,6 @@ const wifi_password = ref("")
                         }
                   }
               } 
-              console.log(body)
               call.post("epos_restaurant_2023.api.network_printing_api.print_wifi_to_network_printer",body)
               toaster.success($t("Print processing"))
               return // print network

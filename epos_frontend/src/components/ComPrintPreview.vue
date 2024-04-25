@@ -12,6 +12,7 @@
                         <v-row>
                             <v-col>
                                 <div style="overflow-x:auto;">
+                                    {{ activeReport }}
                                         <v-btn
                                             v-for="(r, index) in gv.setting.reports.filter(r=>r.doc_type==params.doctype && r.show_in_pos == 1)" :key="index"
                                             :color="activeReport.name == r.name ? 'info' : 'default'"

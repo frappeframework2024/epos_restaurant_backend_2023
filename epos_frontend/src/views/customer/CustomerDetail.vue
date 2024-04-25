@@ -27,7 +27,7 @@
             </v-card>
           </v-col>
           <v-col cols="6" sm="3">
-            <v-card class="pa-2 ma-2" elevation="2" color="warning">
+            <v-card class="pa-2 ma-2" elevation="2" color="totaldiscount">
               <div class="text-h6 text-center">
                 <CurrencyFormat :value="orderSummary.data?.total_annual_order" />
               </div>
@@ -35,7 +35,7 @@
             </v-card>
           </v-col>
           <v-col cols="12" sm="3">
-            <v-card class="pa-2 ma-2" elevation="2" color="success">
+            <v-card class="pa-2 ma-2" elevation="2" color="grandtotalbtn">
               <div class="text-h6 text-center">
                 <CurrencyFormat :value="orderSummary.data?.total_order" />
               </div>
