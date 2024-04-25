@@ -24,7 +24,12 @@ export const mainTheme = {
       'dailogbarcolor':'#B00020',
       'searchbtn':'#4CAF50',
       'printbillbtn':'#2196F3',
-      'paymentbtn':'#16a34a'
+      'paymentbtn':'#16a34a',
+      'paymentbtnhover':'#0d602b',
+      'submitorder':'#2563eb',
+      'submitorderhover':'#1D4ED8',
+      'saletable':'#ECFEFF',
+      'border-text': '#fff',
     },
     variables: {
       'border-color': '#000000',
@@ -74,7 +79,12 @@ export const mainTheme = {
     'dailogbarcolor':'#1abc9c',
     'searchbtn':'#1abc9c',
     'printbillbtn':'#1abc9c',
-    'paymentbtn':'#1abc9c'
+    'paymentbtn':'#1abc9c',
+    'paymentbtnhover':'#148f77',
+    'submitorder':'#14888f',
+    'submitorderhover':'#148f77',
+    'saletable':'#1abc9c',
+    'border-text': '#fff',
 	},
 	variables: {
 	  'border-color': '#000000',

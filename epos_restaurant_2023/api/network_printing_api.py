@@ -9,6 +9,7 @@ import json
 from escpos.printer import Network
 from epos_restaurant_2023.api.printing import (
     get_print_context, 
+    print_from_print_format,
     )
 
 def html_to_image(height,width,html,css,path,image):    
@@ -56,7 +57,8 @@ def on_print(file_path, printer):
 
 
 
-@frappe.whitelist(allow_guest=True,methods='POST')
+# @frappe.whitelist(allow_guest=True,methods='POST')
+@frappe.whitelist(methods="POST")
 def print_bill_to_network_printer(data):
     if not frappe.db.exists("Sale",data["name"]):
         return ""  
@@ -77,7 +79,8 @@ def print_bill_to_network_printer(data):
     on_print(file_path, data["printer"])
 
 ## KOT Printing
-@frappe.whitelist(allow_guest=True,methods="POST")
+# @frappe.whitelist(allow_guest=True,methods="POST")
+@frappe.whitelist(methods="POST")
 def print_kot_to_network_printer(data): 
     sale = data["sale"]
     if not frappe.db.exists("Sale",sale["name"]):
@@ -158,7 +161,8 @@ def _on_kot_print(template ,  station, printer,sale, sale_products):
 
 
 ## Print Waiting Number
-@frappe.whitelist(allow_guest=True,methods="POST")
+# @frappe.whitelist(allow_guest=True,methods="POST")
+@frappe.whitelist(methods="POST")
 def print_waiting_number_to_network_printer(data):
     if not frappe.db.exists("Sale",data["name"]):
         return ""    
@@ -176,7 +180,8 @@ def print_waiting_number_to_network_printer(data):
     on_print(file_path, data["printer"])
      
 ## Print Voucher Slip
-@frappe.whitelist(allow_guest=True,methods="POST")
+# @frappe.whitelist(allow_guest=True,methods="POST")
+@frappe.whitelist(methods="POST")
 def print_voucher_to_network_printer(data):
     if not frappe.db.exists("Voucher",data["name"]):
         return ""    
@@ -193,7 +198,8 @@ def print_voucher_to_network_printer(data):
     file_path = html_to_image(height,width,html,css,path,img_name)
     on_print(file_path, data["printer"])
 
-@frappe.whitelist(allow_guest=True,methods="POST")
+# @frappe.whitelist(allow_guest=True,methods="POST")
+@frappe.whitelist(methods="POST")
 def print_wifi_to_network_printer(data):
     data_template,css,width,fixed_height,item_height = frappe.db.get_value("POS Receipt Template","WiFi",["template","style","width","fixed_height","item_height"]) 
     html= frappe.render_template(data_template, {"password":data["password"]})
@@ -203,3 +209,15 @@ def print_wifi_to_network_printer(data):
 
     file_path = html_to_image(height,width,html,css,path,img_name)
     on_print(file_path, data["printer"])
+
+
+# @frappe.whitelist(allow_guest=True,methods="POST")
+@frappe.whitelist(methods="POST")
+def print_report_to_network_printer(data):
+    result = print_from_print_format(data,is_html=True)
+    img_name = str(uuid.uuid4())+".PNG"
+    path = frappe.get_site_path()+"/file/"
+
+    file_path = html_to_image(result["height"],result["width"],result["html"],result["css"],path,img_name)
+    on_print(file_path, data["printer"])
+

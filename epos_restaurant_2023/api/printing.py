@@ -187,7 +187,7 @@ def print_from_print_format(data, is_html=False):
     if not html:
         return "" 
     html = frappe.render_template(html) 
-    html = "<div class='print-format'>{}</div>".format(html)
+    html = "<div class='print-format' style='padding-right:20px !important;'>{}</div>".format(html)
     css = """"""
     css += get_print_style( print_format=print_format)   
     css += "{}".format(get_css_boostrap()) 
@@ -197,7 +197,7 @@ def print_from_print_format(data, is_html=False):
     css += frappe.get_value("Print Style",print_style,['css'])
 
     if is_html:
-        return {"html":html,"css":css}
+        return {"html":html,"css":css,"width":width, "height":height}
     else: 
         hash_generate =  frappe.generate_hash(length=15)
         return capture(html=html,css=css,height=height,width=width,image='report_{}.png'.format(hash_generate))

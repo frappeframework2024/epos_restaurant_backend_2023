@@ -46,7 +46,7 @@
                 
                         <ComButton v-if="isWindow() && device_setting?.show_button_customer_display==1"  @click="onOpenCustomerDisplay"  :title="$t('Customer Display')" icon="mdi-monitor" icon-color="defaulticonColor" class="bg-brandcolor"/>
 
-                        <ComButton v-if="device_setting?.show_wifi_button==1"  @click="onPrintWifiPassword" :title="$t('Wifi Password')" icon="mdi-wifi" icon-color="defaulticonColor" class="bg-brandcolor"/> 
+                        <ComButton v-if="isWindow() && device_setting?.show_wifi_button==1"  @click="onPrintWifiPassword" :title="$t('Wifi Password')" icon="mdi-wifi" icon-color="defaulticonColor" class="bg-brandcolor"/> 
                         
                         <ComButton @click="onLogout()" text-color="#fff" icon-color="#fff" :title="$t('Logout')" icon="mdi-logout" background-color="#b00020" />
                         

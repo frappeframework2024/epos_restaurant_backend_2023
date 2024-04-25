@@ -31,7 +31,7 @@
                 </div>
         </div>
         <div class="flex items-end pt-1">
-            <v-btn prepend-icon="mdi-magnify" block size="large" @click="onSearch" color="success">
+            <v-btn prepend-icon="mdi-magnify" block size="large" @click="onSearch" color="searchbtn">
                 {{$t('Search')}}
             </v-btn>
         </div>

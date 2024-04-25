@@ -74,11 +74,14 @@
 import { inject, ref,computed,saleDetailDialog, onUnmounted,reactive,i18n } from '@/plugin'
 import { createToaster } from '@meforma/vue-toaster';
 const gv = inject("$gv")
+const frappe = inject("$frappe")
 const pos_profile = localStorage.getItem("pos_profile");
 const serverUrl = window.location.protocol + "//" + window.location.hostname + ":" + gv.setting.pos_setting.backend_port;
 
 const toaster = createToaster({ position: "top-right" });
 const { t: $t } = i18n.global;
+
+const call = frappe.call();
 
 const props = defineProps({
     params: {
@@ -166,51 +169,56 @@ function onExport(){
 }
 
 function onPrint(){
-    if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
+    if ((localStorage.getItem("flutterWrapper") || 0) == 1 || (gv.setting?.device_setting?.use_server_network_printing||0)==1) {
         var printers = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
         if (printers.length <= 0) {
-            // toaster.warning($t("Printer not yet configt for this device"))
+            return 
         } else {
-            let data ={
-                action : "print_report",
-                doc: activeReport.value.doc_type,
-                name: props.params.name,
-                print_format: activeReport.value.print_report_name,
-                
-                pos_profile:pos_profile,
-                outlet:gv.setting.outlet,
-                letterhead:selectedLetterhead.value,
-                printer : {
-                    "printer_name": printers[0].printer_name,
-                    "ip_address": printers[0].ip_address,
-                    "port": printers[0].port,
-                    "cashier_printer": printers[0].cashier_printer,
-                    "is_label_printer": printers[0].is_label_printer
+            if(printers[0].usb_printing == 0){
+                let data ={
+                    action : "print_report",
+                    doc: activeReport.value.doc_type,
+                    name: props.params.name,
+                    print_format: activeReport.value.print_report_name,                    
+                    pos_profile:pos_profile,
+                    outlet:gv.setting.outlet,
+                    letterhead:selectedLetterhead.value,
+                    printer : {
+                        "printer_name": printers[0].printer_name,
+                        "ip_address": printers[0].ip_address,
+                        "port": printers[0].port,
+                        "cashier_printer": printers[0].cashier_printer,
+                        "is_label_printer": printers[0].is_label_printer,
+                        "usb_printing": printers[0].usb_printing,
+                    }
                 }
-            }
-            flutterChannel.postMessage(JSON.stringify(data));
 
+                if((localStorage.getItem("flutterWrapper") || 0) == 1){
+                    flutterChannel.postMessage(JSON.stringify(data));
+                }else{
+                    call.post("epos_restaurant_2023.api.network_printing_api.print_report_to_network_printer",{"data":data})
+                }
+                toaster.success($t("Report is printing"))
+                return
+            }
+
+            //cross
+        }       
+    }
+   
+    if((localStorage.getItem("apkipa") ||0)==0){
+        let data ={
+            action : "print_report",
+            doc: activeReport.value.doc_type,
+            name: props.params.name,
+            print_format: activeReport.value.print_report_name || '',
+            pos_profile:pos_profile,
+            outlet:gv.setting.outlet,
+            letterhead:selectedLetterhead.value
         }
+        window.chrome.webview.postMessage(JSON.stringify(data));
         toaster.success($t("Report is printing"))
-    }
-    else{
-        if((localStorage.getItem("apkipa") ||0)==0){
-
-            let data ={
-                action : "print_report",
-                doc: activeReport.value.doc_type,
-                name: props.params.name,
-                print_format: activeReport.value.print_report_name || '',
-                pos_profile:pos_profile,
-                outlet:gv.setting.outlet,
-                letterhead:selectedLetterhead.value
-            }
-            window.chrome.webview.postMessage(JSON.stringify(data));
-            toaster.success($t("Report is printing"))
-            // window.open(printUrl.value + "&trigger_print=1").print();
-            // window.close();
-        }
-    }
+    }    
 }
 
 // function onPrint(){

@@ -2,8 +2,9 @@
   <div>
     <div>
       <div class="flex">
-        <div class="flex-grow cursor-pointer bg-paymentbtn text-white px-2 py-0  hover:bg-defaulticonColor"
-          @click="onPayment()">
+        <div class="flex-grow cursor-pointer text-white px-2 py-0 "
+          @click="onPayment()"  @mouseover="hoverEffect = true"
+    @mouseleave="hoverEffect = false" :class="[hoverEffect ? 'bg-paymentbtnhover' : 'bg-paymentbtn']">
           <div style="margin-bottom: 0px!important;" class="flex justify-between mb-2 text-lg">
             <div>{{ $t("Payment") }}</div>
             <div style="margin: 0px; padding: 0px; font-size: 26px; font-weight: bold;">
@@ -22,8 +23,9 @@
         </div>
         <div style="width: 120px;">
           <div
-            class="w-full h-full cursor-pointer flex justify-center items-center bg-blue-600 text-white p-3 hover:bg-blue-700 text-center"
-            @click="onSubmit()">
+            class="w-full h-full cursor-pointer flex justify-center items-center  text-white p-3 text-center"
+            @click="onSubmit()" @mouseover="hoverEffectsub = true"
+    @mouseleave="hoverEffectsub = false" :class="[hoverEffectsub ? 'bg-submitorderhover' : 'bg-submitorder']" >
             <div v-if="gv.setting.table_groups && gv.setting.table_groups.length > 0">
               <v-icon icon="mdi-arrow-right-thick"></v-icon>
               <div>{{ $t('Submit Order') }}</div>
@@ -39,11 +41,12 @@
   </div>
 </template>
 <script setup>
-import { inject, useRouter, paymentDialog, searchSaleDialog, createToaster, i18n } from '@/plugin';
+import { inject,ref ,useRouter, paymentDialog, searchSaleDialog, createToaster, i18n } from '@/plugin';
 import ComExchangeRate from './ComExchangeRate.vue';
 import { whenever, useMagicKeys } from '@vueuse/core';
 const { t: $t } = i18n.global;
-
+const hoverEffect = ref(false);
+const hoverEffectsub = ref(false);
 const sale = inject("$sale")
 const gv = inject("$gv")
 const product = inject("$product")
