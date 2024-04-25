@@ -25,28 +25,28 @@
                         <OpenShiftButton  v-if="device_setting?.show_start_close_cashier_shift==1 && device_setting?.is_order_station==0"/>
                         
                         
-                        <ComButton @click="onPOS()" :title="$t('POS')" icon="mdi-cart-outline" class="bg-green-600 text-white" icon-color="#fff" />
-                        <ComButton @click="onViewPendingOrder()" :title="$t('Pending Order')" icon="mdi-arrange-send-backward"  icon-color="#e99417" />
+                        <ComButton @click="onPOS()" :title="$t('POS')" icon="mdi-cart-outline" class="bg-sellcolor text-white" icon-color="#fff" />
+                        <ComButton @click="onViewPendingOrder()" :title="$t('Pending Order')" class="bg-brandcolor" icon="mdi-arrange-send-backward"  icon-color="defaulticonColor" />
 
-                        <ComButton @click="onReservation()" :title="$t('Reservation')" v-if="(device_setting?.show_button_pos_reservation||0) == 1" icon="mdi mdi-calendar-text-outline" class="bg-teal-600 text-white" icon-color="#fff" />
+                        <ComButton @click="onReservation()" :title="$t('Reservation')" v-if="(device_setting?.show_button_pos_reservation||0) == 1"  icon="mdi mdi-calendar-text-outline" class="bg-rscolor text-white" icon-color="#fff" />
 
-                        <ComButton @click="onRoute('ClosedSaleList')" :title="$t('Closed Receipt')" v-if="device_setting?.is_order_station==0 && (gv.workingDay || gv.cashierShift)" icon="mdi-file-document"  icon-color="#e99417" />
+                        <ComButton @click="onRoute('ClosedSaleList')" :title="$t('Closed Receipt')" v-if="device_setting?.is_order_station==0 && (gv.workingDay || gv.cashierShift)" icon="mdi-file-document" class="bg-brandcolor"  icon-color="defaulticonColor" />
                         
                         
-                        <ComButton @click="onRoute('ReceiptList')" :title="$t('Receipt List')" v-if="device_setting?.is_order_station==0" icon="mdi-file-chart"  icon-color="#e99417" />
-                        <ComButton @click="onRoute('KitchenOrderDisplay')" :title="$t('KOD Screen')" v-if="device_setting?.show_button_kod_screen==1" icon="mdi-monitor"  icon-color="#e99417" />
+                        <ComButton @click="onRoute('ReceiptList')" :title="$t('Receipt List')" v-if="device_setting?.is_order_station==0" icon="mdi-file-chart"  icon-color="defaulticonColor" class="bg-brandcolor" />
+                        <ComButton @click="onRoute('KitchenOrderDisplay')" :title="$t('KOD Screen')" v-if="device_setting?.show_button_kod_screen==1" icon="mdi-monitor"  icon-color="defaulticonColor" class="bg-brandcolor" />
 
-                        <ComButton @click="onRoute('Customer')" :title="$t('Customer')" v-if="device_setting?.is_order_station==0" icon-color="#e99417"  icon="mdi-account-multiple-outline" />
+                        <ComButton @click="onRoute('Customer')" :title="$t('Customer')" v-if="device_setting?.is_order_station==0" icon-color="defaulticonColor"  icon="mdi-account-multiple-outline" class="bg-brandcolor" />
                         <!-- <ComButton :title="$t('Park Item')" @click="onRedeemClick()" v-if="device_setting.show_park_button==1" icon-color="#e99417"  icon="mdi-parking" /> -->
-                        <ComButton @click="onVoucherTopUp()"  :title="$t('Top-Up Voucher')" v-if="gv.device_setting.show_top_up && !mobile" icon-color="#e99417"  icon="mdi-wallet-plus" />
-                        <ComButton @click="onCashInCashOut" :title="$t('Cash Drawer')" v-if="device_setting?.is_order_station==0" icon-color="#e99417" icon="mdi-currency-usd" />
-                        <ComButton v-if="isWindow() && device_setting?.is_order_station==0"  @click="onOpenCashDrawer" :title="$t('Open Cash Drawer')" icon="mdi-cash-multiple" icon-color="#e99417" />
+                        <ComButton @click="onVoucherTopUp()"  :title="$t('Top-Up Voucher')" v-if="gv.device_setting.show_top_up && !mobile" icon-color="defaulticonColor"  icon="mdi-wallet-plus" class="bg-brandcolor" />
+                        <ComButton @click="onCashInCashOut" :title="$t('Cash Drawer')" v-if="device_setting?.is_order_station==0" icon-color="defaulticonColor" icon="mdi-currency-usd" class="bg-brandcolor" />
+                        <ComButton v-if="isWindow() && device_setting?.is_order_station==0"  @click="onOpenCashDrawer" :title="$t('Open Cash Drawer')" icon="mdi-cash-multiple" icon-color="defaulticonColor" class="bg-brandcolor" />
                         
-                        <ComButton @click="onRoute('Report')" :title="$t('Report')" v-if="device_setting?.is_order_station==0" icon="mdi-chart-bar" icon-color="#e99417" />
+                        <ComButton @click="onRoute('Report')" :title="$t('Report')" v-if="device_setting?.is_order_station==0" icon="mdi-chart-bar" icon-color="defaulticonColor" class="bg-brandcolor" />
                 
-                        <ComButton v-if="isWindow() && device_setting?.show_button_customer_display==1"  @click="onOpenCustomerDisplay"  :title="$t('Customer Display')" icon="mdi-monitor" icon-color="#e99417" />
+                        <ComButton v-if="isWindow() && device_setting?.show_button_customer_display==1"  @click="onOpenCustomerDisplay"  :title="$t('Customer Display')" icon="mdi-monitor" icon-color="defaulticonColor" class="bg-brandcolor"/>
 
-                        <ComButton v-if="isWindow() && device_setting?.show_wifi_button==1"  @click="onPrintWifiPassword" :title="$t('Wifi Password')" icon="mdi-wifi" icon-color="#e99417" /> 
+                        <ComButton v-if="device_setting?.show_wifi_button==1"  @click="onPrintWifiPassword" :title="$t('Wifi Password')" icon="mdi-wifi" icon-color="defaulticonColor" class="bg-brandcolor"/> 
                         
                         <ComButton @click="onLogout()" text-color="#fff" icon-color="#fff" :title="$t('Logout')" icon="mdi-logout" background-color="#b00020" />
                         
@@ -64,8 +64,7 @@ import WorkingDayButton from './shift/components/WorkingDayButton.vue';
 import OpenShiftButton from './shift/components/OpenShiftButton.vue';
 import ComMessagePromotion from '../components/ComMessagePromotion.vue';
 import moment from '@/utils/moment.js';
-import { useDisplay } from 'vuetify'; 
-
+import { useDisplay } from 'vuetify';  
 const auth = inject('$auth')
 const gv = inject('$gv');
 const frappe = inject('$frappe');

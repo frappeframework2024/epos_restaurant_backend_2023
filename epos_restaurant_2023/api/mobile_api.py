@@ -268,57 +268,8 @@ def get_kot_image(station, sale, products,printer):
 def get_print_report_image(data): 
     return print_from_print_format(data)
  
-@frappe.whitelist(allow_guest=True)
-def print_bill_to_network_printer(name, reprint=0):
-    if not frappe.db.exists("Sale",name):
-        return ""
-    template_name = frappe.db.sql("select name from `tabPOS Receipt Template` where is_web_receipt = 1 order by modified desc limit 1",as_dict=1)
-    if template_name:
-        sale_product = frappe.db.sql("select count(*) item from `tabSale Product` where parent = '{}' and docstatus = 1".format(name),as_dict=1)
-        printer_config = frappe.db.sql("select ip_address from `tabPrinter` where is_web_printer = 1 order by modified desc limit 1",as_dict=1)
-        doc = frappe.get_doc("Sale", name) 
-        data_template,css,width,header_height,footer_height,item_height = frappe.db.get_value("POS Receipt Template",template_name[0].name,["template","style","width","header_height","footer_height","item_height"])
-        html= frappe.render_template(data_template, get_print_context(doc,reprint))
-        img_name = str(uuid.uuid4())+".PNG"
-        path = frappe.get_site_path()+"/file/"
-        height = (header_height + (sale_product[0].item * item_height) + footer_height)
-        HTMLtoImage(height,width,html,css,path,img_name)
-        if printer_config: 
-            printer = Network(printer_config[0].ip_address)
-            printer.image(path+img_name)
-            printer.cut()
-            printer.close()
-            os.remove(path+img_name)
-    else:
-        frappe.throw("No Web Template Found")
 
-def HTMLtoImage(height,width,html,css,path,image):
-    hti = Html2Image()
-    hti.output_path =path
-    hti.size=(width, height)
-    hti.screenshot(html_str=html, css_str=css, save_as='{}'.format(image))   
-    image_path = '{}/{}'.format(path,image)    
-    trim(image_path)
 
-def trim(file_path):
-    image = Image.open(file_path)
-    image = image.convert("RGB")
-    pixels = np.array(image)
-    red_min = np.array([200, 0, 0])
-    red_max = np.array([255, 50, 50])
-    white_min = np.array([240, 240, 240])
-    white_max = np.array([255, 255, 255])
-    mask = np.logical_or(
-        np.all(np.logical_and(pixels >= red_min, pixels <= red_max), axis=-1),
-        np.all(np.logical_and(pixels >= white_min, pixels <= white_max), axis=-1)
-    )
-    coords = np.argwhere(~mask)
-    y_min, x_min = coords.min(axis=0)      
-    y_max, x_max = coords.max(axis=0)
-    cropped = image.crop((x_min, y_min, x_max, y_max+30))
-    cropped.save(file_path)
-
-## END MOBILE SERVER PRINTING GENERATE BASE_64 IMAGE
 
 
 

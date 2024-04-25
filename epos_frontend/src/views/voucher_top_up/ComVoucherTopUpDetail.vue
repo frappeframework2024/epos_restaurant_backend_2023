@@ -85,6 +85,7 @@ const moment = inject('$moment')
 const { t: $t } = i18n.global;
 const frappe = inject('$frappe')
 const db = frappe.db();
+const call = frappe.call();
 const gv = inject('$gv')
 const props = defineProps({
     params: {
@@ -108,43 +109,68 @@ onMounted(async () => {
 })
 
 function onPrinterVoucherClick(){
-    onPrintVoucher('rpt_voucher','print_voucher_slip',voucherTopUp.value)
+    onPrintVoucher('print_voucher_slip',voucherTopUp.value)
 }
 
-async function onPrintVoucher(receipt, action, doc) {
-        const data = {
+async function onPrintVoucher( action, doc) {
+    const data = {
             action: action,
             setting: gv.setting?.pos_setting,
             voucher: doc,
             station_device_printing:(gv.setting?.device_setting?.station_device_printing)||"",
+            station: (gv.setting?.device_setting?.name) || "",
         }
+
+        if((gv.setting?.device_setting?.use_server_network_printing||0)==1){
+            var printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+            if (printer.length <= 0) {
+                return // not printer
+            } 
+            if(printer[0].usb_printing == 0){
+                const body ={
+                    "data":{
+                        "name":data["voucher"]["name"],
+                        "station": data["station"],
+                        "printer" : {
+                            "printer_name": printer[0].printer_name,
+                            "ip_address": printer[0].ip_address,
+                            "port": printer[0].port,
+                            "cashier_printer": printer[0].cashier_printer,
+                            "is_label_printer": printer[0].is_label_printer,
+                            "usb_printing": printer[0].usb_printing,
+                        }
+                    }
+                } 
+                call.post("epos_restaurant_2023.api.network_printing_api.print_voucher_to_network_printer",body)
+                return // print network
+            }      
+        }
+
+
+
         if (localStorage.getItem("is_window")) {
             window.chrome.webview.postMessage(JSON.stringify(data));
-        } else {           
-            if (receipt.pos_receipt_file_name) {
+        }else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
+            var printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+            if (printer.length <= 0) {
+                toaster.warning($t("Printer not yet configt for this device"))
+            } else {
+                data.printer = {
+                    "printer_name": printer[0].printer_name,
+                    "ip_address": printer[0].ip_address,
+                    "port": printer[0].port,
+                    "cashier_printer": printer[0].cashier_printer,
+                    "is_label_printer": printer[0].is_label_printer,
+                    "usb_printing": printer[0].usb_printing,
+                }
+                flutterChannel.postMessage(JSON.stringify(data));
+            }
+        }else {            
                 socket.emit('PrintReceipt', JSON.stringify(data));
-            }
-            else {
-                onOpenBrowserPrint("Voucher", action.name,  action.name)
-            }
-        }
-    }
-
-    function onOpenBrowserPrint(doctype, docname, filename) {
-        const url = getPrintReportPath(doctype, docname, filename, 1)        
-        window.open(url).print();
-        window.close();
-    }
-    function getPrintReportPath(doctype, name, reportName, isPrint = 0) {
-        let url = "";
-         
-        const serverUrl = window.location.protocol + "//" + window.location.hostname +  (window.location.protocol =="https:"? "": (":"+ gv.setting?.pos_setting?.backend_port)) ;
-        url = serverUrl + "/printview?doctype=" + doctype + "&name=" + name + "&format=" + reportName + "&no_letterhead=0&letterhead=Defualt%20Letter%20Head&settings=%7B%7D&_lang=en&d=" + new Date()
-        if (isPrint) {
-            url = url + "&trigger_print=" + isPrint
+             
         }        
-        return url;
-    }
+}
+
 
 
 function onClose() {

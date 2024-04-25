@@ -4,7 +4,7 @@
     <template v-if="gv.device_setting.show_button_print_bill==1">
       <template v-if="gv.setting.reports.filter(r => r.doc_type == doctype && r.show_in_pos == 1).length == 1">
           <v-btn v-if="mobile" style="width:64px" icon="mdi-printer" @click="onPrintReport(gv.setting.reports.filter(r => r.doc_type == doctype && r.show_in_pos == 1)[0])"></v-btn>
-          <v-btn v-else :stacked="!mobile" color="info" size="small" class="m-0-1 grow"
+          <v-btn v-else :stacked="!mobile" color="printbillbtn" size="small" class="m-0-1 grow"
             :prepend-icon="mobile ? '' : 'mdi-printer'" :variant="mobile ? 'tonal' : 'elevated'"
             @click="onPrintReport(gv.setting.reports.filter(r => r.doc_type == doctype && r.show_in_pos == 1)[0])">
             {{ $t('Print Bill') }}</v-btn>

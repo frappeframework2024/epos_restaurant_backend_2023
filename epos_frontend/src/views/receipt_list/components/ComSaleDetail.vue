@@ -1,10 +1,10 @@
 <template>
-    <ComModal @onClose="onClose(false)" :fullscreen="true" :isPrint="sale.doc.docstatus == 1" @onPrint="onPrint()"
+    <ComModal @onClose="onClose(false)" :fullscreen="true" :isPrint="sale.doc?.docstatus == 1" @onPrint="onPrint()"
         :hide-ok-button="true" :hide-close-button="true" :isShowBarMoreButton="canOpenOrder || canEdit || canDelete">
         <template #title>
             {{ $t('Sale Detail') }} #{{ params.name }}
         </template>
-        <template #bar_more_button>
+        <template #bar_more_button> 
             <v-list density="compact">
                 <v-list-item @click="onOpenOrder()" v-if="canOpenOrder">
                     <template v-slot:prepend>
@@ -89,6 +89,10 @@
 import { inject, ref, computed, onUnmounted, createDocumentResource, useRouter, createResource, confirm, smallViewSaleProductListModal, i18n } from '@/plugin';
 import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 import { useDisplay } from 'vuetify';
+import { FrappeApp } from 'frappe-js-sdk';
+import { createToaster } from '@meforma/vue-toaster';
+const toaster = createToaster({ position: "top-right" });
+
 const { mobile } = useDisplay();
 const router = useRouter();
 const gv = inject("$gv")
@@ -99,7 +103,7 @@ const socket = inject("$socket");
 const emit = defineEmits(["resolve"])
 const triggerPrint = ref(0);
 const serverUrl = window.location.protocol + "//" + window.location.hostname + (window.location.protocol =="https:"? "": (":"+ gv.setting.pos_setting.backend_port)) ;
-import { FrappeApp } from 'frappe-js-sdk';
+
 const frappe = new FrappeApp();
 const call = frappe.call()
 
@@ -195,6 +199,36 @@ async function onPrint() {
         station: (gv.setting?.device_setting?.name) || "",
         reprint: 1
     }
+
+    if((gv.setting?.device_setting?.use_server_network_printing||0)==1){
+        var printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+        if (printer.length <= 0) {
+            toaster.warning($t("Printer not yet configt for this device"))
+            return // not printer
+        } 
+        if(printer[0].usb_printing == 0){
+            const body ={
+                "data":{
+                    "name":sale.doc.name,
+                    "reprint":1,
+                    "template_name":data["print_setting"]["pos_receipt_template"],
+                    "printer" : {
+                        "printer_name": printer[0].printer_name,
+                        "ip_address": printer[0].ip_address,
+                        "port": printer[0].port,
+                        "cashier_printer": printer[0].cashier_printer,
+                        "is_label_printer": printer[0].is_label_printer,
+                        "usb_printing": printer[0].usb_printing,
+                    }
+                }
+            } 
+            call.post("epos_restaurant_2023.api.network_printing_api.print_bill_to_network_printer",body)
+            toaster.success($t("Print processing"))
+            return // print network
+        }      
+    }
+
+    //
     if (localStorage.getItem("is_window") == "1") {
         if (activeReport.value.pos_receipt_file_name != "" && activeReport.value.pos_receipt_file_name != null) {
             if (await confirm({ title: $t("Print Receipt"), text: $t("msg.Are you sure to print receipt") })) {
@@ -225,21 +259,17 @@ async function onPrint() {
             }
         }
     }
-    else {
-        if((gv.setting?.device_setting?.platform) == "Web"){
-            await  call.get("epos_restaurant_2023.api.mobile_api.print_bill_to_network_printer",{"name":sale.doc.name,"reprint":1})
+    else { 
+        if (activeReport.value.pos_receipt_file_name != "" && activeReport.value.pos_receipt_file_name != null) {
+            socket.emit('PrintReceipt', JSON.stringify(data));
+            return;
         }
-        else{
-            if (activeReport.value.pos_receipt_file_name != "" && activeReport.value.pos_receipt_file_name != null) {
-                socket.emit('PrintReceipt', JSON.stringify(data));
-                return;
-            }
-            else {
-                window.open(printPreviewUrl.value + "&trigger_print=1").print();
-                window.close();
-            }
-        }
+        else {
+            window.open(printPreviewUrl.value + "&trigger_print=1").print();
+            window.close();
+        }        
     }
+   
 }
 
 function onOpenOrder() {

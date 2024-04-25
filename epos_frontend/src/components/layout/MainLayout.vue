@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <v-app-bar :elevation="2" color="error">
+        <v-app-bar :elevation="2" color="appbar">
             <v-app-bar-title>{{ appTitle }}</v-app-bar-title>
             <template #prepend>
                 <v-app-bar-nav-icon variant="text" @click.stop="onDrawer"></v-app-bar-nav-icon>
@@ -51,7 +51,7 @@
                 </v-menu>
             </template>
         </v-app-bar>
-        <v-navigation-drawer v-model="drawer" temporary>
+        <v-navigation-drawer color="drawerbar" v-model="drawer" temporary>
             <MainLayoutDrawer />
 
             <template v-slot:append>

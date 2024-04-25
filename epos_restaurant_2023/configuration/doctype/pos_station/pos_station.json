@@ -16,6 +16,7 @@
   "license",
   "column_break_uutk",
   "station_device_printing",
+  "use_server_network_printing",
   "is_used",
   "is_order_station",
   "disabled",
@@ -288,11 +289,17 @@
    "fieldname": "show_button_kod_screen",
    "fieldtype": "Check",
    "label": "Show Button KOD Screen"
+  },
+  {
+   "default": "0",
+   "fieldname": "use_server_network_printing",
+   "fieldtype": "Check",
+   "label": "Use Server Network Printing"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-04-20 16:56:13.197450",
+ "modified": "2024-04-24 14:00:02.195702",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

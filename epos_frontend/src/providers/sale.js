@@ -493,7 +493,7 @@ export default class Sale {
         }
     }
     cloneSaleProduct(sp, quantity) {
-        const u = JSON.parse(localStorage.getItem('make_order_auth'));
+        const u = JSON.parse(localStorage.getItem('make_order_auth')); 
         this.clearSelected();
         const sp_copy = JSON.parse(JSON.stringify(sp));
         sp_copy.selected = true;
@@ -1684,34 +1684,40 @@ export default class Sale {
         });
 
 
-
-        if (localStorage.getItem("is_window") == 1) {
-            if ((data.product_printers ?? []).length > 0) {
-                window.chrome.webview.postMessage(JSON.stringify(data));
-            }
+        let kotProducts = {
+            action: "print_to_kitchen",
+            sale: doc,
+            printers: [],
+            setting: this.setting?.pos_setting,
+            station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
         }
-        else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
-            if (_productPrinters.length > 0) {
-                var printers = (this.setting?.device_setting?.station_printers);
-                if (printers.length <= 0) {
-                    // toaster.warning($t("Printer not yet configt for this device"))
-                } else {
-                    let products_ = {
-                        action: "print_to_kitchen",
-                        sale: doc,
-                        printers: [],
-                        setting: this.setting?.pos_setting,
-                        station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
-                    }
-                    let productUSBPrinter = JSON.parse(JSON.stringify(products_));
+        let productUSBPrinter = JSON.parse(JSON.stringify(kotProducts));
+        kotProducts.printers = [];
+        productUSBPrinter.printers = []
 
-                    products_.printers = [];
-                    productUSBPrinter.printers = []
+        let station_printers = (this.setting?.device_setting?.station_printers);
+        if (station_printers.length <= 0) {
+            // console.log("The station no printer for KOT") 
+        } else{ 
+            station_printers.forEach((p) => {
+                let temp_sale_products = data.product_printers.filter((x) => x.printer == p.printer_name)
+                if(temp_sale_products.length>0){
+                    if (p.usb_printing == 1) {                    
+                        productUSBPrinter.printers.push({
+                            "printer_name": p.printer_name,
+                            "group_item_type": p.group_item_type,
+                            "ip_address": p.ip_address,
+                            "port": p.port,
+                            "cashier_printer": p.cashier_printer,
+                            "is_label_printer": p.is_label_printer,
+                            "usb_printing": p.usb_printing,
+                            "products": temp_sale_products
+                        });
 
-                    printers.forEach((p) => {
-
-                        if (p.usb_printing == 1) {
-                            productUSBPrinter.printers.push({
+                    } else {
+                        kotProducts.printers.push({
+                            "station": this.setting?.device_setting?.name ?? "",
+                            "printer": {
                                 "printer_name": p.printer_name,
                                 "group_item_type": p.group_item_type,
                                 "ip_address": p.ip_address,
@@ -1719,42 +1725,47 @@ export default class Sale {
                                 "cashier_printer": p.cashier_printer,
                                 "is_label_printer": p.is_label_printer,
                                 "usb_printing": p.usb_printing,
-                                "products": data.product_printers.filter((x) => x.printer == p.printer_name)
-                            });
-
-                        } else {
-                            products_.printers.push({
-                                "station": this.setting?.device_setting?.name ?? "",
-                                "printer": {
-                                    "printer_name": p.printer_name,
-                                    "group_item_type": p.group_item_type,
-                                    "ip_address": p.ip_address,
-                                    "port": p.port,
-                                    "cashier_printer": p.cashier_printer,
-                                    "is_label_printer": p.is_label_printer,
-                                    "usb_printing": p.usb_printing,
-                                },
-                                "products": data.product_printers.filter((x) => x.printer == p.printer_name)
-                            });
-                        }
-                    });
-
-                    //trigger printer network
-                    if (products_.printers.length > 0) {
-                        flutterChannel.postMessage(JSON.stringify(products_));
+                            },
+                            "products": temp_sale_products
+                        });
                     }
+                }
+            });                
+        }      
 
+
+        if((this.setting?.device_setting?.use_server_network_printing||0)==1){
+           //printer network
+           if (kotProducts.printers.length > 0) {
+                call.post("epos_restaurant_2023.api.network_printing_api.print_kot_to_network_printer",{"data":kotProducts}) 
+            }             
+            //trigger print usb print
+            if (productUSBPrinter.printers.length > 0) {
+                socket.emit("PrintReceipt", JSON.stringify(productUSBPrinter))
+            } 
+
+        }else{
+            if (localStorage.getItem("is_window") == 1) {
+                if ((data.product_printers ?? []).length > 0) {
+                    window.chrome.webview.postMessage(JSON.stringify(data));
+                }
+            }
+            else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
+                if (_productPrinters.length > 0) {                     
+                    //trigger printer network
+                    if (kotProducts.printers.length > 0) {
+                        flutterChannel.postMessage(JSON.stringify(kotProducts));
+                    }
                     //trigger print usb print
                     if (productUSBPrinter.printers.length > 0) {
                         socket.emit("PrintReceipt", JSON.stringify(productUSBPrinter))
-
                     }
                 }
             }
-        }
-        else {
-            socket.emit("PrintReceipt", JSON.stringify(data))
+            else {
+                socket.emit("PrintReceipt", JSON.stringify(data))
 
+            }
         }
 
         //reset product printer
@@ -1877,6 +1888,36 @@ export default class Sale {
             station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
             station: (this.setting?.device_setting?.name) || "",
         }
+
+        if((this.setting?.device_setting?.use_server_network_printing||0)==1){
+            var printer = (this.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+            if (printer.length <= 0) {
+                toaster.warning($t("Printer not yet configt for this device"))
+                return // not printer
+            } 
+            if(printer[0].usb_printing == 0){
+                const body ={
+                    "data":{
+                        "name":this.sale.name,
+                        "reprint":1,
+                        "template_name":data["print_setting"]["pos_receipt_template"],
+                        "printer" : {
+                            "printer_name": printer[0].printer_name,
+                            "ip_address": printer[0].ip_address,
+                            "port": printer[0].port,
+                            "cashier_printer": printer[0].cashier_printer,
+                            "is_label_printer": printer[0].is_label_printer,
+                            "usb_printing": printer[0].usb_printing,
+                        }
+                    }
+                } 
+                call.post("epos_restaurant_2023.api.network_printing_api.print_bill_to_network_printer",body)
+                return // print network
+            }      
+        }
+
+
+
         if (receipt.pos_receipt_file_name && localStorage.getItem("is_window")) {
             window.chrome.webview.postMessage(JSON.stringify(data));
         } else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
@@ -1895,17 +1936,13 @@ export default class Sale {
                 flutterChannel.postMessage(JSON.stringify(data));
             }
         } else {
-            if ((this.setting?.device_setting?.platform) == "Web") {
-                await call.get("epos_restaurant_2023.api.mobile_api.print_bill_to_network_printer", { "name": doc.name, "reprint": 0 })
+            if (receipt.pos_receipt_file_name) {
+                socket.emit('PrintReceipt', JSON.stringify(data));
             }
             else {
-                if (receipt.pos_receipt_file_name) {
-                    socket.emit('PrintReceipt', JSON.stringify(data));
-                }
-                else {
-                    this.onOpenBrowserPrint("Sale", doc.name, receipt.name)
-                }
+                this.onOpenBrowserPrint("Sale", doc.name, receipt.name)
             }
+           
         }
     }
 
@@ -1919,6 +1956,30 @@ export default class Sale {
                     station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
                     station: (this.setting?.device_setting?.name) || "",
                 }
+
+                if((this.setting?.device_setting?.use_server_network_printing||0)==1){
+                    var printer = (this.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+                    if (printer.length <= 0) {
+                        return // not printer
+                    } 
+                    if(printer[0].usb_printing == 0){
+                        const body ={
+                            "data":{
+                                "name":this.sale.name,
+                                "printer" : {
+                                    "printer_name": printer[0].printer_name,
+                                    "ip_address": printer[0].ip_address,
+                                    "port": printer[0].port,
+                                    "cashier_printer": printer[0].cashier_printer,
+                                    "is_label_printer": printer[0].is_label_printer,
+                                    "usb_printing": printer[0].usb_printing,
+                                }
+                            }
+                        } 
+                        call.post("epos_restaurant_2023.api.network_printing_api.print_waiting_number_to_network_printer",body)
+                        return // print network
+                    }      
+                } 
 
                 if (localStorage.getItem("is_window") == "1") {
                     window.chrome.webview.postMessage(JSON.stringify(data));

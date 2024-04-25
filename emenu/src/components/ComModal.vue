@@ -1,6 +1,6 @@
 <template>
     
-    <v-dialog v-model="open" v-bind:style="{'width':'100%','max-width': fullscreen ? 'auto' : width}" :fullscreen="mobileFullscreen ? mobile : fullscreen" :scrollable="scrollable" :persistent="persistent" @update:modelValue="onAction()">
+    <v-dialog v-model="open"  v-bind:style="{'width':'100%','max-width': fullscreen ? 'auto' : width}" :fullscreen="mobileFullscreen ? mobile : fullscreen" :scrollable="scrollable" :persistent="persistent" @update:modelValue="onAction()">
         <v-card>
             <v-card-text :class="fill ? '!p-0' : '!p-2'" class="!relative !overflow-x-hidden">
                 <v-btn class="!fixed top-1 right-2" size="small" icon="mdi-close" @click="onClose()"></v-btn>

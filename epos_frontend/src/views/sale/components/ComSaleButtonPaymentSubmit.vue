@@ -2,7 +2,7 @@
   <div>
     <div>
       <div class="flex">
-        <div class="flex-grow cursor-pointer bg-green-600 text-white px-2 py-0  hover:bg-green-700"
+        <div class="flex-grow cursor-pointer bg-paymentbtn text-white px-2 py-0  hover:bg-defaulticonColor"
           @click="onPayment()">
           <div style="margin-bottom: 0px!important;" class="flex justify-between mb-2 text-lg">
             <div>{{ $t("Payment") }}</div>

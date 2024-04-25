@@ -48,7 +48,7 @@ const { mobile } = useDisplay()
 const props = defineProps({
     color: {
         type: String,
-        default: "red"
+        default: "dailogbarcolor"
     },
     disabled: {
         type: Boolean,

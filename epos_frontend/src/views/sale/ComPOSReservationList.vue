@@ -10,7 +10,7 @@
               <v-btn class="mr-1" prepend-icon="mdi-close" @click="onClearSearch" color="error">
                 {{$t('Clear')}}
             </v-btn>
-              <v-btn class="ml-1" prepend-icon="mdi-magnify" @click="onSearch" color="success">
+              <v-btn class="ml-1" prepend-icon="mdi-magnify" @click="onSearch" color="searchbtn">
                 {{$t('Search')}}
             </v-btn>
             </div>

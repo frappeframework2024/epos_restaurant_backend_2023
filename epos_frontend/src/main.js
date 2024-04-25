@@ -7,6 +7,7 @@ import 'vuetify/styles';
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
+
 import '@mdi/font/css/materialdesignicons.css'
 import { vue3Debounce } from 'vue-debounce'
 //import VueNumberFormat from 'vue-number-format'
@@ -44,7 +45,7 @@ import moment from "./utils/moment";
 import KeyStroke from './plugin/key_stroke';
 import store from "./store";
 import Toaster from "@meforma/vue-toaster";
-import {resourcesPlugin} from "./resources"
+import { resourcesPlugin } from "./resources"
 import { FrappeApp } from 'frappe-js-sdk';
 import { setConfig, frappeRequest } from './resource';
 import MasonryWall from '@yeger/vue-masonry-wall'
@@ -55,8 +56,8 @@ setConfig('resourceFetcher', frappeRequest)
 import { createBottomSheet } from 'bottom-sheet-vue3'
 import 'bottom-sheet-vue3/style.css'
 // i18n
-import { i18n } from "./i18n"; 
-
+import { i18n } from "./i18n";
+import { mainTheme, secondaryTheme } from '@/utils/theme.js'; 
 const app = createApp(App);
 
 const frappe = new FrappeApp();
@@ -69,6 +70,8 @@ const tableLayout = reactive(new TableLayout());
 const product = reactive(new Product());
 const screen = reactive(new Screen());
 
+
+
 const vuetify = createVuetify({
 	components,
 	directives,
@@ -77,22 +80,34 @@ const vuetify = createVuetify({
 	},
 	display: {
 		mobileBreakpoint: 'md',
-		 
-	  },	
-  });
+	},
+	// theme: {
+	// 	defaultTheme: 'mainTheme',
+	// 	themes: {
+	// 		mainTheme,
+	// 	},
+	//   },
+	 theme: {
+		defaultTheme: 'secondaryTheme',
+		themes: {
+			secondaryTheme,
+		},
+	  },
+
+});
 
 
 
-  //load langauge
-var lang = localStorage.getItem('lang'); 
-if((lang||"")==""){
-	localStorage.setItem('lang','en');
+//load langauge
+var lang = localStorage.getItem('lang');
+if ((lang || "") == "") {
+	localStorage.setItem('lang', 'en');
 	lang = "en";
-} 
+}
 app.use(i18n);
 
 
-  
+
 app.use(router);
 app.use(resourcesPlugin);
 app.use(vuetify);
@@ -102,8 +117,8 @@ app.use(createBottomSheet())
 app.use(Toaster, {
 	position: "top",
 })
-app.use(MasonryWall) 
- 
+app.use(MasonryWall)
+
 // Global Properties,
 // components can inject this
 app.provide("$gv", gv);
@@ -112,8 +127,8 @@ app.provide("$sale", sale);
 app.provide("$kod", kod);
 app.provide("$tableLayout", tableLayout);
 app.provide("$product", product);
-app.provide("$numberFormat",NumberFormat)
-app.provide("$socket",socket)
+app.provide("$numberFormat", NumberFormat)
+app.provide("$socket", socket)
 
 app.provide("$screen", screen);
 app.provide("$auth", auth);
@@ -123,36 +138,35 @@ app.provide("$frappe", frappe);
 
 app.provide("$moment", moment)
 app.config.globalProperties.$filter = {
-   isEmpty(str) {
-        return (!str || str.trim().length === 0);
-    }
+	isEmpty(str) {
+		return (!str || str.trim().length === 0);
+	}
 }
 
 
 //app.use(VueNumberFormat, {prefix: '$ ', decimal: '.', thousand: ',',precision:2})
 
- 
+
 app.directive('debounce', vue3Debounce({ lock: true }))
 
 // Configure route gaurds
 router.beforeEach(async (to, from, next) => {
-	
-	if(!localStorage.getItem("pos_profile"))
-	{ 
-		if (to.matched.some((record) => !record.meta.isStartupConfig)){
-			
-			next({name:"StartupConfig", query: { route: to.path }})
-		}else{
+
+	if (!localStorage.getItem("pos_profile")) {
+		if (to.matched.some((record) => !record.meta.isStartupConfig)) {
+
+			next({ name: "StartupConfig", query: { route: to.path } })
+		} else {
 			next()
 		}
 	}
-	else{
-		
+	else {
+
 		if (to.matched.some((record) => !record.meta.isLoginPage)) {
 			// this route requires auth, check if logged in
 			// if not, redirect to login page.
 			if (!auth.isLoggedIn) {
-			 
+
 				next({ name: 'Login', query: { route: to.path } });
 			} else {
 				next();
@@ -174,10 +188,10 @@ app.component('ComPlaceholder', ComPlaceholder);
 app.component('ComAutoComplete', ComAutoComplete);
 app.component('ComPrintPreview', ComPrintPreview);
 app.component("avatar", Avatar);
-app.component('ComChip',ComChip)
-app.component('ComInput',ComInput)
-app.component('ComTableView',ComTableView)
-app.component('ComTdImage',ComTdImage)
+app.component('ComChip', ComChip)
+app.component('ComInput', ComInput)
+app.component('ComTableView', ComTableView)
+app.component('ComTdImage', ComTdImage)
 app.component('ComModal', ComModal)
 
 KeyStroke(app)
@@ -185,4 +199,3 @@ KeyStroke(app)
 
 app.mount("#app");
 
- 

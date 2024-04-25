@@ -116,17 +116,19 @@ def print_bill(station, name,template, reprint ):
 ## print waiting slip
 @frappe.whitelist(allow_guest=True)
 def print_voucher_invoice(station, name):
-    return ""
-    doc = frappe.get_doc("Sale", name)
-    data_template,css,width,fixed_height = frappe.db.get_value("POS Receipt Template","Voucher Slip",["template","style","width","fixed_height"])
+    if not frappe.db.exists("Voucher",name):
+        return ""    
+    doc = frappe.get_doc("Voucher", name) 
+    working_day = frappe.get_doc("Working Day",doc.working_day)
+
+    doc.pos_profile = working_day.pos_profile
+    data_template,css ,width,fixed_height,item_height= frappe.db.get_value("POS Receipt Template","Voucher Reciept",["template","style","width","fixed_height","item_height"])
     html= frappe.render_template(data_template, get_print_context(doc))
-    height = fixed_height
-    if len(doc.sale_products) > 0:
-        height += len(doc.sale_products) * 75
-        
+    height = fixed_height + item_height
+
     hash_generate = frappe.generate_hash(length=15)
     return capture(html=html,css=css,height=height,width=width,image='{}_voucher_slip_{}.png'.format(station,hash_generate))
-       
+
 
 ## print waiting slip
 @frappe.whitelist(allow_guest=True)
@@ -148,12 +150,12 @@ def print_kitchen_order(station, sale, products,printer):
     if not frappe.db.exists("Sale",sale):
         return ""    
     doc_sale = frappe.get_doc("Sale", sale)
-    data_template,css,width,fixed_height = frappe.db.get_value("POS Receipt Template","Kitchen Order",["template","style","width","fixed_height"])   
+    data_template,css,width,fixed_height,item_height = frappe.db.get_value("POS Receipt Template","Kitchen Order",["template","style","width","fixed_height","item_height"])   
     html = frappe.render_template(data_template, get_print_context(doc=doc_sale,sale_products =  products))
     # return products  
     height = fixed_height
     if len(products) > 0:
-        height += len(products) * 75 
+        height += len(products) * item_height 
 
     hash_generate = frappe.generate_hash(length=15)
     return capture(html=html,css=css,height=height,width=width,image='{}_{}_kitchen_order_{}.png'.format(station,printer,hash_generate))
