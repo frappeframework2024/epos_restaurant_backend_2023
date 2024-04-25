@@ -145,11 +145,13 @@ def get_data_for_sync(business_branch=None):
     setting = frappe.get_doc("ePOS Sync Setting")
     if business_branch:
         frappe.db.sql("Update `tabData For Sync` set is_synced = 1")
+        frappe.db.commit()
         data = frappe.db.sql( "select distinct document_type, document_name,is_deleted,is_renamed,old_name  from `tabData For Sync` where is_synced=1 order by creation",as_dict=1) 
     else:
         frappe.db.sql("Update `tabData For Sync` set is_synced = 1 where business_branch='{}'".format(business_branch))
+        frappe.db.commit()
         data = frappe.db.sql( "select distinct document_type, document_name,is_deleted,is_renamed,old_name  from `tabData For Sync` where is_synced=1 and business_branch='{}' order by creation".format(business_branch),as_dict=1) 
-    frappe.db.commit()
+    
     
     
     return_data = []

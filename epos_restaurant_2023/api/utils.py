@@ -185,8 +185,8 @@ def save_sync_data(doc,extra_action=None,action="update"):
     if action != "delete":
         if doc.get("is_synced"):
             doc.is_synced = 1
-        doc.insert(ignore_permissions=True, ignore_links=True)
-        if extra_action:
+        inserted_doc = doc.insert(ignore_permissions=True, ignore_links=True)
+        if extra_action and inserted_doc:
             # action is string
             for act in json.loads(extra_action):
                 frappe.enqueue(act, queue='short', self=doc)
