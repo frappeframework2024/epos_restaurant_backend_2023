@@ -81,18 +81,18 @@ const vuetify = createVuetify({
 	display: {
 		mobileBreakpoint: 'md',
 	},
-	 theme: {
-	 	defaultTheme: 'mainTheme',
+	//  theme: {
+	//  	defaultTheme: 'mainTheme',
+	// 	themes: {
+	// 		mainTheme,
+	//  	},
+	//    },
+	theme: {
+		defaultTheme: 'secondaryTheme',
 		themes: {
-			mainTheme,
-	 	},
-	   },
-	// theme: {
-		//defaultTheme: 'secondaryTheme',
-	//	themes: {
-		//	secondaryTheme,
-		//},
-	 // },
+			secondaryTheme,
+		},
+	 },
 
 });
 

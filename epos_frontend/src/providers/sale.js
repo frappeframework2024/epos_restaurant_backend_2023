@@ -1899,7 +1899,7 @@ export default class Sale {
             if(printer[0].usb_printing == 0){
                 const body ={
                     "data":{
-                        "name":this.sale.name,
+                        "name":data["sale"]["name"],
                         "reprint":0,
                         "action":data["action"],
                         "print_setting":data["print_setting"],
@@ -1913,7 +1913,7 @@ export default class Sale {
                             "usb_printing": printer[0].usb_printing,
                         }
                     }
-                } 
+                }  
                 call.post("epos_restaurant_2023.api.network_printing_api.print_bill_to_network_printer",body)
                 return // print network
             }      
