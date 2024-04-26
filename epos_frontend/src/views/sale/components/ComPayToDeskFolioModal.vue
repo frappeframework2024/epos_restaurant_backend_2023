@@ -85,11 +85,11 @@ const selected_desk_folio = ref();
 
 
 function onSearchCityLedgerName(keywork){
-    onGetCityLedger(['city_ledger_name', 'like', "%"+ keywork +"%"])
+    onGetDeskFolio(['city_ledger_name', 'like', "%"+ keywork +"%"])
 }
 
 function onSearchCityLedgerPhoneNumber(keywork){
-    onGetCityLedger(['phone_number', 'like', "%"+ keywork +"%"])
+    onGetDeskFolio(['phone_number', 'like', "%"+ keywork +"%"])
 }
 
 
@@ -108,7 +108,8 @@ function onGetDeskFolio(_filters = []) {
     }
     db.getDocList('Desk Folio', {
         fields: ['name', 'guest', 'phone_number', 'guest_name', 'property', 'room_number'],
-        filters: custom_filter
+        filters: custom_filter,
+        limit: 500
     }).then((result) => {
         desk_folio_list.value = result;
     });
