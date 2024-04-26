@@ -76,7 +76,7 @@ def generate_data_for_sync_record_on_rename(doc ,method=None, *args, **kwargs):
     if not frappe.db.exists("DocType","ePOS Sync Setting"):
         return
     setting =frappe.get_doc("ePOS Sync Setting")
-    if setting.enable == 1:
+    if setting.enable == 1 and setting.client_side == 0:
         doc_name = {'old_name': args[0], 'name': args[1]}
         frappe.db.sql("delete from `tabData For Sync` where document_type='{}' and document_name='{}' ".format(doc.doctype,doc.name))
         if doc.get("business_branch"):

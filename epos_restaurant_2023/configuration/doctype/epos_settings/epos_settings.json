@@ -21,6 +21,7 @@
   "specific_pos_profile",
   "number_of_day_cashier_can_view_report",
   "allow_change_date_when_start_working_day",
+  "app_theme",
   "number_and_currency_setting_tab",
   "currency",
   "second_currency",
@@ -151,6 +152,13 @@
    "fieldname": "allow_change_date_when_start_working_day",
    "fieldtype": "Check",
    "label": "Allow Change Date When Start Working Day"
+  },
+  {
+   "default": "estc",
+   "fieldname": "app_theme",
+   "fieldtype": "Select",
+   "label": "App Theme",
+   "options": "estc\nmicro_lab"
   }
  ],
  "image_field": "epos_logo",
@@ -158,7 +166,7 @@
  "issingle": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-03-06 11:18:16.106211",
+ "modified": "2024-04-26 09:32:26.919439",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "ePOS Settings",

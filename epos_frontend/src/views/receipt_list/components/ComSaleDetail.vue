@@ -211,6 +211,8 @@ async function onPrint() {
                 "data":{
                     "name":sale.doc.name,
                     "reprint":1,
+                    "action":data["action"],
+                    "print_setting":data["print_setting"],
                     "template_name":data["print_setting"]["pos_receipt_template"],
                     "printer" : {
                         "printer_name": printer[0].printer_name,
@@ -221,7 +223,7 @@ async function onPrint() {
                         "usb_printing": printer[0].usb_printing,
                     }
                 }
-            } 
+            }  
             call.post("epos_restaurant_2023.api.network_printing_api.print_bill_to_network_printer",body)
             toaster.success($t("Print processing"))
             return // print network

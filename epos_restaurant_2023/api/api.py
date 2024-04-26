@@ -18,6 +18,11 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import quote_plus
 
+
+@frappe.whitelist(allow_guest=True)
+def get_theme():
+    return frappe.db.get_single_value("ePOS Settings","app_theme")
+
 @frappe.whitelist()
 def search_image_from_google(keyword):
     url = f"https://www.google.com/search?q={quote_plus(keyword)}&tbm=isch"

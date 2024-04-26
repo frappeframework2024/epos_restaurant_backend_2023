@@ -1900,7 +1900,9 @@ export default class Sale {
                 const body ={
                     "data":{
                         "name":this.sale.name,
-                        "reprint":1,
+                        "reprint":0,
+                        "action":data["action"],
+                        "print_setting":data["print_setting"],
                         "template_name":data["print_setting"]["pos_receipt_template"],
                         "printer" : {
                             "printer_name": printer[0].printer_name,

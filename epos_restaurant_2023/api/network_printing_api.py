@@ -42,15 +42,16 @@ def trim(file_path):
     cropped = image.crop((x_min, y_min, x_max, y_max+30))
     cropped.save(file_path)
 
-def on_print(file_path, printer):
+def on_print(file_path, printer, delete_file = 1):
     if printer:   
         try:
             printer = Network(printer["ip_address"])
             printer.image(file_path)
             printer.cut()
             printer.close()
-            if os.path.isfile(file_path):
-                os.remove(file_path)
+            if delete_file == 1:
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
 
         except OSError as e:
             frappe.throw(str(e))
@@ -74,9 +75,22 @@ def print_bill_to_network_printer(data):
         height += (len(doc.sale_products) * item_height)
          
     file_path = html_to_image(height,width,html,css,path,img_name)
-    
-    ## onProcess Print
-    on_print(file_path, data["printer"])
+
+    if data["action"] == "print_invoice":
+        for i in range(data["print_setting"]["print_invoice_copies"]):
+            on_print(file_path=file_path,printer= data["printer"], delete_file=0)
+    elif data["action"] == "print_receipt":
+        for i in range(data["print_setting"]["print_receipt_copies"]):
+            on_print(file_path=file_path,printer= data["printer"], delete_file=0)
+
+    ## delete file after print        
+    try:
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+    except OSError as e:
+        frappe.throw(str(e))
+        
+   
 
 ## KOT Printing
 # @frappe.whitelist(allow_guest=True,methods="POST")

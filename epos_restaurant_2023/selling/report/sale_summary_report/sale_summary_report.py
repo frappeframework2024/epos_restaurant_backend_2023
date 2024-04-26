@@ -68,6 +68,7 @@ def get_columns(filters):
 	if filters.row_group == 'Sale Invoice':
 		columns.append({'fieldname':'row_group','label':filters.row_group,'fieldtype':'Link',"options":"Sale",'align':'left','width':250})
 		columns.append({'fieldname':'custom_bill_number','label':"Bill No",'fieldtype':'Data','align':'left','width':150})
+		columns.append({'fieldname':'guest_cover','label':"Guest Cover",'fieldtype':'Int','align':'left','width':150})
 	else:
 		columns.append({'fieldname':'row_group','label':filters.row_group,'fieldtype':'Data','align':'left','width':250})
 	# if filters.row_group == "Product":
