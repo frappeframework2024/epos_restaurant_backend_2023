@@ -194,7 +194,7 @@ function getDataResourceParams (){
     return {  
          doctype: props.doctype,
             fields: getFieldName(),
-            filters: pagerOption.filters,
+            filters: getFilter(),
             order_by:'creation' + ' ' + gv.customerMeta?.sort_order || 'desc',
             limit_page_length: pagerOption.itemPerPage,
             limit_start: ( (pagerOption.currentPage -1) * pagerOption.itemPerPage )
@@ -203,8 +203,21 @@ function getDataResourceParams (){
 function getCountResourceParams (){
     return {   
             doctype: props.doctype,
-            filters: pagerOption.filters
+            filters: getFilter()
         }
+}
+
+function getFilter() {
+    let filters = JSON.parse(JSON.stringify(pagerOption.filters))
+    if (gv.setting.specific_pos_profile && props.posProfileField) {
+        filters[props.posProfileField] = ["=", localStorage.getItem('pos_profile')]
+    }
+    else if (gv.setting.specific_business_branch && props.businessBranchField) {
+        filters[props.businessBranchField] = ["=", gv.setting.business_branch]
+    }
+    filters["docstatus"] = ["in", [1, 0]]
+    emit('onFetch', filters)
+    return filters
 }
  
 watch(pagerOption , (currentValue) => {
