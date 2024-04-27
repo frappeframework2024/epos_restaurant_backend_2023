@@ -71,8 +71,6 @@ def rename_sync_data(doctype, data):
 
 
 def on_save(doc):
-    if doc.flags.disable_generate_data_for_sync:
-        return
     doc["__newname"] = doc["name"]
     meta = frappe.get_meta(doc['doctype'])
     for f in [d for d in  meta.fields if d.fieldtype=='Attach Image']:
@@ -81,6 +79,8 @@ def on_save(doc):
                 doc[f.fieldname] = "{}{}".format(frappe.db.get_single_value("ePOS Sync Setting","server_url") ,doc[f.fieldname])
             
     doc = frappe.get_doc(doc)
+    if doc.flags.disable_generate_data_for_sync:
+        return
     doc.flags.ignore_validate = True
     doc.flags.ignore_insert = True
     doc.flags.ignore_after_insert = True
@@ -93,7 +93,7 @@ def on_save(doc):
     
     doc.insert(ignore_permissions=True, ignore_links=True)
 
-
+    
 
 def on_rename(doc):
     doc.flags.ignore_validate = True
@@ -162,7 +162,7 @@ def get_data_for_sync(business_branch=None):
             client_doctype = {"doctype":dt.document_type}
             # update data 
             breakdown_data =[d["document_name"] for d in data if d["document_type"] == dt.document_type and d["is_deleted"]==0 and d['is_renamed'] == 0]
-             
+            
             
             client_doctype["update"] =[breakdown_data[i:i+dt.total_record_per_sync] for i in range(0, len(breakdown_data), dt.total_record_per_sync)]
             client_doctype["delete"] =set([d["document_name"] for d in data if d["document_type"] == dt.document_type and d["is_deleted"]==1])
