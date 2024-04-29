@@ -46,7 +46,14 @@ frappe.ui.form.on("Stock Take",{
 		frm.refresh_field('scan_barcode');
 	},
     stock_location(frm){
-		update_stock_from(frm)
+		if(frm.doc.stock_take_products.length > 0){
+            $.each(frm.doc.stock_take_products, function(i, d) {
+                if(d.product_code){
+					get_currenct_cost(frm,d);
+					updateSumTotal(frm);
+				}
+            });
+        }
     },
 });
 
@@ -77,7 +84,6 @@ function update_stock_take_product_amount(frm,cdt, cdn)  {
 }
 
 function get_currenct_cost(frm,doc){
-	console.log(frm.doc.stock_location)
 	if (frm.doc.stock_location == undefined){
 		frappe.throw("Please Select Stock Location First")
 		return
@@ -92,6 +98,7 @@ function get_currenct_cost(frm,doc){
 		callback: function(r){
 			if(doc!=undefined){
 				doc.price = r.message.cost;
+				doc.base_cost = r.message.cost;
 				doc.amount = doc.quantity * doc.price;
 			}
 			frm.refresh_field('stock_take_products');
@@ -165,6 +172,7 @@ function add_product_child(frm,p){
 function product_by_scan(frm,doc){
 	get_product_cost(frm,doc).then((v)=>{
 		doc.price = v;
+		doc.base_cost = v;
 		doc.amount=doc.quantity * doc.price;
 		frm.refresh_field('stock_take_products');
 		updateSumTotal(frm);
@@ -190,27 +198,12 @@ let get_product_cost = function (frm,doc) {
 		});
 	});
 }
-async function update_stock_from(frm){
-	let rows = frm.fields_dict["stock_take_products"].grid.grid_rows;
-	 $.each(rows, async function(i, d)  {
-		if(d.doc.product_code!=undefined)
-		{
-			get_currenct_cost(frm,d.doc.product_code)
-			get_product_cost(frm,d.doc).then((v)=>{
-				d.doc.price = v;
-				d.doc.amount = d.doc.price * d.doc.quantity;
-				frm.refresh_field('stock_take_products');
-				updateSumTotal(frm);
-			});
-		}
-	});
-	
 
-}
 function product_code(frm,cdt,cdn){
 	let doc = locals[cdt][cdn]
 	get_product_cost(frm,doc).then((v)=>{
 		doc.price = v;
+		doc.base_cost = v;
 		frm.refresh_field('stock_take_products');
 		update_stock_take_product_amount(frm,cdt,cdn)
 	});

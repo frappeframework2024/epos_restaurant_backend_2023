@@ -11,15 +11,6 @@ class StockTransfer(Document):
 	def validate(self):
 		if self.from_stock_location == self.to_stock_location:
 			frappe.throw("Cannot transfer to the same stock location.")
-		for d in self.stock_transfer_products:
-			d.base_cost  = get_product_cost(self.from_stock_location, d.product_code)
-			d.cost = d.base_cost
-			d.amount = d.quantity * d.cost
-			if d.base_unit != d.unit:
-				uom_conversion = get_uom_conversion(d.base_unit, d.unit)
-				
-				d.cost = d.cost / uom_conversion
-				d.amunt = d.cost * d.quantity
 
 		total_quantity = Enumerable(self.stock_transfer_products).sum(lambda x: x.quantity or 0)
 		total_amount = Enumerable(self.stock_transfer_products).sum(lambda x: (x.quantity or 0)* (x.cost or  0))
@@ -44,13 +35,17 @@ class StockTransfer(Document):
 
 	
 	def on_submit(self):
-		update_inventory_on_submit(self)
-		#frappe.enqueue("epos_restaurant_2023.inventory.doctype.stock_transfer.stock_transfer.update_inventory_on_submit", queue='short', self=self)
+		if len(self.stock_transfer_products)>=10:
+			update_inventory_on_submit(self)
+		else:
+			frappe.enqueue("epos_restaurant_2023.inventory.doctype.stock_transfer.stock_transfer.update_inventory_on_submit", queue='short', self=self)
 					
 			
 	def on_cancel(self):
-		update_inventory_on_cancel(self)
-	# 	frappe.enqueue("epos_restaurant_2023.inventory.doctype.stock_transfer.stock_transfer.update_inventory_on_cancel", queue='short', self=self)
+		if len(self.stock_transfer_products)>=10:
+			update_inventory_on_cancel(self)
+		else:
+			frappe.enqueue("epos_restaurant_2023.inventory.doctype.stock_transfer.stock_transfer.update_inventory_on_cancel", queue='short', self=self)
 
 
  
@@ -80,8 +75,6 @@ def update_to_stock(cancel = False, self=None, p=None):
 		'stock_location':self.to_stock_location,
 		'in_quantity': 0 if cancel else p.quantity / uom_conversion,
 		'out_quantity': p.quantity / uom_conversion if cancel else 0,
-		"uom_conversion":uom_conversion,
-		"price":p.base_cost,
 		'note': "New stock transfer from {} to {} submitted.".format(self.from_stock_location,self.to_stock_location),
 		"action": "Cancel" if cancel else "Submit",
 		"has_expired_date":p.has_expired_date,

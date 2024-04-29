@@ -37,12 +37,16 @@ class PurchaseOrder(Document):
 		# 		frappe.throw("Total amount is 0")
 
 	def on_submit(self):
-		# update_inventory_on_submit(self)
-		frappe.enqueue("epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.update_inventory_on_submit", queue='short', self=self)
+		if len(self.purchase_order_products)>=10:
+			update_inventory_on_submit(self)
+		else:
+			frappe.enqueue("epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.update_inventory_on_submit", queue='short', self=self)
 	
 	def on_cancel(self):
-		#update_inventory_on_cancel(self)
-		frappe.enqueue("epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.update_inventory_on_cancel", queue='short', self=self)
+		if len(self.purchase_order_products)>=10:
+			update_inventory_on_cancel(self)
+		else:
+			frappe.enqueue("epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.update_inventory_on_cancel", queue='short', self=self)
 
 
 	def before_submit(self):
@@ -57,8 +61,7 @@ def update_inventory_on_submit(self):
 	
 	for p in self.purchase_order_products:
 		if p.is_inventory_product:
-			
-			uom_conversion = get_uom_conversion(p.base_unit, p.unit)
+			uom_conversion = (1 if (get_uom_conversion(p.base_unit, p.unit) or 0) == 0 else get_uom_conversion(p.base_unit, p.unit))
 			add_to_inventory_transaction({
 				'doctype': 'Inventory Transaction',
 				'transaction_type':"Purchase Order",
@@ -81,7 +84,7 @@ def update_inventory_on_submit(self):
 def update_inventory_on_cancel(self):
 	for p in self.purchase_order_products:
 		if p.is_inventory_product:
-			uom_conversion = get_uom_conversion(p.base_unit, p.unit)
+			uom_conversion = (1 if (get_uom_conversion(p.base_unit, p.unit) or 0) == 0 else get_uom_conversion(p.base_unit, p.unit))
 			add_to_inventory_transaction({
 				'doctype': 'Inventory Transaction',
 				'transaction_type':"Purchase Order",

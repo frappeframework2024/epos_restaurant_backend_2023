@@ -264,12 +264,38 @@ function add_product_to_po_product(frm, p) {
 		doc.sub_total = doc.quantity * doc.cost;
 		doc.unit = p.unit;
 		doc.product_name = p.product_name_en;
+		product_by_scan(frm,doc)
 		update_po_product_amount(frm, doc)
 	}
 }
 
+function product_by_scan(frm,doc){
+	get_product_cost(frm,doc).then((v)=>{
+		doc.cost = v;
+		doc.amount = doc.cost * doc.quantity;
+		frm.refresh_field('purchase_order_products');
+		updateSumTotal(frm);
+	});
+}
+let get_product_cost = function (frm,doc) {
+	return new Promise(function(resolve, reject) {
+		frappe.call({
+			method: "epos_restaurant_2023.inventory.doctype.product.product.get_product_cost_by_stock",
+			args: {
+				stock_location:frm.doc.stock_location,
+				product_code: doc.product_code
+			},
+			callback: function(r){
+				resolve(r.message.cost)
+			},
+			error: function(r) {
+				reject("error")
+			},
+		});
+	});
+}
+
 function get_currenct_cost(frm,doc){
-	console.log(frm.doc.stock_location)
 	if (frm.doc.stock_location == undefined){
 		frappe.throw("Please Select Stock Location First")
 		return
@@ -284,6 +310,7 @@ function get_currenct_cost(frm,doc){
 		callback: function(r){
 			if(doc!=undefined){
 				doc.cost = r.message.cost;
+				doc.amount = doc.cost * doc.quantity;
 			}
 			frm.refresh_field('purchase_order_products');
 		}

@@ -10,16 +10,6 @@ from frappe.model.document import Document
 
 class StockTake(Document):
 	def validate(self):
-		for d in self.stock_take_products:
-			d.base_cost  = get_product_cost(self.stock_location, d.product_code)
-			d.price = d.base_cost
-			
-			if d.base_unit != d.unit:
-				uom_conversion = get_uom_conversion(d.base_unit, d.unit)
-				
-				d.price = d.price / uom_conversion
-				d.amunt = d.price * d.quantity
-
 		total_quantity = Enumerable(self.stock_take_products).sum(lambda x: x.quantity or 0)
 		total_amount = Enumerable(self.stock_take_products).sum(lambda x: (x.quantity or 0)* (x.price or  0))
 

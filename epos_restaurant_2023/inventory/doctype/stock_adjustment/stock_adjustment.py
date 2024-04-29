@@ -22,9 +22,10 @@ class StockAdjustment(Document):
 			self.total_cost = total_cost
 
 	def on_submit(self):
-		
-		update_inventory_on_submit(self)
-		#frappe.enqueue("epos_restaurant_2023.inventory.doctype.stock_adjustment.stock_adjustment.update_inventory_on_submit", queue='short', self=self)
+		if len(self.products)>=10:
+			update_inventory_on_submit(self)
+		else:
+			frappe.enqueue("epos_restaurant_2023.inventory.doctype.stock_adjustment.stock_adjustment.update_inventory_on_submit", queue='short', self=self)
 	
 	def before_cancel(self):
 		frappe.throw(_("Stock adjustment transaction is not allow to cancel."))
