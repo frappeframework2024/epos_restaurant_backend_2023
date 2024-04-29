@@ -3,6 +3,7 @@ import frappe
 import json
 from frappe.utils.response import json_handler
 from datetime import datetime, timedelta
+from epos_restaurant_2023.inventory.inventory import get_uom_conversion
 @frappe.whitelist(allow_guest=True)
 def get_product_by_menu(root_menu="", mobile = 0):
     if root_menu=="":
@@ -238,3 +239,25 @@ def get_product_detail_information(product_code):
     inventory = frappe.db.sql("select stock_location,unit,quantity,reorder_level from `tabStock Location Product` where product_code='{}'".format(product_code),as_dict=1)
     
     return {"product":doc,"invenotry":inventory}
+
+@frappe.whitelist()
+def get_currenct_cost(product_code="",stock_location="",unit=""):
+    if product_code == "" or stock_location == "" or unit == "":
+        return {"cost":0,"quantity":0}
+    product = frappe.get_doc("Product",product_code)
+    uom_conversion = 1 if get_uom_conversion(product.unit, unit) == 0 or get_uom_conversion(product.unit, unit) is None else get_uom_conversion(product.unit, unit)
+    stock_location_products = frappe.db.sql("SELECT count(*) count FROM `tabStock Location Product` WHERE product_code = '{0}'".format(product_code),as_dict=1)
+   
+    if stock_location_products:
+        if stock_location_products[0].count>0:
+            doc = frappe.db.sql("SELECT cost/{2} cost,quantity*{2} quantity FROM `tabStock Location Product` WHERE product_code = '{0}' AND stock_location = '{1}' order by modified desc limit 1".format(product_code,stock_location,uom_conversion),as_dict=1)
+            if doc or len(doc)>0:
+                return doc[0]
+            else:
+                 return {"cost":0,"quantity":0}
+        else:
+            doc = frappe.db.sql("SELECT cost/{1} cost,0 quantity FROM `tabProduct` WHERE product_code = '{0}' limit 1".format(product_code,uom_conversion),as_dict=1)
+            return doc[0]
+    else:
+            doc = frappe.db.sql("SELECT cost/{1} cost,0 quantity FROM `tabProduct` WHERE product_code = '{0}' limit 1".format(product_code,uom_conversion),as_dict=1)
+            return doc[0]

@@ -69,7 +69,7 @@ def update_inventory_on_submit(self):
 				'stock_location':self.stock_location,
 				'in_quantity':p.quantity / uom_conversion,
 				"uom_conversion":uom_conversion,
-				"price":calculate_average_cost(p.product_code,self.stock_location,(p.quantity / uom_conversion),p.cost),
+				"price":calculate_average_cost(p.product_code,self.stock_location,(p.quantity / uom_conversion),p.cost*uom_conversion),
 				'note': 'New purchase order submitted.',
 				"has_expired_date":p.has_expired_date,
 				"expired_date":p.expired_date,

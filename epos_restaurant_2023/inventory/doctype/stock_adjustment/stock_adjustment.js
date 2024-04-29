@@ -15,8 +15,9 @@ frappe.ui.form.on("Stock Adjustment", {
     stock_location(frm){ 
         if(frm.doc.products.length > 0){
             $.each(frm.doc.products, function(i, d) {
-                if(d.product_code)
-                    get_location_product(frm,d)
+                if(d.product_code){
+					get_location_product(frm,d)
+				}
             });
         }
     },
@@ -60,32 +61,43 @@ frappe.ui.form.on('Stock Adjustment Product', {
 	product_code(frm,cdt, cdn) {
         let doc = locals[cdt][cdn];
         get_location_product(frm, doc)
-        
 	},
     quantity(frm,cdt, cdn){
         update_product_amount(frm,cdt, cdn);
     },
     cost(frm,cdt, cdn){
         update_product_amount(frm,cdt, cdn);
+    },
+	unit(frm,cdt, cdn){
+        let doc = locals[cdt][cdn];
+        get_location_product(frm,doc)
+    },
+	quantity(frm,cdt, cdn){
+        let doc = locals[cdt][cdn];
+        get_location_product(frm,doc)
     }
 })
 
 function get_location_product(frm, doc){
 
     frappe.call({
-        method: "epos_restaurant_2023.inventory.doctype.stock_location_product.stock_location_product.get_stock_location_product",
+        method: "epos_restaurant_2023.api.product.get_currenct_cost",
         args: {
-            stock_location:frm.doc.stock_location,
             product_code:doc.product_code,
+			stock_location:frm.doc.stock_location,
+			unit:doc.unit
         },
         callback: function(r){
             if(r.message!=undefined){
-                doc.current_quantity = doc.quantity = r.message.quantity;
-                doc.current_cost = doc.cost = r.message.cost;
+                doc.current_quantity = r.message.quantity;
+				doc.current_cost = r.message.cost;
+				doc.total_current_cost=doc.current_quantity * doc.current_cost;  
+
+				doc.cost = r.message.cost;
+				doc.total_cost = doc.quantity * doc.cost;      
+
                 doc.difference_quantity = doc.quantity - doc.current_quantity;
-                doc.difference_cost = doc.cost - doc.current_cost;
-                doc.total_cost=doc.quantity * doc.cost;           
-                doc.total_current_cost=doc.current_quantity * doc.current_cost;           
+                doc.difference_cost = doc.cost - doc.current_cost;         
                 updateSumTotal(frm)
             }
             else { 

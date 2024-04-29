@@ -190,7 +190,7 @@
    "default": "Today",
    "fetch_from": ".posting_date",
    "fieldname": "posting_date",
-   "fieldtype": "Datetime",
+   "fieldtype": "Date",
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Posting Date",
@@ -1156,7 +1156,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-04-20 12:06:29.600712",
+ "modified": "2024-04-29 11:01:01.146934",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

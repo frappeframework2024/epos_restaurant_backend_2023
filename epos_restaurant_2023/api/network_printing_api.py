@@ -59,7 +59,7 @@ def on_print(file_path, printer, delete_file = 1):
 
 
 # @frappe.whitelist(allow_guest=True,methods='POST')
-@frappe.whitelist(methods="POST")
+@frappe.whitelist(allow_guest=True)
 def print_bill_to_network_printer(data):
     if not frappe.db.exists("Sale",data["name"]):
         return ""  

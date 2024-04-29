@@ -9,6 +9,7 @@
   "product_code",
   "product_name",
   "unit",
+  "base_unit",
   "column_break_4",
   "quantity",
   "cost",
@@ -45,6 +46,7 @@
   },
   {
    "fetch_from": "product_code.unit",
+   "fetch_if_empty": 1,
    "fieldname": "unit",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -82,7 +84,8 @@
    "default": "0",
    "fieldname": "current_quantity",
    "fieldtype": "Float",
-   "label": "Current Quantity"
+   "label": "Current Quantity",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_10",
@@ -92,7 +95,8 @@
    "default": "0",
    "fieldname": "current_cost",
    "fieldtype": "Currency",
-   "label": "Current Cost"
+   "label": "Current Cost",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_12",
@@ -101,7 +105,8 @@
   {
    "fieldname": "total_current_cost",
    "fieldtype": "Currency",
-   "label": "Total Current Cost"
+   "label": "Total Current Cost",
+   "read_only": 1
   },
   {
    "fieldname": "differenct_section",
@@ -143,12 +148,20 @@
    "fieldname": "is_inventory_product",
    "fieldtype": "Check",
    "label": "Is Inventory Product"
+  },
+  {
+   "fetch_from": "product_code.unit",
+   "fetch_if_empty": 1,
+   "fieldname": "base_unit",
+   "fieldtype": "Data",
+   "label": "Base Unit",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-01-02 16:40:20.275185",
+ "modified": "2024-04-29 12:10:06.610011",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Adjustment Product",

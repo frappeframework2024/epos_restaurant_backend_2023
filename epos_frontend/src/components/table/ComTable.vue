@@ -230,6 +230,8 @@ function renderTemplate(template) {
     });
 }
 function getDataResourceParams() {
+     
+ 
 
     return {
         doctype: props.doctype,

@@ -13,7 +13,7 @@ class StockTake(Document):
 		for d in self.stock_take_products:
 			d.base_cost  = get_product_cost(self.stock_location, d.product_code)
 			d.price = d.base_cost
-			d.amount = d.quantity * d.price
+			
 			if d.base_unit != d.unit:
 				uom_conversion = get_uom_conversion(d.base_unit, d.unit)
 				

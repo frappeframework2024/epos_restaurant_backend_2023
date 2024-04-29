@@ -57,7 +57,7 @@ import { createBottomSheet } from 'bottom-sheet-vue3'
 import 'bottom-sheet-vue3/style.css'
 // i18n
 import { i18n } from "./i18n";
-import { mainTheme, secondaryTheme } from '@/utils/theme.js'; 
+import { mainTheme, secondaryTheme } from '@/utils/theme.js';
 const app = createApp(App);
 
 const frappe = new FrappeApp();
@@ -92,7 +92,7 @@ const vuetify = createVuetify({
 	// 	themes: {
 	// 		secondaryTheme,
 	// 	},
-	//  },
+	// },
 
 });
 
@@ -182,6 +182,16 @@ router.beforeEach(async (to, from, next) => {
 	}
 });
 
+// prevent double table in ipad to zoom in
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function(event) {
+    const now = Date.now();
+    if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+    }
+    lastTouchEnd = now;
+});
+//end prevent double table in ipad to zoom in
 
 app.component('CurrencyFormat', CurrencyFormat);
 app.component('ComPlaceholder', ComPlaceholder);

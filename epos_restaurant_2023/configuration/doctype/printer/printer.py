@@ -2,6 +2,7 @@
 # For license information, please see license.txt
 
 import frappe
+from escpos.printer import Network
 from frappe.model.document import Document
 
 class Printer(Document):

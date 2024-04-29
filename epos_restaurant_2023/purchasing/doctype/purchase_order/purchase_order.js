@@ -79,6 +79,15 @@ frappe.ui.form.on("Purchase Order", {
 
 
 	},
+	stock_location(frm){ 
+        if(frm.doc.purchase_order_products.length > 0){
+            $.each(frm.doc.purchase_order_products, function(i, d) {
+                if(d.product_code){
+					get_currenct_cost(frm,d)
+				}
+            });
+        }
+    },
 	discount_type(frm) {
 		update_po_discount_to_po_product(frm);
 	},
@@ -130,9 +139,13 @@ function updateSummary(frm) {
 frappe.ui.form.on('Purchase Order Products', {
 	product_code(frm, cdt, cdn) {
 		let doc = locals[cdt][cdn];
-
+		get_currenct_cost(frm,doc)
 		update_po_product_amount(frm, doc);
-		frm.refresh_field('purchase_order_products');
+	},
+	unit(frm,cdt,cdn){
+		let doc = locals[cdt][cdn];
+		get_currenct_cost(frm,doc)
+		update_po_product_amount(frm, doc);
 	},
 	quantity(frm, cdt, cdn) {
 		update_purchase_order_products_amount(frm, cdt, cdn);
@@ -253,6 +266,29 @@ function add_product_to_po_product(frm, p) {
 		doc.product_name = p.product_name_en;
 		update_po_product_amount(frm, doc)
 	}
+}
+
+function get_currenct_cost(frm,doc){
+	console.log(frm.doc.stock_location)
+	if (frm.doc.stock_location == undefined){
+		frappe.throw("Please Select Stock Location First")
+		return
+	}
+	frappe.call({
+		method: "epos_restaurant_2023.api.product.get_currenct_cost",
+		args: {
+			product_code:doc.product_code,
+			stock_location:frm.doc.stock_location,
+			unit:doc.unit
+		},
+		callback: function(r){
+			if(doc!=undefined){
+				doc.cost = r.message.cost;
+			}
+			frm.refresh_field('purchase_order_products');
+		}
+	});
+	
 }
 
 function update_po_product_amount(frm, doc) {

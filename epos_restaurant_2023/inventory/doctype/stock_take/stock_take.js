@@ -52,15 +52,20 @@ frappe.ui.form.on("Stock Take",{
 
 frappe.ui.form.on("Stock Take Products", {
     product_code(frm,cdt, cdn){
+		let doc = locals[cdt][cdn];
         product_code(frm,cdt,cdn);
-        frm.refresh_field('stock_take_products');
+		get_currenct_cost(frm,doc)
     },
     quantity(frm,cdt, cdn){
         update_stock_take_product_amount(frm,cdt, cdn)
     },
     price(frm,cdt, cdn){
         update_stock_take_product_amount(frm,cdt, cdn)
-    }
+    },
+	unit(frm,cdt,cdn){
+		let doc = locals[cdt][cdn];
+		get_currenct_cost(frm,doc)
+	}
 });
 
 function update_stock_take_product_amount(frm,cdt, cdn)  {
@@ -69,6 +74,30 @@ function update_stock_take_product_amount(frm,cdt, cdn)  {
 		doc.amount=doc.quantity * doc.price;
 	    frm.refresh_field('stock_take_products');
 		updateSumTotal(frm);
+}
+
+function get_currenct_cost(frm,doc){
+	console.log(frm.doc.stock_location)
+	if (frm.doc.stock_location == undefined){
+		frappe.throw("Please Select Stock Location First")
+		return
+	}
+	frappe.call({
+		method: "epos_restaurant_2023.api.product.get_currenct_cost",
+		args: {
+			product_code:doc.product_code,
+			stock_location:frm.doc.stock_location,
+			unit:doc.unit
+		},
+		callback: function(r){
+			if(doc!=undefined){
+				doc.price = r.message.cost;
+				doc.amount = doc.quantity * doc.price;
+			}
+			frm.refresh_field('stock_take_products');
+		}
+	});
+	
 }
 
 function updateSumTotal(frm) {
@@ -164,9 +193,9 @@ let get_product_cost = function (frm,doc) {
 async function update_stock_from(frm){
 	let rows = frm.fields_dict["stock_take_products"].grid.grid_rows;
 	 $.each(rows, async function(i, d)  {
-		
 		if(d.doc.product_code!=undefined)
 		{
+			get_currenct_cost(frm,d.doc.product_code)
 			get_product_cost(frm,d.doc).then((v)=>{
 				d.doc.price = v;
 				d.doc.amount = d.doc.price * d.doc.quantity;
