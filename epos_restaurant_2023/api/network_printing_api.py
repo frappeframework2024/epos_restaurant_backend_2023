@@ -13,6 +13,9 @@ from epos_restaurant_2023.api.printing import (
     )
 
 def html_to_image(height,width,html,css,path,image):    
+    if not os.path.exists(path):
+        os.makedirs(path)
+        os.chmod(path, 0o777)
     hti = Html2Image()    
     hti.output_path = path
     hti.size=(width, height)

@@ -49,6 +49,6 @@ def get_column(filters):
 	columns.append({"label":"Name","fieldname":"name","fieldtype":"Link","options":"Sale","align":"left",'width':180})
 	columns.append({"label":"Bill Number","fieldname":"bill_number","fieldtype":"Data","align":"left",'width':200})
 	columns.append({"label":"Quantity","fieldname":"quantity","fieldtype":"INT","align":"center",'width':60})
-	columns.append({"label":"Price","fieldname":"price","fieldtype":"Currency","align":"center",'width':100})
-	columns.append({"label":"Total Amount","fieldname":"amount","fieldtype":"Currency","align":"center",'width':100})
+	columns.append({"label":"Price","fieldname":"price","fieldtype":"Currency","align":"right",'width':100})
+	columns.append({"label":"Total Amount","fieldname":"amount","fieldtype":"Currency","align":"right",'width':100})
 	return columns

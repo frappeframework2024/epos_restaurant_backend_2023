@@ -49,7 +49,7 @@
                     <v-chip v-if="sp.quantity<0" variant="outlined" color="red">{{ $t("Return") }}</v-chip>
                     <v-tooltip activator="parent" location="start">{{ sp.product_name }} </v-tooltip>
                   </p>  
-                  <p>
+                  <p v-if="sp.product_name != sp.product_name_kh">
                     {{ sp.product_name_kh }}
                     <v-tooltip activator="parent" location="start">{{ sp.product_name_kh }} </v-tooltip>
                   </p> 
