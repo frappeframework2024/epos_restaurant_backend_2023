@@ -73,7 +73,7 @@ def print_bill_to_network_printer(data):
 
 
     img_name = str(uuid.uuid4())+".PNG"
-    path = frappe.get_site_path()+"/file/"
+    path = frappe.get_site_path()+"/file/receipt/"
     height = fixed_height
     if len(doc.sale_products) > 0:
         height += (len(doc.sale_products) * item_height)

@@ -1743,10 +1743,8 @@ export default class Sale {
 
         if ((this.setting?.device_setting?.use_server_network_printing || 0) == 1) {
             //printer network
-            console.log(kotProducts)
             if (kotProducts.printers.length > 0) {
                 call.post("epos_restaurant_2023.api.network_printing_api.print_kot_to_network_printer", { "data": kotProducts })
-                console.log(kotProducts)
             }
             //trigger print usb print
             if (productUSBPrinter.printers.length > 0) {

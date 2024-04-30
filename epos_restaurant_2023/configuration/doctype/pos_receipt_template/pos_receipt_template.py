@@ -20,4 +20,6 @@ class POSReceiptTemplate(Document):
 		validate_template(self.template)
 
 
-
+@frappe.whitelist()
+def get_print_preview_data(name):
+    return "xxx"
