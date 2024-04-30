@@ -11,7 +11,7 @@
         class="relative h-full bg-cover bg-no-repeat rounded-lg shadow-lg cursor-pointer overflow-auto" v-bind:style="{
         'background-color': data.background_color,
         'color': data.text_color,
-        'background-image': 'url(' + encodeURIComponent(data.photo).replace(/%2F/g, '/') + ')',
+        'background-image': 'url(' + encodeURIComponent(data.photo).replace(/%2F/g, '/').replace(/%3A/g, ':').replace(/%3F/g, '?').replace(/%3D/g, '=').replace(/%26/g, '&')  + ')',
         'background-size': 'contain', 'background-position': 'center center'
     }" @click="onClickMenu(data.name)">
         <div class="absolute top-0 bottom-0 right-0 left-0">
