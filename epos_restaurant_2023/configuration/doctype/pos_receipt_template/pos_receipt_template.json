@@ -15,7 +15,8 @@
   "section_break_pdgf",
   "template",
   "section_break_novm",
-  "style"
+  "style",
+  "sample_data"
  ],
  "fields": [
   {
@@ -67,11 +68,16 @@
   {
    "fieldname": "column_break_jnpb",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sample_data",
+   "fieldtype": "JSON",
+   "label": "Sample Data"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-04-24 15:00:16.701731",
+ "modified": "2024-04-30 11:18:32.475635",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Receipt Template",

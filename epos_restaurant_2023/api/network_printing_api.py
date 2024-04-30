@@ -50,6 +50,7 @@ def on_print(file_path, printer, delete_file = 1):
         try:
             printer = Network(printer["ip_address"])
             printer.image(file_path)
+            printer.text(" ")
             printer.cut()
             printer.close()
             if delete_file == 1:
