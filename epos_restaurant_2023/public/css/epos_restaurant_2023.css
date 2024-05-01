@@ -25,7 +25,7 @@
 }
 
 .navbar {
-    background: #3a5a40 !important;
+    background-image: url(../images/background/svg_blue.png) !important;;
     height: 60px !important;
 }
 
@@ -88,6 +88,6 @@
 
 }
 
-/* .page-container {
-    background: url(../images/background_pattern/moroccan-flower.png) !important;
-} */
+.page-container {
+    background-image: url(../images/svg/bg_svg.svg) !important;
+}
