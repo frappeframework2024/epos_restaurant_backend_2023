@@ -55,8 +55,28 @@ class Customer(Document):
 			'customer_code_name': "{} - {}".format(new_name,self.customer_name_en),
 			'customer_code': new_name		
 		}) 
-		
-  
+	def on_update(self):
+		old_name = frappe.db.sql("select customer_name from tabSale where customer = '{0}' order by creation limit 1".format(self.name),as_dict=1)
+		if old_name:
+			if old_name[0].customer_name != self.customer_name_en:
+				frappe.db.sql("update tabSale set customer_name = '{0}' where customer = '{1}'".format(self.customer_name_en,self.name))
+				frappe.db.sql("update `tabSale Payment` set customer_name = '{0}' where customer = '{1}'".format(self.customer_name_en,self.name))
+
+@frappe.whitelist()
+def update_customer_infomation_to_transaction():
+	frappe.db.sql("""UPDATE `tabSale` s
+						INNER JOIN `tabCustomer` c ON s.customer = c.name
+						SET s.customer_name = c.customer_name_en,
+			   				s.phone_number = c.phone_number,
+			   				s.customer_group = c.customer_group
+			   """)
+
+	frappe.db.sql("""UPDATE `tabSale Payment` sp
+						INNER JOIN `tabCustomer` c ON sp.customer = c.name
+						SET sp.customer_name = c.customer_name_en
+			   """)
+	frappe.db.commit()
+
 @frappe.whitelist()
 def get_customer_order_summary(customer):
 	total_visit = 0
