@@ -100,12 +100,12 @@ export default class Sale {
 
     }
 
-    createNewSaleResource() {
+    createNewSaleResource()  {
         const parent = this;
         this.newSaleResource = createResource({
             url: "frappe.client.insert",
-            onSuccess(doc) {
-                parent.onProcessTaskAfterSubmit(doc);
+           async onSuccess(doc)  {
+             await  parent.onProcessTaskAfterSubmit(doc);
                 parent.action = "";
                 if (parent.message != undefined) {
                     toaster.success(parent.message);
@@ -195,9 +195,9 @@ export default class Sale {
                 doctype: "Sale",
                 name: name,
                 setValue: {
-                    onSuccess(doc) {
+                  async  onSuccess(doc) {
                         parent.sale = doc;
-                        parent.onProcessTaskAfterSubmit(doc);
+                        await   parent.onProcessTaskAfterSubmit(doc);
                         parent.action = "";
                         if (parent.message != undefined) {
                             toaster.success(parent.message);
@@ -1596,15 +1596,11 @@ export default class Sale {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async onProcessTaskAfterSubmit(doc) {
-
+    async onProcessTaskAfterSubmit(doc) { 
         if (this.action == "submit_order") {
             this.onPrintToKitchen(doc);
-
-           
             //print waiting doc
             if (this.setting.pos_setting.print_waiting_order_after_submit_order) {
-                await this.timerSleep(250)
                 this.onPrintWaitingOrder(doc);
             }
         }
@@ -1612,38 +1608,34 @@ export default class Sale {
             if (this.pos_receipt == undefined || this.pos_receipt == null) {
                 this.pos_receipt = this.setting?.default_pos_receipt;
             }
-            this.onPrintReceipt(this.pos_receipt, "print_invoice", doc);
-             await this.timerSleep(250)
             this.onPrintToKitchen(doc);
+
+            this.onPrintReceipt(this.pos_receipt, "print_invoice", doc);
         }
         else if (this.action == "quick_pay") {
-            this.onPrintReceipt(this.setting?.default_pos_receipt, "print_receipt", doc);
-            await this.timerSleep(250)
+            
             this.onPrintToKitchen(doc);
             if (this.printWaitingOrderAfterPayment) {
-                await this.timerSleep(250)
                 this.onPrintWaitingOrder(doc);
             }
+            
+            this.onPrintReceipt(this.setting?.default_pos_receipt, "print_receipt", doc);
         }
-        else if (this.action == "payment") {
-
-            if (this.isPrintReceipt == true) {
-                this.onPrintReceipt(this.pos_receipt, "print_receipt", doc);
-            }
-
-            await this.timerSleep(250)
+        else if (this.action == "payment") {  
+            
             //open cashdrawer
             if (localStorage.getItem("is_window") == "1") {
                 window.chrome.webview.postMessage(JSON.stringify({ action: "open_cashdrawer" }));
             }
-
-
-            this.onPrintToKitchen(doc);
+            this.onPrintToKitchen(doc); 
             if (this.printWaitingOrderAfterPayment) {
-                await this.timerSleep(250)
-                this.onPrintWaitingOrder(doc);
+                    this.onPrintWaitingOrder(doc);
+            }  
+            
+            if (this.isPrintReceipt == true) {
+                await  this.onPrintReceipt(this.pos_receipt, "print_receipt", doc);
             }
-
+           
         }
 
         //create deleted sale product to database;

@@ -14,10 +14,54 @@ from frappe.utils import (
 	create_batch,
 	make_filter_dict,
 )
+from escpos.printer import Network
 from frappe.utils.background_jobs import get_queues, get_redis_conn
-
+import math
 QUEUES = ["default", "long", "short"]
 JOB_STATUSES = ["queued", "started", "failed", "finished", "deferred", "scheduled", "canceled"]
+
+@frappe.whitelist()
+def print_me():
+    import time
+    printer = Network("192.168.10.87")
+    # try:
+    from escpos.image import EscposImage,Image
+    # Open the image file
+    img = Image.open('/home/erpuser/frappe_2024/sites/epos.dev/public/files/print.png')
+    # img= Image.open('/home/erpuser/frappe_2024/sites/epos.dev/file/receipt/print.jpg')
+    width, height = img.size
+    height = height + 100
+    # Define the height of each fragment
+    fragment_height = 350
+
+    # Calculate the number of fragments needed
+    num_fragments = height // fragment_height
+
+    # Split the image into fragments
+    fragments = []
+    for i in range(num_fragments):
+        top = i * fragment_height
+        bottom = min((i + 1) * fragment_height, height) + 50
+        fragment = img.crop((0, top, width, bottom))
+        fragments.append(fragment)
+    
+    
+    # Print each fragment
+    for fragment in fragments:
+        printer.image(fragment)
+        time.sleep(0.2)
+    # printer.image(fragments[1])
+    time.sleep(0.2)
+    printer.text("-----------")
+    printer.cut()
+    printer.close()
+        # printer.text(" ")
+    # except OSError as e:
+    #     return (str(e))
+    # finally:
+    #     printer.cut()
+    #     printer.close()
+    #     return "done"
 
 @frappe.whitelist()
 def generate_data_for_sync_record(doc, method=None, *args, **kwargs):

@@ -62,6 +62,7 @@ class Customer(Document):
 				frappe.db.sql("update tabSale set customer_name = '{0}' where customer = '{1}'".format(self.customer_name_en,self.name))
 				frappe.db.sql("update `tabSale Payment` set customer_name = '{0}' where customer = '{1}'".format(self.customer_name_en,self.name))
 
+
 @frappe.whitelist()
 def update_customer_infomation_to_transaction():
 	frappe.db.sql("""UPDATE `tabSale` s

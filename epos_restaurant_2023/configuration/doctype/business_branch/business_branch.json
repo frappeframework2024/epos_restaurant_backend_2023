@@ -10,6 +10,7 @@
  "field_order": [
   "photo",
   "property_background_banner",
+  "pattern_background",
   "business_banch_name_en",
   "business_banch_name_kh",
   "property_code",
@@ -261,12 +262,17 @@
    "fieldname": "vattin_number",
    "fieldtype": "Data",
    "label": "Vattin number"
+  },
+  {
+   "fieldname": "pattern_background",
+   "fieldtype": "Attach Image",
+   "label": "Pattern Background"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-03-28 17:07:13.268232",
+ "modified": "2024-05-01 10:13:03.003455",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",

@@ -183,14 +183,14 @@ router.beforeEach(async (to, from, next) => {
 });
 
 // prevent double table in ipad to zoom in
-let lastTouchEnd = 0;
-document.addEventListener('touchend', function(event) {
-    const now = Date.now();
-    if (now - lastTouchEnd <= 300) {
-        event.preventDefault();
-    }
-    lastTouchEnd = now;
-});
+// let lastTouchEnd = 0;
+// document.addEventListener('touchend', function(event) {
+//     const now = Date.now();
+//     if (now - lastTouchEnd <= 300) {
+//         event.preventDefault();
+//     }
+//     lastTouchEnd = now;
+// });
 //end prevent double table in ipad to zoom in
 
 app.component('CurrencyFormat', CurrencyFormat);
