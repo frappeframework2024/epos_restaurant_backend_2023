@@ -9,3 +9,4 @@ ePOS Report
 Tour Managements
 Product Manager
 GYM
+Account

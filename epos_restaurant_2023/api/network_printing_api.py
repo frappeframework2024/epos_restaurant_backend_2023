@@ -102,11 +102,11 @@ def on_print(file_path, printer, delete_file = 1):
 # @frappe.whitelist(allow_guest=True,methods='POST') 
 @frappe.whitelist(methods="POST")
 def print_bill_to_network_printer(data):     
-    frappe.enqueue("epos_restaurant_2023.api.network_printing_api.print_bill_to_network_printer_queue",data=data,queue="long")
+    frappe.enqueue("epos_restaurant_2023.api.network_printing_api.print_bill_to_network_printer_queue",data=data,queue="short")
     
 # @frappe.whitelist(allow_guest=True)
 def print_bill_to_network_printer_queue(data):
-    time.sleep(0.2)
+    # time.sleep(0.2)
     if not frappe.db.exists("Sale",data["name"]):
         return ""  
     doc = frappe.get_doc("Sale", data["name"]) 
@@ -122,12 +122,12 @@ def print_bill_to_network_printer_queue(data):
 
     if data["action"] == "print_invoice":
         for i in range(data["print_setting"]["print_invoice_copies"]):
-            time.sleep(0.2)
+            time.sleep(0.05)
             on_print(file_path=file_path,printer= data["printer"], delete_file=0)
 
     elif data["action"] == "print_receipt":
         for i in range(data["print_setting"]["print_receipt_copies"]):
-            time.sleep(0.2)
+            time.sleep(0.05)
             on_print(file_path=file_path,printer= data["printer"], delete_file=0)
 
     ## delete file after print        
@@ -142,7 +142,7 @@ def print_bill_to_network_printer_queue(data):
 # @frappe.whitelist(allow_guest=True,methods="POST")
 @frappe.whitelist(methods="POST")
 def print_kot_to_network_printer(data):  
-    frappe.enqueue("epos_restaurant_2023.api.network_printing_api.print_kot_to_network_printer_enque",data=data,queue="long")
+    frappe.enqueue("epos_restaurant_2023.api.network_printing_api.print_kot_to_network_printer_enque",data=data,queue="short")
     
 ## KOT Printing
 # @frappe.whitelist(allow_guest=True,methods="POST")
@@ -234,7 +234,7 @@ def _on_kot_print(template ,  station, printer,sale, sale_products):
 ## Print Waiting Number
 @frappe.whitelist(methods="POST")
 def print_waiting_number_to_network_printer(data):
-    frappe.enqueue("epos_restaurant_2023.api.network_printing_api.print_waiting_number_to_network_printer_enque",data=data,queue="long")
+    frappe.enqueue("epos_restaurant_2023.api.network_printing_api.print_waiting_number_to_network_printer_enque",data=data,queue="short")
 
 # @frappe.whitelist(allow_guest=True,methods="POST")
 def print_waiting_number_to_network_printer_enque(data):
@@ -257,7 +257,7 @@ def print_waiting_number_to_network_printer_enque(data):
 ## Print Voucher Slip
 @frappe.whitelist(methods="POST")
 def print_voucher_to_network_printer(data):
-    frappe.enqueue("epos_restaurant_2023.api.network_printing_api.print_voucher_to_network_printer_enque",data=data,queue="long")
+    frappe.enqueue("epos_restaurant_2023.api.network_printing_api.print_voucher_to_network_printer_enque",data=data,queue="short")
 
 # @frappe.whitelist(allow_guest=True,methods="POST")
 def print_voucher_to_network_printer_enque(data):
@@ -294,7 +294,7 @@ def print_wifi_to_network_printer(data):
 # Print report
 @frappe.whitelist(methods="POST")
 def print_report_to_network_printer(data):
-    frappe.enqueue("epos_restaurant_2023.api.network_printing_api.print_report_to_network_printer_enque",data=data,queue="long")
+    frappe.enqueue("epos_restaurant_2023.api.network_printing_api.print_report_to_network_printer_enque",data=data,queue="short")
 
 # @frappe.whitelist(allow_guest=True,methods="POST")
 def print_report_to_network_printer_enque(data):

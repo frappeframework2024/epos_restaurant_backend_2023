@@ -850,6 +850,16 @@ def update_print_bill_requested(name):
     doc.save()
     frappe.db.commit()
     return doc
+@frappe.whitelist( methods="POST")
+def update_cancel_print_request(data):
+    result = []
+    for a in data:
+        doc = frappe.get_doc("Sale", a["name"])
+        doc.sale_status = "Submitted"
+        doc.save() 
+    frappe.db.commit()
+
+    return True
 
 @frappe.whitelist(methods="POST")
 def get_sale_list_table_badge(data):
@@ -900,6 +910,8 @@ def get_pending_sale_orders(data):
 
     result = frappe.db.sql(sql,as_dict=1)
     return result
+
+
 
 @frappe.whitelist()
 def get_working_day_list_report(business_branch = '', pos_profile = ''): 

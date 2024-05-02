@@ -23,7 +23,7 @@
 
 </template>
 <script setup>
-import { inject, ref, useRouter, confirmDialog, createDocumentResource, createResource, smallViewSaleProductListModal, i18n, onMounted } from '@/plugin'
+import { inject, ref, useRouter, confirmDialog,  smallViewSaleProductListModal, i18n } from '@/plugin'
 import { useDisplay } from 'vuetify'
 import ComSaleListItem from './ComSaleListItem.vue';
 import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
@@ -69,16 +69,50 @@ async function onPrintAllBill(receipt) {
     if (await confirmDialog({ title: $t('Print all Receipts'), text: $t('msg.are you sure to print all receipts') })) {
         let promises = [];
         isLoading.value = true; 
-        props.params.data.filter(r => r.sale_status == "Submitted").forEach(async (d) => { 
-            promises.push(PrintReceipt(d,receipt));         
-        });
 
-        Promise.all(promises).then(() => {
-            toaster.success($t('msg.All receipts has been sent to printer successfully'));
-            tableLayout.getSaleList();
-            isLoading.value = false;
-            emit('resolve', true);
-        })
+        // check if print server printing
+        let other_printing = true
+        // if((sale.setting?.device_setting?.use_server_network_printing||0)==1){
+        //     var printer = (sale.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+        //     if (printer.length <= 0) {
+        //         other_printing = false;
+        //         toaster.warning($t("Printer not yet config for this device"))
+        //     } 
+        //     if(printer[0].usb_printing == 0){ 
+        //         const body ={
+        //             "data":{
+        //                 "name":data["sale"]["name"],
+        //                 "reprint":0,
+        //                 "action":data["action"],
+        //                 "print_setting":data["print_setting"],
+        //                 "template_name":data["print_setting"]["pos_receipt_template"],
+        //                 "printer" : {
+        //                     "printer_name": printer[0].printer_name,
+        //                     "ip_address": printer[0].ip_address,
+        //                     "port": printer[0].port,
+        //                     "cashier_printer": printer[0].cashier_printer,
+        //                     "is_label_printer": printer[0].is_label_printer,
+        //                     "usb_printing": printer[0].usb_printing,
+        //                 }
+        //             }
+        //         }  
+        //         call.post("epos_restaurant_2023.api.network_printing_api.print_bill_to_network_printer",body)
+        //         other_printing = false;
+        //     }      
+        // } 
+        if(other_printing==true){
+            //end check if server printing             
+            props.params.data.filter(r => r.sale_status == "Submitted").forEach(async (d) => { 
+                promises.push(PrintReceipt(d,receipt));         
+            });
+
+            Promise.all(promises).then(() => {
+                toaster.success($t('msg.All receipts has been sent to printer successfully'));
+                tableLayout.getSaleList();
+                isLoading.value = false;
+                emit('resolve', true);
+            })
+        }
     }
 
 }
@@ -127,7 +161,7 @@ async function onQuickPay(isPrint = true) {
 }
 
 async function PrintReceipt(d, receipt) { 
-    await call.get("epos_restaurant_2023.api.api.update_print_bill_requested", {name: d.name}).then((resp)=>{
+   await call.get("epos_restaurant_2023.api.api.update_print_bill_requested", {name: d.name}).then((resp)=>{
         let doc = resp.message;
         if((doc.sale_products.length||0)>0){
             onPrintProcess("print_invoice",receipt,doc);
@@ -213,37 +247,34 @@ async function onCancelPrintBill() {
 
     gv.authorize("cancel_print_bill_required_password", "cancel_print_bill", "cancel_print_bill_required_note", "Cancel Print Bill Note").then((v) => {
         if (v) {
-            isLoading.value = true;
-            const promises = [];
+            isLoading.value = true; 
+            let data_canncel_print =[]
             props.params.data.filter(r => r.sale_status == "Bill Requested").forEach(async (d) => {
-                promises.push(submitCancelPrintBill(d));
+                data_canncel_print.push(d)
             });
+            let body ={
+                data : data_canncel_print
+            } 
+            call.post("epos_restaurant_2023.api.api.update_cancel_print_request",body).then((resp)=>{
+                if(resp.message){
+                    props.params.data.filter(r => r.sale_status == "Bill Requested").forEach((d)=>{
+                        d.sale_status = "Submitted";
+                        d.sale_status_color = sale.setting.sale_status.find(r => r.name == 'Submitted').background_color;
+                    }) 
+                    toaster.success($t('msg.Cancel print successfully'));
+                    tableLayout.getSaleList();                
+                    isLoading.value = false;
+                }  
+            }).catch((err)=>{
 
-            Promise.all(promises).then(() => {
-                toaster.success($t('msg.Cancel print successfully'));
-                tableLayout.getSaleList();
                 isLoading.value = false;
-            });
+                toaster.warning($t('There are problem on bill canncel'));
+            }) 
         }
     })
 
 }
-
-
-async function submitCancelPrintBill(d) {
-    const resource = createDocumentResource({
-        doctype: "Sale",
-        name: d.name,
-    });
-    await resource.get.fetch().then(async (v) => {
-        await resource.setValue.submit({
-            sale_status: 'Submitted'
-        }).then((data) => {
-            d.sale_status = "Submitted";
-            d.sale_status_color = sale.setting.sale_status.find(r => r.name == 'Submitted').background_color;
-        });
-    })
-}
+ 
 
 async function openOrder(s) {
     if (mobile.value) {
