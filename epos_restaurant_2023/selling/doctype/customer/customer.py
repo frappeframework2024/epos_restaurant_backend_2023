@@ -56,15 +56,22 @@ class Customer(Document):
 			'customer_code': new_name		
 		}) 
 	def on_update(self):
-		old_name = frappe.db.sql("select customer_name from tabSale where customer = '{0}' order by creation limit 1".format(self.name),as_dict=1)
-		if old_name:
-			if old_name[0].customer_name != self.customer_name_en:
-				frappe.db.sql("update tabSale set customer_name = '{0}' where customer = '{1}'".format(self.customer_name_en,self.name))
-				frappe.db.sql("update `tabSale Payment` set customer_name = '{0}' where customer = '{1}'".format(self.customer_name_en,self.name))
+		frappe.enqueue(update_sale_customer_name, queue="short",doc=self)
+		
 
+def update_sale_customer_name(doc):
+	old_name = frappe.db.sql("select customer_name from tabSale where customer = '{0}' order by creation limit 1".format(doc.name),as_dict=1)
+	if old_name:
+		if old_name[0].customer_name != doc.customer_name_en:
+			frappe.db.sql("update tabSale set customer_name = '{0}' where customer = '{1}'".format(doc.customer_name_en,doc.name))
+			frappe.db.sql("update `tabSale Payment` set customer_name = '{0}' where customer = '{1}'".format(doc.customer_name_en,doc.name))
+			frappe.db.commit()
 
 @frappe.whitelist()
 def update_customer_infomation_to_transaction():
+	frappe.enqueue(update_customer_infomation_to_transaction_eqnueue,queue="short")
+
+def update_customer_infomation_to_transaction_eqnueue():
 	frappe.db.sql("""UPDATE `tabSale` s
 						INNER JOIN `tabCustomer` c ON s.customer = c.name
 						SET s.customer_name = c.customer_name_en,
