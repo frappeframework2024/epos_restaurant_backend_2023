@@ -61,7 +61,7 @@ def on_print(file_path, printer, delete_file = 1):
             _width,_height = im.size
             # _width = 590
  
-            crop_height = 150
+            crop_height = 200
             init_crop_height = 0 
             h = _height 
             while _height > crop_height: 
@@ -85,10 +85,8 @@ def on_print(file_path, printer, delete_file = 1):
 
             printer_obj.text(" ")           
             printer_obj.cut()
-            printer_obj.close() 
-            time.sleep(1)
-         
-           
+            printer_obj.close()
+
             if delete_file == 1:
                 if os.path.isfile(file_path):
                     os.remove(file_path)
@@ -101,14 +99,14 @@ def on_print(file_path, printer, delete_file = 1):
  
 
 
-# @frappe.whitelist(allow_guest=True,methods='POST')
-@frappe.whitelist(allow_guest=True)
+# @frappe.whitelist(allow_guest=True,methods='POST') 
+@frappe.whitelist(methods="POST")
 def print_bill_to_network_printer(data):     
     frappe.enqueue("epos_restaurant_2023.api.network_printing_api.print_bill_to_network_printer_queue",data=data,queue="long")
     
-@frappe.whitelist(allow_guest=True)
+# @frappe.whitelist(allow_guest=True)
 def print_bill_to_network_printer_queue(data):
-    time.sleep(0.5)
+    time.sleep(0.2)
     if not frappe.db.exists("Sale",data["name"]):
         return ""  
     doc = frappe.get_doc("Sale", data["name"]) 
@@ -124,14 +122,14 @@ def print_bill_to_network_printer_queue(data):
 
     if data["action"] == "print_invoice":
         for i in range(data["print_setting"]["print_invoice_copies"]):
-            time.sleep(0.5)
+            time.sleep(0.2)
             on_print(file_path=file_path,printer= data["printer"], delete_file=0)
 
     elif data["action"] == "print_receipt":
         for i in range(data["print_setting"]["print_receipt_copies"]):
-            time.sleep(0.5)
+            time.sleep(0.2)
             on_print(file_path=file_path,printer= data["printer"], delete_file=0)
-            
+
     ## delete file after print        
     try:
         if os.path.isfile(file_path):
@@ -141,13 +139,14 @@ def print_bill_to_network_printer_queue(data):
 
         
    
-@frappe.whitelist(allow_guest=True,methods="POST")
+# @frappe.whitelist(allow_guest=True,methods="POST")
+@frappe.whitelist(methods="POST")
 def print_kot_to_network_printer(data):  
     frappe.enqueue("epos_restaurant_2023.api.network_printing_api.print_kot_to_network_printer_enque",data=data,queue="long")
     
 ## KOT Printing
 # @frappe.whitelist(allow_guest=True,methods="POST")
-@frappe.whitelist(methods="POST")
+
 def print_kot_to_network_printer_enque(data):     
     sale = data["sale"]
     if not frappe.db.exists("Sale",sale["name"]):
@@ -188,6 +187,7 @@ def _on_kot_print(template ,  station, printer,sale, sale_products):
                 img_name = "{}_{}.PNG".format(station,str(uuid.uuid4()) )                          
                 height =  fixed_height + item_height                    
                 file_path = html_to_image(height,int(width),html,css,path,img_name)  
+                time.sleep(0.2)
                 on_print(file_path, printer) 
     else:
         height =  template["fixed_height"] or 500
@@ -198,6 +198,7 @@ def _on_kot_print(template ,  station, printer,sale, sale_products):
             
             html = frappe.render_template(template["data_template"], get_print_context(doc=sale,sale_products = sale_products,printer_name=printer["printer_name"]))
             file_path = html_to_image(height ,int(template["width"]),html,template["css"],path,img_name)  
+            time.sleep(0.2)
             on_print(file_path, printer)  
 
         elif group_item_type == "Printer cut by order line":        
@@ -208,6 +209,7 @@ def _on_kot_print(template ,  station, printer,sale, sale_products):
                 img_name = "{}_{}_{}.PNG".format(station,printer["printer_name"],str(uuid.uuid4())) 
                 html = frappe.render_template(template["data_template"], get_print_context(doc=sale,sale_products = _sale_products,printer_name=printer["printer_name"]))
                 file_path = html_to_image(height ,int(template["width"]),html,template["css"],path,img_name)  
+                time.sleep(0.2)
                 on_print(file_path, printer)  
 
         elif group_item_type == "Printer cut by order quantity":
@@ -223,15 +225,19 @@ def _on_kot_print(template ,  station, printer,sale, sale_products):
                     img_name = "{}_{}_{}.PNG".format(station,printer["printer_name"],str(uuid.uuid4())) 
                     html = frappe.render_template(template["data_template"], get_print_context(doc=sale,sale_products = _sale_products,printer_name=printer["printer_name"]))
                     file_path = html_to_image(height ,int(template["width"]),html,template["css"],path,img_name)  
+                    time.sleep(0.2)
                     on_print(file_path, printer)    
 
 ## end KOT printing
 
 
 ## Print Waiting Number
-# @frappe.whitelist(allow_guest=True,methods="POST")
 @frappe.whitelist(methods="POST")
 def print_waiting_number_to_network_printer(data):
+    frappe.enqueue("epos_restaurant_2023.api.network_printing_api.print_waiting_number_to_network_printer_enque",data=data,queue="long")
+
+# @frappe.whitelist(allow_guest=True,methods="POST")
+def print_waiting_number_to_network_printer_enque(data):
     if not frappe.db.exists("Sale",data["name"]):
         return ""    
     doc = frappe.get_doc("Sale", data["name"])
@@ -245,12 +251,16 @@ def print_waiting_number_to_network_printer(data):
          
     file_path = html_to_image(height,int(width),html,css,path,img_name)
     ## onProcess Print
+    time.sleep(0.2)
     on_print(file_path, data["printer"])
      
 ## Print Voucher Slip
-# @frappe.whitelist(allow_guest=True,methods="POST")
 @frappe.whitelist(methods="POST")
 def print_voucher_to_network_printer(data):
+    frappe.enqueue("epos_restaurant_2023.api.network_printing_api.print_voucher_to_network_printer_enque",data=data,queue="long")
+
+# @frappe.whitelist(allow_guest=True,methods="POST")
+def print_voucher_to_network_printer_enque(data):
     if not frappe.db.exists("Voucher",data["name"]):
         return ""    
     doc = frappe.get_doc("Voucher", data["name"]) 
@@ -264,7 +274,9 @@ def print_voucher_to_network_printer(data):
     path = frappe.get_site_path()+"/file/"
 
     file_path = html_to_image(height,int(width),html,css,path,img_name)
+    time.sleep(0.2)
     on_print(file_path, data["printer"])
+
 
 # @frappe.whitelist(allow_guest=True,methods="POST")
 @frappe.whitelist(methods="POST")
@@ -276,16 +288,21 @@ def print_wifi_to_network_printer(data):
     path = frappe.get_site_path()+"/file/"
 
     file_path = html_to_image(height,width,html,css,path,img_name)
+    time.sleep(0.2)
     on_print(file_path, data["printer"])
 
-
-# @frappe.whitelist(allow_guest=True,methods="POST")
+# Print report
 @frappe.whitelist(methods="POST")
 def print_report_to_network_printer(data):
+    frappe.enqueue("epos_restaurant_2023.api.network_printing_api.print_report_to_network_printer_enque",data=data,queue="long")
+
+# @frappe.whitelist(allow_guest=True,methods="POST")
+def print_report_to_network_printer_enque(data):
     result = print_from_print_format(data,is_html=True)
     img_name = str(uuid.uuid4())+".PNG"
     path = frappe.get_site_path()+"/file/"
 
     file_path = html_to_image(result["height"],result["width"],result["html"],result["css"],path,img_name)
+    time.sleep(0.2)
     on_print(file_path, data["printer"])
 

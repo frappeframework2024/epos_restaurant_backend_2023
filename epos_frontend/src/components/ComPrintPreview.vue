@@ -175,11 +175,12 @@ function onPrint(){
             return 
         } else {
             if(printers[0].usb_printing == 0){
+                let _print_format = (activeReport.value.print_report_name||"")==""? activeReport.value.name : (activeReport.value.print_report_name||"")
                 let data ={
                     action : "print_report",
                     doc: activeReport.value.doc_type,
                     name: props.params.name,
-                    print_format: activeReport.value.print_report_name,                    
+                    print_format: _print_format,                    
                     pos_profile:pos_profile,
                     outlet:gv.setting.outlet,
                     letterhead:selectedLetterhead.value,
