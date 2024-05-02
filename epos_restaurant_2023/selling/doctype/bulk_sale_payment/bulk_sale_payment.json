@@ -13,6 +13,8 @@
   "section_break_spgn",
   "sale_list",
   "section_break_hqsb",
+  "column_break_ixjp",
+  "column_break_zzlw",
   "total_amount",
   "total_payment_amount",
   "total_balance"
@@ -81,12 +83,20 @@
    "fieldtype": "Currency",
    "label": "Total Balance",
    "read_only": 1
+  },
+  {
+   "fieldname": "column_break_ixjp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_zzlw",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-05-02 12:02:58.850614",
+ "modified": "2024-05-02 12:03:35.322183",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Bulk Sale Payment",
