@@ -56,8 +56,8 @@ const props = defineProps({
 
 
 
-async function onPrintAllBill(r) {
-    if (r.pos_receipt_file_name == null) {
+async function onPrintAllBill(receipt) {
+    if (receipt.pos_receipt_file_name == null) {
         toaster.warning($t('msg.This receipt have not POS receipt file'));
         return;
     }
@@ -68,14 +68,13 @@ async function onPrintAllBill(r) {
 
     if (await confirmDialog({ title: $t('Print all Receipts'), text: $t('msg.are you sure to print all receipts') })) {
         let promises = [];
-        isLoading.value = true;
+        isLoading.value = true; 
         props.params.data.filter(r => r.sale_status == "Submitted").forEach(async (d) => { 
-            promises.push(PrintReceipt(d, r));
+            promises.push(PrintReceipt(d,receipt));         
         });
 
         Promise.all(promises).then(() => {
             toaster.success($t('msg.All receipts has been sent to printer successfully'));
-
             tableLayout.getSaleList();
             isLoading.value = false;
             emit('resolve', true);
@@ -127,33 +126,14 @@ async function onQuickPay(isPrint = true) {
     }
 }
 
-async function PrintReceipt(d, r) {
-    const resource = createResource({
-        url: 'frappe.client.get',
-        params: {
-            doctype: "Sale",
-            name: d.name
-        },
-        async onSuccess(doc) {
-            if (doc.sale_products.length > 0) {
-                onPrintProcess("print_invoice",r,doc)
-            }
-            d.sale_status = "Bill Requested";
-        },
-    });
-
-    await resource.fetch().then(async (doc) => {
-        if (doc) {
-            const updateResource = createResource({
-                url: 'epos_restaurant_2023.api.api.update_print_bill_requested',
-                params: {
-                    name: doc.name
-                }
-            });
-            await updateResource.fetch();
+async function PrintReceipt(d, receipt) { 
+    await call.get("epos_restaurant_2023.api.api.update_print_bill_requested", {name: d.name}).then((resp)=>{
+        let doc = resp.message;
+        if((doc.sale_products.length||0)>0){
+            onPrintProcess("print_invoice",receipt,doc);
         }
-    });
-
+        d.sale_status = doc.sale_status;
+    }) 
 }
 
 
@@ -172,7 +152,7 @@ async function onPrintProcess(action, receipt,doc){
         var printer = (sale.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
         if (printer.length <= 0) {
             other_printing = false;
-            toaster.warning($t("Printer not yet configt for this device"))
+            toaster.warning($t("Printer not yet config for this device"))
         } 
         if(printer[0].usb_printing == 0){ 
             const body ={

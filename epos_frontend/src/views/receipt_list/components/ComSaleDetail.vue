@@ -203,7 +203,7 @@ async function onPrint() {
     if((gv.setting?.device_setting?.use_server_network_printing||0)==1){
         var printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
         if (printer.length <= 0) {
-            toaster.warning($t("Printer not yet configt for this device"))
+            toaster.warning($t("Printer not yet config for this device"))
             return // not printer
         } 
         if(printer[0].usb_printing == 0){
@@ -247,7 +247,7 @@ async function onPrint() {
         if (await confirm({ title: $t("Print Receipt"), text: $t("msg.Are you sure to print receipt") })) {
             var printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
             if (printer.length <= 0) {
-                toaster.warning($t("Printer not yet configt for this device"))
+                toaster.warning($t("Printer not yet config for this device"))
             } else {
                 data.printer = {
                     "printer_name": printer[0].printer_name,
@@ -284,7 +284,7 @@ function onOpenOrder() {
                     emit('resolve', "open_order");
                     const result = await smallViewSaleProductListModal({ title: props.params.name ? props.params.name : $t('New Sale'), data: { from_table: true } });
                     if (result) {
-                        tableLayout.saleListResource.fetch();
+                        tableLayout.getSaleList();
                     } else {
                         localStorage.removeItem('make_order_auth');
                     }

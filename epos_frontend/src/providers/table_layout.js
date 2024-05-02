@@ -2,7 +2,10 @@ import Enumerable from 'linq'
 
 import { createResource, i18n } from "@/plugin"
 import { createToaster } from "@meforma/vue-toaster";
+import { FrappeApp } from 'frappe-js-sdk';
 
+const frappe = new FrappeApp();
+const call = frappe.call()
 const { t: $t } = i18n.global;
 
 
@@ -17,7 +20,8 @@ export default class TableLayout {
         this.tempTableGroups =[];
         this.canArrangeTable = false;
         this.getTableGroups();
-        this.saleListResource = null;
+        this.saleList = [];
+        this.saleLoading = true;
         this.saveTablePositionResource = null;
         this.initSaveTablePositionResource()
     }
@@ -37,22 +41,34 @@ export default class TableLayout {
 
     getSaleList(pos_profile = "") {
         const parent = this;
-        this.saleListResource = createResource({
-            url: "frappe.client.get_list",
-            params: {
-                doctype: "Sale",
-                fields: ["name", "creation", "grand_total", "total_quantity", "tbl_group", "tbl_number", "guest_cover", "grand_total", "sale_status", "sale_status_color", "sale_status_priority", "customer", "customer_name", "phone_number", "customer_photo"],
-                filters: {
-                    pos_profile: pos_profile == ""? localStorage.getItem("pos_profile") : pos_profile,
-                    docstatus: 0
-                },
-                limit_page_length: 500,
-            },
-            auto: true,
-            onSuccess(data) {
+        this.saleLoading = true;
+        let body = {
+            data:{
+                pos_profile: pos_profile == ""? localStorage.getItem("pos_profile") : pos_profile,
+            }
+        }
+        
+        call.post("epos_restaurant_2023.api.api.get_sale_list_table_badge",body).then((resp)=>{
+            const data = resp.message;
+            parent.table_groups.forEach(function (g) {
+                g.tables.forEach(function (t) {
+                    t.sales = data.filter(r => r.tbl_group == g.table_group && r.tbl_number == t.tbl_no)
+                    if (t.sales.length > 0) {
+                        t.guest_cover = t.sales.reduce((n, r) => n + r.guest_cover, 0)
+                        t.grand_total = t.sales.reduce((n, r) => n + r.grand_total, 0)
+                        t.background_color = t.sales.sort((a, b) => a.sale_status_priority - b.sale_status_priority)[0].sale_status_color;
+                        t.creation = Enumerable.from(t.sales).orderBy("$.creation").select("$.creation").toArray()[0]
+                    } else {
+                        t.guest_cover = 0;
+                        t.grand_total = 0;
+                        t.creation = null;
+                        t.background_color = t.default_bg_color;
+                    } 
+                }) 
+            })
 
-                
-                parent.table_groups.forEach(function (g) {
+            if(parent.tempTableGroups){
+                parent.tempTableGroups.forEach(function (g) {
                     g.tables.forEach(function (t) {
                         t.sales = data.filter(r => r.tbl_group == g.table_group && r.tbl_number == t.tbl_no)
                         if (t.sales.length > 0) {
@@ -68,28 +84,11 @@ export default class TableLayout {
                         } 
                     }) 
                 })
+            } 
 
-                if(parent.tempTableGroups){
-                    parent.tempTableGroups.forEach(function (g) {
-                        g.tables.forEach(function (t) {
-                            t.sales = data.filter(r => r.tbl_group == g.table_group && r.tbl_number == t.tbl_no)
-                            if (t.sales.length > 0) {
-                                t.guest_cover = t.sales.reduce((n, r) => n + r.guest_cover, 0)
-                                t.grand_total = t.sales.reduce((n, r) => n + r.grand_total, 0)
-                                t.background_color = t.sales.sort((a, b) => a.sale_status_priority - b.sale_status_priority)[0].sale_status_color;
-                                t.creation = Enumerable.from(t.sales).orderBy("$.creation").select("$.creation").toArray()[0]
-                            } else {
-                                t.guest_cover = 0;
-                                t.grand_total = 0;
-                                t.creation = null;
-                                t.background_color = t.default_bg_color;
-                            } 
-                        }) 
-                    })
-                }
-
-            }
-        });
+            this.saleList = data;
+            this.saleLoading = false;
+        }) 
     }
 
 

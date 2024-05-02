@@ -1902,7 +1902,7 @@ export default class Sale {
         if ((this.setting?.device_setting?.use_server_network_printing || 0) == 1) {
             var printer = (this.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
             if (printer.length <= 0) {
-                toaster.warning($t("Printer not yet configt for this device"))
+                toaster.warning($t("Printer not yet config for this device"))
                 return // not printer
             }
             if (printer[0].usb_printing == 0) {
@@ -1935,7 +1935,7 @@ export default class Sale {
         } else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
             var printer = (this.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
             if (printer.length <= 0) {
-                toaster.warning($t("Printer not yet configt for this device"))
+                toaster.warning($t("Printer not yet config for this device"))
             } else {
                 data.printer = {
                     "printer_name": printer[0].printer_name,
@@ -1999,7 +1999,7 @@ export default class Sale {
                 else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
                     var printer = (this.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
                     if (printer.length <= 0) {
-                        // toaster.warning($t("Printer not yet configt for this device"))
+                        //pass
                     } else {
                         data.printer = {
                             "printer_name": printer[0].printer_name,

@@ -48,7 +48,7 @@ function onGoHome(){
         if (gv.setting.table_groups.length > 0) {
         sale.sale = {};
         router.push({ name: 'TableLayout' }).then(()=>{
-            tableLayout.saleListResource.fetch();
+            tableLayout.getSaleList();
             emit('resolve', true)
         });
         }

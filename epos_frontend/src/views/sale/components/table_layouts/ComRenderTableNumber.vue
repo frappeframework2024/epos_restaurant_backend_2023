@@ -106,7 +106,7 @@ function onTableClick(table, guest_cover) {
                         localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth));
                         const result = await smallViewSaleProductListModal({ title: sale.sale.name ? sale.sale.name : $t('New Sale'), data: { from_table: true } });
                         if (result) {
-                            tableLayout.saleListResource.fetch();
+                            tableLayout.getSaleList();
                         } else {
                             localStorage.removeItem('make_order_auth');
                         }

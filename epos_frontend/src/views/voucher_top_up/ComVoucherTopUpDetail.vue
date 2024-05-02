@@ -153,7 +153,7 @@ async function onPrintVoucher( action, doc) {
         }else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
             var printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
             if (printer.length <= 0) {
-                toaster.warning($t("Printer not yet configt for this device"))
+                toaster.warning($t("Printer not yet config for this device"))
             } else {
                 data.printer = {
                     "printer_name": printer[0].printer_name,

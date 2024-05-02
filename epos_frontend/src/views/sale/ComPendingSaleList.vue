@@ -4,11 +4,11 @@
       {{ $t('Pending Sale') }}
     </template>
     <template #content>
-      <ComPlaceholder :loading="saleResource.loading" :is-not-empty="saleResource?.data?.length > 0"
+      <ComPlaceholder :loading="loading" :is-not-empty="saleList.length > 0"
         :text="$t('No Pending Bill')" icon="mdi-note-outline">
         <div>
           <div class="grid gap-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-            <v-card v-for="(s, index) in saleResource.data" :key="index">
+            <v-card v-for="(s, index) in saleList" :key="index">
               <v-card-title class="!p-0">
                 <v-toolbar height="48">
                   <v-toolbar-title class="text">
@@ -78,12 +78,17 @@
   </ComModal>
 </template>
 <script setup>
-import { useRouter, defineProps, createResource, defineEmits, ref, inject, createToaster,i18n,onMounted,smallViewSaleProductListModal } from "@/plugin"
+import { useRouter, defineProps, defineEmits, ref, inject, createToaster,i18n,onMounted,smallViewSaleProductListModal } from "@/plugin"
 import { Timeago } from 'vue2-timeago'
 import { saleDetailDialog } from "@/utils/dialog";
 import ComModal from "../../components/ComModal.vue";
 import ComPlaceholder from "../../components/layout/components/ComPlaceholder.vue";
 import { useDisplay } from 'vuetify';
+const gv = inject('$gv');
+const sale = inject("$sale");
+const tableLayout = inject("$tableLayout");
+const frappe = inject("$frappe");
+const call = frappe.call();
 
 const { t: $t } = i18n.global;  
 const { mobile } = useDisplay();
@@ -91,9 +96,6 @@ const { mobile } = useDisplay();
 
 const router = useRouter();
 const emit = defineEmits(["resolve"])
-const gv = inject('$gv');
-const sale = inject("$sale");
-const tableLayout = inject("$tableLayout");
 const toaster = createToaster({ position: "top-right" });
 
 const props = defineProps({
@@ -102,20 +104,37 @@ const props = defineProps({
     required: true,
   }
 })
-let filter = ref({
-  working_day: null,
-  cashier_shift: null
+let loading = ref(true);
+const saleList = ref([])
+
+onMounted(async ()=>{
+ await onInit()
 })
+
+async function onInit(){
+  loading.value =true;
+  let body ={
+    data:{
+      working_day: props.params.data.working_day,
+      cashier_shift: props.params.data.cashier_shift
+    }
+  }
+
+  saleList.value = await call.post("epos_restaurant_2023.api.api.get_pending_sale_orders",body).then((resp)=>{
+    return resp.message;
+  })
+
+  loading.value =false;
+}
+ 
 function onOpenOrder(sale_id) {
-  createResource({
-    url: "epos_restaurant_2023.api.api.get_current_shift_information",
-    params: {
-      business_branch: gv.setting?.business_branch,
+
+  call.get("epos_restaurant_2023.api.api.get_current_shift_information",{
+    business_branch: gv.setting?.business_branch,
       pos_profile: localStorage.getItem("pos_profile")
-    },
-    auto: true,
-    onSuccess(data) {
-      if (data.cashier_shift == null) {
+  }).then((resp)=>{
+    const data = resp.message;
+    if (data.cashier_shift == null) {
         toaster.warning($t("msg.Please start shift first"));
         router.push({ name: "OpenShift" }).then(()=>{
             onClose()
@@ -137,7 +156,7 @@ function onOpenOrder(sale_id) {
                         onClose();
                         const result =  await smallViewSaleProductListModal ({title: sale_id ? sale_id : $t('New Sale'), data: {from_table: true}});                      
                         if(result){   
-                          tableLayout.saleListResource.fetch();
+                          tableLayout.getSaleList();
                         }else{
                             localStorage.removeItem('make_order_auth'); 
                         }                                          
@@ -161,13 +180,10 @@ function onOpenOrder(sale_id) {
           toaster.error($t("msg.Sale cannot get"))
         }          
       }
-    },
-    onError(er){
-      toaster.error(JSON.stringify(er))
-    }
+  }).catch((err)=>{
+    toaster.error(JSON.stringify(err))
   })
-
-  
+    
 }
 
 async function onViewSaleOrder(sale_id) {
@@ -177,36 +193,10 @@ async function onViewSaleOrder(sale_id) {
       onClose();
     }
     else if (result == "delete_order") {
-      saleResource.fetch();
+      onInit();
     }
   }
-}
-
-
-let params = ref({
-  doctype: "Sale",
-  fields: ["name", "modified", "sale_status", "sale_status_color","sale_type","sale_type_color", "tbl_number", "guest_cover", "customer", "customer_name", "total_quantity", "grand_total"],
-  order_by: "modified desc",
-  filters: {
-    'docstatus': 0,
-    'working_day': props.params.data.working_day,
-    'cashier_shift': props.params.data.cashier_shift
-  },
-  limit_page_length: 200,
-})
-
-const saleResource = createResource({
-  url: "frappe.client.get_list",
-  params: params.value
-});
-if (!props.params.data.cashier_shift)
-  delete params.value.filters.cashier_shift
-if (!props.params.data.working_day)
-  delete params.value.filters.working_day
-
-saleResource.params = params.value
-saleResource.fetch()
-
+} 
 
 function onClose() {
   emit('resolve', false);

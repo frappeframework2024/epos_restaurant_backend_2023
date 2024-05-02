@@ -848,6 +848,58 @@ def update_print_bill_requested(name):
     doc = frappe.get_doc("Sale",name)
     doc.sale_status = 'Bill Requested'
     doc.save()
+    frappe.db.commit()
+    return doc
+
+@frappe.whitelist(methods="POST")
+def get_sale_list_table_badge(data):
+    sql = """select 
+        `name`,
+        creation,
+        grand_total,
+        total_quantity,
+        tbl_group,
+        tbl_number,
+        guest_cover,
+        grand_total,
+        sale_status,
+        sale_status_color,
+        sale_status_priority,
+        customer,
+        customer_name,
+        phone_number,
+        customer_photo
+    from `tabSale` 
+    where pos_profile = '{}' 
+    and docstatus = 0""".format(data["pos_profile"])
+
+    result = frappe.db.sql(sql,as_dict=1)
+    return result
+
+@frappe.whitelist(methods="POST")
+def get_pending_sale_orders(data): 
+    sql = """select 
+        `name`,
+        modified,
+        sale_status,
+        sale_status_color,
+        sale_type,
+        sale_type_color,
+        tbl_number,
+        guest_cover,
+        customer,
+        customer_name,
+        total_quantity,
+        grand_total
+    from `tabSale` 
+    where docstatus = 0 
+        and working_day = '{}'
+        and cashier_shift = '{}'
+    order by modified desc
+    limit 200""".format(data["working_day"], data["cashier_shift"])
+
+    result = frappe.db.sql(sql,as_dict=1)
+    return result
 
 @frappe.whitelist()
 def get_working_day_list_report(business_branch = '', pos_profile = ''): 

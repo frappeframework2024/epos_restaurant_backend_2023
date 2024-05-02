@@ -1,5 +1,5 @@
 <template>
-    <v-btn :loading="tableLayout.saleListResource.loading" icon color="info" @click="onRefreshSale">
+    <v-btn :loading="tableLayout.saleLoading" icon color="info" @click="onRefreshSale">
         <v-icon>mdi-cached</v-icon>
     </v-btn>
     
@@ -8,7 +8,7 @@
             {{ $t('Pending Order') }}
         </v-btn> 
          
-    </template>
+    </template> 
     
     {{ isShowTableStatus() }}
   
@@ -55,21 +55,27 @@
     </v-menu>
 </template>
 <script setup>
-import { inject, pendingSaleListDialog,createResource,createToaster, useRouter,ref } from '@/plugin';
-import { useDisplay } from 'vuetify'
-const gv = inject('$gv')
+import {inject, pendingSaleListDialog,createToaster, useRouter,ref ,i18n} from '@/plugin';
+import { useDisplay } from 'vuetify';
+const { t: $t } = i18n.global;
+
+const gv = inject('$gv');
+const frappe = inject("$frappe");
 const tableLayout = inject("$tableLayout");
-const emit = defineEmits(['onShowHide'])
-const router = useRouter()
-const { mobile } = useDisplay()
-const toaster = createToaster({position: 'top-right'})
-const posProfile = localStorage.getItem('pos_profile')
+
+const call = frappe.call();
+
+const emit = defineEmits(['onShowHide']);
+const router = useRouter();
+const { mobile } = useDisplay();
+const toaster = createToaster({position: 'top-right'});
+const pos_profile = localStorage.getItem('pos_profile');
 
 
 
 let status = ref(false);
-function onRefreshSale() {
-    tableLayout.saleListResource.fetch();
+function onRefreshSale() { 
+    tableLayout.getSaleList()
 }
 
 function onEnableArrageTable(){
@@ -79,11 +85,14 @@ function onEnableArrageTable(){
 }
 
 async function onViewPendingOrder() {
-    if(workingDayResource.data.name && cashierShiftResource.data.name){
-        const result = await pendingSaleListDialog({data:{working_day:workingDayResource.data.name, cashier_shift: cashierShiftResource.data.name}})
+   const workingDay = await getWorkingDay(); 
+   const cashierShift = await getCashierShift();
+
+    if(workingDay.name && cashierShift.name){
+        const result = await pendingSaleListDialog({data:{working_day:workingDay.name, cashier_shift: cashierShift.name}});    
     }
     else{
-        toaster.error("msg.System can not get current working day or cashier shift")
+        toaster.error($t("msg.System can not get current working day or cashier shift"))
     }
 } 
 
@@ -118,22 +127,22 @@ function onSaveTablePosition() {
     tableLayout.canArrangeTable = false;
 
 }
-const workingDayResource = createResource({
-    url: "epos_restaurant_2023.api.api.get_current_working_day",
-    params: {
+
+
+async function  getWorkingDay(){
+  return await  call.get("epos_restaurant_2023.api.api.get_current_working_day",
+    {
       business_branch: gv.setting?.business_branch
-    },
-    auto:true
-});
+    }).then((resp)=>{return resp.message});
+}
 
-const cashierShiftResource = createResource({
-url: "epos_restaurant_2023.api.api.get_current_cashier_shift",
-    params: {
-        pos_profile: posProfile
-    },
-    auto:true
-});
-
+async function  getCashierShift(){
+  return await  call.get("epos_restaurant_2023.api.api.get_current_cashier_shift",
+    {
+        pos_profile: pos_profile
+    }).then((resp)=>{return resp.message});
+} 
+ 
 function onSaleType(name){
     router.push({name:'AddSaleNoTable',params:{sale_type: name}})
 }

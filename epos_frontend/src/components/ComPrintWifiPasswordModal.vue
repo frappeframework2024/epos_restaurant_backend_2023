@@ -40,7 +40,7 @@ const wifi_password = ref("")
        
           var printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
           if (printer.length <= 0) {
-              toaster.warning($t("Printer not yet configt for this device"))
+              toaster.warning($t("Printer not yet config for this device"))
               return // not printer
           } 
           
