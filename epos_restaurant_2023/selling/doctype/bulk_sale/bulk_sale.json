@@ -6,12 +6,17 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "posting_date",
   "sale",
-  "amount",
-  "column_break_bfgu",
   "payment_type",
+  "currency",
+  "exchange_rate",
+  "column_break_bfgu",
+  "amount",
+  "input_amount",
   "payment_amount",
   "balance",
+  "sale_payment",
   "section_break_ucum",
   "note"
  ],
@@ -23,7 +28,8 @@
    "options": "Sale"
   },
   {
-   "fetch_from": "sale.grand_total",
+   "fetch_from": "sale.balance",
+   "fetch_if_empty": 1,
    "fieldname": "amount",
    "fieldtype": "Currency",
    "label": "Amount",
@@ -37,19 +43,22 @@
    "fieldname": "payment_type",
    "fieldtype": "Link",
    "label": "Payment Type",
-   "options": "Payment Type"
+   "options": "Payment Type",
+   "read_only": 1
   },
   {
-   "fetch_from": "sale.grand_total",
+   "fetch_from": "sale.balance",
    "fetch_if_empty": 1,
    "fieldname": "payment_amount",
    "fieldtype": "Currency",
-   "label": "Payment Amount"
+   "label": "Payment Amount",
+   "read_only": 1
   },
   {
    "fieldname": "balance",
    "fieldtype": "Currency",
-   "label": "Balance"
+   "label": "Balance",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_ucum",
@@ -59,12 +68,46 @@
    "fieldname": "note",
    "fieldtype": "Long Text",
    "label": "Note"
+  },
+  {
+   "fetch_from": "payment_type.currency",
+   "fetch_if_empty": 1,
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date"
+  },
+  {
+   "fieldname": "input_amount",
+   "fieldtype": "Float",
+   "label": "Input Amount"
+  },
+  {
+   "fetch_from": "payment_type.exchange_rate",
+   "fetch_if_empty": 1,
+   "fieldname": "exchange_rate",
+   "fieldtype": "Float",
+   "label": "Exchange Rate",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "sale_payment",
+   "fieldtype": "Data",
+   "label": "Sale Payment",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-05-02 11:30:38.019179",
+ "modified": "2024-05-02 15:54:00.831633",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Bulk Sale",
