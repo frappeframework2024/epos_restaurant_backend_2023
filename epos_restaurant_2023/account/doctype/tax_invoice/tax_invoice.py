@@ -3,7 +3,7 @@
 
 # import frappe
 from frappe.model.document import Document
-
-
 class TaxInvoice(Document):
-	pass
+    pass
+	# def validate(self):
+	# 	self.name = self.document_name

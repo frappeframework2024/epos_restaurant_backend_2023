@@ -305,10 +305,11 @@ class Sale(Document):
 		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit", queue='short', self=self)
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.add_payment_to_sale_payment", queue='short', self=self)
 		if frappe.db.get_single_value("Exely Itegration Setting","enabled")==1:
-			frappe.enqueue("epos_restaurant_2023.api.exely.submit_order_to_exely", queue='short', doc_name = self.name)
+			frappe.enqueue("epos_restaurant_2023.api.exely.submit_order_to_exely", queue='long', doc_name = self.name)
 
-		
-
+		# is_generate_tax_invoice = frappe.db.get_value("POS Config",frappe.db.get_value("POS Profile",self.name,"pos_config"),"generate_tax_invoice_after_close_sale_order")):
+		# if is_generate_tax_invoice:	
+		# 	frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.generate_tax_invoice", queue='long', self=self)	
 	
 	def on_cancel(self):
 		
@@ -317,6 +318,25 @@ class Sale(Document):
 		on_sale_delete_update(self)
 		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel", queue='short', self=self)
 
+# def generate_tax_invoice(self):      
+#     tax_invoice_doc = frappe.get_doc({
+#         "name":self.name,
+#         "doctype":"Tax Invoice",
+#         "property":self.business_branch,
+#         "tax_invoice_type":"Commercial Invoice",
+#         "tax_invoice_date":self.posting_date,
+#         "exchange_rate":self.exchange_rate,
+#         "document_type":"Sale",
+#         "document_name":self.name,
+#         "guest":self.customer
+#     })
+#     tax_invoice_doc.insert()
+#     sql="update `tabSale` set is_generate_tax_invoice=1 where name=%(name)s"
+#     frappe.db.sql(sql,{ "name":self.name})
+#     frappe.db.commit()
+    
+    
+    
 def on_sale_delete_update(self):
 	spa_commission = "update `tabSale Product SPA Commission` set is_deleted = 1  where sale = '{}'".format(self.name)			
 	frappe.db.sql(spa_commission)

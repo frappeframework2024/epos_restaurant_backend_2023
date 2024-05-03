@@ -22,18 +22,21 @@
   {
    "fieldname": "tax_invoice_type",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Tax Invoice Type",
-   "options": "Tax Invoice\nCommercial"
+   "options": "Tax Invoice\nCommercial Invoice"
   },
   {
    "fieldname": "document_type",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Document Type",
    "options": "DocType"
   },
   {
    "fieldname": "document_name",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Document Name"
   },
   {
@@ -44,6 +47,7 @@
   {
    "fieldname": "exchange_rate",
    "fieldtype": "Currency",
+   "in_list_view": 1,
    "label": "Exchange Rate"
   },
   {
@@ -56,6 +60,7 @@
    "fetch_from": "guest.customer_name_en",
    "fieldname": "customer_name",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Customer Name"
   },
   {
@@ -70,21 +75,22 @@
    "label": "Note"
   },
   {
+   "default": "TAX.-.INV.YY.-.####",
    "fieldname": "naming_series",
-   "fieldtype": "Select",
-   "label": "Document Number",
-   "options": "TA.YY.-.####\nINV.YY.-.####"
+   "fieldtype": "Data",
+   "label": "Document Number"
   },
   {
    "fieldname": "property",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Property",
    "options": "Business Branch"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-02 17:27:24.443708",
+ "modified": "2024-05-02 19:13:33.052452",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "Tax Invoice",

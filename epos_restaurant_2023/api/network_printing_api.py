@@ -294,15 +294,17 @@ def print_wifi_to_network_printer(data):
 # Print report
 @frappe.whitelist(methods="POST")
 def print_report_to_network_printer(data):
-    frappe.enqueue("epos_restaurant_2023.api.network_printing_api.print_report_to_network_printer_enque",data=data,queue="short")
+    if data:
+        frappe.enqueue("epos_restaurant_2023.api.network_printing_api.print_report_to_network_printer_enque",data=data,queue="short")
 
 # @frappe.whitelist(allow_guest=True,methods="POST")
 def print_report_to_network_printer_enque(data):
-    result = print_from_print_format(data,is_html=True)
-    img_name = str(uuid.uuid4())+".PNG"
-    path = frappe.get_site_path()+"/file/"
+    if data:
+        result = print_from_print_format(data,is_html=True)
+        img_name = str(uuid.uuid4())+".PNG"
+        path = frappe.get_site_path()+"/file/"
 
-    file_path = html_to_image(result["height"],result["width"],result["html"],result["css"],path,img_name)
-    time.sleep(0.2)
-    on_print(file_path, data["printer"])
+        file_path = html_to_image(result["height"],result["width"],result["html"],result["css"],path,img_name)
+        time.sleep(0.2)
+        on_print(file_path, data["printer"])
 

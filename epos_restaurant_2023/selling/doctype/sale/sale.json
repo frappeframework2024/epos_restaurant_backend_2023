@@ -154,6 +154,7 @@
   "waiting_number",
   "exchange_rate",
   "change_exchange_rate",
+  "is_generate_tax_invoice",
   "section_break_oszl",
   "printed_by",
   "printed_date",
@@ -1144,6 +1145,12 @@
    "fieldname": "deleted_note",
    "fieldtype": "Data",
    "label": "Deleted Note"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_generate_tax_invoice",
+   "fieldtype": "Check",
+   "label": "Is Generate Tax Invoice"
   }
  ],
  "image_field": "photo",
@@ -1156,7 +1163,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-04-29 11:01:01.146934",
+ "modified": "2024-05-02 18:41:48.545332",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

@@ -234,14 +234,6 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2023-10-27 16:16:56.617401",
-  "name": "Ayutthaya",
-  "note": "Ayutthaya",
-  "province": "Ayutthaya"
- },
- {
-  "docstatus": 0,
-  "doctype": "Province",
   "modified": "2023-10-27 16:18:13.959875",
   "name": "Da Nang",
   "note": "Da Nang",
@@ -250,10 +242,10 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2022-12-05 20:47:21.564060",
-  "name": "Siem Reap",
-  "note": null,
-  "province": "Siem Reap"
+  "modified": "2023-10-27 16:16:56.617401",
+  "name": "Ayutthaya",
+  "note": "Ayutthaya",
+  "province": "Ayutthaya"
  },
  {
   "docstatus": 0,
@@ -262,5 +254,13 @@
   "name": "Pattaya",
   "note": "Pattaya",
   "province": "Pattaya"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Province",
+  "modified": "2022-12-05 20:47:21.564060",
+  "name": "Siem Reap",
+  "note": null,
+  "province": "Siem Reap"
  }
 ]
