@@ -1,9 +1,9 @@
 // Copyright (c) 2024, Tes Pheakdey and contributors
 // For license information, please see license.txt
 
-frappe.ui.form.on("Bulk Sale Payment", {
+frappe.ui.form.on("Bulk Purchase Order Payment", {
     setup(frm){
-        frm.set_query("sale","sale_list", function() {
+        frm.set_query("purchase_order","purchase_order_list", function() {
             return {
                 filters: {
                     balance: ['>', 0],
@@ -15,18 +15,18 @@ frappe.ui.form.on("Bulk Sale Payment", {
 	refresh(frm) {
         updatetotal(frm);
 	},
-    customer(frm) {
-		if (frm.doc.customer) {
-            frm.set_value('sale_list', []);
+    vendor(frm) {
+		if (frm.doc.vendor) {
+            frm.set_value('purchase_order_list', []);
 			frappe.call({
-                method: "epos_restaurant_2023.selling.doctype.bulk_sale_payment.bulk_sale_payment.get_sale_by_customer",
+                method: "epos_restaurant_2023.purchasing.doctype.bulk_purchase_order_payment.bulk_purchase_order_payment.get_purchase_order_by_vendor",
                 args: {
-                    customer:frm.doc.customer
+                    vendor:frm.doc.vendor
                 },
                 callback: function(r){
                     r.message.forEach((r => {
-                        doc = frm.add_child("sale_list");
-                        doc.sale = r.sale;
+                        doc = frm.add_child("purchase_order_list");
+                        doc.purchase_order = r.purchase_order;
                         doc.amount = r.balance;
                         doc.payment_type = frm.doc.payment_type;
                         doc.currency = frm.doc.currency;
@@ -36,29 +36,29 @@ frappe.ui.form.on("Bulk Sale Payment", {
                         doc.balance = doc.amount - doc.payment_amount;
                         doc.posting_date = frm.doc.posting_date
                     }))
-                    frm.refresh_field('sale_list');
+                    frm.refresh_field('purchase_order_list');
                     updatetotal(frm);
                 }
             });
 		}
 	},
     payment_type(frm){ 
-        if(frm.doc.sale_list.length > 0){
-            $.each(frm.doc.sale_list, function(i, d) {
+        if(frm.doc.purchase_order_list.length > 0){
+            $.each(frm.doc.purchase_order_list, function(i, d) {
                 d.payment_type = frm.doc.payment_type;
                 d.currency = frm.doc.currency;
                 d.exchange_rate = (frm.doc.exchange_rate || 0);
                 d.input_amount = d.amount * (d.exchange_rate || 0);
                 d.payment_amount = d.input_amount == 0 ? 0 : d.input_amount /  (d.exchange_rate || 0);
                 d.balance = d.amount - d.payment_amount;
-                frm.refresh_field('sale_list');
+                frm.refresh_field('purchase_order_list');
                 updatetotal(frm);
             });
         }
     },
 });
 
-frappe.ui.form.on('Bulk Sale', {
+frappe.ui.form.on('Bulk Purchase Order', {
     input_amount(frm, cdt, cdn) {
 		let doc = locals[cdt][cdn];
         doc.payment_amount = doc.input_amount / doc.exchange_rate
@@ -67,10 +67,10 @@ frappe.ui.form.on('Bulk Sale', {
             doc.input_amount = doc.amount * doc.exchange_rate
         }
         doc.balance = doc.amount - doc.payment_amount
-        frm.refresh_field('sale_list');
+        frm.refresh_field('purchase_order_list');
         updatetotal(frm);
 	},
-    sale(frm,cdt,cdn){
+    purchase_order(frm,cdt,cdn){
         let doc = locals[cdt][cdn];
         doc.payment_type = frm.doc.payment_type;
         doc.currency = frm.doc.currency;
@@ -78,18 +78,18 @@ frappe.ui.form.on('Bulk Sale', {
         doc.input_amount = doc.amount * (doc.exchange_rate || 0);
         doc.payment_amount = doc.input_amount == 0 ? 0 : doc.input_amount /  (doc.exchange_rate || 0);
         doc.balance = doc.amount - doc.payment_amount;
-        frm.refresh_field('sale_list');
+        frm.refresh_field('purchase_order_list');
         updatetotal(frm);
     }
 })
 
 function updatetotal(frm){
-    const sales = frm.doc.sale_list;
-	if (sales == undefined) {
+    const purchase_orders = frm.doc.purchase_order_list;
+	if (purchase_orders == undefined) {
 		return false;
 	}
-    frm.set_value('total_amount', sales.reduce((n, d) => n + d.amount, 0));
-	frm.set_value('total_payment_amount', sales.reduce((n, d) => n + d.payment_amount, 0));
-	frm.set_value('total_balance', sales.reduce((n, d) => n + d.balance, 0));
-	frm.set_value('total_sale', sales.reduce((n, d) => n + 1, 0));
+    frm.set_value('total_amount', purchase_orders.reduce((n, d) => n + d.amount, 0));
+	frm.set_value('total_payment_amount', purchase_orders.reduce((n, d) => n + d.payment_amount, 0));
+	frm.set_value('total_balance', purchase_orders.reduce((n, d) => n + d.balance, 0));
+	frm.set_value('total_purchase_order', purchase_orders.reduce((n, d) => n + 1, 0));
 }

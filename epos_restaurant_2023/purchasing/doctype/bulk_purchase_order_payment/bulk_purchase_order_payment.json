@@ -1,0 +1,161 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2024-05-03 09:35:21.668112",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_poji",
+  "naming_series",
+  "posting_date",
+  "vendor",
+  "amended_from",
+  "column_break_tlkk",
+  "payment_type",
+  "currency",
+  "exchange_rate",
+  "section_break_abcp",
+  "purchase_order_list",
+  "section_break_kebx",
+  "total_purchase_order",
+  "total_amount",
+  "column_break_ktli",
+  "total_payment_amount",
+  "total_balance"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_poji",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Bulk Purchase Order Payment",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date"
+  },
+  {
+   "fieldname": "vendor",
+   "fieldtype": "Link",
+   "label": "Vendor",
+   "options": "Vendor"
+  },
+  {
+   "fieldname": "column_break_tlkk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "payment_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Payment Type",
+   "options": "Payment Type",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "payment_type.currency",
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "payment_type.exchange_rate",
+   "fieldname": "exchange_rate",
+   "fieldtype": "Float",
+   "label": "Exchange Rate",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_abcp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "purchase_order_list",
+   "fieldtype": "Table",
+   "label": "Purchase Order List",
+   "options": "Bulk Purchase Order"
+  },
+  {
+   "fieldname": "section_break_kebx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Amount",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "total_payment_amount",
+   "fieldtype": "Currency",
+   "label": "Total Payment Amount",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "total_balance",
+   "fieldtype": "Currency",
+   "label": "Total Balance",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "total_purchase_order",
+   "fieldtype": "Float",
+   "label": "Total Purchase Order",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_ktli",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "BPOP.-.YYYY.-.#####"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-05-03 10:57:24.789994",
+ "modified_by": "Administrator",
+ "module": "Purchasing",
+ "name": "Bulk Purchase Order Payment",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
