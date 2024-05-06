@@ -37,13 +37,34 @@
                     </v-col>
                     <v-col cols="12" sm="12" md="9">
                         <div>
+                          
+                            <v-alert
+                                v-if="getSelectedFolio && !getSelectedFolio?.name"
+                                class="ma-4"
+                                density="compact"
+                                title="Select Folio"
+                                type="warning"
+                            >
+                        {{$t("You select a stay guest without an existing guest folio. Upon submission, a new guest folio will be created automatically.")}}
+                        </v-alert>
                             <template v-if="get_folio_data.length>0">
                                 <v-row no-gutters>
                                     <v-col cols="12" class="pa-1" sm="12" md="6" v-for="(r, index) in get_folio_data" :key="index" @click="(()=>onOnlineFolioPressed(r))">
                                         <div :class="r.selected ? 'bg-indigo-lighten-2' : 'bg-deep-purple-lighten-5'" class="btn-post-to-room cursor-pointer border border-stone-500 pa-1 rounded-sm">
-                                            <div>
+                                                <v-chip style="float:right" v-if="!r.name" color="red" variant="flat">
+                                                    {{$t("No Guest Folio")}}
+                                                </v-chip>
+                                                <v-chip style="float:right" v-if="r.is_master" color="success" variant="flat">
+                                                    {{$t("Master Folio")}}
+                                                </v-chip>
+                                            <div v-if="r.name">
                                                 <span><strong>{{ $t('Folio') }}:</strong> #{{ r.name }}</span>
                                             </div> 
+                                            
+                                            <div>
+                                                <span><strong>{{ $t('Stay #') }}:</strong>{{ r.reservation_stay }}</span>
+                                            </div> 
+
                                             <div>
                                                 <span><strong>{{$t("Guest")}}:</strong> {{ r.guest_name }}</span>
                                             </div>  
@@ -70,7 +91,7 @@
 </template>
 <script setup>
 
-import { ref,onMounted,i18n,inject,computed } from '@/plugin';
+import { ref,onMounted,i18n,inject,computed,confirmDialog } from '@/plugin';
 import { createToaster } from '@meforma/vue-toaster';
 
 const gv = inject("$gv")
@@ -95,6 +116,14 @@ const keyword = ref("")
 
 const getRoomOffline = computed(() => {    
     return rooms.value.filter((r)=>r.room_name.toLowerCase().includes(keyword.value.toLowerCase()));
+})
+
+const getSelectedFolio = computed(() => {    
+    const folio = folio_data.value.filter((r)=>r.selected||false)
+    if (folio){
+        return folio[0]
+    }
+    return null 
 })
 
 onMounted(()=>{
@@ -159,6 +188,13 @@ const get_folio_data = computed(()=>{
         if(check[0].name=="all"){
             data = folio_data.value.filter((r)=>(r.name + ' ' + r.rooms + ' ' + r.guest_name).toLowerCase().includes(keyword.value.toLowerCase())); 
             return data;
+        }else if(check[0].name=="Room with No Folio"){
+            data = folio_data.value.filter((r)=>!r.name);
+            if(data.length>0){
+                data = data.filter((r)=>(r.name + ' ' + r.rooms + ' ' + r.guest_name).toLowerCase().includes(keyword.value.toLowerCase()));
+            }
+            return data;
+        
         }else{
             data = folio_data.value.filter((r)=>r.room_types.includes(check[0].type));
             if(data.length>0){
@@ -201,7 +237,7 @@ function onOfflineRoomPressed(room){
 function onOnlineFolioPressed(folio){  
     
     folio_data.value.forEach((f)=>{
-        if(f.name==folio.name){
+        if(f.id==folio.id){
             f.selected = !f.selected;
         }else{
             f.selected = false
@@ -210,7 +246,7 @@ function onOnlineFolioPressed(folio){
 }
 
  
-function onConfirm(){ 
+async function onConfirm(){ 
     let room = [] 
     if(props.params.data.use_room_offline){
         room = rooms.value.filter((r)=>r.selected)
@@ -223,6 +259,10 @@ function onConfirm(){
         return
     } 
     const r = room[0];
+    
+
+    
+
     if(props.params.data.use_room_offline){
             emit("resolve", {
             "room":r.room_name,
@@ -230,13 +270,29 @@ function onConfirm(){
         });
     }
     else{
-        
-         emit("resolve", {
+        if(!r.name){
+            if (await confirmDialog({ title: $t("Select Folio"), text: $t("You select a stay guest without an existing guest folio. Upon submission, a new guest folio will be created automatically.") })) {
+            emit("resolve", {
+            "room":r.rooms,
+            "folio":r.name || "",
+            "reservation_stay":r.reservation_stay,
+            "guest":r.guest,
+            "guest_name":r.guest_name
+            });
+            }
+            
+        }else {
+            emit("resolve", {
             "room":r.rooms,
             "folio":r.name,
+            "reservation_stay":r.reservation_stay,
             "guest":r.guest,
             "guest_name":r.guest_name
         });
+        
+        
+}
+        
     }
     
 }

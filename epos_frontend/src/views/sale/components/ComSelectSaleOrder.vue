@@ -56,6 +56,8 @@ const props = defineProps({
 
 
 
+
+
 async function onPrintAllBill(receipt) {
     if (receipt.pos_receipt_file_name == null) {
         toaster.warning($t('msg.This receipt have not POS receipt file'));
@@ -72,34 +74,18 @@ async function onPrintAllBill(receipt) {
 
         // check if print server printing
         let other_printing = true
-        // if((sale.setting?.device_setting?.use_server_network_printing||0)==1){
-        //     var printer = (sale.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
-        //     if (printer.length <= 0) {
-        //         other_printing = false;
-        //         toaster.warning($t("Printer not yet config for this device"))
-        //     } 
-        //     if(printer[0].usb_printing == 0){ 
-        //         const body ={
-        //             "data":{
-        //                 "name":data["sale"]["name"],
-        //                 "reprint":0,
-        //                 "action":data["action"],
-        //                 "print_setting":data["print_setting"],
-        //                 "template_name":data["print_setting"]["pos_receipt_template"],
-        //                 "printer" : {
-        //                     "printer_name": printer[0].printer_name,
-        //                     "ip_address": printer[0].ip_address,
-        //                     "port": printer[0].port,
-        //                     "cashier_printer": printer[0].cashier_printer,
-        //                     "is_label_printer": printer[0].is_label_printer,
-        //                     "usb_printing": printer[0].usb_printing,
-        //                 }
-        //             }
-        //         }  
-        //         call.post("epos_restaurant_2023.api.network_printing_api.print_bill_to_network_printer",body)
-        //         other_printing = false;
-        //     }      
-        // } 
+         if((sale.setting?.device_setting?.use_server_network_printing||0)==1){
+             var printer = (sale.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+             if (printer.length <= 0) {
+                 other_printing = false;
+                 toaster.warning($t("Printer not yet config for this device"))
+             } 
+             if(printer[0].usb_printing == 0){ 
+                other_printing = await _onNetworkPrintAll("print_invoice", receipt,printer) 
+             }      
+         } 
+
+        
         if(other_printing==true){
             //end check if server printing             
             props.params.data.filter(r => r.sale_status == "Submitted").forEach(async (d) => { 
@@ -117,7 +103,72 @@ async function onPrintAllBill(receipt) {
 
 }
 
+async function _onNetworkPrintAll(action, receipt,printer){     
+    let data_print ={
+        "name":null,
+        "reprint":0,
+        "action":action,
+        "print_setting":receipt,
+        "payment_type":sale.setting?.default_payment_type,
+        "template_name":receipt["pos_receipt_template"],
+        "printer" : {
+            "printer_name": printer[0].printer_name,
+            "ip_address": printer[0].ip_address,
+            "port": printer[0].port,
+            "cashier_printer": printer[0].cashier_printer,
+            "is_label_printer": printer[0].is_label_printer,
+            "usb_printing": printer[0].usb_printing,
+        }
+    }
+
+    let data_prints = []
+   
+
+    if (action=="print_invoice"){
+        props.params.data.filter(r => r.sale_status == "Submitted").forEach(async (d) => {  
+            let _d = JSON.parse( JSON.stringify(data_print))
+            _d["name"] =  d["name"]
+            data_prints.push(_d)       
+        }); 
+
+        call.post("epos_restaurant_2023.api.network_printing_api.print_all_bill_to_network_printer",
+        {
+            "data":data_prints
+        }).then((r)=>{ 
+            props.params.data.filter(r => r.sale_status == "Submitted").forEach(async (d) => { 
+                d.sale_status = "Bill Requested";         
+            });
+            tableLayout.getSaleList();
+            isLoading.value = false;
+            emit('resolve', true);
+        });
+
+    }else if (action =="print_receipt"){
+        props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").forEach(async (d) => {  
+            let _d = JSON.parse( JSON.stringify(data_print))
+            _d["name"] =  d["name"]
+            data_prints.push(_d)       
+        }); 
+
+        call.post("epos_restaurant_2023.api.network_printing_api.print_all_bill_quick_pay_to_network_printer",
+        {
+            "data":data_prints
+        }).then((resp)=>{ 
+            props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").forEach(async (d) => { 
+                d.sale_status = "Closed";      
+                d.sale_status_color = sale.setting.sale_status.find(r => r.name == 'Closed').background_color;    
+            });
+            tableLayout.getSaleList();
+            isLoading.value = false;
+            emit('resolve', true);
+        });
+    }   
+
+    return false;
+}
+
 async function onQuickPay(isPrint = true) {
+ 
     if (props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").length == 0) {
         toaster.warning($t("msg.There are no bills to settle"));
         return;
@@ -125,38 +176,50 @@ async function onQuickPay(isPrint = true) {
 
     if (await confirmDialog({ title: $t("Quick Pay"), text: $t('msg.are you sure to process quick pay and close order') })) {
         isLoading.value = true;
+        let other_printing = true
+         if((sale.setting?.device_setting?.use_server_network_printing||0)==1 && isPrint == true ){
+             var printer = (sale.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+             if (printer.length <= 0) {
+                 other_printing = false;
+                 toaster.warning($t("Printer not yet config for this device"))
+             } 
+             if(printer[0].usb_printing == 0){ 
+                other_printing = await _onNetworkPrintAll("print_receipt", sale.setting?.default_pos_receipt, printer) 
+             }      
+         } 
 
-        props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").forEach(async (d) => {
-
-            payment_promises.value.push({
-                sale: d.name,
-                payment_type: sale.setting?.default_payment_type
-            })
-        });
-        Promise.all(payment_promises.value).then(async () => {
-            await call.get('epos_restaurant_2023.api.api.on_sale_quick_pay', {
-                data: JSON.stringify(payment_promises.value)
-            }).then((res) => {
-                props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").forEach(async (d) => {
-                    const _sale = res.message.filter((r) => r.name == d.name)
-                    if (_sale.length > 0) {
-                        d.sale_status = "Closed";
-                        d.sale_status_color = sale.setting.sale_status.find(r => r.name == 'Closed').background_color; 
-                        onPrintProcess("print_receipt",sale.setting?.default_pos_receipt,_sale[0])                        
-                    }
-                });
-
-
-                toaster.success($t('msg.Payment successfully'));
-                tableLayout.getSaleList();
-                isLoading.value = false;
-                emit('resolve', true);
-            }).catch((r) => {
-                toaster.error(r.message);
-                isLoading.value = false;
+         if(other_printing){
+            props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").forEach(async (d) => {
+                payment_promises.value.push({
+                    sale: d.name,
+                    payment_type: sale.setting?.default_payment_type
+                })
             });
+            Promise.all(payment_promises.value).then(async () => {
+                await call.get('epos_restaurant_2023.api.api.on_sale_quick_pay', {
+                    data: JSON.stringify(payment_promises.value)
+                }).then((res) => {
+                    props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").forEach(async (d) => {
+                        const _sale = res.message.filter((r) => r.name == d.name)
+                        if (_sale.length > 0) {
+                            d.sale_status = "Closed";
+                            d.sale_status_color = sale.setting.sale_status.find(r => r.name == 'Closed').background_color; 
+                            if(isPrint){
+                                onPrintProcess("print_receipt",sale.setting?.default_pos_receipt,_sale[0])      
+                            }                  
+                        }
+                    });
 
-        })
+                    toaster.success($t('msg.Payment successfully'));
+                    tableLayout.getSaleList();
+                    isLoading.value = false;
+                    emit('resolve', true);
+                }).catch((r) => {
+                    toaster.error(r.message);
+                    isLoading.value = false;
+                });
+            });
+         }
     }
 }
 

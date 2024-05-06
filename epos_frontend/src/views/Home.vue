@@ -47,6 +47,7 @@
                         <ComButton v-if="isWindow() && device_setting?.show_button_customer_display==1"  @click="onOpenCustomerDisplay"  :title="$t('Customer Display')" icon="mdi-monitor" icon-color="defaulticonColor" class="bg-brandcolor"/>
 
                         <ComButton v-if="isWindow() && device_setting?.show_wifi_button==1"  @click="onPrintWifiPassword" :title="$t('Wifi Password')" icon="mdi-wifi" icon-color="defaulticonColor" class="bg-brandcolor"/> 
+                        <ComButton v-if="device_setting?.allow_switch_pos_profile==1"  @click="onSwitchPOSProfile" :title="$t('Switch POS Profile')" icon="mdi-home-switch-outline" icon-color="defaulticonColor" class="bg-brandcolor"/> 
                         
                         <ComButton @click="onLogout()" text-color="#fff" icon-color="#fff" :title="$t('Logout')" icon="mdi-logout" background-color="#b00020" />
                         
@@ -58,7 +59,7 @@
     
 </template>
 <script setup>
-import { useRouter,computed, posReservationDialog, createToaster,pendingSaleListDialog,inject,onMounted,printWifiPasswordModal,i18n } from '@/plugin'
+import { useRouter,computed, posReservationDialog, createToaster,pendingSaleListDialog,inject,onMounted,printWifiPasswordModal,SwitchPosProfileModal,i18n } from '@/plugin'
 import ComButton from '../components/ComButton.vue';
 import WorkingDayButton from './shift/components/WorkingDayButton.vue';
 import OpenShiftButton from './shift/components/OpenShiftButton.vue';
@@ -240,6 +241,10 @@ function onLogout() {
 async function onPrintWifiPassword(){
     await printWifiPasswordModal({})
 }
+async function onSwitchPOSProfile(){
+    await SwitchPosProfileModal({})
+}
+
 
 
 

@@ -1,0 +1,51 @@
+{% var index = 1 %}
+<div class="form-grid-container">
+    <div class="form-grid">
+        <div class="grid-heading-row">
+            <div class="grid-row">
+                <div class="data-row row">
+                    <div class="col text-center" style="max-width: 4%;">
+                        <span>No.</span>
+                    </div> 
+                    <div class="col col-4">Product Name</div>
+                    <div class="col text-center" style="max-width: 4%;">Qty</div>
+                    <div class="col text-right">Price</div> 
+                    <div class="col text-right">Discount</div>
+                    <div class="col text-right">Tax</div>
+                    <div class="col text-right">Amount</div>    
+                </div>
+            </div>
+        </div>
+        <div class="grid-body">
+            <div class="rows"> 
+                {%for p in doc.sale_products%}
+                    <div class="grid-row">
+                        <div class="data-row row">
+                            <div class="col text-center" style="max-width: 4%;">{{index}}</div> 
+                            <div class="col col-4">
+                                <div class="static-area ellipsis">
+                                    {{p.product_code}} - {{p.product_name}} - {{p.product_name_kh}}<br/>
+                                    {% if p.modifiers != '' %}
+                                        <span style="color: orange;">Modifier</span><br/>
+                                    {% endif %}
+                                    {% if p.combo_menu != null %}
+                                        <span style="color: orange;">Combo Menu</span><br/>
+                                    {% endif %}
+                                    {% if p.note != '' %}
+                                        <i style="color: orange;">Note: {{p.note}}</i>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col text-center" style="max-width: 4%;">{{p.quantity}}</div>
+                            <div class="col text-right">{{format_currency(p.price,frappe.defaults.get_default("currency"),frappe.defaults.get_default("float_precision"))}}</div> 
+                            <div class="col text-right">{{format_currency(p.total_discount,frappe.defaults.get_default("currency"),frappe.defaults.get_default("float_precision"))}}</div>
+                            <div class="col text-right">{{format_currency(p.total_tax,frappe.defaults.get_default("currency"),frappe.defaults.get_default("float_precision"))}}</div>
+                            <div class="col text-right">{{format_currency(p.amount,frappe.defaults.get_default("currency"),frappe.defaults.get_default("float_precision"))}}</div> 
+                        </div>
+                    </div>
+                    {% var index = index + 1 %}
+                {%endfor%}
+            </div>
+        </div>
+    </div>    
+</div>

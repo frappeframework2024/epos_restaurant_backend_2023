@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"name": "edoor",
+			"path": "../../edoor"
+		}
+	],
+	"settings": {
+		"vue.codeActions.enabled": false
+	}
+}

@@ -553,10 +553,11 @@ export default class Sale {
     }
 
     updateSaleProduct(sp) {
+
         //set property for re render comhappyhour check
         sp.is_render = false;
         //end
-        sp.sub_total = sp.quantity * sp.price + sp.quantity * sp.modifiers_price;
+        sp.sub_total = sp.quantity * (sp.price + sp.modifiers_price);
         sp.discount = parseFloat(sp.discount)
         if (sp.discount) {
             if (sp.discount_type == "Percent") {
@@ -611,12 +612,21 @@ export default class Sale {
     //on calculate tax
     onCalculateTax(sp) {
 
+        let amount = sp.sub_total
+        if (sp.rate_include_tax == 1) { 
+            if(sp.tax_rule_data != undefined){
+
+                let priceBefore = this.getRateBeforeTax(sp.sub_total - sp.total_discount,JSON.parse(sp.tax_rule_data), sp.tax_1_rate, sp.tax_2_rate, sp.tax_3_rate)
+                amount =  priceBefore + sp.total_discount  
+            }
+        }  
+
         //tax 1
-        sp.taxable_amount_1 = sp.sub_total;
+        sp.taxable_amount_1 = amount;
         //tax 1 taxable amount
         //if cal tax1 taxable after disc.
         if (sp.calculate_tax_1_after_discount) {
-            sp.taxable_amount_1 = (sp.sub_total - sp.total_discount);
+            sp.taxable_amount_1 = (amount - sp.total_discount);
         }
         sp.taxable_amount_1 *= ((sp.percentage_of_price_to_calculate_tax_1 || 0) / 100);
 
@@ -627,10 +637,10 @@ export default class Sale {
 
         //tax 2
         //tax 2 taxable amount
-        sp.taxable_amount_2 = sp.sub_total;
+        sp.taxable_amount_2 =amount;
         //if cal tax2 taxable after disc.
         if (sp.calculate_tax_2_after_discount) {
-            sp.taxable_amount_2 = (sp.sub_total - sp.total_discount);
+            sp.taxable_amount_2 = (amount - sp.total_discount);
         }
 
         sp.taxable_amount_2 *= ((sp.percentage_of_price_to_calculate_tax_2 || 0) / 100);
@@ -645,10 +655,10 @@ export default class Sale {
 
         //tax 3
         //tax 3 taxable amount
-        sp.taxable_amount_3 = sp.sub_total;
+        sp.taxable_amount_3 = amount;
         //if cal tax3 taxable after disc.
         if (sp.calculate_tax_3_after_discount) {
-            sp.taxable_amount_3 = (sp.sub_total - sp.total_discount);
+            sp.taxable_amount_3 = (amount - sp.total_discount);
         }
 
         sp.taxable_amount_3 *= ((sp.percentage_of_price_to_calculate_tax_3 || 0) / 100);
@@ -669,6 +679,74 @@ export default class Sale {
         sp.total_tax = sp.tax_1_amount + sp.tax_2_amount + sp.tax_3_amount;
 
     }
+
+    onRateIncludeOrNotIncludeTaxClick(){ 
+        this.sale.rate_include_tax = ((this.sale.rate_include_tax||0)==1?0:1) 
+        this.sale.sale_products.forEach((sp)=>{
+            sp.rate_include_tax = this.sale.rate_include_tax;
+            this.onRateIncludeTax(sp, false,  false)
+        })
+        this.updateSaleSummary()  
+    }
+
+    onRateIncludeTax(sp, update_rate = true, update_sale=true){
+        let _tax_rule = JSON.parse(JSON.stringify(this.setting.tax_rules)).filter((r)=>r.tax_rule == sp.tax_rule||this.sale.tax_rule )
+        if(_tax_rule.length > 0){
+            sp.tax_rule_data = _tax_rule[0].tax_rule_data;
+            if(update_rate){
+                sp.rate_include_tax = ((sp.rate_include_tax||0)==1?0:1)
+            }
+            this.updateSaleProduct(sp)
+            if(update_sale){
+                this.updateSaleSummary();
+            }
+        }
+    }
+
+
+    getRateBeforeTax(amount, tax_rule, tax_1_rate, tax_2_rate, tax_3_rate){
+		amount=amount || 0
+	 
+		const t1_r = (tax_1_rate || 0) / 100
+		const t2_r = (tax_2_rate ||  0)  / 100
+		const t3_r = (tax_3_rate || 0)  / 100
+		
+		let tax_1_amount = 0
+		let tax_2_amount = 0
+		let tax_3_amount = 0
+		let price = 0
+
+		let t1_af_disc = tax_rule.calculate_tax_1_after_discount
+		let t2_af_disc = tax_rule.calculate_tax_2_after_discount
+
+		let t2_af_add_t1 = tax_rule.calculate_tax_2_after_adding_tax_1
+        
+		let t3_af_disc	= tax_rule.calculate_tax_3_after_discount
+
+		let t3_af_add_t1 =  tax_rule.calculate_tax_3_after_adding_tax_1
+		let t3_af_add_t2 =   tax_rule.calculate_tax_3_after_adding_tax_2
+
+
+		let tax_rate_con = 0
+		tax_rate_con = (1 + t1_r + t2_r 
+							+ (t1_r * t2_af_add_t1 * t2_r) 
+							+ t3_r + (t1_r * t3_af_add_t1 * t3_r) 
+							+ (t2_r * t3_af_add_t2 * t3_r)
+							+ (t1_r * t2_af_add_t1 * t2_r * t3_af_add_t2 * t3_r))
+
+                          
+    
+		tax_rate_con = tax_rate_con || 1
+
+		price = amount /  (tax_rate_con ==0?1:tax_rate_con)
+
+       
+		 
+		return  price
+	 
+	}
+
+
 
     //on sale apply  tax setting
     onSaleApplyTax(tax_rule, s) {
@@ -712,9 +790,10 @@ export default class Sale {
         this.sale.tax_2_amount = this.getNumber(sp.sum("$.tax_2_amount"));
         this.sale.tax_3_amount = this.getNumber(sp.sum("$.tax_3_amount"));
         this.sale.total_tax = this.getNumber(sp.sum("$.total_tax"));
+        let total_tax_exclude = this.getNumber(sp.where("$.rate_include_tax == 1").sum("$.total_tax"))
 
         //grand_total
-        this.sale.grand_total = ((this.sale.sub_total || 0) - (this.sale.total_discount || 0)) + (this.sale.total_tax || 0);
+        this.sale.grand_total = ((this.sale.sub_total || 0) - (this.sale.total_discount || 0)) + ((this.sale.total_tax || 0)-total_tax_exclude);
         this.sale.balance = this.sale.grand_total - (this.sale.deposit || 0);
 
 
@@ -2072,7 +2151,8 @@ export default class Sale {
                     fee_amount: data.fee_amount,
                     folio_transaction_type: data.folio_transaction_type,
                     folio_transaction_number: data.folio_transaction_number,
-                    city_ledger_name: data.city_ledger_name
+                    city_ledger_name: data.city_ledger_name,
+                    reservation_stay:data.reservation_stay 
                 });
 
                 this.updatePaymentAmount();

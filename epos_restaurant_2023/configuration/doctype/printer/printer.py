@@ -8,6 +8,50 @@ import json
 class Printer(Document):
 	def validate(self):
 		self.business_branch_printer = "{} > {}".format(self.business_branch, self.printer_name)
+
+		## update relate print setting
+		#// product printer
+		frappe.db.sql("""update `tabProduct Printer` 
+                      	set 
+                       printer_name=%(printer_name)s,
+                       group_item_type=%(group_item_type)s,
+                       ip_address=%(ip_address)s,
+                       port=%(port)s,
+                       is_label_printer=%(is_label_printer)s,
+                       usb_printing=%(usb_printing)s
+                       where 
+							printer=%(name)s
+                       """,{
+						   "printer_name":self.printer_name,
+						   "group_item_type":self.group_item_type,
+						   "ip_address":self.ip_address,
+						   "port":self.port,
+						   "is_label_printer":self.is_label_printer,
+						   "usb_printing":self.usb_printing,
+							"name":self.name
+					   })
+		#// pos product printer
+		frappe.db.sql("""update `tabStation Printers` 
+                      	set 
+                       printer_name=%(printer_name)s,
+                       group_item_type=%(group_item_type)s,
+                       ip_address=%(ip_address)s,
+                       port=%(port)s,
+                       is_label_printer=%(is_label_printer)s,
+                       usb_printing=%(usb_printing)s
+                       where 
+							printer=%(name)s
+                       """,{
+						   "printer_name":self.printer_name,
+						   "group_item_type":self.group_item_type,
+						   "ip_address":self.ip_address,
+						   "port":self.port,
+						   "is_label_printer":self.is_label_printer,
+						   "usb_printing":self.usb_printing,
+							"name":self.name
+					   })
+		frappe.db.commit()
+
   
   
 @frappe.whitelist()

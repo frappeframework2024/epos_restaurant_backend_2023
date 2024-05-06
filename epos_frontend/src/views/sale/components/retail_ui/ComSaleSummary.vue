@@ -1,5 +1,6 @@
 <template lang="">
   <div class="border p-2 rounded-md">
+
     <ComLabelValue label="Total QTY" :value="sale.sale.total_quantity"/>
     <!-- sub total -->
     <ComLabelValue v-if="sale.sale.sub_total!=sale.sale.grand_total" label="Sub Total">
@@ -68,6 +69,7 @@
                 :currency="sale.setting.pos_setting.second_currency_name" /></div>
                 
     </ComLabelValue>
+     
 
 
     

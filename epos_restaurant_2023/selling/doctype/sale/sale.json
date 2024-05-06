@@ -87,6 +87,8 @@
   "payment",
   "tax_tab",
   "tax_rule",
+  "column_break_fjyx",
+  "rate_include_tax",
   "section_break_44",
   "tax_1_rate",
   "percentage_of_price_to_calculate_tax_1",
@@ -1151,6 +1153,16 @@
    "fieldname": "is_generate_tax_invoice",
    "fieldtype": "Check",
    "label": "Is Generate Tax Invoice"
+  },
+  {
+   "fieldname": "column_break_fjyx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "rate_include_tax",
+   "fieldtype": "Check",
+   "label": "Rate Include Tax"
   }
  ],
  "image_field": "photo",
@@ -1163,7 +1175,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-05-02 18:41:48.545332",
+ "modified": "2024-05-03 15:19:51.876953",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

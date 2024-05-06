@@ -32,7 +32,14 @@
                 </template>
             </v-list>
             <v-list>
-                <template  v-if="!mobile"> 
+                <template  v-if="device_setting?.allow_switch_pos_profile==1"> 
+                    <v-list-subheader>{{ $t('POS Config') }}</v-list-subheader>
+                    <v-list-item @click="onSwitchPOSProfile">
+                        <v-list-item-title>{{ $t('Switch POS Profile') }}</v-list-item-title>
+                    </v-list-item>
+                </template>
+
+                <template  v-if="!mobile">
                     <v-list-subheader>{{ $t('Table Position') }}</v-list-subheader>
                     <v-list-item @click="onEnableArrageTable">
                         <v-list-item-title>{{ $t('Arrange Table') }}</v-list-item-title>
@@ -55,7 +62,7 @@
     </v-menu>
 </template>
 <script setup>
-import {inject, pendingSaleListDialog,createToaster, useRouter,ref ,i18n} from '@/plugin';
+import {inject, pendingSaleListDialog,createToaster, useRouter,ref,SwitchPosProfileModal ,i18n} from '@/plugin';
 import { useDisplay } from 'vuetify';
 const { t: $t } = i18n.global;
 
@@ -70,12 +77,16 @@ const router = useRouter();
 const { mobile } = useDisplay();
 const toaster = createToaster({position: 'top-right'});
 const pos_profile = localStorage.getItem('pos_profile');
-
+const device_setting = JSON.parse(localStorage.getItem("device_setting"));
 
 
 let status = ref(false);
 function onRefreshSale() { 
     tableLayout.getSaleList()
+}
+
+async function onSwitchPOSProfile(){
+    await SwitchPosProfileModal({})
 }
 
 function onEnableArrageTable(){

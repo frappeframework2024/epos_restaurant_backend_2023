@@ -177,12 +177,13 @@ class Sale(Document):
 		self.tax_2_amount  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.tax_2_amount)
 		self.tax_3_amount  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.tax_3_amount)
 		self.total_tax  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.total_tax)
+		total_rate_include_tax  = Enumerable(self.sale_products).where(lambda x:x.tax_rule and x.rate_include_tax == 1).sum(lambda x: x.total_tax)
 
 		currency_precision = frappe.db.get_single_value('System Settings', 'currency_precision')
 		if currency_precision=='':
 			currency_precision = "2"
 
-		self.grand_total =( sub_total - (self.total_discount or 0))  + self.total_tax 
+		self.grand_total =( sub_total - (self.total_discount or 0))  + self.total_tax - total_rate_include_tax
 	  
 		self.total_paid =  Enumerable(self.payment).where(lambda x: x.payment_type_group !='On Account').sum(lambda x: x.amount or 0)
 		self.total_paid = (self.total_paid or 0) + (self.deposit or 0)
@@ -670,22 +671,33 @@ def add_sale_product_spa_commission(self):
 def create_folio_transaction_from_pos_trnasfer(self):
 
 	for p in self.payment:
-		if p.folio_transaction_type and p.folio_transaction_number :
+		 
+		if p.folio_transaction_type and (p.folio_transaction_number or p.reservation_stay):
 			 
 			if not p.account_code:
 				frappe.throw("Please account code for Payment type {}".format(p.payment_type))
 
+			transaction_number = p.folio_transaction_number
+			if p.folio_transaction_type=="Reservation Folio" and not  p.folio_transaction_number and p.reservation_stay:
+				guest_folio =  create_guest_folio(self, p.reservation_stay)
+				if (guest_folio):
+					transaction_number = guest_folio.name
+				else:
+					frappe.throw(_("There's problem with create guest folio. Please try again."))
+    
+    
 			data = {
 					'doctype': 'Folio Transaction',
 					'posting_date':self.posting_date,
 					'transaction_type': p.folio_transaction_type,
-					'transaction_number': p.folio_transaction_number,
+					'transaction_number': transaction_number,
 					'reference_number':self.name,
 					"input_amount":p.amount,
 					"account_code":p.account_code,
 					"property":self.business_branch,
 					"is_auto_post":1,
 					"sale": self.name,
+					"tbl_number":self.tbl_number,
 					"type":"Debit",
 					"guest":self.customer,
 					"guest_name":self.customer_name,
@@ -695,6 +707,24 @@ def create_folio_transaction_from_pos_trnasfer(self):
 			doc = frappe.get_doc(data)
 			doc.insert(ignore_permissions=True)	
 
+def create_guest_folio(self,reservation_stay):
+    from edoor.api.frontdesk import get_working_day
+    
+    working_day = get_working_day(self.business_branch)
+    
+    
+    doc = frappe.get_doc({
+		"doctype":"Reservation Folio",
+  		"guest":self.customer,
+		"property":self.business_branch,
+		"working_day":working_day["name"],
+		"cashier_shift":working_day["cashier_shift"]["name"],
+		"reservation_stay":reservation_stay,
+		"posting_date":working_day["date_working_day"],
+		"note":"This folio was created by {} from POS when transfer bill to room".format(frappe.db.get_value("User",frappe.session.user,"full_name"))
+	})
+    doc.insert(ignore_permissions=True)
+    return doc
 def on_get_revenue_account_code(self):
 	for sp in self.sale_products:
 		values = {
@@ -733,21 +763,29 @@ def validate_pos_payment(self):
 		d.amount = d.amount #(d.input_amount or 0 ) / (d.exchange_rate or 1)
 
 def validate_tax(doc):
+		
 		if doc.tax_rule:
+			amount = doc.sub_total
+			if (doc.rate_include_tax == 1) :
+				priceBefore = get_ratebefore_tax(doc.sub_total - doc.total_discount,doc.tax_rule, doc.tax_1_rate, doc.tax_2_rate, doc.tax_3_rate)
+				amount =  priceBefore + doc.total_discount  
+				
+			
+
 			#Tax 1
-			doc.taxable_amount_1 = doc.sub_total 
+			doc.taxable_amount_1 = amount
 			#cal tax1 taxable after disc.
 			if doc.calculate_tax_1_after_discount == 1:
-				doc.taxable_amount_1 =   doc.sub_total - doc.total_discount			 
+				doc.taxable_amount_1 =   amount - doc.total_discount			 
 				
 			doc.taxable_amount_1 *= (doc.percentage_of_price_to_calculate_tax_1/100)
 			doc.tax_1_amount =  (doc.taxable_amount_1 or 0) * ((doc.tax_1_rate or 0)/100)
 
 			#Tax 2
-			doc.taxable_amount_2 = doc.sub_total  
+			doc.taxable_amount_2 = amount
 			#cal tax2 taxable after disc.
 			if doc.calculate_tax_2_after_discount==1:
-				doc.taxable_amount_2 = doc.sub_total  - doc.total_discount
+				doc.taxable_amount_2 = amount  - doc.total_discount
 
 			#cal tax2 taxable after add tax1
 			if doc.calculate_tax_2_after_adding_tax_1==1:
@@ -757,10 +795,10 @@ def validate_tax(doc):
 			doc.tax_2_amount =  (doc.taxable_amount_2 or 0) *  ((doc.tax_2_rate or 0) /100)
 
 			#tax 3
-			doc.taxable_amount_3 =  doc.sub_total
+			doc.taxable_amount_3 =  amount
 			#cal tax3 taxable after disc.
 			if doc.calculate_tax_3_after_discount==1:
-				doc.taxable_amount_3 = doc.sub_total - doc.total_discount 
+				doc.taxable_amount_3 = amount - doc.total_discount 
 			
 			#cal tax3 taxable after add tax1
 			if doc.calculate_tax_3_after_adding_tax_1==1:
@@ -784,6 +822,45 @@ def validate_tax(doc):
 			doc.tax_3_amount=0
 			doc.total_tax =0
 		
+def get_ratebefore_tax(amount, t_rule, tax_1_rate, tax_2_rate, tax_3_rate):
+	tax_rule = frappe.get_doc("Tax Rule",t_rule)
+	amount=amount or 0
+	
+	t1_r = (tax_1_rate or 0) / 100
+	t2_r = (tax_2_rate or  0)  / 100
+	t3_r = (tax_3_rate or 0)  / 100
+
+	tax_1_amount = 0
+	tax_2_amount = 0
+	tax_3_amount = 0
+	price = 0
+
+	t1_af_disc = tax_rule.calculate_tax_1_after_discount
+	t2_af_disc = tax_rule.calculate_tax_2_after_discount
+
+	t2_af_add_t1 = tax_rule.calculate_tax_2_after_adding_tax_1
+
+	t3_af_disc	= tax_rule.calculate_tax_3_after_discount
+
+	t3_af_add_t1 =  tax_rule.calculate_tax_3_after_adding_tax_1
+	t3_af_add_t2 =   tax_rule.calculate_tax_3_after_adding_tax_2
+
+
+	tax_rate_con = 0
+	tax_rate_con = (1 + t1_r + t2_r 
+						+ (t1_r * t2_af_add_t1 * t2_r) 
+						+ t3_r + (t1_r * t3_af_add_t1 * t3_r) 
+						+ (t2_r * t3_af_add_t2 * t3_r)
+						+ (t1_r * t2_af_add_t1 * t2_r * t3_af_add_t2 * t3_r))
+
+						
+
+	tax_rate_con = tax_rate_con or 1
+
+	price = amount /  (tax_rate_con or 1)
+
+	return  price
+
 def update_pos_reservation_status(self):
 	if self.from_reservation:
 		if frappe.db.exists("POS Reservation", self.from_reservation):

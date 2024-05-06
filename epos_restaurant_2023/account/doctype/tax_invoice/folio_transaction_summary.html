@@ -1,0 +1,12 @@
+<div class="container" style="background: #f5f3f5;border-radius: 6px;padding:10px; ">
+    {% for d in data %}
+    <div class="row"> 
+        <div class="col">
+            <strong>{{d.account_category}} </strong>
+        </div>
+        <div class="col text-right">
+            {{frappe.format(d.amount,{"fieldtype":"Currency"})}}
+        </div>
+    </div>
+    {% endfor %}
+</div> 

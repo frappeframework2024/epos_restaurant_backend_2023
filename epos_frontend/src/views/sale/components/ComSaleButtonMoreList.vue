@@ -75,6 +75,13 @@
             <v-list-item-title>{{ $t('Edit Menu Item') }}</v-list-item-title>
         </v-list-item>
 
+        <v-list-item @click="sale.onRateIncludeOrNotIncludeTaxClick()" >
+            <template #prepend>
+                <v-icon :icon="sale.rate_include_tax == 1 ? 'mdi-tag-remove' : 'mdi-tag-plus'"></v-icon>
+            </template>
+            <v-list-item-title :class="sale.sale.rate_include_tax == 1 ? text-red-700:''">{{ $t(sale.sale.rate_include_tax == 1 ? 'Remove Rate Include Tax' : 'Rate Include Tax') }}</v-list-item-title>
+        </v-list-item>
+
         <v-divider inset></v-divider>
         <v-list-item v-if="sale.sale.name" @click="onDeleteBill()">
             <template #prepend>

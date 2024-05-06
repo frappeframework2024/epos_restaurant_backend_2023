@@ -1,0 +1,55 @@
+{% var index = 1 %}
+<div class="form-grid-container">
+    <div class="form-grid">
+        <div class="grid-heading-row">
+            <div class="grid-row">
+                <div class="data-row row">
+                    <div class="col text-center" style="max-width: 4%;">
+                        <span>No.</span>
+                    </div> 
+                    <div class="col" style="max-width: 10%;">Folio Transaction</div>
+                    <div class="col text-center" style="max-width: 8%;">Date</div>
+                    <div class="col text-center" style="max-width: 5%;">Room#</div>
+                    <div class="col col-2">Account</div>
+                    <div class="col text-center" style="max-width: 3%;">Qty</div>
+                    <div class="col text-right">Amount/Rate</div>
+                    <div class="col text-right">Discount</div>
+                    <div class="col text-right">Tax</div>
+                    <div class="col text-right">Total Amount</div>
+                    <div class="col">Note</div>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="grid-body">
+            <div class="rows"> 
+                {% for d in data %}
+                    <div class="grid-row">
+                        <div class="data-row row">
+                            <div class="col text-center" style="max-width: 4%;">{{index}}</div>
+                            {% if d.is_auto_post == 1 %}
+                                <div class="col" style="max-width: 10%;color: #ff3720 !important;" >{{d.name}}</div>
+                            {% else %}
+                                <div class="col" style="max-width: 10%;" >{{d.name}}</div>
+                            {% endif %}
+                            <div class="col text-center" style="max-width: 8%;">{{ frappe.format(d.posting_date,{"fieldtype":"Date"})}}</div>
+                            <div class="col text-center" style="max-width: 5%;">{{d.room_number}}</div>
+                            <div class="col col-2">{{d.account_code}} - {{d.account_name}}</div>
+                            <div class="col text-center" style="max-width: 3%;">
+                                {% if d.allow_enter_quantity == 1 %}
+                                    {{d.quantity}}
+                                {% endif %}
+                            </div>
+                            <div class="col text-right">{{frappe.format(d.amount,{"fieldtype":"Currency"})}}</div>
+                            <div class="col text-right">{{frappe.format(d.discount_amount,{"fieldtype":"Currency"})}}</div>
+                            <div class="col text-right">{{frappe.format(d.total_tax,{"fieldtype":"Currency"})}}</div>
+                            <div class="col text-right">{{frappe.format(d.total_amount,{"fieldtype":"Currency"})}}</div> 
+                            <div class="col" style="word-break: break-word;">{{d.note}}</div>
+                        </div>
+                    </div>
+                    {% var index = index + 1 %}
+                {% endfor %} 
+            </div>
+        </div>
+    </div>
+</div> 

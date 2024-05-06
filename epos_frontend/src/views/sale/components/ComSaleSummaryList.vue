@@ -127,4 +127,8 @@
     return null
   } 
 
+  function onRateIncludeOrNotIncludeClick(){
+    sale.onRateIncludeOrNotIncludeTaxClick()
+  }
+
 </script> 

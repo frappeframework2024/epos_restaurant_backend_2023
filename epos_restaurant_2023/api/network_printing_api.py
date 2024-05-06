@@ -12,6 +12,7 @@ from epos_restaurant_2023.api.printing import (
     get_print_context, 
     print_from_print_format,
     )
+ 
 
 
 def html_to_image(height,width,html,css,path,image):    
@@ -95,8 +96,48 @@ def on_print(file_path, printer, delete_file = 1):
             frappe.throw(str(e))
         finally:
             pass
+
+
             
+@frappe.whitelist(methods="POST")
+def print_all_bill_to_network_printer(data):
+    print_data = []
+    for d in data:
+        doc = frappe.get_doc("Sale",d["name"])
+        doc.sale_status = 'Bill Requested'
+        doc.save()
+        print_data.append(d)
+    frappe.db.commit()
+
+    for d in print_data:
+        print_bill_to_network_printer(d) 
+
+    return True
+
+
+## quick pay print bill
+@frappe.whitelist(methods="POST")
+def print_all_bill_quick_pay_to_network_printer(data):
+    print_data = []
+    for s in data:
+        doc =  frappe.get_doc('Sale',s['name'])
+        doc.append ('payment', {
+                'payment_type':s['payment_type'],
+                'input_amount':doc.grand_total,
+                'amount':doc.grand_total
+            })          
+
+        doc.docstatus = 1
+        doc.sale_status = 'Closed'
+        doc.save()
+        print_data.append(s)
+    frappe.db.commit()
+
+    ## print
+    for d in print_data:
+        print_bill_to_network_printer(d) 
  
+    return True
 
 
 # @frappe.whitelist(allow_guest=True,methods='POST') 

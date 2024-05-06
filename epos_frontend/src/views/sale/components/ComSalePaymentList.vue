@@ -5,16 +5,21 @@
             <div v-if="!is_removing" v-for="(p, index) in sale.sale.payment" :key="index">
                 <div class="flex items-center p-1 bg-white rounded-sm mb-1 border border-gray-600">
                     <div class="flex-grow">
+                     
                         <div class="font-bold">{{ p.payment_type }} </div>
-                        <div class="text-xs text-gray-500" v-if="((p.room_number||'') !='')">{{ $t('Room') }}#:   {{ p.room_number }}</div>                     
+                        <div class="text-xs text-gray-500" v-if="((p.room_number||'') !='')">{{ $t('Room') }}#:   {{ p.room_number }}</div>       
+                        <div class="text-xs text-gray-500" v-if="((p.reservation_stay||'') !='')">{{ $t('Stay ') }}#:   {{ p.reservation_stay }}</div>       
+                       
+
                         <div class="text-xs text-gray-500" v-if="((p.folio_transaction_number||'') !='')">
-                            {{ p.folio_transaction_number }} 
+                            {{ p.folio_transaction_number }}  
                             <span v-if="p.folio_transaction_type == 'City Ledger' ">
                                 {{ '('+ p.city_ledger_name +')' }}
                                 
                             </span>
                             
-                        </div>                     
+                        </div> 
+                                          
                        
                         <div class="text-xs text-gray-500" v-if="p.currency != sale.setting.pos_setting.main_currency_name">{{ $t('Exchange Rate') }}: 
                             <CurrencyFormat :value="p.exchange_rate" :currency="p.currency" v-if="sale.setting.pos_setting.main_currency_name == sale.setting.pos_setting.exchange_rate_main_currency"/>

@@ -8,21 +8,29 @@
  "field_order": [
   "naming_series",
   "property",
-  "tax_invoice_type",
-  "document_type",
-  "document_name",
-  "tax_invoice_date",
-  "exchange_rate",
   "guest",
   "customer_name",
   "phone_number",
-  "note"
+  "column_break_zvpk",
+  "tax_invoice_date",
+  "tax_invoice_type",
+  "document_type",
+  "document_name",
+  "exchange_rate",
+  "section_break_wnuk",
+  "item_list",
+  "section_break_crcz",
+  "note",
+  "default_print_format",
+  "column_break_hrgu",
+  "invoice_summary"
  ],
  "fields": [
   {
    "fieldname": "tax_invoice_type",
    "fieldtype": "Select",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Tax Invoice Type",
    "options": "Tax Invoice\nCommercial Invoice"
   },
@@ -30,7 +38,9 @@
    "fieldname": "document_type",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Document Type",
+   "link_filters": "[[{\"fieldname\":\"document_type\",\"field_option\":\"DocType\"},\"name\",\"in\",[\"Sale\",\"Reservation Folio\",\"Desk Folio\"]]]",
    "options": "DocType"
   },
   {
@@ -42,6 +52,8 @@
   {
    "fieldname": "tax_invoice_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Tax Invoice Date"
   },
   {
@@ -83,14 +95,45 @@
   {
    "fieldname": "property",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Property",
    "options": "Business Branch"
+  },
+  {
+   "fieldname": "section_break_wnuk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_zvpk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_crcz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_hrgu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "item_list",
+   "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "invoice_summary",
+   "fieldtype": "HTML"
+  },
+  {
+   "depends_on": "eval:frappe.user.has_role(\"Administrator\")",
+   "fieldname": "default_print_format",
+   "fieldtype": "Link",
+   "label": "Default Print Format",
+   "link_filters": "[[{\"fieldname\":\"default_print_format\",\"field_option\":\"Print Format\"},\"doc_type\",\"=\",\"Tax Invoice\"]]",
+   "options": "Print Format"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-02 19:13:33.052452",
+ "modified": "2024-05-05 11:33:32.239876",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "Tax Invoice",
@@ -112,5 +155,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1
 }

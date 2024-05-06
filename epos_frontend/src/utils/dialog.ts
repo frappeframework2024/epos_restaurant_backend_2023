@@ -40,6 +40,7 @@ import ComShortcutKeyHelp from '@/components/ComShortcutKeyHelp.vue'
 import ComAddCommission from '@/views/sale/components/ComAddCommissionModal.vue'
 import ComSaleReferenceNumberModal from '@/views/sale/components/ComSaleReferenceNumberModal.vue'
 import ComPrintWifiPassword from '@/components/ComPrintWifiPasswordModal.vue'
+import ComSwitchPosProfile from '@/components/ComSwitchPosProfile.vue'
 import ComViewHappyHourPromotionModal from '@/views/sale/components/happy_hour_promotion/ComViewHappyHourPromotionModal.vue'
 import ComSelectDateTime from '@/views/sale/components/ComSelectDateTime.vue'
 import ComSetStopTimerModal from '@/views/sale/components/ComSetStopTimerModal.vue'
@@ -116,6 +117,7 @@ export const posReservationDialog = createPromiseDialog<params, object>(ComPOSRe
 export const inputNumberDialog = createPromiseDialog<params, object>(ComInputNumber);
 export const addCommissionDialog = createPromiseDialog<params, object>(ComAddCommission);
 export const printWifiPasswordModal = createPromiseDialog<params, object>(ComPrintWifiPassword);
+export const SwitchPosProfileModal = createPromiseDialog<params, object>(ComSwitchPosProfile);
 export const splitBillDialog = createPromiseDialog<params, object>(ComSplitBill);
 export const SaleProductComboMenuGroupModal = createPromiseDialog<params, object>(ComSaleProductComboMenuGroupModal);
 export const changeTaxSettingModal = createPromiseDialog<params, object>(ComChangeTaxSettingModal);

@@ -137,7 +137,7 @@ function change_expired_date(frm) {
                 method: 'get_product_summary_information',
                 doc: frm.doc,
                 callback: function (r) {
-                    console.log(r.message)
+                    
                     let dlg = new frappe.ui.Dialog({
                         title: 'Edit Expire Date',
                         size: 'extra-large', 

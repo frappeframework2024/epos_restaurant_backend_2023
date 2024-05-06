@@ -24,7 +24,15 @@ def dome():
                 "outlet":"Main Outlet",
                 "letterhead":"Downtown Letterhead"
             })
-    
+
+@frappe.whitelist(allow_guest=True)
+def get_bill_template_api(name,template, reprint=0):
+    if not frappe.db.exists("Sale",name):
+        return ""    
+    doc = frappe.get_doc("Sale", name) 
+    data_template,css = frappe.db.get_value("POS Receipt Template",template,["template","style"])
+    html= frappe.render_template(data_template, get_print_context(doc,reprint))
+    return {"html":html,"css":css}    
 
 ## WINDOW SERVER PRINTING GENERATE HTML
 @frappe.whitelist(allow_guest=True, methods="POST")

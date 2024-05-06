@@ -18,7 +18,7 @@ window.addEventListener('load', function () {
 
         const navBar = document.querySelector('body')
         navBar.classList.add('full-width');
-        
+       
     })
 
 })
@@ -91,10 +91,13 @@ function removeGanttKanban () {
 
 document.addEventListener('DOMContentLoaded', function () {
     var myTab = document.getElementById('myTab');
-    var lastChild = myTab.lastElementChild;
-    var lastChildLink = lastChild.querySelector('a');
-    
-    lastChildLink.click();
+    if(myTab != null){
+        var lastChild = myTab.lastElementChild;
+    }
+    if (lastChild != undefined){
+        var lastChildLink = lastChild.querySelector('a');
+        lastChildLink.click();
+    } 
 });
 
 

@@ -26,6 +26,8 @@ async function onPaymentTypeClick(pt) {
     let folio = null
     let city_ledger_name = null
     let desk_folio = null
+    let reservation_stay = null
+
     if(pt.payment_type_group=="Pay to Room" ){ 
         if(sale.paymentInputNumber<=0){
             toaster.warning($t("msg.Please enter payment amount"));
@@ -46,6 +48,8 @@ async function onPaymentTypeClick(pt) {
             folio = result.folio;
             folio_transaction_number =result.folio;
             folio_transaction_type="Reservation Folio"
+            reservation_stay=result.reservation_stay
+        
             sale.sale.customer = result.guest
             sale.sale.customer_name = result.guest_name
         }
@@ -103,8 +107,9 @@ async function onPaymentTypeClick(pt) {
     }
 
   
-    const payment_obj={paymentType: pt, amount:sale.paymentInputNumber,fee_amount:fee_amount,room:room, folio : folio, folio_transaction_type:folio_transaction_type,folio_transaction_number:folio_transaction_number,city_ledger_name:city_ledger_name}  
-    // sale.onAddPayment(pt, sale.paymentInputNumber,fee_amount,room,folio,folio_transaction_type,folio_transaction_number);   
+    const payment_obj={paymentType: pt, amount:sale.paymentInputNumber,fee_amount:fee_amount,room:room, folio : folio, folio_transaction_type:folio_transaction_type,folio_transaction_number:folio_transaction_number,city_ledger_name:city_ledger_name,reservation_stay:reservation_stay}
+    
+ 
     sale.onAddPayment(payment_obj);
 
 }
