@@ -55,7 +55,9 @@
                 </template>
                 <v-list-item-title class="text-red-700">{{ $t('Remove Note') }}</v-list-item-title>
             </v-list-item>
-            <v-list-item  :prepend-icon="saleProduct.rate_include_tax == 1 ? 'mdi-tag-remove' : 'mdi-tag-plus'" :title="$t(saleProduct.rate_include_tax == 1 ? 'Remove Rate Include Tax' : 'Rate Include Tax')"   @click="sale.onRateIncludeTax(saleProduct)"></v-list-item>
+            <v-list-item  :prepend-icon="saleProduct.rate_include_tax == 1 ? 'mdi-tag-remove' : 'mdi-tag-plus'"  @click="sale.onRateIncludeTax(saleProduct)"  v-if="saleProduct.tax_rule">
+                <v-list-item-title :class="saleProduct.rate_include_tax == 1 ? 'text-red-700' : ''">{{ $t(saleProduct.rate_include_tax == 1 ? 'Remove Rate Include Tax' : 'Rate Include Tax')}}</v-list-item-title>
+            </v-list-item>
             <v-list-item  prepend-icon="mdi-cash-100" :title="$t('Tax Setting')" v-if="saleProduct.product_tax_rule"  @click="sale.onSaleProductChangeTaxSetting(saleProduct,gv)">
             </v-list-item>
             

@@ -75,11 +75,11 @@
             <v-list-item-title>{{ $t('Edit Menu Item') }}</v-list-item-title>
         </v-list-item>
 
-        <v-list-item @click="sale.onRateIncludeOrNotIncludeTaxClick()" >
+        <v-list-item @click="sale.onRateIncludeOrNotIncludeTaxClick()" v-if="sale.sale.tax_rule">
             <template #prepend>
-                <v-icon :icon="sale.rate_include_tax == 1 ? 'mdi-tag-remove' : 'mdi-tag-plus'"></v-icon>
+                <v-icon :class="sale.sale.rate_include_tax == 1 ? 'text-red-700':''" :icon="sale.sale.rate_include_tax == 1 ? 'mdi-tag-remove' : 'mdi-tag-plus'"></v-icon>
             </template>
-            <v-list-item-title :class="sale.sale.rate_include_tax == 1 ? text-red-700:''">{{ $t(sale.sale.rate_include_tax == 1 ? 'Remove Rate Include Tax' : 'Rate Include Tax') }}</v-list-item-title>
+            <v-list-item-title :class="sale.sale.rate_include_tax == 1 ? 'text-red-700':''">{{ $t(sale.sale.rate_include_tax == 1 ? 'Remove Rate Include Tax' : 'Rate Include Tax') }}</v-list-item-title>
         </v-list-item>
 
         <v-divider inset></v-divider>
