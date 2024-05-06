@@ -5,7 +5,11 @@ import frappe
 from frappe.model.document import Document
 class TaxInvoice(Document):
 	def get_print_settings(self):
-		return ["print_uom_after_quantity","print_taxes_with_zero_amount"]
+		if hasattr(self,"print_settings"):
+			
+			return self.print_settings.split(",")
+		else:
+			return []
 
 	def after_delete(self):
 		if self.document_type in ["Reservation Folio","Desk Folio"]:

@@ -22,6 +22,7 @@
   "section_break_crcz",
   "note",
   "default_print_format",
+  "print_settings",
   "column_break_hrgu",
   "invoice_summary"
  ],
@@ -129,11 +130,18 @@
    "label": "Default Print Format",
    "link_filters": "[[{\"fieldname\":\"default_print_format\",\"field_option\":\"Print Format\"},\"doc_type\",\"=\",\"Tax Invoice\"]]",
    "options": "Print Format"
+  },
+  {
+   "depends_on": "eval:frappe.user.has_role(\"Administrator\")",
+   "fieldname": "print_settings",
+   "fieldtype": "Data",
+   "label": "Print Settings",
+   "length": 250
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-05 11:33:32.239876",
+ "modified": "2024-05-06 15:40:02.422412",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "Tax Invoice",
