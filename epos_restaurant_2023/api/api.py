@@ -1211,7 +1211,7 @@ def get_reservation_folio(property):
     for d in folio:
         d["id"] = d.name
         
-    if frappe.db.get_single_value("ePOS Settings","allow_pos_user_to_create_guest_folio_when_transfer_bill_to_room")=="1":
+    if frappe.db.get_single_value("ePOS Settings","allow_pos_user_to_create_guest_folio_when_transfer_bill_to_room")==1:
         # get all reservation that dont have folio
         sql ="select name as id, name as reservation_stay, room_types, rooms, reservation, guest_name,guest,guest_phone_number as phone_number from `tabReservation Stay` where reservation_status='In-house' and name not in %(stay_names)s"
         stays = frappe.db.sql(sql,{"stay_names": [d["reservation_stay"] for d in folio]},as_dict=1)

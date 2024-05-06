@@ -3,6 +3,8 @@ import uuid
 from html2image import Html2Image
 import numpy as np
 import base64
+import subprocess
+import platform 
 from PIL import Image
 import frappe
 import json
@@ -48,54 +50,63 @@ def trim(file_path):
     cropped = image.crop((x_min, y_min, x_max, y_max+30))
     cropped.save(file_path)
 
+def ping(host):
+    param = '-n' if platform.system().lower()=='windows' else '-c'
+    command = ['ping', param, '1', host]
+
+    result = subprocess.run(command, stdout=subprocess.PIPE)
+    output = result.stdout.decode('utf8')
+    if "Request timed out." in output or "100% packet loss" in output:
+        return False # "NOT CONNECTED"
+    return True #"CONNECTED"
 
 def on_print(file_path, printer, delete_file = 1):
-    if printer:  
-        printer_obj = Network(printer["ip_address"]) 
-        printer_obj.open()
-        try:
+    if printer: 
+        if ping(printer["ip_address"]):         
+            try:
+                printer_obj = Network(printer["ip_address"]) 
+                printer_obj.open()
+                ## crop image base on height buffer size  
+                im = Image.open(file_path)
+                _image = im
+                # printer_obj.image(im) 
+                _width,_height = im.size
+                # _width = 590
+    
+                crop_height = 200
+                init_crop_height = 0 
+                h = _height 
+                while _height > crop_height: 
+                    im = _image
+                    box = (0, init_crop_height, _width, int( crop_height+init_crop_height))
+                    crop_image = im.crop(box)
+                    printer_obj.image(crop_image)                 
+                    init_crop_height += int(crop_height)
+                    _height -= crop_height
+                    time.sleep(0.1)
+                    if _height <=  crop_height: 
 
-            ## crop image base on height buffer size  
-            im = Image.open(file_path)
-            _image = im
-            # printer_obj.image(im) 
-            _width,_height = im.size
-            # _width = 590
- 
-            crop_height = 200
-            init_crop_height = 0 
-            h = _height 
-            while _height > crop_height: 
-                im = _image
-                box = (0, init_crop_height, _width, int( crop_height+init_crop_height))
-                crop_image = im.crop(box)
-                printer_obj.image(crop_image)                 
-                init_crop_height += int(crop_height)
-                _height -= crop_height
-                time.sleep(0.1)
-                if _height <=  crop_height: 
 
+                        break
 
-                    break
+                if _height>0:
+                    box = (0, int(init_crop_height), _width, int(_height+init_crop_height)) 
+                    crop_image = im.crop(box)
+                    printer_obj.image(crop_image) 
+                    time.sleep(0.1)
 
-            if _height>0:
-                box = (0, int(init_crop_height), _width, int(_height+init_crop_height)) 
-                crop_image = im.crop(box)
-                printer_obj.image(crop_image) 
-                time.sleep(0.1)
+                printer_obj.text(" ")           
+                printer_obj.cut()
+                printer_obj.close()
 
-            printer_obj.text(" ")           
-            printer_obj.cut()
-            printer_obj.close()
+                if delete_file == 1:
+                    if os.path.isfile(file_path):
+                        os.remove(file_path)
 
-            if delete_file == 1:
-                if os.path.isfile(file_path):
-                    os.remove(file_path)
-
-        except OSError as e:
-            frappe.throw(str(e))
-        finally:
-            pass
+            except OSError as e:
+                frappe.throw(str(e))
+            finally:
+                pass
 
 
             
