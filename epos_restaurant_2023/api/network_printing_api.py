@@ -212,7 +212,7 @@ def print_kot_to_network_printer_enque(data):
         "fixed_height":fixed_height,
         "item_height":item_height
     }
-    time.sleep(0.05)
+    time.sleep(0.5)
     on_kot_print(data=data,sale=doc_sale, template=template)
 
 ### print kot by print 
@@ -239,7 +239,7 @@ def _on_kot_print(template ,  station, printer,sale, sale_products):
                 img_name = "{}_{}.PNG".format(station,str(uuid.uuid4()) )                          
                 height =  fixed_height + item_height                    
                 file_path = html_to_image(height,int(width),html,css,path,img_name)  
-                time.sleep(0.05)
+                time.sleep(0.2)
                 on_print(file_path, printer) 
     else:
         height =  template["fixed_height"] or 500
@@ -250,7 +250,7 @@ def _on_kot_print(template ,  station, printer,sale, sale_products):
             
             html = frappe.render_template(template["data_template"], get_print_context(doc=sale,sale_products = sale_products,printer_name=printer["printer_name"]))
             file_path = html_to_image(height ,int(template["width"]),html,template["css"],path,img_name)  
-            time.sleep(0.05)
+            time.sleep(0.2)
             on_print(file_path, printer)  
 
         elif group_item_type == "Printer cut by order line":        
@@ -261,7 +261,7 @@ def _on_kot_print(template ,  station, printer,sale, sale_products):
                 img_name = "{}_{}_{}.PNG".format(station,printer["printer_name"],str(uuid.uuid4())) 
                 html = frappe.render_template(template["data_template"], get_print_context(doc=sale,sale_products = _sale_products,printer_name=printer["printer_name"]))
                 file_path = html_to_image(height ,int(template["width"]),html,template["css"],path,img_name)  
-                time.sleep(0.05)
+                time.sleep(0.2)
                 on_print(file_path, printer)  
 
         elif group_item_type == "Printer cut by order quantity":
@@ -277,7 +277,7 @@ def _on_kot_print(template ,  station, printer,sale, sale_products):
                     img_name = "{}_{}_{}.PNG".format(station,printer["printer_name"],str(uuid.uuid4())) 
                     html = frappe.render_template(template["data_template"], get_print_context(doc=sale,sale_products = _sale_products,printer_name=printer["printer_name"]))
                     file_path = html_to_image(height ,int(template["width"]),html,template["css"],path,img_name)  
-                    time.sleep(0.05)
+                    time.sleep(0.2)
                     on_print(file_path, printer)    
 
 ## end KOT printing
