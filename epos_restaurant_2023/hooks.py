@@ -16,7 +16,7 @@ app_license = "MIT"
 app_include_css = "/assets/epos_restaurant_2023/css/epos_restaurant_2023.css"
 app_include_js = "/assets/epos_restaurant_2023/js/epos_restaurant_2023.js"
  
-
+additional_print_settings =["compact_item_print"]
 
 
 # include js, css files in header of web template
@@ -128,6 +128,7 @@ doc_events = {
         "after_insert":"epos_restaurant_2023.api.utils.sync_comment_to_server"
     }
 }
+
 
 # setting =frappe.get_doc("ePOS Sync Setting")
 # if setting.enable ==1:
