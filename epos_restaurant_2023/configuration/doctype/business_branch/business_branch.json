@@ -21,6 +21,7 @@
   "commune",
   "district",
   "vattin_number",
+  "house_number",
   "data_9",
   "province",
   "address_en",
@@ -267,12 +268,17 @@
    "fieldname": "pattern_background",
    "fieldtype": "Attach Image",
    "label": "Pattern Background"
+  },
+  {
+   "fieldname": "house_number",
+   "fieldtype": "Data",
+   "label": "House Number"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-01 10:13:03.003455",
+ "modified": "2024-05-07 09:09:24.651753",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",
