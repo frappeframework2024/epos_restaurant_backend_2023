@@ -387,6 +387,7 @@ function onExport(){
 
  
 function onPrint(){ 
+    gv.onPrintCloseWorkingDay(activeReport.value.report_id,pos_profile)
     if ((localStorage.getItem("flutterWrapper") || 0) == 1 || (gv.setting?.device_setting?.use_server_network_printing||0)==1) { 
         var printers = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
         if (printers.length <= 0) {

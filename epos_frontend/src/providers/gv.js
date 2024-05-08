@@ -1,7 +1,9 @@
 import { authorizeDialog,noteDialog,confirm,i18n,computed } from "@/plugin"
 import { createToaster } from "@meforma/vue-toaster";
 import moment from '@/utils/moment.js';
-
+import { FrappeApp } from 'frappe-js-sdk';
+const frappe = new FrappeApp();
+const call = frappe.call();
 
 const { t: $t } = i18n.global; 
  
@@ -244,14 +246,29 @@ export default class Gv {
 						
 				}
 			} 
-	
-			
+
 		}else{ 
 		 
 			toaster.warning($t(message?.exception || message.httpStatusText))
 			 
 		}
 	}
+	onPrintCloseWorkingDay(name,pos_profile) {
+		call.get('epos_restaurant_2023.api.desktop_api.get_working_day_info',{"name":name,"pos_profile":pos_profile})
+            .then((data) => {
+				let resp = data.message
+				const send_data = {
+					action: "print_close_working_day",
+					setting: this.setting?.pos_setting,
+					working_day: resp.working_day,
+					station_device_printing:(this.setting?.device_setting?.station_device_printing)||"",
+				}
+				window.chrome.webview.postMessage(JSON.stringify(send_data));
+            }).catch((res)=>{
+                console.log(res)
+            })
+       
+    }
 }
 
  
