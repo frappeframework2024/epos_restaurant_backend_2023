@@ -138,7 +138,7 @@ def get_working_day_info(name,pos_profile):
     result.append({
             "categroy":'working_day_info',
             'title':'Created Date',
-            'value': working_day.creation
+            'value': frappe.format(working_day.creation,{'fieldtype':'Datetime'})
         })
     result.append({
             "categroy":'working_day_info',
@@ -330,47 +330,52 @@ def cashier_shift_info(name,pos_profile):
             'value': cashier_shift.working_day
         })
     result.append({
-            "categroy":'working_day_info',
+            "categroy":'cashier_shift_info',
+            'title':'Cashier Shift',
+            'value': cashier_shift.name
+        })
+    result.append({
+            "categroy":'cashier_shift_info',
             'title':'Business Branch',
-            'value': working_day.business_branch
+            'value': cashier_shift.business_branch
         })
     result.append({
-            "categroy":'working_day_info',
+            "categroy":'cashier_shift_info',
             'title':'Outlet',
-            'value': working_day.outlet
+            'value': cashier_shift.outlet
         })
     result.append({
-            "categroy":'working_day_info',
+            "categroy":'cashier_shift_info',
             'title':'POS Profile',
             'value': pos_profile
         })
     result.append({
-            "categroy":'working_day_info',
+            "categroy":'cashier_shift_info',
             'title':'Created Date',
-            'value': working_day.creation
+            'value': frappe.format(cashier_shift.creation,{'fieldtype':'Datetime'})
         })
     result.append({
-            "categroy":'working_day_info',
+            "categroy":'cashier_shift_info',
             'title':'Opened By',
-            'value': frappe.get_doc("User", working_day.owner).full_name
+            'value': frappe.get_doc("User", cashier_shift.owner).full_name
         })
     result.append({
-        "categroy":'working_day_info',
+        "categroy":'cashier_shift_info',
         'title':'Status',
-        'value': "Opened" if working_day.is_closed == 1 else "Closed"
+        'value': "Opened" if cashier_shift.is_closed == 1 else "Closed"
     })
     result.append({
-        "categroy":'working_day_info',
+        "categroy":'cashier_shift_info',
         'title':'Closed Date',
-        'value': frappe.format(working_day.modified,{'fieldtype':'Datetime'})
+        'value': frappe.format(cashier_shift.modified,{'fieldtype':'Datetime'})
     })
     result.append({
-        "categroy":'working_day_info',
+        "categroy":'cashier_shift_info',
         'title':'Closed By',
-        'value': frappe.get_doc("User", working_day.modified_by).full_name
+        'value': frappe.get_doc("User", cashier_shift.modified_by).full_name
     })
     result.append({
-        "categroy":'working_day_info',
+        "categroy":'cashier_shift_info',
         'title':'Exchange Rate',
         'value':  (frappe.utils.fmt_money(1,currency=exch[0].from_currency, precision = main.custom_currency_precision)) + " = " + frappe.utils.fmt_money(exch[0].exchange_rate_input,currency=exch[0].to_currency, precision=second.custom_currency_precision)
     })
