@@ -253,8 +253,24 @@ export default class Gv {
 			 
 		}
 	}
-	onPrintCloseWorkingDay(name,pos_profile) {
-		call.get('epos_restaurant_2023.api.desktop_api.get_working_day_info',{"name":name,"pos_profile":pos_profile})
+	onPrintWorkingDayAndCashierShift(name,pos_profile,doctype) {
+		if(doctype == "Cashier Shift"){
+			call.get('epos_restaurant_2023.api.desktop_api.cashier_shift_info',{"name":name,"pos_profile":pos_profile})
+            .then((data) => {
+				let resp = data.message
+				const send_data = {
+					action: "print_close_cashier_shift",
+					setting: this.setting?.pos_setting,
+					cashier_shift: resp.cashier_shift,
+					station_device_printing:(this.setting?.device_setting?.station_device_printing)||"",
+				}
+				window.chrome.webview.postMessage(JSON.stringify(send_data));
+            }).catch((res)=>{
+                console.log(res)
+            })
+		}
+		else{
+			call.get('epos_restaurant_2023.api.desktop_api.get_working_day_info',{"name":name,"pos_profile":pos_profile})
             .then((data) => {
 				let resp = data.message
 				const send_data = {
@@ -267,7 +283,7 @@ export default class Gv {
             }).catch((res)=>{
                 console.log(res)
             })
-       
+		}
     }
 }
 

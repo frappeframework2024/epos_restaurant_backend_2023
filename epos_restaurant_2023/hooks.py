@@ -122,7 +122,8 @@ doc_events = {
         "on_trash": [
             "epos_restaurant_2023.api.utils.generate_data_for_sync_record_on_delete"
         ],
-        "on_submit":["epos_restaurant_2023.api.utils.sync_data_to_server_on_submit"]
+        "on_submit":["epos_restaurant_2023.api.utils.sync_data_to_server_on_submit"],
+        "validate":"epos_restaurant_2023.api.utils.validate_queue_job_status"
 	},
     "Comment":{
         "after_insert":"epos_restaurant_2023.api.utils.sync_comment_to_server"

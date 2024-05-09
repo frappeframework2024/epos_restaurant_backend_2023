@@ -641,8 +641,13 @@ def validate_sale_product(self):
 		d.total_discount = (d.sale_discount_amount or 0) + (d.discount_amount or 0)
 
 		validate_tax(d)
-		d.amount = (d.sub_total - d.discount_amount) + d.total_tax
-		d.total_revenue = (d.sub_total - d.total_discount) + d.total_tax
+		d.amount = (d.sub_total - d.discount_amount) 
+		d.total_revenue = (d.sub_total - d.total_discount) 
+		if d.rate_include_tax == 0:
+			d.amount += + d.total_tax
+			d.total_revenue += d.total_tax
+
+
 
 def add_sale_product_spa_commission(self):	
 	query = "delete from `tabSale Product SPA Commission` where sale = '{}'".format(self.name)			

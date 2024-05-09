@@ -37,10 +37,10 @@
                                 </div>
                             </div>
                             <div class="col text-center" style="max-width: 4%;">{{p.quantity}}</div>
-                            <div class="col text-right">{{format_currency(p.price,frappe.defaults.get_default("currency"),frappe.defaults.get_default("float_precision"))}}</div> 
-                            <div class="col text-right">{{format_currency(p.total_discount,frappe.defaults.get_default("currency"),frappe.defaults.get_default("float_precision"))}}</div>
-                            <div class="col text-right">{{format_currency(p.total_tax,frappe.defaults.get_default("currency"),frappe.defaults.get_default("float_precision"))}}</div>
-                            <div class="col text-right">{{format_currency(p.amount,frappe.defaults.get_default("currency"),frappe.defaults.get_default("float_precision"))}}</div> 
+                            <div class="col text-right">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</div> 
+                            <div class="col text-right">{{frappe.format(p.total_discount,{"fieldtype":"Currency"})}}</div>
+                            <div class="col text-right">{{frappe.format(p.total_tax,{"fieldtype":"Currency"})}}</div>
+                            <div class="col text-right">{{frappe.format(p.amount,{"fieldtype":"Currency"})}}</div> 
                         </div>
                     </div>
                     {% var index = index + 1 %}

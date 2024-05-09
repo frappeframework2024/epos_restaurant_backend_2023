@@ -52,7 +52,7 @@ class Printer(Document):
 					   })
 		frappe.db.commit()
 
-  
+
   
 @frappe.whitelist()
 def update_printer_to_product():

@@ -28,9 +28,9 @@
                         <div class="data-row row">
                             <div class="col text-center" style="max-width: 4%;">{{index}}</div>
                             {% if d.is_auto_post == 1 %}
-                                <div class="col" style="max-width: 10%;color: #ff3720 !important;" >{{d.name}}</div>
+                                <div class="col" style="max-width: 10%;color: #ff3720 !important;" ><a href="/app/folio-transaction/{{d.name}}">{{d.name}}</a></div>
                             {% else %}
-                                <div class="col" style="max-width: 10%;" >{{d.name}}</div>
+                                <div class="col" style="max-width: 10%;" ><a href="/app/folio-transaction/{{d.name}}">{{d.name}}</a></div>
                             {% endif %}
                             <div class="col text-center" style="max-width: 8%;">{{ frappe.format(d.posting_date,{"fieldtype":"Date"})}}</div>
                             <div class="col text-center" style="max-width: 5%;">{{d.room_number}}</div>

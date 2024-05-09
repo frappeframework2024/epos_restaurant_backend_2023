@@ -1475,4 +1475,3 @@ def change_table_between_outlet(sale, new_pos_profile,new_table_id):
 def get_cashier_shift_by_pos_profile(pos_profile):
     doc=frappe.get_last_doc("Cashier Shift", {"pos_profile":pos_profile,"is_closed":0}, "creation")
     return doc
-    
