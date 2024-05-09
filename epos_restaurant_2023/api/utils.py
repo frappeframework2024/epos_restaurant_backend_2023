@@ -23,9 +23,11 @@ JOB_STATUSES = ["queued", "started", "failed", "finished", "deferred", "schedule
 
 @frappe.whitelist()
 def validate_queue_job_status(doc, method=None, *args, **kwargs):
-    status =  get_scheduler_status()
-    if status["status"]!="active":
-        frappe.throw("Schedule job status is not running. Please contact your system administrator.")
+    
+    if not frappe.local.conf.maintenance_mode:
+        status =  get_scheduler_status()
+        if status["status"]!="active":
+            frappe.throw("Schedule job status is not running. Please contact your system administrator.")
         
 
 @frappe.whitelist()
