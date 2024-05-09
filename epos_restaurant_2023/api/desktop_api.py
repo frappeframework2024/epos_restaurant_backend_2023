@@ -515,7 +515,7 @@ def cashier_shift_info(name,pos_profile):
     coalesce(sum(if(is_foc=0,tax_2_amount,0)),0) as `Tax 2`,
     coalesce(sum(if(is_foc=0,tax_3_amount,0)),0) as `Tax 3`,
     coalesce(sum(if(is_foc = 0,grand_total,0)),0)-coalesce(sum(commission_amount),0) as `Total Sale Revenue`,
-    coalesce(sum(changed_amount),0) as `Change Amount`,
+    coalesce(sum(changed_amount),0) as `Total Change Amount`,
     coalesce(sum(if(is_foc = 1,grand_total,0)),0) as `Total FOC Amount`,
     coalesce(sum(commission_amount),0) as `Commission Amount`
     from `tabSale`
