@@ -50,9 +50,17 @@ class Printer(Document):
 						   "usb_printing":self.usb_printing,
 							"name":self.name
 					   })
+		update_temp_menu_product(self.name)
 		frappe.db.commit()
 
-
+def update_temp_menu_product(product):
+	product_doc = frappe.get_doc("Product",product)
+	if product_doc.printers:
+		printers= json.dumps(get_printer(product_doc))		
+		frappe.db.sql("update `tabTemp Product Menu` set printers=%(printers)s where product_code=%(product_code)s",{
+			"printers":printers,
+			"product_code":product
+		}) 
   
 @frappe.whitelist()
 def update_printer_to_product():
@@ -60,14 +68,7 @@ def update_printer_to_product():
 	update_to_product()
 	data =frappe.db.sql( "select name from `tabProduct`",as_dict=1)
 	for d in data:
-		product_doc = frappe.get_doc("Product",d["name"])
-		if product_doc.printers:
-			printers= json.dumps(get_printer(product_doc))
-			
-			frappe.db.sql("update `tabTemp Product Menu` set printers=%(printers)s where product_code=%(product_code)s",{
-				"printers":printers,
-    			"product_code":d["name"]
-			}) 
+		update_temp_menu_product(d["name"])
 	frappe.db.commit()
     
 
