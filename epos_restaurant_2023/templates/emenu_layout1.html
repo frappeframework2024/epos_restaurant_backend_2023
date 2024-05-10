@@ -423,12 +423,18 @@
 		}
 		.logo img{
 			height: 60px;
+		} 
+
+
+		@media (max-width: 1199.98px) {
+			.item-tt-txt{
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis; 
+				color: #6c6c6c;
+				width: 158px;
+			} 
 		}
-		/* #slid_banner {
-			height: 50vh;
-		} */
-
-
 		@media (max-width: 991.98px) {
 			#slid_banner .owl-nav button{
 				width: 30px;
@@ -437,12 +443,6 @@
 			img.pro-img-it {
 				height: 120px;
     			object-fit: cover;
-			}
-			.item-tt-txt{
-				overflow: hidden;
-				white-space: nowrap;
-				text-overflow: ellipsis; 
-				color: #6c6c6c;
 			} 
 		}
 		@media (min-width: 992px) {
@@ -454,14 +454,9 @@
 				object-fit: cover;
 			}
 			.items-inner-1{
-				box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+				/* box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; */
+				border: 1px solid #cccccc70;
 			}
-			.item-tt-txt{
-				overflow: hidden;
-				/* white-space: nowrap; */
-				text-overflow: ellipsis; 
-				color: #6c6c6c; 
-			} 
 		}  
 
 		{%- block style -%}{%- endblock -%}
