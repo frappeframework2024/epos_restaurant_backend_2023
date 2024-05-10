@@ -88,8 +88,7 @@
             </div>
         </nav>
     </div>
-
-
+ 
     <div class="container sections-content-1">
         <div class="sections sections-content">
             {% if (doc.popular_product | length) >0 %}
@@ -100,14 +99,13 @@
                 </div>
                 <div class="row">
                     {% for p in doc.popular_product %}
-                    <a class="product_detail col-12 col-lg-6 mb-3 text-dark"
+                    <a class="product_detail col-4 col-lg-4 mb-3 text-dark"
                         href="/product_detail?product_code={{p.product_code}}">
-                        <div class="rounded row p-3 items-inner-1 m-0"
-                            style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
-                            <div class="col-12 col-lg-3 p-0 h-100">
+                        <div class="rounded row p-0 p-lg-3 items-inner-1 m-0">
+                            <div class="col-12 col-lg-4 p-0 h-100">
                                 <img loading="lazy" class="rounded img pro-img-it" src="{{p.photo or " /files/no_image.jpg"}}"/>
                             </div>
-                            <div class="col d-flex flex-column justify-between p-0 ps-lg-3 py-3 py-lg-0">
+                            <div class="col d-flex flex-column-reverse flex-lg-column justify-between p-0 ps-lg-3 py-3 py-lg-0">
                                 <div class="mb-4 mb-lg-0">
                                     {% if p.product_name_en == p.product_name_kh %}
                                     <div class="item-tt-txt">{{p.product_name_kh}}</div>
@@ -116,12 +114,14 @@
                                     <div title="{{p.product_name_en}}" class="item-tt-txt">{{p.product_name_en}} </div>
                                     {%endif%}
                                 </div>
-                                <div class="d-flex justify-between">
-                                    <div class="d-flex gap-2">
+                                <div class="d-block d-lg-flex justify-between">
+                                    <div class="d-lg-flex gap-2 d-none">
                                         <p>Product Code: {{p.product_code}}</p>
                                     </div>
-                                    <div style="font-weight: 600;">From
-                                        {{frappe.format(p.price,{"fieldtype":"Currency"})}}</div>
+                                    <div>
+                                        <!-- <span class="d-none d-lg-flex">From</span> -->
+                                        <span style="font-weight: 600;">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -133,20 +133,19 @@
             {% for m in doc.pos_menu_selections %}
             <div class="scroll-section" id="{{m.name}}">
                 <div class="mt-4 mb-3">
-                    <h2>{{m.menu}} </h2>
+                    <h2>{{m.menu}}</h2>
                 </div>
                 <div class="row">
                     {%for p in products|selectattr('pos_menu', 'equalto', m.menu)|list %}
-                    <a class="product_detail col-12 col-lg-6 mb-3 text-dark"
+                    <a class="product_detail col-4 col-lg-4 mb-3 text-dark"
                         href="/product_detail?product_code={{p.product_code}}">
-                        <div class="rounded row p-3 items-inner-1 m-0"
-                            style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
-                            <div class="col-12 col-lg-3 p-0 h-100">
+                        <div class="rounded row p-0 p-lg-3 items-inner-1 m-0">
+                            <div class="col-12 col-lg-4 p-0 h-100">
 
                                 <img loading="lazy" class="rounded img pro-img-it" src="{{p.photo or " /files/no_image.jpg"}}"/>
 
                             </div>
-                            <div class="col d-flex flex-column justify-between p-0 ps-lg-3 py-3 py-lg-0">
+                            <div class="col d-flex flex-column-reverse flex-lg-column justify-between p-0 ps-lg-3 py-3 py-lg-0">
                                 <div class="mb-4 mb-lg-0">
                                     {% if p.product_name_en == p.product_name_kh %}
                                     <div class="item-tt-txt">{{p.product_name_kh}}</div>
@@ -155,12 +154,13 @@
                                     <div title="{{p.product_name_en}}" class="item-tt-txt">{{p.product_name_en}} </div>
                                     {%endif%}
                                 </div>
-                                <div class="d-flex justify-between">
-                                    <div class="d-flex gap-2">
+                                <div class="d-block d-lg-flex justify-between">
+                                    <div class="d-lg-flex gap-2 d-none">
                                         <p>Product Code: {{p.product_code}}</p>
                                     </div>
-                                    <div style="font-weight: 600;">From
-                                        {{frappe.format(p.price,{"fieldtype":"Currency"})}}</div>
+                                    <div>
+                                        <!-- <span class="d-none d-lg-flex">From</span> -->
+                                        <span style="font-weight: 600;">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</span></div>
                                 </div>
                             </div>
                         </div>
