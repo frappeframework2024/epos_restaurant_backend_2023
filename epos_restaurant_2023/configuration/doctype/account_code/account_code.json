@@ -21,6 +21,7 @@
   "show_quantity_in_report",
   "show_in_shortcut_menu",
   "is_package",
+  "allow_zero_amount_posting",
   "icon",
   "sort_order",
   "lft",
@@ -70,6 +71,7 @@
   "account_code_name",
   "account_group",
   "packageinclusion_tab",
+  "main_package_account_code",
   "packages",
   "system_setting_tab",
   "is_guest_folio_account",
@@ -593,14 +595,26 @@
   },
   {
    "fieldname": "default_product_filter",
-   "fieldtype": "Small Text",
+   "fieldtype": "JSON",
    "label": "Default Product Filter"
+  },
+  {
+   "fieldname": "main_package_account_code",
+   "fieldtype": "Link",
+   "label": "Main Package Account Code",
+   "options": "Account Code"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_zero_amount_posting",
+   "fieldtype": "Check",
+   "label": "Allow Zero Amount Posting"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-04-24 15:32:34.779985",
+ "modified": "2024-05-10 10:18:35.679622",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",
