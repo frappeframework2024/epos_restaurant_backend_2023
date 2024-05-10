@@ -180,16 +180,15 @@ function change_expired_date(frm) {
 
 
 function savePhoto(e) {
-    if (e.isTrusted) {
-        frappe.db.set_value("Product", myForm.doc.name, "photo", e.data.url).then(r => {
-            myForm.reload_doc()
-        })
-        dialogGoogleSearch.hide()
-    };
+    if((e.data.action || "")=="update_product_photo"){
+        if (e.isTrusted) {
+            frappe.db.set_value("Product", myForm.doc.name, "photo", e.data.url).then(r => {
+                myForm.reload_doc()
+            })
+            dialogGoogleSearch.hide()
+        };
+    }
 }
-
-
-
 
 
 function print_barcode_button(frm) {
