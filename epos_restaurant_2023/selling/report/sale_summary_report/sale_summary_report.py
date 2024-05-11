@@ -251,7 +251,7 @@ def get_conditions(filters,group_filter=None):
 	return conditions
 
 def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
-
+	# frappe.throw(str(filters.row_group))
 	hide_columns = filters.get("hide_columns")
 	row_group = [d["fieldname"] for d in get_row_groups() if d["label"]==filters.row_group][0]
 	
@@ -566,6 +566,11 @@ def get_row_groups():
 			"fieldname":"if(ifnull(b.sale_type,'')='','Not Set',b.sale_type)",
 			"label":_("Sale Type"),
 			"parent_row_group_filter_field":"row_group",
+			"show_commission":False
+		},
+		{
+			"fieldname":"if(ifnull(b.created_by,'')='','Not Set',b.created_by)",
+			"label":_("Seller"),
 			"show_commission":False
 		},
 	]

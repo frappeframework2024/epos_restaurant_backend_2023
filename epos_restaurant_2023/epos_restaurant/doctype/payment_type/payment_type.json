@@ -18,7 +18,9 @@
   "disabled",
   "photo",
   "is_foc",
-  "is_standard"
+  "is_standard",
+  "color",
+  "background"
  ],
  "fields": [
   {
@@ -100,6 +102,18 @@
    "label": "Change Exchange Rate",
    "precision": "9",
    "read_only": 1
+  },
+  {
+   "default": "#ffffff",
+   "fieldname": "color",
+   "fieldtype": "Color",
+   "label": "Color"
+  },
+  {
+   "default": "#a4b863",
+   "fieldname": "background",
+   "fieldtype": "Color",
+   "label": "Background"
   }
  ],
  "image_field": "photo",
@@ -111,7 +125,7 @@
    "link_fieldname": "to_currency"
   }
  ],
- "modified": "2023-12-13 11:07:33.584200",
+ "modified": "2024-05-11 11:34:42.161196",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "Payment Type",

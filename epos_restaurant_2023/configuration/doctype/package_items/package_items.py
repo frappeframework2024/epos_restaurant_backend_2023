@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class PackageItem(Document):
+class PackageItems(Document):
 	pass

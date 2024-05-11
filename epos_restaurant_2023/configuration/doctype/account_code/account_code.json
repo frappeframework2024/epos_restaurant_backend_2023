@@ -585,7 +585,7 @@
    "fieldname": "packages",
    "fieldtype": "Table",
    "label": "Packages",
-   "options": "Package Item"
+   "options": "Package Items"
   },
   {
    "default": "0",
@@ -614,7 +614,7 @@
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-05-10 10:18:35.679622",
+ "modified": "2024-05-11 12:40:54.174077",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

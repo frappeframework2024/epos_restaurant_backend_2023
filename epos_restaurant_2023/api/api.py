@@ -1252,6 +1252,8 @@ def update_customer_bill_counter(pos_profile, counter):
 
 
 
+
+
 @frappe.whitelist()
 def on_sale_quick_pay(data):
     sales = json.loads(data)

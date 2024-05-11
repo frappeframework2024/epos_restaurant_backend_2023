@@ -11,7 +11,9 @@
   "revenue_group_name_en",
   "revenue_group_name_kh",
   "sort_order",
-  "is_standard"
+  "is_standard",
+  "background",
+  "color"
  ],
  "fields": [
   {
@@ -42,11 +44,23 @@
    "fieldname": "is_standard",
    "fieldtype": "Check",
    "label": "Is Standard"
+  },
+  {
+   "default": "#a4b863",
+   "fieldname": "background",
+   "fieldtype": "Color",
+   "label": "Background"
+  },
+  {
+   "default": "#ffffff",
+   "fieldname": "color",
+   "fieldtype": "Color",
+   "label": "Color"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-05-08 10:21:51.303415",
+ "modified": "2024-05-11 09:52:53.000998",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Revenue Group",

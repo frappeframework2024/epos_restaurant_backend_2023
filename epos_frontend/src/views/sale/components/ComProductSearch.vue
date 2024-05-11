@@ -14,7 +14,6 @@
                 @keydown="onKeyDown"
                 :ref="txtSearch"
                 />
-
 <!-- 
             <ComAutoComplete v-model="selected_product" doctype="Product" :autoFetch="false"
                 @onSelected="onSelectProduct" /> -->
@@ -26,6 +25,7 @@
 
 <script setup>
 import { inject, ref, defineProps, createResource, addModifierDialog, onUnmounted, onMounted } from '@/plugin';
+import { onKeyStroke } from '@vueuse/core'
 import ComInput from '../../../components/form/ComInput.vue';
 import { createToaster } from '@meforma/vue-toaster';
 import ComAutoComplete from '@/components/form/ComAutoComplete.vue';
@@ -52,6 +52,10 @@ const doSearch = ref(true)
 function getIsMobile() {
     return  localStorage.getItem("flutterWrapper")==1 || mobile;
 }
+onKeyStroke('M', (e) => {
+  alert('Hello')
+}, { dedupe: true })
+
 
 function onSearch(key) {
     if (sale.setting.use_retail_ui == 0) {
