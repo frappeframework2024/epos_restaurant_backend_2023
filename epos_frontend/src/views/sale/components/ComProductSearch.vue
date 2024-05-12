@@ -12,19 +12,21 @@
                 v-debounce="onSearch"
                 @onInput="onSearch"
                 @keydown="onKeyDown"
-                :ref="txtSearch"
+                ref="txtSearch"
+                :listening-focus="true"
                 />
 <!-- 
             <ComAutoComplete v-model="selected_product" doctype="Product" :autoFetch="false"
                 @onSelected="onSelectProduct" /> -->
 
         </div>
+        
     </div>
 
 </template>
 
 <script setup>
-import { inject, ref, defineProps, createResource, addModifierDialog, onUnmounted, onMounted } from '@/plugin';
+import { inject, ref, defineProps, createResource, addModifierDialog, onUnmounted, onMounted,nextTick } from '@/plugin';
 import { onKeyStroke } from '@vueuse/core'
 import ComInput from '../../../components/form/ComInput.vue';
 import { createToaster } from '@meforma/vue-toaster';
@@ -37,6 +39,7 @@ const frappe = inject("$frappe")
 const { mobile } = useDisplay();
 const db = frappe.db();
 let control = ref(null)
+
 const toaster = createToaster({ position: 'top-right', maxToasts: 2, duration: 1000 });
 const props = defineProps({
     small: {
@@ -44,6 +47,7 @@ const props = defineProps({
         default: false
     }
 });
+const txtSearch = ref(null);
 
 const selected_product = ref()
 
@@ -52,9 +56,6 @@ const doSearch = ref(true)
 function getIsMobile() {
     return  localStorage.getItem("flutterWrapper")==1 || mobile;
 }
-onKeyStroke('M', (e) => {
-  alert('Hello')
-}, { dedupe: true })
 
 
 function onSearch(key) {

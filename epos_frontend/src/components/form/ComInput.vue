@@ -1,6 +1,7 @@
 <template>
     <div>
         <div v-if="type=='textarea'">
+            
             <v-textarea
                 v-if="keyboard && !mobile"
                 :required="required"
@@ -20,6 +21,7 @@
                 v-model="value"
                 @click:append-inner="onDialog()"
                 :prepend-inner-icon="prependInnerIcon"
+                ref="txtSearch"
                 @input="updateValue">
             </v-textarea>
             <v-textarea
@@ -38,6 +40,7 @@
                 hide-details
                 :append-inner-icon="appendInnerIcon"
                 v-model="value"
+                ref="txtSearch"
                 @click:append-inner="emit('onClickAppendInner')"
                 :prepend-inner-icon="prependInnerIcon"
                 @click:prepend-inner="emit('onClickPrependInner')"
@@ -45,6 +48,7 @@
             </v-textarea>
         </div>
         <div v-else>
+            
             <v-text-field
                 :autofocus="validAutofocus"
                 :clearable="!readonly"
@@ -66,6 +70,7 @@
                 @input="updateValue"
                 @click:clear="onClear"
                 :class="type=='date'?'date-input':''"
+                ref="txtSearch"
                 >
             </v-text-field>
             <v-text-field
@@ -87,15 +92,18 @@
                 :prepend-inner-icon="prependInnerIcon"
                 @click:prepend-inner="emit('onClickPrependInner')"
                 @input="updateValue"
+                ref="txtSearch"
                 :class="type=='date'?'date-input':''">
             </v-text-field>
         </div>
     </div>
 </template>
 <script setup>
-import {computed,keyboardDialog} from '@/plugin'
+import {computed,keyboardDialog,onMounted,ref,nextTick} from '@/plugin'
 import { useDisplay } from 'vuetify'
+import { onKeyStroke } from '@vueuse/core'
 const { mobile } = useDisplay()
+const txtSearch = ref(null);
 
 const props = defineProps({
     modelValue: [String, Number],
@@ -156,6 +164,7 @@ const props = defineProps({
     },
     keyboard: Boolean,
     autofocus:Boolean,
+    listeningFocus:Boolean,
     requiredAutofocus: {
         type: Boolean,
         default: false
@@ -174,7 +183,7 @@ const validAutofocus = computed(()=>{
     return props.requiredAutofocus ? true : props.autofocus && !mobile.value
 })
 // let data = ref(props.modelValue)
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue','focus'])
 
 const updateValue = (event) => {
     let value = event.target.value;
@@ -193,7 +202,21 @@ async function onDialog() {
         emit('onInput',keys)
         emit('update:modelValue', keys)
     }
-        
+}
+if(props.listeningFocus){
+    onKeyStroke('Escape', (e) => {
+        // e.preventDefault();
+        txtSearch.value.focus()
+    }, { dedupe: true })
+}
+
+
+function focus(){
+    nextTick(() => {
+        if (txtSearch.value) {
+            txtSearch.value.focus()
+        }
+    });
 }
 function onClear(){ 
     emit('onInput',"")
