@@ -441,8 +441,6 @@ export default class Sale {
                 this.selected_sale_product = saleProduct
             }
 
-            // this.onRateIncludeTax(saleProduct, false,false)
-
             this.updateSaleProduct(saleProduct);
 
 
@@ -557,7 +555,7 @@ export default class Sale {
     }
 
     updateSaleProduct(sp) {
-
+        this.onRateIncludeTax(sp,false,false,false);
         //set property for re render comhappyhour check
         sp.is_render = false;
         //end
@@ -580,11 +578,15 @@ export default class Sale {
             sp.sale_discount_amount = (sp.sub_total * sp.sale_discount_percent / 100);
         }
         sp.total_discount = sp.discount_amount + sp.sale_discount_amount;
+ 
 
         this.onCalculateTax(sp);
-        sp.amount = sp.sub_total - sp.discount_amount + sp.total_tax;
-        sp.total_revenue = (sp.sub_total - sp.total_discount) + sp.total_tax;
-
+        sp.amount = sp.sub_total - sp.discount_amount ;
+        sp.total_revenue = (sp.sub_total - sp.total_discount);
+        if(sp.rate_include_tax==0){
+            sp.amount = sp.sub_total - sp.discount_amount + sp.total_tax ;
+            sp.total_revenue = (sp.sub_total - sp.total_discount) + sp.total_tax;
+        } 
         //set property for re render comhappyhour check
         sp.is_render = true;
 
@@ -611,7 +613,7 @@ export default class Sale {
         sp.calculate_tax_3_after_adding_tax_1 = tax_rule.calculate_tax_3_after_adding_tax_1 || false;
         sp.calculate_tax_3_after_adding_tax_2 = tax_rule.calculate_tax_3_after_adding_tax_2 || false;
 
-        this.onRateIncludeTax(sp,false,false);
+        
         this.updateSaleProduct(sp);
     }
 
@@ -625,8 +627,9 @@ export default class Sale {
                 let priceBefore = this.getRateBeforeTax(sp.sub_total - sp.total_discount,JSON.parse(sp.tax_rule_data), sp.tax_1_rate, sp.tax_2_rate, sp.tax_3_rate)
                 amount =  priceBefore + sp.total_discount  
             }
-        }   
-        
+        }  
+        sp.selling_price = (amount/sp.quantity) - (sp.modifiers_price||0)
+
         //tax 1
         sp.taxable_amount_1 = amount;
         //tax 1 taxable amount
@@ -690,19 +693,22 @@ export default class Sale {
         this.sale.rate_include_tax = ((this.sale.rate_include_tax||0)==1?0:1) 
         this.sale.sale_products.forEach((sp)=>{
             sp.rate_include_tax = this.sale.rate_include_tax;
-            this.onRateIncludeTax(sp, false,  false)
+            this.onRateIncludeTax(sp, false,true,  false)
         })
         this.updateSaleSummary()  
     }
 
-    onRateIncludeTax(sp, update_rate = true, update_sale=true){
+    onRateIncludeTax(sp, update_rate = true, update_sale_product=true, update_sale=true){
         let _tax_rule = JSON.parse(JSON.stringify(this.setting.tax_rules)).filter((r)=>r.tax_rule == sp.tax_rule||this.sale.tax_rule )
         if(_tax_rule.length > 0){
             sp.tax_rule_data = _tax_rule[0].tax_rule_data;
             if(update_rate){
                 sp.rate_include_tax = ((sp.rate_include_tax||0)==1?0:1)
             }
-            this.updateSaleProduct(sp)
+
+            if(update_sale_product){
+                this.updateSaleProduct(sp)
+            }
             if(update_sale){
                 this.updateSaleSummary();
             }
@@ -778,6 +784,7 @@ export default class Sale {
         const sp = Enumerable.from(this.sale.sale_products);
         this.sale.total_quantity = this.getNumber(sp.where("$.is_timer_product == 0").sum("$.quantity"));
         this.sale.sub_total = this.getNumber(sp.sum("$.sub_total"));
+        
         //calculate sale discount
         this.sale.sale_discountable_amount = this.getNumber(sp.where("$.allow_discount==1 && $.discount==0").sum("$.sub_total"));
         this.sale.discount = this.getNumber(this.sale.discount);
@@ -798,8 +805,11 @@ export default class Sale {
         this.sale.total_tax = this.getNumber(sp.sum("$.total_tax"));
         let total_tax_exclude = this.getNumber(sp.where("$.rate_include_tax == 1").sum("$.total_tax"))
 
+        this.sale.sub_total -= total_tax_exclude;
+
         //grand_total
-        this.sale.grand_total = ((this.sale.sub_total || 0) - (this.sale.total_discount || 0)) + ((this.sale.total_tax || 0)-total_tax_exclude);
+        this.sale.grand_total = ((this.sale.sub_total || 0) - (this.sale.total_discount || 0)) + ((this.sale.total_tax || 0));
+ 
         this.sale.balance = this.sale.grand_total - (this.sale.deposit || 0);
 
 

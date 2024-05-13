@@ -151,13 +151,13 @@ class Sale(Document):
 			self.is_foc = 1
 
 		total_quantity = Enumerable(self.sale_products).where(lambda x:(x.is_timer_product or 0) == 0).sum(lambda x: x.quantity or 0)
-		sub_total = Enumerable(self.sale_products).sum(lambda x: (x.quantity or 0)* (x.price or  0) + ((x.quantity or 0)*(x.modifiers_price or 0)))
+		sub_total = Enumerable(self.sale_products).sum(lambda x: (x.quantity or 0)* (x.price or  0) + ((x.quantity or 0)*(x.modifiers_price or 0)) )
   
 		sale_discountable_amount =Enumerable(self.sale_products).where(lambda x:x.allow_discount ==1 and (x.discount_amount or 0)==0).sum(lambda x: (x.quantity or 0)* (x.price or  0) + + ((x.quantity or 0)*(x.modifiers_price or 0)))
 
 		self.total_quantity = total_quantity
 		self.sale_discountable_amount = sale_discountable_amount
-		self.sub_total = sub_total
+		
 		# calculate sale discount
 		if self.discount:
 			if self.discount_type =="Percent":
@@ -178,6 +178,10 @@ class Sale(Document):
 		self.tax_3_amount  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.tax_3_amount)
 		self.total_tax  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.total_tax)
 		total_rate_include_tax  = Enumerable(self.sale_products).where(lambda x:x.tax_rule and x.rate_include_tax == 1).sum(lambda x: x.total_tax)
+		# total_rate_include_tax  = 0
+ 
+
+		self.sub_total = sub_total	- total_rate_include_tax
 
 		currency_precision = frappe.db.get_single_value('System Settings', 'currency_precision')
 		if currency_precision=='':
@@ -644,7 +648,7 @@ def validate_sale_product(self):
 		d.amount = (d.sub_total - d.discount_amount) 
 		d.total_revenue = (d.sub_total - d.total_discount) 
 		if d.rate_include_tax == 0:
-			d.amount += + d.total_tax
+			d.amount += d.total_tax
 			d.total_revenue += d.total_tax
 
 
@@ -774,8 +778,9 @@ def validate_tax(doc):
 			if (doc.rate_include_tax == 1) :
 				priceBefore = get_ratebefore_tax(doc.sub_total - doc.total_discount,doc.tax_rule, doc.tax_1_rate, doc.tax_2_rate, doc.tax_3_rate)
 				amount =  priceBefore + doc.total_discount  
-				
 			
+			doc.selling_price = (amount / doc.quantity) - (doc.modifiers_price or 0)
+
 
 			#Tax 1
 			doc.taxable_amount_1 = amount

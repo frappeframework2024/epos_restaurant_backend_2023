@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"9Cy6NEc9Q6\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Purchasing</b></span>\",\"col\":12}},{\"id\":\"N5rDPLl0M-\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Your Shortcut</b></span>\",\"col\":12}},{\"id\":\"EjQenWovHy\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"id\":\"uGSB1TxiKZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order Payment\",\"col\":3}},{\"id\":\"4CCisrBqUo\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Vendor\",\"col\":3}},{\"id\":\"zjzmrxGkQ9\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Product\",\"col\":3}},{\"id\":\"P8ReSc0acH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Purchase Order\",\"col\":3}},{\"id\":\"0Z1BCXK9Ph\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Purchase Order Payment\",\"col\":3}},{\"id\":\"q3jMcb17Ou\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":3}},{\"id\":\"SccCXbd9Us\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent Transaction</b></span>\",\"col\":12}},{\"id\":\"75oZvEIWLp\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Purchase Order\",\"col\":6}},{\"id\":\"pVl691b9n7\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Payment\",\"col\":6}},{\"id\":\"rQj_s9SS03\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"hz8GQ9MPtW\",\"type\":\"card\",\"data\":{\"card_name\":\"Vendor\",\"col\":4}},{\"id\":\"WNitUXrlSw\",\"type\":\"card\",\"data\":{\"card_name\":\"Products\",\"col\":4}},{\"id\":\"Zae8PipQ4R\",\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}}]",
+ "content": "[{\"id\":\"9Cy6NEc9Q6\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Purchasing</b></span>\",\"col\":12}},{\"id\":\"N5rDPLl0M-\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Your Shortcut</b></span>\",\"col\":12}},{\"id\":\"EjQenWovHy\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"id\":\"uGSB1TxiKZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order Payment\",\"col\":3}},{\"id\":\"4CCisrBqUo\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Vendor\",\"col\":3}},{\"id\":\"zjzmrxGkQ9\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Product\",\"col\":3}},{\"id\":\"P8ReSc0acH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Purchase Order\",\"col\":3}},{\"id\":\"0Z1BCXK9Ph\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Purchase Order Payment\",\"col\":3}},{\"id\":\"qBnMC9rdQ_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bulk Purchase Order Payment\",\"col\":3}},{\"id\":\"q3jMcb17Ou\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":3}},{\"id\":\"SccCXbd9Us\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent Transaction</b></span>\",\"col\":12}},{\"id\":\"75oZvEIWLp\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Purchase Order\",\"col\":6}},{\"id\":\"pVl691b9n7\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Payment\",\"col\":6}},{\"id\":\"rQj_s9SS03\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"hz8GQ9MPtW\",\"type\":\"card\",\"data\":{\"card_name\":\"Vendor\",\"col\":4}},{\"id\":\"WNitUXrlSw\",\"type\":\"card\",\"data\":{\"card_name\":\"Products\",\"col\":4}},{\"id\":\"Zae8PipQ4R\",\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}}]",
  "creation": "2022-12-03 16:46:43.868577",
  "custom_blocks": [],
  "docstatus": 0,
@@ -157,7 +157,7 @@
    "type": "Link"
   }
  ],
- "modified": "2024-05-11 18:19:58.710663",
+ "modified": "2024-05-13 11:53:55.824916",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchasing",
@@ -184,6 +184,14 @@
    "label": "Purchase Order Payment",
    "link_to": "Purchase Order Payment",
    "stats_filter": "{\"posting_date\":[\"Timespan\",\"this month\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Bulk Purchase Order Payment",
+   "link_to": "Bulk Purchase Order Payment",
+   "stats_filter": "[]",
    "type": "DocType"
   },
   {
