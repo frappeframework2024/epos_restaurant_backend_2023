@@ -379,6 +379,7 @@ export default class Sale {
             const make_order_auth = JSON.parse(localStorage.getItem('make_order_auth'));
             const now = new Date();
             const _now_format = moment(now).format('yyyy-MM-DD HH:mm:ss.SSS');
+ 
             const saleProduct = {
                 menu_product_name: p.menu_product_name,
                 product_code: p.name,
@@ -424,7 +425,8 @@ export default class Sale {
                 is_require_employee: p.is_require_employee,
                 is_timer_product: p.is_timer_product || 0,
                 time_stop: 0,
-                kod_status: "Pending"
+                kod_status: "Pending",
+                rate_include_tax : p.rate_include_tax||0
 
             }
             if (p.is_timer_product) {
@@ -438,6 +440,8 @@ export default class Sale {
                 this.getSelectedProduct(saleProduct)
                 this.selected_sale_product = saleProduct
             }
+
+            // this.onRateIncludeTax(saleProduct, false,false)
 
             this.updateSaleProduct(saleProduct);
 
@@ -606,6 +610,8 @@ export default class Sale {
         sp.calculate_tax_3_after_discount = tax_rule.calculate_tax_3_after_discount || false;
         sp.calculate_tax_3_after_adding_tax_1 = tax_rule.calculate_tax_3_after_adding_tax_1 || false;
         sp.calculate_tax_3_after_adding_tax_2 = tax_rule.calculate_tax_3_after_adding_tax_2 || false;
+
+        this.onRateIncludeTax(sp,false,false);
         this.updateSaleProduct(sp);
     }
 
@@ -619,8 +625,8 @@ export default class Sale {
                 let priceBefore = this.getRateBeforeTax(sp.sub_total - sp.total_discount,JSON.parse(sp.tax_rule_data), sp.tax_1_rate, sp.tax_2_rate, sp.tax_3_rate)
                 amount =  priceBefore + sp.total_discount  
             }
-        }  
-
+        }   
+        
         //tax 1
         sp.taxable_amount_1 = amount;
         //tax 1 taxable amount

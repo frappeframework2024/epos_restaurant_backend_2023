@@ -1,0 +1,51 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:job_name",
+ "creation": "2024-05-12 17:08:05.791027",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "job_name",
+  "skip_if_these_job_running"
+ ],
+ "fields": [
+  {
+   "fieldname": "job_name",
+   "fieldtype": "Data",
+   "label": "Job Name",
+   "unique": 1
+  },
+  {
+   "description": "Please separate by enter",
+   "fieldname": "skip_if_these_job_running",
+   "fieldtype": "Text",
+   "label": "Skip if these job running"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-05-12 18:01:19.170329",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "Queue Job Configuration",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

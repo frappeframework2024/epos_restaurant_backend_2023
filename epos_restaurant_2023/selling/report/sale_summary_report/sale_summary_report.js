@@ -1,11 +1,10 @@
 // Copyright (c) 2022, Frappe Technologies and contributors
 // For license information, please see license.txt
 /* eslint-disable */
+
 frappe.query_reports["Sale Summary Report"] = {
 	onload: function(report) {
 		if(frappe.query_report.get_filter_value('filter_based_on')=="This Month"){
-
-		
 			frappe.query_report.toggle_filter_display('from_fiscal_year', true);
 			frappe.query_report.toggle_filter_display('start_date', true  );
 			frappe.query_report.toggle_filter_display('end_date', true );
@@ -15,10 +14,6 @@ frappe.query_reports["Sale Summary Report"] = {
 		});
 		
 	},
-	
-		
-		
-	
 	"filters": [
 		{
 			fieldname: "business_branch",

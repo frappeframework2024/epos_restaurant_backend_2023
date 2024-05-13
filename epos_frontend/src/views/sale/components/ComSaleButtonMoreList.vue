@@ -496,8 +496,9 @@ async function onEditPOSMenu() {
 </script>
 <style>
 .two-col-list {
-    columns: 2;
-    -webkit-columns: 2;
-    -moz-columns: 2;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 50px);
+    grid-gap: 0px;
 }
 </style>
