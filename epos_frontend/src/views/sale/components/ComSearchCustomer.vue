@@ -165,8 +165,16 @@ function getFilter() {
 
 function onSearch(keyword) {
   search.value = keyword;
-  customerResource.value.params = getDataResourceParams()
-  customerResource.value.fetch()
+  createResource({
+    url: "frappe.client.get_list",
+    params: getDataResourceParams(),
+    auto: true,
+    onSuccess(doc) {
+      loading.value = true;
+      customerResource.value = doc;
+      loading.value = false;
+    }
+  });
 }
 function onClose() {
   emit("resolve", false);
