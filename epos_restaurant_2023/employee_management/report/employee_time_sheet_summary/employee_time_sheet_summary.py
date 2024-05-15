@@ -4,7 +4,7 @@
 import json
 import frappe
 from frappe import _
-from frappe.utils import date_diff,today ,add_months, add_days
+from frappe.utils import date_diff,today ,add_months, add_days,getdate
 from frappe.utils.data import strip
 import datetime
 from py_linq import Enumerable
@@ -18,7 +18,7 @@ def execute(filters=None):
 
 
 	elif filters.filter_based_on =="This Month":
-		filters.start_date = datetime.date.today().replace(day=1)
+		filters.start_date = getdate(filters.start_date).replace(day=1)
 		filters.end_date =add_days(add_months(filters.start_date ,1),-1)
 
 
