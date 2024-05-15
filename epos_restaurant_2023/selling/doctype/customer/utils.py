@@ -6,6 +6,10 @@ def update_fetch_from_fields(self):
 	if self.has_value_changed("customer_name_en"):
 		data_for_updates.append({"doctype":"Sale","update_field":"customer_name='{}'".format(self.customer_name_en)})
 		data_for_updates.append({"doctype":"Sale Payment","update_field":"customer_name='{}'".format(self.customer_name_en)})
+		
+	if self.has_value_changed("photo"):
+		data_for_updates.append({"doctype":"Sale","update_field":"customer_photo='{}'".format(self.photo)})
+			
 	
  
 	if data_for_updates:
