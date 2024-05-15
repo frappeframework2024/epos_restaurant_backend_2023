@@ -164,10 +164,13 @@ def reset_sale_transaction():
             frappe.db.sql("delete from `tabPromotion Products`")
             frappe.db.sql("delete from `tabPromotion Customer Group`")
             frappe.db.sql("delete from `tabHappy Hours Promotion`")
+            frappe.db.sql("delete from `tabPOS Voucher Payment`")
+            frappe.db.sql("delete from `tabVoucher`")
+            frappe.db.sql("delete from `tabVoucher Payment`")
             frappe.db.sql("delete from `tabComment` where reference_doctype in ('Sale','POS Sale Payment','Sale Payment','Sale Product','Cashier Shift Cash Float','Cashier Shift','Working Day')")
 
             #reset sale transaction 
-            doctypes = ["Sale","Sale Payment","Cashier Shift","Working Day","Cash Transaction"]
+            doctypes = ["Sale","Sale Payment","Cashier Shift","Working Day","Cash Transaction","Voucher","Voucher Payment"]
             for d in doctypes:
                 if frappe.get_meta("Sale").get_field("naming_series"):
                     formats =  frappe.get_meta(d).get_field("naming_series").options
@@ -314,7 +317,9 @@ def reset_data():
             frappe.db.sql("update `tabCurrency` set custom_pos_currency_format='#,###,##0. ៛', custom_currency_precision=0 where name in ('KHR','RIEL')")
             frappe.db.sql("update `tabCurrency` set custom_pos_currency_format = '$ #,###,##0.00',custom_currency_precision=2  where name='USD'")
             frappe.db.sql("delete from `tabCurrency` where name not in('USD','KHR','RIEL')")
-
+            frappe.db.sql("delete from `tabPOS Voucher Payment`")
+            frappe.db.sql("delete from `tabVoucher`")
+            frappe.db.sql("delete from `tabVoucher Payment`")
             frappe.db.commit()
             return {"You was cleared all data and configuration."}
         else:
