@@ -165,8 +165,8 @@ function getFilter() {
 
 function onSearch(keyword) {
   search.value = keyword;
-  customerResource.params = getDataResourceParams()
-  customerResource.fetch()
+  customerResource.value.params = getDataResourceParams()
+  customerResource.value.fetch()
 }
 function onClose() {
   emit("resolve", false);
