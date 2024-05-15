@@ -388,9 +388,9 @@ function onExport(){
  
 function onPrint(){ 
     
-    if(activeReport.value.doc_type == "Cashier Shift" || activeReport.value.doc_type == "Working Day"){
-        gv.onPrintWorkingDayAndCashierShift(activeReport.value.report_id,pos_profile,activeReport.value.doc_type)
-    }
+    //if(activeReport.value.doc_type == "Cashier Shift" || activeReport.value.doc_type == "Working Day"){
+       // gv.onPrintWorkingDayAndCashierShift(activeReport.value.report_id,pos_profile,activeReport.value.doc_type)
+    //}
    
     if ((localStorage.getItem("flutterWrapper") || 0) == 1 || (gv.setting?.device_setting?.use_server_network_printing||0)==1) { 
         var printers = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
