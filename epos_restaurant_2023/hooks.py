@@ -241,6 +241,8 @@ fixtures = [
     {"dt": "Predefine SPA Commission Code","filters": [["is_standard", "=", "1"]]},
 
     {"dt": "Print Style","filters": [["name", "=", "Default Style"]]},
+    {"dt": "Print Format","filters": [["name", "IN", ["Commercial Tax Invoice A4"]]]},
+    
 
     ## workflow
     {"dt": "Workflow Action Master"},

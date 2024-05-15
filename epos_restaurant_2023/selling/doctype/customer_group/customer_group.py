@@ -9,3 +9,4 @@ class CustomerGroup(Document):
 		if not self.customer_group_kh:
 			self.customer_group_kh = self.name
 
+ 

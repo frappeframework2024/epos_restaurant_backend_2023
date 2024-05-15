@@ -3,7 +3,7 @@
 
 frappe.ui.form.on("Product Category", {
 	refresh(frm) {
-
+       
 	},
     setup(frm){
         frm.set_query('parent_product_category', () => {

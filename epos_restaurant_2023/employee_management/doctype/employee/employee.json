@@ -69,18 +69,21 @@
    "unique": 1
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "employee_name",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Employee Name"
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "date_of_birth",
    "fieldtype": "Date",
    "in_list_view": 1,
    "label": "Date Of Birth"
   },
   {
+   "allow_in_quick_entry": 1,
    "default": "Not Set",
    "fieldname": "gender",
    "fieldtype": "Select",
@@ -107,7 +110,6 @@
    "label": "Phone Number 1"
   },
   {
-   "allow_in_quick_entry": 1,
    "fieldname": "phone_number_2",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -348,7 +350,7 @@
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-04-19 10:07:36.752594",
+ "modified": "2024-05-14 11:39:19.634670",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee",

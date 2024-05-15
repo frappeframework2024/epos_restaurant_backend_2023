@@ -25,9 +25,9 @@
                     :placeholder="$t('Search')" v-debounce="onSearch" @onInput="onSearch" />
                 </div>
                 <div class="px-4 pb-4">
-                  <ComPlaceholder :loading="customerResource.loading" :is-not-empty="customerResource.data.length > 0"
+                  <ComPlaceholder :loading="loading" :is-not-empty="customerResource.length > 0"
                     :text="$t('No Customer Found')" icon="mdi-account-outline">
-                    <v-card v-for="(c, index) in customerResource.data.filter(r => (r.is_disabled || 0) == 0)"
+                    <v-card v-for="(c, index) in customerResource.filter(r => (r.is_disabled || 0) == 0)"
                       :key="index" :title="c.customer_name_en" @click="onSelectCustomer(c)" class="mb-4">
                       <template v-slot:subtitle>
                         {{ c.name }}
@@ -47,7 +47,7 @@
                     </v-card>
                     <template #empty>
                       <div>
-                        <v-alert v-if="!customerResource.loading" :title="$t('Customer not found')" variant="tonal">
+                        <v-alert v-if="!loading" :title="$t('Customer not found')" variant="tonal">
                           <div class="d-flex flex-row align-center justify-space-between">
                             <div>
                               {{ $t('msg.There is not customer with keyword') }} <strong>{{ search }}</strong>.
@@ -93,6 +93,8 @@ const props = defineProps({
 })
 const tab = ref(gv.setting.exely.enabled == 1 ? "exely" : "epos")
 
+const customerResource=ref([]);
+let loading=ref(true)
 
 const emit = defineEmits(["resolve", "reject"])
 
@@ -128,10 +130,15 @@ if (gv.customerMeta == null) {
 }
 
 
-const customerResource = createResource({
+createResource({
   url: "frappe.client.get_list",
   params: getDataResourceParams(),
-  auto: true
+  auto: true,
+  onSuccess(doc) {
+    loading.value = true;
+    customerResource.value = doc;
+    loading.value = false;
+  }
 });
 
 

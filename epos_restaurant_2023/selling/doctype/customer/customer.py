@@ -21,18 +21,6 @@ class Customer(Document):
 			self.customer_name_kh = self.customer_name_en
 
 		self.customer_code_name = "{} - {}".format(self.name,self.customer_name_en)
-	# def on_update(self):
-	# 	if hasattr(self,'attach'):
-	# 		if self.attach and self.is_new():
-	# 			file = frappe.get_doc('File', self.attach)
-	# 			file.attached_to_name = self.name
-	# 			file.attached_to_field = ''
-	# 			file = file.save()
-	# 			frappe.db.set_value('Customer', self.name,{'photo':file.file_url})
-	# 			frappe.db.commit()
-	# 		else:
-	# 			# remove profile
-	# 			frappe.db.set_value('Customer', self.name,{'photo':''})
 
 	def autoname(self):
 		if self.flags.ignore_autoname == True:
@@ -56,17 +44,29 @@ class Customer(Document):
 			'customer_code': new_name		
 		}) 
 	def on_update(self):
-		frappe.enqueue(update_sale_customer_name, queue="short",doc=self)
+		if self.creation !=self.modified:
+			update_fetch_from_fields(self)
+
+
+
+def update_fetch_from_fields(self):
+	data_for_updates = []
+
+	if self.has_value_changed("customer_name_en"):
+		data_for_updates.append({"doctype":"Sale","update_field":"customer_name='{}'".format(self.customer_name_en)})
+		data_for_updates.append({"doctype":"Sale Payment","update_field":"customer_name='{}'".format(self.customer_name_en)})
 		
-
-def update_sale_customer_name(doc):
-	old_name = frappe.db.sql("select customer_name from tabSale where customer = '{0}' order by creation limit 1".format(doc.name),as_dict=1)
-	if old_name:
-		if old_name[0].customer_name != doc.customer_name_en:
-			frappe.db.sql("update tabSale set customer_name = '{0}' where customer = '{1}'".format(doc.customer_name_en,doc.name))
-			frappe.db.sql("update `tabSale Payment` set customer_name = '{0}' where customer = '{1}'".format(doc.customer_name_en,doc.name))
-			frappe.db.commit()
-
+	if data_for_updates:
+		for d in set([x["doctype"] for x in data_for_updates]):
+			sql="update `tab{}` set {} where customer='{}'".format(
+				d,
+				",".join([x["update_field"] for x in data_for_updates if x["doctype"]==d]),
+				self.name
+			)
+			
+			frappe.db.sql(sql)
+   
+   
 @frappe.whitelist()
 def update_customer_infomation_to_transaction():
 	frappe.enqueue(update_customer_infomation_to_transaction_eqnueue,queue="short")
