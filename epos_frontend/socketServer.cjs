@@ -213,8 +213,14 @@ io.on('connection', (socket) => {
   socket.on("SubmitKOD",(arg)=>{
     io.emit("SubmitKOD",arg)
   })
-  
 
+  socket.on("OnPrintReport",(arg)=>{
+    io.emit("OnPrintReport",arg)
+  })
+
+  socket.on("Ratha",(arg)=>{
+    io.emit("Ratha",arg)
+  })
   
 });
 

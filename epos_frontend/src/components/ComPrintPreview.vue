@@ -80,7 +80,7 @@ const serverUrl = window.location.protocol + "//" + window.location.hostname + "
 
 const toaster = createToaster({ position: "top-right" });
 const { t: $t } = i18n.global;
-
+const socket = inject("$socket");
 const call = frappe.call();
 
 const props = defineProps({
@@ -199,6 +199,7 @@ function onPrint(){
                 }else{
                     call.post("epos_restaurant_2023.api.network_printing_api.print_report_to_network_printer",{"data":data})
                 }
+                
                 toaster.success($t("Report is printing"))
                 return
             }
@@ -215,9 +216,17 @@ function onPrint(){
             print_format: activeReport.value.print_report_name || '',
             pos_profile:pos_profile,
             outlet:gv.setting.outlet,
-            letterhead:selectedLetterhead.value
+            letterhead:selectedLetterhead.value,
+            sale: {pos_profile:pos_profile},
+            station: (gv.setting?.device_setting?.name) || "",
+            station_device_printing: (gv.setting?.device_setting?.station_device_printing) || ""
         }
-        window.chrome.webview.postMessage(JSON.stringify(data));
+        if(localStorage.getItem("is_window")==1){
+            window.chrome.webview.postMessage(JSON.stringify(data));
+        }
+        else{
+            socket.emit('PrintReceipt', JSON.stringify(data));
+        }
         toaster.success($t("Report is printing"))
     }    
 }

@@ -197,6 +197,7 @@ async function onPrint() {
         setting: gv.setting?.pos_setting,
         sale: sale.doc,
         station: (gv.setting?.device_setting?.name) || "",
+        station_device_printing: (gv.setting?.device_setting?.station_device_printing) || "",
         reprint: 1
     }
 

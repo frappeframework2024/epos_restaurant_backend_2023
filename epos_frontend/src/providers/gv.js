@@ -254,6 +254,12 @@ export default class Gv {
 		}
 	}
 	onPrintWorkingDayAndCashierShift(name,pos_profile,doctype) {
+		let body = {
+            data:{
+                pos_profile: pos_profile == ""? localStorage.getItem("pos_profile") : pos_profile,
+            }
+        }
+        call.post("epos_restaurant_2023.api.api.get_sale_list_table_badge",body)
 		if(doctype == "Cashier Shift"){
 			call.get('epos_restaurant_2023.api.desktop_api.cashier_shift_info',{"name":name,"pos_profile":pos_profile})
             .then((data) => {

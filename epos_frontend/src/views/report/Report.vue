@@ -183,10 +183,11 @@ import PageLayout from '@/components/layout/PageLayout.vue';
 import { createToaster } from '@meforma/vue-toaster';
 import { onMounted } from 'vue';
  
-
+const socket = inject("$socket");
 const gv = inject('$gv');
 const frappe = inject('$frappe');
 const moment = inject('$moment');
+
 const pos_profile = localStorage.getItem("pos_profile");
 const serverUrl = window.location.protocol + "//" + window.location.hostname + (window.location.protocol =="https:"? "": (":"+ gv.setting.pos_setting.backend_port));
 
@@ -385,9 +386,8 @@ function onExport(){
     window.close();
 }
 
- 
+
 function onPrint(){ 
-    
     //if(activeReport.value.doc_type == "Cashier Shift" || activeReport.value.doc_type == "Working Day"){
        // gv.onPrintWorkingDayAndCashierShift(activeReport.value.report_id,pos_profile,activeReport.value.doc_type)
     //}
@@ -434,9 +434,17 @@ function onPrint(){
             print_format: activeReport.value.print_report_name || '',
             pos_profile:pos_profile,
             outlet:gv.setting.outlet,
-            letterhead:activeReport.value.letterhead
+            letterhead:activeReport.value.letterhead,
+            sale: {pos_profile:pos_profile},
+            station: (gv.setting?.device_setting?.name) || "",
+            station_device_printing: (gv.setting?.device_setting?.station_device_printing) || ""
         }
-        window.chrome.webview.postMessage(JSON.stringify(data));
+        if(localStorage.getItem("is_window")==1){
+            window.chrome.webview.postMessage(JSON.stringify(data));
+        }
+        else{
+            socket.emit('PrintReceipt', JSON.stringify(data));
+        }
         toaster.success($t("Report is printing")) 
     }
 } 

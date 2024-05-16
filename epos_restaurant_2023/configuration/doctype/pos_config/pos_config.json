@@ -116,7 +116,9 @@
   "park_item_required_password",
   "section_break_70",
   "cash_in_check_out_required_password",
-  "use_guest_cover"
+  "use_guest_cover",
+  "section_break_sibg",
+  "switch_pos_profile_required_password"
  ],
  "fields": [
   {
@@ -699,12 +701,22 @@
    "fieldname": "generate_tax_invoice_after_close_sale_order",
    "fieldtype": "Check",
    "label": "Generate Tax Invoice After Close Sale Order"
+  },
+  {
+   "fieldname": "section_break_sibg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "switch_pos_profile_required_password",
+   "fieldtype": "Check",
+   "label": "Switch POS Profile Required Password"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-02 19:16:32.566214",
+ "modified": "2024-05-16 08:35:03.308592",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",
