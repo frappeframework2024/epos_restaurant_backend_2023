@@ -10,7 +10,8 @@
   "product_name_en",
   "product_name_kh",
   "photo",
-  "price"
+  "price",
+  "is_empty_stock_warning"
  ],
  "fields": [
   {
@@ -46,12 +47,19 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Price"
+  },
+  {
+   "default": "0",
+   "fetch_from": "product_code.is_empty_stock_warning",
+   "fieldname": "is_empty_stock_warning",
+   "fieldtype": "Check",
+   "label": "Is Empty Stock Warning"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-09-05 14:19:04.739706",
+ "modified": "2024-05-17 15:06:08.387382",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu Popular Products",

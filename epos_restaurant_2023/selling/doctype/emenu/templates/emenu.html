@@ -113,13 +113,15 @@
                                     <div title="{{p.product_name_kh}}" class="item-tt-txt">{{p.product_name_kh}}</div>
                                     <div title="{{p.product_name_en}}" class="item-tt-txt">{{p.product_name_en}} </div>
                                     {%endif%}
+                                    {% if p.is_empty_stock_warning == 1 %}
+                                        <p style="color:red;font-size:10px;">* Out of order</p>
+                                    {% endif %} 
                                 </div>
                                 <div class="d-block d-xl-flex justify-between">
                                     <div class="d-lg-flex gap-2 d-none">
                                         <p>Product Code: {{p.product_code}}</p>
                                     </div>
-                                    <div>
-                                        <!-- <span class="d-none d-lg-flex">From</span> -->
+                                    <div class="cnter-txt">
                                         <span style="font-weight: 600;">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</span>
                                     </div>
                                 </div>
@@ -140,26 +142,28 @@
                     <a class="product_detail col-4 col-lg-4 mb-3 text-dark"
                         href="/product_detail?product_code={{p.product_code}}">
                         <div class="row p-0 p-lg-3 items-inner-1 m-0" style="border-radius: 10px;">
-                            <div class="col-12 col-lg-4 p-0 h-100">
+                            <div class="col-12 col-lg-4 p-0 h-100" >
 
                                 <img loading="lazy" class="rounded img pro-img-it" src="{{p.photo or " /files/no_image.jpg"}}"/>
 
                             </div>
                             <div class="col d-flex flex-column-reverse flex-lg-column justify-between p-0 ps-lg-3 py-3 py-lg-0">
-                                <div class="mb-4 mb-lg-0">
+                                <div class="mb-4 mb-lg-0"> 
                                     {% if p.product_name_en == p.product_name_kh %}
                                     <div class="item-tt-txt">{{p.product_name_kh}}</div>
                                     {%else%}
                                     <div title="{{p.product_name_kh}}" class="item-tt-txt">{{p.product_name_kh}}</div>
                                     <div title="{{p.product_name_en}}" class="item-tt-txt">{{p.product_name_en}} </div>
                                     {%endif%}
+                                    {% if p.is_empty_stock_warning == 1 %}
+                                        <p style="color:red;font-size:10px;">* Out of order</p>
+                                    {% endif %}
                                 </div>
                                 <div class="d-block d-xl-flex justify-between">
                                     <div class="d-lg-flex gap-2 d-none">
                                         <p>Product Code: {{p.product_code}}</p>
                                     </div>
-                                    <div>
-                                        <!-- <span class="d-none d-lg-flex">From</span> -->
+                                    <div class="cnter-txt">
                                         <span style="font-weight: 600;">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</span></div>
                                 </div>
                             </div>

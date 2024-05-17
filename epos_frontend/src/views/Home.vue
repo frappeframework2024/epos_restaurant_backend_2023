@@ -242,7 +242,12 @@ async function onPrintWifiPassword(){
     await printWifiPasswordModal({})
 }
 async function onSwitchPOSProfile(){
-    await SwitchPosProfileModal({})
+    gv.authorize("switch_pos_profile_required_password","allow_switch_pos_profile").then(async (v)=>{
+        if(v){          
+            await SwitchPosProfileModal({})           
+        }
+    })           
+
 }
 
 

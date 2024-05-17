@@ -6,6 +6,9 @@
         <div class="section-top-under-img">
             <div class="flex justify-between">
                 <div class="mb-2 wrapper-title-modal">
+                    {% if doc.is_empty_stock_warning == 1 %}
+                        <p style="color:red;font-size:10px;">* Out of order</p>
+                    {% endif %}
                     {% if doc.product_name_en == doc.product_name_kh%}
                     <h2>{{doc.product_name_kh}}</h2>
                     {%else%}

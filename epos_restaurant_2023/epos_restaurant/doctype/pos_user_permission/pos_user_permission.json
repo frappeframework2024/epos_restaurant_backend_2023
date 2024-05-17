@@ -36,6 +36,7 @@
   "close_cashier_shift",
   "cash_in_check_out",
   "open_cashdrawer",
+  "allow_switch_pos_profile",
   "park_item",
   "section_break_7",
   "discount_codes"
@@ -217,11 +218,17 @@
    "fieldname": "add_voucher_top_up",
    "fieldtype": "Check",
    "label": "Add Voucher Top Up"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_switch_pos_profile",
+   "fieldtype": "Check",
+   "label": "Allow Switch POS Profile"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-02-23 08:45:56.952950",
+ "modified": "2024-05-17 11:52:50.131489",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "POS User Permission",

@@ -19,7 +19,8 @@ class eMenu(WebsiteGenerator):
 					product_name_en,
 					product_name_kh,
 					price,
-					ifnull(photo,'files/no_image.jpg') as photo
+					ifnull(photo,'files/no_image.jpg') as photo,
+					is_empty_stock_warning
 				from `tabTemp Product Menu`
 				where pos_menu in %(pos_menu)s
 			"""

@@ -38,8 +38,12 @@ export default class Gv {
 	}
 
 	async authorize(settingKey, permissionCode,requiredNoteKey="",categoryNoteName="", product_code = "", inlineNote = false) {
+
+		console.log(settingKey)
 		return new Promise(async (resolve,reject) => {
 			let is_auth_required  = (this.setting.pos_setting[settingKey] == 1);
+
+			console.log(this.setting.pos_setting[settingKey])
 			const device_setting = JSON.parse(localStorage.getItem("device_setting"));		 
 			if ( !is_auth_required && device_setting.is_order_station == 1){
 				is_auth_required = (this.setting.pos_setting["order_station_open_order_required_password"] == 1)

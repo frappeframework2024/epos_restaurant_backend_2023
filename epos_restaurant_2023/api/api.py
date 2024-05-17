@@ -191,7 +191,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "discount_item_required_note":pos_config.discount_item_required_note,
         "cancel_discount_item_required_password":pos_config.cancel_discount_item_required_password,
         "cancel_discount_item_required_note":pos_config.cancel_discount_item_required_note,
-
+        "switch_pos_profile_required_password":pos_config.switch_pos_profile_required_password or 0,
         "discount_sale_required_password":pos_config.discount_sale_required_password,
         "cancel_discount_sale_required_password":pos_config.cancel_discount_sale_required_password,
         "discount_sale_required_note":pos_config.discount_sale_required_note,
@@ -357,6 +357,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "tax_2_name":doc.tax_2_name,
         "tax_3_name":doc.tax_3_name,
         "use_guest_cover":pos_config.use_guest_cover,
+        "switch_pos_profile_required_password":pos_config.switch_pos_profile_required_password or 0,
         "sale_status":frappe.db.sql("select name,background_color from `tabSale Status`", as_dict=1),
         "print_cashier_shift_summary_after_close_shift":pos_config.print_cashier_shift_summary_after_close_shift,
         "print_cashier_shift_sale_product_summary_after_close_shift":pos_config.print_cashier_shift_sale_product_summary_after_close_shift,
