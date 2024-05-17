@@ -1,6 +1,6 @@
 # Copyright (c) 2022, Tes Pheakdey and contributors
 # For license information, please see license.txt
-
+from functools  import lru_cache
 import frappe
 from escpos.printer import Network
 from frappe.model.document import Document
@@ -10,52 +10,59 @@ class Printer(Document):
 		self.business_branch_printer = "{} > {}".format(self.business_branch, self.printer_name)
 
 		## update relate print setting
-		#// product printer
-		frappe.db.sql("""update `tabProduct Printer` 
-                      	set 
-                       printer_name=%(printer_name)s,
-                       group_item_type=%(group_item_type)s,
-                       ip_address=%(ip_address)s,
-                       port=%(port)s,
-                       is_label_printer=%(is_label_printer)s,
-                       usb_printing=%(usb_printing)s
-                       where 
-							printer=%(name)s
-                       """,{
-						   "printer_name":self.printer_name,
-						   "group_item_type":self.group_item_type,
-						   "ip_address":self.ip_address,
-						   "port":self.port,
-						   "is_label_printer":self.is_label_printer,
-						   "usb_printing":self.usb_printing,
-							"name":self.name
-					   })
-		#// pos product printer
-		frappe.db.sql("""update `tabStation Printers` 
-                      	set 
-                       printer_name=%(printer_name)s,
-                       group_item_type=%(group_item_type)s,
-                       ip_address=%(ip_address)s,
-                       port=%(port)s,
-                       is_label_printer=%(is_label_printer)s,
-                       usb_printing=%(usb_printing)s
-                       where 
-							printer=%(name)s
-                       """,{
-						   "printer_name":self.printer_name,
-						   "group_item_type":self.group_item_type,
-						   "ip_address":self.ip_address,
-						   "port":self.port,
-						   "is_label_printer":self.is_label_printer,
-						   "usb_printing":self.usb_printing,
-							"name":self.name
-					   })
 		
-		product_printers = frappe.db.sql("""select parent from `tabProduct Printer` where printer=%(name)s""",{"name":self.name},as_dict=1)
-		for pp in product_printers:
-			update_temp_menu_product(pp["parent"])
-		frappe.db.commit()
+		update_product_printer_and_temp_menu_printer(self)
 
+@lru_cache(maxsize=128,typed=False)	
+def update_product_printer_and_temp_menu_printer(self):
+	#// product printer
+	frappe.db.sql("""update `tabProduct Printer` 
+					set 
+					printer_name=%(printer_name)s,
+					group_item_type=%(group_item_type)s,
+					ip_address=%(ip_address)s,
+					port=%(port)s,
+					is_label_printer=%(is_label_printer)s,
+					usb_printing=%(usb_printing)s
+					where 
+						printer=%(name)s
+					""",{
+						"printer_name":self.printer_name,
+						"group_item_type":self.group_item_type,
+						"ip_address":self.ip_address,
+						"port":self.port,
+						"is_label_printer":self.is_label_printer,
+						"usb_printing":self.usb_printing,
+						"name":self.name
+					})
+	#// pos product printer
+	frappe.db.sql("""update `tabStation Printers` 
+					set 
+					printer_name=%(printer_name)s,
+					group_item_type=%(group_item_type)s,
+					ip_address=%(ip_address)s,
+					port=%(port)s,
+					is_label_printer=%(is_label_printer)s,
+					usb_printing=%(usb_printing)s
+					where 
+						printer=%(name)s
+					""",{
+						"printer_name":self.printer_name,
+						"group_item_type":self.group_item_type,
+						"ip_address":self.ip_address,
+						"port":self.port,
+						"is_label_printer":self.is_label_printer,
+						"usb_printing":self.usb_printing,
+						"name":self.name
+					})
+	
+	product_printers = frappe.db.sql("""select parent from `tabProduct Printer` where printer=%(name)s""",{"name":self.name},as_dict=1)
+	for pp in product_printers:
+		update_temp_menu_product(pp["parent"])
+	frappe.db.commit()
+
+
+@lru_cache(maxsize=128,typed=False)
 def update_temp_menu_product(product):
 	product_doc = frappe.get_doc("Product",product)
 	if product_doc.printers:
@@ -66,6 +73,7 @@ def update_temp_menu_product(product):
 		}) 
   
 @frappe.whitelist()
+@lru_cache(maxsize=128,typed=False)
 def update_printer_to_product():
 	update_pos_station_printer()
 	update_to_product()
@@ -74,7 +82,7 @@ def update_printer_to_product():
 		update_temp_menu_product(d["name"])
 	frappe.db.commit()
     
-
+@lru_cache(maxsize=128,typed=False)
 def update_pos_station_printer():
 	pritners = frappe.db.sql("select * from `tabPrinter`",as_dict=1)
 	for p in pritners:
@@ -97,7 +105,7 @@ def update_pos_station_printer():
 			"name":p["name"]
 		})
 		
-
+@lru_cache(maxsize=128,typed=False)
 def update_to_product():
     pritners = frappe.db.sql("select * from `tabPrinter`",as_dict=1)
     for p in pritners:
