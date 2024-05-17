@@ -43,7 +43,6 @@ async function onPOSProfileClick(profile){
         pos_profile:profile,
         device_name: localStorage.getItem("device_name"),
        }).then((result)=>{
-        console.log(result)
           localStorage.removeItem("__tblLayoutIndex")
           localStorage.setItem("pos_profile",profile)
           localStorage.setItem("table_groups",JSON.stringify(result.message.table_groups || null))

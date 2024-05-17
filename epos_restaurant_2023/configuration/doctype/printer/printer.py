@@ -50,7 +50,10 @@ class Printer(Document):
 						   "usb_printing":self.usb_printing,
 							"name":self.name
 					   })
-		update_temp_menu_product(self.name)
+		
+		product_printers = frappe.db.sql("""select parent from `tabProduct Printer` where printer=%(name)s""",{"name":self.name},as_dict=1)
+		for pp in product_printers:
+			update_temp_menu_product(pp["parent"])
 		frappe.db.commit()
 
 def update_temp_menu_product(product):

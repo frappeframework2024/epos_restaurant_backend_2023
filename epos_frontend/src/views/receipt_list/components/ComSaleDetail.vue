@@ -226,9 +226,13 @@ async function onPrint() {
                 }
             }  
             call.post("epos_restaurant_2023.api.network_printing_api.print_bill_to_network_printer",body)
-            toaster.success($t("Print processing"))
+            toaster.success($t("Print processing"));
             return // print network
-        }      
+        }  else if((localStorage.getItem("flutterWrapper") || 0) == 1)   {
+            socket.emit('PrintReceipt', JSON.stringify(data));
+            toaster.success($t("Print processing"));        
+            return;
+        }
     }
 
     //

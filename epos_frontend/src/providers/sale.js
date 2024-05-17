@@ -2020,6 +2020,9 @@ export default class Sale {
                 }
                 call.post("epos_restaurant_2023.api.network_printing_api.print_bill_to_network_printer", body)
                 return // print network
+            }else if((localStorage.getItem("flutterWrapper") || 0) == 1){
+                socket.emit('PrintReceipt', JSON.stringify(data));
+                return
             }
         }
 

@@ -206,29 +206,29 @@ function onPrint(){
 
             //cross
         }       
+    }   
+    
+    let data ={
+        action : "print_report",
+        doc: activeReport.value.doc_type,
+        name: props.params.name,
+        print_format: activeReport.value.print_report_name || '',
+        pos_profile:pos_profile,
+        outlet:gv.setting.outlet,
+        letterhead:selectedLetterhead.value,
+        sale: {pos_profile:pos_profile},
+        station: (gv.setting?.device_setting?.name) || "",
+        station_device_printing: (gv.setting?.device_setting?.station_device_printing) || ""
     }
+    if(localStorage.getItem("is_window")==1){
+        window.chrome.webview.postMessage(JSON.stringify(data));
+    }
+    else{
+        socket.emit('PrintReceipt', JSON.stringify(data));
+    }
+
+    toaster.success($t("Report is printing"))
    
-    if((localStorage.getItem("apkipa") ||0)==0){
-        let data ={
-            action : "print_report",
-            doc: activeReport.value.doc_type,
-            name: props.params.name,
-            print_format: activeReport.value.print_report_name || '',
-            pos_profile:pos_profile,
-            outlet:gv.setting.outlet,
-            letterhead:selectedLetterhead.value,
-            sale: {pos_profile:pos_profile},
-            station: (gv.setting?.device_setting?.name) || "",
-            station_device_printing: (gv.setting?.device_setting?.station_device_printing) || ""
-        }
-        if(localStorage.getItem("is_window")==1){
-            window.chrome.webview.postMessage(JSON.stringify(data));
-        }
-        else{
-            socket.emit('PrintReceipt', JSON.stringify(data));
-        }
-        toaster.success($t("Report is printing"))
-    }    
 }
 
 

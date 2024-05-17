@@ -425,9 +425,7 @@ function onPrint(){
             }
         } 
     }
- 
-    if((localStorage.getItem("apkipa") ||0)==0){
-        let data ={
+    let data ={
             action : "print_report",                
             doc: activeReport.value.doc_type,
             name: activeReport.value.report_id,
@@ -438,15 +436,16 @@ function onPrint(){
             sale: {pos_profile:pos_profile},
             station: (gv.setting?.device_setting?.name) || "",
             station_device_printing: (gv.setting?.device_setting?.station_device_printing) || ""
-        }
-        if(localStorage.getItem("is_window")==1){
-            window.chrome.webview.postMessage(JSON.stringify(data));
-        }
-        else{
-            socket.emit('PrintReceipt', JSON.stringify(data));
-        }
-        toaster.success($t("Report is printing")) 
     }
+
+    if(localStorage.getItem("is_window")==1){
+        window.chrome.webview.postMessage(JSON.stringify(data));
+    }
+    else{
+        socket.emit('PrintReceipt', JSON.stringify(data));
+    }
+    toaster.success($t("Report is printing")) 
+   
 } 
 const reportClickHandler = async function (e) {
     if(e.isTrusted && typeof(e.data) == 'string'){
