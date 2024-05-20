@@ -126,7 +126,7 @@
                         </template>
 
 
-                        <v-chip v-if="show_button_change_price && !sp.is_timer_product" color="teal"
+                        <v-chip v-if="show_button_change_price && !sp.is_timer_product && (sp.allow_change_price || 0) == 1" color="teal"
                             class="mx-1 grow text-center justify-center" variant="elevated" size="small"
                             @click="sale.onChangePrice(sp, gv, numberFormat)">{{ $t('Price') }}</v-chip>
 

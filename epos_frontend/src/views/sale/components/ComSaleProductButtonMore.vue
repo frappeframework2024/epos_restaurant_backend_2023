@@ -11,7 +11,7 @@
             <template v-if="gv.device_setting.is_order_station==0">
 
                 <!-- free -->
-                <template v-if ="!saleProduct.is_timer_product">
+                <template v-if ="!saleProduct.is_timer_product && (saleProduct.allow_free || 0) == 1">
                 <v-list-item prepend-icon="mdi-currency-usd-off" :title="$t('Free')" v-if="!saleProduct.is_free"
                     @click="onSaleProductFree()"></v-list-item>
 
@@ -23,7 +23,7 @@
                 </v-list-item>
                 </template>
                 <!-- end free -->
-                <template v-if="!saleProduct.is_free">
+                <template v-if="!saleProduct.is_free && (saleProduct.allow_discount || 0) == 1">
                     <template v-if="!saleProduct.happy_hour_promotion">
                         <v-list-item prepend-icon="mdi-percent" :title="$t('Discount Percent')"
                             @click="onSaleProductDiscount('Percent')"></v-list-item>
