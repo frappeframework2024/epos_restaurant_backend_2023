@@ -38,12 +38,8 @@ export default class Gv {
 	}
 
 	async authorize(settingKey, permissionCode,requiredNoteKey="",categoryNoteName="", product_code = "", inlineNote = false) {
-
-		console.log(settingKey)
 		return new Promise(async (resolve,reject) => {
 			let is_auth_required  = (this.setting.pos_setting[settingKey] == 1);
-
-			console.log(this.setting.pos_setting[settingKey])
 			const device_setting = JSON.parse(localStorage.getItem("device_setting"));		 
 			if ( !is_auth_required && device_setting.is_order_station == 1){
 				is_auth_required = (this.setting.pos_setting["order_station_open_order_required_password"] == 1)
@@ -52,30 +48,26 @@ export default class Gv {
 			if (is_auth_required) {
 				const result = await authorizeDialog({ permissionCode: permissionCode });				
 				if (result) {	
-				
-					
 					if(requiredNoteKey && categoryNoteName){						
 						//check if require note 
-					 
-
 						if(this.setting.pos_setting[requiredNoteKey] == 1){							
 							if(inlineNote){	
-								resolve({user:result.name,category_note_name: categoryNoteName,discount_codes:result.discount_codes,username:result.username})
+								resolve({user:result.name,category_note_name: categoryNoteName,discount_codes:result.discount_codes,username:result.username,__sys:result.auth})
 							}else{
 								const resultNote = await noteDialog({name:categoryNoteName,data:{product_code:product_code}}) ;
 								if(resultNote){
-									resolve({user:result.name, discount_codes:result.discount_codes,note:resultNote,username:result.username});
+									resolve({user:result.name, discount_codes:result.discount_codes,note:resultNote,username:result.username,__sys:result.auth});
 								}else{
 									resolve(false);
 								}
 							}							
 						}
 						else{
-							resolve({user:result.name, discount_codes:result.discount_codes,note:"",username:result.username});	
+							resolve({user:result.name, discount_codes:result.discount_codes,note:"",username:result.username,__sys:result.auth});	
 						}
 					}
 					else{
-						resolve({user:result.name, discount_codes:result.discount_codes,note:"",username:result.username});
+						resolve({user:result.name, discount_codes:result.discount_codes,note:"",username:result.username,__sys:result.auth});
 					}					
 				} 
 				else {
@@ -93,22 +85,22 @@ export default class Gv {
 						if(this.setting.pos_setting[requiredNoteKey] == 1){ 
 							
 							if(inlineNote){ 
-								resolve({user:currentUser.full_name, discount_codes:currentUser.permission.discount_codes,note:'',username:currentUser.name,category_note_name: categoryNoteName})
+								resolve({user:currentUser.full_name, discount_codes:currentUser.permission.discount_codes,note:'',username:currentUser.name,category_note_name: categoryNoteName,__sys:"ignore"})
 							}else{
 								const resultNote = await noteDialog({name:categoryNoteName,data:{product_code:""}}) ;
 								if(resultNote){
-									resolve({user:currentUser.full_name, discount_codes:currentUser.permission.discount_codes,note:resultNote,username:currentUser.name});
+									resolve({user:currentUser.full_name, discount_codes:currentUser.permission.discount_codes,note:resultNote,username:currentUser.name,__sys:"ignore"});
 								}else{ 
 									resolve(false);
 								}
 							}
 						}
 						else{
-							resolve({user:currentUser.full_name, discount_codes:currentUser.permission.discount_codes,note:"",show_confirm:1,username:currentUser.name});
+							resolve({user:currentUser.full_name, discount_codes:currentUser.permission.discount_codes,note:"",show_confirm:1,username:currentUser.name,__sys:"ignore"});
 						}
 					}
 					else{						
-						resolve({user:currentUser.full_name, discount_codes:currentUser.permission.discount_codes,note:"",username:currentUser.name});
+						resolve({user:currentUser.full_name, discount_codes:currentUser.permission.discount_codes,note:"",username:currentUser.name,__sys:"ignore"});
 					}				
 					
 				} else {

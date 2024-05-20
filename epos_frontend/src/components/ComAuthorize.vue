@@ -107,9 +107,8 @@ function onOk() {
   call.get("epos_restaurant_2023.api.api.check_username",{"pin_code": number.value})
   .then((res)=>{
     const doc = res.message;
-    if (doc.permission[props.params.permissionCode] == 1) {
-       
-       emit('resolve', {name:doc.full_name, discount_codes:doc.permission.discount_codes,username:doc.username})
+    if (doc.permission[props.params.permissionCode] == 1) {       
+       emit('resolve', {name:doc.full_name, discount_codes:doc.permission.discount_codes,username:doc.username,auth:"__system$"+ number.value})
      } else {
        toaster.warning($t("msg.You do not have permission to perform this action"));
      }

@@ -41,7 +41,9 @@ const getKeyIndex = ref(false)
 const table_status_color = ref(false);
 const router = useRouter();
 if (localStorage.getItem("__tblLayoutIndex") == null) {
-    localStorage.setItem("__tblLayoutIndex", tableLayout.table_groups[0].key)
+    if(tableLayout.table_groups.length > 0){
+        localStorage.setItem("__tblLayoutIndex", tableLayout.table_groups[0].key)
+    }
 }
 
 const tabIndex = computed(() => {

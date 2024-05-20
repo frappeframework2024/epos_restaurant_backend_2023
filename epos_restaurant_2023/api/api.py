@@ -17,6 +17,7 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import quote_plus
+ 
 
 
 @frappe.whitelist(allow_guest=True)
@@ -69,6 +70,21 @@ def get_user_info(name=""):
         if data:
             permission= frappe.get_doc("POS User Permission",users[0]["pos_permission"])      
             return {"username":data[0]["name"],"full_name":data[0]["full_name"],"photo":data[0]["user_image"],"role":users[0]["pos_permission"],"permission":permission} 
+
+@frappe.whitelist(allow_guest=True)
+def switch_pos_profile_login_user(pin_code):
+    chk = check_username(pin_code)
+    
+    if chk:         
+        user = get_user_information()
+        if user:
+            user.update({"permission":chk["permission"]})
+            return user
+        else:
+            return False
+
+    else:
+        return False
 
 
 

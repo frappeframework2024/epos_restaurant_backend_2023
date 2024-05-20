@@ -85,8 +85,15 @@ function onRefreshSale() {
     tableLayout.getSaleList()
 }
 
-async function onSwitchPOSProfile(){
-    await SwitchPosProfileModal({})
+async function onSwitchPOSProfile(){ 
+    gv.authorize("switch_pos_profile_required_password","allow_switch_pos_profile").then(async (u)=>{
+        if(u){  
+         await SwitchPosProfileModal({data:{
+            "username":u.username,
+            "password":u.__sys,
+           }})                 
+        }
+    })   
 }
 
 function onEnableArrageTable(){
