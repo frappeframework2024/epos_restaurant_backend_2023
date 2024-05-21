@@ -4,9 +4,7 @@
 {% endblock %}
 
 {% block page_content %}
-<div class="m-3">
-    <button onclick="goBack()">&#8592; Back to Menu</button>
-</div>
+<button class="back-btn m-3" id="back-btn" onclick="goBack('{{emenu.route}}')">&#8592; Back to Menu</button>
 
 <div class=" overflow-hidden modal-pp-items section-modal-detail">    
     <div class="modal-img px-3" style="background: #fff;">
@@ -20,9 +18,9 @@
                         <p style="color:red;font-size:10px;">* Out of order</p>
                     {% endif %}
                     {% if doc.product_name_en == doc.product_name_kh%}
-                    <h1 style="font-size: 30px;color:orange">{{doc.product_name_kh}}</h1>
+                    <h1 style="font-size: 36px;color:orange">{{doc.product_name_kh}}</h1>
                     {%else%}
-                    <h1 style="font-size: 30px;color:orange">{{doc.product_name_kh}}</h1>
+                    <h1 style="font-size: 36px;color:orange">{{doc.product_name_kh}}</h1>
                     <h6>{{doc.product_name_en}}</h6>
                     {%endif%}
                 </div>
@@ -37,8 +35,8 @@
             </div>
             <br/>
             <h5 class="text-center">Order now Call</h5>
-            <h1 style="color:orange" class="text-center">061 383 008</h1>
-            <div style="font-weight: 600;" class="text-center">Sok San Road, Sangkat Svay Dongkum, Siem Reap, Cambodia</div>
+            <h1 style="color:orange" class="text-center">{{emenu.phone_number}}</h1>
+            <div style="font-weight: 600;" class="text-center">{{emenu.address}}</div>
         </div>
     </div>
 </div>

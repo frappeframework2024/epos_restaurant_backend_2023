@@ -19,6 +19,8 @@
   "section_break_5",
   "pos_menu",
   "welcome_title",
+  "phone_number",
+  "address",
   "welcome_description",
   "section_break_8",
   "footer_description",
@@ -286,13 +288,23 @@
    "fieldname": "favicon",
    "fieldtype": "Attach Image",
    "label": "Favicon"
+  },
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "label": "Phone Number"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Data",
+   "label": "Address"
   }
  ],
  "has_web_view": 1,
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-20 15:23:20.607140",
+ "modified": "2024-05-21 10:16:54.553455",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu",

@@ -100,12 +100,12 @@
                 <div class="row">
                     {% for p in doc.popular_product %}
                     <a class="product_detail col-12 col-lg-4 mb-3 text-dark"
-                        href="/product_detail?product_code={{p.product_code}}">
+                        href="/product_detail?product_code={{p.product_code}}&menu_id={{doc.name}}">
                         <div class="row p-0 p-lg-3 items-inner-1 m-0" style="border-radius: 10px;">
                             <div class="col col-lg-4 p-0 h-100">
                                 <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/no_image.jpg"}}"/>
                             </div>
-                            <div class="col d-flex flex-column flex-lg-column p-0 ps-lg-3 py-lg-3 py-lg-0 content-custom">
+                            <div class="col d-flex flex-column flex-lg-column p-0 ps-lg-3 py-lg-0 py-lg-0 content-custom">
                                 <div class="">
                                     {% if p.product_name_en == p.product_name_kh %}
                                     <div class="item-tt-txt">{{p.product_name_kh}}</div>
@@ -114,7 +114,7 @@
                                     <div title="{{p.product_name_en}}" class="item-tt-txt">{{p.product_name_en}} </div>
                                     {%endif%} 
                                     {% if p.description %}
-                                        <p>{{p.description}}</p>
+                                        <div class="description-cs">{{p.description}}</div>
                                     {% endif %}
                                     {% if p.is_empty_stock_warning == 1 %}
                                         <p style="color:red;font-size:10px;">* Out of order</p>
@@ -143,12 +143,12 @@
                 <div class="row">
                     {%for p in products|selectattr('pos_menu', 'equalto', m.menu)|list %}
                     <a class="product_detail col-12 col-lg-4 mb-3 text-dark"
-                        href="/product_detail?product_code={{p.product_code}}">
+                        href="/product_detail?product_code={{p.product_code}}&menu_id={{doc.name}}">
                         <div class="row p-0 p-lg-3 items-inner-1 m-0" style="border-radius: 10px;">
                             <div class="col col-lg-4 p-0 h-100" >
                                 <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/no_image.jpg"}}"/>
                             </div>
-                            <div class="col d-flex flex-column flex-lg-column p-0 ps-lg-3 py-lg-3 py-lg-0 content-custom">
+                            <div class="col d-flex flex-column flex-lg-column p-0 ps-lg-3 py-lg-0 py-lg-0 content-custom">
                                 <div class=""> 
                                     {% if p.product_name_en == p.product_name_kh %}
                                     <div class="item-tt-txt">{{p.product_name_kh}}</div>
@@ -157,7 +157,7 @@
                                     <div title="{{p.product_name_en}}" class="item-tt-txt">{{p.product_name_en}} </div>
                                     {%endif%} 
                                     {% if p.description %}
-                                        <p>{{p.description}}</p>
+                                        <div class="description-cs">{{p.description}}</div>
                                     {% endif %}
                                     {% if p.is_empty_stock_warning == 1 %}
                                         <p style="color:red;font-size:10px;">* Out of order</p>
