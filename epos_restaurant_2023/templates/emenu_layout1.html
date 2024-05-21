@@ -282,10 +282,7 @@
 			position: sticky;
 			/* top: var(--top); */
 			z-index: 10000;
-		} 
-		.item-tt-txt{ 
-			font-size: 14px;
-		} 
+		}
 		.el-shadow{
 			box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 		}
@@ -308,8 +305,8 @@
 			border-bottom: 2px solid var(--main-color);
 		}
 		.modal-img img{
-			/* height: 400px; */
-			width: 300px;
+			height: 400px;
+			/* width: 300px; */
     		object-fit: cover;
 		}
 		.modal-img {
@@ -424,14 +421,18 @@
 		.logo img{
 			height: 60px;
 		}
-
-
+		.price-cus {
+			font-weight: 600;
+		}
+		.img.pro-img-it {
+			border-radius: .25rem;
+		}
 		@media (max-width: 1199.98px) {
 			.item-tt-txt{
 				overflow: hidden;
 				white-space: nowrap;
 				text-overflow: ellipsis; 
-				color: #6c6c6c; 
+				
 			} 
 		}
 		@media (max-width: 1199.98px) and (min-width: 992px) {
@@ -445,9 +446,21 @@
     			height: 30px;
 			}
 			img.pro-img-it {
-				height: 120px;
+				width: 180px;
     			object-fit: cover;
+				height: 180px;
+				box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+				border-radius: .5rem !important;
+				
 			} 
+			.item-tt-txt {
+				white-space: normal !important;
+				font-size: 18px;
+				font-weight: 800;
+			}
+			.price-cus {
+				color: #ccc;
+			}
 		}
 		@media (min-width: 992px) {
 			.items-inner-1{
@@ -460,6 +473,13 @@
 			.items-inner-1{
 				/* box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; */
 				border: 1px solid #cccccc70;
+			}
+			.item-tt-txt {
+				font-size: 14px;
+				color: #6c6c6c; 
+			}
+			.content-custom {
+				justify-content: space-between;
 			}
 		}  
 
@@ -536,16 +556,16 @@
 				removalDelay: 300,
 				mainClass: 'my-mfp-slide-bottom'
 			});
-			$('.product_detail').magnificPopup({
-				type: 'ajax',
-				ajax: {
-					settings: {
-						cache: true
-					}
-				},
-				mainClass: 'my-mfp-slide-bottom items-my-mfp-slide-bottom',
-				overflowY: 'scroll' // as we know that popup content is tall we set scroll overflow by default to avoid jump
-			});
+			// $('.product_detail').magnificPopup({
+			// 	type: 'ajax',
+			// 	ajax: {
+			// 		settings: {
+			// 			cache: true
+			// 		}
+			// 	},
+			// 	mainClass: 'my-mfp-slide-bottom items-my-mfp-slide-bottom',
+			// 	overflowY: 'scroll' // as we know that popup content is tall we set scroll overflow by default to avoid jump
+			// });
 
 			// Cache menu links and sections
 			var menuLinks = $('.nav-pro-wrapper a');
@@ -646,6 +666,11 @@
 		tabList.removeEventListener("mousemove", dragging); // Remove mousemove listener here
 		tabList.classList.remove("dragging");
 		});
+
+		//go back button
+		function goBack () {
+            window.location.href = window.location.origin;
+		}
 
 	</script>
 

@@ -273,7 +273,7 @@
   {
    "fieldname": "popular_product",
    "fieldtype": "Table",
-   "label": "Popular Prodsuct",
+   "label": "Popular Product",
    "options": "eMenu Popular Products"
   },
   {
@@ -292,7 +292,7 @@
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-09-07 17:10:17.824257",
+ "modified": "2024-05-20 15:23:20.607140",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu",

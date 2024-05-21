@@ -11,7 +11,8 @@
   "product_name_kh",
   "photo",
   "price",
-  "is_empty_stock_warning"
+  "is_empty_stock_warning",
+  "description"
  ],
  "fields": [
   {
@@ -54,12 +55,18 @@
    "fieldname": "is_empty_stock_warning",
    "fieldtype": "Check",
    "label": "Is Empty Stock Warning"
+  },
+  {
+   "fetch_from": "product_code.description",
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-05-17 15:06:08.387382",
+ "modified": "2024-05-20 15:25:08.370386",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu Popular Products",

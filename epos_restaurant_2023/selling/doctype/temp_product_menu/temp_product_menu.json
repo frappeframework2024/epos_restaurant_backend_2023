@@ -38,7 +38,8 @@
   "combo_group_data",
   "tax_rule",
   "tax_rule_data",
-  "pos_menu_id"
+  "pos_menu_id",
+  "description"
  ],
  "fields": [
   {
@@ -251,11 +252,17 @@
    "fieldname": "rate_include_tax",
    "fieldtype": "Check",
    "label": "Rate Include Tax"
+  },
+  {
+   "fetch_from": "product_code.description",
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-13 10:14:37.392454",
+ "modified": "2024-05-20 15:14:15.944848",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Temp Product Menu",
