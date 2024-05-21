@@ -7,6 +7,8 @@ from frappe.model.document import Document
 
 class ModifierCode(Document):
 	def validate(self):
+		if self.flags.ignore_validate==True:
+			return 
 		#validate product recipe
 		for d in self.product_recipe:
 			if d.unit != d.base_unit:
