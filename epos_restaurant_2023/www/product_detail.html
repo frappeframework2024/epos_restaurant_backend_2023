@@ -35,8 +35,12 @@
             </div>
             <br/>
             <h5 class="text-center">Order now Call</h5>
+            {% if emenu.phone_number %}
             <h1 style="color:orange" class="text-center">{{emenu.phone_number}}</h1>
+            {% endif %}
+            {% if emenu.address %}
             <div style="font-weight: 600;" class="text-center">{{emenu.address}}</div>
+            {% endif %}
         </div>
     </div>
 </div>
