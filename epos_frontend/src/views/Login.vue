@@ -274,7 +274,6 @@ function getCurrentUserInfo(user) {
     url: 'epos_restaurant_2023.api.api.get_user_information',
     auto: true,
     async onSuccess(doc) {
-      console.log(doc)
       doc.permission = user.permission;
       localStorage.setItem('current_user', JSON.stringify(doc));
       router.push({ name: "Home" });

@@ -207,6 +207,15 @@ async function onPrint() {
             toaster.warning($t("Printer not yet config for this device"))
             return // not printer
         } 
+
+        const _printer = {
+                        "printer_name": printer[0].printer_name,
+                        "ip_address": printer[0].ip_address,
+                        "port": printer[0].port,
+                        "cashier_printer": printer[0].cashier_printer,
+                        "is_label_printer": printer[0].is_label_printer,
+                        "usb_printing": printer[0].usb_printing,
+                    }
         if(printer[0].usb_printing == 0){
             const body ={
                 "data":{
@@ -215,14 +224,7 @@ async function onPrint() {
                     "action":data["action"],
                     "print_setting":data["print_setting"],
                     "template_name":data["print_setting"]["pos_receipt_template"],
-                    "printer" : {
-                        "printer_name": printer[0].printer_name,
-                        "ip_address": printer[0].ip_address,
-                        "port": printer[0].port,
-                        "cashier_printer": printer[0].cashier_printer,
-                        "is_label_printer": printer[0].is_label_printer,
-                        "usb_printing": printer[0].usb_printing,
-                    }
+                    "printer" : _printer
                 }
             }  
             call.post("epos_restaurant_2023.api.network_printing_api.print_bill_to_network_printer",body)
