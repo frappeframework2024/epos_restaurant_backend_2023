@@ -244,8 +244,19 @@ async function onPrintVoucher(receipt, action, doc) {
             station: (gv.setting?.device_setting?.name) || "",
         }
 
+        let printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+        let _printer = undefined;
+        if(printer.length>0){
+            _printer ={
+                "printer_name": printer[0].printer_name,
+                "ip_address": printer[0].ip_address,
+                "port": printer[0].port,
+                "cashier_printer": printer[0].cashier_printer,
+                "is_label_printer": printer[0].is_label_printer,
+                "usb_printing": printer[0].usb_printing,
+            }
+        }
         if((gv.setting?.device_setting?.use_server_network_printing||0)==1){
-            var printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
             if (printer.length <= 0) {
                 return // not printer
             } 
@@ -254,43 +265,30 @@ async function onPrintVoucher(receipt, action, doc) {
                     "data":{
                         "name":data["voucher"]["name"],
                         "station": data["station"],
-                        "printer" : {
-                            "printer_name": printer[0].printer_name,
-                            "ip_address": printer[0].ip_address,
-                            "port": printer[0].port,
-                            "cashier_printer": printer[0].cashier_printer,
-                            "is_label_printer": printer[0].is_label_printer,
-                            "usb_printing": printer[0].usb_printing,
-                        }
+                        "printer" : _printer
                     }
                 } 
                 call.post("epos_restaurant_2023.api.network_printing_api.print_voucher_to_network_printer",body)
                 return // print network
-            }      
+            }   else if ((localStorage.getItem("flutterWrapper") || 0) == 1){
+                data.printer = _printer;    
+                socket.emit('PrintReceipt', JSON.stringify(data));
+                return
+            }
         }
-
-
 
         if (localStorage.getItem("is_window")) {
             window.chrome.webview.postMessage(JSON.stringify(data));
-        }else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
-            var printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+        }else if ((localStorage.getItem("flutterWrapper") || 0) == 1) { 
             if (printer.length <= 0) {
                 toaster.warning($t("Printer not yet config for this device"))
             } else {
-                data.printer = {
-                    "printer_name": printer[0].printer_name,
-                    "ip_address": printer[0].ip_address,
-                    "port": printer[0].port,
-                    "cashier_printer": printer[0].cashier_printer,
-                    "is_label_printer": printer[0].is_label_printer,
-                    "usb_printing": printer[0].usb_printing,
-                }
+                data.printer = _printer;
                 flutterChannel.postMessage(JSON.stringify(data));
             }
-        }else {            
-                socket.emit('PrintReceipt', JSON.stringify(data));
-             
+        }else {        
+            data.printer = _printer;    
+            socket.emit('PrintReceipt', JSON.stringify(data));             
         }
     }
 

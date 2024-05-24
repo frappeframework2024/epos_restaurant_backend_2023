@@ -35,10 +35,21 @@ const wifi_password = ref("")
       if (localStorage.key('wifi')){
         localStorage.setItem('wifi',wifi_password.value)
       }
+      let printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+      let _printer = undefined;
+      if(printer.length>0){
+        _printer = {
+            "printer_name": printer[0].printer_name,
+            "ip_address": printer[0].ip_address,
+            "port": printer[0].port,
+            "cashier_printer": printer[0].cashier_printer,
+            "is_label_printer": printer[0].is_label_printer,
+            "usb_printing": printer[0].usb_printing,
+        }
+      }
 
-      if((gv.setting?.device_setting?.use_server_network_printing||0)==1){
-       
-          var printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+
+      if((gv.setting?.device_setting?.use_server_network_printing||0)==1){ 
           if (printer.length <= 0) {
               toaster.warning($t("Printer not yet config for this device"))
               return // not printer
@@ -48,14 +59,7 @@ const wifi_password = ref("")
               const body ={
                   "data":{
                       "password":wifi_password.value,
-                      "printer" : {
-                            "printer_name": printer[0].printer_name,
-                            "ip_address": printer[0].ip_address,
-                            "port": printer[0].port,
-                            "cashier_printer": printer[0].cashier_printer,
-                            "is_label_printer": printer[0].is_label_printer,
-                            "usb_printing": printer[0].usb_printing,
-                        }
+                      "printer" : _printer
                   }
               } 
               call.post("epos_restaurant_2023.api.network_printing_api.print_wifi_to_network_printer",body)
@@ -63,7 +67,7 @@ const wifi_password = ref("")
               return // print network
           }      
       }
-      
+            
       window.chrome.webview.postMessage(JSON.stringify({action:"print_wifi_password",setting:{wifi_password:wifi_password.value}}));
       emit('resolve', false);
     }

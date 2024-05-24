@@ -381,50 +381,13 @@ function onPrintWithChoosePrinter(){
             window.close();
 }
 function onExport(){
-    var exportUrl =   `${serverUrl}/api/method/frappe.utils.print_format.download_pdf?doctype=${activeReport.value.doc_type}&name=${activeReport.value.report_id}&pos_profile=${pos_profile}&outlet=${gv.setting.outlet}&product_category=${activeReport.value.filter.product_category}&format=${activeReport.value.print_report_name}&no_letterhead=0&show_toolbar=0&letterhead=${activeReport.value.letterhead}&settings=%7B%7D&_lang=${activeReport.value.lang}`
+    let exportUrl =   `${serverUrl}/api/method/frappe.utils.print_format.download_pdf?doctype=${activeReport.value.doc_type}&name=${activeReport.value.report_id}&pos_profile=${pos_profile}&outlet=${gv.setting.outlet}&product_category=${activeReport.value.filter.product_category}&format=${activeReport.value.print_report_name}&no_letterhead=0&show_toolbar=0&letterhead=${activeReport.value.letterhead}&settings=%7B%7D&_lang=${activeReport.value.lang}`
     window.open(exportUrl);
     window.close();
 }
 
 
 function onPrint(){ 
-    //if(activeReport.value.doc_type == "Cashier Shift" || activeReport.value.doc_type == "Working Day"){
-       // gv.onPrintWorkingDayAndCashierShift(activeReport.value.report_id,pos_profile,activeReport.value.doc_type)
-    //}
-   
-    if ((localStorage.getItem("flutterWrapper") || 0) == 1 || (gv.setting?.device_setting?.use_server_network_printing||0)==1) { 
-        var printers = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
-        if (printers.length <= 0) {
-            // pass
-        } else { 
-            if(printers[0].usb_printing == 0){
-                let data ={
-                    action : "print_report",
-                    doc: activeReport.value.doc_type,
-                    name: activeReport.value.report_id,
-                    print_format: activeReport.value.print_report_name,
-                    pos_profile:pos_profile,
-                    outlet:gv.setting.outlet,
-                    letterhead:activeReport.value.letterhead,
-                    printer : {
-                        "printer_name": printers[0].printer_name,
-                        "ip_address": printers[0].ip_address,
-                        "port": printers[0].port,
-                        "cashier_printer": printers[0].cashier_printer,
-                        "is_label_printer": printers[0].is_label_printer,
-                        "usb_printing": printers[0].usb_printing,
-                    }
-                }
-                if((localStorage.getItem("flutterWrapper") || 0) == 1){
-                    flutterChannel.postMessage(JSON.stringify(data));
-                }else{
-                    call.post("epos_restaurant_2023.api.network_printing_api.print_report_to_network_printer",{"data":data})
-                }
-                toaster.success($t("Report is printing"))
-                return  
-            }
-        } 
-    }
     let data ={
             action : "print_report",                
             doc: activeReport.value.doc_type,
@@ -438,10 +401,56 @@ function onPrint(){
             station_device_printing: (gv.setting?.device_setting?.station_device_printing) || ""
     }
 
+    let printers = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+    let _printer = undefined;
+    if(printers.length>0){
+        _printer = {
+            "printer_name": printers[0].printer_name,
+            "ip_address": printers[0].ip_address,
+            "port": printers[0].port,
+            "cashier_printer": printers[0].cashier_printer,
+            "is_label_printer": printers[0].is_label_printer,
+            "usb_printing": printers[0].usb_printing,
+        }
+    }
+
+    if ((gv.setting?.device_setting?.use_server_network_printing||0)==1) {        
+        if (printers.length <= 0) {
+            // pass
+        } else { 
+            if(printers[0].usb_printing == 0){
+                let network_data ={
+                    action : "print_report",
+                    doc: activeReport.value.doc_type,
+                    name: activeReport.value.report_id,
+                    print_format: activeReport.value.print_report_name,
+                    pos_profile:pos_profile,
+                    outlet:gv.setting.outlet,
+                    letterhead:activeReport.value.letterhead,
+                    printer : _printer
+                }
+   
+                call.post("epos_restaurant_2023.api.network_printing_api.print_report_to_network_printer",{"data":network_data})            
+                toaster.success($t("Report is printing"))
+                return  
+            }else if((localStorage.getItem("flutterWrapper") || 0) == 1){
+                data.printer = _printer;
+                socket.emit('PrintReceipt', JSON.stringify(data));
+                toaster.success($t("Report is printing"))
+                return  
+            }
+        } 
+    }
+    
+
     if(localStorage.getItem("is_window")==1){
         window.chrome.webview.postMessage(JSON.stringify(data));
+    }else  if((localStorage.getItem("flutterWrapper") || 0) == 1){
+        data.printer = _printer;
+        flutterChannel.postMessage(JSON.stringify(data));
     }
     else{
+        data.printer = _printer;
         socket.emit('PrintReceipt', JSON.stringify(data));
     }
     toaster.success($t("Report is printing")) 

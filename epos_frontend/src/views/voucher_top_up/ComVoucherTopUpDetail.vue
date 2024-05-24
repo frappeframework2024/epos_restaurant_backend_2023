@@ -81,6 +81,7 @@
 import { ref, inject, onMounted, i18n } from '@/plugin'
 import ComModal from '../../components/ComModal.vue';
 const moment = inject('$moment')
+const socket = inject('$socket')
 
 const { t: $t } = i18n.global;
 const frappe = inject('$frappe')
@@ -114,64 +115,60 @@ function onPrinterVoucherClick(){
 
 async function onPrintVoucher( action, doc) {
     const data = {
-            action: action,
-            setting: gv.setting?.pos_setting,
-            voucher: doc,
-            station_device_printing:(gv.setting?.device_setting?.station_device_printing)||"",
-            station: (gv.setting?.device_setting?.name) || "",
+        action: action,
+        setting: gv.setting?.pos_setting,
+        voucher: doc,
+        station_device_printing:(gv.setting?.device_setting?.station_device_printing)||"",
+        station: (gv.setting?.device_setting?.name) || "",
+    }
+    let printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+    let _printer = undefined;
+    if(printer.length>0){
+        _printer = {
+            "printer_name": printer[0].printer_name,
+            "ip_address": printer[0].ip_address,
+            "port": printer[0].port,
+            "cashier_printer": printer[0].cashier_printer,
+            "is_label_printer": printer[0].is_label_printer,
+            "usb_printing": printer[0].usb_printing,
         }
+    }
 
-        if((gv.setting?.device_setting?.use_server_network_printing||0)==1){
-            var printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
-            if (printer.length <= 0) {
-                return // not printer
-            } 
-            if(printer[0].usb_printing == 0){
-                const body ={
-                    "data":{
-                        "name":data["voucher"]["name"],
-                        "station": data["station"],
-                        "printer" : {
-                            "printer_name": printer[0].printer_name,
-                            "ip_address": printer[0].ip_address,
-                            "port": printer[0].port,
-                            "cashier_printer": printer[0].cashier_printer,
-                            "is_label_printer": printer[0].is_label_printer,
-                            "usb_printing": printer[0].usb_printing,
-                        }
-                    }
-                } 
-                call.post("epos_restaurant_2023.api.network_printing_api.print_voucher_to_network_printer",body)
-                return // print network
-            }      
-        }
-
-
-
-        if (localStorage.getItem("is_window")) {
-            window.chrome.webview.postMessage(JSON.stringify(data));
-        }else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
-            var printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
-            if (printer.length <= 0) {
-                toaster.warning($t("Printer not yet config for this device"))
-            } else {
-                data.printer = {
-                    "printer_name": printer[0].printer_name,
-                    "ip_address": printer[0].ip_address,
-                    "port": printer[0].port,
-                    "cashier_printer": printer[0].cashier_printer,
-                    "is_label_printer": printer[0].is_label_printer,
-                    "usb_printing": printer[0].usb_printing,
+    if((gv.setting?.device_setting?.use_server_network_printing||0)==1){
+        if (printer.length <= 0) {
+            return // not printer
+        } 
+        if(printer[0].usb_printing == 0){
+            const body ={
+                "data":{
+                    "name":data["voucher"]["name"],
+                    "station": data["station"],
+                    "printer" : _printer
                 }
-                flutterChannel.postMessage(JSON.stringify(data));
-            }
-        }else {            
-                socket.emit('PrintReceipt', JSON.stringify(data));
-             
-        }        
+            } 
+            call.post("epos_restaurant_2023.api.network_printing_api.print_voucher_to_network_printer",body)
+            return // print network
+        }  else if((localStorage.getItem("flutterWrapper") || 0) == 1)    {
+            data.printer = _printer;
+            socket.emit('PrintReceipt', JSON.stringify(data));
+        }
+    } 
+    
+
+    if (localStorage.getItem("is_window")==1) {
+        window.chrome.webview.postMessage(JSON.stringify(data));
+    }else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
+        if (printer.length <= 0) {
+            toaster.warning($t("Printer not yet config for this device"))
+        } else {
+            data.printer =  _printer;
+            flutterChannel.postMessage(JSON.stringify(data));
+        }
+    }else {          
+        data.printer = _printer;  
+        socket.emit('PrintReceipt', JSON.stringify(data)); 
+    }        
 }
-
-
 
 function onClose() {
     emit('resolve', false);

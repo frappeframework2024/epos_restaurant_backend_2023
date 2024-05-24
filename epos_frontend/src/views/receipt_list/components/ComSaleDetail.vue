@@ -200,22 +200,26 @@ async function onPrint() {
         station_device_printing: (gv.setting?.device_setting?.station_device_printing) || "",
         reprint: 1
     }
+    let printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+    let _printer = undefined
+    if (printer.length > 0) {
+        _printer = {
+            "printer_name": printer[0].printer_name,
+            "ip_address": printer[0].ip_address,
+            "port": printer[0].port,
+            "cashier_printer": printer[0].cashier_printer,
+            "is_label_printer": printer[0].is_label_printer,
+            "usb_printing": printer[0].usb_printing,
+        }
+    } 
 
     if((gv.setting?.device_setting?.use_server_network_printing||0)==1){
-        var printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+       
         if (printer.length <= 0) {
             toaster.warning($t("Printer not yet config for this device"))
             return // not printer
-        } 
+        }  
 
-        const _printer = {
-                        "printer_name": printer[0].printer_name,
-                        "ip_address": printer[0].ip_address,
-                        "port": printer[0].port,
-                        "cashier_printer": printer[0].cashier_printer,
-                        "is_label_printer": printer[0].is_label_printer,
-                        "usb_printing": printer[0].usb_printing,
-                    }
         if(printer[0].usb_printing == 0){
             const body ={
                 "data":{
@@ -231,6 +235,7 @@ async function onPrint() {
             toaster.success($t("Print processing"));
             return // print network
         }  else if((localStorage.getItem("flutterWrapper") || 0) == 1)   {
+            data.printer = _printer;
             socket.emit('PrintReceipt', JSON.stringify(data));
             toaster.success($t("Print processing"));        
             return;
@@ -251,25 +256,18 @@ async function onPrint() {
         }
     }
     else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
-        if (await confirm({ title: $t("Print Receipt"), text: $t("msg.Are you sure to print receipt") })) {
-            var printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+        if (await confirm({ title: $t("Print Receipt"), text: $t("msg.Are you sure to print receipt") })) { 
             if (printer.length <= 0) {
                 toaster.warning($t("Printer not yet config for this device"))
             } else {
-                data.printer = {
-                    "printer_name": printer[0].printer_name,
-                    "ip_address": printer[0].ip_address,
-                    "port": printer[0].port,
-                    "cashier_printer": printer[0].cashier_printer,
-                    "is_label_printer": printer[0].is_label_printer,
-                    "usb_printing": printer[0].usb_printing,
-                }
+                data.printer = _printer;
                 flutterChannel.postMessage(JSON.stringify(data));
             }
         }
     }
     else { 
         if (activeReport.value.pos_receipt_file_name != "" && activeReport.value.pos_receipt_file_name != null) {
+            data.printer = _printer;
             socket.emit('PrintReceipt', JSON.stringify(data));
             return;
         }

@@ -1994,8 +1994,20 @@ export default class Sale {
             station: (this.setting?.device_setting?.name) || "",
         }
 
-        if ((this.setting?.device_setting?.use_server_network_printing || 0) == 1) {
-            var printer = (this.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+        let printer = (this.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+        let _printer = undefined
+        if(printer.length>0){
+            _printer = {
+                "printer_name": printer[0].printer_name,
+                "ip_address": printer[0].ip_address,
+                "port": printer[0].port,
+                "cashier_printer": printer[0].cashier_printer,
+                "is_label_printer": printer[0].is_label_printer,
+                "usb_printing": printer[0].usb_printing,
+            }
+        }
+
+        if ((this.setting?.device_setting?.use_server_network_printing || 0) == 1) {            
             if (printer.length <= 0) {
                 toaster.warning($t("Printer not yet config for this device"))
                 return // not printer
@@ -2008,19 +2020,13 @@ export default class Sale {
                         "action": data["action"],
                         "print_setting": data["print_setting"],
                         "template_name": data["print_setting"]["pos_receipt_template"],
-                        "printer": {
-                            "printer_name": printer[0].printer_name,
-                            "ip_address": printer[0].ip_address,
-                            "port": printer[0].port,
-                            "cashier_printer": printer[0].cashier_printer,
-                            "is_label_printer": printer[0].is_label_printer,
-                            "usb_printing": printer[0].usb_printing,
-                        }
+                        "printer": _printer
                     }
                 }
                 call.post("epos_restaurant_2023.api.network_printing_api.print_bill_to_network_printer", body)
                 return // print network
             }else if((localStorage.getItem("flutterWrapper") || 0) == 1){
+                data.printer = _printer;
                 socket.emit('PrintReceipt', JSON.stringify(data));
                 return
             }
@@ -2031,22 +2037,15 @@ export default class Sale {
         if (receipt.pos_receipt_file_name && localStorage.getItem("is_window")) {
             window.chrome.webview.postMessage(JSON.stringify(data));
         } else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
-            var printer = (this.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
             if (printer.length <= 0) {
                 toaster.warning($t("Printer not yet config for this device"))
             } else {
-                data.printer = {
-                    "printer_name": printer[0].printer_name,
-                    "ip_address": printer[0].ip_address,
-                    "port": printer[0].port,
-                    "cashier_printer": printer[0].cashier_printer,
-                    "is_label_printer": printer[0].is_label_printer,
-                    "usb_printing": printer[0].usb_printing,
-                }
+                data.printer = _printer;
                 flutterChannel.postMessage(JSON.stringify(data));
             }
         } else {
             if (receipt.pos_receipt_file_name) {
+                data.printer = _printer;
                 socket.emit('PrintReceipt', JSON.stringify(data));
             }
             else {
@@ -2067,8 +2066,20 @@ export default class Sale {
                     station: (this.setting?.device_setting?.name) || "",
                 }
 
-                if ((this.setting?.device_setting?.use_server_network_printing || 0) == 1) {
-                    var printer = (this.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+                let printer = (this.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+                let _printer = undefined;
+                if(printer.length>0){
+                    _printer = {
+                        "printer_name": printer[0].printer_name,
+                        "ip_address": printer[0].ip_address,
+                        "port": printer[0].port,
+                        "cashier_printer": printer[0].cashier_printer,
+                        "is_label_printer": printer[0].is_label_printer,
+                        "usb_printing": printer[0].usb_printing,
+                    }
+                }
+
+                if ((this.setting?.device_setting?.use_server_network_printing || 0) == 1) {                    
                     if (printer.length <= 0) {
                         return // not printer
                     }
@@ -2076,18 +2087,14 @@ export default class Sale {
                         const body = {
                             "data": {
                                 "name": this.sale.name,
-                                "printer": {
-                                    "printer_name": printer[0].printer_name,
-                                    "ip_address": printer[0].ip_address,
-                                    "port": printer[0].port,
-                                    "cashier_printer": printer[0].cashier_printer,
-                                    "is_label_printer": printer[0].is_label_printer,
-                                    "usb_printing": printer[0].usb_printing,
-                                }
+                                "printer": _printer
                             }
                         }
                         call.post("epos_restaurant_2023.api.network_printing_api.print_waiting_number_to_network_printer", body)
                         return // print network
+                    }else if ((localStorage.getItem("flutterWrapper") || 0) == 1){
+                        data.printer = _printer;
+                        socket.emit('PrintReceipt', JSON.stringify(data)); 
                     }
                 }
 
@@ -2095,23 +2102,15 @@ export default class Sale {
                     window.chrome.webview.postMessage(JSON.stringify(data));
                 }
                 else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
-                    var printer = (this.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
                     if (printer.length <= 0) {
                         //pass
                     } else {
-                        data.printer = {
-                            "printer_name": printer[0].printer_name,
-                            "ip_address": printer[0].ip_address,
-                            "port": printer[0].port,
-                            "cashier_printer": printer[0].cashier_printer,
-                            "is_label_printer": printer[0].is_label_printer,
-                            "usb_printing": printer[0].usb_printing,
-                        }
+                        data.printer = _printer;
                         flutterChannel.postMessage(JSON.stringify(data));
-
                     }
                 }
                 else {
+                    data.printer = _printer;
                     socket.emit('PrintReceipt', JSON.stringify(data));
                 }
                 this.printWaitingOrderAfterPayment = false;
