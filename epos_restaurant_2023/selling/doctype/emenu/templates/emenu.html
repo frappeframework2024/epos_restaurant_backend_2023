@@ -126,7 +126,8 @@
                                         <div class="d-block d-xl-flex justify-between"> 
                                             <div class="cnter-txt mt-3 mt-lg-0">
                                                 {% for price in p.prices|default([]) %}
-                                                    <span class="price-cus">{{price.portion}}: {{frappe.format(price.price,{"fieldtype":"Currency"})}}</span> <br/>
+                                                {{price}}
+                                                    <span class="price-cus">{{price.portion}}: {{frappe.format(price.price or 0,{"fieldtype":"Currency"})}}</span> <br/>
                                                 {% else %}
                                                     <span class="price-cus">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</span>
                                                 {% endfor %}
