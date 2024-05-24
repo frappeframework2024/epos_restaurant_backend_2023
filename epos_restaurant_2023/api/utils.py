@@ -112,6 +112,19 @@ def generate_data_for_sync_record_on_rename(doc ,method=None, *args, **kwargs):
                         "is_renamed":1
                     }).insert(ignore_permissions=True)
             
+@frappe.whitelist(allow_guest=True)
+def sync_sale_to_server():
+    setting =frappe.get_doc("ePOS Sync Setting")
+    sales = frappe.db.sql("select * from `tabSale` where is_synced = 0",as_dict=1)
+    if sales:
+        for doc in sales:
+            doctype = [d for d in setting.sync_to_server if d.event == 'on_submit' and d.document_type=="Sale"][0] 
+            frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server_on_submit", queue='short', doc=doc,extra_action=doctype.extra_action or [],action="submit") 
+        return "Sales Are Synchronizing"
+    else:
+        return "All Sale Has Been Send"
+
+
 @frappe.whitelist()
 def sync_data_to_server_on_submit(doc, method=None, *args, **kwargs):
     if not frappe.db.exists("DocType","ePOS Sync Setting"):
@@ -159,7 +172,7 @@ def sync_data_to_server(doc,extra_action=None,action="update"):
                 }
         server_url = server_url + "/api/method/epos_restaurant_2023.api.utils.save_sync_data"
 
-        response = requests.post(server_url,headers=headers,json={"doc":frappe.as_json(doc),"extra_action":extra_action,"action":action })
+        response = requests.post(server_url,headers=headers,json={"doc":frappe.as_json(doc),"extra_action":extra_action,"action":action },timeout=300)
         if response.status_code==200:
             meta = frappe.get_meta(doc.get("doctype"))
             if len([d for d in meta.fields if d.fieldname=="is_synced"])>0:
