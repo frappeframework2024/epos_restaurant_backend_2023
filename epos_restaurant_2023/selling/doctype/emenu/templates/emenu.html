@@ -123,18 +123,13 @@
                                                 <p style="color:red;font-size:10px;">* Out of order</p>
                                             {% endif %} 
                                         </div>
-                                        <div class="d-block d-xl-flex justify-between">
-                                            <div class="d-lg-flex gap-2 d-none">
-                                                <p>Product Code: {{p.product_code}}</p>
-                                            </div>
+                                        <div class="d-block d-xl-flex justify-between"> 
                                             <div class="cnter-txt mt-3 mt-lg-0">
-                                                {% if p.prices %}
-                                                    {% for pr in p.prices %}
-                                                        <span class="price-cus">{{pr.portion}}: {{frappe.format(pr.price,{"fieldtype":"Currency"})}}</span> <br/>
-                                                    {% endfor %}
+                                                {% for price in p.prices|default([]) %}
+                                                    <span class="price-cus">{{price.portion}}: {{frappe.format(price.price,{"fieldtype":"Currency"})}}</span> <br/>
                                                 {% else %}
                                                     <span class="price-cus">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</span>
-                                                {% endif %}
+                                                {% endfor %}
                                             </div>
                                         </div>
                                     </div>
@@ -178,17 +173,13 @@
                                             {% endif %}
                                         </div>
                                         <div class="d-block d-xl-flex justify-between">
-                                            <div class="d-lg-flex gap-2 d-none">
-                                                <p>Product Code: {{p.product_code}}</p>
-                                            </div>
+                                             
                                             <div class="cnter-txt mt-3 mt-lg-0">
-                                                {% if p.prices %}
-                                                    {% for pr in p.prices %}
-                                                        <span class="price-cus">{{pr.portion}}: {{frappe.format(pr.price,{"fieldtype":"Currency"})}}</span> <br/>
-                                                    {% endfor %}
+                                                {% for price in p.prices|default([]) %}
+                                                    <span class="price-cus">{{price.portion}}: {{frappe.format(price.price,{"fieldtype":"Currency"})}}</span> <br/>
                                                 {% else %}
                                                     <span class="price-cus">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</span>
-                                                {% endif %}
+                                                {% endfor %}
                                             </div>
                                         </div>
                                     </div>
