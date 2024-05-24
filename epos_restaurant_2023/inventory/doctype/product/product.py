@@ -11,7 +11,8 @@ from py_linq import Enumerable
 from frappe.utils import add_years
 from epos_restaurant_2023.inventory.inventory import add_to_inventory_transaction, check_uom_conversion, get_uom_conversion, update_product_quantity,get_stock_location_product
 import itertools
-import os
+from epos_restaurant_2023.inventory.doctype.product.utils import update_fetch_from_field
+
 
 
 class Product(Document):
@@ -179,6 +180,8 @@ class Product(Document):
 			return 
 		# add_product_to_temp_menu(self)
 		frappe.enqueue("epos_restaurant_2023.inventory.doctype.product.product.add_product_to_temp_menu", queue='short', self=self)
+		update_fetch_from_field(self)
+  
 
 	def on_trash(self):
 		if self.flags.ignore_on_trash==True:
@@ -493,6 +496,19 @@ def add_product_to_temp_menu(self):
 							'modifiers':json.dumps(modifiers)
 						})
 			doc.insert() 
+
+
+		## update to popular product in emenu
+		sql_pop = """select name from `tabeMenu Popular Products` where product_code = '{}'""".format(self.name)
+		pop_docs = frappe.db.sql(sql_pop,as_dict=1)
+		for pop in pop_docs: 
+			frappe.db.set_value('eMenu Popular Products', pop["name"], {
+				'prices': json.dumps(prices),
+				'modifiers': json.dumps(modifiers)
+			})
+		frappe.db.commit()
+
+
    
 @frappe.whitelist()
 def update_product_to_temp_product_menu():
