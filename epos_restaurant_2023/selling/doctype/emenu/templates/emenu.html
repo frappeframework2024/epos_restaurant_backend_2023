@@ -100,39 +100,41 @@
                 <div class="row">
                     {% for p in doc.popular_product %}
                     <div class="product_detail col-6 col-lg-4 mb-3 text-dark">
-                        <a href="/product_detail?product_code={{p.product_code}}&menu_id={{doc.name}}">
-                            <div class="row p-0 p-lg-3 items-inner-1 m-0">
-                                <div class="col-12 col-lg-4 p-0 h-100">
-                                    <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/no_image.jpg"}}"/>
-                                </div>
-                                <div class="col-12 col-lg-8 d-flex flex-column flex-lg-column p-0 ps-lg-3 py-lg-0 py-lg-0 content-custom pt-3 pt-lg-0">
-                                    <div class="">
-                                        <div class="mb-3 mb-lg-0">
-                                            {% if p.product_name_en == p.product_name_kh %}
-                                            <div class="item-tt-txt">{{p.product_name_kh}}</div>
-                                            {%else%}
-                                            <div title="{{p.product_name_kh}}" class="item-tt-txt">{{p.product_name_kh}}</div>
-                                            <div title="{{p.product_name_en}}" class="item-tt-txt en">{{p.product_name_en}} </div>
-                                            {%endif%} 
-                                        </div>
-                                        {% if p.description %}
-                                            <div class="description-cs">{{p.description}}</div>
-                                        {% endif %}
-                                        {% if p.is_empty_stock_warning == 1 %}
-                                            <p style="color:red;font-size:10px;">* Out of order</p>
-                                        {% endif %} 
+                        <div class="col-inner">
+                            <a href="/product_detail?product_code={{p.product_code}}&menu_id={{doc.name}}">
+                                <div class="row p-0 p-lg-3 items-inner-1 m-0">
+                                    <div class="col-12 col-lg-4 p-0 h-100" style="background: url('/files/food_bg_emenu.jpg');">
+                                        <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/no_image.jpg"}}"/>
                                     </div>
-                                    <div class="d-block d-xl-flex justify-between">
-                                        <div class="d-lg-flex gap-2 d-none">
-                                            <p>Product Code: {{p.product_code}}</p>
+                                    <div class="col-12 col-lg-8 d-flex flex-column flex-lg-column py-3 ps-lg-3 py-lg-0 content-custom">
+                                        <div class="">
+                                            <div class="mb-3 mb-lg-0">
+                                                {% if p.product_name_en == p.product_name_kh %}
+                                                <div class="item-tt-txt">{{p.product_name_kh}}</div>
+                                                {%else%}
+                                                <div title="{{p.product_name_kh}}" class="item-tt-txt">{{p.product_name_kh}}</div>
+                                                <div title="{{p.product_name_en}}" class="item-tt-txt en">{{p.product_name_en}} </div>
+                                                {%endif%} 
+                                            </div>
+                                            {% if p.description %}
+                                                <div class="description-cs">{{p.description}}</div>
+                                            {% endif %}
+                                            {% if p.is_empty_stock_warning == 1 %}
+                                                <p style="color:red;font-size:10px;">* Out of order</p>
+                                            {% endif %} 
                                         </div>
-                                        <div class="cnter-txt mt-3 mt-lg-0">
-                                            <span class="price-cus">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</span>
+                                        <div class="d-block d-xl-flex justify-between">
+                                            <div class="d-lg-flex gap-2 d-none">
+                                                <p>Product Code: {{p.product_code}}</p>
+                                            </div>
+                                            <div class="cnter-txt mt-3 mt-lg-0">
+                                                <span class="price-cus">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </a>
+                            </a>
+                        </div>
                     </div>
                     {%endfor%}
                 </div>
@@ -146,38 +148,40 @@
                 <div class="row">
                     {%for p in products|selectattr('pos_menu', 'equalto', m.menu)|list %}
                     <div class="product_detail col-6 col-lg-4 mb-3 text-dark">
-                        <a href="/product_detail?product_code={{p.product_code}}&menu_id={{doc.name}}">
-                            <div class="row p-0 p-lg-3 items-inner-1 m-0">
-                                <div class="col-12 col-lg-4 p-0 h-100">
-                                    <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/no_image.jpg"}}"/>
-                                </div>
-                                <div class="col-12 col-lg-8 d-flex flex-column flex-lg-column p-0 ps-lg-3 py-lg-0 py-lg-0 content-custom pt-3 pt-lg-0">
-                                    <div class=""> 
-                                        <div class="mb-3 mb-lg-0">
-                                            {% if p.product_name_en == p.product_name_kh %}
-                                            <div class="item-tt-txt">{{p.product_name_kh}}</div>
-                                            {%else%}
-                                            <div title="{{p.product_name_kh}}" class="item-tt-txt">{{p.product_name_kh}}</div>
-                                            <div title="{{p.product_name_en}}" class="item-tt-txt en">{{p.product_name_en}} </div>
-                                            {%endif%} 
-                                        </div>
-                                        {% if p.description %}
-                                            <div class="description-cs">{{p.description}}</div>
-                                        {% endif %}
-                                        {% if p.is_empty_stock_warning == 1 %}
-                                            <p style="color:red;font-size:10px;">* Out of order</p>
-                                        {% endif %}
+                        <div class="col-inner">
+                            <a href="/product_detail?product_code={{p.product_code}}&menu_id={{doc.name}}">
+                                <div class="row p-0 p-lg-3 items-inner-1 m-0">
+                                    <div class="col-12 col-lg-4 p-0 h-100" style="background: url('/files/files/food_bg_emenu.jpg');">
+                                        <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/no_image.jpg"}}"/>
                                     </div>
-                                    <div class="d-block d-xl-flex justify-between">
-                                        <div class="d-lg-flex gap-2 d-none">
-                                            <p>Product Code: {{p.product_code}}</p>
+                                    <div class="col-12 col-lg-8 d-flex flex-column flex-lg-column py-3 ps-lg-3 py-lg-0 content-custom">
+                                        <div class=""> 
+                                            <div class="mb-3 mb-lg-0">
+                                                {% if p.product_name_en == p.product_name_kh %}
+                                                <div class="item-tt-txt">{{p.product_name_kh}}</div>
+                                                {%else%}
+                                                <div title="{{p.product_name_kh}}" class="item-tt-txt">{{p.product_name_kh}}</div>
+                                                <div title="{{p.product_name_en}}" class="item-tt-txt en">{{p.product_name_en}} </div>
+                                                {%endif%} 
+                                            </div>
+                                            {% if p.description %}
+                                                <div class="description-cs">{{p.description}}</div>
+                                            {% endif %}
+                                            {% if p.is_empty_stock_warning == 1 %}
+                                                <p style="color:red;font-size:10px;">* Out of order</p>
+                                            {% endif %}
                                         </div>
-                                        <div class="cnter-txt mt-3 mt-lg-0">
-                                            <span class="price-cus">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</span></div>
+                                        <div class="d-block d-xl-flex justify-between">
+                                            <div class="d-lg-flex gap-2 d-none">
+                                                <p>Product Code: {{p.product_code}}</p>
+                                            </div>
+                                            <div class="cnter-txt mt-3 mt-lg-0">
+                                                <span class="price-cus">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</span></div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </a>
+                            </a>
+                        </div>
                     </div>
                     {%endfor%}
                 </div>

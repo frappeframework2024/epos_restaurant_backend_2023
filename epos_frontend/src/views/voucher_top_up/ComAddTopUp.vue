@@ -131,7 +131,7 @@ import { createToaster } from "@meforma/vue-toaster";
 import ComInput from '../../components/form/ComInput.vue';
 import ComModal from '../../components/ComModal.vue';
 const moment = inject('$moment')
-
+const socket = inject('$socket')
 const { t: $t } = i18n.global;
 let workingDay = ref({})
 let CashierShift = ref({})
