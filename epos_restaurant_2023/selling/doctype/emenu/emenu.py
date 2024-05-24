@@ -32,7 +32,7 @@ class eMenu(WebsiteGenerator):
 
 			# Convert prices to JSON
 			for item in data:
-				item['prices'] = json.loads(item['prices'])
+				item['prices'] = json.loads(item['prices'] or '[]')
 
 		context.no_cache = not  (self.enable_cache or 0)
 		context.products = data
