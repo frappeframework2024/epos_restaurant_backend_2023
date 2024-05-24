@@ -101,7 +101,7 @@
                     {% for p in doc.popular_product %}
                     <div class="product_detail col-6 col-lg-4 mb-3 text-dark">
                         <div class="col-inner">
-                            <a href="/product_detail?product_code={{p.product_code}}&menu_id={{doc.name}}">
+                            <a href="/product_detail?product_code={{p.product_code}}&menu_id={{doc.name}}" style="text-decoration: none;">
                                 <div class="row p-0 p-lg-3 items-inner-1 m-0 h-100">
                                     <div class="col-12 col-lg-4 p-0 wrapper-image" style="background: url('/files/food_bg_image.jpg');">
                                         <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/no_image.jpg"}}"/>
@@ -156,7 +156,7 @@
                     {%for p in products|selectattr('pos_menu', 'equalto', m.menu)|list %}
                     <div class="product_detail col-6 col-lg-4 mb-3 text-dark">
                         <div class="col-inner">
-                            <a href="/product_detail?product_code={{p.product_code}}&menu_id={{doc.name}}">
+                            <a href="/product_detail?product_code={{p.product_code}}&menu_id={{doc.name}}" style="text-decoration: none;">
                                 <div class="row p-0 p-lg-3 items-inner-1 m-0 h-100">
                                     <div class="col-12 col-lg-4 p-0 wrapper-image" style="background: url('/files/food_bg_image.jpg');">
                                         <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/no_image.jpg"}}"/>

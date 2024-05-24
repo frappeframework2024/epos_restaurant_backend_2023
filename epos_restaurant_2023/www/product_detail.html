@@ -18,9 +18,9 @@
                         <p style="color:red;font-size:10px;">* Out of order</p>
                     {% endif %}
                     {% if doc.product_name_en == doc.product_name_kh%}
-                    <h1 style="font-size: 36px;color:orange">{{doc.product_name_kh}}</h1>
+                    <h1 style="font-size: 36px;color:#ff5959">{{doc.product_name_kh}}</h1>
                     {%else%}
-                    <h1 style="font-size: 36px;color:orange">{{doc.product_name_kh}}</h1>
+                    <h1 style="font-size: 36px;color:#ff5959">{{doc.product_name_kh}}</h1>
                     <h6>{{doc.product_name_en}}</h6>
                     {%endif%}
                 </div>
@@ -28,15 +28,20 @@
                     {% if min_price == max_price %}
                         <strong>{{ frappe.format(doc.price,{"fieldtype":"Currency"})}}</strong>
                     {%else%}
-                        <strong>{{ frappe.format(min_price,{"fieldtype":"Currency"})}} &#8594; {{
-                        frappe.format(max_price,{"fieldtype":"Currency"})}}</strong>
+                        {%if (doc.product_price | length) > 0%}
+                            <ul class="">
+                                {% for p in doc.product_price%}
+                                    <li><strong>{{p.portion}} - {{frappe.format(p.price,{"fieldtype":"Currency"})}}</strong></li>
+                                {%endfor%}
+                            </ul>
+                        {%endif%}
                     {%endif%}
                 </div>
             </div>
             <br/>
             <h5 class="text-center">Order now Call</h5>
             {% if emenu.phone_number %}
-            <h1 style="color:orange" class="text-center">{{emenu.phone_number}}</h1>
+            <h1 style="color:#ff5959" class="text-center">{{emenu.phone_number}}</h1>
             {% endif %}
             {% if emenu.address %}
             <div style="font-weight: 600;" class="text-center">{{emenu.address}}</div>
@@ -44,5 +49,6 @@
         </div>
     </div>
 </div>
-
+<!-- <button id="btn_add_to_order" data-id="{{doc.product_code}}">Add to order</button>
+<button id="submit_order" >Submit Order</button> -->
 {% endblock %}
