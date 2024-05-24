@@ -37,7 +37,7 @@ class eMenu(WebsiteGenerator):
 		context.no_cache = not  (self.enable_cache or 0)
 		context.products = data
 		for d in self.popular_product:
-			d.prices = json.loads(d.prices)
+			d.prices = json.loads(d.prices or '[]')
 
 	def validate(self):
 		for pop in  self.popular_product:		
