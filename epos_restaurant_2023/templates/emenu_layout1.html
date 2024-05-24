@@ -423,21 +423,16 @@
 		}
 		.price-cus {
 			font-weight: 600;
-		}
-		.img.pro-img-it {
-			border-radius: .25rem;
+			color: #000;
 		}
 		.back-btn {
 			background-color: transparent;
 			border: 0;
-			color: orange;
+			color: #ff5959;
 		}
 		.item-tt-txt:not(.en) {
 			color: #ff5959;
-		}
-		.price-cus {
-			color: #000;
-		}
+		} 
 		@media (max-width: 1199.98px) {
 			.item-tt-txt{
 				overflow: hidden;
@@ -460,9 +455,6 @@
 				width: 180px;
     			object-fit: cover;
 				height: 180px;
-				border-top-left-radius: .5rem !important;
-				border-top-right-radius: .5rem !important;
-				
 			} 
 			.img.pro-img-it{
 				width:100%;
@@ -503,17 +495,24 @@
 				word-break: break-word;
 				max-height: 4.5em;
 				text-align: center;
+				color:#000;
 			}
 			.price-cus {
-				font-size: 20px;
-				font-weight: 800;
+				font-size: 18px;
+				font-weight: 600;
 				color: #000;
+			}
+			.wrapper-image {
+				border-top-left-radius: .5rem;
+				border-top-right-radius: .5rem;
+				height: 180px;
 			}
 		}
 		@media (min-width: 992px) {
-			.items-inner-1{
-				height: 140px; 
+			.col-inner{
+				/* height: 140px;  */
 				border: 1px solid #cccccc70;
+				height: 100%;
 			}
 			.pro-img-it {
 				height: 100%;
@@ -542,8 +541,25 @@
 				text-overflow: ellipsis;
 				word-break: break-word;
 				max-height: 4.5em;
+				color: #000;
+			}
+			.img.pro-img-it {
+				border-radius: .25rem;
+				width: 100%;
+			}
+			.wrapper-image{
+				border-radius: .25rem;
+				height: 100%;
 			}
 		}  
+		@media (max-width: 991.98px) and (min-width: 767.98px) {
+			img.pro-img-it {
+				height: 234px !important;
+			}
+			.wrapper-image {
+				height: 234px !important;
+			}
+		}
 
 		{%- block style -%}{%- endblock -%}
 	</style>
@@ -628,11 +644,62 @@
 			// 	mainClass: 'my-mfp-slide-bottom items-my-mfp-slide-bottom',
 			// 	overflowY: 'scroll' // as we know that popup content is tall we set scroll overflow by default to avoid jump
 			// });
+ 
+			
+			// $("#btn_add_to_order").click(function(){
+				
+			// 	data = $(this)
+			// 	const order =JSON.parse( localStorage.getItem("myOrder"))  || {}
+			 
+			// 	if  (!order.order_products){
+				 
+			// 		order.order_products = []
+			// 	}
+			// 	existing_order = order.order_products.find(r=>r.product_code==data.data("id"))
+			// 	if (existing_order){
+			// 		existing_order.quantity = existing_order.quantity + 1
+			// 	}
+			// 	else{
+			// 		order.order_products.push({
+			// 			product_code:data.data("id"),
+			// 			price:10,
+			// 			quantity:1
+			// 		})
+			// 	}
+			// 	localStorage.setItem("myOrder",JSON.stringify(order))
 
+			// })
+			// $("#submit_order").click(function(){
+			// 	const order =JSON.parse( localStorage.getItem("myOrder"))  || {}
+			// 	if (!order.order_products){
+			// 		frappe.msgprint("Please select order item")
+			// 		return
+			// 	}
+
+				 
+			// 	order.doctype ="Online Order"
+			// 	frappe.call({
+			// 		method: "frappe.client.insert",
+			// 		args: {
+			// 			doc: order
+			// 		},
+			// 		callback: function(r) {
+			// 			if (r.message) {
+			// 				alert("add success")
+			// 			} else {
+			// 				// Handle errors
+			// 				alert("add fail")
+			// 			}
+			// 		}
+			// 	});
+
+			// })
+				 
+			
 			// Cache menu links and sections
 			var menuLinks = $('.nav-pro-wrapper a');
 			var sections = $('.sections-content .scroll-section');
-
+			
 			// Handle scroll event
 			$(window).scroll(function() {
 				var scrollPosition = $(this).scrollTop();

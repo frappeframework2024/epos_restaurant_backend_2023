@@ -102,14 +102,14 @@
                     <div class="product_detail col-6 col-lg-4 mb-3 text-dark">
                         <div class="col-inner">
                             <a href="/product_detail?product_code={{p.product_code}}&menu_id={{doc.name}}">
-                                <div class="row p-0 p-lg-3 items-inner-1 m-0">
-                                    <div class="col-12 col-lg-4 p-0 h-100" style="background: url('/files/food_bg_emenu.jpg');">
+                                <div class="row p-0 p-lg-3 items-inner-1 m-0 h-100">
+                                    <div class="col-12 col-lg-4 p-0 wrapper-image" style="background: url('/files/food_bg_image.jpg');">
                                         <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/no_image.jpg"}}"/>
                                     </div>
                                     <div class="col-12 col-lg-8 d-flex flex-column flex-lg-column py-3 ps-lg-3 py-lg-0 content-custom">
                                         <div class="">
                                             <div class="mb-3 mb-lg-0">
-                                                {% if p.product_name_en == p.product_name_kh %}
+                                                {% if p.product_name_en == p.product_name_kh %}                                    
                                                 <div class="item-tt-txt">{{p.product_name_kh}}</div>
                                                 {%else%}
                                                 <div title="{{p.product_name_kh}}" class="item-tt-txt">{{p.product_name_kh}}</div>
@@ -128,7 +128,14 @@
                                                 <p>Product Code: {{p.product_code}}</p>
                                             </div>
                                             <div class="cnter-txt mt-3 mt-lg-0">
-                                                <span class="price-cus">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</span>
+                                                {% if p.prices %}
+                                                    {% for pr in p.prices %}
+                                                        <span class="price-cus">{{pr.portion}}: {{frappe.format(pr.price,{"fieldtype":"Currency"})}}</span> <br/>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <span class="price-cus">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</span>
+                                                {% endif %}
+                                               
                                             </div>
                                         </div>
                                     </div>
@@ -150,8 +157,8 @@
                     <div class="product_detail col-6 col-lg-4 mb-3 text-dark">
                         <div class="col-inner">
                             <a href="/product_detail?product_code={{p.product_code}}&menu_id={{doc.name}}">
-                                <div class="row p-0 p-lg-3 items-inner-1 m-0">
-                                    <div class="col-12 col-lg-4 p-0 h-100" style="background: url('/files/files/food_bg_emenu.jpg');">
+                                <div class="row p-0 p-lg-3 items-inner-1 m-0 h-100">
+                                    <div class="col-12 col-lg-4 p-0 wrapper-image" style="background: url('/files/food_bg_image.jpg');">
                                         <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/no_image.jpg"}}"/>
                                     </div>
                                     <div class="col-12 col-lg-8 d-flex flex-column flex-lg-column py-3 ps-lg-3 py-lg-0 content-custom">
@@ -176,7 +183,14 @@
                                                 <p>Product Code: {{p.product_code}}</p>
                                             </div>
                                             <div class="cnter-txt mt-3 mt-lg-0">
-                                                <span class="price-cus">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</span></div>
+                                                {% if p.prices %}
+                                                    {% for pr in p.prices %}
+                                                        <span class="price-cus">{{pr.portion}}: {{frappe.format(pr.price,{"fieldtype":"Currency"})}}</span> <br/>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <span class="price-cus">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</span>
+                                                {% endif %}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
