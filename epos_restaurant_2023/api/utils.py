@@ -6,6 +6,7 @@ from frappe import _
 from rq.job import Job
 from rq.queue import Queue
 import re
+import time
 from frappe.model.document import Document
 from frappe.utils import (
 	cint,
@@ -119,8 +120,16 @@ def sync_sale_to_server():
     doctype = [d for d in setting.sync_to_server if d.event == 'on_submit' and d.document_type=="Sale"][0] 
     if sales:
         for sale in sales:
-             doc = frappe.get_doc("Sale",sale.name)
-             frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,extra_action=doctype.extra_action or [],action="submit") 
+            doc = frappe.get_doc("Sale",sale.name)
+            if doc.docstatus == 1:
+                frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,extra_action=doctype.extra_action or [],action="submit") 
+            elif doc.docstatus == 2:
+                doc.docstatus = 1
+                frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,extra_action=doctype.extra_action or [],action="submit") 
+
+                time.sleep(5)
+                doc.docstatus = 2
+                frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,extra_action=doctype.extra_action or [],action="update") 
         return "Sales Are Synchronizing"
     else:
         return "All Sale Has Been Send"
