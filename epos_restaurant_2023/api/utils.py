@@ -116,7 +116,7 @@ def generate_data_for_sync_record_on_rename(doc ,method=None, *args, **kwargs):
 @frappe.whitelist(allow_guest=True)
 def sync_sale_to_server():
     setting =frappe.get_doc("ePOS Sync Setting")
-    sales = frappe.db.sql("select name from `tabSale` where is_synced = 0 and docstatus in (1,2)",as_dict=1)
+    sales = frappe.db.sql("select name,docstatus from `tabSale` where is_synced = 0 and docstatus in (1,2)",as_dict=1)
     doctype = [d for d in setting.sync_to_server if d.event == 'on_submit' and d.document_type=="Sale"][0] 
     if sales:
         for sale in sales:
@@ -126,8 +126,11 @@ def sync_sale_to_server():
             elif doc.docstatus == 2:
                 doc.docstatus = 1
                 frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,extra_action=doctype.extra_action or [],action="submit") 
-
-                time.sleep(5)
+                
+        time.sleep(5)
+        for sale in sales:
+            if sale.docstatus == 2:
+                doc = frappe.get_doc("Sale",sale.name)
                 doc.docstatus = 2
                 frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,extra_action=doctype.extra_action or [],action="update") 
         return "Sales Are Synchronizing"
