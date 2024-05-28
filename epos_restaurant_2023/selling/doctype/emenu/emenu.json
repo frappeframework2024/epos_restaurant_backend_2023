@@ -20,6 +20,7 @@
   "pos_menu",
   "welcome_title",
   "phone_number",
+  "hotel_room_call_number",
   "address",
   "welcome_description",
   "section_break_8",
@@ -298,13 +299,18 @@
    "fieldname": "address",
    "fieldtype": "Data",
    "label": "Address"
+  },
+  {
+   "fieldname": "hotel_room_call_number",
+   "fieldtype": "Data",
+   "label": "Hotel Room Call Number"
   }
  ],
  "has_web_view": 1,
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-21 10:16:54.553455",
+ "modified": "2024-05-28 10:15:09.855235",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu",
