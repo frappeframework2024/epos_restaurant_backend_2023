@@ -39,12 +39,15 @@
                 </div>
             </div>
             <br/>
-            <h5 class="text-center">Order now Call</h5>
+            <h2 class="text-center">Order Now</h2>
+            {% if emenu.hotel_room_call_number %}
+                <h4 style="color:#ff5959" class="text-center">From Hotel Room: Please Deal {{emenu.hotel_room_call_number}}</h4>
+            {% endif %}
             {% if emenu.phone_number %}
-            <h1 style="color:#ff5959" class="text-center">{{emenu.phone_number}}</h1>
+                <h4 style="color:#ff5959" class="text-center">From Outside: {{emenu.phone_number}}</h4>
             {% endif %}
             {% if emenu.address %}
-            <div style="font-weight: 600;" class="text-center">{{emenu.address}}</div>
+            <div style="font-weight: 500;" class="text-center">{{emenu.address}}</div>
             {% endif %}
         </div>
     </div>
