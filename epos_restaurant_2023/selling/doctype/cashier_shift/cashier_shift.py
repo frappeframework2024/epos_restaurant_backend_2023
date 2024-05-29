@@ -70,7 +70,6 @@ class CashierShift(Document):
 			if not self.closed_by:
 				self.closed_by = frappe.session.user
 
-			self.closed_date = frappe.utils.now()
 			pos_profile = frappe.get_doc("POS Profile", self.pos_profile)
 			if pos_profile.reset_waiting_number_after=="Close Cashier Shift":
 				prefix = pos_profile.waiting_number_prefix.replace('.','').replace("#",'')
