@@ -1,0 +1,53 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-04-18 16:25:57.090406",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "new_order_duration",
+  "warning_order_duration"
+ ],
+ "fields": [
+  {
+   "fieldname": "new_order_duration",
+   "fieldtype": "Int",
+   "label": "New Order Duration(Minute)"
+  },
+  {
+   "default": "10",
+   "fieldname": "warning_order_duration",
+   "fieldtype": "Int",
+   "label": "Warning Order Duration"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-05-29 16:06:40.106959",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "Kitchen Order Display Setting",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Sales User",
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
