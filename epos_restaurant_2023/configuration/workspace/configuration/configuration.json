@@ -391,8 +391,64 @@
   {
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Revenue Setting",
+   "link_count": 3,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Revenue Code",
+   "link_count": 0,
+   "link_to": "Revenue Code",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Revenue Group",
+   "link_count": 0,
+   "link_to": "Revenue Group",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "POS Account Code Config",
+   "link_count": 0,
+   "link_to": "POS Account Code Config",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Integration",
+   "link_count": 1,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Exely Integration",
+   "link_count": 0,
+   "link_to": "Exely Itegration Setting",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Other Setting",
-   "link_count": 8,
+   "link_count": 7,
    "onboard": 0,
    "type": "Card Break"
   },
@@ -412,16 +468,6 @@
    "label": "Province",
    "link_count": 0,
    "link_to": "Province",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Revenue Group",
-   "link_count": 0,
-   "link_to": "Revenue Group",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -475,65 +521,9 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Revenue Setting",
-   "link_count": 3,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Revenue Code",
-   "link_count": 0,
-   "link_to": "Revenue Code",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Revenue Group",
-   "link_count": 0,
-   "link_to": "Revenue Group",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "POS Account Code Config",
-   "link_count": 0,
-   "link_to": "POS Account Code Config",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Integration",
-   "link_count": 1,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Exely Integration",
-   "link_count": 0,
-   "link_to": "Exely Itegration Setting",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
   }
  ],
- "modified": "2024-05-14 17:12:18.054668",
+ "modified": "2024-05-28 08:30:59.067169",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Configuration",

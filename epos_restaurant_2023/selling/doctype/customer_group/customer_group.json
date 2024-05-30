@@ -13,7 +13,8 @@
   "note",
   "disabled",
   "photo",
-  "is_standard"
+  "is_standard",
+  "allow_earn_point"
  ],
  "fields": [
   {
@@ -58,12 +59,18 @@
    "fieldname": "is_standard",
    "fieldtype": "Check",
    "label": "Is Standard"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_earn_point",
+   "fieldtype": "Check",
+   "label": "Allow Earn Point"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-02-29 14:01:02.029677",
+ "modified": "2024-05-24 15:23:08.508010",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer Group",

@@ -1,0 +1,40 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-05-30 10:19:11.831720",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "business_branch",
+  "is_empty_stock_warning"
+ ],
+ "fields": [
+  {
+   "fieldname": "business_branch",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Business Branch",
+   "options": "Business Branch"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_empty_stock_warning",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Empty Stock Warning"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-05-30 10:25:19.636163",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "Product Business Branch",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -117,7 +117,7 @@ def get_products(parent_menu,mobile=0):
                 tax_rule_data,
                 revenue_group,
                 sort_order,
-                is_empty_stock_warning,
+                business_branch_configure_data,
                 rate_include_tax
             from  `tabTemp Product Menu` 
             where 
@@ -178,7 +178,7 @@ def get_product_by_barcode(barcode):
                     "is_require_employee":p.is_require_employee,
                     "modifiers_data": json.dumps(([pr.business_branch,pr.modifier_category,pr.prefix,pr.modifier_code,pr.price] for pr in p.product_modifiers),default=json_handler),
                     "sort_order":p.sort_order,
-                    "is_empty_stock_warning":p.is_empty_stock_warning,
+                    "business_branch_configure_data":json.dumps(([b.business_branch,b.is_empty_stock_warning] for b in p.business_branch_configure),default=json_handler),
                     "rate_include_tax":p.rate_include_tax
                 }
             else:
@@ -214,7 +214,7 @@ def get_product_by_barcode(barcode):
                         "revenue_group":product.revenue_group,
                         "modifiers_data": json.dumps(([pr.business_branch,pr.modifier_category,pr.prefix,pr.modifier_code,pr.price] for pr in product.product_modifiers),default=json_handler),
                         "sort_order":product.sort_order,
-                        "is_empty_stock_warning":p.is_empty_stock_warning,
+                        "business_branch_configure_data":json.dumps(([b.business_branch,b.is_empty_stock_warning] for b in p.business_branch_configure),default=json_handler),
                         "rate_include_tax":p.rate_include_tax
                     }
         

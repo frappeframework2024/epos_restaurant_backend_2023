@@ -1,0 +1,85 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-05-24 15:40:25.637570",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "enabled",
+  "section_break_wtwx",
+  "earning_column",
+  "from_amount_earn",
+  "to_point_earn",
+  "column_break_sjrc",
+  "from_amount_sale",
+  "to_point_sale"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  },
+  {
+   "fieldname": "from_amount_earn",
+   "fieldtype": "Currency",
+   "label": "From Amount"
+  },
+  {
+   "fieldname": "to_point_earn",
+   "fieldtype": "Float",
+   "label": "To Point"
+  },
+  {
+   "depends_on": "eval:doc.enabled==1",
+   "fieldname": "section_break_wtwx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "Having 100 Points get $1",
+   "fieldname": "column_break_sjrc",
+   "fieldtype": "Column Break",
+   "label": "Sale"
+  },
+  {
+   "description": "Buy $1 get 1 Point(s)",
+   "fieldname": "earning_column",
+   "fieldtype": "Column Break",
+   "label": "Earning"
+  },
+  {
+   "fieldname": "from_amount_sale",
+   "fieldtype": "Currency",
+   "label": "From Amount"
+  },
+  {
+   "fieldname": "to_point_sale",
+   "fieldtype": "Float",
+   "label": "To Point"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-05-28 10:57:00.962641",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "Loyalty Point Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

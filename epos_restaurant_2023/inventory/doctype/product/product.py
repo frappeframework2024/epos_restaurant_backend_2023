@@ -482,6 +482,16 @@ def add_product_to_temp_menu(self):
 			
 		## end get modifier data
 
+		## get business branch configure
+		business_branch_configure = []
+		for b in self.business_branch_configure:
+			business_branch_configure.append({
+				"business_branch": b.business_branch,
+				"is_empty_stock_warning": b.is_empty_stock_warning
+			})
+
+		## end get business branch configure
+
 
 		for m in self.pos_menus:			
 			doc = frappe.get_doc({
@@ -492,6 +502,7 @@ def add_product_to_temp_menu(self):
 							'pos_menu':m.pos_menu,
 							'printers':json.dumps(printers),
 							'prices':json.dumps(prices),
+							'business_branch_configure_data':json.dumps(business_branch_configure),
 							'revenue_group':self.revenue_group,
 							'modifiers':json.dumps(modifiers)
 						})
@@ -504,7 +515,8 @@ def add_product_to_temp_menu(self):
 		for pop in pop_docs: 
 			frappe.db.set_value('eMenu Popular Products', pop["name"], {
 				'prices': json.dumps(prices),
-				'modifiers': json.dumps(modifiers)
+				'modifiers': json.dumps(modifiers),
+				'business_branch_configure_data':json.dumps(business_branch_configure),
 			})
 		frappe.db.commit()
 

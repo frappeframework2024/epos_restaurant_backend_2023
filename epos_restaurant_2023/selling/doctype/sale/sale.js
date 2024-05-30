@@ -14,7 +14,7 @@ frappe.ui.form.on("Sale", {
 
 	},
 	refresh(frm) {
-
+		
 		if (!frm.doc.__islocal && frm.doc.docstatus == 1) {
 			frm.dashboard.add_indicator(__("Total Quantity: {0}", [frm.doc.total_quantity]), "blue");
 			frm.dashboard.add_indicator(__("Grand Total: {0}", [format_currency(frm.doc.grand_total)]), "blue");

@@ -61,6 +61,7 @@ class SalePayment(Document):
 		update_sale(self)
 		if self.payment_type_group == "Voucher":
 			self.update_customer_voucher_balance()
+		self.update_customer_point()
 	
 	def on_cancel(self):
 		if self.flags.ignore_on_cancel==True:
@@ -68,6 +69,7 @@ class SalePayment(Document):
 		update_sale(self)
 		if self.payment_type_group == "Voucher":
 			self.update_customer_voucher_balance()
+		self.update_customer_point_on_cancel_sale()
 
 	def before_update_after_submit(self):
 		if self.flags.ignore_before_update_after_submit==True:
@@ -87,6 +89,62 @@ class SalePayment(Document):
 			self.balance = 0
 
 		update_sale(self)
+
+		# Update Customer Point When Pay with Point
+	def update_customer_point(self):
+		if frappe.db.get_single_value("Exely Itegration Setting","enabled")==1:
+			frappe.enqueue("epos_restaurant_2023.api.exely.submit_order_to_exely", queue='long', doc_name = self.name)
+		# Update Customer Point
+		point_setting = frappe.get_doc("Loyalty Point Settings")
+		if point_setting.enabled==1:
+			allow_earn_point = frappe.db.get_value("Customer",self.customer,'allow_earn_point')
+			
+			if allow_earn_point==1:
+				if self.payment_type_group != 'Point':
+					total_point_get = (point_setting.to_point_earn * self.payment_amount)/point_setting.from_amount_earn
+					frappe.db.sql("""Update `tabCustomer` set total_point_earn = total_point_earn + {0} where name = '{1}'""".format(total_point_get,self.customer))
+					frappe.db.set_value('Sale Payment',self.name,{ 'allow_earn_point':1,'total_point_earn': total_point_get})
+					frappe.db.sql("""UPDATE `tabSale` s
+									JOIN (
+										SELECT sale, SUM(total_point_earn) AS total_point_earn
+										FROM `tabSale Payment`
+										WHERE sale = '{0}' and docstatus = 1
+										GROUP BY sale
+									) payment ON s.name = payment.sale
+									SET s.total_point_earn = payment.total_point_earn
+									WHERE NAME = '{0}'
+				   				""".format(self.sale))
+					frappe.db.commit()
+					
+				# Customer Use Point
+				if self.payment_type_group == "Point":
+					customer_point = frappe.db.get_value("Customer",self.customer,['total_point_earn','allow_earn_point'],as_dict=1)
+					total_point_redeem = (self.payment_amount * point_setting.to_point_sale) / point_setting.from_amount_sale
+					if float(customer_point.total_point_earn) < float(total_point_redeem):
+						frappe.throw(_("Point for {} not enough.".format(self.customer_name)))
+						
+					frappe.db.sql("Update `tabCustomer` set total_point_earn = total_point_earn - {} where name = '{}'".format(total_point_redeem,self.customer))
+					frappe.db.commit()
+	
+	def update_customer_point_on_cancel_sale(self):
+		frappe.db.sql("""
+				UPDATE `tabSale` SET total_point_earn = 0
+				WHERE NAME = '{0}'
+			""".format(self.sale))
+		frappe.db.sql("""
+				UPDATE `tabCustomer` c
+				JOIN (
+					SELECT customer, SUM(total_point_earn) AS total_point_earn
+					FROM `tabSale`
+					WHERE customer = '{0}' and docstatus = 1
+					GROUP BY customer
+				) sale ON c.name = sale.customer
+				SET c.total_point_earn = sale.total_point_earn
+				WHERE NAME = '{0}'
+			""".format(self.customer))
+		frappe.db.commit()
+
+
 
 		# Update Customer Voucher Balance
 	def update_customer_voucher_balance(self):

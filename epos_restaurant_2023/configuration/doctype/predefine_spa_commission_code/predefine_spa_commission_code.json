@@ -15,6 +15,7 @@
  ],
  "fields": [
   {
+   "allow_in_quick_entry": 1,
    "default": "0",
    "fieldname": "commission_value",
    "fieldtype": "Currency",
@@ -22,6 +23,7 @@
    "label": "Commission Value"
   },
   {
+   "allow_in_quick_entry": 1,
    "default": "0",
    "fieldname": "commission_title",
    "fieldtype": "Data",
@@ -44,7 +46,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-10-11 09:44:09.665156",
+ "modified": "2024-05-28 09:07:19.974170",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Predefine SPA Commission Code",

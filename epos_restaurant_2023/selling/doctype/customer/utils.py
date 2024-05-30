@@ -5,7 +5,7 @@ def update_fetch_from_fields(self):
 	condiction_keys = [
 		{
       		"key":"guest",
-   			"doctypes":["POS Reservation","Deposit Ledger","Tax Invoice","Additional Stay Guest","Room Occupy","Reservation Room Rate","Reservation Folio","Reservation Stay","Reservation","Folio Transaction","Reservation Folio","Desk Folio"]
+   			"doctypes":["POS Reservation","Deposit Ledger","Tax Invoice","Additional Stay Guest","Room Occupy","Reservation Room Rate","Reservation Folio","Reservation Stay","Reservation","Folio Transaction","Reservation Folio","Desk Folio","Revenue Forecast Breakdown"]
       	}
 	]
 	
@@ -55,6 +55,8 @@ def update_fetch_from_fields(self):
 			data_for_updates.append({"doctype":"Reservation Stay","update_field":"guest_name='{}'".format(self.customer_name_en)})
 			#Room Occupy
 			data_for_updates.append({"doctype":"Room Occupy","update_field":"guest_name='{}'".format(self.customer_name_en)})
+			
+
 		
 	if self.has_value_changed("phone_number"):
 		data_for_updates.append({"doctype":"Tax Invoice","update_field":"phone_number='{}'".format(self.phone_number)})
@@ -116,6 +118,8 @@ def update_fetch_from_fields(self):
 		data_for_updates.append({"doctype":"Reservation Stay","update_field":"guest_type='{}'".format(self.customer_group)})
 		#Room Occupy
 		data_for_updates.append({"doctype":"Room Occupy","update_field":"guest_type='{}'".format(self.customer_group)})
+		#Revenue Forecast Breakdown
+		data_for_updates.append({"doctype":"Revenue Forecast Breakdown","update_field":"guest_type='{}'".format(self.customer_group)})
 	if self.has_value_changed("country") and ('edoor' in frappe.get_installed_apps()): 
 		#Folio Transaction
 		data_for_updates.append({"doctype":"Folio Transaction","update_field":"nationality='{}'".format(self.country)})
@@ -123,10 +127,11 @@ def update_fetch_from_fields(self):
 		data_for_updates.append({"doctype":"Reservation Stay","update_field":"nationality='{}'".format(self.country)})
 		#Room Occupy
 		data_for_updates.append({"doctype":"Room Occupy","update_field":"nationality='{}'".format(self.country)})
+		#Revenue Forecast Breakdown
+		data_for_updates.append({"doctype":"Revenue Forecast Breakdown","update_field":"nationality='{}'".format(self.country)})
 		
   
 	if data_for_updates:
-		
 		for d in set([x["doctype"] for x in data_for_updates]):
 			key = [f["key"] for f in condiction_keys if d in f["doctypes"]]
 			

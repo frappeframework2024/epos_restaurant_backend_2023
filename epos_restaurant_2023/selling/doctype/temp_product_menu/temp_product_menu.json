@@ -19,7 +19,6 @@
   "allow_discount",
   "allow_free",
   "allow_change_price",
-  "is_empty_stock_warning",
   "is_inventory_product",
   "is_open_product",
   "append_quantity",
@@ -39,7 +38,8 @@
   "tax_rule",
   "tax_rule_data",
   "pos_menu_id",
-  "description"
+  "description",
+  "business_branch_configure_data"
  ],
  "fields": [
   {
@@ -241,13 +241,6 @@
   },
   {
    "default": "0",
-   "fetch_from": "product_code.is_empty_stock_warning",
-   "fieldname": "is_empty_stock_warning",
-   "fieldtype": "Check",
-   "label": "Is Empty Stock Warning "
-  },
-  {
-   "default": "0",
    "fetch_from": "product_code.rate_include_tax",
    "fieldname": "rate_include_tax",
    "fieldtype": "Check",
@@ -258,11 +251,17 @@
    "fieldname": "description",
    "fieldtype": "Text Editor",
    "label": "Description"
+  },
+  {
+   "default": "[]",
+   "fieldname": "business_branch_configure_data",
+   "fieldtype": "JSON",
+   "label": "Business Branch Configure Data"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-20 15:14:15.944848",
+ "modified": "2024-05-30 10:50:25.345385",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Temp Product Menu",

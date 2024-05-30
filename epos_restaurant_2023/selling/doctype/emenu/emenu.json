@@ -11,6 +11,7 @@
  "field_order": [
   "title",
   "emenu_app_name",
+  "business_branch",
   "column_break_nodn",
   "logo",
   "enable_cache",
@@ -304,13 +305,20 @@
    "fieldname": "hotel_room_call_number",
    "fieldtype": "Data",
    "label": "Hotel Room Call Number"
+  },
+  {
+   "fieldname": "business_branch",
+   "fieldtype": "Link",
+   "label": "Business Branch",
+   "options": "Business Branch",
+   "reqd": 1
   }
  ],
  "has_web_view": 1,
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-28 10:15:09.855235",
+ "modified": "2024-05-30 10:39:40.537480",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu",

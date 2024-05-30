@@ -7,13 +7,25 @@
  "engine": "InnoDB",
  "field_order": [
   "account_code",
-  "account_name",
-  "type",
   "posting_rule",
+  "column_break_qten",
+  "account_name",
   "charge_rule",
+  "column_break_eanp",
+  "type",
+  "section_break_xayr",
   "rate",
+  "column_break_llev",
   "adult_rate",
-  "child_rate"
+  "column_break_yeob",
+  "child_rate",
+  "account_breakdown_setting_section",
+  "breakdown_account_code",
+  "discount_breakdown_account_code",
+  "column_break_osld",
+  "tax_1_breakdown_account_code",
+  "tax_2_breakdown_account_code",
+  "tax_3_breakdown_account_code"
  ],
  "fields": [
   {
@@ -66,12 +78,71 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Child Rate"
+  },
+  {
+   "fieldname": "column_break_qten",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_eanp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_xayr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_llev",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_yeob",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "account_breakdown_setting_section",
+   "fieldtype": "Section Break",
+   "label": "Account Breakdown Setting"
+  },
+  {
+   "fieldname": "breakdown_account_code",
+   "fieldtype": "Link",
+   "label": "Breakdown Account Code",
+   "options": "Account Code"
+  },
+  {
+   "fieldname": "discount_breakdown_account_code",
+   "fieldtype": "Link",
+   "label": "Discount Breakdown Account Code",
+   "options": "Account Code"
+  },
+  {
+   "fieldname": "column_break_osld",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tax_1_breakdown_account_code",
+   "fieldtype": "Link",
+   "label": "Tax 1 Breakdown Account Code",
+   "options": "Account Code"
+  },
+  {
+   "fieldname": "tax_2_breakdown_account_code",
+   "fieldtype": "Link",
+   "label": "Tax 2 Breakdown Account Code",
+   "options": "Account Code"
+  },
+  {
+   "fieldname": "tax_3_breakdown_account_code",
+   "fieldtype": "Link",
+   "label": "Tax 3 Breakdown Account Code",
+   "options": "Account Code"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-05-11 12:42:25.581524",
+ "modified": "2024-05-24 16:45:06.487210",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Package Items",

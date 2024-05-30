@@ -10,6 +10,7 @@
  "field_order": [
   "billing_section",
   "balance",
+  "total_point_earn",
   "column_break_lide",
   "voucher_actual_amount",
   "voucher_credit_amount",
@@ -31,6 +32,7 @@
   "jobs",
   "is_disabled",
   "keyword",
+  "allow_earn_point",
   "column_break_4",
   "phone_number",
   "phone_number_2",
@@ -339,13 +341,27 @@
    "fieldname": "vattin_number",
    "fieldtype": "Data",
    "label": "Vattin Number"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_earn_point",
+   "fieldtype": "Check",
+   "label": "Allow Earn Point"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.total_point_earn > 0",
+   "fieldname": "total_point_earn",
+   "fieldtype": "Data",
+   "label": "Total Point Earn",
+   "read_only": 1
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-03-28 14:26:33.904181",
+ "modified": "2024-05-28 09:34:51.202862",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

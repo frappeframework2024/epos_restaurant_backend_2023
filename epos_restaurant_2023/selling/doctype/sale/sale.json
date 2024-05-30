@@ -85,6 +85,8 @@
   "is_synced",
   "payments_tab",
   "payment",
+  "allow_earn_point",
+  "total_point_earn",
   "tax_tab",
   "tax_rule",
   "column_break_fjyx",
@@ -1163,6 +1165,19 @@
    "fieldname": "rate_include_tax",
    "fieldtype": "Check",
    "label": "Rate Include Tax"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_earn_point",
+   "fieldtype": "Check",
+   "label": "Allow Earn Point",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_point_earn",
+   "fieldtype": "Float",
+   "label": "Total Point Earn",
+   "read_only": 1
   }
  ],
  "image_field": "photo",
@@ -1175,7 +1190,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-05-03 15:19:51.876953",
+ "modified": "2024-05-28 14:01:04.000940",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

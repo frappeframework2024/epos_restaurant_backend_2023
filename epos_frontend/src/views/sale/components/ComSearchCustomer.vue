@@ -42,6 +42,7 @@
                         <avatar v-else :name="c.customer_name_en" class="mr-4" size="40"></avatar>
                       </template>
                       <template v-slot:append>
+                        <v-chip v-if="c.allow_earn_point == 1 && c.total_point_earn > 0" color="success">{{c.total_point_earn}} Point(s)</v-chip>
                         <ComCustomerPromotionChip :customer="c"></ComCustomerPromotionChip>
                       </template>
                     </v-card>
@@ -146,7 +147,7 @@ createResource({
 function getDataResourceParams() {
   return {
     doctype: "Customer",
-    fields: ["name", "customer_name_en", "customer_name_kh", "customer_group", "date_of_birth", "gender", "phone_number", "photo", "default_discount", "is_disabled"],
+    fields: ["name", "customer_name_en", "customer_name_kh", "customer_group", "date_of_birth", "gender", "phone_number", "photo", "default_discount", "is_disabled","allow_earn_point","total_point_earn"],
     order_by: "modified desc",
     or_filters: getFilter(),
     limit_page_length: 20

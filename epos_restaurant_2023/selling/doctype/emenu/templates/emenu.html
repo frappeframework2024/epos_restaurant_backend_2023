@@ -9,20 +9,20 @@
 {% block page_content %}
 <div class="header">
     <div class="container">
-        <div class="d-flex justify-between py-2">
+        <div class="d-flex justify-center py-2">
             <div class="logo">
                 <img loading="lazy" src="{{doc.logo}}" alt="">
             </div>
-            <div class="d-flex align-items-center">
+            <!-- <div class="d-flex align-items-center">
                 <div class="ttl-header">
                     <h6 class="m-0">{{doc.emenu_app_name}}</h6>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
-<div class="section-main-wraper">
-    <div class="owl-carousel owl-theme mb-3" id="slid_banner">
+<div class="section-main-wraper mt-3">
+    <!-- <div class="owl-carousel owl-theme mb-3" id="slid_banner">
         {%for s in doc.slideshow%}
         <div class="item">
             {% if s.has_detail_view != 0 %}
@@ -47,12 +47,12 @@
             {% endif %}
         </div>
         {%endfor%}
-    </div>
+    </div> -->
 
     <div class="container">
         <div class="into-section">
-            <h1>{{doc.welcome_title}}</h1>
-            <div>
+            <h1 class="text-center">{{doc.welcome_title}}</h1>
+            <div class="dsc-header">
                 {{doc.welcome_description}}
             </div>
         </div>
@@ -97,9 +97,9 @@
                     <h2><i class="fas fa-fire main-color"></i> Popular Products</h2>
                     <p>Our signature dishes</p>
                 </div>
-                <div class="row">
+                <div class="row p-2">
                     {% for p in doc.popular_product %}
-                    <div class="product_detail col-6 col-lg-4 mb-3 text-dark">
+                    <div class="product_detail col-6 col-lg-4 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
                         <div class="col-inner">
                             <a href="/product_detail?product_code={{p.product_code}}&menu_id={{doc.name}}" style="text-decoration: none;">
                                 <div class="row p-0 p-lg-3 items-inner-1 m-0 h-100">
@@ -148,9 +148,9 @@
                 <div class="mt-4 mb-3">
                     <h2>{{m.menu}}</h2>
                 </div>
-                <div class="row">
+                <div class="row p-2">
                     {%for p in products|selectattr('pos_menu', 'equalto', m.menu)|list %}
-                    <div class="product_detail col-6 col-lg-4 mb-3 text-dark">
+                    <div class="product_detail col-6 col-lg-4 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
                         <div class="col-inner">
                             <a href="/product_detail?product_code={{p.product_code}}&menu_id={{doc.name}}" style="text-decoration: none;">
                                 <div class="row p-0 p-lg-3 items-inner-1 m-0 h-100">

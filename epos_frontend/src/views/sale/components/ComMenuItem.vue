@@ -102,12 +102,13 @@ const image = computed(() => {
 })
 // price menu
 const productPrices = computed(() => {
-    if (props.data.prices) {
+    if (product.prices) {
         const r = JSON.parse(props.data.prices)
         return r.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule)
     }
     return []
 })
+ 
 const showPrice = computed(() => {
     if (props.data.is_combo_menu) {
         return props.data.price || 0
@@ -203,13 +204,23 @@ async function onClickProduct() {
         const p = JSON.parse(JSON.stringify(props.data));
         product.is_open_price = p.is_open_price
 
-        if (p.is_empty_stock_warning == 1) {
+        //
+        const business_brnach_configure = JSON.parse(p.business_branch_configure_data)
+        const check_bus_config = business_brnach_configure.filter((r)=>r.business_branch == sale.sale.business_branch)
+        if (check_bus_config.length>0){
+            if (check_bus_config[0].is_empty_stock_warning == 1) {
             //message dialog confirmation   
             let emptyConfirm = await EmptyStockProductDialog();
-            if (!emptyConfirm) {
-                return
-            }
-        }
+                if (!emptyConfirm) {
+                    return
+                }
+            }        }    
+
+
+
+
+
+       
 
         if (!p.is_timer_product) {
             if (p.is_open_product == 1) {

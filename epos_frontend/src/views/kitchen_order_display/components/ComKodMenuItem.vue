@@ -89,7 +89,7 @@
             </div>
         </div>
         <div
-            :style="{ 'text-decoration': data.deleted ? 'line-through' : '', 'font-size': kod.setting.font_size + 2 + 'px' }"   :class="(kod.group_order_by == 'order_time' || isSummary) ? 'pe-9' : '' , data.kod_status == 'Done' ? 'text-slate-200' : '' " >
+            :style="{ 'text-decoration': data.deleted ? 'line-through' : '', 'font-size': kod.setting.font_size + 2 + 'px' }"   :class="(kod.group_order_by == 'order_time' || isSummary) ? 'pe-9' : '' , data.kod_status == 'Done' ? 'text-red-400 text-slate-200' : '' " >
             {{ data.quantity }} <v-icon  style="font-size: 20px;">mdi-close</v-icon> {{
                 
                 kod.setting.show_menu_language=='khmer'? data.product_name_kh:data.product_name

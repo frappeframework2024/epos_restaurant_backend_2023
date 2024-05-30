@@ -11,11 +11,12 @@
                             class="mr-4" size="40"></avatar>
                     </template>
                     <div class="px-2">
-                        <div class="font-bold">{{ sale.sale.customer_name || "" }}</div>
+                        <div class="font-bold">{{ sale.sale.customer_name || "" }} <ComChip v-if="current_customer_point > 0" :tooltip="$t('Current Point(s)')" color="success">{{ current_customer_point }}</ComChip></div>
+                        
                         <div class="text-gray-400 text-sm">{{ subTitle || "" }}</div>
                         <div class="text-gray-400 text-sm" v-if="sale.sale.arrival">
                             Stay: {{ moment(sale.sale.arrival).format("DD-MM-YYYY") }} to {{
-        moment(sale.sale.departure).format("DD-MM-YYYY") }}
+                                moment(sale.sale.departure).format("DD-MM-YYYY") }}
                         </div>
 
                         <div class="text-gray-400 text-sm" v-if="sale.sale.room_number">
@@ -24,14 +25,13 @@
 
                     </div>
                     <div>
-
+                        
                         <template v-if="customerPromotion?.length > 0">
                             <ComChip v-for="(item, index) in customerPromotion" :key="index" color="orange"
-                                :tooltip="$t('Happy Hour Promotion')" prepend-icon="mdi-tag-multiple">{{
-        item.promotion_name }}</ComChip>
+                                :tooltip="$t('Happy Hour Promotion')" prepend-icon="mdi-tag-multiple">{{ item.promotion_name }}</ComChip>
                         </template>
                         <v-chip v-else-if="sale.sale.customer_default_discount > 0" color="error">{{
-        sale.sale.customer_default_discount }}
+                            sale.sale.customer_default_discount }}
                             % OFF</v-chip>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import { computed, inject, getCurrentInstance, searchCustomerDialog, createResource, customerDetailDialog, scanCustomerCodeDialog, confirmDialog, onMounted, createToaster, addCustomerDialog } from "@/plugin"
+import { computed, inject,ref, getCurrentInstance, searchCustomerDialog, createResource, customerDetailDialog, scanCustomerCodeDialog, confirmDialog, onMounted, createToaster, addCustomerDialog } from "@/plugin"
 import { whenever, useMagicKeys } from '@vueuse/core';
 import { i18n } from "@/plugin";
 
@@ -83,6 +83,7 @@ let customerPromotion = computed({
         return newValue
     }
 })
+const current_customer_point = ref(0)
 const { ctrl_m } = useMagicKeys({
     passive: false,
     onEventFired(e) {
@@ -120,13 +121,15 @@ function assignCustomerToOrder(result, is_membership = false) {
     sale.sale.phone_number = result.phone_number;
     sale.sale.customer_group = result.customer_group;
     sale.sale.customer_default_discount = 0;
-
     sale.sale.exely_guest_id = result.guest_id || ""
     sale.sale.exely_room_stay_id = result.stay_room_id || ""
     sale.sale.arrival = result.arrival || ""
     sale.sale.departure = result.departure || ""
     sale.sale.room_number = result.room_number || ""
-
+    if (result.total_point_earn > 0 && result.allow_earn_point == 1){
+        current_customer_point.value = result.total_point_earn
+    }
+    
     if (!is_membership) {
         sale.sale.customer_default_discount = result.default_discount;
 
@@ -312,17 +315,18 @@ onMounted(() => {
 })
 
 </script>
-<style> 
+<style>
 @media (max-width: 1024px) {
     .guest-pro-scne {
         padding: 5px !important;
-    } 
+    }
+
     .guest-pro-scne .v-btn--icon {
         font-size: 10px;
     }
+
     .guest-pro-scne .font-bold {
         font-size: smaller;
     }
 }
-    
 </style>

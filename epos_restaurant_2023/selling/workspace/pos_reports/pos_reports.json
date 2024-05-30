@@ -5,7 +5,7 @@
    "label": "Sale Revenue"
   }
  ],
- "content": "[{\"id\":\"HKKd39rO3u\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reports</span>\",\"col\":12}},{\"id\":\"NBiVl7GGy3\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Sale Revenue\",\"col\":12}},{\"id\":\"Skat7JO3Ll\",\"type\":\"card\",\"data\":{\"card_name\":\"Sales Report\",\"col\":4}},{\"id\":\"hGWI3yjPOg\",\"type\":\"card\",\"data\":{\"card_name\":\"Purchase Order\",\"col\":4}},{\"id\":\"L0StVr44OP\",\"type\":\"card\",\"data\":{\"card_name\":\"Inventory Reports\",\"col\":4}},{\"id\":\"6ieXc-xxdR\",\"type\":\"card\",\"data\":{\"card_name\":\"Expense\",\"col\":4}},{\"id\":\"pTBSPwfKKb\",\"type\":\"card\",\"data\":{\"card_name\":\"SPA Reports\",\"col\":4}}]",
+ "content": "[{\"id\":\"HKKd39rO3u\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reports</span>\",\"col\":12}},{\"id\":\"NBiVl7GGy3\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Sale Revenue\",\"col\":12}},{\"id\":\"Skat7JO3Ll\",\"type\":\"card\",\"data\":{\"card_name\":\"Sales Report\",\"col\":4}},{\"id\":\"hGWI3yjPOg\",\"type\":\"card\",\"data\":{\"card_name\":\"Purchase Order\",\"col\":4}},{\"id\":\"L0StVr44OP\",\"type\":\"card\",\"data\":{\"card_name\":\"Inventory Reports\",\"col\":4}},{\"id\":\"6ieXc-xxdR\",\"type\":\"card\",\"data\":{\"card_name\":\"Expense\",\"col\":4}},{\"id\":\"5kr2Gxyib9\",\"type\":\"card\",\"data\":{\"card_name\":\"SPA Report\",\"col\":4}}]",
  "creation": "2022-12-17 18:04:27.765490",
  "custom_blocks": [],
  "docstatus": 0,
@@ -110,24 +110,6 @@
    "label": "Daily Expense Payment Transaction",
    "link_count": 0,
    "link_to": "Daily Expense Payment Transaction",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "SPA Reports",
-   "link_count": 1,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Employee Time Sheet Summary",
-   "link_count": 0,
-   "link_to": "Employee Time Sheet Summary",
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
@@ -327,9 +309,27 @@
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "SPA Report",
+   "link_count": 1,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Employee Time Sheet Summary",
+   "link_count": 0,
+   "link_to": "Employee Time Sheet Summary",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2024-05-14 17:12:17.234242",
+ "modified": "2024-05-28 08:53:18.145134",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Reports",

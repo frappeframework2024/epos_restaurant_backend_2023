@@ -22,7 +22,7 @@ class eMenu(WebsiteGenerator):
 					product_name_kh,
 					price,
 					ifnull(photo,'files/no_image.jpg') as photo,
-					is_empty_stock_warning,
+					business_branch_configure_data,
 					prices,
 					description
 				from `tabTemp Product Menu`
@@ -60,9 +60,21 @@ class eMenu(WebsiteGenerator):
 							})
 						
 				pop.modifiers = json.dumps(get_product_modifier(product))
-
 				pop.prices= json.dumps(prices)
 
+				## get business branch configure
+				business_branch_configure = []
+				for b in product.business_branch_configure:
+					business_branch_configure.append({
+						"business_branch": b.business_branch,
+						"is_empty_stock_warning": b.is_empty_stock_warning
+					})
+
+				pop.business_branch_configure_data = json.dumps(business_branch_configure)
+				## end get business branch configure
+
+
+ 
 
 def get_product_modifier(product):
 	#get product modifier

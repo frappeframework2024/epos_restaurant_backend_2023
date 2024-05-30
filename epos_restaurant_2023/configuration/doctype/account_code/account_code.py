@@ -8,6 +8,8 @@ from frappe.model.document import Document
 class AccountCode(Document):
 	def validate(self):
 		self.account_code_name = self.code + ' - ' + self.account_name
+		if self.parent_account_code:
+			self.parent_account_name = frappe.db.get_value("Account Code",self.parent_account_code,"account_name")
 		#check if account code have tax rule
 		if self.tax_rule:
 			tax_rule = frappe.get_doc("Tax Rule", self.tax_rule)

@@ -1,0 +1,84 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-05-28 15:38:47.316714",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "product_code",
+  "column_break_ifrt",
+  "product_name",
+  "section_break_oibz",
+  "sale",
+  "purchase_order",
+  "column_break_crbo",
+  "stock_adjustment",
+  "stock_transfer",
+  "stock_take"
+ ],
+ "fields": [
+  {
+   "fieldname": "product_code",
+   "fieldtype": "Link",
+   "label": "Product Code",
+   "options": "Product"
+  },
+  {
+   "fetch_from": "product_code.product_name_en",
+   "fetch_if_empty": 1,
+   "fieldname": "product_name",
+   "fieldtype": "Data",
+   "label": "Product Name"
+  },
+  {
+   "fieldname": "sale",
+   "fieldtype": "Float",
+   "label": "Sale"
+  },
+  {
+   "fieldname": "purchase_order",
+   "fieldtype": "Float",
+   "label": "Purchase Order"
+  },
+  {
+   "fieldname": "stock_take",
+   "fieldtype": "Float",
+   "label": "Stock Take"
+  },
+  {
+   "fieldname": "stock_transfer",
+   "fieldtype": "Float",
+   "label": "Stock Transfer"
+  },
+  {
+   "fieldname": "stock_adjustment",
+   "fieldtype": "Float",
+   "label": "Stock Adjustment"
+  },
+  {
+   "fieldname": "column_break_ifrt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_oibz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_crbo",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-05-28 16:20:35.978704",
+ "modified_by": "Administrator",
+ "module": "Inventory",
+ "name": "Inventory Check Items",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
