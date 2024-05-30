@@ -34,7 +34,8 @@ frappe.ui.form.on("Bulk Purchase Order Payment", {
                         doc.input_amount = doc.amount * (doc.exchange_rate || 0);
                         doc.payment_amount = doc.input_amount == 0 ? 0 : doc.input_amount /  (doc.exchange_rate || 0);
                         doc.balance = doc.amount - doc.payment_amount;
-                        doc.posting_date = frm.doc.posting_date
+                        doc.posting_date = frm.doc.posting_date,
+                        doc.stock_location = r.stock_location
                     }))
                     frm.refresh_field('purchase_order_list');
                     updatetotal(frm);
