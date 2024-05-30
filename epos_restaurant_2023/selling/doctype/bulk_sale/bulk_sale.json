@@ -11,6 +11,7 @@
   "payment_type",
   "currency",
   "exchange_rate",
+  "stock_location",
   "column_break_bfgu",
   "amount",
   "input_amount",
@@ -102,12 +103,20 @@
    "fieldtype": "Data",
    "label": "Sale Payment",
    "read_only": 1
+  },
+  {
+   "fetch_from": "sale.stock_location",
+   "fieldname": "stock_location",
+   "fieldtype": "Link",
+   "label": "Stock Location",
+   "options": "Stock Location",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-05-02 15:54:00.831633",
+ "modified": "2024-05-30 09:54:26.570072",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Bulk Sale",

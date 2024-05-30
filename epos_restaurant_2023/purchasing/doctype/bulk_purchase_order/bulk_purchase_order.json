@@ -11,6 +11,7 @@
   "payment_type",
   "currency",
   "exchange_rate",
+  "stock_location",
   "column_break_jztw",
   "amount",
   "input_amount",
@@ -101,12 +102,20 @@
    "fieldtype": "Data",
    "label": "Purchase Order Payment",
    "read_only": 1
+  },
+  {
+   "fetch_from": "purchase_order.stock_location",
+   "fieldname": "stock_location",
+   "fieldtype": "Link",
+   "label": "Stock Location",
+   "options": "Stock Location",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-05-03 11:02:55.535272",
+ "modified": "2024-05-30 09:53:36.471108",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Bulk Purchase Order",
