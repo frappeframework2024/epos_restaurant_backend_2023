@@ -34,6 +34,7 @@ export default class KOD {
             show_outlet_name:false,
             show_item_status:true,
             column_width:300,
+            column_width_summary:30,
             hide_order_information:0
         }
     }

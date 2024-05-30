@@ -1,7 +1,7 @@
 <template>
     <div @click="onChangeStatus(data.kod_status == 'Done' ? 'Pending' : 'Done') "
 
-        class="cursor-pointer mb-3 rounded-lg px-2 pb-1 relative bg-slate-100" :class="(data.kod_status == 'Done' && !isSummary ) ? 'opacity-75' : '' , data.loading ? 'pointer-events-none' : ''  " >
+        class="cursor-pointer mb-3 rounded-lg px-2 pb-1 relative bg-slate-100" :class="(data.kod_status == 'Done' && !isSummary ) ? 'opacity-75 text-red-400 border-red-400' : '' , data.loading ? 'pointer-events-none' : ''  " >
  <template v-if="isSummary">
         <div  :style="{ 'font-size': kod.setting.font_size - 3 + 'px' }" class="flex gap-2 pt-1 flex-wrap">
             <div class="flex item-center gap-2 bg-slate-300 rounded-full px-2">
@@ -45,7 +45,7 @@
                 <div v-if="!data.loading" @click="onChangeStatus(data.kod_status == 'Done' ? 'Pending' : 'Done')">
                     <v-icon v-if="data.kod_status == 'Pending'" style="font-size:15px;"  class="-mr-1 opacity-50">mdi-checkbox-blank-circle-outline</v-icon>
                     <v-icon v-if="data.kod_status == 'Processing'" style="font-size:17px;"  class="-mr-1 opacity-50 text-green-600">mdi-timer</v-icon>
-                    <v-icon v-if="data.kod_status == 'Done'" style="font-size:20px;"  class="-mr-1 opacity-70 text-green-500">mdi-checkbox-marked-circle-outline</v-icon>
+                    <v-icon v-if="data.kod_status == 'Done'" style="font-size:20px;"  class="-mr-1 opacity-70 text-red-500">mdi-checkbox-marked-circle-outline</v-icon>
                 </div>
                 <div v-else>
                     <v-progress-circular
@@ -89,7 +89,7 @@
             </div>
         </div>
         <div
-            :style="{ 'text-decoration': data.deleted ? 'line-through' : '', 'font-size': kod.setting.font_size + 2 + 'px' }"   :class="(kod.group_order_by == 'order_time' || isSummary) ? 'pe-9' : '' , data.kod_status == 'Done' ? 'text-red-400 text-slate-200' : '' " >
+            :style="{ 'text-decoration': data.deleted ? 'line-through' : '', 'font-size': kod.setting.font_size + 2 + 'px' }"   :class="(kod.group_order_by == 'order_time' || isSummary) ? 'pe-9' : '' , data.kod_status == 'Done' ? 'text-red-400' : '' " >
             {{ data.quantity }} <v-icon  style="font-size: 20px;">mdi-close</v-icon> {{
                 
                 kod.setting.show_menu_language=='khmer'? data.product_name_kh:data.product_name

@@ -11,7 +11,7 @@
       name="Pending Order"
       :quantity="kod.kpi.pending_order"
       iconName="mdi-timer-sand"
-      bgColorClass="bg-red-400"
+      bgColorClass="bg-yellow-400"
       :iconSize="30"
     />
     <ComKodKpiBox

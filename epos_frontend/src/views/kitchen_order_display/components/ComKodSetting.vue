@@ -26,12 +26,17 @@
            <v-slider v-model="kod.setting.column_width" :max="500" :min="200" class="align-center">
           </v-slider> 
           </div>
+          <div class="-mt-4">
+            <div>Column Width Status<span class="px-3 bg-slate-100 rounded-lg">{{ kod.setting.column_width_summary.toFixed(2) }}</span> % </div>
+           <v-slider :disabled="!kod.setting.show_item_status" v-model="kod.setting.column_width_summary" :max="80" :min="10" class="align-center">
+          </v-slider> 
+          </div>
           <div class="grid grid-cols-2 -mt-8">
 <div>
   <v-checkbox v-model="kod.setting.show_outlet_name" label="Show outlet name" hide-details></v-checkbox>
 </div>
 <div>
-  <v-checkbox v-model="kod.setting.show_item_status" label="Show Item Status" hide-details></v-checkbox>
+  <v-checkbox @update:modelValue="onupdateitemstatus" v-model="kod.setting.show_item_status" label="Show Item Status" hide-details></v-checkbox>
 </div>
           </div>
           <div>
@@ -60,6 +65,13 @@ const kod = inject("$kod")
 
 const isOpen = ref(false)
 const backup_setting = ref({})
+function onupdateitemstatus(){
+  if (kod.setting.show_item_status){
+    kod.setting.column_width_summary = 0
+}else{
+  kod.setting.column_width_summary = 30
+}
+}
 
 function onOpen() {
 

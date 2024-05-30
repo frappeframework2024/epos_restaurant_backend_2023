@@ -6,8 +6,8 @@
       <ComKodKpi />
     </div>
     <div class="bg-white border p-2">
-      <div :class="kod.setting.show_item_status ? 'grid-cols-1 md:grid-cols-4' : 'grid-cols'" class="grid gap-2">
-        <div class="col-span-3 h-full shadow-md rounded-lg border p-2">
+      <div class="flex w-full gap-2">
+        <div class="h-full shadow-md rounded-lg border p-2" :style="{ width: 100 - kod.setting.column_width_summary + '%'}">
           <MasonryWall :items="kod.pending_orders" :columnWidth="kod.setting.column_width" :gap="10">
             <template #default="{ item }">
               <ComKodBill :data="item" />
@@ -21,7 +21,7 @@
           </div>  
 
         </div>
-        <div v-if="kod.setting.show_item_status" class="col-span-1">
+        <div v-if="kod.setting.show_item_status" :style="{ width: kod.setting.column_width_summary + '%'}" >
           <ComSummaryItemStatus />
         </div>
       </div>
