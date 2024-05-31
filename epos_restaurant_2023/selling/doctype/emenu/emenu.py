@@ -22,7 +22,7 @@ class eMenu(WebsiteGenerator):
 					product_name_kh,
 					price,
 					ifnull(photo,'files/no_image.jpg') as photo,
-					business_branch_configure_data,
+					case when coalesce(business_branch_configure_data,'')='' then '[]' else business_branch_configure_data end as business_branch_configure_data ,
 					prices,
 					description
 				from `tabTemp Product Menu`
@@ -32,17 +32,25 @@ class eMenu(WebsiteGenerator):
 
 			# Convert prices to JSON
 			for item in data:
+
+				business_branch_configure = json.loads(item['business_branch_configure_data'] or '[]')
 				item['prices'] = json.loads(item['prices'] or '[]')
+				item.update({"business_branch_configure": [b for b in business_branch_configure if b["business_branch"] == self.business_branch]}) 
 
 		context.no_cache = not  (self.enable_cache or 0)
-		context.products = data
+		context.products = data 
+		popular_products = [] 
 		for d in self.popular_product:
-			d.prices = json.loads(d.prices or '[]')
-		
+		# 	_d = json.loads(str(d))
+			business_branch_configure =(d.business_branch_configure_data or '[]')
+			d.prices = json.loads(d.prices or '[]') 
+			popular_products.append(d)
+
+		context.popular_products = popular_products
+
 	def validate(self):
 		for pop in  self.popular_product:		
 			prices = []	
-			modifiers = []	
 			pop.modifiers = []
 			pop.prices = []
 			if frappe.db.exists("Product", pop.product_code): 
@@ -62,6 +70,7 @@ class eMenu(WebsiteGenerator):
 				pop.modifiers = json.dumps(get_product_modifier(product))
 				pop.prices= json.dumps(prices)
 
+
 				## get business branch configure
 				business_branch_configure = []
 				for b in product.business_branch_configure:
@@ -71,7 +80,7 @@ class eMenu(WebsiteGenerator):
 					})
 
 				pop.business_branch_configure_data = json.dumps(business_branch_configure)
-				## end get business branch configure
+			
 
 
  

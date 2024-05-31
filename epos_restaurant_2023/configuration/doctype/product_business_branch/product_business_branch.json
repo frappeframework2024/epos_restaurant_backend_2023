@@ -15,7 +15,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Business Branch",
-   "options": "Business Branch"
+   "options": "Business Branch",
+   "reqd": 1
   },
   {
    "default": "0",
@@ -28,7 +29,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-05-30 10:25:19.636163",
+ "modified": "2024-05-30 12:00:16.598691",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Product Business Branch",

@@ -91,14 +91,14 @@
  
     <div class="container sections-content-1">
         <div class="sections sections-content">
-            {% if (doc.popular_product | length) >0 %}
+            {% if (popular_products | length) >0 %}
             <div class="scroll-section" id="popular_product">
                 <div class="mt-4 mb-3">
                     <h2><i class="fas fa-fire main-color"></i> Popular Products</h2>
                     <p>Our signature dishes</p>
                 </div>
                 <div class="row p-2">
-                    {% for p in doc.popular_product %}
+                    {% for p in popular_products %}
                     <div class="product_detail col-6 col-lg-4 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
                         <div class="col-inner">
                             <a href="/product_detail?product_code={{p.product_code}}&menu_id={{doc.name}}" style="text-decoration: none;">
@@ -119,9 +119,6 @@
                                             {% if p.description %}
                                                 <div class="description-cs">{{p.description}}</div>
                                             {% endif %}
-                                            {% if p.is_empty_stock_warning == 1 %}
-                                                <p style="color:red;font-size:10px;">* Out of order</p>
-                                            {% endif %} 
                                         </div>
                                         <div class="d-block d-xl-flex justify-between"> 
                                             <div class="cnter-txt mt-3 mt-lg-0">
@@ -170,9 +167,11 @@
                                             {% if p.description %}
                                                 <div class="description-cs">{{p.description}}</div>
                                             {% endif %}
-                                            {% if p.is_empty_stock_warning == 1 %}
-                                                <p style="color:red;font-size:10px;">* Out of order</p>
-                                            {% endif %}
+                                            {% if p.business_branch_configure|length > 0 %}
+                                                {% if p.business_branch_configure[0].is_empty_stock_warning == 1%}
+                                                    <p style="color:red;font-size:10px;">* Out of order</p>
+                                                {% endif %}
+                                            {% endif %} 
                                         </div>
                                         <div class="d-block d-xl-flex justify-between">
                                              

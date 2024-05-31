@@ -242,18 +242,18 @@
  {
   "docstatus": 0,
   "doctype": "Province",
-  "modified": "2023-10-27 16:16:48.191108",
-  "name": "Pattaya",
-  "note": "Pattaya",
-  "province": "Pattaya"
- },
- {
-  "docstatus": 0,
-  "doctype": "Province",
   "modified": "2022-12-05 20:47:21.564060",
   "name": "Siem Reap",
   "note": null,
   "province": "Siem Reap"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Province",
+  "modified": "2023-10-27 16:16:48.191108",
+  "name": "Pattaya",
+  "note": "Pattaya",
+  "province": "Pattaya"
  },
  {
   "docstatus": 0,
