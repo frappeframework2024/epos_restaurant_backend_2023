@@ -205,22 +205,19 @@ async function onClickProduct() {
         product.is_open_price = p.is_open_price
 
         //
-        const business_brnach_configure = JSON.parse(p.business_branch_configure_data)
-        const check_bus_config = business_brnach_configure.filter((r)=>r.business_branch == sale.sale.business_branch)
-        if (check_bus_config.length>0){
-            if (check_bus_config[0].is_empty_stock_warning == 1) {
-            //message dialog confirmation   
-            let emptyConfirm = await EmptyStockProductDialog();
-                if (!emptyConfirm) {
-                    return
-                }
-            }        }    
-
-
-
-
-
-       
+        const business_brnach_configure = JSON.parse(p.business_branch_configure_data||'[]')
+        if(business_brnach_configure){
+            const check_bus_config = business_brnach_configure.filter((r)=>r.business_branch == sale.sale.business_branch)
+            if (check_bus_config.length>0){
+                if (check_bus_config[0].is_empty_stock_warning == 1) {
+                //message dialog confirmation   
+                let emptyConfirm = await EmptyStockProductDialog();
+                    if (!emptyConfirm) {
+                        return
+                    }
+                }        
+            }  
+        }
 
         if (!p.is_timer_product) {
             if (p.is_open_product == 1) {
