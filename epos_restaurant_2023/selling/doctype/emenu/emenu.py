@@ -41,9 +41,9 @@ class eMenu(WebsiteGenerator):
 		context.products = data 
 		popular_products = [] 
 		for d in self.popular_product:
-		# 	_d = json.loads(str(d))
-			business_branch_configure =(d.business_branch_configure_data or '[]')
+			business_branch_configure = json.loads(d.business_branch_configure_data or '[]')
 			d.prices = json.loads(d.prices or '[]') 
+			d.update({"business_branch_configure":[b for b in business_branch_configure if b["business_branch"] == self.business_branch]})
 			popular_products.append(d)
 
 		context.popular_products = popular_products

@@ -119,6 +119,11 @@
                                             {% if p.description %}
                                                 <div class="description-cs">{{p.description}}</div>
                                             {% endif %}
+                                            {% if p.business_branch_configure|length > 0 %}
+                                                {% if p.business_branch_configure[0].is_empty_stock_warning == 1%}
+                                                    <p style="color:red;font-size:10px;">* Out of order</p>
+                                                {% endif %}
+                                            {% endif %} 
                                         </div>
                                         <div class="d-block d-xl-flex justify-between"> 
                                             <div class="cnter-txt mt-3 mt-lg-0">
