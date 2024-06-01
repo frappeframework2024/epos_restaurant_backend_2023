@@ -38,7 +38,6 @@ frappe.ui.form.on("Sale", {
 
 
 		updateSummary(frm);
-		console.log(frm)
 		if (frm.doc.docstatus == 0){
 			frm.add_custom_button(__('Apply Discount'), function () {
 
