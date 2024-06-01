@@ -32,25 +32,11 @@
   "popular_product_tab",
   "popular_product",
   "template_style_tab",
-  "title_color",
-  "column_break_7",
-  "title_class",
-  "section_break_9",
-  "subtitle_color",
-  "column_break_11",
-  "subtitle_class",
-  "section_break_13",
-  "text_color",
-  "column_break_15",
-  "text_class",
-  "section_break_18",
-  "shortcut_color",
-  "column_break_20",
-  "shortcut_background",
-  "section_break_22",
-  "shortcut_active_color",
-  "column_break_24",
-  "shortcut_active_background",
+  "promo_image",
+  "section_break_wicy",
+  "kh_title_color",
+  "column_break_gezs",
+  "en_title_color",
   "section_break_clsj",
   "css",
   "banner_section",
@@ -79,63 +65,9 @@
    "label": "Template Style"
   },
   {
-   "default": "#d89b43",
-   "fieldname": "title_color",
-   "fieldtype": "Color",
-   "label": "Title Color"
-  },
-  {
-   "default": "#696969",
-   "fieldname": "subtitle_color",
-   "fieldtype": "Color",
-   "label": "Subtitle Color"
-  },
-  {
-   "default": "#7d7d7d",
-   "fieldname": "text_color",
-   "fieldtype": "Color",
-   "label": "Text Color"
-  },
-  {
    "fieldname": "welcome_title",
    "fieldtype": "Data",
    "label": "Welcome Title"
-  },
-  {
-   "fieldname": "column_break_7",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "title_class",
-   "fieldtype": "Data",
-   "label": "Title Class"
-  },
-  {
-   "fieldname": "section_break_9",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "column_break_11",
-   "fieldtype": "Column Break"
-  },
-  {
-   "default": "#696969",
-   "fieldname": "subtitle_class",
-   "fieldtype": "Data",
-   "label": "Subtitle Class"
-  },
-  {
-   "fieldname": "section_break_13",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "column_break_15",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "text_class",
-   "fieldtype": "Data",
-   "label": "Text Class"
   },
   {
    "fieldname": "pos_menu",
@@ -143,45 +75,6 @@
    "label": "Default Root Menu",
    "options": "POS Menu",
    "reqd": 1
-  },
-  {
-   "fieldname": "section_break_18",
-   "fieldtype": "Section Break"
-  },
-  {
-   "default": "#d89b43",
-   "fieldname": "shortcut_color",
-   "fieldtype": "Color",
-   "label": "Shortcut Color"
-  },
-  {
-   "fieldname": "column_break_20",
-   "fieldtype": "Column Break"
-  },
-  {
-   "default": "#e8e8e8",
-   "fieldname": "shortcut_background",
-   "fieldtype": "Color",
-   "label": "Shortcut Background"
-  },
-  {
-   "fieldname": "section_break_22",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "shortcut_active_color",
-   "fieldtype": "Color",
-   "label": "Shortcut Active Color"
-  },
-  {
-   "fieldname": "column_break_24",
-   "fieldtype": "Column Break"
-  },
-  {
-   "default": "#e8e8e8",
-   "fieldname": "shortcut_active_background",
-   "fieldtype": "Color",
-   "label": "Shortcut Active Background"
   },
   {
    "fieldname": "banner_section",
@@ -310,15 +203,37 @@
    "fieldname": "promotion",
    "fieldtype": "Table",
    "label": "Promotion",
-   "options": "eMenu Slideshow",
-   "reqd": 1
+   "options": "eMenu Slideshow"
+  },
+  {
+   "fieldname": "section_break_wicy",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "kh_title_color",
+   "fieldtype": "Color",
+   "label": "KH Title Color"
+  },
+  {
+   "fieldname": "column_break_gezs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "en_title_color",
+   "fieldtype": "Color",
+   "label": "EN Title Color"
+  },
+  {
+   "fieldname": "promo_image",
+   "fieldtype": "Attach Image",
+   "label": "Promo Image"
   }
  ],
  "has_web_view": 1,
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-31 15:49:30.222264",
+ "modified": "2024-06-01 16:13:48.075353",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu",
