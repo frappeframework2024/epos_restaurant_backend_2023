@@ -56,6 +56,7 @@ function getItemListFromSale(frm) {
       frm.refresh_field("invoice_summary");
     })
     .catch((err) => {
+      console.log(err)
       $(frm.fields_dict["item_list"].wrapper).html(
         "Get sale data fail. Please refresh your form"
       );

@@ -38,80 +38,85 @@ frappe.ui.form.on("Sale", {
 
 
 		updateSummary(frm);
+		console.log(frm)
+		if (frm.doc.docstatus == 0){
+			frm.add_custom_button(__('Apply Discount'), function () {
 
-		frm.add_custom_button(__('Apply Discount'), function () {
-
-			frappe.prompt([
-				{ 'fieldname': 'discount_type', 'fieldtype': 'Select', 'label': 'Discount Type', 'default': "Percent", "options": "Percent\nAmount" },
-				{ 'fieldname': 'discount_percent', 'fieldtype': 'Percent', 'label': 'Discount Percent', "depends_on": "eval:doc.discount_type=='Percent'", },
-				{ 'fieldname': 'discount_amount', 'fieldtype': 'Currency', 'label': 'Discount Amount', "depends_on": "eval:doc.discount_type=='Amount'" },
-				{ 'fieldname': 'discount_note', 'fieldtype': 'SmallText', 'label': 'Reason' }
-			],
-				function (d) {
-					frm.doc.discount_type = d.discount_type;
-					if (d.discount_type == "Percent") {
-						frm.doc.discount = d.discount_percent;
-					} else {
-						frm.doc.discount = d.discount_amount;
-					}
-					frm.refresh_field("discount_type");
-					frm.refresh_field("discount");
-					updateSumTotal(frm);
-				},
-				'Discount',
-				"Apply Discount"
-			)
-		}, __("Actions"));
-		frappe.db.get_value("POS Config", frm.doc.pos_config,"edit_closed_receipt_required_note",(r) => {
-			if (r.edit_closed_receipt_required_note === 1){
-				frm.add_custom_button(__('Edit Bill'), function () {
-					frappe.prompt([
-						{ 'fieldname': 'note', 'fieldtype': 'Data', 'label': 'Note',"reqd": 1,},
-					],
-						function (d) {
-							frappe.call({
-								method: "epos_restaurant_2023.api.api.edit_sale_order",
-				
-								args: {
-									name: frm.doc.name,
-									note:d.note,
-									
-								}, callback: function (r) { 
-									frm.reload_doc()
-									frappe.show_alert({
-										message:__('You can change document now.'),
-										indicator:'green'
-									}, 5);
-								}
-							})
-						},
-						'Edit Bill',
-						"Edit Bill"
-					)
-					
-				}, __("Actions"));
-			}else{
-				
-				frm.add_custom_button(__('Edit Bill'), function () {
-					frappe.call({
-						method: "epos_restaurant_2023.api.api.edit_sale_order",
-		
-						args: {
-							name: frm.doc.name
-						}, callback: function (r) { 
-							frm.reload_doc()
-							frappe.show_alert({
-								message:__('You can change document now.'),
-								indicator:'green'
-							}, 5);
-
+				frappe.prompt([
+					{ 'fieldname': 'discount_type', 'fieldtype': 'Select', 'label': 'Discount Type', 'default': "Percent", "options": "Percent\nAmount" },
+					{ 'fieldname': 'discount_percent', 'fieldtype': 'Percent', 'label': 'Discount Percent', "depends_on": "eval:doc.discount_type=='Percent'", },
+					{ 'fieldname': 'discount_amount', 'fieldtype': 'Currency', 'label': 'Discount Amount', "depends_on": "eval:doc.discount_type=='Amount'" },
+					{ 'fieldname': 'discount_note', 'fieldtype': 'SmallText', 'label': 'Reason' }
+				],
+					function (d) {
+						frm.doc.discount_type = d.discount_type;
+						if (d.discount_type == "Percent") {
+							frm.doc.discount = d.discount_percent;
+						} else {
+							frm.doc.discount = d.discount_amount;
 						}
-					})
+						frm.refresh_field("discount_type");
+						frm.refresh_field("discount");
+						updateSumTotal(frm);
+					},
+					'Discount',
+					"Apply Discount"
+				)
+			}, __("Actions"));
+		}
+		if (frm.doc.docstatus == 1 && frm.doc.is_genrate_tax_invoice == 0){
+			frappe.db.get_value("POS Config", frm.doc.pos_config,"edit_closed_receipt_required_note",(r) => {
+				if (r.edit_closed_receipt_required_note === 1){
+					frm.add_custom_button(__('Edit Bill'), function () {
+						frappe.prompt([
+							{ 'fieldname': 'note', 'fieldtype': 'Data', 'label': 'Note',"reqd": 1,},
+						],
+							function (d) {
+								frappe.call({
+									method: "epos_restaurant_2023.api.api.edit_sale_order",
 					
-				}, __("Actions"));
-			}
+									args: {
+										name: frm.doc.name,
+										note:d.note,
+										
+									}, callback: function (r) { 
+										frm.reload_doc()
+										frappe.show_alert({
+											message:__('You can change document now.'),
+											indicator:'green'
+										}, 5);
+									}
+								})
+							},
+							'Edit Bill',
+							"Edit Bill"
+						)
+						
+					}, __("Actions"));
+				}else{
+					
+					frm.add_custom_button(__('Edit Bill'), function () {
+						frappe.call({
+							method: "epos_restaurant_2023.api.api.edit_sale_order",
 			
-		});
+							args: {
+								name: frm.doc.name
+							}, callback: function (r) { 
+								frm.reload_doc()
+								frappe.show_alert({
+									message:__('You can change document now.'),
+									indicator:'green'
+								}, 5);
+	
+							}
+						})
+						
+					}, __("Actions"));
+				}
+				
+			});
+		}
+		
 		
 		
 

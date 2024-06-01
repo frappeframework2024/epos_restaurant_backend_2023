@@ -24,7 +24,9 @@ class eMenu(WebsiteGenerator):
 					ifnull(photo,'files/no_image.jpg') as photo,
 					case when coalesce(business_branch_configure_data,'')='' then '[]' else business_branch_configure_data end as business_branch_configure_data ,
 					prices,
-					description
+					description,
+					emenu_discount_type,
+					emenu_discount_value
 				from `tabTemp Product Menu`
 				where pos_menu in %(pos_menu)s
 			"""

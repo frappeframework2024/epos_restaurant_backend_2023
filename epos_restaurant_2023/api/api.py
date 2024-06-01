@@ -440,7 +440,7 @@ def get_tables_number(table_group,device_name):
     i = 0
     x = 10
     y = 10 
-    for d in data: 
+    for d in data:
         d.background_color=background_color
         d.default_bg_color=background_color
         d.text_color = text_color
@@ -978,7 +978,9 @@ def get_working_day_list_report(business_branch = '', pos_profile = ''):
 
 @frappe.whitelist()
 def edit_sale_order(name,auth=None,note=None):
-    
+    sale_doc = frappe.get_doc("Sale",name)
+    if sale_doc.is_generate_invoice == 1:
+        frappe.throw(_("Sale Order already has tax invoice."))
     if not auth:
         auth = frappe.db.get_value("Employee",{'user_id': frappe.session.user},['user_id','employee_name as full_name','name','pos_permission'], as_dict=1)
         if not auth:
@@ -1000,7 +1002,6 @@ def edit_sale_order(name,auth=None,note=None):
         sync_data_to_server_on_delete(doc= sale_payment)
     
     #then start to cancel sale
-    sale_doc = frappe.get_doc("Sale",name)
 
     payments = copy.deepcopy(sale_doc.payment)
     

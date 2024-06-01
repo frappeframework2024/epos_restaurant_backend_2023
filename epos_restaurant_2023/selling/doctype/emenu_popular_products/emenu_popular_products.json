@@ -14,7 +14,10 @@
   "prices",
   "modifiers",
   "business_branch_configure_data",
-  "description"
+  "description",
+  "column_break_rhjt",
+  "emenu_discount_type",
+  "emenu_discount_value"
  ],
  "fields": [
   {
@@ -75,12 +78,30 @@
    "fieldname": "business_branch_configure_data",
    "fieldtype": "JSON",
    "label": "Business Branch Configure Data"
+  },
+  {
+   "fieldname": "column_break_rhjt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Percent",
+   "fetch_from": "product_code.emenu_discount_type",
+   "fieldname": "emenu_discount_type",
+   "fieldtype": "Data",
+   "label": "Discount Type"
+  },
+  {
+   "default": "0",
+   "fetch_from": "product_code.emenu_discount_value",
+   "fieldname": "emenu_discount_value",
+   "fieldtype": "Float",
+   "label": "Discount Value"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-05-30 10:41:54.535776",
+ "modified": "2024-05-31 14:36:12.557345",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu Popular Products",

@@ -16,7 +16,7 @@
   "logo",
   "enable_cache",
   "section_break_3",
-  "slideshow",
+  "promotion",
   "section_break_5",
   "pos_menu",
   "welcome_title",
@@ -60,13 +60,6 @@
   "favicon"
  ],
  "fields": [
-  {
-   "fieldname": "slideshow",
-   "fieldtype": "Table",
-   "label": "Slideshow",
-   "options": "eMenu Slideshow",
-   "reqd": 1
-  },
   {
    "fieldname": "title",
    "fieldtype": "Data",
@@ -312,13 +305,20 @@
    "label": "Business Branch",
    "options": "Business Branch",
    "reqd": 1
+  },
+  {
+   "fieldname": "promotion",
+   "fieldtype": "Table",
+   "label": "Promotion",
+   "options": "eMenu Slideshow",
+   "reqd": 1
   }
  ],
  "has_web_view": 1,
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-30 10:39:40.537480",
+ "modified": "2024-05-31 15:49:30.222264",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu",

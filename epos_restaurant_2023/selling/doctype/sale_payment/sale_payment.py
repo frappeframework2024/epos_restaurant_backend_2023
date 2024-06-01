@@ -148,7 +148,7 @@ class SalePayment(Document):
 
 		# Update Customer Voucher Balance
 	def update_customer_voucher_balance(self):
-		if self.sale_amount != self.payment_amount and self.payment_type_group == "Voucher" :
+		if self.sale_amount < self.payment_amount and self.payment_type_group == "Voucher" :
 			frappe.throw("Payment amount must equal to grand total")
 		# get Customer Total Voucher Payment
 		voucher_payment_sql = """
@@ -164,7 +164,7 @@ class SalePayment(Document):
 		total_credit_amount =  frappe.db.sql(voucher_credit_sql,as_dict=1)
 		voucher_balance = frappe.db.get_value("Customer",self.customer,'voucher_balance')
 
-		if (total_credit_amount[0].credit_amount <= 0 or voucher_balance < self.sale_amount) and self.docstatus == 1 :
+		if (total_credit_amount[0].credit_amount <= 0 or voucher_balance < self.payment_amount) and self.docstatus == 1 :
 			frappe.throw("Customer has no credit amount for {}".format(self.payment_type))
 		total_voucher_payment = frappe.db.sql(voucher_payment_sql,as_dict=1)
 		frappe.db.set_value('Customer', self.customer, {

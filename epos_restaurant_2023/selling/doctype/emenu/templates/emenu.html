@@ -57,6 +57,7 @@
             </div>
         </div>
     </div>
+    
 
     <div class="py-3 my-3 nav-pro-wrapper border border-start-0 border-end-0 border-bottom-0 bg-white el-shadow">
         <nav class="container">
@@ -88,9 +89,23 @@
             </div>
         </nav>
     </div>
- 
+
     <div class="container sections-content-1">
         <div class="sections sections-content">
+            <div class="scroll-section" id="promo_section">
+                <div class="promo-section mt-4 mb-3">
+                    <h1 class="text-center">Promotion</h1> 
+                </div>
+                <div class="justify-center p-4 w-100" style="background: url(/files/emenu-bg-promo.jpg);border-radius: 20px;background-repeat: no-repeat;background-size: cover;"> 
+                    <div class="owl-carousel owl-theme mb-3" id="slid_banner">
+                        {% for p in promotion %}
+                            <div class="item d-flex justify-center">
+                                <img class="lazy" src="{{p.photo or " /files/no_image.jpg"}}" style="height: 400px;"/>
+                            </div>
+                        {% endfor %} 
+                    </div>
+                </div>
+            </div>
             {% if (popular_products | length) >0 %}
             <div class="scroll-section" id="popular_product">
                 <div class="mt-4 mb-3">
@@ -99,12 +114,19 @@
                 </div>
                 <div class="row p-2">
                     {% for p in popular_products %}
-                    <div class="product_detail col-6 col-lg-4 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
+                    <div class="product_detail col-6 col-lg-6 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
                         <div class="col-inner">
                             <a href="/product_detail?product_code={{p.product_code}}&menu_id={{doc.name}}" style="text-decoration: none;">
                                 <div class="row p-0 p-lg-3 items-inner-1 m-0 h-100">
-                                    <div class="col-12 col-lg-4 p-0 wrapper-image" style="background: url('/files/food_bg_image.jpg');">
+                                    <div class="col-12 col-lg-4 p-0 wrapper-image position-relative" style="background: url('/files/food_bg_image.jpg');">
                                         <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/no_image.jpg"}}"/>
+                                        <div class="position-absolute" style="bottom: 5px; background: #db3c76;left: 5px;">
+                                            {% if p.business_branch_configure|length > 0 %}
+                                                {% if p.business_branch_configure[0].is_empty_stock_warning == 1%}
+                                                    <p class="text-white" style="font-size:16px;">* Out of order</p>
+                                                {% endif %}
+                                            {% endif %} 
+                                        </div>
                                     </div>
                                     <div class="col-12 col-lg-8 d-flex flex-column flex-lg-column py-3 ps-lg-3 py-lg-0 content-custom">
                                         <div class="">
@@ -119,20 +141,37 @@
                                             {% if p.description %}
                                                 <div class="description-cs">{{p.description}}</div>
                                             {% endif %}
-                                            {% if p.business_branch_configure|length > 0 %}
-                                                {% if p.business_branch_configure[0].is_empty_stock_warning == 1%}
-                                                    <p style="color:red;font-size:10px;">* Out of order</p>
-                                                {% endif %}
-                                            {% endif %} 
                                         </div>
                                         <div class="d-block d-xl-flex justify-between"> 
                                             <div class="cnter-txt mt-3 mt-lg-0">
                                                 {% if p.prices != [] %}
                                                         {% for price in p.prices %}
                                                             <span class="price-cus">{{price.portion}}: {{frappe.format(price.price or 0,{"fieldtype":"Currency"})}}</span> <br/>
+                                                            {% if p.emenu_discount_value > 0 %}
+                                                                {% if p.emenu_discount_type=='Percent' %}
+                                                                    <p>{{frappe.format(p.emenu_discount_value,{"fieldtype":"Percent"}) }} off = {{frappe.format((price.price or 0) - ((price.price or 0)* (p.emenu_discount_value/100) ),{"fieldtype":"Currency"})}}</p>
+                                                                {%else%}
+                                                                    <p>{{ frappe.format(p.emenu_discount_value,{"fieldtype":"Currency"})}}
+
+                                                                        = {{frappe.format((price.price or 0) - (p.emenu_discount_value) ,{"fieldtype":"Currency"})}}
+                                                                    </p>
+                                                                {%endif%}
+                                                            {%endif%}
+
                                                         {% endfor %}
                                                     {% else %}
                                                         <span class="price-cus">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</span>
+
+                                                        {% if p.emenu_discount_value > 0 %}
+                                                            {% if p.emenu_discount_type=='Percent' %}
+                                                                <p>{{frappe.format(p.emenu_discount_value,{"fieldtype":"Percent"}) }} off = {{frappe.format((p.price or 0) - ((p.price or 0)* (p.emenu_discount_value/100) ),{"fieldtype":"Currency"})}}</p>
+                                                            {%else%}
+                                                                <p>{{ frappe.format(p.emenu_discount_value,{"fieldtype":"Currency"})}}
+
+                                                                    = {{frappe.format((p.price or 0) - (p.emenu_discount_value) ,{"fieldtype":"Currency"})}}
+                                                                </p>
+                                                            {%endif%}
+                                                        {%endif%}
                                                     {% endif %}
                                             </div>
                                         </div>
@@ -152,7 +191,7 @@
                 </div>
                 <div class="row p-2">
                     {%for p in products|selectattr('pos_menu', 'equalto', m.menu)|list %}
-                    <div class="product_detail col-6 col-lg-4 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
+                    <div class="product_detail col-6 col-lg-6 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
                         <div class="col-inner">
                             <a href="/product_detail?product_code={{p.product_code}}&menu_id={{doc.name}}" style="text-decoration: none;">
                                 <div class="row p-0 p-lg-3 items-inner-1 m-0 h-100">

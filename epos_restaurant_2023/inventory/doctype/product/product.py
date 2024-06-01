@@ -517,6 +517,8 @@ def add_product_to_temp_menu(self):
 				'prices': json.dumps(prices),
 				'modifiers': json.dumps(modifiers),
 				'business_branch_configure_data':json.dumps(business_branch_configure),
+				'emenu_discount_value':self.emenu_discount_value,
+				'emenu_discount_type':self.emenu_discount_type,
 			})
 		frappe.db.commit()
 
