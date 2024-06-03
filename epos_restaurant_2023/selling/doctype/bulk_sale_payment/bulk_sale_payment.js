@@ -13,6 +13,15 @@ frappe.ui.form.on("Bulk Sale Payment", {
         });
     },
 	refresh(frm) {
+        frappe.call({
+            method: "get_sale_payment_naming_series",
+            doc: frm.doc,
+            callback: function (r) {
+                frm.set_df_property('sale_payment_naming_series', 'options', r.message);
+                frm.refresh_field('sale_payment_naming_series');
+                console.log(r.message)
+            },
+        });
         updatetotal(frm);
 	},
     customer(frm) {
@@ -44,7 +53,7 @@ frappe.ui.form.on("Bulk Sale Payment", {
 		}
 	},
     payment_type(frm){ 
-        if(frm.doc.sale_list.length > 0){
+        if(frm.doc.sale_list){
             $.each(frm.doc.sale_list, function(i, d) {
                 d.payment_type = frm.doc.payment_type;
                 d.currency = frm.doc.currency;

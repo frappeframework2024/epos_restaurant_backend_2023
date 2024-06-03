@@ -11,6 +11,7 @@
   "customer",
   "amended_from",
   "column_break_wjqf",
+  "sale_payment_naming_series",
   "payment_type",
   "currency",
   "exchange_rate",
@@ -128,12 +129,17 @@
    "fieldtype": "Float",
    "label": "Exchange Rate",
    "read_only": 1
+  },
+  {
+   "fieldname": "sale_payment_naming_series",
+   "fieldtype": "Select",
+   "label": "Sale Payment Naming Series"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-06-01 08:36:17.486420",
+ "modified": "2024-06-03 09:35:17.638616",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Bulk Sale Payment",
@@ -150,6 +156,7 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],

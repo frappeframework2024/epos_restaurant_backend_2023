@@ -19,14 +19,17 @@ class BulkSalePayment(Document):
 		else:
 			frappe.enqueue(on_cancel_enqueue,queue="short",doc=self)
 		self.reload()
+	@frappe.whitelist()
+	def get_sale_payment_naming_series(self):
+		return frappe.get_meta("Sale Payment").get_field("naming_series").options
 
 def on_cancel_enqueue(doc):
 	for d in doc.sale_list:
 			cancel_sale_payment(d)
 
-def add_sale_payment_enqueue(doc):
-	for d in doc.sale_list:
-			add_sale_payment(d)
+def add_sale_payment_enqueue(self):
+	for d in self.sale_list:
+			add_sale_payment(d,self)
 
 def cancel_sale_payment(d):
 	doc = frappe.get_doc('Sale Payment', d.sale_payment)
@@ -37,8 +40,9 @@ def get_sale_by_customer(customer):
 	sales = frappe.db.sql("select name sale,grand_total amount,total_paid payment_amount,balance,stock_location from `tabSale` where customer = '{0}' and docstatus = 1 and balance > 0".format(customer),as_dict=1)
 	return sales
 
-def add_sale_payment(doc):
+def add_sale_payment(doc,self):
 	p = frappe.new_doc("Sale Payment")
+	p.naming_series = self.sale_payment_naming_series
 	p.posting_date = doc.posting_date
 	p.payment_type = doc.payment_type
 	p.currency = doc.currency
