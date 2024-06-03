@@ -23,10 +23,9 @@ class eMenu(WebsiteGenerator):
 					price,
 					ifnull(photo,'files/no_image.jpg') as photo,
 					case when coalesce(business_branch_configure_data,'')='' then '[]' else business_branch_configure_data end as business_branch_configure_data ,
+					case when coalesce(product_emenu_setting_data,'')='' then '[]' else product_emenu_setting_data end as product_emenu_setting_data ,
 					prices,
-					description,
-					emenu_discount_type,
-					emenu_discount_value
+					description
 				from `tabTemp Product Menu`
 				where pos_menu in %(pos_menu)s
 			"""
@@ -34,18 +33,27 @@ class eMenu(WebsiteGenerator):
 
 			# Convert prices to JSON
 			for item in data:
-
 				business_branch_configure = json.loads(item['business_branch_configure_data'] or '[]')
+				product_emenu_setting = json.loads(item['product_emenu_setting_data'] or '[]')
 				item['prices'] = json.loads(item['prices'] or '[]')
-				item.update({"business_branch_configure": [b for b in business_branch_configure if b["business_branch"] == self.business_branch]}) 
+				item.update({
+					"business_branch_configure": [b for b in business_branch_configure if b["business_branch"] == self.business_branch],
+					"product_emenu_setting":[b for b in product_emenu_setting if b["business_branch"] == self.business_branch]
+				 }) 
+ 
 
 		context.no_cache = not  (self.enable_cache or 0)
 		context.products = data 
 		popular_products = [] 
 		for d in self.popular_product:
 			business_branch_configure = json.loads(d.business_branch_configure_data or '[]')
+			product_emenu_setting = json.loads(d.product_emenu_setting_data or '[]')
+
 			d.prices = json.loads(d.prices or '[]') 
-			d.update({"business_branch_configure":[b for b in business_branch_configure if b["business_branch"] == self.business_branch]})
+			d.update({
+				"business_branch_configure":[b for b in business_branch_configure if b["business_branch"] == self.business_branch],
+				"product_emenu_setting":[b for b in product_emenu_setting if b["business_branch"] == self.business_branch]
+			})
 			popular_products.append(d)
 
 		context.popular_products = popular_products
@@ -82,19 +90,23 @@ class eMenu(WebsiteGenerator):
 					})
 
 				pop.business_branch_configure_data = json.dumps(business_branch_configure)
-			
 
-
- 
+				## get product emenu setting
+				product_emenu_setting =[]
+				for e in product.product_emenu_setting:
+					product_emenu_setting.append({
+						"business_branch":e.business_branch,
+						"discount_type":e.discount_type,
+						"discount_value":e.discount_value
+					})
+				pop.product_emenu_setting_data = json.dumps(product_emenu_setting) 
 
 def get_product_modifier(product):
 	#get product modifier
 	mc0 = []
 	mc1 = Enumerable(product.product_modifiers).select(lambda x: x.modifier_category).distinct()
 	mc2 = [] #global modifier category
-
-
-
+	
 	# #get global modifier category
 	global_modifier_product_categorie = frappe.get_all('Modifier Group Product Category',
 							filters=[['product_category','=',product.product_category]],

@@ -17,8 +17,6 @@
   "price",
   "kitchen_group",
   "tax_rule",
-  "emenu_discount_type",
-  "emenu_discount_value",
   "prices",
   "modifiers",
   "combo_menu_data",
@@ -42,7 +40,8 @@
   "pos_menu_id",
   "printers",
   "description",
-  "business_branch_configure_data"
+  "business_branch_configure_data",
+  "product_emenu_setting_data"
  ],
  "fields": [
   {
@@ -266,23 +265,15 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "Percent",
-   "fetch_from": "product_code.emenu_discount_type",
-   "fieldname": "emenu_discount_type",
-   "fieldtype": "Data",
-   "label": "Discount Type"
-  },
-  {
-   "default": "0",
-   "fetch_from": "product_code.emenu_discount_value",
-   "fieldname": "emenu_discount_value",
-   "fieldtype": "Float",
-   "label": "Discount Value"
+   "default": "[]",
+   "fieldname": "product_emenu_setting_data",
+   "fieldtype": "JSON",
+   "label": "Product eMenu Setting Data"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-31 14:21:01.408136",
+ "modified": "2024-06-03 10:00:07.739940",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Temp Product Menu",

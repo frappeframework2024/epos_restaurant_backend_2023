@@ -489,6 +489,15 @@ def add_product_to_temp_menu(self):
 				"business_branch": b.business_branch,
 				"is_empty_stock_warning": b.is_empty_stock_warning
 			})
+		
+		## get product emenu setting
+		product_emenu_setting = []
+		for e in self.product_emenu_setting:
+			product_emenu_setting.append({
+				"business_branch":e.business_branch,
+				"discount_type":e.discount_type,
+				"discount_value":e.discount_value
+			})
 
 		## end get business branch configure
 
@@ -503,6 +512,7 @@ def add_product_to_temp_menu(self):
 							'printers':json.dumps(printers),
 							'prices':json.dumps(prices),
 							'business_branch_configure_data':json.dumps(business_branch_configure),
+							'product_emenu_setting_data':json.dumps(product_emenu_setting),
 							'revenue_group':self.revenue_group,
 							'modifiers':json.dumps(modifiers)
 						})
@@ -517,8 +527,7 @@ def add_product_to_temp_menu(self):
 				'prices': json.dumps(prices),
 				'modifiers': json.dumps(modifiers),
 				'business_branch_configure_data':json.dumps(business_branch_configure),
-				'emenu_discount_value':self.emenu_discount_value,
-				'emenu_discount_type':self.emenu_discount_type,
+				'product_emenu_setting_data':json.dumps(product_emenu_setting)
 			})
 		frappe.db.commit()
 
