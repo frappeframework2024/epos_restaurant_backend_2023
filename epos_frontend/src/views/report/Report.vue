@@ -444,6 +444,7 @@ function onPrint(){
     
 
     if(localStorage.getItem("is_window")==1){
+        gv.onPrintWorkingDayAndCashierShift(activeReport.value.report_id,pos_profile, activeReport.value.doc_type)
         window.chrome.webview.postMessage(JSON.stringify(data));
     }else  if((localStorage.getItem("flutterWrapper") || 0) == 1){
         data.printer = _printer;
