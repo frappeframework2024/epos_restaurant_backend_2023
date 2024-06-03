@@ -573,7 +573,7 @@ def cashier_shift_info(name,pos_profile):
             custom_currency_precision= frappe.db.get_value("Currency",a["currency"],"custom_currency_precision")
             result.append({
                 "categroy":'voucher_payments',
-                'title': a["revenue_group"],
+                'title': a["payment_type"],
                 'value': frappe.utils.fmt_money(a["input_amount"],currency=a["currency"],precision=custom_currency_precision)
             })
     
