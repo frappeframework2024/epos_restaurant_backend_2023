@@ -600,6 +600,7 @@ def add_payment_to_sale_payment(self):
 
 			doc = frappe.get_doc({
 					'doctype': 'Sale Payment',
+					'naming_series': self.sale_payment_naming_series,
 					"transaction_type":"Changed",
 					'posting_date':self.posting_date,
 					'payment_type': payment_type,
