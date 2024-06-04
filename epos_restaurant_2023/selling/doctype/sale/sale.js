@@ -14,6 +14,14 @@ frappe.ui.form.on("Sale", {
 
 	},
 	refresh(frm) {
+		frappe.call({
+            method: "get_sale_payment_naming_series",
+            doc: frm.doc,
+            callback: function (r) {
+                frm.set_df_property('sale_payment_naming_series', 'options', r.message);
+                frm.refresh_field('sale_payment_naming_series');
+            },
+        });
 		
 		if (!frm.doc.__islocal && frm.doc.docstatus == 1) {
 			frm.dashboard.add_indicator(__("Total Quantity: {0}", [frm.doc.total_quantity]), "blue");
