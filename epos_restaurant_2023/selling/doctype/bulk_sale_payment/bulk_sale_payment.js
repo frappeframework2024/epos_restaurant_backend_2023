@@ -19,7 +19,6 @@ frappe.ui.form.on("Bulk Sale Payment", {
             callback: function (r) {
                 frm.set_df_property('sale_payment_naming_series', 'options', r.message);
                 frm.refresh_field('sale_payment_naming_series');
-                console.log(r.message)
             },
         });
         updatetotal(frm);

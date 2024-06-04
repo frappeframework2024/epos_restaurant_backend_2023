@@ -84,6 +84,7 @@
   "closed_date",
   "is_synced",
   "payments_tab",
+  "sale_payment_naming_series",
   "payment",
   "allow_earn_point",
   "total_point_earn",
@@ -1178,6 +1179,11 @@
    "fieldtype": "Float",
    "label": "Total Point Earn",
    "read_only": 1
+  },
+  {
+   "fieldname": "sale_payment_naming_series",
+   "fieldtype": "Select",
+   "label": "Sale Payment Naming Series"
   }
  ],
  "image_field": "photo",
@@ -1190,7 +1196,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-05-28 14:01:04.000940",
+ "modified": "2024-06-04 08:40:04.275661",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

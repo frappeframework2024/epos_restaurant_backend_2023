@@ -236,7 +236,10 @@ class Sale(Document):
 		if self.docstatus ==1:
 			self.sale_status = "Closed"
 			self.sale_status_color = frappe.get_value("Sale Status","Closed","background_color")
-
+	@frappe.whitelist()
+	def get_sale_payment_naming_series(self):
+		return frappe.get_meta("Sale Payment").get_field("naming_series").options
+	
 	def on_update(self):
 		if self.flags.ignore_on_update == True:
 			return 
@@ -559,6 +562,7 @@ def add_payment_to_sale_payment(self):
 				if p.input_amount>0:
 					doc = frappe.get_doc({
 							'doctype': 'Sale Payment',
+							'naming_series': self.sale_payment_naming_series,
 							'posting_date':self.posting_date,
 							'payment_type': p.payment_type,
 							'currency':p.currency,
