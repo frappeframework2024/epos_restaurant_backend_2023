@@ -15,6 +15,7 @@
   "title",
   "label",
   "alias",
+  "tax_report_fieldname",
   "total_label",
   "sort_order"
  ],
@@ -77,6 +78,7 @@
    "label": "Sort Order"
   },
   {
+   "description": "We use this alias as tax invoice report column also",
    "fieldname": "alias",
    "fieldtype": "Data",
    "label": "Alias"
@@ -87,12 +89,18 @@
    "fieldname": "total_label",
    "fieldtype": "Data",
    "label": "Total Label"
+  },
+  {
+   "description": "The value of this field must be lower case letter separate by _.\nwe use this field to get dynamic report column in Tax Invoice Report. This fieldname here must be match with fieldname of tax field in Tax Invoice Doctype",
+   "fieldname": "tax_report_fieldname",
+   "fieldtype": "Data",
+   "label": "Tax Report Fieldname"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-05-06 12:11:19.110662",
+ "modified": "2024-06-06 12:34:14.281735",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Tax Invoice Summary Group",

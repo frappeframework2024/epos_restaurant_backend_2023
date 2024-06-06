@@ -189,7 +189,8 @@
             {% for m in doc.pos_menu_selections %}
             <div class="scroll-section" id="{{m.name}}">
                 <div class="mt-4 mb-3">
-                    <h2>{{m.menu}}</h2>
+                    {% set title = m.menu %}
+                    <h2>{{title.split('(')[0]}}</h2>
                 </div>
                 <div class="row p-2">
                     {%for p in products|selectattr('pos_menu', 'equalto', m.menu)|list %}

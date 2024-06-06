@@ -39,7 +39,7 @@ def get_kod_menu_item(business_branch, screen_name,group_by="order_time",sale_ty
         from `tabSale Product` sp
         inner join `tabSale` s on s.name = sp.parent  
         where 
-            s.business_branch = %(business_branch)s and 
+            
             s.cashier_shift in %(cashier_shift)s and 
             sp.printers like %(screen_name)s and 
             s.sale_type in %(sale_types)s and
@@ -47,7 +47,7 @@ def get_kod_menu_item(business_branch, screen_name,group_by="order_time",sale_ty
         order by sp.order_time 
     """
  
-    data = frappe.db.sql(sql,{"business_branch":business_branch,"screen_name":'%{}%'.format(screen_name),"cashier_shift":open_cashier_shift,"sale_types":sale_types}, as_dict=1)
+    data = frappe.db.sql(sql,{"screen_name":'%{}%'.format(screen_name),"cashier_shift":open_cashier_shift,"sale_types":sale_types}, as_dict=1)
     data = data + get_deleted_order(business_branch, screen_name, open_cashier_shift)
     return {
             "kpi":get_kpi(data,business_branch, screen_name,sale_types,open_cashier_shift),
@@ -133,12 +133,11 @@ def get_total_done(business_branch, screen_name,sale_types,cashier_shifts):
             inner join `tabSale` s on s.name = sp.parent
             where 
                 kod_status='Done' and 
-                s.business_branch = %(business_branch)s and 
                 s.sale_type in %(sale_types)s and  
                 s.cashier_shift in %(cashier_shifts)s and 
                 sp.printers like %(screen_name)s  
             """
-    data = frappe.db.sql(sql,{"business_branch":business_branch,"screen_name":'%{}%'.format(screen_name),"cashier_shifts":cashier_shifts,"sale_types":sale_types},as_dict=1)
+    data = frappe.db.sql(sql,{"screen_name":'%{}%'.format(screen_name),"cashier_shifts":cashier_shifts,"sale_types":sale_types},as_dict=1)
     return data[0]["total"]
 
 def get_recent_done(business_branch, screen_name,sale_types):
@@ -167,7 +166,6 @@ def get_recent_done(business_branch, screen_name,sale_types):
         from `tabSale Product` sp
         inner join `tabSale` s on s.name = sp.parent  
         where 
-            s.business_branch = %(business_branch)s and 
             sp.printers like %(screen_name)s and  
             s.cashier_shift in %(cashier_shift)s and 
             s.sale_type in %(sale_types)s and 
@@ -176,7 +174,7 @@ def get_recent_done(business_branch, screen_name,sale_types):
         limit 20
     """
  
-    data = frappe.db.sql(sql,{"business_branch":business_branch,"screen_name":'%{}%'.format(screen_name),"cashier_shift":cashier_shift,"sale_types":sale_types}, as_dict=1)
+    data = frappe.db.sql(sql,{"screen_name":'%{}%'.format(screen_name),"cashier_shift":cashier_shift,"sale_types":sale_types}, as_dict=1)
     return data
 
 @frappe.whitelist(methods="POST")
@@ -201,7 +199,7 @@ def close_order(sale_product_names, status):
 
 
 def get_open_cashier_shift(business_branch):
-    sql="select name from `tabCashier Shift` where is_closed=0 and business_branch='{}'".format(business_branch)
+    sql="select name from `tabCashier Shift` where is_closed=0 and "
     return set([d["name"] for d in  frappe.db.sql(sql,as_dict=1)])
      
      
@@ -235,7 +233,7 @@ def get_deleted_order(business_branch,screen_name,cashier_shift = None,sale_type
         from `tabSale Product Deleted` sp
         inner join `tabSale` s on s.name = sp.sale_doc  
         where 
-            s.business_branch = %(business_branch)s and 
+            
             s.cashier_shift in %(cashier_shift)s and 
             sp.printers like %(screen_name)s and 
             s.sale_type like %(sale_types)s and 
@@ -243,7 +241,7 @@ def get_deleted_order(business_branch,screen_name,cashier_shift = None,sale_type
             sp.hide_in_kod=0 
         order by sp.order_time 
     """
-    data = frappe.db.sql(sql,{"business_branch":business_branch,"screen_name":'%{}%'.format(screen_name),"cashier_shift":cashier_shift,"sale_types":sale_types}, as_dict=1)
+    data = frappe.db.sql(sql,{"screen_name":'%{}%'.format(screen_name),"cashier_shift":cashier_shift,"sale_types":sale_types}, as_dict=1)
     
     return data
     

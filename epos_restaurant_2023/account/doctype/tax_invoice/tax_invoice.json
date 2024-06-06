@@ -24,7 +24,14 @@
   "default_print_format",
   "print_settings",
   "column_break_hrgu",
-  "invoice_summary"
+  "invoice_summary",
+  "admin_only_tab",
+  "sub_total",
+  "service_charge",
+  "accommodation_tax",
+  "specific_tax",
+  "vat",
+  "grand_total"
  ],
  "fields": [
   {
@@ -137,11 +144,46 @@
    "fieldtype": "Data",
    "label": "Print Settings",
    "length": 250
+  },
+  {
+   "fieldname": "admin_only_tab",
+   "fieldtype": "Tab Break",
+   "label": "Admin Only"
+  },
+  {
+   "fieldname": "sub_total",
+   "fieldtype": "Currency",
+   "label": "Sub Total"
+  },
+  {
+   "fieldname": "service_charge",
+   "fieldtype": "Currency",
+   "label": "Service Charge"
+  },
+  {
+   "fieldname": "accommodation_tax",
+   "fieldtype": "Currency",
+   "label": "Accommodation Tax"
+  },
+  {
+   "fieldname": "specific_tax",
+   "fieldtype": "Currency",
+   "label": "Specific Tax"
+  },
+  {
+   "fieldname": "vat",
+   "fieldtype": "Currency",
+   "label": "VAT"
+  },
+  {
+   "fieldname": "grand_total",
+   "fieldtype": "Currency",
+   "label": "Grand Total"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-12 16:12:38.121960",
+ "modified": "2024-06-06 12:38:24.939376",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "Tax Invoice",
