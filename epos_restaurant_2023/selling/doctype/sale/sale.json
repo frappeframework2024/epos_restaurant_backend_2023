@@ -139,6 +139,7 @@
   "commission_note",
   "note_tab",
   "total_cost",
+  "total_secondary_cost",
   "amended_from",
   "column_break_75",
   "profit",
@@ -1184,6 +1185,11 @@
    "fieldname": "sale_payment_naming_series",
    "fieldtype": "Select",
    "label": "Sale Payment Naming Series"
+  },
+  {
+   "fieldname": "total_secondary_cost",
+   "fieldtype": "Currency",
+   "label": "Total Secondary Cost"
   }
  ],
  "image_field": "photo",
@@ -1196,7 +1202,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-06-04 08:40:04.275661",
+ "modified": "2024-06-06 15:09:41.212038",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

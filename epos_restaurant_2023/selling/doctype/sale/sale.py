@@ -257,6 +257,7 @@ class Sale(Document):
 			total_second_cost += (frappe.db.get_value('Product',{'product_code':p.product_code}, ['secondary_cost'])* p.quantity)
 		self.sale_grand_total = self.grand_total
 		self.sale_profit = self.grand_total - total_cost
+		self.total_secondary_cost = total_second_cost
 		self.second_sale_profit = self.grand_total - total_second_cost
 		frappe.db.sql("update `tabSale` set total_cost = {0} , profit=grand_total - {0} , second_profit = grand_total - {1} where name='{2}'".format(total_cost,total_second_cost, self.name))
 
