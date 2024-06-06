@@ -38,6 +38,7 @@ const sale = inject("$sale")
 const frappe = inject("$frappe")
 const { mobile } = useDisplay();
 const db = frappe.db();
+const call = frappe.db();
 let control = ref(null)
 
 const toaster = createToaster({ position: 'top-right', maxToasts: 2, duration: 1000 });
@@ -92,6 +93,8 @@ function onKeyDown(event) {
 }
 
 function onSearchProductByBarcode(barcode){
+
+
     const searchProductResource = createResource({
                 url: "epos_restaurant_2023.api.product.get_product_by_barcode",
                 params: {
@@ -133,6 +136,7 @@ function onSearchProductByBarcode(barcode){
                     p.modifiers_data = "[]";
                     p.portion = "";
                 }
+            
 
                 sale.addSaleProduct(p);
 

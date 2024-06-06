@@ -17,10 +17,9 @@ class POSMenu(NestedSet):
 
         self.pos_menu_path = get_menu_path(self.pos_menu_name_en)
 
-        
+        update_pos_menu(self)
 
         if self.is_emenu:
-
             if self.is_new():
                 if not self.background_image:
                     placeholder = "/assets/frappe/images/emenu_placeholder.jpg"
@@ -66,9 +65,17 @@ def  get_menu_path(pos_menu_name):
         pos_menu_paths.insert(0,pos_menu)
         pos_menu =   frappe.db.get_value('POS Menu', pos_menu, 'parent_pos_menu')
     
-    path = ' > '.join(pos_menu_paths)
-   
+    path = ' > '.join(pos_menu_paths) 
+    return path 
+
+
+def update_pos_menu(self):
+    pos_menu = self.name
+    pos_menu_paths = []
+    while pos_menu:
+        pos_menu_paths.insert(0,pos_menu)
+        pos_menu =   frappe.db.get_value('POS Menu', pos_menu, 'parent_pos_menu')     
         
-       
-        
-    return path
+
+    frappe.db.sql("update `tabProduct Menu` a set root_menu = '{}' where pos_menu = '{}'".format(pos_menu_paths[0], self.name))  
+    frappe.db.commit()  

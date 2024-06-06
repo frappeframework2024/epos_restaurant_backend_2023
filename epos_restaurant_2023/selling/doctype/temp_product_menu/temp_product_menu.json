@@ -34,14 +34,15 @@
   "rate_include_tax",
   "is_combo_menu",
   "use_combo_group",
+  "is_empty_stock_warning",
+  "discount_type",
+  "discount_value",
   "sort_order",
   "photo",
   "combo_group_data",
   "pos_menu_id",
   "printers",
-  "description",
-  "business_branch_configure_data",
-  "product_emenu_setting_data"
+  "description"
  ],
  "fields": [
   {
@@ -210,7 +211,7 @@
    "unique": 1
   },
   {
-   "fetch_from": "product_code.sort_order",
+   "fetch_from": ".sort_order",
    "fieldname": "sort_order",
    "fieldtype": "Int",
    "label": "Sort Order"
@@ -255,25 +256,34 @@
    "label": "Description"
   },
   {
-   "default": "[]",
-   "fieldname": "business_branch_configure_data",
-   "fieldtype": "JSON",
-   "label": "Business Branch Configure Data"
-  },
-  {
    "fieldname": "column_break_jpvf",
    "fieldtype": "Column Break"
   },
   {
-   "default": "[]",
-   "fieldname": "product_emenu_setting_data",
-   "fieldtype": "JSON",
-   "label": "Product eMenu Setting Data"
+   "default": "0",
+   "fetch_from": ".use_combo_group",
+   "fieldname": "is_empty_stock_warning",
+   "fieldtype": "Check",
+   "label": "Is Empty Stock Warning"
+  },
+  {
+   "default": "Percent",
+   "fetch_from": ".use_combo_group",
+   "fieldname": "discount_type",
+   "fieldtype": "Data",
+   "label": "Discount Type"
+  },
+  {
+   "default": "0",
+   "fetch_from": ".use_combo_group",
+   "fieldname": "discount_value",
+   "fieldtype": "Float",
+   "label": "Discount Value"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-03 10:00:07.739940",
+ "modified": "2024-06-04 16:07:23.289841",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Temp Product Menu",

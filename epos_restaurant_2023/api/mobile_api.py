@@ -155,11 +155,10 @@ def get_product(root_menu, pos_menu):
                 combo_menu_data,
                 combo_group_data,
                 tax_rule,
-                sort_order,
                 tax_rule_data,
                 revenue_group,
                 sort_order,
-                business_branch_configure_data,
+                is_empty_stock_warning,
                 rate_include_tax
             from  `tabTemp Product Menu` 
             where 

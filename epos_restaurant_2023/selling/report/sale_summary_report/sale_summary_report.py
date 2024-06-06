@@ -251,6 +251,7 @@ def get_conditions(filters,group_filter=None):
 	return conditions
 
 def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
+	
 	# frappe.throw(str(filters.row_group))
 	hide_columns = filters.get("hide_columns")
 	row_group = [d["fieldname"] for d in get_row_groups() if d["label"]==filters.row_group][0]
@@ -295,7 +296,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 	if row_group == "a.parent":
 		_row_group = "a.parent, coalesce(b.custom_bill_number,'-')"
 	elif filters.row_group=="Product And Price":
-		_row_group = "concat(a.product_code,'-',a.product_name),a.price"
+		_row_group = "concat(a.product_code,'-',a.product_name, ' ', a.`portion`),a.price"
 
 	sql = sql + """ {2}
 		FROM `tabSale Product` AS a
@@ -541,12 +542,12 @@ def get_row_groups():
 		},
 
 		{
-			"fieldname":"concat(a.product_code,'-',a.product_name)",
+			"fieldname":"concat(a.product_code,'-',a.product_name, ' ', a.`portion`)",
 			"label":"Product",
 			"show_commission":False
 		},
 		{
-			"fieldname":"concat(a.product_code,'-',a.product_name)",
+			"fieldname":"concat(a.product_code,'-',a.product_name,' ', a.`portion`)",
 			"label":"Product And Price",
 			"show_commission":False
 		},

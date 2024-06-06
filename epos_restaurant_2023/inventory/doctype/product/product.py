@@ -376,7 +376,6 @@ def get_stock_location_product_info(product_code=None, stock_location=None):
 
 def add_product_to_temp_menu(self):
 	frappe.db.sql("delete from `tabTemp Product Menu` where product_code='{}'".format(self.name))
- 
 
 	if self.pos_menus and not self.disabled and self.allow_sale:
 		printers = []
@@ -480,55 +479,55 @@ def add_product_to_temp_menu(self):
 				"items":modifier_items
 			})
 			
-		## end get modifier data
-
-		## get business branch configure
-		business_branch_configure = []
-		for b in self.business_branch_configure:
-			business_branch_configure.append({
-				"business_branch": b.business_branch,
-				"is_empty_stock_warning": b.is_empty_stock_warning
-			})
-		
-		## get product emenu setting
-		product_emenu_setting = []
-		for e in self.product_emenu_setting:
-			product_emenu_setting.append({
-				"business_branch":e.business_branch,
-				"discount_type":e.discount_type,
-				"discount_value":e.discount_value
-			})
-
-		## end get business branch configure
+		## end get modifier data  
 
 
-		for m in self.pos_menus:			
+
+		for m in self.pos_menus:	 
+			pos_menu = m.pos_menu
+			pos_menu_paths = []
+			while pos_menu:
+				pos_menu_paths.insert(0,pos_menu)
+				pos_menu = frappe.db.get_value('POS Menu', pos_menu, 'parent_pos_menu')  
+			m.root_menu = pos_menu_paths[0]
+			
+			frappe.db.sql("update `tabProduct Menu` set root_menu='{}' where name='{}'".format(pos_menu_paths[0],m.name))  
 			doc = frappe.get_doc({
 							"pos_menu_id":m.name,
 							'doctype': 'Temp Product Menu',
 							'product_code': self.name,
-							'sort_order':self.sort_order,
 							'pos_menu':m.pos_menu,
 							'printers':json.dumps(printers),
 							'prices':json.dumps(prices),
-							'business_branch_configure_data':json.dumps(business_branch_configure),
-							'product_emenu_setting_data':json.dumps(product_emenu_setting),
 							'revenue_group':self.revenue_group,
-							'modifiers':json.dumps(modifiers)
+							'modifiers':json.dumps(modifiers),
+							'is_empty_stock_warning':m.is_empty_stock_warning,
+							'discount_type': m.discount_type,
+							'discount_value':m.discount_value,
+							'sort_order':m.sort_order,
 						})
 			doc.insert() 
 
 
 		## update to popular product in emenu
-		sql_pop = """select name from `tabeMenu Popular Products` where product_code = '{}'""".format(self.name)
+		sql_pop = """select name, parent from `tabeMenu Popular Products` where product_code = '{}'""".format(self.name)
 		pop_docs = frappe.db.sql(sql_pop,as_dict=1)
-		for pop in pop_docs: 
+		for pop in pop_docs:
+			emenu = frappe.get_doc("eMenu",pop["parent"])	
 			frappe.db.set_value('eMenu Popular Products', pop["name"], {
 				'prices': json.dumps(prices),
-				'modifiers': json.dumps(modifiers),
-				'business_branch_configure_data':json.dumps(business_branch_configure),
-				'product_emenu_setting_data':json.dumps(product_emenu_setting)
+				'modifiers': json.dumps(modifiers),				
 			})
+
+			product_menu = [ m for m in self.pos_menus if m.root_menu ==  emenu.default_root_menu ] 
+			if len(product_menu)>0:
+				m = product_menu[0] 
+				frappe.db.set_value('eMenu Popular Products', pop["name"], {
+					'is_empty_stock_warning': m.is_empty_stock_warning,
+					'discount_type': m.discount_type,	
+					'discount_value':m.discount_value		
+				})				
+
 		frappe.db.commit()
 
 

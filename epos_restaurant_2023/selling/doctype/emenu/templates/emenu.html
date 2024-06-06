@@ -86,49 +86,44 @@
                     {% for p in popular_products %}
                     <div class="product_detail col-6 col-lg-6 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
                         <div class="col-inner">
-                            <a href="/product_detail?product_code={{p.product_code}}&menu_id={{doc.name}}" style="text-decoration: none;">
+                            <a href="/product_detail?emenu_name={{doc.name}}&product_code={{p.product_code}}&category=populars" style="text-decoration: none;">
                                 <div class="row p-0 p-lg-3 items-inner-1 m-0 h-100">
                                     <div class="col-12 col-lg-4 p-0 wrapper-image position-relative" style="background: url('/files/food_bg_image.jpg');">
                                         <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/no_image.jpg"}}"/>
                                         <div class="position-absolute rounded p-1" style="bottom: 5px; background: #db3c76;right: 5px;">
                                             <p class="text-white" style="font-size:12px;">{{p.product_code}}</p>
                                         </div>
-                                        {% if p.business_branch_configure|length > 0 %}
+                                        {% if p.is_empty_stock_warning == 1%}
                                             <div class="position-absolute rounded p-1" style="bottom: 5px; background: #db3c76;left: 5px;">
-                                                {% if p.business_branch_configure[0].is_empty_stock_warning == 1%}
-                                                    <p class="text-white" style="font-size:12px;">* Out of Order</p>
-                                                {% endif %}
-                                            </div>
-                                        {% endif %} 
-
-                                        {% if p.product_emenu_setting|length>0%}
-                                            {% if p.product_emenu_setting[0].discount_value > 0 %}
-                                                <div class="position-absolute rounded p-1" style="top: 5px; background: #db3c76;left: 5px;">
-                                                    {% if p.prices != [] %}
-                                                        {% for price in p.prices %}
-                                                            {% if loop.index == 1 %}
-                                                                {% if p.product_emenu_setting[0].discount_value > 0 %}
-                                                                    {% if p.product_emenu_setting[0].discount_type == 'Percent' %}
-                                                                        {% set dis_value = p.product_emenu_setting[0].discount_value %}
-                                                                            <p class="text-white">{{ dis_value | int }}% Off</p>
-                                                                        {% else %}
-                                                                        <p class="text-white">{{ frappe.format(p.product_emenu_setting[0].discount_value, {"fieldtype": "Currency"}) }} Off</p>
-                                                                        {% endif %}
-                                                                {% endif %}
-                                                            {% endif %}
-                                                        {% endfor %}
-                                                    {% else %}
-                                                        {% if p.product_emenu_setting[0].discount_value > 0 %}
-                                                            {% if p.product_emenu_setting[0].discount_type=='Percent' %}
-                                                                {% set dis_value = p.product_emenu_setting[0].discount_value %}
-                                                                <p class="text-white">{{ dis_value | int }}% Off</p>
-                                                            {% else %}
-                                                                <p class="text-white">{{ frappe.format(p.product_emenu_setting[0].discount_value,{"fieldtype":"Currency"})}} Off</p>
+                                                <p class="text-white" style="font-size:12px;">* Out of Order</p>
+                                            </div>                                       
+                                        {% endif %}
+                                        {% if p.discount_value > 0 %}
+                                            <div class="position-absolute rounded p-1" style="top: 5px; background: #db3c76;left: 5px;">
+                                                {% if p.prices != [] %}
+                                                    {% for price in p.prices %}
+                                                        {% if loop.index == 1 %}
+                                                            {% if p.discount_value > 0 %}
+                                                                {% if p.discount_type == 'Percent' %}
+                                                                    {% set dis_value = p.discount_value %}
+                                                                        <p class="text-white">{{ dis_value | int }}% Off</p>
+                                                                    {% else %}
+                                                                    <p class="text-white">{{ frappe.format(p.discount_value, {"fieldtype": "Currency"}) }} Off</p>
+                                                                    {% endif %}
                                                             {% endif %}
                                                         {% endif %}
+                                                    {% endfor %}
+                                                {% else %}
+                                                    {% if p.discount_value > 0 %}
+                                                        {% if p.discount_type=='Percent' %}
+                                                            {% set dis_value = p.discount_value %}
+                                                            <p class="text-white">{{ dis_value | int }}% Off</p>
+                                                        {% else %}
+                                                            <p class="text-white">{{ frappe.format(p.discount_value,{"fieldtype":"Currency"})}} Off</p>
+                                                        {% endif %}
                                                     {% endif %}
-                                                </div>
-                                            {% endif %}
+                                                {% endif %}
+                                            </div>
                                         {% endif %}
                                         
                                     </div>
@@ -149,31 +144,31 @@
                                         <div class="d-block d-xl-flex justify-between"> 
                                             <div class="cnter-txt mt-3 mt-lg-0">
                                                 {% if p.prices != [] %}
-                                                    {% for price in p.prices %}
-                                                        {% if p.product_emenu_setting[0].discount_value > 0 %}
+                                                    {% for price in p.prices %}                                                     
+                                                        {% if p.discount_value > 0 %}
                                                             <div><span class="price-cus portion">{{price.portion}}</span></div>
                                                             <div class="d-flex gap-2 justify-center price-portion">    
                                                                 <del class="price-cus" style="color:#ccc">{{frappe.format(price.price or 0,{"fieldtype":"Currency"})}}</del>
-                                                                {% if p.product_emenu_setting[0].discount_type=='Percent' %}
-                                                                    <p class="price-cus">{{frappe.format((price.price or 0) - ((price.price or 0)* (p.product_emenu_setting[0].discount_value/100) ),{"fieldtype":"Currency"})}}</p>
+                                                                {% if p.discount_type=='Percent' %}
+                                                                    <p class="price-cus">{{frappe.format((price.price or 0) - ((price.price or 0)* (p.discount_value/100) ),{"fieldtype":"Currency"})}}</p>
                                                                 {% else %}
-                                                                    <p class="price-cus">{{frappe.format((price.price or 0) - (p.product_emenu_setting[0].discount_value) ,{"fieldtype":"Currency"})}}</p>
+                                                                    <p class="price-cus">{{frappe.format((price.price or 0) - (p.discount_value) ,{"fieldtype":"Currency"})}}</p>
                                                                 {%endif%}
                                                             </div>
                                                         {% else %}
                                                             <p class="price-cus portion">{{price.portion}}: 
                                                                 {{frappe.format(price.price or 0,{"fieldtype":"Currency"})}}
                                                             </p>
-                                                        {% endif %}
+                                                        {% endif %}                          
                                                     {% endfor %}
                                                 {% else %}
-                                                    <div class="flex gap-2 justify-center">
-                                                        {% if p.product_emenu_setting[0].discount_value > 0 %}
+                                                    <div class="flex gap-2 justify-center"> 
+                                                        {% if p.discount_value > 0 %}
                                                             <del class="price-cus" style="color: #ccc;">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</del>
-                                                            {% if p.product_emenu_setting[0].discount_type=='Percent' %}
-                                                                <p class="price-cus">{{frappe.format((p.price or  0) - ((p.price or 0)* (p.product_emenu_setting[0].discount_value/100) ),{"fieldtype":"Currency"})}}</p>
+                                                            {% if p.discount_type=='Percent' %}
+                                                                <p class="price-cus">{{frappe.format((p.price or  0) - ((p.price or 0)* (p.discount_value/100) ),{"fieldtype":"Currency"})}}</p>
                                                             {%else%}
-                                                                <p class="price-cus">{{frappe.format((p.price or 0) - (p.product_emenu_setting[0].discount_value) ,{"fieldtype":"Currency"})}}</p>
+                                                                <p class="price-cus">{{frappe.format((p.price or 0) - (p.discount_value) ,{"fieldtype":"Currency"})}}</p>
                                                             {%endif%}
                                                         {% else %}
                                                             <p class="price-cus">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</p>
@@ -199,51 +194,47 @@
                 <div class="row p-2">
                     {%for p in products|selectattr('pos_menu', 'equalto', m.menu)|list %}
                     <div class="product_detail col-6 col-lg-6 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
-                        <div class="col-inner">
-                            <a href="/product_detail?product_code={{p.product_code}}&menu_id={{doc.name}}" style="text-decoration: none;">
+                        <div class="col-inner"> 
+                            <a href="/product_detail?emenu_name={{doc.name}}&product_code={{p.product_code}}&category={{p.name}}" style="text-decoration: none;">
                                 <div class="row p-0 p-lg-3 items-inner-1 m-0 h-100">
                                     <div class="col-12 col-lg-4 p-0 wrapper-image" style="background: url('/files/food_bg_image.jpg');">
                                         <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/no_image.jpg"}}"/>
                                         <div class="position-absolute rounded p-1" style="bottom: 5px; background: #db3c76;right: 5px;">
                                             <p class="text-white" style="font-size:12px;">{{p.product_code}}</p>
                                         </div>
-                                        {% if p.business_branch_configure|length > 0 %}
-                                            <div class="position-absolute rounded p-1" style="bottom: 5px; background: #db3c76;left: 5px;">
-                                                {% if p.business_branch_configure[0].is_empty_stock_warning == 1%}
-                                                    <p class="text-white" style="font-size:12px;">* Out of Order</p>
-                                                {% endif %}
-                                            </div>
-                                        {% endif %} 
-
-                                        {% if p.product_emenu_setting|length>0%}
-                                            {% if p.product_emenu_setting[0].discount_value > 0 %}
+                                            {% if p.is_empty_stock_warning == 1%}
+                                                <div class="position-absolute rounded p-1" style="bottom: 5px; background: #db3c76;left: 5px;">
+                                                        <p class="text-white" style="font-size:12px;">* Out of Order</p>
+                                                </div>
+                                            {% endif %}
+                                       
+                                            {% if p.discount_value > 0 %}
                                                 <div class="position-absolute rounded p-1" style="top: 5px; background: #db3c76;left: 5px;">
                                                     {% if p.prices != [] %}
                                                         {% for price in p.prices %}
                                                             {% if loop.index == 1 %}
-                                                                {% if p.product_emenu_setting[0].discount_value > 0 %}
-                                                                    {% if p.product_emenu_setting[0].discount_type == 'Percent' %}
-                                                                        {% set dis_value = p.product_emenu_setting[0].discount_value %}
+                                                                {% if p.discount_value > 0 %}
+                                                                    {% if p.discount_type == 'Percent' %}
+                                                                        {% set dis_value = p.discount_value %}
                                                                         <p class="text-white">{{ dis_value | int }}% Off</p>
                                                                     {% else %}
-                                                                        <p class="text-white">{{ frappe.format(p.product_emenu_setting[0].discount_value, {"fieldtype": "Currency"}) }} Off</p>
+                                                                        <p class="text-white">{{ frappe.format(p.discount_value, {"fieldtype": "Currency"}) }} Off</p>
                                                                     {% endif %}
                                                                 {% endif %}
                                                             {% endif %}
                                                         {% endfor %}
                                                     {% else %}
-                                                        {% if p.product_emenu_setting[0].discount_value > 0 %}
-                                                            {% if p.product_emenu_setting[0].discount_type=='Percent' %}
-                                                                {% set dis_value = p.product_emenu_setting[0].discount_value %}
+                                                        {% if p.discount_value > 0 %}
+                                                            {% if p.discount_type=='Percent' %}
+                                                                {% set dis_value = p.discount_value %}
                                                                 <p class="text-white">{{ dis_value | int }}% Off</p>
                                                             {% else %}
-                                                                <p class="text-white">{{ frappe.format(p.product_emenu_setting[0].discount_value,{"fieldtype":"Currency"})}} Off</p>
+                                                                <p class="text-white">{{ frappe.format(p.discount_value,{"fieldtype":"Currency"})}} Off</p>
                                                             {% endif %}
                                                         {% endif %}
                                                     {% endif %}
                                                 </div>
                                             {% endif %}
-                                        {%endif%}
                                         
                                     </div>
                                     <div class="col-12 col-lg-8 d-flex flex-column flex-lg-column py-3 ps-lg-3 py-lg-0 content-custom">
@@ -264,34 +255,37 @@
                                             <div class="cnter-txt mt-3 mt-lg-0">
                                                 {% if p.prices != [] %}
                                                     {% for price in p.prices %}
-                                                        {% if p.product_emenu_setting[0].discount_value > 0 %}
-                                                            <div><span class="price-cus portion">{{price.portion}}</span></div>
-                                                            <div class="d-flex gap-2 justify-center price-portion">    
-                                                                <del class="price-cus" style="color:#ccc">{{frappe.format(price.price or 0,{"fieldtype":"Currency"})}}</del>
-                                                                {% if p.product_emenu_setting[0].discount_type=='Percent' %}
-                                                                    <p class="price-cus">{{frappe.format((price.price or 0) - ((price.price or 0)* (p.product_emenu_setting[0].discount_value/100) ),{"fieldtype":"Currency"})}}</p>
-                                                                {% else %}
-                                                                    <p class="price-cus">{{frappe.format((price.price or 0) - (p.product_emenu_setting[0].discount_value) ,{"fieldtype":"Currency"})}}</p>
-                                                                {%endif%}
-                                                            </div>
-                                                        {% else %}
-                                                            <p class="price-cus portion">{{price.portion}}: 
-                                                                {{frappe.format(price.price or 0,{"fieldtype":"Currency"})}}
-                                                            </p>
-                                                        {% endif %}
+                                                            {% if p.discount_value > 0 %}
+                                                                <div><span class="price-cus portion">{{price.portion}}</span></div>
+                                                                <div class="d-flex gap-2 justify-center price-portion">    
+                                                                    <del class="price-cus" style="color:#ccc">{{frappe.format(price.price or 0,{"fieldtype":"Currency"})}}</del>
+                                                                    {% if p.discount_type=='Percent' %}
+                                                                        <p class="price-cus">{{frappe.format((price.price or 0) - ((price.price or 0)* (p.discount_value/100) ),{"fieldtype":"Currency"})}}</p>
+                                                                    {% else %}
+                                                                        <p class="price-cus">{{frappe.format((price.price or 0) - (p.discount_value) ,{"fieldtype":"Currency"})}}</p>
+                                                                    {%endif%}
+                                                                </div>
+                                                            {% else %}
+                                                                <p class="price-cus portion">{{price.portion}}: 
+                                                                    {{frappe.format(price.price or 0,{"fieldtype":"Currency"})}}
+                                                                </p>
+                                                            {% endif %}
+                                                      
                                                     {% endfor %}
                                                 {% else %}
                                                     <div class="flex gap-2 justify-center">
-                                                        {% if p.product_emenu_setting[0].discount_value > 0 %}
-                                                            <del class="price-cus" style="color: #ccc;">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</del>
-                                                            {% if p.product_emenu_setting[0].discount_type=='Percent' %}
-                                                                <p class="price-cus">{{frappe.format((p.price or  0) - ((p.price or 0)* (p.product_emenu_setting[0].discount_value/100) ),{"fieldtype":"Currency"})}}</p>
-                                                            {%else%}
-                                                                <p class="price-cus">{{frappe.format((p.price or 0) - (p.product_emenu_setting[0].discount_value) ,{"fieldtype":"Currency"})}}</p>
-                                                            {%endif%}
-                                                        {% else %}
-                                                            <p class="price-cus">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</p>
-                                                        {% endif %}
+                                                            {% if p.discount_value > 0 %}
+                                                                <del class="price-cus" style="color: #ccc;">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</del>
+                                                                {% if p.discount_type=='Percent' %}
+                                                                    <p class="price-cus">{{frappe.format((p.price or  0) - ((p.price or 0)* (p.discount_value/100) ),{"fieldtype":"Currency"})}}</p>
+                                                                {%else%}
+                                                                    <p class="price-cus">{{frappe.format((p.price or 0) - (p.discount_value) ,{"fieldtype":"Currency"})}}</p>
+                                                                {%endif%}
+                                                            {% else %}
+                                                                <p class="price-cus">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</p>
+                                                            {% endif %}
+                                                       
+                                                        
                                                     </div>
                                                 {% endif %}
                                             </div>

@@ -174,7 +174,7 @@ function change_expired_date(frm) {
 
 
 
-        }, __("Action"));
+        }, __("Actions"));
     }
 }
 

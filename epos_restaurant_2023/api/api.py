@@ -1212,14 +1212,18 @@ def get_reservation_folio(property):
     folio = frappe.db.get_list("Reservation Folio",
                              filters=[['status','=', 'Open'], 
                                       ['reservation_status','=','In-house'] , 
+                                      ['show_in_pos_transfer','=',1] , 
                                       ["property",'=',property]],
                              limit=500,
                              fields=[
                                  'name', 
                                  'room_types',
+                                 "folio_type",
+                                 "folio_type_color",
                                  'rooms',
                                  'reservation',
                                  'reservation_stay',
+                                 'business_source',
                                  'guest_name',
                                  'guest',
                                  'phone_number',
@@ -1231,7 +1235,7 @@ def get_reservation_folio(property):
         
     if frappe.db.get_single_value("ePOS Settings","allow_pos_user_to_create_guest_folio_when_transfer_bill_to_room")==1:
         # get all reservation that dont have folio
-        sql ="select name as id, name as reservation_stay, room_types, rooms, reservation, guest_name,guest,guest_phone_number as phone_number from `tabReservation Stay` where reservation_status='In-house' and name not in %(stay_names)s"
+        sql ="select name as id, name as reservation_stay, room_types, rooms, reservation, guest_name,guest,guest_phone_number as phone_number,business_source from `tabReservation Stay` where reservation_status='In-house' and name not in %(stay_names)s"
         stays = frappe.db.sql(sql,{"stay_names": [d["reservation_stay"] for d in folio]},as_dict=1)
         folio = folio + stays
         room_types.append({"name":"Room with No Folio", "room_type":"Room with No Folio", "sort_order":1000000})
@@ -1242,6 +1246,13 @@ def get_reservation_folio(property):
         }
 
     return data
+
+@frappe.whitelist()
+def get_inhouse_reservation(property):
+    sql="select name, room_types,rooms,room_type_alias,business_source,guest_name from `tabReservation Stay` where reservation_status ='In-house' where property=%(property)s"
+    data = frappe.db.sql(sql,{"property":property},as_dict=1)
+    return data
+    
 
 @frappe.whitelist()
 def get_current_customer_bill_counter(pos_profile):

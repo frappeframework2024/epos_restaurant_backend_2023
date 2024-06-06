@@ -11,7 +11,7 @@
  "field_order": [
   "title",
   "emenu_app_name",
-  "business_branch",
+  "default_root_menu",
   "column_break_nodn",
   "logo",
   "enable_cache",
@@ -193,13 +193,6 @@
    "label": "Hotel Room Call Number"
   },
   {
-   "fieldname": "business_branch",
-   "fieldtype": "Link",
-   "label": "Business Branch",
-   "options": "Business Branch",
-   "reqd": 1
-  },
-  {
    "fieldname": "promotion",
    "fieldtype": "Table",
    "label": "Promotion",
@@ -227,13 +220,20 @@
    "fieldname": "promo_image",
    "fieldtype": "Attach Image",
    "label": "Promo Image"
+  },
+  {
+   "fieldname": "default_root_menu",
+   "fieldtype": "Link",
+   "label": "Default Root Menu",
+   "options": "POS Menu",
+   "reqd": 1
   }
  ],
  "has_web_view": 1,
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-01 16:13:48.075353",
+ "modified": "2024-06-04 13:59:04.132502",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu",

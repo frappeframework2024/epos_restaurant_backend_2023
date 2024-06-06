@@ -153,8 +153,8 @@ class SalePayment(Document):
 		# get Customer Total Voucher Payment
 		voucher_payment_sql = """
 				select coalesce(sum(payment_amount),0) payment_amount from `tabSale Payment`
-				where customer = '{0}' and payment_type_group = '{1}' and docstatus = 1
-			""".format(self.customer,self.payment_type_group)
+				where customer = '{0}' and payment_type_group = 'Voucher' and docstatus = 1
+			""".format(self.customer)
 		voucher_credit_sql = """ 
 							select 
 								coalesce(sum(credit_amount),0) credit_amount
@@ -162,6 +162,7 @@ class SalePayment(Document):
 							where customer = '{}' and docstatus = 1
 							""".format(self.customer)
 		total_credit_amount =  frappe.db.sql(voucher_credit_sql,as_dict=1)
+		
 		voucher_balance = frappe.db.get_value("Customer",self.customer,'voucher_balance')
 
 		if (total_credit_amount[0].credit_amount <= 0 or voucher_balance < self.payment_amount) and self.docstatus == 1 :

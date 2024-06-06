@@ -7,19 +7,47 @@
 <button class="back-btn m-3" id="back-btn" onclick="goBack('{{emenu.route}}')">&#8592; Back to Menu</button>
 
 <div class=" overflow-hidden modal-pp-items section-modal-detail">    
-    <div class="modal-img px-3 position-relative" style="background: #fff;">
-        <img src="{{doc.photo or "/files/no_image.jpg"}}" alt="" >
-        <div class="position-absolute rounded p-1" style="bottom: 10px; background: #db3c76;right: 25px;">
-            <p class="text-white" style="font-size:12px;">{{doc.product_code}}</p>
+    <div class="modal-img px-3" style="background: #fff;">
+        <div class="position-relative">
+            <img src="{{doc.photo or "/files/no_image.jpg"}}" alt="" >
+            <div class="position-absolute rounded p-1" style="bottom: 10px; background: #db3c76;right: 15px;">
+                <p class="text-white">{{doc.product_code}}</p>
+            </div>
+            {% if doc.is_empty_stock_warning == 1%}
+                <div class="position-absolute rounded p-1" style="bottom: 10px; background: #db3c76;left: 15px;">
+                    <p class="text-white">* Out of Order</p>
+                </div>
+            {% endif %}
+                  
+            {% if doc.discount_value > 0 %}
+                <div class="position-absolute rounded p-1" style="top: 5px; background: #db3c76;left: 5px;">
+                    {% if (doc.prices|length) > 0 %}
+                        {% for price in doc.prices %}
+                            {% if loop.index == 1 %}
+                                {% if doc.discount_type == 'Percent' %}
+                                    {% set dis_value = doc.discount_value %}
+                                    <p class="text-white">{{ dis_value | int }}% Off</p>
+                                {% else %}
+                                    <p class="text-white">{{ frappe.format(doc.discount_value, {"fieldtype": "Currency"}) }} Off</p>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        {% if doc.discount_type=='Percent' %}
+                            {% set dis_value = doc.discount_value %}
+                            <p class="text-white">{{ dis_value | int }}% Off</p>
+                        {% else %}
+                            <p class="text-white">{{ frappe.format(doc.discount_value,{"fieldtype":"Currency"})}} Off</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% endif %} 
         </div>
     </div>
     <div class="p-3">
         <div class="section-top-under-img">
             <div class="">
                 <div class="mb-2 wrapper-title-modal text-center">
-                    {% if doc.is_empty_stock_warning == 1 %}
-                        <p style="color:red;font-size:10px;">* Out of order</p>
-                    {% endif %}
                     {% if doc.product_name_en == doc.product_name_kh%}
                     <h1 style="font-size: 36px;color:#ff5959">{{doc.product_name_kh}}</h1>
                     {%else%}
@@ -27,39 +55,39 @@
                     <h1>{{doc.product_name_en}}</h1>
                     {%endif%}
                 </div>
-                <div class="modal-pirc text-center">
-                        {% if (doc.product_price | length) > 0 %}
-                                {% for p in doc.product_price %}
-                                    {% if doc.emenu_discount_value > 0 %}
-                                        <div><span class="price-cus detail">{{p.portion}}</span></div>
-                                        <div class="d-flex gap-2 justify-center">    
-                                            <del class="price-cus detail" style="color:#ccc">{{frappe.format(p.price or 0,{"fieldtype":"Currency"})}}</del>
-                                            {% if p.emenu_discount_type=='Percent' %}
-                                                <p class="price-cus detail">{{frappe.format((p.price or 0) - ((p.price or 0)* (doc.emenu_discount_value/100) ),{"fieldtype":"Currency"})}}</p>
+                <div class="modal-pirc text-center">      
+                            {% if (doc.prices|length) > 0 %}
+                                {% for price in doc.prices %}
+                                    {% if doc.discount_value > 0 %}
+                                        <div><span class="price-cus portion">{{price.portion}}</span></div>
+                                        <div class="d-flex gap-2 justify-center price-portion">    
+                                            <del class="price-cus" style="color:#ccc">{{frappe.format(price.price or 0,{"fieldtype":"Currency"})}}</del>
+                                            {% if doc.discount_type=='Percent' %}
+                                                <p class="price-cus">{{frappe.format((price.price or 0) - ((price.price or 0)* (doc.discount_value/100) ),{"fieldtype":"Currency"})}}</p>
                                             {% else %}
-                                                <p class="price-cus detail">{{frappe.format((p.price or 0) - (doc.emenu_discount_value) ,{"fieldtype":"Currency"})}}</p>
-                                            {% endif %}
+                                                <p class="price-cus">{{frappe.format((price.price or 0) - (doc.discount_value) ,{"fieldtype":"Currency"})}}</p>
+                                            {%endif%}
                                         </div>
                                     {% else %}
-                                        <p class="price-cus detail">{{p.portion}}: 
-                                            {{frappe.format(p.price or 0,{"fieldtype":"Currency"})}}
+                                        <p class="price-cus portion">{{price.portion}}: 
+                                            {{frappe.format(price.price or 0,{"fieldtype":"Currency"})}}
                                         </p>
-                                    {% endif %}
+                                    {% endif %}   
                                 {% endfor %}
-                        {% else %}
-                            <div class="flex gap-2 justify-center">
-                                {% if doc.emenu_discount_value > 0 %}
-                                    <del class="price-cus detail" style="color: #ccc;">{{frappe.format(doc.price,{"fieldtype":"Currency"})}}</del>
-                                    {% if doc.emenu_discount_type=='Percent' %}
-                                        <p class="price-cus detail">{{frappe.format((doc.price or  0) - ((doc.price or 0)* (doc.emenu_discount_value/100) ),{"fieldtype":"Currency"})}}</p>
-                                    {%else%}
-                                        <p class="price-cus detail">{{frappe.format((doc.price or 0) - (doc.emenu_discount_value) ,{"fieldtype":"Currency"})}}</p>
-                                    {%endif%}
-                                {% else %}
-                                    <p class="price-cus detail">{{frappe.format(doc.price,{"fieldtype":"Currency"})}}</p>
-                                {% endif %}
-                            </div>
-                        {% endif %}
+                            {% else %}
+                                <div class="flex gap-2 justify-center"> 
+                                    {% if doc.discount_value > 0 %}
+                                        <del class="price-cus" style="color: #ccc;">{{frappe.format(doc.price,{"fieldtype":"Currency"})}}</del>
+                                        {% if doc.discount_type=='Percent' %}
+                                            <p class="price-cus">{{frappe.format((doc.price or  0) - ((doc.price or 0)* (doc.discount_value/100) ),{"fieldtype":"Currency"})}}</p>
+                                        {%else%}
+                                            <p class="price-cus">{{frappe.format((doc.price or 0) - (doc.discount_value) ,{"fieldtype":"Currency"})}}</p>
+                                        {%endif%}
+                                    {% else %}
+                                        <p class="price-cus">{{frappe.format(doc.price,{"fieldtype":"Currency"})}}</p>
+                                    {% endif %}
+                                </div>
+                            {% endif %} 
                 </div>
             </div>
             <br/>

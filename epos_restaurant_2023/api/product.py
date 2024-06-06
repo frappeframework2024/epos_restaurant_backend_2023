@@ -116,8 +116,7 @@ def get_products(parent_menu,mobile=0):
                 sort_order,
                 tax_rule_data,
                 revenue_group,
-                sort_order,
-                business_branch_configure_data,
+                is_empty_stock_warning,
                 rate_include_tax
             from  `tabTemp Product Menu` 
             where 
@@ -151,8 +150,8 @@ def get_product_by_barcode(barcode):
                 if p.product_price:
                     product_price = [d for d in p.product_price if d.unit == p.unit]
                     if product_price:
-                        price = product_price[0].price
-                        
+                        price = product_price[0].price 
+                
                 return {
                     "menu_product_name": barcode,
                     "name": p.name,
@@ -177,15 +176,13 @@ def get_product_by_barcode(barcode):
                     "append_quantity": 1,
                     "is_require_employee":p.is_require_employee,
                     "modifiers_data": json.dumps(([pr.business_branch,pr.modifier_category,pr.prefix,pr.modifier_code,pr.price] for pr in p.product_modifiers),default=json_handler),
-                    "sort_order":p.sort_order,
-                    "business_branch_configure_data":json.dumps(([b.business_branch,b.is_empty_stock_warning] for b in p.business_branch_configure),default=json_handler),
+                    "is_empty_stock_warning":0,
                     "rate_include_tax":p.rate_include_tax
                 }
             else:
                 frappe.throw("Item No Name?")
                 
-    else:
-        
+    else:        
         data  = frappe.db.sql("select name,price,unit,parent from `tabProduct Price` where barcode='{}'".format(barcode),as_dict=1)
         if data:
             product = frappe.get_doc('Product', data[0].parent)
@@ -213,8 +210,8 @@ def get_product_by_barcode(barcode):
                         "is_require_employee":product.is_require_employee,
                         "revenue_group":product.revenue_group,
                         "modifiers_data": json.dumps(([pr.business_branch,pr.modifier_category,pr.prefix,pr.modifier_code,pr.price] for pr in product.product_modifiers),default=json_handler),
-                        "sort_order":product.sort_order,
-                        "business_branch_configure_data":json.dumps(([b.business_branch,b.is_empty_stock_warning] for b in p.business_branch_configure),default=json_handler),
+               
+                        "is_empty_stock_warning":0,
                         "rate_include_tax":p.rate_include_tax
                     }
         

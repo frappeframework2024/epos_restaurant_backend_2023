@@ -23,10 +23,14 @@ class VoucherPayment(Document):
 		customer_voucher_amount = frappe.db.sql(sql,as_dict=1)
 			
 		# get customer voucher balance 
-		voucher_balance =frappe.db.get_value("Customer",self.customer,"voucher_balance")
+		voucher_payment_sql = """
+				select coalesce(sum(payment_amount),0) payment_amount from `tabSale Payment`
+				where customer = '{0}' and payment_type_group = 'Voucher' and docstatus = 1
+			""".format(self.customer) 
+		total_voucher_payment = frappe.db.sql(voucher_payment_sql,as_dict=1)
 		if len(customer_voucher_amount) > 0:
 			frappe.db.set_value('Customer', self.customer, {
 				'voucher_actual_amount': customer_voucher_amount[0].actual_amount,
 				'voucher_credit_amount': customer_voucher_amount[0].credit_amount,
-				'voucher_balance': (voucher_balance or 0) + self.credit_amount
+				'voucher_balance': customer_voucher_amount[0].credit_amount - total_voucher_payment[0].payment_amount
 			})

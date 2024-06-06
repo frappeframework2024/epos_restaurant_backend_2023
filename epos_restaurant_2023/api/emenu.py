@@ -5,6 +5,7 @@ from py_linq import Enumerable
 from frappe.utils import today, add_to_date
 from datetime import datetime, timedelta
 from frappe import _
+import time
 
 @frappe.whitelist(allow_guest=True)
 def get_emenu_settings(business_branch = ''):
@@ -259,4 +260,18 @@ def on_get_emenu_tree(parent, is_root = False):
 
 
     return data
- 
+
+
+
+@frappe.whitelist()
+def save_emenu_sort_order_products(data):
+    if data:
+        
+        data =json.loads(data)
+        for p in data["products"]:
+            frappe.db.sql("update `tabTemp Product Menu` set sort_order=%(idx)s where pos_menu=%(menu)s and product_code = %(product_code)s",{"idx":p["idx"], "product_code":p["product_code"],"menu":data["menu"]})
+            frappe.db.sql("update `tabProduct Menu` set sort_order=%(idx)s where pos_menu=%(menu)s and parent = %(product_code)s",{"idx":p["idx"], "product_code":p["product_code"],"menu":data["menu"]})
+        frappe.db.commit()
+        frappe.msgprint("Save eMenu product sort order successfully")
+            
+            

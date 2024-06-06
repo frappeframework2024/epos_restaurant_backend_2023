@@ -25,9 +25,13 @@ class eMenu(WebsiteGenerator):
 					case when coalesce(business_branch_configure_data,'')='' then '[]' else business_branch_configure_data end as business_branch_configure_data ,
 					case when coalesce(product_emenu_setting_data,'')='' then '[]' else product_emenu_setting_data end as product_emenu_setting_data ,
 					prices,
+					discount_value,
+					discount_type,
+					is_empty_stock_warning,
 					description
 				from `tabTemp Product Menu`
 				where pos_menu in %(pos_menu)s
+				order by sort_order
 			"""
 			data = frappe.db.sql(sql,filter,as_dict=1)
 
@@ -80,26 +84,14 @@ class eMenu(WebsiteGenerator):
 				pop.modifiers = json.dumps(get_product_modifier(product))
 				pop.prices= json.dumps(prices)
 
-
-				## get business branch configure
-				business_branch_configure = []
-				for b in product.business_branch_configure:
-					business_branch_configure.append({
-						"business_branch": b.business_branch,
-						"is_empty_stock_warning": b.is_empty_stock_warning
-					})
-
-				pop.business_branch_configure_data = json.dumps(business_branch_configure)
-
-				## get product emenu setting
-				product_emenu_setting =[]
-				for e in product.product_emenu_setting:
-					product_emenu_setting.append({
-						"business_branch":e.business_branch,
-						"discount_type":e.discount_type,
-						"discount_value":e.discount_value
-					})
-				pop.product_emenu_setting_data = json.dumps(product_emenu_setting) 
+				##  
+				product_menu = [ m for m in product.pos_menus if m.root_menu ==  self.default_root_menu ] 
+				if len(product_menu)>0:
+					m = product_menu[0] 
+					pop.is_empty_stock_warning = m.is_empty_stock_warning
+					pop.discount_type = m.discount_type
+					pop.discount_value = m.discount_value
+				
 
 def get_product_modifier(product):
 	#get product modifier

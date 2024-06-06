@@ -8,7 +8,13 @@
  "field_order": [
   "pos_menu",
   "pos_menu_name_kh",
-  "menu_path"
+  "menu_path",
+  "root_menu",
+  "column_break_lcxx",
+  "is_empty_stock_warning",
+  "discount_type",
+  "discount_value",
+  "sort_order"
  ],
  "fields": [
   {
@@ -31,12 +37,47 @@
    "fieldtype": "Small Text",
    "in_list_view": 1,
    "label": "Menu Path"
+  },
+  {
+   "fieldname": "column_break_lcxx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_empty_stock_warning",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Empty Stock Warning"
+  },
+  {
+   "default": "Percent",
+   "fieldname": "discount_type",
+   "fieldtype": "Select",
+   "label": "Discount Type",
+   "options": "Percent\nAmount"
+  },
+  {
+   "default": "0",
+   "fieldname": "discount_value",
+   "fieldtype": "Float",
+   "label": "Discount Value"
+  },
+  {
+   "fieldname": "root_menu",
+   "fieldtype": "Data",
+   "label": "Root Menu"
+  },
+  {
+   "default": "0",
+   "fieldname": "sort_order",
+   "fieldtype": "Int",
+   "label": "Sort Order"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-12-07 17:57:00.406049",
+ "modified": "2024-06-04 16:06:22.980305",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Product Menu",

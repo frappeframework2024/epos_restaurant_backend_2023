@@ -50,30 +50,42 @@
                             <template v-if="get_folio_data.length>0">
                                 <v-row no-gutters>
                                     <v-col cols="12" class="pa-1" sm="12" md="6" v-for="(r, index) in get_folio_data" :key="index" @click="(()=>onOnlineFolioPressed(r))">
+                                       
                                         <div :class="r.selected ? 'bg-indigo-lighten-2' : 'bg-deep-purple-lighten-5'" class="btn-post-to-room cursor-pointer border border-stone-500 pa-1 rounded-sm">
-                                                <v-chip style="float:right" v-if="!r.name" color="red" variant="flat">
+                                                <template v-if="!r.folio_type">
+                                                  
+                                                    <v-chip style="float:right" v-if="!r.name" color="red" variant="flat">
                                                     {{$t("No Guest Folio")}}
                                                 </v-chip>
                                                 <v-chip style="float:right" v-if="r.is_master" color="success" variant="flat">
                                                     {{$t("Master Folio")}}
                                                 </v-chip>
+                                                </template>
+                                                <template v-else>
+                                                    <v-chip style="float:right" :color="r.folio_type_color" variant="flat">
+                                                        {{ r.folio_type }}
+                                                    </v-chip>
+
+                                                </template>
+                                                
+
                                             <div v-if="r.name">
-                                                <span><strong>{{ $t('Folio') }}:</strong> #{{ r.name }}</span>
+                                                <span><strong>{{ $t('Folio') }}: </strong> #{{ r.name }}</span>
                                             </div> 
                                             
                                             <div>
-                                                <span><strong>{{ $t('Stay #') }}:</strong>{{ r.reservation_stay }}</span>
+                                                <span><strong>{{ $t('Stay #') }}: </strong>{{ r.reservation_stay }}</span>
+                                            </div> 
+                                            <div>
+                                                <span><strong>{{ $t('Source') }}: </strong>{{ r.business_source }}</span>
                                             </div> 
 
                                             <div>
-                                                <span><strong>{{$t("Guest")}}:</strong> {{ r.guest_name }}</span>
+                                                <span><strong>{{$t("Guest")}}: </strong> {{ r.guest_name }}</span>
                                             </div>  
+                                            
                                             <div>
-                                                <span><strong>{{ $t("Room Type") }}:</strong> {{ r.room_types }}</span>
-                                            </div>
-                                        
-                                            <div>
-                                                <span><strong>{{$t("Room")}}:</strong> #{{ r.rooms }}</span>
+                                                <span><strong>{{$t("Room")}}: </strong> #{{ r.rooms }} / {{ r.room_types }}</span>
                                             </div>  
                                         </div>                  
                                     </v-col>

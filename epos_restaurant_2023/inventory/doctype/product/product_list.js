@@ -130,7 +130,5 @@ frappe.listview_settings['Product'] = {
                 }
             );
         });
-        
-        
     }
 }
