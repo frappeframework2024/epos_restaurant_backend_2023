@@ -22,8 +22,6 @@ class eMenu(WebsiteGenerator):
 					product_name_kh,
 					price,
 					ifnull(photo,'files/no_image.jpg') as photo,
-					case when coalesce(business_branch_configure_data,'')='' then '[]' else business_branch_configure_data end as business_branch_configure_data ,
-					case when coalesce(product_emenu_setting_data,'')='' then '[]' else product_emenu_setting_data end as product_emenu_setting_data ,
 					prices,
 					discount_value,
 					discount_type,
@@ -37,27 +35,14 @@ class eMenu(WebsiteGenerator):
 
 			# Convert prices to JSON
 			for item in data:
-				business_branch_configure = json.loads(item['business_branch_configure_data'] or '[]')
-				product_emenu_setting = json.loads(item['product_emenu_setting_data'] or '[]')
 				item['prices'] = json.loads(item['prices'] or '[]')
-				item.update({
-					"business_branch_configure": [b for b in business_branch_configure if b["business_branch"] == self.business_branch],
-					"product_emenu_setting":[b for b in product_emenu_setting if b["business_branch"] == self.business_branch]
-				 }) 
  
 
 		context.no_cache = not  (self.enable_cache or 0)
 		context.products = data 
 		popular_products = [] 
 		for d in self.popular_product:
-			business_branch_configure = json.loads(d.business_branch_configure_data or '[]')
-			product_emenu_setting = json.loads(d.product_emenu_setting_data or '[]')
-
 			d.prices = json.loads(d.prices or '[]') 
-			d.update({
-				"business_branch_configure":[b for b in business_branch_configure if b["business_branch"] == self.business_branch],
-				"product_emenu_setting":[b for b in product_emenu_setting if b["business_branch"] == self.business_branch]
-			})
 			popular_products.append(d)
 
 		context.popular_products = popular_products

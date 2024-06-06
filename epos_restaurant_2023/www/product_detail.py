@@ -6,7 +6,7 @@ def get_context(context):
     context.no_cache = 1
     product =None
     emenu = frappe.get_doc("eMenu",frappe.form_dict.emenu_name) 
-    if (frappe.form_dict.menu=="populars"):
+    if (frappe.form_dict.category=="populars"):
         products =  [p for p in emenu.popular_product if p.product_code == frappe.form_dict.product_code ] 
         if len( products) >0 :
             product = products[0]
