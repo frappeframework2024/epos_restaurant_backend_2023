@@ -11,7 +11,7 @@ frappe.ui.form.on("eMenu", {
 frappe.ui.form.on('eMenu Selection', {
 	async sort_product(frm, cdt, cdn) {
 		let doc = locals[cdt][cdn];
-        console.log(doc)
+
         const products = await  getMenuProduct(doc.menu)
         
         
@@ -19,40 +19,41 @@ frappe.ui.form.on('eMenu Selection', {
             title: 'Product Sort Order',
             size: 'extra-large', 
             fields: [
+                
                 {fieldname:"menu", default:doc.menu,fieldtype:"Data",hidden:1},
                 {
                     fieldname: 'products',
                     fieldtype: 'Table',
                     cannot_add_rows: true,
-                    in_place_edit: false,
+                    in_place_edit: true,
                     data:products,
                     fields: [
                         { fieldname: 'product_code', fieldtype: 'Data', in_list_view: 1, label: 'Product Code',read_only:1 },
                         { fieldname: 'product_name_en', fieldtype: 'Data', in_list_view: 1, label: 'Product Name',read_only:1 },
-                        {
-                            fieldtype: 'Button',
-                            fieldname: 'move_up',
-                            label: 'Move Up',
-                            in_list_view: 1,
-                            click: function(x) {
-                                let row = $(this).closest('.grid-row');
-                                let index = row.index();
-                                reorder_records(dlg, index, Math.max(index - 1, 0));
-                            }
-                        },
-                        {
-                            fieldtype: 'Button',
-                            fieldname: 'move_down',
-                            label: 'Move Down',
-                            in_list_view: 1,
-                            click: function() {
-                                let row = $(this).closest('.grid-row');
-                                let index = 1;
+                        // {
+                        //     fieldtype: 'Button',
+                        //     fieldname: 'move_up',
+                        //     label: 'Move Up',
+                        //     in_list_view: 1,
+                        //     click: function(x) {
+                        //         let row = $(this).closest('.grid-row');
+                        //         let index = row.index();
+                        //         reorder_records(dlg, index, Math.max(index - 1, 0));
+                        //     }
+                        // },
+                        // {
+                        //     fieldtype: 'Button',
+                        //     fieldname: 'move_down',
+                        //     label: 'Move Down',
+                        //     in_list_view: 1,
+                        //     click: function() {
+                        //         let row = $(this).closest('.grid-row');
+                        //         let index = 1;
                        
-                                reorder_records(dlg, index, Math.min(index + 1, dlg.fields_dict.products.df.data.length - 1));
+                        //         reorder_records(dlg, index, Math.min(index + 1, dlg.fields_dict.products.df.data.length - 1));
                             
-                            }
-                        }
+                        //     }
+                        // }
 
                     ]
                 }
@@ -74,6 +75,18 @@ frappe.ui.form.on('eMenu Selection', {
 
         
         dlg.show()
+
+        setTimeout(function() {
+            // Hide the edit button and row checkboxes 
+            dlg.$wrapper.find('.frappe-control[data-fieldname="products"] .grid-row-check').hide(); 
+            dlg.$wrapper.find('.frappe-control[data-fieldname="products"] .row-index').each(function(index) {
+                $(this).css('display', 'table-cell');
+                // $(this).text(index + 1); // Set the row number (1-based index)
+            });
+            dlg.$wrapper.find('.frappe-control[data-fieldname="products"] .grid-check-row').hide();
+            dlg.$wrapper.find('.frappe-control[data-fieldname="products"] .row-check').hide();
+            dlg.$wrapper.find('.frappe-control[data-fieldname="products"] .grid-remove-rows').hide();
+        }, 100);
 	}
 })
 
