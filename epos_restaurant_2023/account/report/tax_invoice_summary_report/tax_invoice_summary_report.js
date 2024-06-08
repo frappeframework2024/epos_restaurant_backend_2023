@@ -1,8 +1,7 @@
-// Copyright (c) 2023, Tes Pheakdey and contributors
+// Copyright (c) 2024, Tes Pheakdey and contributors
 // For license information, please see license.txt
 
-frappe.query_reports["Tax Invoice Report"] = {
- 
+frappe.query_reports["Tax Invoice Summary Report"] = {
 	"filters": [
 		{
 			fieldname: "property",
@@ -60,8 +59,8 @@ frappe.query_reports["Tax Invoice Report"] = {
 			"fieldname": "row_group",
 			"label": __("Group By"),
 			"fieldtype": "Select",
-			"options": "\ntax_invoice_type\ndocument_type",
-			"default": "",
+			"options": "Date\nMonth\nYear\nTax Invoice Type\nDocument Type",
+			"default": "Date",
 			"on_change": function (query_report) { },
 			hide_in_filter: 1,
 		},
@@ -103,7 +102,6 @@ frappe.query_reports["Tax Invoice Report"] = {
 			"on_change": function (query_report) { },
 			"hide_in_filter": 1,
 		},
-
 	],
 	onload: function (report) {
 		let filter_based_on = frappe.query_report.get_filter_value('Timespan');
@@ -160,11 +158,7 @@ frappe.query_reports["Tax Invoice Report"] = {
 
 		return value;
 	},
-
 };
-
-
-
 function setLinkField() {
 	const property = frappe.query_report.get_filter_value("property")
 
@@ -173,7 +167,7 @@ function setLinkField() {
 
 			args: {
 				property: property,
-				report: "Tax Invoice Report"
+				report: "Tax Invoice Summary Report"
 			},
 			callback: function (r) {
 				const show_columns = frappe.query_report.get_filter('show_columns');

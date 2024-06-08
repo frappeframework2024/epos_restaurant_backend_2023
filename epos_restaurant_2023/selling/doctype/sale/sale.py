@@ -702,6 +702,7 @@ def create_folio_transaction_from_pos_trnasfer(self):
     
 			data = {
 					'doctype': 'Folio Transaction',
+					"is_base_transaction":1,
 					'posting_date':self.posting_date,
 					'transaction_type': p.folio_transaction_type,
 					'transaction_number': transaction_number,

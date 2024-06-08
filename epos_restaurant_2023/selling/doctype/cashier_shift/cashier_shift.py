@@ -365,6 +365,7 @@ def post_folio_transaction(self,account_code, amount, folio_transaction_type=Non
 	frappe.get_doc( 
 				{
 					'doctype': 'Folio Transaction',
+					"is_base_transaction":1,
 					'property':self.business_branch,
 					'working_day':self.working_day,
 					'cashier_shift':self.name,

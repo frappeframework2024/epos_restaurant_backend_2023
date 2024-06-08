@@ -26,8 +26,7 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Printer Name",
-   "reqd": 1,
-   "unique": 1
+   "reqd": 1
   },
   {
    "allow_in_quick_entry": 1,
@@ -94,7 +93,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-04-17 15:40:21.762243",
+ "modified": "2024-06-06 17:24:49.846072",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Printer",

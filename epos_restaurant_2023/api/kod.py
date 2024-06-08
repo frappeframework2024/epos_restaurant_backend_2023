@@ -199,7 +199,7 @@ def close_order(sale_product_names, status):
 
 
 def get_open_cashier_shift(business_branch):
-    sql="select name from `tabCashier Shift` where is_closed=0 and "
+    sql="select name from `tabCashier Shift` where is_closed=0 "
     return set([d["name"] for d in  frappe.db.sql(sql,as_dict=1)])
      
      
