@@ -23,7 +23,10 @@ def get_report_columns(filters,  report_fields):
 	report_fields = [d for d in report_fields if d.show_in_report==1]
 	
 	for g in report_fields:
-		columns.append({"fieldname":g.fieldname,"label":g.label,"width":g.width,"fieldtype":g.fieldtype,"align": g.align })
+		if g.fieldtype=='Link' and g.link_field_doctype:
+			columns.append({"fieldname":g.fieldname,"label":g.label,"width":g.width,"fieldtype":"Link","options":g.link_field_doctype,"align": g.align })
+		else:
+			columns.append({"fieldname":g.fieldname,"label":g.label,"width":g.width,"fieldtype":g.fieldtype,"align": g.align })
 
 	if filters.row_group:
 		columns = [d for d in columns if d["fieldname"] != filters.row_group]

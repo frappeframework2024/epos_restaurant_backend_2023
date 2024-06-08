@@ -10,6 +10,7 @@
   "fieldname",
   "label",
   "fieldtype",
+  "link_field_doctype",
   "sql_expression",
   "width",
   "show_in_report",
@@ -97,12 +98,19 @@
    "fieldname": "show_in_chart_when_no_fields_selected",
    "fieldtype": "Check",
    "label": "Show in Chart when No Fields Selected"
+  },
+  {
+   "fieldname": "link_field_doctype",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Link Field Doctype",
+   "options": "DocType"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-01-06 11:59:51.941468",
+ "modified": "2024-06-08 09:52:54.037615",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Report Configuration Fields",
