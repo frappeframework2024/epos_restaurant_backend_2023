@@ -41,50 +41,36 @@ def get_report_columns(filters,  report_fields):
     ]
 	report_fields = [d for d in report_fields if d.show_in_report==1]
 	
+	report_fields = report_fields if not filters.show_columns else [d for d in report_fields if d.fieldname in filters.show_columns]
 	for g in report_fields:
 		columns.append({"fieldname":g.fieldname,"label":g.label,"width":g.width,"fieldtype":g.fieldtype,"align": g.align })
 
 	return columns
 
 def get_report_data (filters, report_fields):
-	data = get_data(filters,report_fields)
-	row_group = get_row_group_report_data(filters)
-	
-	report_data = []
-	for g in row_group:
-		report_data.append({
-			"indent":0,
-			"row_group": g['row_group'],
-			"sub_total":sum([d['sub_total'] for d in data if d['tax_invoice_date'] == g['row_group'] or d['tax_invoice_type']==g['row_group'] or d['document_type']==g['row_group']]),
-			"service_charge":sum([d['service_charge'] for d in data if d['tax_invoice_date'] == g['row_group'] or d['tax_invoice_type']==g['row_group'] or d['document_type']==g['row_group']]),
-			"accommodation_tax":sum([d['accommodation_tax'] for d in data if d['tax_invoice_date'] == g['row_group'] or d['tax_invoice_type']==g['row_group'] or d['document_type']==g['row_group']]),
-			"specific_tax":sum([d['specific_tax'] for d in data if d['tax_invoice_date'] == g['row_group'] or d['tax_invoice_type']==g['row_group'] or d['document_type']==g['row_group']]),
-			"vat":sum([d['vat'] for d in data if d['tax_invoice_date'] == g['row_group'] or d['tax_invoice_type']==g['row_group'] or d['document_type']==g['row_group']]),
-			"grand_total":sum([d['grand_total'] for d in data if d['tax_invoice_date'] == g['row_group'] or d['tax_invoice_type']==g['row_group'] or d['document_type']==g['row_group']]),
-		})
-
-	
+	sql ="""
+		select 
+			{0},
+			{1}
+		from `tabTax Invoice` 
+		where 
+			property=%(property)s and 
+			tax_invoice_date between %(start_date)s and %(end_date)s 
+		group by
+			{2}
+		""".format(
+			get_group_field(filters),
+			get_report_fields(report_fields),
+			get_group_field(filters).split(" as ")[0]
+		)
+ 
+	report_data = frappe.db.sql(sql, filters, as_dict=1)
 	return report_data
-
-
-	
-def get_data (filters,report_fields):
-
-	sql ="select date_format(tax_invoice_date,'%%d-%%m-%%Y') as tax_invoice_date,tax_invoice_type,document_type,{}".format(",".join([d.sql_expression for d in report_fields if d.sql_expression]))
-
-	sql = "{} from `tabTax Invoice`  ".format(sql)
-	sql = "{} {}".format(sql, get_filters(filters))
-	
-	data = frappe.db.sql(sql, filters ,as_dict=1)
-	return data
-
-def get_filters(filters):
-	sql = """where property=%(property)s
-	and tax_invoice_date between %(start_date)s and %(end_date)s """
-	
-
-	return sql
-
+			
+def get_report_fields(report_fields):
+	return  ",".join([d.sql_expression for d in report_fields if d.show_in_report == 1])
+ 
+ 
 
 def get_report_summary(filters,report_fields, data):
 	summary = []
@@ -148,18 +134,14 @@ def get_report_chart(filters,data,report_fields):
 	}
 	return chart
 
-def get_row_group_report_data(filters):
-	sql = ""
-	if filters.row_group =='Date':
-		sql ="select date_format(date,'%%d-%%m-%%Y') as row_group from `tabDates` where date between %(start_date)s and %(end_date)s order by date" 
-	elif filters.row_group =='Month':
-		sql ="select date_format(date,'%%b-%%Y') as row_group from `tabDates` where date between %(start_date)s and %(end_date)s group by  date_format(date,'%%b-%%Y') order by year(date),month(date)"      
-	elif filters.row_group =='Year':
-		sql ="select date_format(date,'%%Y') as row_group from `tabDates` where date between %(start_date)s and %(end_date)s group by  date_format(date,'%%Y') order by year(date),month(date)" 
-	elif filters.row_group == 'Tax Invoice Type':
-		sql = "select tax_invoice_type as row_group from `tabTax Invoice` group by tax_invoice_type"
-	elif filters.row_group == 'Document Type':
-		sql = "select document_type as row_group from `tabTax Invoice` group by document_type"
-	data = frappe.db.sql(sql,filters,as_dict=1)
+def get_group_field(filters):
+	return [d["sql_expression"] for d in group_fields() if d["key"] == filters.row_group][0]
 
-	return data
+def group_fields():
+	return [
+		{"key":"Date", "sql_expression":"date_format(tax_invoice_date,'%%d-%%m-%%Y') as row_group"},
+		{"key":"Month", "sql_expression":"date_format(tax_invoice_date,'%%b-%%Y') as row_group"},
+		{"key":"Year", "sql_expression":"date_format(tax_invoice_date,'%%Y') as row_group"},
+		{"key":"Tax Invoice Type", "sql_expression":"tax_invoice_type as row_group"},
+		{"key":"Document Type", "sql_expression":"document_type as row_group"},
+	]
