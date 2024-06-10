@@ -51,19 +51,28 @@ def get_report_data (filters, report_fields):
 			})
 
 			report_data = report_data + [d for d in data if d['tax_invoice_type'] == parent or d['document_type']==parent]
-			total_row = {
+			
+			if filters.row_group == 'tax_invoice_type':
+				total_row = {
 					"indent":0,
 					report_fields[0].fieldname: "Total",
+					report_fields[2].fieldname:len([d for d in data if d['tax_invoice_type'] == parent]),
 					"is_group":1,
 					"is_group_total":1,
 			}
-			if filters.row_group == 'tax_invoice_type':
-				for f in [d for d in report_fields if d.show_in_report==1 and d.fieldtype=='Currency']:
+				for f in [d for d in report_fields if d.show_in_report==1 and d.fieldtype!='Date' and d.fieldtype!='Data' and d.fieldtype!='Link']:
 					total_row[f.fieldname] = (sum([d[f.fieldname] for d in data if d['tax_invoice_type'] == parent]))
 				report_data.append(total_row)
 
 			if filters.row_group == 'document_type':
-				for f in [d for d in report_fields if d.show_in_report==1 and d.fieldtype=='Currency']:
+				total_row = {
+					"indent":0,
+					report_fields[0].fieldname: "Total",
+					report_fields[2].fieldname:len([d for d in data if d['document_type'] == parent]),
+					"is_group":1,
+					"is_group_total":1,
+			}
+				for f in [d for d in report_fields if d.show_in_report==1 and d.fieldtype!='Date' and d.fieldtype!='Data' and d.fieldtype!='Link']:
 					total_row[f.fieldname] = (sum([d[f.fieldname] for d in data if d['document_type'] == parent]))
 			
 				report_data.append(total_row)
