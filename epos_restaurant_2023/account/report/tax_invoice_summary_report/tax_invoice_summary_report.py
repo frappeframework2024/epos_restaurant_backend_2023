@@ -2,6 +2,7 @@
 # For license information, please see license.txt
 
 import frappe
+from frappe import _
 from epos_restaurant_2023.utils import get_date_range_by_timespan
 
 def execute(filters=None):
@@ -67,11 +68,15 @@ def get_report_data (filters, report_fields):
 	report_data = frappe.db.sql(sql, filters, as_dict=1)
 	# total row
 	# TODO
-	report_data.append({
-		"fieldname":"row_group",
+	total_row = {
+		"row_group":_("Total"),
 		"is_total_row": 1,
-		
-	})
+	
+	}
+	for f in [d for d in report_fields if d.show_in_report==1]:
+		total_row[f.fieldname] = (sum([d[f.fieldname] for d in report_data])) 
+
+	report_data.append(total_row)
 
 	return report_data
 			

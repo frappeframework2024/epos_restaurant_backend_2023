@@ -3,6 +3,7 @@
 
 import frappe
 from epos_restaurant_2023.utils import get_date_range_by_timespan
+from frappe import _
 
 def execute(filters=None):
 	report_config = frappe.get_last_doc("Report Configuration", filters={"property":filters.property, "report":"Tax Invoice Report"} )
@@ -39,6 +40,7 @@ def get_report_data (filters, report_fields):
 	report_data = []
 	if filters.row_group:
 		parent_row = get_parent_row_row_by_data(filters,data)
+		
 		for parent in parent_row:
 			d = parent
 			report_data.append({
@@ -48,19 +50,34 @@ def get_report_data (filters, report_fields):
 				"is_group_total":0,
 			})
 
-			report_data = report_data + [d for d in data if d[filters.row_group] == parent]
-		report_data.append({
-			"indent":0,
-			report_fields[0].fieldname: "Total",
-			"is_group":1,
-			"sub_total":sum([d['sub_total'] for d in data if d[filters.row_group] == parent]),
-			"service_charge":sum([d['service_charge'] for d in data if d[filters.row_group] == parent]),
-			"accommodation_tax":sum([d['accommodation_tax'] for d in data if d[filters.row_group] == parent]),
-			"specific_tax":sum([d['specific_tax'] for d in data if d[filters.row_group] == parent]),
-			"vat":sum([d['vat'] for d in data if d[filters.row_group] == parent]),
-			"grand_total":sum([d['grand_total'] for d in data if d[filters.row_group] == parent]),
-			"is_group_total":1,
-		})
+			report_data = report_data + [d for d in data if d['tax_invoice_type'] == parent or d['document_type']==parent]
+
+			if filters.row_group == 'tax_invoice_type':
+				report_data.append({
+					"indent":0,
+					report_fields[0].fieldname: "Total",
+					"is_group":1,
+					"sub_total":sum([d['sub_total'] for d in data if d['tax_invoice_type'] == parent]),
+					"service_charge":sum([d['service_charge'] for d in data if d['tax_invoice_type'] == parent]),
+					"accommodation_tax":sum([d['accommodation_tax'] for d in data if d['tax_invoice_type'] == parent]),
+					"specific_tax":sum([d['specific_tax'] for d in data if d['tax_invoice_type'] == parent]),
+					"vat":sum([d['vat'] for d in data if d['tax_invoice_type'] == parent]),
+					"grand_total":sum([d['grand_total'] for d in data if d['tax_invoice_type'] == parent]),
+					"is_group_total":1,
+				})
+			if filters.row_group == 'document_type':
+				report_data.append({
+					"indent":0,
+					report_fields[0].fieldname: "Total",
+					"is_group":1,
+					"sub_total":sum([d['sub_total'] for d in data if d['document_type'] == parent]),
+					"service_charge":sum([d['service_charge'] for d in data if d['document_type'] == parent]),
+					"accommodation_tax":sum([d['accommodation_tax'] for d in data if d['document_type'] == parent]),
+					"specific_tax":sum([d['specific_tax'] for d in data if d['document_type'] == parent]),
+					"vat":sum([d['vat'] for d in data if d['document_type'] == parent]),
+					"grand_total":sum([d['grand_total'] for d in data if d['document_type'] == parent]),
+					"is_group_total":1,
+				})
 	else:
 		report_data = data
 	
@@ -82,18 +99,12 @@ def get_data (filters,report_fields):
 	if filters.row_group and len([d for d in report_fields if d.fieldname == filters.row_group]) == 0:
 		sql = "{} , {}".format(sql, filters.row_group)
 
-	sql = "{} from `tabTax Invoice`  ".format(sql)
-	sql = "{} {}".format(sql, get_filters(filters))
+	sql = """{} from `tabTax Invoice`  where property=%(property)s
+	and tax_invoice_date between %(start_date)s and %(end_date)s""".format(sql)
+
 	
 	data = frappe.db.sql(sql, filters ,as_dict=1)
 	return data
-
-def get_filters(filters):
-	sql = """where property=%(property)s
-	and tax_invoice_date between %(start_date)s and %(end_date)s """
-	
-
-	return sql
 
 
 def get_report_summary(filters,report_fields, data):
@@ -102,9 +113,9 @@ def get_report_summary(filters,report_fields, data):
 
 	if filters.show_in_summary:
 		summary_fields = [d for d in summary_fields if d.fieldname in filters.show_in_summary]
-	summary.append({
-		"value":len([d for d in data if d['indent']==1]),"indicator":"blue","label":"Total Inv."
-	})
+	# summary.append({
+	# 	"value":len([d for d in data if d['indent']==1]),"indicator":"blue","label":"Total Inv."
+	# })
 	for x in summary_fields:
 		summary.append({
         "value": sum([d[x.fieldname] for d in data if d["is_group"] == 0 and x.fieldname in d]),
@@ -131,7 +142,7 @@ def get_report_chart(filters,data,report_fields):
 	datasets = []
 	chart_label_field = "name"
 	columns = [d[chart_label_field] for d in  data if 'is_group' in d and  d["is_group"] == 1 and d['name']!="Total"]
-	
+
 	for f in report_fields:
 		if f.show_in_chart==1:
 			if (f.fieldtype=="Currency"):
@@ -143,7 +154,7 @@ def get_report_chart(filters,data,report_fields):
 			else:
 				datasets.append({
 					"name": f.label,
-					"values": [d[f.fieldname] for d in  data if 'is_group_total' in d and  d["is_group_total"] ==1]
+					"values": [d[f.fieldname] for d in  data if    'is_group_total' in d and  d["is_group_total"] ==1]
 				})
 				
 	chart = {
