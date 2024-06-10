@@ -48,6 +48,17 @@
   </div>
   {%endif%}
 
+  {% if total_tax >0  %}
+  <div class="row">
+    <div class="col">
+      Total Tax
+    </div>
+    <div class="col text-right">
+      <strong>{{frappe.format(total_tax ,{"fieldtype":"Currency"})}}</strong>
+    </div>
+  </div>
+  {%endif%}
+
   <!-- bank fee -->
   {%if total_fee %}
   <div class="row">
