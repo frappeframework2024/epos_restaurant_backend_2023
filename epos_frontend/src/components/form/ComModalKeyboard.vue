@@ -70,7 +70,7 @@ function onKeyPress($event) {
     }
     else if($event == '{English}' || $event == '{ខ្មែរ}'){
         
-        lang.value = $event == '{English}' ? 'en': 'kh' 
+        lang.value = $event == '{English}' ? 'en': 'km' 
        
      
     }
