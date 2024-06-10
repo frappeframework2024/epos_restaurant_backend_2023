@@ -1790,10 +1790,11 @@ export default class Sale {
 
         let kotProducts = {
             action: "print_to_kitchen",
-            sale: doc,
-            printers: [],
             setting: this.setting?.pos_setting,
+            sale: doc,
+            product_printers: _productPrinters,
             station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
+            printers: [],
         }
         let productUSBPrinter = JSON.parse(JSON.stringify(kotProducts));
         kotProducts.printers = [];

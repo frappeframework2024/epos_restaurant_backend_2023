@@ -65,6 +65,14 @@ def get_report_data (filters, report_fields):
 		)
  
 	report_data = frappe.db.sql(sql, filters, as_dict=1)
+	# total row
+	# TODO
+	report_data.append({
+		"fieldname":"row_group",
+		"is_total_row": 1,
+		
+	})
+
 	return report_data
 			
 def get_report_fields(report_fields):
