@@ -15,8 +15,8 @@ def execute(filters=None):
 	report_data = get_report_data(filters, report_config.report_fields)
 	summary = get_report_summary(filters, report_config.report_fields, report_data)
 	columns = get_report_columns(filters, report_config.report_fields)
-	# chart = get_report_chart(filters,report_data,report_config.report_fields)
-	return  columns, report_data, None, None, summary
+	chart = get_report_chart(filters,report_data,report_config.report_fields)
+	return  columns, report_data, None, chart, summary
 
 
 def get_report_columns(filters,  report_fields):
@@ -35,6 +35,10 @@ def get_report_columns(filters,  report_fields):
 	elif filters.row_group == "Tax Invoice Type":
 		columns = [
         {'key': "Tax Invoice Type","fieldname":"row_group","label":"Tax Invoice Type","width":125},
+    ]
+	elif filters.row_group == "Next Month":
+		columns = [
+        {'key': "Tax Invoice Type","fieldname":"row_group","label":"Month","width":125},
     ]
 	elif filters.row_group == "Document Type":
 		columns = [
@@ -64,8 +68,26 @@ def get_report_data (filters, report_fields):
 			get_report_fields(report_fields),
 			get_group_field(filters).split(" as ")[0]
 		)
- 
-	report_data = frappe.db.sql(sql, filters, as_dict=1)
+	
+	data = frappe.db.sql(sql, filters, as_dict=1)
+	report_data = []
+	date =frappe.db.sql("select date_format(date,'%%d-%%m-%%Y') as row_group from `tabDates` where date between %(start_date)s and %(end_date)s order by date",filters,as_dict=1)
+	date_list = sorted(set([ d['row_group'] for d in date]))
+	date_record = {}
+	if filters.row_group == 'Date':
+		for g in date_list:
+			date_record = {'row_group': g}
+			for f in [d for d in report_fields if d.show_in_report == 1]:
+				date_record[f.fieldname] = 0
+			matching_data = [d for d in data if d['row_group'] == g]
+			if matching_data:
+				for f in [d for d in report_fields if d.show_in_report == 1]:
+					if f.fieldname in matching_data[0]:
+						date_record[f.fieldname] = matching_data[0][f.fieldname]
+			report_data.append(date_record)
+	else:
+		report_data = data
+
 	# total row
 	# TODO
 	total_row = {
@@ -74,7 +96,7 @@ def get_report_data (filters, report_fields):
 	
 	}
 	for f in [d for d in report_fields if d.show_in_report==1]:
-		total_row[f.fieldname] = (sum([d[f.fieldname] for d in report_data])) 
+		total_row[f.fieldname] = (sum([d[f.fieldname] for d in data if f.fieldname in d])) 
 
 	report_data.append(total_row)
 
@@ -116,21 +138,20 @@ def get_report_chart(filters,data,report_fields):
 	columns =[]
 	
 	datasets = []
-	chart_label_field = "name"
-	columns = [d[chart_label_field] for d in  data if 'is_group' in d and  d["is_group"] == 1 and d['name']!="Total"]
-	
+	chart_label_field = "row_group"
+	columns = [d[chart_label_field] for d in  data if d['row_group']!="Total"]
 	for f in report_fields:
 		if f.show_in_chart==1:
 			if (f.fieldtype=="Currency"):
 				datasets.append({
 					"name": f.label,
-					"values": [round(d[f.fieldname],int(precision)) for d in  data if 'is_group_total' in d and  d["is_group_total"] ==1]
+					"values": [round(d[f.fieldname],int(precision)) for d in  data]
 				})
 
 			else:
 				datasets.append({
 					"name": f.label,
-					"values": [d[f.fieldname] for d in  data if 'is_group_total' in d and  d["is_group_total"] ==1]
+					"values": [d[f.fieldname] for d in  data]
 				})
 				
 	chart = {

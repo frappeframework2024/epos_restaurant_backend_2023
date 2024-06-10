@@ -51,33 +51,22 @@ def get_report_data (filters, report_fields):
 			})
 
 			report_data = report_data + [d for d in data if d['tax_invoice_type'] == parent or d['document_type']==parent]
-
+			total_row = {
+					"indent":0,
+					report_fields[0].fieldname: "Total",
+					"is_group":1,
+					"is_group_total":1,
+			}
 			if filters.row_group == 'tax_invoice_type':
-				report_data.append({
-					"indent":0,
-					report_fields[0].fieldname: "Total",
-					"is_group":1,
-					"sub_total":sum([d['sub_total'] for d in data if d['tax_invoice_type'] == parent]),
-					"service_charge":sum([d['service_charge'] for d in data if d['tax_invoice_type'] == parent]),
-					"accommodation_tax":sum([d['accommodation_tax'] for d in data if d['tax_invoice_type'] == parent]),
-					"specific_tax":sum([d['specific_tax'] for d in data if d['tax_invoice_type'] == parent]),
-					"vat":sum([d['vat'] for d in data if d['tax_invoice_type'] == parent]),
-					"grand_total":sum([d['grand_total'] for d in data if d['tax_invoice_type'] == parent]),
-					"is_group_total":1,
-				})
+				for f in [d for d in report_fields if d.show_in_report==1 and d.fieldtype=='Currency']:
+					total_row[f.fieldname] = (sum([d[f.fieldname] for d in data if d['tax_invoice_type'] == parent]))
+				report_data.append(total_row)
+
 			if filters.row_group == 'document_type':
-				report_data.append({
-					"indent":0,
-					report_fields[0].fieldname: "Total",
-					"is_group":1,
-					"sub_total":sum([d['sub_total'] for d in data if d['document_type'] == parent]),
-					"service_charge":sum([d['service_charge'] for d in data if d['document_type'] == parent]),
-					"accommodation_tax":sum([d['accommodation_tax'] for d in data if d['document_type'] == parent]),
-					"specific_tax":sum([d['specific_tax'] for d in data if d['document_type'] == parent]),
-					"vat":sum([d['vat'] for d in data if d['document_type'] == parent]),
-					"grand_total":sum([d['grand_total'] for d in data if d['document_type'] == parent]),
-					"is_group_total":1,
-				})
+				for f in [d for d in report_fields if d.show_in_report==1 and d.fieldtype=='Currency']:
+					total_row[f.fieldname] = (sum([d[f.fieldname] for d in data if d['document_type'] == parent]))
+			
+				report_data.append(total_row)
 	else:
 		report_data = data
 	
@@ -113,9 +102,9 @@ def get_report_summary(filters,report_fields, data):
 
 	if filters.show_in_summary:
 		summary_fields = [d for d in summary_fields if d.fieldname in filters.show_in_summary]
-	# summary.append({
-	# 	"value":len([d for d in data if d['indent']==1]),"indicator":"blue","label":"Total Inv."
-	# })
+	summary.append({
+		"value":len([d for d in data if d['indent']==1]),"indicator":"blue","label":"Total Inv."
+	})
 	for x in summary_fields:
 		summary.append({
         "value": sum([d[x.fieldname] for d in data if d["is_group"] == 0 and x.fieldname in d]),
