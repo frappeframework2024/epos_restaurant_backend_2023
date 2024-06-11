@@ -16,7 +16,9 @@
   "product_categories_section",
   "product_categories",
   "item_section",
-  "items"
+  "items",
+  "note_section",
+  "note"
  ],
  "fields": [
   {
@@ -36,6 +38,7 @@
   {
    "fieldname": "posting_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Posting Date"
   },
   {
@@ -53,6 +56,7 @@
   {
    "fieldname": "check_type",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Check Type",
    "options": "Full Check\nPartially Check"
   },
@@ -83,12 +87,21 @@
    "fieldtype": "Table",
    "label": "Product Categories",
    "options": "Stock Check Category"
+  },
+  {
+   "fieldname": "note_section",
+   "fieldtype": "Section Break",
+   "label": "Note"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Small Text"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-06-11 09:47:13.470368",
+ "modified": "2024-06-11 10:47:28.490579",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Inventory Check",
