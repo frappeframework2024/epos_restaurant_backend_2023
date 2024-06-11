@@ -417,3 +417,5 @@ def update_temp_menu_product_photo_schedule():
                             """.format(setting.server_url))
         frappe.db.commit()
         return data
+    
+
