@@ -11,7 +11,7 @@ from frappe import _
 
 
 @frappe.whitelist(allow_guest=True)
-def station_license(device_id,platform="Windows"): 
+def station_license(device_id,platform="Windows",business_branch=None): 
     if device_id=="Demo":
         doc = None
         if not frappe.db.exists("POS Station","Demo"):
@@ -32,10 +32,15 @@ def station_license(device_id,platform="Windows"):
             }
     else:
         filters = {
-            'disabled': 0,
-            'device_id':device_id,
-             'platform':platform
-            }
+                'disabled': 0,
+                'device_id':device_id,
+                'platform':platform
+                }
+        if business_branch:
+            filters.update({'business_branch':business_branch})
+        else:
+            pass
+            
     # frappe.throw(str(filters))
 
     doc = frappe.db.get_list('POS Station',

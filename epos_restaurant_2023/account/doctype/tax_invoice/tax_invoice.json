@@ -22,6 +22,7 @@
   "section_break_crcz",
   "note",
   "default_print_format",
+  "default_letter_head",
   "print_settings",
   "column_break_hrgu",
   "invoice_summary",
@@ -179,11 +180,17 @@
    "fieldname": "grand_total",
    "fieldtype": "Currency",
    "label": "Grand Total"
+  },
+  {
+   "fieldname": "default_letter_head",
+   "fieldtype": "Link",
+   "label": "Default Letter Head",
+   "options": "Letter Head"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-06 12:38:24.939376",
+ "modified": "2024-06-10 17:45:55.250668",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "Tax Invoice",

@@ -60,7 +60,7 @@ frappe.query_reports["Tax Invoice Report"] = {
 			"fieldname": "row_group",
 			"label": __("Group By"),
 			"fieldtype": "Select",
-			"options": "\ntax_invoice_type\ndocument_type",
+			"options": "\ntax_invoice_type\ndocument_type\ntax_invoice_date",
 			"default": "",
 			"on_change": function (query_report) { },
 			hide_in_filter: 1,

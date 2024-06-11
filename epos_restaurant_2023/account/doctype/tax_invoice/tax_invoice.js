@@ -3,6 +3,10 @@
 
 frappe.ui.form.on("Tax Invoice", {
   refresh(frm) {
+    
+    frm.doc.letter_head = frm.doc.default_letter_head
+    frm.doc.print_format = frm.doc.default_print_format
+
     if (!frm.doc.__islocal) {
       frm.set_intro("This invoice is a " + frm.doc.tax_invoice_type, "blue");
 
@@ -14,10 +18,10 @@ frappe.ui.form.on("Tax Invoice", {
       } else {
         getItemListFromGuestFolio(frm);
       }
-    }
+   
 
     // add custom button to update tax invoice summary
-    if (!frm.doc.__islocal) {
+
       frm.add_custom_button(
         __("Update Tax Invoice Summary"),
         function () {
@@ -40,6 +44,17 @@ frappe.ui.form.on("Tax Invoice", {
         __("Actions")
       );
     }
+
+    frm.add_custom_button(__('Print'), function() {
+     
+      frm.meta.default_print_format = frm.doc.default_print_format;
+      
+  
+    frm.print_doc();
+ 
+
+  });
+
   },
   setup(frm) {
     for (const key in frm.fields_dict) {

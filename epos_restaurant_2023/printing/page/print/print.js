@@ -4,7 +4,7 @@ frappe.pages["print"].on_page_load = function (wrapper) {
 	});
 
 	let print_view = new frappe.ui.form.PrintView(wrapper);
-	alert(123)
+
 	$(wrapper).bind("show", () => {
 		const route = frappe.get_route();
 		const doctype = route[1];
