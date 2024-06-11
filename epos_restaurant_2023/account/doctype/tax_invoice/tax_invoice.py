@@ -1,14 +1,15 @@
 # Copyright (c) 2024, Tes Pheakdey and contributors
 # For license information, please see license.txt
 
-from edoor.api.utils import update_tax_invoice_data_to_tax_invoice
+
 import frappe
 from frappe.model.document import Document
 from epos_restaurant_2023.controllers.base_controller import BaseController
 class TaxInvoice(BaseController):
 	def after_insert(self):
-		 
-		update_tax_invoice_data_to_tax_invoice(self.name)
+		if 'edoor' in frappe.get_installed_apps():
+			from edoor.api.utils import update_tax_invoice_data_to_tax_invoice
+			update_tax_invoice_data_to_tax_invoice(self.name)
 		
 	def after_delete(self):
 		if self.document_type in ["Reservation Folio","Desk Folio"]:
