@@ -15,27 +15,10 @@ class CashierShift(Document):
 		if self.flags.ignore_validate == True:
 			return
 		if self.is_new() == 1:
-			if 'edoor' in frappe.get_installed_apps():
-				if self.is_edoor_shift==0:
-					current_edoor_shift = frappe.get_list("Cashier Shift",
-											filters={
-												"business_branch":self.business_branch, 
-												"is_closed":0,
-												"shift_name":self.shift_name,
-												"is_edoor_shift":1,
-												"name":['!=',self.name]
-											},fields=['name', 'shift_type'])
-					if not current_edoor_shift:
-						frappe.throw("Invalid shift name please try again")
-
-
-			
 			data = frappe.get_list("Cashier Shift",filters={"pos_profile":self.pos_profile,"business_branch":self.business_branch, "is_closed":0})
 			if data:
 				frappe.throw("Cashier shift is already opened")
 
-				
-				
 
 		for c in self.cash_float:
 			exchange_rate = frappe.get_value("Payment Type", c.payment_method,"exchange_rate")

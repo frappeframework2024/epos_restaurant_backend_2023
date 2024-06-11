@@ -19,17 +19,27 @@ def get_products(self):
 	else:
 		data =frappe.db.sql( "select name,product_name_en  from `tabProduct` where disabled=0 and is_inventory_product=1",as_dict=1)
 	
-	opening_data = get_opening_quantity(self.posting_date, [d["name"] for d in data])
+	opening_data = get_opening_quantity(self, [d["name"] for d in data])
+	current_data = get_current_quantity(self, [d["name"] for d in data])
+	frappe.msgprint(str(current_data))
 	for d in data:
 		child_doc = frappe.new_doc("Inventory Check Items")
 		child_doc.product_code = d["name"] 
 		child_doc.product_name = d["product_name_en"] 
-		child_doc.opening_quantity = sum([x["quantity"] for x in opening_data if x["product_code"] ==d["product_code"]])
+		child_doc.opening_quantity = sum([x["quantity"] for x in opening_data if x["product_code"] ==d["name"]])
 		self.append("items", child_doc)
   
+
   
-def get_opening_quantity(date,product_codes):
-    sql = "select product_code, sum(in_quantity - out_quantity) as quantity from `tabInventory Transaction` where transaction_date<%(date)s and product_code in %(product_codes)s group by product_code"
-    data = frappe.db.sql(sql, {"date":date,"product_codes":product_codes},as_dict=1 )
+def get_opening_quantity(self,product_codes):
+    sql = "select product_code, sum(in_quantity - out_quantity) as quantity from `tabInventory Transaction` where stock_location=%(stock_location)s and  transaction_date<%(date)s and product_code in %(product_codes)s group by product_code"
+    data = frappe.db.sql(sql, {"date":self.posting_date, "stock_location": self.stock_location ,"product_codes":product_codes},as_dict=1 )
+    
+    return data
+    
+  
+def get_current_quantity(self,product_codes):
+    sql = "select product_code,transaction_type, sum(in_quantity - out_quantity) as quantity from `tabInventory Transaction` where stock_location=%(stock_location)s and  transaction_date=%(date)s and product_code in %(product_codes)s group by product_code,transaction_type"
+    data = frappe.db.sql(sql, {"date":self.posting_date, "stock_location": self.stock_location ,"product_codes":product_codes},as_dict=1 )
     return data
     
