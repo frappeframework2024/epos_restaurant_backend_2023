@@ -71,6 +71,7 @@
   "note",
   "account_code_name",
   "account_group",
+  "account_group_name",
   "packageinclusion_tab",
   "main_package_account_code",
   "packages",
@@ -617,12 +618,17 @@
    "fieldname": "parent_account_name",
    "fieldtype": "Data",
    "label": "Parent Account Name"
+  },
+  {
+   "fieldname": "account_group_name",
+   "fieldtype": "Data",
+   "label": "Account Group Name"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-05-25 15:51:30.556205",
+ "modified": "2024-06-12 14:55:15.759021",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

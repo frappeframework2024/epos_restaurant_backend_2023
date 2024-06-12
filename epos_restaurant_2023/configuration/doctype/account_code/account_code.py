@@ -29,6 +29,10 @@ class AccountCode(Document):
 
 		if self.discount_account:
 			self.discount_account_name = frappe.db.get_value("Account Code", self.discount_account,"account_name")
+
+		if self.account_group:
+			self.account_group_name = frappe.db.get_value("Account Code",self.account_group,"account_name")
+   
 				
     
 	def on_update(self):
