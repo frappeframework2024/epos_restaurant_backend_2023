@@ -3,7 +3,7 @@
     <div :class="data.css_class" class="rounded-t-lg p-2 text-white">
         <div class="flex justify-between">
 
-        <div class="flex item-center gap-2">
+        <div :style="{'font-size':(kod.setting.font_size) + 'px'}" class="flex item-center gap-2">
        
              <v-icon style="font-size: 20px;">mdi-table-furniture</v-icon>
             {{ data.table_no }} 
@@ -12,7 +12,7 @@
             
         </div>
             
-         <div class="flex item-center gap-2">
+         <div :style="{'font-size':(kod.setting.font_size) + 'px'}" class="flex item-center gap-2">
             <v-icon class="text-white" style="font-size: 20px;">mdi-timer</v-icon> 
              {{ kod.getHour(data.minute_diff) }}
          </div>

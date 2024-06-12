@@ -7,6 +7,13 @@ from frappe.model.document import Document
 from epos_restaurant_2023.controllers.base_controller import BaseController
 class InventoryCheck(BaseController):
 	def validate(self):
+		# validate date with inventory transaction
+		# inventory check date master be greater than or equal to last inventory transaction
+		last_inventory_transaction  =frappe.db.sql( "select max(transaction_date) as date from `tabInventory Transaction`",as_dict=1)
+		if last_inventory_transaction:
+			if frappe.utils.getdate(self.posting_date)<frappe.utils.getdate(last_inventory_transaction[0]["date"]):
+				frappe.throw("Inventory check date must be greater than or equal to last inventory transaction date")
+  
 		if self.is_new():
 			data = frappe.db.sql("select name from `tabInventory Check` where stock_location='{}' and docstatus=0".format(self.stock_location),as_dict=1)
 			if data:
@@ -18,17 +25,19 @@ class InventoryCheck(BaseController):
 				frappe.throw("Please select product category")
 
 		if self.items:
-			for d in [x for x in self.items if 
-          (x.opening_quantity if x.opening_quantity is not None else 0) + 
-          (x.sale if x.sale is not None else 0) + 
-          (x.purchase if x.purchase is not None else 0) + 
-          (x.other_transaction if x.other_transaction is not None else 0) + 
-          (x.actual_quantity if x.actual_quantity is not None else 0) > 0]:
-				d.difference = d.actual_quantity or 0 - d.current_on_hand or 0
+			for d in [x for x in self.items if x.actual_quantity!=x.current_on_hand]:
+				d.difference = (d.actual_quantity or 0) - (d.current_on_hand or 0)
 		
   
 		if self.is_new() or not self.items:
 			get_products(self)
+   
+		# validate duplcate item
+		if len(self.items) != len(set([d.product_code for d in self.items])):
+			is_valid, product_code,product_name = validate_no_duplicate_codes(self.items)
+			if not is_valid:
+				frappe.throw("Product {} - {} is duplicated".format(product_code, product_name))
+    
 		
 	def before_submit(self):
 		# update product cost
@@ -47,7 +56,17 @@ class InventoryCheck(BaseController):
 		# frappe.enqueue("epos_restaurant_2023.inventory.doctype.inventory_check.inventory_check.update_inventory_on_submit", queue='short', self=self)
 	def on_cancel(self):
 		update_inventory_on_cancel(self)
-	
+
+def validate_no_duplicate_codes(dict_list):
+    seen_codes = set()
+    for item in dict_list:
+        code = item.product_code
+
+        if code in seen_codes:
+            return False, code, item.product_name  # Duplicate code found
+        seen_codes.add(code)
+    return True, None , None # No duplicates found
+
 @frappe.whitelist()
 def get_product_quantity_information(product_code,date,stock_location):
 	product_doc = frappe.get_doc("Product",product_code)
@@ -98,7 +117,7 @@ def update_inventory_on_submit(self):
 			'out_quantity': 0 if p.difference>0 else  abs(p.difference) / uom_conversion,
 			"uom_conversion":uom_conversion,
 			"price":calculate_average_cost(p.product_code,self.stock_location,(p.difference / uom_conversion),p.cost*uom_conversion),
-			'note': 'New Inventory Check submitted.',
+			'note': 'New Inventory Check submitted. {}'.format(p.note or ""),
 			"has_expired_date":p.has_expired_date,
 			"expired_date":p.expired_date,
 			'action': 'Submit'
@@ -136,7 +155,7 @@ def get_products(self):
 	
 	opening_data = get_opening_quantity(self, [d["name"] for d in data])
 	current_data = get_current_quantity(self, [d["name"] for d in data])
-	frappe.msgprint(str(current_data))
+	
 	for d in data:
 		child_doc = frappe.new_doc("Inventory Check Items")
 		child_doc.product_code = d["name"] 

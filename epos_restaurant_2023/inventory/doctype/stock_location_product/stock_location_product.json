@@ -45,8 +45,7 @@
    "fieldname": "unit",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Unit",
-   "set_only_once": 1
+   "label": "Unit"
   },
   {
    "fieldname": "quantity",
@@ -113,7 +112,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-23 11:10:12.772715",
+ "modified": "2024-06-12 09:55:17.109310",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Location Product",

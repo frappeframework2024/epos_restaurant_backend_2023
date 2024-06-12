@@ -62,8 +62,7 @@
    "hidden": 1,
    "in_list_view": 1,
    "label": "Unit",
-   "read_only": 1,
-   "set_only_once": 1
+   "read_only": 1
   },
   {
    "fetch_from": "stock_location.business_branch",
@@ -241,7 +240,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-04-24 10:21:45.559768",
+ "modified": "2024-06-12 09:54:14.579145",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Inventory Transaction",

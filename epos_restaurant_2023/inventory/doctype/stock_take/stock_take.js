@@ -88,6 +88,7 @@ function get_currenct_cost(frm,doc){
 		frappe.throw("Please Select Stock Location First")
 		return
 	}
+
 	frappe.call({
 		method: "epos_restaurant_2023.api.product.get_currenct_cost",
 		args: {

@@ -37,12 +37,12 @@
       </template>  
         <hr v-if="isSummary" class="my-1"> 
         
-        <div class="relative" :class="(kod.setting.default_group_by != 'order_time' && !isSummary)  ? 'pt-6':'pt-1' " >
+        <div class="relative" :class="(kod.setting.default_group_by != 'order_time' && !isSummary)  ? 'pt-8':'pt-1' " >
         <div v-if="kod.setting.default_group_by != 'order_time'" :class="data.css_class ? data.css_class : 'bg-slate-500'"
             class="whitespace-normal rounded-md text-white px-1 inline-block absolute top-1">
             <div v-if="(kod.setting.default_group_by != 'order_time' && !isSummary)" class="flex">
-                <v-icon style="font-size:10px;">mdi-timer</v-icon>
-                <span  style="font-size:10px;" class="ms-1">{{ kod.getHour(data.minute_diff) }} - {{ data.order_by }}</span>
+                <v-icon style="font-size:15px;">mdi-timer</v-icon>
+                <span :style="{'font-size':(kod.setting.font_size) - 5 + 'px'}"  class="ms-1">{{ kod.getHour(data.minute_diff) }} - {{ data.order_by }}</span>
                 
 
             </div>

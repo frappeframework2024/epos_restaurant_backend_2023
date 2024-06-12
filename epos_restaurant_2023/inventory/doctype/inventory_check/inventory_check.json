@@ -39,7 +39,8 @@
    "fieldname": "posting_date",
    "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "Posting Date"
+   "label": "Posting Date",
+   "set_only_once": 1
   },
   {
    "fieldname": "column_break_xbyt",
@@ -51,16 +52,19 @@
    "in_list_view": 1,
    "label": "Stock Location",
    "options": "Stock Location",
-   "reqd": 1
+   "reqd": 1,
+   "set_only_once": 1
   },
   {
    "fieldname": "check_type",
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Check Type",
-   "options": "Full Check\nPartially Check"
+   "options": "Full Check\nPartially Check",
+   "set_only_once": 1
   },
   {
+   "depends_on": "eval:!doc.__islocal",
    "fieldname": "item_section",
    "fieldtype": "Section Break",
    "label": "Item"
@@ -79,6 +83,7 @@
   {
    "fieldname": "items",
    "fieldtype": "Table",
+   "label": "Items",
    "options": "Inventory Check Items"
   },
   {
@@ -101,7 +106,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-06-11 10:47:28.490579",
+ "modified": "2024-06-12 10:33:20.611798",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Inventory Check",
