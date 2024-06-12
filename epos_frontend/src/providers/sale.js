@@ -965,12 +965,12 @@ export default class Sale {
                     else {
                         result = input;
                     }
+                    
 
-                    if (result != false) {
+                    if (result != false || result == 0 ) {
                         const price = sp.price;
-                        sp.change_price_note = v.note
+                        sp.change_price_note = v.note;
                         sp.price = parseFloat(this.getNumber(result));
-
                         this.updateSaleProduct(sp);
                         this.updateSaleSummary();
 

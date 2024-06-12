@@ -3,6 +3,7 @@
 
         class="cursor-pointer mb-3 rounded-lg px-2 pb-1 relative bg-slate-100" :class="(data.kod_status == 'Done' && !isSummary ) ? 'opacity-75 text-red-400 border-red-400' : '' , data.loading ? 'pointer-events-none' : ''  " >
  <template v-if="isSummary">
+    
         <div  :style="{ 'font-size': kod.setting.font_size - 3 + 'px' }" class="flex gap-2 pt-1 flex-wrap">
             <div class="flex item-center gap-2 bg-slate-300 rounded-full px-2">
                 <v-icon class="m-auto" style="font-size:15px;">mdi-table-furniture</v-icon>
@@ -13,6 +14,10 @@
                 <v-icon class="text-black m-auto" style="font-size: 15px;">mdi-tag</v-icon>      
                 {{data.sale_type }}
             </div>
+            <div  class="flex item-center gap-2 bg-slate-300 rounded-full px-2">
+                <v-icon class="m-auto" style="font-size:15px;">mdi-tag</v-icon>
+                {{ data.order_by }} 
+            </div> 
             <template v-if="!kod.setting.hide_order_information">
             <div  class="flex item-center gap-2 whitespace-nowrap bg-slate-300 rounded-full px-2">
                 <v-icon class="text-black m-auto" style="font-size: 15px;">mdi-calendar-clock</v-icon>      
@@ -27,17 +32,22 @@
                 </div>
                
             </div>
+          
         </div> 
       </template>  
         <hr v-if="isSummary" class="my-1"> 
+        
         <div class="relative" :class="(kod.setting.default_group_by != 'order_time' && !isSummary)  ? 'pt-6':'pt-1' " >
         <div v-if="kod.setting.default_group_by != 'order_time'" :class="data.css_class ? data.css_class : 'bg-slate-500'"
             class="whitespace-normal rounded-md text-white px-1 inline-block absolute top-1">
             <div v-if="(kod.setting.default_group_by != 'order_time' && !isSummary)" class="flex">
                 <v-icon style="font-size:10px;">mdi-timer</v-icon>
-                <span  style="font-size:10px;" class="ms-1">{{ kod.getHour(data.minute_diff) }}</span>
+                <span  style="font-size:10px;" class="ms-1">{{ kod.getHour(data.minute_diff) }} - {{ data.order_by }}</span>
+                
+
             </div>
         </div>
+        
 
         <div class="w-5 h-5 rounded-md absolute top-0 right-3 "> 
             <div class="flex">

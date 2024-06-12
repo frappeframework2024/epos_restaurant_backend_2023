@@ -68,6 +68,7 @@ def group_pending_kod_order(data,group_by="order_time"):
                     "sale_type":d["sale_type"],
                     "table_no":d["table_no"],
                     "customer":d["customer_name"],
+                    "order_by":d["order_by"],
                     
                 } for d in data if d[group_by]==x][0]
         active_order = [d for d in data if d[group_by]==x and d["kod_status"] in ["Pending","Processing"]]
@@ -93,6 +94,7 @@ def group_pending_kod_order(data,group_by="order_time"):
                 "combo_menu_data":d["combo_menu_data"] or "",
                 "kod_status":d["kod_status"],
                 "is_free":d["is_free"],
+                "order_by":d["order_by"],
                 "order_time":d["order_time"],
                 "minute_diff":d["minute_diff"],
                 "deleted":d["deleted"],

@@ -979,7 +979,7 @@ def get_working_day_list_report(business_branch = '', pos_profile = ''):
 @frappe.whitelist()
 def edit_sale_order(name,auth=None,note=None):
     sale_doc = frappe.get_doc("Sale",name)
-    if sale_doc.is_generate_invoice == 1:
+    if sale_doc.is_generate_tax_invoice == 1:
         frappe.throw(_("Sale Order already has tax invoice."))
     if not auth:
         auth = frappe.db.get_value("Employee",{'user_id': frappe.session.user},['user_id','employee_name as full_name','name','pos_permission'], as_dict=1)

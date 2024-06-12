@@ -18,9 +18,14 @@
          </div>
         
     </div>
+    <div v-if="kod.setting.default_group_by == 'order_time'" class="flex justify-between">
+                <div class="flex item-center gap-2 whitespace-nowrap">
+                    <v-icon class="text-white" style="font-size: 20px;">mdi-tag</v-icon>{{ data.order_by }}
+                </div>
+        </div>
     </div>
-<div v-if="kod.setting.hide_order_information==0" :style="{ 'font-size': kod.setting.font_size + 'px' }" class="rounded-t-lg p-2 text-black">
-        <div class="flex justify-between">
+<div v-if="kod.setting.hide_order_information==0" :style="{ 'font-size': kod.setting.font_size + 'px' }" class="rounded-t-lg p-2 text-black">  
+    <div class="flex justify-between">
                 <div class="flex item-center gap-2 whitespace-nowrap">
                     <v-icon class="text-black" style="font-size: 20px;">mdi-account-outline</v-icon>{{ data.customer }}
                 </div>
@@ -38,6 +43,7 @@
                 {{ $t(data.sale_type) }}
             </div>
         </div>
+
         
     </div>
     <hr>

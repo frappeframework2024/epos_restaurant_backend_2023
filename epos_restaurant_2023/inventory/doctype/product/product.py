@@ -146,13 +146,16 @@ class Product(Document):
 					{
 						"doctype":"Inventory Transaction",
 						"transaction_date":datetime.now(),
+						'transaction_type':"Product",
+						"transaction_number":self.name,
 						"product_code":self.name,
 						"stock_location":self.stock_location,
 						"in_quantity":self.opening_quantity,
 						"price":self.cost,
 						"note":"Opening Quantity",
 						"has_expired_date":self.has_expired_date,
-						"expired_date":self.expired_date
+						"expired_date":self.expired_date,
+						'note': 'Opening Quantity',
 					}
 				)
 
