@@ -22,25 +22,33 @@
                         </div>
                     </div>
                     <div v-else>
-                        <v-data-table v-if="dataResource?.data?.length > 0 && !dataResource.loading" :hover="true"
-                            :headers="getHeaders()" :items="dataResource.data" :items-per-page="pagerOption.itemPerPage"
+                        <v-data-table v-model="selected" v-if="dataResource?.data?.length > 0 && !dataResource.loading" :hover="true"
+                            :headers="getHeaders()" :items="dataResource.data" :items-per-page="pagerOption.itemPerPage" show-select
                             item-value="name" class="elevation-1">
                             <template v-slot="wrapper">
                                 <thead>
-                                    <tr>
+                                    <tr> 
+                                        <!-- <th v-if="showCheckBox" class="v-data-table__td v-data-table-column--align-center">
+                                            <v-checkbox @change="onCheckboxChanged($event)" :value="allSelected"></v-checkbox>
+                                        </th> -->
                                         <th v-if="showIndex==true" class="v-data-table__td v-data-table-column--align-center">
                                             {{ $t('No #') }}
                                         </th>
+                                       
                                         <th v-for="h in headers" :class="getColumnAlignment(h.align)">
+
                                             {{ h.title }}
                                         </th>
                                     </tr>
                                 </thead>
                                 <tr v-for="(item,idx) in dataResource.data" class="v-data-table__tr">
+                                    <!-- <th v-if="showCheckBox" class="text-center">
+                                        <v-checkbox :v-model="item" :input-value="isSelected(item)" @change="toggleSelection(item)"></v-checkbox>
+                                    </th> -->
                                     <th v-if="showIndex==true" class="text-center">
                                             {{ calculateRowNumber(_tempPagerOption.currentPage,_tempPagerOption.itemPerPage,idx) }}
                                             
-                                        </th>
+                                    </th>
                                     <td v-for="h in headers" :class="getColumnAlignment(h.align)">
                                         <template v-if="h.fieldtype == 'Currency'">
                                             <div @click="callback(h, item)"
@@ -138,7 +146,7 @@
 
 <script setup>
 import { VDataTable } from 'vuetify/labs/VDataTable'
-import { createResource, reactive, defineEmits, watch, inject, ref, onUnmounted } from '@/plugin'
+import { createResource, reactive, defineEmits, watch, inject, ref, onUnmounted, computed } from '@/plugin'
 import ComFilter from '../ComFilter.vue';
 
 let filter = reactive({});
@@ -146,6 +154,7 @@ const emit = defineEmits(['callback', 'onFetch'])
 const moment = inject('$moment')
 const gv = inject('$gv')
 const order = ref({})
+const selected = ref([])
 const props = defineProps({
     headers: {
         type: Array,
@@ -156,6 +165,7 @@ const props = defineProps({
         default: ''
     },
     showIndex: Boolean,
+    showCheckBox: Boolean,
     defaltFilter: Object,
     extraFields: String,
     businessBranchField: String,
@@ -224,6 +234,7 @@ let dataResource = createResource({
         _tempPagerOption=JSON.parse(JSON.stringify(pagerOption)) 
     }
 })
+
 function renderTemplate(template) {
     return template.replace(/{\s*([^}]+)\s*}/g, (match, p1) => {
         return eval(p1);
@@ -364,6 +375,36 @@ onUnmounted(() => {
     window.removeEventListener('message', pageListener, false);
 })
 
+
+// function allSelected () {
+//     return this.selected.length === this.dataResource.data.length
+// }
+
+
+// function onCheckboxChanged() {
+//     console.log(this.allSelected)
+//     // if (event.target.checked && this.dataResource && this.dataResource.data) {
+//     //     // Select all items when checkbox is checked
+//     //     this.selected = this.dataResource.data.slice(); // Copies all items to selected array
+//     // } else {
+//     //     // Clear selection when checkbox is unchecked
+//     //     this.selected = [];
+//     // }
+// }
+// function isSelected(item) {
+//     // Check if an item is selected
+//     return this.selected.includes(item);
+// }
+// function toggleSelection(item) {
+//     // Toggle selection of an item
+//     const index = this.selected.indexOf(item);
+//     if (index === -1) {
+//     this.selected.push(item); // Add to selection if not already selected
+//     } else {
+//     this.selected.splice(index, 1); // Remove from selection if already selected
+//     }
+// }
+// Other methods related to your component
 
 </script>
 <style>

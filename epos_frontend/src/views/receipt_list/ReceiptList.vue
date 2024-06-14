@@ -2,7 +2,7 @@
     <PageLayout :title="$t('Receipt List')" icon="mdi-file-chart" full>
       <ComReceiptListCard :headers="headers" doctype="Sale" extra-fields="customer_name,sale_status_color" @callback="onCallback" v-if="mobile"/>
       
-      <ComTable :headers="headers" show-index doctype="Sale" :default-filter="defaltFilter" extra-fields="customer_name,sale_status_color" @onFetch="onFetch" business-branch-field="business_branch" pos-profile-field="pos_profile" @callback="onCallback"  v-else>
+      <ComTable :headers="headers" show-check-box show-index doctype="Sale" :default-filter="defaltFilter" extra-fields="customer_name,sale_status_color" @onFetch="onFetch" business-branch-field="business_branch" pos-profile-field="pos_profile" @callback="onCallback"  v-else>
           <template v-slot:kpi>
             <v-row no-gutters>
           <v-col cols="6" sm="3">

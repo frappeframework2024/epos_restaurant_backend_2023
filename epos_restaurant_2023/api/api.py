@@ -860,6 +860,11 @@ def get_meta(doctype):
     data =  frappe.get_meta(doctype)
     return data
 
+@frappe.whitelist(allow_guest=1)
+def test_get_meta(): 
+    data =  frappe.get_meta("Sale")
+    return data
+
 @frappe.whitelist()
 def update_print_bill_requested(name):
     doc = frappe.get_doc("Sale",name)

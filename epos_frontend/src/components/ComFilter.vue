@@ -44,6 +44,10 @@
                         <v-icon>mdi-refresh</v-icon>
                     </v-btn>
                     <ComOrderBy :fields="resource.data.fields" @onOrderby="onOrderby" :default-orderby="order_by"/>
+                    <!-- <v-btn class="ml-1 mt-1 mb-1 mr-1" @click="$emit('onRefresh')" variant="tonal" :size="mdAndDown ? 'small' : 'default'">
+                        <v-icon>mdi-printer</v-icon>
+                        Print
+                    </v-btn> -->
                     <v-btn v-if="!mdAndDown || mobile" class="ml-4 mt-1 mb-1" @click="$emit('onRefresh')" variant="tonal" :size="mdAndDown ? 'small' : 'default'">
                         <v-icon>mdi-refresh</v-icon>
                     </v-btn>

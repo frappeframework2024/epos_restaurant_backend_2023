@@ -16,8 +16,7 @@
   "business_branch_printer",
   "is_label_printer",
   "usb_printing",
-  "is_standard",
-  "is_web_printer"
+  "is_standard"
  ],
  "fields": [
   {
@@ -83,17 +82,11 @@
    "fieldname": "usb_printing",
    "fieldtype": "Check",
    "label": "USB Printing"
-  },
-  {
-   "default": "0",
-   "fieldname": "is_web_printer",
-   "fieldtype": "Check",
-   "label": "Is Web Printer"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-06 17:24:49.846072",
+ "modified": "2024-06-13 14:08:22.591982",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Printer",
