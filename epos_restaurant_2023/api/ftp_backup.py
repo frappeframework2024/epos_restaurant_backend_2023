@@ -1,6 +1,7 @@
 # Copyright (c) 2023, ratha and contributors
 # For license information, please see license.txt
 
+from epos_restaurant_2023.api.security import aes_decrypt, decode_base64, get_aes_key
 import ftplib, frappe
 import os, shutil
 import shlex, subprocess
@@ -9,6 +10,7 @@ from frappe.utils import cstr
 import asyncio
 from datetime import datetime
 from frappe import conf
+import json
 @frappe.whitelist()
 def execute_backup_command(): 
     frappe.enqueue(run_backup_command,queue="long")
@@ -57,11 +59,20 @@ async def run_bench_command(command, kwargs=None):
 def upload_to_ftp():
     folder_name = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
     setting = frappe.get_doc('FTP Backup')
+      
+  
+    auth_data = setting.ftp_auth_data
+    auth_data = decode_base64(auth_data)
+    auth_data =  aes_decrypt(auth_data, get_aes_key("@dmin$ESTC#"))
+    auth_data = json.lads(auth_data)
+
+    
     site_name = setting.ftp_folder_name if setting.ftp_folder_name != '' else cstr(frappe.local.site)# if setting.ftp_folder_name==''?
     backup_folder = setting.ftp_backup_path
     if backup_folder is None or backup_folder == '' :
         backup_folder = frappe.utils.get_site_path(conf.get("backup_path", "private/backups"))
-    session = ftplib.FTP_TLS(setting.ftp_url,setting.ftp_user,setting.ftp_password)
+    
+    session = ftplib.FTP_TLS(auth_data["ftp_host"],auth_data["ftp_user"],auth_data["ftp_pass"])
     session.encoding = 'latin-1'
     if site_name in session.nlst():
         session.cwd(site_name)

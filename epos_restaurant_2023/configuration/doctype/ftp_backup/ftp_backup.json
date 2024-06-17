@@ -8,11 +8,9 @@
  "engine": "InnoDB",
  "field_order": [
   "ftp_backup_path",
-  "ftp_user",
+  "ftp_auth_data",
   "delete_after",
   "column_break_mojg",
-  "ftp_url",
-  "ftp_password",
   "ftp_folder_name"
  ],
  "fields": [
@@ -20,11 +18,6 @@
    "fieldname": "ftp_backup_path",
    "fieldtype": "Data",
    "label": "Backup Path"
-  },
-  {
-   "fieldname": "ftp_user",
-   "fieldtype": "Data",
-   "label": "User"
   },
   {
    "fieldname": "delete_after",
@@ -37,25 +30,21 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "ftp_url",
-   "fieldtype": "Data",
-   "label": "Url"
-  },
-  {
-   "fieldname": "ftp_password",
-   "fieldtype": "Data",
-   "label": "Password"
-  },
-  {
    "fieldname": "ftp_folder_name",
    "fieldtype": "Data",
    "label": "FTP Folder Name"
+  },
+  {
+   "default": "wCEUdRAuifz6LrBEaRTtq+Ua6nLjlM3dtIIKaL2z3YOSFBrHfqV4A2OoJPNLGQn3tlgXN909542f4eSGJO+iUO7zLlM6qhSsJIeDlGDKjaLx7qMHhnkUBLA12Xy9nabD79Fd5Vu2O9+Ez7pOrP1dR45Gx63NKVNGkXYl+tnEBqpF2N1Co1e/Polh/g3sfYU5WF/3eHH7/BZDjju2Z4luUVk9GVrzwdOS7QMuA8hEhKc=",
+   "fieldname": "ftp_auth_data",
+   "fieldtype": "Small Text",
+   "label": "FTP Auth Data"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-10-04 10:25:44.728602",
+ "modified": "2024-06-17 10:55:22.010026",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "FTP Backup",
@@ -68,16 +57,6 @@
    "print": 1,
    "read": 1,
    "role": "System Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "print": 1,
-   "read": 1,
-   "role": "All",
    "share": 1,
    "write": 1
   }
