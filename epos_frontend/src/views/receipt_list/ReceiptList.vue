@@ -2,7 +2,7 @@
     <PageLayout :title="$t('Receipt List')" icon="mdi-file-chart" full>
       <ComReceiptListCard :headers="headers" doctype="Sale" extra-fields="customer_name,sale_status_color" @callback="onCallback" v-if="mobile"/>
       
-      <ComTable :headers="headers" show-check-box show-index doctype="Sale" :default-filter="defaltFilter" extra-fields="customer_name,sale_status_color" @onFetch="onFetch" business-branch-field="business_branch" pos-profile-field="pos_profile" @callback="onCallback"  v-else>
+      <ComTable :headers="headers" :isPrint="true" @onPrint="onPrint" show-check-box show-index doctype="Sale" :default-filter="defaltFilter" extra-fields="customer_name,sale_status_color" @onFetch="onFetch" business-branch-field="business_branch" pos-profile-field="pos_profile" @callback="onCallback"  v-else>
           <template v-slot:kpi>
             <v-row no-gutters>
           <v-col cols="6" sm="3">
@@ -42,15 +42,20 @@
     </PageLayout>
 </template>
 <script setup>
-import { ref, useRouter, saleDetailDialog, customerDetailDialog,i18n,inject} from '@/plugin'
+import { ref, saleDetailDialog, customerDetailDialog,i18n,inject,confirm} from '@/plugin'
 import PageLayout from '@/components/layout/PageLayout.vue';
 import ComTable from '@/components/table/ComTable.vue';
 import {useDisplay} from 'vuetify' 
 import ComReceiptListCard from './components/ComReceiptListCard.vue';
+import { createToaster } from '@meforma/vue-toaster';
+const toaster = createToaster({ position: "top-right" });
+const socket = inject("$socket");
+
 let summary = ref({})
 const frappe = inject('$frappe');
 const gv = inject('$gv');
 const call = frappe.call();
+const db = frappe.db();
 const { t: $t } = i18n.global; 
 const {mobile} = useDisplay()
 async function onCallback(data) {
@@ -82,12 +87,106 @@ function onFetch(_filters){
   }
    
   ).then((res)=>{
-    if (res.message.length > 0){
+    if (res.message.length > 0){ 
       summary.value = res.message[0]
     }
     
   })
 }
+
+async function onPrint(val){ 
+  
+  if(!val){
+    toaster.warning($t("Please select bill closed to print"));
+    return
+  }
+  if (await confirm({ title: $t("Print Receipt"), text: $t("msg.Are you sure to print receipt") })) {
+    val.forEach(async (v)=>{
+      await db.getDoc("Sale", v.name).then(async (doc)=>{
+      
+        await _onPrintProcess(doc)
+      });
+      
+    }) 
+    toaster.success($t("Print processing"));
+  }
+
+  
+}
+
+async function _onPrintProcess(sale){   //
+  let data = {
+        action: "print_receipt",
+        print_setting: gv.setting.default_pos_receipt,
+        setting: gv.setting?.pos_setting,
+        sale: sale,
+        station: (gv.setting?.device_setting?.name) || "",
+        station_device_printing: (gv.setting?.device_setting?.station_device_printing) || "",
+        reprint: 1
+  } 
+  let printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+  let _printer = undefined
+  if (printer.length > 0) {
+      _printer = {
+          "printer_name": printer[0].printer_name,
+          "ip_address": printer[0].ip_address,
+          "port": printer[0].port,
+          "cashier_printer": printer[0].cashier_printer,
+          "is_label_printer": printer[0].is_label_printer,
+          "usb_printing": printer[0].usb_printing,
+      }
+  } 
+
+  if((gv.setting?.device_setting?.use_server_network_printing||0)==1){       
+      if (printer.length <= 0) {
+          // toaster.warning($t("Printer not yet config for this device"));
+          console.log("Printer not yet config for this device")
+          return // not printer
+      }  
+
+      if(printer[0].usb_printing == 0){
+          const body ={
+              "data":{
+                  "name":sale.name,
+                  "reprint":1,
+                  "action":data["action"],
+                  "print_setting":data["print_setting"],
+                  "template_name":data["print_setting"]["pos_receipt_template"],
+                  "printer" : _printer
+              }
+          }  
+          call.post("epos_restaurant_2023.api.network_printing_api.print_bill_to_network_printer",body)
+          // toaster.success($t("Print processing"));
+          return // print network
+      }  else if((localStorage.getItem("flutterWrapper") || 0) == 1)   {
+          data.printer = _printer;
+          socket.emit('PrintReceipt', JSON.stringify(data));  
+          return;
+      }
+  }
+
+  //
+  if (localStorage.getItem("is_window") == "1") {  
+    window.chrome.webview.postMessage(JSON.stringify(data));
+    return;
+  }
+  else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
+    if (printer.length <= 0) {
+        // toaster.warning($t("Printer not yet config for this device"))
+        console.log("Printer not yet config for this device")
+    } else {
+        data.printer = _printer;
+        flutterChannel.postMessage(JSON.stringify(data));
+    } 
+  }
+  else { 
+    data.printer = _printer;
+    socket.emit('PrintReceipt', JSON.stringify(data));
+    return;              
+  }
+}
+
+
 
 const headers = ref([
   { title: $t('ID'), align: 'start',key: 'name',callback: true},

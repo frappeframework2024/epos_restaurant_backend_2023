@@ -199,7 +199,7 @@ async function onPrint() {
         station: (gv.setting?.device_setting?.name) || "",
         station_device_printing: (gv.setting?.device_setting?.station_device_printing) || "",
         reprint: 1
-    }
+    } 
     let printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
     let _printer = undefined
     if (printer.length > 0) {

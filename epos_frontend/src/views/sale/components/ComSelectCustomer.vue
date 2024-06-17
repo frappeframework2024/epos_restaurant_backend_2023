@@ -14,6 +14,7 @@
                         <div class="font-bold">{{ sale.sale.customer_name || "" }} <ComChip v-if="current_customer_point > 0" :tooltip="$t('Current Point(s)')" color="success">{{ current_customer_point }}</ComChip></div>
                         
                         <div class="text-gray-400 text-sm">{{ subTitle || "" }}</div>
+                        <span class="text-gray-400 text-sm" style="font-size: 12px">{{ sale.sale.pos_note }}</span>
                         <div class="text-gray-400 text-sm" v-if="sale.sale.arrival">
                             Stay: {{ moment(sale.sale.arrival).format("DD-MM-YYYY") }} to {{
                                 moment(sale.sale.departure).format("DD-MM-YYYY") }}
@@ -33,7 +34,10 @@
                         <v-chip v-else-if="sale.sale.customer_default_discount > 0" color="error">{{
                             sale.sale.customer_default_discount }}
                             % OFF</v-chip>
+                        
+                            
                     </div>
+                    
                 </div>
             </div>
             <div class="flex-none" v-if="sale.sale.customer != setting.customer">
@@ -54,6 +58,7 @@
             </div>
 
         </div>
+        
     </div>
 </template>
 
@@ -116,6 +121,7 @@ async function onSearchCustomer() {
 function assignCustomerToOrder(result, is_membership = false) {
     sale.sale.card = "";
     sale.sale.customer = result.name || "";
+    sale.sale.pos_note = result.pos_note;
     sale.sale.customer_name = result.customer_name_en;
     sale.sale.customer_photo = result.photo;
     sale.sale.phone_number = result.phone_number;

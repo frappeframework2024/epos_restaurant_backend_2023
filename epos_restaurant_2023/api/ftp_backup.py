@@ -64,7 +64,7 @@ def upload_to_ftp():
     auth_data = setting.ftp_auth_data
     auth_data = decode_base64(auth_data)
     auth_data =  aes_decrypt(auth_data, get_aes_key("@dmin$ESTC#"))
-    auth_data = json.lads(auth_data)
+    auth_data = json.loads(auth_data)
 
     
     site_name = setting.ftp_folder_name if setting.ftp_folder_name != '' else cstr(frappe.local.site)# if setting.ftp_folder_name==''?

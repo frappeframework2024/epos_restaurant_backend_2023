@@ -42,7 +42,8 @@
   "combo_group_data",
   "pos_menu_id",
   "printers",
-  "description"
+  "description",
+  "pos_note"
  ],
  "fields": [
   {
@@ -279,11 +280,16 @@
    "fieldname": "discount_value",
    "fieldtype": "Float",
    "label": "Discount Value"
+  },
+  {
+   "fieldname": "pos_note",
+   "fieldtype": "Text",
+   "label": "POS Note"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-04 16:07:23.289841",
+ "modified": "2024-06-17 09:41:28.335664",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Temp Product Menu",

@@ -1,10 +1,11 @@
 <template>
     <div>
+ 
         <v-progress-linear v-if="dataResource.loading" style="position: absolute; z-index: 9999999999;" indeterminate
             color="blue-lighten-3"></v-progress-linear>
         <div>
             <div class="bg-gray-50 p-2 elevation-1">
-                <ComFilter v-if="!meta.loading" :meta="meta" @onFilter="onFilter" @onRefresh="onRefresh" />
+                <ComFilter v-if="!meta.loading" :meta="meta" :isPrint="isPrint" @onFilter="onFilter" @onRefresh="onRefresh" @onPrint="onPrintClick" />
                 <div v-else class="h-12"></div>
             </div>
             <div>
@@ -21,20 +22,19 @@
                             </div>
                         </div>
                     </div>
-                    <div v-else>
+                    <div v-else>  
                         <v-data-table v-model="selected" v-if="dataResource?.data?.length > 0 && !dataResource.loading" :hover="true"
-                            :headers="getHeaders()" :items="dataResource.data" :items-per-page="pagerOption.itemPerPage" show-select
+                            :headers="getHeaders()" :items="data" :items-per-page="pagerOption.itemPerPage" show-select
                             item-value="name" class="elevation-1">
                             <template v-slot="wrapper">
                                 <thead>
                                     <tr> 
-                                        <!-- <th v-if="showCheckBox" class="v-data-table__td v-data-table-column--align-center">
-                                            <v-checkbox @change="onCheckboxChanged($event)" :value="allSelected"></v-checkbox>
-                                        </th> -->
+                                        <th v-if="showCheckBox" class="v-data-table__td v-data-table-column--align-center">
+                                            <v-checkbox   v-model="checkedAll" @update:modelValue="onCheckboxChanged(event)" ></v-checkbox>
+                                        </th>
                                         <th v-if="showIndex==true" class="v-data-table__td v-data-table-column--align-center">
                                             {{ $t('No #') }}
                                         </th>
-                                       
                                         <th v-for="h in headers" :class="getColumnAlignment(h.align)">
 
                                             {{ h.title }}
@@ -42,9 +42,10 @@
                                     </tr>
                                 </thead>
                                 <tr v-for="(item,idx) in dataResource.data" class="v-data-table__tr">
-                                    <!-- <th v-if="showCheckBox" class="text-center">
-                                        <v-checkbox :v-model="item" :input-value="isSelected(item)" @change="toggleSelection(item)"></v-checkbox>
-                                    </th> -->
+                                    <th v-if="showCheckBox" class="text-center">
+                                    
+                                        <v-checkbox  v-model="item.is_checked"></v-checkbox>
+                                    </th>
                                     <th v-if="showIndex==true" class="text-center">
                                             {{ calculateRowNumber(_tempPagerOption.currentPage,_tempPagerOption.itemPerPage,idx) }}
                                             
@@ -153,8 +154,11 @@ let filter = reactive({});
 const emit = defineEmits(['callback', 'onFetch'])
 const moment = inject('$moment')
 const gv = inject('$gv')
+const sale = inject("$sale");
 const order = ref({})
 const selected = ref([])
+const checkedAll=ref(false)
+const data = ref([])
 const props = defineProps({
     headers: {
         type: Array,
@@ -169,7 +173,8 @@ const props = defineProps({
     defaltFilter: Object,
     extraFields: String,
     businessBranchField: String,
-    posProfileField: String
+    posProfileField: String,
+    isPrint:false
 })
 
 let pagerOption = reactive({
@@ -229,8 +234,8 @@ let countResource = createResource({
 let dataResource = createResource({
     url: 'frappe.client.get_list',
     params: getDataResourceParams(),
-    async onSuccess(data) {
-        
+    async onSuccess(result) {
+       data.value = result
         _tempPagerOption=JSON.parse(JSON.stringify(pagerOption)) 
     }
 })
@@ -376,34 +381,19 @@ onUnmounted(() => {
 })
 
 
-// function allSelected () {
-//     return this.selected.length === this.dataResource.data.length
-// }
-
-
-// function onCheckboxChanged() {
-//     console.log(this.allSelected)
-//     // if (event.target.checked && this.dataResource && this.dataResource.data) {
-//     //     // Select all items when checkbox is checked
-//     //     this.selected = this.dataResource.data.slice(); // Copies all items to selected array
-//     // } else {
-//     //     // Clear selection when checkbox is unchecked
-//     //     this.selected = [];
-//     // }
-// }
-// function isSelected(item) {
-//     // Check if an item is selected
-//     return this.selected.includes(item);
-// }
-// function toggleSelection(item) {
-//     // Toggle selection of an item
-//     const index = this.selected.indexOf(item);
-//     if (index === -1) {
-//     this.selected.push(item); // Add to selection if not already selected
-//     } else {
-//     this.selected.splice(index, 1); // Remove from selection if already selected
-//     }
-// }
+function onCheckboxChanged(event) {
+    dataResource.data.forEach(r=>r.is_checked = checkedAll.value)
+}
+ 
+function onPrintClick(){
+    const selectedSale = dataResource.data.filter((r)=>r.is_checked && r.sale_status=="Closed"); 
+    if(selectedSale.length>0){        
+        emit('onPrint',selectedSale) ;        
+    }else{
+        emit('onPrint',false);
+    }
+    
+}
 // Other methods related to your component
 
 </script>
