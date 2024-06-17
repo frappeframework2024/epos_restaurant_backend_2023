@@ -448,7 +448,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Other Setting",
-   "link_count": 7,
+   "link_count": 6,
    "onboard": 0,
    "type": "Card Break"
   },
@@ -511,19 +511,9 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "FTP Backup",
-   "link_count": 0,
-   "link_to": "FTP Backup",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
   }
  ],
- "modified": "2024-05-28 08:30:59.067169",
+ "modified": "2024-06-17 10:52:33.901398",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Configuration",
