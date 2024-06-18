@@ -6,7 +6,7 @@ frappe.listview_settings['POS Reservation'] = {
     has_indicator_for_cancelled: true,
 
     get_indicator(doc) { 
-        console.log(doc)
+
         return  [`<span style="font-size: 12px;background-color:${doc.reservation_status_background_color}; color:${doc.reservation_status_color}; padding: 2px 10px;border-radius: 10px;">${__(doc.status)}</span>`]; 
         
     },

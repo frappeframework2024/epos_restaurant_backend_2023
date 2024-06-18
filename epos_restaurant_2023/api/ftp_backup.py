@@ -59,8 +59,6 @@ async def run_bench_command(command, kwargs=None):
 def upload_to_ftp():
     folder_name = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
     setting = frappe.get_doc('FTP Backup')
-      
-  
     auth_data = setting.ftp_auth_data
     auth_data = decode_base64(auth_data)
     auth_data =  aes_decrypt(auth_data, get_aes_key("@dmin$ESTC#"))

@@ -17,6 +17,7 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import quote_plus
+from epos_restaurant_2023.api.security import aes_encrypt,get_aes_key,encode_base64,decode_base64,aes_decrypt
  
 
 
@@ -1511,3 +1512,21 @@ def change_table_between_outlet(sale, new_pos_profile,new_table_id):
 def get_cashier_shift_by_pos_profile(pos_profile):
     doc=frappe.get_last_doc("Cashier Shift", {"pos_profile":pos_profile,"is_closed":0}, "creation")
     return doc
+
+
+## system ftp encrypt and decrypt code
+@frappe.whitelist(allow_guest=1, methods='POST')
+def generate_encrypt_ftp_auth_data(ftp_host,ftp_user,ftp_pass): 
+    data ={"ftp_host":ftp_host,"ftp_user":ftp_user,"ftp_pass":ftp_pass}
+    encrypt=aes_encrypt(json.dumps(data),get_aes_key("@dmin$ESTC#"))
+    encrypt = encode_base64(encrypt)
+    return encrypt
+
+@frappe.whitelist(methods='POST')
+def generate_decrypt_ftp_auth_data(ftp_auth_data):
+    if frappe.session.user == 'Administrator':
+        dycriptdata = ftp_auth_data
+        dycriptdata = decode_base64(dycriptdata)
+        dycriptdata =  aes_decrypt(dycriptdata, get_aes_key("@dmin$ESTC#")) 
+        return dycriptdata
+    return "Not allow to decypt"
