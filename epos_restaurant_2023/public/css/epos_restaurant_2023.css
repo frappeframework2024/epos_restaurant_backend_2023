@@ -107,3 +107,17 @@
 /* .sidebar-item-label {
     color: #fff
 } */
+
+
+.custom-tab{
+    padding: 10px!important;
+}
+.custom-page-head{
+
+    margin-bottom: 20px!important;
+     
+}
+
+.custom-page-head .page-head-content{
+    margin: 10px 0!important;
+}

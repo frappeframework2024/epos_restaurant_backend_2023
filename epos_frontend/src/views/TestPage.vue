@@ -1,7 +1,7 @@
 <template>
-{{ all_menus}}
+<iframe src="/app/selling" style="height:2000px;width:100%"></iframe>
 </template>
 <script setup>
   import { inject,ref } from '@/plugin';
-  const product = inject("$product"); 
+ 
 </script>

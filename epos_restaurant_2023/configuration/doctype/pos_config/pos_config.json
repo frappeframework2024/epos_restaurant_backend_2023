@@ -51,6 +51,7 @@
   "show_button_tip",
   "allow_closed_working_day_when_has_pending_order",
   "generate_tax_invoice_after_close_sale_order",
+  "generate_bill_number_on_create",
   "permission_and_note_tab",
   "delete_bill_required_password",
   "column_break_17",
@@ -711,12 +712,18 @@
    "fieldname": "switch_pos_profile_required_password",
    "fieldtype": "Check",
    "label": "Switch POS Profile Required Password"
+  },
+  {
+   "default": "0",
+   "fieldname": "generate_bill_number_on_create",
+   "fieldtype": "Check",
+   "label": "Generate Bill Number On Create"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-16 08:35:03.308592",
+ "modified": "2024-06-19 11:49:00.116262",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

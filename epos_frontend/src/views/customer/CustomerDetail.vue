@@ -1,6 +1,6 @@
 <template >
-  <ComModal isMoreMenu="true" @onPrint="onPrint" width="900px" @onClose="onClose"
-    :hideOkButton="true" :fullscreen="mobile">
+  <ComModal :isPrint="true" :isMoreMenu="true" @onPrint="onPrint()" width="900px" @onClose="onClose"
+    :hideOkButton="true" :fullscreen="mobile" :isExport="true">
     <template #title>
       {{ $t('Customer Detail') }} - {{ params.name }}
     </template>
@@ -8,7 +8,8 @@
       <v-btn append-icon="mdi-account-edit" @click="onAddCustomer()">{{ $t('Edit') }}</v-btn>
     </template>
     <template #content>
-      <div class="-m-2">
+      
+      <div class="ma-2">
         <v-img height="100" :src="background" cover class="m-auto" />
         <template v-if="customer.doc">
           <div class="text-center relative">
@@ -56,6 +57,7 @@
           <v-tab value="about">{{ $t('About') }}</v-tab>
           <v-tab value="recentOrder">{{ $t('Recent Order') }}</v-tab>
           <v-tab value="topup">{{ $t('Top Up History') }}</v-tab>
+          <v-tab value="print">{{ $t('Print') }}</v-tab>
 
         </v-tabs>
         <v-window v-model="tab">
@@ -179,6 +181,9 @@
               </tbody>
             </v-table>
           </v-window-item>
+          <v-window-item value="print">
+            Print
+          </v-window-item>
         </v-window>
       </div>
     </template>
@@ -276,6 +281,9 @@ async function onSaleDetail(data) {
   if(result=="open_order" ){
     onClose(); 
   }
+}
+function onPrint(){
+  alert('Hello')
 }
 
 </script>

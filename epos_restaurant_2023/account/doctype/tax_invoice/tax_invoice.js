@@ -44,16 +44,7 @@ frappe.ui.form.on("Tax Invoice", {
         __("Actions")
       );
     }
-
-    frm.add_custom_button(__('Print'), function() {
-     
-      frm.meta.default_print_format = frm.doc.default_print_format;
-      
-  
-    frm.print_doc();
  
-
-  });
 
   },
   setup(frm) {

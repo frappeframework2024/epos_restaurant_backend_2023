@@ -269,16 +269,17 @@
    "label": "Keyword"
   },
   {
+   "depends_on": "eval:!doc.__islocal",
    "fieldname": "billing_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Billing"
   },
   {
    "bold": 1,
    "fieldname": "balance",
    "fieldtype": "Currency",
-   "label": "Balance",
-   "read_only": 1
+   "label": "Balance"
   },
   {
    "fieldname": "column_break_lide",
@@ -372,7 +373,7 @@
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-06-17 09:20:09.758757",
+ "modified": "2024-06-20 17:43:12.084722",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

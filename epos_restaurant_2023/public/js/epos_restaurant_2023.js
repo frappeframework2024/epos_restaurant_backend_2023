@@ -102,4 +102,115 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
+// check if my app is running in iframe then hide app bar and workspance menu nav bar
+$(document).ready(function(){
+
+    if (window.self !== window.top) {
+        ClearUI()
+    }
+ })
+
+ function removeHeaderSticky(){
+    var page_head = document.querySelector(".page-head")
+    if (page_head){
+        page_head.classList.remove('page-head');
+        page_head.style.position = 'unset!important';
+        page_head.classList.add("custom-page-head")
+    }
+    var form_tab = document.querySelector(".form-tabs-list")
+    if (form_tab){
+        form_tab.classList.remove('form-tabs-list');
+        form_tab.classList.add("custom-tab")
+         
+    }
+}
+function ClearUI(){
+    //reset width to 100%
+    var main_container = document.querySelector(".container")
+    if (main_container){
+        main_container.style.width = "100%"
+    }
+    
+    var body = document.querySelector(".page-body")
+     
+    if (body){
+        body.style.width = "100%"
+    }
+
+    var header = document.querySelector("header.navbar")
+    if(header){
+        header.remove()
+    }
+    
+
+    var side_bar = document.querySelector(".layout-side-section")
+    if (side_bar){
+        //find if sidebar is desk side bar
+        var desk_sidebar = side_bar.querySelector(".desk-sidebar-item")
+        if (desk_sidebar){
+            side_bar.remove()
+        }
+        
+    } 
+}
+
+if (window.self !== window.top) {
+    //disable right click
+    document.addEventListener('contextmenu', function(event) {
+        event.preventDefault();
+    });
+
+    var bodyElement = document.body;
+
+    // Create a callback function to be executed when mutations are observed
+    var callback = function(mutationsList) {
+        for (var mutation of mutationsList) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'data-ajax-state') {
+                // Check the new value of the data-ajax-state attribute
+                var newState = bodyElement.getAttribute('data-ajax-state');
+                if (newState === 'complete') {
+                      
+ 
+
+                    preventLink()
+                    removeHeaderSticky()
+                    ClearUI()
+                    
+                    
+                }
+            }
+        }
+    };
+
+    // Create a MutationObserver instance with the callback
+    var observer = new MutationObserver(callback);
+
+    // Start observing the <body> element for attribute changes
+    observer.observe(bodyElement, { attributes: true });
+
+
+    function preventLink() {
+         
+        // Select all anchor tags within the iframe
+        const links = document.querySelectorAll('a');
+        
+        // Add click event listener to each link
+        links.forEach(link => {
+            link.addEventListener('click', function(event) {
+ 
+                if (event.ctrlKey || event.metaKey) {
+                    event.preventDefault();
+                     
+                }
+            });
+        });
+    } 
+
+
+}
+
+
+
+
+
  

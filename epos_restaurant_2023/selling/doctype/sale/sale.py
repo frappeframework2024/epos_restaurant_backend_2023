@@ -260,6 +260,20 @@ class Sale(Document):
 		self.total_secondary_cost = total_second_cost
 		self.second_sale_profit = self.grand_total - total_second_cost
 		frappe.db.sql("update `tabSale` set total_cost = {0} , profit=grand_total - {0} , second_profit = grand_total - {1} where name='{2}'".format(total_cost,total_second_cost, self.name))
+	# Generata Bill Number On Insert
+	def before_insert(self):
+		if self.pos_profile:
+			pos_config_name = frappe.db.get_value("POS Profile",self.pos_profile,"pos_config")
+			pos_config = frappe.db.get_value("POS Config",pos_config_name,["pos_bill_number_prefix","generate_bill_number_on_create"], as_dict=1)
+			
+			if pos_config.generate_bill_number_on_create == 1:
+				if pos_config.pos_bill_number_prefix:
+					from frappe.model.naming import make_autoname
+					self.custom_bill_number = make_autoname(pos_config.pos_bill_number_prefix)
+		else:
+			if self.custom_bill_number_prefix:
+				from frappe.model.naming import make_autoname
+				self.custom_bill_number = make_autoname(self.custom_bill_number_prefix)
 
 	def after_insert(self):
 		if self.flags.ignore_after_insert == True:
