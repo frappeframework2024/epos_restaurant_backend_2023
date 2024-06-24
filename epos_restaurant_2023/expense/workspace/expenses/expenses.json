@@ -94,7 +94,7 @@
    "type": "Link"
   }
  ],
- "modified": "2024-05-14 17:12:15.387452",
+ "modified": "2024-06-21 15:32:44.502427",
  "modified_by": "Administrator",
  "module": "Expense",
  "name": "Expenses",
@@ -113,7 +113,7 @@
   }
  ],
  "roles": [],
- "sequence_id": 8.0,
+ "sequence_id": 9.0,
  "shortcuts": [
   {
    "color": "Grey",

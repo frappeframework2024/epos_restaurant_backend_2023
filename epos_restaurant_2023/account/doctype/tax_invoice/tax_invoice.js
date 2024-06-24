@@ -5,13 +5,10 @@ frappe.ui.form.on("Tax Invoice", {
   refresh(frm) {
     
     frm.doc.letter_head = frm.doc.default_letter_head
-    frm.doc.print_format = frm.doc.default_print_format
 
     if (!frm.doc.__islocal) {
       frm.set_intro("This invoice is a " + frm.doc.tax_invoice_type, "blue");
 
-      // set default print format
-      frm.meta.default_print_format = frm.doc.default_print_format;
 
       if (frm.doc.document_type == "Sale") {
         getItemListFromSale(frm);

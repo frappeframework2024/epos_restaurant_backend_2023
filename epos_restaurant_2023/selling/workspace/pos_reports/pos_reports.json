@@ -329,7 +329,7 @@
    "type": "Link"
   }
  ],
- "modified": "2024-05-28 08:53:18.145134",
+ "modified": "2024-06-21 15:32:46.532393",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Reports",
@@ -339,7 +339,7 @@
  "public": 1,
  "quick_lists": [],
  "roles": [],
- "sequence_id": 17.0,
+ "sequence_id": 18.0,
  "shortcuts": [],
  "title": "POS Reports"
 }

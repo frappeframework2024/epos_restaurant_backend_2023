@@ -19,6 +19,7 @@ import ReceiptList from "@/views/receipt_list/ReceiptList.vue"
 import StartupConfig from "@/views/checking_system/StartupConfig.vue"
 import CashDrawer from "@/views/cash_drawer/CashDrawer.vue"
 import Report from "@/views/report/Report.vue"
+import CustomerCreditBlance from "@/views/credit_balance/CustomerCreditBalance.vue"
 import VoucherTopUp from "@/views/voucher_top_up/VoucherTopUp.vue"
 import ServerError from "@/views/checking_system/ServerError.vue"
 import CustomerDisplay from "@/views/customer_display/CustomerDisplay.vue"
@@ -48,6 +49,7 @@ const routes = [
   { path: "/epos_frontend/test-page", name: "TestPage", component: TestPage, meta: { layout: "main_layout" } },
   { path: "/epos_frontend/todo", name: "ToDo", component: ToDo, meta: { layout: "main_layout" } },
   { path: "/epos_frontend/report", name: "Report", component: Report, meta: { layout: "main_layout" } },
+  { path: "/epos_frontend/credit-balance", name: "CreditBalance", component: CustomerCreditBlance, meta: { layout: "main_layout" } },
   { path: "/epos_frontend/voucher-top-up", name: "VoucherTopUp", component: VoucherTopUp, meta: { layout: "main_layout" } },
   { path: "/epos_frontend/server-error", name: "ServerError", component: ServerError },
   { path: "/epos_frontend/closed-sale-list", name: "ClosedSaleList", component: ClosedSaleList, meta: { layout: "main_layout" } },

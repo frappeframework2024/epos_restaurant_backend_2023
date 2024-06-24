@@ -7,6 +7,10 @@ from frappe import utils
 from frappe import _
 from datetime import datetime
 from frappe.utils.data import strip
+import copy
+from epos_restaurant_2023.api.printing import (
+    get_print_context
+    )
 from epos_restaurant_2023.selling.doctype.customer.utils import update_fetch_from_fields
 class Customer(Document):
 	def validate(self):
@@ -118,4 +122,57 @@ def get_voucher_list_per_customer(customer):
 			})
 		v['payments'] = payments or []
 	return vouchers
-	
+
+@frappe.whitelist()
+def get_unpaid_bills(name):
+	sql = """select name from `tabSale` where customer = '{}' and balance > 0""".format(name)
+	bill_numbers = frappe.db.get_all("Sale",filters={
+		"customer":name,
+		"balance":['>',0]
+	},fields=['*'])
+	bill_list = []
+	if len(bill_numbers) > 0:
+		for bill in bill_numbers:
+			sale_products = frappe.db.sql("""
+									select 
+								 	product_code,
+									product_name,
+								 	product_name_kh,
+									`portion`,
+									is_free,
+									modifiers,
+									discount,
+									discount_amount,
+									discount_type,
+									sum(quantity) as quantity,
+								 	price,
+									sum(amount) as amount  
+								 from `tabSale Product` 
+								 where parent='{}' 
+								 group by 
+								 	product_code,
+									product_name,
+								 	product_name_kh,
+									`portion`,
+								 	is_free,
+								 	modifiers,
+								 	discount,
+									discount_amount,
+									discount_type, 
+								 price""".format(bill["name"]),as_dict=1)
+			payment = frappe.db.sql("""
+									select 
+								 	input_amount,
+								 	currency,
+						   			payment_type,
+								 currency_precision
+								 from `tabPOS Sale Payment` 
+								 where parent='{}' 
+								""".format(bill["name"]),as_dict=1)
+
+			bill['sale_products'] = sale_products
+			bill['payment'] = payment
+			bill_list.append(bill)
+	return bill_list
+
+

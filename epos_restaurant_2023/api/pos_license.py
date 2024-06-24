@@ -55,7 +55,58 @@ def station_license(device_id,platform="Windows",business_branch=None):
         return {"name":doc[0].name,"license":doc[0].license,"platform":doc[0].platform,"is_used":doc[0].is_used}
     else:
         return {"name":None,"license":None,"platform":None,"is_used":None}
+
+@frappe.whitelist(allow_guest=True, methods="POST")
+def get_pos_station(device_id=None, platform=None):
+    result ={
+        "status":False
+    }
+
+    if not device_id :
+        return result
+    result.update({"business_branchs":[]})
+
+    if not platform:
+        return result
     
+    
+    filters = {
+        'disabled': 0,
+        'device_id':device_id,
+        'platform': platform
+    } 
+    if platform =="MobileX":
+        filters["platform"] = ["in",["Mobile","Tablet"]]
+ 
+    stations = frappe.db.get_list('POS Station',
+        filters=filters,
+        fields=["name","device_id","station_name","business_branch","pos_profile","platform","license"],
+        as_list=False
+    )
+
+    if len(stations)>0:
+
+        business_branchs = set(map(lambda b:b.business_branch , stations)) 
+        i = 0
+        for b in business_branchs:   
+            
+            _stations =[s for s in stations if s.business_branch == b] 
+            for s in _stations  :
+                s.update({"selected":False}) 
+
+            result["business_branchs"].append({
+                "business_branch":b,
+                "selected":i==0,
+                "stations":_stations
+            }) 
+            i += 1
+    
+        result["status"] = True 
+
+    return result
+
+
+
 @frappe.whitelist(allow_guest=True)
 def start_config_pos():
     pass

@@ -131,25 +131,6 @@ doc_events = {
 }
 
 
-# setting =frappe.get_doc("ePOS Sync Setting")
-# if setting.enable ==1:
-#     for d in  setting.sync_to_client:
-#         doc_events[d.document_type] = {
-#             "on_update": [
-#                 "epos_restaurant_2023.api.utils.generate_data_for_sync_record"
-#             ],
-#             "after_rename": [
-#                 "epos_restaurant_2023.api.utils.generate_data_for_sync_record_on_rename"
-#             ],
-#             # "on_cancel": "method",
-#             "on_trash": "epos_restaurant_2023.api.utils.generate_data_for_sync_record_on_delete",
-# 	}
-        
-#     for d in setting.sync_to_server:
-#         doc_events[d.document_type] = {
-#             "on_submit":["epos_restaurant_2023.api.utils.sync_data_to_server_on_submit"]
-#         }
-
 
 #Scheduled Tasks
 #---------------
@@ -182,9 +163,12 @@ scheduler_events = {
 # Overriding Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
-#	"frappe.desk.doctype.event.event.get_events": "epos_restaurant_2023.event.get_events"
-# }
+override_whitelisted_methods = {
+	# "frappe.desk.doctype.event.event.get_events": "epos_restaurant_2023.event.get_events"
+    "frappe.desk.desktop.get_workspace_sidebar_items" : "epos_restaurant_2023.api.api.get_workspace_sidebar_items"
+
+}
+ 
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,

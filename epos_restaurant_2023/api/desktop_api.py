@@ -68,6 +68,17 @@ def get_voucher_template(name):
     return {"html":html,"css":css}
 
 
+@frappe.whitelist(allow_guest=True, methods="POST")
+def get_unpaid_customer_template(name):
+    if not frappe.db.exists("Sale", {"customer": name}):
+        return ""   
+    doc = frappe.get_doc("Customer", name) 
+   
+    data_template,css = frappe.db.get_value("POS Receipt Template","Receipt List SARA",["template","style"])
+    html= frappe.render_template(data_template, get_print_context(doc))
+    return {"html":html,"css":css}
+
+
 @frappe.whitelist(allow_guest=True,methods='POST')
 def get_kot_template(sale, printer_name, products): 
     if not frappe.db.exists("Sale",sale):

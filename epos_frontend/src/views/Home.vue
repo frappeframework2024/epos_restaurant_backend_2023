@@ -31,7 +31,7 @@
                         <ComButton @click="onReservation()" :title="$t('Reservation')" v-if="(device_setting?.show_button_pos_reservation||0) == 1"  icon="mdi mdi-calendar-text-outline" class="bg-rscolor text-white" icon-color="#fff" />
 
                         <ComButton @click="onRoute('ClosedSaleList')" :title="$t('Closed Receipt')" v-if="device_setting?.is_order_station==0 && (gv.workingDay || gv.cashierShift)" icon="mdi-file-document" class="bg-brandcolor"  icon-color="defaulticonColor" />
-                        <!-- <ComButton @click="onRoute('TestPage')" :title="$t('Credit Balance')"   icon="mdi-file-document" class="bg-brandcolor"  icon-color="defaulticonColor" /> -->
+                        <ComButton @click="onRoute('CreditBalance')" :title="$t('Credit Balance')"   icon="mdi-file-document" class="bg-brandcolor"  icon-color="defaulticonColor" />
                         
                         
                         <ComButton @click="onRoute('ReceiptList')" :title="$t('Receipt List')" v-if="device_setting?.is_order_station==0" icon="mdi-file-chart"  icon-color="defaulticonColor" class="bg-brandcolor" />

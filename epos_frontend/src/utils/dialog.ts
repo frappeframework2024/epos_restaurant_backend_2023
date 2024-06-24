@@ -61,6 +61,7 @@ import ComMoveItemModal from "@/views/sale/components/ComMoveItemModal.vue";
 import ComMoveItemChangeTable from "@/views/sale/components/ComMoveItemChangeTable.vue";
 import ComEditPOSMenu from "@/views/setting/ComEditPOSMenu.vue";
 import ComMoveItemSelectOrder from "@/views/sale/components/ComMoveItemSelectOrder.vue";
+import ComUnpaidBillList from "@/views/credit_balance/UnpaidBillDialog.vue";
 
 interface params {
     doctype?: String,
@@ -141,3 +142,4 @@ export const MoveItemModal = createPromiseDialog<params, object>(ComMoveItemModa
 export const MoveItemChangeTable = createPromiseDialog<params, object>(ComMoveItemChangeTable);
 export const EditPOSMenuDialog = createPromiseDialog<params, object>(ComEditPOSMenu);
 export const MoveItemSelectOrderDialog = createPromiseDialog<params, object>(ComMoveItemSelectOrder);
+export const UnpaidBillListDialog = createPromiseDialog<params, object>(ComUnpaidBillList);
