@@ -15,7 +15,20 @@ frappe.ui.form.on("Bulk Sale Payment", {
     on_submit(frm){
         // Check Current call from Iframe
         if (window.self !== window.top) {
-           window.parent.postMessage(frm.doc)
+            frappe.call({
+                method: 'epos_restaurant_2023.selling.doctype.customer.customer.get_unpaid_bills', 
+                args: {
+                    name: frm.doc.customer,
+                    is_payment:1,
+                    bulk_sale_payment:frm.doc.name
+                },
+                callback: function(response) { 
+                    if (response.message) {
+                        window.parent.postMessage({"data":response.message,"action":"AfterPayment"},"*")
+                    }
+                }
+            })
+          
         }
     },
 	refresh(frm) {

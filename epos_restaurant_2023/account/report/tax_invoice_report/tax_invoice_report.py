@@ -4,8 +4,10 @@
 import frappe
 from epos_restaurant_2023.utils import get_date_range_by_timespan
 from frappe import _
+from frappe.utils import getdate
 
 def execute(filters=None):
+ 
 	report_config = frappe.get_last_doc("Report Configuration", filters={"property":filters.property, "report":"Tax Invoice Report"} )
 	if filters.timespan != "Date Range":
 		date_range = get_date_range_by_timespan(filters.timespan)
@@ -31,7 +33,8 @@ def get_report_columns(filters,  report_fields):
 
 	if filters.row_group:
 		columns = [d for d in columns if d["fieldname"] != filters.row_group]
-
+ 
+ 
 	return columns
 
 def get_report_data (filters, report_fields):
@@ -40,18 +43,26 @@ def get_report_data (filters, report_fields):
 	report_data = []
 	if filters.row_group:
 		parent_row = get_parent_row_row_by_data(filters,data)
-		
+
 		for parent in parent_row:
+			
 			d = parent
+			
+ 
+			 
 			report_data.append({
 				"indent":0,
-				report_fields[0].fieldname: d,
+				report_fields[0].fieldname: d if not filters.row_group =="tax_invoice_date" else frappe.format(d,{'fieldtype':'Date'}),
 				"is_group":1,
 				"is_group_total":0,
 			})
+			# frappe.throw(str(report_data))
 
-			report_data = report_data + [d for d in data if d['tax_invoice_type'] == parent or d['document_type']==parent]
-			
+			if filters.row_group=="tax_invoice_date":
+				report_data = report_data + [d for d in data if getdate(d[filters.row_group]) == parent]
+			else:
+				report_data = report_data + [d for d in data if d[filters.row_group] == parent]
+
 			if filters.row_group == 'tax_invoice_type':
 				total_row = {
 					"indent":0,
@@ -84,9 +95,8 @@ def get_report_data (filters, report_fields):
 
 
 def get_parent_row_row_by_data(filters, data):
-	
+	 
 	rows = set([d[filters.row_group] for d in  data])
-
 	return rows
 	
 def get_data (filters,report_fields):
@@ -97,8 +107,14 @@ def get_data (filters,report_fields):
 	if filters.row_group and len([d for d in report_fields if d.fieldname == filters.row_group]) == 0:
 		sql = "{} , {}".format(sql, filters.row_group)
 
-	sql = """{} from `tabTax Invoice`  where property=%(property)s
-	and tax_invoice_date between %(start_date)s and %(end_date)s""".format(sql)
+	sql = """{} from `tabTax Invoice`  
+ 		where 
+   			property=%(property)s and 
+   			tax_invoice_date between %(start_date)s and %(end_date)s
+		order by
+			tax_invoice_date, 
+			name
+     """.format(sql)
 
 	
 	data = frappe.db.sql(sql, filters ,as_dict=1)
@@ -108,12 +124,15 @@ def get_data (filters,report_fields):
 def get_report_summary(filters,report_fields, data):
 	summary = []
 	summary_fields = [d for d in report_fields if d.show_in_summary==1 ]
+ 
 
 	if filters.show_in_summary:
 		summary_fields = [d for d in summary_fields if d.fieldname in filters.show_in_summary]
+	
 	summary.append({
-		"value":len([d for d in data if d['indent']==1]),"indicator":"blue","label":"Total Inv."
+		"value":len([d for d in data if d['indent']==(1 if filters.row_group else 0)]),"indicator":"blue","label":"Total Inv."
 	})
+
 	for x in summary_fields:
 		summary.append({
         "value": sum([d[x.fieldname] for d in data if d["is_group"] == 0 and x.fieldname in d]),

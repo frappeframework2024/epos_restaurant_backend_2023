@@ -27,8 +27,8 @@
             </div>
             <v-btn :color="actionName == 'Sale' ?'primary' : ''" class="ma-2" @click="actionClick('Sale')">{{ $t("Sale List") }}</v-btn>
             <v-btn :color="actionName == 'Print' ?'primary' : ''" class="ma-2" @click="actionClick('Print')">{{ $t("Print") }}</v-btn>
-            <v-btn  :color="actionName == 'Payment' ?'primary' : ''" class="ma-2"  @click="actionClick('Payment')">{{ $t("Payment") }}</v-btn>
-
+            <v-btn v-if="saleList.total_paid != saleList.total_amount"  :color="actionName == 'Payment' ?'primary' : ''" class="ma-2"  @click="actionClick('Payment')">{{ $t("Payment") }}</v-btn>
+            {{ printPreview }}
                 <v-row v-if="actionName == 'Sale'">
                     <v-col v-for="s in saleList.sales" cols="12" md="3">
                         <v-card>
@@ -103,7 +103,7 @@ const props = defineProps({
     }
 })
 const  actionName = ref("Sale")
-const serverUrl = window.location.protocol + "//" + window.location.hostname + (window.location.protocol == "https:" ? "" : (":" + "5566" /*gv.setting.pos_setting.backend_port*/));
+const serverUrl = window.location.protocol + "//" + window.location.hostname + (window.location.protocol == "https:" ? "" : (":" + gv.setting.pos_setting.backend_port));
 const printPreview = ref(serverUrl + `/printview?doctype=Customer&name=${props.params.data}&trigger_print=1&format=Unpaid%20Customer&no_letterhead=1&letterhead=No%20Letterhead&settings=%7B%7D&_lang=en`)
 //frappe api call
 const call = frappe.call()
@@ -131,7 +131,10 @@ async function actionClick(action){
         actionName.value = action
         if (action == "Payment"){
             window.addEventListener('message', async function  (event) {
-                action = "Print"
+
+                event.data.action == "AfterPayment"
+                printPreview.value = printPreview.value + `&bulk_sale_payment_name=${event.data.data.name}&is_payment=1`
+                actionName.value = "Print"
             });
         }else{
             window.removeEventListener('message', async function  (event) {

@@ -1612,65 +1612,64 @@ def get_sidebar_menu_template():
         
             
     template = """
-    
-    
-<div class="sidebar">
-    <div class="sidebar-inner">
-        <div>
-            <div class="logo-sidebar">
-                <a href="/app">
-                    <img class="app-logo" src="{{app_logo}}" />
-                </a>
+    <div class="render-element">
+        <div class="sidebar">
+            <div class="sidebar-inner">
+                <div>
+                    <div class="logo-sidebar">
+                        <a href="/app">
+                            <img class="app-logo" src="{{app_logo}}" />
+                        </a>
+                    </div>
+                    <div>
+                        <ul class="menu">
+                            {%for d in data%}
+                                <li class="submenu" data-submenu="services">
+                                    <a class="icon" data-workspace="{{d.name}}" data-custom-route="{{d.custom_route or ""}}">
+                                        {%if d.custom_menu_icon%}
+                                            {{d.custom_menu_icon}}
+                                        {%else%}
+                                        <svg class="icon  icon-md" style="">
+                                            <use class="" href="#icon-{{d.icon}}"></use>
+                                        </svg>
+                                        {%endif%}
+                                    </a>
+                                </li>
+                            {%endfor%}
+                        </ul>
+                    </div>
+                </div>
+                <div class="user-profile">
+                    <div class="us-pro-inner">
+                        <img src="{{app_logo}}" />
+                    </div>
+                </div>
             </div>
-            <div>
-                <ul class="menu">
-                    {%for d in data%}
-                        <li class="submenu" data-submenu="services">
-                            <a class="icon" data-workspace="{{d.name}}" data-custom-route="{{d.custom_route or ""}}">
-                                {%if d.custom_menu_icon%}
-                                    {{d.custom_menu_icon}}
-                                {%else%}
-                                <svg class="icon  icon-md" style="">
-                                    <use class="" href="#icon-{{d.icon}}"></use>
-                                </svg>
-                                {%endif%}
-                            </a>
-                        </li>
-                    {%endfor%}
+        </div>
+
+        <div class="submenu-panel" id="submenu-panel">
+            <input type="text" class="search-input" placeholder="Search...">
+            <div class="submenu-content" id="services">
+                <ul class="mega-menu">
+                    <li>
+                        <div class="menu-section-header">Web Design</div>
+                        <div class="menu-section-content">
+                            <a href="#">HTML</a>
+                            <a href="#">CSS</a>
+                            <a href="#">JavaScript</a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="menu-section-header">Development</div>
+                        <div class="menu-section-content">
+                            <a href="#">Frontend</a>
+                            <a href="#">Backend</a>
+                        </div>
+                    </li>
                 </ul>
             </div>
         </div>
-        <div class="user-profile">
-            <div class="us-pro-inner">
-                <img src="{{app_logo}}" />
-            </div>
-        </div>
     </div>
-</div>
-
-<div class="submenu-panel" id="submenu-panel">
-    <input type="text" class="search-input" placeholder="Search...">
-    <div class="submenu-content" id="services">
-        <ul class="mega-menu">
-            <li>
-                <div class="menu-section-header">Web Design</div>
-                <div class="menu-section-content">
-                    <a href="#">HTML</a>
-                    <a href="#">CSS</a>
-                    <a href="#">JavaScript</a>
-                </div>
-            </li>
-            <li>
-                <div class="menu-section-header">Development</div>
-                <div class="menu-section-content">
-                    <a href="#">Frontend</a>
-                    <a href="#">Backend</a>
-                </div>
-            </li>
-        </ul>
-    </div>
-</div>
- 
     """
     return frappe.render_template(template,{"data":menus,"app_logo":frappe.db.get_single_value("Navbar Settings","app_logo")})
     

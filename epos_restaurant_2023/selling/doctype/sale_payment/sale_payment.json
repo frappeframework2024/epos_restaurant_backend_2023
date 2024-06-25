@@ -60,7 +60,8 @@
   "fee_percentage",
   "currency_precision",
   "folio_transaction_type",
-  "folio_transaction_number"
+  "folio_transaction_number",
+  "bulk_sale_payment_name"
  ],
  "fields": [
   {
@@ -418,12 +419,18 @@
    "fieldtype": "Check",
    "label": "Allow Earn Point",
    "read_only": 1
+  },
+  {
+   "fieldname": "bulk_sale_payment_name",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Bulk Sale Payment Name"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-05-28 13:55:19.141099",
+ "modified": "2024-06-25 16:51:06.757996",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Payment",

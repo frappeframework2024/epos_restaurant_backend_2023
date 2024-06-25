@@ -124,11 +124,10 @@ def get_voucher_list_per_customer(customer):
 	return vouchers
 
 @frappe.whitelist()
-def get_unpaid_bills(name):
-	sql = """select name from `tabSale` where customer = '{}' and balance > 0""".format(name)
+def get_unpaid_bills(name,is_payment = 0,bulk_sale_payment=''):
+	
 	bill_numbers = frappe.db.get_all("Sale",filters={
-		"customer":name,
-		"balance":['>',0]
+		"customer":name
 	},fields=['*'])
 	bill_list = []
 	response = {"sales":[]}
@@ -161,7 +160,8 @@ def get_unpaid_bills(name):
 									discount_amount,
 									discount_type, 
 								 price""".format(bill["name"]),as_dict=1)
-			payment = frappe.db.sql("""
+			if is_payment==0:
+				payment = frappe.db.sql("""
 									select 
 								 	input_amount,
 								 	currency,
@@ -170,6 +170,16 @@ def get_unpaid_bills(name):
 								 from `tabPOS Sale Payment` 
 								 where parent='{}' 
 								""".format(bill["name"]),as_dict=1)
+		else:
+			payment = frappe.db.sql("""
+									select 
+								 	input_amount,
+								 	currency,
+						   			payment_type,
+								 currency_precision
+								 from `tabSale Payment` 
+								 where bulk_sale_payment_name='{}' 
+								""".format(bulk_sale_payment),as_dict=1)
 
 			bill['sale_products'] = sale_products
 			bill['payment'] = payment

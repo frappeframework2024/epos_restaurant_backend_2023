@@ -45,6 +45,7 @@ def add_sale_payment(doc,self):
 	p.naming_series = self.sale_payment_naming_series
 	p.posting_date = doc.posting_date
 	p.payment_type = doc.payment_type
+	p.bulk_sale_payment_name = self.name
 	p.currency = doc.currency
 	p.exchange_rate = doc.exchange_rate
 	p.payment_amount = doc.payment_amount
