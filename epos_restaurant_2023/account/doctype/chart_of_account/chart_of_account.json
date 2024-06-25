@@ -1,0 +1,114 @@
+{
+ "actions": [],
+ "autoname": "field:account_code",
+ "creation": "2024-06-24 17:10:01.465268",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_drmo",
+  "account_code",
+  "is_group",
+  "old_parent",
+  "business_branch",
+  "column_break_ygde",
+  "account_name",
+  "parent_chart_of_account",
+  "section_break_b9ww",
+  "lft",
+  "rgt"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_b9ww",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "lft",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Left",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "rgt",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Right",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_group",
+   "fieldtype": "Check",
+   "label": "Is Group"
+  },
+  {
+   "fieldname": "old_parent",
+   "fieldtype": "Link",
+   "label": "Old Parent",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "parent_chart_of_account",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "Parent Chart Of Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "section_break_drmo",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "account_name",
+   "fieldtype": "Data",
+   "label": "Account Name"
+  },
+  {
+   "fieldname": "account_code",
+   "fieldtype": "Data",
+   "label": "Account Code",
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_ygde",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "business_branch",
+   "fieldtype": "Link",
+   "label": "Business Branch",
+   "options": "Business Branch"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_tree": 1,
+ "links": [],
+ "modified": "2024-06-24 17:26:52.967484",
+ "modified_by": "Administrator",
+ "module": "Account",
+ "name": "Chart Of Account",
+ "naming_rule": "By fieldname",
+ "nsm_parent_field": "parent_chart_of_account",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "show_name_in_global_search": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

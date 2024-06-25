@@ -16,6 +16,36 @@
       <strong>{{frappe.format(doc.sub_total,{"fieldtype":"Currency"})}}</strong>
     </div>
   </div>
+  {% if doc.service_charge %}
+  <div class="row">
+    <div class="col">
+      Service Charge
+    </div>
+    <div class="col text-right">
+      <strong>{{frappe.format(doc.service_charge,{"fieldtype":"Currency"})}}</strong>
+    </div>
+  </div>
+  {% endif %}
+  {% if doc.specific_tax %}
+  <div class="row">
+    <div class="col">
+      Specific Tax
+    </div>
+    <div class="col text-right">
+      <strong>{{frappe.format(doc.specific_tax,{"fieldtype":"Currency"})}}</strong>
+    </div>
+  </div>
+  {% endif %}
+  {% if doc.total_tax %}
+    <div class="row">
+      <div class="col">
+        VAT 10%
+      </div>
+      <div class="col text-right">
+        <strong>{{frappe.format(doc.total_tax,{"fieldtype":"Currency"})}}</strong>
+      </div>
+    </div>
+  {% endif %}
   {% if doc.product_discount %}
   <div class="row">
     <div class="col">
@@ -72,6 +102,7 @@
   {%endif%}
 
   <hr>
+
   <div class="row">
     <div class="col">
       <strong>{{__("Grand Total")}}</strong>

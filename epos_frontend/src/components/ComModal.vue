@@ -81,6 +81,11 @@ const props = defineProps({
         type: String,
         default: ""
     },
+    colorOKButton:{
+        type:String,
+        default:"primary"
+    },
+    
     titleCloseButton: {
         type: String,
         default: ""

@@ -187,7 +187,7 @@ function onRedeemClick(){
 
 function onVoucherTopUp(){
     call.get("epos_restaurant_2023.api.api.get_current_shift_information",{
-        business_branch: gv.setting?.business_branch,
+        business_branch:  decodeURIComponent (gv.setting?.business_branch),
         pos_profile: localStorage.getItem("pos_profile")
     }).then((_res)=>{
         const _data = _res.message;

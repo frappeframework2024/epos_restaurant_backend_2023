@@ -59,6 +59,50 @@
  {
   "docstatus": 0,
   "doctype": "Custom HTML Block",
+  "html": "<hr/>",
+  "modified": "2023-12-19 09:17:05.196750",
+  "name": "hr",
+  "private": 0,
+  "roles": [],
+  "script": null,
+  "style": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom HTML Block",
+  "html": "hello",
+  "modified": "2024-05-13 12:43:09.101099",
+  "name": "Testing Template",
+  "private": 0,
+  "roles": [],
+  "script": "",
+  "style": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom HTML Block",
+  "html": "<iframe src=\"/frontdesk/dashboard?layout=blank_layout\" style=\"width:100%;border:none;overflow:hidden\" id=\"iframe\" ></iframe>",
+  "modified": "2024-04-27 08:34:27.109725",
+  "name": "Owner Dashboard",
+  "private": 0,
+  "roles": [],
+  "script": "var iframe = root_element.querySelector('#iframe');\r\n\r\niframe.addEventListener('load', function() {\r\n    var observer = new MutationObserver(function(mutationsList) {\r\n        iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';\r\n        \r\n    });\r\n\r\n    // Observe changes to the body of the document inside the iframe\r\n    observer.observe(iframe.contentWindow.document.body, { attributes: true, childList: true, subtree: true });\r\n});",
+  "style": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom HTML Block",
+  "html": "<div id=\"recent-membership-check-in\">Recent Membership Check In</div>\n<button id=\"view_all_recent_data\">View All Recent Data</button>",
+  "modified": "2023-10-06 14:14:30.191739",
+  "name": "Recent Membership Check In",
+  "private": 0,
+  "roles": [],
+  "script": "let parser = new DOMParser(); // create a DOMParser object\n\nfrappe.call('epos_restaurant_2023.api.gym.get_recent_checked_ins',{\"limit\":8}).then(data=>{\n  \n    let table    = document.createElement(\"table\");\n    let tbody = document.createElement(\"tbody\");\n    let tr = document.createElement(\"tr\");\n    let th = document.createElement(\"th\");\n    let td = document.createElement(\"td\");\n    \n      \n    th.innerHTML = \"Check In No\";\n    tr.appendChild(th)\n    \n    th = document.createElement(\"th\");\n    th.innerHTML = \"Check In Date\" \n    tr.appendChild(th)\n    \n    th = document.createElement(\"th\");\n    th.innerHTML = \"Creation\" \n    tr.appendChild(th)\n    \n    th = document.createElement(\"th\");\n    th.innerHTML = \"Member\" \n    tr.appendChild(th)\n    \n    th = document.createElement(\"th\");\n    th.innerHTML = \"Membership Type\" \n    tr.appendChild(th)\n    \n    th = document.createElement(\"th\");\n    th.innerHTML = \"Membership\" \n    tr.appendChild(th)\n    \n    th = document.createElement(\"th\");\n    th.innerHTML = \"Check In Count\" \n    tr.appendChild(th)\n    \n   \n    tbody.appendChild(tr)\n    \n    data.message.forEach((r)=>{\n         \n        //check in number\n        tr = document.createElement(\"tr\");\n        td = document.createElement(\"td\");\n        td.textContent  = r.membership_check_in;\n        tr.appendChild(td)\n        \n        //check in date\n        td = document.createElement(\"td\");\n        td.textContent =frappe.format( r.check_in_date,{fieldtype:\"Date\"});\n        tr.appendChild(td)\n        \n        //creation \n        td = document.createElement(\"td\");\n        td.textContent =frappe.format( r.creation,{fieldtype:\"Datetime\"});\n        tr.appendChild(td)\n        \n         //member_name\n        td = document.createElement(\"td\");\n        td.textContent  = r.member_name;\n        tr.appendChild(td)\n        \n         //membership_type\n        td = document.createElement(\"td\");\n        td.textContent  = r.membership_type;\n        tr.appendChild(td)\n        \n        //membership_name\n        td = document.createElement(\"td\");\n        td.textContent  = r.membership_name;\n        tr.appendChild(td)\n        \n         //membership check in\n        td = document.createElement(\"td\");\n         td.appendChild(parser.parseFromString(frappe.format( r.check_in_number,{fieldtype:\"Float\"}), \"text/html\").querySelector(\"div\"));\n        tr.appendChild(td)\n        \n        tr.addEventListener('click', function() {\n        \n            frappe.set_route('Form', 'Membership Check In',r.membership_check_in)\n        });\n\n        tbody.appendChild(tr)\n        \n    })\n    table.appendChild(tbody)\n    \n    let recentHTML = root_element.querySelector('#recent-membership-check-in');\n    recentHTML.innerHTML = \"\"\n    recentHTML.appendChild(table);\n    \n})\n\n\n//btn view\nlet btb_view = root_element.querySelector('#view_all_recent_data');\nbtb_view.addEventListener('click', function() {\n     frappe.set_route('List',\"Membership Check In\",\"List\")\n});",
+  "style": "table{\r\n    width:100%;\r\n}\r\n td,th {\r\n  border: 1px solid #ddd;\r\n  padding: 8px;\r\n}\r\n\r\ntr:nth-child(even){background-color: #f2f2f2;}\r\n\r\ntr:hover {background-color: #ddd; cursor:pointer}\r\n\r\nth {\r\n  padding-top: 12px;\r\n  padding-bottom: 12px;\r\n  text-align: left;\r\n  background-color: #0398e1 !important;\r\n  color: white;\r\n}\r\n\r\n#view_all_recent_data{\r\n    margin-top:5px;\r\n    color:white;\r\n    height:var(--btn-height);\r\n    background-color: rgb(82, 146, 247);\r\n    border-radius:var(--border-radius);\r\n    border:none;\r\n}\r\n#view_all_recent_data:hover{\r\n     background-color:#097add;\r\n}"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom HTML Block",
   "html": "<div class=\"btn row w-100 m-0 px-0 pt-0\">\n    <div class=\"col text-left p-0\"> \n        <button id=\"tab-arrival\" class=\"active\">Arrival <span class=\"chip\" id=\"chip-arrival\">0</span></button>\n        <button id=\"tab-stay-over\">Stay Over <span class=\"chip\" id=\"chip-stay-over\">1</span></button>\n        <button id=\"tab-departure\">Departure <span class=\"chip\" id=\"chip-departure\">1</span></button> \n    </div>\n    <div class=\"col border-bottom mr-2\"></div>\n</div>\n<div class=\"tab\">\n    <div class=\"tab-content show\" id=\"tab-content-arrival\"></div>\n    <div class=\"tab-content\" id=\"tab-content-stay-over\"></div>\n    <div class=\"tab-content\" id=\"tab-content-departure\"></div>\n</div>",
   "modified": "2024-01-03 08:32:22.517919",
   "name": "Remaining Data",
@@ -191,28 +235,6 @@
  {
   "docstatus": 0,
   "doctype": "Custom HTML Block",
-  "html": "<hr/>",
-  "modified": "2023-12-19 09:17:05.196750",
-  "name": "hr",
-  "private": 0,
-  "roles": [],
-  "script": null,
-  "style": null
- },
- {
-  "docstatus": 0,
-  "doctype": "Custom HTML Block",
-  "html": "<div id=\"recent-sale-order\">Recent Sale Order</div>",
-  "modified": "2023-10-06 14:14:55.470524",
-  "name": "Recent Sale Order",
-  "private": 0,
-  "roles": [],
-  "script": "let parser = new DOMParser(); // create a DOMParser object\r\n \r\n\t\t\t\r\nfrappe.db.get_list('Sale', {\r\n    fields: ['name','posting_date', 'customer','grand_total','total_quantity','creation'],\r\n    limit:15,\r\n    order_by:\"creation desc\"\r\n    \r\n}).then(data => {\r\n    let table    = document.createElement(\"table\");\r\n    let tbody = document.createElement(\"tbody\");\r\n    let tr = document.createElement(\"tr\");\r\n    let th = document.createElement(\"th\");\r\n    let td = document.createElement(\"td\");\r\n    \r\n    th.innerHTML = \"Sale No\" \r\n    tr.appendChild(th)\r\n    \r\n    th = document.createElement(\"th\");\r\n    th.innerHTML = \"Posting Date\" \r\n    tr.appendChild(th)\r\n    \r\n     th = document.createElement(\"th\");\r\n    th.innerHTML = \"Creation\" \r\n    tr.appendChild(th)\r\n    \r\n    th = document.createElement(\"th\");\r\n    th.innerHTML = \"Quantity\" \r\n    tr.appendChild(th)\r\n    \r\n    th = document.createElement(\"th\");\r\n    th.innerHTML = \"Amount\" \r\n    tr.appendChild(th)\r\n    \r\n    \r\n    tbody.appendChild(tr)\r\n\r\n    \r\n    data.forEach((r)=>{\r\n        //sale number\r\n        tr = document.createElement(\"tr\");\r\n        td = document.createElement(\"td\");\r\n        td.textContent  = r.name;\r\n        tr.appendChild(td)\r\n        //sale date\r\n\r\n        td = document.createElement(\"td\");\r\n        td.textContent =frappe.format( r.posting_date,{fieldtype:\"Date\"});\r\n        tr.appendChild(td)\r\n        \r\n        td = document.createElement(\"td\");\r\n        td.textContent =frappe.format( r.creation,{fieldtype:\"Datetime\"});\r\n        tr.appendChild(td)\r\n        \r\n         //qauntity\r\n        td = document.createElement(\"td\");\r\n        td.appendChild(parser.parseFromString(frappe.format( r.total_quantity,{fieldtype:\"Float\"}), \"text/html\").querySelector(\"div\"));\r\n        tr.appendChild(td)\r\n        \r\n        //amount\r\n        td = document.createElement(\"td\");\r\n        td.appendChild(parser.parseFromString(frappe.format( r.grand_total,{fieldtype:\"Currency\"}), \"text/html\").querySelector(\"div\"));\r\n        tr.appendChild(td)\r\n        \r\n        tr.addEventListener('click', function() {\r\n        \r\n            frappe.set_route('Form', 'Sale',r.name)\r\n        });\r\n\r\n        tbody.appendChild(tr)\r\n        \r\n    })\r\n    table.appendChild(tbody)\r\n    \r\n    let recentSale = root_element.querySelector('#recent-sale-order');\r\n    recentSale.innerHTML = \"\"\r\n    recentSale.appendChild(table);\r\n    \r\n})",
-  "style": "table{\r\n    width:100%;\r\n}\r\n td,th {\r\n  border: 1px solid #ddd;\r\n  padding: 8px;\r\n}\r\n\r\ntr:nth-child(even){background-color: #f2f2f2;}\r\n\r\ntr:hover {background-color: #ddd; cursor:pointer}\r\n\r\nth {\r\n  padding-top: 12px;\r\n  padding-bottom: 12px;\r\n  text-align: left;\r\n  background-color: #0398e1 !important;;\r\n  color: white;\r\n}"
- },
- {
-  "docstatus": 0,
-  "doctype": "Custom HTML Block",
   "html": "<a href=\"/frontdesk/housekeeping\" ><div class=\"widget shortcut-widget-box d-flex justify-content-between flex-row\">\n\n    <b>\n    Housekeeping     \n    </b>\n\n<div>\n    <svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"#000000\" width=\"16px\" height=\"16px\" viewBox=\"0 0 24 24\">\n  <path fill-rule=\"evenodd\" d=\"M5,2 L7,2 C7.55228475,2 8,2.44771525 8,3 C8,3.51283584 7.61395981,3.93550716 7.11662113,3.99327227 L7,4 L5,4 C4.48716416,4 4.06449284,4.38604019 4.00672773,4.88337887 L4,5 L4,19 C4,19.5128358 4.38604019,19.9355072 4.88337887,19.9932723 L5,20 L19,20 C19.5128358,20 19.9355072,19.6139598 19.9932723,19.1166211 L20,19 L20,17 C20,16.4477153 20.4477153,16 21,16 C21.5128358,16 21.9355072,16.3860402 21.9932723,16.8833789 L22,17 L22,19 C22,20.5976809 20.75108,21.9036609 19.1762728,21.9949073 L19,22 L5,22 C3.40231912,22 2.09633912,20.75108 2.00509269,19.1762728 L2,19 L2,5 C2,3.40231912 3.24891996,2.09633912 4.82372721,2.00509269 L5,2 L7,2 L5,2 Z M21,2 L21.081,2.003 L21.2007258,2.02024007 L21.2007258,2.02024007 L21.3121425,2.04973809 L21.3121425,2.04973809 L21.4232215,2.09367336 L21.5207088,2.14599545 L21.5207088,2.14599545 L21.6167501,2.21278596 L21.7071068,2.29289322 L21.7071068,2.29289322 L21.8036654,2.40469339 L21.8036654,2.40469339 L21.8753288,2.5159379 L21.9063462,2.57690085 L21.9063462,2.57690085 L21.9401141,2.65834962 L21.9401141,2.65834962 L21.9641549,2.73400703 L21.9641549,2.73400703 L21.9930928,2.8819045 L21.9930928,2.8819045 L22,3 L22,3 L22,9 C22,9.55228475 21.5522847,10 21,10 C20.4477153,10 20,9.55228475 20,9 L20,5.414 L13.7071068,11.7071068 C13.3466228,12.0675907 12.7793918,12.0953203 12.3871006,11.7902954 L12.2928932,11.7071068 C11.9324093,11.3466228 11.9046797,10.7793918 12.2097046,10.3871006 L12.2928932,10.2928932 L18.584,4 L15,4 C14.4477153,4 14,3.55228475 14,3 C14,2.44771525 14.4477153,2 15,2 L21,2 Z\"/>\n</svg>\n</div>\n</div>\n</a> \n",
   "modified": "2023-12-25 11:19:12.587525",
   "name": "housekeeping link btn",
@@ -224,45 +246,12 @@
  {
   "docstatus": 0,
   "doctype": "Custom HTML Block",
-  "html": "hello",
-  "modified": "2024-05-13 12:43:09.101099",
-  "name": "Testing Template",
-  "private": 0,
-  "roles": [],
-  "script": "",
-  "style": null
- },
- {
-  "docstatus": 0,
-  "doctype": "Custom HTML Block",
-  "html": "<iframe src=\"/frontdesk/dashboard?layout=blank_layout\" style=\"width:100%;border:none;overflow:hidden\" id=\"iframe\" ></iframe>",
-  "modified": "2024-04-27 08:34:27.109725",
-  "name": "Owner Dashboard",
-  "private": 0,
-  "roles": [],
-  "script": "var iframe = root_element.querySelector('#iframe');\r\n\r\niframe.addEventListener('load', function() {\r\n    var observer = new MutationObserver(function(mutationsList) {\r\n        iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';\r\n        \r\n    });\r\n\r\n    // Observe changes to the body of the document inside the iframe\r\n    observer.observe(iframe.contentWindow.document.body, { attributes: true, childList: true, subtree: true });\r\n});",
-  "style": null
- },
- {
-  "docstatus": 0,
-  "doctype": "Custom HTML Block",
-  "html": "<div id=\"recent-membership-check-in\">Recent Membership Check In</div>\n<button id=\"view_all_recent_data\">View All Recent Data</button>",
-  "modified": "2023-10-06 14:14:30.191739",
-  "name": "Recent Membership Check In",
-  "private": 0,
-  "roles": [],
-  "script": "let parser = new DOMParser(); // create a DOMParser object\n\nfrappe.call('epos_restaurant_2023.api.gym.get_recent_checked_ins',{\"limit\":8}).then(data=>{\n  \n    let table    = document.createElement(\"table\");\n    let tbody = document.createElement(\"tbody\");\n    let tr = document.createElement(\"tr\");\n    let th = document.createElement(\"th\");\n    let td = document.createElement(\"td\");\n    \n      \n    th.innerHTML = \"Check In No\";\n    tr.appendChild(th)\n    \n    th = document.createElement(\"th\");\n    th.innerHTML = \"Check In Date\" \n    tr.appendChild(th)\n    \n    th = document.createElement(\"th\");\n    th.innerHTML = \"Creation\" \n    tr.appendChild(th)\n    \n    th = document.createElement(\"th\");\n    th.innerHTML = \"Member\" \n    tr.appendChild(th)\n    \n    th = document.createElement(\"th\");\n    th.innerHTML = \"Membership Type\" \n    tr.appendChild(th)\n    \n    th = document.createElement(\"th\");\n    th.innerHTML = \"Membership\" \n    tr.appendChild(th)\n    \n    th = document.createElement(\"th\");\n    th.innerHTML = \"Check In Count\" \n    tr.appendChild(th)\n    \n   \n    tbody.appendChild(tr)\n    \n    data.message.forEach((r)=>{\n         \n        //check in number\n        tr = document.createElement(\"tr\");\n        td = document.createElement(\"td\");\n        td.textContent  = r.membership_check_in;\n        tr.appendChild(td)\n        \n        //check in date\n        td = document.createElement(\"td\");\n        td.textContent =frappe.format( r.check_in_date,{fieldtype:\"Date\"});\n        tr.appendChild(td)\n        \n        //creation \n        td = document.createElement(\"td\");\n        td.textContent =frappe.format( r.creation,{fieldtype:\"Datetime\"});\n        tr.appendChild(td)\n        \n         //member_name\n        td = document.createElement(\"td\");\n        td.textContent  = r.member_name;\n        tr.appendChild(td)\n        \n         //membership_type\n        td = document.createElement(\"td\");\n        td.textContent  = r.membership_type;\n        tr.appendChild(td)\n        \n        //membership_name\n        td = document.createElement(\"td\");\n        td.textContent  = r.membership_name;\n        tr.appendChild(td)\n        \n         //membership check in\n        td = document.createElement(\"td\");\n         td.appendChild(parser.parseFromString(frappe.format( r.check_in_number,{fieldtype:\"Float\"}), \"text/html\").querySelector(\"div\"));\n        tr.appendChild(td)\n        \n        tr.addEventListener('click', function() {\n        \n            frappe.set_route('Form', 'Membership Check In',r.membership_check_in)\n        });\n\n        tbody.appendChild(tr)\n        \n    })\n    table.appendChild(tbody)\n    \n    let recentHTML = root_element.querySelector('#recent-membership-check-in');\n    recentHTML.innerHTML = \"\"\n    recentHTML.appendChild(table);\n    \n})\n\n\n//btn view\nlet btb_view = root_element.querySelector('#view_all_recent_data');\nbtb_view.addEventListener('click', function() {\n     frappe.set_route('List',\"Membership Check In\",\"List\")\n});",
-  "style": "table{\r\n    width:100%;\r\n}\r\n td,th {\r\n  border: 1px solid #ddd;\r\n  padding: 8px;\r\n}\r\n\r\ntr:nth-child(even){background-color: #f2f2f2;}\r\n\r\ntr:hover {background-color: #ddd; cursor:pointer}\r\n\r\nth {\r\n  padding-top: 12px;\r\n  padding-bottom: 12px;\r\n  text-align: left;\r\n  background-color: #0398e1 !important;\r\n  color: white;\r\n}\r\n\r\n#view_all_recent_data{\r\n    margin-top:5px;\r\n    color:white;\r\n    height:var(--btn-height);\r\n    background-color: rgb(82, 146, 247);\r\n    border-radius:var(--border-radius);\r\n    border:none;\r\n}\r\n#view_all_recent_data:hover{\r\n     background-color:#097add;\r\n}"
- },
- {
-  "docstatus": 0,
-  "doctype": "Custom HTML Block",
   "html": "<div id=\"unpaid-customer\">Unpaid</div>\r\n",
-  "modified": "2024-06-22 10:46:19.405102",
+  "modified": "2024-06-25 11:11:29.081301",
   "name": "Unpaid Customer",
   "private": 0,
   "roles": [],
-  "script": "\r\nlet parser = new DOMParser(); // create a DOMParser object\r\nconst template = `\r\n<table>\r\n    <thead>\r\n    <tr>\r\n        <th>Customer</th>\r\n        <th>Total Amount</th>\r\n        <th>Total Paid</th>\r\n        <th>Balance</th>\r\n    </tr>\r\n    </thead>\r\n    <tbody>\r\n    {%for d in data%}\r\n    <tr data-id=\"{{d.customer}}\">\r\n        <td>{{d.customer}}</td>\r\n        <td>{{frappe.format(d.grand_total,{\"fieldtype\":\"Currency\"})}}</td>\r\n        <td>{{frappe.format(d.total_paid,{\"fieldtype\":\"Currency\"})}}</td>\r\n        <td>{{frappe.format(d.balance,{\"fieldtype\":\"Currency\"})}}</td>\r\n        </tr>\r\n    {%endfor%}\r\n    <tbody>\r\n    </table>\r\n`\r\n\t\t\t\r\n\t\t\t\r\nfrappe.call('get_unpaid_customer').then(data => {\r\n    const html = frappe.render_template(template,{data:data.message});\r\n    let dom = parser.parseFromString(html, \"text/html\").querySelector(\"table\")\r\n    root_element.querySelector('#unpaid-customer').appendChild(dom);\r\n    \r\n    \r\n    \r\n    \r\n})\r\n\r\n $(document).ready(function(){\r\n    $(root_element).find(\"div#unpaid-customer\").on('click', 'tr', function(event) {\r\n        window.parent.postMessage($(this).data('id'))\r\n        \r\n    }) \r\n })\r\n    \r\n \r\n \r\n\r\n",
+  "script": "\r\nlet parser = new DOMParser(); // create a DOMParser object\r\nconst template = `\r\n<table>\r\n    <thead>\r\n    <tr>\r\n        <th>Customer</th>\r\n        <th>Total Amount</th>\r\n        <th>Total Paid</th>\r\n        <th>Balance</th>\r\n    </tr>\r\n    </thead>\r\n    <tbody>\r\n    {%for d in data%}\r\n    <tr data-id=\"{{d.customer}}\">\r\n        <td>{{d.customer}}</td>\r\n        <td>{{frappe.format(d.grand_total,{\"fieldtype\":\"Currency\"})}}</td>\r\n        <td>{{frappe.format(d.total_paid,{\"fieldtype\":\"Currency\"})}}</td>\r\n        <td>{{frappe.format(d.balance,{\"fieldtype\":\"Currency\"})}}</td>\r\n        </tr>\r\n    {%endfor%}\r\n    <tbody>\r\n    </table>\r\n`\r\n\t\t\t\r\n\t\t\t\r\nfrappe.call('get_unpaid_customer').then(data => {\r\n    const html = frappe.render_template(template,{data:data.message});\r\n    let dom = parser.parseFromString(html, \"text/html\").querySelector(\"table\")\r\n    root_element.querySelector('#unpaid-customer').appendChild(dom);\r\n    \r\n    \r\n    \r\n    \r\n})\r\n\r\n $(document).ready(function(){\r\n    $(root_element).find(\"div#unpaid-customer\").on('click', 'tr', function(event) {\r\n        window.parent.postMessage($(this).data('id'))\r\n    }) \r\n })\r\n    \r\n \r\n \r\n\r\n",
   "style": "table{\r\n    width:100%;\r\n}\r\n td,th {\r\n  border: 1px solid #ddd;\r\n  padding: 8px;\r\n}\r\n\r\ntr:nth-child(even){background-color: #f2f2f2;}\r\n\r\ntr:hover {background-color: #ddd; cursor:pointer}\r\n\r\nth {\r\n  padding-top: 12px;\r\n  padding-bottom: 12px;\r\n  text-align: left;\r\n  background-color: #0398e1 !important;;\r\n  color: white;\r\n}\r\n"
  },
  {
@@ -275,6 +264,17 @@
   "roles": [],
   "script": "frappe.call(\"edoor.api.frontdesk.get_daily_property_summary\").then((r)=>{\n    \n    console.log(r.message.working_date)\n    \n    function parseDateString(dateString) {\n    // Assuming dateString is in the format \"YYYY-MM-DD\"\n    const [year, month, day] = dateString.split('-');\n\n    // Convert month from number to month name\n    const months = [\n        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',\n        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'\n    ];\n    const monthName = months[parseInt(month, 10) - 1];\n\n    const dateObject = new Date(`${monthName} ${day}, ${year}`);\n    \n    // Get the day of the week\n    const daysOfWeek = [\n        'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'\n    ];\n    const dayOfWeek = daysOfWeek[dateObject.getDay()];\n\n    return {\n        day: parseInt(day, 10),\n        month: monthName,\n        year: parseInt(year, 10),\n        dayOfWeek: dayOfWeek\n    };\n}\n\n\nconst parsedDate = parseDateString(r.message.working_date);\n\nroot_element.querySelector('#name_day').textContent=parsedDate.dayOfWeek || \"\"\nroot_element.querySelector('#day').textContent=parsedDate.day || \"\"\nroot_element.querySelector('#year').textContent=parsedDate.month + ' ' + parsedDate.year  || \"\"\n    \n})",
   "style": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom HTML Block",
+  "html": "<div id=\"recent-sale-order\">Recent Sale Order</div>",
+  "modified": "2023-10-06 14:14:55.470524",
+  "name": "Recent Sale Order",
+  "private": 0,
+  "roles": [],
+  "script": "let parser = new DOMParser(); // create a DOMParser object\r\n \r\n\t\t\t\r\nfrappe.db.get_list('Sale', {\r\n    fields: ['name','posting_date', 'customer','grand_total','total_quantity','creation'],\r\n    limit:15,\r\n    order_by:\"creation desc\"\r\n    \r\n}).then(data => {\r\n    let table    = document.createElement(\"table\");\r\n    let tbody = document.createElement(\"tbody\");\r\n    let tr = document.createElement(\"tr\");\r\n    let th = document.createElement(\"th\");\r\n    let td = document.createElement(\"td\");\r\n    \r\n    th.innerHTML = \"Sale No\" \r\n    tr.appendChild(th)\r\n    \r\n    th = document.createElement(\"th\");\r\n    th.innerHTML = \"Posting Date\" \r\n    tr.appendChild(th)\r\n    \r\n     th = document.createElement(\"th\");\r\n    th.innerHTML = \"Creation\" \r\n    tr.appendChild(th)\r\n    \r\n    th = document.createElement(\"th\");\r\n    th.innerHTML = \"Quantity\" \r\n    tr.appendChild(th)\r\n    \r\n    th = document.createElement(\"th\");\r\n    th.innerHTML = \"Amount\" \r\n    tr.appendChild(th)\r\n    \r\n    \r\n    tbody.appendChild(tr)\r\n\r\n    \r\n    data.forEach((r)=>{\r\n        //sale number\r\n        tr = document.createElement(\"tr\");\r\n        td = document.createElement(\"td\");\r\n        td.textContent  = r.name;\r\n        tr.appendChild(td)\r\n        //sale date\r\n\r\n        td = document.createElement(\"td\");\r\n        td.textContent =frappe.format( r.posting_date,{fieldtype:\"Date\"});\r\n        tr.appendChild(td)\r\n        \r\n        td = document.createElement(\"td\");\r\n        td.textContent =frappe.format( r.creation,{fieldtype:\"Datetime\"});\r\n        tr.appendChild(td)\r\n        \r\n         //qauntity\r\n        td = document.createElement(\"td\");\r\n        td.appendChild(parser.parseFromString(frappe.format( r.total_quantity,{fieldtype:\"Float\"}), \"text/html\").querySelector(\"div\"));\r\n        tr.appendChild(td)\r\n        \r\n        //amount\r\n        td = document.createElement(\"td\");\r\n        td.appendChild(parser.parseFromString(frappe.format( r.grand_total,{fieldtype:\"Currency\"}), \"text/html\").querySelector(\"div\"));\r\n        tr.appendChild(td)\r\n        \r\n        tr.addEventListener('click', function() {\r\n        \r\n            frappe.set_route('Form', 'Sale',r.name)\r\n        });\r\n\r\n        tbody.appendChild(tr)\r\n        \r\n    })\r\n    table.appendChild(tbody)\r\n    \r\n    let recentSale = root_element.querySelector('#recent-sale-order');\r\n    recentSale.innerHTML = \"\"\r\n    recentSale.appendChild(table);\r\n    \r\n})",
+  "style": "table{\r\n    width:100%;\r\n}\r\n td,th {\r\n  border: 1px solid #ddd;\r\n  padding: 8px;\r\n}\r\n\r\ntr:nth-child(even){background-color: #f2f2f2;}\r\n\r\ntr:hover {background-color: #ddd; cursor:pointer}\r\n\r\nth {\r\n  padding-top: 12px;\r\n  padding-bottom: 12px;\r\n  text-align: left;\r\n  background-color: #0398e1 !important;;\r\n  color: white;\r\n}"
  },
  {
   "docstatus": 0,

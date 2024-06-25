@@ -145,7 +145,7 @@ export default class Sale {
             customer_name: this.customer_name || this.setting?.customer_name,
             customer_group: this.customer_group || this.setting?.customer_group,
             price_rule: this.price_rule || this.setting?.price_rule,
-            business_branch: this.setting?.business_branch,
+            business_branch: decodeURIComponent(this.setting?.business_branch),
             sale_products: [],
             product_variants: [],
             sale_type: this.sale_type || this.setting?.default_sale_type,

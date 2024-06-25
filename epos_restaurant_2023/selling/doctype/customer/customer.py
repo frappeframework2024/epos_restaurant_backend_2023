@@ -131,6 +131,7 @@ def get_unpaid_bills(name):
 		"balance":['>',0]
 	},fields=['*'])
 	bill_list = []
+	response = {"sales":[]}
 	if len(bill_numbers) > 0:
 		for bill in bill_numbers:
 			sale_products = frappe.db.sql("""
@@ -173,6 +174,17 @@ def get_unpaid_bills(name):
 			bill['sale_products'] = sale_products
 			bill['payment'] = payment
 			bill_list.append(bill)
-	return bill_list
+	total_bill = len(bill_list)
+	total_amount = sum(b.grand_total for b in  bill_list) or 0
+	total_paid = sum(b.total_paid for b in  bill_list) or 0
+	balance = sum(b.balance for b in  bill_list) or 0
+
+	response["sales"] = bill_list or []
+	response["total_bill"] = total_bill or 0
+	response["total_amount"] = total_amount or 0
+	response["total_paid"] = total_paid or 0
+	response["balance"] = balance or 0
+
+	return response
 
 

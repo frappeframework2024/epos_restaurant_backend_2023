@@ -12,7 +12,14 @@ frappe.ui.form.on("Bulk Sale Payment", {
             }
         });
     },
+    on_submit(frm){
+        // Check Current call from Iframe
+        if (window.self !== window.top) {
+           window.parent.postMessage(frm.doc)
+        }
+    },
 	refresh(frm) {
+        
         frappe.call({
             method: "get_sale_payment_naming_series",
             doc: frm.doc,

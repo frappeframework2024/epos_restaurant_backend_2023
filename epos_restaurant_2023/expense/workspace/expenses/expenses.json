@@ -8,6 +8,7 @@
  "content": "[{\"id\":\"DzzXAAYd20\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Monthly Expense vs Payment\",\"col\":12}},{\"id\":\"he0HBLhSr3\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Expense</span>\",\"col\":12}},{\"id\":\"qQriRgdLkX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Expenses\",\"col\":3}},{\"id\":\"2OFtYUfVWx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Expense\",\"col\":3}},{\"id\":\"olrBtffvmQ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Expense Payment\",\"col\":3}},{\"id\":\"5cNK2KS0vS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Expense Payment\",\"col\":3}},{\"id\":\"vYQv3Q7kJO\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":3}},{\"id\":\"YJBGlSjgtS\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Zmwnu224e6\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent Transaction</b></span>\",\"col\":12}},{\"id\":\"fjC12PoRZi\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Expense\",\"col\":6}},{\"id\":\"e962-fl1St\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Expense Payment\",\"col\":6}},{\"id\":\"vxmaAifiGc\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"1QZTf_DnrQ\",\"type\":\"card\",\"data\":{\"card_name\":\"Configuration\",\"col\":4}},{\"id\":\"hN_bRBVU7O\",\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}}]",
  "creation": "2022-12-03 15:55:08.589531",
  "custom_blocks": [],
+ "custom_menu_icon": "<svg viewBox=\"0 0 24 24\" id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"#ffffff\" stroke=\"#ffffff\"><g id=\"SVGRepo_bgCarrier\" stroke-width=\"0\"></g><g id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></g><g id=\"SVGRepo_iconCarrier\"><defs><style>.cls-1{fill:none;stroke:#ffffff;stroke-miterlimit:10;stroke-width:1.91px;}</style></defs><path class=\"cls-1\" d=\"M12,12H22.5a10.45,10.45,0,0,1-3.07,7.42L12,12V1.48A10.5,10.5,0,1,0,19.43,19.4\"></path><path class=\"cls-1\" d=\"M15.82,8.16h3.34a1.43,1.43,0,0,0,1.43-1.43h0A1.43,1.43,0,0,0,19.16,5.3h-1a1.44,1.44,0,0,1-1.43-1.44h0A1.43,1.43,0,0,1,18.2,2.43h3.35\"></path><line class=\"cls-1\" x1=\"18.68\" y1=\"0.52\" x2=\"18.68\" y2=\"2.43\"></line><line class=\"cls-1\" x1=\"18.68\" y1=\"8.16\" x2=\"18.68\" y2=\"10.07\"></line></g></svg>",
  "docstatus": 0,
  "doctype": "Workspace",
  "for_user": "",
@@ -94,7 +95,7 @@
    "type": "Link"
   }
  ],
- "modified": "2024-06-21 15:32:44.502427",
+ "modified": "2024-06-24 17:32:48.858591",
  "modified_by": "Administrator",
  "module": "Expense",
  "name": "Expenses",

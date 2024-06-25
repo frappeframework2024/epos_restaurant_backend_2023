@@ -7,7 +7,6 @@ const { t: $t } = i18n.global;
 
 onMounted(() => {
   window.addEventListener('message', async function  (event) {
-    console.log(event.data)
     const result = await UnpaidBillListDialog({ title: $t("Bill"),data:event.data});
   });
 })

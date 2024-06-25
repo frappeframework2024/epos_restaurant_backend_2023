@@ -499,8 +499,8 @@ def check_pos_profile(pos_profile_name, device_name, is_used_validate=True):
 @frappe.whitelist()
 def get_current_working_day(business_branch):
    
-    sql = "select name, posting_date, pos_profile, note from `tabWorking Day` where business_branch = '{}' and is_closed = 0 order by creation limit 1".format(business_branch)
-    data =  frappe.db.sql(sql, as_dict=1) 
+    sql = "select name, posting_date, pos_profile, note from `tabWorking Day` where business_branch = %(business_branch)s and is_closed = 0 order by creation limit 1"
+    data =  frappe.db.sql(sql, {"business_branch":business_branch},as_dict=1) 
     if data:
         return data [0]
     return
@@ -566,8 +566,8 @@ def get_resevation_detail(name):
 @frappe.whitelist()
 def get_current_cashier_shift(pos_profile):
    
-    sql = "select name,working_day, posting_date,shift_name, pos_profile, opened_note,business_branch,total_opening_amount from `tabCashier Shift` where pos_profile = '{}' and is_closed = 0 order by creation desc limit 1".format(pos_profile)
-    data =  frappe.db.sql(sql, as_dict=1) 
+    sql = "select name,working_day, posting_date,shift_name, pos_profile, opened_note,business_branch,total_opening_amount from `tabCashier Shift` where pos_profile = %(pos_profile)s and is_closed = 0 order by creation desc limit 1"
+    data =  frappe.db.sql(sql, {"pos_profile":pos_profile},as_dict=1) 
     if data:
         return data [0]
     return
@@ -1562,7 +1562,8 @@ def get_workspace_sidebar_items():
         "icon",
         "indicator_color",
         "is_hidden",
-        "custom_route"
+        "custom_route",
+        "custom_menu_icon"
     ]
     all_pages = frappe.get_all(
         "Workspace", fields=fields, filters=filters, order_by=order_by, ignore_permissions=True
@@ -1590,3 +1591,87 @@ def get_workspace_sidebar_items():
         pages[0]["label"] = _("Welcome Workspace")
    
     return {"pages": pages, "has_access": has_access}
+@frappe.whitelist()
+def get_sidebar_menu_template():
+    data = get_workspace_sidebar_items()
+    menus = [d for d in data["pages"] if  not d["parent_page"] and d["is_hidden"]==0]
+    # return [d["name"] for d in data["pages"]]
+    shortcut_menus = frappe.db.sql("select parent,  type,link_to,label, doc_view from `tabWorkspace Shortcut` where parent in %(parent_menu)s",{"parent_menu":[d["name"] for d in  data["pages"]]}, as_dict=1)
+    
+    for d in menus:
+        
+        if len([x for x in data["pages"] if x['parent_page'] == d["name"] and x["is_hidden"]==0] ):
+            d["sub_menus"] =  [x for x in data["pages"] if x['parent_page'] == d["name"] and x["is_hidden"]==0]
+    
+        # get sub from shourt cut
+        sub_menu = [s for s in shortcut_menus if s["parent"]==d["name"]]
+        if sub_menu:
+            if "sub_menus" in d:
+                d["sub_menus"] = d["sub_menus"]  + [{"name":x["label"],"link_to":x["link_to"],'type':x["type"],"doc_view":x["doc_view"] } for x in  sub_menu ]
+                
+        
+            
+    template = """
+    
+    
+<div class="sidebar">
+    <div class="sidebar-inner">
+        <div>
+            <div class="logo-sidebar">
+                <a href="/app">
+                    <img class="app-logo" src="{{app_logo}}" />
+                </a>
+            </div>
+            <div>
+                <ul class="menu">
+                    {%for d in data%}
+                        <li class="submenu" data-submenu="services">
+                            <a class="icon" data-workspace="{{d.name}}" data-custom-route="{{d.custom_route or ""}}">
+                                {%if d.custom_menu_icon%}
+                                    {{d.custom_menu_icon}}
+                                {%else%}
+                                <svg class="icon  icon-md" style="">
+                                    <use class="" href="#icon-{{d.icon}}"></use>
+                                </svg>
+                                {%endif%}
+                            </a>
+                        </li>
+                    {%endfor%}
+                </ul>
+            </div>
+        </div>
+        <div class="user-profile">
+            <div class="us-pro-inner">
+                <img src="{{app_logo}}" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="submenu-panel" id="submenu-panel">
+    <input type="text" class="search-input" placeholder="Search...">
+    <div class="submenu-content" id="services">
+        <ul class="mega-menu">
+            <li>
+                <div class="menu-section-header">Web Design</div>
+                <div class="menu-section-content">
+                    <a href="#">HTML</a>
+                    <a href="#">CSS</a>
+                    <a href="#">JavaScript</a>
+                </div>
+            </li>
+            <li>
+                <div class="menu-section-header">Development</div>
+                <div class="menu-section-content">
+                    <a href="#">Frontend</a>
+                    <a href="#">Backend</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+ 
+    """
+    return frappe.render_template(template,{"data":menus,"app_logo":frappe.db.get_single_value("Navbar Settings","app_logo")})
+    
+    

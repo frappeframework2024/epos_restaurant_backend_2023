@@ -5,7 +5,10 @@ import numpy as np
 import base64
 from PIL import Image
 from epos_restaurant_2023.api.product import get_product_by_menu
-from epos_restaurant_2023.api.api import get_system_settings
+from epos_restaurant_2023.api.api import (
+    get_system_settings,
+    check_username,
+)
 from epos_restaurant_2023.api.printing import (
     get_print_context, 
     print_bill,
@@ -25,6 +28,15 @@ def on_check_url():
 @frappe.whitelist(allow_guest=True) 
 def on_get_pos_configure(pos_profile="", device_name=''):  
     return get_system_settings(pos_profile,device_name) 
+
+## use POST method to get user and permission to login
+@frappe.whitelist(allow_guest=True) 
+def on_get_user_for_login(pin):
+    return check_username(pin)
+
+@frappe.whitelist() 
+def test_auth():
+    return "Authorized"
 
 @frappe.whitelist(allow_guest=True,methods='POST') 
 def get_menu_product(root_menu=""):

@@ -8,6 +8,7 @@
  "content": "[{\"id\":\"HKKd39rO3u\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reports</span>\",\"col\":12}},{\"id\":\"NBiVl7GGy3\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Sale Revenue\",\"col\":12}},{\"id\":\"Skat7JO3Ll\",\"type\":\"card\",\"data\":{\"card_name\":\"Sales Report\",\"col\":4}},{\"id\":\"hGWI3yjPOg\",\"type\":\"card\",\"data\":{\"card_name\":\"Purchase Order\",\"col\":4}},{\"id\":\"L0StVr44OP\",\"type\":\"card\",\"data\":{\"card_name\":\"Inventory Reports\",\"col\":4}},{\"id\":\"6ieXc-xxdR\",\"type\":\"card\",\"data\":{\"card_name\":\"Expense\",\"col\":4}},{\"id\":\"5kr2Gxyib9\",\"type\":\"card\",\"data\":{\"card_name\":\"SPA Report\",\"col\":4}}]",
  "creation": "2022-12-17 18:04:27.765490",
  "custom_blocks": [],
+ "custom_menu_icon": "<svg viewBox=\"0 0 512 512\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" fill=\"#ffffff\" stroke=\"#ffffff\"><g id=\"SVGRepo_bgCarrier\" stroke-width=\"0\"></g><g id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></g><g id=\"SVGRepo_iconCarrier\"> <title>report-linechart</title> <g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"> <g id=\"add\" fill=\"#ffffff\" transform=\"translate(42.666667, 85.333333)\"> <path d=\"M341.333333,1.42108547e-14 L426.666667,85.3333333 L426.666667,341.333333 L3.55271368e-14,341.333333 L3.55271368e-14,1.42108547e-14 L341.333333,1.42108547e-14 Z M330.666667,42.6666667 L42.6666667,42.6666667 L42.6666667,298.666667 L384,298.666667 L384,96 L330.666667,42.6666667 Z M106.666667,85.3333333 L106.666333,217.591333 L167.724208,141.269742 L232.938667,173.866667 L280.864376,130.738196 L295.135624,146.595138 L236.398693,199.458376 L173.589333,168.064 L120.324333,234.666333 L341.333333,234.666667 L341.333333,256 L85.3333333,256 L85.3333333,85.3333333 L106.666667,85.3333333 Z\" id=\"Combined-Shape\"> </path> </g> </g> </g></svg>",
  "docstatus": 0,
  "doctype": "Workspace",
  "for_user": "",
@@ -329,7 +330,7 @@
    "type": "Link"
   }
  ],
- "modified": "2024-06-21 15:32:46.532393",
+ "modified": "2024-06-24 17:41:30.901403",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Reports",
