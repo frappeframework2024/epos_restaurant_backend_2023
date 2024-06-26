@@ -48,7 +48,23 @@
   "allow_generate_tax_invoice",
   "tax_invoice_number_format",
   "cancellation_policy_section",
-  "cancellation_policy"
+  "cancellation_policy",
+  "account_tab",
+  "default_cash_account",
+  "default_bank_account",
+  "column_break_uwgp",
+  "default_income_account",
+  "default_receivable_account",
+  "default_sale_discount_account",
+  "column_break_oqmw",
+  "default_credit_account",
+  "default_purchase_discount_account",
+  "inventory_section",
+  "default_inventory_account",
+  "column_break_rvvy",
+  "stock_adjustment_account",
+  "column_break_uize",
+  "default_cost_of_good_sold_account"
  ],
  "fields": [
   {
@@ -279,12 +295,98 @@
    "fieldname": "house_number",
    "fieldtype": "Data",
    "label": "House Number"
+  },
+  {
+   "fieldname": "account_tab",
+   "fieldtype": "Tab Break",
+   "label": "Account"
+  },
+  {
+   "fieldname": "default_cash_account",
+   "fieldtype": "Link",
+   "label": "Default Cash Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "column_break_oqmw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_bank_account",
+   "fieldtype": "Link",
+   "label": "Default Bank Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "column_break_uwgp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_income_account",
+   "fieldtype": "Link",
+   "label": "Default Income Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_receivable_account",
+   "fieldtype": "Link",
+   "label": "Default Receivable Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_cost_of_good_sold_account",
+   "fieldtype": "Link",
+   "label": "Default Cost of Good Sold Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "inventory_section",
+   "fieldtype": "Section Break",
+   "label": "Inventory"
+  },
+  {
+   "fieldname": "default_inventory_account",
+   "fieldtype": "Link",
+   "label": "Default Inventory Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "column_break_rvvy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "stock_adjustment_account",
+   "fieldtype": "Link",
+   "label": "Stock Adjustment Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_sale_discount_account",
+   "fieldtype": "Link",
+   "label": "Default Sale Discount Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_credit_account",
+   "fieldtype": "Link",
+   "label": "Default Credit Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_purchase_discount_account",
+   "fieldtype": "Link",
+   "label": "Default Purchase Discount Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "column_break_uize",
+   "fieldtype": "Column Break"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-11 18:47:00.504164",
+ "modified": "2024-06-26 11:01:34.756405",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",

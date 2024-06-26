@@ -47,7 +47,11 @@
   "total_paid",
   "balance",
   "attach_receipt",
-  "vendor_group"
+  "vendor_group",
+  "accounting_tab",
+  "default_credit_account",
+  "column_break_wyuw",
+  "default_discount_account"
  ],
  "fields": [
   {
@@ -294,6 +298,27 @@
    "fieldname": "note",
    "fieldtype": "Small Text",
    "label": "Note"
+  },
+  {
+   "fieldname": "accounting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "default_credit_account",
+   "fieldtype": "Link",
+   "label": "Default Credit Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "column_break_wyuw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_discount_account",
+   "fieldtype": "Link",
+   "label": "Default Discount Account",
+   "options": "Chart Of Account"
   }
  ],
  "image_field": "attach_receipt",
@@ -306,7 +331,7 @@
    "link_fieldname": "purchase_order"
   }
  ],
- "modified": "2024-04-09 16:12:53.345387",
+ "modified": "2024-06-26 10:58:15.381531",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order",

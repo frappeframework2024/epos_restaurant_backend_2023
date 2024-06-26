@@ -13,7 +13,9 @@
   "sort_order",
   "is_standard",
   "background",
-  "color"
+  "color",
+  "accounting_tab",
+  "default_income_account"
  ],
  "fields": [
   {
@@ -56,11 +58,22 @@
    "fieldname": "color",
    "fieldtype": "Color",
    "label": "Color"
+  },
+  {
+   "fieldname": "accounting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "default_income_account",
+   "fieldtype": "Link",
+   "label": "Default Income Account",
+   "options": "Chart Of Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-11 09:52:53.000998",
+ "modified": "2024-06-25 22:12:31.887923",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Revenue Group",

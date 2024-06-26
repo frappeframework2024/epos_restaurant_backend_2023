@@ -1,6 +1,6 @@
 <template>
     <div v-if="data.type == 'back'" class="h-full rounded-lg shadow-lg cursor-pointer bg-gray-500">
-        <div v-ripple class="relative p-2 w-full h-full flex justify-center items-center" @click="onBack(data.parent)">
+        <div v-ripple class="relative p-2 w-full h-full flex justify-center items-center" @click="onBack(data)">
             <div>
                 <v-icon color="white" size="large">mdi-reply</v-icon>
                 <div class="text-white">{{ $t('Back') }}</div>
@@ -13,7 +13,7 @@
         'color': data.text_color,
         'background-image': 'url(' + encodeURIComponent(data.photo).replace(/%2F/g, '/').replace(/%3A/g, ':').replace(/%3F/g, '?').replace(/%3D/g, '=').replace(/%26/g, '&')  + ')',
         'background-size': 'contain', 'background-position': 'center center'
-    }" @click="onClickMenu(data.name)">
+    }" @click="onClickMenu(data)">
         <div class="absolute top-0 bottom-0 right-0 left-0">
 
             <avatar class="!h-full !w-full" :name="data.name_en" :rounded="false" :background="data.background_color"
@@ -166,12 +166,15 @@ function getTotalQuantityOrder(data) {
 
 function onClickMenu(menu) {
     if (sale.setting.pos_menus.length > 0) {
-        product.parentMenu = menu;
+        product.parentMenu = menu.name;
+        _onPriceRuleChanged(menu);
     } else {
         product.getProductMenuByProductCategory(db, menu)
     }
 
 }
+
+
 async function uploadImage(data) {
     const res = await SelectGoogleImageDialog({
 
@@ -190,13 +193,30 @@ async function uploadImage(data) {
             )
     }
 }
+
 function activate_menu(event) {
     event.stopPropagation();
 }
 
-function onBack(parent) {
-    const parent_menu = product.posMenuResource.data?.find(r => r.name == parent).parent;
+function onBack(menu) {
+    const parent_menu = product.posMenuResource.data?.find(r => r.name == menu.parent).parent;
     product.parentMenu = parent_menu;
+    _onPriceRuleChanged(menu);
+}
+
+function _onPriceRuleChanged(menu){ 
+    
+    console.log(sale.table_price_rule)
+    if((menu.price_rule||"")!=""){
+           sale.price_rule = menu.price_rule; 
+        } else{
+            if((sale.table_price_rule||"") != ""){
+                sale.price_rule = sale.table_price_rule; 
+            }else{
+                sale.price_rule = sale.setting?.price_rule;
+            }
+        }
+        sale.sale.price_rule = sale.price_rule; 
 }
 async function onClickProduct() {
     if (!sale.isBillRequested()) {

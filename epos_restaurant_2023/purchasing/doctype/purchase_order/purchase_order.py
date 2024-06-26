@@ -13,6 +13,10 @@ class PurchaseOrder(Document):
 		
 	def validate(self):
 		validate_po_discount(self)
+
+		for  acc in set([d.default_account for d in self.purchase_order_products]):
+			frappe.msgprint(str(sum([x.amount for x in self.purchase_order_products if x.default_account ==acc])))
+  
 		#validate sale summary
 		total_quantity = Enumerable(self.purchase_order_products).sum(lambda x: x.quantity or 0)
 		sub_total = Enumerable(self.purchase_order_products).sum(lambda x: (x.quantity or 0)* (x.cost or  0))
@@ -32,9 +36,17 @@ class PurchaseOrder(Document):
 		self.total_discount = (self.product_discount or 0) + (self.po_discount or 0)
 		self.grand_total =( sub_total - (self.total_discount or 0))
 		self.balance = self.grand_total  - (self.total_paid or 0)
-		# if not self.is_new():
-		# 	if self.balance == 0 and self.grand_total > 0:
-		# 		frappe.throw("Total amount is 0")
+	
+		default_inventory_account,default_credit_account = frappe.db.get_value("Business Branch",self.business_branch,["default_inventory_account","default_credit_account"])
+		# set default credit account
+		if not self.default_credit_account:
+			self.default_credit_account = default_credit_account
+		# set default account to purcvhase order product
+		
+		for p in [d for d in self.purchase_order_products if not d.default_account]:
+			p.default_account =default_inventory_account 
+
+
 
 	def on_submit(self):
 		if len(self.purchase_order_products)>=10:

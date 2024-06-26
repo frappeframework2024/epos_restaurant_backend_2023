@@ -29,7 +29,9 @@
   "folio_transaction_type",
   "folio_transaction_number",
   "reservation_stay",
-  "guest"
+  "guest",
+  "accounting_section",
+  "default_account"
  ],
  "fields": [
   {
@@ -175,12 +177,23 @@
    "fieldname": "guest",
    "fieldtype": "Data",
    "label": "Guest"
+  },
+  {
+   "fieldname": "accounting_section",
+   "fieldtype": "Section Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "default_account",
+   "fieldtype": "Link",
+   "label": "Default Account",
+   "options": "Chart Of Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-05-05 14:36:04.404633",
+ "modified": "2024-06-25 23:35:35.523387",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Sale Payment",

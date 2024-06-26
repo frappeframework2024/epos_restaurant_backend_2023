@@ -31,7 +31,7 @@ class StockTransfer(Document):
 				else:
 					uom_conversion = get_uom_conversion(current_stock.unit, p.unit)
 					if current_stock.quantity * uom_conversion < p.quantity:
-						frappe.throw(_("{} is available only {} in stock".format(p.product_code, current_stock.quantity)))
+						frappe.throw(("{} is available only {} in stock".format(p.product_code, current_stock.quantity)))
 
 	
 	def on_submit(self):

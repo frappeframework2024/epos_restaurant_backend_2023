@@ -29,6 +29,7 @@ export default class Sale {
         this.setting = null;
         this.tbl_number = null;
         this.table_id = null;
+        this.table_price_rule = null;
         this.price_rule = null;
         this.sale_type = '';
         this.customer = '';
@@ -126,6 +127,7 @@ export default class Sale {
         this.orderChanged = false;
         this.selected_product = null
         this.selected_sale_product = null
+        this.price_rule = (this.price_rule || this.table_price_rule) || this.setting?.price_rule; 
         this.sale = {
             doctype: "Sale",
             sale_status: "New",
@@ -144,7 +146,7 @@ export default class Sale {
             customer_photo: this.customer_photo || this.customer_name ? this.customer_photo : this.setting?.customer_photo,
             customer_name: this.customer_name || this.setting?.customer_name,
             customer_group: this.customer_group || this.setting?.customer_group,
-            price_rule: this.price_rule || this.setting?.price_rule,
+            price_rule:  this.price_rule ,
             business_branch: decodeURIComponent(this.setting?.business_branch),
             sale_products: [],
             product_variants: [],

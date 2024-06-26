@@ -87,6 +87,8 @@
   "tax_3_amount",
   "section_break_62",
   "total_revenue",
+  "accounting_section",
+  "default_income_account",
   "section_break_54",
   "allow_discount",
   "allow_free",
@@ -757,7 +759,7 @@
    "label": "Tax 1 Account"
   },
   {
-   "fetch_from": "revenue_code.tax_2_account",
+   "fetch_from": "revenue_code.",
    "fieldname": "tax_2_account",
    "fieldtype": "Data",
    "hidden": 1,
@@ -945,12 +947,23 @@
    "in_list_view": 1,
    "label": "Selling Price",
    "reqd": 1
+  },
+  {
+   "fieldname": "accounting_section",
+   "fieldtype": "Section Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "default_income_account",
+   "fieldtype": "Link",
+   "label": "Default Income Account",
+   "options": "Chart Of Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-05-13 10:55:03.295019",
+ "modified": "2024-06-25 22:16:09.167846",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",

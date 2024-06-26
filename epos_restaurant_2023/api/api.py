@@ -1624,15 +1624,17 @@ def get_sidebar_menu_template():
                     <div>
                         <ul class="menu">
                             {%for d in data%}
-                                <li class="submenu" data-submenu="services">
-                                    <a class="icon" data-workspace="{{d.name}}" data-custom-route="{{d.custom_route or ""}}">
-                                        {%if d.custom_menu_icon%}
-                                            {{d.custom_menu_icon}}
-                                        {%else%}
-                                        <svg class="icon  icon-md" style="">
-                                            <use class="" href="#icon-{{d.icon}}"></use>
-                                        </svg>
-                                        {%endif%}
+                                <li class="submenu" data-submenu="{{d.name}}">
+                                    <a class="menus" data-workspace="{{d.name}}" data-custom-route="{{d.custom_route or ""}}">
+                                        <span class="icon">
+                                            {%if d.custom_menu_icon%}
+                                                {{d.custom_menu_icon}}
+                                            {%else%}
+                                            <svg class="icon  icon-md" style="">
+                                                <use class="" href="#icon-{{d.icon}}"></use>
+                                            </svg>
+                                            {%endif%}
+                                        </span>
                                     </a>
                                 </li>
                             {%endfor%}
@@ -1649,25 +1651,16 @@ def get_sidebar_menu_template():
 
         <div class="submenu-panel" id="submenu-panel">
             <input type="text" class="search-input" placeholder="Search...">
-            <div class="submenu-content" id="services">
-                <ul class="mega-menu">
-                    <li>
-                        <div class="menu-section-header">Web Design</div>
-                        <div class="menu-section-content">
-                            <a href="#">HTML</a>
-                            <a href="#">CSS</a>
-                            <a href="#">JavaScript</a>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="menu-section-header">Development</div>
-                        <div class="menu-section-content">
-                            <a href="#">Frontend</a>
-                            <a href="#">Backend</a>
-                        </div>
-                    </li>
-                </ul>
-            </div>
+            {{sub_menus}}
+            {%if 'sub_menus' in d %}
+                <div class="submenu-content" id="{{s.name}}">
+                    <ul class="submenu">
+                        {%for s in d["sub_menus"]%}
+                            <li><a data-workspace="{{s.name}}" data-custom-route="{{s.custom_route or ""}}" data-link-to="{{s.link_to}}" data-doc-view="{{s.doc_view}}" data-type="{{s.type}}">{{s.name}}</a></li>  
+                        {%endfor%}
+                    </ul>
+                </div>
+            {%endif%}
         </div>
     </div>
     """

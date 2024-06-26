@@ -4,6 +4,7 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
+from epos_restaurant_2023.selling.doctype.sale_payment.general_ledger_entry import submit_payment_to_general_ledger_entry_on_submit,submit_payment_to_general_ledger_entry_on_cancel
 
 class SalePayment(Document):
 	def validate(self):
@@ -55,6 +56,9 @@ class SalePayment(Document):
 		
 
 	def on_submit(self):
+		# run enque
+		submit_payment_to_general_ledger_entry(self)
+
 		if self.flags.ignore_on_submit==True:
 			return
        
@@ -64,6 +68,9 @@ class SalePayment(Document):
 		self.update_customer_point()
 	
 	def on_cancel(self):
+		# submit to general ledger entry
+		# run this in enqueue
+		submit_payment_to_general_ledger_entry_on_cancel(self)
 		if self.flags.ignore_on_cancel==True:
 			return
 		update_sale(self)

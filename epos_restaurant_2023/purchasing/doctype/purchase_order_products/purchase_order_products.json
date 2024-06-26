@@ -32,6 +32,8 @@
   "column_break_15",
   "discount_amount",
   "total_discount",
+  "accounting_section",
+  "default_account",
   "column_break_14",
   "is_inventory_product",
   "product_category",
@@ -253,12 +255,23 @@
    "fieldtype": "Check",
    "label": "Has Expired Date",
    "read_only": 1
+  },
+  {
+   "fieldname": "accounting_section",
+   "fieldtype": "Section Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "default_account",
+   "fieldtype": "Link",
+   "label": "Default Account",
+   "options": "Chart Of Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-04-09 15:53:21.703451",
+ "modified": "2024-06-26 10:44:46.038888",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order Products",

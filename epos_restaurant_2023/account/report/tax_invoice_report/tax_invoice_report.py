@@ -13,10 +13,11 @@ def execute(filters=None):
 		date_range = get_date_range_by_timespan(filters.timespan)
 		filters.start_date =date_range["start_date"]
 		filters.end_date = date_range["end_date"]
-
-	report_data = get_report_data(filters, report_config.report_fields)
-	summary = get_report_summary(filters, report_config.report_fields, report_data)
 	columns = get_report_columns(filters, report_config.report_fields)
+	raw_data = get_data(filters,report_config.report_fields)
+	report_data = get_report_data(filters = filters, report_fields= report_config.report_fields,data= raw_data)
+	summary = get_report_summary( filters= filters, report_fields =  report_config.report_fields, data = raw_data )
+	
 	chart = get_report_chart(filters,report_data,report_config.report_fields)
 	return  columns, report_data, None, chart, summary
 
@@ -37,8 +38,9 @@ def get_report_columns(filters,  report_fields):
  
 	return columns
 
-def get_report_data (filters, report_fields):
-	data = get_data(filters,report_fields)
+def get_report_data (filters, report_fields, data):
+	
+	
 	
 	report_data = []
 	if filters.row_group:
@@ -47,8 +49,6 @@ def get_report_data (filters, report_fields):
 		for parent in parent_row:
 			
 			d = parent
-			
- 
 			 
 			report_data.append({
 				"indent":0,
@@ -56,43 +56,48 @@ def get_report_data (filters, report_fields):
 				"is_group":1,
 				"is_group_total":0,
 			})
-			# frappe.throw(str(report_data))
 
-			if filters.row_group=="tax_invoice_date":
-				report_data = report_data + [d for d in data if getdate(d[filters.row_group]) == parent]
-			else:
-				report_data = report_data + [d for d in data if d[filters.row_group] == parent]
+			report_data = report_data + [d for d in data if get_row_group_filter_key(filters, d, parent)]
 
-			if filters.row_group == 'tax_invoice_type':
-				total_row = {
-					"indent":0,
-					report_fields[0].fieldname: "Total",
-					report_fields[2].fieldname:len([d for d in data if d['tax_invoice_type'] == parent]),
-					"is_group":1,
-					"is_group_total":1,
-			}
-				for f in [d for d in report_fields if d.show_in_report==1 and d.fieldtype!='Date' and d.fieldtype!='Data' and d.fieldtype!='Link']:
-					total_row[f.fieldname] = (sum([d[f.fieldname] for d in data if d['tax_invoice_type'] == parent]))
-				report_data.append(total_row)
-
-			if filters.row_group == 'document_type':
-				total_row = {
-					"indent":0,
-					report_fields[0].fieldname: "Total",
-					report_fields[2].fieldname:len([d for d in data if d['document_type'] == parent]),
-					"is_group":1,
-					"is_group_total":1,
-			}
-				for f in [d for d in report_fields if d.show_in_report==1 and d.fieldtype!='Date' and d.fieldtype!='Data' and d.fieldtype!='Link']:
-					total_row[f.fieldname] = (sum([d[f.fieldname] for d in data if d['document_type'] == parent]))
+			# total group row
 			
-				report_data.append(total_row)
+
+			total_row = {
+				"indent":1,
+				report_fields[0].fieldname: "Total",
+				"document_name":len([d for d in data if get_row_group_filter_key(filters, d, parent)]),
+				"is_group":1,
+				"is_group_total":1,
+			}
+	 
+			for f in [d for d in report_fields if d.show_in_report==1 and d.fieldtype!='Date' and d.fieldtype!='Data' and d.fieldtype!='Link' and d.show_in_summary==1]:
+				total_row[f.fieldname] = (sum([d[f.fieldname] for d in data if get_row_group_filter_key(filters, d, parent)]))
+			report_data.append(total_row)
+
+		report_data.append({"indent":0}) 
+		grand_total_row = ({"indent":0,report_fields[0].fieldname: "Grand Total","is_group":1,"document_name":len([d for d in data])}) 
+		for f in [d for d in report_fields if d.show_in_report==1 and d.fieldtype!='Date' and d.fieldtype!='Data' and d.fieldtype!='Link' and d.show_in_summary==1]:
+			grand_total_row[f.fieldname] = (sum([d[f.fieldname] for d in data]))
+		report_data.append(grand_total_row)
 	else:
 		report_data = data
+		total_row = ({
+      			"indent":0,
+				report_fields[0].fieldname: "Total",
+    			"is_group":1,
+                "document_name":len([d for d in data])
+                }) 
+		for f in [d for d in report_fields if d.show_in_report==1 and d.fieldtype!='Date' and d.fieldtype!='Data' and d.fieldtype!='Link' and d.show_in_summary==1]:
+			total_row[f.fieldname] = (sum([d[f.fieldname] for d in data]))
+		report_data.append(total_row)
+
 	
-	
+
 	return report_data
 
+
+def get_row_group_filter_key(filters, key_data,value_data):
+    return  ((key_data[filters.row_group] if not key_data.row_group=="tax_invoice_date" else getdate(key_data[filters.row_group])) == value_data) 
 
 def get_parent_row_row_by_data(filters, data):
 	 
@@ -130,16 +135,16 @@ def get_report_summary(filters,report_fields, data):
 		summary_fields = [d for d in summary_fields if d.fieldname in filters.show_in_summary]
 	
 	summary.append({
-		"value":len([d for d in data if d['indent']==(1 if filters.row_group else 0)]),"indicator":"blue","label":"Total Inv."
+		"value":len(data),"indicator":"blue","label":_("Total Inv.")
 	})
 
 	for x in summary_fields:
-		summary.append({
-        "value": sum([d[x.fieldname] for d in data if d["is_group"] == 0 and x.fieldname in d]),
-        "indicator": x.summary_indicator,
-        "label": x.label,
-        "datatype": x.fieldtype
-})
+			summary.append({
+			"value": sum([d[x.fieldname] for d in data if d["is_group"] == 0 and x.fieldname in d]),
+			"indicator": x.summary_indicator,
+			"label": x.label,
+			"datatype": x.fieldtype
+	})
 	return summary
 
 

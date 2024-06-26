@@ -6,9 +6,12 @@
  "engine": "InnoDB",
  "field_order": [
   "posting_date",
-  "account_code",
+  "account",
   "credit_amount",
   "debit_amount",
+  "againt",
+  "againt_voucher_type",
+  "againt_voucher_number",
   "voucher_type",
   "voucher_number",
   "business_branch",
@@ -21,33 +24,32 @@
   {
    "fieldname": "posting_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Posting Date"
-  },
-  {
-   "fieldname": "account_code",
-   "fieldtype": "Link",
-   "label": "Account Code",
-   "options": "Chart Of Account"
   },
   {
    "fieldname": "credit_amount",
    "fieldtype": "Currency",
+   "in_list_view": 1,
    "label": "Credit Amount"
   },
   {
    "fieldname": "debit_amount",
    "fieldtype": "Currency",
+   "in_list_view": 1,
    "label": "Debit Amount"
   },
   {
    "fieldname": "voucher_type",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Voucher Type",
    "options": "DocType"
   },
   {
    "fieldname": "voucher_number",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Voucher Number"
   },
   {
@@ -58,7 +60,7 @@
   },
   {
    "fieldname": "remark",
-   "fieldtype": "Data",
+   "fieldtype": "Small Text",
    "label": "Remark"
   },
   {
@@ -77,12 +79,39 @@
    "fieldname": "party",
    "fieldtype": "Data",
    "label": "Party"
+  },
+  {
+   "fieldname": "account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "againt",
+   "fieldtype": "Small Text",
+   "label": "Againt",
+   "read_only": 1
+  },
+  {
+   "fieldname": "againt_voucher_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Againt Voucher Type",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "againt_voucher_number",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Againt Voucher Number",
+   "options": "DocType"
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-24 17:42:15.473849",
+ "modified": "2024-06-26 10:22:28.112517",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "General Ledger",

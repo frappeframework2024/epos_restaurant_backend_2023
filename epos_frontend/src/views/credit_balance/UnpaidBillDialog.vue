@@ -28,7 +28,6 @@
             <v-btn :color="actionName == 'Sale' ?'primary' : ''" class="ma-2" @click="actionClick('Sale')">{{ $t("Sale List") }}</v-btn>
             <v-btn :color="actionName == 'Print' ?'primary' : ''" class="ma-2" @click="actionClick('Print')">{{ $t("Print") }}</v-btn>
             <v-btn v-if="saleList.total_paid != saleList.total_amount"  :color="actionName == 'Payment' ?'primary' : ''" class="ma-2"  @click="actionClick('Payment')">{{ $t("Payment") }}</v-btn>
-            {{ printPreview }}
                 <v-row v-if="actionName == 'Sale'">
                     <v-col v-for="s in saleList.sales" cols="12" md="3">
                         <v-card>

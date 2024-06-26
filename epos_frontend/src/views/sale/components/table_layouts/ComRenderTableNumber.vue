@@ -152,6 +152,7 @@ async function newSale(table) {
             return;
         }
     }
+    
     sale.newSale();
     sale.sale.guest_cover = guest_cover;
     sale.sale.table_id = table.id
@@ -176,13 +177,22 @@ async function newSale(table) {
 
     if (table.sale_type) {
         sale.sale.sale_type = table.sale_type
-    }
+    }  
     if (table.price_rule) {
+        sale.table_price_rule = table.price_rule;
+        sale.price_rule = table.price_rule;
         sale.sale.price_rule = table.price_rule;
+    }else{  
+        sale.table_price_rule = gv.setting?.price_rule;
+        sale.price_rule = gv.setting?.price_rule;
+        sale.sale.price_rule = gv.setting?.price_rule;
     }
+
+    //
     if (gv.setting.price_rule != sale.sale.price_rule) {
         toaster.info($t('msg.Your current price rule is', [sale.sale.price_rule]));
-    }
+    } 
+
     router.push({ name: "AddSale" });
 }
 

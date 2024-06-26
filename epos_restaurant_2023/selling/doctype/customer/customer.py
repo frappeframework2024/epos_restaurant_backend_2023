@@ -128,7 +128,7 @@ def get_unpaid_bills(name,is_payment = 0,bulk_sale_payment=''):
 	
 	bill_numbers = frappe.db.get_all("Sale",filters={
 		"customer":name
-	},fields=['*'])
+	},fields=['*'],page_length=20 if is_payment == 1 else 100)
 	bill_list = []
 	response = {"sales":[]}
 	if len(bill_numbers) > 0:
@@ -196,5 +196,27 @@ def get_unpaid_bills(name,is_payment = 0,bulk_sale_payment=''):
 	response["balance"] = balance or 0
 
 	return response
+
+
+@frappe.whitelist()
+def get_unpaid_customer(condition=''):
+	if condition != '':
+		condition = 'where {}'.format(condition)
+	data = frappe.db.sql("""
+     select 
+        customer,
+        customer_name,
+        sum(grand_total) as grand_total,
+        sum(total_paid) as total_paid,
+        sum(balance) as balance
+    from `tabSale`
+	{}
+    group by  
+        customer,
+        customer_name,
+        posting_date
+""".format(condition),as_dict=1)
+	return data
+
 
 
