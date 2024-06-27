@@ -29,7 +29,9 @@
   "column_break_wqic",
   "exchange_rate_main_currency",
   "emenu_tab",
-  "emenu"
+  "emenu",
+  "accounting_tab",
+  "use_basic_accounting_feature"
  ],
  "fields": [
   {
@@ -166,6 +168,17 @@
    "fieldname": "allow_pos_user_to_create_guest_folio_when_transfer_bill_to_room",
    "fieldtype": "Check",
    "label": "Allow POS User to Create Guest Folio when Transfer Bill to Room"
+  },
+  {
+   "fieldname": "accounting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Accounting"
+  },
+  {
+   "default": "0",
+   "fieldname": "use_basic_accounting_feature",
+   "fieldtype": "Check",
+   "label": "Use Basic Accounting Feature"
   }
  ],
  "image_field": "epos_logo",
@@ -173,7 +186,7 @@
  "issingle": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-05-05 14:56:24.302156",
+ "modified": "2024-06-27 09:12:58.912436",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "ePOS Settings",

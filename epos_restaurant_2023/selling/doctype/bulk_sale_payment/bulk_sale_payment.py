@@ -5,14 +5,14 @@ import frappe
 from frappe.model.document import Document
 
 
-class BulkSalePayment(Document):	
+class BulkSalePayment(Document):
 	def on_submit(self):
 		if len(self.sale_list) <= 20:
 			add_sale_payment_enqueue(self)
-		else:	
+		else:
 			frappe.enqueue(add_sale_payment_enqueue,queue="short",doc=self)
 		self.reload()
-		
+
 	def on_cancel(self):
 		if len(self.sale_list) <= 20:
 			on_cancel_enqueue(self)
@@ -52,6 +52,9 @@ def add_sale_payment(doc,self):
 	p.input_amount = doc.input_amount
 	p.sale = doc.sale
 	p.note = doc.note
+	if doc.fee_amount > 0:
+		p.fee_amount = doc.fee_amount
+		p.payment_amount = doc.payment_amount - doc.fee_amount
 	p.insert()
 	p.submit()
 
@@ -70,7 +73,7 @@ def update_sale_balance(doc):
 		data = frappe.db.sql("select  ifnull(sum(payment_amount),0)  as total_paid from `tabSale Payment` where docstatus=1 and sale='{}' and payment_amount>0".format(doc.sale))
 		sale_amount = frappe.db.get_value('Sale', doc.sale, 'grand_total')
 		if data and sale_amount:
-			balance =round(sale_amount,int(currency_precision))-round(data[0][0], int(currency_precision))  
+			balance =round(sale_amount,int(currency_precision))-round(data[0][0], int(currency_precision))
 			if balance<0:
 				balance = 0
 			frappe.db.set_value('Sale', doc.sale,  {'total_paid': round(data[0][0],int(currency_precision)),'balance': balance})

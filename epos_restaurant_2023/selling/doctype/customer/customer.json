@@ -371,9 +371,15 @@
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
- "links": [],
+ "links": [
+  {
+   "group": "Selling",
+   "link_doctype": "Sale",
+   "link_fieldname": "customer"
+  }
+ ],
  "make_attachments_public": 1,
- "modified": "2024-06-20 17:43:12.084722",
+ "modified": "2024-06-26 16:46:33.638430",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

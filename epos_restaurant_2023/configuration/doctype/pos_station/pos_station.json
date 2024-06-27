@@ -46,6 +46,7 @@
   "show_edit_menu_button",
   "allow_switch_pos_profile",
   "show_button_kod_screen",
+  "show_credit_balance",
   "printers_tab",
   "default_kod_id",
   "default_kod",
@@ -302,11 +303,17 @@
    "fieldtype": "Link",
    "label": "POS Profile",
    "options": "POS Profile"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_credit_balance",
+   "fieldtype": "Check",
+   "label": "Show Credit Balance"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-21 16:49:37.461671",
+ "modified": "2024-06-26 15:50:16.503033",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

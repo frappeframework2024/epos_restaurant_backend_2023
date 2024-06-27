@@ -125,10 +125,19 @@ def get_voucher_list_per_customer(customer):
 
 @frappe.whitelist()
 def get_unpaid_bills(name,is_payment = 0,bulk_sale_payment=''):
-	
-	bill_numbers = frappe.db.get_all("Sale",filters={
-		"customer":name
-	},fields=['*'],page_length=20 if is_payment == 1 else 100)
+	bill_numbers = []
+	if is_payment == 0:
+		bill_numbers = frappe.db.get_all("Sale",filters={
+			"customer":name,
+			"docstatus":1,
+			"balance": ['>','0']
+		},fields=['*'],page_length=20 if is_payment == 1 else 100)
+	else:
+		bill_numbers = frappe.db.get_all("Sale",filters={
+			"customer":name,
+			"balance": ['=','0']
+		},fields=['*'],page_length=20 if is_payment == 1 else 100)
+
 	bill_list = []
 	response = {"sales":[]}
 	if len(bill_numbers) > 0:
@@ -170,20 +179,21 @@ def get_unpaid_bills(name,is_payment = 0,bulk_sale_payment=''):
 								 from `tabPOS Sale Payment` 
 								 where parent='{}' 
 								""".format(bill["name"]),as_dict=1)
-		else:
-			payment = frappe.db.sql("""
-									select 
-								 	input_amount,
-								 	currency,
-						   			payment_type,
-								 currency_precision
-								 from `tabSale Payment` 
-								 where bulk_sale_payment_name='{}' 
-								""".format(bulk_sale_payment),as_dict=1)
+			else:
+				payment = frappe.db.sql("""
+										select 
+										input_amount,
+										currency,
+										payment_type,
+										currency_precision
+										from `tabSale Payment` 
+										where bulk_sale_payment_name='{}' 
+									""".format(bulk_sale_payment),as_dict=1)
 
 			bill['sale_products'] = sale_products
 			bill['payment'] = payment
 			bill_list.append(bill)
+
 	total_bill = len(bill_list)
 	total_amount = sum(b.grand_total for b in  bill_list) or 0
 	total_paid = sum(b.total_paid for b in  bill_list) or 0
@@ -216,6 +226,7 @@ def get_unpaid_customer(condition=''):
         customer_name,
         posting_date
 """.format(condition),as_dict=1)
+
 	return data
 
 

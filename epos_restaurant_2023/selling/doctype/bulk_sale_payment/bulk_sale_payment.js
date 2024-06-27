@@ -45,44 +45,98 @@ frappe.ui.form.on("Bulk Sale Payment", {
 	},
     customer(frm) {
 		if (frm.doc.customer) {
+            // get default default fee amount
             frm.set_value('sale_list', []);
-			frappe.call({
-                method: "epos_restaurant_2023.selling.doctype.bulk_sale_payment.bulk_sale_payment.get_sale_by_customer",
-                args: {
-                    customer:frm.doc.customer
-                },
-                callback: function(r){
-                    r.message.forEach((r => {
-                        doc = frm.add_child("sale_list");
-                        doc.sale = r.sale;
-                        doc.amount = r.balance;
-                        doc.payment_type = frm.doc.payment_type;
-                        doc.currency = frm.doc.currency;
-                        doc.exchange_rate = (frm.doc.exchange_rate || 0);
-                        doc.input_amount = doc.amount * (doc.exchange_rate || 0);
-                        doc.payment_amount = doc.input_amount == 0 ? 0 : doc.input_amount /  (doc.exchange_rate || 0);
-                        doc.balance = doc.amount - doc.payment_amount;
-                        doc.posting_date = frm.doc.posting_date,
-                        doc.stock_location = r.stock_location
-                    }))
-                    frm.refresh_field('sale_list');
-                    updatetotal(frm);
-                }
-            });
+            if (frm.doc.payment_type){
+                frappe.db.get_value("Payment Type",frm.doc.payment_type,["default_fee_amount"]).then((fee_response)=>{
+                    frappe.call({
+                        method: "epos_restaurant_2023.selling.doctype.bulk_sale_payment.bulk_sale_payment.get_sale_by_customer",
+                        args: {
+                            customer:frm.doc.customer
+                        },
+                        callback: function(r){
+                            r.message.forEach((r => {
+                                doc = frm.add_child("sale_list");
+                                doc.sale = r.sale;
+                                doc.sale_amount = r.balance;
+                                doc.fee_amount = r.balance * (fee_response.message.default_fee_amount > 0 ? (fee_response.message.default_fee_amount/100):1);
+                                doc.amount = r.balance + (r.balance * (fee_response.message.default_fee_amount > 0 ? (fee_response.message.default_fee_amount/100):1));
+                                doc.payment_type = frm.doc.payment_type;
+                                doc.currency = frm.doc.currency;
+                                doc.exchange_rate = (frm.doc.exchange_rate || 0);
+                                doc.input_amount = doc.amount * (doc.exchange_rate || 0);
+                                doc.payment_amount = doc.input_amount == 0 ? 0 : doc.input_amount /  (doc.exchange_rate || 0);
+                                doc.balance = doc.amount - doc.payment_amount;
+                                doc.posting_date = frm.doc.posting_date,
+                                doc.stock_location = r.stock_location
+                            }))
+                            frm.refresh_field('sale_list');
+                            updatetotal(frm);
+                        }
+                    });
+                });
+            }else{
+              
+                    frappe.call({
+                        method: "epos_restaurant_2023.selling.doctype.bulk_sale_payment.bulk_sale_payment.get_sale_by_customer",
+                        args: {
+                            customer:frm.doc.customer
+                        },
+                        callback: function(r){
+                            r.message.forEach((r => {
+                                doc = frm.add_child("sale_list");
+                                doc.sale = r.sale;
+                                doc.sale_amount = r.balance;
+                                doc.amount = r.balance;
+                                doc.payment_type = frm.doc.payment_type;
+                                doc.currency = frm.doc.currency;
+                                doc.exchange_rate = (frm.doc.exchange_rate || 0);
+                                doc.input_amount = doc.amount * (doc.exchange_rate || 0);
+                                doc.payment_amount = doc.input_amount == 0 ? 0 : doc.input_amount /  (doc.exchange_rate || 0);
+                                doc.balance = doc.amount - doc.payment_amount;
+                                doc.posting_date = frm.doc.posting_date,
+                                doc.stock_location = r.stock_location
+                            }))
+                            frm.refresh_field('sale_list');
+                            updatetotal(frm);
+                        }
+                    });
+               
+            }
+            
+
+           
+			
 		}
 	},
     payment_type(frm){ 
         if(frm.doc.sale_list){
-            $.each(frm.doc.sale_list, function(i, d) {
-                d.payment_type = frm.doc.payment_type;
-                d.currency = frm.doc.currency;
-                d.exchange_rate = (frm.doc.exchange_rate || 0);
-                d.input_amount = d.amount * (d.exchange_rate || 0);
-                d.payment_amount = d.input_amount == 0 ? 0 : d.input_amount /  (d.exchange_rate || 0);
-                d.balance = d.amount - d.payment_amount;
+            frappe.db.get_value("Payment Type",frm.doc.payment_type,["default_fee_amount"]).then((fee_response)=>{
+                
+                
+                $.each(frm.doc.sale_list, function(i, d) {
+                    backup_sale = JSON.parse(JSON.stringify(d))
+                    if (fee_response.message.default_fee_amount > 0){
+                        doc.fee_amount = d.sale_amount * (fee_response.message.default_fee_amount > 0 ? (fee_response.message.default_fee_amount/100):1);
+                        doc.amount = d.sale_amount + (d.sale_amount * (fee_response.message.default_fee_amount > 0 ? (fee_response.message.default_fee_amount/100):1));
+                    }else{
+                        doc.fee_amount = 0;
+                        doc.amount = doc.sale_amount
+                        doc.input_amount = doc.sale_amount
+                    }
+                    
+
+                    d.payment_type = frm.doc.payment_type;
+                    d.currency = frm.doc.currency;
+                    d.exchange_rate = (frm.doc.exchange_rate || 0);
+                    d.input_amount = d.amount * (d.exchange_rate || 0);
+                    d.payment_amount = d.input_amount == 0 ? 0 : d.input_amount /  (d.exchange_rate || 0);
+                    d.balance = d.amount - d.payment_amount;
+                });
                 frm.refresh_field('sale_list');
                 updatetotal(frm);
             });
+            
         }
     },
 });
