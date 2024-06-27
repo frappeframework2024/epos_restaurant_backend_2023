@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:account_code",
+ "autoname": "hash",
  "creation": "2024-06-24 17:10:01.465268",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -13,6 +13,8 @@
   "account_name",
   "business_branch",
   "old_parent",
+  "root_type",
+  "account_type",
   "column_break_ygde",
   "section_break_b9ww",
   "lft",
@@ -65,6 +67,8 @@
   {
    "fieldname": "account_name",
    "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Account Name"
   },
   {
@@ -82,16 +86,30 @@
    "fieldtype": "Link",
    "label": "Business Branch",
    "options": "Business Branch"
+  },
+  {
+   "fieldname": "root_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Root Type",
+   "options": "Asset\nLiabilities\nEquity\nIncome\nExpenses"
+  },
+  {
+   "fieldname": "account_type",
+   "fieldtype": "Select",
+   "label": "Account Type",
+   "options": "\nReceivable\nPayable\nCash\nBank\nIncome\nExpense"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-06-25 21:49:45.551305",
+ "modified": "2024-06-26 17:24:13.629274",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "Chart Of Account",
- "naming_rule": "By fieldname",
+ "naming_rule": "Random",
  "nsm_parent_field": "parent_chart_of_account",
  "owner": "Administrator",
  "permissions": [
