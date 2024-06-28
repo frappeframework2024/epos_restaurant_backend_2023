@@ -64,7 +64,7 @@ def get_columns(filters):
 	columns = []
 	row_group = [d for d in get_row_groups() if d["label"]==filters.row_group][0]
  
-	# frappe.throw(str(filters))
+
 	if filters.row_group == 'Sale Invoice':
 		columns.append({'fieldname':'row_group','label':filters.row_group,'fieldtype':'Link',"options":"Sale",'align':'left','width':250})
 		columns.append({'fieldname':'custom_bill_number','label':"Bill No",'fieldtype':'Data','align':'left','width':150})
@@ -252,7 +252,7 @@ def get_conditions(filters,group_filter=None):
 
 def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 	
-	# frappe.throw(str(filters.row_group))
+
 	hide_columns = filters.get("hide_columns")
 	row_group = [d["fieldname"] for d in get_row_groups() if d["label"]==filters.row_group][0]
 	
@@ -267,6 +267,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 		sql = "select {} as row_group, {} as indent ".format(row_group, indent)
 	if filters.column_group != "None":
 		fields = get_fields(filters)
+		
 		for f in fields:
 			sql = strip(sql)
 			if sql[-1]!=",":
@@ -275,12 +276,13 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 			for rf in report_fields:
 				
 				if not hide_columns or  rf["label"] not in hide_columns:
-					sql = sql +	"SUM(if(b.posting_date between '{}' AND '{}',{},0)) as '{}_{}',".format(f["start_date"],f["end_date"],rf["sql_expression"],f["fieldname"],rf["fieldname"])
+					sql = sql +	"SUM(CASE WHEN b.posting_date between '{}' AND '{}' THEN {} ELSE 0 END) as '{}_{}',".format(f["start_date"],f["end_date"],rf["sql_expression"],f["fieldname"],rf["fieldname"])
 			#end for
 	# total last column
+	
 	item_code = ""
 	groupdocstatus = ""
-	normal_filter = "b.docstatus in (1) AND"
+	normal_filter = " and b.docstatus in (1) "
 	# if ((indent > 0) and ( filters.row_group == "Product" or filters.parent_row_group == "Product")):
 	# 	item_code = ",a.item_code"
 	
@@ -302,16 +304,19 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 		FROM `tabSale Product` AS a
 			INNER JOIN `tabSale` b on b.name = a.parent
 		WHERE
-			{4}
 			{0}
+			{4}
 		GROUP BY 
 		{1} {2} {3}
 	""".format(get_conditions(filters,group_filter), _row_group,item_code,groupdocstatus,normal_filter)
+	
 	data = frappe.db.sql(sql,filters, as_dict=1)
+	
 	return data
  
 def get_report_group_data(filters):
 	parent = get_report_data(filters, filters.parent_row_group, 0)
+	
 	data=[] 
 	for p in parent:
 		p["is_group"] = 1

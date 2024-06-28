@@ -53,11 +53,11 @@ def add_sale_payment(doc,self):
 	p.note = doc.note
 	if doc.fee_amount > 0:
 		p.fee_amount = doc.fee_amount
-		p.payment_amount = 7
+		p.payment_amount = doc.sale_amount
 		
 	else:
 		p.payment_amount = doc.payment_amount
-
+	frappe.throw(frappe.as_json(p))
 	p.insert()
 	p.submit()
 
