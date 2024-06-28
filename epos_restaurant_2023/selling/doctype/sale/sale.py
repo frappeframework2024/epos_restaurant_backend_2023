@@ -947,10 +947,15 @@ def update_inventory_product_cost(self):
 				product_code in %(product_codes)s
 		
 	"""
-	data = frappe.db.sql(sql, {"name":self.name, "stock_location":self.stock_location,"business_branch":self.business_branch, "product_codes":[d.product_code for d in self.sale_products if d.is_inventory_product==1]},as_dict=1)
-	if data:
-		for sp in [x for x in self.sale_products if x.is_inventory_product ==1]:
-			cost_data = [d for d in data if d["product_code"]==sp.product_code]
-			if cost_data:
-				sp.cost =  cost_data[0]["cost"]
+	is_inventory = 0
+	for d in self.sale_products:
+		if d.is_inventory_product == 1:
+			is_inventory += 1
+	if is_inventory>0:
+		data = frappe.db.sql(sql, {"name":self.name, "stock_location":self.stock_location,"business_branch":self.business_branch, "product_codes":[d.product_code for d in self.sale_products if d.is_inventory_product==1]},as_dict=1)
+		if data:
+			for sp in [x for x in self.sale_products if x.is_inventory_product ==1]:
+				cost_data = [d for d in data if d["product_code"]==sp.product_code]
+				if cost_data:
+					sp.cost =  cost_data[0]["cost"]
     
