@@ -113,14 +113,14 @@ def get_report_summary(filters,report_fields, data):
 
 	if filters.show_in_summary:
 		summary_fields = [d for d in summary_fields if d.fieldname in filters.show_in_summary]
-
-	for x in summary_fields:
-		summary.append({
-        "value": sum([d[x.fieldname] for d in data if x.fieldname in d]),
-        "indicator": x.summary_indicator,
-        "label": x.label,
-        "datatype": x.fieldtype
-})
+	if filters.show_summary:
+		for x in summary_fields:
+			summary.append({
+			"value": sum([d[x.fieldname] for d in data if x.fieldname in d]),
+			"indicator": x.summary_indicator,
+			"label": x.label,
+			"datatype": x.fieldtype
+		})
 	return summary
 
 
@@ -137,7 +137,7 @@ def get_report_chart(filters,data,report_fields):
 	
 	columns =[]
 	
-	datasets = []
+	datasets = [] 
 	chart_label_field = "row_group"
 	columns = [d[chart_label_field] for d in  data if d['row_group']!="Total"]
 	for f in report_fields:

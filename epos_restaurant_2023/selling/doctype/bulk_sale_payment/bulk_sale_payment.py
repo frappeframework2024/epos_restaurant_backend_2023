@@ -48,13 +48,16 @@ def add_sale_payment(doc,self):
 	p.bulk_sale_payment_name = self.name
 	p.currency = doc.currency
 	p.exchange_rate = doc.exchange_rate
-	p.payment_amount = doc.payment_amount
 	p.input_amount = doc.input_amount
 	p.sale = doc.sale
 	p.note = doc.note
 	if doc.fee_amount > 0:
 		p.fee_amount = doc.fee_amount
-		p.payment_amount = doc.payment_amount - doc.fee_amount
+		p.payment_amount = 7
+		
+	else:
+		p.payment_amount = doc.payment_amount
+
 	p.insert()
 	p.submit()
 

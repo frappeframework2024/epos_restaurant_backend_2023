@@ -1651,16 +1651,23 @@ def get_sidebar_menu_template():
 
         <div class="submenu-panel" id="submenu-panel">
             <input type="text" class="search-input" placeholder="Search...">
-            {{sub_menus}}
-            {%if 'sub_menus' in d %}
-                <div class="submenu-content" id="{{s.name}}">
-                    <ul class="submenu">
-                        {%for s in d["sub_menus"]%}
-                            <li><a data-workspace="{{s.name}}" data-custom-route="{{s.custom_route or ""}}" data-link-to="{{s.link_to}}" data-doc-view="{{s.doc_view}}" data-type="{{s.type}}">{{s.name}}</a></li>  
-                        {%endfor%}
-                    </ul>
+            <div class="accordion" id="accordionExample">
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        Collapsible Group Item #1
+                        </button>
+                    </h2>
+                    </div>
+
+                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                    <div class="card-body">
+                        Some placeholder content for the first accordion panel. This panel is shown by default, thanks to the <code>.show</code> class.
+                    </div>
+                    </div>
                 </div>
-            {%endif%}
+            </div>
         </div>
     </div>
     """

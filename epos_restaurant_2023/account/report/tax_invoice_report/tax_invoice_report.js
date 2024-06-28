@@ -92,7 +92,7 @@ frappe.query_reports["Tax Invoice Report"] = {
 			"label": __("Chart Type"),
 			"fieldtype": "Select",
 			"options": "None\nbar\nline\npie",
-			"default": "bar",
+			"default": "None",
 			hide_in_filter: 1,
 			"on_change": function (query_report) { },
 		},

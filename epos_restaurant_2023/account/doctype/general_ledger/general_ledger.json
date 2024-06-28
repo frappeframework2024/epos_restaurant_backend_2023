@@ -25,7 +25,8 @@
    "fieldname": "posting_date",
    "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "Posting Date"
+   "label": "Posting Date",
+   "search_index": 1
   },
   {
    "fieldname": "credit_amount",
@@ -56,7 +57,8 @@
    "fieldname": "business_branch",
    "fieldtype": "Link",
    "label": "Business Branch",
-   "options": "Business Branch"
+   "options": "Business Branch",
+   "search_index": 1
   },
   {
    "fieldname": "remark",
@@ -85,7 +87,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Account",
-   "options": "Chart Of Account"
+   "options": "Chart Of Account",
+   "search_index": 1
   },
   {
    "fieldname": "againt",
@@ -111,7 +114,7 @@
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-26 10:22:28.112517",
+ "modified": "2024-06-26 20:39:21.546208",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "General Ledger",
@@ -128,6 +131,16 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1
   }
  ],
  "sort_field": "modified",

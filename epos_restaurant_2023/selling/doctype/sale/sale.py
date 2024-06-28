@@ -17,8 +17,6 @@ from epos_restaurant_2023.selling.doctype.sale.general_ledger_entry import submi
 class Sale(Document):
 	def validate(self):
 		
-
-
 		if not frappe.db.get_default('exchange_rate_main_currency'):
 			frappe.throw('Main Exchange Currency not yet config. Please contact to system administrator for solve')
    
@@ -48,10 +46,7 @@ class Sale(Document):
 			self.posting_date = working_day.posting_date
 		
 
-		# if self.posting_date:
-		# 	if self.posting_date>utils.today():
-		# 		frappe.throw(_("Sale date cannot greater than current date"))
-		
+ 
 		# printed_date
 		if not self.printed_date:
 			self.printed_date = datetime.datetime.now()
@@ -237,6 +232,9 @@ class Sale(Document):
 		if self.docstatus ==1:
 			self.sale_status = "Closed"
 			self.sale_status_color = frappe.get_value("Sale Status","Closed","background_color")
+		
+		
+
 	@frappe.whitelist()
 	def get_sale_payment_naming_series(self):
 		return frappe.get_meta("Sale Payment").get_field("naming_series").options
@@ -285,9 +283,11 @@ class Sale(Document):
 		add_sale_product_spa_commission(self)
 
 	def before_submit(self):
+		
 		if self.flags.ignore_before_submit == True:
 			return 
 		on_get_revenue_account_code(self)
+
 		self.append_quantity = None
 		self.scan_barcode = None
 
@@ -303,18 +303,21 @@ class Sale(Document):
 					if self.custom_bill_number_prefix:
 						from frappe.model.naming import make_autoname
 						self.custom_bill_number = make_autoname(self.custom_bill_number_prefix)
-		## end generate custom bill format
 
+		## end generate custom bill format
 		for d in self.sale_products:
 			if d.is_inventory_product:
 				if d.unit !=d.base_unit:
 					if not check_uom_conversion(d.base_unit, d.unit):
 						frappe.throw(_("There is no UoM conversion for product {}-{} from {} to {}".format(d.product_code, d.product_name, d.base_unit, d.unit)))
 
+		update_inventory_product_cost(self)
 	
 	def on_submit(self):
+     
 		if self.flags.ignore_on_submit == True:
 			return 
+
 		if not self.time_out:
 			pass
 
@@ -328,9 +331,10 @@ class Sale(Document):
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.create_folio_transaction_from_pos_trnasfer", queue='short', self=self)
 		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit", queue='short', self=self)
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.add_payment_to_sale_payment", queue='short', self=self)
-
 		
-		submit_sale_to_general_ledger_entry(self)
+		if frappe.db.get_single_value("ePOS Settings","use_basic_accounting_feature"):
+			submit_sale_to_general_ledger_entry(self)
+
 
 
 	def on_cancel(self):
@@ -930,5 +934,23 @@ def update_default_account_to_sale_product(self):
 		sp.default_income_account = frappe.db.get_value("Revenue Group",sp.revenue_group,"default_income_account")
 		sp.default_income_account  = sp.default_income_account or default_income_account
 	
-
-
+ 
+def update_inventory_product_cost(self):
+	sql = """
+			select 
+				product_code,
+				cost 
+			from `tabStock Location Product` 
+			where
+				stock_location = %(stock_location)s and 
+				business_branch = %(business_branch)s and 
+				product_code in %(product_codes)s
+		
+	"""
+	data = frappe.db.sql(sql, {"name":self.name, "stock_location":self.stock_location,"business_branch":self.business_branch, "product_codes":[d.product_code for d in self.sale_products if d.is_inventory_product==1]},as_dict=1)
+	if data:
+		for sp in [x for x in self.sale_products if x.is_inventory_product ==1]:
+			cost_data = [d for d in data if d["product_code"]==sp.product_code]
+			if cost_data:
+				sp.cost =  cost_data[0]["cost"]
+    

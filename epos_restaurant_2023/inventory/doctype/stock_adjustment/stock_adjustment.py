@@ -7,8 +7,12 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from py_linq import Enumerable
+from epos_restaurant_2023.inventory.doctype.stock_adjustment.general_ledger_entry import submit_stock_adjustment_general_ledger_entry_on_submit
+
 class StockAdjustment(Document):
 	def validate(self):
+		if frappe.db.get_single_value("ePOS Settings","use_basic_accounting_feature"):
+			validate_account(self)
 		not_inventory_product =  Enumerable(self.products).where(lambda x: x.is_inventory_product==0).first_or_default()
 		if not_inventory_product:
 			frappe.throw(_("Product {} - {} is not an inventory product".format(not_inventory_product.product_code, not_inventory_product.product_name )))
@@ -22,6 +26,8 @@ class StockAdjustment(Document):
 			self.total_cost = total_cost
 
 	def on_submit(self):
+		if frappe.db.get_single_value("ePOS Settings","use_basic_accounting_feature"):
+			submit_stock_adjustment_general_ledger_entry_on_submit(self)
 		if len(self.products)>=10:
 			update_inventory_on_submit(self)
 		else:
@@ -50,7 +56,10 @@ def update_inventory_on_submit(self):
 				'note': 'New Stock adjustment submitted.',
 				"action":"Submit"
 			})
-
+def validate_account(self):
+    # set default account
+		if not self.difference_account:
+			self.difference_account = frappe.db.get_value("Business Branch",self.business_branch,"stock_adjustment_account")
 
 	# for p in self.products:
 	# 	if p.is_inventory_product:

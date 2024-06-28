@@ -222,7 +222,8 @@
    "fetch_from": ".",
    "fieldname": "input_amount",
    "fieldtype": "Float",
-   "label": "Input Amount"
+   "label": "Input Amount",
+   "reqd": 1
   },
   {
    "default": "1",
@@ -444,13 +445,14 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Account Paid From",
+   "link_filters": "[[{\"fieldname\":\"account_paid_from\",\"field_option\":\"Chart Of Account\"},\"account_type\",\"=\",\"Receivable\"]]",
    "options": "Chart Of Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-06-26 09:54:48.327742",
+ "modified": "2024-06-26 16:06:55.112237",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Payment",

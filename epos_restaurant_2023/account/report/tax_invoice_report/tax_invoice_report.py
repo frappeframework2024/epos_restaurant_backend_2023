@@ -25,7 +25,8 @@ def execute(filters=None):
 def get_report_columns(filters,  report_fields):
 	columns = []
 	report_fields = [d for d in report_fields if d.show_in_report==1]
-	
+	report_fields = report_fields if not filters.show_columns else [d for d in report_fields if d.fieldname in filters.show_columns]
+		
 	for g in report_fields:
 		if g.fieldtype=='Link' and g.link_field_doctype:
 			columns.append({"fieldname":g.fieldname,"label":g.label,"width":g.width,"fieldtype":"Link","options":g.link_field_doctype,"align": g.align })
@@ -35,7 +36,8 @@ def get_report_columns(filters,  report_fields):
 	if filters.row_group:
 		columns = [d for d in columns if d["fieldname"] != filters.row_group]
  
- 
+	
+
 	return columns
 
 def get_report_data (filters, report_fields, data):
@@ -45,11 +47,10 @@ def get_report_data (filters, report_fields, data):
 	report_data = []
 	if filters.row_group:
 		parent_row = get_parent_row_row_by_data(filters,data)
-
 		for parent in parent_row:
 			
 			d = parent
-			 
+			
 			report_data.append({
 				"indent":0,
 				report_fields[0].fieldname: d if not filters.row_group =="tax_invoice_date" else frappe.format(d,{'fieldtype':'Date'}),
@@ -57,7 +58,7 @@ def get_report_data (filters, report_fields, data):
 				"is_group_total":0,
 			})
 
-			report_data = report_data + [d for d in data if get_row_group_filter_key(filters, d, parent)]
+			report_data = report_data + [g for g in data if get_row_group_filter_key(filters, g, parent)]
 
 			# total group row
 			
@@ -101,7 +102,7 @@ def get_row_group_filter_key(filters, key_data,value_data):
 
 def get_parent_row_row_by_data(filters, data):
 	 
-	rows = set([d[filters.row_group] for d in  data])
+	rows = sorted(set([d[filters.row_group] for d in  data]))
 	return rows
 	
 def get_data (filters,report_fields):
@@ -117,8 +118,7 @@ def get_data (filters,report_fields):
    			property=%(property)s and 
    			tax_invoice_date between %(start_date)s and %(end_date)s
 		order by
-			tax_invoice_date, 
-			name
+			tax_invoice_date
      """.format(sql)
 
 	
@@ -133,23 +133,24 @@ def get_report_summary(filters,report_fields, data):
 
 	if filters.show_in_summary:
 		summary_fields = [d for d in summary_fields if d.fieldname in filters.show_in_summary]
-	
-	summary.append({
-		"value":len(data),"indicator":"blue","label":_("Total Inv.")
-	})
+	if filters.show_summary:
+		summary.append({
+			"value":len(data),"indicator":"blue","label":_("Total Inv.")
+		})
 
-	for x in summary_fields:
-			summary.append({
-			"value": sum([d[x.fieldname] for d in data if d["is_group"] == 0 and x.fieldname in d]),
-			"indicator": x.summary_indicator,
-			"label": x.label,
-			"datatype": x.fieldtype
-	})
+		for x in summary_fields:
+				summary.append({
+				"value": sum([d[x.fieldname] for d in data if d["is_group"] == 0 and x.fieldname in d]),
+				"indicator": x.summary_indicator,
+				"label": x.label,
+				"datatype": x.fieldtype
+		})
 	return summary
 
 
 def get_report_chart(filters,data,report_fields):
 	precision = frappe.db.get_single_value("System Settings","currency_precision")
+	report_fields = [d for d in report_fields if d.show_in_chart ==1]
 	if filters.show_chart_series:
 		report_fields = [d for d in report_fields if d.show_in_chart ==1 and d.fieldname in filters.show_chart_series]
 	else:
@@ -162,23 +163,40 @@ def get_report_chart(filters,data,report_fields):
 	columns =[]
 	
 	datasets = []
-	chart_label_field = "name"
-	columns = [d[chart_label_field] for d in  data if 'is_group' in d and  d["is_group"] == 1 and d['name']!="Total"]
+	
+	if filters.row_group:
+		chart_label_field = "name"
+		columns = [d[chart_label_field] for d in  data if 'is_group' in d and  d["is_group"] == 1 and d['name']!="Total" and d['name']!="Grand Total"]
+	else:
+		chart_label_field = "name"
+		columns = [d[chart_label_field] for d in  data if 'is_group' in d and  d["is_group"] == 0 and d['name']!="Total" and d['name']!="Grand Total"]
 
 	for f in report_fields:
 		if f.show_in_chart==1:
-			if (f.fieldtype=="Currency"):
-				datasets.append({
-					"name": f.label,
-					"values": [round(d[f.fieldname],int(precision)) for d in  data if 'is_group_total' in d and  d["is_group_total"] ==1]
-				})
+			if filters.row_group:
+				if (f.fieldtype=="Currency"):
+					datasets.append({
+						"name": f.label,
+						"values": [round(d[f.fieldname],int(precision)) for d in  data if 'is_group_total' in d and  d["is_group_total"] ==1]
+					})
 
+				else:
+					datasets.append({
+						"name": f.label,
+						"values": [d[f.fieldname] for d in  data if    'is_group_total' in d and  d["is_group_total"] ==1]
+					})
 			else:
-				datasets.append({
-					"name": f.label,
-					"values": [d[f.fieldname] for d in  data if    'is_group_total' in d and  d["is_group_total"] ==1]
-				})
-				
+				if (f.fieldtype=="Currency"):
+					datasets.append({
+						"name": f.label,
+						"values": [round(d[f.fieldname],int(precision)) for d in  data if 'is_group' in d and  d["is_group"] ==0]
+					})
+
+				else:
+					datasets.append({
+						"name": f.label,
+						"values": [d[f.fieldname] for d in  data if    'is_group' in d and  d["is_group"] ==0]
+					})
 	chart = {
 		'data':{
 			'labels':columns,

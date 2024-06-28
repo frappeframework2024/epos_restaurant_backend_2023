@@ -1,0 +1,40 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-06-26 15:40:28.822276",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "business_branch",
+  "account"
+ ],
+ "fields": [
+  {
+   "fieldname": "business_branch",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Business Branch",
+   "options": "Business Branch"
+  },
+  {
+   "fieldname": "account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Account",
+   "options": "Chart Of Account"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-06-26 15:43:22.433436",
+ "modified_by": "Administrator",
+ "module": "Account",
+ "name": "Payment Type Account",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

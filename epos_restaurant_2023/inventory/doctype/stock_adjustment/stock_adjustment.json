@@ -31,7 +31,9 @@
   "difference_cost",
   "section_break_16",
   "note",
-  "amended_from"
+  "amended_from",
+  "accounting_tab",
+  "difference_account"
  ],
  "fields": [
   {
@@ -179,12 +181,23 @@
   {
    "fieldname": "section_break_11",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "accounting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "difference_account",
+   "fieldtype": "Link",
+   "label": "Difference Account",
+   "options": "Chart Of Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-04-08 17:02:58.108208",
+ "modified": "2024-06-27 15:45:08.788417",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Adjustment",

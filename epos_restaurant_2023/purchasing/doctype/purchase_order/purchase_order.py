@@ -8,14 +8,12 @@ import frappe
 from frappe import _
 from py_linq import Enumerable
 from frappe.model.document import Document
-
+from epos_restaurant_2023.purchasing.doctype.purchase_order.general_ledger_entry import submit_purchase_to_general_ledger_entry_on_submit,submit_purchase_to_general_ledger_entry_on_cancel
 class PurchaseOrder(Document):
 		
 	def validate(self):
 		validate_po_discount(self)
 
-		for  acc in set([d.default_account for d in self.purchase_order_products]):
-			frappe.msgprint(str(sum([x.amount for x in self.purchase_order_products if x.default_account ==acc])))
   
 		#validate sale summary
 		total_quantity = Enumerable(self.purchase_order_products).sum(lambda x: x.quantity or 0)
@@ -49,12 +47,16 @@ class PurchaseOrder(Document):
 
 
 	def on_submit(self):
+		if frappe.db.get_single_value("ePOS Settings","use_basic_accounting_feature"):
+			submit_purchase_to_general_ledger_entry_on_submit(self)
+  
 		if len(self.purchase_order_products)>=10:
 			update_inventory_on_submit(self)
 		else:
 			frappe.enqueue("epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.update_inventory_on_submit", queue='short', self=self)
-	
 	def on_cancel(self):
+		if frappe.db.get_single_value("ePOS Settings","use_basic_accounting_feature"):
+			submit_purchase_to_general_ledger_entry_on_cancel(self)
 		if len(self.purchase_order_products)>=10:
 			update_inventory_on_cancel(self)
 		else:

@@ -83,6 +83,8 @@
   "closed_by",
   "closed_date",
   "is_synced",
+  "accounting_tab",
+  "default_discount_account",
   "payments_tab",
   "sale_payment_naming_series",
   "payment",
@@ -210,7 +212,8 @@
    "in_standard_filter": 1,
    "label": "Customer",
    "options": "Customer",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fetch_from": "customer.customer_name_en",
@@ -656,7 +659,8 @@
    "fieldname": "sale_quotation",
    "fieldtype": "Link",
    "label": "Sale Quotation",
-   "options": "Sale Quotation"
+   "options": "Sale Quotation",
+   "search_index": 1
   },
   {
    "fieldname": "sale_status",
@@ -1055,6 +1059,7 @@
    "fetch_from": "pos_profile.pos_config",
    "fieldname": "pos_config",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "POS Config"
   },
   {
@@ -1190,6 +1195,18 @@
    "fieldname": "total_secondary_cost",
    "fieldtype": "Currency",
    "label": "Total Secondary Cost"
+  },
+  {
+   "fieldname": "accounting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "default_discount_account",
+   "fieldtype": "Link",
+   "label": "Default Discount Account",
+   "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0],[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"root_type\",\"=\",\"Income\"]]",
+   "options": "Chart Of Account"
   }
  ],
  "image_field": "photo",
@@ -1202,7 +1219,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-06-06 15:09:41.212038",
+ "modified": "2024-06-27 16:08:27.094701",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

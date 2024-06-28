@@ -13,6 +13,8 @@
   "referance",
   "column_break_3",
   "payment_type",
+  "account_paid_to",
+  "account_paid_from",
   "currency",
   "purchase_order_information_section",
   "purchase_order",
@@ -73,7 +75,8 @@
    "in_list_view": 1,
    "label": "Purchase Order",
    "options": "Purchase Order",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "allow_in_quick_entry": 1,
@@ -259,13 +262,29 @@
   {
    "fieldname": "column_break_20",
    "fieldtype": "Column Break"
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "account_paid_to",
+   "fieldtype": "Link",
+   "label": "Account Paid To",
+   "link_filters": "[[{\"fieldname\":\"account_paid_to\",\"field_option\":\"Chart Of Account\"},\"root_type\",\"=\",\"1000 - Assets\"],[{\"fieldname\":\"account_paid_to\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0]]",
+   "options": "Chart Of Account"
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "account_paid_from",
+   "fieldtype": "Link",
+   "label": "Account Paid From",
+   "link_filters": "[[{\"fieldname\":\"account_paid_to_from\",\"field_option\":\"Chart Of Account\"},\"root_type\",\"=\",\"2000 - Liabilities\"],[{\"fieldname\":\"account_paid_to_from\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0]]",
+   "options": "Chart Of Account"
   }
  ],
  "image_field": "attach_receipt",
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-06-28 11:07:38.794702",
+ "modified": "2024-06-26 16:36:52.606229",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order Payment",

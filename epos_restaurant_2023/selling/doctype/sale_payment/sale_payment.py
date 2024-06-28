@@ -10,7 +10,9 @@ class SalePayment(Document):
 	def validate(self):
 		if self.flags.ignore_validate==True:
 			return
-       
+		if frappe.db.get_single_value("ePOS Settings","use_basic_accounting_feature"):
+			validate_account(self)
+  
 		#check if reservation deleted
 		if self.pos_reservation:
 			reservation = frappe.get_doc("POS Reservation", self.pos_reservation)			
@@ -51,13 +53,15 @@ class SalePayment(Document):
 
 			#check paid amount cannot over balance
 			if self.check_valid_payment_amount:
+				frappe.throw(str(f'{self.payment_amount} ,{self.balance}'))
 				if self.payment_amount > self.balance:
 					frappe.throw("Payment amount cannot greater than sale balance")
 		
 
 	def on_submit(self):
 		# run enque
-		submit_payment_to_general_ledger_entry(self)
+		if frappe.db.get_single_value("ePOS Settings","use_basic_accounting_feature"):
+			submit_payment_to_general_ledger_entry_on_submit(self)
 
 		if self.flags.ignore_on_submit==True:
 			return
@@ -70,7 +74,8 @@ class SalePayment(Document):
 	def on_cancel(self):
 		# submit to general ledger entry
 		# run this in enqueue
-		submit_payment_to_general_ledger_entry_on_cancel(self)
+		if frappe.db.get_single_value("ePOS Settings","use_basic_accounting_feature"):
+			submit_payment_to_general_ledger_entry_on_cancel(self)
 		if self.flags.ignore_on_cancel==True:
 			return
 		update_sale(self)
@@ -179,6 +184,23 @@ class SalePayment(Document):
 		frappe.db.set_value('Customer', self.customer, {
 			'voucher_balance': total_credit_amount[0].credit_amount - total_voucher_payment[0].payment_amount
 		})
+
+
+def validate_account(self):
+    # set default account
+		# account_paid_to
+		if not self.account_paid_to:
+			sql = "select account from `tabPayment Type Account` where business_branch=%(business_branch)s limit 1"
+			data = frappe.db.sql(sql,{"business_branch":self.business_branch},as_dict=1)
+			if data:
+				self.account_paid_to = data[0]["account"]
+		# account_paid_from
+		if not self.account_paid_from:
+			self.account_paid_from = frappe.db.get_value("Business Branch",self.business_branch,"default_receivable_account")
+   
+  
+      
+
 
 def update_sale(self):
 	currency_precision = frappe.db.get_single_value('System Settings', 'currency_precision')
