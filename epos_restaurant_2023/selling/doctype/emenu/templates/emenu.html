@@ -19,9 +19,16 @@
 <div class="section-main-wraper mt-3">
     <div class="container">
         <div class="into-section">
-            <h1 class="text-center">{{doc.welcome_title}}</h1>
+            <h1 class="text-center">
+                {% if doc.welcome_title %}
+                {{doc.welcome_title}}
+                {%endif%}
+            </h1>
             <div class="dsc-header">
+                {% if doc.welcome_description %}
                 {{doc.welcome_description}}
+                {%endif%}
+
             </div>
         </div>
     </div>

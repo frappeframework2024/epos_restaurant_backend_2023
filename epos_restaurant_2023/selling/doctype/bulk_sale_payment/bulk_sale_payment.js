@@ -112,11 +112,10 @@ frappe.ui.form.on("Bulk Sale Payment", {
     payment_type(frm){ 
         if(frm.doc.sale_list){
             frappe.db.get_value("Payment Type",frm.doc.payment_type,["default_fee_amount"]).then((fee_response)=>{
-                
-                
                 $.each(frm.doc.sale_list, function(i, d) {
                     backup_sale = JSON.parse(JSON.stringify(d))
                     if (fee_response.message.default_fee_amount > 0){
+                        doc.input_amount = doc.sale_amount;
                         doc.fee_amount = d.sale_amount * (fee_response.message.default_fee_amount > 0 ? (fee_response.message.default_fee_amount/100):1);
                         doc.amount = d.sale_amount + (d.sale_amount * (fee_response.message.default_fee_amount > 0 ? (fee_response.message.default_fee_amount/100):1));
                     }else{
@@ -124,14 +123,12 @@ frappe.ui.form.on("Bulk Sale Payment", {
                         doc.amount = doc.sale_amount
                         doc.input_amount = doc.sale_amount
                     }
-                    
-
                     d.payment_type = frm.doc.payment_type;
                     d.currency = frm.doc.currency;
                     d.exchange_rate = (frm.doc.exchange_rate || 0);
-                    d.input_amount = d.amount * (d.exchange_rate || 0);
+                    d.input_amount = d.sale_amount * (d.exchange_rate || 0);
                     d.payment_amount = d.input_amount == 0 ? 0 : d.input_amount /  (d.exchange_rate || 0);
-                    d.balance = d.amount - d.payment_amount;
+                    d.balance = d.amount - d.payment_amount - doc.fee_amount;
                 });
                 frm.refresh_field('sale_list');
                 updatetotal(frm);

@@ -52,10 +52,10 @@ def check_username(pin_code):
         pin_code = (str( base64.b64encode(pin_code.encode("utf-8")).decode("utf-8")))
         users = frappe.db.sql("select user_id, pos_permission from `tabEmployee` where pos_pin_code = '{}' and allow_login = 1 and allow_login_to_epos = 1 limit 1".format(pin_code), as_dict = 1)
         if users:
-            data = frappe.db.sql("select name,full_name from `tabUser` where name='{}' limit 1".format(users[0].user_id),as_dict=1)
+            data = frappe.db.sql("select name,full_name,user_image from `tabUser` where name='{}' limit 1".format(users[0].user_id),as_dict=1)
             if data:
                 permission= frappe.get_doc("POS User Permission",users[0]["pos_permission"])      
-                return {"username":data[0]["name"],"full_name":data[0]["full_name"],"permission":permission} 
+                return {"username":data[0]["name"],"full_name":data[0]["full_name"],"user_image":data[0]["user_image"],"permission":permission} 
         
     frappe.throw(_("Invalid PIN Code"))
 

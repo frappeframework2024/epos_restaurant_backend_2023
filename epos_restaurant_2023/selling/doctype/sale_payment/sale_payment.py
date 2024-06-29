@@ -53,7 +53,6 @@ class SalePayment(Document):
 
 			#check paid amount cannot over balance
 			if self.check_valid_payment_amount:
-				frappe.throw(str(f'{self.payment_amount} ,{self.balance}'))
 				if self.payment_amount > self.balance:
 					frappe.throw("Payment amount cannot greater than sale balance")
 		

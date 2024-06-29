@@ -56,9 +56,9 @@ def add_sale_payment(doc,self):
 		p.payment_amount = doc.sale_amount
 		
 	else:
-		p.payment_amount = doc.payment_amount
-	frappe.throw(frappe.as_json(p))
+		p.payment_amount = doc.sale_amount
 	p.insert()
+	
 	p.submit()
 
 	bs = frappe.get_doc("Bulk Sale",doc.name)
