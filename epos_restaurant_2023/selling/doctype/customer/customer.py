@@ -230,7 +230,8 @@ def get_unpaid_customer(condition=''):
 
 @frappe.whitelist()
 def get_recent_payment():
-	sql = """select 
+	sql = """select
+			a.parent as name,
 			s.customer,
 			s.customer_name,
 			sum(s.grand_total) grand_total,
@@ -253,12 +254,14 @@ def recent_bills_payment(name):
 	bill_numbers = []
 	bill_numbers = frappe.db.get_all("Bulk Sale",filters={
 		"parent":name
-	},fields=['*'])
-
+	},fields=['sale','sale_payment'])
+	
 	bill_list = []
 	response = {"sales":[]}
 	if len(bill_numbers) > 0:
 		for bill in bill_numbers:
+
+			sale = frappe.db.get_value('Sale',bill.sale,['*'],as_dict=1)
 			sale_products = frappe.db.sql("""
 									select 
 								 	product_code,
@@ -285,21 +288,21 @@ def recent_bills_payment(name):
 								 	discount,
 									discount_amount,
 									discount_type, 
-								 price""".format(bill["name"]),as_dict=1)
-				payment = frappe.db.sql("""
+								 price""".format(bill["sale"]),as_dict=1)
+			payment = frappe.db.sql("""
 										select 
+						   				name,
 										input_amount,
 										currency,
 										payment_type,
 										currency_precision
 										from `tabSale Payment` 
-										where bulk_sale_payment_name='{}' 
-									""".format(bulk_sale_payment),as_dict=1)
+										where name='{}' 
+									""".format(bill['sale_payment']),as_dict=1)
 
-			bill['sale_products'] = sale_products
-			bill['payment'] = payment
-			bill_list.append(bill)
-
+			sale['sale_products'] = sale_products
+			sale['payment'] = payment
+			bill_list.append(sale)
 	total_bill = len(bill_list)
 	total_amount = sum(b.grand_total for b in  bill_list) or 0
 	total_paid = sum(b.total_paid for b in  bill_list) or 0
