@@ -1,7 +1,7 @@
 <template>
     <ComModal :fullscreen="true" @onClose="onClose" :hideOkButton="true">
         <template #title>
-            {{ $t('Unpaid Bill') }}: {{event.data.data.name}}
+            {{ $t('Unpaid Bill') }}: {{ props.params.data }}
         </template>
         <template #content>
             <ComLoadingDialog v-if="isLoading" />
@@ -98,13 +98,14 @@
                     </v-col>
 
                 </v-row>
-                <div v-else-if="actionName == 'Payment'" class="mt-3"  style="width: 100%; height: 100%;">
-                    <iframe :src="`${serverUrl}/app/bulk-sale-payment/new-bulk-sale-payment?customer=${props.params.data}`" height="100%"
-                    width="100%" />
-                </div>
                 <div v-else-if="actionName == 'Print'" class="mt-3"  style="width: 100%; height: 100%;">
                     <iframe  :src="`${printPreview}`"  style="width: 100%; height: 100%;"/>
                 </div>
+                <div v-else-if="actionName == 'Payment'" class="mt-3"  style="width: 100%; height: 100%;">
+                    <iframe :src="`${serverUrl}/app/bulk-sale-payment/new-bulk-sale-payment?customer=${props.params.data}&cashier_shift=${current_cashier_shift.name}&working_day=${current_cashier_shift.working_day}`" height="100%"
+                    width="100%" />
+                </div>
+                
                 
 
         </template>
@@ -150,6 +151,16 @@ onMounted(() => {
         isLoading.value = false
     })
 })
+
+const current_cashier_shift = ref('') 
+call.get("epos_restaurant_2023.api.api.get_current_cashier_shift",
+    {
+        pos_profile: localStorage.getItem("pos_profile")}
+).then((r)=>{
+    console.log(r)
+    current_cashier_shift.value=r.message
+})
+
 function onClose() {
     emit("resolve", false)
 }
@@ -159,7 +170,7 @@ async function actionClick(action){
         actionName.value = action
         if (action == "Payment"){
             window.addEventListener('message', async function  (event) {
-
+                console.log(event.data)
                 event.data.action == "AfterPayment"
                 printPreview.value = printPreview.value + `&bulk_sale_payment_name=${event.data.data.name}&is_payment=1`
                 actionName.value = "Print"

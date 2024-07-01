@@ -1,0 +1,164 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-07-01 14:20:55.819079",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "photo",
+  "document_number",
+  "reference",
+  "posting_date",
+  "column_break_balx",
+  "stock_location",
+  "business_branch",
+  "section_break_wuiv",
+  "scan_barcode",
+  "column_break_pthy",
+  "append_quantity",
+  "section_break_nntm",
+  "items",
+  "section_break_igty",
+  "total_quantity",
+  "column_break_hkmq",
+  "total_amount",
+  "amended_from",
+  "section_break_cdsx",
+  "note"
+ ],
+ "fields": [
+  {
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Photo"
+  },
+  {
+   "fieldname": "document_number",
+   "fieldtype": "Select",
+   "label": "Document Number",
+   "options": "ST.YYYY.-.####"
+  },
+  {
+   "fieldname": "reference",
+   "fieldtype": "Data",
+   "label": "Reference"
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Posting Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_balx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "stock_location",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Stock Location",
+   "options": "Stock Location",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "stock_location.business_branch",
+   "fieldname": "business_branch",
+   "fieldtype": "Data",
+   "label": "Business Branch",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_wuiv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "scan_barcode",
+   "fieldtype": "Data",
+   "label": "Scan Barcode"
+  },
+  {
+   "fieldname": "column_break_pthy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "append_quantity",
+   "fieldtype": "Check",
+   "label": "Append Quantity"
+  },
+  {
+   "fieldname": "section_break_nntm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "items",
+   "options": "Stock Take Products"
+  },
+  {
+   "fieldname": "section_break_igty",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_quantity",
+   "fieldtype": "Float",
+   "label": "Total Quantity",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_hkmq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Stock Entry",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_cdsx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-07-01 14:44:25.206319",
+ "modified_by": "Administrator",
+ "module": "Inventory",
+ "name": "Stock Entry",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

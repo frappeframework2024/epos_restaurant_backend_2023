@@ -205,8 +205,6 @@ function onBack(menu) {
 }
 
 function _onPriceRuleChanged(menu){ 
-    
-    console.log(sale.table_price_rule)
     if((menu.price_rule||"")!=""){
            sale.price_rule = menu.price_rule; 
         } else{

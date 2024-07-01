@@ -244,6 +244,7 @@
   {
    "allow_on_submit": 1,
    "fetch_from": "sale.working_day",
+   "fetch_if_empty": 1,
    "fieldname": "working_day",
    "fieldtype": "Link",
    "label": "Working Day",
@@ -252,6 +253,7 @@
   {
    "allow_on_submit": 1,
    "fetch_from": "sale.cashier_shift",
+   "fetch_if_empty": 1,
    "fieldname": "cashier_shift",
    "fieldtype": "Link",
    "label": "Cashier Shift",
@@ -452,7 +454,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-06-26 16:06:55.112237",
+ "modified": "2024-06-29 13:36:55.450794",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Payment",

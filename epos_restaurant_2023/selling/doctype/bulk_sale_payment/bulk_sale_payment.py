@@ -57,8 +57,13 @@ def add_sale_payment(doc,self):
 		
 	else:
 		p.payment_amount = doc.sale_amount
+
+	if self.cashier_shift:
+		p.cashier_shift = self.cashier_shift
+	if self.working_day:
+		p.working_day = self.working_day
+
 	p.insert()
-	
 	p.submit()
 
 	bs = frappe.get_doc("Bulk Sale",doc.name)

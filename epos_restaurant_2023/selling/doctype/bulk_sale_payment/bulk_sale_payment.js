@@ -24,7 +24,7 @@ frappe.ui.form.on("Bulk Sale Payment", {
                 },
                 callback: function(response) { 
                     if (response.message) {
-                        window.parent.postMessage({"data":response.message,"action":"AfterPayment"},"*")
+                        window.parent.postMessage({"data":frm.doc,"action":"AfterPayment"},"*")
                     }
                 }
             })
@@ -115,20 +115,22 @@ frappe.ui.form.on("Bulk Sale Payment", {
                 $.each(frm.doc.sale_list, function(i, d) {
                     backup_sale = JSON.parse(JSON.stringify(d))
                     if (fee_response.message.default_fee_amount > 0){
-                        doc.input_amount = doc.sale_amount;
-                        doc.fee_amount = d.sale_amount * (fee_response.message.default_fee_amount > 0 ? (fee_response.message.default_fee_amount/100):1);
-                        doc.amount = d.sale_amount + (d.sale_amount * (fee_response.message.default_fee_amount > 0 ? (fee_response.message.default_fee_amount/100):1));
+                        d.input_amount = doc.sale_amount;
+                        d.fee_amount = d.sale_amount * (fee_response.message.default_fee_amount > 0 ? (fee_response.message.default_fee_amount/100):1);
+                        d.amount = d.sale_amount + (d.sale_amount * (fee_response.message.default_fee_amount > 0 ? (fee_response.message.default_fee_amount/100):1));
+                        console.log(d.fee_amount)
                     }else{
-                        doc.fee_amount = 0;
-                        doc.amount = doc.sale_amount
-                        doc.input_amount = doc.sale_amount
+                        d.fee_amount = 0;
+                        d.amount = d.sale_amount
+                        d.input_amount = d.sale_amount
                     }
+                    
                     d.payment_type = frm.doc.payment_type;
                     d.currency = frm.doc.currency;
                     d.exchange_rate = (frm.doc.exchange_rate || 0);
                     d.input_amount = d.sale_amount * (d.exchange_rate || 0);
                     d.payment_amount = d.input_amount == 0 ? 0 : d.input_amount /  (d.exchange_rate || 0);
-                    d.balance = d.amount - d.payment_amount - doc.fee_amount;
+                    d.balance = d.amount - d.payment_amount - d.fee_amount
                 });
                 frm.refresh_field('sale_list');
                 updatetotal(frm);

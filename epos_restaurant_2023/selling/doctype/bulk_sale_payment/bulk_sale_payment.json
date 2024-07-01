@@ -10,6 +10,8 @@
   "posting_date",
   "customer",
   "amended_from",
+  "working_day",
+  "cashier_shift",
   "column_break_wjqf",
   "sale_payment_naming_series",
   "payment_type",
@@ -134,12 +136,26 @@
    "fieldname": "sale_payment_naming_series",
    "fieldtype": "Select",
    "label": "Sale Payment Naming Series"
+  },
+  {
+   "fieldname": "working_day",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Working Day",
+   "options": "Working Day"
+  },
+  {
+   "fieldname": "cashier_shift",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Cashier Shift",
+   "options": "Cashier Shift"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-06-25 16:50:32.323316",
+ "modified": "2024-06-29 13:40:56.403747",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Bulk Sale Payment",

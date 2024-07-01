@@ -1,0 +1,91 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "hash",
+ "creation": "2024-06-29 11:54:10.346372",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "module",
+  "business_branch",
+  "pos_config",
+  "revenue_group",
+  "key",
+  "account",
+  "priority",
+  "payment_type"
+ ],
+ "fields": [
+  {
+   "fieldname": "module",
+   "fieldtype": "Select",
+   "label": "Module",
+   "options": "Sale\nPurchase\nStock Take\nInventory Check\nProduce\nExpense"
+  },
+  {
+   "fieldname": "key",
+   "fieldtype": "Data",
+   "label": "Key"
+  },
+  {
+   "fieldname": "account",
+   "fieldtype": "Link",
+   "label": "Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "priority",
+   "fieldtype": "Int",
+   "label": "Priority"
+  },
+  {
+   "fieldname": "business_branch",
+   "fieldtype": "Link",
+   "label": "Business Branch",
+   "options": "Business Branch"
+  },
+  {
+   "fieldname": "pos_config",
+   "fieldtype": "Link",
+   "label": "POS Config",
+   "options": "POS Config"
+  },
+  {
+   "fieldname": "revenue_group",
+   "fieldtype": "Link",
+   "label": "Revenue Group",
+   "options": "Revenue Group"
+  },
+  {
+   "fieldname": "payment_type",
+   "fieldtype": "Link",
+   "label": "Payment Type",
+   "options": "Payment Type"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-06-29 16:01:56.065650",
+ "modified_by": "Administrator",
+ "module": "Account",
+ "name": "Chart of Account Mapping",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

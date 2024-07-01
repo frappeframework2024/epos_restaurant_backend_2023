@@ -36,8 +36,6 @@ def  get_hierarchy_account_for_report_by_parent(parent,business_branch):
                 business_branch = %(business_branch)s
             
             UNION ALL
-            
-            -- Recursive member: Join the table with itself
             SELECT
                 t.name as account,
                 t.parent_chart_of_account,

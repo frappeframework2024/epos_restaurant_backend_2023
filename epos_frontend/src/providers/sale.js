@@ -1695,7 +1695,7 @@ export default class Sale {
 
     async onProcessTaskAfterSubmit(doc) { 
         if (this.action == "submit_order") {
-            this.onPrintToKitchen(doc);
+            this.onPrintToKitchen(doc); 
             //print waiting doc
             if (this.setting.pos_setting.print_waiting_order_after_submit_order) {
                 this.onPrintWaitingOrder(doc);
@@ -1880,6 +1880,8 @@ export default class Sale {
         if (products == null) {
             this.productPrinters = [];
         }
+
+        console.log(kotProducts)
     }
 
     generateProductPrinters() {

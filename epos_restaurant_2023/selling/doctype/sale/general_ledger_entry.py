@@ -53,13 +53,13 @@ def submit_sale_to_general_ledger_entry(self):
 			docs.append(doc)
 	if self.balance:
 		# post gl entry to default recivable account from business branch setting
-		 
+
 		doc = {
 			"doctype":"General Ledger",
 			"posting_date":self.posting_date,
 			"account":frappe.db.get_value("Business Branch", self.business_branch, "default_receivable_account"),
 			"debit_amount":self.balance,
-			"againt":",".join([d["account"] for d in docs]),
+			# "againt":",".join([d["account"] for d in docs]),
 			"againt_voucher_type":"Sale",
 			"againt_voucher_number": self.name,
 			"voucher_type":"Sale",

@@ -223,11 +223,92 @@ def get_unpaid_customer(condition=''):
 	{}
     group by  
         customer,
-        customer_name,
-        posting_date
+        customer_name
 """.format(condition),as_dict=1)
 
 	return data
 
+@frappe.whitelist()
+def get_recent_payment():
+	sql = """select 
+			s.customer,
+			s.customer_name,
+			sum(s.grand_total) grand_total,
+			sum(s.total_paid) total_paid,
+			sum(s.balance) balance
+		from `tabBulk Sale` a
+		inner join `tabSale` s on a.sale = s.name
+		group by 
+			s.customer,
+			s.customer_name
+		order by a.creation desc
+		limit 20
+	"""
+	data = frappe.db.sql(sql,as_dict=1)
+	return data
 
 
+@frappe.whitelist()
+def recent_bills_payment(name):
+	bill_numbers = []
+	bill_numbers = frappe.db.get_all("Bulk Sale",filters={
+		"parent":name
+	},fields=['*'])
+
+	bill_list = []
+	response = {"sales":[]}
+	if len(bill_numbers) > 0:
+		for bill in bill_numbers:
+			sale_products = frappe.db.sql("""
+									select 
+								 	product_code,
+									product_name,
+								 	product_name_kh,
+									`portion`,
+									is_free,
+									modifiers,
+									discount,
+									discount_amount,
+									discount_type,
+									sum(quantity) as quantity,
+								 	price,
+									sum(amount) as amount  
+								 from `tabSale Product` 
+								 where parent='{}' 
+								 group by 
+								 	product_code,
+									product_name,
+								 	product_name_kh,
+									`portion`,
+								 	is_free,
+								 	modifiers,
+								 	discount,
+									discount_amount,
+									discount_type, 
+								 price""".format(bill["name"]),as_dict=1)
+				payment = frappe.db.sql("""
+										select 
+										input_amount,
+										currency,
+										payment_type,
+										currency_precision
+										from `tabSale Payment` 
+										where bulk_sale_payment_name='{}' 
+									""".format(bulk_sale_payment),as_dict=1)
+
+			bill['sale_products'] = sale_products
+			bill['payment'] = payment
+			bill_list.append(bill)
+
+	total_bill = len(bill_list)
+	total_amount = sum(b.grand_total for b in  bill_list) or 0
+	total_paid = sum(b.total_paid for b in  bill_list) or 0
+	balance = sum(b.balance for b in  bill_list) or 0
+
+	response["sales"] = bill_list or []
+	response["total_bill"] = total_bill or 0
+	response["total_amount"] = total_amount or 0
+	response["total_paid"] = total_paid or 0
+	response["balance"] = balance or 0
+
+	return response
