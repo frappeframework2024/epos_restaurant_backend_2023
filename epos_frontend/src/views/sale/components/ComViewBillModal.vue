@@ -1,7 +1,7 @@
 <template>
     <ComModal :fullscreen="true" @onClose="onClose" title-ok-button="OK" :hideOkButton="true">
         <template #title>
-            <span>{{ $t('Bill') }} # : <span v-if="sale.sale.sale_status=='New'">{{ $t('New') }}</span><span v-else>{{ sale.sale.name }}</span></span>
+            <span>{{ $t('Bill') }} # : <span v-if="sale.sale.sale_status=='New'">{{ $t('New') }}</span><span v-else>{{ sale.sale.custom_bill_number }}</span></span>
         </template>
         <template #content>
             <v-container>
