@@ -45,6 +45,7 @@ def get_columns(filters):
 		{"label":"Outlet", "fieldname":"outlet","fieldtype":"Data","align":"left"},
 		{"label":"Customer", "fieldname":"customer_name","fieldtype":"Data","align":"left","width":150},
 		{"label":"Tbl #", "fieldname":"tbl_number","fieldtype":"Data","align":"left"},
+		{"label":"Guest Cover", "fieldname":"guest_cover","fieldtype":"Data","align":"center","width":50},
 		{"label":"QTY", "fieldname":"total_quantity","fieldtype":"Float","precision":2, "align":"center","width":75},
   		{"label":"Sub Total", "fieldname":"sub_total","fieldtype":"Currency","align":"right"},
   		
@@ -109,7 +110,8 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 			a.total_cost,
 			a.profit,
 			a.total_tax,
-			a.created_by
+			a.created_by,
+			a.guest_cover
 	FROM `tabSale` AS a
 		WHERE
 			{}

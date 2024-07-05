@@ -91,7 +91,7 @@ const props = defineProps({
 })
 const selectedLetterhead = ref(getDefaultLetterHead());
 const selectedLang = ref(gv.setting.lang[0].language_code);
-const activeReport = ref(gv.setting.reports.filter(r=>r.doc_type==props.params.doctype)[0]) ;
+const activeReport = ref(gv.setting.reports.filter(r=>r.doc_type==props.params.doctype && r.show_in_pos == 1)[0]) ;
 
 
 

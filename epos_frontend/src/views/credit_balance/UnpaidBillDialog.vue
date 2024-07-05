@@ -1,5 +1,5 @@
 <template>
-    <ComModal :fullscreen="true" @onClose="onClose" :hideOkButton="true">
+    <ComModal :fullscreen="true" :hideOkButton="true" @onClose="onClose" @onPrint="onPrint" :isPrint="actionName == 'Print'">
         <template #title>
             {{ $t('Unpaid Bill') }}: {{ props.params.data }}
         </template>
@@ -99,7 +99,7 @@
 
                 </v-row>
                 <div v-else-if="actionName == 'Print'" class="mt-3"  style="width: 100%; height: 100%;">
-                    <iframe  :src="`${printPreview}`"  style="width: 100%; height: 100%;"/>
+                    <iframe id="print"  :src="`${printPreview}`"  style="width: 100%; height: 100%;"/>
                 </div>
                 <div v-else-if="actionName == 'Payment'" class="mt-3"  style="width: 100%; height: 100%;">
                     <iframe :src="`${serverUrl}/app/bulk-sale-payment/new-bulk-sale-payment?customer=${props.params.data}&cashier_shift=${current_cashier_shift.name}&working_day=${current_cashier_shift.working_day}`" height="100%"
@@ -141,11 +141,18 @@ const myIframe = ref(null)
 const iframe = document.getElementById('myIframe');
 onMounted(() => {
     isLoading.value = true
-    call.get("epos_restaurant_2023.selling.doctype.customer.customer.get_unpaid_bills", {
-        name: props.params.data
+    let bulk_url = "epos_restaurant_2023.selling.doctype.customer.customer.get_unpaid_bills";
+    let param = props.params.data
+    console.log(props.params.doctype)
+    if (props.params.doctype == "Bulk Sale"){
+        bulk_url = "epos_restaurant_2023.selling.doctype.customer.customer.recent_bills_payment"
+        printPreview.value = serverUrl + `/printview?doctype=Customer&name=${props.params.data}&bulk_sale_payment_name=${props.params.bulk_sale}&trigger_print=1&format=Unpaid%20Customer&no_letterhead=1&letterhead=No%20Letterhead&settings=%7B%7D&_lang=en`
+        param = props.params.bulk_sale
+    }
+    call.get(bulk_url, {
+        name: param
     }).then((res) => {
         saleList.value = res.message
-        
         isLoading.value = false
     }).catch((err) => {
         isLoading.value = false
@@ -157,28 +164,31 @@ call.get("epos_restaurant_2023.api.api.get_current_cashier_shift",
     {
         pos_profile: localStorage.getItem("pos_profile")}
 ).then((r)=>{
-    console.log(r)
     current_cashier_shift.value=r.message
 })
 
 function onClose() {
+    
     emit("resolve", false)
 }
-
+function onPrint(){
+    var iframe = document.getElementById('print');
+    iframe.src = iframe.src;
+}
 async function actionClick(action){
     if (actionName.value != action){
         actionName.value = action
         if (action == "Payment"){
             window.addEventListener('message', async function  (event) {
-                console.log(event.data)
+                
                 event.data.action == "AfterPayment"
-                printPreview.value = printPreview.value + `&bulk_sale_payment_name=${event.data.data.name}&is_payment=1`
+                printPreview.value = printPreview.value + `&bulk_sale_payment_name=${event.data.name}&is_payment=1`
                 actionName.value = "Print"
             });
         }else{
             window.removeEventListener('message', async function  (event) {
                 event.data.action == "AfterPayment"
-                printPreview.value = printPreview.value + `&bulk_sale_payment_name=${event.data.data.name}&is_payment=1`
+                printPreview.value = printPreview.value + `&bulk_sale_payment_name=${event.data.name}&is_payment=1`
                 actionName.value = "Print"
             })
         } 
