@@ -380,7 +380,7 @@ export default class Sale {
 
             const make_order_auth = JSON.parse(localStorage.getItem('make_order_auth'));
             const now = new Date();
-            const _now_format = moment(now).format('yyyy-MM-DD HH:mm:ss.SSS');
+            const _now_format = moment(now).format('yyyy-MM-DD HH:mm:ss.SSSSSS');
  
             const saleProduct = {
                 menu_product_name: p.menu_product_name,
@@ -1757,6 +1757,8 @@ export default class Sale {
 
     onPrintToKitchen(doc, products = null) {
         var _productPrinters = products ?? this.productPrinters;
+        console.log("_productPrinters",_productPrinters)
+        console.log("doc",doc)
         const data = {
             action: "print_to_kitchen",
             setting: this.setting?.pos_setting,
