@@ -180,9 +180,10 @@ async function actionClick(action){
         actionName.value = action
         if (action == "Payment"){
             window.addEventListener('message', async function  (event) {
-                
+                console.log("AfterPayment1",event.data.data)
+                console.log("AfterPayment2.name",event.data.data.name)
                 event.data.action == "AfterPayment"
-                printPreview.value = printPreview.value + `&bulk_sale_payment_name=${event.data.name}&is_payment=1`
+                printPreview.value = printPreview.value + `&bulk_sale_payment_name=${event.data.data.name}&is_payment=1`
                 actionName.value = "Print"
             });
         }else{
