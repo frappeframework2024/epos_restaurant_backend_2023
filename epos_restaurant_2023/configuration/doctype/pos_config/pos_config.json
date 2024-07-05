@@ -119,7 +119,9 @@
   "cash_in_check_out_required_password",
   "use_guest_cover",
   "section_break_sibg",
-  "switch_pos_profile_required_password"
+  "switch_pos_profile_required_password",
+  "accounting_tab",
+  "default_account"
  ],
  "fields": [
   {
@@ -718,12 +720,23 @@
    "fieldname": "generate_bill_number_on_create",
    "fieldtype": "Check",
    "label": "Generate Bill Number On Create"
+  },
+  {
+   "fieldname": "accounting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "default_account",
+   "fieldtype": "Table",
+   "label": "Default Account",
+   "options": "POS Config Default Account"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-19 11:49:00.116262",
+ "modified": "2024-07-04 11:44:35.748807",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

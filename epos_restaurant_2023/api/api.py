@@ -264,6 +264,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "pos_receipt_template",
         "print_format",
         "print_report_name",
+        "sort_order",
         "show_in_pos_report",
         "show_in_pos",
         "print_invoice_copies", 
@@ -277,7 +278,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "receipt_margin_right",
         "receipt_margin_bottom",
         "show_in_pos_closed_sale",
-        "report_options"])
+        "report_options"],order_by="sort_order asc")
     
     _pos_print_format_data = []
     for p in _pos_print_format:
@@ -304,7 +305,8 @@ def get_system_settings(pos_profile="", device_name=''):
                 "receipt_margin_bottom":p.receipt_margin_bottom,
                 "show_in_pos_closed_sale":p.show_in_pos_closed_sale,
                 "report_options":p.report_options,
-                "business_branch":p.business_branch or ""
+                "business_branch":p.business_branch or "",
+                "sort_order":p.sort_order,
             }
             _pos_print_format_data.append(_data)
 

@@ -15,7 +15,7 @@
   "background",
   "color",
   "accounting_tab",
-  "default_income_account"
+  "default_account"
  ],
  "fields": [
   {
@@ -65,15 +65,15 @@
    "label": "Accounting"
   },
   {
-   "fieldname": "default_income_account",
-   "fieldtype": "Link",
-   "label": "Default Income Account",
-   "options": "Chart Of Account"
+   "fieldname": "default_account",
+   "fieldtype": "Table",
+   "label": "Default Account",
+   "options": "Revenue Group Default Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-25 22:12:31.887923",
+ "modified": "2024-07-04 13:57:42.447867",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Revenue Group",

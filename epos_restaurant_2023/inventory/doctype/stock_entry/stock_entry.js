@@ -57,7 +57,7 @@ frappe.ui.form.on("Stock Entry ",{
     },
 });
 
-frappe.ui.form.on("Stock Take Products", {
+frappe.ui.form.on("Stock Entry Products", {
     product_code(frm,cdt, cdn){
 		let doc = locals[cdt][cdn];
         product_code(frm,cdt,cdn);

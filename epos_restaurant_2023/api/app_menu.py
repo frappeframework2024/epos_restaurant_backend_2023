@@ -35,6 +35,7 @@ def get_sidebar_menu_template():
                 c["links"] = [x for x in workspace_links if x["parent"]==d["name"] and x["idx"] in range(c["idx"] + 1, c["idx"] + c["link_count"] + 1)]
                 
                 d["sub_menus"]["workspace_links"].append( c)
+        # end get workspace link
    
     for d in menus:
         if not d["sub_menus"]["shortcut_menu"] and not d["sub_menus"]["workspace_links"]:
@@ -88,7 +89,7 @@ def get_sidebar_menu_template():
                         {%for s in d.sub_menus.shortcut_menu%}
                     
                             <a  class="sub_menu_link" data-name="{{s.name}}" data-doc-view="{{s.doc_view}}" data-link-to="{{s.link_to}}" data-type="{{s.type}}">{{s.name}}</a>
-                            
+                            <hr/>
                              
                         {%endfor%}
                           <hr/>
@@ -125,3 +126,6 @@ def get_sidebar_menu_template():
     
     
     return frappe.render_template(template,{"data":menus,"app_logo":frappe.db.get_single_value("Navbar Settings","app_logo")})
+
+
+

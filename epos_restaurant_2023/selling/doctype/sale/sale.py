@@ -2,6 +2,7 @@
 # For license information, please see license.txt
 
 import json
+from  epos_restaurant_2023.api.cache_function import get_default_account_from_pos_config, get_default_account_from_revenue_group, get_doctype_value_cache
 from epos_restaurant_2023.inventory.inventory import add_to_inventory_transaction, check_uom_conversion, get_product_cost, get_stock_location_product, get_uom_conversion, update_product_quantity
 import frappe
 from frappe import utils
@@ -234,6 +235,8 @@ class Sale(Document):
 			self.sale_status_color = frappe.get_value("Sale Status","Closed","background_color")
 		
 		
+		# update default accunt
+		update_default_account(self)
 
 	@frappe.whitelist()
 	def get_sale_payment_naming_series(self):
@@ -924,17 +927,42 @@ def get_park_item_to_redeem(business_branch):
 	return result_dict
 
 
-def update_default_account_to_sale_product(self):
-	
-	# skip account not empty
-	# check from revenue group
-	# if revenue group dont have check from business branch default income account
-	default_income_account = frappe.get.db.get_single_value("Business Branch",self.business_branch, "default_income_account")
-	for sp in [x for x in self.sale_products if not x.default_income_account]:
-		sp.default_income_account = frappe.db.get_value("Revenue Group",sp.revenue_group,"default_income_account")
-		sp.default_income_account  = sp.default_income_account or default_income_account
-	
+def update_default_account(self):
  
+	# 1 get from product
+	if [x for x in self.sale_products if not x.default_income_account]:
+		# get product default account_code from product
+		sql="select distinct parent as product_code, default_income_account from `tabProduct Default Account` where parent in %(parents)s and business_branch =%(business_branch)s"
+
+		 
+		product_account_codes = frappe.db.sql(sql, {"parents":[x.product_code for x in self.sale_products if not x.default_income_account], "business_branch":self.business_branch},as_dict=1)
+		product_has_default_account = [d["product_code"] for d in product_account_codes]
+		
+		
+		for sp in [x for x in self.sale_products if not x.default_income_account and x.product_code in product_has_default_account]:
+			# 1 get from product
+			sp.default_income_account = [d for d in product_account_codes if d["product_code"] == sp.product_code][0]["default_income_account"] 
+  
+	# 2 get from pos_config
+	if [x for x in self.sale_products if not x.default_income_account]:
+		revenue_group_account_codes = get_default_account_from_pos_config( json.dumps( {"business_branch": self.business_branch, "pos_config":self.pos_config, "revenue_groups" : list(set([d.revenue_group for d in self.sale_products]))}))
+		revenue_group_has_default_account = [d["revenue_group"] for d in revenue_group_account_codes]
+		for sp in [x for x in self.sale_products if not x.default_income_account and x.revenue_group in revenue_group_has_default_account]:
+				sp.default_income_account = [d for d in revenue_group_account_codes if d["revenue_group"] == sp.revenue_group][0]["default_income_account"] 
+
+	# 3 get account code from revenue group 
+	if [x for x in self.sale_products if not x.default_income_account]:
+		revenue_group_account_codes = get_default_account_from_revenue_group(json.dumps( {"business_branch": self.business_branch, "revenue_groups": list(set([d.revenue_group for d in self.sale_products]))}))
+		revenue_group_has_default_account = [d["revenue_group"] for d in revenue_group_account_codes]
+		for sp in [x for x in self.sale_products if not x.default_income_account and x.revenue_group in revenue_group_has_default_account]:
+				sp.default_income_account = [d for d in revenue_group_account_codes if d["revenue_group"] == sp.revenue_group][0]["default_income_account"] 
+
+	# 4 get account code from revenue group 
+	if [x for x in self.sale_products if not x.default_income_account]:
+		for sp in [x for x in self.sale_products if not x.default_income_account]:
+			sp.default_income_account = get_doctype_value_cache("Business Branch",self.business_branch, "default_income_account")
+
+	
 def update_inventory_product_cost(self):
 	sql = """
 			select 

@@ -1,15 +1,17 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "naming_series:",
  "creation": "2024-07-01 14:20:55.819079",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "photo",
-  "document_number",
+  "naming_series",
   "reference",
-  "posting_date",
+  "entry_type",
   "column_break_balx",
+  "posting_date",
   "stock_location",
   "business_branch",
   "section_break_wuiv",
@@ -24,7 +26,9 @@
   "total_amount",
   "amended_from",
   "section_break_cdsx",
-  "note"
+  "note",
+  "accounting_tab",
+  "default_inventory_account"
  ],
  "fields": [
   {
@@ -32,12 +36,6 @@
    "fieldtype": "Attach Image",
    "hidden": 1,
    "label": "Photo"
-  },
-  {
-   "fieldname": "document_number",
-   "fieldtype": "Select",
-   "label": "Document Number",
-   "options": "ST.YYYY.-.####"
   },
   {
    "fieldname": "reference",
@@ -97,7 +95,7 @@
    "fieldname": "items",
    "fieldtype": "Table",
    "label": "items",
-   "options": "Stock Take Products"
+   "options": "Stock Entry Products"
   },
   {
    "fieldname": "section_break_igty",
@@ -135,14 +133,39 @@
    "fieldname": "note",
    "fieldtype": "Small Text",
    "label": "Note"
+  },
+  {
+   "fieldname": "entry_type",
+   "fieldtype": "Link",
+   "label": "Entry Type",
+   "options": "Stock Entry Type"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Document Number",
+   "options": "STE.YYYY.-.####"
+  },
+  {
+   "fieldname": "accounting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "default_inventory_account",
+   "fieldtype": "Link",
+   "label": "Default Inventory Account",
+   "options": "Chart Of Account"
   }
  ],
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2024-07-01 14:44:25.206319",
+ "modified": "2024-07-04 15:57:45.324707",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Entry",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {

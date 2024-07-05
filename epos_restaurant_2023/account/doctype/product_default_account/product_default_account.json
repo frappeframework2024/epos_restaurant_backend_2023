@@ -1,0 +1,56 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-07-04 10:56:13.432023",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "business_branch",
+  "default_income_account",
+  "default_expense_account",
+  "default_adjustment_account"
+ ],
+ "fields": [
+  {
+   "fieldname": "business_branch",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Business Branch",
+   "options": "Business Branch"
+  },
+  {
+   "fieldname": "default_income_account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Default Income Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_expense_account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Default Expense Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_adjustment_account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Default Adjustment Account",
+   "options": "Chart Of Account"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-07-04 15:15:03.274193",
+ "modified_by": "Administrator",
+ "module": "Account",
+ "name": "Product Default Account",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

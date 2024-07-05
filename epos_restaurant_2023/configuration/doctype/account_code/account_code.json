@@ -23,11 +23,13 @@
   "show_in_shortcut_menu",
   "is_package",
   "allow_zero_amount_posting",
-  "icon",
+  "column_break_afbm",
+  "allow_enter_pax",
   "sort_order",
+  "icon",
+  "old_parent",
   "lft",
   "rgt",
-  "old_parent",
   "price_section",
   "price",
   "discount_section",
@@ -623,12 +625,22 @@
    "fieldname": "account_group_name",
    "fieldtype": "Data",
    "label": "Account Group Name"
+  },
+  {
+   "fieldname": "column_break_afbm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_enter_pax",
+   "fieldtype": "Check",
+   "label": "Allow Enter Pax"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-06-12 14:55:15.759021",
+ "modified": "2024-07-03 10:45:06.052665",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

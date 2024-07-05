@@ -1,11 +1,15 @@
 
 window.addEventListener('load', function () {
  
+
+    
     removeButtomCustom()
 
     setFullScreenButton()
 
     removeGanttKanban()
+
+    removeAddButton()
     const navBar = document.querySelector('body')
     navBar.classList.add('full-width');
 
@@ -16,6 +20,8 @@ window.addEventListener('load', function () {
         removeGanttKanban()
 
         setFullScreenButton()
+
+        removeAddButton()
 
         const navBar = document.querySelector('body')
         navBar.classList.add('full-width');
@@ -72,6 +78,30 @@ function removeButtomCustom (){
                 standardActions.remove()
             }
         }
+    }
+}
+
+function removeAddButton () {
+    if (frappe.session.user != 'Administrator'){ 
+        this.setTimeout(function(){
+            const getParent = document.querySelector('.page-head')
+            if (getParent) {
+                btnAddRes = getParent.querySelector('[data-label="Add Reservation"]')
+                btnNewRes = getParent.querySelector('[data-label="New%20Reservation%20Stay"]')
+                btnNewResStay = getParent.querySelector('[data-label="Add Reservation Stay"]')
+                if (btnAddRes) {
+                    btnAddRes.remove()
+                }
+                if (btnNewRes) {
+                    const parentEl = btnNewRes.parentElement
+                    const grantParentEl = parentEl.parentElement
+                    grantParentEl.remove()
+                }
+                if (btnNewResStay) {
+                    btnNewResStay.remove()
+                }
+            }
+        },1000)
     }
 }
 
@@ -154,6 +184,8 @@ function ClearUI(){
     } 
 }
 
+// check if app is running in iframe
+
 if (window.self !== window.top) {
     //disable right click
     document.addEventListener('contextmenu', function(event) {
@@ -176,6 +208,13 @@ if (window.self !== window.top) {
                     removeHeaderSticky()
                     ClearUI()
                     
+                    // set workspace main layout height = 100%
+                    main_layout = document.querySelector("[data-page-route=Workspaces] .layout-main")
+                    
+                    if(main_layout){
+                        main_layout.style.height = "100%"
+                    }
+                   
                     
                 }
             }

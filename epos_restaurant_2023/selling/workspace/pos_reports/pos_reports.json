@@ -321,7 +321,7 @@
   },
   {
    "hidden": 0,
-   "is_query_report": 0,
+   "is_query_report": 1,
    "label": "Employee Time Sheet Summary",
    "link_count": 0,
    "link_to": "Employee Time Sheet Summary",
@@ -330,7 +330,7 @@
    "type": "Link"
   }
  ],
- "modified": "2024-06-24 17:41:30.901403",
+ "modified": "2024-07-03 14:54:48.020676",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Reports",

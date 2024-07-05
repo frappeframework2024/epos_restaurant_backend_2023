@@ -36,11 +36,15 @@ class AccountCode(Document):
 				
     
 	def on_update(self):
+		frappe.clear_document_cache('Account Code', self.name)
 		apps = frappe.get_installed_apps()
+
 		if "edoor" in apps:
 			update_tax_to_related_transaction({"account_code":self.name})
-
+			from edoor.api.cache_functions import get_account_code_doc
+			get_account_code_doc.cache_clear()
 			
+   
  
 
 
