@@ -38,8 +38,8 @@ def validate(filters):
  
 def get_columns(filters):
 	return [
-		{"label":"Doc. #", "fieldname":"name","fieldtype":"Link","options":"Sale", "align":"center",},
-		{"label":"Bill No", "fieldname":"bill_number","fieldtype":"Data", "align":"center","width":120},
+		{"label":"Doc. #", "fieldname":"name","fieldtype":"Link","options":"Sale", "align":"center","width":250},
+		# {"label":"Bill No", "fieldname":"bill_number","fieldtype":"Data", "align":"center","width":120},
 		{"label":"Date",  "fieldname":"posting_date","fieldtype":"Date", "align":"center",},
 		{"label":"Branch", "fieldname":"business_branch","fieldtype":"Data","align":"left","width":120},
 		{"label":"Outlet", "fieldname":"outlet","fieldtype":"Data","align":"left"},
@@ -95,8 +95,10 @@ def get_conditions(filters,group_filter=None):
 def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 	
 	sql = """select  
-			a.name,
-			coalesce(a.custom_bill_number,'-') as bill_number ,
+			CASE 
+        		WHEN a.custom_bill_number = '' THEN a.name
+        		ELSE CONCAT(a.custom_bill_number, ' (', a.name, ')')
+    		END AS name,
 			a.tbl_number,
 			a.posting_date,
 			a.business_branch,

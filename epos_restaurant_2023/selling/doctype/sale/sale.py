@@ -324,7 +324,8 @@ class Sale(Document):
 		if not self.time_out:
 			pass
 
-		create_folio_transaction_from_pos_trnasfer(self) 
+		if "edoor" in frappe.get_installed_apps():
+			create_folio_transaction_from_pos_trnasfer(self) 
 		# update_inventory_on_submit(self)			
 		add_payment_to_sale_payment(self) 
 
@@ -720,8 +721,9 @@ def create_folio_transaction_from_pos_trnasfer(self):
 					"guest":self.customer,
 					"guest_name":self.customer_name,
 					"guest_type":self.customer_group,
-					"nationality": "" if not self.customer else  frappe.db.get_value("Customer",self.customer,"country")
-				} 
+					"nationality": "" if not self.customer else  frappe.get_cached_value("Customer",self.customer,"country")
+				}
+			
 			doc = frappe.get_doc(data)
 			doc.insert(ignore_permissions=True)	
 

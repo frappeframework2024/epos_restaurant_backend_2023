@@ -1593,3 +1593,5 @@ def get_workspace_sidebar_items():
         pages[0]["label"] = _("Welcome Workspace")
    
     return {"pages": pages, "has_access": has_access}
+
+    

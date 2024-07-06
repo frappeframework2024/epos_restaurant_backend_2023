@@ -61,8 +61,9 @@ def get_columns(filters):
 	row_group = [d for d in get_row_groups() if d["label"]==filters.row_group][0]
  
  
-	if filters.row_group == 'Sale Invoice':
+	if filters.row_group == 'Sale Invoice' :
 		columns.append({'fieldname':'row_group','label':filters.row_group,'fieldtype':'Link',"options":"Sale",'align':'left','width':250})
+		columns.append({'fieldname':'guest_cover','label':'Guest Cover','fieldtype':'Data','align':'center','width':50})
 	else:
 		columns.append({'fieldname':'row_group','label':filters.row_group,'fieldtype':'Data','align':'left','width':250})
 	# if filters.row_group == "Product":
@@ -143,8 +144,15 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 	report_fields = get_report_field(filters)
 	
 
-	sql = "select {} as row_group, {} as indent ".format(row_group, indent)
-	
+	# sql = "select {} as row_group, {} as indent ".format(row_group, indent)
+	if(filters.row_group == "Sale Invoice"):
+		sql = """select 
+			CASE 
+        		WHEN b.custom_bill_number = '' THEN {0}
+        		ELSE CONCAT(b.custom_bill_number, ' (', {0}, ')')
+    		END AS row_group,b.guest_cover, {1} as indent """.format(row_group, indent)
+	else:
+		sql = "select {} as row_group, {} as indent ".format(row_group, indent)
 	# total last column
 	item_code = ""
 	groupdocstatus = ""

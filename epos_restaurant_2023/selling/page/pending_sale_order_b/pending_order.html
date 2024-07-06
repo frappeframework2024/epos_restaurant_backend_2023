@@ -1,0 +1,44 @@
+ 
+  <ul class="nav nav-tabs mt-2" id="myTab" role="tablist">
+    {%for g in table_groups%}
+    
+    <li class="nav-item">
+      <a class="nav-link {{g.active}}" id="{{g.id}}-tab" data-toggle="tab" data-target="#{{g.id}}" role="tab" aria-controls="{{g.id}}" aria-selected="true">{{g.group}}</a>
+    </li>
+
+    {%endfor%}
+    
+  </ul>
+  <div class="tab-content mt-2" id="myTabContent">
+    {%for g in table_groups%}
+
+    <div class="tab-pane fade {{g.show}} {{ g.active }}" id="{{g.id}}" role="tabpanel" aria-labelledby="{{g.id}}-tab">
+      <div class="row">
+       {%for t in g.tables%}
+       <div class="text-center col m-2 rounded p-2 flex-column table-number d-flex justify-content-center align-items-center" style="background: {{t.background}};color:{{t.color}};min-height:120px; min-width:120px;max-width:120px;">
+       <div>
+          {{t.tbl_number}}
+          {% if t.total_sales %}
+          ({{t.total_sales}})
+          {% endif %}
+       </div>
+       {% if t.total_amount %}
+       <div>
+      {{frappe.format(t.total_amount,{"fieldtype":"Currency"})}}
+       </div>
+       {% endif %}
+       {% if t.time_ago != 0 %}
+<div>
+  <small>{{t.time_ago}}</small>
+
+</div>
+{% endif %}
+       
+      </div>
+
+      {%endfor%}
+    </div>
+    </div>
+    {%endfor%}
+  </div>
+ 
