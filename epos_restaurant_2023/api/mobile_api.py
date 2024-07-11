@@ -26,7 +26,18 @@ def on_check_url():
 
 ## use POST method to get system config data
 @frappe.whitelist(allow_guest=True) 
-def on_get_pos_configure(pos_profile="", device_name=''):  
+def on_get_pos_configure(pos_profile="", device_name=''):   
+    if not frappe.db.exists("POS Station",device_name):
+        frappe.throw("Invalid POS Station")
+
+    station = frappe.get_doc("POS Station",device_name)
+  
+    if (not station.pos_profile) or "":
+        frappe.throw("Invalid POS Profile")
+    
+    if pos_profile != station.pos_profile:
+        frappe.throw("Invalid POS Profile")
+
     return get_system_settings(pos_profile,device_name) 
 
 ## use POST method to get user and permission to login

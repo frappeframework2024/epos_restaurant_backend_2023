@@ -29,7 +29,8 @@ def get_default_account_from_pos_config(params):
             select 
                 revenue_group, 
                 default_income_account,
-                default_expense_account 
+                default_expense_account,
+                default_discount_account
             from `tabPOS Config Default Account` 
             where
                 parent = %(pos_config)s and 
@@ -42,11 +43,13 @@ def get_default_account_from_pos_config(params):
 
 @lru_cache(maxsize=128)
 def get_default_account_from_revenue_group(params):
+    
     sql = """
             select 
                 parent as revenue_group, 
                 default_income_account,
-                default_expense_account 
+                default_expense_account ,
+                default_discount_account
             from `tabRevenue Group Default Account` 
             where
                 parent in %(revenue_groups)s and 

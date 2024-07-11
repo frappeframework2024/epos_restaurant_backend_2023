@@ -9,6 +9,7 @@ from frappe.model.document import Document
 class BusinessBranch(Document):
 	def on_update(self):
 		get_doctype_value_cache.cache_clear()
+		frappe.clear_document_cache("Business Branch", self.name)
 
 	@frappe.whitelist()
 	def update_to_transaction(self):

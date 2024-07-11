@@ -48,8 +48,10 @@ class Customer(Document):
 			'customer_code': new_name		
 		}) 
 	def on_update(self):
-		if self.creation !=self.modified:
-			update_fetch_from_fields(self)
+		frappe.clear_document_cache("Customer", self.name)
+		if 'edoor' in frappe.get_installed_apps():
+			if self.creation !=self.modified:
+				update_fetch_from_fields(self)
 
 
 

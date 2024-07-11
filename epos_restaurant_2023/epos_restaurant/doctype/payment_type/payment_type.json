@@ -22,7 +22,7 @@
   "default_fee_amount",
   "color",
   "background",
-  "accounting_section",
+  "accounting_tab",
   "default_account"
  ],
  "fields": [
@@ -119,11 +119,6 @@
    "label": "Background"
   },
   {
-   "fieldname": "accounting_section",
-   "fieldtype": "Section Break",
-   "label": "Accounting"
-  },
-  {
    "fieldname": "default_account",
    "fieldtype": "Table",
    "label": "Default Account",
@@ -133,6 +128,11 @@
    "fieldname": "default_fee_amount",
    "fieldtype": "Float",
    "label": "Default Fee Amount"
+  },
+  {
+   "fieldname": "accounting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Accounting"
   }
  ],
  "image_field": "photo",
@@ -144,7 +144,7 @@
    "link_fieldname": "to_currency"
   }
  ],
- "modified": "2024-06-27 11:50:50.887405",
+ "modified": "2024-07-10 10:31:22.138648",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "Payment Type",

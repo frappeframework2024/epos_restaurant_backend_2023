@@ -121,3 +121,10 @@
 .custom-page-head .page-head-content{
     margin: 10px 0!important;
 }
+.nav-link.active-tab.active {
+    color: #4338ca;
+    background: #EEF2FF;
+    border-radius: .5rem;
+    border: 1px solid #e5e7eb;
+
+}

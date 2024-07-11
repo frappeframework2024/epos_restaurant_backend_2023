@@ -59,8 +59,9 @@ class SalePayment(Document):
 
 	def on_submit(self):
 		# run enque
-		if frappe.db.get_single_value("ePOS Settings","use_basic_accounting_feature"):
-			submit_payment_to_general_ledger_entry_on_submit(self)
+		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
+			if not self.flags.ignore_post_general_ledger_entry:
+				submit_payment_to_general_ledger_entry_on_submit(self)
 
 		if self.flags.ignore_on_submit==True:
 			return
@@ -73,7 +74,7 @@ class SalePayment(Document):
 	def on_cancel(self):
 		# submit to general ledger entry
 		# run this in enqueue
-		if frappe.db.get_single_value("ePOS Settings","use_basic_accounting_feature"):
+		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			submit_payment_to_general_ledger_entry_on_cancel(self)
 		if self.flags.ignore_on_cancel==True:
 			return
@@ -103,12 +104,12 @@ class SalePayment(Document):
 
 		# Update Customer Point When Pay with Point
 	def update_customer_point(self):
-		if frappe.db.get_single_value("Exely Itegration Setting","enabled")==1:
+		if frappe.get_cached_value("Exely Itegration Setting",None,"enabled")==1:
 			frappe.enqueue("epos_restaurant_2023.api.exely.submit_order_to_exely", queue='long', doc_name = self.name)
 		# Update Customer Point
 		point_setting = frappe.get_doc("Loyalty Point Settings")
 		if point_setting.enabled==1:
-			allow_earn_point = frappe.db.get_value("Customer",self.customer,'allow_earn_point')
+			allow_earn_point = frappe.get_cached_value("Customer",self.customer,'allow_earn_point')
 			
 			if allow_earn_point==1:
 				

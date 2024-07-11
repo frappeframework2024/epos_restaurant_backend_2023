@@ -19,6 +19,7 @@
   "calculate_tax_1_after_discount",
   "column_break_6",
   "tax_1_account",
+  "default_tax_1_account",
   "section_break_6",
   "tax_2_name",
   "tax_2_rate",
@@ -27,6 +28,7 @@
   "calculate_tax_2_after_adding_tax_1",
   "column_break_13",
   "tax_2_account",
+  "default_tax_2_account",
   "section_break_12",
   "tax_3_name",
   "tax_3_rate",
@@ -36,6 +38,7 @@
   "calculate_tax_3_after_adding_tax_2",
   "column_break_24",
   "tax_3_account",
+  "default_tax_3_account",
   "tax_rule_data"
  ],
  "fields": [
@@ -200,11 +203,32 @@
    "fieldtype": "Select",
    "label": "Category",
    "options": "\nRoom Tax\nSpa Tax"
+  },
+  {
+   "fieldname": "default_tax_1_account",
+   "fieldtype": "Link",
+   "label": "Default Tax 1 Account",
+   "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0]]",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_tax_2_account",
+   "fieldtype": "Link",
+   "label": "Default Tax 2 Account",
+   "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0]]",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_tax_3_account",
+   "fieldtype": "Link",
+   "label": "Default Tax 3 Account",
+   "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0]]",
+   "options": "Chart Of Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-09-08 11:07:46.277664",
+ "modified": "2024-07-10 14:25:26.218419",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Tax Rule",

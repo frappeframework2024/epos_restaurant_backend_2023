@@ -5,7 +5,10 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="pdfkit-orientation" content="{{orientation}}"/>
 	<title>{{ title }} {{view}}</title>
-	
+ 
+	<script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
+ 
+
 	{% if view=='ui' %}
 		
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous"> 
@@ -19,7 +22,17 @@
 		{{ include_style('print.bundle.css') }}
 	{% if print_style %}
     <style>
-	 
+		@page{
+			margin-top: 0mm;
+			margin-bottom: 0mm;
+			margin-left: 0mm;
+			margin-right: 0mm;
+
+		@bottom-left{
+			content: 'Page ' counter(page) ' of '  counter(pages)};
+			color:red;
+		}
+
     {{ print_style }}
 	
 	 
@@ -28,8 +41,7 @@
 		{% endif %}
 </head>
 <body>
-
-
+ 
 	{% if show_toolbar=="1" %}
 	<div class="action-banner print-hide">
 		<a class="p-2" onclick="window.print();">

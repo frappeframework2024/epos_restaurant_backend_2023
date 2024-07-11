@@ -2,6 +2,7 @@ frappe.pages['working-day-summary'].on_page_load = function(wrapper) {
 	new MyPage(wrapper);
 }
 
+
 MyPage = Class.extend({
 	init: function(wrapper) {
 		this.page = frappe.ui.make_app_page({
@@ -14,6 +15,7 @@ MyPage = Class.extend({
 		this.page.add_menu_item('PDF', () =>{this.onPDF()},true )
 		this.page.set_secondary_action('View Report', () => this.onViewReport(), 'octicon octicon-plus')
 		
+
 		this.property = this.page.add_field({
 			label: 'Property',
 			fieldtype: 'Link',

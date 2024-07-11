@@ -94,36 +94,37 @@ class CashierShift(Document):
 					current_sort = frappe.db.get_value("Shift Type",self.shift_name, "sort")
 					 
 					if self.is_edoor_shift==1 and  self.is_run_night_audit==0:
-						if current_sort != 3:
-							"""Create New Cashier Shift When Close Shift eDoor"""
-							new_shift_data = {
-								"doctype":"Cashier Shift",
-								"bussiness_branch": self.business_branch,
-								"outlet":self.outlet,
-								"pos_profile":self.pos_profile,
-								"working_day":self.working_day,
-								"is_edoor_shift":self.is_edoor_shift,
-								"cash_float":[]
-							}
-							if current_sort == 1:
-								next_shift_name = frappe.db.get_value("Shift Type",{'sort': 2} , "name")
-								new_shift_data["shift_name"] = next_shift_name
-							elif current_sort == 2:
-								next_shift_name = frappe.db.get_value("Shift Type",{'sort': 3} , "name")
-								new_shift_data["shift_name"] = next_shift_name
-							
-							pos_config = frappe.db.get_value("POS Profile", self.pos_profile, "pos_config")
-							pos_config = frappe.get_doc("POS Config", pos_config)
+						if frappe.get_cached_value("eDoor Setting", None, "create_next_cashier_shift_after_close_shift"):
+							if current_sort != 3:
+								"""Create New Cashier Shift When Close Shift eDoor"""
+								new_shift_data = {
+									"doctype":"Cashier Shift",
+									"bussiness_branch": self.business_branch,
+									"outlet":self.outlet,
+									"pos_profile":self.pos_profile,
+									"working_day":self.working_day,
+									"is_edoor_shift":self.is_edoor_shift,
+									"cash_float":[]
+								}
+								if current_sort == 1:
+									next_shift_name = frappe.db.get_value("Shift Type",{'sort': 2} , "name")
+									new_shift_data["shift_name"] = next_shift_name
+								elif current_sort == 2:
+									next_shift_name = frappe.db.get_value("Shift Type",{'sort': 3} , "name")
+									new_shift_data["shift_name"] = next_shift_name
+								
+								pos_config = frappe.db.get_value("POS Profile", self.pos_profile, "pos_config")
+								pos_config = frappe.get_doc("POS Config", pos_config)
 
-							for  c in pos_config.payment_type:
-								if c.allow_cash_float:
-									new_shift_data["cash_float"].append({
-										"payment_method":c.payment_type,
-										"currency":c.currency,
-										"input_amount":0
-									})
-							
-							frappe.get_doc(new_shift_data).insert()
+								for  c in pos_config.payment_type:
+									if c.allow_cash_float:
+										new_shift_data["cash_float"].append({
+											"payment_method":c.payment_type,
+											"currency":c.currency,
+											"input_amount":0
+										})
+								
+								frappe.get_doc(new_shift_data).insert()
 					
 					else:
 						frappe.enqueue("epos_restaurant_2023.selling.doctype.cashier_shift.cashier_shift.submit_pos_data_to_folio_transaction", queue='short', self=self)

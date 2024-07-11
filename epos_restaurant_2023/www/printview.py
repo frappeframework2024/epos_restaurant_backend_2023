@@ -83,6 +83,7 @@ def get_context(context):
 		"reservation":frappe.form_dict.reservation,
 		"reservation_stay":frappe.form_dict.reservation_stay,
 		"orientation":frappe.form_dict.orientation or "Portrait",
+		"print":frappe.form_dict.trigger_print or "0",
 
 	}
 

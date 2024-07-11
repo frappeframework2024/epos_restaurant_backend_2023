@@ -25,6 +25,8 @@ class PaymentType(Document):
 				self.change_exchange_rate  =1 
 		
 	def on_update(self):
+		frappe.clear_document_cache("Payment Type", self.name)
+  
 		if self.has_value_changed("payment_type_group"):
 			frappe.db.sql("update `tabSale Payment` set payment_type_group='{}' where payment_type='{}'".format(self.payment_type_group,self.name))
    

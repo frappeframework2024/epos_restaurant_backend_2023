@@ -121,6 +121,10 @@
   "section_break_sibg",
   "switch_pos_profile_required_password",
   "accounting_tab",
+  "default_tip_account",
+  "column_break_mcmi",
+  "default_change_account",
+  "section_break_llms",
   "default_account"
  ],
  "fields": [
@@ -731,12 +735,34 @@
    "fieldtype": "Table",
    "label": "Default Account",
    "options": "POS Config Default Account"
+  },
+  {
+   "fieldname": "default_tip_account",
+   "fieldtype": "Link",
+   "label": "Default Tip Account",
+   "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0],[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"root_type\",\"=\",\"Income\"]]",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "column_break_mcmi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_change_account",
+   "fieldtype": "Link",
+   "label": "Default Change Account",
+   "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0],[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"root_type\",\"=\",\"Asset\"]]",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "section_break_llms",
+   "fieldtype": "Section Break"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-04 11:44:35.748807",
+ "modified": "2024-07-10 19:06:22.780941",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",
