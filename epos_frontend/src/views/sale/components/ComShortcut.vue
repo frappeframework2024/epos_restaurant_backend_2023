@@ -15,10 +15,10 @@
         <v-slide-group v-if="mobile === true && shortcut">
             <v-slide-group-item v-for="(m, index) in shortcut" :key="index" v-slot="{ isSelected, toggle }">
                 <v-btn 
-                class="flex-shrink-0 m-1"
+                class="flex-shrink-0 m-1 my-2 px-5"
                 rounded="pill"
                 variant="tonal"
-                size="small"
+                height="40"
                 v-bind:style="{'background-color':m.background_color}"
                 @click="onClick(m.name_en)">
                 <span v-bind:style="{color:m.text_color}">{{m.name_en}}</span>
