@@ -1,3 +1,14 @@
+frappe.listview_settings['*'] = {
+    onload: function(listview) {
+   
+        listview.page.add_inner_button('Custom Button', () => {
+            frappe.msgprint('This is a custom button for all list views.');
+        });
+    }
+};
+
+
+
 
 window.addEventListener('load', function () {
  
@@ -202,7 +213,7 @@ if (window.self !== window.top) {
                 var newState = bodyElement.getAttribute('data-ajax-state');
                 if (newState === 'complete') {
                       
- 
+                        
 
                     preventLink()
                     removeHeaderSticky()
@@ -215,6 +226,7 @@ if (window.self !== window.top) {
                         main_layout.style.height = "100%"
                     }
                    
+                    
                     
                 }
             }
@@ -249,6 +261,8 @@ if (window.self !== window.top) {
 }
 
 
+
+ 
 
 
 

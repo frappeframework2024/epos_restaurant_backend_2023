@@ -97,6 +97,16 @@ def get_columns(filters):
 						'align':f['align']
 						}
 					)
+			elif f['fieldname'] =='sub_total' :
+				
+				columns.append({
+					'fieldname':"total_" +  f['fieldname'],
+					'label': f["label"],
+					'fieldtype':f['fieldtype'],
+					'precision': f["precision"],
+					'align':f['align']
+					}
+				)
 			else:
 				columns.append({
 						'fieldname':"total_" +  f['fieldname'],
@@ -300,7 +310,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 			sql = sql + " ,{} AS 'total_{}' ".format(rf["sql_expression"],rf["fieldname"])
 
 	_row_group = row_group
-	if row_group == "a.parent":
+	if row_group == "if(ifnull(b.custom_bill_number,'')='',a.parent,b.custom_bill_number)":
 		_row_group = "a.parent, coalesce(b.custom_bill_number,'-')"
 	elif filters.row_group=="Product And Price":
 		_row_group = "concat(a.product_code,'-',a.product_name, ' ', a.`portion`),a.price"
@@ -325,6 +335,7 @@ def get_report_group_data(filters):
 		p["is_group"] = 1
 		data.append(p)
 		row_group = [d for d in get_row_groups() if d["label"]==filters.parent_row_group][0]
+		# frappe.throw(str(row_group))
 		children = get_report_data(filters, None, 1, group_filter={"field":row_group["fieldname"],"value":p[row_group["parent_row_group_filter_field"]]})
 		
 		for c in children:
@@ -353,6 +364,14 @@ def get_report_summary(data,filters):
 						elif f["fieldtype"] =="Float":
 							value = "{:.2f}".format(value)
 						report_summary.append({"label":"Total {}".format(f["label"]),"value":value,"indicator":f["indicator"]})
+				elif f["fieldname"] == 'sub_total':
+					
+					value=sum(d["total_" + f["fieldname"]] for d in data if d["indent"]==0)
+					if f["fieldtype"] == "Currency":
+						value = frappe.utils.fmt_money(value)
+					elif f["fieldtype"] =="Float":
+						value = "{:.2f}".format(value)
+					report_summary.append({"label":"{}".format(f["label"]),"value":value,"indicator":f["indicator"]})
 				else:
 					value=sum(d["total_" + f["fieldname"]] for d in data if d["indent"]==0)
 					if f["fieldtype"] == "Currency":
@@ -456,7 +475,7 @@ def get_report_field(filters):
 def get_row_groups():
 	return [
 		{
-			"fieldname":"a.parent",
+			"fieldname":"if(ifnull(b.custom_bill_number,'')='',a.parent,b.custom_bill_number)",
 			"label":"Sale Invoice",
 			"parent_row_group_filter_field":"row_group",
 			"show_commission":True

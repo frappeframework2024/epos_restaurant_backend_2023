@@ -1,0 +1,6 @@
+{
+	"js/epos.min.js": [
+		"public/js/templates/app_menu.html",
+		"public/js/helloworld.html"
+	]
+}

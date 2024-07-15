@@ -5,21 +5,20 @@ import frappe
 from frappe import _
 from frappe.utils import date_diff,today ,add_months, add_days
 from frappe.utils.data import strip
-import datetime
-
+from datetime import datetime, date
 
 def execute(filters=None):
 
 	if filters.filter_based_on =="Fiscal Year":
 		# if not filters.from_fiscal_year:
-			filters.from_fiscal_year = datetime.date.today().year
+			filters.from_fiscal_year = datetime.today().year
 			
 			filters.start_date = '{}-01-01'.format(filters.from_fiscal_year)
 			filters.end_date = '{}-12-31'.format(filters.from_fiscal_year) 
 
 
-	elif filters.filter_based_on =="This Month":
-		filters.start_date = datetime.date.today().replace(day=1)
+	elif filters.filter_based_on =="This Month": 
+		filters.start_date = str(date.today().replace(day=1))
 		filters.end_date =add_days(  add_months(filters.start_date ,1),-1)
 	
 	 
@@ -290,8 +289,8 @@ def get_sql_data(filters,row_group):
 			"product_name":row["product_name"]
 			}
  
-		in_quantity = row['in_quantity']
-		out_quantity = row['out_quantity']
+		in_quantity = float(row['in_quantity'])
+		out_quantity = float(row['out_quantity'])
 
 		g = json.dumps(group)
 		 
@@ -304,8 +303,14 @@ def get_sql_data(filters,row_group):
 	 
 	inventory_movement = []
 	for group, total in groups.items():
-		total_in_quantity = sum(total['in_quantity'] )
-		total_out_quantity = sum(total['out_quantity'])
+		total_in_quantity = float(sum(total['in_quantity'] ))
+		total_out_quantity = float(sum(total['out_quantity']))
+
+		_start_date =	datetime.strptime(filters.start_date, '%Y-%m-%d').date() 
+		today = datetime.today().date()
+		# if _start_date > today:
+		# 	total_in_quantity = 0
+		# 	total_out_quantity = 0
 
 		row = json.loads(group)
 		_data = list(filter(lambda x: x['business_branch'] ==row["business_branch"] 
@@ -334,10 +339,10 @@ def get_sql_data(filters,row_group):
 			"product_name":row["product_name"],
 			"indent":0,
 			"row_group":row["product_name"],
-			"quantity_on_hand":quantity_on_hand,
+			"quantity_on_hand": quantity_on_hand ,#balance if _start_date > today else quantity_on_hand,
 			"in_quantity":total_in_quantity,
 			"out_quantity":total_out_quantity,
-			"balance":balance
+			"balance": balance
 		})
 	
 	return get_data_group_by_row(inventory_movement,row_group )

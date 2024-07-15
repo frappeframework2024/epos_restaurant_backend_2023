@@ -3,7 +3,6 @@
 
 frappe.ui.form.on("Sale", {
 	onload(frm) {
-
 		frm.set_query("tip_account_code", function () {
 			return {
 				filters: [

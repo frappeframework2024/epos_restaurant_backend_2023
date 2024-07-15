@@ -3,7 +3,7 @@
 /* eslint-disable */
 
 frappe.query_reports["Inventory Movement Report"] = {
-	onload: function() {
+	onload: function(report) {
 		switch(frappe.query_report.get_filter_value('filter_based_on')){
 			case 'This Month':
 				frappe.query_report.toggle_filter_display('from_fiscal_year', true);
@@ -18,6 +18,9 @@ frappe.query_reports["Inventory Movement Report"] = {
 				frappe.query_report.toggle_filter_display('from_fiscal_year', true);
 				break;
 		} 
+		report.page.add_inner_button("Preview Report", function () {
+			frappe.query_report.refresh();
+		});
 	},
 	"filters": [
 		// Business Branch
@@ -27,7 +30,8 @@ frappe.query_reports["Inventory Movement Report"] = {
 			fieldtype: "MultiSelectList",
 			get_data: function(txt) {
 				return frappe.db.get_link_options('Business Branch', txt);
-			}
+			},
+			on_change: function (query_report) {},
 			 
 		},
 		// Date and Date Rang
@@ -51,34 +55,31 @@ frappe.query_reports["Inventory Movement Report"] = {
 					frappe.query_report.toggle_filter_display('start_date', true  );
 					frappe.query_report.toggle_filter_display('end_date', true );
 
-				}
-
-				frappe.query_report.refresh();
-	 
+				} 
 			}
 		},
 		{
 			"fieldname":"start_date",
 			"label": __("Start Date"),
 			"fieldtype": "Date",
-			default:frappe.datetime.get_today(),
-	
-			"reqd": 1
+			default:frappe.datetime.get_today(),	
+			"reqd": 1,
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname":"end_date",
 			"label": __("End Date"),
 			"fieldtype": "Date",
-			default:frappe.datetime.get_today(),
-		
-			"reqd": 1
+			default:frappe.datetime.get_today(),		
+			"reqd": 1,
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname":"from_fiscal_year",
 			"label": __("Start Year"),
-			"fieldtype": "Int",
-			
-			"default": (new Date()).getFullYear()
+			"fieldtype": "Int",			
+			"default": (new Date()).getFullYear(),
+			"on_change": function (query_report) {},
 		},
 		// stock location
 		{
@@ -95,19 +96,19 @@ frappe.query_reports["Inventory Movement Report"] = {
 						"business_branch":["in",group]
 					});
 				}
-			}
+			},
+			"on_change": function (query_report) {},
 		},
-
 
 		// Product Group
 		{
 			"fieldname": "product_group",
 			"label": __("Product Group"),
 			"fieldtype": "MultiSelectList",
-			get_data: function(txt) {
-				
+			get_data: function(txt) {				
 				return frappe.db.get_link_options('Product Category', txt,{"is_group":1});
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 
 		// Product Category
@@ -128,28 +129,17 @@ frappe.query_reports["Inventory Movement Report"] = {
 						"parent_product_category":["in",group]
 					});
 				}
-			}
+			},
+			"on_change": function (query_report) {},
 		},
-		// {
-		// 	"fieldname": "parent_row_group",
-		// 	"label": __("Parent Group By"),
-		// 	"fieldtype": "Select",
-		// 	"options": "\nBusiness Branch\nStock Location\nProduct Group\nProduct Category",
-		// },
 		{
 			"fieldname": "row_group",
 			"label": __("Row Group By"),
 			"fieldtype": "Select",
 			"options": "Product\nProduct Category\nProduct Group\nBusiness Branch\nStock Location",
-			"default":"Product"
+			"default":"Product",
+			"on_change": function (query_report) {},
 		},
-		// {
-		// 	"fieldname": "chart_type",
-		// 	"label": __("Chart Type"),
-		// 	"fieldtype": "Select",
-		// 	"options": "None\nbar\nline\npie",
-		// 	"default":"bar"
-		// }
 
 	],
 	"formatter": function(value, row, column, data, default_formatter) {	

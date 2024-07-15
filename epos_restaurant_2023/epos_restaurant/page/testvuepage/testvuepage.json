@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2024-07-11 15:02:38.434810",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2024-07-11 15:02:38.434810",
+ "modified_by": "Administrator",
+ "module": "ePOS Restaurant",
+ "name": "testvuepage",
+ "owner": "Administrator",
+ "page_name": "testvuepage",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "TestVuePage"
+}

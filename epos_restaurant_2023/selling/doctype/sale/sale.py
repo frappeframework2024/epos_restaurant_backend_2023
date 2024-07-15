@@ -782,7 +782,7 @@ def validate_tax(doc):
 				priceBefore = get_ratebefore_tax(doc.sub_total - doc.total_discount,doc.tax_rule, doc.tax_1_rate, doc.tax_2_rate, doc.tax_3_rate)
 				amount =  priceBefore + doc.total_discount  
 			
-			doc.selling_price = (amount / doc.quantity) - (doc.modifiers_price or 0)
+			doc.selling_price = ((amount / doc.quantity) or 0) - (doc.modifiers_price or 0)
 
 
 			#Tax 1
@@ -1021,8 +1021,6 @@ def update_default_change_account(self):
 			self.default_change_account = frappe.get_cached_value("POS Config",self.pos_config,"default_change_account" )
 		if not self.default_change_account:
 			self.default_change_account = frappe.get_cached_value("Business Branch",self.business_branch,"default_change_account" )
-
-
 
         
 def update_inventory_product_cost(self):

@@ -11,11 +11,16 @@ class WorkingDay(Document):
 	def validate(self):
 		if self.flags.ignore_validate == True:
 			return
-	 
+		
+		pos_profile = frappe.get_doc("POS Profile", self.pos_profile)	 
 
 		if self.is_new():
-			if frappe.db.exists('Working Day', {'pos_profile': self.pos_profile, 'is_closed': 0}):
-				frappe.throw("Workingday in this pos profile {} is already opened".format(self.pos_profile))
+			if pos_profile.business_branch != self.business_branch:
+				frappe.throw("Invalid POS Profile configuration")
+
+			
+			if frappe.db.exists('Working Day', {'business_branch': self.business_branch, 'is_closed': 0}):
+				frappe.throw("Working day is already opened")
 		
 	
 
@@ -35,7 +40,7 @@ class WorkingDay(Document):
 					frappe.throw("Please close all pending order before closing working day.")
 
 			#check reset waiting number
-			pos_profile = frappe.get_doc("POS Profile", self.pos_profile)
+			
 			if pos_profile.reset_waiting_number_after=="Close Working Day":
 				prefix = pos_profile.waiting_number_prefix.replace('.','').replace("#",'')
 				naming_series = NamingSeries(prefix)

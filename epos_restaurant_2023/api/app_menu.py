@@ -6,8 +6,8 @@ def get_sidebar_menu_template():
     data = get_workspace_sidebar_items()
     menus = [d for d in data["pages"] if  not d["parent_page"] and d["is_hidden"]==0]
     # return [d["name"] for d in data["pages"]]
-    shortcut_menus = frappe.db.sql("select parent,  type,link_to,label, doc_view from `tabWorkspace Shortcut` where parent in %(parent_menu)s",{"parent_menu":[d["name"] for d in  data["pages"]]}, as_dict=1)
-    workspace_links = frappe.db.sql("select name,idx, parent,link_to,link_type,label,link_count,type from `tabWorkspace Link` where parent in %(parents)s  order by idx ",{"parents":[d["name"] for d in  data["pages"]]},as_dict=1)
+    shortcut_menus = frappe.db.sql("select parent,  type,link_to,label, doc_view from `tabWorkspace Shortcut` where parent in %(parent_menu)s and custom_show_in_app_menu = 1 order by idx",{"parent_menu":[d["name"] for d in  data["pages"]]}, as_dict=1)
+    workspace_links = frappe.db.sql("select name,idx, parent,link_to,link_type,label,link_count,type from `tabWorkspace Link` where parent in %(parents)s and custom_show_in_app_menu = 1   order by custom_sort_order, idx ",{"parents":[d["name"] for d in  data["pages"]]},as_dict=1)
     
     for d in menus:
         d["sub_menus"] = {"shortcut_menu":[],"workspace_links":[]}
@@ -56,7 +56,7 @@ def get_sidebar_menu_template():
                         <ul class="menu">
                             {%for d in data%}
                                 <li class="{{'' if not 'sub_menus' in d else 'submenu'}}" data-submenu="{{d.id}}">
-                                    <a class="menus" data-workspace="{{d.name}}" data-custom-route="{{d.custom_route or ""}}">
+                                    <a class="menus tooltips" data-workspace="{{d.name}}" data-custom-route="{{d.custom_route or ""}}">
                                         <span class="icon">
                                             {%if d.custom_menu_icon%}
                                                 {{d.custom_menu_icon}}
@@ -66,40 +66,75 @@ def get_sidebar_menu_template():
                                             </svg>
                                             {%endif%}
                                         </span>
+                                        <span class="tooltiptext">{{d.name}}</span>
                                     </a>
                                 </li>
                             {%endfor%}
                         </ul>
                     </div>
                 </div>
+                
                 <div class="user-profile">
-                    <div class="us-pro-inner">
-                        <img src="{{app_logo}}" />
+                    <div class="us-pro-inner" id="popover-button">
+                        <img style="height:inherit;object-fit:cover;" src="{{user.profile}}" />
+                    </div>
+                    <div id="popover" class="popovers">
+                        <div>
+                            <a href="/app/user-profile">My Profile</a>
+                            <a class="text-danger" onclick="return frappe.app.logout()">Log out</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="submenu-panel" id="submenu-panel">
-            <input type="text" class="search-input" placeholder="Search...">
+            <div class="d-flex justify-between align-center" style="gap:10px">
+                <div>
+                    <input type="text" class="search-input" placeholder="Search...">
+                </div>
+                <div>
+                    <div id="hide_sub_menu">
+                        <svg width="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M15 19L9 12L10.5 10.25M15 5L13 7.33333" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+                    </div>
+                </div>
+            </div>
+            <br/>
             {%for d in data%}
                 {%if 'sub_menus' in d%}
                 <div class="submenu-content" id="{{d.id}}">
                     <div class="shortcut_menu">
                         {%for s in d.sub_menus.shortcut_menu%}
-                    
-                            <a  class="sub_menu_link" data-name="{{s.name}}" data-doc-view="{{s.doc_view}}" data-link-to="{{s.link_to}}" data-type="{{s.type}}">{{s.name}}</a>
-                            <hr/>
-                             
+                            <div class="p-2 d-flex align-center sub-hover">
+                                <div>
+                                    <?xml version="1.0" encoding="utf-8"?>
+                                    <!-- Generator: Adobe Illustrator 26.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+                                    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                        width="18.8px" height="18.8px" viewBox="0 0 18.8 18.8" style="enable-background:new 0 0 18.8 18.8;" xml:space="preserve">
+                                    <style type="text/css">
+                                        .st0{fill:#EAECEE;}
+                                        .st1{fill:#495057;}
+                                    </style>
+                                    <g>
+                                        <path class="st0" d="M15.6,18.8H3.2c-1.7,0-3.2-1.4-3.2-3.2L0,3.2C0,1.4,1.4,0,3.2,0l12.4,0c1.7,0,3.2,1.4,3.2,3.2v12.4
+                                            C18.8,17.4,17.4,18.8,15.6,18.8z"/>
+                                        <circle class="st1" cx="9.4" cy="9.4" r="2.1"/>
+                                    </g>
+                                    </svg>
+                                </div>
+                                <div class="ml-2"><a class="sub_menu_link" data-name="{{s.name}}" data-doc-view="{{s.doc_view}}" data-link-to="{{s.link_to}}" data-type="{{s.type}}">{{s.name}}</a></div>
+                            </div>
                         {%endfor%}
-                          <hr/>
                           <div class="accordion" id="accordionExample">
                             {% for g in d.sub_menus.workspace_links%}
                             <div class="card">
                                 <div class="card-header" id="head_{{g.name}}">
                                 <h2 class="mb-0">
-                                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse{{g.name}}" aria-expanded="true" aria-controls="collapse{{g.name}}">
-                                        {{g.label}}
+                                    <button class="btn btn-link btn-block text-left p-0" type="button" data-toggle="collapse" data-target="#collapse{{g.name}}" aria-expanded="true" aria-controls="collapse{{g.name}}">
+                                        <div class="d-flex align-center">
+                                            <div><svg width="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M18 10L13 10" stroke="#000000" stroke-width="1.5" stroke-linecap="round"></path> <path d="M10 3H16.5C16.9644 3 17.1966 3 17.3916 3.02567C18.7378 3.2029 19.7971 4.26222 19.9743 5.60842C20 5.80337 20 6.03558 20 6.5" stroke="#000000" stroke-width="1.5"></path> <path d="M22 11.7979C22 9.16554 22 7.84935 21.2305 6.99383C21.1598 6.91514 21.0849 6.84024 21.0062 6.76946C20.1506 6 18.8345 6 16.2021 6H15.8284C14.6747 6 14.0979 6 13.5604 5.84678C13.2651 5.7626 12.9804 5.64471 12.7121 5.49543C12.2237 5.22367 11.8158 4.81578 11 4L10.4497 3.44975C10.1763 3.17633 10.0396 3.03961 9.89594 2.92051C9.27652 2.40704 8.51665 2.09229 7.71557 2.01738C7.52976 2 7.33642 2 6.94975 2C6.06722 2 5.62595 2 5.25839 2.06935C3.64031 2.37464 2.37464 3.64031 2.06935 5.25839C2 5.62595 2 6.06722 2 6.94975M21.9913 16C21.9554 18.4796 21.7715 19.8853 20.8284 20.8284C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.8284C2 19.6569 2 17.7712 2 14V11" stroke="#000000" stroke-width="1.5" stroke-linecap="round"></path> </g></svg></div>
+                                            <div class="ml-2 dir-menu">{{g.label}}</div>
+                                        </div>
                                     </button>
                                 </h2>
                                 </div>
@@ -107,25 +142,151 @@ def get_sidebar_menu_template():
                                 <div id="collapse{{g.name}}" class="collapse {{'show' if g.show else ''}}" aria-labelledby="head_{{g.name}}" data-parent="#accordionExample">
                                 <div class="card-body">
                                     {%for l in g.links%}
-                                        <a  class="sub_menu_link"  data-link-to="{{l.link_to}}" data-type="{{l.link_type}}">{{l.label}}</a>
-                                        <hr/>
+                                        <div class="sub__menu d-flex align-center">
+                                            <div style="margin-left:20px">
+                                                <div>
+                                                    <?xml version="1.0" encoding="utf-8"?>
+                                                        <!-- Generator: Adobe Illustrator 26.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+                                                        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                                            width="18.8px" height="18.8px" viewBox="0 0 18.8 18.8" style="enable-background:new 0 0 18.8 18.8;" xml:space="preserve">
+                                                        <style type="text/css">
+                                                            .st0{fill:#EAECEE;}
+                                                            .st1{fill:#495057;}
+                                                        </style>
+                                                        <g>
+                                                            <path class="st0" d="M15.6,18.8H3.2c-1.7,0-3.2-1.4-3.2-3.2L0,3.2C0,1.4,1.4,0,3.2,0l12.4,0c1.7,0,3.2,1.4,3.2,3.2v12.4
+                                                                C18.8,17.4,17.4,18.8,15.6,18.8z"/>
+                                                            <circle class="st1" cx="9.4" cy="9.4" r="2.1"/>
+                                                        </g>
+                                                        </svg>
+                                                </div>
+                                            </div>
+                                            <div class="ml-2"><a class="sub_menu_link"  data-link-to="{{l.link_to}}" data-type="{{l.link_type}}">{{l.label}}</a></div>
+                                        </div>
                                     {%endfor%}
                                 </div>
                                 </div>
                             </div>
                            {%endfor%}
                         </div>
-                          <hr/>
                     </div>
                 </div>
                 {%endif%}
             {%endfor%}
         </div>
     </div>
+
+
+    <div id="mobile-side-menu">
+        <div class="menu-btn">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+        <div class="sidebar-a">
+            <ul>
+                {%for d in data%}
+                    <li class="{{'' if not 'sub_menus' in d else 'submenu'}}" data-submenu="{{d.id}}">
+                        <a class="menus tooltips" data-workspace="{{d.name}}" data-custom-route="{{d.custom_route or ""}}">
+                            <span class="icon">
+                                {%if d.custom_menu_icon%}
+                                    {{d.custom_menu_icon}}
+                                {%else%}
+                                <svg class="icon  icon-md" style="">
+                                    <use class="" href="#icon-{{d.icon}}"></use>
+                                </svg>
+                                {%endif%}
+                            </span>
+                            <span>{{d.name}}</span>
+                            <span class="tooltiptext">{{d.name}}</span>
+                        </a>
+                        <ul>
+                            {%if 'sub_menus' in d%}
+                                <div class="submenu-content" id="{{d.id}}">
+                                    <div class="shortcut_menu">
+                                        {%for s in d.sub_menus.shortcut_menu%}
+                                            <div class="p-2 d-flex align-center sub-hover">
+                                                <div>
+                                                    <?xml version="1.0" encoding="utf-8"?>
+                                                    <!-- Generator: Adobe Illustrator 26.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+                                                    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                                        width="18.8px" height="18.8px" viewBox="0 0 18.8 18.8" style="enable-background:new 0 0 18.8 18.8;" xml:space="preserve">
+                                                    <style type="text/css">
+                                                        .st0{fill:#EAECEE;}
+                                                        .st1{fill:#495057;}
+                                                    </style>
+                                                    <g>
+                                                        <path class="st0" d="M15.6,18.8H3.2c-1.7,0-3.2-1.4-3.2-3.2L0,3.2C0,1.4,1.4,0,3.2,0l12.4,0c1.7,0,3.2,1.4,3.2,3.2v12.4
+                                                            C18.8,17.4,17.4,18.8,15.6,18.8z"/>
+                                                        <circle class="st1" cx="9.4" cy="9.4" r="2.1"/>
+                                                    </g>
+                                                    </svg>
+                                                </div>
+                                                <div class="ml-2"><a class="sub_menu_link" data-name="{{s.name}}" data-doc-view="{{s.doc_view}}" data-link-to="{{s.link_to}}" data-type="{{s.type}}">{{s.name}}</a></div>
+                                            </div>
+                                        {%endfor%}
+                                        <div class="accordion" id="accordionExample">
+                                            {% for g in d.sub_menus.workspace_links%}
+                                            <div class="card">
+                                                <div class="card-header" id="head_{{g.name}}">
+                                                <h2 class="mb-0">
+                                                    <button class="btn btn-link btn-block text-left p-0" type="button" data-toggle="collapse" data-target="#collapse{{g.name}}" aria-expanded="true" aria-controls="collapse{{g.name}}">
+                                                        <div class="d-flex align-center">
+                                                            <div><svg width="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M18 10L13 10" stroke="#000000" stroke-width="1.5" stroke-linecap="round"></path> <path d="M10 3H16.5C16.9644 3 17.1966 3 17.3916 3.02567C18.7378 3.2029 19.7971 4.26222 19.9743 5.60842C20 5.80337 20 6.03558 20 6.5" stroke="#000000" stroke-width="1.5"></path> <path d="M22 11.7979C22 9.16554 22 7.84935 21.2305 6.99383C21.1598 6.91514 21.0849 6.84024 21.0062 6.76946C20.1506 6 18.8345 6 16.2021 6H15.8284C14.6747 6 14.0979 6 13.5604 5.84678C13.2651 5.7626 12.9804 5.64471 12.7121 5.49543C12.2237 5.22367 11.8158 4.81578 11 4L10.4497 3.44975C10.1763 3.17633 10.0396 3.03961 9.89594 2.92051C9.27652 2.40704 8.51665 2.09229 7.71557 2.01738C7.52976 2 7.33642 2 6.94975 2C6.06722 2 5.62595 2 5.25839 2.06935C3.64031 2.37464 2.37464 3.64031 2.06935 5.25839C2 5.62595 2 6.06722 2 6.94975M21.9913 16C21.9554 18.4796 21.7715 19.8853 20.8284 20.8284C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.8284C2 19.6569 2 17.7712 2 14V11" stroke="#000000" stroke-width="1.5" stroke-linecap="round"></path> </g></svg></div>
+                                                            <div class="ml-2 dir-menu">{{g.label}}</div>
+                                                        </div>
+                                                    </button>
+                                                </h2>
+                                                </div>
+
+                                                <div id="collapse{{g.name}}" class="collapse {{'show' if g.show else ''}}" aria-labelledby="head_{{g.name}}" data-parent="#accordionExample">
+                                                <div class="card-body">
+                                                    {%for l in g.links%}
+                                                        <div class="sub__menu d-flex align-center">
+                                                            <div style="margin-left:20px">
+                                                                <div>
+                                                                    <?xml version="1.0" encoding="utf-8"?>
+                                                                        <!-- Generator: Adobe Illustrator 26.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+                                                                        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                                                            width="18.8px" height="18.8px" viewBox="0 0 18.8 18.8" style="enable-background:new 0 0 18.8 18.8;" xml:space="preserve">
+                                                                        <style type="text/css">
+                                                                            .st0{fill:#EAECEE;}
+                                                                            .st1{fill:#495057;}
+                                                                        </style>
+                                                                        <g>
+                                                                            <path class="st0" d="M15.6,18.8H3.2c-1.7,0-3.2-1.4-3.2-3.2L0,3.2C0,1.4,1.4,0,3.2,0l12.4,0c1.7,0,3.2,1.4,3.2,3.2v12.4
+                                                                                C18.8,17.4,17.4,18.8,15.6,18.8z"/>
+                                                                            <circle class="st1" cx="9.4" cy="9.4" r="2.1"/>
+                                                                        </g>
+                                                                        </svg>
+                                                                </div>
+                                                            </div>
+                                                            <div class="ml-2"><a class="sub_menu_link"  data-link-to="{{l.link_to}}" data-type="{{l.link_type}}">{{l.label}}</a></div>
+                                                        </div>
+                                                    {%endfor%}
+                                                </div>
+                                                </div>
+                                            </div>
+                                        {%endfor%}
+                                        </div>
+                                    </div>
+                                </div>
+                            {%endif%}
+                        </ul>
+                    </li>
+                {%endfor%}
+            </ul>
+        </div>
+    </div>
     """
+    user = {
+        "username":frappe.get_cached_value("User",frappe.session.user,"full_name"),
+        "profile" : frappe.get_cached_value("User",frappe.session.user,"user_image")
+    }
     
     
-    return frappe.render_template(template,{"data":menus,"app_logo":frappe.db.get_single_value("Navbar Settings","app_logo")})
+    
+    return frappe.render_template(template,{"data":menus,"app_logo":frappe.get_cached_value("Navbar Settings",None,"app_logo"),"user":user})
 
 
 

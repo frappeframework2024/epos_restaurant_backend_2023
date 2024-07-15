@@ -70,9 +70,9 @@ frappe.query_reports["Sale Summary Report"] = {
 			"fieldname":"from_fiscal_year",
 			"label": __("Start Year"),
 			"fieldtype": "Int",
-			"on_change": function (query_report) {},
 			"default": (new Date()).getFullYear(),
-			hide_in_filter:1,
+			"hide_in_filter":1,
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "pos_profile",

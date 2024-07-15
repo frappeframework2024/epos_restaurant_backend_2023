@@ -61,6 +61,7 @@
   "column_break_oqmw",
   "default_credit_account",
   "default_purchase_discount_account",
+  "default_bank_fee_account",
   "profit_and_loss_statement_report_head_account_section",
   "income_head_account",
   "column_break_rfra",
@@ -425,12 +426,18 @@
    "fieldtype": "Link",
    "label": "Default Change Account",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_bank_fee_account",
+   "fieldtype": "Link",
+   "label": "Default Bank Fee Account",
+   "options": "Chart Of Account"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-10 19:04:11.316969",
+ "modified": "2024-07-12 16:03:12.779407",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",

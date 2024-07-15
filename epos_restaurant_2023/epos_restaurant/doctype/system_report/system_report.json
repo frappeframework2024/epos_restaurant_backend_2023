@@ -11,6 +11,7 @@
   "report_title",
   "report_name",
   "filter_option",
+  "filter_default_value",
   "lft",
   "rgt",
   "is_group",
@@ -89,12 +90,18 @@
    "fieldname": "default_filter",
    "fieldtype": "Small Text",
    "label": "Default Filter"
+  },
+  {
+   "description": "Use comma separator of filter key. eg start_date,end_date,business_source,",
+   "fieldname": "filter_default_value",
+   "fieldtype": "Small Text",
+   "label": "Filter Default Value"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-12-29 14:53:04.206302",
+ "modified": "2024-07-13 09:22:52.503647",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "System Report",

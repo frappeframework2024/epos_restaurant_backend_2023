@@ -43,11 +43,7 @@ def on_get_pos_configure(pos_profile="", device_name=''):
 ## use POST method to get user and permission to login
 @frappe.whitelist(allow_guest=True) 
 def on_get_user_for_login(pin):
-    return check_username(pin)
-
-@frappe.whitelist() 
-def test_auth():
-    return "Authorized"
+    return check_username(pin) 
 
 @frappe.whitelist(allow_guest=True,methods='POST') 
 def get_menu_product(root_menu=""):
