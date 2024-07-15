@@ -1,6 +1,6 @@
 <template>
     <div class="bg-white" :class="mobile ? 'px-2' : 'p-2'" id="shortcut_menu" v-if="shortcut?.length > 0"> 
-        <div :class="mobile ? 'flex flex-nowrap overflow-x-auto pb-1 wrap-sm' : 'flex-wrap flex -my-1 justify-center'" v-if="shortcut">
+        <div :class="'flex-wrap flex -my-1 justify-center'" v-if="mobile === false && shortcut">
             <v-btn 
                 class="flex-shrink-0 m-1"
                 v-for="(m, index) in shortcut" :key="index"
@@ -12,6 +12,19 @@
                 <span v-bind:style="{color:m.text_color}">{{m.name_en}}</span>
             </v-btn> 
         </div>
+        <v-slide-group v-if="mobile === true && shortcut">
+            <v-slide-group-item v-for="(m, index) in shortcut" :key="index" v-slot="{ isSelected, toggle }">
+                <v-btn 
+                class="flex-shrink-0 m-1"
+                rounded="pill"
+                variant="tonal"
+                size="small"
+                v-bind:style="{'background-color':m.background_color}"
+                @click="onClick(m.name_en)">
+                <span v-bind:style="{color:m.text_color}">{{m.name_en}}</span>
+            </v-btn> 
+            </v-slide-group-item>
+        </v-slide-group>
     </div>
 </template>
 <script setup>

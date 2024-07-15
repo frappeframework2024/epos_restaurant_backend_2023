@@ -353,13 +353,13 @@ def get_report_summary(data,filters):
 			if not filters.is_ticket:
 				report_summary =[{"label":"Total " + filters.row_group ,"value":len(data)}]
 		fields = get_report_field(filters)
-
 		for f in fields:
 			if not hide_columns or  f["label"] not in hide_columns:
 				if f["fieldname"] == 'commission':
 					if row_group["show_commission"] == True:
 						value=sum(d["total_" + f["fieldname"]] for d in data if d["indent"]==0)
 						if f["fieldtype"] == "Currency":
+							
 							value = frappe.utils.fmt_money(value)
 						elif f["fieldtype"] =="Float":
 							value = "{:.2f}".format(value)
@@ -367,19 +367,13 @@ def get_report_summary(data,filters):
 				elif f["fieldname"] == 'sub_total':
 					
 					value=sum(d["total_" + f["fieldname"]] for d in data if d["indent"]==0)
-					if f["fieldtype"] == "Currency":
-						value = frappe.utils.fmt_money(value)
-					elif f["fieldtype"] =="Float":
-						value = "{:.2f}".format(value)
-					report_summary.append({"label":"{}".format(f["label"]),"value":value,"indicator":f["indicator"]})
+					
+					report_summary.append({"label":"{}".format(f["label"]),"value":value,"datatype": f["fieldtype"],"indicator":f["indicator"]})
 				else:
 					value=sum(d["total_" + f["fieldname"]] for d in data if d["indent"]==0)
-					if f["fieldtype"] == "Currency":
-						value = frappe.utils.fmt_money(value)
-					elif f["fieldtype"] =="Float":
-						value = "{:.2f}".format(value)
+				
 
-					report_summary.append({"label":"Total {}".format(f["label"]),"value":value,"indicator":f["indicator"]})
+					report_summary.append({"label":"Total {}".format(f["label"]),"value":value,        "datatype": f["fieldtype"],"indicator":f["indicator"]})
 
 	return  report_summary
 
