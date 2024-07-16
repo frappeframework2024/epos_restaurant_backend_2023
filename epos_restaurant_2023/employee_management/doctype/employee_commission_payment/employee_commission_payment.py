@@ -34,7 +34,7 @@ class EmployeeCommissionPayment(Document):
 					   posting_date between '{1}' and '{2}'
 					   """.format(doc.employee,doc.sale_start_date,doc.sale_end_date),as_dict=1)
 		for a in data:
-			sales.append({"sale":a.name,"commission_amount":a.sale_commission_amount,"paid_amount":a.sale_commission_paid_amount,"balance":a.sale_commission_balance})
+			sales.append({"sale":a.name,"commission_amount":a.sale_commission_amount,"paid_amount":a.sale_commission_paid_amount,"balance":a.sale_commission_balance,"posting_date":a.posting_date})
 		if len(data) == 0:
 			frappe.throw("No Record")
 		else:
