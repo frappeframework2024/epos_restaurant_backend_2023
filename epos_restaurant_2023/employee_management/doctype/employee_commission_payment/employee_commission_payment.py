@@ -26,7 +26,8 @@ class EmployeeCommissionPayment(Document):
 					   select name,
 					   sale_commission_amount,
 					   sale_commission_paid_amount,
-					   sale_commission_balance 
+					   sale_commission_balance,
+					   posting_date
 					   from `tabSale` 
 					   where sale_commission_to = '{0}' and 
 					   sale_commission_balance > 0 and
