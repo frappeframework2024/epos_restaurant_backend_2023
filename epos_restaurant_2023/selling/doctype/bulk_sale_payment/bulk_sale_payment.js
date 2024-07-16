@@ -60,8 +60,8 @@ frappe.ui.form.on("Bulk Sale Payment", {
                                 doc = frm.add_child("sale_list");
                                 doc.sale = r.sale;
                                 doc.sale_amount = r.balance;
-                                doc.fee_amount = r.balance * (fee_response.message.default_fee_amount > 0 ? (fee_response.message.default_fee_amount/100):1);
-                                doc.amount = r.balance + (r.balance * (fee_response.message.default_fee_amount > 0 ? (fee_response.message.default_fee_amount/100):1));
+                                doc.fee_amount = r.balance * (fee_response.message.default_fee_amount > 0 ? (fee_response.message.default_fee_amount/100):0);
+                                doc.amount = r.balance + (r.balance * (fee_response.message.default_fee_amount > 0 ? (fee_response.message.default_fee_amount/100):0));
                                 doc.payment_type = frm.doc.payment_type;
                                 doc.currency = frm.doc.currency;
                                 doc.exchange_rate = (frm.doc.exchange_rate || 0);
@@ -117,7 +117,7 @@ frappe.ui.form.on("Bulk Sale Payment", {
                     if (fee_response.message.default_fee_amount > 0){
                         d.input_amount = doc.sale_amount;
                         d.fee_amount = d.sale_amount * (fee_response.message.default_fee_amount > 0 ? (fee_response.message.default_fee_amount/100):1);
-                        d.amount = d.sale_amount + (d.sale_amount * (fee_response.message.default_fee_amount > 0 ? (fee_response.message.default_fee_amount/100):1));
+                        d.amount = d.sale_amount + (d.sale_amount * (fee_response.message.default_fee_amount > 0 ? (fee_response.message.default_fee_amount/100):0));
                         console.log(d.fee_amount)
                     }else{
                         d.fee_amount = 0;
