@@ -321,6 +321,7 @@ function get_currenct_cost(frm,doc){
 function update_po_product_amount(frm, doc) {
 	doc.exchange_rate = frm.doc.exchange_rate;
 	doc.sub_total = doc.cost * doc.quantity;
+	doc.total_secondary_cost = doc.secondary_cost * doc.quantity;
 
 
 	if (doc.discount) {

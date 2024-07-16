@@ -104,6 +104,7 @@ function update_stock_transfer_products_amount(frm,cdt, cdn)  {
     let doc=locals[cdt][cdn];
 	if(doc.quantity <= 0) doc.quantity = 1;
 	doc.amount=doc.quantity * doc.cost;
+	doc.total_secondary_cost=doc.quantity * doc.secondary_cost;
 	frm.refresh_field('stock_transfer_products');
 	updateSumTotal(frm);
 }

@@ -11,17 +11,23 @@ frappe.ui.form.on("Bulk Purchase Order Payment", {
                 }
             }
         });
+        frm.set_query("stock_location", function() {
+            return {
+                filters: [["disabled","=",0]]
+            }
+        });
     },
 	refresh(frm) {
         updatetotal(frm);
 	},
-    vendor(frm) {
-		if (frm.doc.vendor) {
+    stock_location(frm){
+        if (frm.doc.vendor) {
             frm.set_value('purchase_order_list', []);
 			frappe.call({
                 method: "epos_restaurant_2023.purchasing.doctype.bulk_purchase_order_payment.bulk_purchase_order_payment.get_purchase_order_by_vendor",
                 args: {
-                    vendor:frm.doc.vendor
+                    vendor:frm.doc.vendor,
+                    stock_location:frm.doc.stock_location
                 },
                 callback: function(r){
                     r.message.forEach((r => {
@@ -42,7 +48,10 @@ frappe.ui.form.on("Bulk Purchase Order Payment", {
                 }
             });
 		}
-	},
+        else{
+            frappe.throw("Please Select Vendor First")
+        }
+    },
     payment_type(frm){ 
         if(frm.doc.purchase_order_list.length > 0){
             $.each(frm.doc.purchase_order_list, function(i, d) {

@@ -79,6 +79,7 @@ function update_stock_take_product_amount(frm,cdt, cdn)  {
     let doc = locals[cdt][cdn];
 		if(doc.quantity <= 0) doc.quantity = 1;
 		doc.amount=doc.quantity * doc.price;
+		doc.total_secondary_cost=doc.quantity * doc.secondary_cost;
 	    frm.refresh_field('stock_take_products');
 		updateSumTotal(frm);
 }

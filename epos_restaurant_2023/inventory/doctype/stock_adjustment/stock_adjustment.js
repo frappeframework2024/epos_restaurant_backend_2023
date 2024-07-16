@@ -114,7 +114,8 @@ function update_product_amount(frm,cdt, cdn)  {
     let doc = locals[cdt][cdn];
     doc.difference_quantity = doc.quantity - doc.current_quantity;
     doc.difference_cost = doc.cost - doc.current_cost;
-    doc.total_cost=doc.quantity * doc.cost;
+    doc.total_cost = doc.quantity * doc.cost;
+    doc.total_secondary_cost = doc.quantity * doc.secondary_cost;
     updateSumTotal(frm);
 }
 

@@ -304,13 +304,13 @@ frappe.ui.form.on("Sale", {
 	},
 	sale_commission_amount(frm) {
 		if(frm.doc.sale_commission_based_on == "First Cost Profit"){
-			frm.set_value('sale_commission_percent',frm.doc.sale_commission_amount*100/frm.doc.sale_profit)
+			frm.set_value('sale_commission_percent',frm.doc.sale_commission_amount*100/(frm.doc.sale_profit > 0 ? frm.doc.sale_profit : 1))
 		}
 		else if(frm.doc.sale_commission_based_on == "Second Cost Profit"){
-			frm.set_value('sale_commission_percent',frm.doc.sale_commission_amount*100/frm.doc.second_sale_profit)
+			frm.set_value('sale_commission_percent',frm.doc.sale_commission_amount*100/(frm.doc.second_sale_profit > 0 ? frm.doc.second_sale_profit : 1))
 		}
 		else{
-			frm.set_value('sale_commission_percent',frm.doc.sale_commission_amount*100/frm.doc.grand_total)
+			frm.set_value('sale_commission_percent',frm.doc.sale_commission_amount*100/(frm.doc.grand_total > 0 ? frm.doc.grand_total : 1))
 		}
 		frm.set_value('sale_commission_balance',frm.doc.sale_commission_amount)
 		frm.refresh_field('sale_commission_percent')
