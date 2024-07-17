@@ -47,6 +47,9 @@ class WorkingDay(Document):
 				naming_series.update_counter(0)
 			# self.send_mail_closed_day()
 
+	def on_update(self):
+		frappe.clear_document_cache("Working Day",self.name)
+  
 
 	# def send_mail_closed_day(self):
 	# 	reports_name = ['Working Day Sale Transaction','Working Day Sale Summary V2','Working Day Sale Product Summary']

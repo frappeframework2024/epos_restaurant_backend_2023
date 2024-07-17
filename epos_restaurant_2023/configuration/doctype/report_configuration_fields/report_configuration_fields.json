@@ -10,6 +10,7 @@
   "fieldname",
   "label",
   "fieldtype",
+  "report_precision",
   "link_field_doctype",
   "sql_expression",
   "width",
@@ -105,12 +106,19 @@
    "in_list_view": 1,
    "label": "Link Field Doctype",
    "options": "DocType"
+  },
+  {
+   "default": "2",
+   "fieldname": "report_precision",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Report Precision"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-06-08 09:52:54.037615",
+ "modified": "2024-07-16 12:13:24.483500",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Report Configuration Fields",

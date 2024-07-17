@@ -45,11 +45,7 @@ if (localStorage.getItem("__tblLayoutIndex") == null) {
         localStorage.setItem("__tblLayoutIndex", tableLayout.table_groups[0].key)
     }
 }
-
-const tabIndex = computed(() => {
-    tableLayout.tab = localStorage.getItem("__tblLayoutIndex");
-})
-
+ 
 socket.on("RefreshTable", () => {
     tableLayout.getSaleList();
 })
@@ -57,17 +53,25 @@ socket.on("RefreshTable", () => {
 
 onMounted(async () => {
     tableLayout.tab = localStorage.getItem("__tblLayoutIndex")
-
-
     let tableGroupLength = JSON.parse(localStorage.getItem("table_groups"))
+
+    if (tableGroupLength.length > 0) {
+        
+        if (tableGroupLength.find(k => k.key == tableLayout.tab) == undefined) {
+            localStorage.setItem("__tblLayoutIndex", tableGroupLength[0].key) 
+            tableLayout.tab = localStorage.getItem("__tblLayoutIndex")
+            tableLayout.initSaveTablePositionResource()
+        } 
+    }  
+
+
+    
     if (tableGroupLength.length == 1) {
         getKeyIndex.value = true
     } else {
         getKeyIndex.value = false
     }
-
-
-
+ 
 
     localStorage.removeItem('make_order_auth');
     const cashierShiftResource = createResource({

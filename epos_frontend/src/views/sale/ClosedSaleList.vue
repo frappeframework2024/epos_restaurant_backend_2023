@@ -89,7 +89,7 @@ const toaster = createToaster({ position: "top-right" })
 const reportUrl = ref("");
 
 const activeReport = ref(gv.setting.reports.filter(r => r.show_in_pos_closed_sale == 1 && r.doc_type == 'POS Profile')[0]);
-
+ 
 const filterResource = createResource({
     url: "epos_restaurant_2023.api.api.get_filter_for_close_sale_list",
     params: {
@@ -125,9 +125,9 @@ function getReportUrl() {
         url += "&working_day=" + filterResource.data?.working_day.name;
     }
 
-    if (filter.value.outlet && reportOption.value.show_outlet) {
-        url += "&outlet=" + filter.value.outlet;
-    }
+    // if (filter.value.outlet && reportOption.value.show_outlet) {
+    //     url += "&outlet=" + filter.value.outlet;
+    // }
 
     if (filter.value.table_group && reportOption.value.show_table_group) {
         url += "&table_group=" + filter.value.table_group;
@@ -151,9 +151,7 @@ function getReportUrl() {
 
     if (filter.value.order_by_type && reportOption.value.show_order_by) {
         url += "&order_by_type=" + filter.value.order_by_type;
-    }
-
-
+    } 
     return url;
 }
 
@@ -217,8 +215,7 @@ window.addEventListener('message', reportClickHandler, false);
 
 onMounted(async () => {
 
-    await filterResource.fetch().then((doc) => {
-       
+    await filterResource.fetch().then((doc) => { 
         filter.value.cashier_shift = doc.cashier_shift.name;
         filter.value.working_day = doc.working_day.name;
         reportUrl.value = getReportUrl();

@@ -1,6 +1,7 @@
 <template>
-    <div class="pb-3">
+    <div class="">
         <div class="flex items-end"  :class="mobile ? 'justify-end' : 'justify-between'" v-if="resource?.data">
+            {{  onSearch() }}
             <div v-if="!mobile">
                 <div class="flex flex-wrap items-end">
                     <div style="min-width: 140px"> 
@@ -16,6 +17,7 @@
                                 <ComInput keyboard type="number"
                                     v-if="f.fieldtype == 'Int' || f.fieldtype == 'Float' || f.fieldtype == 'Currency'" v-model="f.value"
                                     :label="$t(f.label)" variant="solo" class="m-1"/>
+                    
                                 <ComInput type="date" v-if="f.fieldtype == 'Date' || f.fieldtype == 'Datetime'" v-model="f.value" class="m-1" :label="$t(f.label)"></ComInput>
                                 <ComAutoComplete v-model="f.value" v-if="f.fieldtype == 'Link'" :doctype="f.options"   variant="solo"  :label="$t(f.label)" :placeholder="$t(f.label)" class="m-1"/>
                                 <v-select 
@@ -77,6 +79,17 @@ let order_by = ref('modified desc')
 const advancefilters = ref([])
 
 const resource = props.meta 
+resource.data.fields.filter(r => r.in_standard_filter == 1).forEach((f)=>{
+    if(f.fieldtype == 'Date' || f.fieldtype == 'Datetime'){
+        if((f.value||"")==""){
+            const date = new Date();
+            f.value = moment(date).format('YYYY-MM-DD');
+        }
+    }
+   
+});
+
+
 
 function generateFilter() {
     //check name filter
@@ -99,8 +112,8 @@ function generateFilter() {
    
     emit('onFilter', filter, order_by.value)
 }
-watch(resource, (newValue)=>{
-    onSearch()
+watch(resource, (newValue)=>{ 
+    onSearch();
 })
 function getFiltervalue(d, operator="=") {
     let value ="";

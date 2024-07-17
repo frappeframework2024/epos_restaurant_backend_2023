@@ -43,7 +43,7 @@ class Sale(Document):
 			if not self.cashier_shift: 
 				frappe.throw(_("Sale cannot allow with cashier shift"))
 
-			working_day = frappe.get_doc("Working Day", self.working_day)
+			working_day = frappe.get_cached_doc("Working Day", self.working_day)
 			self.posting_date = working_day.posting_date
 		
 
@@ -69,14 +69,14 @@ class Sale(Document):
 			   
 		if self.docstatus ==0:
 			if self.working_day:
-				is_closed = frappe.db.get_value('Working Day', self.working_day,"is_closed")
+				is_closed = frappe.get_cached_value('Working Day', self.working_day,"is_closed")
 				if is_closed==1:
 					pass
 					##frappe.throw(_("Working day was closed"))
 
 
 			if self.cashier_shift:
-				is_closed = frappe.db.get_value('Cashier Shift', self.cashier_shift,"is_closed")
+				is_closed = frappe.get_cached_value('Cashier Shift', self.cashier_shift,"is_closed")
 				if is_closed==1:
 					pass
 					##frappe.throw(_("Cashier shift was closed"))
@@ -114,7 +114,7 @@ class Sale(Document):
 		else:
 			self.exchange_rate = 1
 			self.change_exchange_rate  = 1
-		default_customer = frappe.db.get_value("POS Profile",self.pos_profile,'default_customer')
+		default_customer = frappe.get_cached_value("POS Profile",self.pos_profile,'default_customer')
 		if len([d for d in self.sale_products if d.is_park == 1]) > 0 and self.customer == default_customer:
 			frappe.throw("Please select a customer for park")
 		#validate sale product 
@@ -130,7 +130,7 @@ class Sale(Document):
 
 		## check table if have make foc to sale when discount 100%
 		if self.table_id:
-			_table = frappe.get_doc("Tables Number",self.table_id)
+			_table = frappe.get_cached_doc("Tables Number",self.table_id)
 			if _table.is_foc and self.discount==100 and self.discount_type =="Percent":
 				self.is_foc = 1
 
@@ -213,7 +213,7 @@ class Sale(Document):
 
 
 		if self.sale_status:
-			sale_status_doc = frappe.get_doc("Sale Status", self.sale_status)
+			sale_status_doc = frappe.get_cached_doc("Sale Status", self.sale_status)
 			self.sale_status_color = sale_status_doc.background_color
 			self.sale_status_priority  = sale_status_doc.priority
 		# commission
@@ -248,7 +248,7 @@ class Sale(Document):
 		total_second_cost = 0
 		for p in self.sale_products:
 			total_cost += get_product_cost(self.stock_location, p.product_code) * p.quantity
-			total_second_cost += (frappe.db.get_value('Product',{'product_code':p.product_code}, ['secondary_cost'])* p.quantity)
+			total_second_cost += (frappe.get_cached_value('Product',{'product_code':p.product_code}, 'secondary_cost')* p.quantity)
 		self.sale_grand_total = self.grand_total
 		self.sale_profit = self.grand_total - total_cost
 		self.total_secondary_cost = total_second_cost
@@ -257,8 +257,8 @@ class Sale(Document):
 	# Generata Bill Number On Insert
 	def before_insert(self):
 		if self.pos_profile:
-			pos_config_name = frappe.db.get_value("POS Profile",self.pos_profile,"pos_config")
-			pos_config = frappe.db.get_value("POS Config",pos_config_name,["pos_bill_number_prefix","generate_bill_number_on_create"], as_dict=1)
+			pos_config_name = frappe.get_cached_value("POS Profile",self.pos_profile,"pos_config")
+			pos_config = frappe.get_cached_value("POS Config",pos_config_name,["pos_bill_number_prefix","generate_bill_number_on_create"], as_dict=1)
 			
 			if pos_config.generate_bill_number_on_create == 1:
 				if pos_config.pos_bill_number_prefix:
@@ -289,8 +289,8 @@ class Sale(Document):
 		# generate custom bill format
 		if not self.custom_bill_number:
 				if self.pos_profile:
-					pos_config = frappe.db.get_value("POS Profile",self.pos_profile,"pos_config")
-					bill_number_prefix = frappe.db.get_value("POS Config",pos_config,"pos_bill_number_prefix")
+					pos_config = frappe.get_cached_value("POS Profile",self.pos_profile,"pos_config")
+					bill_number_prefix = frappe.get_cached_value("POS Config",pos_config,"pos_bill_number_prefix")
 					if bill_number_prefix:
 						from frappe.model.naming import make_autoname
 						self.custom_bill_number = make_autoname(bill_number_prefix)
@@ -328,7 +328,7 @@ class Sale(Document):
 		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit", queue='short', self=self)
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.add_payment_to_sale_payment", queue='short', self=self)
 		
-		if frappe.db.get_single_value("ePOS Settings","use_basic_accounting_feature"):
+		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			submit_sale_to_general_ledger_entry(self)
 
 
@@ -379,7 +379,7 @@ def update_inventory_on_submit(self):
     			'action': 'Submit'
 			})
 		else:
-			doc = frappe.get_doc("Product",p.product_code)
+			doc = frappe.get_cached_doc("Product",p.product_code)
 			#check if product has receipt and loop update from product receip
 
 			update_product_recipe_to_inventory(self,doc, p.quantity, "Submit")		
@@ -395,7 +395,7 @@ def update_inventory_on_submit(self):
 		if p.modifiers_data:
 			for m in json.loads(p.modifiers_data):
 
-				modifier_doc = frappe.get_doc("Modifier Code",m['modifier'])
+				modifier_doc = frappe.get_cached_doc("Modifier Code",m['modifier'])
 				for d in modifier_doc.product_recipe:
 					if d.is_inventory_product:
 						uom_conversion = get_uom_conversion(d.base_unit, d.unit)
@@ -462,7 +462,7 @@ def update_combo_menu_to_inventory(self, product,action):
 			
 def update_combo_menu_to_inventor_transaction(self,product,action,combo_menu_data):
 	for p in combo_menu_data:
-		doc = frappe.get_doc("Product",p["product_code"])
+		doc = frappe.get_cached_doc("Product",p["product_code"])
 		if doc.is_inventory_product:
 			uom_conversion = get_uom_conversion( doc.unit,p["unit"])
 			note =""
@@ -509,7 +509,7 @@ def update_inventory_on_cancel(self):
 				'action': 'Cancel'
 			})
 		else:
-			doc = frappe.get_doc("Product",p.product_code)
+			doc = frappe.get_cached_doc("Product",p.product_code)
 			for d in doc.product_recipe:
 				if d.is_inventory_product:
 					uom_conversion = get_uom_conversion(d.base_unit, d.unit)
@@ -531,7 +531,7 @@ def update_inventory_on_cancel(self):
 
 		if p.modifiers_data:
 			for m in json.loads(p.modifiers_data):
-				modifier_doc = frappe.get_doc("Modifier Code",m['modifier'])
+				modifier_doc = frappe.get_cached_doc("Modifier Code",m['modifier'])
 				for d in modifier_doc.product_recipe:	
 					uom_conversion = get_uom_conversion(d.base_unit, d.unit)
 					add_to_inventory_transaction({
@@ -586,9 +586,9 @@ def add_payment_to_sale_payment(self):
 					doc.insert()
    
 		if (self.changed_amount or 0)>0:
-			pos_config = frappe.db.get_value('POS Profile', self.pos_profile, 'pos_config')			
-			payment_type = frappe.db.get_single_value("ePOS Settings","changed_payment_type")			
-			pos_config_data = frappe.get_doc('POS Config', pos_config)
+			pos_config = frappe.get_cached_value('POS Profile', self.pos_profile, 'pos_config')			
+			payment_type = frappe.get_cached_value("ePOS Settings",None,"changed_payment_type")			
+			pos_config_data = frappe.get_cached_doc('POS Config', pos_config)
 			pos_config_payment_type = Enumerable(pos_config_data.payment_type).where(lambda x:x.payment_type==payment_type)
 			account_code = "" 
 			exchange_rate = 1
@@ -703,6 +703,11 @@ def create_folio_transaction_from_pos_trnasfer(self):
 					'transaction_number': transaction_number,
 					'reference_number':self.name,
 					"input_amount":p.amount,
+					"amount":p.amount,
+					"quantity": 1 if frappe.get_cached_value("Account Code",p.account_code,"allow_enter_quantity") ==1 else 0,
+					"report_quantity": 1 if frappe.get_cached_value("Account Code",p.account_code,"show_quantity_in_report") ==1 else 0,
+					"transaction_amount":p.amount,
+					"total_amount":p.amount,
 					"account_code":p.account_code,
 					"property":self.business_branch,
 					"is_auto_post":1,
@@ -733,7 +738,7 @@ def create_guest_folio(self,reservation_stay):
 		"cashier_shift":working_day["cashier_shift"]["name"],
 		"reservation_stay":reservation_stay,
 		"posting_date":working_day["date_working_day"],
-		"note":"This folio was created by {} from POS when transfer bill to room".format(frappe.db.get_value("User",frappe.session.user,"full_name"))
+		"note":"This folio was created by {} from POS when transfer bill to room".format(frappe.get_cached_value("User",frappe.session.user,"full_name"))
 	})
     doc.insert(ignore_permissions=True)
     return doc
@@ -836,7 +841,7 @@ def validate_tax(doc):
 			doc.total_tax =0
 		
 def get_ratebefore_tax(amount, t_rule, tax_1_rate, tax_2_rate, tax_3_rate):
-	tax_rule = frappe.get_doc("Tax Rule",t_rule)
+	tax_rule = frappe.get_cached_doc("Tax Rule",t_rule)
 	amount=amount or 0
 	
 	t1_r = (tax_1_rate or 0) / 100
@@ -877,7 +882,7 @@ def get_ratebefore_tax(amount, t_rule, tax_1_rate, tax_2_rate, tax_3_rate):
 def update_pos_reservation_status(self):
 	if self.from_reservation:
 		if frappe.db.exists("POS Reservation", self.from_reservation):
-			status = frappe.get_doc("POS Reservation Status","Checked Out") 
+			status = frappe.get_cached_doc("POS Reservation Status","Checked Out") 
 			frappe.db.set_value('POS Reservation', self.from_reservation,{
 				"reservation_status": 'Checked Out',
 				"status":"Checked Out",

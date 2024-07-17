@@ -2,37 +2,54 @@
     <PageLayout :title="$t('Receipt List')" icon="mdi-file-chart" full>
       <ComReceiptListCard :headers="headers" doctype="Sale" extra-fields="customer_name,sale_status_color" @callback="onCallback" v-if="mobile"/>
       
-      <ComTable :headers="headers" :isPrint="true" @onPrint="onPrint" show-check-box show-index doctype="Sale" :default-filter="defaltFilter" extra-fields="customer_name,sale_status_color" @onFetch="onFetch" business-branch-field="business_branch" pos-profile-field="pos_profile" @callback="onCallback"  v-else>
+      <ComTable :headers="headers" :isPrint="true" @onPrint="onPrint" show-check-box show-index doctype="Sale" :default-filter="defaltFilter" extra-fields="customer_name,sale_status_color" @onFetch="onFetch" business-branch-field="business_branch" pos-profile-field="pos_profile" @callback="onCallback" @onRefresh="onFetch"  v-else>
           <template v-slot:kpi>
             <v-row no-gutters>
-          <v-col cols="6" sm="3">
-            <v-card class="pa-2 ma-2" elevation="2" color="primary">
+          <v-col cols="6" sm="2">
+            <v-card class="pa-1 ma-2" elevation="2" color="primary">
               <div class="text-h6 text-center"><CurrencyFormat :value="summary.sub_total" /></div>
-              <div class="text-body-1 text-center mt-2  text-sm">{{ $t('Sub Total') }}</div>
+              <div class="text-body-2 text-center text-sm">{{ $t('Sub Total') }}</div>
             </v-card>
           </v-col>
-          <v-col cols="6" sm="3">
-            <v-card class="pa-2 ma-2" elevation="2" color="totaldiscount">
+          <v-col cols="6" sm="2">
+            <v-card class="pa-1 ma-2" elevation="2" color="totaldiscount">
               <div class="text-h6 text-center">
                 <CurrencyFormat :value="summary.total_discount" />
               </div>
-              <div class="text-body-1 text-center mt-2 text-sm">{{ $t('Total Discount') }}</div>
+              <div class="text-body-2 text-center text-sm">{{ $t('Total Discount') }}</div>
             </v-card>
           </v-col>
-          <v-col cols="12" sm="3">
-            <v-card class="pa-2 ma-2" elevation="2" color="grandtotalbtn">
+          <v-col cols="12" sm="2">
+            <v-card class="pa-1 ma-2" elevation="2" color="grandtotalbtn">
               <div class="text-h6 text-center">
                 <CurrencyFormat :value="summary.grand_total" />
               </div>
-              <div class="text-body-1 text-center mt-2 text-sm">{{ $t('Grand Total') }}</div>
+              <div class="text-body-2 text-center text-sm">{{ $t('Grand Total') }}</div>
             </v-card>
           </v-col>
-          <v-col cols="12" sm="3">
-            <v-card class="pa-2 ma-2" elevation="2" color="teal-darken-3">
+          <v-col cols="12" sm="2">
+            <v-card class="pa-1 ma-2" elevation="2" color="teal-darken-3">
               <div class="text-h6 text-center">
                 <CurrencyFormat :value="summary.total_paid" />
               </div>
-              <div class="text-body-1 text-center mt-2 text-sm">{{ $t('Total Paid') }}</div>
+              <div class="text-body-2 text-center text-sm">{{ $t('Total Paid') }}</div>
+            </v-card>
+          </v-col>
+          <v-col cols="12" sm="2">
+            <v-card class="pa-1 ma-2" elevation="2" color="blue darken-4">
+              <div class="text-h6 text-center">
+                {{summary.total_receipts || 0}}
+              </div>
+              <div class="text-body-2 text-center text-sm">{{ $t('Total Reciepts') }}</div>
+            </v-card>
+          </v-col>
+          
+          <v-col cols="12" sm="2">
+            <v-card class="pa-1 ma-2" elevation="2" color="teal darken-4">
+              <div class="text-h6 text-center">
+                {{summary.total_receipt_deleted || 0}}
+              </div>
+              <div class="text-body-2 text-center text-sm">{{ $t('Total Deleted Reciepts') }}</div>
             </v-card>
           </v-col>
           
@@ -57,7 +74,7 @@ const gv = inject('$gv');
 const call = frappe.call();
 const db = frappe.db();
 const { t: $t } = i18n.global; 
-const {mobile} = useDisplay()
+const {mobile} = useDisplay() 
 async function onCallback(data) {
  
  if(data.fieldname=="name"){
@@ -77,7 +94,8 @@ async function onCallback(data) {
   }
 }
 
-function onFetch(_filters){
+function onFetch(_filters){ 
+ 
   let filters =[]
   Object.keys(_filters).forEach(key => {
     filters.push({[key]:_filters[key]})
@@ -89,8 +107,7 @@ function onFetch(_filters){
   ).then((res)=>{
     if (res.message.length > 0){ 
       summary.value = res.message[0]
-    }
-    
+    }  
   })
 }
 
@@ -204,6 +221,5 @@ const headers = ref([
 if (gv.setting.pos_setting.is_client_side_sync_setting==1){
     headers.value.push({ title: $t('Is Synced'), align: 'center', key: 'is_synced', fieldtype: "Status"})
 }
-
  
 </script>

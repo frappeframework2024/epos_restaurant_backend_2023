@@ -7,7 +7,7 @@ import frappe
 from frappe import _
 from py_linq import Enumerable
 from frappe.model.document import Document
-from epos_restaurant_2023.inventory.doctype.stock_entry.general_ledger_entry import submit_stock_to_general_ledger_entry
+from epos_restaurant_2023.inventory.doctype.stock_entry.general_ledger_entry import submit_stock_to_general_ledger_entry_on_submit
 from  epos_restaurant_2023.api.cache_function import get_default_account_from_pos_config, get_default_account_from_revenue_group, get_doctype_value_cache
 import json
 
@@ -39,7 +39,8 @@ class StockEntry(Document):
 	def on_submit(self):
 
 		if frappe.db.get_single_value("ePOS Settings","use_basic_accounting_feature"):
-			submit_stock_to_general_ledger_entry(self)
+			submit_stock_to_general_ledger_entry_on_submit(self)
+			update_default_account(self)
 		#frappe.enqueue("epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.update_inventory_on_submit", queue='short', self=self)
 	
 	# def on_cancel(self):
@@ -49,6 +50,8 @@ class StockEntry(Document):
 
 def update_default_account(self):
  
+	if not self.default_inventory_account:
+		self.default_inventory_account = get_doctype_value_cache("Business Branch",self.business_branch, "default_inventory_account")
 	# 1 get from product
 	if [x for x in self.items if not x.default_account]:
 		# get product default account_code from product
@@ -56,11 +59,12 @@ def update_default_account(self):
 
 		 
 		product_account_codes = frappe.db.sql(sql, {"parents":[x.product_code for x in self.items if not x.default_account], "business_branch":self.business_branch},as_dict=1)
+		
 		product_has_default_account = [d["product_code"] for d in product_account_codes]
 		
 		
 		for sp in [x for x in self.items if not x.default_account and x.product_code in product_has_default_account]:
-			sp.default_account = [d for d in product_account_codes if d["product_code"] == sp.product_code][0]["default_account"] 
+			sp.default_account = [d for d in product_account_codes if d["product_code"] == sp.product_code][0]['default_adjustment_account']
 
 	# 4 get account code from Business Branch
 	if [x for x in self.items if not x.default_account]:

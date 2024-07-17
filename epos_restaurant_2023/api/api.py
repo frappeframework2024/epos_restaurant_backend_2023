@@ -6,6 +6,7 @@ from frappe.desk.desktop import Workspace
 from frappe.utils.data import getdate
 from py_linq import Enumerable
 from frappe.utils import format_datetime
+from urllib.parse import unquote,quote
 from datetime import datetime, timedelta
 from frappe import _
 from frappe.desk.query_report import run
@@ -505,7 +506,7 @@ def get_current_working_day(business_branch):
     data =  frappe.db.sql(sql, {"business_branch":business_branch},as_dict=1) 
     if data:
         return data [0]
-    return
+    return None
 
 @frappe.whitelist()
 def get_current_shift_information(business_branch, pos_profile):
@@ -517,20 +518,38 @@ def get_current_shift_information(business_branch, pos_profile):
 @frappe.whitelist()
 def receipt_list_summary(filter):
     python_object = ast.literal_eval(filter)
-    sql = """select sum(grand_total) grand_total,sum(total_discount) total_discount,sum(sub_total) sub_total,sum(total_paid - changed_amount) total_paid from `tabSale` {}"""
+    sql = """select 
+    sum(grand_total) grand_total,
+    sum(total_discount) total_discount,
+    sum(sub_total) sub_total,
+    sum(total_paid - changed_amount) total_paid , 
+    sum(if(docstatus !=2 ,1,0)) as total_receipts 
+    from `tabSale` {}"""
     sql_conditions = []
+    sql_deleted_conditions = []
     for condition in python_object:
-        key, value = condition.popitem()
+        key, value = condition.popitem() 
         operator, operand = value
         if operator == "=":
             sql_conditions.append(f"{key} = '{operand}'")
-        elif operator == "in":
+            sql_deleted_conditions.append(f"{key} = '{operand}'")
+        elif operator == "in": 
             sql_conditions.append(f"{key} IN {tuple(operand)}")
+            if key == "docstatus":
+                pass
+            else:
+                sql_deleted_conditions.append(f"{key} IN {tuple(operand)}")
+
         elif operator == "between":
             sql_conditions.append(f"{key} IN {tuple(operand)}")
+            sql_deleted_conditions.append(f"{key} IN {tuple(operand)}")
 
     sql_query = " AND ".join(sql_conditions)
-    data = frappe.db.sql(sql.format("where " + sql_query),as_dict=1)
+    sql_deleted_query = " AND ".join(sql_deleted_conditions) 
+
+    data = frappe.db.sql(sql.format("where " + sql_query),as_dict=1) 
+    data_deleted = frappe.db.sql("select sum(if(docstatus=2,1,0)) as total_receipt_deleted from `tabSale` {}".format("where " + sql_deleted_query),as_dict=1) 
+    data[0].update({"total_receipt_deleted":data_deleted[0]["total_receipt_deleted"]})
     return data
 
 @frappe.whitelist()
@@ -572,7 +591,7 @@ def get_current_cashier_shift(pos_profile):
     data =  frappe.db.sql(sql, {"pos_profile":pos_profile},as_dict=1) 
     if data:
         return data [0]
-    return
+    return None
 
 
 
@@ -1159,26 +1178,29 @@ def delete_sale(name,auth):
         
     
 @frappe.whitelist()
-def get_filter_for_close_sale_list(business_branch,pos_profile):
+def get_filter_for_close_sale_list(business_branch,pos_profile): 
     working_day = get_current_working_day(business_branch)
-    cashier_shifts =  [{"name":'', "title":"All Cashier Shift"}]
-    cashier_shifts = cashier_shifts + ( frappe.db.sql("select name, name as title from `tabCashier Shift` where working_day = '{}' order by name".format(working_day.name),as_dict=1))
-    sale_types = [{"title":'All Sale Type',"name":""}]
-    sale_types +=  frappe.db.sql("select name, name as title, color,is_order_use_table from `tabSale Type` order by sort_order",as_dict=1)
-    outlets = [{"title":'All Outlet',"name":""}]
-    outlets += frappe.db.sql("select name, name as title from `tabOutlet` where business_branch = '{}' order by name".format(business_branch),as_dict=1)
-    table_groups =[{"title":'All Table Group',"name":""}]
-    table_groups += frappe.db.sql("select name, name as title from `tabTable Group` where business_branch = '{}' order by name".format(business_branch),as_dict=1)
+    if working_day :
 
-    return {
-    "working_day":working_day,
-    "cashier_shift":get_current_cashier_shift(pos_profile),
-    "cashier_shifts":cashier_shifts,
-    "sale_types":sale_types,
-    "outlets":outlets,
-    "table_groups":table_groups
+        cashier_shifts =  [{"name":'', "title":"All Cashier Shift"}]
+        cashier_shifts = cashier_shifts + ( frappe.db.sql("select name, name as title from `tabCashier Shift` where working_day = '{}' and pos_profile = %(pos_profile)s order by name".format(working_day.name),{"pos_profile":pos_profile},as_dict=1))
+        sale_types = [{"title":'All Sale Type',"name":""}]
+        sale_types +=  frappe.db.sql("select name, name as title, color,is_order_use_table from `tabSale Type` order by sort_order",as_dict=1)
+        # outlets = [{"title":'All Outlet',"name":""}]
+        # outlets += frappe.db.sql("select name, name as title from `tabOutlet` where business_branch =  %(business_branch)s order by name", {"business_branch":business_branch},as_dict=1)
+        table_groups =[{"title":'All Table Group',"name":""}]
+        table_groups += frappe.db.sql("select name, name as title from `tabTable Group` where business_branch = %(business_branch)s order by name",{"business_branch":business_branch},as_dict=1)
 
-    }
+        return {
+        "working_day":working_day,
+        "cashier_shift":get_current_cashier_shift(pos_profile),
+        "cashier_shifts":cashier_shifts,
+        "sale_types":sale_types,
+        # "outlets":outlets,
+        "table_groups":table_groups
+
+        }
+    return None
 
 
 

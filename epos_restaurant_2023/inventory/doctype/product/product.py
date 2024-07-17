@@ -179,6 +179,7 @@ class Product(Document):
 		self.prices = json.dumps(prices)	
 	
 	def on_update(self):
+		frappe.clear_document_cache("Product",self.name)
 		if self.flags.ignore_on_update==True:
 			return 
 		# add_product_to_temp_menu(self)

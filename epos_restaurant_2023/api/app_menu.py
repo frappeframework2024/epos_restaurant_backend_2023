@@ -187,26 +187,40 @@ def get_sidebar_menu_template():
             <ul>
                 {%for d in data%}
                     <li class="{{'' if not 'sub_menus' in d else 'submenu'}}" data-submenu="{{d.id}}">
-                        <a class="menus tooltips" data-workspace="{{d.name}}" data-custom-route="{{d.custom_route or ""}}">
-                            <span class="icon">
-                                {%if d.custom_menu_icon%}
-                                    {{d.custom_menu_icon}}
-                                {%else%}
-                                <svg class="icon  icon-md" style="">
-                                    <use class="" href="#icon-{{d.icon}}"></use>
-                                </svg>
-                                {%endif%}
-                            </span>
-                            <span>{{d.name}}</span>
-                            <span class="tooltiptext">{{d.name}}</span>
-                        </a>
+                        <div class="d-flex align-center w-100 justify-content-between">
+                            <div class="sub_menu_p" style="width:90%">
+                                <a class="menus sub_menu_mobile tooltips text-decoration-none" data-workspace="{{d.name}}" data-custom-route="{{d.custom_route or ""}}">
+                                    <div class="d-flex align-center" style="gap:10px">
+                                        <span class="icon">
+                                            {%if d.custom_menu_icon%}
+                                                {{d.custom_menu_icon}}
+                                            {%else%}
+                                            <svg class="icon  icon-md" style="">
+                                                <use class="" href="#icon-{{d.icon}}"></use>
+                                            </svg>
+                                            {%endif%}
+                                        </span>
+                                        <span>{{d.name}}</span>
+                                    </div>
+                                </a>
+                            </div>
+                            {% if 'sub_menus' in d %}
+                            <div>
+                                <div class="arrow-drop-down">
+                                    <div>
+                                        <svg width="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M19 9L12 15L10.25 13.5M5 9L7.33333 11" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
                         <ul>
                             {%if 'sub_menus' in d%}
                                 <div class="submenu-content" id="{{d.id}}">
                                     <div class="shortcut_menu">
                                         {%for s in d.sub_menus.shortcut_menu%}
-                                            <div class="p-2 d-flex align-center sub-hover">
-                                                <div>
+                                            <div class="d-flex align-center sub-hover">
+                                                <div class="ml-4">
                                                     <?xml version="1.0" encoding="utf-8"?>
                                                     <!-- Generator: Adobe Illustrator 26.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
                                                     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -225,7 +239,7 @@ def get_sidebar_menu_template():
                                                 <div class="ml-2"><a class="sub_menu_link" data-name="{{s.name}}" data-doc-view="{{s.doc_view}}" data-link-to="{{s.link_to}}" data-type="{{s.type}}">{{s.name}}</a></div>
                                             </div>
                                         {%endfor%}
-                                        <div class="accordion" id="accordionExample">
+                                        <div class="accordion ml-3" id="accordionExample">
                                             {% for g in d.sub_menus.workspace_links%}
                                             <div class="card">
                                                 <div class="card-header" id="head_{{g.name}}">

@@ -1,12 +1,13 @@
 import frappe
-def submit_stock_to_general_ledger_entry(self):
+from frappe import _
+def submit_stock_to_general_ledger_entry_on_submit(self):
     
 	from epos_restaurant_2023.api.account import submit_general_ledger_entry
-	entry_type = frappe.db.get_single_value("Stock Entry Type","purpose")
+	entry_type =frappe.db.get_value("Stock Entry Type", self.entry_type, "purpose")
 	docs = []
-	doc = {}
+	
 	if entry_type == 'Stock In':
-		docs.append({
+		doc={
                   "doctype":"General Ledger",
                   "posting_date":self.posting_date,
                   "account":self.default_inventory_account,
@@ -17,8 +18,8 @@ def submit_stock_to_general_ledger_entry(self):
                   "voucher_type":"Stock Entry",
                   "voucher_number":self.name,
                   "business_branch": self.business_branch,
-            })
-
+            }
+		docs.append(doc)
 	
 
 

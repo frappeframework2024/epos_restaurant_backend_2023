@@ -53,7 +53,7 @@ class CashierShift(Document):
 			if not self.closed_by:
 				self.closed_by = frappe.session.user
 
-			pos_profile = frappe.get_doc("POS Profile", self.pos_profile)
+			pos_profile = frappe.get_cached_doc("POS Profile", self.pos_profile)
 			if pos_profile.reset_waiting_number_after=="Close Cashier Shift":
 				prefix = pos_profile.waiting_number_prefix.replace('.','').replace("#",'')
 				naming_series = NamingSeries(prefix)
@@ -64,10 +64,7 @@ class CashierShift(Document):
 			if 'edoor' in frappe.get_installed_apps() and self.is_edoor_shift == 0:
 				#validate account code for post to folio transaction
 				validate_pos_account_code_config(self)
-				
-				
-				       
-			
+
 			is_upload_sale_data_to_google_sheet = frappe.db.get_value("Business Branch",self.business_branch,["upload_sale_data_to_google_sheet"])
 			if is_upload_sale_data_to_google_sheet == 1:
 				frappe.enqueue("epos_restaurant_2023.api.api.upload_all_sale_data_to_google_sheet",start_date=self.posting_date,end_date = self.posting_date,business_branch=self.business_branch,cashier_shift=self.name)
@@ -77,12 +74,11 @@ class CashierShift(Document):
 			return
 		query ="update `tabSale` set working_day='{}', cashier_shift='{}', shift_name='{}' "
 		query = query + " where docstatus = 0 and pos_profile = '{}'"
-
 		query = query.format(self.working_day, self.name,self.shift_name, self.pos_profile)
-
 		frappe.db.sql(query)
 
 	def on_update(self):
+		frappe.clear_document_cache("Cashier Shift",self.name)
 		if self.flags.ignore_on_update == True:
 			return
 		query ="update `tabSale` set  shift_name='{}' where cashier_shift='{}'".format(self.shift_name,self.name)
@@ -114,7 +110,7 @@ class CashierShift(Document):
 									new_shift_data["shift_name"] = next_shift_name
 								
 								pos_config = frappe.db.get_value("POS Profile", self.pos_profile, "pos_config")
-								pos_config = frappe.get_doc("POS Config", pos_config)
+								pos_config = frappe.get_cached_doc("POS Config", pos_config)
 
 								for  c in pos_config.payment_type:
 									if c.allow_cash_float:
@@ -221,7 +217,7 @@ def validate_pos_account_code_config(self):
 	account_code_config = frappe.db.get_list("POS Account Code Config", filters={"outlet":self.outlet, "shift_name":self.shift_name})
 	config = None
 	if account_code_config:
-		config =  frappe.get_doc("POS Account Code Config",account_code_config[0].name)
+		config =  frappe.get_cached_doc("POS Account Code Config",account_code_config[0].name)
 	if not config:
 		frappe.throw("There is no pos account code configuration for outlet {} and shift {}".format(self.outlet, self.shift_name))
 	
@@ -272,7 +268,8 @@ def submit_pos_data_to_folio_transaction(self):
 	account_code_config = frappe.db.get_list("POS Account Code Config", filters={"outlet":self.outlet, "shift_name":self.shift_name})
 	config = None
 	if account_code_config:
-		config =  frappe.get_doc("POS Account Code Config",account_code_config[0].name)
+     
+		config =  frappe.get_cached_doc("POS Account Code Config",account_code_config[0].name)
 	if not config:
 		return
 	
@@ -344,8 +341,7 @@ def submit_pos_data_to_folio_transaction(self):
 	for acc in set([a["bank_fee_account"] for a in payment_data if "bank_fee_account" in a ]):
 		post_folio_transaction(self, acc, sum([x["fee_amount"] for x in payment_data if "bank_fee_account" in x and  x['bank_fee_account'] == acc]) )
 	
-def post_folio_transaction(self,account_code, amount, folio_transaction_type=None, folio_transaction_number = None):
-	 
+def post_folio_transaction(self,account_code, amount, folio_transaction_type=None, folio_transaction_number = None): 
 	frappe.get_doc( 
 				{
 					'doctype': 'Folio Transaction',
@@ -358,7 +354,12 @@ def post_folio_transaction(self,account_code, amount, folio_transaction_type=Non
 					'transaction_number': folio_transaction_number or  self.name ,
 					'reference_number':folio_transaction_number or self.name,
 					"input_amount":amount, 
+					"amount":amount, 
+					"transaction_amount":amount, 
+					"total_amount": amount,
 					"account_code":account_code,
+					"quantity": 1 if frappe.get_cached_value("Account Code",account_code,"allow_enter_quantity") ==1 else 0,
+					"report_quantity": 1 if frappe.get_cached_value("Account Code",account_code,"show_quantity_in_report") ==1 else 0,
 				} 
 			).insert(ignore_permissions=True)
 

@@ -7,6 +7,6 @@ from frappe.model.document import Document
 
 class POSConfig(Document):
 	def on_update(self):
-		 
+		frappe.clear_document_cache("POS Config",self.name)
 		get_default_account_from_pos_config.cache_clear()
   

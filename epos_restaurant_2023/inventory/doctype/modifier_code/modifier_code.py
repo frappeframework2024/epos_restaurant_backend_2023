@@ -15,3 +15,5 @@ class ModifierCode(Document):
 				if not check_uom_conversion(d.base_unit, d.unit):
 						frappe.throw(_("There is no UoM conversion for product {}-{} from {} to {}".format(d.product, d.product_name, d.base_unit, d.unit)))
 
+	def  on_update(self):
+		frappe.clear_document_cache("Modifier Code",self.name)

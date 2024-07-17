@@ -24,13 +24,13 @@
       >{{ $t('Cashier Shift') }}</v-tooltip>
     </v-chip>
     
-    <v-chip size="small" class="mr-2 mb-2" v-if="currentFilter.outlet && reportOption.show_outlet" closable @click:close="onRemove('outlet', '')">
+    <!-- <v-chip size="small" class="mr-2 mb-2" v-if="currentFilter.outlet && reportOption.show_outlet" closable @click:close="onRemove('outlet', '')">
         {{currentFilter.outlet}}
         <v-tooltip
         activator="parent"
         location="top"
       >{{ $t('Outlet') }}</v-tooltip>
-    </v-chip>
+    </v-chip> -->
     
     <v-chip size="small" class="mr-2 mb-2" v-if="currentFilter.table_group && reportOption.show_table_group"  closable @click:close="onRemove('table_group', '')">
         {{currentFilter.table_group}}

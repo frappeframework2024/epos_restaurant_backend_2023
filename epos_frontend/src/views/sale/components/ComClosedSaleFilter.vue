@@ -7,8 +7,8 @@
             <v-select v-if="reportOption.show_cashier_shift" :label="$t('Cashier Shift')" :items="filterResource.data?.cashier_shifts"
                 variant="solo" v-model="filter.cashier_shift" item-title="title" item-value="name"></v-select>
 
-            <v-select v-if="reportOption.show_outlet" :label="$t('Outlet')" :items="filterResource.data?.outlets" variant="solo"
-                v-model="filter.outlet" item-title="title" item-value="name"></v-select>
+            <!-- <v-select v-if="reportOption.show_outlet" :label="$t('Outlet')" :items="filterResource.data?.outlets" variant="solo"
+                v-model="filter.outlet" item-title="title" item-value="name"></v-select> -->
 
             <v-select v-if="reportOption.show_table_group" :label="$t('Table Group')" :items="filterResource.data?.table_groups"
                 variant="solo" v-model="filter.table_group" item-title="title" item-value="name"></v-select>

@@ -30,7 +30,7 @@
                                 <thead>
                                     <tr> 
                                         <th v-if="showCheckBox" class="v-data-table__td v-data-table-column--align-center">
-                                            <v-checkbox   v-model="checkedAll" @update:modelValue="onCheckboxChanged(event)" ></v-checkbox>
+                                            <v-checkbox hide-details class="shrink mr-2"  v-model="checkedAll" @update:modelValue="onCheckboxChanged(event)" ></v-checkbox>
                                         </th>
                                         <th v-if="showIndex==true" class="v-data-table__td v-data-table-column--align-center">
                                             {{ $t('No #') }}
@@ -44,7 +44,7 @@
                                 <tr v-for="(item,idx) in dataResource.data" class="v-data-table__tr">
                                     <th v-if="showCheckBox" class="text-center">
                                     
-                                        <v-checkbox  v-model="item.is_checked"></v-checkbox>
+                                        <v-checkbox hide-details class="shrink mr-2"  v-model="item.is_checked"></v-checkbox>
                                     </th>
                                     <th v-if="showIndex==true" class="text-center">
                                             {{ calculateRowNumber(_tempPagerOption.currentPage,_tempPagerOption.itemPerPage,idx) }}
@@ -151,10 +151,9 @@ import { createResource, reactive, defineEmits, watch, inject, ref, onUnmounted,
 import ComFilter from '../ComFilter.vue';
 
 let filter = reactive({});
-const emit = defineEmits(['callback', 'onFetch'])
+const emit = defineEmits(['callback', 'onFetch', 'onRefresh'])
 const moment = inject('$moment')
-const gv = inject('$gv')
-const sale = inject("$sale");
+const gv = inject('$gv') 
 const order = ref({})
 const selected = ref([])
 const checkedAll=ref(false)
@@ -360,6 +359,15 @@ function onSearch(key, operator) {
 
 function onRefresh() {
     dataResource.fetch()
+    let filters = JSON.parse(JSON.stringify(pagerOption.filters))
+    if (gv.setting.specific_pos_profile && props.posProfileField) {
+        filters[props.posProfileField] = ["=", localStorage.getItem('pos_profile')]
+    }
+    else if (gv.setting.specific_business_branch && props.businessBranchField) {
+        filters[props.businessBranchField] = ["=", gv.setting.business_branch]
+    }
+    filters["docstatus"] = ["in", [1, 0]]
+    emit('onRefresh', filters)
 }
 
 

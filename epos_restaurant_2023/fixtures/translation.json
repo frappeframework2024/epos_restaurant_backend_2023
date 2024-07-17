@@ -6030,5 +6030,44 @@
   "name": "4b58f3dfe2",
   "source_text": "Total Quantity",
   "translated_text": "总计数量"
+ },
+ {
+  "context": null,
+  "contributed": 0,
+  "contribution_docname": null,
+  "contribution_status": "",
+  "docstatus": 0,
+  "doctype": "Translation",
+  "language": "km",
+  "modified": "2024-07-17 09:15:07.645373",
+  "name": "8abc2119e6",
+  "source_text": "Total Reciepts",
+  "translated_text": "សរុបវិក្កយបត្រ"
+ },
+ {
+  "context": null,
+  "contributed": 0,
+  "contribution_docname": null,
+  "contribution_status": "",
+  "docstatus": 0,
+  "doctype": "Translation",
+  "language": "km",
+  "modified": "2024-07-17 09:15:56.549530",
+  "name": "8c2b918d52",
+  "source_text": "Total Deleted Reciepts",
+  "translated_text": "សរុបវិក្កយបត្រលុប"
+ },
+ {
+  "context": null,
+  "contributed": 0,
+  "contribution_docname": null,
+  "contribution_status": "",
+  "docstatus": 0,
+  "doctype": "Translation",
+  "language": "km",
+  "modified": "2024-07-17 10:15:15.014268",
+  "name": "012602ecca",
+  "source_text": "Invoice No",
+  "translated_text": "លេខវិក្កយបត្រ"
  }
 ]

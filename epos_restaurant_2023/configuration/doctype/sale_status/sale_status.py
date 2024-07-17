@@ -6,5 +6,6 @@ from frappe.model.document import Document
 
 class SaleStatus(Document):
 	def on_update(self):
+		frappe.clear_document_cache("Sale Status", self.name)
 		frappe.db.sql("update `tabSale` set sale_status_color='{0}', sale_status_priority={1} where sale_status='{2}' ".format( self.background_color,self.priority, self.name))
 
