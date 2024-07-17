@@ -14,7 +14,8 @@
   "column_break_mojg",
   "ftp_url",
   "delete_after",
-  "ftp_folder_name"
+  "ftp_folder_name",
+  "run_backup"
  ],
  "fields": [
   {
@@ -57,12 +58,17 @@
    "fieldtype": "Select",
    "label": "Backup Type",
    "options": "Simple\nFull"
+  },
+  {
+   "fieldname": "run_backup",
+   "fieldtype": "Button",
+   "label": "Run Backup"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-07-17 09:39:35.584081",
+ "modified": "2024-07-17 15:35:22.733668",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "FTP Backup",
