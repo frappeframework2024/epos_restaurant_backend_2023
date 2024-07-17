@@ -69,7 +69,7 @@ def upload_to_ftp():
     backup_folder = setting.ftp_backup_path
     if backup_folder is None or backup_folder == '' :
         backup_folder = frappe.utils.get_site_path(conf.get("backup_path", "private/backups"))
-    ftp_password = password.get_decrypted_password("FTP Setting", "FTP Setting", fieldname="ftp_password",raise_exception=False)
+    ftp_password = password.get_decrypted_password("FTP Backup", "FTP Backup", fieldname="ftp_password",raise_exception=False)
     session = ftplib.FTP_TLS(setting.ftp_url,setting.ftp_user,ftp_password)
     session.encoding = 'latin-1'
     if site_name in session.nlst():
