@@ -8,9 +8,12 @@
  "engine": "InnoDB",
  "field_order": [
   "ftp_backup_path",
-  "ftp_auth_data",
-  "delete_after",
+  "ftp_user",
+  "ftp_password",
+  "backup_type",
   "column_break_mojg",
+  "ftp_url",
+  "delete_after",
   "ftp_folder_name"
  ],
  "fields": [
@@ -35,16 +38,31 @@
    "label": "FTP Folder Name"
   },
   {
-   "default": "wCEUdRAuifz6LrBEaRTtq+Ua6nLjlM3dtIIKaL2z3YOSFBrHfqV4A2OoJPNLGQn3tlgXN909542f4eSGJO+iUO7zLlM6qhSsJIeDlGDKjaLx7qMHhnkUBLA12Xy9nabD79Fd5Vu2O9+Ez7pOrP1dR45Gx63NKVNGkXYl+tnEBqpF2N1Co1e/Polh/g3sfYU5WF/3eHH7/BZDjju2Z4luUVk9GVrzwdOS7QMuA8hEhKc=",
-   "fieldname": "ftp_auth_data",
-   "fieldtype": "Small Text",
-   "label": "FTP Auth Data"
+   "fieldname": "ftp_url",
+   "fieldtype": "Data",
+   "label": "FTP Url"
+  },
+  {
+   "fieldname": "ftp_user",
+   "fieldtype": "Data",
+   "label": "FTP User"
+  },
+  {
+   "fieldname": "ftp_password",
+   "fieldtype": "Password",
+   "label": "FTP Password"
+  },
+  {
+   "fieldname": "backup_type",
+   "fieldtype": "Select",
+   "label": "Backup Type",
+   "options": "Simple\nFull"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-06-17 10:55:22.010026",
+ "modified": "2024-07-17 09:39:35.584081",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "FTP Backup",
