@@ -55,9 +55,11 @@ def validate_account(self):
 def update_purchase_order(self):
 	data = frappe.db.sql("select  ifnull(sum(payment_amount),0)  as total_paid from `tabPurchase Order Payment` where docstatus=1 and purchase_order='{}'".format(self.purchase_order))
 	purchase_order_amount = frappe.db.get_value('Purchase Order', self.purchase_order, 'grand_total')
-	
+	setting = frappe.get_doc('ePOS Settings')
+	main_currency = frappe.get_doc("Currency",setting.currency)
 	if data and purchase_order_amount:
+		balance = purchase_order_amount - data[0][0]
 		frappe.db.set_value('Purchase Order', self.purchase_order,  {
 			'total_paid': data[0][0] ,
-			'balance': purchase_order_amount - data[0][0]  
+			'balance': (0 if balance <= main_currency.smallest_currency_fraction_value else balance)
 		})
