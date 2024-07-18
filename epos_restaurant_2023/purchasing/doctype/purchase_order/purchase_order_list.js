@@ -5,9 +5,9 @@ frappe.listview_settings['Purchase Order'] = {
     has_indicator_for_draft: false,
 
     get_indicator(doc) {
-        if(doc.balance==0){ 
+        if(Math.abs(doc.balance)<=0.01){ 
             return [__("Paid"), "green"];
-        }else if(doc.total_paid>0 && doc.balance>0){
+        }else if(doc.total_paid>0 && doc.balance>0.01){
             return [__("Partially Paid"), "orange"];
         }else if(doc.total_paid==0){
             return [__("Unpaid"), "red"];
