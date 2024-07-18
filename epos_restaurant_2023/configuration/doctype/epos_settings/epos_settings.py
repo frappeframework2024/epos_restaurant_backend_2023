@@ -15,3 +15,9 @@ class ePOSSettings(Document):
 		for df in self.meta.get("fields"):
 			if df.fieldtype not in no_value_fields and self.has_value_changed(df.fieldname):
 				frappe.db.set_default(df.fieldname, self.get(df.fieldname))
+
+@frappe.whitelist(allow_guest=True)
+def main_currency():
+	setting = frappe.get_doc('ePOS Settings')
+	main_currency = frappe.get_doc("Currency",setting.currency)
+	return main_currency
