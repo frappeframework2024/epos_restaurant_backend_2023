@@ -333,8 +333,9 @@ frappe.ui.form.on("Sale", {
 });
 
 frappe.ui.form.on('POS Sale Payment', {
-	payment_type:function(frm){
-		frappe.throw("Yeeeeet")
+	payment_type(frm, cdt, cdn){
+		var d = frappe.model.get_doc(cdt, cdn);
+		frappe.model.set_value(cdt, cdn, "input_amount", frm.doc.grand_total * d.exchange_rate);
 	}
 })
 
