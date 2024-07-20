@@ -35,6 +35,7 @@
   "shift_name",
   "price_rule",
   "sale_quotation",
+  "status",
   "section_break_6",
   "scan_barcode",
   "column_break_14",
@@ -1304,6 +1305,12 @@
    "label": "Default Bank Fee Account",
    "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0],[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"root_type\",\"=\",\"Income\"]]",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nPaid\nUnpaid\nPartially Paid"
   }
  ],
  "image_field": "photo",
@@ -1316,7 +1323,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-07-12 16:11:45.322253",
+ "modified": "2024-07-20 09:02:47.285046",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

@@ -13,12 +13,14 @@
   "againt_voucher_type",
   "againt_voucher_number",
   "voucher_type",
+  "voucher_subtype",
   "voucher_number",
   "business_branch",
   "remark",
-  "is_canceclled",
+  "is_cancelled",
   "party_type",
-  "party"
+  "party",
+  "amount"
  ],
  "fields": [
   {
@@ -66,12 +68,6 @@
    "label": "Remark"
   },
   {
-   "default": "0",
-   "fieldname": "is_canceclled",
-   "fieldtype": "Check",
-   "label": "Is Canceclled"
-  },
-  {
    "fieldname": "party_type",
    "fieldtype": "Link",
    "label": "Party Type",
@@ -109,12 +105,30 @@
    "in_list_view": 1,
    "label": "Againt Voucher Number",
    "options": "DocType"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_cancelled",
+   "fieldtype": "Check",
+   "label": "Is Cancelled"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Amount"
+  },
+  {
+   "fieldname": "voucher_subtype",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Voucher Subtype",
+   "read_only": 1
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-26 20:39:21.546208",
+ "modified": "2024-07-19 14:14:26.813889",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "General Ledger",

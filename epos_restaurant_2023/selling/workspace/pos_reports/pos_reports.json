@@ -5,7 +5,7 @@
    "label": "Sale Revenue"
   }
  ],
- "content": "[{\"id\":\"HKKd39rO3u\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reports</span>\",\"col\":12}},{\"id\":\"NBiVl7GGy3\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Sale Revenue\",\"col\":12}},{\"id\":\"Skat7JO3Ll\",\"type\":\"card\",\"data\":{\"card_name\":\"Sales Report\",\"col\":4}},{\"id\":\"hGWI3yjPOg\",\"type\":\"card\",\"data\":{\"card_name\":\"Purchase Order\",\"col\":4}},{\"id\":\"L0StVr44OP\",\"type\":\"card\",\"data\":{\"card_name\":\"Inventory Reports\",\"col\":4}},{\"id\":\"6ieXc-xxdR\",\"type\":\"card\",\"data\":{\"card_name\":\"Expense\",\"col\":4}},{\"id\":\"5kr2Gxyib9\",\"type\":\"card\",\"data\":{\"card_name\":\"SPA Report\",\"col\":4}}]",
+ "content": "[{\"id\":\"NBiVl7GGy3\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Sale Revenue\",\"col\":12}},{\"id\":\"Skat7JO3Ll\",\"type\":\"card\",\"data\":{\"card_name\":\"Sales Report\",\"col\":4}},{\"id\":\"hGWI3yjPOg\",\"type\":\"card\",\"data\":{\"card_name\":\"Purchase Order\",\"col\":4}},{\"id\":\"L0StVr44OP\",\"type\":\"card\",\"data\":{\"card_name\":\"Inventory Reports\",\"col\":4}},{\"id\":\"6ieXc-xxdR\",\"type\":\"card\",\"data\":{\"card_name\":\"Expense\",\"col\":4}},{\"id\":\"5kr2Gxyib9\",\"type\":\"card\",\"data\":{\"card_name\":\"SPA Report\",\"col\":4}}]",
  "creation": "2022-12-17 18:04:27.765490",
  "custom_blocks": [],
  "custom_menu_icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"SVGRepo_bgCarrier\" stroke-width=\"0\"></g><g id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></g><g id=\"SVGRepo_iconCarrier\"> <path d=\"M3 22H21\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path> <path d=\"M3 17C3 17.9428 3 18.4142 3.29289 18.7071C3.58579 19 4.05719 19 5 19C5.94281 19 6.41421 19 6.70711 18.7071C7 18.4142 7 17.9428 7 17V11C7 10.0572 7 9.58579 6.70711 9.29289C6.41421 9 5.94281 9 5 9C4.05719 9 3.58579 9 3.29289 9.29289C3 9.58579 3 10.0572 3 11V13\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\"></path> <path d=\"M10 7C10 6.05719 10 5.58579 10.2929 5.29289C10.5858 5 11.0572 5 12 5C12.9428 5 13.4142 5 13.7071 5.29289C14 5.58579 14 6.05719 14 7V17C14 17.9428 14 18.4142 13.7071 18.7071C13.4142 19 12.9428 19 12 19C11.0572 19 10.5858 19 10.2929 18.7071C10 18.4142 10 17.9428 10 17V7Z\" stroke=\"#000000\" stroke-width=\"1.5\"></path> <path d=\"M21 11V17C21 17.9428 21 18.4142 20.7071 18.7071C20.4142 19 19.9428 19 19 19C18.0572 19 17.5858 19 17.2929 18.7071C17 18.4142 17 17.9428 17 17V4C17 3.05719 17 2.58579 17.2929 2.29289C17.5858 2 18.0572 2 19 2C19.9428 2 20.4142 2 20.7071 2.29289C21 2.58579 21 3.05719 21 4V7\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\"></path> </g></svg>",
@@ -20,6 +20,8 @@
  "label": "POS Reports",
  "links": [
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 2,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Purchase Order",
@@ -28,6 +30,8 @@
    "type": "Card Break"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Purchase Order Summary",
@@ -38,6 +42,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Purchase Order Transaction",
@@ -48,6 +54,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Purchase Order Payment",
@@ -58,6 +66,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Vendor Credit Balace",
@@ -68,6 +78,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Daily PO Payment Transation",
@@ -78,6 +90,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 4,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Expense",
@@ -86,6 +100,8 @@
    "type": "Card Break"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Daily Expense Transaction",
@@ -96,6 +112,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Expense Summary",
@@ -106,6 +124,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Daily Expense Payment Transaction",
@@ -116,6 +136,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 3,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Inventory Reports",
@@ -124,6 +146,8 @@
    "type": "Card Break"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Stock Value Report",
@@ -134,6 +158,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Stock Take Transaction",
@@ -144,6 +170,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Stock Transfer Transaction",
@@ -154,6 +182,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Stock Take Summary",
@@ -164,6 +194,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Stock Transfer Summary",
@@ -174,6 +206,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Inventory Movement",
@@ -184,6 +218,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Product Quantity",
@@ -194,6 +230,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 1,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Sales Report",
@@ -202,6 +240,8 @@
    "type": "Card Break"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Sale Summary Report",
@@ -212,6 +252,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Top Sale Product",
@@ -222,6 +264,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Hourly Sale Transaction",
@@ -232,6 +276,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Sale Transaction Report",
@@ -242,6 +288,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Sale Payment Type Breakdown",
@@ -252,6 +300,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Sale Tax Report",
@@ -262,6 +312,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Customer Credit Balance Report",
@@ -272,6 +324,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Sale FOC Summary Report",
@@ -282,6 +336,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Sale Tip Report",
@@ -292,6 +348,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Sale Transaction",
@@ -302,6 +360,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Sale Summary Report V2",
@@ -312,6 +372,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 5,
    "hidden": 0,
    "is_query_report": 0,
    "label": "SPA Report",
@@ -320,6 +382,8 @@
    "type": "Card Break"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Employee Time Sheet Summary",
@@ -330,7 +394,7 @@
    "type": "Link"
   }
  ],
- "modified": "2024-07-11 14:40:28.533865",
+ "modified": "2024-07-18 16:47:14.934777",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Reports",

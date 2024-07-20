@@ -99,10 +99,7 @@ def get_conditions(filters,group_filter=None):
 def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 	
 	sql = """select  
-			CASE 
-        		WHEN a.custom_bill_number = '' THEN a.name
-        		ELSE CONCAT(a.custom_bill_number, ' (', a.name, ')')
-    		END AS name,
+			if(ifnull(a.custom_bill_number,'')='',a.name,concat(a.custom_bill_number,' (',a.name,')')) AS name,
 			a.tbl_number,
 			a.posting_date,
 			a.business_branch,

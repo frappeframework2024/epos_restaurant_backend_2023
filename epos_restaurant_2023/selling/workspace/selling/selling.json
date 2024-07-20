@@ -17,23 +17,15 @@
  "docstatus": 0,
  "doctype": "Workspace",
  "for_user": "",
- "hide_custom": 0,
+ "hide_custom": 1,
  "icon": "retail",
  "idx": 0,
  "is_hidden": 0,
  "label": "Selling",
  "links": [
   {
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Sale Audit Trail Report",
-   "link_count": 0,
-   "link_to": "Sale Audit Trail Report",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 4,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Reports",
@@ -42,6 +34,8 @@
    "type": "Card Break"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Sale Summary Report",
@@ -52,6 +46,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Top Sale Products",
@@ -62,6 +58,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Daily Sale Transaction",
@@ -72,6 +70,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Hourly Sale Report",
@@ -82,6 +82,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Sale By Payment Type",
@@ -92,6 +94,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Sale Tax Report",
@@ -102,6 +106,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Customer Credit Balance Report",
@@ -112,6 +118,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Daily Sale Payment Transaction",
@@ -122,6 +130,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Sale FOC Summary Report",
@@ -132,6 +142,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Sale Tip Report",
@@ -142,6 +154,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Sale Audit Trail Report",
@@ -152,6 +166,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Customer List",
@@ -162,6 +178,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 5,
    "hidden": 0,
    "is_query_report": 0,
    "label": "SPA Reports",
@@ -170,6 +188,8 @@
    "type": "Card Break"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Employee Time Sheet Summary",
@@ -180,6 +200,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 1,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Products",
@@ -188,6 +210,8 @@
    "type": "Card Break"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Product Category",
@@ -198,6 +222,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Products",
@@ -208,6 +234,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Unit",
@@ -218,6 +246,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "UoM Conversion",
@@ -228,6 +258,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Modifier Category",
@@ -238,6 +270,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Modifier Code",
@@ -248,6 +282,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Combo Group",
@@ -258,6 +294,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Modifier Group",
@@ -268,6 +306,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 3,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Promotion",
@@ -276,6 +316,8 @@
    "type": "Card Break"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Happy Hours Promotion",
@@ -286,6 +328,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 2,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Customer",
@@ -294,6 +338,8 @@
    "type": "Card Break"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Customer Group",
@@ -304,6 +350,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Customer",
@@ -314,7 +362,7 @@
    "type": "Link"
   }
  ],
- "modified": "2024-07-11 15:02:53.790308",
+ "modified": "2024-07-18 14:40:33.199181",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Selling",
@@ -352,22 +400,35 @@
  "sequence_id": 4.0,
  "shortcuts": [
   {
-   "color": "Grey",
+   "color": "Green",
+   "custom_show_in_app_menu": 1,
    "doc_view": "List",
-   "label": "Product",
-   "link_to": "Product",
-   "stats_filter": "{\"disabled\":[\"=\",0]}",
+   "label": "Sale",
+   "link_to": "Sale",
+   "stats_filter": "{\"posting_date\":[\"Timespan\",\"today\"]}",
    "type": "DocType"
   },
   {
    "color": "Grey",
+   "custom_show_in_app_menu": 1,
    "doc_view": "List",
-   "label": "Pending Orders",
-   "link_to": "pending-sale-order-b",
-   "type": "Page"
+   "label": "Sale Payment",
+   "link_to": "Sale Payment",
+   "stats_filter": "{\"name\":[\"is\",\"set\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "custom_show_in_app_menu": 1,
+   "doc_view": "List",
+   "label": "Sale Quotation",
+   "link_to": "Sale Quotation",
+   "stats_filter": "{\"posting_date\":[\"Timespan\",\"this month\"]}",
+   "type": "DocType"
   },
   {
    "color": "Cyan",
+   "custom_show_in_app_menu": 1,
    "doc_view": "List",
    "label": "Customer",
    "link_to": "Customer",
@@ -376,14 +437,16 @@
   },
   {
    "color": "Grey",
+   "custom_show_in_app_menu": 1,
    "doc_view": "List",
-   "label": "Reservation Booking",
-   "link_to": "POS Reservation",
-   "stats_filter": "[]",
+   "label": "Product",
+   "link_to": "Product",
+   "stats_filter": "{\"disabled\":[\"=\",0]}",
    "type": "DocType"
   },
   {
    "color": "Grey",
+   "custom_show_in_app_menu": 1,
    "doc_view": "List",
    "label": "Working Day",
    "link_to": "Working Day",
@@ -392,30 +455,15 @@
   },
   {
    "color": "Grey",
+   "custom_show_in_app_menu": 1,
    "doc_view": "List",
-   "label": "Sale Payment",
-   "link_to": "Sale Payment",
-   "stats_filter": "{\"name\":[\"is\",\"set\"]}",
-   "type": "DocType"
-  },
-  {
-   "color": "Green",
-   "doc_view": "List",
-   "label": "Sale",
-   "link_to": "Sale",
-   "stats_filter": "{\"posting_date\":[\"Timespan\",\"today\"]}",
-   "type": "DocType"
-  },
-  {
-   "color": "Orange",
-   "doc_view": "List",
-   "label": "Sale Quotation",
-   "link_to": "Sale Quotation",
-   "stats_filter": "{\"posting_date\":[\"Timespan\",\"this month\"]}",
+   "label": "Cashier Shift",
+   "link_to": "Cashier Shift",
    "type": "DocType"
   },
   {
    "color": "Grey",
+   "custom_show_in_app_menu": 1,
    "doc_view": "List",
    "label": "Sale Dashboard",
    "link_to": "Sale Dashboard",
@@ -423,9 +471,19 @@
   },
   {
    "color": "Grey",
+   "custom_show_in_app_menu": 1,
    "doc_view": "List",
-   "label": "Cashier Shift",
-   "link_to": "Cashier Shift",
+   "label": "Pending Orders",
+   "link_to": "pending-sale-order-b",
+   "type": "Page"
+  },
+  {
+   "color": "Grey",
+   "custom_show_in_app_menu": 1,
+   "doc_view": "List",
+   "label": "Reservation Booking",
+   "link_to": "POS Reservation",
+   "stats_filter": "[]",
    "type": "DocType"
   }
  ],

@@ -12,24 +12,26 @@ def submit_sale_to_general_ledger_entry(self):
 			"doctype":"General Ledger",
 			"posting_date":self.posting_date,
 			"account":acc,
-			"credit_amount":sum([d.sub_total for d in self.sale_products if d.default_income_account==acc]),
+			"amount":sum([d.sub_total for d in self.sale_products if d.default_income_account==acc]),
 			"againt":self.customer + " - " + self.customer_name,
 			"voucher_type":"Sale",
 			"voucher_number":self.name,
 			"business_branch": self.business_branch,
 			"type":"Income"#not use in db
 		}
+	
 		docs.append(doc)
 	# Discount Account
 	if self.total_discount:
 		for  acc in set([d.default_discount_account for d in self.sale_products if d.default_discount_account and d.allow_discount==1]):
 			if not acc:
 				frappe.throw(_("Please enter default discount"))
+
 			doc = {
 				"doctype":"General Ledger",
 				"posting_date":self.posting_date,
 				"account":acc,
-				"debit_amount":sum([d.total_discount for d in self.sale_products if d.default_discount_account==acc and d.allow_discount==1]),
+				"amount":sum([d.total_discount for d in self.sale_products if d.default_discount_account==acc and d.allow_discount==1]),
 				"againt":self.customer + " - " + self.customer_name,
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
@@ -37,6 +39,12 @@ def submit_sale_to_general_ledger_entry(self):
 				"type":"Income"#not use in db
 
 			}
+			root_type = frappe.get_cached_value("Chart Of Account",acc,"root_type")
+			if root_type == "Income":
+				if doc["amount"] > 0:
+					doc["credit_amount"] = doc["amount"]
+				else:
+					doc["debit_amount"] = doc["amount"]
 			docs.append(doc)
   
 	# asset account from payment
@@ -48,7 +56,7 @@ def submit_sale_to_general_ledger_entry(self):
 				"doctype":"General Ledger",
 				"posting_date":self.posting_date,
 				"account":acc.default_account  ,
-				"debit_amount":sum([d.amount + (d.fee_amount or 0) for d in self.payment  if d.default_account==acc.default_account]),
+				"amount":sum([d.amount + (d.fee_amount or 0) for d in self.payment  if d.default_account==acc.default_account]),
 				"againt":self.customer + " - " + self.customer_name,
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
@@ -65,7 +73,7 @@ def submit_sale_to_general_ledger_entry(self):
 			"doctype":"General Ledger",
 			"posting_date":self.posting_date,
 			"account":self.default_receivable_account,
-			"debit_amount":self.balance,
+			"amount":self.balance,
 			# "againt":",".join([d["account"] for d in docs]),
 			"againt_voucher_type":"Sale",
 			"againt_voucher_number": self.name,
@@ -89,8 +97,8 @@ def submit_sale_to_general_ledger_entry(self):
 				"doctype":"General Ledger",
 				"posting_date":self.posting_date,
 				"account": self.default_tax_1_account,
-				"debit_amount":self.tax_1_amount if frappe.get_cached_value("Chart Of Account",self.default_tax_1_account,"root_type") in ["Asset","Expenses"] else 0,
-				"credit_amount":self.tax_1_amount if not frappe.get_cached_value("Chart Of Account",self.default_tax_1_account,"root_type") in ["Asset","Expenses"] else 0,
+				"amount":self.tax_1_amount if frappe.get_cached_value("Chart Of Account",self.default_tax_1_account,"root_type") in ["Asset","Expenses"] else 0,
+				"amount":self.tax_1_amount if not frappe.get_cached_value("Chart Of Account",self.default_tax_1_account,"root_type") in ["Asset","Expenses"] else 0,
 				"againt":self.customer + " - " + self.customer_name,
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
@@ -106,8 +114,8 @@ def submit_sale_to_general_ledger_entry(self):
 				"doctype":"General Ledger",
 				"posting_date":self.posting_date,
 				"account": self.default_tax_2_account,
-				"debit_amount":self.tax_2_amount if frappe.get_cached_value("Chart Of Account",self.default_tax_2_account,"root_type") in ["Asset","Expenses"] else 0,
-				"credit_amount":self.tax_2_amount if not frappe.get_cached_value("Chart Of Account",self.default_tax_1_account,"root_type") in ["Asset","Expenses"] else 0,
+				"amount":self.tax_2_amount if frappe.get_cached_value("Chart Of Account",self.default_tax_2_account,"root_type") in ["Asset","Expenses"] else 0,
+				"amount":self.tax_2_amount if not frappe.get_cached_value("Chart Of Account",self.default_tax_1_account,"root_type") in ["Asset","Expenses"] else 0,
 				"againt":self.customer + " - " + self.customer_name,
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
@@ -124,8 +132,8 @@ def submit_sale_to_general_ledger_entry(self):
 				"doctype":"General Ledger",
 				"posting_date":self.posting_date,
 				"account": self.default_tax_3_account,
-				"debit_amount":self.tax_3_amount if frappe.get_cached_value("Chart Of Account",self.default_tax_3_account,"root_type") in ["Asset","Expenses"] else 0,
-				"credit_amount":self.tax_3_amount if not frappe.get_cached_value("Chart Of Account",self.default_tax_1_account,"root_type") in ["Asset","Expenses"] else 0,
+				"amount":self.tax_3_amount if frappe.get_cached_value("Chart Of Account",self.default_tax_3_account,"root_type") in ["Asset","Expenses"] else 0,
+				"amount":self.tax_3_amount if not frappe.get_cached_value("Chart Of Account",self.default_tax_1_account,"root_type") in ["Asset","Expenses"] else 0,
 				"againt":self.customer + " - " + self.customer_name,
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
@@ -143,7 +151,7 @@ def submit_sale_to_general_ledger_entry(self):
 				"doctype":"General Ledger",
 				"posting_date":self.posting_date,
 				"account": self.default_cost_of_goods_sold_account,
-				"debit_amount":sum([d.quantity* (d.cost or 0) for d in self.sale_products if d.is_inventory_product==1]),
+				"amount":sum([d.quantity* (d.cost or 0) for d in self.sale_products if d.is_inventory_product==1]),
 				"againt":self.default_inventory_account,
 				"againt_voucher_type":"Sale",
 				"againt_voucher_number": self.name,
@@ -161,7 +169,7 @@ def submit_sale_to_general_ledger_entry(self):
 				"doctype":"General Ledger",
 				"posting_date":self.posting_date,
 				"account":self.default_inventory_account,
-				"credit_amount":sum([d.quantity*(d.cost or 0)  for d in self.sale_products if d.is_inventory_product==1]),
+				"amount":sum([d.quantity*(d.cost or 0)  for d in self.sale_products if d.is_inventory_product==1]),
 				"againt":self.default_cost_of_goods_sold_account,
 				"againt_voucher_type":"Sale",
 				"againt_voucher_number": self.name,
@@ -180,7 +188,7 @@ def submit_sale_to_general_ledger_entry(self):
 				"doctype":"General Ledger",
 				"posting_date":self.posting_date,
 				"account":self.default_change_account,
-				"credit_amount":self.changed_amount,
+				"amount":self.changed_amount,
 				"againt":self.customer + " - " + self.customer_name,
 				"againt_voucher_type":"Sale",
 				"againt_voucher_number": self.name,
@@ -197,7 +205,7 @@ def submit_sale_to_general_ledger_entry(self):
 				"doctype":"General Ledger",
 				"posting_date":self.posting_date,
 				"account":self.default_tip_account,
-				"credit_amount":self.tip_amount,
+				"amount":self.tip_amount,
 				"againt":self.customer + " - " + self.customer_name,
 				"againt_voucher_type":"Sale",
 				"againt_voucher_number": self.name,
@@ -215,7 +223,7 @@ def submit_sale_to_general_ledger_entry(self):
 				"doctype":"General Ledger",
 				"posting_date":self.posting_date,
 				"account":self.default_bank_fee_account,
-				"credit_amount":self.total_fee,
+				"amount":self.total_fee,
 				"againt":self.customer + " - " + self.customer_name,
 				"againt_voucher_type":"Sale",
 				"againt_voucher_number": self.name,
@@ -228,5 +236,4 @@ def submit_sale_to_general_ledger_entry(self):
 	submit_general_ledger_entry(docs=docs)
 
 
-def submit_sale_to_general_ledger_entry_after_cancel(self):
- 	pass
+ 

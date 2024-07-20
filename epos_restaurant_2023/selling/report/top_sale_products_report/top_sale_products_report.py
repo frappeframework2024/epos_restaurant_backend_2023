@@ -152,14 +152,12 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 		
 	report_fields = get_report_field(filters)
 	
-
+	
 	# sql = "select {} as row_group, {} as indent ".format(row_group, indent)
 	if(filters.row_group == "Sale Invoice"):
+		
 		sql = """select 
-			CASE 
-        		WHEN b.custom_bill_number = '' THEN {0}
-        		ELSE CONCAT(b.custom_bill_number, ' (', {0}, ')')
-    		END AS row_group,b.guest_cover, {1} as indent """.format(row_group, indent)
+			{0} row_group,b.guest_cover, {1} as indent """.format(row_group, indent)
 	else:
 		sql = "select {} as row_group, {} as indent ".format(row_group, indent)
 	# total last column
@@ -193,7 +191,6 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 		{5}
 		limit %(top)s
 	""".format(get_conditions(filters,group_filter), row_group,item_code,groupdocstatus,normal_filter,order_by)
- 
 	data = frappe.db.sql(sql,filters, as_dict=1)
 	return data
  
@@ -324,7 +321,7 @@ def get_report_field(filters):
 def get_row_groups():
 	return [
 		{
-			"fieldname":"if(ifnull(b.custom_bill_number,'')='',a.parent,b.custom_bill_number)",
+			"fieldname":"if(ifnull(b.custom_bill_number,'')='',a.parent,concat(b.custom_bill_number,' (',a.parent,')'))",
 			"label":"Sale Invoice",
 			"parent_row_group_filter_field":"row_group",
 			"show_commission":True

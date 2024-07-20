@@ -3,6 +3,7 @@
 
 import json
 from  epos_restaurant_2023.api.cache_function import get_default_account_from_pos_config, get_default_account_from_revenue_group, get_doctype_value_cache
+from epos_restaurant_2023.api.account import cancel_general_ledger_entery
 from epos_restaurant_2023.inventory.inventory import add_to_inventory_transaction, check_uom_conversion, get_product_cost, get_stock_location_product, get_uom_conversion, update_product_quantity
 import frappe
 from frappe import utils
@@ -321,6 +322,8 @@ class Sale(Document):
 		# update_inventory_on_submit(self)			
 		add_payment_to_sale_payment(self) 
 
+		update_status(self)
+
 		## set pos reservation status to checked out
 		update_pos_reservation_status(self)
 
@@ -334,12 +337,26 @@ class Sale(Document):
 
 
 	def on_cancel(self):
+		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
+			cancel_general_ledger_entery("Sale", self.name)
 		
 		if self.flags.ignore_on_cancel == True:
 			return 
 		on_sale_delete_update(self)
 		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel", queue='short', self=self)
  
+def update_status(self):
+		status = ""
+		if self.docstatus == 0:
+			status = "Draft"
+		else:
+			if self.balance == 0:
+				status = "Paid"
+			elif self.balance >0 and self.total_paid>0:
+				status = "Partially Paid"
+			else:
+				status = "Unpaid"
+		self.status = status
     
 def on_sale_delete_update(self):
 	spa_commission = "update `tabSale Product SPA Commission` set is_deleted = 1  where sale = '{}'".format(self.name)			
@@ -556,7 +573,6 @@ def add_payment_to_sale_payment(self):
 	if self.payment:
 		for p in self.payment:		 
 			if p.payment_type_group !='On Account':
-				if p.input_amount>0:
 					doc = frappe.get_doc({
 							'doctype': 'Sale Payment',
 							'naming_series': self.sale_payment_naming_series,

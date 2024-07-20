@@ -1298,14 +1298,14 @@ def get_current_customer_bill_counter(pos_profile):
 @frappe.whitelist(methods="POST")
 def update_customer_bill_counter(pos_profile, counter):
     user= (frappe.session.data.user)
-    pos_user_permission = frappe.db.get_value("User", user, "pos_user_permission")
+    pos_user_permission = frappe.get_cached_value("User", user, "pos_user_permission")
     if pos_user_permission:
-        has_permission = frappe.db.get_value("POS User Permission",pos_user_permission,"reset_custom_bill_number_counter" )
+        has_permission = frappe.get_cached_value("POS User Permission",pos_user_permission,"reset_custom_bill_number_counter" )
         if has_permission ==0:
             frappe.throw("You don't permission to reset counter")
 
-    pos_config = frappe.db.get_value("POS Profile",pos_profile,"pos_config" )
-    prefix =  frappe.db.get_value("POS Config",pos_config,"pos_bill_number_prefix" )
+    pos_config = frappe.get_cached_value("POS Profile",pos_profile,"pos_config" )
+    prefix =  frappe.get_cached_value("POS Config",pos_config,"pos_bill_number_prefix" )
     prefix = prefix.replace(".","").replace("#","")
     frappe.db.sql("update  `tabSeries` set current={} where name='{}'".format(counter, prefix))
     frappe.db.commit()
@@ -1339,10 +1339,10 @@ def on_sale_quick_pay(data):
 @frappe.whitelist()
 def get_exchange_rate():
     
-    main_currency = frappe.db.get_single_value("ePOS Settings", "currency")
-    exchange_rate_main_currency = frappe.db.get_single_value("ePOS Settings", "exchange_rate_main_currency")
+    main_currency = frappe.get_cached_value("ePOS Settings",None, "currency")
+    exchange_rate_main_currency = frappe.get_cached_value("ePOS Settings",None, "exchange_rate_main_currency")
 
-    second_currency = frappe.db.get_single_value("ePOS Settings", "second_currency")
+    second_currency = frappe.get_cached_value("ePOS Settings",None, "second_currency")
     if exchange_rate_main_currency == second_currency:
         second_currency  = main_currency
     

@@ -5,7 +5,7 @@
    "label": "Monthly Expense vs Payment"
   }
  ],
- "content": "[{\"id\":\"DzzXAAYd20\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Monthly Expense vs Payment\",\"col\":12}},{\"id\":\"he0HBLhSr3\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Expense</span>\",\"col\":12}},{\"id\":\"qQriRgdLkX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Expenses\",\"col\":3}},{\"id\":\"2OFtYUfVWx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Expense\",\"col\":3}},{\"id\":\"olrBtffvmQ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Expense Payment\",\"col\":3}},{\"id\":\"5cNK2KS0vS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Expense Payment\",\"col\":3}},{\"id\":\"vYQv3Q7kJO\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":3}},{\"id\":\"YJBGlSjgtS\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Zmwnu224e6\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent Transaction</b></span>\",\"col\":12}},{\"id\":\"fjC12PoRZi\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Expense\",\"col\":6}},{\"id\":\"e962-fl1St\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Expense Payment\",\"col\":6}},{\"id\":\"vxmaAifiGc\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"1QZTf_DnrQ\",\"type\":\"card\",\"data\":{\"card_name\":\"Configuration\",\"col\":4}},{\"id\":\"hN_bRBVU7O\",\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}}]",
+ "content": "[{\"id\":\"DzzXAAYd20\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Monthly Expense vs Payment\",\"col\":12}},{\"id\":\"he0HBLhSr3\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Expense</span>\",\"col\":12}},{\"id\":\"vYQv3Q7kJO\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":3}},{\"id\":\"qQriRgdLkX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Expenses\",\"col\":3}},{\"id\":\"2OFtYUfVWx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Expense\",\"col\":3}},{\"id\":\"olrBtffvmQ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Expense Payment\",\"col\":3}},{\"id\":\"5cNK2KS0vS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Expense Payment\",\"col\":3}},{\"id\":\"YJBGlSjgtS\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Zmwnu224e6\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent Transaction</b></span>\",\"col\":12}},{\"id\":\"fjC12PoRZi\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Expense\",\"col\":6}},{\"id\":\"e962-fl1St\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Expense Payment\",\"col\":6}},{\"id\":\"vxmaAifiGc\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"1QZTf_DnrQ\",\"type\":\"card\",\"data\":{\"card_name\":\"Configuration\",\"col\":4}},{\"id\":\"hN_bRBVU7O\",\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}}]",
  "creation": "2022-12-03 15:55:08.589531",
  "custom_blocks": [],
  "custom_menu_icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"SVGRepo_bgCarrier\" stroke-width=\"0\"></g><g id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></g><g id=\"SVGRepo_iconCarrier\"> <path d=\"M12 6V18\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\"></path> <path d=\"M15 9.5C15 8.11929 13.6569 7 12 7C10.3431 7 9 8.11929 9 9.5C9 10.8807 10.3431 12 12 12C13.6569 12 15 13.1193 15 14.5C15 15.8807 13.6569 17 12 17C10.3431 17 9 15.8807 9 14.5\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\"></path> <path d=\"M7 3.33782C8.47087 2.48697 10.1786 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 10.1786 2.48697 8.47087 3.33782 7\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\"></path> </g></svg>",
@@ -19,6 +19,8 @@
  "label": "Expenses",
  "links": [
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 1,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Configuration",
@@ -27,6 +29,8 @@
    "type": "Card Break"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Expense Category",
@@ -37,6 +41,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Expense Code",
@@ -47,6 +53,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Vendor",
@@ -57,6 +65,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 2,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Report",
@@ -65,6 +75,8 @@
    "type": "Card Break"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Daily Expense Transaction",
@@ -75,6 +87,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Expense Summary",
@@ -85,6 +99,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Daily Expense Payment Transaction",
@@ -95,7 +111,7 @@
    "type": "Link"
   }
  ],
- "modified": "2024-07-11 14:46:58.398874",
+ "modified": "2024-07-18 16:18:45.335759",
  "modified_by": "Administrator",
  "module": "Expense",
  "name": "Expenses",
@@ -117,14 +133,17 @@
  "sequence_id": 9.0,
  "shortcuts": [
   {
-   "color": "Grey",
-   "doc_view": "New",
-   "label": "New Expense Payment",
-   "link_to": "Expense Payment",
+   "color": "Green",
+   "custom_show_in_app_menu": 1,
+   "doc_view": "List",
+   "label": "Expenses",
+   "link_to": "Expense",
+   "stats_filter": "{\"posting_date\":[\"Timespan\",\"this month\"]}",
    "type": "DocType"
   },
   {
    "color": "Grey",
+   "custom_show_in_app_menu": 1,
    "doc_view": "New",
    "label": "New Expense",
    "link_to": "Expense",
@@ -132,6 +151,7 @@
   },
   {
    "color": "Grey",
+   "custom_show_in_app_menu": 1,
    "doc_view": "List",
    "label": "Expense Payment",
    "link_to": "Expense Payment",
@@ -140,18 +160,19 @@
   },
   {
    "color": "Grey",
+   "custom_show_in_app_menu": 1,
+   "doc_view": "New",
+   "label": "New Expense Payment",
+   "link_to": "Expense Payment",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "custom_show_in_app_menu": 1,
    "doc_view": "List",
    "label": "Dashboard",
    "link_to": "Expense Dashboard",
    "type": "Dashboard"
-  },
-  {
-   "color": "Green",
-   "doc_view": "List",
-   "label": "Expenses",
-   "link_to": "Expense",
-   "stats_filter": "{\"posting_date\":[\"Timespan\",\"this month\"]}",
-   "type": "DocType"
   }
  ],
  "title": "Expenses"

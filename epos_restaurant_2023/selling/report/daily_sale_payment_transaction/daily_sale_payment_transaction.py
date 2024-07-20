@@ -41,7 +41,7 @@ def get_columns(filters):
 		{"label":"Doc. #", "fieldname":"name","fieldtype":"Link","options":"Sale Payment", "align":"center"},
 		{"label":"Date",  "fieldname":"posting_date","fieldtype":"Date", "align":"center",},
 		{"label":"Reference", "fieldname":"referance","fieldtype":"Data","align":"left"},
-  		{"label":"Sale", "fieldname":"sale","fieldtype":"Link","options":"Sale","align":"left"},
+  		{"label":"Sale", "fieldname":"bill_number","fieldtype":"Link","options":"Sale","align":"left","width":230},
 		{"label":"Branch", "fieldname":"business_branch","fieldtype":"Data","align":"left","width":120},
 		{"label":"Outlet", "fieldname":"outlet","fieldtype":"Data","align":"left"},
 		{"label":"Customer", "fieldname":"customer_name","fieldtype":"Data","align":"left","width":100},
@@ -87,7 +87,8 @@ def get_conditions(filters,group_filter=None):
 def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 	
 	sql = """select  
-			name,
+			a.name,
+			if(ifnull(b.custom_bill_number,'')='',a.sale,concat(b.custom_bill_number,' (',a.sale,')')) as bill_number,
 			a.posting_date,
 			a.business_branch,
 			a.outlet,
@@ -100,6 +101,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 			a.balance,
    			a.payment_amount
 		FROM `tabSale Payment` AS a
+		INNER JOIN `tabSale` b on b.name = a.sale
 		WHERE
 			{}
 		

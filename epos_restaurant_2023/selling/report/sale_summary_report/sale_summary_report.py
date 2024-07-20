@@ -272,11 +272,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 	report_fields = get_report_field(filters)
 
 	if(filters.row_group == "Sale Invoice"):
-		sql = """select 
-			CASE 
-        		WHEN b.custom_bill_number = '' THEN {0}
-        		ELSE CONCAT(b.custom_bill_number, ' (', {0}, ')')
-    		END AS row_group,b.guest_cover, {1} as indent """.format(row_group, indent)
+		sql = "select {0} as row_group,b.guest_cover, {1} as indent ".format(row_group, indent)
 	else:
 		sql = "select {} as row_group, {} as indent ".format(row_group, indent)
 	if filters.column_group != "None":
@@ -310,7 +306,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 			sql = sql + " ,{} AS 'total_{}' ".format(rf["sql_expression"],rf["fieldname"])
 
 	_row_group = row_group
-	if row_group == "if(ifnull(b.custom_bill_number,'')='',a.parent,b.custom_bill_number)":
+	if row_group == "if(ifnull(b.custom_bill_number,'')='',a.parent,concat(b.custom_bill_number,' (',a.parent,')'))":
 		_row_group = "a.parent, coalesce(b.custom_bill_number,'-')"
 	elif filters.row_group=="Product And Price":
 		_row_group = "concat(a.product_code,'-',a.product_name, ' ', a.`portion`),a.price"
@@ -446,11 +442,11 @@ def get_report_field(filters):
 	fields.append({"label":"Amount", "short_label":"Amt", "fieldname":"amount","fieldtype":"Currency","indicator":"Red","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue)"})
 	fields.append({"label":"Cost", "short_label":"Cost", "fieldname":"cost","fieldtype":"Currency","indicator":"Red","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.cost*a.quantity)"})
 	if row_group['show_commission'] :
-		fields.append({"label":"Commission", "short_label":"commission", "fieldname":"commission","fieldtype":"Currency","indicator":"Red","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(b.commission_amount)"})
-		fields.append({"label":"Net Sale", "short_label":"net_sale", "fieldname":"net_sale","fieldtype":"Currency","indicator":"Red","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue - b.commission_amount)"})
+		fields.append({"label":"Commission", "short_label":"Commission", "fieldname":"commission","fieldtype":"Currency","indicator":"Red","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(b.commission_amount)"})
+		fields.append({"label":"Net Sale", "short_label":"Net Sale", "fieldname":"net_sale","fieldtype":"Currency","indicator":"Red","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue - b.commission_amount)"})
 		fields.append({"label":"Profit", "short_label":"Profit", "fieldname":"profit","fieldtype":"Currency","indicator":"Green","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue - (a.cost*a.quantity) - b.commission_amount)"})
 	else:
-		fields.append({"label":"Net Sale", "short_label":"net_sale", "fieldname":"net_sale","fieldtype":"Currency","indicator":"Red","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue)"})
+		fields.append({"label":"Net Sale", "short_label":"Net Sale", "fieldname":"net_sale","fieldtype":"Currency","indicator":"Red","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue)"})
 		fields.append({"label":"Profit", "short_label":"Profit", "fieldname":"profit","fieldtype":"Currency","indicator":"Green","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue - (a.cost*a.quantity))"})
 	# return [
 	# 	{"label":"Quantity","short_label":"Qty", "fieldname":"quantity","fieldtype":"Float","indicator":"Grey","precision":2, "align":"center","chart_color":"#FF8A65","sql_expression":"SUM(a.quantity)"},
@@ -469,7 +465,7 @@ def get_report_field(filters):
 def get_row_groups():
 	return [
 		{
-			"fieldname":"if(ifnull(b.custom_bill_number,'')='',a.parent,b.custom_bill_number)",
+			"fieldname":"if(ifnull(b.custom_bill_number,'')='',a.parent,concat(b.custom_bill_number,' (',a.parent,')'))",
 			"label":"Sale Invoice",
 			"parent_row_group_filter_field":"row_group",
 			"show_commission":True

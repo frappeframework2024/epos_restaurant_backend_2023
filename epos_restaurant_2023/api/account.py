@@ -12,13 +12,54 @@ def submit_general_ledger_entry(docs):
 
 
 def get_general_ledger_entry_record(docs):
- 
     for d in docs:
         doc = frappe.get_doc(d)
+        if doc.amount and not (doc.credit_amount or doc.debit_amount ):
+            root_type = frappe.get_cached_value("Chart Of Account",doc.account,"root_type")
+            if root_type in ["Asset","Expenses"]:
+                if doc.amount>0:
+                    doc.debit_amount = abs(doc.amount)
+                else:
+                    doc.credit_amount = abs(doc.amount)
+            else:
+                if doc.amount>0:
+                    doc.credit_amount = abs(doc.amount)
+                else:
+                    doc.debit_amount =abs(doc.amount)
+      
         doc.name  = make_autoname("GLE.YYYY.-.#####")
-
         yield doc
         
+        
+def cancel_general_ledger_entery(doctype,docname):
+    sql = "select * from `tabGeneral Ledger` where voucher_type='{}' and voucher_number= '{}'".format( doctype,docname)
+    data = frappe.db.sql(sql,as_dict=1)
+    docs = []
+    for r in data:
+        doc = {
+                "doctype":"General Ledger",
+                "posting_date":r["posting_date"],
+                "account":r["account"],
+                "credit_amount":r["debit_amount"],
+                "debit_amount":r["credit_amount"],
+                "againt":r["againt"],
+                "againt_voucher_type":"Sale",
+                "againt_voucher_number": r["againt_voucher_number"],
+                "voucher_type":doctype,
+                "voucher_number":docname,
+                "business_branch": r["business_branch"],
+                "remark": r["remark"],
+                "party_type": r["party_type"],
+                "party": r["party"],
+                "is_cancelled":1,
+            }
+        docs.append(doc)
+        
+    submit_general_ledger_entry(docs)
+    # update submited record is cancelled = 1
+    frappe.db.sql("update `tabGeneral Ledger` set is_cancelled=1 where voucher_type='{}' and voucher_number='{}'".format(doctype,docname))
+    frappe.db.commit()
+     
 
 @lru_cache(maxsize=128)
 def  get_hierarchy_account_for_report_by_parent(parent,business_branch):

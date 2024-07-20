@@ -185,7 +185,8 @@ def get_data(filters):
 		where
 			a.posting_date between %(start_date)s and %(end_date)s and
 			a.business_branch = %(property)s  and 
-			c.root_type in ('Income','Expenses')
+			c.root_type in ('Income','Expenses') and 
+			a.is_cancelled = 0
 		group by
 			account,
 			c.root_type,

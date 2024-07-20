@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"9Cy6NEc9Q6\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Purchasing</b></span>\",\"col\":12}},{\"id\":\"N5rDPLl0M-\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Your Shortcut</b></span>\",\"col\":12}},{\"id\":\"EjQenWovHy\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"id\":\"uGSB1TxiKZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order Payment\",\"col\":3}},{\"id\":\"4CCisrBqUo\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Vendor\",\"col\":3}},{\"id\":\"zjzmrxGkQ9\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Product\",\"col\":3}},{\"id\":\"P8ReSc0acH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Purchase Order\",\"col\":3}},{\"id\":\"0Z1BCXK9Ph\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Purchase Order Payment\",\"col\":3}},{\"id\":\"qBnMC9rdQ_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bulk Purchase Order Payment\",\"col\":3}},{\"id\":\"q3jMcb17Ou\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":3}},{\"id\":\"SccCXbd9Us\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent Transaction</b></span>\",\"col\":12}},{\"id\":\"75oZvEIWLp\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Purchase Order\",\"col\":6}},{\"id\":\"pVl691b9n7\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Payment\",\"col\":6}},{\"id\":\"rQj_s9SS03\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"hz8GQ9MPtW\",\"type\":\"card\",\"data\":{\"card_name\":\"Vendor\",\"col\":4}},{\"id\":\"WNitUXrlSw\",\"type\":\"card\",\"data\":{\"card_name\":\"Products\",\"col\":4}},{\"id\":\"Zae8PipQ4R\",\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}}]",
+ "content": "[{\"id\":\"9Cy6NEc9Q6\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Purchasing</b></span>\",\"col\":12}},{\"id\":\"N5rDPLl0M-\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Your Shortcut</b></span>\",\"col\":12}},{\"id\":\"q3jMcb17Ou\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":3}},{\"id\":\"EjQenWovHy\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"id\":\"uGSB1TxiKZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order Payment\",\"col\":3}},{\"id\":\"4CCisrBqUo\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Vendor\",\"col\":3}},{\"id\":\"zjzmrxGkQ9\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Product\",\"col\":3}},{\"id\":\"P8ReSc0acH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Purchase Order\",\"col\":3}},{\"id\":\"0Z1BCXK9Ph\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Purchase Order Payment\",\"col\":3}},{\"id\":\"qBnMC9rdQ_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bulk Purchase Order Payment\",\"col\":3}},{\"id\":\"SccCXbd9Us\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent Transaction</b></span>\",\"col\":12}},{\"id\":\"75oZvEIWLp\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Purchase Order\",\"col\":6}},{\"id\":\"pVl691b9n7\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recent Payment\",\"col\":6}},{\"id\":\"rQj_s9SS03\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"hz8GQ9MPtW\",\"type\":\"card\",\"data\":{\"card_name\":\"Vendor\",\"col\":4}},{\"id\":\"WNitUXrlSw\",\"type\":\"card\",\"data\":{\"card_name\":\"Products\",\"col\":4}},{\"id\":\"Zae8PipQ4R\",\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}}]",
  "creation": "2022-12-03 16:46:43.868577",
  "custom_blocks": [],
  "custom_menu_icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"SVGRepo_bgCarrier\" stroke-width=\"0\"></g><g id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></g><g id=\"SVGRepo_iconCarrier\"> <path d=\"M3 11H7M21 11H11\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path> <path d=\"M10 14H14\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path> <path d=\"M18 9L15 3\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path> <path d=\"M6 9L9 3\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path> <path d=\"M20.0164 16.2572C19.5294 18.5297 19.2859 19.666 18.4608 20.333C17.6357 21 16.4737 21 14.1495 21H9.85053C7.52639 21 6.36432 21 5.53925 20.333C4.71418 19.666 4.47069 18.5297 3.98372 16.2572L3.55514 14.2572C2.83668 10.9043 2.47745 9.22793 3.378 8.11397C4.27855 7 5.99302 7 9.42196 7H14.5781C18.0071 7 19.7215 7 20.6221 8.11397C21.2929 8.94376 21.2647 10.0856 20.9097 12\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\"></path> </g></svg>",
@@ -14,6 +14,8 @@
  "label": "Purchasing",
  "links": [
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 1,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Vendor",
@@ -22,6 +24,8 @@
    "type": "Card Break"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Vendor",
@@ -32,6 +36,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 2,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Products",
@@ -40,6 +46,8 @@
    "type": "Card Break"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Product Category",
@@ -50,6 +58,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Product",
@@ -60,6 +70,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Unit",
@@ -70,6 +82,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "UoM Conversion",
@@ -80,6 +94,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Unit Category",
@@ -90,6 +106,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Unit Of Measurement",
@@ -100,6 +118,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 3,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Report",
@@ -108,6 +128,8 @@
    "type": "Card Break"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Purchase Order Transaction",
@@ -118,6 +140,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Purchase Order Summary",
@@ -128,6 +152,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Daily PO Payment Transaction",
@@ -138,6 +164,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Vendor Balance Detail Report",
@@ -148,6 +176,8 @@
    "type": "Link"
   },
   {
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
    "label": "Purchase Order Credit Balance Report",
@@ -158,7 +188,7 @@
    "type": "Link"
   }
  ],
- "modified": "2024-07-11 14:45:10.999474",
+ "modified": "2024-07-18 16:24:33.017583",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchasing",
@@ -181,22 +211,7 @@
  "shortcuts": [
   {
    "color": "Green",
-   "doc_view": "List",
-   "label": "Purchase Order Payment",
-   "link_to": "Purchase Order Payment",
-   "stats_filter": "{\"posting_date\":[\"Timespan\",\"this month\"]}",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Bulk Purchase Order Payment",
-   "link_to": "Bulk Purchase Order Payment",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Green",
+   "custom_show_in_app_menu": 1,
    "doc_view": "List",
    "label": "Purchase Order",
    "link_to": "Purchase Order",
@@ -204,28 +219,27 @@
    "type": "DocType"
   },
   {
-   "color": "Grey",
-   "doc_view": "New",
-   "label": "New Purchase Order",
-   "link_to": "Purchase Order",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "New",
-   "label": "New Purchase Order Payment",
-   "link_to": "Purchase Order Payment",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
+   "color": "Green",
+   "custom_show_in_app_menu": 1,
    "doc_view": "List",
-   "label": "Dashboard",
-   "link_to": "Purchase Order Dashboard",
-   "type": "Dashboard"
+   "label": "Purchase Order Payment",
+   "link_to": "Purchase Order Payment",
+   "stats_filter": "{\"posting_date\":[\"Timespan\",\"this month\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "custom_show_in_app_menu": 1,
+   "doc_view": "List",
+   "format": "",
+   "label": "Vendor",
+   "link_to": "Vendor",
+   "stats_filter": "{\"disabled\":[\"=\",0]}",
+   "type": "DocType"
   },
   {
    "color": "Grey",
+   "custom_show_in_app_menu": 1,
    "doc_view": "List",
    "label": "Product",
    "link_to": "Product",
@@ -233,13 +247,37 @@
    "type": "DocType"
   },
   {
-   "color": "Orange",
-   "doc_view": "List",
-   "format": "",
-   "label": "Vendor",
-   "link_to": "Vendor",
-   "stats_filter": "{\"disabled\":[\"=\",0]}",
+   "color": "Grey",
+   "custom_show_in_app_menu": 1,
+   "doc_view": "New",
+   "label": "New Purchase Order",
+   "link_to": "Purchase Order",
    "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "custom_show_in_app_menu": 1,
+   "doc_view": "New",
+   "label": "New Purchase Order Payment",
+   "link_to": "Purchase Order Payment",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "custom_show_in_app_menu": 1,
+   "doc_view": "List",
+   "label": "Bulk Purchase Order Payment",
+   "link_to": "Bulk Purchase Order Payment",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "custom_show_in_app_menu": 1,
+   "doc_view": "List",
+   "label": "Dashboard",
+   "link_to": "Purchase Order Dashboard",
+   "type": "Dashboard"
   }
  ],
  "title": "Purchasing"

@@ -20,7 +20,7 @@
  "links": [
   {
    "custom_show_in_app_menu": 0,
-   "custom_sort_order": 0,
+   "custom_sort_order": 1,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Member & Membership Setup",
@@ -65,8 +65,8 @@
    "type": "Link"
   },
   {
-   "custom_show_in_app_menu": 0,
-   "custom_sort_order": 0,
+   "custom_show_in_app_menu": 1,
+   "custom_sort_order": 2,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Report",
@@ -75,7 +75,7 @@
    "type": "Card Break"
   },
   {
-   "custom_show_in_app_menu": 0,
+   "custom_show_in_app_menu": 1,
    "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
@@ -87,7 +87,7 @@
    "type": "Link"
   },
   {
-   "custom_show_in_app_menu": 0,
+   "custom_show_in_app_menu": 1,
    "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
@@ -99,7 +99,7 @@
    "type": "Link"
   },
   {
-   "custom_show_in_app_menu": 0,
+   "custom_show_in_app_menu": 1,
    "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
@@ -111,7 +111,7 @@
    "type": "Link"
   },
   {
-   "custom_show_in_app_menu": 0,
+   "custom_show_in_app_menu": 1,
    "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
@@ -123,7 +123,7 @@
    "type": "Link"
   },
   {
-   "custom_show_in_app_menu": 0,
+   "custom_show_in_app_menu": 1,
    "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
@@ -135,7 +135,7 @@
    "type": "Link"
   }
  ],
- "modified": "2024-07-13 11:09:42.484116",
+ "modified": "2024-07-19 14:14:08.994527",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Gym",
@@ -200,35 +200,11 @@
  "sequence_id": 6.0,
  "shortcuts": [
   {
-   "color": "Grey",
-   "custom_show_in_app_menu": 1,
-   "doc_view": "List",
-   "label": "Membership List",
-   "link_to": "Membership",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "custom_show_in_app_menu": 1,
-   "doc_view": "List",
-   "label": "Trainers",
-   "link_to": "Trainer",
-   "type": "DocType"
-  },
-  {
    "color": "Green",
    "custom_show_in_app_menu": 1,
    "doc_view": "List",
    "label": "Membership Option",
    "link_to": "Membership Options",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "custom_show_in_app_menu": 1,
-   "doc_view": "List",
-   "label": "Members",
-   "link_to": "Customer",
    "type": "DocType"
   },
   {
@@ -245,6 +221,30 @@
    "doc_view": "New",
    "label": "Register Membership",
    "link_to": "Membership",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "custom_show_in_app_menu": 1,
+   "doc_view": "List",
+   "label": "Members",
+   "link_to": "Customer",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "custom_show_in_app_menu": 1,
+   "doc_view": "List",
+   "label": "Membership List",
+   "link_to": "Membership",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "custom_show_in_app_menu": 1,
+   "doc_view": "List",
+   "label": "Trainers",
+   "link_to": "Trainer",
    "type": "DocType"
   }
  ],

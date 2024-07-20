@@ -332,6 +332,12 @@ frappe.ui.form.on("Sale", {
 	}
 });
 
+frappe.ui.form.on('POS Sale Payment', {
+	payment_type:function(frm){
+		frappe.throw("Yeeeeet")
+	}
+})
+
 frappe.ui.form.on('Sale Product', {
 	sale_products_remove: function (frm) {
 		updateSumTotal(frm);

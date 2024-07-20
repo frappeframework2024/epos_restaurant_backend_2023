@@ -17,7 +17,6 @@
   "section_break_wuiv",
   "scan_barcode",
   "column_break_pthy",
-  "append_quantity",
   "section_break_nntm",
   "items",
   "section_break_igty",
@@ -43,6 +42,7 @@
    "label": "Reference"
   },
   {
+   "default": "Today",
    "fieldname": "posting_date",
    "fieldtype": "Date",
    "in_list_view": 1,
@@ -80,12 +80,6 @@
   {
    "fieldname": "column_break_pthy",
    "fieldtype": "Column Break"
-  },
-  {
-   "default": "0",
-   "fieldname": "append_quantity",
-   "fieldtype": "Check",
-   "label": "Append Quantity"
   },
   {
    "fieldname": "section_break_nntm",
@@ -161,7 +155,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-07-04 15:57:45.324707",
+ "modified": "2024-07-19 14:36:03.162256",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Entry",

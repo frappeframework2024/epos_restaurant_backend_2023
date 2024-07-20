@@ -289,13 +289,13 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 
 	sql = sql + """ 
 		FROM `tabSale Payment` AS a
+		INNER JOIN `tabSale` b on b.name = a.sale
 		WHERE
 			a.docstatus = 1 and
 			{0}
 		GROUP BY 
 		{1} 
 	""".format(get_conditions(filters,group_filter), row_group)	
-	
 	data = frappe.db.sql(sql,filters, as_dict=1)
 	
 	return data
@@ -370,7 +370,7 @@ def get_report_chart(filters,data):
 def get_row_groups():
 	return [
 		{
-			"fieldname":"a.sale",
+			"fieldname":"if(ifnull(b.custom_bill_number,'')='',a.sale,concat(b.custom_bill_number,' (',a.sale,')'))",
 			"label":"Sale Invoice",
 			"parent_row_group_filter_field":"row_group"
 		},

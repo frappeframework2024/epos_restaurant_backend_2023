@@ -4,8 +4,8 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from epos_restaurant_2023.selling.doctype.sale_payment.general_ledger_entry import submit_payment_to_general_ledger_entry_on_submit,submit_payment_to_general_ledger_entry_on_cancel
-
+from epos_restaurant_2023.selling.doctype.sale_payment.general_ledger_entry import submit_payment_to_general_ledger_entry_on_submit
+from epos_restaurant_2023.api.account import cancel_general_ledger_entery
 class SalePayment(Document):
 	def validate(self):
 		if self.flags.ignore_validate==True:
@@ -72,10 +72,11 @@ class SalePayment(Document):
 		self.update_customer_point()
 	
 	def on_cancel(self):
+		
 		# submit to general ledger entry
 		# run this in enqueue
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
-			submit_payment_to_general_ledger_entry_on_cancel(self)
+			cancel_general_ledger_entery('Sale Payment',self.name)
 		if self.flags.ignore_on_cancel==True:
 			return
 		update_sale(self)
@@ -227,16 +228,23 @@ def update_sale(self):
 
 	# update sale balance and paid
 	if self.sale:
-		data = frappe.db.sql("select  ifnull(sum(payment_amount),0)  as total_paid from `tabSale Payment` where docstatus=1 and sale='{}' and payment_amount>0".format(self.sale))
+		data = frappe.db.sql("select  ifnull(sum(payment_amount),0)  as total_paid from `tabSale Payment` where docstatus=1 and sale='{}' and payment_amount>0".format(self.sale),as_dict=1)
 		sale_amount = frappe.db.get_value('Sale', self.sale, 'grand_total')
 		if data and sale_amount:
-			balance =round(sale_amount,int(currency_precision))-round(data[0][0], int(currency_precision))  
-
+			balance =round(sale_amount,int(currency_precision))-round(data[0].total_paid, int(currency_precision))  
+			status = ""
+			if balance == 0:
+				status = "Paid"
+			elif balance >0 and data[0].total_paid>0:
+				status = "Partially Paid"
+			else:
+				status = "Unpaid"
 			if balance<0:
 				balance = 0
 			frappe.db.set_value('Sale', self.sale,  {
-				'total_paid': round(data[0][0],int(currency_precision)),
-				'balance': balance
+				'total_paid': round(data[0].total_paid,int(currency_precision)),
+				'balance': balance,
+				'Status': status
 			})
 
 		# update customer balance

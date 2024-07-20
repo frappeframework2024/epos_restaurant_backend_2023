@@ -15,7 +15,8 @@
   "show_in_reservation_list",
   "show_in_room_chart",
   "sort_order",
-  "allow_user_to_edit_information"
+  "allow_user_to_edit_information",
+  "allow_reinstate"
  ],
  "fields": [
   {
@@ -65,11 +66,17 @@
    "label": "Alias",
    "reqd": 1,
    "unique": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_reinstate",
+   "fieldtype": "Check",
+   "label": "Allow Reinstate"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-10-10 16:08:48.073062",
+ "modified": "2024-07-19 17:20:42.657463",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Reservation Status",

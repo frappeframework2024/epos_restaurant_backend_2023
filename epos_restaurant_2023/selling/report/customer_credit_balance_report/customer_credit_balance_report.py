@@ -118,7 +118,7 @@ def get_sale_transaction_data(filters,customer):
 	
 	sql = """select
 		1 as indent,
-		a.name as row_group,
+		if(ifnull(a.custom_bill_number,'')='',a.name,concat(a.custom_bill_number,' (',a.name,')')) as row_group,
 		a.posting_date,
 		a.grand_total as total_amount,
 		a.total_paid,
