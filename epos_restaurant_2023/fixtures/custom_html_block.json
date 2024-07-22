@@ -92,13 +92,13 @@
  {
   "docstatus": 0,
   "doctype": "Custom HTML Block",
-  "html": "<p>Hello</p>",
-  "modified": "2024-07-17 14:27:40.430255",
+  "html": "<iframe src='/gym/sale-coupon' style=\"width:100%;border:0\"/>",
+  "modified": "2024-07-20 12:05:26.722816",
   "name": "Add Coupon",
   "private": 0,
   "roles": [],
-  "script": null,
-  "style": null
+  "script": "",
+  "style": "\r\n\r\n::-webkit-scrollbar {\r\n  width: 12px;\r\n}\r\n\r\n/* Track */\r\n::-webkit-scrollbar-track {\r\n  box-shadow: inset 0 0 5px #96C9F4; \r\n  border-radius: 2px;\r\n}\r\n \r\n/* Handle */\r\n::-webkit-scrollbar-thumb {\r\n  background: #B6C7AA; \r\n  border-radius: 4px;\r\n}\r\n\r\n/* Handle on hover */\r\n::-webkit-scrollbar-thumb:hover {\r\n  background: #0F67B1; \r\n}\r\n\r\ntable{\r\n    width:100%;\r\n}\r\nthead th {\r\n  position: sticky;\r\n  top: 0;\r\n  z-index: 1;\r\n}\r\n td,th {\r\n  border: 1px solid #ddd;\r\n  padding: 8px;\r\n}\r\n\r\ntr:nth-child(even){background-color: #f2f2f2;}\r\n\r\ntr:hover {background-color: #ddd; cursor:pointer}\r\n\r\nth {\r\n  padding-top: 12px;\r\n  padding-bottom: 12px;\r\n  text-align: left;\r\n  background-color: #0398e1 !important;;\r\n  color: white;\r\n}\r\n#unpaid-customer{\r\n    height: 500px;\r\n    overflow-y: auto;\r\n}\r\n"
  },
  {
   "docstatus": 0,
@@ -269,11 +269,11 @@
   "docstatus": 0,
   "doctype": "Custom HTML Block",
   "html": "<div style=\"font-size:16px;font-weight:600;width:100%;background:#e9e9e9;border-radius:4px\" class=\"px-2 py-2 mb-2\">Recent Payment</div>\r\n<div id=\"unpaid-customer\">\r\n    \r\n</div>\r\n",
-  "modified": "2024-07-03 17:36:47.754956",
+  "modified": "2024-07-20 14:08:41.089924",
   "name": "Recent Paid",
   "private": 0,
   "roles": [],
-  "script": "\r\nlet parser = new DOMParser(); // create a DOMParser object\r\nconst template = `\r\n<table>\r\n    <thead>\r\n    <tr>\r\n        <th>Customer</th>\r\n        <th class=\"text-right\">Total Amount</th>\r\n        <th class=\"text-right\">Total Paid</th>\r\n        <th class=\"text-right\">Balance</th>\r\n    </tr>\r\n    </thead>\r\n    <tbody>\r\n    {%for d in data%}\r\n        <tr data-bulk_sale=\"{{d.name}}\" data-id=\"{{d.customer}}\">\r\n            <td>{{d.customer_name}}</td>\r\n            <td>{{frappe.format(d.grand_total,{\"fieldtype\":\"Currency\"})}}</td>\r\n            <td>{{frappe.format(d.total_paid,{\"fieldtype\":\"Currency\"})}}</td>\r\n            <td>{{frappe.format(d.balance,{\"fieldtype\":\"Currency\"})}}</td>\r\n        </tr>\r\n    {%endfor%}\r\n\r\n    <tbody>\r\n    </table>\r\n`\r\n\t\t\t\r\n\t\t\t\r\nfrappe.call('epos_restaurant_2023.selling.doctype.customer.customer.get_recent_payment').then(data => {\r\n    const html = frappe.render_template(template,{data:data.message});\r\n    let dom = parser.parseFromString(html, \"text/html\").querySelector(\"table\")\r\n    root_element.querySelector('#unpaid-customer').appendChild(dom);\r\n\r\n})\r\n\r\n $(document).ready(function(){\r\n    $(root_element).find(\"div#unpaid-customer\").on('click', 'tr', function(event) {\r\n        \r\n        window.parent.postMessage({\"name\":$(this).data('id'),\"bulk_sale\":$(this).data('bulk_sale'),\"doctype\":\"Bulk Sale\",\"action\":\"Customer\"})\r\n    }) \r\n })\r\n    \r\n \r\n \r\n\r\n",
+  "script": "\r\nlet parser = new DOMParser(); // create a DOMParser object\r\nconst template = `\r\n<table>\r\n    <thead>\r\n    <tr>\r\n        <th>Customer</th>\r\n        <th class=\"text-right\">Total Amount</th>\r\n        <th class=\"text-right\">Total Paid</th>\r\n        <th class=\"text-right\">Balance</th>\r\n    </tr>\r\n    </thead>\r\n    <tbody>\r\n    {%for d in data%}\r\n        <tr data-bulk_sale=\"{{d.name}}\" data-id=\"{{d.member}}\">\r\n            <td>{{d.customer_name}}</td>\r\n            <td>{{frappe.format(d.grand_total,{\"fieldtype\":\"Currency\"})}}</td>\r\n            <td>{{frappe.format(d.total_paid,{\"fieldtype\":\"Currency\"})}}</td>\r\n            <td>{{frappe.format(d.balance,{\"fieldtype\":\"Currency\"})}}</td>\r\n        </tr>\r\n    {%endfor%}\r\n\r\n    <tbody>\r\n    </table>\r\n`\r\n\t\t\t\r\n\t\t\t\r\nfrappe.call('epos_restaurant_2023.gym.doctype.member_coupon.member_coupon.get_recent_sold_coupon').then(data => {\r\n    const html = frappe.render_template(template,{data:data.message});\r\n    let dom = parser.parseFromString(html, \"text/html\").querySelector(\"table\")\r\n    root_element.querySelector('#unpaid-customer').appendChild(dom);\r\n\r\n})\r\n\r\n $(document).ready(function(){\r\n    $(root_element).find(\"div#unpaid-customer\").on('click', 'tr', function(event) {\r\n        \r\n        window.parent.postMessage({\"name\":$(this).data('id'),\"bulk_sale\":$(this).data('bulk_sale'),\"doctype\":\"Bulk Sale\",\"action\":\"Customer\"})\r\n    }) \r\n })\r\n    \r\n \r\n \r\n\r\n",
   "style": "\r\n\r\n::-webkit-scrollbar {\r\n  width: 12px;\r\n}\r\n\r\n/* Track */\r\n::-webkit-scrollbar-track {\r\n  box-shadow: inset 0 0 5px #96C9F4; \r\n  border-radius: 2px;\r\n}\r\n \r\n/* Handle */\r\n::-webkit-scrollbar-thumb {\r\n  background: #B6C7AA; \r\n  border-radius: 4px;\r\n}\r\n\r\n/* Handle on hover */\r\n::-webkit-scrollbar-thumb:hover {\r\n  background: #0F67B1; \r\n}\r\n\r\ntable{\r\n    width:100%;\r\n}\r\nthead th {\r\n  position: sticky;\r\n  top: 0;\r\n  z-index: 1;\r\n}\r\n td,th {\r\n  border: 1px solid #ddd;\r\n  padding: 8px;\r\n}\r\n\r\ntr:nth-child(even){background-color: #f2f2f2;}\r\n\r\ntr:hover {background-color: #ddd; cursor:pointer}\r\n\r\nth {\r\n  padding-top: 12px;\r\n  padding-bottom: 12px;\r\n  text-align: left;\r\n  background-color: #0398e1 !important;;\r\n  color: white;\r\n}\r\n#unpaid-customer{\r\n    height: 500px;\r\n    overflow-y: auto;\r\n}\r\n"
  },
  {
