@@ -149,6 +149,8 @@ $(document).ready(function(){
     if (window.self !== window.top) {
         ClearUI()
     }
+
+
  })
 
  function removeHeaderSticky(){
@@ -262,6 +264,26 @@ if (window.self !== window.top) {
 
 
 
+
+
+function ViewDocDetailModal(doctype,docname){
+    const url = "/app/" +  frappe.router.slug(doctype) + "/" + docname
+    const dialogGoogleSearch = new frappe.ui.Dialog({
+        title: 'View ' + doctype + " - " + docname,
+        fields: [
+            {
+                fieldname: 'result',
+                fieldtype: 'HTML',
+                options: "<iframe src='" + url + "' style='height:80vh;width:100%;border:none'/>"
+            },
+        ],
+        
+
+    });
+    dialogGoogleSearch.$wrapper.find('.modal-dialog').css("max-width", "90%");
+
+    dialogGoogleSearch.show()
+}
  
 
 

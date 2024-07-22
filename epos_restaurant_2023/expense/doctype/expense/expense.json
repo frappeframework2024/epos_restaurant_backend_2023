@@ -25,13 +25,13 @@
   "expense_item_section",
   "expense_items",
   "section_break_8",
-  "total_quantity",
+  "note",
   "column_break_12",
+  "total_quantity",
   "total_amount",
   "total_paid",
   "balance",
   "section_break_13",
-  "note",
   "amended_from",
   "attach_receipt"
  ],
@@ -117,11 +117,12 @@
   {
    "fieldname": "section_break_13",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Note"
   },
   {
    "fieldname": "note",
-   "fieldtype": "Text Editor",
+   "fieldtype": "Small Text",
    "label": "Note"
   },
   {
@@ -194,7 +195,7 @@
    "link_fieldname": "expense"
   }
  ],
- "modified": "2023-12-05 14:36:23.375865",
+ "modified": "2024-07-20 09:44:26.847090",
  "modified_by": "Administrator",
  "module": "Expense",
  "name": "Expense",

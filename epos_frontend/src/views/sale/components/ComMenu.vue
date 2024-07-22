@@ -17,7 +17,7 @@
                             <template v-if="product.setting.pos_menus.length > 0">
 
                                 <div v-for="(m, index) in product.getPOSMenu()" :key="index" class="h-36">
-
+                                    
                                     <ComMenuItem :data="m" />
                                 </div>
                             </template>
@@ -78,6 +78,7 @@ function onMenuRefresh() {
 
         product.getProductMenuByProductCategory(db, "All Product Categories")
         product.loadPOSMenu();
+        console.log(product.getPOSMenu())
     }
 
 }

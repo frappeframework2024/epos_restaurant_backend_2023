@@ -24,7 +24,6 @@
                 <v-icon :color="data.text_color">mdi-folder-open</v-icon>
             </div>
             <div class="p-1 rounded-md absolute bottom-1 right-1 left-1 bg-gray-50 bg-opacity-70 text-sm text-center">
-
                 <span class="text-black" v-if="!sale.load_menu_lang">{{ getMenuName(data) }}</span>
             </div>
         </div>

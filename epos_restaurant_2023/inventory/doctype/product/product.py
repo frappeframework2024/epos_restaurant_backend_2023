@@ -179,6 +179,8 @@ class Product(Document):
 		self.prices = json.dumps(prices)	
 	
 	def on_update(self):
+		for a in self.pos_menus:
+			a.sort_order = self.sort_order
 		frappe.clear_document_cache("Product",self.name)
 		if self.flags.ignore_on_update==True:
 			return 
@@ -270,10 +272,13 @@ class Product(Document):
 
 
 @frappe.whitelist()
-def get_product(barcode,business_branch=None,stock_location = None,price_rule=None, unit=None,portion = None,allow_sale=None,allow_purchase=None):
+def get_product(barcode,business_branch=None,stock_location = None,price_rule=None, unit=None,portion = None,allow_sale=None,allow_purchase=None,is_inventory_product=None):
 	try:
 		frappe.flags.mute_messages = True
-		p = frappe.get_doc("Product",{"product_code":barcode,"disabled":0},["*"])
+		filters = {"product_code":barcode,"disabled":0}
+		if is_inventory_product == 1:
+			filters["is_inventory_product"] = 1
+		p = frappe.get_doc("Product",filters,["*"])
 		if allow_sale and not p.allow_sale:
 			return {
 				"status":404,

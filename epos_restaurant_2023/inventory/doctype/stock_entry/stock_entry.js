@@ -1,6 +1,6 @@
 // Copyright (c) 2022, Tes Pheakdey and contributors
 // For license information, please see license.txt
-frappe.ui.form.on("Stock Entry ",{
+frappe.ui.form.on("Stock Entry",{
     setup(frm){
         frm.set_query("product_code","items", function() {
             return {
@@ -18,6 +18,7 @@ frappe.ui.form.on("Stock Entry ",{
 					args: {
 						barcode:frm.doc.scan_barcode,
 						business_branch:frm.doc.business_branch,
+						is_inventory_product:1
 					},
 					callback: function(r){
 						if(r.message!=undefined){
@@ -64,10 +65,10 @@ frappe.ui.form.on("Stock Entry Products", {
 		get_currenct_cost(frm,doc)
     },
     quantity(frm,cdt, cdn){
-        update_stock_take_product_amount(frm,cdt, cdn)
+        update_stock_entry_product_amount(frm,cdt, cdn)
     },
     price(frm,cdt, cdn){
-        update_stock_take_product_amount(frm,cdt, cdn)
+        update_stock_entry_product_amount(frm,cdt, cdn)
     },
 	unit(frm,cdt,cdn){
 		let doc = locals[cdt][cdn];
@@ -75,10 +76,11 @@ frappe.ui.form.on("Stock Entry Products", {
 	}
 });
 
-function update_stock_take_product_amount(frm,cdt, cdn)  {
+function update_stock_entry_product_amount(frm,cdt, cdn)  {
     let doc = locals[cdt][cdn];
 		if(doc.quantity <= 0) doc.quantity = 1;
 		doc.amount=doc.quantity * doc.price;
+		doc.total_secondary_cost=doc.quantity * doc.secondary_cost;
 	    frm.refresh_field('items');
 		updateSumTotal(frm);
 }
@@ -206,6 +208,6 @@ function product_code(frm,cdt,cdn){
 		doc.price = v;
 		doc.base_cost = v;
 		frm.refresh_field('items');
-		update_stock_take_product_amount(frm,cdt,cdn)
+		update_stock_entry_product_amount(frm,cdt,cdn)
 	});
 }

@@ -1,6 +1,8 @@
 import frappe
 import json
 
+import frappe
+
 def add_to_inventory_transaction(data):
  
     doc = frappe.get_doc(data)
@@ -44,14 +46,14 @@ def get_uom_conversion(from_uom, to_uom):
     return conversion or 1
 
 def get_product_cost(stock_location, product_code):
-    cost =frappe.db.get_value('Stock Location Product', {'stock_location':stock_location,"product_code":product_code}, ['cost'], cache=True)
+    cost =frappe.get_cached_value('Stock Location Product', {'stock_location':stock_location,"product_code":product_code},'cost')
     if (cost or 0) == 0:
-        cost = frappe.db.get_value('Product',{'product_code':product_code}, ['cost'], cache=True)
+        cost = frappe.get_cached_value('Product',product_code, 'cost')
     
     return cost or 0
 
 def check_uom_conversion(from_uom, to_uom):
-    conversion =frappe.db.get_value('Unit of Measurement Conversion', {'from_uom': from_uom,"to_uom":to_uom}, ['conversion'])
+    conversion =frappe.get_cached_value('Unit of Measurement Conversion', {'from_uom': from_uom,"to_uom":to_uom}, "conversion")
     return conversion
 
 @frappe.whitelist(allow_guest=True)

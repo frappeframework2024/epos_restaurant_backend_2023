@@ -11,6 +11,7 @@
   "transaction_date",
   "transaction_type",
   "transaction_number",
+  "stock_entry_type",
   "column_break_4",
   "product_group",
   "product_category",
@@ -236,11 +237,17 @@
    "fieldname": "expired_date",
    "fieldtype": "Date",
    "label": "Expired Date"
+  },
+  {
+   "fieldname": "stock_entry_type",
+   "fieldtype": "Link",
+   "label": "Stock Entry Type",
+   "options": "Stock Entry Type"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-12 09:54:14.579145",
+ "modified": "2024-07-20 09:19:11.002195",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Inventory Transaction",

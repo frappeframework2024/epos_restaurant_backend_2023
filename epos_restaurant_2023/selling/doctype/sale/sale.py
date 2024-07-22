@@ -278,6 +278,9 @@ class Sale(Document):
 			pass	
 		add_sale_product_spa_commission(self)
 
+	def before_cancel(self):
+		update_status(self)
+
 	def before_submit(self):
 		
 		if self.flags.ignore_before_submit == True:
@@ -349,10 +352,12 @@ def update_status(self):
 		status = ""
 		if self.docstatus == 0:
 			status = "Draft"
+		elif self.docstatus == 2:
+			status = "Cancelled"
 		else:
 			if self.balance == 0:
 				status = "Paid"
-			elif self.balance >0 and self.total_paid>0:
+			elif self.balance > 0 and self.total_paid > 0:
 				status = "Partially Paid"
 			else:
 				status = "Unpaid"

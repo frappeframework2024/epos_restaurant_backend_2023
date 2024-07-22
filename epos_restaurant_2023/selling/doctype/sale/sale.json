@@ -1310,7 +1310,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "Draft\nPaid\nUnpaid\nPartially Paid"
+   "options": "Draft\nPaid\nUnpaid\nPartially Paid\nCancelled"
   }
  ],
  "image_field": "photo",
@@ -1323,7 +1323,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-07-20 09:02:47.285046",
+ "modified": "2024-07-20 09:52:36.356998",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

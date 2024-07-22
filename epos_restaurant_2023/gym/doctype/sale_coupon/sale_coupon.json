@@ -1,0 +1,122 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:coupon_number",
+ "creation": "2024-07-17 14:30:49.530510",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "coupon_number",
+  "posting_date",
+  "coupon_type",
+  "membership",
+  "member_name",
+  "phone_number",
+  "column_break_kxut",
+  "price",
+  "limit_visit",
+  "visited_count",
+  "balance",
+  "expiry_date"
+ ],
+ "fields": [
+  {
+   "fieldname": "coupon_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Coupon Number",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "Membership",
+   "fieldname": "coupon_type",
+   "fieldtype": "Select",
+   "label": "Coupon Type",
+   "options": "Individual\nMembership"
+  },
+  {
+   "depends_on": "eval:doc.coupon_type != 'General'",
+   "fieldname": "membership",
+   "fieldtype": "Link",
+   "label": "Membership",
+   "options": "Membership"
+  },
+  {
+   "fetch_from": "membership.member_name",
+   "fetch_if_empty": 1,
+   "fieldname": "member_name",
+   "fieldtype": "Data",
+   "label": "Member Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "label": "Phone Number"
+  },
+  {
+   "fieldname": "column_break_kxut",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "label": "Price",
+   "reqd": 1
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date"
+  },
+  {
+   "fieldname": "limit_visit",
+   "fieldtype": "Int",
+   "label": "Limit Visit",
+   "reqd": 1
+  },
+  {
+   "fieldname": "visited_count",
+   "fieldtype": "Int",
+   "label": "Visited Count"
+  },
+  {
+   "fieldname": "balance",
+   "fieldtype": "Int",
+   "label": "Balance"
+  },
+  {
+   "fieldname": "expiry_date",
+   "fieldtype": "Date",
+   "label": "Expiry Date",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-07-20 14:16:37.614926",
+ "modified_by": "Administrator",
+ "module": "GYM",
+ "name": "Sale Coupon",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

@@ -43,7 +43,7 @@ export default class Product {
             }
         });
         this.posMenuResource.reload();
-        
+        console.log(this.posMenuResource)
 
     }
 
@@ -60,7 +60,8 @@ export default class Product {
                     defaultMenu = localStorage.getItem('default_menu')
                 }
                 //group.orderByDescending("$.order_time").toArray();
-                return   Enumerable.from(this.posMenuResource.data?.filter(r => r.parent == defaultMenu)).orderBy("$.type_index").thenBy("$.sort_order").thenBy("$.name_en");
+                console.log(Enumerable.from(this.posMenuResource.data?.filter(r => r.parent == defaultMenu)).orderBy("$.type_index").thenBy("$.sort_order").thenBy("$.name_en"))
+                return   Enumerable.from(this.posMenuResource.data?.filter(r => r.parent == defaultMenu)).orderBy("$.type_index").orderBy("$.sort_order").thenBy("$.name_en");
 
             }
         } else {

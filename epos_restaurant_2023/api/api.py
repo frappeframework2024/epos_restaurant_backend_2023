@@ -1005,7 +1005,17 @@ def get_working_day_list_report(business_branch = '', pos_profile = ''):
 
 
 @frappe.whitelist()
-def edit_sale_order(name,auth=None,note=None):
+def edit_sale_order(name,auth=None,note=None):  
+    # sale_doc = frappe.get_doc("Sale",name)
+    # sale_doc.reload()
+    # return sale_doc
+    # sale_status_doc = frappe.get_doc("Sale Status","Submitted")
+    # frappe.db.sql("update `tabSale` set docstatus = 0, sale_status='Submitted', sale_status_color='{1}', sale_status_priority={2} where name='{0}'".format(name,sale_status_doc.background_color,sale_status_doc.priority))
+    # frappe.db.sql("update `tabSale Product` set docstatus = 0 where parent='{}'".format(name))
+    # frappe.db.commit()
+
+    # # return True
+
     sale_doc = frappe.get_doc("Sale",name)
     if sale_doc.is_generate_tax_invoice == 1:
         frappe.throw(_("Sale Order already has tax invoice."))
@@ -1026,7 +1036,6 @@ def edit_sale_order(name,auth=None,note=None):
         sale_payment.cancel()
         sale_payment.delete()
         from epos_restaurant_2023.api.utils import sync_data_to_server_on_delete
-
         sync_data_to_server_on_delete(doc= sale_payment)
     
     #then start to cancel sale
@@ -1036,8 +1045,7 @@ def edit_sale_order(name,auth=None,note=None):
     for p in [d for d in payments if d.folio_transaction_number and d.folio_transaction_type and  not d.cancel_order_adjustment_account_code]:
         frappe.throw("There is no cancel order adjustment account code for payment type {}. Please config it in POS Config Setting.".format(p.payment_type))
 
-    # Role back customer voucher balance
-    total_voucher_payment = sum(s.amount for s in sale_doc.payment) or 0
+
 
     sale_doc.payment=[]
     # frappe.throw(str(sale_doc.docstatus))
@@ -1052,6 +1060,7 @@ def edit_sale_order(name,auth=None,note=None):
     sale_status_doc = frappe.get_doc("Sale Status","Submitted")
     frappe.db.sql("update `tabSale` set docstatus = 0, sale_status='Submitted', sale_status_color='{1}', sale_status_priority={2} where name='{0}'".format(name,sale_status_doc.background_color,sale_status_doc.priority))
     frappe.db.sql("update `tabSale Product` set docstatus = 0 where parent='{}'".format(name))
+
 
 
     #check sale has payment type transfer to edoor and user cancel order 

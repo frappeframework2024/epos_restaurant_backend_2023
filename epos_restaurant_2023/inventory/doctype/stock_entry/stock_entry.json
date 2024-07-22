@@ -8,10 +8,10 @@
  "field_order": [
   "photo",
   "naming_series",
+  "posting_date",
   "reference",
   "entry_type",
   "column_break_balx",
-  "posting_date",
   "stock_location",
   "business_branch",
   "section_break_wuiv",
@@ -20,12 +20,11 @@
   "section_break_nntm",
   "items",
   "section_break_igty",
-  "total_quantity",
+  "note",
   "column_break_hkmq",
+  "total_quantity",
   "total_amount",
   "amended_from",
-  "section_break_cdsx",
-  "note",
   "accounting_tab",
   "default_inventory_account"
  ],
@@ -120,10 +119,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "section_break_cdsx",
-   "fieldtype": "Section Break"
-  },
-  {
    "fieldname": "note",
    "fieldtype": "Small Text",
    "label": "Note"
@@ -132,7 +127,8 @@
    "fieldname": "entry_type",
    "fieldtype": "Link",
    "label": "Entry Type",
-   "options": "Stock Entry Type"
+   "options": "Stock Entry Type",
+   "reqd": 1
   },
   {
    "fieldname": "naming_series",
@@ -155,7 +151,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-07-19 14:36:03.162256",
+ "modified": "2024-07-20 15:57:00.378838",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Entry",

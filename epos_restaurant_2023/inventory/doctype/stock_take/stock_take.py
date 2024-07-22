@@ -38,7 +38,7 @@ class StockTake(Document):
 	def on_cancel(self):
 		update_inventory_on_cancel(self)
 		#frappe.enqueue("epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.update_inventory_on_cancel", queue='short', self=self)
-  
+
 def update_inventory_on_submit(self):
 	for p in self.stock_take_products:
 		if p.is_inventory_product:
