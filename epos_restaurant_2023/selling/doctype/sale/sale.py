@@ -340,12 +340,18 @@ class Sale(Document):
 
 
 	def on_cancel(self):
+		
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			cancel_general_ledger_entery("Sale", self.name)
 		
 		if self.flags.ignore_on_cancel == True:
 			return 
 		on_sale_delete_update(self)
+		sql_delete_bulk = """ delete from `tabBulk Sale` where sale = '{}' """.format(self.name)
+		# frappe.throw(sql_delete_bulk)
+		frappe.db.sql(sql_delete_bulk)
+		frappe.db.commit()
+		
 		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel", queue='short', self=self)
  
 def update_status(self):

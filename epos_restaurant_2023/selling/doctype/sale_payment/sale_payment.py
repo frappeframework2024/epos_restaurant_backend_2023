@@ -83,6 +83,7 @@ class SalePayment(Document):
 		if self.payment_type_group == "Voucher":
 			self.update_customer_voucher_balance()
 		self.update_customer_point_on_cancel_sale()
+		 
 
 	def before_update_after_submit(self):
 		if self.flags.ignore_before_update_after_submit==True:
@@ -241,11 +242,14 @@ def update_sale(self):
 				status = "Unpaid"
 			if balance<0:
 				balance = 0
-			frappe.db.set_value('Sale', self.sale,  {
+			
+			update_sale_status = "Update `tabSale` set total_paid = %(total_paid)s , balance = %(balance)s,status=%(status)s where name = %(sale)s"
+			frappe.db.sql(update_sale_status,{
 				'total_paid': round(data[0].total_paid,int(currency_precision)),
 				'balance': balance,
-				'Status': status
+				'status': status,
+				'sale':self.sale
 			})
-
+			frappe.db.commit()
 		# update customer balance
 		

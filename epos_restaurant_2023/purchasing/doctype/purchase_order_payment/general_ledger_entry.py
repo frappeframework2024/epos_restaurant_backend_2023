@@ -9,7 +9,7 @@ def submit_purchase_payment_to_general_ledger_entry_on_submit(self):
         "doctype":"General Ledger",
         "posting_date":self.posting_date,
         "account":self.account_paid_to,
-        "credit_amount":self.payment_amount,
+        "amount":self.payment_amount,
         "againt":"{}-{}".format(vendor,vendor_name),
         "voucher_type":"Purchase Order Payment",
         "voucher_number":self.name,
@@ -25,7 +25,7 @@ def submit_purchase_payment_to_general_ledger_entry_on_submit(self):
         "doctype":"General Ledger",
         "posting_date":self.posting_date,
         "account":self.account_paid_from,
-        "debit_amount":self.payment_amount,
+        "amount":self.payment_amount,
         "party_type":"Vendor",
         "party":"{}-{}".format(vendor,vendor_name),
         "againt":self.account_paid_to,
@@ -41,53 +41,4 @@ def submit_purchase_payment_to_general_ledger_entry_on_submit(self):
     
     submit_general_ledger_entry(docs=docs)
     
-def submit_purchase_payment_to_general_ledger_entry_on_cancel(self):
-    sql="""
-        update `tabGeneral Ledger`
-        set
-            is_canceclled = 1
-        where
-            voucher_type='Purchase Order Payment' and 
-            voucher_number = '{}'
-    """.format(self.name)
-    frappe.db.sql(sql)
-    from epos_restaurant_2023.api.account import submit_general_ledger_entry
-    docs = []
-    # payment acocunt deduct from asset account 
-    vendor,vendor_name = frappe.db.get_value("Purchase Order",self.purchase_order,["vendor","vendor_name"])
-    doc = {
-        "doctype":"General Ledger",
-        "posting_date":self.posting_date,
-        "account":self.account_paid_to,
-        "debit_amount":self.payment_amount,
-        "againt":"{}-{}".format(vendor,vendor_name),
-        "voucher_type":"Purchase Order Payment",
-        "voucher_number":self.name,
-        "business_branch": self.business_branch,
-        "is_canceclled":1
-    }
-    doc["remark"] = "On cancellation of {}".format(self.purchase_order)
-    docs.append(doc)
-    
-    
-    # deduct payable account
-    doc = {
-        "doctype":"General Ledger",
-        "posting_date":self.posting_date,
-        "account":self.account_paid_from,
-        "credit_amount":self.payment_amount,
-        "party_type":"Vendor",
-        "party":"{}-{}".format(vendor,vendor_name),
-        "againt":self.account_paid_to,
-        "against_voucher_type":"Purchase Order",
-        "againt_voucher_number":self.purchase_order,
-        "voucher_type":"Purchase Order Payment",
-        "voucher_number":self.name,
-        "business_branch": self.business_branch,
-        "is_canceclled":1
-    }
-    doc["remark"] = "On cancellation of {}".format(self.purchase_order)
-    docs.append(doc)
-    
-    submit_general_ledger_entry(docs=docs)
     
