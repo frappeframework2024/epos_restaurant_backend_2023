@@ -85,7 +85,8 @@
    "fieldname": "business_branch",
    "fieldtype": "Link",
    "label": "Business Branch",
-   "options": "Business Branch"
+   "options": "Business Branch",
+   "reqd": 1
   },
   {
    "fieldname": "root_type",
@@ -105,7 +106,7 @@
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-06-26 17:24:13.629274",
+ "modified": "2024-07-24 10:04:12.926788",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "Chart Of Account",

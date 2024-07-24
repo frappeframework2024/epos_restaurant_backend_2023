@@ -194,9 +194,8 @@ def validate_account(self):
     # set default account
 		# account_paid_to
 		if not self.account_paid_to:
-			sql = "select account from `tabPayment Type Account` where business_branch=%(business_branch)s and parent=%()s limit 1"
-			data = frappe.db.sql(sql,{"business_branch":self.business_branch},as_dict=1)
-			frappe.throw(str(data))
+			sql = "select account from `tabPayment Type Account` where business_branch=%(business_branch)s and parent=%(payment_type)s limit 1"
+			data = frappe.db.sql(sql,{"business_branch":self.business_branch,"payment_type":self.payment_type},as_dict=1)
 			if data:
 				self.account_paid_to = data[0]["account"]
 
