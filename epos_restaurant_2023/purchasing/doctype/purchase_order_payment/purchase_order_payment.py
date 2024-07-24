@@ -9,7 +9,7 @@ from epos_restaurant_2023.purchasing.doctype.purchase_order_payment.general_ledg
 from epos_restaurant_2023.api.account import cancel_general_ledger_entery
 class PurchaseOrderPayment(Document):
 	def validate(self):
-		if frappe.db.get_single_value("ePOS Settings","use_basic_accounting_feature"):
+		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			validate_account(self)
 		currency_precision = frappe.db.get_single_value('System Settings', 'currency_precision')
 		if currency_precision=='':
@@ -34,28 +34,23 @@ class PurchaseOrderPayment(Document):
 			frappe.throw("Payment amount cannot greater than purchase balance")
 
 	def on_submit(self):
-		if frappe.db.get_single_value("ePOS Settings","use_basic_accounting_feature"):
+		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			submit_purchase_payment_to_general_ledger_entry_on_submit(self)
 		
 		update_purchase_order(self)
 
 	def on_cancel(self):
-		if frappe.db.get_single_value("ePOS Settings","use_basic_accounting_feature"):
+		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			cancel_general_ledger_entery('Purchase Order Payment',self.name)
+   
 		update_purchase_order(self)
 def validate_account(self):
-    # set default account
-		# account_paid_to
-		if not self.account_paid_from:
-			sql = "select account from `tabPayment Type Account` where business_branch=%(business_branch)s  limit 1"
-			data = frappe.db.sql(sql,{"business_branch":self.business_branch},as_dict=1)
-			if data:
-				self.account_paid_from = data[0]["account"]
-			
-		# account_paid_from
-		if not self.account_paid_to:
-			self.account_paid_to = frappe.db.get_value("Business Branch",self.business_branch,"default_credit_account")
-			
+	if not self.account_paid_from:
+		sql = "select account from `tabPayment Type Account` where business_branch=%(business_branch)s and parent = %(parent)s  limit 1"
+		data = frappe.db.sql(sql,{"business_branch":self.business_branch,'parent':self.payment_type},as_dict=1)
+		if data:
+			self.account_paid_from = data[0]["account"]
+
 def update_purchase_order(self):
 	data = frappe.db.sql("select  ifnull(sum(payment_amount),0)  as total_paid from `tabPurchase Order Payment` where docstatus=1 and purchase_order='{}'".format(self.purchase_order))
 	purchase_order_amount = frappe.db.get_value('Purchase Order', self.purchase_order, 'grand_total')

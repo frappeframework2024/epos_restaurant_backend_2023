@@ -95,6 +95,7 @@ def get_conditions(filters,group_filter=None):
 def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 	
 	sql = """select  
+			a.name as sale_id,
 			CASE 
         		WHEN a.custom_bill_number = '' THEN a.name
         		ELSE CONCAT(a.custom_bill_number, ' (', a.name, ')')

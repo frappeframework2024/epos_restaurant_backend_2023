@@ -86,6 +86,8 @@ def update_stock_location_product(self):
 	else:
 			doc.cost = self.price
 
+ 
+
 	doc.quantity = self.balance
 	doc.total_cost =  doc.quantity * doc.cost
 	# when purchase order if product have expire date then we update expire date to stock location product

@@ -33,6 +33,7 @@
   "note",
   "amended_from",
   "accounting_tab",
+  "default_inventory_account",
   "difference_account"
  ],
  "fields": [
@@ -188,16 +189,28 @@
    "label": "Accounting"
   },
   {
+   "fetch_from": "business_branch.stock_adjustment_account",
+   "fetch_if_empty": 1,
    "fieldname": "difference_account",
    "fieldtype": "Link",
    "label": "Difference Account",
+   "link_filters": "[[{\"fieldname\":\"difference_account\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0],[{\"fieldname\":\"difference_account\",\"field_option\":\"Chart Of Account\"},\"root_type\",\"=\",\"Expenses\"]]",
+   "options": "Chart Of Account"
+  },
+  {
+   "fetch_from": "business_branch.default_inventory_account",
+   "fetch_if_empty": 1,
+   "fieldname": "default_inventory_account",
+   "fieldtype": "Link",
+   "label": "Default Inventory Account",
+   "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0],[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"root_type\",\"=\",\"Asset\"]]",
    "options": "Chart Of Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-06-27 15:45:08.788417",
+ "modified": "2024-07-24 12:06:40.499885",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Adjustment",

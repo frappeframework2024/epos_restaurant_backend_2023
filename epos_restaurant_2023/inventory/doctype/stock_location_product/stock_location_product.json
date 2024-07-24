@@ -51,8 +51,7 @@
    "fieldname": "quantity",
    "fieldtype": "Float",
    "in_list_view": 1,
-   "label": "Quantity",
-   "read_only": 1
+   "label": "Quantity"
   },
   {
    "fieldname": "cost",
@@ -112,7 +111,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-12 09:55:17.109310",
+ "modified": "2024-07-24 16:25:50.870914",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Location Product",
@@ -196,5 +195,6 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "product_name"
+ "title_field": "product_name",
+ "track_changes": 1
 }

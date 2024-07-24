@@ -21,13 +21,13 @@
         </template>
         <div class="text-h5 text-center mt-2">{{ customer.doc?.name }} - {{ customer.doc?.customer_name_en }}</div>
         <v-row no-gutters>
-          <v-col cols="6" sm="3">
+          <v-col cols="6" :sm="(gv.device_setting.show_top_up ? '3':'4')">
             <v-card class="pa-2 ma-2" elevation="2" color="primary">
               <div class="text-h6 text-center">{{ orderSummary.data?.total_visit||0 }}</div>
               <div class="text-body-1 text-center mt-2  text-sm">{{ $t('Total Visit') }}</div>
             </v-card>
           </v-col>
-          <v-col cols="6" sm="3">
+          <v-col cols="6" :sm="(gv.device_setting.show_top_up ? '3':'4')">
             <v-card class="pa-2 ma-2" elevation="2" color="totaldiscount">
               <div class="text-h6 text-center">
                 <CurrencyFormat :value="orderSummary.data?.total_annual_order" />
@@ -35,7 +35,7 @@
               <div class="text-body-1 text-center mt-2 text-sm">{{ $t('Total Annual Order') }}</div>
             </v-card>
           </v-col>
-          <v-col cols="6" sm="3">
+          <v-col cols="6" :sm="(gv.device_setting.show_top_up ? '3':'4')" >
             <v-card class="pa-2 ma-2" elevation="2" color="grandtotalbtn">
               <div class="text-h6 text-center">
                 <CurrencyFormat :value="orderSummary.data?.total_order" />
@@ -43,7 +43,7 @@
               <div class="text-body-1 text-center mt-2 text-sm">{{ $t('Total Order') }}</div>
             </v-card>
           </v-col>
-          <v-col cols="12" :sm="(gv.device_setting.show_top_up ? '3':'6')" v-if="gv.device_setting.show_top_up">
+          <v-col cols="12" sm="3" v-if="gv.device_setting.show_top_up">
             <v-card class="pa-2 ma-2" elevation="2" color="teal-darken-3">
               <div class="text-h6 text-center">
                 <CurrencyFormat :value="orderSummary.data?.voucher_balance" />
@@ -56,7 +56,7 @@
         <v-tabs v-model="tab" color="deep-purple-accent-4" align-tabs="start" class="ma-2">
           <v-tab value="about">{{ $t('About') }}</v-tab>
           <v-tab value="recentOrder">{{ $t('Recent Order') }}</v-tab>
-          <v-tab value="topup">{{ $t('Top Up History') }}</v-tab> 
+          <v-tab value="topup" v-if="gv.device_setting.show_top_up">{{ $t('Top Up History') }}</v-tab> 
         </v-tabs>
         <v-window v-model="tab">
           <v-window-item value="about">

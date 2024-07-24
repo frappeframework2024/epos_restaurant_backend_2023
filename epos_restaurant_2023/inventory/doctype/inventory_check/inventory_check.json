@@ -9,6 +9,7 @@
   "section_break_pajt",
   "naming_series",
   "posting_date",
+  "business_branch",
   "column_break_xbyt",
   "stock_location",
   "check_type",
@@ -18,7 +19,11 @@
   "item_section",
   "items",
   "note_section",
-  "note"
+  "note",
+  "accounting_tab",
+  "default_inventory_account",
+  "column_break_itjj",
+  "default_adjustment_account"
  ],
  "fields": [
   {
@@ -101,12 +106,41 @@
   {
    "fieldname": "note",
    "fieldtype": "Small Text"
+  },
+  {
+   "fieldname": "accounting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "default_inventory_account",
+   "fieldtype": "Link",
+   "label": "Default Inventory Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "column_break_itjj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_adjustment_account",
+   "fieldtype": "Link",
+   "label": "Default Adjustment Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "business_branch",
+   "fieldtype": "Link",
+   "label": "Business Branch",
+   "options": "Business Branch",
+   "reqd": 1,
+   "set_only_once": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-06-12 10:33:20.611798",
+ "modified": "2024-07-24 14:20:19.452297",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Inventory Check",

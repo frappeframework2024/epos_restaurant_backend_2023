@@ -7,7 +7,8 @@ import frappe
 from frappe import _
 from py_linq import Enumerable
 from frappe.model.document import Document
-
+from epos_restaurant_2023.inventory.doctype.stock_take.general_ledger_entry import submit_stock_take_general_ledger_entry_on_submit
+from epos_restaurant_2023.api.account import cancel_general_ledger_entery
 class StockTake(Document):
 	def validate(self):
 		total_quantity = Enumerable(self.stock_take_products).sum(lambda x: x.quantity or 0)
@@ -15,6 +16,8 @@ class StockTake(Document):
 
 		self.total_quantity = total_quantity
 		self.total_amount = total_amount
+		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
+			validate_account(self)
   
 	def before_submit(self):
 		for d in self.stock_take_products:
@@ -34,8 +37,11 @@ class StockTake(Document):
 	def on_submit(self):
 		update_inventory_on_submit(self)
 		#frappe.enqueue("epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.update_inventory_on_submit", queue='short', self=self)
-	
+		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
+			submit_stock_take_general_ledger_entry_on_submit(self)
 	def on_cancel(self):
+		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
+			cancel_general_ledger_entery('Stock Take',self.name)
 		update_inventory_on_cancel(self)
 		#frappe.enqueue("epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.update_inventory_on_cancel", queue='short', self=self)
 
@@ -74,3 +80,9 @@ def update_inventory_on_cancel(self):
 				'note': 'Stock take cancelled.',
     			"action": "Cancel"
 			})
+def validate_account(self):
+	if not self.difference_account:
+		self.difference_account = frappe.get_cached_value("Business Branch", self.business_branch, "stock_adjustment_account")
+	
+	if not self.default_inventory_account:
+		self.default_inventory_account = frappe.get_cached_value("Business Branch", self.business_branch, "default_inventory_account")

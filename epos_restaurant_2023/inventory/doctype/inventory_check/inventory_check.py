@@ -5,6 +5,7 @@ from epos_restaurant_2023.inventory.inventory import add_to_inventory_transactio
 import frappe
 from frappe.model.document import Document
 from epos_restaurant_2023.controllers.base_controller import BaseController
+from epos_restaurant_2023.inventory.doctype.inventory_check.general_ledger_entry import submit_inventory_check_general_ledger_entry
 class InventoryCheck(BaseController):
 	def validate(self):
 		# validate date with inventory transaction
@@ -18,6 +19,9 @@ class InventoryCheck(BaseController):
 			data = frappe.db.sql("select name from `tabInventory Check` where stock_location='{}' and docstatus=0".format(self.stock_location),as_dict=1)
 			if data:
 				frappe.throw("Please submit your pending inventory check first before create new inventory check")
+
+		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
+			validate_account(self)
    
    
 		if self.check_type == "Partially Check":
@@ -27,6 +31,9 @@ class InventoryCheck(BaseController):
 		if self.items:
 			for d in [x for x in self.items if x.actual_quantity!=x.current_on_hand]:
 				d.difference = (d.actual_quantity or 0) - (d.current_on_hand or 0)
+			
+			for d in [x for x in  self.items  if ( x.current_on_hand * x.original_cost) != (x.actual_quantity * x.cost) ]:
+				d.total_difference_cost = (d.actual_quantity * d.cost) - (d.current_on_hand * d.original_cost)
 		
   
 		if self.is_new() or not self.items:
@@ -40,21 +47,41 @@ class InventoryCheck(BaseController):
     
 		
 	def before_submit(self):
-		# update product cost
-		sql = """
-			update `tabInventory Check Items` a
-			join `tabStock Location Product` b on b.product_code = a.product_code and b.stock_location=%(stock_location)s
-			set
-				a.cost = b.cost
-			where
-				a.parent = %(name)s
+		sql  = """update `tabStock Location Product` s 
+				inner join `tabInventory Check Items` i on i.product_code = s.product_code and i.stock_location = %(stock_location)s
+					set s.cost = i.cost
+				where i.parent = %(inventory_check) and i.product_code in %(product_code)s"""
+		
+		frappe.db.sql(sql,{
+			"inventory_check":self.parent,
+			"stock_location":self.stock_location,
+			"product_code": [d.product_code for d in self.items if d.cost != d.original_cost]
+		})
 
-  		"""
-		frappe.db.sql(sql,{"stock_location": self.stock_location, "name":self.name})
+
+
 	def on_submit(self):
+		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
+			submit_inventory_check_general_ledger_entry(self)
+
 		update_inventory_on_submit(self)
+
+
 		# frappe.enqueue("epos_restaurant_2023.inventory.doctype.inventory_check.inventory_check.update_inventory_on_submit", queue='short', self=self)
 	def on_cancel(self):
+		sql  = """update `tabStock Location Product` s 
+				inner join `tabInventory Check Items` i on i.product_code = s.product_code and i.stock_location = %(stock_location)s
+					set s.cost = i.original_cost
+				where i.parent = %(inventory_check) and i.product_code in %(product_code)s"""		
+		frappe.db.sql(sql,{
+			"inventory_check":self.parent,
+			"stock_location":self.stock_location,
+			"product_code": [d.product_code for d in self.items if d.cost != d.original_cost]
+		})
+
+		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
+			submit_inventory_check_general_ledger_entry(self, on_cancel=True)
+
 		update_inventory_on_cancel(self)
 
 def validate_no_duplicate_codes(dict_list):
@@ -67,6 +94,20 @@ def validate_no_duplicate_codes(dict_list):
         seen_codes.add(code)
     return True, None , None # No duplicates found
 
+def validate_account(self):
+	if not self.is_new():
+		inventory_check = frappe.db.sql("select business_branch from `tabInventory Check` where name = %(name)s", {"name":self.name}, as_dict=1)
+		if  inventory_check[0].business_branch !=  self.business_branch:
+			self.default_inventory_account = None
+			self.default_adjustment_account = None
+
+	if not self.default_inventory_account:
+		self.default_inventory_account = frappe.get_cached_value("Business Branch", self.business_branch, "default_inventory_account")
+	
+	if not self.default_adjustment_account:
+		self.default_adjustment_account = frappe.get_cached_value("Business Branch", self.business_branch, "stock_adjustment_account") 
+	
+
 @frappe.whitelist()
 def get_product_quantity_information(product_code,date,stock_location):
 	product_doc = frappe.get_doc("Product",product_code)
@@ -77,7 +118,6 @@ def get_product_quantity_information(product_code,date,stock_location):
 	# current data 
 	sql = "select coalesce(transaction_type,'Not Set') as transaction_type, sum(in_quantity - out_quantity) as quantity from `tabInventory Transaction` where stock_location=%(stock_location)s and  transaction_date=%(date)s and product_code =  %(product_code)s group by coalesce(transaction_type,'Not Set') "
 	current_data = frappe.db.sql(sql, {"date":date, "stock_location":stock_location ,"product_code":product_code},as_dict=1 )
-	
 
 
 	result =  {
@@ -89,8 +129,7 @@ def get_product_quantity_information(product_code,date,stock_location):
 		"opening_quantity": opening_data[0]["quantity"] or 0,
 		"sale": sum([d["quantity"] for d in current_data if d["transaction_type"] =='Sale']),
 		"purchase": sum([d["quantity"] for d in current_data if d["transaction_type"] =='Purchase Order']),
-		"other_transaction":sum([d["quantity"] for d in current_data if not d["transaction_type"]  in ('Purchase Order','Sale')]),
-		
+		"other_transaction":sum([d["quantity"] for d in current_data if not d["transaction_type"]  in ('Purchase Order','Sale')]),	
 
 	}
 	result["current_on_hand"] = (result["opening_quantity"] or 0)  +  (result["sale"] or 0) + (result["purchase"] or 0)  + (result["other_transaction"] or 0)
@@ -101,6 +140,8 @@ def get_product_quantity_information(product_code,date,stock_location):
 
 
 def update_inventory_on_submit(self):
+
+
 	
 	for p in [ x for x in self.items if x.difference!=0]:
 		# uom_conversion = (1 if (get_uom_conversion(p.base_unit, p.unit) or 0) == 0 else get_uom_conversion(p.base_unit, p.unit))
@@ -155,6 +196,20 @@ def get_products(self):
 	
 	opening_data = get_opening_quantity(self, [d["name"] for d in data])
 	current_data = get_current_quantity(self, [d["name"] for d in data])
+
+	sql = """
+		select 
+			b.product_code,
+			b.cost 
+		from  `tabStock Location Product` b 
+		where
+			b.product_code in %(product_code)s
+			and b.stock_location=%(stock_location)s
+	"""
+	product_cost = frappe.db.sql(sql,{"stock_location": self.stock_location, "product_code":[d["name"] for d in data ]}, as_dict=1)
+	
+
+
 	
 	for d in data:
 		child_doc = frappe.new_doc("Inventory Check Items")
@@ -166,10 +221,9 @@ def get_products(self):
 		child_doc.other_transaction = sum([x["quantity"] for x in current_data if x["product_code"] ==d["name"] and not x["transaction_type"] in ["Purchase Order","Sale"]])
 		child_doc.current_on_hand = child_doc.opening_quantity +  child_doc.purchase +   child_doc.sale + child_doc.other_transaction 
 		child_doc.actual_quantity = child_doc.current_on_hand
-  
-  
+		child_doc.original_cost = sum([x["cost"] for x in product_cost if x["product_code"]==d["name"]])
+		child_doc.cost = sum([x["cost"] for x in product_cost if x["product_code"]==d["name"]])
 
-  
 		self.append("items", child_doc)
   
 

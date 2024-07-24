@@ -379,7 +379,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2024-06-26 16:46:33.638430",
+ "modified": "2024-07-24 10:47:06.521454",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",
@@ -467,6 +467,18 @@
    "read": 1,
    "report": 1,
    "role": "GYM User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Coupon User",
    "share": 1,
    "write": 1
   }

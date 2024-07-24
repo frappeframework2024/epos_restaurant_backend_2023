@@ -11,8 +11,6 @@ from epos_restaurant_2023.inventory.doctype.stock_adjustment.general_ledger_entr
 
 class StockAdjustment(Document):
 	def validate(self):
-		if frappe.db.get_single_value("ePOS Settings","use_basic_accounting_feature"):
-			validate_account(self)
 		not_inventory_product =  Enumerable(self.products).where(lambda x: x.is_inventory_product==0).first_or_default()
 		if not_inventory_product:
 			frappe.throw(_("Product {} - {} is not an inventory product".format(not_inventory_product.product_code, not_inventory_product.product_name )))
@@ -26,9 +24,10 @@ class StockAdjustment(Document):
 			self.total_cost = total_cost
 
 	def on_submit(self):
-		if frappe.db.get_single_value("ePOS Settings","use_basic_accounting_feature"):
+		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			submit_stock_adjustment_general_ledger_entry_on_submit(self)
-		if len(self.products)>=10:
+   
+		if len(self.products)<=10:
 			update_inventory_on_submit(self)
 		else:
 			frappe.enqueue("epos_restaurant_2023.inventory.doctype.stock_adjustment.stock_adjustment.update_inventory_on_submit", queue='short', self=self)
@@ -56,25 +55,3 @@ def update_inventory_on_submit(self):
 				'note': 'New Stock adjustment submitted.',
 				"action":"Submit"
 			})
-def validate_account(self):
-    # set default account
-		if not self.difference_account:
-			self.difference_account = frappe.db.get_value("Business Branch",self.business_branch,"stock_adjustment_account")
-
-	# for p in self.products:
-	# 	if p.is_inventory_product:
-	# 		defference_qty = p.quantity - p.current_quantity
-	# 		add_to_inventory_transaction({
-	# 			'doctype': 'Inventory Transaction',
-	# 			'transaction_type':"Stock adjustment",
-	# 			'transaction_date':self.posting_date,
-	# 			'transaction_number':self.name,
-	# 			'product_code': p.product_code,
-	# 			'unit':p.unit,
-	# 			'stock_location':self.stock_location,
-	# 			'out_quantity': defference_qty if defference_qty >= 0 else 0,
-	# 			'in_quantity': abs(defference_qty) if defference_qty < 0 else 0,
-	# 			"price":p.current_cost,
-	# 			'note': 'Stock adjustment cancelled.',
-    # 			"action":"Cancel"	
-	# 		})

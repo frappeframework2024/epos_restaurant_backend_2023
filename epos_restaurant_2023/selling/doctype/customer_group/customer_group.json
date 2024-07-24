@@ -70,7 +70,7 @@
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-24 15:23:08.508010",
+ "modified": "2024-07-24 10:48:30.714745",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer Group",
@@ -122,6 +122,18 @@
    "read": 1,
    "report": 1,
    "role": "GYM User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Coupon User",
    "share": 1,
    "write": 1
   },

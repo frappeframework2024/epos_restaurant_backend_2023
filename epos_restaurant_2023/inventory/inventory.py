@@ -6,7 +6,6 @@ import frappe
 def add_to_inventory_transaction(data):
  
     doc = frappe.get_doc(data)
-    
     doc.insert()
     
 

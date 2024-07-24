@@ -219,9 +219,10 @@
   {
    "fetch_from": "purchase_order.business_branch",
    "fieldname": "business_branch",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "hidden": 1,
-   "label": "Business Branch"
+   "label": "Business Branch",
+   "options": "Business Branch"
   },
   {
    "fetch_from": "purchase_order.stock_location",
@@ -267,10 +268,11 @@
   },
   {
    "allow_in_quick_entry": 1,
+   "fetch_from": "business_branch.default_credit_account",
    "fieldname": "account_paid_to",
    "fieldtype": "Link",
    "label": "Account Paid To",
-   "link_filters": "[[{\"fieldname\":\"account_paid_to\",\"field_option\":\"Chart Of Account\"},\"root_type\",\"=\",\"1000 - Assets\"],[{\"fieldname\":\"account_paid_to\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0]]",
+   "link_filters": "[[{\"fieldname\":\"account_paid_to\",\"field_option\":\"Chart Of Account\"},\"root_type\",\"=\",\"Liabilities\"],[{\"fieldname\":\"account_paid_to\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0]]",
    "options": "Chart Of Account"
   },
   {
@@ -278,7 +280,7 @@
    "fieldname": "account_paid_from",
    "fieldtype": "Link",
    "label": "Account Paid From",
-   "link_filters": "[[{\"fieldname\":\"account_paid_to_from\",\"field_option\":\"Chart Of Account\"},\"root_type\",\"=\",\"2000 - Liabilities\"],[{\"fieldname\":\"account_paid_to_from\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0]]",
+   "link_filters": "[[{\"fieldname\":\"account_paid_from\",\"field_option\":\"Chart Of Account\"},\"account_type\",\"in\",[\"Cash\",\"Bank\"]],[{\"fieldname\":\"account_paid_from\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0]]",
    "options": "Chart Of Account"
   },
   {
@@ -295,7 +297,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-07-24 09:58:42.079822",
+ "modified": "2024-07-24 10:16:16.346751",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order Payment",

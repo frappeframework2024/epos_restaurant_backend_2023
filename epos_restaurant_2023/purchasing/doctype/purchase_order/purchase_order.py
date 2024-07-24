@@ -36,15 +36,11 @@ class PurchaseOrder(Document):
 		self.grand_total =( sub_total - (self.total_discount or 0))
 		self.balance = self.grand_total  - (self.total_paid or 0)
 	
-		default_inventory_account,default_credit_account = frappe.db.get_value("Business Branch",self.business_branch,["default_inventory_account","default_credit_account"])
-		# set default credit account
-		if not self.default_credit_account:
-			self.default_credit_account = default_credit_account
-		# set default account to purcvhase order product
-		
-		for p in [d for d in self.purchase_order_products if not d.default_account]:
-			p.default_account =default_inventory_account 
-
+ 
+		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
+			validate_account(self)
+   
+			
 
 
 	def on_submit(self):
@@ -154,3 +150,33 @@ def get_exchange_rate():
     if len(data):
         exchange_rate = data[0]["exchange_rate"]    
     return exchange_rate or 1
+
+
+
+def validate_account(self):
+	if not self.default_credit_account:
+		self.default_credit_account = frappe.get_cached_value("Business Branch", self.business_branch, "default_credit_account")
+	
+	if not self.default_discount_account:
+		self.default_discount_account = frappe.get_cached_value("Business Branch", self.business_branch, "default_purchase_discount_account")
+ 
+	for p in self.purchase_order_products:
+		if not p.default_account:
+			if p.is_inventory_product:
+				p.default_account = frappe.get_cached_value("Business Branch", self.business_branch,"default_inventory_account")
+			else:
+				p.default_account = get_expense_account_from_product(self.business_branch, p.product_code)
+          
+                
+def get_expense_account_from_product(business_branch,product_code):
+    doc = frappe.get_cached_doc("Product",product_code)
+    account = None
+    if doc.default_account:
+        account = [d for d in doc.default_account if d.business_branch == business_branch]
+        if account:
+            account = account[0].default_expense_account
+    
+    if not account:
+        account = frappe.get_cached_value("Business Branch", business_branch,"default_cost_of_good_sold_account")
+        
+    return account or ""

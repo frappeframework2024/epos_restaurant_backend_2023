@@ -3,6 +3,22 @@
 
 frappe.ui.form.on("Journal Entry", {
 	onload(frm) {
-        alert("hell")
+        if(frm.is_new()){
+            frm.set_value('posting_date', frappe.datetime.get_today());
+        }
 	},
+    business_branch(frm){
+        frm.set_query("account","account_entries", function() {
+            return {
+                filters: [
+                    ["business_branch", "=", frm.doc.business_branch]
+                ]
+            }
+        });
+        $.each(frm.doc.account_entries, function(idx, data) {
+            data.account = ''
+        });
+        
+        frm.refresh();
+    }
 });

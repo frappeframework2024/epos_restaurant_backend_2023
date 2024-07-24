@@ -72,10 +72,7 @@ frappe.ui.form.on('Stock Adjustment Product', {
         let doc = locals[cdt][cdn];
         get_location_product(frm,doc)
     },
-	quantity(frm,cdt, cdn){
-        let doc = locals[cdt][cdn];
-        get_location_product(frm,doc)
-    }
+	
 })
 
 function get_location_product(frm, doc){

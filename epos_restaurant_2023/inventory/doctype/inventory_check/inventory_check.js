@@ -9,16 +9,37 @@ frappe.ui.form.on("Inventory Check", {
                 
 	},
         select_product(frm){
-		if(frm.doc.items.length > 0){
-            $.each(frm.doc.items, function(i, d) {
-                if(d.product_code){
-                        get_product_quantity_information(frm,d);
-				}
-            });
-        }
-    },
+                if(frm.doc.items.length > 0){
+                        $.each(frm.doc.items, function(i, d) {
+                                if(d.product_code){
+                                        get_product_quantity_information(frm,d);
+                                }
+                        });
+                }
+        },
+        setup(frm) { 
+		set_query(frm, "stock_location", [["Stock Location", "business_branch", "=", frm.doc.business_branch]]);
+	},
+        business_branch(frm) {
+                frm.doc.stock_location = undefined;
+                frm.refresh_field('stock_location');
+                 
+                set_query(frm, "stock_location", [["Stock Location", "business_branch", "=", frm.doc.business_branch]]);
+        },
         
 });
+
+function set_query(frm, field_name, filters) {
+
+	frm.set_query(field_name, function () {
+		return {
+			filters: filters
+		}
+	});
+
+}
+
+
 frappe.ui.form.on("Inventory Check Items", {
         product_code(frm,cdt, cdn){
                 
