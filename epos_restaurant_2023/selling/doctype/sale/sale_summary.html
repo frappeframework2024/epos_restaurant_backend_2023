@@ -2,7 +2,7 @@
     border-radius: 6px;padding:10px; ">
   <div class="row">
     <div class="col">
-      Total Quantity
+      {{__("Total Quantity")}}
     </div>
     <div class="col text-right">
       <strong>{{total_quantity}}</strong>
@@ -10,7 +10,8 @@
   </div>
   <div class="row">
     <div class="col">
-      Sub Total
+      {{__("Sub Total")}}
+      
     </div>
     <div class="col text-right">
       <strong>{{frappe.format(sub_total,{"fieldtype":"Currency"})}}</strong>
@@ -19,7 +20,8 @@
   {% if product_discount %}
   <div class="row">
     <div class="col">
-      Product Discount
+      {{__("Product Discount")}}
+      
     </div>
     <div class="col text-right">
       <strong>{{frappe.format(product_discount,{"fieldtype":"Currency"})}}</strong>
@@ -29,7 +31,7 @@
   {% if discount %}
   <div class="row">
     <div class="col">
-      Sale Discount {%if discount_type=="Percent"%} - {{discount}}%{%endif%}
+      {{__("Sale Discount")}} {%if discount_type=="Percent"%} - {{discount}}%{%endif%}
     </div>
     <div class="col text-right">
       <strong>{{frappe.format(sale_discount,{"fieldtype":"Currency"})}}</strong>
@@ -40,7 +42,7 @@
   {% if sale_discount>0 && product_discount>0 %}
   <div class="row">
     <div class="col">
-      Total Discount
+      {{__("Total Discount")}}
     </div>
     <div class="col text-right">
       <strong>{{frappe.format(total_discount ,{"fieldtype":"Currency"})}}</strong>
@@ -51,7 +53,7 @@
   {% if total_tax >0  %}
   <div class="row">
     <div class="col">
-      Total Tax
+      {{__("Total Tax")}}
     </div>
     <div class="col text-right">
       <strong>{{frappe.format(total_tax ,{"fieldtype":"Currency"})}}</strong>

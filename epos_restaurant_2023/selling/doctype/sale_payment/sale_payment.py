@@ -55,6 +55,8 @@ class SalePayment(Document):
 			if self.check_valid_payment_amount:
 				if self.payment_amount > self.balance:
 					frappe.throw("Payment amount cannot greater than sale balance")
+
+			
 		
 
 	def on_submit(self):
@@ -192,10 +194,12 @@ def validate_account(self):
     # set default account
 		# account_paid_to
 		if not self.account_paid_to:
-			sql = "select account from `tabPayment Type Account` where business_branch=%(business_branch)s limit 1"
+			sql = "select account from `tabPayment Type Account` where business_branch=%(business_branch)s and parent=%()s limit 1"
 			data = frappe.db.sql(sql,{"business_branch":self.business_branch},as_dict=1)
+			frappe.throw(str(data))
 			if data:
 				self.account_paid_to = data[0]["account"]
+
 		# account_paid_from
 		if not self.account_paid_from:
 			self.account_paid_from = frappe.db.get_value("Business Branch",self.business_branch,"default_receivable_account")

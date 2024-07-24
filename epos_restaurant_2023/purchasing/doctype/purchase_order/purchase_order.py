@@ -6,6 +6,7 @@ from epos_restaurant_2023.inventory.inventory import add_to_inventory_transactio
 from epos_restaurant_2023.inventory.inventory import check_uom_conversion,calculate_average_cost,get_last_inventory_transaction,update_inventory_transaction_status
 import frappe
 from frappe import _
+from frappe.utils import flt
 from py_linq import Enumerable
 from frappe.model.document import Document
 from epos_restaurant_2023.purchasing.doctype.purchase_order.general_ledger_entry import submit_purchase_to_general_ledger_entry_on_submit,submit_purchase_to_general_ledger_entry_on_cancel
@@ -124,7 +125,7 @@ def validate_po_discount(self):
 	for d in self.purchase_order_products:
 		d.sub_total = (d.quantity or 0) * (d.cost or 0)
 		if (d.discount_type or "Percent")=="Percent":
-			d.discount_amount = d.sub_total * (d.discount or 0) / 100
+			d.discount_amount = (flt(d.sub_total) * flt(d.discount or 0)) / 100
 		else:
 			d.discount_amount = d.discount or 0
 		# check if sale has discount

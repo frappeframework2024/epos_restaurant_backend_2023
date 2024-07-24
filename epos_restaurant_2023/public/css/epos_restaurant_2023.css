@@ -128,3 +128,412 @@
     border: 1px solid #e5e7eb;
 
 }
+
+/* sidebar menu css */
+@media (min-width: 768px) {
+    body.full-width .container {
+        width:100% !important;
+        padding-left: 70px;
+        max-width: 100%;
+    }
+}
+li.active {
+    background:#edf6fd;
+    border: 2px solid #0070cc !important;
+    border-radius: 7px;
+}
+.navbar .navbar-brand {
+    margin-left: -3%;
+    opacity: 0;
+}
+#main-menu{
+    z-index: 99999;
+    background-color: red;
+    position: absolute;
+    top:0px;
+
+}
+.logo-sidebar {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+    height: 60px;
+}
+.logo-sidebar .app-logo {
+    width: 36px;
+}
+.user-profile {
+    display: flex;
+    justify-content: center;
+}
+.us-pro-inner {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+}
+.sidebar-inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+/* ====== */
+.sidebar {
+    position: fixed;
+    z-index: 1040;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 56px;
+    background-color: #f8fafc;
+    color: #0c0101;
+    padding: 10px 4px;
+}
+
+.menu {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+.menu li a{
+    position: relative;
+    padding-top: 3px;
+    height: 40px;
+}
+.menu li {
+    border: 2px solid transparent;
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+    color: #160303;
+    text-decoration: none;
+}
+
+.menu li:hover {
+    background:#edf6fd;
+    /* border: 2px solid transparent; */
+    border-radius: 7px;
+}
+
+.menu .icon {
+    font-size: 20px;
+    display: inline-block;
+    width: 26px;
+    text-align: center;
+    height: 100%;
+}
+
+.submenu-panel {
+    width: 250px;
+    background-color: #ffffff;
+    color: #000000;
+    height: 100vh;
+    overflow: auto;
+    position: fixed;
+    left: -250px;
+    top: 0;
+    z-index: 1030;
+    border: 1px solid #f8fafc;
+    padding: 10px 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border: 1px solid #ededed;
+    transition: 0.4s;
+}
+
+.mega-menu {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mega-menu li {
+    border-bottom: 1px solid #555;
+}
+
+.mega-menu a {
+    display: block;
+    padding: 15px 30px;
+    color: #000000;
+    text-decoration: none;
+}
+
+.mega-menu a:hover {
+    background-color: #575757;
+}
+
+.menu-section-header {
+    padding: 15px;
+    cursor: pointer;
+    background-color: #555;
+    color: #000000;
+}
+
+.menu-section-content {
+    display: none;
+    padding-left: 15px;
+}
+
+.menu-section-header.active + .menu-section-content {
+    display: block;
+}
+
+.search-input {
+    padding: 7px;
+    border: none;
+    width: 100%; 
+    box-sizing: border-box;
+    background: #f3f3f3;
+    border-radius: 7px;
+}
+#accordionExample .card-header,
+#accordionExample .sub__menu {
+    padding: 7px !important;
+}
+#accordionExample .sub__menu:hover {
+    background-color: #edf6fd;
+    border-radius: 7px;
+}
+#accordionExample .card-header{
+    background-color: transparent !important;
+    border: 0 !important;
+}
+#accordionExample .card-body {
+    padding: 0 !important;
+}
+#accordionExample .card {
+    border: 0 !important;
+}
+#accordionExample .btn:active,
+#accordionExample div#driver-popover-item .driver-popover-footer button:active {
+    background-color: transparent !important;
+    box-shadow: unset !important;
+}
+.sub_menu_link,
+#accordionExample .dir-menu{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 192px;
+    display: block;
+}
+#accordionExample .sub_menu_link {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 173px;
+    display: block;
+}
+#accordionExample .dir-menu {
+    margin-top:4px;
+}
+#submenu-panel .header-menu{
+    background-color: #edf6fd;
+    border-radius: 7px;
+}
+#hide_sub_menu svg{
+    background: #edf6fd;
+    border-radius: 50%;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.tooltips {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.tooltips .tooltiptext {
+    visibility: hidden;
+    width: max-content;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: 120%;
+    margin-top: -16px;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 9999999;
+}
+
+.tooltips:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(0);
+}
+
+
+
+/* popover */
+.popovers {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+    padding: 5px;
+    z-index: 1000;
+    width: 130px;
+    border-radius: 7px;
+}
+
+.popovers.active {
+    display: block;
+}
+.popovers a:hover,
+.submenu-content .shortcut_menu .sub-hover:hover {
+    background-color: #edf6fd;
+    border-radius: 7px;
+}  
+.popovers a {
+    padding: 5px;
+    display: block;
+} 
+.submenu-content .shortcut_menu .sub-hover a,
+#accordionExample .sub__menu a,
+#accordionExample .btn-link:focus {
+    text-decoration: none;
+}
+.submenu-content .sub-hover.active, 
+#accordionExample .sub__menu.active {
+    background-color: #edf6fd;
+    border-radius: 7px;
+}
+
+@media (max-width: 767.98px) {
+    li.active {
+        background-color: transparent !important;
+    }
+    .menu-btn {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1500;
+        cursor: pointer;
+        transition: 0.4s;
+    } 
+    .menu-btn div {
+        width: 23px;
+        height: 2px;
+        background-color: #333;
+        margin: 6px 0;
+        transition: 0.4s;
+    }
+    .menu-btn.open .bar1 {
+        transform: rotate(-45deg) translate(-6px, 5px);
+        background-color: #fff;
+    }
+    .menu-btn.open .bar2 {
+        opacity: 0;
+    }
+    .menu-btn.open .bar3 {
+        transform: rotate(45deg) translate(-6px, -5px);
+        background-color: #fff;
+    }
+    .sidebar-a {
+        width: 250px;
+        height: 100vh;
+        background-color: #fff;
+        color: #fff;
+        position: fixed;
+        top: 0;
+        left: -250px;
+        transition: 0.4s;
+        z-index: 10000;
+        /* border-top-right-radius: 106px; */
+        overflow: hidden;
+        /* background-image: linear-gradient(30deg, #0048bd, #44a7fd); */
+    }
+    .inner-sidebar {
+        overflow-y: auto;
+        height: 100vh;
+    }
+    .sidebar-a ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    .sidebar-a ul li {
+        margin-bottom: 2px;
+    }
+    .sidebar-a ul li a {
+        padding: 10px;
+        cursor: pointer;
+        width: 100%;
+        display: flex;
+    } 
+    .sidebar-a ul li:hover,
+    .sidebar-a ul li a.active {
+        background-color: #edf6fd;
+    }
+    .sidebar-a ul ul {
+        display: none; 
+    }
+    /* .sidebar-a ul ul ul {
+        background-color: #555;
+    } */
+    .sidebar-a ul li.active > ul {
+        display: block;
+    }
+    .sidebar-a ul ul li {
+        padding-left: 30px;
+    }
+    .sidebar-a ul ul ul li {
+        padding-left: 45px;
+    }
+    .sidebar-a.open {
+        left: 0;
+    }
+    .navbar .navbar-brand {
+        opacity: 1 !important;
+    }
+    li.active { 
+        border: 0 solid transparent !important; 
+        border-radius: 0 !important;
+    }
+    .arrow-drop-down {
+        background-color: transparent;
+        display: flex;
+        height: 100%;
+        padding: 10px;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+        cursor: pointer;
+    }
+    .submenu.active .inner-li-ac,
+    li.active .inner-li-ac {
+        background-color: #edf6fd;
+    }
+    #accordionExample a.sub_menu_link {
+        padding: 0 !important;
+    }
+    #accordionExample .sub__menu {
+        padding: 10px !important;
+    } 
+    .sub_menu_link, #accordionExample .dir-menu {
+        width: 192px !important;
+        display: block !important;
+    }
+    .navbar .navbar-brand {
+        margin-left: 9% !important;
+    }
+    .menu-btn.open {
+        z-index: 100000;
+        left: 221px;
+        top: 2px;
+        transition: 0.4s;
+    }
+}

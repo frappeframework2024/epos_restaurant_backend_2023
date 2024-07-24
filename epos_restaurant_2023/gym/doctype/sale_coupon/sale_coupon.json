@@ -17,7 +17,8 @@
   "limit_visit",
   "visited_count",
   "balance",
-  "expiry_date"
+  "expiry_date",
+  "attach_image"
  ],
  "fields": [
   {
@@ -40,10 +41,11 @@
    "fieldname": "membership",
    "fieldtype": "Link",
    "label": "Membership",
-   "options": "Membership"
+   "options": "Customer"
   },
   {
-   "fetch_from": "membership.member_name",
+   "depends_on": "eval:doc.membership",
+   "fetch_from": "membership.customer_name_en",
    "fetch_if_empty": 1,
    "fieldname": "member_name",
    "fieldtype": "Data",
@@ -68,7 +70,8 @@
   {
    "fieldname": "posting_date",
    "fieldtype": "Date",
-   "label": "Posting Date"
+   "label": "Posting Date",
+   "read_only": 1
   },
   {
    "fieldname": "limit_visit",
@@ -79,11 +82,13 @@
   {
    "fieldname": "visited_count",
    "fieldtype": "Int",
+   "hidden": 1,
    "label": "Visited Count"
   },
   {
    "fieldname": "balance",
    "fieldtype": "Int",
+   "hidden": 1,
    "label": "Balance"
   },
   {
@@ -91,11 +96,18 @@
    "fieldtype": "Date",
    "label": "Expiry Date",
    "reqd": 1
+  },
+  {
+   "fieldname": "attach_image",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Attach Image"
   }
  ],
+ "image_field": "attach_image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-20 14:16:37.614926",
+ "modified": "2024-07-24 09:10:52.032101",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Sale Coupon",

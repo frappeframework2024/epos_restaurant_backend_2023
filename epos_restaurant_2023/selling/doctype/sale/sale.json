@@ -140,16 +140,14 @@
   "sale_commission_based_on",
   "sale_commission_paid_amount",
   "sale_commission_balance",
-  "commission_section",
+  "section_break_qltx",
   "agent_name",
-  "column_break_93",
   "agent_phone_number",
-  "section_break_95",
-  "commission",
-  "column_break_97",
+  "column_break_xksg",
   "commission_type",
-  "section_break_99",
+  "commission",
   "commission_amount",
+  "column_break_ylrq",
   "commission_note",
   "note_tab",
   "total_cost",
@@ -748,27 +746,14 @@
    "label": "Waiting Number"
   },
   {
-   "fieldname": "commission_section",
-   "fieldtype": "Tab Break",
-   "label": "Commission"
-  },
-  {
    "fieldname": "agent_name",
    "fieldtype": "Data",
    "label": "Agent Name"
   },
   {
-   "fieldname": "column_break_93",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "agent_phone_number",
    "fieldtype": "Data",
    "label": "Agent Phone Number"
-  },
-  {
-   "fieldname": "section_break_95",
-   "fieldtype": "Section Break"
   },
   {
    "default": "Percent",
@@ -787,14 +772,6 @@
    "fieldtype": "Currency",
    "label": "Commission Amount",
    "read_only": 1
-  },
-  {
-   "fieldname": "column_break_97",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "section_break_99",
-   "fieldtype": "Section Break"
   },
   {
    "fieldname": "commission_note",
@@ -1077,7 +1054,7 @@
   {
    "fieldname": "sale_commission_tab",
    "fieldtype": "Tab Break",
-   "label": "Sale Commission"
+   "label": "Commission"
   },
   {
    "allow_on_submit": 1,
@@ -1311,6 +1288,18 @@
    "fieldtype": "Select",
    "label": "Status",
    "options": "Draft\nPaid\nUnpaid\nPartially Paid\nCancelled"
+  },
+  {
+   "fieldname": "section_break_qltx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_xksg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_ylrq",
+   "fieldtype": "Column Break"
   }
  ],
  "image_field": "photo",
@@ -1323,7 +1312,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-07-20 09:52:36.356998",
+ "modified": "2024-07-23 16:08:12.300542",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

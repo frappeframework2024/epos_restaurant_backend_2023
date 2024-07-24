@@ -47,13 +47,14 @@ def validate_account(self):
     # set default account
 		# account_paid_to
 		if not self.account_paid_from:
-			sql = "select account from `tabPayment Type Account` where business_branch=%(business_branch)s limit 1"
-			data = frappe.db.sql(sql,{"business_branch":self.business_branch},as_dict=1)
-			if data:
-				self.account_paid_from = data[0]["account"]
+			self.account_paid_from = frappe.db.get_value("Business Branch",self.business_branch,"default_credit_account")
 		# account_paid_from
 		if not self.account_paid_to:
-			self.account_paid_to = frappe.db.get_value("Business Branch",self.business_branch,"default_credit_account")
+			sql = "select account from `tabPayment Type Account` where business_branch=%(business_branch)s and payment_type = %(payment_type)s limit 1"
+			data = frappe.db.sql(sql,{"business_branch":self.business_branch,'payment_type':self.payment_type},as_dict=1)
+			if data:
+				self.account_paid_to = data[0]["account"]
+			
 def update_purchase_order(self):
 	data = frappe.db.sql("select  ifnull(sum(payment_amount),0)  as total_paid from `tabPurchase Order Payment` where docstatus=1 and purchase_order='{}'".format(self.purchase_order))
 	purchase_order_amount = frappe.db.get_value('Purchase Order', self.purchase_order, 'grand_total')

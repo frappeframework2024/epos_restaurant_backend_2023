@@ -13,8 +13,6 @@
   "referance",
   "column_break_3",
   "payment_type",
-  "account_paid_to",
-  "account_paid_from",
   "currency",
   "purchase_order_information_section",
   "purchase_order",
@@ -41,7 +39,11 @@
   "vendor_group",
   "business_branch",
   "stock_location",
-  "symbol"
+  "symbol",
+  "accounting_tab",
+  "account_paid_from",
+  "column_break_znrv",
+  "account_paid_to"
  ],
  "fields": [
   {
@@ -278,13 +280,22 @@
    "label": "Account Paid From",
    "link_filters": "[[{\"fieldname\":\"account_paid_to_from\",\"field_option\":\"Chart Of Account\"},\"root_type\",\"=\",\"2000 - Liabilities\"],[{\"fieldname\":\"account_paid_to_from\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0]]",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "accounting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "column_break_znrv",
+   "fieldtype": "Column Break"
   }
  ],
  "image_field": "attach_receipt",
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-06-26 16:36:52.606229",
+ "modified": "2024-07-24 09:58:42.079822",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order Payment",

@@ -41,6 +41,7 @@ def get_sale_by_customer(customer,stock_location):
 	return sales
 
 def add_sale_payment(doc,self):
+	frappe.throw(str(frappe.get_doc("Sale",doc.sale)))
 	p = frappe.new_doc("Sale Payment")
 	p.naming_series = self.sale_payment_naming_series
 	p.posting_date = doc.posting_date

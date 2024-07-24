@@ -277,6 +277,7 @@ def get_report_group_data(filters):
 
 		row_group = [d for d in get_row_groups() if d["label"]==filters.parent_row_group][0]
 		children = get_report_data(filters, None, 1, group_filter={"field":row_group["fieldname"],"value":p[row_group["parent_row_group_filter_field"]]})
+		frappe.throw(str(children))
 		for c in children:
 			data.append(c)
 	return data

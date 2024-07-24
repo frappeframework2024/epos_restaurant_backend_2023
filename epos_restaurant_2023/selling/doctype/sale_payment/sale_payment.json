@@ -441,6 +441,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Account Paid To",
+   "link_filters": "[[{\"fieldname\":\"account_paid_to\",\"field_option\":\"Chart Of Account\"},\"root_type\",\"=\",\"Asset\"],[{\"fieldname\":\"account_paid_to\",\"field_option\":\"Chart Of Account\"},\"account_type\",\"in\",[\"Bank\",\"Cash\"]]]",
    "options": "Chart Of Account"
   },
   {
@@ -462,7 +463,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-07-18 08:40:12.337602",
+ "modified": "2024-07-24 09:51:40.195370",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Payment",

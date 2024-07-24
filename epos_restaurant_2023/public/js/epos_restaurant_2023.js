@@ -150,10 +150,333 @@ $(document).ready(function(){
         ClearUI()
     }
 
+    // sidebar menu
+
+    const sidebar = document.querySelector(".layout-side-section")
+    let isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+    let submenus= []
+    if (sidebar){
+        sidebar.remove();
+    }
+    var bodyElement = document.querySelector(".main-section");
+    
+    if (!document.querySelector("#main-menu")){
+        RenderNavMenu()
+    }
+    //delete this when move to epos_restaurant_2023.js
+    frappe.router.on('change', () => {
+        if (sidebar){
+            sidebar.remove();
+        }
+        
+        if (!frappe.is_mobile()){ 
+        const layoutsidebar = document.querySelectorAll(".layout-side-section")
+        
+        layoutsidebar.forEach(s=>{
+            s.style.display="none";
+        })
+        }
+        
+    })
+
+    function RenderNavMenu(){
+        if (window.self === window.top) {
+            let parser = new DOMParser()
+            if (!isMobile){
+                frappe.call("epos_restaurant_2023.api.app_menu.get_sidebar_menu_template").then(result=>{
+                    let dom = parser.parseFromString(result.message, "text/html").querySelector("div.render-element")
+                    submenus = dom.querySelectorAll(".submenu-content")
+                    bodyElement.appendChild(dom)
+                    bodyElement.style.transition = '0.4s'
+
+                    //get active menu-name 
+                    var selectedWorkspaceName =  document.body.getAttribute('data-route').split("/");
+                    
+                    if(selectedWorkspaceName.length>=2){
+
+                        const selectedWorkspace = document.querySelector('.sidebar a[data-workspace=' + selectedWorkspaceName[1] + ']');
+
+                        if (selectedWorkspace){
+                            
+                            selectedWorkspace.parentNode.classList.add("active")
+                            
+                            showMenu(selectedWorkspace.parentNode.getAttribute('data-submenu'),$(selectedWorkspace.parentNode).hasClass("submenu"))
+                        }
+                        
+                    }
+                })
+            }else {
+                frappe.call("epos_restaurant_2023.api.app_menu.get_sidebar_menu_template").then(result=>{ 
+                    let dom = parser.parseFromString(result.message, "text/html").querySelector("div#mobile-side-menu")
+                    bodyElement.appendChild(dom)
+
+                    $(document).on("click", ".menu-btn", function (event){
+                        $(this).toggleClass('open');
+                        $('.sidebar-a').toggleClass('open');
+                    }) 
+                    
+                    $(document).on('click', '.sidebar-a ul li:not(.submenu)', function (e) {
+                        removeClOpen()
+                    })
+                    
+                    $(document).on('click', '.sidebar-a ul li a:not(.sub_menu_link)', function (e) {
+                        removeLiMobileActive('.sub_menu_mobile') 
+                        removeAMenuActive('.sub_menu_mobile.active')
+                        openLink(this)  
+                        const parents = $(this).parent() 
+                        activeParent(parents)
+                        $(this).addClass('active')
+                    });
+
+                    $(document).on('click', '.sidebar-a ul li .arrow-drop-down', function (e) { 
+                        removeLiMobileActive('.arrow-drop-down') 
+                        removeAMenuActive('.sub_menu_mobile.active')
+                        // e.stopPropagation();  
+                        const subParents = $(this).parent() 
+                        const parents = $(subParents).parent()
+                        const child = $(parents).find('.sub_menu_p') 
+                        const grandChild = $(child).find('a') 
+                        $(grandChild).addClass('active');  
+                        activeParent(subParents)
+                    });
+
+                    const allGrandSubMenu = document.body.querySelectorAll('.sub_menu_link')
+
+                    allGrandSubMenu.forEach(a => {
+                        a.addEventListener('click', function (){
+                            const childEl = $(this)
+                            const topParentEl = $(childEl).closest('.submenu')
+                            $(topParentEl).addClass('active')
+                            removeClOpen()
+                        })
+                    })
+
+
+                    $(document).on('click', function (event) {
+                        if (!$(event.target).closest('.menu-btn, .sidebar-a').length) {
+                            removeClOpen()
+                        }
+                    });
+                })
+            }
+        }
+    }
+    function removeClOpen () {
+        $('.menu-btn').removeClass('open')
+        $('.sidebar-a').removeClass('open');
+    }
+
+    function removeAMenuActive (aactive) {
+        var allSubMenu = document.body.querySelectorAll(aactive)
+
+        allSubMenu.forEach(sub => { 
+            $(sub).removeClass('active')
+        })
+
+    }
+
+    function activeParent (parents) {
+        const grandParents = $(parents).parent() 
+        const greatGrand = $(grandParents).parent() 
+        $(greatGrand).addClass('active');
+    }
+
+    function removeLiMobileActive (liactive) {
+        var allSubMenu = document.body.querySelectorAll(liactive)
+        allSubMenu.forEach(sub => { 
+            const subParent = $(sub).parent()
+            const parents = $(subParent).parent()
+            const grandParent = $(parents).parent()
+            $(grandParent).removeClass('active')
+        })
+    }
+        
+    $(document).on("click",".sidebar a",function(event){
+        openLink(this)
+    })
+
+    $(document).on("click","#hide_sub_menu",function(event){
+        document.querySelector("#submenu-panel").style.left = "-250px"
+        document.querySelector(".main-section").style.marginLeft="0px";
+
+    })
+
+    // ======
+    $(document).on("click",".menu-section-header",function() {
+        $(this).toggleClass('active');
+    });
+
+
+    // $(document).on("mouseover", ".sidebar .submenu",function() {
+    $(document).on("click", ".sidebar li",function() {
+        const has_submenu = $(this).hasClass("submenu")
+        var submenuId = $(this).attr('data-submenu');
+        if($(this).hasClass("active")){
+            if (has_submenu) {
+                document.querySelector("#submenu-panel").style.left=document.querySelector("#submenu-panel").style.left=="56px"?"-250px":"56px";
+                document.querySelector(".main-section").style.marginLeft=document.querySelector("#submenu-panel").style.left=="56px"?"248px":"0px";
+            }
+        }else{
+            showMenu(submenuId,has_submenu)
+        }
+        
+        $(this).addClass("active")
+        
+    });
+
+    $(document).on("click", ".sub_menu_link",function() {
+        var selectedWorkspaceName =  document.body.getAttribute('data-route').split("/");
+
+        var allSubMenu = document.body.querySelectorAll('.sub_menu_link')
+        
+        allSubMenu.forEach(sub => {
+
+            const subParent = $(sub).parent()
+
+            $(sub).removeClass('active')
+
+            $(subParent).parent().removeClass('active')
+
+        })
+        
+        if(selectedWorkspaceName.length>=2){ 
+
+            const selectedSubWorkspace = $(this).attr('data-name')
+
+            const seletedGrandSub = $(this).attr('data-link-to')
+
+            if (selectedSubWorkspace || seletedGrandSub) {
+
+                $(this).addClass('active')
+
+                const subParent = $(this).parent()
+
+                $(subParent).parent().addClass('active')
+            
+            } else {
+                
+                $(this).removeClass('active')
+
+            }
+
+        }  
+
+        openLink(this); 
+    });
+
+        
+    $(document).on("input", ".search-input",function(e) {
+            
+        const sub_menu = $('div.submenu-content[style*="display: block;"]')
+        if (sub_menu){
+            let elements = sub_menu.find('a');
+            // Loop through the selected elements
+            elements.each(function(index, element) {
+                const parentEl = $(element).closest('.sub-hover')
+                const parentGrEl = $(element).closest('.sub__menu')
+                if(e.target.value.length>=3){ 
+                    if ($(element).text().toLowerCase().includes( e.target.value.toLowerCase())) {
+                        $(parentEl).attr('style', 'display: flex !important;');
+                        $(parentGrEl).attr('style', 'display: flex !important;');
+                    }else {
+                        $(parentEl).attr('style', 'display: none !important;');
+                        $(parentGrEl).attr('style', 'display: none !important;');
+                    }
+                }else {
+                    $(parentEl).attr('style', 'display: flex !important;');
+                    $(parentGrEl).attr('style', 'display: flex !important;');
+                }
+            });
+            
+            //show hide report group
+            let report_groups = sub_menu[0].querySelectorAll('.card')
+            report_groups.forEach(g=>{
+                if(g.querySelectorAll('.sub__menu[style*="display: flex !important;"]').length>0){
+                    g.style.display = "block"
+                    g.querySelector(".collapse").classList.add("show")
+                }else {
+                    g.style.display = "none"
+                }
+            })
+            
+
+            
+        }
+        
+    });
+
+    function showMenu(submenu_id,has_submenu){
+        //clear active menu 
+        const activeMenu = document.querySelector("li.active")
+        if(activeMenu){
+            activeMenu.classList.remove("active")
+        }
+
+        submenus.forEach(sub=>{	
+            if(has_submenu){ 
+                document.querySelector("#submenu-panel").style.left="56px";
+                sub.style.display =  (sub.id === submenu_id ? 'block' : 'none');
+                document.querySelector(".main-section").style.marginLeft="248px";
+            }else {
+                document.querySelector("#submenu-panel").style.left="-250px";
+                document.querySelector(".main-section").style.marginLeft="0px";
+                
+            }
+            
+        })
+    }
+
+    function openLink(el){
+        const route =  $(el).data("custom-route")
+        if(route){
+            frappe.set_route(route)
+        }else if($(el).data("workspace")) {
+            const url ="/app/" +  frappe.router.slug($(el).data("workspace"))
+            frappe.set_route(url)
+        }else if($(el).data("type")=="DocType" ){
+            let view = $(el).data("doc-view")
+            if (!view){
+                view = "List"
+            }
+
+            if($(el).data("doc-view")=="New"){
+                frappe.new_doc($(el).data("link-to") );
+            }else {
+                frappe.set_route(view,$(el).data("link-to") );
+            }
+            
+        }else if($(el).data("type")=="Dashboard"){
+            frappe.set_route("dashboard-view",$(el).data("link-to") );
+        
+        }else if($(el).data("type")=="Report"){
+                
+            frappe.set_route("query-report",$(el).data("link-to") );
+        }else if($(el).data("type")=="Page"){
+                
+            const url ="/app/" +  $(el).data("link-to")
+            frappe.set_route(url)
+        }else {
+            const url ="/app/" +  frappe.router.slug($(el).data("name"))
+            frappe.set_route(url)
+        }
+    }
+
+    $('.report-wrapper').on('click', function(event) {
+        var x = event.clientX;
+        var y = event.clientY;
+        
+        var element = document.elementFromPoint(x, y);
+        if(element.classList.contains("link")){
+            ViewDocDetailModal(element.dataset.doctype,element.dataset.name)
+        }
+
+    });
+
 
  })
 
- function removeHeaderSticky(){
+function removeHeaderSticky(){
     var page_head = document.querySelector(".page-head")
     if (page_head){
         page_head.classList.remove('page-head');
