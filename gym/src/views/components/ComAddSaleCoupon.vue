@@ -169,7 +169,9 @@ function onSave() {
     //Prepare Data To Save
 
 
-    call.post()
+    call.post("upload_file").then((res)=>{
+        
+    })
 
     // const formdata = new FormData();
     // formdata.append("file", selectdFile.value.files[0],selectdFile.value.files[0].name);
