@@ -340,5 +340,4 @@ def get_pos_misc_sale(customer_name):
             s.customer = %(customer_name)s
     """
 	sales = frappe.db.sql(sales, {'customer_name':customer_name}, as_dict=True)
-	[d['payment'] for d in data]
 	return sales
