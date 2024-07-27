@@ -1,3 +1,4 @@
+
 <div class="container" style="background: #f5f3f5;
     border-radius: 6px;padding:10px; ">
   <div class="row">
@@ -94,6 +95,17 @@
     </div>
   </div>
   
+  {%if total_cash_coupon_claim %}
+  <div class="row">
+    <div class="col">
+      <strong>{{__("Coupon Claim")}}</strong>
+    </div>
+    <div class="col text-right">
+      <strong>{{frappe.format(total_cash_coupon_claim ,{"fieldtype":"Currency"})}}</strong>
+    </div>
+  </div> 
+  {%endif%}
+
   {%if total_paid %}
   <div class="row">
     <div class="col">
@@ -142,4 +154,4 @@
   {%endif%}
   
 </div>
-
+ 

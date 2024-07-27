@@ -1,0 +1,55 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-07-25 10:07:16.877412",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "coupon_code",
+  "claim_amount",
+  "cash_coupon",
+  "member"
+ ],
+ "fields": [
+  {
+   "fieldname": "coupon_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Coupon Code"
+  },
+  {
+   "fieldname": "claim_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Claim Amount"
+  },
+  {
+   "fieldname": "member",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Member",
+   "options": "Customer",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cash_coupon",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Cash Coupon",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-07-26 14:47:15.513310",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "Sale Cash Coupon Claim",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

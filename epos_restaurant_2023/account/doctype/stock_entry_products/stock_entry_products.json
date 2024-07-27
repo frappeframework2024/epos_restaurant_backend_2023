@@ -21,7 +21,6 @@
  ],
  "fields": [
   {
-   "default": "is_inventory_product=1",
    "fieldname": "product_code",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -102,7 +101,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-07-20 09:41:30.177713",
+ "modified": "2024-07-25 09:31:46.786932",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "Stock Entry Products",

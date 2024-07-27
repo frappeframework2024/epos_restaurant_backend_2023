@@ -138,17 +138,26 @@ def reset_sale_transaction():
             frappe.db.sql("delete from `tabMembership Check In`")
             frappe.db.sql("delete from `tabMembership Family`")
             frappe.db.sql("delete from `tabMembership`")
+
+           
+
+           
+
            
             doctypes = ["Membership","Membership Check In","Membership Payment"]
             for d in doctypes:                 
                 formats =  frappe.get_meta(d).get_field("naming_series").options
                 if formats:
                     for f in formats.split("\n"):
-                        for n in range(2022, 2030):
+                        for n in range(2022, 2130):
                             format_text = replace_format(f,str(n))                            
                             frappe.db.sql("update `tabSeries` set current=  0 where name='{}'".format(format_text) ) 
 
+           
             #end gym
+            frappe.db.sql("delete from `tabSale Cash Coupon Claim`")
+            frappe.db.sql("delete from `tabCash Coupon Items`")
+            frappe.db.sql("delete from `tabCash Coupon`")
 
             frappe.db.sql("delete from `tabCash Transaction`")
             frappe.db.sql("delete from `tabSale Product Deleted`")
@@ -172,7 +181,7 @@ def reset_sale_transaction():
             frappe.db.sql("delete from `tabComment` where reference_doctype in ('Sale','POS Sale Payment','Sale Payment','Sale Product','Cashier Shift Cash Float','Cashier Shift','Working Day')")
 
             #reset sale transaction 
-            doctypes = ["Sale","Sale Payment","Cashier Shift","Working Day","Cash Transaction","Voucher","Voucher Payment"]
+            doctypes = ["Sale","Sale Payment","Cashier Shift","Working Day","Cash Transaction","Voucher","Voucher Payment","Cash Coupon"]
             for d in doctypes:
                 if frappe.get_meta("Sale").get_field("naming_series"):
                     formats =  frappe.get_meta(d).get_field("naming_series").options

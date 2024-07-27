@@ -1625,4 +1625,49 @@ def get_workspace_sidebar_items():
    
     return {"pages": pages, "has_access": has_access}
 
+@frappe.whitelist()
+def update_cash_coupon_summary_to_customer(members):
+    sql = """update `tabCustomer` c
+            inner join (
+                select 
+                    cc.member,  
+                    sum(cc.total_coupon) as total_coupon ,
+                    sum(cc.total_claim) as total_claim,
+                    sum(cc.total_amount) as total_amount,
+                    sum(cc.total_balance) as total_balance,
+                    sum(if(cc.unlimited=1, 0, if(cc.expiry_date > current_date(),0,cc.total_balance ))) as total_expired_balance
+                from `tabCash Coupon` cc 
+                where docstatus = 1 
+                    and  member in %(member)s
+                group by cc.member
+            ) m on m.member = c.`name`
+            set c.total_coupon = m.total_coupon,
+                c.total_coupon_amount = m.total_amount,
+                c.total_coupon_claim = m.total_claim,
+                c.total_coupon_balance = m.total_balance - m.total_expired_balance,
+                c.total_coupon_balance_expired = m.total_expired_balance
+            where member in %(member)s"""
     
+    frappe.db.sql(sql,{"member":members})
+
+@frappe.whitelist()
+def scan_coupon_number(code):
+    sql = "select balance from `tabCash Coupon Items` where code = %(code)s limit 1"
+    docs = frappe.db.sql(sql,{"code":code}, as_dict=1)
+    result = {}
+    if len( docs) > 0:
+        result.update( {
+            "status":1,
+            "code":code,
+            "balance": docs[0]["balance"],
+            "message":"Success"
+        })
+    else:
+        result.update ({
+            "status":0,
+            "code":code,
+            "balance": 0,
+            "message":"Invalid coupon code"
+        })
+
+    return result

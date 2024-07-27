@@ -124,6 +124,7 @@ def submit_sale_to_general_ledger_entry(self):
 		docs.append(doc)
 	
  	# tax 3 
+	# tax 3
 	if self.tax_3_amount!=0:
 		if not self.default_tax_3_account:
 			frappe.throw(_("Please select tax 3 account"))	
@@ -140,7 +141,6 @@ def submit_sale_to_general_ledger_entry(self):
 				"business_branch": self.business_branch,
 			}
 		docs.append(doc)
-	# change account
 
 	# cost of good sold account
 	if sum([d.quantity* (d.cost or 0) for d in self.sale_products if d.is_inventory_product==1]):
@@ -161,6 +161,7 @@ def submit_sale_to_general_ledger_entry(self):
 				"type":"Asset"#not use in db
 			}
 		docs.append(doc)
+	
 	if sum([d.quantity*(d.cost or 0)  for d in self.sale_products if d.is_inventory_product==1]):
 	# deduct stock in hand
 		if not self.default_inventory_account:
@@ -177,6 +178,24 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
 				"type":"Asset"#not use in db
+			}
+		docs.append(doc)
+
+	# cash coupon claim
+	if self.total_cash_coupon_claim> 0:
+		if not self.default_cash_coupon_claim_account:
+			frappe.throw(_("Please select default cash coupon account"))
+		doc = {
+				"doctype":"General Ledger",
+				"posting_date":self.posting_date,
+				"account":self.default_cash_coupon_claim_account,
+				"amount":self.total_cash_coupon_claim,
+				"againt":self.customer + " - " + self.customer_name,
+				"againt_voucher_type":"Sale",
+				"againt_voucher_number": self.name,
+				"voucher_type":"Sale",
+				"voucher_number":self.name,
+				"business_branch": self.business_branch,
 			}
 		docs.append(doc)
 

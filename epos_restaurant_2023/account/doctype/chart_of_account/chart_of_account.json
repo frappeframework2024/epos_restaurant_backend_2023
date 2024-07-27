@@ -100,13 +100,13 @@
    "fieldname": "account_type",
    "fieldtype": "Select",
    "label": "Account Type",
-   "options": "\nReceivable\nPayable\nCash\nBank\nIncome\nExpense"
+   "options": "\nReceivable\nPayable\nCash\nBank\nIncome\nExpense\nTemporary"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-07-24 10:04:12.926788",
+ "modified": "2024-07-27 08:47:16.973071",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "Chart Of Account",

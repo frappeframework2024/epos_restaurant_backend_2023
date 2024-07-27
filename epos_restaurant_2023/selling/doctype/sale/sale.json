@@ -86,6 +86,7 @@
   "is_synced",
   "accounting_tab",
   "default_discount_account",
+  "default_cash_coupon_claim_account",
   "default_inventory_account",
   "default_cost_of_goods_sold_account",
   "column_break_mtrh",
@@ -94,6 +95,10 @@
   "default_change_account",
   "column_break_pupk",
   "default_bank_fee_account",
+  "cash_coupon_claim_tab",
+  "total_cash_coupon_claim",
+  "section_break_ivlg",
+  "cash_coupon_items",
   "payments_tab",
   "sale_payment_naming_series",
   "payment",
@@ -1121,6 +1126,7 @@
    "default": "0",
    "fieldname": "is_synced",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Synced"
   },
   {
@@ -1194,7 +1200,7 @@
    "fieldname": "default_discount_account",
    "fieldtype": "Link",
    "label": "Default Discount Account",
-   "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0],[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"root_type\",\"=\",\"Income\"]]",
+   "link_filters": "[[{\"fieldname\":\"default_discount_account\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0]]",
    "options": "Chart Of Account"
   },
   {
@@ -1300,6 +1306,34 @@
   {
    "fieldname": "column_break_ylrq",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cash_coupon_claim_tab",
+   "fieldtype": "Tab Break",
+   "label": "Cash Coupon Claim"
+  },
+  {
+   "fieldname": "total_cash_coupon_claim",
+   "fieldtype": "Currency",
+   "label": "Total Cash Coupon Claim",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_ivlg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "cash_coupon_items",
+   "fieldtype": "Table",
+   "label": "Cash Coupon Items",
+   "options": "Sale Cash Coupon Claim"
+  },
+  {
+   "fieldname": "default_cash_coupon_claim_account",
+   "fieldtype": "Link",
+   "label": "Default Cash Coupon Claim Account",
+   "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0]]",
+   "options": "Chart Of Account"
   }
  ],
  "image_field": "photo",
@@ -1312,7 +1346,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-07-23 16:08:12.300542",
+ "modified": "2024-07-27 14:26:50.876367",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

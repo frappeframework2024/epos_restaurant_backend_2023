@@ -52,6 +52,39 @@ def submit_purchase_to_general_ledger_entry_on_submit(self):
 			"remark": "Purchase Order discount"
 		}
 		docs.append(doc)	
+
+	if abs(self.total_expense_cost)>0:
+		# deduct from stock asset
+		default_expense_accounts = set([d.default_expense_account for d in self.purchase_order_products if d.default_expense_account])
+		doc = {
+			"doctype":"General Ledger",
+			"posting_date":self.posting_date,
+			"account":frappe.get_cached_value("Business Branch", self.business_branch,"default_inventory_account"),
+			"credit_amount": 0 if self.total_expense_cost<0 else abs(self.total_expense_cost),
+			"debit_amount": 0 if self.total_expense_cost>0 else abs(self.total_expense_cost),
+			"againt":",".join(default_expense_accounts),#get again from expense account
+			"voucher_type":"Purchase Order",
+			"voucher_number":self.name,
+			"business_branch": self.business_branch,
+			"remark": "Average cost calculation deduction"
+		}
+		docs.append(doc)
+		# update exprense account
+		for ex_acc in default_expense_accounts:
+			amount = sum([d.expense_cost for d in self.purchase_order_products if d.default_expense_account == ex_acc])
+			doc = {
+				"doctype":"General Ledger",
+				"posting_date":self.posting_date,
+				"account":ex_acc,
+				"debit_amount": 0 if amount<0 else abs(amount),
+				"credit_amount": 0 if amount>0 else abs(amount),
+				"againt":frappe.get_cached_value("Business Branch", self.business_branch,"default_inventory_account"),
+				"voucher_type":"Purchase Order",
+				"voucher_number":self.name,
+				"business_branch": self.business_branch,
+				"remark": "Cost expense during average cost calculation"
+			}
+			docs.append(doc)
   
 	submit_general_ledger_entry(docs=docs)
  

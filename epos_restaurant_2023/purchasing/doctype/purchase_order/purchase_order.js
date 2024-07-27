@@ -259,7 +259,7 @@ function add_product_to_po_product(frm, p) {
 	if (doc != undefined) {
 		doc.product_code = p.product_code;
 		doc.product_name = p.product_name_en;
-		doc.cost = p.cost;
+		doc.cost = p.last_purchase_cost;
 		doc.quantity = 1;
 		doc.sub_total = doc.quantity * doc.cost;
 		doc.unit = p.unit;
@@ -271,7 +271,8 @@ function add_product_to_po_product(frm, p) {
 
 function product_by_scan(frm,doc){
 	get_product_cost(frm,doc).then((v)=>{
-		doc.cost = v;
+ 
+		doc.cost = v.last_purchase_cost;
 		doc.amount = doc.cost * doc.quantity;
 		frm.refresh_field('purchase_order_products');
 		updateSumTotal(frm);
@@ -286,7 +287,7 @@ let get_product_cost = function (frm,doc) {
 				product_code: doc.product_code
 			},
 			callback: function(r){
-				resolve(r.message.cost)
+				resolve(r.message)
 			},
 			error: function(r) {
 				reject("error")
@@ -309,7 +310,7 @@ function get_currenct_cost(frm,doc){
 		},
 		callback: function(r){
 			if(doc!=undefined){
-				doc.cost = r.message.cost;
+				doc.cost = r.message.last_purchase_cost;
 				doc.amount = doc.cost * doc.quantity;
 			}
 			frm.refresh_field('purchase_order_products');

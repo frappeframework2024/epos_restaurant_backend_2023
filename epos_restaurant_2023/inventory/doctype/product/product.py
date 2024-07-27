@@ -9,10 +9,10 @@ from frappe.model.document import Document
 from frappe.utils.data import strip
 from py_linq import Enumerable
 from frappe.utils import add_years
+from epos_restaurant_2023.api.account import submit_general_ledger_entry
 from epos_restaurant_2023.inventory.inventory import add_to_inventory_transaction, check_uom_conversion, get_uom_conversion, update_product_quantity,get_stock_location_product
 import itertools
 from epos_restaurant_2023.inventory.doctype.product.utils import update_fetch_from_field
-
 
 
 class Product(Document):
@@ -24,7 +24,6 @@ class Product(Document):
 			self.is_recipe=0
 			if self.is_inventory_product:
 				self.is_inventory_product = 0
-			
 
 		error_list=[]
 		for v in self.product_variants:
@@ -121,6 +120,9 @@ class Product(Document):
 		#check if portion price exists 
 		if	len(self.product_price) > 0:
 			self.price = Enumerable(self.product_price).min(lambda x: x.price)
+   
+		if not self.last_purchase_cost or self.last_purchase_cost == 0:
+			self.last_purchase_cost = self.cost
 
 	def autoname(self):
 		if self.flags.ignore_autoname==True:
@@ -161,6 +163,8 @@ class Product(Document):
 
 
 	def before_save(self):
+		if self.is_new and self.opening_quantity > 0:
+			opening_general_ledger_entry(self)
 		if self.flags.ignore_before_save==True:
 			return 
 		prices = []
@@ -278,7 +282,7 @@ def get_product(barcode,business_branch=None,stock_location = None,price_rule=No
 		filters = {"product_code":barcode,"disabled":0}
 		if is_inventory_product == 1:
 			filters["is_inventory_product"] = 1
-		p = frappe.get_doc("Product",filters,["*"])
+		p = frappe.get_cached_doc("Product",filters,["*"])
 		if allow_sale and not p.allow_sale:
 			return {
 				"status":404,
@@ -303,6 +307,7 @@ def get_product(barcode,business_branch=None,stock_location = None,price_rule=No
 				"product_name_en":p.product_name_en,
 				"unit":p.unit,
 				"cost":price["cost"],
+				"last_purchase_cost":p.last_purchase_cost,
 				"price":price["price"],
 				"allow_discount":p.allow_discount,
 				"allow_free":p.allow_free,
@@ -372,9 +377,11 @@ def get_product_annual_sale(self):
 @frappe.whitelist()
 def get_product_cost_by_stock(product_code=None, stock_location=None):
 	result = frappe.db.sql("select cost from `tabStock Location Product` where stock_location='{}' and product_code='{}'".format(stock_location, product_code), as_dict=1)
+	last_cost = frappe.get_cached_value("Product",product_code, "last_purchase_cost")
 	if result:
+		result[0]["last_purchase_cost"] = last_cost
 		return result[0]
-	return {'cost':0}
+	return {'cost':0,"last_purchase_cost":last_cost}
 
 @frappe.whitelist()
 def get_stock_location_product_info(product_code=None, stock_location=None):
@@ -653,3 +660,32 @@ def update_expire_date(data):
 	frappe.db.commit()
 	frappe.msgprint("Update expire date successfully")
  
+def opening_general_ledger_entry(self):
+	branch =  frappe.db.get_value('Stock Location',self.stock_location, 'business_branch')
+	accounts =  frappe.db.get_value('Business Branch',branch, ['default_temporary_opening_account','default_inventory_account'], as_dict=1)
+	docs = []
+	doc = {
+        "doctype":"General Ledger",
+        "posting_date": datetime.today().strftime('%Y-%m-%d'),
+        "account":accounts.default_inventory_account,
+        "debit_amount":self.opening_quantity * self.cost,
+        "voucher_type":"Item",
+        "voucher_number":self.name,
+        "business_branch": branch,
+    }
+	doc["remark"] = "Opening Stock On Product {0}\nAgainst Account {1}.".format(self.name,accounts.default_temporary_opening_account)
+	docs.append(doc)
+        
+	doc = {
+        "doctype":"General Ledger",
+        "posting_date":datetime.today().strftime('%Y-%m-%d'),
+        "account":accounts.default_temporary_opening_account,
+        "credit_amount":self.opening_quantity * self.cost,
+        "voucher_type":"Item",
+        "voucher_number":self.name,
+        "business_branch": branch,
+
+    }
+	doc["remark"] = "Opening Stock On Product {0}.\nAgainst Account {1}.".format(self.name,accounts.default_inventory_account)
+	docs.append(doc)
+	submit_general_ledger_entry(docs=docs)

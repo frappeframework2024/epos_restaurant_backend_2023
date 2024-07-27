@@ -9,6 +9,7 @@
   "expense_code",
   "expense_name",
   "expense_category",
+  "default_expense_account",
   "quantity",
   "price_second_currency",
   "price",
@@ -68,12 +69,21 @@
    "fieldname": "price_second_currency",
    "fieldtype": "Float",
    "label": "Price (Second Currency)"
+  },
+  {
+   "fetch_from": "expense_code.default_expense_account",
+   "fetch_if_empty": 1,
+   "fieldname": "default_expense_account",
+   "fieldtype": "Link",
+   "label": "Default Expense Account",
+   "options": "Chart Of Account",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-12-05 14:21:27.341746",
+ "modified": "2024-07-27 16:21:18.382741",
  "modified_by": "Administrator",
  "module": "Expense",
  "name": "Expense Item",

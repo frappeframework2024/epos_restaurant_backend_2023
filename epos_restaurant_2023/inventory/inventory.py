@@ -4,7 +4,7 @@ import json
 import frappe
 
 def add_to_inventory_transaction(data):
- 
+    
     doc = frappe.get_doc(data)
     doc.insert()
     
@@ -57,23 +57,24 @@ def check_uom_conversion(from_uom, to_uom):
 
 @frappe.whitelist(allow_guest=True)
 def calculate_average_cost(product_code,stock_location,quantity,cost):
-    data = frappe.db.sql("select cost,quantity,name from `tabStock Location Product` where stock_location='{}' and product_code='{}'".format(stock_location, product_code), as_dict=1)
-    if data:
-        current_qty = float(data[0]["quantity"])
-        current_cost = float(data[0]["cost"])
-        current_stock_cost = current_qty * current_cost
-    else:
-        current_qty = 0
-        current_stock_cost = 0
+    current_stock = frappe.db.sql("select cost,quantity from `tabStock Location Product` where stock_location='{}' and product_code='{}'".format(stock_location, product_code), as_dict=1)
+    
+    current_qty = 0
+    current_stock_cost = 0
 
     new_qty = float(quantity)
     new_cost = float(cost)
     new_stock_cost = new_cost * new_qty
 
-    delta_cost = (current_stock_cost if current_stock_cost > 0 else 0) + new_stock_cost
-    delta_qty = (current_qty if current_qty > 0 else 0) + new_qty
+    if current_stock:
+        current_qty = float(current_stock[0]["quantity"])
+        current_cost = float(current_stock[0]["cost"])
+        current_stock_cost = current_qty * current_cost
 
-    avc = delta_cost / delta_qty
+    stock_cost = (current_stock_cost if current_stock_cost > 0 else 0) + new_stock_cost
+    qty = (current_qty if current_qty > 0 else 0) + new_qty
+
+    avc = stock_cost / qty
 
     return avc
 

@@ -12,6 +12,7 @@ from frappe.utils.data import getdate,fmt_money
 from py_linq import Enumerable
 from frappe.model.document import Document
 import datetime
+from copy import deepcopy
 from decimal import Decimal
 from epos_restaurant_2023.api.exely import submit_order_to_exely
 from epos_restaurant_2023.selling.doctype.sale.general_ledger_entry import submit_sale_to_general_ledger_entry
@@ -121,7 +122,8 @@ class Sale(Document):
 		#validate sale product 
 		validate_sale_product(self)
 
-		
+		# validate sale cash coupon claim
+		validate_cash_coupon_claim(self)
   
 		validate_pos_payment(self)
 		#validate sale summary
@@ -187,23 +189,26 @@ class Sale(Document):
 
 
 		_balance = round(self.grand_total  , int(currency_precision)) -  round((self.total_paid or 0)  , int(currency_precision))
+
+		if len(self.cash_coupon_items) and (self.total_cash_coupon_claim or 0) > 0:
+			_total_claim_coupon = round((self.total_cash_coupon_claim or 0)  , int(currency_precision))
+			if _total_claim_coupon > self.grand_total:
+				frappe.throw("Your coupon claim and payment is over balance.")
+
+			_balance -= _total_claim_coupon
+
 		self.balance = _balance
 		#self.balance =self.grand_total -(self.total_paid or 0) 
 		
-		if self.pos_profile:
-			self.changed_amount = self.total_paid - self.grand_total
-			if round(self.changed_amount,int(currency_precision)) <= generate_decimal(int(currency_precision)):
-				self.changed_amount = 0
+		# if self.pos_profile:
+		self.changed_amount = (self.total_paid + _total_claim_coupon) - self.grand_total
+		if round(self.changed_amount,int(currency_precision)) <= generate_decimal(int(currency_precision)):
+			self.changed_amount = 0
 
 
 		if self.balance<0:
 			self.balance = 0
-		
-		# else:
-		# 	self.changed_amount = 0
-		# 	if self.total_paid > self.grand_total:
-		# 		frappe.throw(_("Paid amount cannot greater than grand total amount"))
-
+			
 
 		if not self.created_by:
 			self.created_by = frappe.get_user().doc.full_name
@@ -235,7 +240,7 @@ class Sale(Document):
 	def get_sale_payment_naming_series(self):
 		return frappe.get_meta("Sale Payment").get_field("naming_series").options
 	
-	def on_update(self):
+	def on_update(self): 
 		if self.flags.ignore_on_update == True:
 			return 
 		#add sale product spa commission
@@ -244,6 +249,9 @@ class Sale(Document):
 		#delete product that parent_sale_product not exists 
 		frappe.db.sql("delete from `tabSale Product` where parent='{0}' and ifnull(reference_sale_product,'')!='' and  ifnull(reference_sale_product,'') not in (select name from `tabSale Product` where parent='{0}')".format(self.name))
 		
+		## update cash coupon information
+		on_update_coupon_information(self)
+
 		#update profit for commission
 		total_cost = 0
 		total_second_cost = 0
@@ -322,8 +330,12 @@ class Sale(Document):
 
 		if "edoor" in frappe.get_installed_apps():
 			create_folio_transaction_from_pos_trnasfer(self) 
+
 		# update_inventory_on_submit(self)			
 		add_payment_to_sale_payment(self) 
+
+		## update cash coupon information
+		on_update_coupon_information(self)		
 
 		update_status(self)
 
@@ -331,7 +343,9 @@ class Sale(Document):
 		update_pos_reservation_status(self)
 
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.create_folio_transaction_from_pos_trnasfer", queue='short', self=self)
-		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit", queue='short', self=self)
+		update_inventory_on_submit(self)
+		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit", queue='short', self=self)
+
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.add_payment_to_sale_payment", queue='short', self=self)
 		
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
@@ -340,18 +354,23 @@ class Sale(Document):
 
 
 	def on_cancel(self):
-		
-		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
-			cancel_general_ledger_entery("Sale", self.name)
-		
 		if self.flags.ignore_on_cancel == True:
 			return 
+		
+
+		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
+			cancel_general_ledger_entery("Sale", self.name)	
+		
+
+		## update cash coupon information
+		on_update_coupon_information(self)
+
 		on_sale_delete_update(self)
 		sql_delete_bulk = """ delete from `tabBulk Sale` where sale = '{}' """.format(self.name)
 		# frappe.throw(sql_delete_bulk)
 		frappe.db.sql(sql_delete_bulk)
 		frappe.db.commit()
-		
+
 		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel", queue='short', self=self)
  
 def update_status(self):
@@ -806,6 +825,89 @@ def validate_pos_payment(self):
 		d.change_exchange_rate = d.change_exchange_rate if d.currency != currency else 1		
 		d.amount = d.amount #(d.input_amount or 0 ) / (d.exchange_rate or 1)
 
+def validate_cash_coupon_claim(self):	
+	self.total_cash_coupon_claim = 0
+
+	if len(self.cash_coupon_items)>0:
+		sql = """select name,parent, member, amount, claim_amount, balance, unlimited,expiry_date, docstatus from `tabCash Coupon Items` where name in %(name)s"""
+		coupons = frappe.db.sql(sql,{
+			"name":[d.coupon_code for d in self.cash_coupon_items]
+		}, as_dict= 1) 
+
+		## check invalite coupon code
+		invalid_coupon = [c for c in  coupons if not c["docstatus"] is 1]
+		if len (invalid_coupon) > 0:
+			frappe.throw("There are invalid coupon code ({})".format(", ".join( [d["name"]  for d in invalid_coupon])))
+
+		## remove sale cash coupon item not exist db
+		[self.cash_coupon_items.remove(d) for d in self.get('cash_coupon_items') if not d.coupon_code in ( [c["name"] for c in coupons])]
+ 
+		
+		## set value and check expired, balance
+		for d in coupons:		
+			for c in [x for x in self.cash_coupon_items if x.coupon_code == d["name"]]:
+				claim_amount = sum([(i.claim_amount or 0) for i in self.cash_coupon_items if i.coupon_code == d["name"]])
+				if d["balance"] < claim_amount:
+					frappe.throw("Cash Coupon {} not enought balance for claim with amount {}. Current balance is {}".format(d["name"],frappe.format_value(claim_amount, {"fieldtype":"Currency"}) ,frappe.format_value( d["balance"], {"fieldtype":"Currency"})))
+				c.member = d["member"]
+				c.cash_coupon = d["parent"]
+				if d["unlimited"] == 0:  
+					if d["expiry_date"] < datetime.datetime.strptime(self.posting_date, '%Y-%m-%d').date() :
+						frappe.throw("The coupon {} was expired".format(d["name"]))
+
+		self.total_cash_coupon_claim = sum([(c.claim_amount or 0) for c in self.cash_coupon_items])
+
+
+def on_update_coupon_information(self):	
+	if len(self.cash_coupon_items ) > 0 and self.docstatus in (1,2):
+		set_value = """c.claim_amount = t.total_claim_amount,
+				c.balance = c.amount - t.total_claim_amount"""
+		if self.docstatus == 2:
+			""" c.claim_amount = c.claim_amount - t.total_claim_amount,
+			  	c.balance = c.amount - ( c.claim_amount + t.total_claim_amount)  """
+		 
+		## update claim amount , balance in cash coupon item 
+		sql = """update `tabCash Coupon Items` c
+				inner join (
+					select 
+						coupon_code,
+						sum(claim_amount) as total_claim_amount 
+					from `tabSale Cash Coupon Claim` 
+					where parent = %(sale)s
+					group by coupon_code
+				) t on c.`code` = t.coupon_code
+				set {}
+				where c.`code` in %(coupon_codes)s""".format(set_value)	
+				
+		frappe.db.sql(sql, {"sale":self.name,"coupon_codes": [c.coupon_code for c in self.cash_coupon_items]})
+
+		# update cash coupn total claim
+		seen = set()
+		[x for x in self.cash_coupon_items if {"coupon":x.cash_coupon, "member":x.member} not in seen and not seen.add({"coupon":x.cash_coupon, "member":x.member})]
+		if len (seen) > 0:
+			update_sql = """update `tabCash Coupon` c
+				inner join (
+					select 
+						parent,
+						sum(claim_amount) as total_claim_amount,
+						sum(balance) as total_balance
+					from `tabCash Coupon Items` x 
+					where x.parent in %(parent)s
+					group by parent
+				) i on i.parent = c.`name`
+					set c.total_claim = i.total_claim_amount,
+					c.total_balance = i.total_balance
+				where c.name in %(parent)s"""
+			
+			frappe.db.sql(update_sql, {"parent":[m["coupon"] for m in seen ]})
+
+			## update coupon information on customer 
+			from epos_restaurant_2023.api.api import update_cash_coupon_summary_to_customer
+			update_cash_coupon_summary_to_customer([m["member"] for m in seen])
+
+ 
+
+
 def validate_tax(doc):
 		
 		if doc.tax_rule:
@@ -919,6 +1021,7 @@ def update_pos_reservation_status(self):
 			})
 
 
+
 @frappe.whitelist()
 def get_park_item_to_redeem(business_branch):
 	from epos_restaurant_2023.api.api import get_current_working_day
@@ -958,6 +1061,7 @@ def update_default_account(self):
 		return
 	update_default_income_account(self)
 	update_default_discount_account(self)
+	update_default_sale_cash_coupon_claim_account(self)
 	update_default_payment_account(self)
 	update_default_tip_account(self)
 	update_default_change_account(self)
@@ -1029,6 +1133,14 @@ def update_default_discount_account(self):
 	if [x for x in self.sale_products if not x.default_discount_account and x.allow_discount==1]:
 		for sp in [x for x in self.sale_products if not x.default_discount_account and   x.allow_discount==1]:
 			sp.default_discount_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_sale_discount_account")
+
+def update_default_sale_cash_coupon_claim_account(self):
+	
+	if self.total_cash_coupon_claim > 0: 		
+		if not self.default_cash_coupon_claim_account: 
+			self.default_cash_coupon_claim_account = frappe.get_cached_value("Business Branch",self.business_branch,"default_sale_cash_coupon_claim_account" )
+	
+
 
 def update_default_payment_account(self):
     

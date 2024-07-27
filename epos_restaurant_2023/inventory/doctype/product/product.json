@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_events_in_timeline": 1,
  "allow_import": 1,
  "allow_rename": 1,
  "autoname": "field:product_code",
@@ -49,12 +50,13 @@
   "is_open_product",
   "is_open_price",
   "pochasing_section",
+  "allow_purchase",
   "vendor",
   "cost",
+  "last_purchase_cost",
   "secondary_cost",
   "column_break_23",
   "allow_sale",
-  "allow_purchase",
   "price",
   "product_printer_and_pos_menu_section",
   "printers",
@@ -129,6 +131,7 @@
    "allow_in_quick_entry": 1,
    "fieldname": "product_name_kh",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Product Name Kh"
   },
   {
@@ -348,7 +351,7 @@
    "depends_on": "eval:doc.is_combo_menu == 0",
    "fieldname": "modifiers_tab",
    "fieldtype": "Tab Break",
-   "label": "Modifiers"
+   "label": "Product Modifiers"
   },
   {
    "fieldname": "product_modifiers",
@@ -440,6 +443,7 @@
    "depends_on": "eval:doc.is_combo_menu == 0",
    "fieldname": "is_recipe",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Recipe"
   },
   {
@@ -508,6 +512,7 @@
    "default": "0",
    "fieldname": "is_combo_menu",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Combo Menu"
   },
   {
@@ -548,6 +553,7 @@
    "default": "0",
    "fieldname": "sort_order",
    "fieldtype": "Int",
+   "hidden": 1,
    "label": "Sort Order"
   },
   {
@@ -608,6 +614,7 @@
    "allow_in_quick_entry": 1,
    "fieldname": "product_code_2",
    "fieldtype": "Data",
+   "hidden": 1,
    "in_list_view": 1,
    "label": "Product Code 2"
   },
@@ -615,12 +622,14 @@
    "allow_in_quick_entry": 1,
    "fieldname": "product_code_3",
    "fieldtype": "Data",
+   "hidden": 1,
    "in_list_view": 1,
    "label": "Product Code 3"
   },
   {
    "fieldname": "secondary_cost",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Secondary Cost"
   },
   {
@@ -638,6 +647,7 @@
    "depends_on": "eval:doc.is_inventory_product==1",
    "fieldname": "has_expired_date",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Has Expired Date"
   },
   {
@@ -669,13 +679,19 @@
    "fieldtype": "Table",
    "label": "Default Account",
    "options": "Product Default Account"
+  },
+  {
+   "default": "0",
+   "fieldname": "last_purchase_cost",
+   "fieldtype": "Currency",
+   "label": "Last Purchase Cost"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-07-16 13:50:41.488670",
+ "modified": "2024-07-26 15:20:34.092417",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Product",

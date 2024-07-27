@@ -1,9 +1,18 @@
 import frappe
 from epos_restaurant_2023.api.api import get_workspace_sidebar_items
+from functools import lru_cache
 
+@frappe.whitelist()
+def clear_cache():
+    get_sidebar_menu_template_cached.cache_clear()
     
 @frappe.whitelist()
 def get_sidebar_menu_template():
+    
+    return get_sidebar_menu_template_cached(frappe.session.user)
+
+@lru_cache(maxsize=128)
+def get_sidebar_menu_template_cached(user):
     data = get_workspace_sidebar_items()
     menus = [d for d in data["pages"] if  not d["parent_page"] and d["is_hidden"]==0]
     # return [d["name"] for d in data["pages"]]
@@ -70,7 +79,7 @@ def get_sidebar_menu_template():
                                             </svg>
                                             {%endif%}
                                         </span>
-                                        <span class="tooltiptext">{{d.name}}</span>
+                                        <span class="tooltiptext">{{_(d.name)}}</span>
                                     </a>
                                 </li>
                             {%endfor%}
@@ -90,7 +99,7 @@ def get_sidebar_menu_template():
         <div class="submenu-panel" id="submenu-panel">
             <div class="d-flex justify-between align-center" style="gap:10px">
                 <div>
-                    <input type="text" class="search-input" placeholder="Search...">
+                    <input type="text" class="search-input" placeholder="{{_("Search...")}}">
                 </div>
                 <div>
                     <div id="hide_sub_menu">
@@ -121,7 +130,7 @@ def get_sidebar_menu_template():
                                     </g>
                                     </svg>
                                 </div>
-                                <div class="ml-2"><a class="sub_menu_link" data-name="{{s.name}}" data-doc-view="{{s.doc_view}}" data-link-to="{{s.link_to}}" data-type="{{s.type}}">{{s.name}}</a></div>
+                                <div class="ml-2"><a class="sub_menu_link" data-name="{{s.name}}" data-doc-view="{{s.doc_view}}" data-link-to="{{s.link_to}}" data-type="{{s.type}}">{{_(s.name)}}</a></div>
                             </div>
                         {%endfor%}
                           <div class="accordion" id="accordionExample">
@@ -132,7 +141,7 @@ def get_sidebar_menu_template():
                                     <button class="btn btn-link btn-block text-left p-0" type="button" data-toggle="collapse" data-target="#collapse{{g.name}}" aria-expanded="true" aria-controls="collapse{{g.name}}">
                                         <div class="d-flex align-center">
                                             <div><svg width="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M18 10L13 10" stroke="#000000" stroke-width="1.5" stroke-linecap="round"></path> <path d="M10 3H16.5C16.9644 3 17.1966 3 17.3916 3.02567C18.7378 3.2029 19.7971 4.26222 19.9743 5.60842C20 5.80337 20 6.03558 20 6.5" stroke="#000000" stroke-width="1.5"></path> <path d="M22 11.7979C22 9.16554 22 7.84935 21.2305 6.99383C21.1598 6.91514 21.0849 6.84024 21.0062 6.76946C20.1506 6 18.8345 6 16.2021 6H15.8284C14.6747 6 14.0979 6 13.5604 5.84678C13.2651 5.7626 12.9804 5.64471 12.7121 5.49543C12.2237 5.22367 11.8158 4.81578 11 4L10.4497 3.44975C10.1763 3.17633 10.0396 3.03961 9.89594 2.92051C9.27652 2.40704 8.51665 2.09229 7.71557 2.01738C7.52976 2 7.33642 2 6.94975 2C6.06722 2 5.62595 2 5.25839 2.06935C3.64031 2.37464 2.37464 3.64031 2.06935 5.25839C2 5.62595 2 6.06722 2 6.94975M21.9913 16C21.9554 18.4796 21.7715 19.8853 20.8284 20.8284C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.8284C2 19.6569 2 17.7712 2 14V11" stroke="#000000" stroke-width="1.5" stroke-linecap="round"></path> </g></svg></div>
-                                            <div class="ml-2 dir-menu">{{g.label}}</div>
+                                            <div class="ml-2 dir-menu">{{_(g.label)}}</div>
                                         </div>
                                     </button>
                                 </h2>
@@ -160,7 +169,7 @@ def get_sidebar_menu_template():
                                                         </svg>
                                                 </div>
                                             </div>
-                                            <div class="ml-2"><a class="sub_menu_link"  data-link-to="{{l.link_to}}" data-type="{{l.link_type}}">{{l.label}}</a></div>
+                                            <div class="ml-2"><a class="sub_menu_link"  data-link-to="{{l.link_to}}" data-type="{{l.link_type}}">{{_(l.label)}}</a></div>
                                         </div>
                                     {%endfor%}
                                 </div>
@@ -254,7 +263,7 @@ def get_sidebar_menu_template():
                                                         <button class="btn btn-link btn-block text-left p-0" type="button" data-toggle="collapse" data-target="#collapse{{g.name}}" aria-expanded="true" aria-controls="collapse{{g.name}}">
                                                             <div class="d-flex align-center">
                                                                 <div><svg width="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M18 10L13 10" stroke="#000000" stroke-width="1.5" stroke-linecap="round"></path> <path d="M10 3H16.5C16.9644 3 17.1966 3 17.3916 3.02567C18.7378 3.2029 19.7971 4.26222 19.9743 5.60842C20 5.80337 20 6.03558 20 6.5" stroke="#000000" stroke-width="1.5"></path> <path d="M22 11.7979C22 9.16554 22 7.84935 21.2305 6.99383C21.1598 6.91514 21.0849 6.84024 21.0062 6.76946C20.1506 6 18.8345 6 16.2021 6H15.8284C14.6747 6 14.0979 6 13.5604 5.84678C13.2651 5.7626 12.9804 5.64471 12.7121 5.49543C12.2237 5.22367 11.8158 4.81578 11 4L10.4497 3.44975C10.1763 3.17633 10.0396 3.03961 9.89594 2.92051C9.27652 2.40704 8.51665 2.09229 7.71557 2.01738C7.52976 2 7.33642 2 6.94975 2C6.06722 2 5.62595 2 5.25839 2.06935C3.64031 2.37464 2.37464 3.64031 2.06935 5.25839C2 5.62595 2 6.06722 2 6.94975M21.9913 16C21.9554 18.4796 21.7715 19.8853 20.8284 20.8284C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.8284C2 19.6569 2 17.7712 2 14V11" stroke="#000000" stroke-width="1.5" stroke-linecap="round"></path> </g></svg></div>
-                                                                <div class="ml-2 dir-menu">{{g.label}}</div>
+                                                                <div class="ml-2 dir-menu">{{_(g.label)}}</div>
                                                             </div>
                                                         </button>
                                                     </h2>
@@ -282,7 +291,7 @@ def get_sidebar_menu_template():
                                                                             </svg>
                                                                     </div>
                                                                 </div>
-                                                                <div class="ml-2"><a class="sub_menu_link"  data-link-to="{{l.link_to}}" data-type="{{l.link_type}}">{{l.label}}</a></div>
+                                                                <div class="ml-2"><a class="sub_menu_link"  data-link-to="{{l.link_to}}" data-type="{{l.link_type}}">{{_(l.label)}}</a></div>
                                                             </div>
                                                         {%endfor%}
                                                     </div>

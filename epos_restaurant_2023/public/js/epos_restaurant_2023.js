@@ -7,13 +7,8 @@ frappe.listview_settings['*'] = {
     }
 };
 
-
-
-
 window.addEventListener('load', function () {
- 
 
-    
     removeButtomCustom()
 
     setFullScreenButton()
@@ -36,6 +31,34 @@ window.addEventListener('load', function () {
 
         const navBar = document.querySelector('body')
         navBar.classList.add('full-width');
+
+
+        const sidebar = document.querySelector(".layout-side-section")
+        if (sidebar){
+            const listSidebar = sidebar.querySelector('.list-sidebar.overlay-sidebar')
+            const formSidebar = sidebar.querySelector('.form-sidebar.overlay-sidebar')
+            if (listSidebar) {
+                const listParent = listSidebar.parentNode
+                if (listParent) {
+                    listParent.remove()
+                }
+            }
+            if (formSidebar) {
+                console.log('form Sidebar')
+                const formParent = formSidebar.parentNode
+                if (formParent) {
+                    $(formParent).css('display', 'none')
+                }
+            }
+        }
+        
+        if (!frappe.is_mobile()){ 
+            const layoutsidebar = document.querySelectorAll(".layout-side-section")
+            
+            layoutsidebar.forEach(s=>{
+                s.style.display="none";
+            })
+        }
        
     })
 
@@ -153,33 +176,34 @@ $(document).ready(function(){
     // sidebar menu
 
     const sidebar = document.querySelector(".layout-side-section")
+
+    if (sidebar){
+        const listSidebar = sidebar.querySelector('.list-sidebar.overlay-sidebar')
+        const formSidebar = sidebar.querySelector('.form-sidebar.overlay-sidebar')
+        if (listSidebar) {
+            const listParent = listSidebar.parentNode
+            if (listParent) {
+                listParent.remove()
+            }
+        }
+        if (formSidebar) {
+            const formParent = formSidebar.parentNode
+            if (formParent) {
+                $(formParent).css('display', 'none')
+            }
+        }
+    }
+
+
     let isMobile = window.matchMedia('(max-width: 768px)').matches;
 
     let submenus= []
-    if (sidebar){
-        sidebar.remove();
-    }
     var bodyElement = document.querySelector(".main-section");
     
     if (!document.querySelector("#main-menu")){
         RenderNavMenu()
     }
-    //delete this when move to epos_restaurant_2023.js
-    frappe.router.on('change', () => {
-        if (sidebar){
-            sidebar.remove();
-        }
-        
-        if (!frappe.is_mobile()){ 
-        const layoutsidebar = document.querySelectorAll(".layout-side-section")
-        
-        layoutsidebar.forEach(s=>{
-            s.style.display="none";
-        })
-        }
-        
-    })
-
+    
     function RenderNavMenu(){
         if (window.self === window.top) {
             let parser = new DOMParser()
@@ -509,7 +533,7 @@ function ClearUI(){
     }
     
 
-    var side_bar = document.querySelector(".layout-side-section")
+    let side_bar = document.querySelector(".layout-side-section")
     if (side_bar){
         //find if sidebar is desk side bar
         var desk_sidebar = side_bar.querySelector(".desk-sidebar-item")
@@ -518,6 +542,15 @@ function ClearUI(){
         }
         
     } 
+    side_bar = document.querySelector(".desk-sidebar")
+    if (side_bar){
+        
+            side_bar.parentNode.parentNode.remove()
+ 
+        
+    } 
+
+    
 }
 
 // check if app is running in iframe
@@ -584,10 +617,6 @@ if (window.self !== window.top) {
 
 
 }
-
-
-
-
 
 function ViewDocDetailModal(doctype,docname){
     const url = "/app/" +  frappe.router.slug(doctype) + "/" + docname

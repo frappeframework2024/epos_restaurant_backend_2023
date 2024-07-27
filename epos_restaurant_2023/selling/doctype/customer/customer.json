@@ -10,11 +10,8 @@
  "field_order": [
   "billing_section",
   "balance",
-  "total_point_earn",
   "column_break_lide",
-  "voucher_actual_amount",
-  "voucher_credit_amount",
-  "voucher_balance",
+  "total_point_earn",
   "section_break_buzm",
   "naming_series",
   "customer_code",
@@ -56,8 +53,28 @@
   "pos_note",
   "tab_break_32",
   "card",
+  "voucher_information_tab",
+  "voucher_actual_amount",
+  "column_break_czzc",
+  "voucher_balance",
+  "column_break_ysoq",
+  "voucher_credit_amount",
+  "coupon_information_tab",
+  "total_coupon",
+  "total_coupon_amount",
+  "column_break_wryf",
+  "total_coupon_claim",
+  "total_coupon_balance",
+  "total_coupon_balance_expired",
   "integration_tab",
-  "exely_guest_id"
+  "exely_guest_id",
+  "stay_history_tab",
+  "stay_history_detail",
+  "posmisc_sale_tab",
+  "pos_misc_sale",
+  "note_tab",
+  "folio_tab",
+  "document_tab"
  ],
  "fields": [
   {
@@ -207,6 +224,7 @@
   },
   {
    "bold": 1,
+   "depends_on": "eval:frappe.user.has_role(\"Administrator\")",
    "fieldname": "customer_group",
    "fieldtype": "Link",
    "in_standard_filter": 1,
@@ -217,12 +235,14 @@
   {
    "fieldname": "market_source",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Market Source",
    "options": "Market Source"
   },
   {
    "fieldname": "market_segment",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Market Segment",
    "options": "Market Segment"
   },
@@ -252,6 +272,7 @@
    "label": "Expired Date"
   },
   {
+   "depends_on": "eval:frappe.user.has_role(\"Administrator\")",
    "fieldname": "tab_break_32",
    "fieldtype": "Tab Break",
    "label": "Card"
@@ -331,6 +352,7 @@
    "read_only": 1
   },
   {
+   "depends_on": "eval:frappe.user.has_role(\"Administrator\")",
    "fieldname": "integration_tab",
    "fieldtype": "Tab Break",
    "label": "Integration"
@@ -349,6 +371,7 @@
    "default": "0",
    "fieldname": "allow_earn_point",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Allow Earn Point"
   },
   {
@@ -367,6 +390,96 @@
    "fieldname": "pos_note",
    "fieldtype": "Small Text",
    "label": "POS Note"
+  },
+  {
+   "fieldname": "coupon_information_tab",
+   "fieldtype": "Tab Break",
+   "label": "Coupon Information"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_coupon",
+   "fieldtype": "Int",
+   "label": "Total Coupon",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_coupon_amount",
+   "fieldtype": "Currency",
+   "label": "Total Coupon Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_wryf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_coupon_claim",
+   "fieldtype": "Currency",
+   "label": "Total Coupon Claim",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_coupon_balance",
+   "fieldtype": "Currency",
+   "label": "Total Coupon Balance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "stay_history_tab",
+   "fieldtype": "Tab Break",
+   "label": "Stay History"
+  },
+  {
+   "fieldname": "posmisc_sale_tab",
+   "fieldtype": "Tab Break",
+   "label": "POS/Misc. Sale"
+  },
+  {
+   "fieldname": "note_tab",
+   "fieldtype": "Tab Break",
+   "label": "Note"
+  },
+  {
+   "fieldname": "folio_tab",
+   "fieldtype": "Tab Break",
+   "label": "Folio"
+  },
+  {
+   "fieldname": "document_tab",
+   "fieldtype": "Tab Break",
+   "label": "Document"
+  },
+  {
+   "fieldname": "stay_history_detail",
+   "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "pos_misc_sale",
+   "fieldtype": "HTML"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_coupon_balance_expired",
+   "fieldtype": "Currency",
+   "label": "Total Coupon Balance Expired",
+   "read_only": 1
+  },
+  {
+   "fieldname": "voucher_information_tab",
+   "fieldtype": "Tab Break",
+   "label": "Voucher Information"
+  },
+  {
+   "fieldname": "column_break_czzc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_ysoq",
+   "fieldtype": "Column Break"
   }
  ],
  "image_field": "photo",
@@ -379,7 +492,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2024-07-24 10:47:06.521454",
+ "modified": "2024-07-27 10:44:38.958080",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

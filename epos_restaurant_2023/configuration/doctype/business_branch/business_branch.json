@@ -57,11 +57,12 @@
   "default_income_account",
   "default_receivable_account",
   "default_sale_discount_account",
+  "default_sale_cash_coupon_claim_account",
   "default_tip_account",
   "column_break_oqmw",
   "default_credit_account",
   "default_purchase_discount_account",
-  "default_bank_fee_account",
+  "default_temporary_opening_account",
   "profit_and_loss_statement_report_head_account_section",
   "income_head_account",
   "column_break_rfra",
@@ -69,6 +70,7 @@
   "column_break_hrxs",
   "inventory_section",
   "default_inventory_account",
+  "default_bank_fee_account",
   "column_break_rvvy",
   "stock_adjustment_account",
   "column_break_uize",
@@ -432,12 +434,24 @@
    "fieldtype": "Link",
    "label": "Default Bank Fee Account",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_temporary_opening_account",
+   "fieldtype": "Link",
+   "label": "Default Temporary Opening Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_sale_cash_coupon_claim_account",
+   "fieldtype": "Link",
+   "label": "Default Sale Cash Coupon Claim Account",
+   "options": "Chart Of Account"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-12 16:03:12.779407",
+ "modified": "2024-07-27 09:57:54.004791",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",

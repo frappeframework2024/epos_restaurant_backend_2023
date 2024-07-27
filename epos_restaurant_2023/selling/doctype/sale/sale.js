@@ -2,7 +2,7 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Sale", {
-	onload(frm) {
+	onload(frm) { 
 		frm.set_query("tip_account_code", function () {
 			return {
 				filters: [
@@ -12,7 +12,8 @@ frappe.ui.form.on("Sale", {
 		});
 
 	},
-	refresh(frm) {
+	refresh(frm) { 
+		 
 		frappe.call({
             method: "get_sale_payment_naming_series",
             doc: frm.doc,
@@ -41,10 +42,12 @@ frappe.ui.form.on("Sale", {
 
 			document.getElementById('inventory_transaction').appendChild(iframe);
 
+
+
 		}
 
+		updateSummary(frm)
 
-		updateSummary(frm);
 		if (frm.doc.docstatus == 0){
 			frm.add_custom_button(__('Apply Discount'), function () {
 
@@ -122,11 +125,8 @@ frappe.ui.form.on("Sale", {
 				
 			});
 		}
+		 
 		
-		
-		
-
-
 	},
 	setup(frm) {
 		set_query(frm, "working_day", [["Working Day", "is_closed", "=", 0]]);
@@ -332,10 +332,13 @@ frappe.ui.form.on("Sale", {
 	}
 });
 
-frappe.ui.form.on('POS Sale Payment', {
-	payment_type(frm, cdt, cdn){
-		var d = frappe.model.get_doc(cdt, cdn);
-		frappe.model.set_value(cdt, cdn, "input_amount", frm.doc.grand_total * d.exchange_rate);
+ 
+frappe.ui.form.on('Sale Cash Coupon Claim', {
+	cash_coupon_items_remove: function (frm){
+		updateSumTotal(frm);
+	},
+	claim_amount(frm,cdt, cdn){
+		updateSumTotal(frm);
 	}
 })
 
@@ -385,13 +388,23 @@ frappe.ui.form.on('Sale Product', {
 		let row = locals[cdt][cdn];
 	}
 })
+
+
+
 frappe.ui.form.on("Sale", "refresh", function(frm) {
 	frm.set_df_property("sale_commission_to", "read_only", (frm.doc.sale_commission_to ?? "") == "" && (frm.doc.docstatus == 1 || frm.doc.docstatus == 0) ? 0 : 1);
 	frm.set_df_property("sale_commission_percent", "read_only", frm.doc.sale_commission_paid_amount > 0 ? 1 : 0);
 	frm.set_df_property("sale_commission_amount", "read_only", frm.doc.sale_commission_paid_amount > 0 ? 1 : 0);
 	frm.set_df_property("sale_commission_based_on", "read_only", frm.doc.sale_commission_paid_amount > 0 ? 1 : 0);
 }),
+
+
 frappe.ui.form.on('POS Sale Payment', {
+	payment_type(frm, cdt, cdn){
+		var d = frappe.model.get_doc(cdt, cdn);
+		// frappe.model.set_value(cdt, cdn, "input_amount", (frm.doc.grand_total * d.exchange_rate) - (frm.doc.total_paid || 0) - (frm.doc.total_cash_coupon_claim || 0) );
+	},
+
 	input_amount(frm) {
 		update_payment_amount(frm);
 	}
@@ -403,29 +416,33 @@ frappe.ui.form.on('POS Sale Payment', {
 
 
 function updateSummary(frm) {
-
-	const html = frappe.render_template("sale_summary", frm.doc)
-	
-	$(frm.fields_dict['html_summary'].wrapper).html(html);
+	if((frm.doc.sale_products??[]).length > 0){ 
+		const html = frappe.render_template("sale_summary", frm.doc)		
+		$(frm.fields_dict['html_summary'].wrapper).html(html);
+		
+	}else{
+		$(frm.fields_dict['html_summary'].wrapper).empty();
+	}
 	frm.refresh_field('html_summary');
-
 }
 
 function update_payment_amount(frm) {
 	$.each(frm.doc.payment, function (i, d) {
 		d.amount = d.input_amount / d.exchange_rate;
 	});
+
+
 	frm.refresh_field('payment');
 	let payments = frm.doc.payment;
+	frm.set_value('total_paid',0);
 
 	if (payments != undefined) {
-
 		frm.set_value('total_paid', payments.reduce((n, d) => n + d.amount, 0));
-		frm.refresh_field('total_paid');
-		frm.set_value('balance', frm.doc.grand_total - frm.doc.total_paid);
-
 	}
-
+	// frm.refresh_field('total_paid');
+	// frm.set_value('balance', frm.doc.grand_total - frm.doc.total_paid - (frm.doc.total_cash_coupon_claim||0) );
+	// frm.refresh_field('balance');
+	updateSumTotal(frm);
 }
 
 function add_product_to_sale_product(frm, p) {
@@ -448,7 +465,7 @@ function add_product_to_sale_product(frm, p) {
 		doc.product_name = p.product_name_en;
 		doc.base_price = p.price,
 
-			doc.price = p.price;
+		doc.price = p.price;
 		doc.quantity = 1;
 		doc.product_name_kh = p.product_name_kh;
 		doc.unit = p.unit;
@@ -534,16 +551,13 @@ async function update_product_price(frm) {
 }
 
 
-function updateSumTotal(frm) {
-	const products = frm.doc.sale_products;
-	if (products == undefined) {
-		return false;
-	}
-
-	frm.set_value('sub_total', products.reduce((n, d) => n + d.sub_total, 0));
-	frm.set_value('total_quantity', products.reduce((n, d) => n + d.quantity, 0));
-	frm.set_value('product_discount', products.reduce((n, d) => n + d.discount_amount || 0, 0));
-	frm.set_value('sale_discountable_amount', products.reduce((n, d) => n + (d.allow_discount == 0 || d.discount_amount > 0 ? 0 : d.sub_total), 0));
+function updateSumTotal(frm) { 
+	const products = frm.doc.sale_products; 
+ 
+	frm.set_value('sub_total',products==undefined?0: products.reduce((n, d) => n + d.sub_total, 0));
+	frm.set_value('total_quantity',products==undefined?0: products.reduce((n, d) => n + d.quantity, 0));
+	frm.set_value('product_discount',products==undefined?0: products.reduce((n, d) => n + d.discount_amount || 0, 0));
+	frm.set_value('sale_discountable_amount',products==undefined?0: products.reduce((n, d) => n + (d.allow_discount == 0 || d.discount_amount > 0 ? 0 : d.sub_total), 0));
 
 	let discount = 0;
 	if (frm.doc.discount_type == "Percent") {
@@ -552,25 +566,37 @@ function updateSumTotal(frm) {
 		discount = frm.doc.discount;
 	}
 	//UPDATE TAX FROM SALE PRODUCT
-	frm.set_value('taxable_amount_1', products.reduce((n, d) => n + d.taxable_amount_1, 0));
-	frm.set_value('taxable_amount_2', products.reduce((n, d) => n + d.taxable_amount_2, 0));
-	frm.set_value('taxable_amount_3', products.reduce((n, d) => n + d.taxable_amount_3, 0));
-	frm.set_value('tax_1_amount', products.reduce((n, d) => n + d.tax_1_amount, 0));
-	frm.set_value('tax_2_amount', products.reduce((n, d) => n + d.tax_2_amount, 0));
-	frm.set_value('tax_3_amount', products.reduce((n, d) => n + d.tax_3_amount, 0));
-	frm.set_value('total_tax', products.reduce((n, d) => n + d.total_tax, 0));
+	frm.set_value('taxable_amount_1',products==undefined?0: products.reduce((n, d) => n + d.taxable_amount_1, 0));
+	frm.set_value('taxable_amount_2',products==undefined?0: products.reduce((n, d) => n + d.taxable_amount_2, 0));
+	frm.set_value('taxable_amount_3',products==undefined?0: products.reduce((n, d) => n + d.taxable_amount_3, 0));
+	frm.set_value('tax_1_amount',products==undefined?0: products.reduce((n, d) => n + d.tax_1_amount, 0));
+	frm.set_value('tax_2_amount',products==undefined?0: products.reduce((n, d) => n + d.tax_2_amount, 0));
+	frm.set_value('tax_3_amount',products==undefined?0: products.reduce((n, d) => n + d.tax_3_amount, 0));
+	frm.set_value('total_tax',products==undefined?0: products.reduce((n, d) => n + d.total_tax, 0));
 
 
 	frm.set_value('sale_discount', discount);
 	frm.set_value('total_discount', discount + frm.doc.product_discount);
 	frm.set_value('grand_total', (frm.doc.sub_total - frm.doc.total_discount) + frm.doc.total_tax);
 
+	frm.set_value('total_paid',0)
 	if (frm.doc.payment != undefined) {
 		frm.set_value('total_paid', frm.doc.payment.reduce((n, d) => n + d.amount, 0));
 	}
+	
+	frm.set_value('total_cash_coupon_claim',0)
+	if (frm.doc.cash_coupon_items != undefined) {
+		frm.set_value('total_cash_coupon_claim', frm.doc.cash_coupon_items.reduce((n, d) => n + d.claim_amount, 0));
+	}
+
+	
+	frm.set_value('balance', frm.doc.grand_total - frm.doc.total_paid - (frm.doc.total_cash_coupon_claim || 0) );
+	if (frm.doc.balance < 0){
+		frm.set_value('balance',0)
+		frm.set_value('changed_amount', (frm.doc.total_paid + (frm.doc.total_cash_coupon_claim||0)) - frm.doc.grand_total)
+	}
 
 
-	frm.set_value('balance', frm.doc.grand_total - frm.doc.total_paid);
 	frm.refresh_field('grand_total');
 	frm.refresh_field('html_summary');
 

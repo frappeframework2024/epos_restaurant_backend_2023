@@ -9,10 +9,13 @@
  "engine": "InnoDB",
  "field_order": [
   "naming_series",
-  "expense_category",
   "expense_name",
-  "note",
-  "disabled"
+  "disabled",
+  "column_break_nkez",
+  "expense_category",
+  "default_expense_account",
+  "section_break_yumi",
+  "note"
  ],
  "fields": [
   {
@@ -49,11 +52,25 @@
    "fieldname": "disabled",
    "fieldtype": "Check",
    "label": "Disabled"
+  },
+  {
+   "fieldname": "default_expense_account",
+   "fieldtype": "Link",
+   "label": "Default Expense Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "column_break_nkez",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_yumi",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-12-06 11:56:43.352026",
+ "modified": "2024-07-27 15:24:52.632296",
  "modified_by": "Administrator",
  "module": "Expense",
  "name": "Expense Code",

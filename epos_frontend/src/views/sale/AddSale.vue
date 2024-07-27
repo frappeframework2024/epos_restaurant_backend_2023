@@ -35,6 +35,8 @@
                     </div>
                     <div class="mt-auto">
                         <div class="-mx-1 bg-blue-100 rounded-tl-md rounded-tr-md text-xs">
+
+                            <!-- <v-btn @click="onClaimCouponClick" >Coupon</v-btn> -->
                             <ComSaleSummaryList />
 
                             <ComSaleKeyPad v-if="gv.device_setting.show_keypad_in_sale_screen == 1" />
@@ -190,6 +192,15 @@ onMounted(() => {
     socket.emit("ShowOrderInCustomerDisplay", sale.sale, "new");
 
 })
+
+function onClaimCouponClick(){
+    onRequestCouponCode("00012")
+}
+
+function onRequestCouponCode(code){
+   sale.onRequestCouponCode(code)
+}
+
 
 
 function onCheckExpireHappyHoursPromotion() {

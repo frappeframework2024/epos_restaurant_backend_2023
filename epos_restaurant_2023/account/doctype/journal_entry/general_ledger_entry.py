@@ -1,23 +1,24 @@
 import frappe
 from frappe import _
-
+from epos_restaurant_2023.api.account import submit_general_ledger_entry
 def submit_sale_to_general_ledger_entry(self):
-	from epos_restaurant_2023.api.account import submit_general_ledger_entry
+	
 	docs = []
 	# income account
-	for acc in set([d.account for d in self.account_entries]):
-		if not acc:
-				frappe.throw(_("Please enter income account"))
+	for acc in self.account_entries:
 		doc = {
 			"doctype":"General Ledger",
 			"posting_date":self.posting_date,
-			"account":acc,
-			"debit":sum([d.debit for d in self.account_entries if d.account==acc]),
-			"againt":self.customer + " - " + self.customer_name,
+			"account":acc.account,
+			"debit_amount":acc.debit,
+			"credit_amount":acc.credit,
+			"againt":acc.party + " - " + acc.party_name,
 			"voucher_type":"Journal Entry",
 			"voucher_number":self.name,
 			"business_branch": self.business_branch,
-			"type":"Income"#not use in db
+			"party_type":acc.party_type,
+			"party":acc.party,
+			"remark":acc.note
 		}
 	
 		docs.append(doc)

@@ -1,0 +1,61 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:doctype_name",
+ "creation": "2024-07-27 10:13:23.389497",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "doctype_name",
+  "title_field",
+  "show_in_journal_entry"
+ ],
+ "fields": [
+  {
+   "fieldname": "doctype_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Doctype Name",
+   "options": "DocType",
+   "unique": 1
+  },
+  {
+   "fieldname": "title_field",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Title Field"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_in_journal_entry",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Show in Journal Entry"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-07-27 11:09:45.261071",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "Reference Doctype",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

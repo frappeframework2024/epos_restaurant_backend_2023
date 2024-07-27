@@ -10,5 +10,13 @@ frappe.ui.form.on("Business Branch", {
                 })
             },"Actions")
         }
+        frm.set_query("default_temporary_opening_account", function() {
+            return {
+                filters: [
+                    ["is_group","=","0"],
+                    ["account_type","=","Temporary"]
+                ]
+            }
+        });
 	},
 });

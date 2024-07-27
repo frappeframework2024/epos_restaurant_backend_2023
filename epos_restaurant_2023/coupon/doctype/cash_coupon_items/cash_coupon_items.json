@@ -1,0 +1,90 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:code",
+ "creation": "2024-07-25 08:36:38.450274",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "code",
+  "amount",
+  "claim_amount",
+  "balance",
+  "column_break_glyj",
+  "unlimited",
+  "expiry_date",
+  "member"
+ ],
+ "fields": [
+  {
+   "fieldname": "code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Code",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount"
+  },
+  {
+   "default": "0",
+   "fieldname": "claim_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Claim Amount",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "balance",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Balance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_glyj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "unlimited",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Unlimited"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "Today",
+   "fieldname": "expiry_date",
+   "fieldtype": "Date",
+   "hidden": 1,
+   "label": "Expiry Date"
+  },
+  {
+   "fieldname": "member",
+   "fieldtype": "Data",
+   "label": "Member"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-07-27 14:39:04.403884",
+ "modified_by": "Administrator",
+ "module": "Coupon",
+ "name": "Cash Coupon Items",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

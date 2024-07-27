@@ -34,7 +34,7 @@ frappe.treeview_settings['Chart Of Account'] = {
             fieldtype:'Select', 
             fieldname:'account_type', 
             label:__('Account Type'),
-            options:"\nReceivable\nPayable\nCash\nBank\nIncome\nExpense"
+            options:"\nReceivable\nPayable\nCash\nBank\nIncome\nExpense\nTemporary"
         }
     ],
     extend_toolbar: true

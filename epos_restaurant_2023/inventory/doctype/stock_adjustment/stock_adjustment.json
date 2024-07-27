@@ -21,17 +21,15 @@
   "section_break_11",
   "products",
   "section_break_9",
-  "total_current_quantity",
-  "total_current_cost",
-  "currency_10",
-  "total_quantity",
-  "total_cost",
-  "column_break_13",
-  "difference_quantity",
-  "difference_cost",
-  "section_break_16",
   "note",
   "amended_from",
+  "column_break_13",
+  "total_quantity",
+  "total_cost",
+  "difference_quantity",
+  "difference_cost",
+  "total_current_cost",
+  "total_current_quantity",
   "accounting_tab",
   "default_inventory_account",
   "difference_account"
@@ -92,10 +90,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "currency_10",
-   "fieldtype": "Column Break"
-  },
-  {
    "default": "0",
    "fieldname": "total_quantity",
    "fieldtype": "Float",
@@ -126,10 +120,6 @@
    "fieldtype": "Currency",
    "label": "Difference Cost",
    "read_only": 1
-  },
-  {
-   "fieldname": "section_break_16",
-   "fieldtype": "Section Break"
   },
   {
    "fieldname": "note",
@@ -210,7 +200,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-07-24 12:06:40.499885",
+ "modified": "2024-07-26 21:25:05.147042",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Adjustment",

@@ -6,12 +6,20 @@ frappe.ui.form.on("Journal Entry", {
         if(frm.is_new()){
             frm.set_value('posting_date', frappe.datetime.get_today());
         }
+       
 	},
+    refresh(frm){
+        frm.set_df_property("party_type","options","Reference Doctype")
+        frm.fields_dict['account_entries'].grid.update_docfield_property(
+            'party_type', 'options', 'Reference Doctype'
+        );
+    },
     business_branch(frm){
         frm.set_query("account","account_entries", function() {
             return {
                 filters: [
-                    ["business_branch", "=", frm.doc.business_branch]
+                    ["business_branch", "=", frm.doc.business_branch],
+                    ["is_group", "=", 0]
                 ]
             }
         });

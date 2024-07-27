@@ -317,3 +317,27 @@ def recent_bills_payment(name):
 	response["balance"] = balance or 0
 
 	return response
+
+
+
+@frappe.whitelist()
+def get_pos_misc_sale(customer_name):
+	sales = """
+        SELECT 
+            sp.product_name, 
+            sp.quantity, 
+            sp.price, 
+            sp.discount_amount, 
+            sp.amount, 
+            s.name 
+        FROM 
+            `tabSale Product` sp
+        INNER JOIN 
+            `tabSale` s 
+        ON 
+            s.name = sp.parent
+        WHERE 
+            s.customer = %(customer_name)s
+    """
+	sales = frappe.db.sql(sales, {'customer_name':customer_name}, as_dict=True)
+	return sales

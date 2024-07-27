@@ -30,6 +30,7 @@
   "column_break_fgou",
   "note",
   "column_break_ekeq",
+  "total_expense_cost",
   "html_summary",
   "section_break_7",
   "total_quantity",
@@ -319,6 +320,11 @@
    "fieldtype": "Link",
    "label": "Default Discount Account",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "total_expense_cost",
+   "fieldtype": "Currency",
+   "label": "Total Expense Cost"
   }
  ],
  "image_field": "attach_receipt",
@@ -331,7 +337,7 @@
    "link_fieldname": "purchase_order"
   }
  ],
- "modified": "2024-06-26 10:58:15.381531",
+ "modified": "2024-07-26 15:27:56.020130",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order",

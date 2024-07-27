@@ -48,17 +48,18 @@ class InventoryCheck(BaseController):
 		
 	def before_submit(self):
 		sql  = """update `tabStock Location Product` s 
-				inner join `tabInventory Check Items` i on i.product_code = s.product_code and i.stock_location = %(stock_location)s
-					set s.cost = i.cost
-				where i.parent = %(inventory_check) and i.product_code in %(product_code)s"""
+				inner join `tabInventory Check Items` i on i.product_code = s.product_code and s.stock_location = %(stock_location)s
+					set s.cost = i.cost,
+					s.total_cost = i.original_cost * s.quantity
+				where i.parent = %(inventory_check)s and i.product_code in %(product_code)s"""
 		
-		frappe.db.sql(sql,{
-			"inventory_check":self.parent,
-			"stock_location":self.stock_location,
-			"product_code": [d.product_code for d in self.items if d.cost != d.original_cost]
-		})
-
-
+		products = [d.product_code for d in self.items if d.cost != d.original_cost]
+		if len(products)>0:
+			frappe.db.sql(sql,{
+				"inventory_check":self.name,
+				"stock_location":self.stock_location,
+				"product_code": products
+			})
 
 	def on_submit(self):
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
@@ -70,14 +71,17 @@ class InventoryCheck(BaseController):
 		# frappe.enqueue("epos_restaurant_2023.inventory.doctype.inventory_check.inventory_check.update_inventory_on_submit", queue='short', self=self)
 	def on_cancel(self):
 		sql  = """update `tabStock Location Product` s 
-				inner join `tabInventory Check Items` i on i.product_code = s.product_code and i.stock_location = %(stock_location)s
-					set s.cost = i.original_cost
-				where i.parent = %(inventory_check) and i.product_code in %(product_code)s"""		
-		frappe.db.sql(sql,{
-			"inventory_check":self.parent,
-			"stock_location":self.stock_location,
-			"product_code": [d.product_code for d in self.items if d.cost != d.original_cost]
-		})
+				inner join `tabInventory Check Items` i on i.product_code = s.product_code and s.stock_location = %(stock_location)s
+					set s.cost = i.original_cost,
+					s.total_cost = i.original_cost * s.quantity
+				where i.parent = %(inventory_check)s and i.product_code in %(product_code)s"""	
+		products = [d.product_code for d in self.items if d.cost != d.original_cost]
+		if len(products)>0:
+			frappe.db.sql(sql,{
+				"inventory_check":self.name,
+				"stock_location":self.stock_location,
+				"product_code": products
+			})
 
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			submit_inventory_check_general_ledger_entry(self, on_cancel=True)

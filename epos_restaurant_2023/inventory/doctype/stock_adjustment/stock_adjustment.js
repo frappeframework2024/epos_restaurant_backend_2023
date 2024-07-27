@@ -2,7 +2,9 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Stock Adjustment", {
+	
 	refresh(frm) {
+	 
 		frm.set_query("product_code","products", function() {
             return {
                 filters: [
@@ -10,8 +12,19 @@ frappe.ui.form.on("Stock Adjustment", {
                 ]
             }
         });
-	},
+	 
 
+	},
+	setup(frm) {
+	 
+		for (const key in frm.fields_dict) {
+			if (["Currency", "Data", "Int", "Link", "Date", "Datetime", "Float", "Select"].includes(frm.fields_dict[key].df.fieldtype)) {
+				frm.fields_dict[key].$wrapper.addClass('custom_control');
+			}
+
+		}
+	},
+	
     stock_location(frm){ 
         if(frm.doc.products.length > 0){
             $.each(frm.doc.products, function(i, d) {
@@ -74,6 +87,8 @@ frappe.ui.form.on('Stock Adjustment Product', {
     },
 	
 })
+ 
+
 
 function get_location_product(frm, doc){
 
@@ -92,6 +107,8 @@ function get_location_product(frm, doc){
 
 				doc.cost = r.message.cost;
 				doc.total_cost = doc.quantity * doc.cost;      
+				
+				doc.quantity = doc.current_quantity
 
                 doc.difference_quantity = doc.quantity - doc.current_quantity;
                 doc.difference_cost = doc.cost - doc.current_cost;         
@@ -144,6 +161,8 @@ function updateSumTotal(frm) {
 	frm.refresh_field("total_quantity");
 	frm.refresh_field("difference_quantity");
 	frm.refresh_field("difference_cost");
+
+ 
     
 }
 function check_row_exist(frm, barcode){
@@ -161,6 +180,7 @@ function update_product_quantity(frm, row){
 	}
 }
 function add_product_child(frm,p){
+	 
 	let all_rows = frm.fields_dict["products"].grid.grid_rows.filter(function(d) { return  d.doc.product_code==undefined});
 	let row =undefined;
 	
@@ -180,6 +200,7 @@ function add_product_child(frm,p){
         doc.product_code = p.product_code;
 		doc.product_name = p.product_name_en;
 		doc.unit = p.unit;
+
 		get_location_product(frm,doc)
 	} 
 }
