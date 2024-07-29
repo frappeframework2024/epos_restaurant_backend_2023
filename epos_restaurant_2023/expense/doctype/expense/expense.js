@@ -18,6 +18,9 @@ frappe.ui.form.on("Expense", {
 
 
 frappe.ui.form.on('Expense Item', {
+	expense_code(frm,cdt,cdn){
+		
+	},
 	quantity(frm,cdt, cdn) {
 		update_expense_item_amount(frm,cdt,cdn);
 	},

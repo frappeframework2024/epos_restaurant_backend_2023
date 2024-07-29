@@ -190,16 +190,15 @@ class Sale(Document):
 
 		_balance = round(self.grand_total  , int(currency_precision)) -  round((self.total_paid or 0)  , int(currency_precision))
 
+		_total_claim_coupon = 0
 		if len(self.cash_coupon_items) and (self.total_cash_coupon_claim or 0) > 0:
 			_total_claim_coupon = round((self.total_cash_coupon_claim or 0)  , int(currency_precision))
 			if _total_claim_coupon > self.grand_total:
 				frappe.throw("Your coupon claim and payment is over balance.")
 
 			_balance -= _total_claim_coupon
-
 		self.balance = _balance
-		#self.balance =self.grand_total -(self.total_paid or 0) 
-		
+				
 		# if self.pos_profile:
 		self.changed_amount = (self.total_paid + _total_claim_coupon) - self.grand_total
 		if round(self.changed_amount,int(currency_precision)) <= generate_decimal(int(currency_precision)):

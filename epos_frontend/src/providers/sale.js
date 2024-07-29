@@ -2339,16 +2339,10 @@ export default class Sale {
 
 
     }
-
-
-
+ 
     async onRequestCouponCode(code)  {
-        await call.get("epos_restaurant_2023.api.api.scan_coupon_number",
-            {
-                "code":code
-            }).then(res=>{
-console.log(res.message)
-        })
+        let data =  await call.get("epos_restaurant_2023.api.api.scan_coupon_number",{"code":code})
+        return data["message"]
     }
 
 }

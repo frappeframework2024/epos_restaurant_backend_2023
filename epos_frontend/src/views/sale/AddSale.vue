@@ -36,7 +36,7 @@
                     <div class="mt-auto">
                         <div class="-mx-1 bg-blue-100 rounded-tl-md rounded-tr-md text-xs">
 
-                            <!-- <v-btn @click="onClaimCouponClick" >Coupon</v-btn> -->
+                            <v-btn @click="onClaimCouponClick" >Coupon</v-btn>
                             <ComSaleSummaryList />
 
                             <ComSaleKeyPad v-if="gv.device_setting.show_keypad_in_sale_screen == 1" />
@@ -50,7 +50,7 @@
 
 </template>
 <script setup>
-import { inject, useRoute, useRouter, ref, onMounted, onUnmounted, onBeforeRouteLeave, createResource, ShortCutKeyHelpDialog, i18n } from '@/plugin';
+import { inject, useRoute, useRouter, ref, onMounted, onUnmounted, onBeforeRouteLeave, createResource, ShortCutKeyHelpDialog, i18n, scanCouponDialog } from '@/plugin';
 import { getCurrentInstance } from 'vue';
 import ComMenu from './components/ComMenu.vue';
 import ComSelectCustomer from './components/ComSelectCustomer.vue';
@@ -193,15 +193,9 @@ onMounted(() => {
 
 })
 
-function onClaimCouponClick(){
-    onRequestCouponCode("00012")
+async function onClaimCouponClick(){ 
+    const result = await scanCouponDialog();
 }
-
-function onRequestCouponCode(code){
-   sale.onRequestCouponCode(code)
-}
-
-
 
 function onCheckExpireHappyHoursPromotion() {
     createResource({

@@ -153,7 +153,18 @@ function expiryChange(event) {
     expiry_date.value = event;
     saleCoupon.value.expiry_date = moment(event).format('YYYY-MM-DD')
 }
-function onSave() {
+
+function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = () => {
+            resolve(reader.result);
+        };
+        reader.onerror = reject;
+    });
+}
+async function onSave() {
     isSaving.value = true
     saleCoupon.value.price = price.value
     if (!saleCoupon.value.coupon_number) {
@@ -168,10 +179,20 @@ function onSave() {
     }
     //Prepare Data To Save
 
+    const formdata = new FormData();
+    formdata.append("file", selectdFile.value.files[0],selectdFile.value.files[0].name);
+    const base64Data = await blobToBase64(selectdFile.value.files[0]);
+    call.post("upload_file",{
+        file:base64Data,
+        file_name:selectdFile.value.files[0].name
+    }).then((res)=>{
 
-    call.post("upload_file").then((res)=>{
-        
+    }) 
+    call.post("epos_restaurant_2023.gym.doctype.sale_coupon.sale_coupon.save_coupon_and_files",{
+        file:base64Data,
+        file_name:selectdFile.value.files[0].name
     })
+    
 
     // const formdata = new FormData();
     // formdata.append("file", selectdFile.value.files[0],selectdFile.value.files[0].name);

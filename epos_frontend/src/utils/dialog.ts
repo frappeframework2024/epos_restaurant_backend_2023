@@ -62,6 +62,7 @@ import ComMoveItemChangeTable from "@/views/sale/components/ComMoveItemChangeTab
 import ComEditPOSMenu from "@/views/setting/ComEditPOSMenu.vue";
 import ComMoveItemSelectOrder from "@/views/sale/components/ComMoveItemSelectOrder.vue";
 import ComUnpaidBillList from "@/views/credit_balance/UnpaidBillDialog.vue";
+import ComScanCouponDialog from "@/views/sale/components/coupon/ComScanCouponDialog.vue"
 
 interface params {
     doctype?: String,
@@ -95,6 +96,7 @@ export const confirmBackToTableLayout = createPromiseDialog<params, object>(ComC
 export const searchCustomerDialog = createPromiseDialog<params, object>(ComSearchCustomer);
 export const saleProductNoteModalDialog = createPromiseDialog<params, object>(ComSaleProductNoteModal);
 export const scanCustomerCodeDialog = createPromiseDialog<params, object>(ComScanCustomerCode);
+export const scanCouponDialog = createPromiseDialog<params, object>(ComScanCouponDialog);
 export const authorizeDialog = createPromiseDialog<params, object>(ComAuthorize);
 export const noteDialog = createPromiseDialog<params, object>(ComNote);
 export const saleProductDiscountDialog = createPromiseDialog<params, object>(ComSaleProductDiscountModal);
