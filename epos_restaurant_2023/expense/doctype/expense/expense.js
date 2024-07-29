@@ -7,7 +7,7 @@ frappe.ui.form.on("Expense", {
 	},
 	setup(frm) {
 		if (frm.is_new()){
-			frappe.call("epos_restaurant_2023.api.api.get_exchange_rate").then(result=>{
+			frappe.call("epos_restaurant_2023.expense.doctype.expense.get_expense_code_account").then(result=>{
 				frm.doc.exchange_rate = result.message
 				frm.refresh_field("exchange_rate");
 			})
@@ -19,7 +19,27 @@ frappe.ui.form.on("Expense", {
 
 frappe.ui.form.on('Expense Item', {
 	expense_code(frm,cdt,cdn){
-		
+		let doc = locals[cdt][cdn];
+		frappe.call({
+			method: 'epos_restaurant_2023.expense.doctype.expense.expense.get_expense_code_account',
+			args: {
+				expense_code: doc.expense_code,
+				branch: frm.doc.business_branch
+			},
+			callback: (r) => {
+			    frm.set_query("account","default_expense_account", function() {
+					return {
+						filters: [
+							["business_branch", "in", r.message],
+							["is_group", "=", 0]
+						]
+					}
+				});
+			},
+			error: (r) => {
+				reject(r)
+			}
+		})
 	},
 	quantity(frm,cdt, cdn) {
 		update_expense_item_amount(frm,cdt,cdn);
@@ -40,7 +60,7 @@ frappe.ui.form.on('Expense Item', {
 })
 
 function update_expense_item_amount(frm,cdt, cdn)  {
-    let doc=   locals[cdt][cdn];
+    let doc = locals[cdt][cdn];
 		doc.amount=doc.quantity*doc.price;
 	    frm.refresh_field('expense_items');
 		updateSumTotal(frm);

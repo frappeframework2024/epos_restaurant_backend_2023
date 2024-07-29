@@ -1,0 +1,60 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-07-29 08:59:09.949576",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "coupon_number",
+  "member_name",
+  "check_in_date",
+  "visit_count"
+ ],
+ "fields": [
+  {
+   "fieldname": "coupon_number",
+   "fieldtype": "Link",
+   "label": "Coupon Number",
+   "options": "Sale Coupon"
+  },
+  {
+   "fieldname": "member_name",
+   "fieldtype": "Data",
+   "label": "Member Name"
+  },
+  {
+   "fieldname": "check_in_date",
+   "fieldtype": "Date",
+   "label": "Check In Date"
+  },
+  {
+   "fieldname": "visit_count",
+   "fieldtype": "Int",
+   "label": "Visit Count"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-07-29 09:01:42.708269",
+ "modified_by": "Administrator",
+ "module": "GYM",
+ "name": "Check In Sale Coupon",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

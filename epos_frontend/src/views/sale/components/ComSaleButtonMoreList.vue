@@ -75,6 +75,13 @@
             <v-list-item-title>{{ $t('Edit Menu Item') }}</v-list-item-title>
         </v-list-item>
 
+        <v-list-item @click="onClaimCouponClick()">
+            <template #prepend>
+                <v-icon icon="mdi-file-edit"></v-icon>
+            </template>
+            <v-list-item-title>{{ $t('Claim Coupon') }}</v-list-item-title>
+        </v-list-item>
+
         <v-list-item @click="sale.onRateIncludeOrNotIncludeTaxClick()" v-if="sale.sale.tax_rule">
             <template #prepend>
                 <v-icon :class="sale.sale.rate_include_tax == 1 ? 'text-red-700':''" :icon="sale.sale.rate_include_tax == 1 ? 'mdi-tag-remove' : 'mdi-tag-plus'"></v-icon>
@@ -102,7 +109,8 @@ import {
     changePOSMenuDialog,
     i18n, ResendDialog,
     MoveItemModal,
-    EditPOSMenuDialog
+    EditPOSMenuDialog,
+    scanCouponDialog
 } from "@/plugin"
 import { useDisplay } from 'vuetify'
 import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
@@ -491,6 +499,10 @@ async function onEditPOSMenu() {
 
 
     const res = await EditPOSMenuDialog({ title: $t('Edit Menu Item') });
+}
+
+async function onClaimCouponClick(){ 
+    const result = await scanCouponDialog();
 }
 
 </script>

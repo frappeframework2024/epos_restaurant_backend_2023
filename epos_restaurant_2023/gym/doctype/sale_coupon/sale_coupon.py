@@ -19,8 +19,3 @@ def get_recent_sold_coupon():
 	sale_coupon = frappe.db.get_list("Member Coupon",order_by='creation desc')
 	return sale_coupon
 
-@frappe.whitelist()
-def save_coupon_and_files(file,file_name,sale_coupon=None):
-	import base64
-	saved_file = save_file(file_name, content=base64.b64decode(file), dt="Sale Coupon", dn='52854', is_private=0)
-	return saved_file

@@ -15,6 +15,7 @@
 <script setup>
     import { ref, defineEmits, watch,inject,createToaster,i18n, keyboardDialog } from '@/plugin'
     import ComInput from '@/components/form/ComInput.vue';
+    const toaster = createToaster({ position: 'top-right' })
     import { useDisplay } from 'vuetify';
     const sale = inject('$sale');
 
@@ -26,24 +27,28 @@
 
     async function onSeachCoupon () {
         saleCoupon.value = await sale.onRequestCouponCode(couponCode._value)
-        console.log(saleCoupon.value)
         if (saleCoupon.value.status == 1) {
             let inputNumber = await keyboardDialog({ title: $t("Claim Amount"), type: 'number', value: saleCoupon.value.balance });
             if (inputNumber) {
                 if (inputNumber > saleCoupon.value.balance) {
-                    alert('bigger')
+                    toaster.warning($t("msg.Please input equal or smaller amount"));
+                    return;
                 }else {
+                    alert('smaller')
                     sale.sale.cash_coupon_items = []
                     sale.sale.cash_coupon_items.push({'coupon_code':couponCode._value,'claim_amount':inputNumber})
                     emit("resolve", true)
+                    toaster.warning($t("msg.Coupon apply successfully"));
                 }
             }
         }
-        
+    }
 
+    function onClose() {
+        emit("resolve", false);
     }
 
     function onRequestCouponCode(code){
-   sale.onRequestCouponCode(code)
-}
+        sale.onRequestCouponCode(code)
+    }
 </script>

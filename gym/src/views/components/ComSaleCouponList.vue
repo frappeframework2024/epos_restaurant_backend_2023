@@ -6,7 +6,11 @@
         </div>
         <div class="col-4 text-right">
             <Button icon="pi pi-refresh" @click="onRefreshClick()" class=" mx-2" text rounded aria-label="Filter" />
-            <Button @click="onAddCoupon">
+            <Button @click="onCheckInSaleCoupon"  severity="success" class="mx-2">
+                <span class="pi pi-sign-in mr-2"></span>
+                Check In
+            </Button>
+            <Button @click="onAddCoupon" >
                 Sale Coupon
             </Button>
         </div>
@@ -81,7 +85,7 @@
 
 <script setup>
 import moment from 'moment'
-import ScrollPanel from 'primevue/scrollpanel';
+import ComCheckInSaleCoupon from './ComCheckInSaleCoupon.vue';
 import { inject, ref, onMounted } from 'vue'
 import DataTable from 'primevue/datatable';
 import Chip from 'primevue/chip';
@@ -109,7 +113,29 @@ function onAddCoupon() {
                 header: 'Sale Coupon',
                 style: {
                     width: '50vw',
-                    height: '60vw',
+                   
+                },
+                breakpoints: {
+                    '960px': '75vw',
+                    '640px': '90vw'
+                },
+
+                modal: true
+            }
+        });
+}
+function onCheckInSaleCoupon() {
+    dialog.open(ComCheckInSaleCoupon,
+
+        {
+            onClose: (opt) => {
+                getListSaleCoupon()
+            },
+            props: {
+                header: 'Check In Coupon',
+                style: {
+                    width: '50vw',
+                  
                 },
                 breakpoints: {
                     '960px': '75vw',

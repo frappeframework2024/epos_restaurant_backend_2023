@@ -27,9 +27,14 @@ class Expense(Document):
 
 		self.balance = self.total_amount
   
-
-
-	
+@frappe.whitelist(allow_guest=True)
+def get_expense_code_account(expense_code,branch):
+	accounts = frappe.db.sql("""select 
+						  default_expense_account 
+						  from `tabExpense Code Account` 
+						  where parent = %(expense_code)s 
+						  and business_branch = %(branch)s""",{'expense_code':expense_code,'branch':branch},as_dict=1)
+	return accounts
 
 
 		

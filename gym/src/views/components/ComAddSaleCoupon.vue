@@ -33,7 +33,7 @@
         </div>
     </div>
     <div class="position-relative">
-        <div class="grid coupon_input_info">
+        <div class="grid coupon_input_info pb-6">
 
             <div class="col-6 lg:col-4">
                 <label>Coupon Number <span class="text-red-500">*</span></label><br />
@@ -86,9 +86,9 @@
                     :showOnFocus="false" />
             </div>
         </div>
-        <div class="flex justify-content-end mt-5 bg-white p-2"
-            style="position: absolute;bottom: 0;width: 100%;left: 0;">
-            <div class="card flex flex-wrap gap-2">
+        <div class="flex justify-content-end mt-5  py-2"
+            style="position: absolute;bottom: 0;width: 100%;left: 0;background-color: #efefef">
+            <div class="card flex flex-wrap gap-2 mr-2">
                 <Button @click="onSave()" :loading="isSaving" label="Save" icon="pi pi-check" />
                 <Button @click="closeDialog" label="Cancel" severity="danger" icon="pi pi-times" />
             </div>
@@ -182,64 +182,30 @@ async function onSave() {
     const formdata = new FormData();
     formdata.append("file", selectdFile.value.files[0],selectdFile.value.files[0].name);
     const base64Data = await blobToBase64(selectdFile.value.files[0]);
-    call.post("upload_file",{
-        file:base64Data,
-        file_name:selectdFile.value.files[0].name
-    }).then((res)=>{
-
-    }) 
-    call.post("epos_restaurant_2023.gym.doctype.sale_coupon.sale_coupon.save_coupon_and_files",{
-        file:base64Data,
-        file_name:selectdFile.value.files[0].name
-    })
     
 
-    // const formdata = new FormData();
-    // formdata.append("file", selectdFile.value.files[0],selectdFile.value.files[0].name);
-    // const myHeaders = new Headers();
-    // myHeaders.append("Authorization", "token b84df842943ec01:91cdd717594ca60");
-    // myHeaders.append("Cookie", "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=");
-    //     const requestOptions = {
-    // method: "POST",
-    // headers: myHeaders,
-    // body: formdata,
-    // redirect: "follow"
-    // };
-    //     fetch("http://192.168.10.19:8080/api/method/upload_file", requestOptions)
-    //     .then((response) => response.text())
-    //     .then((result) => console.log(result))
-    //     .catch((error) => console.error(error));
-    // call.post("epos_restaurant_2023.gym.doctype.sale_coupon.sale_coupon.save_coupon_and_files",{
-    //     file:formdata
-    // }).then((res)=>{
+    
 
-    // })
 
-    //db.createDoc('Sale Coupon',saleCoupon.value).then((doc) => {
-   //     toast.add({ severity: 'success', summary: 'Sucecss', detail: 'Coupon saved succeess.', life: 3000 });
-     //   const fileArgs = {
-    //        /** If the file access is private then set to TRUE (optional) */
-   //         "isPrivate": true,
-   //         "doctype": "Sale Coupon",
-            /** Docname associated with the file (mandatory if doctype is present) */
-    //        "docname": doc.name,
-   //     }
-    //    file.uploadFile(
-   //         selectdFile.value.files,
-   //         fileArgs,
-            /** Progress Indicator callback function **/
-    //        (completedBytes, totalBytes) => console.log(Math.round((completedBytes / totalBytes) * 100), " completed")
-     //   )
-     //   .then(() => console.log("File Upload complete"))
-      //  .catch(e => console.error(e))
-  //      dialogRef.value.close();
-  //      isSaving.value=false
- //   })
-   // .catch((error) => {
-    //    console.log(error)
-        // toast.add({ severity: 'error', summary: 'Validation', detail: JSON.parse(JSON.parse(error['_server_messages'])[0]).message, life: 3000 })
-       // isSaving.value=false
- //   }); 
+
+    db.createDoc('Sale Coupon',saleCoupon.value).then((doc) => {
+       toast.add({ severity: 'success', summary: 'Sucecss', detail: 'Coupon saved succeess.', life: 3000 });
+       
+       isSaving.value=false
+       dialogRef.value.close();
+       call.post("upload_file",{
+            file:selectdFile.value.files[0],
+            file_name:selectdFile.value.files[0].name,
+            doctype: "Sale Coupon",
+            docname: doc.name,
+            is_private:1
+        })
+   })
+   .catch((error) => {
+       console.log(error)
+        toast.add({ severity: 'error', summary: 'Validation', detail: JSON.parse(JSON.parse(error['_server_messages'])[0]).message, life: 3000 })
+       isSaving.value=false
+   }); 
     
 }
 function closeDialog() {
