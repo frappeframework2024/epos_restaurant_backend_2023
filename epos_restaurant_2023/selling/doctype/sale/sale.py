@@ -198,7 +198,7 @@ class Sale(Document):
 
 			_balance -= _total_claim_coupon
 		self.balance = _balance
-				
+
 		# if self.pos_profile:
 		self.changed_amount = (self.total_paid + _total_claim_coupon) - self.grand_total
 		if round(self.changed_amount,int(currency_precision)) <= generate_decimal(int(currency_precision)):
@@ -850,8 +850,8 @@ def validate_cash_coupon_claim(self):
 					frappe.throw("Cash Coupon {} not enought balance for claim with amount {}. Current balance is {}".format(d["name"],frappe.format_value(claim_amount, {"fieldtype":"Currency"}) ,frappe.format_value( d["balance"], {"fieldtype":"Currency"})))
 				c.member = d["member"]
 				c.cash_coupon = d["parent"]
-				if d["unlimited"] == 0:  
-					if d["expiry_date"] < datetime.datetime.strptime(self.posting_date, '%Y-%m-%d').date() :
+				if d["unlimited"] == 0:   
+					if d["expiry_date"] < datetime.datetime.strptime(str( self.posting_date), '%Y-%m-%d').date() :
 						frappe.throw("The coupon {} was expired".format(d["name"]))
 
 		self.total_cash_coupon_claim = sum([(c.claim_amount or 0) for c in self.cash_coupon_items])
@@ -882,7 +882,8 @@ def on_update_coupon_information(self):
 
 		# update cash coupn total claim
 		seen = set()
-		[x for x in self.cash_coupon_items if {"coupon":x.cash_coupon, "member":x.member} not in seen and not seen.add({"coupon":x.cash_coupon, "member":x.member})]
+		[x for x in self.cash_coupon_items if x.cash_coupon not in [s["coupon_code"] for s in seen] and not seen.add(x)]
+		
 		if len (seen) > 0:
 			update_sql = """update `tabCash Coupon` c
 				inner join (
@@ -898,11 +899,11 @@ def on_update_coupon_information(self):
 					c.total_balance = i.total_balance
 				where c.name in %(parent)s"""
 			
-			frappe.db.sql(update_sql, {"parent":[m["coupon"] for m in seen ]})
+			frappe.db.sql(update_sql, {"parent":[m.coupon_code for m in seen ]})
 
 			## update coupon information on customer 
 			from epos_restaurant_2023.api.api import update_cash_coupon_summary_to_customer
-			update_cash_coupon_summary_to_customer([m["member"] for m in seen])
+			update_cash_coupon_summary_to_customer([m.member for m in seen])
 
  
 

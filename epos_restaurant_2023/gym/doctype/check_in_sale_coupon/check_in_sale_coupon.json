@@ -8,34 +8,50 @@
   "coupon_number",
   "member_name",
   "check_in_date",
-  "visit_count"
+  "visited_count",
+  "amended_from"
  ],
  "fields": [
   {
    "fieldname": "coupon_number",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Coupon Number",
    "options": "Sale Coupon"
   },
   {
    "fieldname": "member_name",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Member Name"
   },
   {
    "fieldname": "check_in_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Check In Date"
   },
   {
-   "fieldname": "visit_count",
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Check In Sale Coupon",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "visited_count",
    "fieldtype": "Int",
+   "in_list_view": 1,
    "label": "Visit Count"
   }
  ],
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2024-07-29 09:01:42.708269",
+ "modified": "2024-07-29 13:47:22.666402",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Check In Sale Coupon",
@@ -54,7 +70,9 @@
    "write": 1
   }
  ],
+ "search_fields": "coupon_number",
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "coupon_number"
 }

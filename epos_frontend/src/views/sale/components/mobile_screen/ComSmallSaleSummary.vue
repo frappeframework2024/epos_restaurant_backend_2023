@@ -9,16 +9,21 @@
         <div class="flex justify-between mb-1 text-sm">
           <div>{{ $t('Payment') }}</div>
           <div style="font-size: 24px; font-weight: bold;">
-            <CurrencyFormat :value="(sale.sale.grand_total - sale.sale.deposit)" />
+            <CurrencyFormat :value="(sale.sale.grand_total - sale.sale.deposit - (sale.sale.total_cash_coupon_claim || 0))" />
           </div>
         </div>
-        <div class="text-right">
+        <div class="flex justify-between">
+            <div>{{ $t('Total Qty') }} : <span>{{ sale.sale.total_quantity || 0 }}</span></div>
+            <div class="text-right">
           <div>
             <ComExchangeRate />
-            <CurrencyFormat :value="((sale.sale.grand_total * (sale.sale.exchange_rate || 1)) - (sale.sale.deposit * (sale.sale.exchange_rate || 1)))"
+            <CurrencyFormat :value="((sale.sale.grand_total * (sale.sale.exchange_rate || 1)) - (sale.sale.deposit * (sale.sale.exchange_rate || 1)) - ((sale.sale.total_cash_coupon_claim || 0) * (sale.sale.exchange_rate || 1)))"
               :currency="setting.pos_setting.second_currency_name" />
           </div>
         </div>
+        </div>
+        
+        
       </div>
       <div style="width: 130px;">
         <v-btn

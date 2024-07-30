@@ -44,7 +44,6 @@
    "options": "Customer"
   },
   {
-   "depends_on": "eval:doc.membership",
    "fetch_from": "membership.customer_name_en",
    "fetch_if_empty": 1,
    "fieldname": "member_name",
@@ -82,14 +81,14 @@
   {
    "fieldname": "visited_count",
    "fieldtype": "Int",
-   "hidden": 1,
-   "label": "Visited Count"
+   "label": "Visited Count",
+   "read_only": 1
   },
   {
    "fieldname": "balance",
    "fieldtype": "Int",
-   "hidden": 1,
-   "label": "Balance"
+   "label": "Balance",
+   "read_only": 1
   },
   {
    "fieldname": "expiry_date",
@@ -107,7 +106,7 @@
  "image_field": "attach_image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-24 09:10:52.032101",
+ "modified": "2024-07-29 15:34:24.799755",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Sale Coupon",

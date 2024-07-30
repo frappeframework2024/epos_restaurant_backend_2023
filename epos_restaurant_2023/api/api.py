@@ -1236,7 +1236,7 @@ def get_customer_on_membership_scan(card):
                 customer.card = customer.card
                 return customer
             
-    return {"Invalid Card"}
+    return {"message":"Invalid Card"}
 
 
 # get reservation folio
@@ -1652,16 +1652,25 @@ def update_cash_coupon_summary_to_customer(members):
 
 @frappe.whitelist()
 def scan_coupon_number(code):
-    sql = "select balance from `tabCash Coupon Items` where code = %(code)s limit 1"
-    docs = frappe.db.sql(sql,{"code":code}, as_dict=1)
+    sql = "select balance, unlimited, expiry_date from `tabCash Coupon Items` where balance > 0 and code = %(code)s limit 1"
+    docs = frappe.db.sql(sql,{"code":code}, as_dict=1) 
+    
     result = {}
-    if len( docs) > 0:
-        result.update( {
-            "status":1,
-            "code":code,
-            "balance": docs[0]["balance"],
-            "message":"Success"
-        })
+    if len( docs) > 0: 
+        if docs[0]["unlimited"] == 0 and docs[0]["expiry_date"]  < datetime.now().date() :
+             result.update ({
+                "status":0,
+                "code":code,
+                "balance": 0,
+                "message":"Coupon code was expired"
+            })
+        else:
+            result.update( {
+                "status":1,
+                "code":code,
+                "balance": docs[0]["balance"],
+                "message":"Success"
+            })
     else:
         result.update ({
             "status":0,

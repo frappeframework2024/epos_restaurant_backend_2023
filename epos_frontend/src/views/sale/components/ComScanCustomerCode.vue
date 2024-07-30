@@ -37,6 +37,7 @@ async function onSeachCustomer() {
   if(customerCode.value!=""){
     loading.value = true;
     const data = await call.get('epos_restaurant_2023.api.api.get_customer_on_membership_scan', {"card":customerCode.value});
+    console.log(data.message)
     if(data.message != "Invalid Card"){  
       if(data.message.card.length <= 0) {
           data.message.card = []
@@ -55,7 +56,10 @@ async function onSeachCustomer() {
         } 
       }
     }
+    // toaster.warning($t(data.message));
     loading.value = false;
+  } else {
+    toaster.warning($t('Please enter or scan customer membership card number.'));
   }
 
 }

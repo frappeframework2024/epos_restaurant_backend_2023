@@ -8,7 +8,7 @@
           <div style="margin-bottom: 0px!important;" class="flex justify-between mb-2 text-lg">
             <div>{{ $t("Payment") }}</div>
             <div style="margin: 0px; padding: 0px; font-size: 26px; font-weight: bold;">
-              <CurrencyFormat :value="(sale.sale.grand_total - sale.sale.deposit)" />
+              <CurrencyFormat :value="(sale.sale.grand_total - sale.sale.deposit - (sale.sale.total_cash_coupon_claim || 0))" />
             </div>
           </div>
           <div class="flex justify-between">
@@ -16,7 +16,7 @@
             <div>
               <ComExchangeRate />
               <CurrencyFormat
-                :value="((sale.sale.grand_total * (sale.sale.exchange_rate || 1)) - (sale.sale.deposit * (sale.sale.exchange_rate || 1)))"
+                :value="((sale.sale.grand_total * (sale.sale.exchange_rate || 1)) - (sale.sale.deposit * (sale.sale.exchange_rate || 1)) - ((sale.sale.total_cash_coupon_claim||0) * (sale.sale.exchange_rate || 1)))"
                 :currency="sale.setting.pos_setting.second_currency_name" />
             </div>
           </div>
@@ -164,6 +164,10 @@ async function onSubmit() {
 
 
 async function onPayment() {
+  if (sale.sale.balance < 0 && sale.sale.total_cash_coupon_claim > 0) {
+    toaster.warning($t('Please check sale balance cannot less than zero'));
+    return
+  }
   sale.dialogActiveState = true
   if (device_setting.show_option_payment == 0) {
     return

@@ -50,11 +50,14 @@
     <ComLabelValue v-if="sale.sale.total_tax > 0" label="Total Tax">
       <CurrencyFormat :value="sale.sale.total_tax" />
     </ComLabelValue>
-    <!-- Deposit -->
+    <!-- Claim Coupon -->
+    <ComLabelValue v-if="sale.sale.total_cash_coupon_claim > 0" label="Claim Coupon" >
+      <CurrencyFormat :value="sale.sale.total_cash_coupon_claim" />
+    </ComLabelValue>
+ <!-- Deposit -->
     <ComLabelValue v-if="sale.sale.deposit > 0" label="Deposit">
       <CurrencyFormat :value="sale.sale.deposit" />
     </ComLabelValue>
-
     <!-- Commission -->
     <ComLabelValue v-if="(sale.sale.commission_amount || 0) >0" label="Commission">
       <CurrencyFormat :value="sale.sale.commission_amount" />

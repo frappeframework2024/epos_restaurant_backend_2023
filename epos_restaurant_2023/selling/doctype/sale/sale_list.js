@@ -10,9 +10,9 @@ frappe.listview_settings['Sale'] = {
         }else {
             if(doc.balance==0){ 
                 return [__("Paid"), "green"];
-            }else if(doc.total_paid>0 && doc.balance>0){
+            }else if(doc.total_paid + (doc.total_cash_coupon_claim||0)>0 && doc.balance>0){
                 return [__("Partially Paid"), "orange"];
-            }else if(doc.total_paid==0){
+            }else if(doc.total_paid + (doc.total_cash_coupon_claim||0)==0){
                 return [__("Unpaid"), "red"];
             }
         }

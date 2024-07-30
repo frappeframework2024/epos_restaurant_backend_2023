@@ -66,7 +66,10 @@
                 <Column field="expiry_date" header="Expiry Date" headerClass="exd__custom_header"
                     bodyClass="text-center">
                     <template #body="slotProps">
-                        {{ moment(slotProps.data.expriry_date).format("DD-MM-yyyy") }}
+                        
+                        {{ moment(slotProps.data.expiry_date).format("DD-MM-yyyy") }}
+                        <br/>
+                        <Chip label="Expired" style="height: 16px !important;" class="bg-red-500 text-100" v-if="moment(slotProps.data.expiry_date).isBefore(moment())"/>
                     </template>
                 </Column>
                 <Column header="Used">

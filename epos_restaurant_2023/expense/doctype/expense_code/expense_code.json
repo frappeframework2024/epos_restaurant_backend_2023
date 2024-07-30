@@ -70,7 +70,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-27 17:33:42.826238",
+ "modified": "2024-07-29 10:06:10.229018",
  "modified_by": "Administrator",
  "module": "Expense",
  "name": "Expense Code",
@@ -90,7 +90,6 @@
    "write": 1
   }
  ],
- "quick_entry": 1,
  "search_fields": "expense_name, expense_category",
  "sort_field": "modified",
  "sort_order": "DESC",

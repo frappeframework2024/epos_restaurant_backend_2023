@@ -164,17 +164,19 @@ async function onViewBill() {
     const result = await viewBillModelModel({})
 }
 async function onUpdateGuestCover() {
-    if (setting.use_guest_cover == 1) {
-        const result = await keyboardDialog({ title: $t('Guest Cover'), type: 'number', value: sale.sale.guest_cover });
+    if (!sale.isBillRequested()) {
+        if (setting.use_guest_cover == 1) {
+            const result = await keyboardDialog({ title: $t('Guest Cover'), type: 'number', value: sale.sale.guest_cover });
 
-        if (typeof result != 'boolean' && result != false || result == 0) {
+            if (typeof result != 'boolean' && result != false || result == 0) {
 
-            sale.sale.guest_cover = parseInt(result);
-            if (sale.sale.guest_cover == undefined || isNaN(sale.sale.guest_cover)) {
-                sale.sale.guest_cover = 0;
+                sale.sale.guest_cover = parseInt(result);
+                if (sale.sale.guest_cover == undefined || isNaN(sale.sale.guest_cover)) {
+                    sale.sale.guest_cover = 0;
+                }
+            } else {
+                return;
             }
-        } else {
-            return;
         }
     }
 }
@@ -241,84 +243,95 @@ async function onChangePOSMenu() {
 
 }
 function onRemoveSaleNote() {
-    sale.sale.note = ''
+    if (!sale.isBillRequested()) {
+        sale.sale.note = ''
+    }
 }
 async function onChangeSaleType() {
-
+    if (!sale.isBillRequested()) {
     const result = await changeSaleTypeModalDialog({})
+    }
 }
 
 function onOpenCashDrawer() {
+    if (!sale.isBillRequested()) {
     gv.authorize("open_cashdrawer_require_password", "open_cashdrawer").then((v) => {
         if (v) {
             window.chrome.webview.postMessage(JSON.stringify({ action: "open_cashdrawer" }));
         }
     });
 }
+}
 async function onSeatNumber() {
-    const result = await keyboardDialog({ title: $t('Change Seat Number'), type: 'number', value: sale.sale.seat_number });
+    if (!sale.isBillRequested()) {
+        const result = await keyboardDialog({ title: $t('Change Seat Number'), type: 'number', value: sale.sale.seat_number });
 
-    if (typeof result == 'number') {
+        if (typeof result == 'number') {
 
-        sale.sale.seat_number = parseInt(result);
-        if (sale.sale.seat_number == undefined || isNaN(sale.sale.seat_number)) {
-            sale.sale.seat_number = 0;
+            sale.sale.seat_number = parseInt(result);
+            if (sale.sale.seat_number == undefined || isNaN(sale.sale.seat_number)) {
+                sale.sale.seat_number = 0;
+            }
+
+        } else {
+            return;
         }
-
-    } else {
-        return;
     }
 }
 async function onReferenceNumber() {
-    const reference_number = await ComSaleReferenceNumberDialog({
-        data: sale.sale
-    })
-    if (typeof (reference_number) != 'boolean')
-        sale.sale.reference_number = reference_number
+    if (!sale.isBillRequested()) {
+        const reference_number = await ComSaleReferenceNumberDialog({
+            data: sale.sale
+        })
+        if (typeof (reference_number) != 'boolean')
+            sale.sale.reference_number = reference_number
+    }
 }
 async function onDeleteBill() {
-    //check authorize and     check reason 
-    gv.authorize("delete_bill_required_password", "delete_bill", "delete_bill_required_note", "Delete Bill Note").then(async (v) => {
-        if (v) {
-            if (v.show_confirm == 1) {
-                if (await confirm({ title: $t('Delete Sale Order'), text: $t('msg.are you sure to delete this sale order') }) == false) {
-                    // window.postMessage("close_modal", "*");
-                    return;
+    if (!sale.isBillRequested()) {
+        //check authorize and     check reason 
+        gv.authorize("delete_bill_required_password", "delete_bill", "delete_bill_required_note", "Delete Bill Note").then(async (v) => {
+            if (v) {
+                if (v.show_confirm == 1) {
+                    if (await confirm({ title: $t('Delete Sale Order'), text: $t('msg.are you sure to delete this sale order') }) == false) {
+                        // window.postMessage("close_modal", "*");
+                        return;
+                    }
                 }
-            }
-           
-            //cancel payment first
-            isLoading.value = true;
+            
+                //cancel payment first
+                isLoading.value = true;
 
-            //send deleted sale product to temp deleted
-            const _sale = JSON.parse(JSON.stringify(sale.sale));
-            generateSaleProductPrintToKitchen(_sale, v.note);
+                //send deleted sale product to temp deleted
+                const _sale = JSON.parse(JSON.stringify(sale.sale));
+                generateSaleProductPrintToKitchen(_sale, v.note);
 
-            const deleteSaleResource = createResource({
-                url: "epos_restaurant_2023.api.api.delete_sale",
-                params: {
-                    name: sale.sale.name,
-                    auth: { full_name: v.user, username: v.username, note: v.note }
-                },
-                onError(err) {
+                const deleteSaleResource = createResource({
+                    url: "epos_restaurant_2023.api.api.delete_sale",
+                    params: {
+                        name: sale.sale.name,
+                        auth: { full_name: v.user, username: v.username, note: v.note }
+                    },
+                    onError(err) {
+                        isLoading.value = false;
+                    }
+                });
+
+                await deleteSaleResource.fetch().then((v) => {
                     isLoading.value = false;
-                }
-            });
-
-            await deleteSaleResource.fetch().then((v) => {
-                isLoading.value = false;
-                toaster.success($t("msg.Delete sale order successfully"));
-                //print to kitchen
-                onProcessPrintToKitchen(_sale);
-                sale.newSale();
-                if (sale.setting.table_groups.length > 0) {
-                    router.push({ name: 'TableLayout' });
-                } else {
-                    router.push({ name: "AddSale" });
-                }
-            })
-        }
-    })
+                    toaster.success($t("msg.Delete sale order successfully"));
+                    //print to kitchen
+                    onProcessPrintToKitchen(_sale);
+                    sale.newSale();
+                    if (sale.setting.table_groups.length > 0) {
+                        router.push({ name: 'TableLayout' });
+                    } else {
+                        router.push({ name: "AddSale" });
+                    }
+                })
+            }
+        })
+    }
 }
 
 
@@ -502,7 +515,14 @@ async function onEditPOSMenu() {
 }
 
 async function onClaimCouponClick(){ 
-    const result = await scanCouponDialog();
+ 
+    if (!sale.isBillRequested()) {
+        if (sale.sale.sale_products.length == 0) {
+            toaster.warning($t("msg.Please select a menu item to continue"));
+            return;
+        }
+        const result = await scanCouponDialog();
+    }
 }
 
 </script>

@@ -179,20 +179,11 @@ async function onSave() {
     }
     //Prepare Data To Save
 
-    const formdata = new FormData();
-    formdata.append("file", selectdFile.value.files[0],selectdFile.value.files[0].name);
-    const base64Data = await blobToBase64(selectdFile.value.files[0]);
-    
-
-    
-
-
-
     db.createDoc('Sale Coupon',saleCoupon.value).then((doc) => {
        toast.add({ severity: 'success', summary: 'Sucecss', detail: 'Coupon saved succeess.', life: 3000 });
        
        isSaving.value=false
-       dialogRef.value.close();
+       closeDialog()
        call.post("upload_file",{
             file:selectdFile.value.files[0],
             file_name:selectdFile.value.files[0].name,

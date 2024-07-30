@@ -692,12 +692,14 @@ export default class Sale {
     }
 
     onRateIncludeOrNotIncludeTaxClick(){ 
-        this.sale.rate_include_tax = ((this.sale.rate_include_tax||0)==1?0:1) 
-        this.sale.sale_products.forEach((sp)=>{
-            sp.rate_include_tax = this.sale.rate_include_tax;
-            this.onRateIncludeTax(sp, false,true,  false)
-        })
-        this.updateSaleSummary()  
+        if (!this.isBillRequested()) {
+            this.sale.rate_include_tax = ((this.sale.rate_include_tax||0)==1?0:1) 
+            this.sale.sale_products.forEach((sp)=>{
+                sp.rate_include_tax = this.sale.rate_include_tax;
+                this.onRateIncludeTax(sp, false,true,  false)
+            })
+            this.updateSaleSummary()  
+        }
     }
 
     onRateIncludeTax(sp, update_rate = true, update_sale_product=true, update_sale=true){
@@ -812,7 +814,7 @@ export default class Sale {
         //grand_total
         this.sale.grand_total = ((this.sale.sub_total || 0) - (this.sale.total_discount || 0)) + ((this.sale.total_tax || 0));
  
-        this.sale.balance = this.sale.grand_total - (this.sale.deposit || 0);
+        this.sale.balance = this.sale.grand_total - (this.sale.deposit || 0) - (this.sale.total_cash_coupon_claim||0);
 
 
         // commission
@@ -972,7 +974,12 @@ export default class Sale {
                     if (result != false || result == 0 ) {
                         const price = sp.price;
                         sp.change_price_note = v.note;
-                        sp.price = parseFloat(this.getNumber(result));
+                        if (result == false) {
+                            sp.price = parseFloat(this.getNumber(sp.price));
+                        }else{
+                            sp.price = parseFloat(this.getNumber(result));
+                        }
+                        
                         this.updateSaleProduct(sp);
                         this.updateSaleSummary();
 
@@ -2192,17 +2199,18 @@ export default class Sale {
     }
 
     updatePaymentAmount() {
+        const claim_amount = (this.sale.total_cash_coupon_claim||0);
         const payments = Enumerable.from(this.sale.payment);
         const total_payment = payments.sum("$.amount") + (this.sale.deposit || 0);
         const total_fee = payments.sum("$.fee_amount");
         this.sale.total_paid = total_payment;
         this.sale.total_fee = total_fee;
-        this.sale.balance = (this.sale.grand_total || 0) - this.sale.total_paid;
+        this.sale.balance = (this.sale.grand_total || 0) - this.sale.total_paid -claim_amount;
 
         if (this.sale.balance < 0) {
             this.sale.balance = 0;
         }
-        let change_amount = total_payment - this.sale.grand_total;
+        let change_amount =( total_payment + claim_amount) - this.sale.grand_total;
         this.sale.changed_amount = change_amount;
         this.sale.second_changed_amount = change_amount * this.sale.change_exchange_rate;
 
@@ -2330,19 +2338,13 @@ export default class Sale {
     getScreenNames(sale_products) {
         let printers = []
         sale_products?.forEach((r) => {
-
             printers = printers.concat(JSON.parse(r.printers).map(r => r.printer));
-
         });
-
         return [...new Set(printers)]
-
-
     }
- 
-    async onRequestCouponCode(code)  {
+
+    async onRequestCouponCode(code)  { 
         let data =  await call.get("epos_restaurant_2023.api.api.scan_coupon_number",{"code":code})
         return data["message"]
     }
-
 }

@@ -69,6 +69,13 @@
         </div>
       </div>
 
+      <div class="flex justify-between" v-if="sale.sale.total_cash_coupon_claim > 0">
+        <div>{{$t('Claim Coupon')}}</div>
+        <div class="font-bold">
+          <CurrencyFormat :value="sale.sale.total_cash_coupon_claim" />
+        </div>
+      </div>
+
       <div class="flex justify-between" v-if="sale.sale.deposit > 0">
         <div>{{$t('Deposit')}}</div>
         <div class="font-bold">

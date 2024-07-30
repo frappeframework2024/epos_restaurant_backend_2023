@@ -28,6 +28,7 @@ import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
 import ComIsLoadingPanel from '@/components/ComIsLoadingPanel.vue';
 
+import ConfirmationService from 'primevue/confirmationservice';
 const app = createApp(App);
 
 const frappe = new FrappeApp();
@@ -38,6 +39,7 @@ app.use(router);
 app.use(PrimeVue);
 app.use(DialogService);
 app.use(ToastService);
+app.use(ConfirmationService);
 // Global Properties,
 // components can inject this
 app.provide("$frappe", frappe);
