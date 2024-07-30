@@ -40,11 +40,11 @@
 
             <div class="col-6 lg:col-4">
                 <label>Coupon Number <span class="text-red-500">*</span></label><br />
-                <InputText style="width: 100%" v-model="saleCoupon.coupon_number" />
+                <InputText style="width: 100%" v-model="saleCoupon.coupon_number" :disabled="saleCoupon.name" />
             </div>
             <div class="col-6 lg:col-4">
                 <label>Coupon Type</label><br />
-                <Dropdown v-model="selectedCouponType" editable :options="couponType" placeholder="Select Coupon Type"
+                <Dropdown v-model="selectedCouponType" :options="couponType" placeholder="Select Coupon Type"
                     class="w-full" />
             </div>
             <div class="col-6 lg:col-4" v-if="selectedCouponType == 'Membership'">
@@ -83,7 +83,7 @@
 
             <div class="col-6 lg:col-4">
                 <label>Expiry Date <span class="text-red-500">*</span></label><br />
-                <Calendar style="width: 100%;" @date-select="expiryChange" :modelValue="expiry_date" showIcon
+                <Calendar dateFormat="dd-mm-yy" style="width: 100%;" @date-select="expiryChange" :modelValue="expiry_date" showIcon
                     :showOnFocus="false" />
             </div>
             <div class="col-12">
@@ -95,17 +95,17 @@
 
                     <thead>
                         <tr>
-                            <th>Payment Type</th>
+                            <th class="text-left">Payment Type</th>
                             <th>Amount</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(payment,idx) in payments" :key="idx">
-                            <td>
+                            <td >
                                 <AutoComplete typeahead style="width: 100%;" inputStyle="width:100%" showOnFocus
-                                    :value="payment.payment_type"  @change="onPaymentTypeChanged(payment,$event)" inputId="ac" optionLabel="value"
-                                    :suggestions="paymentTypes" @complete="searchPaymentType">
+                                    v-model="payment.payment_type"  @complete="searchPaymentType" inputId="ac" optionLabel="value"
+                                    :suggestions="paymentTypes" >
                                     <template #option="slotProps">
                                         {{ slotProps.option.value }}
                                         <br />
@@ -134,6 +134,7 @@
             style="position: absolute;bottom: 0;width: 100%;left: 0;background-color: #efefef">
             <div class="card flex flex-wrap gap-2 mr-2">
                 <Button @click="onSave()" :loading="isSaving" label="Save" icon="pi pi-check" />
+                <Button @click="onSave(true)" :loading="isSaving" label="Save & Submit" icon="pi pi-check" />
                 <Button @click="closeDialog" label="Cancel" severity="danger" icon="pi pi-times" />
             </div>
         </div>
@@ -149,10 +150,7 @@ import AutoComplete from 'primevue/autocomplete';
 import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import Row from 'primevue/row';
-import { ref, inject, watch } from 'vue'
+import { ref, inject, watch,onMounted } from 'vue'
 
 import { useToast } from "primevue/usetoast";
 import moment from 'moment';
@@ -198,6 +196,25 @@ const searchPaymentType = (event) => {
         paymentTypes.value = res.message
     })
 }
+onMounted(() => {
+    const params = dialogRef.value.data;
+    if(params){
+        saleCoupon.value = params.saleCoupon
+        expiry_date.value = moment(params.saleCoupon.expiry_date).format("DD-MM-YYYY")
+        price.value = params.saleCoupon.price
+        limitVisit.value = params.saleCoupon.limit_visit
+        selectedCouponType.value = params.saleCoupon.coupon_type
+        selectedMember.value = params.saleCoupon.membership
+        call.get("epos_restaurant_2023.gym.doctype.sale_coupon.sale_coupon.get_sale_coupon_payment",{docname:params.saleCoupon.name}).then((res)=>{
+            if (res.message.length > 0){
+                payments.value = res.message
+            }
+            
+        })
+
+    }
+})
+
 
 function memberFocus(event) {
     call.get("frappe.desk.search.search_link", {
@@ -216,10 +233,6 @@ function onAddPaymentClick() {
     })
 }
 
-function onPaymentTypeChanged(value,event){
-    alert(JSON.stringify(value.value))
-    alert(JSON.stringify(payment))
-}
 function expiryChange(event) {
     expiry_date.value = event;
     saleCoupon.value.expiry_date = moment(event).format('YYYY-MM-DD')
@@ -228,7 +241,7 @@ function expiryChange(event) {
 function onRemovePayment(idx){
     payments.value.splice(idx,1)
 }
-async function onSave() {
+async function onSave(is_submit=false) {
     isSaving.value = true
     saleCoupon.value.price = price.value
     if (!saleCoupon.value.coupon_number) {
@@ -241,16 +254,27 @@ async function onSave() {
         isSaving.value = false
         return
     }
+    if (!expiry_date.value){
+        toast.add({ severity: 'warn', summary: 'Validation', detail: 'Please select expiry date', life: 3000 });
+        isSaving.value = false
+        return
+    }
     let data_to_save = JSON.parse(JSON.stringify(saleCoupon.value))
-    if (data_to_save.payments.length <= 0){
+    data_to_save.coupon_type = selectedCouponType.value
+    data_to_save.payments=[]
+    payments.value.forEach((row)=>{
+        if (row.input_amount > 0){
+            data_to_save.payments.push({"payment_type":row.payment_type.value,"currency":row.payment_type.currency,"exchange_rate":row.payment_type.exchange_rate,"input_amount":row.input_amount,})
+        } 
+    })
+    if (data_to_save.payments.length <= 0 && is_submit == true){
         toast.add({ severity: 'warn', summary: 'Validation', detail: 'Please enter payment amount', life: 3000 });
         isSaving.value = false
         return
     }
 
     //Prepare Data To Save
-    
-    db.createDoc('Sale Coupon', data_to_save).then((doc) => {
+    call.post("epos_restaurant_2023.gym.doctype.sale_coupon.sale_coupon.insert_sale_coupon",{"data":data_to_save,"is_submit":is_submit==false?0:1}).then((res)=>{
         toast.add({ severity: 'success', summary: 'Sucecss', detail: 'Coupon saved succeess.', life: 3000 });
         isSaving.value = false
         closeDialog()
@@ -264,13 +288,12 @@ async function onSave() {
                 is_private: 1
             })
         });
-
+    }).catch((err)=>{
+        isSaving.value = false
+        toast.add({ severity: 'error', summary: 'Validation', detail: JSON.parse(JSON.parse(err['_server_messages'])[0]).message, life: 3000 })
     })
-        .catch((error) => {
-            console.log(error)
-            toast.add({ severity: 'error', summary: 'Validation', detail: JSON.parse(JSON.parse(error['_server_messages'])[0]).message, life: 3000 })
-            isSaving.value = false
-        });
+    
+    
 
 }
 function closeDialog() {
@@ -284,7 +307,7 @@ const onFilesSelected = (events) => {
     selectdFile.value = events
 };
 watch(selectedMember, async (member) => {
-    saleCoupon.value.membership = member.value
+    saleCoupon.value.membership = member
 })
 
 watch(limitVisit, async (value) => {

@@ -8,15 +8,17 @@
  "field_order": [
   "naming_series",
   "posting_date",
-  "product",
   "column_break_clwb",
+  "product",
+  "product_name",
   "unit",
-  "base_unit",
   "column_break_ghmh",
-  "quantity",
   "stock_location",
+  "quantity",
+  "section_break_hbno",
+  "bom",
   "section_break_yjda",
-  "product_items",
+  "produce_items",
   "amended_from"
  ],
  "fields": [
@@ -37,15 +39,6 @@
    "reqd": 1
   },
   {
-   "fetch_from": "product.unit",
-   "fieldname": "unit",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Unit",
-   "options": "Unit Of Measurement",
-   "reqd": 1
-  },
-  {
    "fieldname": "section_break_yjda",
    "fieldtype": "Section Break"
   },
@@ -56,11 +49,6 @@
   {
    "fieldname": "column_break_ghmh",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "product_items",
-   "fieldtype": "Table",
-   "options": "Produce Item"
   },
   {
    "default": "1",
@@ -79,14 +67,6 @@
    "reqd": 1
   },
   {
-   "fetch_from": "product.unit",
-   "fieldname": "base_unit",
-   "fieldtype": "Link",
-   "label": "Base Unit",
-   "options": "Unit Of Measurement",
-   "read_only": 1
-  },
-  {
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Naming Series",
@@ -101,12 +81,43 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "section_break_hbno",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "bom",
+   "fieldtype": "Link",
+   "label": "BOM",
+   "options": "BOM"
+  },
+  {
+   "fetch_from": "product.product_name_en",
+   "fieldname": "product_name",
+   "fieldtype": "Data",
+   "label": "Product Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "produce_items",
+   "fieldtype": "Table",
+   "options": "Produce Item"
+  },
+  {
+   "fetch_from": "product.unit",
+   "fieldname": "unit",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Unit",
+   "options": "Unit Of Measurement",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-03-28 14:43:59.919633",
+ "modified": "2024-07-30 15:28:01.553238",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Produce",

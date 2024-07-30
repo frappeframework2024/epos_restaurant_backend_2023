@@ -11,6 +11,7 @@
   "posting_date",
   "reference",
   "entry_type",
+  "purpose",
   "column_break_balx",
   "stock_location",
   "business_branch",
@@ -146,12 +147,20 @@
    "fieldtype": "Link",
    "label": "Default Inventory Account",
    "options": "Chart Of Account"
+  },
+  {
+   "fetch_from": "entry_type.purpose",
+   "fieldname": "purpose",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Purpose",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-07-20 15:57:00.378838",
+ "modified": "2024-07-30 17:21:34.002994",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Entry",

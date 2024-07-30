@@ -233,7 +233,7 @@ function onSaleProductFree() {
 function onChangeQuantity() {
     const sp = props.saleProduct;
     if (sp.append_quantity == 1) {
-        if (sale.setting.pos_setting.allow_change_quantity_after_submit == 1 || sp.sale_product_status == 'Submitted' || sp.is_require_employee == 1) {
+        if ((sale.setting.pos_setting.allow_change_quantity_after_submit == 0 && sp.sale_product_status == 'Submitted') || sp.is_require_employee == 1) {
             return;
         }
         sale.onChangeQuantity(sp, gv);

@@ -55,6 +55,7 @@ frappe.ui.form.on("Stock Entry",{
 				}
             });
         }
+		set_expense_accounts(frm)
     },
 });
 
@@ -63,6 +64,7 @@ frappe.ui.form.on("Stock Entry Products", {
 		let doc = locals[cdt][cdn];
         product_code(frm,cdt,cdn);
 		get_currenct_cost(frm,doc)
+		set_expense_account(frm,cdt,cdn)
     },
     quantity(frm,cdt, cdn){
         update_stock_entry_product_amount(frm,cdt, cdn)
@@ -75,6 +77,41 @@ frappe.ui.form.on("Stock Entry Products", {
 		get_currenct_cost(frm,doc)
 	}
 });
+
+function set_expense_accounts(frm){
+	frm.doc.items.forEach(a => {
+		frm.call({
+			method: 'get_expense_account',
+			args: {
+				product_code: a.product_code,
+				branch: frm.doc.business_branch
+			},
+			callback: (r) => {
+				if(r.message){
+					a.expense_account = r.message
+				}
+			}
+		}).then(()=>{
+			frm.refresh_field("items")
+		})
+	});
+}
+
+function set_expense_account(frm,cdt,cdn){
+	let doc = locals[cdt][cdn];
+	frm.call({
+		method: 'epos_restaurant_2023.inventory.doctype.stock_entry.stock_entry.get_expense_account',
+		args: {
+			product_code: doc.product_code,
+			branch:frm.doc.business_branch
+		},
+		callback: (r) => {
+			if(r.message){
+				frappe.model.set_value(cdt, cdn, "expense_account", (r.message || ""));
+			}
+		}
+	})
+}
 
 function update_stock_entry_product_amount(frm,cdt, cdn)  {
     let doc = locals[cdt][cdn];

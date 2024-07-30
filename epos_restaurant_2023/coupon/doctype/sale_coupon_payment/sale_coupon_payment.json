@@ -21,16 +21,16 @@
    "options": "Payment Type"
   },
   {
-   "fieldname": "payment_amount",
-   "fieldtype": "Currency",
-   "label": "Payment Amount",
-   "read_only": 1
-  },
-  {
    "fieldname": "input_amount",
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Input Amount"
+  },
+  {
+   "fieldname": "payment_amount",
+   "fieldtype": "Currency",
+   "label": "Payment Amount",
+   "read_only": 1
   },
   {
    "fieldname": "exchange_rate",
@@ -47,9 +47,9 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-07-30 12:12:25.451973",
+ "modified": "2024-07-30 15:43:15.979556",
  "modified_by": "Administrator",
- "module": "GYM",
+ "module": "Coupon",
  "name": "Sale Coupon Payment",
  "owner": "Administrator",
  "permissions": [],

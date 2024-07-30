@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"GPfYOIP36_\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Coupon</span>\",\"col\":12}},{\"id\":\"ORmf_6gH8j\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Add Coupon\",\"col\":12}}]",
+ "content": "[{\"id\":\"XU2PCVkKwI\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Cash Coupon Today\",\"col\":3}},{\"id\":\"AOnZtYj2fW\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Cash Coupon MTD\",\"col\":3}},{\"id\":\"6OE0vLOQDx\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Your Shortcut</b></span>\",\"col\":12}},{\"id\":\"RVIUnLHbp_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Sale Coupon Check In\",\"col\":3}},{\"id\":\"CL8TT1tlMl\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale Coupon Check In\",\"col\":3}},{\"id\":\"twCkHF8Yn-\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Issue Cash Coupon\",\"col\":3}},{\"id\":\"bBKxarOv5A\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Sale Coupon\",\"col\":3}},{\"id\":\"KrZr8GVCVk\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Cash Coupon\",\"col\":3}},{\"id\":\"00b3QV-R2X\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale Coupon\",\"col\":3}},{\"id\":\"WbtS1INno2\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent List</b></span>\",\"col\":12}},{\"id\":\"KMjAowcsaL\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Sale Coupon Check In\",\"col\":4}},{\"id\":\"AOwrbvv3KY\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Cash Coupon\",\"col\":4}},{\"id\":\"EjVRlmCylZ\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Sale Coupon\",\"col\":4}},{\"id\":\"ORmf_6gH8j\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Add Coupon\",\"col\":12}},{\"id\":\"SSzx12V3p1\",\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}}]",
  "creation": "2024-07-17 14:27:00.619409",
  "custom_blocks": [
   {
@@ -17,18 +17,122 @@
  "indicator_color": "green",
  "is_hidden": 0,
  "label": "Coupon",
- "links": [],
- "modified": "2024-07-24 09:22:27.315407",
+ "links": [
+  {
+   "custom_show_in_app_menu": 0,
+   "custom_sort_order": 0,
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Report",
+   "link_count": 1,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "custom_show_in_app_menu": 0,
+   "custom_sort_order": 0,
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Cash Coupon Report",
+   "link_count": 0,
+   "link_to": "Cash Coupon",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2024-07-30 17:20:50.501807",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon",
- "number_cards": [],
+ "number_cards": [
+  {
+   "label": "Cash Coupon Today",
+   "number_card_name": "Cash Coupon Today"
+  },
+  {
+   "label": "Cash Coupon MTD",
+   "number_card_name": "Cash Coupon MTD"
+  }
+ ],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
- "quick_lists": [],
+ "quick_lists": [
+  {
+   "document_type": "Check In Sale Coupon",
+   "label": "Sale Coupon Check In",
+   "quick_list_filter": "[[\"Check In Sale Coupon\",\"check_in_date\",\"Timespan\",\"today\",false]]"
+  },
+  {
+   "document_type": "Cash Coupon",
+   "label": "Cash Coupon",
+   "quick_list_filter": "[[\"Cash Coupon\",\"issue_date\",\"Timespan\",\"today\",false]]"
+  },
+  {
+   "document_type": "Sale Coupon",
+   "label": "Sale Coupon",
+   "quick_list_filter": "[]"
+  }
+ ],
  "roles": [],
  "sequence_id": 24.0,
- "shortcuts": [],
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "custom_show_in_app_menu": 1,
+   "doc_view": "New",
+   "format": "{}",
+   "label": "New Sale Coupon Check In",
+   "link_to": "Check In Sale Coupon",
+   "stats_filter": "[[\"Check In Sale Coupon\",\"name\",\"=\",null,false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "custom_show_in_app_menu": 1,
+   "doc_view": "List",
+   "label": "Sale Coupon Check In",
+   "link_to": "Check In Sale Coupon",
+   "stats_filter": "[[\"Check In Sale Coupon\",\"check_in_date\",\"Timespan\",\"today\",false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "custom_show_in_app_menu": 1,
+   "doc_view": "New",
+   "label": "Issue Cash Coupon",
+   "link_to": "Cash Coupon",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "custom_show_in_app_menu": 1,
+   "doc_view": "New",
+   "label": "New Sale Coupon",
+   "link_to": "Sale Coupon",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "custom_show_in_app_menu": 1,
+   "doc_view": "List",
+   "label": "Cash Coupon",
+   "link_to": "Cash Coupon",
+   "stats_filter": "[[\"Cash Coupon\",\"issue_date\",\"Timespan\",\"today\",false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "custom_show_in_app_menu": 1,
+   "doc_view": "List",
+   "label": "Sale Coupon",
+   "link_to": "Sale Coupon",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
  "title": "Coupon"
 }

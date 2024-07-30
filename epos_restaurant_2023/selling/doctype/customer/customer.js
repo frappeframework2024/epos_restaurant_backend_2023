@@ -84,11 +84,11 @@ function getPOSMiscSaleInfo(frm) {
             customer_name: frm.doc.name,
         },
         callback: (result => {
-            console.log(result.message)
-
-            let html = frappe.render_template("customer_pos_misc_sale", {data:result.message}); 
+            let html = frappe.render_template("customer_pos_misc_sale", {data:result.message,dataLength:result.message.length}); 
             $(frm.fields_dict["pos_misc_sale"].wrapper).html(html);
             frm.refresh_field("pos_misc_sale");
+
+            pagination(frm)
             
         }),
         error: (error => {
@@ -96,3 +96,44 @@ function getPOSMiscSaleInfo(frm) {
         })
     });
 }
+
+function pagination (frm) {
+    const pageContent = $(frm.fields_dict["pos_misc_sale"].wrapper)[0].querySelector('#accordion')
+    const itemsPerPage = 10;
+    let currentPage = 0;
+
+    const items = Array.from(pageContent.querySelectorAll('.sale-card'))
+
+    showPage()
+    createPageButtons()
+
+    // console.log(items)
+    function showPage(page) {
+        const startIndex = page * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        items.forEach((item, index) => {
+            item.classList.toggle('hidden', index < startIndex || index >= endIndex);
+        }); 
+        // updateActiveButtonStates();
+    }
+
+    function createPageButtons() {
+        const totalPages = Math.ceil(items.length / itemsPerPage);
+        const paginationContainer = document.createElement('div');
+        const paginationWrapper = pageContent.querySelector('#pagination')
+
+        const paginationDiv = paginationWrapper.appendChild(paginationContainer);
+        paginationContainer.classList.add('pagination');
+
+        for (let i = 0; i < totalPages; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.textContent = i + 1;
+            pageButton.addEventListener('click', () => {
+              currentPage = i;
+              showPage(currentPage);
+              updateActiveButtonStates();
+            })
+        }
+    }
+}
+

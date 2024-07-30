@@ -1,0 +1,90 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-07-29 08:59:09.949576",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "coupon_number",
+  "member_name",
+  "check_in_date",
+  "visited_count",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "coupon_number",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Coupon Number",
+   "options": "Sale Coupon"
+  },
+  {
+   "fieldname": "member_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Member Name"
+  },
+  {
+   "fieldname": "check_in_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Check In Date"
+  },
+  {
+   "fieldname": "visited_count",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Visit Count"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Check In Sale Coupon",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-07-30 15:43:52.704050",
+ "modified_by": "Administrator",
+ "module": "Coupon",
+ "name": "Check In Sale Coupon",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Coupon User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "coupon_number",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "coupon_number"
+}

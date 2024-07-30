@@ -276,7 +276,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 	else:
 		sql = "select {} as row_group, {} as indent ".format(row_group, indent)
 	if filters.column_group != "None":
-		fields = get_fields(filters)
+		fields = get_fields(filters) 
 		# frappe.throw(str(report_fields))
 		for f in fields:
 			sql = strip(sql)

@@ -36,8 +36,19 @@ def get_stock_location_product(stock_location,product_code):
     else:
         return None
 
-      
-   
+@frappe.whitelist(allow_guest=True)
+def get_default_bom(product):
+    default_bom = frappe.db.sql("select name from `tabBOM` where product = '{0}' and is_active = 1 and is_default = 1".format(product),as_dict=True)
+    if len(default_bom)>0:
+        default_bom = default_bom[0].name
+    else:
+        default_bom = "None"
+    return default_bom
+
+@frappe.whitelist(allow_guest=True)
+def get_bom_items(bom_name):
+    bom_items = frappe.db.sql("select product,product_name,unit,cost,quantity,amount from `tabBOM Items` where parent = '{0}'".format(bom_name),as_dict=True)
+    return bom_items
 
 def get_uom_conversion(from_uom, to_uom):
     conversion =frappe.db.get_value('Unit of Measurement Conversion', {'from_uom': from_uom,"to_uom":to_uom}, ['conversion'], cache=True)

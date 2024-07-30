@@ -24,7 +24,7 @@ class Product(Document):
 			self.is_recipe=0
 			if self.is_inventory_product:
 				self.is_inventory_product = 0
-
+		validate_default_accounts(self)
 		error_list=[]
 		for v in self.product_variants:
 			if v.variant_code is None or v.variant_code == "":
@@ -123,6 +123,7 @@ class Product(Document):
    
 		if not self.last_purchase_cost or self.last_purchase_cost == 0:
 			self.last_purchase_cost = self.cost
+
 
 	def autoname(self):
 		if self.flags.ignore_autoname==True:
@@ -273,7 +274,11 @@ class Product(Document):
 					"price":0
 				})
 		return  product_variants
+def validate_default_accounts(self):
+	branches = {row.business_branch for row in self.default_account}
 
+	if len(branches) != len(self.default_account):
+		frappe.throw(_("Cannot set multiple default account for one branch."))
 
 @frappe.whitelist()
 def get_product(barcode,business_branch=None,stock_location = None,price_rule=None, unit=None,portion = None,allow_sale=None,allow_purchase=None,is_inventory_product=None):
