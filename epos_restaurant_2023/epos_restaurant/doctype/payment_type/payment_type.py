@@ -29,6 +29,12 @@ class PaymentType(Document):
   
 		if self.has_value_changed("payment_type_group"):
 			frappe.db.sql("update `tabSale Payment` set payment_type_group='{}' where payment_type='{}'".format(self.payment_type_group,self.name))
-   
 
-	
+
+@frappe.whitelist()
+def get_payment_type(txt):
+	from frappe.desk.search import search_link
+	data = search_link(txt=txt,doctype="Payment Type")
+	for d in data:
+		d['exchange_rate'],d['currency'] = frappe.db.get_value("Payment Type",d['value'],['exchange_rate','currency'])
+	return data

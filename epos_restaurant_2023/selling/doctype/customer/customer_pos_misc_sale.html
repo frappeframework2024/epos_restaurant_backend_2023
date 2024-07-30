@@ -1,5 +1,41 @@
-{% var index = 0 %}
-<div id="pos_misc_sale">
-    <div id="accordion">
+{% var index = 1 %}
+<div id="accordion">
+    {% for d in data %}
+    {% var index1 = 1 %}
+    <div class="card border-bottom-0" style="{{index != 1 ? 'border-top-right-radius:0;border-top-left-radius:0;border-bottom-right-radius:0;border-bottom-left-radius:0;' : index == index|length - 1 ? 'border-top-right-radius:0;border-top-left-radius:0;' : 'border-bottom-right-radius:0;border-bottom-left-radius:0;'}}">
+      <div class="card-header border-bottom-0 {{index!=1?'rounded-0':''}}" id="heading-{{d.name}}" style="{{index != 1 ? '' : ''}}">
+        <h5 class="mb-0">
+          <button class="btn btn-link w-100 text-left" data-toggle="collapse" data-target="#{{d.name}}" aria-expanded="{{index == 1 ? 'true' : 'false'}}" aria-controls="{{d.name}}">
+            {{d.name}}
+          </button>
+        </h5>
+      </div>
+  
+      <div id="{{d.name}}" class="collapse {{index == 1 ? 'show' : ''}}" aria-labelledby="heading-{{d.name}}" data-parent="#accordion">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-2 font-weight-bold py-2">No.</div>        
+                <div class="col-2 font-weight-bold py-2">Product Name</div>        
+                <div class="col-2 font-weight-bold py-2 text-center">Qty</div>        
+                <div class="col-2 font-weight-bold py-2 text-right">Price</div>        
+                <div class="col-2 font-weight-bold py-2 text-right">Discount</div>        
+                <div class="col-2 font-weight-bold py-2 text-right">Amount</div>        
+                {% for s in d.sale_products %}
+                    <div class="col-2 py-2 border-top">{{index1}}</div>        
+                    <div class="col-2 py-2 border-top">{{s.product_name}}</div>        
+                    <div class="col-2 py-2 border-top text-center">{{s.quantity}}</div>        
+                    <div class="col-2 py-2 border-top text-right">{{ frappe.format(s.price,{"fieldtype":"Currency"})}}</div>        
+                    <div class="col-2 py-2 border-top text-right">{{ frappe.format(s.discount_amount,{"fieldtype":"Currency"})}}</div>        
+                    <div class="col-2 py-2 border-top text-right">{{ frappe.format(s.amount,{"fieldtype":"Currency"})}}</div>        
+                    {% var index1 = index1 + 1 %}
+                {% endfor %}
+            </div>
+        </div>
+      </div>
     </div>
-</div>
+    {% index = index + 1 %}
+    {% endfor %}
+  </div>
+
+
+  

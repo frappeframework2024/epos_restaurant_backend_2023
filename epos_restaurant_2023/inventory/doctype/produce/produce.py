@@ -7,34 +7,6 @@ from frappe.model.document import Document
 
 
 class Produce(Document):
-	@frappe.whitelist()
-	def get_product_children(doc):
-		sales=[]
-		data = frappe.db.sql("""
-					   select 
-					   product_code product,
-					   product_name,
-					   unit,
-					   base_unit,
-					   base_cost,
-					   1 quantity,
-					   is_inventory_product is_inventory
-					   from `tabTemplate Production Ingredients` 
-					   where parent = '{0}'
-					   """.format(doc.product),as_dict=1)
-		for a in data:
-			sales.append({
-				"product":a.product,
-				"unit":a.unit,
-				"quantity":a.quantity,
-				"product_name":a.product_name,
-				"is_inventory":a.is_inventory,
-				"base_unit":a.base_unit,
-				"base_cost":a.base_cost})
-		if len(data) == 0:
-			frappe.throw("No Record")
-		else:
-			return sales
 		
 	def on_submit(self):
 		update_produce(self)

@@ -30,7 +30,7 @@ frappe.ui.form.on("Customer", {
             frm.dashboard.add_indicator(__("Total Point Earn: {0}", [frm.doc.total_point_earn]), "green");
         }
         getCustomerInfo(frm)
-        // getPOSMiscSaleInfo(frm)
+        getPOSMiscSaleInfo(frm)
         
     }
     
@@ -73,32 +73,26 @@ function getCustomerInfo (frm) {
     })
 }
 
-// function getPOSMiscSaleInfo(frm) {
-//     let parser = new DOMParser();
-//     $(frm.fields_dict["pos_misc_sale"].wrapper).html("Loading customer POS Misc Sale...");
-//     frm.refresh_field("pos_misc_sale");
+function getPOSMiscSaleInfo(frm) {
+    let parser = new DOMParser();
+    $(frm.fields_dict["pos_misc_sale"].wrapper).html("Loading customer POS Misc Sale...");
+    frm.refresh_field("pos_misc_sale");
 
-//     frappe.call({
-//         method: "epos_restaurant_2023.selling.doctype.customer.customer.get_pos_misc_sale",
-//         args: {
-//             customer_name: frm.doc.name,
-//         },
-//         callback: (result => {
-//             let data = result.message;
+    frappe.call({
+        method: "epos_restaurant_2023.selling.doctype.customer.customer.get_pos_misc_sale",
+        args: {
+            customer_name: frm.doc.name,
+        },
+        callback: (result => {
+            console.log(result.message)
 
-//             // Function to get unique names
-//             function getUniqueNames(data) {
-//                 const names = data.map(d => d.name);
-//                 return [...new Set(names)];
-//             } 
-
-//             let html = frappe.render_template("customer_pos_misc_sale", accordionHtml); 
-//             $(frm.fields_dict["pos_misc_sale"].wrapper).html(html);
-//             frm.refresh_field("pos_misc_sale");
+            let html = frappe.render_template("customer_pos_misc_sale", {data:result.message}); 
+            $(frm.fields_dict["pos_misc_sale"].wrapper).html(html);
+            frm.refresh_field("pos_misc_sale");
             
-//         }),
-//         error: (error => {
-//             frappe.throw(error);
-//         })
-//     });
-// }
+        }),
+        error: (error => {
+            frappe.throw(error);
+        })
+    });
+}

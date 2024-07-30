@@ -11,8 +11,14 @@ class SaleCoupon(Document):
 	def before_insert(self):
 		self.posting_date = getdate()
 		self.visited_count = 0
-		self.balance = self.limit_visit - self.visited_count 
+		self.balance = self.limit_visit - self.visited_count
 
+	def validate(self):
+		for p in self.payments:
+			p["payment_amount"] = p["input_amount"] / p["exchange_rate"]
+		self.total_payment_amount = sum([d["payment_amount"] for d in self.payments])
+		if self.price != self.total_payment_amount:
+			frappe.throw("Total Payment must equal to Price.")
 
 @frappe.whitelist()
 def get_recent_sold_coupon():

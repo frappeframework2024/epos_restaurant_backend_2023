@@ -1,0 +1,46 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-07-30 09:19:37.533341",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "payment_type",
+  "input_amount",
+  "payment_amount"
+ ],
+ "fields": [
+  {
+   "fieldname": "payment_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Payment Type",
+   "options": "Payment Type"
+  },
+  {
+   "fieldname": "payment_amount",
+   "fieldtype": "Currency",
+   "label": "Payment Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "input_amount",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Input Amount"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-07-30 09:25:53.707136",
+ "modified_by": "Administrator",
+ "module": "GYM",
+ "name": "Sale Coupon Payment",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

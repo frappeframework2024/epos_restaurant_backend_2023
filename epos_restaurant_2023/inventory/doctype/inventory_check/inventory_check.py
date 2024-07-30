@@ -224,7 +224,7 @@ def get_products(self):
 		child_doc.purchase = sum([x["quantity"] for x in current_data if x["product_code"] ==d["name"] and x["transaction_type"] == "Purchase Order"])
 		child_doc.other_transaction = sum([x["quantity"] for x in current_data if x["product_code"] ==d["name"] and not x["transaction_type"] in ["Purchase Order","Sale"]])
 		child_doc.current_on_hand = child_doc.opening_quantity +  child_doc.purchase +   child_doc.sale + child_doc.other_transaction 
-		child_doc.actual_quantity = child_doc.current_on_hand
+		child_doc.actual_quantity = 0 if  child_doc.current_on_hand <= 0 else child_doc.current_on_hand
 		child_doc.original_cost = sum([x["cost"] for x in product_cost if x["product_code"]==d["name"]])
 		child_doc.cost = sum([x["cost"] for x in product_cost if x["product_code"]==d["name"]])
 

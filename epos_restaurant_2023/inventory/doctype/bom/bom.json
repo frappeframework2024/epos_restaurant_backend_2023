@@ -1,0 +1,161 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{product_name}-{#####}",
+ "creation": "2024-07-30 10:02:27.690697",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_tzzm",
+  "product",
+  "product_name",
+  "product_unit",
+  "column_break_ylfb",
+  "is_active",
+  "is_default",
+  "amended_from",
+  "section_break_dmje",
+  "valuation_based_on",
+  "section_break_nhfr",
+  "items",
+  "section_break_xwwq",
+  "total_qty",
+  "column_break_bmbt",
+  "total_cost",
+  "section_break_yzxx",
+  "note"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_tzzm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "BOM",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "product",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Product",
+   "options": "Product",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "product.product_name_en",
+   "fieldname": "product_name",
+   "fieldtype": "Data",
+   "label": "Product Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "product.unit",
+   "fieldname": "product_unit",
+   "fieldtype": "Link",
+   "label": "Product Unit",
+   "options": "Unit Of Measurement",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_ylfb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "1",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Is Active"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "is_default",
+   "fieldtype": "Check",
+   "label": "Is Default"
+  },
+  {
+   "fieldname": "section_break_dmje",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "valuation_based_on",
+   "fieldtype": "Select",
+   "label": "Valuation Based On",
+   "options": "Cost\nPrice"
+  },
+  {
+   "fieldname": "section_break_nhfr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_xwwq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_qty",
+   "fieldtype": "Int",
+   "label": "Total QTY",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_bmbt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_cost",
+   "fieldtype": "Currency",
+   "label": "Total Cost",
+   "read_only": 1
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "BOM Items"
+  },
+  {
+   "fieldname": "section_break_yzxx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Long Text",
+   "label": "Note"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-07-30 11:20:36.424493",
+ "modified_by": "Administrator",
+ "module": "Inventory",
+ "name": "BOM",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -35,7 +35,7 @@ class ComboGroup(Document):
 		
 
 	def on_update(self):
-		#frappe.throw("you save me")
+		 
 		frappe.enqueue("epos_restaurant_2023.inventory.doctype.combo_group.combo_group.update_combo_to_product", queue='short', self=self)
 		#update_combo_to_product(self)
 

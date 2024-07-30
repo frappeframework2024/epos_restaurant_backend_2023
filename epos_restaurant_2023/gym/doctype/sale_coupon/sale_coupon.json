@@ -18,7 +18,11 @@
   "visited_count",
   "balance",
   "expiry_date",
-  "attach_image"
+  "attach_image",
+  "total_payment_amount",
+  "section_break_obwz",
+  "payments",
+  "amended_from"
  ],
  "fields": [
   {
@@ -101,12 +105,37 @@
    "fieldtype": "Attach Image",
    "hidden": 1,
    "label": "Attach Image"
+  },
+  {
+   "fieldname": "section_break_obwz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "payments",
+   "fieldtype": "Table",
+   "options": "Sale Coupon Payment"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Sale Coupon",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "total_payment_amount",
+   "fieldtype": "Currency",
+   "label": "Total Payment Amount"
   }
  ],
  "image_field": "attach_image",
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2024-07-29 15:34:24.799755",
+ "modified": "2024-07-30 11:11:50.670525",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Sale Coupon",

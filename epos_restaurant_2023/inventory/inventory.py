@@ -44,11 +44,20 @@ def get_uom_conversion(from_uom, to_uom):
     
     return conversion or 1
 
+@frappe.whitelist(allow_guest=True)
+def get_product_price(product_code):
+    price = frappe.db.get_value('Product', product_code, 'price')    
+    return price or 0
+
+@frappe.whitelist(allow_guest=True)
 def get_product_cost(stock_location, product_code):
-    cost =frappe.get_cached_value('Stock Location Product', {'stock_location':stock_location,"product_code":product_code},'cost')
-    if (cost or 0) == 0:
-        cost = frappe.get_cached_value('Product',product_code, 'cost')
-    
+    cost = 0
+    if stock_location != "None":
+        cost = frappe.get_cached_value('Stock Location Product', {'stock_location':stock_location,"product_code":product_code},'cost')
+        if (cost or 0) == 0:
+            cost = frappe.get_cached_value('Product',product_code, 'cost')
+    else:
+        cost = frappe.db.get_value('Product', product_code, 'cost')    
     return cost or 0
 
 def check_uom_conversion(from_uom, to_uom):

@@ -2,28 +2,31 @@
     <div>
         <div class="col-12">
             <FileUpload @select="onFilesSelected($event)" name="file" :customUpload="true" :multiple="true"
-                accept="jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx" :maxFileSize="1000000000">
-                <template #header="{ chooseCallback,files }">
+                accept=".jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx" :maxFileSize="1000000000">
+                <template #header="{ chooseCallback, files }">
                     <div class="flex flex-wrap justify-content-between align-items-center flex-1 gap-2">
                         <div class="flex gap-2">
                             <Button @click="chooseCallback" icon="pi pi-images" rounded outlined></Button>
                         </div>
                     </div>
                 </template>
-                <template #content="{ files,removeFileCallback }">
+                <template #content="{ files, removeFileCallback }">
                     <div v-if="files.length > 0" class="flex gap-3  flex-wrap ">
                         <template v-for="d in selectdFile.files">
-                           
-                            <div class="relative flex justify-content-between flex-column align-items-center flex-wrap border-1 border-round-sm w-6rem border-300">
-                                <img style="width:60px" :src="d.objectURL" class="mt-2"/>
-                                <div class="text-xs text-center bg-cyan-50 text-600 p-2 border-300 file-wrapper-name w-full text-overflow-ellipsis" >
+
+                            <div
+                                class="relative flex justify-content-between flex-column align-items-center flex-wrap border-1 border-round-sm w-6rem border-300">
+                                <img style="width:60px" :src="d.objectURL" class="mt-2" />
+                                <div
+                                    class="text-xs text-center bg-cyan-50 text-600 p-2 border-300 file-wrapper-name w-full text-overflow-ellipsis">
                                     {{ d.name }}
                                 </div>
-                                <Button @click="onRemoveImage(removeFileCallback,d)" class="absolute remove-image" size="small" severity="danger" text  rounded icon="pi pi-times" ></Button>
+                                <Button @click="onRemoveImage(removeFileCallback, d)" class="absolute remove-image"
+                                    size="small" severity="danger" text rounded icon="pi pi-times"></Button>
                             </div>
-                            
+
                         </template>
-                        
+
                     </div>
                 </template>
                 <template #empty>
@@ -80,10 +83,51 @@
 
             <div class="col-6 lg:col-4">
                 <label>Expiry Date <span class="text-red-500">*</span></label><br />
-
-
                 <Calendar style="width: 100%;" @date-select="expiryChange" :modelValue="expiry_date" showIcon
                     :showOnFocus="false" />
+            </div>
+            <div class="col-12">
+                <div class="flex justify-content-between py-2 align-items-center font-medium border-round-sm" style="background-color: #efefef">
+                    <div class="mx-2">Payment</div>
+                    <div class="mx-2"><Button @click="onAddPaymentClick()" rounded outlined icon="pi pi-plus" size="small"/></div>
+                </div>
+                <table class="w-full">
+
+                    <thead>
+                        <tr>
+                            <th>Payment Type</th>
+                            <th>Amount</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(payment,idx) in payments" :key="idx">
+                            <td>
+                                <AutoComplete typeahead style="width: 100%;" inputStyle="width:100%" showOnFocus
+                                    :value="payment.payment_type"  @change="onPaymentTypeChanged(payment,$event)" inputId="ac" optionLabel="value"
+                                    :suggestions="paymentTypes" @complete="searchPaymentType">
+                                    <template #option="slotProps">
+                                        {{ slotProps.option.value }}
+                                        <br />
+                                        <span class="text-600 text-xs">
+                                            <template v-if="slotProps.option.exchange_rate != 1">
+                                                {{ slotProps.option.exchange_rate }},
+                                            </template>
+                                            {{ slotProps.option.currency }}
+                                        </span>
+
+                                    </template>
+                                </AutoComplete>
+                            </td>
+                            <td>
+                                <InputNumber v-model="payment.input_amount" inputId="stacked-buttons" style="width: 100%;" />
+                            </td>
+                            <td class="text-center">
+                                <Button @click="onRemovePayment(idx)" severity="danger" rounded text outlined  icon="pi pi-trash" size="small"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
         <div class="flex justify-content-end mt-5  py-2"
@@ -105,8 +149,11 @@ import AutoComplete from 'primevue/autocomplete';
 import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import Row from 'primevue/row';
 import { ref, inject, watch } from 'vue'
-import SaleCoupon from "../SaleCoupon.vue";
+
 import { useToast } from "primevue/usetoast";
 import moment from 'moment';
 const isSaving = ref(false)
@@ -114,6 +161,7 @@ const toast = useToast();
 const frappe = inject("$frappe")
 const call = frappe.call();
 const items = ref([]);
+const paymentTypes = ref([]);
 const saleCoupon = ref({})
 const selectedMember = ref(undefined)
 const price = ref(0)
@@ -121,7 +169,11 @@ const expiry_date = ref()
 const limitVisit = ref(0)
 const VisitBalance = ref(0)
 const selectedCouponType = ref("Individual")
-const selectdFile=ref({})
+const selectdFile = ref({})
+const payments = ref([{
+        "payment_type": "",
+        "payment_amount": 0
+    }])
 const couponType = ref([
     'Individual',
     'Membership'
@@ -132,10 +184,18 @@ const search = (event) => {
     call.get("frappe.desk.search.search_link", {
         txt: event.query,
         doctype: "Customer",
-        ignore_user_permissions: 0,
+        ignore_user_permissions: 1,
         reference_doctype: "Sale Coupon"
     }).then((res) => {
         items.value = res.message
+    })
+}
+
+const searchPaymentType = (event) => {
+    call.get("epos_restaurant_2023.epos_restaurant.doctype.payment_type.payment_type.get_payment_type", {
+        txt: event.query
+    }).then((res) => {
+        paymentTypes.value = res.message
     })
 }
 
@@ -149,20 +209,24 @@ function memberFocus(event) {
         items.value = res.message
     })
 }
+function onAddPaymentClick() {
+    payments.value.unshift({
+        "payment_type": "",
+        "payment_amount": 0
+    })
+}
+
+function onPaymentTypeChanged(value,event){
+    alert(JSON.stringify(value.value))
+    alert(JSON.stringify(payment))
+}
 function expiryChange(event) {
     expiry_date.value = event;
     saleCoupon.value.expiry_date = moment(event).format('YYYY-MM-DD')
 }
 
-function blobToBase64(blob) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onloadend = () => {
-            resolve(reader.result);
-        };
-        reader.onerror = reject;
-    });
+function onRemovePayment(idx){
+    payments.value.splice(idx,1)
 }
 async function onSave() {
     isSaving.value = true
@@ -177,32 +241,42 @@ async function onSave() {
         isSaving.value = false
         return
     }
-    //Prepare Data To Save
+    let data_to_save = JSON.parse(JSON.stringify(saleCoupon.value))
+    if (data_to_save.payments.length <= 0){
+        toast.add({ severity: 'warn', summary: 'Validation', detail: 'Please enter payment amount', life: 3000 });
+        isSaving.value = false
+        return
+    }
 
-    db.createDoc('Sale Coupon',saleCoupon.value).then((doc) => {
-       toast.add({ severity: 'success', summary: 'Sucecss', detail: 'Coupon saved succeess.', life: 3000 });
-       
-       isSaving.value=false
-       closeDialog()
-       call.post("upload_file",{
-            file:selectdFile.value.files[0],
-            file_name:selectdFile.value.files[0].name,
-            doctype: "Sale Coupon",
-            docname: doc.name,
-            is_private:1
-        })
-   })
-   .catch((error) => {
-       console.log(error)
-        toast.add({ severity: 'error', summary: 'Validation', detail: JSON.parse(JSON.parse(error['_server_messages'])[0]).message, life: 3000 })
-       isSaving.value=false
-   }); 
+    //Prepare Data To Save
     
+    db.createDoc('Sale Coupon', data_to_save).then((doc) => {
+        toast.add({ severity: 'success', summary: 'Sucecss', detail: 'Coupon saved succeess.', life: 3000 });
+        isSaving.value = false
+        closeDialog()
+        selectdFile.value.files.forEach(_file => {
+            call.post("upload_file", {
+                file: _file,
+                file_name: _file.name,
+                doctype: "Sale Coupon",
+                folder: "Home/Attachments",
+                docname: doc.name,
+                is_private: 1
+            })
+        });
+
+    })
+        .catch((error) => {
+            console.log(error)
+            toast.add({ severity: 'error', summary: 'Validation', detail: JSON.parse(JSON.parse(error['_server_messages'])[0]).message, life: 3000 })
+            isSaving.value = false
+        });
+
 }
 function closeDialog() {
     dialogRef.value.close();
 }
-function onRemoveImage(callback , image){
+function onRemoveImage(callback, image) {
     selectdFile.value.files = selectdFile.value.files.filter(obj => obj.name !== image.name)
     callback()
 }
@@ -235,21 +309,24 @@ watch(limitVisit, async (value) => {
 .coupon_input_info .p-inputtext.p-component.p-inputnumber-input {
     width: 90%;
 }
-.file-wrapper-name{
-    font-size:8pt; 
+
+.file-wrapper-name {
+    font-size: 8pt;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
-    padding-left:4px;
+    padding-left: 4px;
     overflow: hidden;
     margin-top: 4px;
     text-overflow: ellipsis;
 }
-.remove-image{
+
+.remove-image {
     right: -18px;
     top: -19px;
 }
-.p-fileupload .p-fileupload-content{
+
+.p-fileupload .p-fileupload-content {
     padding: 1rem;
 }
 </style>

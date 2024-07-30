@@ -330,14 +330,22 @@ def get_pos_misc_sale(customer_name):
             sp.discount_amount, 
             sp.amount, 
             s.name 
-        FROM 
-            `tabSale Product` sp
-        INNER JOIN 
-            `tabSale` s 
-        ON 
-            s.name = sp.parent
+        FROM  `tabSale Product` sp
+        INNER JOIN `tabSale` s  ON  s.name = sp.parent
         WHERE 
             s.customer = %(customer_name)s
+		order by
+			s.name
+		limit 20
     """
-	sales = frappe.db.sql(sales, {'customer_name':customer_name}, as_dict=True)
-	return sales
+	sale = frappe.db.sql(sales, {'customer_name':customer_name}, as_dict=1)
+
+	used = []
+	sale_names = [x["name"] for x in sale if x["name"] not in [u["name"] for u in used] and not used.append(x) ]
+	data = []
+	for s in sale_names:
+		data.append({"name":s,"sale_products":[b for b in sale if b["name"]==s]})
+
+
+
+	return 	data 
