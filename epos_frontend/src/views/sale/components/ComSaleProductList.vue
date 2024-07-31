@@ -142,9 +142,8 @@
                         <template v-if="(sp.is_require_employee || 0) == 1">
                             <v-chip color="primary" class="mx-1 grow text-center justify-center" variant="elevated"
                                 size="small" @click="sale.onAssignEmployee(sp)">{{ $t('Employee') }}</v-chip>
-                        </template>
-
-                        <v-chip v-if="!sp.reference_sale_product" color="red"
+                        </template> 
+                        <v-chip v-if="(!sp.reference_sale_product  && (show_button_delete_item ||  sp.sale_product_status == 'New'))" color="red"
                             class="mx-1 grow text-center justify-center" variant="elevated" size="small"
                             @click="sale.onRemoveItem(sp, gv, numberFormat)">{{ $t('Delete')
                             }}</v-chip>
@@ -215,6 +214,15 @@ const show_button_change_price = computed(() => {
 
     return false;
 });
+
+const show_button_delete_item = computed(()=>{
+    if(gv.device_setting.is_order_station == 1 && gv.device_setting.show_button_delete_item_on_order_station == 1){
+        return true
+    }else if(gv.device_setting.is_order_station == 0){
+        return true
+    }
+    return false;
+})
 
 function onReorder(sp) {
     if (!sale.isBillRequested()) {

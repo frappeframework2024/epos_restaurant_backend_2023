@@ -87,7 +87,7 @@
                                     :label="slotProps.data.coupon_type" size="small" icon="pi pi-id-card" />
                                 <Chip v-else :label="slotProps.data.coupon_type" size="small" icon="pi pi-id-card"
                                     class="m-1" />
-                                <Chip v-if="slotProps.data.docstatus == 1" label="Submitted" size="small"
+                                <Chip v-if="slotProps.data.docstatus == 1" label="Submitted" icon="pi pi-verified" size="small"
                                     class="m-1 bg-green-500" />
                                 <Chip label="Expired" style="height: 16px !important;" class="bg-red-500 text-100"
                                     v-if="moment(slotProps.data.expiry_date).isBefore(moment())" />
@@ -97,21 +97,12 @@
                     </Column>
                     <Column header="Action">
                         <template #body="slotProps">
-                            {{ slotProps.data.name }}
-                            <Button type="button" text icon="pi pi-ellipsis-v" @click="toggle" aria-haspopup="true"
+                            <Button type="button" outlined rounded v-if="slotProps.data.docstatus != 1"  icon="pi pi-pencil" @click="onEditClick(slotProps.data)" aria-haspopup="true"
                                 aria-controls="overlay_menu" />
-                            <Button type="button" text icon="pi pi-ellipsis-v" @click="toggle" aria-haspopup="true"
+                            <Button type="button"  outlined rounded v-if="slotProps.data.docstatus == 0" severity="success" icon="pi pi-verified" @click="onSubmit( slotProps.data.name)" aria-haspopup="true"
                                 aria-controls="overlay_menu" />
-                            <!-- <Menu ref="menu" id="overlay_menu" :model="items" plain :popup="true">
-                                <template #item="{ item, props }">
-                                    <div @click="item.click(slotProps.data)"  class="w-full" :class="props.action.class"
-                                        :icon="item.icon" :label="item.label">
-                                        {{ slotProps.data.name }}
-                                        <span :class="item.icon" class="ml-1 mr-2"></span>
-                                        {{ item.label }}
-                                    </div>
-                                </template>
-                            </Menu> -->
+                            
+                           
                         </template>
                     </Column>
 
@@ -158,7 +149,7 @@ const items = ref([
                 icon: 'pi pi-refresh',
 
                 "click": (data) => {
-                    onSubmit(data.name)
+                    
                 },
             },
             {
@@ -166,8 +157,16 @@ const items = ref([
                 icon: 'pi pi-upload',
 
                 "click": (data) => {
-                    console.log(data)
-                    dialog.open(ComAddSaleCoupon,
+                    
+                    
+                },
+            }
+        ]
+    }
+]);
+
+function onEditClick(data){
+    dialog.open(ComAddSaleCoupon,
                         {
                             onClose: (opt) => {
                                 getListSaleCoupon()
@@ -189,12 +188,7 @@ const items = ref([
                                 modal: true
                             }
                         });
-                },
-            }
-        ]
-    }
-]);
-
+}
 
 function onSubmit(docname) {
 

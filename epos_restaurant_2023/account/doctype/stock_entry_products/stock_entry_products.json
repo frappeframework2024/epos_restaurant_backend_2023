@@ -10,12 +10,12 @@
   "product_name",
   "product_category",
   "product_group",
-  "unit",
-  "is_inventory_product",
-  "expense_account",
-  "column_break_xqtx",
   "base_unit",
   "base_cost",
+  "is_inventory_product",
+  "column_break_xqtx",
+  "expense_account",
+  "unit",
   "quantity",
   "price",
   "amount"
@@ -51,13 +51,15 @@
    "fetch_from": "product_code.unit",
    "fieldname": "base_unit",
    "fieldtype": "Data",
-   "label": "Base Unit"
+   "label": "Base Unit",
+   "read_only": 1
   },
   {
    "fetch_from": "product_code.cost",
    "fieldname": "base_cost",
    "fieldtype": "Currency",
-   "label": "Base Cost"
+   "label": "Base Cost",
+   "read_only": 1
   },
   {
    "fetch_from": "product_code.unit",
@@ -77,7 +79,8 @@
   {
    "fieldname": "amount",
    "fieldtype": "Currency",
-   "label": "Amount"
+   "label": "Amount",
+   "read_only": 1
   },
   {
    "default": "0",
@@ -106,7 +109,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-07-30 16:06:14.422513",
+ "modified": "2024-07-31 09:20:16.425555",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "Stock Entry Products",

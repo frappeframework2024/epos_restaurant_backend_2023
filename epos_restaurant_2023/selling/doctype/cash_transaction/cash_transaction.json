@@ -24,6 +24,7 @@
   "transaction_status",
   "column_break_15",
   "payment_type",
+  "payment_type_group",
   "column_break_17",
   "exchange_currency",
   "column_break_19",
@@ -203,11 +204,17 @@
    "fieldname": "symbol",
    "fieldtype": "Data",
    "label": "Symbol"
+  },
+  {
+   "fetch_from": "payment_type.payment_type_group",
+   "fieldname": "payment_type_group",
+   "fieldtype": "Data",
+   "label": "Payment Type Group"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-03-26 20:08:35.766069",
+ "modified": "2024-07-31 09:45:15.879712",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Cash Transaction",

@@ -55,10 +55,10 @@ def get_columns(filters):
 def get_summary_report(filters,data):
 	if filters.show_summary:
 		return [
-			{ "label":"Total Amount","value":sum([d['amount'] for d in data]),"indicator":"green"},
-			{ "label":"Total Claim Amount","value":sum([d['claim_amount'] for d in data]),"indicator":"blue"},
-			{ "label":"Balance","value":sum([d['balance'] for d in data]),"indicator":"blue"},
-			{ "label":"Expired Balance","value":sum([d['expired_balance'] for d in data]),"indicator":"red"},
+			{ "label":"Total Amount","value":sum([d['amount'] for d in data]),"datatype": "Currency","indicator":"green"},
+			{ "label":"Total Claim Amount","value":sum([d['claim_amount'] for d in data]),"datatype": "Currency","indicator":"blue"},
+			{ "label":"Balance","value":sum([d['balance'] for d in data]),"datatype": "Currency","indicator":"blue"},
+			{ "label":"Expired Balance","value":sum([d['expired_balance'] for d in data]),"datatype": "Currency","indicator":"red"},
 			
 		]
 def get_report(filters):
@@ -76,14 +76,18 @@ def get_report(filters):
         b.claim_amount,
         b.balance,
 		a.member,
+		c.customer_group,
         concat(a.member, '-', a.member_name) as member
     from `tabCash Coupon Items` b
     inner join `tabCash Coupon` a on a.name = b.parent
+    inner join `tabCustomer` c on a.member = c.name
     where 
         a.issue_date between %(start_date)s and %(end_date)s
 """
 	if filters.get('customer'):
 		sql = sql + " and a.member in %(customer)s "
+	if filters.get("customer_group"):
+		sql = sql + " AND c.customer_group in %(customer_group)s"
 	data = frappe.db.sql(sql, filters, as_dict=1)
 	return data
 

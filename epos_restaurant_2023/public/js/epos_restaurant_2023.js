@@ -44,7 +44,6 @@ window.addEventListener('load', function () {
                 }
             }
             if (formSidebar) {
-                console.log('form Sidebar')
                 const formParent = formSidebar.parentNode
                 if (formParent) {
                     $(formParent).css('display', 'none')

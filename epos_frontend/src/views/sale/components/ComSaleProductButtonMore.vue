@@ -55,10 +55,10 @@
                 </template>
                 <v-list-item-title class="text-red-700">{{ $t('Remove Note') }}</v-list-item-title>
             </v-list-item>
-            <v-list-item  :prepend-icon="saleProduct.rate_include_tax == 1 ? 'mdi-tag-remove' : 'mdi-tag-plus'"  @click="sale.onRateIncludeTax(saleProduct)"  v-if="saleProduct.tax_rule">
+            <v-list-item  :prepend-icon="saleProduct.rate_include_tax == 1 ? 'mdi-tag-remove' : 'mdi-tag-plus'"  @click="sale.onRateIncludeTax(saleProduct)"  v-if="(saleProduct.tax_rule && gv.device_setting.is_order_station==0)">
                 <v-list-item-title :class="saleProduct.rate_include_tax == 1 ? 'text-red-700' : ''">{{ $t(saleProduct.rate_include_tax == 1 ? 'Remove Rate Include Tax' : 'Rate Include Tax')}}</v-list-item-title>
             </v-list-item>
-            <v-list-item  prepend-icon="mdi-cash-100" :title="$t('Tax Setting')" v-if="saleProduct.product_tax_rule"  @click="sale.onSaleProductChangeTaxSetting(saleProduct,gv)">
+            <v-list-item  prepend-icon="mdi-cash-100" :title="$t('Tax Setting')" v-if="(saleProduct.product_tax_rule && gv.device_setting.is_order_station==0)"  @click="sale.onSaleProductChangeTaxSetting(saleProduct,gv)">
             </v-list-item>
             
             <v-list-item v-if="productPrinter" prepend-icon="mdi-printer-outline" :title="$t('Re-Send')"    @click="onSelectPrinter()">

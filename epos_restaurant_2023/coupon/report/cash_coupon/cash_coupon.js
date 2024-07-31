@@ -74,6 +74,16 @@ frappe.query_reports["Cash Coupon"] = {
 			"on_change": function (query_report) {},
 		},
 		{
+			"fieldname": "customer_group",
+			"label": __("Customer Group"),
+			"fieldtype": "MultiSelectList",
+			get_data: function(txt) {
+				
+				return frappe.db.get_link_options('Customer Group', txt);
+			},
+			"on_change": function (query_report) {},
+		},
+		{
 			"fieldname": "customer",
 			"label": __("Customer"),
 			"fieldtype": "MultiSelectList",

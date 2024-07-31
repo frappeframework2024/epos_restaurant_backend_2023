@@ -13,17 +13,13 @@ from frappe.utils import get_link_to_form
 
 class StockEntry(Document):
 	def validate(self):
-		total_quantity = Enumerable(self.items).sum(lambda x: x.quantity or 0)
-		total_amount = Enumerable(self.items).sum(lambda x: (x.quantity or 0)* (x.price or  0))
-
-		self.total_quantity = total_quantity
-		self.total_amount = total_amount
-		# update default accunt
+		self.total_quantity =  (sum((a.quantity or 0) for a in self.item) or 0)
+		self.total_amount = (sum((a.quantity or 0) * (a.price or  0) for a in self.item) or 0)
 		validate_expense_account(self)
   
 	def before_submit(self):
 		for d in self.items:
-			if d.unit !=d.base_unit:
+			if d.unit != d.base_unit:
 				if not check_uom_conversion(d.base_unit, d.unit):
 					frappe.throw(_("There is no UoM conversion from {} to {}".format(d.base_unit, d.unit)))
 
@@ -57,92 +53,53 @@ def get_expense_account(product_code,branch):
 	return expense_account
 
 def validate_expense_account(self):
-	error=[]
 	for a in self.items:
-		error.append(get_link_to_form("Expense Code", a.expense_code))
-	if error:
-		msg = _("Please Select or Set Default Account For Expense Code {}")
-		frappe.throw(msg.format(", ".join(error)), title=_("Missing Account"))
+		if (a.expense_account or '') == "":
+			a.expense_account = get_expense_account(a.product_code,self.business_branch)
 
 
 def update_inventory_on_submit(self):
 	entry_type =frappe.db.get_value("Stock Entry Type", self.entry_type, "purpose")
-	if entry_type == 'Stock In':
-		for p in self.items:
-			if p.is_inventory_product:
-				uom_conversion = get_uom_conversion(p.base_unit, p.unit)			
-				add_to_inventory_transaction({
-					'doctype': 'Inventory Transaction',
-					'transaction_type':"Stock Entry",
-					'transaction_date':self.posting_date,
-					'transaction_number':self.name,
-					'product_code': p.product_code,
-					'unit':p.unit,
-					'stock_location':self.stock_location,
-					'in_quantity':p.quantity / uom_conversion,
-					"price":p.base_cost,
-					'note': 'New stock Entry submitted.',
-					"stock_entry_type":self.entry_type,
-					"action": "Submit"
-				})
-	if entry_type == 'Stock Out':
-		for p in self.items:
-			if p.is_inventory_product:
-				uom_conversion = get_uom_conversion(p.base_unit, p.unit)			
-				add_to_inventory_transaction({
-					'doctype': 'Inventory Transaction',
-					'transaction_type':"Stock Entry",
-					'transaction_date':self.posting_date,
-					'transaction_number':self.name,
-					'product_code': p.product_code,
-					'unit':p.unit,
-					'stock_location':self.stock_location,
-					'out_quantity':p.quantity / uom_conversion,
-					"price":p.base_cost,
-					'note': 'New stock Entry submitted.',
-					"stock_entry_type":self.entry_type,
-					"action": "Submit"
-				})
+	for p in self.items:
+		if p.is_inventory_product:
+			uom_conversion = get_uom_conversion(p.base_unit, p.unit)			
+			add_to_inventory_transaction({
+				'doctype': 'Inventory Transaction',
+				'transaction_type':"Stock Entry",
+				'transaction_date':self.posting_date,
+				'transaction_number':self.name,
+				'product_code': p.product_code,
+				'unit':p.unit,
+				'stock_location':self.stock_location,
+				'in_quantity':p.quantity / uom_conversion if entry_type == 'Stock In' else 0,
+				'out_quantity':p.quantity / uom_conversion if entry_type == 'Stock Out' else 0,
+				"price":p.base_cost,
+				'note': 'New stock Entry submitted.',
+				"stock_entry_type":self.entry_type,
+				"action": "Submit"
+			})
 
 def update_inventory_on_cancel(self):
 	entry_type =frappe.db.get_value("Stock Entry Type", self.entry_type, "purpose")
-	if entry_type == 'Stock In':
-		for p in self.items:
-			if p.is_inventory_product:
-				uom_conversion = get_uom_conversion(p.base_unit, p.unit)
-				add_to_inventory_transaction({
-					'doctype': 'Inventory Transaction',
-					'transaction_type':"Stock Entry",
-					'transaction_date':self.posting_date,
-					'transaction_number':self.name,
-					'product_code': p.product_code,
-					'unit':p.unit,
-					'stock_location':self.stock_location,
-					'out_quantity':p.quantity / uom_conversion,
-					"price":p.base_cost,
-					'note': 'Stock Entry cancelled.',
-     				"stock_entry_type":self.entry_type,
-					"action": "Cancel"
-				})
-	if entry_type == 'Stock Out':
-		for p in self.items:
-			if p.is_inventory_product:
-				uom_conversion = get_uom_conversion(p.base_unit, p.unit)
-				add_to_inventory_transaction({
-					'doctype': 'Inventory Transaction',
-					'transaction_type':"Stock Entry",
-					'transaction_date':self.posting_date,
-					'transaction_number':self.name,
-					'product_code': p.product_code,
-					'unit':p.unit,
-					'stock_location':self.stock_location,
-					'in_quantity':p.quantity / uom_conversion,
-					"price":p.base_cost,
-					'note': 'Stock Entry cancelled.',
-					"stock_entry_type":self.entry_type,
-					"action": "Cancel"
-				})
-
+	for p in self.items:
+		if p.is_inventory_product:
+			uom_conversion = get_uom_conversion(p.base_unit, p.unit)
+			add_to_inventory_transaction({
+				'doctype': 'Inventory Transaction',
+				'transaction_type':"Stock Entry",
+				'transaction_date':self.posting_date,
+				'transaction_number':self.name,
+				'product_code': p.product_code,
+				'unit':p.unit,
+				'stock_location':self.stock_location,
+				'out_quantity':p.quantity / uom_conversion if entry_type == 'Stock In' else 0,
+				'in_quantity':p.quantity / uom_conversion if entry_type == 'Stock Out' else 0,
+				"price":p.base_cost,
+				'note': 'Stock Entry cancelled.',
+				"stock_entry_type":self.entry_type,
+				"action": "Cancel"
+			})
+	
 def GLEntry(self):
 	inventory_account = frappe.db.get_value('Business Branch',self.business_branch,'default_inventory_account')
 	if self.docstatus == 1:

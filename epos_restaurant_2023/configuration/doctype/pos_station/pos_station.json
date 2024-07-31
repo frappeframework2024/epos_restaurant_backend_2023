@@ -26,27 +26,29 @@
   "show_button_cancel_print_bill",
   "show_start_close_working_day",
   "show_start_close_cashier_shift",
+  "allow_switch_pos_profile",
+  "show_top_up",
+  "show_park_button",
+  "show_button_kod_screen",
   "show_button_pos_reservation",
   "show_button_customer_display",
+  "show_setting_menu",
+  "show_credit_balance",
+  "show_wifi_button",
+  "show_keypad_in_sale_screen",
+  "column_break_yldd",
   "show_option_payment",
   "show_option_quick_pay",
-  "show_sale_more_action_menu",
   "show_reference_button_in_more_menu",
-  "show_button_commission",
-  "show_button_change_price_on_order_station",
-  "show_keypad_in_sale_screen",
-  "show_deleted_sale_product_in_sale_screen",
-  "show_button_change_sale_type",
-  "show_park_button",
-  "show_top_up",
-  "show_setting_menu",
-  "show_button_resend",
-  "show_wifi_button",
-  "show_move_item_button",
   "show_edit_menu_button",
-  "allow_switch_pos_profile",
-  "show_button_kod_screen",
-  "show_credit_balance",
+  "show_sale_more_action_menu",
+  "show_button_change_sale_type",
+  "show_move_item_button",
+  "show_button_resend",
+  "show_button_commission",
+  "show_deleted_sale_product_in_sale_screen",
+  "show_button_change_price_on_order_station",
+  "show_button_delete_item_on_order_station",
   "printers_tab",
   "default_kod_id",
   "default_kod",
@@ -71,13 +73,13 @@
    "default": "1",
    "fieldname": "show_start_close_working_day",
    "fieldtype": "Check",
-   "label": "Show option start/close working day"
+   "label": "Show Option Start/Close Working day"
   },
   {
    "default": "1",
    "fieldname": "show_start_close_cashier_shift",
    "fieldtype": "Check",
-   "label": "Show option start/close cashier shift"
+   "label": "Show Option Start/Close Cashier shift"
   },
   {
    "default": "1",
@@ -149,7 +151,7 @@
    "default": "0",
    "fieldname": "show_button_change_sale_type",
    "fieldtype": "Check",
-   "label": "Show button change sale type"
+   "label": "Show Button Change Sale Type"
   },
   {
    "default": "0",
@@ -219,7 +221,7 @@
    "default": "0",
    "fieldname": "show_top_up",
    "fieldtype": "Check",
-   "label": "Show Top Up"
+   "label": "Show Top Up Button"
   },
   {
    "fieldname": "printers_tab",
@@ -309,11 +311,21 @@
    "fieldname": "show_credit_balance",
    "fieldtype": "Check",
    "label": "Show Credit Balance"
+  },
+  {
+   "fieldname": "column_break_yldd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_button_delete_item_on_order_station",
+   "fieldtype": "Check",
+   "label": "Show Button Delete Item on Order Station"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-26 15:50:16.503033",
+ "modified": "2024-07-31 08:56:07.385216",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

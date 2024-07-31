@@ -20,6 +20,9 @@ class SaleCoupon(Document):
 		
 		if self.price != self.total_payment_amount:
 			frappe.throw("Total Payment must equal to Price.")
+	def on_submit(self):
+		if self.total_payment_amount < self.price:
+			frappe.throw("Please enter payment")
 
 @frappe.whitelist()
 def get_recent_sold_coupon():
@@ -44,6 +47,7 @@ def insert_sale_coupon(data,is_submit):
 		'limit_visit':data['limit_visit'],
 		'expiry_date':data['expiry_date']
 	})
+	
 	if data.get("payments"):
 		for payment in data["payments"]:
 			doc.append("payments",{
@@ -52,7 +56,7 @@ def insert_sale_coupon(data,is_submit):
 				"payment_type":payment["payment_type"],
 				"exchange_rate":payment["exchange_rate"]
 			})
-	doc.save()
+	doc.insert()
 	if is_submit==1:
 		doc.submit()
 
