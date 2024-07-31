@@ -97,17 +97,21 @@
                     </Column>
                     <Column header="Action">
                         <template #body="slotProps">
+                            {{ slotProps.data.name }}
                             <Button type="button" text icon="pi pi-ellipsis-v" @click="toggle" aria-haspopup="true"
                                 aria-controls="overlay_menu" />
-                            <Menu ref="menu" id="overlay_menu" :model="items" plain :popup="true">
+                            <Button type="button" text icon="pi pi-ellipsis-v" @click="toggle" aria-haspopup="true"
+                                aria-controls="overlay_menu" />
+                            <!-- <Menu ref="menu" id="overlay_menu" :model="items" plain :popup="true">
                                 <template #item="{ item, props }">
                                     <div @click="item.click(slotProps.data)"  class="w-full" :class="props.action.class"
                                         :icon="item.icon" :label="item.label">
+                                        {{ slotProps.data.name }}
                                         <span :class="item.icon" class="ml-1 mr-2"></span>
                                         {{ item.label }}
                                     </div>
                                 </template>
-                            </Menu>
+                            </Menu> -->
                         </template>
                     </Column>
 
@@ -285,6 +289,9 @@ function getListSaleCoupon() {
 </script>
 
 <style>
+.p-submenu-header{
+    display: none
+}
 .coupon__table th {
     padding: 8px !important;
 }
