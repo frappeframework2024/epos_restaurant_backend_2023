@@ -17,8 +17,8 @@ class Expense(Document):
 		total_quantity = 0
 		for d in self.expense_items:
 			d.amount = d.price * d.quantity
-			total_quantity = total_quantity + d.quantity
-			total_amount = total_amount + d.amount
+			total_quantity += d.quantity
+			total_amount += d.amount
 
 		self.total_quantity = total_quantity
 		self.total_amount = total_amount
@@ -33,15 +33,14 @@ class Expense(Document):
 def account_validation(self):
 	invalid_modes=[]
 	for a in self.expense_items:
-		if a.expense_account is None or a.expense_account == "":
+		if (a.expense_account or "") == "":
 			invalid_modes.append(get_link_to_form("Expense Code", a.expense_code))
 	if invalid_modes:
 		msg = _("Please Select or Set Default Account For Expense Code {}")
 		frappe.throw(msg.format(", ".join(invalid_modes)), title=_("Missing Account"))
-
 	
 	for a in self.payments:
-		if a.default_account is None or a.default_account == "":
+		if (a.default_account or "") == "":
 			invalid_modes.append(get_link_to_form("Payment Type", a.payment_type))
 	if invalid_modes:
 		msg = _("Please Set Default Account For Payment Type {}")
@@ -75,43 +74,31 @@ def get_payment_type_account(payment_type,branch):
 	return accounts
 
 def GLEntry(self):
+	expense_accounts = defaultdict(int)
+	for a in self.expense_items:
+		category = a.expense_account
+		value = a.amount
+		expense_accounts[category] += value
+	expense_accounts = dict(expense_accounts)
 	if self.docstatus == 1:
-		expense_accounts = defaultdict(int)
-		for a in self.expense_items:
-			category = a.expense_account
-			value = a.amount
-			expense_accounts[category] += value
-		expense_accounts = dict(expense_accounts)
 		for a in expense_accounts:
 			expense_general_ledger_debit(self,account = {"account":a,"amount":expense_accounts[a]})
-		
-		payment_accounts = defaultdict(int)
-		for a in self.payments:
-			category = a.default_account
-			value = a.amount
-			payment_accounts[category] += value
-		payment_accounts = dict(payment_accounts)
+	else:
+		for a in expense_accounts:
+			expense_general_ledger_credit(self,account = {"account":a,"amount":expense_accounts[a]})
+	
+	payment_accounts = defaultdict(int)
+	for a in self.payments:
+		category = a.default_account
+		value = a.amount
+		payment_accounts[category] += value
+	payment_accounts = dict(payment_accounts)
+	if self.docstatus == 1:
 		for a in payment_accounts:
 			expense_general_ledger_credit(self,account = {"account":a,"amount":payment_accounts[a]})
 	else:
-		expense_accounts = defaultdict(int)
-		for a in self.expense_items:
-			category = a.expense_account
-			value = a.amount
-			expense_accounts[category] += value
-		expense_accounts = dict(expense_accounts)
-		for a in expense_accounts:
-			expense_general_ledger_credit(self,account = {"account":a,"amount":expense_accounts[a]})
-		
-		payment_accounts = defaultdict(int)
-		for a in self.payments:
-			category = a.default_account
-			value = a.amount
-			payment_accounts[category] += value
-		payment_accounts = dict(payment_accounts)
 		for a in payment_accounts:
 			expense_general_ledger_debit(self,account = {"account":a,"amount":payment_accounts[a]})
-
 
 def expense_general_ledger_debit(self,account):
 	docs = []
@@ -123,8 +110,7 @@ def expense_general_ledger_debit(self,account):
 		"voucher_type":"Expense",
 		"voucher_number":self.name,
 		"business_branch": self.business_branch,
-		"remark": "Expense {} On Account {}".format(account["amount"],account["account"])
-
+		"remark": "Expense {} On Account {}".format(self.name,account["account"]) if self.docstatus == 1 else "Cancel Expense {} On Account {}".format(self.name,account["account"])
 	}
 	docs.append(doc)
 	submit_general_ledger_entry(docs = docs)
@@ -139,7 +125,7 @@ def expense_general_ledger_credit(self,account):
         "voucher_type":"Expense",
         "voucher_number":self.name,
         "business_branch": self.business_branch,
-		"remark": "Expense Payment {} On Account {}".format(account["amount"],account["account"])
+		"remark": "Expense Payment {} On Account {}".format(self.name,account["account"]) if self.docstatus == 1 else "Cancel Expense Payment {} On Account {}".format(self.name,account["account"])
     }
     docs.append(doc)
     submit_general_ledger_entry(docs=docs)

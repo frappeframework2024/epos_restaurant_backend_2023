@@ -41,11 +41,13 @@ frappe.ui.form.on("Stock Entry",{
 		frm.refresh_field('scan_barcode');
 	},
     stock_location(frm){
-		frm.doc.items.forEach(a => {
-			set_expense_account(frm,'Stock Entry Products',a.name);
-			set_cost(frm,'Stock Entry Products',a.name);
-		});
-		update_totals(frm);
+		if(frm.doc.items){
+			frm.doc.items.forEach(a => {
+				set_expense_account(frm,'Stock Entry Products',a.name);
+				set_cost(frm,'Stock Entry Products',a.name);
+			});
+			update_totals(frm);
+		}
     },
 });
 
@@ -57,7 +59,7 @@ frappe.ui.form.on("Stock Entry Products", {
     quantity(frm,cdt, cdn){
         update_item_amount(frm,cdt, cdn)
     },
-    price(frm,cdt, cdn){
+    cost(frm,cdt, cdn){
         update_item_amount(frm,cdt, cdn)
     },
 	unit(frm,cdt,cdn){
@@ -91,7 +93,7 @@ function set_expense_account(frm,cdt,cdn){
 
 function update_item_amount(frm,cdt, cdn)  {
     doc = locals[cdt][cdn];
-	frappe.model.set_value(cdt, cdn, "amount", (doc.quantity * doc.price));
+	frappe.model.set_value(cdt, cdn, "amount", (doc.quantity * doc.cost));
 	frappe.model.set_value(cdt, cdn, "total_secondary_cost", (doc.quantity * doc.secondary_cost));
 	update_totals(frm);
 }
@@ -107,9 +109,9 @@ function set_cost(frm,cdt,cdn){
 		},
 		callback: function(r){
 			if(doc!=undefined){
-				frappe.model.set_value(cdt, cdn, "price", (r.message.cost));
+				frappe.model.set_value(cdt, cdn, "cost", (r.message.cost));
 				frappe.model.set_value(cdt, cdn, "base_cost", (r.message.cost));
-				frappe.model.set_value(cdt, cdn, "amount", (doc.quantity * doc.price));
+				frappe.model.set_value(cdt, cdn, "amount", (doc.quantity * doc.cost));
 			}
 		}
 	});
@@ -118,10 +120,12 @@ function set_cost(frm,cdt,cdn){
 function update_totals(frm) {
     let sum_total = 0;
 	let total_qty = 0;
-	frm.doc.items.forEach(d => {
-		sum_total += flt(d.amount);
-		total_qty += flt(d.quantity);
-	});
+	if(frm.doc.items){
+		frm.doc.items.forEach(d => {
+			sum_total += flt(d.amount);
+			total_qty += flt(d.quantity);
+		});
+	}
     frm.set_value('total_amount', sum_total);
     frm.set_value('total_quantity', total_qty);
 }
@@ -134,7 +138,7 @@ function check_row_exist(frm, barcode){
 function update_product_quantity(frm, row){
 	if(row!=undefined){
 		frappe.model.set_value('Stock Entry Products', row.doc.name, "quantity", (row.doc.quantity + 1));
-		frappe.model.set_value('Stock Entry Products', row.doc.name, "amount", (row.doc.quantity * row.doc.price));
+		frappe.model.set_value('Stock Entry Products', row.doc.name, "amount", (row.doc.quantity * row.doc.cost));
 		update_totals(frm);
 	}
 }
@@ -158,9 +162,9 @@ function add_product_child(frm,p){
 	if(doc!=undefined){ 
 		doc.product_code = p.product_code;
 		doc.product_name = p.product_name_en;
-		doc.price = p.price;
+		doc.cost = p.cost;
 		doc.quantity = 1;
-		doc.amount = doc.quantity * doc.price;
+		doc.amount = doc.quantity * doc.cost;
 		doc.unit = p.unit;
         doc.is_inventory_product = p.is_inventory_product;
 		frappe.call({
@@ -171,9 +175,9 @@ function add_product_child(frm,p){
 				unit:doc.unit
 			},
 			callback: function(r){
-				doc.price = r.message.cost;
+				doc.cost = r.message.cost;
 				doc.base_cost = r.message.cost;
-				doc.amount = doc.quantity * doc.price;
+				doc.amount = doc.quantity * doc.cost;
 			}
 		}).then((v)=>{
 			frm.refresh_field('items');
