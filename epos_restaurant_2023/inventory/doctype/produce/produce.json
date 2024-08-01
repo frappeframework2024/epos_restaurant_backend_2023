@@ -19,6 +19,7 @@
   "target_location",
   "section_break_hbno",
   "bom",
+  "valuation_based_on",
   "section_break_yjda",
   "produce_items",
   "amended_from"
@@ -97,10 +98,12 @@
   },
   {
    "fetch_from": "product.unit",
+   "fetch_if_empty": 1,
    "fieldname": "unit",
    "fieldtype": "Link",
    "label": "Unit",
-   "options": "Unit Of Measurement"
+   "options": "Unit Of Measurement",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_huej",
@@ -123,12 +126,20 @@
    "label": "Target Location",
    "options": "Stock Location",
    "reqd": 1
+  },
+  {
+   "default": "Cost",
+   "depends_on": "eval:doc.bom == \"\"",
+   "fieldname": "valuation_based_on",
+   "fieldtype": "Select",
+   "label": "Valuation Based On",
+   "options": "Cost\nPrice"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-01 13:55:17.484096",
+ "modified": "2024-08-01 14:50:22.828309",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Produce",

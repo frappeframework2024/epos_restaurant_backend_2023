@@ -4,11 +4,11 @@
 frappe.ui.form.on("Cash Transaction", {
 	setup(frm) {
         frm.set_query('payment_type', () => {
-            return {
-                filters: {
-                    payment_type_group: ['=', 'Cash']
-                }
-            }
+            // return {
+            //     filters: {
+            //         payment_type_group: ['=', 'Cash']
+            //     }
+            // }
         }) 
     },
     input_amount(frm){ 

@@ -31,7 +31,15 @@
                             ></v-text-field>
 
                         </v-col>
-                        <v-col cols="12" md="12">
+                        {{ cash }}
+                        <v-col cols="12" md="6">
+                            <v-select height="100%" density="comfortable" :label="$t('Transaction Type')"
+                                v-model="cash.transaction_type" 
+                                :items="transaction_type"
+                                hide-details hide-no-data variant="solo"
+                                ></v-select>
+                        </v-col>
+                        <v-col cols="12" md="6">
                             <ComInput readonly v-model="cash.amount" type="number" :label="$t('Amount')" />
                         </v-col>
                         <v-col cols="12">
@@ -53,6 +61,8 @@ const emit = defineEmits(["resolve"])
 const props = defineProps({
     params: Object
 })
+
+const transaction_type = ref(['Cash Float', 'Expense'])
 
 const toaster = createToaster({ position: 'top-right' })
 const payment_types = JSON.parse(localStorage.getItem('setting')).payment_types;

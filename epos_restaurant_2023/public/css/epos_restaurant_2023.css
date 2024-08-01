@@ -577,3 +577,14 @@ width: 1px;
 background-color: #fff;
 color: #383838;
 }
+
+.link_line_action{
+    border: 1px dashed #4338ca;
+    border-radius: 10px;
+    padding: 0 5px;
+    color: #4338ca;
+    cursor: pointer;
+    display: inline-block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}

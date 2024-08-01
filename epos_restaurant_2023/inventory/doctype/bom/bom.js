@@ -2,6 +2,18 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("BOM", {
+    refresh(frm){
+        if(frm.doc.docstatus == 1){
+            frm.add_custom_button(__('Update Cost'), function(){
+                frappe.confirm('<b>This Will Update Product Cost For All Stock Location.</b></br> Are you sure you want to proceed?',
+                    () => {
+                        update_all_cost(frm)
+                    }, () => {
+                       
+                    })
+            });
+        }
+    },
 	valuation_based_on(frm) {
         link = frm.doc.valuation_based_on == "Cost" ? 'epos_restaurant_2023.inventory.inventory.get_bom_product_cost':'epos_restaurant_2023.inventory.inventory.get_bom_product_price'
         frm.doc.items.forEach(a => {
@@ -41,32 +53,34 @@ frappe.ui.form.on("BOM Items", {
 		})
 	},
     cost(frm,cdt,cdn){
-        let doc = locals[cdt][cdn];
-        frappe.model.set_value(cdt, cdn, "amount", (doc.cost * doc.quantity));
-        update_totals(frm)
+        update_item(frm,cdt,cdn)
     },
     quantity(frm,cdt,cdn){
-        let doc = locals[cdt][cdn];
-        frappe.model.set_value(cdt, cdn, "amount", (doc.cost * doc.quantity));
-        update_totals(frm)
+        update_item(frm,cdt,cdn)
     },
     unit(frm,cdt,cdn){
-        let doc = locals[cdt][cdn];
-        frappe.call({
-			method: "epos_restaurant_2023.inventory.inventory.get_uom_conversion",
-			args: {
-				from_uom: doc.base_unit, 
-                to_uom: doc.unit
-			},
-			callback: (r) => {
-				if(r.message){
-                    qty = (1/(r.message || 0))
-					frappe.model.set_value(cdt, cdn, "quantity", qty.toFixed(2));
-				}
-			}
-		})
+        update_item(frm,cdt,cdn)
     }
 });
+
+function update_item(frm,cdt,cdn){
+    let doc = locals[cdt][cdn];
+    frappe.call({
+        method: "epos_restaurant_2023.inventory.inventory.get_uom_conversion",
+        args: {
+            from_uom: doc.base_unit, 
+            to_uom: doc.unit
+        },
+        callback: (r) => {
+            if(r.message){
+                uom_conversion = (1/(r.message || 0))
+                frappe.model.set_value(cdt, cdn, "amount", (doc.cost * doc.quantity * uom_conversion.toFixed(2)));
+            }
+        }
+    }).then((r)=>{
+        update_totals(frm)
+    })
+}
 
 function update_totals(frm){
     let total_cost = 0;
@@ -79,4 +93,16 @@ function update_totals(frm){
 
     frm.set_value('total_qty', total_qty);
     frm.set_value('total_cost', total_cost);
+}
+
+function update_all_cost(frm) {
+    frappe.call({
+        method: "update_cost",
+        doc:frm.doc,
+        callback: (r) => {
+            if(r.message){
+                frappe.msgprint(r.message)
+            }
+        }
+    })
 }

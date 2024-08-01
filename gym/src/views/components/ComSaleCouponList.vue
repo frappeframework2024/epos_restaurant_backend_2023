@@ -17,34 +17,17 @@
     </div>
     <div>
         <div class="m-3 p-4 bg-white rounded">
-            <div class="grid m-3">
 
-                <div class="col-3">
-                    <div class="flex flex-column gap-2">
-                        <label for="coupon_number">Coupon #</label>
-                        <InputText id="coupon_number" @update="onSearchCouponNumber" :value="searchCouponNumber"
-                            aria-describedby="coupon_number-help" />
-                    </div>
-                </div>
-                <div class="col-3">
-                    <div class="flex flex-column gap-2">
-                        <label for="member_name">Member Name</label>
-                        <InputText id="member_name" @update="onSearchMemberName" :value="searchMemberName"
-                            aria-describedby="member_name-help" />
-
-                    </div>
-                </div>
-            </div>
             <div class="table-wrapper">
-                <DataTable :value="saleCouponList" tableStyle="min-width: 50rem" tableClass="coupon__table">
-                    <Column header="Coupon #">
-
+                <DataTable v-model:filters="filters" :paginator="true" dataKey="name" filterDisplay="row"  :value="saleCouponList" tableStyle="min-width: 50rem" tableClass="coupon__table">
+                    <Column header="Coupon #" field="coupon_number">
+                        <template #filter="{ filterModel, filterCallback }">
+                            <InputText type="text" v-model="filterModel.value" @input="onFilter(filterModel,filterCallback())"
+                                class="p-column-filter" placeholder="Search by Coupon#" />
+                        </template>
                         <template #body="slotProps">
                             {{ slotProps.data.coupon_number }}
-
                         </template>
-
-
                     </Column>
                     <Column field="posting_date" header="Posting Date">
                         <template #body="slotProps">
@@ -82,13 +65,13 @@
                     <Column header="Status" style="width: 200px">
                         <template #body="slotProps">
                             <div class="flex flex-wrap align-items-center">
-                                
+
                                 <Chip v-if="slotProps.data.coupon_type == 'Membership '" class="bg-primary m-0"
                                     :label="slotProps.data.coupon_type" size="small" icon="pi pi-id-card" />
                                 <Chip v-else :label="slotProps.data.coupon_type" size="small" icon="pi pi-id-card"
                                     class="m-1" />
-                                <Chip v-if="slotProps.data.docstatus == 1" label="Submitted" icon="pi pi-verified" size="small"
-                                    class="m-1 bg-green-500" />
+                                <Chip v-if="slotProps.data.docstatus == 1" label="Submitted" icon="pi pi-verified"
+                                    size="small" class="m-1 bg-green-500" />
                                 <Chip label="Expired" style="height: 16px !important;" class="bg-red-500 text-100"
                                     v-if="moment().isAfter(moment(slotProps.data.expiry_date))" />
                             </div>
@@ -97,12 +80,14 @@
                     </Column>
                     <Column header="Action" class="text-center">
                         <template #body="slotProps">
-                            <Button type="button" outlined rounded class="mx-1" v-if="slotProps.data.docstatus != 1"  icon="pi pi-pencil" @click="onEditClick(slotProps.data)" aria-haspopup="true"
+                            <Button type="button" outlined rounded class="mx-1" v-if="slotProps.data.docstatus != 1"
+                                icon="pi pi-pencil" @click="onEditClick(slotProps.data)" aria-haspopup="true"
                                 aria-controls="overlay_menu" />
-                            <Button type="button"  outlined rounded class="mx-1" v-if="slotProps.data.docstatus == 0" severity="success" icon="pi pi-verified" @click="onSubmit( slotProps.data.name)" aria-haspopup="true"
-                                aria-controls="overlay_menu" />
-                            
-                           
+                            <Button type="button" outlined rounded class="mx-1" v-if="slotProps.data.docstatus == 0"
+                                severity="success" icon="pi pi-verified" @click="onSubmit(slotProps.data.name)"
+                                aria-haspopup="true" aria-controls="overlay_menu" />
+
+
                         </template>
                     </Column>
 
@@ -123,13 +108,13 @@ import { inject, ref, onMounted } from 'vue'
 import DataTable from 'primevue/datatable';
 import ConfirmDialog from 'primevue/confirmdialog';
 import Chip from 'primevue/chip';
-import Menu from 'primevue/menu';
 import InputText from 'primevue/inputtext';
 import Column from 'primevue/column';
 import ComAddSaleCoupon from './ComAddSaleCoupon.vue';
 import Button from 'primevue/button';
 import { useDialog } from 'primevue/usedialog';
 import { useConfirm } from "primevue/useconfirm";
+import { FilterMatchMode } from 'primevue/api';
 const confirm = useConfirm();
 const toast = useToast();
 const dialog = useDialog();
@@ -138,58 +123,37 @@ const db = frappe.db();
 const call = frappe.call();
 const loading = ref(false)
 const saleCouponList = ref([])
-const searchCouponNumber = ref([])
 const menu = ref();
+const filters = ref({
+    coupon_number: { value: '', matchMode: FilterMatchMode.CONTAINS }
+});
 const toggle = (event) => {
     menu.value.toggle(event);
 };
-const items = ref([
-    {
-        items: [
-            {
-                label: 'Submit',
-                icon: 'pi pi-refresh',
 
-                "click": (data) => {
-                    
-                },
-            },
-            {
-                label: 'Edit',
-                icon: 'pi pi-upload',
-
-                "click": (data) => {
-                    
-                    
-                },
-            }
-        ]
-    }
-]);
-
-function onEditClick(data){
+function onEditClick(data) {
     dialog.open(ComAddSaleCoupon,
-                        {
-                            onClose: (opt) => {
-                                getListSaleCoupon()
-                            },
-                            data: {
-                                saleCoupon:data
-                            },
-                            props: {
-                                header: 'Sale Coupon',
-                                style: {
-                                    width: '50vw',
+        {
+            onClose: (opt) => {
+                getListSaleCoupon()
+            },
+            data: {
+                saleCoupon: data
+            },
+            props: {
+                header: 'Sale Coupon',
+                style: {
+                    width: '50vw',
 
-                                },
-                                breakpoints: {
-                                    '960px': '75vw',
-                                    '640px': '90vw'
-                                },
+                },
+                breakpoints: {
+                    '960px': '75vw',
+                    '640px': '90vw'
+                },
 
-                                modal: true
-                            }
-                        });
+                modal: true
+            }
+        });
 }
 
 function onSubmit(docname) {
@@ -204,20 +168,25 @@ function onSubmit(docname) {
         accept: () => {
             call.post("epos_restaurant_2023.coupon.doctype.sale_coupon.sale_coupon.submit_sale_coupon", { "docname": docname }).then((resp) => {
                 toast.add({ severity: 'success', summary: 'Validation', detail: "Submit success.", life: 3000 });
-            }).catch((err)=>{
-                if (err.httpStatus == 403){
+            }).catch((err) => {
+                if (err.httpStatus == 403) {
                     toast.add({ severity: 'error', summary: 'Validation', detail: err._error_message, life: 3000 });
-                }else{
-                    
+                } else {
+
                     toast.add({ severity: 'error', summary: 'Validation', detail: JSON.parse(JSON.parse(err["_server_messages"])), life: 3000 });
                 }
-                
+
             })
         },
         reject: () => {
             isSaving.value = true
         }
     });
+}
+
+function onFilter(keyword,filterCallback){
+    getListSaleCoupon(keyword)
+    filterCallback()
 }
 
 function onAddCoupon() {
@@ -270,11 +239,12 @@ onMounted(() => {
 function onRefreshClick() {
     getListSaleCoupon()
 }
-function getListSaleCoupon() {
+function getListSaleCoupon(keyword="") {
     loading.value = true;
     db.getDocList('Sale Coupon', {
         fields: ["name", "coupon_number", "posting_date", "modified", "coupon_type", "docstatus", "membership", "member_name",
             "phone_number", "price", "expiry_date", "visited_count", "limit_visit"],
+        filters: keyword == "" ? [] : [ ["name", "like", `%${keyword.value}%`]],
         page_length: 500,
         orderBy: {
             field: 'creation',
@@ -285,11 +255,11 @@ function getListSaleCoupon() {
         loading.value = false
     }).catch((err) => {
         console.log(err)
-        if (error.httpStatus == 403){
+        if (error.httpStatus == 403) {
             toast.add({ severity: 'error', summary: 'Validation', detail: err._error_message, life: 3000 });
         }
-        
-        saleCouponList.value=[]
+
+        saleCouponList.value = []
         loading.value = false
     })
 }
@@ -297,9 +267,10 @@ function getListSaleCoupon() {
 </script>
 
 <style>
-.p-submenu-header{
+.p-submenu-header {
     display: none
 }
+
 .coupon__table th {
     padding: 8px !important;
 }
@@ -335,7 +306,7 @@ function getListSaleCoupon() {
 }
 
 .table-wrapper {
-    height: 500px;
+    height: 450px;
     overflow: auto;
 }
 </style>

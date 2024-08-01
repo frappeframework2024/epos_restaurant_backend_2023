@@ -35,18 +35,21 @@ window.addEventListener('load', function () {
 
         const sidebar = document.querySelector(".layout-side-section")
         if (sidebar){
-            const listSidebar = sidebar.querySelector('.list-sidebar.overlay-sidebar')
-            const formSidebar = sidebar.querySelector('.form-sidebar.overlay-sidebar')
+            const listSidebar = sidebar.querySelector('.desk-sidebar.list-unstyled.sidebar-menu')
+            const formSidebar = sidebar.querySelector('.list-unstyled.sidebar-menu')
             if (listSidebar) {
                 const listParent = listSidebar.parentNode
-                if (listParent) {
-                    listParent.remove()
+                const listTopParent = listParent.parentNode
+                console.log(listTopParent)
+                if (listTopParent) {
+                    listTopParent.remove()
                 }
             }
             if (formSidebar) {
                 const formParent = formSidebar.parentNode
-                if (formParent) {
-                    $(formParent).css('display', 'none')
+                const topParent = formParent.parentNode
+                if (topParent) {
+                    $(topParent).css('display', 'none')
                 }
             }
         }
@@ -177,18 +180,21 @@ $(document).ready(function(){
     const sidebar = document.querySelector(".layout-side-section")
 
     if (sidebar){
-        const listSidebar = sidebar.querySelector('.list-sidebar.overlay-sidebar')
-        const formSidebar = sidebar.querySelector('.form-sidebar.overlay-sidebar')
+        const listSidebar = sidebar.querySelector('.desk-sidebar.list-unstyled.sidebar-menu')
+        const formSidebar = sidebar.querySelector('.list-unstyled.sidebar-menu')
         if (listSidebar) {
             const listParent = listSidebar.parentNode
-            if (listParent) {
-                listParent.remove()
+            const listTopParent = listParent.parentNode
+            console.log(listTopParent)
+            if (listTopParent) {
+                listTopParent.remove()
             }
         }
         if (formSidebar) {
             const formParent = formSidebar.parentNode
-            if (formParent) {
-                $(formParent).css('display', 'none')
+            const topParent = formParent.parentNode
+            if (topParent) {
+                $(topParent).css('display', 'none')
             }
         }
     }

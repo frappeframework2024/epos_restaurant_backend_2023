@@ -122,9 +122,9 @@ function getGuestNoteDetail (frm) {
         args: {
             customer_name: frm.doc.name,
         },
-        callback: (result => {
+        callback: (result => { 
             console.log(result.message)
-            let html = frappe.render_template("guest_note_detail", {data:result.message,dataLength:result.message.length}); 
+            let html = frappe.render_template("guest_note_detail", {data:result.message}); 
             $(frm.fields_dict["guest_note_detail"].wrapper).html(html);
             frm.refresh_field("guest_note_detail");
 

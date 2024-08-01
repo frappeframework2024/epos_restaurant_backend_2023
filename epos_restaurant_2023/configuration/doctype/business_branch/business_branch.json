@@ -53,6 +53,8 @@
   "default_cash_account",
   "default_change_account",
   "default_bank_account",
+  "default_pos_difference_amount_account",
+  "default_cash_transaction_expense_account",
   "column_break_uwgp",
   "default_income_account",
   "default_receivable_account",
@@ -446,12 +448,25 @@
    "fieldtype": "Link",
    "label": "Default Sale Cash Coupon Claim Account",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_pos_difference_amount_account",
+   "fieldtype": "Link",
+   "label": "Default POS Difference Amount Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_cash_transaction_expense_account",
+   "fieldtype": "Link",
+   "label": "Default Cash Transaction Expense Account",
+   "link_filters": "[[{\"fieldname\":\"default_cash_transaction_expense_account\",\"field_option\":\"Chart Of Account\"},\"root_type\",\"=\",\"Expenses\"]]",
+   "options": "Chart Of Account"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-27 09:57:54.004791",
+ "modified": "2024-08-01 15:58:45.639143",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",

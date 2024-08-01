@@ -7,7 +7,14 @@ def add_to_inventory_transaction(data):
     
     doc = frappe.get_doc(data)
     doc.insert()
-    
+
+@frappe.whitelist(allow_guest=True)
+def get_product_qty(product,stock_location):
+    qty = 0
+    current_qtys = frappe.db.sql("select quantity from `tabStock Location Product` where product_code = '{0}' and stock_location = '{1}'".format(product,stock_location),as_dict=True)
+    if len(current_qtys)>0:
+        qty = current_qtys[0].quantity
+    return qty
 
 def update_product_quantity(stock_location,product_code, quantity,cost,doc):
     if doc:
@@ -47,7 +54,7 @@ def get_default_bom(product):
 
 @frappe.whitelist(allow_guest=True)
 def get_bom_items(bom_name):
-    bom_items = frappe.db.sql("select product,product_name,unit,cost,quantity,amount from `tabBOM Items` where parent = '{0}'".format(bom_name),as_dict=True)
+    bom_items = frappe.db.sql("select product,product_name,unit,cost,quantity,amount,base_unit from `tabBOM Items` where parent = '{0}'".format(bom_name),as_dict=True)
     return bom_items
 
 @frappe.whitelist(allow_guest=True)

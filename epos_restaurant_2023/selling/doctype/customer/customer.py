@@ -408,7 +408,13 @@ def get_guest_note_detail(customer_name):
 			name, 
 			content, 
 			creation, 
-			modified_by 
+			modified_by,
+			subject,
+			reference_doctype,
+			reference_name,
+			comment_by,
+			custom_audit_trail_type,
+			custom_posting_date
 		from  
 			`tabComment` 
 		where 

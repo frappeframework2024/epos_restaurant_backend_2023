@@ -3,7 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
-from epos_restaurant_2023.inventory.inventory import check_uom_conversion
+from epos_restaurant_2023.inventory.inventory import check_uom_conversion,get_product_qty
 
 
 class BOM(Document):
@@ -11,6 +11,24 @@ class BOM(Document):
 		validate_amount(self)
 		validate_uom_conversion(self)
 		validate_is_default(self)
+	
+	@frappe.whitelist()
+	def update_cost(bom):
+		stock_location = frappe.db.get_list('Stock Location',filters={'disabled': 0},fields=['name'],as_list=False)
+		bom = frappe.get_doc("BOM", bom)
+		for a in stock_location:
+			stock_entry = frappe.new_doc("Stock Adjustment")
+			stock_entry.stock_location = a.name
+			stock_entry.append("products",{
+				'product_code' : bom.product,
+				'product_name' : bom.product_name,
+				'unit' : bom.product_unit,
+				'base_unit' : bom.product_unit,
+				'cost' : bom.total_cost,
+				'qty' : get_product_qty(bom.product,a.stock_location)})
+			stock_entry.docstatus = 1
+			stock_entry.save()
+		return "Cost Updated For All Stock Location"
 
 def validate_amount(self):
 	error = ""
