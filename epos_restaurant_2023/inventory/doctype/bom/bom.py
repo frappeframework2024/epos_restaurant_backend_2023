@@ -10,6 +10,7 @@ class BOM(Document):
 	def validate(self):
 		validate_amount(self)
 		validate_uom_conversion(self)
+		validate_is_default(self)
 
 def validate_amount(self):
 	error = ""
@@ -24,6 +25,14 @@ def validate_uom_conversion(self):
 	for d in self.items:
 		if d.unit != d.base_unit:
 			if not check_uom_conversion(d.base_unit, d.unit):
-					error += "Row #{0} Please Add UoM conversion From {1} To {2}".format(d.idx, d.base_unit, d.unit)
+					error += "Row #{0} Please Add UoM Conversion From <b>{1}</b> To <b>{2}</b>".format(d.idx, d.base_unit, d.unit)
 	if error:
 		frappe.throw(error)
+
+def validate_is_default(self):
+	data = frappe.db.sql("select count(*) is_default from `tabBOM` where product = '{}' and is_default=1".format(self.product),as_dict=True)
+	if data:
+		if data[0].is_default > 0 and self.is_default == 1:
+			frappe.msgprint("This Product Already Has Default BOM. Removing Is Default")
+			self.is_default = 0
+			self.reload()

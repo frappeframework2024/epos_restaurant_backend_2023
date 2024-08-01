@@ -1697,7 +1697,7 @@ def validate_sale_network_lock(param):
     data = frappe.db.sql(sql,param,as_dict=1)     
     result = {} 
     if len(data) > 0 : 
-        if param["sale"]:
+        if "sale" in [k for k in param.keys()]:
             if param["sale"] in [s["sale"] for s in data]:
                 result = {"status":0,"message":"There is an other station actived"}
 
