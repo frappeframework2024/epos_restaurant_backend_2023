@@ -17,7 +17,11 @@
             </div>
             <div class="col-12 lg:col-12">
                 <div class="border-round-sm border-1 border-500 surface-50 p-2">
-                    <Chip label="Expired" style="height: 24px !important;" class="bg-red-500 text-100" v-if="isExpired"/>
+                    <template v-if="scanedCoupon">
+                        <Chip label="Expired" style="height: 24px !important;font-size: 12px" class="bg-red-500 text-100" v-if="isExpired"/>
+                        <Chip label="Submitted" style="height: 24px !important;font-size: 12px" class="bg-green-500 text-100 mx-2" v-if="scanedCoupon.docstatus === 1"/>
+                    </template>
+                    
                     <div v-if="scanedCoupon">
                         <ComDisplayLabelValue label="Coupon Number" :value="scanedCoupon.coupon_number"/>
                         <ComDisplayLabelValue label="Member Name" :value="scanedCoupon.member_name"/>
@@ -47,12 +51,11 @@
         <div class="flex justify-content-end mt-5  py-2"
             style="position: absolute;bottom: 0;width: 100%;left: 0;background-color: #efefef">
             <div class="card flex flex-wrap gap-2 mr-2">
-                <Button @click="onCheckIn" :disabled="isExpired" :loading="isSaving" label="Save" icon="pi pi-check"/>
+                <Button @click="onCheckIn" :disabled="isExpired || scanedCoupon.docstatus != 1" v-if="scanedCoupon" :loading="isSaving" severity="success" label="Check-In" icon="pi pi-check"/>
                 <Button @click="closeDialog" label="Cancel" severity="danger" icon="pi pi-times" />
             </div>
         </div>
     </div>
-    <ConfirmDialog></ConfirmDialog>
 </template>
 
 <script setup>
@@ -100,7 +103,6 @@ async function onCheckIn() {
         rejectLabel: 'Cancel',
         acceptLabel: 'Save',
         accept: () => {
-            
             let dataToSave = JSON.parse(JSON.stringify(scanedCoupon.value))
             dataToSave.visited_count = visitCount.value
             db.createDoc('Check In Sale Coupon',dataToSave).then((res)=>{
@@ -108,7 +110,12 @@ async function onCheckIn() {
                 toast.add({ severity: 'success', summary: 'Success', detail: `${res.data.coupon_number} check in success.`, life: 3000 });
                 isSaving.value = false
             }).catch((error)=>{
-                toast.add({ severity: 'error', summary: "Check In Failed", detail: JSON.parse(JSON.parse(error["_server_messages"])).message , life: 3000 });
+                if (error.httpStatus==403){
+                    toast.add({ severity: 'error', summary: error.exc_type, detail: error._error_message , life: 3000 });
+                }else{
+                    toast.add({ severity: 'error', summary: "Check In Failed", detail: JSON.parse(JSON.parse(error["_server_messages"])).message , life: 3000 });
+                }
+                
                 isSaving.value = false
             })
         },
@@ -121,7 +128,7 @@ async function onCheckIn() {
     isSaving.value = false   
 }
 function onScanCoupon(){
-    call.get("epos_restaurant_2023.gym.doctype.sale_coupon.sale_coupon.get_coupon_by_number",{
+    call.get("epos_restaurant_2023.coupon.doctype.sale_coupon.sale_coupon.get_coupon_by_number",{
         coupon_number:couponNumber.value
     }).then((resp)=>{
         scanedCoupon.value = resp.message

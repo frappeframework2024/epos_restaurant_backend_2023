@@ -31,6 +31,7 @@ frappe.ui.form.on("Customer", {
         }
         getCustomerInfo(frm)
         getPOSMiscSaleInfo(frm)
+        getGuestFolio(frm)
         
     }
     
@@ -73,8 +74,7 @@ function getCustomerInfo (frm) {
     })
 }
 
-function getPOSMiscSaleInfo(frm) {
-    let parser = new DOMParser();
+function getPOSMiscSaleInfo(frm) { 
     $(frm.fields_dict["pos_misc_sale"].wrapper).html("Loading customer POS Misc Sale...");
     frm.refresh_field("pos_misc_sale");
 
@@ -88,7 +88,7 @@ function getPOSMiscSaleInfo(frm) {
             $(frm.fields_dict["pos_misc_sale"].wrapper).html(html);
             frm.refresh_field("pos_misc_sale");
 
-            pagination(frm)
+            pagination(frm, field_dict = 'pos_misc_sale', wrapper = '#accordion', content = '.sale-card')
             
         }),
         error: (error => {
@@ -97,24 +97,46 @@ function getPOSMiscSaleInfo(frm) {
     });
 }
 
-function pagination (frm) {
-    const pageContent = $(frm.fields_dict["pos_misc_sale"].wrapper)[0].querySelector('#accordion')
-    const itemsPerPage = 10;
+
+function getGuestFolio (frm) {
+    $(frm.fields_dict["guest_folio"].wrapper).html("Loading customer folio...");
+    frm.refresh_field("guest_folio");
+
+    frappe.call({
+        method: "epos_restaurant_2023.selling.doctype.customer.customer.get_guest_folio_list",
+        args: {
+            customer_name: frm.doc.name,
+        },
+        callback: (result => {
+            let html = frappe.render_template("guest_folio_list", {data:result.message,dataLength:result.message.length}); 
+            $(frm.fields_dict["guest_folio"].wrapper).html(html);
+            frm.refresh_field("guest_folio");
+
+            pagination(frm, field_dict = 'guest_folio', wrapper = '#guest_folio_list', content = '.folio_list_data')
+        }),
+        error: (error => {
+            frappe.throw(error);
+        })
+    })
+}
+
+// pagination
+function pagination (frm, field_dict, wrapper, content) {
+    const pageContent = $(frm.fields_dict[field_dict].wrapper)[0].querySelector(wrapper)
+    const itemsPerPage = 20;
     let currentPage = 0;
 
-    const items = Array.from(pageContent.querySelectorAll('.sale-card'))
+    const items = Array.from(pageContent.querySelectorAll(content))
 
-    showPage()
-    createPageButtons()
-
-    // console.log(items)
     function showPage(page) {
         const startIndex = page * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
         items.forEach((item, index) => {
             item.classList.toggle('hidden', index < startIndex || index >= endIndex);
         }); 
-        // updateActiveButtonStates();
+        setTimeout(()=>{
+            updateActiveButtonStates();
+        }, 100)
     }
 
     function createPageButtons() {
@@ -129,11 +151,31 @@ function pagination (frm) {
             const pageButton = document.createElement('button');
             pageButton.textContent = i + 1;
             pageButton.addEventListener('click', () => {
-              currentPage = i;
-              showPage(currentPage);
-              updateActiveButtonStates();
+                currentPage = i;
+                showPage(currentPage);
+                setTimeout(()=>{
+                    updateActiveButtonStates();
+                }, 100)
             })
-        }
+            paginationDiv.appendChild(pageButton);
+        } 
+        
     }
+
+    function updateActiveButtonStates() {
+        const pageButtons = pageContent.querySelectorAll('.pagination button');
+        pageButtons.forEach((button, index) => {
+            if (index === currentPage) {
+            button.classList.add('active');
+            } else {
+            button.classList.remove('active');
+            }
+        });
+    } 
+
+
+    showPage(currentPage)
+    createPageButtons()
 }
+
 

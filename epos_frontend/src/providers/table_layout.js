@@ -121,6 +121,29 @@ export default class TableLayout {
     onEnableArrangeTable(status) {
         this.canArrangeTable = status;
     }
+
+
+   async validateNewtowkSaleLock(table,sale=undefined){ 
+ 
+        if(this.setting.device_setting.use_sale_network_lock == 1){      
+            let param = {
+                "table_id":table.id, 
+                "sale":sale,
+                "table_name":table.tbl_no, 
+                "pos_station":localStorage.getItem("device_name"), 
+                "pos_profile": localStorage.getItem("pos_profile")
+            }
+           const resp = await call.post("epos_restaurant_2023.api.api.validate_sale_network_lock",{"param": param})     
+           if(resp.message.status == 0){
+                toaster.warning($t(resp.message.message))
+                return true
+           }else{
+                return false;
+           }
+        }
+        return false
+    }
+
 }
 
 

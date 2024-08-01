@@ -17,10 +17,9 @@ class MembershipPayment(Document):
 										'membership':self.membership
 									},
 									['name','!=',self.name]
-								],)
+								])
 		if doc:
 			frappe.throw("There are draft payment need to submit first.")
-		
 
 		if (self.input_amount or 0) ==0  or  (self.payment_amount or 0) == 0:
 			frappe.throw("Input or Paymout amount not allow zero(0)")

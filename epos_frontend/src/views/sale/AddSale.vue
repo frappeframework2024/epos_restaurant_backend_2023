@@ -113,19 +113,21 @@ function onSearchProduct(open) {
     openSearch.value = open
 }
 
-onMounted(() => {
-
+onMounted(() => { 
     if (sale.getString(route.params.name) == "") {
         if (sale.sale.sale_status == undefined) {
             if (sale.setting.table_groups.length > 0) {
                 router.push({ name: 'TableLayout' })
             }
             else {
-                sale.newSale();
+                sale.newSale(); 
             }
         }
-
     }
+
+    
+
+  
 
     //check working day and cashier shift
     createResource({
@@ -159,10 +161,9 @@ onMounted(() => {
         }
     })
 
-
     //load sale data
     if (!sale.getString(route.params.name) == "" && !sale.no_loading) {
-        sale.LoadSaleData(route.params.name).then((v) => {
+        sale.LoadSaleData(route.params.name).then((v) => { 
             if (v) {
                 if (v.docstatus == 1 || v.docstatus == 2) {
 
@@ -178,13 +179,19 @@ onMounted(() => {
                     else {
                         router.push({ name: 'Home' });
                     }
+                }else{           
+                    sale.saleNetworkLock(sale.sale)
                 }
+                //
                 socket.emit("ShowOrderInCustomerDisplay", sale.sale);
                 sale.getTableSaleList();
             }
+
         });
-    } else {
+    } else { 
         sale.getTableSaleList()
+
+        sale.saleNetworkLock(sale.sale)
     }
     socket.emit("ShowOrderInCustomerDisplay", sale.sale, "new");
 

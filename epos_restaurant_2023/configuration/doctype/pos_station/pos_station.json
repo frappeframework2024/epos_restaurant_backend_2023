@@ -36,6 +36,7 @@
   "show_credit_balance",
   "show_wifi_button",
   "show_keypad_in_sale_screen",
+  "use_sale_network_lock",
   "column_break_yldd",
   "show_option_payment",
   "show_option_quick_pay",
@@ -321,11 +322,17 @@
    "fieldname": "show_button_delete_item_on_order_station",
    "fieldtype": "Check",
    "label": "Show Button Delete Item on Order Station"
+  },
+  {
+   "default": "0",
+   "fieldname": "use_sale_network_lock",
+   "fieldtype": "Check",
+   "label": "Use Sale Network Lock"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-31 08:56:07.385216",
+ "modified": "2024-07-31 10:00:36.508718",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

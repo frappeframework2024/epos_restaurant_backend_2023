@@ -17,7 +17,7 @@
   "expense_account",
   "unit",
   "quantity",
-  "price",
+  "cost",
   "amount"
  ],
  "fields": [
@@ -31,31 +31,35 @@
   },
   {
    "fetch_from": "product_code.product_name_en",
+   "fetch_if_empty": 1,
    "fieldname": "product_name",
    "fieldtype": "Data",
    "label": "Product Name"
   },
   {
    "fetch_from": "product_code.product_category",
+   "fetch_if_empty": 1,
    "fieldname": "product_category",
    "fieldtype": "Data",
    "label": "Product Category"
   },
   {
    "fetch_from": "product_code.product_group",
+   "fetch_if_empty": 1,
    "fieldname": "product_group",
    "fieldtype": "Data",
    "label": "Product Group"
   },
   {
    "fetch_from": "product_code.unit",
+   "fetch_if_empty": 1,
    "fieldname": "base_unit",
    "fieldtype": "Data",
    "label": "Base Unit",
    "read_only": 1
   },
   {
-   "fetch_from": "product_code.cost",
+   "fetch_from": ".cost",
    "fieldname": "base_cost",
    "fieldtype": "Currency",
    "label": "Base Cost",
@@ -63,6 +67,7 @@
   },
   {
    "fetch_from": "product_code.unit",
+   "fetch_if_empty": 1,
    "fieldname": "unit",
    "fieldtype": "Link",
    "label": "Unit",
@@ -91,11 +96,6 @@
    "label": "Is Inventory Product"
   },
   {
-   "fieldname": "price",
-   "fieldtype": "Currency",
-   "label": "Cost"
-  },
-  {
    "fieldname": "column_break_xqtx",
    "fieldtype": "Column Break"
   },
@@ -104,12 +104,17 @@
    "fieldtype": "Link",
    "label": "Expense Account",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "cost",
+   "fieldtype": "Currency",
+   "label": "Cost"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-07-31 09:20:16.425555",
+ "modified": "2024-07-31 10:52:33.312464",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "Stock Entry Products",

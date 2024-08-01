@@ -46,7 +46,7 @@
                     <v-btn :icon="(!gv.isFullscreen ? 'mdi-fullscreen' : 'mdi-fullscreen-exit')"
                         @click="onFullScreen()"></v-btn>
                 </template>
-                <ComSaleNotivication />
+                <ComSaleNotification />
 
 
                 <v-menu :location="location">
@@ -101,7 +101,7 @@ import ComProductSearch from '../../views/sale/components/ComProductSearch.vue'
 import MainLayoutDrawer from './MainLayoutDrawer.vue';
 import ComTimeUpdate from './components/ComTimeUpdate.vue';
 import ComCurrentUserAvatar from './components/ComCurrentUserAvatar.vue';
-import ComSaleNotivication from './ComSaleNotification.vue';
+import ComSaleNotification from './ComSaleNotification.vue';
 
 import { useDisplay } from 'vuetify';
 import { useRouter, ref, inject, confirmBackToTableLayout, SearchProductDialog } from '@/plugin';

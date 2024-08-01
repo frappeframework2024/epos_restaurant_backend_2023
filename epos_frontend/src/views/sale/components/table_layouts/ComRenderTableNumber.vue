@@ -4,7 +4,7 @@
             v-bind:style="{ 'background-image': 'url(' + g.background + ')', 'min-height': `calc(100vh - ${!tableStatusColor && tableLayout.table_groups.length <= 1 ? 118 : 174}px)`, 'background-size': '100% 100%', 'min-width': 'calc(100vw - 0px)' }"
             class="bg-center overflow-auto relative table-bg" v-if="!mobile">
             <template v-for="(t, index) in g.tables" :key="index">
-                <div v-bind:style="{ 'height': t.h + 'px', 'width': t.w + 'px', 'left': t.x + 'px', 'top': t.y + 'px', 'background-color': t.background_color, 'position': 'absolute', 'box-sizing': 'border-box' }"
+                <div   v-bind:style="{ 'height': t.h + 'px', 'width': t.w + 'px', 'left': t.x + 'px', 'top': t.y + 'px', 'background-color': t.background_color, 'position': 'absolute', 'box-sizing': 'border-box' }"
                     class="text-center text-gray-100 cursor-pointer" :class="t.shape == 'Circle' ? 'shape-circle' : ''"
                     @click="onTableClick(t)">
                     <v-badge :content="t.sales?.length" color="error" style="float: right;"
@@ -56,7 +56,7 @@
     </template>
 </template>
 <script setup>
-import { inject, useRouter, createToaster, selectSaleOrderDialog, keyboardDialog, smallViewSaleProductListModal, i18n } from '@/plugin';
+import { inject, useRouter, createToaster, selectSaleOrderDialog, keyboardDialog, smallViewSaleProductListModal, i18n,ref } from '@/plugin';
 import { useDisplay } from 'vuetify';
 
 const { t: $t } = i18n.global;
@@ -66,11 +66,15 @@ const toaster = createToaster({ position: "top-right" });
 const tableLayout = inject("$tableLayout");
 const gv = inject("$gv");
 const sale = inject("$sale");
+const frappe = inject("$frappe");
 const moment = inject("$moment");
 const router = useRouter();
 const props = defineProps({
     tableStatusColor: Boolean
 });
+const call = frappe.call();
+
+const is_processing = ref(false)
 
 tableLayout.tab = localStorage.getItem("__tblLayoutIndex")
 
@@ -91,17 +95,33 @@ function getTimeDifference(date) {
     }
 }
 
+async function  validateNewtowkSaleLock(table){ 
+    is_processing.value = true;  
+    const value = await tableLayout.validateNewtowkSaleLock(table)
+    is_processing.value = false;   
+    return value 
+}
+
+
 function onTableClick(table, guest_cover) {
+    if(is_processing.value){
+        toaster.warning($t("Sale network lock processing"))
+        return
+    }
     gv.authorize("open_order_required_password", "make_order").then(async (v) => {
         if (v) {
             const make_order_auth = { "username": v.username, "name": v.user, discount_codes: v.discount_codes };
-            if (table.sales.length == 0) {
+            if (table.sales.length == 0) { 
                 localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth));
                 newSale(table);
             }
             else if (table.sales.length == 1) {
-                if (mobile.value) {
+                //check sale network lock
+                if(await validateNewtowkSaleLock (table)){ 
+                        return 
+                }
 
+                if (mobile.value) {
                     await sale.LoadSaleData(table.sales[0].name).then(async (_sale) => {
                         localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth));
                         const result = await smallViewSaleProductListModal({ title: sale.sale.name ? sale.sale.name : $t('New Sale'), data: { from_table: true } });
@@ -112,7 +132,7 @@ function onTableClick(table, guest_cover) {
                         }
                     });
                 }
-                else {
+                else { 
                     localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth));
                     router.push({
                         name: "AddSale",
@@ -139,6 +159,11 @@ function onTableClick(table, guest_cover) {
 }
 
 async function newSale(table) {
+    
+    if(await validateNewtowkSaleLock(table)){ 
+        return 
+    }
+     
 
     let guest_cover = 0;
     if (gv.setting.use_guest_cover == 1) {

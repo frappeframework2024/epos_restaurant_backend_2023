@@ -64,10 +64,14 @@ const sale = inject("$sale")
 const socket = inject("$socket")
 const product = inject("$product")
 const gv = inject("$gv")
+const frappe = inject("$frappe")
 const setting = gv.setting;
 const toaster = createToaster({ position: "top-right" })
 const emit = defineEmits(["onSubmitAndNew", 'onClose'])
 const device_setting = JSON.parse(localStorage.getItem("device_setting"))
+
+
+const call = frappe.call()
 
 const { ctrl_p } = useMagicKeys({
     passive: false,
@@ -302,6 +306,9 @@ async function onSubmitAndNew() {
   //check if newsale recource3 is null then 
   //reinitalize newsaleresxource
   // backup old sale
+
+  let backup_sale = JSON.parse(JSON.stringify(sale.sale))
+
   sale.table_id = sale.sale.table_id
   sale.tbl_number = sale.sale.tbl_number
   sale.customer = sale.sale.customer
@@ -330,10 +337,13 @@ async function onSubmitAndNew() {
     sale.sale.sale_status = "Submitted";
 
 
-    await sale.onSubmit().then((value) => {
-      if (value) {
+    await sale.onSubmit().then((value) => { 
+      if (value) { 
+          //sale network lock
+          saleNetworkLock(backup_sale.name, backup_sale)
+
         router.push({ name: "AddSale" });
-        newSale();
+        newSale(); 
       }
       else{
         sale.action = action;
@@ -347,6 +357,9 @@ async function onSubmitAndNew() {
   }
 
   sale.getTableSaleList();
+
+
+
 
   if(mobile){
     window.postMessage("close_modal", "*");
@@ -394,6 +407,20 @@ function newSale() {
   
   socket.emit("ShowOrderInCustomerDisplay",sale, "new");
 
+}
+
+
+async function saleNetworkLock(old_sale_name, new_sale_data){
+  if(gv.setting.device_setting.use_sale_network_lock == 1 && (old_sale_name||"" != "")){   
+    let new_sale = {
+          "table_id":new_sale_data.table_id,  
+          "table_name":new_sale_data.tbl_number, 
+          "sale":"",
+          "pos_station":localStorage.getItem("device_name"), 
+          "pos_profile":localStorage.getItem("pos_profile")
+      }
+      await call.post("epos_restaurant_2023.api.api.reset_sale_network_lock_by_sale",{"old_sale": old_sale_name, "new_sale":new_sale})   
+  }  
 }
 
 

@@ -1,7 +1,7 @@
 // Copyright (c) 2024, Tes Pheakdey and contributors
 // For license information, please see license.txt
 
-// frappe.ui.form.on("Sale Coupon", {
+// frappe.ui.form.on("Sale Network Lock", {
 // 	refresh(frm) {
 
 // 	},

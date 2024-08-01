@@ -336,7 +336,6 @@ def get_pos_misc_sale(customer_name):
             s.customer = %(customer_name)s
 		order by
 			s.name
-		limit 20
     """
 	sale = frappe.db.sql(sales, {'customer_name':customer_name}, as_dict=1)
 
@@ -349,3 +348,27 @@ def get_pos_misc_sale(customer_name):
 
 
 	return 	data 
+
+@frappe.whitelist()
+def get_guest_folio_list(customer_name):
+	sql = """ 
+		select
+			name,
+			property,
+			reservation, 
+			reservation_stay,
+			posting_date,
+			business_source,
+			room_types,
+			room_types_alias,
+			rooms,
+			total_credit,
+			total_debit,
+			balance,
+			status,
+			note
+    	from `tabReservation Folio` 
+    	where guest=%(customer_name)s
+	"""
+	data = frappe.db.sql(sql, {'customer_name':customer_name}, as_dict=1)
+	return data

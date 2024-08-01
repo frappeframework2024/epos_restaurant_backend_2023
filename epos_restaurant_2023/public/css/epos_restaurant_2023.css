@@ -537,3 +537,43 @@ li.active {
         transition: 0.4s;
     }
 }
+
+
+
+/* Pagination */
+#pagination .pagination {
+text-align: center;
+margin-top: 20px;
+}
+
+#pagination .pagination button {
+padding: 5px 13px;
+cursor: pointer;
+outline: 1px solid #ededed;
+border: none;
+background: #f8f8f8;
+color: #383838;
+}
+#pagination .pagination button:first-child {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+#pagination .pagination button:last-child{
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+#pagination .hidden {
+clip: rect(0 0 0 0);
+clip-path: inset(50%);
+height: 1px;
+overflow: hidden;
+position: absolute;
+white-space: nowrap;
+width: 1px;
+}
+
+#pagination .pagination button.active {
+background-color: #fff;
+color: #383838;
+}

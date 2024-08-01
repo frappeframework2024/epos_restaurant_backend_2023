@@ -28,6 +28,9 @@ async function onSearchSale(){
             });
 
             sale.LoadSaleData(result.name)
+
+            //
+            sale.saleNetworkLock(sale.sale)
         }
     }
 }

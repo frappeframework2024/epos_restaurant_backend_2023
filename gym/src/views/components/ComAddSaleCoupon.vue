@@ -16,9 +16,15 @@
 
                             <div
                                 class="relative flex justify-content-between flex-column align-items-center flex-wrap border-1 border-round-sm w-6rem border-300">
-                                <img style="width:60px" :src="d.objectURL" class="mt-2" />
+                                <div style="height:80px;overflow:hidden" class="flex align-items-center">
+                                    <img v-if="d.type.includes('image')" style="width:60px" :src="d.objectURL" class="mt-2" />
+                                    <span v-if="d.type.includes('pdf')" class="pi pi-file-pdf text-5xl" style= "color: var(--red-400);"></span>
+                                    <span v-if="d.type=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'" class="pi pi-file-excel text-5xl" style= "color: var(--green-400);"></span>
+                                    <span v-if="d.type=='application/vnd.openxmlformats-officedocument.wordprocessingml.document'" class="pi pi-file-word text-5xl" style= "color: var(--blue-400);"></span>
+                                </div>
+                                
                                 <div
-                                    class="text-xs text-center bg-cyan-50 text-600 p-2 border-300 file-wrapper-name w-full text-overflow-ellipsis">
+                                    class="text-xs text-center bg-cyan-50 text-600 p-2 border-300 w-full white-space-nowrap overflow-hidden text-overflow-ellipsis">
                                     {{ d.name }}
                                 </div>
                                 <Button @click="onRemoveImage(removeFileCallback, d)" class="absolute remove-image"
@@ -83,7 +89,7 @@
 
             <div class="col-6 lg:col-4">
                 <label>Expiry Date <span class="text-red-500">*</span></label><br />
-                <Calendar dateFormat="dd-mm-yy" style="width: 100%;" @date-select="expiryChange" :modelValue="expiry_date" showIcon
+                <Calendar dateFormat="dd-mm-yy" selectOtherMonths style="width: 100%;" @date-select="expiryChange" :modelValue="expiry_date" showIcon
                     :showOnFocus="false" />
             </div>
             <div class="col-12">
@@ -139,7 +145,6 @@
             </div>
         </div>
     </div>
-    <Toast />
 </template>
 
 <script setup>
@@ -205,7 +210,7 @@ onMounted(() => {
         limitVisit.value = params.saleCoupon.limit_visit
         selectedCouponType.value = params.saleCoupon.coupon_type
         selectedMember.value = params.saleCoupon.membership
-        call.get("epos_restaurant_2023.gym.doctype.sale_coupon.sale_coupon.get_sale_coupon_payment",{docname:params.saleCoupon.name}).then((res)=>{
+        call.get("epos_restaurant_2023.coupon.doctype.sale_coupon.sale_coupon.get_sale_coupon_payment",{docname:params.saleCoupon.name}).then((res)=>{
             if (res.message.length > 0){
                 payments.value = res.message
             }
@@ -262,9 +267,17 @@ async function onSave(is_submit=false) {
     let data_to_save = JSON.parse(JSON.stringify(saleCoupon.value))
     data_to_save.coupon_type = selectedCouponType.value
     data_to_save.payments=[]
+    if (typeof data_to_save.membership == "object"){
+        data_to_save.membership = data_to_save.membership.value
+    }
     payments.value.forEach((row)=>{
         if (row.input_amount > 0){
-            data_to_save.payments.push({"payment_type":row.payment_type.value,"currency":row.payment_type.currency,"exchange_rate":row.payment_type.exchange_rate,"input_amount":row.input_amount,})
+            if (typeof row.payment_type == "object"){
+                data_to_save.payments.push({"payment_type":row.payment_type.value,"currency":row.payment_type.currency,"exchange_rate":row.payment_type.exchange_rate,"input_amount":row.input_amount,})
+            }else{
+                data_to_save.payments.push({"payment_type":row.payment_type,"currency":row.currency,"exchange_rate":row.exchange_rate,"input_amount":row.input_amount,})
+            }
+            
         } 
     })
     if (data_to_save.payments.length <= 0 && is_submit == true){
@@ -274,23 +287,33 @@ async function onSave(is_submit=false) {
     }
 
     //Prepare Data To Save
-    call.post("epos_restaurant_2023.gym.doctype.sale_coupon.sale_coupon.insert_sale_coupon",{"data":data_to_save,"is_submit":is_submit==false?0:1}).then((res)=>{
-        toast.add({ severity: 'success', summary: 'Sucecss', detail: 'Coupon saved succeess.', life: 3000 });
+    call.post("epos_restaurant_2023.coupon.doctype.sale_coupon.sale_coupon.insert_sale_coupon",{"data":data_to_save,"is_submit":is_submit==false?0:1}).then((res)=>{
+        toast.add({ severity: 'success', summary: 'Sucecss', detail: 'Coupon saved success.', life: 3000 });
         isSaving.value = false
+        
+        console.log(selectdFile.value.files)
         closeDialog()
+        const file = frappe.file();
+
+            
         selectdFile.value.files.forEach(_file => {
-            call.post("upload_file", {
-                file: _file,
-                file_name: _file.name,
+            file.uploadFile(_file,{
                 doctype: "Sale Coupon",
                 folder: "Home/Attachments",
-                docname: doc.name,
-                is_private: 1
+                docname: res.message.name,
             })
         });
+       
     }).catch((err)=>{
         isSaving.value = false
-        toast.add({ severity: 'error', summary: 'Validation', detail: JSON.parse(JSON.parse(err['_server_messages'])[0]).message, life: 3000 })
+        if (err.httpStatus == 403){
+            toast.add({ severity: 'error', summary: 'Validation', detail: err._error_message, life: 3000 });
+        }else{
+           
+            toast.add({ severity: 'error', summary: 'Validation', detail: JSON.parse(JSON.parse(err["_server_messages"])).message, life: 3000 });
+        
+        }
+        
     })
     
     
@@ -305,6 +328,7 @@ function onRemoveImage(callback, image) {
 }
 const onFilesSelected = (events) => {
     selectdFile.value = events
+    console.log(events)
 };
 watch(selectedMember, async (member) => {
     saleCoupon.value.membership = member
@@ -312,7 +336,6 @@ watch(selectedMember, async (member) => {
 
 watch(limitVisit, async (value) => {
     if (value <= 0) {
-        toast.add({ severity: 'error', summary: 'Validation', detail: error, life: 3000 })
         return
     }
     VisitBalance.value = value
@@ -339,9 +362,7 @@ watch(limitVisit, async (value) => {
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
     padding-left: 4px;
-    overflow: hidden;
     margin-top: 4px;
-    text-overflow: ellipsis;
 }
 
 .remove-image {

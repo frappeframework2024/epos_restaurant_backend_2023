@@ -25,8 +25,7 @@ import ComTableGroupTabHeader from './components/table_layouts/ComTableGroupTabH
 import ComTableLayoutActionButton from './components/table_layouts/ComTableLayoutActionButton.vue';
 import ComArrangeTable from './components/table_layouts/ComArrangeTable.vue';
 import ComRenderTableNumber from './components/table_layouts/ComRenderTableNumber.vue';
-import ComSaleStatusInformation from '@/views/sale/components/ComSaleStatusInformation.vue';
-import { computed } from 'vue';
+import ComSaleStatusInformation from '@/views/sale/components/ComSaleStatusInformation.vue'; 
 import { useDisplay } from 'vuetify'
 const { mobile } = useDisplay()
 
@@ -35,6 +34,9 @@ const { t: $t } = i18n.global;
 const toaster = createToaster({ position: "top-right" });
 const tableLayout = inject("$tableLayout");
 const socket = inject("$socket");
+const gv = inject("$gv");
+const frappe = inject("$frappe");
+const call = frappe.call();
 
 const getKeyIndex = ref(false)
 
@@ -52,6 +54,19 @@ socket.on("RefreshTable", () => {
 
 
 onMounted(async () => {
+    //delete sale lock
+    if(gv.setting.device_setting.use_sale_network_lock == 1){ 
+        let param = {
+                "sale":undefined,
+                "table_id":undefined, 
+                "table_name":undefined, 
+                "pos_station":localStorage.getItem("device_name"), 
+                "pos_profile": gv.setting.pos_profile
+            }
+        call.post("epos_restaurant_2023.api.api.reset_sale_network_lock",{param:param})
+    }
+
+    
     tableLayout.tab = localStorage.getItem("__tblLayoutIndex")
     let tableGroupLength = JSON.parse(localStorage.getItem("table_groups"))
 

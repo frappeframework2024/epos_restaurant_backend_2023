@@ -119,7 +119,22 @@ export default class Sale {
         })
     }
 
-    async newSale() {
+   async saleNetworkLock(_sale){
+        if(this.setting.device_setting.use_sale_network_lock == 1 && _sale.table_id != undefined){ 
+            let param = {
+                "sale":_sale.name,
+                "table_id":_sale.table_id,
+                "table_name":_sale.tbl_number, 
+                "pos_station":localStorage.getItem("device_name"), 
+                "pos_profile": this.setting.pos_profile
+            }
+          await  call.post("epos_restaurant_2023.api.api.create_sale_network_lock",{"param": param})    
+        }
+    }
+
+    async newSale() { 
+         
+
         this.auditTrailLogs = [];
         this.deletedSaleProductsDisplay = [];
         const make_order_auth = JSON.parse(localStorage.getItem('make_order_auth'));
@@ -165,9 +180,10 @@ export default class Sale {
             commission_amount: 0,
             created_by: make_order_auth.name,
 
-        }
-        this.onSaleApplyTax(tax_rule, this.sale);
+        } 
+        this.onSaleApplyTax(tax_rule, this.sale);       
 
+        
         //audit-trail 
         if ((this.name || "") == "") {
             const u = make_order_auth;
@@ -186,7 +202,8 @@ export default class Sale {
         }
     }
 
-    async LoadSaleData(name) {
+    async LoadSaleData(name) { 
+        
         this.auditTrailLogs = [];
         this.changeTableSaleProducts = [];
         this.moveItemSaleProducts = [];
@@ -218,7 +235,6 @@ export default class Sale {
                 this.onLoadDeleteSaleProducts(doc.name);
                 this.sale = doc;
 
-
                 //add sale product to temp resend sale product to kitchen order
                 this.reSendSaleProductKOT = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "" && ((r.printers || "[]") != "[]"))));
 
@@ -243,7 +259,7 @@ export default class Sale {
             url: "frappe.client.get_list",
             params: {
                 doctype: "Sale",
-                fields: ["name", "creation", "grand_total", "total_quantity", "tbl_group", "tbl_number", "guest_cover", "grand_total", "sale_status", "sale_status_color", "sale_status_priority", "customer", "customer_name", "phone_number", "customer_photo"],
+                fields: ["name", "creation", "grand_total", "total_quantity", "tbl_group","table_id", "tbl_number", "guest_cover", "grand_total", "sale_status", "sale_status_color", "sale_status_priority", "customer", "customer_name", "phone_number", "customer_photo"],
                 filters: {
                     pos_profile: localStorage.getItem("pos_profile"),
                     table_id: JSON.parse(localStorage.getItem("table_groups")) && JSON.parse(localStorage.getItem("table_groups")).length > 0 ? parent.sale.table_id : '',
@@ -1888,9 +1904,7 @@ export default class Sale {
         //reset product printer
         if (products == null) {
             this.productPrinters = [];
-        }
-
-        console.log(kotProducts)
+        } 
     }
 
     generateProductPrinters() {

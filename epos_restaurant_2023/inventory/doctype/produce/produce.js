@@ -32,10 +32,13 @@ frappe.ui.form.on("Produce", {
         update_child_qty(frm)
     }
 });
-frappe.ui.form.on("Produce", {
+frappe.ui.form.on("Produce Item", {
     quantity(frm,cdt,cdn){
         let doc = locals[cdt][cdn];
         frappe.model.set_value(cdt, cdn, "amount", (doc.quantity*doc.cost));
+    },
+    product(frm,cdt,cdn){
+
     }
 })
 

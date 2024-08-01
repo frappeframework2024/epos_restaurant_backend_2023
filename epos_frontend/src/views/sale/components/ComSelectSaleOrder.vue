@@ -343,6 +343,11 @@ async function onCancelPrintBill() {
  
 
 async function openOrder(s) {
+    if (await tableLayout.validateNewtowkSaleLock(props.params.table,s.name)){
+        return
+    }
+
+
     if (mobile.value) {
         await sale.LoadSaleData(s.name).then(async (v) => {
             localStorage.setItem('make_order_auth', JSON.stringify(props.params.make_order_auth));

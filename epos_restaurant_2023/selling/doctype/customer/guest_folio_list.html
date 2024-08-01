@@ -1,0 +1,51 @@
+{% var index = 1 %}
+<div id="guest_folio_list">
+    <div class="form-grid-container">
+        <div class="form-grid">
+            <div class="grid-heading-row" style="height: auto !important;">
+                <div class="grid-row">
+                    <div class="data-row row">
+                        <div class="col text-center" style="max-width: 3%;">
+                            <span>No.</span>
+                        </div> 
+                        <div class="col text-center">Folio Name</div>
+                        <div class="col text-center">Reservation #</div>
+                        <div class="col text-center">Res #</div>
+                        <div class="col text-center">Posting Date</div>
+                        <div class="col">Business Source</div>
+                        <div class="col">Room</div>
+                        <div class="col text-right">Debit(Charge)</div>
+                        <div class="col text-right">Credit(Payment)</div>
+                        <div class="col text-right">Balance</div>
+                        <div class="col text-center">Status</div>
+                        <div class="col">Note</div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-body">
+                <div class="rows"> 
+                    {% for d in data %} 
+                        <div class="grid-row folio_list_data"> 
+                            <div class="data-row row">
+                                <div class="col text-center" style="max-width: 3%;">{{index}}</div>
+                                <div class="col text-center">{{d.name}}</div>
+                                <div class="col text-center">{{d.reservation}}</div>
+                                <div class="col text-center">{{d.reservation_stay}}</div>
+                                <div class="col text-center">{{d.posting_date}}</div>
+                                <div class="col">{{d.business_source}}</div>
+                                <div class="col">{{d.room_types_alias}}/{{d.rooms}}</div>
+                                <div class="col text-right">{{ frappe.format(d.total_debit,{"fieldtype":"Currency"})}}</div>
+                                <div class="col text-right">{{ frappe.format(d.total_credit,{"fieldtype":"Currency"})}}</div>
+                                <div class="col text-right">{{ frappe.format(d.balance,{"fieldtype":"Currency"})}}</div>
+                                <div class="col text-center"><span class="rounded-pill py-1 px-2 font-weight-bold" style="{{d.status == 'Open' ? 'background-color:#a0e6ba;color:#188a42;' : 'background-color:#EEEEEE;'}}">{{d.status}}</span></div>
+                                <div class="col">{{d.note}}</div> 
+                            </div>
+                        </div>
+                        {% var index = index + 1 %}
+                    {% endfor %} 
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="pagination"></div>
+</div>

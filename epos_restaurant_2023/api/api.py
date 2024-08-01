@@ -1688,3 +1688,68 @@ def scan_coupon_number(code):
         })
 
     return result
+
+
+## Validate Sale Network Lock
+@frappe.whitelist(methods='POST')
+def validate_sale_network_lock(param): 
+    sql  = """select sale,table_id, name,pos_station from `tabSale Network Lock` where table_id = %(table_id)s and pos_station != %(pos_station)s and pos_profile = %(pos_profile)s"""
+    data = frappe.db.sql(sql,param,as_dict=1)     
+    result = {} 
+    if len(data) > 0 : 
+        if param["sale"]:
+            if param["sale"] in [s["sale"] for s in data]:
+                result = {"status":0,"message":"There is an other station actived"}
+
+        else:
+            result = {"status":0,"message":"There is an other station actived"}
+        
+    else:
+        result = {"status":1,"message":"This table will lock for other station"}  
+
+
+    return result
+
+@frappe.whitelist(methods='POST')
+def create_sale_network_lock(param):
+        sql  = """select sale,table_id, name,pos_station from `tabSale Network Lock` where table_id = %(table_id)s and pos_station = %(pos_station)s and pos_profile = %(pos_profile)s"""
+        data = frappe.db.sql(sql,param,as_dict=1) 
+        create_doc = False
+        if len(data) <=0:
+            create_doc = True
+            
+        else:
+            if param["sale"]: 
+                if param["sale"] not in [s["sale"] for s in data]:
+                    create_doc = True
+                    
+        if create_doc:
+            doc_data =  { 'doctype': 'Sale Network Lock'}    
+            doc_data.update(param)
+            doc = frappe.get_doc(doc_data)
+            doc.insert()
+
+@frappe.whitelist(methods='POST')
+def reset_sale_network_lock(param):
+    tbl = "1 = 1 "
+    sql  = """delete from `tabSale Network Lock` where {} and pos_station = %(pos_station)s and pos_profile = %(pos_profile)s""".format(tbl)
+    frappe.db.sql(sql,param,as_dict=1) 
+
+    return "reset sale network lock"
+
+@frappe.whitelist(methods='POST')
+def reset_sale_network_lock_by_sale(old_sale, new_sale): 
+    _sale = " 1 = 1 "
+    if old_sale != "":
+        _sale += "and sale = %(sale)s"
+    sql  = """delete from `tabSale Network Lock` where {} and table_id = %(table_id)s and pos_station = %(pos_station)s and pos_profile = %(pos_profile)s""".format(_sale)
+    frappe.db.sql(sql,{"sale":old_sale,
+                       "table_id":new_sale["table_id"] ,
+                       "pos_station": new_sale["pos_station"],
+                       "pos_profile": new_sale["pos_profile"]
+                       },as_dict=1) 
+    if new_sale:
+        create_sale_network_lock(new_sale)
+
+
+    return "reset sale network lock"

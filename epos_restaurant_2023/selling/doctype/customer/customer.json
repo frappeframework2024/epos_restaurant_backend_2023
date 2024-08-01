@@ -74,6 +74,7 @@
   "pos_misc_sale",
   "note_tab",
   "folio_tab",
+  "guest_folio",
   "document_tab"
  ],
  "fields": [
@@ -480,6 +481,10 @@
   {
    "fieldname": "column_break_ysoq",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "guest_folio",
+   "fieldtype": "HTML"
   }
  ],
  "image_field": "photo",
@@ -492,7 +497,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2024-07-27 10:44:38.958080",
+ "modified": "2024-07-31 16:19:21.001790",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

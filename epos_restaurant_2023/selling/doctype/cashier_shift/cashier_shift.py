@@ -41,6 +41,8 @@ class CashierShift(Document):
 
 		# check if close shift then check 
 		if self.is_closed==1:
+			
+
 			if self.is_run_night_audit==1:
 				#validte if still have epos open
 				if frappe.db.exists("Cashier Shift",{"is_closed":0, "is_edoor_shift":0}):
@@ -68,6 +70,10 @@ class CashierShift(Document):
 			is_upload_sale_data_to_google_sheet = frappe.db.get_value("Business Branch",self.business_branch,["upload_sale_data_to_google_sheet"])
 			if is_upload_sale_data_to_google_sheet == 1:
 				frappe.enqueue("epos_restaurant_2023.api.api.upload_all_sale_data_to_google_sheet",start_date=self.posting_date,end_date = self.posting_date,business_branch=self.business_branch,cashier_shift=self.name)
+
+			##delete sale network lock
+			frappe.db.sql("delete from `tabSale Network Lock` where pos_profile = %(pos_profile)s",{"pos_profile":self.pos_profile})
+			frappe.db.commit()
 
 	def after_insert(self):	
 		if self.flags.ignore_after_insert == True:

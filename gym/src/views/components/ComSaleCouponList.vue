@@ -79,7 +79,7 @@
                             {{ slotProps.data.visited_count }} of {{ slotProps.data.limit_visit }}
                         </template>
                     </Column>
-                    <Column header="Used" style="width: 200px">
+                    <Column header="Status" style="width: 200px">
                         <template #body="slotProps">
                             <div class="flex flex-wrap align-items-center">
                                 
@@ -90,16 +90,16 @@
                                 <Chip v-if="slotProps.data.docstatus == 1" label="Submitted" icon="pi pi-verified" size="small"
                                     class="m-1 bg-green-500" />
                                 <Chip label="Expired" style="height: 16px !important;" class="bg-red-500 text-100"
-                                    v-if="moment(slotProps.data.expiry_date).isBefore(moment())" />
+                                    v-if="moment().isAfter(moment(slotProps.data.expiry_date))" />
                             </div>
 
                         </template>
                     </Column>
-                    <Column header="Action">
+                    <Column header="Action" class="text-center">
                         <template #body="slotProps">
-                            <Button type="button" outlined rounded v-if="slotProps.data.docstatus != 1"  icon="pi pi-pencil" @click="onEditClick(slotProps.data)" aria-haspopup="true"
+                            <Button type="button" outlined rounded class="mx-1" v-if="slotProps.data.docstatus != 1"  icon="pi pi-pencil" @click="onEditClick(slotProps.data)" aria-haspopup="true"
                                 aria-controls="overlay_menu" />
-                            <Button type="button"  outlined rounded v-if="slotProps.data.docstatus == 0" severity="success" icon="pi pi-verified" @click="onSubmit( slotProps.data.name)" aria-haspopup="true"
+                            <Button type="button"  outlined rounded class="mx-1" v-if="slotProps.data.docstatus == 0" severity="success" icon="pi pi-verified" @click="onSubmit( slotProps.data.name)" aria-haspopup="true"
                                 aria-controls="overlay_menu" />
                             
                            
@@ -117,6 +117,7 @@
 
 <script setup>
 import moment from 'moment'
+import { useToast } from "primevue/usetoast";
 import ComCheckInSaleCoupon from './ComCheckInSaleCoupon.vue';
 import { inject, ref, onMounted } from 'vue'
 import DataTable from 'primevue/datatable';
@@ -130,6 +131,7 @@ import Button from 'primevue/button';
 import { useDialog } from 'primevue/usedialog';
 import { useConfirm } from "primevue/useconfirm";
 const confirm = useConfirm();
+const toast = useToast();
 const dialog = useDialog();
 const frappe = inject("$frappe")
 const db = frappe.db();
@@ -200,8 +202,16 @@ function onSubmit(docname) {
         rejectLabel: 'Cancel',
         acceptLabel: 'Submit',
         accept: () => {
-            call.post("epos_restaurant_2023.gym.doctype.sale_coupon.sale_coupon.submit_sale_coupon", { "docname": docname }).then((resp) => {
-
+            call.post("epos_restaurant_2023.coupon.doctype.sale_coupon.sale_coupon.submit_sale_coupon", { "docname": docname }).then((resp) => {
+                toast.add({ severity: 'success', summary: 'Validation', detail: "Submit success.", life: 3000 });
+            }).catch((err)=>{
+                if (err.httpStatus == 403){
+                    toast.add({ severity: 'error', summary: 'Validation', detail: err._error_message, life: 3000 });
+                }else{
+                    
+                    toast.add({ severity: 'error', summary: 'Validation', detail: JSON.parse(JSON.parse(err["_server_messages"])), life: 3000 });
+                }
+                
             })
         },
         reject: () => {
@@ -212,7 +222,6 @@ function onSubmit(docname) {
 
 function onAddCoupon() {
     dialog.open(ComAddSaleCoupon,
-
         {
             onClose: (opt) => {
                 getListSaleCoupon()
@@ -234,7 +243,6 @@ function onAddCoupon() {
 }
 function onCheckInSaleCoupon() {
     dialog.open(ComCheckInSaleCoupon,
-
         {
             onClose: (opt) => {
                 getListSaleCoupon()
@@ -275,7 +283,13 @@ function getListSaleCoupon() {
     }).then((docs) => {
         saleCouponList.value = docs
         loading.value = false
-    }).catch((rr) => {
+    }).catch((err) => {
+        console.log(err)
+        if (error.httpStatus == 403){
+            toast.add({ severity: 'error', summary: 'Validation', detail: err._error_message, life: 3000 });
+        }
+        
+        saleCouponList.value=[]
         loading.value = false
     })
 }

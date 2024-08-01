@@ -23,16 +23,20 @@
 </template>
 <script setup>
 
-import { ref, defineProps, defineEmits, inject } from '@/plugin'
-import ComToolbar from '@/components/ComToolbar.vue';
+import { ref, defineProps, defineEmits, inject,i18n ,onMounted} from '@/plugin' 
 import ComInput from '@/components/form/ComInput.vue';
 import { useDisplay } from 'vuetify'
 import ComSaleListItem from './ComSaleListItem.vue';
 import ComPlaceholder from '../../../components/layout/components/ComPlaceholder.vue';
 
-const { mobile } = useDisplay()
-
+import { createToaster } from "@meforma/vue-toaster"; 
+const toaster = createToaster({ position: "top-right" });
+const { mobile } = useDisplay();
 const sale = inject("$sale");
+const frappe = inject("$frappe");
+const call = frappe.call()
+const { t: $t } = i18n.global;
+
 const searchTextField = ref(null)
 const props = defineProps({
   params: {
@@ -45,6 +49,10 @@ const emit = defineEmits(["resolve", "reject"])
 
 const open = ref(true);
 const search = ref('')
+let backup_sale;
+onMounted(()=>{
+  backup_sale = JSON.parse(JSON.stringify(sale.sale))
+})
 
 function getSaleList() {
   if (search.value) {
@@ -61,8 +69,44 @@ function onClose() {
   emit("resolve", false);
 }
 
-function onSelect(c) {
+async function onSelect(c) { 
+
+  if(await validateNewtowkSaleLock(c)){
+    return;
+  }
   emit("resolve", c);
 }
+
+async function validateNewtowkSaleLock(_sale){ 
+ 
+ if(sale.setting.device_setting.use_sale_network_lock == 1 && _sale.name != backup_sale.name){      
+     let param = {
+         "table_id":_sale.table_id, 
+         "sale":_sale.name,
+         "table_name":_sale.tbl_number, 
+         "pos_station":localStorage.getItem("device_name"), 
+         "pos_profile":localStorage.getItem("pos_profile")
+     }
+    const resp = await call.post("epos_restaurant_2023.api.api.validate_sale_network_lock",{"param": param})     
+    if(resp.message.status == 0){
+         toaster.warning($t(resp.message.message))
+         return true
+    }else{
+
+         //reset network lock on change current sale 
+        let new_sale = {
+              "table_id":_sale.table_id,  
+              "table_name":_sale.tbl_number, 
+              "sale":_sale.name,
+              "pos_station":localStorage.getItem("device_name"), 
+              "pos_profile":localStorage.getItem("pos_profile")
+          }
+        call.post("epos_restaurant_2023.api.api.reset_sale_network_lock_by_sale",{"old_sale": backup_sale.name, "new_sale":new_sale})   
+        return false;
+    }
+ }
+ return false
+}
+
 
 </script>
