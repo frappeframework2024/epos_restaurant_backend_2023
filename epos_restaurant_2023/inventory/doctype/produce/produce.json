@@ -11,10 +11,12 @@
   "column_break_clwb",
   "product",
   "product_name",
-  "unit",
-  "column_break_ghmh",
-  "stock_location",
+  "section_break_huej",
   "quantity",
+  "unit",
+  "column_break_vxjy",
+  "source_location",
+  "target_location",
   "section_break_hbno",
   "bom",
   "section_break_yjda",
@@ -47,23 +49,12 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "column_break_ghmh",
-   "fieldtype": "Column Break"
-  },
-  {
    "default": "1",
    "fieldname": "quantity",
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Quantity",
    "non_negative": 1,
-   "reqd": 1
-  },
-  {
-   "fieldname": "stock_location",
-   "fieldtype": "Link",
-   "label": "Stock Location",
-   "options": "Stock Location",
    "reqd": 1
   },
   {
@@ -108,16 +99,36 @@
    "fetch_from": "product.unit",
    "fieldname": "unit",
    "fieldtype": "Link",
-   "hidden": 1,
    "label": "Unit",
-   "options": "Unit Of Measurement",
-   "read_only": 1
+   "options": "Unit Of Measurement"
+  },
+  {
+   "fieldname": "section_break_huej",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_vxjy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "source_location",
+   "fieldtype": "Link",
+   "label": "Source Location",
+   "options": "Stock Location",
+   "reqd": 1
+  },
+  {
+   "fieldname": "target_location",
+   "fieldtype": "Link",
+   "label": "Target Location",
+   "options": "Stock Location",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-07-30 15:28:01.553238",
+ "modified": "2024-08-01 13:55:17.484096",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Produce",

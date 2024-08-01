@@ -1722,6 +1722,8 @@ def create_sale_network_lock(param):
             if "sale" in [k for k in  param.keys()] : 
                 if param["sale"] not in [s["sale"] for s in data]:
                     create_doc = True
+            else: 
+                 create_doc = True
                     
         if create_doc:
             doc_data =  { 'doctype': 'Sale Network Lock'}    

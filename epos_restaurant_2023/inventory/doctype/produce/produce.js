@@ -22,7 +22,6 @@ frappe.ui.form.on("Produce", {
 		}).then((result)=>{
             frm.refresh_field('bom');
             set_child_table(frm)
-            
         })
     },
 	bom(frm){
@@ -37,8 +36,22 @@ frappe.ui.form.on("Produce Item", {
         let doc = locals[cdt][cdn];
         frappe.model.set_value(cdt, cdn, "amount", (doc.quantity*doc.cost));
     },
-    product(frm,cdt,cdn){
-
+    unit(frm,cdt,cdn){
+        let doc = locals[cdt][cdn];
+        frappe.call({
+			method: "epos_restaurant_2023.inventory.inventory.get_uom_conversion",
+			args: {
+				from_uom: doc.base_unit, 
+                to_uom: doc.unit
+			},
+			callback: (r) => {
+				if(r.message){
+                    qty = (1/(r.message || 0))
+					frappe.model.set_value(cdt, cdn, "quantity", qty.toFixed(2));
+				}
+			}
+		})
+        frappe.model.set_value(cdt, cdn, "amount", (doc.quantity*doc.cost));
     }
 })
 

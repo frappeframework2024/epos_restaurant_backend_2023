@@ -125,9 +125,7 @@ onMounted(() => {
         }
     }
 
-    
-
-  
+    let backup_sale = JSON.parse(JSON.stringify(sale.sale))  
 
     //check working day and cashier shift
     createResource({
@@ -191,7 +189,7 @@ onMounted(() => {
     } else { 
         sale.getTableSaleList()
 
-        sale.saleNetworkLock(sale.sale)
+        sale.saleNetworkLock(backup_sale)
     }
     socket.emit("ShowOrderInCustomerDisplay", sale.sale, "new");
 

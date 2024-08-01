@@ -97,7 +97,11 @@ function getTimeDifference(date) {
 
 async function  validateNewtowkSaleLock(table){ 
     is_processing.value = true;  
-    const value = await tableLayout.validateNewtowkSaleLock(table)
+    const value = await tableLayout.validateNewtowkSaleLock(table).catch((r)=> 
+    {
+        is_processing.value = false;   
+    });
+
     is_processing.value = false;   
     return value 
 }
