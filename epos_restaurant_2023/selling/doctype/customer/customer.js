@@ -32,6 +32,7 @@ frappe.ui.form.on("Customer", {
         getCustomerInfo(frm)
         getPOSMiscSaleInfo(frm)
         getGuestFolio(frm)
+        getGuestNoteDetail(frm)
         
     }
     
@@ -42,36 +43,27 @@ function getCustomerInfo (frm) {
     $(frm.fields_dict["stay_history_detail"].wrapper).html("Loading customer stay history...");
     frm.refresh_field("stay_history_detail"); 
 
-    frappe.db.get_list("Reservation Stay", {
-        fields:[
-            'name',
-            'reservation',
-            'reference_number',
-            'reservation_type',
-            'group_code',
-            'reservation_date',
-            'arrival_date',
-            'departure_date',
-            'room_nights',
-            'rooms',
-            'guest',
-            'guest_name',
-            'business_source',
-            'adr',
-            'total_amount',
-            'reservation_status',
-            'rooms_data'
-        ],
-        filters:[['guest','=',frm.doc.name]]
-    }).then(result=>{
-        result.forEach((r) => {
-            r.rooms_data = JSON.parse(r.rooms_data) 
+    frappe.call({
+        method: "epos_restaurant_2023.selling.doctype.customer.customer.get_guest_stay_history",
+        args: {
+            customer_name: frm.doc.name,
+        },
+        callback: (result => { 
+            result.message.forEach((r) => {
+                r.rooms_data = JSON.parse(r.rooms_data) 
+            })
+    
+            let html = frappe.render_template("customer_stay_history", {data:result.message});
+            $(frm.fields_dict["stay_history_detail"].wrapper).html(html);
+            frm.refresh_field("stay_history_detail"); 
+    
+            pagination(frm, field_dict = 'stay_history_detail', wrapper = '#guest_stay_history', content = '.stay_history', items_per_page = 50)
+            
+        }),
+        error: (error => {
+            frappe.throw(error);
         })
-
-        let html = frappe.render_template("customer_stay_history", {data:result});
-        $(frm.fields_dict["stay_history_detail"].wrapper).html(html);
-        frm.refresh_field("stay_history_detail"); 
-    })
+    }); 
 }
 
 function getPOSMiscSaleInfo(frm) { 
@@ -120,10 +112,35 @@ function getGuestFolio (frm) {
     })
 }
 
+
+function getGuestNoteDetail (frm) {
+    $(frm.fields_dict["guest_note_detail"].wrapper).html("Loading customer folio...");
+    frm.refresh_field("guest_note_detail");
+
+    frappe.call({
+        method: "epos_restaurant_2023.selling.doctype.customer.customer.get_guest_note_detail",
+        args: {
+            customer_name: frm.doc.name,
+        },
+        callback: (result => {
+            console.log(result.message)
+            let html = frappe.render_template("guest_note_detail", {data:result.message,dataLength:result.message.length}); 
+            $(frm.fields_dict["guest_note_detail"].wrapper).html(html);
+            frm.refresh_field("guest_note_detail");
+
+            // pagination(frm, field_dict = 'guest_folio', wrapper = '#guest_folio_list', content = '.folio_list_data')
+        }),
+        error: (error => {
+            frappe.throw(error);
+        })
+    })
+}
+
+
 // pagination
-function pagination (frm, field_dict, wrapper, content) {
+function pagination (frm, field_dict, wrapper, content, items_per_page) {
     const pageContent = $(frm.fields_dict[field_dict].wrapper)[0].querySelector(wrapper)
-    const itemsPerPage = 20;
+    const itemsPerPage = items_per_page ? items_per_page : 20;
     let currentPage = 0;
 
     const items = Array.from(pageContent.querySelectorAll(content))

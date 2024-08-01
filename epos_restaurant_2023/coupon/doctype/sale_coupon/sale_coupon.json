@@ -76,8 +76,7 @@
    "fieldname": "price",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Price",
-   "reqd": 1
+   "label": "Price"
   },
   {
    "fieldname": "limit_visit",
@@ -142,7 +141,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-07-31 14:33:13.193140",
+ "modified": "2024-08-01 10:30:48.792189",
  "modified_by": "Administrator",
  "module": "Coupon",
  "name": "Sale Coupon",

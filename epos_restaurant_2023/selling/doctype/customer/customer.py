@@ -372,3 +372,47 @@ def get_guest_folio_list(customer_name):
 	"""
 	data = frappe.db.sql(sql, {'customer_name':customer_name}, as_dict=1)
 	return data
+
+
+@frappe.whitelist()
+def get_guest_stay_history(customer_name):
+	sql = """
+		select
+			name,
+            reservation,
+            reference_number,
+            reservation_type,
+            group_code,
+            reservation_date,
+            arrival_date,
+            departure_date,
+            room_nights,
+            rooms,
+            guest,
+            guest_name,
+            business_source,
+            adr,
+            total_amount,
+            reservation_status,
+            rooms_data
+		from `tabReservation Stay` 
+    	where guest=%(customer_name)s
+	"""
+	data = frappe.db.sql(sql, {'customer_name':customer_name}, as_dict=1)
+	return data
+
+@frappe.whitelist()
+def get_guest_note_detail(customer_name):
+	sql = """
+		select 
+			name, 
+			content, 
+			creation, 
+			modified_by 
+		from  
+			`tabComment` 
+		where 
+        	custom_guest = %(customer_name)s and comment_type = 'Comment'
+	"""
+	data = frappe.db.sql(sql, {'customer_name':customer_name}, as_dict=1)
+	return data

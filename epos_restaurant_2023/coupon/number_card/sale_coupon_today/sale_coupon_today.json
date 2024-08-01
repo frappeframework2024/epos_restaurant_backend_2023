@@ -1,5 +1,5 @@
 {
- "aggregate_function_based_on": "balance",
+ "aggregate_function_based_on": "price",
  "color": "#761ACB",
  "creation": "2024-07-30 12:02:33.389890",
  "docstatus": 0,
@@ -12,7 +12,7 @@
  "is_public": 0,
  "is_standard": 1,
  "label": "Sale Coupon Today",
- "modified": "2024-07-30 12:04:56.412020",
+ "modified": "2024-08-01 10:30:14.934220",
  "modified_by": "Administrator",
  "module": "Coupon",
  "name": "Sale Coupon Today",

@@ -3,12 +3,11 @@
 
 frappe.ui.form.on("BOM", {
 	valuation_based_on(frm) {
-        link = frm.doc.valuation_based_on == "Cost" ? 'epos_restaurant_2023.inventory.inventory.get_product_cost':'epos_restaurant_2023.inventory.inventory.get_product_price'
+        link = frm.doc.valuation_based_on == "Cost" ? 'epos_restaurant_2023.inventory.inventory.get_bom_product_cost':'epos_restaurant_2023.inventory.inventory.get_bom_product_price'
         frm.doc.items.forEach(a => {
             frappe.call({
                 method: link,
                 args: {
-                    stock_location: "None",
                     product_code: a.product
                 },
                 callback: (r) => {
@@ -28,10 +27,10 @@ frappe.ui.form.on("BOM", {
 frappe.ui.form.on("BOM Items", {
 	product(frm,cdt,cdn) {
         let doc = locals[cdt][cdn];
+        link = frm.doc.valuation_based_on == "Cost" ? 'epos_restaurant_2023.inventory.inventory.get_bom_product_cost':'epos_restaurant_2023.inventory.inventory.get_bom_product_price'
 		frappe.call({
-			method: 'epos_restaurant_2023.inventory.inventory.get_product_cost',
+			method: link,
 			args: {
-				stock_location: "None",
 				product_code: doc.product
 			},
 			callback: (r) => {
@@ -50,6 +49,22 @@ frappe.ui.form.on("BOM Items", {
         let doc = locals[cdt][cdn];
         frappe.model.set_value(cdt, cdn, "amount", (doc.cost * doc.quantity));
         update_totals(frm)
+    },
+    unit(frm,cdt,cdn){
+        let doc = locals[cdt][cdn];
+        frappe.call({
+			method: "epos_restaurant_2023.inventory.inventory.get_uom_conversion",
+			args: {
+				from_uom: doc.base_unit, 
+                to_uom: doc.unit
+			},
+			callback: (r) => {
+				if(r.message){
+                    qty = (1/(r.message || 0))
+					frappe.model.set_value(cdt, cdn, "quantity", qty.toFixed(2));
+				}
+			}
+		})
     }
 });
 

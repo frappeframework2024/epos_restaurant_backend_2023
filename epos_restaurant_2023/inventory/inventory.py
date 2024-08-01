@@ -50,15 +50,32 @@ def get_bom_items(bom_name):
     bom_items = frappe.db.sql("select product,product_name,unit,cost,quantity,amount from `tabBOM Items` where parent = '{0}'".format(bom_name),as_dict=True)
     return bom_items
 
+@frappe.whitelist(allow_guest=True)
 def get_uom_conversion(from_uom, to_uom):
     conversion =frappe.db.get_value('Unit of Measurement Conversion', {'from_uom': from_uom,"to_uom":to_uom}, ['conversion'], cache=True)
     
     return conversion or 1
 
 @frappe.whitelist(allow_guest=True)
-def get_product_price(product_code):
-    price = frappe.db.get_value('Product', product_code, 'price')    
+def get_bom_product_price(product_code):
+    price = 0
+    prices = frappe.db.sql("select price from `tabProduct Price` where parent = '{}' order by creation desc".format(product_code),as_dict=True)
+    if len(prices) > 0:
+        price = prices[0].price
+    else:
+        price = frappe.db.get_value('Product', product_code, 'price') 
     return price or 0
+
+@frappe.whitelist(allow_guest=True)
+def get_bom_product_cost(product_code):
+    cost = 0
+    costs = frappe.db.sql("select cost from `tabStock Location Product` where product_code = '{}' order by quantity desc".format(product_code),as_dict=True)
+    if len(costs) > 0:
+        cost = costs[0].cost
+    else:
+        cost = frappe.db.get_value('Product', product_code, 'cost') 
+    return cost or 0
+
 
 @frappe.whitelist(allow_guest=True)
 def get_product_cost(stock_location, product_code):

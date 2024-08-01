@@ -1,73 +1,76 @@
 {% var index = 1 %}
-<div class="form-grid-container">
-    <div class="form-grid">
-        <div class="grid-heading-row" style="height: auto !important;">
-            <div class="grid-row">
-                <div class="data-row row">
-                    <div class="col text-center" style="max-width: 3%;">
-                        <span>No.</span>
-                    </div> 
-                    <div class="col text-center" style="min-width: 8%;">Reservation #</div>
-                    <div class="col text-center" style="min-width: 8%;">Stay #</div>
-                    <div class="col">Ref #</div>
-                    <div class="col text-center" style="max-width: 3%;">Type</div>
-                    <div class="col">Group Code</div>
-                    <div class="col text-center">Res Date</div>
-                    <div class="col text-center" style="min-width: 13%;">Stay Date</div>
-                    <div class="col text-center">Room Nights</div>
-                    <div class="col">Rooms</div>
-                    <div class="col">Guest</div>
-                    <div class="col">Source</div>
-                    <div class="col text-right">ADR</div>
-                    <div class="col text-right">Total Room Rate</div>
-                    <div class="col text-center">Status</div>
+<div id="guest_stay_history">
+    <div class="form-grid-container">
+        <div class="form-grid">
+            <div class="grid-heading-row" style="height: auto !important;">
+                <div class="grid-row">
+                    <div class="data-row row">
+                        <div class="col text-center" style="max-width: 3%;">
+                            <span>No.</span>
+                        </div> 
+                        <div class="col text-center" style="min-width: 8%;">Reservation #</div>
+                        <div class="col text-center" style="min-width: 8%;">Stay #</div>
+                        <div class="col">Ref #</div>
+                        <div class="col text-center" style="max-width: 3%;">Type</div>
+                        <div class="col">Group Code</div>
+                        <div class="col text-center">Res Date</div>
+                        <div class="col text-center" style="min-width: 13%;">Stay Date</div>
+                        <div class="col text-center">Room Nights</div>
+                        <div class="col">Rooms</div>
+                        <div class="col">Guest</div>
+                        <div class="col">Source</div>
+                        <div class="col text-right">ADR</div>
+                        <div class="col text-right">Total Room Rate</div>
+                        <div class="col text-center">Status</div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-body">
+                <div class="rows"> 
+                    {% for d in data %} 
+                        <div class="grid-row stay_history"> 
+                            <div class="data-row row">
+                                <div class="col text-center" style="max-width: 3%;">{{index}}</div>
+                                <div class="col text-center" style="min-width: 8%;">
+                                    <a href="/app/reservation/{{d.reservation}}" style="border: 1px dashed #4338ca;border-radius: 10px;padding: 0 5px;color: #4338ca;cursor: pointer;display: inline-block;">{{d.reservation}}</a>
+                                </div>
+                                <div class="col text-center" style="min-width: 8%;">
+                                    <a href="/app/reservation-stay/{{d.name}}" style="border: 1px dashed #4338ca;border-radius: 10px;padding: 0 5px;color: #4338ca;cursor: pointer;display: inline-block;">{{d.name}}</a>
+                                </div>
+                                <div class="col">{{d.reference_number}}</div>
+                                <div class="col text-center" style="max-width: 3%;">{{d.reservation_type}}</div>
+                                <div class="col">{{d.group_code}}</div>
+                                <div class="col text-center">{{d.reservation_date}}</div>
+                                <div class="col text-center" style="min-width: 13%;">{{d.arrival_date}} &#8594; {{d.departure_date}}</div>
+                                <div class="col text-center">{{d.room_nights}}</div>
+                                <div class="col">
+                                    {% if d.rooms_data %} 
+                                        {% for room in d.rooms_data %}
+                                            {% if room.room_type_alias %}
+                                                <span>{{room.room_type_alias}}</span>/
+                                            {% endif %}
+                                            {% if room.room_number != '' %} 
+                                                <span>{{room.room_number}}</span>
+                                            {% endif %}
+                                            {% if room.room_number == '' %} 
+                                                <a class="p-0 link_line_action1">Assign</a>
+                                            {% endif %}
+                                            <br/>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                                <div class="col">{{d.guest}} - {{d.guest_name}}</div>
+                                <div class="col">{{d.business_source}}</div>
+                                <div class="col text-right">{{frappe.format(d.adr, {"fieldtype":"Currency"})}}</div>
+                                <div class="col text-right">{{frappe.format(d.total_amount, {"fieldtype":"Currency"})}}</div>
+                                <div class="col text-center">{{d.reservation_status}}</div>
+                            </div>
+                        </div>
+                        {% var index = index + 1 %}
+                    {% endfor %} 
                 </div>
             </div>
         </div>
-        <div class="grid-body">
-            <div class="rows"> 
-                {% for d in data %} 
-                    <div class="grid-row"> 
-                        <div class="data-row row">
-                            <div class="col text-center" style="max-width: 3%;">{{index}}</div>
-                            <div class="col text-center" style="min-width: 8%;">
-                                <a href="/app/reservation/{{d.reservation}}" style="border: 1px dashed #4338ca;border-radius: 10px;padding: 0 5px;color: #4338ca;cursor: pointer;display: inline-block;">{{d.reservation}}</a>
-                            </div>
-                            <div class="col text-center" style="min-width: 8%;">
-                                <a href="/app/reservation-stay/{{d.name}}" style="border: 1px dashed #4338ca;border-radius: 10px;padding: 0 5px;color: #4338ca;cursor: pointer;display: inline-block;">{{d.name}}</a>
-                            </div>
-                            <div class="col">{{d.reference_number}}</div>
-                            <div class="col text-center" style="max-width: 3%;">{{d.reservation_type}}</div>
-                            <div class="col">{{d.group_code}}</div>
-                            <div class="col text-center">{{d.reservation_date}}</div>
-                            <div class="col text-center" style="min-width: 13%;">{{d.arrival_date}} &#8594; {{d.departure_date}}</div>
-                            <div class="col text-center">{{d.room_nights}}</div>
-                            <div class="col">
-                                {% if d.rooms_data %} 
-                                    {% for room in d.rooms_data %}
-                                        {% if room.room_type_alias %}
-                                            <span>{{room.room_type_alias}}</span>/
-                                        {% endif %}
-                                        {% if room.room_number != '' %} 
-                                            <span>{{room.room_number}}</span>
-                                        {% endif %}
-                                        {% if room.room_number == '' %} 
-                                            <a class="p-0 link_line_action1">Assign</a>
-                                        {% endif %}
-                                        <br/>
-                                    {% endfor %}
-                                {% endif %}
-                            </div>
-                            <div class="col">{{d.guest}} - {{d.guest_name}}</div>
-                            <div class="col">{{d.business_source}}</div>
-                            <div class="col text-right">{{frappe.format(d.adr, {"fieldtype":"Currency"})}}</div>
-                            <div class="col text-right">{{frappe.format(d.total_amount, {"fieldtype":"Currency"})}}</div>
-                            <div class="col text-center">{{d.reservation_status}}</div>
-                        </div>
-                    </div>
-                    {% var index = index + 1 %}
-                {% endfor %} 
-            </div>
-        </div>
     </div>
+    <div id="pagination"></div>
 </div>
