@@ -75,9 +75,10 @@
 import moment from '@/utils/moment.js';
 import PageLayout from '@/components/layout/PageLayout.vue';
 import ComCashDrawerKPI from './components/ComCashDrawerKPI.vue';
-import { addCashDrawerModalDialog, createResource, ref, onMounted, inject, createDocumentResource, createToaster, useRouter } from '@/plugin'
+import { addCashDrawerModalDialog, createResource, ref, onMounted, inject, createDocumentResource, createToaster, useRouter,i18n } from '@/plugin'
 import { useDisplay } from 'vuetify';
 
+const { t: $t } = i18n.global;  
 const { mobile } = useDisplay()
 const toaster = createToaster({ position: 'top-right' })
 let transactions = ref({})

@@ -414,7 +414,8 @@ def get_guest_note_detail(customer_name):
 			reference_name,
 			comment_by,
 			custom_audit_trail_type,
-			custom_posting_date
+			custom_posting_date,
+			modified
 		from  
 			`tabComment` 
 		where 

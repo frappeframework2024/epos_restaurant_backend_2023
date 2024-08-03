@@ -22,7 +22,6 @@
   "section_break_4",
   "scan_barcode",
   "column_break_11",
-  "exchange_rate",
   "append_quantity",
   "section_break_13",
   "purchase_order_products",
@@ -162,8 +161,9 @@
   {
    "fetch_from": "stock_location.business_branch",
    "fieldname": "business_branch",
-   "fieldtype": "Data",
-   "label": "Business Branch"
+   "fieldtype": "Link",
+   "label": "Business Branch",
+   "options": "Business Branch"
   },
   {
    "fieldname": "stock_location",
@@ -269,12 +269,6 @@
    "label": "Vendor Group"
   },
   {
-   "fieldname": "exchange_rate",
-   "fieldtype": "Float",
-   "label": "Exchange Rate",
-   "read_only": 1
-  },
-  {
    "fieldname": "column_break_dclp",
    "fieldtype": "Column Break"
   },
@@ -337,7 +331,7 @@
    "link_fieldname": "purchase_order"
   }
  ],
- "modified": "2024-07-26 15:27:56.020130",
+ "modified": "2024-08-03 08:48:10.052848",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order",

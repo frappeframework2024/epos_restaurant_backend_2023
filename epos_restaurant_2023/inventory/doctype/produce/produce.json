@@ -19,10 +19,13 @@
   "target_location",
   "section_break_hbno",
   "bom",
-  "valuation_based_on",
   "section_break_yjda",
   "produce_items",
-  "amended_from"
+  "amended_from",
+  "section_break_cwsp",
+  "total_quantity",
+  "column_break_bnnt",
+  "total_amount"
  ],
  "fields": [
   {
@@ -128,18 +131,30 @@
    "reqd": 1
   },
   {
-   "default": "Cost",
-   "depends_on": "eval:doc.bom == \"\"",
-   "fieldname": "valuation_based_on",
-   "fieldtype": "Select",
-   "label": "Valuation Based On",
-   "options": "Cost\nPrice"
+   "fieldname": "section_break_cwsp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_quantity",
+   "fieldtype": "Float",
+   "label": "Total Quantity",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_bnnt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Amount",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-01 14:50:22.828309",
+ "modified": "2024-08-02 08:26:55.038208",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Produce",

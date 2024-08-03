@@ -217,8 +217,6 @@ function set_product_indicator(frm) {
         method: 'get_product_summary_information',
         doc: frm.doc,
         callback: function (r) {
-            console.log(r)
-
             if (r.message) {
                 let total_total_quantity = 0;
                 $.each(r.message.stock_information, function (i, d) {

@@ -838,7 +838,7 @@ def get_cash_float(data):
                 "currency":g['currency'],
                 "input_amount":total_input_amount or 0,
                 "opening_amount":total_opening_amount or 0,
-                "input_close_amount": total_input_close_amount or 0,
+                "input_close_amount": total_input_system_close_amount or 0 ,##total_input_close_amount or 0,
                 "input_system_close_amount": total_input_system_close_amount or 0,
                 "system_close_amount": total_system_close_amount or 0,
                 "different_amount": total_different_amount or 0

@@ -204,9 +204,10 @@ def validate_account(self):
 			if p.is_inventory_product:
 				p.default_account = frappe.get_cached_value("Business Branch", self.business_branch,"default_inventory_account")
 		if not p.default_expense_account:
-			p.default_expense_account = get_expense_account_from_product(self.business_branch, p.product_code)
-     
-def get_expense_account_from_product(business_branch,product_code):
+			p.default_expense_account = get_expense_account(self.business_branch, p.product_code)
+
+@frappe.whitelist(allow_guest=True) 
+def get_expense_account(business_branch,product_code):
     doc = frappe.get_cached_doc("Product",product_code)
     account = None
     if doc.default_account:

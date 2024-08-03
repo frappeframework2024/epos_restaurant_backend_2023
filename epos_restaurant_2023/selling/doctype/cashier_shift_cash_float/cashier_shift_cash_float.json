@@ -42,7 +42,7 @@
    "fieldname": "input_amount",
    "fieldtype": "Float",
    "in_list_view": 1,
-   "label": "Input Amount"
+   "label": "Opening Input Amount"
   },
   {
    "fieldname": "payment_method",
@@ -55,7 +55,6 @@
    "default": "0",
    "fieldname": "opening_amount",
    "fieldtype": "Currency",
-   "in_list_view": 1,
    "label": "Opening Amount",
    "read_only": 1
   },
@@ -63,27 +62,29 @@
    "default": "0",
    "fieldname": "system_close_amount",
    "fieldtype": "Currency",
-   "label": "System Close Amount"
+   "label": "System Close Amount",
+   "read_only": 1
   },
   {
    "default": "0",
    "fieldname": "input_close_amount",
    "fieldtype": "Float",
+   "in_list_view": 1,
    "label": "Input Close Amount"
   },
   {
    "default": "0",
    "fieldname": "close_amount",
    "fieldtype": "Currency",
-   "in_list_view": 1,
-   "label": "Close Amount"
+   "label": "Close Amount",
+   "read_only": 1
   },
   {
    "default": "0",
    "fieldname": "different_amount",
    "fieldtype": "Currency",
-   "in_list_view": 1,
-   "label": "Different Amount"
+   "label": "Different Amount",
+   "read_only": 1
   },
   {
    "fetch_from": "payment_method.currency",
@@ -108,7 +109,9 @@
    "default": "0",
    "fieldname": "input_system_close_amount",
    "fieldtype": "Float",
-   "label": "Input System Close Amount"
+   "in_list_view": 1,
+   "label": "Input System Close Amount",
+   "read_only": 1
   },
   {
    "fetch_from": "payment_method.payment_type_group",
@@ -117,9 +120,12 @@
    "label": "Payment Type Group"
   },
   {
+   "default": "0",
    "fieldname": "input_different_amount",
    "fieldtype": "Float",
-   "label": "Input Different Amount"
+   "in_list_view": 1,
+   "label": "Input Different Amount",
+   "read_only": 1
   },
   {
    "fetch_from": "currency.custom_pos_currency_format",
@@ -166,7 +172,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-12-08 15:07:20.838294",
+ "modified": "2024-08-01 17:27:34.965954",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Cashier Shift Cash Float",

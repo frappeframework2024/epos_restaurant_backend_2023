@@ -50,13 +50,24 @@
             </div>
             <div class="col-6 lg:col-4">
                 <label>Coupon Type</label><br />
+                <AutoComplete style="width: 100%;" inputStyle="width:100%" showOnFocus v-model="selectedMember"
+                    inputId="ac" optionLabel="label" :suggestions="items" @complete="search">
+                    <template #option="slotProps">
+                        {{ slotProps.option.label }}
+                        <br />
+                        <span class="text-600 text-xs">
+                            {{ slotProps.option.description }}
+                        </span>
+
+                    </template>
+                </AutoComplete>
                 <Dropdown v-model="selectedCouponType" :options="couponType" placeholder="Select Coupon Type"
                     class="w-full" />
             </div>
             <div class="col-6 lg:col-4" v-if="selectedCouponType == 'Membership'">
                 <label>Membership</label><br />
                 <AutoComplete style="width: 100%;" inputStyle="width:100%" showOnFocus v-model="selectedMember"
-                    @focus="memberFocus" inputId="ac" optionLabel="label" :suggestions="items" @complete="search">
+                    inputId="ac" optionLabel="label" :suggestions="items" @complete="search">
                     <template #option="slotProps">
                         {{ slotProps.option.label }}
                         <br />
@@ -166,12 +177,12 @@ const call = frappe.call();
 const items = ref([]);
 const paymentTypes = ref([]);
 const saleCoupon = ref({})
-const selectedMember = ref(undefined)
+const selectedMember = ref({})
 const price = ref(0)
 const expiry_date = ref()
 const limitVisit = ref(0)
 const VisitBalance = ref(0)
-const selectedCouponType = ref("Individual")
+const selectedCouponType = ref({})
 const selectdFile = ref({})
 const payments = ref([{
         "payment_type": "",
@@ -221,16 +232,7 @@ onMounted(() => {
 })
 
 
-function memberFocus(event) {
-    call.get("frappe.desk.search.search_link", {
-        txt: "",
-        doctype: "Customer",
-        ignore_user_permissions: 0,
-        reference_doctype: "Sale Coupon"
-    }).then((res) => {
-        items.value = res.message
-    })
-}
+
 function onAddPaymentClick() {
     payments.value.unshift({
         "payment_type": "",

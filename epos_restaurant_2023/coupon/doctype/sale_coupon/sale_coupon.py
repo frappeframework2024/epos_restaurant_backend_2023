@@ -10,7 +10,24 @@ class SaleCoupon(Document):
 		self.visited_count = 0
 		self.balance = self.limit_visit - self.visited_count
 
-	def validate(self):
+	def validate(self): 
+		if  self.member_type != "Individual":
+			if not self.member:
+				frappe.throw("Please select member to continue")	
+			m = frappe.get_doc("Customer", self.member)
+			self.gender = m.gender
+			self.member_name = m.member_name
+			self.member_name_kh = m.member_name_kh
+			self.phone_number = m.phone_number
+			self.phone_number_2 = m.phone_number_2
+
+		else:
+			if not self.member_name:
+				frappe.throw("Please enter member name")	
+			if not self.member_name_kh:
+				self.member_name_kh = self.member_name
+
+
 		for p in self.payments:
 			p.payment_amount = p.input_amount / p.exchange_rate
 		self.total_payment_amount = sum([d.payment_amount for d in self.payments])

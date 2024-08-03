@@ -40,9 +40,7 @@ class CashierShift(Document):
 		self.total_different_amount = self.total_close_amount -  self.total_system_close_amount
 
 		# check if close shift then check 
-		if self.is_closed==1:
-			
-
+		if self.is_closed==1:	
 			if self.is_run_night_audit==1:
 				#validte if still have epos open
 				if frappe.db.exists("Cashier Shift",{"is_closed":0, "is_edoor_shift":0}):

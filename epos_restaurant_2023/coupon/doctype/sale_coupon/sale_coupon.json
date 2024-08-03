@@ -6,20 +6,36 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "information_section",
   "coupon_number",
   "posting_date",
-  "coupon_type",
-  "membership",
-  "member_name",
-  "phone_number",
+  "member_type",
+  "member",
+  "attach_image",
   "column_break_kxut",
+  "member_name",
+  "member_name_kh",
+  "gender",
+  "phone_number",
+  "phone_number_2",
+  "coupon_type_section",
+  "coupon_type",
+  "summary_section",
+  "regular_price",
   "price",
+  "discount_type",
+  "discount_value",
+  "grand_total",
+  "column_break_rszr",
   "limit_visit",
+  "expiry_date",
   "visited_count",
   "balance",
-  "expiry_date",
-  "attach_image",
+  "section_break_xohk",
   "total_payment_amount",
+  "column_break_pgfy",
+  "payment_balance",
+  "payment_tab",
   "section_break_obwz",
   "payments",
   "amended_from"
@@ -40,27 +56,12 @@
    "reqd": 1
   },
   {
-   "default": "Membership",
-   "fieldname": "coupon_type",
-   "fieldtype": "Select",
-   "label": "Coupon Type",
-   "options": "Individual\nMembership"
-  },
-  {
-   "depends_on": "eval:doc.coupon_type != 'General'",
-   "fieldname": "membership",
-   "fieldtype": "Link",
-   "label": "Member",
-   "options": "Customer"
-  },
-  {
    "fetch_from": "membership.customer_name_en",
    "fetch_if_empty": 1,
    "fieldname": "member_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Member Name",
-   "reqd": 1
+   "label": "Member Name"
   },
   {
    "fieldname": "phone_number",
@@ -73,24 +74,29 @@
   },
   {
    "default": "0",
+   "fetch_from": "coupon_type.price",
+   "fetch_if_empty": 1,
    "fieldname": "price",
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Price"
   },
   {
+   "fetch_from": "coupon_type.total_visit",
    "fieldname": "limit_visit",
    "fieldtype": "Int",
    "label": "Limit Visit",
-   "reqd": 1
+   "read_only": 1
   },
   {
+   "default": "0",
    "fieldname": "visited_count",
    "fieldtype": "Int",
    "label": "Visited Count",
    "read_only": 1
   },
   {
+   "default": "0",
    "fieldname": "balance",
    "fieldtype": "Int",
    "label": "Visit Balance",
@@ -111,10 +117,12 @@
    "label": "Attach Image"
   },
   {
+   "default": "0",
    "fieldname": "total_payment_amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Total Payment Amount"
+   "label": "Total Payment Amount",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_obwz",
@@ -135,13 +143,132 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "payment_tab",
+   "fieldtype": "Tab Break",
+   "label": "Payment"
+  },
+  {
+   "depends_on": "eval:doc.coupon_type != 'General'",
+   "fieldname": "member",
+   "fieldtype": "Link",
+   "label": "Member",
+   "options": "Customer"
+  },
+  {
+   "default": "Individual",
+   "fieldname": "member_type",
+   "fieldtype": "Select",
+   "label": "Member Type",
+   "options": "Individual\nMember"
+  },
+  {
+   "default": "Not Set",
+   "fieldname": "gender",
+   "fieldtype": "Select",
+   "label": "Gender",
+   "options": "Not Set\nMale\nFemale"
+  },
+  {
+   "fieldname": "phone_number_2",
+   "fieldtype": "Data",
+   "label": "Phone Number 2"
+  },
+  {
+   "fetch_from": "membership.customer_name_en",
+   "fetch_if_empty": 1,
+   "fieldname": "member_name_kh",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Member Name Kh"
+  },
+  {
+   "fieldname": "information_section",
+   "fieldtype": "Section Break",
+   "label": "Information"
+  },
+  {
+   "fieldname": "summary_section",
+   "fieldtype": "Section Break",
+   "label": "Summary"
+  },
+  {
+   "default": "0",
+   "fieldname": "payment_balance",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Payment Balance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_rszr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Percent",
+   "fieldname": "discount_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Discount Type",
+   "options": "Percent\nAmount"
+  },
+  {
+   "default": "0",
+   "fieldname": "discount_value",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Discount Value"
+  },
+  {
+   "default": "0",
+   "fieldname": "grand_total",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Grand Total",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_xohk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_pgfy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "coupon_type",
+   "fieldtype": "Link",
+   "label": "Coupon Type",
+   "options": "Sale Coupon Type",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fetch_from": "coupon_type.price",
+   "fieldname": "regular_price",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Regular Price",
+   "read_only": 1
+  },
+  {
+   "fieldname": "coupon_type_section",
+   "fieldtype": "Section Break",
+   "label": "Coupon Type"
   }
  ],
  "image_field": "attach_image",
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2024-08-01 10:30:48.792189",
+ "links": [
+  {
+   "group": "Payment",
+   "link_doctype": "Sales Coupon Payment",
+   "link_fieldname": "sale_coupon"
+  }
+ ],
+ "modified": "2024-08-02 17:42:35.802898",
  "modified_by": "Administrator",
  "module": "Coupon",
  "name": "Sale Coupon",

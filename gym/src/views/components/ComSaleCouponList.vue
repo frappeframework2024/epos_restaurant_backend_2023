@@ -19,7 +19,7 @@
         <div class="m-3 p-4 bg-white rounded">
 
             <div class="table-wrapper">
-                <DataTable v-model:filters="filters" :paginator="true" dataKey="name" filterDisplay="row"  :value="saleCouponList" tableStyle="min-width: 50rem" tableClass="coupon__table">
+                <DataTable v-model:filters="filters"  dataKey="name" filterDisplay="row"  :value="saleCouponList" tableStyle="min-width: 50rem" tableClass="coupon__table">
                     <Column header="Coupon #" field="coupon_number">
                         <template #filter="{ filterModel, filterCallback }">
                             <InputText type="text" v-model="filterModel.value" @input="onFilter(filterModel,filterCallback())"
@@ -242,10 +242,10 @@ function onRefreshClick() {
 function getListSaleCoupon(keyword="") {
     loading.value = true;
     db.getDocList('Sale Coupon', {
-        fields: ["name", "coupon_number", "posting_date", "modified", "coupon_type", "docstatus", "membership", "member_name",
+        fields: ["name", "coupon_number", "posting_date", "modified", "coupon_type", "docstatus", "member", "member_name",
             "phone_number", "price", "expiry_date", "visited_count", "limit_visit"],
         filters: keyword == "" ? [] : [ ["name", "like", `%${keyword.value}%`]],
-        page_length: 500,
+        limit: 100,
         orderBy: {
             field: 'creation',
             order: 'DESC',
@@ -254,7 +254,6 @@ function getListSaleCoupon(keyword="") {
         saleCouponList.value = docs
         loading.value = false
     }).catch((err) => {
-        console.log(err)
         if (error.httpStatus == 403) {
             toast.add({ severity: 'error', summary: 'Validation', detail: err._error_message, life: 3000 });
         }

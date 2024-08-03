@@ -40,7 +40,6 @@ window.addEventListener('load', function () {
             if (listSidebar) {
                 const listParent = listSidebar.parentNode
                 const listTopParent = listParent.parentNode
-                console.log(listTopParent)
                 if (listTopParent) {
                     listTopParent.remove()
                 }
@@ -185,7 +184,6 @@ $(document).ready(function(){
         if (listSidebar) {
             const listParent = listSidebar.parentNode
             const listTopParent = listParent.parentNode
-            console.log(listTopParent)
             if (listTopParent) {
                 listTopParent.remove()
             }
@@ -492,6 +490,7 @@ $(document).ready(function(){
     }
 
     $('.report-wrapper').on('click', function(event) {
+         
         var x = event.clientX;
         var y = event.clientY;
         

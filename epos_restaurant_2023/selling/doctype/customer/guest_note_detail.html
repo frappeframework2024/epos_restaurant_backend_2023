@@ -1,11 +1,11 @@
-<div class="card-columns"> 
+<div class="card-columns" style="column-count:4 !important"> 
     {% for d in data %}
         <div class="card"> 
             <div class="card-body">
                 <h5 class="card-title">{{d.subject}} - <a href="/app/{{d.reference_doctype == 'Reservation Stay' ? 'reservation-stay' : 'reservation'}}/{{d.reference_name}}" class="link_line_action">{{d.reference_name}}</a></h5>
-                <p class="card-text"><small class="text-muted">{{d.custom_audit_trail_type}} by: {{d.comment_by}} | Note date: </small></p>
+                <p class="card-text"><small class="text-muted">{{d.custom_audit_trail_type}} by: {{d.comment_by}} | <span class="font-italic">Note date: {{ frappe.format(d.creation,{"fieldtype":"Datetime"})}}</span></small></p>
                 <p class="card-text">{{d.content}}</p>
-                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                <p class="card-text"><small class="text-muted">Last updated {{d.modified}}</small></p>
             </div>
         </div>
     {% endfor %}

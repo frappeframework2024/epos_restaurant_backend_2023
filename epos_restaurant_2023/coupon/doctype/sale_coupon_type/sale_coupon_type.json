@@ -1,0 +1,79 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:coupon_type",
+ "creation": "2024-08-02 16:42:52.586460",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_mjje",
+  "coupon_type",
+  "total_visit",
+  "price"
+ ],
+ "fields": [
+  {
+   "fieldname": "coupon_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Coupon Type",
+   "unique": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_visit",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Total Visit"
+  },
+  {
+   "default": "0",
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Price"
+  },
+  {
+   "fieldname": "section_break_mjje",
+   "fieldtype": "Section Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-08-02 16:58:36.833823",
+ "modified_by": "Administrator",
+ "module": "Coupon",
+ "name": "Sale Coupon Type",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Coupon User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

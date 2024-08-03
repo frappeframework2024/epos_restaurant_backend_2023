@@ -2,33 +2,6 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Purchase Order", {
-	onload(frm) {
-		frappe.call({
-			method: "epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.get_exchange_rate",
-			callback: function (r) {
-				if (r.message != undefined) {
-					if (frm.doc.__islocal == undefined) {
-						frm.doc.exchange_rate = frm.doc.exchange_rate || r.message;
-					} else {
-						frm.doc.exchange_rate = r.message
-					}
-
-				} else {
-					frm.doc.exchange_rate = 1
-				}
-				frm.doc.purchase_order_products.forEach((r => {
-					r.exchange_rate = frm.doc.exchange_rate;
-					r.cost_second_currency = r.exchange_rate * r.cost;
-				}))
-
-				frm.refresh_field('exchange_rate');
-			},
-			error: function (r) {
-				alert("load data fail");
-			},
-		});
-
-	},
 	setup(frm) {
 		for (const key in frm.fields_dict) {
 			if (["Currency", "Data", "Int", "Link", "Date", "Datetime", "Float", "Select"].includes(frm.fields_dict[key].df.fieldtype)) {
@@ -36,7 +9,6 @@ frappe.ui.form.on("Purchase Order", {
 			}
 
 		}
-
 	},
 	refresh(frm) {
 		updateSummary(frm);
@@ -128,12 +100,9 @@ function AddDiscountButton(frm) {
 }
 
 function updateSummary(frm) {
-
 	const html = frappe.render_template("purchase_order_summary", frm.doc)
-
 	$(frm.fields_dict['html_summary'].wrapper).html(html);
 	frm.refresh_field('html_summary');
-
 }
 
 frappe.ui.form.on('Purchase Order Products', {
@@ -211,22 +180,11 @@ function updateSumTotal(frm) {
 	} else {
 		discount = frm.doc.discount;
 	}
-
 	frm.set_value('product_discount', products.reduce((n, d) => n + d.discount_amount, 0));
 	frm.set_value('po_discount', discount);
 	frm.set_value('total_discount', discount + frm.doc.product_discount);
 	frm.set_value('grand_total', frm.doc.sub_total - frm.doc.total_discount);
 	frm.set_value('balance', frm.doc.grand_total - frm.doc.total_paid);
-
-	frm.refresh_field("sub_total");
-	frm.refresh_field("total_quantity");
-	frm.refresh_field("product_discount");
-	frm.refresh_field("total_discount");
-	frm.refresh_field("grand_total");
-	frm.refresh_field("po_discount");
-	frm.refresh_field("po_discountable_amount");
-	frm.refresh_field("balance");
-
 	updateSummary(frm);
 }
 
@@ -294,6 +252,27 @@ let get_product_cost = function (frm,doc) {
 			},
 		});
 	});
+}
+
+function set_account(frm,cdt,cdn){
+	let doc = locals[cdt][cdn];
+	if (frm.doc.stock_location == undefined){
+		frappe.throw("Please Select Stock Location First")
+		return
+	}
+	frappe.call({
+		method: "epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.get_expense_account",
+		args: {
+			business_branch: frm.doc.business_branch,
+			product_code: doc.product_code
+		},
+		callback: function(r){
+			if(doc!=undefined){
+				frappe.model.set_value(cdt, cdn, "expense_account", (r.message || ""));
+			}
+		}
+	});
+	
 }
 
 function get_currenct_cost(frm,doc){

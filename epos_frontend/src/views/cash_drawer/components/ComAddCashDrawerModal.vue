@@ -30,11 +30,10 @@
                             hide-details
                             ></v-text-field>
 
-                        </v-col>
-                        {{ cash }}
+                        </v-col> 
                         <v-col cols="12" md="6">
                             <v-select height="100%" density="comfortable" :label="$t('Transaction Type')"
-                                v-model="cash.transaction_type" 
+                                v-model="cash.transaction_type"
                                 :items="transaction_type"
                                 hide-details hide-no-data variant="solo"
                                 ></v-select>
@@ -82,6 +81,7 @@ let cash = ref({
         working_day: props.params.data.cashier_shift_info.working_day,
         post_date: current_date,
         business_branch: props.params.data.cashier_shift_info.business_branch,
+        transaction_type: 'Cash Float',
         created_by: '',
         input_amount: 0,
         amount: 0

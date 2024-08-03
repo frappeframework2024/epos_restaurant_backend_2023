@@ -445,18 +445,16 @@ li.active {
         background-color: #fff;
     }
     .sidebar-a {
-        width: 250px;
+        width: 300px;
         height: 100vh;
         background-color: #fff;
         color: #fff;
         position: fixed;
         top: 0;
-        left: -250px;
+        left: -300px;
         transition: 0.4s;
         z-index: 10000;
-        /* border-top-right-radius: 106px; */
         overflow: hidden;
-        /* background-image: linear-gradient(30deg, #0048bd, #44a7fd); */
     }
     .inner-sidebar {
         overflow-y: auto;
@@ -482,9 +480,6 @@ li.active {
     .sidebar-a ul ul {
         display: none; 
     }
-    /* .sidebar-a ul ul ul {
-        background-color: #555;
-    } */
     .sidebar-a ul li.active > ul {
         display: block;
     }
@@ -532,7 +527,7 @@ li.active {
     }
     .menu-btn.open {
         z-index: 100000;
-        left: 221px;
+        left: 269px;
         top: 2px;
         transition: 0.4s;
     }

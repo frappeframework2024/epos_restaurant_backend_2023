@@ -123,6 +123,12 @@ function getGuestNoteDetail (frm) {
             customer_name: frm.doc.name,
         },
         callback: (result => { 
+
+            result.message.forEach((r)=> { 
+                let date = new Date(r.modified);
+                r.modified = prettyDate(date)
+            })
+
             console.log(result.message)
             let html = frappe.render_template("guest_note_detail", {data:result.message}); 
             $(frm.fields_dict["guest_note_detail"].wrapper).html(html);
@@ -195,4 +201,25 @@ function pagination (frm, field_dict, wrapper, content, items_per_page) {
     createPageButtons()
 }
 
+function prettyDate(date) {
+    var diff = Math.floor((new Date() - date) / 1000);
+    var dayDiff = Math.floor(diff / 86400);
 
+    if (isNaN(dayDiff) || dayDiff < 0) {
+        return '';
+    }
+
+    if (dayDiff === 0) {
+        if (diff < 60) return 'Just now';
+        if (diff < 120) return '1 minute ago';
+        if (diff < 3600) return Math.floor(diff / 60) + ' minutes ago';
+        if (diff < 7200) return '1 hour ago';
+        if (diff < 86400) return Math.floor(diff / 3600) + ' hours ago';
+    }
+
+    if (dayDiff === 1) return 'Yesterday';
+    if (dayDiff < 7) return dayDiff + ' days ago';
+    if (dayDiff < 31) return Math.ceil(dayDiff / 7) + ' weeks ago';
+    if (dayDiff < 365) return Math.ceil(dayDiff / 30) + ' months ago';
+    return Math.ceil(dayDiff / 365) + ' years ago';
+}

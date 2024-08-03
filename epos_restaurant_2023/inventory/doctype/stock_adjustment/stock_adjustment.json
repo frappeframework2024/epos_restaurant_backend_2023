@@ -26,13 +26,14 @@
   "column_break_13",
   "total_quantity",
   "total_cost",
+  "total_current_quantity",
+  "total_current_cost",
   "difference_quantity",
   "difference_cost",
-  "total_current_cost",
-  "total_current_quantity",
-  "accounting_tab",
-  "default_inventory_account",
-  "difference_account"
+  "section_break_revm",
+  "difference_account",
+  "column_break_sykv",
+  "difference_amount"
  ],
  "fields": [
   {
@@ -174,33 +175,36 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "accounting_tab",
-   "fieldtype": "Tab Break",
-   "label": "Accounting"
-  },
-  {
    "fetch_from": "business_branch.stock_adjustment_account",
    "fetch_if_empty": 1,
    "fieldname": "difference_account",
    "fieldtype": "Link",
    "label": "Difference Account",
    "link_filters": "[[{\"fieldname\":\"difference_account\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0],[{\"fieldname\":\"difference_account\",\"field_option\":\"Chart Of Account\"},\"root_type\",\"=\",\"Expenses\"]]",
-   "options": "Chart Of Account"
+   "options": "Chart Of Account",
+   "read_only": 1
   },
   {
-   "fetch_from": "business_branch.default_inventory_account",
-   "fetch_if_empty": 1,
-   "fieldname": "default_inventory_account",
-   "fieldtype": "Link",
-   "label": "Default Inventory Account",
-   "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0],[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"root_type\",\"=\",\"Asset\"]]",
-   "options": "Chart Of Account"
+   "collapsible": 1,
+   "fieldname": "section_break_revm",
+   "fieldtype": "Section Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "column_break_sykv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "difference_amount",
+   "fieldtype": "Currency",
+   "label": "Difference Amount",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-07-26 21:25:05.147042",
+ "modified": "2024-08-02 09:06:59.495946",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Adjustment",

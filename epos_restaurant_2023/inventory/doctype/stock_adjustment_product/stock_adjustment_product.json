@@ -9,13 +9,11 @@
   "product_code",
   "product_name",
   "unit",
-  "base_unit",
-  "quantity",
   "column_break_4",
+  "quantity",
   "cost",
-  "total_cost",
-  "secondary_cost",
-  "total_secondary_cost",
+  "total_amount",
+  "is_inventory_product",
   "before_adjustment_section",
   "current_quantity",
   "column_break_10",
@@ -23,14 +21,13 @@
   "column_break_12",
   "total_current_cost",
   "differenct_section",
-  "difference_quantity",
+  "difference_account",
   "column_break_16",
-  "difference_cost",
-  "accounting_section",
-  "default_account",
+  "difference_quantity",
+  "column_break_odug",
+  "difference_amount",
   "section_break_18",
-  "note",
-  "is_inventory_product"
+  "note"
  ],
  "fields": [
   {
@@ -46,7 +43,8 @@
    "fieldname": "product_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Product Name"
+   "label": "Product Name",
+   "read_only": 1
   },
   {
    "fetch_from": "product_code.unit",
@@ -56,7 +54,7 @@
    "in_list_view": 1,
    "label": "Unit",
    "options": "Unit Of Measurement",
-   "reqd": 1
+   "read_only": 1
   },
   {
    "fieldname": "column_break_4",
@@ -75,14 +73,6 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Cost"
-  },
-  {
-   "default": "0",
-   "fieldname": "total_cost",
-   "fieldtype": "Currency",
-   "in_list_view": 1,
-   "label": "Total Cost",
-   "read_only": 1
   },
   {
    "default": "0",
@@ -120,17 +110,12 @@
   {
    "fieldname": "difference_quantity",
    "fieldtype": "Float",
-   "label": "Difference Quantity"
+   "label": "Difference Quantity",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_16",
    "fieldtype": "Column Break"
-  },
-  {
-   "default": "0",
-   "fieldname": "difference_cost",
-   "fieldtype": "Currency",
-   "label": "Difference Cost"
   },
   {
    "fieldname": "section_break_18",
@@ -154,44 +139,36 @@
    "label": "Is Inventory Product"
   },
   {
-   "fetch_from": "product_code.unit",
-   "fetch_if_empty": 1,
-   "fieldname": "base_unit",
-   "fieldtype": "Data",
-   "label": "Base Unit",
+   "fieldname": "column_break_odug",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "difference_amount",
+   "fieldtype": "Currency",
+   "label": "Difference Amount",
    "read_only": 1
   },
   {
-   "fieldname": "accounting_section",
-   "fieldtype": "Section Break",
-   "label": "Accounting "
-  },
-  {
-   "fieldname": "default_account",
+   "fieldname": "difference_account",
    "fieldtype": "Link",
-   "label": "Default Account",
-   "options": "Chart Of Account"
-  },
-  {
-   "fetch_from": "product_code.secondary_cost",
-   "fetch_if_empty": 1,
-   "fieldname": "secondary_cost",
-   "fieldtype": "Currency",
-   "label": "Secondary Cost",
+   "label": "Difference Account",
+   "options": "Chart Of Account",
    "read_only": 1
   },
   {
    "default": "0",
-   "fieldname": "total_secondary_cost",
+   "fieldname": "total_amount",
    "fieldtype": "Currency",
-   "label": "Total Secondary Cost",
+   "in_list_view": 1,
+   "label": "Total Amount",
    "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-07-24 14:57:28.311833",
+ "modified": "2024-08-02 12:00:51.219109",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Adjustment Product",

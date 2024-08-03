@@ -1,8 +1,8 @@
 # Copyright (c) 2022, Tes Pheakdey and contributors
 # For license information, please see license.txt
 
-from epos_restaurant_2023.inventory.inventory import add_to_inventory_transaction, get_stock_location_product,get_uom_conversion
-from epos_restaurant_2023.api.product import get_currenct_cost
+from epos_restaurant_2023.inventory.inventory import add_to_inventory_transaction,get_uom_conversion
+from epos_restaurant_2023.api.account import submit_general_ledger_entry
 import frappe
 from frappe import _
 from frappe.model.document import Document
@@ -11,21 +11,32 @@ from epos_restaurant_2023.inventory.doctype.stock_adjustment.general_ledger_entr
 
 class StockAdjustment(Document):
 	def validate(self):
-		not_inventory_product =  Enumerable(self.products).where(lambda x: x.is_inventory_product==0).first_or_default()
-		if not_inventory_product:
-			frappe.throw(_("Product {} - {} is not an inventory product".format(not_inventory_product.product_code, not_inventory_product.product_name )))
-			total_quantity = Enumerable(self.products).sum(lambda x: x.quantity or 0)
-			total_cost = Enumerable(self.products).sum(lambda x: x.cost or 0)
-			total_current_quantity = Enumerable(self.products).sum(lambda x: x.current_quantity or 0)
-			total_current_cost = Enumerable(self.products).sum(lambda x: x.current_cost or 0)
-			self.total_current_quantity = total_current_quantity
-			self.total_current_cost = total_current_cost
-			self.total_quantity = total_quantity
-			self.total_cost = total_cost
+		total_quantity = Enumerable(self.products).sum(lambda x: x.quantity or 0)
+		total_cost = Enumerable(self.products).sum(lambda x: x.total_amount or 0)
+		total_current_quantity = Enumerable(self.products).sum(lambda x: x.current_quantity or 0)
+		total_current_cost = Enumerable(self.products).sum(lambda x: x.total_current_cost or 0)
+
+
+		self.total_quantity = total_quantity
+		self.total_cost = total_cost
+
+		self.total_current_quantity = total_current_quantity
+		self.total_current_cost = total_current_cost
+		
+		self.difference_quantity = self.total_quantity - self.total_current_quantity; 
+		self.difference_cost = self.total_cost - self.total_current_cost; 
+
+		error = 0
+		for a in self.products:
+			if a.difference_amount == 0:
+				error += 1
+				del self.products[a.idx-1]
+		if error>0:
+			frappe.msgprint("Remove None Changing Row")
 
 	def on_submit(self):
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
-			submit_stock_adjustment_general_ledger_entry_on_submit(self)
+			general_ledger(self)
    
 		if len(self.products)<=10:
 			update_inventory_on_submit(self)
@@ -39,8 +50,7 @@ class StockAdjustment(Document):
 def update_inventory_on_submit(self):
 	for p in self.products:
 		if p.is_inventory_product:
-			uom_conversion = (1 if (get_uom_conversion(p.base_unit, p.unit) or 0) == 0 else get_uom_conversion(p.base_unit, p.unit))
-			defference_qty = (p.quantity - p.current_quantity) / uom_conversion
+			defference_qty = p.quantity - p.current_quantity
 			add_to_inventory_transaction({
 				'doctype': 'Inventory Transaction',
 				'transaction_type':"Stock Adjustment",
@@ -51,7 +61,46 @@ def update_inventory_on_submit(self):
 				'stock_location':self.stock_location,
 				'out_quantity': abs(defference_qty) if defference_qty < 0 else 0,
 				'in_quantity': defference_qty if defference_qty >= 0 else 0,
-				"price":p.cost * uom_conversion,
+				"price":p.cost,
 				'note': 'New Stock adjustment submitted.',
 				"action":"Submit"
 			})
+
+def general_ledger(self):
+	stock_in_hand = frappe.db.get_value("Business Branch",self.business_branch,"default_inventory_account")
+	if self.difference_amount > 0:
+		general_ledger_debit(self,{"account":stock_in_hand,"amount":self.difference_amount})
+		general_ledger_credit(self,{"account":self.difference_account,"amount":self.difference_amount})
+	else:
+		general_ledger_debit(self,{"account":self.difference_account,"amount":self.difference_amount})
+		general_ledger_credit(self,{"account":stock_in_hand,"amount":self.difference_amount})
+
+def general_ledger_debit(self,account):
+	docs = []
+	doc = {
+		"doctype":"General Ledger",
+		"posting_date":self.posting_date,
+		"account":account["account"],
+		"debit_amount":account["amount"],
+		"voucher_type":"Stock Adjustment",
+		"voucher_number":self.name,
+		"business_branch": self.business_branch,
+		"remark": "Accounting For Stock Adjustment"
+	}
+	docs.append(doc)
+	submit_general_ledger_entry(docs = docs)
+
+def general_ledger_credit(self,account):
+    docs = []
+    doc = {
+        "doctype":"General Ledger",
+        "posting_date":self.posting_date,
+        "account":account["account"],
+        "credit_amount":account["amount"],
+        "voucher_type":"Stock Adjustment",
+        "voucher_number":self.name,
+        "business_branch": self.business_branch,
+		"remark": "Accounting For Stock Adjustment"
+    }
+    docs.append(doc)
+    submit_general_ledger_entry(docs=docs)
