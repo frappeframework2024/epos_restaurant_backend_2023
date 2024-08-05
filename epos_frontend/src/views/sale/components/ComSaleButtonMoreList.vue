@@ -191,15 +191,15 @@ async function onChangeMenuLanguage() {
 async function onChangeTable() {
      
     if (!sale.isBillRequested()) {
-        if (sale.sale.sale_products.length == 0 && sale.sale.name == undefined) {
-            toaster.warning($t("msg.Please select a menu item to continue"));
-            return;
-        }
+        // if (sale.sale.sale_products.length == 0 && sale.sale.name == undefined) {
+        //     toaster.warning($t("msg.Please select a menu item to continue"));
+        //     return;
+        // }
 
-        if (sale.sale.sale_status != 'Submitted' || sale.sale.sale_products.find(r => r.sale_product_status != 'Submitted')) {
-            toaster.warning($t('msg.please save or submit your current order first', [$t('Submit')]))
-            return;
-        }
+        // if (sale.sale.sale_status != 'Submitted' || sale.sale.sale_products.find(r => r.sale_product_status != 'Submitted')) {
+        //     toaster.warning($t('msg.please save or submit your current order first', [$t('Submit')]))
+        //     return;
+        // }
 
         const result = await changeTableDialog({ pos_profile: localStorage.getItem('pos_profile') });
         if (result) {

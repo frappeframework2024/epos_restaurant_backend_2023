@@ -51,7 +51,19 @@ function onCreateNewBill() {
     emit("resolve", { action: "create_new_bill" });
 }
 
-async function onSaleOrderClick(s) {
+async function onSaleOrderClick(s) { 
+
+    if (sale.sale.sale_products.length == 0 && sale.sale.name == undefined) {
+            toaster.warning($t("msg.Please select a menu item to continue"));
+            return;
+    }
+
+    if (sale.sale.sale_status != 'Submitted' || sale.sale.sale_products.find(r => r.sale_product_status != 'Submitted')) {
+        toaster.warning($t('msg.please save or submit your current order first', [$t('Submit')]))
+        return;
+    }
+    
+
     if (s.sale_status == "Bill Requested") {
         toaster.warning($t("msg.You cannot merge order to the bill requested"));
         return;

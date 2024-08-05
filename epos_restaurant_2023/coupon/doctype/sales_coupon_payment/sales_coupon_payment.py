@@ -10,5 +10,6 @@ class SalesCouponPayment(Document):
 	def validate(self):
 		sale_coupon = frappe.get_doc("Sale Coupon", self.sale_coupon)
 		if sale_coupon.docstatus != 1:
-			frappe.throw("The sale coupon code not yet submit.")
-		pass
+			frappe.throw("The sale coupon not yet submit.")
+
+		

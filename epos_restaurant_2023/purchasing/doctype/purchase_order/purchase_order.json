@@ -41,6 +41,7 @@
   "section_break_10",
   "total_discount",
   "product_discount",
+  "total_expense_cost",
   "column_break_35",
   "grand_total",
   "total_paid",
@@ -295,6 +296,8 @@
    "label": "Accounting"
   },
   {
+   "fetch_from": "business_branch.default_credit_account",
+   "fetch_if_empty": 1,
    "fieldname": "default_credit_account",
    "fieldtype": "Link",
    "label": "Default Credit Account",
@@ -305,6 +308,8 @@
    "fieldtype": "Column Break"
   },
   {
+   "fetch_from": "business_branch.default_purchase_discount_account",
+   "fetch_if_empty": 1,
    "fieldname": "default_discount_account",
    "fieldtype": "Link",
    "label": "Default Discount Account",
@@ -313,6 +318,12 @@
   {
    "fieldname": "column_break_jzpe",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_expense_cost",
+   "fieldtype": "Currency",
+   "label": "Total Expense Cost",
+   "read_only": 1
   }
  ],
  "image_field": "attach_receipt",
@@ -325,7 +336,7 @@
    "link_fieldname": "purchase_order"
   }
  ],
- "modified": "2024-08-03 10:03:23.750843",
+ "modified": "2024-08-05 10:03:34.653322",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order",

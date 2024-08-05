@@ -83,7 +83,7 @@ function calculate_grand_total(frm,changed){
         discount_amount = frm.doc.discount_value / 100
     }
     frm.doc.grand_total = frm.doc.price - discount_amount;
-    frm.doc.payment_balance = frm.doc.price - discount_amount;
+    frm.doc.payment_balance =  frm.doc.grand_total - frm.doc.total_payment_amount;
     
     frm.set_df_property('grand_total', 'read_only',1);
     frm.set_df_property('payment_balance', 'read_only',1);
@@ -105,3 +105,31 @@ function reset_and_refresh_member_fields(frm,reset){
     frm.refresh_field("phone_number_2");    
     frm.refresh_field("gender");    
 }
+
+function update_summary(frm){
+    if(frm.doc.docstatus ==0 ){
+        const payments = frm.doc.payments
+        let total_payment_amount = payments==undefined?0: payments.reduce((n, d) => n + d.payment_amount, 0)
+        frm.set_value('total_payment_amount',total_payment_amount);
+        frm.refresh_field("total_payment_amount");
+
+        frm.set_value('payment_balance',  (frm.doc.grand_total||0) - total_payment_amount);
+        frm.refresh_field("payment_balance");
+        
+    }
+}
+
+frappe.ui.form.on('Sale Coupon Payment', { 
+	input_amount(frm,cdt, cdn){ 
+        const row = locals[cdt][cdn];
+        row.payment_amount = row.input_amount / (row.exchange_rate || 1);
+
+        update_summary(frm);
+	},
+
+    payments_remove: function (frm){
+		update_summary(frm);
+	},
+})
+
+

@@ -242,8 +242,7 @@ function onRefreshClick() {
 function getListSaleCoupon(keyword="") {
     loading.value = true;
     db.getDocList('Sale Coupon', {
-        fields: ["name", "coupon_number", "posting_date", "modified", "coupon_type", "docstatus", "member", "member_name",
-            "phone_number", "price", "expiry_date", "visited_count", "limit_visit"],
+        fields: ['*'],
         filters: keyword == "" ? [] : [ ["name", "like", `%${keyword.value}%`]],
         limit: 100,
         orderBy: {

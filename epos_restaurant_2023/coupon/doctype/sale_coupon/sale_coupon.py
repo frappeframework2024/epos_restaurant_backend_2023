@@ -16,8 +16,8 @@ class SaleCoupon(Document):
 				frappe.throw("Please select member to continue")	
 			m = frappe.get_doc("Customer", self.member)
 			self.gender = m.gender
-			self.member_name = m.member_name
-			self.member_name_kh = m.member_name_kh
+			self.member_name = m.customer_name_en
+			self.member_name_kh = m.customer_name_kh
 			self.phone_number = m.phone_number
 			self.phone_number_2 = m.phone_number_2
 
@@ -27,17 +27,14 @@ class SaleCoupon(Document):
 			if not self.member_name_kh:
 				self.member_name_kh = self.member_name
 
+		validate_sale_coupon_payment(self)
 
-		for p in self.payments:
-			p.payment_amount = p.input_amount / p.exchange_rate
-		self.total_payment_amount = sum([d.payment_amount for d in self.payments])
-		
+		if self.payment_balance < 0:
+			frappe.throw("You cannot settle with over grand total amount")
 		
 
 	def on_submit(self):
-		if self.price != self.total_payment_amount:
-			frappe.throw("Total Payment must equal to Price.")
-
+		
 		for p in self.payments:
 			doc = frappe.get_doc({
 				"doctype":"Sales Coupon Payment",
@@ -50,6 +47,7 @@ class SaleCoupon(Document):
 				"exchange_rate":p.payment_amount,
 			}).insert()
 			doc.submit()
+		
 
 
 @frappe.whitelist()
@@ -125,3 +123,11 @@ def submit_sale_coupon(docname):
 def get_sale_coupon_payment(docname):
 	payments = frappe.db.get_all("Sale Coupon Payment",{"parent":docname},["*"])
 	return payments
+
+@frappe.whitelist()
+def validate_sale_coupon_payment(self):
+	for p in self.payments:
+		p.payment_amount = p.input_amount / p.exchange_rate
+
+	self.total_payment_amount = sum([d.payment_amount for d in self.payments])
+	self.payment_balance = self.grand_total - self.total_payment_amount

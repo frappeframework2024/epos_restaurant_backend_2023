@@ -1779,9 +1779,7 @@ export default class Sale {
     }
 
     onPrintToKitchen(doc, products = null) {
-        var _productPrinters = products ?? this.productPrinters;
-        console.log("_productPrinters",_productPrinters)
-        console.log("doc",doc)
+        var _productPrinters = products ?? this.productPrinters; 
         const data = {
             action: "print_to_kitchen",
             setting: this.setting?.pos_setting,

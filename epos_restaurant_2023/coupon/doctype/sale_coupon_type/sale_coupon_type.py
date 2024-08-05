@@ -8,11 +8,12 @@ from frappe.model.document import Document
 class SaleCouponType(Document):
 	pass
 
+@frappe.whitelist()
 def  get_sale_coupon_type_search_link(txt):
 	data = frappe.db.get_list('Sale Coupon Type',
-		fields=["concate(total_visit,' Time(s), ', price) as description",'name','coupon_type'],
+		fields=['total_visit','price','name','coupon_type'],
 		filters={
-			"":['like',f'%{txt}%']
+			"name":['like','%' + txt+'%']
 		}
 	)
 	return data

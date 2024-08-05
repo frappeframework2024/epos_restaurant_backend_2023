@@ -27,17 +27,21 @@
    "label": "Input Amount"
   },
   {
+   "default": "0",
    "fieldname": "payment_amount",
    "fieldtype": "Currency",
    "label": "Payment Amount",
    "read_only": 1
   },
   {
+   "fetch_from": "payment_type.exchange_rate",
+   "fetch_if_empty": 1,
    "fieldname": "exchange_rate",
    "fieldtype": "Float",
    "label": "Exchange Rate"
   },
   {
+   "fetch_from": "payment_type.currency",
    "fieldname": "currency",
    "fieldtype": "Link",
    "label": "Currency",
@@ -47,7 +51,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-07-30 15:43:15.979556",
+ "modified": "2024-08-05 09:25:09.219604",
  "modified_by": "Administrator",
  "module": "Coupon",
  "name": "Sale Coupon Payment",

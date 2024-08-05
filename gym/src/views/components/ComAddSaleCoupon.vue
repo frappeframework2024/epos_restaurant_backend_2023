@@ -58,8 +58,6 @@
                 <label>Member Type</label><br />
                 <Dropdown v-model="selectedMemberType" :options="memberType" placeholder="Select Member Type"
                     class="w-full" />
-                
-
             </div>
 
             <div class="col-6 lg:col-4" v-if="selectedMemberType == 'Membership'">
@@ -85,35 +83,58 @@
                 <InputText v-model="saleCoupon.phone_number" style="width: 100%;" />
             </div>
             <div class="col-6 lg:col-4">
-                <label>Price <span class="text-red-500">*</span></label><br />
-                <InputNumber v-model="price" inputId="stacked-buttons" showButtons mode="currency" currency="USD"
-                    style="width: 100%;" />
-            </div>
-            <div class="col-6 lg:col-4">
-                <label>Limit Visit</label><br />
-                <InputNumber v-model="limitVisit" inputId="minmax-buttons" mode="decimal" showButtons :min="0"
-                    :max="100" style="width: 100%;" />
-            </div>
-
-            <div class="col-6 lg:col-4">
                 <label>Coupon Type</label><br />
-                <AutoComplete style="width: 100%;" inputStyle="width:100%" showOnFocus v-model="selectedCouponType"
-                    inputId="ac" optionLabel="label" :suggestions="couponTypes" @complete="searchCouponType">
+                <AutoComplete style="width: 100%;" inputStyle="width:100%" showOnFocus @item-select="onCouponSelected" v-model="selectedCouponType"
+                    inputId="ac" optionLabel="coupon_type" :suggestions="couponTypes" @complete="searchCouponType">
                     <template #option="slotProps">
-                        {{ slotProps.option.label }}
+                        {{ slotProps.option.name }}
                         <br />
                         <span class="text-600 text-xs">
-                            {{ slotProps.option.description }}
+                            {{getCouponTypeDescription(slotProps.option.price,slotProps.option.total_visit)}}
                         </span>
 
                     </template>
                 </AutoComplete>
             </div>
             <div class="col-6 lg:col-4">
+                <label>Price <span class="text-red-500">*</span></label><br />
+                <InputNumber v-model="price" inputId="stacked-buttons" showButtons mode="currency" currency="USD"
+                    style="width: 100%;" />
+            </div>
+            <div class="col-6 lg:col-4">
+                <label>Limit Visit</label><br />
+                <InputNumber readonly v-model="limitVisit" inputId="minmax-buttons" mode="decimal" :min="0"
+                    :max="100" style="width: 100%;" />
+            </div>
+
+            
+            <div class="col-6 lg:col-4">
                 <label>Expiry Date <span class="text-red-500">*</span></label><br />
                 <Calendar dateFormat="dd-mm-yy" selectOtherMonths style="width: 100%;" @date-select="expiryChange"
                     :modelValue="expiry_date" showIcon :showOnFocus="false" />
             </div>
+            <div class="col-12">
+                <div class="p-2  font-medium border-round-sm" style="background-color: #efefef">
+                    Discount
+                </div>
+                
+            </div>
+            <div class="col-6 lg:col-4">
+                <label>Discount Type<span class="text-red-500">*</span></label><br />
+                <Dropdown v-model="selectedDiscountType" :options="['Percent','Amount']" placeholder="Discount Type"
+                    class="w-full" />
+            </div>
+            <div class="col-6 lg:col-4">
+                <label>Discount Value<span class="text-red-500">*</span></label><br />
+                <InputNumber v-model="selectedDiscountType" placeholder="Discount Value"
+                    class="w-full" />
+            </div>
+            <div class="col-6 lg:col-4">
+                <label>Grand Total<span class="text-red-500">*</span></label><br />
+                <InputNumber v-model="saleCoupon.grand_total" placeholder="Discount Type"
+                    class="w-full" />
+            </div>
+            
             <div class="col-12">
                 <div class="flex justify-content-between py-2 align-items-center font-medium border-round-sm"
                     style="background-color: #efefef">
@@ -126,7 +147,8 @@
                     <thead>
                         <tr>
                             <th class="text-left">Payment Type</th>
-                            <th>Amount</th>
+                            <th>Exchange Rate</th>
+                            <th>Input Amount</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -148,10 +170,19 @@
 
                                     </template>
                                 </AutoComplete>
+                                
+                                
+                            </td>
+                            
+                            <td>
+                                <InputNumber v-model="payment.payment_type.exchange_rate" readonly inputId="stacked-buttons"
+                                    style="width: 100%;" />
+                                    
                             </td>
                             <td>
                                 <InputNumber v-model="payment.input_amount" inputId="stacked-buttons"
                                     style="width: 100%;" />
+                                    
                             </td>
                             <td class="text-center">
                                 <Button @click="onRemovePayment(idx)" severity="danger" rounded text outlined
@@ -198,6 +229,7 @@ const expiry_date = ref()
 const limitVisit = ref(0)
 const VisitBalance = ref(0)
 const selectedMemberType = ref('Individual')
+const selectedDiscountType = ref('Percent')
 const couponTypes = ref()
 const selectedCouponType = ref()
 const selectdFile = ref({})
@@ -207,7 +239,7 @@ const payments = ref([{
 }])
 const memberType = ref([
     'Individual',
-    'Membership'
+    'Member'
 ])
 const dialogRef = inject('dialogRef');
 
@@ -243,8 +275,9 @@ onMounted(() => {
         expiry_date.value = moment(params.saleCoupon.expiry_date).format("DD-MM-YYYY")
         price.value = params.saleCoupon.price
         limitVisit.value = params.saleCoupon.limit_visit
-        selectedMemberType.value = params.saleCoupon.coupon_type
+        selectedMemberType.value = params.saleCoupon.member_type
         selectedMember.value = params.saleCoupon.membership
+        selectedCouponType.value = params.saleCoupon.coupon_type
         call.get("epos_restaurant_2023.coupon.doctype.sale_coupon.sale_coupon.get_sale_coupon_payment", { docname: params.saleCoupon.name }).then((res) => {
             if (res.message.length > 0) {
                 payments.value = res.message
@@ -255,6 +288,10 @@ onMounted(() => {
     }
 })
 
+function onCouponSelected(selectedValue){
+    price.value = selectedValue.value.price
+    limitVisit.value = selectedValue.value.total_visit
+}
 
 
 function onAddPaymentClick() {
@@ -291,7 +328,9 @@ async function onSave(is_submit = false) {
         return
     }
     let data_to_save = JSON.parse(JSON.stringify(saleCoupon.value))
-    data_to_save.coupon_type = selectedMemberType.value
+    data_to_save.coupon_type = selectedCouponType.value.name ?? selectedCouponType.value
+    data_to_save.regular_price = price.value
+    
     data_to_save.payments = []
     if (typeof data_to_save.membership == "object") {
         data_to_save.membership = data_to_save.membership.value
@@ -341,9 +380,12 @@ async function onSave(is_submit = false) {
         }
 
     })
-
-
-
+}
+function getCouponTypeDescription(price,total_visit){
+    return `${new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+}).format(Number(price))}, ${total_visit} Time(s)`
 }
 function closeDialog() {
     dialogRef.value.close();

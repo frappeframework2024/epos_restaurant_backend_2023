@@ -24,7 +24,6 @@ class PurchaseOrder(Document):
 				self.po_discount = self.po_discountable_amount * self.discount / 100
 			else:
 				self.po_discount = self.discount or 0
-
 		self.product_discount = Enumerable(self.purchase_order_products).sum(lambda x: x.discount_amount)
 		self.total_discount = (self.product_discount or 0) + (self.po_discount or 0)
 		self.grand_total =( self.sub_total - (self.total_discount or 0))
@@ -61,10 +60,10 @@ class PurchaseOrder(Document):
 		else:
 			frappe.enqueue("epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.update_inventory_on_cancel", queue='short', self=self)
 
-
 	def before_submit(self):
 		for d in self.purchase_order_products:
 			calculate_stock_adjustment_cost(self,d)
+			self.total_expense_cost = sum(a.expense_cost for a in self.purchase_order_products)
 			if d.base_unit != d.unit:
 				if not check_uom_conversion(d.base_unit, d.unit):
 					frappe.throw(_("There is no UoM conversion from {} to {}".format(d.base_unit, d.unit)))
@@ -102,9 +101,7 @@ def update_inventory_on_submit(self):
 				"expired_date":p.expired_date,
     			'action': 'Submit'
 			})
-
- 
-			
+		
 def update_inventory_on_cancel(self):
 	for p in self.purchase_order_products:
 		if p.is_inventory_product:
@@ -161,9 +158,13 @@ def validate_account(self):
 
 @frappe.whitelist(allow_guest=True) 
 def get_accounts(branch,product):
+	doc = frappe.get_cached_doc("Product",product)
+	expense_account = None
+	if doc.default_account:
+		expense_account = [d for d in doc.default_account if d.business_branch == branch]
+		if expense_account:
+			expense_account = expense_account[0].default_expense_account
+	if not expense_account:
+		expense_account = frappe.get_cached_value("Business Branch", branch,"default_cost_of_good_sold_account")
 	stock_account = frappe.db.get_value("Business Branch", branch,"default_inventory_account")
-	expense_account = frappe.db.get_value('Product Default Account', {'parent': product,'business_branch':branch}, 'default_expense_account')
-	if (expense_account or "") == "":
-		expense_account = frappe.db.get_value('Business Branch',branch,'default_cost_of_good_sold_account')
-	expense_account
 	return {"stock_account":stock_account,"expense_account":expense_account}
