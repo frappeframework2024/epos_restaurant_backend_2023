@@ -61,6 +61,7 @@
   "cancel_print_bill_required_note",
   "column_break_30",
   "allow_change_quantity_after_submit",
+  "allow_append_quantity_after_submit",
   "section_break_20",
   "free_item_required_password",
   "column_break_22",
@@ -757,12 +758,18 @@
   {
    "fieldname": "section_break_llms",
    "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_append_quantity_after_submit",
+   "fieldtype": "Check",
+   "label": "Allow append quantity after submit"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-10 19:06:22.780941",
+ "modified": "2024-08-05 08:33:01.854679",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

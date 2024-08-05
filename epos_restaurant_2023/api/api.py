@@ -220,6 +220,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "change_tax_setting_required_password":pos_config.change_tax_setting_required_password,
         "change_tax_setting_required_note":pos_config.change_tax_setting_required_note,
         "allow_change_quantity_after_submit":pos_config.allow_change_quantity_after_submit,
+        "allow_append_quantity_after_submit":pos_config.allow_append_quantity_after_submit,
         "main_currency_predefine_payment_amount":pos_config.main_currency_predefine_payment_amount,
         "second_currency_predefine_payment_amount":pos_config.second_currency_predefine_payment_amount,
         "open_order_required_password":pos_config.open_order_required_password,
@@ -1721,9 +1722,11 @@ def create_sale_network_lock(param):
         else:  
             if "sale" in [k for k in  param.keys()] : 
                 if param["sale"] not in [s["sale"] for s in data]:
-                    create_doc = True
+                    if param["table_id"] not in [s["table_id"] for s in data]:
+                        create_doc = True
             else: 
-                 create_doc = True
+                if param["table_id"] not in [s["table_id"] for s in data]:
+                    create_doc = True
                     
         if create_doc:
             doc_data =  { 'doctype': 'Sale Network Lock'}    

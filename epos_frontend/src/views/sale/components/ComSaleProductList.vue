@@ -1,4 +1,5 @@
 <template>
+    
     <v-list class="!p-0">
         <v-list-item
             v-for="sp, index in (readonly == true ? getSaleProducts(groupKey) : sale.getSaleProducts(groupKey))"
@@ -19,9 +20,7 @@
                         <div class="grow">
                             <div v-if="!sale.load_menu_lang"> {{ getMenuName(sp) }}<v-chip class="ml-1" size="x-small"
                                     color="error" variant="outlined" v-if="sp.portion">{{ sp.portion }}</v-chip>
-                                <v-chip v-if="sp.is_free" size="x-small" color="success" variant="outlined">{{
-                $t('Free')
-            }}</v-chip>
+                                <v-chip v-if="sp.is_free" size="x-small" color="success" variant="outlined">{{ $t('Free') }}</v-chip>
                                 <v-chip v-if="sp.is_park" size="x-small" color="error" variant="outlined">
                                     {{ $t('Park') }}</v-chip>
                                 <ComChip :tooltip="sp.happy_hours_promotion_title"
@@ -31,7 +30,6 @@
                                 </ComChip>
                                 <ComHappyHour :saleProduct="sp" v-if="sp.is_render" />
                             </div>
-
                             <div v-if="!sp.is_timer_product">
                                 {{ sp.quantity }} x
                                 <CurrencyFormat :value="sp.price" />
@@ -105,6 +103,7 @@
                             </span>
 
                             <ComQuantityInput v-if="!readonly" :sale-product="sp" />
+                            
                         </div>
                     </div>
 

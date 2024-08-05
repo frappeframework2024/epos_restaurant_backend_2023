@@ -181,6 +181,7 @@ export default class Product {
     setSelectedProduct(p) {
         
         this.selectedProduct = p;
+        
         this.prices = [];
         this.modifiers = [];
         this.combo_group_temp = [];

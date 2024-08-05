@@ -333,7 +333,7 @@ export default class Sale {
         //and check system have feature to send to kitchen
         let strFilter = `$.is_timer_product == 0 && $.is_require_employee==0 && $.product_code=='${p.name}' && $.append_quantity ==1 && $.price==${p.price} && $.portion=='${this.getString(p.portion)}'  && $.modifiers=='${p.modifiers}'  && $.unit=='${p.unit}' && $.is_free==0 && $.note==''`
 
-        if (!this.setting?.pos_setting?.allow_change_quantity_after_submit) {
+        if (!this.setting?.pos_setting?.allow_append_quantity_after_submit) {
             strFilter = strFilter + ` && $.sale_product_status == 'New'`
         }
 

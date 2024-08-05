@@ -56,7 +56,7 @@
                 <v-btn color="primary" class="text-sm button-border-right" elevation="0" rounded="0" :disabled="!allow_change_price" @click="onChangePricePressed()" size="large">
                   {{ $t('Price') }}
                 </v-btn>
-                <v-btn color="primary" class="text-sm button-border-right" elevation="0" rounded="0" :disabled="!is_allow_append_qty" @click="onChangeQuantityPressed()" size="large">
+                <v-btn color="primary" class="text-sm button-border-right" elevation="0" rounded="0" :disabled="!is_allow_change_qty" @click="onChangeQuantityPressed()" size="large">
                   {{ $t('Qty') }}
                 </v-btn>
                
@@ -126,7 +126,7 @@ const is_allow_reorder = computed(() => {
   return true;
 });
 
-const is_allow_append_qty = computed(() => {
+const is_allow_change_qty = computed(() => {
   const sale_products = (sale.sale.sale_products??[]).filter((r)=>r.selected==true);
   if(sale_products.length<=0){
     return false;
@@ -185,13 +185,13 @@ function onReOrderPressed(){
 
         let is_append = false;
         let prev_sale_product = JSON.parse(JSON.stringify(sp))
-        if (sp.sale_product_status == "New" || sale.setting.pos_setting.allow_change_quantity_after_submit == 1) {
+        if (sp.sale_product_status == "New" || sale.setting.pos_setting.allow_append_quantity_after_submit == 1) {
             is_append = true;
             sale.updateQuantity(sp, sp.quantity + value)
         } else {
             let strFilter = `$.product_code=='${sp.product_code}' && $.append_quantity ==1 && $.price==${sp.price} && $.portion=='${sp.portion}'  && $.modifiers=='${sp.modifiers}'  && $.unit=='${sp.unit}'  && $.is_free==0`
 
-            if (!gv.setting?.pos_setting?.allow_change_quantity_after_submit) {
+            if (!gv.setting?.pos_setting?.allow_append_quantity_after_submit) {
                 strFilter = strFilter + ` && $.sale_product_status == 'New'`
             }
             const sale_product = Enumerable.from(sale.sale.sale_products).where(strFilter).firstOrDefault();

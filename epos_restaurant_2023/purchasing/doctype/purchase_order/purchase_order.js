@@ -48,8 +48,6 @@ frappe.ui.form.on("Purchase Order", {
 		}
 		frm.doc.scan_barcode = "";
 		frm.refresh_field('scan_barcode');
-
-
 	},
 	stock_location(frm){ 
         if(frm.doc.purchase_order_products.length > 0){
@@ -65,7 +63,6 @@ frappe.ui.form.on("Purchase Order", {
 	},
 	discount(frm) {
 		if (frm.doc.discount_type == "Percent" && frm.doc.discount > 100) {
-
 			frappe.throw(__("Discount percent cannot greater than 100%"));
 		}
 		update_po_discount_to_po_product(frm);
@@ -110,39 +107,19 @@ frappe.ui.form.on('Purchase Order Products', {
 		let doc = locals[cdt][cdn];
 		get_currenct_cost(frm,doc)
 		update_po_product_amount(frm, doc);
+		set_account(frm,cdt,cdn)
 	},
 	unit(frm,cdt,cdn){
 		let doc = locals[cdt][cdn];
 		get_currenct_cost(frm,doc)
-		update_po_product_amount(frm, doc);
 	},
 	quantity(frm, cdt, cdn) {
-		update_purchase_order_products_amount(frm, cdt, cdn);
+		const row = locals[cdt][cdn];
+		update_purchase_order_products_amount(frm,row);
 	},
 	cost(frm, cdt, cdn) {
-		let doc = locals[cdt][cdn];
-		doc.cost_second_currency = doc.cost * doc.exchange_rate;
-		update_purchase_order_products_amount(frm, cdt, cdn);
-	},
-	cost_second_currency(frm, cdt, cdn) {
-
-		let doc = locals[cdt][cdn];
-		doc.cost = doc.cost_second_currency / (doc.exchange_rate || 1);
-		update_purchase_order_products_amount(frm, cdt, cdn);
-		// frm.refresh_field('purchase_order_products');
-	},
-	business_branch(frm, cdt, cdn) {
-		let doc = locals[cdt][cdn];
-
-		frm.set_query("stock_location", function () {
-			return {
-				filters: [
-					["Stock Location", "business_branch", "=", doc.business_branch]
-				]
-			}
-		});
-
-		frm.refresh_field('stock_location');
+		const row = locals[cdt][cdn];
+		update_purchase_order_products_amount(frm,row);
 	},
 	discount_type(frm, cdt, cdn) {
 		const row = locals[cdt][cdn];
@@ -154,12 +131,10 @@ frappe.ui.form.on('Purchase Order Products', {
 			frappe.throw(__("Discount percent cannot greater than 100%"));
 		}
 		update_po_product_amount(frm, row);
-		frm.refresh_field('sale_products')
 	}
 })
 
-function update_purchase_order_products_amount(frm, cdt, cdn) {
-	let doc = locals[cdt][cdn];
+function update_purchase_order_products_amount(frm,doc) {
 	if (doc.quantity <= 0) doc.quantity = 1;
 	update_po_product_amount(frm, doc)
 }
@@ -169,11 +144,9 @@ function updateSumTotal(frm) {
 	if (products == undefined) {
 		return false;
 	}
-
 	frm.set_value('sub_total', products.reduce((n, d) => n + d.sub_total, 0));
 	frm.set_value('total_quantity', products.reduce((n, d) => n + d.quantity, 0));
 	frm.set_value('po_discountable_amount', products.reduce((n, d) => n + (d.discount_amount > 0 ? 0 : d.sub_total), 0));
-
 	let discount = 0;
 	if (frm.doc.discount_type == "Percent") {
 		discount = frm.doc.po_discountable_amount * frm.doc.discount / 100;
@@ -189,7 +162,6 @@ function updateSumTotal(frm) {
 }
 
 function check_row_exist(frm, barcode) {
-
 	var row = frm.fields_dict["purchase_order_products"].grid.grid_rows.filter(function (d) { return (d.doc.product_code == undefined ? "" : d.doc.product_code).toLowerCase() === barcode.toLowerCase() })[0];
 	return row;
 }
@@ -229,7 +201,6 @@ function add_product_to_po_product(frm, p) {
 
 function product_by_scan(frm,doc){
 	get_product_cost(frm,doc).then((v)=>{
- 
 		doc.cost = v.last_purchase_cost;
 		doc.amount = doc.cost * doc.quantity;
 		frm.refresh_field('purchase_order_products');
@@ -254,32 +225,33 @@ let get_product_cost = function (frm,doc) {
 	});
 }
 
-function set_account(frm,cdt,cdn){
-	let doc = locals[cdt][cdn];
+function validate_filters(frm){
 	if (frm.doc.stock_location == undefined){
 		frappe.throw("Please Select Stock Location First")
 		return
 	}
+}
+
+function set_account(frm,cdt,cdn){
+	validate_filters(frm)
+	let doc = locals[cdt][cdn];
 	frappe.call({
-		method: "epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.get_expense_account",
+		method: "epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.get_accounts",
 		args: {
-			business_branch: frm.doc.business_branch,
-			product_code: doc.product_code
+			branch: frm.doc.business_branch,
+			product: doc.product_code
 		},
 		callback: function(r){
 			if(doc!=undefined){
-				frappe.model.set_value(cdt, cdn, "expense_account", (r.message || ""));
+				frappe.model.set_value(cdt, cdn, "expense_account", (r.message.expense_account || ""));
+				frappe.model.set_value(cdt, cdn, "stock_account", (r.message.stock_account || ""));
 			}
 		}
 	});
-	
 }
 
 function get_currenct_cost(frm,doc){
-	if (frm.doc.stock_location == undefined){
-		frappe.throw("Please Select Stock Location First")
-		return
-	}
+	validate_filters(frm)
 	frappe.call({
 		method: "epos_restaurant_2023.api.product.get_currenct_cost",
 		args: {
@@ -289,44 +261,53 @@ function get_currenct_cost(frm,doc){
 		},
 		callback: function(r){
 			if(doc!=undefined){
-				doc.cost = r.message.last_purchase_cost;
-				doc.amount = doc.cost * doc.quantity;
+				get_uom_conversion(frm,doc).then((factor)=>{
+					conversion_factor = ((1/factor).toFixed(2) || 1)
+					frappe.model.set_value("Purchase Order Products", doc.name, "cost", (r.message.last_purchase_cost * conversion_factor || 0));
+					frappe.model.set_value("Purchase Order Products", doc.name, "amount", ((doc.cost * doc.quantity * conversion_factor) || 0));
+				})
+				
 			}
-			frm.refresh_field('purchase_order_products');
 		}
 	});
-	
 }
 
+let get_uom_conversion = function (frm,doc) {
+	return new Promise(function(resolve, reject) {
+    frappe.call({
+        method: "epos_restaurant_2023.inventory.inventory.get_uom_conversion",
+        args: {
+            from_uom: doc.base_unit, 
+            to_uom: doc.unit
+        },
+        callback: function(r){
+			resolve(r.message)
+		},
+		error: function(r) {
+			reject("error")
+		},
+    })
+})}
+
 function update_po_product_amount(frm, doc) {
-	doc.exchange_rate = frm.doc.exchange_rate;
 	doc.sub_total = doc.cost * doc.quantity;
-	doc.total_secondary_cost = doc.secondary_cost * doc.quantity;
-
-
 	if (doc.discount) {
 		if (doc.discount_type == "Percent") {
 			doc.discount_amount = (doc.sub_total * doc.discount / 100);
 			doc.po_discount_percent = doc.discount;
-
 		} else {
 			doc.discount_amount = doc.discount;
 		}
 	} else {
 		doc.discount_amount = 0;
-		//check if sale have discount then add discount to sale
 	}
 	if (doc.po_discount_percent) {
 		doc.po_discount_amount = (doc.sub_total * doc.po_discount_percent / 100);
-
 	}
 	doc.total_discount = doc.discount_amount + doc.po_discount_amount;
-
 	doc.amount = (doc.sub_total - doc.discount_amount);
-
 	frm.refresh_field('purchase_order_products');
 	updateSumTotal(frm);
-
 }
 
 function update_po_discount_to_po_product(frm) {
@@ -335,8 +316,6 @@ function update_po_discount_to_po_product(frm) {
 		return false;
 	}
 	let po_discount = frm.doc.discount
-
-
 	if (po_discount > 0) {
 		if (frm.doc.discount_type == "Amount") {
 			let discountable_amount = products.reduce((n, d) => n + (d.discount_amount > 0 ? 0 : d.sub_total), 0)
@@ -344,7 +323,6 @@ function update_po_discount_to_po_product(frm) {
 		}
 	}
 	$.each(products, function (i, d) {
-		// check if sale has discount
 		if (po_discount > 0 && d.discount == 0) {
 
 			d.po_discount_percent = po_discount
@@ -356,6 +334,5 @@ function update_po_discount_to_po_product(frm) {
 		}
 		d.total_discount = d.po_discount_amount + d.discount_amount;
 	});
-
 	updateSumTotal(frm);
 }

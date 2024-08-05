@@ -17,12 +17,18 @@
                             <div
                                 class="relative flex justify-content-between flex-column align-items-center flex-wrap border-1 border-round-sm w-6rem border-300">
                                 <div style="height:80px;overflow:hidden" class="flex align-items-center">
-                                    <img v-if="d.type.includes('image')" style="width:60px" :src="d.objectURL" class="mt-2" />
-                                    <span v-if="d.type.includes('pdf')" class="pi pi-file-pdf text-5xl" style= "color: var(--red-400);"></span>
-                                    <span v-if="d.type=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'" class="pi pi-file-excel text-5xl" style= "color: var(--green-400);"></span>
-                                    <span v-if="d.type=='application/vnd.openxmlformats-officedocument.wordprocessingml.document'" class="pi pi-file-word text-5xl" style= "color: var(--blue-400);"></span>
+                                    <img v-if="d.type.includes('image')" style="width:60px" :src="d.objectURL"
+                                        class="mt-2" />
+                                    <span v-if="d.type.includes('pdf')" class="pi pi-file-pdf text-5xl"
+                                        style="color: var(--red-400);"></span>
+                                    <span
+                                        v-if="d.type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'"
+                                        class="pi pi-file-excel text-5xl" style="color: var(--green-400);"></span>
+                                    <span
+                                        v-if="d.type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'"
+                                        class="pi pi-file-word text-5xl" style="color: var(--blue-400);"></span>
                                 </div>
-                                
+
                                 <div
                                     class="text-xs text-center bg-cyan-50 text-600 p-2 border-300 w-full white-space-nowrap overflow-hidden text-overflow-ellipsis">
                                     {{ d.name }}
@@ -49,22 +55,14 @@
                 <InputText style="width: 100%" v-model="saleCoupon.coupon_number" :disabled="saleCoupon.name" />
             </div>
             <div class="col-6 lg:col-4">
-                <label>Coupon Type</label><br />
-                <AutoComplete style="width: 100%;" inputStyle="width:100%" showOnFocus v-model="selectedMember"
-                    inputId="ac" optionLabel="label" :suggestions="items" @complete="search">
-                    <template #option="slotProps">
-                        {{ slotProps.option.label }}
-                        <br />
-                        <span class="text-600 text-xs">
-                            {{ slotProps.option.description }}
-                        </span>
-
-                    </template>
-                </AutoComplete>
-                <Dropdown v-model="selectedCouponType" :options="couponType" placeholder="Select Coupon Type"
+                <label>Member Type</label><br />
+                <Dropdown v-model="selectedMemberType" :options="memberType" placeholder="Select Member Type"
                     class="w-full" />
+                
+
             </div>
-            <div class="col-6 lg:col-4" v-if="selectedCouponType == 'Membership'">
+
+            <div class="col-6 lg:col-4" v-if="selectedMemberType == 'Membership'">
                 <label>Membership</label><br />
                 <AutoComplete style="width: 100%;" inputStyle="width:100%" showOnFocus v-model="selectedMember"
                     inputId="ac" optionLabel="label" :suggestions="items" @complete="search">
@@ -97,16 +95,31 @@
                     :max="100" style="width: 100%;" />
             </div>
 
+            <div class="col-6 lg:col-4">
+                <label>Coupon Type</label><br />
+                <AutoComplete style="width: 100%;" inputStyle="width:100%" showOnFocus v-model="selectedCouponType"
+                    inputId="ac" optionLabel="label" :suggestions="couponTypes" @complete="searchCouponType">
+                    <template #option="slotProps">
+                        {{ slotProps.option.label }}
+                        <br />
+                        <span class="text-600 text-xs">
+                            {{ slotProps.option.description }}
+                        </span>
 
+                    </template>
+                </AutoComplete>
+            </div>
             <div class="col-6 lg:col-4">
                 <label>Expiry Date <span class="text-red-500">*</span></label><br />
-                <Calendar dateFormat="dd-mm-yy" selectOtherMonths style="width: 100%;" @date-select="expiryChange" :modelValue="expiry_date" showIcon
-                    :showOnFocus="false" />
+                <Calendar dateFormat="dd-mm-yy" selectOtherMonths style="width: 100%;" @date-select="expiryChange"
+                    :modelValue="expiry_date" showIcon :showOnFocus="false" />
             </div>
             <div class="col-12">
-                <div class="flex justify-content-between py-2 align-items-center font-medium border-round-sm" style="background-color: #efefef">
+                <div class="flex justify-content-between py-2 align-items-center font-medium border-round-sm"
+                    style="background-color: #efefef">
                     <div class="mx-2">Payment</div>
-                    <div class="mx-2"><Button @click="onAddPaymentClick()" rounded outlined icon="pi pi-plus" size="small"/></div>
+                    <div class="mx-2"><Button @click="onAddPaymentClick()" rounded outlined icon="pi pi-plus"
+                            size="small" /></div>
                 </div>
                 <table class="w-full">
 
@@ -118,11 +131,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(payment,idx) in payments" :key="idx">
-                            <td >
+                        <tr v-for="(payment, idx) in payments" :key="idx">
+                            <td>
                                 <AutoComplete typeahead style="width: 100%;" inputStyle="width:100%" showOnFocus
-                                    v-model="payment.payment_type"  @complete="searchPaymentType" inputId="ac" optionLabel="value"
-                                    :suggestions="paymentTypes" >
+                                    v-model="payment.payment_type" @complete="searchPaymentType" inputId="ac"
+                                    optionLabel="value" :suggestions="paymentTypes">
                                     <template #option="slotProps">
                                         {{ slotProps.option.value }}
                                         <br />
@@ -137,10 +150,12 @@
                                 </AutoComplete>
                             </td>
                             <td>
-                                <InputNumber v-model="payment.input_amount" inputId="stacked-buttons" style="width: 100%;" />
+                                <InputNumber v-model="payment.input_amount" inputId="stacked-buttons"
+                                    style="width: 100%;" />
                             </td>
                             <td class="text-center">
-                                <Button @click="onRemovePayment(idx)" severity="danger" rounded text outlined  icon="pi pi-trash" size="small"/>
+                                <Button @click="onRemovePayment(idx)" severity="danger" rounded text outlined
+                                    icon="pi pi-trash" size="small" />
                             </td>
                         </tr>
                     </tbody>
@@ -166,7 +181,7 @@ import AutoComplete from 'primevue/autocomplete';
 import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
-import { ref, inject, watch,onMounted } from 'vue'
+import { ref, inject, watch, onMounted } from 'vue'
 
 import { useToast } from "primevue/usetoast";
 import moment from 'moment';
@@ -177,18 +192,20 @@ const call = frappe.call();
 const items = ref([]);
 const paymentTypes = ref([]);
 const saleCoupon = ref({})
-const selectedMember = ref({})
+const selectedMember = ref(undefined)
 const price = ref(0)
 const expiry_date = ref()
 const limitVisit = ref(0)
 const VisitBalance = ref(0)
-const selectedCouponType = ref({})
+const selectedMemberType = ref('Individual')
+const couponTypes = ref()
+const selectedCouponType = ref()
 const selectdFile = ref({})
 const payments = ref([{
-        "payment_type": "",
-        "payment_amount": 0
-    }])
-const couponType = ref([
+    "payment_type": "",
+    "payment_amount": 0
+}])
+const memberType = ref([
     'Individual',
     'Membership'
 ])
@@ -204,6 +221,13 @@ const search = (event) => {
         items.value = res.message
     })
 }
+const searchCouponType = (event) => {
+    call.get("epos_restaurant_2023.coupon.doctype.sale_coupon_type.sale_coupon_type.get_sale_coupon_type_search_link", {
+        txt: event.query,
+    }).then((res) => {
+        couponTypes.value = res.message
+    })
+}
 
 const searchPaymentType = (event) => {
     call.get("epos_restaurant_2023.epos_restaurant.doctype.payment_type.payment_type.get_payment_type", {
@@ -214,18 +238,18 @@ const searchPaymentType = (event) => {
 }
 onMounted(() => {
     const params = dialogRef.value.data;
-    if(params){
+    if (params) {
         saleCoupon.value = params.saleCoupon
         expiry_date.value = moment(params.saleCoupon.expiry_date).format("DD-MM-YYYY")
         price.value = params.saleCoupon.price
         limitVisit.value = params.saleCoupon.limit_visit
-        selectedCouponType.value = params.saleCoupon.coupon_type
+        selectedMemberType.value = params.saleCoupon.coupon_type
         selectedMember.value = params.saleCoupon.membership
-        call.get("epos_restaurant_2023.coupon.doctype.sale_coupon.sale_coupon.get_sale_coupon_payment",{docname:params.saleCoupon.name}).then((res)=>{
-            if (res.message.length > 0){
+        call.get("epos_restaurant_2023.coupon.doctype.sale_coupon.sale_coupon.get_sale_coupon_payment", { docname: params.saleCoupon.name }).then((res) => {
+            if (res.message.length > 0) {
                 payments.value = res.message
             }
-            
+
         })
 
     }
@@ -245,10 +269,10 @@ function expiryChange(event) {
     saleCoupon.value.expiry_date = moment(event).format('YYYY-MM-DD')
 }
 
-function onRemovePayment(idx){
-    payments.value.splice(idx,1)
+function onRemovePayment(idx) {
+    payments.value.splice(idx, 1)
 }
-async function onSave(is_submit=false) {
+async function onSave(is_submit = false) {
     isSaving.value = true
     saleCoupon.value.price = price.value
     if (!saleCoupon.value.coupon_number) {
@@ -261,64 +285,64 @@ async function onSave(is_submit=false) {
         isSaving.value = false
         return
     }
-    if (!expiry_date.value){
+    if (!expiry_date.value) {
         toast.add({ severity: 'warn', summary: 'Validation', detail: 'Please select expiry date', life: 3000 });
         isSaving.value = false
         return
     }
     let data_to_save = JSON.parse(JSON.stringify(saleCoupon.value))
-    data_to_save.coupon_type = selectedCouponType.value
-    data_to_save.payments=[]
-    if (typeof data_to_save.membership == "object"){
+    data_to_save.coupon_type = selectedMemberType.value
+    data_to_save.payments = []
+    if (typeof data_to_save.membership == "object") {
         data_to_save.membership = data_to_save.membership.value
     }
-    payments.value.forEach((row)=>{
-        if (row.input_amount > 0){
-            if (typeof row.payment_type == "object"){
-                data_to_save.payments.push({"payment_type":row.payment_type.value,"currency":row.payment_type.currency,"exchange_rate":row.payment_type.exchange_rate,"input_amount":row.input_amount,})
-            }else{
-                data_to_save.payments.push({"payment_type":row.payment_type,"currency":row.currency,"exchange_rate":row.exchange_rate,"input_amount":row.input_amount,})
+    payments.value.forEach((row) => {
+        if (row.input_amount > 0) {
+            if (typeof row.payment_type == "object") {
+                data_to_save.payments.push({ "payment_type": row.payment_type.value, "currency": row.payment_type.currency, "exchange_rate": row.payment_type.exchange_rate, "input_amount": row.input_amount, })
+            } else {
+                data_to_save.payments.push({ "payment_type": row.payment_type, "currency": row.currency, "exchange_rate": row.exchange_rate, "input_amount": row.input_amount, })
             }
-            
-        } 
+
+        }
     })
-    if (data_to_save.payments.length <= 0 && is_submit == true){
+    if (data_to_save.payments.length <= 0 && is_submit == true) {
         toast.add({ severity: 'warn', summary: 'Validation', detail: 'Please enter payment amount', life: 3000 });
         isSaving.value = false
         return
     }
 
     //Prepare Data To Save
-    call.post("epos_restaurant_2023.coupon.doctype.sale_coupon.sale_coupon.insert_sale_coupon",{"data":data_to_save,"is_submit":is_submit==false?0:1}).then((res)=>{
+    call.post("epos_restaurant_2023.coupon.doctype.sale_coupon.sale_coupon.insert_sale_coupon", { "data": data_to_save, "is_submit": is_submit == false ? 0 : 1 }).then((res) => {
         toast.add({ severity: 'success', summary: 'Sucecss', detail: 'Coupon saved success.', life: 3000 });
         isSaving.value = false
-        
+
         console.log(selectdFile.value.files)
         closeDialog()
         const file = frappe.file();
 
-            
+
         selectdFile.value.files.forEach(_file => {
-            file.uploadFile(_file,{
+            file.uploadFile(_file, {
                 doctype: "Sale Coupon",
                 folder: "Home/Attachments",
                 docname: res.message.name,
             })
         });
-       
-    }).catch((err)=>{
+
+    }).catch((err) => {
         isSaving.value = false
-        if (err.httpStatus == 403){
+        if (err.httpStatus == 403) {
             toast.add({ severity: 'error', summary: 'Validation', detail: err._error_message, life: 3000 });
-        }else{
-           
+        } else {
+
             toast.add({ severity: 'error', summary: 'Validation', detail: JSON.parse(JSON.parse(err["_server_messages"])).message, life: 3000 });
-        
+
         }
-        
+
     })
-    
-    
+
+
 
 }
 function closeDialog() {
@@ -330,7 +354,6 @@ function onRemoveImage(callback, image) {
 }
 const onFilesSelected = (events) => {
     selectdFile.value = events
-    console.log(events)
 };
 watch(selectedMember, async (member) => {
     saleCoupon.value.membership = member
@@ -343,6 +366,11 @@ watch(limitVisit, async (value) => {
     VisitBalance.value = value
     saleCoupon.value.limit_visit = value
     saleCoupon.value.balance = VisitBalance.value
+})
+watch(selectedMemberType,(newvalue)=>{
+    if (newvalue == 'Individual'){
+        selectedMember.value=undefined
+    }
 })
 
 

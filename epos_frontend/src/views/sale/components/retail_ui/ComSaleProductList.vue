@@ -13,6 +13,9 @@
             ចំនួន <br />
             Quantity
           </th>
+          <th class="text-center">
+            
+          </th>
           <th class="text-right">
             តម្លៃ <br />
             Price
@@ -74,13 +77,25 @@
                   <div><v-icon size="small" icon="mdi-minus-circle-outline" color="red" @click="onUpdateQuantity(sp, -1)"></v-icon>
                   </div>
                   <div class="text-sm link_line_action overflow-hidden" @click="onChangeQTY(sp)">{{ sp.quantity }}</div>
-                  <div><v-icon size="small" icon="mdi-plus-circle-outline" color="green" @click="onUpdateQuantity(sp, 1)"></v-icon>
+                  <div>
+                    <v-icon size="small" icon="mdi-plus-circle-outline" color="green" @click="onUpdateQuantity(sp, 1)"></v-icon>
                   </div>
-
+                  
                 </div>
-
               </div>
+              
             </td> 
+            <td>
+              <div>
+                {{sp.pos_note}}
+                    <v-icon size="small" icon="mdi-alert-circle-check-outline" :color="sp.pos_note ? 'blue-green-lighten-2':'green-lighten-1' " @click="onPOSNoteClick">
+                      <v-tooltip
+                          activator="parent"
+                          location="top"
+                        >Tooltip</v-tooltip>
+                    </v-icon>
+                  </div>
+            </td>
             <td class="text-end">
               <template v-if="!sp.is_free">
                 <span class="link_line_action overflow-hidden" style="width:auto"
@@ -195,6 +210,7 @@
 
 <script setup>
 import { ref, inject } from "@/plugin"
+import moment from 'moment'
 import ComCurrentUserAvatar from '@/components/layout/components/ComCurrentUserAvatar.vue'
 import ComProductUnit from '@/views/sale/components/retail_ui/ComProductUnit.vue'
 import { createToaster } from '@meforma/vue-toaster';
@@ -237,6 +253,10 @@ function onUpdateQuantity(sp, param) {
 function onReturn(sp) {
   sp.is_return = !sp.is_return 
   sale.updateQuantity(sp, sp.quantity * -1)
+
+}
+
+function onPOSNoteClick(){
 
 }
 

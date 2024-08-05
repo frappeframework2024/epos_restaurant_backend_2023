@@ -28,8 +28,7 @@
   "section_break_ctql",
   "column_break_fgou",
   "note",
-  "column_break_ekeq",
-  "total_expense_cost",
+  "column_break_jzpe",
   "html_summary",
   "section_break_7",
   "total_quantity",
@@ -281,10 +280,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "column_break_ekeq",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "html_summary",
    "fieldtype": "HTML"
   },
@@ -316,9 +311,8 @@
    "options": "Chart Of Account"
   },
   {
-   "fieldname": "total_expense_cost",
-   "fieldtype": "Currency",
-   "label": "Total Expense Cost"
+   "fieldname": "column_break_jzpe",
+   "fieldtype": "Column Break"
   }
  ],
  "image_field": "attach_receipt",
@@ -331,7 +325,7 @@
    "link_fieldname": "purchase_order"
   }
  ],
- "modified": "2024-08-03 08:48:10.052848",
+ "modified": "2024-08-03 10:03:23.750843",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order",

@@ -29,11 +29,11 @@
     
 </template>
 <script setup>
-import { defineProps, defineEmits, inject,useRouter,onUnmounted } from '@/plugin'
+import { defineProps, defineEmits, inject,useRouter,onUnmounted,onMounted } from '@/plugin'
 import ComGroupSaleProductList from '../ComGroupSaleProductList.vue';
 import ComPrintBillButton from '../ComPrintBillButton.vue';
 import ComSelectCustomer from '../ComSelectCustomer.vue';
-import ComSmallSaleSummary from './ComSmallSaleSummary.vue';
+import ComSmallSaleSummary from './ComSmallSaleSummary.vue'; 
 
 const props = defineProps({
     params: Object
@@ -43,6 +43,12 @@ const gv = inject('$gv')
 const emit = defineEmits(['resolve'])
 const router = useRouter();
 const tableLayout = inject("$tableLayout");
+
+onMounted(()=>{
+    const backup_sale = JSON.parse(JSON.stringify(sale.sale))
+    sale.saleNetworkLock(backup_sale)
+});
+
 function onGoHome(){
     if(onRedirectSaleType()){
         if (gv.setting.table_groups.length > 0) {

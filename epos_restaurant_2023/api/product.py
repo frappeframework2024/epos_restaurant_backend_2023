@@ -177,7 +177,8 @@ def get_product_by_barcode(barcode):
                     "is_require_employee":p.is_require_employee,
                     "modifiers_data": json.dumps(([pr.business_branch,pr.modifier_category,pr.prefix,pr.modifier_code,pr.price] for pr in p.product_modifiers),default=json_handler),
                     "is_empty_stock_warning":0,
-                    "rate_include_tax":p.rate_include_tax
+                    "rate_include_tax":p.rate_include_tax,
+                    "pos_note":p.pos_note
                 }
             else:
                 frappe.throw("Item No Name?")

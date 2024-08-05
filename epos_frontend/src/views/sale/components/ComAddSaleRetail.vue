@@ -8,6 +8,7 @@
                 <div class="flex flex-column justify-between product-detail-st">
                     <div class="first-div">
                         <ComSaleProductList />
+                        
                     </div>
                     <div class="second-div">
                         <div class="v-row">
