@@ -143,10 +143,8 @@ async function onSelectTable(t) {
     else {
         const screens = sale.getScreenNames(sale.sale.sale_products)
         if (t.sales?.length == 0) {
+            generateProductPrinterChangeTable(sale.sale.sale_products, sale.sale.name, sale.sale.tbl_number);  
 
-            generateProductPrinterChangeTable(sale.sale.sale_products, sale.sale.name, sale.sale.tbl_number);
-           
-           
             sale.sale.sale_products?.forEach((r) => {
                 r.move_from_table = sale.sale.tbl_number;
             });
@@ -175,6 +173,8 @@ async function onSelectTable(t) {
             }
         }
         else {
+
+            //
             const result = await changeTableSelectSaleOrderDialog({ data: t });
             if (result) {
                 if (result.action == "create_new_bill") {
@@ -225,10 +225,7 @@ async function onSelectTable(t) {
                     } else {
                         emit("resolve", true)
                         router.push({ name: 'TableLayout' })
-
                     }
-
-
                 }
             }
         }

@@ -2,7 +2,7 @@
 # For license information, please see license.txt
 
 
-from epos_restaurant_2023.inventory.inventory import add_to_inventory_transaction, get_uom_conversion, update_product_quantity,get_stock_location_product
+from epos_restaurant_2023.inventory.inventory import add_to_inventory_transaction, get_uom_conversion
 from epos_restaurant_2023.inventory.inventory import check_uom_conversion,calculate_average_cost,get_last_inventory_transaction,update_inventory_transaction_status
 import frappe
 from frappe import _
@@ -34,7 +34,7 @@ class PurchaseOrder(Document):
 			validate_account(self)
 			submit_purchase_to_general_ledger_entry_on_submit(self)
 		 
-		if len(self.purchase_order_products)>=10:
+		if len(self.purchase_order_products)<=10:
 			update_inventory_on_submit(self)
 		else:
 			frappe.enqueue("epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.update_inventory_on_submit", queue='short', self=self)
@@ -62,24 +62,10 @@ class PurchaseOrder(Document):
 
 	def before_submit(self):
 		for d in self.purchase_order_products:
-			calculate_stock_adjustment_cost(self,d)
 			self.total_expense_cost = sum(a.expense_cost for a in self.purchase_order_products)
 			if d.base_unit != d.unit:
 				if not check_uom_conversion(d.base_unit, d.unit):
 					frappe.throw(_("There is no UoM conversion from {} to {}".format(d.base_unit, d.unit)))
-
-def calculate_stock_adjustment_cost(self,item):
-	item.expense_cost = 0
-	current_stock = frappe.db.sql("select cost,quantity from `tabStock Location Product` where stock_location='{}' and product_code='{}'".format(self.stock_location, item.product_code), as_dict=1)
-	if current_stock:
-		current_qty = float(current_stock[0]["quantity"])
-		if current_qty < 0:
-			current_cost = float(current_stock[0]["cost"])
-			current_stock_cost = current_qty * current_cost
-			new_qty = float(item.quantity)
-			new_cost = float(item.cost)
-			new_stock_cost = new_cost * new_qty
-			item.expense_cost = current_stock_cost + new_stock_cost - ((current_qty + new_qty) * new_cost)
 
 def update_inventory_on_submit(self):
 	for p in self.purchase_order_products:

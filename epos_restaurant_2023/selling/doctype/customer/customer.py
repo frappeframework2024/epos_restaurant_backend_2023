@@ -423,3 +423,16 @@ def get_guest_note_detail(customer_name):
 	"""
 	data = frappe.db.sql(sql, {'customer_name':customer_name}, as_dict=1)
 	return data
+
+
+@frappe.whitelist()
+def  get_customer_search_link(txt):
+	data = frappe.db.get_list('Customer',
+		fields=['customer_name_en','name','gender','phone_number','phone_number_2'],
+		or_filters={
+			"customer_name_en":['like','%' + txt+'%'],
+			"customer_name_kh":['like','%' + txt+'%'],
+			"name":['like','%' + txt+'%']
+		}
+	)
+	return data

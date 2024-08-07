@@ -1,0 +1,30 @@
+{
+ "add_total_row": 0,
+ "columns": [],
+ "creation": "2024-08-06 08:43:20.846861",
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": "",
+ "letterhead": null,
+ "modified": "2024-08-06 08:43:20.846861",
+ "modified_by": "Administrator",
+ "module": "Coupon",
+ "name": "Coupon Payment",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "Sale Coupon",
+ "report_name": "Coupon Payment",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Coupon User"
+  }
+ ]
+}

@@ -16,12 +16,12 @@
   "column_break_4",
   "sort_order",
   "disabled",
-  "photo",
   "is_foc",
   "is_standard",
   "default_fee_amount",
   "color",
   "background",
+  "photo",
   "accounting_tab",
   "default_account"
  ],
@@ -144,7 +144,7 @@
    "link_fieldname": "to_currency"
   }
  ],
- "modified": "2024-07-10 10:31:22.138648",
+ "modified": "2024-08-05 13:49:36.433710",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "Payment Type",

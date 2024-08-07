@@ -6,10 +6,18 @@
  "engine": "InnoDB",
  "field_order": [
   "coupon_number",
-  "member_name",
+  "member_type",
+  "column_break_gaqs",
   "check_in_date",
   "visited_count",
-  "amended_from"
+  "amended_from",
+  "member_information_section",
+  "member_name",
+  "member_name_kh",
+  "gender",
+  "column_break_gzsz",
+  "phone_number",
+  "phone_number_2"
  ],
  "fields": [
   {
@@ -20,18 +28,22 @@
    "options": "Sale Coupon"
   },
   {
+   "fetch_from": "coupon_number.member_name",
    "fieldname": "member_name",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Member Name"
   },
   {
+   "default": "Today",
    "fieldname": "check_in_date",
    "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "Check In Date"
+   "label": "Check In Date",
+   "read_only": 1
   },
   {
+   "default": "1",
    "fieldname": "visited_count",
    "fieldtype": "Int",
    "in_list_view": 1,
@@ -46,12 +58,57 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fetch_from": "coupon_number.member_type",
+   "fieldname": "member_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Member Type"
+  },
+  {
+   "fieldname": "column_break_gaqs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "member_information_section",
+   "fieldtype": "Section Break",
+   "label": "Member Information"
+  },
+  {
+   "fetch_from": "coupon_number.member_name_kh",
+   "fieldname": "member_name_kh",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Member Name Kh"
+  },
+  {
+   "fetch_from": "coupon_number.gender",
+   "fieldname": "gender",
+   "fieldtype": "Data",
+   "label": "Gender"
+  },
+  {
+   "fieldname": "column_break_gzsz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "coupon_number.phone_number",
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "label": "Phone Number"
+  },
+  {
+   "fetch_from": "coupon_number.phone_number_2",
+   "fieldname": "phone_number_2",
+   "fieldtype": "Data",
+   "label": "Phone Number 2"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-07-30 15:43:52.704050",
+ "modified": "2024-08-05 17:16:00.315433",
  "modified_by": "Administrator",
  "module": "Coupon",
  "name": "Check In Sale Coupon",

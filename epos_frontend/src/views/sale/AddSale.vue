@@ -35,6 +35,7 @@
                     </div>
                     <div class="mt-auto">
                         <div class="-mx-1 bg-blue-100 rounded-tl-md rounded-tr-md text-xs">
+                            
                             <ComSaleSummaryList />
                             <ComSaleKeyPad v-if="gv.device_setting.show_keypad_in_sale_screen == 1" />
                             <ComSaleButtonPaymentSubmit />

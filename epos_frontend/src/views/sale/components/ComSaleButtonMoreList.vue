@@ -82,7 +82,7 @@
             <v-list-item-title>{{ $t('Claim Coupon') }}</v-list-item-title>
         </v-list-item>
 
-        <v-list-item @click="sale.onRateIncludeOrNotIncludeTaxClick()" v-if="sale.sale.tax_rule">
+        <v-list-item @click="onRateIncludeOrNotIncludeTaxClick" v-if="gv.device_setting.show_rate_include_button==1">
             <template #prepend>
                 <v-icon :class="sale.sale.rate_include_tax == 1 ? 'text-red-700':''" :icon="sale.sale.rate_include_tax == 1 ? 'mdi-tag-remove' : 'mdi-tag-plus'"></v-icon>
             </template>
@@ -158,6 +158,19 @@ const onLoadMenuLabel = computed(() => {
     }
 })
 
+function onRateIncludeOrNotIncludeTaxClick(){
+    gv.authorize(
+      "apply_rate_include_tax_required_password",
+      "allow_apply_tax_include_rate",
+      "apply_rate_include_tax_required_note",
+      "Change Tax Setting"
+    ).then((v) => {
+      if (v) {
+        sale.onRateIncludeOrNotIncludeTaxClick()
+      }
+    });
+    
+}
 
 
 async function onViewBill() {

@@ -719,13 +719,13 @@ export default class Sale {
     }
 
     onRateIncludeTax(sp, update_rate = true, update_sale_product=true, update_sale=true){
+        
         let _tax_rule = JSON.parse(JSON.stringify(this.setting.tax_rules)).filter((r)=>r.tax_rule == sp.tax_rule||this.sale.tax_rule )
         if(_tax_rule.length > 0){
             sp.tax_rule_data = _tax_rule[0].tax_rule_data;
             if(update_rate){
                 sp.rate_include_tax = ((sp.rate_include_tax||0)==1?0:1)
             }
-
             if(update_sale_product){
                 this.updateSaleProduct(sp)
             }

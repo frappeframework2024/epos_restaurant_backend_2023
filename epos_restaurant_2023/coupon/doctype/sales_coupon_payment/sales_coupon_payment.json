@@ -8,15 +8,25 @@
  "field_order": [
   "section_break_s9az",
   "naming_series",
-  "sale_coupon",
   "payment_type",
+  "input_amount",
   "amended_from",
   "column_break_ghvi",
-  "sale_amount",
   "payment_amount",
-  "input_amount",
   "currency",
-  "exchange_rate"
+  "exchange_rate",
+  "sale_coupon_information_section",
+  "sale_coupon",
+  "sale_amount",
+  "member_type",
+  "column_break_yagl",
+  "member",
+  "member_name",
+  "member_name_kh",
+  "column_break_suvi",
+  "gender",
+  "phone_number",
+  "phone_number_2"
  ],
  "fields": [
   {
@@ -27,6 +37,7 @@
    "default": "SCP-.YYYY.-.####",
    "fieldname": "naming_series",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Naming Series",
    "options": "SCP-.YYYY.-.####"
   },
@@ -57,36 +68,105 @@
    "fieldtype": "Column Break"
   },
   {
+   "fetch_from": "sale_coupon.total_payment_amount",
+   "fetch_if_empty": 1,
    "fieldname": "sale_amount",
    "fieldtype": "Currency",
-   "label": "Sale Amount"
+   "label": "Sale Amount",
+   "read_only": 1
   },
   {
+   "default": "0",
    "fieldname": "payment_amount",
    "fieldtype": "Currency",
-   "label": "Payment Amount"
+   "label": "Payment Amount",
+   "read_only": 1
   },
   {
+   "default": "0",
    "fieldname": "input_amount",
    "fieldtype": "Float",
    "label": "Input Amount"
   },
   {
+   "fetch_from": "payment_type.currency",
    "fieldname": "currency",
    "fieldtype": "Link",
    "label": "Currency",
-   "options": "Currency"
+   "options": "Currency",
+   "read_only": 1
   },
   {
+   "default": "1",
+   "fetch_from": "payment_type.exchange_rate",
+   "fetch_if_empty": 1,
    "fieldname": "exchange_rate",
    "fieldtype": "Float",
-   "label": "Exchange Rate"
+   "label": "Exchange Rate",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sale_coupon_information_section",
+   "fieldtype": "Section Break",
+   "label": "Sale Coupon Information"
+  },
+  {
+   "fieldname": "column_break_yagl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "sale_coupon.member",
+   "fieldname": "member",
+   "fieldtype": "Link",
+   "label": "Member",
+   "options": "Customer",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "sale_coupon.member_name",
+   "fieldname": "member_name",
+   "fieldtype": "Data",
+   "label": "Member Name"
+  },
+  {
+   "fetch_from": "sale_coupon.member_name_kh",
+   "fieldname": "member_name_kh",
+   "fieldtype": "Data",
+   "label": "Member Name Kh"
+  },
+  {
+   "fieldname": "column_break_suvi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "sale_coupon.gender",
+   "fieldname": "gender",
+   "fieldtype": "Data",
+   "label": "Gender"
+  },
+  {
+   "fetch_from": "sale_coupon.phone_number",
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "label": "Phone Number"
+  },
+  {
+   "fetch_from": "sale_coupon.phone_number_2",
+   "fieldname": "phone_number_2",
+   "fieldtype": "Data",
+   "label": "Phone Number 2"
+  },
+  {
+   "fetch_from": "sale_coupon.member_type",
+   "fieldname": "member_type",
+   "fieldtype": "Data",
+   "label": "Member Type"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-07-31 15:11:33.259162",
+ "modified": "2024-08-05 15:39:48.932970",
  "modified_by": "Administrator",
  "module": "Coupon",
  "name": "Sales Coupon Payment",

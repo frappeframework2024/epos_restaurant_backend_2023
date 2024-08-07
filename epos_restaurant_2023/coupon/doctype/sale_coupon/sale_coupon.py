@@ -34,20 +34,41 @@ class SaleCoupon(Document):
 		
 
 	def on_submit(self):
-		
 		for p in self.payments:
 			doc = frappe.get_doc({
 				"doctype":"Sales Coupon Payment",
 				"payment_type":p.payment_type,
 				"currency":p.currency,
 				"sale_coupon":self.name,
-				"sale_amount":self.price,
+				"sale_amount":self.grand_total,
 				"input_amount":p.input_amount,
 				"payment_amount":p.payment_amount,
-				"exchange_rate":p.payment_amount,
+				"exchange_rate":p.exchange_rate,
 			}).insert()
 			doc.submit()
-		
+
+		update_customer_relate_sale_coupon(self)
+
+#
+def update_customer_relate_sale_coupon(self):
+	if  self.member_type != "Individual":
+		sql = """update `tabCustomer` c
+				inner join (
+					select 
+						s.member,
+						sum(s.limit_visit) as total_limit_visit,
+						sum(s.visited_count) as total_visited_count,
+						sum(s.balance) as total_visited_balance
+					from `tabSale Coupon` s
+					where s.docstatus = 1 
+					and s.member = %(customer_code)s
+					group by s.member
+				) sc on c.name = sc.member
+					set c.total_limit_visit = sc.total_limit_visit,
+					c.total_visited_count = sc.total_visited_count,
+					c.total_visited_balance = sc.total_visited_balance
+				where c.name = %(customer_code)s"""	
+		frappe.db.sql(sql, {"customer_code": self.member })		
 
 
 @frappe.whitelist()
@@ -69,7 +90,11 @@ def insert_sale_coupon(data,is_submit):
 			doc.membership=data['membership'] or data['membership'] if data.get('membership') else ''
 		doc.member_name=data['member_name'] if data.get('member_name') else ''
 		doc.phone_number=data['phone_number'] if data.get('phone_number') else '' 
+		doc.gender=data['gender']
 		doc.price=data['price']
+		doc.grand_total=data['grand_total']
+		doc.discount_value=data['discount_value']
+		doc.discount_type=data['discount_type']
 		doc.limit_visit=data['limit_visit']
 		doc.expiry_date=data['expiry_date']
 		if data.get("payments"):
@@ -94,7 +119,11 @@ def insert_sale_coupon(data,is_submit):
 			'membership':data['membership'] if data.get('membership') else '',
 			'member_name':data['member_name'] if data.get('member_name') else '',
 			'phone_number':data['phone_number'] if data.get('phone_number') else '' ,
+			'gender':data['gender'],
 			'price':data['price'],
+			'grand_total':data['grand_total'],
+			'discount_value':data['discount_value'],
+			'discount_type':data['discount_type'],
 			'limit_visit':data['limit_visit'],
 			'expiry_date':data['expiry_date']
 		})
@@ -108,7 +137,7 @@ def insert_sale_coupon(data,is_submit):
 				})
 		doc.insert()
 	if is_submit==1:
-		if doc.total_payment_amount != doc.price:
+		if doc.total_payment_amount != doc.grand_total:
 			frappe.throw("Total Payment must equal to Price.")
 		doc.submit()
 	return doc

@@ -33,13 +33,18 @@ frappe.ui.form.on("Sale Coupon", {
 
 function on_member_type_changed(frm, changed){
     frm.set_df_property('member', 'hidden',0);
-    if(frm.doc.member_type=="Individual"){
-        frm.doc.member = ""
-        frm.set_df_property('member', 'hidden', 1);
-        reset_and_refresh_member_fields(frm,true)
+    if(changed){       
+        if(frm.doc.member_type=="Individual"){
+            frm.doc.member = ""
+            frm.set_df_property('member', 'hidden', 1);
+            reset_and_refresh_member_fields(frm,true)
+        }    
+        frm.refresh_field("member");   
+    }else{
+        if(frm.doc.member_type=="Individual"){
+            frm.set_df_property('member', 'hidden', 1);
+        }
     }    
-    frm.refresh_field("member");    
-   
 }
 
 function on_member_changed(frm, changed){

@@ -38,6 +38,7 @@
   "open_cashdrawer",
   "allow_switch_pos_profile",
   "park_item",
+  "allow_apply_tax_include_rate",
   "section_break_7",
   "discount_codes"
  ],
@@ -224,11 +225,17 @@
    "fieldname": "allow_switch_pos_profile",
    "fieldtype": "Check",
    "label": "Allow Switch POS Profile"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_apply_tax_include_rate",
+   "fieldtype": "Check",
+   "label": "Allow Apply Tax Include Rate"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-17 11:52:50.131489",
+ "modified": "2024-08-05 15:02:57.163167",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "POS User Permission",

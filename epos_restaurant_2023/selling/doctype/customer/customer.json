@@ -60,6 +60,13 @@
   "column_break_ysoq",
   "voucher_credit_amount",
   "coupon_information_tab",
+  "sale_coupon_section",
+  "total_sale_coupon_payment_balance",
+  "total_limit_visit",
+  "column_break_haza",
+  "total_visited_count",
+  "total_visited_balance",
+  "cash_coupon_section",
   "total_coupon",
   "total_coupon_amount",
   "column_break_wryf",
@@ -490,6 +497,48 @@
   {
    "fieldname": "guest_note_detail",
    "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "sale_coupon_section",
+   "fieldtype": "Section Break",
+   "label": "Sale Coupon"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_sale_coupon_payment_balance",
+   "fieldtype": "Currency",
+   "label": "Not Payable Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cash_coupon_section",
+   "fieldtype": "Section Break",
+   "label": "Cash Coupon"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_limit_visit",
+   "fieldtype": "Int",
+   "label": "Total Limit Visit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_haza",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_visited_count",
+   "fieldtype": "Int",
+   "label": "Total Visited Count",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_visited_balance",
+   "fieldtype": "Int",
+   "label": "Total Visited Balance",
+   "read_only": 1
   }
  ],
  "image_field": "photo",
@@ -502,7 +551,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2024-08-01 11:02:26.693224",
+ "modified": "2024-08-05 16:34:15.064401",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

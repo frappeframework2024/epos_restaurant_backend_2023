@@ -60,15 +60,15 @@
                     class="w-full" />
             </div>
 
-            <div class="col-6 lg:col-4" v-if="selectedMemberType == 'Membership'">
-                <label>Membership</label><br />
-                <AutoComplete style="width: 100%;" inputStyle="width:100%" showOnFocus v-model="selectedMember"
-                    inputId="ac" optionLabel="label" :suggestions="items" @complete="search">
+            <div class="col-6 lg:col-4" v-if="selectedMemberType == 'Member'">
+                <label>Member</label><br />
+                <AutoComplete style="width: 100%;" inputStyle="width:100%" showOnFocus v-model="selectedMember" @item-select="onMemberSelected"
+                    inputId="ac" optionLabel="customer_name_en" :suggestions="items" @complete="search">
                     <template #option="slotProps">
-                        {{ slotProps.option.label }}
+                        {{slotProps.option.name}} - {{ slotProps.option.customer_name_en }}
                         <br />
                         <span class="text-600 text-xs">
-                            {{ slotProps.option.description }}
+                            {{ getMemberDescription(slotProps.option.phone_number,slotProps.option.phone_number_2,slotProps.option.gender) }}
                         </span>
 
                     </template>
@@ -77,6 +77,11 @@
             <div v-else class="col-6 lg:col-4">
                 <label for="ac">Member Name <span class="text-red-500">*</span></label><br />
                 <InputText v-model="saleCoupon.member_name" style="width: 100%;" />
+            </div>
+            <div class="col-6 lg:col-4">
+                <label>Gender</label><br />
+                <Dropdown v-model="saleCoupon.gender" :options="['Not Set','Male','Female']" placeholder="Gender"
+                    class="w-full" />
             </div>
             <div class="col-6 lg:col-4">
                 <label for="ac">Phone Number</label><br />
@@ -120,35 +125,34 @@
                 
             </div>
             <div class="col-6 lg:col-4">
-                <label>Discount Type<span class="text-red-500">*</span></label><br />
-                <Dropdown v-model="selectedDiscountType" :options="['Percent','Amount']" placeholder="Discount Type"
+                <label>Discount Type</label><br />
+                <Dropdown v-model="selectedDiscountType" :options="['Percent','Amount']" @change="onDiscountTypeChanged" placeholder="Discount Type"
                     class="w-full" />
             </div>
             <div class="col-6 lg:col-4">
-                <label>Discount Value<span class="text-red-500">*</span></label><br />
-                <InputNumber v-model="selectedDiscountType" placeholder="Discount Value"
+                <label>Discount Value</label><br />
+                <InputNumber @update:modelValue="onDiscountValueChanged" v-model="discount_value" placeholder="Discount Value" :max="100"
                     class="w-full" />
             </div>
             <div class="col-6 lg:col-4">
-                <label>Grand Total<span class="text-red-500">*</span></label><br />
-                <InputNumber v-model="saleCoupon.grand_total" placeholder="Discount Type"
+                <label>Grand Total</label><br />
+                <InputNumber v-model="saleCoupon.grand_total" readonly mode="currency" currency="USD"  placeholder="Grand Total"
                     class="w-full" />
             </div>
             
             <div class="col-12">
                 <div class="flex justify-content-between py-2 align-items-center font-medium border-round-sm"
                     style="background-color: #efefef">
+
                     <div class="mx-2">Payment</div>
                     <div class="mx-2"><Button @click="onAddPaymentClick()" rounded outlined icon="pi pi-plus"
                             size="small" /></div>
                 </div>
                 <table class="w-full">
-
                     <thead>
                         <tr>
                             <th class="text-left">Payment Type</th>
-                            <th>Exchange Rate</th>
-                            <th>Input Amount</th>
+                            <th class="text-left">Input Amount</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -156,8 +160,9 @@
                         <tr v-for="(payment, idx) in payments" :key="idx">
                             <td>
                                 <AutoComplete typeahead style="width: 100%;" inputStyle="width:100%" showOnFocus
-                                    v-model="payment.payment_type" @complete="searchPaymentType" inputId="ac"
+                                    v-model="payment.payment_type" @item-select="(value)=>{payment.exchange_rate = payment.payment_type.exchange_rate}" @complete="searchPaymentType" inputId="ac"
                                     optionLabel="value" :suggestions="paymentTypes">
+                                   
                                     <template #option="slotProps">
                                         {{ slotProps.option.value }}
                                         <br />
@@ -174,11 +179,6 @@
                                 
                             </td>
                             
-                            <td>
-                                <InputNumber v-model="payment.payment_type.exchange_rate" readonly inputId="stacked-buttons"
-                                    style="width: 100%;" />
-                                    
-                            </td>
                             <td>
                                 <InputNumber v-model="payment.input_amount" inputId="stacked-buttons"
                                     style="width: 100%;" />
@@ -222,7 +222,7 @@ const frappe = inject("$frappe")
 const call = frappe.call();
 const items = ref([]);
 const paymentTypes = ref([]);
-const saleCoupon = ref({})
+const saleCoupon = ref({gender:"Not Set"})
 const selectedMember = ref(undefined)
 const price = ref(0)
 const expiry_date = ref()
@@ -232,6 +232,7 @@ const selectedMemberType = ref('Individual')
 const selectedDiscountType = ref('Percent')
 const couponTypes = ref()
 const selectedCouponType = ref()
+const discount_value = ref(0)
 const selectdFile = ref({})
 const payments = ref([{
     "payment_type": "",
@@ -244,11 +245,8 @@ const memberType = ref([
 const dialogRef = inject('dialogRef');
 
 const search = (event) => {
-    call.get("frappe.desk.search.search_link", {
+    call.get("epos_restaurant_2023.selling.doctype.customer.customer.get_customer_search_link", {
         txt: event.query,
-        doctype: "Customer",
-        ignore_user_permissions: 1,
-        reference_doctype: "Sale Coupon"
     }).then((res) => {
         items.value = res.message
     })
@@ -278,6 +276,9 @@ onMounted(() => {
         selectedMemberType.value = params.saleCoupon.member_type
         selectedMember.value = params.saleCoupon.membership
         selectedCouponType.value = params.saleCoupon.coupon_type
+        selectedDiscountType.value = params.saleCoupon.discount_type
+        discount_value.value = params.saleCoupon.discount_value
+        saleCoupon.gender = params.saleCoupon.gender
         call.get("epos_restaurant_2023.coupon.doctype.sale_coupon.sale_coupon.get_sale_coupon_payment", { docname: params.saleCoupon.name }).then((res) => {
             if (res.message.length > 0) {
                 payments.value = res.message
@@ -287,9 +288,30 @@ onMounted(() => {
 
     }
 })
+function getMemberDescription(phone_number,phone_number_2,gender){
+    return `${phone_number??''}${ phone_number_2 ? ('/'+ phone_number_2):''} ${gender}`
+}
+function onDiscountValueChanged(discount_value){
+    saleCoupon.value.discount_value = discount_value
+    calculateGrandTotal()
+}
+
+function onDiscountTypeChanged(_discount_type){
+    selectedDiscountType.value = _discount_type.value
+    calculateGrandTotal()
+}
+
+function calculateGrandTotal(){
+    if (selectedDiscountType.value == "Amount"){
+        saleCoupon.value.grand_total = price.value - saleCoupon.value.discount_value
+    }else if (selectedDiscountType.value == "Percent") {
+        saleCoupon.value.grand_total = price.value - (price.value*saleCoupon.value.discount_value) / 100
+    }
+}
 
 function onCouponSelected(selectedValue){
     price.value = selectedValue.value.price
+    saleCoupon.value.grand_total = selectedValue.value.price
     limitVisit.value = selectedValue.value.total_visit
 }
 
@@ -309,6 +331,12 @@ function expiryChange(event) {
 function onRemovePayment(idx) {
     payments.value.splice(idx, 1)
 }
+
+function onMemberSelected(selected_value){
+    saleCoupon.value.member_name = selected_value.value.customer_name_en
+    saleCoupon.value.member = selected_value.value.name
+    saleCoupon.value.phone_number = selected_value.value.phone_number
+}
 async function onSave(is_submit = false) {
     isSaving.value = true
     saleCoupon.value.price = price.value
@@ -317,7 +345,7 @@ async function onSave(is_submit = false) {
         isSaving.value = false
         return
     }
-    if (!saleCoupon.value.membership && saleCoupon.value.coupon_type == "Membership") {
+    if (!saleCoupon.value.member && saleCoupon.value.coupon_type == "Membership") {
         toast.add({ severity: 'warn', summary: 'Validation', detail: 'Please select membership or Member name', life: 3000 });
         isSaving.value = false
         return
@@ -329,7 +357,10 @@ async function onSave(is_submit = false) {
     }
     let data_to_save = JSON.parse(JSON.stringify(saleCoupon.value))
     data_to_save.coupon_type = selectedCouponType.value.name ?? selectedCouponType.value
-    data_to_save.regular_price = price.value
+    data_to_save.grand_total = saleCoupon.value.grand_total
+    data_to_save.discount_type = selectedDiscountType.value
+    data_to_save.discount_value = discount_value.value
+    
     
     data_to_save.payments = []
     if (typeof data_to_save.membership == "object") {
@@ -355,8 +386,6 @@ async function onSave(is_submit = false) {
     call.post("epos_restaurant_2023.coupon.doctype.sale_coupon.sale_coupon.insert_sale_coupon", { "data": data_to_save, "is_submit": is_submit == false ? 0 : 1 }).then((res) => {
         toast.add({ severity: 'success', summary: 'Sucecss', detail: 'Coupon saved success.', life: 3000 });
         isSaving.value = false
-
-        console.log(selectdFile.value.files)
         closeDialog()
         const file = frappe.file();
 

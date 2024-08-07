@@ -55,7 +55,7 @@
                 </template>
                 <v-list-item-title class="text-red-700">{{ $t('Remove Note') }}</v-list-item-title>
             </v-list-item>
-            <v-list-item  :prepend-icon="saleProduct.rate_include_tax == 1 ? 'mdi-tag-remove' : 'mdi-tag-plus'"  @click="sale.onRateIncludeTax(saleProduct)"  v-if="(saleProduct.tax_rule && gv.device_setting.is_order_station==0)">
+            <v-list-item  :prepend-icon="saleProduct.rate_include_tax == 1 ? 'mdi-tag-remove' : 'mdi-tag-plus'"  @click="addAndRemoveRateIncludeTax(saleProduct)"  v-if="(saleProduct.tax_rule && gv.device_setting.is_order_station==0 &&  gv.device_setting.show_rate_include_button==1)">
                 <v-list-item-title :class="saleProduct.rate_include_tax == 1 ? 'text-red-700' : ''">{{ $t(saleProduct.rate_include_tax == 1 ? 'Remove Rate Include Tax' : 'Rate Include Tax')}}</v-list-item-title>
             </v-list-item>
             <v-list-item  prepend-icon="mdi-cash-100" :title="$t('Tax Setting')" v-if="(saleProduct.product_tax_rule && gv.device_setting.is_order_station==0)"  @click="sale.onSaleProductChangeTaxSetting(saleProduct,gv)">
@@ -139,7 +139,19 @@ function onSelectPrinter(){
         showDialogSelectPrinter.value = true;
     }
 }
-
+function addAndRemoveRateIncludeTax(saleProduct){
+    
+    gv.authorize(
+      "apply_rate_include_tax_required_password",
+      "allow_apply_tax_include_rate",
+      "apply_rate_include_tax_required_note",
+      "Change Tax Setting"
+    ).then((v) => {
+      if (v) {
+        sale.onRateIncludeTax(saleProduct)
+      }
+    });
+}
 function onSelectPritnerForPrint(p){
 
 p.selected = !p.selected

@@ -14,6 +14,10 @@
   "column_break_3",
   "payment_type",
   "currency",
+  "section_break_yjiv",
+  "account_paid_from",
+  "column_break_znrv",
+  "account_paid_to",
   "purchase_order_information_section",
   "purchase_order",
   "purchase_order_date",
@@ -39,11 +43,7 @@
   "vendor_group",
   "business_branch",
   "stock_location",
-  "symbol",
-  "accounting_tab",
-  "account_paid_from",
-  "column_break_znrv",
-  "account_paid_to"
+  "symbol"
  ],
  "fields": [
   {
@@ -284,20 +284,21 @@
    "options": "Chart Of Account"
   },
   {
-   "fieldname": "accounting_tab",
-   "fieldtype": "Tab Break",
-   "label": "Accounting"
-  },
-  {
    "fieldname": "column_break_znrv",
    "fieldtype": "Column Break"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_yjiv",
+   "fieldtype": "Section Break",
+   "label": "Accounts"
   }
  ],
  "image_field": "attach_receipt",
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-07-24 10:16:16.346751",
+ "modified": "2024-08-07 14:19:39.695722",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order Payment",

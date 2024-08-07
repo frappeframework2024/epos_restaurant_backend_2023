@@ -358,9 +358,8 @@ def get_sql_data(filters,row_group,report_fields=None):
 
 	for group, total in groups.items():	  
 		data_total = {}
-	 
 		for key in total.keys():
-			data_total.update({key: sum(total[key])})  
+			data_total.update({key: sum((total[key] or 0))})  
 
 		row = json.loads(group)	 
 		_result = {}
