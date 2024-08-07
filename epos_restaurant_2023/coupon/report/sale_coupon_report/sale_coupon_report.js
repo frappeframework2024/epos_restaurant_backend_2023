@@ -1,12 +1,16 @@
 // Copyright (c) 2024, Tes Pheakdey and contributors
 // For license information, please see license.txt
 
-frappe.query_reports["Coupon Payment"] = {
+frappe.query_reports["Sale Coupon Report"] = {
 	onload: function(report) {
 		if(frappe.query_report.get_filter_value('filter_based_on')=="This Month"){
 			frappe.query_report.toggle_filter_display('from_fiscal_year', true);
 			frappe.query_report.toggle_filter_display('start_date', true  );
 			frappe.query_report.toggle_filter_display('end_date', true );
+		}
+		if(frappe.query_report.get_filter_value('member_type').includes("Individual") || frappe.query_report.get_filter_value('member_type')==""){
+			frappe.query_report.toggle_filter_display('customer_group', true);
+			frappe.query_report.toggle_filter_display('customer', true  );
 		}
 		report.page.add_inner_button("Preview Report", function () {
 			frappe.query_report.refresh();
@@ -65,6 +69,32 @@ frappe.query_reports["Coupon Payment"] = {
 			"on_change": function (query_report) {},
 		},
 		{
+			"fieldname": "member_type",
+			"label": __("Member Type"),
+			"fieldtype": "MultiSelectList",
+			"get_data": function(txt) {
+				const options = [
+					{ value: "Individual", description: "Individual" },
+					{ value: "Member", description: "Member" }
+				];
+				return options.filter(option => option.description.toLowerCase().includes(txt.toLowerCase()));
+			},
+			on_change: function() {
+				let member_type = frappe.query_report.get_filter_value('member_type');
+				if(member_type!="Individual"){ 
+					frappe.query_report.toggle_filter_display('customer_group', member_type === 'Member');
+					frappe.query_report.toggle_filter_display('customer', member_type === 'Member'  );
+
+				}
+				if(member_type.includes("Individual")|| member_type==""){
+					frappe.query_report.toggle_filter_display('customer_group', true);
+					frappe.query_report.toggle_filter_display('customer', true  );
+
+				}
+
+			},
+		},
+		{
 			"fieldname": "customer_group",
 			"label": __("Customer Group"),
 			"fieldtype": "MultiSelectList",
@@ -106,7 +136,7 @@ frappe.query_reports["Coupon Payment"] = {
 	
 		value = default_formatter(value, row, column, data);
 
-		if (data && data.indent==0) {
+		if (data && data.indent==0 ) {
 			value = $(`<span>${value}</span>`);
 			var $value = $(value).css("font-weight", "bold");
 			value = $value.wrap("<p></p>").parent().html();

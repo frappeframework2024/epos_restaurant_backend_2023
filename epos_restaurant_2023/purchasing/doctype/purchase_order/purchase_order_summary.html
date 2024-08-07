@@ -33,14 +33,14 @@
 
 
   <!-- discountable amount  -->
-  {% if po_discountable_amount %}
+  {% if discountable_amount %}
   <div class="row">
     <div class="col">
       {{__("Discountable Amount")}}
       
     </div>
     <div class="col text-right">
-      <strong>{{frappe.format(po_discountable_amount,{"fieldtype":"Currency"})}}</strong>
+      <strong>{{frappe.format(discountable_amount,{"fieldtype":"Currency"})}}</strong>
     </div>
   </div>
   {%endif%}
@@ -51,13 +51,13 @@
       PO Discount {%if discount_type=="Percent"%} - {{discount}}%{%endif%}
     </div>
     <div class="col text-right">
-      <strong>{{frappe.format(po_discount,{"fieldtype":"Currency"})}}</strong>
+      <strong>{{frappe.format(discount_amount,{"fieldtype":"Currency"})}}</strong>
     </div>
   </div>
   {%endif%}
 
   <!-- total discount -->
-    {% if  (product_discount ||0) > 0 && (po_discount || 0) > 0 %}
+    {% if  (product_discount ||0) > 0 && (discount || 0) > 0 %}
     <div class="row">
       <div class="col">
         {{__("Total Discount")}}

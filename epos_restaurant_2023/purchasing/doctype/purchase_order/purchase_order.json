@@ -32,22 +32,21 @@
   "html_summary",
   "section_break_7",
   "total_quantity",
-  "discount_type",
-  "discount",
-  "column_break_34",
   "sub_total",
-  "po_discount",
-  "po_discountable_amount",
+  "vendor_group",
+  "column_break_34",
+  "discount_type",
+  "discountable_amount",
+  "discount_amount",
+  "discount",
   "section_break_10",
-  "total_discount",
   "product_discount",
-  "total_expense_cost",
+  "total_discount",
+  "attach_receipt",
   "column_break_35",
   "grand_total",
   "total_paid",
   "balance",
-  "attach_receipt",
-  "vendor_group",
   "accounting_tab",
   "default_credit_account",
   "column_break_wyuw",
@@ -240,26 +239,12 @@
    "label": "Discount"
   },
   {
-   "default": "0",
-   "fieldname": "po_discount",
-   "fieldtype": "Currency",
-   "label": "PO Discount",
-   "read_only": 1
-  },
-  {
    "fieldname": "column_break_34",
    "fieldtype": "Column Break"
   },
   {
    "fieldname": "column_break_35",
    "fieldtype": "Column Break"
-  },
-  {
-   "default": "0",
-   "fieldname": "po_discountable_amount",
-   "fieldtype": "Currency",
-   "label": "PO Discountable Amount ",
-   "read_only": 1
   },
   {
    "fetch_from": "vendor.vendor_group",
@@ -320,9 +305,17 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "total_expense_cost",
+   "default": "0",
+   "fieldname": "discountable_amount",
    "fieldtype": "Currency",
-   "label": "Total Expense Cost",
+   "label": "Discountable Amount ",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "discount_amount",
+   "fieldtype": "Currency",
+   "label": "Discount Amount",
    "read_only": 1
   }
  ],
@@ -336,7 +329,7 @@
    "link_fieldname": "purchase_order"
   }
  ],
- "modified": "2024-08-05 10:03:34.653322",
+ "modified": "2024-08-07 16:23:12.950380",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order",

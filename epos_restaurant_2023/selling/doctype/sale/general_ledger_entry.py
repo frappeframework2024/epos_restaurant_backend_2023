@@ -207,7 +207,7 @@ def submit_sale_to_general_ledger_entry(self):
 				"doctype":"General Ledger",
 				"posting_date":self.posting_date,
 				"account":self.default_change_account,
-				"amount":self.changed_amount,
+				"credit_amount":self.changed_amount,
 				"againt":self.customer + " - " + self.customer_name,
 				"againt_voucher_type":"Sale",
 				"againt_voucher_number": self.name,

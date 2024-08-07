@@ -28,9 +28,8 @@
   "total_discount",
   "accounting_section",
   "expense_account",
-  "stock_account",
   "column_break_xzjs",
-  "expense_cost",
+  "stock_account",
   "column_break_14",
   "select_variant",
   "has_expired_date",
@@ -194,7 +193,7 @@
   {
    "fieldname": "accounting_section",
    "fieldtype": "Section Break",
-   "label": "Accounting"
+   "label": "Accounts"
   },
   {
    "fieldname": "stock_account",
@@ -207,12 +206,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "expense_cost",
-   "fieldtype": "Currency",
-   "label": "Expense Cost",
-   "read_only": 1
-  },
-  {
    "fieldname": "expense_account",
    "fieldtype": "Link",
    "label": "Expense Account",
@@ -222,7 +215,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-05 10:09:36.073994",
+ "modified": "2024-08-07 15:08:13.413376",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order Products",

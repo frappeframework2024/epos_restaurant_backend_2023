@@ -657,6 +657,7 @@ def add_payment_to_sale_payment(self):
 					"note": "Changed amount in sale order {}".format(self.name),
 					"account_code":account_code
 				})
+			doc.flags.ignore_post_general_ledger_entry = True
 			doc.insert()
 
 def validate_sale_product(self):

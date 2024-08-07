@@ -65,9 +65,14 @@ def get_summary_report(filters,data):
 			
 		]
 def get_report(filters):
+	sql1=''
+	join=''
+	if filters.get("member_type")==['Member']:
+		sql1 = ",c.name as customer,c.customer_group"
+		join = "inner join `tabCustomer` c on b.member_name = c.customer_name_en"
 	sql = """
     select 
-		1 as indent,
+
 		b.name as sale_coupon,
 		b.visited_count,
 		concat(b.visited_count,'/',b.limit_visit) as visited,
@@ -82,52 +87,76 @@ def get_report(filters):
 		b.total_payment_amount,
 		b.payment_balance,
 		a.name,
-		c.name as customer,
-		c.customer_group
+		b.member_type
+		{}
 	from `tabSales Coupon Payment` a
 	inner join `tabSale Coupon` b on a.sale_coupon = b.name
-    inner join `tabCustomer` c on b.member_name = c.customer_name_en
+    {}
     where 
         b.posting_date between %(start_date)s and %(end_date)s and
 		a.docstatus = 1
-"""
-	if filters.get('customer'):
-		sql = sql + " and c.name in %(customer)s "
-	if filters.get("customer_group"):
-		sql = sql + " AND c.customer_group in %(customer_group)s"
+""".format(sql1,join)
+	if ['Member'] in filters.get("member_type"):
+		sql = sql + " and b.member_type in %(member_type)s"
+		if filters.get('customer'):
+			sql = sql + " and c.name in %(customer)s "
+		if filters.get("customer_group"):
+			sql = sql + " AND c.customer_group in %(customer_group)s"
+	if filters.get("member_type"):
+		sql = sql + " and b.member_type in %(member_type)s"
+	# frappe.throw(sql)
 	data = frappe.db.sql(sql, filters, as_dict=1)
 	return data
 
 
 def get_report_data(filters,data):
 	report_data = []
-	# date = datetime.date.today()
-
-	# for e in data:
-	# 	if e['expiry_date'] and e['expiry_date'] < date and e['unlimited']==0:
-	# 		e['expired_balance'] = e.get('balance', 0) 
-	# 		e['balance'] = 0
-	# 	else:
-	# 		e['expired_balance'] = 0
 
 	member = sorted(set({d['member_name'] for d in data}))
-	
-	for g in member:
-		report_data.append({
-			'indent':0,
-			'name':g,
-			'limit_visit':sum([d['limit_visit'] for d in data if d['member_name']==g]),
-			'visited_count':sum([d['visited_count'] for d in data if d['member_name']==g]),
-			'price':sum([d['price'] for d in data if d['member_name']==g]),
-			'discount_value':sum([d['discount_value'] for d in data if d['member_name']==g]),
-			'grand_total':sum([d['grand_total'] for d in data if d['member_name']==g]),
-			'total_payment_amount':sum([d['total_payment_amount'] for d in data if d['member_name']==g]),
-			'payment_balance':sum([d['payment_balance'] for d in data if d['member_name']==g]),
-		})
+	individual = sorted(set({d['member_type'] for d in data}))
+	if filters.get('member_type'):
+		for i in individual:
+			report_data.append({
+				'indent':0,
+				'name':i,
+				'limit_visit':sum([d['limit_visit'] for d in data if d['member_type']==i]),
+				'visited_count':sum([d['visited_count'] for d in data if d['member_type']==i]),
+				'price':sum([d['price'] for d in data if d['member_type']==i]),
+				'discount_value':sum([d['discount_value'] for d in data if d['member_type']==i]),
+				'grand_total':sum([d['grand_total'] for d in data if d['member_type']==i]),
+				'total_payment_amount':sum([d['total_payment_amount'] for d in data if d['member_type']==i]),
+				'payment_balance':sum([d['payment_balance'] for d in data if d['member_type']==i]),
+			})
+			for g in [m['member_name'] for m in data if m['member_type']==i]:
+				report_data.append({
+					'indent':1,
+					'name':g,
+					'limit_visit':sum([d['limit_visit'] for d in data if d['member_name']==g and d['member_type']==i]),
+					'visited_count':sum([d['visited_count'] for d in data if d['member_name']==g and d['member_type']==i]),
+					'price':sum([d['price'] for d in data if d['member_name']==g and d['member_type']==i]),
+					'discount_value':sum([d['discount_value'] for d in data if d['member_name']==g and d['member_type']==i]),
+					'grand_total':sum([d['grand_total'] for d in data if d['member_name']==g and d['member_type']==i]),
+					'total_payment_amount':sum([d['total_payment_amount'] for d in data if d['member_name']==g and d['member_type']==i]),
+					'payment_balance':sum([d['payment_balance'] for d in data if d['member_name']==g and d['member_type']==i]),
+				})
 
-		report_data = report_data +  [d for d in data if d['member_name']==g]
+				report_data = report_data +  [d.update({"indent":2}) or d for d in data if d['member_name']==g and d['member_type']==i]
 
-	
+	else:
+		for g in member:
+				report_data.append({
+					'indent':0,
+					'name':g,
+					'limit_visit':sum([d['limit_visit'] for d in data if d['member_name']==g]),
+					'visited_count':sum([d['visited_count'] for d in data if d['member_name']==g]),
+					'price':sum([d['price'] for d in data if d['member_name']==g]),
+					'discount_value':sum([d['discount_value'] for d in data if d['member_name']==g]),
+					'grand_total':sum([d['grand_total'] for d in data if d['member_name']==g]),
+					'total_payment_amount':sum([d['total_payment_amount'] for d in data if d['member_name']==g]),
+					'payment_balance':sum([d['payment_balance'] for d in data if d['member_name']==g]),
+				})
+
+				report_data = report_data +  [d.update({"indent":1}) or d for d in data if d['member_name']==g]
 	return report_data
 
  
