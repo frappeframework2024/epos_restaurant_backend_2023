@@ -304,6 +304,7 @@ function update_product_infos(frm,doc){
 	else {
 		doc.discount_amount = doc.discount;
 	}
+	doc.po_discount_percent = frm.doc.discount_amount / doc.amount * 100
 	doc.po_discount_amount = doc.po_discount_percent / 100 * doc.sub_total
 	doc.total_discount = doc.discount_amount + doc.po_discount_amount;
 	doc.amount = (doc.sub_total - doc.total_discount);
