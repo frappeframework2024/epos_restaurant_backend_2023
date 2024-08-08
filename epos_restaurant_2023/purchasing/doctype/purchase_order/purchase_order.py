@@ -6,24 +6,19 @@ from epos_restaurant_2023.inventory.inventory import add_to_inventory_transactio
 from epos_restaurant_2023.inventory.inventory import check_uom_conversion,calculate_average_cost,get_last_inventory_transaction,update_inventory_transaction_status
 import frappe
 from frappe import _
-from frappe.utils import flt
 from py_linq import Enumerable
 from frappe.model.document import Document
 from epos_restaurant_2023.purchasing.doctype.purchase_order.general_ledger_entry import submit_purchase_to_general_ledger_entry_on_submit,submit_purchase_to_general_ledger_entry_on_cancel
 class PurchaseOrder(Document):
 		
 	def validate(self):
+		validate_discount(self)
 		self.total_quantity = Enumerable(self.purchase_order_products).sum(lambda x: x.quantity or 0)
 		self.discountable_amount = Enumerable(self.purchase_order_products).where(lambda x:(x.discount_amount or 0)==0).sum(lambda x: (x.quantity or 0)* (x.cost or  0))
 		self.sub_total = Enumerable(self.purchase_order_products).sum(lambda x: (x.quantity or 0)* (x.cost or  0))
-
-		if self.discount:
-			if self.discount_type =="Percent":
-				self.discount = self.discountable_amount * self.discount / 100
-			else:
-				self.discount = self.discount or 0
+		self.discount_amount = Enumerable(self.purchase_order_products).sum(lambda x: x.po_discount_amount or 0)
 		self.product_discount = Enumerable(self.purchase_order_products).sum(lambda x: x.discount_amount)
-		self.total_discount = (self.product_discount or 0) + (self.discount or 0)
+		self.total_discount = (self.product_discount or 0) + (self.discount_amount or 0)
 		self.grand_total =( self.sub_total - (self.total_discount or 0))
 		self.balance = self.grand_total  - (self.total_paid or 0)
    
@@ -60,50 +55,63 @@ class PurchaseOrder(Document):
 
 	def before_submit(self):
 		for d in self.purchase_order_products:
-			self.total_expense_cost = sum(a.expense_cost for a in self.purchase_order_products)
 			if d.base_unit != d.unit:
 				if not check_uom_conversion(d.base_unit, d.unit):
 					frappe.throw(_("There is no UoM conversion from {} to {}".format(d.base_unit, d.unit)))
 
+def validate_discount(self):
+	if self.discount:
+		discount_percent = ((self.discount/100)  if self.discount_type == 'Percent' else self.discount/self.discountable_amount)
+		for a in self.purchase_order_products:
+			if a.discount_amount == 0:
+				a.po_discount_percent = discount_percent * 100
+				a.po_discount_amount = a.sub_total*discount_percent
+				a.total_discount = a.discount_amount + a.po_discount_amount
+	else:
+		for a in self.purchase_order_products:
+			if a.discount_amount == 0:
+				a.po_discount_percent = a.po_discount_amount = 0
+				a.total_discount = a.discount_amount + a.po_discount_amount
+
+
+
 def update_inventory_on_submit(self):
 	for p in self.purchase_order_products:
-		if p.is_inventory_product:
-			uom_conversion = (1 if (get_uom_conversion(p.base_unit, p.unit) or 0) == 0 else get_uom_conversion(p.base_unit, p.unit))
-			add_to_inventory_transaction({
-				'doctype': 'Inventory Transaction',
-				'transaction_type':"Purchase Order",
-				'transaction_date':self.posting_date,
-				'transaction_number':self.name,
-				'product_code': p.product_code,
-				'unit':p.unit,
-				'stock_location':self.stock_location,
-				'in_quantity':p.quantity / uom_conversion,
-				"uom_conversion":uom_conversion,
-				"price":calculate_average_cost(p.product_code,self.stock_location,(p.quantity / uom_conversion),p.cost*uom_conversion),
-				'note': 'New purchase order submitted.',
-				"has_expired_date":p.has_expired_date,
-				"expired_date":p.expired_date,
-    			'action': 'Submit'
-			})
+		uom_conversion = (1 if (get_uom_conversion(p.base_unit, p.unit) or 0) == 0 else get_uom_conversion(p.base_unit, p.unit))
+		add_to_inventory_transaction({
+			'doctype': 'Inventory Transaction',
+			'transaction_type':"Purchase Order",
+			'transaction_date':self.posting_date,
+			'transaction_number':self.name,
+			'product_code': p.product_code,
+			'unit':p.unit,
+			'stock_location':self.stock_location,
+			'in_quantity':p.quantity / uom_conversion,
+			"uom_conversion":uom_conversion,
+			"price":calculate_average_cost(p.product_code,self.stock_location,(p.quantity / uom_conversion),p.cost*uom_conversion),
+			'note': 'New purchase order submitted.',
+			"has_expired_date":p.has_expired_date,
+			"expired_date":p.expired_date,
+			'action': 'Submit'
+		})
 		
 def update_inventory_on_cancel(self):
 	for p in self.purchase_order_products:
-		if p.is_inventory_product:
-			uom_conversion = (1 if (get_uom_conversion(p.base_unit, p.unit) or 0) == 0 else get_uom_conversion(p.base_unit, p.unit))
-			add_to_inventory_transaction({
-				'doctype': 'Inventory Transaction',
-				'transaction_type':"Purchase Order",
-				'transaction_date':self.posting_date,
-				'transaction_number':self.name,
-				'product_code': p.product_code,
-				'unit':p.unit,
-				'stock_location':self.stock_location,
-				'out_quantity':p.quantity / uom_conversion,
-				"price": get_last_inventory_transaction(p.product_code,self.stock_location,self.name),
-				'note': 'Purchase order cancelled.',
-				'action': 'Cancel'
-			})
-			update_inventory_transaction_status(self.name)
+		uom_conversion = (1 if (get_uom_conversion(p.base_unit, p.unit) or 0) == 0 else get_uom_conversion(p.base_unit, p.unit))
+		add_to_inventory_transaction({
+			'doctype': 'Inventory Transaction',
+			'transaction_type':"Purchase Order",
+			'transaction_date':self.posting_date,
+			'transaction_number':self.name,
+			'product_code': p.product_code,
+			'unit':p.unit,
+			'stock_location':self.stock_location,
+			'out_quantity':p.quantity / uom_conversion,
+			"price": get_last_inventory_transaction(p.product_code,self.stock_location,self.name),
+			'note': 'Purchase order cancelled.',
+			'action': 'Cancel'
+		})
+		update_inventory_transaction_status(self.name)
 
 def validate_account(self):
 	if not self.default_credit_account:
@@ -115,8 +123,6 @@ def validate_account(self):
 	for p in self.purchase_order_products:
 		if not p.stock_account:
 			p.stock_account = frappe.get_cached_value("Business Branch", self.business_branch,"default_inventory_account")
-		if not p.expense_account:
-			p.expense_account = get_accounts(self.business_branch, p.product_code)["expense_account"]
 
 @frappe.whitelist(allow_guest=True) 
 def get_accounts(branch,product):

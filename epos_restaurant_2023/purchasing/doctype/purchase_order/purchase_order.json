@@ -329,7 +329,7 @@
    "link_fieldname": "purchase_order"
   }
  ],
- "modified": "2024-08-07 16:23:12.950380",
+ "modified": "2024-08-07 20:41:43.260471",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order",
@@ -346,6 +346,7 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "submit": 1,
    "write": 1
   },
   {

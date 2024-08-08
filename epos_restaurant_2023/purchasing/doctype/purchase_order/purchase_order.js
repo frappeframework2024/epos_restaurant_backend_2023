@@ -12,7 +12,7 @@ frappe.ui.form.on("Purchase Order", {
 	},
 	refresh(frm) {
 		AddDiscountButton(frm);
-		updateSumTotal(frm);
+		updateSummary(frm)
 	},
 	scan_barcode(frm) {
 		if (frm.doc.scan_barcode != undefined) {
@@ -71,21 +71,15 @@ function AddDiscountButton(frm) {
 			],
 				function (d) {
 					frm.doc.discount_type = d.discount_type
-					frm.doc.purchase_order_products.forEach(r => {
-						if(r.discount_amount == 0){
-							if(d.discount_type == "Percent"){
-								r.po_discount_percent = d.discount_percent
-								r.po_discount_amount = (r.amount*(d.discount_percent/100))
-							}
-							else{
-								r.po_discount_percent = ((d.discount_amount/frm.doc.discountable_amount)*100)
-								r.po_discount_amount = r.po_discount_percent/100 * r.amount
-							}
-							r.total_discount = r.po_discount_amount + r.discount_amount
-							frm.refresh_field('purchase_order_products');
-							updateSumTotal(frm)
-						}
-					});
+					frm.doc.discount = d.discount_type == "Percent" ? d.discount_percent : d.discount_amount
+					if(frm.doc.discount == 0){
+						frm.doc.purchase_order_products.forEach(r => {
+							r.total_discount = r.total_discount - r.po_discount_amount
+							r.po_discount_amount = r.po_discount_percent = 0
+						});
+					}
+					frm.refresh_field('purchase_order_products');
+					updateSumTotal(frm)
 				},
 				'Discount',
 				"Apply Discount"
@@ -103,7 +97,7 @@ function updateSummary(frm) {
 frappe.ui.form.on('Purchase Order Products', {
 	product_code(frm, cdt, cdn) {
 		let doc = locals[cdt][cdn];
-		update_product_info(frm, doc);
+		update_product_info(frm, doc, 1);
 		set_account(frm,cdt,cdn)
 	},
 	unit(frm,cdt,cdn){
@@ -127,6 +121,9 @@ frappe.ui.form.on('Purchase Order Products', {
 		if (frm.doc.discount_type == "Percent" && frm.doc.discount > 100) {
 			frappe.throw(__("Discount percent cannot greater than 100%"));
 		}
+		if(row.po_discount_amount > 0 ){
+			row.po_discount_amount = row.po_discount_percent = 0
+		}
 		update_product_info(frm, row);
 	}
 })
@@ -140,15 +137,10 @@ function updateSumTotal(frm) {
 	frm.set_value('sub_total', products.reduce((n, d) => n + d.sub_total, 0));
 	frm.set_value('discountable_amount', products.reduce((n, d) => n + (d.discount_amount > 0 ? 0 : d.sub_total), 0));
 	frm.set_value('product_discount', products.reduce((n, d) => n + d.discount_amount, 0));
-	frm.set_value('discount_amount', products.reduce((n, d) => n + d.po_discount_amount, 0));
+	frm.set_value('discount_amount', frm.doc.discount_type == "Percent" ? (frm.doc.discount/100 * frm.doc.discountable_amount) : frm.doc.discount);
 	frm.set_value('total_discount', frm.doc.discount_amount + frm.doc.product_discount);
 	frm.set_value('grand_total', frm.doc.sub_total - frm.doc.total_discount);
 	frm.set_value('balance', frm.doc.grand_total - frm.doc.total_paid);
-	discount = frm.doc.discount_amount
-	if(frm.doc.discount_type == "Percent"){
-		discount = (frm.doc.discount_amount/frm.doc.discountable_amount*100)
-	}
-	frm.set_value('discount',discount)
 	updateSummary(frm);
 }
 
@@ -212,6 +204,7 @@ let get_product_cost = function (frm,doc) {
 			error: function(r) {
 				reject("error")
 			},
+			async: true
 		});
 	});
 }
@@ -237,7 +230,8 @@ function set_account(frm,cdt,cdn){
 				frappe.model.set_value(cdt, cdn, "expense_account", (r.message.expense_account || ""));
 				frappe.model.set_value(cdt, cdn, "stock_account", (r.message.stock_account || ""));
 			}
-		}
+		},
+		async: true
 	});
 }
 
@@ -261,7 +255,8 @@ let get_currenct_cost = function(frm,doc){
 			},
 			error: function(r) {
 				reject("error")
-			}
+			},
+			async: true
 		});
 	})
 }
@@ -280,14 +275,15 @@ let get_uom_conversion = function (frm,doc) {
 		error: function(r) {
 			reject("error")
 		},
+		async: true
     })
 })}
 
 function update_product_info(frm, doc, from_unit=0) {
 	if(from_unit == 1){
 		get_currenct_cost(frm,doc).then((cost)=>{
-			doc.cost = cost
-			doc.discount = 0
+			frappe.model.set_value("Purchase Order Products", doc.name, "cost", (cost || 0));
+			frappe.model.set_value("Purchase Order Products", doc.name, "discount", 0);
 			update_product_infos(frm,doc)
 		})
 	}
@@ -304,7 +300,6 @@ function update_product_infos(frm,doc){
 	else {
 		doc.discount_amount = doc.discount;
 	}
-	doc.po_discount_percent = frm.doc.discount_amount / doc.amount * 100
 	doc.po_discount_amount = doc.po_discount_percent / 100 * doc.sub_total
 	doc.total_discount = doc.discount_amount + doc.po_discount_amount;
 	doc.amount = (doc.sub_total - doc.total_discount);
