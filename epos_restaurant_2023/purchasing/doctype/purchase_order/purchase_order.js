@@ -53,7 +53,7 @@ frappe.ui.form.on("Purchase Order", {
         if(frm.doc.purchase_order_products.length > 0){
             $.each(frm.doc.purchase_order_products, function(i, d) {
                 if(d.product_code){
-					get_currenct_cost(frm,d)
+					update_product_info(frm, d, 1);
 				}
             });
         }
@@ -137,7 +137,8 @@ function updateSumTotal(frm) {
 	frm.set_value('sub_total', products.reduce((n, d) => n + d.sub_total, 0));
 	frm.set_value('discountable_amount', products.reduce((n, d) => n + (d.discount_amount > 0 ? 0 : d.sub_total), 0));
 	frm.set_value('product_discount', products.reduce((n, d) => n + d.discount_amount, 0));
-	frm.set_value('discount_amount', frm.doc.discount_type == "Percent" ? (frm.doc.discount/100 * frm.doc.discountable_amount) : frm.doc.discount);
+	discount_amount = (frm.doc.discountable_amount > 0 ? (frm.doc.discount_type == "Percent" ? (frm.doc.discount/100 * frm.doc.discountable_amount) : frm.doc.discount) : 0)
+	frm.set_value('discount_amount', discount_amount);
 	frm.set_value('total_discount', frm.doc.discount_amount + frm.doc.product_discount);
 	frm.set_value('grand_total', frm.doc.sub_total - frm.doc.total_discount);
 	frm.set_value('balance', frm.doc.grand_total - frm.doc.total_paid);
@@ -172,7 +173,6 @@ function add_product_to_po_product(frm, p) {
 	if (doc != undefined) {
 		doc.product_code = p.product_code;
 		doc.product_name = p.product_name_en;
-		doc.cost = p.last_purchase_cost;
 		doc.quantity = 1;
 		doc.sub_total = doc.quantity * doc.cost;
 		doc.unit = p.unit;
@@ -183,29 +183,11 @@ function add_product_to_po_product(frm, p) {
 }
 
 function product_by_scan(frm,doc){
-	get_product_cost(frm,doc).then((v)=>{
-		doc.cost = v.last_purchase_cost;
+	get_currenct_cost(frm,doc).then((v)=>{
+		doc.cost = v;
 		doc.amount = doc.cost * doc.quantity;
 		frm.refresh_field('purchase_order_products');
 		updateSumTotal(frm);
-	});
-}
-let get_product_cost = function (frm,doc) {
-	return new Promise(function(resolve, reject) {
-		frappe.call({
-			method: "epos_restaurant_2023.inventory.doctype.product.product.get_product_cost_by_stock",
-			args: {
-				stock_location:frm.doc.stock_location,
-				product_code: doc.product_code
-			},
-			callback: function(r){
-				resolve(r.message)
-			},
-			error: function(r) {
-				reject("error")
-			},
-			async: true
-		});
 	});
 }
 
@@ -247,10 +229,7 @@ let get_currenct_cost = function(frm,doc){
 			},
 			callback: function(r){
 				if(doc!=undefined){
-					get_uom_conversion(frm,doc).then((factor)=>{
-						conversion_factor = ((1/factor).toFixed(2) || 1)
-						resolve((r.message.last_purchase_cost * conversion_factor) || 0)
-					})
+					resolve((r.message.cost) || 0)
 				}
 			},
 			error: function(r) {
@@ -261,28 +240,11 @@ let get_currenct_cost = function(frm,doc){
 	})
 }
 
-let get_uom_conversion = function (frm,doc) {
-	return new Promise(function(resolve, reject) {
-    frappe.call({
-        method: "epos_restaurant_2023.inventory.inventory.get_uom_conversion",
-        args: {
-            from_uom: doc.base_unit, 
-            to_uom: doc.unit
-        },
-        callback: function(r){
-			resolve(r.message)
-		},
-		error: function(r) {
-			reject("error")
-		},
-		async: true
-    })
-})}
-
 function update_product_info(frm, doc, from_unit=0) {
 	if(from_unit == 1){
 		get_currenct_cost(frm,doc).then((cost)=>{
 			frappe.model.set_value("Purchase Order Products", doc.name, "cost", (cost || 0));
+			frappe.model.set_value("Purchase Order Products", doc.name, "base_cost", (cost || 0));
 			frappe.model.set_value("Purchase Order Products", doc.name, "discount", 0);
 			update_product_infos(frm,doc)
 		})
@@ -302,7 +264,7 @@ function update_product_infos(frm,doc){
 	}
 	doc.po_discount_amount = doc.po_discount_percent / 100 * doc.sub_total
 	doc.total_discount = doc.discount_amount + doc.po_discount_amount;
-	doc.amount = (doc.sub_total - doc.total_discount);
+	doc.amount = (doc.sub_total - doc.discount_amount);
 	frm.refresh_field('purchase_order_products');
 	updateSumTotal(frm);
 }

@@ -3,7 +3,7 @@
 
 
 from epos_restaurant_2023.inventory.inventory import add_to_inventory_transaction, get_uom_conversion
-from epos_restaurant_2023.inventory.inventory import check_uom_conversion,calculate_average_cost,get_last_inventory_transaction,update_inventory_transaction_status
+from epos_restaurant_2023.inventory.inventory import check_uom_conversion,calculate_average_cost,update_inventory_transaction_status
 import frappe
 from frappe import _
 from py_linq import Enumerable
@@ -72,7 +72,10 @@ def validate_discount(self):
 			if a.discount_amount == 0:
 				a.po_discount_percent = a.po_discount_amount = 0
 				a.total_discount = a.discount_amount + a.po_discount_amount
-
+				a.amount = a.sub_total - a.total_discount
+	total = sum(a.sub_total - a.total_discount for a in self.purchase_order_products)
+	if total < 0:
+		frappe.throw("Discount amount can not be greater than total amount")
 
 
 def update_inventory_on_submit(self):
@@ -85,10 +88,11 @@ def update_inventory_on_submit(self):
 			'transaction_number':self.name,
 			'product_code': p.product_code,
 			'unit':p.unit,
+			'previous_cost': p.base_cost*uom_conversion,
 			'stock_location':self.stock_location,
 			'in_quantity':p.quantity / uom_conversion,
 			"uom_conversion":uom_conversion,
-			"price":calculate_average_cost(p.product_code,self.stock_location,(p.quantity / uom_conversion),p.cost*uom_conversion),
+			"price":calculate_average_cost(p.product_code,self.stock_location,(p.quantity / uom_conversion),(p.sub_total - p.total_discount)),
 			'note': 'New purchase order submitted.',
 			"has_expired_date":p.has_expired_date,
 			"expired_date":p.expired_date,
@@ -105,9 +109,10 @@ def update_inventory_on_cancel(self):
 			'transaction_number':self.name,
 			'product_code': p.product_code,
 			'unit':p.unit,
+			'previous_cost': p.base_cost*uom_conversion,
 			'stock_location':self.stock_location,
 			'out_quantity':p.quantity / uom_conversion,
-			"price": get_last_inventory_transaction(p.product_code,self.stock_location,self.name),
+			"price": calculate_average_cost(p.product_code,self.stock_location,(p.quantity / uom_conversion),(p.sub_total - p.total_discount),self.name),
 			'note': 'Purchase order cancelled.',
 			'action': 'Cancel'
 		})

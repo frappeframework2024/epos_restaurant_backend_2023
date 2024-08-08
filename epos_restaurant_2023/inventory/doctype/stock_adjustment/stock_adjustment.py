@@ -26,13 +26,7 @@ class StockAdjustment(Document):
 		self.difference_quantity = self.total_quantity - self.total_current_quantity; 
 		self.difference_cost = self.total_cost - self.total_current_cost; 
 
-		error = 0
-		for a in self.products:
-			if a.difference_amount == 0:
-				error += 1
-				del self.products[a.idx-1]
-		if error>0:
-			frappe.msgprint("Remove None Changing Row")
+		
 
 	def on_submit(self):
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
@@ -69,11 +63,11 @@ def update_inventory_on_submit(self):
 def general_ledger(self):
 	stock_in_hand = frappe.db.get_value("Business Branch",self.business_branch,"default_inventory_account")
 	if self.difference_amount > 0:
-		general_ledger_debit(self,{"account":stock_in_hand,"amount":self.difference_amount})
-		general_ledger_credit(self,{"account":self.difference_account,"amount":self.difference_amount})
+		general_ledger_debit(self,{"account":stock_in_hand,"amount":abs(self.difference_amount)})
+		general_ledger_credit(self,{"account":self.difference_account,"amount":abs(self.difference_amount)})
 	else:
-		general_ledger_debit(self,{"account":self.difference_account,"amount":self.difference_amount})
-		general_ledger_credit(self,{"account":stock_in_hand,"amount":self.difference_amount})
+		general_ledger_debit(self,{"account":self.difference_account,"amount":abs(self.difference_amount)})
+		general_ledger_credit(self,{"account":stock_in_hand,"amount":abs(self.difference_amount)})
 
 def general_ledger_debit(self,account):
 	docs = []
