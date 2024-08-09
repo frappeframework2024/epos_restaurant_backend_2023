@@ -14,10 +14,8 @@ def submit_purchase_to_general_ledger_entry_on_submit(self):
 				"voucher_type":"Purchase Order",
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
-				"type":"Income"#not use in db
-
+				"remark" : "Accounting Entry Purchase Order"
 			}
-			doc["remark"] = "Accounting Entry for Stock"
 			docs.append(doc)
 	
 		doc = {
@@ -29,6 +27,7 @@ def submit_purchase_to_general_ledger_entry_on_submit(self):
 				"voucher_type":"Purchase Order",
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
+				"remark" : "Accounting Entry Purchase Order"
 			}
 		docs.append(doc)
 
@@ -37,8 +36,20 @@ def submit_purchase_to_general_ledger_entry_on_submit(self):
 			"doctype":"General Ledger",
 			"posting_date":self.posting_date,
 			"account":self.default_discount_account,
-			"debit_amount":self.total_discount,
+			"credit_amount":self.total_discount,
 			"againt":self.default_credit_account,
+			"voucher_type":"Purchase Order",
+			"voucher_number":self.name,
+			"business_branch": self.business_branch,
+			"remark": "Purchase Order discount"
+		}
+		docs.append(doc)
+		doc = {
+			"doctype":"General Ledger",
+			"posting_date":self.posting_date,
+			"account":self.default_credit_account,
+			"debit_amount":self.total_discount,
+			"againt":self.default_discount_account,
 			"voucher_type":"Purchase Order",
 			"voucher_number":self.name,
 			"business_branch": self.business_branch,
@@ -58,29 +69,55 @@ def submit_purchase_to_general_ledger_entry_on_cancel(self):
 			"doctype":"General Ledger",
 			"posting_date":self.posting_date,
 			"account":acc,
-			"credit_amount":sum([d.amount for d in self.purchase_order_products if d.stock_account==acc]),
+			"credit_amount":sum([(d.sub_total-d.total_discount) for d in self.purchase_order_products if d.stock_account==acc]),
 			"againt":self.default_credit_account,
 			"voucher_type":"Purchase Order",
 			"voucher_number":self.name,
 			"business_branch": self.business_branch,
 			"is_canceclled":1,
-			"type":"Income"#not use in db
-
+			"remark" : "Cancel Purchase Order"
 		}
-		doc["remark"] = "On Cancel Of Entry for Stock"
 		docs.append(doc)
 	#post to payable account	
 	doc = {
 			"doctype":"General Ledger",
 			"posting_date":self.posting_date,
 			"account":self.default_credit_account,
-			"debit_amount":self.grand_total,
+			"debit_amount":self.sub_total,
 			"againt": ",".join(stock_asset_account),
 			"voucher_type":"Purchase Order",
 			"voucher_number":self.name,
 			"business_branch": self.business_branch,
 			"is_canceclled":1,
-			"type":"Income"#not use in db
+			"remark" : "Cancel Purchase Order"
 		}
 	docs.append(doc)	
+	
+	if self.total_discount > 0:
+		doc = {
+			"doctype":"General Ledger",
+			"posting_date":self.posting_date,
+			"account":self.default_discount_account,
+			"debit_amount":self.total_discount,
+			"againt":self.default_credit_account,
+			"voucher_type":"Purchase Order",
+			"voucher_number":self.name,
+			"business_branch": self.business_branch,
+			"is_canceclled":1,
+			"remark" : "Cancel Purchase Order"
+		}
+		docs.append(doc)
+		doc = {
+			"doctype":"General Ledger",
+			"posting_date":self.posting_date,
+			"account":self.default_credit_account,
+			"credit_amount":self.total_discount,
+			"againt":self.default_discount_account,
+			"voucher_type":"Purchase Order",
+			"voucher_number":self.name,
+			"business_branch": self.business_branch,
+			"is_canceclled":1,
+			"remark" : "Cancel Purchase Order"
+		}
+		docs.append(doc)
 	submit_general_ledger_entry(docs=docs)	

@@ -2,20 +2,22 @@
 # For license information, please see license.txt
 
 from epos_restaurant_2023.inventory.inventory import add_to_inventory_transaction,get_uom_conversion
+from epos_restaurant_2023.api.product import get_currenct_cost
 from epos_restaurant_2023.api.account import submit_general_ledger_entry
 import frappe
 from frappe import _
 from frappe.model.document import Document
 from py_linq import Enumerable
-from epos_restaurant_2023.inventory.doctype.stock_adjustment.general_ledger_entry import submit_stock_adjustment_general_ledger_entry_on_submit
 
 class StockAdjustment(Document):
+	def before_insert(self):
+		update_current_product_info(self)
+
 	def validate(self):
 		total_quantity = Enumerable(self.products).sum(lambda x: x.quantity or 0)
 		total_cost = Enumerable(self.products).sum(lambda x: x.total_amount or 0)
 		total_current_quantity = Enumerable(self.products).sum(lambda x: x.current_quantity or 0)
 		total_current_cost = Enumerable(self.products).sum(lambda x: x.total_current_cost or 0)
-
 
 		self.total_quantity = total_quantity
 		self.total_cost = total_cost
@@ -25,22 +27,34 @@ class StockAdjustment(Document):
 		
 		self.difference_quantity = self.total_quantity - self.total_current_quantity; 
 		self.difference_cost = self.total_cost - self.total_current_cost; 
-
-		
+		self.difference_amount = self.difference_cost
 
 	def on_submit(self):
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
-			general_ledger(self)
+			if self.difference_amount > 0:
+				general_ledger(self)
    
 		if len(self.products)<=10:
-			update_inventory_on_submit(self)
+			if self.difference_amount > 0:
+				update_inventory_on_submit(self)
+			else:
+				frappe.msgprint("No Stocks Changed")
 		else:
 			frappe.enqueue("epos_restaurant_2023.inventory.doctype.stock_adjustment.stock_adjustment.update_inventory_on_submit", queue='short', self=self)
 	
 	def before_cancel(self):
 		frappe.throw(_("Stock adjustment transaction is not allow to cancel."))
 		#frappe.enqueue("epos_restaurant_2023.inventory.doctype.stock_adjustment.stock_adjustment.update_inventory_on_cancel", queue='short', self=self)
-  
+
+def update_current_product_info(self):
+	for a in self.products:
+		p = get_currenct_cost(a.product_code,self.stock_location,a.unit)
+		a.current_quantity = p["quantity"]
+		a.cost = p["cost"]
+		a.current_cost = a.cost
+		a.total_amount = a.current_quantity * a.cost
+		a.total_current_cost = a.total_amount
+
 def update_inventory_on_submit(self):
 	for p in self.products:
 		if p.is_inventory_product:
