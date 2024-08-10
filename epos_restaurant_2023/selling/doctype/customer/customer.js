@@ -33,12 +33,16 @@ frappe.ui.form.on("Customer", {
                 frm.dashboard.add_indicator(__("Sale Coupon Balance: {0}", [ sale_coupon_balance]), "yellow");
             }            
         }
-        getCustomerInfo(frm)
-        getPOSMiscSaleInfo(frm)
-        getGuestFolio(frm)
-        getGuestNoteDetail(frm)        
+        try{
+            getCustomerInfo(frm)
+            getPOSMiscSaleInfo(frm)
+            getGuestFolio(frm)
+            getGuestNoteDetail(frm)     
+        }
+        catch(err){
+
+        }   
     }
-    
 });
 
 
