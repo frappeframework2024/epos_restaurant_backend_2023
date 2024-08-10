@@ -212,7 +212,6 @@ async function newSale(table) {
         sale.price_rule = table.price_rule;
         sale.sale.price_rule = table.price_rule;
     }else{  
-        sale.table_price_rule = gv.setting?.price_rule;
         sale.price_rule = gv.setting?.price_rule;
         sale.sale.price_rule = gv.setting?.price_rule;
     }
