@@ -344,84 +344,87 @@ def get_pos_misc_sale(customer_name):
 	data = []
 	for s in sale_names:
 		data.append({"name":s,"sale_products":[b for b in sale if b["name"]==s]})
-
-
-
 	return 	data 
 
 @frappe.whitelist()
 def get_guest_folio_list(customer_name):
-	sql = """ 
-		select
-			name,
-			property,
-			reservation, 
-			reservation_stay,
-			posting_date,
-			business_source,
-			room_types,
-			room_types_alias,
-			rooms,
-			total_credit,
-			total_debit,
-			balance,
-			status,
-			note
-    	from `tabReservation Folio` 
-    	where guest=%(customer_name)s
-	"""
-	data = frappe.db.sql(sql, {'customer_name':customer_name}, as_dict=1)
+	data=[]
+	if 'edoor' in frappe.get_installed_apps():
+		sql = """ 
+			select
+				name,
+				property,
+				reservation, 
+				reservation_stay,
+				posting_date,
+				business_source,
+				room_types,
+				room_types_alias,
+				rooms,
+				total_credit,
+				total_debit,
+				balance,
+				status,
+				note
+			from `tabReservation Folio` 
+			where guest=%(customer_name)s
+		"""
+		data = frappe.db.sql(sql, {'customer_name':customer_name}, as_dict=1)
 	return data
 
 
 @frappe.whitelist()
 def get_guest_stay_history(customer_name):
-	sql = """
-		select
-			name,
-            reservation,
-            reference_number,
-            reservation_type,
-            group_code,
-            reservation_date,
-            arrival_date,
-            departure_date,
-            room_nights,
-            rooms,
-            guest,
-            guest_name,
-            business_source,
-            adr,
-            total_amount,
-            reservation_status,
-            rooms_data
-		from `tabReservation Stay` 
-    	where guest=%(customer_name)s
-	"""
-	data = frappe.db.sql(sql, {'customer_name':customer_name}, as_dict=1)
+	data=[]
+	if 'edoor' in frappe.get_installed_apps():
+		sql = """
+			select
+				name,
+				reservation,
+				reference_number,
+				reservation_type,
+				group_code,
+				reservation_date,
+				arrival_date,
+				departure_date,
+				room_nights,
+				rooms,
+				guest,
+				guest_name,
+				business_source,
+				adr,
+				total_amount,
+				reservation_status,
+				rooms_data
+			from `tabReservation Stay` 
+			where guest=%(customer_name)s
+		"""
+		data = frappe.db.sql(sql, {'customer_name':customer_name}, as_dict=1)
 	return data
 
 @frappe.whitelist()
 def get_guest_note_detail(customer_name):
-	sql = """
-		select 
-			name, 
-			content, 
-			creation, 
-			modified_by,
-			subject,
-			reference_doctype,
-			reference_name,
-			comment_by,
-			custom_audit_trail_type,
-			custom_posting_date,
-			modified
-		from  
-			`tabComment` 
-		where 
-        	custom_guest = %(customer_name)s and comment_type = 'Comment'
-	"""
-	data = frappe.db.sql(sql, {'customer_name':customer_name}, as_dict=1)
+	data=[]
+	if 'edoor' in frappe.get_installed_apps():
+		sql = """
+			select 
+				name, 
+				content, 
+				creation, 
+				modified_by,
+				subject,
+				reference_doctype,
+				reference_name,
+				comment_by,
+				custom_audit_trail_type,
+				custom_posting_date,
+				modified
+			from  
+				`tabComment` 
+			where 
+				custom_guest = %(customer_name)s and comment_type = 'Comment'
+		"""
+		data = frappe.db.sql(sql, {'customer_name':customer_name}, as_dict=1)
 	return data
 
 
