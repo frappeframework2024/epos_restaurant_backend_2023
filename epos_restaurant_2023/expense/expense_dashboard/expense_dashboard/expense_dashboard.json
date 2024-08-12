@@ -8,21 +8,11 @@
   },
   {
    "card": "YTD Expense"
-  },
-  {
-   "card": "YTD Expense Payment"
-  },
-  {
-   "card": "Unpaid Expense"
   }
  ],
  "charts": [
   {
    "chart": "Monthly Expense",
-   "width": "Half"
-  },
-  {
-   "chart": "Monthly Expense Payment",
    "width": "Half"
   },
   {
@@ -46,10 +36,10 @@
  "dashboard_name": "Expense Dashboard",
  "docstatus": 0,
  "doctype": "Dashboard",
- "idx": 0,
+ "idx": 20,
  "is_default": 0,
  "is_standard": 1,
- "modified": "2022-12-29 17:15:49.437374",
+ "modified": "2024-08-12 09:01:53.913135",
  "modified_by": "Administrator",
  "module": "Expense",
  "name": "Expense Dashboard",
