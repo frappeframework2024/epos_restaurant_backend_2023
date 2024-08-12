@@ -48,6 +48,18 @@
   "discount_amount",
   "total_discount",
   "discount_note",
+  "section_break_gnvf",
+  "commission_01",
+  "commission_02",
+  "commission_03",
+  "commission_04",
+  "commission_05",
+  "column_break_fueh",
+  "commission_01_account",
+  "commission_02_account",
+  "commission_03_account",
+  "commission_04_account",
+  "commission_05_account",
   "parking_items_section",
   "is_park",
   "expired_date",
@@ -972,12 +984,76 @@
    "label": "Default Discount Account",
    "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0],[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"root_type\",\"=\",\"Income\"]]",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "section_break_gnvf",
+   "fieldtype": "Section Break",
+   "label": "Commissions"
+  },
+  {
+   "fieldname": "commission_01",
+   "fieldtype": "Float",
+   "label": "Commission 01"
+  },
+  {
+   "fieldname": "commission_02",
+   "fieldtype": "Float",
+   "label": "Commission 02"
+  },
+  {
+   "fieldname": "commission_03",
+   "fieldtype": "Float",
+   "label": "Commission 03"
+  },
+  {
+   "fieldname": "commission_04",
+   "fieldtype": "Float",
+   "label": "Commission 04"
+  },
+  {
+   "fieldname": "commission_05",
+   "fieldtype": "Float",
+   "label": "Commission 05"
+  },
+  {
+   "fieldname": "column_break_fueh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "commission_01_account",
+   "fieldtype": "Link",
+   "label": "Commission 01 Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "commission_02_account",
+   "fieldtype": "Link",
+   "label": "Commission 02 Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "commission_03_account",
+   "fieldtype": "Link",
+   "label": "Commission 03 Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "commission_04_account",
+   "fieldtype": "Link",
+   "label": "Commission 04 Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "commission_05_account",
+   "fieldtype": "Link",
+   "label": "Commission 05 Account",
+   "options": "Chart Of Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-07-10 14:28:12.541854",
+ "modified": "2024-08-12 10:53:52.196707",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",

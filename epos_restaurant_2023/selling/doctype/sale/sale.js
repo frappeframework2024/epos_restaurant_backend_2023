@@ -13,7 +13,31 @@ frappe.ui.form.on("Sale", {
 
 	},
 	refresh(frm) { 
-		 
+		frm.set_query("commission_01_account","sale_products", function() {
+            return {
+                filters: [["is_group","=",0],["root_type","=","Liabilities"]]
+            }
+        });
+		frm.set_query("commission_02_account","sale_products", function() {
+            return {
+                filters: [["is_group","=",0],["root_type","=","Liabilities"]]
+            }
+        });
+		frm.set_query("commission_03_account","sale_products", function() {
+            return {
+                filters: [["is_group","=",0],["root_type","=","Liabilities"]]
+            }
+        });
+		frm.set_query("commission_04_account","sale_products", function() {
+            return {
+                filters: [["is_group","=",0],["root_type","=","Liabilities"]]
+            }
+        });
+		frm.set_query("commission_05_account","sale_products", function() {
+            return {
+                filters: [["is_group","=",0],["root_type","=","Liabilities"]]
+            }
+        });
 		frappe.call({
             method: "get_sale_payment_naming_series",
             doc: frm.doc,
