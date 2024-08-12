@@ -18,12 +18,12 @@
   "product_categories",
   "item_section",
   "items",
-  "note_section",
-  "note",
-  "accounting_tab",
+  "accounts_section",
   "default_inventory_account",
   "column_break_itjj",
-  "default_adjustment_account"
+  "default_adjustment_account",
+  "note_section",
+  "note"
  ],
  "fields": [
   {
@@ -41,6 +41,7 @@
    "search_index": 1
   },
   {
+   "default": "Today",
    "fieldname": "posting_date",
    "fieldtype": "Date",
    "in_list_view": 1,
@@ -108,11 +109,6 @@
    "fieldtype": "Small Text"
   },
   {
-   "fieldname": "accounting_tab",
-   "fieldtype": "Tab Break",
-   "label": "Accounting"
-  },
-  {
    "fieldname": "default_inventory_account",
    "fieldtype": "Link",
    "label": "Default Inventory Account",
@@ -135,12 +131,18 @@
    "options": "Business Branch",
    "reqd": 1,
    "set_only_once": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "accounts_section",
+   "fieldtype": "Section Break",
+   "label": "Accounts"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-07-24 14:20:19.452297",
+ "modified": "2024-08-09 14:25:35.790609",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Inventory Check",

@@ -68,6 +68,7 @@
   "default_credit_account",
   "default_purchase_discount_account",
   "default_temporary_opening_account",
+  "default_commission_expense_account",
   "profit_and_loss_statement_report_head_account_section",
   "income_head_account",
   "column_break_rfra",
@@ -481,12 +482,18 @@
    "fieldtype": "Link",
    "label": "Village",
    "options": "Village"
+  },
+  {
+   "fieldname": "default_commission_expense_account",
+   "fieldtype": "Link",
+   "label": "Default Commission Expense Account",
+   "options": "Chart Of Account"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-12 09:53:44.991275",
+ "modified": "2024-08-12 14:10:40.605460",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",

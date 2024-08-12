@@ -1,8 +1,12 @@
 // Copyright (c) 2024, Tes Pheakdey and contributors
 // For license information, please see license.txt
 
-// frappe.ui.form.on("Chart Of Account", {
-// 	refresh(frm) {
-
-// 	},
-// });
+frappe.ui.form.on("Chart Of Account", {
+	refresh(frm) {
+        frm.set_query("parent_chart_of_account", function() {
+            return {
+                filters: [["is_group","=",1]]
+            }
+        });
+	},
+});

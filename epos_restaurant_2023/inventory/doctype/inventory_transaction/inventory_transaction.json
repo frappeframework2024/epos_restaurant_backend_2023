@@ -29,6 +29,7 @@
   "section_break_13",
   "beginning_stock_value",
   "quantity_on_hand",
+  "previous_cost",
   "column_break_16",
   "in_quantity",
   "out_quantity",
@@ -243,11 +244,17 @@
    "fieldtype": "Link",
    "label": "Stock Entry Type",
    "options": "Stock Entry Type"
+  },
+  {
+   "fieldname": "previous_cost",
+   "fieldtype": "Currency",
+   "label": "Previous Cost",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-20 09:19:11.002195",
+ "modified": "2024-08-08 17:00:09.827496",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Inventory Transaction",

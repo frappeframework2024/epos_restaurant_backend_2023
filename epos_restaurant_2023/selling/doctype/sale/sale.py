@@ -3,7 +3,7 @@
 
 import json
 from  epos_restaurant_2023.api.cache_function import get_default_account_from_pos_config, get_default_account_from_revenue_group, get_doctype_value_cache
-from epos_restaurant_2023.api.account import cancel_general_ledger_entery
+from epos_restaurant_2023.api.account import cancel_general_ledger_entery,submit_general_ledger_entry
 from epos_restaurant_2023.inventory.inventory import add_to_inventory_transaction, check_uom_conversion, get_product_cost, get_stock_location_product, get_uom_conversion, update_product_quantity
 import frappe
 from frappe import utils
@@ -16,10 +16,8 @@ from copy import deepcopy
 from decimal import Decimal
 from epos_restaurant_2023.api.exely import submit_order_to_exely
 from epos_restaurant_2023.selling.doctype.sale.general_ledger_entry import submit_sale_to_general_ledger_entry
-
 class Sale(Document):
 	def validate(self):
-		
 		if not frappe.db.get_default('exchange_rate_main_currency'):
 			frappe.throw('Main Exchange Currency not yet config. Please contact to system administrator for solve')
    
@@ -349,6 +347,7 @@ class Sale(Document):
 		
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			submit_sale_to_general_ledger_entry(self)
+			commission_GL_entry(self)
 
 
 
@@ -359,6 +358,7 @@ class Sale(Document):
 
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			cancel_general_ledger_entery("Sale", self.name)	
+			commission_GL_entry(self)
 		
 
 		## update cash coupon information
@@ -371,7 +371,99 @@ class Sale(Document):
 		frappe.db.commit()
 
 		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel", queue='short', self=self)
- 
+
+
+def commission_GL_entry(self):
+	from collections import defaultdict
+	commissions=[]
+	total_commission = (self.commission_01+self.commission_02+self.commission_03+self.commission_04+self.commission_05)
+	if total_commission>0:
+		if self.commission_01_account and self.commission_01 > 0:
+			commissions.append({"amount":self.commission_01,"account":self.commission_01_account})
+		if self.commission_02_account and self.commission_02 > 0:
+			commissions.append({"amount":self.commission_02,"account":self.commission_02_account})
+		if self.commission_03_account and self.commission_03 > 0:
+			commissions.append({"amount":self.commission_03,"account":self.commission_03_account})
+		if self.commission_04_account and self.commission_04 > 0:
+			commissions.append({"amount":self.commission_04,"account":self.commission_04_account})
+		if self.commission_05_account and self.commission_05 > 0:
+			commissions.append({"amount":self.commission_05,"account":self.commission_05_account})
+		commission_accounts = defaultdict(int)
+		for a in commissions:
+			name = a["account"]
+			value = a["amount"]
+			commission_accounts[name] += value
+		commission_accounts = dict(commission_accounts)
+		if self.docstatus == 1:
+			expense_general_ledger_debit(self,account = {"account":self.default_commission_expense_account,"amount":total_commission})
+			for a in commission_accounts:
+				expense_general_ledger_credit(self,account = {"account":a,"amount":commission_accounts[a]})
+		else:
+			expense_general_ledger_credit(self,account = {"account":self.default_commission_expense_account,"amount":total_commission})
+			for a in commission_accounts:
+				expense_general_ledger_debit(self,account = {"account":a,"amount":commission_accounts[a]})
+
+	total_commission = sum((a.commission_01+a.commission_02+a.commission_03+a.commission_04+a.commission_05) for a in self.sale_products)
+	if total_commission>0:
+		commissions=[]
+		for a in self.sale_products:
+			if a.commission_01_account and a.commission_01 > 0:
+				commissions.append({"amount":a.commission_01,"account":a.commission_01_account})
+			if a.commission_02_account and a.commission_02 > 0:
+				commissions.append({"amount":a.commission_02,"account":a.commission_02_account})
+			if a.commission_03_account and a.commission_03 > 0:
+				commissions.append({"amount":a.commission_03,"account":a.commission_03_account})
+			if a.commission_04_account and a.commission_04 > 0:
+				commissions.append({"amount":a.commission_04,"account":a.commission_04_account})
+			if a.commission_05_account and a.commission_05 > 0:
+				commissions.append({"amount":a.commission_05,"account":a.commission_05_account})
+		commission_accounts = defaultdict(int)
+		for a in commissions:
+			name = a["account"]
+			value = a["amount"]
+			commission_accounts[name] += value
+		commission_accounts = dict(commission_accounts)
+		if self.docstatus == 1:
+			expense_general_ledger_debit(self,account = {"account":self.default_commission_expense_account,"amount":total_commission})
+			for a in commission_accounts:
+				expense_general_ledger_credit(self,account = {"account":a,"amount":commission_accounts[a]})
+		else:
+			expense_general_ledger_credit(self,account = {"account":self.default_commission_expense_account,"amount":total_commission})
+			for a in commission_accounts:
+				expense_general_ledger_debit(self,account = {"account":a,"amount":commission_accounts[a]})
+
+def expense_general_ledger_debit(self,account):
+	docs = []
+	doc = {
+		"doctype":"General Ledger",
+		"posting_date":self.posting_date,
+		"account":account["account"],
+		"debit_amount":account["amount"],
+		"voucher_type":"Sale",
+		"voucher_number":self.name,
+		"business_branch": self.business_branch,
+		"remark": "Sale Commission",
+		"is_cancelled":1 if self.docstatus == 2 else 0
+	}
+	docs.append(doc)
+	submit_general_ledger_entry(docs = docs)
+
+def expense_general_ledger_credit(self,account):
+    docs = []
+    doc = {
+        "doctype":"General Ledger",
+        "posting_date":self.posting_date,
+        "account":account["account"],
+        "credit_amount":account["amount"],
+        "voucher_type":"Sale",
+        "voucher_number":self.name,
+        "business_branch": self.business_branch,
+		"remark": "Sale Commission",
+		"is_cancelled":1 if self.docstatus == 2 else 0
+    }
+    docs.append(doc)
+    submit_general_ledger_entry(docs=docs)
+
 def update_status(self):
 		status = ""
 		if self.docstatus == 0:
@@ -825,7 +917,10 @@ def validate_pos_payment(self):
 		d.change_exchange_rate = d.change_exchange_rate if d.currency != currency else 1		
 		d.amount = d.amount #(d.input_amount or 0 ) / (d.exchange_rate or 1)
 
-def validate_cash_coupon_claim(self):	
+def validate_cash_coupon_claim(self):
+	for cc in self.cash_coupon_items:
+		cc.posting_date = self.posting_date
+
 	self.total_cash_coupon_claim = 0
 
 	if len(self.cash_coupon_items)>0:

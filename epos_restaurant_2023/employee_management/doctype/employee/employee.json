@@ -17,6 +17,7 @@
   "disabled",
   "is_selling_agent",
   "agent_stock_location",
+  "commission_account",
   "contact_information_section",
   "phone_number_1",
   "phone_number_2",
@@ -361,12 +362,19 @@
    "label": "Agent Stock Location",
    "mandatory_depends_on": "eval:doc.is_selling_agent == true",
    "options": "Stock Location"
+  },
+  {
+   "depends_on": "eval:doc.is_selling_agent == true",
+   "fieldname": "commission_account",
+   "fieldtype": "Link",
+   "label": "Commission Account",
+   "options": "Chart Of Account"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-09 17:03:42.481890",
+ "modified": "2024-08-12 13:50:09.094601",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee",

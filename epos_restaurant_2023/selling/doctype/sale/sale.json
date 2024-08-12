@@ -85,16 +85,17 @@
   "closed_date",
   "is_synced",
   "accounting_tab",
-  "default_discount_account",
-  "default_cash_coupon_claim_account",
   "default_inventory_account",
+  "default_discount_account",
+  "default_change_account",
   "default_cost_of_goods_sold_account",
   "column_break_mtrh",
-  "default_receivable_account",
-  "default_tip_account",
-  "default_change_account",
-  "column_break_pupk",
+  "default_cash_coupon_claim_account",
   "default_bank_fee_account",
+  "default_tip_account",
+  "column_break_pupk",
+  "default_receivable_account",
+  "default_commission_expense_account",
   "cash_coupon_claim_tab",
   "total_cash_coupon_claim",
   "section_break_ivlg",
@@ -160,6 +161,12 @@
   "commission_03",
   "commission_04",
   "commission_05",
+  "column_break_ikws",
+  "commission_01_to",
+  "commission_02_to",
+  "commission_03_to",
+  "commission_04_to",
+  "commission_05_to",
   "column_break_uffq",
   "commission_01_account",
   "commission_02_account",
@@ -1381,34 +1388,90 @@
    "fieldtype": "Column Break"
   },
   {
+   "fetch_from": "commission_01_to.commission_account",
+   "fetch_if_empty": 1,
    "fieldname": "commission_01_account",
    "fieldtype": "Link",
    "label": "Commission 01 Account",
    "options": "Chart Of Account"
   },
   {
+   "fetch_from": "commission_02_to.commission_account",
+   "fetch_if_empty": 1,
    "fieldname": "commission_02_account",
    "fieldtype": "Link",
    "label": "Commission 02 Account",
    "options": "Chart Of Account"
   },
   {
+   "fetch_from": "commission_03_to.commission_account",
    "fieldname": "commission_03_account",
    "fieldtype": "Link",
    "label": "Commission 03 Account",
    "options": "Chart Of Account"
   },
   {
+   "fetch_from": "commission_04_to.commission_account",
+   "fetch_if_empty": 1,
    "fieldname": "commission_04_account",
    "fieldtype": "Link",
    "label": "Commission 04 Account",
    "options": "Chart Of Account"
   },
   {
+   "fetch_from": "commission_05_to.commission_account",
+   "fetch_if_empty": 1,
    "fieldname": "commission_05_account",
    "fieldtype": "Link",
    "label": "Commission 05 Account",
    "options": "Chart Of Account"
+  },
+  {
+   "fetch_from": "business_branch.default_commission_expense_account",
+   "fetch_if_empty": 1,
+   "fieldname": "default_commission_expense_account",
+   "fieldtype": "Link",
+   "label": "Default Commission Expense Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "column_break_ikws",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "commission_01_to",
+   "fieldtype": "Link",
+   "label": "Commission 01 To",
+   "link_filters": "[[{\"fieldname\":\"commission_01_to\",\"field_option\":\"Employee\"},\"is_selling_agent\",\"=\",1]]",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "commission_02_to",
+   "fieldtype": "Link",
+   "label": "Commission 02 To",
+   "link_filters": "[[{\"fieldname\":\"commission_02_to\",\"field_option\":\"Employee\"},\"is_selling_agent\",\"=\",1]]",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "commission_03_to",
+   "fieldtype": "Link",
+   "label": "Commission 03 To",
+   "link_filters": "[[{\"fieldname\":\"commission_03_to\",\"field_option\":\"Employee\"},\"is_selling_agent\",\"=\",1]]",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "commission_04_to",
+   "fieldtype": "Link",
+   "label": "Commission 04 To",
+   "link_filters": "[[{\"fieldname\":\"commission_04_to\",\"field_option\":\"Employee\"},\"is_selling_agent\",\"=\",1]]",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "commission_05_to",
+   "fieldtype": "Link",
+   "label": "Commission 05 To",
+   "link_filters": "[[{\"fieldname\":\"commission_05_to\",\"field_option\":\"Employee\"},\"is_selling_agent\",\"=\",1]]",
+   "options": "Employee"
   }
  ],
  "image_field": "photo",
@@ -1421,7 +1484,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-08-12 10:30:01.618385",
+ "modified": "2024-08-12 14:56:15.760662",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

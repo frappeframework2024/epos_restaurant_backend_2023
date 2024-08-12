@@ -20,11 +20,12 @@
   "sale",
   "purchase",
   "other_transaction",
+  "column_break_crbo",
   "current_on_hand",
   "actual_quantity",
   "difference",
-  "note",
-  "column_break_crbo"
+  "section_break_vtjs",
+  "note"
  ],
  "fields": [
   {
@@ -98,7 +99,7 @@
   },
   {
    "fieldname": "note",
-   "fieldtype": "Data",
+   "fieldtype": "Long Text",
    "label": "Note"
   },
   {
@@ -147,12 +148,16 @@
    "fieldtype": "Currency",
    "label": "Total Difference Cost",
    "read_only": 1
+  },
+  {
+   "fieldname": "section_break_vtjs",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-07-24 15:44:02.395632",
+ "modified": "2024-08-09 14:37:43.002835",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Inventory Check Items",

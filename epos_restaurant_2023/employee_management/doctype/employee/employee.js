@@ -8,5 +8,17 @@ frappe.ui.form.on("Employee", {
                 filters: [["is_for_consignment","=",1]]
             }
         });
+        frm.set_query("commission_account", function() {
+            return {
+                filters: [["is_group","=",0],["root_type","=","Liabilities"]]
+            }
+        });
     },
+    refresh(frm){
+        frm.set_query("commission_account", function() {
+            return {
+                filters: [["is_group","=",0],["root_type","=","Liabilities"]]
+            }
+        });
+    }
 });
