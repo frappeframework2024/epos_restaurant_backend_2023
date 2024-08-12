@@ -8,30 +8,33 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "photo",
-  "property_background_banner",
-  "pattern_background",
   "business_banch_name_en",
   "business_banch_name_kh",
   "property_code",
   "email",
   "phone_number_1",
   "phone_number_2",
-  "street",
-  "commune",
-  "district",
   "vattin_number",
-  "house_number",
+  "photo",
+  "property_background_banner",
+  "pattern_background",
   "data_9",
-  "province",
-  "address_en",
-  "address_kh",
   "note",
   "disabled",
   "is_standard",
   "upload_sale_data_to_google_sheet",
   "google_account_credentials",
   "google_sheet_file",
+  "section_break_mitm",
+  "province",
+  "district",
+  "commune",
+  "village",
+  "column_break_nlbm",
+  "address_en",
+  "address_kh",
+  "street",
+  "house_number",
   "bank_account_information_section",
   "bank_name",
   "account_name",
@@ -285,13 +288,15 @@
   },
   {
    "fieldname": "commune",
-   "fieldtype": "Data",
-   "label": "Commune"
+   "fieldtype": "Link",
+   "label": "Commune",
+   "options": "Commune"
   },
   {
    "fieldname": "district",
-   "fieldtype": "Data",
-   "label": "District"
+   "fieldtype": "Link",
+   "label": "District",
+   "options": "District"
   },
   {
    "fieldname": "vattin_number",
@@ -461,12 +466,27 @@
    "label": "Default Cash Transaction Expense Account",
    "link_filters": "[[{\"fieldname\":\"default_cash_transaction_expense_account\",\"field_option\":\"Chart Of Account\"},\"root_type\",\"=\",\"Expenses\"]]",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "section_break_mitm",
+   "fieldtype": "Section Break",
+   "label": "Address"
+  },
+  {
+   "fieldname": "column_break_nlbm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "village",
+   "fieldtype": "Link",
+   "label": "Village",
+   "options": "Village"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-01 15:58:45.639143",
+ "modified": "2024-08-12 09:53:44.991275",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",

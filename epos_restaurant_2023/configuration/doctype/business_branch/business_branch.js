@@ -144,5 +144,20 @@ frappe.ui.form.on("Business Branch", {
                 ]
             }
         });
+        frm.set_query("district", function() {
+            return {
+                filters: [["province","=",frm.doc.province]]
+            }
+        });
+        frm.set_query("commune", function() {
+            return {
+                filters: [["district","=",frm.doc.district]]
+            }
+        });
+        frm.set_query("village", function() {
+            return {
+                filters: [["commune","=",frm.doc.commune]]
+            }
+        });
 	},
 });
