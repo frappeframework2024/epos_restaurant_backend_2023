@@ -53,18 +53,6 @@
    "type": "Link"
   },
   {
-   "custom_show_in_app_menu": 1,
-   "custom_sort_order": 0,
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Vendor",
-   "link_count": 0,
-   "link_to": "Vendor",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
    "custom_show_in_app_menu": 0,
    "custom_sort_order": 0,
    "hidden": 0,
@@ -99,7 +87,7 @@
    "type": "Link"
   }
  ],
- "modified": "2024-08-09 14:35:23.367311",
+ "modified": "2024-08-12 09:06:31.592680",
  "modified_by": "Administrator",
  "module": "Expense",
  "name": "Expenses",
