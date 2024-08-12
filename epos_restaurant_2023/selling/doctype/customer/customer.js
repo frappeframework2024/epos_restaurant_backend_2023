@@ -26,6 +26,22 @@ frappe.ui.form.on("Customer", {
     },
 
     refresh(frm){
+        frm.set_query("district", function() {
+            return {
+                filters: [["province","=",frm.doc.province]]
+            }
+        });
+        frm.set_query("commune", function() {
+            return {
+                filters: [["district","=",frm.doc.district]]
+            }
+        });
+        frm.set_query("village", function() {
+            return {
+                filters: [["commune","=",frm.doc.commune]]
+            }
+        });
+
         if (!frm.doc.__islocal && frm.doc.total_point_earn > 1) {
             frm.dashboard.add_indicator(__("Total Point Earn: {0}", [frm.doc.total_point_earn]), "green");
             if((frm.doc.total_sale_coupon_payment_balance||0) > 0 ){ 

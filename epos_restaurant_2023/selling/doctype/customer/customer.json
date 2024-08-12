@@ -33,24 +33,30 @@
   "column_break_4",
   "phone_number",
   "phone_number_2",
-  "email_address",
   "column_break_11",
   "country",
-  "province",
+  "email_address",
   "identity_information_section",
   "identity_type",
   "id_card_number",
   "column_break_23",
   "expired_date",
+  "photo",
   "default_discount_section",
   "default_discount",
   "column_break_12",
-  "photo",
+  "province",
+  "district",
+  "commune",
+  "village",
   "address",
   "column_break_18",
-  "note",
-  "column_break_cfes",
+  "land_size",
+  "crops_type",
+  "section_break_qbmj",
   "pos_note",
+  "column_break_macj",
+  "note",
   "tab_break_32",
   "card",
   "voucher_information_tab",
@@ -157,7 +163,7 @@
   {
    "fieldname": "column_break_12",
    "fieldtype": "Section Break",
-   "label": "Address & Note"
+   "label": "Address"
   },
   {
    "allow_in_quick_entry": 1,
@@ -392,10 +398,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "column_break_cfes",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "pos_note",
    "fieldtype": "Small Text",
    "label": "POS Note"
@@ -539,6 +541,43 @@
    "fieldtype": "Int",
    "label": "Total Visited Balance",
    "read_only": 1
+  },
+  {
+   "fieldname": "district",
+   "fieldtype": "Link",
+   "label": "District",
+   "options": "District"
+  },
+  {
+   "fieldname": "commune",
+   "fieldtype": "Link",
+   "label": "Commune",
+   "options": "Commune"
+  },
+  {
+   "fieldname": "village",
+   "fieldtype": "Link",
+   "label": "Village",
+   "options": "Village"
+  },
+  {
+   "fieldname": "land_size",
+   "fieldtype": "Data",
+   "label": "Land Size"
+  },
+  {
+   "fieldname": "crops_type",
+   "fieldtype": "Data",
+   "label": "Crops Type"
+  },
+  {
+   "fieldname": "section_break_qbmj",
+   "fieldtype": "Section Break",
+   "label": "Note"
+  },
+  {
+   "fieldname": "column_break_macj",
+   "fieldtype": "Column Break"
   }
  ],
  "image_field": "photo",
@@ -551,7 +590,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2024-08-05 16:34:15.064401",
+ "modified": "2024-08-10 16:51:09.260490",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

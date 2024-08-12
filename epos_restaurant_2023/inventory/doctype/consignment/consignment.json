@@ -1,0 +1,190 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2024-08-09 16:36:49.066786",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_ban1",
+  "naming_series",
+  "posting_date",
+  "from_stock_location",
+  "business_branch",
+  "include_payment",
+  "column_break_ruyj",
+  "employee",
+  "to_stock_location",
+  "section_break_guue",
+  "products",
+  "section_break_uyjo",
+  "total_quantity",
+  "amended_from",
+  "column_break_eyfr",
+  "total_amount",
+  "section_break_smdb",
+  "payments",
+  "section_break_srfm",
+  "unearned_revenue_account",
+  "column_break_gfkm",
+  "total_payment"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_ban1",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Consignment",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "CSM.#####"
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date"
+  },
+  {
+   "fieldname": "from_stock_location",
+   "fieldtype": "Link",
+   "label": "From Stock Location",
+   "options": "Stock Location"
+  },
+  {
+   "fieldname": "column_break_ruyj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "employee.agent_stock_location",
+   "fieldname": "to_stock_location",
+   "fieldtype": "Link",
+   "label": "To Stock Location",
+   "options": "Stock Location",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_guue",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_uyjo",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_quantity",
+   "fieldtype": "Float",
+   "label": "Total Quantity",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_eyfr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "products",
+   "fieldtype": "Table",
+   "options": "Consignment Products"
+  },
+  {
+   "default": "0",
+   "fieldname": "include_payment",
+   "fieldtype": "Check",
+   "label": "Include Payment"
+  },
+  {
+   "fetch_from": "from_stock_location.business_branch",
+   "fieldname": "business_branch",
+   "fieldtype": "Link",
+   "label": "Business Branch",
+   "options": "Business Branch",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.include_payment == true",
+   "fieldname": "section_break_smdb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "2120 - Unearned Revenue",
+   "fieldname": "unearned_revenue_account",
+   "fieldtype": "Link",
+   "label": "Unearned Revenue Account",
+   "options": "Chart Of Account",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.include_payment == true",
+   "fieldname": "section_break_srfm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_gfkm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_payment",
+   "fieldtype": "Currency",
+   "label": "Total Payment",
+   "read_only": 1
+  },
+  {
+   "fieldname": "payments",
+   "fieldtype": "Table",
+   "options": "Consignment Payments"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-08-10 11:18:39.147896",
+ "modified_by": "Administrator",
+ "module": "Inventory",
+ "name": "Consignment",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
