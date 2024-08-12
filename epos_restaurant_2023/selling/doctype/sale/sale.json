@@ -154,6 +154,18 @@
   "commission_amount",
   "column_break_ylrq",
   "commission_note",
+  "section_break_qqnb",
+  "commission_01",
+  "commission_02",
+  "commission_03",
+  "commission_04",
+  "commission_05",
+  "column_break_uffq",
+  "commission_01_account",
+  "commission_02_account",
+  "commission_03_account",
+  "commission_04_account",
+  "commission_05_account",
   "note_tab",
   "total_cost",
   "total_secondary_cost",
@@ -1334,6 +1346,69 @@
    "label": "Default Cash Coupon Claim Account",
    "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0]]",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "section_break_qqnb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "commission_01",
+   "fieldtype": "Float",
+   "label": "Commission 01"
+  },
+  {
+   "fieldname": "commission_02",
+   "fieldtype": "Float",
+   "label": "Commission 02"
+  },
+  {
+   "fieldname": "commission_03",
+   "fieldtype": "Float",
+   "label": "Commission 03"
+  },
+  {
+   "fieldname": "commission_04",
+   "fieldtype": "Float",
+   "label": "Commission 04"
+  },
+  {
+   "fieldname": "commission_05",
+   "fieldtype": "Float",
+   "label": "Commission 05"
+  },
+  {
+   "fieldname": "column_break_uffq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "commission_01_account",
+   "fieldtype": "Link",
+   "label": "Commission 01 Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "commission_02_account",
+   "fieldtype": "Link",
+   "label": "Commission 02 Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "commission_03_account",
+   "fieldtype": "Link",
+   "label": "Commission 03 Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "commission_04_account",
+   "fieldtype": "Link",
+   "label": "Commission 04 Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "commission_05_account",
+   "fieldtype": "Link",
+   "label": "Commission 05 Account",
+   "options": "Chart Of Account"
   }
  ],
  "image_field": "photo",
@@ -1346,7 +1421,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-07-27 14:26:50.876367",
+ "modified": "2024-08-12 10:30:01.618385",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",
