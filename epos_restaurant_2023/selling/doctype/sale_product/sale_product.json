@@ -54,6 +54,12 @@
   "commission_03",
   "commission_04",
   "commission_05",
+  "column_break_iojz",
+  "commission_01_to",
+  "commission_02_to",
+  "commission_03_to",
+  "commission_04_to",
+  "commission_05_to",
   "column_break_fueh",
   "commission_01_account",
   "commission_02_account",
@@ -991,26 +997,31 @@
    "label": "Commissions"
   },
   {
+   "default": "0",
    "fieldname": "commission_01",
    "fieldtype": "Float",
    "label": "Commission 01"
   },
   {
+   "default": "0",
    "fieldname": "commission_02",
    "fieldtype": "Float",
    "label": "Commission 02"
   },
   {
+   "default": "0",
    "fieldname": "commission_03",
    "fieldtype": "Float",
    "label": "Commission 03"
   },
   {
+   "default": "0",
    "fieldname": "commission_04",
    "fieldtype": "Float",
    "label": "Commission 04"
   },
   {
+   "default": "0",
    "fieldname": "commission_05",
    "fieldtype": "Float",
    "label": "Commission 05"
@@ -1020,40 +1031,84 @@
    "fieldtype": "Column Break"
   },
   {
+   "fetch_from": "commission_01_to.commission_account",
+   "fetch_if_empty": 1,
    "fieldname": "commission_01_account",
    "fieldtype": "Link",
    "label": "Commission 01 Account",
    "options": "Chart Of Account"
   },
   {
+   "fetch_from": "commission_02_to.commission_account",
+   "fetch_if_empty": 1,
    "fieldname": "commission_02_account",
    "fieldtype": "Link",
    "label": "Commission 02 Account",
    "options": "Chart Of Account"
   },
   {
+   "fetch_from": "commission_03_to.commission_account",
+   "fetch_if_empty": 1,
    "fieldname": "commission_03_account",
    "fieldtype": "Link",
    "label": "Commission 03 Account",
    "options": "Chart Of Account"
   },
   {
+   "fetch_from": "commission_04_to.commission_account",
+   "fetch_if_empty": 1,
    "fieldname": "commission_04_account",
    "fieldtype": "Link",
    "label": "Commission 04 Account",
    "options": "Chart Of Account"
   },
   {
+   "fetch_from": "commission_05_to.commission_account",
+   "fetch_if_empty": 1,
    "fieldname": "commission_05_account",
    "fieldtype": "Link",
    "label": "Commission 05 Account",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "column_break_iojz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "commission_01_to",
+   "fieldtype": "Link",
+   "label": "Commission 01 To",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "commission_02_to",
+   "fieldtype": "Link",
+   "label": "Commission 02 To",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "commission_03_to",
+   "fieldtype": "Link",
+   "label": "Commission 03 To",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "commission_04_to",
+   "fieldtype": "Link",
+   "label": "Commission 04 To",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "commission_05_to",
+   "fieldtype": "Link",
+   "label": "Commission 05 To",
+   "options": "Employee"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-12 10:53:52.196707",
+ "modified": "2024-08-12 14:05:19.085514",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",
