@@ -147,8 +147,7 @@ def reset_sale_transaction():
                         for n in range(2022, 2130):
                             format_text = replace_format(f,str(n))                            
                             frappe.db.sql("update `tabSeries` set current=  0 where name='{}'".format(format_text) ) 
-
-           
+                                       
             #end gym
             #coupon
             ## cash coupon
@@ -185,6 +184,7 @@ def reset_sale_transaction():
             frappe.db.sql("delete from `tabComment`")
             frappe.db.sql("delete from `tabComment` where reference_doctype in ('Sale','POS Sale Payment','Sale Payment','Sale Product','Cashier Shift Cash Float','Cashier Shift','Working Day')")
 
+            
             #reset sale transaction 
             doctypes = ["Sale","Sale Payment","Cashier Shift","Working Day","Cash Transaction","Voucher","Voucher Payment","Cash Coupon"]
             for d in doctypes:

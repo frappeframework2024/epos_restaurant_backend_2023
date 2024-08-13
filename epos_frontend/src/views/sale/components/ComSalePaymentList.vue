@@ -8,7 +8,9 @@
                      
                         <div class="font-bold">{{ p.payment_type }} </div>
                         <div class="text-xs text-gray-500" v-if="((p.room_number||'') !='')">{{ $t('Room') }}#:   {{ p.room_number }}</div>       
-                        <div class="text-xs text-gray-500" v-if="((p.reservation_stay||'') !='')">{{ $t('Stay ') }}#:   {{ p.reservation_stay }}</div>       
+                        <div class="text-xs text-gray-500" v-if="((p.reservation_stay||'') !='')">{{ $t('Stay ') }}#:   {{ p.reservation_stay }}</div>
+                        {{ get_point_to_reduct(p.input_amount) }}
+                        <div class="text-xs text-gray-500" v-if="get_point_to_reduct(p.input_amount) > 0 && p.payment_type_group == 'Point'">{{ $t('Reduct') }}#: {{get_point_to_reduct(p.input_amount)}} {{ $t('Point(s)') }}</div>       
                        
 
                         <div class="text-xs text-gray-500" v-if="((p.folio_transaction_number||'') !='')">
@@ -48,12 +50,17 @@
 import { inject, ref,watch } from '@/plugin';
 const sale = inject('$sale')
 const socket = inject("$socket")
-
+const gv = inject("$gv")
 watch(sale.sale.payment, async (newPayment, oldNewPayment) => {
     socket.emit("ShowOrderInCustomerDisplay", sale.sale, "");
 })
 const is_removing = ref(false);
 
+function get_point_to_reduct(input_amount){
+    let total_point = input_amount * gv.setting.point_setting
+
+    return total_point || 0
+}
 async function  onRemovePayment(p) {
     is_removing.value = true;
     sale.sale.payment.splice(sale.sale.payment.indexOf(p), 1);
@@ -65,7 +72,9 @@ async function  onRemovePayment(p) {
     } 
     await  setTimeout(function() {
         is_removing.value = false;
-    },1);  
+    },1);
     
 }
+
+
 </script> 

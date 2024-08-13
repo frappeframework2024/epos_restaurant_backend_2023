@@ -122,6 +122,7 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Total Payment Amount",
+   "options": "Company:company:default_currency",
    "read_only": 1
   },
   {
@@ -199,6 +200,7 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Payment Balance",
+   "options": "Company:company:default_currency",
    "read_only": 1
   },
   {
@@ -226,6 +228,7 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Grand Total",
+   "options": "Company:company:default_currency",
    "read_only": 1
   },
   {
@@ -268,7 +271,7 @@
    "link_fieldname": "sale_coupon"
   }
  ],
- "modified": "2024-08-06 11:55:03.686264",
+ "modified": "2024-08-09 16:02:36.103102",
  "modified_by": "Administrator",
  "module": "Coupon",
  "name": "Sale Coupon",

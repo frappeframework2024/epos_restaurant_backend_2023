@@ -1,0 +1,17 @@
+<div class="list-row-container" tabindex="1">
+    <div class="level list-row">
+        <div class="level-left ellipsis">
+            {{left}}
+        </div>
+        <div class="level-right text-muted ellipsis">
+            {{frappe.format(doc.grand_total,{"fieldtype":"Currency"})}}
+        </div>
+    </div>
+    
+    <div class="level list-row details-row">{{frappe.format(doc.posting_date,{"fieldtype":"Date"})}}
+<br>
+{{doc.customer_name}}
+
+    </div>
+</div>
+

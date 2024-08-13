@@ -51,6 +51,7 @@
   "show_button_change_price_on_order_station",
   "show_button_delete_item_on_order_station",
   "show_rate_include_button",
+  "print_invoice_on_submit",
   "printers_tab",
   "default_kod_id",
   "default_kod",
@@ -335,11 +336,17 @@
    "fieldname": "show_rate_include_button",
    "fieldtype": "Check",
    "label": "Show Rate Include Button"
+  },
+  {
+   "default": "0",
+   "fieldname": "print_invoice_on_submit",
+   "fieldtype": "Check",
+   "label": "Print Invoice On Submit"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-05 14:58:44.655592",
+ "modified": "2024-08-12 16:34:11.399926",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

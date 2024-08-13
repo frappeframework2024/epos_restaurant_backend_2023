@@ -134,6 +134,8 @@ function assignCustomerToOrder(result, is_membership = false) {
     sale.sale.room_number = result.room_number || ""
     if (result.total_point_earn > 0 && result.allow_earn_point == 1){
         current_customer_point.value = result.total_point_earn
+    }else{
+        current_customer_point.value = 0
     }
     
     if (!is_membership) {

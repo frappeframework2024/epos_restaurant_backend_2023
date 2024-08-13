@@ -3,8 +3,8 @@ frappe.listview_settings['Product'] = {
     add_fields: ['photo'],
     formatters: {
         photo: function (value, field, doc) {
-            console.log(value)
-            return `<img src='${doc.photo || "/files/placeholder.jpg"}' style='border-radius: 50%;height:35px; margin-right:10px;margin-left:5px'/>`;
+            const encodedPhoto = encodeURI(doc.photo)
+            return `<img src="${encodedPhoto || "/files/placeholder.jpg"}" style='border-radius: 50%;height:35px; margin-right:10px;margin-left:5px'/>`;
         },
     },
     onload(me) { 

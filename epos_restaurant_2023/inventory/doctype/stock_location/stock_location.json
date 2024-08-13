@@ -11,7 +11,8 @@
   "business_branch",
   "stock_location_name",
   "disabled",
-  "is_standard"
+  "is_standard",
+  "is_for_consignment"
  ],
  "fields": [
   {
@@ -43,11 +44,18 @@
    "fieldname": "is_standard",
    "fieldtype": "Check",
    "label": "Is Standard"
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "default": "0",
+   "fieldname": "is_for_consignment",
+   "fieldtype": "Check",
+   "label": "Is For Consignment"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-04-08 17:18:17.366115",
+ "modified": "2024-08-09 17:12:58.465818",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Location",

@@ -120,7 +120,7 @@ class SalePayment(Document):
 				if self.payment_type_group != 'Point' and self.payment_type in (d.payment_type for d in point_setting.payment_type):
 
 
-					total_point_get = (point_setting.to_point_earn * self.payment_amount)/point_setting.from_amount_earn
+					total_point_get = (point_setting.to_point_earn * (self.payment_amount ))/point_setting.from_amount_earn
 
 
 					frappe.db.sql("""Update `tabCustomer` set total_point_earn = total_point_earn + {0} where name = '{1}'""".format(total_point_get,self.customer))

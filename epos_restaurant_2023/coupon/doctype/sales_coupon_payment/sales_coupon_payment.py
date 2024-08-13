@@ -16,8 +16,13 @@ class SalesCouponPayment(Document):
 			frappe.throw("The sale coupon not yet submit.")
 		
 		self.payment_amount = self.input_amount / (self.exchange_rate or 1)	
-		balance = 	self.sale_amount - self.payment_amount
-		if balance <= 0.01:
+
+		currency_precision = frappe.db.get_single_value('System Settings', 'currency_precision')
+		if currency_precision=='':
+			currency_precision = "2"			 
+
+		balance = round(self.sale_amount  , int(currency_precision))  - round(self.payment_amount  , int(currency_precision)) 
+		if balance < 0:
 			frappe.throw("Payment amount cannot greater sale amount") 
 
 	def on_submit(self):
@@ -25,7 +30,6 @@ class SalesCouponPayment(Document):
 	
 	def on_cancel(self):
 		update_payment_balance(self)
-
 
 
 def update_payment_balance(self):

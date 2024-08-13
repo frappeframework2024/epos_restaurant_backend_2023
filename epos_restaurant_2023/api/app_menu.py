@@ -9,10 +9,10 @@ def clear_cache():
 @frappe.whitelist()
 def get_sidebar_menu_template():
     
-    return get_sidebar_menu_template_cached(frappe.session.user)
+    return get_sidebar_menu_template_cached(frappe.session.user, frappe.local.site)
 
 @lru_cache(maxsize=128)
-def get_sidebar_menu_template_cached(user):
+def get_sidebar_menu_template_cached(user,site= frappe.local.site):
     data = get_workspace_sidebar_items()
     menus = [d for d in data["pages"] if  not d["parent_page"] and d["is_hidden"]==0]
     # return [d["name"] for d in data["pages"]]

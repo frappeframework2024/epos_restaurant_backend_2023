@@ -86,22 +86,21 @@ def check_uom_conversion(from_uom, to_uom):
     return conversion
 
 @frappe.whitelist(allow_guest=True)
-def calculate_average_cost(product_code,stock_location,quantity,cost,doc_name=""):
+def calculate_average_cost(product_code,stock_location,quantity=0,stock_value=0,doc_name=""):
     current_stock = frappe.db.sql("select cost,quantity,total_cost from `tabStock Location Product` where stock_location='{}' and product_code='{}'".format(stock_location, product_code), as_dict=1)
     
     current_qty = 0
     current_stock_cost = 0
 
     new_qty = float(quantity)
-    new_cost = float(cost)
-    new_stock_cost = new_cost * new_qty
+    new_stock_cost = float(stock_value)
 
     if current_stock:
         current_qty = float(current_stock[0]["quantity"])
         current_stock_cost = float(current_stock[0]["total_cost"])
     
-    if current_qty <= 0 and new_qty <= 0 and doc_name != "":
-        last_cost = frappe.db.sql("SELECT (beginning_stock_value/quantity_on_hand) cost FROM `tabInventory Transaction` where transaction_number = '{0}' and product_code = '{1}'".format(doc_name,product_code), as_dict=1)
+    if doc_name != "":
+        last_cost = frappe.db.sql("SELECT previous_cost cost FROM `tabInventory Transaction` where transaction_number = '{0}' and product_code = '{1}'".format(doc_name,product_code), as_dict=1)
         return last_cost[0].cost
 
     stock_cost = (current_stock_cost if current_stock_cost > 0 else 0) + new_stock_cost

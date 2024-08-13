@@ -31,6 +31,12 @@
   "exchange_rate_main_currency",
   "emenu_tab",
   "emenu",
+  "quickbooks_config_tab",
+  "client_id",
+  "client_secret",
+  "column_break_pifg",
+  "realm_id",
+  "environment",
   "accounting_tab",
   "use_basic_accounting_feature"
  ],
@@ -184,6 +190,37 @@
   {
    "fieldname": "column_break_tzuu",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "quickbooks_config_tab",
+   "fieldtype": "Tab Break",
+   "label": "Quickbooks Config"
+  },
+  {
+   "fieldname": "client_id",
+   "fieldtype": "Data",
+   "label": "Client Id"
+  },
+  {
+   "fieldname": "client_secret",
+   "fieldtype": "Data",
+   "label": "Client Secret"
+  },
+  {
+   "fieldname": "column_break_pifg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "sandbox",
+   "fieldname": "environment",
+   "fieldtype": "Select",
+   "label": "Environment",
+   "options": "sandbox\nproduction"
+  },
+  {
+   "fieldname": "realm_id",
+   "fieldtype": "Data",
+   "label": "Realm ID"
   }
  ],
  "image_field": "epos_logo",
@@ -191,7 +228,7 @@
  "issingle": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-07-27 16:39:33.267067",
+ "modified": "2024-08-10 16:15:55.830958",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "ePOS Settings",

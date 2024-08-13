@@ -17,7 +17,9 @@ def submit_sale_to_general_ledger_entry(self):
 			"voucher_type":"Sale",
 			"voucher_number":self.name,
 			"business_branch": self.business_branch,
-			"type":"Income"#not use in db
+			"type":"Income",
+			"party_type": "Customer",
+			"party":self.customer
 		}
 	
 		docs.append(doc)
@@ -36,7 +38,9 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
-				"type":"Income"#not use in db
+				"type":"Income",
+				"party_type": "Customer",
+				"party":self.customer
 
 			}
 			root_type = frappe.get_cached_value("Chart Of Account",acc,"root_type")
@@ -61,7 +65,9 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
-				"type":"Income"#not use in db
+				"type":"Income",
+				"party_type": "Customer",
+				"party":self.customer
 
 			}
 			docs.append(doc)
@@ -80,7 +86,9 @@ def submit_sale_to_general_ledger_entry(self):
 			"voucher_type":"Sale",
 			"voucher_number":self.name,
 			"business_branch": self.business_branch,
-			"type":"Asset"#not use in db
+			"type":"Asset",
+			"party_type": "Customer",
+			"party":self.customer
 
 		}
 		docs.append(doc)
@@ -103,6 +111,8 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
+				"party_type": "Customer",
+				"party":self.customer
 			}
 		docs.append(doc)
 	# tax 2 
@@ -120,6 +130,8 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
+				"party_type": "Customer",
+				"party":self.customer
 			}
 		docs.append(doc)
 	
@@ -139,6 +151,8 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
+				"party_type": "Customer",
+				"party":self.customer
 			}
 		docs.append(doc)
 
@@ -158,7 +172,9 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
-				"type":"Asset"#not use in db
+				"type":"Asset",
+				"party_type": "Customer",
+				"party":self.customer
 			}
 		docs.append(doc)
 	
@@ -177,7 +193,9 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
-				"type":"Asset"#not use in db
+				"type":"Asset",
+				"party_type": "Customer",
+				"party":self.customer
 			}
 		docs.append(doc)
 
@@ -196,6 +214,8 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
+				"party_type": "Customer",
+				"party":self.customer
 			}
 		docs.append(doc)
 
@@ -214,6 +234,8 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
+				"party_type": "Customer",
+				"party":self.customer
 			}
 		docs.append(doc)
 	# tip
@@ -231,6 +253,8 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
+				"party_type": "Customer",
+				"party":self.customer
 			}
 		docs.append(doc)
 
@@ -249,6 +273,8 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
+				"party_type": "Customer",
+				"party":self.customer
 			}
 		docs.append(doc)
   

@@ -1,0 +1,202 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2024-08-12 17:21:56.598613",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_pwlb",
+  "naming_series",
+  "business_branch",
+  "posting_date",
+  "column_break_rwpw",
+  "payment_type",
+  "mode_of_payment",
+  "section_break_rhkg",
+  "party_type",
+  "party",
+  "column_break_xzic",
+  "party_name",
+  "party_balance",
+  "section_break_swzm",
+  "column_break_fpct",
+  "account_paid_from",
+  "from_account_balance",
+  "column_break_tvix",
+  "account_paid_to",
+  "to_account_balance",
+  "section_break_llzh",
+  "table_mxdi",
+  "section_break_mlcd",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_pwlb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Payment Entry",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Naming Series",
+   "options": "ACC-PAY-.YYYY.-"
+  },
+  {
+   "fieldname": "payment_type",
+   "fieldtype": "Select",
+   "label": "Payment Type",
+   "options": "Pay\nReceive"
+  },
+  {
+   "fieldname": "column_break_rwpw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Posting Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "mode_of_payment",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Mode Of Payment",
+   "options": "Payment Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "business_branch",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Business Branch",
+   "options": "Business Branch",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_swzm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_fpct",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": ".",
+   "fieldname": "account_paid_to",
+   "fieldtype": "Link",
+   "label": "Account Paid To",
+   "options": "Chart Of Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "account_paid_from",
+   "fieldtype": "Link",
+   "label": "Account Paid From",
+   "options": "Chart Of Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_rhkg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "party_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Party Type",
+   "link_filters": "[[{\"fieldname\":\"party_type\",\"field_option\":\"DocType\"},\"name\",\"in\",\"Customer,Vendor,Employee\"]]",
+   "options": "DocType",
+   "reqd": 1
+  },
+  {
+   "fieldname": "party",
+   "fieldtype": "Dynamic Link",
+   "label": "Party",
+   "options": "party_type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_xzic",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "party_name",
+   "fieldtype": "Data",
+   "label": "Party Name"
+  },
+  {
+   "fieldname": "party_balance",
+   "fieldtype": "Currency",
+   "label": "Party Balance"
+  },
+  {
+   "fieldname": "from_account_balance",
+   "fieldtype": "Currency",
+   "label": "Account Balance"
+  },
+  {
+   "fieldname": "to_account_balance",
+   "fieldtype": "Currency",
+   "label": "Account Balance"
+  },
+  {
+   "fieldname": "section_break_mlcd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_tvix",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_llzh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "table_mxdi",
+   "fieldtype": "Table",
+   "options": "Payment Entry Reference"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-08-13 09:40:43.802493",
+ "modified_by": "Administrator",
+ "module": "Account",
+ "name": "Payment Entry",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

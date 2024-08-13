@@ -386,7 +386,6 @@
    "default": "0",
    "fieldname": "allow_earn_point",
    "fieldtype": "Check",
-   "hidden": 1,
    "label": "Allow Earn Point"
   },
   {
@@ -590,7 +589,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2024-08-10 16:51:09.260490",
+ "modified": "2024-08-13 08:41:09.841587",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

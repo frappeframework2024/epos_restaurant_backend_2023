@@ -375,6 +375,7 @@ class Sale(Document):
 
 def commission_GL_entry(self):
 	from collections import defaultdict
+	return
 	commissions=[]
 	total_commission = (self.commission_01+self.commission_02+self.commission_03+self.commission_04+self.commission_05)
 	if total_commission>0:

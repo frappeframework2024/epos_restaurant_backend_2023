@@ -352,6 +352,7 @@ def get_system_settings(pos_profile="", device_name=''):
     #check if epos system have exely integration then get setting
     exely= frappe.get_doc("Exely Itegration Setting")
     
+    point_setting = frappe.get_doc("Loyalty Point Settings")
     
     data={
         "app_name":doc.epos_app_name,
@@ -415,7 +416,8 @@ def get_system_settings(pos_profile="", device_name=''):
         "shortcut_key":shortcut_keys,
         "exely":{
             "enabled":exely.enabled, "default_general_customer_id":exely.default_general_customer_id, "guest_api_endpoint":exely.guest_api_endpoint,"api_key":exely.api_key
-        }
+        },
+        "point_setting":point_setting
     }
 
     return  data

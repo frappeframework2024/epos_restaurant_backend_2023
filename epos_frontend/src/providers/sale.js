@@ -1719,6 +1719,9 @@ export default class Sale {
     async onProcessTaskAfterSubmit(doc) { 
         if (this.action == "submit_order") {
             this.onPrintToKitchen(doc); 
+            if(this.setting?.device_setting?.print_invoice_on_submit == 1){
+                this.onPrintReceipt(this.pos_receipt, "print_invoice", doc);
+            }
             //print waiting doc
             if (this.setting.pos_setting.print_waiting_order_after_submit_order) {
                 this.onPrintWaitingOrder(doc);
@@ -2019,7 +2022,6 @@ export default class Sale {
             station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
             station: (this.setting?.device_setting?.name) || "",
         }
-
         let printer = (this.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
         let _printer = undefined
         if(printer.length>0){
@@ -2057,7 +2059,7 @@ export default class Sale {
                 return
             }
         }
-
+        console.log(data)
 
 
         if (receipt.pos_receipt_file_name && localStorage.getItem("is_window")) {
@@ -2079,6 +2081,7 @@ export default class Sale {
             }
 
         }
+       
     }
 
     onPrintWaitingOrder(doc) {
@@ -2175,9 +2178,10 @@ export default class Sale {
                 if ((data.fee_amount || 0) == 0) {
                     data.fee_amount = parseFloat(parseFloat(data.amount / data.paymentType.exchange_rate).toFixed(precision)) * (data.paymentType.fee_percentage / 100);
                 }
-
+                console.log(data.paymentType)
                 this.sale.payment.push({
                     payment_type: data.paymentType.payment_method,
+                    payment_type_group:data.paymentType.payment_type_group,
                     input_amount: parseFloat(data.amount),
                     amount: parseFloat(parseFloat(data.amount / data.paymentType.exchange_rate).toFixed(precision)),
                     exchange_rate: data.paymentType.exchange_rate,

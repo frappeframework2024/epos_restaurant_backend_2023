@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"XU2PCVkKwI\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Cash Coupon Today\",\"col\":3}},{\"id\":\"AOnZtYj2fW\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Cash Coupon MTD\",\"col\":3}},{\"id\":\"nmlMb7XEwn\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Sale Coupon Today\",\"col\":3}},{\"id\":\"6OE0vLOQDx\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Your Shortcut</b></span>\",\"col\":12}},{\"id\":\"RVIUnLHbp_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Sale Coupon Check In\",\"col\":3}},{\"id\":\"CL8TT1tlMl\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale Coupon Check In\",\"col\":3}},{\"id\":\"twCkHF8Yn-\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Issue Cash Coupon\",\"col\":3}},{\"id\":\"bBKxarOv5A\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Sale Coupon\",\"col\":3}},{\"id\":\"KrZr8GVCVk\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Cash Coupon\",\"col\":3}},{\"id\":\"00b3QV-R2X\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale Coupon\",\"col\":3}},{\"id\":\"v2Do-Lg0bK\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale Coupon Type\",\"col\":3}},{\"id\":\"WbtS1INno2\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent List</b></span>\",\"col\":12}},{\"id\":\"KMjAowcsaL\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Sale Coupon Check In\",\"col\":4}},{\"id\":\"AOwrbvv3KY\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Cash Coupon\",\"col\":4}},{\"id\":\"EjVRlmCylZ\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Sale Coupon\",\"col\":4}},{\"id\":\"SSzx12V3p1\",\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}}]",
+ "content": "[{\"id\":\"j-A1VtQ1E6\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h5\\\">SALE COUPON</span>\",\"col\":12}},{\"id\":\"nmlMb7XEwn\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Sale Coupon Today\",\"col\":3}},{\"id\":\"e5nkct7NZZ\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Sale Coupon Amount Today\",\"col\":3}},{\"id\":\"wWReiIDGg8\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Cash Coupon MTD\",\"col\":3}},{\"id\":\"CY6LJtDJCR\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Sale Coupon Amount MTD\",\"col\":3}},{\"id\":\"vwIfFeyPss\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"p9M0r3eR5x\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h5\\\">CASH COUPON</span>\",\"col\":12}},{\"id\":\"XU2PCVkKwI\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Cash Coupon Today\",\"col\":3}},{\"id\":\"vuAhF1hDn1\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Cash Coupon Amount Today\",\"col\":3}},{\"id\":\"gClcNzsOx5\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Cash Coupon Claim Amount Today\",\"col\":3}},{\"id\":\"I0LTwVrZmX\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Cash Coupon Balance Amount Today\",\"col\":3}},{\"id\":\"AOnZtYj2fW\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Cash Coupon MTD\",\"col\":3}},{\"id\":\"Ot9U98I1G0\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Cash Coupon Amount MTD\",\"col\":3}},{\"id\":\"LTijhsLnHd\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Cash Coupon Claim Amount MTD\",\"col\":3}},{\"id\":\"Dl-9me_mfQ\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Cash Coupon Balance Amount MTD\",\"col\":3}},{\"id\":\"5xewQpAhui\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"6OE0vLOQDx\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Your Shortcut</b></span>\",\"col\":12}},{\"id\":\"RVIUnLHbp_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Sale Coupon Check In\",\"col\":3}},{\"id\":\"CL8TT1tlMl\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale Coupon Check In\",\"col\":3}},{\"id\":\"twCkHF8Yn-\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Issue Cash Coupon\",\"col\":3}},{\"id\":\"bBKxarOv5A\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Sale Coupon\",\"col\":3}},{\"id\":\"KrZr8GVCVk\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Cash Coupon\",\"col\":3}},{\"id\":\"00b3QV-R2X\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale Coupon\",\"col\":3}},{\"id\":\"v2Do-Lg0bK\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sale Coupon Type\",\"col\":3}},{\"id\":\"WbtS1INno2\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent List</b></span>\",\"col\":12}},{\"id\":\"KMjAowcsaL\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Sale Coupon Check In\",\"col\":4}},{\"id\":\"AOwrbvv3KY\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Cash Coupon\",\"col\":4}},{\"id\":\"EjVRlmCylZ\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Sale Coupon\",\"col\":4}},{\"id\":\"SSzx12V3p1\",\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}}]",
  "creation": "2024-07-17 14:27:00.619409",
  "custom_blocks": [],
  "custom_menu_icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"SVGRepo_bgCarrier\" stroke-width=\"0\"></g><g id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></g><g id=\"SVGRepo_iconCarrier\"> <path d=\"M22 12H2\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\"></path> <path d=\"M12 2V22\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\"></path> <path d=\"M13 12C13 14.2091 14.7909 16 17 16\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\"></path> <path d=\"M11 12C11 14.2091 9.20914 16 7 16\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\"></path> <path d=\"M12 10.0352C12 8.54529 13.014 7.24659 14.4594 6.88524C16.0631 6.48431 17.5158 7.93697 17.1148 9.5407C16.7535 10.9861 15.4548 12.0001 13.9649 12.0001H12V10.0352Z\" stroke=\"#000000\" stroke-width=\"1.5\"></path> <path d=\"M12.0001 10.0352C12.0001 8.54529 10.9861 7.24659 9.5407 6.88524C7.93698 6.48431 6.48431 7.93697 6.88524 9.5407C7.24659 10.9861 8.54529 12.0001 10.0352 12.0001H12.0001V10.0352Z\" stroke=\"#000000\" stroke-width=\"1.5\"></path> <path d=\"M22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C21.5093 4.43821 21.8356 5.80655 21.9449 8\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\"></path> </g></svg>",
@@ -34,24 +34,68 @@
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "custom_show_in_app_menu": 0,
+   "custom_sort_order": 0,
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Sale Coupon Report",
+   "link_count": 0,
+   "link_to": "Sale Coupon Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2024-08-02 16:56:22.633586",
+ "modified": "2024-08-09 17:11:14.122565",
  "modified_by": "Administrator",
- "module": "Selling",
+ "module": "Coupon",
  "name": "Coupon",
  "number_cards": [
   {
+   "label": "Cash Coupon Amount Today",
+   "number_card_name": "Cash Coupon Amount Today"
+  },
+  {
    "label": "Sale Coupon Today",
    "number_card_name": "Sale Coupon Today"
+  },
+  {
+   "label": "Cash Coupon MTD",
+   "number_card_name": "Cash Coupon MTD"
   },
   {
    "label": "Cash Coupon Today",
    "number_card_name": "Cash Coupon Today"
   },
   {
-   "label": "Cash Coupon MTD",
-   "number_card_name": "Cash Coupon MTD"
+   "label": "Sale Coupon Amount MTD",
+   "number_card_name": "Sale Coupon Amount MTD"
+  },
+  {
+   "label": "Cash Coupon Amount MTD",
+   "number_card_name": "Cash Coupon Amount MTD"
+  },
+  {
+   "label": "Sale Coupon Amount Today",
+   "number_card_name": "Sale Coupon Amount Today"
+  },
+  {
+   "label": "Cash Coupon Balance Amount MTD",
+   "number_card_name": "Cash Coupon Balance Amount MTD"
+  },
+  {
+   "label": "Cash Coupon Claim Amount MTD",
+   "number_card_name": "Cash Coupon Claim Amount MTD"
+  },
+  {
+   "label": "Cash Coupon Claim Amount Today",
+   "number_card_name": "Cash Coupon Claim Amount Today"
+  },
+  {
+   "label": "Cash Coupon Balance Amount Today",
+   "number_card_name": "Cash Coupon Balance Amount Today"
   }
  ],
  "owner": "Administrator",
@@ -75,7 +119,7 @@
   }
  ],
  "roles": [],
- "sequence_id": 24.0,
+ "sequence_id": 8.0,
  "shortcuts": [
   {
    "color": "Grey",

@@ -42,8 +42,8 @@ frappe.ui.form.on("Customer", {
             }
         });
 
-        if (!frm.doc.__islocal && frm.doc.total_point_earn > 1) {
-            frm.dashboard.add_indicator(__("Total Point Earn: {0}", [frm.doc.total_point_earn]), "green");
+        if (!frm.doc.__islocal && frm.doc.total_point_earn > 0) {
+            frm.dashboard.add_indicator(__("Total Point Earn: {0} Point(s)", [frm.doc.total_point_earn]), "green");
             if((frm.doc.total_sale_coupon_payment_balance||0) > 0 ){ 
                 let sale_coupon_balance =  format_currency(frm.doc.total_sale_coupon_payment_balance)
                 frm.dashboard.add_indicator(__("Sale Coupon Balance: {0}", [ sale_coupon_balance]), "yellow");
@@ -53,7 +53,7 @@ frappe.ui.form.on("Customer", {
             getCustomerInfo(frm)
             getPOSMiscSaleInfo(frm)
             getGuestFolio(frm)
-            getGuestNoteDetail(frm)     
+            getGuestNoteDetail(frm)
         }
         catch(err){
 
