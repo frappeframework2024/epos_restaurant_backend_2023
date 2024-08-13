@@ -9,7 +9,7 @@
                         <div class="font-bold">{{ p.payment_type }} </div>
                         <div class="text-xs text-gray-500" v-if="((p.room_number||'') !='')">{{ $t('Room') }}#:   {{ p.room_number }}</div>       
                         <div class="text-xs text-gray-500" v-if="((p.reservation_stay||'') !='')">{{ $t('Stay ') }}#:   {{ p.reservation_stay }}</div>
-                        {{ get_point_to_reduct(p.input_amount) }}
+
                         <div class="text-xs text-gray-500" v-if="get_point_to_reduct(p.input_amount) > 0 && p.payment_type_group == 'Point'">{{ $t('Reduct') }}#: {{get_point_to_reduct(p.input_amount)}} {{ $t('Point(s)') }}</div>       
                        
 
@@ -57,7 +57,7 @@ watch(sale.sale.payment, async (newPayment, oldNewPayment) => {
 const is_removing = ref(false);
 
 function get_point_to_reduct(input_amount){
-    let total_point = input_amount * gv.setting.point_setting
+    let total_point = input_amount * gv.setting.point_setting.to_point_sale
 
     return total_point || 0
 }
