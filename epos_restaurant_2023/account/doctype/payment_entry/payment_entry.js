@@ -21,6 +21,9 @@ frappe.ui.form.on("Payment Entry", {
         get_party_detail(frm)
         set_filters(frm)
     },
+    posting_date(frm){
+        get_party_detail(frm)
+    },
     paid_amount(frm){
         update_allocated_amount(frm)
     }
