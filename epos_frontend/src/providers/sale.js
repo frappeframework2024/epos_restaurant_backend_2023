@@ -1720,6 +1720,9 @@ export default class Sale {
         if (this.action == "submit_order") {
             this.onPrintToKitchen(doc); 
             if(this.setting?.device_setting?.print_invoice_on_submit == 1){
+                if (this.pos_receipt == undefined || this.pos_receipt == null) {
+                    this.pos_receipt = this.setting?.default_pos_receipt;
+                }
                 this.onPrintReceipt(this.pos_receipt, "print_invoice", doc);
             }
             //print waiting doc
@@ -2059,7 +2062,6 @@ export default class Sale {
                 return
             }
         }
-        console.log(data)
 
 
         if (receipt.pos_receipt_file_name && localStorage.getItem("is_window")) {
