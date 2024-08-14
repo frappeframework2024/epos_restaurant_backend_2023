@@ -374,66 +374,52 @@ class Sale(Document):
 
 
 def commission_GL_entry(self):
-	from collections import defaultdict
-	return
 	commissions=[]
 	total_commission = (self.commission_01+self.commission_02+self.commission_03+self.commission_04+self.commission_05)
 	if total_commission>0:
 		if self.commission_01_account and self.commission_01 > 0:
-			commissions.append({"amount":self.commission_01,"account":self.commission_01_account})
+			commissions.append({"amount":self.commission_01,"account":self.commission_01_account,"employee":a.commission_01_to})
 		if self.commission_02_account and self.commission_02 > 0:
-			commissions.append({"amount":self.commission_02,"account":self.commission_02_account})
+			commissions.append({"amount":self.commission_02,"account":self.commission_02_account,"employee":a.commission_02_to})
 		if self.commission_03_account and self.commission_03 > 0:
-			commissions.append({"amount":self.commission_03,"account":self.commission_03_account})
+			commissions.append({"amount":self.commission_03,"account":self.commission_03_account,"employee":a.commission_03_to})
 		if self.commission_04_account and self.commission_04 > 0:
-			commissions.append({"amount":self.commission_04,"account":self.commission_04_account})
+			commissions.append({"amount":self.commission_04,"account":self.commission_04_account,"employee":a.commission_04_to})
 		if self.commission_05_account and self.commission_05 > 0:
-			commissions.append({"amount":self.commission_05,"account":self.commission_05_account})
-		commission_accounts = defaultdict(int)
-		for a in commissions:
-			name = a["account"]
-			value = a["amount"]
-			commission_accounts[name] += value
-		commission_accounts = dict(commission_accounts)
+			commissions.append({"amount":self.commission_05,"account":self.commission_05_account,"employee":a.commission_05_to})
 		if self.docstatus == 1:
-			expense_general_ledger_debit(self,account = {"account":self.default_commission_expense_account,"amount":total_commission})
-			for a in commission_accounts:
-				expense_general_ledger_credit(self,account = {"account":a,"amount":commission_accounts[a]})
+			general_ledger_debit(self,account = {"account":self.default_commission_expense_account,"amount":total_commission})
+			for a in commissions:
+				general_ledger_credit(self,account = {"account":a["account"],"amount":a["amount"],"party":a["employee"]})
 		else:
-			expense_general_ledger_credit(self,account = {"account":self.default_commission_expense_account,"amount":total_commission})
-			for a in commission_accounts:
-				expense_general_ledger_debit(self,account = {"account":a,"amount":commission_accounts[a]})
+			general_ledger_credit(self,account = {"account":self.default_commission_expense_account,"amount":total_commission})
+			for a in commissions:
+				general_ledger_debit(self,account = {"account":a["account"],"amount":a["amount"],"party":a["employee"]})
 
 	total_commission = sum((a.commission_01+a.commission_02+a.commission_03+a.commission_04+a.commission_05) for a in self.sale_products)
 	if total_commission>0:
 		commissions=[]
 		for a in self.sale_products:
 			if a.commission_01_account and a.commission_01 > 0:
-				commissions.append({"amount":a.commission_01,"account":a.commission_01_account})
+				commissions.append({"amount":a.commission_01,"account":a.commission_01_account,"employee":a.commission_01_to})
 			if a.commission_02_account and a.commission_02 > 0:
-				commissions.append({"amount":a.commission_02,"account":a.commission_02_account})
+				commissions.append({"amount":a.commission_02,"account":a.commission_02_account,"employee":a.commission_02_to})
 			if a.commission_03_account and a.commission_03 > 0:
-				commissions.append({"amount":a.commission_03,"account":a.commission_03_account})
+				commissions.append({"amount":a.commission_03,"account":a.commission_03_account,"employee":a.commission_03_to})
 			if a.commission_04_account and a.commission_04 > 0:
-				commissions.append({"amount":a.commission_04,"account":a.commission_04_account})
+				commissions.append({"amount":a.commission_04,"account":a.commission_04_account,"employee":a.commission_04_to})
 			if a.commission_05_account and a.commission_05 > 0:
-				commissions.append({"amount":a.commission_05,"account":a.commission_05_account})
-		commission_accounts = defaultdict(int)
-		for a in commissions:
-			name = a["account"]
-			value = a["amount"]
-			commission_accounts[name] += value
-		commission_accounts = dict(commission_accounts)
+				commissions.append({"amount":a.commission_05,"account":a.commission_05_account,"employee":a.commission_05_to})
 		if self.docstatus == 1:
-			expense_general_ledger_debit(self,account = {"account":self.default_commission_expense_account,"amount":total_commission})
-			for a in commission_accounts:
-				expense_general_ledger_credit(self,account = {"account":a,"amount":commission_accounts[a]})
+			general_ledger_debit(self,account = {"account":self.default_commission_expense_account,"amount":total_commission})
+			for a in commissions:
+				general_ledger_credit(self,account = {"account":a["account"],"amount":a["amount"],"party":a["employee"]})
 		else:
-			expense_general_ledger_credit(self,account = {"account":self.default_commission_expense_account,"amount":total_commission})
-			for a in commission_accounts:
-				expense_general_ledger_debit(self,account = {"account":a,"amount":commission_accounts[a]})
+			general_ledger_credit(self,account = {"account":self.default_commission_expense_account,"amount":total_commission})
+			for a in commissions:
+				general_ledger_debit(self,account = {"account":a["account"],"amount":a["amount"],"party":a["employee"]})
 
-def expense_general_ledger_debit(self,account):
+def general_ledger_debit(self,account):
 	docs = []
 	doc = {
 		"doctype":"General Ledger",
@@ -449,7 +435,7 @@ def expense_general_ledger_debit(self,account):
 	docs.append(doc)
 	submit_general_ledger_entry(docs = docs)
 
-def expense_general_ledger_credit(self,account):
+def general_ledger_credit(self,account):
     docs = []
     doc = {
         "doctype":"General Ledger",
@@ -460,6 +446,8 @@ def expense_general_ledger_credit(self,account):
         "voucher_number":self.name,
         "business_branch": self.business_branch,
 		"remark": "Sale Commission",
+		"party_type": "Employee",
+		"party":account["party"],
 		"is_cancelled":1 if self.docstatus == 2 else 0
     }
     docs.append(doc)

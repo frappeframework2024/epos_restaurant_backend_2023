@@ -12,7 +12,7 @@ def submit_sale_to_general_ledger_entry(self):
 			"account":acc.account,
 			"debit_amount":acc.debit,
 			"credit_amount":acc.credit,
-			"againt":acc.party + " - " + acc.party_name,
+			"againt":(acc.party or "") + " - " + (acc.party_name or ""),
 			"voucher_type":"Journal Entry",
 			"voucher_number":self.name,
 			"business_branch": self.business_branch,

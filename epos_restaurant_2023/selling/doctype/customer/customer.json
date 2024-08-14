@@ -29,7 +29,6 @@
   "jobs",
   "is_disabled",
   "keyword",
-  "allow_earn_point",
   "column_break_4",
   "phone_number",
   "phone_number_2",
@@ -89,7 +88,9 @@
   "guest_note_detail",
   "folio_tab",
   "guest_folio",
-  "document_tab"
+  "document_tab",
+  "other_tab",
+  "allow_earn_point"
  ],
  "fields": [
   {
@@ -577,6 +578,11 @@
   {
    "fieldname": "column_break_macj",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "other_tab",
+   "fieldtype": "Tab Break",
+   "label": "Other"
   }
  ],
  "image_field": "photo",
@@ -589,7 +595,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2024-08-13 08:41:09.841587",
+ "modified": "2024-08-13 12:01:04.543640",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

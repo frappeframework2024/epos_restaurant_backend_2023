@@ -27,7 +27,9 @@ def submit_purchase_to_general_ledger_entry_on_submit(self):
 				"voucher_type":"Purchase Order",
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
-				"remark" : "Accounting Entry Purchase Order"
+				"remark" : "Accounting Entry Purchase Order",
+				"party_type" : "Vendor",
+				"party":self.vendor
 			}
 		docs.append(doc)
 
@@ -53,7 +55,9 @@ def submit_purchase_to_general_ledger_entry_on_submit(self):
 			"voucher_type":"Purchase Order",
 			"voucher_number":self.name,
 			"business_branch": self.business_branch,
-			"remark": "Purchase Order discount"
+			"remark": "Purchase Order discount",
+			"party_type" : "Vendor",
+			"party":self.vendor
 		}
 		docs.append(doc)
   

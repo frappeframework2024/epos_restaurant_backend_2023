@@ -18,7 +18,6 @@
   "party",
   "column_break_xzic",
   "party_name",
-  "party_balance",
   "section_break_swzm",
   "column_break_fpct",
   "account_paid_from",
@@ -26,8 +25,14 @@
   "column_break_tvix",
   "account_paid_to",
   "to_account_balance",
+  "section_break_ptku",
+  "no_references",
+  "paid_amount",
+  "column_break_exjd",
+  "exchange_rate",
+  "unallocated_amount",
   "section_break_llzh",
-  "table_mxdi",
+  "payment_entry_reference",
   "section_break_mlcd",
   "amended_from"
  ],
@@ -57,7 +62,7 @@
    "fieldname": "payment_type",
    "fieldtype": "Select",
    "label": "Payment Type",
-   "options": "Pay\nReceive"
+   "options": "Receive\nPay"
   },
   {
    "fieldname": "column_break_rwpw",
@@ -137,22 +142,20 @@
   {
    "fieldname": "party_name",
    "fieldtype": "Data",
-   "label": "Party Name"
-  },
-  {
-   "fieldname": "party_balance",
-   "fieldtype": "Currency",
-   "label": "Party Balance"
+   "label": "Party Name",
+   "read_only": 1
   },
   {
    "fieldname": "from_account_balance",
    "fieldtype": "Currency",
-   "label": "Account Balance"
+   "label": "Account Balance",
+   "read_only": 1
   },
   {
    "fieldname": "to_account_balance",
    "fieldtype": "Currency",
-   "label": "Account Balance"
+   "label": "Account Balance",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_mlcd",
@@ -163,19 +166,55 @@
    "fieldtype": "Column Break"
   },
   {
+   "depends_on": "eval:!doc.no_references",
    "fieldname": "section_break_llzh",
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "table_mxdi",
+   "fieldname": "payment_entry_reference",
    "fieldtype": "Table",
    "options": "Payment Entry Reference"
+  },
+  {
+   "fieldname": "section_break_ptku",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "paid_amount",
+   "fieldtype": "Float",
+   "label": "Paid Amount",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_exjd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.unallocated_amount > 0",
+   "fieldname": "unallocated_amount",
+   "fieldtype": "Float",
+   "label": "Unallocated Amount",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "mode_of_payment.exchange_rate",
+   "fieldname": "exchange_rate",
+   "fieldtype": "Float",
+   "label": "Exchange Rate",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "no_references",
+   "fieldtype": "Check",
+   "label": "No References"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-13 09:40:43.802493",
+ "modified": "2024-08-14 14:14:10.901784",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "Payment Entry",
