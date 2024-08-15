@@ -89,6 +89,15 @@ function set_filters(frm){
             }
         });
     }
+    else if(frm.doc.party_type == "Employee"){
+        frm.set_query("party", function() {
+            return {
+                filters: [
+                    ["is_selling_agent", "=", 1]
+                ]
+            }
+        });
+    }
     else{
         frm.set_query("reference_name","payment_entry_reference", function() {
             return {

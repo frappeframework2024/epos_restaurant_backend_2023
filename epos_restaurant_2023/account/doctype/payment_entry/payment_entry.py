@@ -63,13 +63,14 @@ def get_party_detail(party_type,party,posting_date):
 	else:
 		fields.append("vendor_name")
 	p = frappe.db.get_value(party_type,{'name':party},fields,as_dict=1)
-	if party_type == "Customer":
-		name = p.customer_name_en
-	elif party_type == "Employee":
-		name = p.employee_name
-		commission_account = frappe.db.get_value(party_type,{'name':party},"commission_account")
-	else:
-		name = p.vendor_name
+	if p:
+		if party_type == "Customer":
+			name = (p.customer_name_en or "")
+		elif party_type == "Employee":
+			name = (p.employee_name or "")
+			commission_account = (frappe.db.get_value(party_type,{'name':party},"commission_account") or "")
+		else:
+			name = (p.vendor_name or "")
 	
 	return {"name":name,"balance":get_account_balance(posting_date,party_type,party,commission_account),"account":commission_account}
 
