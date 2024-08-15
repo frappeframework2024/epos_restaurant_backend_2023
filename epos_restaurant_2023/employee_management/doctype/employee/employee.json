@@ -23,11 +23,16 @@
   "phone_number_2",
   "column_break_10",
   "email_address",
-  "address_note",
-  "address",
-  "column_break_12",
-  "note",
   "photo",
+  "address_note",
+  "province",
+  "district",
+  "commune",
+  "village",
+  "column_break_12",
+  "address",
+  "note_section",
+  "note",
   "login_information_tab",
   "allow_login",
   "column_break_jbjg",
@@ -128,7 +133,7 @@
   {
    "fieldname": "address_note",
    "fieldtype": "Section Break",
-   "label": "Address & Note"
+   "label": "Address"
   },
   {
    "fieldname": "address",
@@ -369,12 +374,41 @@
    "fieldtype": "Link",
    "label": "Commission Account",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "province",
+   "fieldtype": "Link",
+   "label": "Province",
+   "options": "Province"
+  },
+  {
+   "fieldname": "district",
+   "fieldtype": "Link",
+   "label": "District",
+   "options": "District"
+  },
+  {
+   "fieldname": "commune",
+   "fieldtype": "Link",
+   "label": "Commune",
+   "options": "Commune"
+  },
+  {
+   "fieldname": "village",
+   "fieldtype": "Link",
+   "label": "Village",
+   "options": "Village"
+  },
+  {
+   "fieldname": "note_section",
+   "fieldtype": "Section Break",
+   "label": "Note"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-12 13:50:09.094601",
+ "modified": "2024-08-15 13:48:10.368499",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee",
