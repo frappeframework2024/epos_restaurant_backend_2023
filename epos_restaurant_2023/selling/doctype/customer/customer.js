@@ -42,18 +42,28 @@ frappe.ui.form.on("Customer", {
             }
         });
 
-        if (!frm.doc.__islocal && frm.doc.total_point_earn > 0) {
-            frm.dashboard.add_indicator(__("Total Point Earn: {0} Point(s)", [frm.doc.total_point_earn]), "green");
+        if (!frm.doc.__islocal ) {
+            if(frm.doc.balance > 0) {
+                let balance =  format_currency(frm.doc.balance)
+                frm.dashboard.add_indicator(__("Total Balance: {0}", [ balance]), "red");
+            }
+
             if((frm.doc.total_sale_coupon_payment_balance||0) > 0 ){ 
                 let sale_coupon_balance =  format_currency(frm.doc.total_sale_coupon_payment_balance)
                 frm.dashboard.add_indicator(__("Sale Coupon Balance: {0}", [ sale_coupon_balance]), "yellow");
-            }            
+            }   
+
+           
+            if(frm.doc.total_point_earn > 0){
+                frm.dashboard.add_indicator(__("Total Point Earn: {0} Point(s)", [Number(frm.doc.total_point_earn).toFixed(2)]), "green");
+            }
         }
         try{
             getCustomerInfo(frm)
             getPOSMiscSaleInfo(frm)
             getGuestFolio(frm)
             getGuestNoteDetail(frm)
+            getCustomerDocument(frm)
         }
         catch(err){
 
@@ -146,23 +156,47 @@ function getGuestNoteDetail (frm) {
             customer_name: frm.doc.name,
         },
         callback: (result => { 
+            result.message.forEach((r)=> { 
+                let date = new Date(r.modified);
+                r.modified = prettyDate(date)
+            })
+ 
+            let html = frappe.render_template("guest_note_detail", {data:result.message}); 
+            $(frm.fields_dict["guest_note_detail"].wrapper).html(html);
+            frm.refresh_field("guest_note_detail");
+        }),
+        error: (error => {
+            frappe.throw(error);
+        })
+    })
+}
+
+function getCustomerDocument (frm) {
+    $(frm.fields_dict["customer_document"].wrapper).html("Loading customer document...");
+    frm.refresh_field("customer_document");
+
+    frappe.call({
+        method: "epos_restaurant_2023.selling.doctype.customer.customer.get_customer_document",
+        args: {
+            customer_name: frm.doc.name,
+        },
+        callback: (result => {  
 
             result.message.forEach((r)=> { 
                 let date = new Date(r.modified);
                 r.modified = prettyDate(date)
             })
 
-            console.log(result.message)
-            let html = frappe.render_template("guest_note_detail", {data:result.message}); 
-            $(frm.fields_dict["guest_note_detail"].wrapper).html(html);
-            frm.refresh_field("guest_note_detail");
 
-            // pagination(frm, field_dict = 'guest_folio', wrapper = '#guest_folio_list', content = '.folio_list_data')
+            let html = frappe.render_template("customer_document", {data:result.message}); 
+            $(frm.fields_dict["customer_document"].wrapper).html(html);
+            frm.refresh_field("customer_document");
         }),
         error: (error => {
             frappe.throw(error);
         })
     })
+
 }
 
 

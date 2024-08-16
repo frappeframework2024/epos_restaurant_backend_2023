@@ -12,6 +12,12 @@
   "balance",
   "column_break_lide",
   "total_point_earn",
+  "crypto_information_section",
+  "total_crypto_amount",
+  "column_break_tmbt",
+  "total_crypto_claim",
+  "column_break_tpda",
+  "total_crypto_balance",
   "section_break_buzm",
   "naming_series",
   "customer_code",
@@ -51,13 +57,24 @@
   "address",
   "column_break_18",
   "land_size",
-  "crops_type",
+  "crops_types",
   "section_break_qbmj",
   "pos_note",
   "column_break_macj",
   "note",
   "tab_break_32",
   "card",
+  "membership_information_tab",
+  "section_break_wroi",
+  "membership_amount",
+  "column_break_axzz",
+  "membership_paid",
+  "column_break_glwz",
+  "membership_balance",
+  "crypto_membership_saving_section",
+  "total_crypto_on_register",
+  "column_break_cppj",
+  "total_crypto_on_check_in",
   "voucher_information_tab",
   "voucher_actual_amount",
   "column_break_czzc",
@@ -89,6 +106,7 @@
   "folio_tab",
   "guest_folio",
   "document_tab",
+  "customer_document",
   "other_tab",
   "allow_earn_point"
  ],
@@ -316,7 +334,8 @@
    "bold": 1,
    "fieldname": "balance",
    "fieldtype": "Currency",
-   "label": "Balance"
+   "label": "Total Balance",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_lide",
@@ -394,6 +413,7 @@
    "depends_on": "eval:doc.total_point_earn > 0",
    "fieldname": "total_point_earn",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Total Point Earn",
    "read_only": 1
   },
@@ -515,6 +535,7 @@
   {
    "fieldname": "cash_coupon_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Cash Coupon"
   },
   {
@@ -566,11 +587,6 @@
    "label": "Land Size"
   },
   {
-   "fieldname": "crops_type",
-   "fieldtype": "Data",
-   "label": "Crops Type"
-  },
-  {
    "fieldname": "section_break_qbmj",
    "fieldtype": "Section Break",
    "label": "Note"
@@ -583,6 +599,107 @@
    "fieldname": "other_tab",
    "fieldtype": "Tab Break",
    "label": "Other"
+  },
+  {
+   "fieldname": "customer_document",
+   "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "membership_information_tab",
+   "fieldtype": "Tab Break",
+   "label": "Membership Summary"
+  },
+  {
+   "default": "0",
+   "fieldname": "membership_amount",
+   "fieldtype": "Currency",
+   "label": "Membership Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_axzz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "membership_paid",
+   "fieldtype": "Currency",
+   "label": "Membership Paid",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_glwz",
+   "fieldtype": "Column Break",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "membership_balance",
+   "fieldtype": "Currency",
+   "label": "Membership Balance"
+  },
+  {
+   "depends_on": "eval:!doc.__islocal && doc.total_crypto_amount > 0",
+   "fieldname": "crypto_information_section",
+   "fieldtype": "Section Break",
+   "label": "Crypto Information"
+  },
+  {
+   "fieldname": "total_crypto_amount",
+   "fieldtype": "Currency",
+   "label": "Total Crypto Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_tmbt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_crypto_claim",
+   "fieldtype": "Currency",
+   "label": "Total Crypto Claim",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_tpda",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_crypto_balance",
+   "fieldtype": "Currency",
+   "label": "Total Crypto Balance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_wroi",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "crypto_membership_saving_section",
+   "fieldtype": "Section Break",
+   "label": "Crypto Membership Saving"
+  },
+  {
+   "fieldname": "total_crypto_on_register",
+   "fieldtype": "Currency",
+   "label": "Total Crypto on Register",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_cppj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_crypto_on_check_in",
+   "fieldtype": "Currency",
+   "label": "Total Crypto on Check-In",
+   "read_only": 1
+  },
+  {
+   "fieldname": "crops_types",
+   "fieldtype": "Table MultiSelect",
+   "label": "Crops Types",
+   "options": "Crops Type"
   }
  ],
  "image_field": "photo",
@@ -595,7 +712,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2024-08-13 12:01:04.543640",
+ "modified": "2024-08-16 11:22:27.034298",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",
