@@ -7980,5 +7980,44 @@
   "name": "67c73538dd",
   "source_text": "This is report is for past date transaction",
   "translated_text": "របាយការណ៍នេះសម្រាប់មើលនៅថ្ងៃអតីតកាលតែប៉ុណ្ណោះ"
+ },
+ {
+  "context": null,
+  "contributed": 0,
+  "contribution_docname": null,
+  "contribution_status": "",
+  "docstatus": 0,
+  "doctype": "Translation",
+  "language": "km",
+  "modified": "2024-08-07 10:48:36.610084",
+  "name": "d369f0106a",
+  "source_text": "Floor Plan View",
+  "translated_text": "មើលបន្ទប់តាមជាន់"
+ },
+ {
+  "context": null,
+  "contributed": 0,
+  "contribution_docname": null,
+  "contribution_status": "",
+  "docstatus": 0,
+  "doctype": "Translation",
+  "language": "km",
+  "modified": "2024-08-13 15:24:05.344791",
+  "name": "703ae865df",
+  "source_text": "Today you have",
+  "translated_text": "ថ្នៃនេះអ្នកមាន"
+ },
+ {
+  "context": null,
+  "contributed": 0,
+  "contribution_docname": null,
+  "contribution_status": "",
+  "docstatus": 0,
+  "doctype": "Translation",
+  "language": "km",
+  "modified": "2024-08-13 15:25:10.823218",
+  "name": "8c243e3caf",
+  "source_text": "Map Views",
+  "translated_text": "មើលក្នុងផែនទី"
  }
 ]

@@ -19,6 +19,11 @@ export default class Product {
         this.currentRootPOSMenu = null
         this.productCategory = "";
         this.menuProducts = []
+        this.selectedProductCategory = "All Product Category"
+        this.posSearchProductPager = {
+            limit:20,
+            page:1
+        }
 
         this.posMenuResource = createResource({
             url: 'epos_restaurant_2023.api.product.get_product_by_menu',
@@ -65,12 +70,14 @@ export default class Product {
         } else {
             return this.posMenuResource.data?.filter((r) => {
                 return String(r.name_en + ' ' + r.name_kh + ' ' + r.name).toLocaleLowerCase().includes(this.searchProductKeyword.toLocaleLowerCase()) && r.type == "product"
-            })
+            }).sort((a, b)=>a.sort_order-b.sort_order)
         }
     }
 
     getProductMenuByProductCategory(db,product_category) {
-        
+        if((typeof product_category ) =="object"){
+            product_category = product_category.name
+        }
         db.getDocList("Product Category", {
             fields: ["name", "name as name_en", "product_category_name_kh as name_kh", "parent_product_category as parent", "photo", "text_color", "background_color", "show_in_pos_shortcut_menu as shortcut_menu", "allow_sale"],
             filters: [
@@ -83,55 +90,61 @@ export default class Product {
                 d.type = "menu"
             });
             this.menuProducts = docs
-
-            db.getDocList("Product", {
-                fields: [
-                    "name as menu_product_name",
-                    "name",
-                    "product_name_en as name_en",
-                    "product_name_kh as name_kh",
-                    "product_category as parent",
-                    "price",
-                    "unit",
-                    "allow_discount",
-                    "allow_change_price",
-                    "allow_free",
-                    "is_open_product",
-                    "is_inventory_product",
-                    "photo",
-                    "append_quantity",
-                    "is_combo_menu",
-                    "use_combo_group",
-                    "combo_menu_data",
-                    "combo_group_data",
-                    "is_open_price",
-                    "is_timer_product",
-                    'tax_rule',
-                    'revenue_group',
-                    'prices',
-                    'sort_order'
-                ],
-                orderBy: {
-                    field: 'sort_order',
-                    order: 'asc',
-                  },
-                filters: [["product_category", "=", product_category]],
-                limit: 100,
-            }).then((res) => {
-                res.forEach(d => {
-                    d.price_rule = ""
-                    d.type = "product",
-                    d.tax_rule_data = null,
-                    d.modifiers = "[]"
-                    d.printers = "[]"
-                });
-                this.menuProducts = this.menuProducts.concat(res)
-            }).catch((err) => {
-                console.log(err)
-            })
+            this.getProductByProductCategory(db,product_category,1)
+            
         })
 
     }
+
+    getProductByProductCategory(db,product_category,page=1){
+        db.getDocList("Product", {
+            fields: [
+                "name as menu_product_name",
+                "name",
+                "product_name_en as name_en",
+                "product_name_kh as name_kh",
+                "product_category as parent",
+                "price",
+                "unit",
+                "allow_discount",
+                "allow_change_price",
+                "allow_free",
+                "is_open_product",
+                "is_inventory_product",
+                "photo",
+                "append_quantity",
+                "is_combo_menu",
+                "use_combo_group",
+                "combo_menu_data",
+                "combo_group_data",
+                "is_open_price",
+                "is_timer_product",
+                'tax_rule',
+                'revenue_group',
+                'prices',
+                'sort_order'
+            ],
+            orderBy: {
+                field: 'sort_order',
+                order: 'asc',
+              },
+            filters: [["product_category", "=", product_category]],
+            limit_start:(page -1) * 20 + 1,
+            limit: 20,
+        }).then((res) => {
+            res.forEach(d => {
+                d.price_rule = ""
+                d.type = "product",
+                d.tax_rule_data = null,
+                d.modifiers = "[]"
+                d.printers = "[]"
+            });
+            this.menuProducts = this.menuProducts.concat(res)
+        }).catch((err) => {
+           
+        })
+    }
+
 
     getProductFromDbByKeyword(db, keyword) {
         db.getDocList("Product", {

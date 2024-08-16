@@ -3,7 +3,73 @@
 
 frappe.ui.form.on("Membership", {
 	refresh(frm) {
-           
+        if(frm.doc.docstatus == 1){
+            frm.add_custom_button(__('Upgrade Membership Option'), function () {
+                let d = new frappe.ui.Dialog({
+                    title: 'Upgrade Membership Option',
+                    fields: [
+                        {
+                            label: 'Membership Options',
+                            fieldname: 'membership_option',
+                            fieldtype: 'Link',
+                            options:'Membership Options',
+                            reqd: 1,
+                            get_query: function () {
+                                return {
+                                    filters: {
+                                        membership_type: ["=", frm.doc.membership_type],
+                                        name: ["!=",frm.doc.old_membership || frm.doc.membership],
+                                    }
+                                };
+                            },
+                        },                       
+                    ],
+                    size: 'small', // small, large, extra-large 
+                    primary_action_label: 'Upgrade',
+                    primary_action(val) {  
+                        frappe.db.get_doc("Membership",frm.doc.name).then((resp)=>{ 
+                            if(resp.membership != val.membership_option){                               
+                                frappe.call({
+                                    method: 'epos_restaurant_2023.gym.doctype.membership.membership.upgrade_membership_option',
+                                    type: 'POST',  
+                                    args: {
+                                        param:{
+                                            "membership":frm.doc.name,
+                                            "old_membership_option":resp.old_membership ||resp.membership,
+                                            "new_membership_option":val.membership_option,
+                                        }
+                                    },
+                                    callback: function(response) {
+                                        if (response.message) {
+                                            d.hide();  
+                                            frm.reload_doc();
+                                        } else {
+                                            // Handle the case where there's no message in the response
+                                            console.log('No data received');
+                                        }
+                                    },
+                                    error: function(err) {
+                                        // Handle any errors here
+                                        console.error('An error occurred:', err);
+                                    }
+                                });
+ 
+                            }else{
+                                console.log("same")
+                            }
+                        })
+                        // console.log(val)
+                        // frappe.db.get_value("Membership Options",val.membership_option,["*"]).then((r)=>{
+                        //     console.log(r)
+                           
+                        //     // d.hide();
+                        // });                      
+                    }
+                });
+                
+                d.show();
+            });
+        }
 	},
     onload(frm){
         if((frm.doc.end_date||"")!=""){           
@@ -64,9 +130,16 @@ function on_membership_value_changed(frm,changed=false){
         if(changed){
             frappe.db.get_value("Membership Options",frm.doc.membership,["*"]).then((r)=>{
                 frm.doc.price = r.message.cost;
+                frm.doc.default_discount = r.message.default_discount;
+                frm.doc.crypto_amount = r.message.crypto_amount;
+                frm.doc.old_crypto_amount = 0;
+
                 on_update_grand_total(frm,changed);
                 frm.refresh_field("price");   
-            });
+                frm.refresh_field("default_discount");   
+                frm.refresh_field("crypto_amount");   
+                frm.refresh_field("old_crypto_amount");   
+            }).catch((r)=>console.log(r));
         }else{
             on_update_grand_total(frm,changed);
         }        
@@ -82,6 +155,7 @@ function on_membership_value_changed(frm,changed=false){
     if(changed){
         frm.refresh_field("duration_type");   
         frm.refresh_field("access_to_training_section");  
+
     } 
 }
 
@@ -168,7 +242,7 @@ function on_membership_type_value_changed(frm,changed=false){
     if(changed){
         frm.doc.count_members = 0;
         frm.refresh_field("count_members");   
-        frm.refresh_field("family_shared_section");   
+        frm.refresh_field("family_shared_section");         
     }
 }
 

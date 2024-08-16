@@ -26,6 +26,7 @@
   "delay_access",
   "delay_access_base_on",
   "column_break_qwqf",
+  "old_membership_option",
   "membership",
   "membership_type",
   "duration_base_on",
@@ -35,18 +36,6 @@
   "tracking_limited",
   "max_access",
   "note",
-  "trainer_section",
-  "personal_trainer",
-  "trainer_name_en",
-  "trainer_name_kh",
-  "trainer_phone",
-  "trainer_gender",
-  "trainer_email",
-  "time_training",
-  "trainer_fee_percentage",
-  "trainer_photo",
-  "column_break_ojpw",
-  "trainer_note",
   "pricing_section",
   "regular_price",
   "price",
@@ -65,7 +54,25 @@
   "family_shared_section",
   "count_members",
   "membership_family_table",
-  "amended_from"
+  "amended_from",
+  "trainer_tab",
+  "trainer_section",
+  "personal_trainer",
+  "trainer_name_en",
+  "trainer_name_kh",
+  "trainer_phone",
+  "trainer_gender",
+  "trainer_email",
+  "time_training",
+  "trainer_fee_percentage",
+  "trainer_photo",
+  "column_break_ojpw",
+  "trainer_note",
+  "other_tab",
+  "default_discount",
+  "column_break_agfy",
+  "crypto_amount",
+  "old_crypto_amount"
  ],
  "fields": [
   {
@@ -92,6 +99,7 @@
    "reqd": 1
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "membership.duration_type",
    "fieldname": "duration_type",
    "fieldtype": "Data",
@@ -104,6 +112,7 @@
    "label": "Information"
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "membership.membership_duration",
    "fieldname": "membership_duration",
    "fieldtype": "Int",
@@ -207,12 +216,13 @@
   },
   {
    "default": "0",
-   "fetch_from": ".cost",
+   "fetch_from": ".",
    "fieldname": "grand_total",
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Grand Total",
-   "options": "Company:company:default_currency"
+   "options": "Company:company:default_currency",
+   "read_only": 1
   },
   {
    "default": "0",
@@ -223,7 +233,7 @@
   },
   {
    "default": "Percent",
-   "fetch_from": ".cost",
+   "fetch_from": ".",
    "fieldname": "discount_type",
    "fieldtype": "Select",
    "label": "Discount Type",
@@ -295,8 +305,9 @@
    "label": "Photo"
   },
   {
+   "allow_on_submit": 1,
    "default": "0",
-   "fetch_from": ".cost",
+   "fetch_from": ".",
    "fieldname": "total_discount",
    "fieldtype": "Currency",
    "hidden": 1,
@@ -310,6 +321,7 @@
    "options": "Trainer"
   },
   {
+   "allow_on_submit": 1,
    "default": "0",
    "fetch_from": "membership.tracking_limited",
    "fieldname": "tracking_limited",
@@ -318,6 +330,7 @@
    "label": "Tracking Limited"
   },
   {
+   "allow_on_submit": 1,
    "default": "0",
    "fetch_from": "membership.max_access",
    "fieldname": "max_access",
@@ -325,6 +338,7 @@
    "label": "Max Access"
   },
   {
+   "allow_on_submit": 1,
    "default": "0",
    "fetch_from": "membership.cost",
    "fieldname": "regular_price",
@@ -381,7 +395,7 @@
   {
    "fieldname": "trainer_section",
    "fieldtype": "Section Break",
-   "label": "Trainer"
+   "label": "Information"
   },
   {
    "allow_on_submit": 1,
@@ -490,6 +504,53 @@
    "fieldname": "trainer_fee_percentage",
    "fieldtype": "Float",
    "label": "Trainer Fee (%)"
+  },
+  {
+   "default": "0",
+   "description": "This value will apply to member on submit.",
+   "fetch_from": ".",
+   "fieldname": "default_discount",
+   "fieldtype": "Float",
+   "label": "Default Discount (%)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "other_tab",
+   "fieldtype": "Tab Break",
+   "label": "Other"
+  },
+  {
+   "fieldname": "column_break_agfy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fetch_from": ".",
+   "fieldname": "crypto_amount",
+   "fieldtype": "Currency",
+   "label": "Crypto Amount",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fetch_from": ".",
+   "fieldname": "old_crypto_amount",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "label": "Old Crypto Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "old_membership_option",
+   "fieldtype": "Link",
+   "label": "Old Membership Option",
+   "options": "Membership Options",
+   "read_only": 1
+  },
+  {
+   "fieldname": "trainer_tab",
+   "fieldtype": "Tab Break",
+   "label": "Trainer"
   }
  ],
  "image_field": "photo",
@@ -502,7 +563,7 @@
    "link_fieldname": "membership"
   }
  ],
- "modified": "2024-01-27 10:41:17.231548",
+ "modified": "2024-08-16 11:37:45.745279",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership",

@@ -44,7 +44,7 @@
                       <template v-slot:append>
                         
                         
-                        <v-chip v-if="c.allow_earn_point == 1 && c.total_point_earn > 0" color="success">{{c.total_point_earn}} Point(s)</v-chip>
+                        <v-chip v-if="c.allow_earn_point == 1 && c.total_point_earn > 0" color="success">{{Number(c.total_point_earn).toFixed(2)}} Point(s)</v-chip>
                         <ComCustomerPromotionChip :customer="c"></ComCustomerPromotionChip>
                         <v-badge v-if="c.pos_note" color="error" dot class="ml-2" :title="c.pos_note">
                           <v-icon>mdi-note-alert-outline</v-icon>

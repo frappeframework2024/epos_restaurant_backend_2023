@@ -40,7 +40,7 @@ def validate(filters):
 
 def get_columns(filters):
 	columns = [
-		{'fieldname':'name','label':"Items",'fieldtype':'Data','align':'left','width':150},
+		{'fieldname':'sale_coupon','label':"Items",'fieldtype':'Data','align':'left','width':150},
 		{'fieldname':'posting_date','label':"Date",'fieldtype':'Date','align':'center','width':150},
 		{'fieldname':'limit_visit','label':"Limit Visit",'fieldtype':'Int','align':'center','width':150},
 		{'fieldname':'visited_count','label':"Visited Count",'fieldtype':'Int','align':'center','width':150},
@@ -69,7 +69,7 @@ def get_report(filters):
 	join=''
 	if filters.get("member_type")==['Member']:
 		sql1 = ",c.name as customer,c.customer_group"
-		join = "inner join `tabCustomer` c on b.member_name = c.customer_name_en"
+		join = "inner join `tabCustomer` c on b.member = c.name"
 	sql = """
     select 
 
@@ -81,9 +81,9 @@ def get_report(filters):
 		b.discount_value,
 		b.grand_total,
 		a.payment_type,
-		b.member,
-		concat(b.member,'-',b.member_name) as member,
+		IFNULL(b.member, '') AS member, 
 		b.member_name,
+		CONCAT(IFNULL(b.member, ''), IF(b.member IS NOT NULL, '-', ''), b.member_name) AS member_code,  
 		b.total_payment_amount,
 		b.payment_balance,
 		a.name,
@@ -96,10 +96,12 @@ def get_report(filters):
         b.posting_date between %(start_date)s and %(end_date)s and
 		a.docstatus = 1
 """.format(sql1,join)
-	if ['Member'] in filters.get("member_type"):
+	if  filters.get("member_type") == ['Member']:
+	
 		sql = sql + " and b.member_type in %(member_type)s"
 		if filters.get('customer'):
-			sql = sql + " and c.name in %(customer)s "
+			
+			sql = sql + " and b.member in %(customer)s "
 		if filters.get("customer_group"):
 			sql = sql + " AND c.customer_group in %(customer_group)s"
 	if filters.get("member_type"):
@@ -111,14 +113,14 @@ def get_report(filters):
 
 def get_report_data(filters,data):
 	report_data = []
-
-	member = sorted(set({d['member_name'] for d in data}))
+	# frappe.throw(str([d['member'] for d in data]))
+	member = sorted(set({d['member_code'] for d in data}))
 	individual = sorted(set({d['member_type'] for d in data}))
 	if filters.get('member_type'):
 		for i in individual:
 			report_data.append({
 				'indent':0,
-				'name':i,
+				'sale_coupon':i,
 				'limit_visit':sum([d['limit_visit'] for d in data if d['member_type']==i]),
 				'visited_count':sum([d['visited_count'] for d in data if d['member_type']==i]),
 				'price':sum([d['price'] for d in data if d['member_type']==i]),
@@ -127,43 +129,43 @@ def get_report_data(filters,data):
 				'total_payment_amount':sum([d['total_payment_amount'] for d in data if d['member_type']==i]),
 				'payment_balance':sum([d['payment_balance'] for d in data if d['member_type']==i]),
 			})
-			for g in [m['member_name'] for m in data if m['member_type']==i]:
+			for g in [m['member_code'] for m in data if m['member_type']==i]:
 				report_data.append({
 					'indent':1,
-					'name':g,
-					'limit_visit':sum([d['limit_visit'] for d in data if d['member_name']==g and d['member_type']==i]),
-					'visited_count':sum([d['visited_count'] for d in data if d['member_name']==g and d['member_type']==i]),
-					'price':sum([d['price'] for d in data if d['member_name']==g and d['member_type']==i]),
-					'discount_value':sum([d['discount_value'] for d in data if d['member_name']==g and d['member_type']==i]),
-					'grand_total':sum([d['grand_total'] for d in data if d['member_name']==g and d['member_type']==i]),
-					'total_payment_amount':sum([d['total_payment_amount'] for d in data if d['member_name']==g and d['member_type']==i]),
-					'payment_balance':sum([d['payment_balance'] for d in data if d['member_name']==g and d['member_type']==i]),
+					'sale_coupon':g,
+					'limit_visit':sum([d['limit_visit'] for d in data if d['member_code']==g and d['member_type']==i]),
+					'visited_count':sum([d['visited_count'] for d in data if d['member_code']==g and d['member_type']==i]),
+					'price':sum([d['price'] for d in data if d['member_code']==g and d['member_type']==i]),
+					'discount_value':sum([d['discount_value'] for d in data if d['member_code']==g and d['member_type']==i]),
+					'grand_total':sum([d['grand_total'] for d in data if d['member_code']==g and d['member_type']==i]),
+					'total_payment_amount':sum([d['total_payment_amount'] for d in data if d['member_code']==g and d['member_type']==i]),
+					'payment_balance':sum([d['payment_balance'] for d in data if d['member_code']==g and d['member_type']==i]),
 				})
 
-				report_data = report_data +  [d.update({"indent":2}) or d for d in data if d['member_name']==g and d['member_type']==i]
+				report_data = report_data +  [d.update({"indent":2}) or d for d in data if d['member_code']==g and d['member_type']==i]
 
 	else:
 		for g in member:
 				report_data.append({
 					'indent':0,
-					'name':g,
-					'limit_visit':sum([d['limit_visit'] for d in data if d['member_name']==g]),
-					'visited_count':sum([d['visited_count'] for d in data if d['member_name']==g]),
-					'price':sum([d['price'] for d in data if d['member_name']==g]),
-					'discount_value':sum([d['discount_value'] for d in data if d['member_name']==g]),
-					'grand_total':sum([d['grand_total'] for d in data if d['member_name']==g]),
-					'total_payment_amount':sum([d['total_payment_amount'] for d in data if d['member_name']==g]),
-					'payment_balance':sum([d['payment_balance'] for d in data if d['member_name']==g]),
+					'sale_coupon':g,
+					'limit_visit':sum([d['limit_visit'] for d in data if d['member_code']==g]),
+					'visited_count':sum([d['visited_count'] for d in data if d['member_code']==g]),
+					'price':sum([d['price'] for d in data if d['member_code']==g]),
+					'discount_value':sum([d['discount_value'] for d in data if d['member_code']==g]),
+					'grand_total':sum([d['grand_total'] for d in data if d['member_code']==g]),
+					'total_payment_amount':sum([d['total_payment_amount'] for d in data if d['member_code']==g]),
+					'payment_balance':sum([d['payment_balance'] for d in data if d['member_code']==g]),
 				})
 
-				report_data = report_data +  [d.update({"indent":1}) or d for d in data if d['member_name']==g]
+				report_data = report_data +  [d.update({"indent":1}) or d for d in data if d['member_code']==g]
 	return report_data
 
  
 def get_report_chart(filters, data):
     precision = frappe.db.get_single_value("System Settings", "currency_precision")
     
-    columns = sorted(set(d['member_name'] for d in data))
+    columns = sorted(set(d['member_code'] for d in data))
     
     price = [0] * len(columns)
     discount_value = [0] * len(columns)
@@ -174,7 +176,7 @@ def get_report_chart(filters, data):
     member_index = {member: index for index, member in enumerate(columns)}
     
     for d in data:
-        member = d['member_name']
+        member = d['member_code']
         index = member_index.get(member)
         if index is not None:
             price[index] += d.get('price', 0)

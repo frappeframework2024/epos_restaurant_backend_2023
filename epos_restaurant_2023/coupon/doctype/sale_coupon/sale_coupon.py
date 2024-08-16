@@ -55,14 +55,13 @@ def update_customer_relate_sale_coupon(self):
 		sql = """update `tabCustomer` c
 				inner join (
 					select 
-						s.member,
-						sum(s.limit_visit) as total_limit_visit,
-						sum(s.visited_count) as total_visited_count,
-						sum(s.balance) as total_visited_balance
+						%(customer_code)s as member,
+						coalesce(sum(s.limit_visit),0) as total_limit_visit,
+						coalesce(sum(s.visited_count),0) as total_visited_count,
+						coalesce(sum(s.balance),0) as total_visited_balance
 					from `tabSale Coupon` s
 					where s.docstatus = 1 
 					and s.member = %(customer_code)s
-					group by s.member
 				) sc on c.name = sc.member
 					set c.total_limit_visit = sc.total_limit_visit,
 					c.total_visited_count = sc.total_visited_count,

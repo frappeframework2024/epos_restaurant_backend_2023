@@ -10,8 +10,12 @@
  "field_order": [
   "membership_option_title",
   "membership_type",
+  "column_break_apfr",
+  "default_discount",
   "pricing_section",
   "cost",
+  "column_break_pibt",
+  "crypto_amount",
   "family_pricing_section",
   "family_members_table",
   "column_break_umac",
@@ -147,11 +151,33 @@
    "fieldname": "max_access",
    "fieldtype": "Int",
    "label": "Max Access"
+  },
+  {
+   "default": "0",
+   "description": "apply for member or customer default discount",
+   "fieldname": "default_discount",
+   "fieldtype": "Float",
+   "label": "Default Discount (%)"
+  },
+  {
+   "fieldname": "column_break_apfr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_pibt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "description": "Member can get crypto when register membership or member check-in for GYM",
+   "fieldname": "crypto_amount",
+   "fieldtype": "Currency",
+   "label": "Crypto Amount"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-11-29 11:55:18.842099",
+ "modified": "2024-08-15 17:36:52.368611",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership Options",
@@ -167,6 +193,7 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "select": 1,
    "share": 1,
    "write": 1
   },
@@ -178,43 +205,8 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Sales Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Sales User",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Sales Master Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Product Manager",
+   "role": "GYM User",
+   "select": 1,
    "share": 1,
    "write": 1
   }

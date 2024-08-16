@@ -22,6 +22,7 @@ def get_sidebar_menu_template_cached(user,site= frappe.local.site):
     shortcut_menus =  get_list_with_permission(shortcut_menus) 
     workspace_links = frappe.db.sql("select name,idx, parent,link_to,link_type,label,link_count,type from `tabWorkspace Link` where parent in %(parents)s and custom_show_in_app_menu = 1   order by custom_sort_order, idx ",{"parents":[d["name"] for d in  data["pages"]]},as_dict=1)
     workspace_links =  get_list_with_permission(workspace_links)
+ 
     for d in menus:
         d["sub_menus"] = {"shortcut_menu":[],"workspace_links":[]}
         

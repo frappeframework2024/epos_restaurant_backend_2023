@@ -6,7 +6,7 @@
             <ComShortcut v-if="product.setting.pos_menus.length > 0" />
 
             <ComShortcurMenuFromProductGroup v-else />
-            <div class="pa-2 h-full overflow-y-auto" :class="getCustomerScrollWidth()" id="wrap_menu">
+            <div  ref="scrollContainer" class="pa-2 h-full overflow-y-auto" :class="getCustomerScrollWidth()" id="wrap_menu">
                 <ComPlaceholder :loading="product.posMenuResource.loading"
                     :is-not-empty="product.posMenuResource.data?.length > 0" class-color="text-white"
                     :is-placeholder="true">
@@ -50,9 +50,10 @@ import ComShortcurMenuFromProductGroup from './ComShortcurMenuFromProductGroup.v
 import ComMenuItemByProductCategory from './ComMenuItemByProductCategory.vue';
 import ComPlaceholder from '@/components/layout/components/ComPlaceholder.vue';
 import ComMenuItem from './ComMenuItem.vue';
-import { inject, defineProps } from '@/plugin';
+import { inject, defineProps ,ref,onUnmounted,onMounted} from '@/plugin';
 import { useDisplay } from 'vuetify'
 import ComSaleButtonActions from './ComSaleButtonActions.vue';
+ 
 const { mobile } = useDisplay()
 const product = inject("$product")
 const frappe = inject("$frappe")
@@ -61,6 +62,7 @@ const props = defineProps({
     backgroundImage: String
 });
 
+const scrollContainer = ref(null);
 
 function getCustomerScrollWidth() {
     const is_window = localStorage.getItem('is_window');
@@ -82,6 +84,26 @@ function onMenuRefresh() {
     }
 
 }
+
+const onScroll = () => {
+  if (scrollContainer.value) {
+    const container = scrollContainer.value;
+    const scrollBottom = container.scrollHeight - container.scrollTop === container.clientHeight;
+    if (scrollBottom) {
+        
+        product.getProductByProductCategory(db,"Beers",2)
+    }
+  }
+};
+onMounted(() => {
+ 
+  scrollContainer.value.addEventListener('scroll', onScroll);
+});
+onUnmounted(() => {
+ 
+  scrollContainer.value.removeEventListener('scroll', onScroll);
+});
+
 
 </script>
 

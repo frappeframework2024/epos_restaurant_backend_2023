@@ -36,17 +36,16 @@ def update_payment_balance(self):
 	sql = """update `tabSale Coupon` s
 			inner join (
 				select 
-					p.sale_coupon,  
+					%(coupon_number)s as sale_coupon,  
 					coalesce(sum(p.payment_amount) ,0) as total_payment 
 				from `tabSales Coupon Payment` p
 				where docstatus = 1 
 				and p.sale_coupon = %(coupon_number)s 
-				group by p.sale_coupon 
 			) sp on sp.sale_coupon =  %(coupon_number)s
 			set 
 				s.payment_balance = s.grand_total - sp.total_payment,
 				s.total_payment_amount = sp.total_payment
-			"""
+			where s.name = %(coupon_number)s"""
 	frappe.db.sql(sql,{"coupon_number":self.sale_coupon})
 
 	## update customer on total sale coupon payment balance
@@ -55,12 +54,13 @@ def update_payment_balance(self):
 		customer_sql = """update `tabCustomer` c
 						inner join (
 							select 
-								s.member,  
+								 %(customer_code)s as member,  
 								coalesce(sum(s.payment_balance) ,0) as total_payment_balance 
 							from `tabSale Coupon` s
 							where docstatus = 1 
 							and s.member = %(customer_code)s
 							group by s.member 
 						) sp on sp.member =  %(customer_code)s
-						set c.total_sale_coupon_payment_balance = sp.total_payment_balance"""
+						set c.total_sale_coupon_payment_balance = sp.total_payment_balance
+						where c.name = %(customer_code)s"""
 		frappe.db.sql(customer_sql,{"customer_code":sale_coupon.member})

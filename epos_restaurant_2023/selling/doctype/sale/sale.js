@@ -12,7 +12,11 @@ frappe.ui.form.on("Sale", {
 		});
 
 	},
+	setup(frm){
+		frm.set_indicator_formatter('product_code',"orange");
+	},
 	refresh(frm) { 
+		
 		frm.set_query("commission_01_account","sale_products", function() {
             return {
                 filters: [["is_group","=",0],["root_type","=","Liabilities"]]

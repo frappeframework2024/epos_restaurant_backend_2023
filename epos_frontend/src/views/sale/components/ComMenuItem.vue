@@ -168,7 +168,8 @@ function onClickMenu(menu) {
         product.parentMenu = menu.name;
         _onPriceRuleChanged(menu);
     } else {
-        product.getProductMenuByProductCategory(db, menu)
+        alert(12)
+        product.getProductMenuByProductCategory(db, menu.name)
     }
 
 }

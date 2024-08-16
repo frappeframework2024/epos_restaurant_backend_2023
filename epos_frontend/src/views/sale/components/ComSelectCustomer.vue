@@ -11,7 +11,7 @@
                             class="mr-4" size="40"></avatar>
                     </template>
                     <div class="px-2">
-                        <div class="font-bold">{{ sale.sale.customer_name || "" }} <ComChip v-if="current_customer_point > 0" :tooltip="$t('Current Point(s)')" color="success">{{ current_customer_point }}</ComChip></div>
+                        <div class="font-bold">{{ sale.sale.customer_name || "" }} <ComChip v-if="current_customer_point > 0" :tooltip="$t('Current Point(s)')" color="success">{{ Number(current_customer_point).toFixed(2)  }}</ComChip></div>
                         
                         <div class="text-gray-400 text-sm">{{ subTitle || "" }}</div>
                         <span class="text-gray-400 text-sm" style="font-size: 12px">{{ sale.sale.pos_note }}</span>
@@ -286,7 +286,7 @@ async function onRemove() {
         sale.sale.arrival = ""
         sale.sale.departure = ""
         sale.sale.room_number = ""
-
+        current_customer_point.value = 0
     }
 }
 async function onAddCustomer() {

@@ -15,7 +15,7 @@ class SalePayment(Document):
   
 		#check if reservation deleted
 		if self.pos_reservation:
-			reservation = frappe.get_doc("POS Reservation", self.pos_reservation)			
+			reservation = frappe.get_doc("POS Reservation", self.pos_reservation)		
 			if reservation.reservation_status != "Confirmed" and not self.sale:
 				frappe.throw("Payment not allow with this current reservation status. ({})".format(reservation.reservation_status))
 
@@ -36,7 +36,7 @@ class SalePayment(Document):
 		if self.transaction_type =="Changed":
 			self.payment_amount = self.input_amount / self.change_exchange_rate 
 		else:
-			self.payment_amount = self.input_amount / self.exchange_rate 
+			self.payment_amount = self.input_amount / self.exchange_rate
 		
 		self.payment_amount = round(self.payment_amount,int(currency_precision))
 		
@@ -122,8 +122,6 @@ class SalePayment(Document):
 
 					total_point_get = (point_setting.to_point_earn * (self.payment_amount ))/point_setting.from_amount_earn
 
-					total_point_get = total_point_get
-					
 					frappe.db.sql("""Update `tabCustomer` set total_point_earn = total_point_earn + {0} where name = '{1}'""".format(total_point_get,self.customer))
 					frappe.db.set_value('Sale Payment',self.name,{ 'allow_earn_point':1,'total_point_earn': total_point_get})
 					frappe.db.sql("""UPDATE `tabSale` s
@@ -264,5 +262,21 @@ def update_sale(self):
 				'sale':self.sale
 			})
 			frappe.db.commit()
-		# update customer balance
+			
+			# update customer balance
+			update_customer_bill_balance(self)
 		
+
+
+def update_customer_bill_balance(self,calcel=False):
+	sql ="""update `tabCustomer` c 
+			inner join (
+						select 
+							s.customer, 
+							sum(s.balance) as total_balance 
+						from `tabSale` s
+						where s.docstatus = 1 and s.customer = %(customer)s 
+						group by s.customer) _s on _s.customer = c.name
+				set c.balance = _s.total_balance + c.total_coupon_balance + c.membership_balance
+			where c.name = %(customer)s"""
+	frappe.db.sql(sql,{"customer":self.customer})

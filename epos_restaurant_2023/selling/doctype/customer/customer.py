@@ -439,3 +439,35 @@ def  get_customer_search_link(txt):
 		}
 	)
 	return data
+
+
+@frappe.whitelist()
+def get_customer_document(customer_name):
+	data=[]
+	if 'edoor' in frappe.get_installed_apps():
+		sql = """
+			select 
+				f.name, 
+				f.custom_title, 
+				f.custom_description, 
+				f.file_size, 
+				f.file_url, 
+				f.file_name, 
+				f.attached_to_name, 
+				f.attached_to_doctype, 
+				f.owner, 
+				f.creation, 
+				f.modified, 
+				f.modified_by,
+				f.file_type,
+				c.customer_name_en
+			from 
+				`tabFile` f
+			inner join `tabCustomer` c on f.attached_to_name = c.name
+			where 
+				f.attached_to_doctype='Customer' and 
+				f.attached_to_name=%(customer_name)s and 
+				f.custom_show_in_edoor=1
+		"""
+		data = frappe.db.sql(sql, {'customer_name':customer_name}, as_dict=1)
+	return data

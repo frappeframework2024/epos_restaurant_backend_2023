@@ -344,10 +344,12 @@ class Sale(Document):
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit", queue='short', self=self)
 
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.add_payment_to_sale_payment", queue='short', self=self)
+
+		update_customer_bill_balance(self)
 		
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			submit_sale_to_general_ledger_entry(self)
-			commission_GL_entry(self)
+			commission_general_ledger_entry(self)
 
 
 
@@ -358,7 +360,7 @@ class Sale(Document):
 
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			cancel_general_ledger_entery("Sale", self.name)	
-			commission_GL_entry(self)
+			commission_general_ledger_entry(self)
 		
 
 		## update cash coupon information
@@ -370,12 +372,14 @@ class Sale(Document):
 		frappe.db.sql(sql_delete_bulk)
 		frappe.db.commit()
 
+		update_customer_bill_balance(self)
+
 		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel", queue='short', self=self)
 
 
-def commission_GL_entry(self):
+def commission_general_ledger_entry(self):
 	commissions=[]
-	total_commission = (self.commission_01+self.commission_02+self.commission_03+self.commission_04+self.commission_05)
+	total_commission = ((self.commission_01 or 0) + (self.commission_02 or 0) + (self.commission_03 or 0) +(self.commission_04 or 0) +(self.commission_05 or 0) )
 	if total_commission>0:
 		if self.commission_01_account and self.commission_01 > 0:
 			commissions.append({"amount":self.commission_01,"account":self.commission_01_account,"employee":a.commission_01_to})
@@ -1276,3 +1280,15 @@ def update_inventory_product_cost(self):
 				if cost_data:
 					sp.cost =  cost_data[0]["cost"]
     
+def update_customer_bill_balance(self):
+	sql ="""update `tabCustomer` c 
+			inner join (
+						select 
+							s.customer, 
+							coalesce(sum(s.balance),0) as total_balance 
+						from `tabSale` s
+						where s.docstatus = 1 and s.customer = %(customer)s 
+						group by s.customer) _s on _s.customer = c.name
+				set c.balance = _s.total_balance + c.total_coupon_balance + c.membership_balance
+			where c.name = %(customer)s"""
+	frappe.db.sql(sql,{"customer":self.customer})
