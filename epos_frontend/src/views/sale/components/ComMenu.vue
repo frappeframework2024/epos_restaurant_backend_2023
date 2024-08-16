@@ -4,24 +4,23 @@
         v-bind:style="{ 'background-image': 'url(' + backgroundImage + ')' }">
         <div class="flex h-full flex-col">
             <ComShortcut v-if="product.setting.pos_menus.length > 0" />
-
             <ComShortcurMenuFromProductGroup v-else />
             <div  ref="scrollContainer" class="pa-2 h-full overflow-y-auto" :class="getCustomerScrollWidth()" id="wrap_menu">
                 <ComPlaceholder :loading="product.posMenuResource.loading"
-                    :is-not-empty="product.posMenuResource.data?.length > 0" class-color="text-white"
+                    :is-not-empty="(product.posMenuResource.data?.length > 0 || product.setting.default_pos_menu =='')" class-color="text-white"
                     :is-placeholder="true">
                     <template #default>
                         <div class="grid gap-2"
                             :class="mobile ? 'grid-cols-2' : 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'"
-                            v-if="product.posMenuResource.data?.length > 0">
+                           >
                             <template v-if="product.setting.pos_menus.length > 0">
 
                                 <div v-for="(m, index) in product.getPOSMenu()" :key="index" class="h-36">
-                                    
                                     <ComMenuItem :data="m" />
                                 </div>
                             </template>
                             <template v-else>
+                               
                                 <ComMenuItemByProductCategory />
                             </template>
                         </div>
@@ -78,7 +77,7 @@ function onMenuRefresh() {
         product.loadPOSMenu()
     } else {
 
-        product.getProductMenuByProductCategory(db, "All Product Categories")
+        product.getProductMenuByProductCategory( "All Product Categories")
         product.loadPOSMenu();
         console.log(product.getPOSMenu())
     }
@@ -86,22 +85,25 @@ function onMenuRefresh() {
 }
 
 const onScroll = () => {
-  if (scrollContainer.value) {
+  if (scrollContainer.value && product.isLoadingProduct ==false && product.isSearchProduct == false) {
     const container = scrollContainer.value;
     const scrollBottom = container.scrollHeight - container.scrollTop === container.clientHeight;
     if (scrollBottom) {
         
-        product.getProductByProductCategory(db,"Beers",2)
+        product.getProductByProductCategory(db)
     }
   }
 };
 onMounted(() => {
- 
-  scrollContainer.value.addEventListener('scroll', onScroll);
+    if (scrollContainer.value && product.setting.default_pos_menu=="" ) {
+         scrollContainer.value.addEventListener('scroll', onScroll);
+    }
 });
 onUnmounted(() => {
- 
-  scrollContainer.value.removeEventListener('scroll', onScroll);
+    if (scrollContainer.value && product.setting.default_pos_menu=="") {
+        scrollContainer.value.removeEventListener('scroll', onScroll);
+    }
+  
 });
 
 

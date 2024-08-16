@@ -53,7 +53,8 @@
     })
   
     function onShortCutMenuClick(name) {
-       product.getProductMenuByProductCategory(db,name)
+    
+       product.getProductMenuByProductCategory(name)
         
     }
 </script>

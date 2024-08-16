@@ -3,8 +3,30 @@
 
 frappe.ui.form.on("Membership", {
 	refresh(frm) {
+       
+
         if(frm.doc.docstatus == 1){
+            let expired = false;
+            if(frm.doc.duration_base_on){
+                const _end_datetime = new Date(frm.doc.end_date);  
+                const _now_datetime = on_get_date( new Date());  
+                const _end_date = on_get_date(_end_datetime)
+                expired = _end_date < _now_datetime;
+            }
+
+            if(expired ) return ;
+
+            if(frm.doc.is_delay_access == 1 && frm.doc.delay_access > 0) return ;
+
             frm.add_custom_button(__('Upgrade Membership Option'), function () {
+                if(frm.doc.__unsaved){
+                    frappe.msgprint({
+                        title: __('Warning'),
+                        indicator: 'yellow',
+                        message: __('Please update document first')
+                    });
+                    return
+                }
                 let d = new frappe.ui.Dialog({
                     title: 'Upgrade Membership Option',
                     fields: [
@@ -19,6 +41,8 @@ frappe.ui.form.on("Membership", {
                                     filters: {
                                         membership_type: ["=", frm.doc.membership_type],
                                         name: ["!=",frm.doc.old_membership || frm.doc.membership],
+                                        duration_type:["=",frm.doc.duration_type],
+                                        tracking_limited:["=",frm.doc.tracking_limited]
                                     }
                                 };
                             },
@@ -144,6 +168,19 @@ function on_membership_value_changed(frm,changed=false){
             on_update_grand_total(frm,changed);
         }        
     }
+    
+    if(frm.doc.membership != "" && frm.doc.membership!=undefined){
+        if(frm.doc.duration_type =="Ongoing"){
+            frm.set_df_property('is_delay_access', 'hidden', 1);        
+        }else{
+            
+            frm.set_df_property('is_delay_access', 'hidden', 0);        
+        }
+    }else{
+        frm.set_df_property('is_delay_access', 'hidden', 1);
+    }
+    
+    
 
     frm.set_df_property('duration_type', 'hidden', 0);
     frm.set_df_property('access_to_training_section', 'hidden', 0);
@@ -362,4 +399,8 @@ function on_delay_access_value_changed(frm, changed){
     frm.refresh_field("end_date"); 
 
     frm.set_df_property('end_date', 'read_only', 1);
+}
+
+function on_get_date(date){
+     return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }

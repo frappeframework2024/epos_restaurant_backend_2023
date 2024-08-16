@@ -4,6 +4,8 @@ import json
 from frappe.utils.response import json_handler
 from datetime import datetime, timedelta
 from epos_restaurant_2023.inventory.inventory import get_uom_conversion
+from functools import lru_cache
+
 @frappe.whitelist(allow_guest=True)
 def get_product_by_menu(root_menu="", mobile = 0):
     if root_menu=="":
@@ -267,3 +269,83 @@ def get_currenct_cost(product_code="",stock_location="",unit=""):
             doc = frappe.db.sql("SELECT cost/{1} cost,0 quantity FROM `tabProduct` WHERE product_code = '{0}' limit 1".format(product_code,uom_conversion),as_dict=1)
             doc[0]["last_purchase_cost"] = product.last_purchase_cost
             return doc[0]
+        
+        
+
+@frappe.whitelist()
+def get_product_by_product_category(category ='All Product Categories', limit = 20, page=1):
+    fields= [
+        "name as menu_product_name",
+        "name",
+        "product_name_en as name_en",
+        "product_name_kh as name_kh",
+        "product_category as parent",
+        "price",
+        "unit",
+        "allow_discount",
+        "allow_change_price",
+        "allow_free",
+        "is_open_product",
+        "is_inventory_product",
+        "photo",
+        "append_quantity",
+        "is_combo_menu",
+        "use_combo_group",
+        "combo_menu_data",
+        "combo_group_data",
+        "is_open_price",
+        "is_timer_product",
+        'tax_rule',
+        'revenue_group',
+        'prices',
+        'sort_order'
+    ]
+
+    filters={
+        'disabled': 0,
+        'allow_sale':1,
+       
+    }
+    
+    if category!= 'All Product Categories':
+        filters["product_category"]= ["in",get_product_category_with_children(category)]
+    
+    data = frappe.db.get_list('Product',
+        filters=filters,
+        fields=fields,
+        order_by='sort_order asc',
+        start=(int(page)  -1) * 20 + 1,
+        page_length=limit
+    )
+    return data
+
+
+@frappe.whitelist()
+def  get_product_category_with_children(parent_category='All Product Categories'):
+    sql="""
+        WITH RECURSIVE hierarchy AS (
+            SELECT
+                name as product_category,
+                parent_product_category
+            FROM
+                `tabProduct Category`
+            WHERE
+                name = %(parent_category)s and 
+                allow_sale = 1
+            UNION ALL
+            SELECT
+                t.name as product_category,
+                t.parent_product_category
+            FROM
+                `tabProduct Category` t
+            JOIN
+                hierarchy h ON t.parent_product_category = h.product_category
+        )
+        SELECT
+            product_category
+        FROM
+            hierarchy
+
+    """
+    data =  frappe.db.sql(sql,{"parent_category":parent_category,},as_dict=1)
+    return [d["product_category"] for d in data]

@@ -2,6 +2,7 @@
  
     <div :class="small ? 'px-2' : 'px-6'">
         <div class="search-box my-0 mx-auto" :class="small ? 'w-full' : 'max-w-[350px]'">
+            
             <ComInput
                 :autofocus="!getIsMobile()"
                 keyboard
@@ -15,9 +16,7 @@
                 ref="txtSearch"
                 :listening-focus="true"
                 />
-<!-- 
-            <ComAutoComplete v-model="selected_product" doctype="Product" :autoFetch="false"
-                @onSelected="onSelectProduct" /> -->
+ 
 
         </div>
         

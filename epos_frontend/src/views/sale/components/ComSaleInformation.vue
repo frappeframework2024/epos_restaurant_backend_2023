@@ -80,7 +80,7 @@ async function onChangePriceRule() {
                 product.loadPOSMenu()
             } else {
                 product.loadPOSMenu()
-                product.getProductMenuByProductCategory(db, "All Product Categories")
+                product.getProductMenuByProductCategory( "All Product Categories")
             }
 
             toaster.success("msg.Change price rule successfully");

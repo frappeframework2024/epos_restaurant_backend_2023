@@ -74,11 +74,15 @@ const socket = inject("$socket");
 const product = inject("$product");
 const frappe = inject("$frappe");
 const db = frappe.db();
+ 
 let openSearch = ref(false);
 const route = useRoute();
 const router = useRouter();
 
 const toaster = createToaster({ position: "top-right" });
+
+ 
+ 
 
 sale.vueInstance = getCurrentInstance();
 sale.vue = sale.vueInstance.appContext.config.globalProperties;
@@ -103,7 +107,7 @@ if (product.posMenuResource.data?.length == 0) {
         product.loadPOSMenu();
     } else {
 
-        product.getProductMenuByProductCategory(db, "All Product Categories")
+        product.getProductMenuByProductCategory( "All Product Categories")
         product.loadPOSMenu();
     }
 
@@ -152,7 +156,7 @@ onMounted(() => {
                 // sale.working_day = data.working_day.name;
                 // sale.cashier_shift = data.cashier_shift.name;
                 // sale.shift_name = data.cashier_shift.shift_name;
-                product.getProductMenuByProductCategory(db, 'All Product Categories')
+                product.getProductMenuByProductCategory( 'All Product Categories')
                 gv.confirm_close_working_day(data.working_day.posting_date);
 
                 onCheckExpireHappyHoursPromotion();

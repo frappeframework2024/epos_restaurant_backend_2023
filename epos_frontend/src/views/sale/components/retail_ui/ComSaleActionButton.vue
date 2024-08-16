@@ -203,7 +203,7 @@
               if(product.setting.pos_menus.length>0){
                   product.loadPOSMenu()
               }else{
-                  product.getProductMenuByProductCategory(db,"All Product Categories")
+                  product.getProductMenuByProductCategory("All Product Categories")
               }
               
               window.postMessage("close_modal","*");

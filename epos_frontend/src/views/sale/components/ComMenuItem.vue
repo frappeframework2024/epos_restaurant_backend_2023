@@ -168,8 +168,8 @@ function onClickMenu(menu) {
         product.parentMenu = menu.name;
         _onPriceRuleChanged(menu);
     } else {
-        alert(12)
-        product.getProductMenuByProductCategory(db, menu.name)
+      
+        product.getProductMenuByProductCategory( menu.name)
     }
 
 }
@@ -268,6 +268,7 @@ async function onClickProduct() {
                 
                 const check_modifiers = product.onCheckModifier(JSON.parse(p.modifiers));
 
+                
                 if (portions?.length == 1) {
                     p.price = portions[0].price
                     p.unit = portions[0].unit
@@ -275,19 +276,17 @@ async function onClickProduct() {
 
 
                 }
-
-
+                
                 if (check_modifiers || portions?.length > 1 || p.is_open_price) {
                     const pro_data = props.data
                     if (p.is_open_price && portions.length == 0) {
                         pro_data.prices = JSON.stringify([{ "price": p.price, "branch": "", "price_rule": sale.sale.price_rule, "portion": "Normal", "unit": p.unit, "default_discount": 0 }])
                     }
-
                     product.setSelectedProduct(pro_data);
 
                     let productPrices = await addModifierDialog();
 
-
+                    console.log('productPrices',productPrices)
                     if (productPrices) {
                         if (productPrices.portion != undefined) {
                             p.price = productPrices.portion.price;
@@ -323,7 +322,7 @@ async function onClickProduct() {
                 return
             }
         }
-        console.log(p)
+        
         sale.addSaleProduct(p);
 
     }

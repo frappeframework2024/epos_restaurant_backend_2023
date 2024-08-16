@@ -233,7 +233,7 @@ async function onChangePriceRule() {
             if (product.setting.pos_menus.length > 0) {
                 product.loadPOSMenu()
             } else {
-                product.getProductMenuByProductCategory(db, "All Product Categories")
+                product.getProductMenuByProductCategory( "All Product Categories")
             }
 
             window.postMessage("close_modal", "*");
@@ -248,7 +248,7 @@ async function onChangePOSMenu() {
             product.loadPOSMenu()
         } else {
             product.loadPOSMenu()
-            product.getProductMenuByProductCategory(db, "All Product Categories")
+            product.getProductMenuByProductCategory( "All Product Categories")
         }
         window.postMessage("close_modal", "*");
         toaster.success($t("msg.Change POS Menu successfully"));

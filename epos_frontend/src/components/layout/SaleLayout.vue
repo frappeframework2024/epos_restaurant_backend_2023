@@ -17,7 +17,6 @@
                         <span v-if="sale.sale.tbl_number">- {{ sale.sale.tbl_number }}</span>
                         <span v-if="sale.sale.sale_status == 'New'"> - {{ $t('New') }}</span>
                         <span v-else> - {{ sale.sale.name }}</span>
-
                         <v-chip class="ml-2" variant="elevated" v-if="sale.sale.name"
                             :color="sale.sale.sale_status_color" :size="mobile ? 'x-small' : 'default'">
                             {{ sale.sale.sale_status }}
@@ -29,6 +28,7 @@
             <template #title v-if="!mobile">
                 <div class="flex gap-1 justify-center sale-search-cs">
                     <div>
+                        
                         <ComProductSearch small />
                     </div>
                     <div v-if="!mobile && sale.setting.use_retail_ui == 1">
