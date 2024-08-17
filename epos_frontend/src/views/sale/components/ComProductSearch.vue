@@ -113,7 +113,7 @@ function onSearchProductByBarcode(barcode){
                 }
 
                 if (check_modifiers || portions?.length > 1) {
-                    product.setSelectedProduct(doc);
+                    product.setSelectedProduct(doc,sale.sale.price_rule);
 
                     let productPrices = await addModifierDialog();
 

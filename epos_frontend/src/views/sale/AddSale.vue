@@ -72,8 +72,6 @@ const gv = inject("$gv");
 const socket = inject("$socket");
 
 const product = inject("$product");
-const frappe = inject("$frappe");
-const db = frappe.db();
  
 let openSearch = ref(false);
 const route = useRoute();
@@ -81,8 +79,7 @@ const router = useRouter();
 
 const toaster = createToaster({ position: "top-right" });
 
- 
- 
+  
 
 sale.vueInstance = getCurrentInstance();
 sale.vue = sale.vueInstance.appContext.config.globalProperties;

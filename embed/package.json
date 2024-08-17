@@ -1,0 +1,21 @@
+{
+  "name": "embed",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build --base=/assets/epos_restaurant_2023/embed/ && yarn copy-html-entry",
+    "preview": "vite preview",
+    "copy-html-entry": "cp ../epos_restaurant_2023/public/embed/index.html ../epos_restaurant_2023/www/embed.html"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.5.1",
+    "vue": "^3.4.37",
+    "vue-router": "^4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.1.2",
+    "vite": "^5.4.1"
+  }
+}

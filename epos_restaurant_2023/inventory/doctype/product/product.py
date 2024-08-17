@@ -189,9 +189,9 @@ class Product(Document):
 		frappe.clear_document_cache("Product",self.name)
 		if self.flags.ignore_on_update==True:
 			return 
-		# add_product_to_temp_menu(self)
-		frappe.enqueue("epos_restaurant_2023.inventory.doctype.product.product.add_product_to_temp_menu", queue='short', self=self)
-		update_fetch_from_field(self)
+		add_product_to_temp_menu(self)
+		# frappe.enqueue("epos_restaurant_2023.inventory.doctype.product.product.add_product_to_temp_menu", queue='short', self=self)
+		
   
 
 	def on_trash(self):
@@ -288,6 +288,7 @@ def get_product(barcode,business_branch=None,stock_location = None,price_rule=No
 		if is_inventory_product == 1:
 			filters["is_inventory_product"] = 1
 		p = frappe.get_cached_doc("Product",filters,["*"])
+		
 		if allow_sale and not p.allow_sale:
 			return {
 				"status":404,
@@ -397,7 +398,6 @@ def get_stock_location_product_info(product_code=None, stock_location=None):
 
 def add_product_to_temp_menu(self):
 	frappe.db.sql("delete from `tabTemp Product Menu` where product_code='{}'".format(self.name))
-
 	if self.pos_menus and not self.disabled and self.allow_sale:
 		printers = []
 		for p in self.printers:
@@ -552,6 +552,8 @@ def add_product_to_temp_menu(self):
 
 		frappe.db.commit()
 
+
+	update_fetch_from_field(self)
 
    
 @frappe.whitelist()

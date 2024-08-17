@@ -15,7 +15,7 @@
         'background-size': 'contain', 'background-position': 'center center'
     }" @click="onClickMenu(data)">
         <div class="absolute top-0 bottom-0 right-0 left-0">
-
+            
             <avatar class="!h-full !w-full" :name="data.name_en" :rounded="false" :background="data.background_color"
                 :color="data.text_color" v-if="!data.photo"></avatar>
         </div>
@@ -169,7 +169,7 @@ function onClickMenu(menu) {
         _onPriceRuleChanged(menu);
     } else {
       
-        product.getProductMenuByProductCategory( menu.name)
+        product.getProductMenuByProductCategory(db, menu.name)
     }
 
 }
@@ -282,11 +282,14 @@ async function onClickProduct() {
                     if (p.is_open_price && portions.length == 0) {
                         pro_data.prices = JSON.stringify([{ "price": p.price, "branch": "", "price_rule": sale.sale.price_rule, "portion": "Normal", "unit": p.unit, "default_discount": 0 }])
                     }
-                    product.setSelectedProduct(pro_data);
+                    product.setSelectedProduct(pro_data,sale.sale.price_rule);
 
                     let productPrices = await addModifierDialog();
 
                     console.log('productPrices',productPrices)
+
+                    
+
                     if (productPrices) {
                         if (productPrices.portion != undefined) {
                             p.price = productPrices.portion.price;

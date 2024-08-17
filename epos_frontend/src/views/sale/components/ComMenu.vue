@@ -13,7 +13,7 @@
                         <div class="grid gap-2"
                             :class="mobile ? 'grid-cols-2' : 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'"
                            >
-                            <template v-if="product.setting.pos_menus.length > 0">
+                            <template v-if="product.setting.pos_menus.length < 0">
 
                                 <div v-for="(m, index) in product.getPOSMenu()" :key="index" class="h-36">
                                     <ComMenuItem :data="m" />

@@ -19,6 +19,10 @@ from escpos.printer import Network
 from frappe.utils.background_jobs import get_queues, get_redis_conn
 import math
 from frappe.utils.scheduler import get_scheduler_status
+import calendar
+from datetime import datetime, timedelta
+
+
 QUEUES = ["default", "long", "short"]
 JOB_STATUSES = ["queued", "started", "failed", "finished", "deferred", "scheduled", "canceled"]
 
@@ -418,4 +422,43 @@ def update_temp_menu_product_photo_schedule():
         frappe.db.commit()
         return data
     
+
+@frappe.whitelist()
+def add_months(start_date, months):
+    # Calculate the new month and year
+    new_month = start_date.month + months
+    new_year = start_date.year + (new_month - 1) // 12
+    new_month = (new_month - 1) % 12 + 1
+    
+    # Determine the day in the new month
+    day =start_date.day 
+    try:
+        new_date = datetime(new_year, new_month, day)
+    except ValueError:
+        next_month = new_month % 12 + 1
+        next_year = new_year + (new_month // 12)
+        new_date = datetime(next_year, next_month, 1) - timedelta(days=1)    
+	
+    return new_date
+
+
+@frappe.whitelist()
+def add_years(start_date, years):
+    # Calculate the new month and year
+    new_month = start_date.month
+    new_year = start_date.year + years
+    new_month = (new_month - 1) % 12 + 1
+    
+    # Determine the day in the new month
+    day =start_date.day 
+    try:
+        new_date = datetime(new_year, new_month, day)
+    except ValueError:
+        next_month = new_month % 12 + 1
+        next_year = new_year + (new_month // 12)
+        new_date = datetime(next_year, next_month, 1) - timedelta(days=1)    
+	
+    return new_date
+
+
 

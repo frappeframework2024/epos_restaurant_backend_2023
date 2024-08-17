@@ -423,6 +423,7 @@
    "label": "POS Note"
   },
   {
+   "depends_on": "eval:!doc.__islocal && (doc.total_sale_coupon_payment_balance > 0 || doc.total_limit_visit > 0 || doc.total_coupon > 0)",
    "fieldname": "coupon_information_tab",
    "fieldtype": "Tab Break",
    "label": "Coupon Information"
@@ -500,6 +501,7 @@
    "read_only": 1
   },
   {
+   "depends_on": "eval:!doc.__islocal && (doc.voucher_actual_amount > 0 )",
    "fieldname": "voucher_information_tab",
    "fieldtype": "Tab Break",
    "label": "Voucher Information"
@@ -521,6 +523,7 @@
    "fieldtype": "HTML"
   },
   {
+   "depends_on": "eval:!doc.__islocal && (doc.total_sale_coupon_payment_balance > 0 || doc.total_limit_visit > 0)",
    "fieldname": "sale_coupon_section",
    "fieldtype": "Section Break",
    "label": "Sale Coupon"
@@ -533,9 +536,9 @@
    "read_only": 1
   },
   {
+   "depends_on": "eval:!doc.__islocal && (doc.total_coupon > 0 )",
    "fieldname": "cash_coupon_section",
    "fieldtype": "Section Break",
-   "hidden": 1,
    "label": "Cash Coupon"
   },
   {
@@ -605,6 +608,7 @@
    "fieldtype": "HTML"
   },
   {
+   "depends_on": "eval:!doc.__islocal && (doc.total_crypto_on_register > 0 || doc.total_crypto_on_check_in > 0 || doc.membership_amount > 0 )",
    "fieldname": "membership_information_tab",
    "fieldtype": "Tab Break",
    "label": "Membership Summary"
@@ -671,10 +675,12 @@
    "read_only": 1
   },
   {
+   "depends_on": "eval:!doc.__islocal && doc.membership_amount > 0",
    "fieldname": "section_break_wroi",
    "fieldtype": "Section Break"
   },
   {
+   "depends_on": "eval:!doc.__islocal && (doc.total_crypto_on_register > 0 || doc.total_crypto_on_check_in > 0)",
    "fieldname": "crypto_membership_saving_section",
    "fieldtype": "Section Break",
    "label": "Crypto Membership Saving"
@@ -683,6 +689,7 @@
    "fieldname": "total_crypto_on_register",
    "fieldtype": "Currency",
    "label": "Total Crypto on Register",
+   "precision": "8",
    "read_only": 1
   },
   {
@@ -693,6 +700,7 @@
    "fieldname": "total_crypto_on_check_in",
    "fieldtype": "Currency",
    "label": "Total Crypto on Check-In",
+   "precision": "8",
    "read_only": 1
   },
   {
@@ -712,7 +720,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2024-08-16 11:22:27.034298",
+ "modified": "2024-08-17 09:08:27.353105",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

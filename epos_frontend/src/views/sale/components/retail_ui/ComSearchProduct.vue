@@ -203,7 +203,7 @@ async function onSelectProduct(d){
          }
 
          if (portions?.length > 1) {
-             product.setSelectedProduct(p);
+             product.setSelectedProduct(p,sale.sale.price_rule);
 
              let productPrices = await addModifierDialog();
 

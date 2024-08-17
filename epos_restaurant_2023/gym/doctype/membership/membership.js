@@ -169,7 +169,7 @@ function on_membership_value_changed(frm,changed=false){
         }        
     }
     
-    if(frm.doc.membership != "" && frm.doc.membership!=undefined){
+    if(frm.doc.membership != "" && frm.doc.membership!=undefined && frm.doc.__islocal == undefined){
         if(frm.doc.duration_type =="Ongoing"){
             frm.set_df_property('is_delay_access', 'hidden', 1);        
         }else{

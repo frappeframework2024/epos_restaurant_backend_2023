@@ -207,6 +207,11 @@ function print_barcode_button(frm) {
         });
     });
 
+    frm.add_custom_button("Print Barcode", function () {
+                let msg = frappe.msgprint('<iframe src="http://192.168.10.19:9999/embed/barcode-builder" frameBorder="0" width="100%" height="650" title="Print Barcode"></iframe>', 'Print Barcode')
+                msg.$wrapper.find('.modal-dialog').css("max-width", "80%");
+
+            }, __("Actions"));
 }
 
 function set_product_indicator(frm) {

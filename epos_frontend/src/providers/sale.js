@@ -397,7 +397,6 @@ export default class Sale {
             const make_order_auth = JSON.parse(localStorage.getItem('make_order_auth'));
             const now = new Date();
             const _now_format = moment(now).format('yyyy-MM-DD HH:mm:ss.SSSSSS');
- 
             const saleProduct = {
                 menu_product_name: p.menu_product_name,
                 product_code: p.name,
@@ -423,6 +422,7 @@ export default class Sale {
                 allow_discount: p.allow_discount,
                 allow_free: p.allow_free,
                 allow_change_price: p.allow_change_price,
+                allow_crypto_claim : p.allow_crypto_claim,
                 is_open_product: p.is_open_product,
                 portion: this.getString(p.portion),
                 modifiers: (p.modifiers || '') == "[]" ? "" : (p.modifiers || ''),

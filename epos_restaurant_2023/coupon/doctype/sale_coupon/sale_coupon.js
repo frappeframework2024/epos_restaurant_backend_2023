@@ -15,10 +15,7 @@ frappe.ui.form.on("Sale Coupon", {
     member:function(frm){
         on_member_changed(frm,true)
     },
-    coupon_type:function(frm){
-        on_coupon_type_changed(frm,true)
-    },
-
+ 
     price:function(frm){
         on_price_changed(frm,true)
     },
@@ -28,7 +25,6 @@ frappe.ui.form.on("Sale Coupon", {
     discount_value:function(frm){
         on_discount_value_changed(frm,true)
     }
-
 });
 
 function on_member_type_changed(frm, changed){
@@ -85,7 +81,7 @@ function calculate_grand_total(frm,changed){
     frm.set_df_property('payment_balance', 'read_only',0);
     let discount_amount = frm.doc.discount_value;
     if(frm.doc.discount_type=="Percent"){
-        discount_amount = frm.doc.discount_value / 100
+        discount_amount =  frm.doc.price * ( frm.doc.discount_value / 100)
     }
     frm.doc.grand_total = frm.doc.price - discount_amount;
     frm.doc.payment_balance =  frm.doc.grand_total - frm.doc.total_payment_amount;
@@ -124,14 +120,61 @@ function update_summary(frm){
     }
 }
 
+//sale coupon items
+frappe.ui.form.on('Sale Coupon Items', { 
+	coupon_type(frm,cdt, cdn){ 
+        const row = locals[cdt][cdn];
+        //get coupon type
+        frappe.db.get_doc("Sale Coupon Type",row.coupon_type).then((r)=>{ 
+            row.regular_price = r.price;
+            row.price = r.price;
+            row.total_visit = r.total_visit;
+            row.amount = row.price * (row.quantity || 1);
+
+            update_sale_coupon_items(frm,cdt, cdn);
+        }) 
+	},
+
+    quantity(frm,cdt, cdn){
+        update_sale_coupon_items(frm,cdt, cdn);
+    },
+
+    price(frm,cdt, cdn){      
+        update_sale_coupon_items(frm,cdt, cdn);
+    },
+
+    items_remove: function (frm){
+		update_sale_coupon_summary(frm);
+	},
+})
+
+function update_sale_coupon_items(frm,cdt, cdn){
+    const row = locals[cdt][cdn];
+    row.amount = row.price * (row.quantity || 1);
+    frm.refresh_field("items");
+    
+    update_sale_coupon_summary(frm);
+}
+function update_sale_coupon_summary(frm){
+    const items = frm.doc.items
+    let total_price = items==undefined?0: items.reduce((n, d) => n + d.amount, 0);
+    let limit_visit = items==undefined?0: items.reduce((n, d) => n + (d.total_visit * d.quantity), 0);
+    frm.set_value('regular_price',total_price);
+    frm.set_value('price',total_price);
+    frm.set_value('limit_visit',limit_visit);
+    frm.refresh_field("price");
+    
+    //
+}
+
+
+// sale coupon payment
 frappe.ui.form.on('Sale Coupon Payment', { 
 	input_amount(frm,cdt, cdn){ 
         const row = locals[cdt][cdn];
         row.payment_amount = row.input_amount / (row.exchange_rate || 1);
-
         update_summary(frm);
 	},
-
     payments_remove: function (frm){
 		update_summary(frm);
 	},

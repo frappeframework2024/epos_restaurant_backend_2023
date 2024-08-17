@@ -63,7 +63,7 @@ import ComEditPOSMenu from "@/views/setting/ComEditPOSMenu.vue";
 import ComMoveItemSelectOrder from "@/views/sale/components/ComMoveItemSelectOrder.vue";
 import ComUnpaidBillList from "@/views/credit_balance/UnpaidBillDialog.vue";
 import ComScanCouponDialog from "@/views/sale/components/coupon/ComScanCouponDialog.vue"
-
+import ComSelectPaymentTypeQuickPayment from "@/views/sale/components/ComSelectPaymentTypeQuickPayment.vue"
 interface params {
     doctype?: String,
     name?: String,
@@ -145,3 +145,4 @@ export const MoveItemChangeTable = createPromiseDialog<params, object>(ComMoveIt
 export const EditPOSMenuDialog = createPromiseDialog<params, object>(ComEditPOSMenu);
 export const MoveItemSelectOrderDialog = createPromiseDialog<params, object>(ComMoveItemSelectOrder);
 export const UnpaidBillListDialog = createPromiseDialog<params, object>(ComUnpaidBillList);
+export const ComSelectPaymentTypeQuickPaymentDialog = createPromiseDialog<params, object>(ComSelectPaymentTypeQuickPayment);

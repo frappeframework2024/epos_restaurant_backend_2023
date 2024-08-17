@@ -2,15 +2,23 @@
 # For license information, please see license.txt
 
 import frappe
+from frappe import _
 from frappe.model.document import Document
 from frappe.utils import getdate
-class SaleCoupon(Document):
-	def before_save(self):
-		self.posting_date = getdate()
-		self.visited_count = 0
-		self.balance = self.limit_visit - self.visited_count
-
+class SaleCoupon(Document): 
 	def validate(self): 
+
+		if self.is_new():
+			self.posting_date = getdate() if not self.posting_date else self.posting_date
+			self.visited_count = 0
+			
+
+		if len( self.items) <=0:
+			frappe.throw(_("Sale coupon items not allow empty record"))
+
+		if len( [d for d in self.items if d.quantity <= 0]) >0:
+			frappe.throw(_("Please check quantity agian"))
+
 		if  self.member_type != "Individual":
 			if not self.member:
 				frappe.throw("Please select member to continue")	
@@ -26,7 +34,7 @@ class SaleCoupon(Document):
 				frappe.throw("Please enter member name")	
 			if not self.member_name_kh:
 				self.member_name_kh = self.member_name
-
+		self.balance = self.limit_visit - self.visited_count
 		validate_sale_coupon_payment(self)
 
 		if self.payment_balance < 0:

@@ -189,7 +189,7 @@ export default class Product {
         })
     }
 
-    setSelectedProduct(p) {
+    setSelectedProduct(p,price_rule='') {
         
         this.selectedProduct = p;
         
@@ -205,8 +205,15 @@ export default class Product {
             p.selected = false;
             this.prices.push(p)
         });
+        console.log("this.prices",this.prices)
+        console.log("prices",price_rule)
+        console.log("prices",prices)
         if (this.prices.length > 0) {
-            this.prices[0].selected = true;
+            this.prices.forEach((p)=>{
+                if (p.price_rule == price_rule){
+                    p.selected = true;
+                }
+            })
         }
 
         let modifiers = JSON.parse(p.modifiers);

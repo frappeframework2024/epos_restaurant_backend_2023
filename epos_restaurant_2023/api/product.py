@@ -98,6 +98,7 @@ def get_products(parent_menu,mobile=0):
                 allow_discount,
                 allow_change_price,
                 allow_free,
+                allow_crypto_claim,
                 is_open_product,
                 is_inventory_product,
                 is_require_employee,
@@ -162,6 +163,7 @@ def get_product_by_barcode(barcode):
                     "parent": p.product_category,
                     "price": price,
                     "unit": p.unit,
+                    "allow_crypto_claim":p.allow_crypto_claim,
                     "allow_discount": p.allow_discount,
                     "allow_change_price": p.allow_change_price,
                     "allow_free": p.allow_free,
@@ -175,7 +177,7 @@ def get_product_by_barcode(barcode):
                     "photo": p.photo,
                     "type": "product",
                     "revenue_group":p.revenue_group,
-                    "append_quantity": 1,
+                    "append_quantity": p.append_quantity,
                     "is_require_employee":p.is_require_employee,
                     "modifiers_data": json.dumps(([pr.business_branch,pr.modifier_category,pr.prefix,pr.modifier_code,pr.price] for pr in p.product_modifiers),default=json_handler),
                     "is_empty_stock_warning":0,
@@ -197,6 +199,7 @@ def get_product_by_barcode(barcode):
                         "parent": product.product_category,
                         "price": data[0].price,
                         "unit": data[0].unit,
+                        "allow_crypto_claim":product.allow_crypto_claim,
                         "allow_discount": product.allow_discount,
                         "allow_change_price": product.allow_change_price,
                         "allow_free": product.allow_free,
@@ -209,13 +212,14 @@ def get_product_by_barcode(barcode):
                         "modifiers": "[]",
                         "photo": product.photo,
                         "type": "product",
-                        "append_quantity": 1,
+                        "append_quantity": product.append_quantity,
                         "is_require_employee":product.is_require_employee,
                         "revenue_group":product.revenue_group,
                         "modifiers_data": json.dumps(([pr.business_branch,pr.modifier_category,pr.prefix,pr.modifier_code,pr.price] for pr in product.product_modifiers),default=json_handler),
                
                         "is_empty_stock_warning":0,
-                        "rate_include_tax":p.rate_include_tax
+                        "rate_include_tax":product.rate_include_tax,
+                        "pos_note":product.pos_note
                     }
         
 
@@ -282,6 +286,7 @@ def get_product_by_product_category(category ='All Product Categories', limit = 
         "product_category as parent",
         "price",
         "unit",
+        "allow_crypto_claim",
         "allow_discount",
         "allow_change_price",
         "allow_free",
@@ -295,6 +300,7 @@ def get_product_by_product_category(category ='All Product Categories', limit = 
         "combo_group_data",
         "is_open_price",
         "is_timer_product",
+        "rate_include_tax",
         'tax_rule',
         'revenue_group',
         'prices',
@@ -303,8 +309,7 @@ def get_product_by_product_category(category ='All Product Categories', limit = 
 
     filters={
         'disabled': 0,
-        'allow_sale':1,
-       
+        'allow_sale':1,       
     }
     
     if category!= 'All Product Categories':

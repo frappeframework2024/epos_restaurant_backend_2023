@@ -17,6 +17,13 @@
   "column_break_3",
   "expense_by",
   "employee_name",
+  "link_sale_expense",
+  "section_break_gjhc",
+  "sale",
+  "customer",
+  "column_break_tmuc",
+  "customer_name",
+  "sale_date",
   "expense_item_section",
   "expense_items",
   "section_break_kqzp",
@@ -159,14 +166,58 @@
    "fieldname": "payments",
    "fieldtype": "Table",
    "label": "Payments",
-   "options": "Expense Payment"
+   "options": "Expense Payment",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sale",
+   "fieldtype": "Link",
+   "label": "Sale",
+   "options": "Sale"
+  },
+  {
+   "depends_on": "eval:doc.link_sale_expense",
+   "fieldname": "section_break_gjhc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fetch_from": "sale.customer",
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_tmuc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "sale.customer_name",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "sale.posting_date",
+   "fieldname": "sale_date",
+   "fieldtype": "Data",
+   "label": "Sale Date",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "link_sale_expense",
+   "fieldtype": "Check",
+   "label": "Link Sale Expense"
   }
  ],
  "image_field": "attach_receipt",
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-07-29 17:32:32.405337",
+ "modified": "2024-08-17 14:10:12.724614",
  "modified_by": "Administrator",
  "module": "Expense",
  "name": "Expense",

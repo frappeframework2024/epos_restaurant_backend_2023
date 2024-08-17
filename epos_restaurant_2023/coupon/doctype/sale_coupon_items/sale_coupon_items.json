@@ -1,0 +1,84 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-08-17 15:44:51.038128",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "coupon_type",
+  "regular_price",
+  "price",
+  "column_break_raxx",
+  "quantity",
+  "amount",
+  "column_break_rcrz",
+  "total_visit"
+ ],
+ "fields": [
+  {
+   "fieldname": "coupon_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Coupon Type",
+   "options": "Sale Coupon Type"
+  },
+  {
+   "fetch_from": "coupon_type.price",
+   "fieldname": "regular_price",
+   "fieldtype": "Currency",
+   "label": "Regular Price"
+  },
+  {
+   "default": "0",
+   "fetch_from": ".",
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Price"
+  },
+  {
+   "fieldname": "column_break_raxx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "quantity",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Quantity"
+  },
+  {
+   "default": "0",
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_rcrz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fetch_from": "coupon_type.total_visit",
+   "fieldname": "total_visit",
+   "fieldtype": "Int",
+   "label": "Total Visit",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-08-17 15:56:53.423409",
+ "modified_by": "Administrator",
+ "module": "Coupon",
+ "name": "Sale Coupon Items",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

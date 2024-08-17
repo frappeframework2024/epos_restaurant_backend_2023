@@ -7,8 +7,9 @@ import proxyOptions from './proxyOptions';
 export default defineConfig({
 	plugins: [vue()],
 	server: {
-		port: 8080,
-		proxy: proxyOptions
+		port: 9999,
+		proxy: proxyOptions,
+		host:true
 	},
 	resolve: {
 		alias: {
@@ -16,7 +17,7 @@ export default defineConfig({
 		}
 	},
 	build: {
-		outDir: '../epos_restaurant_2023/public/epos_frontend',
+		outDir: '../epos_restaurant_2023/public/embed',
 		emptyOutDir: true,
 		target: 'esnext'
 		// target: 'es2015',

@@ -1,8 +1,10 @@
 <template>
+
 	<SplashScreen v-if="state.isLoading" />
 	
 	<v-sheet v-else id="app-container" v-resize="onResize">
-		<!-- {{ layout }} -->
+		 
+	 
 		<v-progress-linear class="progress_bar" v-if="isLoading" indeterminate color="teal"></v-progress-linear>
 		<MainLayout v-if="layout=='main_layout'" />
 		<SaleLayout v-else-if="layout=='sale_layout'" />
@@ -25,6 +27,13 @@ import { useStore } from 'vuex'
 import { createToaster } from '@meforma/vue-toaster';
 import { FrappeApp } from 'frappe-js-sdk';
 import { useDisplay } from 'vuetify'; 
+const router = useRouter()
+const route = useRoute()
+
+const layout = computed(() => {
+	return route.meta.layout  || "blank_layout"
+})
+
 
 
 const frappe = inject('$frappe');
@@ -62,12 +71,6 @@ socket.on("PrintReceipt", (arg) => {
 	} 
 });
 
-const router = useRouter()
-const route = useRoute()
-
-const layout = computed(() => {
-	return route.meta.layout  || "blank_layout"
-})
 
 const isLoading = computed(() => {
 	return store.state.isLoading

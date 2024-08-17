@@ -2,6 +2,7 @@
 # For license information, please see license.txt
 
 import json
+from epos_restaurant_2023.api.utils import add_months,add_years
 import frappe
 from frappe import _
 import calendar
@@ -37,6 +38,8 @@ class Membership(Document):
 		
 		#update date balance
 		self.balance = self.grand_total - (self.total_paid or 0)
+
+		
 		
 
 	def on_submit(self):
@@ -100,6 +103,11 @@ def _update_customer_membership_summary(customer,default_discount = 0, cancel = 
 			where c.name = %(customer)s""".format(balance)
 	frappe.db.sql(sql,{"customer":customer})
 
+def update_customer_saving_crypto(self):
+	sql = """select * from `tabMembership` where """
+	pass
+
+
 
 @frappe.whitelist( methods="POST")
 def upgrade_membership_option(param):	
@@ -136,11 +144,9 @@ def upgrade_membership_option(param):
 
 	frappe.db.set_value("Membership",p["membership"],{"docstatus":0})
 	new_doc = frappe.get_doc("Membership", p["membership"])
-
+	_end_date = new_doc.end_date
 	if new_doc.duration_type == "Limited Duration":
-		_duration =   option.membership_duration; 	
-		_end_date = new_doc.end_date
-
+		_duration =   option.membership_duration	
 		if new_doc.duration_base_on == "Day(s)":
 			_end_date = new_doc.start_date + timedelta(days=_duration)
 		elif new_doc.duration_base_on == "Week(s)":
@@ -152,6 +158,8 @@ def upgrade_membership_option(param):
 		else:
 			_end_date = new_doc.start_date
 
+		if _end_date < new_doc.end_date:
+			frappe.throw(_("Membership option not allow to down grand on expory period"))
 
 	new_doc.old_membership_option = p["old_membership_option"] if not doc.old_membership_option else doc.old_membership_option
 	new_doc.membership = p["new_membership_option"]
@@ -169,45 +177,6 @@ def upgrade_membership_option(param):
 	new_doc.docstatus = 1
 	new_doc.save()
 	return True
-
-
-def update_customer_saving_crypto(self):
-	pass
-
-
-def add_months(start_date, months):
-    # Calculate the new month and year
-    new_month = start_date.month + months
-    new_year = start_date.year + (new_month - 1) // 12
-    new_month = (new_month - 1) % 12 + 1
-    
-    # Determine the day in the new month
-    day =start_date.day 
-    try:
-        new_date = datetime(new_year, new_month, day)
-    except ValueError:
-        next_month = new_month % 12 + 1
-        next_year = new_year + (new_month // 12)
-        new_date = datetime(next_year, next_month, 1) - timedelta(days=1)    
-	
-    return new_date
-
-def add_years(start_date, years):
-    # Calculate the new month and year
-    new_month = start_date.month
-    new_year = start_date.year + years
-    new_month = (new_month - 1) % 12 + 1
-    
-    # Determine the day in the new month
-    day =start_date.day 
-    try:
-        new_date = datetime(new_year, new_month, day)
-    except ValueError:
-        next_month = new_month % 12 + 1
-        next_year = new_year + (new_month // 12)
-        new_date = datetime(next_year, next_month, 1) - timedelta(days=1)    
-	
-    return new_date
 
 
 

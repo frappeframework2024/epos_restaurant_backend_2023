@@ -122,6 +122,7 @@
   "is_require_employee",
   "delete_from_pos_require_password",
   "move_from_sale_printed",
+  "allow_crypto_claim",
   "backup_product_price",
   "backup_modifier_price",
   "free_note",
@@ -1103,12 +1104,20 @@
    "fieldtype": "Link",
    "label": "Commission 05 To",
    "options": "Employee"
+  },
+  {
+   "default": "0",
+   "fetch_from": "product_code.allow_crypto_claim",
+   "fetch_if_empty": 1,
+   "fieldname": "allow_crypto_claim",
+   "fieldtype": "Check",
+   "label": "Allow Crypto Claim"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-12 14:05:19.085514",
+ "modified": "2024-08-17 10:03:40.272008",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",

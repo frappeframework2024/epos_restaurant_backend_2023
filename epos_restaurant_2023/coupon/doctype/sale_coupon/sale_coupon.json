@@ -10,16 +10,17 @@
   "coupon_number",
   "posting_date",
   "member_type",
-  "member",
   "attach_image",
   "column_break_kxut",
+  "member",
   "member_name",
   "member_name_kh",
+  "column_break_cjeh",
   "gender",
   "phone_number",
   "phone_number_2",
-  "coupon_type_section",
-  "coupon_type",
+  "section_break_hbiq",
+  "items",
   "summary_section",
   "regular_price",
   "price",
@@ -74,14 +75,15 @@
   },
   {
    "default": "0",
-   "fetch_from": "coupon_type.price",
-   "fetch_if_empty": 1,
+   "fetch_from": ".",
    "fieldname": "price",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Price"
+   "label": "Price",
+   "read_only": 1
   },
   {
+   "default": "0",
    "fetch_from": "coupon_type.total_visit",
    "fieldname": "limit_visit",
    "fieldtype": "Int",
@@ -105,9 +107,8 @@
   {
    "fieldname": "expiry_date",
    "fieldtype": "Date",
-   "in_list_view": 1,
-   "label": "Expiry Date",
-   "reqd": 1
+   "hidden": 1,
+   "label": "Expiry Date"
   },
   {
    "allow_on_submit": 1,
@@ -240,25 +241,28 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "coupon_type",
-   "fieldtype": "Link",
-   "label": "Coupon Type",
-   "options": "Sale Coupon Type",
-   "reqd": 1
-  },
-  {
    "default": "0",
    "fetch_from": "coupon_type.price",
    "fieldname": "regular_price",
    "fieldtype": "Currency",
+   "hidden": 1,
    "in_list_view": 1,
    "label": "Regular Price",
    "read_only": 1
   },
   {
-   "fieldname": "coupon_type_section",
-   "fieldtype": "Section Break",
-   "label": "Coupon Type"
+   "fieldname": "column_break_cjeh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_hbiq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Sale Coupon Items"
   }
  ],
  "image_field": "attach_image",
@@ -271,7 +275,7 @@
    "link_fieldname": "sale_coupon"
   }
  ],
- "modified": "2024-08-09 16:02:36.103102",
+ "modified": "2024-08-17 17:00:56.610759",
  "modified_by": "Administrator",
  "module": "Coupon",
  "name": "Sale Coupon",

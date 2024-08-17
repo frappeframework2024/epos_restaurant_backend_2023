@@ -1482,9 +1482,14 @@
    "group": "Payment",
    "link_doctype": "Sale Payment",
    "link_fieldname": "sale"
+  },
+  {
+   "group": "Expense",
+   "link_doctype": "Expense",
+   "link_fieldname": "sale"
   }
  ],
- "modified": "2024-08-12 14:56:15.760662",
+ "modified": "2024-08-17 14:14:15.086415",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

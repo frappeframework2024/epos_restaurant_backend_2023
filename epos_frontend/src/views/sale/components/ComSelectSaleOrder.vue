@@ -16,14 +16,14 @@
         <template #action>
             <ComSelectSaleOrderAction :isDesktop="isDesktop"
                 :is-bill-requested="params.data.filter(r => r.sale_status == 'Bill Requested').length == params.data.length"
-                @onClose="onClose" @onNewOrder="onNewOrder" @onQuickPay="onQuickPay" @onPrintAllBill="onPrintAllBill"
+                @onClose="onClose" @onNewOrder="onNewOrder" @onQuickPay="onQuickPay" @onQuickPayOtherPaymentType="onQuickPayOtherPaymentType" @onPrintAllBill="onPrintAllBill"
                 @onCancelPrintBill="onCancelPrintBill" />
         </template>
     </ComModal>
 
 </template>
 <script setup>
-import { inject, ref, useRouter, confirmDialog,  smallViewSaleProductListModal, i18n } from '@/plugin'
+import { inject, ref, useRouter, confirmDialog,  smallViewSaleProductListModal, i18n,ComSelectPaymentTypeQuickPaymentDialog } from '@/plugin'
 import { useDisplay } from 'vuetify'
 import ComSaleListItem from './ComSaleListItem.vue';
 import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
@@ -222,6 +222,61 @@ async function onQuickPay(isPrint = true) {
             });
          }
     }
+}
+
+async function onQuickPayOtherPaymentType(isPrint = true) {
+ if (props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").length == 0) {
+     toaster.warning($t("msg.There are no bills to settle"));
+     return;
+ }
+ const dialog_response = await ComSelectPaymentTypeQuickPaymentDialog({data:props.params.data})
+
+ if (dialog_response != false) {
+     isLoading.value = true;
+     let other_printing = true
+      if((sale.setting?.device_setting?.use_server_network_printing||0)==1 && isPrint == true ){
+          var printer = (sale.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+          if (printer.length <= 0) {
+              other_printing = false;
+              toaster.warning($t("Printer not yet config for this device"))
+          } 
+          if(printer[0].usb_printing == 0){ 
+             other_printing = await _onNetworkPrintAll("print_receipt", sale.setting?.default_pos_receipt, printer) 
+          }
+      }
+      if(other_printing){
+         props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").forEach(async (d) => {
+             payment_promises.value.push({
+                 sale: d.name,
+                 payment_type: sale.setting?.default_payment_type
+             })
+         });
+         Promise.all(payment_promises.value).then(async () => {
+             await call.get('epos_restaurant_2023.api.api.on_sale_quick_pay', {
+                 data: JSON.stringify(payment_promises.value)
+             }).then((res) => {
+                 props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").forEach(async (d) => {
+                     const _sale = res.message.filter((r) => r.name == d.name)
+                     if (_sale.length > 0) {
+                         d.sale_status = "Closed";
+                         d.sale_status_color = sale.setting.sale_status.find(r => r.name == 'Closed').background_color; 
+                         if(isPrint){
+                             onPrintProcess("print_receipt",sale.setting?.default_pos_receipt,_sale[0])      
+                         }                  
+                     }
+                 });
+
+                 toaster.success($t('msg.Payment successfully'));
+                 tableLayout.getSaleList();
+                 isLoading.value = false;
+                 emit('resolve', true);
+             }).catch((r) => {
+                 toaster.error(r.message);
+                 isLoading.value = false;
+             });
+         });
+      }
+ }
 }
 
 async function PrintReceipt(d, receipt) { 

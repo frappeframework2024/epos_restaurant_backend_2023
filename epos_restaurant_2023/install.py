@@ -156,9 +156,10 @@ def reset_sale_transaction():
             frappe.db.sql("delete from `tabCash Coupon`")
 
             ## sale coupon
-            frappe.db.sql("delete from `tabCheck In Sale Coupon`")
+            frappe.db.sql("delete from `tabCheck In Sale Coupon`")        
             frappe.db.sql("delete from `tabSales Coupon Payment`")
             frappe.db.sql("delete from `tabSale Coupon Payment`")
+            frappe.db.sql("delete from `tabSale Coupon Items`")    
             frappe.db.sql("delete from `tabSale Coupon`")
             frappe.db.sql("delete from `tabSale Coupon Type`")
             # end coupon

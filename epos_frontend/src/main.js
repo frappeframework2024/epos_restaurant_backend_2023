@@ -150,62 +150,57 @@ app.config.globalProperties.$filter = {
 app.directive('debounce', vue3Debounce({ lock: true }))
 
 // Configure route gaurds
+
 router.beforeEach(async (to, from, next) => {
 
-	if (!localStorage.getItem("pos_profile")) {
-		if (to.matched.some((record) => !record.meta.isStartupConfig)) {
+	 
+		if (!localStorage.getItem("pos_profile")) {
+			if (to.matched.some((record) => !record.meta.isStartupConfig)) {
 
-			next({ name: "StartupConfig", query: { route: to.path } })
-		} else {
-			next()
-		}
-	}
-	else {
-
-		if (to.matched.some((record) => !record.meta.isLoginPage)) {
-			// this route requires auth, check if logged in
-			// if not, redirect to login page.
-			if (!auth.isLoggedIn) {
-
-				next({ name: 'Login', query: { route: to.path } });
+				next({ name: "StartupConfig", query: { route: to.path } })
 			} else {
-				next();
-			}
-
-		} else {
-			if (auth.isLoggedIn) {
-				next({ name: 'Home' });
-			} else {
-				next();
+				next()
 			}
 		}
-	}
+		else {
+
+			if (to.matched.some((record) => !record.meta.isLoginPage)) {
+				// this route requires auth, check if logged in
+				// if not, redirect to login page.
+				if (!auth.isLoggedIn) {
+
+					next({ name: 'Login', query: { route: to.path } });
+				} else {
+					next();
+				}
+
+			} else {
+				if (auth.isLoggedIn) {
+					next({ name: 'Home' });
+				} else {
+					next();
+				}
+			}
+	} 
 });
 
-// prevent double table in ipad to zoom in
-// let lastTouchEnd = 0;
-// document.addEventListener('touchend', function(event) {
-//     const now = Date.now();
-//     if (now - lastTouchEnd <= 300) {
-//         event.preventDefault();
-//     }
-//     lastTouchEnd = now;
-// });
-//end prevent double table in ipad to zoom in
-
-app.component('CurrencyFormat', CurrencyFormat);
-app.component('ComPlaceholder', ComPlaceholder);
-app.component('ComAutoComplete', ComAutoComplete);
-app.component('ComPrintPreview', ComPrintPreview);
-app.component("avatar", Avatar);
-app.component('ComChip', ComChip)
-app.component('ComInput', ComInput)
-app.component('ComTableView', ComTableView)
-app.component('ComTdImage', ComTdImage)
-app.component('ComModal', ComModal)
-
-KeyStroke(app)
+ 
+	app.component('CurrencyFormat', CurrencyFormat);
+	app.component('ComPlaceholder', ComPlaceholder);
+	app.component('ComAutoComplete', ComAutoComplete);
+	app.component('ComPrintPreview', ComPrintPreview);
+	app.component("avatar", Avatar);
+	app.component('ComChip', ComChip)
+	app.component('ComInput', ComInput)
+	app.component('ComTableView', ComTableView)
+	app.component('ComTdImage', ComTdImage)
+	app.component('ComModal', ComModal)
+	
+	KeyStroke(app)
+	
+	
+	app.mount("#app");
 
 
-app.mount("#app");
+
 

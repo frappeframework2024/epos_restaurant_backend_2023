@@ -147,6 +147,7 @@ function onTableClick(table, guest_cover) {
                 }
             }
             else {
+                
                 sale.sale.table_id = table.id;
                 sale.sale.tbl_number = table.tbl_no;
                 const result = await selectSaleOrderDialog({ data: table.sales, table: table, make_order_auth: make_order_auth });
@@ -167,7 +168,7 @@ async function newSale(table) {
     if(await validateNewtowkSaleLock(table)){ 
         return 
     }
-     
+    
 
     let guest_cover = 0;
     if (gv.setting.use_guest_cover == 1) {
