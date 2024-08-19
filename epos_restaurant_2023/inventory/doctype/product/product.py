@@ -164,6 +164,24 @@ class Product(Document):
 
 
 	def before_save(self):
+		if self.has_variant == 1:
+			self.status = "Template"
+		if len(self.product_variants)>0:
+			for a in self.product_variants:
+				p = frappe.new_doc("Product")
+				p.product_category = self.product_category
+				p.revenue_group = self.revenue_group
+				p.product_code = a.variant_code
+				p.product_name_en = a.variant_name
+				p.product_category = self.product_category
+				p.revenue_group = self.revenue_group
+				p.unit = self.unit
+				p.cost = (self.cost if a.cost == 0 else a.cost)
+				p.price = (self.price if a.price == 0 else a.price)
+				p.status = "Variant"
+				p.insert()
+
+
 		if self.is_new and self.opening_quantity > 0:
 			opening_general_ledger_entry(self)
 		if self.flags.ignore_before_save==True:
@@ -184,22 +202,26 @@ class Product(Document):
 		self.prices = json.dumps(prices)	
 	
 	def on_update(self):
+		#
 		for a in self.pos_menus:
 			a.sort_order = self.sort_order
 		frappe.clear_document_cache("Product",self.name)
+		frappe.cache.delete_value("product_variant_" + self.name)
+   
+		
+		
 		if self.flags.ignore_on_update==True:
 			return 
 		add_product_to_temp_menu(self)
 		# frappe.enqueue("epos_restaurant_2023.inventory.doctype.product.product.add_product_to_temp_menu", queue='short', self=self)
 		
-  
+
 
 	def on_trash(self):
 		if self.flags.ignore_on_trash==True:
 			return 
 		frappe.db.sql("delete from `tabTemp Product Menu` where product_code='{}'".format(self.name))
-	 
-
+	
 	@frappe.whitelist()
 	def get_product_summary_information(self):
 		stock_information = []
@@ -234,7 +256,14 @@ class Product(Document):
 		
 	@frappe.whitelist()
 	def generate_variant(self):
-	
+		stored_variant = []
+		if self.product_variants:
+			for a in self.product_variants:
+				stored_variant.append(a)
+
+		if not self.product_code:
+			frappe.throw(_("Please enter product code first"))
+		from frappe.model.naming import make_autoname
 		variant_1 =  [d.variant_value for d in self.variant_1_value]
 		variant_2 =  [d.variant_value for d in self.variant_2_value]
 		variant_3 =  [d.variant_value for d in self.variant_3_value]
@@ -243,37 +272,44 @@ class Product(Document):
 		if variant_1 and not variant_2 and not variant_3:
 			for v1 in variant_1:
 				product_variants.append({
-					"variant_code":"",
+					"variant_code": v1,
 					"variant_name": v1,
 					"variant_1":v1,
 					"opening_qty":0,
-					"cost": 0,
-					"price":0
+					"cost": self.cost,
+					"price":self.price
 				})
 		elif variant_1 and   variant_2 and not variant_3:
 			for v1, v2 in itertools.product(variant_1, variant_2):
 				product_variants.append({
-					"variant_code":"",
-					"variant_name": "{}-{}".format(v1,v2 ),
+					"variant_code": "{}-{}-{}".format(self.product_name_en,frappe.get_cached_value("Variant Code", v1,"code_prefix"),frappe.get_cached_value("Variant Code", v2,"code_prefix")),
+					"variant_name":"{}-{}-{}".format(self.product_name_en,frappe.get_cached_value("Variant Code", v1,"code_prefix"),frappe.get_cached_value("Variant Code", v2,"code_prefix")),
 					"variant_1":v1,
 					"variant_2":v2,
 					"opening_qty":0,
-					"cost": 0,
-					"price":0
+					"cost": self.cost,
+					"price":self.price
 				})
 		else:
 			for v1, v2,v3   in itertools.product(variant_1, variant_2, variant_3):
 				product_variants.append({
-					"variant_code":"{}-{}-{}-{}".format(self.name,frappe.db.get_value("Variant Code", v1,"code_prefix"),frappe.db.get_value("Variant Code", v2,"code_prefix"),frappe.db.get_value("Variant Code", v3,"code_prefix")),
-					"variant_name": "{}-{}-{}".format(v1,v2,v3 ),
+					"variant_code": "{}-{}-{}".format(v1,v2,v3),
+					"variant_name": "{}-{}-{}".format(v1,v2,v3),
 					"variant_1":v1,
 					"variant_2":v2,
 					"variant_3": v3,
 					"opening_qty":0,
-					"cost": 0,
-					"price":0
+					"cost": self.cost,
+					"price":self.price
 				})
-		return  product_variants
+		cur_product_variants = []
+		for a in self.product_variants:
+			cur_product_variants.append(a.variant_code)
+		for a in product_variants:
+			if a["variant_code"] not in cur_product_variants:
+				stored_variant.append(a)
+		return  stored_variant
+
 def validate_default_accounts(self):
 	branches = {row.business_branch for row in self.default_account}
 

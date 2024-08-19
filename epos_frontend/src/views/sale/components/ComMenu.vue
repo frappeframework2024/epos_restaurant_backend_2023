@@ -1,5 +1,4 @@
 <template>
-
     <div class="h-full relative bg-cover bg-no-repeat bg-center"
         v-bind:style="{ 'background-image': 'url(' + backgroundImage + ')' }">
         <div class="flex h-full flex-col">
@@ -13,7 +12,7 @@
                         <div class="grid gap-2"
                             :class="mobile ? 'grid-cols-2' : 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'"
                            >
-                            <template v-if="product.setting.pos_menus.length < 0">
+                            <template v-if="product.setting.pos_menus.length > 0">
 
                                 <div v-for="(m, index) in product.getPOSMenu()" :key="index" class="h-36">
                                     <ComMenuItem :data="m" />
@@ -56,6 +55,7 @@ import ComSaleButtonActions from './ComSaleButtonActions.vue';
 const { mobile } = useDisplay()
 const product = inject("$product")
 const frappe = inject("$frappe")
+const gv = inject("$gv");
 const db = frappe.db();
 const props = defineProps({
     backgroundImage: String
@@ -90,20 +90,32 @@ const onScroll = () => {
     const scrollBottom = container.scrollHeight - container.scrollTop === container.clientHeight;
     if (scrollBottom) {
         
-        product.getProductByProductCategory(db)
+        product.getProductFromDB()
     }
   }
 };
 onMounted(() => {
+    if(!mobile.value){
+        if (scrollContainer.value) {
+            const width  = scrollContainer.value.offsetWidth;
+            const height  = scrollContainer.value.offsetHeight;
+            product.itemLimit = Math.ceil((width / 230) * (height/ 140))
+        }
+    }
     if (scrollContainer.value && product.setting.default_pos_menu=="" ) {
          scrollContainer.value.addEventListener('scroll', onScroll);
+    }
+    const item_menu_setting = JSON.parse(localStorage.getItem("item_menu_setting"))
+    if (item_menu_setting) {
+        gv.itemMenuSetting = item_menu_setting
+       
     }
 });
 onUnmounted(() => {
     if (scrollContainer.value && product.setting.default_pos_menu=="") {
         scrollContainer.value.removeEventListener('scroll', onScroll);
     }
-  
+   
 });
 
 

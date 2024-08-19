@@ -74,10 +74,16 @@
             </template>
             <v-list-item-title>{{ $t('Edit Menu Item') }}</v-list-item-title>
         </v-list-item>
+        <v-list-item  @click="showMenuSetting()">
+            <template #prepend>
+                <v-icon icon="mdi-file-edit"></v-icon>
+            </template>
+            <v-list-item-title>{{ $t('Menu Setting') }}</v-list-item-title>
+        </v-list-item>
 
         <v-list-item @click="onClaimCouponClick()">
             <template #prepend>
-                <v-icon icon="mdi-file-edit"></v-icon>
+                <v-icon icon="mdi-card-bulleted-outline"></v-icon>
             </template>
             <v-list-item-title>{{ $t('Claim Coupon') }}</v-list-item-title>
         </v-list-item>
@@ -114,8 +120,9 @@ import {
 } from "@/plugin"
 import { useDisplay } from 'vuetify'
 import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
+import ComMenuSetting from '@/views/sale/components/ComMenuSetting.vue';
+
 import socket from '@/utils/socketio';
-import ComEditPOSMenu from "../../setting/ComEditPOSMenu.vue";
 
 const { t: $t } = i18n.global;
 const moment = inject("$moment")
@@ -137,7 +144,23 @@ let deletedSaleProducts = [];
 let productPrinters = [];
 
 let count_sale_type = ref({})
-
+import { useDialog } from 'primevue/usedialog';
+const dialog = useDialog();
+const showMenuSetting = () => {
+    dialog.open(ComMenuSetting, {
+        props: {
+            header: 'Menu Setting',
+            style: {
+                width: '50vw',
+            },
+            breakpoints:{
+                '960px': '75vw',
+                '640px': '90vw'
+            },
+            modal: true
+        }
+    });
+}
 
 onMounted(() => {
     db.getCount('Sale Type').then((count) => {

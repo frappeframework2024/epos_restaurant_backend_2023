@@ -2,6 +2,15 @@ from functools import lru_cache
 import frappe
 import json 
 
+@frappe.whitelist()
+def clear_cached():
+    frappe.cache().flushall()
+    # clear redis cache
+    
+    # clear lru cache
+    return "Done"
+    
+
 @lru_cache(maxsize=128)
 def get_doctype_value_cache(doctype,doc_name, fieldname):
     if doc_name:

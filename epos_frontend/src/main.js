@@ -23,7 +23,13 @@ import ComChip from './components/ComChip.vue'
 import ComModal from './components/ComModal.vue'
 import Avatar from "vue3-avatar";
 import socket from './utils/socketio';
+import PrimeVue from 'primevue/config';
+import Aura from '@primevue/themes/aura';
 
+ 
+
+
+import DialogService from 'primevue/dialogservice';
 import Vue3DraggableResizable from 'vue3-draggable-resizable'
 //default styles
 import 'vue3-draggable-resizable/dist/Vue3DraggableResizable.css'
@@ -114,6 +120,12 @@ app.use(vuetify);
 app.use(store);
 app.use(Vue3DraggableResizable)
 app.use(createBottomSheet())
+app.use(PrimeVue, {
+    theme: {
+        preset: Aura
+    }
+});
+app.use(DialogService);
 app.use(Toaster, {
 	position: "top",
 })

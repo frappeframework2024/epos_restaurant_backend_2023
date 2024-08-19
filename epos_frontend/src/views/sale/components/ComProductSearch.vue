@@ -72,7 +72,7 @@ function onSearch(key) {
             //search product from db
 
             if (doSearch.value) {
-                product.getProductFromDbByKeyword(db, key)
+                product.getProductFromDbByKeyword(key)
             }
         }
     }

@@ -72,6 +72,10 @@
   "default_discount",
   "column_break_agfy",
   "crypto_amount",
+  "column_break_rpmp",
+  "crypto_claim",
+  "column_break_jybc",
+  "crypto_balance",
   "old_crypto_amount"
  ],
  "fields": [
@@ -551,6 +555,30 @@
    "fieldname": "trainer_tab",
    "fieldtype": "Tab Break",
    "label": "Trainer"
+  },
+  {
+   "fieldname": "column_break_rpmp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fetch_from": ".",
+   "fieldname": "crypto_claim",
+   "fieldtype": "Currency",
+   "label": "Crypto Claim",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_jybc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fetch_from": ".",
+   "fieldname": "crypto_balance",
+   "fieldtype": "Currency",
+   "label": "Crypto Balance",
+   "read_only": 1
   }
  ],
  "image_field": "photo",
@@ -563,7 +591,7 @@
    "link_fieldname": "membership"
   }
  ],
- "modified": "2024-08-16 11:37:45.745279",
+ "modified": "2024-08-19 15:53:59.547981",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership",

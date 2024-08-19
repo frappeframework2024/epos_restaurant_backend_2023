@@ -108,6 +108,9 @@ import { useRouter, ref, inject, confirmBackToTableLayout, SearchProductDialog }
 
 import { computed } from 'vue';
 import Enumerable from 'linq';
+const frappe = inject("$frappe")
+const call = frappe.call()
+
 const emit = defineEmits('closeModel')
 
 const sale = inject("$sale")
@@ -133,17 +136,21 @@ function onDrawer() {
     drawer.value = !drawer.value;
 }
 function onReload() {
-    location.reload();
-    const apkipa = localStorage.getItem('apkipa');
-    if ((apkipa || 0) == 1) {
-        if ((localStorage.getItem('flutterWrapper') || 0) == 1) {
-            flutterChannel.postMessage(JSON.stringify({ "action": "mobile_reload" }));
-        }
-        else {
-            window.ReactNativeWebView.postMessage("mobile_reload");
-        }
+  
+    call.get("epos_restaurant_2023.api.cache_function.clear_cached").then((result)=>{
+        location.reload();
+        const apkipa = localStorage.getItem('apkipa');
+        if ((apkipa || 0) == 1) {
+            if ((localStorage.getItem('flutterWrapper') || 0) == 1) {
+                flutterChannel.postMessage(JSON.stringify({ "action": "mobile_reload" }));
+            }
+            else {
+                window.ReactNativeWebView.postMessage("mobile_reload");
+            }
 
-    }
+        }
+    })
+    
 }
 
 async function onAdvanceSearch() {

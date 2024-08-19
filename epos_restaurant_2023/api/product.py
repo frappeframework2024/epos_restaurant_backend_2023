@@ -277,52 +277,94 @@ def get_currenct_cost(product_code="",stock_location="",unit=""):
         
 
 @frappe.whitelist()
-def get_product_by_product_category(category ='All Product Categories', limit = 20, page=1):
-    fields= [
-        "name as menu_product_name",
-        "name",
-        "product_name_en as name_en",
-        "product_name_kh as name_kh",
-        "product_category as parent",
-        "price",
-        "unit",
-        "allow_crypto_claim",
-        "allow_discount",
-        "allow_change_price",
-        "allow_free",
-        "is_open_product",
-        "is_inventory_product",
-        "photo",
-        "append_quantity",
-        "is_combo_menu",
-        "use_combo_group",
-        "combo_menu_data",
-        "combo_group_data",
-        "is_open_price",
-        "is_timer_product",
-        "rate_include_tax",
-        'tax_rule',
-        'revenue_group',
-        'prices',
-        'sort_order'
-    ]
+def get_product_by_product_category(category ='All Product Categories',product_code="",keyword="", limit = 20, page=1, order_by='product_code',order_by_type='asc'):
+    sql="""
+        select 
+            name as menu_product_name,
+            name,
+            product_name_en as name_en,
+            product_name_kh as name_kh,
+            product_category as parent,
+            price,
+            unit,
+            allow_crypto_claim,
+            allow_discount,
+            allow_change_price,
+            allow_free,
+            is_open_product,
+            is_inventory_product,
+            photo,
+            append_quantity,
+            is_combo_menu,
+            use_combo_group,
+            combo_menu_data,
+            combo_group_data,
+            is_open_price,
+            is_timer_product,
+            rate_include_tax,
+            tax_rule,
+            revenue_group,
+            prices,
+            sort_order,
+            has_variant
+        from `tabProduct`
+        where
+            (
+                disabled=0 and 
+                allow_sale=1 and 
+                is_variant=if(%(product_code)s='',is_variant, 0)
+            ) 
+    """
 
-    filters={
-        'disabled': 0,
-        'allow_sale':1,       
-    }
+ 
     
     if category!= 'All Product Categories':
-        filters["product_category"]= ["in",get_product_category_with_children(category)]
+        sql = sql + " and product_category in (%(product_categories)s)"
+    if keyword:
+        sql = sql + " and name like %(keyword)s or product_name_en like %(keyword)s and product_name_kh like %(keyword)s"
     
-    data = frappe.db.get_list('Product',
-        filters=filters,
-        fields=fields,
-        order_by='sort_order asc',
-        start=(int(page)  -1) * 20 + 1,
-        page_length=limit
-    )
+    sql = sql + " order by %(order_by)s %(order_by_type)s"
+    sql = sql + " LIMIT %(limit)s OFFSET %(start)s;"
+    data = frappe.db.sql(sql,{
+        "product_categories": get_product_category_with_children(category),
+        "product_code":product_code,
+        "keyword":'%{}%'.format(keyword),
+        "limit":int(limit),
+        "start": (int(page)  -1) * 20 + 1,
+        "order_by":order_by,
+        "order_by_type":order_by_type
+        
+    },as_dict=1)
+     
+    updateVariant([d for d in data if d["has_variant"]==1])
+    
     return data
+
+
+def updateVariant(data):
+    for d in data:
+        d["variant"] = get_product_variant(d["name"])
+
+
+def get_product_variant(product_code):
+    # we clear this cache when save product 
+    if cached_value := frappe.cache.get_value("product_variant_" + product_code):
+        return cached_value
+    
+    doc = frappe.get_cached_doc("Product", product_code)
+    variants = []
+    if doc.variant_1_name:
+        variants.append({"variant_name":doc.variant_1_name, "variants":[{"variant":d.variant_value} for d in doc.variant_1_value]})
+    
+    if doc.variant_2_name:
+        variants.append({"variant_name":doc.variant_2_name, "variants":[{"variant":d.variant_value} for d in doc.variant_2_value]})
+    
+    if doc.variant_3_name:
+        variants.append({"variant_name":doc.variant_3_name, "variants":[{"variant":d.variant_value} for d in doc.variant_3_value]})
+    
+    frappe.cache.set_value("product_variant_" + product_code, variants)
+    return variants
+
 
 
 @frappe.whitelist()

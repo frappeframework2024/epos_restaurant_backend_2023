@@ -29,6 +29,8 @@
   "pos_profile_tax_rule",
   "section_break_10",
   "pos_menus",
+  "section_break_bbuz",
+  "sale_view_by_pos_profile",
   "table_groups_section",
   "table_groups",
   "section_break_rcvr",
@@ -214,11 +216,21 @@
    "fieldname": "use_retail_ui",
    "fieldtype": "Check",
    "label": "Use Retail UI"
+  },
+  {
+   "fieldname": "section_break_bbuz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "sale_view_by_pos_profile",
+   "fieldtype": "Table",
+   "label": "Sale View By POS Profile",
+   "options": "Sale View By POS Profile"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-03-07 08:00:08.619826",
+ "modified": "2024-08-19 16:29:09.660905",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Profile",

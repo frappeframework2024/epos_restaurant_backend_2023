@@ -7,6 +7,21 @@ frappe.listview_settings['Product'] = {
             return `<img src="${encodedPhoto || "/files/placeholder.jpg"}" style='border-radius: 50%;height:35px; margin-right:10px;margin-left:5px'/>`;
         },
     },
+    get_indicator(doc) {
+        if(doc.status=="Enabled"){ 
+            return [__("Enabled"), "blue"];
+        }else if(doc.status == "Disabled"){
+            return [__("Disabled"), "red"];
+        }else if(doc.status == "Variant"){
+            return [__("Variant"), "orange"];
+        }
+        else if (doc.status == "Template") {
+            return [__("Template"), "green"];
+        }
+        else{
+            return [__("Enabled"), "blue"];
+        }
+    },
     onload(me) { 
         me.page.add_action_item('Assign Menu', function() {
             let d = new frappe.ui.Dialog({

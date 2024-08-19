@@ -40,6 +40,7 @@
   "column_break_yldd",
   "show_option_payment",
   "show_option_quick_pay",
+  "show_option_quick_pay_payment_type",
   "show_reference_button_in_more_menu",
   "show_edit_menu_button",
   "show_sale_more_action_menu",
@@ -342,11 +343,17 @@
    "fieldname": "print_invoice_on_submit",
    "fieldtype": "Check",
    "label": "Print Invoice On Submit"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_option_quick_pay_payment_type",
+   "fieldtype": "Check",
+   "label": "Show Option Quick Pay Payment Type"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-12 16:34:11.399926",
+ "modified": "2024-08-19 08:38:50.010333",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

@@ -913,28 +913,53 @@ def update_cancel_print_request(data):
 
 @frappe.whitelist(methods="POST")
 def get_sale_list_table_badge(data):
-    sql = """select 
-        `name`,
-        creation,
-        grand_total,
-        total_quantity,
-        tbl_group,
-        tbl_number,
-        guest_cover,
-        grand_total,
-        sale_status,
-        sale_status_color,
-        sale_status_priority,
-        customer,
-        customer_name,
-        phone_number,
-        customer_photo
-    from `tabSale` 
-    where pos_profile = '{}' 
-    and docstatus = 0""".format(data["pos_profile"])
+    pos_profile = frappe.get_doc("POS Profile",data["pos_profile"])
+    if len(pos_profile.sale_view_by_pos_profile) > 0:
+        data["pos_profile"] = [d.pos_profile for d in pos_profile.sale_view_by_pos_profile]
+        sql = """select 
+            `name`,
+            creation,
+            grand_total,
+            total_quantity,
+            tbl_group,
+            tbl_number,
+            guest_cover,
+            grand_total,
+            sale_status,
+            sale_status_color,
+            sale_status_priority,
+            customer,
+            customer_name,
+            phone_number,
+            customer_photo
+        from `tabSale` 
+        where pos_profile in %(pos_profiles)s
+        and docstatus = 0"""
+        result = frappe.db.sql(sql,{"pos_profiles":data["pos_profile"]},as_dict=1)
+        return result
+    else:
+        sql = """select 
+            `name`,
+            creation,
+            grand_total,
+            total_quantity,
+            tbl_group,
+            tbl_number,
+            guest_cover,
+            grand_total,
+            sale_status,
+            sale_status_color,
+            sale_status_priority,
+            customer,
+            customer_name,
+            phone_number,
+            customer_photo
+        from `tabSale` 
+        where pos_profile = '{}' 
+        and docstatus = 0""".format(data["pos_profile"])
 
-    result = frappe.db.sql(sql,as_dict=1)
-    return result
+        result = frappe.db.sql(sql,as_dict=1)
+        return result
 
 @frappe.whitelist(methods="POST")
 def get_pending_sale_orders(data): 
@@ -1348,6 +1373,35 @@ def on_sale_quick_pay(data):
     
     return result
 
+@frappe.whitelist()
+def on_sale_quick_pay_payment_type(data):
+    sales = json.loads(data)
+
+    result = []
+    for s in sales:
+        doc =  frappe.get_doc('Sale',s['sale'])
+        doc.append ('payment', {
+                'payment_type':s['payment_type'],
+                'input_amount':doc.grand_total * s['additional_info']['exchange_rate'],
+                'amount':doc.grand_total,
+                'room_number':s['room_number'],
+                'folio_number':s['folio_number'],
+                'fee_amount':s['fee_amount'],
+                'folio_transaction_type':s['folio_transaction_type'],
+                'reservation_stay':s['reservation_stay'],
+                'account_code':s['additional_info']['account_code'] or '',
+                "fee_percentage":s['additional_info']['fee_percentage'],
+                "fee_amount":doc.grand_total * (s['additional_info']['fee_percentage'] / 100)
+            })          
+ 
+        doc.docstatus = 1
+        doc.sale_status = 'Closed'
+        doc.save()
+        result.append(doc)
+    frappe.db.commit()
+    
+    return result
+
 
 
 @frappe.whitelist()
@@ -1654,6 +1708,39 @@ def update_cash_coupon_summary_to_customer(members):
             where member in %(member)s"""
     
     frappe.db.sql(sql,{"member":members})
+
+@frappe.whitelist()
+def update_summary_to_customers():
+    ## update expired crypto balance
+    frappe.db.sql("""update `tabCustomer` c
+    inner join (
+    select 
+        m.customer
+		coalesce(sum(m.crypto_balance ),0) as total_crypto_balance
+	from `tabMembership` m 
+	where m.docstatus = 1
+	and m.end_date <  CURRENT_DATE()
+    group by m.customer) _c on c.name = _c.customer
+    set c.total_crypto_balance_expired = _c.total_crypto_balance
+    """)
+
+    sql = """update `tabCustomer` c
+        inner join (
+            select 
+                cc.member,  
+                sum(cc.total_coupon) as total_coupon ,
+                sum(cc.total_claim) as total_claim,
+                sum(cc.total_amount) as total_amount,
+                sum(cc.total_balance) as total_balance,
+                sum(if(cc.unlimited=1, 0, if(cc.expiry_date > current_date(),0,cc.total_balance ))) as total_expired_balance
+            from `tabCash Coupon` cc 
+            where docstatus = 1 
+            group by cc.member
+        ) m on m.member = c.`name`
+        set c.total_coupon_balance_expired = m.total_expired_balance """
+    
+    frappe.db.sql(sql)
+
 
 @frappe.whitelist()
 def scan_coupon_number(code):

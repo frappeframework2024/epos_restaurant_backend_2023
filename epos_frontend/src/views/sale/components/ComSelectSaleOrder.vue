@@ -244,15 +244,22 @@ async function onQuickPayOtherPaymentType(isPrint = true) {
              other_printing = await _onNetworkPrintAll("print_receipt", sale.setting?.default_pos_receipt, printer) 
           }
       }
+      payment_promises.value=[]
       if(other_printing){
          props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").forEach(async (d) => {
              payment_promises.value.push({
                  sale: d.name,
-                 payment_type: sale.setting?.default_payment_type
+                 payment_type: dialog_response.paymentType.payment_method,
+                 additional_info: dialog_response.paymentType,
+                 'room_number':dialog_response['room']||'',
+                'folio_number':dialog_response['folio_number']||'',
+                'folio_transaction_type':dialog_response['folio_transaction_type']||'',
+                'reservation_stay':dialog_response['reservation_stay']||'',
+                'fee_amount':d.grand_total * dialog_response['fee_percentage']
              })
          });
          Promise.all(payment_promises.value).then(async () => {
-             await call.get('epos_restaurant_2023.api.api.on_sale_quick_pay', {
+             await call.get('epos_restaurant_2023.api.api.on_sale_quick_pay_payment_type', {
                  data: JSON.stringify(payment_promises.value)
              }).then((res) => {
                  props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").forEach(async (d) => {

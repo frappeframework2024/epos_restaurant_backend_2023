@@ -14,7 +14,10 @@ from frappe.model.document import Document
 class Membership(Document):
 	def validate(self):
 		if self.is_new():
-			self.old_crypto_amount = 0		
+			self.old_crypto_amount = 0	
+
+		self.crypto_claim = 0
+		self.crypto_balance = self.crypto_amount
 
 		if self.membership_type =="Family Shared":
 			if self.count_members <=0:
@@ -40,14 +43,16 @@ class Membership(Document):
 		self.balance = self.grand_total - (self.total_paid or 0)
 
 		
-		
 
 	def on_submit(self):
 		update_customer_membership_summary(self)
 
 
 	def before_update_after_submit(self):
+		self.crypto_balance = self.crypto_amount - self.crypto_claim
+		
 		self.flags.old_customer = None
+
 		old_member_sql = "select customer from `tabMembership` where name = %(membership)s"
 		doc = frappe.db.sql(old_member_sql,{"membership":self.name}, as_dict=1)
 		if len(doc)>0:
@@ -81,6 +86,21 @@ def _update_customer_membership_summary(customer,default_discount = 0, cancel = 
 	if len(sale) > 0:
 		total_sale_balance = sale[0]["total_sale_balance"] or 0
 
+	crypto_sql = """select 
+		coalesce(sum(if( m.end_date >=  CURRENT_DATE(), m.crypto_balance,0 ) ),0) as total_crypto_balance,
+		coalesce(sum(if( m.end_date <  CURRENT_DATE(), m.crypto_balance,0 ) ),0) as total_crypto_balance_expired
+	from `tabMembership` m 
+	where m.docstatus = 1
+	and m.customer = %(customer)s"""
+	crypto = frappe.db.sql(crypto_sql,{"customer":customer}, as_dict = 1)
+
+	total_crypto_balance = 0
+	total_crypto_balance_expired = 0
+	if len(crypto)>0:
+		total_crypto_balance = crypto[0]["total_crypto_balance"] or 0
+		total_crypto_balance_expired = crypto[0]["total_crypto_balance_expired"] or 0
+
+
 	balance = "c.balance = {} + c.total_coupon_balance +  _c.total_balance".format(total_sale_balance)
 	if cancel:
 		balance = "c.balance = {} + c.total_coupon_balance ".format(total_sale_balance)		
@@ -99,14 +119,14 @@ def _update_customer_membership_summary(customer,default_discount = 0, cancel = 
 				set c.membership_amount = _c.total_amount,
 				c.membership_paid = _c.total_paid,
 				c.membership_balance = _c.total_balance,
-				{}
-			where c.name = %(customer)s""".format(balance)
+				{0},
+				c.total_crypto_on_register = {1},
+				c.total_crypto_balance_expired = {2},
+				c.total_crypto_amount = {1} + {2} + c.total_crypto_on_check_in,
+				c.total_crypto_balance = c.total_crypto_amount - (c.total_crypto_claim + c.total_crypto_balance_expired)
+			where c.name = %(customer)s""".format(balance,total_crypto_balance,total_crypto_balance_expired)
+	
 	frappe.db.sql(sql,{"customer":customer})
-
-def update_customer_saving_crypto(self):
-	sql = """select * from `tabMembership` where """
-	pass
-
 
 
 @frappe.whitelist( methods="POST")

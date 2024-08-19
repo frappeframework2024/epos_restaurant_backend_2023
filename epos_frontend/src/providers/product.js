@@ -3,7 +3,6 @@ import { keyboardDialog, createResource } from "@/plugin"
 import { createToaster } from "@meforma/vue-toaster";
 
 const toaster = createToaster({ position: "top-right" });
-
 import { FrappeApp } from 'frappe-js-sdk';
 const frappe = new FrappeApp();
 const db = frappe.db()
@@ -27,11 +26,11 @@ export default class Product {
         this.isLoadingProduct = false
         this.isGetAllProduct = false
         this.isSearchProduct = false
-        
+        this.itemLimit = 20
 
         this.selectedProductCategory = "All Product Category"
         this.posSearchProductPager = {
-            limit:20,
+            limit:10,
             page:1
         }
 
@@ -85,14 +84,16 @@ export default class Product {
     }
 
     getProductMenuByProductCategory(product_category) {
+  
         if((typeof product_category ) =="object"){
             product_category = product_category.name
         }
+ 
         this.selectedProductCategory = product_category
         this.posSearchProductPager.page = 0
         this.isGetAllProduct = false
         this.isSearchProduct = false
-
+        
         db.getDocList("Product Category", {
             fields: ["name", "name as name_en", "product_category_name_kh as name_kh", "parent_product_category as parent", "photo", "text_color", "background_color", "show_in_pos_shortcut_menu as shortcut_menu", "allow_sale"],
             filters: [
@@ -105,23 +106,29 @@ export default class Product {
                 d.type = "menu"
             });
             this.menuProducts = docs
-            this.getProductByProductCategory()
+            this.getProductFromDB({limit : this.itemLimit})
             
         })
 
     }
 
-    getProductByProductCategory(){
+    getProductFromDB({limit=null,keyword="",category=''}={}){
+       
+        if (!limit){
+            limit =this.posSearchProductPager.limit
+        }
         this.isLoadingProduct = true
  
         if(!this.isGetAllProduct){
+           
             this.posSearchProductPager.page = this.posSearchProductPager.page + 1
             call.get("epos_restaurant_2023.api.product.get_product_by_product_category", {
-                category:this.selectedProductCategory,
-                limit:this.posSearchProductPager.limit,
-                page:this.posSearchProductPager.page
+                category:category==''? this.selectedProductCategory:category,
+                limit:limit,
+                page:this.posSearchProductPager.page,
+                keyword:keyword
             }).then((res) => {
-                console.log(res)
+              
                 this.isLoadingProduct = false
                 res.message.forEach(d => {
                     d.price_rule = ""
@@ -143,51 +150,17 @@ export default class Product {
     }
 
 
-    getProductFromDbByKeyword(db, keyword) {
+    getProductFromDbByKeyword(keyword) {
+         
+        this.isGetAllProduct = false
+
         this.isSearchProduct = true
-        db.getDocList("Product", {
-            fields: [
-                "name as menu_product_name",
-                "name",
-                "product_name_en as name_en",
-                "product_name_kh as name_kh",
-                "product_category as parent",
-                "price",
-                "unit",
-                "allow_discount",
-                "allow_change_price",
-                "allow_free",
-                "is_open_product",
-                "is_inventory_product",
-                "photo",
-                "append_quantity",
-                "is_combo_menu",
-                "use_combo_group",
-                "combo_menu_data",
-                "combo_group_data",
-                'revenue_group',
-                "prices",
-                'sort_order'
-            ],
-            orFilters: [
-                ["name", "like", '%' + keyword + '%'],
-                ["product_name_en", "like", '%' + keyword + '%'],
-                ["product_name_kh", "like", '%' + keyword + '%'],
-            ]
-        }).then((res) => {
-            res.forEach(d => {
-                d.price_rule = ""
-                d.type = "product",
-                d.tax_rule_data = null,
-                d.modifiers = "[]"
-                d.printers = "[]"
-            });
-            this.menuProducts = res
-          
-        }).catch((err) => {
-            console.log("ds",err)
-        })
+        this.menuProducts = []
+
+        this.getProductFromDB({keyword:keyword, category:"All Product Categories"})
     }
+
+
 
     setSelectedProduct(p,price_rule='') {
         

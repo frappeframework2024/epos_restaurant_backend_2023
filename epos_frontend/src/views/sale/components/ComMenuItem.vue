@@ -40,7 +40,7 @@
         </div>
         <div class="block relative p-2 w-full h-full">
             <div>
-                <div class="absolute left-0 top-0 bg-red-700 text-white p-1 rounded-tl-lg rounded-br-lg text-sm">
+                <div :style="{fontSize:gv.itemMenuSetting.font_price_size+ 'px' }" class="absolute left-0 top-0 bg-red-700 text-white p-1 rounded-tl-lg rounded-br-lg text-sm">
                     <div>
                         <span v-if="productPrices.length > 1">
                             <span>
@@ -73,7 +73,7 @@
 
             <div class="p-1 rounded-md absolute bottom-1 right-1 left-1 bg-gray-50 bg-opacity-90 text-sm text-center">
 
-                <span v-if="!sale.load_menu_lang">{{ getMenuName(data, true) }}</span> <span
+                <span v-if="!sale.load_menu_lang" :style="{fontSize:gv.itemMenuSetting.item_font_size+ 'px' }">{{ getMenuName(data, true) }}</span> <span
                     style="color:red; font-weight: bold;">
                     {{ getTotalQuantityOrder(data) }}</span>
             </div>
@@ -84,6 +84,8 @@
 <script setup>
 import { computed, addModifierDialog, SelectDateTime, i18n, inject, keypadWithNoteDialog, SelectGoogleImageDialog, SaleProductComboMenuGroupModal, createToaster, EmptyStockProductDialog } from '@/plugin'
 import Enumerable from 'linq'
+import { useDialog } from 'primevue/usedialog';
+import ComProductVariant from '@/views/sale/components/ComProductVariant.vue'
 const { t: $t } = i18n.global;
 // import ComPriceOnMenu from '../ComPriceOnMenu.vue';
 const props = defineProps({ data: Object })
@@ -93,6 +95,8 @@ const product = inject("$product");
 const toaster = createToaster({ position: 'top-right' })
 const frappe = inject("$frappe")
 const db = frappe.db();
+
+const dialog = useDialog();
 
 
 // get image
@@ -135,7 +139,7 @@ const minPrice = computed(() => {
 
 function getMenuName(menu, is_item = false) {
     const mlang = localStorage.getItem('mLang');
-    let code = !is_item ? "" : (gv.setting.show_item_code_in_sale_screen == 0 ? "" : `${menu.name} - `);
+    let code = !is_item ? "" : (gv.itemMenuSetting.show_item_code == 0 ? "" : `${menu.name} - `);
     if (mlang != null) {
         if (mlang == "en") {
             return `${code}${menu.name_en}`;
@@ -169,7 +173,7 @@ function onClickMenu(menu) {
         _onPriceRuleChanged(menu);
     } else {
       
-        product.getProductMenuByProductCategory(db, menu.name)
+        product.getProductMenuByProductCategory(menu.name)
     }
 
 }
@@ -217,9 +221,8 @@ function _onPriceRuleChanged(menu){
         sale.sale.price_rule = sale.price_rule; 
 }
 async function onClickProduct() {
-  
+    
     if (!sale.isBillRequested()) {
-
         const p = JSON.parse(JSON.stringify(props.data));
         product.is_open_price = p.is_open_price
 
@@ -229,7 +232,12 @@ async function onClickProduct() {
             if (!emptyConfirm) {
                 return
             }
-        }       
+        }  
+        
+        if(p.has_variant==1){
+            selectVariant(p)
+            return
+        }
 
         if (!p.is_timer_product) {
             if (p.is_open_product == 1) {
@@ -286,9 +294,7 @@ async function onClickProduct() {
 
                     let productPrices = await addModifierDialog();
 
-                    console.log('productPrices',productPrices)
-
-                    
+        
 
                     if (productPrices) {
                         if (productPrices.portion != undefined) {
@@ -330,6 +336,25 @@ async function onClickProduct() {
 
     }
 
+}
+
+function selectVariant(product){
+    dialog.open(ComProductVariant, {
+        data:product,
+        props: {
+            header: 'Product Variants',
+            style: {
+                width: '50vw',
+                background: 'white',
+                color: 'black'
+            },
+            breakpoints:{
+                '960px': '75vw',
+                '640px': '90vw'
+            },
+            modal: true
+        }
+    });
 }
 
 async function onComboMenu(p) {

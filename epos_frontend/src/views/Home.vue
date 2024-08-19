@@ -66,7 +66,13 @@ import WorkingDayButton from './shift/components/WorkingDayButton.vue';
 import OpenShiftButton from './shift/components/OpenShiftButton.vue';
 import ComMessagePromotion from '../components/ComMessagePromotion.vue';
 import moment from '@/utils/moment.js';
+import TestDialog  from '@/views/sale/TestDialog.vue';
 import { useDisplay } from 'vuetify';  
+
+import { useDialog } from 'primevue/usedialog';
+
+ 
+const dialog = useDialog();
 const auth = inject('$auth')
 const gv = inject('$gv');
 const frappe = inject('$frappe');
@@ -117,7 +123,7 @@ async function onCashInCashOut(){
 }
 
 function onPOS() {
-    
+ 
     call.get("epos_restaurant_2023.api.api.get_current_shift_information",{
         business_branch: gv.setting?.business_branch,
         pos_profile: localStorage.getItem("pos_profile")

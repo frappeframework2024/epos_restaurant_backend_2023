@@ -18,6 +18,8 @@
   "total_crypto_claim",
   "column_break_tpda",
   "total_crypto_balance",
+  "column_break_copo",
+  "total_crypto_balance_expired",
   "section_break_buzm",
   "naming_series",
   "customer_code",
@@ -640,18 +642,20 @@
    "default": "0",
    "fieldname": "membership_balance",
    "fieldtype": "Currency",
-   "label": "Membership Balance"
+   "label": "Membership Balance",
+   "read_only": 1
   },
   {
-   "depends_on": "eval:!doc.__islocal && doc.total_crypto_amount > 0",
    "fieldname": "crypto_information_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Crypto Information"
   },
   {
    "fieldname": "total_crypto_amount",
    "fieldtype": "Currency",
    "label": "Total Crypto Amount",
+   "precision": "8",
    "read_only": 1
   },
   {
@@ -708,6 +712,15 @@
    "fieldtype": "Table MultiSelect",
    "label": "Crops Types",
    "options": "Crops Type"
+  },
+  {
+   "fieldname": "column_break_copo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_crypto_balance_expired",
+   "fieldtype": "Currency",
+   "label": "Total Crypto Balance Expired"
   }
  ],
  "image_field": "photo",
@@ -720,7 +733,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2024-08-17 09:08:27.353105",
+ "modified": "2024-08-19 16:52:59.094208",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

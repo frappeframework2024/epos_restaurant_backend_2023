@@ -12,6 +12,7 @@
 		<BlankLayout v-else />
 		<PromiseDialogsWrapper />
 	</v-sheet>
+	<DynamicDialog />
 </template>
 <script setup>
 import { useRouter, useRoute, routeLocationKey } from 'vue-router'
@@ -27,6 +28,7 @@ import { useStore } from 'vuex'
 import { createToaster } from '@meforma/vue-toaster';
 import { FrappeApp } from 'frappe-js-sdk';
 import { useDisplay } from 'vuetify'; 
+import DynamicDialog from 'primevue/dynamicdialog';
 const router = useRouter()
 const route = useRoute()
 

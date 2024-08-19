@@ -53,6 +53,25 @@ frappe.ui.form.on("Customer", {
                 frm.dashboard.add_indicator(__("Sale Coupon Balance: {0}", [ sale_coupon_balance]), "yellow");
             }   
 
+            if((frm.doc.total_crypto_amount||0) > 0 ){ 
+                let total_crypto_amount =  format_currency(frm.doc.total_crypto_amount)
+                frm.dashboard.add_indicator(__("Total Crypto Amount: {0}", [ total_crypto_amount]), "yellow");
+            }   
+
+            if((frm.doc.total_crypto_claim||0) > 0 ){ 
+                let total_crypto_claim =  format_currency(frm.doc.total_crypto_claim)
+                frm.dashboard.add_indicator(__("Total Crypto Claim: {0}", [ total_crypto_claim]), "orange");
+            }   
+
+            if((frm.doc.total_crypto_balance||0) > 0 ){ 
+                let total_crypto_balance =  format_currency(frm.doc.total_crypto_balance)
+                frm.dashboard.add_indicator(__("Total Crypto Balance: {0}", [ total_crypto_balance]), "green");
+            }   
+            if((frm.doc.total_crypto_balance_expired||0) > 0 ){ 
+                let total_crypto_balance_expired =  format_currency(frm.doc.total_crypto_balance_expired)
+                frm.dashboard.add_indicator(__("Total Crypto Balance Expired: {0}", [ total_crypto_balance_expired]), "red");
+            }   
+
            
             if(frm.doc.total_point_earn > 0){
                 frm.dashboard.add_indicator(__("Total Point Earn: {0} Point(s)", [Number(frm.doc.total_point_earn).toFixed(2)]), "green");

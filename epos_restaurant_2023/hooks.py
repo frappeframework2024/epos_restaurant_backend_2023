@@ -152,6 +152,7 @@ scheduler_events = {
 			],
       "0 */12 * * *":[
           "epos_restaurant_2023.api.ftp_backup.execute_backup_command",
+          "epos_restaurant_2023.api.api.update_summary_to_customers"
       ]
 	}
 

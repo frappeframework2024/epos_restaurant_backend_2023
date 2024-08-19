@@ -23,6 +23,17 @@ export default class Gv {
 		this.isFullscreen = true;
 		this.shortcut_keys = [];
 		this.device_setting = null;
+		this.itemMenuSetting= {
+            default_font_size:14,
+			show_menu_language:"en",
+			group_by:"sale_number",
+			font_price_size:14,
+			item_font_size:14,
+            min_font_size:10,
+            max_font_size:30,
+            font_size:14,
+            show_item_code:false,
+        }
 		
 	}
 
