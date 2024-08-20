@@ -5,7 +5,6 @@
             {{ $t('Payment') }}
         </template>
         <template #bar_custom>
-
             <ComSelectPaymentPrinter @onClick="onSelectedReceipt" :selected="selectedReceipt.name" v-if="mobile" />
         </template>
         <template #content>
@@ -18,8 +17,7 @@
                         <ComPaymentInputNumber />
                     </v-col>
                     <v-col class="!p-1 h-full" md="4">
-                        <div class="overflow-auto h-full">
-                            
+                        <div class="overflow-auto h-full">                            
                             <ComSalePaymentMethodList />
                         </div>
                     </v-col>
@@ -41,22 +39,18 @@
             <v-row class="!m-0">
                 <v-col class="!p-0" cols="12" md="4">
                     <div class="h-full flex items-center" v-if="!mobile"> 
-                        <ComSelectPaymentPrinter @onClick="onSelectedReceipt" :selected="selectedReceipt.name" />
-                      
+                        <ComSelectPaymentPrinter @onClick="onSelectedReceipt" :selected="selectedReceipt.name" />                      
                     </div>
                     <div v-else>
                         <ComPaymentSummaryInformation />
                     </div> 
                 </v-col> 
                 <v-col class="!p-0" cols="12" md="4">
-                    <div v-if="gv.setting.show_button_tip==1" class="border rounded-sm px-2 py-4 text-center cursor-pointer bg-orange-100 hover:bg-orange-300 flex justify-center items-center m-1" @click="onTipPressed">
-                      
+                    <div v-if="gv.setting.show_button_tip==1" class="border rounded-sm px-2 py-4 text-center cursor-pointer bg-orange-100 hover:bg-orange-300 flex justify-center items-center m-1" @click="onTipPressed">                
                             <span v-if="((sale.sale.tip_amount||0)<=0)">{{ $t('TIP') }}</span>
-                            <span v-else>{{ $t('Remove TIP') }}</span>
-                        
+                            <span v-else>{{ $t('Remove TIP') }}</span>                        
                     </div>
                 </v-col>
-
                 <v-col class="!p-0" cols="12" md="4">
                     <v-row class="!m-0">
                         <v-col class="!p-0" cols="6">
@@ -71,7 +65,6 @@
                             <div class="p-1">
                                 <v-btn size="small" class="w-full" color="primary" @click="onPaymentWithoutPrint" stacked
                                     prepend-icon="mdi-currency-usd">{{ $t('Payment') }}</v-btn>
-
                             </div>
                         </v-col>
                     </v-row>
@@ -94,30 +87,24 @@ import ComPaymentSummaryInformation from './ComPaymentSummaryInformation.vue';
 import { createToaster } from '@meforma/vue-toaster';
 
 const { t: $t } = i18n.global;  
+const { mobile } = useDisplay();
+const sale = inject("$sale");
+const gv = inject("$gv");
 
-const { mobile } = useDisplay()
-
-const sale = inject("$sale")
-const gv = inject("$gv")
-
-const emit = defineEmits(['resolve'])
-const toaster = createToaster({ position: "top-right" })
+const emit = defineEmits(['resolve']);
+const toaster = createToaster({ position: "top-right" });
 const props = defineProps({
     params: Object
-})
+});
 
-
-
-let backup = ref({})
-const selectedReceipt = ref({})
+let backup = ref({});
+const selectedReceipt = ref({});
 selectedReceipt.value = gv.setting.default_pos_receipt;
 sale.paymentInputNumber = ((sale.sale?.grand_total||0) - (sale.sale?.deposit||0) - ((sale.sale?.total_cash_coupon_claim||0))).toFixed(sale.setting.pos_setting.main_currency_precision);
 
 function onSelectedReceipt(r) {
     selectedReceipt.value = r;
 }
-
-
 
 onMounted(() => { 
     sale.is_payment_first_load = true;

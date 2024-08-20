@@ -750,9 +750,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 							summary_columns.push( data_coumns.filter(r=>r.value == f)[0])
 						})
 						 
-						console.log(applied_filters.summary_fields,summary_columns)
-						
- 
+				 
 
 						if(applied_filters.summary_fields){
 							group_record.forEach(g=>{

@@ -26,13 +26,17 @@ export default class Gv {
 		this.itemMenuSetting= {
             default_font_size:14,
 			show_menu_language:"en",
-			group_by:"sale_number",
+			sort_order_by:"sale_number",
 			font_price_size:14,
 			item_font_size:14,
             min_font_size:10,
             max_font_size:30,
             font_size:14,
             show_item_code:false,
+			show_short_cut_chip:true,
+			show_column_item:6,
+			height_item:150,
+			width_sale_summary:400
         }
 		
 	}
@@ -279,7 +283,7 @@ export default class Gv {
 				}
 				window.chrome.webview.postMessage(JSON.stringify(send_data));
             }).catch((res)=>{
-                console.log(res)
+               
             })
 		}
 		else{
@@ -294,7 +298,7 @@ export default class Gv {
 				}
 				window.chrome.webview.postMessage(JSON.stringify(send_data));
             }).catch((res)=>{
-                console.log(res)
+          
             })
 		}
     }

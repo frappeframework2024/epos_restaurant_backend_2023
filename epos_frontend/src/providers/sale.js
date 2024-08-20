@@ -327,6 +327,7 @@ export default class Sale {
         }
     }
 
+ 
     addSaleProduct(p) {
         //check for append quantity rule
         //product code, allow_append_qty,price, unit,modifier, portion, is_free,sale_product_status
@@ -347,6 +348,7 @@ export default class Sale {
 
 
         let sp = Enumerable.from(this.sale.sale_products).where(strFilter).firstOrDefault()
+ 
         let is_new_sale_product = true;
         let new_sale_product;
         let prev_sale_product;
@@ -440,13 +442,14 @@ export default class Sale {
                 combo_menu: p.combo_menu,
                 combo_menu_data: (p.combo_menu_data || p.combo_group_data),
                 product_tax_rule: (p.tax_rule == "None" ? "" : p.tax_rule),
-                is_require_employee: p.is_require_employee,
+                is_require_employee: p.is_require_employee || 0,
                 is_timer_product: p.is_timer_product || 0,
                 time_stop: 0,
                 kod_status: "Pending",
-                rate_include_tax : p.rate_include_tax||0
-
+                rate_include_tax : p.rate_include_tax||0,
+                selected_variant : p.selected_variant
             }
+            
             if (p.is_timer_product) {
                 if (p.time_in) {
                     saleProduct.time_in = moment(p.time_in).format('yyyy-MM-DD HH:mm:ss');
@@ -512,6 +515,7 @@ export default class Sale {
                 })
         }
     }
+
     cloneSaleProduct(sp, quantity) {
         const u = JSON.parse(localStorage.getItem('make_order_auth'));
         this.clearSelected();
@@ -595,8 +599,7 @@ export default class Sale {
         if (sp.sale_discount_percent) {
             sp.sale_discount_amount = (sp.sub_total * sp.sale_discount_percent / 100);
         }
-        sp.total_discount = sp.discount_amount + sp.sale_discount_amount;
- 
+        sp.total_discount = sp.discount_amount + sp.sale_discount_amount; 
 
         this.onCalculateTax(sp);
         sp.amount = sp.sub_total - sp.discount_amount ;
@@ -605,11 +608,14 @@ export default class Sale {
             sp.amount = sp.sub_total - sp.discount_amount + sp.total_tax ;
             sp.total_revenue = (sp.sub_total - sp.total_discount) + sp.total_tax;
         } 
+
+        if(sp.total_discount > 0 || sp.allow_crypto_claim == 0  || this.sale.sale_discount > 0){
+            sp.crypto_able_amount = 0;
+        }else{
+            sp.crypto_able_amount = sp.amount
+        }
+
         //set property for re render comhappyhour check
-        sp.is_render = true;
-
-
-
     }
 
     //on sale product apply tax setting
@@ -829,9 +835,12 @@ export default class Sale {
 
         //grand_total
         this.sale.grand_total = ((this.sale.sub_total || 0) - (this.sale.total_discount || 0)) + ((this.sale.total_tax || 0));
- 
-        this.sale.balance = this.sale.grand_total - (this.sale.deposit || 0) - (this.sale.total_cash_coupon_claim||0);
 
+        // crypto able amount
+        this.sale.crypto_able_amount = (this.sale.sale_discount > 0 ? 0 : this.getNumber(sp.sum("$.crypto_able_amount")));        
+ 
+        //
+        this.sale.balance = this.sale.grand_total - (this.sale.deposit || 0) - (this.sale.total_cash_coupon_claim||0);
 
         // commission
         if (this.sale.commission_type == "Percent") {
@@ -841,7 +850,6 @@ export default class Sale {
         }
 
         this.orderChanged = true;
-
         socket.emit("ShowOrderInCustomerDisplay", this.sale, sale_status);
 
         //add sale product to temp resend sale product to kitchen order
@@ -1544,11 +1552,11 @@ export default class Sale {
     }
 
     onCheckPriceSmallerThanZero() {
-        if (this.sale.sale_products.filter(r => r.amount < 0).length > 0) {
+        if (this.sale.sale_products.filter(r => r.amount < 0 && r.is_return == 0).length > 0) {
             toaster.warning($t('msg.Product price cannot smaller than zero'));
             return true
         }
-        else if (this.sale.grand_total < 0) {
+        else if (this.sale.grand_total < 0 && this.sale.sale_products.filter(r => r.amount < 0 && r.is_return == 1).length <= 0) {
             toaster.warning($t('msg.Sale price cannot smaller than zero'));
             return true
         }
@@ -1794,7 +1802,7 @@ export default class Sale {
             station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
             printers: []
         }
-
+ 
         var groupKeys = "{printer:$.printer,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port}"
         var groupFields = "$.printer+','+$.group_item_type+','+$.ip_address+','+$.port";
         var printers = Enumerable.from(data.product_printers).groupBy(groupKeys, "", groupKeys, groupFields).toArray();
@@ -1833,9 +1841,10 @@ export default class Sale {
 
         let station_printers = (this.setting?.device_setting?.station_printers);
         if (station_printers.length <= 0) {
-            // console.log("The station no printer for KOT") 
+ 
         } else {
             station_printers.forEach((p) => {
+                
                 let temp_sale_products = data.product_printers.filter((x) => x.printer == p.printer_name)
                 if (temp_sale_products.length > 0) {
                     if (p.usb_printing == 1) {
@@ -1917,6 +1926,7 @@ export default class Sale {
             const printers = JSON.parse(r.printers);
             printers.forEach((p) => {
                 this.productPrinters.push({
+                    sale_product_name:r.name,
                     printer: p.printer,
                     group_item_type: p.group_item_type,
                     is_label_printer: p.is_label_printer == 1,
@@ -2180,7 +2190,7 @@ export default class Sale {
                 if ((data.fee_amount || 0) == 0) {
                     data.fee_amount = parseFloat(parseFloat(data.amount / data.paymentType.exchange_rate).toFixed(precision)) * (data.paymentType.fee_percentage / 100);
                 }
-                console.log(data.paymentType)
+                
                 this.sale.payment.push({
                     payment_type: data.paymentType.payment_method,
                     payment_type_group:data.paymentType.payment_type_group,
@@ -2316,7 +2326,7 @@ export default class Sale {
                 is_free: data.is_free
             }).then((doc) => { })
                 .catch((error) => {
-                    console.log(error)
+ 
                 });
         }
     }

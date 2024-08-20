@@ -1,3 +1,5 @@
+import re
+import string
 
 import frappe
 import json
@@ -5,6 +7,23 @@ from frappe.utils.response import json_handler
 from datetime import datetime, timedelta
 from epos_restaurant_2023.inventory.inventory import get_uom_conversion
 from functools import lru_cache
+from py_linq import Enumerable
+
+def convert_to_safe_key(text):
+    # Remove numbers
+    text = re.sub(r'\d+', '', text)
+    
+    # Remove special characters
+    text = text.translate(str.maketrans('', '', string.punctuation))
+    
+    # Convert to lowercase
+    text = text.lower()
+    
+    # Remove whitespace from beginning and end and replace remaining spaces with underscores
+    text = text.strip().replace(" ", "_")
+    
+    return text
+
 
 @frappe.whitelist(allow_guest=True)
 def get_product_by_menu(root_menu="", mobile = 0):
@@ -41,11 +60,11 @@ def get_product_by_menu(root_menu="", mobile = 0):
             for m in child_menus:
                 menus.append(m)
             
-            menu_products = get_products(d.name,mobile=mobile)
+            menu_products = get_temp_menu_products(d.name,mobile=mobile)
             for m in menu_products:
                 menus.append(m)
         
-        menu_products = get_products(root_menu,mobile=mobile)
+        menu_products = get_temp_menu_products(root_menu,mobile=mobile)
         for m in menu_products:
                 menus.append(m)
              
@@ -80,13 +99,13 @@ def get_child_menus(parent_menu, mobile= 0):
         for m in child_menus:
             menus.append(m)
         
-        for m in get_products(d.name,mobile=mobile):
+        for m in get_temp_menu_products(d.name,mobile=mobile):
             menus.append(m)       
         
     return menus
 
 
-def get_products(parent_menu,mobile=0):     
+def get_temp_menu_products(parent_menu,mobile=0):     
     sql = """select 
                 name as menu_product_name,
                 product_code as name,
@@ -274,10 +293,17 @@ def get_currenct_cost(product_code="",stock_location="",unit=""):
             doc[0]["last_purchase_cost"] = product.last_purchase_cost
             return doc[0]
         
-        
+def get_product_category(category):
+    if cached_value := frappe.cache.get_value("product_category_by_category_name_" + category):
+        return cached_value
+    
+    sql="select name, name as name_en, product_category_name_kh as name_kh, parent_product_category as parent, photo, text_color, background_color, show_in_pos_shortcut_menu as shortcut_menu, allow_sale,'menu' as type, '' as price_rule from `tabProduct Category` where parent_product_category=%(category)s and allow_sale=1"
+    data = frappe.db.sql(sql, {"category":category},as_dict=1)
+    frappe.cache.set_value("product_category_by_category_name_" + convert_to_safe_key(category), data)
+    return data             
 
 @frappe.whitelist()
-def get_product_by_product_category(category ='All Product Categories',product_code="",keyword="", limit = 20, page=1, order_by='product_code',order_by_type='asc'):
+def get_products(category ='All Product Categories',product_code=None,keyword=None , limit = 20, page=1, order_by='product_code',order_by_type='asc', include_product_category=0):
     sql="""
         select 
             name as menu_product_name,
@@ -306,44 +332,102 @@ def get_product_by_product_category(category ='All Product Categories',product_c
             revenue_group,
             prices,
             sort_order,
-            has_variant
+            has_variants,
+            '[]' as printers,
+            '[]' as modifiers,
+            '' as price_rule,
+            'product' as type
+            
         from `tabProduct`
         where
             (
                 disabled=0 and 
                 allow_sale=1 and 
-                is_variant=if(%(product_code)s='',is_variant, 0)
+                is_variant=if(%(product_code)s!='',is_variant, 0)
             ) 
     """
 
  
     
     if category!= 'All Product Categories':
-        sql = sql + " and product_category in (%(product_categories)s)"
+        sql = sql + " and product_category in %(product_categories)s"
+    if product_code:
+        sql = sql + " and name = %(product_code)s "
+        
     if keyword:
         sql = sql + " and name like %(keyword)s or product_name_en like %(keyword)s and product_name_kh like %(keyword)s"
     
     sql = sql + " order by %(order_by)s %(order_by_type)s"
     sql = sql + " LIMIT %(limit)s OFFSET %(start)s;"
-    data = frappe.db.sql(sql,{
+   
+    filter = {
         "product_categories": get_product_category_with_children(category),
-        "product_code":product_code,
-        "keyword":'%{}%'.format(keyword),
+        "product_code":product_code or "",
         "limit":int(limit),
-        "start": (int(page)  -1) * 20 + 1,
+        "start": (int(page)-1) * (int(limit) + 1),
         "order_by":order_by,
         "order_by_type":order_by_type
         
-    },as_dict=1)
+    }
+    if keyword:
+        filter["keyword"]='%{}%'.format(keyword)
      
-    updateVariant([d for d in data if d["has_variant"]==1])
+    data = frappe.db.sql(sql,filter,as_dict=1)
     
-    return data
+    # todo 
+    # get  product price
+    # get product modifier
+    # get printers
+    
+    for  d in data:
+        if d["has_variants"]:
+            d["variants"] = get_product_variant(d["name"])
+        
+        d["printer"] = json.dumps( get_product_printers(d["name"]))
+
+        d["modifiers"] = json.dumps( get_product_modifiers(d["name"]))
+    
+    if int(include_product_category) ==1:
+        return {"products":data,"categories":get_product_category(category)}
+    else:
+        return {"products":data}
+            
 
 
-def updateVariant(data):
-    for d in data:
-        d["variant"] = get_product_variant(d["name"])
+@frappe.whitelist(methods="POST")
+def get_product_by_variant(variant,product_code):
+    sql ="""
+        select variant_code from `tabProduct Variants` 
+        where 
+            parent = %(product_code)s and
+            coalesce(variant_1,'') = if(%(variant_1)s ='', coalesce(variant_1,''),%(variant_1)s) and 
+            coalesce(variant_2,'') = if(%(variant_2)s ='', coalesce(variant_2,''),%(variant_2)s) and 
+            coalesce(variant_3,'') = if(%(variant_3)s ='', coalesce(variant_3,''),%(variant_3)s)  
+        limit 1
+    """
+    filter = {
+        "product_code":product_code
+    }
+    filter["variant_1"] = '' if not  "variant_1" in variant else variant["variant_1"]["variant_value"]
+        
+    filter["variant_2"] = '' if not "variant_2" in variant else variant["variant_2"]["variant_value"]
+
+    filter["variant_3"] = '' if not "variant_3" in variant else  variant["variant_3"]["variant_value"]
+ 
+        
+    data = frappe.db.sql(sql,filter,as_dict = 1)
+    
+    if data:
+       
+        product_data = get_products(product_code=data[0]["variant_code"], limit=1, page=1,include_product_category=0)
+        
+        if product_data:
+            if product_data["products"]:
+                return product_data["products"][0]
+    
+    frappe.throw("This selected product variant is not available in the system")
+        
+ 
 
 
 def get_product_variant(product_code):
@@ -365,10 +449,129 @@ def get_product_variant(product_code):
     frappe.cache.set_value("product_variant_" + product_code, variants)
     return variants
 
+def get_product_printers(product_code):
+    # we clear this cache when save product 
+    if cached_value := frappe.cache.get_value("product_printer_" + product_code):
+        return cached_value
+    
+    doc = frappe.get_cached_doc("Product", product_code)
+    printers = []
+    for p in doc.printers:
+            printers.append({
+                    "printer":p.printer_name,
+                    "group_item_type":p.group_item_type,
+                    "ip_address":p.ip_address,
+                    "port":int(p.port or 0),
+                    "is_label_printer":p.is_label_printer,
+                    "usb_printing":p.usb_printing,
+                })
+    
+    frappe.cache.set_value("product_printer_" + product_code, printers)
+    return printers
+
+def get_product_modifiers(product_code):
+    # we clear this cache when save product 
+    if cached_value := frappe.cache.get_value("product_modifier_" + product_code):
+        return cached_value
+    
+    #get product modifier
+    doc = frappe.get_cached_doc("Product",product_code)
+    
+    mc0 = []
+    mc1 = Enumerable(doc.product_modifiers).select(lambda x: x.modifier_category).distinct()
+    mc2 = [] #global modifier category
+
+
+
+    # #get global modifier category
+    global_modifier_product_categorie = get_global_modifier_by_category(doc.product_category)
+    
+    global_modifiers = []
+    for gmpc in global_modifier_product_categorie:
+        gmodifiers = frappe.get_cached_doc('Modifier Group',gmpc.parent)
+        for g in gmodifiers.modifiers:
+            global_modifiers.append(g)
+    
+    if global_modifiers != []:
+        mc2 = Enumerable(global_modifiers).select(lambda x: x.modifier_category).distinct()
+    
+    for mc in mc1:
+        mc0.append(mc)
+    for mc in mc2:
+        mc0.append(mc)
+
+    
+    modifier_categories = Enumerable(mc0).select(lambda x: x).distinct()	
+    modifiers = []
+
+
+    ## get modifier data
+    for mc in modifier_categories:
+        doc_category = frappe.get_cached_doc("Modifier Category",mc)
+        modifier_items = []	
+        items = []			
+        #global modifier group
+        for m in global_modifiers:
+            if m.modifier_category == mc:
+                items.append({
+                    "name":m.name,
+                    "branch":m.business_branch or "" , 
+                    "prefix":m.prefix, 
+                    "modifier":m.modifier_code, 
+                    "value": str(m.business_branch or "") + str(m.prefix) + ''+str( m.modifier_code), 
+                    "price":m.price 
+                    })	
+        
+        #product modifier
+        for m in doc.product_modifiers:
+            if m.modifier_category == mc:							
+                items.append({
+                    "name":m.name,
+                    "branch":m.business_branch or "" , 
+                    "prefix":m.prefix, 
+                    "modifier":m.modifier_code, 
+                    "value":  str(m.business_branch or "") + str(m.prefix) + ''+str( m.modifier_code), 
+                    "price":m.price 
+                })
+        
+        for i in items:	
+            modifier_items.append({
+                "name":i['name'],
+                "branch":i['branch'], 
+                "prefix":i['prefix'], 
+                "modifier":i['modifier'], 
+                "price": i['price'] 
+            })
+
+        modifiers.append({
+            "category":mc,
+            "is_required":doc_category.is_required,
+            "is_multiple":doc_category.is_multiple,
+            "items":modifier_items
+        })
+        
+    frappe.cache.set_value("product_modifier_" + product_code, modifiers)
+    return modifiers
+
+   
+def get_global_modifier_by_category(category):
+    if cached_value := frappe.cache.get_value("global_modifier_group_" + category.replace(" ","_")):
+        return cached_value
+    
+    data =frappe.get_all('Modifier Group Product Category',
+                            filters=[['product_category','=',category]],
+                            fields=['parent','name'],
+                            limit=200
+                            )
+    
+    frappe.cache.set_value("global_modifier_group_" +  convert_to_safe_key(category),data )
+    return data
 
 
 @frappe.whitelist()
 def  get_product_category_with_children(parent_category='All Product Categories'):
+    if cached_value := frappe.cache.get_value("product_category_with_children_" + parent_category):
+        return cached_value
     sql="""
         WITH RECURSIVE hierarchy AS (
             SELECT
@@ -395,4 +598,5 @@ def  get_product_category_with_children(parent_category='All Product Categories'
 
     """
     data =  frappe.db.sql(sql,{"parent_category":parent_category,},as_dict=1)
+    frappe.cache.set_value("product_category_with_children_" + convert_to_safe_key(parent_category),data )
     return [d["product_category"] for d in data]

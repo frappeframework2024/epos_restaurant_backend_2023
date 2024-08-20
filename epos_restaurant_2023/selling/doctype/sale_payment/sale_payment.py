@@ -72,6 +72,9 @@ class SalePayment(Document):
 		if self.payment_type_group == "Voucher":
 			self.update_customer_voucher_balance()
 		self.update_customer_point()
+
+		## update crypto
+		update_customer_saving_crypto(self)
 	
 	def on_cancel(self):
 		
@@ -85,6 +88,9 @@ class SalePayment(Document):
 		if self.payment_type_group == "Voucher":
 			self.update_customer_voucher_balance()
 		self.update_customer_point_on_cancel_sale()
+
+		## cancel crypto
+		update_customer_saving_crypto(self)
 		 
 
 	def before_update_after_submit(self):
@@ -167,6 +173,7 @@ class SalePayment(Document):
 
 
 		# Update Customer Voucher Balance
+	
 	def update_customer_voucher_balance(self):
 		if self.sale_amount < self.payment_amount and self.payment_type_group == "Voucher" :
 			frappe.throw("Payment amount must equal to grand total")
@@ -265,8 +272,6 @@ def update_sale(self):
 			
 			# update customer balance
 			update_customer_bill_balance(self)
-		
-
 
 def update_customer_bill_balance(self,calcel=False):
 	sql ="""update `tabCustomer` c 
@@ -280,3 +285,21 @@ def update_customer_bill_balance(self,calcel=False):
 				set c.balance = _s.total_balance + c.total_coupon_balance + c.membership_balance
 			where c.name = %(customer)s"""
 	frappe.db.sql(sql,{"customer":self.customer})
+
+def update_customer_saving_crypto(self):
+	if self.payment_type_group == "Crypto":
+		sql = """ update `tabCustomer` c
+					inner join (
+						select 
+							%(customer)s as customer,
+					sum(sp.payment_amount) as total_claim_amount
+				from `tabSale Payment` sp 
+				where sp.payment_type_group = 'Crypto'
+				and sp.docstatus = 1
+				and sp.customer = %(customer)s
+				) _c on c.name = _c.customer
+				set c.total_crypto_claim = _c.total_claim_amount,
+				c.total_crypto_balance = c.total_crypto_amount - (_c.total_claim_amount + c.total_crypto_balance_expired )
+				where c.name = %(customer)s"""
+		frappe.db.sql(sql,{"customer":self.customer})
+		

@@ -10,7 +10,7 @@
             <div class="flex-auto pa-0 h-full d-none d-sm-block" style="width: calc(100vw - 450px);">
                 <ComMenu :background-image="gv.setting.pos_sale_order_background_image" />
             </div>
-            <div style="width: 450px;" class="h-full pa-0">
+            <div :style="'width:' +  gv.itemMenuSetting.width_sale_summary + 'px;'" class="h-full pa-0">
                 <div class="h-full flex-col flex px-1">
                     <div class="mb-1">
                         <div class="flex justify-between items-center">
@@ -115,7 +115,20 @@ function onSearchProduct(open) {
     openSearch.value = open
 }
 
+const handleHashChange = () => {
+    const hash = window.location.hash.substring(1); // Remove the `#` from the hash
+    if (hash) {
+        if(product.selectedProductCategory!=decodeURIComponent(hash)){
+         
+            product.getProductMenuByProductCategory(decodeURIComponent(hash))
+        }
+    }
+    product.canBack = (hash && decodeURIComponent(hash)!="All Product Categories")
+};
+
+
 onMounted(() => { 
+    window.addEventListener('hashchange', handleHashChange);
     if (sale.getString(route.params.name) == "") {
         if (sale.sale.sale_status == undefined) {
             if (sale.setting.table_groups.length > 0) {
@@ -232,7 +245,7 @@ onUnmounted(() => {
     sale.kod_messages = [];
 
     socket.emit("ShowOrderInCustomerDisplay", {}, true);
-
+    window.removeEventListener('hashchange', handleHashChange);
 })
 
 

@@ -5,9 +5,9 @@
     </template>
     <template #content>
 
-      <v-tabs v-model="tab" bg-color="primary">
+      <v-tabs v-model="tab" bg-color="primary" v-if="gv.setting.exely.enabled == 1">
         <v-tab value="exely" v-if="gv.setting.exely.enabled == 1">EXELY GUEST</v-tab>
-        <v-tab value="epos">ePOS Customer</v-tab>
+        <v-tab value="epos" >ePOS Customer</v-tab>
 
       </v-tabs>
       <v-card>
@@ -15,9 +15,7 @@
           <v-window v-model="tab">
             <v-window-item value="exely" v-if="gv.setting.exely.enabled == 1">
               <ComSearchExelyGuest @onSelectCustomer="onSelectExelyGuest" />
-
             </v-window-item>
-
             <v-window-item value="epos">
               <div>
                 <div>
@@ -41,10 +39,14 @@
                         </v-avatar>
                         <avatar v-else :name="c.customer_name_en" class="mr-4" size="40"></avatar>
                       </template>
-                      <template v-slot:append>
+                      <template v-slot:append>    
+                        <v-chip v-if="c.total_crypto_balance >0" color="primary">
+                          <CurrencyFormat :value="parseFloat(c.total_crypto_balance)" />
+                          {{ $t("Crypto") }}</v-chip>
+
+                        <v-chip v-if="c.allow_earn_point == 1 && c.total_point_earn > 0" color="success">{{Number(c.total_point_earn).toFixed(2)}} {{ $t("Point(s)") }}</v-chip>
+                     
                         
-                        
-                        <v-chip v-if="c.allow_earn_point == 1 && c.total_point_earn > 0" color="success">{{Number(c.total_point_earn).toFixed(2)}} Point(s)</v-chip>
                         <ComCustomerPromotionChip :customer="c"></ComCustomerPromotionChip>
                         <v-badge v-if="c.pos_note" color="error" dot class="ml-2" :title="c.pos_note">
                           <v-icon>mdi-note-alert-outline</v-icon>
@@ -152,7 +154,7 @@ createResource({
 function getDataResourceParams() {
   return {
     doctype: "Customer",
-    fields: ["name", "customer_name_en", "customer_name_kh","pos_note", "customer_group", "date_of_birth", "gender", "phone_number", "photo", "default_discount", "is_disabled","allow_earn_point","total_point_earn"],
+    fields: ["name", "customer_name_en", "customer_name_kh","pos_note", "customer_group", "date_of_birth", "gender", "phone_number", "photo", "default_discount","total_crypto_balance", "is_disabled","allow_earn_point","total_point_earn"],
     order_by: "modified desc",
     or_filters: getFilter(),
     limit_page_length: 20

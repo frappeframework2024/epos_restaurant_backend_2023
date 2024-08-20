@@ -1,5 +1,5 @@
 <template>
-    <div class="py-2 flex flex-wrap">
+    <div v-if="gv.itemMenuSetting.show_short_cut_chip" class="py-2 flex flex-wrap">
         <ComSaleTypeChip v-if="product.setting.pos_menus.length > 0" />
         <ComChip v-if="!sale.load_menu_lang" :tooltip="$t('Menu Language')" prepend-icon="mdi-translate"
             @onClick="onChangeMenuLanguage()"></ComChip>
@@ -21,13 +21,16 @@
             sale.sale.price_rule }}</ComChip>
         <ComSaleInformationHappyHourPromotionChip />
     </div>
+    <div v-else class="mt-2">
+
+    </div>
 </template>
 
 <script setup>
 import ComSaleTypeChip from './ComSaleTypeChip.vue';
 import ComSaleInformationHappyHourPromotionChip from './happy_hour_promotion/ComSaleInformationHappyHourPromotionChip.vue';
 import { inject, keyboardDialog, changePriceRuleDialog, createToaster, i18n, computed } from '@/plugin';
-
+const gv = inject("$gv")
 
 const { t: $t } = i18n.global;
 

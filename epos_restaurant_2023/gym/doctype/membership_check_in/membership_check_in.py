@@ -11,17 +11,14 @@ class MembershipCheckIn(Document):
 	def on_submit(self): 
 		for m in self.membership_check_in_item:			
 			sql = """select count(`name`) as total_check_in from `tabMembership Check In Items` 
-					where membership = '{}' 
-					and docstatus = 1 """.format( m.membership)
-			
-		 
-			exec = frappe.db.sql(sql, as_dict=1)
-			# frappe.throw(str(exec))
-			# frappe.throw(str(sql))
+					where membership = %(membership)s
+					and docstatus = 1 """		
+			exec = frappe.db.sql(sql,{"membership":m.membership}, as_dict=1)
+
 			if exec:
 				count = (exec[0].total_check_in or 0)
-				update = "update `tabMembership Check In Items` set check_in_number = {} where name ='{}'".format(count,m.name) 
-				frappe.db.sql(update)
+				update = "update `tabMembership Check In Items` set check_in_number = %(count)s where name =%(id)s"
+				frappe.db.sql(update,{"count":count, "id":m.name})
 
 			#
 			saving_crypto_customer(self, m.membership)
@@ -32,9 +29,9 @@ def saving_crypto_customer(self,membership ):
 		count(name) as total_checked_in
 	from `tabMembership Check In Items` m 
 	where m.docstatus = 1
-	-- and cast(m.creation as date) = %(check_in_date)s
-	and m.membership = %(membership)s
-	"""	
+	and cast(m.creation as date) = %(check_in_date)s
+	and m.membership = %(membership)s"""
+	
 	docs = frappe.db.sql(sql,{"check_in_date":self.check_in_date,"membership":membership}, as_dict = 1)	
 	
 	if len( docs)>0:

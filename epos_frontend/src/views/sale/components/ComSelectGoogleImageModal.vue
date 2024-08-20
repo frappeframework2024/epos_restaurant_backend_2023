@@ -55,10 +55,7 @@ onMounted(() => {
   loadImage()
 });
 
-watch(keyword, (newValue, oldValue) => {
-      console.log(`Message changed from "${oldValue}" to "${newValue}"`);
-    });
-
+ 
 function loadImage(){
   is_loading.value=true;
 	call.post('epos_restaurant_2023.api.api.search_image_from_google', {

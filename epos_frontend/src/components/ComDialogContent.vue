@@ -11,7 +11,7 @@
                 </div>    
             </div>
         </div>
-        <div v-if="!hideFooter" :class="[isDialog == false ? 'border-t p-2 page-footer-fixed':'border-t border-gray-200 p-2 pb-0 footer-fixed dialog-ftt', loading ? 'unset-absolute' : '']">
+        <div v-if="!hideFooter" :class="[isDialog == false ? 'p-2 page-footer-fixed':'p-2 footer-fixed dialog-ftt position-fixed bottom-0 left-0 bg-white w-100 ', loading ? 'unset-absolute' : '']">
             <div class="overflow-auto lg:overflow-hidden">
                 <slot name="footer-top"></slot>
                 <div class="flex gap-1 lg:gap-0 justify-between items-center w-max lg:w-full">
@@ -23,10 +23,10 @@
                     </div>
                     <div class="flex gap-2">
                         <slot name="footer-right"></slot>
-                        <v-btn class="text-white" v-if="!hideButtonClose"  rounded="lg" color="red-lighten-2" @click="close()" :loading="loading">
+                        <v-btn class="text-white" v-if="!hideButtonClose"  rounded="lg" color="red-lighten-1" @click="close()" :loading="loading">
               {{ titleButtonClose ?? 'Cancel' }}
             </v-btn>            
-                        <v-btn class="text-white" :disabled="disabledBtnOk" rounded="lg" color="green-lighten-2" v-if="!hideButtonOK" @click="onOK()" :loading="loading">
+                        <v-btn class="text-white" :disabled="disabledBtnOk" rounded="lg" color="green-lighten-1" v-if="!hideButtonOK" @click="onOK()" :loading="loading">
               {{ titleButtonOK ?? 'Save' }}
             </v-btn>
                     </div>

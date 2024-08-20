@@ -22,7 +22,7 @@ frappe.query_reports["User Role And Permission Report"] = {
 	"formatter": function(value, row, column, data, default_formatter) {
 		
 		value = default_formatter(value, row, column, data);
-		console.log(column)
+	 
 		if ((data && data.indent == 0) || (data && data.is_total_row == 1)) {
 
 			value = $(`<span>${value}</span>`);

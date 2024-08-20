@@ -62,20 +62,20 @@ async function onPOSProfileClick(profile){
           .then((_resp)=>{ 
             localStorage.setItem('current_user', JSON.stringify(_resp.message));  
           }).catch((_err)=>{
-            console.log("__fail_to_get_user_permssion")
+        
             emit('resolve', false);
             return
           })
 
         }else{
-          console.log("__fail_to_relogin_auth")
+        
           emit('resolve', false);
           return
         } 
       
       }
     }else{
-      console.log("__system_invalid_auth")
+      
       emit('resolve', false);
       return
     }

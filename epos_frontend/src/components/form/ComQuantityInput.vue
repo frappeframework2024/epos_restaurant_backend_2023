@@ -181,10 +181,11 @@ sale.vue.$onKeyStroke('F7', (e) => {
 
 
 function onUpdateQuantity(param) {
-    if (props.saleProduct.quantity <= 1 && param == -1) {
-        return
+    const qty = (Math.abs(props.saleProduct.quantity) + param) * (props.saleProduct.is_return==1?-1:1)
+    if(qty!=0){
+        sale.updateQuantity(props.saleProduct, (Math.abs(props.saleProduct.quantity) + param) * (props.saleProduct.is_return==1?-1:1) )
     }
-    sale.updateQuantity(props.saleProduct, props.saleProduct.quantity + param)
+    
 }
 
 function onDiscountClick(discount_type) {

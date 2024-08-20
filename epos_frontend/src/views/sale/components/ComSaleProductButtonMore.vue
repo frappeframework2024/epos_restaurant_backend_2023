@@ -55,6 +55,18 @@
                 </template>
                 <v-list-item-title class="text-red-700">{{ $t('Remove Note') }}</v-list-item-title>
             </v-list-item>
+            <v-list-item v-if="saleProduct.quantity > 0" @click="onReturn(saleProduct)">
+                <template v-slot:prepend>
+                    <v-icon icon="mdi-cash-refund" class="text-orange-700"></v-icon>
+                </template>
+                    <v-list-item-title class="text-orange-700">{{ $t("Mark as Return Product") }}</v-list-item-title>
+                  </v-list-item> 
+                  <v-list-item v-else @click="onReturn(saleProduct)">
+                    <template v-slot:prepend>
+                        <v-icon icon="mdi-cash"></v-icon>
+                    </template>
+                    <v-list-item-title>{{ $t("Mark as Selling Product") }}</v-list-item-title>
+                  </v-list-item> 
             <v-list-item  :prepend-icon="saleProduct.rate_include_tax == 1 ? 'mdi-tag-remove' : 'mdi-tag-plus'"  @click="addAndRemoveRateIncludeTax(saleProduct)"  v-if="(saleProduct.tax_rule && gv.device_setting.is_order_station==0 &&  gv.device_setting.show_rate_include_button==1)">
                 <v-list-item-title :class="saleProduct.rate_include_tax == 1 ? 'text-red-700' : ''">{{ $t(saleProduct.rate_include_tax == 1 ? 'Remove Rate Include Tax' : 'Rate Include Tax')}}</v-list-item-title>
             </v-list-item>
@@ -125,6 +137,11 @@ const productPrinter = computed( ()=>{
     return false;
 });
 
+function onReturn(sp) {
+  sp.is_return = !sp.is_return 
+  sale.updateQuantity(sp, sp.quantity * -1)
+
+}
 
 function onSelectPrinter(){ 
     if (!sale.isBillRequested()){

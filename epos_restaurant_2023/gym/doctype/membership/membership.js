@@ -69,7 +69,7 @@ frappe.ui.form.on("Membership", {
                                             frm.reload_doc();
                                         } else {
                                             // Handle the case where there's no message in the response
-                                            console.log('No data received');
+                                            
                                         }
                                     },
                                     error: function(err) {
@@ -79,15 +79,10 @@ frappe.ui.form.on("Membership", {
                                 });
  
                             }else{
-                                console.log("same")
+                                
                             }
                         })
-                        // console.log(val)
-                        // frappe.db.get_value("Membership Options",val.membership_option,["*"]).then((r)=>{
-                        //     console.log(r)
-                           
-                        //     // d.hide();
-                        // });                      
+                                          
                     }
                 });
                 
@@ -163,7 +158,9 @@ function on_membership_value_changed(frm,changed=false){
                 frm.refresh_field("default_discount");   
                 frm.refresh_field("crypto_amount");   
                 frm.refresh_field("old_crypto_amount");   
-            }).catch((r)=>console.log(r));
+            }).catch((r)=>{
+                
+            });
         }else{
             on_update_grand_total(frm,changed);
         }        

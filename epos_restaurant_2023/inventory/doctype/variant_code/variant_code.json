@@ -8,6 +8,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "variant_group",
   "variant_name",
   "code_prefix"
  ],
@@ -26,11 +27,17 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Code Prefix"
+  },
+  {
+   "fieldname": "variant_group",
+   "fieldtype": "Select",
+   "label": "Variant Group",
+   "options": "Variant 01\nVariant 02\nVariant 03"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-04-10 08:49:23.247792",
+ "modified": "2024-08-20 16:08:13.186992",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Variant Code",

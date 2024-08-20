@@ -30,9 +30,9 @@ const call = frappe.call();
 let categories = ref([]);
  
 
-//
+ 
 onMounted(async ()=>{   
-  //  console.log(gv)
+ 
 });
 
 
@@ -45,7 +45,9 @@ async function onSelected(shortcut){
   })
   .then((r)=> { 
     categories.value = r.message 
-  }).catch(er=> console.log(er))
+  }).catch(er=> {
+    
+  })
 }
  
 </script>

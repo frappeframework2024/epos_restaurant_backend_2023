@@ -8,6 +8,7 @@
             <avatar v-else :name="sp.product_name" class="mr-4" size="40"></avatar>
         </template>
         <template v-slot:default>
+  
             <div class="text-sm">
                 <div class="flex">
                     <div class="grow">
@@ -18,6 +19,7 @@
                             </ComChip>                   
                             <ComHappyHour :saleProduct="sp" v-if="sp.is_render"/>
                         </div> 
+                        
                         <div v-if="!sp.is_timer_product">
                             {{ sp.quantity }} x 
                             <CurrencyFormat :value="sp.price" />

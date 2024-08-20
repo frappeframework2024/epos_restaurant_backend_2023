@@ -51,7 +51,16 @@ function onSaleCancelDiscount() {
     gv.authorize("cancel_discount_sale_required_password", "cancel_discount_sale", "cancel_discount_sale_required_note", "Cancel Discount Sale Note", "", false).then((v) => {
         if (v) {  
             sale.sale.discount = 0;
-            sale.sale.discount_type = 'Amount'
+            sale.sale.discount_type = 'Amount';
+            sale.sale.sale_products.forEach((sp)=>{
+                sp.sale_discount_amount = 0;
+                sp.total_discount = sp.discount_amount;
+                if(sp.total_discount > 0 || sp.allow_crypto_claim == 0 ){
+                    sp.crypto_able_amount = 0;
+                }else{
+                    sp.crypto_able_amount = sp.amount
+                }
+            })
             sale.updateSaleSummary(); 
 
             //audit trail 

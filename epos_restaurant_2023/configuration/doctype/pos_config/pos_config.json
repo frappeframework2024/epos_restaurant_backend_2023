@@ -22,6 +22,7 @@
   "website",
   "main_currency_predefine_payment_amount",
   "second_currency_predefine_payment_amount",
+  "percentage_of_bill_amount_to_claim_crypto",
   "section_break_12",
   "vattin_number",
   "section_break_13",
@@ -788,12 +789,18 @@
    "fieldname": "apply_rate_include_tax_required_note",
    "fieldtype": "Check",
    "label": "Apply Rate Include Tax Required Note"
+  },
+  {
+   "default": "0",
+   "fieldname": "percentage_of_bill_amount_to_claim_crypto",
+   "fieldtype": "Percent",
+   "label": "Percentage of Bill amount to Claim Crypto (%)"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-12 15:37:32.979678",
+ "modified": "2024-08-20 11:12:18.569455",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

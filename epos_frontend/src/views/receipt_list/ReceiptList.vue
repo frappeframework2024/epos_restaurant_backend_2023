@@ -157,7 +157,7 @@ async function _onPrintProcess(sale){   //
   if((gv.setting?.device_setting?.use_server_network_printing||0)==1){       
       if (printer.length <= 0) {
           // toaster.warning($t("Printer not yet config for this device"));
-          console.log("Printer not yet config for this device")
+ 
           return // not printer
       }  
 
@@ -190,7 +190,7 @@ async function _onPrintProcess(sale){   //
   else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
     if (printer.length <= 0) {
         // toaster.warning($t("Printer not yet config for this device"))
-        console.log("Printer not yet config for this device")
+ 
     } else {
         data.printer = _printer;
         flutterChannel.postMessage(JSON.stringify(data));

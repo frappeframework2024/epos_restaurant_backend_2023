@@ -11,11 +11,10 @@
                     <v-img :src="sp.product_photo"></v-img>
                 </v-avatar>
                 <avatar v-else :name="sp.product_name" class="mr-4" size="40"></avatar>
-
+                
             </template>
             <template v-slot:default>
                 <div class="text-sm">
-
                     <div class="flex">
                         <div class="grow">
                             <div v-if="!sale.load_menu_lang"> {{ getMenuName(sp) }}<v-chip class="ml-1" size="x-small"
@@ -28,6 +27,7 @@
                                     color="orange" text-color="white" prepend-icon="mdi-tag-multiple">
                                     <span>{{ sp.discount }}%</span>
                                 </ComChip>
+                                
                                 <ComHappyHour :saleProduct="sp" v-if="sp.is_render" />
                             </div>
                             <div v-if="!sp.is_timer_product">
@@ -45,6 +45,20 @@
                                 </template>
 
                             </div>
+                            <div class="d-flex gap-1">
+                                <v-chip v-if="sp?.selected_variant?.variant_1?.variant_value" size="small" color="red">
+                                    {{sp.selected_variant.variant_1.variant_value}}
+                                    <v-tooltip activator="parent" location="top">{{sp.selected_variant.variant_1.variant_name}}</v-tooltip>
+                                </v-chip>
+                                <v-chip :tooltip="sp.selected_variant.variant_2.variant_name" v-if="sp?.selected_variant?.variant_2?.variant_value" size="small" color="red">
+                                    {{sp.selected_variant.variant_2.variant_value}}
+                                    <v-tooltip activator="parent" location="top">{{sp.selected_variant.variant_2.variant_name}}</v-tooltip>
+                                </v-chip>
+                                <v-chip :tooltip="sp.selected_variant.variant_3.variant_name" v-if="sp?.selected_variant?.variant_3?.variant_value" size="small" color="red">
+                                    {{sp.selected_variant.variant_3.variant_value}}
+                                    <v-tooltip activator="parent" location="top">{{sp.selected_variant.variant_3.variant_name}}</v-tooltip>
+                                </v-chip>
+                            </div>    
                             <div class="text-xs pt-1">
                                 <div v-if="sp.modifiers && !sp.is_timer_product">
                                     <span>{{ sp.modifiers }} (
@@ -89,6 +103,7 @@
                                     {{ $t('Expiry') + ": " + moment(sp.expired_date).format('DD-MM-yyyy') }}
                                 </div>
                             </div>
+                            <v-chip v-if="sp.quantity<0" variant="outlined" size="small" color="red" class="return-chip">{{ $t("Return") }}</v-chip>
                         </div>
 
                         <div class="flex-none text-right w-36">
@@ -375,7 +390,9 @@ async function onContinueTimer(sp) {
 .item-list:hover {
     background-color: #ffebcc !important;
 }
-
+.return-chip{
+    height: 16px !important;;
+}
 .submitted::before {
     content: '';
     position: absolute;

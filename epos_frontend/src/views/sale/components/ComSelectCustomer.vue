@@ -10,18 +10,18 @@
                         <avatar v-if="sale.sale.customer_photo == undefined" :name="sale.sale.customer_name"
                             class="mr-4" size="40"></avatar>
                     </template>
-                    <div class="px-2">
-                        <div class="font-bold">{{ sale.sale.customer_name || "" }} <ComChip v-if="current_customer_point > 0" :tooltip="$t('Current Point(s)')" color="success">{{ Number(current_customer_point).toFixed(2)  }}</ComChip></div>
+                    <div class="px-2"> 
+                        <div class="font-bold">{{ sale.sale.customer_name || "" }} </div>
                         
                         <div class="text-gray-400 text-sm">{{ subTitle || "" }}</div>
                         <span class="text-gray-400 text-sm" style="font-size: 12px">{{ sale.sale.pos_note }}</span>
                         <div class="text-gray-400 text-sm" v-if="sale.sale.arrival">
-                            Stay: {{ moment(sale.sale.arrival).format("DD-MM-YYYY") }} to {{
+                            {{ $t("Stay") }}: {{ moment(sale.sale.arrival).format("DD-MM-YYYY") }} {{$t("to")}} {{
                                 moment(sale.sale.departure).format("DD-MM-YYYY") }}
                         </div>
 
                         <div class="text-gray-400 text-sm" v-if="sale.sale.room_number">
-                            Room: {{ sale.sale.room_number }}
+                            {{ $t("Room") }}: {{ sale.sale.room_number }}
                         </div>
 
                     </div>
@@ -31,11 +31,18 @@
                             <ComChip v-for="(item, index) in customerPromotion" :key="index" color="orange"
                                 :tooltip="$t('Happy Hour Promotion')" prepend-icon="mdi-tag-multiple">{{ item.promotion_name }}</ComChip>
                         </template>
+                       
                         <v-chip v-else-if="sale.sale.customer_default_discount > 0" color="error">{{
                             sale.sale.customer_default_discount }}
                             % OFF</v-chip>
-                        
-                            
+
+                            <ComChip v-if="current_customer_point > 0" :tooltip="$t('Current Point(s)')" color="success">{{ Number(current_customer_point).toFixed(2)  }}</ComChip>
+
+                            <template v-if="customer">
+                                <ComChip v-if="customer.total_crypto_balance > 0" :tooltip="$t('Crypto Amount')" color="primary">
+                                    <CurrencyFormat :value="parseFloat(customer.total_crypto_balance)" />
+                                </ComChip>
+                            </template>
                     </div>
                     
                 </div>
@@ -71,13 +78,19 @@ const props = defineProps({
     padding: String
 })
 
-const { t: $t } = i18n.global;
 
-const sale = inject("$sale")
-const gv = inject("$gv")
-const socket = inject("$socket")
-const moment = inject("$moment")
+
+const { t: $t } = i18n.global; 
+
+const sale = inject("$sale");
+const gv = inject("$gv");
+const socket = inject("$socket");
+const moment = inject("$moment");
+const frappe = inject("$frappe");
 const toaster = createToaster({ position: "top-right" });
+const customer = ref(null)
+const db = frappe.db();
+
 sale.vueInstance = getCurrentInstance();
 sale.vue = sale.vueInstance.appContext.config.globalProperties
 let customerPromotion = computed({
@@ -98,6 +111,11 @@ const { ctrl_m } = useMagicKeys({
 })
 whenever(ctrl_m, () => onScanCustomerCode())
 
+ 
+onMounted( ()=>{
+    db.getDoc("Customer", sale.sale.customer).then((r)=>customer.value = r)
+}) 
+
 sale.vue.$onKeyStroke('F9', (e) => {
     e.preventDefault()
     if (sale.dialogActiveState == false) {
@@ -111,9 +129,7 @@ async function onSearchCustomer() {
         const result = await searchCustomerDialog({});
         sale.dialogActiveState = false
         if (result) {
-
             assignCustomerToOrder(result);
-
         }
     }
 }
@@ -175,6 +191,10 @@ function assignCustomerToOrder(result, is_membership = false) {
     sale.updateSaleSummary();
 
     socket.emit("ShowOrderInCustomerDisplay", sale.sale);
+    
+    db.getDoc("Customer", sale.sale.customer).then((r)=> customer.value = r)
+
+    
 }
 
 const setting = computed(() => {

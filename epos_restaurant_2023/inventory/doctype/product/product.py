@@ -29,12 +29,12 @@ class Product(Document):
 		for v in self.product_variants:
 			if v.variant_code is None or v.variant_code == "":
 				error_list.append("""Row: {0} Product Code Can't Be Empty""".format(v.idx))
-			item = frappe.db.sql("select name from `tabProduct` where name = '{0}'".format(v.variant_code),as_dict=1)
-			if item : 
-				error_list.append("""Row: {0} Product Code {1} Already Exist""".format(v.idx,frappe.bold(v.variant_code)))
-			variant = frappe.db.sql("select name from `tabProduct Variants` where variant_code = '{0}' and name != '{1}'".format(v.variant_code,v.name),as_dict=1)
-			if variant : 
-				error_list.append("""Row: {0} Product Code {1} Already Exist""".format(v.idx,frappe.bold(v.variant_code)))
+			# item = frappe.db.sql("select name from `tabProduct` where name = '{0}'".format(v.variant_code),as_dict=1)
+			# if item : 
+			# 	error_list.append("""Row: {0} Product Code {1} Already Exist""".format(v.idx,frappe.bold(v.variant_code)))
+			# variant = frappe.db.sql("select name from `tabProduct Variants` where variant_code = '{0}' and name != '{1}'".format(v.variant_code,v.name),as_dict=1)
+			# if variant : 
+			# 	error_list.append("""Row: {0} Product Code {1} Already Exist""".format(v.idx,frappe.bold(v.variant_code)))
 		if len(error_list) > 0:
 				for msg in error_list:
 					frappe.msgprint(msg)
@@ -164,22 +164,29 @@ class Product(Document):
 
 
 	def before_save(self):
-		if self.has_variant == 1:
-			self.status = "Template"
+		if self.disabled == 1:
+			self.status = "Disabled"
+		else:
+			if self.has_variants == 1:
+				self.status = "Template"
+
 		if len(self.product_variants)>0:
-			for a in self.product_variants:
-				p = frappe.new_doc("Product")
-				p.product_category = self.product_category
-				p.revenue_group = self.revenue_group
-				p.product_code = a.variant_code
-				p.product_name_en = a.variant_name
-				p.product_category = self.product_category
-				p.revenue_group = self.revenue_group
-				p.unit = self.unit
-				p.cost = (self.cost if a.cost == 0 else a.cost)
-				p.price = (self.price if a.price == 0 else a.price)
-				p.status = "Variant"
-				p.insert()
+			if len(self.product_variants)<=5:
+				for a in self.product_variants:
+					variant = frappe.db.sql("select name from `tabProduct` where product_code = '{0}'".format(a.current_variant_code),as_dict=1)
+					if len(variant)>0:
+						insert_update_rename_variant(self,a,"update")
+					else:
+						insert_update_rename_variant(self,a,"insert")
+				frappe.msgprint(_("Variants Updated."), alert=True)
+			else:
+				for a in self.product_variants:
+					variant = frappe.db.sql("select name from `tabProduct` where product_code = '{0}'".format(a.current_variant_code),as_dict=1)
+					if len(variant)>0:
+						frappe.enqueue(insert_update_rename_variant,queue="short",self=self,a=a,action="update")
+					else:
+						frappe.enqueue(insert_update_rename_variant,queue="short",self=self,a=a,action="insert")
+				frappe.msgprint(_("Add New Or Update Variant Will Be In The Background, It Can Take A Few Minutes."), alert=True)
 
 
 		if self.is_new and self.opening_quantity > 0:
@@ -273,6 +280,7 @@ class Product(Document):
 			for v1 in variant_1:
 				product_variants.append({
 					"variant_code": v1,
+					"currentvariant_code": v1,
 					"variant_name": v1,
 					"variant_1":v1,
 					"opening_qty":0,
@@ -283,6 +291,7 @@ class Product(Document):
 			for v1, v2 in itertools.product(variant_1, variant_2):
 				product_variants.append({
 					"variant_code": "{}-{}-{}".format(self.product_name_en,frappe.get_cached_value("Variant Code", v1,"code_prefix"),frappe.get_cached_value("Variant Code", v2,"code_prefix")),
+					"curent_variant_code": "{}-{}-{}".format(self.product_name_en,frappe.get_cached_value("Variant Code", v1,"code_prefix"),frappe.get_cached_value("Variant Code", v2,"code_prefix")),
 					"variant_name":"{}-{}-{}".format(self.product_name_en,frappe.get_cached_value("Variant Code", v1,"code_prefix"),frappe.get_cached_value("Variant Code", v2,"code_prefix")),
 					"variant_1":v1,
 					"variant_2":v2,
@@ -293,8 +302,9 @@ class Product(Document):
 		else:
 			for v1, v2,v3   in itertools.product(variant_1, variant_2, variant_3):
 				product_variants.append({
-					"variant_code": "{}-{}-{}".format(v1,v2,v3),
-					"variant_name": "{}-{}-{}".format(v1,v2,v3),
+					"variant_code": "{}-{}-{}-{}".format(self.product_name_en,frappe.get_cached_value("Variant Code", v1,"code_prefix"),frappe.get_cached_value("Variant Code", v2,"code_prefix"),frappe.get_cached_value("Variant Code", v3,"code_prefix")),
+					"current_variant_code": "{}-{}-{}-{}".format(self.product_name_en,frappe.get_cached_value("Variant Code", v1,"code_prefix"),frappe.get_cached_value("Variant Code", v2,"code_prefix"),frappe.get_cached_value("Variant Code", v3,"code_prefix")),
+					"variant_name": "{}-{}-{}-{}".format(self.product_name_en,frappe.get_cached_value("Variant Code", v1,"code_prefix"),frappe.get_cached_value("Variant Code", v2,"code_prefix"),frappe.get_cached_value("Variant Code", v3,"code_prefix")),
 					"variant_1":v1,
 					"variant_2":v2,
 					"variant_3": v3,
@@ -305,10 +315,49 @@ class Product(Document):
 		cur_product_variants = []
 		for a in self.product_variants:
 			cur_product_variants.append(a.variant_code)
-		for a in product_variants:
-			if a["variant_code"] not in cur_product_variants:
-				stored_variant.append(a)
+		if len(product_variants)>len(cur_product_variants):
+			for a in product_variants:
+				if a["variant_code"] not in cur_product_variants:
+					stored_variant.append(a)
+		elif len(product_variants)<len(cur_product_variants):
+			str_variant_code = []
+			for a in product_variants:
+				str_variant_code.append(a["variant_code"])
+			stored_variant =(a for a in stored_variant if a.variant_code in str_variant_code)
+		else:
+			stored_variant = product_variants
 		return  stored_variant
+
+def insert_update_rename_variant(self,a,action):
+	if action == "update":
+		name = a.current_variant_code
+		if a.current_variant_code != a.variant_code:
+			frappe.rename_doc('Product', a.current_variant_code, a.variant_code)
+			name = a.variant_code
+			a.current_variant_code = name
+		p = frappe.get_doc("Product",name)
+		p.revenue_group = self.revenue_group
+		p.product_name_en = a.variant_name
+		p.product_category = self.product_category
+		p.revenue_group = self.revenue_group
+		p.unit = self.unit
+		p.cost = (self.cost if a.cost == 0 else a.cost)
+		p.price = (self.price if a.price == 0 else a.price)
+		p.status = "Variant"
+		p.save()
+	else:
+		p = frappe.new_doc("Product")
+		p.revenue_group = self.revenue_group
+		p.product_code = a.variant_code
+		p.product_name_en = a.variant_name
+		p.product_category = self.product_category
+		p.revenue_group = self.revenue_group
+		p.unit = self.unit
+		p.cost = (self.cost if a.cost == 0 else a.cost)
+		p.price = (self.price if a.price == 0 else a.price)
+		p.status = "Variant"
+		p.insert()
+	
 
 def validate_default_accounts(self):
 	branches = {row.business_branch for row in self.default_account}

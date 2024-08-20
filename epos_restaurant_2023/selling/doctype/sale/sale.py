@@ -63,7 +63,7 @@ class Sale(Document):
 				self.waiting_number = make_autoname(self.waiting_number_prefix)
  
 
-		if self.discount_type =="Percent" and self.discount> 100:
+		if self.discount_type =="Percent" and self.discount > 100:
 			frappe.throw(_("discount percent cannot greater than 100 percent"))
 
 			   
@@ -196,6 +196,11 @@ class Sale(Document):
 
 			_balance -= _total_claim_coupon
 		self.balance = _balance
+
+		if (self.sale_discount or 0) > 0:
+			self.crypto_able_amount =  0	
+		else:
+			self.crypto_able_amount = Enumerable(self.sale_products).sum(lambda x: x.crypto_able_amount or 0)	
 
 		# if self.pos_profile:
 		self.changed_amount = (self.total_paid + _total_claim_coupon) - self.grand_total
@@ -400,7 +405,7 @@ def commission_general_ledger_entry(self):
 			for a in commissions:
 				general_ledger_debit(self,account = {"account":a["account"],"amount":a["amount"],"party":a["employee"]})
 
-	total_commission = sum((a.commission_01+a.commission_02+a.commission_03+a.commission_04+a.commission_05) for a in self.sale_products)
+	total_commission = sum(((a.commission_01 or 0)+(a.commission_02 or 0)+(a.commission_03 or 0)+(a.commission_04 or 0)+(a.commission_05 or 0)) for a in self.sale_products)
 	if total_commission>0:
 		commissions=[]
 		for a in self.sale_products:
@@ -784,7 +789,11 @@ def validate_sale_product(self):
 			d.amount += d.total_tax
 			d.total_revenue += d.total_tax
 
-
+		## update cryto able amount
+		if d.total_discount > 0 or d.allow_crypto_claim == 0 :
+			d.crypto_able_amount = 0
+		else:
+			d.crypto_able_amount = d.amount 
 
 def add_sale_product_spa_commission(self):	
 	query = "delete from `tabSale Product SPA Commission` where sale = '{}'".format(self.name)			

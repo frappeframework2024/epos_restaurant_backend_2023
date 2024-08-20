@@ -1,44 +1,201 @@
 <template>
-  <h1>barcode builder sss hello</h1>
+  {{ url }}
 
-  <input type="number" v-model="setting.height" />
-  <input type="number" v-model="setting.width" />
-  <input type="text" v-model="setting.product_code" />
+  <Fieldset legend="Previews">
+    <div class="preview-controls">
+      <div class="control-group">
+        <label>Height:</label>
+        <InputText disabled v-model.number="setting.height" class="w-3" />
+        <Slider v-model="setting.height" :max="250" class="w-3" />
+      </div>
+      <div class="control-group">
+        <label>Width: {{ setting.width }} px</label>
+        <!-- <InputText disabled v-model.number="setting.width" class="w-3" /> -->
+        <Slider v-model="setting.width" :max="500" class="w-3" />
+      </div>
+    </div>
 
-  <div
-    class="barcode-container"
-    :style="{ height: setting.height + 'px', width: setting.width + 'px' }"
-  >
-    {{ setting.product_name_en }}
+    <div class="card">
+      <div
+        class="barcode-container"
+        :style="{
+          height: setting.height + 'px',
+          width: setting.width + 'px',
+          backgroundColor: setting.backgroundColor,
+          fontSize: setting.fontSize + 'px',
+          fontFamily: setting.fontFamily.value,
+          transform: 'rotate(' + setting.rotate.value + 'deg)',
+        }"
+        style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+          overflow: hidden;
+          padding: 1rem;
+        "
+      >
+        <div :style="boxStyle" @mousedown="startDrag">
+          {{ setting.name }}
+        </div>
 
-    <img
-      style="width: 100%"
-      :src="
-        'https://barcodeapi.org/api/code128/' +
-        setting.product_code +
-        setting.price
-      "
+        <img
+          style="max-width: 100%; max-height: 100%; height: auto"
+          class="barcode-image"
+          :src="url"
+          alt="Barcode"
+        />
+      </div>
+    </div>
+    <Button label="Print" icon="pi pi-print" @click="onPrint" />
+  </Fieldset>
+
+  <Fieldset legend="Barcode">
+    <label for="barcodeType">Barcode Type : </label>
+    <Dropdown
+      v-model="setting.barcodeType"
+      :options="barcodeTypes"
+      optionLabel="label"
+      inputId="barcodeType"
+      class="input-dropdown mb-2"
+      placeholder="Select a barcode type"
     />
-  </div>
-  {{ setting.price }}
-  {{ setting.company }}
-  <button @click="onPrint">Print</button>
+
+    <div class="control-group">
+      <label for="price">Price($USD):</label>
+      <InputNumber
+        v-model="setting.price"
+        inputId="price"
+        :min="0"
+        :max="100"
+        class="w-2"
+      />
+
+      <label for="barcode">Barcode:</label>
+      <InputText
+        v-model="setting.code"
+        inputId="barcode"
+        placeholder="Enter barcode"
+        class="w-2"
+      />
+
+      <label>Font Type:</label>
+      <Dropdown
+        v-model="setting.fontFamily"
+        :options="fontFamily"
+        optionLabel="label"
+        class="w-2"
+        placeholder="Select a Font"
+      />
+
+      <label>FontSize:</label>
+      <InputNumber disabled v-model="setting.fontSize" class="w-2" />
+      <Slider v-model="setting.fontSize" :max="36" class="w-2 my-2" />
+
+      <label> Rotate: </label>
+      <Dropdown
+        v-model="setting.rotate"
+        :options="rotate"
+        optionLabel="label"
+        class="w-2"
+      />
+    </div>
+  </Fieldset>
 </template>
+
 <script setup>
-import { ref } from "vue";
+import { ref, computed, watch } from "vue";
+import Fieldset from "primevue/fieldset";
+import InputText from "primevue/inputtext";
+import InputNumber from "primevue/inputnumber";
+import Slider from "primevue/slider";
+import Button from "primevue/button";
+import Dropdown from "primevue/dropdown";
+
+const boxStyle = ref({
+  position: "absolute",
+  top: "100px",
+  left: "100px",
+  cursor: "grab",
+});
+
+let startX = 0;
+let startY = 0;
+let offsetX = 0;
+let offsetY = 0;
+
+function startDrag(event) {
+  boxStyle.value.cursor = "grabbing";
+  startX = event.clientX;
+  startY = event.clientY;
+  offsetX = parseInt(boxStyle.value.left, 10);
+  offsetY = parseInt(boxStyle.value.top, 10);
+
+  document.addEventListener("mousemove", onDrag);
+  document.addEventListener("mouseup", stopDrag);
+}
+
+function onDrag(event) {
+  const dx = event.clientX - startX;
+  const dy = event.clientY - startY;
+
+  boxStyle.value.left = `${offsetX + dx}px`;
+  boxStyle.value.top = `${offsetY + dy}px`;
+}
+
+function stopDrag() {
+  boxStyle.value.cursor = "grab";
+  document.removeEventListener("mousemove", onDrag);
+  document.removeEventListener("mouseup", stopDrag);
+}
+
+const barcodeTypes = ref([
+  { label: "Code 128", code: "128" },
+  { label: "Code 39", code: "39" },
+  { label: "QR Code", code: "qr" },
+]);
+
+const fontFamily = ref([
+  { label: "Arial", value: "Arial, sans-serif" },
+  { label: "Courier New", value: "'Courier New', monospace" },
+  { label: "Georgia", value: "Georgia, serif" },
+  { label: "Verdana", value: "Verdana, sans-serif" },
+]);
+
+const rotate = ref([
+  { label: "0°", value: 0 },
+  { label: "90°", value: 90 },
+  { label: "180°", value: 180 },
+  { label: "270°", value: 270 },
+]);
+
 const setting = ref({
   height: 100,
-  width: 170,
-  product_code: "12548728",
-  product_name_en: "Worman",
-  price: "$50.75",
-  company: "Angkor Shop",
+  width: 200,
+  backgroundColor: "white",
+  name: "Product",
+  code: "IVC12235",
+  price: 22.5,
+  fontSize: 16,
+  barcodeType: barcodeTypes.value[0],
+  fontFamily: "Arial, sans-serif",
+  rotate: 0,
+});
+
+const url = computed(() => {
+  return `https://barcodeapi.org/api/${setting.value.barcodeType.code}/${setting.value.code}`;
 });
 
 function onPrint() {
   const divContents = document.querySelector(".barcode-container").outerHTML;
-  var a = window.open("", "", "height=600, width=800");
+  const a = window.open(
+    "",
+    "",
+    `height=${setting.value.height}px, width=${setting.value.width}px`
+  );
   a.document.write("<html>");
+  a.document.write("<body>");
   a.document.write(divContents);
   a.document.write("</body></html>");
   setTimeout(function () {
@@ -47,9 +204,42 @@ function onPrint() {
   }, 1000);
 }
 </script>
+
 <style scoped>
+.preview-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.control-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+}
+
 .barcode-container {
-  border: solid 1px red;
-  text-align: center;
+  border: 2px dashed #7ea0c4;
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  transition: box-shadow 0.3s ease;
+}
+
+.barcode-container:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 </style>

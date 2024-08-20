@@ -10,16 +10,24 @@
                     :is-placeholder="true">
                     <template #default>
                         <div class="grid gap-2"
-                            :class="mobile ? 'grid-cols-2' : 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'"
+                            :class="mobile ? 'grid-cols-2' : ''"
+                            :style="!mobile ? 'grid-template-columns: repeat('+ gv.itemMenuSetting.show_column_item +' , 1fr);' : ''"
                            >
                             <template v-if="product.setting.pos_menus.length > 0">
 
-                                <div v-for="(m, index) in product.getPOSMenu()" :key="index" class="h-36">
+                                <div v-for="(m, index) in product.getPOSMenu()" :key="index" :style="'height:' + gv.itemMenuSetting.height_item + 'px'" class="h-36">
                                     <ComMenuItem :data="m" />
                                 </div>
                             </template>
                             <template v-else>
-                               
+                                <div v-if="product.canBack" class="h-full rounded-lg shadow-lg cursor-pointer bg-gray-500">
+                                    <div v-ripple class="relative p-2 w-full h-full flex justify-center items-center" @click="onBack">
+                                    <div>
+                                    <v-icon color="white" size="large">mdi-reply</v-icon>
+                                    <div class="text-white">{{ $t('Back') }}</div>
+                                    </div>
+                                    </div>
+                                </div>
                                 <ComMenuItemByProductCategory />
                             </template>
                         </div>
@@ -48,7 +56,7 @@ import ComShortcurMenuFromProductGroup from './ComShortcurMenuFromProductGroup.v
 import ComMenuItemByProductCategory from './ComMenuItemByProductCategory.vue';
 import ComPlaceholder from '@/components/layout/components/ComPlaceholder.vue';
 import ComMenuItem from './ComMenuItem.vue';
-import { inject, defineProps ,ref,onUnmounted,onMounted} from '@/plugin';
+import { inject, defineProps ,ref,onUnmounted,onMounted,computed} from '@/plugin';
 import { useDisplay } from 'vuetify'
 import ComSaleButtonActions from './ComSaleButtonActions.vue';
  
@@ -62,6 +70,10 @@ const props = defineProps({
 });
 
 const scrollContainer = ref(null);
+ 
+function onBack(){
+    window.history.back();
+}
 
 function getCustomerScrollWidth() {
     const is_window = localStorage.getItem('is_window');
@@ -79,7 +91,7 @@ function onMenuRefresh() {
 
         product.getProductMenuByProductCategory( "All Product Categories")
         product.loadPOSMenu();
-        console.log(product.getPOSMenu())
+ 
     }
 
 }

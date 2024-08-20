@@ -223,6 +223,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "allow_append_quantity_after_submit":pos_config.allow_append_quantity_after_submit,
         "main_currency_predefine_payment_amount":pos_config.main_currency_predefine_payment_amount,
         "second_currency_predefine_payment_amount":pos_config.second_currency_predefine_payment_amount,
+        "percentage_of_bill_amount_to_claim_crypto":pos_config.percentage_of_bill_amount_to_claim_crypto,
         "open_order_required_password":pos_config.open_order_required_password,
         "order_station_open_order_required_password":pos_config.order_station_open_order_required_password,
         "change_price_rule_require_password":pos_config.change_price_rule_require_password,

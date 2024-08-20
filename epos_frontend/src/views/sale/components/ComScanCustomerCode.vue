@@ -37,7 +37,7 @@ async function onSeachCustomer() {
   if(customerCode.value!=""){
     loading.value = true;
     const data = await call.get('epos_restaurant_2023.api.api.get_customer_on_membership_scan', {"card":customerCode.value});
-    console.log(data.message[0])
+ 
     if(data.message[0] !== "Invalid Card"){  
       if(data.message.card.length <= 0) {
           data.message.card = []

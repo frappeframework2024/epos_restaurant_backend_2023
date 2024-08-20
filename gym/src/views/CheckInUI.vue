@@ -26,8 +26,7 @@
                         <div id="wrapper">
                           <h1 class="text-center mb-3 text-white">Check In / Out</h1>
                           <form action="" method="GET" @submit.prevent="onCheckInClick" v-focustrap>
-                            <div class="card flex justify-content-center" > 
-                              
+                            <div class="card flex justify-content-center" >                               
                               <InputText type="text" class="dial-up-input key mb-5" v-model="checkInCode" autofocus 
                                 placeholder="Enter code..." />
                             </div>
@@ -100,21 +99,16 @@ import ComRecentCheckIn from '@/views/components/ComRecentCheckIn.vue';
 import { useDialog } from 'primevue/usedialog';
 import { useToast } from "primevue/usetoast";
 
-
 const dialog = useDialog();
 const toast = useToast();
-
-
-const isFullscreen = ref(false)
- 
-const is_busy = ref(false)
-
+const isFullscreen = ref(false); 
+const is_busy = ref(false);
 const date = ref();
 const curTap = ref(0);
 const checkInCode = ref("");
 const data = ref(null);
-const tap = ref(['Enter Code', 'Name Search'])
-const is_load_recent_check_in = ref(true)
+const tap = ref(['Enter Code', 'Name Search']);
+const is_load_recent_check_in = ref(true);
 
 const currentTab = (index) => {
   curTap.value = index
@@ -192,8 +186,7 @@ function onCheckInClick(){
                       breakpoints:{
                           '960px': '80vw',
                           '640px': '100vw'
-                      },
-                  
+                      },                  
                 },
               onClose: (options) => {  
                   const data = options.data;
@@ -207,8 +200,7 @@ function onCheckInClick(){
                     is_load_recent_check_in.value = false
                     setTimeout(() => {
                       is_load_recent_check_in.value = true;
-                    }, 50); 
-                  
+                    }, 50);                  
                   }
               }
           });
@@ -241,9 +233,9 @@ function onViewAllMemberCheckInClick(){
 
 window.addEventListener("message", receiveMessageFromIframe, false);
 
-	function receiveMessageFromIframe(event) {		
-		isFullscreen.value = true
-	}
+function receiveMessageFromIframe(event) {		
+  isFullscreen.value = true
+}
 
 </script>
 

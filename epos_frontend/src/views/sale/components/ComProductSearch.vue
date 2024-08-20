@@ -25,19 +25,22 @@
 </template>
 
 <script setup>
-import { inject, ref, defineProps, createResource, addModifierDialog, onUnmounted, onMounted,nextTick } from '@/plugin';
+import { inject, ref, defineProps, createResource, addModifierDialog, onUnmounted, onMounted,nextTick,getApi } from '@/plugin';
 import { onKeyStroke } from '@vueuse/core'
 import ComInput from '../../../components/form/ComInput.vue';
 import { createToaster } from '@meforma/vue-toaster';
 import ComAutoComplete from '@/components/form/ComAutoComplete.vue';
 import { useDisplay } from 'vuetify';
 import { computed } from 'vue';
+import { useDialog } from 'primevue/usedialog';
+const dialog = useDialog()
 const product = inject("$product")
 const sale = inject("$sale")
-const frappe = inject("$frappe")
+import {onSelectProduct} from "@/utils/sale.js"
+
+
 const { mobile } = useDisplay();
-const db = frappe.db();
-const call = frappe.db();
+
 let control = ref(null)
 
 const toaster = createToaster({ position: 'top-right', maxToasts: 2, duration: 1000 });
@@ -77,12 +80,7 @@ function onSearch(key) {
         }
     }
 }
-function onSelectProduct(p) {
-    if(p){ 
-    onSearchProductByBarcode(p)
-    selected_product.value = ""
-    }
-}
+ 
 function onKeyDown(event) {
     if (event.key == "Enter") {
         if (!sale.isBillRequested()) {
@@ -92,61 +90,25 @@ function onKeyDown(event) {
 }
 
 function onSearchProductByBarcode(barcode){
+    getApi("product.get_products",{
+        limit:1,
+        page:1,
+        product_code: barcode,
+        include_product_category:0
+    }).then(result=>{
+        if(result.message.products.length>0){
+           
+            onSelectProduct(result.message.products[0],sale,product,dialog)
+        }else{
+            toaster.warning("Product code is not exist in the system")
+        }
+      
+    }).catch(error=>{
 
+    })
+    
 
-    const searchProductResource = createResource({
-                url: "epos_restaurant_2023.api.product.get_product_by_barcode",
-                params: {
-                    barcode: barcode
-                }
-            });
-
-            searchProductResource.fetch().then(async (doc) => {
-
-                const p = JSON.parse(JSON.stringify(doc));
-
-                const portions = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule);
-                const check_modifiers = product.onCheckModifier(JSON.parse(p.modifiers));
-                if (portions?.length == 1) {
-                    p.price = portions[0].price
-                    p.unit = portions[0].unit
-                }
-
-                if (check_modifiers || portions?.length > 1) {
-                    product.setSelectedProduct(doc,sale.sale.price_rule);
-
-                    let productPrices = await addModifierDialog();
-
-                    if (productPrices) {
-                        if (productPrices.portion != undefined) {
-                            p.price = productPrices.portion.price;
-                            p.portion = productPrices.portion.portion;
-                            p.unit = productPrices.portion.unit
-                        }
-                        p.modifiers = productPrices.modifiers.modifiers;
-                        p.modifiers_data = productPrices.modifiers.modifiers_data;
-                        p.modifiers_price = productPrices.modifiers.price
-
-                    } else {
-                        return;
-                    }
-                } else {
-                    p.modifiers = "";
-                    p.modifiers_data = "[]";
-                    p.portion = "";
-                }
-            
-
-                sale.addSaleProduct(p);
-
-                toaster.success("Added product " + barcode + " successfully")
-                product.searchProductKeywordStore = "";
-                doSearch.value = false
-
-            });
-
-            product.searchProductKeywordStore = ""
-       
+    product.searchProductKeywordStore = ""
 }
 
 

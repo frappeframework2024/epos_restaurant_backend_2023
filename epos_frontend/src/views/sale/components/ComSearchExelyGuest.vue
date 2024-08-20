@@ -72,7 +72,7 @@ function searchGuest() {
       isLoading.value = false
    }).catch(err => {
       isLoading.value = false
-      console.log(err);
+
    })
 
 }

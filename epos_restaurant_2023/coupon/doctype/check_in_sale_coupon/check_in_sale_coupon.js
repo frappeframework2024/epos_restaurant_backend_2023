@@ -5,7 +5,7 @@ frappe.ui.form.on("Check In Sale Coupon", {
 	refresh(frm){
         if (frm.doc.__islocal || frm.doc.docstatus == 0) {           
             frm.dashboard.add_indicator(__("Remaining Visit: {0}", [0]), "green","remaining-visit");  
-            console.log(frm.dashboard.stats_area.wrapper.html())
+           
             frm.dashboard.stats_area.wrapper.find('.col-sm-12.indicator-column').remove();            
             frm.dashboard.stats_area.wrapper.find('.section-head').remove();              
             frm.dashboard.stats_area.wrapper.find(".section-body.hide"). removeClass('hide')           

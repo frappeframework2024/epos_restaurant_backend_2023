@@ -26,7 +26,7 @@ let encrypted=ref('')
     })
   }
   function decrypt() {
-    console.log(encrypted.value)
+ 
     text.value = CryptoJS.AES.decrypt(encrypted.value, CryptoJS.enc.Utf8.parse(key.value),{
       iv: CryptoJS.enc.Utf8.parse(iv),
         mode: CryptoJS.mode.CBC

@@ -15,7 +15,7 @@
 	<DynamicDialog />
 </template>
 <script setup>
-import { useRouter, useRoute, routeLocationKey } from 'vue-router'
+import { useRouter, useRoute, routeLocationKey} from 'vue-router'
 import MainLayout from './components/layout/MainLayout.vue';
 import BlankLayout from './components/layout/BlankLayout.vue';
 import KitchenOrderDisplayLayout from '@/components/layout/KitchenOrderDisplayLayout.vue';
@@ -23,12 +23,13 @@ import SplashScreen from './components/SplashScreen.vue';
 import SaleLayout from './components/layout/SaleLayout.vue';
 import { PromiseDialogsWrapper } from 'vue-promise-dialogs';
 import { createResource } from '@/resource.js'
-import { reactive, computed, onMounted, inject, i18n } from '@/plugin'
+import { reactive, computed, onMounted, inject, i18n,onUnmounted } from '@/plugin'
 import { useStore } from 'vuex'
 import { createToaster } from '@meforma/vue-toaster';
 import { FrappeApp } from 'frappe-js-sdk';
 import { useDisplay } from 'vuetify'; 
 import DynamicDialog from 'primevue/dynamicdialog';
+ 
 const router = useRouter()
 const route = useRoute()
 
@@ -230,7 +231,17 @@ function onLogout() {
 }
  
 
+const actionListeningHandler = async function (e) {
+	if (e.isTrusted && e.data.action) {
+		if(e.data.action=="show_error"){
+			toast.error(e.data.message)
+		}
+		
+	}
+}
+
 onMounted(() => {
+	window.addEventListener('message', actionListeningHandler, false);
 	setTimeout(()=>{
 		if (pos_license.license != null){
 			if (pos_license.license.show_license_msg){
@@ -251,6 +262,10 @@ onMounted(() => {
 	}
 	gv.device_setting  = JSON.parse(localStorage.getItem("device_setting"));	
 	onResize()
+})
+
+onUnmounted(()=>{
+	window.removeEventListener('message', actionListeningHandler, false);
 })
 </script>
 <style>

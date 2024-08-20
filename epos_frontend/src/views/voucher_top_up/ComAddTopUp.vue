@@ -305,7 +305,7 @@ function deleteTopUp(vh,idx) {
         if(v){
             db.deleteDoc('Voucher', vh.name)
                 .then((response) => {
-                    console.log(response.message)
+ 
                     getCustomerVoucher();
                 })
             

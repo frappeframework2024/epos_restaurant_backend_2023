@@ -26,7 +26,8 @@ export default class Product {
         this.isLoadingProduct = false
         this.isGetAllProduct = false
         this.isSearchProduct = false
-        this.itemLimit = 20
+   
+        this.canBack = false
 
         this.selectedProductCategory = "All Product Category"
         this.posSearchProductPager = {
@@ -71,8 +72,6 @@ export default class Product {
                 if (localStorage.getItem('default_menu')) {
                     defaultMenu = localStorage.getItem('default_menu')
                 }
-                //group.orderByDescending("$.order_time").toArray();
-                // console.log(Enumerable.from(this.posMenuResource.data?.filter(r => r.parent == defaultMenu)).orderBy("$.type_index").thenBy("$.sort_order").thenBy("$.name_en"))
                 return   Enumerable.from(this.posMenuResource.data?.filter(r => r.parent == defaultMenu)).orderBy("$.type_index").orderBy("$.sort_order").thenBy("$.name_en");
 
             }
@@ -84,80 +83,84 @@ export default class Product {
     }
 
     getProductMenuByProductCategory(product_category) {
-  
+        
         if((typeof product_category ) =="object"){
             product_category = product_category.name
         }
- 
-        this.selectedProductCategory = product_category
+        if(!product_category){
+            product_category = this.selectedProductCategory ?  this.selectedProductCategory: 'All Product Categories'
+        }else {
+            this.selectedProductCategory = product_category
+        }
+        
         this.posSearchProductPager.page = 0
         this.isGetAllProduct = false
         this.isSearchProduct = false
-        
-        db.getDocList("Product Category", {
-            fields: ["name", "name as name_en", "product_category_name_kh as name_kh", "parent_product_category as parent", "photo", "text_color", "background_color", "show_in_pos_shortcut_menu as shortcut_menu", "allow_sale"],
-            filters: [
-                ["parent_product_category", "=", product_category],
-                ["allow_sale", "=", 1]
-            ]
-         }).then((docs) => {
-            docs.forEach(d => {
-                d.price_rule = ""
-                d.type = "menu"
-            });
-            this.menuProducts = docs
-            this.getProductFromDB({limit : this.itemLimit})
-            
-        })
-
+        window.location.hash = product_category;
+        this.posSearchProductPager.limit =this.getItemLimit() || 20
+        this.getProductFromDB({category:product_category,include_product_category:1})
+  
     }
 
-    getProductFromDB({limit=null,keyword="",category=''}={}){
+    getProductFromDB({keyword="",category='',include_product_category=0}={}){
        
-        if (!limit){
-            limit =this.posSearchProductPager.limit
-        }
+        
         this.isLoadingProduct = true
  
         if(!this.isGetAllProduct){
            
             this.posSearchProductPager.page = this.posSearchProductPager.page + 1
-            call.get("epos_restaurant_2023.api.product.get_product_by_product_category", {
+            call.get("epos_restaurant_2023.api.product.get_products", {
                 category:category==''? this.selectedProductCategory:category,
-                limit:limit,
+                limit:this.posSearchProductPager.limit,
                 page:this.posSearchProductPager.page,
-                keyword:keyword
+                keyword:keyword,
+                include_product_category:include_product_category
             }).then((res) => {
-              
+               
+               
+               
+                
                 this.isLoadingProduct = false
-                res.message.forEach(d => {
-                    d.price_rule = ""
-                    d.type = "product",
-                    d.tax_rule_data = null,
-                    d.modifiers = "[]"
-                    d.printers = "[]"
-                });
-                this.menuProducts = this.menuProducts.concat(res.message)
-                this.isGetAllProduct = res.message.length < this.posSearchProductPager.limit
+                if(include_product_category==1){
+                    this.menuProducts = res.message.categories
+                }
+                this.menuProducts = this.menuProducts.concat(res.message.products)
+   
+                this.isGetAllProduct = res.message.products.length < this.posSearchProductPager.limit
             }).catch((err) => {
                 this.isLoadingProduct = false
             })
         }else {
             this.isLoadingProduct = false
-          
         }
        
     }
 
+    getItemLimit(){
+        const setting = JSON.parse( localStorage.getItem("item_menu_setting"))
+        
+        const scrollContainer = document.querySelector("#wrap_menu")
+        let height  = 768
+        if (scrollContainer){
+            height = scrollContainer.offsetHeight; 
+        }
+        
+
+        return  Math.ceil( (setting.show_column_item || 1) * (height/ (setting.item_height || 140))) 
+    }
 
     getProductFromDbByKeyword(keyword) {
-         
-        this.isGetAllProduct = false
+        if(keyword.length<3){
+            return
+        }
 
+        this.isGetAllProduct = false
         this.isSearchProduct = true
         this.menuProducts = []
-
-        this.getProductFromDB({keyword:keyword, category:"All Product Categories"})
+        this.posSearchProductPager.page = 0 
+        
+        this.getProductFromDB({limit:20,keyword:keyword, category:"All Product Categories"})
     }
 
 
@@ -178,9 +181,6 @@ export default class Product {
             p.selected = false;
             this.prices.push(p)
         });
-        console.log("this.prices",this.prices)
-        console.log("prices",price_rule)
-        console.log("prices",prices)
         if (this.prices.length > 0) {
             this.prices.forEach((p)=>{
                 if (p.price_rule == price_rule){

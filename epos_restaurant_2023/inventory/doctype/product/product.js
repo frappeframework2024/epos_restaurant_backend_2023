@@ -3,7 +3,6 @@
 let dialogGoogleSearch = undefined
 let myForm = undefined
 frappe.ui.form.on("Product", {
-
     refresh(frm) {
         if(!frm.is_new() && frm.doc.is_inventory_product == 1){
             frm.set_df_property("is_inventory_product", "read_only", 1)
@@ -12,6 +11,27 @@ frappe.ui.form.on("Product", {
             return {
                 filters: [
                     ["Product", "is_recipe", "=", 1]
+                ]
+            }
+        });
+        frm.set_query("variant_value", "variant_1_value", function () {
+            return {
+                filters: [
+                    ["variant_group", "=", "Variant 01"]
+                ]
+            }
+        });
+        frm.set_query("variant_value", "variant_2_value", function () {
+            return {
+                filters: [
+                    ["variant_group", "=", "Variant 02"]
+                ]
+            }
+        });
+        frm.set_query("variant_value", "variant_3_value", function () {
+            return {
+                filters: [
+                    ["variant_group", "=", "Variant 03"]
                 ]
             }
         });
@@ -252,3 +272,9 @@ function set_product_indicator(frm) {
         async: true,
     });
 }
+frappe.ui.form.on("Product Variants", {
+    before_product_variants_remove: function(frm, cdt, cdn) {
+        var deleted_row = frappe.get_doc(cdt, cdn);
+      
+    }
+})

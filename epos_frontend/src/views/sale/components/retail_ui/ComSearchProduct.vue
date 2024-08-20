@@ -238,7 +238,7 @@ onMounted(() => {
 
 function getTotalQuantityOrder(data) {
     const qty = sale.sale?.sale_products?.filter(r => r.product_code == data.name).reduce((n, d) => n + (d.quantity || 0), 0);
-    console.log(qty)
+  
     if (qty == undefined) {
         return ""
     }

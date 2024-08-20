@@ -61,6 +61,7 @@
   "changed_amount",
   "total_quantity",
   "total_tax",
+  "crypto_able_amount",
   "column_break_fwiq",
   "balance",
   "sub_total",
@@ -1472,6 +1473,11 @@
    "label": "Commission 05 To",
    "link_filters": "[[{\"fieldname\":\"commission_05_to\",\"field_option\":\"Employee\"},\"is_selling_agent\",\"=\",1]]",
    "options": "Employee"
+  },
+  {
+   "fieldname": "crypto_able_amount",
+   "fieldtype": "Currency",
+   "label": "Crypto Able Amount"
   }
  ],
  "image_field": "photo",
@@ -1489,7 +1495,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-08-17 14:14:15.086415",
+ "modified": "2024-08-20 09:45:06.751109",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

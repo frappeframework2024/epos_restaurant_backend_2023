@@ -61,7 +61,7 @@ function update_child(self,cdt,cdn){
         callback: (r) => {
             if(r.message){
                 uom_conversion = (1/(r.message || 0))
-                console.log(uom_conversion)
+              
                 frappe.model.set_value("Produce Item", doc.name, "amount", (doc.quantity*doc.cost*uom_conversion.toFixed(2)));
             }
         }

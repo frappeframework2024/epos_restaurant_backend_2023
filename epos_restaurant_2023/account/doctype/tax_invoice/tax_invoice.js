@@ -78,10 +78,10 @@ function getItemListFromSale(frm) {
       html = frappe.render_template("sale_summary", { doc: result });
       $(frm.fields_dict["invoice_summary"].wrapper).html(html);
       frm.refresh_field("invoice_summary");
-      console.log(result)
+    
     })
     .catch((err) => {
-      console.log(err)
+     
       $(frm.fields_dict["item_list"].wrapper).html(
         "Get sale data fail. Please refresh your form"
       );
