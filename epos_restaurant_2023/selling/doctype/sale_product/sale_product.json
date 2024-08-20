@@ -151,6 +151,7 @@
   "kod_status",
   "kod_status_update_time",
   "hide_in_kod",
+  "variant_of",
   "column_break_txhh",
   "cost",
   "product_photo",
@@ -1125,12 +1126,18 @@
    "fieldname": "crypto_able_amount",
    "fieldtype": "Currency",
    "label": "Crypto Able Amount"
+  },
+  {
+   "fieldname": "variant_of",
+   "fieldtype": "Link",
+   "label": "Variant Of",
+   "options": "Product"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-20 09:47:25.219739",
+ "modified": "2024-08-20 17:27:40.750352",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",

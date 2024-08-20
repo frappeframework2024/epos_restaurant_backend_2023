@@ -1,6 +1,6 @@
 <template>
     <div  :class="[isDialog ? 'wrap-dialog' : 'bg-white p-2 relative di-page', dialogClass]">
-        <div :class="isDialog ? 'wrap-dialog-content overflow-auto' : ''">
+        <div :class="isDialog ? 'wrap-dialog-content overflow-auto mb-10' : ''">
             <slot name="default"></slot>
             <div v-if="loading">
                 <div  class="overlay-loading-dialog">
@@ -11,7 +11,7 @@
                 </div>    
             </div>
         </div>
-        <div v-if="!hideFooter" :class="[isDialog == false ? 'p-2 page-footer-fixed':'p-2 footer-fixed dialog-ftt position-fixed bottom-0 left-0 bg-white w-100 ', loading ? 'unset-absolute' : '']">
+        <div style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;" v-if="!hideFooter" :class="[isDialog == false ? 'p-2 page-footer-fixed':'p-2 footer-fixed dialog-ftt position-fixed bottom-0 left-0 bg-white w-100 ', loading ? 'unset-absolute' : '']">
             <div class="overflow-auto lg:overflow-hidden">
                 <slot name="footer-top"></slot>
                 <div class="flex gap-1 lg:gap-0 justify-between items-center w-max lg:w-full">

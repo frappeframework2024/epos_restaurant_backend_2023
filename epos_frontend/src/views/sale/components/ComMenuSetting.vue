@@ -1,5 +1,5 @@
 <template>
-     <ComDialogContent titleButtonClose="Cancel"   :hideButtonClose="false"   @onClose="onCancelSetting" @onOK="onSaveSetting">
+     <ComDialogContent dialogClass="h-5/6" titleButtonClose="Cancel"   :hideButtonClose="false"   @onClose="onCancelSetting" @onOK="onSaveSetting">
       
       <div class="text-center pb-4"> 
       <div class="grid grid-cols-3">
@@ -38,7 +38,7 @@
              <Slider :step="0.1" class="mt-4 w-full" :max="250" :min="100" v-model="gv.itemMenuSetting.height_item"  />
             </div>  
             <div class="px-3 mt-2">
-             <div class="text-start">Width Sale Summary<span class="px-3 bg-slate-100 rounded-lg">{{ gv.itemMenuSetting.width_sale_summary }}
+             <div class="text-start">Width Sale Summary <span class="px-3 bg-slate-100 rounded-lg">{{ gv.itemMenuSetting.width_sale_summary }}
             </span> px </div>  
              <Slider :step="1" class="mt-4 w-full" :max="800" :min="300" v-model="gv.itemMenuSetting.width_sale_summary"  />
             </div>  

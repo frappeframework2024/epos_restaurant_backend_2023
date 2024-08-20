@@ -31,14 +31,13 @@
                             <ComChip v-for="(item, index) in customerPromotion" :key="index" color="orange"
                                 :tooltip="$t('Happy Hour Promotion')" prepend-icon="mdi-tag-multiple">{{ item.promotion_name }}</ComChip>
                         </template>
-                       
-                        <v-chip v-else-if="sale.sale.customer_default_discount > 0" color="error">{{
-                            sale.sale.customer_default_discount }}
-                            % OFF</v-chip>
-
-                            <ComChip v-if="current_customer_point > 0" :tooltip="$t('Current Point(s)')" color="success">{{ Number(current_customer_point).toFixed(2)  }}</ComChip>
-
+                            {{ _customer }}
                             <template v-if="customer">
+                                <ComChip :tooltip="$t('Default Discount')" v-if="customerPromotion?.length <= 0 &&  customer.default_discount > 0" color="error">{{
+                            customer.default_discount }}
+                            % OFF</ComChip>
+
+                                <ComChip v-if="customer.total_point_earn > 0" :tooltip="$t('Current Point(s)')" color="success">{{ Number(customer.total_point_earn).toFixed(2)  }}</ComChip>
                                 <ComChip v-if="customer.total_crypto_balance > 0" :tooltip="$t('Crypto Amount')" color="primary">
                                     <CurrencyFormat :value="parseFloat(customer.total_crypto_balance)" />
                                 </ComChip>
@@ -87,9 +86,10 @@ const gv = inject("$gv");
 const socket = inject("$socket");
 const moment = inject("$moment");
 const frappe = inject("$frappe");
-const toaster = createToaster({ position: "top-right" });
-const customer = ref(null)
+const toaster = createToaster({ position: "top-right" }); 
 const db = frappe.db();
+
+const customer = ref(null)
 
 sale.vueInstance = getCurrentInstance();
 sale.vue = sale.vueInstance.appContext.config.globalProperties
@@ -111,10 +111,14 @@ const { ctrl_m } = useMagicKeys({
 })
 whenever(ctrl_m, () => onScanCustomerCode())
 
- 
-onMounted( ()=>{
-    db.getDoc("Customer", sale.sale.customer).then((r)=>customer.value = r)
+const _customer = computed(()=>{ 
+    if( sale.sale.customer){ 
+        db.getDoc("Customer", sale.sale.customer).then((r)=>{
+            customer.value = r;
+        })
+    }
 }) 
+ 
 
 sale.vue.$onKeyStroke('F9', (e) => {
     e.preventDefault()
@@ -190,11 +194,7 @@ function assignCustomerToOrder(result, is_membership = false) {
 
     sale.updateSaleSummary();
 
-    socket.emit("ShowOrderInCustomerDisplay", sale.sale);
-    
-    db.getDoc("Customer", sale.sale.customer).then((r)=> customer.value = r)
-
-    
+    socket.emit("ShowOrderInCustomerDisplay", sale.sale);    
 }
 
 const setting = computed(() => {

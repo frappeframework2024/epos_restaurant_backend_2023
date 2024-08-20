@@ -147,7 +147,7 @@ export default class Product {
         }
         
 
-        return  Math.ceil( (setting.show_column_item || 1) * (height/ (setting.item_height || 140))) 
+        return  Math.ceil( (setting?.show_column_item || 1) * (height/ (setting?.item_height || 140))) 
     }
 
     getProductFromDbByKeyword(keyword) {

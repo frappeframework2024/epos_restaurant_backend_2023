@@ -447,7 +447,8 @@ export default class Sale {
                 time_stop: 0,
                 kod_status: "Pending",
                 rate_include_tax : p.rate_include_tax||0,
-                selected_variant : p.selected_variant
+                selected_variant : p.selected_variant,
+                variant_of:p.variant_of
             }
             
             if (p.is_timer_product) {
