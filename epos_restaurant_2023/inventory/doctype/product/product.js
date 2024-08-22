@@ -75,7 +75,7 @@ frappe.ui.form.on("Product", {
     },
     generate_variant(frm) {
         frm.call({
-            method: 'generate_variant',
+            method: 'generate_variants',
             doc: frm.doc,
             callback: function (r) {
                 if (r.message) {
@@ -272,9 +272,3 @@ function set_product_indicator(frm) {
         async: true,
     });
 }
-frappe.ui.form.on("Product Variants", {
-    before_product_variants_remove: function(frm, cdt, cdn) {
-        var deleted_row = frappe.get_doc(cdt, cdn);
-      
-    }
-})

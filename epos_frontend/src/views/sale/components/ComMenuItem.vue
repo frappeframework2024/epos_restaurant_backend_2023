@@ -78,11 +78,10 @@
                     {{ getTotalQuantityOrder(data) }}</span>
             </div>
         </div>
-    </div>
-
+    </div> 
 </template>
 <script setup>
-import { computed, addModifierDialog, SelectDateTime, i18n, inject, keypadWithNoteDialog, SelectGoogleImageDialog, SaleProductComboMenuGroupModal, createToaster, EmptyStockProductDialog } from '@/plugin'
+import { ref,computed, addModifierDialog, SelectDateTime, i18n, inject, keypadWithNoteDialog, SelectGoogleImageDialog, SaleProductComboMenuGroupModal, createToaster, EmptyStockProductDialog } from '@/plugin'
 import Enumerable from 'linq'
 import { useDialog } from 'primevue/usedialog';
  
@@ -96,8 +95,7 @@ const product = inject("$product");
 const toaster = createToaster({ position: 'top-right' })
 const frappe = inject("$frappe")
 const db = frappe.db();
-
- 
+  
 const dialog = useDialog()
 
 // get image
@@ -235,5 +233,22 @@ async function onClickProduct() {
     position: absolute;
     right: 10px;
     top: -5px;
+}
+.is-loading-page{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 11;
+    transform: translate(-50%,-50%);
+}
+
+.overlay-loading-dialog {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.4);
+    width: 100%;
+    height: 100%;
 }
 </style>

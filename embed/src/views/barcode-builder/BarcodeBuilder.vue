@@ -1,8 +1,25 @@
 <template>
-  {{ url }}
+  <div>
+    <RadioButton value="Pizza" />
+    <h2 :style="textStyle">
+      {{ setting.name }}
+    </h2>
+  </div>
 
+  <h1 style="color: red" class="text-3xl font-bold underline bg-yellow-500">
+    Hello world!
+  </h1>
   <Fieldset legend="Previews">
     <div class="preview-controls">
+      <div>
+        Bold:
+        <input type="checkbox" v-model="isBold" />
+      </div>
+      <div>
+        Italic
+        <input type="checkbox" v-model="isItalic" />
+      </div>
+
       <div class="control-group">
         <label>Height:</label>
         <InputText disabled v-model.number="setting.height" class="w-3" />
@@ -37,12 +54,13 @@
         "
       >
         <div :style="boxStyle" @mousedown="startDrag">
-          {{ setting.name }}
+          <span :style="textStyle">
+            {{ setting.name }}
+          </span>
         </div>
 
         <img
-          style="max-width: 100%; max-height: 100%; height: auto"
-          class="barcode-image"
+          style="max-width: 100%; max-height: 100%"
           :src="url"
           alt="Barcode"
         />
@@ -112,6 +130,15 @@ import InputNumber from "primevue/inputnumber";
 import Slider from "primevue/slider";
 import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
+import RadioButton from "primevue/radiobutton";
+
+const isBold = ref(false);
+const isItalic = ref(false);
+
+const textStyle = computed(() => ({
+  fontWeight: isBold.value ? "bold" : "normal",
+  fontStyle: isItalic.value ? "italic" : "normal",
+}));
 
 const boxStyle = ref({
   position: "absolute",

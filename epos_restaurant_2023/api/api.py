@@ -49,6 +49,7 @@ def search_image_from_google(keyword):
 
 @frappe.whitelist(allow_guest=True)
 def check_username(pin_code):    
+    
     if pin_code:    
         pin_code = (str( base64.b64encode(pin_code.encode("utf-8")).decode("utf-8")))
         users = frappe.db.sql("select user_id, pos_permission from `tabEmployee` where pos_pin_code = '{}' and allow_login = 1 and allow_login_to_epos = 1 limit 1".format(pin_code), as_dict = 1)
@@ -418,7 +419,8 @@ def get_system_settings(pos_profile="", device_name=''):
         "exely":{
             "enabled":exely.enabled, "default_general_customer_id":exely.default_general_customer_id, "guest_api_endpoint":exely.guest_api_endpoint,"api_key":exely.api_key
         },
-        "point_setting":point_setting
+        "point_setting":point_setting,
+        "change_table_previous_date":pos_config.change_table_previous_date
     }
 
     return  data
@@ -1100,21 +1102,31 @@ def edit_sale_order(name,auth=None,note=None):
         for p in [d for d in payments if d.folio_transaction_type and d.folio_transaction_number and d.cancel_order_adjustment_account_code]:
             data = {
                     'doctype': 'Folio Transaction',
+                    "is_base_transaction":1,
                     'posting_date':sale_doc.posting_date,
                     'transaction_type': p.folio_transaction_type,
                     'transaction_number': p.folio_transaction_number,
                     'reference_number':sale_doc.name,
                     "input_amount":p.amount,
+                    "amount":p.amount,
+                    "quantity": 1 if frappe.get_cached_value("Account Code",p.cancel_order_adjustment_account_code,"allow_enter_quantity") ==1 else 0,
+                    "report_quantity": 1 if frappe.get_cached_value("Account Code",p.cancel_order_adjustment_account_code,"show_quantity_in_report") ==1 else 0,
+                    "transaction_amount":p.amount,
+                    "total_amount":p.amount,
                     "account_code":p.cancel_order_adjustment_account_code,
                     "property":sale_doc.business_branch,
                     "is_auto_post":1,
                     "sale": sale_doc.name,
+                    "tbl_number":sale_doc.tbl_number,
                     "type":"Credit",
                     "guest":sale_doc.customer,
                     "guest_name":sale_doc.customer_name,
                     "guest_type":sale_doc.customer_group,
-                    "nationality": "" if not sale_doc.customer else  frappe.db.get_value("Customer",sale_doc.customer,"country")
+                    "nationality": "" if not sale_doc.customer else  frappe.db.get_value("Customer",sale_doc.customer,"country"),
+                    "report_description": "{} ({})" .format( frappe.get_cached_value("Account Code",p.cancel_order_adjustment_account_code,"account_name"),sale_doc.name) ,
                 } 
+            
+ 
             doc = frappe.get_doc(data)
             doc.insert(ignore_permissions=True)	
         
@@ -1383,16 +1395,16 @@ def on_sale_quick_pay_payment_type(data):
         doc =  frappe.get_doc('Sale',s['sale'])
         doc.append ('payment', {
                 'payment_type':s['payment_type'],
-                'input_amount':doc.grand_total * s['additional_info']['exchange_rate'],
+                'input_amount':doc.grand_total * s['additional_info'].get('exchange_rate'),
                 'amount':doc.grand_total,
                 'room_number':s['room_number'],
                 'folio_number':s['folio_number'],
                 'fee_amount':s['fee_amount'],
                 'folio_transaction_type':s['folio_transaction_type'],
                 'reservation_stay':s['reservation_stay'],
-                'account_code':s['additional_info']['account_code'] or '',
-                "fee_percentage":s['additional_info']['fee_percentage'],
-                "fee_amount":doc.grand_total * (s['additional_info']['fee_percentage'] / 100)
+                'account_code':s['additional_info'].get('account_code') or '',
+                "fee_percentage":s['additional_info'].get('fee_percentage'),
+                "fee_amount":doc.grand_total * (s['additional_info'].get('fee_percentage') / 100)
             })          
  
         doc.docstatus = 1
@@ -1850,3 +1862,4 @@ def reset_sale_network_lock_by_sale(old_sale, new_sale):
 
 
     return "reset sale network lock"
+

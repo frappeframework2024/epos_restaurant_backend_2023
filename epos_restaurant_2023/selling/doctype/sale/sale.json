@@ -868,6 +868,7 @@
   },
   {
    "allow_on_submit": 1,
+   "depends_on": "doc.custom_bill_number != ''",
    "fieldname": "custom_bill_number",
    "fieldtype": "Data",
    "label": "Bill Number"
@@ -1312,6 +1313,7 @@
   {
    "fieldname": "status",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Status",
    "options": "Draft\nPaid\nUnpaid\nPartially Paid\nCancelled"
   },
@@ -1495,7 +1497,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-08-20 09:45:06.751109",
+ "modified": "2024-08-21 14:04:16.750098",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

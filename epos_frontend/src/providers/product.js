@@ -18,6 +18,7 @@ export default class Product {
         this.selectedProduct = {};
         this.prices = [];
         this.modifiers = [];
+        this.variants = [];
         this.keyword = "";
         this.combo_group_temp = [];
         this.currentRootPOSMenu = null
@@ -143,11 +144,12 @@ export default class Product {
         const scrollContainer = document.querySelector("#wrap_menu")
         let height  = 768
         if (scrollContainer){
+       
             height = scrollContainer.offsetHeight; 
+           
         }
         
-
-        return  Math.ceil( (setting?.show_column_item || 1) * (height/ (setting?.item_height || 140))) 
+        return  Math.ceil( (setting?.show_column_item || 1) * (height/ (setting?.height_item || 140))) 
     }
 
     getProductFromDbByKeyword(keyword) {
@@ -182,11 +184,14 @@ export default class Product {
             this.prices.push(p)
         });
         if (this.prices.length > 0) {
-            this.prices.forEach((p)=>{
-                if (p.price_rule == price_rule){
-                    p.selected = true;
-                }
-            })
+            this.prices[0].selected = true
+            // console.log(this.prices);
+            // console.log(price_rule);
+            // this.prices.forEach((p)=>{
+            //     if (p.price_rule == price_rule){
+            //         p.selected = true;
+            //     }
+            // })
         }
 
         let modifiers = JSON.parse(p.modifiers);

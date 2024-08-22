@@ -307,9 +307,9 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 
 	_row_group = row_group
 	if row_group == "if(ifnull(b.custom_bill_number,'')='',a.parent,concat(b.custom_bill_number,' (',a.parent,')'))":
-		_row_group = "a.parent, coalesce(b.custom_bill_number,'-')"
+		_row_group = "a.parent, coalesce(b.custom_bill_number,'-'),b.sale_type"
 	elif filters.row_group=="Product And Price":
-		_row_group = "concat(a.product_code,'-',a.product_name, ' ', a.`portion`),a.price"
+		_row_group = "concat(a.product_code,'-',a.product_name,' ', if(concat(a.`portion`)='' or concat(a.`portion`) = 'Normal','',concat(a.`portion`)), coalesce(a.modifiers)),a.price"
 
 	sql = sql + """ {2}
 		FROM `tabSale Product` AS a
@@ -562,12 +562,12 @@ def get_row_groups():
 		},
 
 		{
-			"fieldname":"concat(a.product_code,'-',a.product_name, ' ', a.`portion`)",
+			"fieldname":"concat(a.product_code,'-',a.product_name,' ', if(concat(a.`portion`)='' or concat(a.`portion`) = 'Normal','',concat(a.`portion`)), coalesce(a.modifiers))",
 			"label":"Product",
 			"show_commission":False
 		},
 		{
-			"fieldname":"concat(a.product_code,'-',a.product_name,' ', a.`portion`)",
+			"fieldname":"concat(a.product_code,'-',a.product_name,' ', if(concat(a.`portion`)='' or concat(a.`portion`) = 'Normal','',concat(a.`portion`)), coalesce(a.modifiers))",
 			"label":"Product And Price",
 			"show_commission":False
 		},

@@ -12,9 +12,11 @@ frappe.ui.form.on("Employee Commission Payment", {
 				]
 			}
 		});
+		renderSummary(frm)
 	},
     paid_amount(frm){
 		frm.set_value('balance',frm.doc.commission_amount-frm.doc.paid_amount)
+		renderSummary(frm)
 		frm.refresh_field('balance')
     },
 	get_sales(frm){
@@ -24,6 +26,7 @@ frappe.ui.form.on("Employee Commission Payment", {
             callback:function(r){
                 if(r.message){
                     frm.set_value('employee_commission_sale',r.message);
+					renderSummary(frm)
                 }
             },
             async: true,
@@ -37,3 +40,18 @@ frappe.ui.form.on('Employee Commission Sale', {
 		frm.refresh_field('employee_commission_sale')
 	  },
 });
+
+function renderSummary(frm){
+	if (!frm.is_new()){
+		let summary={}
+		summary.total_commission = frm.doc.employee_commission_sale.reduce((partialSum, a) => partialSum + a.commission_amount, 0)
+		summary.total_paid = frm.doc.employee_commission_sale.reduce((partialSum, a) => partialSum + a.paid_amount, 0)
+		summary.total_balance = frm.doc.employee_commission_sale.reduce((partialSum, a) => partialSum + a.balance, 0)
+		
+		
+		const html = frappe.render_template("total_commission", {doc:frm.doc,summary:summary})
+
+		$(frm.fields_dict['total'].wrapper).html(html);
+		frm.refresh_field('total');
+	}
+}

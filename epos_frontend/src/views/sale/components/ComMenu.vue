@@ -45,6 +45,10 @@
                         </div>
                     </template>
                 </ComPlaceholder>
+
+                <div class="loading-pr-more" v-if="product.isLoadingProduct">
+                    <v-progress-circular indeterminate></v-progress-circular> Loading...
+                </div> 
             </div>
             <ComSaleButtonActions v-if="!mobile" />
         </div>
@@ -101,7 +105,6 @@ const onScroll = () => {
     const container = scrollContainer.value;
     const scrollBottom = container.scrollHeight - container.scrollTop === container.clientHeight;
     if (scrollBottom) {
-        
         product.getProductFromDB()
     }
   }
@@ -136,5 +139,17 @@ onUnmounted(() => {
 <style>
 .scrollbar::-webkit-scrollbar {
     width: 17px;
+}
+.loading-pr-more {
+    text-align: center;
+    color: #fff;
+    background: #0000008a;
+    padding: 10px 0;
+    position: absolute;
+    bottom: 77px;
+    z-index: 9999999;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 131px;
 }
 </style>

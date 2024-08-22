@@ -11,3 +11,12 @@ class TablesNumber(Document):
    		# 	frappe.throw("Table number {} is already exist in group {}".format(self.tbl_number, self.tbl_group))
 	def on_update(self):
 		frappe.clear_document_cache("Tables Number",self.name)
+
+@frappe.whitelist()
+def get_table_number_list(txt,table_group='Rooms'):
+	data = frappe.db.get_list("Tables Number",filters=[[
+    'tbl_number', 'like', "%"+ txt +"%"
+	]],
+		fields=['name','tbl_number', 'tbl_group']
+	)
+	return data

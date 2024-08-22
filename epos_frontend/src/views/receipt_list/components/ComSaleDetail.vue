@@ -1,6 +1,6 @@
 <template>
     <ComModal @onClose="onClose(false)" :fullscreen="true" :isPrint="sale.doc?.docstatus == 1" @onPrint="onPrint()"
-        :hide-ok-button="true" :hide-close-button="true" :isShowBarMoreButton="canOpenOrder || canEdit || canDelete">
+        :hide-ok-button="true" :hide-close-button="true" :isShowBarMoreButton="canOpenOrder || canEdit || canDelete || gv.setting.change_table_previous_date==1">
         <template #title>
             {{ $t('Sale Detail') }} #{{ params.name }}
         </template>
@@ -17,6 +17,12 @@
                         <v-icon>mdi-checkbox-marked-outline</v-icon>
                     </template>
                     <v-list-item-title>{{ $t('Edit Order') }}</v-list-item-title>
+                </v-list-item>
+                <v-list-item v-if="gv.setting.change_table_previous_date==1" @click="showProducts">
+                    <template v-slot:prepend>
+                        <v-icon>mdi-checkbox-marked-outline</v-icon>
+                    </template>
+                    <v-list-item-title>{{ $t('Change Table') }} {{ moment(sale.closed_date).isBefore(moment(gv.setting.working_day?.date_working_day)) }}</v-list-item-title>
                 </v-list-item>
                 <v-list-item @click="OnDeleteOrder()" v-if="canDelete">
                     <template v-slot:prepend>
@@ -91,6 +97,37 @@ import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 import { useDisplay } from 'vuetify';
 import { FrappeApp } from 'frappe-js-sdk';
 import { createToaster } from '@meforma/vue-toaster';
+import moment from 'moment'
+
+import ComChangeTableNumber from './ComChangeTableNumber.vue';
+import { useDialog } from 'primevue/usedialog';
+
+const dialog = useDialog();
+
+const showProducts = () => {
+
+    dialog.open(ComChangeTableNumber, 
+    {
+        data: {
+        sale: sale
+    },
+    props: {
+        header: $t('Change Table'),
+        style: {
+            width: '60vw',
+        },
+        maximizable: true,
+        modal: true,
+        closeOnEscape: false,
+        position: "top",
+        breakpoints:{
+                '960px': '60vw',
+                '640px': '100vw'
+            },
+    },
+});
+}
+
 const toaster = createToaster({ position: "top-right" });
 
 const { mobile } = useDisplay();

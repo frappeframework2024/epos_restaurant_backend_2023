@@ -1,7 +1,7 @@
+import "./style.css";
 import { createApp, reactive } from "vue";
 import App from "./App.vue";
 import "primeicons/primeicons.css";
-import "primeflex/primeflex.css";
 import PrimeVue from "primevue/config";
 import Aura from "@primevue/themes/aura";
 
@@ -12,6 +12,8 @@ import FloatLabel from "primevue/floatlabel";
 import InputText from "primevue/inputtext";
 import Fieldset from "primevue/fieldset";
 import Slider from "primevue/slider";
+import RadioButton from "primevue/radiobutton";
+import SelectButton from "primevue/selectbutton";
 
 const app = createApp(App);
 
@@ -33,6 +35,8 @@ app.component("FloatLabel", FloatLabel);
 app.component("InputText", InputText);
 app.component("Fieldset", Fieldset);
 app.component("Slider", Slider);
+app.component("RadioButton", RadioButton);
+app.component("SelectButton", SelectButton);
 
 // Configure route gaurds
 router.beforeEach(async (to, from, next) => {

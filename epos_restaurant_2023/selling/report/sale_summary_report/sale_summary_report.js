@@ -157,7 +157,6 @@ frappe.query_reports["Sale Summary Report"] = {
 			hide_in_filter:1,
 			"on_change": function (query_report) {},
 		},
-		
 		{
 			"fieldname": "column_group",
 			"label": __("Column Group By"),
@@ -213,7 +212,6 @@ frappe.query_reports["Sale Summary Report"] = {
 	"formatter": function(value, row, column, data, default_formatter) {
 	
 		value = default_formatter(value, row, column, data);
-
 		if (data && data.is_group==1) {
 			value = $(`<span>${value}</span>`);
 			var $value = $(value).css("font-weight", "bold");

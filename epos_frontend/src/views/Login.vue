@@ -143,7 +143,7 @@
 
 </template>
 <script setup>
-import { reactive, inject, computed, useStore, useRouter, createResource, createToaster, i18n, ref } from '@/plugin';
+import { reactive, inject, computed, useStore, useRouter, createResource, createToaster, i18n, ref,getApi } from '@/plugin';
 import { onMounted } from 'vue';
 import { useDisplay } from 'vuetify';
 const frappe = inject("$frappe");
@@ -223,6 +223,7 @@ function isWindow() {
 function onDeleteBack() {
   state.password = state.password.substring(0, state.password.length - 1);
 }
+
 const onLogin = async () => {
   if (pos_license.web_platform) {
     if ((!pos_license.license.status ?? false) || (pos_license.license?.expired ?? false)) {
@@ -234,38 +235,30 @@ const onLogin = async () => {
     toast.warning($t('msg.Invalid PIN Code'), { position: 'top' });
     return
   }
+
   store.dispatch('startLoading');
 
   let is_error = false;
-  createResource({
-    url: 'epos_restaurant_2023.api.api.check_username',
-    auto: true,
-    params: {
-      "pin_code": state.password
-    },
-    async onSuccess(doc) {
-      store.dispatch('startLoading');
-      state.username = doc.username;
-
+  getApi("api.check_username",{
+    "pin_code": state.password
+  }).then(async result=>{
+     store.dispatch('startLoading');
+      state.username = result.message.username;
       if (state.username && state.password) {
         let res = await auth.login(state.username, state.password);
         if (res) {
-          getCurrentUserInfo(doc)
+          getCurrentUserInfo(result.message)
           checkPromotionDay()
         } else {
           toast.warning(`msg.Login fail Invalid username or password`);
           store.dispatch('endLoading');
         }
       }
-    },
-    onError(x) {
-      if (!is_error) {
-        is_error = true;
-        store.dispatch('endLoading');
-        toast.warning($t('msg.Invalid PIN Code'), { position: 'top' });
-      }
-    }
+  }).catch((error)=>{
+    store.dispatch('endLoading');
   })
+
+  
 
 }
 

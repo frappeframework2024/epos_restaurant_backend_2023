@@ -33,6 +33,7 @@
                         v-if="product?.prices?.filter(r => r.price_rule == sale.sale.price_rule).length > 1 || product.is_open_price"
                         :class="mobile ? 'panel-small' : ''">
                         <v-expansion-panel-text>
+                          
                             <div class="flex flex-wrap">
                                 <div class="m-1"
                                     v-for="(item, i) in product.prices.filter(r => r.price_rule == sale.sale.price_rule)"
@@ -42,6 +43,7 @@
                             </div>
                         </v-expansion-panel-text>
                     </v-expansion-panel>
+                    
                     <template v-for="(item, index) in product.modifiers" :key="index">
                         <v-expansion-panel v-if="product.getModifierItem(item).length > 0" class="mt-2" variant="accordion"
                             :class="mobile ? 'panel-small' : ''">

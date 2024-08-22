@@ -261,7 +261,15 @@ onMounted(() => {
 		}		 
 	}
 	gv.device_setting  = JSON.parse(localStorage.getItem("device_setting"));	
+	
+	// get pos local setting and set global
+	if (!localStorage.getItem("item_menu_setting")){
+		localStorage.setItem("item_menu_setting", JSON.stringify( gv.itemMenuSetting) )
+	}
+
+
 	onResize()
+
 })
 
 onUnmounted(()=>{

@@ -303,7 +303,7 @@ def get_product_category(category):
     return data             
 
 @frappe.whitelist()
-def get_products(category ='All Product Categories',product_code=None,keyword=None , limit = 20, page=1, order_by='product_code',order_by_type='asc', include_product_category=0):
+def get_products(category ='All Product Categories',product_code=None,keyword=None , limit = 20, page=1, order_by='product_code',order_by_type='asc', include_product_category=0,price_rule="Normal"):
     sql="""
         select 
             name as menu_product_name,
@@ -336,7 +336,9 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
             '[]' as printers,
             '[]' as modifiers,
             '' as price_rule,
-            'product' as type
+            'product' as type,
+            variant_of,
+            is_variant
             
         from `tabProduct`
         where
@@ -380,18 +382,36 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
     # get printers
     
     for  d in data:
-        if d["has_variants"]:
-            d["variants"] = get_product_variant(d["name"])
-        
         d["printer"] = json.dumps( get_product_printers(d["name"]))
 
         d["modifiers"] = json.dumps( get_product_modifiers(d["name"]))
+        
+        if d["variant_of"]  and d["is_variant"] ==1:
+            d["selected_variant"] = get_selected_variant(d["name"],d["variant_of"]) 
+        # get_default_price
+        product_prices = json.loads(d["prices"])
+        if product_prices:
+            default_price =  get_default_product_price(price_rule, product_prices)
+            d["unit"] = default_price["unit"]
+            d["portion"] = default_price["portion"]
+            d["price"] = default_price["price"]
     
     if int(include_product_category) ==1:
         return {"products":data,"categories":get_product_category(category)}
     else:
         return {"products":data}
             
+
+
+def get_default_product_price(price_rule="Normal", prices=None):
+    # will update to support branch later
+    default_price = [p for p in prices if p["price_rule"] == price_rule]
+    if  default_price:
+        default_price = default_price[0]
+    if not default_price:
+        default_price = prices[0]
+    return default_price
+
 
 
 @frappe.whitelist(methods="POST")
@@ -408,6 +428,7 @@ def get_product_by_variant(variant,product_code):
     filter = {
         "product_code":product_code
     }
+    
     filter["variant_1"] = '' if not  "variant_1" in variant else variant["variant_1"]["variant_value"]
         
     filter["variant_2"] = '' if not "variant_2" in variant else variant["variant_2"]["variant_value"]
@@ -416,14 +437,16 @@ def get_product_by_variant(variant,product_code):
  
         
     data = frappe.db.sql(sql,filter,as_dict = 1)
-    
+    return data
     if data:
        
         product_data = get_products(product_code=data[0]["variant_code"], limit=1, page=1,include_product_category=0)
         
         if product_data:
             if product_data["products"]:
-                return product_data["products"][0]
+                product = product_data["products"][0]
+                
+                return product 
     
     frappe.throw("This selected product variant is not available in the system")
         
@@ -468,6 +491,32 @@ def get_product_printers(product_code):
     
     frappe.cache.set_value("product_printer_" + product_code, printers)
     return printers
+
+def get_selected_variant(product_code, variant_of):
+    # we clear this cache when save product 
+    if cached_value := frappe.cache.get_value("selected_variant_" + product_code):
+        return cached_value
+
+    variant = {}
+    variant_1_name  =frappe.get_cached_value("Product", variant_of, "variant_1_name" ) 
+    if variant_1_name:
+        variant["variant_1"] = {"variant_name": variant_1_name, "variant_value": frappe.get_cached_value("Product", product_code, "variant_1") }
+    
+    
+    variant_2_name  =frappe.get_cached_value("Product", variant_of, "variant_2_name" ) 
+    if variant_2_name:
+        variant["variant_2"] = {"variant_name": variant_2_name, "variant_value": frappe.get_cached_value("Product", product_code, "variant_2") }
+    
+    
+    
+    variant_3_name  =frappe.get_cached_value("Product", variant_of, "variant_3_name" ) 
+    if variant_3_name:
+        variant["variant_3"] = {"variant_name": variant_3_name, "variant_value": frappe.get_cached_value("Product", product_code, "variant_3") }
+    
+    frappe.cache.set_value("selected_variant_" + product_code, variant)
+    return variant
+
+
 
 def get_product_modifiers(product_code):
     # we clear this cache when save product 
@@ -600,3 +649,41 @@ def  get_product_category_with_children(parent_category='All Product Categories'
     data =  frappe.db.sql(sql,{"parent_category":parent_category,},as_dict=1)
     frappe.cache.set_value("product_category_with_children_" + convert_to_safe_key(parent_category),data )
     return [d["product_category"] for d in data]
+
+
+@frappe.whitelist()
+def get_product_option(product_code="", business_branch="", price_rule="Normal"):
+    if cached_value := frappe.cache.get_value(f"product_option_{product_code}_{price_rule}"):
+        return cached_value
+    
+    
+    doc = frappe.get_cached_doc("Product", product_code)
+    
+    data = {"name":doc.name, "product_name_en": doc.product_name_en, "product_name_kh":doc.product_name_kh,"is_variant":doc.is_variant, "variant_of":doc.variant_of}
+    
+    if (doc.photo):
+        data["photo"] = doc.photo
+    else:
+        if doc.variant_of:
+            data["photo"] = frappe.get_cached_value("Product", doc.variant_of,"photo")
+            
+    if doc.product_price:
+        data["prices"] = [{"price":d.price, "unit":d.unit, "portion":d.portion} for d in doc.product_price if (not d.business_branch  and    d.price_rule == price_rule) or (d.business_branch==business_branch and d.price_rule==price_rule ) ]
+    if not "prices" in data:
+        data["prices"] = [{"price":doc.price,"unit":doc.unit, "portion":"Normal"}]
+    
+    if data["prices"]:
+        data["prices"][0]["selected"] = True
+    
+    if doc.has_variants:
+        data["variants"] =  get_product_variant(doc.name)
+    elif doc.variant_of :
+        data["variants"] =  get_product_variant(doc.variant_of)
+    
+    
+    
+    
+    
+    frappe.cache.set_value(f"product_option_{product_code}_{price_rule}",data )
+    return data
+

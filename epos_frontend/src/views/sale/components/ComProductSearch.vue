@@ -62,6 +62,7 @@ function getIsMobile() {
 
 
 function onSearch(key) {
+    if(key.length > 2 || key.length == 0){
     if (sale.setting.use_retail_ui == 0) {
 
 
@@ -78,6 +79,7 @@ function onSearch(key) {
                 product.getProductFromDbByKeyword(key)
             }
         }
+    }
     }
 }
  

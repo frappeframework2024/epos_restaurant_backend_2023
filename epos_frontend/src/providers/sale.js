@@ -178,7 +178,7 @@ export default class Sale {
             commission: 0,
             commission_note: '',
             commission_amount: 0,
-            created_by: make_order_auth.name,
+            created_by: make_order_auth?.name || "",
 
         } 
         this.onSaleApplyTax(tax_rule, this.sale);       
@@ -332,8 +332,9 @@ export default class Sale {
         //check for append quantity rule
         //product code, allow_append_qty,price, unit,modifier, portion, is_free,sale_product_status
         //and check system have feature to send to kitchen
-        let strFilter = `$.is_timer_product == 0 && $.is_require_employee==0 && $.product_code=='${p.name}' && $.append_quantity ==1 && $.price==${p.price} && $.portion=='${this.getString(p.portion)}'  && $.modifiers=='${p.modifiers}'  && $.unit=='${p.unit}' && $.is_free==0 && $.note==''`
-
+        
+        let strFilter = `$.is_timer_product == 0 && $.is_require_employee==0  && $.product_code=='${p.name}' && $.append_quantity ==1 && $.price==${p.price} && $.portion=='${this.getString(p.portion)}'  && $.modifiers=='${(p.modifiers || '')=='[]'?'':(p.modifiers || '')}'   && $.unit=='${p.unit}' && $.is_free==0 && $.note==''`
+ 
         if (!this.setting?.pos_setting?.allow_append_quantity_after_submit) {
             strFilter = strFilter + ` && $.sale_product_status == 'New'`
         }
@@ -420,12 +421,12 @@ export default class Sale {
                 selected: true,
                 modified: _now_format,
                 creation: _now_format,
-                append_quantity: p.append_quantity,
-                allow_discount: p.allow_discount,
-                allow_free: p.allow_free,
-                allow_change_price: p.allow_change_price,
-                allow_crypto_claim : p.allow_crypto_claim,
-                is_open_product: p.is_open_product,
+                append_quantity: p.append_quantity || 0,
+                allow_discount: p.allow_discount || 0,
+                allow_free: p.allow_free || 0,
+                allow_change_price: p.allow_change_price || 0,
+                allow_crypto_claim : p.allow_crypto_claim || 0,
+                is_open_product: p.is_open_product || 0,
                 portion: this.getString(p.portion),
                 modifiers: (p.modifiers || '') == "[]" ? "" : (p.modifiers || ''),
                 modifiers_data: p.modifiers_data,
@@ -448,8 +449,11 @@ export default class Sale {
                 kod_status: "Pending",
                 rate_include_tax : p.rate_include_tax||0,
                 selected_variant : p.selected_variant,
-                variant_of:p.variant_of
+                variant_of:p.variant_of,
+                is_variant:p.is_variant
             }
+
+           
             
             if (p.is_timer_product) {
                 if (p.time_in) {
@@ -1046,6 +1050,10 @@ export default class Sale {
                 if (this.setting.pos_setting.allow_change_quantity_after_submit == 1 || sp.sale_product_status == "New") {
                     if (quantity == 0) {
                         quantity = 1
+                    }
+
+                    if (sp.is_return == 1){
+                        quantity = quantity * -1
                     }
 
                     const u = JSON.parse(localStorage.getItem('make_order_auth'));

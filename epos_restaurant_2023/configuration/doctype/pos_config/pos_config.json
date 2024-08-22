@@ -53,6 +53,7 @@
   "allow_closed_working_day_when_has_pending_order",
   "generate_tax_invoice_after_close_sale_order",
   "generate_bill_number_on_create",
+  "change_table_previous_date",
   "permission_and_note_tab",
   "delete_bill_required_password",
   "column_break_17",
@@ -795,12 +796,18 @@
    "fieldname": "percentage_of_bill_amount_to_claim_crypto",
    "fieldtype": "Percent",
    "label": "Percentage of Bill amount to Claim Crypto (%)"
+  },
+  {
+   "default": "0",
+   "fieldname": "change_table_previous_date",
+   "fieldtype": "Check",
+   "label": "Change Table Previous Date"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-20 11:12:18.569455",
+ "modified": "2024-08-22 08:27:59.628587",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

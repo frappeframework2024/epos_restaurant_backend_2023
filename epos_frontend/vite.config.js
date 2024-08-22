@@ -17,7 +17,7 @@ export default defineConfig({
 		}
 	},
 	build: {
-		outDir: '../epos_restaurant_2023/public/embed',
+		outDir: '../epos_restaurant_2023/public/epos_frontend',
 		emptyOutDir: true,
 		target: 'esnext'
 		// target: 'es2015',

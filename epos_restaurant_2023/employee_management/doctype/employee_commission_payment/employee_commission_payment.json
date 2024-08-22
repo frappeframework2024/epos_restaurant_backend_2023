@@ -16,7 +16,8 @@
   "amended_from",
   "sale_commissions_section",
   "get_sales",
-  "employee_commission_sale"
+  "employee_commission_sale",
+  "total"
  ],
  "fields": [
   {
@@ -88,12 +89,17 @@
    "in_list_view": 1,
    "label": "Sale End Date",
    "reqd": 1
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "HTML",
+   "label": "Total"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-03-27 09:32:01.423451",
+ "modified": "2024-08-21 16:14:18.911642",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee Commission Payment",

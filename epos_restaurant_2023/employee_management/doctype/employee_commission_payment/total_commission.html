@@ -1,0 +1,29 @@
+
+<div class="container" style="background: #f5f3f5;
+    border-radius: 6px;padding:10px;width: 100%!important;">
+  <div class="row">
+    <div class="col">
+      {{__("Total Commission")}}
+    </div>
+    <div class="col text-right">
+      <strong>{{frappe.format(summary.total_commission,{"fieldtype":"Currency"})}}</strong>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      {{__("Total Paid")}}
+    </div>
+    <div class="col text-right">
+      <strong>{{frappe.format(summary.total_paid,{"fieldtype":"Currency"})}}</strong>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      {{__("Total Balance")}}
+    </div>
+    <div class="col text-right">
+      <strong>{{frappe.format(summary.total_balance,{"fieldtype":"Currency"})}}</strong>
+    </div>
+  </div>
+</div>
+ 

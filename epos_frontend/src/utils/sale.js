@@ -1,11 +1,15 @@
 import { computed, addModifierDialog, SelectDateTime, i18n, inject, keypadWithNoteDialog, SelectGoogleImageDialog, SaleProductComboMenuGroupModal, createToaster, EmptyStockProductDialog } from '@/plugin'
 
-import ComProductVariant from '@/views/sale/components/ComProductVariant.vue'
+import ComEditSaleProduct from '@/views/sale/components/ComEditSaleProduct.vue'
  
 
 
 export async function onSelectProduct(product_data,sale,product,dialog){
     
+    if (sale.setting.pos_menus.length>0){
+
+     
+
     // sale is sale from inject 
     // product is product from inject 
     let p = JSON.parse(JSON.stringify( product_data))
@@ -77,10 +81,12 @@ export async function onSelectProduct(product_data,sale,product,dialog){
                 
                 if (check_modifiers || portions?.length > 1 || p.is_open_price) {
                     const pro_data = product_data
+
                     if (p.is_open_price && portions.length == 0) {
                         pro_data.prices = JSON.stringify([{ "price": p.price, "branch": "", "price_rule": sale.sale.price_rule, "portion": "Normal", "unit": p.unit, "default_discount": 0 }])
                     }
-                    product.setSelectedProduct(pro_data,sale.sale.price_rule);
+                product.setSelectedProduct(pro_data,sale.sale.price_rule);
+
 
                     let productPrices = await addModifierDialog();
 
@@ -125,33 +131,44 @@ export async function onSelectProduct(product_data,sale,product,dialog){
         sale.addSaleProduct(p);
 
     }
+} else {
+  
+    // for retail
+    AddProductTotalSaleOrderForRetailPOS(product_data,sale,product,dialog)
+}
+
+}
+
+async function AddProductTotalSaleOrderForRetailPOS(product_data,sale,product,dialog){
+    if (product_data.has_variants){
+        product_data = await selectVariant(product_data.name,dialog)
+        
+    }
+    sale.addSaleProduct(product_data);
+
 }
 
 
-
-function selectVariant(product,dialog){
-    
+function selectVariant(product_code,dialog){
 
     return new Promise((resolve) => {
-        dialog.open(ComProductVariant, {
-            data:product,
+        dialog.open(ComEditSaleProduct, {
+            data:{product_code:product_code},
             props: {
                 header: 'Product Variants',
                 style: {
-                    width: '50vw',
+                    width: '900px',
                     background: 'white',
                     color: 'black'
                 },
-                breakpoints:{
-                    '960px': '75vw',
+                breakpoints:{ 
+                    '960px': '90vw',
                     '640px': '90vw'
                 },
                 modal: true
             },
             onClose: (options) => {
-                
                 const data = options.data;
-                
                 if (data != undefined) {
                     resolve(data)
                 }else {

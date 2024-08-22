@@ -194,7 +194,6 @@
   {
    "fieldname": "quickbooks_config_tab",
    "fieldtype": "Tab Break",
-   "hidden": 1,
    "label": "Quickbooks Config"
   },
   {
@@ -229,7 +228,7 @@
  "issingle": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-08-15 15:57:30.291002",
+ "modified": "2024-08-21 17:37:48.810030",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "ePOS Settings",
