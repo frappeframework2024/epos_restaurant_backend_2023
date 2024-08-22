@@ -7,7 +7,7 @@
                 :autofocus="!getIsMobile()"
                 keyboard
                 variant="outlined"
-                :placeholder="$t('Search...')"
+                :placeholder="$t('Search...') + 'Press ESC'"
                 prepend-inner-icon="mdi-magnify"
                 v-model="product.searchProductKeywordStore"
                 v-debounce="onSearch"

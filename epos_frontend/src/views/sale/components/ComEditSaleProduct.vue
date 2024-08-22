@@ -1,15 +1,14 @@
 <template>
     <ComDialogContent :hideButtonClose="false" :loading="loading" @onOK="onOK" @onClose="onClose">
-        <input type="number" v-model="data.quantity"/>
-        <input  v-model="data.note"/>
-        {{ data }}
         <div class="flex flex-col lg:flex-row">
             <div v-if="data?.photo" class="flex">
                 <v-img class="rounded" style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;" :lazy-src="data.photo"
-                    :width="500" aspect-ratio="4/3" cover :src="data.photo"></v-img>
+                    :width="500" aspect-ratio="4/3" :src="data.photo"></v-img>
             </div>
 
             <div class="md:px-5 w-100 variant-rep">
+                <h1 class="font-extrabold">{{ data?.name }} - {{ data?.product_name_en }}</h1>
+                <br/>
                 <template v-if="data?.variants">
                     <div class="border rounded-md w-100 p-3"
                         style="border-color: #ccc !important;background: aliceblue;">
@@ -47,6 +46,12 @@
                         </v-chip>
                     </template>
                 </div>
+                <br/>
+                <h1 class="mb-2 font-semibold">Quantity</h1>
+                <input class="border rounded-md w-100 pa-1 ps-2" style="border-color: #ccc !important;background: aliceblue;" type="number" v-model="data.quantity"/>
+                <div class="ma-4"></div>
+                <h1 class="mb-2 font-semibold">Note</h1>
+                <v-textarea class="rounded-md w-100" label="Note" v-model="data.note"></v-textarea>
             </div>
         </div>
     
