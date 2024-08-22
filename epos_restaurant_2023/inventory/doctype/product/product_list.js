@@ -22,18 +22,15 @@ frappe.listview_settings['Product'] = {
             return [__("Enabled"), "blue"];
         }
     },
+    refresh(me) { 
+        frappe.route_options = {
+            status: ['!=',"Variant"]
+          };
+    },
     onload(me) { 
-        me.page.wrapper.find('.list-row').each(function() {
-            var row = $(this);
-            // Find the cell containing the status value
-            var statusCell = row.find('[data-fieldname="Veriant"]');
-            var status = statusCell.text().trim();
-            console.log(statusCell)
-            // Hide the row if the status matches the condition
-            if (status === 'Variant') {
-                row.hide(); // Hide the row
-            }
-        });
+        frappe.route_options = {
+            status: ['!=',"Variant"]
+          };
         me.page.add_action_item('Assign Menu', function() {
             let d = new frappe.ui.Dialog({
                 title: 'Assign Menu',

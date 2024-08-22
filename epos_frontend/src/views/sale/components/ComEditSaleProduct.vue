@@ -1,10 +1,13 @@
 <template>
     <ComDialogContent :hideButtonClose="false" :loading="loading" @onOK="onOK" @onClose="onClose">
+       
     <div class="flex flex-col lg:flex-row">
         <div v-if="data?.photo" class="flex">
             <v-img class="rounded" style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;" :lazy-src="data.photo" :width="500" aspect-ratio="4/3" cover :src="data.photo"></v-img>
         </div>
+     
         <div class="md:px-5 w-100 variant-rep">
+            <template v-if="data?.variants">
             <div class="border rounded-md w-100 p-3" style="border-color: #ccc !important;background: aliceblue;">
                 <template v-if="data?.variants" v-for="(item, index) in data.variants" :key="index">
                     <h1 v-if="item?.variants.length > 0" class="mb-2 font-semibold">{{ item.variant_name }}</h1>
@@ -21,14 +24,15 @@
                 </template>
             </div>
             <br/>
+         </template>
             <div v-if="data?.prices.length > 0" class="border rounded-md w-100 p-3" style="border-color: #ccc !important;background: aliceblue;">
                 <h1 class="mb-2 font-semibold">Portion</h1>
                 <template  v-for="(item, index) in data?.prices" :key="index">
-                    <v-chip v-if="item.selected" color="success" variant="tonal">
+                    <v-chip v-if="item.selected" color="success" variant="tonal" @click="onSelectPortion(item)">
                         <v-icon icon="mdi-checkbox-marked-circle-outline" start></v-icon>
                         {{ item.portion }} <CurrencyFormat :value="item.price" />
                     </v-chip>
-                    <v-chip v-else variant="tonal">
+                    <v-chip v-else variant="tonal" @click="onSelectPortion(item)">
                         {{ item.portion }} <CurrencyFormat :value="item.price" />
                     </v-chip>
                 </template>
@@ -50,9 +54,61 @@
     const sale= inject("$sale")
     const prices = ref()
     const selected =  ref([])
-
+    const selectedProduct = ref()
 
    const loading = ref(false)
+
+   function onSelectPortion(p){
+    
+    data.value.prices.find(r=>r.selected).selected = false
+    p.selected =true
+
+
+   }
+
+
+
+
+   const onGetProductByVariantDebounce = debounce(getProductByVariant, 700);
+   
+function getProductByVariant(){
+    if (data.value.variants.flatMap(item => item.variants).filter(r=>r.selected).length!=data.value.variants.length) {
+         
+            return
+        }
+        selectedProduct.value = null
+
+        postApi("product.get_product_by_variant",{
+            variant: selectedData.value,
+            product_code: data.value.variant_of?data.value.variant_of:data.value.name
+        }).then((r)=>{
+          
+            if(r.message){
+                selectedProduct.value = r.message
+                const prices =   JSON.parse( r.message.prices  )
+                
+                if (prices.length>0){
+                    data.value.prices = prices
+                }else {
+     
+                    data.value.prices = [{unit:r.message.unit, price:r.message.price, portion:r.message.unit}]
+                }
+                data.value.prices[0].selected = true
+            }
+            
+        })
+
+}
+function debounce(func, wait) {
+    let timeout;
+
+    return function (...args) {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+}
+
     onMounted(()=>{
         loading.value = true
         getApi("product.get_product_option",{
@@ -62,18 +118,30 @@
         }).then(result=>{
             data.value = result.message
             prices.value = data.value.prices
-            console.log(prices.value)
-
+            
             if(dialogRef.value.data.sale_product){
             
             saleProduct.value =  dialogRef.value.data.sale_product
             selectedData.value = saleProduct.value.selected_variant
             data.value.variants.forEach((r, index)=>{
 
-               
                     r.variants.find(r=>r.variant==selectedData.value["variant_" + (index + 1)].variant_value).selected = true
     
             })
+
+            // set selection for unit
+            if(data.value.prices){
+                // clear selection first
+                let selectedPrice = data.value.prices.find(r=>r.selected == true)
+                if(selectedPrice){
+                    selectedPrice.selected = false
+                }
+                 selectedPrice = data.value.prices.find(r=>r.unit == saleProduct.value.unit)
+                if(selectedPrice){
+                    selectedPrice.selected = true
+
+                }
+            }
             
         }
 
@@ -94,7 +162,8 @@
         selectedData.value['variant_' + (index + 1)] = {variant_name:variant.variant_name,variant_value: i.variant}
         data.value.variants[index].variants.filter(r=>r.selected).forEach(x=>x.selected=false)
         i.selected = true
-         
+        onGetProductByVariantDebounce()
+
 
     }
     function onOK(){  
@@ -102,26 +171,21 @@
             toaster.warning("Please select all variant")
             return
         }
-        loading.value = true
-        postApi("product.get_product_by_variant",{
-            variant: selectedData.value,
-            product_code: data.value.variant_of?data.value.variant_of:data.value.name
-        }).then((r)=>{
-          
-            r.message.selected_variant = selectedData.value
-            const selected_price = data.value.prices.find(r=>r.selected)
+        
+        if (!selectedProduct.value){
+            toaster.warning("This selected variant is not exist in the system ")
+        }
+        
+        const selected_price = data.value.prices.find(r=>r.selected)
 
-            
-            r.message.unit = selected_price.unit
-            r.message.price = selected_price.price
-            r.message.portion = selected_price.portion
 
-            dialogRef.value.close(r.message)
-            loading.value = false
-            
-        }).catch(error=>{
-            loading.value = false
-        })
+        selectedProduct.value.unit = selected_price.unit
+        selectedProduct.value.price = selected_price.price
+        selectedProduct.value.portion = selected_price.portion
+
+        dialogRef.value.close(selectedProduct.value)
+        
+
     }
     const onClose = () => {
         dialogRef.value.close()

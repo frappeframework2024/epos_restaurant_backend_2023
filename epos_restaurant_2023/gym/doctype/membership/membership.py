@@ -178,8 +178,8 @@ def upgrade_membership_option(param):
 		else:
 			_end_date = new_doc.start_date
 
-		if _end_date < new_doc.end_date:
-			frappe.throw(_("Membership option not allow to down grand on expory period"))
+		# if _end_date < new_doc.end_date:
+		# 	frappe.throw(_("Membership option not allow to down grand on expory period"))
 
 	new_doc.old_membership_option = p["old_membership_option"] if not doc.old_membership_option else doc.old_membership_option
 	new_doc.membership = p["new_membership_option"]

@@ -348,7 +348,7 @@ function onEditSaleProductRetailPOS(sp) {
             sale_product:  data
         },
         props: {
-            header: $t('Edit Product Variants'),
+            header: $t('Product Option'),
             style: {
                 width: '900px',
                 background: 'white',
@@ -363,8 +363,6 @@ function onEditSaleProductRetailPOS(sp) {
         onClose: (options) => {
 
             const data = options.data;
-            console.log(sp);
-            console.log(data);
 
             if (data){
                 sp.name = data.name

@@ -981,12 +981,15 @@ def get_pending_sale_orders(data):
         grand_total
     from `tabSale` 
     where docstatus = 0 
-        and working_day = '{}'
-        and cashier_shift = '{}'
+        and working_day = %(working_day)s
+        and cashier_shift = if(%(cashier_shift)s ='', cashier_shift,%(cashier_shift)s )
     order by modified desc
-    limit 200""".format(data["working_day"], data["cashier_shift"])
+    limit 200"""
 
-    result = frappe.db.sql(sql,as_dict=1)
+    result = frappe.db.sql(sql,{
+        "working_day":data["working_day"],
+        "casher_shift":"" if not "casher_shift" in data else data["casher_shift"]
+        },as_dict=1)
     return result
 
 

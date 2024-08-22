@@ -1,5 +1,5 @@
 <template>
-  <div class="tex-sky">Hello</div>
+  <h2 class="">HI BRO</h2>
 
   <router-view />
 </template>

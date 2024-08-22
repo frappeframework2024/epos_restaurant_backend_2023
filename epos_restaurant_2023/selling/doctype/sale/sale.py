@@ -1301,3 +1301,17 @@ def update_customer_bill_balance(self):
 				set c.balance = _s.total_balance + c.total_coupon_balance + c.membership_balance
 			where c.name = %(customer)s"""
 	frappe.db.sql(sql,{"customer":self.customer})
+
+@frappe.whitelist()
+def change_table_number(data):
+	sale = data['sale']
+	default_customer = frappe.db.get_value("Tables Number",data['tbl_name'],'default_customer')
+	customer_doc = frappe.get_doc("Customer",default_customer)
+	frappe.db.set_value("Sale",sale,{
+		'table_id':data['tbl_name'],
+		'tbl_number':data['tbl_number'],
+		'customer':default_customer,
+		'customer_name':customer_doc.customer_name_en,
+		'customer_photo':customer_doc.photo,
+		'customer_group':customer_doc.customer_group
+	})

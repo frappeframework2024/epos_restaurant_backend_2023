@@ -1,125 +1,140 @@
 <template>
-  <div>
-    <RadioButton value="Pizza" />
-    <h2 :style="textStyle">
-      {{ setting.name }}
-    </h2>
+  <div class="flex align-items-center justify-content-center p-3">
+    <div
+      style="border: 1px solid red"
+      class="flex-1 flex align-items-center justify-content-center m-3"
+    >
+      Lorem ipsum dolor sit amet
+    </div>
+    <div
+      style="border: 1px solid red"
+      class="flex-1 flex align-items-center justify-content-center m-3"
+    >
+      Lorem ipsum dolor sit amet
+    </div>
   </div>
 
-  <h1 style="color: red" class="text-3xl font-bold underline bg-yellow-500">
-    Hello world!
-  </h1>
-  <Fieldset legend="Previews">
-    <div class="preview-controls">
-      <div>
-        Bold:
-        <input type="checkbox" v-model="isBold" />
-      </div>
-      <div>
-        Italic
-        <input type="checkbox" v-model="isItalic" />
-      </div>
+  <!-- Barcode Generator -->
+
+  <div class="flex align-items-center justify-content-center p-3">
+    <Fieldset
+      legend="Barcode"
+      class="flex-1 flex align-items-center justify-content-center m-3"
+    >
+      <label for="barcodeType">Barcode Type : </label>
+      <Dropdown
+        v-model="setting.barcodeType"
+        :options="barcodeTypes"
+        optionLabel="label"
+        inputId="barcodeType"
+        class="input-dropdown mb-2"
+        placeholder="Select a barcode type"
+      />
 
       <div class="control-group">
-        <label>Height:</label>
-        <InputText disabled v-model.number="setting.height" class="w-3" />
-        <Slider v-model="setting.height" :max="250" class="w-3" />
-      </div>
-      <div class="control-group">
-        <label>Width: {{ setting.width }} px</label>
-        <!-- <InputText disabled v-model.number="setting.width" class="w-3" /> -->
-        <Slider v-model="setting.width" :max="500" class="w-3" />
-      </div>
-    </div>
+        <label for="price">Price($USD):</label>
+        <InputNumber
+          v-model="setting.price"
+          inputId="price"
+          :min="0"
+          :max="100"
+          class="w-2"
+        />
 
-    <div class="card">
-      <div
-        class="barcode-container"
-        :style="{
-          height: setting.height + 'px',
-          width: setting.width + 'px',
-          backgroundColor: setting.backgroundColor,
-          fontSize: setting.fontSize + 'px',
-          fontFamily: setting.fontFamily.value,
-          transform: 'rotate(' + setting.rotate.value + 'deg)',
-        }"
-        style="
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          position: relative;
-          overflow: hidden;
-          padding: 1rem;
-        "
-      >
-        <div :style="boxStyle" @mousedown="startDrag">
-          <span :style="textStyle">
-            {{ setting.name }}
-          </span>
+        <label for="barcode">Barcode:</label>
+        <InputText
+          v-model="setting.code"
+          inputId="barcode"
+          placeholder="Enter barcode"
+          class="w-2"
+        />
+
+        <label>Font Type:</label>
+        <Dropdown
+          v-model="setting.fontFamily"
+          :options="fontFamily"
+          optionLabel="label"
+          placeholder="Select a Font"
+          class="input-dropdown w-2"
+        />
+
+        <label> Rotate: </label>
+        <Dropdown
+          v-model="setting.rotate"
+          :options="rotate"
+          optionLabel="label"
+          class="input-dropdown w-2"
+        />
+
+        <label>FontSize:</label>
+        <InputNumber disabled v-model="setting.fontSize" class="w-2" />
+        <Slider v-model="setting.fontSize" :max="36" class="my-2, w-2" />
+      </div>
+    </Fieldset>
+
+    <Fieldset
+      legend="Previews"
+      class="flex-1 flex align-items-center justify-content-center m-3"
+    >
+      <div class="preview-controls">
+        <div>
+          Bold:
+          <input type="checkbox" v-model="isBold" />
+        </div>
+        <div>
+          Italic
+          <input type="checkbox" v-model="isItalic" />
         </div>
 
-        <img
-          style="max-width: 100%; max-height: 100%"
-          :src="url"
-          alt="Barcode"
-        />
+        <div class="control-group">
+          <label>Height:</label>
+          <InputText disabled v-model.number="setting.height" class="w-3" />
+          <Slider v-model="setting.height" :max="250" class="w-3" />
+        </div>
+        <div class="control-group">
+          <label>Width: {{ setting.width }} px</label>
+          <!-- <InputText disabled v-model.number="setting.width" class="w-3" /> -->
+          <Slider v-model="setting.width" :max="500" class="w-3" />
+        </div>
       </div>
-    </div>
-    <Button label="Print" icon="pi pi-print" @click="onPrint" />
-  </Fieldset>
 
-  <Fieldset legend="Barcode">
-    <label for="barcodeType">Barcode Type : </label>
-    <Dropdown
-      v-model="setting.barcodeType"
-      :options="barcodeTypes"
-      optionLabel="label"
-      inputId="barcodeType"
-      class="input-dropdown mb-2"
-      placeholder="Select a barcode type"
-    />
+      <div class="card">
+        <div
+          class="barcode-container"
+          :style="{
+            height: setting.height + 'px',
+            width: setting.width + 'px',
+            backgroundColor: setting.backgroundColor,
+            fontSize: setting.fontSize + 'px',
+            fontFamily: setting.fontFamily.value,
+            transform: 'rotate(' + setting.rotate.value + 'deg)',
+          }"
+          style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 1rem;
+          "
+        >
+          <div :style="boxStyle" @mousedown="startDrag">
+            <span :style="textStyle">
+              {{ setting.name }}
+            </span>
+          </div>
 
-    <div class="control-group">
-      <label for="price">Price($USD):</label>
-      <InputNumber
-        v-model="setting.price"
-        inputId="price"
-        :min="0"
-        :max="100"
-        class="w-2"
-      />
-
-      <label for="barcode">Barcode:</label>
-      <InputText
-        v-model="setting.code"
-        inputId="barcode"
-        placeholder="Enter barcode"
-        class="w-2"
-      />
-
-      <label>Font Type:</label>
-      <Dropdown
-        v-model="setting.fontFamily"
-        :options="fontFamily"
-        optionLabel="label"
-        class="w-2"
-        placeholder="Select a Font"
-      />
-
-      <label>FontSize:</label>
-      <InputNumber disabled v-model="setting.fontSize" class="w-2" />
-      <Slider v-model="setting.fontSize" :max="36" class="w-2 my-2" />
-
-      <label> Rotate: </label>
-      <Dropdown
-        v-model="setting.rotate"
-        :options="rotate"
-        optionLabel="label"
-        class="w-2"
-      />
-    </div>
-  </Fieldset>
+          <img
+            style="max-width: 100%; max-height: 100%"
+            :src="url"
+            alt="Barcode"
+          />
+        </div>
+      </div>
+      <Button label="Print" icon="pi pi-print" @click="onPrint" />
+    </Fieldset>
+  </div>
 </template>
 
 <script setup>
@@ -206,8 +221,8 @@ const setting = ref({
   price: 22.5,
   fontSize: 16,
   barcodeType: barcodeTypes.value[0],
-  fontFamily: "Arial, sans-serif",
-  rotate: 0,
+  fontFamily: fontFamily.value[0],
+  rotate: rotate.value[0],
 });
 
 const url = computed(() => {

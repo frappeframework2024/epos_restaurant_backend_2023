@@ -437,7 +437,7 @@ def get_product_by_variant(variant,product_code):
  
         
     data = frappe.db.sql(sql,filter,as_dict = 1)
-    return data
+
     if data:
        
         product_data = get_products(product_code=data[0]["variant_code"], limit=1, page=1,include_product_category=0)
@@ -670,7 +670,7 @@ def get_product_option(product_code="", business_branch="", price_rule="Normal")
     if doc.product_price:
         data["prices"] = [{"price":d.price, "unit":d.unit, "portion":d.portion} for d in doc.product_price if (not d.business_branch  and    d.price_rule == price_rule) or (d.business_branch==business_branch and d.price_rule==price_rule ) ]
     if not "prices" in data:
-        data["prices"] = [{"price":doc.price,"unit":doc.unit, "portion":"Normal"}]
+        data["prices"] = [{"price":doc.price,"unit":doc.unit, "portion":doc.unit}]
     
     if data["prices"]:
         data["prices"][0]["selected"] = True

@@ -1,9 +1,9 @@
-import "./style.css";
 import { createApp, reactive } from "vue";
 import App from "./App.vue";
 import "primeicons/primeicons.css";
 import PrimeVue from "primevue/config";
 import Aura from "@primevue/themes/aura";
+import "/node_modules/primeflex/primeflex.css";
 
 //Import PrimeVue Components
 import Button from "primevue/button";

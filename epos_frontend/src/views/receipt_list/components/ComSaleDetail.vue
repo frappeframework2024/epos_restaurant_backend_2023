@@ -18,7 +18,7 @@
                     </template>
                     <v-list-item-title>{{ $t('Edit Order') }}</v-list-item-title>
                 </v-list-item>
-                <v-list-item v-if="gv.setting.change_table_previous_date==1" @click="showProducts">
+                <v-list-item v-if="gv.setting.change_table_previous_date==1" @click="showChangeTable">
                     <template v-slot:prepend>
                         <v-icon>mdi-checkbox-marked-outline</v-icon>
                     </template>
@@ -104,11 +104,14 @@ import { useDialog } from 'primevue/usedialog';
 
 const dialog = useDialog();
 
-const showProducts = async () => {
+const showChangeTable = async () => {
     const result = await ComChangeTableNumberDialog({
         data: {
                 sale:sale.doc
         }});
+        if (result == 'reload'){
+            emit('resolve', false);
+        }
 }
 
 const toaster = createToaster({ position: "top-right" });

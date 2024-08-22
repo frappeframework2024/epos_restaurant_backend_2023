@@ -155,7 +155,7 @@ function selectVariant(product_code,dialog){
         dialog.open(ComEditSaleProduct, {
             data:{product_code:product_code},
             props: {
-                header: 'Product Variants',
+                header: 'Product Option',
                 style: {
                     width: '900px',
                     background: 'white',
