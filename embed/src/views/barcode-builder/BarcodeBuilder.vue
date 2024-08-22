@@ -17,123 +17,121 @@
   <!-- Barcode Generator -->
 
   <div class="flex align-items-center justify-content-center p-3">
-    <Fieldset
-      legend="Barcode"
-      class="flex-1 flex align-items-center justify-content-center m-3"
-    >
-      <label for="barcodeType">Barcode Type : </label>
-      <Dropdown
-        v-model="setting.barcodeType"
-        :options="barcodeTypes"
-        optionLabel="label"
-        inputId="barcodeType"
-        class="input-dropdown mb-2"
-        placeholder="Select a barcode type"
-      />
-
-      <div class="control-group">
-        <label for="price">Price($USD):</label>
-        <InputNumber
-          v-model="setting.price"
-          inputId="price"
-          :min="0"
-          :max="100"
-          class="w-2"
-        />
-
-        <label for="barcode">Barcode:</label>
-        <InputText
-          v-model="setting.code"
-          inputId="barcode"
-          placeholder="Enter barcode"
-          class="w-2"
-        />
-
-        <label>Font Type:</label>
+    <div class="flex-1 flex align-items-center justify-content-center m-3">
+      <Fieldset legend="Barcode">
+        <label for="barcodeType">Barcode Type : </label>
         <Dropdown
-          v-model="setting.fontFamily"
-          :options="fontFamily"
+          v-model="setting.barcodeType"
+          :options="barcodeTypes"
           optionLabel="label"
-          placeholder="Select a Font"
-          class="input-dropdown w-2"
+          inputId="barcodeType"
+          class="input-dropdown mb-2"
+          placeholder="Select a barcode type"
         />
-
-        <label> Rotate: </label>
-        <Dropdown
-          v-model="setting.rotate"
-          :options="rotate"
-          optionLabel="label"
-          class="input-dropdown w-2"
-        />
-
-        <label>FontSize:</label>
-        <InputNumber disabled v-model="setting.fontSize" class="w-2" />
-        <Slider v-model="setting.fontSize" :max="36" class="my-2, w-2" />
-      </div>
-    </Fieldset>
-
-    <Fieldset
-      legend="Previews"
-      class="flex-1 flex align-items-center justify-content-center m-3"
-    >
-      <div class="preview-controls">
-        <div>
-          Bold:
-          <input type="checkbox" v-model="isBold" />
-        </div>
-        <div>
-          Italic
-          <input type="checkbox" v-model="isItalic" />
-        </div>
 
         <div class="control-group">
-          <label>Height:</label>
-          <InputText disabled v-model.number="setting.height" class="w-3" />
-          <Slider v-model="setting.height" :max="250" class="w-3" />
-        </div>
-        <div class="control-group">
-          <label>Width: {{ setting.width }} px</label>
-          <!-- <InputText disabled v-model.number="setting.width" class="w-3" /> -->
-          <Slider v-model="setting.width" :max="500" class="w-3" />
-        </div>
-      </div>
+          <label for="price">Price($USD):</label>
+          <InputNumber
+            v-model="setting.price"
+            inputId="price"
+            :min="0"
+            :max="100"
+            class="w-2"
+          />
 
-      <div class="card">
-        <div
-          class="barcode-container"
-          :style="{
-            height: setting.height + 'px',
-            width: setting.width + 'px',
-            backgroundColor: setting.backgroundColor,
-            fontSize: setting.fontSize + 'px',
-            fontFamily: setting.fontFamily.value,
-            transform: 'rotate(' + setting.rotate.value + 'deg)',
-          }"
-          style="
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-            padding: 1rem;
-          "
-        >
-          <div :style="boxStyle" @mousedown="startDrag">
-            <span :style="textStyle">
-              {{ setting.name }}
-            </span>
+          <label for="barcode">Barcode:</label>
+          <InputText
+            v-model="setting.code"
+            inputId="barcode"
+            placeholder="Enter barcode"
+            class="w-2"
+          />
+
+          <label>Font Type:</label>
+          <Dropdown
+            v-model="setting.fontFamily"
+            :options="fontFamily"
+            optionLabel="label"
+            placeholder="Select a Font"
+            class="input-dropdown w-2"
+          />
+
+          <label> Rotate: </label>
+          <Dropdown
+            v-model="setting.rotate"
+            :options="rotate"
+            optionLabel="label"
+            class="input-dropdown w-2"
+          />
+
+          <label>FontSize:</label>
+          <InputNumber disabled v-model="setting.fontSize" class="w-2" />
+          <Slider v-model="setting.fontSize" :max="36" class="my-2, w-2" />
+        </div>
+      </Fieldset>
+    </div>
+
+    <div class="flex-1 flex align-items-center justify-content-center m-3">
+      <Fieldset legend="Previews">
+        <div class="preview-controls">
+          <div>
+            Bold:
+            <input type="checkbox" v-model="isBold" />
+          </div>
+          <div>
+            Italic
+            <input type="checkbox" v-model="isItalic" />
           </div>
 
-          <img
-            style="max-width: 100%; max-height: 100%"
-            :src="url"
-            alt="Barcode"
-          />
+          <div class="control-group">
+            <label>Height:</label>
+            <InputText disabled v-model.number="setting.height" class="w-3" />
+            <Slider v-model="setting.height" :max="250" class="w-3" />
+          </div>
+          <div class="control-group">
+            <label>Width: {{ setting.width }} px</label>
+            <!-- <InputText disabled v-model.number="setting.width" class="w-3" /> -->
+            <Slider v-model="setting.width" :max="500" class="w-3" />
+          </div>
         </div>
-      </div>
-      <Button label="Print" icon="pi pi-print" @click="onPrint" />
-    </Fieldset>
+
+        <div class="card">
+          <div
+            class="barcode-container"
+            :style="{
+              height: setting.height + 'px',
+              width: setting.width + 'px',
+              backgroundColor: setting.backgroundColor,
+              fontSize: setting.fontSize + 'px',
+              fontFamily: setting.fontFamily.value,
+              transform: 'rotate(' + setting.rotate.value + 'deg)',
+            }"
+            style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              position: relative;
+              overflow: hidden;
+              padding: 1rem;
+            "
+          >
+            <div :style="boxStyle" @mousedown="startDrag">
+              <span :style="textStyle">
+                {{ setting.name }}
+              </span>
+            </div>
+
+            <img
+              style="max-width: 100%; max-height: 100%"
+              :src="url"
+              alt="Barcode"
+            />
+          </div>
+        </div>
+        <Button label="Print" icon="pi pi-print" @click="onPrint" />
+      </Fieldset>
+    </div>
   </div>
 </template>
 

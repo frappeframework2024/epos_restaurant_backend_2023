@@ -363,17 +363,32 @@ function onEditSaleProductRetailPOS(sp) {
         onClose: (options) => {
 
             const data = options.data;
-
-            if (data){
-                sp.name = data.name
-                sp.menu_product_name = data.menu_product_name
-                sp.portion = data.portion
-                sp.price = data.price
-                sp.unit = data.unit
-                sp.selected_variant = data.selected_variant
-                sale.updateSaleProduct(sp)
-                sale.updateSaleSummary();
+            if (!data) return
+            
+           
+            if (data.product){
+                sp.name = data.product.name
+                sp.menu_product_name = data.product.menu_product_name
+                sp.portion = data.product.portion
+                sp.price = data.product.price
+                sp.unit = data.product.unit
+                sp.selected_variant = data.product.selected_variant
+                sp.quantity = data.product.quantity
+                sp.note= data.product.note
+                
             }
+
+            if(data.updatedData){
+                sp.portion = data.updatedData.portion
+                sp.price = data.updatedData.price
+                sp.unit = data.updatedData.unit
+                sp.quantity = data.updatedData.quantity
+                sp.note= data.updatedData.note
+                
+            }
+            sale.updateSaleProduct(sp)
+            sale.updateSaleSummary();
+
          
 
         }

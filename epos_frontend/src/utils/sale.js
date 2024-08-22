@@ -170,7 +170,7 @@ function selectVariant(product_code,dialog){
             onClose: (options) => {
                 const data = options.data;
                 if (data != undefined) {
-                    resolve(data)
+                    resolve(data.product)
                 }else {
                     resolve(false)
                 }

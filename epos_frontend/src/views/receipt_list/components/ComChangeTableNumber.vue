@@ -113,7 +113,7 @@ function onSaveClick(){
         data:{
             "tbl_name": model.value.name,
             "tbl_number": model.value.tbl_number,
-            "sale": props.params.data.sale.name,
+            "sale": props.params.data.sale.name
 }
     }).then((res)=>{
         toaster.success("Change table success");
