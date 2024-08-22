@@ -2,7 +2,7 @@
  
     <div :class="small ? 'px-2' : 'px-6'">
         <div class="search-box my-0 mx-auto" :class="small ? 'w-full' : 'max-w-[350px]'">
-            
+          
             <ComInput
                 :autofocus="!getIsMobile()"
                 keyboard
@@ -11,7 +11,7 @@
                 prepend-inner-icon="mdi-magnify"
                 v-model="product.searchProductKeywordStore"
                 v-debounce="onSearch"
-                @onInput="onSearch"
+                @onClear="onClear"
                 @keydown="onKeyDown"
                 ref="txtSearch"
                 :listening-focus="true"
@@ -55,7 +55,7 @@ const txtSearch = ref(null);
 const selected_product = ref()
 
 const doSearch = ref(true)
-
+const disableLoadProduct = ref(false)
 function getIsMobile() {
     return  localStorage.getItem("flutterWrapper")==1 || mobile;
 }
@@ -81,10 +81,36 @@ function onSearch(key) {
         }
     }
     }
+    if(!key){
+        if(disableLoadProduct.value) return 
+
+        onClear()
+        
+    }
+    
+}
+
+function onClear(){
+    if(sale.setting.pos_menus==0){
+            
+            const hash = window.location.hash.substring(1); // Remove the `#` from the hash
+            if (hash) {
+                
+                
+                    product.getProductMenuByProductCategory(decodeURIComponent(hash))
+              
+            }else {
+                product.getProductMenuByProductCategory("All Product Categories")
+            }
+            
+        }
 }
  
 function onKeyDown(event) {
+    
     if (event.key == "Enter") {
+        disableLoadProduct.value = true
+        
         if (!sale.isBillRequested()) {
             onSearchProductByBarcode(product.searchProductKeywordStore)
         }
@@ -104,9 +130,9 @@ function onSearchProductByBarcode(barcode){
         }else{
             toaster.warning("Product code is not exist in the system")
         }
-      
+        disableLoadProduct.value = false
     }).catch(error=>{
-
+        disableLoadProduct.value = false
     })
     
 

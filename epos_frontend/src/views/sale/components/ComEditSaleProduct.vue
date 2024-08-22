@@ -4,26 +4,34 @@
         <div v-if="data?.photo" class="flex">
             <v-img class="rounded" style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;" :lazy-src="data.photo" :width="500" aspect-ratio="4/3" cover :src="data.photo"></v-img>
         </div>
-        <div class="md:px-5 w-100">
+        <div class="md:px-5 w-100 variant-rep">
             <div class="border rounded-md w-100 p-3" style="border-color: #ccc !important;background: aliceblue;">
                 <template v-if="data?.variants" v-for="(item, index) in data.variants" :key="index">
                     <h1 v-if="item?.variants.length > 0" class="mb-2 font-semibold">{{ item.variant_name }}</h1>
-                    <ul class="d-flex gap-2"> 
-                        <li style="cursor:pointer;border-radius: 9999px !important;" :class="i.selected? 'bg-black text-white px-2' : 'px-2'" @click="getItemsVariant(index,item,i )" v-if="item?.variants" v-for="i in item.variants">{{ i.variant }}</li>
-                    </ul>
-                    <br/>
+                    <template v-for="i in item.variants" v-if="item?.variants">
+                        <v-chip class="mr-2" @click="getItemsVariant(index,item,i )" v-if="i.selected" color="success" variant="tonal">
+                            <v-icon icon="mdi-checkbox-marked-circle-outline" start></v-icon>
+                            {{ i.variant }}
+                        </v-chip>
+                        <v-chip class="mr-2" @click="getItemsVariant(index,item,i )" v-else variant="tonal">
+                            {{ i.variant }}
+                        </v-chip> 
+                    </template>
+                    <div class="ma-4"></div>
                 </template>
             </div>
             <br/>
-            <div class="border rounded-md w-100 p-3" style="border-color: #ccc !important;background: aliceblue;">
-                <!-- {{ prices }} -->
-                <ul class="d-flex gap-2" v-if="data?.prices.length > 0">
-                    <template  v-for="(item, index) in data?.prices" :key="index">
-                        <li style="cursor:pointer;border-radius: 9999px !important;" :class="item.selected? 'bg-black text-white px-2' : 'px-2'">
-                            {{ item.portion }} <CurrencyFormat :value="item.price" />
-                        </li>
-                    </template>
-                </ul>
+            <div v-if="data?.prices.length > 0" class="border rounded-md w-100 p-3" style="border-color: #ccc !important;background: aliceblue;">
+                <h1 class="mb-2 font-semibold">Portion</h1>
+                <template  v-for="(item, index) in data?.prices" :key="index">
+                    <v-chip v-if="item.selected" color="success" variant="tonal">
+                        <v-icon icon="mdi-checkbox-marked-circle-outline" start></v-icon>
+                        {{ item.portion }} <CurrencyFormat :value="item.price" />
+                    </v-chip>
+                    <v-chip v-else variant="tonal">
+                        {{ item.portion }} <CurrencyFormat :value="item.price" />
+                    </v-chip>
+                </template>
             </div>
         </div>
     </div> 
@@ -131,5 +139,10 @@
     ul li.active {
         background: #000;
         color: #fff;
+    }
+    @media (max-width: 767.98px) {        
+        .variant-rep {
+            margin-top: 20px;
+        }   
     }
 </style>

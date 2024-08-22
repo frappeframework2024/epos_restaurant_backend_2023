@@ -92,7 +92,7 @@
 
 <script setup>
 
-import { inject, ref, computed, onUnmounted, createDocumentResource, useRouter, createResource, confirm, smallViewSaleProductListModal, i18n } from '@/plugin';
+import { inject, ref, computed, onUnmounted, createDocumentResource, useRouter, createResource, confirm,ComChangeTableNumberDialog, smallViewSaleProductListModal, i18n } from '@/plugin';
 import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 import { useDisplay } from 'vuetify';
 import { FrappeApp } from 'frappe-js-sdk';
@@ -104,28 +104,11 @@ import { useDialog } from 'primevue/usedialog';
 
 const dialog = useDialog();
 
-const showProducts = () => {
-
-    dialog.open(ComChangeTableNumber, 
-    {
+const showProducts = async () => {
+    const result = await ComChangeTableNumberDialog({
         data: {
-        sale: sale
-    },
-    props: {
-        header: $t('Change Table'),
-        style: {
-            width: '60vw',
-        },
-        maximizable: true,
-        modal: true,
-        closeOnEscape: false,
-        position: "top",
-        breakpoints:{
-                '960px': '60vw',
-                '640px': '100vw'
-            },
-    },
-});
+                sale:sale.doc
+        }});
 }
 
 const toaster = createToaster({ position: "top-right" });

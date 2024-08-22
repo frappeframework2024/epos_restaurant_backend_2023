@@ -278,6 +278,7 @@ class Product(Document):
 
 			if not self.product_code:
 				frappe.throw(_("Please enter product code first"))
+			error = ""
 			variant_1 = []
 			variant_2 = []
 			variant_3 = []
@@ -288,6 +289,8 @@ class Product(Document):
 				if a not in values:
 					variant_1.append(a)
 					values.append(a)
+				else:
+					error += ("Variant 1 Value {} Already Exist</br>".format(a))
 
 			values = []
 			check_variant_2 =  [d.variant_value for d in self.variant_2_value]
@@ -295,6 +298,8 @@ class Product(Document):
 				if a not in values:
 					variant_2.append(a)
 					values.append(a)
+				else:
+					error += ("Variant 2 Value {} Already Exist</br>".format(a))
 
 			values = []
 			check_variant_3 =  [d.variant_value for d in self.variant_3_value]
@@ -302,7 +307,10 @@ class Product(Document):
 				if a not in values:
 					variant_3.append(a)
 					values.append(a)
-
+				else:
+					error += ("Variant 3 Value {} Already Exist</br>".format(a))
+			if error:
+				frappe.throw(str(error))
 			product_variants = []
 			if variant_1 and not variant_2 and not variant_3:
 				for v1 in variant_1:

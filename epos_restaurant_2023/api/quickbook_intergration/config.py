@@ -19,6 +19,14 @@ def auth_client():
     )
     return auth_client
 
+@frappe.whitelist(allow_guest=True)
+def get_token():
+    doc = frappe.get_doc('ePOS Settings')
+    token = auth_client().get_bearer_token("AB11724303268GZeCAwU7t4IReLwJfzp0n2sfwvBP45RHSSmgh")
+
+    return token
+
+
 def get_authorization_url(): 
     scopes = [
         Scopes.ACCOUNTING,
@@ -35,7 +43,7 @@ def get_authorization_url():
     
 
     # return auth_url
-    auth = auth_client.get_bearer_token("AB11723523901QeyxOVyYfLaVZcdxvgeAz6OKl3pWts97ToLJN", realm_id = doc.realm_id)
+    auth = auth_client.get_bearer_token("AB11724300524kaYUKOfs36IWPWUi9RySS2sh4NOT1Dig9DE4j", realm_id = doc.realm_id)
 
     return     auth
  

@@ -20,6 +20,7 @@
                 append-inner-icon="mdi-keyboard"
                 v-model="value"
                 @click:append-inner="onDialog()"
+                  @click:clear="onClear"
                 :prepend-inner-icon="prependInnerIcon"
                 ref="txtSearch"
                 @input="updateValue">
@@ -42,6 +43,7 @@
                 v-model="value"
                 ref="txtSearch"
                 @click:append-inner="emit('onClickAppendInner')"
+                  @click:clear="onClear"
                 :prepend-inner-icon="prependInnerIcon"
                 @click:prepend-inner="emit('onClickPrependInner')"
                 @input="updateValue">
@@ -91,6 +93,7 @@
                 @click:append-inner="emit('onClickAppendInner')"
                 :prepend-inner-icon="prependInnerIcon"
                 @click:prepend-inner="emit('onClickPrependInner')"
+                @click:clear="onClear"
                 @input="updateValue"
                 ref="txtSearch"
                 :class="type=='date'?'date-input':''">
@@ -220,6 +223,7 @@ function focus(){
 }
 function onClear(){ 
     emit('onInput',"")
+    emit('onClear',"")
     emit('update:modelValue', "")
 }
 </script>
