@@ -105,14 +105,14 @@ frappe.ui.form.on("Business Branch", {
         frm.set_query("income_head_account", function() {
             return {
                 filters: [
-                     ["is_group","=",0]
+                     ["is_group","=",1]
                 ]
             }
         });
         frm.set_query("expense_head_account", function() {
             return {
                 filters: [
-                     ["is_group","=",0]
+                     ["is_group","=",1]
                 ]
             }
         });

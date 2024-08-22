@@ -2,10 +2,9 @@
     <ComModal @onClose="onClose(false)" :isPrint="false"
         :hide-ok-button="true" :hide-close-button="true">
         <template #title>
-            {{ $t('Change Table') }} 
+            {{ $t('Change Table') }}: {{ params.data.sale.tbl_number }}
         </template>
         <template #content>
-            {{ params.data.sale }}
             <v-autocomplete v-model="model" hint="Room Number" @update:search="customFilter" :items="states" label="Room Number"
                prepend-icon="mdi-city" item-title="tbl_number" item-value="name">
 

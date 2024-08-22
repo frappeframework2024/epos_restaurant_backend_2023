@@ -26,7 +26,7 @@ frappe.listview_settings['Product'] = {
         me.page.wrapper.find('.list-row').each(function() {
             var row = $(this);
             // Find the cell containing the status value
-            var statusCell = row.find('[data-fieldname="status"]');
+            var statusCell = row.find('[data-fieldname="Veriant"]');
             var status = statusCell.text().trim();
             console.log(statusCell)
             // Hide the row if the status matches the condition
