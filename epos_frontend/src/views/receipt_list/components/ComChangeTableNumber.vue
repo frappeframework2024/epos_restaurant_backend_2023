@@ -17,21 +17,22 @@
 <script setup>
 import { inject, ref, onMounted } from 'vue'
 const tableList = ref([])
-const model = ref({
-            "name": "",
-            "tbl_number": "U07",
-        })
-const isLoading = ref(false)
-const frappe = inject('$frappe');
-const gv = inject('$gv');
-const call = frappe.call();
-const db = frappe.db();
 const props = defineProps({
   params: {
     type: Object,
     required: true,
   }
 })
+const model = ref({
+            "name": props.params.data.sale.table_id,
+            "tbl_number": props.params.data.sale.tbl_number,
+        })
+const isLoading = ref(false)
+const frappe = inject('$frappe');
+const gv = inject('$gv');
+const call = frappe.call();
+const db = frappe.db();
+
 onMounted(() => {
 
 })
