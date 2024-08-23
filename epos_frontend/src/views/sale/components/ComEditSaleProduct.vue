@@ -1,5 +1,6 @@
 <template>
     <ComDialogContent :hideButtonClose="false" :loading="loading" @onOK="onOK" @onClose="onClose">
+
         <div class="flex flex-col lg:flex-row">
             <div v-if="data?.photo" class="flex">
                 <v-img class="rounded" style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;" :lazy-src="data.photo"
@@ -30,7 +31,7 @@
                 </template>
                 <div v-if="data?.prices?.length > 0" class="border rounded-md w-100 p-3"
                     style="border-color: #ccc !important;background: aliceblue;">
-                    <h1 class="mb-2 font-semibold">Portion</h1>
+                    <h1 class="mb-2 font-semibold">{{$t("Portion")}}</h1>
                     <template v-for="(item, index) in data?.prices" :key="index">
                         <v-chip class="mr-2 mb-2" v-if="item.selected" color="success" variant="tonal" @click="onSelectPortion(item)">
                             <v-icon icon="mdi-checkbox-marked-circle-outline" start></v-icon>
@@ -40,8 +41,6 @@
                         <v-chip class="mr-2 mb-2" v-else variant="tonal" @click="onSelectPortion(item)">
                             {{ item.portion }}
                             <CurrencyFormat :value="item.price" />
-
-                            
                         </v-chip>
                     </template>
                 </div>
@@ -158,7 +157,7 @@ onMounted(() => {
                 if (selectedPrice) {
                     selectedPrice.selected = false
                 }
-                selectedPrice = data.value.prices.find(r => r.unit == saleProduct.value.unit)
+                selectedPrice = data.value.prices.find(r => r.unit == saleProduct.value.unit && r.portion == saleProduct.value.portion)
                 if (selectedPrice) {
                     selectedPrice.selected = true
 

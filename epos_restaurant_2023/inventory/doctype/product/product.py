@@ -326,9 +326,9 @@ class Product(Document):
 			elif variant_1 and  variant_2 and not variant_3:
 				for v1, v2 in itertools.product(variant_1, variant_2):
 					product_variants.append({
-						"variant_code": "{}-{}-{}".format(self.product_name_en,frappe.get_cached_value("Variant Code", v1,"code_prefix"),frappe.get_cached_value("Variant Code", v2,"code_prefix")),
-						"current_variant_code": "{}-{}-{}".format(self.product_name_en,frappe.get_cached_value("Variant Code", v1,"code_prefix"),frappe.get_cached_value("Variant Code", v2,"code_prefix")),
-						"variant_name":"{}-{}-{}".format(self.product_name_en,frappe.get_cached_value("Variant Code", v1,"code_prefix"),frappe.get_cached_value("Variant Code", v2,"code_prefix")),
+						"variant_code": "{}-{}-{}".format(self.name,frappe.get_cached_value("Variant Code", v1,"code_prefix"),frappe.get_cached_value("Variant Code", v2,"code_prefix")),
+						"current_variant_code": "{}-{}-{}".format(self.name,frappe.get_cached_value("Variant Code", v1,"code_prefix"),frappe.get_cached_value("Variant Code", v2,"code_prefix")),
+						"variant_name":"{}-{}-{}".format(self.name,frappe.get_cached_value("Variant Code", v1,"code_prefix"),frappe.get_cached_value("Variant Code", v2,"code_prefix")),
 						"variant_1":v1,
 						"variant_2":v2,
 						"opening_qty":0,
@@ -338,9 +338,9 @@ class Product(Document):
 			else:
 				for v1, v2,v3   in itertools.product(variant_1, variant_2, variant_3):
 					product_variants.append({
-						"variant_code": "{}-{}-{}-{}".format(self.product_name_en,frappe.get_cached_value("Variant Code", v1,"code_prefix"),frappe.get_cached_value("Variant Code", v2,"code_prefix"),frappe.get_cached_value("Variant Code", v3,"code_prefix")),
-						"current_variant_code": "{}-{}-{}-{}".format(self.product_name_en,frappe.get_cached_value("Variant Code", v1,"code_prefix"),frappe.get_cached_value("Variant Code", v2,"code_prefix"),frappe.get_cached_value("Variant Code", v3,"code_prefix")),
-						"variant_name": "{}-{}-{}-{}".format(self.product_name_en,frappe.get_cached_value("Variant Code", v1,"code_prefix"),frappe.get_cached_value("Variant Code", v2,"code_prefix"),frappe.get_cached_value("Variant Code", v3,"code_prefix")),
+						"variant_code": "{}-{}-{}-{}".format(self.name,frappe.get_cached_value("Variant Code", v1,"code_prefix"),frappe.get_cached_value("Variant Code", v2,"code_prefix"),frappe.get_cached_value("Variant Code", v3,"code_prefix")),
+						"current_variant_code": "{}-{}-{}-{}".format(self.name,frappe.get_cached_value("Variant Code", v1,"code_prefix"),frappe.get_cached_value("Variant Code", v2,"code_prefix"),frappe.get_cached_value("Variant Code", v3,"code_prefix")),
+						"variant_name": "{}-{}-{}-{}".format(self.name,frappe.get_cached_value("Variant Code", v1,"code_prefix"),frappe.get_cached_value("Variant Code", v2,"code_prefix"),frappe.get_cached_value("Variant Code", v3,"code_prefix")),
 						"variant_1":v1,
 						"variant_2":v2,
 						"variant_3": v3,

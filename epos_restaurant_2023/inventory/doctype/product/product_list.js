@@ -1,6 +1,9 @@
 frappe.listview_settings['Product'] = {
     hide_name_column: true, 
-    add_fields: ['photo'],
+    add_fields: ['photo',"status",'price'],
+    filters: [
+        ['price', '=', 1]
+    ],
     formatters: {
         photo: function (value, field, doc) {
             const encodedPhoto = encodeURI(doc.photo)
@@ -153,5 +156,6 @@ frappe.listview_settings['Product'] = {
                 }
             );
         });
-    }
+    },
+   
 }

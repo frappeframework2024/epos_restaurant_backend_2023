@@ -14,27 +14,6 @@ frappe.ui.form.on("Product", {
                 ]
             }
         });
-        frm.set_query("variant_value", "variant_1_value", function () {
-            return {
-                filters: [
-                    ["variant_group", "=", "Variant 01"]
-                ]
-            }
-        });
-        frm.set_query("variant_value", "variant_2_value", function () {
-            return {
-                filters: [
-                    ["variant_group", "=", "Variant 02"]
-                ]
-            }
-        });
-        frm.set_query("variant_value", "variant_3_value", function () {
-            return {
-                filters: [
-                    ["variant_group", "=", "Variant 03"]
-                ]
-            }
-        });
         frm.set_query("product", "product_combo_menus", function () {
             return {
                 filters: [
@@ -73,6 +52,8 @@ frappe.ui.form.on("Product", {
         myForm = frm
         window.addEventListener('message', savePhoto, false);
     },
+
+
     generate_variant(frm) {
         frm.call({
             method: 'generate_variants',
