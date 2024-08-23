@@ -345,7 +345,7 @@ function onEditSaleProductRetailPOS(sp) {
     dialog.open(ComEditSaleProduct, {
         data: {
             product_code: data.product_code,
-            sale_product:  data
+            sale_product:  data,
         },
         props: {
             header: $t('Product Option'),

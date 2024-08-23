@@ -27,6 +27,8 @@ frappe.query_reports["GYM Audit Trail Report"] = {
 				return [
 					{"value":"Membership","description":"Membership",fieldtype:"Data"},
 					{"value":"Membership Payment","description":"Membership Payment",fieldtype:"Data"},
+					{"value":"Sale Coupon","description":"Sale Coupon",fieldtype:"Data"},
+					{"value":"Sales Coupon Payment","description":"Sales Coupon Payment",fieldtype:"Data"},
 				]
 			},
 			"on_change": function (query_report){}
@@ -58,9 +60,20 @@ frappe.query_reports["GYM Audit Trail Report"] = {
 		},
 	],
 	onload: function (report) { 
-
 		report.page.add_inner_button("Preview Report", function () {
-			report.refresh();
+			frappe.call({
+				method: 'epos_restaurant_2023.gym.report.gym_audit_trail_report.gym_audit_trail_report.update_prepared_report',
+				type: 'GET',  
+				args: {},
+				callback: function(response) { 
+					report.refresh();
+				},
+				error: function(err) {
+					report.refresh();
+					console.error('An error occurred:', err);
+				}
+			});
+			
 		});
 		
 	},

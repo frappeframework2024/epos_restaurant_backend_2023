@@ -92,18 +92,13 @@ function onSearch(key) {
 
 function onClear(){
     if(sale.setting.pos_menus==0){
-            
-            const hash = window.location.hash.substring(1); // Remove the `#` from the hash
-            if (hash) {
-                
-                
-                    product.getProductMenuByProductCategory(decodeURIComponent(hash))
-              
-            }else {
-                product.getProductMenuByProductCategory("All Product Categories")
-            }
-            
+        const hash = window.location.hash.substring(1); // Remove the `#` from the hash
+        if (hash) {
+            product.getProductMenuByProductCategory(decodeURIComponent(hash))
+        }else {
+            product.getProductMenuByProductCategory("All Product Categories")
         }
+    }
 }
  
 function onKeyDown(event) {

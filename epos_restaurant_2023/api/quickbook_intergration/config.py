@@ -14,7 +14,7 @@ def auth_client():
     auth_client = AuthClient(
         doc.client_id, 
         doc.client_secret,
-        "http://localhost:10800",
+        "https://developer.intuit.com/v2/OAuth2Playground/RedirectUrl",
         doc.environment
     )
     return auth_client
@@ -22,7 +22,7 @@ def auth_client():
 @frappe.whitelist(allow_guest=True)
 def get_token():
     doc = frappe.get_doc('ePOS Settings')
-    token = auth_client().get_bearer_token("AB11724303268GZeCAwU7t4IReLwJfzp0n2sfwvBP45RHSSmgh")
+    token = auth_client().get_bearer_token("BB117243872909XrGLtTMoZfUFpAYtS7IWVUsbp7zvL8zMyBXZ",realm_id=9341452865879148)
 
     return token
 

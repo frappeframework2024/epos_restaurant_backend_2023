@@ -38,7 +38,7 @@ def get_filters(filters):
 	if filters.get("select_filter"):
 		sql = sql + " and c.reference_doctype in %(select_filter)s"
 	else:
-		sql = sql + " and c.reference_doctype in ('Membership','Membership Payment')"
+		sql = sql + " and c.reference_doctype in ('Membership','Membership Payment','Sale Coupon','Sales Coupon Payment')"
 
 	sql = sql + " order by {} {}".format(
 		[d for d in  get_order_field() if d["label"] == filters.order_by_audit][0]["field"],
@@ -66,18 +66,21 @@ def get_report_data(filters):
 				c.reference_doctype,
 				c.subject,
 				c.content,
-				coalesce(c.comment_by,u.full_name) as comment_by, 
+				(select u.full_name from `tabUser` u where u.`name` = c.owner) as comment_by,
 				c.reference_name,
 				c.comment_email,
 				c.modified 
 			from `tabComment` c
-			right join `tabUser` u on u.`name` = c.owner
-
 			where 
 				1=1
 				{}
 		""".format(get_filters(filters))
-
-
+	
 	data =  frappe.db.sql(sql,filters,as_dict=1)
 	return data
+
+
+@frappe.whitelist(allow_guest=True)
+def update_prepared_report():
+	frappe.db.sql("""update `tabReport` set prepared_report = 0 where prepared_report = 1""")
+	frappe.db.commit()

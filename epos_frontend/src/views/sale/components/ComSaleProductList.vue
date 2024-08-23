@@ -11,7 +11,6 @@
                     <v-img :src="sp.product_photo"></v-img>
                 </v-avatar>
                 <avatar v-else :name="sp.product_name" class="mr-4" size="40"></avatar>
-                
             </template>
             <template v-slot:default>
                 <div class="text-sm">
@@ -60,11 +59,11 @@
                                 </v-chip>
                             </div>    
                             <div class="text-xs pt-1">
-                                <div v-if="sp.modifiers && !sp.is_timer_product">
+                                <!-- <div v-if="sp.modifiers && !sp.is_timer_product">
                                     <span>{{ sp.modifiers }} (
                                         <CurrencyFormat :value="sp.modifiers_price * sp.quantity" />)
                                     </span>
-                                </div>
+                                </div> -->
 
                                 <div v-if="sp.is_combo_menu">
                                     <div v-if="sp.use_combo_group && sp.combo_menu_data">
@@ -164,9 +163,6 @@
 
                         <ComSaleProductButtonMore :sale-product="sp" />
                     </div>
-
-
-
                 </div>
 
             </template>

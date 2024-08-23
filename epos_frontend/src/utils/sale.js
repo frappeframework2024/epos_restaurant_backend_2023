@@ -8,8 +8,6 @@ export async function onSelectProduct(product_data,sale,product,dialog){
     
     if (sale.setting.pos_menus.length>0){
 
-     
-
     // sale is sale from inject 
     // product is product from inject 
     let p = JSON.parse(JSON.stringify( product_data))
@@ -132,25 +130,24 @@ export async function onSelectProduct(product_data,sale,product,dialog){
 
     }
 } else {
-  
     // for retail
     AddProductTotalSaleOrderForRetailPOS(product_data,sale,product,dialog)
+
 }
 
 }
 
 async function AddProductTotalSaleOrderForRetailPOS(product_data,sale,product,dialog){
+
     if (product_data.has_variants){
         product_data = await selectVariant(product_data.name,dialog)
-        
+       
     }
     sale.addSaleProduct(product_data);
-
 }
 
 
 function selectVariant(product_code,dialog){
-
     return new Promise((resolve) => {
         dialog.open(ComEditSaleProduct, {
             data:{product_code:product_code},
@@ -169,6 +166,7 @@ function selectVariant(product_code,dialog){
             },
             onClose: (options) => {
                 const data = options.data;
+                
                 if (data != undefined) {
                     resolve(data.product)
                 }else {

@@ -5,8 +5,8 @@
             <div v-if="loading">
                 <div  class="overlay-loading-dialog">
                 <div class="is-loading-page text-white flex justify-center flex-col">
-                    <div><i class="pi pi-spin pi-spinner" style="font-size:35px"></i></div>
-                    <div class="text-sm">Loading....</div>
+                    <div><v-progress-circular color="dark-blue" indeterminate :size="62"></v-progress-circular></div>
+                    <div class="text-sm mt-2">Loading....</div>
                 </div>
                 </div>    
             </div>
@@ -24,11 +24,11 @@
                     <div class="flex gap-2">
                         <slot name="footer-right"></slot>
                         <v-btn class="text-white" v-if="!hideButtonClose"  rounded="lg" color="red-lighten-1" @click="close()" :loading="loading">
-              {{ titleButtonClose ?? 'Cancel' }}
-            </v-btn>            
+                            {{ titleButtonClose ?? 'Cancel' }}
+                        </v-btn>            
                         <v-btn class="text-white" :disabled="disabledBtnOk" rounded="lg" color="green-lighten-1" v-if="!hideButtonOK" @click="onOK()" :loading="loading">
-              {{ titleButtonOK ?? 'Save' }}
-            </v-btn>
+                            {{ titleButtonOK ?? 'Save' }}
+                        </v-btn>
                     </div>
                 </div>
             </div>

@@ -250,6 +250,7 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Total Paid",
+   "options": "Company:company:default_currency",
    "read_only": 1
   },
   {
@@ -259,6 +260,7 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Balance",
+   "options": "Company:company:default_currency",
    "read_only": 1
   },
   {
@@ -591,7 +593,7 @@
    "link_fieldname": "membership"
   }
  ],
- "modified": "2024-08-19 15:53:59.547981",
+ "modified": "2024-08-23 09:41:11.321996",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership",

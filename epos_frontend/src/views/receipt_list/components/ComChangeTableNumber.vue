@@ -38,7 +38,7 @@
                 </v-list-item>
             </v-list>
             <v-autocomplete v-model="model" hint="Table Number" @update:search="customFilter" :items="tableList"
-                label="Table Number" prepend-icon="mdi-city" item-title="tbl_number" item-value="name">
+                label="Table Number" prepend-icon="mdi-table-chair" item-title="tbl_number" item-value="name">
                 <template #item="{ item, props }">
                    
                         <v-list-item v-bind="props" @click="onItemSelected(item.raw)">
@@ -120,6 +120,7 @@ function onSaveClick(){
         emit('resolve',true)
         isSaving.value = false
     }).catch((error)=>{
+        toaster.error(error);
         isSaving.value = false
     })
     isSaving.value = false

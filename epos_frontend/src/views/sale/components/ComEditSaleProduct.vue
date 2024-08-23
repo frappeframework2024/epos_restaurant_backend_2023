@@ -5,22 +5,21 @@
                 <v-img class="rounded" style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;" :lazy-src="data.photo"
                     :width="500" aspect-ratio="4/3" :src="data.photo"></v-img>
             </div>
-
             <div class="md:px-5 w-100 variant-rep">
                 <h1 class="font-extrabold">{{ data?.name }} - {{ data?.product_name_en }}</h1>
                 <br/>
-                <template v-if="data?.variants">
+                <template v-if="data?.variants?.length > 0">
                     <div class="border rounded-md w-100 p-3"
                         style="border-color: #ccc !important;background: aliceblue;">
                         <template v-if="data?.variants" v-for="(item, index) in data.variants" :key="index">
                             <h1 v-if="item?.variants.length > 0" class="mb-2 font-semibold">{{ item.variant_name }}</h1>
                             <template v-for="i in item.variants" v-if="item?.variants">
-                                <v-chip class="mr-2" @click="getItemsVariant(index, item, i)" v-if="i.selected"
+                                <v-chip class="mr-2 mb-2" @click="getItemsVariant(index, item, i)" v-if="i.selected"
                                     color="success" variant="tonal">
                                     <v-icon icon="mdi-checkbox-marked-circle-outline" start></v-icon>
                                     {{ i.variant }}
                                 </v-chip>
-                                <v-chip class="mr-2" @click="getItemsVariant(index, item, i)" v-else variant="tonal">
+                                <v-chip class="mr-2 mb-2" @click="getItemsVariant(index, item, i)" v-else variant="tonal">
                                     {{ i.variant }}
                                 </v-chip>
                             </template>
@@ -33,12 +32,12 @@
                     style="border-color: #ccc !important;background: aliceblue;">
                     <h1 class="mb-2 font-semibold">Portion</h1>
                     <template v-for="(item, index) in data?.prices" :key="index">
-                        <v-chip v-if="item.selected" color="success" variant="tonal" @click="onSelectPortion(item)">
+                        <v-chip class="mr-2 mb-2" v-if="item.selected" color="success" variant="tonal" @click="onSelectPortion(item)">
                             <v-icon icon="mdi-checkbox-marked-circle-outline" start></v-icon>
                             {{ item.portion }}
                             <CurrencyFormat :value="item.price" />
                         </v-chip>
-                        <v-chip v-else variant="tonal" @click="onSelectPortion(item)">
+                        <v-chip class="mr-2 mb-2" v-else variant="tonal" @click="onSelectPortion(item)">
                             {{ item.portion }}
                             <CurrencyFormat :value="item.price" />
 
@@ -48,7 +47,8 @@
                 </div>
                 <br/>
                 <h1 class="mb-2 font-semibold">Quantity</h1>
-                <input class="border rounded-md w-100 pa-1 ps-2" style="border-color: #ccc !important;background: aliceblue;" type="number" v-model="data.quantity"/>
+                <input v-if="data.is_return" max="-1" class="border rounded-md pa-1 ps-2" style="border-color: #ccc !important;background: aliceblue;" type="number" v-model="data.quantity"/>
+                <input v-else :min="1" class="border rounded-md pa-1 ps-2" style="border-color: #ccc !important;background: aliceblue;" type="number" v-model="data.quantity"/>
                 <div class="ma-4"></div>
                 <h1 class="mb-2 font-semibold">Note</h1>
                 <v-textarea class="rounded-md w-100" label="Note" v-model="data.note"></v-textarea>
@@ -134,9 +134,10 @@ onMounted(() => {
     }).then(result => {
         data.value = result.message
         prices.value = data.value.prices
+        data.value.quantity = 1
 
         if (dialogRef.value.data.sale_product) {
-
+            
             saleProduct.value = dialogRef.value.data.sale_product
             selectedData.value = saleProduct.value.selected_variant
             data.value.variants?.forEach((r, index) => {
@@ -147,6 +148,8 @@ onMounted(() => {
             
             data.value.quantity = saleProduct.value.quantity 
             data.value.note = saleProduct.value.note
+            data.value.is_return = saleProduct.value.is_return
+            
 
             // set selection for unit
             if (data.value.prices) {
@@ -187,14 +190,15 @@ function getItemsVariant(index, variant, i) {
 }
 
 function onOK() {
+
     if(data.value.variants){
         if (data.value.variants.flatMap(item => item.variants).filter(r => r.selected).length != data.value.variants.length) {
-        toaster.warning("Please select all variant")
-        return
+            toaster.warning("Please select all variant")
+            return
+        }
     }
     
-    }
-    
+
     
     if (data.value.variants) {
         loading.value = true
@@ -202,18 +206,13 @@ function onOK() {
             variant: selectedData.value,
             product_code: data.value.variant_of ? data.value.variant_of : data.value.name
         }).then((r) => {
-
             r.message.selected_variant = selectedData.value
-           
-
-
+            const selected_price = data.value.prices.find(r => r.selected)
             r.message.unit = selected_price.unit
             r.message.price = selected_price.price
             r.message.portion = selected_price.portion
             r.message.quantity = data.value.quantity
             r.message.note = data.value.note
-
-
             dialogRef.value.close({product:r.message})
             loading.value = false
 

@@ -20,9 +20,9 @@
                 </v-list-item>
                 <v-list-item v-if="gv.setting.change_table_previous_date==1" @click="showChangeTable">
                     <template v-slot:prepend>
-                        <v-icon>mdi-checkbox-marked-outline</v-icon>
+                        <v-icon>mdi-table-chair</v-icon>
                     </template>
-                    <v-list-item-title>{{ $t('Change Table') }} {{ moment(sale.closed_date).isBefore(moment(gv.setting.working_day?.date_working_day)) }}</v-list-item-title>
+                    <v-list-item-title>{{ $t('Change Table') }}</v-list-item-title>
                 </v-list-item>
                 <v-list-item @click="OnDeleteOrder()" v-if="canDelete">
                     <template v-slot:prepend>
@@ -109,8 +109,9 @@ const showChangeTable = async () => {
         data: {
                 sale:sale.doc
         }});
-        if (result == 'reload'){
-            emit('resolve', false);
+        if (result == true){
+            document.getElementById("report-view").contentWindow.location.replace(printPreviewUrl.value);
+            // emit('resolve', false);
         }
 }
 

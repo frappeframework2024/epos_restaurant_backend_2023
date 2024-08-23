@@ -48,7 +48,7 @@ export default class Sale {
         this.sale = {
             sale_products: []
         };
-
+        this.changed = 0
         this.vueInstance = null;
         this.vue = null;
         this.newSaleResource = null;
@@ -332,7 +332,6 @@ export default class Sale {
         //check for append quantity rule
         //product code, allow_append_qty,price, unit,modifier, portion, is_free,sale_product_status
         //and check system have feature to send to kitchen
-        
         let strFilter = `$.is_timer_product == 0 && $.is_require_employee==0  && $.product_code=='${p.name}' && $.append_quantity ==1 && $.price==${p.price} && $.portion=='${this.getString(p.portion)}'  && $.modifiers=='${(p.modifiers || '')=='[]'?'':(p.modifiers || '')}'   && $.unit=='${p.unit}' && $.is_free==0 && $.note==''`
  
         if (!this.setting?.pos_setting?.allow_append_quantity_after_submit) {
@@ -815,7 +814,7 @@ export default class Sale {
         const sp = Enumerable.from(this.sale.sale_products);
         this.sale.total_quantity = this.getNumber(sp.where("$.is_timer_product == 0").sum("$.quantity"));
         this.sale.sub_total = this.getNumber(sp.sum("$.sub_total"));
-        
+        this.changed = 1
         //calculate sale discount
         this.sale.sale_discountable_amount = this.getNumber(sp.where("$.allow_discount==1 && $.discount==0").sum("$.sub_total"));
         this.sale.discount = this.getNumber(this.sale.discount);
@@ -1736,11 +1735,12 @@ export default class Sale {
     async onProcessTaskAfterSubmit(doc) { 
         if (this.action == "submit_order") {
             this.onPrintToKitchen(doc); 
-            if(this.setting?.device_setting?.print_invoice_on_submit == 1){
+            if(this.setting?.device_setting?.print_invoice_on_submit == 1 && this.changed == 1){
                 if (this.pos_receipt == undefined || this.pos_receipt == null) {
                     this.pos_receipt = this.setting?.default_pos_receipt;
                 }
                 this.onPrintReceipt(this.pos_receipt, "print_invoice", doc);
+                this.changed = 0
             }
             //print waiting doc
             if (this.setting.pos_setting.print_waiting_order_after_submit_order) {
