@@ -29,11 +29,29 @@ frappe.listview_settings['Product'] = {
         frappe.route_options = {
             status: ['!=',"Variant"]
           };
+        // console.log(me)
+        
     },
     onload(me) { 
         frappe.route_options = {
             status: ['!=',"Variant"]
           };
+          console.log(me.filter_area)
+        // me.filter_area.get_filters.filters[0].$filter_wrapper.hide();
+        // me.listview.get_data = function() {
+        //     const me = this;
+        //     return frappe.call({
+        //         method: me.method,
+        //         type: 'GET',
+        //         args: $.extend(me.get_args(), {
+        //             filters: me.get_filter_values().concat([["status", "!=", "Variant"]])
+        //         }),
+        //         callback: function(r) {
+        //             me.data = r.message || [];
+        //             me.render();
+        //         }
+        //     });
+        // };
         me.page.add_action_item('Assign Menu', function() {
             let d = new frappe.ui.Dialog({
                 title: 'Assign Menu',

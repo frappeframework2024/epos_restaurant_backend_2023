@@ -2,8 +2,20 @@
 // For license information, please see license.txt
 let dialogGoogleSearch = undefined
 let myForm = undefined
+
+frappe.ui.form.on('Product Variants', {
+    opening_qty: function(frm, cdt, cdn) {
+        let doc = locals[cdt][cdn];
+        let a = frm.previous.product_variants.filter(r => r.variant_code == doc.variant_code)
+        if(a != null){
+            frappe.model.set_value(cdt, cdn, "opening_qty", a[0].opening_qty);
+        }
+    }
+});
+
 frappe.ui.form.on("Product", {
     refresh(frm) {
+        frm.previous = JSON.parse(JSON.stringify(frm.doc))
         if(!frm.is_new() && frm.doc.is_inventory_product == 1){
             frm.set_df_property("is_inventory_product", "read_only", 1)
         }

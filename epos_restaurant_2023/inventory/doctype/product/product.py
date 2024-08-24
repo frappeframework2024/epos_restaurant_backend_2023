@@ -423,6 +423,8 @@ def insert_update_rename_variant(self,a,action):
 		p.save()
 	else:
 		p = frappe.new_doc("Product")
+		p.is_inventory = 1
+		p.opening_quantity = a.opening_qty
 		p.revenue_group = self.revenue_group
 		p.product_code = a.variant_code
 		p.product_name_en = a.variant_name

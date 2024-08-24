@@ -12,7 +12,26 @@ frappe.query_reports["Sale Summary Report"] = {
 		report.page.add_inner_button("Preview Report", function () {
 			frappe.query_report.refresh();
 		});
-		
+		frappe.call({
+            method: "frappe.client.get_list",
+            args: {
+                doctype: "Sale",
+                fields: ["name", "sale_type"],
+                filters: {  },
+                limit: 1 
+            },
+            callback: function(response) {
+				console.log(response)
+                if (response.message && response.message.length > 0) {
+                    let sale_type = response.message[0].sale_type;
+
+                    // Update options based on sale_type
+                    let row_group_filter = frappe.query_report.get_filter('row_group');
+                    row_group_filter.df.options = get_options_based_on_sale_type(sale_type);
+                    row_group_filter.refresh();
+                }
+            }
+        });
 	},
 	"filters": [
 		{
@@ -223,3 +242,21 @@ frappe.query_reports["Sale Summary Report"] = {
 	
 };
 
+function get_options_based_on_sale_type(sale_type) {
+    let options = [
+        "Product", "Product And Price", "Category", "Product Group",
+        "Revenue Group", "Business Branch", "Outlet", "Table Group",
+        "Table", "POS Profile", "Customer", "Customer Group",
+        "Stock Location", "Date", "Month", "Year", "Sale Invoice",
+        "Working Day", "Cashier Shift", "Sale Type", "Seller"
+    ];
+
+    if (sale_type === 'Retail Sale') {
+        // Remove options if sale_type is 'Retail Sale'
+        options = options.filter(option => 
+            !["Table", "Table Group", "Sale Type"].includes(option)
+        );
+    }
+	console.log(options.join('\n'))
+    return options.join('\n');
+}

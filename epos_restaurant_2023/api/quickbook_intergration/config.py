@@ -1,8 +1,11 @@
 import frappe
+from frappe import _
 from flask import Flask, redirect, request, session
 import requests
 from intuitlib.client import AuthClient
 from intuitlib.enums import Scopes
+import base64
+import json
 
 @frappe.whitelist(methods="POST")
 def get_auth(): 
@@ -12,10 +15,11 @@ def get_auth():
 def auth_client():
     doc = frappe.get_doc('ePOS Settings')
     auth_client = AuthClient(
-        doc.client_id, 
-        doc.client_secret,
-        "https://developer.intuit.com/v2/OAuth2Playground/RedirectUrl",
-        doc.environment
+        client_id= doc.client_id, 
+        client_secret= doc.client_secret,
+        redirect_uri= "https://developer.intuit.com/v2/OAuth2Playground/RedirectUrl",
+        environment= doc.environment,
+        realm_id=9341452865879148
     )
     return auth_client
 
@@ -69,3 +73,39 @@ def quickbooks_callback():
     
     except Exception as e:
         return f"Error obtaining access token: {e}", 400
+
+@frappe.whitelist(allow_guest=True)   
+def refresh_token(refresh_token = None):
+    doc = frappe.get_doc('ePOS Settings')
+    if not refresh_token:
+        refresh_token = doc.refresh_token
+
+    if not refresh_token:
+        return frappe.throw(_("Invalid Refresh Token"))
+    
+    url = 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer'
+    authorization = "{}:{}".format(doc.client_id, doc.client_secret)
+    byte_string  = authorization.encode('utf-8')
+    base64_encoded  = base64.b64encode(byte_string)
+    base64_string = base64_encoded.decode('utf-8') 
+    headers = {
+        'Authorization': 'Basic {}'.format(base64_string),
+        'Accept': 'application/json'
+    }
+    body={
+        "grant_type":"refresh_token",
+        "refresh_token":refresh_token
+    }
+    response = requests.post(url, headers=headers, data=body)
+    if response.status_code  in [200,201]:
+        resp = json.loads(response.text)
+
+        
+        doc.refresh_token = resp["refresh_token"]
+        doc.access_token = resp["access_token"]
+        doc.save()
+        frappe.db.commit()
+
+        return json.loads(response.text )
+    return frappe.throw(json.loads(response.text)["error"])
+   

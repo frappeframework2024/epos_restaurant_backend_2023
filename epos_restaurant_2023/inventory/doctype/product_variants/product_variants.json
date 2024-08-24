@@ -46,7 +46,7 @@
   },
   {
    "fieldname": "opening_qty",
-   "fieldtype": "Data",
+   "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Opening Qty"
   },
@@ -65,6 +65,7 @@
   {
    "fieldname": "current_variant_code",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Current Variant Code",
    "read_only": 1
   }
@@ -72,7 +73,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-22 10:34:37.957239",
+ "modified": "2024-08-23 17:43:55.418427",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Product Variants",

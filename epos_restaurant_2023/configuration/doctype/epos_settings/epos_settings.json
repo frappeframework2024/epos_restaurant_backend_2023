@@ -34,9 +34,12 @@
   "quickbooks_config_tab",
   "client_id",
   "client_secret",
-  "column_break_pifg",
   "realm_id",
   "environment",
+  "column_break_pifg",
+  "refresh_token",
+  "refresh_token_button",
+  "access_token",
   "accounting_tab",
   "use_basic_accounting_feature"
  ],
@@ -221,6 +224,22 @@
    "fieldname": "realm_id",
    "fieldtype": "Data",
    "label": "Realm ID"
+  },
+  {
+   "fieldname": "refresh_token",
+   "fieldtype": "Data",
+   "label": "Refresh Token"
+  },
+  {
+   "fieldname": "access_token",
+   "fieldtype": "Long Text",
+   "label": "Access Token",
+   "read_only": 1
+  },
+  {
+   "fieldname": "refresh_token_button",
+   "fieldtype": "Button",
+   "label": "Refresh"
   }
  ],
  "image_field": "epos_logo",
@@ -228,7 +247,7 @@
  "issingle": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-08-21 17:37:48.810030",
+ "modified": "2024-08-23 17:16:35.435722",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "ePOS Settings",

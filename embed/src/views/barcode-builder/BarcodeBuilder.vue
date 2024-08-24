@@ -1,24 +1,11 @@
 <template>
-  <div class="flex align-items-center justify-content-center p-3">
-    <div
-      style="border: 1px solid red"
-      class="flex-1 flex align-items-center justify-content-center m-3"
-    >
-      Lorem ipsum dolor sit amet
-    </div>
-    <div
-      style="border: 1px solid red"
-      class="flex-1 flex align-items-center justify-content-center m-3"
-    >
-      Lorem ipsum dolor sit amet
-    </div>
-  </div>
-
   <!-- Barcode Generator -->
 
-  <div class="flex align-items-center justify-content-center p-3">
-    <div class="flex-1 flex align-items-center justify-content-center m-3">
-      <Fieldset legend="Barcode">
+  <div class="grid p-3">
+    <div
+      class="flex-1 w-full flex align-items-center justify-content-center m-3"
+    >
+      <Fieldset class="w-full" legend="Barcode">
         <label for="barcodeType">Barcode Type : </label>
         <Dropdown
           v-model="setting.barcodeType"
@@ -71,8 +58,8 @@
       </Fieldset>
     </div>
 
-    <div class="flex-1 flex align-items-center justify-content-center m-3">
-      <Fieldset legend="Previews">
+    <div class="flex-1 w-full flex justify-content-center m-3">
+      <Fieldset class="w-full" legend="Previews">
         <div class="preview-controls">
           <div>
             Bold:
@@ -86,47 +73,66 @@
           <div class="control-group">
             <label>Height:</label>
             <InputText disabled v-model.number="setting.height" class="w-3" />
-            <Slider v-model="setting.height" :max="250" class="w-3" />
+            <Slider
+              v-model="setting.height"
+              :min="100"
+              :max="400"
+              class="w-3"
+            />
           </div>
           <div class="control-group">
             <label>Width: {{ setting.width }} px</label>
             <!-- <InputText disabled v-model.number="setting.width" class="w-3" /> -->
-            <Slider v-model="setting.width" :max="500" class="w-3" />
+            <Slider v-model="setting.width" :min="200" :max="400" class="w-3" />
           </div>
         </div>
 
         <div class="card">
           <div
-            class="barcode-container"
-            :style="{
-              height: setting.height + 'px',
-              width: setting.width + 'px',
-              backgroundColor: setting.backgroundColor,
-              fontSize: setting.fontSize + 'px',
-              fontFamily: setting.fontFamily.value,
-              transform: 'rotate(' + setting.rotate.value + 'deg)',
-            }"
-            style="
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: center;
-              position: relative;
-              overflow: hidden;
-              padding: 1rem;
-            "
+            class="barcode-container flex justify-content-center align-items-center"
           >
-            <div :style="boxStyle" @mousedown="startDrag">
-              <span :style="textStyle">
-                {{ setting.name }}
-              </span>
+            <div
+              class="bar_code_content"
+              :style="{
+                backgroundColor: setting.backgroundColor,
+                fontSize: setting.fontSize + 'px',
+                fontFamily: setting.fontFamily.value,
+                transform: 'rotate(' + setting.rotate.value + 'deg)',
+                height: setting.height + 50 + 'px',
+                width: setting.width + 50 + 'px',
+              }"
+              style="
+                position: relative;
+                padding-top: 2rem !important;
+                display: flex;
+                justify-content: center;
+              "
+            >
+              <div
+                :style="boxStyle"
+                @mousedown="(event) => startDrag(event, 'box')"
+              >
+                <span :style="textStyle">
+                  {{ setting.name }}
+                </span>
+              </div>
+              <div
+                :style="boxPriceStyle"
+                @mousedown="(event) => startDrag(event, 'boxPrice')"
+              >
+                <span :style="textStyle">
+                  {{ setting.price }}
+                </span>
+              </div>
+              <img
+                :style="{
+                  height: setting.height + 'px',
+                  width: setting.width + 'px',
+                }"
+                :src="url"
+                alt="Barcode"
+              />
             </div>
-
-            <img
-              style="max-width: 100%; max-height: 100%"
-              :src="url"
-              alt="Barcode"
-            />
           </div>
         </div>
         <Button label="Print" icon="pi pi-print" @click="onPrint" />
@@ -155,8 +161,15 @@ const textStyle = computed(() => ({
 
 const boxStyle = ref({
   position: "absolute",
-  top: "100px",
-  left: "100px",
+  top: "10px",
+  left: "10px",
+  cursor: "grab",
+});
+
+const boxPriceStyle = ref({
+  position: "absolute",
+  top: "10px",
+  right: "10px",
   cursor: "grab",
 });
 
@@ -165,12 +178,23 @@ let startY = 0;
 let offsetX = 0;
 let offsetY = 0;
 
-function startDrag(event) {
-  boxStyle.value.cursor = "grabbing";
+let draggingBox = null;
+
+function startDrag(event, box) {
+  draggingBox = box;
+
+  if (box === "box") {
+    boxStyle.value.cursor = "grabbing";
+    offsetX = parseInt(boxStyle.value.left, 10);
+    offsetY = parseInt(boxStyle.value.top, 10);
+  } else if (box === "boxPrice") {
+    boxPriceStyle.value.cursor = "grabbing";
+    offsetX = parseInt(boxPriceStyle.value.right, 10); // Use correct right offset
+    offsetY = parseInt(boxPriceStyle.value.top, 10); // Use correct top offset
+  }
+
   startX = event.clientX;
   startY = event.clientY;
-  offsetX = parseInt(boxStyle.value.left, 10);
-  offsetY = parseInt(boxStyle.value.top, 10);
 
   document.addEventListener("mousemove", onDrag);
   document.addEventListener("mouseup", stopDrag);
@@ -180,12 +204,24 @@ function onDrag(event) {
   const dx = event.clientX - startX;
   const dy = event.clientY - startY;
 
-  boxStyle.value.left = `${offsetX + dx}px`;
-  boxStyle.value.top = `${offsetY + dy}px`;
+  if (draggingBox === "box") {
+    boxStyle.value.left = `${offsetX + dx}px`;
+    boxStyle.value.top = `${offsetY + dy}px`;
+  } else if (draggingBox === "boxPrice") {
+    boxPriceStyle.value.right = `${offsetX - dx}px`; // Correct calculation for right positioning
+    boxPriceStyle.value.top = `${offsetY + dy}px`;
+  }
 }
 
 function stopDrag() {
-  boxStyle.value.cursor = "grab";
+  if (draggingBox === "box") {
+    boxStyle.value.cursor = "grab";
+  } else if (draggingBox === "boxPrice") {
+    boxPriceStyle.value.cursor = "grab";
+  }
+
+  draggingBox = null;
+
   document.removeEventListener("mousemove", onDrag);
   document.removeEventListener("mouseup", stopDrag);
 }
@@ -228,12 +264,8 @@ const url = computed(() => {
 });
 
 function onPrint() {
-  const divContents = document.querySelector(".barcode-container").outerHTML;
-  const a = window.open(
-    "",
-    "",
-    `height=${setting.value.height}px, width=${setting.value.width}px`
-  );
+  const divContents = document.querySelector(".bar_code_content").outerHTML;
+  const a = window.open("", "", `height=500px, width=500px`);
   a.document.write("<html>");
   a.document.write("<body>");
   a.document.write(divContents);
@@ -272,14 +304,21 @@ function onPrint() {
 }
 
 .barcode-container {
-  border: 2px dashed #7ea0c4;
   padding: 1rem;
   background-color: #ffffff;
   border-radius: 0.5rem;
   transition: box-shadow 0.3s ease;
+  width: 500px;
+  overflow: hidden;
+  height: 500px;
 }
 
 .barcode-container:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.bar_code_content {
+  height: 100%;
+  width: 100%;
+  border: 2px dashed #7ea0c4;
 }
 </style>
