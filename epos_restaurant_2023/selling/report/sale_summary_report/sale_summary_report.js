@@ -21,7 +21,7 @@ frappe.query_reports["Sale Summary Report"] = {
                 limit: 1 
             },
             callback: function(response) {
-				console.log(response)
+				
                 if (response.message && response.message.length > 0) {
                     let sale_type = response.message[0].sale_type;
 
@@ -257,6 +257,5 @@ function get_options_based_on_sale_type(sale_type) {
             !["Table", "Table Group", "Sale Type"].includes(option)
         );
     }
-	console.log(options.join('\n'))
     return options.join('\n');
 }
