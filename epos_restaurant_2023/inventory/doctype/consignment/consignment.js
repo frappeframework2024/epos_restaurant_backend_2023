@@ -3,6 +3,22 @@
 
 frappe.ui.form.on("Consignment", {
     refresh(frm){
+        if(frm.doc.docstatus == 1){
+            frm.add_custom_button(__('Add Sale'), function(){
+                frappe.call({
+                    method: "epos_restaurant_2023.inventory.doctype.consignment.consignment.make_sale",
+                    args: {
+                        consignment: frm.doc.name
+                    },
+                    callback: function(r){
+                        if(r.message!=undefined){
+                            frappe.model.sync(r.message);
+                            frappe.set_route("Form", "Sale", r.message.name);
+                        }
+                    }
+                });	
+            });
+        }
         frm.set_query("from_stock_location", function() {
             return {
                 filters: [["is_for_consignment","=",0]]

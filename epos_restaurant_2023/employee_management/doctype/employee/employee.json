@@ -31,6 +31,7 @@
   "village",
   "column_break_12",
   "address",
+  "generate_customer",
   "note_section",
   "note",
   "login_information_tab",
@@ -403,12 +404,20 @@
    "fieldname": "note_section",
    "fieldtype": "Section Break",
    "label": "Note"
+  },
+  {
+   "default": "0",
+   "fieldname": "generate_customer",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Generate Customer",
+   "read_only": 1
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-15 13:48:10.368499",
+ "modified": "2024-08-26 11:59:55.930650",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee",
@@ -477,10 +486,10 @@
   }
  ],
  "quick_entry": 1,
- "search_fields": "employee_name",
+ "search_fields": "employee_code,employee_name",
  "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "employee_name"
+ "title_field": "employee_code"
 }

@@ -126,6 +126,37 @@ def get_payment_type_account(payment_type,branch):
 	return account
 
 @frappe.whitelist()
+def make_sale(consignment):
+	consignment = frappe.get_doc("Consignment",consignment)
+	sale = frappe.new_doc("Sale")
+	sale.stock_location = consignment.to_stock_location
+	sale.business_branch = consignment.business_branch
+	sale.customer = consignment.employee
+	sale.note = "Sale Consignment From {0}".format(consignment.employee)
+	for a in consignment.products:
+		child = frappe.new_doc("Sale Product")
+		product = frappe.get_doc("Product",a.product)
+		child.update({
+		"product_code": a.product,
+		"product_name": a.product_name,
+		"quantity": a.quantity,
+		"base_unit": a.base_unit,
+		"unit": a.unit,
+		"price": product.price,
+		"cost": a.cost,
+		"sub_total": product.price * a.quantity,
+		"amount": product.price * a.quantity,
+		"parenttype": "Sale",
+    	"parentfield": "sale_products",
+		"doctype": "Sale Product"
+		})
+		sale.sale_products.append(child)
+	sale.total_quantity = consignment.total_quantity
+	sale.sub_total = consignment.total_amount
+	sale.grand_total = consignment.total_amount
+	return sale.as_dict()
+
+@frappe.whitelist()
 def make_return_consignment(consignment):
 	consignment = frappe.get_doc("Consignment",consignment)
 	stock_transfer = frappe.new_doc("Stock Transfer")
