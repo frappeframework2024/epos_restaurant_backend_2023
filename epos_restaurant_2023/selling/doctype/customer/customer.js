@@ -41,7 +41,11 @@ frappe.ui.form.on("Customer", {
                 filters: [["commune","=",frm.doc.commune]]
             }
         });
-
+        frm.set_query("pos_print_format", function() {
+            return {
+                filters: [["doc_type","=",frm.doc.doctype]]
+            }
+        });
         if (!frm.doc.__islocal ) {
             if(frm.doc.balance > 0) {
                 let balance =  format_currency(frm.doc.balance)
