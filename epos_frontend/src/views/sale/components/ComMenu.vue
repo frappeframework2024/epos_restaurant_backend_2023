@@ -123,16 +123,9 @@ onMounted(() => {
     }
 });
 onUnmounted(() => {
-    if (window.mobile == true) { 
-        if (scrollContainer.value && product.setting.default_pos_menu=="" ) {
-            window.addEventListener('scroll', onScroll);
-        }
-    }else{
-        if (scrollContainer.value && product.setting.default_pos_menu=="") {
-            scrollContainer.value.removeEventListener('scroll', onScroll);
-        }
+    if (scrollContainer.value && product.setting.default_pos_menu=="") {
+        scrollContainer.value.removeEventListener('scroll', onScroll);
     }
-   
 });
 
 

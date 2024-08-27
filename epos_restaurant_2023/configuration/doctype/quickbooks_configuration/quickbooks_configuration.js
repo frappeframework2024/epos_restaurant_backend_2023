@@ -34,7 +34,7 @@ frappe.ui.form.on("QuickBooks Configuration", {
                         frappe.msgprint({
                             title: __('Qb Connected'),
                             indicator: 'green',
-                            message: __("System was connected to Quickbooks Online")
+                            message: __("System was connected to QuickBooks Online")
                         });
 
                         frm.reload_doc();                      
@@ -101,12 +101,21 @@ frappe.ui.form.on("QuickBooks Configuration", {
                 freeze: true,
                 callback: function(response) {
                     if(response){
-                        frappe.msgprint({
-                            title: __('Refresh Token'),
-                            indicator: 'green',
-                            message: __('Access token updated')
-                        });
                         frm.reload_doc();
+                        if(response.message.status == 1){
+                            frappe.msgprint({
+                                title: __('Refresh Token'),
+                                indicator: 'green',
+                                message: __('Access token updated')
+                            });
+                        }else{
+                            frappe.msgprint({
+                                title: __('Warning'),
+                                indicator: 'orange',
+                                message: __(response.message.msg)
+                            });
+                        }
+                        
                     }
                 },
                 error: function(err) {
