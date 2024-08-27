@@ -4,6 +4,7 @@ import "primeicons/primeicons.css";
 import PrimeVue from "primevue/config";
 import Aura from "@primevue/themes/aura";
 import "/node_modules/primeflex/primeflex.css";
+import "./assets/main.css";
 
 //Import PrimeVue Components
 import Button from "primevue/button";

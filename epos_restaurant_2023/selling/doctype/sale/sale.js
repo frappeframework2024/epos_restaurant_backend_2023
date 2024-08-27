@@ -3,7 +3,7 @@
 
 frappe.ui.form.on("Sale", {
 	onload(frm) { 
-		console.log(frm)
+		
 		frm.set_query("tip_account_code", function () {
 			return {
 				filters: [
@@ -13,9 +13,7 @@ frappe.ui.form.on("Sale", {
 		});
 
 	},
-	setup(frm){
-		frm.set_indicator_formatter('product_code',"orange");
-	},
+
 	refresh(frm) { 
 		
 		frm.set_query("commission_01_account","sale_products", function() {
@@ -835,6 +833,5 @@ window.addEventListener('message', function (event) {
 	if (event.origin !== window.location.origin) {
 		return;
 	}
-	frappe.set_route('app/product/' + event.data);
-
+	//frappe.set_route('app/product/' + event.data);
 });

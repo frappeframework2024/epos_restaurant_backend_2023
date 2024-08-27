@@ -5,18 +5,20 @@ frappe.ui.form.on("Consignment", {
     refresh(frm){
         if(frm.doc.docstatus == 1){
             frm.add_custom_button(__('Add Sale'), function(){
-                frappe.call({
-                    method: "epos_restaurant_2023.inventory.doctype.consignment.consignment.make_sale",
-                    args: {
-                        consignment: frm.doc.name
-                    },
-                    callback: function(r){
-                        if(r.message!=undefined){
-                            frappe.model.sync(r.message);
-                            frappe.set_route("Form", "Sale", r.message.name);
-                        }
-                    }
-                });	
+                document.getElementById("page-Consignment").classList.add('validated-form');
+                $("body").attr("data-ajax-state", "triggered");
+                // frappe.call({
+                //     method: "epos_restaurant_2023.inventory.doctype.consignment.consignment.make_sale",
+                //     args: {
+                //         consignment: frm.doc.name
+                //     },
+                //     callback: function(r){
+                //         if(r.message!=undefined){
+                //             frappe.model.sync(r.message);
+                //             frappe.set_route("Form", "Sale", r.message.name);
+                //         }
+                //     }
+                // });	
             });
         }
         frm.set_query("from_stock_location", function() {
@@ -107,7 +109,9 @@ function get_products(frm,cdt,cdn){
             if(r.message!=undefined){
                 frappe.model.set_value(cdt,cdn, "quantity_on_hand", (r.message.quantity));
                 frappe.model.set_value(cdt,cdn, "cost", (r.message.cost));
-                frappe.model.set_value(cdt,cdn, "total_amount", (doc.cost * doc.quantity));
+                frappe.model.set_value(cdt,cdn, "price", (r.message.price));
+                frappe.model.set_value(cdt,cdn, "total_cost", (doc.cost * doc.quantity));
+                frappe.model.set_value(cdt,cdn, "total_amount", (doc.price * doc.quantity));
                 update_product_totals(frm)
             }
         }
@@ -127,7 +131,9 @@ function get_product(frm,cdt,cdn){
             if(r.message!=undefined){
                 frappe.model.set_value(cdt,cdn, "quantity_on_hand", (r.message.quantity));
                 frappe.model.set_value(cdt,cdn, "cost", (r.message.cost));
-                frappe.model.set_value(cdt,cdn, "total_amount", (doc.cost * doc.quantity));
+                frappe.model.set_value(cdt,cdn, "price", (r.message.price));
+                frappe.model.set_value(cdt,cdn, "total_cost", (doc.cost * doc.quantity));
+                frappe.model.set_value(cdt,cdn, "total_amount", (doc.price * doc.quantity));
                 update_product_totals(frm)
             }
         }
@@ -137,12 +143,15 @@ function get_product(frm,cdt,cdn){
 function update_product_totals(frm){
     total_qty = 0
     total_amount = 0
+    total_cost = 0
     frm.doc.products.forEach(r => {
         total_qty += r.quantity
         total_amount += r.total_amount
+        total_cost += r.total_cost
     });
     frm.set_value("total_quantity",total_qty)
     frm.set_value("total_amount",total_amount)
+    frm.set_value("total_cost",total_cost)
 }
 
 function update_payment_totals(frm){
@@ -153,3 +162,26 @@ function update_payment_totals(frm){
     frm.set_value("total_payment",total_amount)
 }
 
+function show_progress(title, count, total = 100, description) {
+    let dialog = new frappe.ui.Dialog({
+        title: title,
+    });
+    dialog.progress = $(`<div>
+        <div class="progress">
+            <div class="progress-bar"></div>
+        </div>
+        <p class="description text-muted small"></p>
+    </div`).appendTo(dialog.body);
+    dialog.progress_bar = dialog.progress.css({ "margin-top": "10px" }).find(".progress-bar");
+    dialog.$wrapper.removeClass("fade");
+    dialog.show();
+    frappe.cur_progress = dialog;
+    dialog.progress.find(".description").text(description);
+    dialog.percent = cint((flt(count) * 100) / total);
+    dialog.progress_bar.css({ width: dialog.percent + "%" });
+    if (dialog.percent === 100) {
+        frappe.hide_progress
+    }
+    frappe.cur_progress.$wrapper.css("z-index", 2000);
+    return dialog;
+};

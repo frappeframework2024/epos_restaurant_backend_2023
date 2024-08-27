@@ -241,6 +241,7 @@ const actionListeningHandler = async function (e) {
 }
 
 onMounted(() => {
+	window.mobile = mobile.value
 	window.addEventListener('message', actionListeningHandler, false);
 	setTimeout(()=>{
 		if (pos_license.license != null){

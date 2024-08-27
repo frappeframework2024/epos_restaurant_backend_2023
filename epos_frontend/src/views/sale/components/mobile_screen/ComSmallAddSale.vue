@@ -1,11 +1,8 @@
 <template>
     <div class="h-full">
         <div  class="h-full flex-col flex">
-            <div class="overflow-auto mb-20">
+            <div class="mb-20" :class="mobile == true ? '' : 'overflow-auto'">
                 <div class="pt-2">
-                    <!-- <div class="px-2 pb-2">
-                        <ComSelectCustomer  />
-                    </div> -->
                     <ComProductSearch :small="true" />
                     <ComMenu /> 
                 </div>
@@ -32,14 +29,15 @@
 <script setup>
 import { inject,computed, smallViewSaleProductListModal,i18n  } from '@/plugin'
 import { createToaster } from "@meforma/vue-toaster";
+import { useDisplay } from 'vuetify'
 
 import ComMenu from '../ComMenu.vue';
-// import ComSelectCustomer from '../ComSelectCustomer.vue';
 import ComProductSearch from '../ComProductSearch.vue';
 
 const toaster = createToaster({ position: "top-right" });
 const { t: $t } = i18n.global;
 
+const { mobile } = useDisplay()
 const sale = inject('$sale');
 const lastProduct = computed(()=>{
     return sale.sale?.sale_products?.find(r=>r.selected == true)

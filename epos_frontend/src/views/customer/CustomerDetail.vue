@@ -1,6 +1,6 @@
 <template >
-  <ComModal :isPrint="true" :isMoreMenu="true" @onPrint="onPrint()" width="900px" @onClose="onClose"
-    :hideOkButton="true" :fullscreen="mobile" :isExport="true">
+  <ComModal :isPrint="true && tab=='print'" @onPrint="onPrintClick()" :isMoreMenu="true" width="900px" @onClose="onClose"
+    :hideOkButton="true" :fullscreen="mobile" >
     <template #title>
       {{ $t('Customer Detail') }} - {{ params.name }}
     </template>
@@ -53,10 +53,12 @@
           </v-col>
           
         </v-row>
+        
         <v-tabs v-model="tab" color="deep-purple-accent-4" align-tabs="start" class="ma-2">
           <v-tab value="about">{{ $t('About') }}</v-tab>
           <v-tab value="recentOrder">{{ $t('Recent Order') }}</v-tab>
           <v-tab value="topup" v-if="gv.device_setting.show_top_up">{{ $t('Top Up History') }}</v-tab> 
+          <v-tab value="print">{{ $t('Print') }}</v-tab> 
         </v-tabs>
         <v-window v-model="tab">
           <v-window-item value="about">
@@ -179,7 +181,23 @@
               </tbody>
             </v-table>
           </v-window-item>
-         
+         <v-window-item value="print">
+          
+           
+                <v-select 
+            prepend-inner-icon="mdi-content-paste"
+            density="compact"
+            v-model="selectedLetterhead"
+            :items= gv.setting.letter_heads
+            item-title="name"
+            item-value="name"
+            hide-no-data
+            hide-details
+            variant="solo"
+            class="mx-1 mb-2 mb-md-0"
+            ></v-select>
+            <div class="mt-2"> <iframe id="print_iframe" :src="printPreviewUrl" width="100%" height="450px"/></div>
+         </v-window-item>
         </v-window>
       </div>
     </template>
@@ -196,13 +214,14 @@ const { mobile } = useDisplay()
 const frappe = inject('$frappe')
 const gv = inject('$gv')
 const call= frappe.call();
+const serverUrl = window.location.protocol + "//" + window.location.hostname + (window.location.protocol =="https:"? "": (":"+ gv.setting.pos_setting.backend_port));
 const props = defineProps({
   params: {
     type: Object,
     required: true,
   }
 })
-
+const selectedLetterhead = ref(gv.setting.letter_heads.length > 0 ? gv.setting.letter_heads[0].name:'No Letterhead')
 const emit = defineEmits(["resolve", "reject"])
 
 const customerPhoneNumber = computed(()=>{
@@ -213,6 +232,7 @@ const customerPhoneNumber = computed(()=>{
 })
 const tab = ref(null);
 let topUpHistory = ref([]);
+let trigger_print = ref(0);
 
 function onClose() {
   emit("resolve", false);
@@ -224,6 +244,15 @@ let customer = createDocumentResource({
   name: props.params.name,
   auto: true
 })
+function onPrintClick(){
+  if(trigger_print.value==0){
+    trigger_print.value = 1
+  }else{
+    trigger_print.value = 0
+  }
+  const iframe = document.getElementById('print_iframe');
+  iframe.src = iframe.src;
+}
 
 let recentOrder = createResource(
   {
@@ -279,9 +308,11 @@ async function onSaleDetail(data) {
     onClose(); 
   }
 }
-function onPrint(){
-  alert('Hello')
-}
+
+
+const printPreviewUrl = computed(()=>{
+    return `${serverUrl}/printview?doctype=${customer.doc.doctype}&name=${customer.doc.name}&format=${customer.doc.pos_print_format|| "standard"}&trigger_print=${trigger_print.value}&no_letterhead=0&show_toolbar=0&letterhead=${ JSON.stringify(selectedLetterhead.value) }&settings=%7B%7D&_lang=en`
+})
 
 </script>
 <style>

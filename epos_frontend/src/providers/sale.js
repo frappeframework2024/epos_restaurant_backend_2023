@@ -346,9 +346,8 @@ export default class Sale {
             strFilter = strFilter + ` && $.product_name== '${p.name_en}'`
         }
 
-
         let sp = Enumerable.from(this.sale.sale_products).where(strFilter).firstOrDefault()
- 
+        
         let is_new_sale_product = true;
         let new_sale_product;
         let prev_sale_product;
@@ -449,7 +448,8 @@ export default class Sale {
                 rate_include_tax : p.rate_include_tax||0,
                 selected_variant : p.selected_variant,
                 variant_of:p.variant_of,
-                is_variant:p.is_variant
+                is_variant:p.is_variant,
+                pos_note:p.pos_note
             }
 
            

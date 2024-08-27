@@ -141,19 +141,22 @@ doc_events = {
 scheduler_events = {
     "cron": {
       "*/1 * * * *": [
-				"epos_restaurant_2023.api.schedule_task.generate_audit_trail_from_version",
-				"epos_restaurant_2023.api.sync_api.get_all_data_for_sync_from_server",
-				"epos_restaurant_2023.api.utils.update_temp_menu_product_photo_schedule"
+            "epos_restaurant_2023.api.schedule_task.generate_audit_trail_from_version",
+            "epos_restaurant_2023.api.sync_api.get_all_data_for_sync_from_server",
+            "epos_restaurant_2023.api.utils.update_temp_menu_product_photo_schedule"
+        ],
 
-			],
-      "*/5 * * * *": [
-				"epos_restaurant_2023.api.utils.re_run_fail_jobs"
+        "*/5 * * * *": [
+            "epos_restaurant_2023.api.utils.re_run_fail_jobs"
+		],
 
-			],
-      "0 */12 * * *":[
-          "epos_restaurant_2023.api.ftp_backup.execute_backup_command",
-          "epos_restaurant_2023.api.api.update_summary_to_customers"
-      ]
+        "*/30 * * * *":[
+            "epos_restaurant_2023.api.quickbook_intergration.config.refresh_token"
+        ],
+        "0 */12 * * *":[
+            "epos_restaurant_2023.api.ftp_backup.execute_backup_command",
+            "epos_restaurant_2023.api.api.update_summary_to_customers"
+        ]
 	}
 
     

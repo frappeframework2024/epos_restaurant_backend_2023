@@ -27,7 +27,7 @@ export default class Product {
         this.isLoadingProduct = false
         this.isGetAllProduct = false
         this.isSearchProduct = false
-   
+
         this.canBack = false
 
         this.selectedProductCategory = "All Product Category"
@@ -98,30 +98,22 @@ export default class Product {
         this.isGetAllProduct = false
         this.isSearchProduct = false
         window.location.hash = product_category;
-        this.posSearchProductPager.limit =this.getItemLimit() || 20
+        this.posSearchProductPager.limit = this.getItemLimit() || 20
         this.getProductFromDB({category:product_category,include_product_category:1})
-  
     }
 
     getProductFromDB({keyword="",category='',include_product_category=0}={}){
-       
-        
         this.isLoadingProduct = true
- 
         if(!this.isGetAllProduct){
-           
             this.posSearchProductPager.page = this.posSearchProductPager.page + 1
+
             call.get("epos_restaurant_2023.api.product.get_products", {
                 category:category==''? this.selectedProductCategory:category,
-                limit:this.posSearchProductPager.limit,
+                limit: this.posSearchProductPager.limit,
                 page:this.posSearchProductPager.page,
                 keyword:keyword,
                 include_product_category:include_product_category
             }).then((res) => {
-               
-               
-               
-                
                 this.isLoadingProduct = false
                 if(include_product_category==1){
                     this.menuProducts = res.message.categories
@@ -137,19 +129,14 @@ export default class Product {
         }
        
     }
-
     getItemLimit(){
         const setting = JSON.parse( localStorage.getItem("item_menu_setting"))
-        
         const scrollContainer = document.querySelector("#wrap_menu")
-        let height  = 768
+        let height  = 768 
         if (scrollContainer){
-       
-            height = scrollContainer.offsetHeight; 
-           
+            height = scrollContainer.offsetHeight;
         }
-        
-        return  Math.ceil( (setting?.show_column_item || 1) * (height/ (setting?.height_item || 140))) 
+        return  Math.ceil( (setting?.show_column_item || 1) * (height / (setting?.height_item || 140)))
     }
 
     getProductFromDbByKeyword(keyword) {
@@ -170,7 +157,6 @@ export default class Product {
     setSelectedProduct(p,price_rule='') {
         
         this.selectedProduct = p;
-        
         this.prices = [];
         this.modifiers = [];
         this.combo_group_temp = [];
@@ -185,13 +171,6 @@ export default class Product {
         });
         if (this.prices.length > 0) {
             this.prices[0].selected = true
-            // console.log(this.prices);
-            // console.log(price_rule);
-            // this.prices.forEach((p)=>{
-            //     if (p.price_rule == price_rule){
-            //         p.selected = true;
-            //     }
-            // })
         }
 
         let modifiers = JSON.parse(p.modifiers);

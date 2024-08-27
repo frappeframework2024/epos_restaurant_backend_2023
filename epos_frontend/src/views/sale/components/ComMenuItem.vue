@@ -87,7 +87,6 @@ import { useDialog } from 'primevue/usedialog';
  
 const { t: $t } = i18n.global;
 import {onSelectProduct} from "@/utils/sale.js"
-// import ComPriceOnMenu from '../ComPriceOnMenu.vue';
 const props = defineProps({ data: Object })
 const sale = inject("$sale");
 const gv = inject("$gv");

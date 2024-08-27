@@ -14,7 +14,7 @@
             Quantity
           </th>
           <th class="text-center">
-            
+
           </th>
           <th class="text-right">
             តម្លៃ <br />
@@ -35,36 +35,35 @@
       </thead>
       <tbody class="table-pro">
         <template v-if="sale.sale?.sale_products?.length > 0">
-          <tr v-for="sp  in sale.getSaleProducts(undefined)" @click="sale.onSelectSaleProduct(sp)"
+          <tr v-for="sp in sale.getSaleProducts(undefined)" @click="sale.onSelectSaleProduct(sp)"
             :class="sp.selected ? 'selected' : ''">
             <td>
               <div class="d-flex align-center gap-3">
-                <div> 
+                <div>
                   <v-avatar :image="sp?.product_photo" v-bind="props" v-if="sp?.product_photo"
-                    class="cursor-pointer"></v-avatar> 
-                  <v-avatar :image="placeholderImage" v-bind="props" v-else
                     class="cursor-pointer"></v-avatar>
+                  <v-avatar :image="placeholderImage" v-bind="props" v-else class="cursor-pointer"></v-avatar>
                 </div>
-                <div style="white-space: break-spaces;"> 
-                  <p>{{ sp.product_code }} </p>  
+                <div style="white-space: break-spaces;">
+                  <p>{{ sp.product_code }} </p>
                   <p>
-                    {{ sp.product_name }} 
-                    <v-chip v-if="sp.quantity<0" variant="outlined" color="red">{{ $t("Return") }}</v-chip>
+                    {{ sp.product_name }}
+                    <v-chip v-if="sp.quantity < 0" variant="outlined" color="red">{{ $t("Return") }}</v-chip>
                     <v-tooltip activator="parent" location="start">{{ sp.product_name }} </v-tooltip>
-                  </p>  
+                  </p>
                   <p v-if="sp.product_name != sp.product_name_kh">
                     {{ sp.product_name_kh }}
                     <v-tooltip activator="parent" location="start">{{ sp.product_name_kh }} </v-tooltip>
-                  </p> 
+                  </p>
 
                   <div class="visib-dis">
-                    <template v-if="sp.discount">Discount: 
-                        <span class="" v-if="sp.discount_type == 'Percent'">
-                          {{ sp.discount }} % /
-                        </span>  
-                        <CurrencyFormat :value="sp.discount_amount" />
+                    <template v-if="sp.discount">Discount:
+                      <span class="" v-if="sp.discount_type == 'Percent'">
+                        {{ sp.discount }} % /
+                      </span>
+                      <CurrencyFormat :value="sp.discount_amount" />
                     </template>
-                  </div> 
+                  </div>
                   <p v-if="!sp.note" class="italic underline" style="color:#ccc;" @click="sale.onSaleProductNote(sp)">
                     {{ $t("Add Note") }}</p>
                   <p v-else class="italic" @click="sale.onSaleProductNote(sp)">{{ sp.note }}</p>
@@ -73,36 +72,35 @@
             </td>
             <td class="text-center">
               <div class="flex justify-center">
-                <div class="flex gap-2 border rounded justify-center py-1" >
-                  <div><v-icon size="small" icon="mdi-minus-circle-outline" color="red" @click="onUpdateQuantity(sp, -1)"></v-icon>
+                <div class="flex gap-2 border rounded justify-center py-1">
+                  <div><v-icon size="small" icon="mdi-minus-circle-outline" color="red"
+                      @click="onUpdateQuantity(sp, -1)"></v-icon>
                   </div>
                   <div class="text-sm link_line_action overflow-hidden" @click="onChangeQTY(sp)">{{ sp.quantity }}</div>
                   <div>
-                    <v-icon size="small" icon="mdi-plus-circle-outline" color="green" @click="onUpdateQuantity(sp, 1)"></v-icon>
+                    <v-icon size="small" icon="mdi-plus-circle-outline" color="green"
+                      @click="onUpdateQuantity(sp, 1)"></v-icon>
                   </div>
-                  
+
                 </div>
               </div>
-              
-            </td> 
+
+            </td>
             <td>
-              <div>
-                {{sp.pos_note}}
-                    <v-icon size="small" icon="mdi-alert-circle-check-outline" :color="sp.pos_note ? 'blue-green-lighten-2':'green-lighten-1' " @click="onPOSNoteClick">
-                      <v-tooltip
-                          activator="parent"
-                          location="top"
-                        >Tooltip</v-tooltip>
-                    </v-icon>
-                  </div>
+              <v-btn size="small" variant="text" v-if="sp.pos_note" >
+                <v-icon color="red-darken-1" icon="mdi-alert"></v-icon>
+                <v-tooltip max-width="200px" opacity="100" activator="parent" location="top">{{ sp.pos_note }}</v-tooltip>
+              </v-btn>
             </td>
             <td class="text-end">
               <template v-if="!sp.is_free">
                 <span class="link_line_action overflow-hidden" style="width:auto"
                   @click="sale.onChangePrice(sp, gv, numberFormat)">
                   <CurrencyFormat :value="sp.price" />
-                </span> 
-                <span><ComProductUnit :sale_product="sp" /> </span> 
+                </span>
+                <span>
+                  <ComProductUnit :sale_product="sp" />
+                </span>
               </template>
               <template v-else>
                 <p>
@@ -113,18 +111,20 @@
               </template>
             </td>
             <td class="text-end none-discount-field">
-              <ComHappyHour :saleProduct="sp" v-if="sp.is_render"/>
+              <ComHappyHour :saleProduct="sp" v-if="sp.is_render" />
               <span class="" style="width:auto">
                 <template v-if="!sp.is_free">
                   <span v-if="sp.discount" class="link_line_action overflow-hidden w-auto">
                     <span v-if="sp.discount_type == 'Percent'">
                       {{ sp.discount }} % /
-                    </span> 
+                    </span>
                     <CurrencyFormat :value="sp.discount_amount" />
                   </span>
 
-                  <!-- <template v-else><span style="width:auto;" class="link_line_action overflow-hidden">{{ $t("Apply Discount") }}</span></template> -->
-                  <span v-else class="w-auto link_line_action overflow-hidden"><v-icon color="blue-darken-2" icon="mdi-sale" size="small"></v-icon></span>
+                  <!-- <template v-else><span style="width:auto;" class="link_line_action overflow-hidden">{{ $t("Apply Discount") }}</span></template>
+    -->
+                  <span v-else class="w-auto link_line_action overflow-hidden"><v-icon color="blue-darken-2"
+                      icon="mdi-sale" size="small"></v-icon></span>
                 </template>
 
                 <v-menu activator="parent">
@@ -150,47 +150,48 @@
               </span>
             </td>
             <td class="text-center op-option-btn">
-              <v-btn class="ma-2 hidden-delete-btn" icon="mdi-delete" color="red"  variant="text"  @click="sale.onRemoveItem(sp, gv, numberFormat)">
-                  </v-btn> 
+              <v-btn class="ma-2 hidden-delete-btn" icon="mdi-delete" color="red" variant="text"
+                @click="sale.onRemoveItem(sp, gv, numberFormat)">
+              </v-btn>
               <v-menu>
                 <template v-slot:activator="{ props }">
 
-                  <v-btn class="ma-2" icon="mdi-dots-vertical" variant="text"  v-bind="props">
+                  <v-btn class="ma-2" icon="mdi-dots-vertical" variant="text" v-bind="props">
                   </v-btn>
                 </template>
-                <v-list> 
+                <v-list>
                   <v-list-item @click="onSaleProductDiscount(sp, 'Percent')" class="menu-hidden-an">
-                      <v-list-item-title>{{ $t("Discount Percent") }} (%)</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item @click="onSaleProductDiscount(sp, 'Amount')" class="menu-hidden-an">
-                      <v-list-item-title>{{ $t("Discount Amount") }} ($)</v-list-item-title>
-                    </v-list-item>
-                    <v-divider v-if="sp.discount > 0" inset></v-divider>
-                    <v-list-item v-if="sp.discount > 0" @click="onSaleProductCancelDiscount(sp)" class="menu-hidden-an">
-                      <v-list-item-title class="text-orange-700">{{ $t("Cancel Discount") }}</v-list-item-title>
-                    </v-list-item> 
+                    <v-list-item-title>{{ $t("Discount Percent") }} (%)</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item @click="onSaleProductDiscount(sp, 'Amount')" class="menu-hidden-an">
+                    <v-list-item-title>{{ $t("Discount Amount") }} ($)</v-list-item-title>
+                  </v-list-item>
+                  <v-divider v-if="sp.discount > 0" inset></v-divider>
+                  <v-list-item v-if="sp.discount > 0" @click="onSaleProductCancelDiscount(sp)" class="menu-hidden-an">
+                    <v-list-item-title class="text-orange-700">{{ $t("Cancel Discount") }}</v-list-item-title>
+                  </v-list-item>
                   <v-list-item v-if="sp.quantity > 0" @click="onReturn(sp)">
                     <v-list-item-title>{{ $t("Mark as Return Product") }}</v-list-item-title>
-                  </v-list-item> 
+                  </v-list-item>
                   <v-list-item v-else @click="onReturn(sp)">
                     <v-list-item-title>{{ $t("Mark as Selling Product") }}</v-list-item-title>
-                  </v-list-item> 
-                   
+                  </v-list-item>
+
                   <v-list-item @click="sale.onRemoveItem(sp, gv, numberFormat)" class="menu-hidden-an">
                     <v-list-item-title>{{ $t("Remove Item") }}</v-list-item-title>
-                  </v-list-item>   
+                  </v-list-item>
 
                   <!-- free -->
-                   
-                  <v-list-item :title="$t('Mark as Free Item')" v-if="!sp.is_free"
-                      @click="onSaleProductFree(sp)"></v-list-item>
 
-                  <v-list-item v-else @click="sale.onSaleProductCancelFree(sp)"> 
-                      <v-list-item-title class="text-red-700">{{ $t('Cancel Free') }}</v-list-item-title>
-                  </v-list-item> 
-                <!-- end free --> 
+                  <v-list-item :title="$t('Mark as Free Item')" v-if="!sp.is_free"
+                    @click="onSaleProductFree(sp)"></v-list-item>
+
+                  <v-list-item v-else @click="sale.onSaleProductCancelFree(sp)">
+                    <v-list-item-title class="text-red-700">{{ $t('Cancel Free') }}</v-list-item-title>
+                  </v-list-item>
+                  <!-- end free -->
                 </v-list>
-              </v-menu> 
+              </v-menu>
             </td>
           </tr>
         </template>
@@ -251,12 +252,12 @@ function onUpdateQuantity(sp, param) {
 }
 
 function onReturn(sp) {
-  sp.is_return = !sp.is_return 
+  sp.is_return = !sp.is_return
   sale.updateQuantity(sp, sp.quantity * -1)
 
 }
 
-function onPOSNoteClick(){
+function onPOSNoteClick() {
 
 }
 
@@ -267,7 +268,7 @@ function onSaleProductDiscount(sp, discount_type) {
         if (v) {
           sp.temp_discount_by = v.user;
           sp.temp_discount_note = v.note;
-          
+
           sale.onDiscount(
             gv,
             `${sp.product_name} Discount`,
@@ -302,26 +303,26 @@ function onSaleProductCancelDiscount(sp) {
 }
 
 
-function onChangeQTY (sp) {
-  if ( sale.dialogActiveState == false) {
-            sale.dialogActiveState = true;
-            sale.onChangeQuantity(sp, gv)
-        }
+function onChangeQTY(sp) {
+  if (sale.dialogActiveState == false) {
+    sale.dialogActiveState = true;
+    sale.onChangeQuantity(sp, gv)
+  }
 }
 
 
-function onSaleProductFree(sp) { 
-    if (!sale.isBillRequested()) {
-        gv.authorize("free_item_required_password", "free_item", "free_item_required_note", "Free Item Note", sp.product_code).then((v) => {
-            if (v) { 
-                sp.free_note = v.note;
-                sp.free_by = v.user;
-                sale.onSaleProductFree(sp);
-            }
-        });
+function onSaleProductFree(sp) {
+  if (!sale.isBillRequested()) {
+    gv.authorize("free_item_required_password", "free_item", "free_item_required_note", "Free Item Note", sp.product_code).then((v) => {
+      if (v) {
+        sp.free_note = v.note;
+        sp.free_by = v.user;
+        sale.onSaleProductFree(sp);
+      }
+    });
 
 
-    }
+  }
 }
 
 
@@ -379,24 +380,31 @@ tr:nth-child(even) {
 .table-sale-product-scroll .v-table>.v-table__wrapper>table {
   overflow: hidden !important;
 }
+
 @media (max-width: 1207px) {
-  .none-discount-field, .hidden-delete-btn {
+
+  .none-discount-field,
+  .hidden-delete-btn {
     display: none;
-  } 
+  }
+
   .table-pro tr td.op-option-btn {
-    width:50px
+    width: 50px
   }
 }
+
 .table-pro tr td,
 .h-head tr th {
   padding: 0 6px !important;
 }
+
 .op-option-btn .v-btn--icon.v-btn--density-default {
   width: auto !important;
   height: auto !important;
 }
+
 @media (min-width: 1206.98px) {
-  .visib-dis{
+  .visib-dis {
     display: none;
   }
 }

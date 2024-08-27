@@ -20,6 +20,7 @@
   "product_category",
   "product_group",
   "revenue_group",
+  "material",
   "column_break_6",
   "kitchen_group",
   "unit",
@@ -736,13 +737,18 @@
    "fieldname": "variant_3",
    "fieldtype": "Data",
    "label": "Variant 3"
+  },
+  {
+   "fieldname": "material",
+   "fieldtype": "Data",
+   "label": "Material"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-08-23 13:50:57.824623",
+ "modified": "2024-08-27 10:35:23.763160",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Product",

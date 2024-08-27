@@ -15,6 +15,7 @@
   "column_break_ruyj",
   "employee",
   "to_stock_location",
+  "price_rule",
   "section_break_guue",
   "products",
   "section_break_uyjo",
@@ -22,6 +23,7 @@
   "amended_from",
   "column_break_eyfr",
   "total_amount",
+  "total_cost",
   "section_break_smdb",
   "payments",
   "section_break_srfm",
@@ -158,12 +160,24 @@
    "fieldname": "payments",
    "fieldtype": "Table",
    "options": "Consignment Payments"
+  },
+  {
+   "fieldname": "total_cost",
+   "fieldtype": "Currency",
+   "label": "Total Cost",
+   "read_only": 1
+  },
+  {
+   "fieldname": "price_rule",
+   "fieldtype": "Link",
+   "label": "Price Rule",
+   "options": "Price Rule"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-10 11:18:39.147896",
+ "modified": "2024-08-26 16:06:41.269343",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Consignment",

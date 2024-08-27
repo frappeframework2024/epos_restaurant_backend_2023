@@ -4,6 +4,12 @@
 
 frappe.query_reports["Sale Summary Report"] = {
 	onload: function(report) {
+		getPosProfileAndUpdateOptions();
+
+        // Add event listener for the POS Profile filter
+        frappe.query_report.get_filter('pos_profile').on_change = function() {
+            getPosProfileAndUpdateOptions();
+        };
 		if(frappe.query_report.get_filter_value('filter_based_on')=="This Month"){
 			frappe.query_report.toggle_filter_display('from_fiscal_year', true);
 			frappe.query_report.toggle_filter_display('start_date', true  );
@@ -12,26 +18,7 @@ frappe.query_reports["Sale Summary Report"] = {
 		report.page.add_inner_button("Preview Report", function () {
 			frappe.query_report.refresh();
 		});
-		frappe.call({
-            method: "frappe.client.get_list",
-            args: {
-                doctype: "Sale",
-                fields: ["name", "sale_type"],
-                filters: {  },
-                limit: 1 
-            },
-            callback: function(response) {
-				
-                if (response.message && response.message.length > 0) {
-                    let sale_type = response.message[0].sale_type;
-
-                    // Update options based on sale_type
-                    let row_group_filter = frappe.query_report.get_filter('row_group');
-                    row_group_filter.df.options = get_options_based_on_sale_type(sale_type);
-                    row_group_filter.refresh();
-                }
-            }
-        });
+		
 	},
 	"filters": [
 		{
@@ -94,14 +81,14 @@ frappe.query_reports["Sale Summary Report"] = {
 			"on_change": function (query_report) {},
 		},
 		{
-			"fieldname": "pos_profile",
-			"label": __("POS Profile"),
-			"fieldtype": "MultiSelectList",
-			get_data: function(txt) {
-				return frappe.db.get_link_options('POS Profile', txt);
-			},
-			"on_change": function (query_report) {},
-		},
+            fieldname: "pos_profile",
+            label: __("POS Profile"),
+            fieldtype: "MultiSelectList",
+            get_data: function(txt) {
+                return frappe.db.get_link_options('POS Profile', txt);
+            },
+            on_change: getPosProfileAndUpdateOptions, // Attach the change handler
+        },
 		{
 			"fieldname": "outlet",
 			"label": __("Outlet"),
@@ -241,21 +228,89 @@ frappe.query_reports["Sale Summary Report"] = {
 	},
 	
 };
+function update_filter_options(filter_name, options, hideOptions) {
+    let filter = frappe.query_report.get_filter(filter_name);
 
-function get_options_based_on_sale_type(sale_type) {
+    if (filter) {
+        // Filter out options based on hideOptions array
+        let updatedOptions = options.filter(option => !hideOptions.includes(option));
+        filter.df.options = updatedOptions.join("\n");
+        filter.refresh();
+    } else {
+        console.error(`Filter ${filter_name} not found`);
+    }
+}
+
+function update_row_group_options(default_sale_type) {
     let options = [
-        "Product", "Product And Price", "Category", "Product Group",
-        "Revenue Group", "Business Branch", "Outlet", "Table Group",
-        "Table", "POS Profile", "Customer", "Customer Group",
-        "Stock Location", "Date", "Month", "Year", "Sale Invoice",
+        "Product","Product And Price","Category", "Product Group", "Revenue Group", "Business Branch", 
+        "Outlet", "Table Group", "Table", "POS Profile", "Customer", 
+        "Customer Group", "Stock Location", "Date", "Month", "Year", 
+        "Sale Invoice", "Working Day", "Cashier Shift", "Sale Type"
+    ];
+
+    let hideOptions = [];
+    if (default_sale_type === 'Retail Sale') {
+        hideOptions = ["Table", "Table Group", "Sale Type"];
+    }
+
+    let selectedPosProfiles = frappe.query_report.get_filter_value('pos_profile');
+    if (!selectedPosProfiles || selectedPosProfiles.length === 0) {
+        hideOptions = hideOptions.concat(["Table", "Table Group", "Sale Type"]);
+    }
+
+    update_filter_options('row_group', options, hideOptions);
+}
+
+function update_parent_row_group_options(default_sale_type) {
+    let options = [
+        "", "Category", "Product Group", 
+        "Revenue Group", "Business Branch", "Outlet", "Table Group", 
+        "Table", "POS Profile", "Customer", "Customer Group", 
+        "Stock Location", "Date", "Month", "Year", "Sale Invoice", 
         "Working Day", "Cashier Shift", "Sale Type", "Seller"
     ];
 
-    if (sale_type === 'Retail Sale') {
-        // Remove options if sale_type is 'Retail Sale'
-        options = options.filter(option => 
-            !["Table", "Table Group", "Sale Type"].includes(option)
-        );
+    let hideOptions = [];
+    if (default_sale_type === 'Retail Sale') {
+        hideOptions = ["Table", "Table Group", "Sale Type"];
     }
-    return options.join('\n');
+
+    let selectedPosProfiles = frappe.query_report.get_filter_value('pos_profile');
+    if (!selectedPosProfiles || selectedPosProfiles.length === 0) {
+        hideOptions = hideOptions.concat(["Table", "Table Group", "Sale Type"]);
+    }
+
+    update_filter_options('parent_row_group', options, hideOptions);
+}
+
+function getPosProfileAndUpdateOptions() {
+    let selectedPosProfiles = frappe.query_report.get_filter_value('pos_profile');
+    
+    if (selectedPosProfiles && selectedPosProfiles.length > 0) {
+        // Assuming you need to work with the first selected POS Profile for simplicity
+        let posProfile = selectedPosProfiles[0];
+        
+        // Fetch default_sale_type from the POS Profile
+        frappe.call({
+            method: "frappe.client.get",
+            args: {
+                doctype: "POS Profile",
+                name: posProfile
+            },
+            callback: function(response) {
+                if (response.message) {
+                    let default_sale_type = response.message.default_sale_type || [];
+                    update_row_group_options(default_sale_type);
+                    update_parent_row_group_options(default_sale_type);
+                } else {
+                    console.error(`POS Profile ${posProfile} not found`);
+                }
+            }
+        });
+    } else {
+        // Handle the case where no POS Profile is selected
+        update_row_group_options(''); // or any default value
+        update_parent_row_group_options(''); // or any default value
+    }
 }

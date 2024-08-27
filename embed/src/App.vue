@@ -1,22 +1,46 @@
 <template>
   <div>
-    <input type="number" v-model="pixel" placeholder="Enter pixels" />
-    <p>{{ pixel }} pixels is approximately {{ centimeters.toFixed(2) }} cm</p>
-  </div>
+    <input
+      v-model="barcode_api.type"
+      placeholder="Enter barcode type (e.g., code128)"
+    />
+    <input v-model="barcode_api.text" placeholder="Enter text for barcode" />
+    <input
+      v-model.number="barcode_api.scale"
+      type="number"
+      placeholder="Enter scale (e.g., 3)"
+    />
+    <input
+      v-model="barcode_api.bar_rotate"
+      placeholder="Enter rotation (e.g., N)"
+    />
+    <label>
+      <input type="checkbox" v-model="barcode_api.include_text" />
+      Include Text
+    </label>
 
-  <router-view />
+    <img :src="barcodeUrl" alt="Barcoded" />
+
+    <router-view />
+  </div>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
 
-const pixel = ref("");
-function pxToCm(px) {
-  const ppi = 96; // pixels per inch (standard screen resolution)
-  const inches = px / ppi; // convert pixels to inches
-  const cm = inches * 2.54; // convert inches to centimeters
-  return cm;
-}
+// Reactive data for barcode parameters
+const barcode_api = ref({
+  type: "code128",
+  text: "",
+  bar_rotate: "N",
+  scale: 3,
+  include_text: false,
+});
 
-const centimeters = computed(() => pxToCm(pixel.value));
+// Computed property to generate the barcode URL dynamically
+const barcodeUrl = computed(() => {
+  const encodedText = encodeURIComponent(barcode_api.value.text);
+  const includeTextParam = barcode_api.value.include_text ? "&includetext" : "";
+  return `http://bwipjs-api.metafloor.com/?bcid=${barcode_api.value.type}&text=${encodedText}&scale=${barcode_api.value.scale}&rotate=${barcode_api.value.bar_rotate}${includeTextParam}`;
+});
 </script>

@@ -10,13 +10,13 @@
                         <avatar v-if="sale.sale.customer_photo == undefined" :name="sale.sale.customer_name"
                             class="mr-4" size="40"></avatar>
                     </template>
-                    <div class="px-2"> 
+                    <div class="px-2">
                         <div class="font-bold">{{ sale.sale.customer_name || "" }} </div>
-                        
+
                         <div class="text-gray-400 text-sm">{{ subTitle || "" }}</div>
-                        <span class="text-gray-400 text-sm" style="font-size: 12px">{{ sale.sale.pos_note }}</span>
+
                         <div class="text-gray-400 text-sm" v-if="sale.sale.arrival">
-                            {{ $t("Stay") }}: {{ moment(sale.sale.arrival).format("DD-MM-YYYY") }} {{$t("to")}} {{
+                            {{ $t("Stay") }}: {{ moment(sale.sale.arrival).format("DD-MM-YYYY") }} {{ $t("to") }} {{
                                 moment(sale.sale.departure).format("DD-MM-YYYY") }}
                         </div>
 
@@ -26,24 +26,12 @@
 
                     </div>
                     <div>
-                        
-                        <template v-if="customerPromotion?.length > 0">
-                            <ComChip v-for="(item, index) in customerPromotion" :key="index" color="orange"
-                                :tooltip="$t('Happy Hour Promotion')" prepend-icon="mdi-tag-multiple">{{ item.promotion_name }}</ComChip>
-                        </template>
-                            {{ _customer }}
-                            <template v-if="customer">
-                                <ComChip :tooltip="$t('Default Discount')" v-if="customerPromotion?.length <= 0 &&  customer.default_discount > 0" color="error">{{
-                            customer.default_discount }}
-                            % OFF</ComChip>
 
-                                <ComChip v-if="customer.total_point_earn > 0" :tooltip="$t('Current Point(s)')" color="success">{{ Number(customer.total_point_earn).toFixed(2)  }}</ComChip>
-                                <ComChip v-if="customer.total_crypto_balance > 0" :tooltip="$t('Crypto Amount')" color="primary">
-                                    <CurrencyFormat :value="parseFloat(customer.total_crypto_balance)" />
-                                </ComChip>
-                            </template>
+
+
+
                     </div>
-                    
+
                 </div>
             </div>
             <div class="flex-none" v-if="sale.sale.customer != setting.customer">
@@ -64,12 +52,46 @@
             </div>
 
         </div>
-        
+        <div>
+
+            <template v-if="customerPromotion?.length > 0">
+                <ComChip v-for="(item, index) in customerPromotion" :key="index" color="orange"
+                    :tooltip="$t('Happy Hour Promotion')" prepend-icon="mdi-tag-multiple">{{
+                        item.promotion_name }}</ComChip>
+            </template>
+            {{ _customer }}
+            <template v-if="customer">
+                <ComChip :tooltip="$t('Default Discount')"
+                    v-if="customerPromotion?.length <= 0 && customer.default_discount > 0" color="error">{{
+                        customer.default_discount }}
+                    % OFF</ComChip>
+
+                <ComChip v-if="customer.total_point_earn > 0" :tooltip="$t('Current Point(s)')" color="success">{{
+                    Number(customer.total_point_earn).toFixed(2) }}</ComChip>
+                <ComChip v-if="customer.total_crypto_balance > 0" :tooltip="$t('Crypto Amount')" color="primary">
+                    <CurrencyFormat :value="parseFloat(customer.total_crypto_balance)" />
+                </ComChip>
+            </template>
+            <span v-if="sale.sale.pos_note">
+                <v-btn variant="text" size="small" @click="show = !show" icon v-bind="props">
+                    <v-tooltip  v-model="show" max-width="200px" :opacity="1" location="top">
+                    {{ sale.sale.pos_note }}
+                    <template v-slot:activator="{ props }">
+                        <span variant="text" icon v-bind="props">
+                            <v-icon color="red-darken-1" icon="mdi-alert"></v-icon>
+                        </span>
+                    </template>
+                </v-tooltip>
+                </v-btn>
+                
+            </span>
+        </div>
+
     </div>
 </template>
 
 <script setup>
-import { computed, inject,ref, getCurrentInstance, searchCustomerDialog, createResource, customerDetailDialog, scanCustomerCodeDialog, confirmDialog, onMounted, createToaster, addCustomerDialog } from "@/plugin"
+import { computed, inject, ref, getCurrentInstance, searchCustomerDialog, createResource, customerDetailDialog, scanCustomerCodeDialog, confirmDialog, onMounted, createToaster, addCustomerDialog } from "@/plugin"
 import { whenever, useMagicKeys } from '@vueuse/core';
 import { i18n } from "@/plugin";
 
@@ -79,18 +101,18 @@ const props = defineProps({
 
 
 
-const { t: $t } = i18n.global; 
+const { t: $t } = i18n.global;
 
 const sale = inject("$sale");
 const gv = inject("$gv");
 const socket = inject("$socket");
 const moment = inject("$moment");
 const frappe = inject("$frappe");
-const toaster = createToaster({ position: "top-right" }); 
+const toaster = createToaster({ position: "top-right" });
 const db = frappe.db();
 
 const customer = ref(null)
-
+const show = ref([])
 sale.vueInstance = getCurrentInstance();
 sale.vue = sale.vueInstance.appContext.config.globalProperties
 let customerPromotion = computed({
@@ -111,14 +133,14 @@ const { ctrl_m } = useMagicKeys({
 })
 whenever(ctrl_m, () => onScanCustomerCode())
 
-const _customer = computed(()=>{ 
-    if( sale.sale.customer){ 
-        db.getDoc("Customer", sale.sale.customer).then((r)=>{
+const _customer = computed(() => {
+    if (sale.sale.customer) {
+        db.getDoc("Customer", sale.sale.customer).then((r) => {
             customer.value = r;
         })
     }
-}) 
- 
+})
+
 
 sale.vue.$onKeyStroke('F9', (e) => {
     e.preventDefault()
@@ -152,12 +174,12 @@ function assignCustomerToOrder(result, is_membership = false) {
     sale.sale.arrival = result.arrival || ""
     sale.sale.departure = result.departure || ""
     sale.sale.room_number = result.room_number || ""
-    if (result.total_point_earn > 0 && result.allow_earn_point == 1){
+    if (result.total_point_earn > 0 && result.allow_earn_point == 1) {
         current_customer_point.value = result.total_point_earn
-    }else{
+    } else {
         current_customer_point.value = 0
     }
-    
+
     if (!is_membership) {
         sale.sale.customer_default_discount = result.default_discount;
 
@@ -194,7 +216,7 @@ function assignCustomerToOrder(result, is_membership = false) {
 
     sale.updateSaleSummary();
 
-    socket.emit("ShowOrderInCustomerDisplay", sale.sale);    
+    socket.emit("ShowOrderInCustomerDisplay", sale.sale);
 }
 
 const setting = computed(() => {
@@ -306,6 +328,7 @@ async function onRemove() {
         sale.sale.arrival = ""
         sale.sale.departure = ""
         sale.sale.room_number = ""
+        sale.sale.pos_noted=""
         current_customer_point.value = 0
     }
 }

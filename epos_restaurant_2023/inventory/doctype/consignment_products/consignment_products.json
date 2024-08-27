@@ -10,10 +10,12 @@
   "product_name",
   "quantity_on_hand",
   "base_unit",
+  "cost",
+  "total_cost",
   "column_break_hury",
   "unit",
   "quantity",
-  "cost",
+  "price",
   "total_amount"
  ],
  "fields": [
@@ -74,12 +76,23 @@
    "label": "Base Unit",
    "options": "Unit Of Measurement",
    "read_only": 1
+  },
+  {
+   "fieldname": "total_cost",
+   "fieldtype": "Currency",
+   "label": "Total Cost",
+   "read_only": 1
+  },
+  {
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "label": "Price"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-10 08:42:33.435240",
+ "modified": "2024-08-26 15:52:17.234674",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Consignment Products",

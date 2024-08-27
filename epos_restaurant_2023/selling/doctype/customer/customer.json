@@ -110,7 +110,8 @@
   "document_tab",
   "customer_document",
   "other_tab",
-  "allow_earn_point"
+  "allow_earn_point",
+  "pos_print_format"
  ],
  "fields": [
   {
@@ -721,6 +722,13 @@
    "fieldname": "total_crypto_balance_expired",
    "fieldtype": "Currency",
    "label": "Total Crypto Balance Expired"
+  },
+  {
+   "default": "standard",
+   "fieldname": "pos_print_format",
+   "fieldtype": "Link",
+   "label": "POS Print Format",
+   "options": "Print Format"
   }
  ],
  "image_field": "photo",
@@ -733,7 +741,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2024-08-19 16:52:59.094208",
+ "modified": "2024-08-27 09:28:19.971674",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

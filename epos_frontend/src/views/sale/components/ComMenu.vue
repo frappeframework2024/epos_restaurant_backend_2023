@@ -4,7 +4,7 @@
         <div class="flex h-full flex-col">
             <ComShortcut v-if="product.setting.pos_menus.length > 0" />
             <ComShortcurMenuFromProductGroup v-else />
-            <div  ref="scrollContainer" class="pa-2 h-full overflow-y-auto" :class="getCustomerScrollWidth()" id="wrap_menu">
+            <div ref="scrollContainer" class="pa-2 h-full overflow-y-auto" :class="getCustomerScrollWidth()" id="wrap_menu">
                 <ComPlaceholder :loading="product.posMenuResource.loading"
                     :is-not-empty="(product.posMenuResource.data?.length > 0 || product.setting.default_pos_menu =='')" class-color="text-white"
                     :is-placeholder="true">
@@ -69,6 +69,7 @@ const product = inject("$product")
 const frappe = inject("$frappe")
 const gv = inject("$gv");
 const db = frappe.db();
+
 const props = defineProps({
     backgroundImage: String
 });
@@ -101,34 +102,35 @@ function onMenuRefresh() {
 }
 
 const onScroll = () => {
-  if (scrollContainer.value && product.isLoadingProduct ==false && product.isSearchProduct == false) {
-    const container = scrollContainer.value;
-    const scrollBottom = container.scrollHeight - container.scrollTop === container.clientHeight;
-    if (scrollBottom) {
-        product.getProductFromDB()
-    }
-  }
-};
-onMounted(() => {
-    if(!mobile.value){
-        if (scrollContainer.value) {
-            const width  = scrollContainer.value.offsetWidth;
-            const height  = scrollContainer.value.offsetHeight;
-            product.itemLimit = Math.ceil((width / 230) * (height/ 140))
+    
+    if (scrollContainer.value && product.isLoadingProduct ==false && product.isSearchProduct == false) {
+        const container = scrollContainer.value;
+        const scrollBottom = container.scrollHeight - container.scrollTop === container.clientHeight;
+        if (scrollBottom) {
+            product.getProductFromDB()
         }
     }
+};
+onMounted(() => {
+     
     if (scrollContainer.value && product.setting.default_pos_menu=="" ) {
-         scrollContainer.value.addEventListener('scroll', onScroll);
-    }
+        scrollContainer.value.addEventListener('scroll', onScroll);
+    } 
+
     const item_menu_setting = JSON.parse(localStorage.getItem("item_menu_setting"))
     if (item_menu_setting) {
         gv.itemMenuSetting = item_menu_setting
-       
     }
 });
 onUnmounted(() => {
-    if (scrollContainer.value && product.setting.default_pos_menu=="") {
-        scrollContainer.value.removeEventListener('scroll', onScroll);
+    if (window.mobile == true) { 
+        if (scrollContainer.value && product.setting.default_pos_menu=="" ) {
+            window.addEventListener('scroll', onScroll);
+        }
+    }else{
+        if (scrollContainer.value && product.setting.default_pos_menu=="") {
+            scrollContainer.value.removeEventListener('scroll', onScroll);
+        }
     }
    
 });
@@ -151,5 +153,13 @@ onUnmounted(() => {
     left: 50%;
     transform: translateX(-50%);
     width: 131px;
+}
+@media (max-width:767.98px) {
+    #wrap_menu {
+        height: calc(100vh - 238px) !important;
+    }
+    .loading-pr-more {
+        bottom: 13px !important;
+    }
 }
 </style>

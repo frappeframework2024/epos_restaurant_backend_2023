@@ -23,6 +23,14 @@ from epos_restaurant_2023.api.security import aes_encrypt,get_aes_key,encode_bas
  
 
 
+
+
+@frappe.whitelist()
+def testing():
+    frappe.db.sql("update `tabDocField` set hidden=1 where parent='Product' and fieldname='price'")
+    frappe.db.commit()
+    
+
 @frappe.whitelist(allow_guest=True)
 def get_theme():
     return frappe.db.get_single_value("ePOS Settings","app_theme")

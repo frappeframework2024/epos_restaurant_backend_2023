@@ -18,9 +18,11 @@ class Consignment(Document):
 			frappe.throw("Cannot transfer to the same stock location.")
 
 		total_quantity = sum((a.quantity or 0) for a in self.products)
-		total_amount = sum((a.quantity or 0)* (a.cost or  0) for a in self.products)
+		total_amount = sum((a.quantity or 0)* (a.price or  0) for a in self.products)
+		total_cost = sum((a.quantity or 0)* (a.cost or  0) for a in self.products)
 		self.total_quantity = total_quantity
 		self.total_amount = total_amount
+		self.total_cost = total_cost
   
 	def before_submit(self):
 		for p in self.products:
@@ -56,7 +58,9 @@ def update_current_product_info(self):
 		p = get_currenct_cost(a.product,self.from_stock_location,a.unit)
 		a.current_quantity = p["quantity"]
 		a.cost = p["cost"]
-		a.total_amount = a.quantity * a.cost
+		a.price = p["price"]
+		a.total_amount = a.quantity * a.price
+		a.total_cost = a.quantity * a.cost
 
 def update_inventory_on_submit(self):
 	for p in self.products:
@@ -135,17 +139,16 @@ def make_sale(consignment):
 	sale.note = "Sale Consignment From {0}".format(consignment.employee)
 	for a in consignment.products:
 		child = frappe.new_doc("Sale Product")
-		product = frappe.get_doc("Product",a.product)
 		child.update({
 		"product_code": a.product,
 		"product_name": a.product_name,
 		"quantity": a.quantity,
 		"base_unit": a.base_unit,
 		"unit": a.unit,
-		"price": product.price,
+		"price": a.price,
 		"cost": a.cost,
-		"sub_total": product.price * a.quantity,
-		"amount": product.price * a.quantity,
+		"sub_total": a.price * a.quantity,
+		"amount": a.price * a.quantity,
 		"parenttype": "Sale",
     	"parentfield": "sale_products",
 		"doctype": "Sale Product"
@@ -174,7 +177,7 @@ def make_return_consignment(consignment):
 		"base_cost": a.cost,
 		"unit": a.unit,
 		"cost": a.cost,
-		"amount": a.total_amount,
+		"amount": a.total_cost,
 		"parenttype": "Stock Transfer",
     	"parentfield": "stock_transfer_products",
 		"doctype": "Stock Transfer Products"

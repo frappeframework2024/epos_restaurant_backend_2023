@@ -5,6 +5,7 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "element_name",
   "category",
   "shape_type",
   "photo",
@@ -34,12 +35,17 @@
    "fieldname": "custom_shape",
    "fieldtype": "HTML Editor",
    "label": "Custom Shape"
+  },
+  {
+   "fieldname": "element_name",
+   "fieldtype": "Data",
+   "label": "Element Name"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-10 10:26:23.871507",
+ "modified": "2024-08-24 09:47:49.805605",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Floor Plant Element",
