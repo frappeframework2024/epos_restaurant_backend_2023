@@ -27,7 +27,6 @@
     }
     onMounted(() => { 
         const act = JSON.parse(localStorage.getItem("_d"))
- 
         if(act == null){
             onSelect(active.value)
         }else{

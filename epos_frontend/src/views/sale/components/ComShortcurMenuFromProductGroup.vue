@@ -94,13 +94,12 @@
 
 </script>
 <style scoped>
-.wrap-sm {
-    width: calc( 100vw - 22px);
-}
-.menu-cat-scroll {
-    width: 100%;
-    overflow-x: scroll;
-    white-space: nowrap;
-}
-
+    .wrap-sm {
+        width: calc( 100vw - 22px);
+    }
+    .menu-cat-scroll {
+        width: 100%;
+        overflow-x: scroll;
+        white-space: nowrap;
+    }
 </style>

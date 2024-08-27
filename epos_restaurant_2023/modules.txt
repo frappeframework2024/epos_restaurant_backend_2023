@@ -11,3 +11,4 @@ Product Manager
 GYM
 Account
 Coupon
+Jewelry Management

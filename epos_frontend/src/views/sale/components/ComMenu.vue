@@ -55,104 +55,97 @@
     </div>
 </template>
 <script setup>
-import ComShortcut from './ComShortcut.vue';
-import ComShortcurMenuFromProductGroup from './ComShortcurMenuFromProductGroup.vue';
-import ComMenuItemByProductCategory from './ComMenuItemByProductCategory.vue';
-import ComPlaceholder from '@/components/layout/components/ComPlaceholder.vue';
-import ComMenuItem from './ComMenuItem.vue';
-import { inject, defineProps ,ref,onUnmounted,onMounted,computed} from '@/plugin';
-import { useDisplay } from 'vuetify'
-import ComSaleButtonActions from './ComSaleButtonActions.vue';
- 
-const { mobile } = useDisplay()
-const product = inject("$product")
-const frappe = inject("$frappe")
-const gv = inject("$gv");
-const db = frappe.db();
-
-const props = defineProps({
-    backgroundImage: String
-});
-
-const scrollContainer = ref(null);
- 
-function onBack(){
-    window.history.back();
-}
-
-function getCustomerScrollWidth() {
-    const is_window = localStorage.getItem('is_window');
-    if (is_window == 1) {
-        return 'scrollbar';
-    }
-    return '';
-}
-
-
-function onMenuRefresh() {
-    if (product.setting.pos_menus.length > 0) {
-        product.loadPOSMenu()
-    } else {
-
-        product.getProductMenuByProductCategory( "All Product Categories")
-        product.loadPOSMenu();
- 
-    }
-
-}
-
-const onScroll = () => {
+    import ComShortcut from './ComShortcut.vue';
+    import ComShortcurMenuFromProductGroup from './ComShortcurMenuFromProductGroup.vue';
+    import ComMenuItemByProductCategory from './ComMenuItemByProductCategory.vue';
+    import ComPlaceholder from '@/components/layout/components/ComPlaceholder.vue';
+    import ComMenuItem from './ComMenuItem.vue';
+    import { inject, defineProps ,ref,onUnmounted,onMounted,computed} from '@/plugin';
+    import { useDisplay } from 'vuetify'
+    import ComSaleButtonActions from './ComSaleButtonActions.vue';
     
-    if (scrollContainer.value && product.isLoadingProduct ==false && product.isSearchProduct == false) {
-        const container = scrollContainer.value;
-        const scrollBottom = container.scrollHeight - container.scrollTop === container.clientHeight;
-        if (scrollBottom) {
-            product.getProductFromDB()
+    const { mobile } = useDisplay()
+    const product = inject("$product")
+    const frappe = inject("$frappe")
+    const gv = inject("$gv");
+    const db = frappe.db();
+
+    const props = defineProps({
+        backgroundImage: String
+    });
+
+    const scrollContainer = ref(null);
+    
+    function onBack(){
+        window.history.back();
+    }
+
+    function getCustomerScrollWidth() {
+        const is_window = localStorage.getItem('is_window');
+        if (is_window == 1) {
+            return 'scrollbar';
         }
+        return '';
     }
-};
-onMounted(() => {
-     
-    if (scrollContainer.value && product.setting.default_pos_menu=="" ) {
-        scrollContainer.value.addEventListener('scroll', onScroll);
-    } 
 
-    const item_menu_setting = JSON.parse(localStorage.getItem("item_menu_setting"))
-    if (item_menu_setting) {
-        gv.itemMenuSetting = item_menu_setting
-    }
-});
-onUnmounted(() => {
-    if (scrollContainer.value && product.setting.default_pos_menu=="") {
-        scrollContainer.value.removeEventListener('scroll', onScroll);
-    }
-});
 
+    function onMenuRefresh() {
+        if (product.setting.pos_menus.length > 0) {
+            product.loadPOSMenu()
+        } else {
+            product.getProductMenuByProductCategory( "All Product Categories")
+            product.loadPOSMenu();
+        }
+
+    }
+
+    const onScroll = () => {
+        if (scrollContainer.value && product.isLoadingProduct ==false && product.isSearchProduct == false) {
+            const container = scrollContainer.value;
+            const scrollBottom = container.scrollHeight - container.scrollTop === container.clientHeight;
+            if (scrollBottom) {
+                product.getProductFromDB()
+            }
+        }
+    };
+
+    onMounted(() => {
+        if (scrollContainer.value && product.setting.default_pos_menu=="" ) {
+            scrollContainer.value.addEventListener('scroll', onScroll);
+        } 
+        const item_menu_setting = JSON.parse(localStorage.getItem("item_menu_setting"))
+        if (item_menu_setting) {
+            gv.itemMenuSetting = item_menu_setting
+        }
+    });
+
+    onUnmounted(() => {
+        if (scrollContainer.value && product.setting.default_pos_menu=="") {
+            scrollContainer.value.removeEventListener('scroll', onScroll);
+        }
+    });
 
 </script>
 
 <style>
-.scrollbar::-webkit-scrollbar {
-    width: 17px;
-}
-.loading-pr-more {
-    text-align: center;
-    color: #fff;
-    background: #0000008a;
-    padding: 10px 0;
-    position: absolute;
-    bottom: 77px;
-    z-index: 9999999;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 131px;
-}
-@media (max-width:767.98px) {
-    #wrap_menu {
-        height: calc(100vh - 238px) !important;
+    .scrollbar::-webkit-scrollbar {
+        width: 17px;
     }
     .loading-pr-more {
-        bottom: 13px !important;
+        text-align: center;
+        color: #fff;
+        background: #0000008a;
+        padding: 10px 0;
+        position: absolute;
+        bottom: 76px;
+        z-index: 9999999;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 131px;
     }
-}
+    @media (max-width:767.98px) {
+        #wrap_menu {
+            height: calc(100vh - 238px) !important;
+        }
+    }
 </style>
