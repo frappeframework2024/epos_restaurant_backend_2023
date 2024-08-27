@@ -1,26 +1,6 @@
 <template>
   <div>
-    <input
-      v-model="barcode_api.type"
-      placeholder="Enter barcode type (e.g., code128)"
-    />
-    <input v-model="barcode_api.text" placeholder="Enter text for barcode" />
-    <input
-      v-model.number="barcode_api.scale"
-      type="number"
-      placeholder="Enter scale (e.g., 3)"
-    />
-    <input
-      v-model="barcode_api.bar_rotate"
-      placeholder="Enter rotation (e.g., N)"
-    />
-    <label>
-      <input type="checkbox" v-model="barcode_api.include_text" />
-      Include Text
-    </label>
-
-    <img :src="barcodeUrl" alt="Barcoded" />
-
+  
     <router-view />
   </div>
 </template>
