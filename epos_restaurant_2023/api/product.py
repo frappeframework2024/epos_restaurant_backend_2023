@@ -344,7 +344,8 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
             '' as price_rule,
             'product' as type,
             variant_of,
-            is_variant
+            is_variant,
+            pos_note
             
         from `tabProduct`
         where
