@@ -100,7 +100,7 @@ class Product(Document):
 					"price":m.price,
 					"photo":m.photo
 				})
-				
+    
 			self.combo_menu_data = json.dumps(combo_menus)
 
 		if self.is_combo_menu and self.combo_groups and self.use_combo_group==1:
@@ -126,6 +126,8 @@ class Product(Document):
    
 		if not self.last_purchase_cost or self.last_purchase_cost == 0:
 			self.last_purchase_cost = self.cost
+   
+		
 
 
 	def autoname(self):
