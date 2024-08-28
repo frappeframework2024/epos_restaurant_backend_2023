@@ -128,7 +128,10 @@ class Product(Document):
 			self.last_purchase_cost = self.cost
    
 		
-
+		# material cost 
+		for d in self.produce_products:
+			d.total_amount = d.quantity * d.base_cost
+		self.material_cost = sum([d.total_amount for d in self.produce_products])
 
 	def autoname(self):
 		if self.flags.ignore_autoname==True:
