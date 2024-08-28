@@ -28,6 +28,11 @@
     "@babel/helper-validator-identifier" "^7.24.7"
     to-fast-properties "^2.0.0"
 
+"@chenfengyuan/vue-barcode@2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@chenfengyuan/vue-barcode/-/vue-barcode-2.0.2.tgz#c6a1549af71f553763a97d56ec75e19cdd921a65"
+  integrity sha512-lHQhYfcqWeeA/UYoe4O+O6c8WD+t9WO8SiWohKOVVIiwPhcvC58YxhvlFvJme0/CPL7+Sh1XCpMaC9Mo2Dt5jQ==
+
 "@esbuild/aix-ppc64@0.21.5":
   version "0.21.5"
   resolved "https://registry.yarnpkg.com/@esbuild/aix-ppc64/-/aix-ppc64-0.21.5.tgz#c7184a326533fcdf1b8ee0733e21c713b975575f"
@@ -401,6 +406,11 @@ delayed-stream@~1.0.0:
   resolved "https://registry.yarnpkg.com/delayed-stream/-/delayed-stream-1.0.0.tgz#df3ae199acadfb7d440aaae0b29e2272b24ec619"
   integrity sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==
 
+draggable-resizable-vue3@^1.0.94-beta:
+  version "1.0.94-beta"
+  resolved "https://registry.yarnpkg.com/draggable-resizable-vue3/-/draggable-resizable-vue3-1.0.94-beta.tgz#27571b5d4301829ff2c5f4cf61aa40e0d004cadb"
+  integrity sha512-5faM6lkLIrh9lgiviOeA+kOYatU6MjGHiA93P4B/eFTGYu9EkLDniN0QudhxTm60aLAFLBO3QlZOskeYKTH9dg==
+
 engine.io-client@~6.5.2:
   version "6.5.4"
   resolved "https://registry.npmjs.org/engine.io-client/-/engine.io-client-6.5.4.tgz"
@@ -481,6 +491,11 @@ fsevents@~2.3.2, fsevents@~2.3.3:
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.3.tgz#cac6407785d03675a2a5e1a5305c697b347d90d6"
   integrity sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==
+
+jsbarcode@3:
+  version "3.11.6"
+  resolved "https://registry.yarnpkg.com/jsbarcode/-/jsbarcode-3.11.6.tgz#96e8fbc3395476e162982a6064b98a09b5ea02c0"
+  integrity sha512-G5TKGyKY1zJo0ZQKFM1IIMfy0nF2rs92BLlCz+cU4/TazIc4ZH+X1GYeDRt7TKjrYqmPfTjwTBkU/QnQlsYiuA==
 
 magic-string@^0.30.10:
   version "0.30.11"

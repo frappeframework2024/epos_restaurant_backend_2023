@@ -8,10 +8,19 @@ frappe.ui.form.on("Sale Coupon", {
     onload(frm){
         on_member_type_changed(frm)
     },
+    duration_base_on:function(frm){
+        on_duration_base_on_changed(frm,true)
+    },
+
+    duration:function(frm){
+        on_duration_changed(frm,true)
+    },
 
     member_type:function(frm){
         on_member_type_changed(frm, true)
     },
+
+
     member:function(frm){
         on_member_changed(frm,true)
     },
@@ -26,6 +35,38 @@ frappe.ui.form.on("Sale Coupon", {
         on_discount_value_changed(frm,true)
     }
 });
+
+function on_duration_base_on_changed(frm, changed){
+    on_duration_changed(frm,changed)
+}
+
+function on_duration_changed(frm, changed){
+    if(changed){
+        frm.set_df_property('end_date', 'read_only', 0);
+        frm.set_df_property('end_date', 'read_only', 0);
+        const _date = new Date(frm.doc.start_date);  
+        const _duration =   frm.doc.duration;   
+        let _end_date = _date;
+        switch(frm.doc.duration_base_on){
+            case 'Day(s)':
+                _end_date = new Date(_date.setDate(_date.getDate() + _duration));   
+                break
+            case 'Month(s)':
+                const new_month = new Date(_date.setMonth(_date.getMonth() +_duration)); 
+                _end_date =  new Date(new_month.setDate(new_month.getDate() -1)); 
+                break;
+        }  
+        frm.doc.end_date = _end_date;  
+        frm.doc.expiry_date = _end_date;
+        frm.refresh_field("end_date"); 
+        frm.refresh_field("expiry_date"); 
+        
+        frm.set_df_property('end_date', 'read_only', 1);
+        frm.set_df_property('expiry_date', 'read_only', 1);
+    }
+}
+
+
 
 function on_member_type_changed(frm, changed){
     frm.set_df_property('member', 'hidden',0);

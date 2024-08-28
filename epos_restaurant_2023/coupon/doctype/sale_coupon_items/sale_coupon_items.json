@@ -10,10 +10,10 @@
   "regular_price",
   "price",
   "column_break_raxx",
+  "total_visit",
   "quantity",
   "amount",
-  "column_break_rcrz",
-  "total_visit"
+  "column_break_rcrz"
  ],
  "fields": [
   {
@@ -27,7 +27,9 @@
    "fetch_from": "coupon_type.price",
    "fieldname": "regular_price",
    "fieldtype": "Currency",
-   "label": "Regular Price"
+   "hidden": 1,
+   "label": "Regular Price",
+   "print_hide": 1
   },
   {
    "default": "0",
@@ -66,13 +68,14 @@
    "fieldname": "total_visit",
    "fieldtype": "Int",
    "label": "Total Visit",
+   "print_hide": 1,
    "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-17 15:56:53.423409",
+ "modified": "2024-08-28 10:26:08.725796",
  "modified_by": "Administrator",
  "module": "Coupon",
  "name": "Sale Coupon Items",

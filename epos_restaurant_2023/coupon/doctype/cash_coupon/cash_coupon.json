@@ -20,14 +20,14 @@
   "column_break_rjqb",
   "unlimited",
   "expiry_date",
+  "coupon_code_section",
+  "items",
   "section_break_ibmv",
   "total_coupon",
   "total_amount",
   "column_break_syoz",
   "total_claim",
-  "total_balance",
-  "coupon_code_section",
-  "items"
+  "total_balance"
  ],
  "fields": [
   {
@@ -184,7 +184,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-09 15:22:51.375409",
+ "modified": "2024-08-28 10:18:43.397939",
  "modified_by": "Administrator",
  "module": "Coupon",
  "name": "Cash Coupon",

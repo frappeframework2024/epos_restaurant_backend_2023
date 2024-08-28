@@ -9,7 +9,8 @@
   "section_break_mjje",
   "coupon_type",
   "total_visit",
-  "price"
+  "price",
+  "column_break_rqvf"
  ],
  "fields": [
   {
@@ -36,11 +37,15 @@
   {
    "fieldname": "section_break_mjje",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_rqvf",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-02 16:58:36.833823",
+ "modified": "2024-08-28 09:27:59.406661",
  "modified_by": "Administrator",
  "module": "Coupon",
  "name": "Sale Coupon Type",

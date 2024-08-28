@@ -2,11 +2,14 @@
 # For license information, please see license.txt
 
 import frappe
+from frappe import _
 from frappe.model.document import Document
 
 
 class SaleCouponType(Document):
-	pass
+	def validate(self):
+		pass
+		
 
 @frappe.whitelist()
 def  get_sale_coupon_type_search_link(txt):

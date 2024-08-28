@@ -10,8 +10,11 @@
     "copy-html-entry": "cp ../epos_restaurant_2023/public/embed/index.html ../epos_restaurant_2023/www/embed.html"
   },
   "dependencies": {
+    "@chenfengyuan/vue-barcode": "2",
     "@primevue/themes": "^4.0.4",
+    "draggable-resizable-vue3": "^1.0.94-beta",
     "frappe-js-sdk": "^1.6.0",
+    "jsbarcode": "3",
     "primeflex": "^3.3.1",
     "primeicons": "^7.0.0",
     "primevue": "^4.0.4",
