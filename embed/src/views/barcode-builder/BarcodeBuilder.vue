@@ -13,11 +13,6 @@
         <div class="preview-controls">
           Include Text:
           <input type="checkbox" />
-          Bold:
-          <input type="checkbox" />
-
-          Italic:
-          <input type="checkbox" />
         </div>
       </Fieldset>
 
@@ -146,6 +141,13 @@
             <input type="checkbox" v-model="selectedElement.include_text" />
             Include Text
           </label>
+
+          Bold:
+          <input type="checkbox" />
+
+          Italic:
+          <input type="checkbox" />
+
           <div>
             Text Alignment:
             <Dropdown
@@ -313,9 +315,12 @@ function onPrint() {
     printWindow.document.write(`
       <style>
         @media print {
-          * {
+          * body{
             margin: 0;
             padding: 0;
+            display:flex;
+            justify-content: center;
+            align-items:center;
           }
         }
       </style>

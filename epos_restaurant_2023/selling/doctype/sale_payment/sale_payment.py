@@ -250,11 +250,12 @@ def update_sale(self):
 		data = frappe.db.sql("select  ifnull(sum(payment_amount),0)  as total_paid from `tabSale Payment` where docstatus=1 and sale='{}' and payment_amount>0".format(self.sale),as_dict=1)
 		value = frappe.db.get_value('Sale', self.sale,  ["grand_total","total_cash_coupon_claim"], as_dict = 1)
 		if data and value["grand_total"]:
-			balance =round(value["grand_total"],int(currency_precision)) + round((value["total_cash_coupon_claim"] or 0),int(currency_precision)) - round(data[0].total_paid, int(currency_precision))  
+			total_paid = (round(data[0].total_paid, int(currency_precision)) +  round((value["total_cash_coupon_claim"] or 0),int(currency_precision)))
+			balance = round((value["grand_total"] or 0),int(currency_precision))  - total_paid
 			status = ""
 			if balance == 0:
 				status = "Paid"
-			elif balance >0 and data[0].total_paid>0:
+			elif balance >0 and total_paid>0:
 				status = "Partially Paid"
 			else:
 				status = "Unpaid"
