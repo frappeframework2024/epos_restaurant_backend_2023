@@ -162,6 +162,7 @@
    "search_index": 1
   },
   {
+   "depends_on": "eval:doc.docstatus != 1",
    "fieldname": "payment_tab",
    "fieldtype": "Tab Break",
    "label": "Payment"
@@ -370,7 +371,7 @@
    "link_fieldname": "sale_coupon"
   }
  ],
- "modified": "2024-08-28 10:44:18.003008",
+ "modified": "2024-08-30 08:48:54.408288",
  "modified_by": "Administrator",
  "module": "Coupon",
  "name": "Sale Coupon",

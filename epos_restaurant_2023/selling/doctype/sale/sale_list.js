@@ -18,11 +18,15 @@ frappe.listview_settings['Sale'] = {
         }
     },
     refresh: function(listview) {
-        listview.page.add_inner_button("Sync Sales", function() {
-            frappe.call('epos_restaurant_2023.api.utils.sync_sale_to_server').then(r => {
-                frappe.show_alert(r.message)
-            })
-        });
+        // pls use client script to add this button
+        // or other metod that can show and hide this button 
+
+        
+        // listview.page.add_inner_button("Sync Sales", function() {
+        //     frappe.call('epos_restaurant_2023.api.utils.sync_sale_to_server').then(r => {
+        //         frappe.show_alert(r.message)
+        //     })
+        // });
     },
 }
 

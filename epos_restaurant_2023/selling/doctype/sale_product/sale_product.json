@@ -24,6 +24,7 @@
   "base_price",
   "product_tax_rule",
   "batch_no",
+  "select_material",
   "section_break_9",
   "quantity",
   "deleted_quantity",
@@ -1139,12 +1140,18 @@
    "fieldname": "is_variant",
    "fieldtype": "Check",
    "label": "is_variant"
+  },
+  {
+   "depends_on": "eval: frappe.user.has_role(\"Jewelry Manager\")",
+   "fieldname": "select_material",
+   "fieldtype": "Button",
+   "label": "Select Material"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-21 16:59:58.267996",
+ "modified": "2024-08-29 10:15:57.794921",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",

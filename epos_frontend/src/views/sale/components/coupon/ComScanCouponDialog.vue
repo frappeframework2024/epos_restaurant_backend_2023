@@ -104,10 +104,7 @@
 
     function onConfirmCoupon(){ 
         loading.value = true;
-        if (sale.sale.cash_coupon_items?.length <= 0) {
-            toaster.warning($t('Please enter any coupon'));
-            return
-        }
+      
         let _total_claim_amount = 0;
         _total_claim_amount = sale.sale.cash_coupon_items.reduce((sum,i)=>sum + i.claim_amount,0 )
         if(_total_claim_amount>sale.sale.grand_total){

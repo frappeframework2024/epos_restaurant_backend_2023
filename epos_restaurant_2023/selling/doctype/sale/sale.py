@@ -195,7 +195,7 @@ class Sale(Document):
 				frappe.throw("Your coupon claim and payment is over balance.")
 
 			_balance -= _total_claim_coupon
-		self.balance = _balance
+		self.balance = _balance		
 
 		if (self.sale_discount or 0) > 0:
 			self.crypto_able_amount =  0	
@@ -927,20 +927,38 @@ def validate_cash_coupon_claim(self):
 
 	if len(self.cash_coupon_items)>0:
 		sql = """select name,parent, member, amount, claim_amount, balance, unlimited,expiry_date, docstatus from `tabCash Coupon Items` where name in %(name)s"""
+	
 		coupons = frappe.db.sql(sql,{
 			"name":[d.coupon_code for d in self.cash_coupon_items]
 		}, as_dict= 1) 
+
+		
+
 
 		## check invalite coupon code
 		invalid_coupon = [c for c in  coupons if not c["docstatus"] is 1]
 		if len (invalid_coupon) > 0:
 			frappe.throw("There are invalid coupon code ({})".format(", ".join( [d["name"]  for d in invalid_coupon])))
 
+		coupon_codes = [c["name"] for c in coupons]
+
+		## claim sale coupon 
+		## get sale coupon
+		sale_coupon_sql = """select name,coupon_number,cash_coupon_claim,cash_coupon_balance, cash_coupon_amount, docstatus, end_date from `tabSale Coupon` where name in %(name)s"""
+		sale_coupons = frappe.db.sql(sale_coupon_sql, {"name":[d.coupon_code for d in self.cash_coupon_items]}, as_dict = 1)
+		if len(sale_coupons ) > 0:
+			invalid_sale_coupon = [sc for sc in sale_coupons if not sc["docstatus"] is 1]
+			if len (invalid_sale_coupon)>0:
+				frappe.throw("There are invalid coupon code ({})".format(", ".join( [d["name"]  for d in invalid_coupon])))
+			
+			coupon_codes = coupon_codes + [sc["name"] for sc in sale_coupons]
+
 		## remove sale cash coupon item not exist db
-		[self.cash_coupon_items.remove(d) for d in self.get('cash_coupon_items') if not d.coupon_code in ( [c["name"] for c in coupons])]
+		[self.cash_coupon_items.remove(d) for d in self.get('cash_coupon_items') if not d.coupon_code in coupon_codes]
  
 		
 		## set value and check expired, balance
+		claim_amount = 0
 		for d in coupons:		
 			for c in [x for x in self.cash_coupon_items if x.coupon_code == d["name"]]:
 				claim_amount = sum([(i.claim_amount or 0) for i in self.cash_coupon_items if i.coupon_code == d["name"]])
@@ -952,58 +970,91 @@ def validate_cash_coupon_claim(self):
 					if d["expiry_date"] < datetime.datetime.strptime(str( self.posting_date), '%Y-%m-%d').date() :
 						frappe.throw("The coupon {} was expired".format(d["name"]))
 
-		self.total_cash_coupon_claim = sum([(c.claim_amount or 0) for c in self.cash_coupon_items])
+		
+
+		sale_coupon_claim_amount = 0
+		if len (sale_coupons) > 0:
+			for sc in sale_coupons:
+				for c in [x for x in self.cash_coupon_items if x.coupon_code == sc["name"]]:
+					sale_coupon_claim_amount = sum([(i.claim_amount or 0) for i in self.cash_coupon_items if i.coupon_code == sc["name"]])
+					if sc["cash_coupon_balance"] < sale_coupon_claim_amount:
+						frappe.throw("Sale Coupon {} not enought balance for claim with amount {}. Current balance is {}".format(sc["name"],frappe.format_value(sale_coupon_claim_amount, {"fieldtype":"Currency"}) ,frappe.format_value( d["balance"], {"fieldtype":"Currency"})))
+					c.sale_coupon = sc["name"]
+					if sc["end_date"] < datetime.datetime.strptime(str( self.posting_date), '%Y-%m-%d').date() :
+						frappe.throw("The coupon {} was expired".format(sc["name"]))
+
+		self.total_cash_coupon_claim = claim_amount + sale_coupon_claim_amount		
 
 
 def on_update_coupon_information(self):	
 	if len(self.cash_coupon_items ) > 0 and self.docstatus in (1,2):
-		set_value = """c.claim_amount = t.total_claim_amount,
-				c.balance = c.amount - t.total_claim_amount"""
-		if self.docstatus == 2:
-			""" c.claim_amount = c.claim_amount - t.total_claim_amount,
-			  	c.balance = c.amount - ( c.claim_amount + t.total_claim_amount)  """
-		 
-		## update claim amount , balance in cash coupon item 
-		sql = """update `tabCash Coupon Items` c
-				inner join (
-					select 
-						coupon_code,
-						sum(claim_amount) as total_claim_amount 
-					from `tabSale Cash Coupon Claim` 
-					where parent = %(sale)s
-					group by coupon_code
-				) t on c.`code` = t.coupon_code
-				set {}
-				where c.`code` in %(coupon_codes)s""".format(set_value)	
-				
-		frappe.db.sql(sql, {"sale":self.name,"coupon_codes": [c.coupon_code for c in self.cash_coupon_items]})
-
-		# update cash coupn total claim
-		seen = set()
-		[x for x in self.cash_coupon_items if x.cash_coupon not in [s["coupon_code"] for s in seen] and not seen.add(x)]
-		
-		if len (seen) > 0:
-			update_sql = """update `tabCash Coupon` c
-				inner join (
-					select 
-						parent,
-						sum(claim_amount) as total_claim_amount,
-						sum(balance) as total_balance
-					from `tabCash Coupon Items` x 
-					where x.parent in %(parent)s
-					group by parent
-				) i on i.parent = c.`name`
-					set c.total_claim = i.total_claim_amount,
-					c.total_balance = i.total_balance
-				where c.name in %(parent)s"""
+		cash_coupons = [s for s in self.cash_coupon_items if s.cash_coupon]
+		if len(cash_coupons)>0:
+			set_value = """c.claim_amount =  t.total_claim_amount,
+					c.balance = c.amount - t.total_claim_amount"""			
 			
-			frappe.db.sql(update_sql, {"parent":[m.coupon_code for m in seen ]})
+			## update claim amount , balance in cash coupon item 
+			sql = """update `tabCash Coupon Items` c
+					inner join (
+						select 
+							x.coupon_code,
+							sum(x.claim_amount) as total_claim_amount 
+						from `tabSale Cash Coupon Claim` x
+						where coalesce(x.cash_coupon,'') != '' 
+						and x.coupon_code in %(coupon_codes)s
+						and x.docstatus = 1
+						group by x.coupon_code
+					) t on c.`code` = t.coupon_code
+					set {}
+					where c.`code` in %(coupon_codes)s""".format(set_value)	
+					
+			frappe.db.sql(sql, {"sale":self.name,"coupon_codes": [c.coupon_code for c in cash_coupons ]})
 
-			## update coupon information on customer 
-			from epos_restaurant_2023.api.api import update_cash_coupon_summary_to_customer
-			update_cash_coupon_summary_to_customer([m.member for m in seen])
+			# update cash coupn total claim
+			seen = set()
+			[x for x in cash_coupons if x.cash_coupon not in [s["coupon_code"] for s in seen] and not seen.add(x)]
+			
+			if len (seen) > 0:
+				update_sql = """update `tabCash Coupon` c
+					inner join (
+						select 
+							x.parent,
+							sum(x.claim_amount) as total_claim_amount,
+							sum(x.balance) as total_balance
+						from `tabCash Coupon Items` x 
+						where  x.parent in %(parent)s
+						group by x.parent
+					) i on i.parent = c.`name`
+						set c.total_claim = i.total_claim_amount,
+						c.total_balance = i.total_balance
+					where c.name in %(parent)s"""
+				
+				frappe.db.sql(update_sql, {"parent":[m.coupon_code for m in seen ]})
 
- 
+				## update coupon information on customer 
+				from epos_restaurant_2023.api.api import update_cash_coupon_summary_to_customer
+				update_cash_coupon_summary_to_customer([m.member for m in seen])
+
+		sale_coupons = [s for s in self.cash_coupon_items if s.sale_coupon]
+		if len(sale_coupons) > 0:
+			update_value = """sc.cash_coupon_claim = c.total_claim_amount, sc.cash_coupon_balance = sc.cash_coupon_amount -  c.total_claim_amount"""			
+			update_sale_coupon_sql = """update `tabSale Coupon` sc
+			inner join (
+				select 
+					s.coupon_code,
+					sum(s.claim_amount) as total_claim_amount 
+				from `tabSale Cash Coupon Claim` s
+				where coalesce(s.sale_coupon,'')!= '' 
+				and s.docstatus = 1
+				and s.coupon_code in %(coupon_codes)s
+				group by s.coupon_code
+			) c on c.coupon_code = sc.name
+			set {}
+			where sc.name in %(coupon_codes)s""".format(update_value)
+
+			frappe.db.sql(update_sale_coupon_sql, {"sale":self.name,"coupon_codes": [c.coupon_code for c in sale_coupons ]})
+
+
 
 
 def validate_tax(doc):

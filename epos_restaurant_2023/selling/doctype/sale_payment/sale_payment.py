@@ -248,9 +248,9 @@ def update_sale(self):
 	# update sale balance and paid
 	if self.sale:
 		data = frappe.db.sql("select  ifnull(sum(payment_amount),0)  as total_paid from `tabSale Payment` where docstatus=1 and sale='{}' and payment_amount>0".format(self.sale),as_dict=1)
-		sale_amount = frappe.db.get_value('Sale', self.sale, 'grand_total')
-		if data and sale_amount:
-			balance =round(sale_amount,int(currency_precision))-round(data[0].total_paid, int(currency_precision))  
+		value = frappe.db.get_value('Sale', self.sale,  ["grand_total","total_cash_coupon_claim"], as_dict = 1)
+		if data and value["grand_total"]:
+			balance =round(value["grand_total"],int(currency_precision)) + round((value["total_cash_coupon_claim"] or 0),int(currency_precision)) - round(data[0].total_paid, int(currency_precision))  
 			status = ""
 			if balance == 0:
 				status = "Paid"

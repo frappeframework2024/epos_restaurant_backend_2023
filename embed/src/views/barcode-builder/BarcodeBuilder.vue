@@ -1,305 +1,230 @@
 <template>
-  <div class="p-4">
-    <label for="cmInput" class="block mb-2">Enter value in centimeters:</label>
-    <InputText
-      id="cmInput"
-      type="number"
-      v-model="centimeters"
-      class="border rounded p-2 mb-4 w-full"
-      placeholder="Enter centimeters"
-    />
-    <p>{{ centimeters }} cm is approximately {{ pixels.toFixed(2) }} pixels</p>
-  </div>
-  <!-- Barcode Generator -->
-  <h2 class="flex justify-content-center align-items-center">
-    Barcode Generator
-  </h2>
-
   <div class="grid p-3">
     <div
       class="flex-1 w-full flex align-items-center justify-content-center m-3"
     >
-      <Fieldset class="w-full" legend="Barcode">
-        <div class="grid formgrid p-fluid">
-          <div class="field col-12 md:col-6">
-            <label for="barcodeType">Barcode Type :</label>
-            <Dropdown
-              v-model="setting.barcodeType"
-              :options="barcodeTypes"
-              optionLabel="label"
-              inputId="barcodeType"
-              class="input-dropdown mx-2 w-8"
-              placeholder="Select a barcode type"
-            />
-          </div>
+      <Fieldset class="w-full m-2" legend="Barcode">
+        <div class="field">
+          <label for="fontSize">Font Size:</label>
+          <InputNumber inputId="fontSize" class="input-dropdown mx-2 w-4" />
+          <Slider :max="36" class="my-3 w-4" />
+        </div>
 
-          <div class="field col-12 md:col-6">
-            <label for="price">Price($USD) :</label>
-            <InputNumber
-              v-model="setting.price"
-              inputId="price"
-              :min="0"
-              :max="100"
-              class="input-dropdown mx-2 w-8"
-            />
-          </div>
+        <div class="preview-controls">
+          Include Text:
+          <input type="checkbox" />
+          Bold:
+          <input type="checkbox" />
 
-          <div class="field col-12 md:col-6">
-            <label for="barcode">Barcode:</label>
-            <InputText
-              v-model="setting.code"
-              inputId="barcode"
-              placeholder="Enter barcode"
-              class="input-dropdown mx-2 w-auto"
-            />
-          </div>
+          Italic:
+          <input type="checkbox" />
+        </div>
+      </Fieldset>
 
-          <div class="field col-12 md:col-6">
+      <Fieldset class="w-full m-2" legend="Previews">
+        <label>Height:</label>
+        <InputText v-model.number="data.height" />
+        <Slider v-model="data.height" :min="50" :max="500" class="w-4 my-3" />
+
+        <label>Width:</label>
+        <InputText v-model.number="data.width" />
+        <Slider v-model="data.width" class="w-4 my-3" :min="50" :max="500" />
+
+        <label>Unit:</label>
+        <Select
+          v-model="data.unit"
+          :options="['mm', 'cm', 'in', 'px']"
+          class="md:w-56"
+        />
+      </Fieldset>
+    </div>
+  </div>
+
+  <Button label="Print" icon="pi pi-print" @click="onPrint" />
+
+  <table border="1">
+    <tr>
+      <td>
+        <InputText v-model.number="keyword" placeholder="Search Field" />
+        <div style="height: 300px; width: 300px; overflow: scroll">
+          <div
+            v-if="meta_data"
+            v-for="(f, index) in filteredFields"
+            :key="f.fieldname"
+          >
+            {{ f.label }}
+            <Button label="Select" @click="onAddElement(f)" />
+          </div>
+        </div>
+      </td>
+      <td>
+        {{ data }}
+        <hr />
+        {{ selectedElement }}
+        <div
+          id="print-area"
+          :style="{
+            height: data.height + data.unit,
+            width: data.width + data.unit,
+            border: '1px solid red',
+            overflow: 'hidden',
+            position: 'relative',
+          }"
+        >
+          <div
+            v-if="isPrint"
+            v-for="(e, index) in data.elements"
+            :key="e.fieldname + index"
+            :style="{
+              position: 'absolute',
+              left: e.x + 'px',
+              top: e.y + 'px',
+              height: e.height + 'px',
+              width: e.width + 'px',
+              overflow: 'hidden',
+            }"
+          >
+            <template v-if="e.fieldtype == 'Barcode'">
+              <div style="height: 100%; width: 100%; overflow: hidden">
+                <img style="width: 100%" :src="url" />
+              </div>
+            </template>
+            <template v-else>
+              {{ doc[e.fieldname] }}
+            </template>
+          </div>
+          <DraggableResizableVue
+            v-else
+            v-for="(e, idx) in data.elements"
+            :key="e.fieldname + idx"
+            v-model:x="e.x"
+            v-model:y="e.y"
+            v-model:h="e.height"
+            v-model:w="e.width"
+            v-model:active="e.isActive"
+            @click="onSelectElement(e)"
+            :style="{
+              fontSize: e.font_size + 'px',
+              fontFamily: e.font_type.value,
+            }"
+          >
+            <template v-if="e.fieldtype == 'Barcode'">
+              <div style="height: 100%; width: 100%; overflow: hidden">
+                <img style="width: 100%; height: 100%" :src="url" />
+              </div>
+            </template>
+            <template v-else>
+              <div style="overflow: hidden; height: 100%">
+                {{ doc[e.fieldname] }}
+              </div>
+            </template>
+          </DraggableResizableVue>
+        </div>
+        <div v-if="selectedElement">
+          <label>Element Property:</label>
+          <hr />
+          <label>Font Size:</label>
+          <InputText v-model.number="selectedElement.font_size" />
+          <Slider
+            v-model="selectedElement.font_size"
+            class="w-56"
+            :min="8"
+            :max="20"
+          />
+
+          <div class="field">
             <label for="fontFamily">Font Type:</label>
             <Dropdown
-              v-model="setting.fontFamily"
+              v-model="selectedElement.font_type"
               :options="fontFamily"
               optionLabel="label"
               placeholder="Select a Font"
               class="input-dropdown mx-2 w-auto"
             />
           </div>
+          <label>
+            <input type="checkbox" v-model="selectedElement.include_text" />
+            Include Text
+          </label>
+          <div>
+            Text Alignment:
+            <Dropdown
+              v-model="selectedElement.alignX"
+              :options="alignX"
+              optionLabel="label"
+            />
+          </div>
 
-          <div class="field col-12 md:col-6">
+          <div>
+            Text Adjustment:
+            <Dropdown
+              v-model="selectedElement.alignY"
+              :options="alignY"
+              optionLabel="label"
+            />
+          </div>
+
+          <div class="field">
             <label for="rotate">Rotate:</label>
             <Dropdown
-              v-model="setting.rotate"
+              v-model="selectedElement.rotate"
               :options="rotate"
               optionLabel="label"
               class="input-dropdown mx-2 w-auto"
             />
           </div>
 
-          <div class="field col-12 md:col-6">
-            <label for="fontSize">Font Size:</label>
-            <InputNumber
-              disabled
-              v-model="setting.fontSize"
-              inputId="fontSize"
-              class="input-dropdown mx-2 w-8"
-            />
-            <Slider v-model="setting.fontSize" :max="36" class="my-2 w-full" />
-          </div>
+          <label>Barcode Type:</label>
+          <Select
+            v-model="selectedElement.fieldtype"
+            :options="['Data', 'Currency', 'Barcode', 'Int', 'Float']"
+            class="w-full md:w-56"
+          />
 
-          <div class="preview-controls">
-            <label>
-              <input type="checkbox" v-model="setting.include_text" />
-              Include Text
-            </label>
-
-            <div>
-              Bold:
-              <input type="checkbox" v-model="isBold" />
-            </div>
-            <div>
-              Italic
-              <input type="checkbox" v-model="isItalic" />
-            </div>
-
-            <div class="control-group">
-              <label>Height:</label>
-              <InputText v-model.number="setting.height" class="w-3" />
-              <Slider
-                v-model="setting.height"
-                :min="100"
-                :max="400"
-                class="w-3"
-              />
-            </div>
-            <div class="control-group">
-              <InputNumber v-model="setting.width" :max="400" fluid />
-              <label>Width: {{ setting.width }} px</label>
-              <!-- <InputText disabled v-model.number="setting.width" class="w-3" /> -->
-              <Slider
-                v-model="setting.width"
-                :min="200"
-                :max="400"
-                class="w-3"
-              />
-            </div>
-          </div>
+          <Button label="Delete" @click="onDelete" />
         </div>
-      </Fieldset>
-    </div>
-
-    <div class="flex-1 w-full flex justify-content-center m-3">
-      <Fieldset class="w-full" legend="Previews">
-        <div class="card">
-          <div
-            class="barcode-container flex justify-content-center align-items-center"
-          >
-            <div
-              class="bar_code_content"
-              :style="{
-                backgroundColor: setting.backgroundColor,
-                fontSize: setting.fontSize + 'px',
-                fontFamily: setting.fontFamily.value,
-                transform: 'rotate(' + setting.rotate.value + 'deg)',
-                height: setting.height + 50 + 'px',
-                width: setting.width + 50 + 'px',
-              }"
-              style="
-                position: relative;
-                padding-top: 2rem !important;
-                display: flex;
-                justify-content: center;
-              "
-            >
-              <div
-                :style="boxStyle"
-                @mousedown="(event) => startDrag(event, 'box')"
-              >
-                <span :style="textStyle">
-                  {{ setting.name }}
-                </span>
-              </div>
-              <div
-                :style="boxPriceStyle"
-                @mousedown="(event) => startDrag(event, 'boxPrice')"
-              >
-                <span :style="textStyle">
-                  {{ setting.price }}
-                </span>
-              </div>
-              <img
-                :style="{
-                  height: setting.height + 'px',
-                  width: setting.width + 'px',
-                }"
-                :src="url"
-                alt="Barcode"
-              />
-            </div>
-          </div>
-        </div>
-        <Button label="Print" icon="pi pi-print" @click="onPrint" />
-
-        <label for="text_align_x">Text Alignment X:</label>
-        <Dropdown
-          v-model="setting.text_align_x"
-          :options="text_align_x"
-          optionLabel="label"
-          inputId="text_align_x"
-          class="input-dropdown mx-2 w-8"
-          placeholder="Select a align"
-        />
-
-        <label for="text_align_y">Text Alignment Y :</label>
-        <Dropdown
-          v-model="setting.text_align_y"
-          :options="text_align_y"
-          optionLabel="label"
-          inputId="text_align_y"
-          class="input-dropdown mx-2 w-8"
-          placeholder="Select a align"
-        />
-      </Fieldset>
-    </div>
-  </div>
+      </td>
+    </tr>
+  </table>
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
-import Fieldset from "primevue/fieldset";
+import { onMounted, ref, computed } from "vue";
+import Slider from "primevue/slider";
+import Select from "primevue/select";
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
-import Slider from "primevue/slider";
 import Button from "primevue/button";
+import Fieldset from "primevue/fieldset";
 import Dropdown from "primevue/dropdown";
-import RadioButton from "primevue/radiobutton";
+import DraggableResizableVue from "draggable-resizable-vue3";
+import { FrappeApp } from "frappe-js-sdk";
 
-const centimeters = ref(0);
-
-function cmToPx(centimeters, ppi = 96) {
-  return (centimeters / 2.54) * ppi;
-}
-const pixels = computed(() => cmToPx(centimeters.value));
-
-const isBold = ref(false);
-const isItalic = ref(false);
-
-const textStyle = computed(() => ({
-  fontWeight: isBold.value ? "bold" : "normal",
-  fontStyle: isItalic.value ? "italic" : "normal",
-}));
-
-const boxStyle = ref({
-  position: "absolute",
-  top: "10px",
-  left: "10px",
-  cursor: "grab",
+const frappe = new FrappeApp();
+const db = frappe.db();
+const call = frappe.call();
+const keyword = ref("");
+const data = ref({
+  height: 94,
+  width: 132,
+  unit: "px",
+  elements: [],
 });
 
-const boxPriceStyle = ref({
-  position: "absolute",
-  top: "10px",
-  right: "10px",
-  cursor: "grab",
+const meta_data = ref({});
+const doc = ref({});
+const selectedElement = ref(null);
+const isPrint = ref(false);
+
+const filteredFields = computed(() => {
+  return meta_data.value?.fields?.filter(
+    (r) =>
+      r.hidden === 0 &&
+      r.fieldtype !== "Check" &&
+      r.fieldtype !== "Tab Break" &&
+      r.label?.toLowerCase().includes(keyword.value.toLowerCase())
+  );
 });
-
-let startX = 0;
-let startY = 0;
-let offsetX = 0;
-let offsetY = 0;
-
-let draggingBox = null;
-
-function startDrag(event, box) {
-  draggingBox = box;
-
-  if (box === "box") {
-    boxStyle.value.cursor = "grabbing";
-    offsetX = parseInt(boxStyle.value.left, 10);
-    offsetY = parseInt(boxStyle.value.top, 10);
-  } else if (box === "boxPrice") {
-    boxPriceStyle.value.cursor = "grabbing";
-    offsetX = parseInt(boxPriceStyle.value.right, 10); // Use correct right offset
-    offsetY = parseInt(boxPriceStyle.value.top, 10); // Use correct top offset
-  }
-
-  startX = event.clientX;
-  startY = event.clientY;
-
-  document.addEventListener("mousemove", onDrag);
-  document.addEventListener("mouseup", stopDrag);
-}
-
-function onDrag(event) {
-  const dx = event.clientX - startX;
-  const dy = event.clientY - startY;
-
-  if (draggingBox === "box") {
-    boxStyle.value.left = `${offsetX + dx}px`;
-    boxStyle.value.top = `${offsetY + dy}px`;
-  } else if (draggingBox === "boxPrice") {
-    boxPriceStyle.value.right = `${offsetX - dx}px`; // Correct calculation for right positioning
-    boxPriceStyle.value.top = `${offsetY + dy}px`;
-  }
-}
-
-function stopDrag() {
-  if (draggingBox === "box") {
-    boxStyle.value.cursor = "grab";
-  } else if (draggingBox === "boxPrice") {
-    boxPriceStyle.value.cursor = "grab";
-  }
-
-  draggingBox = null;
-
-  document.removeEventListener("mousemove", onDrag);
-  document.removeEventListener("mouseup", stopDrag);
-}
-
-const barcodeTypes = ref([
-  { label: "Code 128", value: "code128" },
-  { label: "Code 39", value: "39" },
-  { label: "QR Code", value: "qrcode" },
-]);
 
 const fontFamily = ref([
   { label: "Arial", value: "Arial, sans-serif" },
@@ -309,13 +234,13 @@ const fontFamily = ref([
 ]);
 
 const rotate = ref([
-  { label: "0°", value: 0 },
-  { label: "90°", value: 90 },
-  { label: "180°", value: 180 },
-  { label: "270°", value: 270 },
+  { label: "0°", value: "N" },
+  { label: "90°", value: "R" },
+  { label: "180°", value: "L" },
+  { label: "270°", value: "I" },
 ]);
 
-const text_align_x = ref([
+const alignX = ref([
   { label: "Left", value: "left" },
   { label: "Right", value: "right" },
   { label: "Center", value: "center" },
@@ -324,111 +249,106 @@ const text_align_x = ref([
   { label: "Justify", value: "justify" },
 ]);
 
-const text_align_y = ref([
+const alignY = ref([
   { label: "Center", value: "center" },
   { label: "Below", value: "below" },
   { label: "Above", value: "above" },
 ]);
 
-const setting = ref({
-  height: 100,
-  width: 200,
-  backgroundColor: "white",
-  name: "Product",
-  code: "IVC12235",
-  price: 22.5,
-  fontSize: 16,
-  barcodeType: barcodeTypes.value[0],
-  fontFamily: fontFamily.value[0],
-  rotate: rotate.value[0],
-  include_text: false,
-  text_align_x: text_align_x.value[2],
-  text_align_y: text_align_y.value[0],
-});
+function onAddElement(f) {
+  data.value.elements.push({
+    fieldname: f.fieldname,
+    fieldtype: f.fieldtype,
+    x: 0,
+    y: 0,
+    width: 75,
+    height: 25,
+    font_size: 14,
+    font_type: fontFamily.value[0],
+    rotate: rotate.value[0],
+    include_text: false,
+    alignX: alignX.value[2],
+    alignY: alignY.value[1],
+  });
+}
 
 const url = computed(() => {
-  const encodedCode = encodeURIComponent(setting.value.code);
-  const includeTextParam = setting.value.include_text ? "&includetext" : "";
-  return `http://bwipjs-api.metafloor.com/?bcid=${setting.value.barcodeType.value}&text=${encodedCode}&rotate${includeTextParam}&textxalign=${setting.value.text_align_x.value}&textyalign=${setting.value.text_align_y.value}`;
+  if (!selectedElement.value || selectedElement.value.fieldtype !== "Barcode")
+    return "";
+
+  const text = doc.value[selectedElement.value.fieldname] || "";
+  const rotate = selectedElement.value.rotate.value; // Ensure it's a string
+
+  const includeTextParam = selectedElement.value.include_text
+    ? "&includetext"
+    : "";
+  const textxalign = selectedElement.value.alignX.value;
+  const textyalign = selectedElement.value.alignY.value;
+
+  return `http://bwipjs-api.metafloor.com/?bcid=code128&text=${encodeURIComponent(
+    text
+  )}&rotate=${rotate}${includeTextParam}&textxalign=${textxalign}&textyalign=${textyalign}`;
 });
 
+function onDelete() {
+  const index = data.value.elements.indexOf(selectedElement.value);
+  if (index > -1) {
+    data.value.elements.splice(index, 1);
+  }
+  selectedElement.value = null;
+}
+
+function onSelectElement(e) {
+  selectedElement.value = e;
+}
+
 function onPrint() {
-  const divContents = document.querySelector(".bar_code_content").outerHTML;
-
-  // Open a new window with custom height and width
-  const printWindow = window.open("", "", "height=1000px, width=1000px");
-
-  // Write HTML structure
-  printWindow.document.write("<html><head>");
-
-  // Add custom styles for print
-  printWindow.document.write(`
-    <style> 
-        body, html {
-          height: 100%;
-          margin: 0;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        } 
-      
-    </style>
-  `);
-
-  printWindow.document.write("</head><body>");
-  printWindow.document.write(divContents);
-  printWindow.document.write("</body></html>");
-
-  // Close the document and trigger printing
+  isPrint.value = true;
   setTimeout(() => {
-    printWindow.document.close();
-    printWindow.print();
+    const divContents = document.querySelector("#print-area").outerHTML;
+
+    const printWindow = window.open("", "", "height=750px, width=750px");
+
+    printWindow.document.write("<html><head>");
+    printWindow.document.write(`
+      <style>
+        @media print {
+          * {
+            margin: 0;
+            padding: 0;
+          }
+        }
+      </style>
+    `);
+    printWindow.document.write("</head><body>");
+    printWindow.document.write(divContents);
+    printWindow.document.write("</body></html>");
+
+    setTimeout(() => {
+      printWindow.document.close();
+      printWindow.print();
+      isPrint.value = false;
+    }, 1000);
   }, 1000);
 }
+
+onMounted(() => {
+  call
+    .get("epos_restaurant_2023.api.api.get_meta", {
+      doctype: "Product",
+    })
+    .then((result) => {
+      meta_data.value = result.message;
+    });
+
+  db.getDoc("Product", "36").then((result) => {
+    doc.value = result;
+  });
+});
 </script>
 
 <style scoped>
-.preview-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.control-group {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.card {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem;
-  background-color: #f8f9fa;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 1rem;
-}
-
-.barcode-container {
-  padding: 1rem;
-  background-color: #ffffff;
-  border-radius: 0.5rem;
-  transition: box-shadow 0.3s ease;
-  width: 500px;
-  overflow: hidden;
-  height: 500px;
-}
-
-.barcode-container:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-.bar_code_content {
-  height: 100%;
-  width: 100%;
-  border: 2px dashed #7ea0c4;
+#print-area {
+  border: 1px solid red;
 }
 </style>

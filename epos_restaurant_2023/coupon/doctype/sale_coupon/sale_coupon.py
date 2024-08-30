@@ -41,9 +41,13 @@ class SaleCoupon(Document):
 			frappe.throw("You cannot settle with over grand total amount")
 
 		self.expiry_date = self.end_date
+
+		self.cash_coupon_balance = self.cash_coupon_amount
+		self.cash_coupon_claim = 0
 		
 	def on_update_after_submit(self):
 		self.expiry_date = self.end_date
+		
 
 	def on_submit(self):
 		for p in self.payments:

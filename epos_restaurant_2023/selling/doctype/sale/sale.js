@@ -11,11 +11,13 @@ frappe.ui.form.on("Sale", {
 				]
 			}
 		});
-
+		 
 	},
+	 
 
 	refresh(frm) { 
-		
+		 
+
 		frm.set_query("commission_01_account","sale_products", function() {
             return {
                 filters: [["is_group","=",0],["root_type","=","Liabilities"]]
@@ -370,6 +372,12 @@ frappe.ui.form.on('Sale Cash Coupon Claim', {
 })
 
 frappe.ui.form.on('Sale Product', {
+	form_render:function(frm, cdt,cdn){
+		let doc = locals[cdt][cdn];
+		const element = document.querySelector('[data-name="' + doc.name + '"]');	
+		 
+	},
+
 	sale_products_remove: function (frm) {
 		updateSumTotal(frm);
 	},

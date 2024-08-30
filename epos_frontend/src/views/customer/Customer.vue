@@ -6,7 +6,10 @@
             </v-btn>
         </template>
         <ComCustomerCard :headers="headers" doctype="Customer" extra-fields="name,photo,customer_name_en" @callback="onCallback" v-if="mobile"/>
-        <ComTable :headers="headers" doctype="Customer" extra-fields="name" @callback="onCallback" v-else/>
+        <div v-else >
+            <ComTable :headers="headers" doctype="Customer" extra-fields="name" @callback="onCallback" />
+        </div>
+        
   </PageLayout>
 </template>
 <script setup>

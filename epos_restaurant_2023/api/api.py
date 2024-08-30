@@ -1768,7 +1768,7 @@ def update_summary_to_customers():
 
 @frappe.whitelist()
 def scan_coupon_number(code):
-    sql = "select balance, unlimited, expiry_date from `tabCash Coupon Items` where code = %(code)s limit 1"
+    sql = "select balance, unlimited, expiry_date from `tabCash Coupon Items` where docstatus = 1 and code = %(code)s limit 1"
     docs = frappe.db.sql(sql,{"code":code}, as_dict=1) 
     
     result = {}
@@ -1796,12 +1796,24 @@ def scan_coupon_number(code):
                     "message":"Success"
                 })
     else:
-        result.update ({
-            "status":0,
-            "code":code,
-            "balance": 0,
-            "message":"Invalid coupon code"
-        })
+
+        sale_coupon_sql = "select cash_coupon_balance as balance, 0 as unlimited, end_date as expiry_date from `tabSale Coupon` where cash_coupon_balance > 0 and docstatus = 1 and  coupon_number = %(code)s limit 1"
+        sale_coupon = frappe.db.sql(sale_coupon_sql,{"code":code},as_dict = 1 )
+        
+        if len(sale_coupon)>0:
+             result.update ({
+                "status":1,
+                "code":code,
+                "balance": sale_coupon[0]["balance"],
+                "message":"Success"
+            })
+        else:
+            result.update ({
+                "status":0,
+                "code":code,
+                "balance": 0,
+                "message":"Invalid coupon code"
+            })
 
     return result
 
