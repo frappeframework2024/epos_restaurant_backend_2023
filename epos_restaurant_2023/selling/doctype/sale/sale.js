@@ -371,6 +371,7 @@ frappe.ui.form.on('Sale Cash Coupon Claim', {
 	}
 })
 
+
 frappe.ui.form.on('Sale Product', {
 	form_render:function(frm, cdt,cdn){
 		let doc = locals[cdt][cdn];
@@ -424,6 +425,42 @@ frappe.ui.form.on('Sale Product', {
 	}
 })
 
+
+frappe.ui.form.on('Sale Product', {
+	
+	trade_in_remove: function (frm) {
+		const products = frm.doc.trade_in_products; 
+		frm.set_value('total_trade_in_amount',products==undefined?0: products.reduce((n, d) => n + d.amount, 0));
+		frm.refresh_field("total_trade_in_amount")
+		updateSumTotal(frm);
+	},
+	
+	price(frm, cdt, cdn) {
+
+		const row = locals[cdt][cdn];
+		
+		update_trade_in_amount(frm, row);
+
+	},
+	quantity(frm, cdt, cdn) {
+		let row = locals[cdt][cdn];
+		update_trade_in_amount(frm, row);
+	},
+ 
+})
+
+function update_trade_in_amount(frm,doc){
+	
+	doc.amount = doc.price * doc.quantity
+	frm.refresh_field('trade_in_products');
+	const products = frm.doc.trade_in_products; 
+	frm.set_value('total_trade_in_amount',products==undefined?0: products.reduce((n, d) => n + d.amount, 0));
+	frm.refresh_field("total_trade_in_amount")
+	
+
+	updateSumTotal(frm);
+	
+}
 
 
 frappe.ui.form.on("Sale", "refresh", function(frm) {

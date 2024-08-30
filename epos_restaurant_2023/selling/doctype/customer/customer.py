@@ -8,9 +8,7 @@ from frappe import _
 from datetime import datetime
 from frappe.utils.data import strip
 import copy
-from epos_restaurant_2023.api.printing import (
-    get_print_context
-    )
+
 from epos_restaurant_2023.selling.doctype.customer.utils import update_fetch_from_fields
 class Customer(Document):
 	def validate(self):

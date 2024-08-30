@@ -106,6 +106,16 @@
   </div> 
   {%endif%}
 
+  {%if total_trade_in_amount %}
+  <div class="row">
+    <div class="col">
+      {{__("Trade In Amount")}}
+    </div>
+    <div class="col text-right">
+      <strong data-bs-toggle="tooltip" data-bs-placement="top" >{{frappe.format(total_trade_in_amount ,{"fieldtype":"Currency"})}}</strong>
+    </div>
+  </div>
+  {%endif%}
   {%if total_paid %}
   <div class="row">
     <div class="col">

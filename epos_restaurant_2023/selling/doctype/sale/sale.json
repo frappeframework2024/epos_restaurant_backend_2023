@@ -218,7 +218,13 @@
   "inventory_transacton_tab",
   "inventory_transaction",
   "integration_tab",
-  "exely_transaction_id"
+  "exely_transaction_id",
+  "trade_in_tab",
+  "trade_in_products",
+  "section_break_pupr",
+  "column_break_fwau",
+  "column_break_itvr",
+  "total_trade_in_amount"
  ],
  "fields": [
   {
@@ -1480,6 +1486,34 @@
    "fieldname": "crypto_able_amount",
    "fieldtype": "Currency",
    "label": "Crypto Able Amount"
+  },
+  {
+   "fieldname": "trade_in_tab",
+   "fieldtype": "Tab Break",
+   "label": "Trade In"
+  },
+  {
+   "fieldname": "section_break_pupr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_fwau",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_itvr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_trade_in_amount",
+   "fieldtype": "Currency",
+   "label": "Total Trade In Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "trade_in_products",
+   "fieldtype": "Table",
+   "options": "Sale Trade In"
   }
  ],
  "image_field": "photo",
@@ -1497,7 +1531,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2024-08-21 14:04:16.750098",
+ "modified": "2024-08-30 15:12:10.603063",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",
