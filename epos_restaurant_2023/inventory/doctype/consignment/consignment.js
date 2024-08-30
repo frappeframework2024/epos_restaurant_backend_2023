@@ -51,7 +51,12 @@ frappe.ui.form.on("Consignment", {
     },
     from_stock_location(frm){
         frm.doc.products.forEach(r => {
-            get_products(frm,'Consignment Products',r.name)
+            get_product(frm,'Consignment Products',r.name)
+        });
+    },
+    price_rule(frm){
+        frm.doc.products.forEach(a => {
+            get_product(frm, "Consignment Products", a.name)
         });
     }
 });
@@ -90,28 +95,6 @@ function get_payment_type_account(frm,cdt,cdn){
         callback: function(r){
             if(r.message!=undefined){
                 frappe.model.set_value(cdt,cdn, "account", (r.message));
-            }
-        }
-    });	
-}
-
-function get_products(frm,cdt,cdn){
-    let doc = locals[cdt][cdn];
-    frappe.call({
-        method: "epos_restaurant_2023.api.product.get_currenct_cost",
-        args: {
-            product_code:doc.product,
-			stock_location:frm.doc.from_stock_location,
-			unit:doc.unit
-        },
-        callback: function(r){
-            if(r.message!=undefined){
-                frappe.model.set_value(cdt,cdn, "quantity_on_hand", (r.message.quantity));
-                frappe.model.set_value(cdt,cdn, "cost", (r.message.cost));
-                frappe.model.set_value(cdt,cdn, "price", (r.message.price));
-                frappe.model.set_value(cdt,cdn, "total_cost", (doc.cost * doc.quantity));
-                frappe.model.set_value(cdt,cdn, "total_amount", (doc.price * doc.quantity));
-                update_product_totals(frm)
             }
         }
     });	
