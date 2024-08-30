@@ -14,11 +14,6 @@ frappe.ui.form.on("Employee Commission Payment", {
 		});
 		renderSummary(frm)
 	},
-    paid_amount(frm){
-		frm.set_value('balance',frm.doc.commission_amount-frm.doc.paid_amount)
-		renderSummary(frm)
-		frm.refresh_field('balance')
-    },
 	get_sales(frm){
 		frm.call({
             method: 'get_sale_commission',
@@ -36,6 +31,7 @@ frappe.ui.form.on("Employee Commission Payment", {
 frappe.ui.form.on('Employee Commission Sale', {
 	paid_amount(frm, cdt, cdn) {
 		const row = locals[cdt][cdn];
+		renderSummary(frm)
 		row.balance = row.commission_amount - row.paid_amount
 		frm.refresh_field('employee_commission_sale')
 	  },
