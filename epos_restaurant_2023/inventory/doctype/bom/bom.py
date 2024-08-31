@@ -48,7 +48,7 @@ def validate_uom_conversion(self):
 		frappe.throw(error)
 
 def validate_is_default(self):
-	data = frappe.db.sql("select count(*) is_default from `tabBOM` where product = '{}' and is_default=1".format(self.product),as_dict=True)
+	data = frappe.db.sql("select count(*) is_default from `tabBOM` where product = '{}' and is_default=1 and name <> '{}'".format(self.product,self.name),as_dict=True)
 	if data:
 		if data[0].is_default > 0 and self.is_default == 1:
 			frappe.msgprint("This Product Already Has Default BOM. Removing Is Default")
