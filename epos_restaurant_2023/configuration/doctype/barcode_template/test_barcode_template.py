@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestSaleTradeInTemp(FrappeTestCase):
+class TestBarcodeTemplate(FrappeTestCase):
 	pass

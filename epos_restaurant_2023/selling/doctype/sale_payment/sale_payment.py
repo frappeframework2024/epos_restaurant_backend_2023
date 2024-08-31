@@ -246,33 +246,34 @@ def update_sale(self):
 				})
 
 	# update sale balance and paid
-	if self.sale:
-		data = frappe.db.sql("select  ifnull(sum(payment_amount),0)  as total_paid from `tabSale Payment` where docstatus=1 and sale='{}' and payment_amount>0".format(self.sale),as_dict=1)
-		value = frappe.db.get_value('Sale', self.sale,  ["grand_total","total_cash_coupon_claim"], as_dict = 1)
-		if data and value["grand_total"]:
-			total_paid = (round(data[0].total_paid, int(currency_precision)) +  round((value["total_cash_coupon_claim"] or 0),int(currency_precision)))
-			balance = round((value["grand_total"] or 0),int(currency_precision))  - total_paid
-			status = ""
-			if balance == 0:
-				status = "Paid"
-			elif balance >0 and total_paid>0:
-				status = "Partially Paid"
-			else:
-				status = "Unpaid"
-			if balance<0:
-				balance = 0
-			
-			update_sale_status = "Update `tabSale` set total_paid = %(total_paid)s , balance = %(balance)s,status=%(status)s where name = %(sale)s"
-			frappe.db.sql(update_sale_status,{
-				'total_paid': round(data[0].total_paid,int(currency_precision)),
-				'balance': balance,
-				'status': status,
-				'sale':self.sale
-			})
-			frappe.db.commit()
-			
-			# update customer balance
-			update_customer_bill_balance(self)
+	if not self.flags.ignore_update_sale:
+		if self.sale:
+			data = frappe.db.sql("select  ifnull(sum(payment_amount),0)  as total_paid from `tabSale Payment` where docstatus=1 and sale='{}' and payment_amount>0".format(self.sale),as_dict=1)
+			value = frappe.db.get_value('Sale', self.sale,  ["grand_total","total_cash_coupon_claim"], as_dict = 1)
+			if data and value["grand_total"]:
+				total_paid = (round(data[0].total_paid, int(currency_precision)) +  round((value["total_cash_coupon_claim"] or 0),int(currency_precision)))
+				balance = round((value["grand_total"] or 0),int(currency_precision))  - total_paid
+				status = ""
+				if balance == 0:
+					status = "Paid"
+				elif balance >0 and total_paid>0:
+					status = "Partially Paid"
+				else:
+					status = "Unpaid"
+				if balance<0:
+					balance = 0
+				
+				update_sale_status = "Update `tabSale` set total_paid = %(total_paid)s , balance = %(balance)s,status=%(status)s where name = %(sale)s"
+				frappe.db.sql(update_sale_status,{
+					'total_paid': round(data[0].total_paid,int(currency_precision)),
+					'balance': balance,
+					'status': status,
+					'sale':self.sale
+				})
+				frappe.db.commit()
+	if self.sale:	
+		# update customer balance
+		update_customer_bill_balance(self)
 
 def update_customer_bill_balance(self,calcel=False):
 	sql ="""update `tabCustomer` c 

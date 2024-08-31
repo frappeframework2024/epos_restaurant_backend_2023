@@ -10,6 +10,18 @@ frappe.ui.form.on("Stock Adjustment", {
                 ]
             }
         });
+		frm.page.remove_action_item(__('Duplicate'));
+        
+        // Add custom Duplicate button
+        frm.page.add_menu_item(__('Duplicate'), function() {
+            frappe.confirm(
+                'Are you sure you want to duplicate this document?',
+                function() {
+                    frm.duplicate_doc();
+                }
+            );
+            frappe.msgprint(__('Duplicate action clicked'));
+        }, true);
 	},
 	setup(frm) {
 		for (const key in frm.fields_dict) {

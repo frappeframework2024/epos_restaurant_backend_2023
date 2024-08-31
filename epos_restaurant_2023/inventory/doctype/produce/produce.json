@@ -11,6 +11,7 @@
   "column_break_clwb",
   "product",
   "product_name",
+  "base_unit",
   "section_break_huej",
   "quantity",
   "unit",
@@ -105,8 +106,7 @@
    "fieldname": "unit",
    "fieldtype": "Link",
    "label": "Unit",
-   "options": "Unit Of Measurement",
-   "read_only": 1
+   "options": "Unit Of Measurement"
   },
   {
    "fieldname": "section_break_huej",
@@ -149,12 +149,21 @@
    "fieldtype": "Currency",
    "label": "Total Amount",
    "read_only": 1
+  },
+  {
+   "fetch_from": "product.unit",
+   "fieldname": "base_unit",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Base Unit",
+   "options": "Unit Of Measurement",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-02 08:26:55.038208",
+ "modified": "2024-08-31 10:59:34.855236",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Produce",

@@ -3,185 +3,200 @@
     <div
       class="flex-1 w-full flex align-items-center justify-content-center m-3"
     >
-      <Fieldset class="w-full m-2" legend="Barcode">
-        <div class="field">
-          <label for="fontSize">Font Size:</label>
-          <InputNumber inputId="fontSize" class="input-dropdown mx-2 w-4" />
-          <Slider :max="36" class="my-3 w-4" />
-        </div>
-
-        <div class="preview-controls">
-          Include Text:
-          <input type="checkbox" />
-        </div>
-      </Fieldset>
+{{ productCode }}
 
       <Fieldset class="w-full m-2" legend="Previews">
-        <label>Height:</label>
-        <InputText v-model.number="data.height" />
-        <Slider v-model="data.height" :min="50" :max="500" class="w-4 my-3" />
+        <label>Height : </label>
+        <InputText v-model.number="data.height" class="w-1" />
+        <Slider v-model="data.height" :min="50" :max="500" class="w-2 my-3" />
 
-        <label>Width:</label>
-        <InputText v-model.number="data.width" />
-        <Slider v-model="data.width" class="w-4 my-3" :min="50" :max="500" />
+        <label>Width : </label>
+        <InputText v-model.number="data.width" class="w-1" />
+        <Slider v-model="data.width" class="w-2 my-3" :min="50" :max="500" />
 
-        <label>Unit:</label>
+        <label>Unit : </label>
         <Select
           v-model="data.unit"
           :options="['mm', 'cm', 'in', 'px']"
-          class="md:w-56"
+          class="w-sm"
         />
+
+        <Button label="Print" icon="pi pi-print" @click="onPrint" />
+
+        <table border="1">
+          <tr>
+            <td>
+              <InputText v-model.number="keyword" placeholder="Search Field" />
+              <div style="height: 300px; width: 300px; overflow: scroll">
+                <div
+                  v-if="meta_data"
+                  v-for="(f, index) in filteredFields"
+                  :key="f.fieldname"
+                >
+                  {{ f.label }}
+                  <Button label="Select" @click="onAddElement(f)" />
+                </div>
+              </div>
+            </td>
+            <td>
+              {{ data }}
+              <hr />
+              {{ selectedElement }}
+              <div
+                id="print-area"
+                :style="{
+                  height: data.height + data.unit,
+                  width: data.width + data.unit,
+                  border: '1px solid red',
+                  overflow: 'hidden',
+                  position: 'relative',
+                }"
+              >
+                <div
+                  v-if="isPrint"
+                  v-for="(e, index) in data.elements"
+                  :key="e.fieldname + index"
+                  :style="{
+                    position: 'absolute',
+                    left: e.x + 'px',
+                    top: e.y + 'px',
+                    height: e.height + 'px',
+                    width: e.width + 'px',
+                    overflow: 'hidden',
+                    fontSize:e.font_size + 'px',
+                    justifyContent: e.justify_content,
+                    alignItems: e.align_items,
+                    display:'flex',
+                    transform: `rotate(${e.rotation}deg)`,
+                  }"
+                >
+                  <template v-if="e.fieldtype == 'Barcode'">
+                    <div :style="{ height: e.height + 'px',width: e.width + 'px',
+                    overflow: 'hidden'}">
+                      <img style="width: 100%;height: 100%" :src="url" />
+                    </div>
+                  </template>
+                  <template v-else>
+                    {{ doc[e.fieldname] }}
+                  </template>
+                </div>
+                <DraggableResizableVue
+                  v-else
+                  v-for="(e, idx) in data.elements"
+                  :key="e.fieldname + idx"
+                  v-model:x="e.x"
+                  v-model:y="e.y"
+                  v-model:h="e.height"
+                  v-model:w="e.width"
+                  v-model:active="e.isActive"
+                  @click="onSelectElement(e)"
+                  :style="[
+                    textStyle,
+                    {
+                      fontSize: e.font_size + 'px',
+                      fontFamily: e.font_type.value,
+                    },
+                  ]"
+                >
+                  <div
+                    :style="{
+                      transform: `rotate(${e.rotation}deg)`,
+                      height: '100%',
+                      width: '100%',
+                    }"
+                  >
+                    <template v-if="e.fieldtype === 'Barcode'">
+                      <div style="height: 100%; width: 100%; overflow: hidden">
+                        <img style="width: 100%; height: 100%" :src="url" />
+                      </div>
+                    </template>
+                    <template v-else>
+                      <div
+                       :style="{
+                          overflow: 'hidden',
+                          height: '100%',
+                          justifyContent: e.justify_content,
+                          alignItems: e.align_items,
+                          display:'flex',
+                          fontSize:e.font_size + 'px',
+                       }
+                        "
+                      >
+                        {{ doc[e.fieldname] }}
+                      </div>
+                    </template>
+                  </div>
+                </DraggableResizableVue>
+              </div>
+              <div v-if="selectedElement">
+                <label>Element Property:</label>
+                <hr />
+                <label>Font Size:</label>
+                <InputText v-model.number="selectedElement.font_size" />
+                <Slider
+                  v-model="selectedElement.font_size"
+                  class="w-3 my-3"
+                  :min="8"
+                  :max="36"
+                />
+
+                <div class="field">
+                  <label for="fontFamily">Font Type:</label>
+                  <Dropdown
+                    v-model="selectedElement.font_type"
+                    :options="fontFamily"
+                    optionLabel="label"
+                    placeholder="Select a Font"
+                    class="input-dropdown mx-2 w-auto"
+                  />
+                </div>
+
+                <div>
+                  Text Rotation :
+                  <Knob
+                    v-model="selectedElement.rotation"
+                    :max="360"
+                    size="60"
+                    :step="90"
+                  />
+                </div>
+
+                <div>
+                  <label for="bold">Bold:</label>
+                  <input type="checkbox" id="bold" v-model="isBold" />
+                  <label for="italic">Italic:</label>
+                  <input type="checkbox" id="italic" v-model="isItalic" />
+                </div>
+
+                <label>Barcode Type:</label>
+                <Select
+                  v-model="selectedElement.fieldtype"
+                  :options="['Data', 'Currency', 'Barcode', 'Int', 'Float']"
+                  class="w-full md:w-56"
+                />
+text align
+                <Select
+                  v-model="selectedElement.justify_content"
+                  :options="['center', 'left', 'right']"
+                  class="w-full md:w-56"
+                />
+                
+ align item
+                <Select
+                  v-model="selectedElement.align_items"
+                  :options="['center', 'start', 'end']"
+                  class="w-full md:w-56"
+                />
+
+
+                <Button label="Delete" @click="onDelete" />
+              </div>
+            </td>
+          </tr>
+        </table>
       </Fieldset>
     </div>
   </div>
-
-  <Button label="Print" icon="pi pi-print" @click="onPrint" />
-
-  <table border="1">
-    <tr>
-      <td>
-        <InputText v-model.number="keyword" placeholder="Search Field" />
-        <div style="height: 300px; width: 300px; overflow: scroll">
-          <div
-            v-if="meta_data"
-            v-for="(f, index) in filteredFields"
-            :key="f.fieldname"
-          >
-            {{ f.label }}
-            <Button label="Select" @click="onAddElement(f)" />
-          </div>
-        </div>
-      </td>
-      <td>
-        {{ data }}
-        <hr />
-        {{ selectedElement }}
-        <div
-          id="print-area"
-          :style="{
-            height: data.height + data.unit,
-            width: data.width + data.unit,
-            border: '1px solid red',
-            overflow: 'hidden',
-            position: 'relative',
-          }"
-        >
-          <div
-            v-if="isPrint"
-            v-for="(e, index) in data.elements"
-            :key="e.fieldname + index"
-            :style="{
-              position: 'absolute',
-              left: e.x + 'px',
-              top: e.y + 'px',
-              height: e.height + 'px',
-              width: e.width + 'px',
-              overflow: 'hidden',
-            }"
-          >
-            <template v-if="e.fieldtype == 'Barcode'">
-              <div style="height: 100%; width: 100%; overflow: hidden">
-                <img style="width: 100%" :src="url" />
-              </div>
-            </template>
-            <template v-else>
-              {{ doc[e.fieldname] }}
-            </template>
-          </div>
-          <DraggableResizableVue
-            v-else
-            v-for="(e, idx) in data.elements"
-            :key="e.fieldname + idx"
-            v-model:x="e.x"
-            v-model:y="e.y"
-            v-model:h="e.height"
-            v-model:w="e.width"
-            v-model:active="e.isActive"
-            @click="onSelectElement(e)"
-            :style="{
-              fontSize: e.font_size + 'px',
-              fontFamily: e.font_type.value,
-            }"
-          >
-            <template v-if="e.fieldtype == 'Barcode'">
-              <div style="height: 100%; width: 100%; overflow: hidden">
-                <img style="width: 100%; height: 100%" :src="url" />
-              </div>
-            </template>
-            <template v-else>
-              <div style="overflow: hidden; height: 100%">
-                {{ doc[e.fieldname] }}
-              </div>
-            </template>
-          </DraggableResizableVue>
-        </div>
-        <div v-if="selectedElement">
-          <label>Element Property:</label>
-          <hr />
-          <label>Font Size:</label>
-          <InputText v-model.number="selectedElement.font_size" />
-          <Slider
-            v-model="selectedElement.font_size"
-            class="w-56"
-            :min="8"
-            :max="20"
-          />
-
-          <div class="field">
-            <label for="fontFamily">Font Type:</label>
-            <Dropdown
-              v-model="selectedElement.font_type"
-              :options="fontFamily"
-              optionLabel="label"
-              placeholder="Select a Font"
-              class="input-dropdown mx-2 w-auto"
-            />
-          </div>
-          <label>
-            <input type="checkbox" v-model="selectedElement.include_text" />
-            Include Text
-          </label>
-
-          <div>
-            Text Alignment:
-            <Dropdown
-              v-model="selectedElement.alignX"
-              :options="alignX"
-              optionLabel="label"
-            />
-          </div>
-
-          <div>
-            Text Adjustment:
-            <Dropdown
-              v-model="selectedElement.alignY"
-              :options="alignY"
-              optionLabel="label"
-            />
-          </div>
-
-          <div class="field">
-            <label for="rotate">Rotate:</label>
-            <Dropdown
-              v-model="selectedElement.rotate"
-              :options="rotate"
-              optionLabel="label"
-              class="input-dropdown mx-2 w-auto"
-            />
-          </div>
-
-          <label>Barcode Type:</label>
-          <Select
-            v-model="selectedElement.fieldtype"
-            :options="['Data', 'Currency', 'Barcode', 'Int', 'Float']"
-            class="w-full md:w-56"
-          />
-
-          <Button label="Delete" @click="onDelete" />
-        </div>
-      </td>
-    </tr>
-  </table>
 </template>
 
 <script setup>
@@ -190,12 +205,15 @@ import Slider from "primevue/slider";
 import Select from "primevue/select";
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
+import Knob from "primevue/knob";
 import Button from "primevue/button";
 import Fieldset from "primevue/fieldset";
 import Dropdown from "primevue/dropdown";
 import DraggableResizableVue from "draggable-resizable-vue3";
 import { FrappeApp } from "frappe-js-sdk";
+import { useRoute } from 'vue-router';
 
+const route = useRoute();
 const frappe = new FrappeApp();
 const db = frappe.db();
 const call = frappe.call();
@@ -206,7 +224,8 @@ const data = ref({
   unit: "px",
   elements: [],
 });
-
+const productCode = computed(() => route.query.product_code);
+const doctype = computed(() => route.query.doctype);
 const meta_data = ref({});
 const doc = ref({});
 const selectedElement = ref(null);
@@ -222,33 +241,19 @@ const filteredFields = computed(() => {
   );
 });
 
+const isBold = ref(false);
+const isItalic = ref(false);
+
+const textStyle = computed(() => ({
+  fontWeight: isBold.value ? "bold" : "normal",
+  fontStyle: isItalic.value ? "italic" : "normal",
+}));
+
 const fontFamily = ref([
   { label: "Arial", value: "Arial, sans-serif" },
   { label: "Courier New", value: "'Courier New', monospace" },
   { label: "Lucida Sans", value: "'Lucida Sans', sans-serif" },
   { label: "Verdana", value: "Verdana, sans-serif" },
-]);
-
-const rotate = ref([
-  { label: "0°", value: "N" },
-  { label: "90°", value: "R" },
-  { label: "180°", value: "L" },
-  { label: "270°", value: "I" },
-]);
-
-const alignX = ref([
-  { label: "Left", value: "left" },
-  { label: "Right", value: "right" },
-  { label: "Center", value: "center" },
-  { label: "Off-Right", value: "offright" },
-  { label: "Off-Left", value: "offleft" },
-  { label: "Justify", value: "justify" },
-]);
-
-const alignY = ref([
-  { label: "Center", value: "center" },
-  { label: "Below", value: "below" },
-  { label: "Above", value: "above" },
 ]);
 
 function onAddElement(f) {
@@ -261,29 +266,18 @@ function onAddElement(f) {
     height: 25,
     font_size: 14,
     font_type: fontFamily.value[0],
-    rotate: rotate.value[0],
-    include_text: false,
-    alignX: alignX.value[2],
-    alignY: alignY.value[1],
+    rotation: 0,
+    justify_content:'center',
+    align_items:'center'
   });
 }
 
 const url = computed(() => {
-  if (!selectedElement.value || selectedElement.value.fieldtype !== "Barcode")
-    return "";
-
   const text = doc.value[selectedElement.value.fieldname] || "";
-  const rotate = selectedElement.value.rotate.value; // Ensure it's a string
-
-  const includeTextParam = selectedElement.value.include_text
-    ? "&includetext"
-    : "";
-  const textxalign = selectedElement.value.alignX.value;
-  const textyalign = selectedElement.value.alignY.value;
 
   return `http://bwipjs-api.metafloor.com/?bcid=code128&text=${encodeURIComponent(
     text
-  )}&rotate=${rotate}${includeTextParam}&textxalign=${textxalign}&textyalign=${textyalign}`;
+  )}`;
 });
 
 function onDelete() {
@@ -334,13 +328,13 @@ function onPrint() {
 onMounted(() => {
   call
     .get("epos_restaurant_2023.api.api.get_meta", {
-      doctype: "Product",
+      doctype: doctype.value,
     })
     .then((result) => {
       meta_data.value = result.message;
     });
 
-  db.getDoc("Product", "36").then((result) => {
+  db.getDoc("Product", productCode.value).then((result) => {
     doc.value = result;
   });
 });

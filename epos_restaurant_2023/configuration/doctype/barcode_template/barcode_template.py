@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class SaleTradeInTemp(Document):
+class BarcodeTemplate(Document):
 	pass

@@ -43,7 +43,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Unit",
-   "options": "Unit Of Measurement"
+   "options": "Unit Of Measurement",
+   "print_hide": 1
   },
   {
    "fieldname": "price",
@@ -68,13 +69,14 @@
    "fetch_from": "product_code.is_inventory_product",
    "fieldname": "is_inventory",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Inventory"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-30 15:33:17.901306",
+ "modified": "2024-08-31 09:54:38.394423",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Trade In",

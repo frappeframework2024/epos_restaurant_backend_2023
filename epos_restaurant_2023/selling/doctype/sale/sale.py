@@ -721,6 +721,8 @@ def add_payment_to_sale_payment(self):
 							"fee_percentage":p.fee_percentage,
 						})
 					doc.flags.ignore_post_general_ledger_entry = True
+					doc.flags.ignore_update_sale = True
+     
 					doc.insert()
    
 		if (self.changed_amount or 0)>0:

@@ -254,6 +254,40 @@ def submit_sale_to_general_ledger_entry(self):
 			}
 		docs.append(doc)
   
+	if self.trade_in_products:
+		amount = sum([d.amount for d in self.trade_in_products if d.is_inventory==1])
+		if amount > 0:
+			doc = {
+					"doctype":"General Ledger",
+					"posting_date":self.posting_date,
+					"account":frappe.get_cached_value("Business Branch",self.business_branch,"default_inventory_account"),
+					"credit_amount":amount,
+					# "againt": self.customer + " - " + self.customer_name,
+					"againt_voucher_type":"Sale",
+					"againt_voucher_number": self.name,
+					"voucher_type":"Sale",
+					"voucher_number":self.name,
+					"business_branch": self.business_branch,
+				}
+			docs.append(doc)
+   
+		# post to expense account
+		amount = sum([d.amount for d in self.trade_in_products if d.is_inventory ==0])
+		if amount > 0:
+			doc = {
+					"doctype":"General Ledger",
+					"posting_date":self.posting_date,
+					"account":frappe.get_cached_value("Business Branch",self.business_branch,"default_sale_expense_account"),
+					"debit_amount":amount,
+					# "againt": self.customer + " - " + self.customer_name,
+					"againt_voucher_type":"Sale",
+					"againt_voucher_number": self.name,
+					"voucher_type":"Sale",
+					"voucher_number":self.name,
+					"business_branch": self.business_branch,
+				}
+			docs.append(doc)
+   
 	submit_general_ledger_entry(docs=docs)
 
 

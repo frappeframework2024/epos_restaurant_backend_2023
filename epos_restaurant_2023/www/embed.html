@@ -1,14 +1,17 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/assets/epos_restaurant_2023/embed/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + Vue</title>
-    <script type="module" crossorigin src="/assets/epos_restaurant_2023/embed/assets/index-D6JF3wwe.js"></script>
+    <title>ePOS Embed Script</title>
+    <script type="module" crossorigin src="/assets/epos_restaurant_2023/embed/assets/index-Bp6OFNUn.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/epos_restaurant_2023/embed/assets/index-C1jq0QLd.css">
   </head>
   <body>
     <div id="app"></div>
-		<script>window.csrf_token = '{{ frappe.session.csrf_token }}';</script>
+    <script>
+      window.csrf_token = "{{ frappe.session.csrf_token }}";
+    </script>
   </body>
 </html>

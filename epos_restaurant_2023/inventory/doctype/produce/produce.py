@@ -17,8 +17,6 @@ class Produce(Document):
 	def validate(self):
 		self.total_quantity = sum(a.quantity for a in self.produce_items)
 		self.total_amount = sum(a.amount for a in self.produce_items)
-		if self.source_location == self.target_location:
-			frappe.throw("Source Location And Target Location Can Not Be The Same")
 	
 	@frappe.whitelist(allow_guest=True)
 	def get_bom_items(self):
@@ -45,6 +43,7 @@ def update_produce_item(self):
 			'product_code': p.product,
 			'unit':p.unit,
 			'stock_location':self.source_location,
+			'uom_conversion':uom_conversion,
 			'in_quantity': (p.quantity / uom_conversion) if self.docstatus == 2 else 0,
 			'out_quantity':(p.quantity / uom_conversion) if self.docstatus == 1 else 0,
 			"price":p.cost,
@@ -53,6 +52,7 @@ def update_produce_item(self):
 		})
 
 def update_produce(self):
+	uom_conversion = get_uom_conversion(self.base_unit, self.unit)
 	add_to_inventory_transaction({
 		'doctype': 'Inventory Transaction',
 		'transaction_type':"Produce",
@@ -61,8 +61,9 @@ def update_produce(self):
 		'product_code': self.product,
 		'unit':self.unit,
 		'stock_location':self.target_location,
-		'in_quantity': self.quantity if self.docstatus == 1 else 0,
-		'out_quantity': self.quantity if self.docstatus == 2 else 0,
+		'uom_conversion':uom_conversion,
+		'in_quantity': (self.quantity / uom_conversion) if self.docstatus == 1 else 0,
+		'out_quantity':(self.quantity / uom_conversion) if self.docstatus == 2 else 0,
 		"uom_conversion": 1,
 		'note': 'Produce Product Stock In.' if self.docstatus == 1 else "Cancel Produce Product",
 		'action': 'Submit'

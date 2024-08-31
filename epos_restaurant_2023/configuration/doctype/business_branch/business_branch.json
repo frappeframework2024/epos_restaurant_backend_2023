@@ -58,6 +58,7 @@
   "default_bank_account",
   "default_pos_difference_amount_account",
   "default_cash_transaction_expense_account",
+  "default_sale_expense_account",
   "column_break_uwgp",
   "default_income_account",
   "default_receivable_account",
@@ -488,12 +489,19 @@
    "fieldtype": "Link",
    "label": "Default Commission Expense Account",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_sale_expense_account",
+   "fieldtype": "Link",
+   "label": "Default Sale Expense Account",
+   "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"root_type\",\"=\",\"Expenses\"],[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0]]",
+   "options": "Chart Of Account"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-12 14:10:40.605460",
+ "modified": "2024-08-31 09:52:21.700838",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",
