@@ -426,7 +426,7 @@ frappe.ui.form.on('Sale Product', {
 })
 
 
-frappe.ui.form.on('Sale Product', {
+frappe.ui.form.on('Sale Trade In', {
 	
 	trade_in_remove: function (frm) {
 		const products = frm.doc.trade_in_products; 
@@ -662,7 +662,7 @@ function updateSumTotal(frm) {
 	}
 
 	
-	frm.set_value('balance', frm.doc.grand_total - frm.doc.total_paid - (frm.doc.total_cash_coupon_claim || 0) );
+	frm.set_value('balance', frm.doc.grand_total - frm.doc.total_paid - (frm.doc.total_cash_coupon_claim || 0) - (frm.doc.total_trade_in_amount || 0) );
 	if (frm.doc.balance < 0){
 		frm.set_value('balance',0)
 		frm.set_value('changed_amount', (frm.doc.total_paid + (frm.doc.total_cash_coupon_claim||0)) - frm.doc.grand_total)

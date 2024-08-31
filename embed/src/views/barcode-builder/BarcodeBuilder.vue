@@ -3,7 +3,18 @@
     <div
       class="flex-1 w-full flex align-items-center justify-content-center m-3"
     >
-      <Fieldset class="w-full m-2" legend="Barcode"> </Fieldset>
+      <Fieldset class="w-full m-2" legend="Barcode">
+        <div class="field">
+          <label for="fontSize">Font Size:</label>
+          <InputNumber inputId="fontSize" class="input-dropdown mx-2 w-4" />
+          <Slider :max="36" class="my-3 w-4" />
+        </div>
+
+        <div class="preview-controls">
+          Include Text:
+          <input type="checkbox" />
+        </div>
+      </Fieldset>
 
       <Fieldset class="w-full m-2" legend="Previews">
         <label>Height:</label>
@@ -126,13 +137,11 @@
               class="input-dropdown mx-2 w-auto"
             />
           </div>
-
-          <!-- Barcode Options -->
-
-          <!-- <label>
+          <label>
             <input type="checkbox" v-model="selectedElement.include_text" />
             Include Text
-          </label>   
+          </label>
+
           <div>
             Text Alignment:
             <Dropdown
@@ -159,7 +168,7 @@
               optionLabel="label"
               class="input-dropdown mx-2 w-auto"
             />
-          </div> -->
+          </div>
 
           <label>Barcode Type:</label>
           <Select
@@ -220,27 +229,27 @@ const fontFamily = ref([
   { label: "Verdana", value: "Verdana, sans-serif" },
 ]);
 
-// const rotate = ref([
-//   { label: "0°", value: "N" },
-//   { label: "90°", value: "R" },
-//   { label: "180°", value: "L" },
-//   { label: "270°", value: "I" },
-// ]);
+const rotate = ref([
+  { label: "0°", value: "N" },
+  { label: "90°", value: "R" },
+  { label: "180°", value: "L" },
+  { label: "270°", value: "I" },
+]);
 
-// const alignX = ref([
-//   { label: "Left", value: "left" },
-//   { label: "Right", value: "right" },
-//   { label: "Center", value: "center" },
-//   { label: "Off-Right", value: "offright" },
-//   { label: "Off-Left", value: "offleft" },
-//   { label: "Justify", value: "justify" },
-// ]);
+const alignX = ref([
+  { label: "Left", value: "left" },
+  { label: "Right", value: "right" },
+  { label: "Center", value: "center" },
+  { label: "Off-Right", value: "offright" },
+  { label: "Off-Left", value: "offleft" },
+  { label: "Justify", value: "justify" },
+]);
 
-// const alignY = ref([
-//   { label: "Center", value: "center" },
-//   { label: "Below", value: "below" },
-//   { label: "Above", value: "above" },
-// ]);
+const alignY = ref([
+  { label: "Center", value: "center" },
+  { label: "Below", value: "below" },
+  { label: "Above", value: "above" },
+]);
 
 function onAddElement(f) {
   data.value.elements.push({
@@ -252,11 +261,10 @@ function onAddElement(f) {
     height: 25,
     font_size: 14,
     font_type: fontFamily.value[0],
-    // rotate: rotate.value[0],
-    // include_text: false,
-    // alignX: alignX.value[2],
-    // alignY: alignY.value[1],
-    text_rotate: 0,
+    rotate: rotate.value[0],
+    include_text: false,
+    alignX: alignX.value[2],
+    alignY: alignY.value[1],
   });
 }
 

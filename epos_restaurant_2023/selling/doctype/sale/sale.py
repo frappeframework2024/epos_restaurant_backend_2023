@@ -195,6 +195,9 @@ class Sale(Document):
 				frappe.throw("Your coupon claim and payment is over balance.")
 
 			_balance -= _total_claim_coupon
+		
+		_balance = _balance - (self.total_trade_in_amount or 0)
+  
 		self.balance = _balance		
 
 		if (self.sale_discount or 0) > 0:

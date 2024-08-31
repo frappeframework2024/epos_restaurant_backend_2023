@@ -13,7 +13,8 @@
   "unit",
   "price",
   "amount",
-  "note"
+  "note",
+  "is_inventory"
  ],
  "fields": [
   {
@@ -38,7 +39,6 @@
   },
   {
    "fetch_from": "product_code.unit",
-   "fetch_if_empty": 1,
    "fieldname": "unit",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -62,12 +62,19 @@
    "fieldname": "note",
    "fieldtype": "Small Text",
    "label": "Note"
+  },
+  {
+   "default": "0",
+   "fetch_from": "product_code.is_inventory_product",
+   "fieldname": "is_inventory",
+   "fieldtype": "Check",
+   "label": "Is Inventory"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-30 15:06:12.996862",
+ "modified": "2024-08-30 15:33:17.901306",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Trade In",
