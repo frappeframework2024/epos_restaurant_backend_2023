@@ -3,6 +3,12 @@
 
 frappe.ui.form.on("Expense", {
 	refresh(frm){
+		frappe.call({
+			method: 'epos_restaurant_2023.api.api.get_exchange_rate',
+			callback: (r) => {
+				frm.set_value("exchange_rate",r.message)
+			}
+		})
 		frm.set_query("expense_account","expense_items", function() {
             return {
                 filters: [
