@@ -3,7 +3,11 @@
 
 frappe.ui.form.on("Payment Entry", {
     refresh(frm){
-        set_filters(frm)
+        if(frm.is_new()){
+            set_filters(frm)
+            get_mode_of_payment_detail(frm)
+            get_party_detail(frm)
+        }
     },
 	mode_of_payment(frm) {
         get_mode_of_payment_detail(frm)
@@ -137,8 +141,8 @@ function get_party_detail(frm){
     frappe.call({
         method: 'epos_restaurant_2023.account.doctype.payment_entry.payment_entry.get_party_detail',
         args: {
-            party_type: frm.doc.party_type,
-            party: frm.doc.party,
+            party_type: (frm.doc.party_type || ""),
+            party: (frm.doc.party || ""),
             posting_date: frm.doc.posting_date
         },
         callback: (r) => {
@@ -163,11 +167,11 @@ function get_mode_of_payment_detail(frm){
     frappe.call({
         method: 'epos_restaurant_2023.account.doctype.payment_entry.payment_entry.get_mode_of_payment_detail',
         args: {
-            branch: frm.doc.business_branch,
-            mode_of_payment: frm.doc.mode_of_payment,
-            party_type: frm.doc.party_type,
+            branch: (frm.doc.business_branch || ""),
+            mode_of_payment: (frm.doc.mode_of_payment || ""),
+            party_type: (frm.doc.party_type || ""),
             posting_date: frm.doc.posting_date,
-            party:frm.doc.party
+            party: (frm.doc.party || "")
         },
         callback: (r) => {
             frm.set_value("account_paid_from","")

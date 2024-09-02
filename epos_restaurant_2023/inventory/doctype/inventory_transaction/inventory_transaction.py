@@ -54,8 +54,10 @@ def add_stock_location_product(self):
 	if self.transaction_type=="Stock Adjustment" and self.action =="Submit":
 		cost = self.price
 	else:
-		cost = self.ending_stock_value / self.balance
-		
+		if  self.ending_stock_value == 0 or self.balance == 0:
+			cost = 0
+		else:
+			cost = self.ending_stock_value / self.balance
 	 
 	doc = frappe.get_doc({
 			"doctype":"Stock Location Product",

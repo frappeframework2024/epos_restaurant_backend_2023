@@ -17,6 +17,8 @@ class PaymentEntry(Document):
 
 def validate_paid_amount(self):
 	error = ""
+	if self.paid_amount == 0:
+		error += "Payment Amount Cannot Be Zero"
 	for a in self.payment_entry_reference:
 		if a.paid_amount > a.total_amount:
 			error += "Row #{} Paid Amount Cannot Be Greater That Total Amount.</br>".format(a.idx)
@@ -76,22 +78,22 @@ def get_party_detail(party_type,party,posting_date):
 
 def get_account_balance(posting_date="",party_type="",party="",account=""):
 	balance = 0
-	filters = "and posting_date <= '{0}'".format(posting_date)
 	if account != "":
-		filters += "and account = '{0}'".format(account)
-	else:
+		filters = " and posting_date <= '{0}'".format(posting_date)
+		if account != "":
+			filters += " and account = '{0}'".format(account)
 		if party_type != "" and party != "":
-			filters += "and party = '{0}' and party_type = '{1}'".format(party,party_type)
-		else:
-			return 0
-	balances = frappe.db.sql("""SELECT 
-				sum(debit_amount) - sum(credit_amount) balance
-				FROM `tabGeneral Ledger`
-				WHERE is_cancelled=0 
-				{0}""".format(filters),as_dict=1)
-	if balances:
-		balance = balances[0].balance
-	
+			filters += " and party = '{0}' and party_type = '{1}'".format(party,party_type)
+		sql = """SELECT 
+					sum(debit_amount) - sum(credit_amount) balance
+					FROM `tabGeneral Ledger`
+					WHERE is_cancelled=0 
+					{0}""".format(filters)
+		balances = frappe.db.sql(sql,as_dict=1)
+		if balances:
+			balance = balances[0].balance
+	else:
+		balance = 0
 	return balance or 0
 
 def update_doc_amount(self,doc):
@@ -159,6 +161,8 @@ def general_ledger_debit(self,account):
 		"voucher_type":"Payment Entry",
 		"voucher_number":self.name,
 		"business_branch": self.business_branch,
+		"party_type": self.party_type,
+		"party":self.party,
 		"remark": "Accounting For Payment Entry"
 	}
 	docs.append(doc)
