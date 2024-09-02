@@ -474,7 +474,13 @@ frappe.ui.form.on("Sale", "refresh", function(frm) {
 frappe.ui.form.on('POS Sale Payment', {
 	payment_type(frm, cdt, cdn){
 		var d = frappe.model.get_doc(cdt, cdn);
-		frappe.model.set_value(cdt, cdn, "input_amount", (frm.doc.balance * d.exchange_rate));
+		payment = 0
+		frm.doc.payment.forEach(a => {
+			if(a.name != d.name){
+				payment += a.amount
+			}
+		});
+		frappe.model.set_value(cdt, cdn, "input_amount", ((frm.doc.grand_total - payment) * d.exchange_rate));
 	},
 
 	input_amount(frm) {
