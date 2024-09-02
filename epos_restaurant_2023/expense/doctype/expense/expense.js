@@ -41,6 +41,7 @@ frappe.ui.form.on('Expense Payment', {
 				reject(r)
 			}
 		})
+		frappe.model.set_value(cdt, cdn, "input_amount", (frm.doc.balance * doc.exchange_rate));
 	},
 	input_amount(frm,cdt,cdn){
 		let doc = locals[cdt][cdn];
