@@ -16,8 +16,13 @@
   "show_in_pos_assign_employee",
   "disabled",
   "is_selling_agent",
-  "agent_stock_location",
+  "section_break_yqrr",
   "commission_account",
+  "agent_stock_location",
+  "column_break_dyae",
+  "commission_amount",
+  "paid_amount",
+  "balance",
   "contact_information_section",
   "phone_number_1",
   "phone_number_2",
@@ -412,12 +417,39 @@
    "hidden": 1,
    "label": "Generate Customer",
    "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.is_selling_agent",
+   "fieldname": "section_break_yqrr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_dyae",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "commission_amount",
+   "fieldtype": "Currency",
+   "label": "Commission Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "paid_amount",
+   "fieldtype": "Currency",
+   "label": "Paid Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "balance",
+   "fieldtype": "Currency",
+   "label": "Balance",
+   "read_only": 1
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-26 11:59:55.930650",
+ "modified": "2024-09-03 12:04:34.288162",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee",

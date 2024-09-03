@@ -115,3 +115,21 @@ class Employee(Document):
 	# def on_trash(self):
 	# 	frappe.throw("delete me")
 
+@frappe.whitelist()
+def get_account_balance(posting_date="",party_type="",party="",account=""):
+	if account != "":
+		filters = " and posting_date <= '{0}'".format(posting_date)
+		if account != "":
+			filters += " and account = '{0}'".format(account)
+		if party_type != "" and party != "":
+			filters += " and party = '{0}' and party_type = '{1}'".format(party,party_type)
+		sql = """SELECT 
+					abs(sum(debit_amount) - sum(credit_amount)) balance,
+					sum(credit_amount) total_amount,
+					sum(debit_amount) paid_amount
+					FROM `tabGeneral Ledger`
+					WHERE is_cancelled=0 
+					{0}""".format(filters)
+		balances = frappe.db.sql(sql,as_dict=1)
+		if len(balances)>0:
+			return balances[0]
