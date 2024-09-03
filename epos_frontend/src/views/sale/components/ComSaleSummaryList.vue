@@ -1,6 +1,6 @@
 <template lang="">
   <div class="px-2">
-    <template v-if="(sale.sale.total_discount + sale.sale.total_tax + (sale.sale.deposit||0)) > 0">
+    <template v-if="(sale.sale.total_discount + sale.sale.total_tax + (sale.sale.deposit||0) + (sale.sale.crypto_able_amount ||0)) > 0">
       <div class="flex justify-between my-1">
         <div>
           {{$t('Sub Total')}}
@@ -66,6 +66,12 @@
         <div>{{$t('Total Tax')}}</div>
         <div class="font-bold">
           <CurrencyFormat :value="sale.sale.total_tax" />
+        </div>
+      </div>
+      <div class="flex justify-between" v-if="(sale.sale.crypto_able_amount ||0) * ((sale.setting.pos_setting.percentage_of_bill_amount_to_claim_crypto || 0)/100) > 0">
+        <div>{{$t('Crypto payable amount')}}</div>
+        <div class="font-bold">
+          <CurrencyFormat :value="((sale.sale.crypto_able_amount ||0) * ((sale.setting.pos_setting.percentage_of_bill_amount_to_claim_crypto || 0)/100))" />
         </div>
       </div>
 
