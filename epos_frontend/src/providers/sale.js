@@ -1933,9 +1933,11 @@ export default class Sale {
         this.productPrinters = [];
         this.sale.sale_products.filter(r => r.sale_product_status == 'New' && JSON.parse(r.printers).length > 0).forEach((r) => {
             const printers = JSON.parse(r.printers);
+            console.log(r)
             printers.forEach((p) => {
+             
                 this.productPrinters.push({
-                    sale_product_name:r.name,
+                    sale_product_name: (r.name || "New"),
                     printer: p.printer,
                     group_item_type: p.group_item_type,
                     is_label_printer: p.is_label_printer == 1,
@@ -1963,7 +1965,8 @@ export default class Sale {
                     time_stop: (r.time_stop || 0),
                     time_in: r.time_in,
                     time_out_price: r.time_out_price,
-                    time_out: r.time_out
+                    time_out: r.time_out,
+                    amount: r.amount
                 })
             });
         });

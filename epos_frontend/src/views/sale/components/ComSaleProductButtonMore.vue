@@ -232,6 +232,7 @@ function onConfirmSelectPrinter() {
         var resendProductData = []
         printers.forEach((p) => {
             resendProductData.push({
+                sale_product_name: r.name,
                 printer: p.printer,
                 group_item_type: p.group_item_type,
                 is_label_printer: p.is_label_printer == 1,
@@ -261,6 +262,7 @@ function onConfirmSelectPrinter() {
                 time_out_price: r.time_out_price,
                 time_out: r.time_out,
                 reprint: true,
+                amount: r.amount
             })
         });
 

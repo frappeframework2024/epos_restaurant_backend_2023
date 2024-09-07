@@ -327,9 +327,14 @@
    "group": "Payment",
    "link_doctype": "Purchase Order Payment",
    "link_fieldname": "purchase_order"
+  },
+  {
+   "group": "Payment",
+   "link_doctype": "Payment Entry",
+   "link_fieldname": "reference_name"
   }
  ],
- "modified": "2024-08-07 20:41:43.260471",
+ "modified": "2024-09-05 10:55:46.767822",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order",

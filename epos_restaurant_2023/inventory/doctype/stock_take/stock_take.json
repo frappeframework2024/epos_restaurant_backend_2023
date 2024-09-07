@@ -14,6 +14,8 @@
   "column_break_3",
   "stock_location",
   "business_branch",
+  "employee",
+  "employee_name",
   "section_break_6",
   "scan_barcode",
   "column_break_10",
@@ -175,13 +177,26 @@
   {
    "fieldname": "column_break_fqix",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "label": "Employee Name"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-09 14:05:05.159218",
+ "modified": "2024-09-05 11:55:53.481085",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Take",

@@ -101,6 +101,7 @@ async function onSaleOrderClick(s) {
                             const pritners = JSON.parse(r.printers);
                             pritners.forEach((p) => {
                                 sale.productPrinters.push({
+                                    sale_product_name: r.name,
                                     move_from_sale_printed: 1,
                                     printer: p.printer,
                                     group_item_type: p.group_item_type,
@@ -131,7 +132,8 @@ async function onSaleOrderClick(s) {
                                     time_stop: (r.time_stop || 0),
                                     time_in: r.time_in,
                                     time_out_price: r.time_out_price,
-                                    time_out: r.time_out
+                                    time_out: r.time_out,
+                                    amount: r.amount
                                 });
                             });
                         });

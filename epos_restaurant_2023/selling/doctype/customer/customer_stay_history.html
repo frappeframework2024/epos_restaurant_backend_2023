@@ -32,10 +32,21 @@
                             <div class="data-row row">
                                 <div class="col text-center" style="max-width: 3%;">{{index}}</div>
                                 <div class="col text-center" style="min-width: 8%;">
-                                    <a href="/app/reservation/{{d.reservation}}" style="border: 1px dashed #4338ca;border-radius: 10px;padding: 0 5px;color: #4338ca;cursor: pointer;display: inline-block;">{{d.reservation}}</a>
+                                    {%if isInIframe %}
+                                    <a  onclick="window.parent.postMessage('view_reservation_detail|{{d.reservation}}')" style="border: 1px dashed #4338ca;border-radius: 10px;padding: 0 5px;color: #4338ca;cursor: pointer;display: inline-block;">{{d.reservation}}</a>
+                                    {%else%}
+                                    <a  href="/app/reservation/{{d.reservation}}" style="border: 1px dashed #4338ca;border-radius: 10px;padding: 0 5px;color: #4338ca;cursor: pointer;display: inline-block;">{{d.reservation}}</a>
+                                    {%endif%}
+                                    
                                 </div>
                                 <div class="col text-center" style="min-width: 8%;">
+                                    {%if isInIframe %}
+                                    <a    onclick="window.parent.postMessage('view_reservation_stay_detail|{{d.name}}')" style="border: 1px dashed #4338ca;border-radius: 10px;padding: 0 5px;color: #4338ca;cursor: pointer;display: inline-block;">{{d.reservation}}</a>
+                                    {%else%}
                                     <a href="/app/reservation-stay/{{d.name}}" style="border: 1px dashed #4338ca;border-radius: 10px;padding: 0 5px;color: #4338ca;cursor: pointer;display: inline-block;">{{d.name}}</a>
+                                    {%endif%}
+
+                                    
                                 </div>
                                 <div class="col">{{d.reference_number}}</div>
                                 <div class="col text-center" style="max-width: 3%;">{{d.reservation_type}}</div>

@@ -3,10 +3,11 @@
 
 frappe.ui.form.on("Payment Entry", {
     refresh(frm){
+        set_filters(frm)
         if(frm.is_new()){
-            set_filters(frm)
             get_mode_of_payment_detail(frm)
             get_party_detail(frm)
+            update_get_latest_reference(frm)
         }
     },
 	mode_of_payment(frm) {
@@ -40,8 +41,20 @@ frappe.ui.form.on("Payment Entry Reference", {
     input_amount(frm,cdt,cdn){
         let doc=  locals[cdt][cdn];
         frappe.model.set_value(cdt, cdn, "balance", (doc.total_amount-(doc.paid_amount/frm.doc.exchange_rate)));
+    },
+    reference_name_remove(frm,cdt,cdn){
+        update_total_amount(frm)
+    },
+    payment_entry_reference_remove(frm,cdt,cdn){
+        update_total_amount(frm)
     }
 })
+
+function update_get_latest_reference(frm){
+    frm.doc.payment_entry_reference.forEach(a => {
+        get_reference_detail(frm,"Payment Entry Reference",a.name)
+    });
+}
 
 function update_allocated_amount(frm){
     paid_amount = frm.doc.paid_amount/frm.doc.exchange_rate
@@ -68,18 +81,19 @@ function update_allocated_amount(frm){
 
 function set_filters(frm){
     frm.set_query("reference_doctype","payment_entry_reference", function() {
-        return {
-            filters: [
-                ["name", "in", "Sale,Purchase Order"]
-            ]
+        if(frm.doc.payment_type == "Pay"){
+            return {
+                filters: [
+                    ["name", "in", "Purchase Order"]
+                ]
+            }
         }
-    });
-    frm.set_query("reference_name","payment_entry_reference", function() {
-        return {
-            filters: [
-                ["docstatus", "=", 1],
-                ["balance",">",0]
-            ]
+        else{
+            return {
+                filters: [
+                    ["name", "=", "Sale"]
+                ]
+            }
         }
     });
     if(frm.doc.party_type == "Vendor"){
@@ -134,13 +148,26 @@ function get_reference_detail(frm,cdt,cdn){
         if(frm.doc.paid_amount > 0){
             update_allocated_amount(frm)
         }
+        update_total_amount(frm)
     })
 }
 
+function update_total_amount(frm){
+    total_amount = 0
+    frm.doc.payment_entry_reference.forEach(a => {
+        total_amount += a.total_amount
+    });
+    frm.doc.total_amount = total_amount
+    frm.refresh_field("total_amount")
+}
+
 function get_party_detail(frm){
+    account = frm.doc.payment_type == "receive" ? frm.doc.account_paid_from : frm.doc.account_paid_to
     frappe.call({
         method: 'epos_restaurant_2023.account.doctype.payment_entry.payment_entry.get_party_detail',
         args: {
+            account: (account || ""),
+            branch: (frm.doc.business_branch || ""),
             party_type: (frm.doc.party_type || ""),
             party: (frm.doc.party || ""),
             posting_date: frm.doc.posting_date

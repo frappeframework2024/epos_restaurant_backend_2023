@@ -27,6 +27,7 @@
   "to_account_balance",
   "section_break_ptku",
   "no_references",
+  "total_amount",
   "paid_amount",
   "column_break_exjd",
   "exchange_rate",
@@ -209,12 +210,18 @@
    "fieldname": "no_references",
    "fieldtype": "Check",
    "label": "No References"
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Amount",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-14 14:14:10.901784",
+ "modified": "2024-09-04 15:18:34.578535",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "Payment Entry",

@@ -3,28 +3,50 @@
 import frappe
 from frappe import _
 import requests
+import urllib.parse
 from epos_restaurant_2023.api.quickbook_intergration.config import (refresh_token)
 
 
 @frappe.whitelist() 
-def post_api(endpoint,realm_id = None, params=None, body=None):
+def post_api(endpoint,realm_id = None, params=None, headers= None, body=None):
     setting = frappe.get_doc('QuickBooks Configuration') 
     endpoint = "v3/company/{0}/{1}".format((setting.realm_id if not realm_id else realm_id),endpoint)
     base_url = "https://sandbox-quickbooks.api.intuit.com"
     if setting.environment != "sandbox":
         base_url = base_url.replace("sandbox-","")
 
-    headers = {
+    _headers = {
         'Authorization': 'Bearer {}'.format(setting.access_token),
         'Accept': 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded'
     }
+    if not headers:
+        _headers.update({'Content-Type': 'application/x-www-form-urlencoded'})
+    else:
+        _headers.update(headers)
+
     try:
-        resp = requests.post("{}/{}".format(base_url, endpoint), params=params, headers=headers, data=body)  
+        resp = requests.post("{}/{}".format(base_url, endpoint), params=params, headers=_headers, json=body)          
         resp.raise_for_status()
         return resp
     except requests.exceptions.HTTPError as http_err:
-        frappe.throw(f"HTTP error occurred: {http_err}")
+        if resp.status_code == 400:
+            try:             
+                return resp
+            except Exception as e:
+                frappe.throw(f"HTTP error occurred: {http_err}")
+        elif resp.status_code == 401:
+            try:
+                ref = refresh_token()
+                if ref["status"] == 1:
+                    headers.update({"Authorization":'Bearer {}'.format(ref["access_token"])}) 
+                    re_resp = requests.get("{}/{}".format(base_url, endpoint), params=params, headers=headers, json=body) 
+                    re_resp.raise_for_status()
+                    return re_resp
+                else:
+                    frappe.throw(f"HTTP error occurred: {http_err}")
+            except requests.exceptions.HTTPError as re_http_err:
+                frappe.throw(f"HTTP error occurred: {re_http_err}")
+       
     except requests.exceptions.ConnectionError as conn_err:
         frappe.throw(f"Connection error occurred: {conn_err}")  # e.g., DNS failure, refused connection
     except requests.exceptions.Timeout as timeout_err:
@@ -36,7 +58,7 @@ def post_api(endpoint,realm_id = None, params=None, body=None):
 
 
 @frappe.whitelist() 
-def get_api(endpoint, realm_id = None, params= None, body = None):
+def get_api(endpoint, realm_id = None, params= None):
     setting = frappe.get_doc('QuickBooks Configuration') 
     endpoint = "v3/company/{0}/{1}".format((setting.realm_id if not realm_id else realm_id),endpoint)
     base_url = "https://sandbox-quickbooks.api.intuit.com"
@@ -48,11 +70,29 @@ def get_api(endpoint, realm_id = None, params= None, body = None):
         'Content-Type': 'application/x-www-form-urlencoded'
     }
     try:
-        resp = requests.get("{}/{}".format(base_url, endpoint), params=params, headers=headers, data=body)  
+        url = "{}/{}".format(base_url, endpoint)        
+        resp = requests.get(url, params =params, headers=headers)
         resp.raise_for_status()
         return resp
     except requests.exceptions.HTTPError as http_err:
-        frappe.throw(f"HTTP error occurred: {http_err}")
+        if resp.status_code == 400:
+            try:             
+                return resp
+            except Exception as e:
+                frappe.throw(f"HTTP error occurred: {http_err}")
+        elif resp.status_code == 401:
+            try:
+                ref = refresh_token()
+                if ref["status"] == 1:
+                    headers.update({"Authorization":'Bearer {}'.format(ref["access_token"])}) 
+                    re_resp = requests.get("{}/{}".format(base_url, endpoint), params=params, headers=headers) 
+                    re_resp.raise_for_status()
+                    return re_resp
+                else:
+                    frappe.throw(f"HTTP error occurred: {http_err}")
+            except requests.exceptions.HTTPError as re_http_err:
+                frappe.throw(f"HTTP error occurred: {re_http_err}")
+
     except requests.exceptions.ConnectionError as conn_err:
         frappe.throw(f"Connection error occurred: {conn_err}")  # e.g., DNS failure, refused connection
     except requests.exceptions.Timeout as timeout_err:
@@ -68,19 +108,17 @@ def get_list(key, query, max = 100 ):
     start_position = 1
     max_results = max    
     while True:
-        params = {
-            'query': f'{query} STARTPOSITION {start_position} MAXRESULTS {max_results}'
-        }
-        resp = get_api("query", params=params)
+        _query_string = "{} STARTPOSITION {} MAXRESULTS {}".format(query,start_position,max_results )
+      
+        resp = get_api("query?query={}".format(_query_string))
         data = resp.json()
-
         if 'QueryResponse' not in data or key not in data['QueryResponse']:
             break   
         
         items = data['QueryResponse'][key]
         all_items.extend(items)
         
-        if len(items) < max_results:
+        if len(items) <= max_results:
             break
         
         start_position += max_results    

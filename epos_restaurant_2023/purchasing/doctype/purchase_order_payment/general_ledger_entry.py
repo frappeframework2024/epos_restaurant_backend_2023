@@ -14,6 +14,8 @@ def submit_purchase_payment_to_general_ledger_entry_on_submit(self):
         "voucher_type":"Purchase Order Payment",
         "voucher_number":self.name,
         "business_branch": self.business_branch,
+        "party_type": "Vendor",
+        "party":vendor
     }
     doc["remark"] = "Amount {} Pay to {}".format(frappe.format(self.payment_amount,{"fieldtype":"Currency"}), doc["againt"])
     doc["remark"] =  doc["remark"] + "\nAmount {} againt Purchase Order {}".format(frappe.format(self.payment_amount,{"fieldtype":"Currency"}), self.purchase_order)
@@ -33,7 +35,7 @@ def submit_purchase_payment_to_general_ledger_entry_on_submit(self):
         "againt_voucher_number":self.purchase_order,
         "voucher_type":"Purchase Order Payment",
         "voucher_number":self.name,
-        "business_branch": self.business_branch,
+        "business_branch": self.business_branch
     }
     doc["remark"] = "Amount {} Pay to {}".format(frappe.format(self.payment_amount,{"fieldtype":"Currency"}), doc["againt"])
     doc["remark"] = doc["remark"] + "\nAmount {} againt Purchase Order {}".format(frappe.format(self.payment_amount,{"fieldtype":"Currency"}), self.purchase_order)

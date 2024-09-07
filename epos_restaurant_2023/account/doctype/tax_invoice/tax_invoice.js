@@ -4,6 +4,15 @@
 frappe.ui.form.on("Tax Invoice", {
   refresh(frm) {
     
+    setTimeout(() => {
+     
+      frm.page.wrapper.find('[data-label="Remind%20Me"]').closest('.dropdown-item').hide();
+      frm.page.wrapper.find(':contains("New Tax Invoice")').closest('.dropdown-item').hide();
+      frm.page.wrapper.find('[data-label="Delete"]').closest('.dropdown-item').hide();
+      frm.page.wrapper.find('[data-label="Duplicate"]').closest('.dropdown-item').hide();
+      frm.page.wrapper.find('.btn-primary[data-label="Add Tax Invoice"]').hide();
+            
+    },100)
     frm.doc.letter_head = frm.doc.default_letter_head
 
     if (!frm.doc.__islocal) {

@@ -7,7 +7,8 @@ import "/node_modules/primeflex/primeflex.css";
 import "./assets/main.css";
 import DraggableResizableVue from 'draggable-resizable-vue3'
 import VueBarcode from '@chenfengyuan/vue-barcode';
-
+import ConfirmationService from 'primevue/confirmationservice';
+import ToastService from 'primevue/toastservice';
 
 const app = createApp(App);
 
@@ -20,7 +21,10 @@ app.use(PrimeVue, {
     preset: Aura,
   },
 });
+app.use(ConfirmationService);
 
+ 
+app.use(ToastService);
 app.component(VueBarcode.name, VueBarcode);
 
  

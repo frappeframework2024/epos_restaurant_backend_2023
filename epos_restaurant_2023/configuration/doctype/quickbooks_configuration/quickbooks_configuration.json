@@ -7,35 +7,44 @@
  "field_order": [
   "client_id",
   "client_secret",
+  "connect_to_quickbooks_button",
+  "column_break_nzcm",
   "redirect_url",
   "environment",
-  "connect_to_quickbooks_button",
   "connected",
+  "connected_information_section",
   "column_break_rbcn",
   "realm_id",
   "qb_company_name",
   "refresh_token",
+  "column_break_njmr",
   "request_token_button",
-  "access_token"
+  "access_token",
+  "mapping",
+  "payment_method_mapping"
  ],
  "fields": [
   {
+   "depends_on": "eval:frappe.user.has_role(\"Administrator\")",
    "fieldname": "client_id",
    "fieldtype": "Data",
    "label": "Client Id"
   },
   {
+   "depends_on": "eval:frappe.user.has_role(\"Administrator\")",
    "fieldname": "client_secret",
    "fieldtype": "Data",
    "label": "Client Secret"
   },
   {
+   "depends_on": "eval:frappe.user.has_role(\"Administrator\")",
    "fieldname": "redirect_url",
    "fieldtype": "Data",
    "label": "Redirect Url"
   },
   {
    "default": "sandbox",
+   "depends_on": "eval:frappe.user.has_role(\"Administrator\")",
    "fieldname": "environment",
    "fieldtype": "Select",
    "label": "Environment",
@@ -87,12 +96,37 @@
    "fieldname": "request_token_button",
    "fieldtype": "Button",
    "label": "Re -Generate Token"
+  },
+  {
+   "fieldname": "column_break_nzcm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.connected == 1",
+   "fieldname": "connected_information_section",
+   "fieldtype": "Section Break",
+   "label": "Connected Information"
+  },
+  {
+   "fieldname": "column_break_njmr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "payment_method_mapping",
+   "fieldtype": "Table",
+   "label": "Payment Method Mapping",
+   "options": "QB Payment Method Mapping"
+  },
+  {
+   "fieldname": "mapping",
+   "fieldtype": "Tab Break",
+   "label": "Mapping"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-08-27 10:48:31.320315",
+ "modified": "2024-09-03 15:52:24.071308",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "QuickBooks Configuration",

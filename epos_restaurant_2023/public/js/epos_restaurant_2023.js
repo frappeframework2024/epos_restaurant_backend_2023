@@ -63,6 +63,107 @@ window.addEventListener('load', function () {
        
     })
 
+
+    //eDoor menu mobile
+    const observerQueryReportRender = new MutationObserver((mutationsList) => {
+			for (const mutation of mutationsList) {
+				if (mutation.type === 'childList') {
+				// Check if the element with ID 'page-query-report' is in the DOM
+				const element = document.getElementById('page-query-report');
+				if (element) {
+					apply_mobile_report_view()
+					// Optionally, disconnect the observer if you only want to detect it once
+					observerQueryReportRender.disconnect();
+					break;
+				}
+				}
+			}
+		});
+		observerQueryReportRender.observe(document.body, { childList: true, subtree: true });
+
+		function apply_mobile_report_view(){
+			if (!frappe.is_mobile()){
+				return
+			}
+			const filter = document.querySelector(".page-form")
+
+			if (filter) {
+				filter.classList.add("mobile_filter")
+				addViewReportButton(filter)
+
+			}
+			// append filter button
+			// Create and append the wrapper div with buttons
+			document.querySelector("#page-query-report").insertAdjacentHTML('beforeend', `
+				<div class="mobile_report_filter_wrapper">
+				<button class="filter_report btn btn-primary">
+					<svg width="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M20.058 9.72255C21.0065 9.18858 21.4808 8.9216 21.7404 8.49142C22 8.06124 22 7.54232 22 6.50448V5.81466C22 4.48782 22 3.8244 21.5607 3.4122C21.1213 3 20.4142 3 19 3H5C3.58579 3 2.87868 3 2.43934 3.4122C2 3.8244 2 4.48782 2 5.81466V6.50448C2 7.54232 2 8.06124 2.2596 8.49142C2.5192 8.9216 2.99347 9.18858 3.94202 9.72255L6.85504 11.3624C7.49146 11.7206 7.80967 11.8998 8.03751 12.0976C8.51199 12.5095 8.80408 12.9935 8.93644 13.5872C9 13.8722 9 14.2058 9 14.8729L9 17.5424C9 18.452 9 18.9067 9.25192 19.2613C9.50385 19.6158 9.95128 19.7907 10.8462 20.1406C12.7248 20.875 13.6641 21.2422 14.3321 20.8244C15 20.4066 15 19.4519 15 17.5424V14.8729C15 14.2058 15 13.8722 15.0636 13.5872C15.1959 12.9935 15.488 12.5095 15.9625 12.0976" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"></path> </g></svg>
+					Filter Report
+				</button>
+				<button class="btn_refresh_report btn btn-primary">
+					<svg width="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M15.9775 8.71452L15.5355 8.2621C13.5829 6.26318 10.4171 6.26318 8.46447 8.2621C6.51184 10.261 6.51184 13.5019 8.46447 15.5008C10.4171 17.4997 13.5829 17.4997 15.5355 15.5008C16.671 14.3384 17.1462 12.7559 16.9611 11.242M15.9775 8.71452H13.3258M15.9775 8.71452V6" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M7 3.33782C8.47087 2.48697 10.1786 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 10.1786 2.48697 8.47087 3.33782 7" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"></path> </g></svg>
+					Refresh Report
+				</button>
+				</div>
+			`);
+			// Add click event listeners for both buttons
+			document.querySelector('.filter_report').addEventListener('click', () => {
+				let mainSection = document.querySelector('.main-section')
+				mainSection.classList.add('filter-report')
+				filter.style.opacity =1;
+				filter.classList.add("show")
+				addViewReportButton(filter)
+				document.querySelector("body").insertAdjacentHTML('beforeend', `<div class="mobile_filter_back_drop"></div>`);
+
+				document.querySelector('.mobile_filter_back_drop').addEventListener('click', (event) => {
+					document.querySelector('.mobile_filter_back_drop').remove()
+					filter.classList.remove("show")
+				});
+
+			});
+
+			document.querySelector('.btn_refresh_report').addEventListener('click', () => {
+				frappe.query_report.refresh();
+                if (document.querySelector('.mobile_filter_back_drop')) {
+				    document.querySelector('.mobile_filter_back_drop').remove()
+                }
+			}); 
+		}
+
+		function addViewReportButton(filter){
+			
+			if (!document.querySelector(".btn_view_report")){
+				filter.insertAdjacentHTML('beforeend', `
+							<div class="prev-close">
+								<button class="btn_view_report btn btn-primary">
+									<svg width="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M9 4.45962C9.91153 4.16968 10.9104 4 12 4C16.1819 4 19.028 6.49956 20.7251 8.70433C21.575 9.80853 22 10.3606 22 12C22 13.6394 21.575 14.1915 20.7251 15.2957C19.028 17.5004 16.1819 20 12 20C7.81811 20 4.97196 17.5004 3.27489 15.2957C2.42496 14.1915 2 13.6394 2 12C2 10.3606 2.42496 9.80853 3.27489 8.70433C3.75612 8.07914 4.32973 7.43025 5 6.82137" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"></path> <path d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z" stroke="#ffffff" stroke-width="1.5"></path> </g></svg>
+									Preview Report
+								</button>
+								<button class="btn_close_filter btn btn-primary">
+									<svg width="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"></path> <path d="M7 3.33782C8.47087 2.48697 10.1786 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 10.1786 2.48697 8.47087 3.33782 7" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"></path> </g></svg>
+									Close
+								</button>
+							</div>
+						`);
+
+				document.querySelector('.btn_view_report').addEventListener('click', () => {
+					let mainSection = document.querySelector('.main-section')
+					mainSection.classList.remove('filter-report')
+					frappe.query_report.refresh();
+					filter.classList.remove("show")
+					document.querySelector('.mobile_filter_back_drop').remove()
+
+				});
+				document.querySelector('.btn_close_filter').addEventListener('click', () => {
+					let mainSection = document.querySelector('.main-section')
+					mainSection.classList.remove('filter-report')
+					filter.classList.remove("show")
+					document.querySelector('.mobile_filter_back_drop').remove()
+				});
+			}
+		
+		} 
+
 })
 
 function setFullScreenButton () {
@@ -640,8 +741,4 @@ function ViewDocDetailModal(doctype,docname){
 
     dialogGoogleSearch.show()
 }
- 
-
-
-
  

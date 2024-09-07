@@ -1,4 +1,5 @@
 frappe.listview_settings['Customer'] = {
+    hide_name_column: true, // hide the last column which shows the `name`
     onload: function(listview) {
         if(frappe.session.user == "Administrator"){
             listview.page.add_inner_button(__('Update Customer Transaction'), function() {

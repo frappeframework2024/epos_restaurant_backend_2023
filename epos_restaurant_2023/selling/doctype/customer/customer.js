@@ -91,7 +91,27 @@ frappe.ui.form.on("Customer", {
         catch(err){
 
         }   
-    }
+
+
+        frm.fields_dict['qb_customer_name'].get_query = function() {           
+            return {
+                query: 'epos_restaurant_2023.api.quickbook_intergration.qb_customer.get_customer_autocomplete',
+                filters:{
+                    "name": frm.doc.qb_customer_name
+                }
+            };
+        }; 
+
+    },
+
+    onload(frm){
+        frm.fields_dict['qb_customer_name'].get_query = function() {           
+            return {
+                query: 'epos_restaurant_2023.api.quickbook_intergration.qb_customer.get_customer_autocomplete',
+            };
+        }; 
+    },
+  
 });
 
 
@@ -109,7 +129,8 @@ function getCustomerInfo (frm) {
                 r.rooms_data = JSON.parse(r.rooms_data) 
             })
     
-            let html = frappe.render_template("customer_stay_history", {data:result.message});
+            
+            let html = frappe.render_template("customer_stay_history", {data:result.message,isInIframe:(window.self !== window.top)});
             $(frm.fields_dict["stay_history_detail"].wrapper).html(html);
             frm.refresh_field("stay_history_detail"); 
     
@@ -122,6 +143,7 @@ function getCustomerInfo (frm) {
     }); 
 }
 
+ 
 function getPOSMiscSaleInfo(frm) { 
     $(frm.fields_dict["pos_misc_sale"].wrapper).html("Loading customer POS Misc Sale...");
     frm.refresh_field("pos_misc_sale");

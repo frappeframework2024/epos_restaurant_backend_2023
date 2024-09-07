@@ -367,10 +367,14 @@ def get_sql_data(filters,row_group,report_fields=None):
 			"indent":0,
 			"row_group":row[str(row_group)],
 		})	
-		_result.update(data_total) 
-		
+		if not _result.get("in_quantity"):
+			_result.update({"in_quantity":0})
+		if not _result.get("out_quantity"):
+			_result.update({"out_quantity":0})
+
+		_result.update(data_total) 		
 		_result.update({
-			"balance": (_result["prev_on_hand"] + _result["in_quantity"] - _result["out_quantity"]) or 0
+			"balance": ((_result["prev_on_hand"] or 0) + (_result["in_quantity"] or 0) - (_result["out_quantity"] or 0)) or 0
 		}) 
 
 		## check row group

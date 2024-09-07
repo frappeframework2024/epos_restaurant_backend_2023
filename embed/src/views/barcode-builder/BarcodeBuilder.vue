@@ -3,7 +3,7 @@
     <div
       class="flex-1 w-full flex align-items-center justify-content-center m-3"
     >
-{{ productCode }}
+
 
       <Fieldset class="w-full m-2" legend="Previews">
         <label>Height : </label>
@@ -68,16 +68,20 @@
                     alignItems: e.align_items,
                     display:'flex',
                     transform: `rotate(${e.rotation}deg)`,
+                    lineHeight:'12px'
                   }"
                 >
                   <template v-if="e.fieldtype == 'Barcode'">
                     <div :style="{ height: e.height + 'px',width: e.width + 'px',
                     overflow: 'hidden'}">
-                      <img style="width: 100%;height: 100%" :src="url" />
+                      <img style="width: 100%;height: 100%"  :src="`http://bwipjs-api.metafloor.com/?bcid=code128&text=`+doc[e.fieldname]"  />
                     </div>
                   </template>
                   <template v-else>
-                    {{ doc[e.fieldname] }}
+                    <span v-if="e.fieldtype=='Currency'">
+                        {{ getCurrencyAmount(doc[e.fieldname]) }} 
+                      </span>
+                       <span v-else> {{ doc[e.fieldname] }}</span>
                   </template>
                 </div>
                 <DraggableResizableVue
@@ -107,7 +111,7 @@
                   >
                     <template v-if="e.fieldtype === 'Barcode'">
                       <div style="height: 100%; width: 100%; overflow: hidden">
-                        <img style="width: 100%; height: 100%" :src="url" />
+                        <img style="width: 100%; height: 100%" :src="`http://bwipjs-api.metafloor.com/?bcid=code128&text=`+doc[e.fieldname]" />
                       </div>
                     </template>
                     <template v-else>
@@ -122,7 +126,10 @@
                        }
                         "
                       >
-                        {{ doc[e.fieldname] }}
+                      <span v-if="e.fieldtype=='Currency'">
+                        {{ getCurrencyAmount(doc[e.fieldname]) }} 
+                      </span>
+                       <span v-else> {{ doc[e.fieldname] }}</span>
                       </div>
                     </template>
                   </div>
@@ -168,7 +175,7 @@
                   <input type="checkbox" id="italic" v-model="isItalic" />
                 </div>
 
-                <label>Barcode Type:</label>
+                <label>Data Type:</label>
                 <Select
                   v-model="selectedElement.fieldtype"
                   :options="['Data', 'Currency', 'Barcode', 'Int', 'Float']"
@@ -197,10 +204,17 @@ text align
       </Fieldset>
     </div>
   </div>
+ 
+  <Select v-model="templateName" editable :options="templates" optionLabel="template_name" @change="onSelectTemplate" optionValue="template_name" placeholder="Select Template" class="w-full md:w-56" />
+  <Checkbox v-model="isDefault" :binary="true" :trueValue="1" :falseValue = "0"  /> Default
+  
+  <Button  :loading="loading" @click="SaveTemplate">Save</Button>
+
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed,createUpdateDoc,getDocList } from "@/plugin";
+
 import Slider from "primevue/slider";
 import Select from "primevue/select";
 import InputText from "primevue/inputtext";
@@ -212,12 +226,21 @@ import Dropdown from "primevue/dropdown";
 import DraggableResizableVue from "draggable-resizable-vue3";
 import { FrappeApp } from "frappe-js-sdk";
 import { useRoute } from 'vue-router';
+import Checkbox from 'primevue/checkbox';
 
+import { useToast } from 'primevue/usetoast';
+ 
+const toast = useToast();
+
+
+const loading = ref(false)
 const route = useRoute();
 const frappe = new FrappeApp();
 const db = frappe.db();
 const call = frappe.call();
 const keyword = ref("");
+const templateName = ref("Default Template")
+const isDefault = ref(0)
 const data = ref({
   height: 94,
   width: 132,
@@ -230,7 +253,7 @@ const meta_data = ref({});
 const doc = ref({});
 const selectedElement = ref(null);
 const isPrint = ref(false);
-
+const templates = ref([{template_name:"Default Template"},{template_name:"Template Name 2"}])
 const filteredFields = computed(() => {
   return meta_data.value?.fields?.filter(
     (r) =>
@@ -249,6 +272,24 @@ const textStyle = computed(() => ({
   fontStyle: isItalic.value ? "italic" : "normal",
 }));
 
+function getCurrencyAmount(amount) {
+  if (window.parent.frappe) {
+
+
+    const text = window.parent.frappe.format(amount, { "fieldtype": "Currency" })
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text, 'text/html');
+
+    return doc.querySelector('div').textContent.trim();
+
+
+  }
+  return amount
+
+
+
+}
 const fontFamily = ref([
   { label: "Arial", value: "Arial, sans-serif" },
   { label: "Courier New", value: "'Courier New', monospace" },
@@ -272,14 +313,7 @@ function onAddElement(f) {
   });
 }
 
-const url = computed(() => {
-  const text = doc.value[selectedElement.value.fieldname] || "";
-
-  return `http://bwipjs-api.metafloor.com/?bcid=code128&text=${encodeURIComponent(
-    text
-  )}`;
-});
-
+ 
 function onDelete() {
   const index = data.value.elements.indexOf(selectedElement.value);
   if (index > -1) {
@@ -293,6 +327,7 @@ function onSelectElement(e) {
 }
 
 function onPrint() {
+ 
   isPrint.value = true;
   setTimeout(() => {
     const divContents = document.querySelector("#print-area").outerHTML;
@@ -325,6 +360,76 @@ function onPrint() {
   }, 1000);
 }
 
+function SaveTemplate(){
+  loading.value = true
+  let name = templates.value.find(r=>r.template_name == templateName.value)
+  if (name){
+    name = name.name
+  }else {
+    name = undefined
+  }
+  createUpdateDoc('Barcode Template', {
+    name:name,
+    template_name: templateName.value,
+    document_type:doctype.value,
+    template:data.value,
+    is_default:isDefault.value,
+  })
+    .then((doc) => {
+      loading.value = false
+      getTemplates(true)
+
+      toast.add({ severity: 'success', summary: "Save Template", detail: 'Save barcode template successfully', life: 3000 })
+})
+    .catch((error) => {
+      loading.value = false
+    });
+    
+}
+
+function onSelectTemplate(selected){
+
+  
+      let default_template = templates.value.find(r=>r.template_name ==selected.value)
+      if (!default_template){
+        default_template = JSON.parse(templates.value[0].template)
+      }
+      
+     if (default_template){
+      isDefault.value = default_template.is_default
+      data.value = JSON.parse(default_template.template)
+     }
+
+       
+}
+
+function getTemplates(skipGetDefault=false){
+  getDocList("Barcode Template",{
+    filters: [['document_type', '=', doctype.value]],
+    fields:["template_name","name","is_default","template"]
+  }).then(result=>{
+    templates.value = result
+    if(!skipGetDefault){
+    if(templates.value){
+      let default_template = templates.value.find(r=>r.is_default ==1)
+      
+
+      if (!default_template){
+        default_template = JSON.parse(templates.value[0].template)
+      }
+      
+     if (default_template){
+     
+      templateName.value = default_template.template_name
+      isDefault.value = default_template.is_default
+      data.value = JSON.parse(default_template.template)
+     }
+      
+    }
+     
+    }
+  })
+}
 onMounted(() => {
   call
     .get("epos_restaurant_2023.api.api.get_meta", {
@@ -333,10 +438,15 @@ onMounted(() => {
     .then((result) => {
       meta_data.value = result.message;
     });
-
+    
   db.getDoc("Product", productCode.value).then((result) => {
     doc.value = result;
+    getTemplates()
   });
+
+  
+  
+
 });
 </script>
 

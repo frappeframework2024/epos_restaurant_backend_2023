@@ -1886,3 +1886,16 @@ def reset_sale_network_lock_by_sale(old_sale, new_sale):
 
     return "reset sale network lock"
 
+@frappe.whitelist()
+def get_product_activity_log(doctype,product):
+    return dict(
+        frappe.db.sql(
+			"""select unix_timestamp(date(communication_date)), count(name)
+		from `tabActivity Log`
+		where
+			date(communication_date) > subdate(curdate(), interval 1 year)
+            and timeline_doctype = %(doctype)s and timeline_name = %(name)s
+		group by date(communication_date)
+		order by communication_date asc"""
+		,{"name":product,"doctype":doctype}))
+

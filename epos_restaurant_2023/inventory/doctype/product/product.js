@@ -33,7 +33,47 @@ frappe.ui.form.on("Product", {
                 ]
             }
         });
+        // frm.dashboard.render_heatmap({
+        //     title: "Your Heatmap Title",
+        //     heatmap: true,  // This enables the heatmap
+        //     heatmap_options: {
+        //         data: {
+        //             // Example data
+        //             '2024-09-01': 5,
+        //             '2024-09-02': 10,
+        //             '2025-09-03': 3,
+        //         }
+        //     }
+        // })
         frm.dashboard.render_heatmap()
+        frappe.call({
+            method: "epos_restaurant_2023.api.api.get_product_activity_log",
+            args:{
+                product:frm.doc.name,
+                doctype:frm.doc.doctype
+            },
+            callback: function (r) {
+                if (r.message) {
+                    
+                    new frappe.Chart(".heatmap", {
+                        type: 'heatmap',
+                        start: new Date(moment().subtract(1, 'year').toDate()),
+                        countLabel: "transaction",
+                        discreteDomains: 1,
+                        radius: 3, // default 0
+                        data: {
+                            'dataPoints': r.message
+                        },
+                        
+                    });
+                    
+                }
+            }
+        });
+
+
+        
+        
         print_barcode_button(frm);
 
         set_product_indicator(frm);

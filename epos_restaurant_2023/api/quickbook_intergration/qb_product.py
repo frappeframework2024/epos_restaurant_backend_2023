@@ -8,28 +8,16 @@ def get_all():
     query = "SELECT * FROM Item ORDER BY Id"
     return get_list(key="Item", query=query)
 
-@frappe.whitelist(allow_guest=True, methods="POST")
-def create_item():
-    body ={
-        "Name": "Sample Item",
-        "Type": "Inventory",
-        "IncomeAccountRef": {
-            "value": "1",
-            "name": "Sales"
-        },
-        "ExpenseAccountRef": {
-            "value": "456",
-            "name": "Expenses"
-        },
-        "AssetAccountRef": {
-            "value": "789",
-            "name": "Inventory Asset"
-        },
-        "QtyOnHand": 100,
-        "UnitPrice": 20.00
-        }
 
-    resp = post_api("item",body=body)
+
+@frappe.whitelist(allow_guest=True, methods="GET")
+def get_query(table,query): 
+    return get_list(key=table, query=query)
+
+
+@frappe.whitelist(allow_guest=True, methods="GET")
+def create_item(data): 
+    resp = post_api("item",headers={"Content-Type":"application/json"}, body=data)
     return resp.json()
 
 
