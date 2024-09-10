@@ -5,7 +5,7 @@ from py_linq import Enumerable
 import frappe
 from frappe.model.document import Document
 from frappe.model.naming import NamingSeries
-from epos_restaurant_2023.api.quickbook_intergration.qb_invoice import (create_invoice)
+# from epos_restaurant_2023.api.quickbook_intergration.qb_invoice import (create_invoice)
 class CashierShift(Document):
 	def validate(self):
 		# #if close shift check current bill open 
