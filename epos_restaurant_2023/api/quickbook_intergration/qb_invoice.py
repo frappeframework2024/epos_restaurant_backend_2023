@@ -12,11 +12,11 @@ from typing import List, Optional
 def create_invoice(cashier_shift): 
     sql_sale = "select name,total_discount,customer,customer_name,posting_date,custom_bill_number,qb_customer_id from `tabSale` where cashier_shift = %(cashier_shift)s and docstatus = 1"
     sale_list = frappe.db.sql(sql_sale,{"cashier_shift":cashier_shift},as_dict = 1)
-    for s in sale_list:
-        sale_product_list = frappe.db.get_all("Sale Product",filters={
-            'parent': s.name
-        })
-    # invoice = 
+    # for s in sale_list:
+    #     sale_product_list = frappe.db.get_all("Sale Product",,filters={
+    #         'parent': s.name
+    #     })
+        
     resp = post_api("invoice",headers={"Content-Type":"application/json"}, body=data)
     return resp.json()
 
