@@ -5,7 +5,7 @@
    "label": "Stock Values"
   }
  ],
- "content": "[{\"id\":\"m4LNRhZkiv\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Stock Values\",\"col\":12}},{\"id\":\"wcGVDGLB0y\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Product\",\"col\":3}},{\"id\":\"6xdVVCdbHL\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"id\":\"5BtZJlC7Kw\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Entry\",\"col\":3}},{\"id\":\"loZstyAoMz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Adjustment\",\"col\":3}},{\"id\":\"s-3Nsb4Ppc\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Produce\",\"col\":3}},{\"id\":\"WynT32K-wt\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Transfer\",\"col\":3}},{\"id\":\"i_lI6vofYN\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Take\",\"col\":3}},{\"id\":\"y-8wzemmUx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Inventory Check\",\"col\":3}},{\"id\":\"Aa6vA6V-Mi\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Location Product\",\"col\":3}},{\"id\":\"PxU9Ho1GYx\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent Transaction</b></span>\",\"col\":12}},{\"id\":\"oSxaTPxEMJ\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Inventory Transaction\",\"col\":6}},{\"id\":\"sw4Xf5qRb3\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Stock Adjustment Transaction\",\"col\":6}},{\"id\":\"ZRJp8CWklr\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Purchase Order Transaction\",\"col\":4}},{\"id\":\"TbvhMIKkA_\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Stock Transfer Transaction\",\"col\":4}},{\"id\":\"raUOAAq5ip\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Stock Take Transaction\",\"col\":4}},{\"id\":\"4gu51YucNU\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"TAamvxFYMr\",\"type\":\"card\",\"data\":{\"card_name\":\"Configuration\",\"col\":4}},{\"id\":\"_3jjBJB3ED\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"id\":\"lxJRk4MTAz\",\"type\":\"card\",\"data\":{\"card_name\":\"Summary Report\",\"col\":4}}]",
+ "content": "[{\"id\":\"m4LNRhZkiv\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Stock Values\",\"col\":12}},{\"id\":\"wcGVDGLB0y\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Product\",\"col\":3}},{\"id\":\"6xdVVCdbHL\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"id\":\"loZstyAoMz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Adjustment\",\"col\":3}},{\"id\":\"s-3Nsb4Ppc\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Produce\",\"col\":3}},{\"id\":\"WynT32K-wt\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Transfer\",\"col\":3}},{\"id\":\"i_lI6vofYN\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Take\",\"col\":3}},{\"id\":\"Aa6vA6V-Mi\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Location Product\",\"col\":3}},{\"id\":\"PxU9Ho1GYx\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Recent Transaction</b></span>\",\"col\":12}},{\"id\":\"oSxaTPxEMJ\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Inventory Transaction\",\"col\":6}},{\"id\":\"sw4Xf5qRb3\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Stock Adjustment Transaction\",\"col\":6}},{\"id\":\"ZRJp8CWklr\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Purchase Order Transaction\",\"col\":4}},{\"id\":\"TbvhMIKkA_\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Stock Transfer Transaction\",\"col\":4}},{\"id\":\"raUOAAq5ip\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Stock Take Transaction\",\"col\":4}},{\"id\":\"4gu51YucNU\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"TAamvxFYMr\",\"type\":\"card\",\"data\":{\"card_name\":\"Configuration\",\"col\":4}},{\"id\":\"_3jjBJB3ED\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"id\":\"lxJRk4MTAz\",\"type\":\"card\",\"data\":{\"card_name\":\"Summary Report\",\"col\":4}}]",
  "creation": "2022-12-06 10:52:34.110072",
  "custom_blocks": [],
  "custom_menu_icon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"SVGRepo_bgCarrier\" stroke-width=\"0\"></g><g id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></g><g id=\"SVGRepo_iconCarrier\"> <path d=\"M22 22L2 22\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\"></path> <path d=\"M3 22.0001V11.3472C3 10.4903 3.36644 9.67432 4.00691 9.10502M21 22.0001V16M7.25345 6.2192L10.0069 3.77169C11.1436 2.76133 12.8564 2.76133 13.9931 3.77169L19.9931 9.10502C20.6336 9.67432 21 10.4903 21 11.3472V12\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\"></path> <path d=\"M9 18.5H15\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\"></path> <path d=\"M6 22V19M18 22V16C18 14.1144 18 13.1716 17.4142 12.5858C16.8284 12 15.8856 12 14 12H10C8.11438 12 7.17157 12 6.58579 12.5858C6.11424 13.0573 6.02228 13.7602 6.00434 15\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\"></path> <path d=\"M10 9H10.5M14 9H12.5\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\"></path> <path d=\"M9 15.5H10.5M15 15.5H12.5\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\"></path> </g></svg>",
@@ -301,7 +301,7 @@
    "type": "Link"
   }
  ],
- "modified": "2024-08-31 15:35:32.314852",
+ "modified": "2024-09-07 13:41:12.948499",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Inventory",
@@ -353,30 +353,12 @@
    "type": "DocType"
   },
   {
-   "color": "Grey",
-   "custom_show_in_app_menu": 1,
-   "doc_view": "List",
-   "label": "Stock Entry",
-   "link_to": "Stock Entry",
-   "stats_filter": "[[\"Stock Entry\",\"name\",\"=\",null,false]]",
-   "type": "DocType"
-  },
-  {
    "color": "Blue",
    "custom_show_in_app_menu": 1,
    "doc_view": "List",
    "label": "Stock Adjustment",
    "link_to": "Stock Adjustment",
    "stats_filter": "{\"posting_date\":[\"Timespan\",\"this month\"]}",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "custom_show_in_app_menu": 1,
-   "doc_view": "List",
-   "label": "Inventory Check",
-   "link_to": "Inventory Check",
-   "stats_filter": "[]",
    "type": "DocType"
   },
   {

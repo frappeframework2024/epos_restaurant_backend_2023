@@ -1933,7 +1933,6 @@ export default class Sale {
         this.productPrinters = [];
         this.sale.sale_products.filter(r => r.sale_product_status == 'New' && JSON.parse(r.printers).length > 0).forEach((r) => {
             const printers = JSON.parse(r.printers);
-            console.log(r)
             printers.forEach((p) => {
              
                 this.productPrinters.push({

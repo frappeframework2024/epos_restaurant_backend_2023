@@ -7,7 +7,7 @@ import proxyOptions from './proxyOptions';
 export default defineConfig({
 	plugins: [vue()],
 	server: {
-		port: 9999,
+		port: 5566,
 		proxy: proxyOptions,
 		host:true
 	},

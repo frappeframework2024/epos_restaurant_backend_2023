@@ -17,6 +17,7 @@
   "reference_number",
   "pos_profile",
   "customer",
+  "qb_customer_id",
   "customer_name",
   "customer_photo",
   "phone_number",
@@ -224,7 +225,9 @@
   "section_break_pupr",
   "column_break_fwau",
   "column_break_itvr",
-  "total_trade_in_amount"
+  "total_trade_in_amount",
+  "integrate_tab",
+  "qb_invoice_id"
  ],
  "fields": [
   {
@@ -874,7 +877,6 @@
   },
   {
    "allow_on_submit": 1,
-   "depends_on": "doc.custom_bill_number != ''",
    "fieldname": "custom_bill_number",
    "fieldtype": "Data",
    "label": "Bill Number"
@@ -1516,6 +1518,26 @@
    "fieldname": "trade_in_products",
    "fieldtype": "Table",
    "options": "Sale Trade In"
+  },
+  {
+   "fieldname": "integrate_tab",
+   "fieldtype": "Tab Break",
+   "label": "Integrate"
+  },
+  {
+   "fieldname": "qb_invoice_id",
+   "fieldtype": "Data",
+   "label": "QB Invoice ID"
+  },
+  {
+   "fetch_from": "customer.qb_customer_id",
+   "fieldname": "qb_customer_id",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "QB Customer ID",
+   "search_index": 1
   }
  ],
  "image_field": "photo",
@@ -1538,7 +1560,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2024-09-04 16:02:53.624104",
+ "modified": "2024-09-10 11:02:09.808912",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

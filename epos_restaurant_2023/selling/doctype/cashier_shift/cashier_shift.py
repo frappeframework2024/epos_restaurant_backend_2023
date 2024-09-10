@@ -5,6 +5,7 @@ from py_linq import Enumerable
 import frappe
 from frappe.model.document import Document
 from frappe.model.naming import NamingSeries
+from epos_restaurant_2023.api.quickbook_intergration.qb_invoice import (create_invoice)
 class CashierShift(Document):
 	def validate(self):
 		# #if close shift check current bill open 
@@ -128,8 +129,13 @@ class CashierShift(Document):
 					
 					else:
 						frappe.enqueue("epos_restaurant_2023.selling.doctype.cashier_shift.cashier_shift.submit_pos_data_to_folio_transaction", queue='short', self=self)
+		if self.has_value_changed("is_closed") and self.is_closed == 1:
+			create_invoice(self.name)
 
+	# 	frappe.enqueue('epos_restaurant_2023.api.quickbook_intergration.qb_invoice.create_invoice',cashier_shift = self.name)
 
+		
+		
 
 # get sale product revenue sum group by
 def get_sale_product_revenue(sale_products):

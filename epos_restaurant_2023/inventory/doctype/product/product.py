@@ -177,6 +177,8 @@ class Product(Document):
 		else:
 			if self.has_variants == 1:
 				self.status = "Template"
+			else:
+				self.status = "Enabled"
 
 		if len(self.product_variants)>0:
 			for a in self.product_variants:

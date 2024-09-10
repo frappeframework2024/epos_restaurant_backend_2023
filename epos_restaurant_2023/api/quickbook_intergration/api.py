@@ -10,7 +10,7 @@ from epos_restaurant_2023.api.quickbook_intergration.config import (refresh_toke
 @frappe.whitelist() 
 def post_api(endpoint,realm_id = None, params=None, headers= None, body=None):
     setting = frappe.get_doc('QuickBooks Configuration') 
-    endpoint = "v3/company/{0}/{1}".format((setting.realm_id if not realm_id else realm_id),endpoint)
+    _endpoint = "v3/company/{0}/{1}".format((setting.realm_id if not realm_id else realm_id),endpoint)
     base_url = "https://sandbox-quickbooks.api.intuit.com"
     if setting.environment != "sandbox":
         base_url = base_url.replace("sandbox-","")
@@ -25,7 +25,7 @@ def post_api(endpoint,realm_id = None, params=None, headers= None, body=None):
         _headers.update(headers)
 
     try:
-        resp = requests.post("{}/{}".format(base_url, endpoint), params=params, headers=_headers, json=body)          
+        resp = requests.post("{}/{}".format(base_url, _endpoint), params=params, headers=_headers, json=body)          
         resp.raise_for_status()
         return resp
     except requests.exceptions.HTTPError as http_err:
@@ -60,7 +60,7 @@ def post_api(endpoint,realm_id = None, params=None, headers= None, body=None):
 @frappe.whitelist() 
 def get_api(endpoint, realm_id = None, params= None):
     setting = frappe.get_doc('QuickBooks Configuration') 
-    endpoint = "v3/company/{0}/{1}".format((setting.realm_id if not realm_id else realm_id),endpoint)
+    _endpoint = "v3/company/{0}/{1}".format((setting.realm_id if not realm_id else realm_id),endpoint)
     base_url = "https://sandbox-quickbooks.api.intuit.com"
     if setting.environment != "sandbox":
         base_url = base_url.replace("sandbox-","") 
@@ -70,7 +70,7 @@ def get_api(endpoint, realm_id = None, params= None):
         'Content-Type': 'application/x-www-form-urlencoded'
     }
     try:
-        url = "{}/{}".format(base_url, endpoint)        
+        url = "{}/{}".format(base_url, _endpoint)        
         resp = requests.get(url, params =params, headers=headers)
         resp.raise_for_status()
         return resp
@@ -85,7 +85,7 @@ def get_api(endpoint, realm_id = None, params= None):
                 ref = refresh_token()
                 if ref["status"] == 1:
                     headers.update({"Authorization":'Bearer {}'.format(ref["access_token"])}) 
-                    re_resp = requests.get("{}/{}".format(base_url, endpoint), params=params, headers=headers) 
+                    re_resp = requests.get("{}/{}".format(base_url, _endpoint), params=params, headers=headers) 
                     re_resp.raise_for_status()
                     return re_resp
                 else:
