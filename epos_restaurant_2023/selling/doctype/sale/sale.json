@@ -220,14 +220,15 @@
   "inventory_transaction",
   "integration_tab",
   "exely_transaction_id",
+  "qb_integrate_section",
+  "qb_invoice_id",
   "trade_in_tab",
   "trade_in_products",
   "section_break_pupr",
   "column_break_fwau",
   "column_break_itvr",
   "total_trade_in_amount",
-  "integrate_tab",
-  "qb_invoice_id"
+  "integrate_tab"
  ],
  "fields": [
   {
@@ -1538,6 +1539,11 @@
    "in_standard_filter": 1,
    "label": "QB Customer ID",
    "search_index": 1
+  },
+  {
+   "fieldname": "qb_integrate_section",
+   "fieldtype": "Section Break",
+   "label": "QB Integrate"
   }
  ],
  "image_field": "photo",
@@ -1560,7 +1566,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2024-09-10 11:02:09.808912",
+ "modified": "2024-09-11 10:32:42.898035",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

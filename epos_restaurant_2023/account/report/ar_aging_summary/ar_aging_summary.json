@@ -6,11 +6,11 @@
  "docstatus": 0,
  "doctype": "Report",
  "filters": [],
- "idx": 0,
+ "idx": 60,
  "is_standard": "Yes",
  "letter_head": "Tax Invoice",
  "letterhead": null,
- "modified": "2024-06-07 14:18:36.490671",
+ "modified": "2024-09-10 15:42:50.140800",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "AR Aging Summary",
@@ -25,6 +25,15 @@
   },
   {
    "role": "eDoor Admin"
+  },
+  {
+   "role": "Accounts User"
+  },
+  {
+   "role": "eDoor Admin Read Only"
+  },
+  {
+   "role": "Account Manager"
   },
   {
    "role": "Accounts User"

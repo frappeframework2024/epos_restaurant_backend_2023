@@ -21,6 +21,8 @@
   "request_token_button",
   "access_token",
   "mapping",
+  "default_customer_id",
+  "section_break_mmkv",
   "payment_method_mapping"
  ],
  "fields": [
@@ -121,12 +123,21 @@
    "fieldname": "mapping",
    "fieldtype": "Tab Break",
    "label": "Mapping"
+  },
+  {
+   "fieldname": "default_customer_id",
+   "fieldtype": "Data",
+   "label": "Default Customer ID"
+  },
+  {
+   "fieldname": "section_break_mmkv",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-09-03 15:52:24.071308",
+ "modified": "2024-09-11 10:34:09.911912",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "QuickBooks Configuration",
