@@ -129,8 +129,8 @@ class CashierShift(Document):
 					
 					else:
 						frappe.enqueue("epos_restaurant_2023.selling.doctype.cashier_shift.cashier_shift.submit_pos_data_to_folio_transaction", queue='short', self=self)
-		if self.has_value_changed("is_closed") and self.is_closed == 1:
-			create_invoice(self.name)
+		# if self.has_value_changed("is_closed") and self.is_closed == 1:
+		# 	create_invoice(self.name)
 
 	# 	frappe.enqueue('epos_restaurant_2023.api.quickbook_intergration.qb_invoice.create_invoice',cashier_shift = self.name)
 
