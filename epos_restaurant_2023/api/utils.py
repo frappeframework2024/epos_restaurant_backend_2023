@@ -39,7 +39,7 @@ def successful_login(login_manager):
     frappe.throw(get_client_ip())
     
 def get_client_ip():
-    client_ip = frappe.local.request.headers.get('x-real-ip')
+    client_ip = frappe.get_request_header("X-Forwarded-For")
    
     return str(client_ip)
 
