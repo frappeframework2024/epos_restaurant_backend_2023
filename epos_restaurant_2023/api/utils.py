@@ -253,47 +253,49 @@ def ping():
 
 @frappe.whitelist()
 def re_run_fail_jobs():
-    server_url = frappe.db.get_single_value('ePOS Sync Setting','server_url')
-    response = requests.post(f"{server_url}/api/method/epos_restaurant_2023.api.utils.ping")
-    
-    if response.status_code == 200:
-        args = {'doctype': 'RQ Job', 'fields': ['`tabRQ Job`.`name`', '`tabRQ Job`.`owner`', '`tabRQ Job`.`creation`', '`tabRQ Job`.`modified`', '`tabRQ Job`.`modified_by`', '`tabRQ Job`.`_user_tags`', '`tabRQ Job`.`_comments`', '`tabRQ Job`.`_assign`', '`tabRQ Job`.`_liked_by`', '`tabRQ Job`.`docstatus`', '`tabRQ Job`.`idx`', '`tabRQ Job`.`queue`', '`tabRQ Job`.`status`', '`tabRQ Job`.`job_name`'], 'filters': [['RQ Job', 'status', '=', 'failed']], 'order_by': '`tabRQ Job`.`modified` desc', 'start': '0', 'page_length': '20', 'group_by': '`tabRQ Job`.`name`', 'with_comment_count': '1', 'save_user_settings': True, 'strict': None}
-        start = cint(args.get("start"))
-        page_length = cint(args.get("page_length")) or 20
-
-        order_desc = "desc" in args.get("order_by", "")
-
-        matched_job_ids = get_matching_job_ids(args)[start : start + page_length]
-
-        conn = get_redis_conn()
-        jobs = [
-            serialize_job(job) for job in Job.fetch_many(job_ids=matched_job_ids, connection=conn) if job
-        ]
-
-        jobs =  sorted(jobs, key=lambda j: j.modified, reverse=order_desc)
-        jobs = [d for d in jobs if "exc_info" in d]
-        job_names=["epos_restaurant_2023.api.utils."]
-        jobs = [d for d in jobs  if  ( d["job_name"] in job_names or  "Deadlock found when trying"  in  d["exc_info"] or 'Network is unreachable' in d['exc_info'] or "Lock wait timeout exceeded"  in  d["exc_info"] or "Document has been modified after you have opened it" in d["exc_info"] or "zerobalance" in d["exc_info"] or "Task exceeded maximum timeout value" in d["exc_info"] or "timeout" in d["exc_info"] or "object has no attribute" in d["exc_info"] or "object is not subscriptable" in d["exc_info"]) ]
-        job_ids = []
+    enabled = (frappe.db.get_single_value('ePOS Sync Setting','enable') or 0)
+    if enabled == 1:
+        server_url = frappe.db.get_single_value('ePOS Sync Setting','server_url')
+        response = requests.post(f"{server_url}/api/method/epos_restaurant_2023.api.utils.ping")
         
-        for j in jobs:
-            try:
-                job =   json.loads(j["arguments"])
-                #Retry Here
-                if job['job_name'] == "epos_restaurant_2023.api.utils.sync_data_to_server":
-                    frappe.enqueue('epos_restaurant_2023.api.utils.sync_data_to_server',doc=frappe.get_doc(job['kwargs']['doc']),extra_action=job['kwargs']['extra_action'] if job['kwargs'].get('extra_action') else '[]',action=job['kwargs']['action'])
-                    # sync_data_to_server(frappe.get_doc(job['kwargs']['doc']),extra_action=job['kwargs']['extra_action'] if job['kwargs'].get('extra_action') else '[]',action=job['kwargs']['action'])
-                       
+        if response.status_code == 200:
+            args = {'doctype': 'RQ Job', 'fields': ['`tabRQ Job`.`name`', '`tabRQ Job`.`owner`', '`tabRQ Job`.`creation`', '`tabRQ Job`.`modified`', '`tabRQ Job`.`modified_by`', '`tabRQ Job`.`_user_tags`', '`tabRQ Job`.`_comments`', '`tabRQ Job`.`_assign`', '`tabRQ Job`.`_liked_by`', '`tabRQ Job`.`docstatus`', '`tabRQ Job`.`idx`', '`tabRQ Job`.`queue`', '`tabRQ Job`.`status`', '`tabRQ Job`.`job_name`'], 'filters': [['RQ Job', 'status', '=', 'failed']], 'order_by': '`tabRQ Job`.`modified` desc', 'start': '0', 'page_length': '20', 'group_by': '`tabRQ Job`.`name`', 'with_comment_count': '1', 'save_user_settings': True, 'strict': None}
+            start = cint(args.get("start"))
+            page_length = cint(args.get("page_length")) or 20
 
-                job_ids.append(j["job_id"])
-                remove_failed_jobs(job_ids)
-            except Exception as e:
-                frappe.throw(str(e))
+            order_desc = "desc" in args.get("order_by", "")
+
+            matched_job_ids = get_matching_job_ids(args)[start : start + page_length]
+
+            conn = get_redis_conn()
+            jobs = [
+                serialize_job(job) for job in Job.fetch_many(job_ids=matched_job_ids, connection=conn) if job
+            ]
+
+            jobs =  sorted(jobs, key=lambda j: j.modified, reverse=order_desc)
+            jobs = [d for d in jobs if "exc_info" in d]
+            job_names=["epos_restaurant_2023.api.utils."]
+            jobs = [d for d in jobs  if  ( d["job_name"] in job_names or  "Deadlock found when trying"  in  d["exc_info"] or 'Network is unreachable' in d['exc_info'] or "Lock wait timeout exceeded"  in  d["exc_info"] or "Document has been modified after you have opened it" in d["exc_info"] or "zerobalance" in d["exc_info"] or "Task exceeded maximum timeout value" in d["exc_info"] or "timeout" in d["exc_info"] or "object has no attribute" in d["exc_info"] or "object is not subscriptable" in d["exc_info"]) ]
+            job_ids = []
             
-        
-        
+            for j in jobs:
+                try:
+                    job =   json.loads(j["arguments"])
+                    #Retry Here
+                    if job['job_name'] == "epos_restaurant_2023.api.utils.sync_data_to_server":
+                        frappe.enqueue('epos_restaurant_2023.api.utils.sync_data_to_server',doc=frappe.get_doc(job['kwargs']['doc']),extra_action=job['kwargs']['extra_action'] if job['kwargs'].get('extra_action') else '[]',action=job['kwargs']['action'])
+                        # sync_data_to_server(frappe.get_doc(job['kwargs']['doc']),extra_action=job['kwargs']['extra_action'] if job['kwargs'].get('extra_action') else '[]',action=job['kwargs']['action'])
+                        
 
-        return job_ids
+                    job_ids.append(j["job_id"])
+                    remove_failed_jobs(job_ids)
+                except Exception as e:
+                    frappe.throw(str(e))
+                
+            
+            
+
+            return job_ids
 
 
 def serialize_job(job: Job) -> frappe._dict:
