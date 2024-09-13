@@ -34,7 +34,14 @@ def validate_queue_job_status(doc, method=None, *args, **kwargs):
         if status["status"]!="active":
             
             frappe.throw("Schedule job status is not running. Please contact your system administrator.")
-        
+
+def successful_login(login_manager):
+    frappe.throw(get_client_ip())
+def get_client_ip():
+    client_ip = frappe.local.request.headers.get('X-Real-IP') or frappe.local.request.headers.get('X-Forwarded-For')
+    if client_ip:
+        return client_ip.split(',')[0].strip()  # Get the first IP in case of multiple
+    return frappe.local.request_ip        
 
 @frappe.whitelist()
 def generate_data_for_sync_record(doc, method=None, *args, **kwargs):
