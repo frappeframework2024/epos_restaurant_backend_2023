@@ -1,11 +1,3 @@
-frappe.listview_settings['*'] = {
-    onload: function(listview) {
-   
-        listview.page.add_inner_button('Custom Button', () => {
-            frappe.msgprint('This is a custom button for all list views.');
-        });
-    }
-};
 
 window.addEventListener('load', function () {
 
@@ -289,13 +281,7 @@ $(document).ready(function(){
                 listTopParent.remove()
             }
         }
-        // if (formSidebar) {
-        //     const formParent = formSidebar.parentNode
-        //     const topParent = formParent.parentNode
-        //     if (topParent) {
-        //         $(topParent).css('display', 'none')
-        //     }
-        // }
+         
     }
 
 
@@ -602,8 +588,38 @@ $(document).ready(function(){
 
     });
 
+    if(frappe.session.user !="Administrator"){ 
+        // hide set chart, create card, and add chart to dashboard
+        hideCreateCardButton();
+        // Monitor any changes on the page and hide the button again if it reappears
+        const observer = new MutationObserver(() => {
+            hideCreateCardButton();
+        });
+
+        // Start observing the body for changes
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+    function hideCreateCardButton() {
+				
+				
+        // Select the "Create Card" button based on class or other attributes
+        let el = document.querySelector('button[data-label="Create%20Card"]');
+        if (el) {
+            el.style.display = 'none';
+        }
+        
+        let buttons = document.querySelectorAll('button.btn.btn-default.btn-sm.ellipsis');
+        buttons.forEach(function(button) {
+            if (button.innerText.trim() === "Set Chart" || button.innerText.trim() =="Add Chart to Dashboard" ) {
+                button.style.display = 'none';
+            }
+        });
+
+    }
 
  })
+
+
 
 function removeHeaderSticky(){
     var page_head = document.querySelector(".page-head")

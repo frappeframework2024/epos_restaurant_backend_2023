@@ -126,7 +126,7 @@ const tableLayout = inject("$tableLayout");
 const socket = inject("$socket");
 const emit = defineEmits(["resolve"])
 const triggerPrint = ref(0);
-const serverUrl = window.location.protocol + "//" + window.location.hostname + (window.location.protocol =="https:"? "": (":"+ gv.setting.pos_setting.backend_port)) ;
+const serverUrl = window.location.protocol + "//" + "//" + window.location.hostname + (window.location.protocol =="https:"? "": (":"+ gv.setting.pos_setting.backend_port)) ;
 
 const frappe = new FrappeApp();
 const call = frappe.call()

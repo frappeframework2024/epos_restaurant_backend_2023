@@ -45,13 +45,41 @@ frappe.ui.form.on("QuickBooks Configuration", {
                 });
             }        
         }
-
+        frm.fields_dict['qb_default_payment_type'].get_query = function(doc) {
+            return {
+                query: 'epos_restaurant_2023.api.quickbook_intergration.qb_payment_method.get_payment_type_autocomplete'
+            }
+        }
         frm.fields_dict['payment_method_mapping'].grid.get_field('qb_payment_type').get_query = function(doc, cdt, cdn) {           
             return {
                 query: 'epos_restaurant_2023.api.quickbook_intergration.qb_payment_method.get_payment_type_autocomplete'
             };
         }; 
+        
     },
+    qb_default_payment_type(frm,cdt, cdn){ 
+        if((frm.doc.qb_default_payment_type||"" )!="" ){
+            frappe.call({
+                method:"epos_restaurant_2023.api.quickbook_intergration.qb_payment_method.get_payment_type_by_name",
+                freeze: true,
+                args:{
+                    "name":frm.doc.qb_default_payment_type
+                },
+                callback:function(resp){
+                    frm.doc.qb_default_payment_type_id = resp.message.Id  ;
+                    frm.refresh_field("qb_default_payment_type_id");
+                },
+                error:function(err){
+                    frm.doc.qb_default_payment_type_id = undefined;
+                    frm.refresh_field("qb_default_payment_type_id");
+                    console.log({"Bug" : err})
+                }
+            }) ;
+        }else{
+            row.qb_payment_type_id = undefined;
+            frm.refresh_field("payment_method_mapping");
+        }
+	},
     environment:function(frm){
         frm.doc.connected = 0;
         frm.doc.realm_id = undefined;

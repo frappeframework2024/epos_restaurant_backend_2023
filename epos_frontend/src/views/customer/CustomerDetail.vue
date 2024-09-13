@@ -214,7 +214,7 @@ const { mobile } = useDisplay()
 const frappe = inject('$frappe')
 const gv = inject('$gv')
 const call= frappe.call();
-const serverUrl = window.location.protocol + "//" + window.location.hostname + (window.location.protocol =="https:"? "": (":"+ gv.setting.pos_setting.backend_port));
+const serverUrl = window.location.protocol + "//" + "//" + window.location.hostname + (window.location.protocol =="https:"? "": (":"+ gv.setting.pos_setting.backend_port));
 const props = defineProps({
   params: {
     type: Object,

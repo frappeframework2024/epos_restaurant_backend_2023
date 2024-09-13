@@ -22,6 +22,9 @@
   "access_token",
   "mapping",
   "default_customer_id",
+  "column_break_beee",
+  "qb_default_payment_type",
+  "qb_default_payment_type_id",
   "section_break_mmkv",
   "payment_method_mapping"
  ],
@@ -132,12 +135,27 @@
   {
    "fieldname": "section_break_mmkv",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "qb_default_payment_type_id",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "QB Default Payment Type ID"
+  },
+  {
+   "fieldname": "qb_default_payment_type",
+   "fieldtype": "Autocomplete",
+   "label": "QB Default Payment Type"
+  },
+  {
+   "fieldname": "column_break_beee",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-09-11 10:34:09.911912",
+ "modified": "2024-09-13 10:41:55.517072",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "QuickBooks Configuration",

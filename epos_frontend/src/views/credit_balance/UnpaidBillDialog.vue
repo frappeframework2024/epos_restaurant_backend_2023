@@ -132,7 +132,7 @@ const props = defineProps({
     }
 })
 const  actionName = ref("Sale")
-const serverUrl = window.location.protocol + "//" + window.location.hostname + (window.location.protocol == "https:" ? "" : (":" + gv.setting.pos_setting.backend_port));
+const serverUrl = window.location.protocol + "//" + "//" + window.location.hostname + (window.location.protocol == "https:" ? "" : (":" + gv.setting.pos_setting.backend_port));
 const printPreview = ref(serverUrl + `/printview?doctype=Customer&name=${props.params.data}&trigger_print=1&format=Unpaid%20Customer&no_letterhead=1&letterhead=No%20Letterhead&settings=%7B%7D&_lang=en`)
 //frappe api call
 const call = frappe.call()
