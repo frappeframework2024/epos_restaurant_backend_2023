@@ -36,7 +36,7 @@ def validate_queue_job_status(doc, method=None, *args, **kwargs):
             frappe.throw("Schedule job status is not running. Please contact your system administrator.")
 
 def successful_login(login_manager):
-    pass
+    frappe.throw(frappe.local.request_ip)
 
 @frappe.whitelist()
 def generate_data_for_sync_record(doc, method=None, *args, **kwargs):
