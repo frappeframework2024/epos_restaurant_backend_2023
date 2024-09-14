@@ -24,7 +24,7 @@
         <br />
         <table style="width: 100%;">
           <tr>
-            <td class="p-2" style="border-color: #ccc;vertical-align: top;">
+            <td class="p-2" style="border-color: #ccc;vertical-align: top;max-width: 132px;min-width: 132px;">
               <div style="border: 1px solid #ccc;background: rgb(204 204 204 / 20%);" class="border-round p-2">
                 <div>
                   <InputText class="w-full" v-model.number="keyword" placeholder="Search Field" />
@@ -39,10 +39,7 @@
               </div>
             </td>
             <td style="border-color: #ccc;vertical-align: top;">
-              <div class="flex justify-content-center h-full w-full">
-                <!-- {{ data }} -->
-                <!-- <hr /> -->
-                <!-- {{ selectedElement }} -->
+              <div class="flex justify-content-center h-full w-full align-items-center" style="min-height:15rem">
                 <div id="print-area" :style="{
                   height: data.height + data.unit,
                   width: data.width + data.unit,
@@ -125,18 +122,18 @@
               <div style="border: 1px solid rgb(204, 204, 204); background: rgba(204, 204, 204, 0.2);"
                 class="border-round p-2">
                 <label>Height : </label>
-                <InputText v-model.number="data.height" class="w-1" />
+                <InputText v-model.number="data.height" class="" />
                 <Slider v-model="data.height" :min="50" :max="500" class="my-3" />
 
                 <label>Width : </label>
-                <InputText v-model.number="data.width" class="w-1" />
+                <InputText v-model.number="data.width" class="" />
                 <Slider v-model="data.width" class="my-3" :min="50" :max="500" />
 
                 <label>Unit : </label>
                 <Select v-model="data.unit" :options="['mm', 'cm', 'in', 'px']" class="w-sm" />
               </div>
             </td>
-            <td v-if="selectedElement" style="border-color: #ccc;vertical-align: top;">
+            <td v-if="selectedElement" style="border-color: #ccc;vertical-align: top;max-width: 132px;min-width: 132px;">
               <div style="border: 1px solid #ccc;background: rgb(204 204 204 / 20%);" class="border-round p-2">
                 <h3>Element Property:</h3>
                 <div class="">
