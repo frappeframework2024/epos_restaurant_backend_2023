@@ -21,10 +21,34 @@ import math
 from frappe.utils.scheduler import get_scheduler_status
 import calendar
 from datetime import datetime, timedelta
-
+from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
 QUEUES = ["default", "long", "short"]
 JOB_STATUSES = ["queued", "started", "failed", "finished", "deferred", "scheduled", "canceled"]
+
+@frappe.whitelist()
+def create_custom_field():
+    create_custom_fields(
+		{
+			"Print Format": [
+				{
+					"label": _("Show short order option"),
+					"fieldname": "show_sort_order_option",
+					"fieldtype": "Check",
+                    "default": "1",
+					"insert_after": "css",
+				},
+				{
+					"label": _("Sort Order Fields"),
+					"fieldname": "short_order_field",
+					"fieldtype": "JSON",
+     "default": "[]",
+					"insert_after": "show_sort_order_option",
+				}
+            ]
+				 
+		}
+	)
 
 @frappe.whitelist()
 def validate_queue_job_status(doc, method=None, *args, **kwargs):

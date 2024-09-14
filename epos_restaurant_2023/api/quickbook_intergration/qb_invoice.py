@@ -76,11 +76,11 @@ def post_payment_qb_queue(sale_id,qb_invoice_id,qb_customer_id):
     
     # Posting Payment on Invoice
     response_message = []
-    payment_list = frappe.db.get_list("Sale Payment",filters={"sale":sale_id,"docstatus":1},fields=['name','sale','posting_date','payment_amount'])
+    payment_list = frappe.db.get_list("Sale Payment",filters={"sale":sale_id,"docstatus":1,"transaction_type":"Payment"},fields=['name','sale','sale_amount','posting_date','payment_type','payment_amount'])
     for p in payment_list:
-        payment.TotalAmt = p.payment_amount
+        payment.TotalAmt = p.sale_amount
         payment.TxnDate = str(p.posting_date)
-        payment.PaymentMethodRef = PaymentMethodRefModel(value=3)
+        payment.PaymentMethodRef = PaymentMethodRefModel(value=get_qb_mapped_payment_type(p.payment_type))
         payment.CustomerRef = CustomerRefModel(value=qb_customer_id)
         payment_line= PaymentLineModel()
         payment_line.Amount=p.payment_amount
@@ -90,15 +90,15 @@ def post_payment_qb_queue(sale_id,qb_invoice_id,qb_customer_id):
     return response_message.append(payment_response.json())
 
 
-@frappe.whitelist()
 def get_qb_mapped_payment_type(payment_type):
     qb_conf = frappe.get_doc("QuickBooks Configuration")
     qb_payment_type_id = [d.qb_payment_type_id for d in qb_conf.payment_method_mapping if d.pos_payment_type == payment_type]
     if len(qb_payment_type_id) > 0:
         qb_payment_type_id = qb_payment_type_id[0]
     else:
-        qb_payment_type_id = qb_conf.default_qb_payment_type_id
-    return qb_conf
+        qb_payment_type_id = qb_conf.qb_default_payment_type_id
+
+    return qb_payment_type_id
 
 
 @frappe.whitelist(allow_guest=True, methods="GET")
