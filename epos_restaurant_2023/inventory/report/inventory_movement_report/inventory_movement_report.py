@@ -334,8 +334,8 @@ def get_sql_data(filters,row_group,report_fields=None):
 
 	data = docs + docs2 
 	groups = {}
+	result = []
 	for row in data: 		
-		result = []
 		group = {}
 		_row_group ={}
 		for k in row.keys():
