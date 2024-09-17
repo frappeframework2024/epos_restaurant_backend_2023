@@ -133,9 +133,7 @@ def check_authorization():
         return  {
             "status":0,
             "msg":"Unauthorized: The refresh token may be invalid or expired."
-        }
-
-    
+        }    
 
 def update_after_diconnected(setting):
     setting.refresh_token = None

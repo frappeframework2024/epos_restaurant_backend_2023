@@ -74,9 +74,9 @@ def get_bom_product_cost(product_code):
 def get_product_cost(stock_location, product_code):
     cost = 0
     if stock_location != "None":
-        cost = frappe.get_cached_value('Stock Location Product', {'stock_location':stock_location,"product_code":product_code},'cost')
+        cost = frappe.db.get_value('Stock Location Product', {'stock_location':stock_location,"product_code":product_code}, ['cost'])
         if (cost or 0) == 0:
-            cost = frappe.get_cached_value('Product',product_code, 'cost')
+            cost =  frappe.db.get_value('Product',product_code, 'cost')
     else:
         cost = frappe.db.get_value('Product', product_code, 'cost')    
     return cost or 0
