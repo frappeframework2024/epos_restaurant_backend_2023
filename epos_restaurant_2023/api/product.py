@@ -373,8 +373,8 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
         "limit":int(limit),
         "start": (int(page)-1) * (int(limit) + 1),
         "order_by":order_by,
-        "order_by_type":order_by_type
-        
+        "order_by_type":order_by_type,
+        "price_rule":price_rule
     }
     if keyword:
         filter["keyword"]='%{}%'.format(keyword)
@@ -384,12 +384,15 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
                 select
                 parent
                 from `tabProduct Price`
-                where barcode like %(keyword)s"""
+                where price_rule = %(price_rule)s and barcode like %(keyword)s"""
         product_price_datas = frappe.db.sql(product_price,filter,as_dict=1)
         if len(product_price_datas)>0:
-            product_code = ""
+            product_code = []
             for a in product_price_datas:
-                product_code += a.parent
+                product_code.append(a.parent)
+            product_price_filter={
+                "product_code": product_code
+            }
             sql="""
             select 
                 name as menu_product_name,
@@ -428,10 +431,8 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
                 pos_note
                 
             from `tabProduct`
-            where disabled=0 and allow_sale=1 and name in ({0})
-        """.format(product_code)
-        frappe.msgprint(sql)
-        data = frappe.db.sql(sql,filter,as_dict=1)
+            where disabled=0 and allow_sale=1 and name in %(product_code)s"""
+            data = frappe.db.sql(sql,product_price_filter,as_dict=1)
     # todo 
     # get  product price
     # get product modifier
