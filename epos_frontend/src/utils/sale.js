@@ -5,8 +5,8 @@ import ComEditSaleProduct from '@/views/sale/components/ComEditSaleProduct.vue'
 
 
 export async function onSelectProduct(product_data,sale,product,dialog){
-    
-    if (sale.setting.pos_menus.length>0){
+    console.log(sale.setting)
+    if (sale.setting.pos_menus.length>0 || sale.setting.use_menu_retail == 1){
 
     // sale is sale from inject 
     // product is product from inject 

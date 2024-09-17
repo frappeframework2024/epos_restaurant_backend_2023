@@ -375,6 +375,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "pos_profile":pos_profile,
         "outlet":profile.outlet,
         "use_retail_ui":profile.use_retail_ui,
+        "use_menu_retail":profile.use_menu_retail,
         "close_business_day_on":pos_config.close_business_day_on,
         "alert_close_working_day_after":pos_config.alert_close_working_day_after,
         "price_rule":profile.price_rule,

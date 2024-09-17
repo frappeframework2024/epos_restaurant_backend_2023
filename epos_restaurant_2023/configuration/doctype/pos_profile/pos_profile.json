@@ -15,6 +15,7 @@
   "max_cashier_shift",
   "is_edoor_profile",
   "use_retail_ui",
+  "use_menu_retail",
   "column_break_5",
   "price_rule",
   "tax_rule",
@@ -226,11 +227,17 @@
    "fieldtype": "Table",
    "label": "Sale View By POS Profile",
    "options": "Sale View By POS Profile"
+  },
+  {
+   "default": "0",
+   "fieldname": "use_menu_retail",
+   "fieldtype": "Check",
+   "label": "Use Menu Retail"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-19 16:29:09.660905",
+ "modified": "2024-09-17 14:44:53.475409",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Profile",
