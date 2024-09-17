@@ -163,7 +163,7 @@ function onSortField(field) {
 
 function onSearch() {
     loading.value = true
-    
+    console.log("search")
 
     db.getDocList('Product', {
         fields: ['name',"product_code_2","product_code_3", "pos_note",'product_name_en', 'product_name_kh', 'price', "photo", "product_category", 'prices','unit'],

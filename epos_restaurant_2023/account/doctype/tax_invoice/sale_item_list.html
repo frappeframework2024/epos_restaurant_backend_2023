@@ -37,7 +37,7 @@
                                 </div>
                             </div>
                             <div class="col text-center" style="max-width: 4%;">{{p.quantity}}</div>
-                            <div class="col text-right">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</div> 
+                            <div class="col text-right">{{frappe.format(p.price + p.modifiers_price,{"fieldtype":"Currency"})}}</div> 
                             <div class="col text-right">{{frappe.format(p.total_discount,{"fieldtype":"Currency"})}}</div>
                             <div class="col text-right">{{frappe.format(p.total_tax,{"fieldtype":"Currency"})}}</div>
                             <div class="col text-right">{{frappe.format(p.amount,{"fieldtype":"Currency"})}}</div> 

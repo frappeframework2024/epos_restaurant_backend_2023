@@ -310,6 +310,7 @@ def get_product_category(category):
 
 @frappe.whitelist()
 def get_products(category ='All Product Categories',product_code=None,keyword=None , limit = 20, page=1, order_by='product_code',order_by_type='asc', include_product_category=0,price_rule="Normal"):
+    data = None
     sql="""
         select 
             name as menu_product_name,
@@ -355,9 +356,6 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
                 is_variant=if(%(product_code)s!='',is_variant, 0)
             ) 
     """
-
- 
-    
     if category!= 'All Product Categories':
         sql = sql + " and product_category in %(product_categories)s"
     if product_code:
@@ -368,7 +366,7 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
     
     sql = sql + " order by %(order_by)s %(order_by_type)s"
     sql = sql + " LIMIT %(limit)s OFFSET %(start)s;"
-   
+
     filter = {
         "product_categories": get_product_category_with_children(category),
         "product_code":product_code or "",
@@ -380,9 +378,60 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
     }
     if keyword:
         filter["keyword"]='%{}%'.format(keyword)
-     
     data = frappe.db.sql(sql,filter,as_dict=1)
-    
+    if len(data) <= 0:
+        product_price = """
+                select
+                parent
+                from `tabProduct Price`
+                where barcode like %(keyword)s"""
+        product_price_datas = frappe.db.sql(product_price,filter,as_dict=1)
+        if len(product_price_datas)>0:
+            product_code = ""
+            for a in product_price_datas:
+                product_code += a.parent
+            sql="""
+            select 
+                name as menu_product_name,
+                name,
+                product_name_en as name_en,
+                product_name_kh as name_kh,
+                product_category as parent,
+                price,
+                unit,
+                allow_crypto_claim,
+                allow_discount,
+                allow_change_price,
+                allow_free,
+                is_open_product,
+                is_inventory_product,
+                photo,
+                append_quantity,
+                is_combo_menu,
+                use_combo_group,
+                combo_menu_data,
+                combo_group_data,
+                is_open_price,
+                is_timer_product,
+                rate_include_tax,
+                tax_rule,
+                revenue_group,
+                prices,
+                sort_order,
+                has_variants,
+                '[]' as printers,
+                '[]' as modifiers,
+                '' as price_rule,
+                'product' as type,
+                variant_of,
+                is_variant,
+                pos_note
+                
+            from `tabProduct`
+            where disabled=0 and allow_sale=1 and name in ({0})
+        """.format(product_code)
+        frappe.msgprint(sql)
+        data = frappe.db.sql(sql,filter,as_dict=1)
     # todo 
     # get  product price
     # get product modifier
