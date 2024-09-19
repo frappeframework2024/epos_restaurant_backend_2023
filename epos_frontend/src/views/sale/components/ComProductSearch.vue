@@ -120,8 +120,7 @@ function onSearchProductByBarcode(barcode){
         include_product_category:0
     }).then(result=>{
         if(result.message.products.length>0){
-           
-            onSelectProduct(result.message.products[0],sale,product,dialog)
+            onSelectProduct(result.message.products[0],sale,product,dialog,result.message.unit)
         }else{
             toaster.warning("Product code is not exist in the system")
         }

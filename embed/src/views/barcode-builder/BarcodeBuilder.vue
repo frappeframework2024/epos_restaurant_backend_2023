@@ -6,39 +6,65 @@
       <Fieldset class="w-full m-2" legend="Previews">
         <div class="flex justify-content-between">
           <div>
-            <Select v-model="templateName" editable :options="templates" optionLabel="template_name"
-              @change="onSelectTemplate" optionValue="template_name" placeholder="Select Template"
-              class="w-full md:w-56" />
+
             <div class="flex gap-2 align-items-center">
+              <Select v-model="templateName" editable :options="templates" optionLabel="template_name"
+                @change="onSelectTemplate" optionValue="template_name" placeholder="Select Template"
+                class="w-full md:w-56" />
               <Checkbox v-model="isDefault" :binary="true" :trueValue="1" :falseValue="0" />
               <p>Default</p>
             </div>
 
             <Button :loading="loading" @click="SaveTemplate">Save</Button>
           </div>
-
-          <div class="col-2 text-right">
+          <div class="col-3 text-right">
+            <div class="flex">
+             
+              <div class="mx-2">
+                {{ selectedBarcode }}
+                <Select  v-if="doc.product_price" v-model="selectedBarcode" :options="doc.product_price" optionLabel="unit"
+                @change="onProductPriceSelected"  placeholder="Barcode"
+                class="w-full md:w-56 text-left" >
+                <template #option="slotProps">
+                  <div class="flex items-center">
+                      <div>{{ getCurrencyAmount(slotProps.option.price) }}:</div>
+                      <div>{{ slotProps.option.barcode }}:</div>
+                      <div>{{ slotProps.option.unit }}</div>
+                  </div>
+              </template>
+              <template #content="{slotProps}">
+                  {{ slotProps }}
+              </template>
+              </Select>
+              </div>
             <Button label="Print" icon="pi pi-print" @click="onPrint" />
+            </div>
+            
           </div>
         </div>
         <br />
         <table style="width: 100%;">
           <tr>
             <td class="p-2" style="border-color: #ccc;vertical-align: top;max-width: 132px;min-width: 132px;">
-              <div style="border: 1px solid #ccc;background: rgb(204 204 204 / 20%);" class="border-round p-2">
+              <div style="border: 1px solid #ccc;background: rgb(204 204 204 / 20%)" class="border-round p-2">
                 <div>
                   <InputText class="w-full" v-model.number="keyword" placeholder="Search Field" />
                 </div><br />
                 <div style="height: 300px; width: 100%; overflow: auto">
-                  <div class="flex justify-content-between py-1" v-if="meta_data" v-for="(f, index) in filteredFields"
-                    :key="f.fieldname">
-                    {{ f.label }}
-                    <Button style="height: 10px;font-size: 10px;" label="Select" @click="onAddElement(f)" />
-                  </div>
+                  <template v-if="meta_data" v-for="(f, index) in filteredFields" :key="f.fieldname">
+                    <div class=" p-1 field-options flex justify-content-between">
+                      {{ f.label }}
+                        <Button style="height: 10px;font-size: 10px;" label="Select" @click="onAddElement(f)" />
+                      
+                    </div>
+
+                  </template>
+
                 </div>
               </div>
             </td>
             <td style="border-color: #ccc;vertical-align: top;">
+              <!-- {{ doc.product_price }} -->
               <div class="flex justify-content-center h-full w-full align-items-center" style="min-height:15rem">
                 <div id="print-area" :style="{
                   height: data.height + data.unit,
@@ -77,6 +103,7 @@
                       <span v-else> {{ doc[e.fieldname] }}</span>
                     </template>
                   </div>
+
                   <DraggableResizableVue v-else v-for="(e, idx) in data.elements" :key="e.fieldname + idx"
                     v-model:x="e.x" v-model:y="e.y" v-model:h="e.height" v-model:w="e.width" v-model:active="e.isActive"
                     @click="onSelectElement(e)" :style="[
@@ -110,11 +137,12 @@
                           <span v-if="e.fieldtype == 'Currency'">
                             {{ getCurrencyAmount(doc[e.fieldname]) }}
                           </span>
-                          <span v-else> {{ doc[e.fieldname] }}</span>
+                          <span v-else> {{ getValueFromPath(doc, e.fieldname) }}</span>
                         </div>
                       </template>
                     </div>
                   </DraggableResizableVue>
+
                 </div>
               </div>
               <div class="border-bottom-1 mt-5" style="border-color: #ccc;"></div>
@@ -133,7 +161,8 @@
                 <Select v-model="data.unit" :options="['mm', 'cm', 'in', 'px']" class="w-sm" />
               </div>
             </td>
-            <td v-if="selectedElement" style="border-color: #ccc;vertical-align: top;max-width: 132px;min-width: 132px;">
+            <td v-if="selectedElement"
+              style="border-color: #ccc;vertical-align: top;max-width: 132px;min-width: 132px;">
               <div style="border: 1px solid #ccc;background: rgb(204 204 204 / 20%);" class="border-round p-2">
                 <h3>Element Property:</h3>
                 <div class="">
@@ -195,7 +224,6 @@ import { onMounted, ref, computed, createUpdateDoc, getDocList } from "@/plugin"
 import Slider from "primevue/slider";
 import Select from "primevue/select";
 import InputText from "primevue/inputtext";
-import InputNumber from "primevue/inputnumber";
 import Knob from "primevue/knob";
 import Button from "primevue/button";
 import Fieldset from "primevue/fieldset";
@@ -217,6 +245,7 @@ const db = frappe.db();
 const call = frappe.call();
 const keyword = ref("");
 const templateName = ref("Default Template")
+const selectedBarcode = ref({})
 const isDefault = ref(0)
 const data = ref({
   height: 94,
@@ -237,6 +266,8 @@ const filteredFields = computed(() => {
       r.hidden === 0 &&
       r.fieldtype !== "Check" &&
       r.fieldtype !== "Tab Break" &&
+      r.fieldtype !== "Section Break" &&
+      r.fieldtype !== "Column Break" &&
       r.label?.toLowerCase().includes(keyword.value.toLowerCase())
   );
 });
@@ -289,6 +320,22 @@ function onAddElement(f) {
     align_items: 'center'
   });
 }
+function onAddBarcodeElement(f, p, idx) {
+  data.value.elements.push({
+    fieldname: `${p.parentfield}[${idx}].barcode`,
+    fieldtype: "Data",
+    child_doc: 1,
+    x: 0,
+    y: 0,
+    width: 75,
+    height: 25,
+    font_size: 14,
+    font_type: fontFamily.value[0],
+    rotation: 0,
+    justify_content: 'center',
+    align_items: 'center'
+  });
+}
 
 
 function onDelete() {
@@ -321,7 +368,9 @@ function onPrint() {
             display:flex;
             justify-content: center;
             align-items:center;
+            border:0px
           }
+          
         }
       </style>
     `);
@@ -364,20 +413,44 @@ function SaveTemplate() {
 
 }
 
+function getValueFromPath(obj, path) {
+  const value = path.split('.').reduce((acc, part) => {
+    if (acc === undefined || acc === null) {
+      const index = data.value.elements.findIndex(el => el.fieldname === path);
+      if (index !== -1) {
+        data.value.elements.splice(index, 1);
+      }
+    };
+    let match = part.match(/(\w+)\[(\d+)\]/);
+    if (match) {
+      let arr = acc[match[1]];
+      let index = parseInt(match[2]);
+      acc = Array.isArray(arr) && arr.length > index ? arr[index] : undefined
+      // acc = acc[match[1]][parseInt(match[2])];
+    } else {
+      acc = acc[part];
+    }
+    return acc;
+  }, obj);
+
+  return value
+}
+
+function onProductPriceSelected(selected) {
+ console.log(selected)
+}
+
+
 function onSelectTemplate(selected) {
-
-
+  console.log(selected.value)
   let default_template = templates.value.find(r => r.template_name == selected.value)
   if (!default_template) {
     default_template = JSON.parse(templates.value[0].template)
   }
-
   if (default_template) {
     isDefault.value = default_template.is_default
     data.value = JSON.parse(default_template.template)
   }
-
-
 }
 
 function getTemplates(skipGetDefault = false) {
@@ -418,6 +491,8 @@ onMounted(() => {
 
   db.getDoc("Product", productCode.value).then((result) => {
     doc.value = result;
+    doc.value.product_price.push({"unit":doc.value.unit,"price":doc.value.price,"barcode":doc.value.product_code})
+    selectedBarcode = {"unit":doc.value.unit,"price":doc.value.price,"barcode":doc.value.product_code}
     getTemplates()
   });
 
@@ -446,5 +521,12 @@ onMounted(() => {
 
 .print-barcode th {
   background-color: #f2f2f2;
+}
+.field-options{
+  border-radius: 3px;
+}
+.field-options:hover{
+  background-color: #e7e7e7;
+  transition-duration: 250ms;
 }
 </style>

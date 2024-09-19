@@ -750,7 +750,9 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 							summary_columns.push( data_coumns.filter(r=>r.value == f)[0])
 						})
 						 
-				 
+						console.log(applied_filters.summary_fields,summary_columns)
+						
+ 
 
 						if(applied_filters.summary_fields){
 							group_record.forEach(g=>{
@@ -1482,14 +1484,11 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	print_report(print_settings) {
-
-
 		const custom_format = this.report_settings.html_format || null;
 		const filters_html = this.get_filters_html_for_print();
 		const landscape = print_settings.orientation == "Landscape";
 	 
 		if(this.chart_options){
-	 
 			let my_chart = document.createElement("div")
 				my_chart.setAttribute("id","my_chart")
 			if(landscape){ 
@@ -1497,10 +1496,15 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			}else {
 				my_chart.style.width = "720px";
 			}
-			document.querySelector(".layout-main").appendChild(my_chart)
+			
+			document.querySelector("#page-query-report .layout-main").appendChild(my_chart)
 	
 			let chart_option = this.chart_options
 			chart_option.valuesOverPoints = true
+			
+ 
+		 
+
 			let chart = new frappe.Chart( "#my_chart",chart_option);
 
 		}
@@ -1526,20 +1530,17 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 				sumamry_data :  window.summary_data ,
 				summary_columns:window.summary_columns?.filter(c=>c)
 			});
-			document.querySelector("#my_chart")?.remove()
+			document.querySelector("#my_chart").remove()
+		 
 		},this.chart_options?1000:100)
 		
-		
 	}
-
 	 
 	pdf_report(print_settings) {
 		const base_url = frappe.urllib.get_base_url();
 		const print_css = frappe.boot.print_css;
 		const landscape = print_settings.orientation == "Landscape";
-
 		//
-
 		const custom_format = this.report_settings.html_format || null;
 		const columns = this.get_columns_for_print(print_settings, custom_format);
 		const data = this.get_data_for_print();

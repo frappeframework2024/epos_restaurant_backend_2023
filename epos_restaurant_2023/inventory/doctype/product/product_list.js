@@ -6,7 +6,8 @@ frappe.listview_settings['Product'] = {
     ],
     formatters: {
         photo: function (value, field, doc) {
-            const encodedPhoto = encodeURI(doc.photo)
+            const encodedPhoto = encodeURI(doc.photo) || ''
+            console.log(encodedPhoto)
             return `<img src="${encodedPhoto || "/files/placeholder.jpg"}" style='border-radius: 50%;height:35px; margin-right:10px;margin-left:5px'/>`;
         },
     },

@@ -1,13 +1,13 @@
 import { computed, addModifierDialog, SelectDateTime, i18n, inject, keypadWithNoteDialog, SelectGoogleImageDialog, SaleProductComboMenuGroupModal, createToaster, EmptyStockProductDialog } from '@/plugin'
 
 import ComEditSaleProduct from '@/views/sale/components/ComEditSaleProduct.vue'
- 
+import { FrappeApp } from 'frappe-js-sdk';
+const frappe = new FrappeApp();
+const call = frappe.call()
 
-
-export async function onSelectProduct(product_data,sale,product,dialog){
-    console.log(sale.setting)
+export async function onSelectProduct(product_data,sale,product,dialog,unit = "Unit"){
+   
     if (sale.setting.pos_menus.length>0 || sale.setting.use_menu_retail == 1){
-
     // sale is sale from inject 
     // product is product from inject 
     let p = JSON.parse(JSON.stringify( product_data))
@@ -65,7 +65,6 @@ export async function onSelectProduct(product_data,sale,product,dialog){
             }
             else {
                 const portions = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule);
-                
                 const check_modifiers = product.onCheckModifier(JSON.parse(p.modifiers || "[]"));
 
                 
@@ -84,32 +83,42 @@ export async function onSelectProduct(product_data,sale,product,dialog){
                         pro_data.prices = JSON.stringify([{ "price": p.price, "branch": "", "price_rule": sale.sale.price_rule, "portion": "Normal", "unit": p.unit, "default_discount": 0 }])
                     }
                 product.setSelectedProduct(pro_data,sale.sale.price_rule);
-
-
-                    let productPrices = await addModifierDialog();
-
-        
-
-                    if (productPrices) {
-                        if (productPrices.portion != undefined) {
-                            p.price = productPrices.portion.price;
-                            p.portion = productPrices.portion.portion;
-                            p.unit = productPrices.portion.unit
-                            p.discount = productPrices.portion.default_discount || 0
-                        }
-                        p.modifiers = productPrices.modifiers.modifiers;
-                        p.modifiers_data = productPrices.modifiers.modifiers_data;
-                        p.modifiers_price = productPrices.modifiers.price
-
-                    } else {
-                        return;
+              
+                let productPrices = null
+                let base_unit = ""
+                await get_base_unit(p.name).then((res)=>{base_unit = res})
+                if(unit != base_unit){
+                    const portion = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule && r.unit == unit);
+                    const modifiers = JSON.parse((p.modifiers || ""))?.filter(r => (r.branch == sale.sale.business_branch || r.branch == ''));
+                    productPrices = { "portion":(portion[0] || []),"modifiers":(modifiers[0] || [])}
+                }
+                else if(unit == base_unit && sale.setting.base_unit_popup == 1){
+                    productPrices = await addModifierDialog();
+                }
+                else{
+                    const portion = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule && r.unit == unit);
+                    const modifiers = JSON.parse((p.modifiers || ""))?.filter(r => (r.branch == sale.sale.business_branch || r.branch == ''));
+                    productPrices = { "portion":(portion[0] || []),"modifiers":(modifiers[0] || [])}
+                }
+                if (productPrices) {
+                    if (productPrices.portion != undefined) {
+                        p.price = productPrices.portion.price;
+                        p.portion = productPrices.portion.portion;
+                        p.unit = productPrices.portion.unit
+                        p.discount = productPrices.portion.default_discount || 0
                     }
+                    p.modifiers = (productPrices.modifiers.modifiers || "");
+                    p.modifiers_data = (productPrices.modifiers.modifiers_data || []);
+                    p.modifiers_price = (productPrices.modifiers.price || 0)
+
+                } else {
+                    return;
+                }
                 } else {
                     p.modifiers = "";
                     p.modifiers_data = "[]";
                     p.portion = "";
                 }
-
             }
 
         } else {
@@ -135,6 +144,15 @@ export async function onSelectProduct(product_data,sale,product,dialog){
 
 }
 
+}
+
+async function get_base_unit(product_code){
+    return new Promise((resolve) => {call.get("epos_restaurant_2023.api.product.get_product_detail_information", {
+            product_code: product_code
+        }).then((res) => {
+            resolve(res.message.product.unit)
+        })
+    })
 }
 
 async function AddProductTotalSaleOrderForRetailPOS(product_data,sale,product,dialog){
