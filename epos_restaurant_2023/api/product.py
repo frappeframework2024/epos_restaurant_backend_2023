@@ -440,8 +440,13 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
             
         from `tabProduct`
         where disabled=0 and allow_sale=1 and name in %(product_codes)s"""
-        new_data = frappe.db.sql(sql,product_price_filter,as_dict=1)
+        product_price_data = frappe.db.sql(sql,product_price_filter,as_dict=1)
+        new_data = []
+        for a in product_price_data:
+            if a.menu_product_name not in ([a.menu_product_name for a in data]):
+                new_data.append(a)
         data = data + new_data
+
     # todo 
     # get  product price
     # get product modifier
