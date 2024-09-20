@@ -5,7 +5,7 @@ import { FrappeApp } from 'frappe-js-sdk';
 const frappe = new FrappeApp();
 const call = frappe.call()
 
-export async function onSelectProduct(product_data,sale,product,dialog,unit = "Unit"){
+export async function onSelectProduct(product_data,sale,product,dialog,unit = ""){
    
     if (sale.setting.pos_menus.length>0 || sale.setting.use_menu_retail == 1){
     // sale is sale from inject 
@@ -87,6 +87,7 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = "U
                 let productPrices = null
                 let base_unit = ""
                 await get_base_unit(p.name).then((res)=>{base_unit = res})
+                console.log(unit+" | "+base_unit)
                 if(unit != base_unit){
                     const portion = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule && r.unit == unit);
                     const modifiers = JSON.parse((p.modifiers || ""))?.filter(r => (r.branch == sale.sale.business_branch || r.branch == ''));

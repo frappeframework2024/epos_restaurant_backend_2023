@@ -394,7 +394,7 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
             from `tabProduct Price`
             where barcode {0} %(keyword)s""".format(operator)
     product_price_datas = frappe.db.sql(sql_product_prices,filter,as_dict=1)
-    if len(product_price_datas)>0 and operator == "=":
+    if product_price_unit == "" and len(product_price_datas)>0 and operator == "=":
         product_price_unit = product_price_datas[0].unit
     if len(product_price_datas)>0:
         product_price_filter={
