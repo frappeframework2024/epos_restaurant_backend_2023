@@ -87,9 +87,11 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                 let productPrices = null
                 let base_unit = ""
                 await get_base_unit(p.name).then((res)=>{base_unit = res})
-                console.log(unit+" | "+base_unit)
+                if(unit == "" || unit == null || unit == undefined){
+                    unit = base_unit
+                }
                 if(unit != base_unit){
-                    const portion = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule && r.unit == unit);
+                    const portion = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule && decodeURIComponent(r.unit) == unit);
                     const modifiers = JSON.parse((p.modifiers || ""))?.filter(r => (r.branch == sale.sale.business_branch || r.branch == ''));
                     productPrices = { "portion":(portion[0] || []),"modifiers":(modifiers[0] || [])}
                 }
@@ -97,10 +99,9 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                     productPrices = await addModifierDialog();
                 }
                 else{
-                    const portion = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule && r.unit == base_unit);
+                    const portion = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule && decodeURIComponent(r.unit) == unit);
                     const modifiers = JSON.parse((p.modifiers || ""))?.filter(r => (r.branch == sale.sale.business_branch || r.branch == ''));
                     productPrices = { "portion":(portion[0] || []),"modifiers":(modifiers[0] || [])}
-                    console.log(p.prices+" | "+base_unit)
                 }
                 if (productPrices) {
                     if (productPrices.portion != undefined) {
