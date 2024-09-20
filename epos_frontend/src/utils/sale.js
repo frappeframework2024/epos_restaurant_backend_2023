@@ -96,7 +96,7 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = "U
                     productPrices = await addModifierDialog();
                 }
                 else{
-                    const portion = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule && r.unit == unit);
+                    const portion = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule && r.unit == base_unit);
                     const modifiers = JSON.parse((p.modifiers || ""))?.filter(r => (r.branch == sale.sale.business_branch || r.branch == ''));
                     productPrices = { "portion":(portion[0] || []),"modifiers":(modifiers[0] || [])}
                 }
