@@ -173,7 +173,7 @@ function onPrint() {
   isPrint.value = true;
   setTimeout(() => {
     const divContents = document.querySelector("#print-area").outerHTML;
-
+    
     // Open a new window with custom height and width
     const printWindow = window.open("", "", "height=750px, width=750px");
 
@@ -220,7 +220,7 @@ onMounted(() => {
 });
 </script>
 <style scoped>
-#print-area {
+/*#print-area {
   border: 1px solid red;
-}
+}*/
 </style>

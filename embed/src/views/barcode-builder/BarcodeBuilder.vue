@@ -3,7 +3,7 @@
     <div class="flex-1 w-full flex align-items-center justify-content-center m-3">
 
 
-      <Fieldset class="w-full m-2" legend="Previews">
+      <Fieldset class="w-full m-2" :legend="preview_title">
         <div class="flex justify-content-between">
           <div>
 
@@ -17,23 +17,29 @@
 
             <Button :loading="loading" @click="SaveTemplate">Save</Button>
           </div>
-          <div class="col-3 text-right">
-            <div class="flex">
+          <div class="col-6 text-right">
+            <div class="flex justify-content-end">
              
               <div class="mx-2">
-                {{ selectedBarcode }}
-                <Select  v-if="doc.product_price" v-model="selectedBarcode" :options="doc.product_price" optionLabel="unit"
+                <Select empty v-if="doc.product_price && route.query.doctype=='Product'" v-model="selectedBarcode"  :options="doc.product_price" 
                 @change="onProductPriceSelected"  placeholder="Barcode"
                 class="w-full md:w-56 text-left" >
                 <template #option="slotProps">
-                  <div class="flex items-center">
-                      <div>{{ getCurrencyAmount(slotProps.option.price) }}:</div>
-                      <div>{{ slotProps.option.barcode }}:</div>
-                      <div>{{ slotProps.option.unit }}</div>
+                  <div>
+                    <div class="text-right">
+                      <span>{{ slotProps.option.price_rule }} / {{ slotProps.option.unit }}</span>
+                      <div class="text-sm text-color-secondary ml-1 border-top-1">{{ slotProps.option.barcode }} / {{ getCurrencyAmount(slotProps.option.price) }}</div>
+                    </div>
+                     
+                      
                   </div>
               </template>
-              <template #content="{slotProps}">
-                  {{ slotProps }}
+              <template #value="{value}">
+                <div class="text-right">
+                  <span>{{ value.price_rule }} / {{ value.unit }}</span>
+                  <div class="text-sm text-color-secondary ml-1 border-top-1">{{ value.barcode }} / {{ getCurrencyAmount(value.price) }}</div>
+                </div>
+                  
               </template>
               </Select>
               </div>
@@ -100,7 +106,7 @@
                       <span v-if="e.fieldtype == 'Currency'">
                         {{ getCurrencyAmount(doc[e.fieldname]) }}
                       </span>
-                      <span v-else> {{ doc[e.fieldname] }}</span>
+                      <span v-else> {{ ( getValueFromPath(doc, e.fieldname)) }}</span>
                     </template>
                   </div>
 
@@ -135,7 +141,7 @@
                         }
                           ">
                           <span v-if="e.fieldtype == 'Currency'">
-                            {{ getCurrencyAmount(doc[e.fieldname]) }}
+                            {{ getCurrencyAmount(getValueFromPath(doc,e.fieldname)) }}
                           </span>
                           <span v-else> {{ getValueFromPath(doc, e.fieldname) }}</span>
                         </div>
@@ -256,6 +262,7 @@ const data = ref({
 const productCode = computed(() => route.query.product_code);
 const doctype = computed(() => route.query.doctype);
 const meta_data = ref({});
+const preview_title = ref("Preview");
 const doc = ref({});
 const selectedElement = ref(null);
 const isPrint = ref(false);
@@ -307,6 +314,7 @@ const fontFamily = ref([
 
 function onAddElement(f) {
   data.value.elements.push({
+    key: f.fieldname,
     fieldname: f.fieldname,
     fieldtype: f.fieldtype,
     x: 0,
@@ -354,9 +362,12 @@ function onPrint() {
 
   isPrint.value = true;
   setTimeout(() => {
-    const divContents = document.querySelector("#print-area").outerHTML;
-
+    let divContents = document.querySelector("#print-area");
+    divContents.style.borderStyle  = 'none'
+    divContents = divContents.outerHTML
     const printWindow = window.open("", "", "height=750px, width=750px");
+
+    
 
     printWindow.document.write("<html><head>");
     printWindow.document.write(`
@@ -388,6 +399,9 @@ function onPrint() {
 
 function SaveTemplate() {
   loading.value = true
+  data.value.elements.forEach((r)=>{
+    r.filename = r.key
+  })
   let name = templates.value.find(r => r.template_name == templateName.value)
   if (name) {
     name = name.name
@@ -437,12 +451,28 @@ function getValueFromPath(obj, path) {
 }
 
 function onProductPriceSelected(selected) {
- console.log(selected)
+  console.log("selected ",selected)
+  console.log("product_price",doc.value.product_price[0])
+  const selectedIdx = doc.value.product_price.findIndex(item => item.barcode === selected.value.barcode);
+  console.log("selectedIdx",selectedIdx)
+  data.value.elements.forEach(ele => {
+    if (ele.key == 'product_code'){
+      ele.fieldname = `${selected.value.parentfield}[${selectedIdx}].barcode`
+    }
+    if (ele.key == 'price'){
+      ele.fieldname =  `${selected.value.parentfield}[${selectedIdx}].price`
+    }
+    if (ele.key == 'unit'){
+      ele.fieldname =  `${selected.value.parentfield}[${selectedIdx}].unit`
+    }
+  }); 
+  console.log("`${selected.value.parentfield}[${selectedIdx}].price`",`${selected.value.parentfield}[${selectedIdx}].price`)
+  console.log("data.value1",getValueFromPath(doc.value,`${selected.value.parentfield}[${selectedIdx}].price`))
+  console.log("data",data.value)
 }
 
 
 function onSelectTemplate(selected) {
-  console.log(selected.value)
   let default_template = templates.value.find(r => r.template_name == selected.value)
   if (!default_template) {
     default_template = JSON.parse(templates.value[0].template)
@@ -491,8 +521,13 @@ onMounted(() => {
 
   db.getDoc("Product", productCode.value).then((result) => {
     doc.value = result;
-    doc.value.product_price.push({"unit":doc.value.unit,"price":doc.value.price,"barcode":doc.value.product_code})
-    selectedBarcode = {"unit":doc.value.unit,"price":doc.value.price,"barcode":doc.value.product_code}
+    if (doc.value.doctype=="Product"){
+      preview_title.value = "Preview " + doc.value.product_name_en
+      if (doc.value.product_price.length > 0){
+        selectedBarcode.value = doc.value.product_price[0]
+      }
+    }
+    
     getTemplates()
   });
 
