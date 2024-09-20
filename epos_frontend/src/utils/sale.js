@@ -99,6 +99,7 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = "U
                     const portion = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule && r.unit == base_unit);
                     const modifiers = JSON.parse((p.modifiers || ""))?.filter(r => (r.branch == sale.sale.business_branch || r.branch == ''));
                     productPrices = { "portion":(portion[0] || []),"modifiers":(modifiers[0] || [])}
+                    console.log(p.prices+" | "+base_unit)
                 }
                 if (productPrices) {
                     if (productPrices.portion != undefined) {
