@@ -18,6 +18,7 @@
    "fieldname": "report",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Report",
    "options": "Report"
   },
@@ -52,7 +53,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-02-29 18:19:37.436937",
+ "modified": "2024-09-19 16:06:25.717330",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Report Configuration",
