@@ -617,6 +617,11 @@ $(document).ready(function(){
 
     }
 
+    // get default letter and store in window object
+    frappe.db.get_doc("Letter Head", "Default Letterhead").then(doc=>{
+        window.default_letter_head = {header:doc.content, footer:doc.footer}
+     })
+     
  })
 
 

@@ -1484,6 +1484,10 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	print_report(print_settings) {
+		if (!print_settings.letter_head){
+			print_settings.letter_head =  window.default_letter_head
+		}
+		
 		const custom_format = this.report_settings.html_format || null;
 		const filters_html = this.get_filters_html_for_print();
 		const landscape = print_settings.orientation == "Landscape";
