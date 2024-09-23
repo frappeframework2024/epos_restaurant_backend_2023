@@ -83,25 +83,29 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                         pro_data.prices = JSON.stringify([{ "price": p.price, "branch": "", "price_rule": sale.sale.price_rule, "portion": "Normal", "unit": p.unit, "default_discount": 0 }])
                     }
                 product.setSelectedProduct(pro_data,sale.sale.price_rule);
-              
                 let productPrices = null
                 let base_unit = ""
-                await get_base_unit(p.name).then((res)=>{base_unit = res})
-                if(unit == "" || unit == null || unit == undefined){
-                    unit = base_unit
-                }
-                if(unit != base_unit){
-                    const portion = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule && decodeURIComponent(r.unit) == unit);
-                    const modifiers = JSON.parse((p.modifiers || ""))?.filter(r => (r.branch == sale.sale.business_branch || r.branch == ''));
-                    productPrices = { "portion":(portion[0] || []),"modifiers":(modifiers[0] || [])}
-                }
-                else if(unit == base_unit && sale.setting.base_unit_popup == 1){
-                    productPrices = await addModifierDialog();
+                if(sale.setting.use_menu_retail == 1){
+                    await get_base_unit(p.name).then((res)=>{base_unit = res})
+                    if(unit == "" || unit == null || unit == undefined){
+                        unit = base_unit
+                    }
+                    if(unit != base_unit){
+                        const portion = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule && decodeURIComponent(r.unit) == unit);
+                        const modifiers = JSON.parse((p.modifiers || ""))?.filter(r => (r.branch == sale.sale.business_branch || r.branch == ''));
+                        productPrices = { "portion":(portion[0] || []),"modifiers":(modifiers[0] || [])}
+                    }
+                    else if(unit == base_unit && sale.setting.base_unit_popup == 1){
+                        productPrices = await addModifierDialog();
+                    }
+                    else{
+                        const portion = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule && decodeURIComponent(r.unit) == unit);
+                        const modifiers = JSON.parse((p.modifiers || ""))?.filter(r => (r.branch == sale.sale.business_branch || r.branch == ''));
+                        productPrices = { "portion":(portion[0] || []),"modifiers":(modifiers[0] || [])}
+                    }
                 }
                 else{
-                    const portion = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule && decodeURIComponent(r.unit) == unit);
-                    const modifiers = JSON.parse((p.modifiers || ""))?.filter(r => (r.branch == sale.sale.business_branch || r.branch == ''));
-                    productPrices = { "portion":(portion[0] || []),"modifiers":(modifiers[0] || [])}
+                    productPrices = await addModifierDialog();
                 }
                 if (productPrices) {
                     if (productPrices.portion != undefined) {
@@ -111,7 +115,7 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                         p.discount = productPrices.portion.default_discount || 0
                     }
                     p.modifiers = (productPrices.modifiers.modifiers || "");
-                    p.modifiers_data = (productPrices.modifiers.modifiers_data || []);
+                    p.modifiers_data = (productPrices.modifiers.modifiers_data || "[]");
                     p.modifiers_price = (productPrices.modifiers.price || 0)
 
                 } else {
