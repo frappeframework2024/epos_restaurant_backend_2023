@@ -92,6 +92,7 @@
   "show_in_payable_ledger",
   "reporting_tab",
   "flash_report_revenue_group",
+  "hide_account_reservation_not_allow_see_rate",
   "tax_invoice_configuration_tab",
   "show_in_tax_invoice",
   "is_vat",
@@ -635,12 +636,18 @@
    "fieldname": "allow_enter_pax",
    "fieldtype": "Check",
    "label": "Allow Enter Pax"
+  },
+  {
+   "default": "0",
+   "fieldname": "hide_account_reservation_not_allow_see_rate",
+   "fieldtype": "Check",
+   "label": "Hide this account code when reservation not allow to see rate"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-07-03 10:45:06.052665",
+ "modified": "2024-09-23 17:39:38.660440",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",
