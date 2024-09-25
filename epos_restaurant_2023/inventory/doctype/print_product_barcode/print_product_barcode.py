@@ -20,7 +20,7 @@ class PrintProductBarcode(Document):
 										a.price_rule,
 										a.unit,
 										a.price,
-						   				a.photo,
+						   				b.photo,
 										b.product_name_en,
 										b.product_name_kh
 									FROM `tabProduct Price` a
