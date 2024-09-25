@@ -10,7 +10,7 @@ from frappe.utils.data import strip
 from py_linq import Enumerable
 from frappe.utils import add_years
 from epos_restaurant_2023.api.account import submit_general_ledger_entry
-from epos_restaurant_2023.inventory.inventory import add_to_inventory_transaction, check_uom_conversion, get_uom_conversion, update_product_quantity,get_stock_location_product
+from epos_restaurant_2023.inventory.inventory import add_to_inventory_transaction, check_uom_conversion, get_uom_conversion, get_bom_product_cost
 import itertools
 from epos_restaurant_2023.inventory.doctype.product.utils import update_fetch_from_field
 
@@ -191,7 +191,9 @@ class Product(Document):
 						insert_update_rename_variant(self,a,"insert")
 						#frappe.enqueue(insert_update_rename_variant,queue="short",self=self,a=a,action="insert")
 			frappe.msgprint(_("Add New Or Update Variant Will Be In The Background, It Can Take A Few Minutes."), alert=True)
-
+		
+		if len(self.produce_products) >0 :
+			update_bom(self)
 
 		if self.is_new and self.opening_quantity > 0:
 			opening_general_ledger_entry(self)
@@ -364,6 +366,43 @@ class Product(Document):
 			return product_variants
 		else:
 			return self.product_variants
+
+def update_bom(self):
+	previous_children = frappe.db.sql("""select product_code,unit,quantity from `tabTemplate Production Ingredients` where parent = '{0}'""".format(self.name),as_dict=1) or []
+	current_children = self.get("produce_products") or []
+	previous_values = [row for row in previous_children]
+	current_values = [{"product_code":row.product_code,"unit":row.unit,"quantity":row.quantity} for row in current_children]
+	if previous_values != current_values:
+		boms = frappe.db.sql("select name,(select count(*) from `tabProduce` b where b.bom = a.name) produces from `tabBOM` a where a.product = '{0}' and manually_created = 0".format(self.name),as_dict=1)
+		for a in boms:
+			if a.produces > 0:
+				frappe.db.set_value('BOM', a.name, {'is_active' : 0,'docstatus' : 2})
+			else:
+				bom = frappe.get_doc('BOM', a.name)
+				if bom.docstatus == 1:
+					bom.cancel()
+				else:
+					frappe.delete_doc('BOM', a.name)
+				frappe.delete_doc('BOM', a.name)
+
+		bom = frappe.new_doc("BOM")
+		bom.product = self.name
+		bom.product_name = self.product_name_en
+		bom.product_unit = self.unit
+		bom.valuation_based_on = "Cost"
+		bom.is_default = 1
+		bom.manually_created = 0
+		for a in self.produce_products:
+			bom_items = frappe.new_doc("BOM Items")
+			bom_items.product = a.product_code
+			bom_items.product_name = a.product_name
+			bom_items.unit = a.unit
+			bom_items.quantity = a.quantity
+			bom_items.cost = get_bom_product_cost(a.product_code,a.unit)
+			bom_items.amount = bom_items.cost * bom_items.quantity * get_uom_conversion(a.base_unit,a.unit)
+			bom.append("items",bom_items)
+		bom.save()
+		bom.submit()
 
 def validate_variant_value_changed(self):
 	changes = 0

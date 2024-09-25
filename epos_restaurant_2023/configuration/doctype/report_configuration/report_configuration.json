@@ -9,6 +9,10 @@
   "general_section",
   "report",
   "property",
+  "column_break_jwxz",
+  "default_sort_field",
+  "sort_type",
+  "section_break_vcbx",
   "report_fields",
   "report_row_config_tab",
   "row_configs"
@@ -49,11 +53,31 @@
    "fieldname": "row_configs",
    "fieldtype": "Table",
    "options": "Report Row Config"
+  },
+  {
+   "fieldname": "column_break_jwxz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_sort_field",
+   "fieldtype": "Data",
+   "label": "Default Sort Field"
+  },
+  {
+   "default": "ASC",
+   "fieldname": "sort_type",
+   "fieldtype": "Select",
+   "label": "Sort Type",
+   "options": "ASC\nDESC"
+  },
+  {
+   "fieldname": "section_break_vcbx",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-19 16:06:25.717330",
+ "modified": "2024-09-25 10:01:56.004949",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Report Configuration",

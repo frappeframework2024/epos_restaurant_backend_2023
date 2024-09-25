@@ -19,7 +19,8 @@
   "summary_indicator",
   "show_in_chart",
   "show_in_chart_when_no_fields_selected",
-  "align"
+  "align",
+  "allow_sort_order"
  ],
  "fields": [
   {
@@ -113,12 +114,18 @@
    "fieldtype": "Int",
    "in_list_view": 1,
    "label": "Report Precision"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_sort_order",
+   "fieldtype": "Check",
+   "label": "Allow Sort Order"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-07-16 12:13:24.483500",
+ "modified": "2024-09-25 10:08:56.242691",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Report Configuration Fields",

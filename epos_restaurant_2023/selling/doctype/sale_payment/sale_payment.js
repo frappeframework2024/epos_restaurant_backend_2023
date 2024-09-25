@@ -30,6 +30,20 @@ frappe.ui.form.on("Sale Payment", {
             }
         }
     },
+    // on_cancel: function(frm) {
+    //     // Custom logic before showing confirmation
+    //     frappe.confirm(
+    //         'Are you sure you want to cancel this document?',
+    //         function() {
+    //             // Custom action if user confirms
+    //             frm.save_or_update(); // or frm.cancel();
+    //         },
+    //         function() {
+    //             // Custom action if user declines
+    //             frappe.msgprint("Cancellation aborted.");
+    //         }
+    //     );
+    // },
     setup(frm) {
         set_query(frm,"sale",[["Sale","docstatus", "=", 1], ["Sale","balance", ">=", 0.01]]);
         set_query(frm,"pos_reservation",[["POS Reservation","reservation_status", "not in", "Void"]]);         

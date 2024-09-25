@@ -31,6 +31,8 @@ class BOM(Document):
 		return "Cost Updated For All Stock Location"
 
 def validate_amount(self):
+	self.total_qty = sum(a.quantity for a in self.items)
+	self.total_cost = sum(a.amount for a in self.items)
 	error = ""
 	for a in self.items:
 		if a.amount <=0:
@@ -48,7 +50,7 @@ def validate_uom_conversion(self):
 		frappe.throw(error)
 
 def validate_is_default(self):
-	data = frappe.db.sql("select count(*) is_default from `tabBOM` where product = '{}' and is_default=1 and name <> '{}'".format(self.product,self.name),as_dict=True)
+	data = frappe.db.sql("select count(*) is_default from `tabBOM` where product = '{}' and is_active=1 and is_default=1 and name <> '{}'".format(self.product,self.name),as_dict=True)
 	if data:
 		if data[0].is_default > 0 and self.is_default == 1:
 			frappe.msgprint("This Product Already Has Default BOM. Removing Is Default")

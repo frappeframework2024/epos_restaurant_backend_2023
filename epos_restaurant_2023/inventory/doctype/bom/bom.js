@@ -17,40 +17,14 @@ frappe.ui.form.on("BOM", {
 	valuation_based_on(frm) {
         link = frm.doc.valuation_based_on == "Cost" ? 'epos_restaurant_2023.inventory.inventory.get_bom_product_cost':'epos_restaurant_2023.inventory.inventory.get_bom_product_price'
         frm.doc.items.forEach(a => {
-            frappe.call({
-                method: link,
-                args: {
-                    product_code: a.product
-                },
-                callback: (r) => {
-                    if(r.message){
-                        a.cost = r.message
-                        a.amount = a.cost * a.quantity
-                    }
-                }
-            }).then((result)=>{
-                frm.refresh_field("items")
-                update_totals(frm)
-            })
+            update_item(frm,"BOM Items",a.name)
         });
 	},
 });
 
 frappe.ui.form.on("BOM Items", {
 	product(frm,cdt,cdn) {
-        let doc = locals[cdt][cdn];
-        link = frm.doc.valuation_based_on == "Cost" ? 'epos_restaurant_2023.inventory.inventory.get_bom_product_cost':'epos_restaurant_2023.inventory.inventory.get_bom_product_price'
-		frappe.call({
-			method: link,
-			args: {
-				product_code: doc.product
-			},
-			callback: (r) => {
-				if(r.message){
-					frappe.model.set_value(cdt, cdn, "cost", (r.message || 0));
-				}
-			}
-		})
+        update_item(frm,cdt,cdn)
 	},
     cost(frm,cdt,cdn){
         update_item(frm,cdt,cdn)
@@ -65,19 +39,21 @@ frappe.ui.form.on("BOM Items", {
 
 function update_item(frm,cdt,cdn){
     let doc = locals[cdt][cdn];
+    link = frm.doc.valuation_based_on == "Cost" ? 'epos_restaurant_2023.inventory.inventory.get_bom_product_cost':'epos_restaurant_2023.inventory.inventory.get_bom_product_price'
     frappe.call({
-        method: "epos_restaurant_2023.inventory.inventory.get_uom_conversion",
+        method: link,
         args: {
-            from_uom: doc.base_unit, 
-            to_uom: doc.unit
+            product_code: (doc.product || ""),
+            unit: (doc.unit || "")
         },
         callback: (r) => {
             if(r.message){
-                uom_conversion = (1/(r.message || 0))
-                frappe.model.set_value(cdt, cdn, "amount", (doc.cost * doc.quantity * uom_conversion.toFixed(2)));
+                doc.cost = r.message
+                doc.amount = doc.cost * doc.quantity
             }
         }
     }).then((r)=>{
+        frm.refresh_field("items")
         update_totals(frm)
     })
 }

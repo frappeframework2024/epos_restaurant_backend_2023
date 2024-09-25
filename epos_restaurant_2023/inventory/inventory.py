@@ -50,24 +50,34 @@ def get_uom_conversion(from_uom, to_uom):
     return conversion or 1
 
 @frappe.whitelist(allow_guest=True)
-def get_bom_product_price(product_code):
+def get_bom_product_price(product_code,unit):
     price = 0
-    prices = frappe.db.sql("select price from `tabProduct Price` where parent = '{}' order by creation desc".format(product_code),as_dict=True)
-    if len(prices) > 0:
-        price = prices[0].price
+    product = frappe.db.get_value('Product', product_code, ['price','unit'],as_dict=1) 
+    if product:
+        prices = frappe.db.sql("select price from `tabProduct Price` where parent = '{}' order by creation desc".format(product_code),as_dict=True)
+        uom_conversion = get_uom_conversion(unit,product.unit)
+        if len(prices) > 0:
+            price = prices[0].price * uom_conversion
+        else:
+            price = product.price * uom_conversion
+        return price or 0
     else:
-        price = frappe.db.get_value('Product', product_code, 'price') 
-    return price or 0
+        return 0
 
 @frappe.whitelist(allow_guest=True)
-def get_bom_product_cost(product_code):
+def get_bom_product_cost(product_code,unit):
     cost = 0
-    costs = frappe.db.sql("select cost from `tabStock Location Product` where product_code = '{}' order by quantity desc".format(product_code),as_dict=True)
-    if len(costs) > 0:
-        cost = costs[0].cost
+    product = frappe.db.get_value('Product', product_code, ['cost','unit'],as_dict=1) 
+    if product:
+        costs = frappe.db.sql("select cost from `tabStock Location Product` where product_code = '{}' order by quantity desc".format(product_code),as_dict=True)
+        uom_conversion = get_uom_conversion(unit,product.unit)
+        if len(costs) > 0:
+            cost = costs[0].cost * uom_conversion
+        else:
+            cost = product.cost * uom_conversion
+        return cost or 0
     else:
-        cost = frappe.db.get_value('Product', product_code, 'cost') 
-    return cost or 0
+        return 0
 
 
 @frappe.whitelist(allow_guest=True)
