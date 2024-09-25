@@ -38,6 +38,7 @@ function set_child_table(frm){
                         product_name_en : p.product_name_en,
                         product_name_kh : p.product_name_kh,
                         price_rule : p.price_rule,
+                        photo : p.photo,
                         unit : p.unit,
                         price : p.price
                     });

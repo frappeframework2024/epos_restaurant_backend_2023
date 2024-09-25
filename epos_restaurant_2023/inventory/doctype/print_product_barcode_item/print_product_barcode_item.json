@@ -9,6 +9,7 @@
   "product_code",
   "product_name_en",
   "product_name_kh",
+  "photo",
   "column_break_bcjk",
   "price_rule",
   "price",
@@ -52,12 +53,17 @@
    "fieldtype": "Data",
    "label": "Unit",
    "options": "Unit Of Measurement"
+  },
+  {
+   "fieldname": "photo",
+   "fieldtype": "Data",
+   "label": "Photo"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-09-25 16:26:47.537088",
+ "modified": "2024-09-25 16:36:57.716056",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Print Product Barcode Item",
