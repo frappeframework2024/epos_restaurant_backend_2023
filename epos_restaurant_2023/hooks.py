@@ -16,7 +16,8 @@ app_license = "MIT"
 app_include_css = "/assets/epos_restaurant_2023/css/epos_restaurant_2023.css"
 app_include_js = [
     "/assets/epos_restaurant_2023/js/epos_restaurant_2023.js",
-    "/assets/js/epos.min.js"
+    "/assets/epos_restaurant_2023/js/echarts.min.js",
+    
 ]
  
 additional_print_settings =["compact_item_print"]

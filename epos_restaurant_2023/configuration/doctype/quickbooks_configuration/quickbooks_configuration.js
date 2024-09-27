@@ -50,6 +50,12 @@ frappe.ui.form.on("QuickBooks Configuration", {
                 query: 'epos_restaurant_2023.api.quickbook_intergration.qb_payment_method.get_payment_type_autocomplete'
             }
         }
+        frm.fields_dict['qb_default_customer'].get_query = function(doc) {
+            return {
+                query: 'epos_restaurant_2023.api.quickbook_intergration.qb_customer.get_customer_autocomplete'
+            }
+        }
+
         frm.fields_dict['payment_method_mapping'].grid.get_field('qb_payment_type').get_query = function(doc, cdt, cdn) {           
             return {
                 query: 'epos_restaurant_2023.api.quickbook_intergration.qb_payment_method.get_payment_type_autocomplete'
@@ -57,6 +63,29 @@ frappe.ui.form.on("QuickBooks Configuration", {
         }; 
         
     },
+    qb_default_customer(frm,cdt, cdn){ 
+        if((frm.doc.qb_default_customer||"" )!="" ){
+            frappe.call({
+                method:"epos_restaurant_2023.api.quickbook_intergration.qb_customer.get_customer_by_name",
+                freeze: true,
+                args:{
+                    "name":frm.doc.qb_default_customer
+                },
+                callback:function(resp){
+                    frm.doc.default_customer_id = resp.message.Id  ;
+                    frm.refresh_field("default_customer_id");
+                },
+                error:function(err){
+                    frm.doc.default_customer_id = undefined;
+                    frm.refresh_field("default_customer_id");
+                    console.log({"Bug" : err})
+                }
+            }) ;
+        }else{
+            frm.doc.default_customer_id = undefined;
+            frm.refresh_field("qb_default_customer");
+        }
+	},
     qb_default_payment_type(frm,cdt, cdn){ 
         if((frm.doc.qb_default_payment_type||"" )!="" ){
             frappe.call({

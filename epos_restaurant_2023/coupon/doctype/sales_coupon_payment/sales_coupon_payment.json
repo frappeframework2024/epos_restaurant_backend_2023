@@ -68,7 +68,7 @@
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "sale_coupon.total_payment_amount",
+   "fetch_from": "sale_coupon.payment_balance",
    "fetch_if_empty": 1,
    "fieldname": "sale_amount",
    "fieldtype": "Currency",
@@ -166,7 +166,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-05 15:39:48.932970",
+ "modified": "2024-09-27 09:10:27.180736",
  "modified_by": "Administrator",
  "module": "Coupon",
  "name": "Sales Coupon Payment",

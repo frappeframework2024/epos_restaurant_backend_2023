@@ -59,7 +59,9 @@ def create_invoice(cashier_shift):
                 sync_response.append({"sale_id":s['custom_bill_number'] or s['name'],"qb_id":resp.json()["Invoice"]["Id"],"message":f'Success'})
                 frappe.db.set_value("Sale",s.name,'qb_invoice_id',resp.json()["Invoice"]["Id"])
                 frappe.db.commit()
-                frappe.enqueue("epos_restaurant_2023.api.quickbook_intergration.qb_invoice.post_payment_qb_queue",qb_invoice_id=resp.json()["Invoice"]["Id"],sale_id=s.name,qb_customer_id=resp.json()["Invoice"]["CustomerRef"]["value"])
+                payment_sync_response = post_payment_qb_queue(qb_invoice_id=resp.json()["Invoice"]["Id"],sale_id=s.name,qb_customer_id=resp.json()["Invoice"]["CustomerRef"]["value"])
+                # frappe.enqueue("epos_restaurant_2023.api.quickbook_intergration.qb_invoice.post_payment_qb_queue",qb_invoice_id=resp.json()["Invoice"]["Id"],sale_id=s.name,qb_customer_id=resp.json()["Invoice"]["CustomerRef"]["value"])
+                sync_response.append({"payment":"Payment","message":payment_sync_response})
             else:
                 sync_response.append({"sale_id":s['name'],"qb_id":resp.json(),"message":resp.status_code})
 
@@ -72,13 +74,14 @@ def create_invoice(cashier_shift):
 @frappe.whitelist()
 def post_payment_qb_queue(sale_id,qb_invoice_id,qb_customer_id):
     # Prepare Data to post
-    payment = PaymentModel()
+    
     
     # Posting Payment on Invoice
     response_message = []
     payment_list = frappe.db.get_list("Sale Payment",filters={"sale":sale_id,"docstatus":1,"transaction_type":"Payment"},fields=['name','sale','sale_amount','posting_date','payment_type','payment_amount'])
     for p in payment_list:
-        payment.TotalAmt = p.sale_amount
+        payment = PaymentModel()
+        payment.TotalAmt = p.payment_amount
         payment.TxnDate = str(p.posting_date)
         payment.PaymentMethodRef = PaymentMethodRefModel(value=get_qb_mapped_payment_type(p.payment_type))
         payment.CustomerRef = CustomerRefModel(value=qb_customer_id)
@@ -86,8 +89,11 @@ def post_payment_qb_queue(sale_id,qb_invoice_id,qb_customer_id):
         payment_line.Amount=p.payment_amount
         payment_line.LinkedTxn.append(LinkedTxnModel(TxnId=qb_invoice_id,TxnType='Invoice'))
         payment.Line.append(payment_line)
+    
         payment_response=post_api("payment",headers={'Content-Type': 'application/json'}, body= json.loads(dump(payment)))
-    return response_message.append(payment_response.json())
+        response_message.append({"type":"body","data":json.loads(dump(payment))})
+        response_message.append({"type":"response","data":payment_response.json()})
+    return response_message
 
 
 def get_qb_mapped_payment_type(payment_type):

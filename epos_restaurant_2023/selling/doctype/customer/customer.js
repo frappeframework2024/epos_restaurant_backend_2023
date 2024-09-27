@@ -111,6 +111,29 @@ frappe.ui.form.on("Customer", {
             };
         }; 
     },
+    qb_customer_name(frm,cdt, cdn){ 
+        if((frm.doc.qb_customer_name||"" )!="" ){
+            frappe.call({
+                method:"epos_restaurant_2023.api.quickbook_intergration.qb_customer.get_customer_by_name",
+                freeze: true,
+                args:{
+                    "name":frm.doc.qb_customer_name
+                },
+                callback:function(resp){
+                    frm.doc.qb_customer_id = resp.message.Id  ;
+                    frm.refresh_field("qb_customer_id");
+                },
+                error:function(err){
+                    frm.doc.qb_customer_id = undefined;
+                    frm.refresh_field("qb_customer_id");
+                    console.log({"Bug" : err})
+                }
+            }) ;
+        }else{
+            row.qb_customer_id = undefined;
+            frm.refresh_field("qb_customer_id");
+        }
+	},
   
 });
 

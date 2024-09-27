@@ -72,7 +72,14 @@ frappe.ui.form.on("Product", {
         });
 
 
-        
+        frm.fields_dict['qb_product_name'].get_query = function() {           
+            return {
+                query: 'epos_restaurant_2023.api.quickbook_intergration.qb_product.get_product_autocomplete',
+                filters:{
+                    "name": frm.doc.qb_product_name
+                }
+            };
+        }; 
         
         print_barcode_button(frm);
 
@@ -85,6 +92,13 @@ frappe.ui.form.on("Product", {
 
 
 
+    },
+    onload(frm){
+        frm.fields_dict['qb_product_name'].get_query = function() {           
+            return {
+                query: 'epos_restaurant_2023.api.quickbook_intergration.qb_product.get_product_autocomplete',
+            };
+        }; 
     },
     setup(frm) {
         for (const key in frm.fields_dict) {
@@ -104,6 +118,30 @@ frappe.ui.form.on("Product", {
         myForm = frm
         window.addEventListener('message', savePhoto, false);
     },
+
+    qb_product_name(frm,cdt, cdn){ 
+        if((frm.doc.qb_product_name||"" )!="" ){
+            frappe.call({
+                method:"epos_restaurant_2023.api.quickbook_intergration.qb_product.get_product_by_name",
+                freeze: true,
+                args:{
+                    "name":frm.doc.qb_product_name
+                },
+                callback:function(resp){
+                    frm.doc.qb_product_id = resp.message.Id  ;
+                    frm.refresh_field("qb_product_id");
+                },
+                error:function(err){
+                    frm.doc.qb_product_id = undefined;
+                    frm.refresh_field("qb_product_id");
+                    console.log({"Bug" : err})
+                }
+            }) ;
+        }else{
+            row.qb_product_id = undefined;
+            frm.refresh_field("qb_product_id");
+        }
+	},
 
 
     generate_variant(frm) {

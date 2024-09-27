@@ -21,6 +21,7 @@
   "request_token_button",
   "access_token",
   "mapping",
+  "qb_default_customer",
   "default_customer_id",
   "column_break_beee",
   "qb_default_payment_type",
@@ -150,12 +151,17 @@
   {
    "fieldname": "column_break_beee",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "qb_default_customer",
+   "fieldtype": "Autocomplete",
+   "label": "QB Default Customer"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-09-13 10:41:55.517072",
+ "modified": "2024-09-27 10:40:21.588114",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "QuickBooks Configuration",

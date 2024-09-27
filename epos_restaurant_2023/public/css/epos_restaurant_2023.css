@@ -661,3 +661,19 @@ color: #383838;
 .report-summary .summary-item {
     margin: 15px 0px !important;
 }
+
+/* report summary style */
+#summary_data table {
+    border-collapse: collapse;  
+    width: 100%;  
+}
+
+#summary_data th, #summary_data td {
+    border: 1px solid black !important; 
+    padding: 8px;  
+    text-align: left;  
+}
+
+#summary_data th {
+    background-color: #f2f2f2;  
+}
