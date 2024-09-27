@@ -1785,6 +1785,13 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			});
 		} 
 
+		let report_summary = null
+		const summary_table = document.querySelector("#summary_table")
+		console.log(summary_table)
+		if(summary_table){
+			report_summary = summary_table.outerHTML
+		}
+
 		const content = frappe.render_template(template, {
 			title: __(this.report_name),
 			subtitle: filters_html,
@@ -1797,7 +1804,8 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			chart_url:chart_url,
 			has_chart: this.chart_options?1:0,
 			sumamry_data :  window.summary_data ,
-			summary_columns:window.summary_columns?.filter(c=>c)
+			summary_columns:window.summary_columns?.filter(c=>c),
+			report_summary:report_summary
 		});
 		
 
