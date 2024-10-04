@@ -85,6 +85,7 @@
   "section_break_38",
   "discount_sale_required_password",
   "cancel_discount_sale_required_password",
+  "manual_percent_discount_required_password",
   "column_break_40",
   "discount_sale_required_note",
   "cancel_discount_sale_required_note",
@@ -802,12 +803,18 @@
    "fieldname": "change_table_previous_date",
    "fieldtype": "Check",
    "label": "Change Table Previous Date"
+  },
+  {
+   "default": "0",
+   "fieldname": "manual_percent_discount_required_password",
+   "fieldtype": "Check",
+   "label": " Manual Percent Discount Required Password"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-22 08:27:59.628587",
+ "modified": "2024-10-04 15:47:32.133872",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

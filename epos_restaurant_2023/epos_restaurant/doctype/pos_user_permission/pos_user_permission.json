@@ -29,6 +29,7 @@
   "reset_custom_bill_number_counter",
   "change_item_time_in",
   "change_item_time_out",
+  "allow_manual_percent_discount",
   "column_break_13",
   "start_working_day",
   "close_working_day",
@@ -231,11 +232,17 @@
    "fieldname": "allow_apply_tax_include_rate",
    "fieldtype": "Check",
    "label": "Allow Apply Tax Include Rate"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_manual_percent_discount",
+   "fieldtype": "Check",
+   "label": "Allow Manual Percent Discount"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-05 15:02:57.163167",
+ "modified": "2024-10-04 15:50:43.350306",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "POS User Permission",

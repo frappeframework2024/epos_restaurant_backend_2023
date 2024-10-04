@@ -261,8 +261,9 @@ class Sale(Document):
 		total_cost = 0
 		total_second_cost = 0
 		for p in self.sale_products:
-			total_cost += get_product_cost(self.stock_location, p.product_code) * p.quantity
-			total_second_cost += (frappe.db.get_value('Product',{'product_code':p.product_code}, 'secondary_cost')* p.quantity)
+			uom_conversion = get_uom_conversion(p.base_unit, p.unit)
+			total_cost += (get_product_cost(self.stock_location, p.product_code)/uom_conversion) * p.quantity
+			total_second_cost += ((frappe.db.get_value('Product',{'product_code':p.product_code}, 'secondary_cost')/uom_conversion)* p.quantity)
 		self.sale_grand_total = self.grand_total
 		self.sale_profit = self.grand_total - total_cost
 		self.total_secondary_cost = total_second_cost
@@ -381,12 +382,65 @@ class Sale(Document):
 		sql_delete_bulk = """ delete from `tabBulk Sale` where sale = '{}' """.format(self.name)
 		# frappe.throw(sql_delete_bulk)
 		frappe.db.sql(sql_delete_bulk)
-		frappe.db.commit()
+		
 
 		update_customer_bill_balance(self)
 
+		# update to folio transaction
+
+		update_pos_pay_to_room_adjustment(self)
+
+		# delete payment from POS Sale Payment
+		frappe.db.sql("delete from `tabPOS Sale Payment` where parent = '{}'".format(self.name))
+		
+
+		frappe.db.commit()
 		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel", queue='short', self=self)
 
+def update_pos_pay_to_room_adjustment(self):
+
+	#check sale has payment type transfer to edoor and user cancel order 
+    # then we check payment type adjustment account then post adjustment account to edoor pms
+	if 'edoor' in frappe.get_installed_apps():
+	
+		payments =  deepcopy(self.payment)
+		
+		for p in [d for d in payments if d.folio_transaction_number and d.folio_transaction_type and  not d.cancel_order_adjustment_account_code]:
+			frappe.throw("There is no cancel order adjustment account code for payment type {}. Please config it in POS Config Setting.".format(p.payment_type))
+
+		 
+
+		for p in [d for d in payments if d.folio_transaction_type and d.folio_transaction_number and d.cancel_order_adjustment_account_code]:
+			data = {
+					'doctype': 'Folio Transaction',
+					"is_base_transaction":1,
+					'posting_date':self.posting_date,
+					'transaction_type': p.folio_transaction_type,
+					'transaction_number': p.folio_transaction_number,
+					'reference_number':self.name,
+					"input_amount":p.amount,
+					"amount":p.amount,
+					"quantity": 1 if frappe.get_cached_value("Account Code",p.cancel_order_adjustment_account_code,"allow_enter_quantity") ==1 else 0,
+					"report_quantity": 1 if frappe.get_cached_value("Account Code",p.cancel_order_adjustment_account_code,"show_quantity_in_report") ==1 else 0,
+					"transaction_amount":p.amount,
+					"total_amount":p.amount,
+					"account_code":p.cancel_order_adjustment_account_code,
+					"property":self.business_branch,
+					"is_auto_post":1,
+					"sale": self.name,
+					"tbl_number":self.tbl_number,
+					"type":"Credit",
+					"guest":self.customer,
+					"guest_name":self.customer_name,
+					"guest_type":self.customer_group,
+					"nationality": "" if not self.customer else  frappe.db.get_value("Customer",self.customer,"country"),
+					"report_description": "{} ({})" .format( frappe.get_cached_value("Account Code",p.cancel_order_adjustment_account_code,"account_name"),self.name) ,
+				} 
+			
+
+			doc = frappe.get_doc(data)
+			doc.insert(ignore_permissions=True)	
+        
 
 def commission_general_ledger_entry(self):
 	commissions=[]
@@ -1345,8 +1399,9 @@ def update_inventory_product_cost(self):
 		if data:
 			for sp in [x for x in self.sale_products if x.is_inventory_product ==1]:
 				cost_data = [d for d in data if d["product_code"]==sp.product_code]
+				uom_conversion = get_uom_conversion(sp.base_unit,sp.unit)
 				if cost_data:
-					sp.cost =  cost_data[0]["cost"]
+					sp.cost = (cost_data[0]["cost"] / uom_conversion)
     
 def update_customer_bill_balance(self):
 	sql ="""update `tabCustomer` c 

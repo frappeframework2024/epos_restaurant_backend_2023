@@ -260,7 +260,8 @@ def get_system_settings(pos_profile="", device_name=''):
         "is_client_side_sync_setting":epos_sync_setting.client_side,
         "park_item_days_expiry":pos_config.park_item_days_expiry,
         "apply_rate_include_tax_required_password":pos_config.apply_rate_include_tax_required_password,
-        "apply_rate_include_tax_required_note":pos_config.apply_rate_include_tax_required_note
+        "apply_rate_include_tax_required_note":pos_config.apply_rate_include_tax_required_note,
+        "manual_percent_discount_required_password":pos_config.manual_percent_discount_required_password
         }
     #get default customre
     
@@ -1093,7 +1094,7 @@ def edit_sale_order(name,auth=None,note=None):
 
 
 
-    sale_doc.payment=[]
+
     # frappe.throw(str(sale_doc.docstatus))
     sale_doc.cancel()
 
@@ -1108,41 +1109,6 @@ def edit_sale_order(name,auth=None,note=None):
     frappe.db.sql("update `tabSale Product` set docstatus = 0 where parent='{}'".format(name))
 
 
-
-    #check sale has payment type transfer to edoor and user cancel order 
-    # then we check payment type adjustment account then post adjustment account to edoor pms
-    if 'edoor' in frappe.get_installed_apps():
-        for p in [d for d in payments if d.folio_transaction_type and d.folio_transaction_number and d.cancel_order_adjustment_account_code]:
-            data = {
-                    'doctype': 'Folio Transaction',
-                    "is_base_transaction":1,
-                    'posting_date':sale_doc.posting_date,
-                    'transaction_type': p.folio_transaction_type,
-                    'transaction_number': p.folio_transaction_number,
-                    'reference_number':sale_doc.name,
-                    "input_amount":p.amount,
-                    "amount":p.amount,
-                    "quantity": 1 if frappe.get_cached_value("Account Code",p.cancel_order_adjustment_account_code,"allow_enter_quantity") ==1 else 0,
-                    "report_quantity": 1 if frappe.get_cached_value("Account Code",p.cancel_order_adjustment_account_code,"show_quantity_in_report") ==1 else 0,
-                    "transaction_amount":p.amount,
-                    "total_amount":p.amount,
-                    "account_code":p.cancel_order_adjustment_account_code,
-                    "property":sale_doc.business_branch,
-                    "is_auto_post":1,
-                    "sale": sale_doc.name,
-                    "tbl_number":sale_doc.tbl_number,
-                    "type":"Credit",
-                    "guest":sale_doc.customer,
-                    "guest_name":sale_doc.customer_name,
-                    "guest_type":sale_doc.customer_group,
-                    "nationality": "" if not sale_doc.customer else  frappe.db.get_value("Customer",sale_doc.customer,"country"),
-                    "report_description": "{} ({})" .format( frappe.get_cached_value("Account Code",p.cancel_order_adjustment_account_code,"account_name"),sale_doc.name) ,
-                } 
-            
- 
-            doc = frappe.get_doc(data)
-            doc.insert(ignore_permissions=True)	
-        
            
 
 
@@ -1193,7 +1159,6 @@ def delete_sale(name,auth):
     
     #then start to cancel sale
     sale_doc = frappe.get_doc("Sale",name)
-    sale_doc.payment=[]
     if sale_doc.docstatus ==1:
         sale_doc.cancel()
     else:        
