@@ -16,6 +16,7 @@
   "width",
   "show_in_report",
   "show_in_summary",
+  "show_in_total_row",
   "summary_indicator",
   "show_in_chart",
   "show_in_chart_when_no_fields_selected",
@@ -120,12 +121,18 @@
    "fieldname": "allow_sort_order",
    "fieldtype": "Check",
    "label": "Allow Sort Order"
+  },
+  {
+   "default": "1",
+   "fieldname": "show_in_total_row",
+   "fieldtype": "Check",
+   "label": "Show In Total Row"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-09-25 10:08:56.242691",
+ "modified": "2024-10-03 20:17:26.465015",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Report Configuration Fields",

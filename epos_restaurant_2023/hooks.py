@@ -17,6 +17,7 @@ app_include_css = "/assets/epos_restaurant_2023/css/epos_restaurant_2023.css"
 app_include_js = [
     "/assets/epos_restaurant_2023/js/epos_restaurant_2023.js",
     "/assets/epos_restaurant_2023/js/echarts.min.js",
+    "/assets/epos_restaurant_2023/js/html2canvas.min.js",
     
 ]
  
@@ -176,7 +177,8 @@ scheduler_events = {
 #
 override_whitelisted_methods = {
 	# "frappe.desk.doctype.event.event.get_events": "epos_restaurant_2023.event.get_events"
-    "frappe.desk.desktop.get_workspace_sidebar_items" : "epos_restaurant_2023.api.api.get_workspace_sidebar_items"
+    "frappe.desk.desktop.get_workspace_sidebar_items" : "epos_restaurant_2023.api.api.get_workspace_sidebar_items",
+    "frappe.desk.query_report.export_query" : "epos_restaurant_2023.api.data_export.data_export_override.export_to_excel"
 
 }
  

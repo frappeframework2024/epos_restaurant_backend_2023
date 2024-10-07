@@ -63,8 +63,14 @@
                         </template>
 
                         <v-list>
+                            <v-list-item @click="open">
+                                <v-list-item-title>{{ $t("Upload Local Image") }}</v-list-item-title>
+                            </v-list-item>
                             <v-list-item @click="uploadImage(data)">
-                                <v-list-item-title>{{ $t("Upload Image") }}</v-list-item-title>
+                                <v-list-item-title>{{ $t("Upload Online Image") }}</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @click="onOpenChangePrice">
+                                <v-list-item-title>{{ $t("Change Price") }}</v-list-item-title>
                             </v-list-item>
                         </v-list>
                     </v-menu>
@@ -94,7 +100,7 @@ const product = inject("$product");
 const toaster = createToaster({ position: 'top-right' })
 const frappe = inject("$frappe")
 const db = frappe.db();
-  
+import { useFileDialog } from '@vueuse/core'
 const dialog = useDialog()
 
 // get image
@@ -176,25 +182,49 @@ function onClickMenu(menu) {
 
 }
 
+const { files, open, reset, onCancel, onChange } = useFileDialog({
+        accept: 'image/*', // Set to accept only image files
+        directory: false, // Select directories instead of files if set true
+    })
+onChange((files) => {
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/method/upload_file", true);
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.setRequestHeader("X-Frappe-CSRF-Token", frappe.csrf_token);
+    let form_data = new FormData();
+    form_data.append("file", files[0], files[0].name);
+    xhr.send(form_data);
+    db.updateDoc('Product', props.data.name, {
+            photo: "/files/"+files[0].name,
+        }).then((doc) => {
+            props.data.photo =  "/files/"+files[0].name
+            toaster.success($t("msg.Update successfully"))
+        })
+})
+
 
 async function uploadImage(data) {
     const res = await SelectGoogleImageDialog({
-
         title: $t("Upload Image") + " " + data.name_en,
         keyword: data.name_en
     })
     if (res) {
         db.updateDoc('Product', data.name, {
             photo: res.image,
-        })
-            .then((doc) => {
+        }).then((doc) => {
                 data.photo = res.image
                 toaster.success($t("msg.Update successfully"))
             }
-
-            )
+        )
     }
 }
+
+async function onOpenChangePrice(data) {
+//    alert(123)
+    
+}
+
+
 
 function activate_menu(event) {
     event.stopPropagation();

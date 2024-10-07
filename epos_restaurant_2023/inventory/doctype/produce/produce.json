@@ -6,9 +6,11 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "naming_series",
   "posting_date",
+  "business_branch",
+  "cost_of_goods_sold_account",
   "column_break_clwb",
+  "naming_series",
   "product",
   "product_name",
   "base_unit",
@@ -22,9 +24,9 @@
   "bom",
   "section_break_yjda",
   "produce_items",
-  "amended_from",
   "section_break_cwsp",
   "total_quantity",
+  "amended_from",
   "column_break_bnnt",
   "total_amount"
  ],
@@ -65,6 +67,7 @@
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Naming Series",
    "options": "PCE.YYYY.-.#####"
   },
@@ -158,12 +161,25 @@
    "label": "Base Unit",
    "options": "Unit Of Measurement",
    "read_only": 1
+  },
+  {
+   "fieldname": "business_branch",
+   "fieldtype": "Link",
+   "label": "Business Branch",
+   "options": "Business Branch"
+  },
+  {
+   "depends_on": "eval:doc.cost_of_goods_sold_account",
+   "fetch_from": "business_branch.default_cost_of_good_sold_account",
+   "fieldname": "cost_of_goods_sold_account",
+   "fieldtype": "Data",
+   "label": "Cost Of Goods Sold Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-31 10:59:34.855236",
+ "modified": "2024-10-07 09:23:26.443033",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Produce",

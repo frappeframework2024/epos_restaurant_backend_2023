@@ -15,7 +15,9 @@ def get_customer_autocomplete(name=None):
 
 @frappe.whitelist()
 def get_customer_by_name(name):
-    query = "SELECT Id FROM Customer Where DisplayName ='{}'".format(name)
+    param = urllib.parse.quote(("%{}%".format(name)))
+    frappe.throw(str(param))
+    query = "SELECT Id FROM Customer Where DisplayName ='{}'".format(param)
     data = get_list(key="Customer", query=query)
     if len(data) > 0:
         return data[0]

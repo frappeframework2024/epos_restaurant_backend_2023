@@ -172,6 +172,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			() => this.refresh_report(route_options),
 			() => this.add_chart_buttons_to_toolbar(true),
 			() => this.add_card_button_to_toolbar(true),
+			() => this.add_print_button(true)
 		]);
 	}
 
@@ -180,6 +181,20 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 		this.page.add_inner_button(__("Create Card"), () => {
 			this.add_card_to_dashboard();
 		});
+	}
+	// this code is custom code create by Mr. Pheakdey to add print button to report toolbar
+	add_print_button() {
+		this.page.add_inner_button(__("Print Report"), () => {
+			
+			let dialog = frappe.ui.get_print_settings(
+				false,
+				(print_settings) => this.print_report(print_settings),
+				this.report_doc.letter_head,
+				this.get_visible_columns()
+			);
+			this.add_portrait_warning(dialog);
+
+		}).addClass('btn-print-custom').html('<i class="fa fa-print"></i> Print Report');;
 	}
 
 	add_chart_buttons_to_toolbar(show) {
@@ -712,9 +727,13 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 					}
 
 					this.render_datatable();
+
 					// render report summary
-					// TODO
+					// This is custom code to develop by Mr. Pheakdey
+					// to show summary table under report data
+					
 					this.render_datatable_summary()
+
 
 					this.add_chart_buttons_to_toolbar(true);
 					this.add_card_button_to_toolbar();
@@ -1975,6 +1994,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	get_menu_items() {
+	 
 		let items = [
 			{
 				label: __("Refresh"),

@@ -162,6 +162,8 @@ const store = useStore();
 const languages = ref()
 const languageDisplay = ref('')
 
+// console.log(navigator.userAgent)
+
 store.state.isLoading = false;
 
 let state = reactive({

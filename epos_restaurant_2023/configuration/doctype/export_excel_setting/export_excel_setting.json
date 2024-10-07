@@ -1,0 +1,89 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-09-30 16:31:38.029351",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "report_title_start_row",
+  "min_column",
+  "max_column",
+  "chart_start_cell",
+  "chart_image_min_width",
+  "report_data_start_row_with_chart",
+  "report_data_start_row_with_without_chart",
+  "logo_width"
+ ],
+ "fields": [
+  {
+   "default": "12",
+   "fieldname": "min_column",
+   "fieldtype": "Int",
+   "label": "Min Column"
+  },
+  {
+   "default": "20",
+   "fieldname": "max_column",
+   "fieldtype": "Int",
+   "label": "Max Column"
+  },
+  {
+   "default": "1100",
+   "fieldname": "chart_image_min_width",
+   "fieldtype": "Int",
+   "label": "Chart Image Min Width"
+  },
+  {
+   "default": "25",
+   "fieldname": "report_data_start_row_with_chart",
+   "fieldtype": "Int",
+   "label": "Report Data Start Row with Chart"
+  },
+  {
+   "default": "5",
+   "fieldname": "report_data_start_row_with_without_chart",
+   "fieldtype": "Int",
+   "label": "Report Data Start Row with without Chart"
+  },
+  {
+   "default": "1",
+   "fieldname": "report_title_start_row",
+   "fieldtype": "Int",
+   "label": "Report Title Start Row"
+  },
+  {
+   "default": "5",
+   "fieldname": "chart_start_cell",
+   "fieldtype": "Int",
+   "label": "Chart Start Cell"
+  },
+  {
+   "fieldname": "logo_width",
+   "fieldtype": "Int",
+   "label": "Logo Width"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-10-03 22:16:58.623556",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "Export Excel Setting",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

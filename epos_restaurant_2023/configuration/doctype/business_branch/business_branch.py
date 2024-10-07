@@ -8,6 +8,7 @@ from frappe.model.document import Document
 
 class BusinessBranch(Document):
 	def on_update(self):
+		frappe.clear_document_cache('Business Branch', self.name)
 		get_doctype_value_cache.cache_clear()
 		frappe.clear_document_cache("Business Branch", self.name)
 

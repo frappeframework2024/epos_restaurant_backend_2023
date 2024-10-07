@@ -52,6 +52,12 @@
   "tax_invoice_number_format",
   "cancellation_policy_section",
   "cancellation_policy",
+  "report_header_sting_tab",
+  "report_header_sub_line_section",
+  "report_header_en",
+  "report_header_sub_line",
+  "column_break_frez",
+  "report_header_logo",
   "account_tab",
   "default_cash_account",
   "default_change_account",
@@ -496,12 +502,41 @@
    "label": "Default Sale Expense Account",
    "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"root_type\",\"=\",\"Expenses\"],[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0]]",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "report_header_sub_line_section",
+   "fieldtype": "Section Break",
+   "label": "Report Header Sub Line"
+  },
+  {
+   "fieldname": "report_header_sub_line",
+   "fieldtype": "Small Text",
+   "label": "Report Header Sub Line"
+  },
+  {
+   "fieldname": "report_header_sting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Report Header Sting"
+  },
+  {
+   "fieldname": "report_header_en",
+   "fieldtype": "Data",
+   "label": "Report Header EN"
+  },
+  {
+   "fieldname": "column_break_frez",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "report_header_logo",
+   "fieldtype": "Attach Image",
+   "label": "Report Header Logo"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-31 09:52:21.700838",
+ "modified": "2024-10-03 21:37:34.004372",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",

@@ -22,6 +22,9 @@ class Customer(Document):
 		if not self.customer_name_kh:
 			self.customer_name_kh = self.customer_name_en
 
+		if not self.qb_customer_name:
+			self.qb_customer_id = None
+
 		self.customer_code_name = "{} - {}".format(self.name,self.customer_name_en)
 
 	def autoname(self):

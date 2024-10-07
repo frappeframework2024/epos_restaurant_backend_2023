@@ -5,7 +5,7 @@
         </template>
     </ComToolbar>
     
-    <v-container>
+    <v-container >
         <v-card
             class="mx-auto mt-12"
             color="grey-lighten-3"
