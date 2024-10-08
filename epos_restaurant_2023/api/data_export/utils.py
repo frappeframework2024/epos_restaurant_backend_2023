@@ -20,6 +20,9 @@ def get_business_information(filters):
         business_branch = filters.get("property")
     elif filters.get("business_branch",""):
         business_branch = filters.get("business_branch")
+    if not business_branch:
+        business_branch = frappe.db.sql("select name from `tabBusiness Branch` limit 1",as_dict=1)[0]["name"]
+        
     if business_branch:
         doc = frappe.get_cached_doc("Business Branch", business_branch)
         return {
