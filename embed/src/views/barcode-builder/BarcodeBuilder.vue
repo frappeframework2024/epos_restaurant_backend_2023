@@ -99,7 +99,7 @@
                         overflow: 'hidden'
                       }">
                         <img style="width: 100%;height: 100%"
-                          :src="`http://bwipjs-api.metafloor.com/?bcid=code128&text=` + doc[e.fieldname]" />
+                          :src="`http://bwipjs-api.metafloor.com/?bcid=code128&text=` + getValueFromPath(doc, e.fieldname)" />
                       </div>
                     </template>
                     <template v-else>
@@ -127,7 +127,7 @@
                       <template v-if="e.fieldtype === 'Barcode'">
                         <div style="height: 100%; width: 100%; overflow: hidden">
                           <img style="width: 100%; height: 100%"
-                            :src="`http://bwipjs-api.metafloor.com/?bcid=code128&text=` + doc[e.fieldname]" />
+                            :src="`http://bwipjs-api.metafloor.com/?bcid=code128&text=` + getValueFromPath(doc, e.fieldname)" />
                         </div>
                       </template>
                       <template v-else>
