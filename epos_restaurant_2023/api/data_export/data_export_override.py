@@ -46,7 +46,9 @@ def export_to_excel():
     data = query_report.run(
         report_name, form_params.filters, custom_columns=custom_columns, are_default_filters=False
     )
+    
     data = frappe._dict(data)
+     
     if not data.columns:
         frappe.respond_as_web_page(
             _("No data to export"),

@@ -14,7 +14,7 @@ from io import BytesIO
 import os
 from frappe.utils import get_site_path
 from epos_restaurant_2023.api.data_export import report_chart
-from epos_restaurant_2023.api.data_export.utils import cell_array,get_business_information
+from epos_restaurant_2023.api.data_export.utils import cell_array,get_business_information,get_status_color_by_alias
 import base64
 from openpyxl.drawing.image import Image
 from PIL import Image as PILImage  # Import Pillow
@@ -125,7 +125,7 @@ def export_excel(report_name="Reservation List Report",report_data=None,chart_im
     
     if report_data["result"][0].get("report_summary"):
         start_row_index = report_data_row + len(report_data["result"]) + 2#add 2 because include 1 for row header and 1 for space 1 row
-        if  report_data.get("report_summary"):
+        if  report_data.get("report_summary")  and  not  report_data.get("chart"): 
             start_row_index = start_row_index + 6
             
         render_report_summary(ws1=ws1, 
@@ -172,6 +172,9 @@ def render_report_letter_head(ws1,filters,columns):
     total_column  = len(columns)
     if total_column<setting_doc.min_column:
         total_column = setting_doc.min_column
+    
+    if total_column>setting_doc.max_column:
+        total_column = setting_doc.max_column
         
         
     end_merge_cell = cell_array()[total_column - 1]  
@@ -183,10 +186,10 @@ def render_report_letter_head(ws1,filters,columns):
     ws1[header_cell].alignment = Alignment(vertical='center',horizontal= "center" )
 
 
-    ws1.merge_cells(f'A2:{end_merge_cell}2') 
-    ws1[f"A2"] = info.get("sub_header")
-    ws1[f"A2"].font = Font(size=12)  
-    ws1[f'A2'].alignment = Alignment(vertical='center',horizontal="center" ,wrap_text=True)
+    ws1.merge_cells(f'B2:{end_merge_cell}2') 
+    ws1[f"B2"] = info.get("sub_header")
+    ws1[f"B2"].font = Font(size=12)  
+    ws1[f'B2'].alignment = Alignment(vertical='center',horizontal="center" ,wrap_text=True)
     ws1.row_dimensions[2].height = len(info.get("sub_header").split("\n")) * 15
 
     # show logo if have
@@ -215,7 +218,8 @@ def render_header(ws1, report_name,columns):
     total_column  = len(columns)
     if total_column<setting_doc.min_column:
         total_column = setting_doc.min_column
-        
+    if total_column>setting_doc.max_column:
+        total_column = setting_doc.max_column
         
     end_merge_cell = cell_array()[total_column - 1]  
     ws1.merge_cells(f'A{row_index}:{end_merge_cell}{row_index}') 
@@ -229,6 +233,8 @@ def render_filter(ws1, filters_html,columns ):
     total_column  = len(columns)
     if total_column<setting_doc.min_column:
         total_column = setting_doc.min_column
+    if total_column>setting_doc.max_column:
+        total_column = setting_doc.max_column
     ws1.row_dimensions[row_index].height =30
     ws1.merge_cells(f'A{row_index}:{cell_array()[total_column-4]}{row_index}') 
     ws1[f'A{row_index}'] = frappe.utils.strip_html(filters_html).replace("&amp;", "&")
@@ -308,41 +314,56 @@ def render_report_data(ws1,columns,data,report_data_row=25):
 
      
     for row_index,d in enumerate(data):
+        
+         
         column_index = 0
         for c in columns:
-            value =  d.get(c.get("fieldname"))
-            value = frappe.format(value, {"fieldtype":c.get("fieldtype","Data")})
-            if column_index==0:
-                value = f'{" " * d.get("indent",0) * 5} {value}'
+            if str(type(d)) != "<class 'list'>":
+               
+                value =  d.get(c.get("fieldname"))
+                value = frappe.format(value, {"fieldtype":c.get("fieldtype","Data")})
+                if column_index==0:
+                    # set indent space character 
+                    value = f'{" " * d.get("indent",0) * 5} {value}'
+                    
+                cell_row = row_index + report_data_row + 1
                 
-            cell_row = row_index + report_data_row + 1
-            try:
                 cell = ws1.cell(row= cell_row, column=column_index+1, value=value)
-            except:
-                frappe.throw(f'{cell_row}')
+                    
                 
+                
+                # mearge cell
+                if c.get("merge_cell",1)>1:
+                    merge_cell = f'{cell_array()[column_index]}{cell_row}:{cell_array()[column_index   +  c.get("merge_cell")  -1 ]}{cell_row}'
+                    
+                    ws1.merge_cells(merge_cell)
             
-             
-            # mearge cell
-            # if c.get("merge_cell",1)>1:
-            #     merge_cell = f'{cell_array()[column_index]}{cell_row}:{cell_array()[column_index   +  c.get("merge_cell")  -1 ]}{cell_row}'
+                cell.alignment = Alignment(vertical='center',horizontal= c.get("align","left") )
                 
-            #     ws1.merge_cells(merge_cell)
-          
-            cell.alignment = Alignment(vertical='center',horizontal= c.get("align","left") )    
+                # check if report is Monthly Room Availilability Chart 
+                # then check hight row by reservation status
+                if c.get("set_reservation_status_color"):
+                    color = get_status_color_by_alias(value)
+                    fill = PatternFill(start_color=color, end_color=color, fill_type="solid")
+                    if color:
+                        cell.fill = fill
 
-            if d.get("is_total_row",0) ==1 or d.get("is_group",0) == 1:
-                ws1.row_dimensions[row_index + report_data_row].height =20
-                cell.font = Font(bold=True) 
-                
-            column_index = column_index + c.get("merge_cell",1) 
-            # check if cell is group then check if it  set to merge
-            # then break stop loop
-            # if d.get("merge_group_row",0)==1:
-            #      ws1.merge_cells('A{row}:{end_column}{row}'.format(row=row_index + report_data_row+1, end_column = cell_array()[len(columns)-1]))
-            #      break
-             
+                if d.get("is_total_row",0) ==1 or d.get("is_group",0) == 1:
+                    ws1.row_dimensions[row_index + report_data_row].height =25
+                    cell.font = Font(bold=True) 
+                    cell.border = Border(top=Side(style='thin')) 
+                    
+                column_index = column_index + c.get("merge_cell",1) 
+                # check if cell is group then check if it  set to merge
+                # then break stop loop
+                if d.get("merge_group_row",0)==1:
+                        ws1.merge_cells('A{row}:{end_column}{row}'.format(row=row_index + report_data_row+1, end_column = cell_array()[len(columns)-1]))
+                        break
             
+            else:
+                for col_num, value in enumerate(d, start=1):
+                    cell = ws1.cell(row= row_index + report_data_row + 1, column=col_num, value=value) 
+                    cell.font = Font(bold=True) 
            
             
             
