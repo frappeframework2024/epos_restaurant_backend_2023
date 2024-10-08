@@ -395,6 +395,8 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	refresh_report(route_options) {
+		
+	 
 		this.toggle_message(true);
 		this.toggle_report(false);
 
@@ -619,6 +621,8 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	refresh(have_filters_changed) {
+		
+ 
 		this.toggle_message(true);
 		this.toggle_report(false);
 		let filters = this.get_filter_values(true);
@@ -711,6 +715,9 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 					this.chart_options = this.get_chart_options(data);
 
 					this.$chart.empty();
+					if(window.myChart!=null){
+						window.myChart.dispose();
+					}
 					if (this.chart_options) {
 						this.render_chart(this.chart_options);
 					} else {
@@ -876,6 +883,10 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 		});
 
 		this.$summary.show();
+
+		// this code is update by Pheakdey
+		// this is custom code to capture report summary as image and save it in window object
+		//this.capture_report_summary_image()
 	}
 
 	get_query_params() {
@@ -1198,6 +1209,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	get_chart_options(data) {
+		console.log(data)
 		let options = this.report_settings.get_chart_data
 			? this.report_settings.get_chart_data(data.columns, data.result)
 			: data.chart
@@ -1220,6 +1232,10 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			shortenYAxisNumbers: 1,
 			numberFormatter: frappe.utils.format_chart_axis_number,
 		};
+		options.title = {
+			left: 'center',
+			text: 'Large Area Chart'
+		};
 		options.height = 280;
 		return options;
 	}
@@ -1228,14 +1244,15 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 		this.$chart.empty();
 		this.$chart.show();
 		 // this.chart = new frappe.Chart(this.$chart[0], options);
-		 
+		
+		//  this is custom code use echart
 		if(window.myChart!=null){
 			window.myChart.dispose();
 		}
 		if ( options.type=='pie' ||  options.type=="donut"){
 			this.$chart[0].style.height= "450px";
 		}else{
-			this.$chart[0].style.height= "400px";
+			this.$chart[0].style.height= "450px";
 		}
 		
 		this.$chart[0].style.width= "100%";
@@ -1270,6 +1287,10 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 				}
 			}
 		  }else {
+		  	option.title ={
+				text: options.data.datasets[0].name,
+				left: 'center'
+			}
 			option.tooltip =  {
 				trigger: 'item'
 			  }
@@ -1289,6 +1310,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 		}
 		}else {
 			return  {
+				type: 'scroll',
 				orient: 'vertical',
 				right: 10,
 				top: "middle",
@@ -1593,6 +1615,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	get_visible_columns() {
+		
 		const visible_column_ids = this.datatable.datamanager
 			.getColumns(true)
 			.map((col) => col.id);
@@ -1877,7 +1900,12 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			.join(" / ");
 	}
 
-	export_report() {
+	async export_report() {
+		
+
+		 
+		
+		 
 		if (this.export_dialog) {
 			this.export_dialog.clear();
 			this.export_dialog.show();
@@ -1925,6 +1953,24 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 					csv_quoting,
 					include_indentation,
 				};
+			 
+				console.log(window.myChart)
+				if(window.myChart!=null && window.myChart !=undefined){
+					let chart_url = window.myChart.getDataURL({
+						type: 'svg', 
+						backgroundColor: '#fff' 
+					});
+					if(chart_url){
+
+						args.chart_image = chart_url
+					}
+				}
+				if (window.report_summary_image){
+					args.report_summary_image = window.report_summary_image
+				}
+
+				const filters_html = this.get_filters_html_for_print();
+				args.filters_html = filters_html
 
 				open_url_post(frappe.request.url, args);
 
@@ -2415,5 +2461,27 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	// backward compatibility
 	get get_values() {
 		return this.get_filter_values;
+	}
+
+	// custom by epos
+	capture_report_summary_image(){
+
+		window.report_summary_image = null
+		if(document.querySelectorAll(".summary-item")){
+			
+			html2canvas(document.querySelector(".report-summary"),{
+				imageTimeout: 5000,
+				scale:1,
+				useCORS: true,
+				logging: false,        // Disables logging
+				background: "transparent", // Avoids drawing background
+				foreignObjectRendering: false, // Improves performance if foreign objects are not needed
+				letterRendering: false,
+				}).then(canvas=>{
+					window.report_summary_image = canvas.toDataURL("image/png");
+				  
+				})
+				
+		}
 	}
 };
