@@ -149,6 +149,7 @@
    "depends_on": "eval:frappe.user.has_role(\"Administrator\")",
    "fieldname": "disabled",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Disabled"
   },
   {
@@ -256,6 +257,7 @@
    "depends_on": "eval:frappe.user.has_role(\"Administrator\")",
    "fieldname": "google_account_credentials",
    "fieldtype": "Code",
+   "hidden": 1,
    "label": "Google Account Credentials",
    "options": "JSON",
    "permlevel": 2
@@ -265,12 +267,14 @@
    "depends_on": "eval:frappe.user.has_role(\"Administrator\")",
    "fieldname": "upload_sale_data_to_google_sheet",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Upload Sale Data To Google Sheet"
   },
   {
    "depends_on": "eval:frappe.user.has_role(\"Administrator\")",
    "fieldname": "google_sheet_file",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Google Sheet File"
   },
   {
@@ -536,7 +540,7 @@
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-03 21:37:34.004372",
+ "modified": "2024-10-08 10:24:54.318544",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",

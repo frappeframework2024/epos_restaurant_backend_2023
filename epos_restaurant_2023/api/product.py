@@ -26,7 +26,8 @@ def convert_to_safe_key(text):
 
 
 @frappe.whitelist(allow_guest=True)
-def get_product_by_menu(root_menu="", mobile = 0):
+def get_product_by_menu(root_menu="",mobile = 0,sort_order_by="product_name_en",sort_menu_order_by='name' ):
+    
     if root_menu=="":
         return []
     else:
@@ -49,28 +50,29 @@ def get_product_by_menu(root_menu="", mobile = 0):
                 where 
                     parent_pos_menu='{}' and
                     disabled = 0 
-                order by sort_order, name
-                """.format(root_menu)
+                order by {}
+                """.format(root_menu,sort_menu_order_by)
         data = frappe.db.sql(sql,as_dict=1)
         
         for d in data:
             menus.append(d)
-            child_menus = get_child_menus(d.name, mobile=mobile)
+            child_menus = get_child_menus(d.name, mobile=mobile,sort_menu_order_by=sort_menu_order_by,sort_order_by = sort_order_by)
             
             for m in child_menus:
                 menus.append(m)
             
-            menu_products = get_temp_menu_products(d.name,mobile=mobile)
+            menu_products = get_temp_menu_products(d.name,mobile=mobile,sort_order_by = sort_order_by)
             for m in menu_products:
                 menus.append(m)
         
-        menu_products = get_temp_menu_products(root_menu,mobile=mobile)
+        menu_products = get_temp_menu_products(root_menu,mobile=mobile,sort_order_by = sort_order_by)
         for m in menu_products:
                 menus.append(m)
              
+      
         return menus
 
-def get_child_menus(parent_menu, mobile= 0):
+def get_child_menus(parent_menu, mobile= 0,sort_menu_order_by="name",sort_order_by = "product_name_en"):
     menus = []
     menus.append({"type":"back","parent":parent_menu})
     sql = """select 
@@ -90,22 +92,22 @@ def get_child_menus(parent_menu, mobile= 0):
             where 
                 parent_pos_menu='{}' and
                 disabled = 0 
-            order by sort_order, name
-            """.format(parent_menu)
+            order by {}
+            """.format(parent_menu,sort_menu_order_by)
     data = frappe.db.sql(sql,as_dict=1)
     for d in data:        
         menus.append(d)
-        child_menus = get_child_menus(d.name,mobile=mobile)
+        child_menus = get_child_menus(d.name,mobile=mobile,sort_order_by=sort_order_by)
         for m in child_menus:
             menus.append(m)
         
-        for m in get_temp_menu_products(d.name,mobile=mobile):
+        for m in get_temp_menu_products(d.name,mobile=mobile,sort_order_by=sort_order_by):
             menus.append(m)       
         
     return menus
 
 
-def get_temp_menu_products(parent_menu,mobile=0):     
+def get_temp_menu_products(parent_menu,mobile=0,sort_order_by="product_name_en"):     
     sql = """select 
                 name as menu_product_name,
                 product_code as name,
@@ -143,8 +145,9 @@ def get_temp_menu_products(parent_menu,mobile=0):
             from  `tabTemp Product Menu` 
             where 
                 pos_menu='{0}' 
-            order by sort_order
-            """.format(parent_menu)
+            order by {1}
+            """.format(parent_menu, sort_order_by)
+    
     data = frappe.db.sql(sql,as_dict=1)
    
     return data

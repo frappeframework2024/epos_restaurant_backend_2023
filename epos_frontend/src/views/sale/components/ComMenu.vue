@@ -9,13 +9,15 @@
                     :is-not-empty="(product.posMenuResource.data?.length > 0 || product.setting.default_pos_menu =='')" class-color="text-white"
                     :is-placeholder="true">
                     <template #default>
+                        
                         <div class="grid gap-2"
                             :class="mobile ? 'grid-cols-2' : ''"
                             :style="!mobile ? 'grid-template-columns: repeat('+ gv.itemMenuSetting.show_column_item +' , 1fr);' : ''"
                            >
                             <template v-if="product.setting.pos_menus.length > 0">
-
+                               
                                 <div v-for="(m, index) in product.getPOSMenu()" :key="index" :style="'height:' + gv.itemMenuSetting.height_item + 'px'" class="h-36">
+                                    
                                     <ComMenuItem :data="m" />
                                 </div>
                             </template>

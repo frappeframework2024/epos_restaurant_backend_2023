@@ -194,7 +194,7 @@ def submit_sale_to_general_ledger_entry(self):
 	for sp in self.sale_products:
 		if (sp.is_inventory_product or 0) == 0:
 			product = frappe.get_cached_doc("Product",sp.product_code)
-			if len(product.product_recipe or 0) > 0:
+			if len(product.product_recipe or []) > 0:
 				for r in product.product_recipe:
 					recipe = frappe.get_cached_doc("Product",r.product)
 					if recipe.is_inventory_product == 1:

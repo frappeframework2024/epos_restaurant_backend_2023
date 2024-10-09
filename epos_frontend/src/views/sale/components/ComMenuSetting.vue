@@ -16,13 +16,25 @@
     { key: 'product_name_kh', title: 'Product Name (KH)' },
     { key: 'product_code', title: 'Product Code' },
     { key: 'creation', title: 'Creation Date' },
-    { key: 'last_modified', title: 'Last Modified Date' }
+    { key: 'modified', title: 'Last Modified Date' }
             ]"
-            item-title="title" item-value="key" label="Group Order By"></v-select> 
+            item-title="title" item-value="key" label="Sort Menu Item By"></v-select> 
+
+        
             <div class="px-3 mt-2">
               <div class="text-start">Price Font Size <span class="px-3 bg-slate-100 rounded-lg">{{ gv.itemMenuSetting.font_price_size ?? gv.itemMenuSetting.font_price_size }}</span> px </div>
               <Slider :step="0.2" class="mt-4 w-full" :max="gv.itemMenuSetting.max_font_size" :min="gv.itemMenuSetting.min_font_size" v-model="gv.itemMenuSetting.font_price_size"  />
             </div>
+            <v-select v-model="gv.itemMenuSetting.sort_menu_order_by"
+        
+            :items="[
+              { key: 'sort_order', title: 'Sort Order' },
+    { key: 'name', title: 'Menu Name' },
+ 
+            ]"
+            item-title="title" item-value="key" label="Sort Menu By"></v-select> 
+
+
             <div class="px-3 mt-2">
              <div class="text-start">Product Font Size <span class="px-3 bg-slate-100 rounded-lg">{{ gv.itemMenuSetting.item_font_size ?? gv.itemMenuSetting.item_font_size }}</span> px </div>  
              <Slider :step="0.2" class="mt-4 w-full" :max="gv.itemMenuSetting.max_font_size" :min="gv.itemMenuSetting.min_font_size" v-model="gv.itemMenuSetting.item_font_size"  />
@@ -55,18 +67,20 @@
   import ComDialogContent from '@/components/ComDialogContent.vue' 
   import Slider from 'primevue/slider';
   const { t: $t } = i18n.global;
-  const product = inject("$product")
+  const product = inject("$product");
   const gv = inject("$gv")
   const backup_setting = ref({})
   const dialogRef = inject('dialogRef');
   
   function onSaveSetting() { 
+   
     localStorage.setItem("item_menu_setting", JSON.stringify(gv.itemMenuSetting))
-    if (gv.itemMenuSetting.sort_order_by != backup_setting.value.sort_order_by ) {
-      if (product.setting.pos_menus.length > 0) {
+    if (gv.itemMenuSetting.sort_order_by != backup_setting.value.sort_order_by || gv.itemMenuSetting.sort_menu_order_by != backup_setting.value.sort_menu_order_by ) {
+      if (product.setting.pos_menus.length == 0) {
         product.getProductMenuByProductCategory()
       }else {
-        alert("sort order on get from from POS menu for epos restaurant setup")
+        
+        product.loadPOSMenu()
       }
     }
     dialogRef.value.close()
