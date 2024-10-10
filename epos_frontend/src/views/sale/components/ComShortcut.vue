@@ -1,6 +1,8 @@
 <template>
     <div class="bg-white" :class="mobile ? 'px-2' : 'p-2'" id="shortcut_menu" v-if="shortcut?.length > 0"> 
+        
         <div :class="'flex-wrap flex -my-1 justify-center'" v-if="mobile === false && shortcut">
+         
             <v-btn 
                 class="flex-shrink-0 m-1"
                 v-for="(m, index) in shortcut" :key="index"
@@ -32,8 +34,23 @@
     import {useDisplay}  from 'vuetify'
     const {mobile} = useDisplay()
     const product = inject("$product")
+    import Enumerable from 'linq'
+    const gv = inject("$gv")
+
     const shortcut = computed(()=>{
-        return product.posMenuResource.data?.filter(r=>r.shortcut_menu == 1) 
+        let  data = product.posMenuResource.data?.filter(r=>r.shortcut_menu == 1) 
+            
+        if((gv.itemMenuSetting?.sort_menu_order_by || "name") == "name"){
+         
+            data = Enumerable.from(data).orderBy("$.name").toArray()
+            console.log(data);
+        }else {
+            data = Enumerable.from(data).orderBy("$.sort_order").toArray()
+        }
+      
+        
+        return data
+       
     })
   
     function onClick(name) {

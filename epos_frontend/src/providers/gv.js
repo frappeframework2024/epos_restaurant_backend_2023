@@ -26,7 +26,8 @@ export default class Gv {
 		this.itemMenuSetting= {
             default_font_size:14,
 			show_menu_language:"en",
-			sort_order_by:"sort_order",
+			sort_order_by:"product_name_en",
+			sort_menu_order_by:"name",
 			font_price_size:14,
 			item_font_size:14,
             min_font_size:10,
