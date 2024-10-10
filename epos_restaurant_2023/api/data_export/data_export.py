@@ -261,7 +261,8 @@ def render_report_summary_kpi(ws1,  report_summary):
     ws1.row_dimensions[row_index+1].height =30
     # color = [{"red":"FF0000"},{"blue":"0000FF"},{"orange":"FFA500"},{"green":"00FF00"}]
     if report_summary:
-        for index, d in enumerate(report_summary):
+        index = 1
+        for   d in report_summary:
             label_cell = ws1.cell(row= row_index, column=index + 1, value=d.get("label"))
             value_cell = ws1.cell(row= row_index + 1, column=index + 1, value=d.get("value"))
             label_cell.alignment = Alignment(vertical='center',horizontal= "center",wrap_text=True)
@@ -281,20 +282,25 @@ def render_report_summary_kpi(ws1,  report_summary):
                 
                 
             value_cell.font = Font(size=13, color=value_color)  
-             
+            
+            index = index + 1
 
 
 def render_report_data(ws1,columns,data,report_data_row=25):
     report_data_row= setting_doc.report_data_start_row_with_chart
-    index = 0
+    index =1
+    # No
+    ws1.column_dimensions["A"].width =5
+    cell = ws1.cell(row=report_data_row, column=1, value="No")
+    format_header_cell(cell,"center")
+    
     for  c in columns:
         width =  get_column_width(c)
         ws1.column_dimensions[cell_array()[index]].width =width
         ws1.row_dimensions[report_data_row].height =25
         cell = ws1.cell(row=report_data_row, column=index+1, value=c.get("label"))
-        # mearge cell
+    # mearge cell
         if c.get("merge_cell",1)>1:
-           
             merge_cell = f'{cell_array()[index]}{report_data_row}:{cell_array()[index   +  c.get("merge_cell")  -1 ]}{report_data_row}'
           
             ws1.merge_cells(merge_cell)
@@ -304,11 +310,7 @@ def render_report_data(ws1,columns,data,report_data_row=25):
             
        
                     
-        cell.alignment = Alignment(vertical='center',horizontal= c.get("align","left") )    
-        cell.font = Font(bold=True) 
-        silver_fill = PatternFill(start_color='C0C0C0', end_color='C0C0C0', fill_type='solid')
-        cell.fill = silver_fill
-        cell.border = Border(bottom=Side(style='thin')) 
+        format_header_cell(cell,c.get("align","left"))
         
         index = index + c.get("merge_cell",1)
 
@@ -316,7 +318,7 @@ def render_report_data(ws1,columns,data,report_data_row=25):
     for row_index,d in enumerate(data):
         
          
-        column_index = 0
+        column_index = 1
         for c in columns:
             if str(type(d)) != "<class 'list'>":
                
@@ -366,8 +368,12 @@ def render_report_data(ws1,columns,data,report_data_row=25):
                     cell.font = Font(bold=True) 
            
             
-            
-            
+def format_header_cell(cell,align):
+    cell.alignment = Alignment(vertical='center',horizontal= align) 
+    cell.font = Font(bold=True) 
+    silver_fill = PatternFill(start_color='C0C0C0', end_color='C0C0C0', fill_type='solid')
+    cell.fill = silver_fill
+    cell.border = Border(bottom=Side(style='thin'))                        
 
 def render_report_summary(ws1, summary_data,summary_fields,start_row_index):
     
