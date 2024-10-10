@@ -1,67 +1,78 @@
 <template>
-     <ComDialogContent dialogClass="h-5/6" titleButtonClose="Cancel"   :hideButtonClose="false"   @onClose="onCancelSetting" @onOK="onSaveSetting">
-      
-      <div class="text-center pb-4"> 
+  <ComDialogContent dialogClass="h-5/6" titleButtonClose="Cancel" :hideButtonClose="false" @onClose="onCancelSetting"
+    @onOK="onSaveSetting">
+
+    <div class="text-center pb-4">
       <div class="grid grid-cols-3">
         <v-checkbox v-model=" gv.itemMenuSetting.show_item_code" label="Show Product Code" hide-details></v-checkbox>
-        <v-checkbox v-model=" gv.itemMenuSetting.show_short_cut_chip" label="Show Shortcut Chip" hide-details></v-checkbox>
+        <v-checkbox v-model=" gv.itemMenuSetting.show_short_cut_chip" label="Show Shortcut Chip"
+          hide-details></v-checkbox>
       </div>
-      <div class="grid gap-2 grid-cols-2"> 
+      <div class="grid gap-2 grid-cols-2">
         <v-select v-model="gv.itemMenuSetting.show_menu_language" label="Menu Language" :items="['kh','en']"></v-select>
-        <v-select v-model="gv.itemMenuSetting.sort_order_by"
-        
-            :items="[
+        <v-select v-model="gv.itemMenuSetting.sort_order_by" :items="[
               { key: 'sort_order', title: 'Sort Order' },
     { key: 'product_name_en', title: 'Product Name (EN)' },
     { key: 'product_name_kh', title: 'Product Name (KH)' },
     { key: 'product_code', title: 'Product Code' },
     { key: 'creation', title: 'Creation Date' },
     { key: 'modified', title: 'Last Modified Date' }
-            ]"
-            item-title="title" item-value="key" label="Sort Menu Item By"></v-select> 
+            ]" item-title="title" item-value="key" label="Sort Menu Item By"></v-select>
 
-        
-            <div class="px-3 mt-2">
-              <div class="text-start">Price Font Size <span class="px-3 bg-slate-100 rounded-lg">{{ gv.itemMenuSetting.font_price_size ?? gv.itemMenuSetting.font_price_size }}</span> px </div>
-              <Slider :step="0.2" class="mt-4 w-full" :max="gv.itemMenuSetting.max_font_size" :min="gv.itemMenuSetting.min_font_size" v-model="gv.itemMenuSetting.font_price_size"  />
-            </div>
-            <v-select v-model="gv.itemMenuSetting.sort_menu_order_by"
-        
-            :items="[
+
+        <div class="px-3 mt-2">
+          <div class="text-start">Price Font Size <span class="px-3 bg-slate-100 rounded-lg">{{
+              gv.itemMenuSetting.font_price_size ?? gv.itemMenuSetting.font_price_size }}</span> px </div>
+          <Slider :step="0.2" class="mt-4 w-full" :max="gv.itemMenuSetting.max_font_size"
+            :min="gv.itemMenuSetting.min_font_size" v-model="gv.itemMenuSetting.font_price_size" />
+        </div>
+        <v-select v-model="gv.itemMenuSetting.sort_menu_order_by" :items="[
               { key: 'sort_order', title: 'Sort Order' },
     { key: 'name', title: 'Menu Name' },
  
-            ]"
-            item-title="title" item-value="key" label="Sort Menu By"></v-select> 
+            ]" item-title="title" item-value="key" label="Sort Menu By"></v-select>
 
 
-            <div class="px-3 mt-2">
-             <div class="text-start">Product Font Size <span class="px-3 bg-slate-100 rounded-lg">{{ gv.itemMenuSetting.item_font_size ?? gv.itemMenuSetting.item_font_size }}</span> px </div>  
-             <Slider :step="0.2" class="mt-4 w-full" :max="gv.itemMenuSetting.max_font_size" :min="gv.itemMenuSetting.min_font_size" v-model="gv.itemMenuSetting.item_font_size"  />
-            </div>
-            <div class="px-3 mt-2">
-             <div class="text-start">Column Product <span class="px-3 bg-slate-100 rounded-lg">{{ gv.itemMenuSetting.show_column_item }}
-            </span> Col </div>  
-             <Slider class="mt-4 w-full" :max="12" :min="3" v-model="gv.itemMenuSetting.show_column_item"  />
-            </div>  
-            <div class="px-3 mt-2">
-             <div class="text-start">Height Product <span class="px-3 bg-slate-100 rounded-lg">{{ gv.itemMenuSetting.height_item }}
-            </span> px </div>  
-             <Slider :step="0.1" class="mt-4 w-full" :max="250" :min="100" v-model="gv.itemMenuSetting.height_item"  />
-            </div>  
-            <div class="px-3 mt-2">
-             <div class="text-start">Width Sale Summary <span class="px-3 bg-slate-100 rounded-lg">{{ gv.itemMenuSetting.width_sale_summary }}
-            </span> px </div>  
-             <Slider :step="1" class="mt-4 w-full" :max="800" :min="300" v-model="gv.itemMenuSetting.width_sale_summary"  />
-            </div>  
+        <div class="px-3 mt-2">
+          <div class="text-start">Product Font Size <span class="px-3 bg-slate-100 rounded-lg">{{
+              gv.itemMenuSetting.item_font_size ?? gv.itemMenuSetting.item_font_size }}</span> px </div>
+          <Slider :step="0.2" class="mt-4 w-full" :max="gv.itemMenuSetting.max_font_size"
+            :min="gv.itemMenuSetting.min_font_size" v-model="gv.itemMenuSetting.item_font_size" />
+        </div>
+        <div class="px-3 mt-2">
+          <div class="text-start">Column Product <span class="px-3 bg-slate-100 rounded-lg">{{
+              gv.itemMenuSetting.show_column_item }}
+            </span> Col </div>
+          <Slider class="mt-4 w-full" :max="12" :min="3" v-model="gv.itemMenuSetting.show_column_item" />
+        </div>
+     
+        <div class="px-3 mt-2">
+          <div class="text-start">Shortcut Menu Font Size <span class="px-3 bg-slate-100 rounded-lg">{{
+              gv.itemMenuSetting.shortcut_menu_font_size   }}</span> px </div>
+          <Slider :step="1" class="mt-4 w-full" :max="gv.itemMenuSetting.max_font_size"
+            :min="gv.itemMenuSetting.min_font_size" v-model="gv.itemMenuSetting.shortcut_menu_font_size" />
+        </div>
+
+        <div class="px-3 mt-2">
+          <div class="text-start">Height Product <span class="px-3 bg-slate-100 rounded-lg">{{
+              gv.itemMenuSetting.height_item }}
+            </span> px </div>
+          <Slider :step="0.1" class="mt-4 w-full" :max="250" :min="100" v-model="gv.itemMenuSetting.height_item" />
+        </div>
+        <div class="px-3 mt-2">
+          <div class="text-start">Width Sale Summary <span class="px-3 bg-slate-100 rounded-lg">{{
+              gv.itemMenuSetting.width_sale_summary }}
+            </span> px </div>
+          <Slider :step="1" class="mt-4 w-full" :max="800" :min="300" v-model="gv.itemMenuSetting.width_sale_summary" />
+        </div>
       </div>
-       
-           
-          
-             
+
+
+
+
     </div>
-</ComDialogContent>
-  </template>
+  </ComDialogContent>
+</template>
   <script setup>
   import { inject, ref, i18n , onMounted } from '@/plugin';
   import ComDialogContent from '@/components/ComDialogContent.vue' 

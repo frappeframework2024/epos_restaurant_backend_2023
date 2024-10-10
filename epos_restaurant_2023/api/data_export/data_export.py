@@ -178,17 +178,18 @@ def render_report_letter_head(ws1,filters,columns):
         
         
     end_merge_cell = cell_array()[total_column - 1]  
+ 
 
     ws1.merge_cells(f'A{row_index}:{end_merge_cell}{row_index}') 
     header_cell = f'A{row_index}'
     ws1[header_cell] = info.get("header")
-    ws1[header_cell].font = Font(size=24)  
+    ws1[header_cell].font = Font(name="Times New Roman",size=24,color=("#9a5e6f").replace("#",""))  
     ws1[header_cell].alignment = Alignment(vertical='center',horizontal= "center" )
 
 
     ws1.merge_cells(f'B2:{end_merge_cell}2') 
     ws1[f"B2"] = info.get("sub_header")
-    ws1[f"B2"].font = Font(size=12)  
+    ws1[f"B2"].font = Font(name="Times New Roman",size=12,color=("#9a5e6f").replace("#",""))  
     ws1[f'B2'].alignment = Alignment(vertical='center',horizontal="center" ,wrap_text=True)
     ws1.row_dimensions[2].height = len(info.get("sub_header").split("\n")) * 15
 
@@ -315,12 +316,17 @@ def render_report_data(ws1,columns,data,report_data_row=25):
         
         index = index + c.get("merge_cell",1)
 
-     
+    row_number = 0
     for row_index,d in enumerate(data):
         # No numbe order row
-        if d.get("is_total_row",0) == 0:
-            cell = ws1.cell(row=row_index + report_data_row + 1, column=1, value=row_index + 1 )
+        if not (d.get("is_total_row",0) == 1 or d.get("is_group",0) == 1) :
+            row_number = row_number + 1
+            cell = ws1.cell(row=row_index + report_data_row + 1, column=1, value=row_number )
             cell.alignment = Alignment(vertical='center',horizontal= "center" )
+        
+        if d.get("is_group",0)==1:
+             row_number = 0
+        # end set row number
             
         column_index = 1
         for c in columns:
@@ -363,7 +369,7 @@ def render_report_data(ws1,columns,data,report_data_row=25):
                 # check if cell is group then check if it  set to merge
                 # then break stop loop
                 if d.get("merge_group_row",0)==1:
-                        ws1.merge_cells('A{row}:{end_column}{row}'.format(row=row_index + report_data_row+1, end_column = cell_array()[len(columns)-1]))
+                        ws1.merge_cells('B{row}:{end_column}{row}'.format(row=row_index + report_data_row+1, end_column = cell_array()[len(columns)]))
                         break
             
             else:
@@ -380,7 +386,6 @@ def format_header_cell(cell,align):
     cell.border = Border(bottom=Side(style='thin'))                        
 
 def render_report_summary(ws1, summary_data,summary_fields,start_row_index):
-    
     c_index = 1
     ws1.row_dimensions[start_row_index].height =20
     for c in summary_fields :

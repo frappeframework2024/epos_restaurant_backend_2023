@@ -12,7 +12,9 @@
   "chart_image_min_width",
   "report_data_start_row_with_chart",
   "report_data_start_row_with_without_chart",
-  "logo_width"
+  "logo_width",
+  "column_break_sbhg",
+  "report_letter_head_color"
  ],
  "fields": [
   {
@@ -61,12 +63,21 @@
    "fieldname": "logo_width",
    "fieldtype": "Int",
    "label": "Logo Width"
+  },
+  {
+   "fieldname": "column_break_sbhg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "report_letter_head_color",
+   "fieldtype": "Color",
+   "label": "Report Letter Head Color"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-10-03 22:16:58.623556",
+ "modified": "2024-10-10 15:04:18.263949",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Export Excel Setting",

@@ -4,7 +4,9 @@
         <div :class="'flex-wrap flex -my-1 justify-center'" v-if="mobile === false && shortcut">
          
             <v-btn 
+
                 class="flex-shrink-0 m-1"
+                :style="{fontSize:gv.itemMenuSetting.shortcut_menu_font_size + 'px',height:height + 'px'}"
                 v-for="(m, index) in shortcut" :key="index"
                 rounded="pill"
                 variant="tonal"
@@ -37,7 +39,15 @@
     import Enumerable from 'linq'
     const gv = inject("$gv")
     const sale = inject("$sale");
+    
 
+    if (!gv.itemMenuSetting.shortcut_menu_font_size){
+        gv.itemMenuSetting.shortcut_menu_font_size = 16
+    }
+
+    const height = computed(()=>{
+        return (gv.itemMenuSetting.shortcut_menu_font_size * 28) / 16
+    })
     const shortcut = computed(()=>{
         let  data = product.posMenuResource.data?.filter(r=>r.shortcut_menu == 1) 
         if((gv.itemMenuSetting?.sort_menu_order_by || "name") == "name"){

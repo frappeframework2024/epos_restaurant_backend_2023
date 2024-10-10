@@ -37,7 +37,8 @@ export default class Gv {
 			show_short_cut_chip:true,
 			show_column_item:6,
 			height_item:150,
-			width_sale_summary:400
+			width_sale_summary:400,
+			shortcut_menu_font_size:16
         }
 		
 	}
