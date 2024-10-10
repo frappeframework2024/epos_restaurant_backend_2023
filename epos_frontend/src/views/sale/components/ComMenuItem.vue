@@ -231,14 +231,16 @@ function activate_menu(event) {
 }
 
 function onBack(menu) {
-    const current_menu = product.posMenuResource.data?.find(r => r.name == menu.parent);
-    const parent_menu = product.posMenuResource.data?.find(r => r.name == current_menu.parent);
-    product.parentMenu = current_menu.parent;
+    const parent_name = product.posMenuResource.data?.find(r => r.name == menu.parent).parent;
+    const parent_menu = product.posMenuResource.data?.find(r => r.name == parent_name);
+    product.parentMenu = parent_name;
     if (parent_menu != undefined){
+        console.log(parent_menu)
+        console.log(1)
         _onPriceRuleChanged(parent_menu);
     }
    else{
-        _onPriceRuleChanged(current_menu);
+        get_price_rule()
    }
 }
 
@@ -246,6 +248,7 @@ function _onPriceRuleChanged(menu){
     if((menu.price_rule||"")!="")
     {
         sale.price_rule = menu.price_rule; 
+        sale.sale.price_rule = sale.price_rule; 
     } 
     else
     {
@@ -262,7 +265,6 @@ function _onPriceRuleChanged(menu){
             get_price_rule()
         }
     }
-    sale.sale.price_rule = sale.price_rule; 
 }
 function get_price_rule(){
     if((sale.table_price_rule||"") != "")
@@ -273,6 +275,7 @@ function get_price_rule(){
     {
         sale.price_rule = sale.setting?.price_rule;
     }
+    sale.sale.price_rule = sale.price_rule; 
 }
 
 async function onClickProduct() {

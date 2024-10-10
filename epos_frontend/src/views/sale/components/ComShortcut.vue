@@ -55,32 +55,32 @@
     })
   
     function onClick(menu) {
-        product.searchProductKeyword="";
-        product.parentMenu = menu.name;
-        _onPriceRuleChanged(menu)
-    }
-    function _onPriceRuleChanged(menu){ 
-    if((menu.price_rule||"")!="")
-    {
-        sale.price_rule = menu.price_rule; 
-    } 
-    else
-    {
-        const parent_menu = product.posMenuResource.data?.find(r => r.name == menu.parent);
-        if(parent_menu != undefined){
-            if((parent_menu.price_rule||"")!=""){
-                sale.price_rule = parent_menu.price_rule
+            product.searchProductKeyword="";
+            product.parentMenu = menu.name;
+            _onPriceRuleChanged(menu)
+        }
+        function _onPriceRuleChanged(menu){ 
+        if((menu.price_rule||"")!="")
+        {
+            sale.price_rule = menu.price_rule; 
+            sale.sale.price_rule = sale.price_rule; 
+        } 
+        else
+        {
+            const parent_menu = product.posMenuResource.data?.find(r => r.name == menu.parent);
+            if(parent_menu != undefined){
+                if((parent_menu.price_rule||"")!=""){
+                    sale.price_rule = parent_menu.price_rule
+                }
+                else{
+                    get_price_rule()
+                }
             }
             else{
                 get_price_rule()
             }
         }
-        else{
-            get_price_rule()
-        }
     }
-    sale.sale.price_rule = sale.price_rule; 
-}
     function get_price_rule(){
         if((sale.table_price_rule||"") != "")
         {
@@ -90,6 +90,7 @@
         {
             sale.price_rule = sale.setting?.price_rule;
         }
+        sale.sale.price_rule = sale.price_rule; 
     }
 </script>
 <style scoped>
