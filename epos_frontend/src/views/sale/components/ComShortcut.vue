@@ -10,7 +10,7 @@
                 variant="tonal"
                 size="small"
                 v-bind:style="{'background-color':m.background_color}"
-                @click="onClick(m.name_en)">
+                @click="onClick(m)">
                 <span v-bind:style="{color:m.text_color}">{{m.name_en}}</span>
             </v-btn> 
         </div>
@@ -22,7 +22,7 @@
                 variant="tonal"
                 height="40"
                 v-bind:style="{'background-color':m.background_color}"
-                @click="onClick(m.name_en)">
+                @click="onClick(m)">
                 <span v-bind:style="{color:m.text_color}">{{m.name_en}}</span>
             </v-btn> 
             </v-slide-group-item>
@@ -36,6 +36,7 @@
     const product = inject("$product")
     import Enumerable from 'linq'
     const gv = inject("$gv")
+    const sale = inject("$sale");
 
     const shortcut = computed(()=>{
         let  data = product.posMenuResource.data?.filter(r=>r.shortcut_menu == 1) 
@@ -53,10 +54,42 @@
        
     })
   
-    function onClick(name) {
+    function onClick(menu) {
         product.searchProductKeyword="";
-        product.parentMenu = name;
-    
+        product.parentMenu = menu.name;
+        _onPriceRuleChanged(menu)
+    }
+    function _onPriceRuleChanged(menu){ 
+    if((menu.price_rule||"")!="")
+    {
+        sale.price_rule = menu.price_rule; 
+    } 
+    else
+    {
+        const parent_menu = product.posMenuResource.data?.find(r => r.name == menu.parent);
+        if(parent_menu != undefined){
+            if((parent_menu.price_rule||"")!=""){
+                sale.price_rule = parent_menu.price_rule
+            }
+            else{
+                get_price_rule()
+            }
+        }
+        else{
+            get_price_rule()
+        }
+    }
+    sale.sale.price_rule = sale.price_rule; 
+}
+    function get_price_rule(){
+        if((sale.table_price_rule||"") != "")
+        {
+            sale.price_rule = sale.table_price_rule; 
+        }
+        else
+        {
+            sale.price_rule = sale.setting?.price_rule;
+        }
     }
 </script>
 <style scoped>

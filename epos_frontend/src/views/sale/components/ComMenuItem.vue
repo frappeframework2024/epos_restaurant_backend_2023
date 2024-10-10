@@ -231,22 +231,48 @@ function activate_menu(event) {
 }
 
 function onBack(menu) {
-    const parent_menu = product.posMenuResource.data?.find(r => r.name == menu.parent).parent;
-    product.parentMenu = parent_menu;
-    _onPriceRuleChanged(menu);
+    const current_menu = product.posMenuResource.data?.find(r => r.name == menu.parent);
+    const parent_menu = product.posMenuResource.data?.find(r => r.name == current_menu.parent);
+    product.parentMenu = current_menu.parent;
+    if (parent_menu != undefined){
+        _onPriceRuleChanged(parent_menu);
+    }
+   else{
+        _onPriceRuleChanged(current_menu);
+   }
 }
 
 function _onPriceRuleChanged(menu){ 
-    if((menu.price_rule||"")!=""){
-           sale.price_rule = menu.price_rule; 
-        } else{
-            if((sale.table_price_rule||"") != ""){
-                sale.price_rule = sale.table_price_rule; 
-            }else{
-                sale.price_rule = sale.setting?.price_rule;
+    if((menu.price_rule||"")!="")
+    {
+        sale.price_rule = menu.price_rule; 
+    } 
+    else
+    {
+        const parent_menu = product.posMenuResource.data?.find(r => r.name == menu.parent);
+        if(parent_menu != undefined){
+            if((parent_menu.price_rule||"")!=""){
+                sale.price_rule = parent_menu.price_rule
+            }
+            else{
+                get_price_rule()
             }
         }
-        sale.sale.price_rule = sale.price_rule; 
+        else{
+            get_price_rule()
+        }
+    }
+    sale.sale.price_rule = sale.price_rule; 
+}
+function get_price_rule(){
+    if((sale.table_price_rule||"") != "")
+    {
+        sale.price_rule = sale.table_price_rule; 
+    }
+    else
+    {
+        sale.price_rule = sale.setting?.price_rule;
+    }
 }
 
 async function onClickProduct() {
