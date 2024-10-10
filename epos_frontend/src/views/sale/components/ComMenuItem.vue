@@ -235,8 +235,6 @@ function onBack(menu) {
     const parent_menu = product.posMenuResource.data?.find(r => r.name == parent_name);
     product.parentMenu = parent_name;
     if (parent_menu != undefined){
-        console.log(parent_menu)
-        console.log(1)
         _onPriceRuleChanged(parent_menu);
     }
    else{

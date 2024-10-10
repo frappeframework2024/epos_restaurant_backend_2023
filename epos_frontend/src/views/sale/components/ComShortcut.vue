@@ -40,18 +40,12 @@
 
     const shortcut = computed(()=>{
         let  data = product.posMenuResource.data?.filter(r=>r.shortcut_menu == 1) 
-            
         if((gv.itemMenuSetting?.sort_menu_order_by || "name") == "name"){
-         
             data = Enumerable.from(data).orderBy("$.name").toArray()
-            console.log(data);
         }else {
             data = Enumerable.from(data).orderBy("$.sort_order").toArray()
         }
-      
-        
         return data
-       
     })
   
     function onClick(menu) {
