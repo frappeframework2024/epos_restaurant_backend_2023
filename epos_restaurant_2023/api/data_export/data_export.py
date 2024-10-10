@@ -169,7 +169,7 @@ def render_report_letter_head(ws1,filters,columns):
     info = get_business_information(filters)
 
     row_index = 1
-    total_column  = len(columns)
+    total_column  =  len(columns) + 1# include No Column
     if total_column<setting_doc.min_column:
         total_column = setting_doc.min_column
     
@@ -214,8 +214,9 @@ def render_report_letter_head(ws1,filters,columns):
 
 
 def render_header(ws1, report_name,columns):
+    
     row_index = setting_doc.report_title_start_row
-    total_column  = len(columns)
+    total_column  = len(columns) + 1# include No Column
     if total_column<setting_doc.min_column:
         total_column = setting_doc.min_column
     if total_column>setting_doc.max_column:
@@ -230,7 +231,7 @@ def render_header(ws1, report_name,columns):
 
 def render_filter(ws1, filters_html,columns ):
     row_index = setting_doc.report_title_start_row + 1
-    total_column  = len(columns)
+    total_column  =  len(columns) + 1# include No Column
     if total_column<setting_doc.min_column:
         total_column = setting_doc.min_column
     if total_column>setting_doc.max_column:
@@ -316,8 +317,11 @@ def render_report_data(ws1,columns,data,report_data_row=25):
 
      
     for row_index,d in enumerate(data):
-        
-         
+        # No numbe order row
+        if d.get("is_total_row",0) == 0:
+            cell = ws1.cell(row=row_index + report_data_row + 1, column=1, value=row_index + 1 )
+            cell.alignment = Alignment(vertical='center',horizontal= "center" )
+            
         column_index = 1
         for c in columns:
             if str(type(d)) != "<class 'list'>":
@@ -377,7 +381,7 @@ def format_header_cell(cell,align):
 
 def render_report_summary(ws1, summary_data,summary_fields,start_row_index):
     
-    c_index = 0
+    c_index = 1
     ws1.row_dimensions[start_row_index].height =20
     for c in summary_fields :
         if c.get("merge_cell",1)>1:
@@ -396,14 +400,14 @@ def render_report_summary(ws1, summary_data,summary_fields,start_row_index):
         c_index = c_index + c.get("merge_cell",1)
 
     # set border of summary table header bootm
-    for i in range(1, sum([d.get("merge_cell",1) for d in summary_fields]) + 1):
+    for i in range(2, sum([d.get("merge_cell",1) for d in summary_fields]) + 2):
         cell = ws1.cell(row=start_row_index, column=i)
         cell.border = Border(bottom=Side(style='thin'))
 
     start_row_index = start_row_index + 1
     
     for index,d in enumerate(summary_data):
-        c_index = 0
+        c_index = 1
         for c in summary_fields :
             if c.get("merge_cell",1)>1:
                 merge_cell = '{start_cell}{row_index}:{end_cell}{row_index}'.format(start_cell =  cell_array()[c_index],end_cell = cell_array()[c_index + c.get("merge_cell") -1],row_index = start_row_index+index )
@@ -415,7 +419,7 @@ def render_report_summary(ws1, summary_data,summary_fields,start_row_index):
             
         if d.get("is_total_row",0)==1:
             ws1.row_dimensions[start_row_index + index].height =20
-            for i in range(1, sum([d.get("merge_cell",1) for d in summary_fields]) + 1):
+            for i in range(2, sum([d.get("merge_cell",1) for d in summary_fields]) + 2):
                 cell = ws1.cell(row=start_row_index + index, column=i)
                 cell.font = Font(bold=True) 
                 cell.border = Border(top=Side(style='thin'))
