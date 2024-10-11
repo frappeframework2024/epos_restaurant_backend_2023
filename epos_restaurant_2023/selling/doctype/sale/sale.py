@@ -18,6 +18,7 @@ from epos_restaurant_2023.api.exely import submit_order_to_exely
 from epos_restaurant_2023.selling.doctype.sale.general_ledger_entry import submit_sale_to_general_ledger_entry
 class Sale(Document):
 	def validate(self):
+		 
 		if not frappe.db.get_default('exchange_rate_main_currency'):
 			frappe.throw('Main Exchange Currency not yet config. Please contact to system administrator for solve')
    

@@ -111,13 +111,24 @@ async function onSearchSale() {
 }
 
 async function onSubmit() {
-  if (!sale.isBillRequested()) {
+  
+  if (setting.allow_change_table_after_print_bill == 0){
+    if (sale.isBillRequested()) {
+      return
+    }
+  }
+
+
     const action = sale.action;
     const message = sale.message;
     const sale_status = sale.sale.sale_status;
     sale.action = "submit_order";
     sale.message = $t("msg.Submit order successfully");
-    sale.sale.sale_status = "Submitted";
+    if (sale.sale.sale_status!="Bill Requested"){
+      sale.sale.sale_status = "Submitted";
+    }
+    
+    
 
     await sale.onSubmit().then((doc) => {
       product.onClearKeyword();
@@ -158,7 +169,7 @@ async function onSubmit() {
         sale.sale.sale_status = sale_status;
       }
     });
-  }
+
 }
 
 
