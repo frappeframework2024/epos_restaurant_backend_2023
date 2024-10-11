@@ -54,6 +54,7 @@
   "generate_tax_invoice_after_close_sale_order",
   "generate_bill_number_on_create",
   "change_table_previous_date",
+  "allow_change_table_after_print_bill",
   "permission_and_note_tab",
   "delete_bill_required_password",
   "column_break_17",
@@ -809,12 +810,18 @@
    "fieldname": "manual_percent_discount_required_password",
    "fieldtype": "Check",
    "label": " Manual Percent Discount Required Password"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_change_table_after_print_bill",
+   "fieldtype": "Check",
+   "label": "Allow change table after print bill"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-04 15:47:32.133872",
+ "modified": "2024-10-11 14:13:38.634886",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

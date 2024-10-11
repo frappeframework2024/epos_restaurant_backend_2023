@@ -431,7 +431,8 @@ def get_system_settings(pos_profile="", device_name=''):
             "enabled":exely.enabled, "default_general_customer_id":exely.default_general_customer_id, "guest_api_endpoint":exely.guest_api_endpoint,"api_key":exely.api_key
         },
         "point_setting":point_setting,
-        "change_table_previous_date":pos_config.change_table_previous_date
+        "change_table_previous_date":pos_config.change_table_previous_date,
+        "allow_change_table_after_print_bill":pos_config.allow_change_table_after_print_bill
     }
 
     return  data
@@ -999,7 +1000,7 @@ def get_pending_sale_orders(data):
 
     result = frappe.db.sql(sql,{
         "working_day":data["working_day"],
-        "casher_shift":"" if not "casher_shift" in data else data["casher_shift"]
+        "cashier_shift":data.get("cashier_shift","")
         },as_dict=1)
     return result
 

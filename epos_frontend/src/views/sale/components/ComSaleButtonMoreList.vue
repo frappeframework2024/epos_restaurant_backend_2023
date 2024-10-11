@@ -225,17 +225,8 @@ async function onChangeMenuLanguage() {
 }
 
 async function onChangeTable() {
-     
-    if (!sale.isBillRequested()) {
-        // if (sale.sale.sale_products.length == 0 && sale.sale.name == undefined) {
-        //     toaster.warning($t("msg.Please select a menu item to continue"));
-        //     return;
-        // }
-
-        // if (sale.sale.sale_status != 'Submitted' || sale.sale.sale_products.find(r => r.sale_product_status != 'Submitted')) {
-        //     toaster.warning($t('msg.please save or submit your current order first', [$t('Submit')]))
-        //     return;
-        // }
+    if (setting.allow_change_table_after_print_bill == 0){
+        if (!sale.isBillRequested()) {
 
         const result = await changeTableDialog({ pos_profile: localStorage.getItem('pos_profile') });
         if (result) {
@@ -244,6 +235,15 @@ async function onChangeTable() {
             }
         }
     }
+    }else {
+        const result = await changeTableDialog({ pos_profile: localStorage.getItem('pos_profile') });
+        if (result) {
+            if (result.action == "reload_sale") {
+                await sale.LoadSaleData(result.name);
+            }
+        }
+    }
+    
 }
 async function onChangePriceRule() {
     if (sale.sale.sale_status != 'New') {
