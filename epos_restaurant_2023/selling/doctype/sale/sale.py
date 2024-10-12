@@ -272,7 +272,7 @@ class Sale(Document):
 		self.total_cost = total_cost
 		self.profit = self.grand_total - total_cost
 		self.second_profit = self.grand_total - total_second_cost
-		
+		update_inventory_product_cost(self)
 	# Generata Bill Number On Insert
 	def before_insert(self):
 		if self.pos_profile:
@@ -327,8 +327,6 @@ class Sale(Document):
 				if d.unit !=d.base_unit:
 					if not check_uom_conversion(d.base_unit, d.unit):
 						frappe.throw(_("There is no UoM conversion for product {}-{} from {} to {}".format(d.product_code, d.product_name, d.base_unit, d.unit)))
-
-		update_inventory_product_cost(self)
 	
 	def on_submit(self):
      
@@ -560,7 +558,7 @@ def update_inventory_on_submit(self):
 	for p in self.sale_products:
 		if p.is_inventory_product:
 			uom_conversion = get_uom_conversion(p.base_unit, p.unit)
-			cost = get_product_cost(self.stock_location, p.product_code)
+			cost = get_product_cost(self.stock_location, p.product_code) / uom_conversion
 			add_to_inventory_transaction({
 				'doctype': 'Inventory Transaction',
 				'transaction_type':"Sale",
@@ -1380,29 +1378,16 @@ def update_default_change_account(self):
 
         
 def update_inventory_product_cost(self):
-	sql = """
-			select 
-				product_code,
-				cost 
-			from `tabStock Location Product` 
-			where
-				stock_location = %(stock_location)s and 
-				business_branch = %(business_branch)s and 
-				product_code in %(product_codes)s
-		
-	"""
 	is_inventory = 0
 	for d in self.sale_products:
 		if d.is_inventory_product == 1:
 			is_inventory += 1
 	if is_inventory>0:
-		data = frappe.db.sql(sql, {"name":self.name, "stock_location":self.stock_location,"business_branch":self.business_branch, "product_codes":[d.product_code for d in self.sale_products if d.is_inventory_product==1]},as_dict=1)
-		if data:
-			for sp in [x for x in self.sale_products if x.is_inventory_product ==1]:
-				cost_data = [d for d in data if d["product_code"]==sp.product_code]
-				uom_conversion = get_uom_conversion(sp.base_unit,sp.unit)
-				if cost_data:
-					sp.cost = (cost_data[0]["cost"] / uom_conversion)
+		for sp in [x for x in self.sale_products if x.is_inventory_product ==1]:
+			cost = get_product_cost(self.stock_location, sp.product_code)
+			uom_conversion = get_uom_conversion(sp.base_unit,sp.unit)
+			if cost:
+				sp.cost = (cost / uom_conversion)
     
 def update_customer_bill_balance(self):
 	sql ="""update `tabCustomer` c 
