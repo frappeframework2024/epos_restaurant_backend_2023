@@ -511,8 +511,7 @@
    "options": "POS Sale Payment"
   },
   {
-   "fetch_from": "pos_profile.stock_location",
-   "fetch_if_empty": 1,
+   "fetch_from": ".",
    "fieldname": "stock_location",
    "fieldtype": "Link",
    "label": "Stock Location",
@@ -866,6 +865,7 @@
    "label": "Closed Date"
   },
   {
+   "fetch_from": "cashier_shift.shift_name",
    "fieldname": "shift_name",
    "fieldtype": "Data",
    "label": "Shift Name"
@@ -1566,7 +1566,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2024-10-07 09:54:43.986517",
+ "modified": "2024-10-13 19:00:01.494691",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

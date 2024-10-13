@@ -1646,6 +1646,12 @@ export default class Sale {
 
                         this.sale.sale_status = "Submitted";
                         this.sale.docstatus = 1;
+                        this.sale.sale_status = "Closed";
+                        this.sale.cashier_shift = this.cashier_shift;
+                        this.sale.working_day = this.working_day;
+                        this.sale.pos_profile = this.setting?.pos_profile;
+                        this.sale.outlet = this.setting?.outlet;
+
                         this.action = "quick_pay";
 
                         let doc = JSON.parse(JSON.stringify(this.sale));
@@ -1710,6 +1716,10 @@ export default class Sale {
 
                     this.sale.sale_status = "Closed";
                     this.sale.docstatus = 1;
+                    this.sale.cashier_shift = this.cashier_shift;
+                    this.sale.working_day = this.working_day;
+                    this.sale.pos_profile = this.setting?.pos_profile;
+                    this.sale.outlet = this.setting?.outlet;
 
                     this.action = "payment";
                     if (this.getString(this.sale.name) == "") {
