@@ -163,8 +163,6 @@ def general_ledger_debit(self,account):
 		"voucher_type":"Payment Entry",
 		"voucher_number":self.name,
 		"business_branch": self.business_branch,
-		"party_type": self.party_type,
-		"party":self.party,
 		"remark": "Accounting For Payment Entry"
 	}
 	docs.append(doc)

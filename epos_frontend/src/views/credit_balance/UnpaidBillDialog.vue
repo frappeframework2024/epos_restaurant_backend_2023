@@ -113,7 +113,7 @@
 </template>
 
 <script setup>
-import { ref, defineEmits, inject, useRouter, createDocumentResource, confirm, i18n, onMounted } from '@/plugin'
+import { ref, defineEmits, inject, useRouter, i18n, onMounted } from '@/plugin'
 import { createToaster } from '@meforma/vue-toaster';
 import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 const socket = inject("$socket");

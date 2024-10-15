@@ -6,9 +6,11 @@ import { inject, ref, onMounted, UnpaidBillListDialog, onUnmounted, i18n } from 
 const { t: $t } = i18n.global;
 
 onMounted(() => {
-  window.addEventListener('message', async function  (event) {
+  window.addEventListener('message', async function  (event) { 
     if (event.data.action == "Customer"){
-      const result = await UnpaidBillListDialog({ title: $t("Bill"),data:event.data.name,doctype:event.data.doctype,bulk_sale:event.data.bulk_sale});
+      if (event.data.name != undefined){
+        const result = await UnpaidBillListDialog({ title: $t("Bill"),data:event.data.name,doctype:event.data.doctype,bulk_sale:event.data.bulk_sale});
+      }
     }
     
   });

@@ -1,0 +1,44 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:party_type",
+ "creation": "2024-10-14 09:30:15.211255",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "party_type"
+ ],
+ "fields": [
+  {
+   "fieldname": "party_type",
+   "fieldtype": "Data",
+   "label": "Party Type",
+   "unique": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-10-14 09:32:00.942274",
+ "modified_by": "Administrator",
+ "module": "Account",
+ "name": "Party Type",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

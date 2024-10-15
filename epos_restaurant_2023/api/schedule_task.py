@@ -10,15 +10,9 @@ import requests
 
 @frappe.whitelist()
 def generate_audit_trail_from_version():
-    if frappe.local.site =="epos.dev":
-       
-        try:
-            response = requests.get("https://salasrapp.edoorfrontdesk.com/")
-        except:
-            bot = telegram.Bot(token="574671518:AAEe7NTJjayGOB2xSPuUy-_OHvK6kUcQ6lg")
-            asyncio.run(bot.send_message(chat_id=-304965617, text="https://salasrapp.edoorfrontdesk.com/ is down"))
-          
+            
     audit_trail_documents = frappe.db.get_list("Audit Trail Document", pluck='name',filters={"is_epos_audit_trail":1})
+     
     version_data = frappe.db.get_list('Version',
                         filters={
                             'ref_doctype': ["in",audit_trail_documents],

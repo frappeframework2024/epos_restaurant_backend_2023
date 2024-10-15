@@ -148,11 +148,12 @@ scheduler_events = {
       "*/1 * * * *": [
             "epos_restaurant_2023.api.schedule_task.generate_audit_trail_from_version",
             "epos_restaurant_2023.api.sync_api.get_all_data_for_sync_from_server",
-            "epos_restaurant_2023.api.utils.update_temp_menu_product_photo_schedule"
+            
         ],
 
         "*/5 * * * *": [
-            "epos_restaurant_2023.api.utils.re_run_fail_jobs"
+            "epos_restaurant_2023.api.utils.re_run_fail_jobs",
+            "epos_restaurant_2023.api.utils.update_temp_menu_product_photo_schedule"
 		],
 
         "*/30 * * * *":[
