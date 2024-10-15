@@ -141,7 +141,7 @@ def get_data(filters):
 	if filters.party:
 		filter += " and party in ({0})".format(get_list(filters,"party"))
 	if filters.voucher_no:
-		filter += " and voucher_number = '{0}'".format(filters.voucher_no)
+		filter += " and voucher_number like '%{0}%'".format(filters.voucher_no)
 	sql = """
 			select
 			posting_date,
