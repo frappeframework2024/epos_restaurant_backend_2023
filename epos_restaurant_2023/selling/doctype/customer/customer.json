@@ -110,8 +110,8 @@
   "integration_tab",
   "qb_customer_mapping_section",
   "qb_customer_name",
-  "qb_customer_id",
   "column_break_xgfj",
+  "qb_customer_id",
   "exely_guest_mapping_section",
   "exely_guest_id",
   "other_tab",
@@ -744,12 +744,11 @@
    "label": "QB Customer Mapping"
   },
   {
+   "description": "Update qb-customer-name to get qb-customer-id",
    "fieldname": "qb_customer_id",
    "fieldtype": "Data",
    "label": "QB Customer ID",
-   "print_hide": 1,
-   "read_only": 1,
-   "report_hide": 1
+   "read_only": 1
   },
   {
    "default": "NONE",
@@ -780,7 +779,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2024-10-04 09:45:33.494638",
+ "modified": "2024-10-16 11:32:04.228268",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

@@ -111,15 +111,17 @@ frappe.ui.form.on("Customer", {
             };
         }; 
     },
-    qb_customer_name(frm,cdt, cdn){ 
-        if((frm.doc.qb_customer_name||"" )!="" ){
+
+    qb_customer_name(frm){  
+        let input = (frm.doc.qb_customer_name||"");
+        if( input !="" ){
             frappe.call({
-                method:"epos_restaurant_2023.api.quickbook_intergration.qb_customer.get_customer_autocomplete",
+                method:"epos_restaurant_2023.api.quickbook_intergration.qb_customer.get_customer_by_name",
                 freeze: true,
                 args:{
                     "name":frm.doc.qb_customer_name
                 },
-                callback:function(resp){
+                callback:function(resp){ 
                     frm.doc.qb_customer_id = resp.message.Id  ;
                     frm.refresh_field("qb_customer_id");
                 },
@@ -130,13 +132,14 @@ frappe.ui.form.on("Customer", {
                 }
             }) ;
         }else{
-            row.qb_customer_id = undefined;
+            frm.qb_customer_id = undefined;
             frm.refresh_field("qb_customer_id");
         }
 	},
   
 });
 
+ 
 
 function getCustomerInfo (frm) {
     $(frm.fields_dict["stay_history_detail"].wrapper).html("Loading customer stay history...");
