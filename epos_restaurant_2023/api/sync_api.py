@@ -2,7 +2,7 @@ import json
 import frappe
 import requests
 import re
-
+from frappe.utils import password,cstr
 
 # ********************Client API *********************
 
@@ -92,6 +92,8 @@ def on_save(doc):
     delete_doc(doc.doctype,doc.name)
     
     doc.insert(ignore_permissions=True, ignore_links=True)
+    if doc.doctype == "User":
+        set_user_password(doc.name,doc.new_password)
 
     
 
@@ -175,9 +177,16 @@ def get_data_for_sync(business_branch=None):
 @frappe.whitelist(methods="POST")
 def get_doctype_data(doctype,names):
     data = []
-    for d in names:
-        if frappe.db.exists(doctype,d):
-            data.append(frappe.get_doc(doctype,d))
+    if doctype == "User":
+        for d in names:
+            if frappe.db.exists(doctype,d):
+                doc = frappe.get_doc(doctype,d)
+                doc.new_password = get_password(doc.name)
+                data.append(doc)
+    else:
+        for d in names:
+            if frappe.db.exists(doctype,d):
+                data.append(frappe.get_doc(doctype,d))
     return data
 
 
@@ -189,8 +198,16 @@ def get_doctype_for_rename(doctype,data):
             data.append({'old_name':d['old_name'],'doc':frappe.get_doc(doctype,d)})
     return data
 
+def get_password(name):
+    username =  frappe.get_doc("User",name).username
+    employee =  frappe.db.sql("select name from `tabEmployee` where username = '{0}'".format(username),as_dict=1)
+    str_password = password.get_decrypted_password("Employee", employee[0].name, fieldname="encrypt_password",raise_exception=False)
+    return str_password
 
-
+def set_user_password(user, password):
+    from frappe.utils.password import update_password
+    update_password(user=user, pwd=password)
+    frappe.db.commit()
 
 
 def is_url(url):

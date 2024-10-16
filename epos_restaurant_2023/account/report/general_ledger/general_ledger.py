@@ -201,8 +201,8 @@ def get_columns(filters):
 			"options": "voucher_type",
 			"width": 200,
 		},
-		{"label": _("Party Type"), "fieldname": "party_type", "width": 100},
-		{"label": _("Party"), "fieldname": "party", "width": 150},
+		{"label": _("Party Type"), "fieldname": "party_type", "align":"left", "width": 100},
+		{"label": _("Party"), "fieldname": "party", "align":"left", "width": 150},
 		{"label": _("Remark"), "fieldname": "remark", "align":"left","width": 400}
 	]
 	return columns

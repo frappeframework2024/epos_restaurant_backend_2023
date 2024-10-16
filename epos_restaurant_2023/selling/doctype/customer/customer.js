@@ -114,7 +114,7 @@ frappe.ui.form.on("Customer", {
     qb_customer_name(frm,cdt, cdn){ 
         if((frm.doc.qb_customer_name||"" )!="" ){
             frappe.call({
-                method:"epos_restaurant_2023.api.quickbook_intergration.qb_customer.get_customer_by_name",
+                method:"epos_restaurant_2023.api.quickbook_intergration.qb_customer.get_customer_autocomplete",
                 freeze: true,
                 args:{
                     "name":frm.doc.qb_customer_name

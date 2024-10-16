@@ -11,6 +11,7 @@ class Employee(Document):
 			return
 		if self.password:
 			self.pos_pin_code = str( base64.b64encode(self.password.encode("utf-8")).decode("utf-8"))
+			self.encrypt_password = self.password
 
 	def on_update(self):
 		if self.is_selling_agent == 1 and self.generate_customer == 0:

@@ -127,7 +127,7 @@ def add_audit_trail(data,update_creation_date=False):
             d["comment_type"]="Info"
             
         d["custom_is_audit_trail"]=1
-        d["comment_by"]:frappe.session.user.full_name
+        d["comment_by"]=frappe.get_cached_value("User",frappe.session.user,"full_name")
 
         doc = frappe.get_doc(d).insert(ignore_permissions=True)
         if update_creation_date:

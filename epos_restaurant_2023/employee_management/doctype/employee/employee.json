@@ -47,6 +47,7 @@
   "section_break_hsfl",
   "username",
   "password",
+  "encrypt_password",
   "column_break_mrdf",
   "role_profile",
   "module_profile",
@@ -444,12 +445,17 @@
    "fieldtype": "Currency",
    "label": "Balance",
    "read_only": 1
+  },
+  {
+   "fieldname": "encrypt_password",
+   "fieldtype": "Password",
+   "label": "Encrypt Password"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-03 12:04:34.288162",
+ "modified": "2024-10-15 15:38:36.055586",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee",

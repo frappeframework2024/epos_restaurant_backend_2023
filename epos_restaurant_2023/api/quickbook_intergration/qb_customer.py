@@ -9,6 +9,7 @@ def get_customer_autocomplete(name=None):
     qb_query = "SELECT DisplayName FROM Customer ORDER BY Id ASC"
     if name:
         qb_query = "SELECT DisplayName FROM Customer WHERE DisplayName LIKE '{}'  ORDER BY Id ASC ".format(urllib.parse.quote(("%{}%".format(name)))) 
+        # return qb_query
 
     data = get_list(key="Customer", max = 10, query=qb_query)
     return [d["DisplayName"] for d in data]
@@ -16,7 +17,6 @@ def get_customer_autocomplete(name=None):
 @frappe.whitelist()
 def get_customer_by_name(name):
     param = urllib.parse.quote(("%{}%".format(name)))
-    frappe.throw(str(param))
     query = "SELECT Id FROM Customer Where DisplayName ='{}'".format(param)
     data = get_list(key="Customer", query=query)
     if len(data) > 0:

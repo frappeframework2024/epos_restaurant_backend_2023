@@ -68,7 +68,7 @@ def get_party_detail(party_type,party,posting_date,account,branch):
 	if p:
 		if party_type == "Customer":
 			name = (p.customer_name_en or "")
-			local_account = frappe.db.get_value('Business Branch', {'name':branch}, ['default_receivable_account']) if (account or "") == "" else account
+			local_account = frappe.db.get_value('Business Branch', {'name':branch}, ['default_receivable_account'])
 		elif party_type == "Employee":
 			name = (p.employee_name or "")
 			local_account = (frappe.db.get_value(party_type,{'name':party},"commission_account") or "")
