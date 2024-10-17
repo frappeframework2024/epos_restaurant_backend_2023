@@ -318,18 +318,21 @@ def render_report_data(ws1,columns,data,report_data_row=25):
 
     row_number = 0
     for row_index,d in enumerate(data):
-        # No numbe order row
-        if not (d.get("is_total_row",0) == 1 or d.get("is_group",0) == 1) :
-            row_number = row_number + 1
-            cell = ws1.cell(row=row_index + report_data_row + 1, column=1, value=row_number )
-            cell.alignment = Alignment(vertical='center',horizontal= "center" )
+        # No row number 
+        # we check build in Total Row of script report
+        if not  str(type(d)) == "<class 'list'>":
+            if not ( d.get("is_total_row",0) == 1 or d.get("is_group",0) == 1 ) :
+                row_number = row_number + 1
+                cell = ws1.cell(row=row_index + report_data_row + 1, column=1, value=row_number )
+                cell.alignment = Alignment(vertical='center',horizontal= "center" )
         
-        if d.get("is_group",0)==1:
-             row_number = 0
-        # end set row number
+            if d.get("is_group",0)==1:
+                row_number = 0
+            # end set row number
             
         column_index = 1
         for c in columns:
+            
             if str(type(d)) != "<class 'list'>":
                
                 value =  d.get(c.get("fieldname"))
@@ -373,8 +376,15 @@ def render_report_data(ws1,columns,data,report_data_row=25):
                         break
             
             else:
-                for col_num, value in enumerate(d, start=1):
+                # for build in report row total data
+                ws1.cell(row= row_index +  report_data_row + 1, column=1, value="").border = Border(top=Side(style='thin')) 
+                for col_num, value in enumerate(d, start=2):
+                    column =columns[col_num - 2]
+                    value = frappe.format(value,   {"fieldtype":column.get("fieldtype","Data")})
+                    
                     cell = ws1.cell(row= row_index + report_data_row + 1, column=col_num, value=value) 
+                    cell.alignment = Alignment(vertical='center',horizontal= column.get("align","left") )
+                    cell.border = Border(top=Side(style='thin')) 
                     cell.font = Font(bold=True) 
            
             

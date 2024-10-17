@@ -191,6 +191,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 		{5}
 		limit %(top)s
 	""".format(get_conditions(filters,group_filter), row_group,item_code,groupdocstatus,normal_filter,order_by)
+
 	data = frappe.db.sql(sql,filters, as_dict=1)
 	return data
  
@@ -303,7 +304,7 @@ def get_report_field(filters):
 		fields.append({"label":"Profit", "short_label":"Profit", "fieldname":"profit","fieldtype":"Currency","indicator":"Green","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue - (a.cost*a.quantity)) - SUM(b.commission_amount)/Count(a.name)"})
 	else:
 		fields.append({"label":"Net Sale", "short_label":"net_sale", "fieldname":"net_sale","fieldtype":"Currency","indicator":"Red","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue)"})
-		fields.append({"label":"Profit", "short_label":"Profit", "fieldname":"profit","fieldtype":"Currency","indicator":"Green","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue - (a.cost**a.quantity))"})
+		fields.append({"label":"Profit", "short_label":"Profit", "fieldname":"profit","fieldtype":"Currency","indicator":"Green","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue - (a.cost*a.quantity))"})
  	# return [
 	# 	{"label":"Quantity","short_label":"Qty", "fieldname":"quantity","fieldtype":"Float","indicator":"Grey","precision":2, "align":"center","chart_color":"#FF8A65","sql_expression":"SUM(a.quantity)"},
 	# 	{"label":"Sub Total", "short_label":"Sub To.", "fieldname":"sub_total","fieldtype":"Currency","indicator":"Grey","precision":None, "align":"right","chart_color":"#dd5574","sql_expression":"SUM(a.sub_total)"},

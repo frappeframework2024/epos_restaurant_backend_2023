@@ -1,0 +1,31 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-10-17 09:34:58.655409",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "log"
+ ],
+ "fields": [
+  {
+   "fieldname": "log",
+   "fieldtype": "Link",
+   "label": "Log",
+   "options": "DocType"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-10-17 09:37:20.817826",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "Clear Logs",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
