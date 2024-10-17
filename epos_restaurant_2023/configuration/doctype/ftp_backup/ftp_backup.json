@@ -15,7 +15,9 @@
   "ftp_url",
   "delete_after",
   "ftp_folder_name",
-  "run_backup"
+  "run_backup",
+  "section_break_gryt",
+  "clear_logs"
  ],
  "fields": [
   {
@@ -63,12 +65,22 @@
    "fieldname": "run_backup",
    "fieldtype": "Button",
    "label": "Run Backup"
+  },
+  {
+   "fieldname": "section_break_gryt",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "clear_logs",
+   "fieldtype": "Table",
+   "label": "Clear Logs",
+   "options": "Clear Logs"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-07-17 15:35:22.733668",
+ "modified": "2024-10-17 09:38:29.059346",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "FTP Backup",

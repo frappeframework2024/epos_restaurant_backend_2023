@@ -15,11 +15,29 @@ def execute_backup_command():
     return "Added To Queue"
 
 @frappe.whitelist()
-def run_backup_command():   
-    setting = frappe.get_doc('FTP Backup')
+def clear_logs(setting):
+    clear_logs = [a.log for a in setting.clear_logs]
+    if clear_logs:
+        for a in clear_logs:
+            sql = "delete from `tab{0}`".format(a)
+            frappe.db.sql(sql)
+    else:
+        frappe.db.sql("delete from `tabError Log`")
+        frappe.db.sql("delete from `tabScheduled Job Log`")
+    frappe.db.commit()
+
+@frappe.whitelist()
+def run_backup_command():  
+    setting = frappe.get_doc('FTP Backup') 
     site_name = cstr(frappe.local.site)
     folder = setting.ftp_backup_path
     backup_type = setting.backup_type
+
+    try:
+        clear_logs(setting)
+    except:
+        pass
+
     if folder is None or folder == '' :
         folder = frappe.utils.get_site_path(conf.get("backup_path", "private/backups"))       
     for filename in os.listdir(folder):
