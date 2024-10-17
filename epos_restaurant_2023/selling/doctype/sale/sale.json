@@ -17,7 +17,6 @@
   "reference_number",
   "pos_profile",
   "customer",
-  "qb_customer_id",
   "customer_name",
   "customer_photo",
   "phone_number",
@@ -219,16 +218,18 @@
   "inventory_transacton_tab",
   "inventory_transaction",
   "integration_tab",
-  "exely_transaction_id",
   "qb_integrate_section",
+  "qb_customer_id",
   "qb_invoice_id",
+  "column_break_jxgn",
+  "exely_integrate_section",
+  "exely_transaction_id",
   "trade_in_tab",
   "trade_in_products",
   "section_break_pupr",
   "column_break_fwau",
   "column_break_itvr",
-  "total_trade_in_amount",
-  "integrate_tab"
+  "total_trade_in_amount"
  ],
  "fields": [
   {
@@ -1521,22 +1522,16 @@
    "options": "Sale Trade In"
   },
   {
-   "fieldname": "integrate_tab",
-   "fieldtype": "Tab Break",
-   "label": "Integrate"
-  },
-  {
+   "allow_on_submit": 1,
    "fieldname": "qb_invoice_id",
    "fieldtype": "Data",
    "label": "QB Invoice ID"
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "customer.qb_customer_id",
    "fieldname": "qb_customer_id",
    "fieldtype": "Data",
-   "hidden": 1,
-   "in_list_view": 1,
-   "in_standard_filter": 1,
    "label": "QB Customer ID",
    "search_index": 1
   },
@@ -1544,6 +1539,15 @@
    "fieldname": "qb_integrate_section",
    "fieldtype": "Section Break",
    "label": "QB Integrate"
+  },
+  {
+   "fieldname": "column_break_jxgn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "exely_integrate_section",
+   "fieldtype": "Section Break",
+   "label": "Exely Integrate"
   }
  ],
  "image_field": "photo",
@@ -1566,7 +1570,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2024-10-13 19:00:01.494691",
+ "modified": "2024-10-16 15:57:59.646163",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

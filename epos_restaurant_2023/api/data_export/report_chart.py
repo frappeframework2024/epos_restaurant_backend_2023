@@ -14,6 +14,7 @@ from epos_restaurant_2023.api.data_export.utils import cell_array
 
 
 def render_chart_data(ws2,data):
+
     # set cell a1
     columns = ["Series"] + [d.get("name") for d in data.get("data").get("datasets")]
    

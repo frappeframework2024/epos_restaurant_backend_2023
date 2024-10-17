@@ -72,14 +72,10 @@ frappe.ui.form.on("Product", {
         });
 
 
-        frm.fields_dict['qb_product_name'].get_query = function() {           
-            return {
-                query: 'epos_restaurant_2023.api.quickbook_intergration.qb_product.get_product_autocomplete',
-                filters:{
-                    "name": frm.doc.qb_product_name
-                }
-            };
-        }; 
+  
+
+
+
         
         print_barcode_button(frm);
 
@@ -89,6 +85,80 @@ frappe.ui.form.on("Product", {
 
         add_search_image_from_google_button(frm)
         change_expired_date(frm)
+
+
+      // frm.fields_dict['qb_product_name'].get_query = function() {           
+        //     return {
+        //         query: 'epos_restaurant_2023.api.quickbook_intergration.qb_product.get_product_autocomplete',
+        //         filters:{
+        //             "name": frm.doc.qb_product_name
+        //         }
+        //     };
+        // }; 
+
+
+
+         // auto-complete select product from qb 
+        let $dropdown;
+        frm.fields_dict['qb_product_name'].$input.on('input', debounce(function(){
+                 let inputValue = $(this).val();
+                if (inputValue.length > 0) {
+                    frappe.call({
+                        method: 'epos_restaurant_2023.api.quickbook_intergration.qb_product.get_product_autocomplete',
+                        freeze: true,
+                        args: {
+                            name: inputValue,
+                        },
+                        callback: function(r) {
+                            if (r.message) {
+                                let suggestions = r.message;                            
+                                // Clear existing dropdown
+                                if ($dropdown) {
+                                    $dropdown.remove();
+                                } 
+
+                                // Create dropdown if it doesn't exist
+                                $dropdown = $('<ul role="listbox" id="e-custom" style="min-width: 100%;">')
+                                    .appendTo(frm.fields_dict['qb_product_name'].$input.parent());
+
+                                $.each(suggestions, function(index, item) { 
+                                    $('<li><a><p><strong>'+item+'</strong></p></a></li>')
+                                        // .text(item) 
+                                        .appendTo( $dropdown)
+                                        .on('click', function() {
+                                            frm.set_value('qb_product_name',item); // Set the selected item
+                                            $dropdown.remove(); // Remove dropdown after selection
+                                        });
+                                });
+
+                                // Hide dropdown if no suggestions
+                                if (suggestions.length === 0) {
+                                    $dropdown.remove();
+                                } 
+
+                            }
+                        }
+                    });
+                }else{
+                if ($dropdown) {
+                        $dropdown.remove();
+                    }
+                }
+
+            }, 400)          
+            
+        );
+
+        // Handle blur event
+        frm.fields_dict['qb_product_name'].$input.on('blur', function() {
+            setTimeout(function() {
+                if ($dropdown) {
+                    $dropdown.remove();
+                }
+            }, 400);
+        });
+
+        // end auto-complete select product from db
 
 
 
@@ -172,6 +242,18 @@ frappe.ui.form.on("Product", {
     },
 
 });
+
+
+// deboounce text  auto-complete
+function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+}
+
 
 function add_search_image_from_google_button(frm) {
     if (!frm.is_new()) {

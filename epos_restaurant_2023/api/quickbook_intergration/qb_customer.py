@@ -11,7 +11,7 @@ def get_customer_autocomplete(name=None):
         qb_query = "SELECT DisplayName FROM Customer WHERE DisplayName LIKE '{}'  ORDER BY Id ASC ".format(urllib.parse.quote(("%{}%".format(name)))) 
    
 
-    data = get_list(key="Customer", max = 5, query=qb_query)
+    data = get_list(key="Customer", max = 10, query=qb_query)
     return [d["DisplayName"] for d in data]
 
 @frappe.whitelist()
@@ -26,8 +26,5 @@ def get_customer_by_name(name):
 def get_customer_types():
     query = "SELECT * FROM CustomerType"
     return get_list(key="CustomerType", query=query)
-
-
-
 
 

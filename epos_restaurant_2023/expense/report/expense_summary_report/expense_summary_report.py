@@ -342,15 +342,15 @@ def get_report_chart(filters,data):
 			if not hide_columns or  rf["label"] not in hide_columns:
 				fieldname = 'total_'+rf["fieldname"]
 				if(fieldname=="total_qty"):
-					dataset.append({'name':rf["label"],'values':(d["total_qty"] for d in data if d["indent"]==0)})
+					dataset.append({'name':rf["label"],'values':[d["total_qty"] for d in data if d["indent"]==0]})
 				elif(fieldname=="total_sub_total"):
-					dataset.append({'name':rf["label"],'values':(d["total_sub_total"] for d in data if d["indent"]==0)})
+					dataset.append({'name':rf["label"],'values':[d["total_sub_total"] for d in data if d["indent"]==0]})
 				elif(fieldname=="total_cost"):
-					dataset.append({'name':rf["label"],'values':(d["total_cost"] for d in data if d["indent"]==0)})
+					dataset.append({'name':rf["label"],'values':[d["total_cost"] for d in data if d["indent"]==0]})
 				elif(fieldname=="total_amount"):
-					dataset.append({'name':rf["label"],'values':(d["total_amount"] for d in data if d["indent"]==0)})
+					dataset.append({'name':rf["label"],'values':[d["total_amount"] for d in data if d["indent"]==0]})
 				elif(fieldname=="total_profit"):
-					dataset.append({'name':rf["label"],'values':(d["total_profit"] for d in data if d["indent"]==0)})
+					dataset.append({'name':rf["label"],'values':[d["total_profit"] for d in data if d["indent"]==0]})
 
 		 
 

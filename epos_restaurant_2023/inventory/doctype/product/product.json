@@ -141,6 +141,7 @@
   "integrate_tab",
   "qb_product_mapping_section",
   "qb_product_name",
+  "column_break_qpuh",
   "qb_product_id"
  ],
  "fields": [
@@ -924,19 +925,24 @@
   {
    "fieldname": "qb_product_id",
    "fieldtype": "Data",
-   "label": "QB Product ID"
+   "label": "QB Product ID",
+   "read_only": 1
   },
   {
    "fieldname": "qb_product_name",
    "fieldtype": "Autocomplete",
-   "label": "QB Product Product Name"
+   "label": "QB Product Name"
+  },
+  {
+   "fieldname": "column_break_qpuh",
+   "fieldtype": "Column Break"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-09-27 08:31:30.497771",
+ "modified": "2024-10-16 15:16:08.536331",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Product",

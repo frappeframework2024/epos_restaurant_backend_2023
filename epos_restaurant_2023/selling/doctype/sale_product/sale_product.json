@@ -153,8 +153,8 @@
   "kod_status_update_time",
   "hide_in_kod",
   "variant_of",
-  "qb_product_id",
   "is_variant",
+  "qb_product_id",
   "column_break_txhh",
   "cost",
   "product_photo",
@@ -1149,17 +1149,17 @@
    "label": "Select Material"
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "product_code.qb_product_id",
    "fieldname": "qb_product_id",
    "fieldtype": "Data",
-   "label": "QB Product ID",
-   "options": "Product"
+   "label": "QB Product ID"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-09-10 09:19:25.341306",
+ "modified": "2024-10-16 16:00:17.149155",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",
