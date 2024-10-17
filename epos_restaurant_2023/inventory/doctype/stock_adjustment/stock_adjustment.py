@@ -31,11 +31,11 @@ class StockAdjustment(Document):
 
 	def on_submit(self):
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
-			if self.difference_amount != 0:
+			if self.difference_amount != 0 or self.difference_quantity != 0:
 				general_ledger(self)
    
 		if len(self.products)<=10:
-			if self.difference_amount != 0:
+			if self.difference_amount != 0 or self.difference_quantity != 0:
 				update_inventory_on_submit(self)
 			else:
 				frappe.msgprint("No Stocks Changed")
