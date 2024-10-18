@@ -252,7 +252,7 @@ const onLogin = async () => {
           getCurrentUserInfo(result.message)
           checkPromotionDay()
         } else {
-          toast.warning(`msg.Login fail Invalid username or password`);
+          toast.warning(`Login fail Invalid username or password`);
           store.dispatch('endLoading');
         }
       }

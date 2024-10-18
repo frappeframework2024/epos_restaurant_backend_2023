@@ -181,6 +181,7 @@ export default class Product {
 
 
     setSelectedProduct(p,price_rule='') {
+       
         
         this.selectedProduct = p;
         this.prices = [];
@@ -191,10 +192,11 @@ export default class Product {
             prices = JSON.parse(p.prices)
         }
        
-        prices.filter(r => r.branch == this.setting?.business_branch || r.branch == "").forEach((p) => {
+        prices.filter(r => (r.branch == this.setting?.business_branch || r.branch == "") && ((r.price_rule||"")== "" || (r.price_rule)==price_rule) ).forEach((p) => {
             p.selected = false;
             this.prices.push(p)
         });
+
         if (this.prices.length > 0) {
             this.prices[0].selected = true
         }
@@ -220,8 +222,7 @@ export default class Product {
         }
 
     }
-    setSelectedProductByMenuID(id) {
-       
+    setSelectedProductByMenuID(id) {       
         let p = Enumerable.from(this.posMenuResource.data ?? []).where(`$.menu_product_name=='${id}'`).firstOrDefault();      
    
         if (p) {

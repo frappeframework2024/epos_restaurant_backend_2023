@@ -25,6 +25,27 @@ from epos_restaurant_2023.api.security import aes_encrypt,get_aes_key,encode_bas
 
 
 
+@frappe.whitelist(allow_guest=True)
+def get_ip():
+    
+    return (
+        frappe.local.request.headers,
+        frappe.local.request_ip,
+        frappe.request.remote_addr,
+        frappe.request.headers.get('X-Forwarded-For'),
+        get_client_ip()
+        )
+def get_client_ip():
+    forwarded_for = frappe.get_request_header('X-Forwarded-For')
+    if forwarded_for:
+        # Split the list of forwarded IPs and return the first one (client IP)
+        ip = forwarded_for.split(',')[0].strip()
+    else:
+        # Fallback to REMOTE_ADDR if X-Forwarded-For is not present
+        ip = frappe.get_request_header('REMOTE_ADDR')
+    return ip
+
+
 @frappe.whitelist()
 def testing():
     frappe.db.sql("update `tabDocField` set hidden=1 where parent='Product' and fieldname='price'")
