@@ -24,6 +24,7 @@
   "is_package",
   "allow_zero_amount_posting",
   "is_adjustment_account",
+  "is_refund_account",
   "show_in_shortcut_sub_menu",
   "column_break_afbm",
   "allow_enter_pax",
@@ -656,12 +657,18 @@
    "fieldname": "is_adjustment_account",
    "fieldtype": "Check",
    "label": "Is Adjustment Account"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_refund_account",
+   "fieldtype": "Check",
+   "label": "Is Refund Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-10-19 14:52:27.997785",
+ "modified": "2024-10-19 15:32:30.230271",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

@@ -97,7 +97,7 @@ def get_child_menus(parent_menu, mobile= 0,sort_menu_order_by="name",sort_order_
     data = frappe.db.sql(sql,as_dict=1)
     for d in data:        
         menus.append(d)
-        child_menus = get_child_menus(d.name,mobile=mobile,sort_order_by=sort_order_by)
+        child_menus = get_child_menus(d.name,mobile=mobile,sort_menu_order_by=sort_menu_order_by,sort_order_by=sort_order_by)
         for m in child_menus:
             menus.append(m)
         

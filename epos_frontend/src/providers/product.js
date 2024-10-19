@@ -53,7 +53,7 @@ export default class Product {
         this.selectedProduct = {};
     }
     loadPOSMenu() {
-      
+        
         let setting = localStorage.getItem("item_menu_setting")
         if (setting){
             setting = JSON.parse(setting)
@@ -63,7 +63,7 @@ export default class Product {
                 sort_order_by:product_name_en
             }
         }
-       
+      
         this.posMenuResource.update({
             params: {
                 root_menu: this.currentRootPOSMenu ? this.currentRootPOSMenu : this.setting?.default_pos_menu,

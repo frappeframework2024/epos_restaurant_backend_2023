@@ -19,7 +19,9 @@
             v-if="gv.device_setting.show_button_commission == 1" @click="onAddCommission()" />
 
 
-        <v-list-item prepend-icon="mdi-bulletin-board" :title="$t('Change Price Rule')" @click="onChangePriceRule()" />
+        <v-list-item v-if="setting.price_rules.length > 1" prepend-icon="mdi-bulletin-board" :title="$t('Change Price Rule')" @click="onChangePriceRule()" />
+
+
         <v-list-item v-if="setting.table_groups && setting.table_groups.length > 0" prepend-icon="mdi-silverware"
             :title="$t('Change POS Menu')" @click="onChangePOSMenu()" />
 

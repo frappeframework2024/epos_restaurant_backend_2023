@@ -27,12 +27,9 @@
             :min="gv.itemMenuSetting.min_font_size" v-model="gv.itemMenuSetting.font_price_size" />
         </div>
         <v-select v-model="gv.itemMenuSetting.sort_menu_order_by" :items="[
-              { key: 'sort_order', title: 'Sort Order' },
-    { key: 'name', title: 'Menu Name' },
- 
+            { key: 'sort_order', title: 'Sort Order' },
+            { key: 'name', title: 'Menu Name' },
             ]" item-title="title" item-value="key" label="Sort Menu By"></v-select>
-
-
         <div class="px-3 mt-2">
           <div class="text-start">Product Font Size <span class="px-3 bg-slate-100 rounded-lg">{{
               gv.itemMenuSetting.item_font_size ?? gv.itemMenuSetting.item_font_size }}</span> px </div>
