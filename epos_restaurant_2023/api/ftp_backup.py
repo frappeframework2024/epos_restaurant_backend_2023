@@ -9,10 +9,25 @@ from frappe.utils import cstr,password
 import asyncio
 from datetime import datetime
 from frappe import conf
+
 @frappe.whitelist()
 def execute_backup_command(): 
     frappe.enqueue(run_backup_command,queue="long")
     return "Added To Queue"
+
+@frappe.whitelist()
+def execute_repair_table():
+    frappe.enqueue(method=repair_table,queue="long")
+    return 'Repairing Database, Check RQ Job'
+
+@frappe.whitelist()
+def repair_table():
+    data = frappe.db.sql("SELECT concat('REPAIR Table `',TABLE_NAME,'`;') script FROM information_schema.TABLES WHERE table_schema='{0}' AND table_type='BASE TABLE'".format(frappe.conf.get("db_name")),as_dict=1)
+    for a in data:
+        frappe.db.sql(a.script)
+    frappe.db.commit()
+    frappe.publish_realtime("repair_database", {"message": "Database Repaired"})
+
 
 @frappe.whitelist()
 def clear_logs(setting):
