@@ -15,12 +15,10 @@ def execute_backup_command():
     frappe.enqueue(run_backup_command,queue="long")
     return "Added To Queue"
 
-@frappe.whitelist()
 def execute_repair_table():
     frappe.enqueue(method=repair_table,queue="long")
     return 'Repairing Database, Check RQ Job'
 
-@frappe.whitelist()
 def repair_table():
     data = frappe.db.sql("SELECT concat('REPAIR Table `',TABLE_NAME,'`;') script FROM information_schema.TABLES WHERE table_schema='{0}' AND table_type='BASE TABLE'".format(frappe.conf.get("db_name")),as_dict=1)
     for a in data:
@@ -28,7 +26,6 @@ def repair_table():
     frappe.db.commit()
     frappe.publish_realtime("repair_database", {"message": "Database Repaired"})
 
-@frappe.whitelist()
 def check_table():
     site = frappe.conf.get("db_name")
     corrupt_table = ""
@@ -47,7 +44,6 @@ def check_table():
         corrupt_table = "No Table Corrupted"
     return corrupt_table
 
-@frappe.whitelist()
 def clear_logs(setting):
     clear_logs = [a.log for a in setting.clear_logs]
     if clear_logs:
@@ -59,7 +55,6 @@ def clear_logs(setting):
         frappe.db.sql("delete from `tabScheduled Job Log`")
     frappe.db.commit()
 
-@frappe.whitelist()
 def run_backup_command():  
     setting = frappe.get_doc('FTP Backup') 
     site_name = cstr(frappe.local.site)
@@ -112,7 +107,6 @@ async def run_bench_command(command, kwargs=None):
     command = shlex.split(command)
     subprocess.run(command, input=cmd_input, capture_output=True)
 
-@frappe.whitelist()
 def upload_to_ftp():
     folder_name = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
     setting = frappe.get_doc('FTP Backup')
