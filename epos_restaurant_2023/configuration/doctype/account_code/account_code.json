@@ -23,6 +23,7 @@
   "show_in_shortcut_menu",
   "is_package",
   "allow_zero_amount_posting",
+  "is_adjustment_account",
   "show_in_shortcut_sub_menu",
   "column_break_afbm",
   "allow_enter_pax",
@@ -649,12 +650,18 @@
    "fieldname": "show_in_shortcut_sub_menu",
    "fieldtype": "Check",
    "label": "Show in Shortcut Sub Menu"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_adjustment_account",
+   "fieldtype": "Check",
+   "label": "Is Adjustment Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-10-18 17:07:41.334321",
+ "modified": "2024-10-19 14:52:27.997785",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

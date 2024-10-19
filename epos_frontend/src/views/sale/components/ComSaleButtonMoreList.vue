@@ -81,11 +81,11 @@
             <v-list-item-title>{{ $t('Menu Setting') }}</v-list-item-title>
         </v-list-item>
 
-        <v-list-item @click="onClaimCouponClick()">
+        <v-list-item v-if="sale.sale.total_cash_coupon_claim > 0" @click="onClaimCouponClick()">
             <template #prepend>
                 <v-icon icon="mdi-card-bulleted-outline"></v-icon>
             </template>
-            <v-list-item-title>{{ $t('Claim Coupon') }}</v-list-item-title>
+            <v-list-item-title>{{ $t('Claim Coupon')}}</v-list-item-title>
         </v-list-item>
 
         <v-list-item @click="onRateIncludeOrNotIncludeTaxClick" v-if="gv.device_setting.show_rate_include_button==1">
