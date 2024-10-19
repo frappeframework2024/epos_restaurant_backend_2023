@@ -7,6 +7,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "ftp_setting_section",
   "ftp_backup_path",
   "ftp_user",
   "ftp_password",
@@ -16,7 +17,10 @@
   "delete_after",
   "ftp_folder_name",
   "run_backup",
+  "section_break_vmjx",
   "repair_database",
+  "check_database",
+  "message",
   "section_break_gryt",
   "clear_logs"
  ],
@@ -69,24 +73,46 @@
   },
   {
    "fieldname": "section_break_gryt",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Clear Logs"
   },
   {
    "fieldname": "clear_logs",
    "fieldtype": "Table",
-   "label": "Clear Logs",
    "options": "Clear Logs"
   },
   {
+   "depends_on": "eval:doc.message && doc.message != \"No Table Corrupted\"",
    "fieldname": "repair_database",
    "fieldtype": "Button",
    "label": "Repair Database"
+  },
+  {
+   "fieldname": "section_break_vmjx",
+   "fieldtype": "Section Break",
+   "label": "Database"
+  },
+  {
+   "fieldname": "check_database",
+   "fieldtype": "Button",
+   "label": "Check Database"
+  },
+  {
+   "depends_on": "eval:doc.message",
+   "fieldname": "message",
+   "fieldtype": "Long Text",
+   "label": "Corrupt Tables"
+  },
+  {
+   "fieldname": "ftp_setting_section",
+   "fieldtype": "Section Break",
+   "label": "FTP Setting"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-10-19 10:51:05.856578",
+ "modified": "2024-10-19 14:21:39.279964",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "FTP Backup",

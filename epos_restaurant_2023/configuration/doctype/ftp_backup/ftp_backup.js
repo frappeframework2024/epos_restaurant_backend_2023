@@ -27,4 +27,12 @@ frappe.ui.form.on("FTP Backup", {
             }
         })
 	},
+    check_database(frm) {
+        frappe.call({
+            method: 'epos_restaurant_2023.api.ftp_backup.check_table', 
+            callback: function(r) { 
+                frm.set_value('message', r.message);
+            }
+        })
+	},
 });

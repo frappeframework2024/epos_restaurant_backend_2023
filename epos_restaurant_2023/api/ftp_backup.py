@@ -28,6 +28,24 @@ def repair_table():
     frappe.db.commit()
     frappe.publish_realtime("repair_database", {"message": "Database Repaired"})
 
+@frappe.whitelist()
+def check_table():
+    site = frappe.conf.get("db_name")
+    corrupt_table = ""
+    tables = ""
+    data = frappe.db.sql("SELECT concat('`',TABLE_NAME,'`') table_name FROM information_schema.TABLES WHERE table_schema='{0}' AND table_type='BASE TABLE'".format(site),as_dict=1)
+    for a in data:
+        if data.index(a) != len(data)-1:
+            tables += a.table_name + ","
+        else:
+            tables += a.table_name
+    check_tables = frappe.db.sql("CHECK TABLE {}".format(tables),as_dict=1)
+    for b in check_tables:
+        if b.Msg_text != "OK":
+            corrupt_table += b.Table.replace(site+".","")+"\n"
+    if corrupt_table == "":
+        corrupt_table = "No Table Corrupted"
+    return corrupt_table
 
 @frappe.whitelist()
 def clear_logs(setting):
