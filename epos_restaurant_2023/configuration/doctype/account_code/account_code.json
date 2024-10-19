@@ -23,6 +23,7 @@
   "show_in_shortcut_menu",
   "is_package",
   "allow_zero_amount_posting",
+  "show_in_shortcut_sub_menu",
   "column_break_afbm",
   "allow_enter_pax",
   "sort_order",
@@ -642,12 +643,18 @@
    "fieldname": "hide_account_reservation_not_allow_see_rate",
    "fieldtype": "Check",
    "label": "Hide this account code when reservation not allow to see rate"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_in_shortcut_sub_menu",
+   "fieldtype": "Check",
+   "label": "Show in Shortcut Sub Menu"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-09-23 17:39:38.660440",
+ "modified": "2024-10-18 17:07:41.334321",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",
