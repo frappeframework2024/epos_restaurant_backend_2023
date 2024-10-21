@@ -15,6 +15,7 @@ def execute_backup_command():
     frappe.enqueue(run_backup_command,queue="long")
     return "Added To Queue"
 
+@frappe.whitelist()
 def execute_repair_table():
     frappe.enqueue(method=repair_table,queue="long")
     return 'Repairing Database, Check RQ Job'
@@ -26,6 +27,7 @@ def repair_table():
     frappe.db.commit()
     frappe.publish_realtime("repair_database", {"message": "Database Repaired"})
 
+@frappe.whitelist()
 def check_table():
     site = frappe.conf.get("db_name")
     corrupt_table = ""
