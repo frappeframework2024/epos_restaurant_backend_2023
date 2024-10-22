@@ -11,18 +11,17 @@ def add_to_inventory_transaction(data):
 @frappe.whitelist()
 def get_stock_location_by_pos_profile(product_code,pos_profile,stock_location):
     current_stock_location = stock_location
-    sql = "select stock_location from `tabProduct Inventory Location` WHERE parent = '{0}' AND pos_profile = '{1}'".format(product_code,pos_profile)
-    data = frappe.db.sql(sql,as_dict=1)
+    data = frappe.get_value('Product Inventory Location', {'parent':product_code,'pos_profile':pos_profile}, ['stock_location'], as_dict=1)
     if data:
-        current_stock_location = data[0].stock_location
+        current_stock_location = data.stock_location
     return current_stock_location
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def get_product_qty(product,stock_location):
     qty = 0
-    current_qtys = frappe.db.sql("select quantity from `tabStock Location Product` where product_code = '{0}' and stock_location = '{1}'".format(product,stock_location),as_dict=True)
-    if len(current_qtys)>0:
-        qty = current_qtys[0].quantity
+    data = frappe.db.get_value('Stock Location Product', {'product_code':product,'stock_location':stock_location}, ['quantity'], as_dict=1)
+    if data:
+        qty = data.quantity
     return qty
 
 def update_product_quantity(stock_location,product_code, quantity,cost,doc):

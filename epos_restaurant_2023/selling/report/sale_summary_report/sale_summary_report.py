@@ -592,6 +592,7 @@ def get_row_groups():
 		{
 			"fieldname":"if(ifnull(b.created_by,'')='','Not Set',b.created_by)",
 			"label":_("Seller"),
+			"parent_row_group_filter_field":"row_group",
 			"show_commission":False
 		},
 	]

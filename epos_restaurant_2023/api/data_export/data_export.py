@@ -318,8 +318,9 @@ def render_report_data(ws1,columns,data,report_data_row=25):
 
     row_number = 0
     for row_index,d in enumerate(data):
-        if d.get("is_separator",0)==1:
-            continue
+        if not  str(type(d)) == "<class 'list'>":
+            if d.get("is_separator",0)==1:
+                continue
         # No row number 
         # we check build in Total Row of script report
         

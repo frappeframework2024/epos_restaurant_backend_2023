@@ -61,7 +61,7 @@
                             {%set _prices = doc.prices |selectattr('price_rule', 'equalto', emenu.default_price_rule) | list  %}
                                 {% for price in _prices %}    
                                     {% if doc.discount_value > 0 %}
-                                        <div><span class="price-cus portion">{{price.portion}}</span></div>
+                                    {%if price.portion != "Normal" %} <div><span class="price-cus portion">{{price.portion}}</span></div> {%endif%}
                                         <div class="d-flex gap-2 justify-center price-portion">    
                                             <del class="price-cus" style="color:#ccc">{{frappe.format(price.price or 0,{"fieldtype":"Currency"})}}</del>
                                             {% if doc.discount_type=='Percent' %}
@@ -71,7 +71,8 @@
                                             {%endif%}
                                         </div>
                                     {% else %}
-                                        <p class="price-cus portion">{{price.portion}}: 
+                                        <p class="price-cus portion">
+                                            {%if price.portion != "Normal" %} <span>{{price.portion}}:</span> {%endif%}
                                             {{frappe.format(price.price or 0,{"fieldtype":"Currency"})}}
                                         </p>
                                     {% endif %}   
