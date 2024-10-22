@@ -751,11 +751,7 @@ def get_product_option(product_code="", business_branch="", price_rule="Normal")
         data["variants"] =  get_product_variant(doc.name)
     elif doc.variant_of :
         data["variants"] =  get_product_variant(doc.variant_of)
-    
-    
-    
-    
-    
     frappe.cache.set_value(f"product_option_{product_code}_{price_rule}",data )
     return data
+    
 

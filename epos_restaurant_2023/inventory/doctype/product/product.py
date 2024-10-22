@@ -28,6 +28,7 @@ class Product(Document):
 			if self.is_inventory_product:
 				self.is_inventory_product = 0
 		validate_default_accounts(self)
+		check_product_inventory_location(self)
 		error_list=[]
 		for v in self.product_variants:
 			if v.variant_code is None or v.variant_code == "":
@@ -486,7 +487,20 @@ def insert_update_rename_variant(self,a,action):
 		p.variant_2 = a.variant_2
 		p.variant_3 = a.variant_3
 		p.insert()
-	
+
+def check_product_inventory_location(self):
+	exists = []
+	duplicate = []
+	for a in self.product_inventory_transaction:
+		if a.pos_profile not in exists:
+			exists.append(a.pos_profile)
+		else:
+			duplicate.append({"pos_profile":a.pos_profile,"idx":a.idx})
+	if len(duplicate) > 0:
+		str_error = ""
+		for a in duplicate:
+			str_error += "Row # <b>{0}</b> POS Profile <b>{1}</b> Already Exist</br>".format(a["idx"],a["pos_profile"])
+		frappe.throw(str_error)
 
 def validate_default_accounts(self):
 	branches = {row.business_branch for row in self.default_account}

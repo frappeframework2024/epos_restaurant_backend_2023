@@ -4,7 +4,7 @@
 import json
 from  epos_restaurant_2023.api.cache_function import get_default_account_from_pos_config, get_default_account_from_revenue_group, get_doctype_value_cache
 from epos_restaurant_2023.api.account import cancel_general_ledger_entery,submit_general_ledger_entry
-from epos_restaurant_2023.inventory.inventory import add_to_inventory_transaction, check_uom_conversion, get_product_cost, get_stock_location_product, get_uom_conversion, update_product_quantity
+from epos_restaurant_2023.inventory.inventory import add_to_inventory_transaction, get_stock_location_by_pos_profile,check_uom_conversion, get_product_cost, get_stock_location_product, get_uom_conversion, update_product_quantity
 import frappe
 from frappe import utils
 from frappe import _
@@ -567,7 +567,7 @@ def update_inventory_on_submit(self):
 				'product_code': p.product_code,
 				'portion':p.portion,
 				'unit':p.unit,
-				'stock_location':self.stock_location,
+				'stock_location': get_stock_location_by_pos_profile(p.product_code,self.pos_profile,self.stock_location),
 				'out_quantity':p.quantity / uom_conversion,
 				"uom_conversion":uom_conversion,
 				'note': 'New sale submitted.',

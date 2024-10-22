@@ -12,6 +12,7 @@
   "title",
   "emenu_app_name",
   "default_root_menu",
+  "default_price_rule",
   "column_break_nodn",
   "logo",
   "enable_cache",
@@ -227,13 +228,20 @@
    "label": "Default Root Menu",
    "options": "POS Menu",
    "reqd": 1
+  },
+  {
+   "fieldname": "default_price_rule",
+   "fieldtype": "Link",
+   "label": "Default Price Rule",
+   "options": "Price Rule",
+   "reqd": 1
   }
  ],
  "has_web_view": 1,
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-04 13:59:04.132502",
+ "modified": "2024-10-21 17:39:26.759161",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu",

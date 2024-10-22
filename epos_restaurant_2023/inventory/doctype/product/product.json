@@ -142,7 +142,9 @@
   "qb_product_mapping_section",
   "qb_product_name",
   "column_break_qpuh",
-  "qb_product_id"
+  "qb_product_id",
+  "product_transaction_location_tab",
+  "product_inventory_transaction"
  ],
  "fields": [
   {
@@ -936,13 +938,23 @@
   {
    "fieldname": "column_break_qpuh",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "product_transaction_location_tab",
+   "fieldtype": "Tab Break",
+   "label": "Product Transaction Location"
+  },
+  {
+   "fieldname": "product_inventory_transaction",
+   "fieldtype": "Table",
+   "options": "Product Inventory Location"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-10-16 15:16:08.536331",
+ "modified": "2024-10-21 16:58:00.491675",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Product",

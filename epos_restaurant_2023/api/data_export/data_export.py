@@ -238,10 +238,10 @@ def render_filter(ws1, filters_html,columns ):
     if total_column>setting_doc.max_column:
         total_column = setting_doc.max_column
     ws1.row_dimensions[row_index].height =30
-    ws1.merge_cells(f'A{row_index}:{cell_array()[total_column-4]}{row_index}') 
-    ws1[f'A{row_index}'] = frappe.utils.strip_html(filters_html).replace("&amp;", "&")
-    ws1[f'A{row_index}'].font = Font(size=10,italic=True)  
-    ws1[f'A{row_index}'].alignment = Alignment(vertical='center' ,wrap_text=True)
+    ws1.merge_cells(f'C{row_index}:{cell_array()[total_column-4]}{row_index}') 
+    ws1[f'C{row_index}'] = frappe.utils.strip_html(filters_html).replace("&amp;", "&")
+    ws1[f'C{row_index}'].font = Font(size=10,italic=True)  
+    ws1[f'C{row_index}'].alignment = Alignment(vertical='center' ,wrap_text=True)
 
     start_cell = cell_array()[total_column-3]
     end_cell = cell_array()[total_column-1]
@@ -304,7 +304,7 @@ def render_report_data(ws1,columns,data,report_data_row=25):
     # mearge cell
         if c.get("merge_cell",1)>1:
             merge_cell = f'{cell_array()[index]}{report_data_row}:{cell_array()[index   +  c.get("merge_cell")  -1 ]}{report_data_row}'
-          
+           
             ws1.merge_cells(merge_cell)
             for column  in range(index, index +  1  +  c.get("merge_cell",1)):
                 ws1.column_dimensions[cell_array()[column]].width =width / c.get("merge_cell",1)
@@ -318,8 +318,11 @@ def render_report_data(ws1,columns,data,report_data_row=25):
 
     row_number = 0
     for row_index,d in enumerate(data):
+        if d.get("is_separator",0)==1:
+            continue
         # No row number 
         # we check build in Total Row of script report
+        
         if not  str(type(d)) == "<class 'list'>":
             if not ( d.get("is_total_row",0) == 1 or d.get("is_group",0) == 1 ) :
                 row_number = row_number + 1
@@ -337,7 +340,7 @@ def render_report_data(ws1,columns,data,report_data_row=25):
                
                 value =  d.get(c.get("fieldname"))
                 value = frappe.format(value, {"fieldtype":c.get("fieldtype","Data")})
-                if column_index==0:
+                if column_index==1:
                     # set indent space character 
                     value = f'{" " * d.get("indent",0) * 5} {value}'
                     
@@ -352,6 +355,8 @@ def render_report_data(ws1,columns,data,report_data_row=25):
                     merge_cell = f'{cell_array()[column_index]}{cell_row}:{cell_array()[column_index   +  c.get("merge_cell")  -1 ]}{cell_row}'
                     
                     ws1.merge_cells(merge_cell)
+                    
+                    
             
                 cell.alignment = Alignment(vertical='center',horizontal= c.get("align","left") )
                 
@@ -366,7 +371,11 @@ def render_report_data(ws1,columns,data,report_data_row=25):
                 if d.get("is_total_row",0) ==1 or d.get("is_group",0) == 1:
                     ws1.row_dimensions[row_index + report_data_row].height =25
                     cell.font = Font(bold=True) 
-                    cell.border = Border(top=Side(style='thin')) 
+                    cell.border = Border(top=Side(style='thin'),bottom=Side(style='thin')) 
+                    for merge_column_index in range(column_index, column_index +c.get("merge_cell",1)):
+                        ws1.cell(row=cell_row, column=merge_column_index+1).border =  Border(bottom=Side(style='thin')) 
+                        
+                    
                     
                 column_index = column_index + c.get("merge_cell",1) 
                 # check if cell is group then check if it  set to merge

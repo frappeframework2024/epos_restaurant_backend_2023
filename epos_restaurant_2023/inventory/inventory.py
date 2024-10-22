@@ -8,6 +8,15 @@ def add_to_inventory_transaction(data):
     doc = frappe.get_doc(data)
     doc.insert()
 
+@frappe.whitelist()
+def get_stock_location_by_pos_profile(product_code,pos_profile,stock_location):
+    current_stock_location = stock_location
+    sql = "select stock_location from `tabProduct Inventory Location` WHERE parent = '{0}' AND pos_profile = '{1}'".format(product_code,pos_profile)
+    data = frappe.db.sql(sql,as_dict=1)
+    if data:
+        current_stock_location = data[0].stock_location
+    return current_stock_location
+
 @frappe.whitelist(allow_guest=True)
 def get_product_qty(product,stock_location):
     qty = 0
