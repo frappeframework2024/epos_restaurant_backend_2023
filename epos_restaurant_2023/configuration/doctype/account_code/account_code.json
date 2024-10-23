@@ -101,6 +101,7 @@
   "is_vat",
   "tax_invoice_summary_key",
   "tax_invoice_summary_label",
+  "custom_commercial_group_by_key",
   "column_break_lnjf",
   "tax_invoice_group_by_key",
   "tax_invoice_description_template"
@@ -663,12 +664,18 @@
    "fieldname": "is_refund_account",
    "fieldtype": "Check",
    "label": "Is Refund Account"
+  },
+  {
+   "description": "We use this field to group by tax summary in commercial invoice report",
+   "fieldname": "custom_commercial_group_by_key",
+   "fieldtype": "Data",
+   "label": "Commercial Tax Invoice Tax Label Group By Key"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-10-19 15:32:30.230271",
+ "modified": "2024-10-22 11:14:47.468295",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",
