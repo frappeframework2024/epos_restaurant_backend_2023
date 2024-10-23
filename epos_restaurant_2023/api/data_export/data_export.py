@@ -19,7 +19,6 @@ import base64
 from openpyxl.drawing.image import Image
 from PIL import Image as PILImage  # Import Pillow
 
-
 min_chart_image_width = 1000
 max_chart_image_width = 1500
 max_chart_image_height = 350
@@ -28,6 +27,7 @@ max_chart_image_height = 350
 setting_doc = None
 report_data_row = 25
 has_summary_kpi = False
+
 
 @frappe.whitelist()
 def export_excel(report_name="Reservation List Report",report_data=None,chart_image=None,filters_html=None,filters = None):
@@ -154,9 +154,6 @@ def export_excel(report_name="Reservation List Report",report_data=None,chart_im
     frappe.local.response.type = "binary"
     frappe.local.response.filename = filename
 
-
-
-
     # wb.save(file_path)
 
     # # Create a URL for the file to be accessed from the browser
@@ -167,7 +164,6 @@ def export_excel(report_name="Reservation List Report",report_data=None,chart_im
 
 def render_report_letter_head(ws1,filters,columns):
     info = get_business_information(filters)
-
     row_index = 1
     total_column  =  len(columns) + 1# include No Column
     if total_column<setting_doc.min_column:
@@ -183,7 +179,7 @@ def render_report_letter_head(ws1,filters,columns):
     ws1.merge_cells(f'A{row_index}:{end_merge_cell}{row_index}') 
     header_cell = f'A{row_index}'
     ws1[header_cell] = info.get("header")
-    ws1[header_cell].font = Font(name="Times New Roman",size=24,color=("#9a5e6f").replace("#",""))  
+    ws1[header_cell].font = Font(name="Times New Roman",size=24,color=(setting_doc.report_letter_head_color or "#1c1c1c").replace("#",""))  
     ws1[header_cell].alignment = Alignment(vertical='center',horizontal= "center" )
 
 
@@ -214,8 +210,8 @@ def render_report_letter_head(ws1,filters,columns):
         ws1.add_image(img, 'A1')  # Puts the image in cell A1
 
 
+
 def render_header(ws1, report_name,columns):
-    
     row_index = setting_doc.report_title_start_row
     total_column  = len(columns) + 1# include No Column
     if total_column<setting_doc.min_column:
