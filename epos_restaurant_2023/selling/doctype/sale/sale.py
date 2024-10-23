@@ -350,13 +350,24 @@ class Sale(Document):
 		## set pos reservation status to checked out
 		update_pos_reservation_status(self)
 
-		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.create_folio_transaction_from_pos_trnasfer", queue='short', self=self)
-		update_inventory_on_submit(self)
-		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit", queue='short', self=self)
-
-		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.add_payment_to_sale_payment", queue='short', self=self)
+		#update inventory
+		is_update_inventory = False
+		if self.pos_profile:
+			enable_calculate_inventory_on_sale = frappe.get_cached_value("POS Profile",self.pos_profile,"enable_calculate_inventory_on_sale")
+			if enable_calculate_inventory_on_sale:
+				is_update_inventory = True
+		else:
+			is_update_inventory = True
+		
+		if is_update_inventory:
+			update_inventory_on_submit(self)
+		#end update inventory
 
 		update_customer_bill_balance(self)
+
+		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.create_folio_transaction_from_pos_trnasfer", queue='short', self=self)
+		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit", queue='short', self=self)
+		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.add_payment_to_sale_payment", queue='short', self=self)
 		
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			submit_sale_to_general_ledger_entry(self)
@@ -380,21 +391,28 @@ class Sale(Document):
 		on_sale_delete_update(self)
 		sql_delete_bulk = """ delete from `tabBulk Sale` where sale = '{}' """.format(self.name)
 		# frappe.throw(sql_delete_bulk)
-		frappe.db.sql(sql_delete_bulk)
-		
+		frappe.db.sql(sql_delete_bulk)		
 
 		update_customer_bill_balance(self)
 
 		# update to folio transaction
-
 		update_pos_pay_to_room_adjustment(self)
 
 		# delete payment from POS Sale Payment
 		frappe.db.sql("delete from `tabPOS Sale Payment` where parent = '{}'".format(self.name))
-		
-
 		frappe.db.commit()
-		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel", queue='short', self=self)
+
+		is_update_inventory = False
+		if self.pos_profile:
+			enable_calculate_inventory_on_sale = frappe.get_cached_value("POS Profile",self.pos_profile,"enable_calculate_inventory_on_sale")
+			if enable_calculate_inventory_on_sale:
+				is_update_inventory = True
+		else:
+			is_update_inventory = True
+		
+		if is_update_inventory:
+			update_inventory_on_cancel(self)
+		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel", queue='short', self=self)
 
 def update_pos_pay_to_room_adjustment(self):
 

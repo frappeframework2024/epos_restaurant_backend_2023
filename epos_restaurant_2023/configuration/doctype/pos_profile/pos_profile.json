@@ -22,6 +22,7 @@
   "tax_rule",
   "default_pos_menu",
   "default_sale_type",
+  "enable_calculate_inventory_on_sale",
   "column_break_12",
   "pos_config",
   "pos_branding",
@@ -241,11 +242,17 @@
    "fieldname": "base_unit_popup",
    "fieldtype": "Check",
    "label": "Base Unit Popup"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_calculate_inventory_on_sale",
+   "fieldtype": "Check",
+   "label": "Enable Calculate Inventory On Sale"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-19 10:33:07.164522",
+ "modified": "2024-10-23 13:45:30.447936",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Profile",
