@@ -11,9 +11,10 @@ def add_to_inventory_transaction(data):
 @frappe.whitelist()
 def get_stock_location_by_pos_profile(product_code,pos_profile,stock_location):
     current_stock_location = stock_location
-    data = frappe.get_value('Product Inventory Location', {'parent':product_code,'pos_profile':pos_profile}, ['stock_location'], as_dict=1)
-    if data:
-        current_stock_location = data.stock_location
+    if pos_profile and product_code:
+        data = frappe.get_value('Product Inventory Location', {'parent':product_code,'pos_profile':pos_profile}, ['stock_location'], as_dict=1)
+        if data:
+            current_stock_location = data.stock_location
     return current_stock_location
 
 @frappe.whitelist()
