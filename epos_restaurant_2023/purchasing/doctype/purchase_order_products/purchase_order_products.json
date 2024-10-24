@@ -43,6 +43,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Product Code",
+   "link_filters": "[[{\"fieldname\":\"product_code\",\"field_option\":\"Product\"},\"allow_purchase\",\"=\",1]]",
    "options": "Product",
    "reqd": 1
   },
@@ -224,7 +225,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-08 17:28:35.110154",
+ "modified": "2024-10-24 11:08:00.044358",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order Products",

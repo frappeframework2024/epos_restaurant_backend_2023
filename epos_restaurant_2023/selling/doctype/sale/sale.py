@@ -258,21 +258,9 @@ class Sale(Document):
 		## update cash coupon information
 		on_update_coupon_information(self)
 	def before_save(self):
-		#update profit for commission
-		total_cost = 0
-		total_second_cost = 0
-		for p in self.sale_products:
-			uom_conversion = get_uom_conversion(p.base_unit, p.unit)
-			total_cost += (get_product_cost(self.stock_location, p.product_code)/uom_conversion) * p.quantity
-			total_second_cost += ((frappe.db.get_value('Product',{'product_code':p.product_code}, 'secondary_cost')/uom_conversion)* p.quantity)
-		self.sale_grand_total = self.grand_total
-		self.sale_profit = self.grand_total - total_cost
-		self.total_secondary_cost = total_second_cost
-		self.second_sale_profit = self.grand_total - total_second_cost
-		self.total_cost = total_cost
-		self.profit = self.grand_total - total_cost
-		self.second_profit = self.grand_total - total_second_cost
-		update_inventory_product_cost(self)
+		update_sale_sale_product_cost(self)
+
+
 	# Generata Bill Number On Insert
 	def before_insert(self):
 		if self.pos_profile:
@@ -300,14 +288,13 @@ class Sale(Document):
 		update_status(self)
 
 	def before_submit(self):
+		update_sale_sale_product_cost(self)
 		
 		if self.flags.ignore_before_submit == True:
 			return 
 		on_get_revenue_account_code(self)
-
 		self.append_quantity = None
 		self.scan_barcode = None
-
 		# generate custom bill format
 		if not self.custom_bill_number:
 				if self.pos_profile:
@@ -413,6 +400,29 @@ class Sale(Document):
 		if is_update_inventory:
 			update_inventory_on_cancel(self)
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel", queue='short', self=self)
+
+#update sale and sale product cost / cross profit
+def update_sale_sale_product_cost(self):
+	#update profit for commission
+	total_cost = 0
+	total_second_cost = 0
+	for p in self.sale_products:
+		sale_product_stock_location = get_stock_location_by_pos_profile(p.product_code,self.pos_profile,self.stock_location)
+		uom_conversion = get_uom_conversion(p.base_unit, p.unit)
+		_sale_product_cost = (get_product_cost(sale_product_stock_location, p.product_code)/uom_conversion) * p.quantity
+		## update sale product cost 
+		p.cost = _sale_product_cost
+
+		total_cost += _sale_product_cost
+		total_second_cost += ((frappe.db.get_value('Product',{'product_code':p.product_code}, 'secondary_cost')/uom_conversion)* p.quantity)
+	self.sale_grand_total = self.grand_total
+	self.sale_profit = self.grand_total - total_cost
+	self.total_secondary_cost = total_second_cost
+	self.second_sale_profit = self.grand_total - total_second_cost
+	self.total_cost = total_cost
+	self.profit = self.grand_total - total_cost
+	self.second_profit = self.grand_total - total_second_cost 
+
 
 def update_pos_pay_to_room_adjustment(self):
 
@@ -576,7 +586,8 @@ def update_inventory_on_submit(self):
 	for p in self.sale_products:
 		if p.is_inventory_product:
 			uom_conversion = get_uom_conversion(p.base_unit, p.unit)
-			cost = get_product_cost(self.stock_location, p.product_code) / uom_conversion
+			sale_product_stock_location = get_stock_location_by_pos_profile(p.product_code,self.pos_profile,self.stock_location)
+			cost = get_product_cost(sale_product_stock_location, p.product_code) / uom_conversion
 			add_to_inventory_transaction({
 				'doctype': 'Inventory Transaction',
 				'transaction_type':"Sale",
@@ -585,7 +596,7 @@ def update_inventory_on_submit(self):
 				'product_code': p.product_code,
 				'portion':p.portion,
 				'unit':p.unit,
-				'stock_location': get_stock_location_by_pos_profile(p.product_code,self.pos_profile,self.stock_location),
+				'stock_location': sale_product_stock_location,
 				'out_quantity':p.quantity / uom_conversion,
 				"uom_conversion":uom_conversion,
 				'note': 'New sale submitted.',
@@ -594,16 +605,15 @@ def update_inventory_on_submit(self):
 		else:
 			doc = frappe.get_cached_doc("Product",p.product_code)
 			#check if product has receipt and loop update from product receip
+			update_product_recipe_to_inventory(self,doc, p.quantity, "Submit")	
 
-			update_product_recipe_to_inventory(self,doc, p.quantity, "Submit")		
-
-			#udpate cost for none stock product
-			
+			#udpate cost for none stock product			
 			cost = doc.cost or 0
 			if doc.product_price:
 				prices = Enumerable(doc.product_price).where(lambda x:x.business_branch == self.business_branch and x.price_rule == self.price_rule and x.unit == "Unit" and x.portion ==p.portion).first_or_default()
 				if prices:
 					cost = prices.cost
+
 		#check if product have modifier then check receipt in modifer and update to inventory
 		if p.modifiers_data:
 			for m in json.loads(p.modifiers_data):
@@ -631,7 +641,7 @@ def update_inventory_on_submit(self):
 		if p.is_combo_menu:
 			update_combo_menu_to_inventory(self,p,"Submit")
 		
-		frappe.db.sql("update `tabSale Product` set cost = {} where name='{}'".format(cost, p.name))
+		#frappe.db.sql("update `tabSale Product` set cost = {} where name='{}'".format(cost, p.name))
    
 	#update total cost to sale and profit to sale
 	total_cost = 0
@@ -671,9 +681,9 @@ def update_product_recipe_to_inventory(self,product,base_quantity,action):
 def update_combo_menu_to_inventory(self, product,action):
 	if product.is_combo_menu:
 		combo_menu_data = json.loads(product.combo_menu_data)
-		update_combo_menu_to_inventor_transaction(self,product,action, combo_menu_data)
+		update_combo_menu_to_inventory_transaction(self,product,action, combo_menu_data)
 			
-def update_combo_menu_to_inventor_transaction(self,product,action,combo_menu_data):
+def update_combo_menu_to_inventory_transaction(self,product,action,combo_menu_data):
 	for p in combo_menu_data:
 		doc = frappe.get_cached_doc("Product",p["product_code"])
 		if doc.is_inventory_product:
@@ -1395,17 +1405,6 @@ def update_default_change_account(self):
 			self.default_change_account = frappe.get_cached_value("Business Branch",self.business_branch,"default_change_account" )
 
         
-def update_inventory_product_cost(self):
-	is_inventory = 0
-	for d in self.sale_products:
-		if d.is_inventory_product == 1:
-			is_inventory += 1
-	if is_inventory>0:
-		for sp in [x for x in self.sale_products if x.is_inventory_product ==1]:
-			cost = get_product_cost(self.stock_location, sp.product_code)
-			uom_conversion = get_uom_conversion(sp.base_unit,sp.unit)
-			if cost:
-				sp.cost = (cost / uom_conversion)
     
 def update_customer_bill_balance(self):
 	sql ="""update `tabCustomer` c 

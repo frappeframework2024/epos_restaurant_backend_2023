@@ -150,6 +150,7 @@ def submit_sale_to_general_ledger_entry(self):
 		docs.append(doc)
 
 	# cost of good sold account
+	
 	if sum([d.quantity* (d.cost or 0) for d in self.sale_products if d.is_inventory_product==1]):	
 
 		if not self.default_cost_of_goods_sold_account:
