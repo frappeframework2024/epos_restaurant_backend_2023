@@ -607,6 +607,8 @@ def update_inventory_on_submit(self):
 			#check if product has receipt and loop update from product receip
 			update_product_recipe_to_inventory(self,doc, p.quantity, "Submit")	
 
+
+
 			#udpate cost for none stock product			
 			cost = doc.cost or 0
 			if doc.product_price:
@@ -617,7 +619,6 @@ def update_inventory_on_submit(self):
 		#check if product have modifier then check receipt in modifer and update to inventory
 		if p.modifiers_data:
 			for m in json.loads(p.modifiers_data):
-
 				modifier_doc = frappe.get_cached_doc("Modifier Code",m['modifier'])
 				for d in modifier_doc.product_recipe:
 					if d.is_inventory_product:
