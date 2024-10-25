@@ -1888,3 +1888,24 @@ def get_product_activity_log(doctype,product):
 		order by communication_date asc"""
 		,{"name":product,"doctype":doctype}))
 
+@frappe.whitelist()
+def get_pos_profile_for_switch(pos_station,current_pos_profile,business_branch):
+    
+    sql = """select 
+        sp.pos_profile as `name` 
+    from `tabStation POS Profile` sp 
+    where 1 = 1
+    and sp.is_edoor_profile = 0
+    and sp.business_branch = %(business_branch)s
+    and sp.parent = %(station)s 
+    and sp.pos_profile != %(pos_profile)s"""
+
+    data = frappe.db.sql(sql,{
+        "station":pos_station, 
+        "pos_profile":current_pos_profile,
+        "business_branch":business_branch
+        }, as_dict=1)
+    
+    return data
+
+

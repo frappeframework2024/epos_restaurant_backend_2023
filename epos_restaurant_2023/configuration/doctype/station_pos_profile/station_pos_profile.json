@@ -1,0 +1,49 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-10-25 11:18:39.835549",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "pos_profile",
+  "business_branch",
+  "is_edoor_profile"
+ ],
+ "fields": [
+  {
+   "fieldname": "pos_profile",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "POS Profile",
+   "options": "POS Profile"
+  },
+  {
+   "fetch_from": "pos_profile.business_branch",
+   "fieldname": "business_branch",
+   "fieldtype": "Data",
+   "label": "Business Branch",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fetch_from": "pos_profile.is_edoor_profile",
+   "fieldname": "is_edoor_profile",
+   "fieldtype": "Check",
+   "label": "Is eDoor Profile",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-10-25 14:16:20.395673",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "Station POS Profile",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

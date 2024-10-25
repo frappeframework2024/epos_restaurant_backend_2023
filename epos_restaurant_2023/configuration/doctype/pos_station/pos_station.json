@@ -53,6 +53,9 @@
   "show_button_delete_item_on_order_station",
   "show_rate_include_button",
   "print_invoice_on_submit",
+  "switch_pos_profile_tab",
+  "pos_profiles_section",
+  "table_grlz",
   "printers_tab",
   "default_kod_id",
   "default_kod",
@@ -349,11 +352,26 @@
    "fieldname": "show_option_quick_pay_payment_type",
    "fieldtype": "Check",
    "label": "Show Option Quick Pay Payment Type"
+  },
+  {
+   "fieldname": "switch_pos_profile_tab",
+   "fieldtype": "Tab Break",
+   "label": "Switch POS Profile"
+  },
+  {
+   "fieldname": "pos_profiles_section",
+   "fieldtype": "Section Break",
+   "label": "POS Profiles"
+  },
+  {
+   "fieldname": "table_grlz",
+   "fieldtype": "Table",
+   "options": "Station POS Profile"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-19 08:38:50.010333",
+ "modified": "2024-10-25 13:44:23.601736",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

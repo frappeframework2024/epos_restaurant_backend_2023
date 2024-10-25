@@ -39,14 +39,20 @@ const props = defineProps({
 
 
 const posProfiles = ref([])
-
-
-db.getDocList("POS Profile",{
-  fields: ['name'],
-  filters: [['name', '!=', localStorage.getItem("pos_profile")],['is_edoor_profile', '=', 0],["business_branch","=",gv.setting.business_branch]],
-}).then((docs) => {
-  posProfiles.value=docs
+call.get("epos_restaurant_2023.api.api.get_pos_profile_for_switch",{
+  pos_station: localStorage.getItem('device_name'),
+  current_pos_profile: localStorage.getItem("pos_profile"),
+  business_branch:gv.setting.business_branch
+}).then((res)=>{
+  posProfiles.value = res.message
 }).catch((error) => console.error(error));
+
+// db.getDocList("POS Profile",{
+//   fields: ['name'],
+//   filters: [['name', '!=', localStorage.getItem("pos_profile")],['is_edoor_profile', '=', 0],["business_branch","=",gv.setting.business_branch]],
+// }).then((docs) => {
+//   posProfiles.value=docs
+// }).catch((error) => console.error(error));
 
 async function onPOSProfileClick(profile){
   if (await confirm({ title: $t("Switch POS Profile"), text: $t("Please make sure to switch the POS profile") })) {
