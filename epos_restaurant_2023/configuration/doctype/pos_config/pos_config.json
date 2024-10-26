@@ -61,9 +61,11 @@
   "delete_bill_required_note",
   "section_break_28",
   "cancel_print_bill_required_password",
-  "cancel_print_bill_required_note",
   "column_break_30",
   "allow_change_quantity_after_submit",
+  "section_break_scrc",
+  "cancel_print_bill_required_note",
+  "column_break_ldje",
   "allow_append_quantity_after_submit",
   "section_break_20",
   "free_item_required_password",
@@ -79,16 +81,20 @@
   "delete_item_required_note",
   "section_break_34",
   "discount_item_required_password",
-  "cancel_discount_item_required_password",
   "section_break_36",
   "discount_item_required_note",
+  "section_break_dcke",
+  "cancel_discount_item_required_password",
+  "column_break_dysj",
   "cancel_discount_item_required_note",
   "section_break_38",
-  "discount_sale_required_password",
-  "cancel_discount_sale_required_password",
   "manual_percent_discount_required_password",
+  "discount_sale_required_password",
   "column_break_40",
   "discount_sale_required_note",
+  "section_break_htkz",
+  "cancel_discount_sale_required_password",
+  "column_break_ihni",
   "cancel_discount_sale_required_note",
   "section_break_42",
   "change_tax_setting_required_password",
@@ -100,7 +106,7 @@
   "order_station_open_order_required_password",
   "section_break_44",
   "change_price_rule_require_password",
-  "section_break_53",
+  "column_break_thal",
   "open_cashdrawer_require_password",
   "section_break_58",
   "edit_closed_receipt_required_password",
@@ -108,23 +114,24 @@
   "edit_closed_receipt_required_note",
   "section_break_61",
   "start_working_day_required_password",
-  "section_break_64",
+  "column_break_gack",
   "close_working_day_required_password",
   "section_break_66",
   "start_cashier_shift_required_password",
+  "column_break_sqyf",
+  "close_cashier_shift_required_password",
   "section_break_kktb",
   "delete_voucher_top_up_required_password",
   "column_break_twzh",
   "add_voucher_top_up_required_password",
-  "section_break_68",
-  "close_cashier_shift_required_password",
-  "section_break_rrup",
-  "park_item_required_password",
   "section_break_70",
   "cash_in_check_out_required_password",
+  "column_break_umeh",
   "use_guest_cover",
   "section_break_sibg",
   "switch_pos_profile_required_password",
+  "column_break_smcp",
+  "park_item_required_password",
   "section_break_ocjr",
   "apply_rate_include_tax_required_password",
   "column_break_oqhs",
@@ -480,10 +487,6 @@
    "label": "Change Price Rule Require Password"
   },
   {
-   "fieldname": "section_break_53",
-   "fieldtype": "Section Break"
-  },
-  {
    "default": "0",
    "fieldname": "open_cashdrawer_require_password",
    "fieldtype": "Check",
@@ -520,10 +523,6 @@
    "label": "Start Working Day Required Password"
   },
   {
-   "fieldname": "section_break_64",
-   "fieldtype": "Section Break"
-  },
-  {
    "default": "0",
    "fieldname": "close_working_day_required_password",
    "fieldtype": "Check",
@@ -538,10 +537,6 @@
    "fieldname": "start_cashier_shift_required_password",
    "fieldtype": "Check",
    "label": "Start Cashier Shift Required Password"
-  },
-  {
-   "fieldname": "section_break_68",
-   "fieldtype": "Section Break"
   },
   {
    "default": "0",
@@ -654,10 +649,6 @@
    "fieldtype": "Check",
    "label": "Show Park Item",
    "options": "0"
-  },
-  {
-   "fieldname": "section_break_rrup",
-   "fieldtype": "Section Break"
   },
   {
    "default": "0",
@@ -816,12 +807,56 @@
    "fieldname": "allow_change_table_after_print_bill",
    "fieldtype": "Check",
    "label": "Allow change table after print bill"
+  },
+  {
+   "fieldname": "section_break_scrc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_ldje",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_dcke",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_dysj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_htkz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_ihni",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_thal",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_gack",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_sqyf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_umeh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_smcp",
+   "fieldtype": "Column Break"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-11 14:13:38.634886",
+ "modified": "2024-10-26 09:49:25.300907",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",
