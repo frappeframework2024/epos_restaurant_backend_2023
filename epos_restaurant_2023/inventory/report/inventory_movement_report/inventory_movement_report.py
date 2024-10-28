@@ -265,7 +265,7 @@ def get_sql_data(filters,row_group,report_fields=None):
 					a.product_name, 
 					a.stock_unit,
 					a.product_category,
-					a.product_group,
+					coalesce(a.product_group,'None Group') as product_group,
 					a.business_branch,
 					a.stock_location,		
 					max(a.creation) as _max_creation,
@@ -278,7 +278,7 @@ def get_sql_data(filters,row_group,report_fields=None):
 					a.product_name, 
 					a.stock_unit,
 					a.product_category,
-					a.product_group,
+					coalesce(a.product_group,'None Group') as product_group,
 					a.business_branch,
 					a.stock_location	
 			)
