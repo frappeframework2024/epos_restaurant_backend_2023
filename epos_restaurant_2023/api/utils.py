@@ -60,9 +60,8 @@ def validate_queue_job_status(doc, method=None, *args, **kwargs):
             frappe.throw("Schedule job status is not running. Please contact your system administrator.")
 
 def successful_login(login_manager):
-    host = frappe.get_request_header("host")
-    ip = frappe.local.request_ip
-    # frappe.throw("Client: "+str(ip)+" / Host: "+str(host))
+    frappe.msgprint("login success")
+    
 
 @frappe.whitelist()
 def generate_data_for_sync_record(doc, method=None, *args, **kwargs):
@@ -303,12 +302,22 @@ def re_run_fail_jobs():
             jobs =  sorted(jobs, key=lambda j: j.modified, reverse=order_desc)
             jobs = [d for d in jobs if "exc_info" in d]
             job_names=["epos_restaurant_2023.api.utils."]
-            jobs = [d for d in jobs  if  ( d["job_name"] in job_names or  "Deadlock found when trying"  in  d["exc_info"] or 'Network is unreachable' in d['exc_info'] or "Lock wait timeout exceeded"  in  d["exc_info"] or "Document has been modified after you have opened it" in d["exc_info"] or "zerobalance" in d["exc_info"] or "Task exceeded maximum timeout value" in d["exc_info"] or "timeout" in d["exc_info"] or "object has no attribute" in d["exc_info"] or "object is not subscriptable" in d["exc_info"]) ]
+            jobs = [d for d in jobs]
             job_ids = []
-            
+            already_check_docs=[]
             for j in jobs:
                 try:
                     job =   json.loads(j["arguments"])
+                    if job['kwargs']['self']['name'] not in already_check_docs:
+                        already_check_docs.append(job['kwargs']['self']['name'])
+                except Exception as e:
+                    frappe.throw(str(e))
+            return already_check_docs
+            for j in jobs:
+                try:
+                    job =   json.loads(j["arguments"])
+                    if job['kwargs']['doc']['name'] not in already_check_docs:
+                        already_check_docs.append(job['kwargs']['doc']['name'])
                     #Retry Here
                     if job['job_name'] == "epos_restaurant_2023.api.utils.sync_data_to_server":
                         frappe.enqueue('epos_restaurant_2023.api.utils.sync_data_to_server',doc=frappe.get_doc(job['kwargs']['doc']),extra_action=job['kwargs']['extra_action'] if job['kwargs'].get('extra_action') else '[]',action=job['kwargs']['action'])
