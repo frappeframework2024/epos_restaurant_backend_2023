@@ -17,7 +17,7 @@
  "margin_left": 0.0,
  "margin_right": 0.0,
  "margin_top": 0.0,
- "modified": "2024-05-14 09:58:20.217364",
+ "modified": "2024-10-28 17:13:35.033019",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "Commercial Tax Invoice A4",
@@ -28,5 +28,6 @@
  "print_format_type": "Jinja",
  "raw_printing": 0,
  "show_section_headings": 0,
+ "show_sort_order_option": 0,
  "standard": "Yes"
 }
