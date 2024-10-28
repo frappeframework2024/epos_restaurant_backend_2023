@@ -317,6 +317,9 @@ def re_run_fail_jobs():
                         
                         job_ids.append(j["job_id"])
                         remove_failed_jobs(job_ids)
+                    else:
+                        job_ids.append(j["job_id"])
+                        remove_failed_jobs(job_ids)
                 except Exception as e:
                     frappe.throw(str(e))
             return job_ids
