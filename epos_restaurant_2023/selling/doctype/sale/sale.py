@@ -562,7 +562,7 @@ def update_status(self):
 				status = "Partially Paid"
 			else:
 				status = "Unpaid"
-		self.status = status
+		frappe.db.set_value('Sale', self.name, 'status', status, update_modified=False)
     
 def on_sale_delete_update(self):
 	spa_commission = "update `tabSale Product SPA Commission` set is_deleted = 1  where sale = '{}'".format(self.name)			
