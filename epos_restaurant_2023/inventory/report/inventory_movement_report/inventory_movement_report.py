@@ -241,22 +241,6 @@ def get_sql_data(filters,row_group,report_fields=None):
  		coalesce(a.product_group,'None Group'), 
 		a.stock_location,
 		a.business_branch"""
-	
-	if row_group == "product_category":
-		_group_by = """a.product_category,
- 		coalesce(a.product_group,'None Group'), 
-		a.stock_location,
-		a.business_branch"""
-	elif row_group == "product_group":
-		_group_by = """coalesce(a.product_group,'None Group'), 
-		a.stock_location,
-		a.business_branch"""
-	elif row_group == "stock_location":
-		_group_by = """a.stock_location,
-		a.business_branch"""
-	elif row_group =="":
-		_group_by = """a.business_branch"""
-	
 	fields = """a.product_code,
  		a.product_name, 
 		a.stock_unit,
@@ -264,20 +248,31 @@ def get_sql_data(filters,row_group,report_fields=None):
  		coalesce(a.product_group,'None Group') as product_group, 
 		a.stock_location,
 		a.business_branch"""
+	
 	if row_group == "product_category":
+		_group_by = """a.product_category,
+ 		coalesce(a.product_group,'None Group'), 
+		a.stock_location,
+		a.business_branch"""
 		fields = """a.product_category,
  		coalesce(a.product_group,'None Group') as product_group, 
 		a.stock_location,
 		a.business_branch"""
 	elif row_group == "product_group":
+		_group_by = """coalesce(a.product_group,'None Group'), 
+		a.stock_location,
+		a.business_branch"""
 		fields = """coalesce(a.product_group,'None Group') as product_group, 
 		a.stock_location,
 		a.business_branch"""
 	elif row_group == "stock_location":
+		_group_by = """a.stock_location,
+		a.business_branch"""
 		fields = """a.stock_location,
 		a.business_branch"""
 	elif row_group =="":
-		fields = """a.business_branch"""
+		_group_by = """a.business_branch"""
+		fields = """a.business_branch"""		
 
 	_filter =  get_filter_condition(filters)
 	##query prev on hand quantity
