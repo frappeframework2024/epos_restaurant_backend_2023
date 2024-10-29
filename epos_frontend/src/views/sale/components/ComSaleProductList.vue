@@ -90,7 +90,8 @@
                                     </span>
 
                                 </div>
-                                <v-chip color="blue" size="x-small" v-if="sp.seat_number"> {{ $t('Seat') + "# " + sp.seat_number }}</v-chip>
+                                <v-chip color="green" size="small" v-if="sp.seat_number"> {{ $t('Seat') + "# " + sp.seat_number }}</v-chip>
+
                                 <div class="text-gray-500">
                                     <v-icon icon="mdi-clock" size="small" class="mr-1"></v-icon><span>{{ moment(sp.creation).format('hh:mm:ss A') }}</span>
                                 </div>

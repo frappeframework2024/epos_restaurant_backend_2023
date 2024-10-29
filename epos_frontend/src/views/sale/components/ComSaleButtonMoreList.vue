@@ -301,11 +301,9 @@ function onOpenCashDrawer() {
 }
 }
 async function onSeatNumber() {
-    if (!sale.isBillRequested()) {
-        const result = await keyboardDialog({ title: $t('Change Seat Number'), type: 'number', value: sale.sale.seat_number });
-
+    if (!sale.isBillRequested()) { 
+        const result = await keyboardDialog({ title: $t('Change Seat Number'), type: 'number', value: sale.sale.seat_number }); 
         if (typeof result == 'number') {
-
             sale.sale.seat_number = parseInt(result);
             if (sale.sale.seat_number == undefined || isNaN(sale.sale.seat_number)) {
                 sale.sale.seat_number = 0;

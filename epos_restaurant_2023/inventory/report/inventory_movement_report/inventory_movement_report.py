@@ -217,7 +217,7 @@ def get_conditions(filters,group_filter=None):
 	conditions += " AND a.transaction_date between '{}' AND '{}'".format(start_date,end_date)
 
 	if filters.get("product_group"):
-		conditions += " AND a.product_group in %(product_group)s"
+		conditions += " AND coalesce(a.product_group,'None Group') in %(product_group)s"
 
 	if filters.get("product_category"):
 		conditions += " AND a.product_category in %(product_category)s"
@@ -238,17 +238,17 @@ def get_sql_data(filters,row_group,report_fields=None):
  		a.product_name, 
 		a.stock_unit,
 		a.product_category,
- 		a.product_group, 
+ 		coalesce(a.product_group,'None Group'), 
 		a.stock_location,
 		a.business_branch"""
 	
 	if row_group == "product_category":
 		_group_by = """a.product_category,
- 		a.product_group, 
+ 		coalesce(a.product_group,'None Group'), 
 		a.stock_location,
 		a.business_branch"""
 	elif row_group == "product_group":
-		_group_by = """a.product_group, 
+		_group_by = """coalesce(a.product_group,'None Group'), 
 		a.stock_location,
 		a.business_branch"""
 	elif row_group == "stock_location":
@@ -256,6 +256,28 @@ def get_sql_data(filters,row_group,report_fields=None):
 		a.business_branch"""
 	elif row_group =="":
 		_group_by = """a.business_branch"""
+	
+	fields = """a.product_code,
+ 		a.product_name, 
+		a.stock_unit,
+		a.product_category,
+ 		coalesce(a.product_group,'None Group') as product_group, 
+		a.stock_location,
+		a.business_branch"""
+	if row_group == "product_category":
+		fields = """a.product_category,
+ 		coalesce(a.product_group,'None Group') as product_group, 
+		a.stock_location,
+		a.business_branch"""
+	elif row_group == "product_group":
+		fields = """coalesce(a.product_group,'None Group') as product_group, 
+		a.stock_location,
+		a.business_branch"""
+	elif row_group == "stock_location":
+		fields = """a.stock_location,
+		a.business_branch"""
+	elif row_group =="":
+		fields = """a.business_branch"""
 
 	_filter =  get_filter_condition(filters)
 	##query prev on hand quantity
@@ -284,14 +306,14 @@ def get_sql_data(filters,row_group,report_fields=None):
 			)
 			, b as(
 				select	
-					{0},
+					{4},
 					sum((select x.balance from `tabInventory Transaction` x where x.creation = a._max_creation and x.stock_location = a.stock_location )) as prev_on_hand
 				from inventory_transaction a
 				group by 
 					{0}
 				union
 				select 
-					{0}, 
+					{4}, 
 					0 as prev_on_hand
 				from `tabInventory Transaction` a 
 				where {1}
@@ -299,11 +321,11 @@ def get_sql_data(filters,row_group,report_fields=None):
 				group by 
 					{0}
 			)select
-					{0}, 
+					{4}, 
 					sum(a.prev_on_hand)  as prev_on_hand
 			from b as a
 			group by
-					{0}""".format(_group_by, _filter, filters.start_date, filters.end_date )
+					{0}""".format(_group_by, _filter, filters.start_date, filters.end_date, fields)
 	docs = frappe.db.sql(sql,filters, as_dict=1)
 
 	# ## get current filter
@@ -390,7 +412,7 @@ def get_sql_data(filters,row_group,report_fields=None):
 def get_filter_condition(filters):
 	conditions = " 1 = 1 " 
 	if filters.get("product_group"):
-		conditions += " AND a.product_group in %(product_group)s"
+		conditions += " AND coalesce(a.product_group,'None Group') in %(product_group)s"
 
 	if filters.get("product_category"):
 		conditions += " AND a.product_category in %(product_category)s"

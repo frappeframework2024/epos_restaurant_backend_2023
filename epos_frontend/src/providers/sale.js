@@ -1417,9 +1417,15 @@ export default class Sale {
     async onSaleProductSetSeatNumber(sp) {
         if (!this.isBillRequested()) {
             const result = await keyboardDialog({ title: $t("Set Seat Number"), type: 'number', value: sp.seat_number })
-            if (result != false) {
-                sp.seat_number = result
-                socket.emit("ShowOrderInCustomerDisplay", this.sale);
+            if (typeof result == 'number') {
+                sp.seat_number = parseInt(result);
+                if (sp.seat_number == undefined || isNaN(sp.seat_number)) {
+                    sp.seat_number = 0;
+                    socket.emit("ShowOrderInCustomerDisplay", this.sale);
+                }
+        
+            } else {
+                return;
             }
         }
     }
