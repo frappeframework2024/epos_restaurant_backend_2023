@@ -278,7 +278,7 @@ def get_sql_data(filters,row_group,report_fields=None):
 					a.product_name, 
 					a.stock_unit,
 					a.product_category,
-					coalesce(a.product_group,'None Group') as product_group,
+					coalesce(a.product_group,'None Group'),
 					a.business_branch,
 					a.stock_location	
 			)
@@ -304,7 +304,6 @@ def get_sql_data(filters,row_group,report_fields=None):
 			from b as a
 			group by
 					{0}""".format(_group_by, _filter, filters.start_date, filters.end_date )
-	
 	docs = frappe.db.sql(sql,filters, as_dict=1)
 
 	# ## get current filter
