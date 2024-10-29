@@ -38,8 +38,25 @@ frappe.query_reports["Sale Summary Report"] = {
 			"options": ["Fiscal Year","This Month", "Date Range"],
 			"default": ["This Month"],
 			"reqd": 1,
-			on_change: function() {
+			on_change: function() { 
 				let filter_based_on = frappe.query_report.get_filter_value('filter_based_on');
+				
+				//update select date filter 
+				if(filter_based_on=="Fiscal Year"){
+					let from_fiscal_year = frappe.query_report.get_filter_value('from_fiscal_year');
+					frappe.query_report.set_filter_value("start_date", start_of_year(from_fiscal_year)); 					
+					frappe.query_report.set_filter_value("end_date", end_of_year(from_fiscal_year));
+					
+				}else if( filter_based_on =="This Month"){
+					let date = new Date()
+					frappe.query_report.set_filter_value("start_date", start_of_month(date)); 					
+					frappe.query_report.set_filter_value("end_date", end_of_month(date));
+				}else{
+					frappe.query_report.set_filter_value("start_date", date); 					
+					frappe.query_report.set_filter_value("end_date", date);
+				}
+				//end update select date filter
+
 				if(filter_based_on!="This Month"){ 
 					frappe.query_report.toggle_filter_display('from_fiscal_year', filter_based_on === 'Date Range');
 					frappe.query_report.toggle_filter_display('start_date', filter_based_on === 'Fiscal Year'  );
@@ -78,7 +95,14 @@ frappe.query_reports["Sale Summary Report"] = {
 			"fieldtype": "Int",
 			"default": (new Date()).getFullYear(),
 			"hide_in_filter":1,
-			"on_change": function (query_report) {},
+			"on_change": function (query_report) {
+				let filter_based_on = frappe.query_report.get_filter_value('filter_based_on');
+				if(filter_based_on=="Fiscal Year"){
+					let from_fiscal_year = frappe.query_report.get_filter_value('from_fiscal_year');
+					frappe.query_report.set_filter_value("start_date", start_of_year(from_fiscal_year)); 					
+					frappe.query_report.set_filter_value("end_date", end_of_year(from_fiscal_year));					
+				}
+			},
 		},
 		{
             fieldname: "pos_profile",
@@ -228,6 +252,26 @@ frappe.query_reports["Sale Summary Report"] = {
 	},
 	
 };
+
+function start_of_month(date)
+{
+    return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+function end_of_month(date)
+{
+	let lastDate = new Date(date.getFullYear(), date.getMonth() + 1, 0); 
+    return new Date(date.getFullYear(), date.getMonth(), lastDate.getDate() ) ;
+}
+
+function start_of_year(year)
+{
+    return new Date(year, 0, 1); // January 1st
+}
+function end_of_year(year)
+{
+    return new Date(year, 11, 31);// December 31st
+}
+
 function update_filter_options(filter_name, options, hideOptions) {
     let filter = frappe.query_report.get_filter(filter_name);
 
