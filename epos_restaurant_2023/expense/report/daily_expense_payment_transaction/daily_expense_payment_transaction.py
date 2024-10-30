@@ -96,7 +96,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 			a.total_paid,
 			a.balance,
    			a.payment_amount
-		FROM `tabExpense Payment` AS a
+		FROM `tabExpense Payments` AS a
 		WHERE
 			{}
 		

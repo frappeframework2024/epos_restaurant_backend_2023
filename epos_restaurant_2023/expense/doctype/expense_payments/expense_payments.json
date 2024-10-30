@@ -6,7 +6,12 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "default_account"
+  "payment_type",
+  "default_account",
+  "exchange_rate",
+  "input_amount",
+  "amount",
+  "note"
  ],
  "fields": [
   {
@@ -14,12 +19,42 @@
    "fieldtype": "Link",
    "label": "Default Account",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "payment_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Payment Type",
+   "options": "Payment Type"
+  },
+  {
+   "fetch_from": "payment_type.exchange_rate",
+   "fieldname": "exchange_rate",
+   "fieldtype": "Float",
+   "label": "Exchange Rate"
+  },
+  {
+   "fieldname": "input_amount",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Input Amount"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Long Text",
+   "label": "Note"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-30 14:26:13.804574",
+ "modified": "2024-10-30 14:30:07.141805",
  "modified_by": "Administrator",
  "module": "Expense",
  "name": "Expense Payments",

@@ -28,8 +28,8 @@
   "expense_item_section",
   "expense_items",
   "section_break_kqzp",
+  "payment_column",
   "payments",
-  "table_opti",
   "section_break_8",
   "total_quantity",
   "note",
@@ -165,13 +165,6 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "payments",
-   "fieldtype": "Table",
-   "label": "Payments",
-   "options": "Expense Payment",
-   "reqd": 1
-  },
-  {
    "fieldname": "sale",
    "fieldtype": "Link",
    "label": "Sale",
@@ -221,8 +214,14 @@
    "read_only": 1
   },
   {
-   "fieldname": "table_opti",
+   "fieldname": "payment_column",
+   "fieldtype": "Column Break",
+   "label": "Payment"
+  },
+  {
+   "fieldname": "payments",
    "fieldtype": "Table",
+   "label": "Expense Payments",
    "options": "Expense Payments"
   }
  ],
@@ -230,7 +229,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-30 14:26:40.011590",
+ "modified": "2024-10-30 14:34:07.782202",
  "modified_by": "Administrator",
  "module": "Expense",
  "name": "Expense",

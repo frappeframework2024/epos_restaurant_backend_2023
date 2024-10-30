@@ -23,7 +23,7 @@ frappe.ui.form.on("Expense", {
 		change_branch(frm)
 	},
 });
-frappe.ui.form.on('Expense Payment', {
+frappe.ui.form.on('Expense Payments', {
 	payment_type(frm,cdt,cdn){
 		let doc = locals[cdt][cdn];
 		frappe.call({

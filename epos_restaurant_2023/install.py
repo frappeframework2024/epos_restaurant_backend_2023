@@ -284,7 +284,7 @@ def reset_data():
             frappe.db.sql("delete from `tabShift Type`")
             frappe.db.sql("delete from `tabEmployee Type`")
             frappe.db.sql("delete from `tabEmployee`")
-            frappe.db.sql("delete from `tabExpense Payment`")
+            frappe.db.sql("delete from `tabExpense Payments`")
             frappe.db.sql("delete from `tabExpense Item`")
             frappe.db.sql("delete from `tabExpense`")
             frappe.db.sql("delete from `tabExpense Category`")
