@@ -29,6 +29,7 @@
   "expense_items",
   "section_break_kqzp",
   "payments",
+  "table_opti",
   "section_break_8",
   "total_quantity",
   "note",
@@ -218,13 +219,18 @@
    "fieldtype": "Float",
    "label": "Exchange Rate",
    "read_only": 1
+  },
+  {
+   "fieldname": "table_opti",
+   "fieldtype": "Table",
+   "options": "Expense Payments"
   }
  ],
  "image_field": "attach_receipt",
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-09-02 17:24:52.889589",
+ "modified": "2024-10-30 14:26:40.011590",
  "modified_by": "Administrator",
  "module": "Expense",
  "name": "Expense",
