@@ -17,6 +17,7 @@
   "product_category",
   "revenue_group",
   "kitchen_group",
+  "kitchen_group_sort_order",
   "pos_reservation",
   "column_break_9",
   "unit",
@@ -242,10 +243,10 @@
   },
   {
    "fetch_from": "product_code.kitchen_group",
-   "fetch_if_empty": 1,
    "fieldname": "kitchen_group",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "label": "Kitchen Group",
+   "options": "Kitchen Group",
    "read_only": 1
   },
   {
@@ -1154,12 +1155,24 @@
    "fieldname": "qb_product_id",
    "fieldtype": "Data",
    "label": "QB Product ID"
+  },
+  {
+   "default": "0",
+   "fetch_from": "kitchen_group.sort_order",
+   "fieldname": "kitchen_group_sort_order",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Kitchen Group Sort Order",
+   "print_hide": 1,
+   "print_hide_if_no_value": 1,
+   "read_only": 1,
+   "report_hide": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-16 16:00:17.149155",
+ "modified": "2024-10-30 16:01:03.082605",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",

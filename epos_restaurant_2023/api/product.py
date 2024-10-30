@@ -141,6 +141,8 @@ def get_temp_menu_products(parent_menu,mobile=0,sort_order_by="product_name_en")
                 tax_rule_data,
                 revenue_group,
                 is_empty_stock_warning,
+                kitchen_group,
+                kitchen_group_sort_order,
                 rate_include_tax
             from  `tabTemp Product Menu` 
             where 
@@ -203,6 +205,8 @@ def get_product_by_barcode(barcode):
                     "is_require_employee":p.is_require_employee,
                     "modifiers_data": json.dumps(([pr.business_branch,pr.modifier_category,pr.prefix,pr.modifier_code,pr.price] for pr in p.product_modifiers),default=json_handler),
                     "is_empty_stock_warning":0,
+                    "kitchen_group":p.kitchen_group or "",
+                    "kitchen_group_sort_order":p.kitchen_group_sort_order or 0,
                     "rate_include_tax":p.rate_include_tax,
                     "pos_note":p.pos_note
                 }
@@ -238,7 +242,8 @@ def get_product_by_barcode(barcode):
                         "is_require_employee":product.is_require_employee,
                         "revenue_group":product.revenue_group,
                         "modifiers_data": json.dumps(([pr.business_branch,pr.modifier_category,pr.prefix,pr.modifier_code,pr.price] for pr in product.product_modifiers),default=json_handler),
-               
+                        "kitchen_group":product.kitchen_group or "",
+                        "kitchen_group_sort_order":product.kitchen_group_sort_order or 0,
                         "is_empty_stock_warning":0,
                         "rate_include_tax":product.rate_include_tax,
                         "pos_note":product.pos_note
@@ -321,6 +326,8 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
             name,
             product_name_en as name_en,
             product_name_kh as name_kh,
+            kitchen_group",
+            kitchen_group_sort_order,
             product_category as parent,
             price,
             unit,
@@ -410,6 +417,8 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
             name,
             product_name_en as name_en,
             product_name_kh as name_kh,
+            kitchen_group",
+            kitchen_group_sort_order,
             product_category as parent,
             price,
             unit,

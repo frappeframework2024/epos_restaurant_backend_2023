@@ -16,6 +16,7 @@
   "unit",
   "price",
   "kitchen_group",
+  "kitchen_group_sort_order",
   "tax_rule",
   "prices",
   "modifiers",
@@ -293,11 +294,20 @@
    "fieldname": "allow_crypto_claim",
    "fieldtype": "Check",
    "label": "Allow Crypto Claim"
+  },
+  {
+   "fetch_from": "product_code.kitchen_group_sort_order",
+   "fieldname": "kitchen_group_sort_order",
+   "fieldtype": "Int",
+   "label": "Kitchen Group Sort Order",
+   "print_hide": 1,
+   "print_hide_if_no_value": 1,
+   "report_hide": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-17 09:36:45.920346",
+ "modified": "2024-10-30 17:25:49.942160",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Temp Product Menu",

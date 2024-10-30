@@ -28,12 +28,13 @@
 </v-card-title>
 <v-card-text class="!pt-0 !pr-0 !pb-14 !pl-0">
     <v-list>
-        <v-list-item class="!p-0" v-for="(sp, _index) in g.sale.sale_products" :key="_index" @click="onSelected(sp)">
+        <v-list-item class="!p-0" v-for="(sp, _index) in g.sale.sale_products.sort((a, b) => parseInt( a.seat_number, 10) - parseInt( b.seat_number , 10) )" :key="_index" @click="onSelected(sp)">
+           
             <div class="text-sm relative px-2 border-b">
                 <v-badge :content="sp.total_selected" style="margin-top:-10px; margin-right:2px" color="success"
                     class="absolute top-2 right-2" v-if="sp.total_selected > 0"></v-badge>
 
-                <div class="flex" style="margin-top:10px;">
+                <div class="flex" style="margin-top:10px; margin-bottom:5px;">
                     <div class="grow">
                         <div> {{ getMenuName(sp)  }}<v-chip class="ml-1" size="x-small" color="error" variant="outlined"
                                 v-if="sp.portion">{{ sp.portion }}</v-chip> <v-chip v-if="sp.is_free" size="x-small"
@@ -52,7 +53,7 @@
                                     }}%</span>
                                 <CurrencyFormat v-else :value="parseFloat(sp.discount)" />
                             </div>
-                            <v-chip color="blue" size="x-small" v-if="sp.seat_number">Seat# {{
+                            <v-chip color="green" size="small" v-if="sp.seat_number">{{$t("Seat")}}# {{
                                 sp.seat_number
                                 }}</v-chip>
                             <div class="text-gray-500" v-if="sp.note">
@@ -98,6 +99,8 @@ function onSelected(sp) {
 
     showDownload();
 }
+
+
 
 
 function showDownload() {
@@ -198,7 +201,7 @@ function onDeleteBillPressed(group) {
 
 function getMenuName(product) {
     const mlang = localStorage.getItem('mLang');
-    let code = (gv.setting.show_item_code_in_sale_screen == 0 ? "" : `${product.name} - `);
+    let code = (gv.setting.show_item_code_in_sale_screen == 0 ? "" : `${product.product_code} - `);
     if (mlang != null) {
         if (mlang == "en") {
             return `${code}${product.product_name}`;

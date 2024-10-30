@@ -31,6 +31,7 @@
   "length",
   "column_break_6",
   "kitchen_group",
+  "kitchen_group_sort_order",
   "unit",
   "unit_category",
   "is_inventory_product",
@@ -949,13 +950,24 @@
    "fieldname": "product_inventory_transaction",
    "fieldtype": "Table",
    "options": "Product Inventory Location"
+  },
+  {
+   "default": "0",
+   "fetch_from": "kitchen_group.sort_order",
+   "fieldname": "kitchen_group_sort_order",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Kitchen Group Sort Order",
+   "print_hide": 1,
+   "print_hide_if_no_value": 1,
+   "report_hide": 1
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-10-24 11:24:35.310798",
+ "modified": "2024-10-30 17:15:13.979463",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Product",

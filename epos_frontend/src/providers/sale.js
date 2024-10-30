@@ -347,6 +347,7 @@ export default class Sale {
         }
 
         let sp = Enumerable.from(this.sale.sale_products).where(strFilter).firstOrDefault()
+     
         
         let is_new_sale_product = true;
         let new_sale_product;
@@ -425,6 +426,8 @@ export default class Sale {
                 allow_change_price: p.allow_change_price || 0,
                 allow_crypto_claim : p.allow_crypto_claim || 0,
                 is_open_product: p.is_open_product || 0,
+                kitchen_group:p.kitchen_group||"",
+                kitchen_group_sort_order: p.kitchen_group_sort_order || 0,
                 portion: this.getString(p.portion),
                 modifiers: (p.modifiers || '') == "[]" ? "" : (p.modifiers || ''),
                 modifiers_data: p.modifiers_data,
@@ -1962,6 +1965,9 @@ export default class Sale {
                     product_code: r.product_code,
                     product_name_en: r.product_name,
                     product_name_kh: r.product_name_kh,
+                    kitchen_group:r.kitchen_group||"",
+                    kitchen_group_sort_order: r.kitchen_group_sort_order || 0,
+                    seat_number: r.seat_number||"",
                     portion: r.portion,
                     unit: r.unit,
                     modifiers: r.modifiers,
@@ -2014,6 +2020,9 @@ export default class Sale {
                         product_code: r.product_code,
                         product_name_en: r.product_name,
                         product_name_kh: r.product_name_kh,
+                        kitchen_group: r.kitchen_group||"",
+                        kitchen_group_sort_order: r.kitchen_group_sort_order || 0,
+                        seat_number: r.seat_number||"",
                         portion: r.portion,
                         unit: r.unit,
                         modifiers: r.modifiers,
@@ -2035,7 +2044,7 @@ export default class Sale {
                         time_out: r.time_out
                     })
                 });
-            });
+            }); 
         }
     }
 
