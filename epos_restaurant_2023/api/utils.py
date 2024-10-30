@@ -26,6 +26,11 @@ from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 QUEUES = ["default", "long", "short"]
 JOB_STATUSES = ["queued", "started", "failed", "finished", "deferred", "scheduled", "canceled"]
 
+
+@frappe.whitelist(allow_guest=True)
+def get_sid():
+    return frappe.session.sid
+
 @frappe.whitelist()
 def create_custom_field():
     create_custom_fields(

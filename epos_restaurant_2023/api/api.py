@@ -503,10 +503,10 @@ def get_tables_number(table_group,device_name):
             d.y = y 
 
         i += 1 
-        x += 110
+        x += (d.w +10)
         if i >=10:
             x = 10
-            y += 110
+            y += (d.h + 10)
             i = 0
         ##
 
