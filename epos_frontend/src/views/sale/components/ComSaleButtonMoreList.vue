@@ -47,8 +47,8 @@
         <v-list-item prepend-icon="mdi-translate" :title="($t('Menu Language') + '(' + onLoadMenuLabel + ')')"
             @click="onChangeMenuLanguage()" />
 
-        <v-list-item v-if="setting.table_groups && setting.table_groups.length > 0" prepend-icon="mdi-chair-school"
-            :title="$t('Seat') + '#'" @click="onSeatNumber()" />
+        <v-list-item v-if="gv.device_setting.show_seat_number_button == 1 && setting.table_groups && setting.table_groups.length > 0" 
+            prepend-icon="mdi-chair-school" :title="$t('Seat') + '#'" @click="onSeatNumber()" />
 
         <v-list-item v-if="(device_setting.show_button_resend || 0) == 1" prepend-icon="mdi-printer-outline"
             :title="$t('Re-Send')" @click="onResend()" />

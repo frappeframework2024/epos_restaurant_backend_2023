@@ -14,7 +14,7 @@
         <ComChip v-if="setting.table_groups && setting.table_groups.length > 0 && setting.use_guest_cover == 1"
             :tooltip="$t('Guest Cover')" prepend-icon="mdi-account-multiple-outline" @onClick="onUpdateGuestCover()">{{
             sale.sale.guest_cover }}</ComChip>
-        <ComChip v-if="setting.table_groups && setting.table_groups.length > 0 && sale.sale.seat_number"
+        <ComChip v-if="setting.table_groups && setting.table_groups.length > 0 && gv.device_setting.show_seat_number_button == 1"
             :tooltip="($t('Seat') + ' #')" prepend-icon="mdi-chair-school" @onClick="onUpdateSeatNumber()">{{
             sale.sale.seat_number }}</ComChip>
         <ComChip :tooltip="$t('Price Rule')" prepend-icon="mdi-bulletin-board" @onClick="onChangePriceRule()">{{

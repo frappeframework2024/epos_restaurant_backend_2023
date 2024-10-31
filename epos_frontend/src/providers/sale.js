@@ -134,6 +134,8 @@ export default class Sale {
 
     async newSale() { 
          
+        const now = new Date();
+        const _now_format = moment(now).format('yyyy-MM-DD HH:mm:ss.SSSSSS');
 
         this.auditTrailLogs = [];
         this.deletedSaleProductsDisplay = [];
@@ -145,6 +147,8 @@ export default class Sale {
         this.price_rule = (this.price_rule || this.table_price_rule) || this.setting?.price_rule; 
         this.sale = {
             doctype: "Sale",
+            modified: _now_format,
+            creation: _now_format,
             sale_status: "New",
             cashier_shift: this.cashier_shift,
             shift_name: this.shift_name,
@@ -1144,6 +1148,40 @@ export default class Sale {
         }
     }
 
+    async onSplitSaleProduct( sp){
+        if(!this.isBillRequested()){
+            const currentQty = sp.quantity ;
+            if(currentQty <=1){
+                return;
+            }
+            const result =  await keyboardDialog({ title: `${$t("Split Item")}`, type: 'number', value: 1 });
+            if(result){
+                let splipQty = parseFloat(this.getNumber(result));
+                if(splipQty >= currentQty){
+                    toaster.warning($t("Item cannot split equal or over current quantity"))
+                    return;
+                }
+
+                let splitItemProduct = JSON.parse(JSON.stringify(sp));
+                splitItemProduct.name = "";
+                splitItemProduct.quantity = splipQty;
+
+                splitItemProduct.selected = false; 
+                this.updateSaleProduct(splitItemProduct);
+                this.sale.sale_products.push(splitItemProduct);
+
+                //update old sale product  
+                sp.quantity = sp.quantity - splipQty;
+                this.updateSaleProduct(sp);
+
+                this.updateSaleSummary();
+
+
+            }
+            this.dialogActiveState = false;
+        }
+    }
+
     async onSaleProductFree(sp) {
         let freeQty = 0;
         const result = sp.quantity == 1 ? 1 : await keyboardDialog({ title: $t("Change Free Quantity"), type: 'number', value: sp.quantity });
@@ -2063,11 +2101,23 @@ export default class Sale {
     }
 
     async onPrintReceipt(receipt, action, doc) {
+        let seat_numbers = []
+        // if(action == "print_invoice_by_seat"){
+            var groupKeys = "{seat_number:$.seat_number}"
+            var groupFields = "$.seat_number";
+            var _seat_numbers = Enumerable.from(doc.sale_products).groupBy(groupKeys, "", groupKeys, groupFields).toArray();
+            seat_numbers = []
+            _seat_numbers.forEach((sn)=>{
+                seat_numbers.push(sn.seat_number||"")
+            })
+        // }  
+
         let data = {
             action: action,
             print_setting: receipt,
             setting: this.setting?.pos_setting,
             sale: doc,
+            seat_numbers:seat_numbers,
             station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
             station: (this.setting?.device_setting?.name) || "",
         }
@@ -2093,6 +2143,7 @@ export default class Sale {
                 const body = {
                     "data": {
                         "name": data["sale"]["name"],
+                        "seat_numbers":data["seat_numbers"],
                         "reprint": 0,
                         "action": data["action"],
                         "print_setting": data["print_setting"],

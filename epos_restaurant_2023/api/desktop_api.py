@@ -25,22 +25,22 @@ def dome():
             })
 
 @frappe.whitelist(allow_guest=True)
-def get_bill_template_api(name,template, reprint=0):
+def get_bill_template_api(name,template,seat_number = "", reprint=0):
     if not frappe.db.exists("Sale",name):
         return ""    
     doc = frappe.get_doc("Sale", name) 
     data_template,css = frappe.db.get_value("POS Receipt Template",template,["template","style"])
-    html= frappe.render_template(data_template, get_print_context(doc,reprint))
+    html= frappe.render_template(data_template, get_print_context(doc=doc,seat_number=seat_number, reprint=reprint))
     return {"html":html,"css":css}    
 
 ## WINDOW SERVER PRINTING GENERATE HTML
 @frappe.whitelist(allow_guest=True, methods="POST")
-def get_bill_template(name,template, reprint=0):
+def get_bill_template(name,template,seat_number = "", reprint=0):
     if not frappe.db.exists("Sale",name):
         return ""    
     doc = frappe.get_doc("Sale", name) 
     data_template,css = frappe.db.get_value("POS Receipt Template",template,["template","style"])
-    html= frappe.render_template(data_template, get_print_context(doc,reprint))
+    html= frappe.render_template(data_template, get_print_context(doc=doc,seat_number=seat_number, reprint=reprint))
     return {"html":html,"css":css}
 
 

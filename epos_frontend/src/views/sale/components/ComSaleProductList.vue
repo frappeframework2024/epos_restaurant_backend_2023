@@ -139,6 +139,10 @@
                                 }}</v-chip>
                         </template>
 
+                        <v-chip v-if="show_button_seat_number && !(sp.is_require_employee || false) && !sp.is_timer_product" color="teal"
+                            class="mx-1 grow text-center justify-center" variant="elevated" size="small"
+                            @click="sale.onSaleProductSetSeatNumber(sp)">{{ $t('Seat') }}
+                        </v-chip>
 
                         <v-chip v-if="show_button_change_price && !sp.is_timer_product && (sp.allow_change_price || 0) == 1" color="teal"
                             class="mx-1 grow text-center justify-center" variant="elevated" size="small"
@@ -184,6 +188,7 @@ const { t: $t } = i18n.global;
 const numberFormat = inject('$numberFormat');
 const sale = inject('$sale');
 const product = inject('$product');
+const tableLayout = inject("$tableLayout");
 const gv = inject('$gv');
 const moment = inject('$moment');
 const toaster = createToaster({ position: 'top-right' });
@@ -214,6 +219,15 @@ function getMenuName(sp) {
         return `${code}${sp.product_name}`;
     }
 }
+
+const show_button_seat_number = computed(()=>{
+    if (gv.device_setting.show_seat_number_button == 1 && tableLayout.table_groups && tableLayout.table_groups.length > 0){
+        //
+        return  true;
+    }else{
+        return false;
+    }
+});
 
 const show_button_change_price = computed(() => {
     if (gv.device_setting.is_order_station == 1 && gv.device_setting.show_button_change_price_on_order_station == 1) {

@@ -9,6 +9,10 @@
             <v-list-item prepend-icon="mdi-pencil" :title="$t('Edit')" v-if="canEdit"
                 @click="onEditSaleProduct(saleProduct)"></v-list-item>
 
+            <v-list-item prepend-icon="mdi-note-text" :title="$t('Split Item')" v-if="gv.device_setting.show_split_item_button==1 && saleProduct.quantity > 1"
+                @click="sale.onSplitSaleProduct(saleProduct)"></v-list-item>
+
+
         
 
             <template v-if="gv.device_setting.is_order_station == 0">
@@ -43,11 +47,11 @@
 
             </template>
 
-            <template v-if="!(saleProduct.is_require_employee || false) && !saleProduct.is_timer_product">
+            <!-- <template v-if="!(saleProduct.is_require_employee || false) && !saleProduct.is_timer_product">
                 <v-list-item v-if="tableLayout.table_groups && tableLayout.table_groups.length > 0"
                     prepend-icon="mdi-chair-school" :title="($t('Seat') + '#')"
                     @click="sale.onSaleProductSetSeatNumber(saleProduct)"></v-list-item>
-            </template>
+            </template> -->
 
             <v-list-item prepend-icon="mdi-parking" :title="$t('Park Item')"
                 v-if="gv.device_setting.show_park_button == 1" @click="onSaleProductPark(saleProduct)"></v-list-item>
@@ -58,19 +62,23 @@
                     <v-icon icon="mdi-note-outline" color="error"></v-icon>
                 </template>
                 <v-list-item-title class="text-red-700">{{ $t('Remove Note') }}</v-list-item-title>
-            </v-list-item>
-            <v-list-item v-if="saleProduct.quantity > 0" @click="onReturn(saleProduct)">
-                <template v-slot:prepend>
-                    <v-icon icon="mdi-cash-refund" class="text-orange-700"></v-icon>
-                </template>
-                <v-list-item-title class="text-orange-700">{{ $t("Mark as Return Product") }}</v-list-item-title>
-            </v-list-item>
-            <v-list-item v-else @click="onReturn(saleProduct)">
-                <template v-slot:prepend>
-                    <v-icon icon="mdi-cash"></v-icon>
-                </template>
-                <v-list-item-title>{{ $t("Mark as Selling Product") }}</v-list-item-title>
-            </v-list-item>
+            </v-list-item> 
+
+            <template v-if="gv.device_setting.show_make_return_or_selling_item_button == 1">
+                <v-list-item v-if="saleProduct.quantity > 0" @click="onReturn(saleProduct)">
+                    <template v-slot:prepend>
+                        <v-icon icon="mdi-cash-refund" class="text-orange-700"></v-icon>
+                    </template>
+                    <v-list-item-title class="text-orange-700">{{ $t("Mark as Return Product") }}</v-list-item-title>
+                </v-list-item>
+                <v-list-item v-else @click="onReturn(saleProduct)">
+                    <template v-slot:prepend>
+                        <v-icon icon="mdi-cash"></v-icon>
+                    </template>
+                    <v-list-item-title>{{ $t("Mark as Selling Product") }}</v-list-item-title>
+                </v-list-item>
+            </template>
+
             <v-list-item :prepend-icon="saleProduct.rate_include_tax == 1 ? 'mdi-tag-remove' : 'mdi-tag-plus'"
                 @click="addAndRemoveRateIncludeTax(saleProduct)"
                 v-if="(saleProduct.tax_rule && gv.device_setting.is_order_station == 0 && gv.device_setting.show_rate_include_button == 1)">
@@ -105,9 +113,8 @@
 </template>
 
 <script setup>
-import { defineProps, inject, keypadWithNoteDialog, i18n, ref, getApi } from '@/plugin'
-import { createToaster } from '@meforma/vue-toaster';
-import { computed } from 'vue';
+import { defineProps, inject, i18n, ref, computed } from '@/plugin'
+import { createToaster } from '@meforma/vue-toaster'; 
 import { useDialog } from 'primevue/usedialog';
 import ComEditSaleProduct from '@/views/sale/components/ComEditSaleProduct.vue'
 
@@ -115,9 +122,7 @@ const { t: $t } = i18n.global;
 
 const product = inject('$product');
 const sale = inject('$sale');
-const numberFormat = inject('$numberFormat');
 const gv = inject("$gv");
-const tableLayout = inject("$tableLayout");
 const dialog = useDialog()
 
 const props = defineProps({
@@ -291,6 +296,8 @@ function onSaleProductFree() {
 
     }
 }
+
+
 
 function onSaleProductPark() {
     if (!sale.isBillRequested()) {

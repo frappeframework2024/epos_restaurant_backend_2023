@@ -25,7 +25,10 @@
                                 <div>{{ $t('Bill') }}#: {{ sale.name }}</div>
                                
                                 <div>
-                                    <Timeago :long="long" :datetime="sale.creation" />
+                                    <div v-if="sale.creation" class="text-xs">
+                                        <v-icon icon="mdi-clock" size="x-small"></v-icon>
+                                        {{ getTimeAgo(sale.creation) }}
+                                    </div> 
                                 </div>
                             </div>
                         </div>
@@ -46,11 +49,29 @@
     </v-card>
 </template>
 <script setup>
-import { Timeago } from 'vue2-timeago'
-import { defineProps } from 'vue'
-import { useDisplay } from 'vuetify'
-const {mobile} = useDisplay()
+import { inject } from '@/plugin';
+import { defineProps } from 'vue';
+import { useDisplay } from 'vuetify';
+const moment = inject("$moment");
+const {mobile} = useDisplay();
 const props = defineProps({
     sale: Object
 })
+
+
+function getTimeAgo(date) {
+    const now = Date.now();
+    const diff = now - moment(date).toDate();
+    const hours = Math.floor(diff / 3600000);
+    const minutes = Math.floor((diff % 3600000) / 60000);
+    if (minutes <= 0 && hours <= 0) {
+        return "just now"
+    } else {
+        if (hours == 0) {
+            return `${minutes} mn`;
+        }
+        return `${hours} h ${minutes} mn`;
+    }
+}
+
 </script>
