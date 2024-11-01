@@ -3,11 +3,12 @@
 
     <template v-if="gv.device_setting.show_button_print_bill==1">
       <template v-if="gv.setting.reports.filter(r => r.doc_type == doctype && r.show_in_pos == 1).length == 1">
-          <v-btn v-if="mobile" style="width:64px" icon="mdi-printer" @click="onPrintReport(gv.setting.reports.filter(r => r.doc_type == doctype && r.show_in_pos == 1)[0])"></v-btn>
-          <v-btn v-else :stacked="!mobile" color="printbillbtn" size="small" class="m-0-1 grow"
-            :prepend-icon="mobile ? '' : 'mdi-printer'" :variant="mobile ? 'tonal' : 'elevated'"
-            @click="onPrintReport(gv.setting.reports.filter(r => r.doc_type == doctype && r.show_in_pos == 1)[0])">
-            {{ $t('Print Bill') }}</v-btn>
+          <v-btn v-if="mobile" style="width:64px" icon="mdi-printer" @click="onPrintPressed(gv.setting.reports.filter(r => r.doc_type == doctype && r.show_in_pos == 1)[0])"></v-btn>
+ 
+          <v-btn v-else  :stacked="!mobile" color="printbillbtn" size="small" class="m-0-1 grow"
+          :prepend-icon="mobile ? '' : 'mdi-printer'" :variant="mobile ? 'tonal' : 'elevated'"
+          @click="onPrintPressed(gv.setting.reports.filter(r => r.doc_type == doctype && r.show_in_pos == 1)[0])">
+          {{ $t('Print Bill') }}</v-btn> 
       </template>
       <v-menu v-else>
         <template v-slot:activator="{ props }">
@@ -20,13 +21,12 @@
         </template>
         <v-list>
           <v-list-item v-for="(r, index) in gv.setting.reports.filter(r => r.doc_type == doctype && r.show_in_pos == 1)"
-            :key="index" @click="onPrintReport(r)">
+            :key="index" @click="onPrintPressed(r)">
             <v-list-item-title>{{ r.name }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
-
-    </template> 
+    </template>  
   </template>
 
   <template v-else> 
@@ -71,47 +71,20 @@ const emit = defineEmits(["onPrint"]);
 const toaster = createToaster({ position: 'top-right' });
 
 
-async function onPrintReport(r) {
-  if(sale.sale.sale_products.filter(r=>!r.time_out_price && r.is_timer_product).length>0){
-            toaster.warning($t('msg.Please stop timer on timer product'));
-            return;
+async function onPrintPressed(r) {
+  await sale.onPrintPressed(r).then(async(resp)=>{
+    if(resp){
+      await sale.onSubmit().then(async (value) => {
+        if (value) {
+          router.push({ name: "TableLayout" });
+          window.postMessage("close_modal", "*"); 
+        }
+      });
     }
-
-  if (sale.sale.sale_products?.length == 0) {
-    toaster.warning($t("msg.Please select a menu item to submit order"));
-  } else {
-    const now = new Date();     
-    const u = JSON.parse(localStorage.getItem('make_order_auth'));
-    
-    sale.sale.printed_by = u.name;
-    sale.sale.printed_date = moment(now).format('yyyy-MM-DD HH:mm:ss.SSS');
-
-    sale.sale.sale_status = "Bill Requested";
-    sale.action = "print_bill";
-    sale.pos_receipt = r;    
-    
-    let msg = `${u.name} was Printed Bill`; 
-    sale.auditTrailLogs.push({
-        doctype:"Comment",
-        subject:"Print Bill",
-        comment_type:"Info",
-        reference_doctype:"Sale",
-        reference_name:"New",
-        comment_by:u.name,
-        content:msg,
-        custom_item_description: "",
-        custom_note:"",
-        custom_amount: (sale.sale.grand_total ||0) 
-    })  ; 
-
-    await sale.onSubmit().then(async (value) => {
-      if (value) {
-        router.push({ name: "TableLayout" });
-        window.postMessage("close_modal", "*"); 
-      }
-    });
-  }
+  }); 
 }
+
+
 async function onCancelPrintBill() {
   gv.authorize("cancel_print_bill_required_password", "cancel_print_bill", "cancel_print_bill_required_note", "Cancel Print Bill Note").then((v) => {
     if (v) {

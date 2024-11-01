@@ -23,6 +23,7 @@
   "use_server_network_printing",
   "section_break_xdfa",
   "show_button_print_bill",
+  "show_button_print_bill_by_seat",
   "show_button_cancel_print_bill",
   "show_start_close_working_day",
   "show_start_close_cashier_shift",
@@ -388,11 +389,17 @@
    "fieldname": "show_split_item_button",
    "fieldtype": "Check",
    "label": "Show Split Item Button"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_button_print_bill_by_seat",
+   "fieldtype": "Check",
+   "label": "Show Button Print Bill By Seat"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-31 10:01:55.018494",
+ "modified": "2024-11-01 09:12:51.782578",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

@@ -3,23 +3,30 @@
 
     <div class="flex flex-wrap w-full">
       <ComButtonToTableLayout :is-mobile="false" @closeModel="closeModel()" />
-        <template v-if="setting.table_groups && setting.table_groups.length > 0 ">
+      <template v-if="setting.table_groups && setting.table_groups.length > 0 ">
 
-          <template v-if="sale.sale.sale_status != 'Bill Requested' && !mobile">
-            <ComPrintBillButton  v-if="gv.device_setting.show_button_print_bill==1"  :variant="mobile ? 'tonal' : 'elevated'" :stacked="!mobile" doctype="Sale" :title="$t('Print Bill')" />
-            
-          </template>
-
-          <template v-else>
-
-            <template v-if="!mobile">
-              <v-btn  v-if="gv.device_setting.show_button_cancel_print_bill==1" color="error" size="small" class="m-0-1 grow" :variant="mobile ? 'tonal' : 'elevated'"  :stacked="!mobile" :prepend-icon="mobile ? '' : 'mdi-printer'" @click="onCancelPrintBill">
-                {{ $t('Cancel Print Bill') }}
-              </v-btn> 
-              
-          </template>
-          </template>
+        <template v-if="sale.sale.sale_status != 'Bill Requested' && !mobile">
+          <ComPrintBillButton  v-if="gv.device_setting.show_button_print_bill==1"  :variant="mobile ? 'tonal' : 'elevated'" :stacked="!mobile" doctype="Sale" :title="$t('Print Bill')" />
+ 
         </template>
+
+        <template v-else>
+          <template v-if="!mobile">
+            <v-btn  v-if="gv.device_setting.show_button_cancel_print_bill==1" color="error" size="small" class="m-0-1 grow" :variant="mobile ? 'tonal' : 'elevated'"  :stacked="!mobile" :prepend-icon="mobile ? '' : 'mdi-printer'" @click="onCancelPrintBill">
+              {{ $t('Cancel Print Bill') }}
+            </v-btn>               
+        </template>
+        </template>
+      </template>
+
+      <template v-if="setting.table_groups && setting.table_groups.length > 0 && showButtonPrintBySeat>0 && sale.sale.sale_status != 'Bill Requested' && gv.device_setting.show_button_print_bill_by_seat ==1" >
+        <template v-if="(gv.setting.reports.filter(r => r.doc_type == 'Sale' && r.show_in_pos == 1).length == 1)">
+            <v-btn   :stacked="!mobile" color="print_bill_by_seat" size="small" class="m-0-1 grow"
+                    :prepend-icon="mobile ? '' : 'mdi-printer'" :variant="mobile ? 'tonal' : 'elevated'" :height="mobile ? '35px' : undefined" 
+                    @click="onPrintPressed(gv.setting.reports.filter(r => r.doc_type == 'Sale' && r.show_in_pos == 1)[0])">
+                    {{ $t('Print by Seat') }}</v-btn> 
+          </template>
+      </template>
 
       <ComDiscountButton v-if="gv.device_setting.is_order_station==0"/>
       
@@ -40,13 +47,14 @@
         :prepend-icon="mobile ? '' : 'mdi-currency-usd'" @click="onQuickPay">
         {{ $t('Quick Pay') }}
       </v-btn>
+      
     
       <ComSaleButtonMore />
     </div>
   </div>
 </template>
 <script setup>
-import { inject, useRouter,ref,changePriceRuleDialog,changeSaleTypeModalDialog,ComSaleReferenceNumberDialog,addCommissionDialog,i18n } from '@/plugin';
+import { inject,computed, useRouter,ref,changePriceRuleDialog,changeSaleTypeModalDialog,ComSaleReferenceNumberDialog,addCommissionDialog,i18n } from '@/plugin';
 import ComDiscountButton from './ComDiscountButton.vue';
 import ComPrintBillButton from './ComPrintBillButton.vue';
 import { createToaster } from '@meforma/vue-toaster';
@@ -54,7 +62,7 @@ import ComButtonToTableLayout from './ComButtonToTableLayout.vue';
 import ComSaleButtonMore from './ComSaleButtonMore.vue';
 import Enumerable from 'linq';
 import { useDisplay } from 'vuetify'
-import { whenever,useMagicKeys  } from '@vueuse/core';
+import { whenever,useMagicKeys  } from '@vueuse/core'; 
 
 const { t: $t } = i18n.global;  
 
@@ -123,9 +131,7 @@ whenever(ctrl_q, () =>{
   if(gv.device_setting.show_option_quick_pay==0){
     return;
   }
-
     onQuickPay();
-
 })
 
 
@@ -151,7 +157,25 @@ sale.vue.$onKeyStroke('F11',(e)=>{
   if(sale.dialogActiveState==false){
     onSaleDiscount('Amount')
   }
-})
+});
+
+const showButtonPrintBySeat = computed(()=>{
+  let count = sale.sale.sale_products?.filter((sp)=>(sp.seat_number||"") != "")?.length;
+  return count;
+});
+
+async function onPrintPressed(r) {
+  await sale.onPrintPressed(r, "print_invoice_by_seat").then(async(resp)=>{
+    if(resp){
+      await sale.onSubmit().then(async (value) => {
+        if (value) {
+          router.push({ name: "TableLayout" });
+          window.postMessage("close_modal", "*"); 
+        }
+      });
+    }
+  }); 
+}
 
 async function onChangeSaleType() {
   const result = await changeSaleTypeModalDialog({})

@@ -22,8 +22,8 @@
             </template>
             <ComGroupSaleProductList/>
         </template>
-        <template #action>
-            <ComSmallSaleSummary @onClose="onGoHome()" @onSubmitAndNew="onSubmitAndNew()"/>
+        <template #action> 
+            <ComSmallSaleSummary @onClose="onGoHome()" @onSubmitAndNew="onSubmitAndNew()"/> 
         </template>
     </ComModal>
     

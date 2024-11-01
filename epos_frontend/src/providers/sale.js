@@ -7,7 +7,7 @@ import {
 import { createToaster } from "@meforma/vue-toaster";
 import socket from '@/utils/socketio';
 import { FrappeApp } from 'frappe-js-sdk';
-import NumberFormat from 'number-format.js'
+import NumberFormat from 'number-format.js';
 
 const frappe = new FrappeApp();
 const db = frappe.db()
@@ -1804,13 +1804,12 @@ export default class Sale {
                 this.onPrintWaitingOrder(doc);
             }
         }
-        else if (this.action == "print_bill") {
+        else if (this.action == "print_bill" || this.action =="print_invoice_by_seat") {
             if (this.pos_receipt == undefined || this.pos_receipt == null) {
                 this.pos_receipt = this.setting?.default_pos_receipt;
             }
             this.onPrintToKitchen(doc);
-
-            this.onPrintReceipt(this.pos_receipt, "print_invoice", doc);
+            this.onPrintReceipt(this.pos_receipt, `${this.action == "print_invoice_by_seat"? "print_invoice_by_seat": "print_invoice" }`, doc);
         }
         else if (this.action == "quick_pay") {
             
@@ -2099,6 +2098,45 @@ export default class Sale {
         }
         return url;
     }
+
+    
+    async  onPrintPressed(r, action = "print_bill") {
+        if(this.sale.sale_products.filter(r=>!r.time_out_price && r.is_timer_product).length>0){
+                toaster.warning($t('msg.Please stop timer on timer product'));
+                return false;
+        }
+    
+        if (this.sale.sale_products?.length == 0) {
+            toaster.warning($t("msg.Please select a menu item to submit order"));
+            return false
+        } else {
+            const now = new Date();     
+            const u = JSON.parse(localStorage.getItem('make_order_auth'));    
+            this.sale.printed_by = u.name;
+            this.sale.printed_date = moment(now).format('yyyy-MM-DD HH:mm:ss.SSS');
+            this.sale.sale_status = "Bill Requested";
+            this.action = action;
+            this.pos_receipt = r; 
+
+            let msg = `${u.name} was ${action=="print_bill"?"Printed Bill":"Printed Bill by Seat"}`; 
+            this.auditTrailLogs.push({
+                doctype:"Comment",
+                subject:"Print Bill",
+                comment_type:"Info",
+                reference_doctype:"Sale",
+                reference_name:"New",
+                comment_by:u.name,
+                content:msg,
+                custom_item_description: "",
+                custom_note:"",
+                custom_amount: (this.sale.grand_total ||0) 
+            })  ; 
+
+            return true; 
+        }
+    }
+
+  
 
     async onPrintReceipt(receipt, action, doc) {
         let seat_numbers = []
