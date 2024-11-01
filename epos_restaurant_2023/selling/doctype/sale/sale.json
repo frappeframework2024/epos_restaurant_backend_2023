@@ -1551,6 +1551,7 @@
    "label": "Exely Integrate"
   },
   {
+   "fetch_from": "sale_commission_to.employee_name",
    "fieldname": "sale_commission_to_name",
    "fieldtype": "Data",
    "label": "Sale Commission To Name",
@@ -1577,7 +1578,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2024-11-01 13:48:24.798368",
+ "modified": "2024-11-01 14:04:38.736520",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",
