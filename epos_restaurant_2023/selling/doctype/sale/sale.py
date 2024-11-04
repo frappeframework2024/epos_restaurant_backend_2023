@@ -407,7 +407,8 @@ def update_sale_sale_product_cost(self):
 	total_cost = 0
 	total_second_cost = 0
 	for p in self.sale_products:
-		sale_product_stock_location = get_stock_location_by_pos_profile(p.product_code,self.pos_profile,self.stock_location)
+		pos_profile = p.pos_profile if p.pos_profile else self.pos_profile
+		sale_product_stock_location = get_stock_location_by_pos_profile(p.product_code,pos_profile,self.stock_location)
 		uom_conversion = get_uom_conversion(p.base_unit, p.unit)
 		_sale_product_cost = (get_product_cost(sale_product_stock_location, p.product_code)/uom_conversion) * p.quantity
 		## update sale product cost 
@@ -584,9 +585,10 @@ def generate_decimal(precision: int) -> Decimal:
 def update_inventory_on_submit(self):
 	cost = 0 
 	for p in self.sale_products:
-		if p.is_inventory_product:
+		pos_profile = p.pos_profile if p.pos_profile else self.pos_profile
+		if p.is_inventory_product:			
 			uom_conversion = get_uom_conversion(p.base_unit, p.unit)
-			sale_product_stock_location = get_stock_location_by_pos_profile(p.product_code,self.pos_profile,self.stock_location)
+			sale_product_stock_location = get_stock_location_by_pos_profile(p.product_code,pos_profile,self.stock_location)
 			cost = get_product_cost(sale_product_stock_location, p.product_code) / uom_conversion
 			add_to_inventory_transaction({
 				'doctype': 'Inventory Transaction',
@@ -630,7 +632,7 @@ def update_inventory_on_submit(self):
 							'transaction_number':self.name,
 							'product_code': d.product,
 							'unit':d.unit,
-							'stock_location':get_stock_location_by_pos_profile(d.product_code,self.pos_profile,self.stock_location),
+							'stock_location':get_stock_location_by_pos_profile(d.product_code,pos_profile,self.stock_location),
 							'out_quantity':(p.quantity* d.quantity) / uom_conversion,
 							"uom_conversion":uom_conversion,
 							'note': 'Update Recipe Quantity from modifer ({}) after New sale submitted.'.format(m["modifier"]),
@@ -653,7 +655,7 @@ def update_inventory_on_submit(self):
 	frappe.db.sql("update `tabSale` set total_cost = {0} , profit=grand_total - {0} where name='{1}'".format(total_cost, self.name))
 
 def update_product_recipe_to_inventory(self,product,base_quantity,action):
-
+	pos_profile = product.pos_profile if product.pos_profile else self.pos_profile
 	for d in product.product_recipe:
 		if d.is_inventory_product:
 			if not d.sale_type or d.sale_type == self.sale_type:
@@ -671,7 +673,7 @@ def update_product_recipe_to_inventory(self,product,base_quantity,action):
 					'transaction_number':self.name,
 					'product_code': d.product,
 					'unit':d.unit,
-					'stock_location':get_stock_location_by_pos_profile(d.product,self.pos_profile,self.stock_location),
+					'stock_location':get_stock_location_by_pos_profile(d.product,pos_profile,self.stock_location),
 					'in_quantity':(base_quantity* d.quantity) / uom_conversion if action=="Cancel" else 0,
 					'out_quantity':(base_quantity* d.quantity) / uom_conversion if action=="Submit" else 0,
 					"uom_conversion":uom_conversion,
@@ -685,6 +687,7 @@ def update_combo_menu_to_inventory(self, product,action):
 		update_combo_menu_to_inventory_transaction(self,product,action, combo_menu_data)
 			
 def update_combo_menu_to_inventory_transaction(self,product,action,combo_menu_data):
+	pos_profile = product.pos_profile if product.pos_profile else self.pos_profile
 	for p in combo_menu_data:
 		doc = frappe.get_cached_doc("Product",p["product_code"])
 		if doc.is_inventory_product:
@@ -702,7 +705,7 @@ def update_combo_menu_to_inventory_transaction(self,product,action,combo_menu_da
 				'transaction_number':self.name,
 				'product_code': doc.name,
 				'unit':p["unit"],
-				'stock_location':get_stock_location_by_pos_profile(doc.name,self.pos_profile,self.stock_location),
+				'stock_location':get_stock_location_by_pos_profile(doc.name,pos_profile,self.stock_location),
 				"in_quantity": (p["quantity"] * product.quantity) / uom_conversion if action =="Cancel" else 0,
 				'out_quantity': (p["quantity"] * product.quantity) / uom_conversion if action =="Submit" else 0,
 				"uom_conversion":uom_conversion,
@@ -716,6 +719,7 @@ def update_combo_menu_to_inventory_transaction(self,product,action,combo_menu_da
 					
 def update_inventory_on_cancel(self):
 	for p in self.sale_products:
+		pos_profile = p.pos_profile if p.pos_profile else self.pos_profile
 		if p.is_inventory_product:
 			uom_conversion = get_uom_conversion(p.base_unit, p.unit)
 			add_to_inventory_transaction({
@@ -725,7 +729,7 @@ def update_inventory_on_cancel(self):
 				'transaction_date':self.posting_date,
 				'product_code': p.product_code,
 				'unit':p.unit,
-				'stock_location':get_stock_location_by_pos_profile(p.product_code,self.pos_profile,self.stock_location),
+				'stock_location':get_stock_location_by_pos_profile(p.product_code,pos_profile,self.stock_location),
 				'in_quantity':p.quantity / uom_conversion,
 				"uom_conversion":uom_conversion,
 				"price":p.cost,
@@ -737,7 +741,6 @@ def update_inventory_on_cancel(self):
 			for d in doc.product_recipe:
 				if d.is_inventory_product:
 					uom_conversion = get_uom_conversion(d.base_unit, d.unit)
-					
 					add_to_inventory_transaction({
 						'doctype': 'Inventory Transaction',
 						'transaction_type':"Sale",
@@ -745,7 +748,7 @@ def update_inventory_on_cancel(self):
 						'transaction_number':self.name,
 						'product_code': d.product,
 						'unit':d.unit,
-						'stock_location':get_stock_location_by_pos_profile(d.product,self.pos_profile,self.stock_location),
+						'stock_location':get_stock_location_by_pos_profile(d.product,pos_profile,self.stock_location),
 						'in_quantity':(p.quantity* d.quantity) / uom_conversion,
 						"uom_conversion":uom_conversion,
 						'note': 'Update Recipe Quantity after Sale Invoice Cancelled.',
@@ -765,7 +768,7 @@ def update_inventory_on_cancel(self):
 						'transaction_number':self.name,
 						'product_code': d.product,
 						'unit':d.unit,
-						'stock_location':get_stock_location_by_pos_profile(d.product,self.pos_profile,self.stock_location),
+						'stock_location':get_stock_location_by_pos_profile(d.product,pos_profile,self.stock_location),
 						'in_quantity':(p.quantity* d.quantity) / uom_conversion,
 						"uom_conversion":uom_conversion,
 						'note': 'Update Recipe Quantity from modifer ({}) after Sale Invoice Cancelled.'.format(m["modifier"]),

@@ -17,7 +17,7 @@
                     <div class="w-full saletable justify-between px-3 flex flex-wrap p-1 rounded-md mt-1" v-if="sale.sale?.tbl_number"> 
                             <div class="font-bold" > {{$t('Table #')}} :</div>
                             <div> {{ sale.sale.tbl_number }} </div>
-                             </div>
+                    </div>
                 </div>
             </template>
             <ComGroupSaleProductList/>

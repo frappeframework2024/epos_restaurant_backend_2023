@@ -125,6 +125,7 @@ function onCreateNew() {
   const _deleted = groupSales.value.filter((r) => r.deleted == true && r.sale.name != "");
   let _sale = JSON.parse(JSON.stringify(sale.sale));
   _sale.name = "";
+  _sale.seat_number = 0;
   if (_deleted.length > 0) {
     _sale = JSON.parse(JSON.stringify(_deleted[0].sale));
     _deleted[0].sale.name = "";

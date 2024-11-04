@@ -21,16 +21,23 @@
                             <div class="text-xs">
                                 {{ sale.phone_number }}
                             </div>
+
                             <div class="text-sm">
-                                <div>{{ $t('Bill') }}#: {{ sale.name }}</div>
-                               
+                                <div>{{ $t('Bill') }}#: {{ sale.name }}
+
+                                <v-chip  v-if="(sale.seat_number??0) != 0" color="green" class="mx-1" size="small">
+                                    {{`${$t("Seat")} #: ${sale.seat_number}`}}
+                                  </v-chip>
+                                </div>
+                                 
+                                
                                 <div>
                                     <div v-if="sale.creation" class="text-xs">
                                         <v-icon icon="mdi-clock" size="x-small"></v-icon>
                                         {{ getTimeAgo(sale.creation) }}
                                     </div> 
                                 </div>
-                            </div>
+                            </div> 
                         </div>
                         <div class="flex-none text-right">
                             <div class="font-bold" :class="mobile ? '' : 'text-lg'">

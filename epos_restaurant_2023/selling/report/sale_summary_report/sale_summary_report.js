@@ -52,6 +52,7 @@ frappe.query_reports["Sale Summary Report"] = {
 					frappe.query_report.set_filter_value("start_date", start_of_month(date)); 					
 					frappe.query_report.set_filter_value("end_date", end_of_month(date));
 				}else{
+					let date = new Date()
 					frappe.query_report.set_filter_value("start_date", date); 					
 					frappe.query_report.set_filter_value("end_date", date);
 				}

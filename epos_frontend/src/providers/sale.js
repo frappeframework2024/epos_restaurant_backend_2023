@@ -404,6 +404,7 @@ export default class Sale {
             const now = new Date();
             const _now_format = moment(now).format('yyyy-MM-DD HH:mm:ss.SSSSSS');
             const saleProduct = {
+                pos_profile:this.setting?.pos_profile,
                 menu_product_name: p.menu_product_name,
                 product_code: p.name,
                 product_name: p.name_en,

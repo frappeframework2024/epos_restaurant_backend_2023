@@ -93,7 +93,7 @@ def get_pos_station(device_id=None, platform=None):
                 s.update({"selected":False}) 
 
             result["business_branchs"].append({
-                "business_branch":b,
+                "business_branch":b ,
                 "selected":i==0,
                 "stations":_stations
             }) 
