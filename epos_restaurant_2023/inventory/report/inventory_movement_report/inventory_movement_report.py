@@ -321,11 +321,12 @@ def get_sql_data(filters,row_group,report_fields=None):
 			from b as a
 			group by
 					{0}""".format(_group_by, _filter, filters.start_date, filters.end_date, fields)
+	
 	docs = frappe.db.sql(sql,filters, as_dict=1)
 
 	# ## get current filter
 	sql2 = """select 
-		{0},
+		{5},
 		0 as prev_on_hand,
 		0 as balance,
 		sum(a.in_quantity) as in_quantity,
@@ -336,8 +337,9 @@ def get_sql_data(filters,row_group,report_fields=None):
 		and a.transaction_date between '{2}' and '{3}' 
 	group by 
 		{0} 
-	""".format(_group_by, _filter, filters.start_date, filters.end_date,",".join([d.sql_expression for d in report_fields if d.sql_expression]))
+	""".format(_group_by, _filter, filters.start_date, filters.end_date,",".join([d.sql_expression for d in report_fields if d.sql_expression]),fields)
 	docs2 = frappe.db.sql(sql2,filters, as_dict=1)
+	frappe.msgprint(sql2)
 	if len(docs2)>0:
 		for key in docs2[0].keys():
 			for d in docs:
