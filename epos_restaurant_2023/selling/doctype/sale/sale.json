@@ -16,11 +16,6 @@
   "posting_date",
   "reference_number",
   "pos_profile",
-  "customer",
-  "customer_name",
-  "customer_photo",
-  "phone_number",
-  "customer_group",
   "column_break_6",
   "business_branch",
   "outlet",
@@ -36,6 +31,17 @@
   "price_rule",
   "sale_quotation",
   "status",
+  "section_break_kafh",
+  "customer",
+  "customer_name",
+  "phone_number",
+  "customer_group",
+  "customer_photo",
+  "column_break_geib",
+  "province",
+  "commune",
+  "district",
+  "village",
   "section_break_6",
   "scan_barcode",
   "column_break_14",
@@ -1556,6 +1562,42 @@
    "fieldtype": "Data",
    "label": "Sale Commission To Name",
    "read_only": 1
+  },
+  {
+   "fieldname": "section_break_kafh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_geib",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "customer.province",
+   "fieldname": "province",
+   "fieldtype": "Data",
+   "label": "Province",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "customer.commune",
+   "fieldname": "commune",
+   "fieldtype": "Data",
+   "label": "Commune",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "customer.district",
+   "fieldname": "district",
+   "fieldtype": "Data",
+   "label": "District",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "customer.village",
+   "fieldname": "village",
+   "fieldtype": "Data",
+   "label": "Village",
+   "read_only": 1
   }
  ],
  "image_field": "photo",
@@ -1578,7 +1620,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2024-11-01 14:04:38.736520",
+ "modified": "2024-11-05 15:34:41.125785",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",
