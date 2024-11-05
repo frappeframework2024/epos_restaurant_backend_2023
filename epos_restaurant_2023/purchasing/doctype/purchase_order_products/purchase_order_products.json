@@ -14,9 +14,11 @@
   "section_break_8",
   "quantity",
   "cost",
+  "secondary_cost",
   "base_cost",
   "column_break_10",
   "sub_total",
+  "total_secondary_cost",
   "amount",
   "discount_section",
   "discount_type",
@@ -220,12 +222,25 @@
    "hidden": 1,
    "label": "Base Cost",
    "read_only": 1
+  },
+  {
+   "fetch_from": "product_code.secondary_cost",
+   "fieldname": "secondary_cost",
+   "fieldtype": "Currency",
+   "label": "Secondary Cost",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_secondary_cost",
+   "fieldtype": "Currency",
+   "label": "Total Secondary Cost",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-24 11:08:00.044358",
+ "modified": "2024-11-05 14:51:00.074705",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order Products",

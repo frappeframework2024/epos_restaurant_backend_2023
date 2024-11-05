@@ -98,7 +98,8 @@ function get_product(frm, doc){
 				doc.difference_account = frm.doc.difference_account
 				doc.cost = r.message.cost;
 				doc.quantity = doc.current_quantity;
-				doc.total_amount = doc.quantity * doc.cost;      
+				doc.total_amount = doc.quantity * doc.cost;
+				doc.total_secondary_cost = doc.quantity * doc.secondary_cost;
                 doc.difference_quantity = doc.quantity - doc.current_quantity;
                 doc.difference_amount = (doc.cost * doc.quantity) - (doc.current_cost * doc.current_quantity); 
                 update_totals(frm)
@@ -110,6 +111,7 @@ function get_product(frm, doc){
 function update_product_amount(frm,cdt, cdn)  {
     let doc = locals[cdt][cdn];
 	frappe.model.set_value(cdt,cdn, "total_amount", (doc.quantity * doc.cost));
+	frappe.model.set_value(cdt,cdn, "total_secondary_cost", (doc.quantity * doc.secondary_cost));
 	frappe.model.set_value(cdt,cdn, "difference_quantity", (doc.quantity - doc.current_quantity));
 	frappe.model.set_value(cdt,cdn, "difference_amount", ((doc.cost * doc.quantity) - (doc.current_cost * doc.current_quantity)));
     update_totals(frm);

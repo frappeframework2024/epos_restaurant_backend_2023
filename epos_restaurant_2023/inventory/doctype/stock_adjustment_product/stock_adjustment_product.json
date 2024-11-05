@@ -9,10 +9,12 @@
   "product_code",
   "product_name",
   "unit",
-  "column_break_4",
   "quantity",
+  "column_break_4",
   "cost",
   "total_amount",
+  "secondary_cost",
+  "total_secondary_cost",
   "is_inventory_product",
   "before_adjustment_section",
   "current_quantity",
@@ -163,12 +165,25 @@
    "in_list_view": 1,
    "label": "Total Amount",
    "read_only": 1
+  },
+  {
+   "fetch_from": "product_code.secondary_cost",
+   "fieldname": "secondary_cost",
+   "fieldtype": "Currency",
+   "label": "Secondary Cost",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_secondary_cost",
+   "fieldtype": "Currency",
+   "label": "Total Secondary Cost",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-02 12:00:51.219109",
+ "modified": "2024-11-05 14:51:48.256146",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Adjustment Product",

@@ -265,6 +265,7 @@ function update_product_infos(frm,doc){
 	doc.po_discount_amount = doc.po_discount_percent / 100 * doc.sub_total
 	doc.total_discount = doc.discount_amount + doc.po_discount_amount;
 	doc.amount = (doc.sub_total - doc.discount_amount);
+	doc.total_secondary_cost =  doc.secondary_cost * (doc.quantity<=0 ? 1 : doc.quantity);
 	frm.refresh_field('purchase_order_products');
 	updateSumTotal(frm);
 }
