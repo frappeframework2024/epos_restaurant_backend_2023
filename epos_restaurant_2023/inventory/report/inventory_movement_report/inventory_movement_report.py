@@ -339,7 +339,6 @@ def get_sql_data(filters,row_group,report_fields=None):
 		{0} 
 	""".format(_group_by, _filter, filters.start_date, filters.end_date,",".join([d.sql_expression for d in report_fields if d.sql_expression]),fields)
 	docs2 = frappe.db.sql(sql2,filters, as_dict=1)
-	frappe.msgprint(sql2)
 	if len(docs2)>0:
 		for key in docs2[0].keys():
 			for d in docs:
