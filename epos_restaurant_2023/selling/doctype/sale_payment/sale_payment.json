@@ -31,6 +31,7 @@
   "pos_reservation",
   "is_reservation_deposit",
   "column_break_xqmm",
+  "property",
   "sale_information_section",
   "sale",
   "sale_date",
@@ -458,12 +459,19 @@
    "fieldname": "accounting_tab",
    "fieldtype": "Tab Break",
    "label": "Accounting"
+  },
+  {
+   "fetch_from": "pos_reservation.property",
+   "fieldname": "property",
+   "fieldtype": "Link",
+   "label": "Property",
+   "options": "Business Branch"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-07-24 10:11:13.544252",
+ "modified": "2024-11-06 10:10:18.669055",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Payment",

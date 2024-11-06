@@ -201,6 +201,7 @@ class SalePayment(Document):
 
 
 def validate_account(self):
+	business_branch = self.property  if self.is_reservation_deposit else self.business_branch
     # set default account
 	if not self.is_new():
 		sql = "select payment_type from `tabSale Payment` where name = %(name)s"
@@ -211,12 +212,12 @@ def validate_account(self):
 	# account_paid_to
 	if not self.account_paid_to:
 		sql = "select account from `tabPayment Type Account` where business_branch=%(business_branch)s and parent=%(payment_type)s limit 1"
-		data = frappe.db.sql(sql,{"business_branch":self.business_branch,"payment_type":self.payment_type},as_dict=1)
+		data = frappe.db.sql(sql,{"business_branch":business_branch,"payment_type":self.payment_type},as_dict=1)
 		if data:
 			self.account_paid_to = data[0]["account"]
 
 	# account_paid_from
-	branch = frappe.db.get_value('Business Branch', self.business_branch,  ['default_cash_account', 'default_receivable_account'], as_dict=1)
+	branch = frappe.db.get_value('Business Branch', business_branch,  ['default_cash_account', 'default_receivable_account'], as_dict=1)
 	if not self.account_paid_to :
 		self.account_paid_to = branch.default_cash_account
 	if not self.account_paid_from:
