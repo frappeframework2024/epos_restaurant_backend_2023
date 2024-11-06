@@ -632,7 +632,7 @@ def update_inventory_on_submit(self):
 							'transaction_number':self.name,
 							'product_code': d.product,
 							'unit':d.unit,
-							'stock_location':get_stock_location_by_pos_profile(d.product_code,pos_profile,self.stock_location),
+							'stock_location':get_stock_location_by_pos_profile(d.product,pos_profile,self.stock_location),
 							'out_quantity':(p.quantity* d.quantity) / uom_conversion,
 							"uom_conversion":uom_conversion,
 							'note': 'Update Recipe Quantity from modifer ({}) after New sale submitted.'.format(m["modifier"]),
