@@ -648,11 +648,11 @@ def update_inventory_on_submit(self):
    
 	#update total cost to sale and profit to sale
 	total_cost = 0
-	cost_datas = frappe.db.sql("select sum(cost * quantity) from `tabSale Product` where parent='{}'".format(self.name))
+	cost_datas = frappe.db.sql("select coalesce(sum(cost * quantity),0) as total_cost from `tabSale Product` where parent= %(sale)s", {"sale": self.name}, as_dict = 1)
 	if cost_datas:
-		total_cost = cost_datas[0][0]
+		total_cost = cost_datas[0]["total_cost"] or 0
   
-	frappe.db.sql("update `tabSale` set total_cost = {0} , profit=grand_total - {0} where name='{1}'".format(total_cost, self.name))
+	frappe.db.sql("update `tabSale` set total_cost = {0} , profit=grand_total - {0} where name=%(sale)s".format(total_cost), {"sale":self.name})
 
 def update_product_recipe_to_inventory(self,product,base_quantity,action,pos_profile=""):
 	current_pos_profile = pos_profile if pos_profile != "" else self.pos_profile
