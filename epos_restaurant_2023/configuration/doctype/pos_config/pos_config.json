@@ -45,11 +45,13 @@
   "print_sale_product_move_item",
   "print_new_deleted_sale_product",
   "print_working_day_sale_product_summary_after_close_working_day",
-  "column_break_prwc",
   "check_delete_item_require_passord_from_product",
+  "column_break_prwc",
   "show_item_code_in_sale_screen",
-  "show_park_item",
+  "show_time_ago_on_table",
+  "show_total_amount_on_table",
   "show_button_tip",
+  "show_park_item",
   "allow_closed_working_day_when_has_pending_order",
   "generate_tax_invoice_after_close_sale_order",
   "generate_bill_number_on_create",
@@ -851,12 +853,24 @@
   {
    "fieldname": "column_break_smcp",
    "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "show_time_ago_on_table",
+   "fieldtype": "Check",
+   "label": "Show Time Ago on Table "
+  },
+  {
+   "default": "1",
+   "fieldname": "show_total_amount_on_table",
+   "fieldtype": "Check",
+   "label": "Show Total Amount on Table"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-26 09:49:25.300907",
+ "modified": "2024-11-06 11:50:54.006803",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

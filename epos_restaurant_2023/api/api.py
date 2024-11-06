@@ -432,6 +432,8 @@ def get_system_settings(pos_profile="", device_name=''):
         "show_item_code_in_sale_screen":pos_config.show_item_code_in_sale_screen,
         "show_button_tip":pos_config.show_button_tip,
         "tip_account_code":pos_config.tip_account_code,
+        "show_time_ago_on_table":pos_config.show_time_ago_on_table,
+        "show_total_amount_on_table":pos_config.show_total_amount_on_table,
         "shift_types":shift_types,
         "currencies":currencies,
         "default_currency":frappe.db.get_default("currency"),

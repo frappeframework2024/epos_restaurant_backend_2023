@@ -14,12 +14,11 @@
                             <div><span class="font-bold">{{ t.tbl_no }}</span><span v-if="t.guest_cover">({{
                                 t.guest_cover
                                     }})</span></div>
-                            <div v-if="t.grand_total">
+                            <div v-if="t.grand_total && gv.setting.show_total_amount_on_table">
                                 <CurrencyFormat :value="t.grand_total"></CurrencyFormat>
                             </div>
-                            <div v-if="t.creation" class="text-xs">
+                            <div v-if="t.creation && gv.setting.show_time_ago_on_table" class="text-xs">
                                 <v-icon icon="mdi-clock" size="x-small"></v-icon>
-                                <!-- <Timeago :long="false" :datetime="t.creation" /> -->
                                 {{ getTimeDifference(t.creation) }}
                             </div>
                         </div>
@@ -39,11 +38,11 @@
                         <div class="flex items-center justify-center h-full">
                             <div>
                                 <div><span class="font-bold">{{ t.tbl_no }}</span><span v-if="t.guest_cover">({{
-                                    t.guest_cover }})</span></div>
-                                <div v-if="t.grand_total">
+                                    t.guest_cover }})</span></div> 
+                                <div v-if="t.grand_total && gv.setting.show_total_amount_on_table">
                                     <CurrencyFormat :value="t.grand_total"></CurrencyFormat>
                                 </div>
-                                <div v-if="t.creation" class="text-xs">
+                                <div v-if="t.creation && gv.setting.show_time_ago_on_table" class="text-xs">
                                     <v-icon icon="mdi-clock" size="x-small"></v-icon>
                                     {{ getTimeDifference(t.creation) }}
                                 </div>
@@ -58,6 +57,8 @@
 <script setup>
 import { inject, useRouter, createToaster, selectSaleOrderDialog, keyboardDialog, smallViewSaleProductListModal, i18n,ref } from '@/plugin';
 import { useDisplay } from 'vuetify';
+
+
 
 const { t: $t } = i18n.global;
 
@@ -77,6 +78,7 @@ const call = frappe.call();
 const is_processing = ref(false)
 
 tableLayout.tab = localStorage.getItem("__tblLayoutIndex")
+
 
 
 function getTimeDifference(date) {
