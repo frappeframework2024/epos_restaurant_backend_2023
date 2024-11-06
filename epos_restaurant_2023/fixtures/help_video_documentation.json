@@ -1,0 +1,74 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Help Video Documentation",
+  "is_group": 0,
+  "label": "Create FIT reservation",
+  "link": "https://youtu.be/8JTI2J0M-tY?si=uKb-AiFth_3oZOQY",
+  "modified": "2024-11-06 13:44:13.797284",
+  "name": "Create FIT reservation",
+  "parent_help_video_documentation": "FIT Reservations",
+  "show_in_overview": 1,
+  "video_name": "Create FIT reservation"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Help Video Documentation",
+  "is_group": 0,
+  "label": "Create GIT Group Reservation",
+  "link": "https://youtu.be/j3gaGvvy7hc?si=qVvIa23HGRcLjdc4",
+  "modified": "2024-11-06 10:52:31.239103",
+  "name": "Create GIT Group Reservation",
+  "parent_help_video_documentation": "GIT Reservations",
+  "show_in_overview": 0,
+  "video_name": "Create GIT Group Reservation"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Help Video Documentation",
+  "is_group": 0,
+  "label": null,
+  "link": "https://youtu.be/Z5ogqrxCIc0?si=isoczwf12CDioSOS",
+  "modified": "2024-11-06 13:48:10.125726",
+  "name": "Check-in a Reservation",
+  "parent_help_video_documentation": "Front Desk",
+  "show_in_overview": 1,
+  "video_name": "Check-in a Reservation"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Help Video Documentation",
+  "is_group": 1,
+  "label": "Reservations",
+  "link": null,
+  "modified": "2024-11-06 14:24:29.355903",
+  "name": "GIT Reservations",
+  "parent_help_video_documentation": null,
+  "show_in_overview": 0,
+  "video_name": "GIT Reservations"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Help Video Documentation",
+  "is_group": 1,
+  "label": "Front Desk",
+  "link": null,
+  "modified": "2024-11-06 10:42:32.348537",
+  "name": "Front Desk",
+  "parent_help_video_documentation": null,
+  "show_in_overview": 0,
+  "video_name": "Front Desk"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Help Video Documentation",
+  "is_group": 1,
+  "label": "Reservations",
+  "link": null,
+  "modified": "2024-11-06 10:43:38.687426",
+  "name": "FIT Reservations",
+  "parent_help_video_documentation": null,
+  "show_in_overview": 0,
+  "video_name": "FIT Reservations"
+ }
+]
