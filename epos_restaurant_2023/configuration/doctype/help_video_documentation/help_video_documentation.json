@@ -11,7 +11,8 @@
   "video_name",
   "label",
   "link",
-  "show_in_overview"
+  "show_in_overview",
+  "is_group"
  ],
  "fields": [
   {
@@ -46,11 +47,17 @@
    "fieldname": "show_in_overview",
    "fieldtype": "Check",
    "label": "Show in Overview"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_group",
+   "fieldtype": "Check",
+   "label": "Is Group"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-06 15:04:39.040216",
+ "modified": "2024-11-06 15:12:30.477530",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Help Video Documentation",
