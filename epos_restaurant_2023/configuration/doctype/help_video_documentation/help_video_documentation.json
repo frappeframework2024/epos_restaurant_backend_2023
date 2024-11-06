@@ -7,14 +7,10 @@
  "engine": "InnoDB",
  "field_order": [
   "section_break_k0n6",
-  "old_parent",
   "parent_help_video_documentation",
-  "is_group",
   "video_name",
   "label",
   "link",
-  "lft",
-  "rgt",
   "show_in_overview"
  ],
  "fields": [
@@ -23,24 +19,11 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "old_parent",
-   "fieldtype": "Link",
-   "label": "Old Parent",
-   "options": "Help Video Documentation"
-  },
-  {
    "fieldname": "parent_help_video_documentation",
    "fieldtype": "Data",
    "ignore_user_permissions": 1,
    "label": "Parent Help Video Documentation",
-   "link_filters": "[[{\"fieldname\":\"parent_help_video_documentation\",\"field_option\":\"Help Video Documentation\"},\"is_group\",\"=\",1]]",
-   "options": "Help Video Documentation"
-  },
-  {
-   "default": "0",
-   "fieldname": "is_group",
-   "fieldtype": "Check",
-   "label": "Is Group"
+   "link_filters": "[[{\"fieldname\":\"parent_help_video_documentation\",\"field_option\":\"Help Video Documentation\"},\"is_group\",\"=\",1]]"
   },
   {
    "fieldname": "video_name",
@@ -59,22 +42,6 @@
    "label": "Link"
   },
   {
-   "fieldname": "lft",
-   "fieldtype": "Int",
-   "hidden": 1,
-   "label": "Left",
-   "no_copy": 1,
-   "read_only": 1
-  },
-  {
-   "fieldname": "rgt",
-   "fieldtype": "Int",
-   "hidden": 1,
-   "label": "Right",
-   "no_copy": 1,
-   "read_only": 1
-  },
-  {
    "default": "0",
    "fieldname": "show_in_overview",
    "fieldtype": "Check",
@@ -83,7 +50,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-06 14:44:26.599073",
+ "modified": "2024-11-06 15:04:39.040216",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Help Video Documentation",
