@@ -30,7 +30,7 @@
   },
   {
    "fieldname": "parent_help_video_documentation",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "ignore_user_permissions": 1,
    "label": "Parent Help Video Documentation",
    "link_filters": "[[{\"fieldname\":\"parent_help_video_documentation\",\"field_option\":\"Help Video Documentation\"},\"is_group\",\"=\",1]]",
@@ -82,9 +82,8 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "is_tree": 1,
  "links": [],
- "modified": "2024-11-06 14:36:37.073706",
+ "modified": "2024-11-06 14:44:26.599073",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Help Video Documentation",
