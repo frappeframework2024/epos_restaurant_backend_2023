@@ -18,7 +18,7 @@
   "margin_left": 0.0,
   "margin_right": 0.0,
   "margin_top": 0.0,
-  "modified": "2024-05-14 09:58:20.217364",
+  "modified": "2024-10-28 17:13:45.052352",
   "module": "Account",
   "name": "Commercial Tax Invoice A4",
   "page_number": "Bottom Center",
@@ -30,6 +30,6 @@
   "short_order_field": null,
   "show_section_headings": 0,
   "show_sort_order_option": 0,
-  "standard": "Yes"
+  "standard": "No"
  }
 ]

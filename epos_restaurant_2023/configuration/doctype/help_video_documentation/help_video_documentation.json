@@ -1,0 +1,111 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:video_name",
+ "creation": "2024-11-06 10:26:23.892362",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_k0n6",
+  "old_parent",
+  "parent_help_video_documentation",
+  "is_group",
+  "video_name",
+  "label",
+  "link",
+  "lft",
+  "rgt",
+  "show_in_overview"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_k0n6",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "old_parent",
+   "fieldtype": "Link",
+   "label": "Old Parent",
+   "options": "Help Video Documentation"
+  },
+  {
+   "fieldname": "parent_help_video_documentation",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "Parent Help Video Documentation",
+   "link_filters": "[[{\"fieldname\":\"parent_help_video_documentation\",\"field_option\":\"Help Video Documentation\"},\"is_group\",\"=\",1]]",
+   "options": "Help Video Documentation"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_group",
+   "fieldtype": "Check",
+   "label": "Is Group"
+  },
+  {
+   "fieldname": "video_name",
+   "fieldtype": "Data",
+   "label": "Video Name",
+   "unique": 1
+  },
+  {
+   "fieldname": "label",
+   "fieldtype": "Data",
+   "label": "Label"
+  },
+  {
+   "fieldname": "link",
+   "fieldtype": "Data",
+   "label": "Link"
+  },
+  {
+   "fieldname": "lft",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Left",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "rgt",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Right",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "show_in_overview",
+   "fieldtype": "Check",
+   "label": "Show in Overview"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_tree": 1,
+ "links": [],
+ "modified": "2024-11-06 14:36:37.073706",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "Help Video Documentation",
+ "naming_rule": "By fieldname",
+ "nsm_parent_field": "parent_help_video_documentation",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
