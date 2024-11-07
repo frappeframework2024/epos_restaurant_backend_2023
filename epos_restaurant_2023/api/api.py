@@ -226,6 +226,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "specific_business_branch":doc.specific_business_branch,
         "specific_pos_profile":doc.specific_pos_profile,
         "backend_port":doc.backend_port,
+        "use_backend_port":doc.use_backend_port,
         "customer_display_slideshow": pos_branding.customer_display_slideshow,
         "thank_you_message":pos_branding.thank_you_message,
         "cancel_print_bill_required_password":pos_config.cancel_print_bill_required_password,
@@ -611,11 +612,11 @@ def get_resevation_calendar(business_branch,start,end):
                 reservation_status_background_color as borderColor 
             from `tabPOS Reservation` 
             where 
-                property='{0}' and 
-                arrival_date between '{1}' and '{2}'
+                property=%(property)s and 
+                arrival_date between '{0}' and '{21}'
             order by arrival_time
-            """.format(business_branch,getdate(start),getdate(end))
-    data = frappe.db.sql(sql,as_dict=1)
+            """.format(getdate(start),getdate(end))
+    data = frappe.db.sql(sql,{"property":business_branch}, as_dict=1)
     return data
 
 @frappe.whitelist()

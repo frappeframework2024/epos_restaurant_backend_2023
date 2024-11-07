@@ -189,8 +189,9 @@ const frappe = inject('$frappe');
 const moment = inject('$moment');
 
 const pos_profile = localStorage.getItem("pos_profile");
-const serverUrl = window.location.protocol + "//" + "//" + window.location.hostname + (window.location.protocol =="https:"? "": (":"+ gv.setting.pos_setting.backend_port));
 
+let port = gv.setting.pos_setting.use_backend_port == 0 ? `:${window.location.port}` : (window.location.protocol == "https:" ? "" : `:${gv.setting.pos_setting.backend_port}`)
+const serverUrl = `${window.location.protocol}//${window.location.hostname}${port}`;
 
 const call = frappe.call();
 const db = frappe.db();

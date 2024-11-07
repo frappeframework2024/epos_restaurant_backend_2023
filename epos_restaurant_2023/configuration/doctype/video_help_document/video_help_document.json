@@ -1,0 +1,83 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:video_name",
+ "creation": "2024-11-06 15:33:37.351119",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "video_name",
+  "label",
+  "parent_help_video",
+  "is_group",
+  "show_in_overview",
+  "link",
+  "keyword"
+ ],
+ "fields": [
+  {
+   "fieldname": "video_name",
+   "fieldtype": "Data",
+   "label": "Video Name",
+   "unique": 1
+  },
+  {
+   "fieldname": "label",
+   "fieldtype": "Data",
+   "label": "Label",
+   "unique": 1
+  },
+  {
+   "fieldname": "parent_help_video",
+   "fieldtype": "Data",
+   "label": "Parent Help Video"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_group",
+   "fieldtype": "Check",
+   "label": "Is Group"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_in_overview",
+   "fieldtype": "Check",
+   "label": "Show In Overview"
+  },
+  {
+   "fieldname": "link",
+   "fieldtype": "Data",
+   "label": "Link"
+  },
+  {
+   "fieldname": "keyword",
+   "fieldtype": "Small Text",
+   "label": "keyword"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-11-06 15:39:54.533244",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "Video Help Document",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

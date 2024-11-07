@@ -67,7 +67,9 @@ const { mobile } = useDisplay()
 const gv = inject("$gv")
 const keyword = ref("")
 const drawer = ref(false)
-const serverUrl = window.location.protocol + "//" + "//" + window.location.hostname + (window.location.protocol =="https:"? "": (":"+ gv.setting.pos_setting.backend_port)) ;
+
+let port = gv.setting.pos_setting.use_backend_port == 0 ? `:${window.location.port}` : (window.location.protocol == "https:" ? "" : `:${gv.setting.pos_setting.backend_port}`)
+const serverUrl = `${window.location.protocol}//${window.location.hostname}${port}`;
 
  
 const filter = ref({
