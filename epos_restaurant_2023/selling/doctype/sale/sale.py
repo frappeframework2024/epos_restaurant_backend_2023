@@ -383,6 +383,7 @@ class Sale(Document):
 		update_customer_bill_balance(self)
 
 		# update to folio transaction
+		
 		update_pos_pay_to_room_adjustment(self)
 
 		# delete payment from POS Sale Payment
@@ -426,12 +427,11 @@ def update_sale_sale_product_cost(self):
 
 
 def update_pos_pay_to_room_adjustment(self):
-
 	#check sale has payment type transfer to edoor and user cancel order 
     # then we check payment type adjustment account then post adjustment account to edoor pms
 	if 'edoor' in frappe.get_installed_apps():
-	
 		payments =  deepcopy(self.payment)
+ 
 		
 		for p in [d for d in payments if d.folio_transaction_number and d.folio_transaction_type and  not d.cancel_order_adjustment_account_code]:
 			frappe.throw("There is no cancel order adjustment account code for payment type {}. Please config it in POS Config Setting.".format(p.payment_type))
