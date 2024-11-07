@@ -137,7 +137,7 @@ let totalDifferentAmount = ref(0);
 const totalCloseAmount = computed(() => {
     if (cashierShiftSummary.value.data) {
 
-        return cashierShiftSummary.value.data.reduce((n, r) => n + (r.input_close_amount / r.exchange_rate), 0);
+        return cashierShiftSummary.value.data.reduce((n, r) => n + (r.input_close_amount / (r.exchange_rate == 0? 1 : r.exchange_rate)), 0);
     }
     return 0;
 })
@@ -202,7 +202,7 @@ onMounted(async () => {
 
         cashierShiftSummary.value.data.forEach(function (d) {
             d.input_different_amount = d.input_close_amount - d.input_system_close_amount;
-            d.different_amount = (d.input_close_amount - d.input_system_close_amount) / d.exchange_rate;
+            d.different_amount = (d.input_close_amount - d.input_system_close_amount) / (d.exchange_rate == 0 ? 1: d.exchange_rate) ;
 
         });
         totalDifferentAmount.value = cashierShiftSummary.value.data.reduce((n, r) => n + r.different_amount, 0);
