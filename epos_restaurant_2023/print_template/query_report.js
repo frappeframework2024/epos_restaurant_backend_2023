@@ -1166,6 +1166,8 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 						<th style="text-align: center;">Room Count</th>
 						<th style="text-align: center;">Room Nights</th>
 						<th style="text-align: center;">Pax (A/C)</th>
+						<th style="text-align: center;">ADR</th>
+						<th style="text-align: center;">Total Amount</th>
 						<th style="text-align: right;">Debit</th>
 						<th style="text-align: right;">Credit</th>
 					</tr>
@@ -1175,7 +1177,10 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 							<td style="text-align: center;">{{d.room_count}}</td>
 							<td style="text-align: center;">{{d.room_nights}}</td>
 							<td style="text-align: center;">{{d.adult}} / {{d.child}}</td>
+							<td >{{frappe.format(d.adr,{"fieldtype":"Currency"})}}</td>
+							<td >{{frappe.format(d.total_amount,{"fieldtype":"Currency"})}}</td>
 							<td >{{frappe.format(d.debit,{"fieldtype":"Currency"})}}</td>
+							
 							<td>{{frappe.format(d.credit,{"fieldtype":"Currency"})}}</td>
 						</tr>
 					{%endfor%}

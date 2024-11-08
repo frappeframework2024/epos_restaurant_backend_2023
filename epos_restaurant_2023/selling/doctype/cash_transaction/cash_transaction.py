@@ -9,7 +9,7 @@ class CashTransaction(Document):
 	def validate(self):
 		if self.flags.ignore_validate:
 			return
-		self.amount = self.input_amount / self.exchange_currency
+		self.amount = self.input_amount / (self.exchange_currency or 1)
 		if not self.created_by:
 			self.created_by = frappe.get_user().doc.full_name
 

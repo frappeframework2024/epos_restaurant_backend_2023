@@ -295,7 +295,7 @@ def get_currenct_cost(product_code="",stock_location="",unit="",price_rule = "")
                 doc[0]["price"] = price
                 return doc[0]
             else:
-                 return {"cost":0,"quantity":0, "price":0}
+                 return {"cost":product.cost / uom_conversion ,"quantity":0, "price":0}
         else:
             doc = frappe.db.sql("SELECT cost/{1} cost,0 quantity FROM `tabProduct` WHERE product_code = '{0}' limit 1".format(product_code,uom_conversion),as_dict=1)
             doc[0]["last_purchase_cost"] = product.last_purchase_cost
