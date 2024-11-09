@@ -226,6 +226,7 @@ async function onPrint() {
         station_device_printing: (gv.setting?.device_setting?.station_device_printing) || "",
         reprint: 1
     } 
+    console.log(activeReport.value)
     let printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
     let _printer = undefined
     if (printer.length > 0) {
