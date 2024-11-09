@@ -17,7 +17,12 @@ class StockTransfer(Document):
 
 		self.total_quantity = total_quantity
 		self.total_amount = total_amount
-  
+		
+	def before_save(self):
+		for a in self.stock_transfer_products:
+			a.total_secondary_cost = a.quantity * a.secondary_cost
+			a.amount = a.quantity * a.cost
+
 	def before_submit(self):
 		for p in self.stock_transfer_products:
 			if(p.is_inventory_product):

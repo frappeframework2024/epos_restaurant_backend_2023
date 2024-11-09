@@ -29,7 +29,12 @@ class StockTake(Document):
 					uom_conversion = get_uom_conversion(current_stock.unit, d.unit)
 					if current_stock.quantity * uom_conversion < d.quantity:
 						frappe.throw(_("{} is available only {} {} in stock".format(d.product_code, current_stock.quantity,current_stock.unit)))
-      
+	def before_save(self):
+		for a in self.stock_take_products:
+			a.total_secondary_cost = a.quantity * a.secondary_cost
+			a.total_amount = a.quantity * a.cost
+
+
 	def on_submit(self):
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			GL_Entry(self)
@@ -87,6 +92,7 @@ def update_current_product_info(self):
 		p = get_currenct_cost(a.product_code,self.stock_location,a.unit)
 		a.cost = p["cost"]
 		a.total_amount = a.quantity * a.cost
+		a.total_secondary_cost = a.quantity * a.secondary_cost
 
 def GL_Entry(self):
     docs = [] 

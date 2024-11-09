@@ -51,6 +51,7 @@ def update_current_product_info(self):
 		p = get_currenct_cost(a.product_code,self.stock_location,a.unit)
 		a.current_quantity = p["quantity"]
 		a.total_current_cost = a.current_quantity * a.current_cost
+		a.total_secondary_cost = a.quantity * a.secondary_cost
 
 def update_inventory_on_submit(self):
 	for p in self.products:

@@ -51,7 +51,7 @@ class PurchaseOrder(Document):
 		if len(self.purchase_order_products)>=10:
 			update_inventory_on_cancel(self)
 		else:
-			frappe.enqueue("epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.update_inventory_on_cancel", queue='short', self=self)
+			frappe.enqueue("epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.update_inventory_on_cancel", queue='short', self=self)		
 
 	def before_submit(self):
 		for d in self.purchase_order_products:
@@ -67,12 +67,14 @@ def validate_discount(self):
 				a.po_discount_percent = discount_percent * 100
 				a.po_discount_amount = a.sub_total*discount_percent
 				a.total_discount = a.discount_amount + a.po_discount_amount
+				a.total_secondary_cost = a.quantity * a.secondary_cost
 	else:
 		for a in self.purchase_order_products:
 			if a.discount_amount == 0:
 				a.po_discount_percent = a.po_discount_amount = 0
 				a.total_discount = a.discount_amount + a.po_discount_amount
 				a.amount = a.sub_total - a.total_discount
+				a.total_secondary_cost = a.quantity * a.secondary_cost
 	total = sum(a.sub_total - a.total_discount for a in self.purchase_order_products)
 	if total < 0:
 		frappe.throw("Discount amount can not be greater than total amount")

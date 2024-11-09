@@ -567,7 +567,7 @@ def get_row_groups():
 			"show_commission":False
 		},
 		{
-			"fieldname":"concat(a.product_code,'-',a.product_name,' ', if(concat(a.`portion`)='' or concat(a.`portion`) = 'Normal','',concat(a.`portion`)), coalesce(a.modifiers,''))",
+			"fieldname":"concat(a.product_code,'-',a.product_name,' ', if(concat(a.`portion`)='' or concat(a.`portion`) = 'Normal'nve,'',concat(a.`portion`)), coalesce(a.modifiers,''))",
 			"label":"Product And Price",
 			"show_commission":False
 		},
