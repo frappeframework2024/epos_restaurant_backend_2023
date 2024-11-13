@@ -28,6 +28,7 @@
   "show_in_shortcut_sub_menu",
   "column_break_afbm",
   "allow_enter_pax",
+  "allow_post_inclusion",
   "sort_order",
   "icon",
   "old_parent",
@@ -87,12 +88,15 @@
   "is_deposit_ledger_account",
   "is_desk_folio_account",
   "is_payable_ledger_account",
+  "column_break_lqed",
+  "section_break_guhm",
   "account_group_setting_column",
   "show_in_guest_folio",
   "show_in_desk_folio",
   "show_in_city_ledger",
   "show_in_deposit_ledger",
   "show_in_payable_ledger",
+  "column_break_hstf",
   "reporting_tab",
   "flash_report_revenue_group",
   "hide_account_reservation_not_allow_see_rate",
@@ -170,11 +174,13 @@
    "default": "0",
    "fieldname": "show_in_shortcut_menu",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Show in Shortcut Menu"
   },
   {
    "fieldname": "icon",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Icon"
   },
   {
@@ -670,12 +676,31 @@
    "fieldname": "custom_commercial_group_by_key",
    "fieldtype": "Data",
    "label": "Commercial Tax Invoice Tax Label Group By Key"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_post_inclusion",
+   "fieldtype": "Check",
+   "label": "Allow Post Inclusion"
+  },
+  {
+   "fieldname": "column_break_lqed",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_guhm",
+   "fieldtype": "Section Break",
+   "hidden": 1
+  },
+  {
+   "fieldname": "column_break_hstf",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-10-22 11:14:47.468295",
+ "modified": "2024-11-12 15:25:41.785914",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

@@ -218,21 +218,28 @@ const workingDay = ref(null)
 const drawer = ref(false)
 
 const printPreviewUrl = computed(()=>{
-    let param ={
-        "name": encodeURIComponent(activeReport.value.report_id),
-        "product_category":encodeURIComponent(activeReport.value.filter.product_category),
-        "pos_profile":encodeURIComponent(pos_profile),
-        "outlet":encodeURIComponent(gv.setting.outlet),
-        "format":encodeURIComponent(activeReport.value.preview_report),
-        "letterhead":encodeURIComponent(activeReport.value.letterhead)
-    }
+    let param = getReportParam();
     const url =  `${serverUrl}/printview?doctype=${activeReport.value.doc_type}&name=${param.name}&product_category=${param.product_category}&pos_profile=${param.pos_profile}&outlet=${param.outlet}&format=${param.format}&no_letterhead=0&show_toolbar=0&letterhead=${param.letterhead}&settings=%7B%7D&_lang=${activeReport.value.lang}`
     return url;
 })
 
+const getReportParam = (isPreview = true) =>{
+    const format = isPreview ? activeReport.value.preview_report : activeReport.value.print_report_name;  
+    const param = {
+        "name": encodeURIComponent(activeReport.value.report_id),
+        "product_category":encodeURIComponent(activeReport.value.filter.product_category),
+        "pos_profile":encodeURIComponent(pos_profile),
+        "outlet":encodeURIComponent(gv.setting.outlet),
+        "format":encodeURIComponent(format),
+        "letterhead":encodeURIComponent(activeReport.value.letterhead)
+    } 
+    return param;
+}
+
 
 const printUrl = computed(()=>{
-    return `${serverUrl}/printview?doctype=${activeReport.value.doc_type}&name=${activeReport.value.report_id}&product_category=${activeReport.value.filter.product_category}&pos_profile=${pos_profile}&outlet=${gv.setting.outlet}&format=${activeReport.value.print_report_name}&no_letterhead=0&show_toolbar=0&letterhead=${activeReport.value.letterhead}&settings=%7B%7D&_lang=${activeReport.value.lang}`
+    let param = getReportParam(false);
+    return `${serverUrl}/printview?doctype=${activeReport.value.doc_type}&name=${param.name}&product_category=${param.product_category}&pos_profile=${param.pos_profile}&outlet=${param.outlet}&format=${param.format}&no_letterhead=0&show_toolbar=0&letterhead=${param.letterhead}&settings=%7B%7D&_lang=${activeReport.value.lang}`
 })
 
 const lang = gv.setting.lang;

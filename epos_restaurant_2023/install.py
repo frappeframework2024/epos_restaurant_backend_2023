@@ -173,6 +173,7 @@ def reset_sale_transaction():
             frappe.db.sql("delete from `tabSale Product`")
             frappe.db.sql("delete from `tabSale`")
             frappe.db.sql("delete from `tabCashier Shift Cash Float`")
+            frappe.db.sql("delete from `tabCashier Shift Cash Count`")
             frappe.db.sql("delete from `tabCashier Shift`")
             frappe.db.sql("delete from `tabWorking Day`")
             frappe.db.sql("delete from `tabPromotion Products`")
@@ -182,7 +183,6 @@ def reset_sale_transaction():
             frappe.db.sql("delete from `tabVoucher`")
             frappe.db.sql("delete from `tabVoucher Payment`")
             frappe.db.sql("delete from `tabVersion`")
-            frappe.db.sql("delete from `tabComment`")
             frappe.db.sql("delete from `tabComment` where reference_doctype in ('Sale','POS Sale Payment','Sale Payment','Sale Product','Cashier Shift Cash Float','Cashier Shift','Working Day')")
 
             

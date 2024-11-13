@@ -411,11 +411,11 @@ def update_sale_sale_product_cost(self):
 		pos_profile = p.pos_profile if p.pos_profile else self.pos_profile
 		sale_product_stock_location = get_stock_location_by_pos_profile(p.product_code,pos_profile,self.stock_location)
 		uom_conversion = get_uom_conversion(p.base_unit, p.unit)
-		_sale_product_cost = (get_product_cost(sale_product_stock_location, p.product_code)/uom_conversion) * p.quantity
+		cost = get_product_cost(sale_product_stock_location, p.product_code)/uom_conversion
 		## update sale product cost 
-		p.cost = _sale_product_cost
+		p.cost = cost
 
-		total_cost += _sale_product_cost
+		total_cost += (cost * p.quantity)
 		total_second_cost += ((frappe.db.get_value('Product',{'product_code':p.product_code}, 'secondary_cost')/uom_conversion)* p.quantity)
 	self.sale_grand_total = self.grand_total
 	self.sale_profit = self.grand_total - total_cost
