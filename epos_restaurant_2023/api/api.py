@@ -1929,3 +1929,4 @@ def get_pos_profile_for_switch(pos_station,current_pos_profile,business_branch):
     return data
 
 
+
