@@ -37,7 +37,7 @@ def validate(filters):
 			frappe.throw("Parent row group and row group can not be the same")
  
 def get_columns(filters):
-	return [
+	columns = [
 		{"label":"Doc. #", "fieldname":"name","fieldtype":"Link","options":"Sale", "align":"center","width":250},
 		# {"label":"Bill No", "fieldname":"bill_number","fieldtype":"Data", "align":"center","width":120},
 		{"label":"Date",  "fieldname":"posting_date","fieldtype":"Date", "align":"center",},
@@ -57,7 +57,12 @@ def get_columns(filters):
 		{"label":"User", "fieldname":"created_by","fieldtype":"Data"},
 		
 	]
- 
+	
+	if filters.is_void:
+		columns.append(
+		{"label":"Deleted By", "fieldname":"deleted_by","fieldtype":"Data"},
+		)
+	return columns
  
 
 
@@ -115,7 +120,8 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 			a.total_tax,
 			a.docstatus,
 			a.created_by,
-			a.guest_cover
+			a.guest_cover,
+			a.deleted_by
 	FROM `tabSale` AS a
 		WHERE
 			{}

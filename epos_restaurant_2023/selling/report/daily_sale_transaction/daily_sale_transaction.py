@@ -55,6 +55,7 @@ def get_columns(filters):
 		{"label":"Total Amt", "fieldname":"grand_total","fieldtype":"Currency","align":"right","width":100},
 		{"label":"Profit", "fieldname":"profit","fieldtype":"Currency","align":"right","width":100},
 		{"label":"User", "fieldname":"created_by","fieldtype":"Data"},
+		{"label":"Status", "fieldname":"status","fieldtype":"Data","width":100},
 		
 	]
  
@@ -63,14 +64,10 @@ def get_columns(filters):
 
  
 def get_conditions(filters,group_filter=None):
-	conditions = " a.docstatus = 1 "
-
+	conditions = ""
 	start_date = filters.start_date
 	end_date = filters.end_date
-
-
-
-	conditions += " AND a.posting_date between '{}' AND '{}'".format(start_date,end_date)
+	conditions += "a.posting_date between '{}' AND '{}'".format(start_date,end_date)
 
 	if filters.get("product_group"):
 		conditions += " AND a.product_group in %(product_group)s"
@@ -89,6 +86,11 @@ def get_conditions(filters,group_filter=None):
 
 	if filters.get("pos_profile"):
 		conditions += " AND a.pos_profile in %(pos_profile)s"
+
+	if filters.get("show_cancelled") == 1:
+		conditions += " AND a.docstatus in (1,2)"
+	else:
+		conditions += " AND a.docstatus = 1"
 	
 	return conditions
 
@@ -114,7 +116,8 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 			a.profit,
 			a.total_tax,
 			a.created_by,
-			a.guest_cover
+			a.guest_cover,
+			if(a.docstatus=1,'Paid','Cancelled') status
 	FROM `tabSale` AS a
 		WHERE
 			{}

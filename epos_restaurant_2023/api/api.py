@@ -81,9 +81,9 @@ def check_username(pin_code):
     
     if pin_code:    
         pin_code = (str( base64.b64encode(pin_code.encode("utf-8")).decode("utf-8")))
-        users = frappe.db.sql("select user_id, pos_permission from `tabEmployee` where pos_pin_code = '{}' and allow_login = 1 and allow_login_to_epos = 1 limit 1".format(pin_code), as_dict = 1)
+        users = frappe.db.sql("select user_id, pos_permission from `tabEmployee` where pos_pin_code = %(pin_code)s and allow_login = 1 and allow_login_to_epos = 1 limit 1", {"pin_code":pin_code}, as_dict = 1)
         if users:
-            data = frappe.db.sql("select name,full_name,user_image from `tabUser` where name='{}' limit 1".format(users[0].user_id),as_dict=1)
+            data = frappe.db.sql("select name,full_name,user_image from `tabUser` where name=%(name)s limit 1",{"name":users[0].user_id},as_dict=1)
             if data:
                 permission= frappe.get_doc("POS User Permission",users[0]["pos_permission"])      
                 return {"username":data[0]["name"],"full_name":data[0]["full_name"],"user_image":data[0]["user_image"],"permission":permission} 
@@ -97,9 +97,9 @@ def get_user_info(name=""):
     if name == "Guest":
         frappe.throw("Please login to start using epos system")
 
-    users = frappe.db.sql("select user_id, pos_permission from `tabEmployee` where user_id = '{}' ".format(name), as_dict = 1)
+    users = frappe.db.sql("select user_id, pos_permission from `tabEmployee` where user_id = %(user_id)s ",{"user_id":name}, as_dict = 1)
     if users:
-        data = frappe.db.sql("select name,full_name,user_image,role_profile_name from `tabUser` where name='{}'".format(name),as_dict=1)
+        data = frappe.db.sql("select name,full_name,user_image,role_profile_name from `tabUser` where name=%(name)s",{"name":name},as_dict=1)
         if data:
             permission= frappe.get_doc("POS User Permission",users[0]["pos_permission"])      
             return {"username":data[0]["name"],"full_name":data[0]["full_name"],"photo":data[0]["user_image"],"role":users[0]["pos_permission"],"permission":permission} 
@@ -479,24 +479,25 @@ def get_tables_number(table_group,device_name):
                             height as h, 
                             width as w, 
                             price_rule,
+                            tbl_group,
                             discount_type 
                          from `tabTables Number` 
-                         where tbl_group='{}' 
+                         where tbl_group=%(group)s
                          order by 
                          sort_order, 
-                         tbl_number""".format(table_group), as_dict=1)
+                         tbl_number""",{"group":table_group}, as_dict=1)
 
     background_color = frappe.db.get_default("default_table_number_background_color")
     text_color = frappe.db.get_default("default_table_number_text_color")
     i = 0
-    x = 10
-    y = 10 
+    x = 5
+    y = 5 
     for d in data:
         d.background_color=background_color
         d.default_bg_color=background_color
         d.text_color = text_color
         d.default_text_color = text_color
-        position = frappe.db.sql("select x,y,h,w from `tabePOS Table Position` where device_name='{}' and tbl_number='{}' limit 1".format(device_name,d.tbl_no ), as_dict=1)
+        position = frappe.db.sql("select x,y,h,w from `tabePOS Table Position` where device_name=%(device_name)s and table_id=%(table_id)s limit 1",{"device_name":device_name,"table_id":d.id }, as_dict=1)
         if position:
             for p in position:
                 d.x = p.x or x
@@ -508,10 +509,10 @@ def get_tables_number(table_group,device_name):
             d.y = y 
 
         i += 1 
-        x += (d.w +10)
+        x += (d.w +5)
         if i >=10:
-            x = 10
-            y += (d.h + 10)
+            x = 5
+            y += (d.h + 5)
             i = 0
         ##
 
@@ -536,7 +537,7 @@ def check_pos_profile(pos_profile_name, device_name, is_used_validate=True):
             if station.is_used and not device_name=="Demo":
                 frappe.throw("This station is already used")
 
-        frappe.db.sql("update `tabPOS Station` set is_used = 1 where name = '{}'".format(device_name))
+        frappe.db.sql("update `tabPOS Station` set is_used = 1 where name = %(name)s",{"name":device_name})
         
         frappe.db.commit()
     
@@ -613,7 +614,7 @@ def get_resevation_calendar(business_branch,start,end):
             from `tabPOS Reservation` 
             where 
                 property=%(property)s and 
-                arrival_date between '{0}' and '{21}'
+                arrival_date between '{0}' and '{1}'
             order by arrival_time
             """.format(getdate(start),getdate(end))
     data = frappe.db.sql(sql,{"property":business_branch}, as_dict=1)
@@ -656,10 +657,8 @@ def get_user_information():
 @frappe.whitelist()
 def save_table_position(device_name, table_group):
     # frappe.throw("{}".format(table_group))
-    frappe.db.sql("delete from `tabePOS Table Position` where device_name='{}'".format(device_name) )
-    
-    for g in table_group:
-        
+    frappe.db.sql("delete from `tabePOS Table Position` where device_name=%(name)s",{"name":device_name} )    
+    for g in table_group:      
         for t in g['tables']:
             x = 0
             if "x" in t:
@@ -673,11 +672,13 @@ def save_table_position(device_name, table_group):
             w = 0
             if "w" in t:
                 w = t["w"]
-            if not frappe.db.exists('ePOS Table Position', {'tbl_number': t['tbl_no'], 'device_name': device_name}):
+            if not frappe.db.exists('ePOS Table Position', {'table_id': t['id'], 'device_name': device_name}):
                 doc = frappe.get_doc({
                         'doctype': 'ePOS Table Position',
                         'device_name':device_name,
                         'tbl_number': t['tbl_no'],
+                        'table_group':g["table_group"],
+                        'table_id':t['id'],
                         'x':x,
                         'y':y,
                         'h':h,
@@ -686,8 +687,7 @@ def save_table_position(device_name, table_group):
                 doc.insert()
 
 @frappe.whitelist()
-def get_pos_print_format(doctype,business_branch=None):    
-
+def get_pos_print_format(doctype,business_branch=None):  
     # pos_print_format =  
     sql = """select 
                 name,
@@ -708,12 +708,13 @@ def get_pos_print_format(doctype,business_branch=None):
                 business_branch,
                 report_options
             from `tabPOS Print Format Setting` 
-            where print_format_doc_type='{}'
-            and show_in_pos = 1 """.format(doctype)
+            where print_format_doc_type= %(doctype)s
+            and show_in_pos = 1 """
     if business_branch:
-        sql += " and business_branch = '{}'".format(business_branch)
-    
-    data = frappe.db.sql(sql, as_dict=True)    
+        sql += " and business_branch = %(business_branch)s" 
+        data = frappe.db.sql(sql,{"business_branch":business_branch,"doctype":doctype}, as_dict=True)  
+    else:
+        data =   frappe.db.sql(sql,{"doctype":doctype}, as_dict=True)  
     if data:
        return data
     else:
@@ -736,22 +737,30 @@ def get_close_shift_summary(cashier_shift):
     doc = frappe.get_doc("Cashier Shift",cashier_shift)
     
     #get close amount by payment type
-    sql = "select payment_type, currency,sum(input_amount + (fee_amount * exchange_rate)) as input_amount, sum(payment_amount + fee_amount) as payment_amount from `tabSale Payment` where cashier_shift='{}' and docstatus=1 group by payment_type, currency".format(cashier_shift)
+    sql = """select payment_type, currency,
+            sum(input_amount + (fee_amount * exchange_rate)) as input_amount, 
+            sum(payment_amount + fee_amount) as payment_amount 
+        from `tabSale Payment` 
+        where cashier_shift=%(cashier_shift)s 
+        and docstatus=1 
+        group by 
+        payment_type, 
+        currency"""
     voucher_payment_sql = """SELECT 
                                 payment_type, 
                                 exchange_rate,
                                 currency,sum(input_amount) as input_amount, 
                                 sum(payment_amount) as payment_amount from `tabVoucher Payment` 
                             WHERE 
-                                cashier_shift='{}' and 
+                                cashier_shift=%(cashier_shift)s and 
                                 docstatus=1 
                             group BY 
                                 payment_type,
-                                currency""".format(cashier_shift)
+                                currency"""
 
     
-    payments = frappe.db.sql(sql, as_dict=1)
-    voucher_payments = frappe.db.sql(voucher_payment_sql, as_dict=1)
+    payments = frappe.db.sql(sql,{"cashier_shift":cashier_shift}, as_dict=1)
+    voucher_payments = frappe.db.sql(voucher_payment_sql,{"cashier_shift":cashier_shift}, as_dict=1)
     
     
     #get cash in out 
@@ -762,13 +771,13 @@ def get_close_shift_summary(cashier_shift):
                 sum(if(transaction_status='Cash Out',input_amount*-1,input_amount)) as total_input_amount, 
                 sum(if(transaction_status='Cash Out',amount*-1,amount)) as total_amount 
             from `tabCash Transaction`   
-            where cashier_shift='{}'    
+            where cashier_shift=%(cashier_shift)s
             group by  
                 payment_type,
                 currency,
-                exchange_currency""".format(cashier_shift)
+                exchange_currency"""
  
-    cash_transactions = frappe.db.sql(sql, as_dict=1)
+    cash_transactions = frappe.db.sql(sql,{"cashier_shift":cashier_shift}, as_dict=1)
     
 
     #get cash float
@@ -898,23 +907,23 @@ def get_cash_float(data):
 
 @frappe.whitelist()
 def get_payment_cash(cashier_shift):
-    sql = "select payment_type, currency, SUM(payment_amount) as payment_amount from `tabSale Payment` where cashier_shift='{}' AND payment_type_group = 'Cash' and docstatus=1 group by payment_type, currency".format(cashier_shift)
-    data = frappe.db.sql(sql, as_dict=1)
+    sql = "select payment_type, currency, SUM(payment_amount) as payment_amount from `tabSale Payment` where cashier_shift=%(cashier_shift)s AND payment_type_group = 'Cash' and docstatus=1 group by payment_type, currency"
+    data = frappe.db.sql(sql,{"cashier_shift":cashier_shift}, as_dict=1)
     return data
 @frappe.whitelist()
 def get_cash_drawer_balance(cashier_shift):
-    sql_system_amount = "SELECT COALESCE( SUM(payment_amount),0) AS total_amount_cash FROM `tabSale Payment` where cashier_shift='{}' AND payment_type_group = 'Cash' and docstatus=1".format(cashier_shift)
-    sql_opening_amount = "SELECT total_opening_amount FROM `tabCashier Shift` WHERE name = '{}'".format(cashier_shift)
-    sql_cash_out = "SELECT COALESCE( SUM(amount), 0) AS total_amount_cash_out FROM `tabCash Transaction` WHERE cashier_shift = '{}' AND transaction_status = 'Cash Out'".format(cashier_shift)
-    sql_cash_in = "SELECT COALESCE( SUM(amount), 0) AS total_amount_cash_in FROM `tabCash Transaction` WHERE cashier_shift = '{}' AND transaction_status = 'Cash In'".format(cashier_shift)
+    sql_system_amount = "SELECT COALESCE( SUM(payment_amount),0) AS total_amount_cash FROM `tabSale Payment` where cashier_shift=%(cashier_shift)s AND payment_type_group = 'Cash' and docstatus=1"
+    sql_opening_amount = "SELECT total_opening_amount FROM `tabCashier Shift` WHERE name = %(cashier_shift)s"
+    sql_cash_out = "SELECT COALESCE( SUM(amount), 0) AS total_amount_cash_out FROM `tabCash Transaction` WHERE cashier_shift = %(cashier_shift)s AND transaction_status = 'Cash Out'"
+    sql_cash_in = "SELECT COALESCE( SUM(amount), 0) AS total_amount_cash_in FROM `tabCash Transaction` WHERE cashier_shift = %(cashier_shift)s AND transaction_status = 'Cash In'"
     
-    data_system_amount = frappe.db.sql(sql_system_amount, as_dict=1)
+    data_system_amount = frappe.db.sql(sql_system_amount,{"cashier_shift":cashier_shift}, as_dict=1)
     total_amount_cash = data_system_amount[0].total_amount_cash
-    data_opening_amount = frappe.db.sql(sql_opening_amount, as_dict=1)
+    data_opening_amount = frappe.db.sql(sql_opening_amount,{"cashier_shift":cashier_shift}, as_dict=1)
     total_opening_amount = data_opening_amount[0].total_opening_amount
-    data_cash_in = frappe.db.sql(sql_cash_in, as_dict=1)
+    data_cash_in = frappe.db.sql(sql_cash_in, {"cashier_shift":cashier_shift}, as_dict=1)
     total_amount_cash_in = data_cash_in[0].total_amount_cash_in
-    data_cash_out = frappe.db.sql(sql_cash_out, as_dict=1)
+    data_cash_out = frappe.db.sql(sql_cash_out,{"cashier_shift":cashier_shift},  as_dict=1)
     total_amount_cash_out = data_cash_out[0].total_amount_cash_out
     data = {
         "total_amount_cash": total_amount_cash,
@@ -965,6 +974,7 @@ def get_sale_list_table_badge(data):
             total_quantity,
             tbl_group,
             tbl_number,
+            table_id,
             seat_number,
             guest_cover,
             grand_total,
@@ -988,6 +998,7 @@ def get_sale_list_table_badge(data):
             total_quantity,
             tbl_group,
             tbl_number,
+            table_id,
             seat_number,
             guest_cover,
             grand_total,
@@ -999,10 +1010,9 @@ def get_sale_list_table_badge(data):
             phone_number,
             customer_photo
         from `tabSale` 
-        where pos_profile = '{}' 
-        and docstatus = 0""".format(data["pos_profile"])
-
-        result = frappe.db.sql(sql,as_dict=1)
+        where pos_profile = %(pos_profile)s
+        and docstatus = 0"""
+        result = frappe.db.sql(sql,{"pos_profile":data["pos_profile"]},as_dict=1)
         return result
 
 @frappe.whitelist(methods="POST")
@@ -1015,7 +1025,9 @@ def get_pending_sale_orders(data):
         sale_type,
         sale_type_color,
         seat_number,
+        tbl_group,
         tbl_number,
+        table_id,
         guest_cover,
         customer,
         customer_name,
@@ -1136,11 +1148,10 @@ def edit_sale_order(name,auth=None,note=None):
 
     #change status from 2 to 0 (Cancel to Draft) to allow pos can modified this doc
     sale_status_doc = frappe.get_doc("Sale Status","Submitted")
-    frappe.db.sql("update `tabSale` set docstatus = 0, sale_status='Submitted', sale_status_color='{1}', sale_status_priority={2} where name='{0}'".format(name,sale_status_doc.background_color,sale_status_doc.priority))
-    frappe.db.sql("update `tabSale Product` set docstatus = 0 where parent='{}'".format(name))
-
-
-           
+    sale_sql = "update `tabSale` set docstatus = 0, sale_status='Submitted', sale_status_color='{0}', sale_status_priority={1} where name=%(name)s".format(sale_status_doc.background_color,sale_status_doc.priority)
+    sale_product_sql = "update `tabSale Product` set docstatus = 0 where parent=%(parent)s"
+    frappe.db.sql(sale_sql, {"name":name})
+    frappe.db.sql(sale_product_sql,{"parent":name})          
 
 
     #add comment
@@ -1194,16 +1205,16 @@ def delete_sale(name,auth):
         sale_doc.cancel()
     else:        
         frappe.db.sql("update `tabSale` set docstatus = 2,deleted_by=%(deleted_by)s,deleted_note=%(deleted_note)s  where name=%(name)s",{"name":name,"deleted_by":auth["full_name"],"deleted_note":auth["note"]})
-        frappe.db.sql("update `tabSale Product` set docstatus = 2 where parent='{}'".format(name))
+        frappe.db.sql("update `tabSale Product` set docstatus = 2 where parent=%(parent)s",{"parent":name})
     
     #update sale product spa deleted
-    query = "update `tabSale Product SPA Commission` set is_deleted = 1  where sale = '{}'".format(name)
-    frappe.db.sql(query)
+    query = "update `tabSale Product SPA Commission` set is_deleted = 1  where sale = %(sale)s"
+    frappe.db.sql(query, {"sale":name})
 
     # sale check if from pos reservation update status
     if sale_doc.from_reservation:
         if frappe.db.exists("POS Reservation", sale_doc.from_reservation):
-            frappe.db.sql("update `tabPOS Reservation` set workflow_state='Confirmed' where name='{0}'".format(sale_doc.from_reservation))
+            frappe.db.sql("update `tabPOS Reservation` set workflow_state='Confirmed' where name=%(name)s",{"name":sale_doc.from_reservation})
             
             reservation = frappe.get_doc("POS Reservation", sale_doc.from_reservation)
             if reservation:
@@ -1244,7 +1255,7 @@ def get_filter_for_close_sale_list(business_branch,pos_profile):
     if working_day :
 
         cashier_shifts =  [{"name":'', "title":"All Cashier Shift"}]
-        cashier_shifts = cashier_shifts + ( frappe.db.sql("select name, name as title from `tabCashier Shift` where working_day = '{}' and pos_profile = %(pos_profile)s order by name".format(working_day.name),{"pos_profile":pos_profile},as_dict=1))
+        cashier_shifts = cashier_shifts + ( frappe.db.sql("select name, name as title from `tabCashier Shift` where working_day = %(working_day)s and pos_profile = %(pos_profile)s order by name",{"pos_profile":pos_profile,"working_day":working_day.name},as_dict=1))
         sale_types = [{"title":'All Sale Type',"name":""}]
         sale_types +=  frappe.db.sql("select name, name as title, color,is_order_use_table from `tabSale Type` order by sort_order",as_dict=1)
         # outlets = [{"title":'All Outlet',"name":""}]
@@ -1563,7 +1574,7 @@ def get_pos_profiles():
 # get pos profile
 @frappe.whitelist(methods='POST')
 def get_tables_groups_other_pos_profile(pos_profile):
-    docs = frappe.db.sql("select * from `tabCashier Shift` where pos_profile = '{}' and is_closed = 0 and is_edoor_shift = 0".format(pos_profile), as_dict=1)
+    docs = frappe.db.sql("select * from `tabCashier Shift` where pos_profile = %(pos_profile)s and is_closed = 0 and is_edoor_shift = 0",{"pos_profile":pos_profile}, as_dict=1)
     result = None
     if len( docs) > 0:
         result = {

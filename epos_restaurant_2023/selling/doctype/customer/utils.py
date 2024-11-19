@@ -5,7 +5,7 @@ def update_fetch_from_fields(self):
 	condiction_keys = [
 		{
       		"key":"guest",
-   			"doctypes":["POS Reservation","Deposit Ledger","Tax Invoice","Additional Stay Guest","Room Occupy","Reservation Room Rate","Reservation Folio","Reservation Stay","Reservation","Folio Transaction","Reservation Folio","Desk Folio","Revenue Forecast Breakdown"]
+   			"doctypes":["POS Reservation","Deposit Ledger","Tax Invoice","Additional Stay Guest","Room Occupy","Reservation Room Rate","Reservation Folio","Reservation Stay","Reservation","Folio Transaction","Reservation Folio","Desk Folio","Revenue Forecast Breakdown","Reservation Stay Room"]
       	}
 	]
 	
@@ -23,6 +23,7 @@ def update_fetch_from_fields(self):
 		data_for_updates.append({"doctype":"Sale Payment","update_field":"customer_group='{}'".format(self.customer_group)})		
 
 	if self.has_value_changed("customer_name_en"):
+
 
 		data_for_updates.append({"doctype":"Sale","update_field":"customer_name='{}'".format(self.customer_name_en)})
 		data_for_updates.append({"doctype":"Sale Payment","update_field":"customer_name='{}'".format(self.customer_name_en)})
@@ -55,6 +56,8 @@ def update_fetch_from_fields(self):
 			data_for_updates.append({"doctype":"Reservation Stay","update_field":"guest_name='{}'".format(self.customer_name_en)})
 			#Room Occupy
 			data_for_updates.append({"doctype":"Room Occupy","update_field":"guest_name='{}'".format(self.customer_name_en)})
+			# reservaiton stay room
+			data_for_updates.append({"doctype":"Reservation Stay Room","update_field":"guest_name='{}'".format(self.customer_name_en)})
 			
 
 		

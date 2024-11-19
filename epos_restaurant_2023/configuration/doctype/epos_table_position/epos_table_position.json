@@ -7,8 +7,10 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "device_name",
+  "table_id",
   "tbl_number",
+  "table_group",
+  "device_name",
   "x",
   "y",
   "h",
@@ -27,7 +29,7 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "tbl_number",
+   "label": "Table Number",
    "reqd": 1
   },
   {
@@ -57,11 +59,24 @@
    "fieldtype": "Int",
    "in_list_view": 1,
    "label": "w"
+  },
+  {
+   "fieldname": "table_id",
+   "fieldtype": "Data",
+   "label": "Table Id",
+   "reqd": 1
+  },
+  {
+   "fieldname": "table_group",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Table Group"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-03-26 20:23:47.867515",
+ "modified": "2024-11-19 09:58:05.566250",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "ePOS Table Position",

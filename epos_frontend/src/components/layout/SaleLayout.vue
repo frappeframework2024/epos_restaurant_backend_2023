@@ -33,7 +33,8 @@
                     </div>
                     <div v-if="!mobile && sale.setting.use_retail_ui == 1">
                         <v-btn class="advanced-btn h-100 " @click="onAdvanceSearch">
-                            Advance Search
+                            {{$t('Advance Search')}}
+                            
                         </v-btn>
                     </div>
                 </div>

@@ -641,22 +641,19 @@ def add_product_to_temp_menu(self):
 		prices = []
 		for p in self.product_price:
 			prices.append({
-
 					"price":p.price,
 					'branch':p.business_branch or "",
 					'price_rule':p.price_rule, 
 					'portion':p.portion,
-					  'unit':p.unit, 
-					  'price_rule' : p.price_rule,
-					  'default_discount':p.default_discount
+					'unit':p.unit, 
+					'price_rule' : p.price_rule,
+					'default_discount':p.default_discount
 					})
 			
 		#get product modifier
 		mc0 = []
 		mc1 = Enumerable(self.product_modifiers).select(lambda x: x.modifier_category).distinct()
 		mc2 = [] #global modifier category
-
-
 
 		# #get global modifier category
 		global_modifier_product_categorie = frappe.get_all('Modifier Group Product Category',
@@ -677,11 +674,9 @@ def add_product_to_temp_menu(self):
 			mc0.append(mc)
 		for mc in mc2:
 			mc0.append(mc)
-
-		
+			
 		modifier_categories = Enumerable(mc0).select(lambda x: x).distinct()	
 		modifiers = []
-
 
 		## get modifier data
 		for mc in modifier_categories:
@@ -729,9 +724,6 @@ def add_product_to_temp_menu(self):
 			})
 			
 		## end get modifier data  
-
-
-
 		for m in self.pos_menus:	 
 			pos_menu = m.pos_menu
 			pos_menu_paths = []
@@ -779,8 +771,6 @@ def add_product_to_temp_menu(self):
 				})				
 
 		frappe.db.commit()
-
-
 	update_fetch_from_field(self)
 
    

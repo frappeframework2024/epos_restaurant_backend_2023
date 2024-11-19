@@ -229,7 +229,7 @@ function onSave() {
         emit('resolve', true);
         toaster.success($t('Top up successfully'))
     }).catch((err) => {
-        let jsonstring = JSON.parse(err['_server_messages']);
+        let jsonstring = (JSON.parse(err['_server_messages']) || "Error");
         toaster.warning(JSON.parse(jsonstring[0]).message)
         loading.value = false;
     })

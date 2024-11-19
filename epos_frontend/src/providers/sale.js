@@ -263,7 +263,7 @@ export default class Sale {
             url: "frappe.client.get_list",
             params: {
                 doctype: "Sale",
-                fields: ["name", "creation", "grand_total", "total_quantity", "tbl_group","table_id", "tbl_number", "guest_cover", "grand_total", "sale_status", "sale_status_color", "sale_status_priority", "customer", "customer_name", "phone_number", "customer_photo"],
+                fields: ["name", "creation", "grand_total", "total_quantity","seat_number", "tbl_group","table_id", "tbl_number", "guest_cover", "grand_total", "sale_status", "sale_status_color", "sale_status_priority", "customer", "customer_name", "phone_number", "customer_photo"],
                 filters: {
                     pos_profile: localStorage.getItem("pos_profile"),
                     table_id: JSON.parse(localStorage.getItem("table_groups")) && JSON.parse(localStorage.getItem("table_groups")).length > 0 ? parent.sale.table_id : '',

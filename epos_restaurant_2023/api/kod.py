@@ -1,7 +1,7 @@
 import frappe 
 from functools import lru_cache
 
-@frappe.whitelist(methods="POST")
+@frappe.whitelist()
 def get_kod_menu_item(business_branch, screen_name,group_by="order_time",sale_types=None):
     
     open_cashier_shift = get_open_cashier_shift(business_branch)

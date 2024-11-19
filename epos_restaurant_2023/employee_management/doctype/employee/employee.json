@@ -330,7 +330,6 @@
   {
    "fieldname": "user_id",
    "fieldtype": "Data",
-   "hidden": 1,
    "label": "User ID",
    "no_copy": 1
   },
@@ -455,7 +454,7 @@
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-15 15:38:36.055586",
+ "modified": "2024-11-14 16:33:42.171235",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee",

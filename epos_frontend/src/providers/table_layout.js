@@ -51,8 +51,8 @@ export default class TableLayout {
         call.post("epos_restaurant_2023.api.api.get_sale_list_table_badge",body).then((resp)=>{
             const data = resp.message;
             parent.table_groups.forEach(function (g) {
-                g.tables.forEach(function (t) {
-                    t.sales = data.filter(r => r.tbl_group == g.table_group && r.tbl_number == t.tbl_no)
+                g.tables.forEach(function (t) { 
+                    t.sales = data.filter(r => r.tbl_group == g.table_group && r.table_id == t.id)
                     if (t.sales.length > 0) {
                         t.guest_cover = t.sales.reduce((n, r) => n + r.guest_cover, 0)
                         t.grand_total = t.sales.reduce((n, r) => n + r.grand_total, 0)
@@ -70,7 +70,7 @@ export default class TableLayout {
             if(parent.tempTableGroups){
                 parent.tempTableGroups.forEach(function (g) {
                     g.tables.forEach(function (t) {
-                        t.sales = data.filter(r => r.tbl_group == g.table_group && r.tbl_number == t.tbl_no)
+                        t.sales = data.filter(r => r.tbl_group == g.table_group && r.table_id == t.id)
                         if (t.sales.length > 0) {
                             t.guest_cover = t.sales.reduce((n, r) => n + r.guest_cover, 0)
                             t.grand_total = t.sales.reduce((n, r) => n + r.grand_total, 0)
