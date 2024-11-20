@@ -383,14 +383,18 @@ def update_uom_conversion(item):
 		doc.insert()
 	
 	if len(data_a) > 0:
+		item.conversion_factor = data_a[0].conversion
 		return
 	else:
-		doc = frappe.new_doc('Unit of Measurement Conversion')
-		doc.unit_category = 'General'
-		doc.from_uom = item.unit
-		doc.to_uom = item.base_unit
-		doc.conversion = item.conversion_factor
-		doc.insert()
+		if item.conversion_factor == 0:
+			frappe.throw("Row# {0} Unit <b>{1}</b> To <b>{2}</b> Conversion Can't Be Zero".format(item.idx,item.unit,item.base_unit))
+		else:
+			doc = frappe.new_doc('Unit of Measurement Conversion')
+			doc.unit_category = 'General'
+			doc.from_uom = item.unit
+			doc.to_uom = item.base_unit
+			doc.conversion = item.conversion_factor
+			doc.insert()
 
 	if len(data_b) > 0:
 		return

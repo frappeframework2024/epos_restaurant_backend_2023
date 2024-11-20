@@ -16,6 +16,46 @@ frappe.ui.form.on('Product Variants', {
 frappe.ui.form.on('Product Price', {
     product_price_add: function(frm, cdt, cdn) {
         frappe.model.set_value(cdt, cdn, "base_unit", frm.doc.base_unit);
+        let doc = locals[cdt][cdn];
+        frappe.call({
+            method: "epos_restaurant_2023.inventory.inventory.get_uom_conversion",
+            args:{
+                from_uom:doc.unit,
+                to_uom:doc.base_unit
+            },
+            callback: function (r) {
+                if (r.message) {
+                    if(doc.unit == doc.base_unit){
+                        frappe.model.set_value(cdt, cdn, "conversion_factor", r.message);
+                    }
+                    else{
+                        frappe.model.set_value(cdt, cdn, "conversion_factor", 0);
+                    }
+                    
+                }
+            }
+        });
+    },
+    unit: function(frm,cdt,cdn){
+        let doc = locals[cdt][cdn];
+        frappe.call({
+            method: "epos_restaurant_2023.inventory.inventory.get_uom_conversion",
+            args:{
+                from_uom:doc.unit,
+                to_uom:doc.base_unit
+            },
+            callback: function (r) {
+                if (r.message) {
+                    if(doc.unit == doc.base_unit){
+                        frappe.model.set_value(cdt, cdn, "conversion_factor", r.message);
+                    }
+                    else{
+                        frappe.model.set_value(cdt, cdn, "conversion_factor", 0);
+                    }
+                    
+                }
+            }
+        });
     }
 });
 
