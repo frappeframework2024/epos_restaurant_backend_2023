@@ -223,13 +223,7 @@ frappe.ui.form.on("Product", {
             }
         }
 
-        frm.set_query('product_category', () => {
-            return {
-                filters: {
-                    is_group: 0
-                }
-            }
-        });
+    
         // set form to public to reload when change photo from google search
         myForm = frm
         window.addEventListener('message', savePhoto, false);
