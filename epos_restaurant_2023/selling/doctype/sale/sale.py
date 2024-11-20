@@ -468,6 +468,12 @@ def update_pos_pay_to_room_adjustment(self):
 
 			doc = frappe.get_doc(data)
 			doc.insert(ignore_permissions=True)	
+			# update folio summary credit and debit balance
+			frappe.enqueue("edoor.api.folio_transaction.update_reservation_folio", queue='short', name=p.folio_transaction_number, doc=None, run_commit=True )
+			reservation = frappe.get_cached_value("Reservation Folio",p.folio_transaction_number,"reservation")
+			reservation_stay = frappe.get_cached_value("Reservation Folio",p.folio_transaction_number,"reservation_stay")
+			frappe.enqueue("edoor.api.utils.update_reservation_stay_and_reservation", queue='short', reservation = reservation, reservation_stay=reservation_stay)
+   
         
 
 def commission_general_ledger_entry(self):
@@ -956,6 +962,16 @@ def create_folio_transaction_from_pos_trnasfer(self):
 			
 			doc = frappe.get_doc(data)
 			doc.insert(ignore_permissions=True)	
+			# update folio summary credit and debit balance
+			frappe.enqueue("edoor.api.folio_transaction.update_reservation_folio", queue='short', name=transaction_number, doc=None, run_commit=True )
+			reservation = frappe.get_cached_value("Reservation Folio",transaction_number,"reservation")
+			reservation_stay = frappe.get_cached_value("Reservation Folio",transaction_number,"reservation_stay")
+			frappe.enqueue("edoor.api.utils.update_reservation_stay_and_reservation", queue='short', reservation = reservation, reservation_stay=reservation_stay)
+   
+   
+			
+
+
 
 def create_guest_folio(self,reservation_stay):
     from edoor.api.frontdesk import get_working_day

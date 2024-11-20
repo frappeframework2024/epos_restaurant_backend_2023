@@ -67,6 +67,10 @@ class Product(Document):
 		if strip(self.product_name_kh)=="":
 			self.product_name_kh = strip(self.product_name_en)
 
+		if len(self.product_price)>0:
+			for item in self.product_price:
+				update_uom_conversion(item)
+
 		#validate uom conversion product price
 		if self.is_inventory_product:
 			for d in self.product_price:
@@ -228,7 +232,6 @@ class Product(Document):
 			return 
 		add_product_to_temp_menu(self)
 		# frappe.enqueue("epos_restaurant_2023.inventory.doctype.product.product.add_product_to_temp_menu", queue='short', self=self)
-		
 
 
 	def on_trash(self):
@@ -367,6 +370,37 @@ class Product(Document):
 			return product_variants
 		else:
 			return self.product_variants
+
+def update_uom_conversion(item):
+	sql_a = "select conversion from `tabUnit of Measurement Conversion` where from_uom='{0}' and to_uom='{1}' order by creation desc limit 1".format(item.unit,item.base_unit)
+	sql_b = "select conversion from `tabUnit of Measurement Conversion` where from_uom='{0}' and to_uom='{1}' order by creation desc limit 1".format(item.base_unit,item.unit)
+	data_a = frappe.db.sql(sql_a,as_dict=1)
+	data_b = frappe.db.sql(sql_b,as_dict=1)
+
+	if not frappe.db.exists("Unit Category", "General"):
+		doc = frappe.new_doc('Unit Category')
+		doc.unit_category_name = 'General'
+		doc.insert()
+	
+	if len(data_a) > 0:
+		return
+	else:
+		doc = frappe.new_doc('Unit of Measurement Conversion')
+		doc.unit_category = 'General'
+		doc.from_uom = item.unit
+		doc.to_uom = item.base_unit
+		doc.conversion = item.conversion_factor
+		doc.insert()
+
+	if len(data_b) > 0:
+		return
+	else:
+		doc = frappe.new_doc('Unit of Measurement Conversion')
+		doc.unit_category = 'General'
+		doc.from_uom = item.base_unit
+		doc.to_uom = item.unit
+		doc.conversion = 1/item.conversion_factor
+		doc.insert()
 
 def update_bom(self):
 	previous_children = frappe.db.sql("""select product_code,unit,quantity from `tabTemplate Production Ingredients` where parent = '{0}'""".format(self.name),as_dict=1) or []

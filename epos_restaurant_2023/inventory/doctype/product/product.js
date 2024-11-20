@@ -13,6 +13,12 @@ frappe.ui.form.on('Product Variants', {
     }
 });
 
+frappe.ui.form.on('Product Price', {
+    product_price_add: function(frm, cdt, cdn) {
+        frappe.model.set_value(cdt, cdn, "base_unit", frm.doc.base_unit);
+    }
+});
+
 frappe.ui.form.on("Product", {
     refresh(frm) {
         frm.previous = JSON.parse(JSON.stringify(frm.doc))
