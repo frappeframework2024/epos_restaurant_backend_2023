@@ -259,22 +259,8 @@ class Sale(Document):
 		on_update_coupon_information(self)
 	def before_save(self):
 		update_sale_sale_product_cost(self)
+		on_generate_custom_bill_number(self)
 
-
-	# Generata Bill Number On Insert
-	def before_insert(self):
-		if self.pos_profile:
-			pos_config_name = frappe.get_cached_value("POS Profile",self.pos_profile,"pos_config")
-			pos_config = frappe.get_cached_value("POS Config",pos_config_name,["pos_bill_number_prefix","generate_bill_number_on_create"], as_dict=1)
-			
-			if pos_config.generate_bill_number_on_create == 1:
-				if pos_config.pos_bill_number_prefix:
-					from frappe.model.naming import make_autoname
-					self.custom_bill_number = make_autoname(pos_config.pos_bill_number_prefix)
-		else:
-			if self.custom_bill_number_prefix:
-				from frappe.model.naming import make_autoname
-				self.custom_bill_number = make_autoname(self.custom_bill_number_prefix)
 
 	def after_insert(self):
 		if self.flags.ignore_after_insert == True:
@@ -295,6 +281,8 @@ class Sale(Document):
 		on_get_revenue_account_code(self)
 		self.append_quantity = None
 		self.scan_barcode = None
+
+
 		# generate custom bill format
 		if not self.custom_bill_number:
 				if self.pos_profile:
@@ -307,6 +295,7 @@ class Sale(Document):
 					if self.custom_bill_number_prefix:
 						from frappe.model.naming import make_autoname
 						self.custom_bill_number = make_autoname(self.custom_bill_number_prefix)
+
 
 		## end generate custom bill format
 		for d in self.sale_products:
@@ -401,6 +390,23 @@ class Sale(Document):
 		if is_update_inventory:
 			update_inventory_on_cancel(self)
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel", queue='short', self=self)
+
+## generate custom bill number
+def on_generate_custom_bill_number(self):
+	if not self.custom_bill_number:
+		if self.pos_profile:
+			pos_config_name = frappe.get_cached_value("POS Profile",self.pos_profile,"pos_config")
+			pos_config = frappe.get_cached_value("POS Config",pos_config_name,["pos_bill_number_prefix","generate_bill_number_on_create"], as_dict=1)
+			if pos_config.generate_bill_number_on_create == 1 and  self.is_new():
+				if pos_config.pos_bill_number_prefix:
+					from frappe.model.naming import make_autoname
+					self.custom_bill_number = make_autoname(pos_config.pos_bill_number_prefix)
+		else:
+			if self.custom_bill_number_prefix:
+				from frappe.model.naming import make_autoname
+				self.custom_bill_number = make_autoname(self.custom_bill_number_prefix)
+
+
 
 #update sale and sale product cost / cross profit
 def update_sale_sale_product_cost(self):

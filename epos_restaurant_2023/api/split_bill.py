@@ -10,14 +10,34 @@ from frappe import _
 
 @frappe.whitelist()
 def on_save(data,current_sale_id ): 
-    for d in data:       
-        if d["temp_deleted"]:    
-            if d["name"]:    
-                frappe.delete_doc("Sale", str(d["name"]))
-                
-        else:
+    
+    for d in [ r for r in data if not r["temp_deleted"]]:       
             doc = frappe.get_doc(d)
             doc.save() 
+
+    for d in [ r for r in data if r["temp_deleted"]]:  
+        if d["name"]: 
+            frappe.delete_doc("Sale", str(d["name"]))
+            # # Fetch the document
+            # doc = frappe.get_doc("Sale", str(d["name"]))
+
+            # # Manually clear the sale_products child table
+            # # doc.sale_products = []
+
+            # # Update the other fields
+            # doc.db_set('deleted_by', 'Split Bill')
+            # doc.db_set('deleted_note', 'Auto Delete by Split Bill')
+            # doc.db_set('status', 'Cancelled')
+            
+            # # Transition the document to Cancelled directly (docstatus = 2)
+            # doc.db_set('docstatus', 2)  # This bypasses workflow restrictions, use cautiously
+
+            # # Save the document
+            # # doc.save()
+
+            # # Reload the document to ensure changes are reflected
+            # doc.reload()
+
 
     frappe.db.commit()
 

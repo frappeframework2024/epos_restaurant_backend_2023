@@ -25,7 +25,7 @@ frappe.ui.form.on('Product Price', {
             },
             callback: function (r) {
                 if (r.message) {
-                    if(doc.unit == doc.base_unit){
+                    if(doc.unit != doc.base_unit){
                         frappe.model.set_value(cdt, cdn, "conversion_factor", r.message);
                     }
                     else{

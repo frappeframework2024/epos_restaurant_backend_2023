@@ -126,6 +126,7 @@ function onCreateNew() {
   let _sale = JSON.parse(JSON.stringify(sale.sale));
   _sale.name = "";
   _sale.seat_number = 0;
+  _sale.custom_bill_number = undefined;
   if (_deleted.length > 0) {
     _sale = JSON.parse(JSON.stringify(_deleted[0].sale));
     _deleted[0].sale.name = "";

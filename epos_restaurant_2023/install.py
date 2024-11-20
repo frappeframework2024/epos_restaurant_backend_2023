@@ -164,6 +164,10 @@ def reset_sale_transaction():
             frappe.db.sql("delete from `tabSale Coupon Type`")
             # end coupon
 
+            # general ledger by sales
+            frappe.db.sql("delete from `tabGeneral Ledger` where voucher_type in ('Sale','Sale Payment')")
+            # end general ledger by sales
+
             frappe.db.sql("delete from `tabCash Transaction`")
             frappe.db.sql("delete from `tabSale Product Deleted`")
             frappe.db.sql("delete from `tabSale Product SPA Commission`")            
