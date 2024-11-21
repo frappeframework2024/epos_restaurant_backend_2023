@@ -4,7 +4,7 @@
             #{{ shiftInformation.data?.working_day?.name }}
         </template>
         <template #action>
-            <v-btn prepend-icon="mdi-printer" @click="onOpenReport">{{ $t('Report') }}</v-btn>
+            <v-btn v-if="setting?.pos_setting?.show_preview_report" prepend-icon="mdi-printer" @click="onOpenReport">{{ $t('Report') }}</v-btn>
         </template>
         <template #default>
             <div class="pa-4">
@@ -49,6 +49,8 @@ const { t: $t } = i18n.global;
 const router = useRouter();
 const toaster = createToaster({ position: 'top-right' });
 const gv = inject('$gv')
+const setting = gv.setting;
+
 const closed_note = ref("")
 let pendingOrder = ref(0)
 

@@ -6,6 +6,7 @@
         <template #bar_more_button>
         </template>
         <template #content>
+            <ComLoadingDialog v-if="isLoading" />
             <v-card>
                 <template #title>
                     <div class="px-1 py-2 -m-1">
@@ -62,7 +63,9 @@
                     </div>
                 </template>
                 <v-card-text style="height: calc(100vh - 150px);">
-                    <iframe id="report-view" height="100%" width="100%" :src="printPreviewUrl"></iframe>
+                    <iframe id="report-view" height="100%" width="100%" :src="printPreviewUrl" 
+                            @load="onIframeLoad"
+                            @error="onIframeError"></iframe>
                 </v-card-text>
             </v-card>
         </template>
@@ -73,6 +76,7 @@
 
 import { inject, ref,computed,saleDetailDialog, onUnmounted,reactive,i18n } from '@/plugin'
 import { createToaster } from '@meforma/vue-toaster';
+import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 const gv = inject("$gv")
 const frappe = inject("$frappe")
 const pos_profile = localStorage.getItem("pos_profile");
@@ -94,13 +98,14 @@ const selectedLetterhead = ref(getDefaultLetterHead());
 const selectedLang = ref(gv.setting.lang[0].language_code);
 const activeReport = ref(gv.setting.reports.filter(r=>r.doc_type==props.params.doctype && r.show_in_pos == 1)[0]) ;
 
-
+const isLoading = ref(true)
 
 let filter = reactive({
     product_category: 'All Product Categories',
     product_category_filter: ''
 })
 const printPreviewUrl = computed(()=>{
+    isLoading.value = true;
     let  letterhead = "";
     if(selectedLetterhead.value==""){
            letterhead = getDefaultLetterHead();
@@ -135,6 +140,13 @@ if (props.params.print) {
     triggerPrint.value = 0;
 }
 
+function onIframeLoad(){
+    isLoading.value = false
+}
+function onIframeError(){
+    isLoading.value = false
+}
+
 
 
 function onViewReport(r){
@@ -150,7 +162,7 @@ function onRefresh(){
 }
 
 function onPrintWithChoosePrinter(){
-        window.open(printPreviewUrl.value + "&trigger_print=1").print();
+    window.open(printPreviewUrl.value + "&trigger_print=1").print();
     window.close();
 }
 

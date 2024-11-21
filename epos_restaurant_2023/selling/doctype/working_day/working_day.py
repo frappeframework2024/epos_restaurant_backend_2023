@@ -22,11 +22,19 @@ class WorkingDay(Document):
 			if frappe.db.exists('Working Day', {'business_branch': self.business_branch, 'is_closed': 0}):
 				frappe.throw("Working day is already opened")
 		
+		if not self.created_by:
+			user = frappe.get_doc("User", self.owner)
+			self.created_by = user.full_name
+
 	
 
 
 		#if close shift check current bill open 
 		if self.is_closed==1:
+			user = frappe.get_doc("User", self.modified_by)
+			self.closed_by = user.full_name
+			if not self.closed_date:
+				self.closed_date =  frappe.utils.now()
 			# validate cashier shift open 
 			pending_cashier_shift = frappe.db.sql("select name from `tabCashier Shift` where is_closed  = 0 and working_day = '{}'".format(self.name), as_dict=1)
 			if pending_cashier_shift:

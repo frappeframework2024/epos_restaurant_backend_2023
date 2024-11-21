@@ -283,7 +283,9 @@ def get_system_settings(pos_profile="", device_name=''):
         "park_item_days_expiry":pos_config.park_item_days_expiry,
         "apply_rate_include_tax_required_password":pos_config.apply_rate_include_tax_required_password,
         "apply_rate_include_tax_required_note":pos_config.apply_rate_include_tax_required_note,
-        "manual_percent_discount_required_password":pos_config.manual_percent_discount_required_password
+        "manual_percent_discount_required_password":pos_config.manual_percent_discount_required_password,
+        "show_preview_report": pos_config.show_preview_report,
+        "show_system_closed_amount": pos_config.show_system_closed_amount
         }
     #get default customre
     
@@ -732,7 +734,7 @@ def get_pos_letter_head(doctype):
         return arr
 
 @frappe.whitelist()
-def get_close_shift_summary(cashier_shift):
+def get_close_shift_summary(cashier_shift, show_system_closed_amount = 1):
     data = []
     doc = frappe.get_doc("Cashier Shift",cashier_shift)
     
@@ -839,10 +841,10 @@ def get_close_shift_summary(cashier_shift):
         })
     
         
-    return get_cash_float(data)
+    return get_cash_float(data, show_system_closed_amount)
 
 #get cash float sum group by
-def get_cash_float(data):
+def get_cash_float(data,show_system_closed_amount = 1):
 	result = []
 	groups = {}
 	for row in data:
@@ -894,7 +896,7 @@ def get_cash_float(data):
                 "currency":g['currency'],
                 "input_amount":total_input_amount or 0,
                 "opening_amount":total_opening_amount or 0,
-                "input_close_amount": total_input_system_close_amount or 0 ,##total_input_close_amount or 0,
+                "input_close_amount": (total_input_system_close_amount or 0) if show_system_closed_amount == 1 else 0 ,##total_input_close_amount or 0,
                 "input_system_close_amount": total_input_system_close_amount or 0,
                 "system_close_amount": total_system_close_amount or 0,
                 "different_amount": total_different_amount or 0

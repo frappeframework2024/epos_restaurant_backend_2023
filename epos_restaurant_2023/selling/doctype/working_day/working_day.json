@@ -14,6 +14,7 @@
   "pos_profile",
   "column_break_5",
   "note",
+  "created_by",
   "closing_information_section",
   "is_closed",
   "closed_date",
@@ -105,11 +106,16 @@
    "fieldname": "is_synced",
    "fieldtype": "Check",
    "label": "Is Synced"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Data",
+   "label": "Created By"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-03-20 08:50:36.001535",
+ "modified": "2024-11-21 11:17:23.630753",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Working Day",

@@ -5,7 +5,7 @@
         </template>
         <template #action>
             <v-btn prepend-icon="mdi-file-edit" @click="onChangeShiftName">{{ $t('Change Shift Name') }}</v-btn>
-            <v-btn prepend-icon="mdi-printer" @click="onOpenReport">{{ $t('Report') }}</v-btn>
+            <v-btn  v-if="setting?.pos_setting?.show_preview_report" prepend-icon="mdi-printer" @click="onOpenReport">{{ $t('Preview Report') }}</v-btn>
         </template>
         <template #default>
             <ComAlertPendingOrder v-if="cashierShiftResource.doc" type="info" :working_day="cashierShiftResource.doc.working_day" :cashier_shift="cashierShiftResource.doc.name"/>
@@ -58,13 +58,16 @@
                                 <CurrencyFormat :value="d.input_amount" :currency="d.currency" />
                             </td>
                             <td>
-                                <CurrencyFormat :value="d.input_system_close_amount" :currency="d.currency" />
+
+                                <CurrencyFormat v-if="setting?.pos_setting?.show_system_closed_amount" :value="d.input_system_close_amount" :currency="d.currency" />
+                                <span v-else >***</span>
                             </td>
                             <td>
                                 <ComInput type="number" v-model="d.input_close_amount" keyboard> </ComInput>
                             </td>
                             <td>
-                                <CurrencyFormat :value="d.input_different_amount" :currency="d.currency" />
+                                <CurrencyFormat v-if="setting?.pos_setting?.show_system_closed_amount" :value="d.input_different_amount" :currency="d.currency" />
+                                <span v-else >***</span>
                             </td>
                         </tr>
                     </tbody>
@@ -77,14 +80,16 @@
                                 <CurrencyFormat :value="cashierShiftSummary.data.reduce((n, r) => n + r.opening_amount, 0)" />
                             </td>
                             <td>
-                                <CurrencyFormat :value="cashierShiftSummary.data.reduce((n, r) => n + r.system_close_amount, 0)" />
+                                <CurrencyFormat v-if="setting?.pos_setting?.show_system_closed_amount" :value="cashierShiftSummary.data.reduce((n, r) => n + r.system_close_amount, 0)" />
+                                    <span v-else >***</span>
 
                             </td>
                             <td>
                                 <CurrencyFormat :value="totalCloseAmount" />
                             </td>
                             <td>
-                                <CurrencyFormat :value="totalDifferentAmount" />
+                                <CurrencyFormat v-if="setting?.pos_setting?.show_system_closed_amount" :value="totalDifferentAmount" />
+                                <span v-else >***</span>
                             </td>
                         </tr>
                     </tfoot>
@@ -97,7 +102,7 @@
             <div class="flex justify-between items-center mx-4">
                 <v-btn @click="onCloseShift" color="primary"
                     :loading="(cashierShiftResource.setValue && cashierShiftResource.setValue.loading) ? cashierShiftResource.setValue.loading : false">{{ $t('Close Shift') }}</v-btn>
-                <v-btn @click="router.push({ name: 'Home' })" color="error" class="ml-4">{{ $t("Cancel") }}</v-btn>
+                <v-btn  @click="router.push({ name: 'Home' })" color="error" class="ml-4">{{ $t("Cancel") }}</v-btn>
             </div>
         </template>
     </PageLayout>
@@ -118,9 +123,7 @@ const { t: $t } = i18n.global;
 const router = useRouter();
 const toaster = createToaster({position:"top-right"});
 const gv = inject('$gv');
-const setting = gv.setting;
-
- 
+const setting = gv.setting;  
 
 const current_date = moment(new Date).format('DD-MM-YYYY');
 let doc = ref({
@@ -195,6 +198,7 @@ onMounted(async () => {
         url: "epos_restaurant_2023.api.api.get_close_shift_summary",
         params: {
             cashier_shift: cashierShiftInfo.data.name,
+            show_system_closed_amount: (setting?.pos_setting?.show_system_closed_amount??0)
         },
         auto: true
     });

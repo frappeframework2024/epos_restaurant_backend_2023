@@ -300,4 +300,8 @@ onUnmounted(()=>{
 	background: rgb(165, 165, 165);
 	border-radius: 10px;
 }
+
+button {
+  text-transform: none !important;
+}
 </style>

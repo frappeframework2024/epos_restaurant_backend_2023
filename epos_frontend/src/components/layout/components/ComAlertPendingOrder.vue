@@ -10,7 +10,7 @@
             <template #text>
                 <div :class="mobile ? '' : 'flex justify-between items-center'">
                     <div> <span class="font-bold underline cursor-pointer" @click="onViewPendingOrder">{{$t(`msg.There are pending orders`,[ countPendingSaleListResource.data ])}}</span></div>
-                    <div class="p-2"><v-btn color="primary" @click="onViewPendingOrder">{{ $t('View Pending Order') }}</v-btn></div>
+                    <div class="p-2"><v-btn  color="primary" @click="onViewPendingOrder">{{ $t('View Pending Order') }}</v-btn></div>
                 </div>
             </template>
         </v-alert>

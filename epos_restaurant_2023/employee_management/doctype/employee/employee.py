@@ -4,6 +4,7 @@
 import base64
 import frappe
 from frappe.model.document import Document
+from frappe import _
 
 class Employee(Document):
 	def validate(self):
@@ -116,6 +117,14 @@ class Employee(Document):
 	# def on_trash(self):
 	# 	frappe.throw("delete me")
 
+
+@frappe.whitelist(methods="POST")
+def change_password(user,password):
+	doc = frappe.get_doc("User", user)
+	doc.new_password = password
+	doc.save()
+	frappe.msgprint(_("Update password successfully"))
+ 
 @frappe.whitelist()
 def get_account_balance(posting_date="",party_type="",party="",account=""):
 	if account != "":

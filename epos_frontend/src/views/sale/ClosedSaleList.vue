@@ -3,7 +3,8 @@
         <template #action>
             <v-btn v-if="mobile" icon="mdi-filter-outline" @click="onOpenDrawer"></v-btn>
         </template>
-        <template #default>          
+        <template #default>      
+            <ComLoadingDialog v-if="isLoading" />
             <ComLoadingDialog v-if="filterResource.loading && filterResource.data" />
             <template v-else>
                 <div v-if="filterResource.data?.cashier_shifts?.length == 0">{{ $t('There is no cashier shift opened') }}</div>
@@ -31,7 +32,7 @@
                             </div>
                             <ComClosedSaleSelectedFilter  :currentFilter="resultFilter"  :reportOption="reportOption"  @onSearch="onSearch"/>
                             <div style="height: calc(100vh - 202px);">
-                                <iframe @load="onIframeLoaded()" id="report-view" height="100%" width="100%" :src="reportUrl"></iframe>
+                                <iframe @load="onIframeLoaded"  @error="onIframeError" id="report-view" height="100%" width="100%" :src="reportUrl"></iframe>
                             </div>
                         </v-col>
                     </v-row>
@@ -52,8 +53,7 @@
 <script setup>
 import PageLayout from '@/components/layout/PageLayout.vue';
 import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
-import { useDisplay } from 'vuetify'
-
+import { useDisplay } from 'vuetify';
 
 import { inject, ref, createResource, saleDetailDialog, onUnmounted, onMounted, computed,printPreviewDialog,customerDetailDialog,i18n } from '@/plugin'
 import { createToaster } from '@meforma/vue-toaster';
@@ -67,6 +67,7 @@ const { mobile } = useDisplay()
 const gv = inject("$gv")
 const keyword = ref("")
 const drawer = ref(false)
+const isLoading = ref(true)
 
 let port = gv.setting.pos_setting.use_backend_port == 0 ? `:${window.location.port}` : (window.location.protocol == "https:" ? "" : `:${gv.setting.pos_setting.backend_port}`)
 const serverUrl = `${window.location.protocol}//${window.location.hostname}${port}`;
@@ -111,7 +112,7 @@ const reportOption = computed(() => {
 }) 
 
 function getReportUrl() {
-
+    isLoading.value = true;
     let url = `${serverUrl}/printview?doctype=${activeReport.value.doc_type}&name=${localStorage.getItem("pos_profile")}&format=${activeReport.value.name}&no_letterhead=1&show_toolbar=0&view=ui`;
 
     if (filter.value.keyword && reportOption.value.show_keyword) {
@@ -163,15 +164,26 @@ function onReportClick(r) {
   
 }
 function onIframeLoaded(){
+    isLoading.value = false;
     const iframe = document.getElementById("report-view");
+   iframe.height = iframe.contentWindow.document.body.scrollHeight; 
 
-   iframe.height = iframe.contentWindow.document.body.scrollHeight;
 }
+
+function onIframeError(){
+    isLoading.value = false
+}
+
 function onSearch(f) {
     filter.value = f;
-    reportUrl.value = getReportUrl();
+    const newUrl =  getReportUrl();
+    if(reportUrl.value == newUrl){
+        isLoading.value = false;
+    }
+    reportUrl.value =newUrl;
     drawer.value = false;
     resultFilter.value =  JSON.parse(JSON.stringify(filter.value));
+
 }
 
 function onRefresh() {

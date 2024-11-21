@@ -46,6 +46,7 @@
   "print_new_deleted_sale_product",
   "print_working_day_sale_product_summary_after_close_working_day",
   "check_delete_item_require_passord_from_product",
+  "show_preview_report",
   "column_break_prwc",
   "show_item_code_in_sale_screen",
   "show_time_ago_on_table",
@@ -57,6 +58,7 @@
   "generate_bill_number_on_create",
   "change_table_previous_date",
   "allow_change_table_after_print_bill",
+  "show_system_closed_amount",
   "permission_and_note_tab",
   "delete_bill_required_password",
   "column_break_17",
@@ -865,12 +867,24 @@
    "fieldname": "show_total_amount_on_table",
    "fieldtype": "Check",
    "label": "Show Total Amount on Table"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_preview_report",
+   "fieldtype": "Check",
+   "label": "Show Preview Report"
+  },
+  {
+   "default": "1",
+   "fieldname": "show_system_closed_amount",
+   "fieldtype": "Check",
+   "label": "Show System Closed Amount"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-06 11:50:54.006803",
+ "modified": "2024-11-21 08:16:00.284886",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

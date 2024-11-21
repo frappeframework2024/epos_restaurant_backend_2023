@@ -1,9 +1,12 @@
  <template>
+    <ComLoadingDialog v-if="isLoading" />
     <PageLayout class="pb-4" :title="`${$t(activeReport.doc_type)} #${activeReport.report_id}`" icon="mdi-chart-bar" full>
         <template #action>
-            <v-btn v-if="showPrintPopUp" @click="onPrintWithChoosePrinter()"> {{$t("Choose Printer") }}</v-btn>
-            <v-btn  @click="onExport()">{{ $t("PDF") }}</v-btn>
-            <v-btn icon="mdi-printer" @click="onPrint()"></v-btn>
+            <template v-if="allowPreviewReport">
+                <v-btn v-if="showPrintPopUp" @click="onPrintWithChoosePrinter()"> {{$t("Choose Printer") }}</v-btn>
+                <v-btn  @click="onExport()">{{ $t("PDF") }}</v-btn>
+                <v-btn icon="mdi-printer" @click="onPrint()"></v-btn>
+            </template>
         </template>
     <v-row> 
         <v-navigation-drawer v-model="drawer" location="left" temporary style="width:90%">
@@ -39,9 +42,13 @@
                             </v-card>
                             <div v-if="activeReport.report_id == c.name || getCashierShifts(c).find(r=>r.name == activeReport.report_id)">
                                 <div class="-m-1">
-                                    <v-btn :color="item.name == activeReport.report_id ? 'info' : 'default'" variant="tonal" stacked class="m-1" v-for="(item, index) in getCashierShifts(c)" :key="index" @click="onCashierShift(item)">
+                                    <v-btn  :color="item.name == activeReport.report_id ? 'info' : 'default'" variant="tonal" stacked class="m-1" v-for="(item, index) in getCashierShifts(c)" :key="index" @click="onCashierShift(item)">
                                         <div>{{ moment(item.creation).format('h:mm:ss A') }}</div>
-                                        <div class="text-xs">#{{ item.name }}</div>
+                                        <div class="text-xs">#{{ item.name }} </div>
+                                        <div>
+                                            <v-chip v-if="item.is_closed" color="error" size="x-small" variant="elevated">{{ $t('Closed') }}</v-chip>
+                                            <v-chip v-else color="success" size="x-small" variant="elevated">{{ $t('Opening') }}</v-chip>
+                                        </div>
                                     </v-btn>
                                 </div>
                             </div>
@@ -74,11 +81,11 @@
                                     <div>
                                         <div><v-icon icon="mdi-calendar" size="x-small" /> <span class="font-bold">{{
                                             c.posting_date
-                                        }}</span> {{ $t('was opening by') }} <span class="font-bold">{{ c.owner }}</span></div>
+                                        }}</span> {{ $t('was opening by') }} <span class="font-bold">{{ c.created_by??c.owner }}</span></div>
                                         <div v-if="c.is_closed">
                                             <v-icon icon="mdi-calendar-multiple" size="x-small" /> <span
                                                 class="font-bold">{{ c.closed_date }}</span> {{ $t('was closed by') }} <span
-                                                class="font-bold">{{ c.modified_by }}</span>
+                                                class="font-bold">{{ c.closed_by?? c.modified_by }}</span>
                                         </div>
                                         <div><v-icon icon="mdi-note-text" size="x-small"></v-icon> {{ $t('Total Shift') }}: <span
                                                 class="font-bold">{{getCashierShifts(c).length }}</span></div>
@@ -87,9 +94,13 @@
                             </v-card>
                             <div v-if="activeReport.report_id == c.name || getCashierShifts(c).find(r=>r.name == activeReport.report_id)">
                                 <div class="-m-1">
-                                    <v-btn :color="item.name == activeReport.report_id ? 'info' : 'default'" variant="tonal" stacked class="m-1" v-for="(item, index) in getCashierShifts(c)" :key="index" @click="onCashierShift(item)">
+                                    <v-btn  :color="item.name == activeReport.report_id ? 'info' : 'default'" variant="tonal" stacked class="m-1" v-for="(item, index) in getCashierShifts(c)" :key="index" @click="onCashierShift(item)">
                                         <div>{{ moment(item.creation).format('h:mm:ss A') }}</div>
                                         <div class="text-xs">#{{ item.name }}</div>
+                                        <div>
+                                            <v-chip v-if="item.is_closed" color="error" size="x-small" variant="elevated">{{ $t('Closed') }}</v-chip>
+                                            <v-chip v-else color="success" size="x-small" variant="elevated">{{ $t('Opening') }}</v-chip>
+                                        </div>
                                     </v-btn>
                                 </div>
                             </div>
@@ -101,11 +112,13 @@
                 </v-card-text>
             </v-card>
         </v-col> 
+
         <v-col md="9">
             <!-- Hamburger Nav -->
             <div class="d-flex justify-between items-center d-block d-md-none" style="padding: 0rem 1rem 0rem 0rem">
                 <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
                 <v-icon icon="mdi-refresh" size="small" @click="onRefresh"/>
+                
             </div>
             <!-- Hamburger Nav -->
             <v-card>
@@ -151,7 +164,7 @@
                                         class="mx-1"
                                         @update:modelValue="onRefresh"
                                         ></v-select>
-                                        <v-icon class="d-none d-md-block mx-1" icon="mdi-refresh" size="small" @click="onRefresh"/>
+                                        <v-icon  class="d-none d-md-block mx-1" icon="mdi-refresh" size="small" @click="onRefresh"/>
                                     </div>
                                 </div>
                             </v-col>
@@ -168,8 +181,32 @@
                         </div>
                     </div>
                 </template>
-                <v-card-text style="height: calc(100vh - 230px)">
-                    <iframe v-if="(activeReport.doc_type !='')" id="report-view" height="100%" width="100%" :src="printPreviewUrl"></iframe>
+
+
+                <v-card-text style="height: calc(100vh - 290px)">
+                   
+                    <template v-if="allowPreviewReport">
+                        <iframe  v-if="(activeReport.doc_type !='') " 
+                            id="report-view" 
+                            height="100%" 
+                            width="100%" 
+                            :src="printPreviewUrl"  
+                            @load="onIframeLoad"
+                            @error="onIframeError"></iframe>
+                    </template>
+                    <template v-else>
+                        <div style="height: calc(100vh - 300px);">
+                            <div class="report_container_error">
+                                <div style="margin-bottom: 45px;">
+                                    <svg fill="#7c7c7c"  version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-6 -6 72.00 72.00" xml:space="preserve" width="136px" height="136px" transform="rotate(0)matrix(1, 0, 0, 1, 0, 0)" stroke="#7c7c7c" stroke-width="0.72"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.12"></g><g id="SVGRepo_iconCarrier"> <g> <g> <path d="M56.5,49L56.5,49V1c0-0.6-0.4-1-1-1h-45c-0.6,0-1,0.4-1,1v14h2V2h43v46h-9c-0.6,0-1,0.4-1,1v9h-33V43h-2v16 c0,0.6,0.4,1,1,1h35c0.3,0,0.5-0.1,0.7-0.3l10-10c0.1-0.1,0.1-0.2,0.2-0.3v-0.1C56.5,49.2,56.5,49.1,56.5,49z M46.5,50h6.6 l-3.3,3.3l-3.3,3.3L46.5,50L46.5,50z"></path> <path d="M16.5,38h6h4v-2h-3V17c0-0.6-0.4-1-1-1h-6c-0.6,0-1,0.4-1,1v6h-5c-0.6,0-1,0.4-1,1v4h-5c-0.6,0-1,0.4-1,1v8 c0,0.6,0.4,1,1,1h6H16.5z M17.5,18h4v18h-4V24V18z M11.5,25h4v11h-4v-7V25z M5.5,30h4v6h-4V30z"></path> <path d="M50.5,24V7c0-0.6-0.4-1-1-1h-21c-0.6,0-1,0.4-1,1v17c0,0.6,0.4,1,1,1h21C50.1,25,50.5,24.6,50.5,24z M48.5,12h-12V8h12V12 z M34.5,8v4h-5c0-1.6,0-4,0-4H34.5z M29.5,14h5v9h-5C29.5,23,29.5,18.3,29.5,14z M36.5,23v-9h12v9H36.5z"></path> <rect x="28.5" y="28" width="21" height="2"></rect> <rect x="28.5" y="33" width="21" height="2"></rect> <rect x="28.5" y="38" width="21" height="2"></rect> <rect x="14.5" y="6" width="6" height="2"></rect> <rect x="14.5" y="11" width="9" height="2"></rect> <rect x="14.5" y="43" width="7" height="2"></rect> <rect x="24.5" y="43" width="7" height="2"></rect> <rect x="34.5" y="43" width="7" height="2"></rect> <rect x="14.5" y="48" width="7" height="2"></rect> <rect x="24.5" y="48" width="7" height="2"></rect> <rect x="34.5" y="48" width="7" height="2"></rect> <rect x="14.5" y="53" width="7" height="2"></rect> <rect x="24.5" y="53" width="7" height="2"></rect> <rect x="34.5" y="53" width="7" height="2"></rect> </g> </g> </g></svg>
+                                </div>
+                                <span class="report_title_error">{{ $t("Not Allow Preview") }}</span>
+                                <div class="report_dp_error">
+                                    <span>{{ $t("System not allow preview report during status opening") }}</span>
+                                </div>	
+                            </div>
+                        </div>
+                    </template>
                 </v-card-text>
             </v-card>
         </v-col>
@@ -179,6 +216,7 @@
 <script setup>
 import { inject, computed,ref,saleDetailDialog,onUnmounted, reactive,i18n} from '@/plugin'
 import Enumerable from 'linq'
+import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 import PageLayout from '@/components/layout/PageLayout.vue';
 import { createToaster } from '@meforma/vue-toaster';
 import { onMounted } from 'vue';
@@ -214,14 +252,32 @@ const activeReport = ref({
         product_category : ''
     }
 })
+
+const isTransactionClosed = ref(0)
+
 const workingDay = ref(null)
+const isLoading  = ref(true)
 const drawer = ref(false)
 
 const printPreviewUrl = computed(()=>{
+    isLoading.value = true;
     let param = getReportParam();
     const url =  `${serverUrl}/printview?doctype=${activeReport.value.doc_type}&name=${param.name}&product_category=${param.product_category}&pos_profile=${param.pos_profile}&outlet=${param.outlet}&format=${param.format}&no_letterhead=0&show_toolbar=0&letterhead=${param.letterhead}&settings=%7B%7D&_lang=${activeReport.value.lang}`
     return url;
 })
+
+const allowPreviewReport =computed(()=>{
+    if(gv.setting?.pos_setting?.show_preview_report){
+        return true
+    }else{
+        if(isTransactionClosed.value){
+            return true
+        }
+        return false
+    }
+})
+
+
 
 const getReportParam = (isPreview = true) =>{
     const format = isPreview ? activeReport.value.preview_report : activeReport.value.print_report_name;  
@@ -331,6 +387,9 @@ async function _onInit() {
         activeReport.value.doc_type = working_day_print_format[0].doc_type;
         activeReport.value.print_report_name = working_day_print_format[0].print_report_name || working_day_print_format[0].name;
         workingDay.value = working_day_print_format; 
+
+        isTransactionClosed.value = working_day_print_format[0]?.is_closed??0
+
     }
 
 
@@ -349,8 +408,18 @@ async function _onInit() {
             cashierShiftReports.value.push(_data)
         })
     } 
+
+    isLoading.value = false;
     
 }
+
+function onIframeLoad(){
+    isLoading.value = false
+}
+function onIframeError(){
+    isLoading.value = false
+}
+
 
 
 function getCashierShifts(working_day){   
@@ -367,30 +436,34 @@ function onCashierShift(data){
         activeReport.value.report_id = data?.name
         activeReport.value.preview_report = cashierShiftReports.value[0]?.name
         activeReport.value.doc_type = cashierShiftReports.value[0]?.doc_type 
-        activeReport.value.print_report_name = cashierShiftReports.value[0]?.print_report_name || cashierShiftReports?.value[0]?.name
+        activeReport.value.print_report_name = cashierShiftReports.value[0]?.print_report_name || cashierShiftReports?.value[0]?.name;
+
+        isTransactionClosed.value = data?.is_closed??0;
     }else{
         toast.error($t('Report is unavailable.'), { position: 'top' });
     }
 }
-function onPrintFormat(value){
+function onPrintFormat(value){ 
     activeReport.value.preview_report = value.name;
     activeReport.value.print_report_name = value.print_report_name || value.name
-    onRefresh()
+    onRefresh()  
   
 }
 
-function onWorkingDay(working_day){ 
+function onWorkingDay(working_day){  
     activeReport.value.name = 'Working Day';
     activeReport.value.report_id = working_day.name;
     activeReport.value.preview_report = workingDay.value[0]?.name;
     activeReport.value.doc_type = workingDay.value[0]?.doc_type ;
-    const print_report_name = workingDay.value.filter(r=>r.name == working_day.name);
-    
     activeReport.value.print_report_name = workingDay[0]?.print_report_name || workingDay[0]?.name;
+
+    isTransactionClosed.value = working_day?.is_closed??0;
 }
 
 function onRefresh(){
-    document.getElementById("report-view").contentWindow.location.replace(printPreviewUrl.value)
+    if(document.getElementById("report-view")){
+        document.getElementById("report-view").contentWindow.location.replace(printPreviewUrl.value)
+    }
 }
 
 function onPrintWithChoosePrinter(){
@@ -501,6 +574,9 @@ onUnmounted(() => {
     window.removeEventListener('message', reportClickHandler, false);
 }) 
 </script>
+
+
+
 <style>
 .subtitle-opacity-1 .v-card-subtitle {
     opacity: 1 !important;
@@ -512,4 +588,25 @@ onUnmounted(() => {
 .v-card-subtitle {
     white-space: normal !important;
 }
+
+
+.report_container_error{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    flex-direction: column;
+    color: #7c7c7c ;
+}
+.report_title_error{
+    font-size: 30px;
+    margin-top: -30px;
+}
+.report_dp_error{
+    margin-top: 20px;
+}
+.report_icon-error-contact{
+    margin-top: 5px;
+}
+
 </style>
