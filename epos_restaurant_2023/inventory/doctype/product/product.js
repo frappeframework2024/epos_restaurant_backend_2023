@@ -25,13 +25,15 @@ frappe.ui.form.on('Product Price', {
             },
             callback: function (r) {
                 if (r.message) {
-                    if(doc.unit != doc.base_unit){
+                    if(doc.unit == doc.base_unit && r.message == 1){
                         frappe.model.set_value(cdt, cdn, "conversion_factor", r.message);
                     }
-                    else{
+                    else if(doc.unit != doc.base_unit && r.message == 1){
                         frappe.model.set_value(cdt, cdn, "conversion_factor", 0);
                     }
-                    
+                    else{
+                        frappe.model.set_value(cdt, cdn, "conversion_factor", r.message);
+                    }
                 }
             }
         });
@@ -46,13 +48,15 @@ frappe.ui.form.on('Product Price', {
             },
             callback: function (r) {
                 if (r.message) {
-                    if(doc.unit == doc.base_unit){
+                    if(doc.unit == doc.base_unit && r.message == 1){
                         frappe.model.set_value(cdt, cdn, "conversion_factor", r.message);
                     }
-                    else{
+                    else if(doc.unit != doc.base_unit && r.message == 1){
                         frappe.model.set_value(cdt, cdn, "conversion_factor", 0);
                     }
-                    
+                    else{
+                        frappe.model.set_value(cdt, cdn, "conversion_factor", r.message);
+                    }
                 }
             }
         });

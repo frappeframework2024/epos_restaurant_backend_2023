@@ -372,6 +372,8 @@ class Product(Document):
 			return self.product_variants
 
 def update_uom_conversion(item):
+	if item.conversion_factor == 0 and (item.base_unit or '') == "":
+		return
 	sql_a = "select conversion from `tabUnit of Measurement Conversion` where from_uom='{0}' and to_uom='{1}' order by creation desc limit 1".format(item.unit,item.base_unit)
 	sql_b = "select conversion from `tabUnit of Measurement Conversion` where from_uom='{0}' and to_uom='{1}' order by creation desc limit 1".format(item.base_unit,item.unit)
 	data_a = frappe.db.sql(sql_a,as_dict=1)
