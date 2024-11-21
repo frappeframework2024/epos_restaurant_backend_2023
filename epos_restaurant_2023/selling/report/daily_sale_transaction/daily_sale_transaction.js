@@ -71,6 +71,14 @@ frappe.query_reports["Daily Sale Transaction"] = {
 			"on_change": function (query_report) {},
 		},
 		{
+			"fieldname": "include_foc",
+			"label": __("Include FOC"),
+			"fieldtype": "Check",
+			default:false,
+			hide_in_filter:1,
+			"on_change": function (query_report) {},
+		},
+		{
 			"fieldname": "show_summary",
 			"label": __("Show Summary"),
 			"fieldtype": "Check",
@@ -82,7 +90,7 @@ frappe.query_reports["Daily Sale Transaction"] = {
 			"fieldname": "show_cancelled",
 			"label": __("Show Cancelled"),
 			"fieldtype": "Check",
-			default:true,
+			default:false,
 			hide_in_filter:1,
 			"on_change": function (query_report) {},
 		},
