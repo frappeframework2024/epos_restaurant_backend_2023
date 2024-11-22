@@ -38,16 +38,13 @@ frappe.ui.form.on('Employee Commission Sale', {
 });
 
 function renderSummary(frm){
-	if (!frm.is_new()){
 		let summary={}
-		summary.total_commission = frm.doc.employee_commission_sale.reduce((partialSum, a) => partialSum + a.commission_amount, 0)
-		summary.total_paid = frm.doc.employee_commission_sale.reduce((partialSum, a) => partialSum + a.paid_amount, 0)
-		summary.total_balance = frm.doc.employee_commission_sale.reduce((partialSum, a) => partialSum + a.balance, 0)
-		
+		summary.total_commission = frm.doc.employee_commission_sale.reduce((a, b) => a + b.commission_amount, 0)
+		summary.total_paid = frm.doc.employee_commission_sale.reduce((a, b) => a + b.paid_amount, 0)
+		summary.total_balance = frm.doc.employee_commission_sale.reduce((a, b) => a + b.balance, 0)
 		
 		const html = frappe.render_template("total_commission", {doc:frm.doc,summary:summary})
 
 		$(frm.fields_dict['total'].wrapper).html(html);
 		frm.refresh_field('total');
-	}
 }
