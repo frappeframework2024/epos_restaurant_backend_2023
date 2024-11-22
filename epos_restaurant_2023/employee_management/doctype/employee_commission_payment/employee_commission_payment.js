@@ -31,9 +31,9 @@ frappe.ui.form.on("Employee Commission Payment", {
 frappe.ui.form.on('Employee Commission Sale', {
 	paid_amount(frm, cdt, cdn) {
 		const row = locals[cdt][cdn];
-		renderSummary(frm)
 		row.balance = row.commission_amount - row.paid_amount
 		frm.refresh_field('employee_commission_sale')
+		renderSummary(frm)
 	  },
 });
 
