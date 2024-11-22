@@ -139,6 +139,7 @@ function isShowTableStatus(){
 function onSaveTablePosition() {
     tableLayout.saveTablePositionResource.params = {
         "device_name": localStorage.getItem("device_name"),
+        "pos_profile": pos_profile,
         "table_group": JSON.parse(JSON.stringify(tableLayout.table_groups))
     };
     tableLayout.saveTablePositionResource.submit();

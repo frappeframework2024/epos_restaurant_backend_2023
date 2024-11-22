@@ -11,6 +11,7 @@
   "tbl_number",
   "table_group",
   "device_name",
+  "pos_profile",
   "x",
   "y",
   "h",
@@ -72,11 +73,17 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Table Group"
+  },
+  {
+   "fieldname": "pos_profile",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "POS Profile"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-19 09:58:05.566250",
+ "modified": "2024-11-22 09:32:09.056349",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "ePOS Table Position",

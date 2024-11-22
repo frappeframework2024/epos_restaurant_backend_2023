@@ -150,7 +150,7 @@ def get_system_settings(pos_profile="", device_name=''):
             "table_group":g.table_group,
             "table_group_kh":_group.table_group_name_kh,
             "background":_group.photo,
-            "tables":get_tables_number(g.table_group, device_name),
+            "tables":get_tables_number(table_group= g.table_group,device_name= device_name, pos_profile= pos_profile),
             "search_table_keyword":""
             })
     pos_menus = []
@@ -467,7 +467,7 @@ def get_system_settings(pos_profile="", device_name=''):
 
 
 @frappe.whitelist(allow_guest=True)
-def get_tables_number(table_group,device_name):
+def get_tables_number(table_group,device_name, pos_profile):
     data = frappe.db.sql("""select 
                             name as id, 
                             shape, 
@@ -499,7 +499,7 @@ def get_tables_number(table_group,device_name):
         d.default_bg_color=background_color
         d.text_color = text_color
         d.default_text_color = text_color
-        position = frappe.db.sql("select x,y,h,w from `tabePOS Table Position` where device_name=%(device_name)s and table_id=%(table_id)s limit 1",{"device_name":device_name,"table_id":d.id }, as_dict=1)
+        position = frappe.db.sql("select x,y,h,w from `tabePOS Table Position` where pos_profile = %(pos_profile)s and device_name=%(device_name)s and table_id=%(table_id)s limit 1",{"device_name":device_name,"table_id":d.id,"pos_profile":pos_profile }, as_dict=1)
         if position:
             for p in position:
                 d.x = p.x or x
@@ -657,9 +657,9 @@ def get_user_information():
     
     
 @frappe.whitelist()
-def save_table_position(device_name, table_group):
+def save_table_position(device_name,pos_profile, table_group):
     # frappe.throw("{}".format(table_group))
-    frappe.db.sql("delete from `tabePOS Table Position` where device_name=%(name)s",{"name":device_name} )    
+    frappe.db.sql("delete from `tabePOS Table Position` where  device_name=%(name)s and pos_profile = %(pos_profile)s",{"name":device_name, 'pos_profile':pos_profile} )    
     for g in table_group:      
         for t in g['tables']:
             x = 0
@@ -674,10 +674,11 @@ def save_table_position(device_name, table_group):
             w = 0
             if "w" in t:
                 w = t["w"]
-            if not frappe.db.exists('ePOS Table Position', {'table_id': t['id'], 'device_name': device_name}):
+            if not frappe.db.exists('ePOS Table Position', {'table_id': t['id'], 'device_name': device_name , 'pos_profile':pos_profile }):
                 doc = frappe.get_doc({
                         'doctype': 'ePOS Table Position',
                         'device_name':device_name,
+                        'pos_profile':pos_profile,
                         'tbl_number': t['tbl_no'],
                         'table_group':g["table_group"],
                         'table_id':t['id'],

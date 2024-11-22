@@ -3,7 +3,13 @@
 /* eslint-disable */
 
 frappe.query_reports["Customer Credit Balance Report"] = {
-	
+	onload: function(report) {
+		report.page.add_inner_button("Preview Report", function () {
+			frappe.query_report.refresh();
+		});
+		
+	},
+
 	"filters": [
 		{
 			fieldname: "business_branch",
@@ -11,15 +17,16 @@ frappe.query_reports["Customer Credit Balance Report"] = {
 			fieldtype: "MultiSelectList",
 			get_data: function(txt) {
 				return frappe.db.get_link_options('Business Branch', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 			 
 		},
 		{
 			"fieldname":"end_date",
 			"label": __("End Date"),
 			"fieldtype": "Date",
-		 
-			
+			default:frappe.datetime.get_today(),
+			"on_change": function (query_report) {},
 		},
 	 
 		
@@ -30,28 +37,37 @@ frappe.query_reports["Customer Credit Balance Report"] = {
 			get_data: function(txt) {
 				
 				return frappe.db.get_link_options('Customer Group', txt);
-			}
+			},
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "customer",
 			"label": __("Customer"),
 			"fieldtype": "Link",
 			"options":"Customer",
-			
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "show_sale_transaction",
 			"label": __("Show Sale Transaction"),
 			"fieldtype": "Check",
-			"default":0,
-			
+			"default":false,
+			"on_change": function (query_report) {},
 		},
 		{
 			"fieldname": "show_summary",
 			"label": __("Show Summary"),
 			"fieldtype": "Check",
-			"default":1,
-			
+			"default":true,
+			"on_change": function (query_report) {},
+		},
+
+		{
+			"fieldname": "show_chart",
+			"label": __("Show Chart"),
+			"fieldtype": "Check",
+			"default":false,
+			"on_change": function (query_report) {},			
 		},
 		 
 

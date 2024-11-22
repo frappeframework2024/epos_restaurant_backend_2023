@@ -14,11 +14,16 @@ def execute(filters=None):
 		skip_total_row=True
 		
 	report_data = get_report_data(filters) 
-	report_summary = None
-	if filters.show_summary==1:
-		report_summary =get_report_summary(report_data,filters)
+ 
+	report_chart = None
+	if filters.show_chart:
+		report_chart = get_report_chart(report_data)
+
+	report_summary = []
+	if filters.show_summary:
+		report_summary =get_report_summary(report_data,filters)	
   
-	return get_columns(filters), report_data, None, get_report_chart(report_data), report_summary,skip_total_row
+	return  get_columns(filters), report_data, None, report_chart, report_summary , skip_total_row
 
 def validate(filters):
 	if not filters.end_date:

@@ -2,6 +2,13 @@
 // For license information, please see license.txt
 
 frappe.query_reports["Vendor Balance Detail Report"] = {
+	onload: function(report) {
+		report.page.add_inner_button("Preview Report", function () {
+			frappe.query_report.refresh();
+		});
+		
+	},
+
 	"filters": [
 		{
 			fieldname: "business_branch",
@@ -9,7 +16,8 @@ frappe.query_reports["Vendor Balance Detail Report"] = {
 			fieldtype: "MultiSelectList",
 			get_data: function(txt) {
 				return frappe.db.get_link_options('Business Branch', txt);
-			}
+			},
+			"on_change": function (query_report) {}
 			 
 		},
 		{
@@ -18,13 +26,17 @@ frappe.query_reports["Vendor Balance Detail Report"] = {
 			fieldtype: "MultiSelectList",
 			get_data: function(txt) {
 				return frappe.db.get_link_options('Vendor', txt);
-			}
+			},
+			"on_change": function (query_report) {}
 		},
+		
 		{
 			"fieldname":"start_date",
 			"label": __("Start Date"),
 			"fieldtype": "Date",
 			"reqd": 1,
+			default:frappe.datetime.get_today(),
+			"on_change": function (query_report) {}
 		},
 		
 		{
@@ -32,6 +44,8 @@ frappe.query_reports["Vendor Balance Detail Report"] = {
 			"label": __("End Date"),
 			"fieldtype": "Date",
 			"reqd": 1,
+			default:frappe.datetime.get_today(),
+			"on_change": function (query_report) {}
 		},
 
 	
@@ -63,5 +77,7 @@ frappe.query_reports["Vendor Balance Detail Report"] = {
 		
 		return value;
 	},
+
+	
 	
 };

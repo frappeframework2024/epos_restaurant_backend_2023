@@ -5,8 +5,29 @@ import frappe
 
 
 def execute(filters=None):
+	validate(filters)
+
+	report_data = get_report_data(filters)
+
+	report_summary  = None
+
+	skip_total_row = False
 	 
-	return columns(), get_report_data(filters)
+	return columns(), report_data,None, None, report_summary,skip_total_row
+
+
+def validate(filters):
+	if not filters.business_branch:
+		filters.business_branch = frappe.db.get_list("Business Branch",pluck='name')
+
+	if not filters.vendor:
+		filters.vendor = frappe.db.get_list("Vendor",pluck='name')
+  
+
+	if filters.start_date and filters.end_date:
+		if filters.start_date > filters.end_date:
+
+			frappe.throw("The 'Start Date' ({}) must be before the 'End Date' ({})".format(filters.start_date, filters.end_date))
 
 
 def get_vendor(opening_data, current_transaction_data):
@@ -78,19 +99,40 @@ def get_opening_balance(filters):
 	 
 	sql = """
 			with a as (
-				select vendor, concat(vendor, '-',vendor_name) as vendor_name ,sum(grand_total) as amount   from `tabPurchase Order` where docstatus=1 and  posting_date < '{0}'    GROUP by vendor,vendor_name
+				select 
+					vendor, 
+					concat(vendor, '-',vendor_name) as vendor_name ,
+					sum(grand_total) as amount   
+				from `tabPurchase Order` 
+				where docstatus=1 
+					and  posting_date < %(start_date)s 
+					and business_branch in %(business_branch)s 
+					and vendor in %(vendor)s 
+				group by 
+					vendor,
+					vendor_name				
 				union all 
-				select vendor,concat(vendor, '-',vendor_name) as vendor_name,sum(payment_amount*-1) as amount   from `tabPurchase Order Payment` where docstatus=1 and posting_date < '{0}'    group by vendor,vendor_name
+				select 
+					vendor,
+					concat(vendor, '-',vendor_name) as vendor_name,
+					sum(payment_amount*-1) as amount   
+				from `tabPurchase Order Payment`
+				where docstatus=1 
+					and posting_date < %(start_date)s    
+					and business_branch in %(business_branch)s 
+					and vendor in %(vendor)s 
+				group by 
+					vendor,
+					vendor_name
 			)
-			select vendor,vendor_name, sum(amount) as amount from a group by vendor,vendor_name 
-			
-		""".format(filters.start_date)
-	return frappe.db.sql(sql,as_dict=1)
+			select vendor,vendor_name, sum(amount) as amount from a group by vendor,vendor_name 			
+		"""
+	return frappe.db.sql(sql, filters,as_dict=1)
 
 def get_current_transaction(filters):
-	condition = "where docstatus=1  and posting_date between %(start_date)s and %(end_date)s"
-	if filters.get("vendor"):
-		condition += "and vendor in %(vendor)s"
+	condition = "where docstatus=1  and business_branch in %(business_branch)s  and vendor in %(vendor)s and posting_date between %(start_date)s and %(end_date)s"
+
+
 	sql = """
 				select 
 					vendor, 
@@ -117,8 +159,7 @@ def get_current_transaction(filters):
 					0 as last_balance 
 					from `tabPurchase Order Payment`
 						{0}
-		""".format(condition)
-	
+		""".format(condition)	
 	data = frappe.db.sql(sql,filters, as_dict=1)
 
 	return data
