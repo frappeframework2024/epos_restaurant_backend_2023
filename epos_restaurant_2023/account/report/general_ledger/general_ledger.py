@@ -206,9 +206,10 @@ def get_columns(filters):
 			"width": 200,
 		},
 		{"label": _("Party Type"), "fieldname": "party_type", "align":"left", "width": 100},
-		{"label": _("Party"), "fieldname": "party", "align":"left", "width": 150},
-		{"label": _("Remark"), "fieldname": "remark", "align":"left","width": 400}
+		{"label": _("Party"), "fieldname": "party", "align":"left", "width": 150}
 	]
 	if filters.show_cancelled == 1:
-		columns.append({"label": _("Status"), "fieldname": "status", "align":"left","width": 400})
+		columns.append({"label": _("Status"), "fieldname": "status", "align":"left","width": 100})
+	columns.append({"label": _("Remark"), "fieldname": "remark", "align":"left","width": 400})
+	
 	return columns
