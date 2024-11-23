@@ -90,23 +90,25 @@ def get_data_with_opening_closing(filters, gl_entries):
 	data = []
 	gle_map = initialize_gle_map(gl_entries, filters)
 	totals, entries = get_accountwise_gle(filters, gl_entries, gle_map)
+	data.append(totals.opening)
+	data.append({})
 	if filters.group_by:
 		for acc, acc_dict in gle_map.items():
 			if acc_dict.entries:
-				# if filters.group_by != "voucher_number":
-				# 	data.append(acc_dict.totals.opening)
+				if filters.group_by != "voucher_number":
+					data.append(acc_dict.totals.opening)
 				data += acc_dict.entries
 				data.append(acc_dict.totals.total)
-				# if filters.group_by != "voucher_number":
-				# 	data.append(acc_dict.totals.closing)
-			data.append({})
+				if filters.group_by != "voucher_number":
+					data.append(acc_dict.totals.closing)
+				data.append({})
 		data.append(totals.total)
 	else:
 		for acc, acc_dict in gle_map.items():
 			if acc_dict.entries:
 				data += acc_dict.entries
 		data.append(totals.total)
-	# data.append(totals.closing)
+	data.append(totals.closing)
 	return data
 
 
@@ -129,11 +131,11 @@ def get_list(filters,name):
 
 def get_data(filters):
 	order_by_statement = "order by posting_date, creation, account"
-	if filters.get("group_by") == "Group by Voucher":
-		order_by_statement = "order by posting_date, debit_amount desc, voucher_type, voucher_no"
-	if filters.get("group_by") == "Group by Account":
+	if filters.get("group_by") == "voucher_number":
+		order_by_statement = "order by posting_date, debit_amount desc, voucher_type, voucher_number"
+	if filters.get("group_by") == "account":
 		order_by_statement = "order by account, posting_date, creation"
-	filter  = ""
+	filter  = "coalesce(voucher_number,'') != ''"
 	if filters.group_by == "party":
 		filter += "and coalesce(party,'') <> ''"
 	if filters.account:
@@ -142,6 +144,8 @@ def get_data(filters):
 		filter += " and party in ({0})".format(get_list(filters,"party"))
 	if filters.voucher_no:
 		filter += " and voucher_number like '%{0}%'".format(filters.voucher_no)
+	if filters.show_cancelled == 0:
+		filter += " and is_cancelled = 0"
 	sql = """
 			select
 			posting_date,
@@ -153,11 +157,11 @@ def get_data(filters):
 			debit_amount,
 			credit_amount,
 			(debit_amount-credit_amount) balance,
-			remark
+			remark,
+			if(is_cancelled = 1,"Cancelled","Submit") status
 			from `tabGeneral Ledger`
-			where is_cancelled = 0 and posting_date between '{0}' and '{1}' {2}
-			{3}
-			""".format(filters.from_date,filters.to_date,filter,order_by_statement)
+			where {0}
+			{1}""".format(filter,order_by_statement)
 	sql_data = frappe.db.sql(sql,as_dict=1)
 	with_opening_closing_data = get_data_with_opening_closing(filters,sql_data)
 	data = get_result_as_list(with_opening_closing_data)
@@ -205,4 +209,6 @@ def get_columns(filters):
 		{"label": _("Party"), "fieldname": "party", "align":"left", "width": 150},
 		{"label": _("Remark"), "fieldname": "remark", "align":"left","width": 400}
 	]
+	if filters.show_cancelled == 1:
+		columns.append({"label": _("Status"), "fieldname": "status", "align":"left","width": 400})
 	return columns

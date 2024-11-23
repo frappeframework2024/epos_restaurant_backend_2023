@@ -118,5 +118,12 @@ frappe.query_reports["General Ledger"] = {
 			"default": "Group by Voucher",
 			on_change: function (query_report) {},
 		},
+		{
+			"fieldname": "show_cancelled",
+			"label": __("Show Cancelled Entries"),
+			"fieldtype": "Check",
+			"default":0,
+			on_change: function (query_report) {},
+		},
 	]
 };

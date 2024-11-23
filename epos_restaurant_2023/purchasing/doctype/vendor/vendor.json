@@ -37,7 +37,8 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Vendor Name",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "default": "Individual",
@@ -52,7 +53,8 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Company"
+   "label": "Company",
+   "search_index": 1
   },
   {
    "fieldname": "contact_name",
@@ -66,7 +68,8 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Phone Number"
+   "label": "Phone Number",
+   "search_index": 1
   },
   {
    "fieldname": "email_address",
@@ -149,15 +152,17 @@
   },
   {
    "fieldname": "keyword",
-   "fieldtype": "Small Text",
+   "fieldtype": "Data",
    "hidden": 1,
-   "label": "Keyword"
+   "label": "Keyword",
+   "length": 500,
+   "search_index": 1
   }
  ],
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-06 16:33:26.703900",
+ "modified": "2024-11-23 08:59:35.879750",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Vendor",

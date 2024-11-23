@@ -185,7 +185,7 @@ def render_report_letter_head(ws1,filters,columns):
 
     ws1.merge_cells(f'B2:{end_merge_cell}2') 
     ws1[f"B2"] = info.get("sub_header")
-    ws1[f"B2"].font = Font(name="Times New Roman",size=12,color=("#9a5e6f").replace("#",""))  
+    ws1[f"B2"].font = Font(name="Times New Roman",size=12,color=(setting_doc.report_letter_head_color or "#1c1c1c").replace("#",""))  
     ws1[f'B2'].alignment = Alignment(vertical='center',horizontal="center" ,wrap_text=True)
     ws1.row_dimensions[2].height = len(info.get("sub_header").split("\n")) * 15
 

@@ -51,13 +51,15 @@
   },
   {
    "fieldname": "keyword",
-   "fieldtype": "Small Text",
-   "label": "keyword"
+   "fieldtype": "Data",
+   "label": "keyword",
+   "length": 500,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-06 15:39:54.533244",
+ "modified": "2024-11-23 08:43:53.925539",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Video Help Document",
