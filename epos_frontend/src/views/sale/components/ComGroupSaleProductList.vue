@@ -8,7 +8,7 @@
                 <span v-for="(g, index) in sale.getSaleProductDeletedGroupByKey()" :key="index">       
                         <div class="bg-red-700 text-white flex items-center justify-between" style="font-size: 10px; padding: 2px;">
                             <div><v-icon icon="mdi-clock" size="small" class="mr-1"></v-icon>{{
-                                moment(g.order_time).format('HH:mm:ss')
+                                moment(g.order_time).format('DD-MM-YYYY hh:mm:ss A')
                             }}</div>
                             <div><v-icon icon="mdi-account-outline" size="small" class="mr-1"></v-icon>{{ g.order_by }}</div>
                         </div>
@@ -19,7 +19,7 @@
             <span v-for="(g, index) in sale.getSaleProductGroupByKey()" :key="index">     
                     <div class="bg-red-700 text-white flex items-center justify-between" style="font-size: 10px; padding: 2px;">
                         <div><v-icon icon="mdi-clock" size="small" class="mr-1"></v-icon>{{
-                            moment(g.order_time).format('HH:mm:ss')
+                            moment(g.order_time).format('DD-MM-YYYY hh:mm:ss A')
                         }}</div>
                         <div><v-icon icon="mdi-account-outline" size="small" class="mr-1"></v-icon>{{ g.order_by }}</div>
                     </div>
