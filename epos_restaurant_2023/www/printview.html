@@ -20,21 +20,29 @@
   
 		<meta name="generator" content="frappe">
 		{{ include_style('print.bundle.css') }}
+		<!-- <style>
+			@page {
+				margin-top: 0mm;
+				margin-bottom: 15mm;
+				margin-left: 0mm;
+				margin-right: 0mm;
+			
+				 
+			
+				 
+				@bottom-center {
+					content: 'Page ' counter(page) ' of ' counter(pages);
+					color: #000;
+					font-size:12px;
+				}
+			}
+		</style> -->
 	{% if print_style %}
     <style>
-		@page{
-			margin-top: 0mm;
-			margin-bottom: 0mm;
-			margin-left: 0mm;
-			margin-right: 0mm;
-
-		@bottom-left{
-			content: 'Page ' counter(page) ' of '  counter(pages)};
-			color:red;
-		}
-
-    {{ print_style }}
-	
+ 
+		
+		{{ print_style }}
+ 
 	 
     </style>
 {% endif %}
