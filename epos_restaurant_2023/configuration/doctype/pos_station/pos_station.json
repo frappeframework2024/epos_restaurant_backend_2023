@@ -59,7 +59,7 @@
   "print_invoice_on_submit",
   "switch_pos_profile_tab",
   "pos_profiles_section",
-  "table_grlz",
+  "switch_pos_profiles",
   "printers_tab",
   "default_kod_id",
   "default_kod",
@@ -368,11 +368,6 @@
    "label": "POS Profiles"
   },
   {
-   "fieldname": "table_grlz",
-   "fieldtype": "Table",
-   "options": "Station POS Profile"
-  },
-  {
    "default": "0",
    "fieldname": "show_seat_number_button",
    "fieldtype": "Check",
@@ -395,11 +390,16 @@
    "fieldname": "show_button_print_bill_by_seat",
    "fieldtype": "Check",
    "label": "Show Button Print Bill By Seat"
+  },
+  {
+   "fieldname": "switch_pos_profiles",
+   "fieldtype": "Table",
+   "options": "Station POS Profile"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-01 09:12:51.782578",
+ "modified": "2024-11-25 11:05:50.366244",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

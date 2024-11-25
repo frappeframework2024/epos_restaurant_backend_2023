@@ -13,7 +13,7 @@
                 <v-card-title class="!p-0">
                     <v-toolbar height="55">
                         <v-toolbar-title class="text">
-                            <div class="text-lg">{{$t('No')}}: {{ g.no }} | {{$t('Seat')}}#: {{ g.sale.seat_number }}</div> 
+                            <div class="text-lg">{{$t('No')}}: {{ g.no }}  <span v-if="g.sale.seat_number"> | {{$t('Seat')}}#: {{ g.sale.seat_number }} </span></div> 
                             <div class="text-sm">#{{g.sale.name || "New"}}</div>                            
                         </v-toolbar-title>
                         <template v-slot:append>

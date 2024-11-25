@@ -17,26 +17,20 @@ def on_save(data,current_sale_id ):
 
     for d in [ r for r in data if r["temp_deleted"]]:  
         if d["name"]: 
-            frappe.delete_doc("Sale", str(d["name"]))
-            # # Fetch the document
-            # doc = frappe.get_doc("Sale", str(d["name"]))
+            # frappe.delete_doc("Sale", str(d["name"]))
 
-            # # Manually clear the sale_products child table
-            # # doc.sale_products = []
+            # clear sale product
+            doc = frappe.get_doc("Sale", str(d["name"]))
+            doc.db_set('deleted_by', 'Split Bill')
+            doc.db_set('deleted_note', 'Auto Delete by Split Bill')
+            doc.sale_products = []
+            doc.save()
 
-            # # Update the other fields
-            # doc.db_set('deleted_by', 'Split Bill')
-            # doc.db_set('deleted_note', 'Auto Delete by Split Bill')
-            # doc.db_set('status', 'Cancelled')
-            
-            # # Transition the document to Cancelled directly (docstatus = 2)
-            # doc.db_set('docstatus', 2)  # This bypasses workflow restrictions, use cautiously
-
-            # # Save the document
-            # # doc.save()
-
-            # # Reload the document to ensure changes are reflected
-            # doc.reload()
+            # update to cancelled sale
+            doc_cancelled = frappe.get_doc("Sale", str(d["name"]))
+            doc_cancelled.db_set('status', 'Cancelled')
+            doc_cancelled.db_set('docstatus', 2)  
+            doc_cancelled.reload()
 
 
     frappe.db.commit()

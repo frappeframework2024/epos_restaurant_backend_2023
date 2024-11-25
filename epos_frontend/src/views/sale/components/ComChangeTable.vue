@@ -300,6 +300,7 @@ function generateProductPrinterChangeTable(sale_products, old_sale, old_table) {
 }
 
 tableLayout.getSaleList();
+
 onMounted(() => {
 
     tableLayout.getTempTableGroup();
@@ -309,17 +310,31 @@ onMounted(() => {
     }, 100);
 
 
-    loading.value = true
-    call
-        .get("epos_restaurant_2023.api.api.get_pos_profiles")
-        .then((result) => {
+    loading.value = true;
+    const device_string = localStorage.getItem("device_setting");
+    const device = JSON.parse(device_string)
 
-            switch_pos_station.value = result.message
-            loading.value = false
+    let pos_profiles = []
+    if(device?.switch_pos_profiles){
+        device.switch_pos_profiles.forEach((p)=>{
+            pos_profiles.push({"name":p.pos_profile})
         })
-        .catch((error) => {
-            loading.value = false
-        });
+    }
+
+    switch_pos_station.value = pos_profiles;
+
+    loading.value = false;
+
+    // call
+    //     .get("epos_restaurant_2023.api.api.get_pos_profiles")
+    //     .then((result) => {
+
+    //         switch_pos_station.value = result.message
+    //         loading.value = false
+    //     })
+    //     .catch((error) => {
+    //         loading.value = false
+    //     });
 })
 
 
@@ -364,7 +379,7 @@ function switchPOSProfil(data) {
 }
 
 async function changeTableBetweenOutlet(t) {
-    if (await confirm({ title: $t("Change Table"), text: $t("msg.Are your sure you to change this order to table number " + t.tbl_no) })) {
+    if (await confirm({ title: $t("Change Table"), text: $t("Are your sure you to change this order to table number") + " "+ t.tbl_no  })) {
         return new Promise((resolve, reject) => {
             loading.value = true
             call.post("epos_restaurant_2023.api.api.change_table_between_outlet", {

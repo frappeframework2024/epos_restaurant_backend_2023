@@ -45,7 +45,23 @@ def on_merge_order(old_sale, new_sale):
         except:
             pass
       
-        frappe.delete_doc("Sale",old_sale)
+        
+
+        # update sale delete
+        doc_old_sale = frappe.get_doc("Sale", old_sale)
+        doc_old_sale.db_set('deleted_by', 'Merge Order')
+        doc_old_sale.db_set('deleted_note', 'Auto Delete by Merge Order, All items were move to sale #{}'.format(new_doc.name))
+        doc_old_sale.save()
+
+        #update sale to cancel
+        doc_cancel = frappe.get_doc("Sale", old_sale)
+        doc_cancel.db_set('status', 'Cancelled')
+        doc_cancel.db_set('docstatus', 2)  
+        doc_cancel.reload()
+        # # Update the other fields
+        
+       
+
        
         msg = "Sale document has been deleted"
 

@@ -1599,7 +1599,10 @@ def get_table_group_in_pos_profile(pos_profile=""):
             "table_group":g.table_group,
             "table_group_kh":_group.table_group_name_kh,
             "background":_group.photo,
-            "tables":get_tables_number(g.table_group, ""),#device_name = ''
+            "tables":get_tables_number(table_group= g.table_group
+                                       ,device_name= ""
+                                       , pos_profile=pos_profile 
+                                    ),#device_name = ''
             "search_table_keyword":""
             })
     return table_groups
