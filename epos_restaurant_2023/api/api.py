@@ -484,7 +484,9 @@ def get_tables_number(table_group,device_name, pos_profile):
                             tbl_group,
                             discount_type 
                          from `tabTables Number` 
+
                          where tbl_group=%(group)s
+                         and disabled = 0
                          order by 
                          sort_order, 
                          tbl_number""",{"group":table_group}, as_dict=1)

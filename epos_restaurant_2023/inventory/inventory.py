@@ -55,8 +55,13 @@ def get_stock_location_product(stock_location,product_code):
 @frappe.whitelist(allow_guest=True)
 def get_uom_conversion(from_uom, to_uom):
     conversion =frappe.db.get_value('Unit of Measurement Conversion', {'from_uom': from_uom,"to_uom":to_uom}, ['conversion'], cache=True)
-    
     return conversion or 1
+
+@frappe.whitelist(allow_guest=True)
+def get_uom_conversion_zero(from_uom, to_uom):
+    conversion =frappe.db.get_value('Unit of Measurement Conversion', {'from_uom': from_uom,"to_uom":to_uom}, ['conversion'], cache=True)
+    
+    return conversion or 0
 
 @frappe.whitelist(allow_guest=True)
 def get_bom_product_price(product_code,unit):

@@ -25,7 +25,8 @@
   "default_customer",
   "customer_photo",
   "customer_name",
-  "customer_group"
+  "customer_group",
+  "disabled"
  ],
  "fields": [
   {
@@ -144,12 +145,18 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Customer Group"
+  },
+  {
+   "default": "0",
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "label": "Disabled"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-04-23 09:22:34.281507",
+ "modified": "2024-11-26 11:30:08.717250",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Tables Number",

@@ -18,22 +18,14 @@ frappe.ui.form.on('Product Price', {
         frappe.model.set_value(cdt, cdn, "base_unit", frm.doc.base_unit);
         let doc = locals[cdt][cdn];
         frappe.call({
-            method: "epos_restaurant_2023.inventory.inventory.get_uom_conversion",
+            method: "epos_restaurant_2023.inventory.inventory.get_uom_conversion_zero",
             args:{
                 from_uom:doc.unit,
                 to_uom:doc.base_unit
             },
             callback: function (r) {
                 if (r.message) {
-                    if(doc.unit == doc.base_unit && r.message == 1){
-                        frappe.model.set_value(cdt, cdn, "conversion_factor", r.message);
-                    }
-                    else if(doc.unit != doc.base_unit && r.message == 1){
-                        frappe.model.set_value(cdt, cdn, "conversion_factor", 0);
-                    }
-                    else{
-                        frappe.model.set_value(cdt, cdn, "conversion_factor", r.message);
-                    }
+                    frappe.model.set_value(cdt, cdn, "conversion_factor", r.message);
                 }
             }
         });
@@ -41,22 +33,14 @@ frappe.ui.form.on('Product Price', {
     unit: function(frm,cdt,cdn){
         let doc = locals[cdt][cdn];
         frappe.call({
-            method: "epos_restaurant_2023.inventory.inventory.get_uom_conversion",
+            method: "epos_restaurant_2023.inventory.inventory.get_uom_conversion_zero",
             args:{
                 from_uom:doc.unit,
                 to_uom:doc.base_unit
             },
             callback: function (r) {
                 if (r.message) {
-                    if(doc.unit == doc.base_unit && r.message == 1){
-                        frappe.model.set_value(cdt, cdn, "conversion_factor", r.message);
-                    }
-                    else if(doc.unit != doc.base_unit && r.message == 1){
-                        frappe.model.set_value(cdt, cdn, "conversion_factor", 0);
-                    }
-                    else{
-                        frappe.model.set_value(cdt, cdn, "conversion_factor", r.message);
-                    }
+                    frappe.model.set_value(cdt, cdn, "conversion_factor", r.message);
                 }
             }
         });
