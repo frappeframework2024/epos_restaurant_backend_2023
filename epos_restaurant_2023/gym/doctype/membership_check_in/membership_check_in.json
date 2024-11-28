@@ -122,7 +122,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-19 14:01:51.835230",
+ "modified": "2024-11-27 09:12:57.373837",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership Check In",
@@ -141,6 +141,18 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "GYM Admin",
+   "select": 1,
    "submit": 1,
    "write": 1
   },

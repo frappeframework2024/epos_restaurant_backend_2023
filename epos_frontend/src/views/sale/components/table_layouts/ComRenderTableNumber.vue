@@ -3,6 +3,7 @@
         <v-window-item :value="g.key"
             v-bind:style="{ 'background-image': 'url(' + g.background + ')', 'min-height': `calc(100vh - ${!tableStatusColor && tableLayout.table_groups.length <= 1 ? 118 : 174}px)`, 'background-size': '100% 100%', 'min-width': 'calc(100vw - 0px)' }"
             class="bg-center overflow-auto relative table-bg" v-if="!mobile">
+            <!-- <v-img :src="g.background" alt="Table Plan Background" aspect-ratio="16/9" class="elevation-3" :lazy-src="g.background"></v-img> -->
             <template v-for="(t, index) in g.tables" :key="index">
                 <div   v-bind:style="{ 'height': t.h + 'px', 'width': t.w + 'px', 'left': t.x + 'px', 'top': t.y + 'px', 'background-color': t.background_color, 'position': 'absolute', 'box-sizing': 'border-box','border-radius':t.shape == 'Circle' ? '' : '10px' }"
                     class="text-center text-gray-100 cursor-pointer" :class="t.shape == 'Circle' ? 'shape-circle' : ''"

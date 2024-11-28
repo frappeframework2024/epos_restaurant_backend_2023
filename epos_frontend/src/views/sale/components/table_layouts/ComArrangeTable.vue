@@ -3,6 +3,7 @@
         <v-window-item :value="g.key"
             v-bind:style="{ 'background-image': 'url(' + g.background + ')', 'min-height': `calc(100vh - ${!tableStatusColor && tableLayout.table_groups.length <= 1 ? 118 : 174}px)`, 'background-size': '100% 100%' }"
             class="bg-center overflow-auto relative table-bg">
+            
             <Vue3DraggableResizable v-for="(t, index) in g.tables" :key="index" v-model:x="t.x" v-model:y="t.y" :w="t.w"
                 :h="t.h" :draggable="true" :resizable="true" @resize-end="tableLayout.onResizeEnd(t)($event)">
 

@@ -177,7 +177,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-15 17:36:52.368611",
+ "modified": "2024-11-27 08:43:49.600266",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership Options",
@@ -205,10 +205,16 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "GYM User",
-   "select": 1,
+   "role": "GYM Admin",
    "share": 1,
    "write": 1
+  },
+  {
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "GYM User",
+   "select": 1
   }
  ],
  "sort_field": "modified",

@@ -19,8 +19,8 @@
  "label": "Gym",
  "links": [
   {
-   "custom_show_in_app_menu": 1,
-   "custom_sort_order": 2,
+   "custom_show_in_app_menu": 0,
+   "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
    "label": "Report",
@@ -29,7 +29,7 @@
    "type": "Card Break"
   },
   {
-   "custom_show_in_app_menu": 1,
+   "custom_show_in_app_menu": 0,
    "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
@@ -41,7 +41,7 @@
    "type": "Link"
   },
   {
-   "custom_show_in_app_menu": 1,
+   "custom_show_in_app_menu": 0,
    "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
@@ -53,7 +53,7 @@
    "type": "Link"
   },
   {
-   "custom_show_in_app_menu": 1,
+   "custom_show_in_app_menu": 0,
    "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
@@ -65,7 +65,7 @@
    "type": "Link"
   },
   {
-   "custom_show_in_app_menu": 1,
+   "custom_show_in_app_menu": 0,
    "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
@@ -77,11 +77,11 @@
    "type": "Link"
   },
   {
-   "custom_show_in_app_menu": 1,
+   "custom_show_in_app_menu": 0,
    "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 1,
-   "label": "Gym Attendance",
+   "label": "GYM Attendance",
    "link_count": 0,
    "link_to": "GYM Attendant",
    "link_type": "Report",
@@ -127,9 +127,9 @@
    "custom_sort_order": 0,
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Members",
+   "label": "Class Types",
    "link_count": 0,
-   "link_to": "Customer",
+   "link_to": "GYM Class Types",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -147,7 +147,7 @@
    "type": "Link"
   }
  ],
- "modified": "2024-08-23 09:57:59.641250",
+ "modified": "2024-11-27 10:00:15.812936",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Gym",

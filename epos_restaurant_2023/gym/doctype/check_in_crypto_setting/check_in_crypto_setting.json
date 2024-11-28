@@ -20,7 +20,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-08-16 08:30:21.899293",
+ "modified": "2024-11-27 08:45:24.481373",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Check In Crypto Setting",
@@ -39,12 +39,17 @@
   {
    "create": 1,
    "delete": 1,
-   "email": 1,
+   "read": 1,
+   "role": "GYM Admin",
+   "select": 1,
+   "share": 1,
+   "write": 1
+  },
+  {
    "print": 1,
    "read": 1,
    "role": "GYM User",
-   "share": 1,
-   "write": 1
+   "select": 1
   }
  ],
  "sort_field": "modified",
