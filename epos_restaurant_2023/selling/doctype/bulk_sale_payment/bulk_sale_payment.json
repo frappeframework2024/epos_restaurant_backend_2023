@@ -19,7 +19,9 @@
   "exchange_rate",
   "amended_from",
   "section_break_spgn",
+  "payment_amount",
   "sale_list",
+  "balance",
   "section_break_hqsb",
   "column_break_ixjp",
   "total_sale",
@@ -157,12 +159,24 @@
    "fieldtype": "Link",
    "label": "Stock Location",
    "options": "Stock Location"
+  },
+  {
+   "fieldname": "payment_amount",
+   "fieldtype": "Float",
+   "label": "Payment Amount"
+  },
+  {
+   "depends_on": "eval:doc.balance>0",
+   "fieldname": "balance",
+   "fieldtype": "Currency",
+   "label": "Balance",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-07-16 14:44:08.486509",
+ "modified": "2024-11-28 17:32:58.618257",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Bulk Sale Payment",
