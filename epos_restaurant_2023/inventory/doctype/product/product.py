@@ -372,7 +372,7 @@ class Product(Document):
 			return self.product_variants
 
 def update_uom_conversion(item):
-	if item.conversion_factor == 0 or (item.base_unit or '') == "":
+	if (item.base_unit or '') == "":
 		return
 	sql_a = "select conversion from `tabUnit of Measurement Conversion` where from_uom='{0}' and to_uom='{1}' order by creation desc limit 1".format(item.unit,item.base_unit)
 	sql_b = "select conversion from `tabUnit of Measurement Conversion` where from_uom='{0}' and to_uom='{1}' order by creation desc limit 1".format(item.base_unit,item.unit)
@@ -405,7 +405,7 @@ def update_uom_conversion(item):
 		doc.unit_category = 'General'
 		doc.from_uom = item.base_unit
 		doc.to_uom = item.unit
-		doc.conversion = 1/item.conversion_factor
+		doc.conversion = (1/item.conversion_factor)
 		doc.insert()
 
 def update_bom(self):
