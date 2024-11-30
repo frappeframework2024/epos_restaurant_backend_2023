@@ -209,6 +209,7 @@
   "printed_by",
   "printed_date",
   "deleted_by",
+  "deleted_type",
   "deleted_note",
   "column_break_rrof",
   "paid_by",
@@ -1598,6 +1599,11 @@
    "fieldtype": "Data",
    "label": "Village",
    "read_only": 1
+  },
+  {
+   "fieldname": "deleted_type",
+   "fieldtype": "Data",
+   "label": "Deleted Type"
   }
  ],
  "image_field": "photo",
@@ -1620,7 +1626,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2024-11-05 15:34:41.125785",
+ "modified": "2024-11-30 16:26:12.790876",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

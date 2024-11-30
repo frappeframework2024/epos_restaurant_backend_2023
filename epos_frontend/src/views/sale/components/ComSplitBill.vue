@@ -196,7 +196,15 @@ function onDownloadPressed(group) {
 
   //end remove sale product when qty equal zero
 }
-
+function getOldSale(sales,name){
+  let sale = sales.filter((r)=>r.sale.name == name)
+  
+  if (sale.length > 0) {
+    return sale[0]
+  }else{
+    return null
+  }
+}
 
 function onSave() {
   //check if current sale empty data
@@ -216,8 +224,6 @@ function onSave() {
 
   let _active_sales = groupSales.value.filter((r) => r.deleted == false);
   const screens = sale.getScreenNames(_active_sales.flatMap(r=>r.sale.sale_products));
-
-  
   _active_sales.forEach((a) => {
 
     //check if empty sale products in sale
@@ -230,7 +236,13 @@ function onSave() {
       sp.deleted_quantity = 0;
       if (sp.parent != a.sale.name) {
         sp.name = ""
+
+        
       }
+      let from = getOldSale(_active_sales,sp.original_parent)
+      sp.move_from_table = from.sale.tbl_number
+      sp.move_from_sale = from.sale.name
+
     });
   });
 

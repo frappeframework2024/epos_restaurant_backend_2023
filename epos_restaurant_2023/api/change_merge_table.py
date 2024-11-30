@@ -21,6 +21,7 @@ def on_merge_order(old_sale, new_sale):
     for c in change_table_sale_products:
         c.move_from_sale_printed  = 0
         c.move_from_sale = old_sale
+        c.move_from_table = old_doc.tbl_number
         c.parent = new_sale   
 
 
@@ -48,8 +49,10 @@ def on_merge_order(old_sale, new_sale):
         
 
         # update sale delete
+        current_user_full_name =frappe.db.get_value("User",frappe.session.user,"full_name")
         doc_old_sale = frappe.get_doc("Sale", old_sale)
-        doc_old_sale.db_set('deleted_by', 'Merge Order')
+        doc_old_sale.db_set('deleted_type', 'Merge Order')
+        doc_old_sale.db_set('deleted_by', current_user_full_name)
         doc_old_sale.db_set('deleted_note', 'Auto Delete by Merge Order, All items were move to sale #{}'.format(new_doc.name))
         doc_old_sale.save()
 

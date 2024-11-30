@@ -76,6 +76,7 @@ async function onMoveItem(table, sourceSale, targetSale) {
     generateProductPrinterMoveItem(targetSale.sale_products, sourceSale.name, sourceSale.tbl_number);
     targetSale.sale_products?.forEach((r) => {
         r.total_selected = 0
+        r.move_from_sale = sourceSale.name
         r.move_from_table = sourceSale.tbl_number;
     });
 

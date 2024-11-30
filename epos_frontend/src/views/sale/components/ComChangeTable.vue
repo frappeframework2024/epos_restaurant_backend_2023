@@ -147,6 +147,7 @@ async function onSelectTable(t) {
 
             sale.sale.sale_products?.forEach((r) => {
                 r.move_from_table = sale.sale.tbl_number;
+                r.move_from_sale = sale.sale.name;
             });
             sale.sale.table_id = t.id;
             const old_table_number = sale.sale.tbl_number 
@@ -183,6 +184,7 @@ async function onSelectTable(t) {
 
                     sale.sale.sale_products?.forEach((r) => {
                         r.move_from_table = sale.sale.tbl_number;
+                        r.move_from_sale = sale.sale.name;
                     });
                     sale.sale.table_id = t.id;
                     const old_table_number = sale.sale.tbl_number

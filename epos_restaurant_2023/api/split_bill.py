@@ -6,10 +6,11 @@ from py_linq import Enumerable
 from frappe.utils import today, add_to_date
 from datetime import datetime, timedelta
 from frappe import _
-
+ 
 
 @frappe.whitelist()
-def on_save(data,current_sale_id ): 
+def on_save(data,current_sale_id ):
+    current_user_full_name =frappe.db.get_value("User",frappe.session.user,"full_name")
     
     for d in [ r for r in data if not r["temp_deleted"]]:       
             doc = frappe.get_doc(d)
@@ -21,8 +22,9 @@ def on_save(data,current_sale_id ):
 
             # clear sale product
             doc = frappe.get_doc("Sale", str(d["name"]))
-            doc.db_set('deleted_by', 'Split Bill')
+            doc.db_set('deleted_by', current_user_full_name)
             doc.db_set('deleted_note', 'Auto Delete by Split Bill')
+            doc.db_set('deleted_type', 'Split Bill')
             doc.sale_products = []
             doc.save()
 

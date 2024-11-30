@@ -1205,9 +1205,15 @@ def delete_sale(name,auth):
             sale_payment.delete()
     
     #then start to cancel sale
-    sale_doc = frappe.get_doc("Sale",name)
     if sale_doc.docstatus ==1:
+        _sale = frappe.get_doc("Sale",name)
+        _sale.db_set('deleted_by', auth["full_name"])
+        _sale.db_set('deleted_note', auth["note"])
+        _sale.reload()
+        
+        sale_doc = frappe.get_doc("Sale",name)
         sale_doc.cancel()
+        
     else:        
         frappe.db.sql("update `tabSale` set docstatus = 2,deleted_by=%(deleted_by)s,deleted_note=%(deleted_note)s  where name=%(name)s",{"name":name,"deleted_by":auth["full_name"],"deleted_note":auth["note"]})
         frappe.db.sql("update `tabSale Product` set docstatus = 2 where parent=%(parent)s",{"parent":name})
