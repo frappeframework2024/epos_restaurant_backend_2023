@@ -209,6 +209,7 @@ class Product(Document):
 			
 			for p in self.product_price:
 				prices.append({
+					"name":p.name,
 					"price":p.price,
 					'branch':p.business_branch or "",
 					'price_rule':p.price_rule, 
@@ -371,6 +372,22 @@ class Product(Document):
 		else:
 			return self.product_variants
 
+@frappe.whitelist(methods="POST")
+def update_product_info(product,portion=None):
+	frappe.enqueue(update_product_info_queue,queue='short', product=product, portion=portion)
+
+def update_product_info_queue(product,portion=None):
+	if product:
+		item = frappe.get_doc("Product",product["name"])
+		item.product_name_en = product["name_en"]
+		item.product_name_kh = product["name_kh"]
+		item.price = product["price"]
+		if portion:
+			for a in item.product_price:
+				if a.name == portion["name"]:
+					a.price = portion["price"]
+		item.save()
+    
 def update_uom_conversion(item):
 	if (item.base_unit or '') == "":
 		return
@@ -681,6 +698,7 @@ def add_product_to_temp_menu(self):
 		prices = []
 		for p in self.product_price:
 			prices.append({
+					"name":p.name,
 					"price":p.price,
 					'branch':p.business_branch or "",
 					'price_rule':p.price_rule, 
@@ -790,7 +808,7 @@ def add_product_to_temp_menu(self):
 						})
 			doc.insert() 
 
-
+	 
 		## update to popular product in emenu
 		sql_pop = """select name, parent from `tabeMenu Popular Products` where product_code = '{}'""".format(self.name)
 		pop_docs = frappe.db.sql(sql_pop,as_dict=1)

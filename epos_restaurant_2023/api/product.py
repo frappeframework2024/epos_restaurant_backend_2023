@@ -27,7 +27,6 @@ def convert_to_safe_key(text):
 
 @frappe.whitelist(allow_guest=True)
 def get_product_by_menu(root_menu="",mobile = 0,sort_order_by="product_name_en",sort_menu_order_by='name' ):
-    
     if root_menu=="":
         return []
     else:
@@ -318,6 +317,7 @@ def get_product_category(category):
 
 @frappe.whitelist()
 def get_products(category ='All Product Categories',product_code=None,keyword=None , limit = 20, page=1, order_by='product_code',order_by_type='asc', include_product_category=0,price_rule="Normal"):
+    frappe.throw("Yes")
     data = None
     product_price_unit = ""
     sql="""
@@ -455,8 +455,13 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
         product_price_data = frappe.db.sql(sql,product_price_filter,as_dict=1)
         new_data = []
         for a in product_price_data:
-            if a.menu_product_name not in ([a.menu_product_name for a in data]):
-                new_data.append(a)
+            for b in data:
+                if b.name == a.name and b.price == a.price:
+                    return
+                else:
+                    frappe.throw(str( b.name +','+ a.name +','+ b.price +','+ a.price))
+                    if a.menu_product_name not in ([a.menu_product_name for a in data]):
+                        new_data.append(a)
         data = data + new_data
 
     # todo 

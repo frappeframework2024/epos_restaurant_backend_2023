@@ -8,7 +8,8 @@
  "field_order": [
   "class_type_name",
   "description",
-  "disabled"
+  "disabled",
+  "color"
  ],
  "fields": [
   {
@@ -31,11 +32,17 @@
    "fieldname": "disabled",
    "fieldtype": "Check",
    "label": "Disabled"
+  },
+  {
+   "default": "#13babf",
+   "fieldname": "color",
+   "fieldtype": "Color",
+   "label": "Color"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-27 09:56:27.656612",
+ "modified": "2024-11-30 11:56:25.086164",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "GYM Class Types",

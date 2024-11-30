@@ -8461,5 +8461,31 @@
   "name": "e519fd029a",
   "source_text": "Owner Dashboard",
   "translated_text": "ផ្ទាំងសម្រាប់អ្នកគ្រប់គ្រង"
+ },
+ {
+  "context": null,
+  "contributed": 0,
+  "contribution_docname": null,
+  "contribution_status": "",
+  "docstatus": 0,
+  "doctype": "Translation",
+  "language": "en",
+  "modified": "2024-11-28 10:56:40.087040",
+  "name": "2c021617d6",
+  "source_text": "Room Name",
+  "translated_text": "Room Number"
+ },
+ {
+  "context": null,
+  "contributed": 0,
+  "contribution_docname": null,
+  "contribution_status": "",
+  "docstatus": 0,
+  "doctype": "Translation",
+  "language": "en",
+  "modified": "2024-11-29 08:24:15.135332",
+  "name": "c675ed7c59",
+  "source_text": "Business Source Type",
+  "translated_text": "Market Source Type"
  }
 ]

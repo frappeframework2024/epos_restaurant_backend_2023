@@ -102,7 +102,7 @@ frappe.ui.form.on("Sale", {
 				)
 			}, __("Actions"));
 		}
-		if (frm.doc.docstatus == 1 && frm.doc.is_genrate_tax_invoice == 0){
+		if (frm.doc.docstatus == 1 && frm.doc.is_generate_tax_invoice == 0){
 			frappe.db.get_value("POS Config", frm.doc.pos_config,"edit_closed_receipt_required_note",(r) => {
 				if (r.edit_closed_receipt_required_note === 1){
 					frm.add_custom_button(__('Edit Bill'), function () {

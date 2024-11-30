@@ -21,8 +21,9 @@
             <div  class="grid  gap-3 w-full" style="max-height: 80vh;overflow: auto;"> 
 
                 <table>
+<template v-for="item in product.posMenuResource.data.filter(r=>r.parent==selectedNode.name && r.type == 'product')" :key="item.menu_product_name" >
 
-                    <tr  v-for="item in product.posMenuResource.data.filter(r=>r.parent==selectedNode.name && r.type != 'back')" :key="item.menu_product_name" class="bg-blue-50 rounded-lg shadow-lg border cursor-move p-2">
+                    <tr  class="bg-blue-50 rounded-lg shadow-lg border cursor-move p-2">
                         <td class="w-20"> 
                             <div style="border: 2px solid #b1b1b1;" class="overflow-hidden flex justify-center items-center m-2  w-20 bg-white h-full rounded-lg h-20">  
                             <img v-if="item.photo" class="w-auto" :src="item.photo"   />
@@ -32,12 +33,39 @@
                             </div>
                         </td>
                         <td class="p-2">
+ 
+                           
                             <label>En Product Name</label>
-                            <input class="border-2 input_text_style w-full" type="text" v-model="item.name_en" /></td>
+                            <input  @change="onUpdate(item)"  class="border-2 input_text_style w-full" type="text" v-model="item.name_en" /></td>
                         <td class="p-2">
                             <label>KH Product Name</label>
-                            <input  class="border-2 input_text_style w-full" type="text" v-model="item.name_kh" /></td>
+                            <input  @change="onUpdate(item)"  class="border-2 input_text_style w-full" type="text" v-model="item.name_kh" /></td>
+                        
+                        <td class="p-2">
+                            <label>Price</label>
+                            <input @change="onUpdate(item)"  :readonly="prices(item).length>0" type="number" class="border-2 input_text_style w-full"  v-model="item.price" />
+                        </td>
+                        
                     </tr>
+                    <tr v-if="prices(item).length>0">
+                        <td colspan="3">
+                            <table>
+                                <tr>
+                                    <th style="width: 20%;">{{ $t("Price Rule") }}</th>
+                                    <th style="width: 20%;">{{ $t("Portion") }}</th>
+                                    <th style="width: 20%;">{{ $t("Price") }}</th>
+                                </tr>
+                                <tr v-for="(p, pindex) in prices(item)" :key="pindex" >
+                                    <td style="text-align: center;">{{ p.price_rule }}</td>
+                                    <td style="text-align: center;">{{ p.portion }}</td>
+
+                                    <td> <input style="text-align: center;"  @change="onUpdate(item,p)"  type="number" class="border-2 input_text_style w-full"  v-model="p.price" /></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    
+</template>
                 </table>
     
             </div> 
@@ -51,8 +79,8 @@
 </template>
 
 <script setup>
-import { ref, inject, onMounted, i18n } from '@/plugin'
-import { watch } from 'vue'
+import { ref, inject, onMounted, i18n,postApi } from '@/plugin'
+import { computed, watch } from 'vue'
 import { createToaster } from "@meforma/vue-toaster";
 import ComInput from '../../components/form/ComInput.vue';
 import Tree from "vue3-treeview";
@@ -77,6 +105,17 @@ const config = ref({
 
 const posMenuData = ref()
 
+
+function prices(item){
+    if(item?.prices){
+
+        return JSON.parse(item.prices)
+    }
+
+    return []
+}
+
+ 
 
 
 const moment = inject('$moment')
@@ -103,10 +142,20 @@ const emit = defineEmits(["resolve"])
  
 let loading = ref(false)
 
+function onUpdate(item,portion) {
+    postApi("epos_restaurant_2023.inventory.doctype.product.product.update_product_info",{
+        product:item,
+        portion:portion
+    },"",true,"").then(toaster.success($t("msg.Update successfully")))
+    
+}
+
 onMounted(async () => {
     posMenuData.value = getPOSMenuData()
 })
   
+
+
 
 function getPOSMenuData(){
     const pos_menus =  product.posMenuResource.data.filter(r=>r.type!='back').map((item, index)  => ({
