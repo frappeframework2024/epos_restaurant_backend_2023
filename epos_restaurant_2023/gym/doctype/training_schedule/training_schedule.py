@@ -16,7 +16,6 @@ def get_event(start,end,filters):
 	data = frappe.db.get_all("Training Schedule",
 						  fields = [
 							  "name",
-							  "day",
 							  "time_training",
 							  "start_date",
 							  "start_time",

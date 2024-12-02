@@ -1944,3 +1944,6 @@ def get_pos_profile_for_switch(pos_station,current_pos_profile,business_branch):
 
 
 
+@frappe.whitelist()
+def is_training_site():
+    return frappe.get_cached_value("ePOS Settings",None, "is_demo_site")
