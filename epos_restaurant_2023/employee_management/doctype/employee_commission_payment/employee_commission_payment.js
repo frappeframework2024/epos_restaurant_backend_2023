@@ -38,6 +38,7 @@ frappe.ui.form.on('Employee Commission Sale', {
 });
 
 function renderSummary(frm){
+	if(frm.doc.employee_commission_sale != undefined){
 		let summary={}
 		summary.total_commission = frm.doc.employee_commission_sale.reduce((a, b) => a + b.commission_amount, 0)
 		summary.total_paid = frm.doc.employee_commission_sale.reduce((a, b) => a + b.paid_amount, 0)
@@ -47,4 +48,5 @@ function renderSummary(frm){
 
 		$(frm.fields_dict['total'].wrapper).html(html);
 		frm.refresh_field('total');
+	}
 }
