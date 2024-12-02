@@ -43,24 +43,7 @@ frappe.views.calendar['Training Schedule'] =   {
                         }, {
                             fieldtype: 'Section Break',
                         },
-                        {
-                            label: 'Start Date',
-                            fieldname: 'start_date',
-                            fieldtype: 'Date',
-                            default: doc.start_date,
-                            read_only:1
-                        },
-                        {fieldtype: 'Column Break',},
-                        {
-                            label: 'End Date',
-                            fieldname: 'end_date',
-                            fieldtype: 'Date',
-                            default: doc.end_date,
-                            read_only:1
-                        },
-                        {fieldtype: 'Column Break'},
-                        {label:"Day",fieldtype:"Data",default:doc.day,read_only:1},
-                        {fieldtype: 'Column Break',},
+                        
                         {label:"Training Time",fieldtype:"Data",default:doc.time_training,read_only:1},
                         {fieldtype: 'Section Break',label:"Members"},
                         {

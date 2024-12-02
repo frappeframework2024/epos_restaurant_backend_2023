@@ -61,9 +61,8 @@ def get_event(start,end,filters):
 					end_on = datetime(start_date.year, start_date.month, start_date.day, int(etime[0]), int(etime[1]), int(etime[2]))
 					trainer = ""
 					if d.get("trainer"):
-						trainer = "({}) - {}".format(d.get("trainer"), d.get("trainer_name_en"))
-
-					title =  """{}\nTrainer: {}\nMembers: {}""".format( d.get("class_type"), trainer,d.get("total_members"))
+						trainer = "\nTrainer: ({}) - {}".format(d.get("trainer"), d.get("trainer_name_en"))
+					title =  """{}{}""".format( d.get("class_type"),  trainer, "\nMembers: {}".format( d.get("total_members" )) if d.get("total_members" ) > 0 else "" )
 					result.append({
 						"start": start_on,
 						"end": end_on,
