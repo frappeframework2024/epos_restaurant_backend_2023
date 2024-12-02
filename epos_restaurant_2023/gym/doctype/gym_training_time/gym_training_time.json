@@ -6,9 +6,13 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "title",
   "typical_time",
+  "title",
+  "start_time",
+  "end_time",
+  "column_break_sgha",
   "sort_order",
+  "note",
   "disabled"
  ],
  "fields": [
@@ -43,11 +47,36 @@
    "in_list_view": 1,
    "label": " Typical Time",
    "options": "Morning\nLunch\nEvening"
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "start_time",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "Start Time",
+   "reqd": 1
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "end_time",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "End Time",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_sgha",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-27 17:00:34.540743",
+ "modified": "2024-12-02 13:39:24.260072",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "GYM Training Time",
