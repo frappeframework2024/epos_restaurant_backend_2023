@@ -785,7 +785,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2024-11-23 08:58:01.956327",
+ "modified": "2024-12-03 10:01:41.352676",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",
@@ -860,6 +860,18 @@
    "print": 1,
    "read": 1,
    "report": 1,
+   "role": "eDoor Admin Read Only",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
    "role": "eDoor Admin",
    "share": 1,
    "write": 1
@@ -872,7 +884,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "GYM User",
+   "role": "GYM Admin",
    "share": 1,
    "write": 1
   },
@@ -896,7 +908,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "eDoor Admin Read Only",
+   "role": "GYM User",
    "share": 1,
    "write": 1
   }

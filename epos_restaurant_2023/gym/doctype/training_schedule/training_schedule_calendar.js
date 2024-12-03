@@ -18,8 +18,19 @@ frappe.views.calendar['Training Schedule'] =   {
                 }
                  
                 const dlg  = new frappe.ui.Dialog({
-                    title: 'Training Schedule Detail',
+                    title: 'Class Training Attendance',
                     fields: [
+                        {
+                            label: 'ID',
+                            fieldname: 'name',
+                            fieldtype: 'Link',
+                            default: doc.name,
+                            read_only:1
+                             
+                        },
+                        {
+                            fieldtype: 'Column Break',
+                        },
                         {
                             label: 'Class',
                             fieldname: 'class_type',

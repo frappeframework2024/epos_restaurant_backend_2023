@@ -1,0 +1,191 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2024-12-03 09:56:45.769776",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "reference_doctype",
+  "reference_name",
+  "training_schedule",
+  "time_training",
+  "class",
+  "column_break_idpi",
+  "check_in_date",
+  "check_out_date",
+  "trainer_info_section",
+  "trainer",
+  "trainer_name_en",
+  "trainer_name_kh",
+  "gender",
+  "column_break_qhde",
+  "phone",
+  "email",
+  "member_info_section",
+  "membership"
+ ],
+ "fields": [
+  {
+   "default": "Today",
+   "fieldname": "check_in_date",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Check In Date"
+  },
+  {
+   "fieldname": "check_out_date",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Check Out Date"
+  },
+  {
+   "fieldname": "column_break_idpi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "training_schedule",
+   "fieldtype": "Link",
+   "label": "Training Schedule",
+   "options": "Training Schedule"
+  },
+  {
+   "fetch_from": "training_schedule.time_training",
+   "fieldname": "time_training",
+   "fieldtype": "Data",
+   "label": "Time Training"
+  },
+  {
+   "fieldname": "class",
+   "fieldtype": "Link",
+   "label": "Class",
+   "options": "GYM Class Types"
+  },
+  {
+   "fieldname": "reference_doctype",
+   "fieldtype": "Link",
+   "label": "Reference Document",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "reference_name",
+   "fieldtype": "Dynamic Link",
+   "label": "Reference Name",
+   "options": "reference_doctype"
+  },
+  {
+   "fieldname": "trainer_info_section",
+   "fieldtype": "Section Break",
+   "label": "Trainer Info"
+  },
+  {
+   "fetch_from": "trainer.trainer_name_en",
+   "fieldname": "trainer_name_en",
+   "fieldtype": "Data",
+   "label": "Trainer Name En"
+  },
+  {
+   "fetch_from": "trainer.trainer_name_kh",
+   "fieldname": "trainer_name_kh",
+   "fieldtype": "Data",
+   "label": "Trainer Name Kh"
+  },
+  {
+   "fetch_from": "trainer.gender",
+   "fieldname": "gender",
+   "fieldtype": "Data",
+   "label": "Gender"
+  },
+  {
+   "fieldname": "column_break_qhde",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "trainer.phone_number",
+   "fieldname": "phone",
+   "fieldtype": "Data",
+   "label": "Phone"
+  },
+  {
+   "fetch_from": "trainer.email_id",
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email"
+  },
+  {
+   "fetch_from": ".",
+   "fieldname": "trainer",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Trainer",
+   "options": "Trainer",
+   "print_hide": 1,
+   "report_hide": 1
+  },
+  {
+   "fieldname": "member_info_section",
+   "fieldtype": "Section Break",
+   "label": "Member Info"
+  },
+  {
+   "fieldname": "membership",
+   "fieldtype": "Link",
+   "label": "Membership",
+   "options": "Membership"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-12-03 10:35:59.145045",
+ "modified_by": "Administrator",
+ "module": "GYM",
+ "name": "Training Attendance",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "GYM Admin",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "GYM User",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

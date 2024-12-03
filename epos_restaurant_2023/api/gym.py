@@ -247,3 +247,12 @@ def get_membership_checked_in_for_check_out(member_code):
 
         return result
     return result
+
+
+
+@frappe.whitelist()
+def training_attendance_track(code):
+    
+
+    result = {}
+    return result

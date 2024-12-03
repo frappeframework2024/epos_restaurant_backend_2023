@@ -48,6 +48,7 @@
    "in_standard_filter": 1,
    "label": "Product Code",
    "options": "Product",
+   "search_index": 1,
    "set_only_once": 1
   },
   {
@@ -72,6 +73,7 @@
    "fieldtype": "Data",
    "in_standard_filter": 1,
    "label": "Business Branch",
+   "search_index": 1,
    "set_only_once": 1
   },
   {
@@ -81,6 +83,7 @@
    "in_standard_filter": 1,
    "label": "Stock Location",
    "options": "Stock Location",
+   "search_index": 1,
    "set_only_once": 1
   },
   {
@@ -133,6 +136,7 @@
    "fieldname": "transaction_date",
    "fieldtype": "Date",
    "label": "Transaction Date",
+   "search_index": 1,
    "set_only_once": 1
   },
   {
@@ -254,7 +258,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-08 17:00:09.827496",
+ "modified": "2024-12-03 14:34:29.135422",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Inventory Transaction",

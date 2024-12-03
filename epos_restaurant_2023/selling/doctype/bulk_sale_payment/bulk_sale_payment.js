@@ -72,7 +72,7 @@ frappe.ui.form.on("Bulk Sale Payment", {
                 frm.refresh_field('sale_list');
                 updatetotal(frm);
             });
-            
+            frm.set_value('payment_amount', frm.doc.sale_list.reduce((n, d) => n + d.amount, 0)*frm.doc.exchange_rate);
         }
     },
     payment_amount(frm){
@@ -131,7 +131,7 @@ function update_allocated_amount(frm){
             r.balance = r.amount - r.payment_amount
             paid_amount = paid_amount - r.payment_amount
         });
-        frm.set_value("balance",paid_amount*frm.doc.exchange_rate)
+        frm.set_value('balance', ((frm.doc.payment_amount) - (frm.doc.sale_list.reduce((n, d) => n + d.amount, 0))*frm.doc.exchange_rate));
         frm.refresh_field("sale_list")
     }
     else{
@@ -166,7 +166,7 @@ function get_sales(frm){
                             doc.stock_location = r.stock_location
                         }))
                         frm.refresh_field('sale_list');
-                        frm.set_value('payment_amount', frm.doc.sale_list.reduce((n, d) => n + d.amount, 0));
+                        frm.set_value('payment_amount', frm.doc.sale_list.reduce((n, d) => n + d.amount, 0)*frm.doc.exchange_rate);
                         updatetotal(frm);
                     }
                 });

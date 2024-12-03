@@ -17,7 +17,9 @@
   "exchange_rate",
   "amended_from",
   "section_break_abcp",
+  "payment_amount",
   "purchase_order_list",
+  "balance",
   "section_break_kebx",
   "total_purchase_order",
   "total_amount",
@@ -136,12 +138,24 @@
    "fieldtype": "Link",
    "label": "Stock Location",
    "options": "Stock Location"
+  },
+  {
+   "fieldname": "payment_amount",
+   "fieldtype": "Float",
+   "label": "Payment Amount"
+  },
+  {
+   "depends_on": "eval:doc.balance != 0",
+   "fieldname": "balance",
+   "fieldtype": "Float",
+   "label": "Balance",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-07-16 14:33:38.421940",
+ "modified": "2024-12-03 11:08:13.875517",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Bulk Purchase Order Payment",
