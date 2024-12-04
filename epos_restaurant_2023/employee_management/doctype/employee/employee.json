@@ -282,7 +282,7 @@
    "fieldtype": "Section Break"
   },
   {
-   "description": "Space is now allow",
+   "description": "Space is not allow",
    "fieldname": "username",
    "fieldtype": "Data",
    "label": "Username",
@@ -454,7 +454,7 @@
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-14 16:33:42.171235",
+ "modified": "2024-12-04 09:37:48.854327",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee",

@@ -16,6 +16,7 @@
   "column_break_nodn",
   "logo",
   "enable_cache",
+  "is_mobile_show_1_column",
   "section_break_3",
   "promotion",
   "section_break_5",
@@ -235,13 +236,19 @@
    "label": "Default Price Rule",
    "options": "Price Rule",
    "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_mobile_show_1_column",
+   "fieldtype": "Check",
+   "label": "Is Mobile show 1 column"
   }
  ],
  "has_web_view": 1,
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-21 17:39:26.759161",
+ "modified": "2024-12-04 08:19:42.826003",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu",
