@@ -15,9 +15,6 @@
   "time_training",
   "start_time",
   "end_time",
-  "trainer",
-  "trainer_name_en",
-  "trainer_name_kh",
   "sort_order",
   "color",
   "note",
@@ -32,10 +29,7 @@
   "wednesday",
   "sunday",
   "column_break_mtet",
-  "thursday",
-  "section_break_asnp",
-  "total_members",
-  "members"
+  "thursday"
  ],
  "fields": [
   {
@@ -71,27 +65,9 @@
    "reqd": 1
   },
   {
-   "fieldname": "trainer",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Trainer",
-   "options": "Trainer"
-  },
-  {
    "fieldname": "note",
    "fieldtype": "Small Text",
    "label": "Note"
-  },
-  {
-   "fieldname": "section_break_asnp",
-   "fieldtype": "Section Break",
-   "label": "Members"
-  },
-  {
-   "fieldname": "members",
-   "fieldtype": "Table",
-   "options": "Member Training Schedule"
   },
   {
    "fieldname": "business_branch",
@@ -166,29 +142,6 @@
    "report_hide": 1
   },
   {
-   "fieldname": "total_members",
-   "fieldtype": "Int",
-   "label": "Total Members"
-  },
-  {
-   "fetch_from": "trainer.trainer_name_en",
-   "fieldname": "trainer_name_en",
-   "fieldtype": "Data",
-   "hidden": 1,
-   "label": "Trainer Name En",
-   "print_hide": 1,
-   "report_hide": 1
-  },
-  {
-   "fetch_from": "trainer.trainer_name_kh",
-   "fieldname": "trainer_name_kh",
-   "fieldtype": "Data",
-   "hidden": 1,
-   "label": "Trainer Name Kh",
-   "print_hide": 1,
-   "report_hide": 1
-  },
-  {
    "fieldname": "available_days_section",
    "fieldtype": "Section Break",
    "label": "Available Days"
@@ -250,7 +203,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-30 13:50:41.443463",
+ "modified": "2024-12-05 08:34:24.457410",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Training Schedule",
@@ -306,7 +259,7 @@
    "write": 1
   }
  ],
- "search_fields": "class_type, time_training, trainer",
+ "search_fields": "class_type, time_training",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

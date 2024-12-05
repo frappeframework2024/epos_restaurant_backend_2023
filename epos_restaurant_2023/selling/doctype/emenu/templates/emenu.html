@@ -7,6 +7,20 @@
 {% endblock %}
 
 {% block page_content %}
+{% if doc.is_mobile_show_1_column == 1%}
+<div style="height: 0 !important;" class="header">
+
+</div>
+<div >
+    <div class="container">
+        <div class="d-flex justify-center py-2">
+            <div class="logo">
+                <img loading="lazy" src="{{doc.logo or " /files/no_image.jpg"}}" alt="">
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
 <div class="header">
     <div class="container">
         <div class="d-flex justify-center py-2">
@@ -16,6 +30,7 @@
         </div>
     </div>
 </div>
+{%endif%}
 <div class="section-main-wraper mt-3">
     <div class="container">
         <div class="into-section">
@@ -34,7 +49,37 @@
     </div>
 
 
-
+    {% if doc.is_mobile_show_1_column == 1%}
+    <div class="py-3 my-3 nav-pro-wrapper border border-start-0 border-end-0 border-bottom-0 bg-white el-shadow" style="top:0;">
+        <nav class="container">
+            <div class="position-relative">
+                <div class="tab-bar">
+                    <div class="left-arrow">
+                        <p><i class="fas fa-chevron-left"></i></p>
+                    </div>
+                    <div class="navigt tabs">
+                        <div class="d-flex mb-0" style="flex-wrap: wrap;min-width: 46rem;">
+                            {% if (doc.popular_product | length) >0 %}
+                            <a class="bg-white px-3 py-1 rounded-pill main-color nav-pro tab active mt-1"
+                                href="#popular_product">
+                                <p>Popular Products</p>
+                            </a>
+                            {%endif%}
+                            {% for m in doc.pos_menu_selections %}
+                            <a class="bg-white px-3 py-1 rounded-pill main-color nav-pro tab mt-1" href="#{{m.name}}">
+                                <p>{{m.menu}}</p>
+                            </a>
+                            {%endfor%}
+                        </div>
+                    </div>
+                    <div class="right-arrow active">
+                        <p><i class="fas fa-chevron-right"></i></p>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+    {%else%}
     <div class="py-3 my-3 nav-pro-wrapper border border-start-0 border-end-0 border-bottom-0 bg-white el-shadow">
         <nav class="container">
             <div class="position-relative">
@@ -65,7 +110,7 @@
             </div>
         </nav>
     </div>
-
+    {%endif%}
     <div class="container sections-content-1">
         <div class="sections sections-content">
             <div class="scroll-section" id="promo_section">
@@ -102,7 +147,7 @@
                             <a href="/product_detail?emenu_name={{doc.name}}&product_code={{p.product_code}}&category=populars" style="text-decoration: none;">
                                 <div class="row p-0 p-lg-3 items-inner-1 m-0 h-100">
                                     <div class="col-12 col-lg-4 p-0 wrapper-image position-relative mobile_img" style="background: url('/files/food_bg_image.jpg');">
-                                        <img loading="lazy" class="img pro-img-it mobile_img" src="{{p.photo or " /files/no_image.jpg"}}"/>
+                                        <img loading="lazy" class="img pro-img-it mobile_img" src="{{p.photo or " /files/food_bg_image.jpg"}}"/>
                                         <div class="promo_dis" style="bottom: 5px; background: #db3c76;right: 5px;">
                                             <p class="text-white" style="font-size:12px;">{{p.product_code}}</p>
                                         </div>
@@ -215,7 +260,7 @@
                             <a href="/product_detail?emenu_name={{doc.name}}&product_code={{p.product_code}}&category=populars" style="text-decoration: none;">
                                 <div class="row p-0 p-lg-3 items-inner-1 m-0 h-100">
                                     <div class="col-12 col-lg-4 p-0 wrapper-image position-relative" style="background: url('/files/food_bg_image.jpg');">
-                                        <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/no_image.jpg"}}"/>
+                                        <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/food_bg_image.jpg"}}"/>
                                         <div class="position-absolute rounded p-1" style="bottom: 5px; background: #db3c76;right: 5px;">
                                             <p class="text-white" style="font-size:12px;">{{p.product_code}}</p>
                                         </div>
@@ -334,7 +379,7 @@
                             <a href="/product_detail?emenu_name={{doc.name}}&product_code={{p.product_code}}&category={{p.name}}" style="text-decoration: none;">
                                 <div class="row p-0 p-lg-3 items-inner-1 m-0 h-100">
                                     <div class="col-12 col-lg-4 p-0 wrapper-image mobile_img" style="background: url('/files/food_bg_image.jpg');">
-                                        <img loading="lazy" class="img pro-img-it mobile_img" src="{{p.photo or " /files/no_image.jpg"}}"/>
+                                        <img loading="lazy" class="img pro-img-it mobile_img" src="{{p.photo or " /files/food_bg_image.jpg"}}"/>
                                         <div class="promo_dis" style="bottom: 5px; background: #db3c76;right: 5px;">
                                             <p class="text-white" style="font-size:12px;">{{p.product_code}}</p>
                                         </div>
@@ -459,7 +504,7 @@
                             <a href="/product_detail?emenu_name={{doc.name}}&product_code={{p.product_code}}&category={{p.name}}" style="text-decoration: none;">
                                 <div class="row p-0 p-lg-3 items-inner-1 m-0 h-100">
                                     <div class="col-12 col-lg-4 p-0 wrapper-image" style="background: url('/files/food_bg_image.jpg');">
-                                        <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/no_image.jpg"}}"/>
+                                        <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/food_bg_image.jpg"}}"/>
                                         <div class="position-absolute rounded p-1" style="bottom: 5px; background: #db3c76;right: 5px;">
                                             <p class="text-white" style="font-size:12px;">{{p.product_code}}</p>
                                         </div>

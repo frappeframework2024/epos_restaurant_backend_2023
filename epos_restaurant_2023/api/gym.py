@@ -251,8 +251,6 @@ def get_membership_checked_in_for_check_out(member_code):
 
 
 @frappe.whitelist()
-def training_attendance_track(code):
-    
-
-    result = {}
+def training_attendance_track(param): 
+    result = {"param":param}
     return result

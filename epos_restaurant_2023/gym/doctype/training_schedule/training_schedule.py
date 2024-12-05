@@ -7,7 +7,8 @@ from frappe.model.document import Document
 
 class TrainingSchedule(Document):
 	def validate(self):
-		self.total_members = len(self.members)
+		pass
+		# self.total_members = len(self.members)
 
 
 
@@ -23,9 +24,6 @@ def get_event(start,end,filters):
 							  "end_time",
 							  "class_type",
 							  "color",
-							  "trainer",
-							  "trainer_name_en",
-							  "total_members",
 							  "monday",
 							  "tuesday",
 							  "wednesday",
@@ -58,18 +56,14 @@ def get_event(start,end,filters):
 				if len([ x for x in generate_days if x == day_name]) > 0 :
 					start_on = datetime(start_date.year, start_date.month, start_date.day, int(stime[0]), int(stime[1]), int(stime[2]))
 					end_on = datetime(start_date.year, start_date.month, start_date.day, int(etime[0]), int(etime[1]), int(etime[2]))
-					trainer = ""
-					if d.get("trainer"):
-						trainer = "\nTrainer: ({}) - {}".format(d.get("trainer"), d.get("trainer_name_en"))
-					title =  """{}{}""".format( d.get("class_type"),  trainer, "\nMembers: {}".format( d.get("total_members" )) if d.get("total_members" ) > 0 else "" )
+					title =  """{}""".format(d.get("class_type"))
 					result.append({
 						"start": start_on,
 						"end": end_on,
 						"name": d.get("name"),
 						"all_day": 0,
 						"title":title , 
-						"color": d.get("color"),
-						
+						"color": d.get("color"),						
 					})
 				start_date += timedelta(days=1)
 		
