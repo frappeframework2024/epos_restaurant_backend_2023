@@ -1,0 +1,43 @@
+import frappe
+import json
+
+def get_context(context):
+    emenu = frappe.get_doc("eMenu","emenu")
+    context.emenu = emenu
+    context.doc = frappe.get_doc("POS Menu",frappe.form_dict.menu_category)
+    
+    context.pos_menus  =  get_sub_menu(frappe.form_dict.menu_category)
+    context.products  =  get_product(frappe.form_dict.menu_category)
+ 
+    
+def get_sub_menu(parent_menu):
+    sql = "select name from `tabPOS Menu` where parent_pos_menu = %(parent_menu)s and disabled=0"
+    data = frappe.db.sql(sql,{"parent_menu":parent_menu},as_dict = 1)
+    return data
+
+def get_product(menu):
+ 
+    sql ="""
+        select 
+            name,
+            pos_menu,
+            product_code,
+            product_name_en,
+            product_name_kh,
+            price,
+            ifnull(photo,'files/no_image.jpg') as photo,
+            prices,
+            discount_value,
+            discount_type,
+            is_empty_stock_warning,
+            description
+        from `tabTemp Product Menu`
+        where pos_menu =  %(menu)s
+        order by sort_order
+    """
+    data = frappe.db.sql(sql,{"menu":menu},as_dict=1)
+
+    # Convert prices to JSON
+    for item in data:
+        item['prices'] = json.loads(item['prices'] or '[]')
+    return data

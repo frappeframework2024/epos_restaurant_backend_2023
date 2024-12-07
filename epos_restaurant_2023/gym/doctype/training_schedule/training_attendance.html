@@ -1,4 +1,56 @@
+<table class="table table-striped" style="width: 100%;">
+    <thead>
+        <tr>
+            <th>Profile</th>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Gender</th>
+            <th>Phone Number</th>
+            <th>Type</th>
+            <th>Check In Date</th>
+            <th>Check Out Date</th>
+            <th>Status</th> 
+        </tr>
+    </thead>
+    <tbody> 
+        {%for a in data%}
+            <tr>
+                <td>
+                    {% if a.photo %}
+                        <div style="width:40px;height:40px;overflow:hidden;" class="rounded-circle bg-dark">
+                            <img class="rounded-circle" src="{{a.photo}}"/>
+                        </div>
+                    {%else%}
+                        <div style="width:40px;height:40px;overflow:hidden;" class="rounded-circle bg-dark"></div>
+                    {%endif%}
+                </td>
+                <td style="vertical-align: middle;">{{a.code}}</td>
+                <td style="vertical-align: middle;">
+                    {% if a.name_kh==a.name_en%}
+                    {{a.name_en}} 
+                    {%else%}
+                    {{a.name_kh}}<br/>
+                    {{a.name_en}}
+                    {%endif%}
+                </td>
+                <td style="vertical-align: middle;">{{a.gender}}</td>
+                <td style="vertical-align: middle;">{{a.phone_number}}</td>
+                <td style="vertical-align: middle;">{{a.member_type}}</td> 
+                <td style="vertical-align: middle;"> 
+                    {{ frappe.format(a.check_in_date, {"fieldtype":"Date"})}} {{frappe.format(a.check_in_date, {"fieldtype":"Time"})}}
+                </td>
+                <td style="vertical-align: middle;">{{frappe.format(a.check_out_date, {"fieldtype":"Date"})}} {{frappe.format(a.check_out_date, {"fieldtype":"Time"})}}</td>
+                <td style="vertical-align: middle;">                    
+                    {% if a.is_check_out==1 %}
+                    <p class="text-white bg-secondary p-1 rounded-pill text-center"> Check Out</p>
+                    {%else%}
+                    <p class="text-white bg-success px-2 py-1 rounded-pill text-center">Check In</p>
+                    {%endif%}
+                    
+                </td>
+            </tr> 
+        {%endfor%} 
+    </tbody>
+</table>
 
-{%for a in data%}
-    <p>{{a.name}}-{{a.code}} _ {{a.name_en}}</p>
-{%endfor%}
+

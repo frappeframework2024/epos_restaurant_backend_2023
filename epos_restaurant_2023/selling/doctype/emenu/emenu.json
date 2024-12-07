@@ -34,6 +34,8 @@
   "popular_product_tab",
   "popular_product",
   "template_style_tab",
+  "template_name",
+  "section_break_ivmw",
   "promo_image",
   "section_break_wicy",
   "kh_title_color",
@@ -242,13 +244,23 @@
    "fieldname": "is_mobile_show_1_column",
    "fieldtype": "Check",
    "label": "Is Mobile show 1 column"
+  },
+  {
+   "fieldname": "template_name",
+   "fieldtype": "Select",
+   "label": "Template Name",
+   "options": "emenu_layout_1\nemenu_layout_2"
+  },
+  {
+   "fieldname": "section_break_ivmw",
+   "fieldtype": "Section Break"
   }
  ],
  "has_web_view": 1,
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-04 08:19:42.826003",
+ "modified": "2024-12-07 11:21:20.282296",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu",

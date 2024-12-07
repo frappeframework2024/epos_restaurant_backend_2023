@@ -30,6 +30,7 @@ frappe.ui.form.on('eMenu Selection', {
                     fields: [
                         { fieldname: 'product_code', fieldtype: 'Data', in_list_view: 1, label: 'Product Code',read_only:1 },
                         { fieldname: 'product_name_en', fieldtype: 'Data', in_list_view: 1, label: 'Product Name',read_only:1 },
+                        { fieldname: 'hidden', fieldtype: 'Check', in_list_view: 1, label: 'Hidden',read_only:0 },
                         // {
                         //     fieldtype: 'Button',
                         //     fieldname: 'move_up',

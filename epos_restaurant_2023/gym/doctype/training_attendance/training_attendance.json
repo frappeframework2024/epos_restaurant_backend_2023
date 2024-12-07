@@ -22,6 +22,7 @@
   "gender",
   "phone",
   "email",
+  "trainer_photo",
   "member_info_section",
   "membership",
   "member",
@@ -30,7 +31,8 @@
   "column_break_fvdp",
   "member_gender",
   "phone_number_1",
-  "phone_number_2"
+  "phone_number_2",
+  "member_photo"
  ],
  "fields": [
   {
@@ -227,11 +229,27 @@
    "in_standard_filter": 1,
    "label": "Training Date",
    "read_only": 1
+  },
+  {
+   "fetch_from": "member.photo",
+   "fieldname": "member_photo",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Member Photo",
+   "print_hide": 1,
+   "read_only": 1,
+   "report_hide": 1
+  },
+  {
+   "fetch_from": "trainer.photo",
+   "fieldname": "trainer_photo",
+   "fieldtype": "Data",
+   "label": "Trainer Photo"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-07 09:12:05.469092",
+ "modified": "2024-12-07 14:16:12.695305",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Training Attendance",

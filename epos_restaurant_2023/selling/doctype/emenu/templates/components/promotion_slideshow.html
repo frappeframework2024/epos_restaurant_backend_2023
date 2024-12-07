@@ -1,0 +1,17 @@
+<div class="scroll-section" id="promo_section">
+    
+    {% if (promotion|length) > 0 %}
+        <div class="promo-section mt-4 mb-3">
+            <h1 class="text-center">Promotion</h1> 
+        </div>
+        <div class="justify-center p-4 w-100" style="background: url({{doc.promo_image}});border-radius: 20px;background-repeat: no-repeat;background-size: cover;"> 
+            <div class="owl-carousel owl-theme mb-3" id="slid_banner">
+                {% for p in promotion %}
+                    <div class="item d-flex justify-center">
+                        <img class="lazy promo-st" src="{{p.photo or " /files/no_image.jpg"}}"/>
+                    </div>
+                {% endfor %} 
+            </div>
+        </div>
+    {% endif %}
+</div>

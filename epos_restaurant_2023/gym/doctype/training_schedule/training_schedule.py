@@ -35,6 +35,7 @@ def get_event(start,end,filters):
 						filters=filters)
 	result =[]
 	current_date = datetime.now() 
+	current_date_str = current_date.strftime("%Y-%m-%d")
 
 	for d in data: 
 		generate_days = get_days(data=d)	
@@ -63,7 +64,10 @@ def get_event(start,end,filters):
 						"name": d.get("name"),
 						"all_day": 0,
 						"title":title , 
-						"color": d.get("color"),						
+						"color": d.get("color"),	
+						"day":	day_name,	
+						"training_date":start_date.strftime("%Y-%m-%d")	,
+						"current_date": current_date_str
 					})
 				start_date += timedelta(days=1)
 		

@@ -46,6 +46,7 @@ class eMenu(WebsiteGenerator):
 			popular_products.append(d)
 
 		context.popular_products = popular_products
+		context.pos_menus = get_menus(self.default_root_menu)
 
 	def validate(self):
 		for pop in  self.popular_product:		
@@ -77,6 +78,11 @@ class eMenu(WebsiteGenerator):
 					pop.discount_type = m.discount_type
 					pop.discount_value = m.discount_value
 				
+
+def get_menus(parent_menu):
+    sql = "select name from `tabPOS Menu` where parent_pos_menu = %(parent_menu)s and disabled=0"
+    data = frappe.db.sql(sql,{"parent_menu":parent_menu},as_dict = 1)
+    return data
 
 def get_product_modifier(product):
 	#get product modifier
@@ -157,128 +163,4 @@ def get_product_modifier(product):
 	return modifiers
 			
 		## end get modifier data
-@frappe.whitelist(allow_guest=True)
-def get_product_by_menu(root_menu="Root Menu",mobile = 0,sort_order_by="product_name_en",sort_menu_order_by='name' ):
-        menus = []
-        sql = """select 
-                    name,
-                    pos_menu_name_en as name_en,
-                    pos_menu_name_kh as name_kh,
-                    parent_pos_menu as parent,
-                    photo,
-                    text_color,
-                    background_color,
-                    shortcut_menu,
-                    price_rule,
-                    photo,
-                    'menu' as type,
-                    1 as type_index,
-                    sort_order
-                from `tabPOS Menu` 
-                where 
-                    parent_pos_menu='{}' and
-                    disabled = 0 
-                order by {}
-                """.format(root_menu,sort_menu_order_by)
-        data = frappe.db.sql(sql,as_dict=1)
-        
-        for d in data:
-            menus.append(d)
-            child_menus = get_child_menus(d.name, mobile=mobile,sort_menu_order_by=sort_menu_order_by,sort_order_by = sort_order_by)
-            
-            for m in child_menus:
-                menus.append(m)
-            
-            menu_products = get_temp_menu_products(d.name,mobile=mobile,sort_order_by = sort_order_by)
-            for m in menu_products:
-                menus.append(m)
-        
-        menu_products = get_temp_menu_products(root_menu,mobile=mobile,sort_order_by = sort_order_by)
-        for m in menu_products:
-                menus.append(m)
-             
-      
-        return menus
-
-def get_child_menus(parent_menu, mobile= 0,sort_menu_order_by="name",sort_order_by = "product_name_en"):
-    menus = []
-    menus.append({"type":"back","parent":parent_menu})
-    sql = """select 
-                name,
-                pos_menu_name_en as name_en,
-                pos_menu_name_kh as name_kh,
-                parent_pos_menu as parent,
-                photo,
-                text_color,
-                background_color,
-                shortcut_menu,
-                price_rule,
-                'menu' as type,
-                2 as type_index,
-                sort_order
-            from `tabPOS Menu` 
-            where 
-                parent_pos_menu='{}' and
-                disabled = 0 
-            order by {}
-            """.format(parent_menu,sort_menu_order_by)
-    data = frappe.db.sql(sql,as_dict=1)
-    for d in data:        
-        menus.append(d)
-        child_menus = get_child_menus(d.name,mobile=mobile,sort_menu_order_by=sort_menu_order_by,sort_order_by=sort_order_by)
-        for m in child_menus:
-            menus.append(m)
-        
-        for m in get_temp_menu_products(d.name,mobile=mobile,sort_order_by=sort_order_by):
-            menus.append(m)       
-        
-    return menus
-
-@frappe.whitelist(allow_guest=True)
-def get_temp_menu_products(parent_menu,mobile=0,sort_order_by="product_name_en"):     
-    sql = """select 
-                name as menu_product_name,
-                product_code as name,
-                product_name_en as name_en,
-                product_name_kh as name_kh,
-                '{0}' as parent,
-                price,
-                unit,
-                allow_discount,
-                allow_change_price,
-                allow_free,
-                allow_crypto_claim,
-                is_open_product,
-                is_inventory_product,
-                is_require_employee,
-                is_timer_product,
-                is_open_price,
-                prices,
-                printers,
-                modifiers,
-                photo,
-                'product' as type,
-                3 as type_index,
-                append_quantity,
-                is_combo_menu,
-                use_combo_group,
-                combo_menu_data,
-                combo_group_data,
-                tax_rule,
-                sort_order,
-                tax_rule_data,
-                revenue_group,
-                is_empty_stock_warning,
-                kitchen_group,
-                kitchen_group_sort_order,
-                rate_include_tax
-            from  `tabTemp Product Menu` 
-            where 
-                pos_menu='{0}' 
-            order by {1}
-            """.format(parent_menu, sort_order_by)
-    
-    data = frappe.db.sql(sql,as_dict=1)
-   
-    return data
 

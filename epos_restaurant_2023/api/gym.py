@@ -408,15 +408,17 @@ def on_find_membership(card):
 
 ## get training attendance data list    
 @frappe.whitelist()
-def get_training_attendance(param):
+def get_training_attendance(param): 
     p = json.loads(param)
     sql = """select 
         `name`,
         if(member is null , trainer, member) as `code`,
+        if(member is null, trainer_photo , member_photo ) as photo,
         if(member is null, trainer_name_en, member_name ) as name_en,
         if(member is null, trainer_name_kh, member_name_kh ) as name_kh,
         if(member is null, gender, member_gender ) as gender,
         if(member is null,phone , concat(phone_number_1,'/',phone_number_2) ) as phone_number,
+        if(reference_doctype = 'Trainer','Trainer','Member') as member_type,
         check_in_date,
         check_out_date,	
         if(check_out_date is null, 0, 1) as is_check_out

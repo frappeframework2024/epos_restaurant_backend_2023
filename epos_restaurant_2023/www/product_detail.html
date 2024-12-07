@@ -1,6 +1,7 @@
-{% extends "templates/emenu_layout1.html" %}
+{% extends "templates/emenu_templates/{}.html".format(emenu.template_name) %}
+{% block title %} {{doc.product_name_en}} {% endblock %}
 {% block style%}
-{{doc.css}}
+    {{emenu.css}}
 {% endblock %}
 
 {% block page_content %}

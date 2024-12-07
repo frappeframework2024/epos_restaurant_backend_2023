@@ -1,0 +1,5 @@
+
+{%for m in pos_menus%}
+{{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/menu_card.html", {"menu":m,"parent_menu":parent_menu}) }}
+
+{%endfor%}

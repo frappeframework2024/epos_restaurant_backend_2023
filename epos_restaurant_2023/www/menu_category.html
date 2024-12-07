@@ -1,0 +1,26 @@
+{% extends "templates/emenu_templates/{}.html".format(emenu.template_name) %}
+{% block title %} {{doc.name}} {% endblock %}
+{% block style%}
+    {{emenu.css}}
+{% endblock %}
+
+{% block page_content %}
+ 
+{{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/header_logo.html", {"doc":emenu}) }}
+<!-- back -->
+{% if doc.parent_pos_menu  %}
+    <a href="/menu_category?menu_category={{doc.parent_pos_menu}}">Back</a>
+{%endif%}
+<!-- pos menu menu -->
+{{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/emenu_layout_2/menu_list.html", {"pos_menus":pos_menus,"parent_menu":doc.name}) }}
+ 
+<!-- render product -->
+{%if products %}
+    {%for p in products%}
+        {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/product_card.html", {"p":p,"default_price_rule":emenu.default_price_rule,"emenu_name":emenu.name}) }}
+    {%endfor%}
+{%endif%}
+
+
+{% endblock %}
+

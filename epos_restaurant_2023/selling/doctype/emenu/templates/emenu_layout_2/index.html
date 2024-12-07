@@ -1,0 +1,14 @@
+
+{{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/header_logo.html", {"doc":doc}) }}
+<div class="container sections-content-1">
+    <div class="sections sections-content">
+
+    {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/promotion_slideshow.html", {"doc":doc,"promotion":promotion}) }}
+
+    {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/popular_product.html", {"doc":doc,"popular_products":popular_products}) }}
+    {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/emenu_layout_2/menu_list.html", {"pos_menus":pos_menus}) }}
+
+
+
+    </div>
+</div>
