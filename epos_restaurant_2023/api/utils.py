@@ -276,7 +276,7 @@ def save_sync_data(doc,extra_action=None,action="update"):
             uom_conversion = get_uom_conversion(p.base_unit, p.unit)
             cost = get_product_cost(doc.stock_location, p.product_code)/uom_conversion
             frappe.db.sql("UPDATE `tabSale Product` set cost = {0} where name = '{1}'".format(cost,p.name))
-        frappe.db.sql("UPDATE `tabSale` a SET a.total_cost = coalesce((select SUM(b.cost*b.quantity) from `tabSale Product` b where b.parent = a.name),0) where a.name = '{1}'".format(doc.name))
+        frappe.db.sql("UPDATE `tabSale` a SET a.total_cost = coalesce((select SUM(b.cost*b.quantity) from `tabSale Product` b where b.parent = a.name),0) where a.name = '{0}'".format(doc.name))
     frappe.db.commit()
 
 

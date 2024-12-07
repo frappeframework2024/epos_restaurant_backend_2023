@@ -1,6 +1,5 @@
 {
  "actions": [],
- "allow_rename": 1,
  "autoname": "naming_series:",
  "creation": "2023-09-28 15:29:33.205252",
  "default_view": "List",
@@ -10,6 +9,7 @@
  "field_order": [
   "information_section",
   "naming_series",
+  "membership_code_name",
   "posting_date",
   "reference_no",
   "customer_code",
@@ -581,6 +581,15 @@
    "fieldtype": "Currency",
    "label": "Crypto Balance",
    "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "membership_code_name",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Membership Code Name",
+   "options": "MS.-.#####",
+   "read_only": 1
   }
  ],
  "image_field": "photo",
@@ -593,7 +602,7 @@
    "link_fieldname": "membership"
   }
  ],
- "modified": "2024-11-27 09:13:45.380351",
+ "modified": "2024-12-06 11:16:34.247749",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership",
@@ -662,6 +671,6 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "membership",
+ "title_field": "membership_code_name",
  "track_changes": 1
 }

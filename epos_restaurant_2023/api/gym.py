@@ -250,7 +250,186 @@ def get_membership_checked_in_for_check_out(member_code):
 
 
 
+## GYM Training  Feature blog
+
 @frappe.whitelist()
 def training_attendance_track(param): 
-    result = {"param":param}
+    param_json = json.loads(param)
+    result = {"param":param_json}
+    result = on_check_attendace_exsits(param=param_json)
     return result
+
+
+def on_check_attendace_exsits(param):
+    sql = """select 
+            ta.* 
+            from `tabTraining Attendance` ta
+            inner join `tabTraining Schedule` ts on ta.training_schedule = ts.name 
+                and ta.class = ts.class_type 
+                and ta.time_training = ts.time_training
+            where ta.training_schedule = %(training_schedule)s 
+            and ta.calendar_date = %(calendar_date)s
+            and ta.reference_name = %(card_id)s"""
+    
+    docs = frappe.db.sql(sql, {
+        "training_schedule":param["info"]["id"],
+        "card_id":param["card_id"],
+        "calendar_date":param["info"]["start"]
+    }, as_dict = 1)
+
+    if len( docs) > 0:
+        now = datetime.now()
+        is_check_out = False
+
+        if param["info"]["attendance_type"] == "CHECK OUT":
+            for d in docs:
+                doc = frappe.get_doc("Training Attendance", d["name"])
+                if not doc.check_out_date:
+                    doc.check_out_date = now
+                    doc.save()
+                    is_check_out = True
+
+            ## check if update to check out attendance     
+            if is_check_out:
+                frappe.db.commit()
+
+                return {
+                    "data":{
+                        "value":None,
+                        "title":param["info"]["attendance_type"],
+                        "description": "Transaction is update to CHECK OUT"
+                    },
+                    "error": None
+                }
+            else:
+                return {
+                    "data":None,
+                    "error": {
+                        "title":param["info"]["attendance_type"],
+                        "description": "This card number was CHECK IN and OUT already"
+                    }
+                }
+        else:
+            return {
+                "data":None,
+                "error": {
+                    "title":param["info"]["attendance_type"],
+                    "description": "Card was CHECK IN already"
+                }
+            }
+
+    else:
+        # check if transaction check out not rais create new attendace
+        if param["info"]["attendance_type"] == "CHECK OUT":
+            
+            return {
+                "data":None,
+                "error":{
+                    "title":param["info"]["attendance_type"],
+                    "description":"There aren't transaction Check In"
+                }
+            }
+        
+        ## not yet attendance
+        attendence = on_find_data_to_attendance(param=param)  
+        if attendence["data"]:
+            return {
+                "data":{
+                    "value":attendence["data"],
+                    "title":param["info"]["attendance_type"],
+                    "description":"Card is CHECK IN successfully"
+                },
+                "error": None
+            }
+        else:
+            return {
+                "data":None,
+                "error":{
+                    "title":param["info"]["attendance_type"],
+                    "description":attendence["error"]
+                }
+            }
+
+
+def on_find_data_to_attendance(param):
+    reference_doctype = "Customer" 
+    membership = None
+    if on_find_trainer(card=param["card_id"]):
+        reference_doctype = "Trainer"
+    else:
+        membership = on_find_membership(card=param["card_id"])
+        if membership:                
+            pass
+        else:
+            return {
+                "data":None,
+                "error":"Invalide Card Number"
+            }
+
+
+    # schedule = frappe.get_doc("Training Schedule",param["info"]["id"])
+    now = datetime.now()
+    _calendar =   param["info"]["start"].split("-")
+    doc_insert = frappe.get_doc({
+        "reference_doctype":reference_doctype,
+        "reference_name":param["card_id"],
+        "training_schedule":param["info"]["id"],
+        "trainer": param["card_id"] if reference_doctype == "Trainer" else None,
+        "membership": membership,
+        "calendar_date": datetime(year= int(_calendar[0]) , month= int(_calendar[1]),day= int(_calendar[2])),
+        "check_in_date":now,
+        "doctype":'Training Attendance'
+    })
+
+    doc_insert.insert()
+    frappe.db.commit()
+    return {
+                "data":doc_insert,
+                "error":None
+            } 
+
+
+def on_find_trainer(card):
+    sql = """select name from `tabTrainer` where name = %(trainer)s and disabled = 0"""
+    docs = frappe.db.sql(sql,{"trainer":card}, as_dict=1)
+    if len(docs) > 0:
+        return docs[0].name
+    else:
+        return None 
+
+def on_find_membership(card):
+    sql = """select name  from `tabMembership` where customer = %(member)s and docstatus = 1"""
+    docs = frappe.db.sql(sql,{"member":card}, as_dict= 1)
+    if len(docs)>0:
+        return docs[0].name
+    else:
+        return None
+    
+
+## get training attendance data list    
+@frappe.whitelist()
+def get_training_attendance(param):
+    p = json.loads(param)
+    sql = """select 
+        `name`,
+        if(member is null , trainer, member) as `code`,
+        if(member is null, trainer_name_en, member_name ) as name_en,
+        if(member is null, trainer_name_kh, member_name_kh ) as name_kh,
+        if(member is null, gender, member_gender ) as gender,
+        if(member is null,phone , concat(phone_number_1,'/',phone_number_2) ) as phone_number,
+        check_in_date,
+        check_out_date,	
+        if(check_out_date is null, 0, 1) as is_check_out
+
+    from `tabTraining Attendance` 
+    where calendar_date = %(training_date)s 
+    and training_schedule = %(training_schedule)s
+    order by check_in_date desc"""
+
+    data = frappe.db.sql(sql,{
+        "training_date":p["training_date"],
+        "training_schedule":p["training_schedule"]
+    },as_dict= 1)
+
+
+    return data

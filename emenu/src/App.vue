@@ -1,15 +1,5 @@
 <template>
-	<template v-if="!not_found">
-	<MainLayout>
-		<router-view />
-	</MainLayout>
-</template>
-<template v-else>
-	<NoFoundLayout>
-	 
-	</NoFoundLayout>
-</template>
-	
+	<div>111111111111111111111</div>
 </template>
 <script setup>
 	import {inject,ref, onMounted } from 'vue';

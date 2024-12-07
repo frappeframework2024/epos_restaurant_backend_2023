@@ -5,6 +5,7 @@ frappe.views.calendar['Training Schedule'] = {
     options: {
         eventClick: function(info) {
             frappe.db.get_doc("Training Schedule", info.id).then(doc => {
+
                 const dlg = new frappe.ui.Dialog({
                     title: 'Class Training Attendance',
                     fields: [
@@ -17,10 +18,26 @@ frappe.views.calendar['Training Schedule'] = {
                             read_only: 1
                         },
                         {
-                            label: 'Scan Card ID',
-                            fieldname: 'card_id',
+                            label: "Date",
+                            fieldtype: "Date",
+                            default: info.start,
+                            read_only: 1
+                        },
+                        {
+                            fieldtype: 'Column Break',
+                        },
+                        {
+                            label: 'Class',
+                            fieldname: 'class_type',
                             fieldtype: 'Data',
-                            default: "",
+                            default: doc.class_type,
+                            read_only: 1
+                        },
+                        {
+                            label: "Training Time",
+                            fieldtype: "Data",
+                            default: doc.time_training,
+                            read_only: 1
                         },
                         {
                             fieldtype: 'Column Break',
@@ -33,24 +50,28 @@ frappe.views.calendar['Training Schedule'] = {
                             read_only: 1
                         },
                         {
-                            label: 'Class',
-                            fieldname: 'class_type',
-                            fieldtype: 'Data',
-                            default: doc.class_type,
-                            read_only: 1
+                            label: "Attendance Type",
+                            fieldname: 'attendance_type',
+                            fieldtype: "Select",
+                            default: "CHECK IN",
+                            options: "CHECK IN\nCHECK OUT",
                         },
+                        
                         {
-                            fieldtype: 'Column Break',
+                            fieldtype: 'Section Break',
+                        },
+                        
+                        {
+                            label: 'Card ID',
+                            fieldname: 'card_id',
+                            fieldtype: 'Data',
+                            default: "",
+                            description:"Please scan or enter Card ID for check-in / out attendance."
                         },
                         {
                             fieldtype: 'Section Break',
                         },
-                        {
-                            label: "Training Time",
-                            fieldtype: "Data",
-                            default: doc.time_training,
-                            read_only: 1
-                        },
+                        
                         {
                             fieldtype: 'Section Break',
                             label: "Members"
@@ -59,48 +80,115 @@ frappe.views.calendar['Training Schedule'] = {
                             fieldtype: 'Section Break',
                         },
                         {
-                            label: "Note",
-                            fieldtype: "Small Text",
-                            default: doc.note,
-                            read_only: 1
-                        }
+                            label: 'Reload',
+                            fieldname: 'btn_reload_attendance',
+                            fieldtype: 'Button',
+                            click:async function(){
+                              await  get_attendace_list({
+                                    "training_date":get_date(info.start),
+                                    "training_schedule":info.id
+                                }).then((val)=>{ 
+            
+                                    let html = frappe.render_template("training_attendance", {data:val["data"],isInIframe:(window.self !== window.top)});
+                                    $(dlg.fields_dict.attendace_list.wrapper).html(html);
+                                    const attendaceList = dlg.fields_dict.attendace_list;
+                                    if (attendaceList) {
+                                        attendaceList.refresh();                                      
+                                    }                                
+            
+                                })
+                            }
+                        },
+
+                        {
+                            "fieldname": "attendace_list",
+                            "fieldtype": "HTML"
+                        },
                     ],
                     size: 'extra-large',
-                    primary_action_label: 'Check IN',
-                    primary_action(data) {
-                        // console.log(data);
-                        // dlg.hide();
-                    }
+                    // primary_action_label: 'Check IN',
+                    // primary_action(data) {
+                    //     // console.log(data);
+                    //     // dlg.hide();
+                    // },
                 });
-
-                // Use Frappe's event system to capture the Enter key press after the dialog is shown
+     
                 dlg.show();
 
-                // Bind the keyup event to the `card_id` field after the dialog is displayed
                 const cardIdField = dlg.fields_dict.card_id.input;
+                // Use a delay to ensure dialog is rendered and the card_id field is available
+                setTimeout(() => {
+                    const cardIdField = dlg.fields_dict.card_id.input;
+                    if (cardIdField) {
+                        cardIdField.focus();  
+                    }  
+
+                    get_attendace_list({
+                        "training_date":get_date(info.start),
+                        "training_schedule":info.id
+                    }).then((val)=>{ 
+
+                        let html = frappe.render_template("training_attendance", {data:val["data"],isInIframe:(window.self !== window.top)});
+                        $(dlg.fields_dict.attendace_list.wrapper).html(html);
+                        const attendaceList = dlg.fields_dict.attendace_list;
+                        if (attendaceList) {
+                            attendaceList.refresh();                                      
+                        }                                
+
+                    })
+
+                }, 500);
+
                 cardIdField.addEventListener('keyup', async function(e) {
                     if (e.key === 'Enter') {
                         let cardId = dlg.fields_dict.card_id.get_value();
-                        let resp = await scan_card_attendance(cardId, dlg)
-                        if(resp.data){
+                        const attendanceType = dlg.fields_dict.attendance_type.get_value();
+                        let data = {"card_id":cardId,"info":{
+                            "id":info.id,
+                            "start": get_date(info.start),
+                            "end":get_date(info.end), 
+                            "attendance_type":attendanceType
+                        }}
+                        let resp = await scan_card_attendance(data, dlg)                      
+
+                        if(resp.data){ 
+
+                            //
+                          await get_attendace_list({
+                                "training_date":get_date(info.start),
+                                "training_schedule":info.id
+                            }).then((val)=>{ 
+                                let html = frappe.render_template("training_attendance", {data:val["data"],isInIframe:(window.self !== window.top)});
+                                $(dlg.fields_dict.attendace_list.wrapper).html(html);
+                                const attendaceList = dlg.fields_dict.attendace_list;
+                                if (attendaceList) {
+                                    attendaceList.refresh();                                      
+                                }                                
+
+                            }).catch((err)=>{
+                                console.log({"_a":"Request attendace","_err": err})
+                            })
+                            //
+                           
 
                             frappe.show_alert({
                                 message: `
-                                    <strong>Attendance tracked successfully!</strong><br>
-                                    <span>${cardId} - was Check IN</span>
-                                `,  // The message you want to display
-                                indicator: 'success',  // The color indicator for success ('green' for success)
+                                    <strong>${resp.data.title}</strong><br>
+                                    <span>${cardId} - ${resp.data.description}</span>s
+                                `, 
+                                indicator: 'success', 
                             }, 5);
+
+
                              
                         }else{
                             frappe.show_alert({
-                                message: "Success",  // The message you want to display
-                                indicator: 'green',  // The color indicator for success ('green' for success)
+                                message:` <strong>${resp.error.title}</strong><br>
+                                    <span>${cardId} - ${resp.error.description}</span>`,  // The message you want to display
+                                indicator: 'yellow',  // The color indicator for success ('green' for success)
                             }, 5);
-                            //
                         }
-                        cardIdField.select();
-                        console.log(resp)
+                        cardIdField.select();  
                     }
                 });
             });
@@ -118,23 +206,26 @@ frappe.views.calendar['Training Schedule'] = {
 };
 
 
-async function scan_card_attendance(card, dialog) {
+async function scan_card_attendance(data, dialog) {
     // Return a Promise to ensure we handle async results properly
     return new Promise((resolve, reject) => {
         // Initialize result object
         let result = { "data": undefined, "error": undefined };
-
         frappe.call({
             method: 'epos_restaurant_2023.api.gym.training_attendance_track',
             type: 'POST',
+            freeze: true,
             args: {
-                param: {
-                    "card": card,
-                }
+                param: data
             },
             callback: function(resp) {
                 // If the response is successful, set the data and resolve the promise
-                result.data = resp.message;
+                if(resp.message["data"]){
+                    result.data = resp.message["data"];
+                }else{
+                    result.error = resp.message["error"];
+                }
+                
                 resolve(result); // Return the result when the call is complete
             },
             error: function(err) {
@@ -145,3 +236,35 @@ async function scan_card_attendance(card, dialog) {
         });
     });
 }
+
+async function get_attendace_list(param){
+    return new Promise((resolve, reject) => {
+        let result = { "data": undefined, "error": undefined };
+        frappe.call({
+            method: 'epos_restaurant_2023.api.gym.get_training_attendance',
+            type: 'POST',
+            freeze: true,
+            args: {
+                param: param
+            },
+            callback: function(resp) {
+                result.data = resp.message;
+                resolve(result); 
+            },
+            error: function(err) {
+                result.error = err;
+                reject(result);
+            }
+        });
+    });
+}
+
+function get_date(param){
+    const date = new Date(param)
+    // const date = new Date(Date.UTC(2024, 10, 28, 17, 30, 0));
+    console.log(param)
+    console.log(date)
+    return`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}` ; 
+}
+
+

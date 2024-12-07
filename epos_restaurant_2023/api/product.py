@@ -105,7 +105,7 @@ def get_child_menus(parent_menu, mobile= 0,sort_menu_order_by="name",sort_order_
         
     return menus
 
-
+@frappe.whitelist(allow_guest=True)
 def get_temp_menu_products(parent_menu,mobile=0,sort_order_by="product_name_en"):     
     sql = """select 
                 name as menu_product_name,

@@ -13,6 +13,7 @@ from frappe.model.document import Document
 
 class Membership(Document):
 	def validate(self):
+		
 		if self.is_new():
 			self.old_crypto_amount = 0	
 
@@ -42,10 +43,16 @@ class Membership(Document):
 		#update date balance
 		self.balance = self.grand_total - (self.total_paid or 0)
 
+		self.membership_code_name = "{} - {}".format(self.name, self.membership)
+
 		
 
 	def on_submit(self):
 		update_customer_membership_summary(self)
+
+ 
+		
+		
 
 
 	def before_update_after_submit(self):
@@ -60,6 +67,10 @@ class Membership(Document):
 				self.flags.old_customer = doc[0]["customer"]
 
 	def on_update_after_submit(self):
+		self.membership_code_name = "{} - {}".format(self.name, self.membership)
+		self.db_update()
+
+
 		update_customer_membership_summary(self,old_customer=self.flags.old_customer)
 	
 	def on_cancel(self):
