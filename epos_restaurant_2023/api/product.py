@@ -317,7 +317,6 @@ def get_product_category(category):
 
 @frappe.whitelist()
 def get_products(category ='All Product Categories',product_code=None,keyword=None , limit = 20, page=1, order_by='product_code',order_by_type='asc', include_product_category=0,price_rule="Normal"):
-    frappe.throw("Yes")
     data = None
     product_price_unit = ""
     sql="""
