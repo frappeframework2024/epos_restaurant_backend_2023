@@ -14,7 +14,7 @@ from frappe import _
 def membership_check_in(code,check_in_date):  
     check_member = frappe.db.exists("Customer",code) 
     if not check_member:
-        return False
+        return False   
 
     cus = frappe.get_doc("Customer",code)
     member = {
@@ -82,11 +82,57 @@ def membership_check_in(code,check_in_date):
             "max_access":m.max_access
         })
  
+    allow_scan_auto_check_in_or_out = frappe.db.get_single_value("GYM Setting", "allow_scan_auto_check_in_or_out")  
     data = {
         'check_in_date':check_in_date,
         'member':member,
-        'membership':memberships
+        'membership':memberships,
+        'allow_scan_auto_check_in_or_out':allow_scan_auto_check_in_or_out
     }
+
+
+    if allow_scan_auto_check_in_or_out:
+        _membership = [m for m in memberships if m["locked"] == False]
+        if len(_membership)>0:
+            check_in_out_sql = """select 
+                c.`name` as membership_check_in,
+                i.name as membsership_check_in_item
+            from `tabMembership Check In Items` i
+            inner join `tabMembership Check In` c on i.parent = c.name and c.is_check_out = 0 and c.member = %(member)s
+            where i.membership = %(membership)s """ 
+
+            check_in_out = frappe.db.sql(check_in_out_sql, {"membership": _membership[0]["name"],"member":member["name"]}, as_dict = 1)
+            if len(check_in_out or []) > 0: ## check out
+                for c in check_in_out:
+                    doc = frappe.get_doc("Membership Check In", c["membership_check_in"])
+                    doc.is_check_out = 1
+                    doc.check_out_date_time = datetime.now()
+                    doc.save(ignore_permissions=True)
+
+                frappe.db.commit()
+
+                data.update({"status":"CHECK OUT"})
+
+            else: #check in
+                now = datetime.now()
+                param = [{
+                    "doctype": "Membership Check In",
+                    "member": member["name"],
+                    "check_in_date":now.date(),    
+                    "check_in_date_time":now,
+                    "is_check_out":0,
+                    "membership_check_in_item": [{
+                        "membership": _membership[0]["name"],
+                        "member": member["name"]
+                        }
+                    ]}]
+                resp = check_in_submit_data(data=param)    
+                data.update({"status":"CHECK IN"})
+      
+        else:
+            data.update({"status":None, "msg":"Card Number membership was expired to check-in/out"})
+    
+        
     return data
 
 
@@ -168,8 +214,12 @@ def check_access_to_train(access,check_in_date,code,membership):
 
 
 @frappe.whitelist()
-def check_in_submit_data(data):   
-    values = json.loads(data)    
+def check_in_submit_data(data):
+    if isinstance(data, str): 
+        values = json.loads(data)    
+    else:
+        values = data
+
     for d in values:
         doc = frappe.get_doc(d)
         doc.insert()
@@ -357,9 +407,12 @@ def on_find_data_to_attendance(param):
     if on_find_trainer(card=param["card_id"]):
         reference_doctype = "Trainer"
     else:
-        membership = on_find_membership(card=param["card_id"])
-        if membership:                
-            pass
+        _membership = on_find_membership(card=param["card_id"])
+        if _membership:
+            if _membership["data"]:
+                membership = _membership["data"]
+            else:                
+                return _membership
         else:
             return {
                 "data":None,
@@ -398,10 +451,23 @@ def on_find_trainer(card):
         return None 
 
 def on_find_membership(card):
-    sql = """select name  from `tabMembership` where customer = %(member)s and docstatus = 1"""
+
+    now = datetime.now().date()
+    
+    sql = """select name,start_date,end_date  from `tabMembership` where customer = %(member)s and docstatus = 1 """
     docs = frappe.db.sql(sql,{"member":card}, as_dict= 1)
     if len(docs)>0:
-        return docs[0].name
+        values = [d for d in docs if d.start_date <= now and d.end_date >= now]
+        if len(values)>0:
+            return {
+                "data":values[0].name,
+                "error":None
+            }
+        else:
+            return {
+                "data":None,
+                "error":"Card Number of membership was expired"
+            }
     else:
         return None
     

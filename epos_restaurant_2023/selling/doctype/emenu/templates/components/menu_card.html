@@ -1,6 +1,6 @@
-<div class="col-3">
+<div class="col-12 col-md-4 col-lg-3 ">
     <a class="menu_category_list" href="/menu_category?menu_category={{menu.name|urlencode }}&parent_menu={{(parent_menu |urlencode ) or ''}}">
-        <div class="category_item rounded position-relative" style="background: url('{{menu.photo or placeholder_bg}}');background-size: cover;">
+        <div class="category_item position-relative border" style="background: url('{{menu.photo or placeholder_bg}}');background-size: cover;">
             <div class="category_item_title position-absolute rounded-pill px-2 py-1 text-white">{{menu.name}}</div>
         </div>
     </a>

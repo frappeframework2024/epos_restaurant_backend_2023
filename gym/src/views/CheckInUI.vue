@@ -109,6 +109,7 @@ const checkInCode = ref("");
 const data = ref(null);
 const tap = ref(['Enter Code', 'Name Search']);
 const is_load_recent_check_in = ref(true);
+const is_search_name = ref(false);
 
 const currentTab = (index) => {
   curTap.value = index
@@ -138,6 +139,8 @@ function onKeyDialClick(n){
 
 function onCheckInClick(){
   if(checkInCode.value==""){
+    
+    is_search_name.value = false;
     toast.add({ severity: 'warn', summary: 'Member Code', detail: 'Please input member code.', life: 3000 });
     return
   }
@@ -147,6 +150,8 @@ function onCheckInClick(){
       check_in_date : moment().format('YYYY-MM-DD')
     }  
     is_busy.value = true; 
+
+    
     window.call.get("epos_restaurant_2023.api.gym.membership_check_in",param)
     .then((res)=>{ 
       is_busy.value = false
@@ -172,7 +177,31 @@ function onCheckInClick(){
           }else{
             data.value.membership.push(d)
           }
-        }); 
+        });     
+        const _data = res.message;  
+        if(_data.allow_scan_auto_check_in_or_out && !is_search_name.value){
+          
+          if (_data.status){
+              if(_data.status=="CHECK OUT"){
+                //
+              }else{
+                toast.add({ severity: 'success', summary: 'Check In', detail: 'Check In successfully.', life: 3000 }); 
+              }
+              checkInCode.value = "";
+              is_load_recent_check_in.value = false
+              setTimeout(() => {
+                is_load_recent_check_in.value = true;                
+                is_search_name.value = false;
+              }, 50);                  
+            }
+
+          else{
+            toast.add({ severity: 'warn', summary: 'Check In/Out', detail: _data.msg, life: 3000 }); 
+          } 
+          
+          is_search_name.value = false;
+          return ; //
+        }
         
         const dialogRef = dialog.open(ComCheckInMembership, {
               data: data.value,
@@ -215,6 +244,8 @@ function onCheckInClick(){
     .catch((error)=>{
       console.log(error);
       is_busy.value = false; 
+      
+      is_search_name.value = false;
     })
 }
 
@@ -223,6 +254,7 @@ function onSelectCustomer(data){
     return
   } 
   checkInCode.value = data.value
+  is_search_name.value = true; 
   onCheckInClick();
   checkInCode.value = ""
 }
@@ -240,273 +272,274 @@ function receiveMessageFromIframe(event) {
 </script>
 
 <style>
-body,
-html {
-  margin: 0;
-  padding: 0;
-  background-color: var(--green-50);
-  color: #444;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  color: #444;
-  margin: 0;
-}
-
-
-#wrapper {
-  margin: 0 auto 0 auto;
-  position: relative;
-  /* top: 50%;
-  transform: translateY(-50%); */
-}
-
-.key {
-  border-radius: 50px 50px 50px 50px;
-  color: #444;
-  width: 70px;
-  height: 70px;
-  text-align: center;
-  font-size: 30px;
-  float: left;
-  box-sizing: border-box;
-  margin: 0 7px 10px 7px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f0f8ff69;
-  transition: all .4s ease;
-}
-
-.key span {
-  display: block;
-  color: #444;
-  text-align: center;
-  font-size: 12px;
-  text-transform: uppercase;
-}
-
-.key.special {
-  line-height: 60px;
-}
-
-.key.nb {
-  border: none;
-}
-
-.key.phone {
-  background: #5CDB74;
-  border: none;
-  color: #FFF;
-  line-height: 60px;
-  font-size: 1rem;
-  height: 45px !important;
-  margin: 0 auto !important;
-  width: 50%;
-  transition: all .4s ease;
-}
-
-.clear {
-  clear: both;
-}
-
-.dial-up-input {
-  border: none;
-  line-height: 60px;
-  font-size: 1rem;
-  height: 60px;
-  width: 50%;
-}
-
-.dial-up-input::placeholder {
-  color: rgb(185, 185, 185);
-  opacity: 1;
-  /* Firefox */
-}
-
-.dial-up-input::-ms-input-placeholder {
-  /* Edge 12-18 */
-  color: rgb(185, 185, 185);
-}
-
-.dial-up-input:focus-visible {
-  outline: 0;
-}
-
-.key.dial:hover {
-  background-color: #a8a8a8a1;
-  transition: all .4s ease;
-}
-
-.key.phone:hover {
-  background-color: #109429c7;
-  transition: all .4s ease;
-}
-
-.profile {
-  width: 60px;
-  height: 60px;
-  /* border-radius: 50%; */
-  overflow: hidden;
-}
-
-.profile img {
-  object-fit: cover;
-}
-
-.profile-info .date {
-  color: #ccc;
-  font-size: 13px;
-}
-
-.cart-item {
-  /* box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; */
-  border-bottom: 1px solid #cccccc40;
-}
-
-.scroll-item-cart {
-  overflow: auto;
-  height: calc(100vh - 147px);
-}
-
-button.btn {
-  background: #5CDB74;
-  border: none;
-  color: #FFF;
-  line-height: 2.5;
-  transition: all .4s ease;
-  border-radius: 50px 50px 50px 50px;
-  font-size: 1rem;
-}
-
-/*tab active */
-.tab-wrapper {
-  text-align: center;
-  display: block;
-  margin: auto;
-  max-width: 500px;
-}
-
-.tabs {
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-}
-
-.tab-link {
-  margin: 0 1%;
-  list-style: none;
-  padding: 10px 15px;
-  color: #aaa;
-  cursor: pointer;
-  font-weight: 700;
-  transition: all ease 0.5s;
-  border-bottom: solid 3px rgba(255, 255, 255, 0);
-  letter-spacing: 1px;
-}
-
-.tab-link:hover {
-  color: #999;
-  border-color: #999;
-}
-
-.tab-link.active {
-  color: #333;
-  border-color: #333;
-}
-
-.tab-link:nth-of-type(1).active {
-  color: #EE6534;
-  border-color: #EE6534;
-}
-
-.tab-link:nth-of-type(2).active {
-  color: #1790D2;
-  border-color: #1790D2;
-}
-
-.tab-link:nth-of-type(3).active {
-  color: #EEC63B;
-  border-color: #EEC63B;
-}
-
-.tab-content {
-  display: none;
-  text-align: center;
-  color: #888;
-  font-weight: 300;
-  font-size: 15px;
-  opacity: 0;
-  transform: translateY(15px);
-  animation: fadeIn 0.5s ease 1 forwards;
-}
-
-.tab-content.active {
-  display: block;
-}
-
-.date-pick button {
-  border-radius: 0 50px 50px 0;
-  background-color: #5CDB74;
-  border: 0;
-}
-
-.date-pick input {
-  color: #444;
-  height: 40px;
-  text-align: center;
-  font-size: 16px;
-  float: left;
-  box-sizing: border-box;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f0f8ff69;
-  transition: all .4s ease;
-  border: 0;
-}
-
-@keyframes fadeIn {
-  100% {
-    opacity: 1;
-    transform: none;
+  body,
+  html {
+    margin: 0;
+    padding: 0;
+    background-color: var(--green-50);
+    color: #444;
   }
-}
 
-button.btn {
-  cursor: pointer;
-}
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: #444;
+    margin: 0;
+  }
 
-button.btn:hover {
-  background: #3f814b;
-}
 
-@media (max-width: 992.98px) {
-  #phone {
-    height: 655px !important;
+  #wrapper {
+    margin: 0 auto 0 auto;
+    position: relative;
+    /* top: 50%;
+    transform: translateY(-50%); */
+  }
+
+  .key {
+    border-radius: 50px 50px 50px 50px;
+    color: #444;
+    width: 70px;
+    height: 70px;
+    text-align: center;
+    font-size: 30px;
+    float: left;
+    box-sizing: border-box;
+    margin: 0 7px 10px 7px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f8ff69;
+    transition: all .4s ease;
+  }
+
+  .key span {
+    display: block;
+    color: #444;
+    text-align: center;
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+
+  .key.special {
+    line-height: 60px;
+  }
+
+  .key.nb {
+    border: none;
+  }
+
+  .key.phone {
+    background: #5CDB74;
+    border: none;
+    color: #FFF;
+    line-height: 60px;
+    font-size: 1rem;
+    height: 45px !important;
+    margin: 0 auto !important;
+    width: 50%;
+    transition: all .4s ease;
+  }
+
+  .clear {
+    clear: both;
   }
 
   .dial-up-input {
-    width: 80%
+    border: none;
+    line-height: 60px;
+    font-size: 1rem;
+    height: 60px;
+    width: 50%;
   }
 
-  .h-item {
-    height: unset !important;
+  .dial-up-input::placeholder {
+    color: rgb(185, 185, 185);
+    opacity: 1;
+    /* Firefox */
+  }
+
+  .dial-up-input::-ms-input-placeholder {
+    /* Edge 12-18 */
+    color: rgb(185, 185, 185);
+  }
+
+  .dial-up-input:focus-visible {
+    outline: 0;
+  }
+
+  .key.dial:hover {
+    background-color: #a8a8a8a1;
+    transition: all .4s ease;
+  }
+
+  .key.phone:hover {
+    background-color: #109429c7;
+    transition: all .4s ease;
+  }
+
+  .profile {
+    width: 60px;
+    height: 60px;
+    /* border-radius: 50%; */
+    overflow: hidden;
+  }
+
+  .profile img {
+    object-fit: cover;
+  }
+
+  .profile-info .date {
+    color: #ccc;
+    font-size: 13px;
+  }
+
+  .cart-item {
+    /* box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; */
+    border-bottom: 1px solid #cccccc40;
   }
 
   .scroll-item-cart {
-    height: calc(100vh - 1px);
+    overflow: auto;
+    height: calc(100vh - 147px);
   }
-}
 
-.p-calendar:not(.p-calendar-disabled).p-focus>.p-inputtext {
-  box-shadow: unset !important;
-}</style>
+  button.btn {
+    background: #5CDB74;
+    border: none;
+    color: #FFF;
+    line-height: 2.5;
+    transition: all .4s ease;
+    border-radius: 50px 50px 50px 50px;
+    font-size: 1rem;
+  }
+
+  /*tab active */
+  .tab-wrapper {
+    text-align: center;
+    display: block;
+    margin: auto;
+    max-width: 500px;
+  }
+
+  .tabs {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .tab-link {
+    margin: 0 1%;
+    list-style: none;
+    padding: 10px 15px;
+    color: #aaa;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all ease 0.5s;
+    border-bottom: solid 3px rgba(255, 255, 255, 0);
+    letter-spacing: 1px;
+  }
+
+  .tab-link:hover {
+    color: #999;
+    border-color: #999;
+  }
+
+  .tab-link.active {
+    color: #333;
+    border-color: #333;
+  }
+
+  .tab-link:nth-of-type(1).active {
+    color: #EE6534;
+    border-color: #EE6534;
+  }
+
+  .tab-link:nth-of-type(2).active {
+    color: #1790D2;
+    border-color: #1790D2;
+  }
+
+  .tab-link:nth-of-type(3).active {
+    color: #EEC63B;
+    border-color: #EEC63B;
+  }
+
+  .tab-content {
+    display: none;
+    text-align: center;
+    color: #888;
+    font-weight: 300;
+    font-size: 15px;
+    opacity: 0;
+    transform: translateY(15px);
+    animation: fadeIn 0.5s ease 1 forwards;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  .date-pick button {
+    border-radius: 0 50px 50px 0;
+    background-color: #5CDB74;
+    border: 0;
+  }
+
+  .date-pick input {
+    color: #444;
+    height: 40px;
+    text-align: center;
+    font-size: 16px;
+    float: left;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f8ff69;
+    transition: all .4s ease;
+    border: 0;
+  }
+
+  @keyframes fadeIn {
+    100% {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  button.btn {
+    cursor: pointer;
+  }
+
+  button.btn:hover {
+    background: #3f814b;
+  }
+
+  @media (max-width: 992.98px) {
+    #phone {
+      height: 655px !important;
+    }
+
+    .dial-up-input {
+      width: 80%
+    }
+
+    .h-item {
+      height: unset !important;
+    }
+
+    .scroll-item-cart {
+      height: calc(100vh - 1px);
+    }
+  }
+
+  .p-calendar:not(.p-calendar-disabled).p-focus>.p-inputtext {
+    box-shadow: unset !important;
+  }
+</style>

@@ -5,7 +5,8 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "allow_manual_entry_discount"
+  "allow_manual_entry_discount",
+  "allow_scan_auto_check_in_or_out"
  ],
  "fields": [
   {
@@ -13,12 +14,18 @@
    "fieldname": "allow_manual_entry_discount",
    "fieldtype": "Check",
    "label": "Allow Manual Entry Discount"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_scan_auto_check_in_or_out",
+   "fieldtype": "Check",
+   "label": "Allow Scan Auto Check In or Out"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-12-09 11:40:21.011522",
+ "modified": "2024-12-10 15:03:50.989682",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "GYM Setting",

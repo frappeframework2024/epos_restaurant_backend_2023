@@ -68,7 +68,8 @@
    "in_list_view": 1,
    "label": "Member",
    "options": "Customer",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fetch_from": "member.customer_name_en",
@@ -115,14 +116,15 @@
    "default": "0",
    "fieldname": "is_check_out",
    "fieldtype": "Check",
-   "label": "Is Check Out"
+   "label": "Is Check Out",
+   "search_index": 1
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-27 09:12:57.373837",
+ "modified": "2024-12-10 16:46:33.147964",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership Check In",
