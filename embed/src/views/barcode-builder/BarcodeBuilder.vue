@@ -70,6 +70,8 @@
               </div>
             </td>
             <td style="border-color: #ccc;vertical-align: top;">
+          
+
               <!-- {{ doc.product_price }} -->
               <div class="flex justify-content-center h-full w-full align-items-center" style="min-height:15rem">
                 <div id="print-area" :style="{
@@ -104,7 +106,8 @@
                     </template>
                     <template v-else>
                       <span v-if="e.fieldtype == 'Currency'">
-                        {{ getCurrencyAmount(doc[e.fieldname]) }}
+                        
+                        {{ getCurrencyAmount(getValueFromPath(doc, e.fieldname)) }}
                       </span>
                       <span v-else> {{ ( getValueFromPath(doc, e.fieldname)) }}</span>
                     </template>
@@ -390,10 +393,13 @@ function onPrint() {
     printWindow.document.write("</body></html>");
 
     setTimeout(() => {
-      printWindow.document.close();
+       
       printWindow.print();
+      printWindow.close();
+     
       isPrint.value = false;
     }, 1000);
+
   }, 1000);
 }
 
