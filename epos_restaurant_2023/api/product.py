@@ -456,9 +456,8 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
         for a in product_price_data:
             for b in data:
                 if b.name == a.name and b.price == a.price:
-                    return
+                    pass
                 else:
-                    frappe.throw(str( b.name +','+ a.name +','+ b.price +','+ a.price))
                     if a.menu_product_name not in ([a.menu_product_name for a in data]):
                         new_data.append(a)
         data = data + new_data
