@@ -112,6 +112,7 @@ const is_load_recent_check_in = ref(true);
 const is_search_name = ref(false);
 
 const currentTab = (index) => {
+  is_search_name.value = index == 1 
   curTap.value = index
 }
 
@@ -139,15 +140,14 @@ function onKeyDialClick(n){
 
 function onCheckInClick(){
   if(checkInCode.value==""){
-    
-    is_search_name.value = false;
     toast.add({ severity: 'warn', summary: 'Member Code', detail: 'Please input member code.', life: 3000 });
     return
   }
   
   const param = {
       'code':checkInCode.value, 
-      check_in_date : moment().format('YYYY-MM-DD')
+      check_in_date : moment().format('YYYY-MM-DD'),
+      "is_search_name": is_search_name.value==true?1:0
     }  
     is_busy.value = true; 
 
@@ -162,6 +162,7 @@ function onCheckInClick(){
           "check_in_date_time": moment().format('YYYY-MM-DD HH:mm:ss'),
           "member":res.message.member,
           "membership":[],
+         
         } 
 
         const now = new Date(moment().format('YYYY-MM-DD'))
@@ -178,29 +179,30 @@ function onCheckInClick(){
             data.value.membership.push(d)
           }
         });     
-        const _data = res.message;  
-        if(_data.allow_scan_auto_check_in_or_out && !is_search_name.value){
-          
-          if (_data.status){
-              if(_data.status=="CHECK OUT"){
-                //
-              }else{
-                toast.add({ severity: 'success', summary: 'Check In', detail: 'Check In successfully.', life: 3000 }); 
-              }
-              checkInCode.value = "";
-              is_load_recent_check_in.value = false
-              setTimeout(() => {
-                is_load_recent_check_in.value = true;                
-                is_search_name.value = false;
-              }, 50);                  
-            }
 
-          else{
-            toast.add({ severity: 'warn', summary: 'Check In/Out', detail: _data.msg, life: 3000 }); 
-          } 
-          
-          is_search_name.value = false;
-          return ; //
+        if(!is_search_name.value){ 
+            const _data = res.message;  
+            if(_data.allow_scan_auto_check_in_or_out ){
+              console.log(_data)
+              
+              if (_data.status){
+                  if(_data.status=="CHECK OUT"){
+                    //
+                  }else{
+                    toast.add({ severity: 'success', summary: 'Check In', detail: 'Check In successfully.', life: 3000 }); 
+                  }
+                  checkInCode.value = "";
+                  is_load_recent_check_in.value = false
+                  setTimeout(() => {
+                    is_load_recent_check_in.value = true;    
+                  }, 50);                  
+                }
+
+              else{
+                toast.add({ severity: 'warn', summary: 'Check In/Out', detail: _data.msg, life: 3000 }); 
+              }  
+              return ; //
+            }
         }
         
         const dialogRef = dialog.open(ComCheckInMembership, {
@@ -244,8 +246,6 @@ function onCheckInClick(){
     .catch((error)=>{
       console.log(error);
       is_busy.value = false; 
-      
-      is_search_name.value = false;
     })
 }
 
@@ -253,8 +253,7 @@ function onSelectCustomer(data){
   if(data.value == undefined){
     return
   } 
-  checkInCode.value = data.value
-  is_search_name.value = true; 
+  checkInCode.value = data.value 
   onCheckInClick();
   checkInCode.value = ""
 }
