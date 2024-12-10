@@ -10,14 +10,14 @@
   "business_branch",
   "discount_type",
   "discount_code",
-  "discount_value"
+  "discount_value",
+  "column_break_fynm"
  ],
  "fields": [
   {
    "allow_in_quick_entry": 1,
    "fieldname": "business_branch",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Business Branch",
    "options": "Business Branch"
@@ -44,12 +44,16 @@
    "in_list_view": 1,
    "label": "Discount Type",
    "options": "Percent\nAmount"
+  },
+  {
+   "fieldname": "column_break_fynm",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-02-01 18:52:55.939002",
+ "modified": "2024-12-09 11:13:00.430491",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Discount Code",

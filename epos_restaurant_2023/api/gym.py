@@ -390,7 +390,7 @@ def on_find_data_to_attendance(param):
 
 
 def on_find_trainer(card):
-    sql = """select name from `tabTrainer` where name = %(trainer)s and disabled = 0"""
+    sql = """select name from `tabTrainer` where name = %(trainer)s and is_disabled = 0"""
     docs = frappe.db.sql(sql,{"trainer":card}, as_dict=1)
     if len(docs) > 0:
         return docs[0].name
@@ -435,3 +435,24 @@ def get_training_attendance(param):
 
 
     return data
+
+@frappe.whitelist(methods="POST")
+def get_discount_code():
+ 
+    sql = """select pos_permission from `tabEmployee` where user_id = %(user_id)s"""
+    emp = frappe.db.sql(sql,{"user_id":frappe.session.user}, as_dict = 1)
+    if len( emp)>0:
+        if  emp[0]["pos_permission"]:
+            pos_permission = frappe.get_doc("POS User Permission", emp[0]["pos_permission"])
+            discount_codes = [{
+                "discount_code": d.discount_code,
+                "discount_type": d.discount_type,
+                "discount_value": d.discount_value,
+            } for d in pos_permission.discount_codes]
+
+            return discount_codes
+        else:
+            return []
+
+    else:
+        return [] 

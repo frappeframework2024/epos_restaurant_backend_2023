@@ -1,10 +1,13 @@
-{% extends "templates/emenu_templates/{}.html".format(emenu.template_name) %}
+{% if doc.template_name  %}
+    {% extends "templates/emenu_templates/{}.html".format(doc.template_name) %}
+{%endif%}
 {% block title %} {{doc.product_name_en}} {% endblock %}
 {% block style%}
     {{emenu.css}}
 {% endblock %}
 
 {% block page_content %}
+<button class="add-to-order-button" onclick="addToOrder('{{doc.product_code}}')">Add to order</button>
 <button class="back-btn m-3" id="back-btn" onclick="goBack('{{emenu.route}}')">&#8592; Back to Menu</button>
 
 <div class=" overflow-hidden modal-pp-items section-modal-detail">    

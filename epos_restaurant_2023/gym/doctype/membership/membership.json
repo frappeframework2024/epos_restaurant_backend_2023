@@ -41,6 +41,7 @@
   "price",
   "discount_type",
   "discount",
+  "select_discount",
   "total_discount",
   "column_break_higk",
   "grand_total",
@@ -590,6 +591,16 @@
    "label": "Membership Code Name",
    "options": "MS.-.#####",
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fetch_from": ".cost",
+   "fieldname": "select_discount",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Select Discount",
+   "print_hide": 1,
+   "report_hide": 1
   }
  ],
  "image_field": "photo",
@@ -602,7 +613,7 @@
    "link_fieldname": "membership"
   }
  ],
- "modified": "2024-12-06 11:16:34.247749",
+ "modified": "2024-12-09 11:50:08.347513",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership",

@@ -80,7 +80,7 @@ class eMenu(WebsiteGenerator):
 				
 
 def get_menus(parent_menu):
-    sql = "select name from `tabPOS Menu` where parent_pos_menu = %(parent_menu)s and disabled=0"
+    sql = "select name, photo from `tabPOS Menu` where parent_pos_menu = %(parent_menu)s and disabled=0"
     data = frappe.db.sql(sql,{"parent_menu":parent_menu},as_dict = 1)
     return data
 

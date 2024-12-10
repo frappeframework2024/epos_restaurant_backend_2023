@@ -15,7 +15,9 @@
   "section_break_vcbx",
   "report_fields",
   "report_row_config_tab",
-  "row_configs"
+  "row_configs",
+  "other_setting_tab",
+  "other_setting"
  ],
  "fields": [
   {
@@ -73,11 +75,21 @@
   {
    "fieldname": "section_break_vcbx",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "other_setting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Other Setting"
+  },
+  {
+   "fieldname": "other_setting",
+   "fieldtype": "JSON",
+   "label": "Other Setting"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-25 10:01:56.004949",
+ "modified": "2024-12-09 09:00:48.650286",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Report Configuration",

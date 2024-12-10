@@ -1,0 +1,7 @@
+<div class="radio-buttons">
+{%for d in data%}
+    <label style="margin-right:10px">
+        <input type="radio" name="discount_value" value="{{d.discount_value}}" id="{{d.discount_type}}">{{d.discount_code}}</input>
+    </label>
+{%endfor%}
+</div>

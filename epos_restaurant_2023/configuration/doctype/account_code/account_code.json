@@ -100,6 +100,9 @@
   "reporting_tab",
   "flash_report_revenue_group",
   "hide_account_reservation_not_allow_see_rate",
+  "section_break_bizz",
+  "column_break_emgh",
+  "available_in_reports",
   "tax_invoice_configuration_tab",
   "show_in_tax_invoice",
   "is_vat",
@@ -695,12 +698,28 @@
   {
    "fieldname": "column_break_hstf",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_bizz",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Availabe in Reports"
+  },
+  {
+   "description": "We use this table to account that available for filter in selected report below. This account code will be use for filtering account code from folio transaction list",
+   "fieldname": "column_break_emgh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "available_in_reports",
+   "fieldtype": "Table",
+   "options": "Report Account Code Config"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-11-12 15:25:41.785914",
+ "modified": "2024-12-09 09:22:39.607512",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

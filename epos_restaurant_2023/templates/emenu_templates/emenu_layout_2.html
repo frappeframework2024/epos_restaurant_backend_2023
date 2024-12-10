@@ -611,20 +611,20 @@
 			$(window).scroll(function(){
 				var headerHeight = $('.header').height();
 				$('.nav-pro-wrapper').css('top', headerHeight);
-			})
+			});
 			
 			$('#slid_banner').owlCarousel({
 				loop: true,
 				nav: true,
-				items: 1,
+				items: 2,
 				center:true,
 				mouseDrag:false,
 				navText: ['&#8592;', '&#8594;']
-			})
+			});
 
 			$('#navi-slide-menu').owlCarousel({
 				items:5
-			})
+			});
 
 			//banner popup
 			$('.popup-with-move-anim').magnificPopup({
@@ -642,66 +642,7 @@
 				removalDelay: 300,
 				mainClass: 'my-mfp-slide-bottom'
 			});
-			// $('.product_detail').magnificPopup({
-			// 	type: 'ajax',
-			// 	ajax: {
-			// 		settings: {
-			// 			cache: true
-			// 		}
-			// 	},
-			// 	mainClass: 'my-mfp-slide-bottom items-my-mfp-slide-bottom',
-			// 	overflowY: 'scroll' // as we know that popup content is tall we set scroll overflow by default to avoid jump
-			// });
- 
-			
-			// $("#btn_add_to_order").click(function(){
-				
-			// 	data = $(this)
-			// 	const order =JSON.parse( localStorage.getItem("myOrder"))  || {}
 			 
-			// 	if  (!order.order_products){
-				 
-			// 		order.order_products = []
-			// 	}
-			// 	existing_order = order.order_products.find(r=>r.product_code==data.data("id"))
-			// 	if (existing_order){
-			// 		existing_order.quantity = existing_order.quantity + 1
-			// 	}
-			// 	else{
-			// 		order.order_products.push({
-			// 			product_code:data.data("id"),
-			// 			price:10,
-			// 			quantity:1
-			// 		})
-			// 	}
-			// 	localStorage.setItem("myOrder",JSON.stringify(order))
-
-			// })
-			// $("#submit_order").click(function(){
-			// 	const order =JSON.parse( localStorage.getItem("myOrder"))  || {}
-			// 	if (!order.order_products){
-			// 		frappe.msgprint("Please select order item")
-			// 		return
-			// 	}
-
-				 
-			// 	order.doctype ="Online Order"
-			// 	frappe.call({
-			// 		method: "frappe.client.insert",
-			// 		args: {
-			// 			doc: order
-			// 		},
-			// 		callback: function(r) {
-			// 			if (r.message) {
-			// 				alert("add success")
-			// 			} else {
-			// 				// Handle errors
-			// 				alert("add fail")
-			// 			}
-			// 		}
-			// 	});
-
-			// })
 				 
 			
 			// Cache menu links and sections
@@ -815,6 +756,37 @@
 				window.location.href = window.location.origin + '/' + p
 			}
 		} 
+
+
+		function addToOrder(product_code){
+			let orderList = localStorage.getItem("order_list")
+			if(orderList){
+				orderList = JSON.parse(orderList)
+			}else {
+				orderList = []
+			}
+
+			//checvk existing product
+			product = orderList.find(r=>r.product_code == product_code)
+			if(product){
+				product.quantity = product.quantity  + 1;
+				product.total_amount = product.quantity * product.price
+
+			}else {
+				orderList.push({
+					"product_code":product_code,
+					"product_name":"product name...",
+					"price":12,
+					quantity:1,
+					total_amount: 12
+				})
+			}
+
+			
+			localStorage.setItem("order_list",JSON.stringify(orderList))
+
+			// frappe.db.
+		}
 	</script>
 
 </body>

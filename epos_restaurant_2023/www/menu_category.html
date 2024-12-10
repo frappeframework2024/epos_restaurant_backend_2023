@@ -1,4 +1,6 @@
-{% extends "templates/emenu_templates/{}.html".format(emenu.template_name) %}
+{% if emenu.template_name  %}
+    {% extends "templates/emenu_templates/{}.html".format(emenu.template_name) %}
+{%endif%}
 {% block title %} {{doc.name}} {% endblock %}
 {% block style%}
     {{emenu.css}}

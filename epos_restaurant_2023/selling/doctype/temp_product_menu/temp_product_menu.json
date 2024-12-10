@@ -60,7 +60,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Product Code",
-   "options": "Product"
+   "options": "Product",
+   "search_index": 1
   },
   {
    "fetch_from": "product_code.product_name_en",
@@ -307,7 +308,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-30 17:25:49.942160",
+ "modified": "2024-12-09 14:53:54.974560",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Temp Product Menu",

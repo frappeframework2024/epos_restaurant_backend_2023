@@ -1,0 +1,29 @@
+<div class="py-3 my-3 nav-pro-wrapper border border-start-0 border-end-0 border-bottom-0 bg-white el-shadow" style="top:0;">
+    <nav class="container">
+        <div class="position-relative">
+            <div class="tab-bar">
+                <div class="left-arrow">
+                    <p><i class="fas fa-chevron-left"></i></p>
+                </div>
+                <div class="navigt tabs">
+                    <div class="d-flex mb-0">
+                        {% if (doc.popular_product | length) >0 %}
+                        <a class="bg-white px-3 py-1 rounded-pill main-color nav-pro tab active mt-1"
+                            href="#popular_product">
+                            <p>Popular Products</p>
+                        </a>
+                        {%endif%}
+                        {% for m in doc.pos_menu_selections %}
+                        <a class="bg-white px-3 py-1 rounded-pill main-color nav-pro tab mt-1" href="#{{m.name}}">
+                            <p>{{m.menu}}</p>
+                        </a>
+                        {%endfor%}
+                    </div>
+                </div>
+                <div class="right-arrow active">
+                    <p><i class="fas fa-chevron-right"></i></p>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>

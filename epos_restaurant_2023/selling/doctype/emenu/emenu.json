@@ -37,6 +37,7 @@
   "template_name",
   "section_break_ivmw",
   "promo_image",
+  "category_placeholder_background",
   "section_break_wicy",
   "kh_title_color",
   "column_break_gezs",
@@ -254,13 +255,18 @@
   {
    "fieldname": "section_break_ivmw",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "category_placeholder_background",
+   "fieldtype": "Attach",
+   "label": "Category Placeholder Background"
   }
  ],
  "has_web_view": 1,
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-07 11:21:20.282296",
+ "modified": "2024-12-09 11:42:11.684335",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu",

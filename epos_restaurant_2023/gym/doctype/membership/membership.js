@@ -3,8 +3,6 @@
 
 frappe.ui.form.on("Membership", {
 	refresh(frm) {
-       
-
         if(frm.doc.docstatus == 1){
             let expired = false;
             if(frm.doc.duration_base_on){
@@ -88,7 +86,9 @@ frappe.ui.form.on("Membership", {
                 
                 d.show();
             });
-        }
+        } 
+
+        on_check_setting_allow_entry_discount(frm);
 	},
     onload(frm){
         if((frm.doc.end_date||"")!=""){           
@@ -99,6 +99,8 @@ frappe.ui.form.on("Membership", {
             }            
         } 
         on_membership_value_changed(frm)   
+
+        on_check_setting_allow_entry_discount(frm);
     },
     is_delay_access:function(frm){
         on_is_delay_access_value_changed(frm,true)
@@ -135,6 +137,10 @@ frappe.ui.form.on("Membership", {
     },
     delay_access:function(frm){
         on_delay_access_value_changed(frm,true);
+    },
+
+    select_discount:function(frm){
+        on_select_discount_click(frm)
     }
 });
 
@@ -401,3 +407,116 @@ function on_delay_access_value_changed(frm, changed){
 function on_get_date(date){
      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
+
+
+function on_check_setting_allow_entry_discount(frm){ 
+    if(frm.doc.docstatus == 0){
+        frappe.db.get_single_value("GYM Setting","allow_manual_entry_discount").then((r)=>{
+            if(r == 1){
+                frm.set_df_property('discount', 'read_only', 0);
+                frm.set_df_property('discount_type', 'read_only', 0);
+                frm.set_df_property('select_discount', 'hidden', 1);
+            }else{
+                frm.set_df_property('discount', 'read_only', 1);         
+                frm.set_df_property('discount_type', 'read_only', 1);      
+                frm.set_df_property('select_discount', 'hidden', 0);               
+            }
+            frm.refresh_field('discount');
+            frm.refresh_field('discount_type');
+            frm.refresh_field('select_discount');
+        })
+    }else{
+        frm.set_df_property('select_discount', 'hidden', 1);
+        frm.refresh_field('select_discount');
+        
+    }
+}
+
+function on_select_discount_click(frm) {
+    frappe.call({
+        method: 'epos_restaurant_2023.api.gym.get_discount_code',
+        type: 'POST',
+        freeze: true,
+        callback: function(resp) {
+            const dlg = createDiscountDialog(frm, resp.message);
+            dlg.show();
+        },
+        error: function(err) {
+            console.error('Error:', err);
+        }
+    });
+}
+
+function createDiscountDialog(frm, discountData) {
+    const fields = [
+        {
+            fieldtype: 'HTML',
+            fieldname: 'radio_buttons',
+            options: `
+                <div class="radio-buttons">
+                    <label style="margin-right:10px">
+                        <input type="radio" name="discount_type" value="Percent" checked>Percent
+                    </label>
+                    <label>
+                        <input type="radio" name="discount_type" value="Amount"> Amount
+                    </label>
+                </div>
+            `,
+        },
+        { fieldtype: 'Section Break' },
+        { fieldtype: 'HTML', fieldname: 'discount_codes' },
+    ];
+
+    const dlg = new frappe.ui.Dialog({
+        title: 'Discount',
+        fields: fields,
+        size: 'large',
+        primary_action_label: "Apply Discount",
+        primary_action: function() {
+            const selectedDiscount = $('input[name="discount_value"]:checked');
+            console.log(selectedDiscount)
+            const discountValue = selectedDiscount.val();
+            if (discountValue) {
+                frm.doc.discount_type = selectedDiscount.attr("id");
+                frm.doc.discount = (frm.doc.discount_type === "Percent") ? discountValue * 100 : discountValue;
+
+                on_update_grand_total(frm,true)
+
+                frm.refresh_field("discount_type");
+                frm.refresh_field("discount");
+
+
+
+                dlg.hide();
+
+                // clear the selected discount value
+                $('input[name="discount_type"]:checked').prop('checked', false);
+                $('input[name="discount_value"]:checked').prop('checked', false);
+
+            } else {
+                frappe.msgprint(__('Please select a discount code'));
+            }
+        }
+    });
+
+    render_discount_code(discountData.filter(r => r.discount_type === "Percent"), dlg); 
+    
+    $(document).on('change', 'input[name="discount_type"]', function() {
+        const selectedValue = $(this).val();
+        const data = discountData.filter(r => r.discount_type === selectedValue);
+        render_discount_code(data, dlg);
+ 
+    });
+
+    return dlg;
+}
+
+function render_discount_code(data, dialog) {
+    const discountCodeHtml = frappe.render_template("membership_apply_discount", { data: data, isInIframe: (window.self !== window.top) });
+    $(dialog.fields_dict.discount_codes.wrapper).html(discountCodeHtml);
+    dialog.fields_dict.discount_codes.refresh();
+}
+
+
+
+

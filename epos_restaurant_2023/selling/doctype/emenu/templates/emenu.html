@@ -1,5 +1,8 @@
-{% extends "templates/emenu_templates/{}.html".format(doc.template_name) %}
-{% block title %} {{doc.welcome_title}} {% endblock %}
+{% if doc.template_name  %}
+    {% extends "templates/emenu_templates/{}.html".format(doc.template_name) %}
+{%endif%}
+
+{% block title %} {{(doc.welcome_title)}} {% endblock %}
 
 {% block style%}
  
@@ -8,8 +11,6 @@
 {% endblock %}
 
 {% block page_content %}
- 
-
     {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/{}/index.html".format(doc.template_name),
         {
             "doc":doc,
