@@ -182,12 +182,11 @@ function onCheckInClick(){
 
         if(!is_search_name.value){ 
             const _data = res.message;  
-            if(_data.allow_scan_auto_check_in_or_out ){
-              console.log(_data)
+            if(_data.allow_scan_auto_check_in_or_out ){ 
               
               if (_data.status){
                   if(_data.status=="CHECK OUT"){
-                    //
+                    toast.add({ severity: 'success', summary: 'Check Out', detail: 'Check Out successfully.', life: 3000 }); 
                   }else{
                     toast.add({ severity: 'success', summary: 'Check In', detail: 'Check In successfully.', life: 3000 }); 
                   }

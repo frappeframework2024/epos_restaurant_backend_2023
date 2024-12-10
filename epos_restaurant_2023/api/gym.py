@@ -89,9 +89,8 @@ def membership_check_in(code,check_in_date, is_search_name=0):
         'membership':memberships,
         'allow_scan_auto_check_in_or_out':allow_scan_auto_check_in_or_out
     }
-
-    return {"x":allow_scan_auto_check_in_or_out and not is_search_name,"xx":is_search_name, "dd":allow_scan_auto_check_in_or_out}
-    if allow_scan_auto_check_in_or_out and not is_search_name:
+ 
+    if allow_scan_auto_check_in_or_out and  is_search_name=="0":
         _membership = [m for m in memberships if m["locked"] == False]
         if len(_membership)>0:
             check_in_out_sql = """select 
