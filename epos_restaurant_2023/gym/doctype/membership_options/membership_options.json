@@ -14,6 +14,8 @@
   "default_discount",
   "pricing_section",
   "cost",
+  "default_discount_type_membership_register",
+  "default_discount_membership_register",
   "column_break_pibt",
   "crypto_amount",
   "family_pricing_section",
@@ -173,11 +175,24 @@
    "fieldname": "crypto_amount",
    "fieldtype": "Currency",
    "label": "Crypto Amount"
+  },
+  {
+   "default": "Percent",
+   "fieldname": "default_discount_type_membership_register",
+   "fieldtype": "Select",
+   "label": "Default Discount Type Membership Register",
+   "options": "Percent\nAmount"
+  },
+  {
+   "default": "0",
+   "fieldname": "default_discount_membership_register",
+   "fieldtype": "Float",
+   "label": "Default Discount Membership Register"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-27 08:43:49.600266",
+ "modified": "2024-12-10 11:41:38.608875",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership Options",
@@ -219,5 +234,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1
 }

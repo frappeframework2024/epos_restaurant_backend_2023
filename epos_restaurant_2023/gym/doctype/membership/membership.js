@@ -155,12 +155,17 @@ function on_membership_value_changed(frm,changed=false){
         if(changed){
             frappe.db.get_value("Membership Options",frm.doc.membership,["*"]).then((r)=>{
                 frm.doc.price = r.message.cost;
+                frm.doc.discount_type = r.message.default_discount_type_membership_register;
+                frm.doc.discount = r.message.default_discount_membership_register;
+
                 frm.doc.default_discount = r.message.default_discount;
                 frm.doc.crypto_amount = r.message.crypto_amount;
                 frm.doc.old_crypto_amount = 0;
 
                 on_update_grand_total(frm,changed);
                 frm.refresh_field("price");   
+                frm.refresh_field("discount_type");   
+                frm.refresh_field("discount");   
                 frm.refresh_field("default_discount");   
                 frm.refresh_field("crypto_amount");   
                 frm.refresh_field("old_crypto_amount");   

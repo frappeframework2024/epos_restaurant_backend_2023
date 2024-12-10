@@ -7,6 +7,7 @@
 {% endblock %}
 
 {% block page_content %}
+<div class="container">
  
 {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/header_logo.html", {"doc":emenu}) }}
 <!-- back -->
@@ -14,7 +15,8 @@
     <a href="/menu_category?menu_category={{doc.parent_pos_menu}}">Back</a>
 {%endif%}
 <!-- pos menu menu -->
-{{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/emenu_layout_2/menu_list.html", {"pos_menus":pos_menus,"parent_menu":doc.name}) }}
+{{pos_menus}}
+{{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/emenu_layout_2/menu_list.html", {"pos_menus":pos_menus,"parent_menu":doc.name,"placeholder_bg":emenu.category_placeholder_background}) }}
  
 <!-- render product -->
 {%if products %}
@@ -23,6 +25,6 @@
     {%endfor%}
 {%endif%}
 
-
+</div>
 {% endblock %}
 

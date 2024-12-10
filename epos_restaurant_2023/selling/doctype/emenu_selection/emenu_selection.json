@@ -9,7 +9,8 @@
  "field_order": [
   "menu",
   "sort_product",
-  "hidden"
+  "hidden",
+  "photo"
  ],
  "fields": [
   {
@@ -30,12 +31,18 @@
    "fieldname": "hidden",
    "fieldtype": "Check",
    "label": "Hidden"
+  },
+  {
+   "fetch_from": "menu.photo",
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "label": "Photo"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-12-07 15:55:32.095830",
+ "modified": "2024-12-10 11:43:49.373664",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu Selection",
