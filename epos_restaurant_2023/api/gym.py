@@ -275,7 +275,7 @@ def get_trainer_link_option(name):
 @frappe.whitelist()
 def get_membership_checked_in_for_check_out(member_code):
     result = []
-    sql = "select `name` from `tabMembership Check In` where docstatus = 1 and is_check_out = 0 and member = '{}'".format(member_code)
+    sql = "select `name` from `tabMembership Check In` where docstatus = 1 and is_check_out = 0 and member = '{}' order by modified desc".format(member_code)
     docs = frappe.db.sql(sql, as_dict=1)
     if len(docs) > 0:
         for d in docs:
