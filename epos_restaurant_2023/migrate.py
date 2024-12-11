@@ -35,7 +35,7 @@ def after_migrate():
     # frappe.db.sql("delete from `tabPrinter` where printer_name in ('Kitchen Printer','Cashier Printer', 'Bar Printer')")
 
     frappe.db.sql("update `tabScheduled Job Type` set stopped = 1 where name = 'reminder.send_reminders'")
-    frappe.db.commit()
+
 
 
 
