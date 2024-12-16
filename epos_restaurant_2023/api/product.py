@@ -403,7 +403,7 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
             from `tabProduct Price`
             where barcode {0} %(keyword)s""".format(operator)
     product_price_datas = frappe.db.sql(sql_product_prices,filter,as_dict=1)
-    if product_price_unit == "" and len(product_price_datas)>0 and operator == "=":
+    if product_price_unit == "" and len(product_price_datas) == 1:
         product_price_unit = product_price_datas[0].unit
     if len(product_price_datas)>0:
         product_price_filter={
@@ -449,19 +449,23 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
             is_variant,
             pos_note
             
-        from `tabProduct`
+        from `tabProduct` a
         where disabled=0 and allow_sale=1 and name in %(product_codes)s"""
         product_price_data = frappe.db.sql(sql,product_price_filter,as_dict=1)
         new_data = []
-        for a in product_price_data:
-            for b in data:
-                if b.name == a.name and b.price == a.price:
-                    pass
-                else:
-                    if a.menu_product_name not in ([a.menu_product_name for a in data]):
-                        new_data.append(a)
+        if len(data) > 0:
+            for a in product_price_data:
+                for b in data:
+                    if b.name == a.name and b.price == a.price:
+                        pass
+                    else:
+                        if a.menu_product_name not in ([d.menu_product_name for d in data]):
+                            new_data.append(a)
+        else:
+            for a in product_price_data:
+                new_data.append(a)
         data = data + new_data
-
+    
     # todo 
     # get  product price
     # get product modifier
