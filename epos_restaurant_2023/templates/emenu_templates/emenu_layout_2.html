@@ -25,7 +25,6 @@
 		:root {
     		--main-color: #db3b76;
 		}
-
 		.main-color {
 			color: var(--main-color);
 		}
@@ -89,21 +88,14 @@
 			height: 100%;
 		}
 
-		#slid_banner .item img {
-			object-fit: cover;
-			height: 100%;
-			width: unset !important;
-			object-position: top;
-		}
-
-		#slid_banner .owl-nav {
+		/* #slid_banner .owl-nav {
 			position: absolute;
 			top: 50%;
 			transform: translateY(-50%);
 			width: 100%;
 			display: flex;
 			justify-content: space-between;
-		}
+		} */
 
 		#slid_banner .owl-nav button {
 			color: #000;
@@ -287,9 +279,6 @@
 			/* top: var(--top); */
 			z-index: 10000;
 		}
-		.el-shadow{
-			box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-		}
 		ul.pt-si{
 			columns: 2;
 			-webkit-columns: 2;
@@ -441,13 +430,7 @@
 			color: #ff5959;
 		}
 		/* New Style */
-		.mobile_img{
-			border-radius: 20px !important;
-			height: 220px !important;
-			background-position: center !important;
-  background-repeat: no-repeat !important;
-  background-size: cover !important;
-		}
+		
 		.meal-price {
       font-size: 16px;
       font-weight: bold;
@@ -586,6 +569,7 @@
 	
 	<!-- <h1>Emenu</h1> -->
 	{%- block page_content -%}{%- endblock -%}
+	<div class="loading"></div>
 
 	<!-- js should be loaded in body! -->
 
@@ -614,12 +598,101 @@
 			});
 			
 			$('#slid_banner').owlCarousel({
-				loop: true,
-				nav: true,
-				items: 2,
-				center:true,
-				mouseDrag:false,
-				navText: ['&#8592;', '&#8594;']
+				loop: false,
+				nav: false,
+				autoWidth:true,
+				center:false,
+				mouseDrag:true,
+				margin:10,
+				// navText: ['&#8592;', '&#8594;'],
+				responsive:{
+					0:{
+						items:1,
+						nav:false,
+						center:false,
+						dots:false,
+						loop:false
+					},
+					600:{
+						items:3,
+						nav:false,
+						center:false,
+						dots:false,
+						loop:false
+					},
+					1000:{
+						items:5,
+						nav:false,
+						center:false,
+						dots:false,
+						loop:false
+					}
+				}
+			});
+			$('#menu_list_carousel').owlCarousel({
+				loop: false,
+				nav: false,
+				autoWidth:true,
+				center:false,
+				mouseDrag:true,
+				margin:10,
+				// navText: ['&#8592;', '&#8594;'],
+				responsive:{
+					0:{
+						items:1,
+						nav:false,
+						center:false,
+						dots:false,
+						loop:false
+					},
+					600:{
+						items:3,
+						nav:false,
+						center:false,
+						dots:false,
+						loop:false
+					},
+					1000:{
+						items:5,
+						nav:false,
+						center:false,
+						dots:false,
+						loop:false
+					}
+				}
+			});
+
+			$('#popular_product_carousel').owlCarousel({
+				loop: false,
+				nav: false,
+				autoWidth:true,
+				center:false,
+				mouseDrag:true,
+				margin:10,
+				// navText: ['&#8592;', '&#8594;'],
+				responsive:{
+					0:{
+						items:1,
+						nav:false,
+						center:false,
+						dots:false,
+						loop:false
+					},
+					600:{
+						items:3,
+						nav:false,
+						center:false,
+						dots:false,
+						loop:false
+					},
+					1000:{
+						items:5,
+						nav:false,
+						center:false,
+						dots:false,
+						loop:false
+					}
+				}
 			});
 
 			$('#navi-slide-menu').owlCarousel({
@@ -787,6 +860,22 @@
 
 			// frappe.db.
 		}
+
+		const currentUrl = window.location.href;
+		const urlObj = new URL(currentUrl);
+		const menuCategory = urlObj.searchParams.get("menu_category");
+		if (menuCategory) {
+			const menuCate = document.querySelectorAll('a.menu_categories');
+			menuCate.forEach((link)=> {
+				const text = link.querySelector('p').textContent;
+				if (menuCategory == text) {
+					link.classList.add('active');
+				}
+			}) 
+		}
+
+		
+		
 	</script>
 
 </body>

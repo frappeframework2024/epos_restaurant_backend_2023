@@ -229,6 +229,7 @@ override_whitelisted_methods = {
 # auth_hooks = [
 #	"epos_restaurant_2023.auth.validate"
 # ]
+
 on_login = "epos_restaurant_2023.api.utils.successful_login"
 
 fixtures = [

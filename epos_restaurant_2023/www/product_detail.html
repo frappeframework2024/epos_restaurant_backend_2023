@@ -1,28 +1,35 @@
 {% if doc.template_name  %}
     {% extends "templates/emenu_templates/{}.html".format(doc.template_name) %}
 {%endif%}
-{% block title %} {{doc.product_name_en}} {% endblock %}
 {% block style%}
-    {{emenu.css}}
+<style>
+  {{emenu.css}}  
+</style>
+    
 {% endblock %}
 
 {% block page_content %}
-<button class="add-to-order-button" onclick="addToOrder('{{doc.product_code}}')">Add to order</button>
-<button class="back-btn m-3" id="back-btn" onclick="goBack('{{emenu.route}}')">&#8592; Back to Menu</button>
 
-<div class=" overflow-hidden modal-pp-items section-modal-detail">    
+
+<div class=" overflow-hidden modal-pp-items contain-all">    
     <div class="modal-img px-3" style="background: #fff;">
-        <div class="position-relative">
-            <img src="{{doc.photo or "/files/no_image.jpg"}}" alt="" >
-            <div class="position-absolute rounded p-1" style="bottom: 10px; background: #db3c76;right: 15px;">
-                <p class="text-white">{{doc.product_code}}</p>
-            </div>
-            {% if doc.is_empty_stock_warning == 1%}
-                <div class="position-absolute rounded p-1" style="bottom: 10px; background: #db3c76;left: 15px;">
-                    <p class="text-white">* Out of Order</p>
-                </div>
-            {% endif %}
+        
+        <div class="position-relative" style="position: relative;">
+            <div class="position-relative d-flex image-content">
+            <img class="pro-image border-theme-color" src="{{doc.photo or "/files/no_image.jpg"}}" alt="" >
+            <button class="detail-back-btn border-theme-color" id="back-btn" onclick="goBack('{{emenu.route}}')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                  </svg>
                   
+
+            </button>
+            {% if doc.is_empty_stock_warning == 1%}
+            <div class="out-of-order bg-theme-color">
+                <div class="text-white">* Out of Order</div>
+            </div>
+        {% endif %}
+            </div>
             {% if doc.discount_value > 0 %}
                 <div class="position-absolute rounded p-1" style="top: 5px; background: #db3c76;left: 5px;">
                     {% if (doc.prices|length) > 0 %}
@@ -47,63 +54,134 @@
                     {% endif %}
                 </div>
             {% endif %} 
-        </div>
-    </div>
-    <div class="p-3">
-        <div class="section-top-under-img">
-            <div class="">
-                <div class="mb-2 wrapper-title-modal text-center">
-                    {% if doc.product_name_en == doc.product_name_kh%}
-                    <h1 style="font-size: 36px;color:#ff5959">{{doc.product_name_kh}}</h1>
-                    {%else%}
-                    <h1 style="font-size: 36px;color:#ff5959">{{doc.product_name_kh}}</h1>
-                    <h1>{{doc.product_name_en}}</h1>
-                    {%endif%}
-                </div>
-                <div class="modal-pirc text-center">      
+            <div class="container-dis">
+                <div class="content-on-image">
+                    <div class="promotion-card bg-theme-color">{{doc.product_code}}</div>
+                    <div>
+                    </div>
+                                </div>
+                <div style="padding: 20px;">
+                    <div class="box-line bg-theme-color"></div>
+                        <div class="title-dis">
+                            {% if doc.product_name_kh == doc.product_name_en %}
+                            <span class="kh-title" style="color:{{emenu.kh_title_color}}">{{doc.product_name_en}}</span>
+                            {%else%}
+                            <span class="kh-title" style="color:{{emenu.kh_title_color}}">{{doc.product_name_kh}}</span>
+<br>
+                            <span class="en-title" style="color:{{emenu.en_title_color}}">{{doc.product_name_en}}</span>
+                            {% endif %}
+                        </div>
+                    <div class="discription" >
+                       <div class="content-price">
+                        <div class="content-price">      
                             {% if (doc.prices|length) > 0 %}
                             {%set _prices = doc.prices |selectattr('price_rule', 'equalto', emenu.default_price_rule) | list  %}
-                                {% for price in _prices %}    
+                                {% for price in _prices %}  
+                                <div class="row-price">
                                     {% if doc.discount_value > 0 %}
-                                    {%if price.portion != "Normal" %} <div><span class="price-cus portion">{{price.portion}}</span></div> {%endif%}
-                                        <div class="d-flex gap-2 justify-center price-portion">    
-                                            <del class="price-cus" style="color:#ccc">{{frappe.format(price.price or 0,{"fieldtype":"Currency"})}}</del>
+                                    {%if price.portion != "Normal" %} <div>
+                                        <span class="price-cus portion">{{price.portion}}</span></div>
+                                    {%endif%}
+                                    -
+                                        <div class="content-portion">    
+                                            
                                             {% if doc.discount_type=='Percent' %}
-                                                <p class="price-cus">{{frappe.format((price.price or 0) - ((price.price or 0)* (doc.discount_value/100) ),{"fieldtype":"Currency"})}}</p>
+                                                <div class="price-cus">{{frappe.format((price.price or 0) - ((price.price or 0)* (doc.discount_value/100) ),{"fieldtype":"Currency"})}}</div>
                                             {% else %}
-                                                <p class="price-cus">{{frappe.format((price.price or 0) - (doc.discount_value) ,{"fieldtype":"Currency"})}}</p>
+                                                <div class="price-cus">{{frappe.format((price.price or 0) - (doc.discount_value) ,{"fieldtype":"Currency"})}}</div>
                                             {%endif%}
+                                            <del  style="color:#ccc">{{frappe.format(price.price or 0,{"fieldtype":"Currency"})}}</del>
+                                        </div>
+                                        <div class="content-dis">
+                                            {% if doc.discount_type=='Percent' %}
+                                            <div >{{doc.discount_value}} %</div>
+                                        {% else %}
+                                            <div>{{(doc.discount_value ,{"fieldtype":"Currency"})}}</div>
+                                        {%endif%}
                                         </div>
                                     {% else %}
-                                        <p class="price-cus portion">
+                                        <div class="price-cus portion">
                                             {%if price.portion != "Normal" %} <span>{{price.portion}}:</span> {%endif%}
                                             {{frappe.format(price.price or 0,{"fieldtype":"Currency"})}}
-                                        </p>
-                                    {% endif %}   
+                                        </div>
+                                    {% endif %} 
+                                </div>        
                                 {% endfor %}
                             {% else %}
-                                <div class="flex gap-2 justify-center"> 
+                                <div class="text-center"> 
                                     {% if doc.discount_value > 0 %}
-                                        <del class="price-cus" style="color: #ccc;">{{frappe.format(doc.price,{"fieldtype":"Currency"})}}</del>
+                                      
                                         {% if doc.discount_type=='Percent' %}
-                                            <p class="price-cus">{{frappe.format((doc.price or  0) - ((doc.price or 0)* (doc.discount_value/100) ),{"fieldtype":"Currency"})}}</p>
+                                            <div class="price-cus">{{frappe.format((doc.price or  0) - ((doc.price or 0)* (doc.discount_value/100) ),{"fieldtype":"Currency"})}}</div>
                                         {%else%}
-                                            <p class="price-cus">{{frappe.format((doc.price or 0) - (doc.discount_value) ,{"fieldtype":"Currency"})}}</p>
+                                            <div class="price-cus">{{frappe.format((doc.price or 0) - (doc.discount_value) ,{"fieldtype":"Currency"})}}</div>
                                         {%endif%}
+                                        <del  style="color: #ccc;">{{frappe.format(doc.price,{"fieldtype":"Currency"})}}</del>
                                     {% else %}
-                                        <p class="price-cus">{{frappe.format(doc.price,{"fieldtype":"Currency"})}}</p>
+                                        <div class="price-cus">{{frappe.format(doc.price,{"fieldtype":"Currency"})}}</div>
                                     {% endif %}
+
                                 </div>
                             {% endif %} 
                 </div>
+                       </div>
+                    </div>
+                </div>
             </div>
-            <br/>
-            <h2 class="text-center">Order Now</h2>
+        </div>
+   {% if doc.modifiers != '' %} 
+<div class="content-modify">
+        {% for item in json.loads(doc.modifiers) %}
+        <div class="modify">
+        <div class="header-table">
+           {{ item.category }}
+        </div>    
+  <div class="modifier-list"></div>
+        {% for modify in item["items"]  %}
+
+        
+            <div class="modifier-item">
+            <span class="modifier-name">{{modify.modifier}}</span>
+            <span class="modifier-dots"></span>
+            <span class="modifier-value">  {{frappe.format(modify.price or 0,{"fieldtype":"Currency"})}}</span>
+        </div>
+      
+        {% endfor %}
+      </div>
+
+{% endfor %}
+</div>
+{% endif %}
+{% if doc.description %}
+<div class="content-description">
+    <span>
+ description       
+    </span>
+ 
+<div class="description-text" style="padding: 5px ;">
+{{doc.description}}
+</div>   
+</div>
+
+{% endif %}        
+        
+        
+        
+        
+        
+      
+        <!-- <div class="content-order-button">
+        <button class="add-to-order-button bg-theme-color" onclick="addToOrder('{{doc.product_code}}')">Add to order</button>
+        </div> -->
+    </div>
+
+    <div class="p-3">
+        <div class="content-footer">
             {% if emenu.hotel_room_call_number %}
-                <h4 style="color:#ff5959" class="text-center">From Hotel Room: Please Deal {{emenu.hotel_room_call_number}}</h4>
+                <div style="color:#ff5959" class="text-center">From Hotel Room: Please Deal {{emenu.hotel_room_call_number}}</div>
             {% endif %}
             {% if emenu.phone_number %}
-                <h4 style="color:#ff5959" class="text-center">From Outside: {{emenu.phone_number}}</h4>
+                <div style="color:#ff5959" class="text-center">From Outside: {{emenu.phone_number}}</div>
             {% endif %}
             {% if emenu.address %}
             <div style="font-weight: 500;" class="text-center">{{emenu.address}} </div>
@@ -111,6 +189,18 @@
         </div>
     </div>
 </div>
+<script>
+    function goBack (p) {
+			const referrer = document.referrer;
+			const currentDomain = window.location.hostname;
+
+			if (referrer && new URL(referrer).hostname === currentDomain) {
+				history.back();
+			} else {
+				window.location.href = window.location.origin + '/' + p
+			}
+		} 
+</script>
 <!-- <button id="btn_add_to_order" data-id="{{doc.product_code}}">Add to order</button>
 <button id="submit_order" >Submit Order</button> -->
 {% endblock %}

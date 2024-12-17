@@ -210,6 +210,95 @@ def reset_sale_transaction():
     else:
         return {"Invalid Method."}
 
+## RESET SALE TRANSACTION
+@frappe.whitelist()
+def reset_sale_transaction_pos_only():
+    # backupd db first
+    run_backup_command()
+
+    if frappe.local.request.method == "POST":
+        if frappe.session.user == 'Administrator':
+
+            #gym
+            frappe.db.sql("delete from `tabMembership Payment`")
+            frappe.db.sql("delete from `tabMembership Check In Items`")
+            frappe.db.sql("delete from `tabMembership Check In`")
+            frappe.db.sql("delete from `tabMembership Family`")
+            frappe.db.sql("delete from `tabMembership`") 
+           
+            doctypes = ["Membership","Membership Check In","Membership Payment","Sales Coupon Payment"]
+            for d in doctypes:                 
+                formats =  frappe.get_meta(d).get_field("naming_series").options
+                if formats:
+                    for f in formats.split("\n"):
+                        for n in range(2022, 2130):
+                            format_text = replace_format(f,str(n))                            
+                            frappe.db.sql("update `tabSeries` set current=  0 where name='{}'".format(format_text) ) 
+                                       
+            #end gym
+            #coupon
+            ## cash coupon
+            frappe.db.sql("delete from `tabSale Cash Coupon Claim`")
+            frappe.db.sql("delete from `tabCash Coupon Items`")
+            frappe.db.sql("delete from `tabCash Coupon`")
+
+            ## sale coupon
+            frappe.db.sql("delete from `tabCheck In Sale Coupon`")        
+            frappe.db.sql("delete from `tabSales Coupon Payment`")
+            frappe.db.sql("delete from `tabSale Coupon Payment`")
+            frappe.db.sql("delete from `tabSale Coupon Items`")    
+            frappe.db.sql("delete from `tabSale Coupon`")
+            frappe.db.sql("delete from `tabSale Coupon Type`")
+            # end coupon
+
+            # general ledger by sales
+            frappe.db.sql("delete from `tabGeneral Ledger` where voucher_type in ('Sale','Sale Payment')")
+            # end general ledger by sales
+
+            frappe.db.sql("delete from `tabCash Transaction`")
+            frappe.db.sql("delete from `tabSale Product Deleted`")
+            frappe.db.sql("delete from `tabSale Product SPA Commission`")            
+            frappe.db.sql("delete from `tabInventory Transaction`")
+            frappe.db.sql("delete from `tabPOS Sale Payment`")
+            frappe.db.sql("delete from `tabSale Payment`")
+            frappe.db.sql("delete from `tabSale Product`")
+            frappe.db.sql("delete from `tabSale`")
+
+            frappe.db.sql("delete c from `tabCashier Shift Cash Float` c inner join `tabCashier Shift` x on x.name = c.parent where x.is_edoor_shift = 0")
+            frappe.db.sql("delete c from `tabCashier Shift Cash Count` c inner join `tabCashier Shift` x on x.name = c.parent where x.is_edoor_shift = 0")
+            frappe.db.sql("delete from `tabCashier Shift` where is_edoor_shift = 0")
+
+            frappe.db.sql("delete from `tabPromotion Products`")
+            frappe.db.sql("delete from `tabPromotion Customer Group`")
+            frappe.db.sql("delete from `tabHappy Hours Promotion`")
+            frappe.db.sql("delete from `tabPOS Voucher Payment`")
+            frappe.db.sql("delete from `tabVoucher`")
+            frappe.db.sql("delete from `tabVoucher Payment`")
+            frappe.db.sql("delete from `tabVersion` where ref_doctype in ('Sale','POS Sale Payment','Sale Payment','Sale Product','Cashier Shift Cash Float','Cashier Shift','Working Day') ")
+            frappe.db.sql("delete from `tabComment` where reference_doctype in ('Sale','POS Sale Payment','Sale Payment','Sale Product','Cashier Shift Cash Float','Cashier Shift','Working Day')")
+
+            
+            #reset sale transaction 
+            doctypes = ["Sale","Sale Payment","Cashier Shift","Working Day","Cash Transaction","Voucher","Voucher Payment","Cash Coupon"]
+            for d in doctypes:
+                if frappe.get_meta("Sale").get_field("naming_series"):
+                    formats =  frappe.get_meta(d).get_field("naming_series").options
+                    if formats:
+                        for f in formats.split("\n"):
+                            for n in range(2022, 2130):
+                                format_text = replace_format(f,str(n))                            
+                                frappe.db.sql("update `tabSeries` set current=  0 where name='{}'".format(format_text) )       
+
+            frappe.db.commit()
+
+            return {"You was reset sale transaction."}
+        else:
+            return {"Please contact to system's Administrator for reset sale transaction.(Permission denied)"}
+    
+    else:
+        return {"Invalid Method."}
+
+
 ## END RESET SALE TRANSACTION
 
 ## RESET DATABASE Method

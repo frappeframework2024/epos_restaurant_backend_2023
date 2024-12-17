@@ -50,6 +50,12 @@ def create_custom_field():
 					"fieldtype": "JSON",
      "default": "[]",
 					"insert_after": "show_sort_order_option",
+				},{
+					"label": _("Group By Fields"),
+					"fieldname": "group_by_field",
+					"fieldtype": "JSON",
+                     "default": "[]",
+					"insert_after": "short_order_field",
 				}
             ]
 				 

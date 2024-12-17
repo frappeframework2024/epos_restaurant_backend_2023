@@ -47,6 +47,7 @@ class eMenu(WebsiteGenerator):
 
 		context.popular_products = popular_products
 		context.pos_menus = get_menus(self.default_root_menu)
+		context.shortcut_menu = get_shortcut_menu()
 
 	def validate(self):
 		for pop in  self.popular_product:		
@@ -80,9 +81,14 @@ class eMenu(WebsiteGenerator):
 				
 
 def get_menus(parent_menu):
-    sql = "select name, photo from `tabPOS Menu` where parent_pos_menu = %(parent_menu)s and disabled=0"
-    data = frappe.db.sql(sql,{"parent_menu":parent_menu},as_dict = 1)
-    return data
+	sql = "select name, photo, shortcut_menu from `tabPOS Menu` where parent_pos_menu = %(parent_menu)s and disabled=0"
+	data = frappe.db.sql(sql,{"parent_menu":parent_menu},as_dict = 1)
+	return data
+
+def get_shortcut_menu():
+	sql = "select name, shortcut_menu from `tabPOS Menu` where shortcut_menu=1 and disabled=0"
+	data = frappe.db.sql(sql,as_dict = 1) 
+	return data
 
 def get_product_modifier(product):
 	#get product modifier

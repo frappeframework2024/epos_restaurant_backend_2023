@@ -1,20 +1,20 @@
-<div class="product_detail col-6 col-lg-6 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
-    <div class="col-inner"> 
+<div class="product_detail_mobile col-12 col-lg-6 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
+    <div class="col-inner-ml"> 
         <a href="/product_detail?emenu_name={{emenu_name}}&product_code={{p.product_code}}&category={{p.name}}" style="text-decoration: none;">
             <div class="row p-0 p-lg-3 items-inner-1 m-0 h-100">
-                <div class="col-12 col-lg-4 p-0 wrapper-image" style="background: url('/files/food_bg_image.jpg');">
-                    <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/food_bg_image.jpg"}}"/>
-                    <div class="position-absolute rounded p-1" style="bottom: 5px; background: #db3c76;right: 5px;">
+                <div class="col-12 col-lg-4 p-0 wrapper-image mobile_img" style="background: url('/files/food_bg_image.jpg');">
+                    <img loading="lazy" class="img pro-img-it mobile_img border" src="{{p.photo or " /files/food_bg_image.jpg"}}"/>
+                    <div class="promo_dis" style="bottom: 5px; background: #db3c76;right: 5px;">
                         <p class="text-white" style="font-size:12px;">{{p.product_code}}</p>
                     </div>
                         {% if p.is_empty_stock_warning == 1%}
-                            <div class="position-absolute rounded p-1" style="bottom: 5px; background: #db3c76;left: 5px;">
+                            <div class="promo_dis" style="bottom: 5px; background: #db3c76;left: 5px;">
                                     <p class="text-white" style="font-size:12px;">* Out of Order</p>
                             </div>
                         {% endif %}
                    
                         {% if p.discount_value > 0 %}
-                            <div class="position-absolute rounded p-1" style="top: 5px; background: #db3c76;left: 5px;">
+                            <div class="promo_dis" style="top: 5px; background: #db3c76;left: 5px;">
                                 {% if p.prices != [] %}
                                 {%set _prices = p.prices |selectattr('price_rule', 'equalto', default_price_rule) | list  %}
                                 {% for price in _prices %}     
@@ -44,39 +44,44 @@
                         {% endif %}
                     
                 </div>
-                <div class="col-12 col-lg-8 d-flex flex-column flex-lg-column py-3 ps-lg-3 py-lg-0 content-custom">
-                    <div class=""> 
-                        <div class="mb-3 mb-lg-0">
+                <div class="col-12 col-lg-8 d-flex flex-column flex-lg-column py-2 px-2 ps-lg-3 py-lg-0 content-custom-ml">
+                    <div class="text-start"> 
+                        <div class="mb-lg-0">
                             {% if p.product_name_en == p.product_name_kh %}
-                            <div class="item-tt-txt">{{p.product_name_kh}}</div>
+                            <div class="item-tt-txt-ml" style="color: {{p.kh_title_color}};">{{p.product_name_kh}}</div>
                             {%else%}
-                            <div title="{{p.product_name_kh}}" class="item-tt-txt" >{{p.product_name_kh}}</div>
-                            <div title="{{p.product_name_en}}" class="item-tt-txt en">{{p.product_name_en}} </div>
+                            <div title="{{p.product_name_kh}}" class="item-tt-txt-ml" style="color: {{p.kh_title_color}};">{{p.product_name_kh}}</div>
+                            <div title="{{p.product_name_en}}" class="item-tt-txt-ml en" style="color: {{p.en_title_color}};">{{p.product_name_en}} </div>
                             {%endif%} 
                         </div>
                         {% if p.description %}
-                            <div class="description-cs">{{p.description}}</div>
+                            <div class="text-start">{{p.description}}</div>
                         {% endif %}
                     </div>
                     <div class="d-block d-xl-flex justify-between">
-                        <div class="cnter-txt mt-3 mt-lg-0">
+                        <div class="cnter-txt mt-lg-0">
                             {% if p.prices != [] %}
                                 {%set _prices = p.prices |selectattr('price_rule', 'equalto', default_price_rule) | list  %}
                                 {% for price in _prices %}     
                                         {% if p.discount_value > 0 %}
+                                        <div class="d-flex gap-2 align-items-center">
+
+                                        
                                             {%if price.portion != "Normal" %}
-                                                <div><span class="price-cus portion">{{price.portion}}</span></div>
+                                                <div class="d-flex"><span class="meal-price portion" style="font-size: 14px !important;">{{price.portion}}</span></div> - 
                                             {%endif%}
-                                            <div class="d-flex gap-2 justify-center price-portion">    
-                                                <del class="price-cus" style="color:#ccc">{{frappe.format(price.price or 0,{"fieldtype":"Currency"})}}</del>
+                                            <div class="d-flex gap-2 text-start price-portion">    
+                                                
                                                 {% if p.discount_type=='Percent' %}
-                                                    <p class="price-cus">{{frappe.format((price.price or 0) - ((price.price or 0)* (p.discount_value/100) ),{"fieldtype":"Currency"})}}</p>
+                                                    <p class="meal-price">{{frappe.format((price.price or 0) - ((price.price or 0)* (p.discount_value/100) ),{"fieldtype":"Currency"})}}</p>
                                                 {% else %}
-                                                    <p class="price-cus">{{frappe.format((price.price or 0) - (p.discount_value) ,{"fieldtype":"Currency"})}}</p>
+                                                    <p class="meal-price">{{frappe.format((price.price or 0) - (p.discount_value) ,{"fieldtype":"Currency"})}}</p>
                                                 {%endif%}
+                                                <del class="del_price" style="color:#ccc">{{frappe.format(price.price or 0,{"fieldtype":"Currency"})}}</del>
                                             </div>
+                                        </div>
                                         {% else %}
-                                            <p class="price-cus portion">
+                                            <p class="meal-price portion">
                                                 {%if price.portion != "Normal" %} <span>{{price.portion}}:</span> {%endif%}
                                                 {{frappe.format(price.price or 0,{"fieldtype":"Currency"})}}
                                             </p>
@@ -84,19 +89,18 @@
                                   
                                 {% endfor %}
                             {% else %}
-                                <div class="flex gap-2 justify-center">
+                                <div class="flex gap-2 text-start">
                                         {% if p.discount_value > 0 %}
-                                            <del class="price-cus" style="color: #ccc;">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</del>
+                                            
                                             {% if p.discount_type=='Percent' %}
-                                                <p class="price-cus">{{frappe.format((p.price or  0) - ((p.price or 0)* (p.discount_value/100) ),{"fieldtype":"Currency"})}}</p>
+                                                <p class="meal-price">{{frappe.format((p.price or  0) - ((p.price or 0)* (p.discount_value/100) ),{"fieldtype":"Currency"})}}</p>
                                             {%else%}
-                                                <p class="price-cus">{{frappe.format((p.price or 0) - (p.discount_value) ,{"fieldtype":"Currency"})}}</p>
+                                                <p class="meal-price">{{frappe.format((p.price or 0) - (p.discount_value) ,{"fieldtype":"Currency"})}}</p>
                                             {%endif%}
+                                            <del class="del_price" style="color: #ccc;">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</del>
                                         {% else %}
-                                            <p class="price-cus">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</p>
+                                            <p class="meal-price">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</p>
                                         {% endif %}
-                                   
-                                    
                                 </div>
                             {% endif %}
                         </div>

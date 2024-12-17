@@ -1,4 +1,5 @@
 {% if (popular_products | length) >0 %}
+<hr/>
 <div class="scroll-section" id="popular_product">
     <div class="mt-4 mb-3">
         <h2><i class="fas fa-fire main-color"></i> Popular Products</h2>
@@ -6,13 +7,13 @@
     </div>
 
     {% if doc.is_mobile_show_1_column == 1%}
-    <div class="row p-2">
+    <div class="d-flex justify-content-around owl-carousel owl-theme p-2" id="popular_product_carousel">
         {% for p in popular_products %}
-        <div class="product_detail_mobile col-12 col-lg-6 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
+        <div class="product_detail_mobile text-dark">
             <div class="col-inner-ml">
-                <a style="text-decoration: none;">
-                    <div class="row p-0 p-lg-3 items-inner-1 m-0 h-100">
-                        <div class="col-12 col-lg-4 p-0 wrapper-image position-relative mobile_img" style="background: url('/files/food_bg_image.jpg');">
+                <a href="/product_detail?emenu_name={{doc.name}}&product_code={{p.product_code}}&category=populars" style="text-decoration: none;">
+                    <div class="p-0 items-inner-1 m-0 h-100">
+                        <div class="p-0 wrapper-image position-relative mobile_img" style="background: url('/files/food_bg_image.jpg');">
                             <img loading="lazy" class="img pro-img-it mobile_img" src="{{p.photo or " /files/food_bg_image.jpg"}}"/>
                             <div class="promo_dis" style="bottom: 5px; background: #db3c76;right: 5px;">
                                 <p class="text-white" style="font-size:12px;">{{p.product_code}}</p>
@@ -53,7 +54,7 @@
                             {% endif %}
                             
                         </div>
-                        <div class="col-12 col-lg-8 d-flex flex-column flex-lg-column py-2 px-2 ps-lg-3 py-lg-0 content-custom-ml">
+                        <div class="d-flex flex-column flex-lg-column py-2 px-2 content-custom-ml">
                             <div class="text-start">
                                 <div class="mb-lg-0">
                                     {% if p.product_name_en == p.product_name_kh %}                                    
@@ -227,6 +228,6 @@
         {%endfor%}
     </div>
     {%endif%}
-
 </div>
+<hr/>
 {%endif%}

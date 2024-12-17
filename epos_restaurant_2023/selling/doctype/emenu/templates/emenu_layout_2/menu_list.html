@@ -1,6 +1,10 @@
-
-<div class="row g-3">
-{%for m in pos_menus%}
-    {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/menu_card.html", {"menu":m,"parent_menu":parent_menu,"placeholder_bg":placeholder_bg}) }}
-{%endfor%}
+{% if (pos_menus|length) > 0 %}
+<h2>Menu List</h2>
+<div class="w-100 menu_list_section overflow-hidden">
+    <div class="menu_list_section_inner owl-carousel owl-theme w-100" id="menu_list_carousel">
+    {%for m in pos_menus%}
+        {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/menu_card.html", {"menu":m,"parent_menu":parent_menu,"placeholder_bg":placeholder_bg}) }}
+    {%endfor%}
+    </div>
 </div>
+{% endif %}

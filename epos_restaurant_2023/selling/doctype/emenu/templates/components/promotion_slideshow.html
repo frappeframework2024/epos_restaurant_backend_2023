@@ -4,31 +4,14 @@
         <div class="promo-section mt-4 mb-3">
             <h1 class="text-center">Promotion</h1> 
         </div>
-        <div class="justify-center p-4 w-100" style="background: url({{doc.promo_image}});border-radius: 20px;background-repeat: no-repeat;background-size: cover;"> 
-            <div class="owl-carousel owl-theme mb-3" id="slid_banner">
+        <div class="justify-center w-100" > 
+            <div class="d-flex justify-content-around owl-carousel owl-theme mb-3" id="slid_banner">
                 {% for p in promotion %}
-                    <div class="item">
-                        <img class="lazy promo-st" src="{{p.photo or " /files/no_image.jpg"}}"/>
+                    <div class="item overflow-hidden rounded">
+                        <img class="lazy promo-st" src="{{p.photo or " /files/no_image.jpg"}}"/> 
                     </div>
                 {% endfor %} 
             </div>
         </div>
     {% endif %}
 </div>
-
-<!-- <div class="promotion_section_emenu"> 
-    {% if (promotion|length) > 0 %}
-        <div class="promo-section mt-4 mb-3">
-            <h1 class="text-center">Promotion</h1> 
-        </div>
-        <div class="justify-center p-4 w-100" style="background: url({{doc.promo_image}});border-radius: 20px;background-repeat: no-repeat;background-size: cover;"> 
-            <div class="d-flex justify-center gap-3">
-                {% for p in promotion %}
-                    <div class="rounded overflow-hidden">
-                        <img class="lazy promo-st" src="{{p.photo or " /files/no_image.jpg"}}"/>
-                    </div>
-                {% endfor %} 
-            </div>
-        </div>
-    {% endif %} 
-</div> -->

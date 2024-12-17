@@ -7,27 +7,30 @@
 {% endblock %}
 
 {% block page_content %}
-{{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/header_logo.html", {"doc":emenu}) }}
+<!-- back -->
+{{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/header_logo.html", {"doc":emenu,"back_btn":doc.parent_pos_menu}) }}
 <div class="container sections-content-1">
     <div class="sections sections-content">
         {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/header_title_description.html", {"doc":emenu}) }}
-
+        <hr/>
         {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/promotion_slideshow.html", {"doc":emenu,"promotion":emenu.promotion}) }}
-    <!-- {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/navigation_menu.html", {"doc":doc}) }} -->
-    <!-- {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/popular_product.html", {"doc":doc,"popular_products":popular_products}) }} -->
-
-        <!-- back -->
-        {% if doc.parent_pos_menu  %}
-            <a href="/menu_category?menu_category={{doc.parent_pos_menu}}">Back</a>
-        {%endif%}
+        {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/popular_product.html", {"doc":emenu,"popular_products":emenu.popular_product}) }}
+        {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/navigation_menu.html", {"shortcut_menu":shortcut_menu}) }}
+        
         <!-- pos menu menu -->
         {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/emenu_layout_2/menu_list.html", {"pos_menus":pos_menus,"parent_menu":doc.name,"placeholder_bg":emenu.category_placeholder_background}) }}
-        
+       
         <!-- render product -->
         {%if products %}
-            {%for p in products%}
-                {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/product_card.html", {"p":p,"default_price_rule":emenu.default_price_rule,"emenu_name":emenu.name}) }}
-            {%endfor%}
+            <div class="mt-4 mb-3 text-center">
+                <h2>Your dishes are here</h2>
+                <p>Find Your Favorite</p>
+            </div>
+            <div class="row p-2">
+                {%for p in products%}
+                    {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/product_card.html", {"p":p,"default_price_rule":emenu.default_price_rule,"emenu_name":emenu.name}) }}
+                {%endfor%}
+            </div>
         {%endif%}
 
     </div>
