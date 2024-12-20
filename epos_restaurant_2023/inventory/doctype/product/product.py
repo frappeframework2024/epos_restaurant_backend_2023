@@ -389,7 +389,7 @@ def update_product_info_queue(product,portion=None):
 		item.save()
     
 def update_uom_conversion(self,item):
-	if (item.base_unit or '') == "" or (self.base_unit or '') == "":
+	if (item.base_unit or '') == "" or (self.base_unit or '') == "" or (self.base_unit or '') != (self.unit or ''):
 		item.base_unit = self.base_unit = self.unit
 	sql_a = "select conversion from `tabUnit of Measurement Conversion` where from_uom='{0}' and to_uom='{1}' order by creation desc limit 1".format(item.unit,item.base_unit)
 	sql_b = "select conversion from `tabUnit of Measurement Conversion` where from_uom='{0}' and to_uom='{1}' order by creation desc limit 1".format(item.base_unit,item.unit)

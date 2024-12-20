@@ -1,6 +1,8 @@
 
 import frappe
+import json
 from frappe import _
+from  epos_restaurant_2023.api.cache_function import get_default_account_from_pos_config, get_default_account_from_revenue_group
 from epos_restaurant_2023.inventory.inventory import (
 	get_product_cost, 
 	get_uom_conversion
@@ -152,46 +154,46 @@ def submit_sale_to_general_ledger_entry(self):
 	# cost of good sold account
 	
 	if sum([d.quantity* (d.cost or 0) for d in self.sale_products if d.is_inventory_product==1]):	
-
-		if not self.default_cost_of_goods_sold_account:
-				frappe.throw(_('Please select default cost of goods sold account'))
-	
-		doc = {
-				"doctype":"General Ledger",
-				"posting_date":self.posting_date,
-				"account": self.default_cost_of_goods_sold_account,
-				"amount":sum([d.quantity* (d.cost or 0) for d in self.sale_products if d.is_inventory_product==1]),
-				"againt":self.default_inventory_account,
-				"againt_voucher_type":"Sale",
-				"againt_voucher_number": self.name,
-				"voucher_type":"Sale",
-				"voucher_number":self.name,
-				"business_branch": self.business_branch,
-				"type":"Asset"#not use in db
-			}
-		docs.append(doc)
+		for acc in set([d.default_expense_account for d in self.sale_products]):
+			if not acc:
+				frappe.throw(_("Please enter expense account"))
+			doc = {
+					"doctype":"General Ledger",
+					"posting_date":self.posting_date,
+					"account": acc,
+					"amount":sum([d.quantity* (d.cost or 0) for d in self.sale_products if (d.is_inventory_product==1 and d.default_income_account==acc)]),
+					"againt":self.default_inventory_account,
+					"againt_voucher_type":"Sale",
+					"againt_voucher_number": self.name,
+					"voucher_type":"Sale",
+					"voucher_number":self.name,
+					"business_branch": self.business_branch,
+					"type":"Asset"#not use in db
+				}
+			docs.append(doc)
 	if sum([d.quantity*(d.cost or 0)  for d in self.sale_products if d.is_inventory_product==1]):
 	# deduct stock in hand
-		if not self.default_inventory_account:
-				frappe.throw(_('Please select default inventory account'))
-		doc = {
-				"doctype":"General Ledger",
-				"posting_date":self.posting_date,
-				"account":self.default_inventory_account,
-				"amount":sum([d.quantity*(d.cost or 0)  for d in self.sale_products if d.is_inventory_product==1])*-1,
-				"againt":self.default_cost_of_goods_sold_account,
-				"againt_voucher_type":"Sale",
-				"againt_voucher_number": self.name,
-				"voucher_type":"Sale",
-				"voucher_number":self.name,
-				"business_branch": self.business_branch,
-				"type":"Asset"#not use in db
-			}
-		docs.append(doc)
+		for acc in set([d.default_expense_account for d in self.sale_products]):
+			if not acc:
+				frappe.throw(_("Please enter expense account"))
+			doc = {
+					"doctype":"General Ledger",
+					"posting_date":self.posting_date,
+					"account":self.default_inventory_account,
+					"amount":sum([d.quantity*(d.cost or 0)  for d in self.sale_products if (d.is_inventory_product==1 and d.default_income_account==acc)])*-1,
+					"againt":acc,
+					"againt_voucher_type":"Sale",
+					"againt_voucher_number": self.name,
+					"voucher_type":"Sale",
+					"voucher_number":self.name,
+					"business_branch": self.business_branch,
+					"type":"Asset"#not use in db
+				}
+			docs.append(doc)
 
 	
 	# cost of good sold for product have recipes
-	total_amount = 0
+	recipe_acc = []
 	for sp in self.sale_products:
 		if (sp.is_inventory_product or 0) == 0:
 			product = frappe.get_cached_doc("Product",sp.product_code)
@@ -202,36 +204,39 @@ def submit_sale_to_general_ledger_entry(self):
 						# get cost or recipe item
 						cost = get_product_cost(self.stock_location,r.product)
 						uom_conversion = get_uom_conversion(recipe.unit,r.unit)
-						total_amount += total_amount + (cost / uom_conversion * r.quantity)
-	if total_amount > 0:
-		doc = {
-			"doctype":"General Ledger",
-			"posting_date":self.posting_date,
-			"account": self.default_cost_of_goods_sold_account,
-			"amount":total_amount,
-			"againt":self.default_inventory_account,
-			"againt_voucher_type":"Sale",
-			"againt_voucher_number": self.name,
-			"voucher_type":"Sale",
-			"voucher_number":self.name,
-			"business_branch": self.business_branch,
-			"type":"Asset"
-		}
-		docs.append(doc)
-		doc = {
-			"doctype":"General Ledger",
-			"posting_date":self.posting_date,
-			"account": self.default_inventory_account,
-			"amount":total_amount*-1,
-			"againt":self.default_cost_of_goods_sold_account,
-			"againt_voucher_type":"Sale",
-			"againt_voucher_number": self.name,
-			"voucher_type":"Sale",
-			"voucher_number":self.name,
-			"business_branch": self.business_branch,
-			"type":"Asset"
-		}
-		docs.append(doc)
+						total_amount = (cost / uom_conversion * r.quantity)
+						recipe_acc.append({"account":get_expense_account(self,recipe),"total_amount":total_amount})
+	group_recipe_acc = set([d["account"] for d in recipe_acc])
+	if len(group_recipe_acc) > 0:
+		for acc in group_recipe_acc:
+			doc = {
+				"doctype":"General Ledger",
+				"posting_date":self.posting_date,
+				"account": acc,
+				"amount":sum([d["total_amount"] for d in recipe_acc if d["account"]==acc]),
+				"againt":self.default_inventory_account,
+				"againt_voucher_type":"Sale",
+				"againt_voucher_number": self.name,
+				"voucher_type":"Sale",
+				"voucher_number":self.name,
+				"business_branch": self.business_branch,
+				"type":"Asset"
+			}
+			docs.append(doc)
+			doc = {
+				"doctype":"General Ledger",
+				"posting_date":self.posting_date,
+				"account": self.default_inventory_account,
+				"amount": sum([d["total_amount"] for d in recipe_acc if d["account"]==acc])*-1,
+				"againt": acc,
+				"againt_voucher_type":"Sale",
+				"againt_voucher_number": self.name,
+				"voucher_type":"Sale",
+				"voucher_number":self.name,
+				"business_branch": self.business_branch,
+				"type":"Asset"
+			}
+			docs.append(doc)
 		
 	# cash coupon claim
 	if self.total_cash_coupon_claim> 0:
@@ -340,5 +345,30 @@ def submit_sale_to_general_ledger_entry(self):
    
 	submit_general_ledger_entry(docs=docs)
 
+def get_expense_account(self,recipe):
+	account = ""
+	# 1 get from product
+	sql="select default_expense_account from `tabProduct Default Account` where parent = %(parents)s and business_branch =%(business_branch)s"
+	acc = frappe.db.sql(sql, {"parents":recipe.name, "business_branch":self.business_branch},as_dict=1)
+	if len(acc) > 0:
+		account = acc[0]["default_expense_account"]
+  
+	# 2 get from pos_config
+	if account == "":
+		acc = get_default_account_from_pos_config(json.dumps({"business_branch": self.business_branch, "pos_config":self.pos_config, "revenue_groups" : list([recipe.revenue_group])}))
+		if len(acc)>0:
+			account = acc[0]["default_expense_account"]
 
- 
+	# 3 get account code from revenue group 
+	if account == "":
+		acc = get_default_account_from_revenue_group(json.dumps( {"business_branch": self.business_branch, "revenue_groups": list([recipe.revenue_group])}))
+		if len(acc)>0:
+			account = acc[0]["default_expense_account"]
+	
+	# 4 get account code from revenue group 
+	if account == "":
+		acc = frappe.get_cached_value("Business Branch",self.business_branch, "default_cost_of_good_sold_account")
+		if acc:
+			account = acc
+	
+	return account

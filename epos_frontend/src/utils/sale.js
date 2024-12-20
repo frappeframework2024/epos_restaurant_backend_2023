@@ -89,23 +89,21 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                         await get_base_unit(p.name).then((res)=>{base_unit = res})
                         if(unit == "" || unit == null || unit == undefined){
                             unit = base_unit
-                            console.log(1)
                         }
                         if(unit != base_unit){
                             const portion = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule && decodeURIComponent(r.unit) == unit);
                             const modifiers = JSON.parse((p.modifiers || ""))?.filter(r => (r.branch == sale.sale.business_branch || r.branch == ''));
                             productPrices = { "portion":(portion[0] || []),"modifiers":(modifiers[0] || [])}
-                            console.log(2)
+                      
                         }
                         else if(unit == base_unit && sale.setting.base_unit_popup == 1){
                             productPrices = await addModifierDialog();
-                            console.log(3)
                         }
                         else{
                             const portion = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule && decodeURIComponent(r.unit) == unit);
                             const modifiers = JSON.parse((p.modifiers || ""))?.filter(r => (r.branch == sale.sale.business_branch || r.branch == ''));
                             productPrices = { "portion":(portion[0] || []),"modifiers":(modifiers[0] || [])}
-                            console.log(4)
+                         
                         }
                     }
                     else{

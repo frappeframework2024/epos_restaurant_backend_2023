@@ -11,7 +11,12 @@ def get_context(context):
     context.products = get_product(frappe.form_dict.menu_category)
     context.shortcut_menu = get_shortcut_menu()
 
-    context.popular_product = emenu.popular_product
+    popular_products = []
+    for d in emenu.popular_product:
+        d.prices = json.loads(d.prices or "[]")
+        popular_products.append(d)
+
+    context.popular_products = popular_products
 
 
 def get_sub_menu(parent_menu):
