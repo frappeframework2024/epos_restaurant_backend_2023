@@ -284,21 +284,22 @@ def get_report_group_data(filters):
  
 def get_report_summary(data,filters):
 	hide_columns = filters.get("hide_columns")
-	report_summary=[]
-	if filters.parent_row_group==None:
-		if not filters.is_ticket:
-			report_summary =[{"label":"Total " + filters.row_group ,"value":len(data)}]
-	
-	fields = get_report_field(filters)
+	report_summary=[] 
+	if filters.show_summary:
+		if filters.parent_row_group==None:
+			if not filters.is_ticket:
+				report_summary =[{"label":"Total " + filters.row_group ,"value":len(data)}]
+		
+		fields = get_report_field(filters)
 
-	for f in fields:
-		if not hide_columns or  f["label"] not in hide_columns:
-			value=sum(d["total_" + f["fieldname"]] for d in data if d["indent"]==0)
-			if f["fieldtype"] == "Currency":
-				value = frappe.utils.fmt_money(value)
-			elif f["fieldtype"] =="Float":
-				value = "{:.2f}".format(value)
-			report_summary.append({"label":"Total {}".format(f["label"]),"value":value,"indicator":f["indicator"]})	
+		for f in fields:
+			if not hide_columns or  f["label"] not in hide_columns:
+				value=sum(d["total_" + f["fieldname"]] for d in data if d["indent"]==0)
+				if f["fieldtype"] == "Currency":
+					value = frappe.utils.fmt_money(value)
+				elif f["fieldtype"] =="Float":
+					value = "{:.2f}".format(value)
+				report_summary.append({"label":"Total {}".format(f["label"]),"value":value,"indicator":f["indicator"]})	
 
 	return report_summary
 

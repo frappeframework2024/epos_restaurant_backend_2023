@@ -602,7 +602,9 @@ def receipt_list_summary(filter):
     sql_deleted_query = " AND ".join(sql_deleted_conditions) 
 
     data = frappe.db.sql(sql.format("where " + sql_query),as_dict=1) 
-    data_deleted = frappe.db.sql("select sum(if(docstatus=2,1,0)) as total_receipt_deleted from `tabSale` {}".format("where " + sql_deleted_query),as_dict=1) 
+    deleted_sql = """select sum(if(docstatus=2,1,0)) as total_receipt_deleted from `tabSale` {}""".format("where deleted_type is null and " + sql_deleted_query)
+     
+    data_deleted = frappe.db.sql(deleted_sql,as_dict=1) 
     data[0].update({"total_receipt_deleted":data_deleted[0]["total_receipt_deleted"]})
     return data
 

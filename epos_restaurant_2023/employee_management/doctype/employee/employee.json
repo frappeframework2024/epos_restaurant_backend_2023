@@ -65,6 +65,8 @@
   "basic_salary",
   "employee_type",
   "device_id",
+  "housekeeping_app_section",
+  "is_housekeeper",
   "emergency_contact_tab",
   "emergency_contacts",
   "exit_information_tab",
@@ -449,12 +451,23 @@
    "fieldname": "encrypt_password",
    "fieldtype": "Password",
    "label": "Encrypt Password"
+  },
+  {
+   "fieldname": "housekeeping_app_section",
+   "fieldtype": "Section Break",
+   "label": "Housekeeping App"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_housekeeper",
+   "fieldtype": "Check",
+   "label": "Is Housekeeper"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-04 09:37:48.854327",
+ "modified": "2024-12-20 14:18:45.248030",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee",
@@ -528,5 +541,5 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "employee_code"
+ "title_field": "employee_name"
 }

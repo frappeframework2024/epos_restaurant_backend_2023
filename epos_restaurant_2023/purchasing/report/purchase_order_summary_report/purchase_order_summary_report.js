@@ -129,6 +129,14 @@ frappe.query_reports["Purchase Order Summary Report"] = {
 			"options": "None\nbar\nline\npie",
 			"default":"bar"
 		},
+		{
+			"fieldname": "show_summary",
+			"label": __("Show Summary"),
+			"fieldtype": "Check",
+			default:false,
+			hide_in_filter:1,
+			// "on_change": function (query_report) {},
+		},
 
 	],
 	"formatter": function(value, row, column, data, default_formatter) {
