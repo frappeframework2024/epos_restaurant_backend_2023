@@ -235,14 +235,14 @@ function onSave() {
     (a.sale.sale_products || []).forEach((sp) => {
       sp.deleted_quantity = 0;
       if (sp.parent != a.sale.name) {
-        sp.name = ""
-
-        
+        sp.name = ""        
       }
-      let from = getOldSale(_active_sales,sp.original_parent)
-      sp.move_from_table = from.sale.tbl_number
-      sp.move_from_sale = from.sale.name
 
+      let from = getOldSale(_active_sales,sp.original_parent)
+      if(from){ 
+        sp.move_from_table = from.sale.tbl_number
+        sp.move_from_sale = from.sale.name
+      }
     });
   });
 

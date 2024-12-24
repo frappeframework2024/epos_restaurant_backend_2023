@@ -186,13 +186,20 @@ function onDeleteBillPressed(group) {
     if (_current_sale.length > 0) {
         const result = props.data.filter((x) => x.deleted == false).flatMap(a => (a.sale.sale_products || []));
         result.forEach((r) => r.total_selected = 0);
-        (group.sale.sale_products || []).forEach((r) => r.total_selected = r.quantity);
+        (group.sale.sale_products || []).forEach((r) => {            
+            r.total_selected = r.quantity ;
+            if(group.sale.name != ""){
+                r.move_from_table = group.sale.tbl_number
+                r.move_from_sale = group.sale.name
+            } 
+        });
         onDownloadPressed(_current_sale[0]);
 
         if (group.sale.name == "") {
             props.data.splice(props.data.indexOf(group), 1);
         }
         else {
+
             group.deleted = true;
         }
     }
