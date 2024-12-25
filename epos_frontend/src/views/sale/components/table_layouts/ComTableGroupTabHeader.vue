@@ -6,7 +6,7 @@
             </v-col>
             <v-col cols="12" :md="tableSaleColor ? '6' : '12'" :lg="!mobile && tableSaleColor ? '4' : '12'">
                 <v-tabs align-tabs="center" height="100%" v-model="tableLayout.tab" center-active>
-                    <v-tab :class="tableLayout.tab == g.key ? 'text-green' : ''" :style="{'text-transform': 'none', 'font-weight': tableLayout.tab == g.key ? 'bold' : ''}" v-for="g in tableLayout.table_groups" :key="g.key"
+                    <v-tab :class="tableLayout.tab == g.key ? 'text-green' : ''" :style="{'text-transform': 'none', 'font-weight': tableLayout.tab == g.key ? 'bold' : '', 'font-family':'Khmer'}" v-for="g in tableLayout.table_groups" :key="g.key"
                         :value="g.key" @click="onTabClick(g.key)">
                         {{ getGroupName(g) }}
                     </v-tab>

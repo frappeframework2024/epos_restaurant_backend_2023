@@ -16,7 +16,6 @@
         {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/promotion_slideshow.html", {"doc":emenu,"promotion":emenu.promotion}) }}
         {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/popular_product.html", {"doc":emenu,"popular_products":emenu.popular_product}) }}
         {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/navigation_menu.html", {"shortcut_menu":shortcut_menu}) }}
-        
         <!-- pos menu menu -->
         {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/emenu_layout_2/menu_list.html", {"pos_menus":pos_menus,"parent_menu":doc.name,"placeholder_bg":emenu.category_placeholder_background}) }}
        
