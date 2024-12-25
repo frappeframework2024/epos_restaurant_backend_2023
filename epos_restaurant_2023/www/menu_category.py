@@ -3,6 +3,7 @@ import json
 
 
 def get_context(context):
+    context.no_cache = 1
     emenu = frappe.get_doc("eMenu", "emenu")
     context.emenu = emenu
     context.doc = frappe.get_doc("POS Menu", frappe.form_dict.menu_category)

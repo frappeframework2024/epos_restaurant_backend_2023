@@ -30,7 +30,7 @@ class EmployeeCommissionPayment(Document):
 					   posting_date
 					   from `tabSale` 
 					   where sale_commission_to = '{0}' and 
-					   sale_commission_balance > 0 and
+					   sale_commission_balance > 0 and docstatus = 1 and
 					   posting_date between '{1}' and '{2}'
 					   """.format(doc.employee,doc.sale_start_date,doc.sale_end_date),as_dict=1)
 		for a in data:
