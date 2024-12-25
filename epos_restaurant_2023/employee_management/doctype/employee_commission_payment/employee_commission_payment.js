@@ -2,16 +2,18 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Employee Commission Payment", {
-	setup: function(frm) {
-		frm.set_query("sale", function() {
+	refresh(frm) {
+		frm.set_query('sale', 'employee_commission_sale', function(doc, cdt, cdn) {
+			var d = locals[cdt][cdn];
 			return {
 				filters: [
 					["Sale","docstatus", "=", "1"],
-					["Sale","sale_commission_amount", ">", "0"],
 					["Sale","sale_commission_balance", ">", "0"]
 				]
-			}
+			};
 		});
+	},
+	setup: function(frm) {
 		renderSummary(frm)
 	},
 	get_sales(frm){
