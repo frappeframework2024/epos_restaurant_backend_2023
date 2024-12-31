@@ -56,7 +56,20 @@ def create_custom_field():
 					"fieldtype": "JSON",
                      "default": "[]",
 					"insert_after": "short_order_field",
-				}
+				},
+    {
+					"label": _("Use Report Server"),
+					"fieldname": "use_report_server",
+					"fieldtype": "Check",
+                    "default": "0",
+					"insert_after": "short_order_field",
+				},
+    {
+					"label": _("Server Report Name"),
+					"fieldname": "server_report_name",
+					"fieldtype": "Data",
+					"insert_after": "use_report_server",
+				},
             ]
 				 
 		}

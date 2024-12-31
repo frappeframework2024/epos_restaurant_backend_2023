@@ -6,7 +6,7 @@
                     <p><i class="fas fa-chevron-left"></i></p>
                 </div>
                 <div class="navigt tabs">
-                    <div class="d-flex mb-0">
+                    <div class="d-flex mb-0 navigt-inner">
                         {% for m in shortcut_menu %} 
                         <a class="bg-white px-3 py-1 rounded-pill main-color nav-pro tab mt-1 menu_categories" 
                             href="/menu_category?menu_category={{m.name|urlencode }}&parent_menu={{(m.parent_pos_menu|urlencode ) or ''}}">

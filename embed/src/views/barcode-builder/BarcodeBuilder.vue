@@ -457,10 +457,9 @@ function getValueFromPath(obj, path) {
 }
 
 function onProductPriceSelected(selected) {
-  console.log("selected ",selected)
-  console.log("product_price",doc.value.product_price[0])
+ 
   const selectedIdx = doc.value.product_price.findIndex(item => item.barcode === selected.value.barcode);
-  console.log("selectedIdx",selectedIdx)
+ 
   data.value.elements.forEach(ele => {
     if (ele.key == 'product_code'){
       ele.fieldname = `${selected.value.parentfield}[${selectedIdx}].barcode`
@@ -472,9 +471,7 @@ function onProductPriceSelected(selected) {
       ele.fieldname =  `${selected.value.parentfield}[${selectedIdx}].unit`
     }
   }); 
-  console.log("`${selected.value.parentfield}[${selectedIdx}].price`",`${selected.value.parentfield}[${selectedIdx}].price`)
-  console.log("data.value1",getValueFromPath(doc.value,`${selected.value.parentfield}[${selectedIdx}].price`))
-  console.log("data",data.value)
+ 
 }
 
 

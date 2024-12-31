@@ -65,8 +65,6 @@
                                 {% for price in _prices %}     
                                         {% if p.discount_value > 0 %}
                                         <div class="d-flex gap-2 align-items-center">
-
-                                        
                                             {%if price.portion != "Normal" %}
                                                 <div class="d-flex"><span class="meal-price portion" style="font-size: 14px !important;">{{price.portion}}</span></div> - 
                                             {%endif%}

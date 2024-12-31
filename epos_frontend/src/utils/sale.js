@@ -58,7 +58,7 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
 
                 }
                 else if (p.is_combo_menu) {
-                    await onComboMenu(p)
+                    await onComboMenu(p,product)
                     p.modifiers = "";
                     p.portion = "";
                     p.modifiers_data = "[]";
@@ -206,7 +206,7 @@ function selectVariant(product_code,dialog){
     })
 }
 
-async function onComboMenu(p) {
+async function onComboMenu(p,product) {
     if (p.is_combo_menu && p.use_combo_group) {
         product.setSelectedComboMenu(p)
         const result = await SaleProductComboMenuGroupModal();

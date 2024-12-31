@@ -205,7 +205,8 @@
    "fieldname": "device_id",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Device ID"
+   "label": "Device ID",
+   "length": 500
   },
   {
    "fieldname": "column_break_uutk",
@@ -399,7 +400,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-25 11:05:50.366244",
+ "modified": "2024-12-26 10:58:14.644361",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",
