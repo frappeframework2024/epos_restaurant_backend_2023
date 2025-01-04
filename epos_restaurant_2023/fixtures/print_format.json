@@ -28,9 +28,11 @@
   "print_format_type": "Jinja",
   "raw_commands": null,
   "raw_printing": 0,
+  "server_report_name": null,
   "short_order_field": null,
   "show_section_headings": 0,
   "show_sort_order_option": 0,
-  "standard": "No"
+  "standard": "No",
+  "use_report_server": 0
  }
 ]

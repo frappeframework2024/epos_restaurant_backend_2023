@@ -24,6 +24,7 @@
               </v-card-title>
               <v-card-text class="!pt-0 !pr-0 !pb-14 !pl-0">
                 <v-list :lines="false" density="compact" class="pa-0">
+
                   <v-list-item :title="($t('Table')+ ' #')" v-if="s.tbl_number">
                     <template v-slot:append>
                       {{ s.tbl_number }}
@@ -34,6 +35,7 @@
                       <v-chip size="x-small" :color="s.sale_type_color">{{ s.sale_type }}</v-chip>
                     </template>
                   </v-list-item>
+                  
                   <v-list-item :title="$t('Guest Cover')" v-if="s.guest_cover">
                     <template v-slot:append>
                       {{ s.guest_cover }}

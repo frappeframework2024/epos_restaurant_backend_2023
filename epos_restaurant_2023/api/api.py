@@ -163,6 +163,7 @@ def get_system_settings(pos_profile="", device_name=''):
     #main currency information
     main_currency = frappe.get_doc("Currency",frappe.db.get_default("currency"))
     second_currency = frappe.get_doc("Currency",frappe.db.get_default("second_currency"))
+    exchange_rate_main_currency = frappe.db.get_default("exchange_rate_main_currency")
 
     payment_types=[]
     for p in pos_config.payment_type:
@@ -193,6 +194,27 @@ def get_system_settings(pos_profile="", device_name=''):
     currencies = frappe.db.sql("select name,symbol,custom_currency_precision as currency_precision,symbol_on_right, custom_pos_currency_format as pos_currency_format  from `tabCurrency` where enabled=1", as_dict=1)
     
 
+    to_currency = second_currency.name
+    if (exchange_rate_main_currency != main_currency.name):
+        to_currency = main_currency.name  
+
+    #get exchange rate
+    exchange_rate = frappe.db.sql("""select 
+                                        posting_date,
+                                        exchange_rate,
+                                        exchange_rate_input,
+                                        change_exchange_rate,
+                                        change_exchange_rate_input 
+                                    from `tabCurrency Exchange` 
+                                    where docstatus=1 
+                                    and from_currency= %(from_currency)s
+                                    and to_currency=%(to_currency) s
+                                    order by posting_date desc
+                                    limit 1""",{
+                                        "from_currency":exchange_rate_main_currency,
+                                        "to_currency":to_currency,
+                                    }, as_dict= 1)
+
     #get price rule
     price_rules = []
     for pr in pos_config.price_rules:
@@ -215,7 +237,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "website":pos_config.website,
         "sale_types":sale_types,
         "main_currency_name":main_currency.name,
-        "exchange_rate_main_currency":frappe.db.get_default("exchange_rate_main_currency"),
+        "exchange_rate_main_currency":exchange_rate_main_currency,
         "main_currency_symbol":main_currency.symbol,
         "main_currency_format":main_currency.custom_pos_currency_format,
         "main_currency_precision":main_currency.custom_currency_precision,
@@ -443,6 +465,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "shift_types":shift_types,
         "currencies":currencies,
         "default_currency":frappe.db.get_default("currency"),
+        "currency_exchange":exchange_rate,
         "pos_setting":pos_setting,
         "customer":default_customer.name,
         "customer_name":default_customer.customer_name_en,
@@ -1952,3 +1975,12 @@ def get_pos_profile_for_switch(pos_station,current_pos_profile,business_branch):
 @frappe.whitelist()
 def is_training_site():
     return frappe.get_cached_value("ePOS Settings",None, "is_demo_site")
+
+
+@frappe.whitelist()
+def update_pos_status(station_name):
+    frappe.db.sql("update `tabPOS Station` set is_used = 1 where name = %(name)s", {"name":station_name})
+    frappe.db.commit()
+    
+
+

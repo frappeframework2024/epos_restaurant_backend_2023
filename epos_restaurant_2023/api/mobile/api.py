@@ -91,6 +91,21 @@ def get_close_shift_summary(param):
 def get_pending_sale_orders(data):
      return _get_pending_sale_orders(data)
 
+@frappe.whitelist(methods="POST")
+def check_start_shift_exists_shift_type(param):
+     docs = frappe.get_list("Cashier Shift", 
+                            fields=["*"], 
+                            filters={
+                                 "pos_profile": param["pos_profile"],
+                                 "working_day":param["working_day"],
+                                 "shift_name":param["shift_name"],
+                                 "business_branch":param["business_branch"]
+                                 })
+     if len(docs)>0:
+          return True
+     return False
+
+
 @frappe.whitelist()
 def test_me():
      return "Yes"

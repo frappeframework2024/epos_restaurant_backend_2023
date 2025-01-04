@@ -5,7 +5,7 @@
         :size="mobile ? 'large' : 'x-large'" >
         <v-icon start icon="mdi-checkbox-marked-circle-outline" v-if="modifier.selected" color="orange"></v-icon>
         <span>
-            {{ modifier.modifier }} <CurrencyFormat :value="modifier.price"></CurrencyFormat>
+            {{ modifier.modifier }} <CurrencyFormat v-if="modifier.price>0" :value="modifier.price"></CurrencyFormat>
         </span>
     </v-chip> 
 </template>

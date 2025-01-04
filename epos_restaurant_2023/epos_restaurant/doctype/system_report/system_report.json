@@ -10,6 +10,7 @@
  "field_order": [
   "report_title",
   "report_name",
+  "server_report_path",
   "filter_option",
   "filter_default_value",
   "lft",
@@ -96,12 +97,18 @@
    "fieldname": "filter_default_value",
    "fieldtype": "Small Text",
    "label": "Filter Default Value"
+  },
+  {
+   "fieldname": "server_report_path",
+   "fieldtype": "Data",
+   "label": "Server Report Path",
+   "length": 500
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-09-11 10:06:25.487611",
+ "modified": "2025-01-02 20:43:40.673355",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "System Report",
