@@ -106,6 +106,91 @@ def check_start_shift_exists_shift_type(param):
      return False
 
 
+##get sale invoice
+@frappe.whitelist(methods="POST")
+def get_sale_invoice(doc_name):
+     result = {}
+     if not frappe.db.exists("Sale",doc_name):
+          return {"status":False}
+     
+     doc = frappe.get_doc("Sale", doc_name)
+     pos_profile = frappe.get_doc("POS Profile",doc.pos_profile)
+     setting_data = frappe.get_doc("POS Config", pos_profile.pos_config)
+     branding = frappe.get_doc("POS Branding", pos_profile.pos_branding)
+     currency = frappe.db.get_single_value("ePOS Settings","currency")
+     second_currency = frappe.db.get_single_value("ePOS Settings","second_currency")
+     second_currency_data = frappe.get_doc("Currency",second_currency)
+
+
+     order_date = frappe.db.sql("""select 
+                                   distinct cast(coalesce(order_time,creation) as date) as order_date 
+                                from `tabSale Product` 
+                                where parent='{}' 
+                                group by cast(coalesce(order_time,creation) as date)""".format(doc.name), as_dict = 1)
+     sale_product_data = frappe.db.sql("""select  
+                                       cast(coalesce(order_time,creation) as date) as order_date, 
+                                       product_name,
+                                       product_name_kh,
+                                       `portion`,
+                                       is_free,
+                                       note,
+                                       modifiers,
+                                       discount,
+                                       sum(discount_amount) as discount_amount,
+                                       discount_type,
+                                       sum(quantity) as quantity,
+                                       (price + modifiers_price)  as price  
+                                       from `tabSale Product` 
+                                   where parent='{}' 
+                                       group by  cast(coalesce(order_time,creation) as date) ,
+                                       product_name,
+                                       product_name_kh,
+                                       note,
+                                       `portion`,
+                                       is_free,
+                                       modifiers,
+                                       discount,
+                                       discount_type, 
+                                       price + modifiers_price""".format(doc.name),as_dict=1)
+     doc.sale_products = [] 
+
+     setting = {
+          "logo":branding.logo,
+          "business_name_en":setting_data.business_name_en,
+          "business_name_kh":setting_data.business_name_kh,
+          "vattin_number":setting_data.vattin_number,
+          "phone_number":setting_data.phone_number,
+          "address":setting_data.address,
+          "address_kh":setting_data.address_kh,
+          "email":setting_data.email,
+          "website":setting_data.website,
+     }
+     second_currency_value =  {
+          "name": second_currency_data.name,
+          "currency_name": second_currency_data.currency_name,
+          "symbol": second_currency_data.symbol,
+          "symbol_on_right": second_currency_data.symbol_on_right,
+          "number_format": second_currency_data.number_format,
+          "custom_currency_precision": second_currency_data.custom_currency_precision,
+          "custom_pos_currency_format": second_currency_data.custom_pos_currency_format,
+     }
+
+
+     result.update({
+          "status":True,
+          "setting":setting,
+          "currency":currency,
+          "second_currency":second_currency,
+          "second_currency_data":second_currency_value ,
+          "doc":doc,
+          "order_date":order_date,
+          "sale_product_data":sale_product_data,
+          })
+     
+     return result
+
+
+
 @frappe.whitelist()
 def test_me():
      return "Yes"

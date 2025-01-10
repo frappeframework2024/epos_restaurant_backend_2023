@@ -8,6 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "menu",
+  "menu_kh",
   "sort_product",
   "hidden"
  ],
@@ -30,12 +31,20 @@
    "fieldname": "hidden",
    "fieldtype": "Check",
    "label": "Hidden"
+  },
+  {
+   "fetch_from": "menu.pos_menu_name_kh",
+   "fieldname": "menu_kh",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Menu KH",
+   "options": "POS Menu"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-12-10 11:47:09.951626",
+ "modified": "2025-01-10 10:39:05.480920",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu Selection",

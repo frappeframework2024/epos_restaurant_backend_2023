@@ -20,8 +20,11 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import quote_plus
 from epos_restaurant_2023.api.security import aes_encrypt,get_aes_key,encode_base64,decode_base64,aes_decrypt
- 
+from frappe.model.rename_doc import get_link_fields
 
+@frappe.whitelist(allow_guest=True)
+def get_field(doctype):
+    return str(get_link_fields(doctype))
 
 
 

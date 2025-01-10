@@ -1,0 +1,104 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-01-09 13:48:39.162832",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "document_type",
+  "document_name",
+  "type",
+  "description",
+  "sort_order",
+  "quantity",
+  "price",
+  "amount",
+  "show_border_top",
+  "is_bold"
+ ],
+ "fields": [
+  {
+   "fieldname": "document_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Document Type"
+  },
+  {
+   "fieldname": "document_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Document Name"
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Type"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "description"
+  },
+  {
+   "fieldname": "sort_order",
+   "fieldtype": "Data",
+   "label": "sort_order"
+  },
+  {
+   "fieldname": "quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "quantity"
+  },
+  {
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "label": "price"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_border_top",
+   "fieldtype": "Check",
+   "label": "Show Border Top"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_bold",
+   "fieldtype": "Check",
+   "label": "Is Bold"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-09 16:04:11.678415",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "Tax Invoice Data",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

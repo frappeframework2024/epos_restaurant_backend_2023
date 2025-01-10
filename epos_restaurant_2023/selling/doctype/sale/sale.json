@@ -38,6 +38,7 @@
   "customer_group",
   "customer_photo",
   "column_break_geib",
+  "vattin_number",
   "province",
   "commune",
   "district",
@@ -1604,6 +1605,13 @@
    "fieldname": "deleted_type",
    "fieldtype": "Data",
    "label": "Deleted Type"
+  },
+  {
+   "fetch_from": "customer.vattin_number",
+   "fieldname": "vattin_number",
+   "fieldtype": "Data",
+   "label": "Vattin Number",
+   "read_only": 1
   }
  ],
  "image_field": "photo",
@@ -1626,7 +1634,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2024-11-30 16:26:12.790876",
+ "modified": "2025-01-04 16:02:40.241395",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

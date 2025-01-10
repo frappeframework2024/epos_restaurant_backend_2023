@@ -61,7 +61,7 @@
                             {%endif%}
                             {% for m in doc.pos_menu_selections %}
                             <a class="bg-white px-3 py-1 rounded-pill main-color nav-pro tab mt-1 menu_categories" href="#{{m.name}}">
-                                <p>{{m.menu}}</p>
+                                <p>{{m.menu}} {{'/' if m.menu!=m.menu_kh}} {{'' if m.menu==m.menu_kh else m.menu_kh }}</p>
                             </a>
                             {%endfor%}
                         </div>
