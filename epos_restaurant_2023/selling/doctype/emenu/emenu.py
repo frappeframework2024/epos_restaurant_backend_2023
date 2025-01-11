@@ -35,15 +35,29 @@ class eMenu(WebsiteGenerator):
             data = frappe.db.sql(sql, filter, as_dict=1)
 
             # Convert prices to JSON
+            items = []
             for item in data:
                 item["prices"] = json.loads(item["prices"] or "[]")
+                if len(item["prices"]) == 0:
+                    items.append(item)
+                else:
+                    prices =[d for d in item["prices"] if d["price_rule"] == self.default_price_rule]
+                    if len(prices) > 0:
+                        items.append(item)
+
 
         context.no_cache = not (self.enable_cache or 0)
-        context.products = data
+        context.products = items
         popular_products = []
         for d in self.popular_product:
             d.prices = json.loads(d.prices or "[]")
-            popular_products.append(d)
+            if len(d.prices) == 0:
+
+                popular_products.append(d)
+            else:
+                _prices =[x for x in d.prices if x["price_rule"] == self.default_price_rule]
+                if len(_prices) > 0:
+                    popular_products.append(d)
 
         context.popular_products = popular_products
         context.pos_menus = get_menus(self.default_root_menu)

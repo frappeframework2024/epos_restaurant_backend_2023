@@ -1026,6 +1026,7 @@ def get_sale_list_table_badge(data):
         and docstatus = 0"""
         result = frappe.db.sql(sql,{"pos_profiles":data["pos_profile"]},as_dict=1)
         return result
+    
     else:
         sql = """select 
             `name`,

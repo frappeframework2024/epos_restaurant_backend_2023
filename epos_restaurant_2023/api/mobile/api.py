@@ -1,7 +1,8 @@
 from epos_restaurant_2023.api.api import (
     get_current_shift_information,
     get_close_shift_summary as _get_close_shift_summary,
-    get_pending_sale_orders as _get_pending_sale_orders
+    get_pending_sale_orders as _get_pending_sale_orders,
+    get_sale_list_table_badge as _get_sale_list_table_badge
 ) 
 import frappe
 from builtins import str 
@@ -189,7 +190,9 @@ def get_sale_invoice(doc_name):
      
      return result
 
-
+@frappe.whitelist(methods="POST")
+def get_sale_list_table_badge(data):
+     return _get_sale_list_table_badge(data)
 
 @frappe.whitelist()
 def test_me():
