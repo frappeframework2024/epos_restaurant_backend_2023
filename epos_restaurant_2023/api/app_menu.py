@@ -17,7 +17,10 @@ def get_sidebar_menu_template_cached(user,site= frappe.local.site):
     # return [d["name"] for d in data["pages"]]
     
     
-    shortcut_menus = frappe.db.sql("select parent,  type,link_to,label, doc_view from `tabWorkspace Shortcut` where parent in %(parent_menu)s and custom_show_in_app_menu = 1 order by idx",{"parent_menu":[d["name"] for d in  data["pages"]]}, as_dict=1)
+    shortcut_menus = frappe.db.sql("select parent,  type,link_to,label, doc_view,stats_filter from `tabWorkspace Shortcut` where parent in %(parent_menu)s and custom_show_in_app_menu = 1 order by idx",{"parent_menu":[d["name"] for d in  data["pages"]]}, as_dict=1)
+    
+    
+    
     shortcut_menus =  get_list_with_permission(shortcut_menus) 
     workspace_links = frappe.db.sql("select name,idx, parent,link_to,link_type,label,link_count,type from `tabWorkspace Link` where parent in %(parents)s and custom_show_in_app_menu = 1   order by custom_sort_order, idx ",{"parents":[d["name"] for d in  data["pages"]]},as_dict=1)
     workspace_links =  get_list_with_permission(workspace_links)
@@ -35,7 +38,7 @@ def get_sidebar_menu_template_cached(user,site= frappe.local.site):
         sub_menu = [s for s in shortcut_menus if s["parent"]==d["name"]]
         if sub_menu:
             if "sub_menus" in d:
-                d["sub_menus"]["shortcut_menu"] = d["sub_menus"]["shortcut_menu"]  + [{"name":x["label"],"link_to":x["link_to"],'type':x["type"],"doc_view":x["doc_view"] } for x in  sub_menu ]
+                d["sub_menus"]["shortcut_menu"] = d["sub_menus"]["shortcut_menu"]  + [{"name":x["label"],"link_to":x["link_to"],'type':x["type"],"doc_view":x["doc_view"],"stats_filter":x["stats_filter"] } for x in  sub_menu ]
                 
         # workspace link
         if d["name"] in [x["parent"] for x  in workspace_links]:
@@ -130,7 +133,10 @@ def get_sidebar_menu_template_cached(user,site= frappe.local.site):
                                     </g>
                                     </svg>
                                 </div>
-                                <div class="ml-2"><a class="sub_menu_link" data-name="{{s.name}}" data-doc-view="{{s.doc_view}}" data-link-to="{{s.link_to}}" data-type="{{s.type}}">{{_(s.name)}}</a></div>
+                                <div class="ml-2">
+                                <button class="filterClick" onclick="onMenuClick()">{{s.name}}</button>
+                                <a class="sub_menu_link"   data-name="{{s.name}}" data-doc-view="{{s.doc_view}}" data-link-to="{{s.link_to}}" data-type="{{s.type}}">{{_(s.name)}}</a>
+                                </div>
                             </div>
                         {%endfor%}
                           <div class="accordion" id="accordionExample">
@@ -169,7 +175,7 @@ def get_sidebar_menu_template_cached(user,site= frappe.local.site):
                                                         </svg>
                                                 </div>
                                             </div>
-                                            <div class="ml-2"><a class="sub_menu_link"  data-link-to="{{l.link_to}}" data-type="{{l.link_type}}">{{_(l.label)}}</a></div>
+                                            <div class="ml-2"><a class="sub_menu_link"   data-link-to="{{l.link_to}}" data-type="{{l.link_type}}">{{_(l.label)}}</a></div>
                                         </div>
                                     {%endfor%}
                                 </div>

@@ -24,22 +24,26 @@ frappe.ui.form.on('eMenu Selection', {
                 {
                     fieldname: 'products',
                     fieldtype: 'Table',
-                    cannot_add_rows: true,
-                    in_place_edit: true,
+                    // cannot_add_rows: true,
+                    // in_place_edit: true,
                     data:products,
                     fields: [
                         { fieldname: 'product_code', fieldtype: 'Data', in_list_view: 1, label: 'Product Code',read_only:1 },
                         { fieldname: 'product_name_en', fieldtype: 'Data', in_list_view: 1, label: 'Product Name',read_only:1 },
                         { fieldname: 'hidden', fieldtype: 'Check', in_list_view: 1, label: 'Hidden',read_only:0 },
+
                         // {
                         //     fieldtype: 'Button',
                         //     fieldname: 'move_up',
                         //     label: 'Move Up',
                         //     in_list_view: 1,
-                        //     click: function(x) {
+                        //     click: function () {
                         //         let row = $(this).closest('.grid-row');
                         //         let index = row.index();
-                        //         reorder_records(dlg, index, Math.max(index - 1, 0));
+                        //         if (index > 0) {
+                        //             // Move row up within the full dataset
+                        //             reorder_records(dlg, index, index - 1);
+                        //         }
                         //     }
                         // },
                         // {
@@ -47,14 +51,15 @@ frappe.ui.form.on('eMenu Selection', {
                         //     fieldname: 'move_down',
                         //     label: 'Move Down',
                         //     in_list_view: 1,
-                        //     click: function() {
+                        //     click: function () {
                         //         let row = $(this).closest('.grid-row');
-                        //         let index = 1;
-                       
-                        //         reorder_records(dlg, index, Math.min(index + 1, dlg.fields_dict.products.df.data.length - 1));
-                            
+                        //         let index = row.index();
+                        //         if (index < dlg.fields_dict.products.df.data.length - 1) {
+                        //             // Move row down within the full dataset
+                        //             reorder_records(dlg, index, index + 1);
+                        //         }
                         //     }
-                        // }
+                        // },
 
                     ]
                 }
@@ -91,17 +96,28 @@ frappe.ui.form.on('eMenu Selection', {
 	}
 })
 
-function reorder_records(dialog, fromIndex, toIndex) {
-    let tableField = dialog.fields_dict.products;
-    let data = tableField.df.data;
+function reorder_records(dlg, fromIndex, toIndex) {
 
-    if (fromIndex >= 0 && fromIndex < data.length && toIndex >= 0 && toIndex < data.length) {
-        let recordToMove = data.splice(fromIndex, 1)[0];
-        data.splice(toIndex, 0, recordToMove);
-        tableField.grid.refresh();
-    } else {
-        frappe.msgprint(__('Invalid indices.'));
-    }
+    let products = dlg.fields_dict.products.df.data;
+    
+    // Move the item within the array
+    let item = products.splice(fromIndex, 1)[0];
+    products.splice(toIndex, 0, item);
+
+    // Update the table data with the new order
+    dlg.fields_dict.products.df.data = products;
+    dlg.fields_dict.products.refresh();
+
+    // let tableField = dialog.fields_dict.products;
+    // let data = tableField.df.data;
+
+    // if (fromIndex >= 0 && fromIndex < data.length && toIndex >= 0 && toIndex < data.length) {
+    //     let recordToMove = data.splice(fromIndex, 1)[0];
+    //     data.splice(toIndex, 0, recordToMove);
+    //     tableField.grid.refresh();
+    // } else {
+    //     frappe.msgprint(__('Invalid indices.'));
+    // }
 }
 
 function getMenuProduct(pos_menu) {

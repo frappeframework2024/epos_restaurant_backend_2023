@@ -294,8 +294,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 			{0}
 		GROUP BY 
 		{1} 
-	""".format(get_conditions(filters,group_filter), row_group)	
-	frappe.throw(sql)
+	""".format(get_conditions(filters,group_filter), row_group)	 
 	data = frappe.db.sql(sql,filters, as_dict=1)
 	
 	return data

@@ -230,7 +230,7 @@
   },
   {
    "fieldname": "cancellation_policy",
-   "fieldtype": "Text Editor",
+   "fieldtype": "Small Text",
    "label": "Cancellation Policy"
   },
   {
@@ -540,7 +540,7 @@
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-08 10:24:54.318544",
+ "modified": "2025-01-11 13:54:02.933470",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",

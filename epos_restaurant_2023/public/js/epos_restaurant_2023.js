@@ -439,6 +439,10 @@ $(document).ready(function(){
         
     });
 
+    $(document).on("click", ".filterClick",function() {
+        alert(123)
+    })
+
     $(document).on("click", ".sub_menu_link",function() {
         var selectedWorkspaceName =  document.body.getAttribute('data-route').split("/");
 
