@@ -76,6 +76,14 @@ frappe.query_reports["Purchase Order Summary Report"] = {
 			"default": (new Date()).getFullYear()
 		},
 		{
+			"fieldname": "stock_location",
+			"label": __("Stock Location"),
+			"fieldtype": "MultiSelectList",
+			get_data: function(txt) {
+				return frappe.db.get_link_options('Stock Location', txt);
+			}
+		},
+		{
 			"fieldname": "vendor_group",
 			"label": __("Vendor Group"),
 			"fieldtype": "MultiSelectList",

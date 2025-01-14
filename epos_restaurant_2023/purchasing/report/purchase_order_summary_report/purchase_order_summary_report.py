@@ -202,13 +202,15 @@ def get_conditions(filters,group_filter=None):
 	end_date = filters.end_date
 
 
-	if(group_filter!=None):
+	if(group_filter is not None):
 		conditions += " and {} ='{}'".format(group_filter["field"],group_filter["value"].replace("'","''").replace("%","%%"))
 
 	conditions += " AND b.posting_date between '{}' AND '{}'".format(start_date,end_date)
 
 	if filters.get("vendor_group"):
 		conditions += " AND b.vendor_group in %(vendor_group)s"
+	if filters.get("stock_location"):
+		conditions += " AND b.stock_location in %(stock_location)s"
 	if filters.get("vendor"):
 		conditions += " AND b.vendor = %(vendor)s"
 
@@ -257,6 +259,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 	sql = sql + """ {2}
 		FROM `tabPurchase Order Products` AS a
 			INNER JOIN `tabPurchase Order` b on b.name = a.parent
+			inner join `tabProduct` c on c.name = a.product_code
 		WHERE
 			{4}
 			{0}
@@ -371,17 +374,17 @@ def get_row_groups():
 			"parent_row_group_filter_field":"row_group"
 		},
 		{
-			"fieldname":"a.product_category",
+			"fieldname":"c.product_category",
 			"label":"Category",
 			"parent_row_group_filter_field":"row_group"
 		},
 		{
-			"fieldname":"a.product_group",
+			"fieldname":"c.product_group",
 			"label":"Product Group",
 			"parent_row_group_filter_field":"row_group"
 		},
   		{
-			"fieldname":"a.product_code",
+			"fieldname":"concat(a.product_code,'',a.product_name) product_code",
 			"label":"Product",
 			"parent_row_group_filter_field":"row_group"
 		},

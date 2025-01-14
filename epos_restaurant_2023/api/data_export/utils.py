@@ -26,9 +26,9 @@ def get_business_information(filters):
     if business_branch:
         doc = frappe.get_cached_doc("Business Branch", business_branch)
         return {
-            "logo": doc.report_header_logo,
-            "header": doc.report_header_en,
-            "sub_header": doc.report_header_sub_line
+            "logo": (doc.report_header_logo or ""), 
+            "header": (doc.report_header_en or ""),
+            "sub_header": (doc.report_header_sub_line or "")
         }
     
     return  None
