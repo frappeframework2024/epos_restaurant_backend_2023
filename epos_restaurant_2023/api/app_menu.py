@@ -141,7 +141,6 @@ def get_sidebar_menu_template_cached(user,site= frappe.local.site):
                         {%endfor%}
                           <div class="accordion" id="accordionExample">
                             {% for g in d.sub_menus.workspace_links%}
-                            {{d.sub_menus.workspace_links}}
                             <div class="card">
                                 <div class="card-header" id="head_{{g.name}}">
                                 <h2 class="mb-0">
