@@ -175,7 +175,7 @@ def get_sidebar_menu_template_cached(user,site= frappe.local.site):
                                                         </svg>
                                                 </div>
                                             </div>
-                                            <div class="ml-2"><a class="sub_menu_link" data-filter='{{l.stats_filter}}' data-link-to="{{l.link_to}}" data-type="{{l.link_type}}">{{_(l.label)}}</a></div>
+                                            <div class="ml-2"><a class="sub_menu_link" data-link-to="{{l.link_to}}" data-type="{{l.link_type}}">{{_(l.label)}}</a></div>
                                         </div>
                                     {%endfor%}
                                 </div>
@@ -258,7 +258,7 @@ def get_sidebar_menu_template_cached(user,site= frappe.local.site):
                                                         </g>
                                                         </svg>
                                                     </div>
-                                                    <div class="ml-2"><a class="sub_menu_link" data-name="{{s.name}}" data-doc-view="{{s.doc_view}}" data-link-to="{{s.link_to}}" data-type="{{s.type}}">{{s.name}}</a></div>
+                                                    <div class="ml-2"><a class="sub_menu_link" data-filter='{{s.stats_filter}}' data-name="{{s.name}}" data-doc-view="{{s.doc_view}}" data-link-to="{{s.link_to}}" data-type="{{s.type}}">{{s.name}}</a></div>
                                                 </div>
                                             {%endfor%}
                                             <div class="accordion ml-3" id="accordionExample">
