@@ -33,6 +33,7 @@
         <v-btn class="grow" variant="flat" color="primary" @click="$emit('onQuickPay',true)">{{ $t('Quick Pay') }}</v-btn>
         <v-btn class="grow" variant="flat" color="primary" @click="$emit('onQuickPay',false)">{{ $t('Quick Pay without Print') }}</v-btn>
         <v-btn class="grow" variant="flat" color="primary" v-if="device_setting.show_option_quick_pay_payment_type ==1" @click="$emit('onQuickPayOtherPaymentType',true)">{{ $t('Quick Pay Other Payment Type') }}</v-btn>
+        
         <v-btn class="grow" variant="flat" color="success" @click="$emit('onNewOrder')">{{ $t('Create New Order') }}</v-btn>
         <v-btn class="grow" variant="flat" color="error" @click="$emit('onClose')">{{ $t('Cancel') }}</v-btn>
     </div>

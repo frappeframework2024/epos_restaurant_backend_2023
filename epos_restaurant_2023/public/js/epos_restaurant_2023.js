@@ -437,11 +437,7 @@ $(document).ready(function(){
         
         $(this).addClass("active")
         
-    });
-
-    $(document).on("click", ".filterClick",function() {
-        alert(123)
-    })
+    }); 
 
     $(document).on("click", ".sub_menu_link",function() {
         var selectedWorkspaceName =  document.body.getAttribute('data-route').split("/");
@@ -545,23 +541,40 @@ $(document).ready(function(){
         })
     }
 
-    function openLink(el){
+    function openLink(el){ 
         const route =  $(el).data("custom-route")
         if(route){
             frappe.set_route(route)
         }else if($(el).data("workspace")) {
             const url ="/app/" +  frappe.router.slug($(el).data("workspace"))
             frappe.set_route(url)
-        }else if($(el).data("type")=="DocType" ){
+        }else if($(el).data("type")=="DocType" ){ 
             let view = $(el).data("doc-view")
             if (!view){
                 view = "List"
             }
 
+
+            //my rout
+            let link_to = $(el).data("link-to");
+            console.log(link_to);
+
             if($(el).data("doc-view")=="New"){
-                frappe.new_doc($(el).data("link-to") );
-            }else {
-                frappe.set_route(view,$(el).data("link-to") );
+                frappe.new_doc(link_to );
+            }else { 
+                const type = $(el).data("type");
+                let route = frappe.utils.generate_route({
+                    name: link_to,
+                    type: type,
+                    doctype: $(el).data("type"),
+                    doc_view: $(el).data("doc-view"),
+                });
+    
+                let filters = frappe.utils.get_filter_from_json( JSON.stringify($(el).data("filter"))); 
+                if (type == "DocType" && filters) {
+                    frappe.route_options = filters;
+                }
+                frappe.set_route(route);
             }
             
         }else if($(el).data("type")=="Dashboard"){
@@ -579,6 +592,19 @@ $(document).ready(function(){
             frappe.set_route(url)
         }
     }
+
+    function convertToUrlFilter(filterArray) {
+        return filterArray.map(subArray => {
+            return subArray.map(item => {
+                // If the item is a boolean, convert it to 'true' or 'false' as string
+                if (typeof item === "boolean") {
+                    return item.toString();
+                }
+                return item;
+            }).join(',');
+        }).join('&');
+    }
+
 
     $('.report-wrapper').on('click', function(event) {
          

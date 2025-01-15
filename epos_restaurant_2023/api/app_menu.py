@@ -18,7 +18,8 @@ def get_sidebar_menu_template_cached(user,site= frappe.local.site):
     
     
     shortcut_menus = frappe.db.sql("select parent,  type,link_to,label, doc_view,stats_filter from `tabWorkspace Shortcut` where parent in %(parent_menu)s and custom_show_in_app_menu = 1 order by idx",{"parent_menu":[d["name"] for d in  data["pages"]]}, as_dict=1)
-    
+    for s in shortcut_menus:
+        s["stats_filter"] = str(s["stats_filter"])
     
     
     shortcut_menus =  get_list_with_permission(shortcut_menus) 
@@ -133,14 +134,14 @@ def get_sidebar_menu_template_cached(user,site= frappe.local.site):
                                     </g>
                                     </svg>
                                 </div>
-                                <div class="ml-2">
-                                <button class="filterClick" onclick="onMenuClick()">{{s.name}}</button>
-                                <a class="sub_menu_link"   data-name="{{s.name}}" data-doc-view="{{s.doc_view}}" data-link-to="{{s.link_to}}" data-type="{{s.type}}">{{_(s.name)}}</a>
+                                <div class="ml-2"> 
+                                <a class="sub_menu_link" data-filter='{{s.stats_filter}}' data-name="{{s.name}}" data-doc-view="{{s.doc_view}}" data-link-to="{{s.link_to}}" data-type="{{s.type}}">{{_(s.name)}}</a>
                                 </div>
                             </div>
                         {%endfor%}
                           <div class="accordion" id="accordionExample">
                             {% for g in d.sub_menus.workspace_links%}
+                            {{d.sub_menus.workspace_links}}
                             <div class="card">
                                 <div class="card-header" id="head_{{g.name}}">
                                 <h2 class="mb-0">
@@ -175,7 +176,7 @@ def get_sidebar_menu_template_cached(user,site= frappe.local.site):
                                                         </svg>
                                                 </div>
                                             </div>
-                                            <div class="ml-2"><a class="sub_menu_link"   data-link-to="{{l.link_to}}" data-type="{{l.link_type}}">{{_(l.label)}}</a></div>
+                                            <div class="ml-2"><a class="sub_menu_link" data-filter='{{l.stats_filter}}' data-link-to="{{l.link_to}}" data-type="{{l.link_type}}">{{_(l.label)}}</a></div>
                                         </div>
                                     {%endfor%}
                                 </div>

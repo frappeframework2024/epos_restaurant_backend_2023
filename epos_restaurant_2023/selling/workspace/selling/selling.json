@@ -362,7 +362,7 @@
    "type": "Link"
   }
  ],
- "modified": "2025-01-13 09:39:38.088735",
+ "modified": "2025-01-13 16:28:19.964107",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Selling",
@@ -409,6 +409,15 @@
    "type": "DocType"
   },
   {
+   "color": "Grey",
+   "custom_show_in_app_menu": 1,
+   "doc_view": "List",
+   "label": "Inventory Product",
+   "link_to": "Product",
+   "stats_filter": "[[\"Product\",\"is_inventory_product\",\"=\",1,false],[\"Product\",\"disabled\",\"=\",0,false]]",
+   "type": "DocType"
+  },
+  {
    "color": "Green",
    "custom_show_in_app_menu": 1,
    "doc_view": "List",
@@ -424,15 +433,6 @@
    "label": "Sale Payment",
    "link_to": "Sale Payment",
    "stats_filter": "{\"name\":[\"is\",\"set\"]}",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "custom_show_in_app_menu": 1,
-   "doc_view": "List",
-   "label": "Inventory Product",
-   "link_to": "Product",
-   "stats_filter": "[[\"Product\",\"is_inventory_product\",\"=\",1,false]]",
    "type": "DocType"
   },
   {
