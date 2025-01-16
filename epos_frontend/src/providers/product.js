@@ -100,7 +100,7 @@ export default class Product {
             // sort is from db
 
             return this.posMenuResource.data?.filter((r) => {
-                return String(r.name_en + ' ' + r.name_kh + ' ' + r.name).toLocaleLowerCase().includes(this.searchProductKeyword.toLocaleLowerCase()) && r.type == "product"
+                return String(r.name_en + ' ' + r.product_code_2 + ' ' + r.product_code_3 + ' ' + r.name_kh + ' ' + r.name).toLocaleLowerCase().includes(this.searchProductKeyword.toLocaleLowerCase()) && r.type == "product"
             })
 
             // return this.posMenuResource.data?.filter((r) => {

@@ -108,45 +108,48 @@ def get_child_menus(parent_menu, mobile= 0,sort_menu_order_by="name",sort_order_
 @frappe.whitelist(allow_guest=True)
 def get_temp_menu_products(parent_menu,mobile=0,sort_order_by="product_name_en"):     
     sql = """select 
-                name as menu_product_name,
-                product_code as name,
-                product_name_en as name_en,
-                product_name_kh as name_kh,
+                a.name as menu_product_name,
+                a.product_code as name,
+                b.product_code_2,
+                b.product_code_3,
+                a.product_name_en as name_en,
+                a.product_name_kh as name_kh,
                 '{0}' as parent,
-                price,
-                unit,
-                allow_discount,
-                allow_change_price,
-                allow_free,
-                allow_crypto_claim,
-                is_open_product,
-                is_inventory_product,
-                is_require_employee,
-                is_timer_product,
-                is_open_price,
-                prices,
-                printers,
-                modifiers,
-                photo,
+                a.price,
+                a.unit,
+                a.allow_discount,
+                a.allow_change_price,
+                a.allow_free,
+                a.allow_crypto_claim,
+                a.is_open_product,
+                a.is_inventory_product,
+                a.is_require_employee,
+                a.is_timer_product,
+                a.is_open_price,
+                a.prices,
+                a.printers,
+                a.modifiers,
+                a.photo,
                 'product' as type,
                 3 as type_index,
-                append_quantity,
-                is_combo_menu,
-                use_combo_group,
-                combo_menu_data,
-                combo_group_data,
-                tax_rule,
-                sort_order,
-                tax_rule_data,
-                revenue_group,
-                is_empty_stock_warning,
-                kitchen_group,
-                kitchen_group_sort_order,
-                rate_include_tax
-            from  `tabTemp Product Menu` 
+                a.append_quantity,
+                a.is_combo_menu,
+                a.use_combo_group,
+                a.combo_menu_data,
+                a.combo_group_data,
+                a.tax_rule,
+                a.sort_order,
+                a.tax_rule_data,
+                a.revenue_group,
+                a.is_empty_stock_warning,
+                a.kitchen_group,
+                a.kitchen_group_sort_order,
+                a.rate_include_tax
+            from  `tabTemp Product Menu` a
+            inner join `tabProduct` b on b.name = a.product_code
             where 
-                pos_menu='{0}' 
-            order by {1}
+                a.pos_menu='{0}' 
+            order by a.{1}
             """.format(parent_menu, sort_order_by)
     
     data = frappe.db.sql(sql,as_dict=1)
@@ -372,7 +375,7 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
         sql = sql + " and name = %(product_code)s "
         
     if keyword:
-        sql = sql + " and name like %(keyword)s or product_name_en like %(keyword)s and product_name_kh like %(keyword)s"
+        sql = sql + " and (name like %(keyword)s or product_name_en like %(keyword)s or product_name_kh like %(keyword)s or product_code_2 like %(keyword)s or product_code_3 like %(keyword)s)"
     
     sql = sql + " order by %(order_by)s %(order_by_type)s"
     sql = sql + " LIMIT %(limit)s OFFSET %(start)s;"
@@ -392,6 +395,7 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
     else:
         filter["keyword"] = '{}'.format((product_code or ""))
         operator = "="
+    
     data = frappe.db.sql(sql,filter,as_dict=1)
     if len(data) == 1:
         product_price_unit = data[0].unit
