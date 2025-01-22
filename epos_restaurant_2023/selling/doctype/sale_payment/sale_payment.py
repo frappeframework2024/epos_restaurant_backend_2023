@@ -114,8 +114,7 @@ class SalePayment(Document):
 
 		# Update Customer Point When Pay with Point
 	def update_customer_point(self):
-		if frappe.get_cached_value("Exely Itegration Setting",None,"enabled")==1:
-			frappe.enqueue("epos_restaurant_2023.api.exely.submit_order_to_exely", queue='long', doc_name = self.sale)
+		
 		# Update Customer Point
 		point_setting = frappe.get_doc("Loyalty Point Settings")
 		if point_setting.enabled==1:

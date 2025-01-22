@@ -139,7 +139,7 @@
                     <h2>{{title.split('(')[0]}}</h2>
                 </div>
                 <div class="row p-2">
-                    {%for p in products|selectattr('pos_menu', 'equalto', m.menu)|list %}
+                    {% for p in products | selectattr('pos_menu', 'equalto', m.menu) | sort(attribute='product_code') | list %}
                     <div class="product_detail_mobile col-12 col-lg-6 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
                         <div class="col-inner-ml"> 
                             <a href="/product_detail?emenu_name={{doc.name}}&product_code={{p.product_code}}&category={{p.name}}" style="text-decoration: none;">

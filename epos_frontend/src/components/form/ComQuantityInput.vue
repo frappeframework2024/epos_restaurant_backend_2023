@@ -94,27 +94,34 @@ watch(() => props.saleProduct.time_out, (newValue, oldValue) => {
 
 
 //Add Key stroke
-sale.vue.$onKeyStroke('PageUp', (e) => {
-    e.preventDefault()
-    if (props.saleProduct.selected && props.saleProduct.is_require_employee == 0) {
-        sale.updateQuantity(props.saleProduct, props.saleProduct.quantity + 1)
-    }
-})
-sale.vue.$onKeyStroke('PageDown', (e) => {
-    e.preventDefault()
-    if (props.saleProduct.selected && props.saleProduct.quantity > 1 && props.saleProduct.is_require_employee == 0) {
-        sale.updateQuantity(props.saleProduct, props.saleProduct.quantity - 1)
-    }
-})
+ if(sale.vau){
 
-if (props.saleProduct.selected) {
-    sale.vue.$onKeyStroke('F3', (e) => {
+    sale.vue.$onKeyStroke('PageUp', (e) => {
         e.preventDefault()
-        if (props.saleProduct.selected && sale.dialogActiveState == false) {
-            sale.dialogActiveState = true;
-            sale.onChangeQuantity(props.saleProduct, gv)
+        if (props.saleProduct.selected && props.saleProduct.is_require_employee == 0) {
+            sale.updateQuantity(props.saleProduct, props.saleProduct.quantity + 1)
         }
     })
+}
+if(sale.vau){
+    sale.vue.$onKeyStroke('PageDown', (e) => {
+        e.preventDefault()
+        if (props.saleProduct.selected && props.saleProduct.quantity > 1 && props.saleProduct.is_require_employee == 0) {
+            sale.updateQuantity(props.saleProduct, props.saleProduct.quantity - 1)
+        }
+    })
+}
+//
+if (props.saleProduct.selected) {
+    if(sale.vau){
+        sale.vue.$onKeyStroke('F3', (e) => {
+            e.preventDefault()
+            if (props.saleProduct.selected && sale.dialogActiveState == false) {
+                sale.dialogActiveState = true;
+                sale.onChangeQuantity(props.saleProduct, gv)
+            }
+        })
+    }
 }
 
 const allow_change_price = computed(() => {
@@ -127,57 +134,62 @@ const allow_change_price = computed(() => {
 
     return false;
 });
-
-sale.vue.$onKeyStroke('F4', (e) => {
-    e.preventDefault();
-    if (!allow_change_price) {
-        return;
-    }
-
-    if (props.saleProduct.selected && sale.dialogActiveState == false) {
-        sale.dialogActiveState = true;
-        sale.onChangePrice(props.saleProduct, gv, numberFormat);
-    }
-})
-
-sale.vue.$onKeyStroke('F5', (e) => {
-    e.preventDefault();
-
-    if (gv.device_setting.is_order_station == 1) {
-        return;
-    }
-
-    onDiscountClick("Percent")
-})
-
-
-sale.vue.$onKeyStroke('F6', (e) => {
-    e.preventDefault();
-    if (gv.device_setting.is_order_station == 1) {
-        return;
-    }
-
-    onDiscountClick("Amount")
-})
-
-sale.vue.$onKeyStroke('F7', (e) => {
-    e.preventDefault();
-    if (gv.device_setting.is_order_station == 1) {
-        return;
-    }
-
-    if (props.saleProduct.selected && sale.dialogActiveState == false) {
-
-        if (!props.saleProduct.is_free) {
-            onSaleProductFree(props.saleProduct);
-
-        } else {
-            sale.onSaleProductCancelFree(props.saleProduct)
-            toaster.warning($t('msg.This item is not allow to discount'));
+if(sale.vau){
+    sale.vue.$onKeyStroke('F4', (e) => {
+        e.preventDefault();
+        if (!allow_change_price) {
+            return;
         }
-    }
 
-})
+        if (props.saleProduct.selected && sale.dialogActiveState == false) {
+            sale.dialogActiveState = true;
+            sale.onChangePrice(props.saleProduct, gv, numberFormat);
+        }
+    })
+}
+if(sale.vau){
+    sale.vue.$onKeyStroke('F5', (e) => {
+        e.preventDefault();
+
+        if (gv.device_setting.is_order_station == 1) {
+            return;
+        }
+
+        onDiscountClick("Percent")
+    })
+}
+
+if(sale.vau){
+    sale.vue.$onKeyStroke('F6', (e) => {
+        e.preventDefault();
+        if (gv.device_setting.is_order_station == 1) {
+            return;
+        }
+
+        onDiscountClick("Amount")
+    })
+}
+
+if(sale.vau){
+    sale.vue.$onKeyStroke('F7', (e) => {
+        e.preventDefault();
+        if (gv.device_setting.is_order_station == 1) {
+            return;
+        }
+
+        if (props.saleProduct.selected && sale.dialogActiveState == false) {
+
+            if (!props.saleProduct.is_free) {
+                onSaleProductFree(props.saleProduct);
+
+            } else {
+                sale.onSaleProductCancelFree(props.saleProduct)
+                toaster.warning($t('msg.This item is not allow to discount'));
+            }
+        }
+
+    })
+}
 
 
 function onUpdateQuantity(param) {

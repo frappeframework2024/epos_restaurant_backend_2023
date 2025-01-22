@@ -136,28 +136,33 @@ whenever(ctrl_q, () =>{
 
 
 
-sale.vue.$onKeyStroke('F10',(e)=>{ 
-  e.preventDefault();
-    if(gv.device_setting.is_order_station==1){
-        return;
+if(sale.vau){
+  sale.vue.$onKeyStroke('F10',(e)=>{ 
+    e.preventDefault();
+      if(gv.device_setting.is_order_station==1){
+          return;
+      }
+
+    if(sale.dialogActiveState==false){
+      onSaleDiscount('Percent')
     }
+    
+  })
+}
 
-  if(sale.dialogActiveState==false){
-    onSaleDiscount('Percent')
-  }
-  
-})
 
-sale.vue.$onKeyStroke('F11',(e)=>{
-  e.preventDefault();
-    if(gv.device_setting.is_order_station==1){
-        return;
+if(sale.vau){
+  sale.vue.$onKeyStroke('F11',(e)=>{
+    e.preventDefault();
+      if(gv.device_setting.is_order_station==1){
+          return;
+      }
+
+    if(sale.dialogActiveState==false){
+      onSaleDiscount('Amount')
     }
-
-  if(sale.dialogActiveState==false){
-    onSaleDiscount('Amount')
-  }
-});
+  });
+}
 
 const showButtonPrintBySeat = computed(()=>{
   let count = sale.sale.sale_products?.filter((sp)=>(sp.seat_number||"") != "")?.length;
@@ -279,13 +284,15 @@ async function onQuickPay() {
   });
 }
 
-sale.vue.$onKeyStroke('Insert', (e)=>{
-  e.preventDefault();
-  if (sale.dialogActiveState === false) {
-    sale.onSaleNote(sale.sale);
-  }
-        
-})
+if(sale.vau){
+  sale.vue.$onKeyStroke('Insert', (e)=>{
+    e.preventDefault();
+    if (sale.dialogActiveState === false) {
+      sale.onSaleNote(sale.sale);
+    }
+          
+  })
+}
 
 
 function onRedirectSaleType(){

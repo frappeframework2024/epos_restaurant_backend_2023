@@ -272,6 +272,9 @@ class Sale(Document):
 
 	def before_cancel(self):
 		update_status(self)
+		if frappe.get_cached_value("Exely Itegration Setting",None,"enabled")==1:
+			if self.exely_transaction_id:
+				frappe.enqueue("epos_restaurant_2023.api.exely.cancel_order", queue='short', transaction_id = self.exely_transaction_id, comment = "ePOS Restaurant Cancel Order")
 
 	def before_submit(self):
 		update_sale_sale_product_cost(self)
@@ -345,11 +348,14 @@ class Sale(Document):
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit", queue='short', self=self)
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.add_payment_to_sale_payment", queue='short', self=self)
 		
+  
+		
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			submit_sale_to_general_ledger_entry(self)
 			commission_general_ledger_entry(self)
 
-
+		if frappe.get_cached_value("Exely Itegration Setting",None,"enabled")==1:
+			frappe.enqueue("epos_restaurant_2023.api.exely.submit_order_to_exely", queue='long', doc_name = self.name)
 
 	def on_cancel(self):
 		if self.flags.ignore_on_cancel == True:

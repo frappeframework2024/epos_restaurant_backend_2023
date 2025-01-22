@@ -13,6 +13,7 @@ class PurchaseOrder(Document):
 		
 	def validate(self):
 		validate_discount(self)
+		update_items(self)
 		self.total_quantity = Enumerable(self.purchase_order_products).sum(lambda x: x.quantity or 0)
 		self.discountable_amount = Enumerable(self.purchase_order_products).where(lambda x:(x.discount_amount or 0)==0).sum(lambda x: (x.quantity or 0)* (x.cost or  0))
 		self.sub_total = Enumerable(self.purchase_order_products).sum(lambda x: (x.quantity or 0)* (x.cost or  0))
@@ -58,6 +59,10 @@ class PurchaseOrder(Document):
 			if d.base_unit != d.unit:
 				if not check_uom_conversion(d.base_unit, d.unit):
 					frappe.throw(_("There is no UoM conversion from {} to {}".format(d.base_unit, d.unit)))
+
+def update_items(self):
+	for a in self.purchase_order_products:
+		a.amount = (a.quantity * a.cost) - a.total_discount
 
 def validate_discount(self):
 	if self.discount:
