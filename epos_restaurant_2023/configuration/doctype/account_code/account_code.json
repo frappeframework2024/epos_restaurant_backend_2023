@@ -14,6 +14,7 @@
   "code",
   "account_name",
   "account_category",
+  "pos_revenue_group",
   "is_group",
   "data_4",
   "type",
@@ -714,12 +715,19 @@
    "fieldname": "available_in_reports",
    "fieldtype": "Table",
    "options": "Report Account Code Config"
+  },
+  {
+   "fieldname": "pos_revenue_group",
+   "fieldtype": "Link",
+   "label": "POS Revenue Group",
+   "mandatory_depends_on": "eval:doc.is_group==0",
+   "options": "Revenue Group"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-12-09 09:22:39.607512",
+ "modified": "2025-01-24 15:04:10.764550",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

@@ -933,6 +933,7 @@ export default class Sale {
                         }
 
                         if (result) {
+ 
                             if (sp.quantity < result.number) {
                                 result.number = sp.quantity;
                             }
@@ -962,9 +963,8 @@ export default class Sale {
                     }
                 });
             } else {
-
-                if ((sp.name || "") != "") {
-                    const u = JSON.parse(localStorage.getItem('make_order_auth'));
+                const u = JSON.parse(localStorage.getItem('make_order_auth'));
+                if ((sp.name || "") != "") {                  
                     this.onRemoveSaleProduct(sp, sp.quantity, u.name);
                     let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion || "") == "" ? "" : `(${sp.portion})`} ${sp.modifiers}`
                     let msg = `${u.name} delete item: ${item_description}`;
@@ -983,8 +983,17 @@ export default class Sale {
                         custom_amount: sp.amount
                     });
                 } else {
-
+                   if(input!= (-99999)){
+                        if(sp.quantity <= input){
+                            this.sale.sale_products.splice(this.sale.sale_products.indexOf(sp), 1);
+                        }
+                        else{
+                            this.onRemoveSaleProduct(sp, input, u.name); 
+                        }
+                   }else{
                     this.sale.sale_products.splice(this.sale.sale_products.indexOf(sp), 1);
+                   }
+                    
                     this.updateSaleSummary();
 
                 }

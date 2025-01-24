@@ -62,6 +62,7 @@ def cancel_general_ledger_entery(doctype,docname):
      
 
 @lru_cache(maxsize=128)
+
 def  get_hierarchy_account_for_report_by_parent(parent,business_branch):
     sql="""
         WITH RECURSIVE hierarchy AS (

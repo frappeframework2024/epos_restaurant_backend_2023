@@ -14,6 +14,7 @@ def get_report_columns(filters):
     columns = [
 		{"fieldname":"product_code","label":"Product Code","fieldtype":"Link","options":"Product","align":"left"},
 		{"fieldname":"product_name", "label":"Product Name","align":"left","width":"250"},
+		{"fieldname":"product_group", "label":"Product Group", "align":"left","width":"150"},
 		{"fieldname":"product_category", "label":"Category", "align":"left","width":"150"},
 		{"fieldname":"stock_location","label":"Warehouse"},
 		{"fieldname":"quantity","label":"Quantity", "fieldtype":"Float","align":"center"},
@@ -28,9 +29,11 @@ def get_report_columns(filters):
 
 def get_report_data(filters):
     sql = """
-		select *,
-			datediff(expired_date,now()) as expired_date_in_day
-		from `tabStock Location Product`
+		select slp.*,
+			datediff(slp.expired_date,now()) as expired_date_in_day,
+            pc.name as product_group
+		from `tabStock Location Product` slp
+        inner join `tabProduct Category` pc on pc.name = slp.product_category
 		where
 			1=1   
     """
@@ -42,8 +45,11 @@ def get_report_data(filters):
     
     if filters.product_category:
         sql= sql + " and  product_category = %(product_category)s "
-    
-      
+        
+    if filters.product_group and not filters.product_category:
+        filters.product_groups = get_product_category_by_product_group(filters.product_group)
+        sql= sql + " and  slp.product_category in %(product_groups)s "
+
     if filters.show_product_option=="Product Out of Stock":
         sql = sql + " and quantity<=0"
     elif filters.show_product_option=="Product to Order":
@@ -71,4 +77,40 @@ def get_order_by_field(fitlers):
     data = ["Product Name","Product Code","Category","Quantity","Expired Date"]
     key = ["product_name","product_code","product_category","quantity","expired_date"]
     return key[data.index(fitlers.order_by)]
+
+
+
+def  get_product_category_by_product_group(parent):
+    sql="""
+        WITH RECURSIVE hierarchy AS (
+            SELECT
+                name,
+                parent_product_category
+               
+                
+            FROM
+                `tabProduct Category`
+            WHERE
+                name = %(parent)s
+             UNION ALL
+            SELECT
+                t.name as account,
+                t.parent_product_category
+                
+            FROM
+                `tabProduct Category` t
+            JOIN
+                hierarchy h ON t.parent_product_category = h.name
+           
+        )
+        SELECT
+            name
+        FROM
+            hierarchy
+
+    """
+    data = frappe.db.sql(sql,{"parent":parent},as_dict=1)
+    return [d.get("name") for d in data]
+
+    
     

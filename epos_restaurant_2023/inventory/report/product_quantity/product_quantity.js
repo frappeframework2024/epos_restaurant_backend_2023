@@ -29,6 +29,38 @@ frappe.query_reports["Product Quantity"] = {
 			"on_change": function (query_report) {},
 		},
 		{
+			"fieldname": "product_group",
+			"label": __("Product Group"),
+			"fieldtype": "Link",
+			"options": "Product Category",
+			"get_query": function() {
+                return {
+                    filters: {
+                        // Define the filter conditions here
+                        "parent_product_category": 'All Product Categories', // Example: only show active product categories
+                    }
+                };
+            },
+			"on_change": function (query_report) {
+				const product_group = frappe.query_report.get_filter_value("product_group");
+
+				const product_category = frappe.query_report.get_filter("product_category");
+				let filter = {}
+				if(product_group){
+					filter = {
+						parent_product_category: product_group 
+					  }
+				}
+
+				product_category.df.get_query = function () {
+				  return {
+					filters:filter ,
+				  };
+				};
+
+			},
+		},
+		{
 			"fieldname": "product_category",
 			"label": __("Product Category"),
 			"fieldtype": "Link",

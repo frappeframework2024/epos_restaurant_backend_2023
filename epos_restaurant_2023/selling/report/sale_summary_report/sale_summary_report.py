@@ -257,7 +257,10 @@ def get_conditions(filters,group_filter=None):
 
 	if filters.get("pos_profile"):
 		conditions += " AND b.pos_profile in %(pos_profile)s"
-	
+  
+	if filters.customer:
+		conditions += " AND b.customer  = %(customer)s"
+  
 	return conditions
 
 def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):

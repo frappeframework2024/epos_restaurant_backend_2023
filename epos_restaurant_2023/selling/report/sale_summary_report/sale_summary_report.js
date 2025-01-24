@@ -16,7 +16,18 @@ frappe.query_reports["Sale Summary Report"] = {
 			frappe.query_report.toggle_filter_display('end_date', true );
 		}
 		report.page.add_inner_button("Preview Report", function () {
-			frappe.query_report.refresh();
+			frappe.call({
+				method: 'epos_restaurant_2023.api.api.update_prepare_report_render',
+				args: {"report_name":"Sale Summary Report" },
+				type: 'POST',
+				freeze: true,
+				callback: function(resp) {
+					frappe.query_report.refresh();
+				},
+				error: function(err) {
+					console.error('Error:', err);
+				}
+			});			
 		});
 		
 	},

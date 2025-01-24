@@ -348,8 +348,6 @@ class Sale(Document):
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit", queue='short', self=self)
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.add_payment_to_sale_payment", queue='short', self=self)
 		
-  
-		
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			submit_sale_to_general_ledger_entry(self)
 			commission_general_ledger_entry(self)

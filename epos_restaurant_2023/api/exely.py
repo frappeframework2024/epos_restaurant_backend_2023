@@ -110,13 +110,12 @@ def submit_order_to_exely(doc_name):
      
         # send to api
         url = setting.post_service_api_endpoint
-
         headers = {
                     'x-api-key': setting.api_key,
                     'Content-Type': 'application/json'
                 }
         
- 
+
         response = requests.post(url, data=json.dumps(doc),headers=headers)
         if response.status_code==200:
             raw= json.loads(response.text)
@@ -135,11 +134,11 @@ def get_service_detail(data):
         services.append({
             "name":"{}-{} ({})".format( d.product_code,d.product_name,d.quantity),
             "total":{
-                "amount":d.amount,
+                "amount":round(d.total_revenue,2),
                 "currency":currency
             },
             "payment":{
-                "amount":d.amount,
+                "amount":round(d.total_revenue,2),
                 "currency":currency
             },
             "vat":d.total_tax,
