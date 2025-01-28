@@ -137,7 +137,6 @@ def submit_order_to_exely(doc_name):
             doc.exely_transaction_type = "Submit Order"
             doc.exely_transaction_id = raw["transactionId"]
             doc.grand_total = sale.grand_total
-            doc.insert()
             doc.submit()
     
 
@@ -180,14 +179,13 @@ def cancel_order(transaction_id,sale,comment):
     if response.status_code!=200:
         frappe.throw(str(response.text))
         
-        #log the transaction
-        doc = frappe.new_doc('Exely Logs')
-        doc.sale = sale
-        doc.exely_transaction_type = "Cancel Order"
-        doc.exely_transaction_id = transaction_id
-        grand_total = frappe.db.get_value('Sale', sale, 'grand_total')
-        doc.grand_total = grand_total
-        doc.insert()
-        doc.submit()
+    #log the transaction
+    doc = frappe.new_doc('Exely Logs')
+    doc.sale = sale
+    doc.exely_transaction_type = "Cancel Order"
+    doc.exely_transaction_id = transaction_id
+    grand_total = frappe.db.get_value('Sale', sale, 'grand_total')
+    doc.grand_total = grand_total
+    doc.submit()
     
     #return doc
