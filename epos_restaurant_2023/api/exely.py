@@ -119,12 +119,32 @@ def submit_order_to_exely(doc_name):
         response = requests.post(url, data=json.dumps(doc),headers=headers)
         if response.status_code==200:
             raw= json.loads(response.text)
+            sale = frappe.get_doc("Sale", doc_name)
+            if sale.exely_transaction_id:
+                doc = frappe.get_doc({
+                    'doctype': 'Comment',
+                    'subject': 'Delete sale order',
+                    "comment_type":"Info",
+                    "reference_doctype":"Sale",
+                    "reference_name":doc_name,
+                    "content":"Old Exely Tran.Id: {}, New Exely Tran.Id: {}".format(sale.exely_transaction_id,raw["transactionId"] )
+                })
+                doc.insert()
+
+            #log the transaction
+            doc = frappe.new_doc('Exely Logs')
+            doc.sale = sale.name
+            doc.exely_transaction_type = "Submit Order"
+            doc.exely_transaction_id = raw["transactionId"]
+            doc.grand_total = sale.grand_total
+            doc.insert()
+            doc.submit()
+    
+
             frappe.db.sql("update `tabSale` set exely_transaction_id='{}' where name='{}'".format(raw["transactionId"],doc_name))
             frappe.db.commit()
         else:
             frappe.throw(str(response.text))
-
-       
     #return doc
 
 def get_service_detail(data):
@@ -148,7 +168,7 @@ def get_service_detail(data):
 
 
 @frappe.whitelist()    
-def cancel_order(transaction_id,comment):
+def cancel_order(transaction_id,sale,comment):
     setting = frappe.get_doc("Exely Itegration Setting")
     url = setting.cancel_service_api_endpoint
     headers = {
@@ -159,6 +179,15 @@ def cancel_order(transaction_id,comment):
     response = requests.delete(url,headers=headers, data=json.dumps( {"transactionId":transaction_id, "comment":comment}))
     if response.status_code!=200:
         frappe.throw(str(response.text))
-    
+        
+        #log the transaction
+        doc = frappe.new_doc('Exely Logs')
+        doc.sale = sale
+        doc.exely_transaction_type = "Cancel Order"
+        doc.exely_transaction_id = transaction_id
+        grand_total = frappe.db.get_value('Sale', sale, 'grand_total')
+        doc.grand_total = grand_total
+        doc.insert()
+        doc.submit()
     
     #return doc

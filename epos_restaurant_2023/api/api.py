@@ -20,6 +20,7 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import quote_plus
 from epos_restaurant_2023.api.security import aes_encrypt,get_aes_key,encode_base64,decode_base64,aes_decrypt
+from epos_restaurant_2023.api.exely import cancel_order,submit_order_to_exely
 from frappe.model.rename_doc import get_link_fields
 
 @frappe.whitelist(allow_guest=True)
@@ -1211,7 +1212,7 @@ def edit_sale_order(name,auth=None,note=None):
 
     # check if sale have excely integration then submit cancell order
     if sale_doc.exely_transaction_id:
-        frappe.enqueue("epos_restaurant_2023.api.exely.cancel_order", queue='short', transaction_id = sale_doc.exely_transaction_id, comment = auth["note"])
+       cancel_order(transaction_id = sale_doc.exely_transaction_id, sale = sale_doc.name, comment = auth["note"])
   
 
 @frappe.whitelist()
@@ -1289,7 +1290,7 @@ def delete_sale(name,auth):
     
     # check if sale have excely integration then submit cancell order
     if sale_doc.exely_transaction_id:
-        frappe.enqueue("epos_restaurant_2023.api.exely.cancel_order", queue='short', transaction_id = sale_doc.exely_transaction_id, comment = auth["note"])
+        cancel_order(transaction_id = sale_doc.exely_transaction_id, sale = sale_doc.name, comment = auth["note"])
         
     
 @frappe.whitelist()

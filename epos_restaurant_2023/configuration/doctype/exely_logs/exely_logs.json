@@ -1,0 +1,77 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-01-28 15:30:09.748136",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_rzha",
+  "sale",
+  "exely_transaction_type",
+  "exely_transaction_id",
+  "grand_total",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_rzha",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Exely Logs",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "sale",
+   "fieldtype": "Data",
+   "label": "Sale"
+  },
+  {
+   "fieldname": "exely_transaction_id",
+   "fieldtype": "Data",
+   "label": "Exely Transaction ID"
+  },
+  {
+   "fieldname": "grand_total",
+   "fieldtype": "Float",
+   "label": "Grand Total"
+  },
+  {
+   "fieldname": "exely_transaction_type",
+   "fieldtype": "Data",
+   "label": "Exely Transaction Type"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-01-28 15:36:04.775105",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "Exely Logs",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

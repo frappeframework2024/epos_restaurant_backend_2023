@@ -14,7 +14,7 @@ from frappe.model.document import Document
 import datetime
 from copy import deepcopy
 from decimal import Decimal
-from epos_restaurant_2023.api.exely import submit_order_to_exely
+from epos_restaurant_2023.api.exely import cancel_order,submit_order_to_exely
 from epos_restaurant_2023.selling.doctype.sale.general_ledger_entry import submit_sale_to_general_ledger_entry
 class Sale(Document):
 	def validate(self):
@@ -274,7 +274,7 @@ class Sale(Document):
 		update_status(self)
 		if frappe.get_cached_value("Exely Itegration Setting",None,"enabled")==1:
 			if self.exely_transaction_id:
-				frappe.enqueue("epos_restaurant_2023.api.exely.cancel_order", queue='short', transaction_id = self.exely_transaction_id, comment = "ePOS Restaurant Cancel Order")
+				cancel_order(transaction_id = self.exely_transaction_id, sale = self.name, comment = "ePOS Restaurant Cancel Order")
 
 	def before_submit(self):
 		update_sale_sale_product_cost(self)
