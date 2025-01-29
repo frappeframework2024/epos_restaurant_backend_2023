@@ -130,7 +130,12 @@ def reset_sale_transaction():
     run_backup_command()
 
     if frappe.local.request.method == "POST":
-        if frappe.session.user == 'Administrator':
+        # epos_setting = frappe.get_doc("ePOS Settings")
+        # if not epos_setting.user_reset_data or epos_setting.user_reset_data == "":
+        #     return {"Please config default user to reset data"}
+
+        # if frappe.session.user == epos_setting.user_reset_data:
+        if frappe.session.user == "Administrator":
 
             #gym
             frappe.db.sql("delete from `tabMembership Payment`")
@@ -217,7 +222,11 @@ def reset_sale_transaction_pos_only():
     run_backup_command()
 
     if frappe.local.request.method == "POST":
-        if frappe.session.user == 'Administrator':
+        epos_setting = frappe.get_doc("ePOS Settings")
+        if not epos_setting.user_reset_data or epos_setting.user_reset_data == "":
+            return {"Please config default user to reset data"}
+
+        if frappe.session.user == epos_setting.user_reset_data:
 
             #gym
             frappe.db.sql("delete from `tabMembership Payment`")
@@ -305,7 +314,12 @@ def reset_sale_transaction_pos_only():
 @frappe.whitelist()
 def reset_database():
     if frappe.local.request.method == "POST":
-        if frappe.session.user == 'Administrator':
+        # epos_setting = frappe.get_doc("ePOS Settings")
+        # if not epos_setting.user_reset_data or epos_setting.user_reset_data == "":
+        #     return {"Please config default user to reset data"}
+
+        # if frappe.session.user == epos_setting.user_reset_data:
+        if frappe.session.user == "Administrator":
             #step 1 reset data
             reset_data()
             #step 2 create predefine data

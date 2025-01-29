@@ -1993,3 +1993,5 @@ def update_pos_status(station_name):
 def update_prepare_report_render(report_name):
     frappe.db.sql("update `tabReport` set prepared_report = 0 where name = %(report_name)s",{"report_name":report_name})
     
+def dome():
+    return "Do Me"

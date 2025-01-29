@@ -7,21 +7,27 @@ import frappe
 from passlib.hash import pbkdf2_sha256
 
 class ResetData(Document):
-	def validate(self):
+	def validate(self):		
+
 			if self.stored_password is None or self.stored_password == "" : 
 				self.stored_password = self.password
 			if self.stored_password is None or self.stored_password == "":
 				frappe.throw("Please Enter Password")
 			else:
-				user = frappe.db.sql("select password from __Auth where name ='Administrator' and doctype='User' and fieldname='password'",as_dict=True)
+				user = frappe.db.sql("select password from __Auth where name =%(user_reset)s and doctype='User' and fieldname='password'",{"user_reset":epos_setting.user_reset_data},as_dict=True)
 				if not pbkdf2_sha256.verify(self.stored_password, user[0].password):
 					frappe.throw("Wrong Password")
 
 	def on_submit(self):
 		if self.transaction_type == "Reset Database":
+
 			frappe.call('epos_restaurant_2023.install.reset_database')
 		elif self.transaction_type == "Reset Sale Transaction":
+
 			frappe.call('epos_restaurant_2023.install.reset_sale_transaction')
+		elif self.transaction_type == "Reset Only POS Sale Transaction":
+
+			frappe.call('epos_restaurant_2023.install.reset_sale_transaction_pos_only')
 		else:
 			frappe.msgprint("?")
 		

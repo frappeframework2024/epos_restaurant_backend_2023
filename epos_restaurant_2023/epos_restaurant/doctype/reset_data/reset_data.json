@@ -19,7 +19,7 @@
    "fieldname": "transaction_type",
    "fieldtype": "Select",
    "label": "Transaction Type",
-   "options": "Reset Database\nReset Sale Transaction"
+   "options": "Reset Database\nReset Sale Transaction\nReset Only POS Sale Transaction"
   },
   {
    "fieldname": "password",
@@ -47,7 +47,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-12-02 15:21:47.687358",
+ "modified": "2025-01-29 11:11:57.460171",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "Reset Data",
