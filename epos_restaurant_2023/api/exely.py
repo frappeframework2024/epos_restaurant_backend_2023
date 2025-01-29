@@ -132,12 +132,15 @@ def submit_order_to_exely(doc_name):
                 doc.insert()
 
             #log the transaction
-            doc = frappe.new_doc('Exely Logs')
-            doc.sale = sale.name
-            doc.exely_transaction_type = "Submit Order"
-            doc.exely_transaction_id = raw["transactionId"]
-            doc.grand_total = sale.grand_total
-            doc.submit()
+            try:
+                doc = frappe.new_doc('Exely Logs')
+                doc.sale = sale.name
+                doc.exely_transaction_type = "Submit Order"
+                doc.exely_transaction_id = raw["transactionId"]
+                doc.grand_total = sale.grand_total
+                doc.submit()
+            except:
+                pass
     
 
             frappe.db.sql("update `tabSale` set exely_transaction_id='{}' where name='{}'".format(raw["transactionId"],doc_name))
@@ -180,12 +183,15 @@ def cancel_order(transaction_id,sale,comment):
         frappe.throw(str(response.text))
         
     #log the transaction
-    doc = frappe.new_doc('Exely Logs')
-    doc.sale = sale
-    doc.exely_transaction_type = "Cancel Order"
-    doc.exely_transaction_id = transaction_id
-    grand_total = frappe.db.get_value('Sale', sale, 'grand_total')
-    doc.grand_total = grand_total
-    doc.submit()
+    try:
+        doc = frappe.new_doc('Exely Logs')
+        doc.sale = sale
+        doc.exely_transaction_type = "Cancel Order"
+        doc.exely_transaction_id = transaction_id
+        grand_total = frappe.db.get_value('Sale', sale, 'grand_total')
+        doc.grand_total = grand_total
+        doc.submit()
+    except:
+        pass
     
     #return doc

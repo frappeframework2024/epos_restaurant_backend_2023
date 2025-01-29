@@ -48,14 +48,15 @@ def check_table():
 
 def clear_logs(setting):
     clear_logs = [a.log for a in setting.clear_logs]
-    if clear_logs:
-        for a in clear_logs:
-            sql = "delete from `tab{0}`".format(a)
-            frappe.db.sql(sql)
-    else:
-        frappe.db.sql("delete from `tabError Log`")
-        frappe.db.sql("delete from `tabScheduled Job Log`")
-    frappe.db.commit()
+    if setting.enabled_clear_logs:
+        if clear_logs:
+            for a in clear_logs:
+                sql = "delete from `tab{0}`".format(a)
+                frappe.db.sql(sql)
+        else:
+            frappe.db.sql("delete from `tabError Log`")
+            frappe.db.sql("delete from `tabScheduled Job Log`")
+        frappe.db.commit()
 
 def run_backup_command():  
     setting = frappe.get_doc('FTP Backup') 

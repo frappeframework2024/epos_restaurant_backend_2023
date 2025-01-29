@@ -22,6 +22,7 @@
   "check_database",
   "message",
   "section_break_gryt",
+  "enabled_clear_logs",
   "clear_logs"
  ],
  "fields": [
@@ -107,12 +108,18 @@
    "fieldname": "ftp_setting_section",
    "fieldtype": "Section Break",
    "label": "FTP Setting"
+  },
+  {
+   "default": "0",
+   "fieldname": "enabled_clear_logs",
+   "fieldtype": "Check",
+   "label": "Enabled Clear Logs"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-10-19 14:21:39.279964",
+ "modified": "2025-01-29 09:12:17.192010",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "FTP Backup",
