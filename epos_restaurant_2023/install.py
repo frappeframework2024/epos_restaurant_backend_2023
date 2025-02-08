@@ -224,7 +224,7 @@ def reset_sale_transaction_pos_only():
     if frappe.local.request.method == "POST":
         epos_setting = frappe.get_doc("ePOS Settings")
         if not epos_setting.user_reset_data or epos_setting.user_reset_data == "":
-            return {"Please config default user to reset data"}
+            frappe.throw("Please config default user to reset data")
 
         if frappe.session.user == epos_setting.user_reset_data:
 
@@ -288,7 +288,7 @@ def reset_sale_transaction_pos_only():
 
             
             #reset sale transaction 
-            doctypes = ["Sale","Sale Payment","Cashier Shift","Working Day","Cash Transaction","Voucher","Voucher Payment","Cash Coupon"]
+            doctypes = ["Sale","Sale Payment","Cash Transaction","Voucher","Voucher Payment","Cash Coupon"]
             for d in doctypes:
                 if frappe.get_meta("Sale").get_field("naming_series"):
                     formats =  frappe.get_meta(d).get_field("naming_series").options
@@ -302,10 +302,11 @@ def reset_sale_transaction_pos_only():
 
             return {"You was reset sale transaction."}
         else:
-            return {"Please contact to system's Administrator for reset sale transaction.(Permission denied)"}
+
+            frappe.throw("Please contact to system's Administrator for reset sale transaction.(Permission denied)")
     
     else:
-        return {"Invalid Method."}
+        frappe.throw("Invalid Method.")
 
 
 ## END RESET SALE TRANSACTION
@@ -486,3 +487,11 @@ def create_predefine_data():
 def get_server_name():
     server_name = socket.gethostname()
     return server_name
+
+
+
+
+@frappe.whitelist(methods="POST")
+def update_series_number(names):
+    frappe.db.sql("update `tabSeries` set current=  0 where name in %(naming)s",{"naming":json.loads(str(names))} )     
+

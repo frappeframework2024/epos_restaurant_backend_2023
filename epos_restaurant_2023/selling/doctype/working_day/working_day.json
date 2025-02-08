@@ -12,6 +12,7 @@
   "posting_date",
   "business_branch",
   "pos_profile",
+  "close_pos_profile",
   "column_break_5",
   "note",
   "created_by",
@@ -111,11 +112,17 @@
    "fieldname": "created_by",
    "fieldtype": "Data",
    "label": "Created By"
+  },
+  {
+   "fieldname": "close_pos_profile",
+   "fieldtype": "Link",
+   "label": "Close POS Profile",
+   "options": "POS Profile"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-21 11:17:23.630753",
+ "modified": "2025-02-04 17:02:37.198799",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Working Day",

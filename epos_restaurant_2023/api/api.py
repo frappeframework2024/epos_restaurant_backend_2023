@@ -469,7 +469,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "shift_types":shift_types,
         "currencies":currencies,
         "default_currency":frappe.db.get_default("currency"),
-        "currency_exchange":exchange_rate,
+        "currency_exchange":exchange_rate[0],
         "pos_setting":pos_setting,
         "customer":default_customer.name,
         "customer_name":default_customer.customer_name_en,
@@ -510,6 +510,8 @@ def get_tables_number(table_group,device_name, pos_profile):
                             customer_group,
                             height as h, 
                             width as w, 
+                            0 as x_percent,
+                            0 as y_percent,
                             price_rule,
                             tbl_group,
                             discount_type 
@@ -531,13 +533,15 @@ def get_tables_number(table_group,device_name, pos_profile):
         d.default_bg_color=background_color
         d.text_color = text_color
         d.default_text_color = text_color
-        position = frappe.db.sql("select x,y,h,w from `tabePOS Table Position` where pos_profile = %(pos_profile)s and device_name=%(device_name)s and table_id=%(table_id)s limit 1",{"device_name":device_name,"table_id":d.id,"pos_profile":pos_profile }, as_dict=1)
+        position = frappe.db.sql("select x,y,h,w,x_percent,y_percent from `tabePOS Table Position` where pos_profile = %(pos_profile)s and device_name=%(device_name)s and table_id=%(table_id)s limit 1",{"device_name":device_name,"table_id":d.id,"pos_profile":pos_profile }, as_dict=1)
         if position:
             for p in position:
                 d.x = p.x or x
                 d.y = p.y or y 
                 d.w = p.w or 100
                 d.h = p.h or 100
+                d.x_percent = p.x_percent or 0
+                d.y_percent = p.y_percent or 0
         else:
             d.x = x
             d.y = y 
@@ -708,6 +712,15 @@ def save_table_position(device_name,pos_profile, table_group):
             w = 0
             if "w" in t:
                 w = t["w"]
+
+            x_percent = 0
+            if "x_percent" in t:
+                x_percent = t["x_percent"]
+
+            y_percent = 0
+            if "y_percent" in t:
+                y_percent = t["y_percent"]
+
             if not frappe.db.exists('ePOS Table Position', {'table_id': t['id'], 'device_name': device_name , 'pos_profile':pos_profile }):
                 doc = frappe.get_doc({
                         'doctype': 'ePOS Table Position',
@@ -719,7 +732,9 @@ def save_table_position(device_name,pos_profile, table_group):
                         'x':x,
                         'y':y,
                         'h':h,
-                        'w':w
+                        'w':w,
+                        "x_percent":x_percent,
+                        "y_percent":y_percent
                     })
                 doc.insert()
 
@@ -1881,15 +1896,17 @@ def validate_sale_network_lock(param):
     data = frappe.db.sql(sql,param,as_dict=1)     
     result = {} 
     if len(data) > 0 : 
-        if "sale" in [k for k in param.keys()]:
+        if "sale" in [k for k in param.keys()]: 
             if param["sale"] in [s["sale"] for s in data]:
                 result = {"status":0,"message":"There is an other station actived"}
+            else:
+                result = {"status":1,"message":""}
 
         else:
             result = {"status":0,"message":"There is an other station actived"}
         
     else:
-        result = {"status":1,"message":"This table will lock for other station"}  
+        result = {"status":1,"message":"This table/room will lock for other station"}  
 
 
     return result
@@ -1995,3 +2012,22 @@ def update_prepare_report_render(report_name):
     
 def dome():
     return "Do Me"
+
+@frappe.whitelist()
+def get_server_report_setting():
+    setting = frappe.get_cached_doc("eDoor Setting")
+    property = frappe.defaults.get_user_default("business_branch")
+    if not property:
+        data = frappe.db.get_list("Business Branch")
+        if len(data)>0:
+            property = data[0].name
+            
+    data = {
+        "user":frappe.session.user,
+        "full_name":frappe.get_cached_value("User",frappe.session.user,"full_name"),
+        "server_report_url":setting.server_report_url,
+        "report_service_url":setting.report_service_url,
+        "server_report_token":setting.server_report_token,
+        "property":property
+    }
+    return data

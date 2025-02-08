@@ -4,6 +4,11 @@ frappe.treeview_settings['Product Category'] = {
     fields: [
         {
             fieldtype:'Data', 
+            fieldname:'product_code_prefix', 
+            label:__('Product Code Prefix')
+        },
+        {
+            fieldtype:'Data', 
             fieldname:'product_category_name_en', 
             label:__('Product Category Name EN'),
             reqd:true

@@ -70,7 +70,6 @@ def get_report_data(filters):
         sql= sql + " order by {} {}".format( get_order_by_field(filters), filters.order_by_type)
             
   
-  
     return data
 
 def get_order_by_field(fitlers):

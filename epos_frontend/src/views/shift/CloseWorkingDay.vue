@@ -50,7 +50,7 @@ const router = useRouter();
 const toaster = createToaster({ position: 'top-right' });
 const gv = inject('$gv')
 const setting = gv.setting;
-
+const pos_profile = localStorage.getItem("pos_profile");
 const closed_note = ref("")
 let pendingOrder = ref(0)
 
@@ -64,7 +64,7 @@ const shiftInformation = createResource({
     url: "epos_restaurant_2023.api.api.get_current_shift_information",
     params: {
         business_branch: gv.setting?.business_branch,
-        pos_profile: localStorage.getItem("pos_profile")
+        pos_profile: pos_profile
     },
     onSuccess(data) {
     
@@ -124,7 +124,8 @@ async function onCloseWorkingDay() {
                 workingDayResourceResource.value.setValue.submit({
                     is_closed: 1,
                     closed_note: closed_note.value,
-                    closed_date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+                    closed_date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+                    pos_profile: pos_profile
                 })
             }
         } else {
@@ -134,8 +135,10 @@ async function onCloseWorkingDay() {
         if (await confirm({ title: $t("Close Working Day"), text: $t("msg.are you sure to close working day") })) {
             workingDayResourceResource.value.setValue.submit({
                 is_closed: 1,
+                close_pos_profile:pos_profile,
                 closed_note: closed_note.value,
-                closed_date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+                closed_date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+                pos_profile: pos_profile
             })
         }
     }

@@ -12,10 +12,13 @@
   "table_group",
   "device_name",
   "pos_profile",
+  "column_break_icyy",
   "x",
   "y",
   "h",
-  "w"
+  "w",
+  "x_percent",
+  "y_percent"
  ],
  "fields": [
   {
@@ -52,14 +55,14 @@
    "fieldname": "h",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "h"
+   "label": "Height"
   },
   {
    "default": "0",
    "fieldname": "w",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "w"
+   "label": "Width"
   },
   {
    "fieldname": "table_id",
@@ -79,11 +82,25 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "POS Profile"
+  },
+  {
+   "fieldname": "column_break_icyy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "x_percent",
+   "fieldtype": "Float",
+   "label": "x Percent"
+  },
+  {
+   "fieldname": "y_percent",
+   "fieldtype": "Float",
+   "label": "y Percent"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-22 09:32:09.056349",
+ "modified": "2025-02-06 10:42:25.057930",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "ePOS Table Position",

@@ -97,7 +97,7 @@ def get_report_data(filters):
 						'-' as duration_title,
 						0 as commission_amount,		
 						e.basic_salary as total_amount	
-					FROM tabEmployee e"""
+					FROM tabEmployee e  where e.disabled = 0 and e.show_in_pos_assign_employee = 1 """
 	
 	data_query = """select 
 						e.employee_code,
@@ -136,7 +136,7 @@ def get_report_data(filters):
 
 # get sql filter condition
 def get_filter_condition(filters):
-	conditions = " 1 = 1 "
+	conditions = " 1 = 1 and e.disabled = 0 and  e.show_in_pos_assign_employee = 1"
 	start_date = filters.start_date
 	end_date = filters.end_date
 	conditions += " AND s.is_deleted = 0 "

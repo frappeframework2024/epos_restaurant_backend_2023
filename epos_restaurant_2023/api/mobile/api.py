@@ -2,7 +2,10 @@ from epos_restaurant_2023.api.api import (
     get_current_shift_information,
     get_close_shift_summary as _get_close_shift_summary,
     get_pending_sale_orders as _get_pending_sale_orders,
-    get_sale_list_table_badge as _get_sale_list_table_badge
+    get_sale_list_table_badge as _get_sale_list_table_badge,
+    validate_sale_network_lock as _validate_sale_network_lock,
+    check_username as _check_username,
+    save_table_position as _save_table_position,
 ) 
 import frappe
 from builtins import str 
@@ -51,6 +54,20 @@ def login(usr, pwd):
 @frappe.whitelist(methods="POST")
 def get_current_shift_management(business_branch, pos_profile):
     return  get_current_shift_information(business_branch,pos_profile) 
+
+
+@frappe.whitelist(methods="POST")
+def validate_sale_network_lock(param):
+    return  _validate_sale_network_lock(param=param) 
+
+
+@frappe.whitelist(methods="POST")
+def check_username(pin_code):
+    return  _check_username(pin_code=pin_code) 
+
+@frappe.whitelist(methods="POST")
+def save_table_position(device_name,pos_profile,table_group):
+    return  _save_table_position(device_name=device_name, pos_profile=pos_profile,table_group=table_group) 
 
 
 @frappe.whitelist(methods="POST")
@@ -193,6 +210,14 @@ def get_sale_invoice(doc_name):
 @frappe.whitelist(methods="POST")
 def get_sale_list_table_badge(data):
      return _get_sale_list_table_badge(data)
+
+@frappe.whitelist(methods="POST")
+def get_sale_customer(name):
+     if not frappe.db.exists("Customer", name):
+          return {"status":False, "data":None}
+     doc = frappe.get_doc("Customer", name)
+
+     return  {"status":True, "data":doc}
 
 @frappe.whitelist()
 def test_me():

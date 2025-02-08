@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
 import BarcodeBuilder from '@/views/barcode-builder/BarcodeBuilder.vue'
+import ServerReport from '@/views/server-report/ServerReport.vue'
 
 const routes = [
   {
@@ -12,6 +13,11 @@ const routes = [
     path: "/embed/barcode-builder",
     name: "BarcodeBuilder",
     component: BarcodeBuilder,
+  },
+  {
+    path: "/embed/server-report",
+    name: "ServerReport",
+    component: ServerReport,
   }
 ];
 

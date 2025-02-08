@@ -93,7 +93,7 @@
    "label": "Default Filter"
   },
   {
-   "description": "Use comma separator of filter key. eg start_date,end_date,business_source,",
+   "description": "Default filter value must json data",
    "fieldname": "filter_default_value",
    "fieldtype": "Small Text",
    "label": "Filter Default Value"
@@ -108,7 +108,7 @@
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2025-01-02 20:43:40.673355",
+ "modified": "2025-02-03 13:54:46.401313",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "System Report",

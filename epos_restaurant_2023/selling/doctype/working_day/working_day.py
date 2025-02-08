@@ -22,15 +22,27 @@ class WorkingDay(Document):
 			if frappe.db.exists('Working Day', {'business_branch': self.business_branch, 'is_closed': 0}):
 				frappe.throw("Working day is already opened")
 		
+		# validate close working day only from edoor night audit process only
+		# check if have edoor app install 
+  
+		if 'edoor' in frappe.get_installed_apps():
+			if self.pos_profile !="eDoor Profile"  :
+				frappe.throw("Your are not allow to close working from POS Station. Please ask your night auditor to run night audit.")
+      
 		if not self.created_by:
 			user = frappe.get_doc("User", self.owner)
 			self.created_by = user.full_name
 
 	
 
-
+		
 		#if close shift check current bill open 
 		if self.is_closed==1:
+			if not self.close_pos_profile:
+				self.close_pos_profile = self.pos_profile
+			if 'edoor' in frappe.get_installed_apps():
+				if self.close_pos_profile !="eDoor Profile"  :
+					frappe.throw("Your are not allow to close working from POS Station. Please ask your night auditor to run night audit.")
 			user = frappe.get_doc("User", self.modified_by)
 			self.closed_by = user.full_name
 			if not self.closed_date:
@@ -56,6 +68,9 @@ class WorkingDay(Document):
 			# self.send_mail_closed_day()
 
 	def on_update(self):
+		if 'edoor' in frappe.get_installed_apps():
+			if self.pos_profile !="eDoor Profile":
+				frappe.throw("Your are not allow to close working from POS Station. Please ask your night auditor to run night audit.")
 		frappe.clear_document_cache("Working Day",self.name)
   
 
