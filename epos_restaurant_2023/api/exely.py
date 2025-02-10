@@ -104,7 +104,8 @@ def submit_order_to_exely(doc_name):
             "roomStayId": sale.exely_room_stay_id,
             "guestId": sale.exely_guest_id,
             "services": get_service_detail(sale.sale_products),
-            "paymentMethod":payment_method
+            "paymentMethod":payment_method,
+            "dateTime": (sale.posting_date).strftime("%Y-%m-%d") + (sale.time_out).strftime("T%H:%M:%SZ")
         }
         
      
