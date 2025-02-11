@@ -10,6 +10,11 @@ import asyncio
 from datetime import datetime
 from frappe import conf
 
+
+@frappe.whitelist()
+def get_current_site_name(): 
+    return cstr(frappe.local.site)
+
 @frappe.whitelist()
 def execute_backup_command(): 
     frappe.enqueue(run_backup_command,queue="long")
@@ -113,7 +118,7 @@ async def run_bench_command(command, kwargs=None):
 def upload_to_ftp():
     folder_name = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
     setting = frappe.get_doc('FTP Backup')
-    site_name = setting.ftp_folder_name if setting.ftp_folder_name != '' else cstr(frappe.local.site)# if setting.ftp_folder_name==''?
+    site_name = setting.ftp_folder_name if setting.ftp_folder_name != '' else cstr(frappe.local.site)
     backup_folder = setting.ftp_backup_path
     if backup_folder is None or backup_folder == '' :
         backup_folder = frappe.utils.get_site_path(conf.get("backup_path", "private/backups"))

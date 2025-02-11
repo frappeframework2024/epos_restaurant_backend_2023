@@ -119,20 +119,29 @@ if (!localStorage.getItem("pos_profile")) {
 	router.push({ name: 'StartupConfig' });
 
 } else {
+
+	const pos_profile = localStorage.getItem("pos_profile");
 	localStorage.removeItem("__startup_device");
 	state.isLoading = true;
 	createResource({
 		url: 'epos_restaurant_2023.api.api.get_system_settings',
 		params: {
-			pos_profile: localStorage.getItem("pos_profile"),
+			pos_profile: pos_profile,
 			device_name: localStorage.getItem("device_name")
 		},
 		cache: "get_system_settings",
 		auto: true,
-		onSuccess(doc) {    
+		onSuccess(doc) { 
+
+			
+			const customer_display_key = `${doc.business_branch}_${pos_profile}_${doc.device_setting.device_id}`;
+			console.log({"key_cds": customer_display_key})
+
 			state.isLoading = false;
 			localStorage.setItem("setting", JSON.stringify(doc)); 
 			gv.setting = doc;
+			gv.customer_display_key = customer_display_key;
+			sale.customer_display_key = customer_display_key;
 			sale.setting = doc;
 			product.setting = doc;
 			tableLayout.setting = doc;
@@ -146,7 +155,7 @@ if (!localStorage.getItem("pos_profile")) {
 					url: "epos_restaurant_2023.api.api.get_current_shift_information",
 					params: {
 						business_branch: gv.setting?.business_branch,
-						pos_profile: localStorage.getItem("pos_profile")
+						pos_profile: pos_profile
 					},
 					onSuccess(data) {
 						gv.workingDay = data.wroking_day;

@@ -323,7 +323,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 		GROUP BY 
 		{1} {2} {3}
 	""".format(get_conditions(filters,group_filter), _row_group,item_code,groupdocstatus,normal_filter)
-	# frappe.throw(sql)
+	frappe.throw(sql)
 	data = frappe.db.sql(sql,filters, as_dict=1)
 	return data
  

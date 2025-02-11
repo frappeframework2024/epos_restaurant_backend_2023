@@ -196,7 +196,7 @@ onMounted(() => {
                     sale.saleNetworkLock(sale.sale)
                 }
                 //
-                socket.emit("ShowOrderInCustomerDisplay", sale.sale);
+                socket.emit("ShowOrderInCustomerDisplay", sale.sale,"", sale.customer_display_key);
                 sale.getTableSaleList();
             }
 
@@ -206,7 +206,7 @@ onMounted(() => {
 
         sale.saleNetworkLock(backup_sale)
     }
-    socket.emit("ShowOrderInCustomerDisplay", sale.sale, "new");
+    socket.emit("ShowOrderInCustomerDisplay", sale.sale, "new", sale.customer_display_key);
 
 })
 
@@ -244,7 +244,7 @@ onUnmounted(() => {
     sale.tableSaleListResource = null;
     sale.kod_messages = [];
 
-    socket.emit("ShowOrderInCustomerDisplay", {}, true);
+    socket.emit("ShowOrderInCustomerDisplay", {}, true,  sale.customer_display_key);
     window.removeEventListener('hashchange', handleHashChange);
 })
 

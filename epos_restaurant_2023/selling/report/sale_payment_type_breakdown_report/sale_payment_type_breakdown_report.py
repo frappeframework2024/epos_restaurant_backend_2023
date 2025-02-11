@@ -197,7 +197,6 @@ def get_date_fields(filters):
 		""".format(filters.start_date, filters.end_date)
 
 	fields = frappe.db.sql(sql,as_dict=1)
-	 
 	return fields
  
 def get_report_field_by_payment_type(filters ):
@@ -296,7 +295,6 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 		{1} 
 	""".format(get_conditions(filters,group_filter), row_group)	 
 	data = frappe.db.sql(sql,filters, as_dict=1)
-	
 	return data
  
 def get_report_group_data(filters): 

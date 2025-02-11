@@ -48,7 +48,7 @@ const sale = inject('$sale')
 const socket = inject("$socket")
 const gv = inject("$gv")
 watch(sale.sale.payment, async (newPayment, oldNewPayment) => {
-    socket.emit("ShowOrderInCustomerDisplay", sale.sale, "");
+    socket.emit("ShowOrderInCustomerDisplay", sale.sale, "",sale.customer_display_key);
 })
 const is_removing = ref(false);
 

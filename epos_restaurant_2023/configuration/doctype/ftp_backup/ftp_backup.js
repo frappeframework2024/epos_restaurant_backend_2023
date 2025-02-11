@@ -3,6 +3,12 @@
 
 frappe.ui.form.on("FTP Backup", {
     onload(frm){
+        frappe.call({
+            method: 'epos_restaurant_2023.api.ftp_backup.get_current_site_name', 
+            callback: function(r) { 
+               console.log(r.message)
+            }
+        })
         frappe.realtime.on("repair_database", (data) => {
             console.log("triggered")
             frappe.show_alert({

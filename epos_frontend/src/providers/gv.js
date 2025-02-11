@@ -12,6 +12,7 @@ const toaster = createToaster({ position: "top-right" });
 export default class Gv {
 	constructor() {
 		this.setting = {},
+		this.customer_display_key = "",
 		this.customerMeta = null,
 		this.saleMeta = null,
 		this.countries = [],

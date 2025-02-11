@@ -436,7 +436,7 @@ function newSale() {
 
   sale.updateSaleSummary();
   
-  socket.emit("ShowOrderInCustomerDisplay",sale, "new");
+  socket.emit("ShowOrderInCustomerDisplay",sale.sale, "new",  sale.customer_display_key);
 
 }
 

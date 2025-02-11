@@ -43,6 +43,7 @@ export default class Sale {
         this.router = useRouter();
         this.name = "";
         this.action = "";
+        this.customer_display_key = "",
         this.pos_receipt = undefined;
         this.no_loading = false;
         this.sale = {
@@ -862,7 +863,7 @@ export default class Sale {
         }
 
         this.orderChanged = true;
-        socket.emit("ShowOrderInCustomerDisplay", this.sale, sale_status);
+        socket.emit("ShowOrderInCustomerDisplay", this.sale, sale_status, this.customer_display_key);
 
         //add sale product to temp resend sale product to kitchen order
         this.reSendSaleProductKOT = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "" && ((r.printers || "[]") != "[]"))));
@@ -1144,7 +1145,7 @@ export default class Sale {
             const result = await noteDialog({ title: $t("Note"), name: 'Items Note', data: sp });
             if (result != false) {
                 sp.note = result
-                socket.emit("ShowOrderInCustomerDisplay", this.sale);
+                socket.emit("ShowOrderInCustomerDisplay", this.sale,"", this.customer_display_key);
             }
         }
     }
@@ -1472,7 +1473,7 @@ export default class Sale {
                 sp.seat_number = parseInt(result);
                 if (sp.seat_number == undefined || isNaN(sp.seat_number)) {
                     sp.seat_number = 0;
-                    socket.emit("ShowOrderInCustomerDisplay", this.sale);
+                    socket.emit("ShowOrderInCustomerDisplay", this.sale,"", this.customer_display_key);
                 }
         
             } else {
@@ -1690,7 +1691,7 @@ export default class Sale {
                         });
 
 
-                        socket.emit("ShowOrderInCustomerDisplay", this.sale, "paid");
+                        socket.emit("ShowOrderInCustomerDisplay", this.sale, "paid", this.customer_display_key);
                         const now = new Date();
                         const u = JSON.parse(localStorage.getItem('make_order_auth'));
                         this.sale.paid_by = u.name;
@@ -1757,7 +1758,7 @@ export default class Sale {
             } else {
                 if (await confirmDialog({ title: $t("Payment"), text: $t("msg.are you sure to process payment and close order") })) {
 
-                    socket.emit("ShowOrderInCustomerDisplay", this.sale, "paid");
+                    socket.emit("ShowOrderInCustomerDisplay", this.sale, "paid", this.customer_display_key);
                     this.generateProductPrinters();
 
                     const now = new Date();

@@ -39,7 +39,8 @@
                     @click="onAddCustomer()"></v-btn>
                 <v-btn size="small" variant="text" color="primary" icon="mdi-account-edit"
                     @click="onViewCustomerDetail()"></v-btn>
-                <v-btn size="small" variant="text" color="error" icon="mdi-delete" @click="onRemove()"></v-btn>
+                <v-btn size="small" variant="text" color="error" icon="mdi-delete" 
+                    @click="onRemove()"></v-btn>
 
             </div>
             <div class="flex-none" v-else>
@@ -217,7 +218,7 @@ function assignCustomerToOrder(result, is_membership = false) {
 
     sale.updateSaleSummary();
 
-    socket.emit("ShowOrderInCustomerDisplay", sale.sale);
+    socket.emit("ShowOrderInCustomerDisplay", sale.sale,"", sale.customer_display_key);
 }
 
 const setting = computed(() => {

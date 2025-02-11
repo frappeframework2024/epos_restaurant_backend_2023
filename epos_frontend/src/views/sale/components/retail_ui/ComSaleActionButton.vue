@@ -443,7 +443,7 @@ function checkCashierShift(){
   
     sale.updateSaleSummary();
     
-    socket.emit("ShowOrderInCustomerDisplay",sale, "new");
+    socket.emit("ShowOrderInCustomerDisplay",sale, "new",  sale.customer_display_key);
   
   }
   
