@@ -1,0 +1,125 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2025-02-12 09:41:32.426344",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "project",
+  "status",
+  "column_break_eyfl",
+  "employee",
+  "employee_name",
+  "section_break_xdpe",
+  "time_sheets",
+  "section_break_ygrx",
+  "column_break_mwxs",
+  "column_break_eowi",
+  "total_working_hours",
+  "section_break_ekxn",
+  "note"
+ ],
+ "fields": [
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project"
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Employee",
+   "options": "Employee",
+   "reqd": 1
+  },
+  {
+   "fieldname": "time_sheets",
+   "fieldtype": "Table",
+   "label": "Time Sheets",
+   "options": "Time Sheets"
+  },
+  {
+   "fieldname": "column_break_eyfl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "label": "Employee Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_xdpe",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_ekxn",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Long Text",
+   "label": "Note"
+  },
+  {
+   "fieldname": "total_working_hours",
+   "fieldtype": "Float",
+   "label": "Total Working Hours",
+   "read_only": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "TS-.YYYY.-.####"
+  },
+  {
+   "fieldname": "section_break_ygrx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_mwxs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_eowi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Open\nWorking\nCompleted"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-02-12 14:18:28.230638",
+ "modified_by": "Administrator",
+ "module": "ePOS Restaurant",
+ "name": "Timesheet",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
