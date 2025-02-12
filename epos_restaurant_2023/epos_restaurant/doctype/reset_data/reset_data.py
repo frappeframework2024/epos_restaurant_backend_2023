@@ -14,6 +14,7 @@ class ResetData(Document):
 			if self.stored_password is None or self.stored_password == "":
 				frappe.throw("Please Enter Password")
 			else:
+				epos_setting = frappe.get_doc("ePOS Settings")
 				user = frappe.db.sql("select password from __Auth where name =%(user_reset)s and doctype='User' and fieldname='password'",{"user_reset":epos_setting.user_reset_data},as_dict=True)
 				if not pbkdf2_sha256.verify(self.stored_password, user[0].password):
 					frappe.throw("Wrong Password")

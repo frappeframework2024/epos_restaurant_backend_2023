@@ -1433,7 +1433,7 @@ def update_default_expense_account(self):
 	# 4 get account code from revenue group 
 	if [x for x in self.sale_products if not x.default_expense_account]:
 		for sp in [x for x in self.sale_products if not x.default_expense_account]:
-			sp.default_expense_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_expense_account")
+			sp.default_expense_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_cost_of_good_sold_account")
 
 def update_default_sale_cash_coupon_claim_account(self):
 	
