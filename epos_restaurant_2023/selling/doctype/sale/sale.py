@@ -1444,9 +1444,7 @@ def update_default_sale_cash_coupon_claim_account(self):
 
 
 def update_default_payment_account(self):
-    
-	for p in [d for d in self.payment if not d.default_account]:
-		 
+	for p in [d for d in self.payment]:
 		default_account = frappe.get_cached_value("Payment Type",p.payment_type, "default_account")
 		if default_account:
 			default_account = [d for d in default_account if d.business_branch == self.business_branch]
