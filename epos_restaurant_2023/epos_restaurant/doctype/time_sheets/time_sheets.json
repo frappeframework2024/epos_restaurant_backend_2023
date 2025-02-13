@@ -22,12 +22,12 @@
   },
   {
    "fieldname": "from_time",
-   "fieldtype": "Time",
+   "fieldtype": "Datetime",
    "label": "From Time"
   },
   {
    "fieldname": "to_time",
-   "fieldtype": "Time",
+   "fieldtype": "Datetime",
    "label": "To Time"
   },
   {
@@ -54,7 +54,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-02-12 11:07:13.606820",
+ "modified": "2025-02-13 11:09:26.253428",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "Time Sheets",

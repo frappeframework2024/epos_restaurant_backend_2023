@@ -113,7 +113,7 @@ if(sale.vau){
 }
 //
 if (props.saleProduct.selected) {
-    if(sale.vau){
+    if(sale.vue){
         sale.vue.$onKeyStroke('F3', (e) => {
             e.preventDefault()
             if (props.saleProduct.selected && sale.dialogActiveState == false) {

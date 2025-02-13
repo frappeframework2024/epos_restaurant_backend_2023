@@ -313,14 +313,31 @@ export default class Product {
 
     getSelectedModifier() {
 
-        const selected = (Enumerable.from(this.modifiers).selectMany("$.items").where("$.selected==true").orderBy("$.modifier"));
+        let modifiers_data = [];
+        let idx = 0;
+        this.modifiers.forEach((m) =>{ 
+            m.items.forEach((i)=>{
+                if(i.selected == true){
+                    let data = {...i};
+                    data.sort = idx;
+                    data.category = m.category;
+                    modifiers_data.push(data);
+                    idx++;
+                }
+            });
+        });
+
+        const selected = (Enumerable.from(modifiers_data).orderBy("$.sort").thenBy("$.modifier"));
+
+        console.log(selected.select('r=>r').toJSONString())
         let modifiers = selected.select("r=>(r.prefix || '') + ' ' + r.modifier").toJoinedString(", ");
         if (modifiers == "[]" || modifiers == undefined) {
             modifiers = "";
         }
+ 
 
         return {
-            modifiers_data: selected.select("x => {name:x['name'], modifier: x['modifier'], price: x['price'] }").toJSONString(),
+            modifiers_data: selected.select("x => {idx:x['sort'], category:x['category'], name:x['name'], modifier: x['modifier'], price: x['price'] }").toJSONString(),
             modifiers: modifiers,
             price: selected.sum("$.price")
         }

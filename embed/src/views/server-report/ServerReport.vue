@@ -44,8 +44,11 @@ $("#main_server_report_viewer_backend").boldReportViewer({
     parameters: report_params,
     printMode:true,
     zoomFactor: 1.25,
+    enableViewState: true,  // Enables the Save View feature
     toolbarSettings: {
-        items: ej.ReportViewer.ToolbarItems.All
+        items: ej.ReportViewer.ToolbarItems.All,
+        showSaveView: true,  // Shows Save View button on the toolbar
+        showViewList: true,  // Enables selecting a saved view
     },
     reportLoaded: function(event) {
     }

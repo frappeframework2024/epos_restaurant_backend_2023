@@ -38,6 +38,9 @@ socket.on("ShowOrderInCustomerDisplay", async (arg, show, key) => {
     const _key = `${business_branch}_${pos_profile}_${device_id}`;
     console.log({"pub": _key, "sub":key});
 
+
+    
+
     if(key == _key){
         data.value = arg;
         if (Object.entries(data.value).length > 0) {
