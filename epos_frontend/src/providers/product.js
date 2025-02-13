@@ -337,7 +337,7 @@ export default class Product {
  
 
         return {
-            modifiers_data: selected.select("x => {idx:x['sort'], category:x['category'], name:x['name'], modifier: x['modifier'], price: x['price'] }").toJSONString(),
+            modifiers_data: selected.select("x => {idx:x['sort'], category:x['category'],prefix:x['prefix'], name:x['name'], modifier: x['modifier'], price: x['price'] }").toJSONString(),
             modifiers: modifiers,
             price: selected.sum("$.price")
         }
