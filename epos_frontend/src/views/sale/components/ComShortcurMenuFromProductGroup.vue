@@ -39,7 +39,7 @@
     let scrollLeft
  
     db.getDocList("Product Category",{
-        fields:["name","background_color","background_color"],
+        fields:["name","background_color","text_color"],
         filters:[
         ["show_in_pos_shortcut_menu","=","1"],
         ["allow_sale","=","1"]

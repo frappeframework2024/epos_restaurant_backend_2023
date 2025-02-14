@@ -63,31 +63,25 @@ function getIsMobile() {
 
 function onSearch(key) {
     if(key.length > 2 || key.length == 0){
-    if (sale.setting.use_retail_ui == 0) {
-
-
-        if (key) {
-            doSearch.value = true
-        }
-        if (product.setting.pos_menus.length > 0) {
-            product.searchProductKeyword = key;
-
-        } else {
-            //search product from db
-
-            if (doSearch.value) {
-                product.getProductFromDbByKeyword(key)
+        if (sale.setting.use_retail_ui == 0) {
+            if (key) {
+                doSearch.value = true
+            }
+            if (product.setting.pos_menus.length > 0) {
+                product.searchProductKeyword = key; 
+            } else {
+                //search product from db
+                if (doSearch.value) {
+                    product.getProductFromDbByKeyword(key)
+                }
             }
         }
     }
-    }
+
     if(!key){
         if(disableLoadProduct.value) return 
-
-        onClear()
-        
-    }
-    
+        onClear()        
+    }    
 }
 
 function onClear(){

@@ -10,6 +10,7 @@ from epos_restaurant_2023.api.api import (
 import frappe
 from builtins import str 
 import base64 
+import json
 
 
 def generate_keys(user):
@@ -218,6 +219,20 @@ def get_sale_customer(name):
      doc = frappe.get_doc("Customer", name)
 
      return  {"status":True, "data":doc}
+
+
+
+@frappe.whitelist()
+def execute_sql_query(query,params=None):
+     if not query.lower().startswith('select'):
+        raise frappe.PermissionError("Only SELECT queries are allowed")
+     
+     if params:
+         result = frappe.db.sql(query, json.loads(params) , as_dict=True)
+     else:
+          result = frappe.db.sql(query , as_dict=True)
+     
+     return result
 
 @frappe.whitelist()
 def test_me():

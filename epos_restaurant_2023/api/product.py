@@ -313,7 +313,7 @@ def get_product_category(category):
     if cached_value := frappe.cache.get_value("product_category_by_category_name_" + category):
         return cached_value
     
-    sql="select name, name as name_en, product_category_name_kh as name_kh, parent_product_category as parent, photo, text_color, background_color, show_in_pos_shortcut_menu as shortcut_menu, allow_sale,'menu' as type, '' as price_rule from `tabProduct Category` where parent_product_category=%(category)s and allow_sale=1"
+    sql="select name, name as name_en, product_category_name_kh as name_kh, parent_product_category as parent, photo, coalesce(text_color,'#797878') as text_color, coalesce(background_color,'#e0e0e0') as background_color, show_in_pos_shortcut_menu as shortcut_menu, allow_sale,'menu' as type, '' as price_rule from `tabProduct Category` where parent_product_category=%(category)s and allow_sale=1"
     data = frappe.db.sql(sql, {"category":category},as_dict=1)
     frappe.cache.set_value("product_category_by_category_name_" + convert_to_safe_key(category), data)
     return data             

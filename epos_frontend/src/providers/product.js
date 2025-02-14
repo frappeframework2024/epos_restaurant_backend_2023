@@ -178,8 +178,6 @@ export default class Product {
         this.getProductFromDB({limit:20,keyword:keyword, category:"All Product Categories"})
     }
 
-
-
     setSelectedProduct(p,price_rule='') {
        
         
@@ -222,6 +220,7 @@ export default class Product {
         }
 
     }
+
     setSelectedProductByMenuID(id) {       
         let p = Enumerable.from(this.posMenuResource.data ?? []).where(`$.menu_product_name=='${id}'`).firstOrDefault();      
    
@@ -239,6 +238,7 @@ export default class Product {
         }
 
     }
+
     setModifierSelection(sp) {
         
         Enumerable.from(this.prices).where("$.selected==true").forEach("$.selected = false");
@@ -257,7 +257,7 @@ export default class Product {
             })
         }
     }
-
+    
     getModifierItem(category) {
         if (this.keyword == "") {
             return category.items.filter((r) => {
@@ -307,9 +307,7 @@ export default class Product {
     getSelectedModifierList() {
         const data = (Enumerable.from(this.modifiers).selectMany("$.items").where("$.selected==true").orderBy("$.modifier")).toArray();
         return data;
-    }
-
-    
+    }    
 
     getSelectedModifier() {
 
@@ -371,6 +369,7 @@ export default class Product {
         });
         this.combo_group_temp = combo_group_data;
     }
+
     getSelectedComboGroup() {
         let selected = Enumerable.from(this.combo_group_temp).selectMany("$.menus").where("$.selected==true").toArray();
         if (selected == undefined) {
@@ -379,6 +378,7 @@ export default class Product {
 
         return selected;
     }
+
     validateComboGroup() {
         return new Promise((resolve) => {
             this.combo_group_temp.forEach((c) => {
@@ -396,6 +396,7 @@ export default class Product {
             resolve(true)
         })
     }
+
     getComboMenu(group) {
         if (this.keyword == "") {
             return group.menus
