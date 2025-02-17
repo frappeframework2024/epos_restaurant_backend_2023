@@ -93,14 +93,14 @@ frappe.query_reports["Stock Take Summary Report"] = {
 			"fieldname": "parent_row_group",
 			"label": __("Parent Group By"),
 			"fieldtype": "Select",
-			"options": "\nCategory\nProduct Group\nBusiness Branch\nStock Location\nDate\n\Month\nYear\nStock Take Transaction",
+			"options": "\nProduct Category\nBusiness Branch\nStock Location\nDate\n\Month\nYear\nStock Take Transaction",
 			
 		},
 		{
 			"fieldname": "row_group",
 			"label": __("Row Group By"),
 			"fieldtype": "Select",
-			"options": "Product\nCategory\nProduct Group\nBusiness Branch\nStock Location\nDate\n\Month\nYear\nStock Take Transaction",
+			"options": "Product\nProduct Category\nBusiness Branch\nStock Location\nDate\n\Month\nYear\nStock Take Transaction",
 			"default":"Category"
 		},
 		{
