@@ -36,6 +36,6 @@ class EmployeeCommissionPayment(Document):
 		for a in data:
 			sales.append({"sale":a.name,"commission_amount":a.sale_commission_amount,"paid_amount":a.sale_commission_paid_amount,"balance":a.sale_commission_balance,"posting_date":a.posting_date})
 		if len(data) == 0:
-			frappe.throw("No Record")
+			sales = []
 		else:
 			return sales

@@ -25,9 +25,16 @@ frappe.ui.form.on("Employee Commission Payment", {
                     frm.set_value('employee_commission_sale',r.message);
 					renderSummary(frm)
                 }
+				else{
+					frm.set_value('employee_commission_sale',[]);
+				}
             },
             async: true,
-        });
+        }).then((result)=>{
+			if(!result.message){
+				frappe.msgprint("No Sales Found")
+			}
+		})
 	},
 }),
 frappe.ui.form.on('Employee Commission Sale', {
