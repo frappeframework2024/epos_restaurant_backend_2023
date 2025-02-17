@@ -200,7 +200,7 @@ def get_conditions(filters,group_filter=None):
 
 
 	if(group_filter!=None):
-		conditions += " and {} ='{}'".format(group_filter["field"],group_filter["value"].replace("'","''").replace("%","%%"))
+		conditions += " and {} ='{}'".format(group_filter["field"],(group_filter["value"] or "").replace("'","''").replace("%","%%"))
 
 	conditions += " AND b.posting_date between '{}' AND '{}'".format(start_date,end_date)
 

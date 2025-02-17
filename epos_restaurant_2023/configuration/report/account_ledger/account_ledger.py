@@ -219,7 +219,7 @@ def get_tree(data):
 		l0["sort"] = sort	
 			
 		sort +=1
-		if l0["code"] is not "Opening Balance":
+		if l0["code"] != "Opening Balance":
 			## get level 1
 			l0["level"] =  0
 			l0["indent"] = 0
