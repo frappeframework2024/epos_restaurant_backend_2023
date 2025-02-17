@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:employee_code",
+ "autoname": "naming_series:",
  "creation": "2022-12-03 17:16:41.333505",
  "default_view": "List",
  "doctype": "DocType",
@@ -13,6 +13,7 @@
   "date_of_birth",
   "gender",
   "column_break_4",
+  "naming_series",
   "show_in_pos_assign_employee",
   "disabled",
   "is_selling_agent",
@@ -462,16 +463,22 @@
    "fieldname": "is_housekeeper",
    "fieldtype": "Check",
    "label": "Is Housekeeper"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "EMP-.####"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-20 14:18:45.248030",
+ "modified": "2025-02-17 08:40:43.060967",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee",
- "naming_rule": "By fieldname",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
