@@ -142,7 +142,7 @@ const minPrice = computed(() => {
 })
 
 function getMenuName(menu, is_item = false) {
-    const mlang = gv.itemMenuSetting.show_menu_language
+    const mlang =localStorage.getItem('mLang');  
     let code = !is_item ? "" : (gv.itemMenuSetting.show_item_code == 0 ? "" : `${menu.name} - `);
     if (mlang != null) {
         if (mlang == "en") {
@@ -152,7 +152,7 @@ function getMenuName(menu, is_item = false) {
         }
 
     } else {
-        localStorage.setItem('mLang', 'en');
+       
         return `${code}${menu.name_en}`;
     }
 }

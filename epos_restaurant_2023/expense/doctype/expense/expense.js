@@ -25,6 +25,10 @@ frappe.ui.form.on("Expense", {
 });
 frappe.ui.form.on('Expense Payments', {
 	payment_type(frm,cdt,cdn){
+		if(frm.doc.business_branch == "" || frm.doc.business_branch == null){
+			frappe.throw("Please Select Business Branch First")
+			return
+		}
 		let doc = locals[cdt][cdn];
 		frappe.call({
 			method: 'epos_restaurant_2023.expense.doctype.expense.expense.get_payment_type_account',
@@ -109,6 +113,24 @@ function change_branch(frm){
 				}
 			}).then((result)=>{
 				frm.refresh_field('expense_items');
+			})
+		}
+	});
+	frm.doc.payments.forEach(a => {
+		if((a.payment_type || "") != ""){
+			frappe.call({
+				method: 'epos_restaurant_2023.expense.doctype.expense.expense.get_payment_type_account',
+				args: {
+					payment_type: a.payment_type,
+					branch: frm.doc.business_branch
+				},
+				callback: (r) => {
+					if(r.message && r.message != "no_record"){
+						a.default_account = (r.message[0].account || "");
+					}
+				}
+			}).then((result)=>{
+				frm.refresh_field('payments');
 			})
 		}
 	});

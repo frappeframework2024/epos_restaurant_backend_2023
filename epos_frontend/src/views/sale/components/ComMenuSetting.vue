@@ -76,13 +76,13 @@
   import Slider from 'primevue/slider';
   const { t: $t } = i18n.global;
   const product = inject("$product");
-  const gv = inject("$gv")
+  const gv = inject("$gv");
+  const sale = inject("$sale");
   const backup_setting = ref({})
   const dialogRef = inject('dialogRef');
   
   function onSaveSetting() { 
-   
-    localStorage.setItem("item_menu_setting", JSON.stringify(gv.itemMenuSetting))
+    
     if (gv.itemMenuSetting.sort_order_by != backup_setting.value.sort_order_by || gv.itemMenuSetting.sort_menu_order_by != backup_setting.value.sort_menu_order_by ) {
       if (product.setting.pos_menus.length == 0) {
         product.getProductMenuByProductCategory()
@@ -91,15 +91,24 @@
         product.loadPOSMenu()
       }
     }
+
+    if(gv.itemMenuSetting.show_menu_language !=backup_setting.value.show_menu_language ){
+      sale.load_menu_lang = true;  
+      localStorage.setItem("mLang",gv.itemMenuSetting.show_menu_language);   
+      localStorage.setItem("item_menu_setting", JSON.stringify(gv.itemMenuSetting));
+      sale.load_menu_lang = false;  
+    }
     dialogRef.value.close()
   }
-  function onCancelSetting() {
-    
+
+ 
+  function onCancelSetting() {    
     gv.itemMenuSetting = backup_setting.value
     dialogRef.value.close()
   }
   onMounted(() => {
-backup_setting.value = JSON.parse(JSON.stringify(gv.itemMenuSetting))
+    gv.itemMenuSetting.show_menu_language = localStorage.getItem("mLang") || 'en';
+    backup_setting.value = JSON.parse(JSON.stringify(gv.itemMenuSetting))
   })
   
   

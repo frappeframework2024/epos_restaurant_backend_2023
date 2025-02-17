@@ -1,6 +1,7 @@
 import Enumerable from 'linq'
 import moment from '@/utils/moment.js';
 import {
+    inject,
     ref, noteDialog, changeTaxSettingModal, SaleProductComboMenuGroupModal, keyboardDialog, keypadWithNoteDialog, createResource,
     createDocumentResource, addModifierDialog, useRouter, confirmDialog, selectEmployeeDialog, saleProductDiscountDialog, i18n
 } from "@/plugin"
@@ -8,6 +9,9 @@ import { createToaster } from "@meforma/vue-toaster";
 import socket from '@/utils/socketio';
 import { FrappeApp } from 'frappe-js-sdk';
 import NumberFormat from 'number-format.js';
+
+
+
 
 const frappe = new FrappeApp();
 const db = frappe.db()
@@ -98,7 +102,7 @@ export default class Sale {
         this.kod_messages = [] //key, screen, message
 
 
-        this.createNewSaleResource();
+        this.createNewSaleResource();      
 
     }
 
@@ -2472,17 +2476,27 @@ export default class Sale {
     }
 
     onChangeMenuLanguage() {
-        this.load_menu_lang = true;
+        this.load_menu_lang = true;  
         const mlang = localStorage.getItem('mLang');
+        let lang = mlang??"en";
         if (mlang != null) {
             if (mlang == "en") {
-                localStorage.setItem('mLang', "km");
+                lang = "kh";
+
+                localStorage.setItem('mLang', lang);
             } else {
-                localStorage.setItem('mLang', "en");
+                lang = "en";
+                localStorage.setItem('mLang',lang);
             }
         } else {
-            localStorage.setItem('mLang', "en");
+            localStorage.setItem('mLang', lang);
         }
+        
+        let settiing = localStorage.getItem("item_menu_setting");
+        let value_stetting = JSON.parse(settiing);
+        value_stetting.show_menu_language = lang;
+        localStorage.setItem('item_menu_setting', JSON.stringify(value_stetting));
+        this.load_menu_lang = false;
     }
 
 
