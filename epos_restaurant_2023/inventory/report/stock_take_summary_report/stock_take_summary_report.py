@@ -374,12 +374,7 @@ def get_row_groups():
 		},
 		{
 			"fieldname":"a.product_category",
-			"label":"Category",
-			"parent_row_group_filter_field":"row_group"
-		},
-		{
-			"fieldname":"a.product_group",
-			"label":"Product Group",
+			"label":"Product Category",
 			"parent_row_group_filter_field":"row_group"
 		},
  		 {
