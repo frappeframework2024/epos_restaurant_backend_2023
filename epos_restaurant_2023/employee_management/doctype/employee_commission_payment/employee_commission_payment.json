@@ -14,8 +14,9 @@
   "posting_date",
   "sale_end_date",
   "amended_from",
-  "sale_commissions_section",
+  "section_break_wdog",
   "get_sales",
+  "sale_commissions_section",
   "employee_commission_sale",
   "total"
  ],
@@ -49,11 +50,6 @@
    "hidden": 1,
    "label": "Naming Series",
    "options": "ECP-.YYYY.-.#####"
-  },
-  {
-   "fieldname": "employee_commission_sale",
-   "fieldtype": "Table",
-   "options": "Employee Commission Sale"
   },
   {
    "fieldname": "column_break_tlzf",
@@ -94,12 +90,21 @@
    "fieldname": "total",
    "fieldtype": "HTML",
    "label": "Total"
+  },
+  {
+   "fieldname": "employee_commission_sale",
+   "fieldtype": "Table",
+   "options": "Employee Commission Sale"
+  },
+  {
+   "fieldname": "section_break_wdog",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-21 16:14:18.911642",
+ "modified": "2025-02-17 16:18:46.917156",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee Commission Payment",
