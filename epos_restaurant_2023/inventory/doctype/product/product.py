@@ -387,6 +387,21 @@ def update_product_info_queue(product,portion=None):
 				if a.name == portion["name"]:
 					a.price = portion["price"]
 		item.save()
+
+@frappe.whitelist()
+def update_single_product_info(product,prices):
+	if product:
+		item = frappe.get_doc("Product",product["name"])
+		item.product_name_en = product["name_en"]
+		item.product_name_kh = product["name_kh"]
+		item.price = product["price"]
+		list_prices = prices if (prices or "") != "" else []
+		if list_prices:
+			for b in list_prices:
+				for a in item.product_price:
+					if a.name == b["name"]:
+						a.price = b["price"]
+		item.save()
     
 def update_uom_conversion(self,item):
 	if (item.base_unit or '') == "" or (self.base_unit or '') == "" or (self.base_unit or '') != (self.unit or ''):

@@ -60,6 +60,7 @@ import ComEmptyStockProductDialog from "@/views/sale/components/ComEmptyStockPro
 import ComMoveItemModal from "@/views/sale/components/ComMoveItemModal.vue";
 import ComMoveItemChangeTable from "@/views/sale/components/ComMoveItemChangeTable.vue";
 import ComEditPOSMenu from "@/views/setting/ComEditPOSMenu.vue";
+import ComChangePrice from "@/views/setting/ComChangePrice.vue";
 import ComMoveItemSelectOrder from "@/views/sale/components/ComMoveItemSelectOrder.vue";
 import ComUnpaidBillList from "@/views/credit_balance/UnpaidBillDialog.vue";
 import ComScanCouponDialog from "@/views/sale/components/coupon/ComScanCouponDialog.vue"
@@ -144,6 +145,7 @@ export const EmptyStockProductDialog = createPromiseDialog<params, object>(ComEm
 export const MoveItemModal = createPromiseDialog<params, object>(ComMoveItemModal);
 export const MoveItemChangeTable = createPromiseDialog<params, object>(ComMoveItemChangeTable);
 export const EditPOSMenuDialog = createPromiseDialog<params, object>(ComEditPOSMenu);
+export const ChangePriceDialog = createPromiseDialog<params, object>(ComChangePrice);
 export const MoveItemSelectOrderDialog = createPromiseDialog<params, object>(ComMoveItemSelectOrder);
 export const UnpaidBillListDialog = createPromiseDialog<params, object>(ComUnpaidBillList);
 export const ComSelectPaymentTypeQuickPaymentDialog = createPromiseDialog<params, object>(ComSelectPaymentTypeQuickPayment);

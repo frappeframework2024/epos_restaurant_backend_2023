@@ -69,7 +69,7 @@
                             <v-list-item @click="uploadImage(data)">
                                 <v-list-item-title>{{ $t("Upload Online Image") }}</v-list-item-title>
                             </v-list-item>
-                            <v-list-item @click="onOpenChangePrice">
+                            <v-list-item @click="onOpenChangePrice(data)">
                                 <v-list-item-title>{{ $t("Change Price") }}</v-list-item-title>
                             </v-list-item>
                         </v-list>
@@ -87,7 +87,7 @@
     </div> 
 </template>
 <script setup>
-import { ref,computed, addModifierDialog, SelectDateTime, i18n, inject, keypadWithNoteDialog, SelectGoogleImageDialog, SaleProductComboMenuGroupModal, createToaster, EmptyStockProductDialog } from '@/plugin'
+import { ref,computed, addModifierDialog, SelectDateTime, i18n, inject, keypadWithNoteDialog, SelectGoogleImageDialog, ChangePriceDialog, createToaster, EmptyStockProductDialog } from '@/plugin'
 import Enumerable from 'linq'
 import { useDialog } from 'primevue/usedialog';
  
@@ -220,8 +220,8 @@ async function uploadImage(data) {
 }
 
 async function onOpenChangePrice(data) {
-//    alert(123)
-    
+    let prices = (JSON.parse(data.prices) || []);
+    const result = await ChangePriceDialog({ title:"Change Price",item:data,prices:prices });
 }
 
 
