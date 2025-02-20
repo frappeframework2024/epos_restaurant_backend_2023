@@ -126,6 +126,7 @@ def get_temp_menu_products(parent_menu,mobile=0,sort_order_by="product_name_en")
                 a.is_require_employee,
                 a.is_timer_product,
                 a.is_open_price,
+                a.has_variants,
                 a.prices,
                 a.printers,
                 a.modifiers,
@@ -148,7 +149,8 @@ def get_temp_menu_products(parent_menu,mobile=0,sort_order_by="product_name_en")
             from  `tabTemp Product Menu` a
             inner join `tabProduct` b on b.name = a.product_code
             where 
-                a.pos_menu='{0}' 
+                coalesce(b.variant_of,'') = ''  
+                and a.pos_menu='{0}' 
             order by a.{1}
             """.format(parent_menu, sort_order_by)
     
@@ -318,6 +320,8 @@ def get_product_category(category):
     frappe.cache.set_value("product_category_by_category_name_" + convert_to_safe_key(category), data)
     return data             
 
+
+# @frappe.whitelist(allow_guest=True)
 @frappe.whitelist()
 def get_products(category ='All Product Categories',product_code=None,keyword=None , limit = 20, page=1, order_by='product_code',order_by_type='asc', include_product_category=0,price_rule="Normal"):
     data = None
@@ -377,16 +381,14 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
     if keyword:
         sql = sql + " and (name like %(keyword)s or product_name_en like %(keyword)s or product_name_kh like %(keyword)s or product_code_2 like %(keyword)s or product_code_3 like %(keyword)s)"
     
-    sql = sql + " order by %(order_by)s %(order_by_type)s"
+    sql = sql + " order by {0} {1}".format(order_by, order_by_type)
     sql = sql + " LIMIT %(limit)s OFFSET %(start)s;"
-
+   
     filter = {
         "product_categories": get_product_category_with_children(category),
         "product_code":product_code or "",
         "limit":int(limit),
-        "start": (int(page)-1) * (int(limit) + 1),
-        "order_by":order_by,
-        "order_by_type":order_by_type
+        "start": (int(page)-1) * (int(limit) + 1)
     }
     operator = ""
     if keyword:
@@ -395,7 +397,7 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
     else:
         filter["keyword"] = '{}'.format((product_code or ""))
         operator = "="
-    
+
     data = frappe.db.sql(sql,filter,as_dict=1)
     if len(data) == 1:
         product_price_unit = data[0].unit
@@ -526,8 +528,7 @@ def get_product_by_variant(variant,product_code):
     filter["variant_2"] = '' if not "variant_2" in variant else variant["variant_2"]["variant_value"]
 
     filter["variant_3"] = '' if not "variant_3" in variant else  variant["variant_3"]["variant_value"]
- 
-        
+           
     data = frappe.db.sql(sql,filter,as_dict = 1)
 
     if data:
@@ -553,13 +554,13 @@ def get_product_variant(product_code):
     doc = frappe.get_cached_doc("Product", product_code)
     variants = []
     if doc.variant_1_name:
-        variants.append({"variant_name":doc.variant_1_name, "variants":[{"variant":d.variant_value} for d in doc.variant_1_value]})
+        variants.append({"key":"variant_1","variant_name":doc.variant_1_name, "variants":[{"variant":d.variant_value} for d in doc.variant_1_value]})
     
     if doc.variant_2_name:
-        variants.append({"variant_name":doc.variant_2_name, "variants":[{"variant":d.variant_value} for d in doc.variant_2_value]})
+        variants.append({"key":"variant_2","variant_name":doc.variant_2_name, "variants":[{"variant":d.variant_value} for d in doc.variant_2_value]})
     
     if doc.variant_3_name:
-        variants.append({"variant_name":doc.variant_3_name, "variants":[{"variant":d.variant_value} for d in doc.variant_3_value]})
+        variants.append({"key":"variant_3","variant_name":doc.variant_3_name, "variants":[{"variant":d.variant_value} for d in doc.variant_3_value]})
     
     frappe.cache.set_value("product_variant_" + product_code, variants)
     return variants

@@ -95,9 +95,10 @@
     if(gv.itemMenuSetting.show_menu_language !=backup_setting.value.show_menu_language ){
       sale.load_menu_lang = true;  
       localStorage.setItem("mLang",gv.itemMenuSetting.show_menu_language);   
-      localStorage.setItem("item_menu_setting", JSON.stringify(gv.itemMenuSetting));
       sale.load_menu_lang = false;  
     }
+    
+    localStorage.setItem("item_menu_setting", JSON.stringify(gv.itemMenuSetting));
     dialogRef.value.close()
   }
 

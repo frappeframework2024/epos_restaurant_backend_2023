@@ -37,6 +37,8 @@
   "is_combo_menu",
   "use_combo_group",
   "is_empty_stock_warning",
+  "has_variants",
+  "variant_of",
   "discount_type",
   "discount_value",
   "sort_order",
@@ -304,11 +306,26 @@
    "print_hide": 1,
    "print_hide_if_no_value": 1,
    "report_hide": 1
+  },
+  {
+   "default": "0",
+   "fetch_from": "product_code.has_variants",
+   "fieldname": "has_variants",
+   "fieldtype": "Check",
+   "label": "Has Variants",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "product_code.variant_of",
+   "fieldname": "variant_of",
+   "fieldtype": "Data",
+   "label": "Variant Of",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-09 14:53:54.974560",
+ "modified": "2025-02-19 14:14:50.430023",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Temp Product Menu",

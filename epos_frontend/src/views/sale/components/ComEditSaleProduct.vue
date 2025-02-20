@@ -58,8 +58,7 @@
 </template>
 
 <script setup>
-import { VDataTable } from 'vuetify/labs/VDataTable'
-import { ref, inject, onMounted, postApi, computed, createToaster, getApi } from "@/plugin"
+import { ref, inject, onMounted, postApi, createToaster, getApi } from "@/plugin"
 import ComDialogContent from "@/components/ComDialogContent.vue"
 const dialogRef = inject('dialogRef');
 const data = ref({})
@@ -181,6 +180,8 @@ onMounted(() => {
 function getItemsVariant(index, variant, i) {
 
     selectedData.value['variant_' + (index + 1)] = { variant_name: variant.variant_name, variant_value: i.variant }
+
+    
     data.value.variants[index].variants.filter(r => r.selected).forEach(x => x.selected = false)
     i.selected = true
     onGetProductByVariantDebounce()

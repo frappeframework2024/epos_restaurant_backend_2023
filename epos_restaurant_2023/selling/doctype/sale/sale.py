@@ -179,12 +179,13 @@ class Sale(Document):
 			currency_precision = "2"
 
 		self.grand_total =( sub_total - (self.total_discount or 0))  + self.total_tax - total_rate_include_tax
+		self.grand_total =round(self.grand_total, int(currency_precision))
 	  
 		self.total_paid =  Enumerable(self.payment).where(lambda x: x.payment_type_group !='On Account').sum(lambda x: x.amount or 0)
-		self.total_paid = (self.total_paid or 0) + (self.deposit or 0)
+		self.total_paid = round ( ((self.total_paid or 0) + (self.deposit or 0)), int(currency_precision))
 
 		self.total_fee =  Enumerable(self.payment).sum(lambda x: x.fee_amount or 0)
-		self.total_paid_with_fee = self.total_paid + (self.total_fee or 0)
+		self.total_paid_with_fee = round(( self.total_paid + (self.total_fee or 0)), int(currency_precision))
 
 
 		_balance = round(self.grand_total  , int(currency_precision)) -  round((self.total_paid or 0)  , int(currency_precision))
