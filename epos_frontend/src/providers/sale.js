@@ -368,9 +368,8 @@ export default class Sale {
             this.clearSelected();
             sp.selected = true;
             this.updateSaleProduct(sp);
-            is_new_sale_product = false;
-
-            if (this.setting.table_groups.length == 0) {
+            is_new_sale_product = false; 
+            if (this.setting.use_retail_ui == 1 ) { 
                 this.getSelectedProduct(sp)
                 this.selected_sale_product = sp
             }
@@ -474,7 +473,7 @@ export default class Sale {
             }
             this.onSaleProductApplyTax(tax_rule, saleProduct);
             this.sale.sale_products.push(saleProduct);
-            if (this.setting.table_groups.length == 0) {
+            if (this.setting.use_retail_ui == 1 ) {
                 this.getSelectedProduct(saleProduct)
                 this.selected_sale_product = saleProduct
             }
@@ -583,7 +582,7 @@ export default class Sale {
         sp.selected = true;
 
         // we check if user use retail system when user click on order product we get product information
-        if (this.setting.table_groups.length == 0) {
+        if (this.setting.use_retail_ui == 1 ) {
             this.getSelectedProduct(sp)
             this.selected_sale_product = sp
         }
