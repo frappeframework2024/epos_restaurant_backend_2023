@@ -3,6 +3,8 @@ import frappe
 import requests
 import json
 from frappe.utils.data import getdate,add_to_date
+from datetime import datetime
+import pytz
 
 @frappe.whitelist()
 def search_guest(room="",guest_name="", guest_phone=""):
@@ -88,24 +90,26 @@ def create_guest(data):
 def submit_order_to_exely(doc_name):
     setting = frappe.get_doc("Exely Itegration Setting")
     sale = frappe.get_doc("Sale",doc_name)
-    
+    payment_method = "Cash"
+    payment_type = None
     if sale:
-        payment_method= "Cash"
         if len(sale.payment)>0:
             payment_type= sale.payment[0].payment_type
             pt = [d for d in setting.payment_types if d.epos_payment_type==payment_type]
             if len(pt)>0:
                 payment_method = pt[0].exely_payment_type
                 
-        if  not payment_type:
+        if not payment_type:
             payment_method= "Cash"
-            
+
+        local_time = datetime.fromisoformat(str(str((sale.posting_date).strftime("%Y-%m-%d")) + str(((sale.closed_date or datetime.now())).strftime("T%H:%M:%S+07:00"))))
+        utc_time = local_time.astimezone(pytz.utc)
         doc = {
             "roomStayId": sale.exely_room_stay_id,
             "guestId": sale.exely_guest_id,
             "services": get_service_detail(sale.sale_products),
             "paymentMethod":payment_method,
-            "dateTime": (sale.posting_date).strftime("%Y-%m-%d") + (sale.closed_date).strftime("T%H:%M:%SZ")
+            "dateTime": str(utc_time.strftime("%Y:%m:%dT%H:%M:%SZ"))
         }
         
      
