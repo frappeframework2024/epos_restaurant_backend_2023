@@ -215,7 +215,6 @@ function onOK() {
             r.message.note = data.value.note
             dialogRef.value.close({product:r.message})
             loading.value = false
-
         }).catch(error => {
             loading.value = false
         })

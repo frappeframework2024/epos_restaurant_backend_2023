@@ -111,9 +111,8 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 			a.posting_date
 		
 	""".format(get_conditions(filters,group_filter))	
-	 
 	data = frappe.db.sql(sql,filters, as_dict=1)
-
+	# frappe.throw(str(sql))
 	return data
  
 

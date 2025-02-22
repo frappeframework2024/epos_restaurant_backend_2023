@@ -127,6 +127,7 @@ def get_temp_menu_products(parent_menu,mobile=0,sort_order_by="product_name_en")
                 a.is_timer_product,
                 a.is_open_price,
                 a.has_variants,
+                b.variant_of,
                 a.prices,
                 a.printers,
                 a.modifiers,
@@ -361,6 +362,7 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
             '[]' as modifiers,
             '' as price_rule,
             'product' as type,
+            
             variant_of,
             is_variant,
             pos_note

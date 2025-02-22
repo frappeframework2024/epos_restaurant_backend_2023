@@ -234,6 +234,12 @@ def execute_sql_query(query,params=None):
      
      return result
 
+@frappe.whitelist(methods="POST")
+def delete_note(notes):    
+     sql = """delete from `tabCashier Notes` where name in %(notes)s"""
+     frappe.db.sql(sql,{"notes": [d["name"] for d in notes]}, as_dict=True)
+     return {"status": True, "message":"Delete successfully"}
+
 @frappe.whitelist()
 def test_me():
      return "Yes"
