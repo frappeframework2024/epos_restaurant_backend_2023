@@ -176,10 +176,10 @@ def get_service_detail(sale):
 
 @frappe.whitelist()
 def cal_adjustment(sale):
-    item_amount = sum([round(d.total_revenue,2) for d in sale.sale_products])
-    diff = round((sale.grand_total-item_amount),2)
+    item_amount = sum([round((d.total_revenue or 0),2) for d in sale.sale_products])
+    diff = round((sale.grand_total-(item_amount or 0)),2)
     if diff != 0:
-        for a in sale.sale_products : a.total_revenue = round(a.total_revenue,2)
+        for a in sale.sale_products : a.total_revenue = round((a.total_revenue or 0),2)
         sale.sale_products = sorted(sale.sale_products, key=lambda x: x.total_revenue,reverse=True)
         sale.sale_products[0].total_revenue = round(sale.sale_products[0].total_revenue,2) + diff
     return sale
