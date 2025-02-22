@@ -107,7 +107,7 @@ def submit_order_to_exely(doc_name):
         doc = {
             "roomStayId": sale.exely_room_stay_id,
             "guestId": sale.exely_guest_id,
-            "services": get_service_detail(sale.sale_products),
+            "services": get_service_detail(sale),
             "paymentMethod":payment_method,
             "dateTime": str(utc_time.strftime("%Y-%m-%dT%H:%M:%SZ"))
         }
@@ -154,10 +154,11 @@ def submit_order_to_exely(doc_name):
             frappe.throw(str(response.text))
     #return doc
 
-def get_service_detail(data):
+def get_service_detail(sale):
     services = []
     currency = frappe.db.get_single_value("ePOS Settings","currency")
-    for d in data:
+    sale =  cal_adjustment(sale)
+    for d in sale.sale_products:
         services.append({
             "name":"{}-{} ({})".format( d.product_code,d.product_name,d.quantity),
             "total":{
@@ -173,6 +174,15 @@ def get_service_detail(data):
         })
     return services
 
+@frappe.whitelist()
+def cal_adjustment(sale):
+    item_amount = sum([round(d.total_revenue,2) for d in sale.sale_products])
+    diff = round((sale.grand_total-item_amount),2)
+    if diff != 0:
+        for a in sale.sale_products : a.total_revenue = round(a.total_revenue,2)
+        sale.sale_products = sorted(sale.sale_products, key=lambda x: x.total_revenue,reverse=True)
+        sale.sale_products[0].total_revenue = round(sale.sale_products[0].total_revenue,2) + diff
+    return sale
 
 @frappe.whitelist()    
 def cancel_order(transaction_id,sale,comment):
