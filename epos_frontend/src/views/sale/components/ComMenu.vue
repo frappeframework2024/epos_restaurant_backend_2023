@@ -112,7 +112,7 @@
     };
 
     onMounted(() => {
-        if (scrollContainer.value && product.setting.default_pos_menu=="" ) {
+        if (scrollContainer.value && product.setting.default_pos_menu!="" ) {
             scrollContainer.value.addEventListener('scroll', onScroll);
         } 
         const item_menu_setting = JSON.parse(localStorage.getItem("item_menu_setting"))

@@ -21,6 +21,7 @@ class ComboGroup(Document):
 					"menu_name":m.name,
 					"product_code":m.product,
 					"product_name":m.product_name,
+					"product_name_kh":m.product_name_kh,
 					"unit":m.unit,
 					"quantity":m.quantity,
 					"price":m.price,

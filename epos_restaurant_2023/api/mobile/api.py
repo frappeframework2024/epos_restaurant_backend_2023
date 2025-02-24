@@ -240,6 +240,22 @@ def delete_note(notes):
      frappe.db.sql(sql,{"notes": [d["name"] for d in notes]}, as_dict=True)
      return {"status": True, "message":"Delete successfully"}
 
+@frappe.whitelist(methods="POST")
+def create_note(category, note):   
+     doc = frappe.get_doc("Category Note", category)
+     new_row  = doc.append("notes", {
+          "note": note["note"],
+          "product_code": note["product_code"]
+     })
+     doc.save()
+     doc.reload()
+
+     return new_row
+     
+
+
+
+
 @frappe.whitelist()
 def test_me():
      return "Yes"

@@ -27,6 +27,10 @@ class Product(Document):
 			self.is_recipe=0
 			if self.is_inventory_product:
 				self.is_inventory_product = 0
+			if self.product_combo_menus:
+				for c in self.product_combo_menus:
+					c.product_name_kh = frappe.get_doc("Product", c.product).product_name_kh
+
 		validate_default_accounts(self)
 		check_product_inventory_location(self)
 		error_list=[]
@@ -100,6 +104,7 @@ class Product(Document):
 					"menu_name":m.name,
 					"product_code":m.product,
 					"product_name":m.product_name,
+					"product_name_kh":m.product_name_kh,
 					"unit":m.unit,
 					"quantity":m.quantity,
 					"price":m.price,

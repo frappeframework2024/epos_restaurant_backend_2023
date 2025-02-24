@@ -9,6 +9,7 @@
  "field_order": [
   "product",
   "product_name",
+  "product_name_kh",
   "base_unit",
   "unit",
   "quantity",
@@ -82,12 +83,17 @@
    "fieldname": "base_unit",
    "fieldtype": "Data",
    "label": "Base Unit"
+  },
+  {
+   "fieldname": "product_name_kh",
+   "fieldtype": "Data",
+   "label": "Product Name Kh"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-05-02 12:26:54.630350",
+ "modified": "2025-02-24 11:35:27.179156",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Product Combo Menu",
