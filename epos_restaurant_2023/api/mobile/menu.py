@@ -3,6 +3,7 @@ from epos_restaurant_2023.api.product import (
     get_products as _get_products,
     get_product_option as _get_product_option,
     get_product_by_variant as _get_product_by_variant,
+    get_product_detail_information as _get_product_detail_information,
 ) 
 import frappe
 
@@ -47,3 +48,10 @@ def get_product_by_variant(variant,product_code):
             variant=variant,
             product_code=product_code,
         )
+
+
+@frappe.whitelist(methods="POST") 
+def get_product_detail_information(product_code):
+    return _get_product_detail_information(
+        product_code=product_code
+    )

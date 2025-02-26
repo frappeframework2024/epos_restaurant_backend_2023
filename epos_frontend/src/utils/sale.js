@@ -62,6 +62,7 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                 }
                 else if (p.is_combo_menu) {
                     await onComboMenu(p,product)
+                     
                     p.modifiers = "";
                     p.portion = "";
                     p.modifiers_data = "[]";
@@ -75,13 +76,10 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                         p.price = portions[0].price
                         p.unit = portions[0].unit
                         p.discount = portions[0].default_discount || 0
-
-
                     }
                     
                     if (check_modifiers || portions?.length > 1 || p.is_open_price) {
-                        const pro_data = product_data
-
+                        const pro_data = product_data;
                         if (p.is_open_price && portions.length == 0) {
                             pro_data.prices = JSON.stringify([{ "price": p.price, "branch": "", "price_rule": sale.sale.price_rule, "portion": "Normal", "unit": p.unit, "default_discount": 0 }])
                         }
@@ -95,7 +93,7 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                             }
                             if(unit != base_unit){
                                 const portion = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule && decodeURIComponent(r.unit) == unit);
-                                const modifiers = JSON.parse((p.modifiers || ""))?.filter(r => (r.branch == sale.sale.business_branch || r.branch == ''));
+                                const modifiers = JSON.parse((p.modifiers || "[]"))?.filter(r => (r.branch == sale.sale.business_branch || r.branch == ''));
                                 productPrices = { "portion":(portion[0] || []),"modifiers":(modifiers[0] || [])}
                         
                             }
@@ -225,6 +223,7 @@ async function onComboMenu(p,product) {
                 p.combo_group_data = "[]"
             }
         }
+        
     } else {
         if (p.is_combo_menu && p.combo_menu_data) {
             const combo_menu_data = JSON.parse(p.combo_menu_data)

@@ -326,8 +326,6 @@ export default class Product {
         });
 
         const selected = (Enumerable.from(modifiers_data).orderBy("$.sort").thenBy("$.modifier"));
-
-        console.log(selected.select('r=>r').toJSONString())
         let modifiers = selected.select("r=>(r.prefix || '') + ' ' + r.modifier").toJoinedString(", ");
         if (modifiers == "[]" || modifiers == undefined) {
             modifiers = "";
@@ -374,7 +372,7 @@ export default class Product {
         let selected = Enumerable.from(this.combo_group_temp).selectMany("$.menus").where("$.selected==true").toArray();
         if (selected == undefined) {
             selected = []
-        }
+        } 
 
         return selected;
     }
