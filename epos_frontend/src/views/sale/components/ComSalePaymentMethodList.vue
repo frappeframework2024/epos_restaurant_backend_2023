@@ -118,6 +118,14 @@ async function onPaymentTypeClick(pt) {
             return;
         }        
 
+    }else if(pt.payment_type_group == "FOC"){
+      var resp =  await gv.authorize("apply_foc_required_password", "allow_apply_foc", "apply_foc_required_note", "FOC Note", "")
+        if (resp) {
+            sale.sale.foc_note = resp.note;
+        }
+        else{
+            return;
+        }
     }
 
     //check if payment exist manual fee

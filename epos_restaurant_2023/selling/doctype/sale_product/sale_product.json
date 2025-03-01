@@ -169,7 +169,8 @@
   "combo_menu_data",
   "employee_names",
   "employees",
-  "selected_variant"
+  "selected_variant",
+  "return_note"
  ],
  "fields": [
   {
@@ -1181,12 +1182,17 @@
    "fieldtype": "Link",
    "label": "Default Expense Account",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "return_note",
+   "fieldtype": "Long Text",
+   "label": "Return Note"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-12-20 09:15:42.877500",
+ "modified": "2025-03-01 12:14:19.827993",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",

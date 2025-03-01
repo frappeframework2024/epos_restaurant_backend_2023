@@ -53,6 +53,7 @@
   "column_break_glqa",
   "note",
   "column_break_10",
+  "foc_note",
   "html_summary",
   "hide_section_section",
   "tip_account_code",
@@ -1612,6 +1613,11 @@
    "fieldtype": "Data",
    "label": "Vattin Number",
    "read_only": 1
+  },
+  {
+   "fieldname": "foc_note",
+   "fieldtype": "Small Text",
+   "label": "FOC Note"
   }
  ],
  "image_field": "photo",
@@ -1634,7 +1640,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2025-01-04 16:02:40.241395",
+ "modified": "2025-03-01 14:49:04.697048",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

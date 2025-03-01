@@ -20,6 +20,7 @@
   "cancel_discount_sale",
   "add_voucher_top_up",
   "delete_voucher_top_up",
+  "allow_return_product",
   "column_break_6",
   "free_item",
   "change_item_price",
@@ -30,6 +31,7 @@
   "change_item_time_in",
   "change_item_time_out",
   "allow_manual_percent_discount",
+  "allow_apply_foc",
   "column_break_13",
   "start_working_day",
   "close_working_day",
@@ -238,11 +240,23 @@
    "fieldname": "allow_manual_percent_discount",
    "fieldtype": "Check",
    "label": "Allow Manual Percent Discount"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_return_product",
+   "fieldtype": "Check",
+   "label": "Allow Return Product"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_apply_foc",
+   "fieldtype": "Check",
+   "label": "Allow Apply FOC"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-04 15:50:43.350306",
+ "modified": "2025-03-01 14:24:44.611590",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "POS User Permission",

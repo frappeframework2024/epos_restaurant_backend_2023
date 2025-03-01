@@ -187,9 +187,20 @@ const canEditVariant = computed(() => {
 })
 
 function onReturn(sp) {
-    sp.is_return = !sp.is_return
-    sale.updateQuantity(sp, sp.quantity * -1)
-
+    if (sp.is_return == 0) {
+            gv.authorize("return_product_required_password", "allow_return_product", "return_product_required_note", "Return Product Note", "").then((v) => {
+            if (v) {
+                sp.is_return = !sp.is_return
+                sp.return_note = v.note
+                sale.updateQuantity(sp, sp.quantity * -1)
+            }
+        });
+    }
+    else{
+        sp.is_return = !sp.is_return
+        sale.updateQuantity(sp, sp.quantity * -1)
+    }
+   
 }
 
 function onSelectPrinter() {
@@ -206,7 +217,6 @@ function onSelectPrinter() {
     }
 }
 function addAndRemoveRateIncludeTax(saleProduct) {
-
     gv.authorize(
         "apply_rate_include_tax_required_password",
         "allow_apply_tax_include_rate",

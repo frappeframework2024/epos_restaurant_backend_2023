@@ -1873,6 +1873,8 @@ export default class Sale {
 
     onPrintToKitchen(doc, products = null) {
         var _productPrinters = products ?? this.productPrinters; 
+        var none_return_products = doc.sale_products.filter((r) => r.is_return == 0).map(a => a.product_code);
+        _productPrinters = _productPrinters.filter(b => none_return_products.includes(b.product_code));
         const data = {
             action: "print_to_kitchen",
             setting: this.setting?.pos_setting,
@@ -1881,7 +1883,7 @@ export default class Sale {
             station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
             printers: []
         }
- 
+      
         var groupKeys = "{printer:$.printer,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port}"
         var groupFields = "$.printer+','+$.group_item_type+','+$.ip_address+','+$.port";
         var printers = Enumerable.from(data.product_printers).groupBy(groupKeys, "", groupKeys, groupFields).toArray();
@@ -2001,10 +2003,9 @@ export default class Sale {
 
     generateProductPrinters() {
         this.productPrinters = [];
-        this.sale.sale_products.filter(r => r.sale_product_status == 'New' && JSON.parse(r.printers).length > 0).forEach((r) => {
+        this.sale.sale_products.filter(r => r.sale_product_status == 'New' && r.is_return == 0 && JSON.parse(r.printers).length > 0).forEach((r) => {
             const printers = JSON.parse(r.printers);
             printers.forEach((p) => {
-             
                 this.productPrinters.push({
                     sale_product_name: (r.name || "New"),
                     printer: p.printer,

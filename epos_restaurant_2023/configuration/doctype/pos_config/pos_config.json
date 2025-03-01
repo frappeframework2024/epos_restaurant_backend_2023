@@ -140,6 +140,14 @@
   "apply_rate_include_tax_required_password",
   "column_break_oqhs",
   "apply_rate_include_tax_required_note",
+  "section_break_pmag",
+  "return_product_required_password",
+  "column_break_vfmz",
+  "return_product_required_note",
+  "section_break_dgra",
+  "apply_foc_required_password",
+  "column_break_kpcm",
+  "apply_foc_required_note",
   "accounting_tab",
   "default_tip_account",
   "column_break_mcmi",
@@ -879,12 +887,52 @@
    "fieldname": "show_system_closed_amount",
    "fieldtype": "Check",
    "label": "Show System Closed Amount"
+  },
+  {
+   "fieldname": "section_break_pmag",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "return_product_required_password",
+   "fieldtype": "Check",
+   "label": "Return Product Required Password"
+  },
+  {
+   "fieldname": "column_break_vfmz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "return_product_required_note",
+   "fieldtype": "Check",
+   "label": "Return Product Required Note"
+  },
+  {
+   "fieldname": "section_break_dgra",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "apply_foc_required_password",
+   "fieldtype": "Check",
+   "label": "Apply FOC Required Password"
+  },
+  {
+   "fieldname": "column_break_kpcm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "apply_foc_required_note",
+   "fieldtype": "Check",
+   "label": "Apply FOC Required Note"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-21 08:16:00.284886",
+ "modified": "2025-03-01 14:25:27.367136",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

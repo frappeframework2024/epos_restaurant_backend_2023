@@ -62,7 +62,6 @@ export default class Gv {
 			if ( !is_auth_required && device_setting.is_order_station == 1){
 				is_auth_required = (this.setting.pos_setting["order_station_open_order_required_password"] == 1)
 			} 
-
 			if (is_auth_required) {
 				const result = await authorizeDialog({ permissionCode: permissionCode });				
 				if (result) {	
