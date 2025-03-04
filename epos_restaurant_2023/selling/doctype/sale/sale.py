@@ -306,6 +306,13 @@ class Sale(Document):
 				if d.unit !=d.base_unit:
 					if not check_uom_conversion(d.base_unit, d.unit):
 						frappe.throw(_("There is no UoM conversion for product {}-{} from {} to {}".format(d.product_code, d.product_name, d.base_unit, d.unit)))
+		# chekc if user pay to room we need to check if folio is still open
+		if "edoor" in frappe.get_installed_apps():
+			room_payment = [x for x in self.payment if x.payment_type == "Pay to Room"]
+			if room_payment:
+				room_payment = room_payment[0] 
+				if frappe.db.get_value("Reservation Folio",room_payment.folio_number,"status") =="Closed":
+					frappe.throw("This folio number {} in room {} is already closed".format(room_payment.folio_number,room_payment.room_number))
 	
 	def on_submit(self):
      

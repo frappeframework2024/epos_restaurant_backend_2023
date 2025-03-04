@@ -107,6 +107,8 @@ import { ref,onMounted,i18n,inject,computed,confirmDialog } from '@/plugin';
 import { createToaster } from '@meforma/vue-toaster';
 
 const gv = inject("$gv")
+const sale = inject("$sale")
+
 const frappe = inject("$frappe")
 const { t: $t } = i18n.global;  
 
@@ -169,8 +171,10 @@ function onRoomTypeSelected(type) {
 }
 
 function onGetReservationFolio(){
+    console.log(sale.sale)
     call.get('epos_restaurant_2023.api.api.get_reservation_folio', {
-        "property":gv.setting?.business_branch
+        "property":gv.setting?.business_branch,
+        "working_date":sale.sale.posting_date
     }).then((result) => {
         reservation_folio.value = result.message;
         if(reservation_folio.value){

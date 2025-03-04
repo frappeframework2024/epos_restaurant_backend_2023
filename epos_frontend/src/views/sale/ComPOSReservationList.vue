@@ -246,6 +246,9 @@ async function onConvertToSale(reservation) {
               sale.sale.from_reservation = reservation.name;
 
               sale.sale.working_day = _data.working_day.name;
+              sale.sale.posting_date = data.working_day.posting_date;
+              sale.posting_date = data.working_day.posting_date;
+
               sale.sale.cashier_shift = _data.cashier_shift.name;
               sale.sale.shift_name = _data.cashier_shift.shift_name;
 

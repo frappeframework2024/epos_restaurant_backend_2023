@@ -28,6 +28,7 @@ export default class Sale {
         this.platform = {};
         this.promotion = null;
         this.working_day = "";
+        this.posting_date =null;
         this.cashier_shift = "";
         this.shift_name = "";
         this.setting = null;
@@ -138,7 +139,6 @@ export default class Sale {
     }
 
     async newSale() { 
-         
         const now = new Date();
         const _now_format = moment(now).format('yyyy-MM-DD HH:mm:ss.SSSSSS');
 
@@ -1883,7 +1883,6 @@ export default class Sale {
             station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
             printers: []
         }
-      
         var groupKeys = "{printer:$.printer,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port}"
         var groupFields = "$.printer+','+$.group_item_type+','+$.ip_address+','+$.port";
         var printers = Enumerable.from(data.product_printers).groupBy(groupKeys, "", groupKeys, groupFields).toArray();

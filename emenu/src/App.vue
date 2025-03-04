@@ -59,8 +59,8 @@
 						sale.setting = gv;
 						sale.cashier_shift = res.message.cashier_shift;
 						sale.working_day = res.message.working_day;
+						sale.posting_date = res.message.working_day.posting_date;
 						sale.default_customer = _cus
-
 
 						//create new sale
 					} 

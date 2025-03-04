@@ -102,10 +102,14 @@ function onConfirm() {
                 }
             }
 
-            emit("resolve", {
+            let result = {
                 portion: portion,
                 modifiers: product.getSelectedModifier()
-            })
+            };
+
+           
+
+            emit("resolve", result )
         }
 
     })

@@ -33,9 +33,16 @@ let report_params = [
     {name: 'printed_by', values: [setting.value.full_name] },
     {name: 'property', values: [setting.value.property] },
     {name: 'start_date', values: ['2025-01-01'] },
-    {name: 'end_date', values: ['2025-01-31'] },
+    {name: 'end_date', values: [ getCurrentDate()] },
 ] 
- 
+function getCurrentDate() {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
+    const day = String(date.getDate()).padStart(2, '0'); 
+    return `${year}-${month}-${day}`;
+}
+
 $("#main_server_report_viewer_backend").boldReportViewer({
     reportServerUrl:setting.value.server_report_url,
     reportServiceUrl: setting.value.report_service_url,
@@ -43,7 +50,7 @@ $("#main_server_report_viewer_backend").boldReportViewer({
     serviceAuthorizationToken: "bearer " + setting.value.server_report_token,
     parameters: report_params,
     printMode:true,
-    zoomFactor: 1.25,
+    zoomFactor: 1,
     enableViewState: true,  // Enables the Save View feature
     toolbarSettings: {
         items: ej.ReportViewer.ToolbarItems.All,

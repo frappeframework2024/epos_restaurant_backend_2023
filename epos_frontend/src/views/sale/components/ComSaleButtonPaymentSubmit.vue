@@ -155,6 +155,10 @@ async function onSubmit() {
                 router.push({ name: "StartWorkingDay" });
               } else {
                 sale.sale.working_day = data.message.working_day.name;
+                
+                sale.sale.posting_date = data.working_day.posting_date;
+                sale.posting_date = data.working_day.posting_date;
+
                 sale.sale.cashier_shift = data.message.cashier_shift.name;
                 sale.sale.shift_name = data.message.cashier_shift.shift_name;
                 gv.confirm_close_working_day(data.message.working_day.posting_date);
@@ -231,6 +235,9 @@ async function onPayment() {
             router.push({ name: "StartWorkingDay" });
           } else {
             sale.sale.working_day = data.message.working_day.name;
+            sale.sale.posting_date = data.working_day.posting_date;
+            sale.posting_date = data.working_day.posting_date;
+
             sale.sale.cashier_shift = data.message.cashier_shift.name;
             sale.sale.shift_name = data.message.cashier_shift.shift_name;
             gv.confirm_close_working_day(data.message.working_day.posting_date);

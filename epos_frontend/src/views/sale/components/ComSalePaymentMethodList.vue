@@ -43,7 +43,7 @@ async function onPaymentTypeClick(pt) {
             toaster.warning($t("msg.Please enter payment amount"));
             return
         }
-
+        
         const result = await payToRoomDialog({
             data : pt
         });

@@ -1367,7 +1367,8 @@ def get_customer_on_membership_scan(card):
 
 # get reservation folio
 @frappe.whitelist()
-def get_reservation_folio(property):
+def get_reservation_folio(property,working_date):
+    
     room_types = frappe.db.get_list("Room Type",
                              filters=[["property",'=',property]],
                              limit=100,
@@ -1396,8 +1397,13 @@ def get_reservation_folio(property):
                                  "is_master"
                                  ],
                             )
+    current_stay_rooms = get_current_stay_room([d.reservation_stay for d in folio],working_date)
     for d in folio:
         d["id"] = d.name
+        room = [x for x   in current_stay_rooms if x.get("reservation_stay") == d.reservation_stay ]
+        if room:
+            d["rooms"] =  room[0]["room_number"]
+            d["room_types"] =  room[0]["room_type"]
         
     if frappe.db.get_single_value("ePOS Settings","allow_pos_user_to_create_guest_folio_when_transfer_bill_to_room")==1:
         # get all reservation that dont have folio
@@ -1412,6 +1418,9 @@ def get_reservation_folio(property):
         }
 
     return data
+
+def get_current_stay_room(stays,working_date):
+    return   frappe.db.sql("select reservation_stay, room_type,room_number from `tabRoom Occupy` where date=%(date)s and reservation_stay in %(stays)s",{"stays":stays,"date":working_date},as_dict=1)
 
 @frappe.whitelist()
 def get_inhouse_reservation(property):

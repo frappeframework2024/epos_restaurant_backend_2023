@@ -158,7 +158,10 @@ onMounted(() => {
                 toaster.warning($t('msg.Please start working day first'));
                 router.push({ name: "StartWorkingDay" });
             } else {
+
                 sale.sale.working_day = data.working_day.name;
+                sale.sale.posting_date = data.working_day.posting_date;
+                sale.posting_date = data.working_day.posting_date;
                 sale.sale.cashier_shift = data.cashier_shift.name;
                 sale.sale.shift_name = data.cashier_shift.shift_name;
 
