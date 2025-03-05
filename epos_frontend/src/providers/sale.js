@@ -1621,7 +1621,7 @@ export default class Sale {
     }
 
     onCheckPriceSmallerThanZero() {
-        if (this.sale.sale_products.filter(r => r.amount < 0 && r.is_return == 0).length > 0) {
+        if (this.sale.sale_products.filter(r => r.amount < 0 && (r.is_return||0) == 0).length > 0) {
             toaster.warning($t('msg.Product price cannot smaller than zero'));
             return true
         }
@@ -1873,7 +1873,7 @@ export default class Sale {
 
     onPrintToKitchen(doc, products = null) {
         var _productPrinters = products ?? this.productPrinters; 
-        var none_return_products = doc.sale_products.filter((r) => r.is_return == 0).map(a => a.product_code);
+        var none_return_products = doc.sale_products.filter((r) => (r.is_return || 0) == 0).map(a => a.product_code);
         _productPrinters = _productPrinters.filter(b => none_return_products.includes(b.product_code));
         const data = {
             action: "print_to_kitchen",
@@ -2002,7 +2002,7 @@ export default class Sale {
 
     generateProductPrinters() {
         this.productPrinters = [];
-        this.sale.sale_products.filter(r => r.sale_product_status == 'New' && r.is_return == 0 && JSON.parse(r.printers).length > 0).forEach((r) => {
+        this.sale.sale_products.filter(r => r.sale_product_status == 'New' && JSON.parse(r.printers).length > 0).forEach((r) => {
             const printers = JSON.parse(r.printers);
             printers.forEach((p) => {
                 this.productPrinters.push({
