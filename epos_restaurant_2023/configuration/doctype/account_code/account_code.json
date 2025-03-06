@@ -101,6 +101,8 @@
   "reporting_tab",
   "flash_report_revenue_group",
   "hide_account_reservation_not_allow_see_rate",
+  "column_break_utwx",
+  "custom_category_for_reporting",
   "section_break_bizz",
   "column_break_emgh",
   "available_in_reports",
@@ -721,12 +723,22 @@
    "fieldtype": "Link",
    "label": "POS Revenue Group",
    "options": "Revenue Group"
+  },
+  {
+   "fieldname": "column_break_utwx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "We use this field to grouping account to the same group and later we use this to generate display report, such f&b section in General Journal.",
+   "fieldname": "custom_category_for_reporting",
+   "fieldtype": "Data",
+   "label": "Custom Category for Reporting"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2025-02-01 15:15:56.465623",
+ "modified": "2025-03-06 09:56:09.277491",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

@@ -111,7 +111,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 
 def get_report_summary(data,filters):
 	report_summary = []
-	report_summary.append({"label":_("Purchase Order Amount"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.expense_amount or 0)),"indicator":"blue"})	
+	report_summary.append({"label":_("Purchase Order Amount"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.purchase_order_amount or 0)),"indicator":"blue"})	
 	report_summary.append({"label":_("Total Balance"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.balance or 0)),"indicator":"red"})
 	report_summary.append({"label":_("Total Payment Amount"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.payment_amount or 0)),"indicator":"green"})		
 

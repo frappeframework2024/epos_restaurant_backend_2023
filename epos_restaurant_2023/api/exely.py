@@ -18,15 +18,20 @@ def search_guest(room="",guest_name="", guest_phone=""):
     headers = {'x-api-key': doc.api_key}
     params ={}
  
+    if room:
+        params["room"] = room
+    else:
+        params["room"] = ""
+    
     if guest_name:
         params["guestName"] = guest_name
+    else:
+        params["guestName"] = ""
         
     if guest_phone:
         params["guestPhone"] = guest_phone
-        
-    if room:
-        params["room"] = room
-        
+    else:
+        params["guestPhone"] = ""
 
 
     response = requests.get(url, headers=headers, params=params)

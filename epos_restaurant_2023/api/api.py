@@ -1398,12 +1398,17 @@ def get_reservation_folio(property,working_date):
                                  ],
                             )
     current_stay_rooms = get_current_stay_room([d.reservation_stay for d in folio],working_date)
+    guest_names = get_guest_name_with_addition_name([d.reservation_stay for d in folio])
     for d in folio:
         d["id"] = d.name
         room = [x for x   in current_stay_rooms if x.get("reservation_stay") == d.reservation_stay ]
         if room:
             d["rooms"] =  room[0]["room_number"]
             d["room_types"] =  room[0]["room_type"]
+        guest_name = [g for g in guest_names if g.get("reservation_stay") == d.reservation_stay]
+        if guest_name:
+            d["guest_name"] = guest_name[0]["guest_name"]
+        
         
     if frappe.db.get_single_value("ePOS Settings","allow_pos_user_to_create_guest_folio_when_transfer_bill_to_room")==1:
         # get all reservation that dont have folio
@@ -1421,6 +1426,9 @@ def get_reservation_folio(property,working_date):
 
 def get_current_stay_room(stays,working_date):
     return   frappe.db.sql("select reservation_stay, room_type,room_number from `tabRoom Occupy` where date=%(date)s and reservation_stay in %(stays)s",{"stays":stays,"date":working_date},as_dict=1)
+
+def get_guest_name_with_addition_name(stays):
+    return   frappe.db.sql("select parent as reservation_stay, concat(guest_name,if(coalesce(additional_guest_name,'')='','',concat(' / ',additional_guest_name))) as guest_name from `tabReservation Stay Room` where coalesce(additional_guest_name,'') <> '' and parent in %(stays)s",{"stays":stays},as_dict=1)
 
 @frappe.whitelist()
 def get_inhouse_reservation(property):

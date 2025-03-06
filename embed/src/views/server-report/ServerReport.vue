@@ -50,7 +50,7 @@ $("#main_server_report_viewer_backend").boldReportViewer({
     serviceAuthorizationToken: "bearer " + setting.value.server_report_token,
     parameters: report_params,
     printMode:true,
-    zoomFactor: 1,
+    zoomFactor: "FitWidth",
     enableViewState: true,  // Enables the Save View feature
     toolbarSettings: {
         items: ej.ReportViewer.ToolbarItems.All,
