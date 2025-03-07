@@ -369,10 +369,9 @@
   },
   {
    "fieldname": "print_format",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "label": "Print Format",
-   "mandatory_depends_on": "eval:doc.show_print_preview ==1",
-   "options": "Print Format"
+   "mandatory_depends_on": "eval:doc.show_print_preview ==1"
   },
   {
    "fieldname": "section_break_29",
@@ -738,7 +737,7 @@
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2025-03-06 09:56:09.277491",
+ "modified": "2025-03-07 12:11:59.246932",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

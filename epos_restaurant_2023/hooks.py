@@ -78,7 +78,10 @@ doctype_list_js = {"Translation": "public/js/translation_list.js"}
 # after_install = "epos_restaurant_2023.install.after_install"
 
 before_migrate ="epos_restaurant_2023.migrate.before_migrate" 
-after_migrate = "epos_restaurant_2023.migrate.after_migrate"
+after_migrate = [
+    "epos_restaurant_2023.migrate.after_migrate",
+    "epos_restaurant_2023.store_procedures.stored_procedure.execute"
+    ]
  
 # Uninstallation
 # ------------
