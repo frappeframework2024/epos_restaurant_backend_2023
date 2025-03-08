@@ -9,9 +9,12 @@ def execute():
 def sp_get_account_ar_aging_report():
     # Define the stored procedure
     stored_procedure = """
-    DELIMITER $$
-    DROP PROCEDURE IF EXISTS sp_get_account_ar_aging_report;
 
+    -- drop function if existing
+
+    DROP PROCEDURE IF EXISTS sp_get_account_ar_aging_report;   
+
+    -- create function
     CREATE PROCEDURE sp_get_account_ar_aging_report(
         IN p_customer VARCHAR(255),  -- Input parameter for customer search
         IN p_end_date DATE,          -- Input parameter for the end date
@@ -43,16 +46,13 @@ def sp_get_account_ar_aging_report():
         INNER JOIN `tabCustomer` c ON c.name = a.party
         WHERE b.account_type = 'Receivable'
         AND a.party_type = 'Customer'
-        AND a.business_branch = property COLLATE utf8mb4_unicode_ci 
+        AND a.business_branch = property  
         AND a.posting_date <= DATE(end_date)
         AND CONCAT(c.name, COALESCE(c.customer_name_en, ''), COALESCE(c.phone_number, '')) 
-            LIKE CONCAT('%', customer COLLATE utf8mb4_unicode_ci, '%')
+            LIKE CONCAT('%', customer, '%')
         GROUP BY c.name, c.customer_name_en, c.phone_number;
 
-    END $$
-
-    DELIMITER ;
-    """
+    END; """
 
     # Run the stored procedure query via Frappe's database connection
     frappe.db.sql(stored_procedure)
