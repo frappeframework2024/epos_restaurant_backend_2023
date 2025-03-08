@@ -9,7 +9,7 @@ def execute():
 def sp_get_account_ar_aging_report():
     # Define the stored procedure
     stored_procedure = """
-    ELIMITER $$
+    DELIMITER $$
     DROP PROCEDURE IF EXISTS sp_get_account_ar_aging_report;
 
     CREATE PROCEDURE sp_get_account_ar_aging_report(
