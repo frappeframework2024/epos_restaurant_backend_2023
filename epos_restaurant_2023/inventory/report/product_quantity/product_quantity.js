@@ -71,7 +71,7 @@ frappe.query_reports["Product Quantity"] = {
 			"fieldname": "show_product_option",
 			"label": __("Show Product Option"),
 			"fieldtype": "Select",
-			"options": "All Products\nProduct Out of Stock\nProduct to Order\nProduct Expired\nProduct Expired Within Day",
+			"options": "All Products\nProduct With Stock\nProduct With Zero Stock\nProduct With Negative Stock\nProduct to Order\nProduct Expired\nProduct Expired Within Day",
 			"default": "All Products",
 			"on_change": function (query_report) {},
 		},

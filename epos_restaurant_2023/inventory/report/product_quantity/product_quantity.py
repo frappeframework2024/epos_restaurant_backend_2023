@@ -50,10 +50,14 @@ def get_report_data(filters):
         filters.product_groups = get_product_category_by_product_group(filters.product_group)
         sql= sql + " and  slp.product_category in %(product_groups)s "
 
-    if filters.show_product_option=="Product Out of Stock":
-        sql = sql + " and quantity<=0"
+    if filters.show_product_option=="Product With Zero Stock":
+        sql = sql + " and quantity=0"
     elif filters.show_product_option=="Product to Order":
         sql = sql + " and quantity<=reorder_level"
+    elif filters.show_product_option=="Product With Stock":
+        sql = sql + " and (quantity>0 or quantity>reorder_level)"
+    elif filters.show_product_option=="Product With Negative Stock":
+        sql = sql + " and quantity<0"
     elif filters.show_product_option=="Product Expired":
         sql = sql + " and coalesce(expired_date,'')!='' and has_expired_date = 1 and expired_date<=now()"    
     elif filters.show_product_option=="Product Expired Within Day":
