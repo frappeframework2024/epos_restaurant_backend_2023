@@ -2042,14 +2042,15 @@ def get_server_report_setting():
         data = frappe.db.get_list("Business Branch")
         if len(data)>0:
             property = data[0].name
-            
+    working_day = get_current_working_day(property);     
     data = {
         "user":frappe.session.user,
         "full_name":frappe.get_cached_value("User",frappe.session.user,"full_name"),
         "server_report_url":setting.server_report_url,
         "report_service_url":setting.report_service_url,
         "server_report_token":setting.server_report_token,
-        "property":property
+        "property":property,
+        "working_day":working_day
     }
     return data
 

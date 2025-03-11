@@ -2,7 +2,7 @@
 
    
    <div v-if="saleProduct.time_in && !saleProduct.time_out_price">
-    <span style="color:green; font-size: 12px;" class="mr-2">EST. Price</span>
+    <span style="color:green; font-size: 12px;" class="mr-2">{{ $t("EST. Price") }}</span>
     <CurrencyFormat :value="est_price" />
    </div> 
  

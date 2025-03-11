@@ -16,8 +16,8 @@
         </template> 
         <template #action>
                 <v-btn variant="flat" type="button" color="primary" :disabled="loading" v-if="!hideOkButton" @click="setTimeLaterClick()">
-                       {{$t("Set Time In Later")  }}
-                    </v-btn>
+                    {{$t("Set Time In Later")  }}
+                </v-btn>
         </template>
     </ComModal>
 </template>

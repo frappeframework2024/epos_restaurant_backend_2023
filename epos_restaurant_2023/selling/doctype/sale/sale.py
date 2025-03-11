@@ -1194,7 +1194,7 @@ def validate_tax(doc):
 				priceBefore = get_ratebefore_tax(doc.sub_total - doc.total_discount,doc.tax_rule, doc.tax_1_rate, doc.tax_2_rate, doc.tax_3_rate)
 				amount =  priceBefore + doc.total_discount  
 			
-			doc.selling_price = ((amount / doc.quantity) or 0) - (doc.modifiers_price or 0)
+			doc.selling_price = 0 if doc.quantity == 0 else   ((amount / doc.quantity) or 0) - (doc.modifiers_price or 0)
 
 
 			#Tax 1
