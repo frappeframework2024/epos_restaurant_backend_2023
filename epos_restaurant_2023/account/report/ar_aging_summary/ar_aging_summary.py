@@ -43,7 +43,6 @@ def get_report_data(filters):
 	"""
 	if filters.city_ledger:
 		sql = sql + " and name = %(city_ledger)s"
-
 	report_data =  frappe.db.sql(sql, filters,as_dict =1)
 
 	# get transaction and update to report data 

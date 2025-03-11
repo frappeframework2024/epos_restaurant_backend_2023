@@ -2056,15 +2056,15 @@ def get_server_report_setting():
 
 
 @frappe.whitelist(allow_guest = True,methods="GET")
-def ssrs_server_rul(protocol,host, port, report_path):
+def ssrs_server_rul(protocol,host, port):
     from requests.auth import HTTPBasicAuth
-
+ 
     SSRS_USERNAME = 'win10'
     SSRS_PASSWORD = 'eSAdmin@INC855.com'
-    SSRS_REPORT_URL = '{}://{}:{}/ReportServer/{}'.format(protocol,host,port,report_path)
+    SSRS_REPORT_URL = '{}://{}:{}/ReportServer'.format(protocol,host,port)
     response = requests.get(SSRS_REPORT_URL, auth=HTTPBasicAuth(SSRS_USERNAME, SSRS_PASSWORD))
 
     if response.status_code == 200:
         return SSRS_REPORT_URL
     else:
-        return "Not Found Server"
+        return response.status_code

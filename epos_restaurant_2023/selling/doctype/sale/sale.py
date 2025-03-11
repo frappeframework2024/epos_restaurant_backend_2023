@@ -360,7 +360,10 @@ class Sale(Document):
 			commission_general_ledger_entry(self)
 
 		if frappe.get_cached_value("Exely Itegration Setting",None,"enabled")==1:
-			frappe.enqueue("epos_restaurant_2023.api.exely.submit_order_to_exely", queue='long', doc_name = self.name)
+			if self.payment[0].payment_type =="Bill to Room":
+				submit_order_to_exely(self.name)
+			else:
+				frappe.enqueue("epos_restaurant_2023.api.exely.submit_order_to_exely", queue='long', doc_name = self.name)
 
 	def on_cancel(self):
 		if self.flags.ignore_on_cancel == True:

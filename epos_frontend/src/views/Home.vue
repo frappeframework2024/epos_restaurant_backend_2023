@@ -17,9 +17,10 @@
             </div>
         </div>
         <v-container>
+            <!-- <iframe style="height: 1000px; width: 100%; background: green;"  src="" ></iframe> -->
             <div class="pb-16">
                 <div class="mx-auto mt-4 mb-0 md:w-[600px]">
-                   
+                    
                     <ComMessagePromotion />
                     <div class="grid xs:grid-cols-2 md:grid-cols-4 grid-cols-2" style="grid-gap: 20px;">
                         <WorkingDayButton  v-if="device_setting?.show_start_close_working_day==1 && device_setting?.is_order_station==0"/>
@@ -95,6 +96,22 @@ function isWindow(){
 const device_name = computed(() => {
     return localStorage.getItem('device_name')
 })
+
+// fetch("http://192.168.10.156:4000/ReportServer/Pages/ReportViewer.aspx?%2feSystem%2fReports%2frptTest1Report&rs:Command=Render&rs:Embed=True", {
+//   method: "GET",
+//   headers: {
+//     "Authorization": "Basic " + btoa("win10:eSAdmin@INC855.com"),
+//   },
+//   credentials: "include"  // Ensures cookies/credentials are sent
+// })
+// .then(response => response.text())
+// .then(data => {
+// document.getElementById("reportContainer").innerHTML = data;
+// })
+// .catch(error => {
+// console.error('Error loading the SSRS report:', error);
+// });
+
  
 //on init
 onMounted(async () => { 

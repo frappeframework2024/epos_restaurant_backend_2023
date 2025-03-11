@@ -251,9 +251,14 @@ const onLogin = async () => {
         if (res) {
           getCurrentUserInfo(result.message)
           checkPromotionDay()
-        } else {
+        } else {  
           toast.warning(`Login fail Invalid username or password`);
           store.dispatch('endLoading');
+
+          //logout
+          auth.logout().then((r) => {
+              router.push({ name: 'Login' });
+          });
         }
       }
   }).catch((error)=>{

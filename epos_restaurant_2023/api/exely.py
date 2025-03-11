@@ -111,7 +111,7 @@ def submit_order_to_exely(doc_name):
         utc_time = local_time.astimezone(pytz.utc)
         doc = {
             "roomStayId": sale.exely_room_stay_id,
-            "guestId": sale.exely_guest_id,
+            "guestId": sale.exely_guest_id or setting.default_general_customer_id,
             "services": get_service_detail(sale),
             "paymentMethod":payment_method,
             "dateTime": str(utc_time.strftime("%Y-%m-%dT%H:%M:%SZ"))
