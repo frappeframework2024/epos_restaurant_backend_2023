@@ -97,20 +97,6 @@ const device_name = computed(() => {
     return localStorage.getItem('device_name')
 })
 
-// fetch("http://192.168.10.156:4000/ReportServer/Pages/ReportViewer.aspx?%2feSystem%2fReports%2frptTest1Report&rs:Command=Render&rs:Embed=True", {
-//   method: "GET",
-//   headers: {
-//     "Authorization": "Basic " + btoa("win10:eSAdmin@INC855.com"),
-//   },
-//   credentials: "include"  // Ensures cookies/credentials are sent
-// })
-// .then(response => response.text())
-// .then(data => {
-// document.getElementById("reportContainer").innerHTML = data;
-// })
-// .catch(error => {
-// console.error('Error loading the SSRS report:', error);
-// });
 
  
 //on init
