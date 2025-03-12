@@ -1,9 +1,11 @@
-import { computed, addModifierDialog, SelectDateTime, i18n, inject, keypadWithNoteDialog, SelectGoogleImageDialog, SaleProductComboMenuGroupModal, createToaster, EmptyStockProductDialog } from '@/plugin'
-
+import { computed, addModifierDialog, SelectDateTime, i18n, inject, keypadWithNoteDialog, SelectGoogleImageDialog, SaleProductComboMenuGroupModal, EmptyStockProductDialog } from '@/plugin'
+import { createToaster } from "@meforma/vue-toaster";
 import ComEditSaleProduct from '@/views/sale/components/ComEditSaleProduct.vue'
 import { FrappeApp } from 'frappe-js-sdk';
 const frappe = new FrappeApp();
 const call = frappe.call()
+const toaster = createToaster({ position: "top-right" });
+const { t: $t } = i18n.global;
 
 export async function onSelectProduct(product_data,sale,product,dialog,unit = ""){
    
@@ -12,15 +14,18 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
         // product is product from inject 
         let p = JSON.parse(JSON.stringify( product_data))
         if (!sale.isBillRequested()) {
-            product.is_open_price = p.is_open_price
-
-            if (p.is_empty_stock_warning == 1) {
-                    //message dialog confirmation   
-                let emptyConfirm = await EmptyStockProductDialog();
-                if (!emptyConfirm) {
-                    return
-                }
-            }  
+            if(sale.setting.pos_setting?.allow_negative_stock == 1){
+                if (p.is_empty_stock_warning == 1) { 
+                    let emptyConfirm = await EmptyStockProductDialog();
+                    if (!emptyConfirm) {
+                        return
+                    }
+                }  
+            }
+            else{
+                toaster.error($t('Product out of stock'));
+                return
+            }
                         
             if(p.has_variants==1){
                
