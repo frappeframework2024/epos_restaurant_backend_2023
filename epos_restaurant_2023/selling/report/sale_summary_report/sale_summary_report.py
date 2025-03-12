@@ -260,6 +260,9 @@ def get_conditions(filters,group_filter=None):
   
 	if filters.customer:
 		conditions += " AND b.customer  = %(customer)s"
+
+	if filters.table:
+		conditions += " AND b.table_id  in %(table)s"
   
 	return conditions
 
@@ -317,6 +320,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 	sql = sql + """ {2}
 		FROM `tabSale Product` AS a
 			INNER JOIN `tabSale` b on b.name = a.parent
+			inner join `tabTables Number` c on c.name = b.table_id
 		WHERE
 			{4}
 			{0}
@@ -570,7 +574,12 @@ def get_row_groups():
 			"parent_row_group_filter_field":"row_group",
 			"show_commission":False
 		},
-
+		{
+			"fieldname":"tbl_number",
+			"label":"Table",
+			"parent_row_group_filter_field":"row_group",
+			"show_commission":False
+		},
 		{
 			"fieldname":"concat(a.product_code,'-',a.product_name,' ', if(concat(a.`portion`)='' or concat(a.`portion`) = 'Normal','',concat(a.`portion`)), coalesce(a.modifiers,''))",
 			"label":"Product",

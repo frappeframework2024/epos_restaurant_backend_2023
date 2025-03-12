@@ -10,6 +10,12 @@ frappe.query_reports["Sale Summary Report"] = {
         frappe.query_report.get_filter('pos_profile').on_change = function() {
             getPosProfileAndUpdateOptions();
         };
+		if(frappe.query_report.get_filter_value('parent_row_group')!=="Table"){
+			frappe.query_report.toggle_filter_display('table', true);
+		}
+		if(frappe.query_report.get_filter_value('row_group')!=="Table"){
+			frappe.query_report.toggle_filter_display('table', true);
+		}
 		if(frappe.query_report.get_filter_value('filter_based_on')=="This Month"){
 			frappe.query_report.toggle_filter_display('from_fiscal_year', true);
 			frappe.query_report.toggle_filter_display('start_date', true  );
@@ -186,8 +192,10 @@ frappe.query_reports["Sale Summary Report"] = {
 			"label": __("Parent Group By"),
 			"fieldtype": "Select",
 			"options": "\nCategory\nProduct Group\nRevenue Group\nBusiness Branch\nOutlet\nTable Group\nTable\nPOS Profile\nCustomer\nCustomer Group\nStock Location\nDate\n\Month\nYear\nSale Invoice\nWorking Day\nCashier Shift\nSale Type",
-			hide_in_filter:1,
-			"on_change": function (query_report) {},
+			on_change: function() { 
+				filter = frappe.query_report.get_filter_value('parent_row_group')
+				frappe.query_report.toggle_filter_display('table',filter !== 'Table');
+			},
 			
 		},
 		{
@@ -196,8 +204,10 @@ frappe.query_reports["Sale Summary Report"] = {
 			"fieldtype": "Select",
 			"options": "Product\nProduct And Price\nCategory\nProduct Group\nRevenue Group\nBusiness Branch\nOutlet\nTable Group\nTable\nPOS Profile\nCustomer\nCustomer Group\nStock Location\nDate\n\Month\nYear\nSale Invoice\nWorking Day\nCashier Shift\nSale Type\nSeller",
 			"default":"Category",
-			hide_in_filter:1,
-			"on_change": function (query_report) {},
+			on_change: function() { 
+				filter = frappe.query_report.get_filter_value('row_group')
+				frappe.query_report.toggle_filter_display('table',filter !== 'Table');
+			},
 		},
 		{
 			"fieldname": "column_group",
@@ -221,6 +231,16 @@ frappe.query_reports["Sale Summary Report"] = {
 					{"value":"Cost","description":"Cost"},
 					{"value":"Profit","description":"Pofit"}
 				]
+			},
+			hide_in_filter:1,
+			"on_change": function (query_report) {},
+		},
+		{
+			fieldname: "table",
+			label: "Table",
+			fieldtype: "MultiSelectList",
+			get_data: function(txt) {
+				return frappe.db.get_link_options('Tables Number', txt);
 			},
 			hide_in_filter:1,
 			"on_change": function (query_report) {},
@@ -310,10 +330,7 @@ function update_row_group_options(default_sale_type) {
         hideOptions = ["Table", "Table Group", "Sale Type"];
     }
 
-    let selectedPosProfiles = frappe.query_report.get_filter_value('pos_profile');
-    if (!selectedPosProfiles || selectedPosProfiles.length === 0) {
-        hideOptions = hideOptions.concat(["Table", "Table Group", "Sale Type"]);
-    }
+    
 
     update_filter_options('row_group', options, hideOptions);
 }
@@ -332,10 +349,7 @@ function update_parent_row_group_options(default_sale_type) {
         hideOptions = ["Table", "Table Group", "Sale Type"];
     }
 
-    let selectedPosProfiles = frappe.query_report.get_filter_value('pos_profile');
-    if (!selectedPosProfiles || selectedPosProfiles.length === 0) {
-        hideOptions = hideOptions.concat(["Table", "Table Group", "Sale Type"]);
-    }
+    
 
     update_filter_options('parent_row_group', options, hideOptions);
 }
