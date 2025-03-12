@@ -7,11 +7,22 @@ from epos_restaurant_2023.api.account import submit_general_ledger_entry
 import frappe
 from frappe import _
 from frappe.model.document import Document
+from epos_restaurant_2023.inventory.inventory import get_product_qty
+
 class StockTake(Document):
 	def before_insert(self):
 		update_current_product_info(self)
 
 	def validate(self): 
+		epos_setting = frappe.get_doc('ePOS Settings')
+		error = ""
+		for p in self.stock_take_products:
+			if p.is_inventory_product == 1 and epos_setting.allow_negative_stock == 0:
+				if p.quantity >= get_product_qty(p.product_code, self.stock_location):
+					error = error + ("Product <b>{0}</b> QTY In Stock Location <b>{1}</b> Are Not Enough</br>".format(p.product_code, self.stock_location))
+		if error != "":
+			frappe.throw(error)
+			
 		self.total_quantity = sum((a.quantity or 0) for a in self.stock_take_products)
 		self.total_amount = sum((a.quantity or 0)* (a.cost or  0) for a in self.stock_take_products)
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):

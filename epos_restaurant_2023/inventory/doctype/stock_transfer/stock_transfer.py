@@ -6,12 +6,21 @@ from py_linq import Enumerable
 from epos_restaurant_2023.inventory.inventory import add_to_inventory_transaction, get_product_cost, get_stock_location_product, get_uom_conversion, update_product_quantity
 from epos_restaurant_2023.inventory.inventory import check_uom_conversion
 from frappe.model.document import Document
+from epos_restaurant_2023.inventory.inventory import get_product_qty
 
 class StockTransfer(Document):
 	def validate(self):
+		epos_setting = frappe.get_doc('ePOS Settings')
+		error = ""
 		if self.from_stock_location == self.to_stock_location:
 			frappe.throw("Cannot transfer to the same stock location.")
-
+		for p in self.stock_transfer_products:
+			if p.is_inventory_product == 1 and epos_setting.allow_negative_stock == 0:
+				if p.quantity >= get_product_qty(p.product_code, self.from_stock_location):
+					error = error + ("Product <b>{0}</b> QTY In Stock Location <b>{1}</b> Are Not Enough</br>".format(p.product_code, self.from_stock_location))
+		if error != "":
+			frappe.throw(error)
+			
 		total_quantity = Enumerable(self.stock_transfer_products).sum(lambda x: x.quantity or 0)
 		total_amount = Enumerable(self.stock_transfer_products).sum(lambda x: (x.quantity or 0)* (x.cost or  0))
 
