@@ -312,6 +312,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "add_voucher_top_up_required_password":pos_config.add_voucher_top_up_required_password,
         "check_delete_item_require_passord_from_product":pos_config.check_delete_item_require_passord_from_product,
         "allow_change_date_when_start_working_day":doc.allow_change_date_when_start_working_day,
+        "allow_negative_stock":doc.allow_negative_stock,
         "is_client_side_sync_setting":epos_sync_setting.client_side,
         "park_item_days_expiry":pos_config.park_item_days_expiry,
         "apply_rate_include_tax_required_password":pos_config.apply_rate_include_tax_required_password,

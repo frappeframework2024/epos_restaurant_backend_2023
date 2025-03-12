@@ -337,10 +337,20 @@ export default class Sale {
     }
 
  
-    addSaleProduct(p) {
+    async addSaleProduct(p) {
         //check for append quantity rule
         //product code, allow_append_qty,price, unit,modifier, portion, is_free,sale_product_status
         //and check system have feature to send to kitchen
+        console.log(p)
+        if(this.setting?.pos_setting?.allow_negative_stock == 0 && p.is_inventory_product == 1){
+            let data =  await call.get("epos_restaurant_2023.inventory.inventory.get_product_qty",{"product":p.name,"stock_location":this.sale.stock_location})
+            console.log(data.message,this.sale.stock_location)
+           if(data.message <= 0){
+                toaster.error($t('msg.Product out of stock'));
+                return
+           }
+        }
+        
         let strFilter = `$.is_timer_product == 0 && $.is_require_employee==0  && $.product_code=='${p.name}' && $.append_quantity ==1 && $.price==${p.price} && $.portion=='${this.getString(p.portion)}'  && $.modifiers=='${(p.modifiers || '')=='[]'?'':(p.modifiers || '')}'   && $.unit=='${p.unit}' && $.is_free==0 && $.note==''`
  
         if (!this.setting?.pos_setting?.allow_append_quantity_after_submit) {
