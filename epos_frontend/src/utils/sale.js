@@ -14,18 +14,21 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
         // product is product from inject 
         let p = JSON.parse(JSON.stringify( product_data))
         if (!sale.isBillRequested()) {
-            if(sale.setting.pos_setting?.allow_negative_stock == 1){
-                if (p.is_empty_stock_warning == 1) { 
-                    let emptyConfirm = await EmptyStockProductDialog();
-                    if (!emptyConfirm) {
-                        return
-                    }
-                }  
+            if(sale.setting?.pos_setting?.allow_negative_stock == 0 && p.is_inventory_product == 1){
+                let data =  await call.get("epos_restaurant_2023.inventory.inventory.get_product_qty",{"product":p.name,"stock_location":sale.sale.stock_location})
+                if(data.message <= 0){
+                    toaster.error($t('Product out of stock'));
+                    return
+                }
             }
-            else{
-                toaster.error($t('Product out of stock'));
-                return
-            }
+            
+            if (p.is_empty_stock_warning == 1) { 
+                let emptyConfirm = await EmptyStockProductDialog();
+                if (!emptyConfirm) {
+                    return
+                }
+            }  
+            
                         
             if(p.has_variants==1){
                

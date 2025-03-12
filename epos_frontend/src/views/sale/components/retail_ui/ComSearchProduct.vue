@@ -196,6 +196,13 @@ function onClose(isClose) {
 async function onSelectProduct(d){
     call.get("epos_restaurant_2023.api.product.get_product_by_barcode",{barcode:d.name}).then(async (result)=>{
         const p = result.message
+        if(sale.setting?.pos_setting?.allow_negative_stock == 0 && p.is_inventory_product == 1){
+            let data =  await call.get("epos_restaurant_2023.inventory.inventory.get_product_qty",{"product":p.name,"stock_location":sale.sale.stock_location})
+            if(data.message <= 0){
+                toaster.error($t('Product out of stock'));
+                return
+            }
+        }
         const portions = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule);
          if (portions?.length == 1) {
              p.price = portions[0].price
