@@ -336,24 +336,18 @@ def re_run_fail_jobs():
             jobs = [d for d in jobs if "exc_info" in d]
             job_names=["epos_restaurant_2023.api.utils."]
             jobs = [d for d in jobs  if  ( d["job_name"] in job_names or  "Deadlock found when trying"  in  d["exc_info"] or 'Network is unreachable' in d['exc_info'] or "Lock wait timeout exceeded"  in  d["exc_info"] or "Document has been modified after you have opened it" in d["exc_info"] or "zerobalance" in d["exc_info"] or "Task exceeded maximum timeout value" in d["exc_info"] or "timeout" in d["exc_info"] or "object has no attribute" in d["exc_info"] or "object is not subscriptable" in d["exc_info"]) ]
-            job_ids = []
-            already_check_docs=[]
             for j in jobs:
                 try:
                     job =   json.loads(j["arguments"])
-                    if job['kwargs']['doc']['name'] not in already_check_docs:
-                        already_check_docs.append(job['kwargs']['doc']['name'])
-                        #Retry Here
-                        if job['job_name'] == "epos_restaurant_2023.api.utils.sync_data_to_server":
-                            frappe.enqueue('epos_restaurant_2023.api.utils.sync_data_to_server',doc=frappe.get_doc(job['kwargs']['doc']),extra_action=job['kwargs']['extra_action'] if job['kwargs'].get('extra_action') else '[]',action=job['kwargs']['action'])
-                            # sync_data_to_server(frappe.get_doc(job['kwargs']['doc']),extra_action=job['kwargs']['extra_action'] if job['kwargs'].get('extra_action') else '[]',action=job['kwargs']['action'])
-                        
-                        remove_job(j["job_id"])
-                    else:
+                    #Retry Here
+                    if job['job_name'] == "epos_restaurant_2023.api.utils.sync_data_to_server":
+                        frappe.enqueue('epos_restaurant_2023.api.utils.sync_data_to_server',doc=frappe.get_doc(job['kwargs']['doc']),extra_action=job['kwargs']['extra_action'] if job['kwargs'].get('extra_action') else '[]',action=job['kwargs']['action'])
+                        # sync_data_to_server(frappe.get_doc(job['kwargs']['doc']),extra_action=job['kwargs']['extra_action'] if job['kwargs'].get('extra_action') else '[]',action=job['kwargs']['action'])
+                        jobs = (a for a in jobs if a["job_id"] != j["job_id"])
                         remove_job(j["job_id"])
                 except Exception as e:
                     frappe.throw(str(e))
-            return job_ids
+            return []
 
 
 def serialize_job(job: Job) -> frappe._dict:
@@ -454,14 +448,14 @@ def filter_current_site_jobs(job_ids: list[str]) -> list[str]:
 
 @frappe.whitelist()
 def remove_job(failed_job):
-    from frappe.utils.background_jobs import get_redis_conn
-    from rq import Queue
+    frappe.only_for("System Manager")
     redis_conn = get_redis_conn()
-    queue_name = "default"  # Change to "short" or "long" if needed
-
-    queue = Queue(queue_name, connection=redis_conn)
-    queue.empty() 
-
+    job_id = failed_job
+    try:
+        job = Job.fetch(job_id, connection=redis_conn)
+        job.delete()
+    except Exception as e:
+        frappe.throw(str(e))
 
 
 @frappe.whitelist()
