@@ -14,6 +14,15 @@ class StockAdjustment(Document):
 		update_current_product_info(self)
 
 	def validate(self):
+		epos_setting = frappe.get_doc('ePOS Settings')
+		error = ""
+		for p in self.products:
+			if p.is_inventory_product == 1 and epos_setting.allow_negative_stock == 0:
+				if p.quantity < 0:
+					error = error + ("Product <b>{0}</b> QTY Not Allow Negative".format(p.product_code))
+		if error != "":
+			frappe.throw(error)
+
 		total_quantity = Enumerable(self.products).sum(lambda x: x.quantity or 0)
 		total_cost = Enumerable(self.products).sum(lambda x: x.total_amount or 0)
 		total_current_quantity = Enumerable(self.products).sum(lambda x: x.current_quantity or 0)
