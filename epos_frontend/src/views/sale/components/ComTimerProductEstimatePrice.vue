@@ -30,7 +30,7 @@ function getEstimatePrice(){
     data.price_rule = sale.sale.price_rule
     
     
-    if(data.name){
+    if(data.name && data.time_in){
         call.post("epos_restaurant_2023.api.timer_product.get_timer_product_estimate_price", { sale_product: data }).then((result) => {
             est_price.value = result.message
         })

@@ -44,6 +44,8 @@
                                 </template>
 
                             </div>
+
+                            <!-- variant  -->
                             <div class="d-flex gap-1">
                                 <v-chip v-if="sp?.selected_variant?.variant_1?.variant_value" size="small" color="red">
                                     {{sp.selected_variant.variant_1.variant_value}}
@@ -58,12 +60,17 @@
                                     <v-tooltip activator="parent" location="top">{{sp.selected_variant.variant_3.variant_name}}</v-tooltip>
                                 </v-chip>
                             </div>    
+                              <!-- variant  -->
+                             
                             <div class="text-xs pt-1">
+                                    <!-- modifier  -->
                                 <div v-if="sp.modifiers && !sp.is_timer_product">
                                     <span>{{ sp.modifiers }} (
                                         <CurrencyFormat :value="sp.modifiers_price * sp.quantity" />)
                                     </span>
                                 </div> 
+                                    <!-- modifier  -->
+                                         <!-- combo   -->
 
                                 <div v-if="sp.is_combo_menu">
                                     <div v-if="sp.use_combo_group && sp.combo_menu_data">
@@ -72,6 +79,8 @@
                                     </div>
                                     <span v-else>{{ sp.combo_menu }}</span>
                                 </div>
+                                   <!-- combo   -->
+                                       <!-- discount   -->
                                 <div v-if="sp.discount > 0 && !sp.is_free">
                                     <span class="text-red-500">
                                         {{ $t('Discount') }} :
@@ -79,7 +88,8 @@
                                         <CurrencyFormat v-else :value="parseFloat(sp.discount)" />
                                     </span>
                                 </div>
-
+                                <!-- discount   -->
+                                <!-- employee   -->
                                 <div v-if="(sp.is_require_employee || 0) == 1">
                                     <span v-for="emp, idx in getEmployees(sp.employees)" :key="idx"
                                         class="text-gray-500">
@@ -88,8 +98,10 @@
                                             {{ emp.employee_display_name }}
                                         </v-chip>
                                     </span>
-
                                 </div>
+                                <!-- employee   -->
+
+
                                 <v-chip color="green" size="small" v-if="sp.seat_number"> {{ $t('Seat') + "# " + sp.seat_number }}</v-chip>
 
                                 <div class="text-gray-500">
@@ -103,6 +115,7 @@
                                     {{ $t('Expiry') + ": " + moment(sp.expired_date).format('DD-MM-yyyy') }}
                                 </div>
                             </div>
+                              <!-- modifier  -->
                             <v-chip v-if="sp.quantity<0" variant="outlined" size="small" color="red" class="return-chip">{{ $t("Return") }}</v-chip>
                         </div>
 
@@ -160,7 +173,7 @@
                         <template v-if="(sp.is_require_employee || 0) == 1">
                             <v-chip color="primary" class="mx-1 grow text-center justify-center" variant="elevated"
                                 size="small" @click="sale.onAssignEmployee(sp)">{{ $t('Employee') }}</v-chip>
-                        </template> 
+                        </template>     
                         <v-chip v-if="(!sp.reference_sale_product  && (show_button_delete_item ||  sp.sale_product_status == 'New'))" color="red"
                             class="mx-1 grow text-center justify-center" variant="elevated" size="small"
                             @click="sale.onRemoveItem(sp, gv, numberFormat)">{{ $t('Delete')
@@ -219,6 +232,7 @@ function getMenuName(sp) {
         return `${code}${sp.product_name}`;
     }
 }
+
 
 const show_button_seat_number = computed(()=>{
     if (gv.device_setting.show_seat_number_button == 1 && tableLayout.table_groups && tableLayout.table_groups.length > 0){
@@ -308,8 +322,7 @@ function getSaleProducts(groupByKey) {
     return [];
 }
 
-
-
+ 
 function getEmployees(data) {
     if ((data || "") != "") {
         const result = JSON.parse(data);
