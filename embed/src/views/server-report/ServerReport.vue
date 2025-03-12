@@ -1,7 +1,7 @@
 <template>
     <Splitter    state-key="report_server_backend_spliter_state" state-storage="local">
             <SplitterPanel :size="20" class="pa-4 left-side-panel overflow-y-auto wrapper-sidebar-report" style="height:99vh">
-                <ComReportTree   @onSelectReport="onSelectReport" />
+                <ComReportTree   :root_report="root_report" @onSelectReport="onSelectReport" />
             </SplitterPanel>
             <SplitterPanel :size="80" class="pa-4">
                 
@@ -17,7 +17,7 @@
         
 </template>
 <script setup>
-import { getApi,ref } from '@/plugin';
+import { getApi,ref,useRoute } from '@/plugin';
 import { onMounted } from 'vue';
  
 import Splitter from 'primevue/splitter';
@@ -26,7 +26,8 @@ import ComReportTree from  "@/views/server-report/ComReportTree.vue";
 import reportpng from "@/assets/images/report.png"
 const setting =ref({})
 const selectedReport = ref()
- 
+const route = useRoute();
+const root_report =  ref(route.query.root_report)
 function onSelectReport(p) { 
  
     selectedReport.value = p

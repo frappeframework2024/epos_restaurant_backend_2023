@@ -35,6 +35,9 @@ const selectedReport = ref()
 import PanelMenu from 'primevue/panelmenu';
 import { watch } from "vue";
  
+const props = defineProps({
+    root_report:String
+})
 const keyword = ref("")
 const loading = ref(false)
 const reportItems = ref([])
@@ -87,7 +90,7 @@ function buildTreeData(){
    
      
     if(filterReports.value){
-        let tree_report_data = filterReports.value.filter(r=>r.parent_system_report == 'All Reports'  );
+        let tree_report_data = filterReports.value.filter(r=>r.parent_system_report == props.root_report  );
     tree_report_data.forEach(parent=>{
         parent.keyword  = parent.report_title 
         parent.items = getSubReportItem(parent)

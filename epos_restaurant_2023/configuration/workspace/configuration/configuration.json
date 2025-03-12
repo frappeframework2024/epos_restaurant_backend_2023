@@ -688,7 +688,7 @@
    "type": "Link"
   }
  ],
- "modified": "2025-03-11 11:56:18.326070",
+ "modified": "2025-03-12 09:51:00.080318",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Configuration",
@@ -698,7 +698,7 @@
  "public": 1,
  "quick_lists": [],
  "roles": [],
- "sequence_id": 23.0,
+ "sequence_id": 24.0,
  "shortcuts": [],
  "title": "Configuration"
 }

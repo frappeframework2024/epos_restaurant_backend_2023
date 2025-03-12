@@ -348,11 +348,9 @@ def re_run_fail_jobs():
                             frappe.enqueue('epos_restaurant_2023.api.utils.sync_data_to_server',doc=frappe.get_doc(job['kwargs']['doc']),extra_action=job['kwargs']['extra_action'] if job['kwargs'].get('extra_action') else '[]',action=job['kwargs']['action'])
                             # sync_data_to_server(frappe.get_doc(job['kwargs']['doc']),extra_action=job['kwargs']['extra_action'] if job['kwargs'].get('extra_action') else '[]',action=job['kwargs']['action'])
                         
-                        job_ids.append(j["job_id"])
-                        remove_failed_jobs(job_ids)
+                        remove_job(j["job_id"])
                     else:
-                        job_ids.append(j["job_id"])
-                        remove_failed_jobs(job_ids)
+                        remove_job(j["job_id"])
                 except Exception as e:
                     frappe.throw(str(e))
             return job_ids
@@ -455,18 +453,15 @@ def filter_current_site_jobs(job_ids: list[str]) -> list[str]:
 	return [j for j in job_ids if j.startswith(site)]
 
 @frappe.whitelist()
-def remove_failed_jobs(failed_jobs):
-    frappe.only_for("System Manager")
+def remove_job(failed_job):
+    from frappe.utils.background_jobs import get_redis_conn
+    from rq import Queue
+    redis_conn = get_redis_conn()
+    queue_name = "default"  # Change to "short" or "long" if needed
 
-    for queue in get_queues():
-        
-        fail_registry = queue.failed_job_registry
-         
-        # Delete in batches to avoid loading too many things in memory
-        conn = get_redis_conn()
-        for job_ids in create_batch(failed_jobs, 100):
-            for job in Job.fetch_many(job_ids=job_ids, connection=conn):
-                job and fail_registry.remove(job, delete_job=True)
+    queue = Queue(queue_name, connection=redis_conn)
+    queue.empty() 
+
 
 
 @frappe.whitelist()

@@ -120,11 +120,11 @@
                             <ComQuantityInput v-if="!readonly" :sale-product="sp" />
                             
                         </div>
-                    </div>
-
+                    </div> 
                     <div v-if="sp.selected && !readonly" class="-mx-1 flex pt-1">
                         <template v-if="sp.is_timer_product">
                             <!-- start time  -->
+                            
                             <v-chip color="green" v-if="!sp.time_out && !sp.reference_sale_product"
                                 class="mx-1 grow text-center justify-center" variant="elevated" size="small"
                                 @click="onStartTime(sp)">{{ $t('Start Timer') }}</v-chip>

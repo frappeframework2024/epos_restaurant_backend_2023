@@ -1,0 +1,34 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"ANFhIOhJBF\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"POS Server Report\",\"col\":12}}]",
+ "creation": "2025-03-12 09:34:57.506449",
+ "custom_blocks": [
+  {
+   "custom_block_name": "POS Server Report",
+   "label": "POS Server Report"
+  }
+ ],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "printer",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "ePOS Reports",
+ "links": [],
+ "modified": "2025-03-12 09:50:59.465045",
+ "modified_by": "Administrator",
+ "module": "ePOS Report",
+ "name": "ePOS Reports",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 19.0,
+ "shortcuts": [],
+ "title": "ePOS Reports"
+}

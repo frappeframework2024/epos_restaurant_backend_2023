@@ -139,8 +139,7 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                         p.time_in = selectdatetime;
                     } else {
                         p.time_in = undefined;
-                    }
-
+                    } 
                 } else {
                     return
                 }
