@@ -4,8 +4,8 @@
             <v-col cols="12" md="6" lg="4" v-if="!mobile && tableSaleColor">
                 <ComSaleStatusInformation />
             </v-col>
-            <v-col cols="12" :md="tableSaleColor ? '6' : '12'" :lg="!mobile && tableSaleColor ? '4' : '12'">
-                <v-tabs align-tabs="center" height="100%" v-model="tableLayout.tab" center-active>
+            <v-col style="width: 1px;" cols="12" :md="tableSaleColor ? '6' : '12'" :lg="!mobile && tableSaleColor ? '4' : '12'">
+                <v-tabs show-arrows align-tabs="center" height="100%" v-model="tableLayout.tab" center-active>
                     <v-tab :class="tableLayout.tab == g.key ? 'text-green' : ''" :style="{'text-transform': 'none', 'font-weight': tableLayout.tab == g.key ? 'bold' : '', 'font-family':'Khmer'}" v-for="g in tableLayout.table_groups" :key="g.key"
                         :value="g.key" @click="onTabClick(g.key)">
                         {{ getGroupName(g) }}
