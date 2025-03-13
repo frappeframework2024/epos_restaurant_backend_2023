@@ -17,7 +17,7 @@
         
 </template>
 <script setup>
-import { getApi,ref,useRoute } from '@/plugin';
+import { getApi,ref,useRoute,inject } from '@/plugin';
 import { onMounted } from 'vue';
  
 import Splitter from 'primevue/splitter';
@@ -27,6 +27,9 @@ import reportpng from "@/assets/images/report.png"
 const setting =ref({})
 const selectedReport = ref()
 const route = useRoute();
+
+const moment = inject("$moment")
+
 const root_report =  ref(route.query.root_report)
 function onSelectReport(p) { 
  
