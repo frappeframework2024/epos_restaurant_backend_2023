@@ -32,11 +32,11 @@ const moment = inject("$moment")
 
 const root_report =  ref(route.query.root_report)
 function onSelectReport(p) { 
- 
     selectedReport.value = p
     let report_params = [
         {name: 'printed_by', values: [setting.value.full_name] },
         {name: 'username', values: [setting.value.user] },
+        {name: 'report_title', values: [p.report_title] },
         {name: 'property', values: [setting.value.property] },
         {name: 'start_date', values: [setting.value.working_day.posting_date] },
         {name: 'end_date', values: [setting.value.working_day.posting_date] },
@@ -111,6 +111,11 @@ function onSelectReport(p) {
         showSaveView: true,  // Shows Save View button on the toolbar
         showViewList: true,  // Enables selecting a saved view
     },
+    printAction: function (args) {
+        alert("u print me")
+        args.printOption.pageSize = "Landscape"; // Force Landscape mode
+    }
+    ,
         reportLoaded: function(event) {
             setTimeout(() => {
                 let property  = document.querySelector("#main_server_report_viewer_Param_101")

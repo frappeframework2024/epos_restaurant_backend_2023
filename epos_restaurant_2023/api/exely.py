@@ -103,45 +103,62 @@ def submit_order_to_exely(doc_name):
             pt = [d for d in setting.payment_types if d.epos_payment_type==payment_type]
             if len(pt)>0:
                 payment_method = pt[0].exely_payment_type
-                
-        if not payment_type:
-            payment_method= "Cash"
 
-        local_time = datetime.fromisoformat(str(str((sale.posting_date).strftime("%Y-%m-%d")) + str(((sale.closed_date or datetime.now())).strftime("T%H:%M:%S+07:00"))))
-        utc_time = local_time.astimezone(pytz.utc)
-        doc = {
-            "roomStayId": sale.exely_room_stay_id,
-            "guestId": sale.exely_guest_id or setting.default_general_customer_id,
-            "services": get_service_detail(sale),
-            "paymentMethod":payment_method,
-            "dateTime": str(utc_time.strftime("%Y-%m-%dT%H:%M:%SZ"))
-        }
+        if payment_type != "FOC":
+            if not payment_type:
+                payment_method= "Cash"
+
+            local_time = datetime.fromisoformat(str(str((sale.posting_date).strftime("%Y-%m-%d")) + str(((sale.closed_date or datetime.now())).strftime("T%H:%M:%S+07:00"))))
+            utc_time = local_time.astimezone(pytz.utc)
+            doc = {
+                "roomStayId": sale.exely_room_stay_id,
+                "guestId": sale.exely_guest_id or setting.default_general_customer_id,
+                "services": get_service_detail(sale),
+                "paymentMethod":payment_method,
+                "dateTime": str(utc_time.strftime("%Y-%m-%dT%H:%M:%SZ"))
+            }
+            
         
-     
-        # send to api
-        url = setting.post_service_api_endpoint
-        headers = {
-                    'x-api-key': setting.api_key,
-                    'Content-Type': 'application/json'
-                }
+            # send to api
+            url = setting.post_service_api_endpoint
+            headers = {
+                        'x-api-key': setting.api_key,
+                        'Content-Type': 'application/json'
+                    }
+            
+
+            response = requests.post(url, data=json.dumps(doc),headers=headers)
+            if response.status_code==200:
+                raw= json.loads(response.text)
+                sale = frappe.get_doc("Sale", doc_name)
+                if sale.exely_transaction_id:
+                    doc = frappe.get_doc({
+                        'doctype': 'Comment',
+                        'subject': 'Delete sale order',
+                        "comment_type":"Info",
+                        "reference_doctype":"Sale",
+                        "reference_name":doc_name,
+                        "content":"Old Exely Tran.Id: {}, New Exely Tran.Id: {}".format(sale.exely_transaction_id,raw["transactionId"] )
+                    })
+                    doc.insert()
+
+                #log the transaction
+                try:
+                    doc = frappe.new_doc('Exely Logs')
+                    doc.sale = sale.name
+                    doc.exely_transaction_type = "Submit Order"
+                    doc.exely_transaction_id = raw["transactionId"]
+                    doc.grand_total = sale.grand_total
+                    doc.submit()
+                except:
+                    pass
         
 
-        response = requests.post(url, data=json.dumps(doc),headers=headers)
-        if response.status_code==200:
-            raw= json.loads(response.text)
-            sale = frappe.get_doc("Sale", doc_name)
-            if sale.exely_transaction_id:
-                doc = frappe.get_doc({
-                    'doctype': 'Comment',
-                    'subject': 'Delete sale order',
-                    "comment_type":"Info",
-                    "reference_doctype":"Sale",
-                    "reference_name":doc_name,
-                    "content":"Old Exely Tran.Id: {}, New Exely Tran.Id: {}".format(sale.exely_transaction_id,raw["transactionId"] )
-                })
-                doc.insert()
-
-            #log the transaction
+                frappe.db.sql("update `tabSale` set exely_transaction_id='{}' where name='{}'".format(raw["transactionId"],doc_name))
+                frappe.db.commit()
+            else:
+                frappe.throw(str(response.text))
+        else:
             try:
                 doc = frappe.new_doc('Exely Logs')
                 doc.sale = sale.name
@@ -151,13 +168,6 @@ def submit_order_to_exely(doc_name):
                 doc.submit()
             except:
                 pass
-    
-
-            frappe.db.sql("update `tabSale` set exely_transaction_id='{}' where name='{}'".format(raw["transactionId"],doc_name))
-            frappe.db.commit()
-        else:
-            frappe.throw(str(response.text))
-    #return doc
 
 def get_service_detail(sale):
     services = []
