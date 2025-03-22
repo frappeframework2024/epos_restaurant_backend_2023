@@ -464,10 +464,19 @@ function update_trade_in_amount(frm,doc){
 
 
 frappe.ui.form.on("Sale", "refresh", function(frm) {
-	frm.set_df_property("sale_commission_to", "read_only", (frm.doc.sale_commission_to ?? "") == "" && (frm.doc.docstatus == 1 || frm.doc.docstatus == 0) ? 0 : 1);
-	frm.set_df_property("sale_commission_percent", "read_only", frm.doc.sale_commission_paid_amount > 0 ? 1 : 0);
-	frm.set_df_property("sale_commission_amount", "read_only", frm.doc.sale_commission_paid_amount > 0 ? 1 : 0);
-	frm.set_df_property("sale_commission_based_on", "read_only", frm.doc.sale_commission_paid_amount > 0 ? 1 : 0);
+	frappe.call({
+		method: 'epos_restaurant_2023.employee_management.doctype.employee.employee.get_current_employee_info', 
+		callback: function(response) { 
+			if (response.message) {
+				if(response.message.allow_change_after_submit == 0 && frm.doc.docstatus == 1){
+					frm.set_df_property("sale_commission_to", "read_only", frm.doc.docstatus == 0 ? 0 : 1);
+					frm.set_df_property("sale_commission_percent", "read_only", frm.doc.sale_commission_paid_amount > 0 ? 1 : 0);
+					frm.set_df_property("sale_commission_amount", "read_only", frm.doc.sale_commission_paid_amount > 0 ? 1 : 0);
+					frm.set_df_property("sale_commission_based_on", "read_only", frm.doc.sale_commission_paid_amount > 0 ? 1 : 0);
+				}
+			}
+		}
+	})
 }),
 
 

@@ -117,6 +117,13 @@ class Employee(Document):
 	# def on_trash(self):
 	# 	frappe.throw("delete me")
 
+@frappe.whitelist()
+def get_current_employee_info():
+	employee_info = frappe.db.sql("select * from `tabEmployee` where user_id='{}'".format(str(frappe.session.user)),as_dict=1)
+	if employee_info:
+		return employee_info[0]
+	else:
+		return None
 
 @frappe.whitelist(methods="POST")
 def change_password(user,password):

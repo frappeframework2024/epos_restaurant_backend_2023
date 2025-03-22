@@ -17,6 +17,7 @@
   "show_in_pos_assign_employee",
   "disabled",
   "is_selling_agent",
+  "allow_change_after_submit",
   "section_break_yqrr",
   "commission_account",
   "agent_stock_location",
@@ -469,12 +470,18 @@
    "fieldtype": "Select",
    "label": "Naming Series",
    "options": "EMP-.####"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_change_after_submit",
+   "fieldtype": "Check",
+   "label": "Allow Change After Submit"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-17 08:40:43.060967",
+ "modified": "2025-03-22 08:49:45.515103",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee",
