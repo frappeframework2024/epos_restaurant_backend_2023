@@ -320,7 +320,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 	sql = sql + """ {2}
 		FROM `tabSale Product` AS a
 			INNER JOIN `tabSale` b on b.name = a.parent
-			inner join `tabTables Number` c on c.name = b.table_id
+			left join `tabTables Number` c on c.name = b.table_id
 		WHERE
 			{4}
 			{0}

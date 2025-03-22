@@ -943,7 +943,12 @@ def add_sale_product_spa_commission(self):
 def create_folio_transaction_from_pos_trnasfer(self):
 	for p in self.payment:
 		if p.folio_transaction_type and (p.folio_transaction_number or p.reservation_stay):
-			 
+			if (p.account_code or "") == "":
+				pos_config = frappe.get_cached_value('POS Profile', self.pos_profile, 'pos_config')			
+				pos_config_data = frappe.get_cached_doc('POS Config', pos_config)
+				pos_config_payment_type = Enumerable(pos_config_data.payment_type).where(lambda x:x.payment_type==p.payment_type)
+				if pos_config_payment_type:
+					p.account_code = pos_config_payment_type[0].account_code	
 			if not p.account_code:
 				frappe.throw("Please account code for Payment type {}".format(p.payment_type))
 
