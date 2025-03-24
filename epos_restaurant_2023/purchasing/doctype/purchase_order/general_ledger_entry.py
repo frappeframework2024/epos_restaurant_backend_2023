@@ -29,7 +29,7 @@ def submit_purchase_to_general_ledger_entry_on_submit(self):
 				"business_branch": self.business_branch,
 				"remark" : "Accounting Entry Purchase Order",
 				"party_type" : "Vendor",
-				"party":self.vendor
+				"party":"{}-{}".format(self.vendor,self.vendor_name)
 			}
 		docs.append(doc)
 
@@ -57,7 +57,7 @@ def submit_purchase_to_general_ledger_entry_on_submit(self):
 			"business_branch": self.business_branch,
 			"remark": "Purchase Order discount",
 			"party_type" : "Vendor",
-			"party":self.vendor
+			"party":"{}-{}".format(self.vendor,self.vendor_name)
 		}
 		docs.append(doc)
   

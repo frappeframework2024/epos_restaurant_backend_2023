@@ -70,7 +70,8 @@ def get_conditions(filters,group_filter=None):
 	end_date = filters.end_date
 
 	conditions += " AND a.posting_date<= '{}'".format(end_date)
-
+	if filters.get("stock_location"):
+		conditions += " AND a.stock_location in %(stock_location)s"
 
 	if filters.get("vendor_group"):
 		conditions += " AND a.vendor_group in %(vendor_group)s"

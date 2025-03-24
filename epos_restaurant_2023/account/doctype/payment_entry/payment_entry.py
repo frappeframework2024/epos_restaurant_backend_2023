@@ -179,7 +179,7 @@ def general_ledger_credit(self,account):
         "voucher_number":self.name,
         "business_branch": self.business_branch,
 		"party_type": self.party_type,
-		"party":self.party,
+		"party":"{}-{}".format(self.party,self.party_name),
 		"remark": "Accounting For Payment Entry"
     }
     docs.append(doc)
