@@ -361,7 +361,7 @@ class Sale(Document):
 
 		if frappe.get_cached_value("Exely Itegration Setting",None,"enabled")==1:
 			if len( self.payment) > 0:
-				payments = [ d for d in self.payment if d.payment_type == "Bill to Room"]
+				payments = [ d for d in self.payment if d.is_pay_to_room == 1]
 				if len(payments) >0:
 					submit_order_to_exely(self.name)
 				else:

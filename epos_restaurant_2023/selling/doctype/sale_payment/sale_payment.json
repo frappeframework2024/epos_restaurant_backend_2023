@@ -17,6 +17,7 @@
   "payment_type_group",
   "currency",
   "symbol",
+  "is_pay_to_room",
   "section_break_11",
   "input_amount",
   "total_point_earn",
@@ -466,12 +467,21 @@
    "fieldtype": "Link",
    "label": "Property",
    "options": "Business Branch"
+  },
+  {
+   "default": "0",
+   "fetch_from": "payment_type.is_pay_to_room",
+   "fieldname": "is_pay_to_room",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Is Pay To Room",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-06 10:10:18.669055",
+ "modified": "2025-03-22 14:51:28.699063",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Payment",

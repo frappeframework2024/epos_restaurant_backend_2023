@@ -13,6 +13,7 @@
   "currency",
   "exchange_rate",
   "change_exchange_rate",
+  "is_pay_to_room",
   "column_break_pzmx",
   "currency_symbol",
   "currency_precision",
@@ -188,12 +189,20 @@
    "fieldtype": "Link",
    "label": "Default Account",
    "options": "Chart Of Account"
+  },
+  {
+   "default": "0",
+   "fetch_from": "payment_type.is_pay_to_room",
+   "fieldname": "is_pay_to_room",
+   "fieldtype": "Check",
+   "label": "Is Pay To Room",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-06-25 23:35:35.523387",
+ "modified": "2025-03-22 14:50:39.141582",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Sale Payment",

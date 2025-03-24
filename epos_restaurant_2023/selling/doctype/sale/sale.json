@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_auto_repeat": 1,
  "allow_import": 1,
  "allow_rename": 1,
  "autoname": "naming_series:",
@@ -1640,7 +1641,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2025-03-01 14:49:04.697048",
+ "modified": "2025-03-21 17:05:34.054660",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

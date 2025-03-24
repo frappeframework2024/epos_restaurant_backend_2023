@@ -161,7 +161,26 @@ def print_kitchen_order(station, sale, products,printer):
     return capture(html=html,css=css,height=height,width=width,image='{}_{}_kitchen_order_{}.png'.format(station,printer,hash_generate))
 
 
+@frappe.whitelist(allow_guest=True)
+def get_pdf_from_print_format(data): 
+    data  = print_from_print_format(data=data, is_html=True)
+    html = """<!DOCTYPE html>
+            <html>
+                <head>
+                    <style> {} </style>
+                </head>
+                <body>{}</body>
+            </html>""".format(data["css"],data["html"])
+        
+    from frappe.utils.pdf import get_pdf
+    pdf_content = get_pdf(html)
+    return pdf_content
 
+    # output_path='{}/output.pdf'.format(frappe.get_site_path())  
+    # with open(output_path, "wb") as f:
+    #     f.write(pdf_content)
+
+    # return output_path
 
 ### print report from print format 
 @frappe.whitelist(allow_guest=True,methods="POST")

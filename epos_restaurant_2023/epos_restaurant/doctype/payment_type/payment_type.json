@@ -13,6 +13,7 @@
   "currency",
   "exchange_rate",
   "change_exchange_rate",
+  "is_pay_to_room",
   "column_break_4",
   "sort_order",
   "disabled",
@@ -133,6 +134,12 @@
    "fieldname": "accounting_tab",
    "fieldtype": "Tab Break",
    "label": "Accounting"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_pay_to_room",
+   "fieldtype": "Check",
+   "label": "Is Pay To Room"
   }
  ],
  "image_field": "photo",
@@ -144,7 +151,7 @@
    "link_fieldname": "to_currency"
   }
  ],
- "modified": "2024-08-05 13:49:36.433710",
+ "modified": "2025-03-22 14:48:00.012552",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "Payment Type",

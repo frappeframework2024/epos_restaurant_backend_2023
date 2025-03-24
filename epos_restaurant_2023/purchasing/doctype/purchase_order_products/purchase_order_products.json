@@ -184,7 +184,8 @@
   {
    "fieldname": "expired_date",
    "fieldtype": "Date",
-   "label": "Expired Date"
+   "label": "Expired Date",
+   "mandatory_depends_on": "eval:doc.has_expired_date ==true;"
   },
   {
    "default": "0",
@@ -240,7 +241,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-11-05 14:51:00.074705",
+ "modified": "2025-03-24 09:03:47.719028",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order Products",
