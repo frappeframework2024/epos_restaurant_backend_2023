@@ -85,7 +85,7 @@ def get_account_balance(posting_date="",party_type="",party="",account=""):
 		if account != "":
 			filters += " and account = '{0}'".format(account)
 		if party_type != "" and party != "":
-			filters += " and party = '{0}' and party_type = '{1}'".format(party,party_type)
+			filters += " and SUBSTRING_INDEX(party, '-', 1) = '{0}' and party_type = '{1}'".format(party,party_type)
 		sql = """SELECT 
 					sum(debit_amount) - sum(credit_amount) balance
 					FROM `tabGeneral Ledger`
@@ -155,32 +155,58 @@ def GL_entry(self):
 
 def general_ledger_debit(self,account):
 	docs = []
-	doc = {
-		"doctype":"General Ledger",
-		"posting_date":self.posting_date,
-		"account":account["account"],
-		"debit_amount":account["amount"],
-		"voucher_type":"Payment Entry",
-		"voucher_number":self.name,
-		"business_branch": self.business_branch,
-		"remark": "Accounting For Payment Entry"
-	}
+	if self.payment_type == "Pay":
+		doc = {
+			"doctype":"General Ledger",
+			"posting_date":self.posting_date,
+			"account":account["account"],
+			"debit_amount":account["amount"],
+			"voucher_type":"Payment Entry",
+			"voucher_number":self.name,
+			"business_branch": self.business_branch,
+			"party_type": self.party_type,
+			"party":"{}-{}".format(self.party,self.party_name),
+			"remark": "Accounting For Payment Entry"
+		}
+	else:
+		doc = {
+			"doctype":"General Ledger",
+			"posting_date":self.posting_date,
+			"account":account["account"],
+			"debit_amount":account["amount"],
+			"voucher_type":"Payment Entry",
+			"voucher_number":self.name,
+			"business_branch": self.business_branch,
+			"remark": "Accounting For Payment Entry"
+		}
 	docs.append(doc)
 	submit_general_ledger_entry(docs = docs)
 
 def general_ledger_credit(self,account):
-    docs = []
-    doc = {
-        "doctype":"General Ledger",
-        "posting_date":self.posting_date,
-        "account":account["account"],
-        "credit_amount":account["amount"],
-        "voucher_type":"Payment Entry",
-        "voucher_number":self.name,
-        "business_branch": self.business_branch,
-		"party_type": self.party_type,
-		"party":"{}-{}".format(self.party,self.party_name),
-		"remark": "Accounting For Payment Entry"
-    }
-    docs.append(doc)
-    submit_general_ledger_entry(docs=docs)
+	docs = []
+	if self.payment_type == "Pay":
+		doc = {
+			"doctype":"General Ledger",
+			"posting_date":self.posting_date,
+			"account":account["account"],
+			"credit_amount":account["amount"],
+			"voucher_type":"Payment Entry",
+			"voucher_number":self.name,
+			"business_branch": self.business_branch,
+			"remark": "Accounting For Payment Entry"
+		}
+	else:
+		doc = {
+			"doctype":"General Ledger",
+			"posting_date":self.posting_date,
+			"account":account["account"],
+			"credit_amount":account["amount"],
+			"voucher_type":"Payment Entry",
+			"voucher_number":self.name,
+			"business_branch": self.business_branch,
+			"party_type": self.party_type,
+			"party":"{}-{}".format(self.party,self.party_name),
+			"remark": "Accounting For Payment Entry"
+		}
+	docs.append(doc)
+	submit_general_ledger_entry(docs=docs)
