@@ -197,7 +197,7 @@ def reset_sale_transaction():
 
             
             #reset sale transaction 
-            doctypes = ["Sale","Sale Payment","Cashier Shift","Working Day","Cash Transaction","Voucher","Voucher Payment","Cash Coupon","General Ledger"]
+            doctypes = ["Sale","Sale Payment","Cashier Shift","Working Day","Cash Transaction","Voucher","Voucher Payment","Cash Coupon"]
             for d in doctypes:
                 if frappe.get_meta("Sale").get_field("naming_series"):
                     formats =  frappe.get_meta(d).get_field("naming_series").options
@@ -206,6 +206,12 @@ def reset_sale_transaction():
                             for n in range(2022, 2130):
                                 format_text = replace_format(f,str(n))                            
                                 frappe.db.sql("update `tabSeries` set current=  0 where name='{}'".format(format_text) )
+                                
+            GL = "GLE.YYYY.-.#####"
+            for f in GL.split("\n"):
+                for n in range(2022, 2130):
+                    format_text = replace_format(f,str(n))                            
+                    frappe.db.sql("update `tabSeries` set current=  0 where name='{}'".format(format_text) )
 
             frappe.db.commit()
 
