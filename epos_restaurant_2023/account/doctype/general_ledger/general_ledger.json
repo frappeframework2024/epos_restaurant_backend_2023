@@ -1,10 +1,12 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "naming_series:",
  "creation": "2024-06-24 17:23:01.224755",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
   "posting_date",
   "account",
   "credit_amount",
@@ -123,15 +125,22 @@
    "in_list_view": 1,
    "label": "Voucher Subtype",
    "read_only": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "GLE.YYYY.-.#####"
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-19 14:14:26.813889",
+ "modified": "2025-03-25 09:44:21.370679",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "General Ledger",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {

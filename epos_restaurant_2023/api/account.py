@@ -26,8 +26,6 @@ def get_general_ledger_entry_record(docs):
                     doc.credit_amount = abs(doc.amount)
                 else:
                     doc.debit_amount =abs(doc.amount)
-      
-        doc.name  = make_autoname("GLE.YYYY.-.#####")
         yield doc
         
         

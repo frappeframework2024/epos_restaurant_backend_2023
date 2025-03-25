@@ -51,9 +51,11 @@ frappe.ui.form.on("Payment Entry Reference", {
 })
 
 function update_get_latest_reference(frm){
-    frm.doc.payment_entry_reference.forEach(a => {
-        get_reference_detail(frm,"Payment Entry Reference",a.name)
-    });
+    if ((frm.doc.payment_entry_reference || []).length > 0){
+        frm.doc.payment_entry_reference.forEach(a => {
+            get_reference_detail(frm,"Payment Entry Reference",a.name)
+        });
+    }
 }
 
 function update_allocated_amount(frm){
@@ -109,10 +111,12 @@ function set_filters(frm){
     }
     else if(frm.doc.party_type == "Employee"){
         frm.set_query("party", function() {
-            return {
-                filters: [
-                    ["is_selling_agent", "=", 1]
-                ]
+            if(frm.doc.party_type == "Employee"){
+                return {
+                    filters: [
+                        ["is_selling_agent", "=", 1]
+                    ]
+                }
             }
         });
     }

@@ -161,7 +161,7 @@ def submit_sale_to_general_ledger_entry(self):
 					"doctype":"General Ledger",
 					"posting_date":self.posting_date,
 					"account": acc,
-					"amount":sum([d.quantity* (d.cost or 0) for d in self.sale_products if (d.is_inventory_product==1 and d.default_income_account==acc)]),
+					"amount":sum([d.quantity* (d.cost or 0) for d in self.sale_products if (d.is_inventory_product==1 and d.default_expense_account==acc)]),
 					"againt":self.default_inventory_account,
 					"againt_voucher_type":"Sale",
 					"againt_voucher_number": self.name,
@@ -180,7 +180,7 @@ def submit_sale_to_general_ledger_entry(self):
 					"doctype":"General Ledger",
 					"posting_date":self.posting_date,
 					"account":self.default_inventory_account,
-					"amount":sum([d.quantity*(d.cost or 0)  for d in self.sale_products if (d.is_inventory_product==1 and d.default_income_account==acc)])*-1,
+					"amount":sum([d.quantity*(d.cost or 0)  for d in self.sale_products if (d.is_inventory_product==1 and d.default_expense_account==acc)])*-1,
 					"againt":acc,
 					"againt_voucher_type":"Sale",
 					"againt_voucher_number": self.name,
@@ -190,7 +190,7 @@ def submit_sale_to_general_ledger_entry(self):
 					"type":"Asset"#not use in db
 				}
 			docs.append(doc)
-
+	
 	
 	# cost of good sold for product have recipes
 	recipe_acc = []
