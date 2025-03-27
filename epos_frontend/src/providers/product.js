@@ -185,6 +185,7 @@ export default class Product {
         this.prices = [];
         this.modifiers = [];
         this.combo_group_temp = [];
+        this.is_open_price = p.is_open_price;
         let prices = []
         if (p.prices) {
             prices = JSON.parse(p.prices)

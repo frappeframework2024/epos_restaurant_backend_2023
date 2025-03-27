@@ -12,8 +12,9 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
     if (sale.setting.pos_menus.length>0 || sale.setting.use_menu_retail == 1){
         // sale is sale from inject 
         // product is product from inject 
-        let p = JSON.parse(JSON.stringify( product_data))
-        if (!sale.isBillRequested()) {
+        let p = JSON.parse(JSON.stringify(product_data))
+        product.is_open_price = p.is_open_price
+        if (!sale.isBillRequested(p)) {
             if(sale.setting?.pos_setting?.allow_negative_stock == 0 && p.is_inventory_product == 1){
                 let data =  await call.get("epos_restaurant_2023.inventory.inventory.get_product_qty",{"product":p.name,"stock_location":sale.sale.stock_location})
                 if(data.message <= 0){
@@ -78,9 +79,10 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                 else {
                     const portions = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule);
                     const check_modifiers = product.onCheckModifier(JSON.parse(p.modifiers || "[]"));
-
+                   
                     
                     if (portions?.length == 1) {
+                        p.portion = portions[0].portion
                         p.price = portions[0].price
                         p.unit = portions[0].unit
                         p.discount = portions[0].default_discount || 0
@@ -91,9 +93,11 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                         if (p.is_open_price && portions.length == 0) {
                             pro_data.prices = JSON.stringify([{ "price": p.price, "branch": "", "price_rule": sale.sale.price_rule, "portion": "Normal", "unit": p.unit, "default_discount": 0 }])
                         }
+                        
                         product.setSelectedProduct(pro_data,sale.sale.price_rule);
                         let productPrices = null
                         let base_unit = ""
+                        
                         if(sale.setting.use_menu_retail == 1){
                             await get_base_unit(p.name).then((res)=>{base_unit = res})
                             if(unit == "" || unit == null || unit == undefined){
@@ -136,7 +140,7 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                     } else {
                         p.modifiers = "";
                         p.modifiers_data = "[]";
-                        p.portion = "";
+                        p.portion = p.portion=="Normal"?"":p.portion; 
                     }
                 }
 

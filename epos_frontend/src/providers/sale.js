@@ -2309,8 +2309,11 @@ export default class Sale {
         window.close();
     }
 
-    isBillRequested() {
+    isBillRequested(sp=undefined) {
         if (this.sale.sale_status == 'Bill Requested') {
+            if((sp.revenue_group || "") == this.setting.pos_setting.allow_tip_revenue_group){
+                return false;
+            }
             toaster.warning($t('msg.this sale order is already print bill please cancel print bill first'));
             return true;
         } else {

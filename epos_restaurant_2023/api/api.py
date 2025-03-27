@@ -253,6 +253,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "tax_2_name":doc.tax_2_name,
         "tax_3_name":doc.tax_3_name,
         "specific_business_branch":doc.specific_business_branch,
+        "allow_tip_revenue_group":doc.allow_tip_revenue_group,
         "specific_pos_profile":doc.specific_pos_profile,
         "backend_port":doc.backend_port,
         "use_backend_port":doc.use_backend_port,
