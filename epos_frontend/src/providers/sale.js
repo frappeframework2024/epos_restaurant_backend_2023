@@ -883,17 +883,13 @@ export default class Sale {
 
     async onRemoveItem(sp, gv, numberFormat, input = (-99999)) {
 
-        if (!this.isBillRequested()) {
+        if (!this.isBillRequested(sp)) {
             if (sp.sale_product_status == 'Submitted') {
-
                 let authorize_key = "delete_item_required_password"
                 if (gv.setting.pos_setting['check_delete_item_require_passord_from_product'] == 1 && sp.delete_from_pos_require_password == 0) {
                     authorize_key = "delete_item_required_password_dont_check" //we change this authorize key is just for when delete item do not show popup password
                 }
-
-
                 gv.authorize(authorize_key, "delete_item", "delete_item_required_note", "Delete Item Note", sp.product_code, true).then(async (v) => {
-
                     if (v) {
                         let result = false;
                         if (input == (-99999)) {
@@ -933,11 +929,9 @@ export default class Sale {
                                     note: '',
                                 }
                             }
-
                         }
 
                         if (result) {
- 
                             if (sp.quantity < result.number) {
                                 result.number = sp.quantity;
                             }
@@ -962,7 +956,6 @@ export default class Sale {
                                 custom_note: result.note,
                                 custom_amount: sp.amount
                             });
-
                         }
                     }
                 });
@@ -997,9 +990,7 @@ export default class Sale {
                    }else{
                     this.sale.sale_products.splice(this.sale.sale_products.indexOf(sp), 1);
                    }
-                    
                     this.updateSaleSummary();
-
                 }
             }
 
@@ -1007,7 +998,7 @@ export default class Sale {
     }
 
     async onChangePrice(sp, gv, numberFormat, input = (-99999)) {
-        if (!this.isBillRequested()) {
+        if (!this.isBillRequested(sp)) {
             gv.authorize("change_item_price_required_password", "change_item_price", "change_item_price_required_note", "Change Item Price Note", sp.product_code).then(async (v) => {
                 if (v) {
                     let result = false;
@@ -1062,7 +1053,7 @@ export default class Sale {
             return;
         }
 
-        if (!this.isBillRequested()) {
+        if (!this.isBillRequested(sp)) {
             const result = await keyboardDialog({ title: $t("Change Quantity"), type: 'number', value: sp.quantity });
             if (result) {
 
