@@ -51,6 +51,7 @@ frappe.ui.form.on('Product Price', {
 
 frappe.ui.form.on("Product", {
     refresh(frm) {
+        setup_barcode_field(frm.fields_dict["product_code"],frm);
         frm.previous = JSON.parse(JSON.stringify(frm.doc))
         if(!frm.is_new() && frm.doc.is_inventory_product == 1){
             frm.set_df_property("is_inventory_product", "read_only", 1)
@@ -273,6 +274,34 @@ frappe.ui.form.on("Product", {
 
 });
 
+function setup_barcode_field(field,frm) {
+    if(location.protocol == "https:"){
+        field.$wrapper.append(
+            `<span class="link-btn">
+                <a class="btn-open no-decoration" title="${__("Scan")}">
+                    ${frappe.utils.icon("scan", "sm")}
+                </a>
+            </span>`
+        );
+    
+        this.$scan_btn = field.$wrapper.find(".link-btn");
+        this.$scan_btn.toggle(true);
+    
+    
+        this.$scan_btn.on("click", "a", () => {
+            new frappe.ui.Scanner({
+                dialog: true,
+                multiple: false,
+                on_scan(data) {
+                    if (data && data.result && data.result.text) {
+                        frm.doc.product_code = data.result.text;
+                        frm.refresh_field("product_code");
+                    }
+                },
+            });
+        });
+    }
+}
 
 // deboounce text  auto-complete
 function debounce(func, wait) {
