@@ -43,6 +43,7 @@
   "product_discount",
   "total_discount",
   "attach_receipt",
+  "status",
   "column_break_35",
   "grand_total",
   "total_paid",
@@ -317,6 +318,12 @@
    "fieldtype": "Currency",
    "label": "Discount Amount",
    "read_only": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Unpaid\nPartially Paid\nPaid"
   }
  ],
  "image_field": "attach_receipt",
@@ -334,7 +341,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2024-09-05 10:55:46.767822",
+ "modified": "2025-03-29 17:25:30.830264",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order",

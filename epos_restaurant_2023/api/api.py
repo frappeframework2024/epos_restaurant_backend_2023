@@ -564,8 +564,6 @@ def get_tables_number(table_group,device_name, pos_profile):
 
 @frappe.whitelist(allow_guest=True)
 def check_pos_profile(pos_profile_name, device_name, is_used_validate=True):
-
- 
     if not frappe.db.exists("POS Profile", pos_profile_name):
         frappe.throw("Invalid POS Profile")
 
@@ -584,9 +582,6 @@ def check_pos_profile(pos_profile_name, device_name, is_used_validate=True):
         frappe.db.sql("update `tabPOS Station` set is_used = 1 where name = %(name)s",{"name":device_name})
         
         frappe.db.commit()
-    
-    
-
     return station
 
 
@@ -2071,3 +2066,11 @@ def ssrs_server_rul(protocol,host, port):
         return SSRS_REPORT_URL
     else:
         return response.status_code
+
+@frappe.whitelist()
+def get_default_price_rule():
+    price_rule = frappe.get_list("Price Rule", filters={"is_default":1}, fields=["name"])
+    if len(price_rule) > 0:
+        return price_rule[0].name
+    else:
+        return ""

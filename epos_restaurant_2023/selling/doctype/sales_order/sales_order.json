@@ -1,0 +1,350 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2025-03-31 08:33:21.686531",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_moab",
+  "naming_series",
+  "posting_date",
+  "price_rule",
+  "column_break_ztlw",
+  "outlet",
+  "business_branch",
+  "stock_location",
+  "section_break_ajbb",
+  "customer",
+  "customer_name",
+  "column_break_cmuj",
+  "phone_number",
+  "customer_price_rule",
+  "section_break_cmig",
+  "products",
+  "section_break_svqg",
+  "discount_type",
+  "sale_discountable_amount",
+  "discount",
+  "column_break_cxrc",
+  "product_discount",
+  "sale_discount",
+  "section_break_jcxu",
+  "tax_rule",
+  "column_break_oxyu",
+  "total_tax_amount",
+  "section_break_fxmu",
+  "tax_1_rate",
+  "tax_2_rate",
+  "tax_3_rate",
+  "column_break_ngsw",
+  "taxable_amount_1",
+  "taxable_amount_2",
+  "taxable_amount_3",
+  "column_break_yxtt",
+  "tax_1_amount",
+  "tax_2_amount",
+  "tax_3_amount",
+  "section_break_zbax",
+  "total_quantity",
+  "total_discount",
+  "amended_from",
+  "column_break_sgrr",
+  "sub_total",
+  "grand_total"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_moab",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Sales Order",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "SO.YYYY.-.####"
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date"
+  },
+  {
+   "fieldname": "price_rule",
+   "fieldtype": "Link",
+   "label": "Price Rule",
+   "options": "Price Rule"
+  },
+  {
+   "fieldname": "column_break_ztlw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "outlet",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Outlet",
+   "options": "Outlet",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "outlet.business_branch",
+   "fetch_if_empty": 1,
+   "fieldname": "business_branch",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Business Branch",
+   "options": "Business Branch",
+   "reqd": 1
+  },
+  {
+   "fieldname": "stock_location",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Stock Location",
+   "options": "Stock Location",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_ajbb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "customer.customer_name_en",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "customer.price_rule",
+   "fieldname": "customer_price_rule",
+   "fieldtype": "Data",
+   "label": "Customer Price Rule",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "customer.phone_number",
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "label": "Phone Number",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_cmuj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_cmig",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_zbax",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "total_quantity",
+   "fieldtype": "Float",
+   "label": "Total Quantity",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "sub_total",
+   "fieldtype": "Currency",
+   "label": "Sub Total",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_sgrr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_tax_amount",
+   "fieldtype": "Currency",
+   "label": "Total Tax Amount",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "grand_total",
+   "fieldtype": "Currency",
+   "label": "Grand Total",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_jcxu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "tax_rule",
+   "fieldtype": "Link",
+   "label": "Tax Rule",
+   "options": "Tax Rule"
+  },
+  {
+   "fieldname": "column_break_oxyu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_discount",
+   "fieldtype": "Currency",
+   "label": "Total Discount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_svqg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "Percent",
+   "fieldname": "discount_type",
+   "fieldtype": "Select",
+   "label": "Discount Type",
+   "options": "Percent\nAmount"
+  },
+  {
+   "default": "0",
+   "fieldname": "discount",
+   "fieldtype": "Float",
+   "label": "Discount"
+  },
+  {
+   "fieldname": "column_break_cxrc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "product_discount",
+   "fieldtype": "Currency",
+   "label": "Product Discount",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "sale_discount",
+   "fieldtype": "Currency",
+   "label": "Sale Discount",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "sale_discountable_amount",
+   "fieldtype": "Currency",
+   "label": "Sale Discountable Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "products",
+   "fieldtype": "Table",
+   "options": "Sales Order Product"
+  },
+  {
+   "depends_on": "eval:doc.tax_rule",
+   "fieldname": "section_break_fxmu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "tax_1_rate",
+   "fieldtype": "Float",
+   "label": "Tax 1 Rate"
+  },
+  {
+   "fieldname": "tax_2_rate",
+   "fieldtype": "Float",
+   "label": "Tax 2 Rate"
+  },
+  {
+   "fieldname": "tax_3_rate",
+   "fieldtype": "Float",
+   "label": "Tax 3 Rate"
+  },
+  {
+   "fieldname": "column_break_ngsw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "taxable_amount_1",
+   "fieldtype": "Currency",
+   "label": "Taxable Amount 1"
+  },
+  {
+   "fieldname": "taxable_amount_2",
+   "fieldtype": "Currency",
+   "label": "Taxable Amount 2"
+  },
+  {
+   "fieldname": "taxable_amount_3",
+   "fieldtype": "Currency",
+   "label": "Taxable Amount 3"
+  },
+  {
+   "fieldname": "column_break_yxtt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tax_1_amount",
+   "fieldtype": "Currency",
+   "label": "Tax 1 Amount"
+  },
+  {
+   "fieldname": "tax_2_amount",
+   "fieldtype": "Currency",
+   "label": "Tax 2 Amount"
+  },
+  {
+   "fieldname": "tax_3_amount",
+   "fieldtype": "Currency",
+   "label": "Tax 3 Amount"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-03-31 15:49:37.354576",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "Sales Order",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

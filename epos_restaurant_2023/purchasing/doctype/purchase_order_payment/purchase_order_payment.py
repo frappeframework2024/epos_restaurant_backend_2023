@@ -56,7 +56,15 @@ def update_purchase_order(self):
 	purchase_order_amount = frappe.db.get_value('Purchase Order', self.purchase_order, 'grand_total')
 	if data and purchase_order_amount:
 		balance = purchase_order_amount - data[0][0]
+		status = ''
+		if balance <= main_currency().smallest_currency_fraction_value:
+			status = 'Paid'
+		elif balance > main_currency().smallest_currency_fraction_value and balance < purchase_order_amount:
+			status = 'Partially Paid'
+		else:
+			status = 'Unpaid'
 		frappe.db.set_value('Purchase Order', self.purchase_order,  {
 			'total_paid': data[0][0] ,
-			'balance': (0 if balance <= main_currency().smallest_currency_fraction_value else balance)
+			'balance': (0 if balance <= main_currency().smallest_currency_fraction_value else balance),
+			'status': status
 		})

@@ -148,3 +148,9 @@ def get_accounts(branch,product):
 		expense_account = frappe.get_cached_value("Business Branch", branch,"default_cost_of_good_sold_account")
 	stock_account = frappe.db.get_value("Business Branch", branch,"default_inventory_account")
 	return {"stock_account":stock_account,"expense_account":expense_account}
+
+@frappe.whitelist()
+def update_purchase_order_status(purchase_order,status):
+	frappe.db.set_value('Purchase Order', purchase_order,  {
+		'status': status
+	})

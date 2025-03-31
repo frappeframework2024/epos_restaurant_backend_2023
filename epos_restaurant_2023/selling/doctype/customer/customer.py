@@ -8,7 +8,7 @@ from frappe import _
 from datetime import datetime
 from frappe.utils.data import strip
 import copy
-
+from epos_restaurant_2023.api.api import get_default_price_rule
 from epos_restaurant_2023.selling.doctype.customer.utils import update_fetch_from_fields
 class Customer(Document):
 	def validate(self):
@@ -26,7 +26,8 @@ class Customer(Document):
 			self.qb_customer_id = None
 
 		self.customer_code_name = "{} - {}".format(self.name,self.customer_name_en)
-
+		self.price_rule = get_default_price_rule()
+		
 	def autoname(self):
 		if self.flags.ignore_autoname == True:
 			return

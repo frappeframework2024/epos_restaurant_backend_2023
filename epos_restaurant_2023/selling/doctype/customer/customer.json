@@ -51,6 +51,8 @@
   "photo",
   "default_discount_section",
   "default_discount",
+  "column_break_ecoz",
+  "price_rule",
   "column_break_12",
   "province",
   "district",
@@ -261,7 +263,7 @@
    "allow_in_quick_entry": 1,
    "fieldname": "default_discount_section",
    "fieldtype": "Section Break",
-   "label": "Default Discount"
+   "label": "Default Discount And Price Rule"
   },
   {
    "fieldname": "customer_code_name",
@@ -772,6 +774,16 @@
    "fieldname": "exely_guest_mapping_section",
    "fieldtype": "Section Break",
    "label": "Exely Guest Mapping"
+  },
+  {
+   "fieldname": "price_rule",
+   "fieldtype": "Link",
+   "label": "Price Rule",
+   "options": "Price Rule"
+  },
+  {
+   "fieldname": "column_break_ecoz",
+   "fieldtype": "Column Break"
   }
  ],
  "image_field": "photo",
@@ -784,7 +796,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2024-12-03 21:17:15.284041",
+ "modified": "2025-03-31 16:16:53.433378",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",
