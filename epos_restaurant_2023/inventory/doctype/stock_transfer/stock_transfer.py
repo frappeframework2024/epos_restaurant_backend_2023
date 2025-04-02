@@ -15,9 +15,14 @@ class StockTransfer(Document):
 		if self.from_stock_location == self.to_stock_location:
 			frappe.throw("Cannot transfer to the same stock location.")
 		for p in self.stock_transfer_products:
-			if p.is_inventory_product == 1 and epos_setting.allow_negative_stock == 0:
-				if p.quantity >= get_product_qty(p.product_code, self.from_stock_location):
-					error = error + ("Product <b>{0}</b> QTY In Stock Location <b>{1}</b> Are Not Enough</br>".format(p.product_code, self.from_stock_location))
+			if p.is_inventory_product == 1:
+				if p.unit !=p.base_unit:
+					if not check_uom_conversion(p.base_unit, p.unit):
+						frappe.throw("There is no UoM conversion from {} to {}".format(p.base_unit, p.unit))
+				if epos_setting.allow_negative_stock == 0:
+					available_qty = get_product_qty(p.product_code, self.from_stock_location) * get_uom_conversion(p.unit, p.base_unit)
+					if p.quantity >= available_qty:
+						error = error + ("Product <b>{0}</b> QTY In Stock Location <b>{1}</b> Are Not Enough</br>".format(p.product_code, self.from_stock_location))
 		if error != "":
 			frappe.throw(error)
 			
@@ -31,25 +36,9 @@ class StockTransfer(Document):
 		for a in self.stock_transfer_products:
 			a.total_secondary_cost = a.quantity * a.secondary_cost
 			a.amount = a.quantity * a.cost
-
-	def before_submit(self):
-		for p in self.stock_transfer_products:
-			if(p.is_inventory_product):
-				if p.unit !=p.base_unit:
-					if not check_uom_conversion(p.base_unit, p.unit):
-						frappe.throw("There is no UoM conversion from {} to {}".format(p.base_unit, p.unit))
-      
-				current_stock = get_stock_location_product(self.from_stock_location, p.product_code)
-				if current_stock is None or current_stock.quantity <= 0:
-					frappe.throw("{} is not available in {}".format(p.product_code, self.from_stock_location))
-				else:
-					uom_conversion = get_uom_conversion(current_stock.unit, p.unit)
-					if current_stock.quantity * uom_conversion < p.quantity:
-						frappe.throw(("{} is available only {} in stock".format(p.product_code, current_stock.quantity)))
-
 	
 	def on_submit(self):
-		if len(self.stock_transfer_products)>=10:
+		if len(self.stock_transfer_products)<=10:
 			update_inventory_on_submit(self)
 		else:
 			frappe.enqueue("epos_restaurant_2023.inventory.doctype.stock_transfer.stock_transfer.update_inventory_on_submit", queue='short', self=self)
@@ -60,7 +49,6 @@ class StockTransfer(Document):
 			update_inventory_on_cancel(self)
 		else:
 			frappe.enqueue("epos_restaurant_2023.inventory.doctype.stock_transfer.stock_transfer.update_inventory_on_cancel", queue='short', self=self)
-
 
  
 def update_inventory_on_submit(self):
@@ -78,7 +66,6 @@ def update_inventory_on_cancel(self):
 
 def update_to_stock(cancel = False, self=None, p=None):
 	uom_conversion = get_uom_conversion(p.base_unit, p.unit)
-	
 	add_to_inventory_transaction({
 		'doctype': 'Inventory Transaction',
 		'transaction_type':"Stock Transfer",

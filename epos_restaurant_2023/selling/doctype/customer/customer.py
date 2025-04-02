@@ -26,7 +26,7 @@ class Customer(Document):
 			self.qb_customer_id = None
 
 		self.customer_code_name = "{} - {}".format(self.name,self.customer_name_en)
-		self.price_rule = get_default_price_rule()
+		self.price_rule =  get_default_price_rule() if (self.price_rule or "") == "" else self.price_rule
 		
 	def autoname(self):
 		if self.flags.ignore_autoname == True:

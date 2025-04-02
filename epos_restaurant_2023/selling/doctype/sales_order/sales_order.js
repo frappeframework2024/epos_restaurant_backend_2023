@@ -15,6 +15,12 @@ frappe.ui.form.on("Sales Order", {
 	setup(frm) {
 		set_query(frm,"product_code",{allow_sale: 1});
 		set_query(frm,"stock_location",[["Stock Location","business_branch","=",frm.doc.business_branch]]);
+		frappe.call({
+			method: "epos_restaurant_2023.api.api.get_default_price_rule",
+			callback: function(r){
+				frm.set_value("price_rule",r.message)
+			}
+		});	
     },
 	business_branch(frm){
 		set_query(frm,"stock_location",[["Stock Location","business_branch","=",frm.doc.business_branch]]);
@@ -439,7 +445,6 @@ let get_product_price = function (frm,doc) {
 				portion:doc.portion
 			},
 			callback: function(r){
-		
 				resolve(r.message.price)
 			},
 			error: function(r) {
@@ -448,7 +453,6 @@ let get_product_price = function (frm,doc) {
 		});	
 	});
 }
-
 
 
  

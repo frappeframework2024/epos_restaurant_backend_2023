@@ -36,7 +36,8 @@ def validate(filters):
 def get_columns(filters):
 	if filters.show_sale_transaction:
 		return [
-			{"label":"Customer", "fieldname":"row_group","fieldtype":"Data","align":"left","width":200},
+			{"label":"Customer", "fieldname":"row_group","fieldtype":"Data","align":"left","width":300},
+			{"label":"Stock Location", "fieldname":"stock_location","fieldtype":"Data","align":"center","width":150},
 			{"label":"Date", "fieldname":"posting_date","fieldtype":"Date","align":"center","width":100},
 			{"label":"Total Amount", "fieldname":"total_amount","fieldtype":"Currency","align":"right","width":120},
 			{"label":"Total Paid", "fieldname":"total_paid","fieldtype":"Currency","align":"right","width":120},
@@ -124,6 +125,7 @@ def get_sale_transaction_data(filters,customer):
 	sql = """select
 		1 as indent,
 		if(ifnull(a.custom_bill_number,'')='',a.name,concat(a.custom_bill_number,' (',a.name,')')) as row_group,
+		a.stock_location,
 		a.posting_date,
 		a.grand_total as total_amount,
 		a.total_paid,

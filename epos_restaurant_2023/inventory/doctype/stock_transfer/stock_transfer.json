@@ -11,6 +11,7 @@
   "naming_series",
   "posting_date",
   "referance",
+  "purpose",
   "column_break_3",
   "amended_from",
   "from_stock_location",
@@ -19,6 +20,11 @@
   "to_stock_location",
   "to_business_branch",
   "consignment",
+  "section_break_rdli",
+  "customer",
+  "customer_name",
+  "column_break_xdtm",
+  "phone_number",
   "section_break_12",
   "scan_barcode",
   "column_break_14",
@@ -173,12 +179,48 @@
    "label": "Consignment",
    "options": "Consignment",
    "read_only": 1
+  },
+  {
+   "default": "Stock Transfer",
+   "fieldname": "purpose",
+   "fieldtype": "Select",
+   "label": "Purpose",
+   "options": "Stock Transfer\nStock Return"
+  },
+  {
+   "depends_on": "eval:doc.purpose == \"Stock Return\"",
+   "fieldname": "section_break_rdli",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "fetch_from": "customer.customer_name_en",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_xdtm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "customer.phone_number",
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "label": "Phone Number",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-16 11:42:39.789973",
+ "modified": "2025-04-01 08:35:16.015766",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Transfer",

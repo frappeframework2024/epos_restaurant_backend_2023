@@ -24,7 +24,6 @@ frappe.ui.form.on("Customer", {
             }, 100)
         }
     },
-
     refresh(frm){
         frm.set_query("district", function() {
             return {

@@ -9,6 +9,17 @@ frappe.ui.form.on("Stock Transfer", {
 			}
 		}
 	},
+	purpose(frm){
+		if(frm.doc.purpose == "Stock Return"){
+			frm.set_query("to_stock_location", function() {
+				return {
+					filters: {
+						is_for_return_stock: ['=', "1"]
+					}
+				}
+			})
+		}
+	},
     scan_barcode(frm){
 		if(frm.doc.scan_barcode!=undefined){
 				let barcode = frm.doc.scan_barcode;

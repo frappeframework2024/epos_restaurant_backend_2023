@@ -22,6 +22,13 @@ frappe.query_reports["Customer Credit Balance Report"] = {
 			 
 		},
 		{
+			fieldname: "stock_location",
+			label: __("Stock Location"),
+			fieldtype: "MultiSelectList",
+			"on_change": function (query_report) {},
+			 
+		},
+		{
 			"fieldname":"end_date",
 			"label": __("End Date"),
 			"fieldtype": "Date",

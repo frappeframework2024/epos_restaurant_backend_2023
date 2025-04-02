@@ -12,7 +12,8 @@
   "stock_location_name",
   "disabled",
   "is_standard",
-  "is_for_consignment"
+  "is_for_consignment",
+  "is_for_return_stock"
  ],
  "fields": [
   {
@@ -51,11 +52,17 @@
    "fieldname": "is_for_consignment",
    "fieldtype": "Check",
    "label": "Is For Consignment"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_for_return_stock",
+   "fieldtype": "Check",
+   "label": "Is For Return Stock"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-09 17:12:58.465818",
+ "modified": "2025-04-01 08:39:55.048543",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Location",
