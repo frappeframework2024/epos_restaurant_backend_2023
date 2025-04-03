@@ -1,26 +1,31 @@
 // Copyright (c) 2023, Tes Pheakdey and contributors
 // For license information, please see license.txt
 
-frappe.ui.form.on("Sale Quotation", {
-	refresh: function(frm) {
-        if(frm.doc.docstatus === 1){
-             frm.add_custom_button(__('Sales Order'), function() {
+frappe.ui.form.on("Delivery Note", {
+    refresh: function(frm) {
+        if(frm.doc.docstatus === 1 && frm.doc.status=="To Bill"){
+             frm.add_custom_button(__('Sale'), function() {
                 frappe.model.open_mapped_doc({
-                    method: "epos_restaurant_2023.selling.doctype.sale_quotation.sale_quotation.make_sales_order",
+                    method: "epos_restaurant_2023.selling.doctype.delivery_note.delivery_note.make_sales_invoice",
                     frm: frm
                 })
         }, __("Create"));
      }
     },
 	setup(frm) {
-		set_query(frm,"product_code",{  allow_sale: 1});
+		set_query(frm,"product_code",{allow_sale: 1});
 		set_query(frm,"stock_location",[["Stock Location","business_branch","=",frm.doc.business_branch]]);
-		set_query(frm,"outlet",[["Outlet","business_branch","=",frm.doc.business_branch]]);
-
+		if((frm.doc.price_rule || "") == ""){
+			frappe.call({
+				method: "epos_restaurant_2023.api.api.get_default_price_rule",
+				callback: function(r){
+					frm.set_value("price_rule",r.message)
+				}
+			});	
+		}
     },
 	business_branch(frm){
 		set_query(frm,"stock_location",[["Stock Location","business_branch","=",frm.doc.business_branch]]);
-		set_query(frm,"outlet",[["Outlet","business_branch","=",frm.doc.business_branch]]);
 		if (frm.doc.business_branch){ 
 			update_product_price(frm);
 		}
@@ -29,57 +34,6 @@ frappe.ui.form.on("Sale Quotation", {
 		if (frm.doc.price_rule){ 
 			update_product_price(frm);
 		}
-	},
-	scan_barcode(frm){
-		if(frm.doc.scan_barcode!=undefined){
-				let barcode = frm.doc.scan_barcode;
-				frappe.call({
-					method: "epos_restaurant_2023.inventory.doctype.product.product.get_product",
-					args: {
-						barcode:frm.doc.scan_barcode,
-						business_branch:frm.doc.business_branch,
-						price_rule: frm.doc.price_rule,
-						allow_sale:1,
-						
-						
-					},
-					callback: function(r){
-						 
-						if(r.message!=undefined){
-							if(r.message.status ==0){ 
-								let row_exist = check_row_exist(frm,barcode,r.message.unit);
-				
-								if(row_exist!=undefined && frm.doc.append_quantity == 1){
-									row_exist.doc.quantity = row_exist.doc.quantity + 1;
-									update_sale_product_amount(frm,row_exist.doc);
-								 
-								}else {
-									add_product_to_sale_product(frm,r.message);
-								}
-								frm.refresh_field("products");
-						
-								
-							}else {
-								frappe.show_alert({message:r.message.message, indicator:"orange"});
-								
-							}
-
-						}
-						else {
-							frappe.throw(_("Load data fail."))
-						}
-					},
-					error: function(r) {
-						frappe.throw(_("Load data fail."))
-					},
-				});	
-					
-					
-		}
-		frm.doc.scan_barcode = "";
-		frm.refresh_field('scan_barcode'); 
-	
-		 
 	},
 	discount_type(frm){
 		update_sale_discount_to_sale_product(self);
@@ -100,6 +54,9 @@ frappe.ui.form.on("Sale Quotation", {
 		if(frm.doc.tax_rule){ 
 			frappe.model.with_doc('Tax Rule', frm.doc.tax_rule, function () {
 				let tax_rule = frappe.model.get_doc('Tax Rule', frm.doc.tax_rule);
+                frm.set_value("tax_1_rate",tax_rule.tax_1_rate)
+                frm.set_value("tax_2_rate",tax_rule.tax_2_rate)
+                frm.set_value("tax_3_rate",tax_rule.tax_3_rate)
 				$.each(frm.doc.products,  function(i, d)  {
 					if(d.product_tax_rule==undefined){ 
 						set_product_tax(d,tax_rule);
@@ -112,26 +69,25 @@ frappe.ui.form.on("Sale Quotation", {
 				updateSumTotal(frm);
 			});
 		}else {
-		 
 			$.each(frm.doc.products,  function(i, d)  {
 				if(d.product_tax_rule==undefined){ 
 					set_product_tax(d,null);
 					update_sale_product_amount(frm,d);
 				}
 			});
-
-			frm.refresh_field('products');
-			
+			frm.refresh_field('products');	
 			updateSumTotal(frm);
-		}
-		
+		}	
 	},
 	customer(frm){
 		frappe.model.with_doc('Customer', frm.doc.customer, function () {
 			let customer = frappe.model.get_doc('Customer', frm.doc.customer);
-			 
 				frm.set_value('discount_type', "Percent");
 				frm.set_value('discount', customer.default_discount);
+				frm.set_value('customer_price_rule', customer.price_rule);
+                if((customer.price_rule || "") != ""){
+				    frm.set_value('price_rule', customer.price_rule);
+                }
 				update_sale_discount_to_sale_product(frm);
 				updateSumTotal(frm);
 			 
@@ -140,7 +96,27 @@ frappe.ui.form.on("Sale Quotation", {
 	
 });
 
-frappe.ui.form.on('Sale Quotation Product', {
+frappe.ui.form.on('Delivery Note Product', {
+    products_add:function(frm,cdt, cdn) {
+        let row = locals[cdt][cdn];
+        row.product_tax_rule = frm.doc.tax_rule;
+        if(frm.doc.tax_rule){ 
+			frappe.model.with_doc('Tax Rule', frm.doc.tax_rule, function () {
+                let tax_rule = frappe.model.get_doc('Tax Rule', frm.doc.tax_rule);
+                set_product_tax(row,tax_rule);
+                update_sale_product_amount(frm,row);
+				frm.refresh_field('products');
+				updateSumTotal(frm);
+			});
+		}else {
+            if(row.product_tax_rule==undefined){ 
+                set_product_tax(row,null);
+                update_sale_product_amount(frm,row);
+            }
+			frm.refresh_field('products');	
+			updateSumTotal(frm);
+		}	
+    },
 	products_remove: function(frm) {
 		updateSumTotal(frm);
     },
@@ -249,13 +225,10 @@ async function update_product_price(frm){
 	let rows = frm.fields_dict["products"].grid.grid_rows;
 	const promises = [];
 	 $.each(rows, async function(i, d)  {
-	 
-	
 		if(d.doc.product_code!=undefined)
 		{ 
 			const promise = frappe.call({
 				method: "epos_restaurant_2023.inventory.doctype.product.product.get_product_price",
-				
 				args: {
 					barcode:d.doc.product_code,
 					business_branch:frm.doc.business_branch,
@@ -266,7 +239,6 @@ async function update_product_price(frm){
 				callback: function(r){
 					d.doc.price = r.message.price ;
 					d.doc.base_price = r.message.price ;
-
 					d.doc.sub_total = d.doc.price * d.doc.quantity;
 					d.doc.amount = d.doc.sub_total - d.doc.discount_amount;
 				},
@@ -311,28 +283,21 @@ function updateSumTotal(frm) {
 		frm.set_value('tax_1_amount', products.reduce((n, d) => n + d.tax_1_amount,0));
 		frm.set_value('tax_2_amount', products.reduce((n, d) => n + d.tax_2_amount,0));
 		frm.set_value('tax_3_amount', products.reduce((n, d) => n + d.tax_3_amount,0));
-		frm.set_value('total_tax', products.reduce((n, d) => n + d.total_tax,0));
+		frm.set_value('total_tax_amount', products.reduce((n, d) => n + d.total_tax_amount,0));
 		frm.set_value('sale_discount', discount);
 		frm.set_value('total_discount', discount + frm.doc.product_discount);
-		frm.set_value('grand_total',  (frm.doc.sub_total - frm.doc.total_discount) + frm.doc.total_tax);
+		frm.set_value('grand_total',  (frm.doc.sub_total - frm.doc.total_discount) + frm.doc.total_tax_amount);
 		frm.refresh_field('grand_total'); 
-	
-		
-	
-	
 }
 
 function calculate_sale_product_tax(doc){
 		if (doc.tax_rule){
-		
 			if(doc.calculate_tax_1_after_discount==true){
 				doc.taxable_amount_1 =   doc.sub_total - doc.total_discount
 			}else {
 				doc.taxable_amount_1 = doc.sub_total ;
 			}
-
 			doc.tax_1_amount =  doc.taxable_amount_1 * doc.tax_1_rate/100;
-
 			//tax 2
 			if( doc.calculate_tax_2_after_discount==true){
 				doc.taxable_amount_2 = doc.sub_total - doc.total_discount;
@@ -359,7 +324,7 @@ function calculate_sale_product_tax(doc){
 			doc.tax_3_amount =  doc.taxable_amount_3 * doc.tax_3_rate/100;
 		 
 			//total tax
-			doc.total_tax = doc.tax_1_amount + doc.tax_2_amount + doc.tax_3_amount;
+			doc.total_tax_amount = doc.tax_1_amount + doc.tax_2_amount + doc.tax_3_amount;
 		}else {
 			doc.taxable_amount_1 =0;
 			doc.tax_1_amount=0;
@@ -367,11 +332,8 @@ function calculate_sale_product_tax(doc){
 			doc.tax_2_amount=0;
 			doc.taxable_amount_3 =0;
 			doc.tax_3_amount=0;
-			doc.total_tax =0;
+			doc.total_tax_amount =0;
 		}
-
-
-		//end tax calculateion
 }
 
 
@@ -379,17 +341,19 @@ function product_code(frm,doc){
 	if(doc.product_tax_rule){ 
 		frappe.model.with_doc('Tax Rule', doc.product_tax_rule, function () {
 			let tax_rule = frappe.model.get_doc('Tax Rule', doc.product_tax_rule);
-			
 			set_product_tax(doc,tax_rule)
-
 			get_product_price(frm,doc).then((v)=>{
 				doc.price = v;
 				update_sale_product_amount(frm,doc)
-				
 			});
         });
 	}
-
+    else{
+        get_product_price(frm,doc).then((v)=>{
+            doc.price = v;
+            update_sale_product_amount(frm,doc)
+        });
+    }
 }
 
 function set_product_tax(doc, tax_rule){
@@ -423,9 +387,7 @@ function set_product_tax(doc, tax_rule){
 }
 
 function update_sale_product_amount(frm,doc){
- 
 	doc.sub_total = doc.price * doc.quantity;
-
 	if(doc.discount){ 
 		if (doc.discount_type=="Percent"){
 			doc.discount_amount = (doc.sub_total * doc.discount/100); 
@@ -435,23 +397,16 @@ function update_sale_product_amount(frm,doc){
 		doc.sale_discount_percent = 0;
 		doc.sale_discount_amount = 0;
 	}else {
-		doc.discount_amount = 0;
-		//check if sale have discount then add discount to sale
-		
+		doc.discount_amount = 0;		
 	}
 	if(doc.sale_discount_percent){
 		doc.sale_discount_amount = (doc.sub_total * doc.sale_discount_percent/100); 
-		 
 	}
 	doc.total_discount = doc.discount_amount + doc.sale_discount_amount;
-
 	calculate_sale_product_tax(doc);
-	 
-	doc.amount = (doc.sub_total - doc.discount_amount) + doc.total_tax ;
-	
+	doc.amount = (doc.sub_total - doc.discount_amount) + doc.total_tax_amount ;
 	frm.refresh_field('products');
 	updateSumTotal(frm);
-
 }
 function update_sale_discount_to_sale_product(frm){
 	let products = frm.doc.products
@@ -459,8 +414,6 @@ function update_sale_discount_to_sale_product(frm){
 		return false;
 	}
 	let sale_discount = frm.doc.discount
- 
-
 	if (sale_discount>0) { 
 		if (frm.doc.discount_type=="Amount"){ 
 			let discountable_amount = products.reduce((n, d) => n + (d.allow_discount==0 || d.discount_amount>0?0:d.sub_total),0)
@@ -470,7 +423,6 @@ function update_sale_discount_to_sale_product(frm){
 	$.each(products,  function(i, d)  {
 		// check if sale has discount
 		if (sale_discount>0 && d.allow_discount && d.discount==0){ 
-			
 			d.sale_discount_percent = sale_discount  
 			d.sale_discount_amount = (sale_discount/100) * d.sub_total
 		}
@@ -479,15 +431,12 @@ function update_sale_discount_to_sale_product(frm){
 			d.sale_discount_amount = 0
 		}
 		d.total_discount = d.sale_discount_amount  + d.discount_amount ;
-	
 		calculate_sale_product_tax(d);
 	});
 }
 
 let get_product_price = function (frm,doc) {
-	
 	return new Promise(function(resolve, reject) {
-		
 		frappe.call({
 			method: "epos_restaurant_2023.inventory.doctype.product.product.get_product_price",
 			args: {
@@ -498,7 +447,6 @@ let get_product_price = function (frm,doc) {
 				portion:doc.portion
 			},
 			callback: function(r){
-		
 				resolve(r.message.price)
 			},
 			error: function(r) {
@@ -507,7 +455,6 @@ let get_product_price = function (frm,doc) {
 		});	
 	});
 }
-
 
 
  

@@ -3,24 +3,32 @@
 
 frappe.ui.form.on("Sales Order", {
     refresh: function(frm) {
-        if(frm.doc.docstatus === 1){
-             frm.add_custom_button(__('Sale'), function() {
-                frappe.model.open_mapped_doc({
-                    method: "epos_restaurant_2023.selling.doctype.sales_order.sales_order.make_sales_invoice",
-                    frm: frm
-                })
+        if(frm.doc.docstatus === 1 && frm.doc.status=="To Bill"){
+			frm.add_custom_button(__('Delivery Note'), function() {
+			frappe.model.open_mapped_doc({
+				method: "epos_restaurant_2023.selling.doctype.sales_order.sales_order.make_delivery_note",
+				frm: frm
+			})
+        }, __("Create"));
+		frm.add_custom_button(__('Sale'), function() {
+			frappe.model.open_mapped_doc({
+				method: "epos_restaurant_2023.selling.doctype.sales_order.sales_order.make_sales_invoice",
+				frm: frm
+			})
         }, __("Create"));
      }
     },
 	setup(frm) {
 		set_query(frm,"product_code",{allow_sale: 1});
 		set_query(frm,"stock_location",[["Stock Location","business_branch","=",frm.doc.business_branch]]);
-		frappe.call({
-			method: "epos_restaurant_2023.api.api.get_default_price_rule",
-			callback: function(r){
-				frm.set_value("price_rule",r.message)
-			}
-		});	
+		if((frm.doc.price_rule || "") == ""){
+			frappe.call({
+				method: "epos_restaurant_2023.api.api.get_default_price_rule",
+				callback: function(r){
+					frm.set_value("price_rule",r.message)
+				}
+			});	
+		}
     },
 	business_branch(frm){
 		set_query(frm,"stock_location",[["Stock Location","business_branch","=",frm.doc.business_branch]]);

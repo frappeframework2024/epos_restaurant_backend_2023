@@ -2,7 +2,8 @@
  "actions": [],
  "allow_rename": 1,
  "autoname": "naming_series:",
- "creation": "2025-03-31 08:33:21.686531",
+ "creation": "2025-04-03 16:11:54.418826",
+ "default_view": "List",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -49,6 +50,7 @@
   "total_quantity",
   "total_discount",
   "amended_from",
+  "sales_order",
   "column_break_sgrr",
   "sub_total",
   "grand_total",
@@ -60,20 +62,10 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Sales Order",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
-  },
-  {
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Naming Series",
-   "options": "DLV.YYYY.-.####"
+   "options": "DLVR.YYYY.-.####"
   },
   {
    "default": "Today",
@@ -137,11 +129,8 @@
    "read_only": 1
   },
   {
-   "fetch_from": "customer.price_rule",
-   "fieldname": "customer_price_rule",
-   "fieldtype": "Data",
-   "label": "Customer Price Rule",
-   "read_only": 1
+   "fieldname": "column_break_cmuj",
+   "fieldtype": "Column Break"
   },
   {
    "fetch_from": "customer.phone_number",
@@ -151,69 +140,20 @@
    "read_only": 1
   },
   {
-   "fieldname": "column_break_cmuj",
-   "fieldtype": "Column Break"
+   "fetch_from": "customer.price_rule",
+   "fieldname": "customer_price_rule",
+   "fieldtype": "Data",
+   "label": "Customer Price Rule",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_cmig",
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "section_break_zbax",
-   "fieldtype": "Section Break"
-  },
-  {
-   "default": "1",
-   "fieldname": "total_quantity",
-   "fieldtype": "Float",
-   "label": "Total Quantity",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "fieldname": "sub_total",
-   "fieldtype": "Currency",
-   "label": "Sub Total",
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_sgrr",
-   "fieldtype": "Column Break"
-  },
-  {
-   "default": "0",
-   "fieldname": "total_tax_amount",
-   "fieldtype": "Currency",
-   "label": "Total Tax Amount",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "fieldname": "grand_total",
-   "fieldtype": "Currency",
-   "label": "Grand Total",
-   "read_only": 1
-  },
-  {
-   "fieldname": "section_break_jcxu",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "tax_rule",
-   "fieldtype": "Link",
-   "label": "Tax Rule",
-   "options": "Tax Rule"
-  },
-  {
-   "fieldname": "column_break_oxyu",
-   "fieldtype": "Column Break"
-  },
-  {
-   "default": "0",
-   "fieldname": "total_discount",
-   "fieldtype": "Currency",
-   "label": "Total Discount",
-   "read_only": 1
+   "fieldname": "products",
+   "fieldtype": "Table",
+   "options": "Delivery Note Product"
   },
   {
    "fieldname": "section_break_svqg",
@@ -225,6 +165,13 @@
    "fieldtype": "Select",
    "label": "Discount Type",
    "options": "Percent\nAmount"
+  },
+  {
+   "default": "0",
+   "fieldname": "sale_discountable_amount",
+   "fieldtype": "Currency",
+   "label": "Sale Discountable Amount",
+   "read_only": 1
   },
   {
    "default": "0",
@@ -251,16 +198,25 @@
    "read_only": 1
   },
   {
-   "default": "0",
-   "fieldname": "sale_discountable_amount",
-   "fieldtype": "Currency",
-   "label": "Sale Discountable Amount",
-   "read_only": 1
+   "fieldname": "section_break_jcxu",
+   "fieldtype": "Section Break"
   },
   {
-   "fieldname": "products",
-   "fieldtype": "Table",
-   "options": "Sales Order Product"
+   "fieldname": "tax_rule",
+   "fieldtype": "Link",
+   "label": "Tax Rule",
+   "options": "Tax Rule"
+  },
+  {
+   "fieldname": "column_break_oxyu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_tax_amount",
+   "fieldtype": "Currency",
+   "label": "Total Tax Amount",
+   "read_only": 1
   },
   {
    "depends_on": "eval:doc.tax_rule",
@@ -321,11 +277,75 @@
    "label": "Tax 3 Amount"
   },
   {
+   "fieldname": "section_break_zbax",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "total_quantity",
+   "fieldtype": "Float",
+   "label": "Total Quantity",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_discount",
+   "fieldtype": "Currency",
+   "label": "Total Discount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Delivery Note",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_sgrr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "sub_total",
+   "fieldtype": "Currency",
+   "label": "Sub Total",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "grand_total",
+   "fieldtype": "Currency",
+   "label": "Grand Total",
+   "read_only": 1
+  },
+  {
    "fieldname": "status",
    "fieldtype": "Select",
    "hidden": 1,
    "label": "Status",
    "options": "\nDraft\nTo Bill\nCompleted\nCancelled\nClosed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Delivery Note",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "sales_order",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Sales Order",
+   "options": "Sales Order",
    "read_only": 1
   }
  ],
@@ -334,17 +354,13 @@
  "links": [
   {
    "link_doctype": "Sale",
-   "link_fieldname": "sales_order"
-  },
-  {
-   "link_doctype": "Delivery Note",
-   "link_fieldname": "sales_order"
+   "link_fieldname": "delivery_note"
   }
  ],
- "modified": "2025-04-03 17:21:06.359461",
+ "modified": "2025-04-03 17:21:45.431474",
  "modified_by": "Administrator",
  "module": "Selling",
- "name": "Sales Order",
+ "name": "Delivery Note",
  "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [

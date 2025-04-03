@@ -219,6 +219,8 @@
   "paid_date",
   "time_in",
   "time_out",
+  "sales_order",
+  "delivery_note",
   "integration_section",
   "exely_guest_id",
   "arrival",
@@ -247,7 +249,7 @@
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Document Number",
-   "options": "SO.YYYY.-.####",
+   "options": "SINV.YYYY.-.####",
    "print_hide": 1,
    "report_hide": 1
   },
@@ -1619,6 +1621,22 @@
    "fieldname": "foc_note",
    "fieldtype": "Small Text",
    "label": "FOC Note"
+  },
+  {
+   "fieldname": "sales_order",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Sales Order",
+   "options": "Sales Order",
+   "read_only": 1
+  },
+  {
+   "fieldname": "delivery_note",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Delivery Note",
+   "options": "Delivery Note",
+   "read_only": 1
   }
  ],
  "image_field": "photo",
@@ -1641,7 +1659,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2025-03-21 17:05:34.054660",
+ "modified": "2025-04-03 17:06:14.509303",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

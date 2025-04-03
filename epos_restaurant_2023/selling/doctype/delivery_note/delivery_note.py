@@ -4,7 +4,7 @@ from frappe import _
 from py_linq import Enumerable
 from frappe.model.document import Document
 
-class SalesOrder(Document):
+class DeliveryNote(Document):
 	def validate(self):
 		if self.discount_type =="Percent" and self.discount> 100:
 			frappe.throw(_("Discount percent cannot greater than 100%"))
@@ -162,17 +162,18 @@ def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
 			target.naming_series = naming_series_list[0]
 		else:
 			target.naming_series = ""
-		target.sales_order = source.name
+		target.sales_order = source.sales_order
+		target.delivery_note = source.name
 		target.status = "Draft"
 	doclist = get_mapped_doc(
-		"Sales Order",
+		"Delivery Note",
 		source_name,
 		{
-			"Sales Order": {
+			"Delivery Note": {
 				"doctype": "Sale",
 				"validation": {"docstatus": ["=", 1]},
 			},
-			"Sales Order Product": {
+			"Delivery Note Product": {
 				"doctype": "Sale Product",
 				"field_map": {
 					"name": "products",
@@ -184,39 +185,7 @@ def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
 		postprocess,
 		ignore_permissions=ignore_permissions,
 	)
-	return doclist
 
-@frappe.whitelist()
-def make_delivery_note(source_name, target_doc=None, ignore_permissions=False):
-	from frappe.model.mapper import get_mapped_doc
-	def postprocess(source, target):
-		naming_series_list = get_naming_series("Delivery Note")
-		if len(naming_series_list) > 0:
-			target.naming_series = naming_series_list[0]
-		else:
-			target.naming_series = ""
-		target.sales_order = source.name
-		target.status = "Draft"
-	doclist = get_mapped_doc(
-		"Sales Order",
-		source_name,
-		{
-			"Sales Order": {
-				"doctype": "Delivery Note",
-				"validation": {"docstatus": ["=", 1]},
-			},
-			"Sales Order Product": {
-				"doctype": "Delivery Note Product",
-				"field_map": {
-					"name": "products",
-					"parent": "sales_order",
-				},
-			}
-		},
-		target_doc,
-		postprocess,
-		ignore_permissions=ignore_permissions,
-	)
 	return doclist
 
 def get_naming_series(doctype):

@@ -366,6 +366,8 @@ class Sale(Document):
 					submit_order_to_exely(self.name)
 				else:
 					frappe.enqueue("epos_restaurant_2023.api.exely.submit_order_to_exely", queue='long', doc_name = self.name)
+		update_sales_order_and_delivery_note_status(self)
+		
 
 	def on_cancel(self):
 		if self.flags.ignore_on_cancel == True:
@@ -405,7 +407,70 @@ class Sale(Document):
 		
 		if is_update_inventory:
 			update_inventory_on_cancel(self)
+		update_sales_order_and_delivery_note_status(self)
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel", queue='short', self=self)
+
+def update_sales_order_and_delivery_note_status(self):
+	if self.sales_order:
+		sales_order_product = frappe.db.sql("""
+						select
+						a.product_code,
+						a.base_unit,
+						a.unit,
+						a.quantity,
+						0 as converted_qty
+						from `tabSales Order Product` a
+						inner join `tabSales Order` b on b.name = a.parent
+						where b.name = '{}' and b.docstatus = 1""".format(self.sales_order),as_dict=1)
+		delivery_note_product = frappe.db.sql("""
+						select
+						a.product_code,
+						a.base_unit,
+						a.unit,
+						a.quantity,
+						0 as converted_qty
+						from `tabDelivery Note Product` a
+						inner join `tabDelivery Note` b on b.name = a.parent
+						where b.name = '{}' and b.docstatus = 1""".format(self.delivery_note),as_dict=1)
+		sale_products = frappe.db.sql("""
+						select 
+						a.product_code,
+						a.unit,
+						a.base_unit,
+						a.quantity,
+						0 as converted_qty
+						from `tabSale Product` a
+						inner join `tabSale` b on b.name = a.parent
+						where b.sales_order = '{}' and b.docstatus = 1""".format(self.sales_order),as_dict=1)
+		if len(sales_order_product) > 0:
+			for a in sales_order_product:
+				uom_conversion = get_uom_conversion(a.base_unit,a.unit)
+				a.converted_qty = a.quantity * uom_conversion
+
+		if len(delivery_note_product) > 0:
+			for a in delivery_note_product:
+				uom_conversion = get_uom_conversion(a.base_unit,a.unit)
+				a.converted_qty = a.quantity * uom_conversion
+
+		if len(sale_products) > 0:
+			for a in sale_products:
+				uom_conversion = get_uom_conversion(a.base_unit,a.unit)
+				a.converted_qty = a.quantity * uom_conversion
+
+		sales_order_product_qty = Enumerable(sales_order_product).sum(lambda x: x.converted_qty or 0)
+		delivery_note_product_qty = Enumerable(delivery_note_product).sum(lambda x: x.converted_qty or 0)
+		sale_product_qty = Enumerable(sale_products).sum(lambda x: x.converted_qty or 0)
+
+		if sales_order_product_qty == sale_product_qty:
+			frappe.db.set_value("Sales Order",self.sales_order,"status","Completed")
+		else:
+			frappe.db.set_value("Sales Order",self.sales_order,"status","To Bill")
+		
+		if delivery_note_product_qty == sale_product_qty:
+			frappe.db.set_value("Delivery Note",self.delivery_note,"status","Completed")
+		else:
+			frappe.db.set_value("Delivery Note",self.delivery_note,"status","To Bill")
+		frappe.db.commit()
 
 ## generate custom bill number
 def on_generate_custom_bill_number(self):
