@@ -224,8 +224,8 @@ def get_sale_customer(name):
 
 @frappe.whitelist()
 def execute_sql_query(query,params=None):
-     if not query.lower().startswith('select'):
-        raise frappe.PermissionError("Only SELECT queries are allowed")
+     # if not query.lower().startswith('select'):
+     #    raise frappe.PermissionError("Only SELECT queries are allowed")
      
      if params:
          result = frappe.db.sql(query, json.loads(params) , as_dict=True)

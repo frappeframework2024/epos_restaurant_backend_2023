@@ -283,11 +283,8 @@ function setup_barcode_field(field,frm) {
                 </a>
             </span>`
         );
-    
         this.$scan_btn = field.$wrapper.find(".link-btn");
         this.$scan_btn.toggle(true);
-    
-    
         this.$scan_btn.on("click", "a", () => {
             new frappe.ui.Scanner({
                 dialog: true,

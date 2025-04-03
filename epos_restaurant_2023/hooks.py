@@ -1,4 +1,5 @@
 from . import __version__ as app_version
+from .socket_server import start_socket_server, stop_socket_server
 import frappe
 app_name = "epos_restaurant_2023"
 app_title = "ePOS Restaurant"
@@ -22,6 +23,12 @@ app_include_js = [
 ]
  
 additional_print_settings =["compact_item_print"]
+
+
+# Socket Server Configuration
+# --------------------------
+# Start the socket server when the site boots
+boot_session = lambda: start_socket_server()
 
 
 # include js, css files in header of web template
@@ -77,14 +84,20 @@ doctype_list_js = {"Translation": "public/js/translation_list.js"}
 # before_install = "epos_restaurant_2023.install.before_install"
 # after_install = "epos_restaurant_2023.install.after_install"
 
-before_migrate ="epos_restaurant_2023.migrate.before_migrate" 
+before_migrate =[
+    "epos_restaurant_2023.migrate.before_migrate" ,
+    "epos_restaurant_2023.socket_server.stop_socket_server",
+]
 after_migrate = [
     "epos_restaurant_2023.migrate.after_migrate",
+     "epos_restaurant_2023.socket_server.start_socket_server",
     ]
  
 # Uninstallation
 # ------------
-
+before_uninstall =[
+    "epos_restaurant_2023.socket_server.stop_socket_server"
+]
 # before_uninstall = "epos_restaurant_2023.uninstall.before_uninstall"
 # after_uninstall = "epos_restaurant_2023.uninstall.after_uninstall"
 

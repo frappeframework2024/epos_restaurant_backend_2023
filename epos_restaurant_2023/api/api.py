@@ -1202,7 +1202,7 @@ def edit_sale_order(name,auth=None,note=None):
 
     #change status from 2 to 0 (Cancel to Draft) to allow pos can modified this doc
     sale_status_doc = frappe.get_doc("Sale Status","Submitted")
-    sale_sql = "update `tabSale` set docstatus = 0, sale_status='Submitted', sale_status_color='{0}', sale_status_priority={1} where name=%(name)s".format(sale_status_doc.background_color,sale_status_doc.priority)
+    sale_sql = "update `tabSale` set docstatus = 0, sale_status='Submitted', sale_status_color='{0}', sale_status_priority={1},balance=grand_total,total_paid_with_fee=0,total_paid=0 where name=%(name)s".format(sale_status_doc.background_color,sale_status_doc.priority)
     sale_product_sql = "update `tabSale Product` set docstatus = 0 where parent=%(parent)s"
     frappe.db.sql(sale_sql, {"name":name})
     frappe.db.sql(sale_product_sql,{"parent":name})          
