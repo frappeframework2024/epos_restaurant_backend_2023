@@ -23,6 +23,9 @@ from epos_restaurant_2023.api.security import aes_encrypt,get_aes_key,encode_bas
 from epos_restaurant_2023.api.exely import cancel_order,submit_order_to_exely
 from frappe.model.rename_doc import get_link_fields
 
+import re
+from urllib.parse import urljoin
+
 @frappe.whitelist(allow_guest=True)
 def get_field(doctype):
     return str(get_link_fields(doctype))
@@ -2052,21 +2055,90 @@ def get_server_report_setting():
     return data
 
 
-
-@frappe.whitelist(allow_guest = True,methods="GET")
-def ssrs_server_rul(protocol,host, port):
+@frappe.whitelist(allow_guest=True)
+def get_ssrs_report(protocol="http", host="your-ssrs-server", port="80", report_path="Your/Report/Path"):
     from requests.auth import HTTPBasicAuth
- 
-    SSRS_USERNAME = 'win10'
-    SSRS_PASSWORD = 'eSAdmin@INC855.com'
-    SSRS_REPORT_URL = '{}://{}:{}/ReportServer'.format(protocol,host,port)
-    response = requests.get(SSRS_REPORT_URL, auth=HTTPBasicAuth(SSRS_USERNAME, SSRS_PASSWORD))
+    SSRS_USERNAME = "win10"
+    SSRS_PASSWORD = "eSAdmin@INC855.com"
+    SSRS_REPORT_URL = f"{protocol}://{host}:{port}/ReportServer?/{report_path}&rs:Command=Render&rs:Embed=true"
+    SSRS_BASE_URL = f"{protocol}://{host}:{port}/ReportServer"
+    
+    try:
+        # Fetch the main report HTML
+        response = requests.get(SSRS_REPORT_URL, auth=HTTPBasicAuth(SSRS_USERNAME, SSRS_PASSWORD))
+        if response.status_code != 200:
+            return {"status": "error", "message": f"Failed with status code: {response.status_code}"}
+        
+        html_content = response.content.decode("utf-8")
+        frappe.log(f"Raw SSRS HTML: {html_content}")  # Debug raw HTML
+        
+        # Inline CSS styles
+        css_links = re.findall(r'<link[^>]+href=["\'](.*?)["\']', html_content, re.IGNORECASE)
+        for css_url in css_links:
+            if not css_url.startswith(("http", "https")):
+                css_url = urljoin(SSRS_BASE_URL, css_url)
+            frappe.log(f"Fetching CSS: {css_url}")
+            css_response = requests.get(css_url, auth=HTTPBasicAuth(SSRS_USERNAME, SSRS_PASSWORD))
+            if css_response.status_code == 200:
+                inline_css = f"<style>{css_response.text}</style>"
+                html_content = html_content.replace(f'<link href="{css_url}" rel="stylesheet" />', inline_css)
+            else:
+                frappe.log(f"Failed to fetch CSS: {css_url}, status: {css_response.status_code}")
+        
+        # Inline JavaScript files
+        script_links = re.findall(r'<script[^>]+src=["\'](.*?)["\']', html_content, re.IGNORECASE)
+        for script_url in script_links:
+            if not script_url.startswith(("http", "https")):
+                script_url = urljoin(SSRS_BASE_URL, script_url)
+            frappe.log(f"Fetching JS: {script_url}")
+            js_response = requests.get(script_url, auth=HTTPBasicAuth(SSRS_USERNAME, SSRS_PASSWORD))
+            if js_response.status_code == 200:
+                inline_js = f"<script>{js_response.text}</script>"
+                html_content = html_content.replace(f'<script src="{script_url}"></script>', inline_js)
+            else:
+                frappe.log(f"Failed to fetch JS: {script_url}, status: {js_response.status_code}")
+        
+        # Inline images/icons (e.g., PNG, JPG, GIF) as base64
+        img_links = re.findall(r'<img[^>]+src=["\'](.*?)["\']', html_content, re.IGNORECASE)
+        for img_url in img_links:
+            if not img_url.startswith(("http", "https", "data:")):
+                img_url = urljoin(SSRS_BASE_URL, img_url)
+            frappe.log(f"Fetching Image: {img_url}")
+            img_response = requests.get(img_url, auth=HTTPBasicAuth(SSRS_USERNAME, SSRS_PASSWORD))
+            if img_response.status_code == 200:
+                # Encode image as base64
+                img_base64 = base64.b64encode(img_response.content).decode("utf-8")
+                mime_type = img_response.headers.get("Content-Type", "image/png")
+                inline_img = f"data:{mime_type};base64,{img_base64}"
+                html_content = html_content.replace(img_url, inline_img)
+            else:
+                frappe.log(f"Failed to fetch Image: {img_url}, status: {img_response.status_code}")
 
-    if response.status_code == 200:
-        return SSRS_REPORT_URL
-    else:
-        return response.status_code
+        # Ensure full HTML structure with proper metadata
+        full_html = f"""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <base href="{SSRS_BASE_URL}/">
+            <title>SSRS Report</title>
+        </head>
+        <body>
+            {html_content}
+        </body>
+        </html>
+        """
+        frappe.log(f"Final HTML: {full_html}")  # Debug final HTML
+        return {"status": "success", "html_content": full_html}
+    
+    except Exception as e:
+        frappe.log_error(f"Error fetching SSRS report: {str(e)}")
+        return {"status": "error", "message": str(e)}
 
+
+
+    
 @frappe.whitelist()
 def get_default_price_rule():
     price_rule = frappe.get_list("Price Rule", filters={"is_default":1}, fields=["name"])
