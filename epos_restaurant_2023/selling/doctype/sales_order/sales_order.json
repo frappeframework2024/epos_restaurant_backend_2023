@@ -325,7 +325,7 @@
    "fieldtype": "Select",
    "hidden": 1,
    "label": "Status",
-   "options": "\nDraft\nTo Bill\nCompleted\nCancelled\nClosed",
+   "options": "\nDraft\nTo Bill\nPartially Billed\nTo Deliver and Bill\nCompleted\nCancelled\nClosed",
    "read_only": 1
   }
  ],
@@ -341,7 +341,7 @@
    "link_fieldname": "sales_order"
   }
  ],
- "modified": "2025-04-03 17:21:06.359461",
+ "modified": "2025-04-04 11:01:56.009896",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order",

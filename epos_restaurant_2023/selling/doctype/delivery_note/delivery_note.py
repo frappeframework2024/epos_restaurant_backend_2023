@@ -1,4 +1,4 @@
-from epos_restaurant_2023.inventory.inventory import check_uom_conversion
+from epos_restaurant_2023.inventory.inventory import check_uom_conversion,get_uom_conversion
 import frappe
 from frappe import _
 from py_linq import Enumerable
@@ -53,10 +53,6 @@ class DeliveryNote(Document):
 			currency_precision = "2"
 
 		self.grand_total =( sub_total - (self.total_discount or 0))  + self.total_tax
-		update_status(self)
-
-	def on_update(self):
-		update_status(self)
 
 	def before_submit(self):
 		self.append_quantity = None
@@ -68,8 +64,78 @@ class DeliveryNote(Document):
 						frappe.throw(_("There is no UoM conversion for product {}-{} from {} to {}".format(d.product_code, d.product_name, d.base_unit, d.unit)))
 
 	def on_cancel(self):
+		update_delivered_qty(self)
 		update_status(self)
-		
+		update_sales_order_status(self)
+	
+	def on_submit(self):
+		update_delivered_qty(self)
+		update_status(self)
+		update_sales_order_status(self)
+
+def update_sales_order_status(self):
+	if self.sales_order:
+		sales_order_product = frappe.db.sql("""
+						select
+						a.product_code,
+						a.base_unit,
+						a.unit,
+						a.quantity,
+						0 as converted_qty
+						from `tabSales Order Product` a
+						inner join `tabSales Order` b on b.name = a.parent
+						where b.name = '{}' and b.docstatus = 1""".format(self.sales_order),as_dict=1)
+		delivery_note_product = frappe.db.sql("""
+						select
+						a.product_code,
+						a.base_unit,
+						a.unit,
+						a.quantity,
+						0 as converted_qty
+						from `tabDelivery Note Product` a
+						inner join `tabDelivery Note` b on b.name = a.parent
+						where b.sales_order = '{}' and b.docstatus = 1""".format(self.sales_order),as_dict=1)
+		sale_products = frappe.db.sql("""
+						select 
+						a.product_code,
+						a.unit,
+						a.base_unit,
+						a.quantity,
+						0 as converted_qty
+						from `tabSale Product` a
+						inner join `tabSale` b on b.name = a.parent
+						where b.sales_order = '{}' and b.docstatus = 1""".format(self.sales_order),as_dict=1)
+		if len(sales_order_product) > 0:
+			for a in sales_order_product:
+				uom_conversion = get_uom_conversion(a.base_unit,a.unit)
+				a.converted_qty = a.quantity * uom_conversion
+
+		if len(delivery_note_product) > 0:
+			for a in delivery_note_product:
+				uom_conversion = get_uom_conversion(a.base_unit,a.unit)
+				a.converted_qty = a.quantity * uom_conversion
+
+		if len(sale_products) > 0:
+			for a in sale_products:
+				uom_conversion = get_uom_conversion(a.base_unit,a.unit)
+				a.converted_qty = a.quantity * uom_conversion
+
+		sales_order_product_qty = Enumerable(sales_order_product).sum(lambda x: x.converted_qty or 0)
+		delivery_note_product_qty = Enumerable(delivery_note_product).sum(lambda x: x.converted_qty or 0)
+		sale_product_qty = Enumerable(sale_products).sum(lambda x: x.converted_qty or 0)
+		sales_order_status = ""
+		if sales_order_product_qty == sale_product_qty:
+			sales_order_status = "Completed"
+		elif sales_order_product_qty > sale_product_qty:
+			if delivery_note_product_qty == sales_order_product_qty:
+				sales_order_status = "Partially Billed"
+			else:
+				sales_order_status = "To Deliver and Bill"
+		else:
+			sales_order_status = "To Bill"
+		frappe.db.set_value("Sales Order",self.sales_order,"status",sales_order_status)
+		frappe.db.commit()
+
 def validate_sale_product(self):
 	sale_discount = self.discount  
 	if sale_discount>0:
@@ -141,6 +207,18 @@ def validate_tax(doc):
 			doc.tax_3_amount=0
 			doc.total_tax =0
 
+def update_delivered_qty(self):
+	sales_order_product = frappe.get_all("Sales Order Product", filters={"parent": self.sales_order}, fields=["name", "product_code", "quantity","unit","base_unit"])
+	if self.products:
+		for d in self.products:
+			p = Enumerable(sales_order_product).where(lambda x: x.product_code==d.product_code)
+			if p:
+				p = p.first()
+				conversion = check_uom_conversion(d.unit, p.unit)
+				qty = (d.quantity or 0) * conversion
+				frappe.db.sql("update `tabSales Order Product` set delivered_quantity = delivered_quantity + {0} where name = '{1}'".format(qty, p.name))
+				frappe.db.commit()
+
 @frappe.whitelist()
 def update_status(self,status=None):
 	if status:
@@ -152,6 +230,7 @@ def update_status(self,status=None):
 		self.status = "To Bill"
 	else:
 		self.status = "Cancelled"
+	frappe.db.set_value("Delivery Note", self.name, "status", self.status)
 
 @frappe.whitelist()
 def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):

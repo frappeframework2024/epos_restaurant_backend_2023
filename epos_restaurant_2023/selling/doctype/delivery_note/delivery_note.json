@@ -24,6 +24,7 @@
   "section_break_cmig",
   "products",
   "section_break_svqg",
+  "column_break_hgad",
   "discount_type",
   "sale_discountable_amount",
   "discount",
@@ -157,7 +158,8 @@
   },
   {
    "fieldname": "section_break_svqg",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "hidden": 1
   },
   {
    "default": "Percent",
@@ -181,7 +183,8 @@
   },
   {
    "fieldname": "column_break_cxrc",
-   "fieldtype": "Column Break"
+   "fieldtype": "Column Break",
+   "hidden": 1
   },
   {
    "default": "0",
@@ -327,7 +330,7 @@
    "fieldtype": "Select",
    "hidden": 1,
    "label": "Status",
-   "options": "\nDraft\nTo Bill\nCompleted\nCancelled\nClosed",
+   "options": "\nDraft\nTo Bill\nPartially Billed\nCompleted\nCancelled\nClosed",
    "read_only": 1
   },
   {
@@ -347,6 +350,11 @@
    "label": "Sales Order",
    "options": "Sales Order",
    "read_only": 1
+  },
+  {
+   "fieldname": "column_break_hgad",
+   "fieldtype": "Column Break",
+   "hidden": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -357,7 +365,7 @@
    "link_fieldname": "delivery_note"
   }
  ],
- "modified": "2025-04-03 17:21:45.431474",
+ "modified": "2025-04-04 11:01:27.956645",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Delivery Note",

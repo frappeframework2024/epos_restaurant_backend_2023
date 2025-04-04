@@ -20,6 +20,7 @@
   "column_break_touv",
   "sub_total",
   "amount",
+  "delivered_quantity",
   "section_break_nhwc",
   "discount_type",
   "discount",
@@ -398,12 +399,18 @@
    "fieldname": "amount",
    "fieldtype": "Currency",
    "label": "Amount"
+  },
+  {
+   "fieldname": "delivered_quantity",
+   "fieldtype": "Float",
+   "label": "Delivered Quantity",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-03-31 15:54:42.531559",
+ "modified": "2025-04-04 08:37:40.551927",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order Product",

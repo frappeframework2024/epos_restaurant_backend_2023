@@ -3,13 +3,15 @@
 
 frappe.ui.form.on("Sales Order", {
     refresh: function(frm) {
-        if(frm.doc.docstatus === 1 && frm.doc.status=="To Bill"){
+        if(frm.doc.docstatus === 1 && frm.doc.status=="To Deliver and Bill"){
 			frm.add_custom_button(__('Delivery Note'), function() {
 			frappe.model.open_mapped_doc({
 				method: "epos_restaurant_2023.selling.doctype.sales_order.sales_order.make_delivery_note",
 				frm: frm
 			})
         }, __("Create"));
+	}
+	if(frm.doc.docstatus === 1 && (frm.doc.status!="Completed")){
 		frm.add_custom_button(__('Sale'), function() {
 			frappe.model.open_mapped_doc({
 				method: "epos_restaurant_2023.selling.doctype.sales_order.sales_order.make_sales_invoice",
@@ -98,6 +100,14 @@ frappe.ui.form.on("Sales Order", {
 				updateSumTotal(frm);
 			 
         });
+		if((frm.doc.price_rule || "") == ""){
+			frappe.call({
+				method: "epos_restaurant_2023.api.api.get_default_price_rule",
+				callback: function(r){
+					frm.set_value("price_rule",r.message)
+				}
+			});	
+		}
 	}
 	
 });

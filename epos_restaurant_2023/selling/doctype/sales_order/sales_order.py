@@ -3,8 +3,12 @@ import frappe
 from frappe import _
 from py_linq import Enumerable
 from frappe.model.document import Document
-
+from frappe.utils import flt
 class SalesOrder(Document):
+	def before_insert(self):
+		for a in self.products:
+			a.delivered_quantity = 0
+
 	def validate(self):
 		if self.discount_type =="Percent" and self.discount> 100:
 			frappe.throw(_("Discount percent cannot greater than 100%"))
@@ -53,10 +57,6 @@ class SalesOrder(Document):
 			currency_precision = "2"
 
 		self.grand_total =( sub_total - (self.total_discount or 0))  + self.total_tax
-		update_status(self)
-
-	def on_update(self):
-		update_status(self)
 
 	def before_submit(self):
 		self.append_quantity = None
@@ -68,6 +68,9 @@ class SalesOrder(Document):
 						frappe.throw(_("There is no UoM conversion for product {}-{} from {} to {}".format(d.product_code, d.product_name, d.base_unit, d.unit)))
 
 	def on_cancel(self):
+		update_status(self)
+	
+	def on_submit(self):
 		update_status(self)
 		
 def validate_sale_product(self):
@@ -149,9 +152,16 @@ def update_status(self,status=None):
 	if self.docstatus == 0:
 		self.status = "Draft"
 	elif self.docstatus == 1:
-		self.status = "To Bill"
+		self.status = "To Deliver and Bill"
 	else:
 		self.status = "Cancelled"
+	frappe.db.set_value("Sales Order", self.name, "status", self.status)
+	frappe.db.commit()
+
+@frappe.whitelist()
+def get_sale_product(product_code,sales_order):
+	p = frappe.db.sql("""select sum(quantity) qty from `tabSale Product` a inner join `tabSale` b on b.name = a.parent where product_code='{0}' and sales_order = '{1}'""".format(product_code,sales_order), as_dict=True)
+	return (p[0].qty or 0)
 
 @frappe.whitelist()
 def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
@@ -164,6 +174,11 @@ def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
 			target.naming_series = ""
 		target.sales_order = source.name
 		target.status = "Draft"
+
+	def update_item(source, target, source_parent):
+		sale_quantity = get_sale_product(source.product_code, source.parent)
+		target.quantity = flt(source.quantity) - flt(sale_quantity)
+
 	doclist = get_mapped_doc(
 		"Sales Order",
 		source_name,
@@ -178,6 +193,7 @@ def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
 					"name": "products",
 					"parent": "sales_order",
 				},
+				"postprocess": update_item,
 			}
 		},
 		target_doc,
@@ -196,7 +212,14 @@ def make_delivery_note(source_name, target_doc=None, ignore_permissions=False):
 		else:
 			target.naming_series = ""
 		target.sales_order = source.name
+		target.delivery_note = source.name
+		target.sub_total = 0
+		target.grand_total = 0
 		target.status = "Draft"
+
+	def update_item(source, target, source_parent):
+		target.quantity = flt(source.quantity) - flt(source.delivered_quantity)
+
 	doclist = get_mapped_doc(
 		"Sales Order",
 		source_name,
@@ -211,6 +234,7 @@ def make_delivery_note(source_name, target_doc=None, ignore_permissions=False):
 					"name": "products",
 					"parent": "sales_order",
 				},
+				"postprocess": update_item,
 			}
 		},
 		target_doc,

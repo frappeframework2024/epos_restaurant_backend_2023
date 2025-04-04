@@ -7,8 +7,12 @@ frappe.listview_settings['Sales Order'] = {
     get_indicator(doc) {
         if(doc.status=="Draft"){ 
             return [__("Draft"), "red"];
+        }else if(doc.status=="To Deliver and Bill"){
+            return [__("To Deliver and Bill"), "orange"];
         }else if(doc.status=="To Bill"){
             return [__("To Bill"), "orange"];
+        }else if(doc.status=="Partially Billed"){
+            return [__("Partially Billed"), "orange"];
         }else if(doc.status=="Cancelled"){
             return [__("Cancelled"), "red"];
         }

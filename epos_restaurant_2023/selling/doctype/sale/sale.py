@@ -431,7 +431,7 @@ def update_sales_order_and_delivery_note_status(self):
 						0 as converted_qty
 						from `tabDelivery Note Product` a
 						inner join `tabDelivery Note` b on b.name = a.parent
-						where b.name = '{}' and b.docstatus = 1""".format(self.delivery_note),as_dict=1)
+						where {0} = '{1}' and b.docstatus = 1""".format(("b.name" if self.delivery_note else "b.sales_order"),self.delivery_note if self.delivery_note else self.sales_order),as_dict=1)
 		sale_products = frappe.db.sql("""
 						select 
 						a.product_code,
@@ -460,16 +460,31 @@ def update_sales_order_and_delivery_note_status(self):
 		sales_order_product_qty = Enumerable(sales_order_product).sum(lambda x: x.converted_qty or 0)
 		delivery_note_product_qty = Enumerable(delivery_note_product).sum(lambda x: x.converted_qty or 0)
 		sale_product_qty = Enumerable(sale_products).sum(lambda x: x.converted_qty or 0)
-
+		sales_order_status = ""
 		if sales_order_product_qty == sale_product_qty:
-			frappe.db.set_value("Sales Order",self.sales_order,"status","Completed")
+			sales_order_status = "Completed"
+		elif sales_order_product_qty > sale_product_qty:
+			if delivery_note_product_qty == sales_order_product_qty:
+				sales_order_status = "Partially Billed"
+			else:
+				sales_order_status = "To Deliver and Bill"
 		else:
-			frappe.db.set_value("Sales Order",self.sales_order,"status","To Bill")
+			sales_order_status = "To Bill"
+		frappe.db.set_value("Sales Order",self.sales_order,"status",sales_order_status)
 		
-		if delivery_note_product_qty == sale_product_qty:
-			frappe.db.set_value("Delivery Note",self.delivery_note,"status","Completed")
+		delivery_status = ""
+		if self.delivery_note:
+			if delivery_note_product_qty == sale_product_qty:
+				delivery_status = "Completed"
+			elif delivery_note_product_qty > sale_product_qty:
+				delivery_status = "Partially Billed"
+			else:
+				delivery_status = "To Bill"
+			frappe.db.set_value("Delivery Note",self.delivery_note,"status",delivery_status)
 		else:
-			frappe.db.set_value("Delivery Note",self.delivery_note,"status","To Bill")
+			delivery_note = frappe.get_all("Delivery Note",filters={"sales_order":self.sales_order,"docstatus":1},fields=["name"])
+			for a in delivery_note:
+				frappe.db.set_value("Delivery Note",a.name,"status","To Bill" if sales_order_status == "To Deliver and Bill" else sales_order_status)
 		frappe.db.commit()
 
 ## generate custom bill number
