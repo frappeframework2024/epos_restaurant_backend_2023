@@ -464,8 +464,10 @@ def update_sales_order_and_delivery_note_status(self):
 		if sales_order_product_qty == sale_product_qty:
 			sales_order_status = "Completed"
 		elif sales_order_product_qty > sale_product_qty:
-			if delivery_note_product_qty == sales_order_product_qty:
+			if delivery_note_product_qty == sales_order_product_qty and sale_product_qty>0:
 				sales_order_status = "Partially Billed"
+			elif delivery_note_product_qty == sales_order_product_qty and sale_product_qty==0:
+				sales_order_status = "To Bill"
 			else:
 				sales_order_status = "To Deliver and Bill"
 		else:

@@ -16,8 +16,7 @@
                 </div>
             </div>
         </div>
-        <v-container>
-            <!-- <iframe style="height: 1000px; width: 100%; background: green;"  src="" ></iframe> -->
+        <v-container> 
             <div class="pb-16">
                 <div class="mx-auto mt-4 mb-0 md:w-[600px]">
                     
@@ -62,7 +61,7 @@
     
 </template>
 <script setup>
-import { useRouter,computed, posReservationDialog, createToaster,pendingSaleListDialog,inject,onMounted,printWifiPasswordModal,SwitchPosProfileModal,i18n } from '@/plugin'
+import { ref, useRouter,computed, posReservationDialog, createToaster,pendingSaleListDialog,inject,onMounted,printWifiPasswordModal,SwitchPosProfileModal,i18n } from '@/plugin'
 import ComButton from '../components/ComButton.vue';
 import WorkingDayButton from './shift/components/WorkingDayButton.vue';
 import OpenShiftButton from './shift/components/OpenShiftButton.vue';
@@ -80,6 +79,7 @@ const gv = inject('$gv');
 const frappe = inject('$frappe');
 const call = frappe.call();
 const { mobile } = useDisplay();
+const iframeContent = ref("");
 
 
 const { t: $t } = i18n.global; 
@@ -98,10 +98,11 @@ const device_name = computed(() => {
 })
 
 
- 
+
 //on init
 onMounted(async () => { 
     localStorage.removeItem('make_order_auth');    
+
     call.get("epos_restaurant_2023.api.api.get_current_working_day",{business_branch: gv.setting?.business_branch})
     .then((_res)=>{
         if(!already_load_confirm_close_working_day){

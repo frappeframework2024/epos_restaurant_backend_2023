@@ -154,15 +154,16 @@ def get_system_settings(pos_profile="", device_name=''):
     doc = frappe.get_doc('ePOS Settings')
     table_groups = []
     for g in profile.table_groups:
-        _group = frappe.get_doc("Table Group",g.table_group,fields=["photo","table_group_name_kh"])        
-        table_groups.append({
-            "key":g.table_group.lower().replace(" ","_"),
-            "table_group":g.table_group,
-            "table_group_kh":_group.table_group_name_kh,
-            "background":_group.photo,
-            "tables":get_tables_number(table_group= g.table_group,device_name= device_name, pos_profile= pos_profile),
-            "search_table_keyword":""
-            })
+        _group = frappe.get_doc("Table Group",g.table_group,fields=["photo","table_group_name_kh"])      
+        if not _group.disabled :
+            table_groups.append({
+                "key":g.table_group.lower().replace(" ","_"),
+                "table_group":g.table_group,
+                "table_group_kh":_group.table_group_name_kh,
+                "background":_group.photo,
+                "tables":get_tables_number(table_group= g.table_group,device_name= device_name, pos_profile= pos_profile),
+                "search_table_keyword":""
+                })
     pos_menus = []
     for m in profile.pos_menus:
         pos_menus.append({"pos_menu":m.pos_menu})   
@@ -1314,28 +1315,27 @@ def delete_sale(name,auth):
     
 @frappe.whitelist()
 def get_filter_for_close_sale_list(business_branch,pos_profile): 
-    working_day = get_current_working_day(business_branch)
-    if working_day :
+    if business_branch:
+        working_day = get_current_working_day(business_branch)
+        if working_day :
+            cashier_shifts =  [{"name":'', "title":"All Cashier Shift"}]
+            cashier_shifts = cashier_shifts + ( frappe.db.sql("select name, name as title from `tabCashier Shift` where working_day = %(working_day)s and pos_profile = %(pos_profile)s order by name",{"pos_profile":pos_profile,"working_day":working_day.name},as_dict=1))
+            sale_types = [{"title":'All Sale Type',"name":""}]
+            sale_types +=  frappe.db.sql("select name, name as title, color,is_order_use_table from `tabSale Type` order by sort_order",as_dict=1)
+            # outlets = [{"title":'All Outlet',"name":""}]
+            # outlets += frappe.db.sql("select name, name as title from `tabOutlet` where business_branch =  %(business_branch)s order by name", {"business_branch":business_branch},as_dict=1)
+            table_groups =[{"title":'All Table Group',"name":""}]
+            table_groups += frappe.db.sql("select name, name as title from `tabTable Group` where business_branch = %(business_branch)s order by name",{"business_branch":business_branch},as_dict=1)
 
-        cashier_shifts =  [{"name":'', "title":"All Cashier Shift"}]
-        cashier_shifts = cashier_shifts + ( frappe.db.sql("select name, name as title from `tabCashier Shift` where working_day = %(working_day)s and pos_profile = %(pos_profile)s order by name",{"pos_profile":pos_profile,"working_day":working_day.name},as_dict=1))
-        sale_types = [{"title":'All Sale Type',"name":""}]
-        sale_types +=  frappe.db.sql("select name, name as title, color,is_order_use_table from `tabSale Type` order by sort_order",as_dict=1)
-        # outlets = [{"title":'All Outlet',"name":""}]
-        # outlets += frappe.db.sql("select name, name as title from `tabOutlet` where business_branch =  %(business_branch)s order by name", {"business_branch":business_branch},as_dict=1)
-        table_groups =[{"title":'All Table Group',"name":""}]
-        table_groups += frappe.db.sql("select name, name as title from `tabTable Group` where business_branch = %(business_branch)s order by name",{"business_branch":business_branch},as_dict=1)
-
-        return {
-        "working_day":working_day,
-        "cashier_shift":get_current_cashier_shift(pos_profile),
-        "cashier_shifts":cashier_shifts,
-        "sale_types":sale_types,
-        # "outlets":outlets,
-        "table_groups":table_groups
-
-        }
-    return None
+            return {
+            "working_day":working_day,
+            "cashier_shift":get_current_cashier_shift(pos_profile),
+            "cashier_shifts":cashier_shifts,
+            "sale_types":sale_types,
+            # "outlets":outlets,
+            "table_groups":table_groups
+            }
+        return None
 
 
 
