@@ -18,6 +18,7 @@
   "column_break_dclp",
   "stock_location",
   "business_branch",
+  "purchase_request",
   "amended_from",
   "section_break_4",
   "scan_barcode",
@@ -34,7 +35,6 @@
   "total_quantity",
   "sub_total",
   "vendor_group",
-  "purchase_request",
   "column_break_34",
   "discount_type",
   "discountable_amount",
@@ -329,7 +329,7 @@
   {
    "fieldname": "purchase_request",
    "fieldtype": "Link",
-   "label": "Purchase Request",
+   "label": "From Purchase Request",
    "options": "Purchase Request",
    "read_only": 1
   }
@@ -349,7 +349,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2025-04-07 13:34:49.721365",
+ "modified": "2025-04-08 08:44:44.460328",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order",
