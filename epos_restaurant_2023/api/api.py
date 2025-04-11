@@ -588,16 +588,6 @@ def check_pos_profile(pos_profile_name, device_name, is_used_validate=True):
         frappe.db.commit()
     return station
 
-@frappe.whitelist()
-def custom_404_to_desk(path=None):
-    # Redirect to /app if user is logged in
-    if frappe.session.user and frappe.session.user != "Guest":
-        frappe.local.response["type"] = "redirect"
-        frappe.local.response["location"] = "/app"
-    else:
-        # If not logged in, send to login page or show 404
-        frappe.local.response["type"] = "redirect"
-        frappe.local.response["location"] = "/login"
 
 @frappe.whitelist()
 def get_current_working_day(business_branch = ""):
