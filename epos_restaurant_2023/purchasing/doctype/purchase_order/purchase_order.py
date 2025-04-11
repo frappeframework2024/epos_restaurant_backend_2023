@@ -10,7 +10,10 @@ from py_linq import Enumerable
 from frappe.model.document import Document
 from epos_restaurant_2023.purchasing.doctype.purchase_order.general_ledger_entry import submit_purchase_to_general_ledger_entry_on_submit,submit_purchase_to_general_ledger_entry_on_cancel
 class PurchaseOrder(Document):
-		
+	
+	def before_insert(self):
+		self.status = "Draft"
+
 	def validate(self):
 		validate_discount(self)
 		update_items(self)
@@ -45,6 +48,8 @@ class PurchaseOrder(Document):
 				p.last_purchase_cost = pp.cost
 		"""
 		frappe.db.sql(sql,{"parent": self.name})
+		self.status = "Unpaid"
+		update_purchase_order_status(self,"Unpaid")
 
 	def on_cancel(self):
 		if frappe.db.get_single_value("ePOS Settings","use_basic_accounting_feature"):
@@ -52,7 +57,9 @@ class PurchaseOrder(Document):
 		if len(self.purchase_order_products)>=10:
 			update_inventory_on_cancel(self)
 		else:
-			frappe.enqueue("epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.update_inventory_on_cancel", queue='short', self=self)		
+			frappe.enqueue("epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.update_inventory_on_cancel", queue='short', self=self)	
+		self.status = "Cancelled"
+		update_purchase_order_status(self,"Cancelled")
 
 	def before_submit(self):
 		for d in self.purchase_order_products:
@@ -149,8 +156,8 @@ def get_accounts(branch,product):
 	stock_account = frappe.db.get_value("Business Branch", branch,"default_inventory_account")
 	return {"stock_account":stock_account,"expense_account":expense_account}
 
-@frappe.whitelist()
-def update_purchase_order_status(purchase_order,status):
-	frappe.db.set_value('Purchase Order', purchase_order,  {
+def update_purchase_order_status(self,status):
+	frappe.db.set_value('Purchase Order', self.name,  {
 		'status': status
 	})
+	frappe.db.commit()

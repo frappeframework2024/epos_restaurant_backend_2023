@@ -324,7 +324,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "Unpaid\nPartially Paid\nPaid"
+   "options": "Unpaid\nPartially Paid\nPaid\nDraft\nCancelled"
   },
   {
    "fieldname": "purchase_request",
@@ -349,7 +349,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2025-04-08 08:44:44.460328",
+ "modified": "2025-04-11 09:20:13.175026",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order",

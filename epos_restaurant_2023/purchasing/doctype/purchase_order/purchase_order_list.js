@@ -9,6 +9,10 @@ frappe.listview_settings['Purchase Order'] = {
             return [__("Paid"), "green"];
         }else if(doc.status=="Partially Paid"){
             return [__("Partially Paid"), "orange"];
+        }else if(doc.status=="Draft"){
+            return [__("Draft"), "red"];
+        }else if(doc.status=="Cancelled"){
+            return [__("Cancelled"), "red"];
         }else{
             return [__("Unpaid"), "red"];
         }
