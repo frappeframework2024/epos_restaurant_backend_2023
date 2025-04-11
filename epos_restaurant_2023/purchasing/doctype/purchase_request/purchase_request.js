@@ -35,7 +35,6 @@ frappe.ui.form.on("Purchase Request", {
             let color = color_map[state] || '#808080'; 
             let indicator = frm.page.wrapper.find('.indicator-pill'); 
             if (indicator.length) {
-				console.log(hexToRgba(color,0.5))
                 indicator.css({ 
                     'color':color,
                 });

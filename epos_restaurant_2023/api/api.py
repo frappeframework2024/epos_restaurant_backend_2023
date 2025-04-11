@@ -590,13 +590,22 @@ def check_pos_profile(pos_profile_name, device_name, is_used_validate=True):
 
 
 @frappe.whitelist()
-def get_current_working_day(business_branch):
-   
-    sql = "select name, posting_date, pos_profile, note from `tabWorking Day` where business_branch = %(business_branch)s and is_closed = 0 order by creation limit 1"
-    data =  frappe.db.sql(sql, {"business_branch":business_branch},as_dict=1) 
-    if data:
-        return data [0]
-    return None
+def get_current_working_day(business_branch = ""):
+    if (business_branch or "") == "":
+        business_branchs = (frappe.db.get_list('Business Branch') or [])
+        if len(business_branchs) == 1:
+            business_branch = business_branchs[0].name
+        else:
+            business_branch = ""
+    if business_branch != "":
+        sql = "select name, posting_date, pos_profile, note from `tabWorking Day` where business_branch = %(business_branch)s and is_closed = 0 order by creation limit 1"
+        data =  frappe.db.sql(sql, {"business_branch":business_branch},as_dict=1) 
+        if data:
+            return data [0]
+        else:
+            return None
+    else:
+        return None
 
 @frappe.whitelist()
 def get_current_shift_information(business_branch, pos_profile):

@@ -287,7 +287,7 @@ class Sale(Document):
 
 
 		# generate custom bill format
-		if not self.custom_bill_number:
+		if (self.custom_bill_number or "") == "":
 				if self.pos_profile:
 					pos_config = frappe.get_cached_value("POS Profile",self.pos_profile,"pos_config")
 					bill_number_prefix = frappe.get_cached_value("POS Config",pos_config,"pos_bill_number_prefix")
@@ -491,7 +491,7 @@ def update_sales_order_and_delivery_note_status(self):
 
 ## generate custom bill number
 def on_generate_custom_bill_number(self):
-	if not self.custom_bill_number:
+	if (self.custom_bill_number or "") == "":
 		if self.pos_profile:
 			pos_config_name = frappe.get_cached_value("POS Profile",self.pos_profile,"pos_config")
 			pos_config = frappe.get_cached_value("POS Config",pos_config_name,["pos_bill_number_prefix","generate_bill_number_on_create"], as_dict=1)

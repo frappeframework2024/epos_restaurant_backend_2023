@@ -152,6 +152,11 @@
                                 }}</v-chip>
                         </template>
 
+                        <v-chip color="orange" v-if="(sp.is_require_employee || 0) == 1"
+                            class="mx-1 grow text-center justify-center" variant="elevated" size="small"
+                            @click="onSetTimer(sp)">{{ $t('Set Time In/Out') }}
+                        </v-chip>
+
                         <v-chip v-if="show_button_seat_number && !(sp.is_require_employee || false) && !sp.is_timer_product" color="teal"
                             class="mx-1 grow text-center justify-center" variant="elevated" size="small"
                             @click="sale.onSaleProductSetSeatNumber(sp)">{{ $t('Seat') }}
@@ -196,8 +201,11 @@ import Enumerable from 'linq';
 import ComSaleProductComboMenuGroupItemDisplay from './combo_menu/ComSaleProductComboMenuGroupItemDisplay.vue';
 import ComHappyHour from './happy_hour_promotion/ComHappyHour.vue';
 import ComTimerProductEstimatePrice from '@/views/sale/components/ComTimerProductEstimatePrice.vue';
+import ComSetTimeInOutModal from '@/views/sale/components/ComSetTimeInOutModal.vue';
+
 
 const { t: $t } = i18n.global;
+import { useDialog } from 'primevue/usedialog';
 const numberFormat = inject('$numberFormat');
 const sale = inject('$sale');
 const product = inject('$product');
@@ -207,6 +215,8 @@ const moment = inject('$moment');
 const toaster = createToaster({ position: 'top-right' });
 const frappe = inject("$frappe")
 const call = frappe.call()
+const dialog = useDialog()
+const dialogRef = inject('dialogRef');
 
 const props = defineProps({
     groupKey: Object,
@@ -373,6 +383,21 @@ async function onStopTimer(sp) {
         _onStopTimer(sp);
     }
 }
+
+async function onSetTimer(sp) { 
+    const dialogRef = dialog.open(ComSetTimeInOutModal, {
+        data: sp,
+        onClose: (options) => {
+            const result = options.data;
+            if (result) { 
+                
+                sp.time_in = result.time_in
+                sp.time_out = result.time_out
+            }
+        }
+    })
+} 
+
 async function _onStopTimer(sp) {
     if (sale.sale.sale_products.filter(r => !r.name).length > 0) {
         toaster.warning($t('msg.Please submit your order first'));
