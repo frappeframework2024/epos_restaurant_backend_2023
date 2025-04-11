@@ -190,6 +190,7 @@ override_whitelisted_methods = {
 	# "frappe.desk.doctype.event.event.get_events": "epos_restaurant_2023.event.get_events"
     "frappe.desk.desktop.get_workspace_sidebar_items" : "epos_restaurant_2023.api.api.get_workspace_sidebar_items",
     "frappe.desk.query_report.export_query" : "epos_restaurant_2023.api.data_export.data_export_override.export_to_excel",
+    "frappe.website.router.handle_404": "epos_restaurant.api.api.custom_404_to_desk",
     
 }
  

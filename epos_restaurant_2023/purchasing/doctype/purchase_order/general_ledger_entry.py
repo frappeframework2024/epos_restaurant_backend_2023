@@ -2,7 +2,7 @@ import frappe
 def submit_purchase_to_general_ledger_entry_on_submit(self):
 	from epos_restaurant_2023.api.account import submit_general_ledger_entry
 	docs = []
-	stock_asset_account = set([d.stock_account for d in self.purchase_order_products])
+	stock_asset_account = set([d.stock_account for d in self.purchase_order_products if d.stock_account])
 	if self.grand_total > 0:
 		for acc in stock_asset_account:
 			doc = {
