@@ -214,9 +214,42 @@ def sync_data_to_server_on_delete(doc, method=None, *args, **kwargs):
     if setting.enable ==1:
         frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,action="delete") 
 
-
-
- 
+@frappe.whitelist(methods="POST")
+def secure_upload(file_name, file_data, is_private=1):
+    import frappe
+    import base64
+    content = base64.b64decode(file_data)
+    file_doc = frappe.get_doc({
+        "doctype": "File",
+        "file_name": file_name,
+        "content": content,
+        "is_private": int(is_private)
+    })
+    file_doc.insert(ignore_permissions=True)
+    return "sucess"
+       
+@frappe.whitelist(allow_guest=True)
+def send_files(file_name):
+    import base64
+    import requests
+    file_name = (file_name or "").replace("/files/","")
+    if frappe.db.exists("File", {"file_name": file_name}):
+        tocken = frappe.db.get_single_value('ePOS Sync Setting','access_token')
+        doc = frappe.get_doc("File", {"file_name":file_name})
+        file_path = doc.get_full_path()
+        server_url = frappe.db.get_single_value('ePOS Sync Setting','server_url')
+        encoded = None
+        with open(file_path, 'rb') as f : encoded = base64.b64encode(f.read()).decode()
+        url = server_url + '/api/method/epos_restaurant_2023.api.utils.secure_upload'
+        response = requests.post(url,
+            headers={'Authorization': 'token {}'.format(tocken),
+                    "Content-Type":"application/json"},
+            json={
+                "file_name": file_name,
+                "file_data": encoded,
+                "is_private": 0
+            })
+        return response.text
 
 @frappe.whitelist()
 def sync_comment_to_server(doc, method=None, *args, **kwargs):
