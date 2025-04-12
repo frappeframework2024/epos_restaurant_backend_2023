@@ -126,7 +126,8 @@ after_migrate = [
 doc_events = {
 	"*": {
 		"on_update": [
-            "epos_restaurant_2023.api.utils.generate_data_for_sync_record"
+            "epos_restaurant_2023.api.utils.generate_data_for_sync_record",
+            "epos_restaurant_2023.api.utils.sync_data_to_server_on_submit"
         ],
         "after_rename": [
                 "epos_restaurant_2023.api.utils.generate_data_for_sync_record_on_rename"
@@ -154,8 +155,7 @@ scheduler_events = {
     "cron": {
       "*/1 * * * *": [
             "epos_restaurant_2023.api.schedule_task.generate_audit_trail_from_version",
-            "epos_restaurant_2023.api.sync_api.get_all_data_for_sync_from_server",
-            
+            "epos_restaurant_2023.api.sync_api.get_all_data_for_sync_from_server",  
         ],
 
         "*/5 * * * *": [
