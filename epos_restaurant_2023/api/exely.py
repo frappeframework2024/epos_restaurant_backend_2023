@@ -152,7 +152,6 @@ def submit_order_to_exely(doc_name):
                     doc.submit()
                 except:
                     pass
-        
 
                 frappe.db.sql("update `tabSale` set exely_transaction_id='{}' where name='{}'".format(raw["transactionId"],doc_name))
                 frappe.db.commit()

@@ -54,7 +54,7 @@ class PurchaseOrder(Document):
 	def on_cancel(self):
 		if frappe.db.get_single_value("ePOS Settings","use_basic_accounting_feature"):
 			submit_purchase_to_general_ledger_entry_on_cancel(self)
-		if len(self.purchase_order_products)>=10:
+		if len(self.purchase_order_products)<=10:
 			update_inventory_on_cancel(self)
 		else:
 			frappe.enqueue("epos_restaurant_2023.purchasing.doctype.purchase_order.purchase_order.update_inventory_on_cancel", queue='short', self=self)	
