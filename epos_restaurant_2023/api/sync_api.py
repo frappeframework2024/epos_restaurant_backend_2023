@@ -73,6 +73,8 @@ def rename_sync_data(doctype, data):
 def get_file(file_name):
     import base64
     file_name = (file_name or "").replace("/private","").replace("/files/","")
+    if frappe.db.exists("File", {"file_name": file_name}):
+        return
     setting = frappe.get_doc("ePOS Sync Setting")
     headers = {
                 "Authorization": f"token {setting.access_token}",
