@@ -255,7 +255,7 @@ def send_files(file_name):
             json={
                 "file_name": file_name,
                 "file_data": encoded,
-                "is_private": 1 if "private" in file_name else 0
+                "is_private": (doc.is_private or 0)
             })
         return response.text
 
