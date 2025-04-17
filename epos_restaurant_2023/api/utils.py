@@ -211,7 +211,7 @@ def sync_data_to_server_on_submit(doc, method=None, *args, **kwargs):
         if doc.doctype in [d.document_type for d in setting.sync_to_server if d.event == 'on_submit']:
             doctype = [d for d in setting.sync_to_server if d.event == 'on_submit' and d.document_type==doc.doctype][0] 
             frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,extra_action=doctype.extra_action or [],action="submit") 
-            if doc.doctyep == "Product":
+            if doc.doctype == "Product":
                 frappe.enqueue("epos_restaurant_2023.api.utils.send_files", queue='short',file_name=doc.photo) 
 
 @frappe.whitelist(methods="POST")
