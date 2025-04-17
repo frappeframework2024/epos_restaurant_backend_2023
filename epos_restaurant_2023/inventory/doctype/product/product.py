@@ -231,8 +231,6 @@ class Product(Document):
 			a.sort_order = self.sort_order
 		frappe.clear_document_cache("Product",self.name)
 		frappe.cache.delete_value("product_variant_" + self.name)
-		from epos_restaurant_2023.api.utils import send_files
-		send_files(self.photo)
 		
 		
 		if self.flags.ignore_on_update==True:
