@@ -194,6 +194,13 @@ def sync_sale_to_server():
     else:
         return "All Sale Has Been Send"
 
+@frappe.whitelist()
+def sync_data_to_server_on_delete(doc, method=None, *args, **kwargs):
+    if not frappe.db.exists("DocType","ePOS Sync Setting"):
+        return
+    setting =frappe.get_doc("ePOS Sync Setting")
+    if setting.enable ==1:
+        frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,action="delete") 
 
 @frappe.whitelist()
 def sync_data_to_server_on_submit(doc, method=None, *args, **kwargs):
@@ -204,35 +211,36 @@ def sync_data_to_server_on_submit(doc, method=None, *args, **kwargs):
         if doc.doctype in [d.document_type for d in setting.sync_to_server if d.event == 'on_submit']:
             doctype = [d for d in setting.sync_to_server if d.event == 'on_submit' and d.document_type==doc.doctype][0] 
             frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,extra_action=doctype.extra_action or [],action="submit") 
-
-
-@frappe.whitelist()
-def sync_data_to_server_on_delete(doc, method=None, *args, **kwargs):
-    if not frappe.db.exists("DocType","ePOS Sync Setting"):
-        return
-    setting =frappe.get_doc("ePOS Sync Setting")
-    if setting.enable ==1:
-        frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,action="delete") 
+            if doc.doctyep == "Product":
+                frappe.enqueue("epos_restaurant_2023.api.utils.send_files", queue='short',file_name=doc.photo) 
 
 @frappe.whitelist(methods="POST")
 def secure_upload(file_name, file_data, is_private=1):
     import frappe
     import base64
     content = base64.b64decode(file_data)
-    file_doc = frappe.get_doc({
+    doc = frappe.get_doc({
         "doctype": "File",
         "file_name": file_name,
         "content": content,
         "is_private": int(is_private)
     })
-    file_doc.insert(ignore_permissions=True)
+    doc.flags.ignore_validate = True
+    doc.flags.ignore_insert = True
+    doc.flags.ignore_after_insert = True
+    doc.flags.ignore_on_update = True
+    doc.flags.ignore_before_submit = True
+    doc.flags.ignore_on_submit = True
+    doc.flags.ignore_on_cancel = True
+    doc.insert(ignore_permissions=True,ignore_links=True)
+    frappe.db.commit()
     return "sucess"
        
 @frappe.whitelist(allow_guest=True)
 def send_files(file_name):
     import base64
     import requests
-    file_name = (file_name or "").replace("/files/","")
+    file_name = (file_name or "").replace("/private","").replace("/files/","")
     if frappe.db.exists("File", {"file_name": file_name}):
         tocken = frappe.db.get_single_value('ePOS Sync Setting','access_token')
         doc = frappe.get_doc("File", {"file_name":file_name})
@@ -247,7 +255,7 @@ def send_files(file_name):
             json={
                 "file_name": file_name,
                 "file_data": encoded,
-                "is_private": 0
+                "is_private": 1 if "private" in file_name else 0
             })
         return response.text
 

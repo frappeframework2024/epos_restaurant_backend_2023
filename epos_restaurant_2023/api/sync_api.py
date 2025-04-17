@@ -69,14 +69,60 @@ def rename_sync_data(doctype, data):
         frappe.rename_doc(doctype,d['old_name'],d['name'])
     frappe.db.commit()
 
+@frappe.whitelist()
+def get_file(file_name):
+    import base64
+    file_name = (file_name or "").replace("/private","").replace("/files/","")
+    setting = frappe.get_doc("ePOS Sync Setting")
+    headers = {
+                "Authorization": f"token {setting.access_token}",
+                "Content-Type":"application/json"
+            }
+    server_url = setting.server_url + "/api/method/epos_restaurant_2023.api.sync_api.get_file_from_server"
+    response = requests.post(server_url,headers=headers,json={"file_name":file_name})
+    if response.status_code == 200:
+        data = json.loads(response.text)
+        content = base64.b64decode(data["message"])
+        doc = frappe.get_doc({
+            "doctype": "File",
+            "file_name": file_name,
+            "content": content,
+            "is_private": 0
+        })
+        doc.flags.ignore_validate = True
+        doc.flags.ignore_insert = True
+        doc.flags.ignore_after_insert = True
+        doc.flags.ignore_on_update = True
+        doc.flags.ignore_before_submit = True
+        doc.flags.ignore_on_submit = True
+        doc.flags.ignore_on_cancel = True
+        doc.insert(ignore_permissions=True,ignore_links=True)
+        frappe.db.commit()
+        return "success"
+    else:
+        return response.text
+
+@frappe.whitelist()
+def get_file_from_server(file_name):
+    import base64
+    if frappe.db.exists("File", {"file_name": file_name}):
+        doc = frappe.get_doc("File", {"file_name":file_name})
+        file_path = doc.get_full_path()
+        encoded = None
+        with open(file_path, 'rb') as f : encoded = base64.b64encode(f.read()).decode()
+        return (encoded or "")
+    else:
+        return "No File Exist"
 
 def on_save(doc):
     doc["__newname"] = doc["name"]
     meta = frappe.get_meta(doc['doctype'])
     for f in [d for d in  meta.fields if d.fieldtype=='Attach Image']:
         if doc.get(f.fieldname):
-            if doc[f.fieldname] and  not is_url(doc[f.fieldname]):
-                doc[f.fieldname] = "{}{}".format(frappe.db.get_single_value("ePOS Sync Setting","server_url") ,doc[f.fieldname])
+            frappe.enqueue("epos_restaurant_2023.api.sync_api.get_file", queue='short',file_name=doc[f.fieldname]) 
+            # get_file(doc[f.fieldname])
+            # if doc[f.fieldname] and not is_url(doc[f.fieldname]):
+            #     doc[f.fieldname] = "{}{}".format(frappe.db.get_single_value("ePOS Sync Setting","server_url") ,doc[f.fieldname])
             
     doc = frappe.get_doc(doc)
     if doc.flags.disable_generate_data_for_sync:
@@ -218,3 +264,66 @@ def is_url(url):
         return True
     else:
         return False
+    
+@frappe.whitelist()
+def testMe():
+    import os
+
+    file_path = "/foder/f2/files/beer-heineken-blonde-french-5-33-cl.jpg"
+    file_name = os.path.basename( file_path)
+
+    return send_image_to_public_site( 
+        {"doctype":"Product",
+         "name":"B001",
+         "url":"/files/beer-heineken-blonde-french-5-33-cl29c1b0.jpg",
+            "file_name": file_name
+         }
+    )
+
+@frappe.whitelist()
+def send_image_to_public_site(data):
+    import base64
+    import requests
+    from frappe.utils.file_manager import get_file_path
+    setting = frappe.get_doc("ePOS Sync Setting")
+    image_path = get_file_path(data.get("url"))
+    with open(image_path, "rb") as f:
+        encoded_string = base64.b64encode(f.read()).decode()
+    data["filedata_base64"] = encoded_string
+    
+    response = requests.post(
+        "http://webmonitor.inccloudserver.com:7117/api/method/epos_restaurant_2023.api.sync_api.upload_image",
+        json={"data":data},
+        # headers={
+        #     "Authorization": f'token {setting.access_token}'
+        # }
+        headers={
+            "Authorization": f'token b84df842943ec01:744075e4def9080'
+        }
+    )
+    result = None
+    if response.ok:
+        result =  response.json()
+    else:
+        result =  (response.status_code,response.text)
+
+
+    try:
+        result =  response.json()
+    except Exception as e:
+        result =  str(e)
+    
+    return result
+
+ 
+    
+
+@frappe.whitelist(allow_guest=True)
+def upload_image(data):
+    import base64
+    from frappe.utils.file_manager import save_file
+    doc = frappe.get_doc(data.get("doctype"), data.get("name"))
+    file = save_file(data.get("file_name"), base64.b64decode(data.get("filedata_base64")), doc.doctype, doc.name)
+    doc.photo = file.file_url
+    doc.save(ignore_permissions=True)
+    return {"status": "success", "file_url": file}
