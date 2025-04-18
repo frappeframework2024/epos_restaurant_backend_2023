@@ -94,6 +94,14 @@ frappe.query_reports["Daily Sale Transaction"] = {
 			hide_in_filter:1,
 			"on_change": function (query_report) {},
 		},
+		{
+			"fieldname": "show_only_cancelled",
+			"label": __("Show Only Cancelled"),
+			"fieldtype": "Check",
+			default:false,
+			hide_in_filter:1,
+			"on_change": function (query_report) {},
+		},
 
 	],
 	"formatter": function(value, row, column, data, default_formatter) {

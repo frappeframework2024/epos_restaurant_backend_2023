@@ -96,10 +96,13 @@ def get_conditions(filters,group_filter=None):
 	if filters.get("pos_profile"):
 		conditions += " AND a.pos_profile in %(pos_profile)s"
 
-	if filters.get("show_cancelled") == 1:
-		conditions += " AND a.docstatus in (1,2)"
+	if filters.get("show_only_cancelled") == 1:
+		conditions += " AND a.docstatus = 2"
 	else:
-		conditions += " AND a.docstatus = 1"
+		if filters.get("show_cancelled") == 1:
+			conditions += " AND a.docstatus in (1,2)"
+		else:
+			conditions += " AND a.docstatus = 1"
 	
 	return conditions
 

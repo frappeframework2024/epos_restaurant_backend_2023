@@ -5,6 +5,7 @@ import copy
 import json
 import os
 import re
+import base64
 from typing import TYPE_CHECKING, Optional
 
 import frappe
@@ -24,68 +25,104 @@ standard_format = "templates/print_formats/standard.html"
 
 
 def get_context(context):
-	"""Build context for print"""
-	if not ((frappe.form_dict.doctype and frappe.form_dict.name) or frappe.form_dict.doc):
-		return {
-			"body": f"""
-				<h1>Error</h1>
-				<p>Parameters doctype and name required</p>
-				<pre>{escape_html(frappe.as_json(frappe.form_dict, indent=2))}</pre>
-				"""
-		}
-
-	if frappe.form_dict.doc:
-		doc = frappe.form_dict.doc
-	else:
-		doc = frappe.get_doc(frappe.form_dict.doctype, frappe.form_dict.name)
-
-	set_link_titles(doc)
-
-	settings = frappe.parse_json(frappe.form_dict.settings)
-
-	letterhead = frappe.form_dict.letterhead or None
-
-	meta = frappe.get_meta(doc.doctype)
-
-	print_format = get_print_format_doc(None, meta=meta)
-
-	make_access_log(
-		doctype=frappe.form_dict.doctype, document=frappe.form_dict.name, file_type="PDF", method="Print"
-	)
-
-	print_style = None
-	body = get_rendered_template(
-		doc,
-		print_format=print_format,
-		meta=meta,
-		trigger_print=frappe.form_dict.trigger_print,
-		no_letterhead=frappe.form_dict.no_letterhead,
-		letterhead=letterhead,
-		settings=settings,
-	)
-	print_style = get_print_style(frappe.form_dict.style, print_format)
-
-	return {
-		"body": body,
-		"print_style": print_style,
-		"comment": frappe.session.user,
-		"title": frappe.utils.strip_html(doc.get_title() or doc.name),
-		"lang": frappe.local.lang,
-		"layout_direction": "rtl" if is_rtl() else "ltr",
-		"doctype": frappe.form_dict.doctype,
-		"name": frappe.form_dict.name,
-		"key": frappe.form_dict.get("key"),
+	
+	ignore_permissions =  False
+	param_arr = None
+	if frappe.form_dict.preview == "1" or frappe.form_dict.preview ==1 or frappe.form_dict.preview == 'true'  or frappe.form_dict.preview == True  :
+		ignore_permissions = True
+	if ignore_permissions:
+		data_param = frappe.form_dict.data
+		data_param = data_param.replace('key','').replace('estc','')
+		url = base64.b64decode( base64.b64decode(data_param).decode('utf-8')).decode('utf-8')
 		
-		"show_toolbar": frappe.form_dict.show_toolbar or 1,
-		"view": frappe.form_dict.view or 'print',
-		"format": "" if  not print_format  else  print_format.name,
-		"folio":frappe.form_dict.folio,
-		"reservation":frappe.form_dict.reservation,
-		"reservation_stay":frappe.form_dict.reservation_stay,
-		"orientation":frappe.form_dict.orientation or "Portrait",
-		"print":frappe.form_dict.trigger_print or "0",
+		params = url.split('&') 
+		param_arr = {}	 
+		for param in params:
+			key_value = param.split('=')
+			if key_value[0] == "doctype":				
+				frappe.form_dict.doctype = key_value[1]
+			elif key_value[0] == "name":
+				frappe.form_dict.name = key_value[1]
+			elif key_value[0] == "format":
+				frappe.form_dict.format = key_value[1] 
 
-	}
+			param_arr[key_value[0]] =  key_value[1] 
+	else:
+		"""Build context for print"""
+		if not ((frappe.form_dict.doctype and frappe.form_dict.name) or frappe.form_dict.doc):
+			return {
+				"body": f"""
+					<h1>Error</h1>
+					<p>Parameters doctype and name required</p>
+					<pre>{escape_html(frappe.as_json(frappe.form_dict, indent=2))}</pre>
+					"""
+			}
+		
+	# Set flags to ignore permissions
+	frappe.flags.ignore_permissions =  ignore_permissions
+	frappe.flags.ignore_print_permissions = ignore_permissions
+
+	try:
+		if frappe.form_dict.doc:
+			doc = frappe.form_dict.doc
+		else:
+			# Fetch document without permission checks
+			doc = frappe.get_doc(frappe.form_dict.doctype, frappe.form_dict.name)
+
+		set_link_titles(doc)
+
+		settings = frappe.parse_json(frappe.form_dict.settings)
+
+		letterhead = frappe.form_dict.letterhead or None
+
+		meta = frappe.get_meta(doc.doctype)
+
+		print_format = get_print_format_doc(None, meta=meta)
+
+		make_access_log(
+			doctype=frappe.form_dict.doctype,
+			document=frappe.form_dict.name,
+			file_type="PDF",
+			method="Print"
+		)
+
+		print_style = None 
+		doc.form_dict = param_arr
+
+		body = get_rendered_template(
+			doc,
+			print_format=print_format,
+			meta=meta,
+			trigger_print=frappe.form_dict.trigger_print,
+			no_letterhead=frappe.form_dict.no_letterhead,
+			letterhead=letterhead,
+			settings=settings,
+		)
+		print_style = get_print_style(frappe.form_dict.style, print_format)
+
+		return {
+			"body": body,
+			"print_style": print_style,
+			"comment": frappe.session.user,
+			"title": frappe.utils.strip_html(doc.get_title() or doc.name),
+			"lang": frappe.local.lang,
+			"layout_direction": "rtl" if is_rtl() else "ltr",
+			"doctype": frappe.form_dict.doctype,
+			"name": frappe.form_dict.name,
+			"key": frappe.form_dict.get("key"),
+			"show_toolbar": frappe.form_dict.show_toolbar or 1,
+			"view": frappe.form_dict.view or 'print',
+			"format": "" if not print_format else print_format.name,
+			"folio": frappe.form_dict.folio,
+			"reservation": frappe.form_dict.reservation,
+			"reservation_stay": frappe.form_dict.reservation_stay,
+			"orientation": frappe.form_dict.orientation or "Portrait",
+			"print": frappe.form_dict.trigger_print or "0",
+		}
+	finally:
+		# Reset permission flags to avoid affecting subsequent operations
+		frappe.flags.ignore_permissions = False
+		frappe.flags.ignore_print_permissions = False
 
 
 def get_print_format_doc(print_format_name, meta):
