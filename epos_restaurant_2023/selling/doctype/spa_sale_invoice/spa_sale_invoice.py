@@ -12,31 +12,59 @@ from frappe.model.document import Document
 class SPASaleInvoice(Document):
 	def validate(self): 
 
+		#get exchange rate
+		if self.is_new() or self.exchange_rate is None or self.change_exchange_rate is None:
+			main_currency = frappe.get_doc("Currency",frappe.db.get_default("currency"))
+			second_currency = frappe.get_doc("Currency",frappe.db.get_default("second_currency"))
+			exchange_rate_main_currency = frappe.db.get_default("exchange_rate_main_currency")
+			to_currency = second_currency.name
+			if (exchange_rate_main_currency != main_currency.name):
+				to_currency = main_currency.name 
+
+			exchange_rate = frappe.db.sql("""select 
+											exchange_rate,
+											change_exchange_rate
+										from `tabCurrency Exchange` 
+										where docstatus=1 
+										and from_currency= %(from_currency)s
+										and to_currency=%(to_currency) s
+										order by posting_date desc
+										limit 1""",{
+											"from_currency":exchange_rate_main_currency,
+											"to_currency":to_currency,
+										}, as_dict= 1)
+			self.exchange_rate = exchange_rate[0]["exchange_rate"] or 1
+			self.change_exchange_rate = exchange_rate[0]["change_exchange_rate"] or 1
+
 		if len ([ d for d in  self.items if d.quantity ==0]) > 0:
 				frappe.throw(_("The quantity of item not allow value zero"))
-
 		update_sale_product_data(self=self)
-		self.item_discount = sum(  sp.discount_amount for sp in self.items if sp.discount_amount != 0)
-		self.total_quantity = sum(sp.quantity for sp in self.items)
-		self.sub_total = sum(sp.price * sp.quantity for sp in self.items)
+		self.item_discount = round_value(sum(  sp.discount_amount for sp in self.items if sp.discount_amount != 0))
+		self.total_quantity = round_value( sum(sp.quantity for sp in self.items))
+		self.sub_total = round_value( sum(sp.price * sp.quantity for sp in self.items))
 
 		discountable_amount = sum(sp.price * sp.quantity for sp in self.items if sp.discount_amount == 0)
 		self.discount_amount =  self.discount or 0 if self.discount_type == "Amount"  else discountable_amount * ((self.discount or 0)/100)
 		self.total_discount = self.item_discount + self.discount_amount
 
-		validate_tax(doc=self)		
+		validate_tax(doc=self)	
 
-		if self.is_new():
-			
+		self.total_amount = round_value(self.sub_total - self.total_discount + self.tax_1_amount + self.tax_2_amount + self.tax_3_amount)
 
-			pass
 
+		#payment validate
+
+		validate_payment(self)
+
+
+	def on_submit(self):
+		validate_payment_on_submit(self)
 
 def update_sale_product_data(self):
 	for sp in self.items:
 		sp.discount_amount = sp.discount_amount or 0
-		sp.discount_amount  =  (sp.discount or 0 if sp.discount_type == "Amount" else (sp.quantity * sp.price) * (sp.discount / 100) )
-		sp.amount = (sp.quantity * sp.price) -  sp.discount_amount
+		sp.discount_amount  =  round_value( (sp.discount or 0 if sp.discount_type == "Amount" else (sp.quantity * sp.price) * (sp.discount / 100) ))
+		sp.amount = round_value( (sp.quantity * sp.price) -  sp.discount_amount)
 
 
 def validate_tax(doc):
@@ -45,77 +73,84 @@ def validate_tax(doc):
 			if frappe.db.exists("Tax Rule", doc.tax_rule):
 				_tax_rule = frappe.get_doc("Tax Rule", doc.tax_rule)
 				doc.tax_rule_data = _tax_rule.tax_rule_data
-
-
 				#
-				amount = sum(sp.price * sp.quantity for sp in doc.items if sp.allow_tax == 1)				
+				amount = round_value( sum(sp.price * sp.quantity for sp in doc.items if sp.allow_tax == 1))
+
+				#load tax rule
+				tax_val  = json.loads(doc.tax_rule_data)  	
+				doc.tax_1_rate = tax_val["tax_1_rate"]	
+				doc.tax_2_rate = tax_val["tax_2_rate"]	
+				doc.tax_3_rate = tax_val["tax_3_rate"]	
 
 				#tax 1
 				doc.tax_1_taxable_amount = amount 
 				## cal tax 1 after discount validate
-				tax_val  = json.loads(doc.tax_rule_data)  
-				if tax_val["calculate_tax_1_after_discount"] == 1:
+
+				if tax_val["calculate_tax_1_after_discount"] == 1:					
 					doc.tax_1_taxable_amount = amount - doc.total_discount
 
+				doc.tax_1_taxable_amount *= (tax_val["percentage_of_price_to_calculate_tax_1"]/100)
+				doc.tax_1_amount = round_value( (doc.tax_1_taxable_amount or 0) * ((doc.tax_1_rate or 0)/100))
 
+				#tax 2
+				doc.tax_2_taxable_amount = amount 
+				#cal tax2 taxable after disc.
+				if tax_val["calculate_tax_2_after_discount"]==1:
+					doc.tax_2_taxable_amount = amount  - doc.total_discount
 
+				#cal tax2 taxable after add tax1
+				if tax_val["calculate_tax_2_after_adding_tax_1"]==1:
+					doc.tax_2_taxable_amount +=  doc.tax_1_amount
 
+				doc.tax_2_taxable_amount *= (tax_val["percentage_of_price_to_calculate_tax_2"]/100)
+				doc.tax_2_amount =  round_value((doc.tax_2_taxable_amount or 0) *  ((doc.tax_2_rate or 0) /100))
+
+				#tax 3
+				doc.tax_3_taxable_amount =  amount
+				#cal tax3 taxable after disc.
+				if tax_val["calculate_tax_3_after_discount"]==1:
+					doc.tax_3_taxable_amount = amount - doc.total_discount 
 				
-		else:
-			pass
-		return
-		
-		if doc.tax_rule:
-			amount = doc.price * doc.quantity
-			# if (doc.rate_include_tax == 1) :
-			# 	priceBefore = get_ratebefore_tax(doc.sub_total - doc.total_discount,doc.tax_rule, doc.tax_1_rate, doc.tax_2_rate, doc.tax_3_rate)
-			# 	amount =  priceBefore + doc.total_discount  	
-			#Tax 1
-			doc.taxable_amount_1 = amount
-			#cal tax1 taxable after disc.
-			if doc.calculate_tax_1_after_discount == 1:
-				doc.taxable_amount_1 =   amount - doc.total_discount			 
+				#cal tax3 taxable after add tax1
+				if tax_val["calculate_tax_3_after_adding_tax_1"]==1:
+					doc.tax_3_taxable_amount =   doc.tax_3_taxable_amount +  doc.tax_1_amount 
 				
-			doc.taxable_amount_1 *= (doc.percentage_of_price_to_calculate_tax_1/100)
-			doc.tax_1_amount =  (doc.taxable_amount_1 or 0) * ((doc.tax_1_rate or 0)/100)
+				#cal tax3 taxable after add tax2
+				if tax_val["calculate_tax_3_after_adding_tax_2"]==1:
+					doc.tax_3_taxable_amount = doc.tax_3_taxable_amount +  doc.tax_2_amount 
+				
+				doc.tax_3_taxable_amount *= (tax_val["percentage_of_price_to_calculate_tax_3"]/100)
+				doc.tax_3_amount = round_value(  (doc.tax_3_taxable_amount or 0) *  ((doc.tax_3_rate or 0) /100))
+				
+				#total tax
+				# doc.total_tax = doc.tax_1_amount + doc.tax_2_amount + doc.tax_3_amount
 
-			#Tax 2
-			doc.taxable_amount_2 = amount
-			#cal tax2 taxable after disc.
-			if doc.calculate_tax_2_after_discount==1:
-				doc.taxable_amount_2 = amount  - doc.total_discount
-
-			#cal tax2 taxable after add tax1
-			if doc.calculate_tax_2_after_adding_tax_1==1:
-				doc.taxable_amount_2 +=  doc.tax_1_amount
-
-			doc.taxable_amount_2 *= (doc.percentage_of_price_to_calculate_tax_2/100)
-			doc.tax_2_amount =  (doc.taxable_amount_2 or 0) *  ((doc.tax_2_rate or 0) /100)
-
-			#tax 3
-			doc.taxable_amount_3 =  amount
-			#cal tax3 taxable after disc.
-			if doc.calculate_tax_3_after_discount==1:
-				doc.taxable_amount_3 = amount - doc.total_discount 
-			
-			#cal tax3 taxable after add tax1
-			if doc.calculate_tax_3_after_adding_tax_1==1:
-				doc.taxable_amount_3 =   doc.taxable_amount_3 +  doc.tax_1_amount 
-			
-			#cal tax3 taxable after add tax2
-			if doc.calculate_tax_3_after_adding_tax_2==1:
-				doc.taxable_amount_3 = doc.taxable_amount_3 +  doc.tax_2_amount 
-			
-			doc.taxable_amount_3 *= (doc.percentage_of_price_to_calculate_tax_3/100)
-			doc.tax_3_amount =  (doc.taxable_amount_3 or 0) *  ((doc.tax_3_rate or 0) /100)
-			
-			#total tax
-			doc.total_tax = doc.tax_1_amount + doc.tax_2_amount + doc.tax_3_amount
 		else:
-			doc.taxable_amount_1 =0
+			doc.tax_1_taxable_amount =0
 			doc.tax_1_amount=0
-			doc.taxable_amount_2 =0
+			doc.tax_2_taxable_amount =0
 			doc.tax_2_amount=0
-			doc.taxable_amount_3 =0
+			doc.tax_3_taxable_amount =0
 			doc.tax_3_amount=0
-			doc.total_tax =0
+			# doc.total_tax =0
+
+
+def validate_payment(self):
+	for p in self.payments:
+		p.amount = round_value(p.input_amount/(p.exchange_rate or 1))
+
+	total_payment_amount = round_value(sum(p.amount for p in self.payments))
+	self.total_paid = total_payment_amount
+	change_amount = (self.total_paid or 0) - self.total_amount
+	self.changed_amount = (0 if change_amount <= 0 else change_amount)	
+	self.balance = round_value( self.total_amount - (self.total_paid or 0))
+
+def validate_payment_on_submit(self):
+	total_payment_amount =round_value( sum(p.amount for p in self.payments))
+	if total_payment_amount < self.total_amount:
+		frappe.throw(_("Please kindly make full payment for this invoice"))
+
+
+#function round decimal value
+def round_value(value, precision = 2):
+	return round(value,precision)

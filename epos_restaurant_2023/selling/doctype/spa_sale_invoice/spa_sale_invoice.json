@@ -19,15 +19,15 @@
   "items",
   "payments",
   "section_break_fgkj",
+  "discount_amount",
+  "discount_type",
+  "discount",
+  "tax_rule",
+  "column_break_jirp",
   "total_quantity",
   "sub_total",
   "item_discount",
-  "discount_type",
-  "discount",
-  "discount_amount",
   "total_discount",
-  "column_break_eumk",
-  "tax_rule",
   "tax_1_rate",
   "tax_1_taxable_amount",
   "tax_1_amount",
@@ -39,11 +39,13 @@
   "tax_3_amount",
   "section_break_xycl",
   "exchange_rate",
+  "change_exchange_rate",
   "tax_rule_data",
   "column_break_iipo",
   "total_amount",
   "total_paid",
-  "balance"
+  "balance",
+  "changed_amount"
  ],
  "fields": [
   {
@@ -114,6 +116,7 @@
    "fieldtype": "Link",
    "hidden": 1,
    "label": "Sale",
+   "no_copy": 1,
    "options": "Sale",
    "print_hide": 1,
    "read_only": 1,
@@ -177,11 +180,8 @@
    "fieldname": "total_discount",
    "fieldtype": "Currency",
    "label": "Total Discount",
+   "read_only": 1,
    "report_hide": 1
-  },
-  {
-   "fieldname": "column_break_eumk",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "tax_1_rate",
@@ -296,6 +296,7 @@
   {
    "fieldname": "tax_rule_data",
    "fieldtype": "JSON",
+   "hidden": 1,
    "label": "Tax Rule Data",
    "print_hide": 1,
    "read_only": 1,
@@ -311,12 +312,33 @@
    "print_hide_if_no_value": 1,
    "read_only": 1,
    "report_hide": 1
+  },
+  {
+   "fieldname": "change_exchange_rate",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "Change Exchange Rate",
+   "precision": "9",
+   "print_hide": 1,
+   "print_hide_if_no_value": 1,
+   "read_only": 1,
+   "report_hide": 1
+  },
+  {
+   "fieldname": "changed_amount",
+   "fieldtype": "Currency",
+   "label": "Changed Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_jirp",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-25 14:11:58.551527",
+ "modified": "2025-04-25 16:04:51.613746",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "SPA Sale Invoice",
