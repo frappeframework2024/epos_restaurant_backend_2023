@@ -1,0 +1,149 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-04-25 09:43:46.660259",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "article",
+  "article_name_en",
+  "article_name_kh",
+  "therapist_name",
+  "time_in",
+  "time_out",
+  "column_break_vuqu",
+  "duration",
+  "quantity",
+  "price",
+  "discount",
+  "discount_type",
+  "discount_amount",
+  "amount",
+  "unit",
+  "allow_tax"
+ ],
+ "fields": [
+  {
+   "fieldname": "article",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Article",
+   "options": "Product"
+  },
+  {
+   "fetch_from": "article.product_name_en",
+   "fetch_if_empty": 1,
+   "fieldname": "article_name_en",
+   "fieldtype": "Data",
+   "label": "Article Name En"
+  },
+  {
+   "fetch_from": "article.product_name_kh",
+   "fetch_if_empty": 1,
+   "fieldname": "article_name_kh",
+   "fieldtype": "Data",
+   "label": "Article Name Kh"
+  },
+  {
+   "fetch_from": ".",
+   "fieldname": "therapist_name",
+   "fieldtype": "Small Text",
+   "label": "Therapist Name",
+   "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Employee\"},\"show_in_pos_assign_employee\",\"=\",1]]"
+  },
+  {
+   "default": "Now",
+   "fieldname": "time_in",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "Time In"
+  },
+  {
+   "default": "Now",
+   "fieldname": "time_out",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "Time Out"
+  },
+  {
+   "fieldname": "column_break_vuqu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "duration",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Duration"
+  },
+  {
+   "default": "1",
+   "fieldname": "quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Quantity"
+  },
+  {
+   "default": "0",
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Price"
+  },
+  {
+   "default": "0",
+   "fieldname": "discount",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Discount"
+  },
+  {
+   "default": "Percent",
+   "fieldname": "discount_type",
+   "fieldtype": "Select",
+   "label": "Discount Type",
+   "options": "Percent\nAmount"
+  },
+  {
+   "default": "0",
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "unit",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Unit",
+   "print_hide": 1,
+   "report_hide": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "allow_tax",
+   "fieldtype": "Check",
+   "label": "Allow Tax"
+  },
+  {
+   "default": "0",
+   "fieldname": "discount_amount",
+   "fieldtype": "Currency",
+   "label": "Discount Amount",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-04-25 14:01:04.002492",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "SPA Sale Invoice Product",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -3,8 +3,8 @@
   "docstatus": 0,
   "doctype": "Workflow Action Master",
   "modified": "2023-11-28 09:51:21.219649",
-  "name": "Reject",
-  "workflow_action_name": "Reject"
+  "name": "Rejected",
+  "workflow_action_name": "Rejected"
  },
  {
   "docstatus": 0,
@@ -66,7 +66,35 @@
   "docstatus": 0,
   "doctype": "Workflow Action Master",
   "modified": "2023-11-28 09:51:21.216202",
-  "name": "Approve",
-  "workflow_action_name": "Approve"
+  "name": "Approved",
+  "workflow_action_name": "Approved"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2025-04-07 09:23:11.246276",
+  "name": "Request Approval",
+  "workflow_action_name": "Request Approval"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2025-04-07 09:39:59.295590",
+  "name": "Approved By Supervisor",
+  "workflow_action_name": "Approved By Supervisor"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2025-04-07 09:49:58.083517",
+  "name": "Approved By GM",
+  "workflow_action_name": "Approved By GM"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2025-04-07 10:08:02.894981",
+  "name": "Convert as PO",
+  "workflow_action_name": "Convert as PO"
  }
 ]

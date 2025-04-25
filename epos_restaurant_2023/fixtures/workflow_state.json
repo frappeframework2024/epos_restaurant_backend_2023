@@ -84,9 +84,54 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
+  "modified": "2025-04-07 10:07:03.405264",
+  "name": "Convert to PO",
+  "style": "",
+  "workflow_state_name": "Convert to PO"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2025-04-07 10:08:17.688621",
+  "name": "Convert as PO",
+  "style": "",
+  "workflow_state_name": "Convert as PO"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2025-04-07 09:48:39.719834",
+  "name": "Approved By GM",
+  "style": "",
+  "workflow_state_name": "Approved By GM"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
   "modified": "2024-07-02 08:12:34.040201",
   "name": "Request Approval",
   "style": "",
   "workflow_state_name": "Request Approval"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2025-04-07 09:47:56.476696",
+  "name": "Approved By Supervisor",
+  "style": "",
+  "workflow_state_name": "Approved By Supervisor"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2025-04-07 09:35:57.258106",
+  "name": "Draft",
+  "style": "",
+  "workflow_state_name": "Draft"
  }
 ]

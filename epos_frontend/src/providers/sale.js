@@ -21,6 +21,7 @@ const toaster = createToaster({ position: "top-right" });
 
 export default class Sale {
     constructor() {
+        this.now = new Date();
         this.is_payment_first_load = false;
         this.load_menu_lang = false;
         this.loading = false;
@@ -112,6 +113,8 @@ export default class Sale {
         this.newSaleResource = createResource({
             url: "frappe.client.insert",
            async onSuccess(doc)  {
+            
+       
              await  parent.onProcessTaskAfterSubmit(doc);
                 parent.action = "";
                 if (parent.message != undefined) {
@@ -139,7 +142,8 @@ export default class Sale {
     }
 
     async newSale() { 
-        const now = new Date();
+        this.now = new Date();
+        const now = this.now;
         const _now_format = moment(now).format('yyyy-MM-DD HH:mm:ss.SSSSSS');
 
         this.auditTrailLogs = [];
@@ -1647,6 +1651,11 @@ export default class Sale {
                     if (this.newSaleResource == null) {
                         this.createNewSaleResource();
                     }
+
+                    console.log(this.now);
+
+                    // moment(now).format('yyyy-MM-DD HH:mm:ss.SSSSSS')
+                    console.log(doc)
                     _sale = await this.newSaleResource.submit({ doc: doc });
                 }
                 else {

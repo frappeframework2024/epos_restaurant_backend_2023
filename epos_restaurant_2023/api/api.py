@@ -2155,3 +2155,9 @@ def get_default_price_rule():
         return price_rule[0].name
     else:
         return ""
+    
+
+@frappe.whitelist()
+def override_doc_timestamps(doctype, name, creation, modified):
+    frappe.db.set_value(doctype, name, "creation", creation)
+    frappe.db.set_value(doctype, name, "modified", modified)

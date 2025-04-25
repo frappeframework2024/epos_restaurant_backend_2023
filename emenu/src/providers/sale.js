@@ -17,6 +17,7 @@ export default class Sale {
     
     async newSale() { 
         const tax_rule = this.setting.pos_profile.tax_rule;
+        const now = new Date();
         this.sale = {
             doctype: "Sale",
             sale_status: "New",
@@ -24,6 +25,7 @@ export default class Sale {
             shift_name:this.cashier_shift.shift_name,
             working_day: this.working_day.name,
             exchange_rate: this.setting.setting.exchange_rate,
+            creation: moment(now).format('yyyy-MM-DD HH:mm:ss.SSS'), //2025-04-16 13:19:27.907275
 
             table_id: this.table_id,
             tbl_number: this.tbl_number,
@@ -44,14 +46,17 @@ export default class Sale {
             discount: 0,
             sub_total: 0,
             payment: [],
-            posting_date: moment(new Date()).format('yyyy-MM-DD'),
+            posting_date: moment(now).format('yyyy-MM-DD'),
             commission_type: "Percent",
             commission: 0,
             commission_note: '',
             commission_amount: 0,
+            
             created_by:make_order_auth.name     
         }  
         this.onSaleApplyTax(tax_rule,this.sale); 
+
+        console.log(this.sale)
     }
 
 

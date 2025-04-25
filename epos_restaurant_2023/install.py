@@ -174,6 +174,8 @@ def reset_sale_transaction():
             # end general ledger by sales
 
             frappe.db.sql("delete from `tabCash Transaction`")
+            frappe.db.sql("delete from `tabSPA Sale Invoice Product`")
+            frappe.db.sql("delete from `tabSPA Sale Invoice`")
             frappe.db.sql("delete from `tabSale Product Deleted`")
             frappe.db.sql("delete from `tabSale Product SPA Commission`")            
             frappe.db.sql("delete from `tabInventory Transaction`")
@@ -275,6 +277,8 @@ def reset_sale_transaction_pos_only():
             # end general ledger by sales
 
             frappe.db.sql("delete from `tabCash Transaction`")
+            frappe.db.sql("delete from `tabSPA Sale Invoice Product`")
+            frappe.db.sql("delete from `tabSPA Sale Invoice`")
             frappe.db.sql("delete from `tabSale Product Deleted`")
             frappe.db.sql("delete from `tabSale Product SPA Commission`")            
             frappe.db.sql("delete from `tabInventory Transaction`")

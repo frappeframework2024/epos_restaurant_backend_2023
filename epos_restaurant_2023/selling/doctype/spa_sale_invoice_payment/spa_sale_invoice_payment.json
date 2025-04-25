@@ -1,0 +1,82 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-04-25 10:29:33.030936",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "payment_type",
+  "currency",
+  "input_amount",
+  "amount",
+  "exchange_rate",
+  "column_break_zppe",
+  "payment_type_group",
+  "is_foc"
+ ],
+ "fields": [
+  {
+   "fieldname": "payment_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Payment Type",
+   "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Payment Type\"},\"disabled\",\"=\",0]]",
+   "options": "Payment Type",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "payment_type.currency",
+   "fieldname": "currency",
+   "fieldtype": "Data",
+   "label": "Currency"
+  },
+  {
+   "fieldname": "input_amount",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Input Amount"
+  },
+  {
+   "default": "0",
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount"
+  },
+  {
+   "fieldname": "exchange_rate",
+   "fieldtype": "Float",
+   "label": "Exchange Rate",
+   "precision": "9"
+  },
+  {
+   "fieldname": "column_break_zppe",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "payment_type.payment_type_group",
+   "fieldname": "payment_type_group",
+   "fieldtype": "Data",
+   "label": "Payment Type Group"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_foc",
+   "fieldtype": "Check",
+   "label": "Is FOC"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-04-25 10:40:52.966495",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "SPA Sale Invoice Payment",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

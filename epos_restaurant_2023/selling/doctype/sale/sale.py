@@ -17,7 +17,7 @@ from decimal import Decimal
 from epos_restaurant_2023.api.exely import cancel_order,submit_order_to_exely
 from epos_restaurant_2023.selling.doctype.sale.general_ledger_entry import submit_sale_to_general_ledger_entry
 class Sale(Document):
-	def validate(self):
+	def validate(self): 		
 		if not frappe.db.get_default('exchange_rate_main_currency'):
 			frappe.throw('Main Exchange Currency not yet config. Please contact to system administrator for solve')
    
@@ -240,7 +240,7 @@ class Sale(Document):
 		
 		
 		# update default accunt
-		update_default_account(self)
+		update_default_account(self) 
 
 	@frappe.whitelist()
 	def get_sale_payment_naming_series(self):
@@ -257,6 +257,7 @@ class Sale(Document):
 		
 		## update cash coupon information
 		on_update_coupon_information(self)
+	
 	def before_save(self):
 		update_sale_sale_product_cost(self)
 		on_generate_custom_bill_number(self)
@@ -269,6 +270,8 @@ class Sale(Document):
 		if not self.time_in:
 			pass	
 		add_sale_product_spa_commission(self)
+
+		
 
 	def before_cancel(self):
 		update_status(self)

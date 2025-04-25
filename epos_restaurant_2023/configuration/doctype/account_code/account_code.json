@@ -29,6 +29,7 @@
   "show_in_shortcut_sub_menu",
   "column_break_afbm",
   "allow_enter_pax",
+  "allow_enter_city_ledger_invoice",
   "allow_post_inclusion",
   "sort_order",
   "icon",
@@ -734,12 +735,18 @@
    "fieldname": "custom_category_for_reporting",
    "fieldtype": "Data",
    "label": "Custom Category for Reporting"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_enter_city_ledger_invoice",
+   "fieldtype": "Check",
+   "label": "Allow Enter City Ledger Invoice"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2025-03-26 14:11:56.920727",
+ "modified": "2025-04-18 14:10:30.329602",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Account Code",

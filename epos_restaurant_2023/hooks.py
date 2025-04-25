@@ -143,7 +143,8 @@ doc_events = {
     },
     "Module Profile":{
         "on_update":"epos_restaurant_2023.override_methods.module_profile.on_update"
-    }
+    },
+    
 }
 
 

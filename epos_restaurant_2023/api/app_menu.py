@@ -334,7 +334,7 @@ def get_list_with_permission(data):
     return_data = return_data + [d for d in data if d["type"]=="DocType" and frappe.has_permission(doctype=d["link_to"], ptype='read', user=frappe.session.user)]
     # report
     return_data = return_data + [d for d in data if d["type"]=="Report" and frappe.has_permission('Report', ptype='read', doc=d["link_to"], user=frappe.session.user)]
-    # report
+    # page
     return_data = return_data + [d for d in data if d["type"]=="Page" and frappe.has_permission('Page', ptype='read', doc=d["link_to"], user=frappe.session.user)]
     
     return return_data

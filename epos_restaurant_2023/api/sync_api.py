@@ -168,7 +168,7 @@ def delete_doc(doctype,name):
 @frappe.whitelist()
 def delete_sync_data(doctype,data):
     if (doctype or "") != "":
-        frappe.db.sql("delete from  `tab{}` where name in %(data)s".format(doctype),data)
+        frappe.db.sql("delete from  `tab{}` where name in (%s)".format(doctype),data)
         meta = frappe.get_meta(doctype)
         for child in [d for d in meta.fields if d.fieldtype=="Table"]:
             frappe.db.sql("delete from `tab{0}` where parent='{1}'".format(child.options,doctype))
