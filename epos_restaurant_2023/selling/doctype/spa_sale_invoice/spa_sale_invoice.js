@@ -1,8 +1,262 @@
 // Copyright (c) 2025, Tes Pheakdey and contributors
 // For license information, please see license.txt
 
-// frappe.ui.form.on("SPA Sale Invoice", {
-// 	refresh(frm) {
+frappe.ui.form.on("SPA Sale Invoice", {
+	refresh(frm) { 
+        if(frm.doc.__islocal==1 && frm.doc.tax_rule == undefined){
+            frm.doc.tax_rule = ""
+        }
+        update_invoice_summary(frm)
 
-// 	},
-// });
+	},
+
+    validate: function(frm) {
+        //
+    },
+
+    discount_type(frm){
+        update_invoice_summary(frm)
+    },
+    discount(frm){
+        update_invoice_summary(frm)
+    },
+    tax_rule(frm){
+        update_invoice_summary(frm)
+    }
+});
+
+frappe.ui.form.on('SPA Sale Invoice Payment', {
+	form_render:function(frm, cdt,cdn){
+		const doc = locals[cdt][cdn];
+		const element = document.querySelector('[data-name="' + doc.name + '"]');	
+		 
+	},   
+
+	payments_remove: function (frm) {
+        update_invoice_summary(frm)
+	},
+
+    payment_type(frm, cdt, cdn){
+        const row = locals[cdt][cdn];
+        if(row.input_amount){
+            row.amount = row.input_amount / (row.exchange_rate || 1);
+            frm.refresh_field("payments"); 
+            update_invoice_summary(frm) 
+            
+        }
+    },
+    input_amount(frm, cdt, cdn){
+        const row = locals[cdt][cdn];
+        if(row.payment_type){
+            row.amount = row.input_amount / (row.exchange_rate || 1);
+            frm.refresh_field("payments");  
+            update_invoice_summary(frm)
+        }
+    }
+});
+
+
+
+
+
+frappe.ui.form.on('SPA Sale Invoice Product', {
+	form_render:function(frm, cdt,cdn){
+		const doc = locals[cdt][cdn];
+		const element = document.querySelector('[data-name="' + doc.name + '"]');	
+		 
+	},
+
+    
+
+	items_remove: function (frm) {
+        update_invoice_summary(frm)
+	}, 
+
+    article(frm, cdt, cdn){
+        const row = locals[cdt][cdn];
+        frappe.call({
+            method: 'epos_restaurant_2023.selling.doctype.spa_sale_invoice.spa_sale_invoice.get_product_by_id',
+            type: 'GET',            
+            freeze: true,
+            args: {
+                name:row.article
+            },
+            callback: function(resp) {
+                const val = resp.message;
+                if(val.length > 1){
+                    const dlg = select_portion_dialog(frm,row, resp.message);
+                    dlg.show();
+                }else{
+                    update_item_duration_price(frm,row,val);
+                }               
+            },
+            error: function(err) { 
+                on_reset_value_article(frm,row) 
+            }
+        });
+        
+    },
+	
+	price(frm, cdt, cdn) {
+		const row = locals[cdt][cdn];
+        update_item_amount(frm,row)
+
+	},
+	quantity(frm, cdt, cdn) {
+		const row = locals[cdt][cdn];
+		update_item_amount(frm,row)
+	},
+	discount(frm, cdt, cdn) {
+		const row = locals[cdt][cdn];
+		update_item_amount(frm,row)
+	},
+	discount_type(frm, cdt, cdn) {
+		const row = locals[cdt][cdn];
+		update_item_amount(frm,row)
+	},
+	
+})
+
+
+
+ 
+
+function on_reset_value_article(frm, row){
+    row.article = "";
+    frm.refresh_field("items");  
+}
+
+
+function select_portion_dialog(frm,row,data){
+    const fields = [
+        { fieldtype: 'HTML', fieldname: 'portions' },
+    ];
+
+    const dlg = new frappe.ui.Dialog({
+        title: "Duration/Portion",
+        fields: fields,
+        size: 'small',
+        primary_action_label: "Accept",
+        primary_action: function() {
+            update_item_duration_price(frm, row,data);
+        }
+    });
+    render_duration_or_portion(data,dlg)
+
+
+    // Handle cancel/close event
+    dlg.$wrapper.on('hide.bs.modal', () => {
+        on_reset_value_article(frm,row)
+    });
+    return dlg; 
+}
+
+
+function update_item_duration_price(frm, row, data){
+    row.duration = data[0].portion;
+    row.price = data[0].price;
+    row.regular_price = data[0].price;
+    row.base_unit = data[0].base_unit;
+    row.unit = data[0].unit; 
+
+    update_item_amount(frm,row)
+}
+
+
+function render_duration_or_portion(data, dialog) {
+    const dataHtml = frappe.render_template("select_portion_template", { data: data, isInIframe: (window.self !== window.top) });
+    $(dialog.fields_dict.portions.wrapper).html(dataHtml);
+    dialog.fields_dict.portions.refresh();
+}
+
+
+function update_item_amount(frm,row){
+    let sub_total = (row.price || 0) * (row.quantity || 1);
+    let discount = 0;
+
+    discount = row.discount_type =="Amount"? row.discount : sub_total * ((row.discount || 0) / 100)
+    row.discount_amount = discount;
+    row.amount =  sub_total - discount;
+    frm.refresh_field("items");  
+
+    update_invoice_summary(frm)
+
+}
+
+function update_invoice_summary(frm){ 
+    if(frm.doc.items == undefined){
+        frm.set_value('items', []);
+    }
+    if(frm.doc.payments == undefined){
+        frm.set_value('payments', []);
+    }
+    frappe.call({
+        method: 'epos_restaurant_2023.selling.doctype.spa_sale_invoice.spa_sale_invoice.client_script_update_summary',
+        type: 'GET',            
+        freeze: true,
+        args: {
+            param:frm.doc
+        },
+        callback: function(resp) { 
+            update_summary_value(frm,resp.message);            
+        },
+        error: function(err) { 
+            update_summary_value(frm, undefined)
+        }
+    });
+}
+ 
+async function update_summary_value(frm, data){
+    const t = data;
+
+    //set value to field
+    frm.set_value('total_quantity', t.total_quantity || 0);
+    frm.set_value('sub_total', t.sub_total||0);
+    frm.set_value('item_discount', t.item_discount||0);
+    frm.set_value('discount_amount', t.discount_amount || 0);
+    frm.set_value('total_discount', t.total_discount || 0);
+
+    frm.set_value('tax_1_rate', t.tax_1_rate || 0);
+    frm.set_value('tax_1_amount', t.tax_1_amount || 0);
+    frm.set_value('tax_1_taxable_amount', t.tax_1_taxable_amount || 0);
+    frm.set_value('tax_2_rate', t.tax_2_rate || 0);
+    frm.set_value('tax_2_amount', t.tax_2_amount || 0);
+    frm.set_value('tax_2_taxable_amount', t.tax_2_taxable_amount || 0); 
+    frm.set_value('tax_3_rate', t.tax_3_rate || 0);
+    frm.set_value('tax_3_amount', t.tax_3_amount || 0);
+    frm.set_value('tax_3_taxable_amount', t.tax_3_taxable_amount || 0); 
+
+    frm.set_value('total_amount', t.total_amount || 0); 
+    frm.set_value('total_paid', t.total_paid || 0); 
+    frm.set_value('balance', t.balance || 0); 
+    frm.set_value('changed_amount', t.changed_amount || 0); 
+
+
+
+    //refresh fields
+    frm.refresh_field('total_quantity');
+    frm.refresh_field('sub_total');
+    frm.refresh_field('item_discount');
+    frm.refresh_field('total_discount');
+
+    frm.refresh_field('tax_1_rate');
+    frm.refresh_field('tax_1_amount');
+    frm.refresh_field('tax_1_taxable_amount');
+    frm.refresh_field('tax_2_rate');
+    frm.refresh_field('tax_2_amount');
+    frm.refresh_field('tax_2_taxable_amount');
+    frm.refresh_field('tax_3_rate');
+    frm.refresh_field('tax_3_amount');
+    frm.refresh_field('tax_3_taxable_amount');
+
+    frm.refresh_field('total_amount');
+    frm.refresh_field('total_paid');
+    frm.refresh_field('balance');
+    frm.refresh_field('changed_amount');
+
+ 
+    frm.doc._temp_tax_rule = JSON.parse(frm.doc.tax_rule_data) 
+
+    const html = frappe.render_template("invoice_summary_template", frm.doc )		
+	$(frm.fields_dict['invoice_summary'].wrapper).html(html);
+}

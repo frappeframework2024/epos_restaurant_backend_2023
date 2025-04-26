@@ -23,6 +23,12 @@
   "discount_type",
   "discount",
   "tax_rule",
+  "column_break_rquv",
+  "invoice_summary",
+  "section_break_xycl",
+  "exchange_rate",
+  "change_exchange_rate",
+  "tax_rule_data",
   "column_break_jirp",
   "total_quantity",
   "sub_total",
@@ -37,10 +43,6 @@
   "tax_3_rate",
   "tax_3_taxable_amount",
   "tax_3_amount",
-  "section_break_xycl",
-  "exchange_rate",
-  "change_exchange_rate",
-  "tax_rule_data",
   "column_break_iipo",
   "total_amount",
   "total_paid",
@@ -221,7 +223,11 @@
   },
   {
    "fieldname": "section_break_xycl",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "hide_border": 1,
+   "print_hide": 1,
+   "report_hide": 1
   },
   {
    "fieldname": "total_amount",
@@ -333,12 +339,21 @@
   {
    "fieldname": "column_break_jirp",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_rquv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "invoice_summary",
+   "fieldtype": "HTML",
+   "label": "Invoice Summary"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-25 16:04:51.613746",
+ "modified": "2025-04-26 14:29:07.527673",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "SPA Sale Invoice",
