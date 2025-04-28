@@ -6,8 +6,24 @@ frappe.ui.form.on("SPA Sale Invoice", {
         if(frm.doc.__islocal==1 && frm.doc.tax_rule == undefined){
             frm.doc.tax_rule = ""
         }
-        update_invoice_summary(frm)
+        if(frm.doc.__islocal==undefined){
+            frm.doc._temp_tax_rule = JSON.parse(frm.doc.tax_rule_data||"[]") 
 
+            const html = frappe.render_template("invoice_summary_template", frm.doc )		
+            $(frm.fields_dict['invoice_summary'].wrapper).html(html);
+        }else{
+            $(frm.fields_dict['invoice_summary'].wrapper).html('');
+        }
+
+       
+
+        // //load function for child table
+        frm.fields_dict['items'].grid.wrapper.on('click', '#assign-therapist', function(e) {
+            e.preventDefault();
+            let row_name = $(this).data('row-name'); 
+            let row = frm.doc.items.find(d => d.name === row_name); 
+            on_assign_therapist(frm, row);
+        });
 	},
 
     validate: function(frm) {
@@ -27,9 +43,10 @@ frappe.ui.form.on("SPA Sale Invoice", {
 
 frappe.ui.form.on('SPA Sale Invoice Payment', {
 	form_render:function(frm, cdt,cdn){
-		const doc = locals[cdt][cdn];
-		const element = document.querySelector('[data-name="' + doc.name + '"]');	
-		 
+        
+        
+		// const doc = locals[cdt][cdn];
+		// const element = document.querySelector('[data-name="' + doc.name + '"]');			 
 	},   
 
 	payments_remove: function (frm) {
@@ -62,16 +79,15 @@ frappe.ui.form.on('SPA Sale Invoice Payment', {
 frappe.ui.form.on('SPA Sale Invoice Product', {
 	form_render:function(frm, cdt,cdn){
 		const doc = locals[cdt][cdn];
-		const element = document.querySelector('[data-name="' + doc.name + '"]');	
-		 
-	},
-
-    
+		const element = document.querySelector('[data-name="' + doc.name + '"]');		
+        doc.__is_open = 1;   
+        on_render_therapist(frm,doc);  
+	}, 
+  
 
 	items_remove: function (frm) {
         update_invoice_summary(frm)
-	}, 
-
+	},  
     article(frm, cdt, cdn){
         const row = locals[cdt][cdn];
         frappe.call({
@@ -85,16 +101,16 @@ frappe.ui.form.on('SPA Sale Invoice Product', {
                 const val = resp.message;
                 if(val.length > 1){
                     const dlg = select_portion_dialog(frm,row, resp.message);
-                    dlg.show();
+                    console.log("__calback",resp.message )
                 }else{
                     update_item_duration_price(frm,row,val);
                 }               
             },
             error: function(err) { 
+                console.log("__log", err)
                 on_reset_value_article(frm,row) 
             }
-        });
-        
+        });        
     },
 	
 	price(frm, cdt, cdn) {
@@ -128,6 +144,7 @@ function on_reset_value_article(frm, row){
 
 
 function select_portion_dialog(frm,row,data){
+    row.__reset_value = true;
     const fields = [
         { fieldtype: 'HTML', fieldname: 'portions' },
     ];
@@ -138,15 +155,39 @@ function select_portion_dialog(frm,row,data){
         size: 'small',
         primary_action_label: "Accept",
         primary_action: function() {
-            update_item_duration_price(frm, row,data);
+            const active_button = $('.duration_portion_option.active'); 
+            if(active_button){
+                var e = $(active_button[0]);                   
+                const result =[
+                    {
+                        portion:e.data('portion'),
+                        price:e.data('price'),
+                        base_unit:e.data('base_unit'),
+                        unit:e.data('unit')
+                    }
+                ]
+                update_item_duration_price(frm, row,result);
+                row.__reset_value = false;
+                dlg.hide();
+            }  
         }
     });
     render_duration_or_portion(data,dlg)
 
+    dlg.show();
 
     // Handle cancel/close event
     dlg.$wrapper.on('hide.bs.modal', () => {
-        on_reset_value_article(frm,row)
+        const grid_row = frm.fields_dict['items'].grid.grid_rows_by_docname[row.name];    
+        if(row.__is_open && row.__is_open==1){
+            grid_row.show_form();             
+        } 
+
+        $(dlg.fields_dict.portions.wrapper).empty();
+        
+        if(row.__reset_value == true){
+            on_reset_value_article(frm,row)
+        }
     });
     return dlg; 
 }
@@ -163,10 +204,44 @@ function update_item_duration_price(frm, row, data){
 }
 
 
-function render_duration_or_portion(data, dialog) {
-    const dataHtml = frappe.render_template("select_portion_template", { data: data, isInIframe: (window.self !== window.top) });
-    $(dialog.fields_dict.portions.wrapper).html(dataHtml);
+function render_duration_or_portion(data, dialog) {   
+    
+    const dataHtml = frappe.render_template("select_portion_template", { data: data, isInIframe: (window.self !== window.top) }); 
+    $(dialog.fields_dict.portions.wrapper).html(dataHtml); 
+    // Use a small timeout to ensure content is rendered and then add the active class
+    setTimeout(function() { 
+        const buttons = $('.duration_portion_option'); 
+        buttons.each(function(i, e) { 
+            if(i==0){
+                $(e).addClass('active').each(function() {
+                    $(e)[0].style.setProperty('border-color', '#007bff', 'important'); // Custom border color
+                    $(e)[0].style.setProperty('color', '#007bff', 'important'); // Custom text color
+                });
+            }else{
+                $(e).removeClass('active').each(function() {
+                    // Reset border and text color with !important using setProperty()
+                    $(e)[0].style.setProperty('border-color', '#dfdfdf', 'important');
+                    $(e)[0].style.setProperty('color', '#4338ca', 'important');
+                }); 
+            }
+        });
+         
+    }, 250);
     dialog.fields_dict.portions.refresh();
+
+    $(dialog.fields_dict.portions.wrapper).on('click', '.duration_portion_option', function() {
+            // Remove 'active' class from all buttons
+            $('.duration_portion_option').removeClass('active').each(function() { 
+                $(this)[0].style.setProperty('border-color', '#dfdfdf', 'important');
+                $(this)[0].style.setProperty('color', '#4338ca', 'important');
+            });
+        
+            // Add 'active' class to the clicked button and apply custom styles with !important
+            $(this).addClass('active').each(function() {
+                $(this)[0].style.setProperty('border-color', '#007bff', 'important');  
+                $(this)[0].style.setProperty('color', '#007bff', 'important');  
+            });
+    }); 
 }
 
 
@@ -189,7 +264,8 @@ function update_invoice_summary(frm){
     }
     if(frm.doc.payments == undefined){
         frm.set_value('payments', []);
-    }
+    } 
+
     frappe.call({
         method: 'epos_restaurant_2023.selling.doctype.spa_sale_invoice.spa_sale_invoice.client_script_update_summary',
         type: 'GET',            
@@ -254,9 +330,46 @@ async function update_summary_value(frm, data){
     frm.refresh_field('balance');
     frm.refresh_field('changed_amount');
 
- 
-    frm.doc._temp_tax_rule = JSON.parse(frm.doc.tax_rule_data) 
+    if(t.tax_rule_data){ 
+        frm.doc._temp_tax_rule = t.tax_rule_data
+    }else{
+        frm.doc._temp_tax_rule = []
+    }
 
     const html = frappe.render_template("invoice_summary_template", frm.doc )		
 	$(frm.fields_dict['invoice_summary'].wrapper).html(html);
+}
+
+
+
+//therapist blog
+function on_render_therapist(frm, row){
+    const html = frappe.render_template("select_therapist_template", {doc:row} )	    
+    let grid_row = frm.fields_dict['items'].grid.grid_rows_by_docname[row.name]; 
+    $(grid_row.grid_form.fields_dict.therapist.wrapper).html(html);
+}
+
+function on_assign_therapist(frm,row){
+    const fields = [
+        { fieldtype: 'HTML', fieldname: 'therapist_html' },
+    ];
+
+    const dlg = new frappe.ui.Dialog({
+        title: "Therapist",
+        fields: fields,
+        size: 'small',
+        primary_action_label: "Accept",
+        primary_action: function() {
+           //
+        }
+    });
+   
+    //
+
+
+    // Handle cancel/close event
+    dlg.$wrapper.on('hide.bs.modal', () => { 
+        frm.fields_dict['items'].grid.grid_rows_by_docname[row.name].show_form();
+    });
+    dlg.show(); 
 }

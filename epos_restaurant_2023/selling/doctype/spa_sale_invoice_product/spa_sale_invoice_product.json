@@ -9,11 +9,12 @@
   "article",
   "article_name_en",
   "article_name_kh",
+  "unit",
   "therapist_name",
   "time_in",
   "time_out",
-  "column_break_vuqu",
   "duration",
+  "column_break_vuqu",
   "quantity",
   "regular_price",
   "price",
@@ -21,8 +22,12 @@
   "discount_type",
   "discount_amount",
   "amount",
-  "unit",
-  "allow_tax"
+  "allow_tax",
+  "assign_unassigned_therapist",
+  "therapist",
+  "section_break_houp",
+  "column_break_kpit",
+  "therapist_data"
  ],
  "fields": [
   {
@@ -52,7 +57,8 @@
    "fieldname": "therapist_name",
    "fieldtype": "Small Text",
    "label": "Therapist Name",
-   "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Employee\"},\"show_in_pos_assign_employee\",\"=\",1]]"
+   "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Employee\"},\"show_in_pos_assign_employee\",\"=\",1]]",
+   "read_only": 1
   },
   {
    "default": "Now",
@@ -140,14 +146,44 @@
    "default": "0",
    "fieldname": "regular_price",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Regular Price",
-   "read_only": 1
+   "print_hide": 1,
+   "print_hide_if_no_value": 1,
+   "read_only": 1,
+   "report_hide": 1
+  },
+  {
+   "fieldname": "therapist",
+   "fieldtype": "HTML",
+   "label": "Therapist"
+  },
+  {
+   "fieldname": "therapist_data",
+   "fieldtype": "JSON",
+   "label": "Therapist Data",
+   "print_hide": 1,
+   "read_only": 1,
+   "report_hide": 1
+  },
+  {
+   "fieldname": "assign_unassigned_therapist",
+   "fieldtype": "Section Break",
+   "label": "Assign / Unassigned Therapist"
+  },
+  {
+   "fieldname": "section_break_houp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_kpit",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-04-26 10:44:28.119397",
+ "modified": "2025-04-28 17:06:31.029211",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "SPA Sale Invoice Product",

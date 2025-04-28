@@ -220,8 +220,8 @@ def client_script_update_summary(param):
 	doc["total_discount"] = doc["item_discount"] + doc["discount_amount"]
 
 	##tax validate
+	doc["tax_rule_data"] = None
 	if  doc["tax_rule"]:
-		doc["tax_rule_data"] =[]
 		if frappe.db.exists("Tax Rule", doc["tax_rule"]):
 			_tax_rule = frappe.get_doc("Tax Rule", doc["tax_rule"])
  
@@ -316,6 +316,7 @@ def client_script_update_summary(param):
 		"sub_total":doc["sub_total"],
 		"discount_amount":doc["discount_amount"],
 		"total_discount":doc["total_discount"],
+		"tax_rule_data":json.loads( doc["tax_rule_data"] or '[]'),
 		"tax_1_rate":doc["tax_1_rate"],
 		"tax_2_rate":doc["tax_2_rate"],
 		"tax_3_rate":doc["tax_3_rate"],

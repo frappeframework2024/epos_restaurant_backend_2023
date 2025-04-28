@@ -1,3 +1,12 @@
-{%for d in data%}
-<button>{{d.price}} <br/> {{d.portion}}</button>
-{%endfor%}
+<div id="duration_portion_button">
+    {% if data.length > 0 %}
+        {% var index = 1 %}
+        {%for d in data%}
+        <button data-id="{{d.name}}" data-price="{{d.price}}" data-portion="{{d.portion}}" data-base-unit="{{d.base_unit}}" data-unit="{{d.unit}}" class="bg-transparent rounded border border-secondary px-3 py-1 duration_portion_option">
+            {{frappe.format(d.price,{"fieldtype":"Currency"})}} 
+            {{d.portion}}
+        </button>
+        {% index = index + 1%}
+        {%endfor%} 
+    {% endif %}
+</div>
