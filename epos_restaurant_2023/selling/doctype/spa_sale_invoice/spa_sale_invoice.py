@@ -354,11 +354,14 @@ def get_therapist_data(duration=None):
 	duration_data = frappe.db.sql(duration_sql, as_dict=1)
 	commission_data = frappe.db.sql(commission_sql, as_dict=1)
 
+	idx = 0
 	for d in [ dur for dur in duration_data if dur["mapping_value"]== duration] :
-		commission = [com for com in commission_data if d["commission"] == com["name"] ]
-		if len(commission) > 0:
-			d["selected"] = 1
-			commission[0]["selected"] = 1 
+		idx +=1
+		if idx <= 1:
+			commission = [com for com in commission_data if d["commission"] == com["name"] ]
+			if len(commission) > 0:
+				d["selected"] = 1
+				commission[0]["selected"] = 1 
  
 	return {
 		"therapies":therapist_data,
