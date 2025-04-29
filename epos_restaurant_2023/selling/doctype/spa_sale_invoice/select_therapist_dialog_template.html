@@ -1,0 +1,30 @@
+
+<div id="therapies_button">
+    {% if therapies.length > 0 %} 
+        {%for d in therapies%}
+        <button data-id="{{d.name}}"  class="bg-transparent rounded border border-secondary px-3 py-1 mt-1 therapies_button">
+            {{d.employee_name}}
+        </button> 
+        {%endfor%} 
+    {% endif %}
+</div>
+<hr/>
+<div id="durations_button">
+    {% if durations.length > 0 %} 
+        {%for d in durations%}
+        <button data-id="{{d.name}}" data-duration-title="{{d.duration_title}}" data-duration="{{d.duration}}" data-is-overtime="{{d.is_overtime}}"  class="bg-transparent rounded border border-secondary px-3 py-1 mt-1 durations_button">           
+            {{d.duration_title}}
+        </button> 
+        {%endfor%} 
+    {% endif %}
+</div>
+<hr/>
+<div id="commissions_button">
+    {% if commissions.length > 0 %} 
+        {%for d in commissions%}
+        <button data-id="{{d.name}}"    class="bg-transparent rounded border border-secondary px-3 py-1 mt-1 commissions_button">
+            {{frappe.format(d.commission_amount,{"fieldtype":"Currency"})}}  
+        </button> 
+        {%endfor%} 
+    {% endif %}
+</div>

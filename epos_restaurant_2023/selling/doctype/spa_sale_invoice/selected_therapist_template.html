@@ -1,0 +1,30 @@
+
+{%if enabled %}
+<button id="assign-therapist" type="button" class="btn btn-info" data-row-name={{doc.name}}>Assign Therapist</button>
+ {%endif%}
+ 
+<div>
+    <table class="table table-striped" style="width: 100%;">
+        <thead>
+            <tr>
+                <th>Therapist Name</th>
+                <th class="text-center">Duration</th>
+                <th class="text-right" >Commission</th>
+                <th class="text-center">Status</th> 
+            </tr>
+        </thead>
+        <tbody> 
+            {%for a in doc.__therapist_data_json%}
+                <tr> 
+                    <td style="vertical-align: middle;">{{a.employee_name}}</td>
+                    <td class="text-center" style="vertical-align: middle;">{{a.duration_title}}</td>
+                    <td class="text-right" style="vertical-align: middle;">{{a.commission_amount}}</td>
+                    <td class="text-center" style="vertical-align: middle;">    
+                        <p class="text-white bg-secondary p-1 rounded-pill text-center">Unassinged</p> 
+                    </td>
+                </tr> 
+            {%endfor%} 
+        </tbody>
+    </table> 
+   
+</div> 

@@ -12,6 +12,8 @@ from frappe.model.document import Document
 class SPASaleInvoice(Document):
 	def validate(self): 
 
+		
+
 		#get exchange rate
 		if self.is_new() or self.exchange_rate is None or self.change_exchange_rate is None:
 			main_currency = frappe.get_doc("Currency",frappe.db.get_default("currency"))
@@ -58,6 +60,9 @@ class SPASaleInvoice(Document):
 
 
 	def on_submit(self):
+		if len([d for d in self.items if d.is_required_therapist == 1 and  len(d.therapist_data or [])<=0  ]) >0:
+			frappe.throw(_("Please assign therapist before submit"))
+			
 		validate_payment_on_submit(self)
 
 def update_sale_product_data(self):
@@ -183,6 +188,7 @@ def get_product_by_id(name):
 		result = []
 		for d in doc.product_price:
 			result.append({
+				"is_require_employee": doc.is_require_employee,
 				"portion": d.portion,
 				"base_unit":doc.unit, 
 				"unit":d.unit, 
@@ -192,11 +198,15 @@ def get_product_by_id(name):
 	
 	else:
 		return [{
+			"is_require_employee": doc.is_require_employee,
 			"portion": "",
 			"base_unit":doc.unit, 
 			"unit":doc.unit, 
 			"price": doc.price
 		}]
+
+
+
 
 @frappe.whitelist()
 def client_script_update_summary(param):
@@ -330,4 +340,28 @@ def client_script_update_summary(param):
 		"total_paid": doc["total_paid"],
 		"changed_amount": doc["changed_amount"],
 		"balance": doc["balance"],
+	}
+
+
+@frappe.whitelist()
+# @frappe.whitelist(allow_guest= True)
+def get_therapist_data(duration=None):
+	therapist_sql = """select `name` as employee_id, employee_name from `tabEmployee` where show_in_pos_assign_employee = 1 and disabled = 0"""
+	duration_sql = """select duration_title,duration_value as duration, commission,commission_value,is_overtime,mapping_value from `tabPredefine SPA Duration Code` order by duration_value"""
+	commission_sql = """select `name`, commission_title,commission_value from `tabPredefine SPA Commission Code` order by  commission_value"""
+
+	therapist_data = frappe.db.sql(therapist_sql, as_dict=1)
+	duration_data = frappe.db.sql(duration_sql, as_dict=1)
+	commission_data = frappe.db.sql(commission_sql, as_dict=1)
+
+	for d in [ dur for dur in duration_data if dur["mapping_value"]== duration] :
+		commission = [com for com in commission_data if d["commission"] == com["name"] ]
+		if len(commission) > 0:
+			d["selected"] = 1
+			commission[0]["selected"] = 1 
+ 
+	return {
+		"therapies":therapist_data,
+		"durations":duration_data,
+		"commissions":commission_data,
 	}

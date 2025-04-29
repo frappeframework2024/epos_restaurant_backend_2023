@@ -2,7 +2,7 @@
     {% if data.length > 0 %}
         {% var index = 1 %}
         {%for d in data%}
-        <button data-id="{{d.name}}" data-price="{{d.price}}" data-portion="{{d.portion}}" data-base-unit="{{d.base_unit}}" data-unit="{{d.unit}}" class="bg-transparent rounded border border-secondary px-3 py-1 duration_portion_option">
+        <button data-id="{{d.name}}"  data-price="{{d.price}}" data-portion="{{d.portion}}" data-base-unit="{{d.base_unit}}" data-unit="{{d.unit}}" class="bg-transparent rounded border border-secondary px-3 py-1 duration_portion_option">
             {{frappe.format(d.price,{"fieldtype":"Currency"})}} 
             {{d.portion}}
         </button>
