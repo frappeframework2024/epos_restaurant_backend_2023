@@ -1,30 +1,48 @@
 
-<div id="therapies_button">
-    {% if therapies.length > 0 %} 
-        {%for d in therapies%}
-        <button data-id="{{d.name}}"  class="bg-transparent rounded border border-secondary px-3 py-1 mt-1 therapies_button">
-            {{d.employee_name}}
-        </button> 
-        {%endfor%} 
-    {% endif %}
-</div>
-<hr/>
-<div id="durations_button">
-    {% if durations.length > 0 %} 
-        {%for d in durations%}
-        <button data-id="{{d.name}}" data-duration-title="{{d.duration_title}}" data-duration="{{d.duration}}" data-is-overtime="{{d.is_overtime}}"  class="bg-transparent rounded border border-secondary px-3 py-1 mt-1 durations_button">           
-            {{d.duration_title}}
-        </button> 
-        {%endfor%} 
-    {% endif %}
-</div>
-<hr/>
-<div id="commissions_button">
-    {% if commissions.length > 0 %} 
-        {%for d in commissions%}
-        <button data-id="{{d.name}}"    class="bg-transparent rounded border border-secondary px-3 py-1 mt-1 commissions_button">
-            {{frappe.format(d.commission_amount,{"fieldtype":"Currency"})}}  
-        </button> 
-        {%endfor%} 
-    {% endif %}
+<div class="row">
+    <div class="col-4 px-1">
+        <div id="therapies_button" class="card h-100">
+            <div class="card-body">
+                <label>Employee</label><br/>
+                {% if therapies.length > 0 %} 
+                    {%for d in therapies%}
+                    <button data-id="{{d.name}}" data-employee-id="{{d.employee_id}}" data-employee-name="{{d.employee_name}}" data-selected="{{d.selected||0}}" class="bg-transparent rounded border border-secondary px-3 py-1 mt-1 therapies_button w-100">
+                        {{d.employee_name}}
+                    </button> 
+                    {%endfor%} 
+                {% endif %}
+            </div>
+        </div> 
+        
+    </div>
+    <div class="col-8 px-1">
+        <div class="card h-100">
+            <div class="card-body">
+                <div id="durations_button" class="card mb-2">
+                    <div class="card-body">
+                        <label>Duration</label><br/>
+                        {% if durations.length > 0 %} 
+                            {%for d in durations%}
+                            <button data-id="{{d.name}}" data-selected="{{d.selected||0}}" data-duration-title="{{d.duration_title}}" data-duration="{{d.duration}}" data-is-overtime="{{d.is_overtime}}"  class="bg-transparent rounded border border-secondary px-3 py-1 mt-1 durations_button">           
+                                {{d.duration_title}}
+                            </button> 
+                            {%endfor%} 
+                        {% endif %}
+                    </div> 
+                </div> 
+                <div id="commissions_button" class="card">
+                    <div class="card-body">
+                        <label>Commission</label><br/>
+                        {% if commissions.length > 0 %} 
+                            {%for d in commissions%}
+                            <button data-id="{{d.name}}" data-commission-amount="{{d.commission_value}}"  data-selected="{{d.selected||0}}"  class="bg-transparent rounded border border-secondary px-3 py-1 mt-1 commissions_button">
+                                {{frappe.format(d.commission_value,{"fieldtype":"Currency"})}}  
+                            </button> 
+                            {%endfor%} 
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

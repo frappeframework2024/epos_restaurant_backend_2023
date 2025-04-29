@@ -373,11 +373,30 @@ function on_render_therapist(frm, row){
     row.__therapist_data_json = JSON.parse(row.therapist_data ||'[]') 
     const html = frappe.render_template("selected_therapist_template", {doc:row, enabled: frm.doc.docstatus == 0} )	 
     $(grid_row.grid_form.fields_dict.therapist.wrapper).html(html);
+
+
+     // //load function for child table
+    $(grid_row.grid_form.fields_dict.therapist.wrapper).on('click', '#unassign-therapist', function(e) {
+        e.preventDefault();
+        const tr = e.target.closest("tr");
+        
+        const employeeId = $(this).data("employee-id")
+
+        let therapist_data = JSON.parse(row.therapist_data||'[]');
+        therapist_data = therapist_data.filter(t => t.employee_id !== employeeId);
+        
+        row.therapist_data = JSON.stringify(therapist_data); 
+        const result = therapist_data.map(item => `${item.employee_name}`).join(', ');
+
+        frappe.model.set_value(row.doctype, row.name, "therapist_name", result);        
+        tr.remove();
+        frm.refresh_field("items"); 
+    }); 
 }
 
 function on_assign_therapist(frm,row){
     if(!row.__is_busy ){
-        row.__is_busy = true;
+        row.__is_busy = true; 
         const fields = [
             { fieldtype: 'HTML', fieldname: 'therapist_html' },
         ];
@@ -389,36 +408,70 @@ function on_assign_therapist(frm,row){
             primary_action_label: "Accept",
             primary_action: function() {
 
-                const therapist_selected = [
-                    {
-                        "employee_id":"02",
-                        "employee_name":"Mey GBgg",
-                        "duration_title":"1H",
-                        "duration":60,
-                        "commission_amount":1.5,
-                        "is_overtime":0
-                     }
-                ]
+                // Example validation: check if any button has data-selected="1"
+                const therapist = $(dlg.fields_dict.therapist_html.wrapper).find('.therapies_button[data-selected="1"]');
+                if (therapist.length === 0) { 
+                    frappe.show_alert({
+                        message: "Please select a therapist before proceeding.",
+                        indicator: "yellow"
+                    }); 
+                    return;
+                }
+
+                const duration = $(dlg.fields_dict.therapist_html.wrapper).find('.durations_button[data-selected="1"]');
+                if (duration.length === 0) { 
+                    frappe.show_alert({
+                        message: "Please select a duration before proceeding.",
+                        indicator: "yellow"
+                    });  
+                    return;
+                }
+
+                const commssion = $(dlg.fields_dict.therapist_html.wrapper).find('.commissions_button[data-selected="1"]');
+                if (commssion.length === 0) { 
+                    frappe.show_alert({
+                        message: "Please select a commission before proceeding.",
+                        indicator: "yellow"
+                    });   
+                    return;
+                }
 
 
-                row.therapist_data = JSON.stringify(therapist_selected)
-            
-                on_render_therapist(frm, row) 
-                dlg.hide()
+                // Optional: Get therapist data from selected button (assuming you stored data-* attributes)
+                const therapist_selected = {
+                    "employee_id": therapist.data("employee-id"), // or use .attr("data-employee-id")
+                    "employee_name": therapist.data("employee-name"),
+                    "duration_title": duration.data("duration-title"),
+                    "duration": duration.data("duration"),
+                    "commission_amount": commssion.data("commission-amount"),
+                    "is_overtime": duration.data("is-overtime") || 0
+                };
 
-                frm.refresh_field("items");   
+                // Assign data to row
+                let therapist_data = JSON.parse(row.therapist_data||'[]');
+                therapist_data.push(therapist_selected);
+                row.therapist_data = JSON.stringify(therapist_data); 
+                const result = therapist_data.map(item => `${item.employee_name}`).join(', ');
+
+                frappe.model.set_value(row.doctype, row.name, "therapist_name", result);
+
+               
+                on_render_therapist(frm, row);
+                dlg.hide();
+                frm.refresh_field("items"); 
             }
         });
     
         render_select_therapist_dialog(frm,row,dlg)
 
 
-        // Handle cancel/close event
+        // Handle cancel/close event 
         dlg.$wrapper.on('hide.bs.modal', () => { 
             row.__is_busy = false;
-
+        
             frm.fields_dict['items'].grid.grid_rows_by_docname[row.name].show_form();
         });
+ 
         dlg.show(); 
     }
 }
@@ -431,55 +484,72 @@ function render_select_therapist_dialog(frm,row,dialog){
         args: {
             duration:row.duration
         },
-        callback: function(resp) { 
+        callback: async function(resp) { 
             const data = resp.message; 
             const dataHtml = frappe.render_template("select_therapist_dialog_template", { therapies: data.therapies, durations:data.durations,commissions:data.commissions, isInIframe: (window.self !== window.top) }); 
             $(dialog.fields_dict.therapist_html.wrapper).html(dataHtml); 
-
+            await select_therapist_load_selected_data()
             dialog.fields_dict.therapist_html.refresh();
+
+           await on_button_render_select_changed(dialog)
         },
         error: function(err) { 
             //
         }
-    });
+    }); 
+}
 
+async function select_therapist_load_selected_data(){
+    setTimeout(function() { 
 
-
-   
-    // Use a small timeout to ensure content is rendered and then add the active class
-    // setTimeout(function() { 
-    //     const buttons = $('.duration_portion_option'); 
-    //     buttons.each(function(i, e) { 
-    //         if(i==0){
-    //             $(e).addClass('active').each(function() {
-    //                 $(e)[0].style.setProperty('border-color', '#007bff', 'important'); // Custom border color
-    //                 $(e)[0].style.setProperty('color', '#007bff', 'important'); // Custom text color
-    //             });
-    //         }else{
-    //             $(e).removeClass('active').each(function() {
-    //                 // Reset border and text color with !important using setProperty()
-    //                 $(e)[0].style.setProperty('border-color', '#dfdfdf', 'important');
-    //                 $(e)[0].style.setProperty('color', '#4338ca', 'important');
-    //             }); 
-    //         }
-    //     });
+        //durations
+        const durations = $('.durations_button'); 
+        durations.each(function(i, e) { 
+            render_selected_button(e)
+        });
+        //commission
+        const commissions = $('.commissions_button'); 
+        commissions.each(function(i, e) { 
+            render_selected_button(e)
+        });
          
-    // }, 250);
-   
+    }, 250);
+}
 
-    // $(dialog.fields_dict.portions.wrapper).on('click', '.duration_portion_option', function() {
-    //         // Remove 'active' class from all buttons
-    //         $('.duration_portion_option').removeClass('active').each(function() { 
-    //             $(this)[0].style.setProperty('border-color', '#dfdfdf', 'important');
-    //             $(this)[0].style.setProperty('color', '#4338ca', 'important');
-    //         });
-        
-    //         // Add 'active' class to the clicked button and apply custom styles with !important
-    //         $(this).addClass('active').each(function() {
-    //             $(this)[0].style.setProperty('border-color', '#007bff', 'important');  
-    //             $(this)[0].style.setProperty('color', '#007bff', 'important');  
-    //         });
-    // }); 
+async function on_button_render_select_changed(dialog){
+   await on_button_click(dialog, '.therapies_button')
+   await on_button_click(dialog, '.durations_button')
+   await on_button_click(dialog, '.commissions_button')
+}
+
+async function on_button_click(dialog, class_name){
+    $(dialog.fields_dict.therapist_html.wrapper).on('click', class_name, function() {      
+        const selected = $(this).attr("data-selected");
+        $(class_name).each(function() { 
+            $(this)[0].style.removeProperty('border-color');
+            $(this)[0].style.removeProperty('color');
+            $(this).attr('data-selected', 0);
+        }); 
+        if(selected==0){ 
+            $(this).attr('data-selected', 1);
+        }
+        render_selected_button(this) 
+    }); 
+}
+
+function render_selected_button(e){   
+    const selected = $(e).attr("data-selected") == 1;
+    if(selected){
+        $(e).each(function() {
+            $(e)[0].style.setProperty('border-color', '#ff0000', 'important'); // Custom border color
+            $(e)[0].style.setProperty('color', '#ff0000', 'important'); // Custom text color
+        });
+    }else{
+        $(e).each(function() {
+            $(e)[0].style.removeProperty('border-color');
+            $(e)[0].style.removeProperty('color');
+        }); 
+    }
 }
 
 
