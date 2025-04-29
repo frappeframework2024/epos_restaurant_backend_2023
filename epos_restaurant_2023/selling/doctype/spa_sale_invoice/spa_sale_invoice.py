@@ -345,9 +345,9 @@ def client_script_update_summary(param):
 
 @frappe.whitelist()
 # @frappe.whitelist(allow_guest= True)
-def get_therapist_data(duration=None):
+def get_therapist_data(duration=None): 
 	therapist_sql = """select `name` as employee_id, employee_name from `tabEmployee` where show_in_pos_assign_employee = 1 and disabled = 0"""
-	duration_sql = """select duration_title,duration_value as duration, commission,commission_value,is_overtime,mapping_value from `tabPredefine SPA Duration Code` order by duration_value"""
+	duration_sql = """select concat(duration_title, case when is_overtime = 1 then '(OT)' else '' end) as  duration_title,duration_value as duration, commission,commission_value,is_overtime,mapping_value from `tabPredefine SPA Duration Code` order by duration_value"""
 	commission_sql = """select `name`, commission_title,commission_value from `tabPredefine SPA Commission Code` order by  commission_value"""
 
 	therapist_data = frappe.db.sql(therapist_sql, as_dict=1)
