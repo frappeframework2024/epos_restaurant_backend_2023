@@ -20,6 +20,7 @@
             <div class="pb-16">
                 <div class="mx-auto mt-4 mb-0 md:w-[600px]">
                     
+                  
                     <ComMessagePromotion />
                     <div class="grid xs:grid-cols-2 md:grid-cols-4 grid-cols-2" style="grid-gap: 20px;">
                         <WorkingDayButton  v-if="device_setting?.show_start_close_working_day==1 && device_setting?.is_order_station==0"/>

@@ -13,6 +13,8 @@
   "customer",
   "column_break_cjbm",
   "business_branch",
+  "outlet",
+  "stock_location",
   "shift_name",
   "sale",
   "section_break_xklc",
@@ -116,7 +118,6 @@
   {
    "fieldname": "sale",
    "fieldtype": "Link",
-   "hidden": 1,
    "label": "Sale",
    "no_copy": 1,
    "options": "Sale",
@@ -348,12 +349,26 @@
    "fieldname": "invoice_summary",
    "fieldtype": "HTML",
    "label": "Invoice Summary"
+  },
+  {
+   "fieldname": "outlet",
+   "fieldtype": "Link",
+   "label": "Outlet",
+   "options": "Outlet",
+   "reqd": 1
+  },
+  {
+   "fieldname": "stock_location",
+   "fieldtype": "Link",
+   "label": "Stock Location",
+   "options": "Stock Location",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-26 14:29:07.527673",
+ "modified": "2025-05-01 13:58:43.672915",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "SPA Sale Invoice",

@@ -10,9 +10,7 @@ from frappe.model.document import Document
 
 
 class SPASaleInvoice(Document):
-	def validate(self): 
-
-		
+	def validate(self): 	
 
 		#get exchange rate
 		if self.is_new() or self.exchange_rate is None or self.change_exchange_rate is None:
@@ -64,6 +62,12 @@ class SPASaleInvoice(Document):
 			frappe.throw(_("Please assign therapist before submit"))
 			
 		validate_payment_on_submit(self)
+
+		#generate to sale
+		generate_to_sale(self)
+
+	def on_cancel(self):
+		pass
 
 def update_sale_product_data(self):
 	for sp in self.items:
@@ -174,11 +178,78 @@ def validate_payment_on_submit(self):
 		frappe.throw(_("Please kindly make full payment for this invoice"))
 
 
+def generate_to_sale(self):
+	create_new = False
+	if self.sale:
+		#check sale exist
+		if not frappe.db.exists("SPA Sale", self.sale):
+			create_new = True
+	else:
+		create_new = True
+
+	if create_new:
+		doc_json = {
+			"doctype": "Sale",	
+			"business_branch":self.business_branch,
+			"outlet":self.outlet,
+			"stock_location":self.stock_location,
+			"custom_bill_number":self.name,
+			"customer": self.customer,
+			"posting_date": self.posting_date,
+			"tax_rule": self.tax_rule,
+			"exchange_rate": self.exchange_rate,
+			"change_exchange_rate": self.change_exchange_rate,
+			"sale_products":[],
+			"payment":[]
+		}
+
+		items_json=[]
+		date_obj = datetime.strptime(self.posting_date, "%Y-%m-%d").date()
+		for sp in self.items: 
+			items_json.append({
+				"product_code":sp.article,
+				"product_name":sp.article_name_en,
+				"product_name_kh":sp.article_name_kh,
+				"portion":sp.duration,
+				"quantity":sp.quantity,
+				"price":sp.price,
+				"regular_price":sp.regular_price,
+				"discount":sp.discount,
+				"discount_type":sp.discount_type,
+				"discount_amount":sp.discount_amount,
+				"selling_price":sp.price,
+				"tax_rule": self.tax_rule if sp.allow_tax == 1 else "NONE_TAX",
+				"time_in":  datetime.combine(date_obj, datetime.strptime(sp.time_in, "%H:%M:%S").time()) ,
+				"time_out": datetime.combine(date_obj, datetime.strptime(sp.time_out, "%H:%M:%S").time())  ,
+				"is_require_employee": sp.is_required_therapist,
+				"employee_names": sp.therapist_name,
+				"employees": sp.therapist_data,
+				"unit":sp.unit,
+				"base_unit":sp.unit,
+			})
+
+		doc_json["sale_products"] = items_json	
+
+		payment_json=[]
+		for p in self.payments:
+			payment_json.append({
+				"input_amount":p.input_amount,
+				"amount":p.amount,
+				"payment_type":p.payment_type,
+				"exchange_rate":p.exchange_rate,
+			})
+		doc_json["payment"] = payment_json
+
+
+		doc = frappe.get_doc(doc_json)
+		doc.flags.ignore_permissions = True  # Skip all permission checks
+		doc.insert()  # Save
+		doc.submit()  # Submit
+		self.sale = doc.name
+
 #function round decimal value
 def round_value(value, precision = 2):
 	return round(value,precision)
-
-
 
 
 @frappe.whitelist()
@@ -204,8 +275,6 @@ def get_product_by_id(name):
 			"unit":doc.unit, 
 			"price": doc.price
 		}]
-
-
 
 
 @frappe.whitelist()

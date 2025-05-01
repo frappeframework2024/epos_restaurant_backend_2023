@@ -927,15 +927,17 @@ def add_payment_to_sale_payment(self):
 					doc.insert()
    
 		if (self.changed_amount or 0)>0:
-			pos_config = frappe.get_cached_value('POS Profile', self.pos_profile, 'pos_config')			
-			payment_type = frappe.get_cached_value("ePOS Settings",None,"changed_payment_type")			
-			pos_config_data = frappe.get_cached_doc('POS Config', pos_config)
-			pos_config_payment_type = Enumerable(pos_config_data.payment_type).where(lambda x:x.payment_type==payment_type)
+			payment_type = frappe.get_cached_value("ePOS Settings",None,"changed_payment_type")		
 			account_code = "" 
 			exchange_rate = 1
-			if pos_config_payment_type:
-				account_code = pos_config_payment_type[0].account_code
-				exchange_rate = pos_config_payment_type[0].change_exchange_rate		
+			if self.pos_profile:
+				pos_config = frappe.get_cached_value('POS Profile', self.pos_profile, 'pos_config')					
+				pos_config_data = frappe.get_cached_doc('POS Config', pos_config)
+
+				pos_config_payment_type = Enumerable(pos_config_data.payment_type).where(lambda x:x.payment_type==payment_type)				
+				if pos_config_payment_type:
+					account_code = pos_config_payment_type[0].account_code
+					exchange_rate = pos_config_payment_type[0].change_exchange_rate		
 
 			doc = frappe.get_doc({
 					'doctype': 'Sale Payment',

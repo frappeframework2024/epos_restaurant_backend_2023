@@ -20,7 +20,7 @@ def execute(filters=None):
 	message=None
 	report_data = get_report_data(filters)  
  
-	return get_columns(filters), report_data, message, None, None,skip_total_row
+	return get_columns(filters), report_data, message, None, [],skip_total_row
  
 
 def validate(filters):

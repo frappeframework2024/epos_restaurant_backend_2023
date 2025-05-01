@@ -20,7 +20,7 @@ def execute(filters=None):
 	
 	report_data = get_report_data(filters) 
 
-	return get_columns(filters), report_data, None, None, None,skip_total_row
+	return get_columns(filters), report_data, None, None, summary_report(report_data, filters),skip_total_row
 
 def validate(filters):
 
@@ -28,7 +28,56 @@ def validate(filters):
 		if filters.start_date > filters.end_date:
 			frappe.throw("The 'Start Date' ({}) must be before the 'End Date' ({})".format(filters.start_date, filters.end_date))
 
+def summary_report(data, filters):
+	sub_total = 0
+	total_discount = 0
+	total_amount = 0
+	total_paid= 0
+	total_balance = 0
+	
+	if filters.group_by_reference_no == 1:
+		data = [d for d in data if d["indent"] == 0]
 
+	sub_total = sum(item['price'] for item in data)
+	total_discount = sum(item['total_discount'] for item in data)
+	total_amount = sum(item['grand_total'] for item in data)
+	total_paid = sum(item['total_paid'] for item in data)
+	total_balance = sum(item['balance'] for item in data)
+
+	report_summary = [
+		{
+			"label":"Sub Total",
+			"value":sub_total,
+			"datatype":"Currency",
+			"indicator":"green"
+		},
+		{
+			"label":"Total Discount",
+			"value":total_discount,
+			"datatype":"Currency",
+			"indicator":"red"
+		},
+		{
+			"label":"Total Amount",
+			"value":total_amount,
+			"datatype":"Currency",
+			"indicator":"green"
+		},
+		{
+			"label":"Total Paid",
+			"value":total_paid,
+			"datatype":"Currency",
+			"indicator":"blue"
+		},
+		{
+			"label":"Total Balance",
+			"value":total_balance,
+			"datatype":"Currency",
+			"indicator":"orange"
+		}
+	]
+	
+	return report_summary
 
 def get_columns(filters): 
 	columns = []
