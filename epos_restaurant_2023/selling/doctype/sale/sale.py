@@ -240,8 +240,6 @@ class Sale(Document):
 		# update default accunt
 		update_default_account(self) 
 
-		# frappe.throw(str(self.working_day))
-
 	@frappe.whitelist()
 	def get_sale_payment_naming_series(self):
 		return frappe.get_meta("Sale Payment").get_field("naming_series").options
@@ -264,6 +262,8 @@ class Sale(Document):
 
 
 	def after_insert(self):
+		
+		
 		if self.flags.ignore_after_insert == True:
 			return 
 		#add sale product spa commission
@@ -316,6 +316,8 @@ class Sale(Document):
 				room_payment = room_payment[0] 
 				if frappe.db.get_value("Reservation Folio",room_payment.folio_number,"status") =="Closed":
 					frappe.throw("This folio number {} in room {} is already closed".format(room_payment.folio_number,room_payment.room_number))
+
+		
 	
 	def on_submit(self):
      
@@ -327,6 +329,7 @@ class Sale(Document):
 
 		if "edoor" in frappe.get_installed_apps():
 			create_folio_transaction_from_pos_trnasfer(self) 
+		
 
 		# update_inventory_on_submit(self)			
 		add_payment_to_sale_payment(self) 
