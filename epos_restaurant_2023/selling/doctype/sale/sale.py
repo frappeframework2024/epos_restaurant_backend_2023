@@ -939,6 +939,10 @@ def add_payment_to_sale_payment(self):
 					account_code = pos_config_payment_type[0].account_code
 					exchange_rate = pos_config_payment_type[0].change_exchange_rate		
 
+			else:
+				pt = frappe.get_cached_doc('Payment Type', payment_type)
+				exchange_rate = pt.change_exchange_rate or 1
+
 			doc = frappe.get_doc({
 					'doctype': 'Sale Payment',
 					'naming_series': self.sale_payment_naming_series,
