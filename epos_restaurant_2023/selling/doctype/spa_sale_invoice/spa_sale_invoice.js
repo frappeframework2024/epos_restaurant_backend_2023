@@ -32,7 +32,11 @@ frappe.ui.form.on("SPA Sale Invoice", {
         //
     },
     after_save: function(frm) { 
-        update_child_table_field_visibility(frm)
+        update_child_table_field_visibility(frm) 
+        if (frm.doc.docstatus === 1) {            
+            // frappe.set_route('Form', 'SPA Sale Invoice','New');
+            frappe.new_doc('SPA Sale Invoice');                    
+        }
     },
 
     discount_type(frm){
@@ -447,7 +451,7 @@ function on_assign_therapist(frm,row){
                     "is_overtime": duration.data("is-overtime") || 0
                 };
 
-                console.log(therapist_selected)
+               
 
                 // Assign data to row
                 let therapist_data = JSON.parse(row.therapist_data||'[]');

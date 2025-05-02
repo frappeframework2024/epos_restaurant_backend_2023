@@ -51,9 +51,17 @@ class SPASaleInvoice(Document):
 
 		self.total_amount = round_value(self.sub_total - self.total_discount + self.tax_1_amount + self.tax_2_amount + self.tax_3_amount)
 
-
 		#payment validate
-
+		if self.docstatus == 1:
+			self.payments = []
+			default_payment_type = frappe.get_cached_value("ePOS Settings",None,"default_payment_type") 
+			pt = frappe.get_cached_doc('Payment Type', default_payment_type)
+			self.append('payments', {
+				"input_amount":self.total_amount,
+				"payment_type":default_payment_type,
+				"exchange_rate":pt.exchange_rate or 1,
+				"amount" : round_value(self.total_amount/(pt.exchange_rate or 1))
+			}) 
 		validate_payment(self)
 
 
@@ -196,6 +204,7 @@ def validate_payment(self):
 
 
 def validate_payment_on_submit(self):
+	return
 	total_payment_amount =round_value( sum(p.amount for p in self.payments))
 	if total_payment_amount < self.total_amount:
 		frappe.throw(_("Please kindly make full payment for this invoice"))
@@ -255,6 +264,8 @@ def generate_to_sale(self):
 		doc_json["sale_products"] = items_json	
 
 		payment_json=[]
+		
+
 		for p in self.payments:
 			payment_json.append({
 				"input_amount":p.input_amount,
