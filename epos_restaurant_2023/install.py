@@ -202,7 +202,7 @@ def reset_sale_transaction():
             frappe.db.sql("delete from `tabDelivery Note Product`")
             
             #reset sale transaction 
-            doctypes = ["Sale","Sale Payment","Cashier Shift","Working Day","Cash Transaction","Voucher","Voucher Payment","Cash Coupon","Sales Order","Delivery Note"]
+            doctypes = ["Sale","SPA Sale Invoice","Sale Payment","Cashier Shift","Working Day","Cash Transaction","Voucher","Voucher Payment","Cash Coupon","Sales Order","Delivery Note"]
             for d in doctypes:
                 if frappe.get_meta("Sale").get_field("naming_series"):
                     formats =  frappe.get_meta(d).get_field("naming_series").options
@@ -277,6 +277,7 @@ def reset_sale_transaction_pos_only():
             # end general ledger by sales
 
             frappe.db.sql("delete from `tabCash Transaction`")
+            frappe.db.sql("delete from `tabSPA Sale Invoice Payment`")
             frappe.db.sql("delete from `tabSPA Sale Invoice Product`")
             frappe.db.sql("delete from `tabSPA Sale Invoice`")
             frappe.db.sql("delete from `tabSale Product Deleted`")
