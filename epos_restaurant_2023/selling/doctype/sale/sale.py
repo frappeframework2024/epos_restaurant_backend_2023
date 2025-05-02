@@ -46,8 +46,6 @@ class Sale(Document):
 			working_day = frappe.get_cached_doc("Working Day", self.working_day)
 			self.posting_date = working_day.posting_date
 		
-
- 
 		# printed_date
 		if not self.printed_date:
 			self.printed_date = datetime.datetime.now()
@@ -241,6 +239,8 @@ class Sale(Document):
 		
 		# update default accunt
 		update_default_account(self) 
+
+		frappe.throw(str(self.working_day))
 
 	@frappe.whitelist()
 	def get_sale_payment_naming_series(self):
@@ -507,8 +507,6 @@ def on_generate_custom_bill_number(self):
 				from frappe.model.naming import make_autoname
 				self.custom_bill_number = make_autoname(self.custom_bill_number_prefix)
 
-
-
 #update sale and sale product cost / cross profit
 def update_sale_sale_product_cost(self):
 	#update profit for commission
@@ -531,7 +529,6 @@ def update_sale_sale_product_cost(self):
 	self.total_cost = total_cost
 	self.profit = self.grand_total - total_cost
 	self.second_profit = self.grand_total - total_second_cost 
-
 
 def update_pos_pay_to_room_adjustment(self):
 	#check sale has payment type transfer to edoor and user cancel order 
@@ -580,9 +577,7 @@ def update_pos_pay_to_room_adjustment(self):
 			reservation = frappe.get_cached_value("Reservation Folio",p.folio_transaction_number,"reservation")
 			reservation_stay = frappe.get_cached_value("Reservation Folio",p.folio_transaction_number,"reservation_stay")
 			frappe.enqueue("edoor.api.utils.update_reservation_stay_and_reservation", queue='short', reservation = reservation, reservation_stay=reservation_stay)
-   
-        
-
+ 
 def commission_general_ledger_entry(self):
 	commissions=[]
 	total_commission = ((self.commission_01 or 0) + (self.commission_02 or 0) + (self.commission_03 or 0) +(self.commission_04 or 0) +(self.commission_05 or 0) )
@@ -1029,7 +1024,6 @@ def add_sale_product_spa_commission(self):
 					} 
 					doc = frappe.get_doc(data)
 					doc.insert() 
-			
 				
 def create_folio_transaction_from_pos_trnasfer(self):
 	for p in self.payment:
@@ -1085,18 +1079,10 @@ def create_folio_transaction_from_pos_trnasfer(self):
 			reservation = frappe.get_cached_value("Reservation Folio",transaction_number,"reservation")
 			reservation_stay = frappe.get_cached_value("Reservation Folio",transaction_number,"reservation_stay")
 			frappe.enqueue("edoor.api.utils.update_reservation_stay_and_reservation", queue='short', reservation = reservation, reservation_stay=reservation_stay)
-   
-   
-			
-
-
 
 def create_guest_folio(self,reservation_stay):
-    from edoor.api.frontdesk import get_working_day
-    
-    working_day = get_working_day(self.business_branch)
-    
-    
+    from edoor.api.frontdesk import get_working_day    
+    working_day = get_working_day(self.business_branch)   
     doc = frappe.get_doc({
 		"doctype":"Reservation Folio",
   		"guest":self.customer,
@@ -1109,6 +1095,7 @@ def create_guest_folio(self,reservation_stay):
 	})
     doc.insert(ignore_permissions=True)
     return doc
+
 def on_get_revenue_account_code(self):
 	for sp in self.sale_products:
 		values = {
@@ -1212,7 +1199,6 @@ def validate_cash_coupon_claim(self):
 
 		self.total_cash_coupon_claim = claim_amount + sale_coupon_claim_amount		
 
-
 def on_update_coupon_information(self):	
 	if len(self.cash_coupon_items ) > 0 and self.docstatus in (1,2):
 		cash_coupons = [s for s in self.cash_coupon_items if s.cash_coupon]
@@ -1280,9 +1266,6 @@ def on_update_coupon_information(self):
 			where sc.name in %(coupon_codes)s""".format(update_value)
 
 			frappe.db.sql(update_sale_coupon_sql, {"sale":self.name,"coupon_codes": [c.coupon_code for c in sale_coupons ]})
-
-
-
 
 def validate_tax(doc):
 		
@@ -1431,7 +1414,6 @@ def get_park_item_to_redeem(business_branch):
 
 	return result_dict
 
-
 def update_default_account(self):
 	if not frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 		return
@@ -1474,7 +1456,6 @@ def update_default_income_account(self):
 	if [x for x in self.sale_products if not x.default_income_account]:
 		for sp in [x for x in self.sale_products if not x.default_income_account]:
 			sp.default_income_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_income_account")
-
  
 def update_default_discount_account(self):
 	# 1 get from product
@@ -1548,8 +1529,6 @@ def update_default_sale_cash_coupon_claim_account(self):
 	if self.total_cash_coupon_claim > 0: 		
 		if not self.default_cash_coupon_claim_account: 
 			self.default_cash_coupon_claim_account = frappe.get_cached_value("Business Branch",self.business_branch,"default_sale_cash_coupon_claim_account" )
-	
-
 
 def update_default_payment_account(self):
 	for p in [d for d in self.payment]:
@@ -1572,9 +1551,7 @@ def update_default_change_account(self):
 			self.default_change_account = frappe.get_cached_value("POS Config",self.pos_config,"default_change_account" )
 		if not self.default_change_account:
 			self.default_change_account = frappe.get_cached_value("Business Branch",self.business_branch,"default_change_account" )
-
-        
-    
+  
 def update_customer_bill_balance(self):
 	sql ="""update `tabCustomer` c 
 			inner join (

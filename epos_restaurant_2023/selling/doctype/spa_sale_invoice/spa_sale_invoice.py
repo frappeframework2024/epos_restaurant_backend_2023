@@ -182,7 +182,7 @@ def generate_to_sale(self):
 	create_new = False
 	if self.sale:
 		#check sale exist
-		if not frappe.db.exists("SPA Sale", self.sale):
+		if not frappe.db.exists("Sale", self.sale):
 			create_new = True
 	else:
 		create_new = True
@@ -195,6 +195,7 @@ def generate_to_sale(self):
 			"stock_location":self.stock_location,
 			"custom_bill_number":self.name,
 			"customer": self.customer,
+			"shift_name": self.shift_name,
 			"posting_date": self.posting_date,
 			"tax_rule": self.tax_rule,
 			"exchange_rate": self.exchange_rate,
