@@ -240,7 +240,7 @@ class Sale(Document):
 		# update default accunt
 		update_default_account(self) 
 
-		frappe.throw(str(self.working_day))
+		# frappe.throw(str(self.working_day))
 
 	@frappe.whitelist()
 	def get_sale_payment_naming_series(self):
