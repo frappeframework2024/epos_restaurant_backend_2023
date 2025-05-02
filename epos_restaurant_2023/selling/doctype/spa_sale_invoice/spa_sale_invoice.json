@@ -116,6 +116,7 @@
    "reqd": 1
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "sale",
    "fieldtype": "Link",
    "label": "Sale",
@@ -368,7 +369,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-05-01 15:11:12.878234",
+ "modified": "2025-05-02 11:01:12.843669",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "SPA Sale Invoice",

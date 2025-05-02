@@ -66,6 +66,29 @@ class SPASaleInvoice(Document):
 		#generate to sale
 		generate_to_sale(self)
 
+	def before_update_after_submit(self):
+		if self.sale:
+			fields = []
+			if self.has_value_changed("posting_date"):
+				fields.append("posting_date")
+
+			if len(fields) > 0:
+				sale = frappe.get_doc("Sale", self.sale)
+				for f in fields:
+					setattr(sale, f, self.get(f))  
+				 
+				# Critical: set ALL these flags
+				sale.flags.ignore_validate = True
+				sale.flags.ignore_validate_update_after_submit = True
+				sale.flags.ignore_mandatory = True
+				sale.flags.ignore_links = True  # handles Link field changes
+
+				# Save
+				sale.save(ignore_permissions=True)
+				self.sale = sale.name 
+				
+				
+
 	def on_cancel(self):
 		pass
 
