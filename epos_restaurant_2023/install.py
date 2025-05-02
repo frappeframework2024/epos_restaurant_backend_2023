@@ -144,7 +144,7 @@ def reset_sale_transaction():
             frappe.db.sql("delete from `tabMembership Family`")
             frappe.db.sql("delete from `tabMembership`") 
            
-            doctypes = ["Membership","Membership Check In","Membership Payment","Sales Coupon Payment"]
+            doctypes = ["Membership","Membership Check In","Membership Payment","Sales Coupon Payment","SPA Sale Invoice"]
             for d in doctypes:                 
                 formats =  frappe.get_meta(d).get_field("naming_series").options
                 if formats:
@@ -174,6 +174,7 @@ def reset_sale_transaction():
             # end general ledger by sales
 
             frappe.db.sql("delete from `tabCash Transaction`")
+            frappe.db.sql("delete from `tabSPA Sale Invoice Payment`")
             frappe.db.sql("delete from `tabSPA Sale Invoice Product`")
             frappe.db.sql("delete from `tabSPA Sale Invoice`")
             frappe.db.sql("delete from `tabSale Product Deleted`")
@@ -247,7 +248,7 @@ def reset_sale_transaction_pos_only():
             frappe.db.sql("delete from `tabMembership Family`")
             frappe.db.sql("delete from `tabMembership`") 
            
-            doctypes = ["Membership","Membership Check In","Membership Payment","Sales Coupon Payment"]
+            doctypes = ["Membership","Membership Check In","Membership Payment","Sales Coupon Payment","SPA Sale Invoice"]
             for d in doctypes:                 
                 formats =  frappe.get_meta(d).get_field("naming_series").options
                 if formats:
