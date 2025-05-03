@@ -161,8 +161,56 @@ frappe.ui.form.on('SPA Sale Invoice Product', {
 
 
     time_in(frm, cdt, cdn) {
-        const row = locals[cdt][cdn]; 
-        update_time_out(frm,row)
+        const row = locals[cdt][cdn];  
+
+        // let parts = row.time_in.split(':');
+        // let startDate = new Date();
+        // startDate.setHours(parseInt(parts[0]));
+        // startDate.setMinutes(parseInt(parts[1]));
+        // startDate.setSeconds(parseInt(parts[2] || 0));
+
+        // // Add duration (in minutes)
+        // startDate.setMinutes(startDate.getMinutes());
+
+        // // Format back to "HH:mm:ss"
+        // let hh = String(startDate.getHours()).padStart(2, '0');
+        // let mm = String(startDate.getMinutes()).padStart(2, '0');
+        // let ss = String(startDate.getSeconds()).padStart(2, '0'); 
+        // setTimeout(() => {
+        //     // Find the correct grid row field input
+        //     const grid = frm.fields_dict["items"].grid;
+        //     const field = grid.grid_rows_by_docname[cdn];
+        //     const $input = $(field.wrapper).find('[data-fieldname="time_in"] input');
+
+        //             // Track whether the change is from manual input or slider
+        //     let isManualChange = false;                
+        //     // Detect manual input change (typing in the input)
+        //     $input.on('input', function() {
+        //         isManualChange = true;
+        //     });
+           
+        //     // Detect slider change
+        //     $input.on('change', function() {
+        //         console.log(isManualChange)
+        //         if (!isManualChange) {
+        //             console.log("Time changed from the slider.");
+        //         } else {
+        //             if ($input.length && $input.data('datepicker')) {
+        //                 const datepicker = $input.data('datepicker');
+        //                 const currentDate = datepicker.selectedDates[0] || new Date();
+        //                 currentDate.setHours(parseInt(hh));
+        //                 currentDate.setMinutes(parseInt(mm));
+        //                 currentDate.setSeconds(parseInt(ss));
+        //                 datepicker.selectDate(currentDate);  // Sync UI slider
+        //             }
+        //         } 
+        //         isManualChange = false;
+        //     });
+
+             
+        // }, 100);
+
+        update_time_out(frm,row)   
     },
     
      
@@ -278,6 +326,18 @@ function update_time_out(frm, row){
 
         // Set the result to another Time field (e.g., time_out)
         frappe.model.set_value(row.doctype, row.name, "time_out", newTime).then(() => { 
+            setTimeout(() => {
+                const $input = $(`[data-fieldname="time_out"] input`);
+                if ($input.length && $input.data('datepicker')) {
+                    const datepicker = $input.data('datepicker');
+                    const currentDate = datepicker.selectedDates[0] || new Date();
+                    currentDate.setHours(parseInt(hh));
+                    currentDate.setMinutes(parseInt(mm));
+                    currentDate.setSeconds(parseInt(ss));
+                    datepicker.selectDate(currentDate);  // Update the picker
+                } 
+            }, 100);
+
             frm.fields_dict["items"].grid.refresh();
         }); 
     }
