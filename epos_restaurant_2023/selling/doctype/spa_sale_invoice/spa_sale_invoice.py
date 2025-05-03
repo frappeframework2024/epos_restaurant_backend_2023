@@ -296,6 +296,7 @@ def get_product_by_id(name):
 			result.append({
 				"is_require_employee": doc.is_require_employee,
 				"portion": d.portion,
+				"duration_value": get_duration_value(d.portion),
 				"base_unit":doc.unit, 
 				"unit":d.unit, 
 				"price": d.price
@@ -308,8 +309,23 @@ def get_product_by_id(name):
 			"portion": "",
 			"base_unit":doc.unit, 
 			"unit":doc.unit, 
-			"price": doc.price
+			"price": doc.price,
+			"duration_value": 0,
 		}]
+
+def get_duration_value(portion):
+	duration_sql = """select concat(duration_title, case when is_overtime = 1 then '(OT)' else '' end) as  duration_title,
+		duration_value as duration,
+		is_overtime
+	from `tabPredefine SPA Duration Code` 
+	where mapping_value = %(mapping_value)s
+	order by duration_value"""
+	duration = frappe.db.sql(duration_sql, {"mapping_value":portion}, as_dict = 1)
+	if len(duration)>0:
+		return duration[0]["duration"]
+	else:
+		return 0
+
 
 
 @frappe.whitelist()

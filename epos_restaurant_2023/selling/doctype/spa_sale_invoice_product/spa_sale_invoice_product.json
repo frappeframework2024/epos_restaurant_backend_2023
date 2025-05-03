@@ -14,6 +14,7 @@
   "time_in",
   "time_out",
   "duration",
+  "duration_value",
   "column_break_vuqu",
   "quantity",
   "regular_price",
@@ -193,12 +194,24 @@
    "label": "Is Required Therapist",
    "print_hide": 1,
    "report_hide": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "duration_value",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Duration Value",
+   "print_hide": 1,
+   "print_hide_if_no_value": 1,
+   "read_only": 1,
+   "report_hide": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-04-29 10:31:33.113668",
+ "modified": "2025-05-03 10:11:47.787316",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "SPA Sale Invoice Product",

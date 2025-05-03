@@ -3,6 +3,25 @@
 
 frappe.ui.form.on("SPA Sale Invoice", {
 	refresh(frm) { 
+
+        // Hide the sidebar
+        frm.page.sidebar.hide();
+        // Hide the comments section
+        frm.timeline.wrapper.hide();
+         setTimeout(() => {
+            $('.comment-box').hide();
+            $('.dropdown-menu li:contains("Print")').hide();
+            $('.dropdown-menu li:contains("Duplicate")').hide();
+            $('.dropdown-menu li:contains("Links")').hide();
+            $('.dropdown-menu li:contains("Rename")').hide();
+            $('.dropdown-menu li:contains("Jump to field")').hide();
+            $('.dropdown-menu li:contains("Email")').hide();
+            $('.dropdown-menu li:contains("Redo")').hide();
+            $('.dropdown-menu li:contains("Undo")').hide();
+            $('.dropdown-menu li:contains("Remind Me")').hide();
+        }, 100);
+
+
         if(frm.doc.__islocal==1 && frm.doc.tax_rule == undefined){
             frm.doc.tax_rule = ""
         }
@@ -26,6 +45,12 @@ frappe.ui.form.on("SPA Sale Invoice", {
         }); 
 
         update_child_table_field_visibility(frm)
+
+
+        if (frm.is_new()) {
+            frm.remove_custom_button('Print');
+            frm.page.clear_icons();  // hides print, email, etc. icons in the top-right
+        }
 	},
 
     validate: function(frm) {
@@ -48,6 +73,8 @@ frappe.ui.form.on("SPA Sale Invoice", {
     tax_rule(frm){
         update_invoice_summary(frm)
     }
+
+
 });
 
 frappe.ui.form.on('SPA Sale Invoice Payment', {
@@ -95,6 +122,7 @@ frappe.ui.form.on('SPA Sale Invoice Product', {
         update_child_table_field_visibility(frm)
       
         on_render_therapist(frm,doc);  
+        
 
 
 	}, 
@@ -113,7 +141,7 @@ frappe.ui.form.on('SPA Sale Invoice Product', {
                 name:row.article
             },
             callback: function(resp) {
-                const val = resp.message;
+                const val = resp.message; 
                 if(val.length > 1){
                     const dlg = select_portion_dialog(frm,row, val);
                      
@@ -130,6 +158,13 @@ frappe.ui.form.on('SPA Sale Invoice Product', {
             }
         });        
     },
+
+
+    time_in(frm, cdt, cdn) {
+        const row = locals[cdt][cdn]; 
+        update_time_out(frm,row)
+    },
+    
 	
 	price(frm, cdt, cdn) {
 		const row = locals[cdt][cdn];
@@ -149,6 +184,8 @@ frappe.ui.form.on('SPA Sale Invoice Product', {
 		update_item_amount(frm,row)
 	},
 	
+
+
 })
 
 
@@ -185,8 +222,9 @@ function select_portion_dialog(frm,row,data){
                             is_require_employee: data[0].is_require_employee || 0,
                             portion:e.data('portion'),
                             price:e.data('price'),
-                            base_unit:e.data('base_unit'),
-                            unit:e.data('unit')
+                            base_unit:e.data('base-unit'),
+                            unit:e.data('unit'),
+                            duration_value:  e.data('duration'),
                         }
                     ]
                     update_item_duration_price(frm, row,result);
@@ -219,16 +257,43 @@ function select_portion_dialog(frm,row,data){
 }
 
 
+function update_time_out(frm, row){
+    if (row.time_in && row.duration_value) {
+        // Parse start_time (expected format: "HH:mm:ss")
+        let parts = row.time_in.split(':');
+        let startDate = new Date();
+        startDate.setHours(parseInt(parts[0]));
+        startDate.setMinutes(parseInt(parts[1]));
+        startDate.setSeconds(parseInt(parts[2] || 0));
+
+        // Add duration (in minutes)
+        startDate.setMinutes(startDate.getMinutes() + row.duration_value);
+
+        // Format back to "HH:mm:ss"
+        let hh = String(startDate.getHours()).padStart(2, '0');
+        let mm = String(startDate.getMinutes()).padStart(2, '0');
+        let ss = String(startDate.getSeconds()).padStart(2, '0');
+        let newTime = `${hh}:${mm}:${ss}`;
+
+        // Set the result to another Time field (e.g., time_out)
+        frappe.model.set_value(row.doctype, row.name, "time_out", newTime);
+        frm.refresh_field("items"); 
+    }
+}
+
+
 function update_item_duration_price(frm, row, data){
     update_child_table_field_visibility(frm)
-
-
     row.duration = data[0].portion;
+    row.duration_value = data[0].duration_value || 0;
     row.price = data[0].price;
     row.regular_price = data[0].price;
     row.base_unit = data[0].base_unit;
-    row.unit = data[0].unit; 
-    update_item_amount(frm,row)
+    row.unit = data[0].unit;  
+    update_item_amount(frm,row);
+
+
+    update_time_out(frm,row);
 }
 
 

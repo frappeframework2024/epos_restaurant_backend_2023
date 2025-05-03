@@ -332,6 +332,22 @@ function show_camera_dialog(frm) {
         }
     });
     d.show();
+    setTimeout(() => {
+        const button_wrapper = d.fields_dict.take_photo.$wrapper;
+        button_wrapper.css({
+            'text-align': 'right',
+            'margin-top': '10px'
+        });
+        let btn = d.fields_dict.take_photo.$wrapper.find('button');
+        btn.css({
+            'color': '#fff',            // text color
+            'background-color': '#007bff', // custom background
+            'border-color': '#007bff',
+            'height': '40px',
+            'font-size': '15px',
+            'border-radius': '5px',
+        });
+    }, 100);
     d.$wrapper.find('.modal-dialog').addClass('modal-lg');
   
     // Inject HTML for camera feed
