@@ -165,6 +165,7 @@ frappe.ui.form.on('SPA Sale Invoice Product', {
         update_time_out(frm,row)
     },
     
+     
 	
 	price(frm, cdt, cdn) {
 		const row = locals[cdt][cdn];
@@ -276,8 +277,9 @@ function update_time_out(frm, row){
         let newTime = `${hh}:${mm}:${ss}`;
 
         // Set the result to another Time field (e.g., time_out)
-        frappe.model.set_value(row.doctype, row.name, "time_out", newTime);
-        frm.refresh_field("items"); 
+        frappe.model.set_value(row.doctype, row.name, "time_out", newTime).then(() => { 
+            frm.fields_dict["items"].grid.refresh();
+        }); 
     }
 }
 

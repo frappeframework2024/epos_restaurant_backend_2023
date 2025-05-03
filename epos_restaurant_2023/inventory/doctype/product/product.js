@@ -336,14 +336,14 @@ function show_camera_dialog(frm) {
         const button_wrapper = d.fields_dict.take_photo.$wrapper;
         button_wrapper.css({
             'text-align': 'right',
-            'margin-top': '10px'
+            'margin-top': '20px'
         });
         let btn = d.fields_dict.take_photo.$wrapper.find('button');
         btn.css({
             'color': '#fff',            // text color
             'background-color': '#007bff', // custom background
             'border-color': '#007bff',
-            'height': '40px',
+            'height': '50px',
             'font-size': '15px',
             'border-radius': '5px',
         });
@@ -355,7 +355,7 @@ function show_camera_dialog(frm) {
     wrapper.html(`
       <div style="text-align: center;">
         <video id="video" autoplay playsinline style="width: 100%; max-width: 100%; height: auto; border-radius: 8px;"></video>
-        <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
+        <canvas id="canvas" width="960" height="1280" style="display: none;"></canvas>
       </div>
     `);
     
