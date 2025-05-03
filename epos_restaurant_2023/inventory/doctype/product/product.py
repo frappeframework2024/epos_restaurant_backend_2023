@@ -376,6 +376,34 @@ class Product(Document):
 		else:
 			return self.product_variants
 
+@frappe.whitelist()
+def upload_photo(base64_image):
+	import base64
+	import re
+	from frappe.utils.file_manager import save_file
+	from frappe.utils import now_datetime
+
+	match = re.match(r"data:image\/\w+;base64,(.*)", base64_image)
+	if not match:
+		frappe.throw("Invalid image data.")
+
+	image_data = match.group(1)
+	image_bytes = base64.b64decode(image_data)
+
+	timestamp = now_datetime().strftime("%Y%m%d-%H%M%S")
+	docname = f"{timestamp}.png"
+
+	file_doc = save_file(
+		fname=docname,
+		content=image_bytes,
+		dt="File",
+		dn=docname,
+		decode=False,
+		is_private=0
+	)
+	return file_doc.file_url
+
+
 @frappe.whitelist(methods="POST")
 def update_product_info(product,portion=None):
 	frappe.enqueue(update_product_info_queue,queue='short', product=product, portion=portion)

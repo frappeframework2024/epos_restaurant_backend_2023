@@ -51,6 +51,9 @@ frappe.ui.form.on('Product Price', {
 
 frappe.ui.form.on("Product", {
     refresh(frm) {
+        frm.add_custom_button('Take Photo', () => {
+            show_camera_dialog(frm);
+          });
         setup_barcode_field(frm.fields_dict["product_code"],frm);
         frm.previous = JSON.parse(JSON.stringify(frm.doc))
         if(!frm.is_new() && frm.doc.is_inventory_product == 1){
@@ -274,18 +277,107 @@ frappe.ui.form.on("Product", {
 
 });
 
+function show_camera_dialog(frm) {
+    let streamRef;
+    let d = new frappe.ui.Dialog({
+        title: 'Take a Photo',
+        fields: [
+          {
+            fieldname: 'camera_html',
+            fieldtype: 'HTML'
+          },
+          {
+            label: 'Take Photo',
+            fieldname: 'take_photo',
+            fieldtype: 'Button',
+            click: () => {
+              const canvas = document.getElementById('canvas');
+              const video = document.getElementById('video');
+              const context = canvas.getContext('2d');
+              context.drawImage(video, 0, 0, canvas.width, canvas.height);
+              const imageData = canvas.toDataURL('image/png');
+              // Call backend to save
+              frappe.call({
+                method: "epos_restaurant_2023.inventory.doctype.product.product.upload_photo",
+                args: {
+                    base64_image: imageData
+                },
+                callback: function(r) {
+                  if (!r.exc) {
+                    if(frm.is_new()){
+                        frm.set_value("photo", r.message);
+                    }
+                    else{
+                        frm.set_value("photo", r.message);
+                        frm.save();
+                    }
+                  }
+                }
+              });
+              d.hide();
+            }
+          }
+        ]
+      });
+    $(d.$wrapper).on('hide.bs.modal', function () {
+        d.$wrapper.remove();
+        d = null;
+        const video = document.getElementById('video');
+        if (video) {
+            video.pause();
+            video.srcObject = null;
+        }
+        if (streamRef) {
+            streamRef.getTracks().forEach(track => track.stop());
+        }
+    });
+    d.show();
+    d.$wrapper.find('.modal-dialog').addClass('modal-lg');
+  
+    // Inject HTML for camera feed
+    const wrapper = d.fields_dict.camera_html.$wrapper;
+    wrapper.html(`
+      <div style="text-align: center;">
+        <video id="video" autoplay playsinline style="width: 100%; max-width: 100%; height: auto; border-radius: 8px;"></video>
+        <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
+      </div>
+    `);
+    
+    // Delay to ensure DOM is ready
+    setTimeout(() => {
+      const video = document.getElementById('video');
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" }
+        }).then(function(stream) {
+          streamRef = stream;
+          video.srcObject = stream;
+          video.play().catch(err => {
+            console.error('Error playing video:', err);
+        });
+        }).catch(function(err) {
+          frappe.msgprint("Camera error: " + err.message);
+        });
+      } else {
+        frappe.msgprint("Camera not supported.");
+      }
+    }, 200);
+  }
+  
+  
+
 function setup_barcode_field(field,frm) {
-    if(location.protocol == "https:"){
-        field.$wrapper.append(
-            `<span class="link-btn">
-                <a class="btn-open no-decoration" title="${__("Scan")}">
-                    ${frappe.utils.icon("scan", "sm")}
-                </a>
-            </span>`
-        );
-        this.$scan_btn = field.$wrapper.find(".link-btn");
-        this.$scan_btn.toggle(true);
-        this.$scan_btn.on("click", "a", () => {
+    field.$wrapper.append(
+        `<span class="link-btn">
+            <a class="btn-open no-decoration" title="${__("Scan")}">
+                ${frappe.utils.icon("scan", "sm")}
+            </a>
+        </span>`
+    );
+    this.$scan_btn = field.$wrapper.find(".link-btn");
+    this.$scan_btn.toggle(true);
+    this.$scan_btn.on("click", "a", () => {
+        setTimeout(() => {
             new frappe.ui.Scanner({
                 dialog: true,
                 multiple: false,
@@ -296,8 +388,8 @@ function setup_barcode_field(field,frm) {
                     }
                 },
             });
-        });
-    }
+        }, 200);
+    });
 }
 
 // deboounce text  auto-complete
