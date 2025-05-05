@@ -32,25 +32,19 @@ const { t: $t } = i18n.global;
 
 const data = ref(JSON.parse(JSON.stringify(dialogRef.value.data)))
 
-console.log(data)
 
 let is_loading=ref(false)
 
-if (!data.value.time_out){
-    data.value.time_out=moment(new Date).format('YYYY-MM-DD HH:mm')
-}
-
-if (!data.value.time_in){
-    data.value.time_in=moment(new Date).format('YYYY-MM-DD HH:mm')
-}
+data.value.time_in=moment(!data.value.time_in ? new Date : data.value.time_in).format('YYYY-MM-DD HH:mm')
+data.value.time_out=moment(!data.value.time_out ? new Date : data.value.time_out).format('YYYY-MM-DD HH:mm')
  
 
 function onConfirm() {
     is_loading.value=true 
         dialogRef.value.close(
             { 
-                time_in: moment(data.value.time_in).format('yyyy-MM-DD HH:mm:ss'),
-                time_out: moment(data.value.time_out).format('yyyy-MM-DD HH:mm:ss'),
+                time_in: moment(data.value.time_in).format('yyyy-MM-DD HH:mm:ss.SSSSSS'),
+                time_out: moment(data.value.time_out).format('yyyy-MM-DD HH:mm:ss.SSSSSS'),
             }
         );
         is_loading.value=false 

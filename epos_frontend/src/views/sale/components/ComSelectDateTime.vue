@@ -37,7 +37,7 @@ const props = defineProps({
 // const date = ref("2024-01-09 13:49");
 const default_date = moment(new Date).format('YYYY-MM-DD HH:mm')
 
-const date =  ref(default_date + ":00")
+const date =  ref(default_date + ":00.000000")
 
 if (props.params?.time_in){
     
@@ -49,7 +49,7 @@ const emit = defineEmits(["click"])
 
 
 function onClick() {
-    emit("resolve",moment(date.value).format('yyyy-MM-DD HH:mm:ss'));
+    emit("resolve",moment(date.value).format('yyyy-MM-DD HH:mm:ss.SSSSSS'));
 }
 function setTimeLaterClick() {
     emit("resolve",'Set Later');

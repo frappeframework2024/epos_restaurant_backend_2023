@@ -472,7 +472,7 @@ export default class Sale {
             
             if (p.is_timer_product) {
                 if (p.time_in) {
-                    saleProduct.time_in = moment(p.time_in).format('yyyy-MM-DD HH:mm:ss');
+                    saleProduct.time_in = moment(p.time_in).format('yyyy-MM-DD HH:mm:ss.SSSSSS');
                 }
             }
             this.onSaleProductApplyTax(tax_rule, saleProduct);
@@ -2168,6 +2168,8 @@ export default class Sale {
             })
         // }  
 
+
+
         let data = {
             action: action,
             print_setting: receipt,
@@ -2311,8 +2313,10 @@ export default class Sale {
 
     isBillRequested(sp=undefined) {
         if (this.sale.sale_status == 'Bill Requested') {
-            if((sp.revenue_group || "") == this.setting.pos_setting.allow_tip_revenue_group){
-                return false;
+            if(sp){
+                if((sp.revenue_group || "") == this.setting.pos_setting.allow_tip_revenue_group){
+                    return false;
+                }
             }
             toaster.warning($t('msg.this sale order is already print bill please cancel print bill first'));
             return true;

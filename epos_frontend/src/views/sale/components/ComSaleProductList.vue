@@ -33,8 +33,10 @@
                                 {{ sp.quantity }} x
                                 <CurrencyFormat :value="sp.price" />
                             </div>
+                            
                             <div v-else>
                                 <template v-if="sp.time_in">
+                                    
                                     {{ $t("Time In") }}: {{ moment(sp.time_in).format('hh:mm A') }}
                                     <span v-if="sp.time_out">
                                         {{ $t("Time Out") }}
@@ -105,7 +107,23 @@
                                 <v-chip color="green" size="small" v-if="sp.seat_number"> {{ $t('Seat') + "# " + sp.seat_number }}</v-chip>
 
                                 <div class="text-gray-500">
-                                    <v-icon icon="mdi-clock" size="small" class="mr-1"></v-icon><span>{{ moment(sp.creation).format('hh:mm:ss A') }}</span>
+                                    <v-icon icon="mdi-clock" size="small" class="mr-1"></v-icon>
+                                    <template v-if="sp.time_in ">
+                                      
+                                        <span>
+                                         {{ moment(sp.time_in).format('hh:mm A') }}
+                                        </span>
+                                        <span v-if="sp.time_out">
+                                            - {{ moment(sp.time_out).format('hh:mm A') }}
+                                        </span>
+                                        </template>
+                                    <template v-else>
+                                        <span>
+                                        {{ moment(sp.creation).format('hh:mm:ss A') }}
+                                    </span>
+                                    </template>
+                                    
+                                   
                                 </div>
 
                                 <div class="text-gray-500" v-if="sp.note">
@@ -365,7 +383,7 @@ async function _onStartTimer(sp) {
     let selectdatetime = await SelectDateTime({ "time_in": sp.time_in });
     if (selectdatetime) {
         if (selectdatetime != 'Set Later') {
-            sp.time_in = moment(selectdatetime).format('yyyy-MM-DD HH:mm:ss');
+            sp.time_in = moment(selectdatetime).format('yyyy-MM-DD HH:mm:ss.SSSSSS');
         } else {
             sp.time_in = undefined;
         }
@@ -385,17 +403,19 @@ async function onStopTimer(sp) {
 }
 
 async function onSetTimer(sp) { 
-    const dialogRef = dialog.open(ComSetTimeInOutModal, {
-        data: sp,
-        onClose: (options) => {
-            const result = options.data;
-            if (result) { 
-                
-                sp.time_in = result.time_in
-                sp.time_out = result.time_out
+    if (!sale.isBillRequested()) {
+        const dialogRef = dialog.open(ComSetTimeInOutModal, {
+            data: sp,
+            onClose: (options) => {
+                const result = options.data;
+                if (result) { 
+                    
+                    sp.time_in = result.time_in
+                    sp.time_out = result.time_out
+                }
             }
-        }
-    })
+        })
+    }
 } 
 
 async function _onStopTimer(sp) {
