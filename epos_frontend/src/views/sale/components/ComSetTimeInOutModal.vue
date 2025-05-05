@@ -2,7 +2,7 @@
     <ComModal width="1000px" :loading="is_loading" @onClose="onClose" @onOk="onConfirm" titleOKButton="Confirm">
         
         <template #title>
-            {{ $t('Stop Timer') }}
+            {{ $t('Set Time In/Out') }}
         </template>
         <template #content>
             <div class="d-block d-md-flex mb-3" style="justify-content: space-between;">
