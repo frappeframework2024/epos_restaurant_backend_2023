@@ -2334,13 +2334,12 @@ export default class Sale {
             const precision = this.setting.pos_setting.main_currency_precision;
             if (data.paymentType.is_single_payment_type == 1) {
                 this.sale.payment = [];
-                data.amount = parseFloat(parseFloat(this.sale.grand_total).toFixed(precision));
+                data.amount = parseFloat(parseFloat(this.sale.grand_total * data.paymentType.exchange_rate).toFixed(precision));
             }
             if (!this.getNumber(data.amount) == 0) {
                 if ((data.fee_amount || 0) == 0) {
                     data.fee_amount = parseFloat(parseFloat(data.amount / data.paymentType.exchange_rate).toFixed(precision)) * (data.paymentType.fee_percentage / 100);
                 }
-                
                 this.sale.payment.push({
                     payment_type: data.paymentType.payment_method,
                     payment_type_group:data.paymentType.payment_type_group,
