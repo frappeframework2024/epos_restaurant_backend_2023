@@ -37,10 +37,10 @@ const props = defineProps({
 // const date = ref("2024-01-09 13:49");
 const default_date = moment(new Date).format('YYYY-MM-DD HH:mm')
 
-const date =  ref(default_date + ":00.000000")
+const date =  ref(default_date + ":00")
 
 if (props.params?.time_in){    
-    date.value = props.params.time_in
+    date.value =moment(props.params.time_in).format('YYYY-MM-DD HH:mm') 
 } 
 const emit = defineEmits(["click"])
 

@@ -170,7 +170,7 @@
                                 }}</v-chip>
                         </template>
 
-                        <v-chip color="orange" v-if="(sp.is_require_employee || 0) == 1"
+                        <v-chip color="orange" v-if="(sp.is_require_employee || 0) == 1 && !sp.is_timer_product"
                             class="mx-1 grow text-center justify-center" variant="elevated" size="small"
                             @click="onSetTimer(sp)">{{ $t('Set Time In/Out') }}
                         </v-chip>
