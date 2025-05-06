@@ -229,6 +229,8 @@ def generate_to_sale(self):
 			"customer": self.customer,
 			"shift_name": self.shift_name,
 			"posting_date": self.posting_date,
+			"discount":self.discount,
+			"discount_type":self.discount_type,	
 			"tax_rule": self.tax_rule,
 			"exchange_rate": self.exchange_rate,
 			"change_exchange_rate": self.change_exchange_rate,
@@ -280,7 +282,9 @@ def generate_to_sale(self):
 		doc.flags.ignore_permissions = True  # Skip all permission checks
 		doc.insert()  # Save
 		doc.submit()  # Submit
-		self.sale = doc.name
+		self.sale = doc.name 
+		frappe.db.sql("update `tabSPA Sale Invoice` set sale=%(sale)s where name=%(name)s",{"sale":doc.name,"name":self.name})
+		frappe.db.commit()
 
 #function round decimal value
 def round_value(value, precision = 2):
@@ -331,6 +335,8 @@ def get_duration_value(portion):
 @frappe.whitelist()
 def client_script_update_summary(param):
 	doc = json.loads(param)	
+
+
 
  
 	#udpate sale item summary
@@ -444,6 +450,8 @@ def client_script_update_summary(param):
 		"item_discount":doc["item_discount"],
 		"total_quantity":doc["total_quantity"],
 		"sub_total":doc["sub_total"],
+		"discount":doc["discount"],
+		"discount_type":doc["discount_type"],	
 		"discount_amount":doc["discount_amount"],
 		"total_discount":doc["total_discount"],
 		"tax_rule_data":json.loads( doc["tax_rule_data"] or '[]'),
