@@ -24,6 +24,7 @@
   "discount_amount",
   "discount_type",
   "discount",
+  "bank_fee",
   "tax_rule",
   "column_break_rquv",
   "invoice_summary",
@@ -368,12 +369,18 @@
    "label": "Stock Location",
    "options": "Stock Location",
    "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "bank_fee",
+   "fieldtype": "Percent",
+   "label": "Bank Fee"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-05-03 10:03:46.842683",
+ "modified": "2025-05-07 14:37:02.082620",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "SPA Sale Invoice",

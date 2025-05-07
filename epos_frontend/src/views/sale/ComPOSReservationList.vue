@@ -242,12 +242,16 @@ async function onConvertToSale(reservation) {
             localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth));
 
             await db.getDoc("Tables Number", reservation.table_id).then(async (table) => {
-              sale.newSale();
+
+              
+             await sale.newSale();
+
+            
               sale.sale.from_reservation = reservation.name;
 
               sale.sale.working_day = _data.working_day.name;
-              sale.sale.posting_date = data.working_day.posting_date;
-              sale.posting_date = data.working_day.posting_date;
+              sale.sale.posting_date = _data.working_day.posting_date;
+              sale.posting_date = _data.working_day.posting_date;
 
               sale.sale.cashier_shift = _data.cashier_shift.name;
               sale.sale.shift_name = _data.cashier_shift.shift_name;
@@ -261,7 +265,7 @@ async function onConvertToSale(reservation) {
               sale.sale.customer_name = reservation.guest_name;
               sale.sale.customer_group = reservation.guest_type;
               sale.sale.deposit = reservation.total_deposit;
-
+             
               if (table.sale_type) {
                 sale.sale.sale_type = table.sale_type
               }
@@ -308,7 +312,8 @@ async function onConvertToSale(reservation) {
               }).catch(() => {
                 isLoading.value = false;
               });
-            }).catch(() => {
+            }).catch((err) => {
+              console.log(err)
               isLoading.value = false;
             })
 
