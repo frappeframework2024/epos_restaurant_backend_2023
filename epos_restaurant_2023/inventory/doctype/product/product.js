@@ -51,6 +51,9 @@ frappe.ui.form.on('Product Price', {
 
 frappe.ui.form.on("Product", {
     refresh(frm) {
+        if(!frm.is_new()){
+            frm.$wrapper.find('#custom-image-wrapper').remove();
+        }
         frm.add_custom_button('Take Photo', () => {
             show_camera_dialog(frm);
           });
@@ -85,31 +88,35 @@ frappe.ui.form.on("Product", {
         //         }
         //     }
         // })
-        frm.dashboard.render_heatmap()
-        frappe.call({
-            method: "epos_restaurant_2023.api.api.get_product_activity_log",
-            args:{
-                product:frm.doc.name,
-                doctype:frm.doc.doctype
-            },
-            callback: function (r) {
-                if (r.message) {
-                    
-                    new frappe.Chart(".heatmap", {
-                        type: 'heatmap',
-                        start: new Date(moment().subtract(1, 'year').toDate()),
-                        countLabel: "transaction",
-                        discreteDomains: 1,
-                        radius: 3, // default 0
-                        data: {
-                            'dataPoints': r.message
-                        },
+        const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+        if (!isMobile) {
+            frm.dashboard.render_heatmap()
+            frappe.call({
+                method: "epos_restaurant_2023.api.api.get_product_activity_log",
+                args:{
+                    product:frm.doc.name,
+                    doctype:frm.doc.doctype
+                },
+                callback: function (r) {
+                    if (r.message) {
                         
-                    });
-                    
+                        new frappe.Chart(".heatmap", {
+                            type: 'heatmap',
+                            start: new Date(moment().subtract(1, 'year').toDate()),
+                            countLabel: "transaction",
+                            discreteDomains: 1,
+                            radius: 3, // default 0
+                            data: {
+                                'dataPoints': r.message
+                            },
+                            
+                        });
+                        
+                    }
                 }
-            }
-        });
+            });
+        }
+        
 
 
   
@@ -204,6 +211,9 @@ frappe.ui.form.on("Product", {
 
     },
     onload(frm){
+        if(!frm.is_new()){
+            frm.$wrapper.find('#custom-image-wrapper').remove();
+        }
         frm.fields_dict['qb_product_name'].get_query = function() {           
             return {
                 query: 'epos_restaurant_2023.api.quickbook_intergration.qb_product.get_product_autocomplete',
@@ -306,9 +316,11 @@ function show_camera_dialog(frm) {
                   if (!r.exc) {
                     if(frm.is_new()){
                         frm.set_value("photo", r.message);
+                        show_taken_photo(frm)
                     }
                     else{
                         frm.set_value("photo", r.message);
+                        show_taken_photo(frm)
                         frm.save();
                     }
                   }
@@ -379,7 +391,19 @@ function show_camera_dialog(frm) {
       }
     }, 200);
   }
-  
+
+function show_taken_photo(frm) {
+    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+    if (isMobile && frm.is_new()) {
+        frm.$wrapper.find('#custom-image-wrapper').remove();
+        const imageUrl = frm.doc.photo;
+        if (imageUrl) {
+            const imageHtml = `<div id="custom-image-wrapper" style="text-align:center"><img src="${imageUrl}"  style="width: 80%; height: auto; border-radius:4px; border:1px solid #ccc;"/></div>`;
+            console.log(imageHtml);
+            $('.layout-main-section').first().before(imageHtml);
+        }
+    }
+}
   
 
 function setup_barcode_field(field,frm) {
