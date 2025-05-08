@@ -130,7 +130,7 @@
   {
    "fieldname": "tax_rule",
    "fieldtype": "Link",
-   "label": "Apply Tax Rule",
+   "label": "Apply Tax",
    "options": "Tax Rule"
   },
   {
@@ -374,13 +374,13 @@
    "default": "0",
    "fieldname": "bank_fee",
    "fieldtype": "Percent",
-   "label": "Bank Fee"
+   "label": "Bank Fee (%)"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-05-07 14:37:02.082620",
+ "modified": "2025-05-08 14:30:30.169328",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "SPA Sale Invoice",

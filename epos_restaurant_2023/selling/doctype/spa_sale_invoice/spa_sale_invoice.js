@@ -72,6 +72,9 @@ frappe.ui.form.on("SPA Sale Invoice", {
     },
     tax_rule(frm){
         update_invoice_summary(frm)
+    },
+    bank_fee(frm){
+        update_invoice_summary(frm)
     }
 
 

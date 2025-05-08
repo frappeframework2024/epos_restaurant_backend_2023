@@ -92,6 +92,15 @@
       <strong>{{frappe.format(total_amount ,{"fieldtype":"Currency"})}}</strong>
     </div>
   </div>
+
+  <div class="row">
+    <div class="col">
+      {{__("Bank Fee")}}
+    </div>
+    <div class="col text-right">
+      <strong data-bs-toggle="tooltip" data-bs-placement="top" title="Bank Fee">{{frappe.format(bank_fee ,{"fieldtype":"Percent"})}}</strong>
+    </div>
+  </div>
   
  
   {%if total_paid %}
@@ -100,7 +109,7 @@
       {{__("Paid")}}
     </div>
     <div class="col text-right">
-      <strong data-bs-toggle="tooltip" data-bs-placement="top" title="Paid">{{frappe.format(total_paid ,{"fieldtype":"Currency"})}}</strong>
+      <strong data-bs-toggle="tooltip" data-bs-placement="top" title="Paid">{{frappe.format(total_paid + ( (total_amount*(bank_fee||0)/100)),{"fieldtype":"Currency"})}}</strong>
     </div>
   </div>
   {%endif%}
@@ -111,7 +120,7 @@
       {{__("Balance")}}
     </div>
     <div class="col text-right">
-      <strong>{{frappe.format(balance ,{"fieldtype":"Currency"})}}</strong>
+      <strong>{{frappe.format(balance + ( (total_amount*(bank_fee||0)/100)) ,{"fieldtype":"Currency"})}}</strong>
     </div>
   </div>
   {%endif%}
