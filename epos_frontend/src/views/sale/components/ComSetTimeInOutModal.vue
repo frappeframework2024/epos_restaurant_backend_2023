@@ -43,11 +43,11 @@ function onConfirm() {
     is_loading.value=true 
         dialogRef.value.close(
             { 
-                time_in: moment(data.value.time_in).format('yyyy-MM-DD HH:mm:ss.SSSSSS'),
-                time_out: moment(data.value.time_out).format('yyyy-MM-DD HH:mm:ss.SSSSSS'),
+                time_in: moment(data.value.time_in).format('yyyy-MM-DD HH:mm:ss.000001'),
+                time_out: moment(data.value.time_out).format('yyyy-MM-DD HH:mm:ss.000001'),
             }
         );
-        is_loading.value=false 
+        is_loading.value=false
 }
 
 function onClose() {
