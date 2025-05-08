@@ -49,6 +49,7 @@ async function onOk() {
 }
 
 async function onMoveItem(table, sourceSale, targetSale) {
+    sale.move_item = true
     targetSale.table_id = table.id;
     targetSale.tbl_number = table.tbl_no;
     targetSale.tbl_group = table.tbl_group;

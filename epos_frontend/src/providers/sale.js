@@ -21,6 +21,7 @@ const toaster = createToaster({ position: "top-right" });
 
 export default class Sale {
     constructor() {
+        this.move_item = false
         this.now = new Date();
         this.is_payment_first_load = false;
         this.load_menu_lang = false;
@@ -216,10 +217,13 @@ export default class Sale {
     }
 
     async LoadSaleData(name) { 
-        
-        this.auditTrailLogs = [];
-        this.changeTableSaleProducts = [];
-        this.moveItemSaleProducts = [];
+        if(this.move_item == false){
+            this.auditTrailLogs = [];
+            this.changeTableSaleProducts = [];
+            this.moveItemSaleProducts = [];
+        }
+        this.move_item = false
+
         return new Promise(async (resolve) => {
             const parent = this;
             this.saleResource = createDocumentResource({
@@ -1651,11 +1655,7 @@ export default class Sale {
                     if (this.newSaleResource == null) {
                         this.createNewSaleResource();
                     }
-
-                    console.log(this.now);
-
                     // moment(now).format('yyyy-MM-DD HH:mm:ss.SSSSSS')
-                    console.log(doc)
                     _sale = await this.newSaleResource.submit({ doc: doc });
                 }
                 else {
