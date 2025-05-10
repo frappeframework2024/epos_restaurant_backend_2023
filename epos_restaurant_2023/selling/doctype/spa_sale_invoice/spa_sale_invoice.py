@@ -53,15 +53,17 @@ class SPASaleInvoice(Document):
 
 		#payment validate
 		if self.docstatus == 1:
+			
 			self.payments = []
-			default_payment_type = frappe.get_cached_value("ePOS Settings",None,"default_payment_type") 
-			pt = frappe.get_cached_doc('Payment Type', default_payment_type)
-			self.append('payments', {
-				"input_amount":self.total_amount,
-				"payment_type":default_payment_type,
-				"exchange_rate":pt.exchange_rate or 1,
-				"amount" : round_value(self.total_amount/(pt.exchange_rate or 1))
-			}) 
+			if self.total_amount > 0:
+				default_payment_type = frappe.get_cached_value("ePOS Settings",None,"default_payment_type") 
+				pt = frappe.get_cached_doc('Payment Type', default_payment_type)
+				self.append('payments', {
+					"input_amount":self.total_amount,
+					"payment_type":default_payment_type,
+					"exchange_rate":pt.exchange_rate or 1,
+					"amount" : round_value(self.total_amount/(pt.exchange_rate or 1))
+				}) 
 		validate_payment(self)
 
 
