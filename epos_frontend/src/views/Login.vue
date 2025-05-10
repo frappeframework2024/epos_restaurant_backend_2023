@@ -102,8 +102,7 @@
                 <div class="mt-2">
                   <v-btn size="x-large" class="w-full" color="light" @click="(() => {
                     $i18n.locale = ($i18n.locale == 'kh' ? 'en' : 'km');
-                    onChangeLang($i18n.locale)
-
+                    onChangeLang($i18n.locale, $i18n.locale == 'en' ? 'English' : 'Khmer')
                   })">{{ $i18n.locale == "en" ? "ខ្មែរ" : "English" }}</v-btn>
                 </div>
               </template>
