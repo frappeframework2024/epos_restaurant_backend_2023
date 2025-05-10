@@ -27,7 +27,6 @@ frappe.listview_settings['Product'] = {
         frappe.route_options = {
             status: ['!=',"Variant"]
           };
-        
     },
     onload(me) { 
         frappe.route_options = {

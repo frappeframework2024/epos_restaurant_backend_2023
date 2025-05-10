@@ -76,18 +76,6 @@ frappe.ui.form.on("Product", {
                 ]
             }
         });
-        // frm.dashboard.render_heatmap({
-        //     title: "Your Heatmap Title",
-        //     heatmap: true,  // This enables the heatmap
-        //     heatmap_options: {
-        //         data: {
-        //             // Example data
-        //             '2024-09-01': 5,
-        //             '2024-09-02': 10,
-        //             '2025-09-03': 3,
-        //         }
-        //     }
-        // })
         const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
         if (!isMobile) {
             frm.dashboard.render_heatmap()
@@ -116,12 +104,6 @@ frappe.ui.form.on("Product", {
                 }
             });
         }
-        
-
-
-  
-
-
 
         
         print_barcode_button(frm);
