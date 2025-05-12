@@ -1,5 +1,5 @@
 <template>
-    <div class="v-col rounded-lg mx-1 p-1" :class="bgColor">
+    <div class="v-col rounded-lg mx-1 p-1 clickable-box raised-box " :class="bgColor" @click="onClick">
         <div class="flex items-center h-100">
             <div class="v-row px-2">
                 <div class="v-col text-white" style="padding: 0 !important;">
@@ -17,7 +17,29 @@
         </div>
     </div>
 </template>
+<style scoped>
+.clickable-box {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.clickable-box:hover {
+  background-color: #5d9bff;
+}
+.raised-box {
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.2s ease;
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
+}
 
+.raised-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 6px rgba(0, 0, 0, 0.25);
+}
+</style>
 <script setup>
 import { defineProps, inject } from 'vue'
 const emit = defineEmits(["onClick"])

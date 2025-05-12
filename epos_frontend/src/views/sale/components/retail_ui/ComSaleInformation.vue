@@ -10,7 +10,7 @@
                 icon="mdi-calendar" />
             <ComSaleInformationbox bgColor="bg-blue-500" title="Cashier Shift" :value="sale.sale.cashier_shift"
                 size="large" icon="mdi-clock-time-nine-outline" />
-            <ComSaleInformationbox bgColor="bg-blue-500" title="Price Rule" :value="sale.sale.price_rule" size="large"
+            <ComSaleInformationbox bgColor="bg-blue-500"  @onClick="onChangePriceRule()" title="Price Rule" :value="sale.sale.price_rule" size="large"
                 icon="mdi-currency-usd" />
         </div>
     </div>
@@ -38,6 +38,7 @@ async function onChangeMenuLanguage() {
         sale.load_menu_lang = false;
     }, 1);
 }
+
 
 async function onUpdateGuestCover() {
     if (setting.use_guest_cover == 1) {
