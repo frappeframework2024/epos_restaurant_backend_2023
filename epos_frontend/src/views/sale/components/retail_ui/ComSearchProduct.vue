@@ -163,8 +163,6 @@ function onSortField(field) {
 
 function onSearch() {
     loading.value = true
- 
-
     db.getDocList('Product', {
         fields: ['name',"product_code_2","product_code_3", "pos_note",'product_name_en', 'product_name_kh', 'price', "photo", "product_category", 'prices','unit'],
         orFilters: [
@@ -179,7 +177,13 @@ function onSearch() {
         limit:50
     })
         .then((docs) => {
-            data.value = docs
+            const seen = new Set();
+            const filtered_data = docs.filter(doc => {
+                if (seen.has(doc.name)) return false;
+                seen.add(doc.name);
+                return true;
+            });
+            data.value = filtered_data
             loading.value = false
 
         })
