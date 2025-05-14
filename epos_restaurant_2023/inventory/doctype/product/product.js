@@ -50,6 +50,25 @@ frappe.ui.form.on('Product Price', {
 });
 
 frappe.ui.form.on("Product", {
+     product_code(frm) {
+         frappe.call({
+            method: "epos_restaurant_2023.inventory.doctype.product.product.check_existing_product",
+            args:{
+                product_code:frm.doc.product_code
+            },
+            callback: function (r) {
+                if (r.message == 1) {
+                    frm.set_df_property('existing_error', 'options', `<div style="color: red; text-align: center;width: 100%;">❌ Product code ${frm.doc.product_code} already exist</div>`);
+                    const parentDiv = frm.fields_dict.product_code.$wrapper;
+                    parentDiv.find('.help-box').hide();
+                    parentDiv.css('margin-bottom', '8px');
+                }
+                else{
+                    frm.fields_dict.existing_error.$wrapper.html('');
+                }
+            }
+        });
+    },
     refresh(frm) {
         if(!frm.is_new()){
             frm.$wrapper.find('#custom-image-wrapper').remove();
@@ -407,6 +426,23 @@ function setup_barcode_field(field,frm) {
                     if (data && data.result && data.result.text) {
                         frm.doc.product_code = data.result.text;
                         frm.refresh_field("product_code");
+                        frappe.call({
+                            method: "epos_restaurant_2023.inventory.doctype.product.product.check_existing_product",
+                            args:{
+                                product_code:frm.doc.product_code
+                            },
+                            callback: function (r) {
+                                if (r.message == 1) {
+                                    frm.set_df_property('existing_error', 'options', `<div style="color: red; text-align: center;width: 100%;">❌ Product code ${frm.doc.product_code} already exist</div>`);
+                                    const parentDiv = frm.fields_dict.product_code.$wrapper;
+                                    parentDiv.find('.help-box').hide();
+                                    parentDiv.css('margin-bottom', '8px');
+                                }
+                                else{
+                                    frm.fields_dict.existing_error.$wrapper.html('');
+                                }
+                            }
+                        });
                     }
                 },
             });

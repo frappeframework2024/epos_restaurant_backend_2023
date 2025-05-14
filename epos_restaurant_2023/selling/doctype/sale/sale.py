@@ -522,9 +522,9 @@ def update_sale_sale_product_cost(self):
 		cost = get_product_cost(sale_product_stock_location, p.product_code)/uom_conversion
 		## update sale product cost 
 		p.cost = cost
-
+		p_second_cost = (frappe.db.get_value('Product',{'product_code':p.product_code}, 'secondary_cost') or 0)
 		total_cost += (cost * p.quantity)
-		total_second_cost += ((frappe.db.get_value('Product',{'product_code':p.product_code}, 'secondary_cost')/uom_conversion)* p.quantity)
+		total_second_cost += ((p_second_cost/uom_conversion)* p.quantity)
 	self.sale_grand_total = self.grand_total
 	self.sale_profit = self.grand_total - total_cost
 	self.total_secondary_cost = total_second_cost

@@ -1019,3 +1019,10 @@ def opening_general_ledger_entry(self):
 	doc["remark"] = "Opening Stock On Product {0}.\nAgainst Account {1}.".format(self.name,accounts.default_inventory_account)
 	docs.append(doc)
 	submit_general_ledger_entry(docs=docs)
+
+@frappe.whitelist()
+def check_existing_product(product_code):
+	existed = 0
+	if frappe.db.exists("Product", product_code):
+		existed = 1
+	return existed
