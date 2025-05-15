@@ -7,7 +7,6 @@ from py_linq import Enumerable
 
 class ePOSSettings(Document):
 	def validate(self):
-			
 		if self.specific_pos_profile:
 			self.specific_business_branch = self.specific_pos_profile
 

@@ -26,6 +26,15 @@ from frappe.model.rename_doc import get_link_fields
 import re
 from urllib.parse import urljoin
 
+
+@frappe.whitelist("POST")
+def rename_doc(data):
+    doc = frappe.rename_doc(data['doctype'], data['old_name'], data['new_name'])
+    if doc:
+        return {
+            'name': data['new_name']
+        }
+    
 @frappe.whitelist(allow_guest=True)
 def get_field(doctype):
     return str(get_link_fields(doctype))

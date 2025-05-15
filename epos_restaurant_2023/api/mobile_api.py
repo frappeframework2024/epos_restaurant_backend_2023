@@ -287,11 +287,3 @@ def get_kot_image(station, sale, products,printer):
 def get_print_report_image(data): 
     return print_from_print_format(data)
  
-
-
-
-
-
-    
-
- 

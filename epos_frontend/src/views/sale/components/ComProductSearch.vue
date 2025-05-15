@@ -15,6 +15,7 @@
                 @keydown="onKeyDown"
                 ref="txtSearch"
                 :listening-focus="true"
+                @onInput="onSearch"
                 />
  
 
@@ -61,7 +62,7 @@ function getIsMobile() {
 }
 
 
-function onSearch(key) {
+function onSearch(key) { 
     if(key.length > 2 || key.length == 0){
         if (sale.setting.use_retail_ui == 0) {
             if (key) {

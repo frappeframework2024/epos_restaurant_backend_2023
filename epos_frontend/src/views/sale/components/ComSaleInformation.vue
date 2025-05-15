@@ -36,7 +36,6 @@ import ComSaleTypeChip from './ComSaleTypeChip.vue';
 import ComSaleInformationHappyHourPromotionChip from './happy_hour_promotion/ComSaleInformationHappyHourPromotionChip.vue';
 import { inject, keyboardDialog, changePriceRuleDialog, createToaster, i18n, computed } from '@/plugin';
 const gv = inject("$gv")
-
 const { t: $t } = i18n.global;
 
 

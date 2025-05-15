@@ -102,7 +102,7 @@
     </div>
 </template>
 <script setup>
-import {computed,keyboardDialog,onMounted,ref,nextTick} from '@/plugin'
+import {computed,keyboardDialog,ref,nextTick} from '@/plugin'
 import { useDisplay } from 'vuetify'
 import { onKeyStroke } from '@vueuse/core'
 const { mobile } = useDisplay()
@@ -186,7 +186,7 @@ const validAutofocus = computed(()=>{
     return props.requiredAutofocus ? true : props.autofocus && !mobile.value
 })
 // let data = ref(props.modelValue)
-const emit = defineEmits(['update:modelValue','focus'])
+const emit = defineEmits(['update:modelValue','focus','text-change', 'onInput', 'onClear', 'onClickAppendInner', 'onClickPrependInner'])
 
 const updateValue = (event) => {
     let value = event.target.value;
@@ -194,6 +194,7 @@ const updateValue = (event) => {
         value = parseFloat(value || 0)
     }
     emit('update:modelValue', value)
+    emit('text-change', value) // Emit custom text-change event
 }
 
 async function onDialog() { 
@@ -201,9 +202,10 @@ async function onDialog() {
     if(typeof keys == 'boolean' && keys == false){
         return
     }
-    else {         
+    else {      
         emit('onInput',keys)
         emit('update:modelValue', keys)
+        emit('text-change', keys) // Emit text-change for keyboard input
     }
 }
 if(props.listeningFocus){
@@ -225,6 +227,7 @@ function onClear(){
     emit('onInput',"")
     emit('onClear',"")
     emit('update:modelValue', "")
+    emit('text-change', "") // Emit text-change on clear
 }
 </script>
 <style>
