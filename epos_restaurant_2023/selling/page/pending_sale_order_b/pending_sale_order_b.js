@@ -86,12 +86,37 @@ MyPage = Class.extend({
 		frappe.call("epos_restaurant_2023.selling.page.pending_sale_order_b.pending_order.get_pending_order",param).then(result=>{		 
 			$(frappe.render_template("pending_order", result.message)).appendTo(this.content_container);
 			
-			// $('.table-number').on('click', function (e) {
-			// 	e.preventDefault();
-			// 	frappe.msgprint(frappe.render_template("pending_order_detail",{data:["data1","data 2","Item 3","Item 4","Item 5"]}))
-			//   });
+			$('.table-number').on('click', function (e) {
+				e.preventDefault();
+			
+				const iframe_url = "/printview?doctype=Sale&name=SINV2025-0032&format=Sale%20Receipt%20En&no_letterhead=0&show_toolbar=0&letterhead=Default%20Letterhead&settings=%7B%7D&_lang=en";
+				const dialog = new frappe.ui.Dialog({
+					title: 'Sale Receipt',
+					size: 'extra-large',
+					fields: [
+						{
+							fieldtype: 'HTML',
+							fieldname: 'iframe_area',
+							options: `${frappe.render_template("pending_order_detail",{data:["data1","data 2","Item 3","Item 4","Item 5"] , iframe_url})}	
+							${String(result.message)}			
+							
+							`
+						}
+					]
+				});
+			
+				dialog.show();
+			});
+			
+			
 
-		})	
+		})	.catch(err => {
+			frappe.msgprint({
+				title: __('Error'),
+				indicator: 'red',
+				message: __('Failed to load pending orders: ') + err.message
+			});
+		});
 
 	},
 

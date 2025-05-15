@@ -193,13 +193,16 @@ def print_from_print_format(data, is_html=False):
     
     set_link_titles(document)
     try:
+        from frappe.translate import set_default_language
+        set_default_language(data["_lang"])
         html = get_rendered_template(
             doc=document,
             letterhead=data['letterhead'] or "",
             print_format=print_format,
             meta=document.meta,
-            pos_profile= data["pos_profile"]
+            pos_profile= data["pos_profile"],
             )
+        set_default_language(frappe.local.lang)
     except frappe.TemplateNotFoundError:
         frappe.clear_last_message()
         html = None

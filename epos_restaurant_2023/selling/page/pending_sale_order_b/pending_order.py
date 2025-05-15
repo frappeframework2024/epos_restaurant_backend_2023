@@ -18,9 +18,6 @@ def get_pending_order(param):
 
 
     for tg in table_groups: 
-        
-         
-        
         tables = frappe.db.get_all("Tables Number",  
                                    filters={"tbl_group":tg.table_group}, 
                                    fields=["name","tbl_number"],
