@@ -144,8 +144,8 @@ frappe.query_reports["Sale Summary Report"] = {
 					end_date = end_date
 				}
                 return frappe.db.get_link_options('Working Day', txt,filters={
-						posting_date: ['between', [frappe.query_report.get_filter_value('start_date'), frappe.query_report.get_filter_value('end_date')]]
-					});
+					posting_date: ['between', [start_date, end_date]]
+				});
             },
 			"on_change": function (query_report) {},
 		},

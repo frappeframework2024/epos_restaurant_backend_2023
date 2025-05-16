@@ -39,21 +39,17 @@ class StockAdjustment(Document):
 		self.difference_amount = self.difference_cost
 
 	def on_submit(self):
+		if len(self.products)<=10:
+			update_inventory_on_submit(self)
+		else:
+			frappe.enqueue("epos_restaurant_2023.inventory.doctype.stock_adjustment.stock_adjustment.update_inventory_on_submit", queue='short', self=self)
+		
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			if self.difference_amount != 0 or self.difference_quantity != 0:
 				general_ledger(self)
-   
-		if len(self.products)<=10:
-			if self.difference_amount != 0 or self.difference_quantity != 0:
-				update_inventory_on_submit(self)
-			else:
-				frappe.msgprint("No Stocks Changed")
-		else:
-			frappe.enqueue("epos_restaurant_2023.inventory.doctype.stock_adjustment.stock_adjustment.update_inventory_on_submit", queue='short', self=self)
 	
 	def before_cancel(self):
 		frappe.throw(_("Stock adjustment transaction is not allow to cancel."))
-		#frappe.enqueue("epos_restaurant_2023.inventory.doctype.stock_adjustment.stock_adjustment.update_inventory_on_cancel", queue='short', self=self)
 
 def update_current_product_info(self):
 	for a in self.products:
@@ -64,7 +60,7 @@ def update_current_product_info(self):
 
 def update_inventory_on_submit(self):
 	for p in self.products:
-		if p.is_inventory_product:
+		if p.is_inventory_product and (p.quantity != p.current_quantity or p.cost != p.current_cost):
 			defference_qty = p.quantity - p.current_quantity
 			add_to_inventory_transaction({
 				'doctype': 'Inventory Transaction',
@@ -80,6 +76,7 @@ def update_inventory_on_submit(self):
 				'note': 'New Stock adjustment submitted.',
 				"action":"Submit"
 			})
+
 
 def general_ledger(self):
 	stock_in_hand = frappe.db.get_value("Business Branch",self.business_branch,"default_inventory_account")
