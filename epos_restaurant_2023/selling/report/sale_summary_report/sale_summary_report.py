@@ -263,6 +263,12 @@ def get_conditions(filters,group_filter=None):
 
 	if filters.table:
 		conditions += " AND b.table_id  in %(table)s"
+
+	if filters.working_day:
+		conditions += " AND b.working_day  in %(working_days)s"
+	
+	if filters.cashier_shift:
+		conditions += " AND b.cashier_shift  in %(cashier_shifts)s"
   
 	return conditions
 

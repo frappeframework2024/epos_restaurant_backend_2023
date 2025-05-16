@@ -123,6 +123,47 @@ frappe.query_reports["Sale Summary Report"] = {
 			},
 		},
 		{
+			"fieldname": "working_days",
+			"label": __("Working Day"),
+			"fieldtype": "MultiSelectList",
+			 get_data: function(txt) {
+				let filter_based_on = frappe.query_report.get_filter_value("filter_based_on");
+				let start_date = frappe.query_report.get_filter_value("start_date");
+				let end_date = frappe.query_report.get_filter_value("end_date");
+				let date = new Date()
+				if (filter_based_on=="Fiscal Year"){
+					start_date = start_of_year(date);
+					end_date = end_of_year(date);
+				}
+				else if (filter_based_on=="This Month"){
+					start_date = start_of_month(date);
+					end_date = end_of_month(date);
+				}
+				else{
+					start_date = start_date
+					end_date = end_date
+				}
+                return frappe.db.get_link_options('Working Day', txt,filters={
+						posting_date: ['between', [frappe.query_report.get_filter_value('start_date'), frappe.query_report.get_filter_value('end_date')]]
+					});
+            },
+			"on_change": function (query_report) {},
+		},
+		{
+			"fieldname": "cashier_shifts",
+			"label": __("Cashier Shift"),
+			"fieldtype": "MultiSelectList",
+			get_data: function(txt) {
+				working_days = frappe.query_report.get_filter_value("working_days");
+				if(working_days != ""){
+					return frappe.db.get_link_options('Cashier Shift', txt,filters={
+						working_day: ['in', working_days]
+					});
+				}
+			},
+			"on_change": function (query_report) {},
+		},
+		{
             fieldname: "pos_profile",
             label: __("POS Profile"),
             fieldtype: "MultiSelectList",
