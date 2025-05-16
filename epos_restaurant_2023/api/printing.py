@@ -190,7 +190,8 @@ def print_from_print_format(data, is_html=False):
     document = frappe.get_doc(data["doc"], data["name"])
     print_format = get_print_format_doc(data["print_format"], meta=document.meta)
     frappe.flags.ignore_print_permissions = True  
-    
+    if '_lang' not in data:
+        data['_lang'] = "English"
     set_link_titles(document)
     try:
         from frappe.translate import set_default_language
