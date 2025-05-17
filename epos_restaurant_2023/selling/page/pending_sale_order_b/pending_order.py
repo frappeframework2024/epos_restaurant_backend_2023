@@ -15,8 +15,6 @@ def get_pending_order(param):
         ss.update({"color":"#ffffff"})
     
     default_background, default_color = frappe.db.get_value("ePOS Settings", None, ["default_table_number_background_color","default_table_number_text_color"])
-
-
     for tg in table_groups: 
         tables = frappe.db.get_all("Tables Number",  
                                    filters={"tbl_group":tg.table_group}, 
@@ -39,7 +37,7 @@ def get_pending_order(param):
                 for s in sales:
                     s.update({"time_ago":pretty_date(s.creation),
                               "background":s.sale_status_color, 
-                              "color":s.sale_status_color, 
+                              "color":"#ffffff", 
                               "status":s.sale_status,
                               "bill_number":s.custom_bill_number or ""
                               })

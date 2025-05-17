@@ -83,31 +83,52 @@ MyPage = Class.extend({
 			}
 		}
 
-		frappe.call("epos_restaurant_2023.selling.page.pending_sale_order_b.pending_order.get_pending_order",param).then(result=>{		 
-			$(frappe.render_template("pending_order", result.message)).appendTo(this.content_container);
-			
-			$('.table-number').on('click', function (e) {
-				e.preventDefault();
-			
-				const iframe_url = "/printview?doctype=Sale&name=SINV2025-0032&format=Sale%20Receipt%20En&no_letterhead=0&show_toolbar=0&letterhead=Default%20Letterhead&settings=%7B%7D&_lang=en";
-				const dialog = new frappe.ui.Dialog({
-					title: 'Sale Receipt',
-					size: 'extra-large',
-					fields: [
-						{
-							fieldtype: 'HTML',
-							fieldname: 'iframe_area',
-							options: `${frappe.render_template("pending_order_detail",{data:["data1","data 2","Item 3","Item 4","Item 5"] , iframe_url})}	
-							${String(result.message)}			
-							
-							`
-						}
-					]
-				});
-			
-				dialog.show();
+		frappe.call("epos_restaurant_2023.selling.page.pending_sale_order_b.pending_order.get_pending_order",param).then(result=>{		
+			result.message.table_groups.forEach(group => {
+				group.tables.forEach(item => {
+					item.sales.forEach(s => {
+						s.sale = btoa(JSON.stringify(s));
+					});
+					item.sales_json = btoa(JSON.stringify(item.sales));
+				}); 
 			});
-			
+			$(frappe.render_template("pending_order", result.message)).appendTo(this.content_container);
+			const self = this;
+
+			$('.table-number').on('click', function (e) {	
+				
+				const sales = JSON.parse(atob($(this).data("sales")));
+				if(sales.length > 1){
+					const saleDialog = new frappe.ui.Dialog({
+						title: 'Choose Invoices',
+						size: 'small',
+						fields: [
+							{
+								fieldtype: 'HTML',
+								fieldname: 'iframe_area',
+								options: `${frappe.render_template("pending_order_detail",{sales: sales, iframe:undefined})}`								
+							}
+						]
+					});				
+					saleDialog.show();
+
+					// 🔽 Add event listener for sale-item
+					saleDialog.$wrapper.find('.sale-item').on('click', function (e) {
+						e.preventDefault();
+						const saleData = JSON.parse(atob($(this).data('sale')));
+						self.on_view_receipt(saleData);
+					});
+
+					
+					
+				}
+				else if(sales.length == 1){
+					self.on_view_receipt(sales[0])
+				}else{
+					// frappe.throw("No Invoice")
+
+				}
+			});		
 			
 
 		})	.catch(err => {
@@ -119,6 +140,29 @@ MyPage = Class.extend({
 		});
 
 	},
+
+	 on_view_receipt: function(e) {
+		
+		const iframe_url = `/printview?doctype=Sale&name=`+encodeURI(e.name)+`&format=Sale%20Receipt%20En&no_letterhead=0&show_toolbar=0&letterhead=Default%20Letterhead&settings=%7B%7D&_lang=en`;
+		const dialog = new frappe.ui.Dialog({
+			title: `Bill ID: ${e.name}` ,
+			size: 'extra-large',
+			fields: [
+				{
+					fieldtype: 'HTML',
+					fieldname: 'iframe_area',
+				}
+			]
+		});			
+		dialog.show();
+ 
+		dialog.fields_dict.iframe_area.$wrapper.html(`
+			 <div style="height:80vh;">
+			<iframe src="${iframe_url}" style="width:100%; height:100%; border:none;"></iframe>
+			</div>
+		`);
+	},
+	
 
 	onReload:function(){ 
 		this.make();

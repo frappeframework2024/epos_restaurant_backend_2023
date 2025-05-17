@@ -61,7 +61,7 @@ def update_current_product_info(self):
 def update_inventory_on_submit(self):
 	for p in self.products:
 		if p.is_inventory_product and (p.quantity != p.current_quantity or p.cost != p.current_cost):
-			defference_qty = p.quantity - p.current_quantity
+			difference_qty = p.quantity - p.current_quantity
 			add_to_inventory_transaction({
 				'doctype': 'Inventory Transaction',
 				'transaction_type':"Stock Adjustment",
@@ -70,8 +70,8 @@ def update_inventory_on_submit(self):
 				'product_code': p.product_code,
 				'unit':p.unit,
 				'stock_location':self.stock_location,
-				'out_quantity': abs(defference_qty) if defference_qty < 0 else 0,
-				'in_quantity': defference_qty if defference_qty >= 0 else 0,
+				'out_quantity': abs(difference_qty) if difference_qty < 0 else 0,
+				'in_quantity': difference_qty if difference_qty >= 0 else 0,
 				"price":p.cost,
 				'note': 'New Stock adjustment submitted.',
 				"action":"Submit"

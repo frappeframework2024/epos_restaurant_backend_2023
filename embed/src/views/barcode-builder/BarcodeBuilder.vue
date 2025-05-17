@@ -109,7 +109,7 @@
                         
                         {{ getCurrencyAmount(getValueFromPath(doc, e.fieldname)) }}
                       </span>
-                      <span v-else> {{ ( getValueFromPath(doc, e.fieldname)) }}</span>
+                      <span class="ellipsis-content" v-else> {{ ( getValueFromPath(doc, e.fieldname)) }}</span>
                     </template>
                   </div>
 
@@ -146,7 +146,7 @@
                           <span v-if="e.fieldtype == 'Currency'">
                             {{ getCurrencyAmount(getValueFromPath(doc,e.fieldname)) }}
                           </span>
-                          <span v-else> {{ getValueFromPath(doc, e.fieldname) }}</span>
+                          <span class="ellipsis-content" v-else> {{ getValueFromPath(doc, e.fieldname) }}</span>
                         </div>
                       </template>
                     </div>
@@ -566,5 +566,12 @@ onMounted(() => {
 .field-options:hover{
   background-color: #e7e7e7;
   transition-duration: 250ms;
+}
+.ellipsis-content {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>

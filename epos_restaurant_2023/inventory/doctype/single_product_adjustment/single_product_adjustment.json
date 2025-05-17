@@ -1,0 +1,237 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2025-05-16 10:21:51.245362",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "posting_date",
+  "column_break_zaeg",
+  "stock_location",
+  "business_branch",
+  "section_break_vimr",
+  "product_code",
+  "product_name",
+  "is_inventory_product",
+  "column_break_nozv",
+  "base_unit",
+  "unit",
+  "section_break_pekx",
+  "current_quantity",
+  "current_cost",
+  "total_current_cost",
+  "column_break_wutu",
+  "new_quantity",
+  "new_cost",
+  "total_new_cost",
+  "section_break_igkd",
+  "difference_account",
+  "column_break_mbqw",
+  "difference_quantity",
+  "column_break_coyl",
+  "difference_amount",
+  "section_break_iqkh",
+  "note"
+ ],
+ "fields": [
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Posting Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "stock_location",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Stock Location",
+   "options": "Stock Location",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "stock_location.business_branch",
+   "fieldname": "business_branch",
+   "fieldtype": "Link",
+   "label": "Business Branch",
+   "options": "Business Branch",
+   "read_only": 1
+  },
+  {
+   "fieldname": "product_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Product Code",
+   "link_filters": "[[{\"fieldname\":\"product_code\",\"field_option\":\"Product\"},\"is_inventory_product\",\"=\",1]]",
+   "options": "Product",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "product_code.product_name_en",
+   "fieldname": "product_name",
+   "fieldtype": "Data",
+   "label": "Product Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "product_code.unit",
+   "fieldname": "base_unit",
+   "fieldtype": "Link",
+   "label": "Base Unit",
+   "options": "Unit Of Measurement",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "product_code.unit",
+   "fetch_if_empty": 1,
+   "fieldname": "unit",
+   "fieldtype": "Link",
+   "label": "Unit",
+   "options": "Unit Of Measurement"
+  },
+  {
+   "default": "1",
+   "fieldname": "current_quantity",
+   "fieldtype": "Float",
+   "label": "Current Quantity",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "current_cost",
+   "fieldtype": "Currency",
+   "label": "Current Cost",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_current_cost",
+   "fieldtype": "Currency",
+   "label": "Total Current Cost",
+   "read_only": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "new_quantity",
+   "fieldtype": "Float",
+   "label": "New Quantity"
+  },
+  {
+   "default": "0",
+   "fieldname": "new_cost",
+   "fieldtype": "Currency",
+   "label": "New Cost"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_new_cost",
+   "fieldtype": "Currency",
+   "label": "Total New Cost",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_zaeg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_pekx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_wutu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_igkd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_mbqw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_vimr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fetch_from": "product_code.is_inventory_product",
+   "fieldname": "is_inventory_product",
+   "fieldtype": "Check",
+   "label": "Is Inventory Product",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_nozv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "business_branch.stock_adjustment_account",
+   "fetch_if_empty": 1,
+   "fieldname": "difference_account",
+   "fieldtype": "Link",
+   "label": "Difference Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "default": "0",
+   "fieldname": "difference_amount",
+   "fieldtype": "Currency",
+   "label": "Difference Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "difference_quantity",
+   "fieldtype": "Float",
+   "label": "Difference Quantity",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_coyl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "SPA.YYYY.-.####"
+  },
+  {
+   "fieldname": "section_break_iqkh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Long Text",
+   "label": "Note"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-05-16 14:41:23.315825",
+ "modified_by": "Administrator",
+ "module": "Inventory",
+ "name": "Single Product Adjustment",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
