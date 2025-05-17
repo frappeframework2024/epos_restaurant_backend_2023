@@ -2457,6 +2457,7 @@ export default class Sale {
                 sale_product_id: data.name,
                 product_name: `${data.product_name}${data.portion ? '.' + data.portion : ''}${data.modifiers ? ' ' + data.modifiers : ''}`,
                 sale_doc: this.sale.name,
+                sale_date: this.sale.posting_date,
                 sale_product: data,
                 quantity: data.quantity,
                 amount: data.total_revenue,

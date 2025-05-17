@@ -33,6 +33,7 @@ class Product(Document):
 
 		validate_default_accounts(self)
 		check_product_inventory_location(self)
+		add_base_unit_to_product_prices(self)
 		error_list=[]
 		for v in self.product_variants:
 			if v.variant_code is None or v.variant_code == "":
@@ -375,6 +376,27 @@ class Product(Document):
 			return product_variants
 		else:
 			return self.product_variants
+
+def add_base_unit_to_product_prices(self):
+	existed = []
+	default_price_rule = frappe.db.sql("select name from `tabPrice Rule` where is_default = 1 and disabled = 0",as_dict=1)
+	if default_price_rule:
+		if self.product_price:
+			for a in self.product_price:
+				if a.unit == self.unit and a.price_rule == default_price_rule[0].name:
+					existed.append(a.name)
+	if len(existed) == 0:
+		self.append('product_price', {
+			'barcode': self.name,
+            'price_rule': default_price_rule[0].name,
+            'unit': self.unit,
+			'base_unit': self.unit,
+            'business_branch': "",
+            'price': self.price,
+            'portion': self.unit,
+            'conversion_factor': 1
+        })
+
 
 @frappe.whitelist()
 def upload_photo(base64_image):
