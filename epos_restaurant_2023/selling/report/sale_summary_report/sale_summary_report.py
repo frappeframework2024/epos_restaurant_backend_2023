@@ -273,10 +273,14 @@ def get_conditions(filters,group_filter=None):
 	return conditions
 
 def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
-	
-	# frappe.throw(str(filters.row_group))
 	hide_columns = filters.get("hide_columns")
-	row_group = [d["fieldname"] for d in get_row_groups() if d["label"]==filters.row_group][0]
+	row_group = [d["fieldname"] for d in get_row_groups() if d["label"]==filters.row_group]
+	if len(row_group)>0:
+		row_group = None
+		row_group = row_group[0]
+	else:
+		row_group = None
+		row_group = "a.product_category"
 	
 	if(parent_row_group!=None):
 		row_group = [d["fieldname"] for d in get_row_groups() if d["label"]==parent_row_group][0]
