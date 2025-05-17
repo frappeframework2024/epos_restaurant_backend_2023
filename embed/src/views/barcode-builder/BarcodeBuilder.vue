@@ -109,7 +109,7 @@
                         
                         {{ getCurrencyAmount(getValueFromPath(doc, e.fieldname)) }}
                       </span>
-                      <span class="ellipsis-content" v-else> {{ ( getValueFromPath(doc, e.fieldname)) }}</span>
+                      <span :class="{ 'ellipsis-content': e.text_line == 'Single' }" v-else> {{ ( getValueFromPath(doc, e.fieldname)) }}</span>
                     </template>
                   </div>
 
@@ -146,7 +146,7 @@
                           <span v-if="e.fieldtype == 'Currency'">
                             {{ getCurrencyAmount(getValueFromPath(doc,e.fieldname)) }}
                           </span>
-                          <span class="ellipsis-content" v-else> {{ getValueFromPath(doc, e.fieldname) }}</span>
+                          <span :class="{ 'ellipsis-content': e.text_line == 'Single' }" v-else> {{ getValueFromPath(doc, e.fieldname) }}</span>
                         </div>
                       </template>
                     </div>
@@ -176,46 +176,47 @@
                 <h3>Element Property:</h3>
                 <div class="">
                   <div>
-                    <label>Font Size: </label>
-                    <InputText v-model.number="selectedElement.font_size" />
-                    <Slider v-model="selectedElement.font_size" class="w-3 my-3" :min="8" :max="36" />
-
-                    <div class="field">
-                      <label for="fontFamily">Font Type:</label>
-                      <Dropdown v-model="selectedElement.font_type" :options="fontFamily" optionLabel="label"
-                        placeholder="Select a Font" class="input-dropdown mx-2 w-auto" />
+                    <div style="display: flex;align-items: center;margin-bottom: 10px;">
+                      <label style="width: 50%;">Font Size: </label>
+                      <InputText style="width: 95%;" v-model.number="selectedElement.font_size" />
                     </div>
-
-                    <div>
-                      Text Rotation :
+                    <div style="display: flex;align-items: center;margin-top: 10px;">
+                      <label style="width: 50%;">Text Line:</label>
+                       <Select v-model="selectedElement.text_line" :options="['Single', 'Multi']" class="w-full md:w-56" />
+                    </div>
+                    <div style="display: flex;align-items: center;margin-top: 10px;">
+                      <label style="width: 50%;" for="fontFamily">Font Type:</label>
+                      <Dropdown style="width: 100%;" v-model="selectedElement.font_type" :options="fontFamily" optionLabel="label" placeholder="Select a Font" />
+                    </div>
+                    <div style="display: flex;align-items: center;display: flex;justify-content: center; margin-top: 10px;">
+                      <label>Text Rotation:</label>
                       <Knob v-model="selectedElement.rotation" :max="360" size="60" :step="90" />
                     </div>
                   </div>
                   <div>
 
-                    <div class="flex gap-2">
+                    <div class="flex gap-2" style="text-align: center;display: flex;justify-content: center;align-items: center;">
                       <label for="bold">Bold:</label>
                       <input type="checkbox" id="bold" v-model="isBold" />
                       <label for="italic">Italic:</label>
                       <input type="checkbox" id="italic" v-model="isItalic" />
                     </div>
-                    <div>
-                      <label>Data Type:</label>
-                      <Select v-model="selectedElement.fieldtype"
-                        :options="['Data', 'Currency', 'Barcode', 'Int', 'Float']" class="w-full md:w-56" />
+                    <div style="display: flex;align-items: center;margin-top: 10px;">
+                      <label style="width: 50%;">Data Type:</label>
+                      <Select v-model="selectedElement.fieldtype" :options="['Data', 'Currency', 'Barcode', 'Int', 'Float']" class="w-full md:w-56" />
                     </div>
-                    <div>text align</div>
-                    <Select v-model="selectedElement.justify_content" :options="['center', 'left', 'right']"
-                      class="w-full md:w-56" />
-
-                    <div>
-                      align item
-                      <Select v-model="selectedElement.align_items" :options="['center', 'start', 'end']"
-                        class="w-full md:w-56" />
+                    <div style="display: flex;align-items: center;margin-top: 10px;">
+                      <label style="width: 50%;">Text Align:</label>
+                       <Select v-model="selectedElement.justify_content" :options="['center', 'left', 'right']" class="w-full md:w-56" />
                     </div>
-
+                    <div style="display: flex;align-items: center;margin-top: 10px;">
+                      <label style="width: 50%;">Item Align:</label>
+                       <Select v-model="selectedElement.align_items" :options="['center', 'start', 'end']" class="w-full md:w-56" />
+                    </div>
                     <br />
-                    <Button label="Delete" @click="onDelete" />
+                    <div style="text-align: center;display: flex;justify-content: right;align-items: center;  margin-top: -20px;">
+                      <Button label="Delete" @click="onDelete" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -328,7 +329,8 @@ function onAddElement(f) {
     font_type: fontFamily.value[0],
     rotation: 0,
     justify_content: 'center',
-    align_items: 'center'
+    align_items: 'center',
+    text_line: 'Single',
   });
 }
 function onAddBarcodeElement(f, p, idx) {
@@ -344,7 +346,8 @@ function onAddBarcodeElement(f, p, idx) {
     font_type: fontFamily.value[0],
     rotation: 0,
     justify_content: 'center',
-    align_items: 'center'
+    align_items: 'center',
+    text_line: 'Single',
   });
 }
 
@@ -574,4 +577,5 @@ onMounted(() => {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
 </style>
