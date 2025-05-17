@@ -13,6 +13,7 @@ import { vue3Debounce } from 'vue-debounce'
 //import VueNumberFormat from 'vue-number-format'
 import NumberFormat from 'number-format.js'
 import CurrencyFormat from './components/CurrencyFormat.vue';
+import CurrencyFormatCustomerDisplay from './components/CurrencyFormatCustomerDisplay.vue';	
 import ComPlaceholder from './components/layout/components/ComPlaceholder.vue'
 import ComAutoComplete from './components/form/ComAutoComplete.vue'
 import ComTableView from './components/table/table_view/ComTableView.vue'
@@ -200,6 +201,7 @@ router.beforeEach(async (to, from, next) => {
 
  
 	app.component('CurrencyFormat', CurrencyFormat);
+	app.component('CurrencyFormatCustomerDisplay', CurrencyFormatCustomerDisplay);
 	app.component('ComPlaceholder', ComPlaceholder);
 	app.component('ComAutoComplete', ComAutoComplete);
 	app.component('ComPrintPreview', ComPrintPreview);

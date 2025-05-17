@@ -1,5 +1,5 @@
 <template>
-    {{ numberFormat(format, amount) }}
+    <div style="font-size: 20px;font-weight: bold;">{{ numberFormat(format, amount) }}</div>
 </template>
 <script setup>
 

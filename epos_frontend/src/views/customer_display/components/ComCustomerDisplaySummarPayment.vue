@@ -32,11 +32,10 @@
         <!-- end change amount -->
 
         <div class="flex justify-between">
-            <div>{{$t('Total Qty')}} : <span>{{ data.total_quantity }}</span></div>
-            <div>
+            <div style="font-size: 18px;">{{$t('Total Qty')}} : <span>{{ data.total_quantity }}</span></div>
+            <div style="margin-bottom: 0px!important; align-items: center;" class="flex justify-between mb-2 text-lg">
                 <ComExchangeRate />
-                <CurrencyFormat :value="(data.grand_total || 0) * (data.exchange_rate || 1)"
-                    :currency="gv.setting.pos_setting.second_currency_name" />
+                <CurrencyFormatCustomerDisplay :value="(data.grand_total || 0) * (data.exchange_rate || 1)" :currency="gv.setting.pos_setting.second_currency_name" />
             </div>
         </div>
     </div>
@@ -44,6 +43,7 @@
 <script setup>
 import { inject } from '@/plugin';
 import ComExchangeRate from '../../sale/components/ComExchangeRate.vue';
+import CurrencyFormatCustomerDisplay from '../../../components/CurrencyFormatCustomerDisplay.vue';
 const props = defineProps({
     data: Object
 })

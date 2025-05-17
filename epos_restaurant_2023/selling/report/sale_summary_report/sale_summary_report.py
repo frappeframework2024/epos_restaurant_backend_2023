@@ -448,7 +448,9 @@ def get_report_chart(filters,data):
 	return chart
 
 def get_report_field(filters):
-	row_group = [d for d in get_row_groups() if d["label"]==filters.row_group][0]
+	row_groups = [d for d in get_row_groups() if d["label"]==filters.row_group]
+	if len(row_groups)>0:
+		row_group = row_group[0]
 	
 	fields = []
 
