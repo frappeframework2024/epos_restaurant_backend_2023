@@ -386,8 +386,12 @@ def add_base_unit_to_product_prices(self):
 				if a.unit == self.unit and a.price_rule == default_price_rule[0].name:
 					existed += 1
 		if existed == 0:
+			counter = 1; name = self.name
+			while frappe.db.exists('Product Price', {"barcode":name}):
+				counter += 1
+				name = self.name + "-" + str(counter)
 			self.append('product_price', {
-				'barcode': self.name,
+				'barcode': name,
 				'price_rule': default_price_rule[0].name,
 				'unit': self.unit,
 				'base_unit': self.unit,
