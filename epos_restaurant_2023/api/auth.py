@@ -87,4 +87,11 @@ def generate_keys(user):
 
     
 
+@frappe.whitelist(allow_guest=True)
+def check_user_login(property):
  
+    if frappe.session.sid == "Guest":
+        frappe.response["message"] =  frappe.session.sid
+    else:
+        frappe.response["message"] = get_response_user_information(property)
+    

@@ -143,7 +143,7 @@ MyPage = Class.extend({
 
 	 on_view_receipt: function(e) {
 		
-		const iframe_url = `/printview?doctype=Sale&name=`+encodeURI(e.name)+`&format=Sale%20Receipt%20En&no_letterhead=0&show_toolbar=0&letterhead=Default%20Letterhead&settings=%7B%7D&_lang=en`;
+		const iframe_url = `/printview?doctype=Sale&name=`+encodeURI(e.name)+`&format=`+encodeURI(e.print_format)+`&no_letterhead=0&show_toolbar=0&letterhead=Default%20Letterhead&settings=%7B%7D&_lang=en`;
 		const dialog = new frappe.ui.Dialog({
 			title: `Bill ID: ${e.name}` ,
 			size: 'extra-large',

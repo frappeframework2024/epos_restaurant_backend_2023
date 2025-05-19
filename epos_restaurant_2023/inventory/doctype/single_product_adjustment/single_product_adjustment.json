@@ -15,6 +15,7 @@
   "product_code",
   "product_name",
   "is_inventory_product",
+  "product_category",
   "column_break_nozv",
   "base_unit",
   "unit",
@@ -33,7 +34,8 @@
   "column_break_coyl",
   "difference_amount",
   "section_break_iqkh",
-  "note"
+  "note",
+  "amended_from"
  ],
  "fields": [
   {
@@ -207,11 +209,29 @@
    "fieldname": "note",
    "fieldtype": "Long Text",
    "label": "Note"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Single Product Adjustment",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fetch_from": "product_code.product_category",
+   "fieldname": "product_category",
+   "fieldtype": "Link",
+   "label": "Product Category",
+   "options": "Product Category"
   }
  ],
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2025-05-16 14:41:23.315825",
+ "modified": "2025-05-17 16:37:43.469558",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Single Product Adjustment",
@@ -231,6 +251,7 @@
    "write": 1
   }
  ],
+ "search_fields": "product_code,product_name",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

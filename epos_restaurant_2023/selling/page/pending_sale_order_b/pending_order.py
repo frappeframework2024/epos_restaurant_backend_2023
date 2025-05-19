@@ -23,7 +23,7 @@ def get_pending_order(param):
                                 )
         for t in tables:
             sales = frappe.db.get_all("Sale", 
-                                       filters=[["table_id","=",t.name], ["docstatus","!=",1]],
+                                       filters=[["table_id","=",t.name], ["docstatus","=",0]],
                                        fields=["name","custom_bill_number","creation","sale_status","sale_status_priority","sale_status_color", "grand_total"],
                                        order_by="creation"
                                     )
@@ -39,7 +39,8 @@ def get_pending_order(param):
                               "background":s.sale_status_color, 
                               "color":"#ffffff", 
                               "status":s.sale_status,
-                              "bill_number":s.custom_bill_number or ""
+                              "bill_number":s.custom_bill_number or "",
+                              "print_format":doc.default_pos_receipt
                               })
                     del s["custom_bill_number"]
                     del s["sale_status_priority"]

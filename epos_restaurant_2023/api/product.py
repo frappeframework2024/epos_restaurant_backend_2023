@@ -413,6 +413,7 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
     product_price_datas = frappe.db.sql(sql_product_prices,filter,as_dict=1)
     if product_price_unit == "" and len(product_price_datas) == 1:
         product_price_unit = product_price_datas[0].unit
+
     if len(product_price_datas)>0:
         product_price_filter={
             "product_codes": [a.parent for a in product_price_datas]

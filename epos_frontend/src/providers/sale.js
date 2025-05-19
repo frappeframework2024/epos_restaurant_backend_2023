@@ -601,6 +601,7 @@ export default class Sale {
     }
 
     updateSaleProduct(sp) {
+        const precision = (this.setting.pos_setting.main_currency_precision||2)
         this.onRateIncludeTax(sp,false,false,false);
         //set property for re render comhappyhour check
         sp.is_render = false;
@@ -619,6 +620,8 @@ export default class Sale {
             sp.discount_amount = 0;
             //check if sale have discount then add discount to sale
         }
+        sp.discount_amount = parseFloat(sp.discount_amount.toFixed(precision));
+        
         sp.discount_amount = Math.abs(sp.discount_amount || 0) * (sp.is_return ? -1 : 1)
         if (sp.sale_discount_percent) {
             sp.sale_discount_amount = (sp.sub_total * sp.sale_discount_percent / 100);
@@ -831,6 +834,7 @@ export default class Sale {
 
     //update sale summary
     updateSaleSummary(sale_status = '') {
+        const precision = (this.setting.pos_setting.main_currency_precision||2)
         const sp = Enumerable.from(this.sale.sale_products);
         this.sale.total_quantity = this.getNumber(sp.where("$.is_timer_product == 0").sum("$.quantity"));
         this.sale.sub_total = this.getNumber(sp.sum("$.sub_total"));
@@ -840,10 +844,14 @@ export default class Sale {
         this.sale.discount = this.getNumber(this.sale.discount);
         this.sale.sale_discount = 0;
         if (this.sale.discount_type == "Percent") {
-            this.sale.sale_discount = this.sale.sale_discountable_amount * (this.sale.discount / 100);
+            this.sale.sale_discount =  this.sale.sale_discountable_amount * (this.sale.discount / 100);
         } else {
             this.sale.sale_discount = this.sale.discount;
         }
+
+        
+
+        this.sale.sale_discount = parseFloat(this.sale.sale_discount.toFixed(precision));
 
         this.sale.product_discount = this.getNumber(sp.sum("$.discount_amount"));
         this.sale.total_discount = (this.sale.product_discount || 0) + (this.sale.sale_discount || 0);
@@ -858,7 +866,8 @@ export default class Sale {
         this.sale.sub_total -= total_tax_exclude;
 
         //grand_total
-        this.sale.grand_total = ((this.sale.sub_total || 0) - (this.sale.total_discount || 0)) + ((this.sale.total_tax || 0));
+        this.sale.grand_total =  ((this.sale.sub_total || 0) - (this.sale.total_discount || 0)) + ((this.sale.total_tax || 0));
+        this.sale.grand_total =   parseFloat(this.sale.grand_total.toFixed(precision));
 
         // crypto able amount
         this.sale.crypto_able_amount = (this.sale.sale_discount > 0 ? 0 : this.getNumber(sp.sum("$.crypto_able_amount")));        

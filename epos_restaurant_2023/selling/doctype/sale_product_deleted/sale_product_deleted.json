@@ -9,6 +9,7 @@
  "engine": "InnoDB",
  "field_order": [
   "sale_doc",
+  "sale_date",
   "sale_product_id",
   "product_name",
   "product_name_kh",
@@ -34,7 +35,8 @@
    "fieldname": "sale_doc",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Sale Doc"
+   "label": "Sale Doc",
+   "search_index": 1
   },
   {
    "fieldname": "sale_product_id",
@@ -139,11 +141,17 @@
    "fieldtype": "Data",
    "label": "Combo Menu",
    "length": 500
+  },
+  {
+   "fieldname": "sale_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Sale Date"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-07 10:09:38.216913",
+ "modified": "2025-05-17 14:53:19.077557",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product Deleted",

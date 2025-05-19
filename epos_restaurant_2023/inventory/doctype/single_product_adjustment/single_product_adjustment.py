@@ -21,6 +21,10 @@ class SingleProductAdjustment(Document):
 		self.total_new_cost =self.new_quantity * self.new_cost
 		self.difference_quantity = self.new_quantity - self.current_quantity
 		self.difference_amount = self.total_new_cost - self.total_current_cost
+	
+	def on_submit(self):
+		update_inventory_on_submit(self)
+		general_ledger(self)
 			
 def update_current_product_info(self):
 	p = get_currenct_cost(self.product_code,self.stock_location,self.unit)
