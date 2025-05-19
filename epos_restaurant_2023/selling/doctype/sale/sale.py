@@ -134,6 +134,9 @@ class Sale(Document):
 				self.is_foc = 1
 
 
+		currency_precision = frappe.db.get_single_value('System Settings', 'currency_precision')
+		if currency_precision=='':
+			currency_precision = "2"
 		
 		if Enumerable(self.payment).where(lambda x: (x.is_foc or 0) ==1).count()>=1:
 			self.is_foc = 1
@@ -150,10 +153,13 @@ class Sale(Document):
 		if self.discount:
 			if self.discount_type =="Percent":
 				self.sale_discount = self.sale_discountable_amount * self.discount / 100
+				self.discount_amount = round(self.discount_amount  , int(currency_precision)) 
 			else:
 				self.sale_discount = self.discount or 0
 				if self.discount > self.sale_discountable_amount:
 					frappe.throw("Discount amount cannot greater than discountable amount")
+
+
 		
 		self.product_discount = Enumerable(self.sale_products).where(lambda x:x.allow_discount ==1).sum(lambda x: x.discount_amount)		
 		self.total_discount = (self.product_discount or 0) + (self.sale_discount or 0)  
@@ -171,9 +177,7 @@ class Sale(Document):
 
 		self.sub_total = sub_total	- total_rate_include_tax
 
-		currency_precision = frappe.db.get_single_value('System Settings', 'currency_precision')
-		if currency_precision=='':
-			currency_precision = "2"
+	
 
 		self.grand_total =( sub_total - (self.total_discount or 0))  + self.total_tax - total_rate_include_tax
 		self.grand_total =round(self.grand_total, int(currency_precision))
@@ -964,6 +968,10 @@ def add_payment_to_sale_payment(self):
 			doc.insert()
 
 def validate_sale_product(self):
+	currency_precision = frappe.db.get_single_value('System Settings', 'currency_precision')
+	if currency_precision=='':
+		currency_precision = "2"
+		
 	sale_discount = self.discount  
 	if sale_discount>0:
 		if self.discount_type=="Amount":
@@ -981,6 +989,7 @@ def validate_sale_product(self):
 		d.sub_total = (d.quantity or 0) * (d.price or 0) + (d.quantity or 0) * (d.modifiers_price or 0)
 		if (d.discount_type or "Percent")=="Percent":
 			d.discount_amount = d.sub_total * (d.discount or 0) / 100
+			d.discount_amount = round(d.discount_amount  , int(currency_precision))
 		else:
 			d.discount_amount = d.discount or 0
 

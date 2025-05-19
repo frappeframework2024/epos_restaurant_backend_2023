@@ -601,7 +601,7 @@ export default class Sale {
     }
 
     updateSaleProduct(sp) {
-        const precision = (this.setting.pos_setting.main_currency_precision||2)
+        const precision = (this.setting.pos_setting.main_currency_precision||2) // new
         this.onRateIncludeTax(sp,false,false,false);
         //set property for re render comhappyhour check
         sp.is_render = false;
@@ -620,8 +620,9 @@ export default class Sale {
             sp.discount_amount = 0;
             //check if sale have discount then add discount to sale
         }
-        sp.discount_amount = parseFloat(sp.discount_amount.toFixed(precision));
-        
+   
+        sp.discount_amount = parseFloat(sp.discount_amount.toFixed(precision)); //new
+
         sp.discount_amount = Math.abs(sp.discount_amount || 0) * (sp.is_return ? -1 : 1)
         if (sp.sale_discount_percent) {
             sp.sale_discount_amount = (sp.sub_total * sp.sale_discount_percent / 100);
@@ -834,7 +835,7 @@ export default class Sale {
 
     //update sale summary
     updateSaleSummary(sale_status = '') {
-        const precision = (this.setting.pos_setting.main_currency_precision||2)
+        const precision = (this.setting.pos_setting.main_currency_precision||2) //new
         const sp = Enumerable.from(this.sale.sale_products);
         this.sale.total_quantity = this.getNumber(sp.where("$.is_timer_product == 0").sum("$.quantity"));
         this.sale.sub_total = this.getNumber(sp.sum("$.sub_total"));
@@ -851,7 +852,7 @@ export default class Sale {
 
         
 
-        this.sale.sale_discount = parseFloat(this.sale.sale_discount.toFixed(precision));
+        this.sale.sale_discount = parseFloat(this.sale.sale_discount.toFixed(precision)); //new
 
         this.sale.product_discount = this.getNumber(sp.sum("$.discount_amount"));
         this.sale.total_discount = (this.sale.product_discount || 0) + (this.sale.sale_discount || 0);
@@ -867,7 +868,7 @@ export default class Sale {
 
         //grand_total
         this.sale.grand_total =  ((this.sale.sub_total || 0) - (this.sale.total_discount || 0)) + ((this.sale.total_tax || 0));
-        this.sale.grand_total =   parseFloat(this.sale.grand_total.toFixed(precision));
+        this.sale.grand_total =   parseFloat(this.sale.grand_total.toFixed(precision)); //new
 
         // crypto able amount
         this.sale.crypto_able_amount = (this.sale.sale_discount > 0 ? 0 : this.getNumber(sp.sum("$.crypto_able_amount")));        
@@ -875,12 +876,15 @@ export default class Sale {
         //
         this.sale.balance = this.sale.grand_total - (this.sale.deposit || 0) - (this.sale.total_cash_coupon_claim||0);
 
+        this.sale.balance =  parseFloat(this.sale.balance.toFixed(precision)); //new
+
         // commission
         if (this.sale.commission_type == "Percent") {
             this.sale.commission_amount = (this.sale.grand_total * this.sale.commission / 100);
         } else {
             this.sale.commission_amount = this.sale.commission;
         }
+        this.sale.commission_amount =  parseFloat(this.sale.commission_amount.toFixed(precision)); //new
 
         this.orderChanged = true;
         socket.emit("ShowOrderInCustomerDisplay", this.sale, sale_status, this.customer_display_key);
