@@ -401,6 +401,13 @@ def add_base_unit_to_product_prices(self):
 				'conversion_factor': 1
 			})
 
+@frappe.whitelist()
+def custom_rename_doc(doctype, old, new, merge=False):
+	from frappe.model.rename_doc import rename_doc
+	if not frappe.has_permission(doctype, "write", old):
+		frappe.throw(_("You do not have permission to rename this document."))
+
+	return rename_doc(doctype, old, new, merge=merge)
 
 @frappe.whitelist()
 def upload_photo(base64_image):

@@ -58,7 +58,7 @@ frappe.ui.form.on("Product", {
             },
             callback: function (r) {
                 if (r.message == 1) {
-                    frm.set_df_property('existing_error', 'options', `<div style="color: red; text-align: center;width: 100%;">❌ Product code ${frm.doc.product_code} already exist</div>`);
+                    frm.set_df_property('existing_error', 'options', `<div style="color: red; text-align: center;width: 100%;margin-bottom:5px">❌ Product code ${frm.doc.product_code} already exist</div>`);
                     const parentDiv = frm.fields_dict.product_code.$wrapper;
                     parentDiv.find('.help-box').hide();
                     parentDiv.css('margin-bottom', '8px');
@@ -70,6 +70,7 @@ frappe.ui.form.on("Product", {
         });
     },
     refresh(frm) {
+        custom_rename(frm);
         if(!frm.is_new()){
             frm.$wrapper.find('#custom-image-wrapper').remove();
         }
@@ -407,7 +408,96 @@ function show_taken_photo(frm) {
         }
     }
 }
-  
+
+function custom_rename(frm) {
+    frm.page.add_menu_item(__('Rename Product'), () => {
+    const dialog = new frappe.ui.Dialog({
+        title: 'Rename',
+        fields: [
+            {
+                label: 'New Code',
+                fieldname: 'new_name',
+                fieldtype: 'Data',
+                reqd: 1
+            },
+                {
+                fieldtype: 'HTML',
+                fieldname: 'error_msg'
+            }
+        ],
+        primary_action_label: 'Rename',
+        primary_action(values) {
+            frappe.call({
+                method: 'epos_restaurant_2023.inventory.doctype.product.product.custom_rename_doc',
+                args: {
+                    doctype: frm.doc.doctype,
+                    old: frm.doc.name,
+                    new: values.new_name,
+                    merge: 0
+                },
+                callback: function(r) {
+                    if (!r.exc) {
+                        frappe.set_route('Form', frm.doc.doctype, values.new_name);
+                    }
+                }
+            });
+            dialog.hide();
+        }
+    });
+    dialog.show();
+    const $rename_btn = dialog.get_primary_btn();
+    setTimeout(() => {
+        const $input_wrapper = dialog.fields_dict.new_name.$wrapper;
+        dialog.fields_dict.new_name.$input.on('input', async function() {
+        const val = $(this).val().trim();
+        dialog.fields_dict.error_msg.$wrapper.html('');
+        $rename_btn.prop('disabled', false);
+        if (!val) {
+            $rename_btn.prop('disabled', true);
+            return;
+        }
+        try {
+            check_existing_product(dialog,frm.doc.doctype, val,$rename_btn);
+        } catch (e) {
+            console.error(e);
+        }
+        });
+        const $input = $input_wrapper.find('input');
+        const $icon = $(`
+            <span style="position: absolute; right: 10px; top: 72%; transform: translateY(-50%); cursor: pointer;">
+                <a class="btn-open no-decoration" title="${__("Scan")}">
+                    ${frappe.utils.icon("scan", "sm")}
+                </a>
+            </span>`);
+        $input_wrapper.css('position', 'relative');
+        $input.css('padding-right', '30px');
+        $input_wrapper.append($icon);
+        $icon.on('click', () => {
+            const scanner = new frappe.ui.Scanner({
+                dialog: true,
+                on_scan: (data) => {
+                    dialog.set_value('new_name', data.result.text);
+                    check_existing_product(dialog,frm.doc.doctype, data.result.text,$rename_btn);
+                }
+            });
+            scanner.show();
+        });
+    }, 100);
+});
+}
+
+async function check_existing_product(dialog,doctype,result,$rename_btn) {
+    const exists = await frappe.db.exists(doctype, result);
+    if (exists) {
+        dialog.fields_dict.error_msg.$wrapper.html(
+        `<div style="color: red; text-align: center;width: 100%;">❌ Product code ${result} already exist</div>`
+        );
+        $rename_btn.prop('disabled', true);
+    } else {
+        dialog.fields_dict.error_msg.$wrapper.html('');
+        $rename_btn.prop('disabled', false);
+    }
+}
 
 function setup_barcode_field(field_name,frm) {
     field = frm.fields_dict[field_name];

@@ -147,13 +147,13 @@ class Sale(Document):
 		sale_discountable_amount =Enumerable(self.sale_products).where(lambda x:x.allow_discount ==1 and (x.discount_amount or 0)==0).sum(lambda x: (x.quantity or 0)* (x.price or  0) + + ((x.quantity or 0)*(x.modifiers_price or 0)))
 
 		self.total_quantity = total_quantity
-		self.sale_discountable_amount = sale_discountable_amount
+		self.sale_discountable_amount = round(sale_discountable_amount  , int(currency_precision)) 
 		
 		# calculate sale discount
 		if self.discount:
 			if self.discount_type =="Percent":
 				self.sale_discount = self.sale_discountable_amount * self.discount / 100
-				self.discount_amount = round(self.discount_amount  , int(currency_precision)) 
+				self.sale_discount = round(self.sale_discount  , int(currency_precision)) 
 			else:
 				self.sale_discount = self.discount or 0
 				if self.discount > self.sale_discountable_amount:
@@ -162,6 +162,7 @@ class Sale(Document):
 
 		
 		self.product_discount = Enumerable(self.sale_products).where(lambda x:x.allow_discount ==1).sum(lambda x: x.discount_amount)		
+		self.product_discount=round(self.product_discount  , int(currency_precision)) 
 		self.total_discount = (self.product_discount or 0) + (self.sale_discount or 0)  
 		#tax 
 		self.taxable_amount_1  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.taxable_amount_1)
@@ -998,6 +999,7 @@ def validate_sale_product(self):
 			
 			d.sale_discount_percent = sale_discount  
 			d.sale_discount_amount = (sale_discount/100) * d.sub_total
+			d.sale_discount_amount=round(d.sale_discount_amount  , int(currency_precision))
 		else:
 			d.sale_discount_percent = 0  
 			d.sale_discount_amount = 0
