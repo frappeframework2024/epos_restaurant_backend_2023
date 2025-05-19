@@ -1,10 +1,16 @@
 <template>
     <v-tooltip :text="$t('Exchange Rate')" location="top">
         <template v-slot:activator="{ props }">
-            <v-chip v-bind="props" color="white" class="m-1" rounded="pill" variant="elevated" size="x-small" style="height: 25px;;">
-                <CurrencyFormatCustomerDisplay :value="1" :currency="gv.setting.pos_setting.exchange_rate_main_currency" /> 
-                <div style="font-size: 18px;font-weight: bold;margin-left: 5px;margin-right: 5px;">=</div>
-                <CurrencyFormatCustomerDisplay :value="exchange_rate" :currency="to_currency" />
+            <v-chip v-bind="props" color="white" class="m-1" rounded="pill" variant="elevated" size="x-small" style="height: 32px;;">
+                <div style="margin: 0px; padding: 0px; font-size: 26px; font-weight: bold;">
+                    <CurrencyFormat :value="1" :currency="gv.setting.pos_setting.exchange_rate_main_currency" /> 
+                </div>
+                <div>
+                    <div style="font-size: 22px;font-weight: bold;margin-left: 5px;margin-right: 5px;">=</div>
+                </div>
+                <div style="margin: 0px; padding: 0px; font-size: 26px; font-weight: bold;">
+                    <CurrencyFormat :value="exchange_rate" :currency="to_currency" />
+                </div>
             </v-chip>
         </template>
     </v-tooltip>
