@@ -76,7 +76,9 @@ frappe.ui.form.on("Product", {
         frm.add_custom_button('Take Photo', () => {
             show_camera_dialog(frm);
           });
-        setup_barcode_field(frm.fields_dict["product_code"],frm);
+        setup_barcode_field("product_code",frm);
+        setup_barcode_field("product_code_2",frm);
+        setup_barcode_field("product_code_3",frm);
         frm.previous = JSON.parse(JSON.stringify(frm.doc))
         if(!frm.is_new() && frm.doc.is_inventory_product == 1){
             frm.set_df_property("is_inventory_product", "read_only", 1)
@@ -407,7 +409,8 @@ function show_taken_photo(frm) {
 }
   
 
-function setup_barcode_field(field,frm) {
+function setup_barcode_field(field_name,frm) {
+    field = frm.fields_dict[field_name];
     field.$wrapper.append(
         `<span class="link-btn">
             <a class="btn-open no-decoration" title="${__("Scan")}">
@@ -424,25 +427,27 @@ function setup_barcode_field(field,frm) {
                 multiple: false,
                 on_scan(data) {
                     if (data && data.result && data.result.text) {
-                        frm.doc.product_code = data.result.text;
-                        frm.refresh_field("product_code");
-                        frappe.call({
-                            method: "epos_restaurant_2023.inventory.doctype.product.product.check_existing_product",
-                            args:{
-                                product_code:frm.doc.product_code
-                            },
-                            callback: function (r) {
-                                if (r.message == 1) {
-                                    frm.set_df_property('existing_error', 'options', `<div style="color: red; text-align: center;width: 100%;">❌ Product code ${frm.doc.product_code} already exist</div>`);
-                                    const parentDiv = frm.fields_dict.product_code.$wrapper;
-                                    parentDiv.find('.help-box').hide();
-                                    parentDiv.css('margin-bottom', '8px');
+                        frm.doc[field_name] = data.result.text;
+                        frm.refresh_field(field_name);
+                        if(field == "product_code"){
+                            frappe.call({
+                                method: "epos_restaurant_2023.inventory.doctype.product.product.check_existing_product",
+                                args:{
+                                    product_code:frm.doc.product_code
+                                },
+                                callback: function (r) {
+                                    if (r.message == 1) {
+                                        frm.set_df_property('existing_error', 'options', `<div style="color: red; text-align: center;width: 100%;">❌ Product code ${frm.doc.product_code} already exist</div>`);
+                                        const parentDiv = frm.fields_dict.product_code.$wrapper;
+                                        parentDiv.find('.help-box').hide();
+                                        parentDiv.css('margin-bottom', '8px');
+                                    }
+                                    else{
+                                        frm.fields_dict.existing_error.$wrapper.html('');
+                                    }
                                 }
-                                else{
-                                    frm.fields_dict.existing_error.$wrapper.html('');
-                                }
-                            }
-                        });
+                            });
+                        }
                     }
                 },
             });
