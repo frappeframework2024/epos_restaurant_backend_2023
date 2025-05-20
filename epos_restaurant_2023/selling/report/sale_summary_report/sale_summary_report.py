@@ -448,6 +448,7 @@ def get_report_chart(filters,data):
 	return chart
 
 def get_report_field(filters):
+	row_group = None
 	row_groups = [d for d in get_row_groups() if d["label"]==filters.row_group]
 	if len(row_groups)>0:
 		row_group = row_group[0]
@@ -458,22 +459,23 @@ def get_report_field(filters):
 	fields.append({"label":"Sub Total", "short_label":"Sub To.", "fieldname":"sub_total","fieldtype":"Currency","indicator":"gray","precision":None, "align":"right","chart_color":"#dd5574","sql_expression":"SUM(a.sub_total)"})
 	fields.append({"label":"Discount", "short_label":"Disc.", "fieldname":"discount_amount","fieldtype":"Currency","indicator":"gray","precision":None, "align":"right","chart_color":"#dd5574","sql_expression":"SUM(a.total_discount)"})
 	
-	if row_group['show_commission'] :
-		fields.append({"label":"Commission", "short_label":"Commission", "fieldname":"commission","fieldtype":"Currency","indicator":"gray","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(b.commission_amount)"})
-		fields.append({"label":"Net Sale", "short_label":"Net Sale", "fieldname":"net_sale","fieldtype":"Currency","indicator":"Blue","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.sub_total - a.total_discount - b.commission_amount)"})
-		
-	else:
-		fields.append({"label":"Net Sale", "short_label":"Net Sale", "fieldname":"net_sale","fieldtype":"Currency","indicator":"Blue","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.sub_total - a.total_discount)"})
+	if row_group is not None:
+		if row_group['show_commission'] :
+			fields.append({"label":"Commission", "short_label":"Commission", "fieldname":"commission","fieldtype":"Currency","indicator":"gray","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(b.commission_amount)"})
+			fields.append({"label":"Net Sale", "short_label":"Net Sale", "fieldname":"net_sale","fieldtype":"Currency","indicator":"Blue","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.sub_total - a.total_discount - b.commission_amount)"})
+			
+		else:
+			fields.append({"label":"Net Sale", "short_label":"Net Sale", "fieldname":"net_sale","fieldtype":"Currency","indicator":"Blue","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.sub_total - a.total_discount)"})
 		
 	
 	fields.append({"label":"Tax", "short_label":"Tax", "fieldname":"total_tax","fieldtype":"Currency","indicator":"gray","precision":None, "align":"right","chart_color":"#dd5574","sql_expression":"SUM(a.total_tax)"})
 	fields.append({"label":"Revenue", "short_label":"Revenue", "fieldname":"amount","fieldtype":"Currency","indicator":"Red","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue)"})
 	fields.append({"label":"Cost", "short_label":"Cost", "fieldname":"cost","fieldtype":"Currency","indicator":"Red","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.cost*a.quantity)"})
-
-	if row_group['show_commission']:
-		fields.append({"label":"Gross Profit", "short_label":"Profit", "fieldname":"profit","fieldtype":"Currency","indicator":"Green","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue - (a.cost*a.quantity) - b.commission_amount)"})
-	else:
-		fields.append({"label":"Gross Profit", "short_label":"Profit", "fieldname":"profit","fieldtype":"Currency","indicator":"Green","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue - (a.cost*a.quantity))"})
+	if row_group is not None:
+		if row_group['show_commission']:
+			fields.append({"label":"Gross Profit", "short_label":"Profit", "fieldname":"profit","fieldtype":"Currency","indicator":"Green","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue - (a.cost*a.quantity) - b.commission_amount)"})
+		else:
+			fields.append({"label":"Gross Profit", "short_label":"Profit", "fieldname":"profit","fieldtype":"Currency","indicator":"Green","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue - (a.cost*a.quantity))"})
 
 	# return [
 	# 	{"label":"Quantity","short_label":"Qty", "fieldname":"quantity","fieldtype":"Float","indicator":"Grey","precision":2, "align":"center","chart_color":"#FF8A65","sql_expression":"SUM(a.quantity)"},
