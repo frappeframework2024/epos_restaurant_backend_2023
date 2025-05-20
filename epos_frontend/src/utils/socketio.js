@@ -12,7 +12,7 @@ if (protocol=="http:"){
 } 
  
  
-let socket = io(protocol + "//" + host + port, { path: '/socketserver/socket.io' });
+let socket = io("https://pos.thenight-hotel.com", { path: '/socketserver/socket.io' });
 
 export default socket;
 
