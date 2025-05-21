@@ -6,82 +6,106 @@ def get_day_numbers(year, month):
     _, num_days = calendar.monthrange(int( year), int(month))
     return list(range(1, num_days + 1))
 
-# param: {"param": {"pos_profiles":["POS Profile"], "date":"2025-02-06"}}
+def get_param(param):
+    keys = param.keys()
+    business_branch = ""
+    if "business_branch" in keys:
+        business_branch = param["business_branch"]
+    pos_profiles = []
+    if "pos_profiles" in keys:
+        pos_profiles = param["pos_profiles"]
+    
+    working_day_sql = """select max(posting_date) as posting_date from `tabWorking Day` where 1=1 """
+    if not business_branch is "":
+        working_day_sql += " and business_branch = %(business_branch)s"
+    working_day_sql += " limit 1"
+    
+    working_day = frappe.db.sql(working_day_sql, {"business_branch": business_branch}, as_dict=1)
+
+    if working_day and working_day[0]["posting_date"]:
+        working_date = working_day[0]["posting_date"]
+    else:
+        now = datetime.datetime.now()
+        current_date = now.date()
+        working_date = current_date
+
+    return {"business_branch":business_branch,"working_date":working_date, "pos_profiles":pos_profiles, }
+
+# param: {"param": {"pos_profiles":["POS Profile"],"business_branch":""}}
+### business_branch ="" means all business_branch
+
 # @frappe.whitelist(allow_guest=True)
 @frappe.whitelist()
 def sale_kpi(param):
-    result = {
-        "total_revenue": 0.0,
-        "total_active_bill": 0.0,
-        "total_active_quantity": 0.0,
-        "totale_deleted_bill": 0,
-        "total_deleted_quantity":0,
-    }
+    p = get_param(param)
+    business_branch  = p["business_branch"]
+    working_date = p["working_date"]
+    pos_profiles = p["pos_profiles"] 
 
-    sale_sql = """select 
-                    sum(if(s.docstatus = 1, s.grand_total, 0)) as total_revenue ,
-                    sum(if(s.docstatus = 1, s.total_quantity,0)) as total_quantity,
-                    sum(if(s.docstatus = 1, 1,0)) as total_active_bill,
-                    sum(if(s.docstatus = 2 and s.deleted_type is null, 1,0)) as total_deleted_bill,
-                    sum(if(s.docstatus = 2 and s.deleted_type is null, s.total_quantity,0)) as total_deleted_quantity
+    today_data = sale_kpi_get_data(business_branch, pos_profiles, working_date)
+    mtd_data = sale_kpi_get_data(business_branch, pos_profiles, working_date,type="MTD")
+
+    return {
+        "today_revenue": today_data.total_revenue,
+        "today_bill": today_data.total_bill,
+        "today_quantity": today_data.total_quantity,
+        "mtd_revenue": mtd_data.total_revenue,
+        "mtd_bill": mtd_data.total_bill,
+        "mtd_quantity": mtd_data.total_quantity,    
+    }
+    
+
+def sale_kpi_get_data(business_branch, pos_profiles,working_date, type="Today"):
+    sale_today_sql = """select 
+                    coalesce(sum(s.grand_total),0) as total_revenue ,
+                    coalesce(sum(s.total_quantity),0) as total_quantity,
+                    coalesce(count(s.name),0) as total_bill
                 from `tabSale` s 
                 where 1=1
-                and s.posting_date = %(date)s """
-    if param["pos_profiles"]:
-        sale_sql += " and (s.pos_profile in %(pos_profile)s or s.pos_profile is null)"
+                and s.docstatus = 1"""
+    if type == "Today":
+        sale_today_sql += " and s.posting_date = %(end_date)s"
+    else:
+        sale_today_sql += " and s.posting_date between %(start_date)s and %(end_date)s"
 
-    sale = frappe.db.sql(sale_sql, {
-            "pos_profile": param["pos_profiles"],
-            "date": param["date"]
-        }, as_dict=1)
-    
+    if not business_branch is "":
+        sale_today_sql += " and s.business_branch = %(business_branch)s"
 
-    ## get deleted sale product
-    sale_sql = """select 
-                    sum(sp.quantity) as total_deleted_quantity
-                from `tabSale Product Deleted` sp 
-                inner join `tabSale` s on s.name = sp.sale_doc
-                where 1=1
-                and s.posting_date = %(date)s """
-    
-    if param["pos_profiles"]:
-        sale_sql += " and (s.pos_profile in %(pos_profile)s or s.pos_profile is null)"
+    if len(pos_profiles) > 0:
+        sale_today_sql += " and (s.pos_profile in %(pos_profile)s or s.pos_profile is null)"
 
-    deleted_sale_product = frappe.db.sql(sale_sql, {
-            "pos_profile": param["pos_profiles"],
-            "date": param["date"]
-        }, as_dict = 1)
-    
-    total_deleted_quantity = 0
-    if deleted_sale_product:
-        item = deleted_sale_product[0]
-        total_deleted_quantity = item.total_deleted_quantity or 0
-        result["total_deleted_quantity"] = total_deleted_quantity
-    ## end get deleted sale product
-
-    if sale:
-        sale = sale[0]
-        result = {
-            "total_revenue": sale.total_revenue or 0,
-            "total_active_bill": sale.total_active_bill or 0,
-            "total_active_quantity": sale.total_quantity or 0,
-            "totale_deleted_bill": sale.total_deleted_bill or 0,
-            "total_deleted_quantity": (sale.total_deleted_quantity or 0) + total_deleted_quantity,
-        }
-
-    return result
+    data = frappe.db.sql(sale_today_sql, {
+            "business_branch": business_branch,
+            "pos_profile": pos_profiles,
+            "start_date": type == "Today" and working_date or working_date.replace(day=1),
+            "end_date": working_date,
+        }, as_dict=1)  
+    if data:
+        return data[0]
+    else:
+        return {
+            "total_revenue": 0,
+            "total_quantity": 0,
+            "total_bill": 0,
+        } 
 
 
-
-# param: {"param": {"pos_profiles":["POS Profile 01","POS Profile 02"], "year":"2025", "month":"02"}}
+# param: {"param": {"pos_profiles":["POS Profile 01","POS Profile 02"], "business_branch":""}}
 # @frappe.whitelist(allow_guest=True)
 @frappe.whitelist()
 def daily_sale_chart(param):
+    p = get_param(param)
+    business_branch  = p["business_branch"]
+    working_date = p["working_date"]
+    pos_profiles = p["pos_profiles"] 
+    
+
+
     result = []
-    for d in get_day_numbers(param["year"], param["month"]):
+    for d in get_day_numbers(working_date.year, working_date.month):
         result.append({
             "day": d,
-            "date": frappe.utils.formatdate(datetime.date(int(param["year"]), int(param["month"]), d), "yyyy-MM-dd"),
+            "date": frappe.utils.formatdate(datetime.date(working_date.year, working_date.month, d), "yyyy-MM-dd"),
             "value": 0
         })
 
@@ -92,15 +116,20 @@ def daily_sale_chart(param):
             where 1=1
             and s.docstatus = 1
             and s.posting_date between %(start_date)s and %(end_date)s """
-    if param["pos_profiles"]:
+    
+    if not business_branch is "":
+        sql += " and s.business_branch = %(business_branch)s"
+
+    if len(pos_profiles) > 0:
         sql += " and (s.pos_profile in %(pos_profile)s or s.pos_profile is null)"
         
     sql += " group by s.posting_date"
     
     data = frappe.db.sql(sql, {
+        "business_branch": business_branch,
+        "pos_profile": pos_profiles,
         "start_date":result[0]["date"] ,
         "end_date": result[-1]["date"] ,
-        "pos_profile": param["pos_profiles"],
         }, as_dict=1)
     
 
@@ -112,10 +141,15 @@ def daily_sale_chart(param):
     return result
 
 
-# param: {"param": {"pos_profiles":["POS Profile 01","POS Profile 02"] , "date":"2025-02-06"}}
+# param: {"param": {"pos_profiles":["POS Profile"],"business_branch":""}}
 # @frappe.whitelist(allow_guest=True)
 @frappe.whitelist()
 def payment_breakdown(param):
+    p = get_param(param)
+    business_branch  = p["business_branch"]
+    working_date = p["working_date"]
+    pos_profiles = p["pos_profiles"] 
+
     sql = """select 
             sp.payment_type_group, 
             sp.payment_type,
@@ -126,13 +160,18 @@ def payment_breakdown(param):
         from `tabSale Payment`  sp
         where 1 = 1
         and sp.docstatus = 1
-        and  sp.posting_date = %(date)s """
-    if param["pos_profiles"]:
+        and  sp.posting_date = %(end_date)s """
+    if not business_branch is "":
+        sql += " and sp.business_branch = %(business_branch)s"
+
+    if len(pos_profiles) > 0:
         sql += " and (sp.pos_profile in %(pos_profile)s or sp.pos_profile is null)"
+
     sql += " group by sp.payment_type_group, sp.payment_type, sp.currency, sp.currency_precision"
     data = frappe.db.sql(sql, {
-        "date":param["date"] ,
-        "pos_profile": param["pos_profiles"],        
+        "business_branch": business_branch,
+        "pos_profile": pos_profiles,   
+        "end_date":working_date ,     
         }, as_dict=1)
 
      
