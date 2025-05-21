@@ -62,7 +62,6 @@ async function onMoveItem(table, sourceSale, targetSale) {
             sp.quantity = 0;
             targetSale.sale_products.push(_sp);
         } else {
-
             sp.quantity -= (sp.total_selected || 0);
             _sp.name = null;
             _sp.quantity = (sp.total_selected || 0);
@@ -75,7 +74,7 @@ async function onMoveItem(table, sourceSale, targetSale) {
         sale.updateQuantity(sp, sp.quantity)
     })
 
-    generateProductPrinterMoveItem(targetSale.sale_products, sourceSale.name, sourceSale.tbl_number);
+    generateProductPrinterMoveItem(targetSale, sourceSale.name, sourceSale.tbl_number);
     targetSale.sale_products?.forEach((r) => {
         r.total_selected = 0
         r.move_from_sale = sourceSale.name
@@ -96,6 +95,9 @@ async function onMoveItem(table, sourceSale, targetSale) {
             }).catch((r) => {
                 toaster.error($t('The items have problem with moving'));
             })
+        if((targetSale.moveItemSaleProducts || []).length > 0){
+            sale.onPrintToKitchen(targetSale, targetSale.moveItemSaleProducts, true);
+        }
     } else {
         db.createDoc('Sale', targetSale)
             .then((t) => {
@@ -109,15 +111,20 @@ async function onMoveItem(table, sourceSale, targetSale) {
             }).catch((r) => {
                 toaster.error($t('The items have problem with moving'));
             })
+        if((targetSale.moveItemSaleProducts || []).length > 0){
+            sale.onPrintToKitchen(targetSale, targetSale.moveItemSaleProducts, true);
+        }
     }
 }
 
-function generateProductPrinterMoveItem(sale_products, old_sale, old_table) {
+function generateProductPrinterMoveItem(targetSale, old_sale, old_table) {
+    targetSale.moveItemSaleProducts = [];
     if (sale.setting.pos_setting.print_sale_product_change_table) {
-        sale_products?.forEach((r) => {
+        targetSale.sale_products?.forEach((r) => {
             const pritners = JSON.parse(r.printers);
             pritners.forEach((p) => {
-                sale.moveItemSaleProducts.push({
+                if((r.total_selected || 0) > 0){
+                 targetSale.moveItemSaleProducts.push({
                     move_from_table: old_table,
                     move_from_sale: old_sale,
                     printer: p.printer,
@@ -151,10 +158,10 @@ function generateProductPrinterMoveItem(sale_products, old_sale, old_table) {
                     time_in: r.time_in,
                     time_out_price: r.time_out_price,
                     time_out: r.time_out
-                });
+                });  
+                }
             });
         });
-
     }
 }
 </script>

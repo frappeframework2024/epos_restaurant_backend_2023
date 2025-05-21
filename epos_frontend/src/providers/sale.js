@@ -1884,10 +1884,12 @@ export default class Sale {
         this.auditTrailLogs = [];
     }
 
-    onPrintToKitchen(doc, products = null) {
+    onPrintToKitchen(doc, products = null,from_move_item = false) {
         var _productPrinters = products ?? this.productPrinters; 
-        var none_return_products = doc.sale_products.filter((r) => (r.is_return || 0) == 0).map(a => a.product_code);
-        _productPrinters = _productPrinters.filter(b => none_return_products.includes(b.product_code));
+        if(from_move_item == false){
+            var none_return_products = doc.sale_products.filter((r) => (r.is_return || 0) == 0).map(a => a.product_code);
+            _productPrinters = _productPrinters.filter(b => none_return_products.includes(b.product_code));
+        }
         const data = {
             action: "print_to_kitchen",
             setting: this.setting?.pos_setting,
