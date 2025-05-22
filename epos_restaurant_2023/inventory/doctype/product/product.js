@@ -58,13 +58,13 @@ frappe.ui.form.on("Product", {
             },
             callback: function (r) {
                 if (r.message == 1) {
-                    frm.set_df_property('existing_error', 'options', `<div style="color: red; text-align: center;width: 100%;margin-bottom:5px">❌ Product code ${frm.doc.product_code} already exist</div>`);
+                    frm.fields_dict["existing_error"].$wrapper.html(`<div style="color: red; text-align: center;width: 100%;margin-bottom:5px">❌ Product code ${frm.doc.product_code} already exist</div>`);
                     const parentDiv = frm.fields_dict.product_code.$wrapper;
                     parentDiv.find('.help-box').hide();
                     parentDiv.css('margin-bottom', '8px');
                 }
                 else{
-                    frm.fields_dict.existing_error.$wrapper.html('');
+                    frm.fields_dict["existing_error"].$wrapper.html('');
                 }
             }
         });
@@ -517,9 +517,10 @@ function setup_barcode_field(field_name,frm) {
                 multiple: false,
                 on_scan(data) {
                     if (data && data.result && data.result.text) {
+                        frm.doc[field_name] = "";
                         frm.doc[field_name] = data.result.text;
                         frm.refresh_field(field_name);
-                        if(field == "product_code"){
+                        if(field_name == "product_code"){
                             frappe.call({
                                 method: "epos_restaurant_2023.inventory.doctype.product.product.check_existing_product",
                                 args:{
@@ -527,13 +528,13 @@ function setup_barcode_field(field_name,frm) {
                                 },
                                 callback: function (r) {
                                     if (r.message == 1) {
-                                        frm.set_df_property('existing_error', 'options', `<div style="color: red; text-align: center;width: 100%;">❌ Product code ${frm.doc.product_code} already exist</div>`);
+                                        frm.fields_dict["existing_error"].$wrapper.html(`<div style="color: red; text-align: center;width: 100%;margin-bottom:5px">❌ Product code ${frm.doc.product_code} already exist</div>`);
                                         const parentDiv = frm.fields_dict.product_code.$wrapper;
                                         parentDiv.find('.help-box').hide();
                                         parentDiv.css('margin-bottom', '8px');
                                     }
                                     else{
-                                        frm.fields_dict.existing_error.$wrapper.html('');
+                                        frm.fields_dict["existing_error"].$wrapper.html('');
                                     }
                                 }
                             });
