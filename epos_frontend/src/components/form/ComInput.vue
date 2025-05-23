@@ -22,6 +22,7 @@
                 @click:append-inner="onDialog()"
                   @click:clear="onClear"
                 :prepend-inner-icon="prependInnerIcon"
+                style="font-family: 'Kh System'"
                 ref="txtSearch"
                 @input="updateValue">
             </v-textarea>
@@ -42,6 +43,7 @@
                 :append-inner-icon="appendInnerIcon"
                 v-model="value"
                 ref="txtSearch"
+                style="font-family: 'Kh System'"
                 @click:append-inner="emit('onClickAppendInner')"
                   @click:clear="onClear"
                 :prepend-inner-icon="prependInnerIcon"
@@ -72,6 +74,7 @@
                 @input="updateValue"
                 @click:clear="onClear"
                 :class="type=='date'?'date-input':''"
+                style="font-family: 'Kh System'"
                 ref="txtSearch"
                 >
             </v-text-field>
@@ -96,6 +99,7 @@
                 @click:clear="onClear"
                 @input="updateValue"
                 ref="txtSearch"
+                style="font-family: 'Kh System'"
                 :class="type=='date'?'date-input':''">
             </v-text-field>
         </div>

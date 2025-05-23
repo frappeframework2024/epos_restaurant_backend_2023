@@ -372,9 +372,6 @@ function onPrint() {
     divContents.style.borderStyle  = 'none'
     divContents = divContents.outerHTML
     const printWindow = window.open("", "", "height=750px, width=750px");
-
-    
-
     printWindow.document.write("<html><head>");
     printWindow.document.write(`
       <style>
@@ -387,19 +384,22 @@ function onPrint() {
             align-items:center;
             border:0px
           }
-          
+        }
+      .ellipsis-content {
+          height: 100%;
+          width: 100%;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
         }
       </style>
     `);
     printWindow.document.write("</head><body>");
     printWindow.document.write(divContents);
     printWindow.document.write("</body></html>");
-
     setTimeout(() => {
-       
       printWindow.print();
       printWindow.close();
-     
       isPrint.value = false;
     }, 1000);
 

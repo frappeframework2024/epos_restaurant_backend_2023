@@ -10,7 +10,7 @@
             </v-toolbar>
             <v-card-text>
                 <div class="mb-2">
-                    <v-text-field type="text" density="compact" variant="solo" single-line hide-details :value="input"
+                    <v-text-field type="text" density="compact" variant="solo" style="font-family: 'Kh System'" single-line hide-details :value="input"
                         @input="onInputChange">
                     </v-text-field>
                 </div>
