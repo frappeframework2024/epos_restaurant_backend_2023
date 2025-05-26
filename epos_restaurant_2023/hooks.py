@@ -127,16 +127,29 @@ doc_events = {
 	"*": {
 		"on_update": [
             "epos_restaurant_2023.api.utils.generate_data_for_sync_record",
-            "epos_restaurant_2023.api.utils.sync_data_to_server_on_submit"
+            "epos_restaurant_2023.api.utils.sync_data_to_server_on_submit",
+              "epos_restaurant_2023.api.override.set_custom_timestamps"
         ],
         "after_rename": [
-                "epos_restaurant_2023.api.utils.generate_data_for_sync_record_on_rename"
-            ],
+                "epos_restaurant_2023.api.utils.generate_data_for_sync_record_on_rename",
+                ],
         "on_trash": [
             "epos_restaurant_2023.api.utils.generate_data_for_sync_record_on_delete"
         ],
-        "on_submit":["epos_restaurant_2023.api.utils.sync_data_to_server_on_submit"],
-        "validate":"epos_restaurant_2023.api.utils.validate_queue_job_status"
+        "on_submit":[
+            "epos_restaurant_2023.api.utils.sync_data_to_server_on_submit",
+            "epos_restaurant_2023.api.override.set_custom_timestamps"
+            ],
+        "validate":[
+            "epos_restaurant_2023.api.utils.validate_queue_job_status",
+            "epos_restaurant_2023.api.override.set_custom_timestamps"
+        ],
+        "before_insert":[
+                "epos_restaurant_2023.api.override.set_custom_timestamps"
+        ],
+        "before_save":[
+                "epos_restaurant_2023.api.override.set_custom_timestamps"
+        ]
 	},
     "Comment":{
         "after_insert":"epos_restaurant_2023.api.utils.sync_comment_to_server"
@@ -144,7 +157,6 @@ doc_events = {
     "Module Profile":{
         "on_update":"epos_restaurant_2023.override_methods.module_profile.on_update"
     },
-    
 }
 
 

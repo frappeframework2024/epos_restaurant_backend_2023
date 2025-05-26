@@ -1,3 +1,4 @@
+import json
 import frappe
 import calendar
 import datetime
@@ -7,6 +8,8 @@ def get_day_numbers(year, month):
     return list(range(1, num_days + 1))
 
 def get_param(param):
+    if  type(param) is str:
+        param = json.loads(param)
     keys = param.keys()
     business_branch = ""
     if "business_branch" in keys:
@@ -141,6 +144,9 @@ def daily_sale_chart(param):
     return result
 
 
+@frappe.whitelist()
+def testme():
+    return payment_breakdown ({"business_branch":"ESTC HOTEL"}) 
 # param: {"param": {"pos_profiles":["POS Profile"],"business_branch":""}}
 # @frappe.whitelist(allow_guest=True)
 @frappe.whitelist()
@@ -151,12 +157,13 @@ def payment_breakdown(param):
     pos_profiles = p["pos_profiles"] 
 
     sql = """select 
-            sp.payment_type_group, 
+            sp.payment_type_group as `group`, 
             sp.payment_type,
             sum(sp.input_amount) as input_amount,
-            sum(sp.payment_amount) as payment_amount,
+            sum(sp.payment_amount) as base_amount,
             sp.currency ,
-            sp.currency_precision
+            sp.currency_precision as `precision`,
+            sp.symbol
         from `tabSale Payment`  sp
         where 1 = 1
         and sp.docstatus = 1

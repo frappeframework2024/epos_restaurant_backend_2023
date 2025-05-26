@@ -141,7 +141,8 @@
                             <div class="text-lg">
                                 <ComTimerProductEstimatePrice v-if="sp.is_timer_product && !sp.time_out_price"
                                     :saleProduct="sp" />
-                                <CurrencyFormat v-else :value="(sp.amount - sp.total_tax)" />
+                                    <CurrencyFormat v-else :value="(sp.amount - (sp.rate_include_tax == 1? 0 : sp.total_tax))" />
+                                <!-- <CurrencyFormat v-else :value="(sp.amount - sp.total_tax)" /> -->
                             </div>
                             <span v-if="sp.product_tax_rule && sp.total_tax > 0" class="text-xs">
                                 {{ $t('Tax') }}:

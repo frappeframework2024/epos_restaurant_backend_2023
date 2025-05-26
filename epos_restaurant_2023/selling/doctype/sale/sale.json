@@ -228,6 +228,10 @@
   "room_number",
   "column_break_iapd",
   "exely_room_stay_id",
+  "overrides_section",
+  "override_creation",
+  "column_break_nxxc",
+  "override_modified",
   "inventory_transacton_tab",
   "inventory_transaction",
   "integration_tab",
@@ -1637,6 +1641,29 @@
    "fieldtype": "Currency",
    "label": "Total Trade In Amount",
    "read_only": 1
+  },
+  {
+   "fieldname": "overrides_section",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "hide_border": 1,
+   "label": "Overrides",
+   "print_hide": 1,
+   "report_hide": 1
+  },
+  {
+   "fieldname": "override_creation",
+   "fieldtype": "Datetime",
+   "label": "Override Creation"
+  },
+  {
+   "fieldname": "column_break_nxxc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "override_modified",
+   "fieldtype": "Datetime",
+   "label": "Override Modified"
   }
  ],
  "image_field": "photo",
@@ -1659,7 +1686,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2025-04-25 17:14:12.667821",
+ "modified": "2025-05-26 11:32:53.009896",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

@@ -642,6 +642,7 @@ export default class Sale {
         }else{
             sp.crypto_able_amount = sp.amount
         }
+ 
 
         //set property for re render comhappyhour check
     }
@@ -650,6 +651,7 @@ export default class Sale {
     onSaleProductApplyTax(tax_rule, sp) {
 
         sp.tax_rule = tax_rule.name || "";
+        sp.rate_include_tax = tax_rule.rate_include_tax||0;
         sp.tax_1_rate = tax_rule.tax_1_rate || 0;
         sp.percentage_of_price_to_calculate_tax_1 = tax_rule.percentage_of_price_to_calculate_tax_1 || 100;
         sp.calculate_tax_1_after_discount = tax_rule.calculate_tax_1_after_discount || false;
@@ -816,7 +818,11 @@ export default class Sale {
 
     //on sale apply  tax setting
     onSaleApplyTax(tax_rule, s) {
-
+        if(tax_rule.rate_include_tax == undefined ){
+            tax_rule.rate_include_tax = tax_rule.is_rate_include_tax||0;
+        }
+        
+        s.rate_include_tax = tax_rule.rate_include_tax||0;
         s.tax_rule = tax_rule.name || "";
         s.tax_1_rate = tax_rule.tax_1_rate || 0;
         s.percentage_of_price_to_calculate_tax_1 = tax_rule.percentage_of_price_to_calculate_tax_1 || 100;

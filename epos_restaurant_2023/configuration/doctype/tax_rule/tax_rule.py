@@ -12,6 +12,7 @@ class TaxRule(Document):
 				"name":self.name,
 				"tax_1_rate":self.tax_1_rate,
 				"tax_1_name":self.tax_1_name,
+				"rate_include_tax":self.is_rate_include_tax,
 				"percentage_of_price_to_calculate_tax_1":self.percentage_of_price_to_calculate_tax_1,
 				"calculate_tax_1_after_discount":self.calculate_tax_1_after_discount,
 				"tax_1_account":self.tax_1_account,

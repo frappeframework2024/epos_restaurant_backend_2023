@@ -251,7 +251,23 @@ def create_note(category, note):
      doc.reload()
 
      return new_row
-     
+
+@frappe.whitelist(methods="POST")
+def bulk_insert(data):
+    try:
+        inserted_docs = []
+        for doc_data in data:
+            # Create a new document using frappe.get_doc
+            doc = frappe.get_doc(doc_data)
+            # Insert the document
+            doc.insert(ignore_permissions=False)  # Set to True to bypass permissions
+            inserted_docs.append(doc.name)
+        frappe.db.commit()
+        return {"status": "success", "doc": doc_data["doctype"]}
+    except Exception as e:
+        frappe.db.rollback()
+        frappe.log_error(f"Bulk insert failed: {str(e)}")
+        return {"status": "error", "message": str(e)}    
 
 
 
