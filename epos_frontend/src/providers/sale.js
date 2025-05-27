@@ -821,7 +821,7 @@ export default class Sale {
         if(tax_rule.rate_include_tax == undefined ){
             tax_rule.rate_include_tax = tax_rule.is_rate_include_tax||0;
         }
-        
+
         s.rate_include_tax = tax_rule.rate_include_tax||0;
         s.tax_rule = tax_rule.name || "";
         s.tax_1_rate = tax_rule.tax_1_rate || 0;
@@ -1086,6 +1086,7 @@ export default class Sale {
 
                 let quantity = this.getNumber(result);
                 if (this.setting.pos_setting.allow_change_quantity_after_submit == 1 || sp.sale_product_status == "New") {
+                   
                     if (quantity == 0) {
                         quantity = 1
                     }
@@ -1123,8 +1124,6 @@ export default class Sale {
                     //do add record
                     if (quantity > sp.quantity) {
                         this.cloneSaleProduct(sp, quantity);
-
-
                     } else {
                         if (sp.quantity - quantity > 0) {
                             //do delete record

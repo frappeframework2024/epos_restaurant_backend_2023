@@ -63,16 +63,21 @@ def validate(filters):
 def get_columns(filters):	
 	columns = []
 	row_group = [d for d in get_row_groups() if d["label"]==filters.row_group][0]
- 
-	# frappe.throw(str(filters))
 	if filters.row_group == 'Sale Invoice':
 		columns.append({'fieldname':'row_group','label':filters.row_group,'fieldtype':'Data',"options":"Sale",'align':'left','width':250})
-		# columns.append({'fieldname':'custom_bill_number','label':"Bill No",'fieldtype':'Data','align':'left','width':150})
 		columns.append({'fieldname':'guest_cover','label':"Guest Cover",'fieldtype':'Int','align':'left','width':150})
 	else:
-		columns.append({'fieldname':'row_group','label':filters.row_group,'fieldtype':'Data','align':'left','width':250})
-	# if filters.row_group == "Product":
-	# 	columns.append({"label":"Item Code","fieldname":"item_code","fieldtype":"Data","align":"left",'width':130})
+		if filters.row_group == "Product And Price" or filters.row_group == "Product Code":
+			columns.append({'fieldname':'row_group','label':"Product Code",'fieldtype':'Data','align':'left','width':150})
+		else:
+			columns.append({'fieldname':'row_group','label':filters.row_group,'fieldtype':'Data','align':'left','width':250})
+		
+	if filters.row_group == "Product Code" or filters.row_group == "Product And Price":
+		columns.append({"label":"Product Name","fieldname":"product_name","fieldtype":"Data","align":"left",'width':300})
+		columns.append({"label":"Unit","fieldname":"unit","fieldtype":"Data","align":"center",'width':100})
+	
+	if filters.row_group == "Product And Price":
+		columns.append({"label":"Price","fieldname":"price","fieldtype":"Currency","align":"right",'width':100})
 	
 	hide_columns = filters.get("hide_columns")
 	 
@@ -94,7 +99,8 @@ def get_columns(filters):
 						'label':"Total " + f["label"],
 						'fieldtype':f['fieldtype'],
 						'precision': f["precision"],
-						'align':f['align']
+						'align':f['align'],
+						'width':150
 						}
 					)
 			elif f['fieldname'] =='sub_total' :
@@ -104,7 +110,8 @@ def get_columns(filters):
 					'label': f["label"],
 					'fieldtype':f['fieldtype'],
 					'precision': f["precision"],
-					'align':f['align']
+					'align':f['align'],
+					'width':150
 					}
 				)
 			else:
@@ -113,7 +120,8 @@ def get_columns(filters):
 						'label':"Total " + f["label"],
 						'fieldtype':f['fieldtype'],
 						'precision': f["precision"],
-						'align':f['align']
+						'align':f['align'],
+						'width':150
 						}
 					)
     
@@ -308,11 +316,13 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 					# 	sql = sql +	"{} as '{}_{}',".format(rf["sql_expression"],f["fieldname"],rf["fieldname"])
 			#end for
 	# total last column
-	item_code = ""
+	extra_columns = ""
 	groupdocstatus = ""
 	normal_filter = "b.docstatus in (1) AND"
-	# if ((indent > 0) and ( filters.row_group == "Product" or filters.parent_row_group == "Product")):
-	# 	item_code = ",a.item_code"
+	if filters.row_group == "Product Code" or filters.row_group == "Product And Price":
+		extra_columns = ",a.product_name,a.unit"
+	if filters.row_group == "Product And Price":
+		extra_columns = extra_columns + ",a.price"
 	
 	for rf in report_fields:
 		#check sql variable if last character is , then remove it
@@ -337,7 +347,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 			{0}
 		GROUP BY 
 		{1} {2} {3}
-	""".format(get_conditions(filters,group_filter), _row_group,item_code,groupdocstatus,normal_filter)
+	""".format(get_conditions(filters,group_filter), _row_group,extra_columns,groupdocstatus,normal_filter)
 	data = frappe.db.sql(sql,filters, as_dict=1)
 	return data
  
@@ -593,12 +603,12 @@ def get_row_groups():
 			"show_commission":False
 		},
 		{
-			"fieldname":"concat(a.product_code,'-',a.product_name,' ', if(concat(a.`portion`)='' or concat(a.`portion`) = 'Normal','',concat(a.`portion`)), coalesce(a.modifiers,''))",
-			"label":"Product",
+			"fieldname":"a.product_code",
+			"label":"Product Code",
 			"show_commission":False
 		},
 		{
-			"fieldname":"concat(a.product_code,'-',a.product_name,' ', if(concat(a.`portion`)='' or concat(a.`portion`) = 'Normal'nve,'',concat(a.`portion`)), coalesce(a.modifiers,''))",
+			"fieldname":"a.product_code",
 			"label":"Product And Price",
 			"show_commission":False
 		},

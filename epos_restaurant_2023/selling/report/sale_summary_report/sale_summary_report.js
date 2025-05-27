@@ -243,7 +243,7 @@ frappe.query_reports["Sale Summary Report"] = {
 			"fieldname": "row_group",
 			"label": __("Row Group By"),
 			"fieldtype": "Select",
-			"options": "Product\nProduct And Price\nCategory\nProduct Group\nRevenue Group\nBusiness Branch\nOutlet\nTable Group\nTable\nPOS Profile\nCustomer\nCustomer Group\nStock Location\nDate\n\Month\nYear\nSale Invoice\nWorking Day\nCashier Shift\nSale Type\nSeller",
+			"options": "Product Code\nProduct And Price\nCategory\nProduct Group\nRevenue Group\nBusiness Branch\nOutlet\nTable Group\nTable\nPOS Profile\nCustomer\nCustomer Group\nStock Location\nDate\n\Month\nYear\nSale Invoice\nWorking Day\nCashier Shift\nSale Type\nSeller",
 			"default":"Category",
 			on_change: function() { 
 				filter = frappe.query_report.get_filter_value('row_group')
@@ -360,7 +360,7 @@ function update_filter_options(filter_name, options, hideOptions) {
 
 function update_row_group_options(default_sale_type) {
     let options = [
-        "Product","Product And Price","Category", "Product Group", "Revenue Group", "Business Branch", 
+        "Product Code","Product And Price","Category", "Product Group", "Revenue Group", "Business Branch", 
         "Outlet", "Table Group", "Table", "POS Profile", "Customer", 
         "Customer Group", "Stock Location", "Date", "Month", "Year", 
         "Sale Invoice", "Working Day", "Cashier Shift", "Sale Type"
