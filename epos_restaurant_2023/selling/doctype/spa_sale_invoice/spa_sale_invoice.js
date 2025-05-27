@@ -520,7 +520,7 @@ function on_render_therapist(frm, row){
         therapist_data = therapist_data.filter(t => t.employee_id !== employeeId);
         
         row.therapist_data = JSON.stringify(therapist_data); 
-        const result = therapist_data.map(item => `${item.employee_name} (${item.duration})`).join(', ');
+        const result = therapist_data.map(item => `${item.employee_name} (${item.duration_title})`).join(', ');
 
         frappe.model.set_value(row.doctype, row.name, "therapist_name", result);        
         tr.remove();
@@ -587,7 +587,7 @@ function on_assign_therapist(frm,row){
                 let therapist_data = JSON.parse(row.therapist_data||'[]');
                 therapist_data.push(therapist_selected);
                 row.therapist_data = JSON.stringify(therapist_data); 
-                const result = therapist_data.map(item => `${item.employee_name}`).join(', ');
+                const result = therapist_data.map(item => `${item.employee_name} (${item.duration_title})`).join(', ');
 
                 frappe.model.set_value(row.doctype, row.name, "therapist_name", result);
 
