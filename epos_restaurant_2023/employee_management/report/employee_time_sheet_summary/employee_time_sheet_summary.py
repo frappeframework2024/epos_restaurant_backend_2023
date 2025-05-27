@@ -89,6 +89,7 @@ def get_report_field(filters):
 def get_report_data(filters):
 
 	emp_query = """	SELECT
+						e.name,
 						e.employee_code,
 						concat(e.employee_code,'-',e.employee_name) as employee_name,
 						coalesce(e.phone_number_1,'') as phone_number,
@@ -100,6 +101,7 @@ def get_report_data(filters):
 					FROM tabEmployee e  where e.disabled = 0 and e.show_in_pos_assign_employee = 1 """
 	
 	data_query = """select 
+						e.name,
 						e.employee_code,
 						sum(coalesce(s.duration,0)) as duration,
 						sum(coalesce(s.commission_amount,0)) as commission_amount
@@ -107,6 +109,7 @@ def get_report_data(filters):
 					inner join `tabSale Product SPA Commission` s on e.`name` = s.employee
 					WHERE {}
 					group by
+					e.name,
 						e.employee_code""".format(get_filter_condition(filters)) 
 
 	

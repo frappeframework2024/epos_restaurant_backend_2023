@@ -102,9 +102,9 @@ frappe.query_reports["Employee Time Sheet Summary"] = {
 		
 		if (column.fieldname=="employee_name") {
 			if(filter_based_on == "This Month"){
-				value = $(`<span><a onclick="epos_restaurant_2023.employee_time_sheet_summary.open_report('${value}')" href='/printview?doctype=Employee&name=${data.employee_code}&format=Employee%20Time%20Sheet&start_date=${firstDayOfMonth}&end_date=${end_date}&no_letterhead=1&letterhead=No%20Letterhead&settings=%7B%7D&_lang=en&trigger_print=1'>${value}</a></span>`);
+				value = $(`<span><a onclick="epos_restaurant_2023.employee_time_sheet_summary.open_report('${value}')" href='/printview?doctype=Employee&name=${data.name}&format=Employee%20Time%20Sheet&start_date=${firstDayOfMonth}&end_date=${end_date}&no_letterhead=1&letterhead=No%20Letterhead&settings=%7B%7D&_lang=en&trigger_print=1'>${value}</a></span>`);
 			}else{
-				value = $(`<span><a onclick="epos_restaurant_2023.employee_time_sheet_summary.open_report('${value}')" href='/printview?doctype=Employee&name=${data.employee_code}&format=Employee%20Time%20Sheet&start_date=${start_date}&end_date=${end_date}&no_letterhead=1&letterhead=No%20Letterhead&settings=%7B%7D&_lang=en&trigger_print=1'>${value}</a></span>`);
+				value = $(`<span><a onclick="epos_restaurant_2023.employee_time_sheet_summary.open_report('${value}')" href='/printview?doctype=Employee&name=${data.name}&format=Employee%20Time%20Sheet&start_date=${start_date}&end_date=${end_date}&no_letterhead=1&letterhead=No%20Letterhead&settings=%7B%7D&_lang=en&trigger_print=1'>${value}</a></span>`);
 			}
 			
 
