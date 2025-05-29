@@ -321,13 +321,14 @@ def get_working_day_info(name,pos_profile):
     on_account = frappe.db.sql("""
     select 
         payment_type,
+        currency,
         sum(input_amount) as input_amount ,
         sum(amount) as payment_amount 
         from `tabSale` a
         inner join `tabPOS Sale Payment` b on b.parent = a.name
         where working_day = '{0}' and a.pos_profile = '{1}' and payment_type='On Account'
     group by
-        payment_type""".format(working_day.name,pos_profile),as_dict=1)
+        payment_type,currency""".format(working_day.name,pos_profile),as_dict=1)
     for a in on_account:
         custom_currency_precision= frappe.db.get_value("Currency",a["currency"],"custom_currency_precision")
         result.append({
