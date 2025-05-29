@@ -38,7 +38,7 @@ def validate(filters):
  
 def get_columns(filters):
 	return [
-		{"label":"Doc. #", "fieldname":"name","fieldtype":"Link","options":"Expense Payment", "align":"center"},
+		{"label":"Doc. #", "fieldname":"name","fieldtype":"Link","options":"Expense Payments", "align":"center"},
 		{"label":"Date",  "fieldname":"posting_date","fieldtype":"Date", "align":"center",},
 		{"label":"Reference", "fieldname":"reference_no","fieldtype":"Data","align":"left"},
   		{"label":"Expense", "fieldname":"expense","fieldtype":"Link","options":"Expense","align":"left"},

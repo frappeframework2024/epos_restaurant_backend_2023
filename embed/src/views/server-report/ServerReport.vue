@@ -6,6 +6,7 @@
             <SplitterPanel :size="80" class="pa-4">
                 
                 <div style="height:100vh" id="main_server_report_viewer_backend" class="flex align-items-center justify-content-center">
+                {{ selectedReport }}
                     <div class="flex flex-column align-items-center gap-5" v-if="!selectedReport">
                         <img :src="reportpng" width="100" />
                         Please select a report to view your report.

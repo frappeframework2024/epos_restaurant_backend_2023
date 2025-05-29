@@ -17,6 +17,7 @@
   "expense_by",
   "employee_name",
   "exchange_rate",
+  "open_cash_float",
   "link_sale_expense",
   "section_break_gjhc",
   "sale",
@@ -61,6 +62,7 @@
    "fieldtype": "Link",
    "in_standard_filter": 1,
    "label": "Expense By",
+   "link_filters": "[[{\"fieldname\":\"expense_by\",\"field_option\":\"Employee\"},\"allow_login\",\"=\",1]]",
    "options": "Employee",
    "reqd": 1
   },
@@ -222,13 +224,19 @@
    "fieldtype": "Table",
    "label": "Expense Payments",
    "options": "Expense Payments"
+  },
+  {
+   "default": "0",
+   "fieldname": "open_cash_float",
+   "fieldtype": "Currency",
+   "label": "Open Cash Float"
   }
  ],
  "image_field": "attach_receipt",
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-03-21 17:04:03.394006",
+ "modified": "2025-05-29 15:53:42.222083",
  "modified_by": "Administrator",
  "module": "Expense",
  "name": "Expense",
