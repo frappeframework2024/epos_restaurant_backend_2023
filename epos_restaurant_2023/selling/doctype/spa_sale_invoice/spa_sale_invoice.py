@@ -72,6 +72,7 @@ class SPASaleInvoice(Document):
 			frappe.throw(_("Please assign therapist before submit"))
 			
 		validate_payment_on_submit(self)
+		
 
 		#generate to sale
 		generate_to_sale(self)
@@ -96,11 +97,17 @@ class SPASaleInvoice(Document):
 				# Save
 				sale.save(ignore_permissions=True)
 				self.sale = sale.name 
+				self.temp_sale = sale.name
 				
 				
 
 	def on_cancel(self):
-		pass
+		if  frappe.db.exists("Sale", self.sale):
+			sale = frappe.get_doc("Sale", self.sale)
+			sale.cancel()
+
+	
+
 
 def update_sale_product_data(self):
 	for sp in self.items:
@@ -211,14 +218,67 @@ def validate_payment_on_submit(self):
 	if total_payment_amount < self.total_amount:
 		frappe.throw(_("Please kindly make full payment for this invoice"))
 
+@frappe.whitelist()
+def on_edit_to_remove_sale(name,sale):
+	doc = frappe.get_doc("SPA Sale Invoice", name)
+
+	if  frappe.db.exists("Sale", sale):
+		# If it's submitted, cancel it first before deletion
+		sale_doc = frappe.get_doc("Sale", sale)
+		sale_doc.flags.ignore_submit_validation = True
+		doc.sale = None
+
+		sale_payments = frappe.get_all("Sale Payment", filters={"sale": sale}, fields=["name"])
+		for p in sale_payments:
+			sale_payment = frappe.get_doc("Sale Payment", p.name)
+			sale_payment.flags.ignore_submit_validation = True
+			if sale_payment.docstatus == 1:	
+				sale_payment.cancel()
+
+			frappe.delete_doc(
+				doctype="Sale Payment",
+				name=p.name,
+				force=1,
+				ignore_permissions=True,
+				ignore_on_trash=True
+			)
+			
+
+
+		if sale_doc.docstatus == 1:	
+			sale_doc.cancel()
+
+		frappe.delete_doc(
+				doctype="Sale",
+				name=sale,
+				force=1,
+				ignore_permissions=True,
+				ignore_on_trash=True
+			)
+		
+	
+	for d in doc.items:
+		d.db_set("docstatus", 0)
+	for d in doc.payments:	
+		d.db_set("docstatus", 0)
+
+	doc.db_set("docstatus", 0)
+	doc.db_set("sale", None)
+	frappe.db.commit()
+
 
 def generate_to_sale(self):
 	create_new = False
+	sale_doc_name = None
 	if self.sale:
 		#check sale exist
 		if not frappe.db.exists("Sale", self.sale):
+			sale_doc_name = self.sale
 			create_new = True
 	else:
+		if self.temp_sale:
+			sale_doc_name = self.temp_sale
+
 		create_new = True
 
 	if create_new:
@@ -239,6 +299,8 @@ def generate_to_sale(self):
 			"sale_products":[],
 			"payment":[]
 		}
+		if sale_doc_name:
+			doc_json["name"] = sale_doc_name
 
 		items_json=[]
 		date_obj = datetime.strptime(self.posting_date, "%Y-%m-%d").date()
@@ -285,6 +347,7 @@ def generate_to_sale(self):
 		doc.insert()  # Save
 		doc.submit()  # Submit
 		self.sale = doc.name 
+		self.temp_sale = doc.name
 		frappe.db.sql("update `tabSPA Sale Invoice` set sale=%(sale)s where name=%(name)s",{"sale":doc.name,"name":self.name})
 		frappe.db.commit()
 
@@ -331,7 +394,6 @@ def get_duration_value(portion):
 		return duration[0]["duration"]
 	else:
 		return 0
-
 
 
 @frappe.whitelist()

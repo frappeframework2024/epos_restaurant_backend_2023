@@ -17,6 +17,7 @@
   "stock_location",
   "shift_name",
   "sale",
+  "temp_sale",
   "section_break_xklc",
   "items",
   "payments",
@@ -375,12 +376,20 @@
    "fieldname": "bank_fee",
    "fieldtype": "Percent",
    "label": "Bank Fee (%)"
+  },
+  {
+   "fieldname": "temp_sale",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Temp Sale",
+   "print_hide": 1,
+   "report_hide": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-05-08 14:30:30.169328",
+ "modified": "2025-06-02 11:13:11.085188",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "SPA Sale Invoice",

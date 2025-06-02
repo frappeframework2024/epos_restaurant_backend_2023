@@ -51,6 +51,36 @@ frappe.ui.form.on("SPA Sale Invoice", {
             frm.remove_custom_button('Print');
             frm.page.clear_icons();  // hides print, email, etc. icons in the top-right
         }
+
+
+         // Show the button only if submitted
+        if (frm.doc.docstatus === 1) { 
+            if(frappe.perm.has_perm('SPA Sale Invoice', 0, 'amend')){
+                frm.add_custom_button('Edit Invoice', function() {
+                // Example: Set doc to draft (not recommended unless intentional)
+
+                    frappe.confirm(
+                        'Are you sure you want to edit this invoice?',
+                        // Confirm callback
+                        () => {
+                        frappe.call({
+                            method: "epos_restaurant_2023.selling.doctype.spa_sale_invoice.spa_sale_invoice.on_edit_to_remove_sale",
+                            args: {
+                                sale: frm.doc.sale,
+                                name: frm.doc.name
+                            },
+                            callback: function() {
+                                frappe.show_alert("Docstatus set to Draft");
+                                frm.reload_doc();
+                            }
+                        }); },
+                        // Cancel callback
+                        ()=>{},);
+                    });
+            }
+           
+        }
+
 	},
 
     validate: function(frm) {
