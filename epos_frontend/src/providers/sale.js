@@ -2069,7 +2069,8 @@ export default class Sale {
                     time_in: r.time_in,
                     time_out_price: r.time_out_price,
                     time_out: r.time_out,
-                    amount: r.amount
+                    amount: r.amount,
+                    is_return: (r.is_return || 0)
                 })
             });
         });
@@ -2124,7 +2125,7 @@ export default class Sale {
                         time_in: r.time_in,
                         time_out_price: r.time_out_price,
                         time_out: r.time_out,
-                        is_return: r.is_return
+                        is_return: (r.is_return || 0)
                     })
                 });
             }); 
