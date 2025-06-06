@@ -369,9 +369,6 @@ function OnDeleteOrder() {
                     return;
                 }
             }
-
-
-            //cancel payment first
             isLoading.value = true;
             const _sale = JSON.parse(JSON.stringify(sale.doc));
             generateSaleProductPrintToKitchen(_sale, v.note);
@@ -400,7 +397,7 @@ function OnDeleteOrder() {
 function generateSaleProductPrintToKitchen(doc, note) {
     deletedSaleProducts = [];
     (doc.sale_products || []).forEach((sp) => {
-        if (sp.sale_product_status == "Submitted") {
+        if (sp.sale_product_status == "Submitted" &&  (sp.is_return || 0) == 0) {
             sp.note = note;
             sp.deleted_item_note = "Bill Deleted";
             deletedSaleProducts.push(sp);
