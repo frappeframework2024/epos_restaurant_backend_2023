@@ -1892,8 +1892,18 @@ export default class Sale {
     onPrintToKitchen(doc, products = null) {
         var _productPrinters = products ?? this.productPrinters; 
         var return_products = doc.sale_products.filter((r) => (r.is_return || 0) == 1).map(a => a.product_code);
+        this.deletedSaleProducts.forEach((r) => {
+            if(r.is_return == 1){
+                return_products.push(r.product_code);
+            }
+        });
         if((return_products || []).length > 0){
             var none_return_products = doc.sale_products.filter((r) => (r.is_return || 0) == 0).map(a => a.product_code);
+            this.deletedSaleProducts.forEach((r) => {
+                if(r.is_return == 0){
+                    none_return_products.push(r.product_code);
+                }
+            });
             _productPrinters = _productPrinters.filter(b => none_return_products.includes(b.product_code));
         }
         const data = {
@@ -2078,7 +2088,6 @@ export default class Sale {
         }
 
         if (this.setting.pos_setting.print_new_deleted_sale_product) {
-            console.log("generate deleted product to product printer list");
             //generate deleted product to product printer list
             this.deletedSaleProducts.filter(r => JSON.parse(r.printers).length > 0).forEach((r) => {
                 const printers = JSON.parse(r.printers);
@@ -2114,7 +2123,8 @@ export default class Sale {
                         time_stop: (r.time_stop || 0),
                         time_in: r.time_in,
                         time_out_price: r.time_out_price,
-                        time_out: r.time_out
+                        time_out: r.time_out,
+                        is_return: r.is_return
                     })
                 });
             }); 
