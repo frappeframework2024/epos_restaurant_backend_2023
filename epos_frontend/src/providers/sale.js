@@ -1889,9 +1889,10 @@ export default class Sale {
         this.auditTrailLogs = [];
     }
 
-    onPrintToKitchen(doc, products = null,from_move_item = false) {
+    onPrintToKitchen(doc, products = null) {
         var _productPrinters = products ?? this.productPrinters; 
-        if(from_move_item == false){
+        var return_products = doc.sale_products.filter((r) => (r.is_return || 0) == 1).map(a => a.product_code);
+        if((return_products || []).length > 0){
             var none_return_products = doc.sale_products.filter((r) => (r.is_return || 0) == 0).map(a => a.product_code);
             _productPrinters = _productPrinters.filter(b => none_return_products.includes(b.product_code));
         }
@@ -2077,6 +2078,7 @@ export default class Sale {
         }
 
         if (this.setting.pos_setting.print_new_deleted_sale_product) {
+            console.log("generate deleted product to product printer list");
             //generate deleted product to product printer list
             this.deletedSaleProducts.filter(r => JSON.parse(r.printers).length > 0).forEach((r) => {
                 const printers = JSON.parse(r.printers);
