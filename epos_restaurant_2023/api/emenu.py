@@ -60,6 +60,24 @@ def get_emenu_settings(business_branch = ''):
         }
     }
 
+@frappe.whitelist() 
+def get_settings(emenu,pos_profile):
+    currency = frappe.get_cached_value("ePOS Settings", None, "currency")
+    currency_format = frappe.get_cached_value("Currency", currency, "custom_pos_currency_format")
+    emenu = frappe.get_cached_doc("eMenu", emenu)
+    business_branch_doc = frappe.get_cached_doc("Business Branch", frappe.get_cached_value("POS Profile", pos_profile, "business_branch")) 
+
+    return {
+        "currency": currency,
+        "currency_format": currency_format,
+        "emenu":emenu,
+        "predefineLocation":{
+            "lat":business_branch_doc.lat,
+            "long":business_branch_doc.long 
+
+        }
+    }
+
 @frappe.whitelist(allow_guest=True)
 def get_pos_profile(name):
     if not frappe.db.exists("POS Profile",name):

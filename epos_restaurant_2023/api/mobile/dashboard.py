@@ -18,19 +18,23 @@ def get_param(param):
     if "pos_profiles" in keys:
         pos_profiles = param["pos_profiles"]
     
-    working_day_sql = """select max(posting_date) as posting_date from `tabWorking Day` where 1=1 """
-    if not business_branch is "":
-        working_day_sql += " and business_branch = %(business_branch)s"
-    working_day_sql += " limit 1"
-    
-    working_day = frappe.db.sql(working_day_sql, {"business_branch": business_branch}, as_dict=1)
+    working_date = param["working_date"] if "working_date" in keys else ""
+    if (working_date or "") == "":
+        working_day_sql = """select max(posting_date) as posting_date from `tabWorking Day` where 1=1 """
+        if not business_branch is "":
+            working_day_sql += " and business_branch = %(business_branch)s"
+        working_day_sql += " limit 1"
+        
+        working_day = frappe.db.sql(working_day_sql, {"business_branch": business_branch}, as_dict=1)
 
-    if working_day and working_day[0]["posting_date"]:
-        working_date = working_day[0]["posting_date"]
+        if working_day and working_day[0]["posting_date"]:
+            working_date = working_day[0]["posting_date"]
+        else:
+            now = datetime.datetime.now()
+            current_date = now.date()
+            working_date = current_date
     else:
-        now = datetime.datetime.now()
-        current_date = now.date()
-        working_date = current_date
+        working_date = datetime.datetime.strptime(working_date, "%Y-%m-%d").date()
 
     return {"business_branch":business_branch,"working_date":working_date, "pos_profiles":pos_profiles, }
 
@@ -101,8 +105,6 @@ def daily_sale_chart(param):
     business_branch  = p["business_branch"]
     working_date = p["working_date"]
     pos_profiles = p["pos_profiles"] 
-    
-
 
     result = []
     for d in get_day_numbers(working_date.year, working_date.month):

@@ -9,7 +9,14 @@
   "product_code",
   "product_name",
   "quantity",
-  "price"
+  "price",
+  "portion",
+  "modifiers",
+  "modifers_data",
+  "modifier_price",
+  "sub_total",
+  "total_amount",
+  "note"
  ],
  "fields": [
   {
@@ -37,12 +44,47 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Price"
+  },
+  {
+   "fieldname": "portion",
+   "fieldtype": "Data",
+   "label": "Portion"
+  },
+  {
+   "fieldname": "modifiers",
+   "fieldtype": "Data",
+   "label": "Modifiers"
+  },
+  {
+   "fieldname": "modifers_data",
+   "fieldtype": "JSON",
+   "label": "Modifers Data"
+  },
+  {
+   "fieldname": "modifier_price",
+   "fieldtype": "Currency",
+   "label": "Modifier Price"
+  },
+  {
+   "fieldname": "sub_total",
+   "fieldtype": "Currency",
+   "label": "Sub Total"
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Amount"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-05-24 15:19:19.312948",
+ "modified": "2025-06-05 12:42:21.198944",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Online Order Product",

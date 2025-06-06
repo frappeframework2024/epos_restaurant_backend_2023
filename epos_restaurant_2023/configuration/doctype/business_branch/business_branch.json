@@ -35,6 +35,9 @@
   "address_kh",
   "street",
   "house_number",
+  "column_break_msiv",
+  "lat",
+  "long",
   "bank_account_information_section",
   "bank_name",
   "account_name",
@@ -535,12 +538,28 @@
    "fieldname": "report_header_logo",
    "fieldtype": "Attach Image",
    "label": "Report Header Logo"
+  },
+  {
+   "fieldname": "column_break_msiv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lat",
+   "fieldtype": "Float",
+   "label": "Lat",
+   "precision": "9"
+  },
+  {
+   "fieldname": "long",
+   "fieldtype": "Float",
+   "label": "Long",
+   "precision": "9"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-11 13:54:02.933470",
+ "modified": "2025-06-06 13:11:15.387316",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",

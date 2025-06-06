@@ -14,6 +14,7 @@ from frappe.utils import (
 )
 from escpos import *
 
+from epos_restaurant_2023.api.pdf import get_pdf
 
 def get_print_context(doc, seat_number = "", reprint=0, sale_products= [],printer_name=None):
     setting = frappe.get_doc("POS Config", frappe.db.get_value("POS Profile",doc.pos_profile, "pos_config"))
@@ -224,4 +225,54 @@ def print_from_print_format(data, is_html=False):
     else: 
         hash_generate =  frappe.generate_hash(length=15)
         return capture(html=html,css=css,height=height,width=width,image='report_{}.png'.format(hash_generate))
+
+
+
+@frappe.whitelist()
+def get_mobile_order_to_kitchen_pdf(template = "Online Order Kitchen Ticket",doc_name="ORD2025-0033", data=[],pdf=1):
+    template =frappe.get_cached_doc("POS Receipt Template",template)
+    doc = frappe.get_doc("Online Order",doc_name)
+    product_printer = frappe.db.sql("select printer_name,parent as product_code from `tabProduct Printer` where parent in %(product_codes)s",{"product_codes":[d.product_code for d in doc.order_products]} ,as_dict=1) 
+    
+    html_template = """
+    <html>
+    <head>
+        <style>
+           {css}
+        </style>
+    </head>
+    <body>
+     {template}
+    </body>
+    </html>
+    """.format(css=template.style,template=template.template)
+    options = {
+        "margin-top": "0mm",
+        "margin-bottom": "0mm",
+        "margin-left": "0mm",
+        "margin-right": "0mm",
+        "disable-smart-shrinking": None,
+        "no-outline": None,
+        "header-spacing": "0",
+        "footer-spacing": "0",
+        "print-media-type": None,
+        "page-width": "80mm",          # width of the thermal receipt
+        "page-height": "297mm"
+    }
+
+    result_base64 = []
+    for printer in set([d.get("printer_name") for d in product_printer]):
+        product_codes = [d.get("product_code") for d in product_printer if d.get("printer_name")==printer] 
+        rendered_html = frappe.render_template(html_template, {"printer_name":printer,"doc":doc,"products":[d for d in doc.order_products if d.product_code in product_codes]})
+        pdf = get_pdf(rendered_html,options=options)
+        # return pdf
+        if pdf==1:
+            frappe.local.response.filename = "custom_report.pdf"
+            frappe.local.response.filecontent = pdf
+            frappe.local.response.type = "download"
+
+        # return base 64
+        pdf_base64 = base64.b64encode(pdf)
+        result_base64.append([printer,pdf_base64.decode()]) 
+    return result_base64
 

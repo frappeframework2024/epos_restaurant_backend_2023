@@ -15,17 +15,17 @@
 
             <!-- free -->
             <template v-if="!saleProduct.is_timer_product && (saleProduct.allow_free || 0) == 1">
-                    <v-list-item prepend-icon="mdi-currency-usd-off" :title="$t('Free')" v-if="!saleProduct.is_free"
-                        @click="onSaleProductFree()"></v-list-item>
+                <v-list-item prepend-icon="mdi-currency-usd-off" :title="$t('Free')" v-if="!saleProduct.is_free"
+                    @click="onSaleProductFree()"></v-list-item>
 
-                    <v-list-item v-else @click="sale.onSaleProductCancelFree(saleProduct)">
-                        <template v-slot:prepend>
-                            <v-icon icon="mdi-currency-usd-off" color="error"></v-icon>
-                        </template>
-                        <v-list-item-title class="text-red-700">{{ $t('Cancel Free') }}</v-list-item-title>
-                    </v-list-item>
-                </template>
-                <!-- end free -->
+                <v-list-item v-else @click="sale.onSaleProductCancelFree(saleProduct)">
+                    <template v-slot:prepend>
+                        <v-icon icon="mdi-currency-usd-off" color="error"></v-icon>
+                    </template>
+                    <v-list-item-title class="text-red-700">{{ $t('Cancel Free') }}</v-list-item-title>
+                </v-list-item>
+            </template>
+            <!-- end free -->
 
             <template v-if="gv.device_setting.is_order_station == 0">
             

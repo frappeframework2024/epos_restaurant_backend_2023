@@ -48,7 +48,10 @@
   "height_banner",
   "background_color_banner",
   "background_image_banner",
-  "favicon"
+  "favicon",
+  "setting_tab",
+  "qr_code_expire_duration",
+  "online_order_range"
  ],
  "fields": [
   {
@@ -260,13 +263,30 @@
    "fieldname": "category_placeholder_background",
    "fieldtype": "Attach",
    "label": "Category Placeholder Background"
+  },
+  {
+   "fieldname": "setting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Setting"
+  },
+  {
+   "default": "8",
+   "fieldname": "qr_code_expire_duration",
+   "fieldtype": "Int",
+   "label": "QR Code Expire Duration (Hour)"
+  },
+  {
+   "default": "50",
+   "fieldname": "online_order_range",
+   "fieldtype": "Int",
+   "label": "Online Order Range"
   }
  ],
  "has_web_view": 1,
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-28 14:14:22.821019",
+ "modified": "2025-06-06 13:15:28.263559",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu",

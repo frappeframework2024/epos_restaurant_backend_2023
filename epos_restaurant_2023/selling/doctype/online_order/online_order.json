@@ -8,8 +8,18 @@
  "field_order": [
   "naming_series",
   "posting_date",
+  "amended_from",
+  "column_break_johc",
+  "pos_profile",
+  "table_id",
+  "table_number",
+  "session_id",
+  "section_break_wdtv",
   "order_products",
-  "amended_from"
+  "section_break_blaq",
+  "column_break_eqol",
+  "column_break_iqip",
+  "total_amount"
  ],
  "fields": [
   {
@@ -38,12 +48,60 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "column_break_johc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "pos_profile",
+   "fieldtype": "Link",
+   "label": "POS Profile",
+   "options": "POS Profile"
+  },
+  {
+   "fieldname": "section_break_wdtv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "session_id",
+   "fieldtype": "Data",
+   "label": "Session ID"
+  },
+  {
+   "fieldname": "table_id",
+   "fieldtype": "Link",
+   "label": "Table ID",
+   "options": "Tables Number"
+  },
+  {
+   "fetch_from": "table_id.tbl_number",
+   "fieldname": "table_number",
+   "fieldtype": "Data",
+   "label": "Table Number"
+  },
+  {
+   "fieldname": "section_break_blaq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_eqol",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_iqip",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Amount"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-05-24 15:30:17.900729",
+ "modified": "2025-06-06 14:50:40.072351",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Online Order",

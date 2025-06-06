@@ -22,6 +22,9 @@ frappe.ui.form.on("Expense", {
 	business_branch(frm) {
 		change_branch(frm)
 	},
+	open_cash_float(frm){
+		updateSumTotal(frm);
+	}
 });
 frappe.ui.form.on('Expense Payments', {
 	payment_type(frm,cdt,cdn){
@@ -164,6 +167,7 @@ function updateSumTotal(frm) {
     frm.set_value('total_quantity', total_qty);
     frm.set_value('total_paid', total_payment);
     frm.set_value('balance', total_amount - total_payment);
+	frm.set_value('remaining_cash_float', (frm.doc.open_cash_float||0) - (total_amount||0));
    
 	frm.refresh_field("total_amount");
 	frm.refresh_field("total_quantity");
