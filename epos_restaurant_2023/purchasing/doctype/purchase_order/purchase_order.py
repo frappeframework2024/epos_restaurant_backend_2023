@@ -157,11 +157,11 @@ def get_accounts(branch,product):
 	return {"stock_account":stock_account,"expense_account":expense_account}
 
 @frappe.whitelist()
-def set_status_to_paid_without_payment(purchase_order):
+def set_status_to_paid_without_payment(purchase_order,payment_type_name="Cash Dollar"):
 	purchase_order = frappe.get_doc("Purchase Order", purchase_order)
 	if purchase_order.balance > 0:
 		doc = frappe.new_doc("Purchase Order Payment")
-		payment_type = frappe.get_doc("Payment Type", "Cash Dollar")
+		payment_type = frappe.get_doc("Payment Type", payment_type_name)
 		doc.payment_type = payment_type.name
 		doc.currency = payment_type.currency
 		doc.posting_date = frappe.utils.nowdate()
