@@ -156,6 +156,31 @@ def get_accounts(branch,product):
 	stock_account = frappe.db.get_value("Business Branch", branch,"default_inventory_account")
 	return {"stock_account":stock_account,"expense_account":expense_account}
 
+@frappe.whitelist()
+def set_status_to_paid_without_payment(purchase_order):
+	purchase_order = frappe.get_doc("Purchase Order", purchase_order)
+	if purchase_order.balance > 0:
+		doc = frappe.new_doc("Purchase Order Payment")
+		payment_type = frappe.get_doc("Payment Type", "Cash Dollar")
+		doc.payment_type = payment_type.name
+		doc.currency = payment_type.currency
+		doc.posting_date = frappe.utils.nowdate()
+		if frappe.db.get_single_value("ePOS Settings","use_basic_accounting_feature"):
+			account_paid_froms = frappe.db.sql("select account from `tabPayment Type Account` where business_branch=%s and parent = %s limit 1", (purchase_order.business_branch, payment_type.name), as_dict=True)
+			if account_paid_froms:
+				doc.account_paid_from = account_paid_froms[0].account
+			else:
+				doc.account_paid_from = frappe.get_cached_value("Business Branch", purchase_order.business_branch, "default_cash_account")
+			doc.account_paid_to = frappe.get_cached_value("Business Branch", purchase_order.business_branch, "default_credit_account")
+		doc.purchase_order = purchase_order.name
+		doc.input_amount = purchase_order.balance
+		doc.exchange_rate = (payment_type.exchange_rate or 1)
+		doc.payment_amount = purchase_order.balance / doc.exchange_rate
+		doc.submit()
+		return {"message": _("Purchase order paid")}
+	else:
+		return {"message": _("Purchase order already paid")}
+
 def update_purchase_order_status(self,status):
 	frappe.db.set_value('Purchase Order', self.name,  {
 		'status': status
