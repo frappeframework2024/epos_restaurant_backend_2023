@@ -169,14 +169,11 @@ def upload_file():
 	if frappe.form_dict.folder :
 		if frappe.form_dict.folder !="":
 			if not frappe.db.exists("File", {"file_name": frappe.form_dict.folder, "is_folder": 1}):
-				folder_doc = frappe.get_doc({
-					"doctype": "File",
-					"file_name": frappe.form_dict.folder,
-					"is_folder": 1,
-					"folder": "Home" 
-				})
-				folder_doc.insert(ignore_permissions=True)
-				frappe.db.commit()
+				doc = frappe.new_doc("File")
+				doc.file_name = frappe.form_dict.folder
+				doc.is_folder = 1
+				doc.folder = "Home"
+				doc.insert(ignore_permissions=True)
         
 	user = None
 	if frappe.session.user == "Guest":
@@ -204,14 +201,10 @@ def upload_file():
 	description = frappe.form_dict.custom_description or ""
 	content = None
 
-
 	if "file" in files:
 		file = files["file"]
-		
 		content = file.stream.read()
- 
 		filename = file.filename
-	 
 		content_type = guess_type(filename)[0]
 		if optimize and content_type and content_type.startswith("image/"):
 			args = {"content": content, "content_type": content_type}
@@ -254,8 +247,7 @@ def upload_file():
 			}
 		).save(ignore_permissions=ignore_permissions)
 		if fieldname:
-			frappe.db.set_value(uploadedFile.attached_to_doctype,uploadedFile.attached_to_name,fieldname,uploadedFile.file_url);
-   
+			frappe.db.set_value(uploadedFile.attached_to_doctype,uploadedFile.attached_to_name,fieldname,uploadedFile.file_url)
 		return uploadedFile
 
 
