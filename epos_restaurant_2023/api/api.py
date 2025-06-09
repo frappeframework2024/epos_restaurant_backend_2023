@@ -2185,10 +2185,14 @@ def generate_table_qr_menu(param):
     if not menu_qr_base_url.endswith("/"):
         menu_qr_base_url += "/" 
     business_branch = urllib.parse.quote(p["business_branch"])
+    bus = frappe.get_doc("Business Branch", business_branch)
+
+    property_code = bus.property_code
+
     pos_profile = urllib.parse.quote(p["pos_profile"])
     emenu = urllib.parse.quote(p["emenu"])
     table_id = urllib.parse.quote(p["table_id"])
-    qr_url = "{}?propertyCode={}&posProfile={}&eMenu={}&tableNo={}".format(menu_qr_base_url, business_branch, pos_profile, emenu, table_id)
+    qr_url = "{}?propertyCode={}&posProfile={}&eMenu={}&tableNo={}".format(menu_qr_base_url, property_code, pos_profile, emenu, table_id)
     generate_param =  urllib.parse.quote(qr_url)
     generate = "https://api.qrserver.com/v1/create-qr-code/?data={}&size=200x200".format(generate_param)
 
