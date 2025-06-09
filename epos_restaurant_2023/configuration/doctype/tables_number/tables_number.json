@@ -15,6 +15,7 @@
   "height",
   "sale_type",
   "is_foc",
+  "qr_menu_file",
   "column_break_6",
   "shape",
   "discount_type",
@@ -151,12 +152,18 @@
    "fieldname": "disabled",
    "fieldtype": "Check",
    "label": "Disabled"
+  },
+  {
+   "fieldname": "qr_menu_file",
+   "fieldtype": "Attach Image",
+   "label": "QR Menu File",
+   "read_only": 1
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-26 11:30:08.717250",
+ "modified": "2025-06-09 10:00:16.438460",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Tables Number",

@@ -2170,3 +2170,53 @@ def get_default_price_rule():
 def override_doc_timestamps(doctype, name, creation, modified):
     frappe.db.set_value(doctype, name, "creation", creation)
     frappe.db.set_value(doctype, name, "modified", modified)
+
+
+@frappe.whitelist()
+def generate_table_qr_menu(param):
+    p = json.loads(param)
+
+    import urllib.parse
+
+    menu_qr_base_url = frappe.db.get_single_value("ePOS Settings","menu_qr_base_url")
+    if not menu_qr_base_url:
+        frappe .throw("Please set Menu QR Base URL in ePOS Settings")
+    
+    if not menu_qr_base_url.endswith("/"):
+        menu_qr_base_url += "/" 
+    business_branch = urllib.parse.quote(p["business_branch"])
+    pos_profile = urllib.parse.quote(p["pos_profile"])
+    emenu = urllib.parse.quote(p["emenu"])
+    table_id = urllib.parse.quote(p["table_id"])
+    qr_url = "{}?propertyCode={}&posProfile={}&eMenu={}&tableNo={}".format(menu_qr_base_url, business_branch, pos_profile, emenu, table_id)
+    generate_param =  urllib.parse.quote(qr_url)
+    generate = "https://api.qrserver.com/v1/create-qr-code/?data={}&size=200x200".format(generate_param)
+
+    response = requests.get(generate)
+
+    if response.status_code != 200:
+        frappe.throw("Failed to generate QR code from external API.")
+
+    # Create a unique filename
+    file_name = f"qr_menu_{table_id}_{frappe.generate_hash(length=8)}.png"
+    file_path = f"public/files/{file_name}"
+
+    # Save image to public folder
+    full_path = frappe.get_site_path(file_path)
+    with open(full_path, "wb") as f:
+        f.write(response.content)
+
+    # Create File DocType entry
+    file_url = f"/files/{file_name}"
+    file_doc = frappe.get_doc({
+        "doctype": "File",
+        "file_url": file_url,
+        "file_name": file_name,
+        "is_private": 0
+    })
+    file_doc.insert(ignore_permissions=True)
+
+    return {
+        "file_url": file_url,
+        "file_name": file_name
+    }
