@@ -2183,9 +2183,9 @@ def generate_table_qr_menu(param):
         frappe .throw("Please set Menu QR Base URL in ePOS Settings")
     
     if not menu_qr_base_url.endswith("/"):
-        menu_qr_base_url += "/" 
-    business_branch = urllib.parse.quote(p["business_branch"])
-    bus = frappe.get_doc("Business Branch", business_branch)
+        menu_qr_base_url += "/"  
+        
+    bus = frappe.get_doc("Business Branch", p["business_branch"])
 
     property_code = bus.property_code
 
