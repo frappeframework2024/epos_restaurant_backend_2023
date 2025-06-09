@@ -166,14 +166,21 @@ def uploadfile():
 
 @frappe.whitelist(allow_guest=True)
 def upload_file():
+	from frappe.exceptions import QueryDeadlockError
+	import time
 	if frappe.form_dict.folder :
 		if frappe.form_dict.folder !="":
 			if not frappe.db.exists("File", {"file_name": frappe.form_dict.folder, "is_folder": 1}):
-				doc = frappe.new_doc("File")
-				doc.file_name = frappe.form_dict.folder
-				doc.is_folder = 1
-				doc.folder = "Home"
-				doc.insert(ignore_permissions=True)
+				for attempt in range(5):
+					try:
+						doc = frappe.new_doc("File")
+						doc.file_name = frappe.form_dict.folder
+						doc.is_folder = 1
+						doc.folder = "Home"
+						doc.insert(ignore_permissions=True)
+						break
+					except QueryDeadlockError:
+						time.sleep(3)
         
 	user = None
 	if frappe.session.user == "Guest":
