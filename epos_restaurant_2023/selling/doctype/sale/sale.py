@@ -726,7 +726,7 @@ def update_inventory_on_submit(self):
 		else:
 			doc = frappe.get_cached_doc("Product",p.product_code)
 			#check if product has receipt and loop update from product receip
-			update_product_recipe_to_inventory(self,doc, p.quantity, "Submit",pos_profile)	
+			update_product_recipe_to_inventory(self,doc, p.quantity, "Submit",p,pos_profile)	
 
 
 
@@ -773,32 +773,33 @@ def update_inventory_on_submit(self):
   
 	frappe.db.sql("update `tabSale` set total_cost = {0} , profit=grand_total - {0} where name=%(sale)s".format(total_cost), {"sale":self.name})
 
-def update_product_recipe_to_inventory(self,product,base_quantity,action,pos_profile=""):
+def update_product_recipe_to_inventory(self,product,base_quantity,action,sale_product,pos_profile=""):
 	current_pos_profile = pos_profile if pos_profile != "" else self.pos_profile
 	for d in product.product_recipe:
-		if d.is_inventory_product:
+		if d.is_inventory_product :
 			if not d.sale_type or d.sale_type == self.sale_type:
-				uom_conversion = get_uom_conversion(d.base_unit, d.unit)
-				note = ""
-				if action =="Submit":
-					note = 'Update Recipe Quantity after New sale submitted.'
-				else:
-					note =  'Update Recipe Quantity after cancel order.'
+				if d.portion == sale_product.portion or (d.portion or "") == "":
+					uom_conversion = get_uom_conversion(d.base_unit, d.unit)
+					note = ""
+					if action =="Submit":
+						note = 'Update Recipe Quantity after New sale submitted.'
+					else:
+						note =  'Update Recipe Quantity after cancel order.'
 
-				add_to_inventory_transaction({
-					'doctype': 'Inventory Transaction',
-					'transaction_type':"Sale",
-					'transaction_date':self.posting_date,
-					'transaction_number':self.name,
-					'product_code': d.product,
-					'unit':d.unit,
-					'stock_location':get_stock_location_by_pos_profile(d.product,current_pos_profile,self.stock_location),
-					'in_quantity':(base_quantity* d.quantity) / uom_conversion if action=="Cancel" else 0,
-					'out_quantity':(base_quantity* d.quantity) / uom_conversion if action=="Submit" else 0,
-					"uom_conversion":uom_conversion,
-					'note': note,
-					'action': action
-				})
+					add_to_inventory_transaction({
+						'doctype': 'Inventory Transaction',
+						'transaction_type':"Sale",
+						'transaction_date':self.posting_date,
+						'transaction_number':self.name,
+						'product_code': d.product,
+						'unit':d.unit,
+						'stock_location':get_stock_location_by_pos_profile(d.product,current_pos_profile,self.stock_location),
+						'in_quantity':(base_quantity* d.quantity) / uom_conversion if action=="Cancel" else 0,
+						'out_quantity':(base_quantity* d.quantity) / uom_conversion if action=="Submit" else 0,
+						"uom_conversion":uom_conversion,
+						'note': note,
+						'action': action
+					})
 
 def update_combo_menu_to_inventory(self, product,action):
 	if product.is_combo_menu:
@@ -834,7 +835,7 @@ def update_combo_menu_to_inventory_transaction(self,product,action,combo_menu_da
 		else:
 			#check if product have receipt then update to stock
 			# base qty here is = sale product quantity * combo product quantity
-			update_product_recipe_to_inventory(self,doc,product.quantity * p["quantity"], action,pos_profile)
+			update_product_recipe_to_inventory(self,doc,product.quantity * p["quantity"], action,product,pos_profile)
 					
 def update_inventory_on_cancel(self):
 	for p in self.sale_products:

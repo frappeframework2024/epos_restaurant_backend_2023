@@ -51,7 +51,8 @@
   "favicon",
   "setting_tab",
   "qr_code_expire_duration",
-  "online_order_range"
+  "online_order_range",
+  "web_socket_print_url"
  ],
  "fields": [
   {
@@ -280,13 +281,19 @@
    "fieldname": "online_order_range",
    "fieldtype": "Int",
    "label": "Online Order Range"
+  },
+  {
+   "description": "We use WebApp Hardware Bridge, Work in window only.\n",
+   "fieldname": "web_socket_print_url",
+   "fieldtype": "Data",
+   "label": "Web Socket Print Url"
   }
  ],
  "has_web_view": 1,
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-06 13:15:28.263559",
+ "modified": "2025-06-10 09:25:12.306563",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu",

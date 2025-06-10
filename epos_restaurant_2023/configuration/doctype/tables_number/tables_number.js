@@ -41,9 +41,9 @@ frappe.ui.form.on("Tables Number", {
                     primary_action_label: 'Generate',
                     primary_action(values) {
                         d.hide();
-
                         frappe.call({
                         method: 'epos_restaurant_2023.api.api.generate_table_qr_menu',
+                         freeze: true,
                         args: {
                             param: {
                                 business_branch: values.business_branch,
