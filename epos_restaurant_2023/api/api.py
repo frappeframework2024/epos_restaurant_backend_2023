@@ -612,11 +612,15 @@ def get_current_working_day(business_branch = ""):
 
 @frappe.whitelist()
 def get_current_cashier_shift(pos_profile):
-    sql = "select name,working_day, posting_date,shift_name, pos_profile, opened_note,business_branch,total_opening_amount from `tabCashier Shift` where pos_profile = %(pos_profile)s and is_closed = 0 order by creation desc limit 1"
-    data =  frappe.db.sql(sql, {"pos_profile":pos_profile},as_dict=1) 
-    if data:
-        return data [0]
-    return None
+    if (pos_profile or "") != "":
+        sql = "select name,working_day, posting_date,shift_name, pos_profile, opened_note,business_branch,total_opening_amount from `tabCashier Shift` where pos_profile = %(pos_profile)s and is_closed = 0 order by creation desc limit 1"
+        data =  frappe.db.sql(sql, {"pos_profile":pos_profile},as_dict=1) 
+        if data:
+            return data [0]
+        else:
+            return None
+    else:
+        return None
 
 @frappe.whitelist()
 def get_current_shift_information(business_branch="", pos_profile=""):
