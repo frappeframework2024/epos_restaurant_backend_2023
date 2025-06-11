@@ -624,8 +624,9 @@ def get_current_cashier_shift(pos_profile=""):
 
 @frappe.whitelist()
 def get_current_shift_information(business_branch="", pos_profile=""):
-    branch = ""
-    profile = ""
+    branch = business_branch
+    profile = pos_profile
+    
     if (business_branch or "") == "":
         business_branchs = (frappe.db.get_list('Business Branch') or [])
         if len(business_branchs) == 1:
