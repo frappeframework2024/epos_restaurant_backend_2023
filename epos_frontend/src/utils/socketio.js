@@ -9,7 +9,9 @@ let port ="";
 
 if (protocol=="http:"){
     port = ":" +  websocket_port;
-} 
+}else  {
+    port = ":" +  window.location.port;
+}
  
 
  
