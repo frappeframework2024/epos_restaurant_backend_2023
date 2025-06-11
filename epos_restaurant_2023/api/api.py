@@ -624,24 +624,17 @@ def get_current_cashier_shift(pos_profile=""):
 
 @frappe.whitelist()
 def get_current_shift_information(business_branch="", pos_profile=""):
-    branch = business_branch
-    profile = pos_profile
-    
     if (business_branch or "") == "":
-        business_branchs = (frappe.db.get_list('Business Branch') or [])
-        if len(business_branchs) == 1:
-            branch = business_branchs[0].name
-        else:
-            branch = business_branch
+        branches = (frappe.db.get_list('Business Branch') or [])
+        if len(branches) == 1:
+            business_branch = branches[0].name
     if (pos_profile or "") == "":
         profiles = (frappe.db.get_list('POS Profile') or [])
         if len(profiles) == 1:
-            profile = profiles[0].name
-        else:
-            profile = pos_profile
+            pos_profile = profiles[0].name
     return {
-        "working_day":get_current_working_day(branch),
-        "cashier_shift":get_current_cashier_shift(profile)
+        "working_day":get_current_working_day(business_branch),
+        "cashier_shift":get_current_cashier_shift(pos_profile)
     }
 
 @frappe.whitelist()
