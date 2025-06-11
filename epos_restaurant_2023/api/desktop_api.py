@@ -203,7 +203,7 @@ def get_working_day_info(name,pos_profile):
             'value': str(sum(a.total_transaction for a in sale_transactions))
         })
     for a in sale_transactions:
-        if a["total_display"]>0:
+        if (a["total_display"] or 0)>0:
             result.append({
                 "categroy":'sale_transactions',
                 'title': a["sale_type"],
@@ -222,7 +222,7 @@ def get_working_day_info(name,pos_profile):
     coalesce(sum(commission_amount),0) as `Total Commission Amount`
     from `tabSale` where working_day = '{0}' and docstatus = 1 and pos_profile = '{1}'""".format(working_day.name,pos_profile),as_dict=1)
     for k in sale_summary[0].keys():
-        if sale_summary[0][k]>0:
+        if (sale_summary[0][k] or 0)>0:
             result.append({
                 "categroy":'sale_summary',
                 'title':k,
@@ -251,7 +251,7 @@ def get_working_day_info(name,pos_profile):
     where working_day = '{0}' and docstatus=1
     """.format(working_day.name,pos_profile),as_dict=1)
     for a in sale_by_revenue_group:
-        if a["amount"]>0:
+        if (a["amount"] or 0)>0:
             result.append({
                 "categroy":'sale_by_revenue_group',
                 'title': a["revenue_group"],
@@ -266,7 +266,7 @@ def get_working_day_info(name,pos_profile):
     where s.working_day = '{0}' and s.is_foc=1 and s.docstatus=1 and
     s.pos_profile = '{1}' group by revenue_group""".format(working_day.name,pos_profile),as_dict=1)
     for a in foc_by_revenue_group:
-        if a["amount"]>0:
+        if (a["amount"] or 0)>0:
             result.append({
                 "categroy":'foc_by_revenue_group',
                 'title': a["revenue_group"],
@@ -295,7 +295,7 @@ def get_working_day_info(name,pos_profile):
             'title': a["payment_type"],
             'value': frappe.utils.fmt_money(a["input_amount"] + (a["fee_amount"] * a["exchange_rate"]),currency=a["currency"],precision=a["currency_precision"])
         })
-    if(sum(c["payment_amount"] for c in payment_breakdown)>0):
+    if(sum((c["payment_amount"] or 0) for c in payment_breakdown)>0):
         result.append({
                 "categroy":'payment_breakdown',
                 'title': "Total Payment Amount",
@@ -336,7 +336,7 @@ def get_working_day_info(name,pos_profile):
             'title': a["payment_type"],
             'value': frappe.utils.fmt_money(a["input_amount"] + (a["fee_amount"] * a["exchange_rate"]),currency=a["currency"],precision=a["currency_precision"])
     })
-    if(sum(c["payment_amount"] for c in on_account)>0):
+    if(sum((c["payment_amount"] or 0) for c in on_account)>0):
         result.append({
                 "categroy":'on_account',
                 'title': "Total On Account",
