@@ -11,6 +11,7 @@ if (protocol=="http:"){
     port = ":" +  websocket_port;
 } 
  
+
  
 let socket = io(protocol + "//" + host + port, { path: '/socketserver/socket.io' });
 

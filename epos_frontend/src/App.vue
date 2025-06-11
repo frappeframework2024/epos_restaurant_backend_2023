@@ -23,13 +23,14 @@ import SplashScreen from './components/SplashScreen.vue';
 import SaleLayout from './components/layout/SaleLayout.vue';
 import { PromiseDialogsWrapper } from 'vue-promise-dialogs';
 import { createResource } from '@/resource.js'
-import { reactive, computed, onMounted, inject, i18n,onUnmounted } from '@/plugin'
+import { reactive, computed, onMounted, inject, i18n,onUnmounted,postApi } from '@/plugin'
 import { useStore } from 'vuex'
 import { createToaster } from '@meforma/vue-toaster';
 import { FrappeApp } from 'frappe-js-sdk';
 import { useDisplay } from 'vuetify'; 
 import DynamicDialog from 'primevue/dynamicdialog';
- 
+ import WebSocketPrinter from "@/utils/websocket-printer.js"
+const printService = new WebSocketPrinter();
 const router = useRouter()
 const route = useRoute()
 
@@ -73,6 +74,32 @@ socket.on("PrintReceipt", (arg) => {
 		}
 	} 
 });
+
+// print from emenu order
+socket.on("OnPrintReport", async (arg) => {
+ 
+	
+     if(arg.order_number!==""){
+	 
+		  await postApi("printing.get_mobile_order_to_kitchen_pdf", {
+			pdf: 0,
+			doc_name: arg.order_number
+		}).then(result=>{
+			result.message.forEach(x => {
+         printService.submit({
+            'type': x[0],//printer name
+            'url': 'file.pdf',
+            'file_content': x[1] //base 64 pdf
+         });
+      }
+      )
+		})
+
+		
+	 }
+    })
+
+
 
 
 const isLoading = computed(() => {
