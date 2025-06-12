@@ -44,7 +44,7 @@ const props = defineProps({
 
 //frappe api call
 const call = frappe.call();
-
+const db = frappe.db();
 
 
 function onCreateNewBill() {
@@ -81,7 +81,7 @@ async function onSaleOrderClick(s) {
             new_sale: s.name,
         };
         call.get('epos_restaurant_2023.api.change_merge_table.on_merge_order', params)
-            .then((res) => {
+            .then(async (res) => {
                 isLoading.value = false;
                 if (res.message.alert != "") {
                     toaster.success($t(`msg.${res.message.alert}`, [res.message.data.name]))
@@ -93,7 +93,6 @@ async function onSaleOrderClick(s) {
                 });
                 isLoading.value = false;
                 emit("resolve", { action: "reload_sale", name: res.message.data.name })
-
                 // check if print items merge bill
                 if (sale.setting.pos_setting.print_sale_product_merged_table) {
                     sale.sale.sale_products.filter(r => (r.move_from_sale || "") != "" && (r.move_from_sale_printed || 0) == 0 && JSON.parse(r.printers).length > 0)
@@ -127,8 +126,8 @@ async function onSaleOrderClick(s) {
                                     order_by: r.order_by,
                                     creation: r.creation,
                                     modified: r.modified,
-                                    move_from_sale: r.move_from_sale,
-                                    move_from_table: r.move_from_table,
+                                    move_from_sale: sale.sale.name,
+                                    move_from_table: sale.sale.tbl_number,
                                     is_timer_product: (r.is_timer_product || 0),
                                     reference_sale_product: r.reference_sale_product,
                                     duration: r.duration,
@@ -140,8 +139,8 @@ async function onSaleOrderClick(s) {
                                 });
                             });
                         });
-
-                    sale.onPrintToKitchen(sale.sale);
+                    let doc = await db.getDoc("Sale", s.name);
+                    sale.onPrintToKitchen(doc);
                 }
 
 
