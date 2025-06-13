@@ -15,6 +15,7 @@
   "platform",
   "is_used",
   "is_order_station",
+  "allow_login_multiple_site",
   "disabled",
   "column_break_uutk",
   "device_id",
@@ -396,11 +397,17 @@
    "fieldname": "switch_pos_profiles",
    "fieldtype": "Table",
    "options": "Station POS Profile"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_login_multiple_site",
+   "fieldtype": "Check",
+   "label": "Allow Login Multiple Site"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-26 10:58:14.644361",
+ "modified": "2025-06-13 08:05:47.376290",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

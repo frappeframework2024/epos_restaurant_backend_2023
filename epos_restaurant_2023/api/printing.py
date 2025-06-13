@@ -228,6 +228,46 @@ def print_from_print_format(data, is_html=False):
 
 
 
+
+## print invoice or receipt
+@frappe.whitelist(allow_guest=True)
+def print_bill_pdf(station='Cashier Station', name='SINV2025-0152',template = "POS Receipt PDF", reprint=0 ):
+    doc = frappe.get_doc("Sale", name) 
+    data_template,css= frappe.db.get_value("POS Receipt Template",template,["template","style"])
+    html= frappe.render_template(data_template, get_print_context(doc,reprint))
+    html_template = """
+    <html>
+    <head>
+        <style>
+           {css}
+        </style>
+    </head>
+    <body>
+     {template}
+    </body>
+    </html>
+    """.format(css=css,template=html)
+    options = {
+        "margin-top": "0mm",
+        "margin-bottom": "0mm",
+        "margin-left": "0mm",
+        "margin-right": "0mm",
+        "disable-smart-shrinking": None,
+        "no-outline": None,
+        "header-spacing": "0",
+        "footer-spacing": "0",
+        "print-media-type": None,
+        "page-width": "80mm",          # width of the thermal receipt
+        "page-height": "297mm"
+    }
+
+    pdf = get_pdf(html_template,options=options)
+    # return pdf
+    frappe.local.response.filename = "custom_report.pdf"
+    frappe.local.response.filecontent = pdf
+    frappe.local.response.type = "download"
+    
+
 @frappe.whitelist()
 def get_mobile_order_to_kitchen_pdf(template = "Online Order Kitchen Ticket",doc_name="ORD2025-0033", data=[],pdf=1):
     template =frappe.get_cached_doc("POS Receipt Template",template)
@@ -275,4 +315,5 @@ def get_mobile_order_to_kitchen_pdf(template = "Online Order Kitchen Ticket",doc
         pdf_base64 = base64.b64encode(pdf)
         result_base64.append([printer,pdf_base64.decode()]) 
     return result_base64
+
 

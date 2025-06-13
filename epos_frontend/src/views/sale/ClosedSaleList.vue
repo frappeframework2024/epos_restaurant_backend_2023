@@ -113,7 +113,9 @@ const reportOption = computed(() => {
 
 function getReportUrl() {
     isLoading.value = true;
-    let url = `${serverUrl}/printview?doctype=${activeReport.value.doc_type}&name=${localStorage.getItem("pos_profile")}&format=${activeReport.value.name}&no_letterhead=1&show_toolbar=0&view=ui`;
+    let profile = encodeURIComponent(localStorage.getItem("pos_profile"));
+    let report_name = encodeURIComponent(activeReport.value.name);
+    let url = `${serverUrl}/printview?doctype=${activeReport.value.doc_type}&name=${profile}&format=${report_name}&no_letterhead=1&show_toolbar=0&view=ui`;
 
     if (filter.value.keyword && reportOption.value.show_keyword) {
         url += "&keyword=" + filter.value.keyword;

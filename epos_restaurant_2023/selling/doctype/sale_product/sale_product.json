@@ -27,6 +27,8 @@
   "product_tax_rule",
   "batch_no",
   "select_material",
+  "coupon",
+  "coupon_value",
   "section_break_9",
   "quantity",
   "deleted_quantity",
@@ -1187,12 +1189,23 @@
    "fieldname": "return_note",
    "fieldtype": "Long Text",
    "label": "Return Note"
+  },
+  {
+   "fieldname": "coupon",
+   "fieldtype": "Data",
+   "label": "Coupon",
+   "search_index": 1
+  },
+  {
+   "fieldname": "coupon_value",
+   "fieldtype": "Currency",
+   "label": "Coupon Value"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-03-01 12:14:19.827993",
+ "modified": "2025-06-12 14:27:26.990404",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",

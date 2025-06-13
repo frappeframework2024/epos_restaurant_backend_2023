@@ -2254,6 +2254,7 @@ export default class Sale {
 
         if (receipt.pos_receipt_file_name && localStorage.getItem("is_window")) {
             window.chrome.webview.postMessage(JSON.stringify(data));
+            
         } else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
             if (printer.length <= 0) {
                 toaster.warning($t("Printer not yet config for this device"))

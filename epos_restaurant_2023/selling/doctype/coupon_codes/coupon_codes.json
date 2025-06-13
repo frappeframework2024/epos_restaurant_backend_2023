@@ -1,0 +1,67 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "field:coupon",
+ "creation": "2025-06-12 15:14:39.685106",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "coupon",
+  "coupon_url",
+  "is_used"
+ ],
+ "fields": [
+  {
+   "fieldname": "coupon",
+   "fieldtype": "Data",
+   "label": "Coupon",
+   "unique": 1
+  },
+  {
+   "fieldname": "coupon_url",
+   "fieldtype": "Data",
+   "label": "Coupon URL"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_used",
+   "fieldtype": "Check",
+   "label": "Is Used"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-06-12 15:39:53.586498",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "Coupon Codes",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

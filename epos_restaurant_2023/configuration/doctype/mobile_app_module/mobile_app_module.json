@@ -9,11 +9,16 @@
   "section_break_h2as",
   "title",
   "route_url",
+  "color",
+  "icon",
+  "sort_order",
   "lft",
   "rgt",
   "is_group",
   "old_parent",
-  "parent_mobile_app_module"
+  "parent_mobile_app_module",
+  "column_break_ywba",
+  "is_active"
  ],
  "fields": [
   {
@@ -64,12 +69,40 @@
    "fieldname": "route_url",
    "fieldtype": "Data",
    "label": "Route URL"
+  },
+  {
+   "fieldname": "icon",
+   "fieldtype": "Code",
+   "label": "icon"
+  },
+  {
+   "default": "primary",
+   "description": "Use ionic predefine color, such as primary, danger, warning...",
+   "fieldname": "color",
+   "fieldtype": "Data",
+   "label": "Color"
+  },
+  {
+   "default": "0",
+   "fieldname": "sort_order",
+   "fieldtype": "Int",
+   "label": "Sort Order"
+  },
+  {
+   "fieldname": "column_break_ywba",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Is Active"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2025-06-11 15:18:10.326032",
+ "modified": "2025-06-12 10:04:28.949696",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Mobile App Module",
@@ -90,8 +123,8 @@
    "write": 1
   }
  ],
- "sort_field": "modified",
- "sort_order": "DESC",
+ "sort_field": "sort_order",
+ "sort_order": "ASC",
  "states": [],
  "title_field": "title"
 }
