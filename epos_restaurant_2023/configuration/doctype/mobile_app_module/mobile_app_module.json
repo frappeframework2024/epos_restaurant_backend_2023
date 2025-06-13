@@ -9,6 +9,7 @@
   "section_break_h2as",
   "title",
   "route_url",
+  "component",
   "color",
   "icon",
   "sort_order",
@@ -97,12 +98,17 @@
    "fieldname": "is_active",
    "fieldtype": "Check",
    "label": "Is Active"
+  },
+  {
+   "fieldname": "component",
+   "fieldtype": "Data",
+   "label": "Component"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2025-06-12 10:04:28.949696",
+ "modified": "2025-06-13 17:34:01.482404",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Mobile App Module",

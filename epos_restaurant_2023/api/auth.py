@@ -19,7 +19,7 @@ def check_api_url(property_code):
     frappe.throw("Property {} does not exist".format(property_code))
     
 @frappe.whitelist( allow_guest=True,methods="POST" )
-def login(property,usr, pwd):
+def login(property,usr, pwd, property_code=None):
  
     # from frappe.core.doctype.user.user import generate_keys
     try:
@@ -30,10 +30,10 @@ def login(property,usr, pwd):
         frappe.clear_messages()
         frappe.throw("Usename and password incorrect.")
         
-    frappe.response["message"] = get_response_user_information(property)
+    frappe.response["message"] = get_response_user_information(property,property_code )
 
         
-def get_response_user_information(property):
+def get_response_user_information(property, property_code=None):
     phone_number =""
     address =""
     employee_id=""
@@ -50,18 +50,18 @@ def get_response_user_information(property):
     api_generate = generate_keys(frappe.session.user)
     
     return {
-            "username":user.username,
-            "full_name":user.full_name,
-            "role_profile":user.role_profile_name,
-            "photo":user.user_image,
-            "phone_number":phone_number,
-            "address":address,
-            "name":frappe.session.user,
-            "position":position,
-            "token": base64.b64encode(str("{}:{}".format(user.api_key,api_generate)).encode("utf-8")).decode('utf-8'),
-        
-            "employee_id":employee_id
-
+        "username":user.username,
+        "full_name":user.full_name,
+        "role_profile":user.role_profile_name,
+        "photo":user.user_image,
+        "phone_number":phone_number,
+        "address":address,
+        "name":frappe.session.user,
+        "position":position,
+        "token": base64.b64encode(str("{}:{}".format(user.api_key,api_generate)).encode("utf-8")).decode('utf-8'),
+        "property_name":property,
+        "property_code":property_code,
+        "employee_id":employee_id
     }
 
      
