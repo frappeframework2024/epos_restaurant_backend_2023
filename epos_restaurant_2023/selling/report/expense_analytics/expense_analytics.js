@@ -55,7 +55,7 @@ frappe.query_reports["Expense Analytics"] = {
 			"label": __("Column Group By"),
 			"fieldtype": "Select",
 			"options": "Daily\nWeekly\nMonthly\nQuarterly\nHalf Yearly\nYearly",
-			"default":"None",
+			"default":"Monthly",
 			"on_change": function (query_report) {},
 		},
 		{
@@ -63,10 +63,21 @@ frappe.query_reports["Expense Analytics"] = {
 			"label": __("Chart Type"),
 			"fieldtype": "Select",
 			"options": "None\nbar\nline\npie",
-			"default":"bar",
+			"default":"None",
 			"on_change": function (query_report) {},
 		},
-	]
+	],
+	"formatter": function(value, row, column, data, default_formatter) {
+	
+		value = default_formatter(value, row, column, data);
+		if (data && data.is_group==1) {
+			value = $(`<span>${value}</span>`);
+			var $value = $(value).css("font-weight", "bold");
+			value = $value.wrap("<p></p>").parent().html();
+		}
+		
+		return value;
+	},
 };
 function start_of_year()
 {

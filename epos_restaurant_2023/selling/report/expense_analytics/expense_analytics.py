@@ -76,25 +76,30 @@ def get_report_field(filters):
 	return fields
 
 def get_fields(filters):
+	daily_label = "date_format(date,'%d/%m')"
+	start_date = datetime.datetime.strptime(filters.start_date, "%Y-%m-%d").date()
+	end_date = datetime.datetime.strptime(filters.end_date, "%Y-%m-%d").date()
+	if start_date.month == end_date.month and start_date.year == end_date.year:
+		daily_label = "date_format(date,'%d')"
 	sql=""
 	if filters.column_group=="Daily":
 		sql = """
 			select 
 				concat('col_',date_format(date,'%d_%m')) as fieldname, 
-				date_format(date,'%d') as label ,
+				{2} as label ,
 				min(date) as start_date,
 				max(date) as end_date
 			from `tabDates` 
-			where date between '{}' and '{}'
+			where date between '{0}' and '{1}'
 			group by
 				concat('col_',date_format(date,'%d_%m')) , 
 				date_format(date,'%d')  	
-		""".format(filters.start_date, filters.end_date)
+		""".format(filters.start_date, filters.end_date,daily_label)
 	elif filters.column_group =="Monthly":
 		sql = """
 			select 
 				concat('col_',date_format(date,'%m_%Y')) as fieldname, 
-				date_format(date,'%b %y') as label ,
+				date_format(date,'%b/%y') as label ,
 				min(date) as start_date,
 				max(date) as end_date
 			from `tabDates` 
@@ -107,7 +112,7 @@ def get_fields(filters):
 		sql = """
 			select 
 				concat('col_',date_format(date,'%v_%Y')) as fieldname, 
-				concat('WK ',date_format(date,'%v %y')) as label ,
+				concat('WK ',date_format(date,'%v/%y')) as label ,
 				min(date) as start_date,
 				max(date) as end_date
 			from `tabDates` 
@@ -196,7 +201,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 			sql = sql[0:len(sql)-1]
 		sql = sql + " ,{} AS 'total_{}' ".format(rf["sql_expression"],rf["fieldname"])
 	extra_fields = ""
-	if filters.row_group == "Expense Code":
+	if (filters.row_group == "Expense Code" and indent == 1) or (filters.row_group == "Expense Code" and (filters.parent_row_group or "") == ""):
 		extra_fields = ",a.expense_name"
 	sql = sql + extra_fields + """
 		FROM `tabExpense Item` AS a
@@ -225,7 +230,6 @@ def get_report_chart(filters,data):
 	columns = []
 	dataset = []
 	colors = []
-
 	report_fields = get_report_field(filters)
 
 	if filters.column_group != "None":
