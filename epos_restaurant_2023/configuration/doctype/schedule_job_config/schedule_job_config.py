@@ -9,6 +9,7 @@ from frappe.model.document import Document
 class ScheduleJobConfig(Document):
 	pass
 
+@frappe.whitelist(allow_guest=True)
 def check_custom_schedule():
 	now = frappe.utils.now_datetime()
 	jobs = frappe.get_all("Scheduled Job Config", filters={"enabled": 1})
