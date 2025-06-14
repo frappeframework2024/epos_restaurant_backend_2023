@@ -12,12 +12,19 @@ class ScheduleJobConfig(Document):
 @frappe.whitelist(allow_guest=True)
 def check_custom_schedule():
 	now = frappe.utils.now_datetime()
-	jobs = frappe.get_all("Schedule Job Config", filters={"enabled": 1})
+	jobs = frappe.db.get_list('Schedule Job Config',filters={"enabled": 1},fields=['execute_time', 'api_method','enqueue'],as_list=0)
 	for job in jobs:
 		if (job.execute_time or "") != "":
-			scheduled_time = datetime.datetime.strptime(job.execute_time, "%H:%M:%S").time()
-			if now.hour == scheduled_time.hour and now.minute == scheduled_time.minute:
+			time = datetime.datetime.strptime(str(job.execute_time), "%H:%M:%S").time()
+			scheduled_datetime = datetime.datetime.combine(now.date(), time)
+			if now.hour == scheduled_datetime.hour and now.minute == scheduled_datetime.minute:
 				if job.enqueue == 1:
 					frappe.enqueue(job.api_method,queue="long", job_name=job.name)
+					return "Enqueued"
 				else:
 					frappe.call(job.api_method)
+					return "Executed"
+			else:
+				return "Not Scheduled"
+		else:
+			return "No Scheduled"
