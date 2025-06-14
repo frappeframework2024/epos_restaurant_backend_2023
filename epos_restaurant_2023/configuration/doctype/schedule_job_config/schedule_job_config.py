@@ -18,4 +18,4 @@ def check_custom_schedule():
 		if (config.execute_time or "") != "":
 			scheduled_time = datetime.datetime.strptime(config.execute_time, "%H:%M:%S").time()
 			if now.hour == scheduled_time.hour and now.minute == scheduled_time.minute:
-				frappe.enqueue(config.api_method, job_name=config.name)
+				frappe.enqueue(config.api_method,queue="long", job_name=config.name)
