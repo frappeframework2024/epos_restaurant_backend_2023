@@ -8,6 +8,7 @@
  "field_order": [
   "api_method",
   "execute_time",
+  "enqueue",
   "enabled"
  ],
  "fields": [
@@ -31,11 +32,17 @@
    "label": "Api Method",
    "reqd": 1,
    "unique": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "enqueue",
+   "fieldtype": "Check",
+   "label": "Enqueue"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-14 08:53:44.201841",
+ "modified": "2025-06-14 10:04:09.661335",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Schedule Job Config",

@@ -17,4 +17,7 @@ def check_custom_schedule():
 		if (job.execute_time or "") != "":
 			scheduled_time = datetime.datetime.strptime(job.execute_time, "%H:%M:%S").time()
 			if now.hour == scheduled_time.hour and now.minute == scheduled_time.minute:
-				frappe.enqueue(job.api_method,queue="long", job_name=job.name)
+				if job.enqueue == 1:
+					frappe.enqueue(job.api_method,queue="long", job_name=job.name)
+				else:
+					frappe.call(job.api_method)
