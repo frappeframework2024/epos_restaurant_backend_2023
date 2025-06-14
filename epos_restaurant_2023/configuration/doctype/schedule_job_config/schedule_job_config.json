@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:api_method",
+ "autoname": "format:Custom-Schedule-{api_method}-{#####}",
  "creation": "2025-06-14 08:42:07.090241",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -42,11 +42,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-14 10:04:09.661335",
+ "modified": "2025-06-14 10:55:26.783195",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Schedule Job Config",
- "naming_rule": "By fieldname",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
