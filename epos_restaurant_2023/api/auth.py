@@ -48,7 +48,8 @@ def get_response_user_information(property, property_code=None):
         phone_number = data[0].get("phone_number_1")
         address = data[0].get("address")
     api_generate = generate_keys(frappe.session.user)
-    
+     
+
     return {
         "username":user.username,
         "full_name":user.full_name,
@@ -60,7 +61,7 @@ def get_response_user_information(property, property_code=None):
         "position":position,
         "token": base64.b64encode(str("{}:{}".format(user.api_key,api_generate)).encode("utf-8")).decode('utf-8'),
         "property_name":property,
-        "property_code":property_code,
+        "property_code":property_code, 
         "employee_id":employee_id
     }
 

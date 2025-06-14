@@ -36,5 +36,16 @@ def get_settings(station_name=None):
             data["pos_profile"] = pos_profile
             data["allow_login_multiple_site"] = frappe.get_cached_value("POS Station",station_name,"allow_login_multiple_site")
             
-            
+            data["working_day"] = get_working_day(pos_profile.name)
         return data
+
+@frappe.whitelist()
+def get_working_day(pos_profile):
+
+    sql="select name from `tabWorking Day` where pos_profile = %(pos_profile)s and is_closed=0 order by creation desc limit 1"
+    working_day = frappe.db.sql(sql,{"pos_profile":pos_profile},as_dict=True)
+    if working_day:
+        return working_day[0].name
+    else:
+        return None
+    

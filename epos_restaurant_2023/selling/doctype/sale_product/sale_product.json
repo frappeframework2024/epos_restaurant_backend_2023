@@ -160,6 +160,7 @@
   "variant_of",
   "is_variant",
   "qb_product_id",
+  "coupons",
   "column_break_txhh",
   "cost",
   "product_photo",
@@ -1200,12 +1201,17 @@
    "fieldname": "coupon_value",
    "fieldtype": "Currency",
    "label": "Coupon Value"
+  },
+  {
+   "fieldname": "coupons",
+   "fieldtype": "JSON",
+   "label": "Coupons"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-06-12 14:27:26.990404",
+ "modified": "2025-06-14 11:11:18.780923",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",
