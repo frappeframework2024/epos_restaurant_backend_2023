@@ -93,13 +93,13 @@
 
                 </div>
               </div>
-              <div class="mt-4">
+              <div class="mt-4" style="font-family: Khmer OS Battambang;">
                 <v-btn type="submit" :loading="isLoading" size="x-large" class="w-full" color="primary"
                   :disabled="(pos_license.web_platform && (!(pos_license.license?.status ?? false) || (pos_license.license?.expired ?? false)))">{{
                     $t("Login") }}</v-btn>
               </div>
               <template v-if="languages?.length <= 2">
-                <div class="mt-2">
+                <div class="mt-2" style="font-family: Khmer OS Battambang;">
                   <v-btn size="x-large" class="w-full" color="light" @click="(() => {
                      $i18n.locale = ($i18n.locale == 'km' || $i18n.locale == 'kh' ? 'en' : 'km');
                      onChangeLang($i18n.locale, $i18n.locale == 'en' ? 'English':'Khmer' )
