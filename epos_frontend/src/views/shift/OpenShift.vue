@@ -11,7 +11,7 @@
                 <ComInput :label="$t('POS Profile')" v-model="pos_profile" readonly />
             </v-col>
             <v-col cols="12" md="6">
-                <v-select :label="$t('Shift')" item-title="name" item-value="name" variant="solo" v-model="shift_type"
+                <v-select style="font-family: Khmer OS Battambang;" :label="$t('Shift')" item-title="name" item-value="name" variant="solo" v-model="shift_type"
                     density="compact" :items="gv.setting.shift_types.filter(shift_name => shift_name.show_in_pos == 1)"></v-select>
             </v-col>
         </v-row>
@@ -32,7 +32,7 @@
                 </ComInput>
             </v-col>
         </v-row>
-        <div class="flex items-center justify-between mt-8 mb-3">
+        <div style="font-family: Khmer OS Battambang;" class="flex items-center justify-between mt-8 mb-3">
             <v-btn @click="onOpenShift" :loading="addCashierShiftResource.loading" color="primary">{{ $t('Open Shift')
             }}</v-btn>
             <v-btn @click="router.push({ name: 'Home' })" color="error" class="ml-4">{{ $t('Cancel') }}</v-btn>

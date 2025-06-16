@@ -2,12 +2,11 @@
   <v-dialog v-model="open" persistent max-width="320">
     <v-card>
       <v-card-item>
-        <v-card-title>{{ $t('Enter Your PIN Code') }}</v-card-title>
+        <div style="font-family: Khmer OS Battambang;height: 28px;">{{ $t('Enter Your PIN Code') }}</div>
       </v-card-item>
       <v-card-text>
         <form v-on:submit.prevent="onOk">
-
-        <v-text-field type="password" :label="$t('PIN Code')" variant="solo" v-model="number" clearable
+        <v-text-field style="font-family: Khmer OS Battambang;" type="password" :label="$t('PIN Code')" variant="solo" v-model="number" clearable
           maxlength="10"></v-text-field>
         <div>
           <div class="grid grid-cols-3 gap-3">
@@ -46,7 +45,7 @@
             </v-btn>
           </div>
           <div>
-              <div class="text-right pt-4">
+              <div style="font-family: Khmer OS Battambang;" class="text-right pt-4">
                   <v-btn class="mr-2" variant="flat" @click="onCancel()" color="error" size="large">
                       {{ $t('Close') }}
                   </v-btn>

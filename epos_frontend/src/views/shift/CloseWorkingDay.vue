@@ -4,7 +4,7 @@
             #{{ shiftInformation.data?.working_day?.name }}
         </template>
         <template #action>
-            <v-btn v-if="setting?.pos_setting?.show_preview_report" prepend-icon="mdi-printer" @click="onOpenReport">{{ $t('Report') }}</v-btn>
+            <v-btn style="font-family: Khmer OS Battambang;" v-if="setting?.pos_setting?.show_preview_report" prepend-icon="mdi-printer" @click="onOpenReport">{{ $t('Report') }}</v-btn>
         </template>
         <template #default>
             <div class="pa-4">
@@ -29,11 +29,11 @@
                     </v-col>
                 </v-row>
 
-                <v-btn
+                <v-btn style="font-family: Khmer OS Battambang;"
                     :loading="(workingDayResourceResource.setValue && workingDayResourceResource.setValue.loading) ? workingDayResourceResource.setValue.loading : false"
                     @click="onCloseWorkingDay" color="primary">{{ $t('Close Working Day') }}</v-btn>
 
-                <v-btn @click="router.push({ name: 'Home' })" color="error" class="ml-4">{{ $t('Cancel') }}</v-btn>
+                <v-btn style="font-family: Khmer OS Battambang;" @click="router.push({ name: 'Home' })" color="error" class="ml-4">{{ $t('Cancel') }}</v-btn>
             </div>
         </template>
     </PageLayout>

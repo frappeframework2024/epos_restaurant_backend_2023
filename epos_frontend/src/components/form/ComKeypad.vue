@@ -35,7 +35,7 @@
               <v-btn @click="numpad_click('.')" size="large">
                 .
               </v-btn>
-              <v-btn color="error" @click="numpad_click(false)" size="large">
+              <v-btn  color="error" @click="numpad_click(false)" size="large">
                 {{$t('Clear')}}
               </v-btn>
             </div>
