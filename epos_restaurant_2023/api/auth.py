@@ -29,7 +29,7 @@ def login(property,usr, pwd, property_code=None):
     except frappe.exceptions.AuthenticationError:
         frappe.clear_messages()
         frappe.throw("Usename and password incorrect.")
-        
+  
     frappe.response["message"] = get_response_user_information(property,property_code )
 
         
@@ -40,13 +40,17 @@ def get_response_user_information(property, property_code=None):
     position=""
     user = frappe.get_doc("User", frappe.session.user)
     
-    sql = "select position,name,phone_number_1,address from `tabEmployee` where user_id = '{}' limit 1".format(frappe.session.user)
+    sql = "select position,name,phone_number_1,address,pos_permission from `tabEmployee` where user_id = '{}' limit 1".format(frappe.session.user)
     data = frappe.db.sql(sql, as_dict=1)
+    pos_permission=None
     if data:
         position = data[0].get("position")
         employee_id = data[0].get("name")
         phone_number = data[0].get("phone_number_1")
         address = data[0].get("address")
+        if data[0].get("pos_permission"):
+             pos_permission = frappe.get_cached_doc("POS User Permission", data[0].get("pos_permission"))
+
     api_generate = generate_keys(frappe.session.user)
      
 
@@ -62,7 +66,8 @@ def get_response_user_information(property, property_code=None):
         "token": base64.b64encode(str("{}:{}".format(user.api_key,api_generate)).encode("utf-8")).decode('utf-8'),
         "property_name":property,
         "property_code":property_code, 
-        "employee_id":employee_id
+        "employee_id":employee_id,
+        "pos_permission":pos_permission
     }
 
      

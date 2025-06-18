@@ -7,6 +7,7 @@ from rq.job import Job
 from rq.queue import Queue
 import re
 import time
+
 from frappe.model.document import Document
 from frappe.utils import (
 	cint,
@@ -553,4 +554,12 @@ def add_years(start_date, years):
     return new_date
 
 
+
+
+
+def round_half_up(value, digits=2):
+    try:
+        return float(Decimal(str(value)).quantize(Decimal(f'1.{"0"*digits}'), rounding=ROUND_HALF_UP))
+    except:
+        return value  
 

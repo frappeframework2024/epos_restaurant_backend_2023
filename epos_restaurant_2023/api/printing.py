@@ -231,7 +231,12 @@ def print_from_print_format(data, is_html=False):
 
 ## print invoice or receipt
 @frappe.whitelist(allow_guest=True)
-def print_bill_pdf(station='Cashier Station', name='SINV2025-0152',template = "POS Receipt PDF", reprint=0 ):
+def get_print_bill_pdf(
+    station='Cashier Station', 
+    name='SINV2025-0152',
+    template = "POS Receipt PDF", 
+    reprint=0,
+    pdf= 1): 
     doc = frappe.get_doc("Sale", name) 
     data_template,css= frappe.db.get_value("POS Receipt Template",template,["template","style"])
     html= frappe.render_template(data_template, get_print_context(doc,reprint))
@@ -261,12 +266,14 @@ def print_bill_pdf(station='Cashier Station', name='SINV2025-0152',template = "P
         "page-height": "297mm"
     }
 
-    pdf = get_pdf(html_template,options=options)
-    # return pdf
-    frappe.local.response.filename = "custom_report.pdf"
-    frappe.local.response.filecontent = pdf
-    frappe.local.response.type = "download"
-    
+    pdfDoc = get_pdf(html_template,options=options)
+    if int(pdf)==1:
+        frappe.local.response.filename = "custom_report.pdf"
+        frappe.local.response.filecontent = pdfDoc
+        frappe.local.response.type = "download"
+    else:
+        pdf_base64 = base64.b64encode(pdfDoc)
+        return pdf_base64.decode()
 
 @frappe.whitelist()
 def get_mobile_order_to_kitchen_pdf(template = "Online Order Kitchen Ticket",doc_name="ORD2025-0033", data=[],pdf=1):

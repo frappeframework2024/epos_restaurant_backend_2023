@@ -23,6 +23,7 @@
   "main_currency_predefine_payment_amount",
   "second_currency_predefine_payment_amount",
   "percentage_of_bill_amount_to_claim_crypto",
+  "print_service_url",
   "section_break_12",
   "vattin_number",
   "section_break_13",
@@ -927,12 +928,18 @@
    "fieldname": "apply_foc_required_note",
    "fieldtype": "Check",
    "label": "Apply FOC Required Note"
+  },
+  {
+   "description": "Webapp Hardware Bridge Web Socket URL",
+   "fieldname": "print_service_url",
+   "fieldtype": "Data",
+   "label": "Print Service Url"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-01 14:25:27.367136",
+ "modified": "2025-06-14 18:14:01.586780",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

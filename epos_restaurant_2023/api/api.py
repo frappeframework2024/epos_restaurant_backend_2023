@@ -26,6 +26,9 @@ from frappe.model.rename_doc import get_link_fields
 import re
 from urllib.parse import urljoin
 
+@frappe.whitelist()
+def test():
+    return frappe.format(91.145,{"fieldtype":"Currency"})
 
 @frappe.whitelist("POST")
 def rename_doc(data):
@@ -1332,7 +1335,8 @@ def delete_sale(name,auth):
     # check if sale have excely integration then submit cancell order
     if sale_doc.exely_transaction_id:
         cancel_order(transaction_id = sale_doc.exely_transaction_id, sale = sale_doc.name, comment = auth["note"])
-        
+
+    return "Done" 
     
 @frappe.whitelist()
 def get_filter_for_close_sale_list(business_branch,pos_profile): 

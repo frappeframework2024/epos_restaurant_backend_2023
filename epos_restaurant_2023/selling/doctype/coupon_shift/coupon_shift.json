@@ -1,0 +1,175 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2025-06-17 09:26:08.460336",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "business_branch",
+  "posting_date",
+  "station_opened",
+  "pos_profile",
+  "column_break_afrb",
+  "shift_name",
+  "open_by",
+  "open_note",
+  "is_closed",
+  "close_information_section",
+  "station_closed",
+  "close_by",
+  "close_date",
+  "column_break_ghnf",
+  "close_note"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Document Number",
+   "options": "CPN.YY.-.####",
+   "print_hide": 1,
+   "report_hide": 1
+  },
+  {
+   "fieldname": "business_branch",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Business Branch",
+   "options": "Business Branch"
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Posting Date"
+  },
+  {
+   "fieldname": "station_opened",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Station Opened",
+   "options": "POS Station"
+  },
+  {
+   "fieldname": "pos_profile",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "POS Profile",
+   "options": "POS Profile"
+  },
+  {
+   "fieldname": "column_break_afrb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "open_by",
+   "fieldtype": "Data",
+   "label": "Open By",
+   "read_only": 1
+  },
+  {
+   "fieldname": "open_note",
+   "fieldtype": "Small Text",
+   "label": "Open Note"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_closed",
+   "fieldtype": "Check",
+   "label": "Is Closed"
+  },
+  {
+   "fieldname": "close_information_section",
+   "fieldtype": "Section Break",
+   "label": "Close Information"
+  },
+  {
+   "fieldname": "station_closed",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Station Closed",
+   "options": "POS Station"
+  },
+  {
+   "fieldname": "close_by",
+   "fieldtype": "Data",
+   "label": "Close By",
+   "read_only": 1
+  },
+  {
+   "fieldname": "close_date",
+   "fieldtype": "Datetime",
+   "label": "Close Date"
+  },
+  {
+   "fieldname": "column_break_ghnf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "close_note",
+   "fieldtype": "Small Text",
+   "label": "Close Note"
+  },
+  {
+   "fieldname": "shift_name",
+   "fieldtype": "Link",
+   "label": "Shift Name",
+   "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Shift Type\"},\"show_in_pos\",\"=\",1]]",
+   "options": "Shift Type"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-06-17 14:56:49.356392",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "Coupon Shift",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

@@ -19,7 +19,9 @@
   "old_parent",
   "parent_mobile_app_module",
   "column_break_ywba",
-  "is_active"
+  "is_active",
+  "show_in_drawer_menu",
+  "show_in_home"
  ],
  "fields": [
   {
@@ -103,12 +105,24 @@
    "fieldname": "component",
    "fieldtype": "Data",
    "label": "Component"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_in_drawer_menu",
+   "fieldtype": "Check",
+   "label": "Show in Drawer Menu"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_in_home",
+   "fieldtype": "Check",
+   "label": "Show In Home"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2025-06-13 17:34:01.482404",
+ "modified": "2025-06-15 13:05:24.122391",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Mobile App Module",

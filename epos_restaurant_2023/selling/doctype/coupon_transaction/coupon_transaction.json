@@ -1,0 +1,218 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-06-18 14:00:07.080681",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "business_branch",
+  "pos_profile",
+  "pos_station",
+  "coupon_number",
+  "posting_date",
+  "transaction_date",
+  "sale",
+  "sale_product",
+  "transaction_type",
+  "column_break_dmry",
+  "input_actual_amount",
+  "actual_amount",
+  "markup_percentage",
+  "input_coupon_amount",
+  "coupon_amount",
+  "currency",
+  "exchange_rate",
+  "status",
+  "note"
+ ],
+ "fields": [
+  {
+   "fieldname": "business_branch",
+   "fieldtype": "Link",
+   "label": "Business Branch",
+   "options": "Business Branch",
+   "reqd": 1
+  },
+  {
+   "fieldname": "pos_profile",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "POS Profile",
+   "options": "POS Profile",
+   "reqd": 1
+  },
+  {
+   "fieldname": "pos_station",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "POS Station",
+   "options": "POS Station",
+   "reqd": 1
+  },
+  {
+   "fieldname": "coupon_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Coupon Number",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date"
+  },
+  {
+   "default": "Now",
+   "fieldname": "transaction_date",
+   "fieldtype": "Datetime",
+   "label": "Transaction Date"
+  },
+  {
+   "fieldname": "sale",
+   "fieldtype": "Link",
+   "label": "Sale",
+   "options": "Sale"
+  },
+  {
+   "fieldname": "sale_product",
+   "fieldtype": "Link",
+   "label": "Sale Product",
+   "options": "Sale Product"
+  },
+  {
+   "fieldname": "transaction_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Transaction Type",
+   "options": "Sale\nTop up\nRedeem\nUse"
+  },
+  {
+   "default": "0",
+   "fieldname": "input_actual_amount",
+   "fieldtype": "Currency",
+   "label": "Input Actual Amount"
+  },
+  {
+   "default": "0",
+   "fieldname": "actual_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Actual Amount",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "markup_percentage",
+   "fieldtype": "Percent",
+   "label": "Markup Percentage",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "input_coupon_amount",
+   "fieldtype": "Currency",
+   "label": "Input Coupon Amount"
+  },
+  {
+   "default": "0",
+   "fieldname": "coupon_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Coupon Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "exchange_rate",
+   "fieldtype": "Float",
+   "label": "Exchange Rate",
+   "precision": "9"
+  },
+  {
+   "default": "Active",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Active\nInactive",
+   "precision": "9"
+  },
+  {
+   "fieldname": "column_break_dmry",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-06-18 15:12:43.980336",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "Coupon Transaction",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Master Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -68,10 +68,10 @@ doctype_list_js = {"Translation": "public/js/translation_list.js"}
 # Jinja
 # ----------
 
-# add methods and filters to jinja environment
+#add methods and filters to jinja environment
 # jinja = {
-#	"methods": "epos_restaurant_2023.utils.jinja_methods",
-#	"filters": "epos_restaurant_2023.utils.jinja_filters"
+# 	#"methods": "epos_restaurant_2023.utils.jinja_methods",
+# 	"filters": "epos_restaurant_2023.utils.jinja_filters"
 # }
 
 # Installation

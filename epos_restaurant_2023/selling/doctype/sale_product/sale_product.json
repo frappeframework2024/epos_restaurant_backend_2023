@@ -130,6 +130,7 @@
   "delete_from_pos_require_password",
   "move_from_sale_printed",
   "allow_crypto_claim",
+  "is_open_product",
   "backup_product_price",
   "backup_modifier_price",
   "free_note",
@@ -160,6 +161,8 @@
   "variant_of",
   "is_variant",
   "qb_product_id",
+  "coupon_markup_type",
+  "coupon_markup_value",
   "coupons",
   "column_break_txhh",
   "cost",
@@ -1206,12 +1209,30 @@
    "fieldname": "coupons",
    "fieldtype": "JSON",
    "label": "Coupons"
+  },
+  {
+   "fieldname": "coupon_markup_type",
+   "fieldtype": "Data",
+   "label": "Coupon Markup Type"
+  },
+  {
+   "fieldname": "coupon_markup_value",
+   "fieldtype": "Float",
+   "label": "Coupon Markup Value"
+  },
+  {
+   "default": "0",
+   "fetch_from": "product_code.allow_crypto_claim",
+   "fetch_if_empty": 1,
+   "fieldname": "is_open_product",
+   "fieldtype": "Check",
+   "label": "Is Open Product"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-06-14 11:11:18.780923",
+ "modified": "2025-06-17 10:50:40.615875",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",
