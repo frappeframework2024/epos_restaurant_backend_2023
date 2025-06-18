@@ -95,7 +95,7 @@ def run_backup_command():
 
     asyncio.run(run_bench_command(command))
     
-    frappe.enqueue(upload_to_ftp,queue="long")
+    frappe.enqueue(upload_to_ftp,job_timeout=3600)
 
     return "Backup In Queue"
 
@@ -124,6 +124,7 @@ def upload_to_ftp():
         backup_folder = frappe.utils.get_site_path(conf.get("backup_path", "private/backups"))
     ftp_password = password.get_decrypted_password("FTP Backup", "FTP Backup", fieldname="ftp_password",raise_exception=False)
     session = ftplib.FTP_TLS(setting.ftp_url,setting.ftp_user,ftp_password)
+    session.prot_p()
     session.encoding = 'latin-1'
     if site_name in session.nlst():
         session.cwd(site_name)
@@ -149,9 +150,8 @@ def upload_to_ftp():
         session.cwd(folder_name)
     for filename in os.listdir(backup_folder):
         file_path = os.path.join(backup_folder, filename)
-        file = open(file_path,'rb')
-        session.storbinary('STOR ' + filename, file)
-        file.close()
+        with open(file_path, 'rb') as file:
+            session.storbinary(f'STOR {filename}', file, blocksize=8192)
     session.quit()
     return "Backup Completed"
 
