@@ -2024,10 +2024,14 @@ export default class Sale {
 
             }
         }
-
         //reset product printer
         if (products == null) {
             this.productPrinters = [];
+            this.changeTableSaleProducts = [];
+            this.moveItemSaleProducts = [];
+            this.deletedSaleProducts = [];
+            this.deletedSaleProductsDisplay = [];
+            this.reSendSaleProductKOT = [];
         } 
     }
 
@@ -2074,7 +2078,6 @@ export default class Sale {
                 })
             });
         });
-
         //generate sale product print when change table
         if ((this.changeTableSaleProducts?.length || 0) > 0) {
             this.changeTableSaleProducts.forEach(x => {
