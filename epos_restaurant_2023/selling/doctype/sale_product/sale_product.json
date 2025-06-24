@@ -163,6 +163,7 @@
   "qb_product_id",
   "coupon_markup_type",
   "coupon_markup_value",
+  "coupon_markup_percentage",
   "coupons",
   "column_break_txhh",
   "cost",
@@ -176,7 +177,8 @@
   "employee_names",
   "employees",
   "selected_variant",
-  "return_note"
+  "return_note",
+  "redeem_coupon_info"
  ],
  "fields": [
   {
@@ -982,8 +984,7 @@
    "fieldname": "selling_price",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Selling Price",
-   "reqd": 1
+   "label": "Selling Price"
   },
   {
    "fieldname": "accounting_section",
@@ -1227,12 +1228,22 @@
    "fieldname": "is_open_product",
    "fieldtype": "Check",
    "label": "Is Open Product"
+  },
+  {
+   "fieldname": "coupon_markup_percentage",
+   "fieldtype": "Float",
+   "label": "Coupon Markup Percentage"
+  },
+  {
+   "fieldname": "redeem_coupon_info",
+   "fieldtype": "JSON",
+   "label": "Redeem Coupon Info"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-06-17 10:50:40.615875",
+ "modified": "2025-06-23 11:16:51.813465",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",

@@ -5,15 +5,27 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "sale_information_section",
   "business_branch",
   "pos_profile",
   "pos_station",
-  "coupon_number",
   "posting_date",
-  "transaction_date",
   "sale",
-  "sale_product",
+  "column_break_xvqr",
+  "working_day",
+  "cashier_shift",
+  "column_break_hzff",
+  "customer",
+  "customer_name",
+  "customer_photo",
+  "section_break_pxpc",
   "transaction_type",
+  "coupon_shift",
+  "coupon_code",
+  "coupon_number",
+  "transaction_date",
+  "sale_product",
+  "product_code",
   "column_break_dmry",
   "input_actual_amount",
   "actual_amount",
@@ -22,8 +34,11 @@
   "coupon_amount",
   "currency",
   "exchange_rate",
+  "column_break_xzik",
   "status",
-  "note"
+  "note",
+  "created_by",
+  "used_from_transaction"
  ],
  "fields": [
   {
@@ -57,13 +72,15 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Coupon Number",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "default": "Today",
    "fieldname": "posting_date",
    "fieldtype": "Date",
-   "label": "Posting Date"
+   "label": "Posting Date",
+   "search_index": 1
   },
   {
    "default": "Now",
@@ -88,7 +105,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Transaction Type",
-   "options": "Sale\nTop up\nRedeem\nUse"
+   "options": "Sale Coupon\nTop Up\nRedeem\nUse"
   },
   {
    "default": "0",
@@ -142,8 +159,9 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "Active\nInactive",
-   "precision": "9"
+   "options": "Active\nLocked\nInactive",
+   "precision": "9",
+   "search_index": 1
   },
   {
    "fieldname": "column_break_dmry",
@@ -153,11 +171,96 @@
    "fieldname": "note",
    "fieldtype": "Small Text",
    "label": "Note"
+  },
+  {
+   "fieldname": "coupon_shift",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Coupon Shift",
+   "options": "Coupon Shift"
+  },
+  {
+   "fieldname": "product_code",
+   "fieldtype": "Link",
+   "label": "Product Code",
+   "options": "Product"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Data",
+   "label": "Created By"
+  },
+  {
+   "fieldname": "working_day",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Working Day",
+   "options": "Working Day"
+  },
+  {
+   "fieldname": "cashier_shift",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Cashier Shift",
+   "options": "Cashier Shift"
+  },
+  {
+   "fieldname": "sale_information_section",
+   "fieldtype": "Section Break",
+   "label": "Sale Information"
+  },
+  {
+   "fieldname": "column_break_xvqr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_hzff",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name"
+  },
+  {
+   "fieldname": "section_break_pxpc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_xzik",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "customer.photo",
+   "fieldname": "customer_photo",
+   "fieldtype": "Attach Image",
+   "label": "Customer Photo"
+  },
+  {
+   "fieldname": "used_from_transaction",
+   "fieldtype": "Link",
+   "label": "Used From Transaction",
+   "options": "Coupon Transaction"
+  },
+  {
+   "fieldname": "coupon_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Coupon Code",
+   "reqd": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-18 15:12:43.980336",
+ "modified": "2025-06-24 17:01:30.961613",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Transaction",

@@ -378,12 +378,15 @@ class Sale(Document):
 				else:
 					frappe.enqueue("epos_restaurant_2023.api.exely.submit_order_to_exely", queue='long', doc_name = self.name)
 		update_sales_order_and_delivery_note_status(self)
+
+		if self.sale_type in ["Sale Coupon","Top Up","Redeem"]: 
+			update_coupon_transaction(self)
+
 		
 
 	def on_cancel(self):
 		if self.flags.ignore_on_cancel == True:
 			return 
-		
 
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			cancel_general_ledger_entery("Sale", self.name)	
@@ -1149,7 +1152,7 @@ def validate_pos_payment(self):
 	for d in self.payment:
 		d.exchange_rate = d.exchange_rate if d.currency != currency else 1
 		d.change_exchange_rate = d.change_exchange_rate if d.currency != currency else 1		
-		d.amount = d.amount #(d.input_amount or 0 ) / (d.exchange_rate or 1)
+		d.amount = (d.input_amount or 0 ) / (d.exchange_rate or 1)
 
 def validate_cash_coupon_claim(self):
 	for cc in self.cash_coupon_items:
@@ -1603,3 +1606,98 @@ def change_table_number(data):
 			'table_id':data['tbl_name'],
 			'tbl_number':data['tbl_number']
 		})
+
+def update_coupon_transaction(self):
+	coupon_transactions = []
+	for sp in self.sale_products:
+		if sp.coupons:
+
+			coupon = json.loads(sp.coupons)
+			if coupon:
+				for c in coupon:
+					ct_doc = frappe.get_doc({
+						"doctype": "Coupon Transaction",
+						"business_branch": self.business_branch,
+						"pos_profile": self.pos_profile, 
+						"pos_station":self.pos_station_name,
+						"sale":self.name,
+						"cashier_shift":self.cashier_shift,
+						"working_day":self.working_day, 
+						"coupon_number":c.get("coupon"),
+						"coupon_code":c.get("name"),#this field is primary key of coupon code
+						"posting_date":self.posting_date,
+						"transaction_date":self.creation,
+						"sale_product":sp.name,
+						"product_code":sp.product_code,
+						"transaction_type":self.sale_type,
+						"input_actual_amount":sp.amount/sp.quantity ,#sale product add input amount
+						"actual_amount":sp.amount/sp.quantity,
+						"markup_percentage":sp.coupon_markup_percentage,
+						"input_coupon_amount":sp.coupon_value,# no field in sale produdft yet
+						"coupon_amount":sp.coupon_value,
+						"currency":"USD", #no field in sale product yet
+						"exchange_rate":1, #no field in sale product yet
+						"status":"Active",
+						"created_by": self.closed_by,
+						"customer":self.customer,
+						"customer_name":self.customer_name,
+						"note":sp.note
+
+					})
+					if (self.sale_type =="Redeem"):
+						ct_doc.input_actual_amount = ct_doc.input_actual_amount * -1
+						ct_doc.actual_amount = ct_doc.actual_amount * -1
+
+					ct_doc.insert(ignore_permissions=True,ignore_links=True)
+					coupon_transactions.append({"name":ct_doc.name,"coupon_code":ct_doc.coupon_code, "coupon":ct_doc.coupon_number}) 
+
+			
+	if coupon_transactions and self.sale_type in ["Sale Coupon","Redeem"]:
+		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_coupon_codes", queue='short', coupon_transactions=coupon_transactions,sale_type=self.sale_type) 
+
+def update_coupon_codes(coupon_transactions,sale_type):
+	if sale_type=="Sale Coupon":
+		sql ="""
+			update `tabCoupon Codes` cc
+			join `tabCoupon Transaction` ct on ct.coupon_number = cc.coupon 
+				and ct.transaction_type = 'Sale Coupon'
+			SET
+				cc.coupon = ct.coupon_number,
+				cc.coupon_status = "Used",
+				cc.sale_date = ct.posting_date,
+				cc.sale= ct.sale, 
+				cc.working_day = ct.working_day,
+				cc.cashier_shift = ct.cashier_shift,
+				cc.pos_profile = ct.pos_profile,
+				cc.pos_station = ct.pos_station,
+				cc.price = ct.actual_amount,
+				cc.coupon_value = ct.coupon_amount,
+				cc.created_by = ct.created_by,
+				cc.customer = ct.customer,
+				cc.customer_name = ct.customer_name
+
+			where
+				ct.name in %(coupon_transaction_names)s and 
+				cc.name in %(coupon_codes)s 
+				
+
+		"""
+		frappe.db.sql(sql,{
+			"coupon_transaction_names":[d["name"] for d in coupon_transactions],
+			"coupon_codes":[d["coupon_code"] for d in coupon_transactions]
+			 
+		})
+	elif sale_type=="Redeem":
+		sql ="""
+			update `tabCoupon Codes` cc
+			SET
+				cc.coupon_status = "Redeemed"
+			where
+				cc.coupon_status = "Used" and 
+				cc.name in %(coupon_code)s
+
+		"""
+		frappe.db.sql(sql,{
+			"coupon_code":[d["coupon_code"] for d in coupon_transactions]
+		})
+	frappe.db.commit()

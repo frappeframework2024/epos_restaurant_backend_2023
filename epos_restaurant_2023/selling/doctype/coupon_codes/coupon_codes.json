@@ -2,21 +2,34 @@
  "actions": [],
  "allow_import": 1,
  "allow_rename": 1,
- "autoname": "field:coupon",
+ "autoname": "hash",
  "creation": "2025-06-12 15:14:39.685106",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "coupon",
   "coupon_url",
-  "is_used"
+  "coupon_status",
+  "sale_date",
+  "sale",
+  "working_day",
+  "cashier_shift",
+  "pos_profile",
+  "pos_station",
+  "price",
+  "coupon_value",
+  "created_by",
+  "column_break_tfky",
+  "customer",
+  "customer_name"
  ],
  "fields": [
   {
    "fieldname": "coupon",
    "fieldtype": "Data",
-   "label": "Coupon",
-   "unique": 1
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Coupon"
   },
   {
    "fieldname": "coupon_url",
@@ -24,19 +37,92 @@
    "label": "Coupon URL"
   },
   {
-   "default": "0",
-   "fieldname": "is_used",
-   "fieldtype": "Check",
-   "label": "Is Used"
+   "default": "Unused",
+   "fieldname": "coupon_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Coupon Status",
+   "options": "Unused\nUsed\nRedeemed\nExpired",
+   "search_index": 1
+  },
+  {
+   "fieldname": "sale_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Sale Date",
+   "search_index": 1
+  },
+  {
+   "fieldname": "sale",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Sale",
+   "options": "Sale",
+   "search_index": 1
+  },
+  {
+   "fieldname": "working_day",
+   "fieldtype": "Link",
+   "label": "Working Day",
+   "options": "Working Day"
+  },
+  {
+   "fieldname": "cashier_shift",
+   "fieldtype": "Link",
+   "label": "Cashier Shift",
+   "options": "Cashier Shift"
+  },
+  {
+   "fieldname": "pos_profile",
+   "fieldtype": "Link",
+   "label": "POS Profile",
+   "options": "POS Profile"
+  },
+  {
+   "fieldname": "pos_station",
+   "fieldtype": "Data",
+   "label": "POS Station"
+  },
+  {
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Price"
+  },
+  {
+   "fieldname": "coupon_value",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Coupon Value"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Data",
+   "label": "Created By"
+  },
+  {
+   "fieldname": "column_break_tfky",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-12 15:39:53.586498",
+ "modified": "2025-06-24 16:50:18.030448",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Codes",
- "naming_rule": "By fieldname",
+ "naming_rule": "Random",
  "owner": "Administrator",
  "permissions": [
   {

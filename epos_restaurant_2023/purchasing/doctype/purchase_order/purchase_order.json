@@ -208,6 +208,7 @@
    "label": "Phone Number"
   },
   {
+   "allow_bulk_edit": 1,
    "fieldname": "purchase_order_products",
    "fieldtype": "Table",
    "label": "Purchase Order Products",
@@ -349,7 +350,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2025-04-11 09:20:13.175026",
+ "modified": "2025-06-24 14:57:47.208403",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Purchase Order",

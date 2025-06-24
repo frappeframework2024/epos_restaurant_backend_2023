@@ -33,7 +33,8 @@ class Product(Document):
 
 		validate_default_accounts(self)
 		check_product_inventory_location(self)
-		add_base_unit_to_product_prices(self)
+		if self.is_new():
+			add_base_unit_to_product_prices(self)
 		error_list=[]
 		for v in self.product_variants:
 			if v.variant_code is None or v.variant_code == "":
@@ -380,11 +381,13 @@ class Product(Document):
 def add_base_unit_to_product_prices(self):
 	if len(self.product_price)>0:
 		existed = 0
-		default_price_rule = frappe.db.sql("select name from `tabPrice Rule` where is_default = 1 and disabled = 0",as_dict=1)
-		if default_price_rule:
+		default_price_rule = (frappe.db.sql("select name from `tabPrice Rule` where is_default = 1 and disabled = 0",as_dict=1) or [])
+		if len(default_price_rule)>0:
 			for a in self.product_price:
 				if a.unit == self.unit and a.price_rule == default_price_rule[0].name:
 					existed += 1
+		else:
+			frappe.throw(_("No Default Price Rule Found, Please Create Default Price Rule First"))
 		if existed == 0:
 			counter = 1; name = self.name
 			while frappe.db.exists('Product Price', {"barcode":name}):

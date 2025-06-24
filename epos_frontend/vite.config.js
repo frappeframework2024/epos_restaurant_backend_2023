@@ -13,7 +13,8 @@ export default defineConfig({
 	},
 	resolve: {
 		alias: {
-			'@': path.resolve(__dirname, 'src')
+			'@': path.resolve(__dirname, 'src'),
+			'@vite/client': path.resolve(__dirname, 'src/my-vite-client.ts'),
 		}
 	},
 	build: {
