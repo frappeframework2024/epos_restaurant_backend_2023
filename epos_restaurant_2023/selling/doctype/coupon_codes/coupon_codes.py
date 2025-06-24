@@ -36,7 +36,6 @@ def get_coupon_info(coupon):
 			ct.transaction_type,
 			ct.customer,
 			ct.customer_name,
-			ct.input_amount,
 			ct.actual_amount,
 			ct.coupon_amount,
 			ct.input_actual_amount,
@@ -55,6 +54,7 @@ def get_coupon_info(coupon):
 
 
 	return {
+		"coupon_number":coupon,
 		"coupon_info":coupon_codes,
 		"coupon_transactions":coupon_transactions
 	}

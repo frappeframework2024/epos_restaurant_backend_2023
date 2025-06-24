@@ -346,6 +346,7 @@ def on_scan_use_coupon(params):
                                                     working_day,
                                                     cashier_shift,
                                                     customer,
+                                                    customer_name,
                                                     coupon_code
                                             from `tabCoupon Transaction` 
                                             where coupon_number = %(coupon_number)s
@@ -379,15 +380,15 @@ def on_scan_use_coupon(params):
             # return result
             if result and len(result) > 0:
                 for r in result:
-                    actual_amount = r["cut_amount"] / (1+(r["markup_percentage"]/100))
-                    create = frappe.new_doc("Coupon Transaction")
-                    create.update({
+                    actual_amount = r["cut_amount"] / (1+(r["markup_percentage"]/100)) 
+                    doc = frappe.get_doc({
+                        "doctype":"Coupon Transaction",
                         "business_branch":params["business_branch"],
-                        "status": "Locked" if r["used"] else "Active",
+                        "status": "Locked" if r["used"] else "Active", 
                         "transaction_type":"Use",
-                        "input_coupon_amount":r["cut_amount"],
+                        "input_coupon_amount":r["cut_amount"] * params["exchange_rate"],
+                        "input_actual_amount":actual_amount * params["exchange_rate"], 
                         "exchange_rate":params["exchange_rate"],
-                        "input_actual_amount":actual_amount, 
                         "cashier_shift":r["cashier_shift"],
                         "customer":r["customer"],
                         "coupon_code":r["coupon_code"],
@@ -400,10 +401,11 @@ def on_scan_use_coupon(params):
                         "markup_percentage":r["markup_percentage"],
                         "working_day":r["working_day"],
                         "currency":params["currency"],
-                        "used_from_transaction":r["name"]
-                        
+                        "used_from_transaction":r["name"],
+                        "customer_name":   r["customer_name"]           
                         })
-                    create.insert()
+                    doc.insert()
+
                 return result
             
     

@@ -20,6 +20,7 @@ def check_coupon_code(coupon_code):
 
     
     sql = """select 
+        coupon_code,
         coupon_number,transaction_date,sale,posting_date,
         input_actual_amount,
         input_coupon_amount,
@@ -50,7 +51,7 @@ def check_coupon_code(coupon_code):
             
         coupon_info =  coupon_info[0]
     
-
+    # get balance data
     sql = """
         select 
             transaction_type,
@@ -63,9 +64,8 @@ def check_coupon_code(coupon_code):
             transaction_type,
             markup_percentage
     """
-    
-
     data = frappe.db.sql(sql,{"coupon_number":coupon_code},as_dict=1)
+
     coupon_info["coupon_transaction"] = data
     coupon_info["coupon_balance"] = sum([d.get("coupon_amount") for d in data])
     coupon_info["actual_amount_balance"] = get_coupon_actual_amount_balance(data)
