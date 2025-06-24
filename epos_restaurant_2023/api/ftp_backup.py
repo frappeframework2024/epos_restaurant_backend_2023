@@ -9,7 +9,8 @@ from frappe.utils import cstr,password
 import asyncio
 from datetime import datetime
 from frappe import conf
-
+import os
+import requests
 
 @frappe.whitelist()
 def get_current_site_name(): 
@@ -95,7 +96,7 @@ def run_backup_command():
 
     asyncio.run(run_bench_command(command))
     
-    frappe.enqueue(upload_to_ftp,job_timeout=3600)
+    frappe.enqueue(upload_to_ftp,timeout=3600)
 
     return "Backup In Queue"
 
@@ -154,5 +155,3 @@ def upload_to_ftp():
             session.storbinary(f'STOR {filename}', file, blocksize=8192)
     session.quit()
     return "Backup Completed"
-
-
