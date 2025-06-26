@@ -319,10 +319,11 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 	extra_columns = ""
 	groupdocstatus = ""
 	normal_filter = "b.docstatus in (1) AND"
-	if filters.row_group == "Product Code" or filters.row_group == "Product And Price":
-		extra_columns = ",a.product_name,a.unit"
-	if filters.row_group == "Product And Price":
-		extra_columns = extra_columns + ",a.price,a.total_discount"
+	if (indent == 1 and filters.parent_row_group) or (indent == 0 and (filters.parent_row_group or "") == ""):
+		if (filters.row_group == "Product Code" or filters.row_group == "Product And Price"):
+			extra_columns = ",a.product_name,a.unit"
+		if filters.row_group == "Product And Price":
+			extra_columns = extra_columns + ",a.price,a.total_discount"
 	
 	for rf in report_fields:
 		#check sql variable if last character is , then remove it
@@ -335,8 +336,9 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 	_row_group = row_group
 	if row_group == "if(ifnull(b.custom_bill_number,'')='',a.parent,concat(b.custom_bill_number,' (',a.parent,')'))":
 		_row_group = "a.parent, coalesce(b.custom_bill_number,'-'),b.sale_type"
-	elif filters.row_group=="Product And Price":
-		_row_group = "concat(a.product_code,'-',a.product_name,' ', if(concat(a.`portion`)='' or concat(a.`portion`) = 'Normal','',concat(a.`portion`)), coalesce(a.modifiers)),a.price"
+	else:
+		if ((indent == 1 and filters.parent_row_group) or (indent == 0 and (filters.parent_row_group or "") == "")) and filters.row_group=="Product And Price":
+			_row_group = "concat(a.product_code,'-',a.product_name,' ', if(concat(a.`portion`)='' or concat(a.`portion`) = 'Normal','',concat(a.`portion`)), coalesce(a.modifiers)),a.price"
 
 	sql = sql + """ {2}
 		FROM `tabSale Product` AS a
@@ -358,13 +360,9 @@ def get_report_group_data(filters):
 		p["is_group"] = 1
 		data.append(p)
 		row_group = [d for d in get_row_groups() if d["label"]==filters.parent_row_group][0]
-		# frappe.throw(str(row_group))
 		children = get_report_data(filters, None, 1, group_filter={"field":row_group["fieldname"],"value":p[row_group["parent_row_group_filter_field"]]})
-		
 		for c in children:
-			
 			data.append(c)
-		# frappe.throw(str(data))
 	return data
 
 def get_report_summary(data,filters):

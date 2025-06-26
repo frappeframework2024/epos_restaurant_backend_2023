@@ -65,10 +65,16 @@ def get_columns(filters):
 		columns.append({'fieldname':'row_group','label':filters.row_group,'fieldtype':'Link',"options":"Sale",'align':'left','width':250})
 		columns.append({'fieldname':'guest_cover','label':'Guest Cover','fieldtype':'Data','align':'center','width':50})
 	else:
-		columns.append({'fieldname':'row_group','label':filters.row_group,'fieldtype':'Data','align':'left','width':250})
-	# if filters.row_group == "Product":
-	# 	columns.append({"label":"Item Code","fieldname":"item_code","fieldtype":"Data","align":"left",'width':130})
-	
+		if filters.row_group == "Product And Price" or filters.row_group == "Product Code":
+			columns.append({'fieldname':'row_group','label':"Product Code",'fieldtype':'Data','align':'left','width':150})
+		else:
+			columns.append({'fieldname':'row_group','label':filters.row_group,'fieldtype':'Data','align':'left','width':250})
+	if filters.row_group == "Product Code" or filters.row_group == "Product And Price":
+		columns.append({"label":"Product Name","fieldname":"product_name","fieldtype":"Data","align":"left",'width':300})
+		columns.append({"label":"Unit","fieldname":"unit","fieldtype":"Data","align":"center",'width':100})
+	if filters.row_group == "Product And Price":
+		columns.append({"label":"Price","fieldname":"price","fieldtype":"Currency","align":"right",'width':100})
+
 	hide_columns = filters.get("hide_columns")
 
 
@@ -161,10 +167,14 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 	else:
 		sql = "select {} as row_group, {} as indent ".format(row_group, indent)
 	# total last column
-	item_code = ""
+	extra_columns = ""
 	groupdocstatus = ""
 	normal_filter = "b.docstatus in (1) AND"
-
+	if (indent == 1 and filters.parent_row_group) or (indent == 0 and (filters.parent_row_group or "") == ""):
+		if (filters.row_group == "Product Code" or filters.row_group == "Product And Price"):
+			extra_columns = ",a.product_name,a.unit"
+		if filters.row_group == "Product And Price":
+			extra_columns = extra_columns + ",a.price,a.total_discount"
 	#get order by 
 	order_by = ""
 	if filters.order_by=="Quantity":
@@ -179,6 +189,13 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 			sql = sql[0:len(sql)-1]
 		if not hide_columns or  rf["label"] not in hide_columns:
 			sql = sql + " ,{} AS 'total_{}' ".format(rf["sql_expression"],rf["fieldname"])
+	_row_group = row_group
+	if row_group == "if(ifnull(b.custom_bill_number,'')='',a.parent,concat(b.custom_bill_number,' (',a.parent,')'))":
+		_row_group = "a.parent, coalesce(b.custom_bill_number,'-'),b.sale_type"
+	else:
+		if ((indent == 1 and filters.parent_row_group) or (indent == 0 and (filters.parent_row_group or "") == "")) and filters.row_group=="Product And Price":
+			_row_group = "concat(a.product_code,'-',a.product_name,' ', if(concat(a.`portion`)='' or concat(a.`portion`) = 'Normal','',concat(a.`portion`)), coalesce(a.modifiers)),a.price"
+
 	sql = sql + """ {2}
 		FROM `tabSale Product` AS a
 			INNER JOIN `tabSale` b on b.name = a.parent
@@ -190,7 +207,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 		order by 
 		{5}
 		limit %(top)s
-	""".format(get_conditions(filters,group_filter), row_group,item_code,groupdocstatus,normal_filter,order_by)
+	""".format(get_conditions(filters,group_filter), _row_group,extra_columns,groupdocstatus,normal_filter,order_by)
 
 	data = frappe.db.sql(sql,filters, as_dict=1)
 
@@ -415,7 +432,12 @@ def get_row_groups():
 
 		{
 			"fieldname":"concat(a.product_code,'-',a.product_name)",
-			"label":"Product",
+			"label":"Product Code",
+			"show_commission":False
+		},
+		{
+			"fieldname":"a.product_code",
+			"label":"Product And Price",
 			"show_commission":False
 		},
   		{
