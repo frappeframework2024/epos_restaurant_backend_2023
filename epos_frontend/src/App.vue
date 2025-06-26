@@ -38,8 +38,6 @@ const layout = computed(() => {
 	return route.meta.layout  || "blank_layout"
 })
 
-
-
 const frappe = inject('$frappe');
 const call = frappe.call();
 const { t: $t } = i18n.global; 
@@ -276,7 +274,17 @@ const actionListeningHandler = async function (e) {
 	}
 }
 
+const handleBeforeUnload = (event) => {
+	const device_setting  = JSON.parse(localStorage.getItem("device_setting"));	
+	if (route.path === '/epos_frontend/add-sale' && device_setting.show_warning_before_reload_in_order_screen == 1) {
+		event.preventDefault()
+		event.returnValue = ''
+	}
+}
+
+
 onMounted(() => {
+	window.addEventListener('beforeunload', handleBeforeUnload)
 	window.mobile = mobile.value
 	window.addEventListener('message', actionListeningHandler, false);
 	setTimeout(()=>{
@@ -310,6 +318,7 @@ onMounted(() => {
 })
 
 onUnmounted(()=>{
+	window.removeEventListener('beforeunload', handleBeforeUnload)
 	window.removeEventListener('message', actionListeningHandler, false);
 })
 </script>
