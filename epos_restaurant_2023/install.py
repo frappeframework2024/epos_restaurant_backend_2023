@@ -228,7 +228,7 @@ def reset_sale_transaction():
     else:
         return {"Invalid Method."}
 
-## RESET SALE TRANSACTION
+## RESET SALE TRANSACTION ONLY
 @frappe.whitelist()
 def reset_sale_transaction_pos_only():
     # backupd db first

@@ -308,9 +308,20 @@ def check_coupon_code(coupon_number):
     #    "coupon_shift":"CPN25-0002",
     #    "transaction_date":"2025-06-24 10:57:56.926061"
 # }
+def short_hex_uuid(length=18):
+    import uuid
+    return uuid.uuid4().hex[:length]
+
 @frappe.whitelist()
 def on_scan_use_coupon(params):
-    coupon_amount = params["input_coupon_amount"] / params["exchange_rate"] or 1
+    import uuid
+    transaction_id = short_hex_uuid()  
+    # check if valid coupon number
+
+    # end change coupon
+    coupon_amount = params["input_coupon_amount"] / (params["exchange_rate"] or 1)
+    original_coupon_amount = coupon_amount
+
     data = check_coupon_code(params["coupon_number"])
     if data:
         if(data["amount"] < coupon_amount):
@@ -347,6 +358,7 @@ def on_scan_use_coupon(params):
                                                     cashier_shift,
                                                     customer,
                                                     customer_name,
+                                                    customer_photo,
                                                     coupon_code
                                             from `tabCoupon Transaction` 
                                             where coupon_number = %(coupon_number)s
@@ -379,15 +391,24 @@ def on_scan_use_coupon(params):
                         # return {"x": transaction}
             # return result
             if result and len(result) > 0:
+                customer = {
+                    "customer":"",
+                    "customer_name":"",
+                    "photo":""
+                }
                 for r in result:
+                    customer["customer"] = r["customer"]
+                    customer["customer_name"] = r["customer_name"]  
+                    customer["photo"] = r["customer_photo"]
+                    ##
                     actual_amount = r["cut_amount"] / (1+(r["markup_percentage"]/100)) 
                     doc = frappe.get_doc({
                         "doctype":"Coupon Transaction",
                         "business_branch":params["business_branch"],
                         "status": "Locked" if r["used"] else "Active", 
                         "transaction_type":"Use",
-                        "input_coupon_amount":r["cut_amount"] * params["exchange_rate"],
-                        "input_actual_amount":actual_amount * params["exchange_rate"], 
+                        "input_coupon_amount": (-1)* (r["cut_amount"] * params["exchange_rate"]),
+                        "input_actual_amount":(-1)* (actual_amount * params["exchange_rate"]), 
                         "exchange_rate":params["exchange_rate"],
                         "cashier_shift":r["cashier_shift"],
                         "customer":r["customer"],
@@ -402,12 +423,32 @@ def on_scan_use_coupon(params):
                         "working_day":r["working_day"],
                         "currency":params["currency"],
                         "used_from_transaction":r["name"],
-                        "customer_name":   r["customer_name"]           
+                        "customer_name":  r["customer_name"],
+                        "used_transaction_id":transaction_id,
+                        "original_used_amount": original_coupon_amount * -1,
+                        "created_by":params["created_by"],
+                        "note":params["remark"],
                         })
                     doc.insert()
 
-                return result
+                    ## update coupon transaction status to locked
+                    if r["used"]:
+                        frappe.db.sql("""update `tabCoupon Transaction` 
+                                        set status = 'Locked' 
+                                        where name = %(name)s""", {"name":r["name"]})
+
+
+                return_data = params.copy()
+                return_data["original_used_amount"] = original_coupon_amount
+                return_data["used_transaction_id"] = transaction_id
+                return_data["customer_name"] = customer["customer_name"]
+                return_data["customer"] = customer["customer"]
+                return_data["customer_photo"] = customer["photo"]
+                
+                return return_data
             
+            else:   
+                frappe.throw("Invalid coupon number")
     
     else:
         frappe.throw("Invalid coupon number")

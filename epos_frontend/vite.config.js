@@ -9,7 +9,7 @@ export default defineConfig({
 	server: {
 		port: 5566,
 		proxy: proxyOptions,
-		host:true
+		host:true,
 	},
 	resolve: {
 		alias: {

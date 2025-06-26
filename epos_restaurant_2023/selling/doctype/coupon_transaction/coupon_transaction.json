@@ -38,7 +38,9 @@
   "status",
   "note",
   "created_by",
-  "used_from_transaction"
+  "used_from_transaction",
+  "original_used_amount",
+  "used_transaction_id"
  ],
  "fields": [
   {
@@ -256,11 +258,31 @@
    "label": "Coupon Code",
    "reqd": 1,
    "search_index": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "original_used_amount",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "label": "Original Used Amount",
+   "print_hide": 1,
+   "print_hide_if_no_value": 1,
+   "read_only": 1,
+   "report_hide": 1
+  },
+  {
+   "fieldname": "used_transaction_id",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Used Transaction ID",
+   "print_hide": 1,
+   "read_only": 1,
+   "report_hide": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-24 17:01:30.961613",
+ "modified": "2025-06-25 10:28:44.132713",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Transaction",

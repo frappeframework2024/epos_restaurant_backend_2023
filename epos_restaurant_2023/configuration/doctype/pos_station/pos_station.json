@@ -58,6 +58,7 @@
   "show_button_delete_item_on_order_station",
   "show_rate_include_button",
   "print_invoice_on_submit",
+  "show_warning_before_reload_in_order_screen",
   "switch_pos_profile_tab",
   "pos_profiles_section",
   "switch_pos_profiles",
@@ -403,11 +404,17 @@
    "fieldname": "allow_login_multiple_site",
    "fieldtype": "Check",
    "label": "Allow Login Multiple Site"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_warning_before_reload_in_order_screen",
+   "fieldtype": "Check",
+   "label": "Show Warning Before Reload In Order Screen"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-13 08:05:47.376290",
+ "modified": "2025-06-26 08:52:03.112310",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",
