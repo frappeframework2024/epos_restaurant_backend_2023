@@ -2,17 +2,25 @@
     <v-app>
         <v-app-bar :elevation="2" color="appbar">
             <template #prepend>
-                <v-app-bar-nav-icon size="small" variant="text" @click.stop="onDrawer()"></v-app-bar-nav-icon>
+                <v-app-bar-nav-icon size="small" variant="text" @click.stop="onDrawer()" style="margin-left: -5px;"></v-app-bar-nav-icon>
                 <template v-if="mobile">
-                    <v-btn icon @click="onBack('TableLayout')" v-if="gv.setting.table_groups.length > 0">
+                    <v-btn icon @click="onBack('TableLayout')" v-if="gv.setting.table_groups.length > 0" style="margin-left: -5px;">
                         <v-icon>mdi-arrow-left</v-icon>
                     </v-btn>
-                    <v-btn icon @click="onBack('Home')" v-else>
+                    <v-btn icon @click="onBack('Home')" v-else style="margin-left: -5px;">
                         <v-icon>mdi-home-outline</v-icon>
                     </v-btn>
                 </template>
                 <v-app-bar-title>
-                    <div :class="mobile ? 'text-xs' : ''">
+                      <div v-if="mobile" class="text-xs">
+                        <span v-if="sale.sale.sale_status == 'New'"> {{ $t('New') }}</span>
+                        <span v-else> {{ sale.sale.name }}</span>
+                        <v-chip class="ml-2" variant="elevated" v-if="sale.sale.name"
+                            :color="sale.sale.sale_status_color" :size="mobile ? 'x-small' : 'default'">
+                            {{ sale.sale.sale_status }}
+                        </v-chip>
+                    </div>
+                    <div v-else :class="mobile ? 'text-xs' : ''">
                         POS
                         <span v-if="sale.sale.tbl_number">- {{ sale.sale.tbl_number }}</span>
                         <span v-if="sale.sale.sale_status == 'New'"> - {{ $t('New') }}</span>

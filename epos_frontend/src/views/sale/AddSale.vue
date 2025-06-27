@@ -89,7 +89,6 @@ sale.deletedSaleProducts = [];
 
 sale.vue.$onKeyStroke('F1', (e) => {
     e.preventDefault();
-
     if (localStorage.getItem('dialogstate') === null) {
         localStorage.setItem('dialogstate', 1)
         ShortCutKeyHelpDialog()
@@ -126,8 +125,16 @@ const handleHashChange = () => {
     product.canBack = (hash && decodeURIComponent(hash)!="All Product Categories")
 };
 
+const handleBeforeUnload = (event) => {
+	const device_setting  = JSON.parse(localStorage.getItem("device_setting"));	
+	if (route.path.toLowerCase().includes('/epos_frontend/add-sale') && device_setting.show_warning_before_reload_in_order_screen == 1) {
+		event.preventDefault()
+		event.returnValue = ''
+	}
+}
 
 onMounted(() => { 
+    window.addEventListener('beforeunload', handleBeforeUnload)
     window.addEventListener('hashchange', handleHashChange);
     if (sale.getString(route.params.name) == "") {
         if (sale.sale.sale_status == undefined) {
@@ -233,6 +240,7 @@ onBeforeRouteLeave(() => {
 });
 
 onUnmounted(() => {
+    window.removeEventListener('beforeunload', handleBeforeUnload)
     if (sale.kod_messages.length>0){
         sale.kod_messages.forEach(s=>{
             socket.emit("SubmitKOD",{screen_name:s.screen_name,message:s.message})
