@@ -21,6 +21,8 @@ const toaster = createToaster({ position: "top-right" });
 
 export default class Sale {
     constructor() {
+        this.id = "";
+        this.previous_id = "";
         this.move_item = false
         this.now = new Date();
         this.is_payment_first_load = false;
@@ -128,7 +130,6 @@ export default class Sale {
             }
         })
     }
-
    async saleNetworkLock(_sale){
         if(this.setting.device_setting.use_sale_network_lock == 1 && _sale.table_id != undefined){ 
             let param = {
@@ -1653,6 +1654,13 @@ export default class Sale {
 
     onSubmit() {
         return new Promise(async (resolve) => {
+            if(this.id == ""){
+                this.id = generateGUID();
+            }
+            if(this.id == this.previous_id){
+                 return
+            }
+            this.previous_id = this.id;
             if (this.sale.sale_products.length == 0 && this.sale.name == undefined && (this.sale.from_reservation || "") == "") {
                 toaster.warning($t('msg.Please select a menu item to submit order'));
                 resolve(false);
@@ -1680,6 +1688,7 @@ export default class Sale {
                     _sale = await this.saleResource.setValue.submit(doc);
                 }
                 this.submitToAuditTrail(doc);
+                this.id = "";
                 //refresh tabl 
                 resolve(_sale);
             }
@@ -2573,3 +2582,10 @@ export default class Sale {
         return data["message"]
     }
 }
+function  generateGUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8); // v4 UUID
+        return v.toString(16);
+    });
+    }
