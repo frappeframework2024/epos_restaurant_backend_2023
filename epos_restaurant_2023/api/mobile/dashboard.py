@@ -20,10 +20,13 @@ def get_param(param):
     
     working_date = param["working_date"] if "working_date" in keys else ""
     if (working_date or "") == "":
-        working_day_sql = """select max(posting_date) as posting_date from `tabWorking Day` where 1=1 """
-        if not business_branch is "":
-            working_day_sql += " and business_branch = %(business_branch)s"
-        working_day_sql += " limit 1"
+        working_day_sql = """
+            select 
+                max(posting_date) as posting_date 
+            from `tabWorking Day` where 1=1 
+                (%(business_branch)s = '' or business_branch = %(business_branch)s)  
+            limit 1
+        """
         
         working_day = frappe.db.sql(working_day_sql, {"business_branch": business_branch}, as_dict=1)
 
@@ -36,7 +39,7 @@ def get_param(param):
     else:
         working_date = datetime.datetime.strptime(working_date, "%Y-%m-%d").date()
 
-    return {"business_branch":business_branch,"working_date":working_date, "pos_profiles":pos_profiles, }
+    return {"business_branch":business_branch or "","working_date":working_date, "pos_profiles":pos_profiles, }
 
 # param: {"param": {"pos_profiles":["POS Profile"],"business_branch":""}}
 ### business_branch ="" means all business_branch
@@ -72,15 +75,15 @@ def sale_kpi_get_data(business_branch, pos_profiles,working_date, type="Today"):
                     coalesce(sum(s.total_quantity),0) as total_quantity,
                     coalesce(count(s.name),0) as total_bill
                 from `tabSale` s 
-                where 1=1
-                and s.docstatus = 1"""
+                where 
+                 s.docstatus = 1 and 
+                (%(business_branch)s = '' or business_branch = %(business_branch)s)  
+
+                """
     if type == "Today":
         sale_today_sql += " and s.posting_date = %(end_date)s"
     else:
         sale_today_sql += " and s.posting_date between %(start_date)s and %(end_date)s"
-
-    if not business_branch is "":
-        sale_today_sql += " and s.business_branch = %(business_branch)s"
 
     if len(pos_profiles) > 0:
         sale_today_sql += " and (s.pos_profile in %(pos_profile)s or s.pos_profile is null)"
@@ -113,14 +116,15 @@ def get_total_coupon_quantity_sale(business_branch, pos_profiles,working_date, t
                 inner join `tabSale` s on s.name = sp.parent
                 where  
                     s.docstatus = 1 and 
-                    s.sale_type = 'Sale Coupon' """
+                    s.sale_type = 'Sale Coupon' and
+                    (%(business_branch)s = '' or s.business_branch = %(business_branch)s)  
+
+                    """
     if type == "Today":
         sale_today_sql += " and s.posting_date = %(end_date)s"
     else:
         sale_today_sql += " and s.posting_date between %(start_date)s and %(end_date)s"
 
-    if not business_branch is "":
-        sale_today_sql += " and s.business_branch = %(business_branch)s"
 
     if len(pos_profiles) > 0:
         sale_today_sql += " and (s.pos_profile in %(pos_profile)s or s.pos_profile is null)"
@@ -142,14 +146,15 @@ def get_total_sale_coupon_bill(business_branch, pos_profiles,working_date, type=
                 from  `tabSale` s 
                 where  
                     s.docstatus = 1 and 
-                    s.sale_type = 'Sale Coupon' """
+                    s.sale_type = 'Sale Coupon' and 
+                    (%(business_branch)s = '' or s.business_branch = %(business_branch)s)  
+                    """
     if type == "Today":
         sale_today_sql += " and s.posting_date = %(end_date)s"
     else:
         sale_today_sql += " and s.posting_date between %(start_date)s and %(end_date)s"
 
-    if not business_branch is "":
-        sale_today_sql += " and s.business_branch = %(business_branch)s"
+    
 
     if len(pos_profiles) > 0:
         sale_today_sql += " and (s.pos_profile in %(pos_profile)s or s.pos_profile is null)"
@@ -193,7 +198,7 @@ def daily_sale_chart(param):
             and s.docstatus = 1
             and s.posting_date between %(start_date)s and %(end_date)s """
     
-    if not business_branch is "":
+    if (business_branch or "") != "":
         sql += " and s.business_branch = %(business_branch)s"
 
     if len(pos_profiles) > 0:
@@ -239,7 +244,7 @@ def payment_breakdown(param):
         where 1 = 1
         and sp.docstatus = 1
         and  sp.posting_date = %(end_date)s """
-    if not business_branch is "":
+    if (business_branch or "") != "":
         sql += " and sp.business_branch = %(business_branch)s"
 
     if len(pos_profiles) > 0:
