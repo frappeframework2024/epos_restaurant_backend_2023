@@ -1655,6 +1655,7 @@ export default class Sale {
         return new Promise(async (resolve) => {
             this.loading = true;
             const resp = await Ping(this.setting)
+            console.log(resp)
             if(resp==0){
                 toaster.warning($t('msg.Please check your network connection'));
                 this.loading = false;
