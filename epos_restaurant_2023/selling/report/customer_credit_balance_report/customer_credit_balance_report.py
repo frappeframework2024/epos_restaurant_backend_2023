@@ -79,6 +79,8 @@ def get_conditions(filters,group_filter=None):
 		conditions += " AND a.customer_group in %(customer_group)s"
 	if filters.get("customer"):
 		conditions += " AND a.customer = %(customer)s"
+	if filters.get("stock_location"):
+		conditions += " AND a.stock_location in %(stock_location)s"
 	conditions += " AND a.business_branch in %(business_branch)s"
 	
 	return conditions
@@ -108,9 +110,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 		
 		
 	""".format(filters.end_date, get_conditions(filters,group_filter))	
-	
 	data = frappe.db.sql(sql,filters, as_dict=1)
-	
 	if not filters.show_sale_transaction:
 		return data
 	else:
@@ -144,7 +144,6 @@ def get_sale_transaction_data(filters,customer):
 		a.customer = '{1}' and
 	{2}
 	""".format(filters.end_date,customer, get_conditions(filters))	
-
 	data = frappe.db.sql(sql,filters, as_dict=1)
 	return data
 

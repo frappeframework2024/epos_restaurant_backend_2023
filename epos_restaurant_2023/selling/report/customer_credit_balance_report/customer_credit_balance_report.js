@@ -25,6 +25,9 @@ frappe.query_reports["Customer Credit Balance Report"] = {
 			fieldname: "stock_location",
 			label: __("Stock Location"),
 			fieldtype: "MultiSelectList",
+			get_data: function(txt) {
+				return frappe.db.get_link_options('Stock Location', txt);
+			},
 			"on_change": function (query_report) {},
 			 
 		},

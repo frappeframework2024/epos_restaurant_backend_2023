@@ -68,20 +68,14 @@ def get_columns(filters):
 def get_conditions(filters,group_filter=None):
 	conditions = " a.docstatus = 1 "
 	end_date = filters.end_date
-
 	conditions += " AND a.posting_date<= '{}'".format(end_date)
 	if filters.get("stock_location"):
 		conditions += " AND a.stock_location in %(stock_location)s"
-
 	if filters.get("vendor_group"):
 		conditions += " AND a.vendor_group in %(vendor_group)s"
-  
 	if filters.get("vendor"):
 		conditions += " AND a.vendor = %(vendor)s"
- 
 	conditions += " AND a.business_branch in %(business_branch)s"
-
-
 	return conditions
 
 def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
