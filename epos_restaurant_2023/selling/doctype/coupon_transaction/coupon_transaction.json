@@ -48,7 +48,8 @@
    "fieldtype": "Link",
    "label": "Business Branch",
    "options": "Business Branch",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "pos_profile",
@@ -66,7 +67,8 @@
    "in_standard_filter": 1,
    "label": "POS Station",
    "options": "POS Station",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "coupon_number",
@@ -107,7 +109,8 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Transaction Type",
-   "options": "Sale Coupon\nTop Up\nRedeem\nUse"
+   "options": "Sale Coupon\nTop Up\nRedeem\nUse",
+   "search_index": 1
   },
   {
    "default": "0",
@@ -282,7 +285,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-25 10:28:44.132713",
+ "modified": "2025-06-28 11:25:28.519631",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Transaction",

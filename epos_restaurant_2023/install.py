@@ -328,7 +328,7 @@ def reset_sale_transaction_pos_only():
         frappe.throw("Invalid Method.")
 
 
-## END RESET SALE TRANSACTION
+## END RESET SALE TRANSACTION ONLY
 
 ## RESET DATABASE Method
 @frappe.whitelist()

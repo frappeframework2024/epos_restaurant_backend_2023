@@ -272,7 +272,7 @@ def check_coupon_code(coupon_number):
             where `status` = 'Active' 
             and coupon_number = %(coupon_number)s""" 
     data = frappe.db.sql(sql, {"coupon_number":coupon_number}, as_dict=1)
-    if data and len(data) > 0:
+    if data and len(data) > 0: 
         cus_sql = """select 
             customer,
             customer_name,
@@ -283,7 +283,7 @@ def check_coupon_code(coupon_number):
             and status = 'Active' 
         order by creation desc 
         limit 1"""
-        cus = frappe.db.sql(cus_sql, {"coupon_number":coupon_number}, as_dict=1)
+        cus = frappe.db.sql(cus_sql, {"coupon_number":coupon_number}, as_dict=1) 
         if cus and len(cus) > 0:
             return {
                 "card":coupon_number,
@@ -292,7 +292,7 @@ def check_coupon_code(coupon_number):
                 "cimage":cus[0]["customer_photo"],
                 "amount":data[0]["coupon_amount"]
             }
-        else:
+        else: 
             return None 
 
 
@@ -454,4 +454,111 @@ def on_scan_use_coupon(params):
         frappe.throw("Invalid coupon number")
 
 
+@frappe.whitelist(methods=["POST"])
+def get_report(name, show_transaction):  
+
+    ## data_type = label, table
+    doc = frappe.get_doc("Coupon Shift", name)
+    info = {"key":[],"type":[],"value":[]}
+    summary = {"key":[],"type":[],"value":[]}
+    result = {}
+    
+    if doc.is_closed:
+        info = {
+            "key":["Closed station","Closed at","Opened by"],
+            "type":["data","datetime","data"],
+            "value":[doc.station_closed, doc.close_date,doc.close_by]
+        }
+
+    #get summary
+    sql_summary = """select 
+        coalesce(sum(actual_amount) , 0)*(-1) as total_actual_amount,
+        coalesce(sum(coupon_amount) , 0) *(-1)  as total_coupon_amount,
+        count(`name`) as total_record
+    from `tabCoupon Transaction` 
+    where 1=1
+    and transaction_type in ('Use')
+    and coupon_shift = %(name)s"""
+    summary_data = frappe.db.sql(sql_summary, {"name":name}, as_dict=1)
+    if summary and len(summary_data) > 0:
+        summary_data = summary_data[0]
+        summary["key"] = ["Coupon Amount","Actual Amount","Transactions"]
+        summary["type"] = ["currency","currency","int"]
+        summary["value"] = [summary_data["total_coupon_amount"],summary_data["total_actual_amount"],summary_data["total_record"]]
+
+    if show_transaction:
+        transctions = {"data":{}}
+        sql_transactions = """select 
+            name,
+            coupon_code,
+            creation,
+            coupon_amount,
+            created_by
+        from `tabCoupon Transaction` 
+        where 1=1
+        and transaction_type in ('Use')
+        and coupon_shift = %(name)s
+        order by creation desc"""   
+        transction_data = frappe.db.sql(sql_transactions, {"name":name}, as_dict=1) 
+
+        transctions["data"] = {
+            "header":[
+                "No","Coupon","Date","Amount","By"
+            ],
+            "type":["int","data","time","currency","data"],
+            "align":["center","left","left","right","left"],
+            "width":[20.0,0.0,60.0,60.0,60.0],
+            "data":[
+                [i + 1, d["coupon_code"], d["creation"], abs(d["coupon_amount"]), d["created_by"]] for i, d in enumerate(transction_data)
+            ]
+        }
+
+        ## update result transaction 
+        result["Trasactions"] =  { 
+            "data":transctions["data"],
+            "data_type":"table",
+            "sort":99
+        }
+
+    
+
+    # set info to result
+    result["Info"] = {
+        "key":[ 
+            "Date",
+            "POS Profile",
+            "Opened station",
+            "Opened at",
+            "Opened by",
+            "Shift name",
+            "Status",
+            *info["key"]
+        ],
+        "type":["date", "data", "data","datetime","data", "data", "data",*info["type"]],
+        "value":[
+            doc.posting_date,
+            doc.pos_profile,
+            doc.station_opened,
+            doc.creation,
+            doc.open_by,
+            doc.shift_name,
+            "Closed" if doc.is_closed else "Opening",
+            *info["value"]
+        ], 
+        "data_type":"label",
+        "sort":0
+    }
+
+    # set summary to result
+    result["Summary"] = { 
+        "key":[*summary["key"]],
+        "type":[*summary["type"]],
+        "value":[*summary["value"]],
+        "data_type":"label",
+        "sort":1
+    }
+
+    sorted_data = dict(sorted(result.items(), key=lambda x: x[1].get("sort", 99999)))   
  
+ 
+    return sorted_data

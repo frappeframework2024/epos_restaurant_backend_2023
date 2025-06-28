@@ -56,9 +56,13 @@ def sale_kpi(param):
         "today_revenue": today_data.total_revenue,
         "today_bill": today_data.total_bill,
         "today_quantity": today_data.total_quantity,
+        "today_coupon_quantity": today_data.total_coupon,
+        "today_coupon_bill": today_data.total_coupon_bill,
         "mtd_revenue": mtd_data.total_revenue,
         "mtd_bill": mtd_data.total_bill,
         "mtd_quantity": mtd_data.total_quantity,    
+        "mtd_coupon_quantity": mtd_data.total_coupon,    
+        "mtd_coupon_bill": mtd_data.total_coupon_bill
     }
     
 
@@ -86,16 +90,83 @@ def sale_kpi_get_data(business_branch, pos_profiles,working_date, type="Today"):
             "pos_profile": pos_profiles,
             "start_date": type == "Today" and working_date or working_date.replace(day=1),
             "end_date": working_date,
+
         }, as_dict=1)  
     if data:
+        data[0]["total_coupon"] = get_total_coupon_quantity_sale(business_branch, pos_profiles,working_date, type)
+        data[0]["total_coupon_bill"] = get_total_sale_coupon_bill(business_branch, pos_profiles,working_date, type)
         return data[0]
     else:
         return {
             "total_revenue": 0,
             "total_quantity": 0,
             "total_bill": 0,
+            "total_coupon":0,
+            "total_coupon_bill":0
         } 
 
+
+def get_total_coupon_quantity_sale(business_branch, pos_profiles,working_date, type="Today"): 
+    sale_today_sql = """select 
+                    sum(sp.quantity) as quantity
+                from `tabSale Product` sp 
+                inner join `tabSale` s on s.name = sp.parent
+                where  
+                    s.docstatus = 1 and 
+                    s.sale_type = 'Sale Coupon' """
+    if type == "Today":
+        sale_today_sql += " and s.posting_date = %(end_date)s"
+    else:
+        sale_today_sql += " and s.posting_date between %(start_date)s and %(end_date)s"
+
+    if not business_branch is "":
+        sale_today_sql += " and s.business_branch = %(business_branch)s"
+
+    if len(pos_profiles) > 0:
+        sale_today_sql += " and (s.pos_profile in %(pos_profile)s or s.pos_profile is null)"
+
+    data = frappe.db.sql(sale_today_sql, {
+            "business_branch": business_branch,
+            "pos_profile": pos_profiles,
+            "start_date": type == "Today" and working_date or working_date.replace(day=1),
+            "end_date": working_date,
+        }, as_dict=1)  
+    if data:
+        return data[0]["quantity"]
+    else:
+        return 0
+
+def get_total_sale_coupon_bill(business_branch, pos_profiles,working_date, type="Today"): 
+    sale_today_sql = """select 
+                   count(s.name) as total
+                from  `tabSale` s 
+                where  
+                    s.docstatus = 1 and 
+                    s.sale_type = 'Sale Coupon' """
+    if type == "Today":
+        sale_today_sql += " and s.posting_date = %(end_date)s"
+    else:
+        sale_today_sql += " and s.posting_date between %(start_date)s and %(end_date)s"
+
+    if not business_branch is "":
+        sale_today_sql += " and s.business_branch = %(business_branch)s"
+
+    if len(pos_profiles) > 0:
+        sale_today_sql += " and (s.pos_profile in %(pos_profile)s or s.pos_profile is null)"
+
+    data = frappe.db.sql(sale_today_sql, {
+            "business_branch": business_branch,
+            "pos_profile": pos_profiles,
+            "start_date": type == "Today" and working_date or working_date.replace(day=1),
+            "end_date": working_date,
+        }, as_dict=1)  
+    if data:
+        return data[0]["total"]
+    else:
+        return 0
+
+
+ 
 
 # param: {"param": {"pos_profiles":["POS Profile 01","POS Profile 02"], "business_branch":""}}
 # @frappe.whitelist(allow_guest=True)
@@ -146,9 +217,7 @@ def daily_sale_chart(param):
     return result
 
 
-@frappe.whitelist()
-def testme():
-    return payment_breakdown ({"business_branch":"ESTC HOTEL"}) 
+
 # param: {"param": {"pos_profiles":["POS Profile"],"business_branch":""}}
 # @frappe.whitelist(allow_guest=True)
 @frappe.whitelist()
@@ -185,3 +254,121 @@ def payment_breakdown(param):
 
      
     return data
+
+@frappe.whitelist()
+def get_sale_breakdown_by_coupon(param):
+    p = get_param(param)
+    business_branch  = p["business_branch"]
+    working_date = p["working_date"]
+ 
+    sql = """
+        select
+            sp.product_name,
+            sum(if(s.sale_type='Top Up',0,sp.quantity)) as quantity,
+            sum(sp.total_coupon_value) as total_coupon_value,
+            sum(sp.amount) as total_amount
+        from `tabSale Product` sp
+        inner join `tabSale` s on s.name = sp.parent
+        inner join `tabProduct` p on p.name = sp.product_code 
+        where 
+            s.docstatus = 1 and
+            s.sale_type in ('Sale Coupon','Top Up') and  
+            p.is_coupon = 1 and 
+            s.posting_date = %(date)s and 
+            (%(business_branch)s = '' or s.business_branch = %(business_branch)s)  
+        group by 
+            sp.product_name 
+
+    """
+    filters ={
+        "date":working_date,
+        "business_branch" : business_branch
+    }
+    data = frappe.db.sql(sql,filters,as_dict=1)
+    return data
+
+@frappe.whitelist()
+def get_coupon_transaction_summary(param):
+    p = get_param(param)
+    business_branch  = p["business_branch"]
+    working_date = p["working_date"]
+    
+    sql = """
+        select 
+            transaction_type,
+            count(*) as total_transaction,
+            sum(coupon_amount) as coupon_value
+        from `tabCoupon Transaction`
+       
+        where 
+            posting_date = %(date)s and 
+            (%(business_branch)s = '' or business_branch = %(business_branch)s)  
+        group by 
+            transaction_type
+
+    """
+    filters ={
+        "date":working_date,
+        "business_branch" : business_branch
+    }
+    
+    data = frappe.db.sql(sql,filters,as_dict=1)
+    return_data = []
+    transaction_type =  ["Sale Coupon","Top Up","Use","Redeem"]
+    for t in transaction_type:
+        exists = [d for d in data if d.get("transaction_type") == t]
+        if exists:
+            return_data.append(exists[0])
+        else:
+            return_data.append({
+                "transaction_type":t,
+                "total_transaction":0,
+                "coupon_value":0
+            })
+    return_data.insert(2, {
+         "transaction_type":"Sale + Top Up",
+                "total_transaction":sum([d.get("total_transaction") for d in return_data if d.get("transaction_type") in ["Sale Coupon"]]),
+                "coupon_value":sum([d.get("coupon_value") for d in return_data if d.get("transaction_type") in ["Sale Coupon","Top Up"]])
+    })
+
+    return return_data
+ 
+@frappe.whitelist()
+def testMe():
+    params = {
+        "business_branch": "ESTC HOTEL",
+        "working_date": "2025-06-15",
+        "pos_profiles": ""
+        }
+     
+    return get_summary_coupon_used_by_pos_station(params)
+
+@frappe.whitelist()
+def get_summary_coupon_used_by_pos_station(param):
+    p = get_param(param)
+    business_branch  = p["business_branch"]
+    working_date = p["working_date"]
+    
+    sql = """
+       select 
+            pos_station,
+            sum(coupon_amount) as coupon_value,
+            sum(actual_amount) as total_amount
+        from `tabCoupon Transaction` 
+        where
+            transaction_type = 'Use' and
+            posting_date = %(date)s and 
+            (%(business_branch)s = '' or business_branch = %(business_branch)s)  
+        group by 
+            pos_station
+
+    """
+    filters ={
+        "date":working_date,
+        "business_branch" : business_branch
+    }
+    
+    data = frappe.db.sql(sql,filters,as_dict=1)
+    
+    return data
+ 

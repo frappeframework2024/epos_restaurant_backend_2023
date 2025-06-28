@@ -6,7 +6,12 @@ from frappe.model.document import Document
 from frappe import _
 
 class CouponCodes(Document):
-	pass
+	
+	def on_trash(self):
+		if frappe.db.exists("Coupon Transaction",{"coupon_code":self.name}):
+			frappe.throw(_("Cannot delete coupon code as it has transactions"))
+
+		frappe.msgprint(_("Delete coupon code successfully"))
 
 @frappe.whitelist()
 def check_coupon_code(coupon):
