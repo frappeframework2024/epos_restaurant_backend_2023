@@ -21,8 +21,6 @@ const toaster = createToaster({ position: "top-right" });
 
 export default class Sale {
     constructor() {
-        this.id = "";
-        this.previous_id = "";
         this.move_item = false
         this.now = new Date();
         this.is_payment_first_load = false;
@@ -130,6 +128,7 @@ export default class Sale {
             }
         })
     }
+
    async saleNetworkLock(_sale){
         if(this.setting.device_setting.use_sale_network_lock == 1 && _sale.table_id != undefined){ 
             let param = {
@@ -1654,13 +1653,14 @@ export default class Sale {
 
     onSubmit() {
         return new Promise(async (resolve) => {
-            if(this.id == ""){
-                this.id = generateGUID();
+            this.loading = true;
+            const resp = await Ping(this.setting)
+            if(resp==0){
+                toaster.warning($t('msg.Please check your network connection'));
+                this.loading = false;
+                resolve(false);
+                return
             }
-            if(this.id == this.previous_id){
-                 return
-            }
-            this.previous_id = this.id;
             if (this.sale.sale_products.length == 0 && this.sale.name == undefined && (this.sale.from_reservation || "") == "") {
                 toaster.warning($t('msg.Please select a menu item to submit order'));
                 resolve(false);
@@ -1688,10 +1688,10 @@ export default class Sale {
                     _sale = await this.saleResource.setValue.submit(doc);
                 }
                 this.submitToAuditTrail(doc);
-                this.id = "";
                 //refresh tabl 
                 resolve(_sale);
             }
+             this.loading = false;
         })
     }
 
@@ -2582,10 +2582,20 @@ export default class Sale {
         return data["message"]
     }
 }
-function  generateGUID() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        const r = Math.random() * 16 | 0;
-        const v = c === 'x' ? r : (r & 0x3 | 0x8); // v4 UUID
-        return v.toString(16);
-    });
+
+async function Ping(setting) {
+    let port =  setting?.pos_setting?.use_backend_port == 0 ? `:${window.location.port}` : (window.location.protocol == "https:" ? "" : `:${setting?.pos_setting?.backend_port}`)
+    const url = `${window.location.protocol}//${window.location.hostname}${port}/api/method/epos_restaurant_2023.api.utils.ping`;
+    const controller = new AbortController();
+     const timer = setTimeout(() => {
+        controller.abort();
+    }, 5000)
+    try {
+        await fetch(url, { method: 'HEAD', mode: 'no-cors', cache: 'no-store' });
+        clearTimeout(timer);
+        return 1
+    } catch (error) {
+        clearTimeout(timer);
+        return 0
     }
+}
