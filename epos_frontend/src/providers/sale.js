@@ -2592,7 +2592,7 @@ async function Ping(setting) {
         controller.abort();
     }, 5000)
     try {
-        await fetch(url, { method: 'HEAD', mode: 'no-cors', cache: 'no-store' });
+        await fetch(url, { method: 'HEAD', mode: 'no-cors', cache: 'no-store',signal: controller.signal, });
         clearTimeout(timer);
         return 1
     } catch (error) {
