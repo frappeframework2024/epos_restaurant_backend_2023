@@ -1655,8 +1655,7 @@ export default class Sale {
         return new Promise(async (resolve) => {
             this.loading = true;
             const resp = await Ping(this.setting)
-            console.log(resp)
-            if(resp==0){
+            if(resp == 0){
                 toaster.warning($t('msg.Please check your network connection'));
                 this.loading = false;
                 resolve(false);
@@ -2588,9 +2587,9 @@ async function Ping(setting) {
     let port =  setting?.pos_setting?.use_backend_port == 0 ? `:${window.location.port}` : (window.location.protocol == "https:" ? "" : `:${setting?.pos_setting?.backend_port}`)
     const url = `${window.location.protocol}//${window.location.hostname}${port}/api/method/epos_restaurant_2023.api.utils.ping`;
     const controller = new AbortController();
-     const timer = setTimeout(() => {
+    const timer = setTimeout(() => {
         controller.abort();
-    }, 5000)
+    }, 10000)
     try {
         await fetch(url, { method: 'HEAD', mode: 'no-cors', cache: 'no-store',signal: controller.signal, });
         clearTimeout(timer);
