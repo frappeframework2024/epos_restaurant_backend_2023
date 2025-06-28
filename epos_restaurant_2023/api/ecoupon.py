@@ -482,9 +482,9 @@ def get_report(name, show_transaction):
     summary_data = frappe.db.sql(sql_summary, {"name":name}, as_dict=1)
     if summary and len(summary_data) > 0:
         summary_data = summary_data[0]
-        summary["key"] = ["Coupon Amount","Actual Amount","Transactions"]
-        summary["type"] = ["currency","currency","int"]
-        summary["value"] = [summary_data["total_coupon_amount"],summary_data["total_actual_amount"],summary_data["total_record"]]
+        summary["key"] = ["Transactions","Coupon Amount","Actual Amount"]
+        summary["type"] = ["int","currency","currency"]
+        summary["value"] = [summary_data["total_record"],summary_data["total_coupon_amount"],summary_data["total_actual_amount"]]
 
     if show_transaction:
         transctions = {"data":{}}
