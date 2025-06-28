@@ -1024,7 +1024,7 @@ def validate_sale_product(self):
 			d.crypto_able_amount = d.amount 
 
 		# update total coupon value
-		d.total_coupon_value = d.coupon_value * d.quantity
+		d.total_coupon_value = (d.coupon_value or 0) * (d.quantity or 0)
 
 def add_sale_product_spa_commission(self):	
 	query = "delete from `tabSale Product SPA Commission` where sale = '{}'".format(self.name)			

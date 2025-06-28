@@ -32,7 +32,7 @@ class InventoryCheck(BaseController):
 			for d in [x for x in self.items if x.actual_quantity!=x.current_on_hand]:
 				d.difference = (d.actual_quantity or 0) - (d.current_on_hand or 0)
 			
-			for d in [x for x in  self.items  if ( x.current_on_hand * x.original_cost) != (x.actual_quantity * x.cost) ]:
+			for d in [x for x in  self.items  if ( (x.current_on_hand or 0) * (x.original_cost or 0) ) != ( (x.actual_quantity or 0) * (x.cost or 0) )]:
 				d.total_difference_cost = (d.actual_quantity * d.cost) - (d.current_on_hand * d.original_cost)
 		
   
