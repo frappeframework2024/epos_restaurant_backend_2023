@@ -500,10 +500,11 @@ def get_report(name, show_transaction):
         and coupon_shift = %(name)s
         order by creation desc"""   
         transction_data = frappe.db.sql(sql_transactions, {"name":name}, as_dict=1) 
-
+        
         transctions["data"] = {
             "header":[
                 "No","Coupon","Date","Amount","By"
+                    
             ],
             "type":["int","data","time","currency","data"],
             "align":["center","left","left","right","left"],

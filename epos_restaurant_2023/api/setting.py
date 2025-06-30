@@ -29,27 +29,35 @@ def get_settings(station_name=None):
     if currency:
         data["currency_symbol"] = currency.symbol
         data["symbol_on_right"] = currency.symbol_on_right
-        # if station_name pass we get more data like pos profile
-        if station_name:
-            pos_profile = frappe.get_cached_doc("POS Profile", frappe.get_cached_value("POS Station",station_name,"pos_profile"))
-            data["pos_profile"] = pos_profile
-            data["allow_login_multiple_site"] = frappe.get_cached_value("POS Station",station_name,"allow_login_multiple_site")
-            data["working_day"] = get_working_day(pos_profile.name)
-            data["cashier_shift"] = get_current_cashier_shift(pos_profile.name)  
-        return data
+    # if station_name pass we get more data like pos profile
+    pos_profile = None
+    if station_name:
+        pos_profile = frappe.get_cached_doc("POS Profile", frappe.get_cached_value("POS Station",station_name,"pos_profile"))
+        data["pos_profile"] = pos_profile
+        data["allow_login_multiple_site"] = frappe.get_cached_value("POS Station",station_name,"allow_login_multiple_site")
+        
+        data["cashier_shift"] = get_current_cashier_shift(pos_profile.name)  
+
+    data["working_day"] = get_working_day(None if not pos_profile else pos_profile.name)
+    return data
 
 @frappe.whitelist()
-def get_working_day(pos_profile):
-
-    sql="select name,pos_profile,posting_date from `tabWorking Day` where pos_profile = %(pos_profile)s and is_closed=0 order by creation desc limit 1"
-    working_day = frappe.db.sql(sql,{"pos_profile":pos_profile},as_dict=True)
+def get_working_day(pos_profile=None):
+    if pos_profile:
+        sql="select name,pos_profile,posting_date from `tabWorking Day` where pos_profile = %(pos_profile)s and is_closed=0 order by creation desc limit 1"
+        working_day = frappe.db.sql(sql,{"pos_profile":pos_profile},as_dict=True)
+        if working_day:
+            return working_day[0]
+    # if not pos profile the we get current working date only
+    sql="select pos_profile,posting_date from `tabWorking Day` where   is_closed=0 order by creation desc limit 1" 
+    working_day = frappe.db.sql(sql,{},as_dict=True)
     if working_day:
         return working_day[0]
-    else:
-        return None
+    return None
+
+
 @frappe.whitelist()
 def get_exchange_rate():
-    
     main_currency = frappe.get_cached_value("ePOS Settings",None, "currency")
     exchange_rate_main_currency = frappe.get_cached_value("ePOS Settings",None, "exchange_rate_main_currency")
 
