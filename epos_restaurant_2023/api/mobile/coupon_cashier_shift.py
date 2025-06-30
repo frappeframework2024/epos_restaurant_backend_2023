@@ -14,7 +14,7 @@ def get_cashier_shift_summary_inrormation(cashier_shift):
 def get_transactions(cashier_shift):
     sql ="""
         select 
-            count(s.sale_type == 'Sale Coupon') as total_sale_coupon,
+            sum(s.sale_type = 'Sale Coupon') as total_sale_coupon
         from `tabSale` s
         where
             cashier_shift = %(cashier_shift)s and

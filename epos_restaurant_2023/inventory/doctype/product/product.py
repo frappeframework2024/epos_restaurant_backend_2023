@@ -33,8 +33,7 @@ class Product(Document):
 
 		validate_default_accounts(self)
 		check_product_inventory_location(self)
-		if self.is_new():
-			add_base_unit_to_product_prices(self)
+		add_base_unit_to_product_prices(self)
 		error_list=[]
 		for v in self.product_variants:
 			if v.variant_code is None or v.variant_code == "":
@@ -225,8 +224,8 @@ class Product(Document):
 					'price_rule' : p.price_rule,
 					"default_discount":p.default_discount
 				})
-		self.prices = json.dumps(prices)	
-	
+		self.prices = json.dumps(prices)
+
 	def on_update(self):
 		#
 		for a in self.pos_menus:
@@ -403,6 +402,11 @@ def add_base_unit_to_product_prices(self):
 				'portion': self.unit,
 				'conversion_factor': 1
 			})
+		sorted_prices = sorted(self.product_price, key=lambda x: x.conversion_factor)
+		for new_index, price in enumerate(sorted_prices):
+			price.idx = new_index + 1
+		self.product_price = []
+		self.product_price = sorted_prices
 
 @frappe.whitelist()
 def custom_rename_doc(doctype, old, new, merge=False):

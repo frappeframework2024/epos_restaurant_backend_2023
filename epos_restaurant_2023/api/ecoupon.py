@@ -21,14 +21,16 @@ def remove_key(data, keys= None):
         return [remove_key(item, keys) for item in data]
 
 
-@frappe.whitelist(methods=["POST"])
+@frappe.whitelist(methods=["POST"],allow_guest=True)
 def app_settings(params): 
     result = {}
+    ignore_permissions=True
+    
 
     ## get pos station
     ignore = True
     if params.get("station_name"): 
-        station = frappe.get_doc("POS Station", params.get("station_name")) 
+        station = frappe.get_doc("POS Station", params.get("station_name"), ignore_permissions=ignore_permissions) 
         
         if not station or station.disabled:
             ignore = False  
@@ -42,7 +44,7 @@ def app_settings(params):
         if not stations or len(stations) == 0:
             frappe.throw("Invalid device station")
            
-        station = frappe.get_doc("POS Station", stations[0]["name"])
+        station = frappe.get_doc("POS Station", stations[0]["name"],ignore_permissions=ignore_permissions)
 
     station_doc = remove_key(station.as_dict()) 
 
@@ -52,7 +54,8 @@ def app_settings(params):
         "Shift Type",
         fields=["*"],
         filters={"show_in_pos": 1},
-        order_by="sort asc"
+        order_by="sort asc",
+        ignore_permissions=ignore_permissions
     ) 
     _shift_types = []
     for st in shift_types:
@@ -65,7 +68,7 @@ def app_settings(params):
         "port":frappe.get_conf().get('socketio_port', 9000),
         "site_name": frappe.local.site
     }
-    main_currency = frappe.get_doc("Currency",frappe.db.get_default("currency"))
+    main_currency = frappe.get_doc("Currency",frappe.db.get_default("currency"),ignore_permissions=ignore_permissions)
     currency = remove_key(main_currency.as_dict())
     currency["precision"] = currency.pop("custom_currency_precision")
     currency["format"] = currency.pop("custom_pos_currency_format")
@@ -83,7 +86,11 @@ def app_settings(params):
 
     result["main_currency"] =  currency
 
-    currencies = frappe.db.get_list("Currency",fields=["name","symbol","number_format","symbol_on_right","custom_currency_precision","custom_pos_currency_format"], filters= {"enabled":1})
+    currencies = frappe.db.get_list("Currency",
+                                    fields=["name","symbol","number_format","symbol_on_right","custom_currency_precision","custom_pos_currency_format"], 
+                                    filters= {"enabled":1},
+                                    ignore_permissions=ignore_permissions
+                                    )
     # Rename fields
     for c in currencies:
         exchange_rate = 0

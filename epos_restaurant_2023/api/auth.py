@@ -1,5 +1,6 @@
 
 import frappe
+from frappe import _
 import base64
 from builtins import str
 
@@ -20,19 +21,52 @@ def check_api_url(property_code):
     
 @frappe.whitelist( allow_guest=True,methods="POST" )
 def login(property,usr, pwd, property_code=None):
- 
-    # from frappe.core.doctype.user.user import generate_keys
-    try:
-        login_manager = frappe.auth.LoginManager()
-        login_manager.authenticate(user=usr, pwd=pwd)
-        login_manager.post_login()
-    except frappe.exceptions.AuthenticationError:
-        frappe.clear_messages()
-        frappe.throw("Usename and password incorrect.")
-  
-    frappe.response["message"] = get_response_user_information(property,property_code )
+    ## check employee
+    user = check_user(usr, pwd)  
+    username = usr
+    if user:
+        if (usr or "") == "":
+            username = user["name"] 
+        try:
+            login_manager = frappe.auth.LoginManager()
+            login_manager.authenticate(user=username, pwd=pwd)
+            login_manager.post_login()
+        except frappe.exceptions.AuthenticationError:
+            frappe.clear_messages()
+            frappe.throw("Usename and password incorrect.")    
+        frappe.response["message"] = get_response_user_information(property,property_code )
 
-        
+    else:
+        frappe.throw("Usename and password incorrect.")
+
+
+##check user login
+def check_user(usr, pwd):  
+    pin_code = pwd
+    if pin_code:    
+        pin_code = (str( base64.b64encode(pin_code.encode("utf-8")).decode("utf-8")))
+        sql = """select 
+                                user_id, 
+                                pos_permission ,
+                                username
+                              from `tabEmployee` 
+                              where (username = %(username)s or %(username)s = '') 
+                                and pos_pin_code = %(pos_pin_code)s 
+                                and allow_login = 1 
+                                and allow_login_to_epos = 1 
+                              limit 1"""
+ 
+        users = frappe.db.sql(sql, 
+                              {
+                                   "username":usr or "",
+                                   "pos_pin_code":pin_code
+                            }, as_dict = 1) 
+        if users: 
+            data = frappe.db.sql("select name,username,full_name from `tabUser` where name=%(name)s limit 1",{"name":users[0].user_id},as_dict=1)
+            return data[0]
+    
+    frappe.throw(_("Usename and password incorrect."))
+       
 def get_response_user_information(property, property_code=None):
     phone_number =""
     address =""
