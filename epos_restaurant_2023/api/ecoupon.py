@@ -517,7 +517,7 @@ def get_report(name, show_transaction):
             "align":["center","left","left","right","left"],
             "width":[20.0,0.0,60.0,60.0,60.0],
             "data":[
-                [i + 1, d["coupon_code"], d["creation"], abs(d["coupon_amount"]), d["created_by"]] for i, d in enumerate(transction_data)
+                [i + 1, d["coupon_number"], d["creation"], abs(d["coupon_amount"]), d["created_by"]] for i, d in enumerate(transction_data)
             ]
         }
 
