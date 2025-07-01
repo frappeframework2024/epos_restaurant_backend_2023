@@ -11,8 +11,6 @@ import { FrappeApp } from 'frappe-js-sdk';
 import NumberFormat from 'number-format.js';
 
 
-
-
 const frappe = new FrappeApp();
 const db = frappe.db()
 const call = frappe.call()
@@ -480,6 +478,7 @@ export default class Sale {
                 }
             }
             this.onSaleProductApplyTax(tax_rule, saleProduct);
+            await this.onSaleApplyPromotion(saleProduct)
             this.sale.sale_products.push(saleProduct);
             if (this.setting.use_retail_ui == 1 ) {
                 this.getSelectedProduct(saleProduct)
@@ -642,11 +641,65 @@ export default class Sale {
         }else{
             sp.crypto_able_amount = sp.amount
         }
- 
+        console.log(sp)
 
         //set property for re render comhappyhour check
     }
+    getPromotionByCustomerGroup(customer_group){
+		let promotions = []
+		if(this.promotion && this.promotion.length > 0){
+			this.promotion.forEach(r => {
+				if(r.customer_groups.length > 0){
+					r.customer_groups.forEach(g=>{
+						if(g.customer_group_name_en == customer_group){
+							promotions.push(r)
+						}
+					})
+				}else{
+					promotions.push(r)
+				}
+			});	
+			return promotions
+		}
+		return promotions
+	}
+    async onSaleApplyPromotion(sp){
+        let customerPromotion = []
+        let product_code = []
+        let promotions = {}
+        product_code.push(sp)
 
+        if (this.promotion) {
+            customerPromotion = this.getPromotionByCustomerGroup(this.sale.customer_group)
+            promotions = await call.post('epos_restaurant_2023.api.promotion.get_promotion_products', { "promotions": JSON.parse(JSON.stringify(customerPromotion)),"products": product_code })
+        }
+        
+       promotions = promotions.message
+       if (sp.happy_hour_promotion) {
+            sp.discount_type = ''
+            sp.discount = 0
+            sp.happy_hours_promotion_title = ''
+            sp.happy_hour_promotion = ''
+        }
+        promotions.product_promotions.forEach(r => {
+        if (sp.product_code == r.product_code)
+            if (moment(sp.order_time).format('HH:mm:ss') == r.order_time && sp.is_free == false) {
+                sp.discount_type = 'Percent'
+                sp.discount = r.percentage_discount
+                sp.happy_hours_promotion_title = r.promotion_title
+                sp.happy_hour_promotion = r.promotion_name
+            }
+            this.updateSaleProduct(sp)
+        })
+
+        // remove expire promotion
+        if (promotions.expire_promotion.length > 0) {
+                promotions.expire_promotion.forEach((p) => {
+                toaster.warning(`${p.promotion_name} ${$t('msg.was expired')}`)
+            })
+        }
+        this.updateSaleSummary();
+    }
     //on sale product apply tax setting
     onSaleProductApplyTax(tax_rule, sp) {
 
