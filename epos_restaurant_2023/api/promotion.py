@@ -51,12 +51,10 @@ def check_promotion_product(promotions = [], product_name = ''):
 @frappe.whitelist(allow_guest=True)
 def get_promotion_products(promotions = [],products = []):
     date = datetime.today()
-    
-
+    expire_promotions = []
     result = []
     if len(promotions) > 0:
         promotion_list = Enumerable(promotions).order_by(lambda x:x['priority']).to_list()
-        expire_promotions = []
         for p in promotion_list:
             # check promotion expire
             if p['end_time'] >= format_time(date,'HH:mm:ss'):
