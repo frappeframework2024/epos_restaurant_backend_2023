@@ -82,6 +82,7 @@
   "grand_total",
   "deposit",
   "total_fee",
+  "total_coupon_value",
   "parking_items_section",
   "reference_name",
   "column_break_scjm",
@@ -1664,6 +1665,12 @@
    "fieldname": "override_modified",
    "fieldtype": "Datetime",
    "label": "Override Modified"
+  },
+  {
+   "fieldname": "total_coupon_value",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "label": "Total Coupon Value"
   }
  ],
  "image_field": "photo",
@@ -1686,7 +1693,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2025-05-26 11:32:53.009896",
+ "modified": "2025-07-01 16:41:40.898935",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

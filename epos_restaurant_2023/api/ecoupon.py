@@ -497,7 +497,7 @@ def get_report(name, show_transaction):
         transctions = {"data":{}}
         sql_transactions = """select 
             name,
-            coupon_code,
+            coupon_number,
             creation,
             coupon_amount,
             created_by

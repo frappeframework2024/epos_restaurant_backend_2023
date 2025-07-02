@@ -232,16 +232,20 @@ class Sale(Document):
 			self.sale_status_color = sale_status_doc.background_color
 			self.sale_status_priority  = sale_status_doc.priority
 		# commission
+		
 		if self.agent_name:
 			if self.commission_type=="Percent":
 				self.commission_amount = (self.grand_total * self.commission/100); 
 			else:
 				self.commission_amount = self.commission
+
 		if self.docstatus ==1:
 			self.sale_status = "Closed"
 			self.sale_status_color = frappe.get_value("Sale Status","Closed","background_color")
 		
-		
+		# update total coupon value to sale
+		self.total_coupon_value = sum([(d.total_coupon_value or 0) for d in self.sale_products])
+		 
 		# update default accunt
 		update_default_account(self) 
 
