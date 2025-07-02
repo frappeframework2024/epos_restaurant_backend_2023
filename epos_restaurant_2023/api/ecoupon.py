@@ -285,7 +285,7 @@ def check_coupon_code(coupon_number):
             customer_name,
             customer_photo
         from `tabCoupon Transaction` 
-        where transaction_type = 'Sale Coupon' 
+        where transaction_type in ( 'Sale Coupon','Top Up') 
             and coupon_number = %(coupon_number)s 
             and status = 'Active' 
         order by creation desc 
@@ -315,7 +315,7 @@ def check_coupon_code(coupon_number):
     #    "coupon_shift":"CPN25-0002",
     #    "transaction_date":"2025-06-24 10:57:56.926061"
 # }
-def short_hex_uuid(length=18):
+def short_hex_uuid(length=12):
     import uuid
     return uuid.uuid4().hex[:length]
 
@@ -326,6 +326,16 @@ def on_scan_use_coupon(params):
     # check if valid coupon number
 
     # end change coupon
+
+    working_day_sql = """select name,posting_date from `tabWorking Day` where business_branch = %(business_branch)s and is_closed = 0 order by creation desc limit 1"""
+    working_days = frappe.db.sql(working_day_sql, {"business_branch": params["business_branch"]}, as_dict=1) 
+    if not working_days or len(working_days) <=0:
+        frappe.throw("Counter was close working day")
+    
+    working_day = working_days[0]
+
+
+
     coupon_amount = params["input_coupon_amount"] / (params["exchange_rate"] or 1)
     original_coupon_amount = coupon_amount
 
@@ -417,17 +427,16 @@ def on_scan_use_coupon(params):
                         "input_coupon_amount": (-1)* (r["cut_amount"] * params["exchange_rate"]),
                         "input_actual_amount":(-1)* (actual_amount * params["exchange_rate"]), 
                         "exchange_rate":params["exchange_rate"],
-                        "cashier_shift":r["cashier_shift"],
                         "customer":r["customer"],
                         "coupon_code":r["coupon_code"],
                         "coupon_number":params["coupon_number"],
                         "pos_profile":params["pos_profile"],
                         "pos_station":params["pos_station"],
-                        "posting_date": params["posting_date"],
+                        "posting_date": working_day["posting_date"],
+                        "working_day":working_day["name"],
                         "coupon_shift":params["coupon_shift"],
                         "transaction_date":params["transaction_date"],
                         "markup_percentage":r["markup_percentage"],
-                        "working_day":r["working_day"],
                         "currency":params["currency"],
                         "used_from_transaction":r["name"],
                         "customer_name":  r["customer_name"],

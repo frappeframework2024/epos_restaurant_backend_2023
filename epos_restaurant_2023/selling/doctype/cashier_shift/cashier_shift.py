@@ -27,7 +27,7 @@ class CashierShift(Document):
 			c.exchange_rate = exchange_rate
 			
 			c.opening_amount = float((c.input_amount or 0))  / exchange_rate
-			c.close_amount = float((c.input_close_amount or 0))
+			c.close_amount = float((c.input_close_amount or 0))  / exchange_rate 
 			c.system_close_amount = float((c.input_system_close_amount or 0)) / exchange_rate
 
 			c.different_amount = (c.close_amount or 0) - (c.system_close_amount or 0)

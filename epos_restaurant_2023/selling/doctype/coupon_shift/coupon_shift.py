@@ -6,7 +6,10 @@ from frappe.model.document import Document
 
 
 class CouponShift(Document):
-	def validate(self):
+	def validate(self):	
+
+	
+
 		full_name = frappe.utils.get_fullname(frappe.session.user)
  
 
