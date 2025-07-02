@@ -25,12 +25,14 @@ frappe.listview_settings['Product'] = {
     },
     refresh(me) { 
         frappe.route_options = {
-            status: ['!=',"Variant"]
+            status: ['!=',"Variant"],
+            disabled: ['=',0]
           };
     },
     onload(me) { 
         frappe.route_options = {
-            status: ['!=',"Variant"]
+            status: ['!=',"Variant"],
+            disabled: ['=',0]
           };
         me.page.add_action_item('Assign Menu', function() {
             let d = new frappe.ui.Dialog({
