@@ -671,34 +671,32 @@ export default class Sale {
             customerPromotion = this.getPromotionByCustomerGroup(this.sale.customer_group)
             promotions = await call.post('epos_restaurant_2023.api.promotion.get_promotion_products', { "promotions": JSON.parse(JSON.stringify(customerPromotion)),"products": product_code })
             promotions = promotions.message
-        }
-        
-      
-       if (sp.happy_hour_promotion) {
-            sp.discount_type = ''
-            sp.discount = 0
-            sp.happy_hours_promotion_title = ''
-            sp.happy_hour_promotion = ''
-        }
-        if(promotions && promotions.product_promotions) {
-            promotions.product_promotions.forEach(r => {
-            if (sp.product_code == r.product_code)
-                if (moment(sp.order_time).format('HH:mm:ss') == r.order_time && sp.is_free == false) {
-                    sp.discount_type = 'Percent'
-                    sp.discount = r.percentage_discount
-                    sp.happy_hours_promotion_title = r.promotion_title
-                    sp.happy_hour_promotion = r.promotion_name
-                }
-                this.updateSaleProduct(sp)
-            })
-
-            // remove expire promotion
-            if (promotions.expire_promotion.length > 0) {
-                    promotions.expire_promotion.forEach((p) => {
-                    toaster.warning(`${p.promotion_name} ${$t('msg.was expired')}`)
-                })
+            if (sp.happy_hour_promotion) {
+                sp.discount_type = ''
+                sp.discount = 0
+                sp.happy_hours_promotion_title = ''
+                sp.happy_hour_promotion = ''
             }
-            this.updateSaleSummary();
+            if(promotions && promotions.product_promotions) {
+                promotions.product_promotions.forEach(r => {
+                if (sp.product_code == r.product_code)
+                    if (moment(sp.order_time).format('HH:mm:ss') == r.order_time && sp.is_free == false) {
+                        sp.discount_type = 'Percent'
+                        sp.discount = r.percentage_discount
+                        sp.happy_hours_promotion_title = r.promotion_title
+                        sp.happy_hour_promotion = r.promotion_name
+                    }
+                    this.updateSaleProduct(sp)
+                })
+
+                // remove expire promotion
+                if (promotions.expire_promotion.length > 0) {
+                        promotions.expire_promotion.forEach((p) => {
+                        toaster.warning(`${p.promotion_name} ${$t('msg.was expired')}`)
+                    })
+                }
+                this.updateSaleSummary();
+            }
         }
     }
     //on sale product apply tax setting
