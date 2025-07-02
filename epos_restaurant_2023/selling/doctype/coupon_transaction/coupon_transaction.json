@@ -164,8 +164,9 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "Active\nLocked\nInactive",
+   "options": "Active\nLocked\nInactive\nDeleted",
    "precision": "9",
+   "read_only": 1,
    "search_index": 1
   },
   {
@@ -285,7 +286,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-28 11:25:28.519631",
+ "modified": "2025-07-02 17:58:15.699730",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Transaction",

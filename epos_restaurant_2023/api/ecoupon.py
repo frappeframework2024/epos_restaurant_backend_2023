@@ -150,7 +150,8 @@ def get_history_coupon_kpi(params):
         and pos_profile = %(pos_profile)s
         and business_branch = %(property_name)s
         and (date(posting_date) between date(%(start_date)s) and date(%(end_date)s))
-        and  transaction_type in ('Use')"""
+        and  transaction_type in ('Use')
+        and status in ('Active','Locked')"""
    
     if params.get("keyword"):
         sql += " and coupon_number like %(keyword)s"
@@ -599,13 +600,32 @@ def get_transaction_detail(name):
             note as remark,
             original_used_amount,
             used_transaction_id,
-            sum(input_coupon_amount) as input_coupon_amoun
+            sum(input_coupon_amount) as input_coupon_amount
     from `tabCoupon Transaction` 
     where 1 = 1
     and used_transaction_id = %(used_transaction_id)s
     GROUP BY used_transaction_id"""
     data = frappe.db.sql(sql, { "used_transaction_id":doc.used_transaction_id}, as_dict=1)
     if data and len(data) > 0:
+        # data[0]["input_coupon_amoun"] = abs(data[0]["input_coupon_amoun"])
+        data[0]["original_used_amount"] = abs(data[0]["original_used_amount"])
         return data[0]
     
     frappe.throw("Invalid transaction")
+
+
+@frappe.whitelist(methods=["POST"])
+def delete_transaction(transaction_id): 
+    sql = """select name from `tabCoupon Transaction` where used_transaction_id = %(used_transaction_id)s"""
+    data = frappe.db.sql(sql, { "used_transaction_id":transaction_id}, as_dict=1)
+    if data and len(data) > 0:
+        for d in data:
+            delete_doc = frappe.get_doc("Coupon Transaction", d["name"])
+            delete_doc.status = "Deleted"
+            delete_doc.save()   
+        
+        frappe.db.commit()
+    return "Deleted"
+
+
+
