@@ -641,8 +641,6 @@ export default class Sale {
         }else{
             sp.crypto_able_amount = sp.amount
         }
-        console.log(sp)
-
         //set property for re render comhappyhour check
     }
     getPromotionByCustomerGroup(customer_group){
