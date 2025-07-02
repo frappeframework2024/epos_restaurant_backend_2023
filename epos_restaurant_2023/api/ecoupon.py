@@ -579,3 +579,33 @@ def get_report(name, show_transaction):
  
  
     return sorted_data
+
+@frappe.whitelist(methods=["POST"])
+def get_transaction_detail(name):
+    doc = frappe.get_doc("Coupon Transaction", name)
+    sql = """select 
+            business_branch,
+            customer_name,
+            coupon_number,
+            customer,
+            customer_photo,
+            currency,
+            exchange_rate,
+            created_by,
+            pos_profile,
+            pos_station,
+            coupon_shift,
+            transaction_date,
+            note as remark,
+            original_used_amount,
+            used_transaction_id,
+            sum(input_coupon_amount) as input_coupon_amoun
+    from `tabCoupon Transaction` 
+    where 1 = 1
+    and used_transaction_id = %(used_transaction_id)s
+    GROUP BY used_transaction_id"""
+    data = frappe.db.sql(sql, { "used_transaction_id":doc.used_transaction_id}, as_dict=1)
+    if data and len(data) > 0:
+        return data[0]
+    
+    frappe.throw("Invalid transaction")
