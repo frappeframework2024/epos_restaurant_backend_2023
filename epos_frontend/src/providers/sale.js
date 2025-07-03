@@ -688,6 +688,10 @@ export default class Sale {
                 if (promotions.expire_promotion.length > 0) {
                         promotions.expire_promotion.forEach((p) => {
                         toaster.warning(`${p.promotion_name} ${$t('msg.was expired')}`)
+                        const index = this.promotion.findIndex(r => r.name == p.name)
+                        if (index > -1) {
+                            this.promotion.splice(index, 1);
+                        }
                     })
                 }
                 this.updateSaleSummary();
