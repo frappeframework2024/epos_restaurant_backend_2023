@@ -643,27 +643,24 @@ export default class Sale {
         }
         //set property for re render comhappyhour check
     }
-    getPromotionByCustomerGroup(customer_group){
-		let promotions = []
-		if(this.promotion && this.promotion.length > 0){
-			this.promotion.forEach(r => {
-				if(r.customer_groups.length > 0){
-					r.customer_groups.forEach(g=>{
-						if(g.customer_group_name_en == customer_group){
-							promotions.push(r)
-						}
-					})
-				}else{
-					promotions.push(r)
-				}
-			});	
-			return promotions
-		}
-		return promotions
-	}
+
     async onSaleApplyPromotion(sp){
         if (this.promotion) {
-            let customerPromotion = this.getPromotionByCustomerGroup(this.sale.customer_group)
+            let customerPromotion = []
+            if(this.promotion && this.promotion.length > 0){
+                this.promotion.forEach(r => {
+                    if(r.customer_groups.length > 0){
+                        r.customer_groups.forEach(g=>{
+                            if(g.customer_group_name_en == customer_group){
+                                customerPromotion.push(r)
+                            }}
+                        )
+                    }
+                    else{
+                        customerPromotion.push(r)
+                    }
+                });	
+            }
             let promotions = await call.post('epos_restaurant_2023.api.promotion.get_promotion_products', { "promotions": JSON.parse(JSON.stringify(customerPromotion)),"products": [sp] })
             promotions = promotions.message
             if (sp.happy_hour_promotion) {
