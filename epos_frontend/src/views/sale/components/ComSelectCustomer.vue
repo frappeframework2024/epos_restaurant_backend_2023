@@ -184,21 +184,7 @@ function assignCustomerToOrder(result, is_membership = false) {
 
     if (!is_membership) {
         sale.sale.customer_default_discount = result.default_discount;
-
-        if (sale.promotion) {
-            customerPromotion.value = gv.getPromotionByCustomerGroup(sale.sale.customer_group)
-            //sale.promotion.customer_groups.filter(r=>r.customer_group_name_en == result.customer_group).length > 0
-            if (customerPromotion.value && customerPromotion.value.length > 0) {
-                customerPromotion.value.forEach((r) => {
-                    toaster.info(`${$t('msg.This customer has happy hour promotion')} ${r.promotion_name} : ${((r.percentage_discount || 0))}%`);
-                })
-                updateProductAfterSelectCustomer(customerPromotion.value)
-            }
-            else {
-                onClearPromotionProduct()
-            }
-
-        }
+        applyPromotion()
         if (parseFloat(result.default_discount) && (customerPromotion.value || []).length <= 0) {
             sale.sale.discount_type = "Percent";
             sale.sale.discount = parseFloat(result.default_discount);
@@ -324,6 +310,7 @@ async function onRemove() {
         sale.sale.card = "";
         sale.sale.customer = setting.value.customer
         sale.sale.customer_name = setting.value.customer_name
+        sale.sale.customer_group = setting.value.customer_group
         sale.sale.customer_photo = setting.value.customer_photo
         sale.sale.exely_guest_id = ""
         sale.sale.exely_room_stay_id = ""
@@ -333,7 +320,24 @@ async function onRemove() {
         sale.sale.pos_noted=""
         current_customer_point.value = 0
     }
+    applyPromotion()
 }
+
+function applyPromotion() {
+    if (sale.promotion) {
+        customerPromotion.value = gv.getPromotionByCustomerGroup(sale.sale.customer_group)
+        if (customerPromotion.value && customerPromotion.value.length > 0) {
+            customerPromotion.value.forEach((r) => {
+                toaster.info(`${$t('msg.This customer has happy hour promotion')} ${r.promotion_name} : ${((r.percentage_discount || 0))}%`);
+            })
+            updateProductAfterSelectCustomer(customerPromotion.value)
+        }
+        else {
+            onClearPromotionProduct()
+        }
+    }
+}
+
 async function onAddCustomer() {
     if (!sale.isBillRequested()) {
         const result = await addCustomerDialog({ title: $t('New Customer'), value: '' });

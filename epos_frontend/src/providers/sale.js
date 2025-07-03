@@ -662,14 +662,9 @@ export default class Sale {
 		return promotions
 	}
     async onSaleApplyPromotion(sp){
-        let customerPromotion = []
-        let product_code = []
-        let promotions = {}
-        product_code.push(sp)
-
         if (this.promotion) {
-            customerPromotion = this.getPromotionByCustomerGroup(this.sale.customer_group)
-            promotions = await call.post('epos_restaurant_2023.api.promotion.get_promotion_products', { "promotions": JSON.parse(JSON.stringify(customerPromotion)),"products": product_code })
+            let customerPromotion = this.getPromotionByCustomerGroup(this.sale.customer_group)
+            let promotions = await call.post('epos_restaurant_2023.api.promotion.get_promotion_products', { "promotions": JSON.parse(JSON.stringify(customerPromotion)),"products": [sp] })
             promotions = promotions.message
             if (sp.happy_hour_promotion) {
                 sp.discount_type = ''
