@@ -3,7 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
-
+from epos_restaurant_2023.api.account import submit_general_ledger_entry
 
 class CouponTransaction(Document):
 	def validate(self):
@@ -35,7 +35,51 @@ class CouponTransaction(Document):
 		## calculate markup percentage
 		if self.transaction_type != "Use":
 			self.markup_percentage = ((self.coupon_amount - self.actual_amount)/self.actual_amount) * 100
+
+		#add GL entry
+		if self.is_new():
+			if self.transaction_type not in ["Sale Coupon","Top Up"]:
+				unearned_revenue = frappe.get_cached_value("Business Branch",self.business_branch, "default_unearned_revenue")
+				general_ledger_credit(self,account = {"account":unearned_revenue,"amount":abs(self.coupon_amount)})
+				income_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_income_account")
+				general_ledger_debit(self,account = {"account":income_account,"amount":abs(self.coupon_amount)})
+		else:
+			if self.status == "Deleted":
+				unearned_revenue = frappe.get_cached_value("Business Branch",self.business_branch, "default_unearned_revenue")
+				general_ledger_debit(self,account = {"account":unearned_revenue,"amount":abs(self.coupon_amount)})
+				income_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_income_account")
+				general_ledger_credit(self,account = {"account":income_account,"amount":abs(self.coupon_amount)})
+				frappe.db.sql("update `tabGeneral Ledger` set is_cancelled=1 where voucher_type='Coupon Transaction' and voucher_number='{}'".format(self.name))
 		
+def general_ledger_debit(self,account):
+	docs = []
+	doc = {
+		"doctype":"General Ledger",
+		"posting_date":self.posting_date,
+		"account":account["account"],
+		"debit_amount":account["amount"],
+		"voucher_type":"Coupon Transaction",
+		"voucher_number":self.name,
+		"business_branch": self.business_branch,
+		"remark": "Delete Coupon Transaction" if self.status == "Deleted" else "",
+		"is_cancelled":1 if self.status == "Deleted" else 0
+	}
+	docs.append(doc)
+	submit_general_ledger_entry(docs = docs)
 
-
+def general_ledger_credit(self,account):
+    docs = []
+    doc = {
+        "doctype":"General Ledger",
+        "posting_date":self.posting_date,
+        "account":account["account"],
+        "credit_amount":account["amount"],
+        "voucher_type":"Coupon Transaction",
+        "voucher_number":self.name,
+        "business_branch": self.business_branch,
+		"remark": "Delete Coupon Transaction" if self.status == "Deleted" else "",
+		"is_cancelled":1 if self.status == "Deleted" else 0
+    }
+    docs.append(doc)
+    submit_general_ledger_entry(docs=docs)
 		

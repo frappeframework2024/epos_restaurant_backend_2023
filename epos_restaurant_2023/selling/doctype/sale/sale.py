@@ -1035,12 +1035,12 @@ def add_coupon_GL_entry(self):
 	for a in self.sale_products:
 		if len((a.coupons or "")) > 0:
 			coupons.append({"amount":a.amount,"coupon_amount":a.total_coupon_value,"income_account":a.default_income_account,"expense_account":a.default_expense_account})
-	incomes = list(set([d["income_account"] for d in coupons if d.get("income_account","") != ""]))
-	if len(incomes)>0:
-		for a in incomes:
+	accounts = list(set([d["income_account"] for d in coupons if d.get("income_account","") != ""]))
+	if len(accounts)>0:
+		for a in accounts:
 			general_ledger_credit(self,account = {"account":a,"amount":sum(b.get("coupon_amount") for b in coupons if b.get("income_account","") == a),"party":self.customer},is_commission=0)
-	coupon_expense = frappe.get_cached_value("Business Branch",self.business_branch, "default_marketing_expense")
-	general_ledger_debit(self,account = {"account":coupon_expense,"amount":sum(a.get("coupon_amount")-a.get("amount") for a in coupons)},is_commission=0)
+		coupon_expense = frappe.get_cached_value("Business Branch",self.business_branch, "default_marketing_expense")
+		general_ledger_debit(self,account = {"account":coupon_expense,"amount":sum(a.get("coupon_amount")-a.get("amount") for a in coupons)},is_commission=0)
 
 
 def add_sale_product_spa_commission(self):	
