@@ -10,16 +10,17 @@ from epos_restaurant_2023.inventory.inventory import (
 
 def submit_sale_to_general_ledger_entry(self):
 	from epos_restaurant_2023.api.account import submit_general_ledger_entry
+	sale_products = [a for a in self.sale_products if (a.coupons or "") == ""]
 	docs = []
 	# income account
-	for acc in set([d.default_income_account for d in self.sale_products]):
+	for acc in set([d.default_income_account for d in sale_products]):
 		if not acc:
 				frappe.throw(_("Please enter income account"))
 		doc = {
 			"doctype":"General Ledger",
 			"posting_date":self.posting_date,
 			"account":acc,
-			"amount":sum([d.sub_total for d in self.sale_products if d.default_income_account==acc]),
+			"amount":sum([d.sub_total for d in sale_products if d.default_income_account==acc]),
 			"againt":self.customer + " - " + self.customer_name,
 			"voucher_type":"Sale",
 			"voucher_number":self.name,
@@ -30,7 +31,7 @@ def submit_sale_to_general_ledger_entry(self):
 		docs.append(doc)
 	# Discount Account
 	if self.total_discount:
-		for  acc in set([d.default_discount_account for d in self.sale_products if d.default_discount_account and d.allow_discount==1]):
+		for  acc in set([d.default_discount_account for d in sale_products if d.default_discount_account and d.allow_discount==1]):
 			if not acc:
 				frappe.throw(_("Please enter default discount"))
 
@@ -38,7 +39,7 @@ def submit_sale_to_general_ledger_entry(self):
 				"doctype":"General Ledger",
 				"posting_date":self.posting_date,
 				"account":acc,
-				"amount":sum([d.total_discount for d in self.sale_products if d.default_discount_account==acc and d.allow_discount==1]),
+				"amount":sum([d.total_discount for d in sale_products if d.default_discount_account==acc and d.allow_discount==1]),
 				"againt":self.customer + " - " + self.customer_name,
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
@@ -153,15 +154,15 @@ def submit_sale_to_general_ledger_entry(self):
 
 	# cost of good sold account
 	
-	if sum([d.quantity* (d.cost or 0) for d in self.sale_products if d.is_inventory_product==1]):	
-		for acc in set([d.default_expense_account for d in self.sale_products]):
+	if sum([d.quantity* (d.cost or 0) for d in sale_products if d.is_inventory_product==1]):	
+		for acc in set([d.default_expense_account for d in sale_products]):
 			if not acc:
 				frappe.throw(_("Please enter expense account"))
 			doc = {
 					"doctype":"General Ledger",
 					"posting_date":self.posting_date,
 					"account": acc,
-					"amount":sum([d.quantity* (d.cost or 0) for d in self.sale_products if (d.is_inventory_product==1 and d.default_expense_account==acc)]),
+					"amount":sum([d.quantity* (d.cost or 0) for d in sale_products if (d.is_inventory_product==1 and d.default_expense_account==acc)]),
 					"againt":self.default_inventory_account,
 					"againt_voucher_type":"Sale",
 					"againt_voucher_number": self.name,
@@ -171,16 +172,16 @@ def submit_sale_to_general_ledger_entry(self):
 					"type":"Asset"#not use in db
 				}
 			docs.append(doc)
-	if sum([d.quantity*(d.cost or 0)  for d in self.sale_products if d.is_inventory_product==1]):
+	if sum([d.quantity*(d.cost or 0)  for d in sale_products if d.is_inventory_product==1]):
 	# deduct stock in hand
-		for acc in set([d.default_expense_account for d in self.sale_products]):
+		for acc in set([d.default_expense_account for d in sale_products]):
 			if not acc:
 				frappe.throw(_("Please enter expense account"))
 			doc = {
 					"doctype":"General Ledger",
 					"posting_date":self.posting_date,
 					"account":self.default_inventory_account,
-					"amount":sum([d.quantity*(d.cost or 0)  for d in self.sale_products if (d.is_inventory_product==1 and d.default_expense_account==acc)])*-1,
+					"amount":sum([d.quantity*(d.cost or 0)  for d in sale_products if (d.is_inventory_product==1 and d.default_expense_account==acc)])*-1,
 					"againt":acc,
 					"againt_voucher_type":"Sale",
 					"againt_voucher_number": self.name,
@@ -194,7 +195,7 @@ def submit_sale_to_general_ledger_entry(self):
 	
 	# cost of good sold for product have recipes
 	recipe_acc = []
-	for sp in self.sale_products:
+	for sp in sale_products:
 		if (sp.is_inventory_product or 0) == 0:
 			product = frappe.get_cached_doc("Product",sp.product_code)
 			if len(product.product_recipe or []) > 0:

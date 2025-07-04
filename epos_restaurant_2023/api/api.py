@@ -1177,17 +1177,224 @@ def get_working_day_list_report(business_branch = '', pos_profile = ''):
 
 
 @frappe.whitelist()
+def edit_sale_coupon(name,auth):  
+    if isinstance(name, str):
+        auth = json.loads(auth)
+    sale = frappe.db.exists("Sale", name)
+    if not sale:
+        frappe.throw(_("Sale not found"))
+    sale_doc = frappe.get_doc("Sale",name)
+    if sale_doc.docstatus == 2:
+        frappe.throw(_("Sale is already deleted"))
+    sale_coupons = check_coupon_transactions(sale_doc,"delete")
+    if sale_doc.is_generate_tax_invoice == 1:
+        frappe.throw(_("Sale Order already has tax invoice."))
+    if not auth:
+        auth = frappe.db.get_value("Employee",{'user_id': frappe.session.user},['user_id','employee_name as full_name','name','pos_permission'], as_dict=1)
+        if not auth:
+            auth = frappe.db.get_value("User",{'name': frappe.session.user},['full_name','name'], as_dict=1)
+        else:
+            edit_closed_receipt = frappe.db.get_value('POS User Permission',auth.pos_permission,'edit_closed_receipt')
+            if edit_closed_receipt != 1:
+                frappe.throw(_("You don't permission to permform this action"))
+    #check if sale already have payment then cancel sale payment first
+    payments = frappe.get_list("Sale Payment",fields=["name"], filters={"sale":name,"docstatus":1})
+    for p in payments:
+        sale_payment = frappe.get_doc("Sale Payment", p.name)
+        sale_payment.cancel()
+        sale_payment.delete()
+    
+    #then start to cancel sale
+    payments = copy.deepcopy(sale_doc.payment)
+    for p in [d for d in payments if d.folio_transaction_number and d.folio_transaction_type and  not d.cancel_order_adjustment_account_code]:
+        frappe.throw("There is no cancel order adjustment account code for payment type {}. Please config it in POS Config Setting.".format(p.payment_type))
+    sale_doc.cancel()
+    
+    #change status from 2 to 0 (Cancel to Draft) to allow pos can modified this doc
+    sale_status_doc = frappe.get_doc("Sale Status","Submitted")
+    sale_sql = "update `tabSale` set docstatus = 0, sale_status='Submitted', sale_status_color='{0}', sale_status_priority={1},balance=grand_total,total_paid_with_fee=0,total_paid=0 where name=%(name)s".format(sale_status_doc.background_color,sale_status_doc.priority)
+    sale_product_sql = "update `tabSale Product` set docstatus = 0 where parent=%(parent)s"
+    frappe.db.sql(sale_sql, {"name":name})
+    frappe.db.sql(sale_product_sql,{"parent":name})          
+
+    #add comment
+    doc = frappe.get_doc({
+        'doctype': 'Comment',
+        'subject': 'Edit Bill',
+        "comment_type":"Info",
+        "reference_doctype":"Sale",
+        "reference_name":sale_doc.name,
+        "comment_by":auth['full_name'],
+        "custom_note":auth["note"],
+        "content":"User {0} edit sale order. Reason: {1}".format(auth['full_name'], auth["note"])
+    })
+    doc.insert()
+
+@frappe.whitelist()
+def delete_sale_coupon(name,auth):
+    if isinstance(name, str):
+        auth = json.loads(auth)
+    sale = frappe.db.exists("Sale", name)
+    if not sale:
+        frappe.throw(_("Sale not found"))
+    sale_doc = frappe.get_doc("Sale",name)
+    if sale_doc.docstatus == 2:
+        frappe.throw(_("Sale is already deleted"))
+    sale_coupons = check_coupon_transactions(sale_doc,"delete")
+    sale_amount = sale_doc.grand_total
+
+    #check if sale already have payment then cancel sale payment first
+    payments = frappe.get_list("Sale Payment",fields=["name"], filters={"sale":name,"docstatus":1})
+    for p in payments:
+        sale_payment = frappe.get_doc("Sale Payment", p.name)
+        sale_payment.cancel()
+        sale_payment.delete()
+    
+    #then start to cancel sale
+    if sale_doc.docstatus ==1:
+        _sale = frappe.get_doc("Sale",name)
+        _sale.db_set('deleted_by', auth["full_name"])
+        _sale.db_set('deleted_note', auth["note"])
+        _sale.reload()
+        sale_doc = frappe.get_doc("Sale",name)
+        sale_doc.cancel()
+    else:        
+        frappe.db.sql("update `tabSale` set docstatus = 2,deleted_by=%(deleted_by)s,deleted_note=%(deleted_note)s  where name=%(name)s",{"name":name,"deleted_by":auth["full_name"],"deleted_note":auth["note"]})
+        frappe.db.sql("update `tabSale Product` set docstatus = 2 where parent=%(parent)s",{"parent":name})
+
+    #update coupon status
+    frappe.db.sql("update `tabCoupon Transaction` set status='Deleted' where sale=%(sale)s",{"sale":name})
+    frappe.db.sql("update `tabCoupon Codes` set coupon_status='Unused' where name in %(coupon_codes)s",{"coupon_codes":[d["name"] for d in sale_coupons]})
+
+    #add to comment
+    doc = frappe.get_doc({
+        'doctype': 'Comment',
+        'subject': 'Delete sale order',
+        "comment_type":"Info",
+        "reference_doctype":"Sale",
+        "reference_name":sale_doc.name,
+        "comment_by":auth['full_name'],
+        "custom_note":auth["note"],
+        "custom_amount": sale_amount,
+        "content":"User {0} delete sale order. Reason: {1}".format(auth['full_name'], auth["note"])
+    })
+    doc.insert()
+    return "Done" 
+
+@frappe.whitelist()
+def check_coupon_transactions(sale,action):
+    #check coupon transactions
+    if sale.docstatus == 2:
+        frappe.throw("Sale is already deleted")
+    from datetime import datetime
+    sale_coupons = []   
+    #get coupon from sale product
+    for a in sale.sale_products:
+        if a.coupons:
+            for b in json.loads(a.coupons):
+                sale_coupons.append(b)
+    if len(sale_coupons) > 0:
+        #get coupon transactions from coupon
+        coupon_transactions = []
+        transactions = frappe.db.sql("select name,modified,coalesce(sale,'no_sale') sale,coupon_code,coupon_number,transaction_date,coupon_amount from `tabCoupon Transaction` where coalesce(sale,'') <> %(sale)s and transaction_type != 'Sale Coupon' and status in ('Active','Locked') and coupon_code in %(coupon_codes)s",{"sale":sale.name,"coupon_codes":[d["name"] for d in sale_coupons]},as_dict=1)
+        for b in transactions:
+            b["modified"] = b["modified"].strftime("%Y-%m-%d %H:%M:%S")
+            b["transaction_date"] = b["transaction_date"].strftime("%Y-%m-%d %H:%M:%S")
+            coupon_transactions.append(b)
+        #get later transactions from coupon transactions
+        later_transactions = []
+        for a in coupon_transactions:
+            if datetime.strptime(a["modified"], "%Y-%m-%d %H:%M:%S") > sale.modified:
+                later_transactions.append(a)
+
+        #return error if later transactions found
+        if len(later_transactions) > 0:
+            str_sale = ",".join([d["name"] if d["sale"] == "no_sale" else d["sale"] for d in later_transactions])
+            if action == "delete":
+                frappe.throw(_("Can not delete sale coupon already used in {}".format(str_sale)))
+            else:
+                frappe.throw(_("Can not edit sale coupon already used in {}".format(str_sale)))
+        return sale_coupons
+
+@frappe.whitelist()
+def delete_sale(name,auth): 
+    sale_doc = frappe.get_doc("Sale",name)
+    sale_amount = sale_doc.grand_total
+    #validate cashier shift
+    cashier_shift_doc = frappe.get_doc("Cashier Shift", sale_doc.cashier_shift)
+    if cashier_shift_doc.is_closed==1:
+        frappe.throw(_("Cashier shift is already closed."))
+
+    #check if sale already have payment then cancel sale payment first
+    payments = frappe.get_list("Sale Payment",fields=["name"], filters={"sale":name,"docstatus":1})
+    for p in payments:
+        sale_payment = frappe.get_doc("Sale Payment", p.name)
+        # check  if reservation deposit
+        if sale_payment.is_reservation_deposit:
+            sale_payment.sale = ""
+            sale_payment.save()
+        else:
+            sale_payment.cancel()
+            sale_payment.delete()
+    
+    #then start to cancel sale
+    if sale_doc.docstatus ==1:
+        _sale = frappe.get_doc("Sale",name)
+        _sale.db_set('deleted_by', auth["full_name"])
+        _sale.db_set('deleted_note', auth["note"])
+        _sale.reload()
+        
+        sale_doc = frappe.get_doc("Sale",name)
+        sale_doc.cancel()
+        
+    else:        
+        frappe.db.sql("update `tabSale` set docstatus = 2,deleted_by=%(deleted_by)s,deleted_note=%(deleted_note)s  where name=%(name)s",{"name":name,"deleted_by":auth["full_name"],"deleted_note":auth["note"]})
+        frappe.db.sql("update `tabSale Product` set docstatus = 2 where parent=%(parent)s",{"parent":name})
+    
+    #update sale product spa deleted
+    query = "update `tabSale Product SPA Commission` set is_deleted = 1  where sale = %(sale)s"
+    frappe.db.sql(query, {"sale":name})
+
+    # sale check if from pos reservation update status
+    if sale_doc.from_reservation:
+        if frappe.db.exists("POS Reservation", sale_doc.from_reservation):
+            frappe.db.sql("update `tabPOS Reservation` set workflow_state='Confirmed' where name=%(name)s",{"name":sale_doc.from_reservation})
+            
+            reservation = frappe.get_doc("POS Reservation", sale_doc.from_reservation)
+            if reservation:
+                reservation.reservation_status = "Confirmed"
+                reservation.status = "Confirmed"
+                reservation.save()
+
+    #add to comment
+    doc = frappe.get_doc({
+        'doctype': 'Comment',
+        'subject': 'Delete sale order',
+        "comment_type":"Info",
+        "reference_doctype":"Sale",
+        "reference_name":sale_doc.name,
+        "comment_by":auth['full_name'],
+        "custom_note":auth["note"],
+        "custom_amount": sale_amount,
+        "content":"User {0} delete sale order. Reason: {1}".format(auth['full_name'], auth["note"])
+    })
+    doc.insert()
+    
+
+
+    if frappe.db.get_single_value("ePOS Sync Setting",'enable') == 1:
+         frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=frappe.get_doc("Sale",sale_doc.name),extra_action='["epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel"]',action="cancel")  
+
+    
+    
+    # check if sale have excely integration then submit cancell order
+    if sale_doc.exely_transaction_id:
+        cancel_order(transaction_id = sale_doc.exely_transaction_id, sale = sale_doc.name, comment = auth["note"])
+
+    return "Done" 
+
+@frappe.whitelist()
 def edit_sale_order(name,auth=None,note=None):  
-    # sale_doc = frappe.get_doc("Sale",name)
-    # sale_doc.reload()
-    # return sale_doc
-    # sale_status_doc = frappe.get_doc("Sale Status","Submitted")
-    # frappe.db.sql("update `tabSale` set docstatus = 0, sale_status='Submitted', sale_status_color='{1}', sale_status_priority={2} where name='{0}'".format(name,sale_status_doc.background_color,sale_status_doc.priority))
-    # frappe.db.sql("update `tabSale Product` set docstatus = 0 where parent='{}'".format(name))
-    # frappe.db.commit()
-
-    # # return True
-
     sale_doc = frappe.get_doc("Sale",name)
     if sale_doc.is_generate_tax_invoice == 1:
         frappe.throw(_("Sale Order already has tax invoice."))
@@ -1257,86 +1464,6 @@ def edit_sale_order(name,auth=None,note=None):
     # check if sale have excely integration then submit cancell order
     if sale_doc.exely_transaction_id:
        cancel_order(transaction_id = sale_doc.exely_transaction_id, sale = sale_doc.name, comment = auth["note"])
-  
-
-@frappe.whitelist()
-def delete_sale(name,auth): 
-    sale_doc = frappe.get_doc("Sale",name)
-    sale_amount = sale_doc.grand_total
-    #validate cashier shift
-    cashier_shift_doc = frappe.get_doc("Cashier Shift", sale_doc.cashier_shift)
-    if cashier_shift_doc.is_closed==1:
-        frappe.throw(_("Cashier shift is already closed."))
-
-
-    #check if sale already have payment then cancel sale payment first
-    payments = frappe.get_list("Sale Payment",fields=["name"], filters={"sale":name,"docstatus":1})
-    for p in payments:
-        sale_payment = frappe.get_doc("Sale Payment", p.name)
-        # check  if reservation deposit
-        if sale_payment.is_reservation_deposit:
-            sale_payment.sale = ""
-            sale_payment.save()
-        else:
-            sale_payment.cancel()
-            sale_payment.delete()
-    
-    #then start to cancel sale
-    if sale_doc.docstatus ==1:
-        _sale = frappe.get_doc("Sale",name)
-        _sale.db_set('deleted_by', auth["full_name"])
-        _sale.db_set('deleted_note', auth["note"])
-        _sale.reload()
-        
-        sale_doc = frappe.get_doc("Sale",name)
-        sale_doc.cancel()
-        
-    else:        
-        frappe.db.sql("update `tabSale` set docstatus = 2,deleted_by=%(deleted_by)s,deleted_note=%(deleted_note)s  where name=%(name)s",{"name":name,"deleted_by":auth["full_name"],"deleted_note":auth["note"]})
-        frappe.db.sql("update `tabSale Product` set docstatus = 2 where parent=%(parent)s",{"parent":name})
-    
-    #update sale product spa deleted
-    query = "update `tabSale Product SPA Commission` set is_deleted = 1  where sale = %(sale)s"
-    frappe.db.sql(query, {"sale":name})
-
-    # sale check if from pos reservation update status
-    if sale_doc.from_reservation:
-        if frappe.db.exists("POS Reservation", sale_doc.from_reservation):
-            frappe.db.sql("update `tabPOS Reservation` set workflow_state='Confirmed' where name=%(name)s",{"name":sale_doc.from_reservation})
-            
-            reservation = frappe.get_doc("POS Reservation", sale_doc.from_reservation)
-            if reservation:
-                reservation.reservation_status = "Confirmed"
-                reservation.status = "Confirmed"
-                reservation.save()
-
-
-    #add to comment
-    doc = frappe.get_doc({
-        'doctype': 'Comment',
-        'subject': 'Delete sale order',
-        "comment_type":"Info",
-        "reference_doctype":"Sale",
-        "reference_name":sale_doc.name,
-        "comment_by":auth['full_name'],
-        "custom_note":auth["note"],
-        "custom_amount": sale_amount,
-        "content":"User {0} delete sale order. Reason: {1}".format(auth['full_name'], auth["note"])
-    })
-    doc.insert()
-    
-
-
-    if frappe.db.get_single_value("ePOS Sync Setting",'enable') == 1:
-         frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=frappe.get_doc("Sale",sale_doc.name),extra_action='["epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel"]',action="cancel")  
-
-    
-    
-    # check if sale have excely integration then submit cancell order
-    if sale_doc.exely_transaction_id:
-        cancel_order(transaction_id = sale_doc.exely_transaction_id, sale = sale_doc.name, comment = auth["note"])
-
-    return "Done" 
     
 @frappe.whitelist()
 def get_filter_for_close_sale_list(business_branch,pos_profile): 
@@ -2231,3 +2358,40 @@ def generate_table_qr_menu(param):
         "file_url": file_url,
         "file_name": file_name
     }
+    
+
+
+def is_safe_sql(query: str) -> bool:
+    import re
+    # Normalize SQL: remove leading/trailing whitespaces, lowercase, and remove comments
+    query = query.strip().lower()
+    query = re.sub(r'--.*?(\n|$)', '', query)  # remove -- comments
+    query = re.sub(r'/\*.*?\*/', '', query, flags=re.DOTALL)  # remove /* */ comments
+
+    # Only allow SELECT at the beginning
+    if not query.startswith('select'):
+        return False
+
+    # Disallowed SQL keywords (mutation or dangerous operations)
+    forbidden_keywords = [
+        'insert', 'update', 'delete', 'drop', 'alter',
+        'create', 'truncate', 'replace', 'grant', 'revoke'
+    ]
+
+    # Check if any forbidden keyword is in the query
+    for keyword in forbidden_keywords:
+        if re.search(r'\b' + re.escape(keyword) + r'\b', query):
+            return False
+
+    return True
+
+
+@frappe.whitelist()
+def sql(sql_command,params=None):
+    if not is_safe_sql(sql_command):
+        frappe.throw(_("Only SELECT statements are allowed."), frappe.PermissionError)
+
+    if(params):
+        return frappe.db.sql(sql_command,params,as_dict=1)
+    else:
+        return frappe.db.sql(sql_command,as_dict=1)

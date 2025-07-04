@@ -329,7 +329,6 @@ class Sale(Document):
 		
 	
 	def on_submit(self):
-     
 		if self.flags.ignore_on_submit == True:
 			return 
 
@@ -371,6 +370,7 @@ class Sale(Document):
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.add_payment_to_sale_payment", queue='short', self=self)
 		
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
+			add_coupon_GL_entry(self)
 			submit_sale_to_general_ledger_entry(self)
 			commission_general_ledger_entry(self)
 
@@ -642,7 +642,7 @@ def commission_general_ledger_entry(self):
 			for a in commissions:
 				general_ledger_debit(self,account = {"account":a["account"],"amount":a["amount"],"party":a["employee"]})
 
-def general_ledger_debit(self,account):
+def general_ledger_debit(self,account,is_commission = 1):
 	docs = []
 	doc = {
 		"doctype":"General Ledger",
@@ -652,13 +652,13 @@ def general_ledger_debit(self,account):
 		"voucher_type":"Sale",
 		"voucher_number":self.name,
 		"business_branch": self.business_branch,
-		"remark": "Sale Commission",
+		"remark": "Sale Commission" if is_commission == 1 else "",
 		"is_cancelled":1 if self.docstatus == 2 else 0
 	}
 	docs.append(doc)
 	submit_general_ledger_entry(docs = docs)
 
-def general_ledger_credit(self,account):
+def general_ledger_credit(self,account,is_commission = 1):
     docs = []
     doc = {
         "doctype":"General Ledger",
@@ -668,9 +668,9 @@ def general_ledger_credit(self,account):
         "voucher_type":"Sale",
         "voucher_number":self.name,
         "business_branch": self.business_branch,
-		"remark": "Sale Commission",
-		"party_type": "Employee",
-		"party":account["party"],
+		"remark": "Sale Commission" if is_commission == 1 else "",
+		"party_type": "Employee" if is_commission == 1 else None,
+		"party":account["party"] if is_commission == 1 else None,
 		"is_cancelled":1 if self.docstatus == 2 else 0
     }
     docs.append(doc)
@@ -1029,6 +1029,19 @@ def validate_sale_product(self):
 
 		# update total coupon value
 		d.total_coupon_value = (d.coupon_value or 0) * (d.quantity or 0)
+
+def add_coupon_GL_entry(self):
+	coupons = []
+	for a in self.sale_products:
+		if len((a.coupons or "")) > 0:
+			coupons.append({"amount":a.amount,"coupon_amount":a.total_coupon_value,"income_account":a.default_income_account,"expense_account":a.default_expense_account})
+	incomes = list(set([d["income_account"] for d in coupons if d.get("income_account","") != ""]))
+	if len(incomes)>0:
+		for a in incomes:
+			general_ledger_credit(self,account = {"account":a,"amount":sum(b.get("coupon_amount") for b in coupons if b.get("income_account","") == a),"party":self.customer},is_commission=0)
+	coupon_expense = frappe.get_cached_value("Business Branch",self.business_branch, "default_marketing_expense")
+	general_ledger_debit(self,account = {"account":coupon_expense,"amount":sum(a.get("coupon_amount")-a.get("amount") for a in coupons)},is_commission=0)
+
 
 def add_sale_product_spa_commission(self):	
 	query = "delete from `tabSale Product SPA Commission` where sale = '{}'".format(self.name)			
