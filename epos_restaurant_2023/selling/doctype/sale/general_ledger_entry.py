@@ -69,8 +69,8 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
-				"type":"Income"#not use in db
-
+				"type":"Income",
+				"remark": "Redeem Coupon" if self.sale_type == "Redeem" else "",
 			}
 			docs.append(doc)
 	if self.balance:

@@ -1031,16 +1031,35 @@ def validate_sale_product(self):
 		d.total_coupon_value = (d.coupon_value or 0) * (d.quantity or 0)
 
 def add_coupon_GL_entry(self):
+	def general_ledger(self,account):
+		docs = []
+		doc = {
+			"doctype":"General Ledger",
+			"posting_date":self.posting_date,
+			"account":account["account"],
+			"amount":account["amount"],
+			"voucher_type":"Sale",
+			"voucher_number":self.name,
+			"business_branch": self.business_branch,
+			"remark": "",
+			"party_type": None,
+			"party":account["party"],
+			"remark": "Redeem Coupon" if self.sale_type == "Redeem" else "",
+			"is_cancelled":1 if self.docstatus == 2 else 0
+		}
+		docs.append(doc)
+		submit_general_ledger_entry(docs=docs)
+	
 	coupons = []
 	for a in self.sale_products:
 		if len((a.coupons or "")) > 0:
-			coupons.append({"amount":a.amount,"coupon_amount":a.total_coupon_value,"income_account":a.default_income_account,"expense_account":a.default_expense_account})
+			coupons.append({"amount":a.amount,"coupon_amount":a.coupon_value,"income_account":a.default_income_account,"expense_account":a.default_expense_account})
 	accounts = list(set([d["income_account"] for d in coupons if d.get("income_account","") != ""]))
 	if len(accounts)>0:
 		for a in accounts:
-			general_ledger_credit(self,account = {"account":a,"amount":sum(b.get("coupon_amount") for b in coupons if b.get("income_account","") == a),"party":self.customer},is_commission=0)
+			general_ledger(self,account = {"account":a,"amount":sum(b.get("coupon_amount") for b in coupons if b.get("income_account","") == a),"party":self.customer})
 		coupon_expense = frappe.get_cached_value("Business Branch",self.business_branch, "default_marketing_expense")
-		general_ledger_debit(self,account = {"account":coupon_expense,"amount":sum(a.get("coupon_amount")-a.get("amount") for a in coupons)},is_commission=0)
+		general_ledger(self,account = {"account":coupon_expense,"amount":sum(a.get("coupon_amount")-a.get("amount") for a in coupons),"party":""})
 
 
 def add_sale_product_spa_commission(self):	

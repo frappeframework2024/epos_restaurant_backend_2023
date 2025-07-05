@@ -7,7 +7,6 @@ from epos_restaurant_2023.api.account import submit_general_ledger_entry
 
 class CouponTransaction(Document):
 	def validate(self):
-		
 		#validate exhcange rate change 
 		if self.transaction_type != "Use":
 			sql_exchange_rate = """select 
@@ -38,13 +37,24 @@ class CouponTransaction(Document):
 
 		#add GL entry
 		if self.is_new():
-			if self.transaction_type not in ["Sale Coupon","Top Up"]:
+			if self.transaction_type == "Use":
 				unearned_revenue = frappe.get_cached_value("Business Branch",self.business_branch, "default_unearned_revenue")
 				general_ledger_credit(self,account = {"account":unearned_revenue,"amount":abs(self.coupon_amount)})
 				income_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_income_account")
 				general_ledger_debit(self,account = {"account":income_account,"amount":abs(self.coupon_amount)})
 		else:
 			if self.status == "Deleted":
+				tranactions = (frappe.db.sql("""select 
+							   transaction_type
+							   from `tabCoupon Transaction` 
+							   where name != %(name)s and coupon_code = %(coupon_code)s 
+							   and creation > %(creation)s and status in ('Active','Locked') 
+							   order by creation desc""",{"name":self.name,"coupon_code":self.coupon_code,"creation":self.creation},as_dict=1))
+				if len(tranactions) > 0:
+					if tranactions[0]["transaction_type"] == "Redeem":
+						frappe.throw(("Coupon has already been redeemed for cash"))
+					else:
+						frappe.throw(("Can not delete coupon transaction"))
 				unearned_revenue = frappe.get_cached_value("Business Branch",self.business_branch, "default_unearned_revenue")
 				general_ledger_debit(self,account = {"account":unearned_revenue,"amount":abs(self.coupon_amount)})
 				income_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_income_account")
