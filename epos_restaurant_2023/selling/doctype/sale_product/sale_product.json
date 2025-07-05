@@ -117,6 +117,7 @@
   "default_expense_account",
   "column_break_mert",
   "default_discount_account",
+  "default_coupon_expense_account",
   "section_break_54",
   "allow_discount",
   "allow_free",
@@ -1247,12 +1248,18 @@
    "fieldname": "total_coupon_value",
    "fieldtype": "Currency",
    "label": "Total Coupon Value"
+  },
+  {
+   "fieldname": "default_coupon_expense_account",
+   "fieldtype": "Link",
+   "label": "Default Coupon Expense Account",
+   "options": "Chart Of Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-06-28 10:25:50.583911",
+ "modified": "2025-07-05 15:01:26.845792",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",

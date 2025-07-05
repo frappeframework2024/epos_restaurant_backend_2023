@@ -616,7 +616,7 @@ def get_transaction_detail(name):
 
 @frappe.whitelist(methods=["POST"])
 def delete_transaction(transaction_id): 
-    sql = """select name from `tabCoupon Transaction` where used_transaction_id = %(used_transaction_id)s"""
+    sql = """select name,coupon_shift from `tabCoupon Transaction` where used_transaction_id = %(used_transaction_id)s"""
     data = frappe.db.sql(sql, { "used_transaction_id":transaction_id}, as_dict=1)
     if data and len(data) > 0:
         for d in data:

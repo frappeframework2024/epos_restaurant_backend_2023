@@ -58,7 +58,8 @@ def get_default_account_from_revenue_group(params):
                 parent as revenue_group, 
                 default_income_account,
                 default_expense_account ,
-                default_discount_account
+                default_discount_account,
+                default_coupon_expense_account
             from `tabRevenue Group Default Account` 
             where
                 parent in %(revenue_groups)s and 

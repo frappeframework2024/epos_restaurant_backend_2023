@@ -36,11 +36,17 @@ class CouponTransaction(Document):
 			self.markup_percentage = ((self.coupon_amount - self.actual_amount)/self.actual_amount) * 100
 
 		#add GL entry
+		unearned_revenue = frappe.get_cached_value("Business Branch",self.business_branch, "default_unearned_revenue_account")
+		income_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_income_account")
+		pos_config = frappe.db.get_value('POS Profile', self.pos_profile, 'pos_config')
+		pos_config_accounts = (frappe.db.sql("select default_unearned_revenue_account,default_income_account from `tabPOS Config Default Account` where parent = '{0}' and business_branch = '{1}'".format(pos_config,self.business_branch), as_dict=1) or [])
+		if len(pos_config_accounts) > 0:
+			account = pos_config_accounts[0]
+			unearned_revenue = account.get("default_unearned_revenue_account","") if account.get("default_unearned_revenue_account","") != "" else unearned_revenue
+			income_account = account.get("default_income_account","") if account.get("default_income_account","") != "" else income_account
 		if self.is_new():
 			if self.transaction_type == "Use":
-				unearned_revenue = frappe.get_cached_value("Business Branch",self.business_branch, "default_unearned_revenue")
 				general_ledger_credit(self,account = {"account":unearned_revenue,"amount":abs(self.coupon_amount)})
-				income_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_income_account")
 				general_ledger_debit(self,account = {"account":income_account,"amount":abs(self.coupon_amount)})
 		else:
 			if self.status == "Deleted":
@@ -55,9 +61,7 @@ class CouponTransaction(Document):
 						frappe.throw(("Coupon has already been redeemed for cash"))
 					else:
 						frappe.throw(("Can not delete coupon transaction"))
-				unearned_revenue = frappe.get_cached_value("Business Branch",self.business_branch, "default_unearned_revenue")
 				general_ledger_debit(self,account = {"account":unearned_revenue,"amount":abs(self.coupon_amount)})
-				income_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_income_account")
 				general_ledger_credit(self,account = {"account":income_account,"amount":abs(self.coupon_amount)})
 				frappe.db.sql("update `tabGeneral Ledger` set is_cancelled=1 where voucher_type='Coupon Transaction' and voucher_number='{}'".format(self.name))
 		

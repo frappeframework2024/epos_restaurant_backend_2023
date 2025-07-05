@@ -74,11 +74,13 @@
   "default_sale_discount_account",
   "default_sale_cash_coupon_claim_account",
   "default_tip_account",
+  "default_coupon_expense_account",
   "column_break_oqmw",
   "default_credit_account",
   "default_purchase_discount_account",
   "default_temporary_opening_account",
   "default_commission_expense_account",
+  "default_unearned_revenue_account",
   "profit_and_loss_statement_report_head_account_section",
   "income_head_account",
   "column_break_rfra",
@@ -554,12 +556,24 @@
    "fieldtype": "Float",
    "label": "Long",
    "precision": "9"
+  },
+  {
+   "fieldname": "default_coupon_expense_account",
+   "fieldtype": "Link",
+   "label": "Default Coupon Expense Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_unearned_revenue_account",
+   "fieldtype": "Link",
+   "label": "Default Unearned Revenue Account",
+   "options": "Chart Of Account"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-06 13:11:15.387316",
+ "modified": "2025-07-05 14:58:11.484918",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",

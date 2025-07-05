@@ -324,3 +324,48 @@ def get_mobile_order_to_kitchen_pdf(template = "Online Order Kitchen Ticket",doc
     return result_base64
 
 
+@frappe.whitelist(allow_guest=True)
+def get_print_data(doctype,docname,template,return_type="base64"):
+    # return type base64, pdf, or html
+    doc = frappe.get_doc(doctype, docname) 
+    data_template,css= frappe.db.get_value("POS Receipt Template",template,["template","style"])
+    html= frappe.render_template(data_template,{"doc":doc})
+    if return_type=="html":
+        return {"html":html,"css":css}
+    
+    html_template = """
+    <html>
+    <head>
+        <style>
+           {css}
+        </style>
+    </head>
+    <body>
+     {template}
+    </body>
+    </html>
+    """.format(css=css,template=html)
+    options = {
+        "margin-top": "0mm",
+        "margin-bottom": "0mm",
+        "margin-left": "0mm",
+        "margin-right": "0mm",
+        "disable-smart-shrinking": None,
+        "no-outline": None,
+        "header-spacing": "0",
+        "footer-spacing": "0",
+        "print-media-type": None,
+        "page-width": "80mm",          # width of the thermal receipt
+        "page-height": "297mm"
+    }
+
+    pdfDoc = get_pdf(html_template,options=options)
+ 
+    if return_type=="pdf":
+        frappe.local.response.filename = "custom_report.pdf"
+        frappe.local.response.filecontent = pdfDoc
+        frappe.local.response.type = "download"
+    else:
+        pdf_base64 = base64.b64encode(pdfDoc)
+        return pdf_base64.decode()
+    

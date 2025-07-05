@@ -61,3 +61,5 @@ def  get_exchange_rate(date):
         return data[0].exchange_rate
     
     return 1
+
+

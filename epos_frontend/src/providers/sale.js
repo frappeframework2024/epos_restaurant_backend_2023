@@ -651,7 +651,7 @@ export default class Sale {
                 this.promotion.forEach(r => {
                     if(r.customer_groups.length > 0){
                         r.customer_groups.forEach(g=>{
-                            if(g.customer_group_name_en == customer_group){
+                            if(g.customer_group_name_en == this.customer_group){
                                 customerPromotion.push(r)
                             }}
                         )

@@ -1053,13 +1053,15 @@ def add_coupon_GL_entry(self):
 	coupons = []
 	for a in self.sale_products:
 		if len((a.coupons or "")) > 0:
-			coupons.append({"amount":a.amount,"coupon_amount":a.coupon_value,"income_account":a.default_income_account,"expense_account":a.default_expense_account})
-	accounts = list(set([d["income_account"] for d in coupons if d.get("income_account","") != ""]))
-	if len(accounts)>0:
-		for a in accounts:
+			coupons.append({"amount":a.amount,"coupon_amount":a.coupon_value,"income_account":a.default_income_account,"expense_account":a.default_coupon_expense_account})
+	income_account = list(set([d["income_account"] for d in coupons if d.get("income_account","") != ""]))
+	expense_account = list(set([d["expense_account"] for d in coupons if d.get("expense_account","") != ""]))
+	if len(income_account)>0:
+		for a in income_account:
 			general_ledger(self,account = {"account":a,"amount":sum(b.get("coupon_amount") for b in coupons if b.get("income_account","") == a),"party":self.customer})
-		coupon_expense = frappe.get_cached_value("Business Branch",self.business_branch, "default_marketing_expense")
-		general_ledger(self,account = {"account":coupon_expense,"amount":sum(a.get("coupon_amount")-a.get("amount") for a in coupons),"party":""})
+	if len(expense_account)>0:
+		for a in expense_account:
+			general_ledger(self,account = {"account":a,"amount":sum(b.get("coupon_amount")-b.get("amount") for b in coupons if b.get("expense_account","") == a),"party":""})
 
 
 def add_sale_product_spa_commission(self):	
@@ -1484,7 +1486,41 @@ def update_default_account(self):
 	update_default_tip_account(self)
 	update_default_change_account(self)
 	update_default_expense_account(self)
- 
+	update_default_coupon_expense_account(self)
+
+
+def update_default_coupon_expense_account(self):
+	# 1 get from product
+	if [x for x in self.sale_products if not x.default_coupon_expense_account]:
+		# get product default account_code from product
+		sql="select distinct parent as product_code, default_coupon_expense_account from `tabProduct Default Account` where parent in %(parents)s and business_branch =%(business_branch)s"
+		product_account_codes = frappe.db.sql(sql, {"parents":[x.product_code for x in self.sale_products if not x.default_coupon_expense_account], "business_branch":self.business_branch},as_dict=1)
+		product_has_default_account = [d["product_code"] for d in product_account_codes]
+
+
+		for sp in [x for x in self.sale_products if not x.default_coupon_expense_account and x.product_code in product_has_default_account]:
+			# 1 get from product
+			sp.default_coupon_expense_account = [d for d in product_account_codes if d["product_code"] == sp.product_code][0]["default_coupon_expense_account"] 
+  
+	# 2 get from pos_config
+	if [x for x in self.sale_products if not x.default_coupon_expense_account]:
+		revenue_group_account_codes = get_default_account_from_pos_config( json.dumps( {"business_branch": self.business_branch, "pos_config":self.pos_config, "revenue_groups" : list(set([d.revenue_group for d in self.sale_products if not d.default_coupon_expense_account]))}))
+		revenue_group_has_default_account = [d["revenue_group"] for d in revenue_group_account_codes]
+		for sp in [x for x in self.sale_products if not x.default_coupon_expense_account and x.revenue_group in revenue_group_has_default_account]:
+				sp.default_coupon_expense_account = [d for d in revenue_group_account_codes if d["revenue_group"] == sp.revenue_group][0]["default_coupon_expense_account"] 
+
+	# 3 get account code from revenue group 
+	if [x for x in self.sale_products if not x.default_coupon_expense_account]:
+		revenue_group_account_codes = get_default_account_from_revenue_group(json.dumps( {"business_branch": self.business_branch, "revenue_groups": list(set([d.revenue_group for d in self.sale_products if not d.default_coupon_expense_account]))}))
+		revenue_group_has_default_account = [d["revenue_group"] for d in revenue_group_account_codes]
+		for sp in [x for x in self.sale_products if not x.default_coupon_expense_account and x.revenue_group in revenue_group_has_default_account]:
+				sp.default_coupon_expense_account = [d for d in revenue_group_account_codes if d["revenue_group"] == sp.revenue_group][0]["default_coupon_expense_account"] 
+
+	# 4 get account code from revenue group 
+	if [x for x in self.sale_products if not x.default_coupon_expense_account]:
+		for sp in [x for x in self.sale_products if not x.default_coupon_expense_account]:
+			sp.default_coupon_expense_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_coupon_expense_account")
+
 def update_default_income_account(self):
 	# 1 get from product
 	if [x for x in self.sale_products if not x.default_income_account]:
