@@ -39,7 +39,9 @@ def get_report_columns():
   		{"label":"Date", "fieldname":"posting_date", "fieldtype":"Date","align":"center","width":120},
 		{"label":"Branch", "fieldname":"business_branch","fieldtype":"Data","align":"left","width":120},
   		{"label":"Stock Location","fieldname":"stock_location","fieldtype":"Data","align":"left","width":150},
-    	{"label":"QTY", "fieldname":"total_quantity", "fieldtype":"Data","align":"center","width":100},
 		{"label":"Current QTY", "fieldname":"current_quantity", "fieldtype":"Currency","align":"center","width":120},
-		{"label":"New QTY", "fieldname":"new_quantity", "fieldtype":"Currency","align":"center","width":120}
+		{"label":"New QTY", "fieldname":"new_quantity", "fieldtype":"Currency","align":"center","width":120},
+		{"label":"Current Cost", "fieldname":"current_cost", "fieldtype":"Currency","align":"center","width":120},
+		{"label":"New Cost", "fieldname":"new_cost", "fieldtype":"Currency","align":"center","width":120},
+		
 	]
