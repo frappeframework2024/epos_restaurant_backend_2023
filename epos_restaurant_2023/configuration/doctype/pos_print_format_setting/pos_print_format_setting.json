@@ -14,6 +14,7 @@
   "pos_receipt_template",
   "invoice_template_by_seat_number",
   "print_report_name",
+  "boldreport_report_id",
   "pos_invoice_file_name",
   "pos_receipt_file_name",
   "receipt_height",
@@ -197,11 +198,16 @@
    "fieldtype": "Link",
    "label": "Invoice Template (By Seat No)",
    "options": "POS Receipt Template"
+  },
+  {
+   "fieldname": "boldreport_report_id",
+   "fieldtype": "Data",
+   "label": "BoldReport Report ID"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-31 11:04:08.988553",
+ "modified": "2025-07-08 14:16:05.552345",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Print Format Setting",

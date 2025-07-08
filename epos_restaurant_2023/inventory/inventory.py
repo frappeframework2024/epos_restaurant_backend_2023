@@ -95,14 +95,17 @@ def get_bom_product_cost(product_code,unit):
 
 
 @frappe.whitelist(allow_guest=True)
-def get_product_cost(stock_location, product_code):
+def get_product_cost(stock_location="", product_code=""):
     cost = 0
-    if stock_location != "None":
-        cost = frappe.db.get_value('Stock Location Product', {'stock_location':stock_location,"product_code":product_code}, ['cost'])
-        if (cost or 0) == 0:
-            cost =  frappe.db.get_value('Product',product_code, 'cost')
+    if product_code == "":
+        cost = 0
     else:
-        cost = frappe.db.get_value('Product', product_code, 'cost')    
+        if (stock_location or "") != "":
+            cost = frappe.db.get_value('Stock Location Product', {'stock_location':stock_location,"product_code":product_code}, ['cost'])
+            if (cost or 0) == 0:
+                cost =  frappe.db.get_value('Product',product_code, 'cost')
+        else:
+            cost = frappe.db.get_value('Product', product_code, 'cost')    
     return cost or 0
 
 def check_uom_conversion(from_uom, to_uom):

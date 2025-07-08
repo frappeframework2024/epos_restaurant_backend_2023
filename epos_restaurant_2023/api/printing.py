@@ -325,11 +325,18 @@ def get_mobile_order_to_kitchen_pdf(template = "Online Order Kitchen Ticket",doc
 
 
 @frappe.whitelist(allow_guest=True)
-def get_print_data(doctype,docname,template,return_type="base64"):
+def get_print_data(doctype,docname,template,return_type="base64",lang="en",options={}):
+
     # return type base64, pdf, or html
+    original_lang = frappe.local.lang
+
+    # Set to Khmer
+    frappe.local.lang = lang
+
     doc = frappe.get_doc(doctype, docname) 
     data_template,css= frappe.db.get_value("POS Receipt Template",template,["template","style"])
-    html= frappe.render_template(data_template,{"doc":doc})
+    html= frappe.render_template(data_template,{"doc":doc,"options":options})
+    frappe.local.lang = original_lang
     if return_type=="html":
         return {"html":html,"css":css}
     

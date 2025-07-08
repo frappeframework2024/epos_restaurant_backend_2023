@@ -22,14 +22,12 @@ class CashierShift(Document):
 
 
 		for c in self.cash_float:
-			exchange_rate = frappe.get_value("Payment Type", c.payment_method,"exchange_rate")
-			exchange_rate = exchange_rate or 1
+			exchange_rate = (frappe.get_value("Payment Type", c.payment_method,"exchange_rate") or 1)
 			c.exchange_rate = exchange_rate
-			
+			frappe.thow(str(exchange_rate))
 			c.opening_amount = float((c.input_amount or 0))  / exchange_rate
 			c.close_amount = float((c.input_close_amount or 0))  / exchange_rate 
 			c.system_close_amount = float((c.input_system_close_amount or 0)) / exchange_rate
-
 			c.different_amount = (c.close_amount or 0) - (c.system_close_amount or 0)
 
 		for c in self.cash_count:
@@ -487,3 +485,16 @@ def get_payments(self):
 	
 	return frappe.db.sql(sql,as_dict=1)
 
+
+
+@frappe.whitelist()
+def validate_before_close_shift(pos_profile):
+	sql = "select name from `tabCashier Shift` where pos_profile=%(pos_profile)s and is_closed=0 limit 1"
+	data = frappe.db.sql(sql,{"pos_profile":pos_profile},as_dict=1)
+	if not data:
+		return {"error_code": "No Shift Opened"} # No shift open
+	sql="select name from `tabSale` where docstatus=0 and cashier_shift=%(cashier_shift)s"
+	data = frappe.db.sql(sql,{"cashier_shift":data[0].name},as_dict=1)
+	
+	if  data:
+		return {"error_code": "Shift Has Pending Sale"} # No sale open

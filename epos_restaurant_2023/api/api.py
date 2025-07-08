@@ -369,6 +369,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "receipt_margin_right",
         "receipt_margin_bottom",
         "show_in_pos_closed_sale",
+        "boldreport_report_id",
         "report_options"],order_by="sort_order asc")
     
     _pos_print_format_data = []
@@ -399,6 +400,7 @@ def get_system_settings(pos_profile="", device_name=''):
                 "report_options":p.report_options,
                 "business_branch":p.business_branch or "",
                 "sort_order":p.sort_order,
+                "boldreport_report_id":p.boldreport_report_id
             }
             _pos_print_format_data.append(_data)
 

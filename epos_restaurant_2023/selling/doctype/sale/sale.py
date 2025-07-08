@@ -20,18 +20,17 @@ class Sale(Document):
 	def validate(self): 		
 		if not frappe.db.get_default('exchange_rate_main_currency'):
 			frappe.throw('Main Exchange Currency not yet config. Please contact to system administrator for solve')
+
 		if self.pos_profile:
 			if not self.working_day:
-				sql="select name from `tabWorking Day` where business_branch=%(business_branch)s and is_closed = 0 order by posting_date limit 1"
-				data = frappe.db.sql(sql,{"business_branch":self.business_branch},as_dict=1)
+				data = (frappe.db.sql("select name from `tabWorking Day` where business_branch=%(business_branch)s and is_closed = 0 order by posting_date limit 1",{"business_branch":self.business_branch},as_dict=1) or [])[0]
 				if len(data)>0:
 					self.working_day = data[0]["name"]
 				else:
 					frappe.throw(_("Please start working day first"))
 
 			if not self.cashier_shift: 
-				sql="select name from `tabCashier Shift` where business_branch=%(business_branch)s and pos_profile=%(pos_profile)s and is_closed = 0 order by posting_date limit 1"
-				data = frappe.db.sql(sql,{"business_branch":self.business_branch,"pos_profile":self.pos_profile},as_dict=1)
+				data = (frappe.db.sql("select name from `tabCashier Shift` where business_branch=%(business_branch)s and pos_profile=%(pos_profile)s and is_closed = 0 order by posting_date limit 1",{"business_branch":self.business_branch,"pos_profile":self.pos_profile},as_dict=1) or [])[0]
 				if len(data)>0:
 					self.cashier_shift= data[0]["name"]
 				else:
@@ -543,13 +542,8 @@ def update_pos_pay_to_room_adjustment(self):
     # then we check payment type adjustment account then post adjustment account to edoor pms
 	if 'edoor' in frappe.get_installed_apps():
 		payments =  deepcopy(self.payment)
- 
-		
 		for p in [d for d in payments if d.folio_transaction_number and d.folio_transaction_type and  not d.cancel_order_adjustment_account_code]:
 			frappe.throw("There is no cancel order adjustment account code for payment type {}. Please config it in POS Config Setting.".format(p.payment_type))
-
-		 
-
 		for p in [d for d in payments if d.folio_transaction_type and d.folio_transaction_number and d.cancel_order_adjustment_account_code]:
 			data = {
 					'doctype': 'Folio Transaction',
@@ -724,9 +718,6 @@ def update_inventory_on_submit(self):
 			doc = frappe.get_cached_doc("Product",p.product_code)
 			#check if product has receipt and loop update from product receip
 			update_product_recipe_to_inventory(self,doc, p.quantity, "Submit",p,pos_profile)	
-
-
-
 			#udpate cost for none stock product			
 			cost = doc.cost or 0
 			if doc.product_price:
@@ -759,7 +750,6 @@ def update_inventory_on_submit(self):
 		#check if product is combo menu then get item from the combo menu item and update to inventory
 		if p.is_combo_menu:
 			update_combo_menu_to_inventory(self,p,"Submit")
-		
 		#frappe.db.sql("update `tabSale Product` set cost = {} where name='{}'".format(cost, p.name))
    
 	#update total cost to sale and profit to sale
@@ -1052,28 +1042,26 @@ def add_coupon_GL_entry(self):
 			general_ledger(self,account = {"account":a,"amount":sum(b.get("coupon_amount")-b.get("amount") for b in coupons if b.get("expense_account","") == a),"party":""})
 
 
-def add_sale_product_spa_commission(self):	
-	query = "delete from `tabSale Product SPA Commission` where sale = '{}'".format(self.name)			
-	frappe.db.sql(query)
+def add_sale_product_spa_commission(self):			
+	frappe.db.sql("delete from `tabSale Product SPA Commission` where sale = '{}'".format(self.name))
 	for sp in self.sale_products:		 
-		if sp.is_require_employee:
-			if sp.employees: 
-				for em in json.loads(sp.employees): 
-					data ={
-						'doctype': 'Sale Product SPA Commission',
-						'sale':self.name,
-						'sale_product': sp.name,
-						'product_name':sp.product_name,
-						'product_name_kh':sp.product_name_kh,
-						"employee":em['employee_id'],
-						"employee_name":em['employee_name'],
-						"duration_title":em['duration_title'],
-						"duration":em['duration'],
-						"commission_amount":em['commission_amount'],
-						"is_overtime":em['is_overtime']
-					} 
-					doc = frappe.get_doc(data)
-					doc.insert() 
+		if sp.is_require_employee and sp.employees: 
+			for em in json.loads(sp.employees): 
+				data ={
+					'doctype': 'Sale Product SPA Commission',
+					'sale':self.name,
+					'sale_product': sp.name,
+					'product_name':sp.product_name,
+					'product_name_kh':sp.product_name_kh,
+					"employee":em['employee_id'],
+					"employee_name":em['employee_name'],
+					"duration_title":em['duration_title'],
+					"duration":em['duration'],
+					"commission_amount":em['commission_amount'],
+					"is_overtime":em['is_overtime']
+				} 
+				doc = frappe.get_doc(data)
+				doc.insert() 
 				
 def create_folio_transaction_from_pos_trnasfer(self):
 	for p in self.payment:

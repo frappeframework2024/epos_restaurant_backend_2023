@@ -1897,6 +1897,7 @@ export default class Sale {
             if (this.pos_receipt == undefined || this.pos_receipt == null) {
                 this.pos_receipt = this.setting?.default_pos_receipt;
             }
+            
             this.onPrintToKitchen(doc);
             this.onPrintReceipt(this.pos_receipt, `${this.action == "print_invoice_by_seat"? "print_invoice_by_seat": "print_invoice" }`, doc);
         }
@@ -2332,7 +2333,34 @@ export default class Sale {
             }
 
         }
+
+
+        // Test Print with python services
+        this.onPrintWithPythonPrintService(data)
        
+    }
+
+    onPrintWithPythonPrintService(sale_data){
+      
+        fetch("http://192.168.10.81:5001/print-receipt", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(sale_data)
+        })
+        .then(response => {
+        if (!response.ok) {
+            throw new Error("Failed to send print request");
+        }
+        return response.json();
+        })
+        .then(data => {
+        console.log("Print response:", data);
+        })
+        .catch(error => {
+        console.error("Print error:", error);
+});
     }
 
     onPrintWaitingOrder(doc) {

@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "receipt_name",
+  "boldreport_report_id",
   "width",
   "column_break_mpzb",
   "fixed_height",
@@ -28,7 +29,8 @@
   {
    "fieldname": "template",
    "fieldtype": "Code",
-   "label": "Template"
+   "label": "Template",
+   "options": "HTML"
   },
   {
    "fieldname": "style",
@@ -73,11 +75,16 @@
    "fieldname": "sample_data",
    "fieldtype": "JSON",
    "label": "Sample Data"
+  },
+  {
+   "fieldname": "boldreport_report_id",
+   "fieldtype": "Data",
+   "label": "BoldReport Report ID"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-04-30 11:18:32.475635",
+ "modified": "2025-07-08 14:20:12.068675",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Receipt Template",
