@@ -20,8 +20,6 @@ class Sale(Document):
 	def validate(self): 		
 		if not frappe.db.get_default('exchange_rate_main_currency'):
 			frappe.throw('Main Exchange Currency not yet config. Please contact to system administrator for solve')
-   
-			#frappe.throw(_("Please select your working day"))
 		if self.pos_profile:
 			if not self.working_day:
 				sql="select name from `tabWorking Day` where business_branch=%(business_branch)s and is_closed = 0 order by posting_date limit 1"
@@ -72,7 +70,6 @@ class Sale(Document):
 					pass
 					##frappe.throw(_("Working day was closed"))
 
-
 			if self.cashier_shift:
 				is_closed = frappe.get_cached_value('Cashier Shift', self.cashier_shift,"is_closed")
 				if is_closed==1:
@@ -115,6 +112,7 @@ class Sale(Document):
 		default_customer = frappe.get_cached_value("POS Profile",self.pos_profile,'default_customer')
 		if len([d for d in self.sale_products if d.is_park == 1]) > 0 and self.customer == default_customer:
 			frappe.throw("Please select a customer for park")
+
 		#validate sale product 
 		validate_sale_product(self)
 
@@ -159,8 +157,6 @@ class Sale(Document):
 				if self.discount > self.sale_discountable_amount:
 					frappe.throw("Discount amount cannot greater than discountable amount")
 
-
-		
 		self.product_discount = Enumerable(self.sale_products).where(lambda x:x.allow_discount ==1).sum(lambda x: x.discount_amount)		
 		self.product_discount=round(self.product_discount  , int(currency_precision)) 
 		self.total_discount = (self.product_discount or 0) + (self.sale_discount or 0)  
@@ -174,12 +170,7 @@ class Sale(Document):
 		self.total_tax  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.total_tax)
 		total_rate_include_tax  = Enumerable(self.sale_products).where(lambda x:x.tax_rule and x.rate_include_tax == 1).sum(lambda x: x.total_tax)
 		# total_rate_include_tax  = 0
- 
-
 		self.sub_total = sub_total	- total_rate_include_tax
-
-	
-
 		self.grand_total =( sub_total - (self.total_discount or 0))  + self.total_tax - total_rate_include_tax
 		self.grand_total =round(self.grand_total, int(currency_precision))
 	  
@@ -189,6 +180,8 @@ class Sale(Document):
 		self.total_fee =  Enumerable(self.payment).sum(lambda x: x.fee_amount or 0)
 		self.total_paid_with_fee = round(( self.total_paid + (self.total_fee or 0)), int(currency_precision))
 
+		if self.grand_total <0 and self.grand_total != self.total_paid:
+			frappe.throw("Return payment amount must be the same as grand total")
 
 		_balance = round(self.grand_total  , int(currency_precision)) -  round((self.total_paid or 0)  , int(currency_precision))
 
@@ -245,7 +238,6 @@ class Sale(Document):
 		
 		# update total coupon value to sale
 		self.total_coupon_value = sum([(d.total_coupon_value or 0) for d in self.sale_products])
-		 
 		# update default accunt
 		update_default_account(self) 
 
@@ -535,10 +527,8 @@ def update_sale_sale_product_cost(self):
 		## update sale product cost 
 		p.cost = cost
 		p_second_cost = (frappe.db.get_value('Product',{'product_code':p.product_code}, 'secondary_cost') or 0)
-		total_cost += (cost * p.quantity)
-		if p_second_cost == 0:
-			total_second_cost += 0
-		else:
+		total_cost += ((cost or 0) * p.quantity)
+		if p_second_cost != 0:
 			total_second_cost += ((p_second_cost/uom_conversion)* p.quantity)
 	self.sale_grand_total = self.grand_total
 	self.sale_profit = self.grand_total - total_cost
@@ -947,12 +937,10 @@ def add_payment_to_sale_payment(self):
 			if self.pos_profile:
 				pos_config = frappe.get_cached_value('POS Profile', self.pos_profile, 'pos_config')					
 				pos_config_data = frappe.get_cached_doc('POS Config', pos_config)
-
 				pos_config_payment_type = Enumerable(pos_config_data.payment_type).where(lambda x:x.payment_type==payment_type)				
 				if pos_config_payment_type:
 					account_code = pos_config_payment_type[0].account_code
 					exchange_rate = pos_config_payment_type[0].change_exchange_rate		
-
 			else:
 				pt = frappe.get_cached_doc('Payment Type', payment_type)
 				exchange_rate = pt.change_exchange_rate or 1
