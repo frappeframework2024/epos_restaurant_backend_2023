@@ -152,7 +152,8 @@
    "fieldname": "photo",
    "fieldtype": "Attach Image",
    "hidden": 1,
-   "label": "Photo"
+   "label": "Photo",
+   "length": 250
   },
   {
    "allow_in_quick_entry": 1,
@@ -796,7 +797,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2025-03-31 16:16:53.433378",
+ "modified": "2025-07-09 10:27:35.257615",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

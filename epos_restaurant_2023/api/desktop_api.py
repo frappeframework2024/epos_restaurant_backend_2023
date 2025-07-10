@@ -25,6 +25,21 @@ def dome():
             })
 
 @frappe.whitelist(allow_guest=True)
+def get_pos_receipt_template():
+    sql = """select boldreport_report_id , name from `tabPOS Receipt Template`"""
+    data = frappe.db.sql(sql,as_dict=1)
+    ## pos print format
+    pos_print_format_sql = """select boldreport_report_id , print_format as name from `tabPOS Print Format Setting`"""
+    pos_print_format = frappe.db.sql(pos_print_format_sql,as_dict=1)    
+    return data + pos_print_format
+
+@frappe.whitelist(allow_guest=True)
+def get_boldreport_setting():
+    settings = frappe.db.get_value("eDoor Setting",None,["server_report_url","server_report_token"], as_dict=True)   
+    return {"boldreport_url":settings.server_report_url,"boldreport_authorize":settings.server_report_token}
+
+
+@frappe.whitelist(allow_guest=True)
 def get_bill_template_api(name,template,seat_number = "", reprint=0):
     if not frappe.db.exists("Sale",name):
         return ""    

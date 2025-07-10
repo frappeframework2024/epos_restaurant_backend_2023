@@ -103,7 +103,8 @@
   {
    "fieldname": "conversion_factor",
    "fieldtype": "Float",
-   "label": "Conversion Factor"
+   "label": "Conversion Factor",
+   "precision": "9"
   },
   {
    "fieldname": "base_unit",
@@ -116,7 +117,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-11-19 17:30:30.550876",
+ "modified": "2025-07-08 16:46:04.367613",
  "modified_by": "Administrator",
  "module": "Product Manager",
  "name": "Product Price",

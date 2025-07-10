@@ -24,7 +24,7 @@ class CashierShift(Document):
 		for c in self.cash_float:
 			exchange_rate = (frappe.get_value("Payment Type", c.payment_method,"exchange_rate") or 1)
 			c.exchange_rate = exchange_rate
-			frappe.thow(str(exchange_rate))
+			 
 			c.opening_amount = float((c.input_amount or 0))  / exchange_rate
 			c.close_amount = float((c.input_close_amount or 0))  / exchange_rate 
 			c.system_close_amount = float((c.input_system_close_amount or 0)) / exchange_rate

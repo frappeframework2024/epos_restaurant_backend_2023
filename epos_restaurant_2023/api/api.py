@@ -1234,8 +1234,9 @@ def edit_sale_coupon(name,auth):
 
 @frappe.whitelist()
 def delete_sale_coupon(name,auth):
-    if isinstance(name, str):
+    if isinstance(auth, str):
         auth = json.loads(auth)
+
     sale = frappe.db.exists("Sale", name)
     if not sale:
         frappe.throw(_("Sale not found"))

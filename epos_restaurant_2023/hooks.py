@@ -70,8 +70,15 @@ doctype_list_js = {"Translation": "public/js/translation_list.js"}
 
 #add methods and filters to jinja environment
 jinja = {
-	#"methods": "epos_restaurant_2023.utils.jinja_methods",
-    "filters": "epos_restaurant_2023.api.jinja_filters.get_jinja_filters" 
+	"methods": [
+        "epos_restaurant_2023.api.jinja_filters.get_total",
+        "epos_restaurant_2023.api.jinja_filters.get_exchange_rate",
+    ],
+    "filters": [
+                "epos_restaurant_2023.api.jinja_filters.unique",
+                "epos_restaurant_2023.api.jinja_filters.format_currency",
+                "epos_restaurant_2023.api.jinja_filters.format_second_currency",
+            ], 
 }   
 
 
