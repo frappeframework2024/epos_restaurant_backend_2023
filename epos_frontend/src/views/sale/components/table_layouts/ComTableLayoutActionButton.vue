@@ -1,17 +1,21 @@
 <template>
-    <v-btn :loading="tableLayout.saleLoading" icon color="info" @click="onRefreshSale">
+    <v-btn :loading="tableLayout.saleLoading" icon @click="onRefreshSale">
         <v-icon>mdi-cached</v-icon>
     </v-btn>
-    
+    <v-btn @click="UnlockTable" v-if="gv.setting.device_setting.use_sale_network_lock == 1">
+        <svg  v-if="mobile" class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14v3m4-6V7a3 3 0 1 1 6 0v4M5 11h10a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z"/>
+        </svg>
+        <div v-else>
+            Unlock Table
+        </div>
+    </v-btn>
     <template v-if="!mobile">
         <v-btn @click="onViewPendingOrder">
             {{ $t('Pending Order') }}
         </v-btn> 
-         
     </template> 
-    
     {{ isShowTableStatus() }}
-  
     <v-btn :loading="tableLayout.saveTablePositionResource.loading" v-if="tableLayout.canArrangeTable"
         @click="onSaveTablePosition">
         {{ $t('Save Table Position') }}
@@ -83,6 +87,24 @@ const device_setting = JSON.parse(localStorage.getItem("device_setting"));
 let status = ref(false);
 function onRefreshSale() { 
     tableLayout.getSaleList()
+}
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function UnlockTable(){
+  let param = {
+        "sale":undefined,
+        "table_id":undefined, 
+        "table_name":undefined, 
+        "pos_station":localStorage.getItem("device_name"), 
+        "pos_profile": gv.setting.pos_profile
+    }
+    toaster.success($t("Unlocking table"))
+    await call.post("epos_restaurant_2023.api.api.reset_sale_network_lock",{param:param})
+    await delay(2000)
+    toaster.success($t("All table unlocked"))
 }
 
 async function onSwitchPOSProfile(){ 
