@@ -7,7 +7,7 @@
         <v-icon start icon="mdi-checkbox-marked-circle-outline" v-if="portion.selected" color="orange"></v-icon>
         <span>
          
-            {{ showUnit?portion.unit:portion.portion }} <CurrencyFormat :value="portion.price"></CurrencyFormat>
+            <div style="font-family: Khmer OS Siemreap;">{{ showUnit?portion.unit:portion.portion }}</div> <CurrencyFormat :value="portion.price"></CurrencyFormat>
         </span>
     </v-chip> 
 </template>

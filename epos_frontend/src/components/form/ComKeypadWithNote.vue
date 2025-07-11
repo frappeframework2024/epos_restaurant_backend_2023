@@ -37,7 +37,7 @@
                                         <v-icon start icon="mdi-checkbox-marked-circle-outline" v-if="item.selected"
                                             color="orange"></v-icon>
                                         <span>
-                                            {{ item.note }}
+                                            <div style="font-family: Khmer OS Siemreap;">{{ item.note }}</div>
                                         </span>
                                     </v-chip>
                                 </template>
