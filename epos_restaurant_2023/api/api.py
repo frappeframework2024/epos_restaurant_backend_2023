@@ -2118,6 +2118,11 @@ def reset_sale_network_lock(param):
 
     return "reset sale network lock"
 
+@frappe.whitelist()
+def reset_all_sale_network_lock():
+    sql  = "delete from `tabSale Network Lock`"
+    frappe.db.sql(sql,as_dict=1) 
+
 @frappe.whitelist(methods='POST')
 def reset_sale_network_lock_by_sale(old_sale, new_sale): 
     _sale = " 1 = 1 "

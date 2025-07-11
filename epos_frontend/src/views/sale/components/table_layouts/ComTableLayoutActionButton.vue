@@ -102,7 +102,7 @@ async function UnlockTable(){
         "pos_profile": gv.setting.pos_profile
     }
     toaster.success($t("Unlocking table"))
-    await call.post("epos_restaurant_2023.api.api.reset_sale_network_lock",{param:param})
+    await call.post("epos_restaurant_2023.api.api.reset_all_sale_network_lock",{param:param})
     await delay(2000)
     toaster.success($t("All table unlocked"))
 }
