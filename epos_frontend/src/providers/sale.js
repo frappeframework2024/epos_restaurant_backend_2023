@@ -1879,6 +1879,10 @@ export default class Sale {
     }
 
     async onProcessTaskAfterSubmit(doc) { 
+        //create deleted sale product to database;
+        this.deletedSaleProducts.forEach((r) => {
+            this.onCreateDeletedSaleProduct(r);
+        });
         if (this.action == "submit_order") {
             this.onPrintToKitchen(doc); 
             if(this.setting?.device_setting?.print_invoice_on_submit == 1 && this.changed == 1){
@@ -1926,11 +1930,6 @@ export default class Sale {
             }
            
         }
-
-        //create deleted sale product to database;
-        this.deletedSaleProducts.forEach((r) => {
-            this.onCreateDeletedSaleProduct(r);
-        });
 
         this.submitToAuditTrail(doc);
         this.sale = {};
