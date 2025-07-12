@@ -9,12 +9,15 @@ def submit_purchase_to_general_ledger_entry_on_submit(self):
 				"doctype":"General Ledger",
 				"posting_date":self.posting_date,
 				"account":acc,
-				"debit_amount":sum([(d.sub_total-d.total_discount)  for d in self.purchase_order_products if d.stock_account==acc]),
+				"debit_amount":sum([(d.amount)  for d in self.purchase_order_products if d.stock_account==acc]),
 				"againt":self.default_credit_account,
 				"voucher_type":"Purchase Order",
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
-				"remark" : "Accounting Entry Purchase Order"
+				"remark" : "Accounting Entry Purchase Order",
+				"party_type" : "Vendor",
+				"party":self.name,
+				"party_name":self.vendor_name
 			}
 			docs.append(doc)
 	
@@ -22,45 +25,17 @@ def submit_purchase_to_general_ledger_entry_on_submit(self):
 				"doctype":"General Ledger",
 				"posting_date":self.posting_date,
 				"account":self.default_credit_account,
-				"credit_amount":(self.sub_total),
+				"credit_amount":(self.grand_total),
 				"againt": ",".join(stock_asset_account),
 				"voucher_type":"Purchase Order",
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
 				"remark" : "Accounting Entry Purchase Order",
 				"party_type" : "Vendor",
-				"party":"{}-{}".format(self.vendor,self.vendor_name)
+				"party":self.vendor,
+				"party_name":self.vendor_name
 			}
 		docs.append(doc)
-
-	if self.total_discount > 0:
-		doc = {
-			"doctype":"General Ledger",
-			"posting_date":self.posting_date,
-			"account":self.default_discount_account,
-			"credit_amount":self.total_discount,
-			"againt":self.default_credit_account,
-			"voucher_type":"Purchase Order",
-			"voucher_number":self.name,
-			"business_branch": self.business_branch,
-			"remark": "Purchase Order discount"
-		}
-		docs.append(doc)
-		doc = {
-			"doctype":"General Ledger",
-			"posting_date":self.posting_date,
-			"account":self.default_credit_account,
-			"debit_amount":self.total_discount,
-			"againt":self.default_discount_account,
-			"voucher_type":"Purchase Order",
-			"voucher_number":self.name,
-			"business_branch": self.business_branch,
-			"remark": "Purchase Order discount",
-			"party_type" : "Vendor",
-			"party":"{}-{}".format(self.vendor,self.vendor_name)
-		}
-		docs.append(doc)
-  
 	submit_general_ledger_entry(docs=docs)
  
 def submit_purchase_to_general_ledger_entry_on_cancel(self):
@@ -73,13 +48,16 @@ def submit_purchase_to_general_ledger_entry_on_cancel(self):
 			"doctype":"General Ledger",
 			"posting_date":self.posting_date,
 			"account":acc,
-			"credit_amount":sum([(d.sub_total-d.total_discount) for d in self.purchase_order_products if d.stock_account==acc]),
+			"credit_amount":sum([(d.amount) for d in self.purchase_order_products if d.stock_account==acc]),
 			"againt":self.default_credit_account,
 			"voucher_type":"Purchase Order",
 			"voucher_number":self.name,
 			"business_branch": self.business_branch,
-			"is_canceclled":1,
-			"remark" : "Cancel Purchase Order"
+			"is_cancelled":1,
+			"remark" : "Cancel Purchase Order",
+			"party_type" : "Vendor",
+			"party":self.name,
+			"party_name":self.vendor_name
 		}
 		docs.append(doc)
 	#post to payable account	
@@ -92,36 +70,11 @@ def submit_purchase_to_general_ledger_entry_on_cancel(self):
 			"voucher_type":"Purchase Order",
 			"voucher_number":self.name,
 			"business_branch": self.business_branch,
-			"is_canceclled":1,
-			"remark" : "Cancel Purchase Order"
+			"is_cancelled":1,
+			"remark" : "Cancel Purchase Order",
+			"party_type" : "Vendor",
+			"party":self.vendor,
+			"party_name":self.vendor_name
 		}
-	docs.append(doc)	
-	
-	if self.total_discount > 0:
-		doc = {
-			"doctype":"General Ledger",
-			"posting_date":self.posting_date,
-			"account":self.default_discount_account,
-			"debit_amount":self.total_discount,
-			"againt":self.default_credit_account,
-			"voucher_type":"Purchase Order",
-			"voucher_number":self.name,
-			"business_branch": self.business_branch,
-			"is_canceclled":1,
-			"remark" : "Cancel Purchase Order"
-		}
-		docs.append(doc)
-		doc = {
-			"doctype":"General Ledger",
-			"posting_date":self.posting_date,
-			"account":self.default_credit_account,
-			"credit_amount":self.total_discount,
-			"againt":self.default_discount_account,
-			"voucher_type":"Purchase Order",
-			"voucher_number":self.name,
-			"business_branch": self.business_branch,
-			"is_canceclled":1,
-			"remark" : "Cancel Purchase Order"
-		}
-		docs.append(doc)
+	docs.append(doc)
 	submit_general_ledger_entry(docs=docs)	

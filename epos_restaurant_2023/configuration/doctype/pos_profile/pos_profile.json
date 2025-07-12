@@ -38,12 +38,18 @@
   "table_groups",
   "section_break_rcvr",
   "default_payment_type",
+  "column_break_edcc",
   "second_currency_payment_type",
   "section_break_lxjs",
   "default_customer",
   "default_pos_receipt",
   "column_break_pzgb",
-  "default_redeem_coupon_product"
+  "default_redeem_coupon_product",
+  "section_break_aezl",
+  "default_credit_account",
+  "coupon_posting_type",
+  "column_break_iwff",
+  "default_vendor"
  ],
  "fields": [
   {
@@ -260,11 +266,43 @@
    "fieldtype": "Link",
    "label": "Default Redeem Coupon Product",
    "options": "Product"
+  },
+  {
+   "fieldname": "section_break_aezl",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_edcc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "We use this field to get vendor to post data to payable account when close Coupon Shift",
+   "fieldname": "default_vendor",
+   "fieldtype": "Link",
+   "label": "Default Vendor",
+   "options": "Vendor"
+  },
+  {
+   "fieldname": "column_break_iwff",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_credit_account",
+   "fieldtype": "Link",
+   "label": "Default Credit Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "default": "Actual Amount",
+   "fieldname": "coupon_posting_type",
+   "fieldtype": "Select",
+   "label": "Coupon Posting Type",
+   "options": "Actual Amount\nCoupon Amount"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-21 16:57:41.797846",
+ "modified": "2025-07-12 16:33:01.216581",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Profile",

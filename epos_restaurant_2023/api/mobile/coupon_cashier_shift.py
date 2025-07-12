@@ -12,7 +12,7 @@ def get_cashier_shift_summary_inrormation(cashier_shift):
 
 
 @frappe.whitelist()
-def get_sale_summary(cashier_shift):
+def get_sale_summary(cashier_shift = "",working_day = ""):
     sql ="""
         select 
             sale_type,
@@ -25,11 +25,12 @@ def get_sale_summary(cashier_shift):
         from `tabSale`
         where
             docstatus = 1 and 
-            cashier_shift = %(cashier_shift)s
+            (cashier_shift = %(cashier_shift)s or %(cashier_shift)s='') and 
+            (working_day = %(working_day)s or %(working_day)s='') 
         group by
             sale_type
     """
-    data = frappe.db.sql(sql,{"cashier_shift":cashier_shift},as_dict=1)
+    data = frappe.db.sql(sql,{"cashier_shift":cashier_shift or "","working_day":working_day or ""},as_dict=1)
     
     return_data = []
     for t in ["Sale Coupon","Top Up","Redeem"]:
@@ -61,5 +62,17 @@ def  get_exchange_rate(date):
         return data[0].exchange_rate
     
     return 1
+
+
+@frappe.whitelist()
+def get_working_day_summary_inrormation(working_day): 
+    shift_doc = frappe.get_cached_doc("Working Day", working_day)
+    return {
+        "doc":shift_doc,
+        "exchange_rate":get_exchange_rate(shift_doc.posting_date),
+       
+    }
+
+
 
 

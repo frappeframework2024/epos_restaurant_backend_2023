@@ -81,6 +81,7 @@
   "default_temporary_opening_account",
   "default_commission_expense_account",
   "default_unearned_revenue_account",
+  "default_coupon_payment_expense_account",
   "profit_and_loss_statement_report_head_account_section",
   "income_head_account",
   "column_break_rfra",
@@ -568,12 +569,18 @@
    "fieldtype": "Link",
    "label": "Default Unearned Revenue Account",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_coupon_payment_expense_account",
+   "fieldtype": "Link",
+   "label": "Default Coupon Payment Expense Account",
+   "options": "Chart Of Account"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-05 14:58:11.484918",
+ "modified": "2025-07-12 14:36:24.377070",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",

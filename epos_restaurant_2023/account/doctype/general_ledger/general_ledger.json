@@ -20,6 +20,7 @@
   "is_cancelled",
   "party_type",
   "party",
+  "party_name",
   "amount"
  ],
  "fields": [
@@ -74,6 +75,7 @@
    "options": "DocType"
   },
   {
+   "description": "Please add data to this field as primary key from part type",
    "fieldname": "party",
    "fieldtype": "Data",
    "label": "Party"
@@ -123,12 +125,17 @@
    "in_list_view": 1,
    "label": "Voucher Subtype",
    "read_only": 1
+  },
+  {
+   "fieldname": "party_name",
+   "fieldtype": "Data",
+   "label": "Party Name"
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-25 10:13:09.927538",
+ "modified": "2025-07-11 14:51:34.092956",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "General Ledger",

@@ -18,9 +18,9 @@ app_include_js = [
     "/assets/epos_restaurant_2023/js/epos_restaurant_2023.js",
     "/assets/epos_restaurant_2023/js/echarts.min.js",
     "/assets/epos_restaurant_2023/js/html2canvas.min.js",
-    
 ]
  
+
 additional_print_settings =["compact_item_print"]
 
 

@@ -44,10 +44,12 @@ class CouponTransaction(Document):
 			account = pos_config_accounts[0]
 			unearned_revenue = account.get("default_unearned_revenue_account","") if account.get("default_unearned_revenue_account","") != "" else unearned_revenue
 			income_account = account.get("default_income_account","") if account.get("default_income_account","") != "" else income_account
+
 		if self.is_new():
 			if self.transaction_type == "Use":
-				general_ledger_credit(self,account = {"account":unearned_revenue,"amount":abs(self.coupon_amount)})
-				general_ledger_debit(self,account = {"account":income_account,"amount":abs(self.coupon_amount)})
+				general_ledger_debit(self,account = {"account":unearned_revenue,"amount":abs(self.coupon_amount)})
+				general_ledger_credit(self,account = {"account":income_account,"amount":abs(self.coupon_amount)})
+				
 		else:
 			if self.status == "Deleted":
 				tranactions = (frappe.db.sql("""select 
@@ -61,8 +63,8 @@ class CouponTransaction(Document):
 						frappe.throw(("Coupon has already been redeemed for cash"))
 					else:
 						frappe.throw(("Can not delete coupon transaction"))
-				general_ledger_debit(self,account = {"account":unearned_revenue,"amount":abs(self.coupon_amount)})
-				general_ledger_credit(self,account = {"account":income_account,"amount":abs(self.coupon_amount)})
+				general_ledger_credit(self,account = {"account":unearned_revenue,"amount":abs(self.coupon_amount)})
+				general_ledger_debit(self,account = {"account":income_account,"amount":abs(self.coupon_amount)})
 				frappe.db.sql("update `tabGeneral Ledger` set is_cancelled=1 where voucher_type='Coupon Transaction' and voucher_number='{}'".format(self.name))
 		
 def general_ledger_debit(self,account):

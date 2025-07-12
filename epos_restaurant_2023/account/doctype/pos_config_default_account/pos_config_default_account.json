@@ -11,7 +11,9 @@
   "default_income_account",
   "default_discount_account",
   "default_expense_account",
-  "default_unearned_revenue_account"
+  "default_unearned_revenue_account",
+  "default_credit_account",
+  "default_coupon_payment_expense_account"
  ],
  "fields": [
   {
@@ -54,12 +56,24 @@
    "fieldtype": "Link",
    "label": "Default Unearned Revenue Account",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_credit_account",
+   "fieldtype": "Link",
+   "label": "Default Credit Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_coupon_payment_expense_account",
+   "fieldtype": "Link",
+   "label": "Default Coupon Payment Expense Account",
+   "options": "Chart Of Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-07-05 14:59:39.815654",
+ "modified": "2025-07-12 14:35:57.342224",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "POS Config Default Account",

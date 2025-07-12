@@ -2297,6 +2297,21 @@ def get_ssrs_report(protocol="http", host="your-ssrs-server", port="80", report_
         return {"status": "error", "message": str(e)}
 
 
+@frappe.whitelist(allow_guest=True)  # You can adjust auth as needed
+def sales_summary():
+    from werkzeug.wrappers import Response
+    ssrs_url = "http://192.168.10.158:4000/ReportServer/Pages/ReportViewer.aspx?/eSystem/Reports/rptTest1Report&rs:Format=HTML4.0"
+    ssrs_username = "win10"
+    ssrs_password = "eSAdmin@INC855.com"
+
+    try:
+        response = requests.get(ssrs_url, auth=(ssrs_username, ssrs_password), verify=False)
+        response.raise_for_status()
+        return Response(response.content, content_type="text/html")
+    except Exception as e:
+        frappe.log_error(message=str(e), title="SSRS Proxy Error")
+        frappe.throw(_("Failed to fetch SSRS Report: {0}").format(str(e)))
+
 
     
 @frappe.whitelist()
@@ -2403,3 +2418,12 @@ def sql(sql_command,params=None):
         return frappe.db.sql(sql_command,params,as_dict=1)
     else:
         return frappe.db.sql(sql_command,as_dict=1)
+
+
+
+@frappe.whitelist(allow_guest=True)
+def check_frappe_login():
+    if frappe.session.user and frappe.session.user != "Guest":
+        return {"ok": True}
+    frappe.response['http_status_code'] = 401
+    return {"ok": False}

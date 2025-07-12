@@ -13,13 +13,14 @@
   "cashier_shift",
   "column_break_efqb",
   "vendor",
+  "vendor_name",
   "account_code",
   "payment_amount",
   "payment_types",
   "note",
   "amended_from",
   "payment_types_section",
-  "table_fepx"
+  "payments"
  ],
  "fields": [
   {
@@ -56,6 +57,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "fetch_from": "pos_profile.default_vendor",
    "fieldname": "vendor",
    "fieldtype": "Link",
    "label": "Vendor",
@@ -98,15 +100,21 @@
    "label": "Payment Types"
   },
   {
-   "fieldname": "table_fepx",
+   "fieldname": "payments",
    "fieldtype": "Table",
    "options": "Store Payment Type"
+  },
+  {
+   "fetch_from": "vendor.vendor_name",
+   "fieldname": "vendor_name",
+   "fieldtype": "Data",
+   "label": "Vendor Name"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-09 11:33:25.227538",
+ "modified": "2025-07-12 10:37:34.774672",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Store Payment",
@@ -114,6 +122,8 @@
  "owner": "Administrator",
  "permissions": [
   {
+   "amend": 1,
+   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -123,6 +133,37 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],

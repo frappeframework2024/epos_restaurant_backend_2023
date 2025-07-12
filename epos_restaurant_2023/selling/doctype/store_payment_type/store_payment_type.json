@@ -11,7 +11,8 @@
   "payment_amount",
   "currency",
   "account_code",
-  "currency_precision"
+  "currency_precision",
+  "exchange_rate"
  ],
  "fields": [
   {
@@ -43,15 +44,22 @@
    "options": "Chart Of Account"
   },
   {
+   "fetch_from": "currency.custom_currency_precision",
    "fieldname": "currency_precision",
    "fieldtype": "Int",
    "label": "Currency Precision"
+  },
+  {
+   "fieldname": "exchange_rate",
+   "fieldtype": "Float",
+   "label": "exchange_rate",
+   "precision": "9"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-07-09 11:31:33.615161",
+ "modified": "2025-07-12 08:48:33.189340",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Store Payment Type",

@@ -114,7 +114,9 @@ def get_general_ledger_data(filters):
 		having sum(a.credit_amount-a.debit_amount)  != 0
 	"""
  
-	return frappe.db.sql(sql, filters, as_dict=1)
+	data =  frappe.db.sql(sql, filters, as_dict=1)
+	
+	return data
 
 
 
