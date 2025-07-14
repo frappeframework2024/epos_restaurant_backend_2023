@@ -6,22 +6,32 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "business_branch",
   "naming_series",
+  "business_branch",
   "pos_profile",
+  "column_break_ueym",
   "posting_date",
   "working_day",
   "cashier_shift",
-  "column_break_efqb",
+  "section_break_ikgv",
+  "payment_types",
+  "column_break_wnvd",
+  "credit_amount",
+  "payment_amount",
+  "section_break_ivyj",
   "vendor",
   "vendor_name",
+  "column_break_ssrr",
   "account_code",
-  "payment_amount",
-  "payment_types",
-  "note",
-  "amended_from",
+  "section_break_tdmv",
+  "receive_by",
+  "column_break_whin",
+  "receive_by_phone_number",
   "payment_types_section",
-  "payments"
+  "payments",
+  "section_break_vzbc",
+  "note",
+  "amended_from"
  ],
  "fields": [
   {
@@ -34,12 +44,14 @@
    "fieldname": "pos_profile",
    "fieldtype": "Link",
    "label": "POS Profile",
-   "options": "POS Profile"
+   "options": "POS Profile",
+   "reqd": 1
   },
   {
    "fieldname": "posting_date",
    "fieldtype": "Date",
-   "label": "Posting Date"
+   "label": "Posting Date",
+   "reqd": 1
   },
   {
    "fieldname": "working_day",
@@ -54,25 +66,25 @@
    "options": "Cashier Shift"
   },
   {
-   "fieldname": "column_break_efqb",
-   "fieldtype": "Column Break"
-  },
-  {
    "fetch_from": "pos_profile.default_vendor",
+   "fetch_if_empty": 1,
    "fieldname": "vendor",
    "fieldtype": "Link",
    "label": "Vendor",
-   "options": "Vendor"
+   "options": "Vendor",
+   "reqd": 1
   },
   {
    "fieldname": "payment_amount",
    "fieldtype": "Currency",
-   "label": "Payment Amount"
+   "label": "Payment Amount",
+   "read_only": 1
   },
   {
    "fieldname": "payment_types",
    "fieldtype": "Data",
-   "label": "Payment Types"
+   "label": "Payment Types",
+   "read_only": 1
   },
   {
    "fieldname": "note",
@@ -90,6 +102,8 @@
    "search_index": 1
   },
   {
+   "fetch_from": "pos_profile.default_credit_account",
+   "fetch_if_empty": 1,
    "fieldname": "account_code",
    "fieldtype": "Link",
    "label": "Account Code",
@@ -114,14 +128,64 @@
   {
    "fieldname": "business_branch",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Business Branch",
-   "options": "Business Branch"
+   "options": "Business Branch",
+   "reqd": 1
+  },
+  {
+   "fieldname": "receive_by",
+   "fieldtype": "Data",
+   "label": "Receive By"
+  },
+  {
+   "fieldname": "receive_by_phone_number",
+   "fieldtype": "Data",
+   "label": "Receive By Phone Number"
+  },
+  {
+   "fieldname": "column_break_ueym",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_ikgv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_wnvd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "credit_amount",
+   "fieldtype": "Currency",
+   "label": "Credit Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_ivyj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_ssrr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_tdmv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_whin",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_vzbc",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-14 08:37:00.028939",
+ "modified": "2025-07-14 10:41:10.265284",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Store Payment",

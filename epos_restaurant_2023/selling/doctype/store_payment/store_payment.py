@@ -8,39 +8,58 @@ from frappe import _
 class StorePayment(Document):
 	def validate(self):
 		#remote record empty
-		self.payments = [d for d in self.payments if   d.payment_type and (d.input_amount or 0)>0]
+		self.payments = [d for d in self.payments if d.payment_type and (d.input_amount or 0)>0]
 		if sum([d.input_amount for d in self.payments]) == 0:
 			frappe.throw(_("Please enter payment amount"))
+		
 		# update payment with commar separated values
 		self.payment_types = ", ".join(set(str(d.payment_type) for d in self.payments))
-		for p in self.payments:
-			p.payment_amount = p.input_amount / (p.exchange_rate or 1)
+
+		get_accounts(self)
+		self.credit_amount = get_vendor_credit_balance(self.pos_profile)["balance"]
 		self.payment_amount = sum(d.payment_amount for d in self.payments)
 
 	def before_submit(self):
-		if (self.payment_amount or 0)  == 0:
-			frappe.throw(_("Please enter payment amount"))
+		if self.credit_amount < self.payment_amount:
+			if self.credit_amount == 0:
+				frappe.throw(_("Credit amount is zero"))
+			else:
+				frappe.throw(_("Credit amount is less than payment amount"))
 
 	def on_submit(self):
 		add_GL_Entry(self)
+
+def get_accounts(self):
+	error = ""
+	if (self.account_code or "") == "":
+		self.account_code = frappe.db.get_value("POS Profile",self.pos_profile,"default_credit_account")
+
+	for a in self.payments:
+		if a.payment_type:
+			account = get_payment_type_account(a.payment_type,self.business_branch)
+			if account != "no_record":
+				a.account_code = account[0].account
+				a.exchange_rate = account[0].exchange_rate
+				a.payment_amount = a.input_amount / (a.exchange_rate or 1)
+			else:
+				error += "Row <b>{}</b> Payment Type <b>{}</b> does not have account code</br>".format(a.idx,a.payment_type)
+	if error:
+		frappe.throw(error)
 
 @frappe.whitelist()
 def get_vendor_credit_balance(pos_profile):
 	account_code = frappe.get_cached_doc("POS Profile",pos_profile,"default_credit_account")
 	sql = "select sum(debit_amount-credit_amount) as total from `tabGeneral Ledger` where account = %(account)s"
-
 	data = frappe.db.sql(sql,{"account":account_code},as_dict = 1)
 	if data:
 		return {"balance":data[0].get("total") or 0}
-
 	return {"balance":0} 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def get_payment_type_account(payment_type,branch):
 	accounts = frappe.db.sql("""select 
 						a.account,
-						b.exchange_rate,
-						b.change_exchange_rate
+						b.exchange_rate
 						from `tabPayment Type Account` a
 						inner join `tabPayment Type` b on b.name = a.parent
 						where parent = %(payment_type)s 
