@@ -51,7 +51,7 @@ def account_validation(self):
 	if abs(expense - payment) != 0:
 		frappe.throw("Expense Amount Must Be The Same As Payment Amount")
   
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def get_expense_code_account(expense_code,branch):
 	accounts = frappe.db.sql("""select 
 						  default_expense_account 
@@ -62,7 +62,7 @@ def get_expense_code_account(expense_code,branch):
 		accounts = "no_record"
 	return accounts
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def get_payment_type_account(payment_type,branch):
 	accounts = frappe.db.sql("""select 
 						  account 

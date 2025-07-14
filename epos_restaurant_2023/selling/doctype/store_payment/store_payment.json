@@ -6,6 +6,7 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "business_branch",
   "naming_series",
   "pos_profile",
   "posting_date",
@@ -109,12 +110,18 @@
    "fieldname": "vendor_name",
    "fieldtype": "Data",
    "label": "Vendor Name"
+  },
+  {
+   "fieldname": "business_branch",
+   "fieldtype": "Link",
+   "label": "Business Branch",
+   "options": "Business Branch"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-12 10:37:34.774672",
+ "modified": "2025-07-14 08:37:00.028939",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Store Payment",
