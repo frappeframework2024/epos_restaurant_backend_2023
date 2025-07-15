@@ -28,6 +28,9 @@ class StorePayment(Document):
 
 	def on_submit(self):
 		add_GL_Entry(self)
+	
+	def on_cancel(self):
+		cancel_GL_Entry(self)
 
 def get_accounts(self):
 	error = ""
@@ -48,9 +51,9 @@ def get_accounts(self):
 
 @frappe.whitelist()
 def get_vendor_credit_balance(pos_profile):
-	account_code = frappe.get_cached_doc("POS Profile",pos_profile,"default_credit_account")
-	sql = "select sum(debit_amount-credit_amount) as total from `tabGeneral Ledger` where account = %(account)s"
-	data = frappe.db.sql(sql,{"account":account_code},as_dict = 1)
+	pos_profile = frappe.get_doc("POS Profile",pos_profile)
+	sql = "select abs(sum(debit_amount-credit_amount)) as total from `tabGeneral Ledger` where account = %(account)s"
+	data = frappe.db.sql(sql,{"account":pos_profile.default_credit_account},as_dict=1)
 	if data:
 		return {"balance":data[0].get("total") or 0}
 	return {"balance":0} 
@@ -81,7 +84,7 @@ def add_GL_Entry(self):
 			"voucher_type":"Store Payment",
 			"voucher_number":self.name,
 			"business_branch": self.business_branch,
-			"remark": "Payment to store",
+			"remark": "Payment to store"
 		}
 		docs.append(doc)
 	doc = {
@@ -96,6 +99,41 @@ def add_GL_Entry(self):
 		"party_type" : "Vendor",
 		"party":self.vendor,
 		"party_name":self.vendor_name
+		}
+	docs.append(doc)
+	submit_general_ledger_entry(docs=docs)
+
+def cancel_GL_Entry(self):
+	from epos_restaurant_2023.api.account import submit_general_ledger_entry
+	frappe.db.sql("update `tabGeneral Ledger` set is_cancelled=1 where voucher_type='Store Payment' and voucher_number = '{0}'".format(self.name))
+	docs = []
+	for a in set([d.account_code for d in self.payments]):
+		doc = {
+			"doctype":"General Ledger",
+			"posting_date":self.posting_date,
+			"account":a,
+			"debit_amount":sum([d.payment_amount for d in self.payments if d.account_code == a]),
+			"againt": self.account_code,
+			"voucher_type":"Store Payment",
+			"voucher_number":self.name,
+			"business_branch": self.business_branch,
+			"remark": "Payment to store",
+			"party_type" : "Vendor",
+			"party":self.vendor,
+			"party_name":self.vendor_name,
+			"is_cancelled":1
+		}
+		docs.append(doc)
+	doc = {
+		"doctype":"General Ledger",
+		"posting_date":self.posting_date,
+		"account":self.account_code,
+		"credit_amount": sum([d.payment_amount for d in self.payments]),
+		"voucher_type":"Store Payment",
+		"voucher_number":self.name,
+		"business_branch": self.business_branch,
+		"remark" : "Payment to store",
+		"is_cancelled":1
 		}
 	docs.append(doc)
 	submit_general_ledger_entry(docs=docs)

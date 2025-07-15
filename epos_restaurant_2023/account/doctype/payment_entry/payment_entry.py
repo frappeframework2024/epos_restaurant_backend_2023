@@ -7,6 +7,7 @@ from epos_restaurant_2023.api.account import submit_general_ledger_entry
 
 class PaymentEntry(Document):
 	def validate(self):
+		update_amounts(self)
 		validate_paid_amount(self)
 	
 	def on_submit(self):
@@ -14,6 +15,12 @@ class PaymentEntry(Document):
 		
 	def on_cancel(self):
 		GL_entry(self)
+
+def update_amounts(self):
+	self.to_account_balance = get_party_detail(self.party_type,self.party,self.posting_date,self.account_paid_to,self.business_branch)["balance"]
+	self.from_account_balance = get_mode_of_payment_detail(self.business_branch,self.mode_of_payment,self.party_type,self.posting_date,self.party)["mode_of_payment_balance"]
+	paid_amount = (self.paid_amount / self.exchange_rate) if len((self.payment_entry_reference or [])) == 0 else sum([a.paid_amount/a.exchange_rate for a in self.payment_entry_reference])
+	self.unallocated_amount = (abs(paid_amount) - abs(self.to_account_balance)) * self.exchange_rate
 
 def validate_paid_amount(self):
 	error = ""
@@ -45,7 +52,8 @@ def get_mode_of_payment_detail(branch="",mode_of_payment="",party_type="",postin
 	elif party_type == "Vendor":
 		party_account = frappe.db.get_value('Business Branch', {'name':branch}, ['default_credit_account'])
 	else:
-		party_account = frappe.db.get_value(party_type,{'name':party},"commission_account")
+		if party_type != "":
+			party_account = frappe.db.get_value(party_type,{'name':party},"commission_account")
 	party_balance = 0
 
 	if posting_date != "" and party != "":
@@ -55,6 +63,8 @@ def get_mode_of_payment_detail(branch="",mode_of_payment="",party_type="",postin
 
 @frappe.whitelist()
 def get_party_detail(party_type,party,posting_date,account,branch):
+	if party_type == "":
+		return {"name":"","balance":0,"account":""}
 	fields = []
 	name = ""
 	local_account = ""
@@ -140,7 +150,7 @@ def GL_entry(self):
 				general_ledger_credit(self,{"account":self.account_paid_from,"amount":a.paid_amount})
 		else:
 			general_ledger_credit(self,{"account":self.account_paid_from,"amount":self.paid_amount})
-		if self.unallocated_amount > 0:
+		if self.unallocated_amount > 0 and self.unallocated_amount != self.paid_amount:
 			general_ledger_credit(self,{"account":self.account_paid_from,"amount":self.unallocated_amount})
 	else:
 		general_ledger_credit(self,{"account":self.account_paid_to,"amount":self.paid_amount})
@@ -150,7 +160,7 @@ def GL_entry(self):
 				general_ledger_debit(self,{"account":self.account_paid_from,"amount":a.paid_amount})
 		else:
 			general_ledger_debit(self,{"account":self.account_paid_from,"amount":self.paid_amount})
-		if self.unallocated_amount > 0:
+		if self.unallocated_amount > 0 and self.unallocated_amount != self.paid_amount:
 			general_ledger_debit(self,{"account":self.account_paid_from,"amount":self.unallocated_amount})
 
 def general_ledger_debit(self,account):
@@ -165,7 +175,7 @@ def general_ledger_debit(self,account):
 			"voucher_number":self.name,
 			"business_branch": self.business_branch,
 			"party_type": self.party_type,
-			"party":"{}-{}".format(self.party,self.party_name),
+			"party":self.party,
 			"remark": "Accounting For Payment Entry"
 		}
 	else:
@@ -205,7 +215,7 @@ def general_ledger_credit(self,account):
 			"voucher_number":self.name,
 			"business_branch": self.business_branch,
 			"party_type": self.party_type,
-			"party":"{}-{}".format(self.party,self.party_name),
+			"party":self.party,
 			"remark": "Accounting For Payment Entry"
 		}
 	docs.append(doc)

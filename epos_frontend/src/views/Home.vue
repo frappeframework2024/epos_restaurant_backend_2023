@@ -46,10 +46,10 @@
                         <ComButton @click="onVoucherTopUp()"  :title="$t('Top-Up Voucher')" v-if="gv.device_setting.show_top_up" icon-color="defaulticonColor"  icon="mdi-wallet-plus" class="bg-brandcolor" />
                         <ComButton @click="onCashInCashOut" :title="$t('Cash Drawer')" v-if="device_setting?.is_order_station==0" icon-color="defaulticonColor" icon="mdi-currency-usd" class="bg-brandcolor" />
                         <ComButton v-if="isWindow() && device_setting?.is_order_station==0"  @click="onOpenCashDrawer" :title="$t('Open Cash Drawer')" icon="mdi-cash-multiple" icon-color="defaulticonColor" class="bg-brandcolor" />
-                        
                         <ComButton @click="onRoute('Report')" :title="$t('Report')" v-if="device_setting?.is_order_station==0" icon="mdi-chart-bar" icon-color="defaulticonColor" class="bg-brandcolor" />
                 
-                        <ComButton v-if="isWindow() && device_setting?.show_button_customer_display==1"  @click="onOpenCustomerDisplay"  :title="$t('Customer Display')" icon="mdi-monitor" icon-color="defaulticonColor" class="bg-brandcolor"/>
+                        <ComButton v-if="isWindow() && device_setting?.show_button_customer_display==1 && customer_display_opened != 'opened'"  @click="onOpenCustomerDisplay"  :title="$t('Customer Display')" icon="mdi-monitor" icon-color="defaulticonColor" class="bg-brandcolor"/>
+                        <ComButton v-else  @click="onOpenCustomerDisplay"  :title="$t('Customer Display')" icon="mdi-monitor" icon-color="#fff" class="bg-sellcolor text-white"/>
 
                         <ComButton v-if="isWindow() && device_setting?.show_wifi_button==1"  @click="onPrintWifiPassword" :title="$t('Wifi Password')" icon="mdi-wifi" icon-color="defaulticonColor" class="bg-brandcolor"/> 
                         <ComButton v-if="device_setting?.allow_switch_pos_profile==1"  @click="onSwitchPOSProfile" :title="$t('Switch POS Profile')" icon="mdi-home-switch-outline" icon-color="defaulticonColor" class="bg-brandcolor"/> 
@@ -83,7 +83,7 @@ const frappe = inject('$frappe');
 const call = frappe.call();
 const { mobile } = useDisplay();
 const iframeContent = ref("");
-
+const customer_display_opened = ref("closed");
 
 const { t: $t } = i18n.global; 
 const toaster = createToaster({ position: "top-right" }); 
@@ -105,7 +105,6 @@ const device_name = computed(() => {
 //on init
 onMounted(async () => { 
     localStorage.removeItem('make_order_auth');    
-
     call.get("epos_restaurant_2023.api.api.get_current_working_day",{business_branch: gv.setting?.business_branch})
     .then((_res)=>{
         if(!already_load_confirm_close_working_day){
@@ -115,6 +114,12 @@ onMounted(async () => {
             }
         } 
     });
+    let doc = await call.get("epos_restaurant_2023.api.api.customer_display_logs",{station_id:device_name.value,posting_type:"get"})
+    if(doc.message == "no_logs"){
+        customer_display_opened.value = "closed";
+    }else{
+        customer_display_opened.value = "opened";
+    }
 })
 
 
@@ -242,8 +247,19 @@ async function onViewPendingOrder() {
     });
 }
 
-function onOpenCustomerDisplay(){
+async function onOpenCustomerDisplay(){
     window.chrome.webview.postMessage(JSON.stringify({ action: "open_customer_display" }));
+    await sleep(400);
+    let doc = await call.get("epos_restaurant_2023.api.api.customer_display_logs",{station_id:device_name.value,posting_type:"get"})
+    if(doc.message == "no_logs"){
+        customer_display_opened.value = "closed";
+    }else{
+        customer_display_opened.value = "opened";
+    }
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function onLogout() {

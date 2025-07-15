@@ -29,7 +29,8 @@
   "column_break_16",
   "note",
   "image",
-  "vendor_code_name"
+  "vendor_code_name",
+  "store_payment_balance"
  ],
  "fields": [
   {
@@ -46,7 +47,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Vendor Type",
-   "options": "General\nIndividual\nCompany"
+   "options": "General\nIndividual\nCompany\nInternal"
   },
   {
    "fieldname": "company",
@@ -157,12 +158,18 @@
    "label": "Keyword",
    "length": 500,
    "search_index": 1
+  },
+  {
+   "description": "We use this field to track total balance that we need to pay to our internal store, for business food court selling coupon. ",
+   "fieldname": "store_payment_balance",
+   "fieldtype": "Currency",
+   "label": "Store Payment Balance"
   }
  ],
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-23 08:59:35.879750",
+ "modified": "2025-07-14 15:40:25.547409",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Vendor",
@@ -255,7 +262,7 @@
   }
  ],
  "quick_entry": 1,
- "search_fields": "company, phone_number,vendor_name",
+ "search_fields": "vendor_name,company, phone_number",
  "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",

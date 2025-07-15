@@ -1,0 +1,56 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "prompt",
+ "creation": "2025-07-15 08:38:47.992237",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "station_id"
+ ],
+ "fields": [
+  {
+   "fieldname": "station_id",
+   "fieldtype": "Data",
+   "label": "Station ID",
+   "options": "POS Station"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-07-15 09:17:43.658513",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "Customer Display Logs",
+ "naming_rule": "Set by user",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

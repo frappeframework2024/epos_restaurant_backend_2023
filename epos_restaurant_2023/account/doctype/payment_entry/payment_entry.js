@@ -73,11 +73,11 @@ function update_allocated_amount(frm){
             r.balance = r.total_amount - r.paid_amount
             paid_amount = paid_amount - r.paid_amount
         });
-        frm.set_value("unallocated_amount",paid_amount*frm.doc.exchange_rate)
+        frm.set_value("unallocated_amount",paid_amount/frm.doc.exchange_rate)
         frm.refresh_field("payment_entry_reference")
     }
     else{
-        frm.set_value("unallocated_amount",frm.doc.paid_amount - Math.abs(frm.doc.to_account_balance))
+        frm.set_value("unallocated_amount",(((frm.doc.paid_amount/frm.doc.exchange_rate) - Math.abs(frm.doc.to_account_balance)) * frm.doc.exchange_rate))
     }
 }
 

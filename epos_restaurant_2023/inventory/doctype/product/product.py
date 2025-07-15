@@ -413,7 +413,6 @@ def custom_rename_doc(doctype, old, new, merge=False):
 	from frappe.model.rename_doc import rename_doc
 	if not frappe.has_permission(doctype, "write", old):
 		frappe.throw(_("You do not have permission to rename this document."))
-
 	return rename_doc(doctype, old, new, merge=merge)
 
 @frappe.whitelist()

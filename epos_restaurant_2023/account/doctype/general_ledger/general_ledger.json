@@ -72,13 +72,15 @@
    "fieldname": "party_type",
    "fieldtype": "Link",
    "label": "Party Type",
-   "options": "DocType"
+   "options": "DocType",
+   "search_index": 1
   },
   {
    "description": "Please add data to this field as primary key from part type",
    "fieldname": "party",
    "fieldtype": "Data",
-   "label": "Party"
+   "label": "Party",
+   "search_index": 1
   },
   {
    "fieldname": "account",
@@ -135,7 +137,7 @@
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-11 14:51:34.092956",
+ "modified": "2025-07-14 10:00:53.000501",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "General Ledger",

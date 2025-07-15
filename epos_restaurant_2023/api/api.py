@@ -2427,3 +2427,25 @@ def check_frappe_login():
         return {"ok": True}
     frappe.response['http_status_code'] = 401
     return {"ok": False}
+
+@frappe.whitelist(allow_guest=True)
+def customer_display_logs(station_id="",posting_type = "post"):
+    import uuid
+    random_id = str(uuid.uuid4())
+    if posting_type == "post":
+        frappe.db.sql("insert into `tabCustomer Display Logs` (name,station_id,creation) values (%(name)s,%(station_id)s,now())",{"name":random_id,"station_id":station_id})
+        frappe.db.commit()
+        return "created"
+    elif posting_type == "get":
+        device_id = (frappe.db.get_value("POS Station",station_id,"device_id") or "")
+        if device_id != "":
+            station_id = device_id
+        doc = (frappe.db.sql("""select name from `tabCustomer Display Logs` where station_id = %(station_id)s""",{"station_id":station_id},as_dict=1) or [])
+        if len(doc) > 0:
+            return doc[0]["name"]
+        else:
+            return "no_logs"
+    else:
+        frappe.db.sql("""delete from `tabCustomer Display Logs` where station_id = %(station_id)s""",{"station_id":station_id})
+        frappe.db.commit()
+        return "deleted"

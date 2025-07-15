@@ -132,7 +132,7 @@ def get_list(filters,name):
 def get_data(filters):
 	order_by_statement = "order by posting_date, creation, account"
 	if filters.get("group_by") == "voucher_number":
-		order_by_statement = "order by posting_date,creation desc, debit_amount desc, voucher_type, voucher_number"
+		order_by_statement = "order by posting_date,creation, debit_amount desc, voucher_type, voucher_number"
 	if filters.get("group_by") == "account":
 		order_by_statement = "order by account, posting_date, creation"
 	filter  = "coalesce(voucher_number,'') != ''"

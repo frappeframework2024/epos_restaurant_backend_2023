@@ -57,7 +57,7 @@ def getCouponShiftAmount(self):
 	if pos_profile.default_credit_account:
 		credit_account = pos_profile.default_credit_account
 
-	coupon_transaction = (frappe.db.sql("""select sum(abs(actual_amount)) actual_amount,sum(abs(coupon_amount)) coupon_amount from `tabCoupon Transaction` where pos_profile = %(pos_profile)s""",{"pos_profile":self.pos_profile},as_dict=1) or [])
+	coupon_transaction = (frappe.db.sql("""select sum(abs(actual_amount)) actual_amount,sum(abs(coupon_amount)) coupon_amount from `tabCoupon Transaction` where transaction_type = 'Use' and pos_profile = %(pos_profile)s and coupon_shift = %(coupon_shift)s""",{"pos_profile":self.pos_profile,"coupon_shift":self.name},as_dict=1) or [])
 	return {
 			"actual_amount":coupon_transaction[0].actual_amount,
 			"coupon_amount":coupon_transaction[0].coupon_amount,
@@ -70,7 +70,7 @@ def submit_Gl_Entry(self):
 	coupon_shift = getCouponShiftAmount(self)
 	docs = []
 	amount = coupon_shift.get("actual_amount",0) if coupon_shift.get("coupon_posting_type","") == "Actual Amount" else coupon_shift.get("coupon_amount",0)
-	if amount > 0:
+	if (amount or 0) > 0:
 		doc = {
 			"doctype":"General Ledger",
 			"posting_date":self.posting_date,
@@ -96,10 +96,7 @@ def submit_Gl_Entry(self):
 			"voucher_type":"Coupon Shift",
 			"voucher_number":self.name,
 			"business_branch": self.business_branch,
-			"remark" : "Transfer to payable account",
-			"party_type" : "Vendor",
-			"party":self.vendor,
-			"party_name":self.vendor_name
+			"remark" : "Transfer to payable account"
 			}
 		docs.append(doc)
 	submit_general_ledger_entry(docs=docs)
@@ -109,7 +106,7 @@ def cancel_Gl_Entry(self):
 	amount = coupon_shift.get("actual_amount",0) if coupon_shift.get("coupon_posting_type","") == "Actual Amount" else coupon_shift.get("coupon_amount",0)
 	frappe.db.sql("update `tabGeneral Ledger` set is_cancelled=1 where voucher_type='Coupon Shift' and voucher_number = '{0}'".format(self.name))
 	docs = []
-	if amount > 0:
+	if (amount or 0) > 0:
 		doc = {
 			"doctype":"General Ledger",
 			"posting_date":self.posting_date,

@@ -118,7 +118,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-24 16:50:18.030448",
+ "modified": "2025-07-14 15:21:22.030700",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Codes",
@@ -149,5 +149,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "coupon"
 }
