@@ -2445,7 +2445,9 @@ def customer_display_logs(station_id="",posting_type = "post"):
             return doc[0]["name"]
         else:
             return "no_logs"
-    else:
+    elif posting_type == "delete":
         frappe.db.sql("""delete from `tabCustomer Display Logs` where station_id = %(station_id)s""",{"station_id":station_id})
         frappe.db.commit()
         return "deleted"
+    else:
+        pass
