@@ -249,7 +249,7 @@ async function onViewPendingOrder() {
 
 async function onOpenCustomerDisplay(){
     window.chrome.webview.postMessage(JSON.stringify({ action: "open_customer_display" }));
-    await sleep(400);
+    await sleep(500);
     let doc = await call.get("epos_restaurant_2023.api.api.customer_display_logs",{station_id:device_name.value,posting_type:"get"})
     if(doc.message == "no_logs"){
         customer_display_opened.value = "closed";

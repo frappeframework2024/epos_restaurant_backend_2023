@@ -274,13 +274,33 @@ def daily_scan_coupon_chart(params):
 
 @frappe.whitelist()
 def check_coupon_code(coupon_number): 
+
+    coupon = """select name,coupon from `tabCoupon Codes` where coupon = %(coupon_number)s and coupon_status = 'Unused' limit 1""" 
+    coupon_data = frappe.db.sql(coupon, {"coupon_number":coupon_number}, as_dict=1)
+    if coupon_data and len(coupon_data) > 0:
+       pass
+    else:
+        return {
+            "status":False,
+            "msg":"Invalid coupon number",
+            "data":None
+        }
+
     sql  = """select 
-                sum(coupon_amount) as coupon_amount
+                coalesce(sum(coupon_amount) , 0) as coupon_amount
             from `tabCoupon Transaction` 
             where `status` = 'Active' 
             and coupon_number = %(coupon_number)s""" 
-    data = frappe.db.sql(sql, {"coupon_number":coupon_number}, as_dict=1)
+    data = frappe.db.sql(sql, {"coupon_number":coupon_number}, as_dict=1)    
+
     if data and len(data) > 0: 
+        if data[0].get("coupon_amount",0) <= 0:
+            return {
+                "status":False,
+                "msg":"Current balance is empty",
+                "data":None
+            }
+         
         cus_sql = """select 
             customer,
             customer_name,
@@ -294,15 +314,28 @@ def check_coupon_code(coupon_number):
         cus = frappe.db.sql(cus_sql, {"coupon_number":coupon_number}, as_dict=1) 
         if cus and len(cus) > 0:
             return {
-                "card":coupon_number,
-                "cid":cus[0]["customer"], 
-                "cname":cus[0]["customer_name"], 
-                "cimage":cus[0]["customer_photo"],
-                "amount":data[0]["coupon_amount"]
+                "status":True,
+                "msg":"Success",
+                "data":{
+                    "card":coupon_number,
+                    "cid":cus[0]["customer"], 
+                    "cname":cus[0]["customer_name"], 
+                    "cimage":cus[0]["customer_photo"],
+                    "amount":data[0]["coupon_amount"]
+                }
             }
         else: 
-            return None 
-
+            return {
+                "status":False,
+                "msg":"Invalid coupon number",
+                "data":None
+            }
+    else:
+        return {
+            "status":False,
+            "msg":"Invalid coupon number",
+            "data":None
+        }
 
 ## params = {
     # "coupon_number":"100007",
@@ -340,10 +373,16 @@ def on_scan_use_coupon(params):
     coupon_amount = params["input_coupon_amount"] / (params["exchange_rate"] or 1)
     original_coupon_amount = coupon_amount
 
-    data = check_coupon_code(params["coupon_number"])
+    check = check_coupon_code(params["coupon_number"])
+
+
+    if not check.get("status",False):
+        frappe.throw(check.get("msg","Not enough balance"))
+
+    data = check.get("data",None)
     if data:
         if(data["amount"] < coupon_amount):
-            frappe.throw("Not enough amount")
+            frappe.throw("Not enough balance")
         else:
             sql_coupon_transactions = """select 
                     markup_percentage,
@@ -616,15 +655,24 @@ def get_transaction_detail(name):
 
 @frappe.whitelist(methods=["POST"])
 def delete_transaction(transaction_id): 
-    sql = """select name,coupon_shift from `tabCoupon Transaction` where used_transaction_id = %(used_transaction_id)s"""
+    sql = """select name,coupon_shift , used_from_transaction from `tabCoupon Transaction` where used_transaction_id = %(used_transaction_id)s"""
     data = frappe.db.sql(sql, { "used_transaction_id":transaction_id}, as_dict=1)
+
+
+
+    use_from = []
     if data and len(data) > 0:
+        check_shift = frappe.db.sql("""select count(name) as total_shift from `tabCoupon Shift` where name in %(name)s and is_closed = 1""",{"name":[d["coupon_shift"] for d in data]},as_dict=1)
+        if check_shift and len(check_shift) > 0:
+            if check_shift[0].total_shift > 0:
+                frappe.throw("This transaction is used by a closed shift and can not be deleted")
         for d in data:
             delete_doc = frappe.get_doc("Coupon Transaction", d["name"])
             delete_doc.status = "Deleted"
             delete_doc.save()   
-        
+            use_from.append(d["used_from_transaction"])        
         frappe.db.commit()
+        frappe.db.sql("""update `tabCoupon Transaction` set status = 'Active' where name in %(names)s""",{"names":use_from})
     return "Deleted"
 
 
