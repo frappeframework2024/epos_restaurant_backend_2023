@@ -1039,7 +1039,7 @@ def add_coupon_GL_entry(self):
 			general_ledger(self,account = {"account":a,"amount":sum(b.get("coupon_amount") for b in coupons if b.get("income_account","") == a),"party":self.customer})
 	if len(expense_account)>0:
 		for a in expense_account:
-			general_ledger(self,account = {"account":a,"amount":sum(b.get("coupon_amount")-b.get("amount") for b in coupons if b.get("expense_account","") == a),"party":""})
+			general_ledger(self,account = {"account":a,"amount":(sum(b.get("coupon_amount")-b.get("amount") for b in coupons if b.get("expense_account","") == a)*-1),"party":""})
 
 
 def add_sale_product_spa_commission(self):			
