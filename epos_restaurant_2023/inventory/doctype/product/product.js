@@ -100,31 +100,31 @@ frappe.ui.form.on("Product", {
         });
         const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
         if (!isMobile) {
-            frm.dashboard.render_heatmap()
-            frappe.call({
-                method: "epos_restaurant_2023.api.api.get_product_activity_log",
-                args:{
-                    product:frm.doc.name,
-                    doctype:frm.doc.doctype
-                },
-                callback: function (r) {
-                    if (r.message) {
+            // frm.dashboard.render_heatmap()
+            // frappe.call({
+            //     method: "epos_restaurant_2023.api.api.get_product_activity_log",
+            //     args:{
+            //         product:frm.doc.name,
+            //         doctype:frm.doc.doctype
+            //     },
+            //     callback: function (r) {
+            //         if (r.message) {
                         
-                        new frappe.Chart(".heatmap", {
-                            type: 'heatmap',
-                            start: new Date(moment().subtract(1, 'year').toDate()),
-                            countLabel: "transaction",
-                            discreteDomains: 1,
-                            radius: 3, // default 0
-                            data: {
-                                'dataPoints': r.message
-                            },
+            //             new frappe.Chart(".heatmap", {
+            //                 type: 'heatmap',
+            //                 start: new Date(moment().subtract(1, 'year').toDate()),
+            //                 countLabel: "transaction",
+            //                 discreteDomains: 1,
+            //                 radius: 3, // default 0
+            //                 data: {
+            //                     'dataPoints': r.message
+            //                 },
                             
-                        });
+            //             });
                         
-                    }
-                }
-            });
+            //         }
+            //     }
+            // });
         }
 
         

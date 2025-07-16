@@ -105,7 +105,9 @@ def get_coupon_detail(coupon_code):
             transaction_type,
             markup_percentage,
             input_actual_amount,
-            coupon_amount 
+            coupon_amount ,
+            pos_station,
+            pos_profile
         from `tabCoupon Transaction` 
         where 
         coupon_code=%(coupon_code)s 

@@ -275,7 +275,7 @@ def daily_scan_coupon_chart(params):
 @frappe.whitelist()
 def check_coupon_code(coupon_number): 
 
-    coupon = """select name,coupon from `tabCoupon Codes` where coupon = %(coupon_number)s and coupon_status = 'Unused' limit 1""" 
+    coupon = """select name,coupon from `tabCoupon Codes` where coupon = %(coupon_number)s and coupon_status = 'Used' limit 1""" 
     coupon_data = frappe.db.sql(coupon, {"coupon_number":coupon_number}, as_dict=1)
     if coupon_data and len(coupon_data) > 0:
        pass

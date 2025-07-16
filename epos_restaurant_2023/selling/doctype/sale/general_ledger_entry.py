@@ -57,14 +57,16 @@ def submit_sale_to_general_ledger_entry(self):
   
 	# asset account from payment
 	if self.payment:
-		for acc in set([d for d in self.payment if not d.payment_type_group=="On Account"]):
-			if not  acc.default_account:
-				frappe.throw(_("Please enter default account for payment type {payment_type}".format(payment_type=acc.payment_type)))
+		for a in self.payment:
+			if not  a.default_account:
+				frappe.throw(_("Please enter default account for payment type {payment_type}".format(payment_type=a.payment_type)))
+
+		for acc in set([d.default_account for d in self.payment if not d.payment_type_group=="On Account"]):
 			doc = {
 				"doctype":"General Ledger",
 				"posting_date":self.posting_date,
-				"account":acc.default_account  ,
-				"amount":sum([d.amount + (d.fee_amount or 0) for d in self.payment  if d.default_account==acc.default_account]),
+				"account":acc  ,
+				"amount":sum([d.amount + (d.fee_amount or 0) for d in self.payment  if d.default_account==acc]),
 				"againt":self.customer + " - " + self.customer_name,
 				"voucher_type":"Sale",
 				"voucher_number":self.name,

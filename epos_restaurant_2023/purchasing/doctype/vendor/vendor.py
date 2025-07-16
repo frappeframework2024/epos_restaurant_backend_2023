@@ -38,3 +38,26 @@ def update_store_payment_balance(vendor=""):
     frappe.db.sql(sql,{"vendors": vendors},as_dict=1)
     frappe.db.commit()
     return "Done"
+
+
+@frappe.whitelist
+def get_vendor_credit_balance(vendor, date):
+    
+    sql="select sum(credit_amount - debit_amount) as total from `tabGeneral Ledger` where party = %(vendor)s and posting_date<%(date)s"
+    fitler={"vendor":vendor,"date":date}
+    data = frappe.db.sql(sql,filter,as_dict=1)
+    return_data = {}
+    if (data):
+        return_data["opening_balance"] = data[0].get("total") or 0
+    # current credit
+    sql="select sum(credit_amount) as total_credit,sum(debit_amount) as total_debit from `tabGeneral Ledger` where party = %(vendor)s and posting_date=%(date)s"
+    
+    data = frappe.db.sql(sql,filter,as_dict=1)
+    if (data):
+        return_data["credit"] = data[0].get("total_credit") or 0
+        return_data["debit"] = data[0].get("total_debit") or 0 
+    
+    return_data["balance"] = (return_data.get("opening_balance") +      return_data["credit"] ) -  return_data["debit"]
+    return return_data 
+    
+

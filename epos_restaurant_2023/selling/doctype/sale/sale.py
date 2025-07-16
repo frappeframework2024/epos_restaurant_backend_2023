@@ -1504,8 +1504,6 @@ def update_default_income_account(self):
 		sql="select distinct parent as product_code, default_income_account from `tabProduct Default Account` where parent in %(parents)s and business_branch =%(business_branch)s"
 		product_account_codes = frappe.db.sql(sql, {"parents":[x.product_code for x in self.sale_products if not x.default_income_account], "business_branch":self.business_branch},as_dict=1)
 		product_has_default_account = [d["product_code"] for d in product_account_codes]
-
-
 		for sp in [x for x in self.sale_products if not x.default_income_account and x.product_code in product_has_default_account]:
 			# 1 get from product
 			sp.default_income_account = [d for d in product_account_codes if d["product_code"] == sp.product_code][0]["default_income_account"] 
@@ -1524,10 +1522,10 @@ def update_default_income_account(self):
 		for sp in [x for x in self.sale_products if not x.default_income_account and x.revenue_group in revenue_group_has_default_account]:
 				sp.default_income_account = [d for d in revenue_group_account_codes if d["revenue_group"] == sp.revenue_group][0]["default_income_account"] 
 
-	# 4 get account code from revenue group 
+	# 4 get account code from branch
 	if [x for x in self.sale_products if not x.default_income_account]:
 		for sp in [x for x in self.sale_products if not x.default_income_account]:
-			sp.default_income_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_income_account")
+			sp.default_income_account = frappe.get_cached_value("Business Branch",self.business_branch,  "default_income_account" if not sp.coupons else "default_unearned_revenue_account" )
  
 def update_default_discount_account(self):
 	# 1 get from product
@@ -1559,7 +1557,7 @@ def update_default_discount_account(self):
 		for sp in [x for x in self.sale_products if not x.default_discount_account and x.revenue_group in revenue_group_has_default_account and x.allow_discount==1]:
 				sp.default_discount_account = [d for d in revenue_group_account_codes if d["revenue_group"] == sp.revenue_group][0]["default_discount_account"] 
 
-	# 4 get account code from revenue group 
+	# 4 get account code from branch group 
 	if [x for x in self.sale_products if not x.default_discount_account and x.allow_discount==1]:
 		for sp in [x for x in self.sale_products if not x.default_discount_account and   x.allow_discount==1]:
 			sp.default_discount_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_sale_discount_account")

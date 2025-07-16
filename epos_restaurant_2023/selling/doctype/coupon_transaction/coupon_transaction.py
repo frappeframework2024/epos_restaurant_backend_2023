@@ -39,7 +39,15 @@ class CouponTransaction(Document):
 		unearned_revenue = frappe.get_cached_value("Business Branch",self.business_branch, "default_unearned_revenue_account")
 		income_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_income_account")
 		pos_config = frappe.db.get_value('POS Profile', self.pos_profile, 'pos_config')
-		pos_config_accounts = (frappe.db.sql("select default_unearned_revenue_account,default_income_account from `tabPOS Config Default Account` where parent = '{0}' and business_branch = '{1}'".format(pos_config,self.business_branch), as_dict=1) or [])
+		pos_config_accounts = (frappe.db.sql("""select 
+											default_unearned_revenue_account,
+											default_income_account 
+									   from `tabPOS Config Default Account` 
+									   where parent = %(pos_config)s and business_branch = %(business_branch)s""",{
+			"pos_config":pos_config,
+			"business_branch":self.business_branch
+			}, as_dict=1) or [])
+		
 		if len(pos_config_accounts) > 0:
 			account = pos_config_accounts[0]
 			unearned_revenue = account.get("default_unearned_revenue_account","") if account.get("default_unearned_revenue_account","") != "" else unearned_revenue
