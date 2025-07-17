@@ -11,13 +11,15 @@ class Vendor(Document):
 
 @frappe.whitelist()
 def update_store_payment_balance(vendor=""):
+
     vendors = []
     if vendor:
         vendors = [vendor]
     else:
         account_codes =frappe.db.sql( "select default_vendor from `tabPOS Profile` where coalesce(default_vendor,'')!= '' and coalesce(default_credit_account,'')!='' and (%(vendor)s = '' or default_vendor=%(vendor)s)",{"vendor":vendor},as_dict=1)
         vendors =   [d.get("default_vendor") for d in account_codes] or ["dumy"]
-    
+
+
     sql = """
         UPDATE `tabVendor` v
         JOIN (
@@ -40,11 +42,12 @@ def update_store_payment_balance(vendor=""):
     return "Done"
 
 
-@frappe.whitelist
+
+@frappe.whitelist()
 def get_vendor_credit_balance(vendor, date):
     
     sql="select sum(credit_amount - debit_amount) as total from `tabGeneral Ledger` where party = %(vendor)s and posting_date<%(date)s"
-    fitler={"vendor":vendor,"date":date}
+    filter={"vendor":vendor,"date":date}
     data = frappe.db.sql(sql,filter,as_dict=1)
     return_data = {}
     if (data):

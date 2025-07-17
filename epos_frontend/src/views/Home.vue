@@ -6,7 +6,7 @@
                 <div>
                     <div class="text-center text-white mb-3">
                         <img :src="gv.setting.logo" class="w-24 inline-block mb-2" />
-                        <p class="text-xl">{{ gv.setting.business_branch }}</p>
+                        <p class="text-xl">{{ gv.setting.app_name }}</p>
                         <p>
                             <span class="font-bold">{{ $t('POS Profile') }}</span> : {{ gv.setting.pos_profile }} /
                             <span class="font-bold">{{ $t('Outlet') }}</span> : {{ gv.setting.outlet }} /
@@ -249,7 +249,7 @@ async function onViewPendingOrder() {
 
 async function onOpenCustomerDisplay(){
     window.chrome.webview.postMessage(JSON.stringify({ action: "open_customer_display" }));
-    await sleep(500);
+    await sleep(1000);
     let doc = await call.get("epos_restaurant_2023.api.api.customer_display_logs",{station_id:device_name.value,posting_type:"get"})
     if(doc.message == "no_logs"){
         customer_display_opened.value = "closed";

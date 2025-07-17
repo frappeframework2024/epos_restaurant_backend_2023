@@ -57,9 +57,12 @@ def submit_sale_to_general_ledger_entry(self):
   
 	# asset account from payment
 	if self.payment:
+		error = ""
 		for a in self.payment:
-			if not  a.default_account:
-				frappe.throw(_("Please enter default account for payment type {payment_type}".format(payment_type=a.payment_type)))
+			if (a.default_account or "") == "":
+				error += ("Please enter default account for payment type '{0}'</br>".format(a.payment_type))
+		if error:
+			frappe.throw(error)
 
 		for acc in set([d.default_account for d in self.payment if not d.payment_type_group=="On Account"]):
 			doc = {
