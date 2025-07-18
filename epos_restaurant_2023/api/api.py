@@ -340,7 +340,7 @@ def get_system_settings(pos_profile="", device_name=''):
         }
     #get default customre
     default_customer = ""
-    if (pos_profile.default_customer or "") != "":
+    if (profile.default_customer or "") != "":
         default_customer = frappe.get_doc("Customer", profile.default_customer)
     else:
         if not frappe.db.exists("Customer", "General"):
@@ -357,7 +357,7 @@ def get_system_settings(pos_profile="", device_name=''):
             b.save()
             default_customer = b.customer_name_en
         else:
-            doc = frappe.get_doc("POS Profile", pos_profile.name)
+            doc = frappe.get_doc("POS Profile", profile.name)
             doc.default_customer = "General"
             doc.save()
     
