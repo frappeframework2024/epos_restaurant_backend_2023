@@ -73,6 +73,7 @@ jinja = {
 	"methods": [
         "epos_restaurant_2023.api.jinja_filters.get_total",
         "epos_restaurant_2023.api.jinja_filters.get_exchange_rate",
+        "epos_restaurant_2023.api.jinja_filters.get_combo_product_by_kitchen_group",
     ],
     "filters": [
                 "epos_restaurant_2023.api.jinja_filters.unique",

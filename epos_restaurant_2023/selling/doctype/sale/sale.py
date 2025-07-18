@@ -1701,8 +1701,9 @@ def update_coupon_transaction(self):
 					coupon_transactions.append({"name":ct_doc.name,"coupon_code":ct_doc.coupon_code, "coupon":ct_doc.coupon_number}) 
 
 			
-	if coupon_transactions and self.sale_type in ["Sale Coupon","Redeem"]:
-		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_coupon_codes", queue='short', coupon_transactions=coupon_transactions,sale_type=self.sale_type) 
+	if coupon_transactions and self.sale_type in ["Sale Coupon","Redeem","Top Up"]:
+		update_coupon_codes(coupon_transactions,self.sale_type)
+		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_coupon_codes", queue='short', coupon_transactions=coupon_transactions,sale_type=self.sale_type) 
 
 def update_coupon_codes(coupon_transactions,sale_type):
 	if sale_type=="Sale Coupon":
@@ -1736,17 +1737,52 @@ def update_coupon_codes(coupon_transactions,sale_type):
 			"coupon_codes":[d["coupon_code"] for d in coupon_transactions]
 			 
 		})
+	elif  sale_type=="Top Up":
+		# frappe.throw(str([d["coupon_code"] for d in coupon_transactions]))
+		sql ="""
+			update `tabCoupon Codes` cc
+			join (
+				select 
+					coupon_code ,
+					sum(actual_amount) as  actual_amount,
+					sum(coupon_amount) as coupon_amount
+				from `tabCoupon Transaction` 
+				where
+					coupon_code in %(coupon_codes)s and 
+					transaction_type = 'Top Up'
+				group by 
+					coupon_code
+			) ct on ct.coupon_code = cc.name
+			SET
+				cc.top_up_amount = ct.actual_amount,
+				cc.top_up_coupon_value = ct.coupon_amount
+			where
+				cc.name in %(coupon_codes)s """
+
+		frappe.db.sql(sql,{
+			"coupon_codes":[d["coupon_code"] for d in coupon_transactions]
+		})
+
 	elif sale_type=="Redeem":
 		sql ="""
 			update `tabCoupon Codes` cc
+			join `tabCoupon Transaction` ct on ct.coupon_number = cc.coupon 
+				and ct.transaction_type = 'Redeem'
 			SET
-				cc.coupon_status = "Redeemed"
+				
+				cc.redeem_amount = ct.actual_amount,
+				cc.redeem_coupon_value = ct.coupon_amount,
+				cc.coupon_status = 'Redeemed'
+
 			where
-				cc.coupon_status = "Used" and 
-				cc.name in %(coupon_code)s
+				ct.name in %(coupon_transaction_names)s and 
+				cc.name in %(coupon_codes)s 
+				
 
 		"""
 		frappe.db.sql(sql,{
-			"coupon_code":[d["coupon_code"] for d in coupon_transactions]
+			"coupon_transaction_names":[d["name"] for d in coupon_transactions],
+			"coupon_codes":[d["coupon_code"] for d in coupon_transactions]
+			 
 		})
 	frappe.db.commit()

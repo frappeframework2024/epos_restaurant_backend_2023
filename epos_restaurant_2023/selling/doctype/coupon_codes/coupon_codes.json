@@ -16,12 +16,20 @@
   "cashier_shift",
   "pos_profile",
   "pos_station",
+  "created_by",
+  "column_break_bkgy",
   "price",
   "coupon_value",
-  "created_by",
+  "top_up_amount",
+  "top_up_coupon_value",
+  "redeem_amount",
+  "redeem_coupon_value",
+  "use_amount",
+  "use_coupon_value",
   "column_break_tfky",
   "customer",
-  "customer_name"
+  "customer_name",
+  "expired_date"
  ],
  "fields": [
   {
@@ -114,11 +122,56 @@
    "fieldname": "customer_name",
    "fieldtype": "Data",
    "label": "Customer Name"
+  },
+  {
+   "fieldname": "expired_date",
+   "fieldtype": "Datetime",
+   "label": "Expired Date"
+  },
+  {
+   "fieldname": "column_break_bkgy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "top_up_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Top Up Amount"
+  },
+  {
+   "fieldname": "top_up_coupon_value",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Top Up Coupon Value"
+  },
+  {
+   "fieldname": "redeem_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Redeem Amount"
+  },
+  {
+   "fieldname": "redeem_coupon_value",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Redeem Coupon Value"
+  },
+  {
+   "fieldname": "use_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Use Amount"
+  },
+  {
+   "fieldname": "use_coupon_value",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Use Coupon Value"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-14 15:21:22.030700",
+ "modified": "2025-07-17 10:51:58.236610",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Codes",

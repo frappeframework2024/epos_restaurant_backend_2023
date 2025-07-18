@@ -263,6 +263,7 @@ def check_coupon_code_for_redeem(coupon_code):
     coupon_info["coupon_transaction"] = data
     coupon_info["coupon_balance"] = sum([d.get("coupon_amount") for d in data])
     coupon_info["actual_amount_balance"] = get_coupon_actual_amount_balance(data)
+    coupon_info["used_coupon_value"] = sum([d.get("coupon_amount") for d in data if d.get("transaction_type") =="Used"])
     
     return  coupon_info
 

@@ -114,14 +114,25 @@ onMounted(async () => {
             }
         } 
     });
+    await check_customer_display_status();
+    window.chrome.webview.addEventListener("message", event => {
+        const data = event.data;
+        if (data === "customer_display_opened") {
+            customer_display_opened.value = "opened";
+        }else{
+            customer_display_opened.value = "closed";
+        }
+    });
+})
+
+async function check_customer_display_status(){
     let doc = await call.get("epos_restaurant_2023.api.api.customer_display_logs",{station_id:device_name.value,posting_type:"get"})
     if(doc.message == "no_logs"){
         customer_display_opened.value = "closed";
     }else{
         customer_display_opened.value = "opened";
     }
-})
-
+}
 
 function onRoute(page) {   
     router.push({ name: page })
@@ -223,10 +234,6 @@ function onVoucherTopUp(){
 }
 
 async function onViewPendingOrder() { 
-    // // window.ReactNativeWebView.postMessage("mobile_print");
-    // window.WebViewBridge.postMessage("mobile print");
-
-    // return;
     call.get("epos_restaurant_2023.api.api.get_current_shift_information",{
         business_branch: gv.setting?.business_branch,
         pos_profile: localStorage.getItem("pos_profile")
@@ -249,13 +256,6 @@ async function onViewPendingOrder() {
 
 async function onOpenCustomerDisplay(){
     window.chrome.webview.postMessage(JSON.stringify({ action: "open_customer_display" }));
-    await sleep(1000);
-    let doc = await call.get("epos_restaurant_2023.api.api.customer_display_logs",{station_id:device_name.value,posting_type:"get"})
-    if(doc.message == "no_logs"){
-        customer_display_opened.value = "closed";
-    }else{
-        customer_display_opened.value = "opened";
-    }
 }
 
 function sleep(ms) {

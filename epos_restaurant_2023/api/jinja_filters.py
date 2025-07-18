@@ -39,6 +39,102 @@ def get_exchange_rate(date):
         return currecy_data[0].exchange_rate
     else:
         return 1
+
+@frappe.whitelist()
+def get_combo_product_by_kitchen_group(value=None):
+    # value is param contain product como item list
+    if not value:
+        value = [
+            {
+                "menu_name": "268be447e5",
+                "product_code": "0113",
+                "product_name": "Tiger prawn",
+                "product_name_kh": "បង្កាក្រហម",
+                "unit": "Unit",
+                "quantity": 2,
+                "price": 6,
+                "photo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIjv1VWvhiyN1j6s7WA3Hp_PtEwpm3IiVHefP8EspDIl_Ovv0JLGEN14eEbA&s"
+            },
+            {
+                "menu_name": "2a9a6e7ea0",
+                "product_code": "115",
+                "product_name": "DEEP-FREID PORK",
+                "product_name_kh": "សាច់ជ្រូកបំពង",
+                "unit": "Unit",
+                "quantity": 1,
+                "price": 6,
+                "photo": "/files/IMG_3833.jpeg"
+            },
+            {
+                "menu_name": "efd6ab1e79",
+                "product_code": "P0001",
+                "product_name": "Screen",
+                "product_name_kh": "Screen",
+                "unit": "Unit",
+                "quantity": 2,
+                "price": 100,
+                "photo": ""
+            },
+            {
+                "menu_name": "d0674d555a",
+                "product_code": "P0002",
+                "product_name": "Frame",
+                "product_name_kh": "Screen",
+                "unit": "Unit",
+                "quantity": 1,
+                "price": 50,
+                "photo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8rPznUWAlcd7BB5D4joctMJPvZ6EMkccWbZK5nUb--lsBng_zLjI8YOapWA&s"
+            },
+            {
+                "menu_name": "ceb0b74725",
+                "product_code": "P0002",
+                "product_name": "Frame",
+                "product_name_kh": "Screen",
+                "unit": "Unit",
+                "quantity": 1,
+                "price": 50,
+                "photo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8rPznUWAlcd7BB5D4joctMJPvZ6EMkccWbZK5nUb--lsBng_zLjI8YOapWA&s"
+            },
+            {
+                "menu_name": "cb37fda018",
+                "product_code": "P0003",
+                "product_name": "Motherboard",
+                "product_name_kh": "Screen",
+                "unit": "Unit",
+                "quantity": 1,
+                "price": 80,
+                "photo": ""
+            }
+            ]
+ 
+    for p in value:
+        p["kitchen_group"] = frappe.get_cached_value("Product",p.get("product_code"),"kitchen_group") or "Not Set"
+
+    # get sorted kitchen group 
+    sql = "select name as kitchen_group from `tabKitchen Group` where name in %(names)s order by sort_order"
+    kitchen_group = frappe.db.sql(sql,{"names":[d.get("kitchen_group") for d in value]}, as_dict=1)
+
+    for k in kitchen_group:
+        k["products"] =[d for d in value if d.get("kitchen_group") == k.get("kitchen_group")]
+
+    # handle with not set kitchen group
+    if len([d for d in value if d.get("kitchen_group" == "Not Set")])>0:
+            
+        not_set_kitchen_group = {
+                "kitchen_group":"Not Set", 
+                "products":[d for d in value if d.get("kitchen_group") == "Not Set"]
+
+        } 
+        kitchen_group.append(not_set_kitchen_group)
+    
+    return kitchen_group
+
+
+
+
+
+
+
     
     
      

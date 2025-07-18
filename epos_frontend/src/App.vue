@@ -303,11 +303,12 @@ onMounted(() => {
 
 
 	onResize()
-
+	localStorage.setItem('myData', JSON.stringify({ status: 'opened' }));
 })
 
 onUnmounted(()=>{
 	window.removeEventListener('message', actionListeningHandler, false);
+	console.log("onUnmounted")
 })
 </script>
 <style>
