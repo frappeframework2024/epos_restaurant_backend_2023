@@ -48,8 +48,8 @@
                         <ComButton v-if="isWindow() && device_setting?.is_order_station==0"  @click="onOpenCashDrawer" :title="$t('Open Cash Drawer')" icon="mdi-cash-multiple" icon-color="defaulticonColor" class="bg-brandcolor" />
                         <ComButton @click="onRoute('Report')" :title="$t('Report')" v-if="device_setting?.is_order_station==0" icon="mdi-chart-bar" icon-color="defaulticonColor" class="bg-brandcolor" />
                 
-                        <ComButton v-if="isWindow() && device_setting?.show_button_customer_display==1 && customer_display_opened != 'opened'"  @click="onOpenCustomerDisplay"  :title="$t('Customer Display')" icon="mdi-monitor" icon-color="defaulticonColor" class="bg-brandcolor"/>
-                        <ComButton v-else  @click="onOpenCustomerDisplay"  :title="$t('Customer Display')" icon="mdi-monitor" icon-color="#fff" class="bg-sellcolor text-white"/>
+                        <ComButton v-if="isWindow() && device_setting?.show_button_customer_display==1 && customer_display_opened == 'closed'"  @click="onOpenCustomerDisplay"  :title="$t('Customer Display')" icon="mdi-monitor" icon-color="defaulticonColor" class="bg-brandcolor"/>
+                        <ComButton v-if="isWindow() && device_setting?.show_button_customer_display==1 && customer_display_opened == 'opened'"   @click="onOpenCustomerDisplay"  :title="$t('Customer Display')" icon="mdi-monitor" icon-color="#fff" class="bg-sellcolor text-white"/>
 
                         <ComButton v-if="isWindow() && device_setting?.show_wifi_button==1"  @click="onPrintWifiPassword" :title="$t('Wifi Password')" icon="mdi-wifi" icon-color="defaulticonColor" class="bg-brandcolor"/> 
                         <ComButton v-if="device_setting?.allow_switch_pos_profile==1"  @click="onSwitchPOSProfile" :title="$t('Switch POS Profile')" icon="mdi-home-switch-outline" icon-color="defaulticonColor" class="bg-brandcolor"/> 
