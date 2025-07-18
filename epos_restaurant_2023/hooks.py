@@ -79,6 +79,7 @@ jinja = {
                 "epos_restaurant_2023.api.jinja_filters.unique",
                 "epos_restaurant_2023.api.jinja_filters.format_currency",
                 "epos_restaurant_2023.api.jinja_filters.format_second_currency",
+                "epos_restaurant_2023.api.jinja_filters.to_json",
             ], 
 }   
 

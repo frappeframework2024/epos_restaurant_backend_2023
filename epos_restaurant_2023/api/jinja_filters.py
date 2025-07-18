@@ -1,5 +1,5 @@
 import frappe
-
+import json
 # jinja filter list
 
 @frappe.whitelist()
@@ -12,9 +12,22 @@ def format_currency(value):
 
 @frappe.whitelist()
 def format_second_currency(value):
-    currency = frappe.get_cached_value("ePOS Settings",None,"second_currency")
+     
+    currency =  frappe.get_cached_value("ePOS Settings",None,"second_currency")
+  
     precision = frappe.get_cached_value("Currency",currency,"custom_currency_precision")
-    return frappe.format(value, {"fieldtype": "Currency", "currency": currency,"precision":precision})
+    return frappe.utils.fmt_money(value,  currency =  currency, precision = precision )
+
+@frappe.whitelist()
+def to_json(value):
+   
+    if not value:
+        return None
+    try:
+        return json.loads(value)
+    except:
+        return None
+
 
 
 # jinja method 
