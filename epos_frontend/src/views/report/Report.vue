@@ -369,8 +369,7 @@ async function _onInit() {
             })
         } 
     });
-    
-    result.forEach((r)=>{
+    (result || []).forEach((r)=>{
         if(r.doc_type=="Working Day"){
             working_day_print_format.push(r);
         }else if(r.doc_type == "Cashier Shift"){
