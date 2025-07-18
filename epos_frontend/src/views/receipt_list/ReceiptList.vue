@@ -218,7 +218,7 @@ const headers = ref([
   { title: $t('Balance'), align: 'end', key: 'balance', fieldtype: "Currency" },
   { title: $t('Status'), align: 'center', key: 'sale_status', fieldtype: "Status",color_field:"sale_status_color" }
 ])
-if (gv.setting.pos_setting.is_client_side_sync_setting==1){
+if ((gv.setting.pos_setting.is_client_side_sync_setting || 0)==1){
     headers.value.push({ title: $t('Is Synced'), align: 'center', key: 'is_synced', fieldtype: "Status"})
 }
  
