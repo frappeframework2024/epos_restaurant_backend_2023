@@ -341,8 +341,14 @@ def get_system_settings(pos_profile="", device_name=''):
     #get default customre
     default_customer = ""
     if (profile.default_customer or "") != "":
-        default_customer = frappe.get_doc("Customer", profile.default_customer)
+        if frappe.db.exists("Customer", pos_profile.default_customer):
+            default_customer = frappe.get_doc("Customer", profile.default_customer)
+        else:
+            default_customer = create_default_customer()
     else:
+         default_customer = create_default_customer()
+        
+    def create_default_customer():
         if not frappe.db.exists("Customer", "General"):
             if not frappe.db.exists("Customer Group", "General"):
                 a = frappe.new_doc("Customer Group")
@@ -355,12 +361,12 @@ def get_system_settings(pos_profile="", device_name=''):
             b.customer_name_kh = "General"
             b.customer_group = "General"
             b.save()
-            default_customer = b
+            return b
         else:
             doc = frappe.get_doc("POS Profile", profile.name)
             doc.default_customer = "General"
             doc.save()
-    
+            return frappe.get_doc("Customer", "General")
     #get default print format
     _pos_print_format = frappe.get_list("POS Print Format Setting",fields=[
         "name",
