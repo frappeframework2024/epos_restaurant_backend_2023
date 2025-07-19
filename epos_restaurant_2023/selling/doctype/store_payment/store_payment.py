@@ -7,6 +7,8 @@ from frappe import _
 
 class StorePayment(Document):
 	def validate(self):
+		if not self.pos_profile:
+			frappe.throw(_("Please select store"))
 		#remote record empty
 		self.payments = [d for d in self.payments if d.payment_type and (d.input_amount or 0)>0]
 		if sum([d.input_amount for d in self.payments]) == 0:

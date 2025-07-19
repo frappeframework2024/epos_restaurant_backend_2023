@@ -1194,7 +1194,7 @@ def get_working_day_list_report(business_branch = '', pos_profile = ''):
     return data
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods="POST")
 def edit_sale_coupon(name,auth):  
     if isinstance(name, str):
         auth = json.loads(auth)
@@ -1247,6 +1247,8 @@ def edit_sale_coupon(name,auth):
         "content":"User {0} edit sale order. Reason: {1}".format(auth['full_name'], auth["note"])
     })
     doc.insert()
+
+    return "Success"
 
 @frappe.whitelist()
 def delete_sale_coupon(name,auth):

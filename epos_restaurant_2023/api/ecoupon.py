@@ -274,7 +274,6 @@ def daily_scan_coupon_chart(params):
 
 @frappe.whitelist()
 def check_coupon_code(coupon_number): 
-
     coupon = """select name,coupon from `tabCoupon Codes` where coupon = %(coupon_number)s and coupon_status = 'Used' limit 1""" 
     coupon_data = frappe.db.sql(coupon, {"coupon_number":coupon_number}, as_dict=1)
     if coupon_data and len(coupon_data) > 0:
@@ -317,6 +316,7 @@ def check_coupon_code(coupon_number):
                 "status":True,
                 "msg":"Success",
                 "data":{
+                    "cardid":coupon_data[0].get("name",None),
                     "card":coupon_number,
                     "cid":cus[0]["customer"], 
                     "cname":cus[0]["customer_name"], 
@@ -500,6 +500,10 @@ def on_scan_use_coupon(params):
                 return_data["customer_name"] = customer["customer_name"]
                 return_data["customer"] = customer["customer"]
                 return_data["customer_photo"] = customer["photo"]
+
+
+                ##update use coupon/amount  to coupon code
+                update_use_coupon_amount(data.get("cardid",None))
                 
                 return return_data
             
@@ -655,10 +659,8 @@ def get_transaction_detail(name):
 
 @frappe.whitelist(methods=["POST"])
 def delete_transaction(transaction_id): 
-    sql = """select name,coupon_shift , used_from_transaction from `tabCoupon Transaction` where used_transaction_id = %(used_transaction_id)s"""
+    sql = """select coupon_code, name,coupon_shift , used_from_transaction from `tabCoupon Transaction` where used_transaction_id = %(used_transaction_id)s"""
     data = frappe.db.sql(sql, { "used_transaction_id":transaction_id}, as_dict=1)
-
-
 
     use_from = []
     if data and len(data) > 0:
@@ -673,7 +675,33 @@ def delete_transaction(transaction_id):
             use_from.append(d["used_from_transaction"])        
         frappe.db.commit()
         frappe.db.sql("""update `tabCoupon Transaction` set status = 'Active' where name in %(names)s""",{"names":use_from})
+
+        update_use_coupon_amount(data[0].get("coupon_code",None))
     return "Deleted"
+
+
+@frappe.whitelist()
+def update_use_coupon_amount(coupon_code):
+    sql = """select 
+                abs(coalesce(sum(coupon_amount),0)) as coupon_amount, 
+                abs(coalesce(sum(actual_amount),0)) as actual_amount
+            from `tabCoupon Transaction` 
+            where coupon_code =%(coupon_code)s 
+                and status in ('Active','Locked') 
+                and transaction_type = 'Use'"""
+    data = frappe.db.sql(sql,{"coupon_code":coupon_code}, as_dict=1)
+
+    if data and len(data)>0:
+        sql = """update `tabCoupon Codes` set 
+                    use_coupon_value = %(coupon_amount)s,
+                    use_amount = %(actual_amount)s
+                    where name = %(coupon_code)s"""
+        frappe.db.sql(sql,{
+            "coupon_code":coupon_code,
+            "coupon_amount":data[0].get("coupon_amount",0),
+            "actual_amount":data[0].get("actual_amount",0)
+        })
+        frappe.db.commit()
 
 
 

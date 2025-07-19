@@ -185,7 +185,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-14 10:41:10.265284",
+ "modified": "2025-07-18 16:52:00.414425",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Store Payment",
@@ -238,6 +238,7 @@
    "write": 1
   }
  ],
+ "search_fields": "vendor_name,payment_types",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

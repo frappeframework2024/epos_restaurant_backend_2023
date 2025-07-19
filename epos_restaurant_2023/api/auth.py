@@ -33,8 +33,10 @@ def login(property,usr, pwd, property_code=None):
             login_manager.post_login()
         except frappe.exceptions.AuthenticationError:
             frappe.clear_messages()
-            frappe.throw("Usename and password incorrect.")    
+            frappe.throw("Usename and password incorrect.")   
+
         frappe.response["message"] = get_response_user_information(property,property_code )
+        frappe.response["message"]["app_menus"] =get_user_menu()
 
     else:
         frappe.throw("Usename and password incorrect.")
@@ -125,13 +127,74 @@ def generate_keys(user):
 
 
 
+
+def get_user_menu():
+    
+    user = frappe.session.user
+    roles = frappe.get_roles(user)
+    roles.append("All")
+    
+    sql = """
+        select * from (
+            select 
+                parent_mobile_app_module,
+                name,
+                title,
+                route_url,
+                icon,
+                component,
+                color,
+                is_group,
+                is_active,
+                show_in_drawer_menu,
+                show_in_home,
+                sort_order
+            from   `tabMobile App Module` 
+            where
+                name not  in (
+                    select distinct parent from `tabHas Role` 
+                    where
+                        parenttype = 'Mobile App Module'
+                ) and 
+                is_active = 1
+            union
+            select 
+                parent_mobile_app_module,
+                name,
+                title,
+                route_url,
+                icon,
+                component,
+                color,
+                is_group,
+                is_active,
+                show_in_drawer_menu,
+                show_in_home,
+                sort_order
+
+            from `tabMobile App Module` 
+            where
+                name in (
+                    select distinct parenttype from `tabHas Role` 
+                    where
+                        role in %(roles)s and 
+                        parenttype = 'Mobile App Module'
+                )  and 
+                is_active = 1
+        ) x
+        order by sort_order
+        
+            
+    """
+    return frappe.db.sql(sql, {"roles":roles},as_dict = 1)
     
 
 @frappe.whitelist(allow_guest=True)
 def check_user_login(property):
- 
     if frappe.session.sid == "Guest":
         frappe.response["message"] =  frappe.session.sid
     else:
         frappe.response["message"] = get_response_user_information(property)
+        frappe.response["message"]["app_menus"] =get_user_menu()
+        
     
