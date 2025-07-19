@@ -351,6 +351,11 @@ def get_system_settings(pos_profile="", device_name=''):
             b.customer_name_kh = "General"
             b.customer_group = "General"
             b.save()
+
+            doc = frappe.get_doc("POS Profile", profile.name)
+            doc.default_customer = "General"
+            doc.save()
+            
             return b
         else:
             doc = frappe.get_doc("POS Profile", profile.name)
