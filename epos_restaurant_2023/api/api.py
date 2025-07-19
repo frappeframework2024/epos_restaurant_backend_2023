@@ -355,7 +355,7 @@ def get_system_settings(pos_profile="", device_name=''):
             b.customer_name_kh = "General"
             b.customer_group = "General"
             b.save()
-            default_customer = b.customer_name_en
+            default_customer = b
         else:
             doc = frappe.get_doc("POS Profile", profile.name)
             doc.default_customer = "General"
@@ -1204,7 +1204,8 @@ def edit_sale_coupon(name,auth):
     sale_doc = frappe.get_doc("Sale",name)
     if sale_doc.docstatus == 2:
         frappe.throw(_("Sale is already deleted"))
-    sale_coupons = check_coupon_transactions(sale_doc,"delete")
+    sale_coupons = check_coupon_transactions(sale_doc,"edit")
+     
     if sale_doc.is_generate_tax_invoice == 1:
         frappe.throw(_("Sale Order already has tax invoice."))
     if not auth:
@@ -1234,6 +1235,19 @@ def edit_sale_coupon(name,auth):
     sale_product_sql = "update `tabSale Product` set docstatus = 0 where parent=%(parent)s"
     frappe.db.sql(sale_sql, {"name":name})
     frappe.db.sql(sale_product_sql,{"parent":name})          
+
+
+    # delete coupon transaction 
+    sql = "delete from `tabCoupon Transaction` where coupon_code in %(coupon_codes)s and sale=%(sale)s"
+    frappe.db.sql(sql,{"sale":sale_doc.name, "coupon_codes":[d.get("name") for d in sale_coupons]})
+
+    # update coupon code, change status = Unused, sale = ""
+    sql = """update `tabCoupon Codes` set coupon_status = 'Unused',sale='',price=0,coupon_value=0,sale_date=null,working_day='',cashier_shift='',pos_profile='',pos_station='',created_by='',customer='',customer_name='' 
+        where name in %(coupon_codes)s
+    """
+    frappe.db.sql(sql,{ "coupon_codes":[d.get("name") for d in sale_coupons]})
+
+
 
     #add comment
     doc = frappe.get_doc({
@@ -1314,6 +1328,7 @@ def check_coupon_transactions(sale,action):
         if a.coupons:
             for b in json.loads(a.coupons):
                 sale_coupons.append(b)
+  
     if len(sale_coupons) > 0:
         #get coupon transactions from coupon
         coupon_transactions = []
@@ -1425,7 +1440,6 @@ def edit_sale_order(name,auth=None,note=None):
             auth = frappe.db.get_value("User",{'name': frappe.session.user},['full_name','name'], as_dict=1)
         else:
             edit_closed_receipt = frappe.db.get_value('POS User Permission',auth.pos_permission,'edit_closed_receipt')
-            
             if edit_closed_receipt != 1:
                 frappe.throw(_("You don't permission to permform this action"))
         auth['note'] = (note if note else '')
@@ -1451,7 +1465,6 @@ def edit_sale_order(name,auth=None,note=None):
     # frappe.throw(str(sale_doc.docstatus))
     sale_doc.cancel()
 
-
     #add comment to this doc to track who request to edit this sale order 
     #get user and note from pos confirm edit dialog
     
@@ -1461,7 +1474,8 @@ def edit_sale_order(name,auth=None,note=None):
     sale_sql = "update `tabSale` set docstatus = 0, sale_status='Submitted', sale_status_color='{0}', sale_status_priority={1},balance=grand_total,total_paid_with_fee=0,total_paid=0 where name=%(name)s".format(sale_status_doc.background_color,sale_status_doc.priority)
     sale_product_sql = "update `tabSale Product` set docstatus = 0 where parent=%(parent)s"
     frappe.db.sql(sale_sql, {"name":name})
-    frappe.db.sql(sale_product_sql,{"parent":name})          
+    frappe.db.sql(sale_product_sql,{"parent":name})   
+
 
 
     #add comment
