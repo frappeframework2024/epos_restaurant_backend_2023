@@ -339,9 +339,9 @@ def get_system_settings(pos_profile="", device_name=''):
         "show_system_closed_amount": pos_config.show_system_closed_amount
         }
     #get default customre
-    default_customer = ""
+    default_customer = None
     if (profile.default_customer or "") != "":
-        if frappe.db.exists("Customer", pos_profile.default_customer):
+        if frappe.db.exists("Customer", profile.default_customer):
             default_customer = frappe.get_doc("Customer", profile.default_customer)
         else:
             default_customer = create_default_customer()
