@@ -8,7 +8,6 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils.data import strip
 from py_linq import Enumerable
-from frappe.utils import add_years
 from epos_restaurant_2023.api.account import submit_general_ledger_entry
 from epos_restaurant_2023.inventory.inventory import add_to_inventory_transaction, check_uom_conversion, get_uom_conversion, get_bom_product_cost
 import itertools
@@ -16,10 +15,11 @@ from epos_restaurant_2023.inventory.doctype.product.utils import update_fetch_fr
 
 class Product(Document):
 	def validate(self):
-		gen_variant = self.generate_variants()
-		self.product_variants = []
-		for a in gen_variant:
-			self.append("product_variants",a)
+		gen_variant = (self.generate_variants() or [])
+		if len(gen_variant)>0:
+			self.product_variants = []
+			for a in gen_variant:
+				self.append("product_variants",a)
 		if self.flags.ignore_validate==True:
 			return 
 
@@ -34,42 +34,22 @@ class Product(Document):
 		validate_default_accounts(self)
 		check_product_inventory_location(self)
 		add_base_unit_to_product_prices(self)
-		error_list=[]
-		for v in self.product_variants:
-			if v.variant_code is None or v.variant_code == "":
-				error_list.append("""Row: {0} Product Code Can't Be Empty""".format(v.idx))
-			# item = frappe.db.sql("select name from `tabProduct` where name = '{0}'".format(v.variant_code),as_dict=1)
-			# if item : 
-			# 	error_list.append("""Row: {0} Product Code {1} Already Exist""".format(v.idx,frappe.bold(v.variant_code)))
-			# variant = frappe.db.sql("select name from `tabProduct Variants` where variant_code = '{0}' and name != '{1}'".format(v.variant_code,v.name),as_dict=1)
-			# if variant : 
-			# 	error_list.append("""Row: {0} Product Code {1} Already Exist""".format(v.idx,frappe.bold(v.variant_code)))
-		if len(error_list) > 0:
-				for msg in error_list:
-					frappe.msgprint(msg)
-				raise frappe.ValidationError(error_list)
+		check_product_variants(self)
 
 		# lock uncheck inventory product
-		if not self.is_new():
-			old_product = frappe.get_doc('Product', self.product_code)
+		if (self.is_new() or 0) == 0:
 			has_inventory_transaction = frappe.db.exists("Inventory Transaction", {"product_code": self.name})
-			if old_product.is_inventory_product and not self.is_inventory_product and has_inventory_transaction:
-				frappe.throw(_("Cannot uncheck inventory product"))
-
-			if old_product.unit != self.unit and has_inventory_transaction:
-				frappe.throw(_("Cannot change unit"))
-    
-		if strip(self.naming_series) =="" and strip(self.product_code) =="":
-			frappe.throw(_("Please enter product code"))
-   
-		if self.is_inventory_product == False and self.is_new():
-			self.opening_quantity = 0
-   
-		elif self.is_inventory_product and self.opening_quantity > 0 and not self.stock_location and self.is_new():
-			frappe.throw(_("Please select stock location"))
+			if has_inventory_transaction:
+				if self.has_value_changed("unit"):
+					frappe.throw(_("Cannot change unit after transactions created"))
+		else:
+			if self.is_inventory_product == 1:
+				if self.opening_quantity > 0 and (self.stock_location or "") == "":
+					frappe.throw(_("Please select stock location"))
+			else:
+				self.opening_quantity = 0
 			
-
-		if strip(self.product_name_kh)=="":
+		if strip(self.product_name_kh or "")=="":
 			self.product_name_kh = strip(self.product_name_en)
 
 		if len(self.product_price)>0:
@@ -83,14 +63,11 @@ class Product(Document):
 					if not check_uom_conversion(d.unit, self.unit):
 							frappe.throw(_("There is no UoM conversion  from {} to {}".format( d.unit, self.unit)))
 
-
 		#validate uom product recipe
 		for d in self.product_recipe:
 			if d.unit != d.base_unit:
 				if not check_uom_conversion(d.base_unit, d.unit):
 						frappe.throw(_("There is no UoM conversion for product {}-{} from {} to {}".format(d.product, d.product_name, d.base_unit, d.unit)))
-
-
 		self.total_recipe_quantity = Enumerable(self.product_recipe).sum(lambda x: x.quantity)
 
 		#generate combo menu to json and update to combo menu data 
@@ -100,7 +77,6 @@ class Product(Document):
 				if m.unit != m.base_unit:
 					if not check_uom_conversion(m.base_unit, m.unit):
 							frappe.throw(_("There is no UoM conversion for product {}-{} from {} to {}".format(m.product, m.product_name, m.base_unit, m.unit)))
-
 				combo_menus.append({
 					"menu_name":m.name,
 					"product_code":m.product,
@@ -111,7 +87,6 @@ class Product(Document):
 					"price":m.price,
 					"photo":m.photo
 				})
-    
 			self.combo_menu_data = json.dumps(combo_menus)
 
 		if self.is_combo_menu and self.combo_groups and self.use_combo_group==1:
@@ -123,13 +98,7 @@ class Product(Document):
 					"item_selection":m.item_selection,
 					"menus":json.loads(m.combo_menu_data),
 				})
-			
 			self.combo_group_data = json.dumps(combo_groups)
-
-		
-		# price = get_product_price(product=self, business_branch="SR Branch",portion="Normal", price_rule="Normal Rate", unit="Box" )
-		# if price:
-		# 	frappe.msgprint(str(price["cost"]))
 
 		#check if portion price exists 
 		if	len(self.product_price) > 0:
@@ -138,7 +107,6 @@ class Product(Document):
 		if not self.last_purchase_cost or self.last_purchase_cost == 0:
 			self.last_purchase_cost = self.cost
    
-		
 		# material cost 
 		for d in self.produce_products:
 			d.total_amount = d.quantity * d.base_cost
@@ -147,23 +115,19 @@ class Product(Document):
 	def autoname(self):
 		if self.flags.ignore_autoname==True:
 			return 
-
-		from frappe.model.naming import set_name_by_naming_series, get_default_naming_series,make_autoname
-
-		if strip(self.naming_series) !="" and strip(self.product_code) =="":
+		if strip(self.naming_series) =="" and strip(self.product_code) =="":
+				frappe.throw(_("Please enter product code"))
+		else:
+			from frappe.model.naming import set_name_by_naming_series
 			set_name_by_naming_series(self)
 			self.product_code = self.name		
-
-		self.product_code = strip(self.product_code)
-		self.name = self.product_code
-		 
+			self.product_code = strip(self.product_code)
+			self.name = self.product_code
   
 	def after_insert(self):
 		if self.flags.ignore_after_insert==True:
 			return 
-
-		if self.is_inventory_product:
-			if self.opening_quantity and self.opening_quantity>0:
+		if self.is_inventory_product ==	1 and (self.opening_quantity or 0) > 0:
 				add_to_inventory_transaction(
 					{
 						"doctype":"Inventory Transaction",
@@ -180,9 +144,13 @@ class Product(Document):
 						'note': 'Opening Quantity',
 					}
 				)
+				opening_general_ledger_entry(self)
 
 
 	def before_save(self):
+		if self.flags.ignore_before_save==True:
+			return 
+		
 		if self.disabled == 1:
 			self.status = "Disabled"
 		else:
@@ -191,28 +159,21 @@ class Product(Document):
 			else:
 				self.status = "Enabled"
 
-		if len(self.product_variants)>0:
+		if len(self.product_variants or [])>0:
 			for a in self.product_variants:
 				variant = frappe.db.sql("select count(name) count from `tabProduct` where product_code = '{0}'".format(a.current_variant_code),as_dict=1)
-				if len(variant)>0:
+				if len(variant or [])>0:
 					if variant[0].count > 0:
 						insert_update_rename_variant(self,a,"update")
-						#frappe.enqueue(insert_update_rename_variant,queue="short",self=self,a=a,action="update")
 					else:
 						insert_update_rename_variant(self,a,"insert")
-						#frappe.enqueue(insert_update_rename_variant,queue="short",self=self,a=a,action="insert")
 			frappe.msgprint(_("Add New Or Update Variant Will Be In The Background, It Can Take A Few Minutes."), alert=True)
 		
-		if len(self.produce_products) >0 :
+		if len(self.produce_products or []) >0 :
 			update_bom(self)
-
-		if self.is_new and self.opening_quantity > 0:
-			opening_general_ledger_entry(self)
-		if self.flags.ignore_before_save==True:
-			return 
-		prices = []
-		if self.product_price:
 			
+		if len(self.product_price or [])>0:
+			prices = []
 			for p in self.product_price:
 				prices.append({
 					"name":p.name,
@@ -224,21 +185,17 @@ class Product(Document):
 					'price_rule' : p.price_rule,
 					"default_discount":p.default_discount
 				})
-		self.prices = json.dumps(prices)
+			self.prices = json.dumps(prices)
 
 	def on_update(self):
-		#
+		if self.flags.ignore_on_update==True:
+			return 
+		
 		for a in self.pos_menus:
 			a.sort_order = self.sort_order
 		frappe.clear_document_cache("Product",self.name)
 		frappe.cache.delete_value("product_variant_" + self.name)
-		
-		
-		if self.flags.ignore_on_update==True:
-			return 
 		add_product_to_temp_menu(self)
-		# frappe.enqueue("epos_restaurant_2023.inventory.doctype.product.product.add_product_to_temp_menu", queue='short', self=self)
-
 
 	def on_trash(self):
 		if self.flags.ignore_on_trash==True:
@@ -248,7 +205,6 @@ class Product(Document):
 	@frappe.whitelist()
 	def get_product_summary_information(self):
 		stock_information = []
-
 		stock_data =frappe.db.get_list('Stock Location Product',
 					filters={
 						'product_code': self.name
@@ -261,27 +217,25 @@ class Product(Document):
 				expired_date = "" if not d.has_expired_date  or not d.expired_date else frappe.format(d.expired_date,{"fieldtype":"Date"})
 				stock_information.append({"name":d.name, "stock_location": d.stock_location, "quantity":d.quantity,"unit":d.unit,"expired_date":expired_date})
 	
-
 		return {
 			"total_annual_sale":get_product_annual_sale(self),
 			"stock_information":stock_information,
 			"precision": frappe.db.get_default("float_precision"),
-			
 		}
+	
 	@frappe.whitelist()
 	def generate_roundup(self):
 		ra = []
 		data = list(range(0,60))
 		for a in data:
 			ra.append({"base_value":a,"roundup_value":a})
-
 		return ra
 		
 	@frappe.whitelist()
 	def generate_variants(self):
 		if validate_variant_value_changed(self) > 0:
 			stored_variant = []
-			if self.product_variants:
+			if len(self.product_variants or [])>0:
 				for a in self.product_variants:
 					stored_variant.append({
 						"variant_code": a.variant_code,
@@ -377,8 +331,19 @@ class Product(Document):
 		else:
 			return self.product_variants
 
+def check_product_variants(self):
+	if len(self.product_variants or [])>0:
+		error_list=[]
+		for v in self.product_variants:
+			if v.variant_code is None or v.variant_code == "":
+				error_list.append("""Row: {0} Product Code Can't Be Empty""".format(v.idx))
+		if len(error_list) > 0:
+				for msg in error_list:
+					frappe.msgprint(msg)
+				raise frappe.ValidationError(error_list)
+
 def add_base_unit_to_product_prices(self):
-	if len(self.product_price)>0:
+	if len(self.product_price or [])>0:
 		existed = 0
 		default_price_rule = (frappe.db.sql("select name from `tabPrice Rule` where is_default = 1 and disabled = 0",as_dict=1) or [])
 		if len(default_price_rule)>0:
@@ -441,7 +406,6 @@ def upload_photo(base64_image):
 		is_private=0
 	)
 	return file_doc.file_url
-
 
 @frappe.whitelist(methods="POST")
 def update_product_info(product,portion=None):
@@ -517,7 +481,7 @@ def update_bom(self):
 	previous_values = [row for row in previous_children]
 	current_values = [{"product_code":row.product_code,"unit":row.unit,"quantity":row.quantity} for row in current_children]
 	if previous_values != current_values:
-		boms = frappe.db.sql("select name,(select count(*) from `tabProduce` b where b.bom = a.name) produces from `tabBOM` a where a.product = '{0}' and manually_created = 0".format(self.name),as_dict=1)
+		boms = frappe.db.sql("select name,(select count(name) from `tabProduce` b where b.bom = a.name) produces from `tabBOM` a where a.product = '{0}' and manually_created = 0".format(self.name),as_dict=1)
 		for a in boms:
 			if a.produces > 0:
 				frappe.db.set_value('BOM', a.name, {'is_active' : 0,'docstatus' : 2})
@@ -545,7 +509,6 @@ def update_bom(self):
 			bom_items.cost = get_bom_product_cost(a.product_code,a.unit)
 			bom_items.amount = bom_items.cost * bom_items.quantity * get_uom_conversion(a.base_unit,a.unit)
 			bom.append("items",bom_items)
-		bom.save()
 		bom.submit()
 
 def validate_variant_value_changed(self):
@@ -632,24 +595,25 @@ def insert_update_rename_variant(self,a,action):
 		p.insert()
 
 def check_product_inventory_location(self):
-	exists = []
-	duplicate = []
-	for a in self.product_inventory_transaction:
-		if a.pos_profile not in exists:
-			exists.append(a.pos_profile)
-		else:
-			duplicate.append({"pos_profile":a.pos_profile,"idx":a.idx})
-	if len(duplicate) > 0:
-		str_error = ""
-		for a in duplicate:
-			str_error += "Row # <b>{0}</b> POS Profile <b>{1}</b> Already Exist</br>".format(a["idx"],a["pos_profile"])
-		frappe.throw(str_error)
+	if len((self.product_inventory_transaction or []))>0:
+		exists = []
+		duplicate = []
+		for a in self.product_inventory_transaction:
+			if a.pos_profile not in exists:
+				exists.append(a.pos_profile)
+			else:
+				duplicate.append({"pos_profile":a.pos_profile,"idx":a.idx})
+		if len(duplicate) > 0:
+			str_error = ""
+			for a in duplicate:
+				str_error += "Row # <b>{0}</b> POS Profile <b>{1}</b> Already Exist</br>".format(a["idx"],a["pos_profile"])
+			frappe.throw(str_error)
 
 def validate_default_accounts(self):
-	branches = {row.business_branch for row in self.default_account}
-
-	if len(branches) != len(self.default_account):
-		frappe.throw(_("Cannot set multiple default account for one branch."))
+	if len((self.default_account or []))>0:
+		branches = set(a.business_branch for a in self.default_account)
+		if len(branches) != len(self.default_account):
+			frappe.throw(_("Cannot set multiple default account for one branch."))
 
 @frappe.whitelist()
 def get_product(barcode,business_branch=None,stock_location = None,price_rule=None, unit=None,portion = None,allow_sale=None,allow_purchase=None,is_inventory_product=None):
@@ -769,30 +733,31 @@ def get_stock_location_product_info(product_code=None, stock_location=None):
 
 def add_product_to_temp_menu(self):
 	frappe.db.sql("delete from `tabTemp Product Menu` where product_code='{}'".format(self.name))
-	if self.pos_menus and not self.disabled and self.allow_sale:
+	if len(self.pos_menus or []) > 0 and self.disabled == 0 and self.allow_sale == 1:
 		printers = []
-		for p in self.printers:
-			printers.append({
-					"printer":p.printer_name,
-					"group_item_type":p.group_item_type,
-					"ip_address":p.ip_address,
-					"port":int(p.port or 0),
-					"is_label_printer":p.is_label_printer,
-					"usb_printing":p.usb_printing,
-				})
-	
-		prices = []
-		for p in self.product_price:
-			prices.append({
-					"name":p.name,
-					"price":p.price,
-					'branch':p.business_branch or "",
-					'price_rule':p.price_rule, 
-					'portion':p.portion,
-					'unit':p.unit, 
-					'price_rule' : p.price_rule,
-					'default_discount':p.default_discount
+		if len(self.printers or [])>0:
+			for p in self.printers:
+				printers.append({
+						"printer":p.printer_name,
+						"group_item_type":p.group_item_type,
+						"ip_address":p.ip_address,
+						"port":int(p.port or 0),
+						"is_label_printer":p.is_label_printer,
+						"usb_printing":p.usb_printing,
 					})
+		prices = []
+		if len(self.product_price or [])>0:
+			for p in self.product_price:
+				prices.append({
+						"name":p.name,
+						"price":p.price,
+						'branch':p.business_branch or "",
+						'price_rule':p.price_rule, 
+						'portion':p.portion,
+						'unit':p.unit, 
+						'price_rule' : p.price_rule,
+						'default_discount':p.default_discount
+						})
 			
 		#get product modifier
 		mc0 = []
@@ -806,12 +771,13 @@ def add_product_to_temp_menu(self):
 								limit=200
 							 )
 		global_modifiers = []
-		for gmpc in global_modifier_product_categorie:
-			gmodifiers = frappe.get_doc('Modifier Group',gmpc.parent)
-			for g in gmodifiers.modifiers:
-				global_modifiers.append(g)
+		if len(global_modifier_product_categorie or []) > 0:
+			for gmpc in global_modifier_product_categorie:
+				gmodifiers = frappe.get_doc('Modifier Group',gmpc.parent)
+				for g in gmodifiers.modifiers:
+					global_modifiers.append(g)
 		
-		if global_modifiers != []:
+		if len(global_modifiers or []) > 0:
 			mc2 = Enumerable(global_modifiers).select(lambda x: x.modifier_category).distinct()
 		
 		for mc in mc1:
@@ -823,49 +789,54 @@ def add_product_to_temp_menu(self):
 		modifiers = []
 
 		## get modifier data
-		for mc in modifier_categories:
-			doc_category = frappe.get_doc("Modifier Category",mc)
-			modifier_items = []	
-			items = []			
-			#global modifier group
-			for m in global_modifiers:
-				if m.modifier_category == mc:
-					items.append({
-						"name":m.name,
-						"branch":m.business_branch or "" , 
-						"prefix":m.prefix, 
-						"modifier":m.modifier_code, 
-						"value": str(m.business_branch or "") + str(m.prefix) + ''+str( m.modifier_code), 
-						"price":m.price 
-						})	
-			
-			#product modifier
-			for m in self.product_modifiers:
-				if m.modifier_category == mc:							
-					items.append({
-						"name":m.name,
-						"branch":m.business_branch or "" , 
-						"prefix":m.prefix, 
-						"modifier":m.modifier_code, 
-						"value":  str(m.business_branch or "") + str(m.prefix) + ''+str( m.modifier_code), 
-						"price":m.price 
-					})
-			
-			for i in items:	
-				modifier_items.append({
-					"name":i['name'],
-					"branch":i['branch'], 
-					"prefix":i['prefix'], 
-					"modifier":i['modifier'], 
-					"price": i['price'] 
-				})
+		if len(modifier_categories or [])>0:
+			for mc in modifier_categories:
+				items = []			
+				#global modifier group
+				if len(global_modifiers or [])>0:
+					for m in global_modifiers:
+						if m.modifier_category == mc:
+							items.append({
+								"name":m.name,
+								"branch":m.business_branch or "" , 
+								"prefix":m.prefix, 
+								"modifier":m.modifier_code, 
+								"value": str(m.business_branch or "") + str(m.prefix) + ''+str( m.modifier_code), 
+								"price":m.price 
+								})	
+				
+				#product modifier
+				if len(self.product_modifiers or [])>0:
+					for m in self.product_modifiers:
+						if m.modifier_category == mc:							
+							items.append({
+								"name":m.name,
+								"branch":m.business_branch or "" , 
+								"prefix":m.prefix, 
+								"modifier":m.modifier_code, 
+								"value":  str(m.business_branch or "") + str(m.prefix) + ''+str( m.modifier_code), 
+								"price":m.price 
+							})
 
-			modifiers.append({
-				"category":mc,
-				"is_required":doc_category.is_required,
-				"is_multiple":doc_category.is_multiple,
-				"items":modifier_items
-			})
+				modifier_items = []	
+				if len(items or [])>0:
+					for i in items:	
+						modifier_items.append({
+							"name":i['name'],
+							"branch":i['branch'], 
+							"prefix":i['prefix'], 
+							"modifier":i['modifier'], 
+							"price": i['price'] 
+						})
+					
+				doc_category = frappe.db.get_value("Modifier Category",mc, ["name", "is_required", "is_multiple"],as_dict=1)
+				if doc_category:
+					modifiers.append({
+						"category":mc,
+						"is_required":doc_category.is_required,
+						"is_multiple":doc_category.is_multiple,
+						"items":modifier_items
+					})
 			
 		## end get modifier data  
 		for m in self.pos_menus:	 
@@ -896,23 +867,23 @@ def add_product_to_temp_menu(self):
 
 	 
 		## update to popular product in emenu
-		sql_pop = """select name, parent from `tabeMenu Popular Products` where product_code = '{}'""".format(self.name)
-		pop_docs = frappe.db.sql(sql_pop,as_dict=1)
-		for pop in pop_docs:
-			emenu = frappe.get_doc("eMenu",pop["parent"])	
-			frappe.db.set_value('eMenu Popular Products', pop["name"], {
-				'prices': json.dumps(prices),
-				'modifiers': json.dumps(modifiers),				
-			})
-
-			product_menu = [ m for m in self.pos_menus if m.root_menu ==  emenu.default_root_menu ] 
-			if len(product_menu)>0:
-				m = product_menu[0] 
+		pop_docs = frappe.db.sql("""select name, parent from `tabeMenu Popular Products` where product_code = '{}'""".format(self.name),as_dict=1)
+		if len(pop_docs or [])>0:
+			for pop in pop_docs:
+				emenu = frappe.get_doc("eMenu",pop["parent"])	
 				frappe.db.set_value('eMenu Popular Products', pop["name"], {
-					'is_empty_stock_warning': m.is_empty_stock_warning,
-					'discount_type': m.discount_type,	
-					'discount_value':m.discount_value		
-				})				
+					'prices': json.dumps(prices),
+					'modifiers': json.dumps(modifiers),				
+				})
+
+				product_menu = [ m for m in self.pos_menus if m.root_menu ==  emenu.default_root_menu ] 
+				if len(product_menu or [])>0:
+					m = product_menu[0] 
+					frappe.db.set_value('eMenu Popular Products', pop["name"], {
+						'is_empty_stock_warning': m.is_empty_stock_warning,
+						'discount_type': m.discount_type,	
+						'discount_value':m.discount_value		
+					})				
 
 		frappe.db.commit()
 	update_fetch_from_field(self)
@@ -923,7 +894,6 @@ def update_product_to_temp_product_menu():
 	products = frappe.db.sql("select name from `tabProduct`", as_dict=1)
 	for pro in products:
 		doc = frappe.get_doc("Product", pro.name)
-		
 		add_product_to_temp_menu(doc)
 	frappe.db.commit()
 	return "Done"
@@ -957,12 +927,10 @@ def assign_menu(products,menu):
 
 @frappe.whitelist()
 def assign_printer(products,printer):
- 
 	printer_doc = frappe.get_doc("Printer",printer)
 	for p in products.split(","):
 		product = frappe.get_doc("Product",p)
-	 
-		if len(product.printers) ==0:
+		if len(product.printers or []) ==0:
 			# Create a new child document
 			child_doc = frappe.new_doc("Product Printer")
 			child_doc.printer =printer 
@@ -971,17 +939,12 @@ def assign_printer(products,printer):
 			product.append("printers", child_doc)
 		else:
 			result = [d for d in product.printers if d.printer== printer]
-			
 			if not result:
-				
 				child_doc = frappe.new_doc("Product Printer")
 				child_doc.printer =printer 
 				child_doc.printer_name= printer_doc.printer_name
 				# Add the child document to the parent document
 				product.append("printers", child_doc)
-
-			 
-			 
 		product.save()
 
 	frappe.db.commit()
@@ -997,9 +960,7 @@ def remove_printer(products,printer):
 			if row.printer == printer:
 				printers.remove(row)
 		product.save()
-
 	frappe.db.commit()
-
 
 @frappe.whitelist()
 def clear_all_printer_from_product(products):
@@ -1007,7 +968,6 @@ def clear_all_printer_from_product(products):
 		product = frappe.get_doc("Product",p)
 		product.printers = []
 		product.save()
-
 	frappe.db.commit()
 
 @frappe.whitelist()
@@ -1016,9 +976,7 @@ def clear_all_menus_from_product(products):
 		product = frappe.get_doc("Product",p)
 		product.pos_menus = []
 		product.save()
-
 	frappe.db.commit()
-
 
 @frappe.whitelist()
 def update_expire_date(data):
