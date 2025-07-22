@@ -52,31 +52,21 @@ class Product(Document):
 		if strip(self.product_name_kh or "")=="":
 			self.product_name_kh = strip(self.product_name_en)
 
-		if len(self.product_price)>0:
-			for item in self.product_price:
-				update_uom_conversion(self,item)
-
 		#validate uom conversion product price
-		if self.is_inventory_product:
-			for d in self.product_price:
-				if d.unit != self.unit:
-					if not check_uom_conversion(d.unit, self.unit):
-							frappe.throw(_("There is no UoM conversion  from {} to {}".format( d.unit, self.unit)))
+		for d in self.product_price:
+			local_check_uom_conversion(d.unit, self.unit)
 
 		#validate uom product recipe
 		for d in self.product_recipe:
-			if d.unit != d.base_unit:
-				if not check_uom_conversion(d.base_unit, d.unit):
-						frappe.throw(_("There is no UoM conversion for product {}-{} from {} to {}".format(d.product, d.product_name, d.base_unit, d.unit)))
+			local_check_uom_conversion(d.base_unit, d.unit)
 		self.total_recipe_quantity = Enumerable(self.product_recipe).sum(lambda x: x.quantity)
 
 		#generate combo menu to json and update to combo menu data 
 		if self.is_combo_menu and self.product_combo_menus and self.use_combo_group==0:
+			for m in self.product_combo_menus:
+				local_check_uom_conversion(m.base_unit, m.unit)
 			combo_menus = []
 			for m in self.product_combo_menus:
-				if m.unit != m.base_unit:
-					if not check_uom_conversion(m.base_unit, m.unit):
-							frappe.throw(_("There is no UoM conversion for product {}-{} from {} to {}".format(m.product, m.product_name, m.base_unit, m.unit)))
 				combo_menus.append({
 					"menu_name":m.name,
 					"product_code":m.product,
@@ -99,18 +89,9 @@ class Product(Document):
 					"menus":json.loads(m.combo_menu_data),
 				})
 			self.combo_group_data = json.dumps(combo_groups)
-
-		#check if portion price exists 
-		if	len(self.product_price) > 0:
-			self.price = Enumerable(self.product_price).min(lambda x: x.price)
    
-		if not self.last_purchase_cost or self.last_purchase_cost == 0:
+		if (self.last_purchase_cost or 0) == 0:
 			self.last_purchase_cost = self.cost
-   
-		# material cost 
-		for d in self.produce_products:
-			d.total_amount = d.quantity * d.base_cost
-		self.material_cost = sum([d.total_amount for d in self.produce_products])
 
 	def autoname(self):
 		if self.flags.ignore_autoname==True:
@@ -128,24 +109,23 @@ class Product(Document):
 		if self.flags.ignore_after_insert==True:
 			return 
 		if self.is_inventory_product ==	1 and (self.opening_quantity or 0) > 0:
-				add_to_inventory_transaction(
-					{
-						"doctype":"Inventory Transaction",
-						"transaction_date":datetime.now(),
-						'transaction_type':"Product",
-						"transaction_number":self.name,
-						"product_code":self.name,
-						"stock_location":self.stock_location,
-						"in_quantity":self.opening_quantity,
-						"price":self.cost,
-						"note":"Opening Quantity",
-						"has_expired_date":self.has_expired_date,
-						"expired_date":self.expired_date,
-						'note': 'Opening Quantity',
-					}
-				)
-				opening_general_ledger_entry(self)
-
+			add_to_inventory_transaction(
+				{
+					"doctype":"Inventory Transaction",
+					"transaction_date":datetime.now(),
+					'transaction_type':"Product",
+					"transaction_number":self.name,
+					"product_code":self.name,
+					"stock_location":self.stock_location,
+					"in_quantity":self.opening_quantity,
+					"price":self.cost,
+					"note":"Opening Quantity",
+					"has_expired_date":self.has_expired_date,
+					"expired_date":self.expired_date,
+					'note': 'Opening Quantity',
+				}
+			)
+			opening_general_ledger_entry(self)
 
 	def before_save(self):
 		if self.flags.ignore_before_save==True:
@@ -170,9 +150,17 @@ class Product(Document):
 			frappe.msgprint(_("Add New Or Update Variant Will Be In The Background, It Can Take A Few Minutes."), alert=True)
 		
 		if len(self.produce_products or []) >0 :
+			total_amount = 0
+			for d in self.produce_products:
+				d.total_amount = d.quantity * d.base_cost
+				total_amount += d.total_amount
+			self.material_cost = total_amount
 			update_bom(self)
 			
 		if len(self.product_price or [])>0:
+			for item in self.product_price:
+				update_uom_conversion(self,item)
+
 			prices = []
 			for p in self.product_price:
 				prices.append({
@@ -186,6 +174,7 @@ class Product(Document):
 					"default_discount":p.default_discount
 				})
 			self.prices = json.dumps(prices)
+			self.price = Enumerable(self.product_price).min(lambda x: x.price)
 
 	def on_update(self):
 		if self.flags.ignore_on_update==True:
@@ -331,16 +320,18 @@ class Product(Document):
 		else:
 			return self.product_variants
 
+def local_check_uom_conversion(uom_from, uom_to):
+	if not check_uom_conversion(uom_from, uom_to):
+		frappe.throw(_("There is no UoM conversion from {} to {}".format(uom_from, uom_to)))
+
 def check_product_variants(self):
 	if len(self.product_variants or [])>0:
-		error_list=[]
+		error_list=""
 		for v in self.product_variants:
-			if v.variant_code is None or v.variant_code == "":
-				error_list.append("""Row: {0} Product Code Can't Be Empty""".format(v.idx))
-		if len(error_list) > 0:
-				for msg in error_list:
-					frappe.msgprint(msg)
-				raise frappe.ValidationError(error_list)
+			if (v.variant_code or "") == "":
+				error_list += """Row: {0} Product Code Can't Be Empty\n""".format(v.idx)
+		if error_list != "":
+			frappe.throw(error_list)
 
 def add_base_unit_to_product_prices(self):
 	if len(self.product_price or [])>0:
@@ -451,7 +442,7 @@ def update_uom_conversion(self,item):
 		doc.unit_category_name = 'General'
 		doc.insert()
 	
-	if len(data_a) > 0:
+	if len(data_a or []) > 0:
 		item.conversion_factor = data_a[0].conversion
 		return
 	else:
@@ -465,7 +456,7 @@ def update_uom_conversion(self,item):
 			doc.conversion = item.conversion_factor
 			doc.insert()
 
-	if len(data_b) > 0:
+	if len(data_b or []) > 0:	
 		return
 	else:
 		doc = frappe.new_doc('Unit of Measurement Conversion')
@@ -902,7 +893,7 @@ def update_product_to_temp_product_menu():
 
 @frappe.whitelist()
 def assign_menu(products,menu):
-	pos_menu_doc = frappe.get_doc("POS Menu",menu)
+	pos_menu_doc = frappe.db.get_value("POS Menu",menu, ["name", "pos_menu_name_kh"], as_dict=1)
 	for p in products.split(","):
 		product = frappe.get_doc("Product",p)	 
 		if len(product.pos_menus) ==0:
@@ -922,12 +913,11 @@ def assign_menu(products,menu):
 				# Add the child document to the parent document
 				product.append("pos_menus", child_doc)	
 		product.save()
-
 	frappe.db.commit()
 
 @frappe.whitelist()
 def assign_printer(products,printer):
-	printer_doc = frappe.get_doc("Printer",printer)
+	printer_doc = frappe.db.get_value("Printer",printer, ["name", "printer_name"], as_dict=1)
 	for p in products.split(","):
 		product = frappe.get_doc("Product",p)
 		if len(product.printers or []) ==0:
@@ -946,16 +936,13 @@ def assign_printer(products,printer):
 				# Add the child document to the parent document
 				product.append("printers", child_doc)
 		product.save()
-
 	frappe.db.commit()
-
-	#frappe.throw("u run assign pritner")
 
 @frappe.whitelist()
 def remove_printer(products,printer):
 	for p in products.split(","):
 		product = frappe.get_doc("Product",p)
-		printers = product.get('printers')
+		printers = product.get('printers' or [])
 		for row in printers:
 			if row.printer == printer:
 				printers.remove(row)
@@ -965,17 +952,13 @@ def remove_printer(products,printer):
 @frappe.whitelist()
 def clear_all_printer_from_product(products):
 	for p in products.split(","):
-		product = frappe.get_doc("Product",p)
-		product.printers = []
-		product.save()
+		frappe.db.set_value("Product",p,"printers",[])
 	frappe.db.commit()
 
 @frappe.whitelist()
 def clear_all_menus_from_product(products):
 	for p in products.split(","):
-		product = frappe.get_doc("Product",p)
-		product.pos_menus = []
-		product.save()
+		frappe.db.set_value("Product",p,"pos_menus",[])
 	frappe.db.commit()
 
 @frappe.whitelist()
