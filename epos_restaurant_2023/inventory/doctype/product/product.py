@@ -33,7 +33,6 @@ class Product(Document):
 
 		validate_default_accounts(self)
 		check_product_inventory_location(self)
-		add_base_unit_to_product_prices(self)
 		check_product_variants(self)
 
 		# lock uncheck inventory product
@@ -63,6 +62,7 @@ class Product(Document):
 
 		#generate combo menu to json and update to combo menu data 
 		if self.is_combo_menu and self.product_combo_menus and self.use_combo_group==0:
+			self.product_recipe = []
 			for m in self.product_combo_menus:
 				local_check_uom_conversion(m.base_unit, m.unit)
 			combo_menus = []
@@ -99,12 +99,13 @@ class Product(Document):
 		if strip(self.naming_series) =="" and strip(self.product_code) =="":
 				frappe.throw(_("Please enter product code"))
 		else:
-			from frappe.model.naming import set_name_by_naming_series
-			set_name_by_naming_series(self)
-			self.product_code = self.name		
+			if self.product_code == "":
+				from frappe.model.naming import set_name_by_naming_series
+				set_name_by_naming_series(self)
+				self.product_code = self.name		
 			self.product_code = strip(self.product_code)
 			self.name = self.product_code
-  
+	
 	def after_insert(self):
 		if self.flags.ignore_after_insert==True:
 			return 
@@ -138,6 +139,8 @@ class Product(Document):
 				self.status = "Template"
 			else:
 				self.status = "Enabled"
+				
+		add_base_unit_to_product_prices(self)
 
 		if len(self.product_variants or [])>0:
 			for a in self.product_variants:
@@ -174,7 +177,11 @@ class Product(Document):
 					"default_discount":p.default_discount
 				})
 			self.prices = json.dumps(prices)
-			self.price = Enumerable(self.product_price).min(lambda x: x.price)
+			default_price_rule = (frappe.db.sql("select name from `tabPrice Rule` where is_default = 1 and disabled = 0",as_dict=1) or [])
+			if len(default_price_rule)>0:
+				self.price = Enumerable(self.product_price).where(lambda x: x.price_rule == default_price_rule[0].name).select(lambda x: x.price).first_or_default()
+			else:
+				self.price = Enumerable(self.product_price).min(lambda x: x.price)
 
 	def on_update(self):
 		if self.flags.ignore_on_update==True:
