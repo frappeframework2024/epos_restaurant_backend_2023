@@ -183,7 +183,7 @@ class Product(Document):
 			else:
 				self.price = Enumerable(self.product_price).min(lambda x: x.price)
 		else:
-			self.prices = ""
+			self.prices = "[]"
 
 	def on_update(self):
 		if self.flags.ignore_on_update==True:
