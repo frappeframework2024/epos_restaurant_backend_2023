@@ -486,7 +486,7 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
         if d["variant_of"]  and d["is_variant"] ==1:
             d["selected_variant"] = get_selected_variant(d["name"],d["variant_of"]) 
         # get_default_price
-        product_prices = json.loads(d["prices"])
+        product_prices = json.loads(d.get("prices" or ""))
         if product_prices:
             default_price =  get_default_product_price(price_rule, product_prices)
             d["unit"] = default_price["unit"]

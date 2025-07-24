@@ -182,6 +182,8 @@ class Product(Document):
 				self.price = Enumerable(self.product_price).where(lambda x: x.price_rule == default_price_rule[0].name).select(lambda x: x.price).first_or_default()
 			else:
 				self.price = Enumerable(self.product_price).min(lambda x: x.price)
+		else:
+			self.prices = ""
 
 	def on_update(self):
 		if self.flags.ignore_on_update==True:
