@@ -99,7 +99,7 @@ class Product(Document):
 		if strip(self.naming_series) =="" and strip(self.product_code) =="":
 				frappe.throw(_("Please enter product code"))
 		else:
-			if self.product_code == "":
+			if strip(self.product_code or "") == "":
 				from frappe.model.naming import set_name_by_naming_series
 				set_name_by_naming_series(self)
 				self.product_code = self.name		
