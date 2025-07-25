@@ -144,7 +144,7 @@ def reset_sale_transaction():
             frappe.db.sql("delete from `tabMembership Family`")
             frappe.db.sql("delete from `tabMembership`") 
            
-            doctypes = ["Membership","Membership Check In","Membership Payment","Sales Coupon Payment","SPA Sale Invoice"]
+            doctypes = ["Membership","Membership Check In","Membership Payment","Sales Coupon Payment","SPA Sale Invoice","Store Payment"]
             for d in doctypes:                 
                 formats =  frappe.get_meta(d).get_field("naming_series").options
                 if formats:
@@ -201,6 +201,11 @@ def reset_sale_transaction():
             frappe.db.sql("delete from `tabSales Order Product`")
             frappe.db.sql("delete from `tabDelivery Note`")
             frappe.db.sql("delete from `tabDelivery Note Product`")
+            frappe.db.sql("delete from `tabCoupon Shift`")
+            frappe.db.sql("delete from `tabCoupon Transaction`")
+            frappe.db.sql("delete from `tabStore Payment`") 
+            frappe.db.sql("update  `tabCoupon Codes` set coupon_status='Unused',expired_date=null,sale='',working_day='',cashier_shift=''")
+
             
             #reset sale transaction 
             doctypes = ["Sale","SPA Sale Invoice","Sale Payment","Cashier Shift","Working Day","Cash Transaction","Voucher","Voucher Payment","Cash Coupon","Sales Order","Delivery Note"]

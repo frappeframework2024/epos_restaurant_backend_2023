@@ -263,7 +263,7 @@ let recentOrder = createResource(
     params: {
       doctype: "Sale",
       fields: ["name", "grand_total", "total_quantity", "modified"],
-      filters: { customer: props.params.name },
+      filters: { customer: props.params.name, docstatus: 1 },
       order_by: "modified desc",
       limit_page_length: 5
     },

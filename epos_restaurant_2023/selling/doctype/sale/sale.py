@@ -14,6 +14,7 @@ from frappe.model.document import Document
 import datetime
 from copy import deepcopy
 from decimal import Decimal
+from frappe.utils import add_to_date
 from epos_restaurant_2023.api.exely import cancel_order,submit_order_to_exely
 from epos_restaurant_2023.selling.doctype.sale.general_ledger_entry import submit_sale_to_general_ledger_entry
 class Sale(Document):
@@ -966,7 +967,10 @@ def validate_sale_product(self):
 			if discountable_amount>0:
 				sale_discount=(sale_discount / discountable_amount ) * 100
 			sale_discount = sale_discount or 0
-		
+	# coupon expired date duration
+
+	coupon_expired_duration = frappe.get_cached_value("ePOS Settings",None,"default_coupon_expired")
+
 	for d in self.sale_products:
 		d.regular_price = d.regular_price if d.regular_price else d.price
 		# validate product free
@@ -1005,8 +1009,17 @@ def validate_sale_product(self):
 		else:
 			d.crypto_able_amount = d.amount 
 
+
 		# update total coupon value
-		d.total_coupon_value = (d.coupon_value or 0) * (d.quantity or 0)
+		if self.sale_type in ["Sale Coupon","Top Up","Redeem"]: 
+			d.total_coupon_value = (d.coupon_value or 0) * (d.quantity or 0)
+			if self.docstatus == 1 and frappe.get_cached_value("Product",d.product_code,"is_coupon")==1:
+				d.coupon_expired_date = add_to_date(datetime.datetime.now(),days=coupon_expired_duration)
+			 
+
+			
+			
+
 
 def add_coupon_GL_entry(self):
 	def general_ledger(self,account):
@@ -1690,6 +1703,7 @@ def update_coupon_transaction(self):
 						"created_by": self.closed_by,
 						"customer":self.customer,
 						"customer_name":self.customer_name,
+						"expired_date":sp.coupon_expired_date,
 						"note":sp.note
 
 					})
@@ -1724,7 +1738,8 @@ def update_coupon_codes(coupon_transactions,sale_type):
 				cc.coupon_value = ct.coupon_amount,
 				cc.created_by = ct.created_by,
 				cc.customer = ct.customer,
-				cc.customer_name = ct.customer_name
+				cc.customer_name = ct.customer_name,
+				cc.expired_date = ct.expired_date
 
 			where
 				ct.name in %(coupon_transaction_names)s and 

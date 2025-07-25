@@ -4,7 +4,8 @@
 import frappe
 from frappe.model.document import Document
 from frappe import _
-
+import datetime
+from frappe.utils import get_datetime
 class CouponCodes(Document):
 	
 	def on_trash(self):
@@ -17,13 +18,28 @@ class CouponCodes(Document):
 def check_coupon_code(coupon):
 	if not coupon:
 		frappe.throw(_("Please scan the QR code of the coupon"))
-	data = frappe.db.sql("select name, coupon,coupon_status from `tabCoupon Codes` where coupon = %(coupon)s",{"coupon":coupon},as_dict=1)
+	data = frappe.db.sql("select name, coupon,coupon_status,expired_date from `tabCoupon Codes` where coupon = %(coupon)s order by creation desc limit 1",{"coupon":coupon},as_dict=1)
 	if not data:
-		frappe.throw(_("Coupon code not found"))
-	if data:
-		if len([d for d in data if d.get("coupon_status") == "Unused"]) == 0:
-			frappe.throw(_("Coupon code is already used"))
-	return [d for d in data if d.get("coupon_status") =="Unused"][0]
+		frappe.throw(_("This coupon is not exist in the system"))
+	 
+	if data[0].get("coupon_status") == "Redeemed":
+		frappe.throw(_("Coupon code is already redeem"))
+
+	if data[0].get("coupon_status") == "Expired":
+		frappe.throw(_("This coupon code is already expired"))
+	if data[0].get("coupon_status") == "Used":
+		if datetime.datetime.now() > get_datetime(data[0].expired_date):
+			frappe.throw(_("This coupon code is expired"))   
+
+		frappe.throw(_("Coupon code is already used"))
+	
+	if data[0].get("coupon_status") == "Redeemed":
+		frappe.throw(_("Coupon code is already redeem"))
+	
+	
+	
+
+	return data[0]
 
 @frappe.whitelist()
 def get_coupon_info(coupon):

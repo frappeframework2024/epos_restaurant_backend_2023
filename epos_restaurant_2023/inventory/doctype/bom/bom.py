@@ -35,7 +35,7 @@ def validate_amount(self):
 	self.total_cost = sum(a.amount for a in self.items)
 	error = ""
 	for a in self.items:
-		if a.amount <=0:
+		if a.quantity <=0:
 			error += "Row #{0} Quantity Can Not Be Zero.</br>".format(a.idx)
 	if error:
 		frappe.throw(error)

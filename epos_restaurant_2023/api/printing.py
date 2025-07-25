@@ -376,3 +376,53 @@ def get_print_data(doctype,docname,template,return_type="base64",lang="en",optio
         pdf_base64 = base64.b64encode(pdfDoc)
         return pdf_base64.decode()
     
+@frappe.whitelist()
+def convertimg():
+    import imgkit
+    import base64
+    from io import BytesIO
+    from PIL import Image
+
+ 
+
+    template = "POS Receipt PDF"
+    doc = frappe.get_doc("Sale", "SINV2025-0002")
+    data_template, css = frappe.db.get_value("POS Receipt Template", template, ["template", "style"])
+    html = frappe.render_template(data_template, get_print_context(doc, 0))
+    full_html = f"""
+    <html>
+    <head>
+        <style>
+           {css}
+        </style>
+    </head>
+    <body background:#FFF">
+     {html}
+    </body>
+    </html>
+    """
+
+    options = {
+        'format': 'png',
+        'width': "576",
+        'disable-smart-width': '',
+        'quiet': '',
+        'zoom': '2',             # Important for scaling text and layout sharply
+    }
+    
+    # Convert HTML to PNG (in memory)
+    img_bytes = imgkit.from_string(full_html, False, options=options)
+    
+    # Process image for thermal printer
+    with Image.open(BytesIO(img_bytes)) as img:
+        # Convert to 1-bit black and white
+        img = img.convert('1')
+        
+        # Save to bytes
+        output = BytesIO()
+        img.save(output, format='PNG')
+        img_bytes = output.getvalue()
+    
+    # Convert to base64 and return as data URI
+    base64_img = base64.b64encode(img_bytes).decode('utf-8')
+    return f"data:image/png;base64,{base64_img}"

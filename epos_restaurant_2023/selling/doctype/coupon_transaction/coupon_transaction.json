@@ -26,6 +26,7 @@
   "transaction_date",
   "sale_product",
   "product_code",
+  "expired_date",
   "column_break_dmry",
   "input_actual_amount",
   "actual_amount",
@@ -283,11 +284,16 @@
    "print_hide": 1,
    "read_only": 1,
    "report_hide": 1
+  },
+  {
+   "fieldname": "expired_date",
+   "fieldtype": "Datetime",
+   "label": "Expired Date"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-16 17:23:28.154847",
+ "modified": "2025-07-22 16:57:14.341966",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Transaction",

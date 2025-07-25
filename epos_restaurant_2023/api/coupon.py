@@ -1,6 +1,6 @@
 import frappe
 from frappe import _
-
+import datetime
 @frappe.whitelist()
 def check_coupon_code(coupon_code):
     data = frappe.db.get_list('Coupon Codes', filters={
@@ -110,7 +110,8 @@ def get_coupon_detail(coupon_code):
             pos_profile
         from `tabCoupon Transaction` 
         where 
-        coupon_code=%(coupon_code)s 
+        coupon_code=%(coupon_code)s and 
+        status not in ('Deleted')
         order by creation
     """
     data = frappe.db.sql(sql,{"coupon_code":coupon_code},as_dict=1)
@@ -132,10 +133,13 @@ def check_coupon_code_for_top_up(coupon_code):
         'coupon':  coupon_code,
         "coupon_status":"Used"
     },
-    fields=["name","coupon","coupon_status"]
+    fields=["name","coupon","coupon_status","expired_date"]
     )
     if not data:
         frappe.throw(_("This coupon number is not a used coupon number"))
+
+    if   datetime.datetime.now() > data[0].expired_date:
+        frappe.throw(_("This coupon code is expired"))
 
 
     sql = """select 
@@ -197,17 +201,36 @@ def check_coupon_code_for_top_up(coupon_code):
 @frappe.whitelist()
 def check_coupon_code_for_redeem(coupon_code):
     if not frappe.db.exists("Coupon Codes",{"coupon":coupon_code}):
-        frappe.throw(_("Coupon code not found"))
+        frappe.throw(_("This coupon code does not exist in the system"))
 
 
     data = frappe.db.get_list('Coupon Codes', filters={
-        'coupon':  coupon_code,
-        "coupon_status":"Used"
+        'coupon':  coupon_code
     },
-    fields=["name","coupon","coupon_status"]
+    order_by='creation desc',
+    page_length=1,
+    fields=["name","coupon","coupon_status","expired_date"]
     )
+ 
+    # validate expiredate
     if not data:
+        frappe.throw(_("This coupon code does not exist in the system"))
+
+    if data[0].coupon_status =="Unused":
         frappe.throw(_("This coupon number is not a used coupon number"))
+    
+    if data[0].coupon_status=="Redeemed":
+        frappe.throw(_("This coupon code is already redeemed"))
+        
+    if data[0].coupon_status=="Expired":
+        frappe.throw(_("This coupon code is expired"))  
+
+    
+    if data[0].coupon_status=="Used":
+        if   datetime.datetime.now() > data[0].expired_date:
+            frappe.throw(_("This coupon code is expired"))   
+    
+    
 
 
     sql = """select 
