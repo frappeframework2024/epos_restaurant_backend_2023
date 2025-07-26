@@ -19,8 +19,20 @@ class ModifierCode(Document):
 		frappe.clear_document_cache("Modifier Code",self.name)
 
 	def after_rename(self, old_name,new_name,merge):
-		products = frappe.db.sql("""select name from `tabProduct` where disabled=0""",as_dict=1)
+		frappe.enqueue("epos_restaurant_2023.inventory.doctype.modifier_code.modifier_code.update_temp_menu_after_rename", queue='short', old_name=old_name, new_name=new_name)
+
+@frappe.whitelist()
+def update_temp_menu_after_rename(old_name, new_name):
+	from epos_restaurant_2023.inventory.doctype.product.product import add_product_to_temp_menu
+
+	frappe.db.sql("""UPDATE `tabModifiers` SET modifier_code = '{0}' WHERE modifier_code = '{1}'""".format(new_name, old_name))
+	frappe.db.commit()
+
+	product_ids = frappe.db.sql("""SELECT parent FROM `tabModifiers` WHERE modifier_code = '{0}'""".format(new_name),as_dict=1)
+	product_names = [d.get("parent") for d in product_ids]
+	if product_names:
+		products = frappe.db.sql("""SELECT name FROM `tabProduct` WHERE name IN %(product_names)s""", {"product_names": product_names}, as_dict=1)
 		for p in products:
-			a = frappe.get_doc("Product",p.get("name"))
-			a.note = "Rename Modifier Code From {} To {}".format(old_name,new_name)
-			a.save()
+			product_doc = frappe.get_doc("Product", p.get("name"))
+			add_product_to_temp_menu(product_doc)
+		frappe.db.commit()
