@@ -7,6 +7,7 @@
  "field_order": [
   "posting_date",
   "account",
+  "account_type",
   "credit_amount",
   "debit_amount",
   "againt",
@@ -132,12 +133,21 @@
    "fieldname": "party_name",
    "fieldtype": "Data",
    "label": "Party Name"
+  },
+  {
+   "fetch_from": "account.account_type",
+   "fieldname": "account_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Account Type",
+   "options": "Chart Of Account",
+   "search_index": 1
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-14 10:00:53.000501",
+ "modified": "2025-07-26 12:18:39.779862",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "General Ledger",

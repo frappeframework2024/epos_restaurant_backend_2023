@@ -22,7 +22,6 @@ class Product(Document):
 				self.append("product_variants",a)
 		if self.flags.ignore_validate==True:
 			return 
-
 		if self.is_combo_menu==1:
 			self.is_recipe=0
 			if self.is_inventory_product:

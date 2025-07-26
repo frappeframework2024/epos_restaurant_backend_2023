@@ -17,3 +17,10 @@ class ModifierCode(Document):
 
 	def  on_update(self):
 		frappe.clear_document_cache("Modifier Code",self.name)
+
+	def after_rename(self, old_name,new_name,merge):
+		products = frappe.db.sql("""select name from `tabProduct` where disabled=0""",as_dict=1)
+		for p in products:
+			a = frappe.get_doc("Product",p.get("name"))
+			a.note = "Rename Modifier Code From {} To {}".format(old_name,new_name)
+			a.save()

@@ -12,6 +12,7 @@ def get_settings(station_name=None):
     data["app_logo"] =  frappe.get_cached_value("ePOS Settings",None, "epos_logo") 
     data["currency"] =  frappe.get_cached_value("ePOS Settings",None, "currency") 
     data["second_currency"] =  frappe.get_cached_value("ePOS Settings",None, "second_currency") 
+    data["exchange_rate_main_currency"] =  frappe.get_cached_value("ePOS Settings",None, "exchange_rate_main_currency") 
 
     currency = frappe.get_cached_doc("Currency", data["currency"])
     data["currency_symbol"] =currency.symbol
@@ -64,7 +65,9 @@ def get_exchange_rate():
 
     second_currency = frappe.get_cached_value("ePOS Settings",None, "second_currency")
     if exchange_rate_main_currency == second_currency:
-        second_currency  = main_currency
+        main_currency = exchange_rate_main_currency
+        second_currency  = frappe.get_cached_value("ePOS Settings",None, "currency")
+       
     
     exchange_rate = frappe.db.sql("""select 
                                         posting_date,

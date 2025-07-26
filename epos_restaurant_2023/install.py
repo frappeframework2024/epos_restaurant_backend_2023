@@ -204,6 +204,7 @@ def reset_sale_transaction():
             frappe.db.sql("delete from `tabCoupon Shift`")
             frappe.db.sql("delete from `tabCoupon Transaction`")
             frappe.db.sql("delete from `tabStore Payment`") 
+            frappe.db.sql("delete from `tabStore Payment Type`") 
             frappe.db.sql("update  `tabCoupon Codes` set coupon_status='Unused',expired_date=null,sale='',working_day='',cashier_shift=''")
 
             

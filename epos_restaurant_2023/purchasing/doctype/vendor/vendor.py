@@ -43,17 +43,19 @@ def update_store_payment_balance(vendor=""):
 
 
 
+
 @frappe.whitelist()
 def get_vendor_credit_balance(vendor, date):
-    
-    sql="select sum(credit_amount - debit_amount) as total from `tabGeneral Ledger` where party = %(vendor)s and posting_date<%(date)s"
+    update_account_type_to_gl_entery()
+    sql="select sum(credit_amount - debit_amount) as total from `tabGeneral Ledger` where party = %(vendor)s and posting_date<%(date)s and account_type = 'Payable'"
+
     filter={"vendor":vendor,"date":date}
     data = frappe.db.sql(sql,filter,as_dict=1)
     return_data = {}
     if (data):
         return_data["opening_balance"] = data[0].get("total") or 0
     # current credit
-    sql="select sum(credit_amount) as total_credit,sum(debit_amount) as total_debit from `tabGeneral Ledger` where party = %(vendor)s and posting_date=%(date)s"
+    sql="select sum(credit_amount) as total_credit,sum(debit_amount) as total_debit from `tabGeneral Ledger` where   account_type = 'Payable' and party = %(vendor)s and posting_date=%(date)s"
     
     data = frappe.db.sql(sql,filter,as_dict=1)
     if (data):
@@ -63,4 +65,16 @@ def get_vendor_credit_balance(vendor, date):
     return_data["balance"] = (return_data.get("opening_balance") +      return_data["credit"] ) -  return_data["debit"]
     return return_data 
     
+
+def update_account_type_to_gl_entery():
+    sql ="""
+        update `tabGeneral Ledger` a
+        join `tabChart Of Account` b on b.name = a.account
+        set
+            a.account_type = b.account_type
+        where
+            coalesce(a.account_type,'') = ''
+    """
+    frappe.db.sql(sql)
+    frappe.db.commit()
 
