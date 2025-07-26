@@ -730,6 +730,7 @@ def get_stock_location_product_info(product_code=None, stock_location=None):
 		return result[0]
 	return {'cost':0}
 
+@frappe.whitelist()
 def add_product_to_temp_menu(self):
 	frappe.db.sql("delete from `tabTemp Product Menu` where product_code='{}'".format(self.name))
 	if len(self.pos_menus or []) > 0 and self.disabled == 0 and self.allow_sale == 1:
