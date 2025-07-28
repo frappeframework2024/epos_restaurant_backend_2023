@@ -704,4 +704,59 @@ def update_use_coupon_amount(coupon_code):
         frappe.db.commit()
 
 
+@frappe.whitelist( methods=['POST'])
+def get_store_account(pos_profile): 
+    pression = 2
+    default_vendor = frappe.get_value("POS Profile",pos_profile,"default_vendor")
+    sql = """select 
+        abs( sum(actual_amount)) as total_actual_amount,
+        abs(sum(coupon_amount)) as total_coupon_amount
+    from `tabCoupon Transaction` 
+    where pos_profile = %(pos_profile)s 
+    and transaction_type in ('Use')
+    and status in ('Active','Locked')"""
+    data = frappe.db.sql(sql,{"pos_profile":pos_profile},as_dict=1)
+    if data:
+        total_coupon_amount =round( data[0].get("total_coupon_amount",0),pression)
+        total_actual_amount = round( data[0].get("total_actual_amount",0),pression)
+        available_balance = total_actual_amount
+
+        sql_vendor = """select sum(payment_amount) as total_withdrawal from `tabStore Payment` where vendor = %(vendor)s"""
+        data_vendor = frappe.db.sql(sql_vendor,{"vendor":default_vendor},as_dict=1)
+        if data_vendor:            
+            total_withdrawal = round( data_vendor[0].get("total_withdrawal",0),pression)
+            available_balance = round( total_actual_amount - total_withdrawal,pression)
+            return {
+                "actual_amount":total_actual_amount,   
+                "coupon_amount":total_coupon_amount,
+                "withdrawal":total_withdrawal,
+                "available_balance":available_balance
+            }   
+
+        return {
+            "actual_amount":total_actual_amount,   
+            "coupon_amount":total_coupon_amount,
+            "withdrawal":0,
+            "available_balance":available_balance
+        }
+
+    return {
+        "actual_amount":0,  
+        "coupon_amount":0,
+        "withdrawal":0,
+        "available_balance":0
+    }
+
+
+@frappe.whitelist( methods=['POST'])
+def get_store_payment(param):
+    pression = 2
+    default_vendor = frappe.get_value("POS Profile",param["pos_profile"],"default_vendor")
+    sql_vendor = """select name, posting_date, payment_amount as withdrawal, modified from `tabStore Payment` where vendor = %(vendor)s order by posting_date desc, modified desc limit 1"""
+    if param.get("start_date") and param.get("end_date"):
+        sql_vendor += " and posting_date between %(start_date)s and %(end_date)s"
+    
+    data_vendor = frappe.db.sql(sql_vendor,{"vendor":default_vendor},as_dict=1)
+
+    return data_vendor
 

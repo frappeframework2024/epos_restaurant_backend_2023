@@ -35,6 +35,14 @@ frappe.query_reports["General Ledger"] = {
 			on_change: function (query_report) {},
 		},
 		{
+			"fieldname":"account_type",
+			"label": __("Account Type"),
+			"fieldtype": "Select",
+			"options": "\nReceivable\nPayable\nCash\nBank\nIncome\nExpense\nTemporary",
+			
+			on_change: function (query_report) {},
+		},
+		{
 			"fieldname":"account",
 			"label": __("Account"),
 			"fieldtype": "MultiSelectList",

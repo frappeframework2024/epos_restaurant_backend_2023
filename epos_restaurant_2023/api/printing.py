@@ -17,7 +17,7 @@ from escpos import *
 from epos_restaurant_2023.api.pdf import get_pdf
 
 def get_print_context(doc, seat_number = "", reprint=0, sale_products= [],printer_name=None):
-    setting = frappe.get_doc("POS Config", frappe.db.get_value("POS Profile",doc.pos_profile, "pos_config"))
+    setting = frappe.get_cached_doc("POS Config", frappe.get_cached_value("POS Profile",doc.pos_profile, "pos_config"))
     
     for sp in [d for d in sale_products if "combo_menu_data" in d and d["combo_menu_data"]]:
         sp["combo_menu_data"] = json.loads(sp["combo_menu_data"])

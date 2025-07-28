@@ -145,7 +145,10 @@ def get_data(filters):
 	if filters.voucher_no:
 		filter += " and voucher_number like '%{0}%'".format(filters.voucher_no)
 	if (filters.show_cancelled or 0) == 0:
-		filter += " and is_cancelled = 0"
+		filter += " and is_cancelled = 0 "
+	if filters.account_type and filters.account_type != "":
+		 
+		filter += " and coalesce(account_type,'') = '{}'".format(filters.account_type) 
 	sql = """
 			select
 			posting_date,

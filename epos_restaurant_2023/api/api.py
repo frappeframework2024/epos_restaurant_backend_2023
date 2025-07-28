@@ -842,7 +842,9 @@ def get_pos_letter_head(doctype):
         return arr
 
 @frappe.whitelist()
-def get_close_shift_summary(cashier_shift, show_system_closed_amount = 1):
+def get_close_shift_summary(cashier_shift="", show_system_closed_amount = 1):
+    if not cashier_shift:
+        cashier_shift = "CS2025-0001"
     data = []
     doc = frappe.get_doc("Cashier Shift",cashier_shift)
     
@@ -947,6 +949,33 @@ def get_close_shift_summary(cashier_shift, show_system_closed_amount = 1):
             "different_amount":0,
             "currency":voucher_payment.currency
         })
+
+    # coupon payment
+    coupon_payments= frappe.db.sql("""
+                                select 
+                                    spt.payment_type as payment_method,
+                                   spt.exchange_rate,
+                                   0 as input_amount, 
+                                   0 as opening_amount,
+                                    0 as input_close_amount,
+                                   sum(spt.input_amount * -1) as input_system_close_amount, 
+                                   sum(spt.payment_amount *-1) as system_close_amount, 
+                                   0 as different_amount, 
+                                   spt.currency 
+                                from `tabStore Payment Type` spt
+                                   inner join `tabStore Payment` sp on sp.name = spt.parent
+                                where
+                                    sp.cashier_shift = %(cashier_shift)s and
+                                    sp.docstatus = 1 
+                                group by
+                                    spt.payment_type,
+                                    spt.exchange_rate,
+                                    spt.currency
+
+        """,{"cashier_shift":cashier_shift},as_dict=1)
+    
+    data.extend(coupon_payments)
+
     
         
     return get_cash_float(data, show_system_closed_amount)

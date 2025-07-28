@@ -1,6 +1,6 @@
 # Copyright (c) 2022, Tes Pheakdey and contributors
 # For license information, please see license.txt
-
+from frappe import _
 import frappe
 from frappe.model.document import Document
 from frappe.model.naming import NamingSeries
@@ -66,6 +66,14 @@ class WorkingDay(Document):
 				naming_series = NamingSeries(prefix)
 				naming_series.update_counter(0)
 			# self.send_mail_closed_day()
+
+		# validte coupon shift opened then foce to close coupon shift first
+		# for business sell coupon
+		if self.is_closed == 1:
+			if frappe.db.exists("Coupon Shift", {"is_closed":0}):
+				frappe.throw(_("Please close all pending coupon shift before closing working day."))
+
+		
 
 	def on_update(self):
 		if 'edoor' in frappe.get_installed_apps():

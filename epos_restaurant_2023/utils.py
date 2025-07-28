@@ -53,3 +53,9 @@ def get_room_rate(hotel_name, room_type):
 	if data:
 		return data[0]["rate"]
 	return 0
+
+
+@frappe.whitelist(methods="POST")
+def change_language(user,lang):
+    frappe.db.set_value("User",user,"language",lang)
+    return "Done"

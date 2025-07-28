@@ -1,0 +1,486 @@
+welcome,សូមស្វាគមន៍មកកាន់កម្មវិធីរបស់ខ្ញុំ!,
+greeting,សួស្តី {name}!,
+Add Workspace,បញ្ជូល Workspace,
+ePOS by ESTC,ePOS ដោយ eSTC,
+Remove Property,លុប Property,
+Edit Property,កែប្រែព័ត៌មាន,
+Edit,កែប្រែ,
+Please enter your business code, username and password,សូមបញ្ជូលព័ត៌មានពាណិជ្ជកម្ម, ឈ្មោះប្រើប្រាស់ និងលេខសម្ងាត់របស់អ្នក,
+Property Code,លេខកូដពាណិជ្ជកម្ម,
+Username,ឈ្មោះប្រើប្រាស់,
+Password,លេខសម្ងាត់,
+Save Workspace,រក្សាទុក Workspace,
+Loading,កំពុងដំណើរការ,
+Loading...,កំពុងដំណើរការ...,
+Please enter property code,សូមបញ្ជូលលេខកូដពាណិជ្ជកម្ម,
+Loging In...,កំពុងចូលប្រព័ន្ធ...,
+Change Language,ប្តូរភាសារ,
+Help,ជំនួយ,
+My Profile,ព័ត៌មានរបស់អ្នក,
+Logout,ចាក់ចេញ,
+Occupy,បន្ទប់មានភ្ងៀវ,
+Room Occupy,បន្ទប់មានភ្ងៀវ,
+Arrival,ភ្ងៀវត្រូវចូល,
+Departure,ភ្ងៀវត្រូវចេញ,
+Stay Over,ភ្ងៀវស្នាក់នៅបន្ត,
+Vacant Room,បន្ទប់ទំនេរ,
+Total Rooms,បន្ទប់សរុប,
+Summary,ព័ត៌មានសង្ខេប,
+Good Morning!,អរុណសួស្ដី!,
+Good Afternoon!,ទិវាសួស្តី,
+Good Evening!,សាយន្តសួស្តី,
+Welcome to your workspace.,សូមស្វាគមន៍មកកាន់កន្លែងធ្វើការរបស់អ្នក,
+Monday,ថ្ងៃច័ន្ទ,
+Tuesday,ថ្ងៃអង្គារ,
+Wednesday,ថ្ងៃពុធ,
+Thursday,ថ្ងៃព្រហស្បតិ៍,
+Friday,ថ្ងៃសុក្រ,
+Saturday,ថ្ងៃសៅរ៍,
+Sunday,ថ្ងៃអាទិត្យ,
+January,ខែមករា,
+February,ខែកុម្ភៈ,
+March,មីនា,
+April,មេសា,
+May,ឧសភា,
+June,មិថុនា,
+July,កក្កដា,
+August,សីហា,
+September,កញ្ញា,
+October,តុលា,
+November,វិច្ឆិកា,
+December,ធ្នូ,
+Today,ថ្ងៃនេះ,
+Tomorrow,ថ្ងៃស្អែក,
+on_date_time,នៅថ្ងៃទី,
+Occupancy,ភាគរយនៃការកាស្នាក់នៅ,
+Home,ទំព័រដើម,
+Room,បន្ទប់,
+Task,កិច្ចការ,
+Stays,ភ្ងៀវស្នាក់នៅ,
+reservation_menu,ភ្ងៀវស្នាក់នៅ,
+Report,របាយការណ៌,
+Reports,របាយការណ៌,
+Recent List,បញ្ជីថ្មីៗ,
+Room Status,ស្ថានភាពបន្ទប់,
+Occupy Dirty,បន្ទប់មានភ្ងៀវមិនទាន់សម្អាត,
+Occupy Cleaned,បន្ទប់មានភ្ងៀវស្អាត,
+Vacant Clean,បន្ទប់ទំនេរស្អាត,
+Vacant Dirty,បន្ទប់ទំនេរមិនទាន់សម្អាត,
+Room Block,បន្ទប់បិទ,
+Lost and Found,បាត់របស់ និងរកឃើញ,
+Housekeeping SOP,នីតិវិធីស្តង់ដារផ្នែកអនាម័យ,
+Settings,កំណត់,
+Setting,កំណត់,
+Checking property code,ត្រួតពិនិត្យលេខកូដពាណិជ្ជកម្មរបស់អ្នក,
+Loging In,កំពុងចូលប្រព័ន្ធ,
+property_not_exist_message,លេខកូដ {property_code} មិនមានក្នុងប្រព័ន្ធទេ,
+Check Property Information,ត្រួតពិនិត្យព័ត៌មានពាណិជ្ជកម្ម,
+OK,យល់ព្រម,
+Ok,យល់ព្រម,
+ok,យល់ព្រម,
+View All,មើលទាំងអស់,
+View all Tasks,មើលកិច្ចការទាំងអស់,
+My Task,កិច្ចការរបស់ខ្ញុំ,
+POS Station Name,ម៉ាស៊ីនគិតលុយ,
+No sale note,គ្មានកំណត់ចំណាំ,
+Description,បរិយាយ,
+Bill #,លេខ Bill,
+Business Branch,សាខា,
+Sale Product List,តារាងទំនិញ,
+Working Day/Cashier Shift,ថ្ងៃ និងវេណធ្វើការ,
+Cash Dollar,ប្រាក់ដុល្លា,
+Please enter your pin code,សូមបញ្ជូលលេខ PIN កូដរបស់អ្នក,
+All Task,កិច្ចការទាំងអស់,
+In Progress,កំពុងដំណើរការ,
+New,ថ្មី,
+Clear Selected,លុបការជ្រើសរើស,
+Search,ស្វែងរក,
+Jan,មករា,
+Feb,កុម្ភៈ,
+Mar,មីនា,
+Apr,មេសា,
+Jun,មិថុនា,
+Jul,កក្កដា,
+Aug,សីហា,
+Sep,កញ្ញា,
+Oct,តុលា,
+Nov,វិច្ឆិកា,
+Dec,ធ្នូ,
+Room Cleaning,សម្អាតបន្ទប់,
+Customer Management,គ្រប់គ្រងអតិថិជន,
+Shift Management,គ្រប់គ្រងវេណលក់,
+Sale & Refund,គ្រប់គ្រងការលក់,
+Inventory,បញ្ជីសារពើភណ្ឌ,
+All Coupon Codes,បញ្ជីលេខគូប៉ុងទាំងអស់,
+Coupon Codes,លេខគូប៉ុង,
+Sold Coupon,បញ្ជីលេខគូប៉ុងបានលក់,
+Register Coupon,បញ្ជូលលេខគូប៉ុង,
+Use Coupon Transaction,ប្រតិបត្តការប្រើគូប៉ុង,
+Coupon Register,បញ្ជូលលេខគូប៉ុង,
+Coupon Management,គ្រប់គ្រងគូប៉ុង,
+Mark as Done,រួចរាល់,
+Sale #,លេខវិកយប័ត្រ,
+Close Date,ម៉ោងបិទលក់,
+View Detail,មើលលម្អិត,
+Station,កន្លែងលក់,
+Check Coupon Code,ត្រួតពិនិត្យលេខគូប៉ុងកូដ,
+Sale Product Dis.,សរុបបញ្ចុះតម្លៃលើទំនិញ,
+Check coupon code,ត្រួតពិនិត្យលេខគូប៉ុងកូដ,
+Coupon Transaction Summary,សង្ខេបប្រតិបត្តការគូប៉ុង,
+Transaction Summary,ប្រតិបត្តការសង្ខេប,
+Parking Area,កន្លែងចតឡាន,
+Ongoing,ដំណើរការ,
+Complete,បញ្ចប់,
+Cancelled,បានលុបចោល,
+Dashboard,ផ្ទាំងគ្រប់គ្រង,
+Sale Dashboard,ផ្ទាំងគ្រប់គ្រងការលក់,
+Close Working Day,បិទថ្ងៃលក់,
+Start Working Day,បើកថ្ងៃលក់,
+Close Cashier Shift,បិទវេណលក់,
+Close Shift,បិទវេណលក់,
+New Sale Coupon,លក់គូប៉ុងថ្មី,
+Quick Action,ប្រតិបត្តការរហ័ស,
+New Top Up,បញ្ជូល Top Up ថ្មី,
+New Redeem,បញ្ជូលការដកប្រាក់ថ្មី,
+Start Cashier Shift,បើកវេណលក់,
+Start Shift,បើកវេណលក់,
+Stock Adjustment,កែសម្រួលស្តុក,
+Sale,លក់,
+Cash Float,ប្រាក់បើកឲ្យដំបូង,
+Opening Amount,ប្រាក់ដើមគ្រា,
+System Close Amount,ប្រាក់បិទបញ្ជីរដោយប្រព័ន្ធ,
+System Closed Amount,ប្រាក់បិទបញ្ជីរដោយប្រព័ន្ធ,
+Total Closes Amount,សរុបប្រាក់បិទបញ្ជី,
+Total Difference Amount,សរុបប្រាក់លម្អៀង,
+Product List,តារាងបញ្ចីទំនិញ,
+Last modified:,កែប្រែដោយ,
+Modified By,កែប្រែដោយ,
+Modified,កែប្រែចុងក្រោយ,
+Modified Date,ថ្ងៃកែប្រែចុងក្រោយ,
+Last Modified,កែប្រែចុងក្រោយ,
+Sale Detail:,ព័ត៌មានលក់,
+Sale Detail,ព័ត៌មានលក់,
+Customer Detail:,ព័ត៌មានអតិថិជន,
+Customer Detail,ព័ត៌មានអតិថិជន,
+Branch,សាខា,
+Bill Number,លេខវិក័យប័ត្រ,
+Posting Date,កាលបរិច្ឆេទបញ្ចូល,
+Table #,លេខតុ,
+Payment successfully,បង់ប្រាក់បានជោគជ័យ,
+To Date,ដល់,
+Price Rule,កម្រិតតម្លៃ,
+Select,ជ្រើសរើស,
+Today Revenue,ចំណូលថ្ងៃនេះ,
+Today Bill / QTY,ចនួនវិកយប័ត្រ/ចំនួន,
+Stock Location,ទីតាំងស្តុក,
+Outlet,កន្លែងលក់,
+Working Day,ថ្ងៃធ្វើការ,
+MTD Revenue,ចំណូលប្រចាំខែ,
+Coupon Amount Summary,សង្ខេបចំនួនទឹកប្រាក់ក្នុងគូប៉ុង,
+Cashier Shift,វេនអ្នកគិតលុយ,
+Payment,បង់ប្រាក់,
+Sale + Top Up,លក់ + បញ្ជូលទឹកប្រាក់បន្ថែម,
+Use,ប្រើប្រាស់គូប៉ុង,
+Total,សរុប,
+USD,ដុល្លា,
+KHR,រៀល,
+Quick Pay,ទូទាត់រហ័ស,
+Delete this Order,លុបវិកយប័ត្រនេះ,
+Mores,ផ្សេងៗ,
+Set Reference Number,កំណត់លេខយោង,
+View Order Detail,មើលប៉ុងលម្អិត,
+Print Bill,បោះពុម្ភវិកយប័ត្រ,
+Total Quantity,ចំនួនសរុប,
+Created by,បង្កើតដោយ,
+Use Amount,ទឹកប្រាក់ប្រើប្រាស់,
+Total/Balance,សរុប/សមតុល្យ,
+Transaction Type,ប្រភេទប្រតិបត្តិការណ៌,
+Are you sure you want to delete this coupon code?,តើអ្នកពិតជាចង់លុបលេខគូប៉ុងនេះមែនទេ?,
+Delete Coupon,លុបគូប៉ុង,
+Today Bill / Total Coupon,សរុបវិកយប័ត្រ/ចំនួនគូប៉ុង,
+Show/Hide Summary,បង្ហាញ/លាក់ព័ត៌មានសង្ខេប,
+Closed by,បិទដោយ,
+Start Date,ថ្ងៃចាប់ផ្តើម,
+Working Day #,លេខថ្ងៃធ្វើការ,
+Top Up,ដាក់ប្រាក់បន្ថែម,
+Cashier Shift #,លេខវេណលក់,
+Coupon Value,តម្លៃគូប៉ុង,
+Coupon value,តម្លៃគូប៉ុង,
+Total Coupon Value,សរុបតម្លៃគូប៉ុង,
+End Date,ថ្ងៃបញ្ចប់,
+Redeem,ដកប្រាក់,
+Redeemed,ដកប្រាក់,
+Balance,សមតុល្យ,
+Coupon #,លេខគូប៉ុង,
+Invoice #,លេខវិកយប័ត្រ,
+POS Station,ម៉ាស៊ីនលក់,
+Coupon Transaction,ប្រតិបត្តិការប្រើប្រាស់គូប៉ុង,
+Coupon Transactions,ប្រតិបត្តិការប្រើប្រាស់គូប៉ុង,
+Actual Amount,តម្លៃជាក់ស្តែង,
+Total Tax,ពន្ធសរុប,
+This coupon is register by:,លេខគូប៉ុងនេះត្រូវបានបង្កើតដោយ:,
+This coupon is register by,លេខគូប៉ុងនេះត្រូវបានបង្កើតដោយ:,
+Payment Breakdown,បែងចែកការទូទាត់,
+Daily Sale Chart,តារាងលក់ប្រចាំថ្ងៃ,
+Recent Order,ការបញ្ជាទិញថ្មីៗ,
+View all orders,មើលការបញ្ជាទិញទាំងអស់,
+Pending Order,បញ្ជាទិញកំពុងរងចាំ,
+Please enter price,សូមបញ្ជូលតម្លៃ,
+Change Profile,ប្តូរប្រវត្តិរូប,
+Take Photo,ផ្ទុករូបភាព,
+Upload Photo,ផ្ទុករូបភាព,
+Remove File,លុបឯកសារ,
+Show more,បង្ហាញព័ត៌មានទាំងអស់,
+Show More,បង្ហាញព័ត៌មានទាំងអស់,
+Hide Info,លាក់ព័ត៌មាន,
+Product Category,ប្រភេទផលិតផល,
+Unit,ឯកតា,
+Price,តម្លៃ,
+Note,កំណត់ចំណាំ,
+Created By,បង្កើតដោយ,
+days ago,ថ្ងៃមុន,
+minutes ago,នាទីមុន,
+hours ago,ម៉ោងមុន,
+a day ago,ម្សិលមិញ,
+Exchange Rate,អត្រាប្ដូរប្រាក់,
+Created Date,កាលបរិច្ឆេទបង្កើត,
+Products,ផលិតផល,
+Total Transaction,ចំនួនប្រតិបត្តិការណ៌,
+Print,បោះពុម្ភ,
+Stock Adjustment History,ប្រវត្តិកែស្តុក,
+Quantity,បរិមាណ,
+Search By Product Name,ស្វែងរកតាមឈ្មោះផលិតផល,
+Pleas Select Stock Location,សូមជ្រើសរើសទីតាំងស្តុក,
+Code,កូដ,
+Sale Date,ថ្ងៃលក់,
+Current Quantity,បរិមាណបច្ចុប្បន្ន,
+Sub Total,សរុបរង,
+New Quantity,បរិមាណថ្មី,
+Receipt List,តារាងវិកយប័ត្រ,
+New Cost,ថ្លៃដើមថ្មី,
+Different,លម្អៀង,
+Prices,តម្លៃ,
+Product Price,តម្លៃផលិតផល,
+Product,ផលិតផល,
+Between Date,ចន្លោះថ្ងៃ,
+Equal,ស្មើរ,
+Greater than,ធំជាង,
+Greater than and Equal,ធំជាងឬស្មើរ,
+Less than,តូចជាង,
+Less than and Equal,តូចជាងឬស្មើរ,
+Delete,លុប,
+Save,រក្សាទុក,
+Cancel,បោះបង់,
+Category,ប្រភេទ,
+Cost,ថ្លៃដើម,
+Grand Total,តម្លៃសរុប,
+Product Name Kh,ឈ្មោះផលិតផលជាភាសាខ្មែរ,
+Product Name En,ឈ្មោះផលិតផលជាអង់គ្លេស,
+Revenue Group,ក្រុមចំណូល,
+Product Information,ព័ត៌៌មានផលិតផល,
+On Date,នៅថ្ងៃទី,
+Select Date,ជ្រើសរើសកាលបរិច្ឆេទ,
+Yesterday,ម្សិលមិញ,
+This Week,សប្ដាហ៍នេះ,
+Last Week,សប្ដាហ៍មុន,
+Next Week,សប្ដាហ៍ក្រោយ,
+This Month,ខែនេះ,
+Last Month,ខែមុន,
+Next Month,ខែក្រោយ,
+This Quarter,ត្រីមាសនេះ,
+Last Quarter,ត្រីមាសមុន,
+This Year,ឆ្នាំនេះ,
+Date Range,ចន្លោះថ្ងៃ,
+Last Year,ឆ្នាំមុន,
+Total Discount,បញ្ចុះតម្លៃសរុប,
+Items Discount,បញ្ចុះតម្លៃលើទំនិញ,
+Sale Discount,លក់បញ្ចុះតម្លៃ,
+Discountable Amount,ចំនួនទឹកប្រាក់ដែលអាចបញ្ចុះតម្លៃ,
+Add Price,បញ្ចូលតម្លៃ,
+Delete Price,លុបតម្លៃ,
+QTY,ចំនួន,
+QTY:,ចំនួន:,
+Discount,បញ្ចុះតម្លៃ,
+Tax,ពន្ធ,
+Total Orders,បញ្ជាទិញសរុប,
+Total Amt,ទឹកប្រាក់សរុប,
+Profit,ប្រាក់ចំណេញ,
+Total Revenue,ប្រាក់ចំណូលសរុប,
+Total Cost,ថ្លៃដើមសរុប,
+Total Gross Profit,ប្រាក់ចំណេញសរុប,
+Date,កាលបរិច្ឆេទ,
+Total Commission,កម្រៃជើងសារសរុប,
+Credit Card,កាតឥណទាន,
+Total Payment,ទូទាត់ប្រាក់សរុប,
+Other,ផ្សេងទៀត,
+User,អ្នកប្រើប្រាស់
+Customer,អតិថិជន
+Revenue,ប្រាក់ចំណូល
+Sale Reports,របាយការណ៌លក់
+Show/Hide Chart,បង្ហាញ/លាក់ក្រាហ្វ
+Redeem List,បញ្ជីប្តូរគូប៉ុង
+Sale Coupon,លក់គូប៉ុង
+Sale Coupon List,បញ្ជីលក់គូប៉ុង
+Top Up Coupon List,បញ្ជីបញ្ចូលគូប៉ុង
+Top Up Coupon,បញ្ចូលគូប៉ុង
+Coupon Code,លេខគូប៉ុង
+Total Coupon:,សរុបគូប៉ុង
+Total Coupon,សរុបគូប៉ុង
+Total Amount:,សរុបតម្លៃ
+Total Amount,សរុបតម្លៃ
+Scan to Add,ស្កេនដើម្បីបញ្ជូល
+Scan to Remove,ស្កេនដើម្បីលុប
+Please scan coupon code,សូមបញ្ជូលលេខគូប៉ុងនៅទីនេះ
+Please enter or scan qr code,សូមបញ្ជូល ឬស្កេន QR កូដ
+Date of Birth,ថ្ងៃខែឆ្នាំកំណើត
+Customer Code,លេខកូដអតិថិជន
+Customer Name EN,ឈ្មោះអតិថិជនជាអង់គ្លេស
+Customer Name KH,ឈ្មោះអតិថិជនជាភាសាខ្មែរ
+Name Kh,ឈ្មោះជាភាសាខ្មែរ
+Note on Product,កំណត់ចំណាំអំពីផលិតផល
+More,ផ្សេងទៀត
+Company Name,ឈ្មោះក្រុមហ៊ុន
+Company,ក្រុមហ៊ុន
+Jobs,ការងារ
+Contact Infromation,ព័ត៌មានទំនាក់ទំនង
+Address & Note,អាសយដ្ឋាន & កំណត់ចំណាំ
+Address,អាសយដ្ឋាន
+Phone Number 1,លេខទូរស័ព្ទ ១
+Phone Number 2,លេខទូរស័ព្ទ ២
+Email Address,អាសយដ្ឋានអ៊ីមែល
+Add Customer,បញ្ចូលអតិថិជន
+Add new customer,បញ្ចូលអតិថិជនថ្មី
+Customer List,បញ្ជីអតិថិជន
+Please scan member card,សូមស្កេនកាតសមាជិក
+Scan Member Card,ស្កេនកាតសមាជិក
+Phone Number,លេខទូរស័ព្ទ
+Location,ទីតាំង
+Group,ក្រុម
+coupon_code_number_does_not_exist,គូប៉ុងកូដលេខ {coupon} មិនទាន់បានជ្រើសរើសទេ។
+Discount Percent,ភាគរយបញ្ចុះតម្លៃ
+Discount Amount,ចំនួនទឹកប្រាក់បញ្ចុះតម្លៃ
+No.,ល.រ
+Daily Sale Revenue,ចំណូលលក់ប្រចាំថ្ងៃ
+Totals:,សរុប:
+Sale Revenue,ចំណូលលក់
+Closed,បិទ
+Close,បិទ
+Opened,បើក
+View Graph as Bar Chart,មើលក្រាហ្វជាប្រភេទសសរ
+Recent Transactions,ប្រតិបត្តិការថ្មីៗ
+View Graph as Line Chart,មើលក្រាហ្វជាប្រភេទខ្សែបន្ទាត់
+View Data,មើលទិន្នន័យ
+Sale Breakdown by Coupon Code,ចំណូលលក់តាមប្រភេទគូប៉ុង
+Payment Type,ប្រភេទទូទាត់
+Status,ស្ថានភាព
+Cashier Shift List,តារាងវេណលក់
+Shift Type,វេណលក់
+Shift,វេណលក់
+Opened By,បើកដោយ
+Opened Date,ថ្ងៃបើក
+Payment Amount,ចំនួនទឹកប្រាក់ទូទាត់
+Cash RIEL,ប្រាក់រៀល
+Cash Riel,ប្រាក់រៀល
+ABA RIEL,ABA រៀល
+ABA Riel,ABA រៀល
+ABA Dollar,ABA ដុល្លា
+ABA DOLLAR,ABA ដុល្លា
+Revenue vs Coupon Used by Station,ចំណូល និងការប្រើប្រាស់គូប៉ុងតាមទីតាំងលក់
+Please enter your station name.,សូមបញ្ជូលឈ្មោះទីតាំងលក់
+Please enter station name,សូមបញ្ជូលឈ្មោះទីតាំងលក់
+Enter Station Name,បញ្ជូលឈ្មោះទីតាំងលក់
+Station name,ទីតាំងលក់
+Coupon Transaction List,បញ្ជីប្រតិបត្តិការប្រើប្រាស់គូប៉ុង
+Coupon Number,លេខគូប៉ុង
+Sale Summary,សង្ខេបការលក់
+Close Amount,ប្រាក់បិទបញ្ជីរ
+Difference Amount,ប្រាក់លម្អៀង
+Total Bill,សរុបវិកយប័ត្រ
+Warning,ព្រមាន
+shift_already_opened,{shift_name} ត្រូវបានបើក និងបិទរួចហើយក្នុងថ្ងៃនេះ. តើអ្នកពិតជាចង់បើកម្តងទៀតមែនទេ?
+Are you sure you want start cashier shift?,តើអ្នកពិតជាចង់បើកវេណលក់មែនទេ?
+Morning Shift,វេណព្រឹក
+Afternoon Shift,វេណរសៀល
+Night Shift,វេណយប់
+Open shift note,កំណត់ចំណាំពេលបើកវេណ
+Total Cash Float,សរុបប្រាក់បើកឲ្យដំបូង
+Go Home,ទៅទំព័រដើម
+Working Date,ថ្ងៃធ្វើការ
+There's no working day opened. Please start working day first.,អ្នកមិនទាន់បានបើកថ្ងៃលក់ទេ។ សូមបើកថ្ងៃលក់ជាមុនសិន។
+Start Working Day Now,ចាប់ផ្តើមបើកថ្ងៃធ្វើការឥឡូវនេះ
+Closed Date,ថ្ងៃបិទ
+Closed By,បិទដោយ
+Print Preview,មើលមុនបោះពុម្ព
+Download PDF,ទាញយកឯកសារ PDF
+Working Day List,បញ្ជីថ្ងៃធ្វើការ
+Coupon Amount,ចំនួនទឹកប្រាក់ក្នុងគូប៉ុង
+Select Customer,ជ្រើសរើសអតិថិជន
+View all top ups,មើលការដាក់ប្រាក់បន្ថែមទាំងអស់
+View all Coupon Transactions,មើលប្រតិបត្តិការគូប៉ុងទាំងអស់
+View all redeems,មើលការដកប្រាក់ទាំងអស់
+Coupon Status,ស្ថានភាពគូប៉ុង
+Please scan or enter your coupon code.,សូមស្កេន ឬបញ្ចូលលេខគូប៉ុងរបស់អ្នក។
+Choose Top-Up Option,ជ្រើសរើសជម្រើសបញ្ចូលទឹកប្រាក់
+Scan qr code here,ស្កេន code qr នៅទីនេះ
+Top Up Note,កំណត់ចំណាំបញ្ចូលទឹកប្រាក់
+Redeem Note,កំណត់ចំណាំដកប្រាក់
+No Record Found,មិនមានទិន្នន័យ
+empty_record_message,មិនមាន {doctype} ដែលត្រូវនិងការចម្រោះរបស់អ្នក។ សូមជម្រះចម្រោះ ដើម្បីមើល {doctype} ទាំងអស់។
+About,អំពី
+No Selected,មិនបានជ្រើសរើស
+Show Record,បង្ហាញទិន្នន័យ
+Show record,បង្ហាញទិន្នន័យ
+Showing Record,បង្ហាញទិន្នន័យ
+Showing record,បង្ហាញទិន្នន័យ
+Close shift note,កំណត់ចំណាំបិទវេណ
+Close Shift Amount,ទឹកប្រាក់បិទវេណ
+Loading more...,ទាញទិន្នន័យបន្ថែម...
+Enter Number,បញ្ជូលលេខ
+Clear,ជម្រះ
+of,នៃ
+Store Payment List,បញ្ជីទូទាត់តាមហាង
+Vendor,អ្នកផ្គត់ផ្គង់
+Vendor Name,ឈ្មោះអ្នកផ្គត់ផ្គង់
+Enter Pin Code,បញ្ជូលលេខកូដ
+Vendor Group,ក្រុមអ្នកលក់
+Total Credit Amount,ចំនួនទឹកប្រាក់ឥណទានសរុប
+Contact Name,ឈ្មោះទំនាក់ទំនង
+Province,ខេត្ត
+Credit,ឥណទាន
+Debit,Debit
+Opening Balance,សមតុល្យដើមគ្រា
+Store Detail,ព័ត៌មានលម្អិតអំពីហាង
+Store #,ហាង
+Are you sure you want to print this document?,តើអ្នកពិតជាចង់បោះពុម្ភឯកសារនេះមែនទេ?
+Store Name,ឈ្មោះហាង
+Confirm,បញ្ជាក់
+Delete Sale,លុបវិកយប័ត្រ
+Are you sure you want to delete this Sale Order?,តើអ្នកពិតជាចង់លុបវិកយប័ត្រនេះមែនទេ?
+There's cashier shift still opened. Please close cashier shift first,មានវេណលក់កំពុងតែបើក។ សូមបិទវេណលក់ជាមុនសិន មុននឹងបិទថ្ងៃលក់
+Close Cashier Shift Now,បិទវេនលក់ឥឡូវនេះ
+Store Payment,ទូទាត់តាមហាង
+Please enter payment amount,សូមបញ្ជូលទឹកប្រាក់ទូទាត់
+Unused,មិនទាន់ប្រើ
+Receive By,ទទួលដោយ
+Receive By Phone Number,លេខទូរស័ព្ទអ្នកទទួល
+Payment Method,ទូទាត់តាមរយៈ
+Input Amount,ចំនួនទឹកប្រាក់បញ្ចូល
+Store Payment Detail,ព័ត៌មានលម្អិតអំពីការទូទាត់តាមហាង
+Store Payment History,ប្រវត្តិនៃការបង់ប្រាក់
+Stores,ហាង
+Store List,បញ្ជីហាង
+View All Coupon Codes,មើលលេខគូប៉ូងទាំងអស់
+Coupon Code List,តារាងបញ្ចីលេខគូប៉ុង
+Expired Date,ថ្ងៃផុតកំណត់
+Used Coupon,បានប្រើប្រាស់
+Amount to Redeem,ទឹកប្រាក់ត្រូវដក
+Total Redeem Amount,សរុបទឹកប្រាក់ត្រូវដក
+Remaining Value,តម្លៃដែលនៅសល់
+Remaining Amount,ចំនួនទឹកប្រាក់ដែលនៅសល់
+Top Up Value,តម្លៃបញ្ចូលទឹកប្រាក់
+Top Up Amount,ចំនួនទឹកប្រាក់បញ្ចូលទឹកប្រាក់
+Total Value,តម្លៃសរុប
+Coupon Name,ឈ្មោះគូប៉ុង
+Cashier,អ្នកគិតលុយ
+By,ដោយ
+Add new Store Payment,បញ្ចូលទូទាត់តាមហាងថ្មី
