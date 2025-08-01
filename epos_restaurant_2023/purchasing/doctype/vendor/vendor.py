@@ -78,3 +78,60 @@ def update_account_type_to_gl_entery():
     frappe.db.sql(sql)
     frappe.db.commit()
 
+
+@frappe.whitelist()
+def get_store_revenue(vendor=None, posting_date=None):
+    from datetime import datetime, date
+ 
+
+    if  not posting_date:
+
+        posting_date =date.today()
+    else :
+        posting_date = frappe.utils.getdate(posting_date)
+        
+    data = []
+    vendors = []
+    if vendor:
+        vendors = [{"default_vendor":vendor}]
+    else:
+        vendors = frappe.db.sql("select default_vendor from `tabPOS Profile` where not default_vendor is null ",as_dict = 1)
+    
+    # sql = "select name, vendor_name, 0 as current_revenue, 0 as mtd_revenue, 0 as ytd_revenue from `tabVendor`"
+    sql = "select name, vendor_name, 0 as current_revenue, 0 as mtd_revenue, 0 as ytd_revenue from `tabVendor` where name in %(vendors)s"
+    data = frappe.db.sql(sql,{"vendors":[d.get("default_vendor") for d in vendors]},as_dict = 1)
+    # get current revenue 
+    get_revenue( data , posting_date, posting_date, "current_revenue")
+    get_revenue( data , posting_date.replace(day=1), posting_date, "mtd_revenue")
+    get_revenue( data , posting_date.replace(day=1,month=1), posting_date, "ytd_revenue")
+
+    if vendor:
+        if data: 
+            return data[0]
+        return {}
+
+    return data
+
+def get_revenue(data,start_date, end_date,fieldname):
+    
+    sql = """
+        select 
+            vendor,
+            sum(input_actual_amount*-1) as amount
+        from `tabCoupon Transaction` 
+        where
+            transaction_type = 'Use'  and 
+            coalesce(vendor,'') != ''  and 
+            posting_date between %(start_date)s and %(end_date)s and 
+            vendor in %(vendors)s
+        group by 
+            vendor
+    """
+    vendors = [d.get("name") for d in data]
+    revenue_data = frappe.db.sql(sql,{ "vendors":vendors, "start_date":start_date.strftime('%Y-%m-%d'), "end_date":end_date.strftime('%Y-%m-%d')},as_dict=1)
+ 
+    for rd in revenue_data:
+        vendor = [d for d in data if d.get("name") == rd.get("vendor")]
+        
+        if vendor:
+            vendor[0][fieldname] = rd.get("amount")

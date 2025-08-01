@@ -7,7 +7,18 @@ from frappe import _
 import datetime
 from frappe.utils import get_datetime
 class CouponCodes(Document):
-	
+	def validate(self):
+		# validate coupon exist with status Unused
+		if self.coupon:
+		 
+			if self.is_new():
+
+				if frappe.db.exists("Coupon Codes",{"coupon":self.coupon,"coupon_status":["in",["Unused","Used"]]}):
+					frappe.throw(_("Coupon {} code already exist").format(self.coupon))
+			else:
+				if frappe.db.exists("Coupon Codes",{"coupon":self.coupon,"coupon_status":["in",["Unused","Used"]],"name":["!=",self.name]}):
+					frappe.throw(_("Coupon {} code already exist").format(self.coupon))
+
 	def on_trash(self):
 		if frappe.db.exists("Coupon Transaction",{"coupon_code":self.name}):
 			frappe.throw(_("Cannot delete coupon code as it has transactions"))

@@ -8,6 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "coupon",
+  "coupon_register",
   "coupon_url",
   "coupon_status",
   "sale_date",
@@ -37,7 +38,9 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Coupon"
+   "label": "Coupon",
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "coupon_url",
@@ -167,11 +170,17 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Use Coupon Value"
+  },
+  {
+   "fieldname": "coupon_register",
+   "fieldtype": "Link",
+   "label": "Coupon Register",
+   "options": "Coupon Register"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-17 10:51:58.236610",
+ "modified": "2025-07-30 11:34:01.387487",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Codes",
@@ -200,6 +209,7 @@
    "share": 1
   }
  ],
+ "search_fields": "coupon",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

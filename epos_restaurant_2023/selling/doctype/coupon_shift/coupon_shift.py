@@ -19,19 +19,20 @@ class CouponShift(Document):
 		if not self.open_by :
 			self.open_by = full_name
 
-		if (self.is_new() or 0) == 0:
-			if has_value_changed(self,'posting_date') or has_value_changed(self,'pos_profile') or has_value_changed(self,'vendor') or has_value_changed(self,'is_closed'):
-				if self.is_closed == 1:
-					submit_Gl_Entry(self)
-				else:
-					if check_for_existing_GL_Entry(self) == 1:
-						cancel_Gl_Entry(self)
-		else:
-			if self.is_closed == 1:
-				submit_Gl_Entry(self)
-			else:
-				if check_for_existing_GL_Entry(self) == 1:
-					cancel_Gl_Entry(self)
+		# if (self.is_new() or 0) == 0:
+		# 	if has_value_changed(self,'posting_date') or has_value_changed(self,'pos_profile') or has_value_changed(self,'vendor') or has_value_changed(self,'is_closed'):
+		# 		if self.is_closed == 1:
+		# 			submit_Gl_Entry(self)
+		# 		else:
+		# 			if check_for_existing_GL_Entry(self) == 1:
+		# 				cancel_Gl_Entry(self)
+		# else:
+		# 	if self.is_closed == 1:
+		# 		submit_Gl_Entry(self)
+		# 	else:
+		# 		if check_for_existing_GL_Entry(self) == 1:
+		# 			cancel_Gl_Entry(self)
+		
 
 def has_value_changed(self, fieldname):
 	previous = self.get_doc_before_save()
