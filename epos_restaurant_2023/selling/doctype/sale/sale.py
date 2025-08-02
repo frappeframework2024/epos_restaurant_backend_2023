@@ -290,18 +290,18 @@ class Sale(Document):
 		self.scan_barcode = None
 
 
-		# generate custom bill format
-		if (self.custom_bill_number or "") == "":
-				if self.pos_profile:
-					pos_config = frappe.get_cached_value("POS Profile",self.pos_profile,"pos_config")
-					bill_number_prefix = frappe.get_cached_value("POS Config",pos_config,"pos_bill_number_prefix")
-					if bill_number_prefix:
-						from frappe.model.naming import make_autoname
-						self.custom_bill_number = make_autoname(bill_number_prefix)
-				else:
-					if self.custom_bill_number_prefix:
-						from frappe.model.naming import make_autoname
-						self.custom_bill_number = make_autoname(self.custom_bill_number_prefix)
+		# # generate custom bill format
+		# if (self.custom_bill_number or "") == "":
+		# 		if self.pos_profile:
+		# 			pos_config = frappe.get_cached_value("POS Profile",self.pos_profile,"pos_config")
+		# 			bill_number_prefix = frappe.get_cached_value("POS Config",pos_config,"pos_bill_number_prefix")
+		# 			if bill_number_prefix:
+		# 				from frappe.model.naming import make_autoname
+		# 				self.custom_bill_number = make_autoname(bill_number_prefix)
+		# 		else:
+		# 			if self.custom_bill_number_prefix:
+		# 				from frappe.model.naming import make_autoname
+		# 				self.custom_bill_number = make_autoname(self.custom_bill_number_prefix)
 
 
 		## end generate custom bill format
@@ -420,6 +420,10 @@ class Sale(Document):
 		update_sales_order_and_delivery_note_status(self)
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel", queue='short', self=self)
 
+	def get_auto_name(self):
+		from frappe.model.naming import make_autoname
+		return  make_autoname(self.custom_bill_number_prefix)
+
 def update_sales_order_and_delivery_note_status(self):
 	if self.sales_order:
 		sales_order_product = frappe.db.sql("""
@@ -501,6 +505,7 @@ def update_sales_order_and_delivery_note_status(self):
 
 ## generate custom bill number
 def on_generate_custom_bill_number(self):
+	return
 	if (self.custom_bill_number or "") == "":
 		if self.pos_profile:
 			pos_config_name = frappe.get_cached_value("POS Profile",self.pos_profile,"pos_config")

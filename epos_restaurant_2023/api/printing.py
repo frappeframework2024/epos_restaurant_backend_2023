@@ -1,6 +1,6 @@
 import json
 import frappe
-from PIL import Image, ImageChops
+from PIL import Image, ImageDraw, ImageFont, ImageColor
 from html2image import Html2Image
 import numpy as np
 import os
@@ -15,6 +15,12 @@ from frappe.utils import (
 from escpos import *
 
 from epos_restaurant_2023.api.pdf import get_pdf
+ 
+ 
+import io
+ 
+ 
+
 
 def get_print_context(doc, seat_number = "", reprint=0, sale_products= [],printer_name=None):
     setting = frappe.get_cached_doc("POS Config", frappe.get_cached_value("POS Profile",doc.pos_profile, "pos_config"))
@@ -386,7 +392,7 @@ def convertimg():
  
 
     template = "POS Receipt PDF"
-    doc = frappe.get_doc("Sale", "SINV2025-0002")
+    doc = frappe.get_doc("Sale", "SINV2025-0001")
     data_template, css = frappe.db.get_value("POS Receipt Template", template, ["template", "style"])
     html = frappe.render_template(data_template, get_print_context(doc, 0))
     full_html = f"""
@@ -426,3 +432,50 @@ def convertimg():
     # Convert to base64 and return as data URI
     base64_img = base64.b64encode(img_bytes).decode('utf-8')
     return f"data:image/png;base64,{base64_img}"
+
+@frappe.whitelist()
+def create_text_image_base64(text):
+    font_path = "/usr/share/fonts/truetype/ttf-khmeros-core/KhmerOS.ttf"
+    font_size = 40
+    image_size = (400, 100)
+    bg_color = "white"
+    text_color = "black"
+
+    # Validate and convert colors
+    try:
+        bg_color = ImageColor.getrgb(bg_color)
+    except Exception:
+        bg_color = (255, 255, 255)
+
+    try:
+        text_color = ImageColor.getrgb(text_color)
+    except Exception:
+        text_color = (0, 0, 0)
+
+    # Load font
+    if not os.path.isfile(font_path):
+        frappe.throw(f"Font not found: {font_path}")
+    font = ImageFont.truetype(font_path, font_size)
+
+    # Create image
+    img = Image.new("RGB", image_size, color=bg_color)
+    draw = ImageDraw.Draw(img)
+
+    # Use textbbox (better than deprecated textsize)
+    bbox = draw.textbbox((0, 0), text, font=font)
+    text_width = bbox[2] - bbox[0]
+    text_height = bbox[3] - bbox[1]
+
+    # Center text
+    x = (image_size[0] - text_width) // 2
+    y = (image_size[1] - text_height) // 2
+
+    draw.text((x, y), text, font=font, fill=text_color)
+
+    # Convert to base64
+    buffer = io.BytesIO()
+    img.save(buffer, format="PNG")
+    base64_str = base64.b64encode(buffer.getvalue()).decode("utf-8")
+
+    # Optional: Return with data URI prefix for HTML <img src=...>
+    return "data:image/png;base64," + base64_str

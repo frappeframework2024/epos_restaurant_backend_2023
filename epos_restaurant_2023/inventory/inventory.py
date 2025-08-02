@@ -6,7 +6,7 @@ import frappe
 def add_to_inventory_transaction(data):
     
     doc = frappe.get_doc(data)
-    doc.insert()
+    doc.insert( ignore_links=True)
 
 @frappe.whitelist()
 def get_stock_location_by_pos_profile(product_code,pos_profile,stock_location):
