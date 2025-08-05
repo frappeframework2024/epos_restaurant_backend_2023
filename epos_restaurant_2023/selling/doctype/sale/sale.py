@@ -768,31 +768,33 @@ def update_inventory_on_submit(self):
 
 def update_product_recipe_to_inventory(self,product,base_quantity,action,sale_product,pos_profile=""):
 	current_pos_profile = pos_profile if pos_profile != "" else self.pos_profile
-	for d in product.product_recipe:
-		if d.is_inventory_product :
-			if not d.sale_type or d.sale_type == self.sale_type:
-				if d.portion == sale_product.portion or (d.portion or "") == "":
-					uom_conversion = get_uom_conversion(d.base_unit, d.unit)
-					note = ""
-					if action =="Submit":
-						note = 'Update Recipe Quantity after New sale submitted.'
-					else:
-						note =  'Update Recipe Quantity after cancel order.'
+	inventory_products = [x for x in product.product_recipe if x.is_inventory_product == 1]
+	inventory_products = [x for x in inventory_products if (not x.price_rule or x.price_rule == self.price_rule)]
+	inventory_products = [x for x in inventory_products if (not x.sale_type or x.sale_type == self.sale_type)]
 
-					add_to_inventory_transaction({
-						'doctype': 'Inventory Transaction',
-						'transaction_type':"Sale",
-						'transaction_date':self.posting_date,
-						'transaction_number':self.name,
-						'product_code': d.product,
-						'unit':d.unit,
-						'stock_location':get_stock_location_by_pos_profile(d.product,current_pos_profile,self.stock_location),
-						'in_quantity':(base_quantity* d.quantity) / uom_conversion if action=="Cancel" else 0,
-						'out_quantity':(base_quantity* d.quantity) / uom_conversion if action=="Submit" else 0,
-						"uom_conversion":uom_conversion,
-						'note': note,
-						'action': action
-					})
+	for d in inventory_products:
+		if d.portion == sale_product.portion or (d.portion or "") == "":
+			uom_conversion = get_uom_conversion(d.base_unit, d.unit)
+			note = ""
+			if action =="Submit":
+				note = 'Update Recipe Quantity after New sale submitted.'
+			else:
+				note =  'Update Recipe Quantity after cancel order.'
+
+			add_to_inventory_transaction({
+				'doctype': 'Inventory Transaction',
+				'transaction_type':"Sale",
+				'transaction_date':self.posting_date,
+				'transaction_number':self.name,
+				'product_code': d.product,
+				'unit':d.unit,
+				'stock_location':get_stock_location_by_pos_profile(d.product,current_pos_profile,self.stock_location),
+				'in_quantity':(base_quantity* d.quantity) / uom_conversion if action=="Cancel" else 0,
+				'out_quantity':(base_quantity* d.quantity) / uom_conversion if action=="Submit" else 0,
+				"uom_conversion":uom_conversion,
+				'note': note,
+				'action': action
+			})
 
 def update_combo_menu_to_inventory(self, product,action):
 	if product.is_combo_menu:
