@@ -27,6 +27,8 @@
   "redeem_coupon_value",
   "use_amount",
   "use_coupon_value",
+  "balance_amount",
+  "balance_coupon_value",
   "column_break_tfky",
   "customer",
   "customer_name",
@@ -176,11 +178,21 @@
    "fieldtype": "Link",
    "label": "Coupon Register",
    "options": "Coupon Register"
+  },
+  {
+   "fieldname": "balance_amount",
+   "fieldtype": "Currency",
+   "label": "Balance Amount"
+  },
+  {
+   "fieldname": "balance_coupon_value",
+   "fieldtype": "Currency",
+   "label": "Balance Coupon Value"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-30 11:34:01.387487",
+ "modified": "2025-08-07 17:16:06.996667",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Codes",

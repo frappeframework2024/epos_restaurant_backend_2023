@@ -2268,7 +2268,7 @@ def dome():
 
 @frappe.whitelist()
 def get_server_report_setting():
-    setting = frappe.get_cached_doc("eDoor Setting")
+    setting = frappe.get_cached_doc("ePOS Settings")
     property = frappe.defaults.get_user_default("business_branch")
     if not property:
         data = frappe.db.get_list("Business Branch")
@@ -2278,13 +2278,28 @@ def get_server_report_setting():
     data = {
         "user":frappe.session.user,
         "full_name":frappe.get_cached_value("User",frappe.session.user,"full_name"),
-        "server_report_url":setting.server_report_url,
+        "server_report_url":setting.report_server_url,
         "report_service_url":setting.report_service_url,
         "server_report_token":setting.server_report_token,
         "property":property,
         "working_day":working_day
     }
     return data
+
+@frappe.whitelist()
+def get_system_report(parent):
+    from frappe.utils.nestedset import get_descendants_of
+    report_names = get_descendants_of("System Report","POS Report")
+    reports = frappe.get_list(
+        "System Report",
+        fields = ["parent_system_report","name", "is_group", "report_title", "report_name","server_report_path", "filter_option", "parent_system_report","filter_default_value"],
+        order_by='sort_order asc',
+        filters={'name':["in",report_names]},
+        page_length=10000
+    )
+    return reports
+       
+
 
 
 @frappe.whitelist(allow_guest=True)

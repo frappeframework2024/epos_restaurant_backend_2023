@@ -694,7 +694,9 @@ def update_use_coupon_amount(coupon_code):
     if data and len(data)>0:
         sql = """update `tabCoupon Codes` set 
                     use_coupon_value = %(coupon_amount)s,
-                    use_amount = %(actual_amount)s
+                    use_amount = %(actual_amount)s,
+                    balance_amount = (price + top_up_amount)  -   (%(actual_amount)s + redeem_amount),
+                    balance_coupon_value = (coupon_value + top_up_coupon_value)  -  (%(coupon_amount)s + redeem_coupon_value )
                     where name = %(coupon_code)s"""
         frappe.db.sql(sql,{
             "coupon_code":coupon_code,

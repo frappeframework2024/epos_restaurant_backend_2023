@@ -234,15 +234,18 @@ def print_from_print_format(data, is_html=False):
 
 
 
-
+@frappe.whitelist()
+def testme():
+    return get_print_bill_pdf(name = 'SINV2025-0033')
 ## print invoice or receipt
 @frappe.whitelist(allow_guest=True)
 def get_print_bill_pdf(
-    station='Cashier Station', 
-    name='SINV2025-0152',
-    template = "POS Receipt PDF", 
-    reprint=0,
-    pdf= 1): 
+                station='Cashier Station', 
+                name='SINV2025-0152',
+                template = "POS Receipt PDF", 
+                reprint=0,
+                pdf= 1
+    ): 
     doc = frappe.get_doc("Sale", name) 
     data_template,css= frappe.db.get_value("POS Receipt Template",template,["template","style"])
     html= frappe.render_template(data_template, get_print_context(doc,reprint))
@@ -381,101 +384,4 @@ def get_print_data(doctype,docname,template,return_type="base64",lang="en",optio
     else:
         pdf_base64 = base64.b64encode(pdfDoc)
         return pdf_base64.decode()
-    
-@frappe.whitelist()
-def convertimg():
-    import imgkit
-    import base64
-    from io import BytesIO
-    from PIL import Image
-
- 
-
-    template = "POS Receipt PDF"
-    doc = frappe.get_doc("Sale", "SINV2025-0001")
-    data_template, css = frappe.db.get_value("POS Receipt Template", template, ["template", "style"])
-    html = frappe.render_template(data_template, get_print_context(doc, 0))
-    full_html = f"""
-    <html>
-    <head>
-        <style>
-           {css}
-        </style>
-    </head>
-    <body background:#FFF">
-     {html}
-    </body>
-    </html>
-    """
-
-    options = {
-        'format': 'png',
-        'width': "576",
-        'disable-smart-width': '',
-        'quiet': '',
-        'zoom': '2',             # Important for scaling text and layout sharply
-    }
-    
-    # Convert HTML to PNG (in memory)
-    img_bytes = imgkit.from_string(full_html, False, options=options)
-    
-    # Process image for thermal printer
-    with Image.open(BytesIO(img_bytes)) as img:
-        # Convert to 1-bit black and white
-        img = img.convert('1')
-        
-        # Save to bytes
-        output = BytesIO()
-        img.save(output, format='PNG')
-        img_bytes = output.getvalue()
-    
-    # Convert to base64 and return as data URI
-    base64_img = base64.b64encode(img_bytes).decode('utf-8')
-    return f"data:image/png;base64,{base64_img}"
-
-@frappe.whitelist()
-def create_text_image_base64(text):
-    font_path = "/usr/share/fonts/truetype/ttf-khmeros-core/KhmerOS.ttf"
-    font_size = 40
-    image_size = (400, 100)
-    bg_color = "white"
-    text_color = "black"
-
-    # Validate and convert colors
-    try:
-        bg_color = ImageColor.getrgb(bg_color)
-    except Exception:
-        bg_color = (255, 255, 255)
-
-    try:
-        text_color = ImageColor.getrgb(text_color)
-    except Exception:
-        text_color = (0, 0, 0)
-
-    # Load font
-    if not os.path.isfile(font_path):
-        frappe.throw(f"Font not found: {font_path}")
-    font = ImageFont.truetype(font_path, font_size)
-
-    # Create image
-    img = Image.new("RGB", image_size, color=bg_color)
-    draw = ImageDraw.Draw(img)
-
-    # Use textbbox (better than deprecated textsize)
-    bbox = draw.textbbox((0, 0), text, font=font)
-    text_width = bbox[2] - bbox[0]
-    text_height = bbox[3] - bbox[1]
-
-    # Center text
-    x = (image_size[0] - text_width) // 2
-    y = (image_size[1] - text_height) // 2
-
-    draw.text((x, y), text, font=font, fill=text_color)
-
-    # Convert to base64
-    buffer = io.BytesIO()
-    img.save(buffer, format="PNG")
-    base64_str = base64.b64encode(buffer.getvalue()).decode("utf-8")
-
-    # Optional: Return with data URI prefix for HTML <img src=...>
-    return "data:image/png;base64," + base64_str
+     

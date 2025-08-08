@@ -74,6 +74,11 @@ def get_columns(filters):
 		
 	if filters.row_group == "Product Code" or filters.row_group == "Product And Price":
 		columns.append({"label":"Product Name","fieldname":"product_name","fieldtype":"Data","align":"left",'width':300})
+
+		if  filters.row_group == "Product And Price":
+			columns.append({"label":"Portion","fieldname":"portion","fieldtype":"Data","align":"left",'width':300})
+			columns.append({"label":"Modifiers","fieldname":"modifiers","fieldtype":"Data","align":"left",'width':300})
+
 		columns.append({"label":"Unit","fieldname":"unit","fieldtype":"Data","align":"center",'width':100})
 	
 	if filters.row_group == "Product And Price":
@@ -317,13 +322,17 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 			#end for
 	# total last column
 	extra_columns = ""
+	extra_columns_group_by = ""
 	groupdocstatus = ""
 	normal_filter = "b.docstatus in (1) AND"
 	if (indent == 1 and filters.parent_row_group) or (indent == 0 and (filters.parent_row_group or "") == ""):
 		if (filters.row_group == "Product Code" or filters.row_group == "Product And Price"):
 			extra_columns = ",a.product_name,a.unit"
+			extra_columns_group_by = extra_columns
+
 		if filters.row_group == "Product And Price":
-			extra_columns = extra_columns + ",a.price,a.total_discount"
+			extra_columns +=  ",a.price,a.total_discount,if(coalesce(a.portion,'') = '' or coalesce(a.portion,'')='Normal','', coalesce(a.portion,'')) as `portion`, coalesce(a.modifiers,'') as modifiers"
+			extra_columns_group_by += ",a.price,a.total_discount,coalesce(a.portion,''), coalesce(a.modifiers,'')"
 	
 	for rf in report_fields:
 		#check sql variable if last character is , then remove it
@@ -338,19 +347,21 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 		_row_group = "a.parent, coalesce(b.custom_bill_number,'-'),b.sale_type"
 	else:
 		if ((indent == 1 and filters.parent_row_group) or (indent == 0 and (filters.parent_row_group or "") == "")) and filters.row_group=="Product And Price":
-			_row_group = "concat(a.product_code,'-',a.product_name,' ', if(concat(a.`portion`)='' or concat(a.`portion`) = 'Normal','',concat(a.`portion`)), coalesce(a.modifiers)),a.price"
+			_row_group = "concat(a.product_code,'-',a.product_name,' ', if(coalesce(a.`portion`,'')='' or coalesce(a.`portion`,'') = 'Normal','',coalesce(a.`portion`,'')), coalesce(a.modifiers,'')),a.price"
 
 	sql = sql + """ {2}
 		FROM `tabSale Product` AS a
 			INNER JOIN `tabSale` b on b.name = a.parent
 			left join `tabTables Number` c on c.name = b.table_id
 		WHERE
-			{4}
+			{5}
 			{0}
 		GROUP BY 
-		{1} {2} {3}
-	""".format(get_conditions(filters,group_filter), _row_group,extra_columns,groupdocstatus,normal_filter)
+		{1} {3} {4}
+	""".format(get_conditions(filters,group_filter), _row_group,extra_columns,extra_columns_group_by,groupdocstatus,normal_filter)
+ 
 	data = frappe.db.sql(sql,filters, as_dict=1)
+ 
 	return data
  
 def get_report_group_data(filters):

@@ -1808,3 +1808,13 @@ def update_coupon_codes(coupon_transactions,sale_type):
 			 
 		})
 	frappe.db.commit()
+	# update balance 
+	frappe.db.sql("""
+				update `tabCoupon Codes` 
+			   set balance_amount = (price + top_up_amount) - (redeem_amount + use_amount),
+			   balance_coupon_value = (coupon_value +top_up_coupon_value) - (redeem_coupon_value + use_coupon_value)
+			   where 
+			   		name in %(names)s
+			   
+	""",{"names":[d["coupon_code"] for d in coupon_transactions]})
+	frappe.db.commit()
