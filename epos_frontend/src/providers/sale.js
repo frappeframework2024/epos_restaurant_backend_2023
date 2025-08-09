@@ -610,6 +610,7 @@ export default class Sale {
         if (sp.discount) {
             if (sp.discount_type == "Percent") {
                 sp.discount_amount = (sp.sub_total * sp.discount / 100);
+                
             } else {
                 sp.discount_amount = sp.discount;
             }
@@ -620,11 +621,12 @@ export default class Sale {
             //check if sale have discount then add discount to sale
         }
    
-        sp.discount_amount = parseFloat(sp.discount_amount.toFixed(precision)); //new
+        sp.discount_amount = parseFloat((sp.discount_amount + Number.EPSILON).toFixed(precision)); //new
 
         sp.discount_amount = Math.abs(sp.discount_amount || 0) * (sp.is_return ? -1 : 1)
         if (sp.sale_discount_percent) {
             sp.sale_discount_amount = (sp.sub_total * sp.sale_discount_percent / 100);
+            sp.sale_discount_amount =    Number((sp.sale_discount_amount + Number.EPSILON).toFixed(precision)); 
         }
         sp.total_discount = sp.discount_amount + sp.sale_discount_amount; 
 
@@ -896,20 +898,25 @@ export default class Sale {
         this.changed = 1
         //calculate sale discount
         this.sale.sale_discountable_amount = this.getNumber(sp.where("$.allow_discount==1 && $.discount==0").sum("$.sub_total"));
+        this.sale.sale_discountable_amount =  Number((this.sale.sale_discountable_amount + Number.EPSILON).toFixed(precision))
+
         this.sale.discount = this.getNumber(this.sale.discount);
         this.sale.sale_discount = 0;
-        if (this.sale.discount_type == "Percent") {
+        if (this.sale.discount_type == "Percent") {           
             this.sale.sale_discount =  this.sale.sale_discountable_amount * (this.sale.discount / 100);
+
+
         } else {
             this.sale.sale_discount = this.sale.discount;
-        }
+        } 
 
-        
-
-        this.sale.sale_discount = parseFloat(this.sale.sale_discount.toFixed(precision)); //new
-
+        this.sale.sale_discount = parseFloat((this.sale.sale_discount + Number.EPSILON).toFixed(precision)); //new 
+ 
         this.sale.product_discount = this.getNumber(sp.sum("$.discount_amount"));
+        this.sale.product_discount = Number( (this.sale.product_discount +Number.EPSILON).toFixed(precision))
+
         this.sale.total_discount = (this.sale.product_discount || 0) + (this.sale.sale_discount || 0);
+
 
         //tax
         this.sale.tax_1_amount = this.getNumber(sp.sum("$.tax_1_amount"));
@@ -922,7 +929,7 @@ export default class Sale {
 
         //grand_total
         this.sale.grand_total =  ((this.sale.sub_total || 0) - (this.sale.total_discount || 0)) + ((this.sale.total_tax || 0));
-        this.sale.grand_total =   parseFloat(this.sale.grand_total.toFixed(precision)); //new
+        this.sale.grand_total =   parseFloat((this.sale.grand_total + Number.EPSILON).toFixed(precision)); //new
 
         // crypto able amount
         this.sale.crypto_able_amount = (this.sale.sale_discount > 0 ? 0 : this.getNumber(sp.sum("$.crypto_able_amount")));        
@@ -930,7 +937,7 @@ export default class Sale {
         //
         this.sale.balance = this.sale.grand_total - (this.sale.deposit || 0) - (this.sale.total_cash_coupon_claim||0);
 
-        this.sale.balance =  parseFloat(this.sale.balance.toFixed(precision)); //new
+        this.sale.balance =  parseFloat((this.sale.balance + Number.EPSILON).toFixed(precision)); //new
 
         // commission
         if (this.sale.commission_type == "Percent") {
@@ -938,7 +945,7 @@ export default class Sale {
         } else {
             this.sale.commission_amount = this.sale.commission;
         }
-        this.sale.commission_amount =  parseFloat(this.sale.commission_amount.toFixed(precision)); //new
+        this.sale.commission_amount =  parseFloat((this.sale.commission_amount + Number.EPSILON).toFixed(precision)); //new
 
         this.orderChanged = true;
         socket.emit("ShowOrderInCustomerDisplay", this.sale, sale_status, this.customer_display_key);
@@ -1479,7 +1486,9 @@ export default class Sale {
                     (this.sale.sale_products ?? []).forEach(_sp => {
                         if (sale_discount > 0 && _sp.allow_discount && _sp.discount == 0) {
                             _sp.sale_discount_percent = sale_discount;
-                            _sp.sale_discount_amount = (sale_discount / 100) * _sp.sub_total;
+                            const temp_sale_discount_amount = (sale_discount / 100) * _sp.sub_total;
+                            const sale_discount_amount =  Number((temp_sale_discount_amount + Number.EPSILON).toFixed(this.setting.pos_setting.main_currency_precision))
+                            _sp.sale_discount_amount = sale_discount_amount
                         }
                         else {
                             _sp.sale_discount_percent = 0;
@@ -1487,6 +1496,7 @@ export default class Sale {
                         }
                         _sp.total_discount = (_sp.sale_discount_amount || 0) + (_sp.discount_amount || 0);
                         this.updateSaleProduct(_sp);
+
                     });
 
 
@@ -1828,7 +1838,7 @@ export default class Sale {
     async onSubmitPayment(isPrint = true) {
         this.isPrintReceipt = isPrint;
         return new Promise(async (resolve) => {
-            let balance = Number(this.sale.balance.toFixed(this.setting.pos_setting.main_currency_precision));
+            let balance = Number((this.sale.balance + Number.EPSILON).toFixed(this.setting.pos_setting.main_currency_precision));
 
             if (balance > 0) {
                 toaster.warning($t('msg.Please enter all payment amount'));
@@ -2455,17 +2465,17 @@ export default class Sale {
             const precision = this.setting.pos_setting.main_currency_precision;
             if (data.paymentType.is_single_payment_type == 1) {
                 this.sale.payment = [];
-                data.amount = parseFloat(parseFloat(this.sale.grand_total * data.paymentType.exchange_rate).toFixed(precision));
+                data.amount = parseFloat((parseFloat(this.sale.grand_total * data.paymentType.exchange_rate) + Number.EPSILON).toFixed(precision));
             }
             if (!this.getNumber(data.amount) == 0) {
                 if ((data.fee_amount || 0) == 0) {
-                    data.fee_amount = parseFloat(parseFloat(data.amount / data.paymentType.exchange_rate).toFixed(precision)) * (data.paymentType.fee_percentage / 100);
+                    data.fee_amount = parseFloat((parseFloat(data.amount / data.paymentType.exchange_rate) +  Number.EPSILON).toFixed(precision)) * (data.paymentType.fee_percentage / 100);
                 }
                 this.sale.payment.push({
                     payment_type: data.paymentType.payment_method,
                     payment_type_group:data.paymentType.payment_type_group,
                     input_amount: parseFloat(data.amount),
-                    amount: parseFloat(parseFloat(data.amount / data.paymentType.exchange_rate).toFixed(precision)),
+                    amount: parseFloat((parseFloat(data.amount / data.paymentType.exchange_rate) + Number.EPSILON ).toFixed(precision)),
                     exchange_rate: data.paymentType.exchange_rate,
                     change_exchange_rate: data.paymentType.change_exchange_rate,
                     currency: data.paymentType.currency,
@@ -2486,7 +2496,7 @@ export default class Sale {
                 });
 
                 this.updatePaymentAmount();
-                this.paymentInputNumber = this.sale.balance.toFixed(precision);
+                this.paymentInputNumber = (this.sale.balance + Number.EPSILON).toFixed(precision);
 
             } else {
                 toaster.warning($t("msg.Please enter payment amount"));
@@ -2512,9 +2522,9 @@ export default class Sale {
         this.sale.changed_amount = change_amount;
         this.sale.second_changed_amount = change_amount * this.sale.change_exchange_rate;
 
-        this.sale.second_changed_amount = Number(this.sale.second_changed_amount.toFixed(this.setting.pos_setting.second_currency_precision));
+        this.sale.second_changed_amount = Number((this.sale.second_changed_amount + Number.EPSILON).toFixed(this.setting.pos_setting.second_currency_precision));
 
-        this.sale.changed_amount = Number(this.sale.changed_amount.toFixed(this.setting.pos_setting.main_currency_precision));
+        this.sale.changed_amount = Number((this.sale.changed_amount + Number.EPSILON).toFixed(this.setting.pos_setting.main_currency_precision));
         if (this.sale.changed_amount <= 0) {
             this.sale.changed_amount = 0;
         }

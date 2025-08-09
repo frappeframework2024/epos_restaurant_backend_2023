@@ -972,7 +972,7 @@ def validate_sale_product(self):
 		if self.discount_type=="Amount":
 			discountable_amount = Enumerable(self.sale_products).where(lambda x: x.allow_discount==1 and x.discount==0).sum(lambda x: (x.quantity or 0)* (x.price or  0))
 			if discountable_amount>0:
-				sale_discount=(sale_discount / discountable_amount ) * 100
+				sale_discount= round( (sale_discount / discountable_amount ),int(currency_precision)) * 100
 			sale_discount = sale_discount or 0
 	# coupon expired date duration
 

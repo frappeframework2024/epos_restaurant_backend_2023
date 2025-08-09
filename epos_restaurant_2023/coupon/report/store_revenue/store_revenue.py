@@ -38,7 +38,7 @@ def get_columns(filters):
 	elif filters.group_by == "Posting Date":
 		columns.append({"label":"Posting Date","fieldname":"posting_date","fieldtype":"Date","align":"left",'width':150})
 	elif filters.group_by == "Hour":
-		columns.append({"label":"Hour","fieldname":"number","fieldtype":"Data","align":"left",'width':150})
+		columns.append({"label":"Hour","fieldname":"number","fieldtype":"Data","align":"center",'width':100})
 	else:
 		columns.append({"label":"Device","fieldname":"pos_station","fieldtype":"Data","align":"left",'width':150})
 	columns.append({"label":"Transactions","fieldname":"transactions","fieldtype":"Data","align":"center",'width':120})
@@ -46,10 +46,13 @@ def get_columns(filters):
 	return columns
  
 def get_conditions(filters):
-	conditions = ""
+	conditions = " where"
+	if filters.group_by == "Hour":
+		conditions = " and"
+	conditions += " coalesce(transaction_type,'Use')='Use'"
 	start_date = filters.start_date
 	end_date = filters.end_date
-	conditions += " AND posting_date between '{}' AND '{}'".format(start_date,end_date)
+	conditions += " AND coalesce(posting_date,now()) between '{}' AND '{}'".format(start_date,end_date)
 	conditions += " AND business_branch in %(business_branch)s"
 	if filters.get("pos_profile"):
 		conditions += " AND pos_profile in %(pos_profile)s"
@@ -65,14 +68,13 @@ def get_report_data(filters):
 	sql = """
 	SELECT 
 	{1},
-	truncate(abs(sum(a.actual_amount)),4) actual_amount,
-	count(a.name) transactions
+	coalesce(truncate(abs(sum(a.actual_amount)),4),0) actual_amount,
+	coalesce(count(a.name),0) transactions
 	FROM `tabCoupon Transaction` a
 	{2}
-	WHERE transaction_type='Use' {0}
+	{0}
 	group by {1}
 	""".format(get_conditions(filters),group_by,join)
-	frappe.msgprint(sql)
 	data = frappe.db.sql(sql,filters, as_dict=1)
 	return data
  
