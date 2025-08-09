@@ -95,7 +95,8 @@ before_migrate =[
 ]
 after_migrate = [
     "epos_restaurant_2023.migrate.after_migrate",
-    ]
+    "epos_restaurant_2023.store_procedures.execute"
+]
  
 # Uninstallation
 # ------------
