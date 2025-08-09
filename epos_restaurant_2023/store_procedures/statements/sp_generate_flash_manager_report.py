@@ -1,24 +1,5 @@
-import pymysql
-import frappe
-def execute_multiple_statements():
-    try:
-        # Get DB credentials from Frappe
-        db_config = frappe.conf
-        connection = pymysql.connect(
-            host=db_config.db_host or "127.0.0.1",
-            user=db_config.db_name,
-            password=db_config.db_password,
-            database=db_config.db_name,
-            autocommit=True  # Required for executing DDL statements
-        )
-
-        with connection.cursor() as cursor:
-            # Example: Executing multiple statements
-            sql_statements = [
-                "DROP PROCEDURE IF EXISTS sp_generate_flash_manager_report;",
-                
-                """
-CREATE   PROCEDURE `sp_generate_flash_manager_report`( IN v_property varchar(100), IN v_posting_date DATE  )
+SQL = """
+CREATE  PROCEDURE `sp_generate_flash_manager_report`( IN v_property varchar(100), IN v_posting_date DATE  )
 BEGIN
 		DECLARE v_mtd_start_date DATE;
 		DECLARE v_ytd_start_date DATE;
@@ -194,21 +175,16 @@ BEGIN
 		where posting_date = v_posting_date and property = v_property and title = '% of Total Occupancy' and `group` = 'ADR and Occupancy';
 		
 		
+		-- update to % of Paid Occupancy 
+		update `tabManager Flash Report Data` 
+		set 
+			today_total = v_today_paid_rooms/ v_today_total_rooms * 100, 
+			mtd_total = v_mtd_paid_rooms / v_mtd_total_rooms * 100,
+			ytd_total =  v_ytd_paid_rooms  / v_ytd_total_rooms * 100
+		where posting_date = v_posting_date and property = v_property and title = '% of Paid Occupancy' and `group` = 'ADR and Occupancy';
 		
  
 		
 			select * from `tabManager Flash Report Data`  ;
-END;
+END
 """
-            ]
-
-            # Execute each statement separately
-            for statement in sql_statements:
-                cursor.execute(statement)
-
-        connection.close()
-        frappe.msgprint("Stored Procedure Created Successfully")
-
-    except Exception as e:
-        frappe.log_error(f"Error executing multiple statements: {str(e)}", "SQL Execution Error")
-        frappe.throw(f"Failed to execute SQL statements: {str(e)}")

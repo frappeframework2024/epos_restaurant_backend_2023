@@ -1,7 +1,6 @@
 import Enumerable from 'linq'
 import moment from '@/utils/moment.js';
 import {
-    inject,
     ref, noteDialog, changeTaxSettingModal, SaleProductComboMenuGroupModal, keyboardDialog, keypadWithNoteDialog, createResource,
     createDocumentResource, addModifierDialog, useRouter, confirmDialog, selectEmployeeDialog, saleProductDiscountDialog, i18n
 } from "@/plugin"
@@ -9,7 +8,6 @@ import { createToaster } from "@meforma/vue-toaster";
 import socket from '@/utils/socketio';
 import { FrappeApp } from 'frappe-js-sdk';
 import NumberFormat from 'number-format.js';
-
 
 const frappe = new FrappeApp();
 const db = frappe.db()
@@ -19,8 +17,6 @@ const toaster = createToaster({ position: "top-right" });
 
 export default class Sale {
     constructor() {
-        this.move_item = false
-        this.now = new Date();
         this.is_payment_first_load = false;
         this.load_menu_lang = false;
         this.loading = false;
@@ -28,7 +24,6 @@ export default class Sale {
         this.platform = {};
         this.promotion = null;
         this.working_day = "";
-        this.posting_date =null;
         this.cashier_shift = "";
         this.shift_name = "";
         this.setting = null;
@@ -103,7 +98,7 @@ export default class Sale {
         this.kod_messages = [] //key, screen, message
 
 
-        this.createNewSaleResource();      
+        this.createNewSaleResource();
 
     }
 
@@ -112,8 +107,6 @@ export default class Sale {
         this.newSaleResource = createResource({
             url: "frappe.client.insert",
            async onSuccess(doc)  {
-            
-       
              await  parent.onProcessTaskAfterSubmit(doc);
                 parent.action = "";
                 if (parent.message != undefined) {
@@ -141,8 +134,8 @@ export default class Sale {
     }
 
     async newSale() { 
-        this.now = new Date();
-        const now = this.now;
+         
+        const now = new Date();
         const _now_format = moment(now).format('yyyy-MM-DD HH:mm:ss.SSSSSS');
 
         this.auditTrailLogs = [];
@@ -215,13 +208,10 @@ export default class Sale {
     }
 
     async LoadSaleData(name) { 
-        if(this.move_item == false){
-            this.auditTrailLogs = [];
-            this.changeTableSaleProducts = [];
-            this.moveItemSaleProducts = [];
-        }
-        this.move_item = false
-
+        
+        this.auditTrailLogs = [];
+        this.changeTableSaleProducts = [];
+        this.moveItemSaleProducts = [];
         return new Promise(async (resolve) => {
             const parent = this;
             this.saleResource = createDocumentResource({
@@ -343,7 +333,7 @@ export default class Sale {
     }
 
  
-    async addSaleProduct(p) {
+    addSaleProduct(p) {
         //check for append quantity rule
         //product code, allow_append_qty,price, unit,modifier, portion, is_free,sale_product_status
         //and check system have feature to send to kitchen
@@ -374,8 +364,9 @@ export default class Sale {
             this.clearSelected();
             sp.selected = true;
             this.updateSaleProduct(sp);
-            is_new_sale_product = false; 
-            if (this.setting.use_retail_ui == 1 ) { 
+            is_new_sale_product = false;
+
+            if (this.setting.table_groups.length == 0) {
                 this.getSelectedProduct(sp)
                 this.selected_sale_product = sp
             }
@@ -474,13 +465,12 @@ export default class Sale {
             
             if (p.is_timer_product) {
                 if (p.time_in) {
-                    saleProduct.time_in = moment(p.time_in).format('yyyy-MM-DD HH:mm:ss.SSSSSS');
+                    saleProduct.time_in = moment(p.time_in).format('yyyy-MM-DD HH:mm:ss');
                 }
             }
             this.onSaleProductApplyTax(tax_rule, saleProduct);
-            await this.onSaleApplyPromotion(saleProduct)
             this.sale.sale_products.push(saleProduct);
-            if (this.setting.use_retail_ui == 1 ) {
+            if (this.setting.table_groups.length == 0) {
                 this.getSelectedProduct(saleProduct)
                 this.selected_sale_product = saleProduct
             }
@@ -589,7 +579,7 @@ export default class Sale {
         sp.selected = true;
 
         // we check if user use retail system when user click on order product we get product information
-        if (this.setting.use_retail_ui == 1 ) {
+        if (this.setting.table_groups.length == 0) {
             this.getSelectedProduct(sp)
             this.selected_sale_product = sp
         }
@@ -600,7 +590,7 @@ export default class Sale {
     }
 
     updateSaleProduct(sp) {
-        const precision = (this.setting.pos_setting.main_currency_precision||2) // new
+        const precision = (this.setting.pos_setting.main_currency_precision||2) // newline
         this.onRateIncludeTax(sp,false,false,false);
         //set property for re render comhappyhour check
         sp.is_render = false;
@@ -610,7 +600,6 @@ export default class Sale {
         if (sp.discount) {
             if (sp.discount_type == "Percent") {
                 sp.discount_amount = (sp.sub_total * sp.discount / 100);
-                
             } else {
                 sp.discount_amount = sp.discount;
             }
@@ -620,7 +609,7 @@ export default class Sale {
             sp.discount_amount = 0;
             //check if sale have discount then add discount to sale
         }
-   
+
         sp.discount_amount = parseFloat((sp.discount_amount + Number.EPSILON).toFixed(precision)); //new
 
         sp.discount_amount = Math.abs(sp.discount_amount || 0) * (sp.is_return ? -1 : 1)
@@ -643,60 +632,10 @@ export default class Sale {
         }else{
             sp.crypto_able_amount = sp.amount
         }
+
         //set property for re render comhappyhour check
     }
 
-    async onSaleApplyPromotion(sp){
-        if (this.promotion) {
-            let customerPromotion = []
-            if(this.promotion && this.promotion.length > 0){
-                this.promotion.forEach(r => {
-                    if(r.customer_groups.length > 0){
-                        r.customer_groups.forEach(g=>{
-                            if(g.customer_group_name_en == this.customer_group){
-                                customerPromotion.push(r)
-                            }}
-                        )
-                    }
-                    else{
-                        customerPromotion.push(r)
-                    }
-                });	
-            }
-            let promotions = await call.post('epos_restaurant_2023.api.promotion.get_promotion_products', { "promotions": JSON.parse(JSON.stringify(customerPromotion)),"products": [sp] })
-            promotions = promotions.message
-            if (sp.happy_hour_promotion) {
-                sp.discount_type = ''
-                sp.discount = 0
-                sp.happy_hours_promotion_title = ''
-                sp.happy_hour_promotion = ''
-            }
-            if(promotions && promotions.product_promotions) {
-                promotions.product_promotions.forEach(r => {
-                if (sp.product_code == r.product_code)
-                    if (moment(sp.order_time).format('HH:mm:ss') == r.order_time && sp.is_free == false) {
-                        sp.discount_type = 'Percent'
-                        sp.discount = r.percentage_discount
-                        sp.happy_hours_promotion_title = r.promotion_title
-                        sp.happy_hour_promotion = r.promotion_name
-                    }
-                    this.updateSaleProduct(sp)
-                })
-
-                // remove expire promotion
-                if (promotions.expire_promotion.length > 0) {
-                        promotions.expire_promotion.forEach((p) => {
-                        toaster.warning(`${p.promotion_name} ${$t('msg.was expired')}`)
-                        const index = this.promotion.findIndex(r => r.name == p.name)
-                        if (index > -1) {
-                            this.promotion.splice(index, 1);
-                        }
-                    })
-                }
-                this.updateSaleSummary();
-            }
-        }
-    }
     //on sale product apply tax setting
     onSaleProductApplyTax(tax_rule, sp) {
 
@@ -871,7 +810,6 @@ export default class Sale {
         if(tax_rule.rate_include_tax == undefined ){
             tax_rule.rate_include_tax = tax_rule.is_rate_include_tax||0;
         }
-
         s.rate_include_tax = tax_rule.rate_include_tax||0;
         s.tax_rule = tax_rule.name || "";
         s.tax_1_rate = tax_rule.tax_1_rate || 0;
@@ -891,32 +829,26 @@ export default class Sale {
 
     //update sale summary
     updateSaleSummary(sale_status = '') {
-        const precision = (this.setting.pos_setting.main_currency_precision||2) //new
+        const precision = (this.setting.pos_setting.main_currency_precision||2) //newline
         const sp = Enumerable.from(this.sale.sale_products);
         this.sale.total_quantity = this.getNumber(sp.where("$.is_timer_product == 0").sum("$.quantity"));
         this.sale.sub_total = this.getNumber(sp.sum("$.sub_total"));
         this.changed = 1
         //calculate sale discount
         this.sale.sale_discountable_amount = this.getNumber(sp.where("$.allow_discount==1 && $.discount==0").sum("$.sub_total"));
-        this.sale.sale_discountable_amount =  Number((this.sale.sale_discountable_amount + Number.EPSILON).toFixed(precision))
-
+        this.sale.sale_discountable_amount =  Number((this.sale.sale_discountable_amount + Number.EPSILON).toFixed(precision)) //new
         this.sale.discount = this.getNumber(this.sale.discount);
         this.sale.sale_discount = 0;
-        if (this.sale.discount_type == "Percent") {           
-            this.sale.sale_discount =  this.sale.sale_discountable_amount * (this.sale.discount / 100);
-
-
+        if (this.sale.discount_type == "Percent") {
+            this.sale.sale_discount = this.sale.sale_discountable_amount * (this.sale.discount / 100);
         } else {
             this.sale.sale_discount = this.sale.discount;
-        } 
+        }
 
         this.sale.sale_discount = parseFloat((this.sale.sale_discount + Number.EPSILON).toFixed(precision)); //new 
- 
+
         this.sale.product_discount = this.getNumber(sp.sum("$.discount_amount"));
-        this.sale.product_discount = Number( (this.sale.product_discount +Number.EPSILON).toFixed(precision))
-
-        this.sale.total_discount = (this.sale.product_discount || 0) + (this.sale.sale_discount || 0);
-
+        this.sale.product_discount = Number( (this.sale.product_discount +Number.EPSILON).toFixed(precision)) //new
 
         //tax
         this.sale.tax_1_amount = this.getNumber(sp.sum("$.tax_1_amount"));
@@ -928,7 +860,7 @@ export default class Sale {
         this.sale.sub_total -= total_tax_exclude;
 
         //grand_total
-        this.sale.grand_total =  ((this.sale.sub_total || 0) - (this.sale.total_discount || 0)) + ((this.sale.total_tax || 0));
+        this.sale.grand_total = ((this.sale.sub_total || 0) - (this.sale.total_discount || 0)) + ((this.sale.total_tax || 0));
         this.sale.grand_total =   parseFloat((this.sale.grand_total + Number.EPSILON).toFixed(precision)); //new
 
         // crypto able amount
@@ -965,13 +897,17 @@ export default class Sale {
 
     async onRemoveItem(sp, gv, numberFormat, input = (-99999)) {
 
-        if (!this.isBillRequested(sp)) {
+        if (!this.isBillRequested()) {
             if (sp.sale_product_status == 'Submitted') {
+
                 let authorize_key = "delete_item_required_password"
                 if (gv.setting.pos_setting['check_delete_item_require_passord_from_product'] == 1 && sp.delete_from_pos_require_password == 0) {
                     authorize_key = "delete_item_required_password_dont_check" //we change this authorize key is just for when delete item do not show popup password
                 }
+
+
                 gv.authorize(authorize_key, "delete_item", "delete_item_required_note", "Delete Item Note", sp.product_code, true).then(async (v) => {
+
                     if (v) {
                         let result = false;
                         if (input == (-99999)) {
@@ -1011,9 +947,11 @@ export default class Sale {
                                     note: '',
                                 }
                             }
+
                         }
 
                         if (result) {
+ 
                             if (sp.quantity < result.number) {
                                 result.number = sp.quantity;
                             }
@@ -1038,6 +976,7 @@ export default class Sale {
                                 custom_note: result.note,
                                 custom_amount: sp.amount
                             });
+
                         }
                     }
                 });
@@ -1072,7 +1011,9 @@ export default class Sale {
                    }else{
                     this.sale.sale_products.splice(this.sale.sale_products.indexOf(sp), 1);
                    }
+                    
                     this.updateSaleSummary();
+
                 }
             }
 
@@ -1080,7 +1021,7 @@ export default class Sale {
     }
 
     async onChangePrice(sp, gv, numberFormat, input = (-99999)) {
-        if (!this.isBillRequested(sp)) {
+        if (!this.isBillRequested()) {
             gv.authorize("change_item_price_required_password", "change_item_price", "change_item_price_required_note", "Change Item Price Note", sp.product_code).then(async (v) => {
                 if (v) {
                     let result = false;
@@ -1135,13 +1076,12 @@ export default class Sale {
             return;
         }
 
-        if (!this.isBillRequested(sp)) {
+        if (!this.isBillRequested()) {
             const result = await keyboardDialog({ title: $t("Change Quantity"), type: 'number', value: sp.quantity });
             if (result) {
 
                 let quantity = this.getNumber(result);
                 if (this.setting.pos_setting.allow_change_quantity_after_submit == 1 || sp.sale_product_status == "New") {
-                   
                     if (quantity == 0) {
                         quantity = 1
                     }
@@ -1179,6 +1119,8 @@ export default class Sale {
                     //do add record
                     if (quantity > sp.quantity) {
                         this.cloneSaleProduct(sp, quantity);
+
+
                     } else {
                         if (sp.quantity - quantity > 0) {
                             //do delete record
@@ -1489,6 +1431,7 @@ export default class Sale {
                             const temp_sale_discount_amount = (sale_discount / 100) * _sp.sub_total;
                             const sale_discount_amount =  Number((temp_sale_discount_amount + Number.EPSILON).toFixed(this.setting.pos_setting.main_currency_precision))
                             _sp.sale_discount_amount = sale_discount_amount
+                            
                         }
                         else {
                             _sp.sale_discount_percent = 0;
@@ -1496,7 +1439,6 @@ export default class Sale {
                         }
                         _sp.total_discount = (_sp.sale_discount_amount || 0) + (_sp.discount_amount || 0);
                         this.updateSaleProduct(_sp);
-
                     });
 
 
@@ -1696,7 +1638,7 @@ export default class Sale {
     }
 
     onCheckPriceSmallerThanZero() {
-        if (this.sale.sale_products.filter(r => r.amount < 0 && (r.is_return||0) == 0).length > 0) {
+        if (this.sale.sale_products.filter(r => r.amount < 0 && r.is_return == 0).length > 0) {
             toaster.warning($t('msg.Product price cannot smaller than zero'));
             return true
         }
@@ -1711,14 +1653,6 @@ export default class Sale {
 
     onSubmit() {
         return new Promise(async (resolve) => {
-            this.loading = true;
-            const resp = await Ping(this.setting)
-            if(resp == 0){
-                toaster.warning($t('msg.Please check your network connection'));
-                this.loading = false;
-                resolve(false);
-                return
-            }
             if (this.sale.sale_products.length == 0 && this.sale.name == undefined && (this.sale.from_reservation || "") == "") {
                 toaster.warning($t('msg.Please select a menu item to submit order'));
                 resolve(false);
@@ -1739,7 +1673,6 @@ export default class Sale {
                     if (this.newSaleResource == null) {
                         this.createNewSaleResource();
                     }
-                    // moment(now).format('yyyy-MM-DD HH:mm:ss.SSSSSS')
                     _sale = await this.newSaleResource.submit({ doc: doc });
                 }
                 else {
@@ -1749,7 +1682,6 @@ export default class Sale {
                 //refresh tabl 
                 resolve(_sale);
             }
-             this.loading = false;
         })
     }
 
@@ -1889,10 +1821,6 @@ export default class Sale {
     }
 
     async onProcessTaskAfterSubmit(doc) { 
-        //create deleted sale product to database;
-        this.deletedSaleProducts.forEach((r) => {
-            this.onCreateDeletedSaleProduct(r);
-        });
         if (this.action == "submit_order") {
             this.onPrintToKitchen(doc); 
             if(this.setting?.device_setting?.print_invoice_on_submit == 1 && this.changed == 1){
@@ -1911,7 +1839,6 @@ export default class Sale {
             if (this.pos_receipt == undefined || this.pos_receipt == null) {
                 this.pos_receipt = this.setting?.default_pos_receipt;
             }
-            
             this.onPrintToKitchen(doc);
             this.onPrintReceipt(this.pos_receipt, `${this.action == "print_invoice_by_seat"? "print_invoice_by_seat": "print_invoice" }`, doc);
         }
@@ -1941,6 +1868,11 @@ export default class Sale {
            
         }
 
+        //create deleted sale product to database;
+        this.deletedSaleProducts.forEach((r) => {
+            this.onCreateDeletedSaleProduct(r);
+        });
+
         this.submitToAuditTrail(doc);
         this.sale = {};
         this.orderTime = "";
@@ -1958,21 +1890,6 @@ export default class Sale {
 
     onPrintToKitchen(doc, products = null) {
         var _productPrinters = products ?? this.productPrinters; 
-        var return_products = doc.sale_products.filter((r) => (r.is_return || 0) == 1).map(a => a.product_code);
-        this.deletedSaleProducts.forEach((r) => {
-            if(r.is_return == 1){
-                return_products.push(r.product_code);
-            }
-        });
-        if((return_products || []).length > 0){
-            var none_return_products = doc.sale_products.filter((r) => (r.is_return || 0) == 0).map(a => a.product_code);
-            this.deletedSaleProducts.forEach((r) => {
-                if(r.is_return == 0){
-                    none_return_products.push(r.product_code);
-                }
-            });
-            _productPrinters = _productPrinters.filter(b => none_return_products.includes(b.product_code));
-        }
         const data = {
             action: "print_to_kitchen",
             setting: this.setting?.pos_setting,
@@ -1981,6 +1898,7 @@ export default class Sale {
             station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
             printers: []
         }
+ 
         var groupKeys = "{printer:$.printer,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port}"
         var groupFields = "$.printer+','+$.group_item_type+','+$.ip_address+','+$.port";
         var printers = Enumerable.from(data.product_printers).groupBy(groupKeys, "", groupKeys, groupFields).toArray();
@@ -2091,14 +2009,10 @@ export default class Sale {
 
             }
         }
+
         //reset product printer
         if (products == null) {
             this.productPrinters = [];
-            this.changeTableSaleProducts = [];
-            this.moveItemSaleProducts = [];
-            this.deletedSaleProducts = [];
-            this.deletedSaleProductsDisplay = [];
-            this.reSendSaleProductKOT = [];
         } 
     }
 
@@ -2107,6 +2021,7 @@ export default class Sale {
         this.sale.sale_products.filter(r => r.sale_product_status == 'New' && JSON.parse(r.printers).length > 0).forEach((r) => {
             const printers = JSON.parse(r.printers);
             printers.forEach((p) => {
+             
                 this.productPrinters.push({
                     sale_product_name: (r.name || "New"),
                     printer: p.printer,
@@ -2140,11 +2055,11 @@ export default class Sale {
                     time_in: r.time_in,
                     time_out_price: r.time_out_price,
                     time_out: r.time_out,
-                    amount: r.amount,
-                    is_return: (r.is_return || 0)
+                    amount: r.amount
                 })
             });
         });
+
         //generate sale product print when change table
         if ((this.changeTableSaleProducts?.length || 0) > 0) {
             this.changeTableSaleProducts.forEach(x => {
@@ -2194,8 +2109,7 @@ export default class Sale {
                         time_stop: (r.time_stop || 0),
                         time_in: r.time_in,
                         time_out_price: r.time_out_price,
-                        time_out: r.time_out,
-                        is_return: (r.is_return || 0)
+                        time_out: r.time_out
                     })
                 });
             }); 
@@ -2271,8 +2185,6 @@ export default class Sale {
             })
         // }  
 
-
-
         let data = {
             action: action,
             print_setting: receipt,
@@ -2324,7 +2236,6 @@ export default class Sale {
 
         if (receipt.pos_receipt_file_name && localStorage.getItem("is_window")) {
             window.chrome.webview.postMessage(JSON.stringify(data));
-            
         } else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
             if (printer.length <= 0) {
                 toaster.warning($t("Printer not yet config for this device"))
@@ -2342,34 +2253,7 @@ export default class Sale {
             }
 
         }
-
-
-        // Test Print with python services
-        this.onPrintWithPythonPrintService(data)
        
-    }
-
-    onPrintWithPythonPrintService(sale_data){
-      
-        fetch("http://192.168.10.81:5001/print-receipt", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(sale_data)
-        })
-        .then(response => {
-        if (!response.ok) {
-            throw new Error("Failed to send print request");
-        }
-        return response.json();
-        })
-        .then(data => {
-        console.log("Print response:", data);
-        })
-        .catch(error => {
-        console.error("Print error:", error);
-});
     }
 
     onPrintWaitingOrder(doc) {
@@ -2442,13 +2326,8 @@ export default class Sale {
         window.close();
     }
 
-    isBillRequested(sp=undefined) {
+    isBillRequested() {
         if (this.sale.sale_status == 'Bill Requested') {
-            if(sp){
-                if((sp.revenue_group || "") == this.setting.pos_setting.allow_tip_revenue_group){
-                    return false;
-                }
-            }
             toaster.warning($t('msg.this sale order is already print bill please cancel print bill first'));
             return true;
         } else {
@@ -2471,6 +2350,7 @@ export default class Sale {
                 if ((data.fee_amount || 0) == 0) {
                     data.fee_amount = parseFloat((parseFloat(data.amount / data.paymentType.exchange_rate) +  Number.EPSILON).toFixed(precision)) * (data.paymentType.fee_percentage / 100);
                 }
+                
                 this.sale.payment.push({
                     payment_type: data.paymentType.payment_method,
                     payment_type_group:data.paymentType.payment_type_group,
@@ -2588,7 +2468,6 @@ export default class Sale {
                 sale_product_id: data.name,
                 product_name: `${data.product_name}${data.portion ? '.' + data.portion : ''}${data.modifiers ? ' ' + data.modifiers : ''}`,
                 sale_doc: this.sale.name,
-                sale_date: this.sale.posting_date,
                 sale_product: data,
                 quantity: data.quantity,
                 amount: data.total_revenue,
@@ -2613,27 +2492,17 @@ export default class Sale {
     }
 
     onChangeMenuLanguage() {
-        this.load_menu_lang = true;  
+        this.load_menu_lang = true;
         const mlang = localStorage.getItem('mLang');
-        let lang = mlang??"en";
         if (mlang != null) {
             if (mlang == "en") {
-                lang = "kh";
-
-                localStorage.setItem('mLang', lang);
+                localStorage.setItem('mLang', "km");
             } else {
-                lang = "en";
-                localStorage.setItem('mLang',lang);
+                localStorage.setItem('mLang', "en");
             }
         } else {
-            localStorage.setItem('mLang', lang);
+            localStorage.setItem('mLang', "en");
         }
-        
-        let settiing = localStorage.getItem("item_menu_setting");
-        let value_stetting = JSON.parse(settiing);
-        value_stetting.show_menu_language = lang;
-        localStorage.setItem('item_menu_setting', JSON.stringify(value_stetting));
-        this.load_menu_lang = false;
     }
 
 
@@ -2665,22 +2534,5 @@ export default class Sale {
     async onRequestCouponCode(code)  { 
         let data =  await call.get("epos_restaurant_2023.api.api.scan_coupon_number",{"code":code})
         return data["message"]
-    }
-}
-
-async function Ping(setting) {
-    let port =  setting?.pos_setting?.use_backend_port == 0 ? `:${window.location.port}` : (window.location.protocol == "https:" ? "" : `:${setting?.pos_setting?.backend_port}`)
-    const url = `${window.location.protocol}//${window.location.hostname}${port}/api/method/epos_restaurant_2023.api.utils.ping`;
-    const controller = new AbortController();
-    const timer = setTimeout(() => {
-        controller.abort();
-    }, 10000)
-    try {
-        await fetch(url, { method: 'HEAD', mode: 'no-cors', cache: 'no-store',signal: controller.signal, });
-        clearTimeout(timer);
-        return 1
-    } catch (error) {
-        clearTimeout(timer);
-        return 0
     }
 }
