@@ -75,6 +75,7 @@ const props = defineProps({
     tableStatusColor: Boolean
 });
 const call = frappe.call();
+const db = frappe.db();
 
 const is_processing = ref(false)
 
@@ -197,13 +198,19 @@ async function newSale(table) {
         sale.sale.customer_group = table.customer_group;
     }
 
-    if (parseFloat(table.default_discount) > 0) {
-        sale.sale.discount_type = table.discount_type;
-        sale.sale.discount = parseFloat(table.default_discount);
-        if (table.discount_type == "Percent") {
-            toaster.info($t("msg.This table have discount", [table.default_discount + '%']))
-        } else {
-            toaster.info($t("msg.This table have discount", [(table.default_discount + ' ' + gv.setting.pos_setting.main_currency_name)]))
+    let cust = await db.getDoc("Customer", sale.sale.customer)
+    if(cust.default_discount > 0){
+        sale.sale.discount_type = "Percent";
+        sale.sale.discount = parseFloat(cust.default_discount);
+    }else{  
+        if (parseFloat(table.default_discount) > 0) {
+            sale.sale.discount_type = table.discount_type;
+            sale.sale.discount = parseFloat(table.default_discount);
+            if (table.discount_type == "Percent") {
+                toaster.info($t("msg.This table have discount", [table.default_discount + '%']))
+            } else {
+                toaster.info($t("msg.This table have discount", [(table.default_discount + ' ' + gv.setting.pos_setting.main_currency_name)]))
+            }
         }
     }
 

@@ -526,6 +526,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "customer_name":default_customer.customer_name_en,
         "customer_photo":default_customer.photo,
         "customer_group":default_customer.customer_group,
+        "customer_default_discount": default_customer.default_discount,
         "default_sale_type":profile.default_sale_type,
         "default_payment_type":profile.default_payment_type,
         "default_pos_receipt":default_pos_receipt,

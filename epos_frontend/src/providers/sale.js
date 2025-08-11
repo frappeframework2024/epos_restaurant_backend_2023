@@ -186,7 +186,7 @@ export default class Sale {
             created_by: make_order_auth?.name || "",
 
         } 
-        this.onSaleApplyTax(tax_rule, this.sale);       
+        this.onSaleApplyTax(tax_rule, this.sale);   
 
         
         //audit-trail 
@@ -850,6 +850,8 @@ export default class Sale {
         this.sale.product_discount = this.getNumber(sp.sum("$.discount_amount"));
         this.sale.product_discount = Number( (this.sale.product_discount +Number.EPSILON).toFixed(precision)) //new
 
+        this.sale.total_discount = (this.sale.sale_discount || 0) + (this.sale.product_discount || 0)
+
         //tax
         this.sale.tax_1_amount = this.getNumber(sp.sum("$.tax_1_amount"));
         this.sale.tax_2_amount = this.getNumber(sp.sum("$.tax_2_amount"));
@@ -1373,7 +1375,7 @@ export default class Sale {
     }
 
     async onDiscount(gv, title, amount, discount_value, discount_type, discount_codes, discount_note, sp, category_note_name) {
-
+        
         const result = await saleProductDiscountDialog({
             title: title,
             value: amount,
