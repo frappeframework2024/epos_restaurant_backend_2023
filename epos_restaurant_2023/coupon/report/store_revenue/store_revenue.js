@@ -91,7 +91,7 @@ frappe.query_reports["Store Revenue"] = {
 			"fieldname": "group_by",
 			"label": __("Group By"),
 			"fieldtype": "Select",
-			"options": "Station\nCoupon Number\nDevice\nPosting Date\nHour",
+			"options": "Station\nCoupon Number\nCoupon Detail\nDevice\nPosting Date\nHour",
 			"default":"Station",
 			"on_change": function (query_report) {},
 		},

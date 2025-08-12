@@ -35,6 +35,13 @@ def get_columns(filters):
 		columns.append({"label":"Station","fieldname":"pos_profile","fieldtype":"Data","align":"left",'width':200})
 	elif filters.group_by == "Coupon Number":
 		columns.append({"label":"Coupon Number","fieldname":"coupon_number","fieldtype":"Data","align":"left",'width':150})
+	elif filters.group_by == "Coupon Detail":
+		columns.append({"label":"Coupon Number","fieldname":"coupon_number","fieldtype":"Data","align":"left",'width':150})
+		columns.append({"label":"Branch","fieldname":"business_branch","fieldtype":"Data","align":"left",'width':150})
+		columns.append({"label":"Station","fieldname":"pos_profile","fieldtype":"Data","align":"center",'width':150})
+		columns.append({"label":"Device","fieldname":"pos_station","fieldtype":"Data","align":"center",'width':150})
+		columns.append({"label":"Posting Date","fieldname":"posting_date","fieldtype":"Data","align":"center",'width':150})
+		columns.append({"label":"Customer","fieldname":"customer_name","fieldtype":"Data","align":"center",'width':150})
 	elif filters.group_by == "Posting Date":
 		columns.append({"label":"Posting Date","fieldname":"posting_date","fieldtype":"Date","align":"left",'width':150})
 	elif filters.group_by == "Hour":
@@ -96,39 +103,42 @@ def get_report_summary(data,filters):
 	return  report_summary
 
 def get_report_chart(filters, data):
-    columns = []
-    colors = []
-    field = get_field(filters)
-    columns = list({d[field] for d in data})  # Use set for uniqueness
-    report_fields = get_report_field(filters)
-    datasets = []
-    for rf in report_fields:
-        dataset_values = []
-        for col in columns:
-            value = sum(d[rf["fieldname"]] for d in data if d[field] == col)
-            dataset_values.append(value)
-        datasets.append({
-            'name': rf["label"],
-            'values': dataset_values
-        })
-        colors.append(rf["chart_color"])
-    chart = {
-        'data': {
-            'labels': columns,
-            'datasets': datasets
-        },
-        "type": filters.chart_type,
-        "lineOptions": {
-            "regionFill": 1,
-        },
-        "axisOptions": {"xIsSeries": 1}
-    }
-    return chart
+	columns = []
+	colors = []
+	field = get_field(filters).split(",")
+	field = field[0]
+	columns = list({d[field] for d in data})  # Use set for uniqueness
+	report_fields = [get_report_field(filters)[1]]
+	datasets = []
+	for rf in report_fields:
+		dataset_values = []
+		for col in columns:
+			value = sum(d[rf["fieldname"]] for d in data if d[field] == col)
+			dataset_values.append(value)
+		datasets.append({
+			'name': rf["label"],
+			'values': dataset_values
+		})
+		colors.append(rf["chart_color"])
+	chart = {
+		'data': {
+			'labels': columns,
+			'datasets': datasets
+		},
+		"type": filters.chart_type,
+		"lineOptions": {
+			"regionFill": 1,
+		},
+		"axisOptions": {"xIsSeries": 1}
+	}
+	return chart
 
 def get_field(filters):
 	field = "pos_profile"
 	if filters.group_by == "Coupon Number":
 		field = "coupon_number"
+	elif filters.group_by == "Coupon Detail":
+		field = "coupon_number,pos_profile,pos_station,posting_date,customer_name,business_branch"
 	elif filters.group_by == "Device":
 		field = "pos_station"
 	elif filters.group_by == "Posting Date":
@@ -141,5 +151,6 @@ def get_field(filters):
 
 def get_report_field(filters):
 	fields = []
-	fields.append({"label":"Amount","short_label":"Amt.", "fieldname":"actual_amount","fieldtype":"Currency","indicator":"gray","precision":2,"chart_color":"#FF8A65"})
+	fields.append({"label":"Transactions","short_label":"Amt.", "fieldname":"transactions","fieldtype":"Data","indicator":"gray","precision":2,"chart_color":"#AF8A10"})
+	fields.append({"label":"Amounts","short_label":"Amt.", "fieldname":"actual_amount","fieldtype":"Currency","indicator":"gray","precision":2,"chart_color":"#FF8A65"})
 	return fields
