@@ -615,7 +615,7 @@ export default class Sale {
         sp.discount_amount = Math.abs(sp.discount_amount || 0) * (sp.is_return ? -1 : 1)
         if (sp.sale_discount_percent) {
             sp.sale_discount_amount = (sp.sub_total * sp.sale_discount_percent / 100);
-            sp.sale_discount_amount =    Number((sp.sale_discount_amount + Number.EPSILON).toFixed(precision)); 
+            // sp.sale_discount_amount =    Number((sp.sale_discount_amount + Number.EPSILON).toFixed(precision)); 
         }
         sp.total_discount = sp.discount_amount + sp.sale_discount_amount; 
 
@@ -840,7 +840,8 @@ export default class Sale {
         this.sale.discount = this.getNumber(this.sale.discount);
         this.sale.sale_discount = 0;
         if (this.sale.discount_type == "Percent") {
-            this.sale.sale_discount = this.sale.sale_discountable_amount * (this.sale.discount / 100);
+            // this.sale.sale_discount = this.sale.sale_discountable_amount * (this.sale.discount / 100);
+            this.sale.sale_discount = sp.sum("$.sale_discount_amount")
         } else {
             this.sale.sale_discount = this.sale.discount;
         }
@@ -1432,7 +1433,7 @@ export default class Sale {
                             _sp.sale_discount_percent = sale_discount;
                             const temp_sale_discount_amount = (sale_discount / 100) * _sp.sub_total;
                             const sale_discount_amount =  Number((temp_sale_discount_amount + Number.EPSILON).toFixed(this.setting.pos_setting.main_currency_precision))
-                            _sp.sale_discount_amount = sale_discount_amount
+                            _sp.sale_discount_amount = temp_sale_discount_amount
                             
                         }
                         else {

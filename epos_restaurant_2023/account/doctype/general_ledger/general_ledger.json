@@ -106,10 +106,10 @@
   },
   {
    "fieldname": "againt_voucher_number",
-   "fieldtype": "Link",
+   "fieldtype": "Dynamic Link",
    "in_list_view": 1,
    "label": "Againt Voucher Number",
-   "options": "DocType"
+   "options": "againt_voucher_type"
   },
   {
    "default": "0",
@@ -147,7 +147,7 @@
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-26 12:18:39.779862",
+ "modified": "2025-08-13 09:54:22.111571",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "General Ledger",

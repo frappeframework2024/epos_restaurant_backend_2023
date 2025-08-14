@@ -145,20 +145,23 @@ class Sale(Document):
 		sale_discountable_amount =Enumerable(self.sale_products).where(lambda x:x.allow_discount ==1 and (x.discount_amount or 0)==0).sum(lambda x: (x.quantity or 0)* (x.price or  0) + + ((x.quantity or 0)*(x.modifiers_price or 0)))
 
 		self.total_quantity = total_quantity
-		self.sale_discountable_amount = round(sale_discountable_amount  , int(currency_precision)) 
+		self.sale_discountable_amount = math_round(sale_discountable_amount  , int(currency_precision)) 
 		
 		# calculate sale discount
 		if self.discount:
 			if self.discount_type =="Percent":
-				self.sale_discount = self.sale_discountable_amount * self.discount / 100
-				self.sale_discount = round(self.sale_discount  , int(currency_precision)) 
+				# self.sale_discount = self.sale_discountable_amount * self.discount / 100
+				# self.sale_discount = round(self.sale_discount  , int(currency_precision)) 
+
+				self.sale_discount = Enumerable(self.sale_products).sum(lambda x:  (x.sale_discount_amount or 0))
 			else:
 				self.sale_discount = self.discount or 0
 				if self.discount > self.sale_discountable_amount:
 					frappe.throw("Discount amount cannot greater than discountable amount")
+		self.sale_discount = math_round(self.sale_discount, int(currency_precision))
 
 		self.product_discount = Enumerable(self.sale_products).where(lambda x:x.allow_discount ==1).sum(lambda x: x.discount_amount)		
-		self.product_discount=round(self.product_discount  , int(currency_precision)) 
+		self.product_discount=math_round(self.product_discount  , int(currency_precision)) 
 		self.total_discount = (self.product_discount or 0) + (self.sale_discount or 0)  
 		#tax 
 		self.taxable_amount_1  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.taxable_amount_1)
@@ -172,22 +175,22 @@ class Sale(Document):
 		# total_rate_include_tax  = 0
 		self.sub_total = sub_total	- total_rate_include_tax
 		self.grand_total =( sub_total - (self.total_discount or 0))  + self.total_tax - total_rate_include_tax
-		self.grand_total =round(self.grand_total, int(currency_precision))
+		self.grand_total =math_round(self.grand_total, int(currency_precision))
 	  
 		self.total_paid =  Enumerable(self.payment).where(lambda x: x.payment_type_group !='On Account').sum(lambda x: x.amount or 0)
-		self.total_paid = round ( ((self.total_paid or 0) + (self.deposit or 0)), int(currency_precision))
+		self.total_paid = math_round ( ((self.total_paid or 0) + (self.deposit or 0)), int(currency_precision))
 
 		self.total_fee =  Enumerable(self.payment).sum(lambda x: x.fee_amount or 0)
-		self.total_paid_with_fee = round(( self.total_paid + (self.total_fee or 0)), int(currency_precision))
+		self.total_paid_with_fee = math_round(( self.total_paid + (self.total_fee or 0)), int(currency_precision))
 
 		if self.grand_total <0 and self.grand_total != self.total_paid:
 			frappe.throw("Return payment amount must be the same as grand total")
 
-		_balance = round(self.grand_total  , int(currency_precision)) -  round((self.total_paid or 0)  , int(currency_precision))
+		_balance = math_round(self.grand_total  , int(currency_precision)) -  math_round((self.total_paid or 0)  , int(currency_precision))
 
 		_total_claim_coupon = 0
 		if len(self.cash_coupon_items) and (self.total_cash_coupon_claim or 0) > 0:
-			_total_claim_coupon = round((self.total_cash_coupon_claim or 0)  , int(currency_precision))
+			_total_claim_coupon = math_round((self.total_cash_coupon_claim or 0)  , int(currency_precision))
 			if _total_claim_coupon > self.grand_total:
 				frappe.throw("Your coupon claim and payment is over balance.")
 
@@ -204,7 +207,7 @@ class Sale(Document):
 
 		# if self.pos_profile:
 		self.changed_amount = (self.total_paid + _total_claim_coupon) - self.grand_total
-		if round(self.changed_amount,int(currency_precision)) <= generate_decimal(int(currency_precision)):
+		if math_round(self.changed_amount,int(currency_precision)) <= generate_decimal(int(currency_precision)):
 			self.changed_amount = 0
 
 
@@ -423,6 +426,10 @@ class Sale(Document):
 	def get_auto_name(self):
 		from frappe.model.naming import make_autoname
 		return  make_autoname(self.custom_bill_number_prefix)
+def math_round(value, precision):
+	import math
+	result = math.floor((value * math.pow(10, precision)) + 0.5) / math.pow(10, precision)
+	return result
 
 def update_sales_order_and_delivery_note_status(self):
 	if self.sales_order:
@@ -972,7 +979,7 @@ def validate_sale_product(self):
 		if self.discount_type=="Amount":
 			discountable_amount = Enumerable(self.sale_products).where(lambda x: x.allow_discount==1 and x.discount==0).sum(lambda x: (x.quantity or 0)* (x.price or  0))
 			if discountable_amount>0:
-				sale_discount= round( (sale_discount / discountable_amount ),int(currency_precision)) * 100
+				sale_discount= math_round( (sale_discount / discountable_amount ),int(currency_precision)) * 100
 			sale_discount = sale_discount or 0
 	# coupon expired date duration
 
@@ -987,7 +994,7 @@ def validate_sale_product(self):
 		d.sub_total = (d.quantity or 0) * (d.price or 0) + (d.quantity or 0) * (d.modifiers_price or 0)
 		if (d.discount_type or "Percent")=="Percent":
 			d.discount_amount = d.sub_total * (d.discount or 0) / 100
-			d.discount_amount = round(d.discount_amount  , int(currency_precision))
+			d.discount_amount = math_round(d.discount_amount  , int(currency_precision))
 		else:
 			d.discount_amount = d.discount or 0
 
@@ -996,7 +1003,7 @@ def validate_sale_product(self):
 			
 			d.sale_discount_percent = sale_discount  
 			d.sale_discount_amount = (sale_discount/100) * d.sub_total
-			d.sale_discount_amount=round(d.sale_discount_amount  , int(currency_precision))
+			# d.sale_discount_amount=math_round(d.sale_discount_amount  , int(currency_precision)) 
 		else:
 			d.sale_discount_percent = 0  
 			d.sale_discount_amount = 0

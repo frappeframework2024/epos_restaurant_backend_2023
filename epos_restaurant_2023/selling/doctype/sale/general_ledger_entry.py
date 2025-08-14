@@ -95,7 +95,8 @@ def submit_sale_to_general_ledger_entry(self):
 			"business_branch": self.business_branch,
 			"type":"Asset",
 			"party_type": "Customer",
-			"party":"{}-{}".format(self.customer,self.customer_name)
+			"party": self.customer,
+			"party_name":self.customer_name
 
 		}
 		docs.append(doc)

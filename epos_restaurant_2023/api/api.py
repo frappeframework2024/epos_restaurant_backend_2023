@@ -1796,9 +1796,9 @@ def get_time_product_estimate_price(sp=None):
     return 10
 
 
+
 @frappe.whitelist()
 def upload_all_sale_data_to_google_sheet(business_branch,start_date,end_date,cashier_shift):
-    
     google_account_credentials,google_sheet_file = frappe.db.get_value("Business Branch",business_branch,['google_account_credentials', 'google_sheet_file'])
     response = run(
 			"Daily Sale Transaction Detail",
@@ -1806,33 +1806,24 @@ def upload_all_sale_data_to_google_sheet(business_branch,start_date,end_date,cas
 			
 		)
     result = response.get("result")
-    columns = response.get("columns")
 
+    columns = response.get("columns")
+ 
     creds = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(google_account_credentials))
     client = gspread.authorize(creds)
     sheet = client.open(google_sheet_file).sheet1
-    
     if len(sheet.get_all_records()) <= 0:
         sheet.append_rows([[obj.label for obj in columns]])
-    
-    report_data = convert_to_nested_arrays(result,columns)
-    return report_data
-    resp = sheet.append_rows(report_data)
-    sheet.format('A1:S1',{
-        "backgroundColor": {
-            "red": 0,
-            "green": 128,
-            "blue": 255
-        }
-    })
-    # Append data to the Google Sheet
 
+
+    report_data = convert_to_nested_arrays(result,columns)
+    
+    resp = sheet.append_rows(report_data)
+
+ 
 
 def convert_to_nested_arrays(json_data,columns):
-    # data = json.loads(json_data)
-   
-    # Get the keys dynamically from the first entry
-    
+
     if(len(json_data) > 0):
         keys = [{"fieldname": item["fieldname"], "fieldtype": item["fieldtype"]} for item in columns]
         result = [
@@ -1855,9 +1846,7 @@ def convert_to_nested_arrays(json_data,columns):
     else:
          return []
 
-    # Extract values for each key in each entry
-    
-       
+    # Extract values for each key in each entry  
 
 @frappe.whitelist()
 def update_language():
