@@ -1,0 +1,118 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:gift_voucher_code",
+ "creation": "2025-08-15 09:04:34.251992",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "gift_voucher_code",
+  "gift_voucher_type",
+  "customer",
+  "is_fan",
+  "column_break_ofyb",
+  "issue_date",
+  "expiry_on",
+  "amount",
+  "min_bill_amount",
+  "disabled"
+ ],
+ "fields": [
+  {
+   "fieldname": "gift_voucher_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Gift Voucher Code",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "gift_voucher_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Gift Voucher Type",
+   "options": "Gift Voucher Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "column_break_ofyb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "issue_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Issue Date",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "expiry_on",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Expiry On",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_fan",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Fan"
+  },
+  {
+   "default": "0",
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "label": "Disabled"
+  },
+  {
+   "default": "0",
+   "fieldname": "min_bill_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Min Bill Amount"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-08-15 12:03:03.373754",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "Issue Gift Voucher",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
