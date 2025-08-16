@@ -49,6 +49,7 @@
   "show_button_change_sale_type",
   "show_move_item_button",
   "show_split_item_button",
+  "show_mark_delivered_item_button",
   "show_seat_number_button",
   "show_button_resend",
   "show_make_return_or_selling_item_button",
@@ -410,11 +411,17 @@
    "fieldname": "show_warning_before_reload_in_order_screen",
    "fieldtype": "Check",
    "label": "Show Warning Before Reload In Order Screen"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_mark_delivered_item_button",
+   "fieldtype": "Check",
+   "label": "Show Mark Delivered Item Button"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-26 08:52:03.112310",
+ "modified": "2025-08-16 11:15:05.736388",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

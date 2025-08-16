@@ -2375,7 +2375,8 @@ export default class Sale {
                     folio_transaction_type: data.folio_transaction_type,
                     folio_transaction_number: data.folio_transaction_number,
                     city_ledger_name: data.city_ledger_name,
-                    reservation_stay:data.reservation_stay 
+                    reservation_stay:data.reservation_stay,
+                    issue_gift_voucher:data.voucher_name
                 });
 
                 this.updatePaymentAmount();

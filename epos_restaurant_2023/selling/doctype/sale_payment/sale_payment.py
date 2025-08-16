@@ -75,6 +75,7 @@ class SalePayment(Document):
 
 		## update crypto
 		update_customer_saving_crypto(self)
+		update_voucher(self)
 	
 	def on_cancel(self):
 		
@@ -190,7 +191,6 @@ class SalePayment(Document):
 		total_credit_amount =  frappe.db.sql(voucher_credit_sql,as_dict=1)
 		
 		voucher_balance = frappe.db.get_value("Customer",self.customer,'voucher_balance')
-
 		if (total_credit_amount[0].credit_amount <= 0 or voucher_balance < self.payment_amount) and self.docstatus == 1 :
 			frappe.throw("Customer has no credit amount for {}".format(self.payment_type))
 		total_voucher_payment = frappe.db.sql(voucher_payment_sql,as_dict=1)
@@ -198,6 +198,9 @@ class SalePayment(Document):
 			'voucher_balance': total_credit_amount[0].credit_amount - total_voucher_payment[0].payment_amount
 		})
 
+def update_voucher(self):
+	frappe.db.sql("update `tabIssue Gift Voucher` set used = 1 where name = '{0}'".format(self.issue_gift_voucher))
+	frappe.db.commit()
 
 def validate_account(self):
 	business_branch = self.property  if self.is_reservation_deposit else self.business_branch

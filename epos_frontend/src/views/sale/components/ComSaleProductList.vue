@@ -122,6 +122,10 @@
                                         {{ moment(sp.creation).format('hh:mm:ss A') }}
                                     </span>
                                     </template>
+
+                                    <template v-if="sp.is_delivered">
+                                        <ComChip size="x-small" color="success" variant="outlined">{{ $t("Delivered") }}</ComChip>
+                                    </template>
                                     
                                    
                                 </div>

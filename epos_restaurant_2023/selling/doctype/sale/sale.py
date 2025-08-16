@@ -929,6 +929,7 @@ def add_payment_to_sale_payment(self):
 							"account_code":p.account_code,
 							"fee_amount":p.fee_amount,
 							"fee_percentage":p.fee_percentage,
+							"issue_gift_voucher":p.issue_gift_voucher
 						})
 					doc.flags.ignore_post_general_ledger_entry = True
 					doc.flags.ignore_update_sale = True

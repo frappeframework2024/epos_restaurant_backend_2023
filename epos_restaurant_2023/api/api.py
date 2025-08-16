@@ -337,7 +337,9 @@ def get_system_settings(pos_profile="", device_name=''):
         "apply_rate_include_tax_required_note":pos_config.apply_rate_include_tax_required_note,
         "manual_percent_discount_required_password":pos_config.manual_percent_discount_required_password,
         "show_preview_report": pos_config.show_preview_report,
-        "show_system_closed_amount": pos_config.show_system_closed_amount
+        "show_system_closed_amount": pos_config.show_system_closed_amount,
+        "overwrite_voucher_minimum_amount_required_password": pos_config.overwrite_voucher_minimum_amount_required_password,
+        "show_voucher_minimum_overwrite": pos_config.show_voucher_minimum_overwrite,
         }
     def create_default_customer():
         if not frappe.db.exists("Customer", "General"):
@@ -2530,21 +2532,24 @@ def customer_display_logs(station_id="",posting_type = "post"):
     else:
         pass
 @frappe.whitelist()
-def get_voucher_info(name,branch):
+def get_voucher_info(name):
     from datetime import date
-    working_date = (get_current_working_day(branch) or {"posting_date":date.today()})
-    data = frappe.db.sql("select expiry_on,amount,min_bill_amount,gift_voucher_type,coalesce(customer,'no customer') customer,name from `tabIssue Gift Voucher` where name = '{0}'".format(name),as_dict=1)
+    data = frappe.db.sql("select expiry_on,amount,min_bill_amount,gift_voucher_type,coalesce(customer,'no customer') customer,name,used from `tabIssue Gift Voucher` where disabled = 0 and name = '{0}'".format(name),as_dict=1)
     if len(data)>0:
-        return {"is_expired":data[0].get("expiry_on")<working_date.get("posting_date"),
+        return {"is_expired":data[0].get("expiry_on")<=date.today(),
                 "amount":data[0].get("amount"),
                 "min_bill_amount":data[0].get("min_bill_amount"),
                 "gift_voucher_type":data[0].get("gift_voucher_type"),
                 "customer":data[0].get("customer"),
-                "name":data[0].get("name")}
+                "name":data[0].get("name"),
+                "expired_date":data[0].get("expiry_on"),
+                "used":data[0].get("used")}
     else:
         return {"is_expired":1,
                 "amount":0,
                 "min_bill_amount":0,
                 "gift_voucher_type":"",
                 "customer":"",
-                "name":"Not Found"}
+                "name":"Not Found",
+                "expired_date":date.today(),
+                "used":0}

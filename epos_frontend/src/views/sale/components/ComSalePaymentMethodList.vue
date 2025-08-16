@@ -29,7 +29,7 @@ if (currency_setting) {
 }
 
 async function onPaymentTypeClick(pt) { 
-    let voucher_amount = 0
+    let voucher = {"voucher_amount":0,"voucher_name":0,"customer":0}
     let room = null;
     let folio_transaction_number = null
     let folio_transaction_type=null
@@ -37,12 +37,15 @@ async function onPaymentTypeClick(pt) {
     let city_ledger_name = null
     let desk_folio = null
     let reservation_stay = null
-    // if(pt.is_voucher){
-    //     const result = await vouhcerDialog({})
-    //     if(result != false){
-    //         voucher_amount = result.voucher_amount
-    //     }
-    // }
+    if(pt.is_voucher){
+        const result = await vouhcerDialog({})
+        if(result != false){
+            voucher = result
+        }
+        else{
+            return
+        }
+    }
     if(pt.payment_type_group=="Pay to Room" ){ 
         if(sale.paymentInputNumber<=0){
             toaster.warning($t("msg.Please enter payment amount"));
@@ -153,8 +156,11 @@ async function onPaymentTypeClick(pt) {
     else  if(sale.is_payment_first_load){       
         sale.paymentInputNumber = sale.paymentInputNumber * pt.exchange_rate;       
     }  
-    const payment_obj={paymentType: pt, amount:sale.paymentInputNumber,fee_amount:fee_amount,room:room, folio : folio, folio_transaction_type:folio_transaction_type,folio_transaction_number:folio_transaction_number,city_ledger_name:city_ledger_name,reservation_stay:reservation_stay}
-     
+    if(voucher.voucher_amount>0){
+         sale.paymentInputNumber = voucher.voucher_amount
+         sale.sale.customer = voucher.voucher_customer
+    }
+    const payment_obj={paymentType: pt, amount:sale.paymentInputNumber,fee_amount:fee_amount,room:room, folio : folio, folio_transaction_type:folio_transaction_type,folio_transaction_number:folio_transaction_number,city_ledger_name:city_ledger_name,reservation_stay:reservation_stay,voucher_name:voucher.voucher_name}
     sale.onAddPayment(payment_obj);
 }
 

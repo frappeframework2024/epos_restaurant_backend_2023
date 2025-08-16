@@ -151,6 +151,10 @@
   "apply_foc_required_password",
   "column_break_kpcm",
   "apply_foc_required_note",
+  "section_break_khgx",
+  "overwrite_voucher_minimum_amount_required_password",
+  "column_break_gezq",
+  "show_voucher_minimum_overwrite",
   "accounting_tab",
   "default_tip_account",
   "column_break_mcmi",
@@ -946,12 +950,32 @@
    "fieldname": "print_settings",
    "fieldtype": "Table",
    "options": "POS Config Print Setting"
+  },
+  {
+   "fieldname": "section_break_khgx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "overwrite_voucher_minimum_amount_required_password",
+   "fieldtype": "Check",
+   "label": "Overwrite Voucher Minimum Amount Required Password"
+  },
+  {
+   "fieldname": "column_break_gezq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_voucher_minimum_overwrite",
+   "fieldtype": "Check",
+   "label": "Show Voucher Minimum Overwrite"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-10 15:11:52.333445",
+ "modified": "2025-08-16 09:51:40.226027",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

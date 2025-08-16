@@ -87,8 +87,14 @@
             <v-list-item prepend-icon="mdi-cash-100" :title="$t('Tax Setting')"
                 v-if="(saleProduct.product_tax_rule && gv.device_setting.is_order_station == 0)"
                 @click="sale.onSaleProductChangeTaxSetting(saleProduct, gv)">
-            </v-list-item>
+            </v-list-item> 
 
+            <template v-if="gv.device_setting.show_mark_delivered_item_button">
+                <v-list-item :prepend-icon="showButtonDelivered? 'mdi-check-circle' : 'mdi-circle-outline'" :title="showButtonDelivered? $t('Mark to Delivered') :  $t('Mark to Processing')"
+                @click="onMarkDelivered(saleProduct)"></v-list-item>
+
+            </template>
+           
             <v-list-item v-if="productPrinter" prepend-icon="mdi-printer-outline" :title="$t('Re-Send')"
                 @click="onSelectPrinter()">
             </v-list-item>
@@ -149,6 +155,17 @@ const productPrinter = computed(() => {
             }
 
             return (!props.saleProduct.is_timer_product && (props.saleProduct.name || '') != '');
+        }
+        return false;
+    }
+    return false;
+});
+
+const showButtonDelivered = computed(() => {
+    
+    if(gv.device_setting.show_mark_delivered_item_button == 1){
+        if(!props.saleProduct.is_delivered ){
+            return true;
         }
         return false;
     }
@@ -327,6 +344,11 @@ sale.vue.$onKeyStroke('F8', (e) => {
         sale.onSaleProductNote(props.saleProduct)
     }
 })
+
+
+function onMarkDelivered(sp){
+    sp.is_delivered = (sp.is_delivered??0)?0:1
+}
 
 function onEditSaleProduct(sp) {
     if (!sale.isBillRequested()) {

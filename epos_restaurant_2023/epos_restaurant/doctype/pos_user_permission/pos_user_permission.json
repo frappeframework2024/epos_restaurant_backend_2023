@@ -42,6 +42,7 @@
   "allow_switch_pos_profile",
   "park_item",
   "allow_apply_tax_include_rate",
+  "allow_overwrite_voucher_minimum_amount",
   "section_break_7",
   "discount_codes"
  ],
@@ -252,11 +253,17 @@
    "fieldname": "allow_apply_foc",
    "fieldtype": "Check",
    "label": "Allow Apply FOC"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_overwrite_voucher_minimum_amount",
+   "fieldtype": "Check",
+   "label": "Allow Overwrite Voucher Minimum Amount"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-01 14:24:44.611590",
+ "modified": "2025-08-16 09:41:49.070406",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "POS User Permission",

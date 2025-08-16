@@ -64,6 +64,7 @@
   "folio_transaction_type",
   "folio_transaction_number",
   "bulk_sale_payment_name",
+  "issue_gift_voucher",
   "accounting_tab",
   "account_paid_to",
   "account_paid_from"
@@ -476,12 +477,18 @@
    "hidden": 1,
    "label": "Is Pay To Room",
    "read_only": 1
+  },
+  {
+   "fieldname": "issue_gift_voucher",
+   "fieldtype": "Link",
+   "label": "Issue Gift Voucher",
+   "options": "Issue Gift Voucher"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-03-22 14:51:28.699063",
+ "modified": "2025-08-16 11:34:12.013897",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Payment",

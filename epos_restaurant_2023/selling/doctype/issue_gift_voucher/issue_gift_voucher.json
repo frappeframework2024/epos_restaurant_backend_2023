@@ -10,6 +10,7 @@
   "gift_voucher_type",
   "customer",
   "is_fan",
+  "used",
   "column_break_ofyb",
   "issue_date",
   "expiry_on",
@@ -87,11 +88,17 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Min Bill Amount"
+  },
+  {
+   "default": "0",
+   "fieldname": "used",
+   "fieldtype": "Check",
+   "label": "Used"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-15 14:41:05.916031",
+ "modified": "2025-08-16 13:45:55.651221",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Issue Gift Voucher",
