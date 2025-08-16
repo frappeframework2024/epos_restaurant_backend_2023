@@ -21,7 +21,6 @@
   {
    "fieldname": "gift_voucher_code",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Gift Voucher Code",
    "reqd": 1,
    "unique": 1
@@ -38,7 +37,8 @@
   {
    "fieldname": "customer",
    "fieldtype": "Link",
-   "label": "Customer",
+   "in_list_view": 1,
+   "label": "Customer / Influencer",
    "options": "Customer"
   },
   {
@@ -91,7 +91,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-15 12:03:03.373754",
+ "modified": "2025-08-15 14:41:05.916031",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Issue Gift Voucher",

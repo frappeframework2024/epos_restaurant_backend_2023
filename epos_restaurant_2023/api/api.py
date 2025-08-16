@@ -197,6 +197,7 @@ def get_system_settings(pos_profile="", device_name=''):
             "currency_precision":p.currency_precision,
             "allow_change":p.allow_change,
             "is_single_payment_type":p.is_single_payment_type,
+            "is_voucher":p.is_voucher,
             "allow_cash_float":p.allow_cash_float, 
             "input_amount":0.0,
             "exchange_rate":p.exchange_rate if p.currency != main_currency.name else 1.0,
@@ -2528,3 +2529,22 @@ def customer_display_logs(station_id="",posting_type = "post"):
         return "deleted"
     else:
         pass
+@frappe.whitelist()
+def get_voucher_info(name,branch):
+    from datetime import date
+    working_date = (get_current_working_day(branch) or {"posting_date":date.today()})
+    data = frappe.db.sql("select expiry_on,amount,min_bill_amount,gift_voucher_type,coalesce(customer,'no customer') customer,name from `tabIssue Gift Voucher` where name = '{0}'".format(name),as_dict=1)
+    if len(data)>0:
+        return {"is_expired":data[0].get("expiry_on")<working_date.get("posting_date"),
+                "amount":data[0].get("amount"),
+                "min_bill_amount":data[0].get("min_bill_amount"),
+                "gift_voucher_type":data[0].get("gift_voucher_type"),
+                "customer":data[0].get("customer"),
+                "name":data[0].get("name")}
+    else:
+        return {"is_expired":1,
+                "amount":0,
+                "min_bill_amount":0,
+                "gift_voucher_type":"",
+                "customer":"",
+                "name":"Not Found"}

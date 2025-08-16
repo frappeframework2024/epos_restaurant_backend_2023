@@ -5,6 +5,7 @@ import importlib.util
 
 
 STATEMENTS_DIR = os.path.join(os.path.dirname(__file__), "statements")
+@frappe.whitelist()
 def execute():
     sql_statements = []
 

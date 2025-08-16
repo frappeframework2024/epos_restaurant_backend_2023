@@ -10,7 +10,7 @@
     </div>
 </template>
 <script setup>
-import { inject , payToRoomDialog,createToaster,payToCityLedgerDialog,payDeskfolioDialog,i18n ,computed,keyboardDialog,ref} from '@/plugin';
+import { inject , payToRoomDialog,createToaster,payToCityLedgerDialog,payDeskfolioDialog,i18n ,computed,keyboardDialog,ref,vouhcerDialog} from '@/plugin';
 import { useDisplay } from 'vuetify'
 const {mobile} = useDisplay()
 const gv = inject("$gv")
@@ -29,7 +29,7 @@ if (currency_setting) {
 }
 
 async function onPaymentTypeClick(pt) { 
-
+    let voucher_amount = 0
     let room = null;
     let folio_transaction_number = null
     let folio_transaction_type=null
@@ -37,7 +37,12 @@ async function onPaymentTypeClick(pt) {
     let city_ledger_name = null
     let desk_folio = null
     let reservation_stay = null
-
+    // if(pt.is_voucher){
+    //     const result = await vouhcerDialog({})
+    //     if(result != false){
+    //         voucher_amount = result.voucher_amount
+    //     }
+    // }
     if(pt.payment_type_group=="Pay to Room" ){ 
         if(sale.paymentInputNumber<=0){
             toaster.warning($t("msg.Please enter payment amount"));

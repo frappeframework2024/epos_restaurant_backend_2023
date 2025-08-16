@@ -66,6 +66,7 @@ import ComUnpaidBillList from "@/views/credit_balance/UnpaidBillDialog.vue";
 import ComScanCouponDialog from "@/views/sale/components/coupon/ComScanCouponDialog.vue"
 import ComSelectPaymentTypeQuickPayment from "@/views/sale/components/ComSelectPaymentTypeQuickPayment.vue"
 import ComChangeTableNumber from "@/views/receipt_list/components/ComChangeTableNumber.vue"
+import ComVoucher from "../components/ComVoucher.vue";
 interface params {
     doctype?: String,
     name?: String,
@@ -101,6 +102,7 @@ export const scanCustomerCodeDialog = createPromiseDialog<params, object>(ComSca
 export const scanCouponDialog = createPromiseDialog<params, object>(ComScanCouponDialog);
 export const authorizeDialog = createPromiseDialog<params, object>(ComAuthorize);
 export const noteDialog = createPromiseDialog<params, object>(ComNote);
+export const vouhcerDialog = createPromiseDialog<params, object>(ComVoucher);
 export const saleProductDiscountDialog = createPromiseDialog<params, object>(ComSaleProductDiscountModal);
 export const paymentDialog = createPromiseDialog<params, object>(ComPayment);
 export const payToRoomDialog = createPromiseDialog<params, object>(ComPayToRoomModal);

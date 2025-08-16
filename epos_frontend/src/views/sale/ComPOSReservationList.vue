@@ -98,6 +98,12 @@
                     </template>
                   </v-list-item>
 
+                   <v-list-item :title="`${$t('Note')}:`" v-if="s.note">
+                    <template v-slot:append>
+                     {{ s.note }}
+                    </template>
+                  </v-list-item>
+
 
                 </v-list>
               </v-card-text>
