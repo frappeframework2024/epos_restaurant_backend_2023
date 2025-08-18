@@ -279,32 +279,40 @@ def update_sale(self):
 		update_customer_bill_balance(self)
 
 def update_customer_bill_balance(self,calcel=False):
-	sql ="""update `tabCustomer` c 
-			inner join (
-						select 
-							s.customer, 
-							sum(s.balance) as total_balance 
-						from `tabSale` s
-						where s.docstatus = 1 and s.customer = %(customer)s 
-						group by s.customer) _s on _s.customer = c.name
-				set c.balance = _s.total_balance + c.total_coupon_balance + c.membership_balance
-			where c.name = %(customer)s"""
-	frappe.db.sql(sql,{"customer":self.customer})
+	from frappe.utils.synchronization import filelock
+	lock_name = f"customer_balance_{self.name}"
+	with filelock(lock_name, timeout=30):
+		sql ="""update `tabCustomer` c 
+				inner join (
+							select 
+								s.customer, 
+								sum(s.balance) as total_balance 
+							from `tabSale` s
+							where s.docstatus = 1 and s.customer = %(customer)s 
+							group by s.customer) _s on _s.customer = c.name
+					set c.balance = _s.total_balance + c.total_coupon_balance + c.membership_balance
+				where c.name = %(customer)s"""
+		frappe.db.sql(sql,{"customer":self.customer})
+		frappe.db.commit()
 
 def update_customer_saving_crypto(self):
 	if self.payment_type_group == "Crypto":
-		sql = """ update `tabCustomer` c
-					inner join (
-						select 
-							%(customer)s as customer,
-					sum(sp.payment_amount) as total_claim_amount
-				from `tabSale Payment` sp 
-				where sp.payment_type_group = 'Crypto'
-				and sp.docstatus = 1
-				and sp.customer = %(customer)s
-				) _c on c.name = _c.customer
-				set c.total_crypto_claim = _c.total_claim_amount,
-				c.total_crypto_balance = c.total_crypto_amount - (_c.total_claim_amount + c.total_crypto_balance_expired )
-				where c.name = %(customer)s"""
-		frappe.db.sql(sql,{"customer":self.customer})
+		from frappe.utils.synchronization import filelock
+		lock_name = f"customer_crypto_balance_{self.name}"
+		with filelock(lock_name, timeout=30):
+			sql = """ update `tabCustomer` c
+						inner join (
+							select 
+								%(customer)s as customer,
+						sum(sp.payment_amount) as total_claim_amount
+					from `tabSale Payment` sp 
+					where sp.payment_type_group = 'Crypto'
+					and sp.docstatus = 1
+					and sp.customer = %(customer)s
+					) _c on c.name = _c.customer
+					set c.total_crypto_claim = _c.total_claim_amount,
+					c.total_crypto_balance = c.total_crypto_amount - (_c.total_claim_amount + c.total_crypto_balance_expired )
+					where c.name = %(customer)s"""
+			frappe.db.sql(sql,{"customer":self.customer})
+			frappe.db.commit()
 		

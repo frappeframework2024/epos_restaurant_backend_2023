@@ -2534,22 +2534,25 @@ def customer_display_logs(station_id="",posting_type = "post"):
 @frappe.whitelist()
 def get_voucher_info(name):
     from datetime import date
-    data = frappe.db.sql("select expiry_on,amount,min_bill_amount,gift_voucher_type,coalesce(customer,'no customer') customer,name,used from `tabIssue Gift Voucher` where disabled = 0 and name = '{0}'".format(name),as_dict=1)
-    if len(data)>0:
-        return {"is_expired":data[0].get("expiry_on")<=date.today(),
-                "amount":data[0].get("amount"),
-                "min_bill_amount":data[0].get("min_bill_amount"),
-                "gift_voucher_type":data[0].get("gift_voucher_type"),
-                "customer":data[0].get("customer"),
-                "name":data[0].get("name"),
-                "expired_date":data[0].get("expiry_on"),
-                "used":data[0].get("used")}
-    else:
-        return {"is_expired":1,
-                "amount":0,
-                "min_bill_amount":0,
-                "gift_voucher_type":"",
-                "customer":"",
-                "name":"Not Found",
-                "expired_date":date.today(),
-                "used":0}
+    from frappe.utils.synchronization import filelock
+    lock_name = f"voucher_{name}"
+    with filelock(lock_name, timeout=30):
+        data = frappe.db.sql("select expiry_on,amount,min_bill_amount,gift_voucher_type,coalesce(customer,'no customer') customer,name,used from `tabIssue Gift Voucher` where disabled = 0 and name = '{0}'".format(name),as_dict=1)
+        if len(data)>0:
+            return {"is_expired":data[0].get("expiry_on")<=date.today(),
+                    "amount":data[0].get("amount"),
+                    "min_bill_amount":data[0].get("min_bill_amount"),
+                    "gift_voucher_type":data[0].get("gift_voucher_type"),
+                    "customer":data[0].get("customer"),
+                    "name":data[0].get("name"),
+                    "expired_date":data[0].get("expiry_on"),
+                    "used":data[0].get("used")}
+        else:
+            return {"is_expired":1,
+                    "amount":0,
+                    "min_bill_amount":0,
+                    "gift_voucher_type":"",
+                    "customer":"",
+                    "name":"Not Found",
+                    "expired_date":date.today(),
+                    "used":0}
