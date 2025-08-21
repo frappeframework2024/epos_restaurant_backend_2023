@@ -25,8 +25,7 @@
         <div style="width: 120px;">
           <div
             class="w-full h-full cursor-pointer flex justify-center items-center  text-white p-3 text-center"
-            @click="onSubmit()" @mouseover="hoverEffectsub = true"
-    @mouseleave="hoverEffectsub = false" :class="[hoverEffectsub ? 'bg-submitorderhover' : 'bg-submitorder']" >
+            @click="onSubmit()" @mouseover="hoverEffectsub = true" @mouseleave="hoverEffectsub = false" :class="[hoverEffectsub ? 'bg-submitorderhover' : 'bg-submitorder']" >
             <div v-if="gv.setting.table_groups && gv.setting.table_groups.length > 0">
               <v-icon icon="mdi-arrow-right-thick"></v-icon>
               <div>{{ $t('Submit Order') }}</div>

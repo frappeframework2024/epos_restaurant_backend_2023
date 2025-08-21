@@ -158,7 +158,7 @@ async function onPaymentTypeClick(pt) {
     }  
     if(voucher.voucher_amount>0){
          sale.paymentInputNumber = voucher.voucher_amount
-         sale.sale.customer = voucher.voucher_customer
+         sale.sale.customer = (voucher.voucher_customer || "") == "" ?  sale.sale.customer : voucher.voucher_customer
     }
     const payment_obj={paymentType: pt, amount:sale.paymentInputNumber,fee_amount:fee_amount,room:room, folio : folio, folio_transaction_type:folio_transaction_type,folio_transaction_number:folio_transaction_number,city_ledger_name:city_ledger_name,reservation_stay:reservation_stay,voucher_name:voucher.voucher_name}
     sale.onAddPayment(payment_obj);

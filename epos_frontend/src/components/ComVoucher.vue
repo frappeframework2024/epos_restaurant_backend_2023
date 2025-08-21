@@ -6,7 +6,7 @@
         <template #content>
             <div>
                 <div class="mb-2">
-                    <ComInput autofocus :placeholder="$t('Search')" keyboard v-model="search" v-debounce="onSearch" />
+                    <ComInput autofocus :placeholder="$t('Search')" keyboard v-model="search" v-debounce="onSearch" @onInput="onSearch"/>
                 </div>
                 <div style="white-space: pre-line;font-family: Arial;font-size: 15px;margin-top: -5px;">{{ voucher_info }}</div>
                 <div style="color: red;font-family: Arial;font-size: 15px;margin-top: -5px;">{{ error_msg }}</div>
