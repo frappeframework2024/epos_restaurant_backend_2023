@@ -1,5 +1,4 @@
-SQL = """
-CREATE   PROCEDURE `sp_generate_flash_manager_report`( IN v_property varchar(100), IN v_posting_date DATE  )
+SQL = """CREATE   PROCEDURE `sp_generate_flash_manager_report`( IN v_property varchar(100), IN v_posting_date DATE  )
 BEGIN
 		DECLARE v_mtd_start_date DATE;
 		DECLARE v_ytd_start_date DATE;
@@ -321,5 +320,5 @@ BEGIN
  -- remove 0 record
 		delete from `tabManager Flash Report Data` where coalesce(today_total,0) = 0 and COALESCE(mtd_total,0) = 0 and coalesce(ytd_total,0) = 0;
 
-END
+END;
 """
