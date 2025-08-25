@@ -374,7 +374,7 @@ def post_folio_transaction(self,account_code, amount, folio_transaction_type=Non
 def get_revenues(self):
 	sql="""select 
 			sp.revenue_group,
-			sum(sp.sub_total) as sub_total,
+			sum(sp.selling_price*sp.quantity) as sub_total,
 			sum(sp.total_discount) as discount,
 			sum(sp.tax_1_amount) as tax_1_amount,
 			sum(sp.tax_2_amount) as tax_2_amount,

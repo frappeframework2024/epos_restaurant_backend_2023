@@ -29,8 +29,8 @@ import { createToaster } from '@meforma/vue-toaster';
 import { FrappeApp } from 'frappe-js-sdk';
 import { useDisplay } from 'vuetify'; 
 import DynamicDialog from 'primevue/dynamicdialog';
- import WebSocketPrinter from "@/utils/websocket-printer.js"
-const printService = new WebSocketPrinter();
+import WebSocketPrinter from "@/utils/websocket-printer.js"
+
 const router = useRouter()
 const route = useRoute()
 
@@ -49,6 +49,8 @@ const pos_license = inject("$pos_license");
 const product = inject("$product");
 const tableLayout = inject("$tableLayout");
 
+
+
 const socket = inject("$socket");
 const auth = inject("$auth");
 const store = useStore();
@@ -56,6 +58,10 @@ const screen = inject('$screen');
 let state = reactive({
 	isLoading: false
 }); 
+
+
+
+ 
  
 const { mobile } = useDisplay();
 const licenseToaster = createToaster({ position: "top", duration: 1000*60*60, type: "error" });
@@ -74,35 +80,45 @@ socket.on("PrintReceipt", (arg) => {
 });
 
 // print from emenu order
-socket.on("OnPrintReport", async (arg) => {
- 
-	
-     if(arg.order_number!==""){
-	 
-		  await postApi("printing.get_mobile_order_to_kitchen_pdf", {
-			pdf: 0,
-			doc_name: arg.order_number
-		}).then(result=>{
-			result.message.forEach(x => {
-         printService.submit({
-            'type': x[0],//printer name
-            'url': 'file.pdf',
-            'file_content': x[1] //base 64 pdf
-         });
-      }
-      )
-		})
-
-		
-	 }
-    })
+socket.on("OnPrintReport", async (arg) => { 
+	if(printService){	
+		if(arg.order_number!==""){		
+			await postApi("printing.get_mobile_order_to_kitchen_pdf", {
+				pdf: 0,
+				doc_name: arg.order_number
+			}).then(result=>{
+				result.message.forEach(x => {
+					printService.submit({
+						'type': x[0],//printer name
+						'url': 'file.pdf',
+						'file_content': x[1] //base 64 pdf
+					});
+				});
+			});			
+		}
+	}
+})
 
 
 
+let printService  = null;
 
 const isLoading = computed(() => {
-	return store.state.isLoading
+	const value = store.state.isLoading;
+	if(!value){	 
+		 /// wss://192.168.1.125:12212/printer/
+		 
+		 if(gv.setting?.device_setting?.web_socket_print_url){
+			printService = new WebSocketPrinter(null, gv.setting.device_setting.web_socket_print_url);
+		 }
+	}
+	
+	return value;
 });
+
+
+
+
 
 
 const is_window = localStorage.getItem("is_window");

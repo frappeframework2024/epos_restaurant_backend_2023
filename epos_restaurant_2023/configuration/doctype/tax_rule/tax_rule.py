@@ -13,6 +13,7 @@ class TaxRule(Document):
 				"tax_1_rate":self.tax_1_rate,
 				"tax_1_name":self.tax_1_name,
 				"rate_include_tax":self.is_rate_include_tax,
+				"is_rate_include_tax":self.is_rate_include_tax,
 				"percentage_of_price_to_calculate_tax_1":self.percentage_of_price_to_calculate_tax_1,
 				"calculate_tax_1_after_discount":self.calculate_tax_1_after_discount,
 				"tax_1_account":self.tax_1_account,
@@ -29,7 +30,7 @@ class TaxRule(Document):
 				"calculate_tax_3_after_adding_tax_1":self.calculate_tax_3_after_adding_tax_1,
 				"calculate_tax_3_after_adding_tax_2":self.calculate_tax_3_after_adding_tax_2,
 				"tax_3_account":self.tax_3_account
-				}
+			}
 		) 
 	
 	def after_rename(self, old_name, new_name, merge=False):
@@ -37,7 +38,7 @@ class TaxRule(Document):
 		doc.save()
 
 	def on_update(self): 
-		frappe.db.sql("update `tabTemp Product Menu` set tax_rule_data='{}' where tax_rule='{}'".format(self.tax_rule_data, self.name))
-		frappe.db.sql("update `tabPOS Profile Tax Rule` set tax_rule_data='{}' where tax_rule='{}'".format(self.tax_rule_data, self.name))
+		frappe.db.sql("update `tabTemp Product Menu` set tax_rule_data='{}' where tax_rule=%(tax_rule)s".format(self.tax_rule_data),{"tax_rule": self.name})
+		frappe.db.sql("update `tabPOS Profile Tax Rule` set tax_rule_data='{}' where tax_rule=%(tax_rule)s".format(self.tax_rule_data),{"tax_rule": self.name})
 		frappe.clear_document_cache("Tax Rule", self.name)
 	

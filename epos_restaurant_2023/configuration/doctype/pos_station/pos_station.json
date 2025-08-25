@@ -21,6 +21,7 @@
   "device_id",
   "license",
   "station_device_printing",
+  "web_socket_print_url",
   "use_server_network_printing",
   "section_break_xdfa",
   "show_button_print_bill",
@@ -417,11 +418,17 @@
    "fieldname": "show_mark_delivered_item_button",
    "fieldtype": "Check",
    "label": "Show Mark Delivered Item Button"
+  },
+  {
+   "description": "We use WebApp Hardware Bridge",
+   "fieldname": "web_socket_print_url",
+   "fieldtype": "Data",
+   "label": "Web Socket Print Url"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-16 11:15:05.736388",
+ "modified": "2025-08-23 11:31:54.011983",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

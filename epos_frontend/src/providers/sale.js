@@ -186,7 +186,8 @@ export default class Sale {
             created_by: make_order_auth?.name || "",
 
         } 
-        this.onSaleApplyTax(tax_rule, this.sale);   
+        this.onSaleApplyTax(tax_rule, this.sale);  
+
 
         
         //audit-trail 
@@ -205,6 +206,8 @@ export default class Sale {
                 custom_note: ''
             });
         }
+
+        
     }
 
     async LoadSaleData(name) { 
@@ -481,6 +484,9 @@ export default class Sale {
             new_sale_product = saleProduct;
 
         }
+
+
+        
         this.updateSaleSummary();
 
         const u = JSON.parse(localStorage.getItem('make_order_auth'));
@@ -830,6 +836,10 @@ export default class Sale {
     //update sale summary
     updateSaleSummary(sale_status = '') {
         const precision = (this.setting.pos_setting.main_currency_precision||2) //newline
+        if(this.sale.discount> 0){
+            this.onUpdateSaleDiscount(this.sale.discount, this.sale.discount_type, this.sale.discount_note)
+        }
+
         const sp = Enumerable.from(this.sale.sale_products);
         this.sale.total_quantity = this.getNumber(sp.where("$.is_timer_product == 0").sum("$.quantity"));
         this.sale.sub_total = this.getNumber(sp.sum("$.sub_total"));
@@ -839,19 +849,21 @@ export default class Sale {
         this.sale.sale_discountable_amount =  Number((this.sale.sale_discountable_amount + Number.EPSILON).toFixed(precision)) //new
         this.sale.discount = this.getNumber(this.sale.discount);
         this.sale.sale_discount = 0;
+       
         if (this.sale.discount_type == "Percent") {
             // this.sale.sale_discount = this.sale.sale_discountable_amount * (this.sale.discount / 100);
             this.sale.sale_discount = sp.sum("$.sale_discount_amount")
         } else {
             this.sale.sale_discount = this.sale.discount;
-        }
+        } 
 
         this.sale.sale_discount = parseFloat((this.sale.sale_discount + Number.EPSILON).toFixed(precision)); //new 
 
         this.sale.product_discount = this.getNumber(sp.sum("$.discount_amount"));
         this.sale.product_discount = Number( (this.sale.product_discount +Number.EPSILON).toFixed(precision)) //new
-
-        this.sale.total_discount = (this.sale.sale_discount || 0) + (this.sale.product_discount || 0)
+ 
+ 
+        this.sale.total_discount = (Number(this.sale.sale_discount) || 0) + (Number(this.sale.product_discount) || 0); 
 
         //tax
         this.sale.tax_1_amount = this.getNumber(sp.sum("$.tax_1_amount"));
@@ -1375,6 +1387,30 @@ export default class Sale {
         const resp = await this.onChangeTaxSetting($t('Change Tax Setting'), sp.product_tax_rule, sp.change_tax_setting_note, gv, sp);
     }
 
+
+    onUpdateSaleDiscount(discount,discount_type, discount_note){
+        this.sale.discount = discount;
+        this.sale.discount_type = discount_type;
+        this.sale.discount_note = discount_note;
+        const sale_discount = this.sale.discount;
+
+        (this.sale.sale_products ?? []).forEach(_sp => {
+            if (sale_discount > 0 && _sp.allow_discount && _sp.discount == 0) {
+                _sp.sale_discount_percent = sale_discount;
+                const temp_sale_discount_amount = (sale_discount / 100) * _sp.sub_total;
+                const sale_discount_amount =  Number((temp_sale_discount_amount + Number.EPSILON).toFixed(this.setting.pos_setting.main_currency_precision))
+                _sp.sale_discount_amount = temp_sale_discount_amount
+                
+            }
+            else {
+                _sp.sale_discount_percent = 0;
+                _sp.sale_discount_amount = 0;
+            }
+            _sp.total_discount = (_sp.sale_discount_amount || 0) + (_sp.discount_amount || 0);
+            this.updateSaleProduct(_sp);
+        });
+    }
+
     async onDiscount(gv, title, amount, discount_value, discount_type, discount_codes, discount_note, sp, category_note_name) {
         
         const result = await saleProductDiscountDialog({
@@ -1422,29 +1458,8 @@ export default class Sale {
 
                 }
                 else {
-                    this.sale.discount = result.discount;
-                    this.sale.discount_type = result.discount_type;
-                    this.sale.discount_note = result.discount_note;
-                    const sale_discount = this.sale.discount;
 
-
-                    (this.sale.sale_products ?? []).forEach(_sp => {
-                        if (sale_discount > 0 && _sp.allow_discount && _sp.discount == 0) {
-                            _sp.sale_discount_percent = sale_discount;
-                            const temp_sale_discount_amount = (sale_discount / 100) * _sp.sub_total;
-                            const sale_discount_amount =  Number((temp_sale_discount_amount + Number.EPSILON).toFixed(this.setting.pos_setting.main_currency_precision))
-                            _sp.sale_discount_amount = temp_sale_discount_amount
-                            
-                        }
-                        else {
-                            _sp.sale_discount_percent = 0;
-                            _sp.sale_discount_amount = 0;
-                        }
-                        _sp.total_discount = (_sp.sale_discount_amount || 0) + (_sp.discount_amount || 0);
-                        this.updateSaleProduct(_sp);
-                    });
-
-
+                    this.onUpdateSaleDiscount(result.discount, result.discount_type,result.discount_note);
 
                     //sale discount audit
                     let discount = this.sale.discount_type == "Percent" ? `${this.sale.discount} %` : NumberFormat(gv.getCurrnecyFormat, this.sale.discount);                //audit trail
@@ -1653,8 +1668,28 @@ export default class Sale {
             return false
         }
     }
-
-    onSubmit() {
+   async pingServer(options = {}, timeout = 5000) {
+        this.loading = true
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), timeout);
+        let port = this.setting?.pos_setting?.use_backend_port == 0 ? `:${window.location.port}` : (window.location.protocol == "https:" ? "" : `:${this.setting?.pos_setting?.backend_port}`)
+        const url = `${window.location.protocol}//${window.location.hostname}${port}/api/method/epos_restaurant_2023.api.utils.ping`;
+        try {
+            const res = await fetch(url, {...options,signal: controller.signal});
+            return "OK";
+        } catch (err) {
+           return "Failed"
+        } finally {
+            clearTimeout(id);
+            this.loading = false
+        }
+    }
+    async onSubmit() {
+        await this.pingServer().then((doc)=>{
+            if(doc == "Failed"){
+                return
+            }
+        })
         return new Promise(async (resolve) => {
             if (this.sale.sale_products.length == 0 && this.sale.name == undefined && (this.sale.from_reservation || "") == "") {
                 toaster.warning($t('msg.Please select a menu item to submit order'));
@@ -1689,7 +1724,12 @@ export default class Sale {
     }
 
     async onSubmitQuickPay() {
-
+        await this.pingServer().then((doc)=>{
+            console.log(doc)
+            if(doc == "Failed"){
+                return
+            }
+        })
         if (this.sale.sale_products.filter(r => !r.time_out_price && r.is_timer_product).length > 0) {
             toaster.warning($t('msg.Please stop timer on timer product'));
             return;
@@ -2019,48 +2059,153 @@ export default class Sale {
         } 
     }
 
+ 
+
+    //p = printer, r = sale product
+    onAddToProductPrinters(p, r){
+        this.productPrinters.push({
+            sale_product_name: (r.name || "New"),
+            printer: p.printer,
+            group_item_type: p.group_item_type,
+            is_label_printer: p.is_label_printer == 1,
+            ip_address: p.ip_address,
+            port: p.port,
+            usb_printing: p.usb_printing,
+            product_code: r.product_code,
+            product_name_en: r.product_name,
+            product_name_kh: r.product_name_kh,
+            kitchen_group:r.kitchen_group||"",
+            kitchen_group_sort_order: r.kitchen_group_sort_order || 0,
+            seat_number: r.seat_number||"",
+            portion: r.portion,
+            unit: r.unit,
+            modifiers: r.modifiers,
+            note: r.note,
+            quantity: r.quantity,
+            is_deleted: false,
+            is_free: r.is_free == 1,
+            combo_menu: r.combo_menu,
+            combo_menu_data: r.combo_menu_data,
+            order_by: r.order_by,
+            creation: r.creation,
+            modified: r.modified,
+            is_timer_product: (r.is_timer_product || 0),
+            reference_sale_product: r.reference_sale_product,
+            duration: r.duration,
+            time_stop: (r.time_stop || 0),
+            time_in: r.time_in,
+            time_out_price: r.time_out_price,
+            time_out: r.time_out,
+            amount: r.amount
+        })
+    }
+
+
+    generateComboItemPrinters(){
+        //
+    }
+
+
     generateProductPrinters() {
         this.productPrinters = [];
-        this.sale.sale_products.filter(r => r.sale_product_status == 'New' && JSON.parse(r.printers).length > 0).forEach((r) => {
-            const printers = JSON.parse(r.printers);
-            printers.forEach((p) => {
-             
-                this.productPrinters.push({
-                    sale_product_name: (r.name || "New"),
-                    printer: p.printer,
-                    group_item_type: p.group_item_type,
-                    is_label_printer: p.is_label_printer == 1,
-                    ip_address: p.ip_address,
-                    port: p.port,
-                    usb_printing: p.usb_printing,
-                    product_code: r.product_code,
-                    product_name_en: r.product_name,
-                    product_name_kh: r.product_name_kh,
-                    kitchen_group:r.kitchen_group||"",
-                    kitchen_group_sort_order: r.kitchen_group_sort_order || 0,
-                    seat_number: r.seat_number||"",
-                    portion: r.portion,
-                    unit: r.unit,
-                    modifiers: r.modifiers,
-                    note: r.note,
-                    quantity: r.quantity,
-                    is_deleted: false,
-                    is_free: r.is_free == 1,
-                    combo_menu: r.combo_menu,
-                    combo_menu_data: r.combo_menu_data,
-                    order_by: r.order_by,
-                    creation: r.creation,
-                    modified: r.modified,
-                    is_timer_product: (r.is_timer_product || 0),
-                    reference_sale_product: r.reference_sale_product,
-                    duration: r.duration,
-                    time_stop: (r.time_stop || 0),
-                    time_in: r.time_in,
-                    time_out_price: r.time_out_price,
-                    time_out: r.time_out,
-                    amount: r.amount
-                })
-            });
+        this.sale.sale_products.filter(r => r.sale_product_status == 'New' &&  JSON.parse(r.printers).length > 0).forEach(async (r) => {  
+       
+            ///check if combo print KOT by combo items
+            if(this.setting.pos_setting.combo_menu_print_captain_by_items_printer && r.is_combo_menu){
+                const combo_data = JSON.parse(r.combo_menu_data)
+                let productCodes = combo_data.map(i => i.product_code);
+                const res = await call.post("epos_restaurant_2023.api.api.get_product_printer_by_products", {
+                     "product_codes":productCodes
+                });    
+                const printers = JSON.parse(r.printers); 
+                const combo_product_printers = res["message"]            
+                for(const pro of combo_data ){
+                    const p_printers = combo_product_printers.filter(r=>r.product_code == pro.product_code)
+                    for(const p of p_printers){ 
+                        ///check combo item is exist printer match
+                        const match_printers =  printers.filter(r=> r.printer == p.printer_name)                        
+                        if( match_printers.length > 0){
+                            this.productPrinters.push({
+                                sale_product_name: (r.name || "New"),
+                                printer: p.printer_name,
+                                group_item_type: p.group_item_type,
+                                is_label_printer: p.is_label_printer == 1,
+                                ip_address: p.ip_address,
+                                port: p.port,
+                                usb_printing: p.usb_printing,
+                                product_code: pro.product_code,
+                                product_name_en: pro.product_name,
+                                product_name_kh: pro.product_name_kh,
+                                kitchen_group:pro.kitchen_group||"",
+                                kitchen_group_sort_order: pro.kitchen_group_sort_order || 0,
+                                seat_number: r.seat_number||"",
+                                portion: r.portion,
+                                unit: r.unit,
+                                modifiers: r.modifiers,
+                                note: r.note,
+                                quantity: r.quantity * (pro.quantity||1),
+                                is_deleted: false,
+                                is_free: r.is_free == 1,
+                                combo_menu: r.product_name,
+                                combo_menu_data: null,
+                                order_by: r.order_by,
+                                creation: r.creation,
+                                modified: r.modified,
+                                is_timer_product: (r.is_timer_product || 0),
+                                reference_sale_product: r.reference_sale_product,
+                                duration: r.duration,
+                                time_stop: (r.time_stop || 0),
+                                time_in: r.time_in,
+                                time_out_price: r.time_out_price,
+                                time_out: r.time_out,
+                                amount: r.amount
+                            })
+
+                        }
+                    }
+                }  
+                //
+            }else{                
+                const printers = JSON.parse(r.printers);
+                printers.forEach((p) => { 
+                    this.productPrinters.push({
+                        sale_product_name: (r.name || "New"),
+                        printer: p.printer,
+                        group_item_type: p.group_item_type,
+                        is_label_printer: p.is_label_printer == 1,
+                        ip_address: p.ip_address,
+                        port: p.port,
+                        usb_printing: p.usb_printing,
+                        product_code: r.product_code,
+                        product_name_en: r.product_name,
+                        product_name_kh: r.product_name_kh,
+                        kitchen_group:r.kitchen_group||"",
+                        kitchen_group_sort_order: r.kitchen_group_sort_order || 0,
+                        seat_number: r.seat_number||"",
+                        portion: r.portion,
+                        unit: r.unit,
+                        modifiers: r.modifiers,
+                        note: r.note,
+                        quantity: r.quantity,
+                        is_deleted: false,
+                        is_free: r.is_free == 1,
+                        combo_menu: r.combo_menu,
+                        combo_menu_data: r.combo_menu_data,
+                        order_by: r.order_by,
+                        creation: r.creation,
+                        modified: r.modified,
+                        is_timer_product: (r.is_timer_product || 0),
+                        reference_sale_product: r.reference_sale_product,
+                        duration: r.duration,
+                        time_stop: (r.time_stop || 0),
+                        time_in: r.time_in,
+                        time_out_price: r.time_out_price,
+                        time_out: r.time_out,
+                        amount: r.amount
+                    })
+                });
+            } 
+                       
         });
 
         //generate sale product print when change table

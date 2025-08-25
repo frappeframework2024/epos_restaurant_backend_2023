@@ -378,7 +378,7 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
     if category!= 'All Product Categories':
         sql = sql + " and product_category in %(product_categories)s"
     if product_code:
-        sql = sql + " and name = %(product_code)s "
+        sql = sql + " and (name = %(product_code)s or product_code_2 = %(product_code)s or product_code_3 = %(product_code)s)"
         
     if keyword:
         sql = sql + " and (name like %(keyword)s or product_name_en like %(keyword)s or product_name_kh like %(keyword)s or product_code_2 like %(keyword)s or product_code_3 like %(keyword)s)"

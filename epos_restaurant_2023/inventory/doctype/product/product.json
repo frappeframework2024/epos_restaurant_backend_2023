@@ -654,14 +654,16 @@
    "fieldname": "product_code_2",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Product Code 2"
+   "label": "Product Code 2",
+   "unique": 1
   },
   {
    "allow_in_quick_entry": 1,
    "fieldname": "product_code_3",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Product Code 3"
+   "label": "Product Code 3",
+   "unique": 1
   },
   {
    "fieldname": "secondary_cost",
@@ -1013,7 +1015,7 @@
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2025-06-17 09:31:58.101691",
+ "modified": "2025-08-25 09:47:47.742806",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Product",

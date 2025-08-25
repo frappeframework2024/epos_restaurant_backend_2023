@@ -21,7 +21,7 @@ def execute():
 
             # Expect each file to have a variable `SQL`
             if hasattr(module, "SQL"):
-                sql_statements.append(f"DROP PROCEDURE IF EXISTS {get_proc_name(module.SQL)}")
+                sql_statements.append(f"DROP PROCEDURE IF EXISTS {get_proc_name(module.SQL)};")
                 sql_statements.append(module.SQL)
             else:
                 frappe.logger().warning(f"No SQL found in {file_name}")

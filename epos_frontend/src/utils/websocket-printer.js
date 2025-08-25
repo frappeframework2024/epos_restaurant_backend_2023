@@ -1,6 +1,6 @@
-export default function WebSocketPrinter(options) {
+export default function WebSocketPrinter(options, url) {
     var defaults = {
-        url: "wss://192.168.1.125:12212/printer/",
+        url: url,
         onConnect: function () {
         },
         onDisconnect: function () {

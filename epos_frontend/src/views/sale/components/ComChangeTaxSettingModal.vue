@@ -82,9 +82,10 @@ function onOK(){
         toaster.warning("Please select note");
     }
     else{
+        const tax_rule = data.value.find(r=>r.selected == true);
         const result = {
             change_tax_setting_note: note.value,
-            tax_rule: data.value.find(r=>r.selected == true)
+            tax_rule: tax_rule
         }
         emit('resolve', result)
     }

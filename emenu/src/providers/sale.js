@@ -55,8 +55,6 @@ export default class Sale {
             created_by:make_order_auth.name     
         }  
         this.onSaleApplyTax(tax_rule,this.sale); 
-
-        console.log(this.sale)
     }
 
 

@@ -338,6 +338,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "manual_percent_discount_required_password":pos_config.manual_percent_discount_required_password,
         "show_preview_report": pos_config.show_preview_report,
         "show_system_closed_amount": pos_config.show_system_closed_amount,
+        "combo_menu_print_captain_by_items_printer": pos_config.combo_menu_print_captain_by_items_printer,
         "overwrite_voucher_minimum_amount_required_password": pos_config.overwrite_voucher_minimum_amount_required_password,
         "show_voucher_minimum_overwrite": pos_config.show_voucher_minimum_overwrite,
         }
@@ -2499,7 +2500,17 @@ def sql(sql_command,params=None):
     else:
         return frappe.db.sql(sql_command,as_dict=1)
 
+@frappe.whitelist()
+def get_product_printer_by_products(product_codes):
+    result = []
+    result = frappe.db.sql("""
+        SELECT printer_name, port, is_label_printer, ip_address, group_item_type, usb_printing, parent as product_code
+        FROM `tabProduct Printer`
+        WHERE parent IN %(product_codes)s
+    """, {"product_codes": product_codes}, as_dict=True)
 
+
+    return result
 
 @frappe.whitelist(allow_guest=True)
 def check_frappe_login():

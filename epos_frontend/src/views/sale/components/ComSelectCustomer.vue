@@ -182,6 +182,8 @@ function assignCustomerToOrder(result, is_membership = false) {
         current_customer_point.value = 0
     }
 
+    sale.sale.discount = 0;
+
     if (!is_membership) {
         sale.sale.customer_default_discount = result.default_discount;
         applyPromotion()
@@ -334,6 +336,10 @@ function applyPromotion() {
         }
         else {
             onClearPromotionProduct()
+        }
+    }else{
+        if((sale.sale.customer_default_discount||0) > 0){
+            console.log("sale")
         }
     }
 }

@@ -62,6 +62,7 @@
   "change_table_previous_date",
   "allow_change_table_after_print_bill",
   "show_system_closed_amount",
+  "combo_menu_print_captain_by_items_printer",
   "permission_and_note_tab",
   "delete_bill_required_password",
   "column_break_17",
@@ -970,12 +971,18 @@
    "fieldname": "show_voucher_minimum_overwrite",
    "fieldtype": "Check",
    "label": "Show Voucher Minimum Overwrite"
+  },
+  {
+   "default": "0",
+   "fieldname": "combo_menu_print_captain_by_items_printer",
+   "fieldtype": "Check",
+   "label": "Combo Menu Print Captain By Items Printer"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-16 09:51:40.226027",
+ "modified": "2025-08-23 09:18:10.115238",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",
