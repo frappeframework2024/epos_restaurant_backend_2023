@@ -1708,7 +1708,7 @@ export default class Sale {
                 //refresh tabl 
                 resolve(_sale);
             }
-             this.loading = true;
+             this.loading = false;
         })
     }
 
