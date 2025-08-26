@@ -1668,28 +1668,16 @@ export default class Sale {
             return false
         }
     }
-   async pingServer(options = {}, timeout = 5000) {
-        this.loading = true
-        const controller = new AbortController();
-        const id = setTimeout(() => controller.abort(), timeout);
-        let port = this.setting?.pos_setting?.use_backend_port == 0 ? `:${window.location.port}` : (window.location.protocol == "https:" ? "" : `:${this.setting?.pos_setting?.backend_port}`)
-        const url = `${window.location.protocol}//${window.location.hostname}${port}/api/method/epos_restaurant_2023.api.utils.ping`;
-        try {
-            const res = await fetch(url, {...options,signal: controller.signal});
-            return "OK";
-        } catch (err) {
-           return "Failed"
-        } finally {
-            clearTimeout(id);
-            this.loading = false
-        }
-    }
+    
     async onSubmit() {
-        await this.pingServer().then((doc)=>{
-            if(doc == "Failed"){
-                return
-            }
-        })
+        this.loading = true;
+        const resp = await Ping(this.setting)
+        if(resp == 0){
+            toaster.warning($t('msg.Please check your network connection'));
+            this.loading = false;
+            resolve(false);
+            return
+        }
         return new Promise(async (resolve) => {
             if (this.sale.sale_products.length == 0 && this.sale.name == undefined && (this.sale.from_reservation || "") == "") {
                 toaster.warning($t('msg.Please select a menu item to submit order'));
@@ -1720,16 +1708,19 @@ export default class Sale {
                 //refresh tabl 
                 resolve(_sale);
             }
+             this.loading = true;
         })
     }
 
     async onSubmitQuickPay() {
-        await this.pingServer().then((doc)=>{
-            console.log(doc)
-            if(doc == "Failed"){
-                return
-            }
-        })
+        this.loading = true;
+        const resp = await Ping(this.setting)
+        if(resp == 0){
+            toaster.warning($t('msg.Please check your network connection'));
+            this.loading = false;
+            resolve(false);
+            return
+        }
         if (this.sale.sale_products.filter(r => !r.time_out_price && r.is_timer_product).length > 0) {
             toaster.warning($t('msg.Please stop timer on timer product'));
             return;
@@ -1807,10 +1798,19 @@ export default class Sale {
                     }
                 }
             }
+            this.loading = false;
         })
     }
 
     async onSubmitPayment(isPrint = true) {
+        this.loading = true;
+        const resp = await Ping(this.setting)
+        if(resp == 0){
+            toaster.warning($t('msg.Please check your network connection'));
+            this.loading = false;
+            resolve(false);
+            return
+        }
         this.isPrintReceipt = isPrint;
         return new Promise(async (resolve) => {
             let balance = Number((this.sale.balance + Number.EPSILON).toFixed(this.setting.pos_setting.main_currency_precision));
@@ -1856,6 +1856,7 @@ export default class Sale {
                     resolve(true);
                 }
             }
+            this.loading = false;
         });
     }
 
@@ -2683,5 +2684,27 @@ export default class Sale {
     async onRequestCouponCode(code)  { 
         let data =  await call.get("epos_restaurant_2023.api.api.scan_coupon_number",{"code":code})
         return data["message"]
+    }
+}
+
+async function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function Ping(setting) {
+    await delay(500)
+    let port =  setting?.pos_setting?.use_backend_port == 0 ? `:${window.location.port}` : (window.location.protocol == "https:" ? "" : `:${setting?.pos_setting?.backend_port}`)
+    const url = `${window.location.protocol}//${window.location.hostname}${port}/api/method/epos_restaurant_2023.api.utils.ping`;
+    const controller = new AbortController();
+    const timer = setTimeout(() => {
+        controller.abort();
+    }, 5000)
+    try {
+        await fetch(url, { method: 'HEAD', mode: 'no-cors', cache: 'no-store',signal: controller.signal, });
+        clearTimeout(timer);
+        return 1
+    } catch (error) {
+        clearTimeout(timer);
+        return 0
     }
 }
