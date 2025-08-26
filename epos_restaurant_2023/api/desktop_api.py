@@ -35,8 +35,8 @@ def get_pos_receipt_template():
 
 @frappe.whitelist(allow_guest=True)
 def get_boldreport_setting():
-    settings = frappe.db.get_value("eDoor Setting",None,["server_report_url","server_report_token"], as_dict=True)   
-    return {"boldreport_url":settings.server_report_url,"boldreport_authorize":settings.server_report_token}
+    settings = frappe.db.get_value("ePOS Settings",None,["report_service_url","server_report_token"], as_dict=True)   
+    return {"boldreport_url":settings.report_service_url,"boldreport_authorize":settings.server_report_token}
 
 
 @frappe.whitelist(allow_guest=True)
