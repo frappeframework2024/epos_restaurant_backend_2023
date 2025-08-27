@@ -1673,7 +1673,7 @@ export default class Sale {
         this.loading = true;
         const resp = await Ping(this.setting)
         if(resp == 0){
-            toaster.warning($t('msg.Please check your network connection'));
+            toaster.error($t('Please check your network connection'));
             this.loading = false;
             resolve(false);
             return
@@ -1716,7 +1716,7 @@ export default class Sale {
         this.loading = true;
         const resp = await Ping(this.setting)
         if(resp == 0){
-            toaster.warning($t('msg.Please check your network connection'));
+            toaster.error($t('Please check your network connection'));
             this.loading = false;
             resolve(false);
             return
@@ -1803,24 +1803,23 @@ export default class Sale {
     }
 
     async onSubmitPayment(isPrint = true) {
-        this.loading = true;
-        const resp = await Ping(this.setting)
-        if(resp == 0){
-            toaster.warning($t('msg.Please check your network connection'));
-            this.loading = false;
-            resolve(false);
-            return
-        }
         this.isPrintReceipt = isPrint;
         return new Promise(async (resolve) => {
             let balance = Number((this.sale.balance + Number.EPSILON).toFixed(this.setting.pos_setting.main_currency_precision));
 
             if (balance > 0) {
-                toaster.warning($t('msg.Please enter all payment amount'));
+                toaster.error($t('Please enter all payment amount'));
                 resolve(false);
             } else {
                 if (await confirmDialog({ title: $t("Payment"), text: $t("msg.are you sure to process payment and close order") })) {
-
+                    this.loading = true;
+                    const resp = await Ping(this.setting)
+                    if(resp == 0){
+                        toaster.warning($t('msg.Please check your network connection'));
+                        this.loading = false;
+                        resolve(false);
+                        return
+                    }
                     socket.emit("ShowOrderInCustomerDisplay", this.sale, "paid", this.customer_display_key);
                     this.generateProductPrinters();
 
@@ -1858,10 +1857,6 @@ export default class Sale {
             }
             this.loading = false;
         });
-    }
-
-    timerSleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     async onProcessTaskAfterSubmit(doc) { 
@@ -2698,11 +2693,26 @@ async function Ping(setting) {
     const controller = new AbortController();
     const timer = setTimeout(() => {
         controller.abort();
-    }, 5000)
+    }, 3000)
     try {
-        await fetch(url, { method: 'HEAD', mode: 'no-cors', cache: 'no-store',signal: controller.signal, });
+        const start = performance.now();
+        let status = 0
+        const resp = await fetch(url, {signal: controller.signal});
+        const end = performance.now();
+        if(resp.status != 200){
+            status = 0
+        }
+        else{
+            const responseTime = end - start;
+            if(responseTime>2000){
+                status = 0
+            }
+            else{
+                status = 1
+            }
+        }
         clearTimeout(timer);
-        return 1
+        return status
     } catch (error) {
         clearTimeout(timer);
         return 0
