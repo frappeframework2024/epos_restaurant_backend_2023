@@ -17,6 +17,9 @@ from decimal import Decimal
 from frappe.utils import add_to_date
 from epos_restaurant_2023.api.exely import cancel_order,submit_order_to_exely
 from epos_restaurant_2023.selling.doctype.sale.general_ledger_entry import submit_sale_to_general_ledger_entry
+
+
+
 class Sale(Document):
 	def validate(self): 		
 		if not frappe.db.get_default('exchange_rate_main_currency'):
@@ -243,6 +246,20 @@ class Sale(Document):
 		self.total_coupon_value = sum([(d.total_coupon_value or 0) for d in self.sale_products])
 		# update default accunt
 		update_default_account(self) 
+
+		
+		### Test socketio client from app server event
+		# from epos_restaurant_2023.custom_socket_client import emit_event
+		# # prepare payload
+		# payload = {
+		#     'type': 'chat',
+		# 	'message': self.doctype,
+		# 	'sender': 'Server',
+		# 	'senderId': "SERVER",
+		# }
+		# # emit to your socket server
+		# emit_event("ePOSMobile", payload)
+
 
 	@frappe.whitelist()
 	def get_sale_payment_naming_series(self):

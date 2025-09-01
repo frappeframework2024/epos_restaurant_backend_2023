@@ -30,23 +30,16 @@ const show_thankyou = ref(false)
 
 /// key = business branch + pos profile + device id
 socket.on("ShowOrderInCustomerDisplay", async (arg, show, key) => {
- 
     const device_setting = JSON.parse(localStorage.getItem("device_setting"));
 	const device_id = device_setting?.device_id||"";
     const pos_profile = localStorage.getItem("pos_profile");
     const business_branch = decodeURIComponent(gv.setting?.business_branch);
     const _key = `${business_branch}_${pos_profile}_${device_id}`;
-    console.log({"pub": _key, "sub":key});
-
-
-    
-
     if(key == _key){
         data.value = arg;
         if (Object.entries(data.value).length > 0) {
             dataThankYou.value = JSON.parse(JSON.stringify(data.value))
         }
-
         if (show == 'paid') {
             show_thankyou.value = true
             await setTimeout(onHideThankYou, 50000)

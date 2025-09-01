@@ -1,4 +1,4 @@
-SQL = """CREATE   PROCEDURE `sp_generate_flash_manager_report`( IN v_property varchar(100), IN v_posting_date DATE  )
+SQL = """create procedure `sp_generate_flash_manager_report`( IN v_property varchar(100), IN v_posting_date DATE  )
 BEGIN
 		DECLARE v_mtd_start_date DATE;
 		DECLARE v_ytd_start_date DATE;

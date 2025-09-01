@@ -2,16 +2,16 @@ const http = require('http');
 const socketio = require('socket.io');
 
 const server = http.createServer();
- 
-const io = require('socket.io')(server, {
+const io = socketio(server, {
   path: '/socketserver/socket.io',
   cors: {
     origin: '*',
+
   }
 });
 
 io.on('connection', (socket) => {
-  
+
   socket.on("UpdateTable",(arg)=>{
     io.emit("UpdateData",arg)
   })
@@ -222,6 +222,13 @@ io.on('connection', (socket) => {
   socket.on("Ratha",(arg)=>{
     io.emit("Ratha",arg)
   })
+
+  //server socket for ePOS Mobile stand alone
+  socket.on("ePOSMobile",(arg)=>{
+    socket.broadcast.emit('ePOSMobile', arg);
+    // io.emit("ePOSMobile", arg);
+  })
+
   
 });
 

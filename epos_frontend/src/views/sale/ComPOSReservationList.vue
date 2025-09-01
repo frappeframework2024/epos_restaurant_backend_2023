@@ -38,7 +38,6 @@
               </v-card-title>
               <v-card-text class="!pt-0 !pr-0 !pb-14 !pl-0">
                 <v-list :lines="false" density="compact" class="pa-0">
-
                   <v-list-item :title="`${$t('Arrival Date')}:`">
                     <template v-slot:append>
                       {{ moment(new Date(`${s.arrival_date} ${s.arrival_time}`)).format('yyyy-MM-DD hh:mm A') }}
@@ -98,17 +97,17 @@
                     </template>
                   </v-list-item>
 
-                   <v-list-item :title="`${$t('Note')}:`" v-if="s.note">
+                  <v-list-item :title="`${$t('Note')}:`" v-if="s.note">
                     <template v-slot:append>
-                     {{ s.note }}
+                      <div style="white-space: normal; word-break: break-word;">
+                        {{ s.note }}
+                      </div>
                     </template>
                   </v-list-item>
-
-
+                  
                 </v-list>
               </v-card-text>
               <v-card-actions class="pt-0 flex items-center justify-between absolute bottom-0 w-full">
-
                 <v-btn v-if="s.arrival_date == current_date" variant="tonal" color="success" @click="onCheckIn(s)">
                   {{ $t('Checked In') }}
                 </v-btn>
