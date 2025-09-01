@@ -97,14 +97,20 @@
                     </template>
                   </v-list-item>
 
-                  <v-list-item :title="`${$t('Note')}:`" v-if="s.note">
-                    <template v-slot:append>
-                      <div style="white-space: normal; word-break: break-word;">
+                  <v-list-item v-if="s.note">
+                    <v-list-item-content style="display: flex; justify-content: space-between; align-items: flex-start;">
+                      <!-- Title on the left -->
+                      <div style="margin-right: 16px; white-space: nowrap;">
+                        {{ $t('Note') }}:
+                      </div>
+
+                      <!-- Note text on the right, wraps -->
+                      <div style="white-space: normal; word-break: break-word; max-width: 60%; text-align: left;">
                         {{ s.note }}
                       </div>
-                    </template>
+                    </v-list-item-content>
                   </v-list-item>
-                  
+
                 </v-list>
               </v-card-text>
               <v-card-actions class="pt-0 flex items-center justify-between absolute bottom-0 w-full">
