@@ -33,7 +33,7 @@ class CouponTransaction(Document):
 
 		## calculate markup percentage
 		if self.transaction_type != "Use":
-			self.markup_percentage = ((self.coupon_amount - self.actual_amount)/self.actual_amount) * 100
+			self.markup_percentage = ((self.coupon_amount - self.actual_amount)/(self.actual_amount or 1)) * 100
 
 		#add GL entry
 		unearned_revenue = frappe.get_cached_value("Business Branch",self.business_branch, "default_unearned_revenue_account")

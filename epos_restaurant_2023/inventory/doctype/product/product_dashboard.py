@@ -2,7 +2,6 @@ from frappe import _
 
 def get_data():
 	return {
-		
 		"fieldname": "product_code",
 		"transactions": [
 			{"label": _("Sell & Purchase"), "items": ["Sale","Purchase Order"]},

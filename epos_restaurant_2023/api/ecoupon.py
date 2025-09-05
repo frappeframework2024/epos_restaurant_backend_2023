@@ -68,7 +68,9 @@ def app_settings(params):
         "port":frappe.get_conf().get('socketio_port', 9000),
         "site_name": frappe.local.site
     }
-    main_currency = frappe.get_doc("Currency",frappe.db.get_default("currency"),ignore_permissions=ignore_permissions)
+    default_currency = frappe.db.get_default("currency")
+    exchange_rate_main_currency = frappe.db.get_default("exchange_rate_main_currency")
+    main_currency = frappe.get_doc("Currency",default_currency,ignore_permissions=ignore_permissions)
     currency = remove_key(main_currency.as_dict())
     currency["precision"] = currency.pop("custom_currency_precision")
     currency["format"] = currency.pop("custom_pos_currency_format")
@@ -108,8 +110,8 @@ def app_settings(params):
                     and docstatus = 1 
                 order by posting_date desc, creation desc limit 1"""
             exch = frappe.db.sql(sql_exchange_rate,{
-                "from_currency":currency["name"],
-                "to_currency":c["name"]
+                "from_currency":c["name"],
+                "to_currency":currency["name"]
                 },as_dict=1)
             if exch:
                 exchange_rate = exch[0]["exchange_rate"] 

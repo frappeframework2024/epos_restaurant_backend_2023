@@ -445,7 +445,7 @@ class Sale(Document):
 		return  make_autoname(self.custom_bill_number_prefix)
 def math_round(value, precision):
 	import math
-	result = math.floor((value * math.pow(10, precision)) + 0.5) / math.pow(10, precision)
+	result = math.floor(((value or 0) * math.pow(10, (precision or 0) )) + 0.5) / math.pow(10, (precision or 0))
 	return result
 
 def update_sales_order_and_delivery_note_status(self):

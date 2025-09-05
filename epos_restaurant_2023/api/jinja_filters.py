@@ -8,11 +8,10 @@ def unique(value):
 
 @frappe.whitelist()
 def format_currency(value):
-    return frappe.format(value, {"fieldtype": "Currency"})
+    return frappe.format((value or 0), {"fieldtype": "Currency"})
 
 @frappe.whitelist()
-def format_second_currency(value):
-     
+def format_second_currency(value): 
     currency =  frappe.get_cached_value("ePOS Settings",None,"second_currency")
   
     precision = frappe.get_cached_value("Currency",currency,"custom_currency_precision")
@@ -38,18 +37,20 @@ def get_total(value, fieldname):
     return sum([d.get(fieldname) for d in value])
 
 
-
 def get_exchange_rate(date):
-    from_currency = frappe.get_cached_value("ePOS Settings",None,"currency")
+    from_currency = frappe.get_cached_value("ePOS Settings",None,"exchange_rate_main_currency")
     to_currency = frappe.get_cached_value("ePOS Settings",None,"second_currency")
-    currecy_data = frappe.db.sql("select exchange_rate from `tabCurrency Exchange` where posting_date<=%(posting_date)s and from_currency = %(from_currency)s and to_currency = %(to_currency)s order by creation desc limit 1",
+    if from_currency ==to_currency:
+        to_currency = frappe.get_cached_value("ePOS Settings",None,"currency")
+
+    currecy_data = frappe.db.sql("select exchange_rate_input as exchange_rate_input from `tabCurrency Exchange` where posting_date<=%(posting_date)s and from_currency = %(from_currency)s and to_currency = %(to_currency)s order by creation desc limit 1",
         {
             "posting_date": date,
             "from_currency":from_currency,
             "to_currency":to_currency
         },as_dict=1)
     if currecy_data:
-        return currecy_data[0].exchange_rate
+        return currecy_data[0].get("exchange_rate_input")
     else:
         return 1
 
