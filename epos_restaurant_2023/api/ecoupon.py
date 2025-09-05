@@ -63,6 +63,8 @@ def app_settings(params):
         _shift_types.append(st_doc) 
 
     result["pos_station"] = station_doc
+    result["pos_station"]["use_coupon_encrypt"] = int(frappe.db.get_default("use_coupon_encrypt") or 0)
+
     result["shift_types"] = _shift_types
     result["socketio"] = {
         "port":frappe.get_conf().get('socketio_port', 9000),
