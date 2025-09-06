@@ -467,7 +467,7 @@ def on_scan_use_coupon(params):
                         "doctype":"Coupon Transaction",
                         "business_branch":params["business_branch"],
                         "status": "Locked" if r["used"] else "Active", 
-                        "transaction_type":"Use",
+                        "transaction_type":"Used",
                         "input_coupon_amount": (-1)* (r["cut_amount"] * params["exchange_rate"]),
                         "input_actual_amount":(-1)* (actual_amount * params["exchange_rate"]), 
                         "exchange_rate":params["exchange_rate"],

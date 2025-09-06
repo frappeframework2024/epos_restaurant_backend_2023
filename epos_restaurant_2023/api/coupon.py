@@ -203,7 +203,6 @@ def check_coupon_code_for_redeem(coupon_code):
     if not frappe.db.exists("Coupon Codes",{"coupon":coupon_code}):
         frappe.throw(_("This coupon code does not exist in the system"))
 
-
     data = frappe.db.get_list('Coupon Codes', filters={
         'coupon':  coupon_code
     },
