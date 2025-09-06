@@ -319,7 +319,7 @@ def get_coupon_transaction_summary(param):
     
     data = frappe.db.sql(sql,filters,as_dict=1)
     return_data = []
-    transaction_type =  ["Sale Coupon","Top Up","Use","Redeem"]
+    transaction_type =  ["Sale Coupon","Top Up","Used","Redeem"]
     for t in transaction_type:
         exists = [d for d in data if d.get("transaction_type") == t]
         if exists:

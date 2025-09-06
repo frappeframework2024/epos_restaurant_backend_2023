@@ -33,7 +33,7 @@ class CouponTransaction(Document):
 
 
 		## calculate markup percentage
-		if self.transaction_type != "Use":
+		if self.transaction_type != "Used":
 			self.markup_percentage = ((self.coupon_amount - self.actual_amount)/(self.actual_amount or 1)) * 100
 
 		#add GL entry
@@ -55,7 +55,7 @@ class CouponTransaction(Document):
 			income_account = account.get("default_income_account","") if account.get("default_income_account","") != "" else income_account
 
 		if self.is_new():
-			if self.transaction_type == "Use":
+			if self.transaction_type == "Used":
 				general_ledger_debit(self,account = {"account":unearned_revenue,"amount":abs(self.coupon_amount)})
 				general_ledger_credit(self,account = {"account":income_account,"amount":abs(self.coupon_amount)})
 				
