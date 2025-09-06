@@ -1729,7 +1729,7 @@ def update_coupon_transaction(self):
 						"markup_percentage":sp.coupon_markup_percentage,
 						"input_coupon_amount":sp.coupon_value,# no field in sale produdft yet
 						"coupon_amount":sp.coupon_value,
-						"currency":"USD", #no field in sale product yet
+						"currency":frappe.get_cached_value("ePOS Settings",None,"currency"), #no field in sale product yet
 						"exchange_rate":1, #no field in sale product yet
 						"status":"Active",
 						"created_by": self.closed_by,

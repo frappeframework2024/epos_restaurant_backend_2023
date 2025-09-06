@@ -292,9 +292,11 @@ def check_coupon_code(coupon_number):
     sql  = """select 
                 coalesce(sum(coupon_amount) , 0) as coupon_amount
             from `tabCoupon Transaction` 
-            where `status` = 'Active' 
+            where `status` = 'Active'
+            and coupon_code = %(coupon_code)s 
             and coupon_number = %(coupon_number)s""" 
-    data = frappe.db.sql(sql, {"coupon_number":coupon_number}, as_dict=1)    
+    data = frappe.db.sql(sql, {"coupon_number":coupon_number,"coupon_code":coupon_data[0]["name"]}, as_dict=1)    
+
 
     if data and len(data) > 0: 
         if data[0].get("coupon_amount",0) <= 0:
