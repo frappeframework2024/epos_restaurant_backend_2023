@@ -80,6 +80,14 @@ class WorkingDay(Document):
 			if self.pos_profile !="eDoor Profile":
 				frappe.throw("Your are not allow to close working from POS Station. Please ask your night auditor to run night audit.")
 		frappe.clear_document_cache("Working Day",self.name)
+
+
+		
+		# this validatation is use for ecoupon when we close working day all coupon must be mark as expired imediatly
+		if self.has_value_changed("is_closed"):
+			sql = "update `tabCoupon Codes` set coupon_status ='Expired' where coupon_status ='Used' and working_day = %(working_day)s"
+			frappe.db.sql(sql,{"working_day":self.name})
+			
   
 
 	# def send_mail_closed_day(self):

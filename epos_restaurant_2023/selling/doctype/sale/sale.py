@@ -1044,7 +1044,7 @@ def validate_sale_product(self):
 
 		# update total coupon value
 		if self.sale_type in ["Sale Coupon","Top Up","Redeem"]: 
-			d.total_coupon_value = (d.coupon_value or 0) * (d.quantity or 0)
+			d.total_coupon_value = (d.coupon_value or 0) * (d.quantity or 0) * (-1 if self.sale_type=="Redeem" else 1)
 			if self.docstatus == 1 and frappe.get_cached_value("Product",d.product_code,"is_coupon")==1:
 				d.coupon_expired_date = add_to_date(datetime.datetime.now(),days=coupon_expired_duration)
 			 

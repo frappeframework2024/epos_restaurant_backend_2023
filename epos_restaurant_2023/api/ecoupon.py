@@ -154,7 +154,7 @@ def get_history_coupon_kpi(params):
         and pos_profile = %(pos_profile)s
         and business_branch = %(property_name)s
         and (date(posting_date) between date(%(start_date)s) and date(%(end_date)s))
-        and  transaction_type in ('Use')
+        and  transaction_type in ('Used')
         and status in ('Active','Locked')"""
    
     if params.get("keyword"):
@@ -203,7 +203,7 @@ def coupon_kpi_get_data(property_name, pos_profiles, type="Today"):
                     count(*) as total_transaction
             from `tabCoupon Transaction` 
             where 1 = 1
-            and transaction_type in ('Use')
+            and transaction_type in ('Used')
             and pos_profile = %(pos_profile)s
             and business_branch = %(property_name)s """
     if type == "Today":
@@ -252,7 +252,7 @@ def daily_scan_coupon_chart(params):
                     posting_date
             from `tabCoupon Transaction` 
             where 1 = 1
-            and transaction_type in ('Use')
+            and transaction_type in ('Used')
             and pos_profile = %(pos_profile)s
             and business_branch = %(property_name)s 
             and (date(posting_date) between date(%(start_date)s) and date(%(end_date)s))"""        
@@ -543,7 +543,7 @@ def get_report(name, show_transaction):
         count(`name`) as total_record
     from `tabCoupon Transaction` 
     where 1=1
-    and transaction_type in ('Use')
+    and transaction_type in ('Used')
     and coupon_shift = %(name)s"""
     summary_data = frappe.db.sql(sql_summary, {"name":name}, as_dict=1)
     if summary and len(summary_data) > 0:
@@ -562,7 +562,7 @@ def get_report(name, show_transaction):
             created_by
         from `tabCoupon Transaction` 
         where 1=1
-        and transaction_type in ('Use')
+        and transaction_type in ('Used')
         and coupon_shift = %(name)s
         order by creation desc"""   
         transction_data = frappe.db.sql(sql_transactions, {"name":name}, as_dict=1) 
@@ -694,7 +694,7 @@ def update_use_coupon_amount(coupon_code):
             from `tabCoupon Transaction` 
             where coupon_code =%(coupon_code)s 
                 and status in ('Active','Locked') 
-                and transaction_type = 'Use'"""
+                and transaction_type = 'Used'"""
     data = frappe.db.sql(sql,{"coupon_code":coupon_code}, as_dict=1)
 
     if data and len(data)>0:
@@ -721,7 +721,7 @@ def get_store_account(pos_profile):
         abs(sum(coupon_amount)) as total_coupon_amount
     from `tabCoupon Transaction` 
     where pos_profile = %(pos_profile)s 
-    and transaction_type in ('Use')
+    and transaction_type in ('Used')
     and status in ('Active','Locked')"""
     data = frappe.db.sql(sql,{"pos_profile":pos_profile},as_dict=1)
     if data:
