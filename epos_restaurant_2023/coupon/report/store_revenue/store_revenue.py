@@ -56,7 +56,7 @@ def get_conditions(filters):
 	conditions = " where"
 	if filters.group_by == "Hour":
 		conditions = " and"
-	conditions += " coalesce(transaction_type,'Use')='Use'"
+	conditions += " coalesce(transaction_type,'Used')='Used'"
 	start_date = filters.start_date
 	end_date = filters.end_date
 	conditions += " AND coalesce(posting_date,now()) between '{}' AND '{}'".format(start_date,end_date)

@@ -361,7 +361,7 @@ def get_summary_coupon_used_by_pos_station(param):
             sum(actual_amount) as total_amount
         from `tabCoupon Transaction` 
         where
-            transaction_type = 'Use' and
+            transaction_type = 'Used' and
             posting_date = %(date)s and 
             (%(business_branch)s = '' or business_branch = %(business_branch)s)  
         group by 

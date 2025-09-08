@@ -66,7 +66,7 @@ def getCouponShiftAmount(self):
 	if pos_profile.default_credit_account:
 		credit_account = pos_profile.default_credit_account
 
-	coupon_transaction = (frappe.db.sql("""select sum(abs(actual_amount)) actual_amount,sum(abs(coupon_amount)) coupon_amount from `tabCoupon Transaction` where transaction_type = 'Use' and pos_profile = %(pos_profile)s and coupon_shift = %(coupon_shift)s""",{"pos_profile":self.pos_profile,"coupon_shift":self.name},as_dict=1) or [])
+	coupon_transaction = (frappe.db.sql("""select sum(abs(actual_amount)) actual_amount,sum(abs(coupon_amount)) coupon_amount from `tabCoupon Transaction` where transaction_type = 'Used' and pos_profile = %(pos_profile)s and coupon_shift = %(coupon_shift)s""",{"pos_profile":self.pos_profile,"coupon_shift":self.name},as_dict=1) or [])
 	return {
 			"actual_amount":coupon_transaction[0].actual_amount,
 			"coupon_amount":coupon_transaction[0].coupon_amount,

@@ -125,6 +125,7 @@ import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 import ComMenuSetting from '@/views/sale/components/ComMenuSetting.vue';
 
 import socket from '@/utils/socketio';
+import Enumerable from 'linq';
 
 const { t: $t } = i18n.global;
 const moment = inject("$moment")
@@ -372,7 +373,7 @@ async function onDeleteBill() {
 
 
 // generate print kot when delete bill 
-function generateSaleProductPrintToKitchen(doc, note) {
+ function generateSaleProductPrintToKitchen(doc, note) {
     deletedSaleProducts = [];
     (doc.sale_products || []).forEach((sp) => {
         if (sp.sale_product_status == "Submitted" && (sp.is_return || 0) == 0) {
@@ -383,67 +384,244 @@ function generateSaleProductPrintToKitchen(doc, note) {
     });
 
     //generate deleted product to product printer list
-    deletedSaleProducts.filter(r => JSON.parse(r.printers).length > 0).forEach((r) => {
-        const pritners = JSON.parse(r.printers);
-        pritners.forEach((p) => {
-            productPrinters.push({
-                printer: p.printer,
-                group_item_type: p.group_item_type,
-                is_label_printer: p.is_label_printer == 1,
-                ip_address: p.ip_address,
-                port: p.port,
-                usb_printing: p.usb_printing,
-                product_code: r.product_code,
-                product_name_en: r.product_name,
-                product_name_kh: r.product_name_kh,
-                kitchen_group:r.kitchen_group||"",
-                kitchen_group_sort_order: r.kitchen_group_sort_order || 0,
-                seat_number: r.seat_number||"",
-                portion: r.portion,
-                unit: r.unit,
-                modifiers: r.modifiers,
-                note: r.note,
-                quantity: r.quantity,
-                is_deleted: true,
-                is_free: r.is_free == 1,
-                combo_menu: r.combo_menu,
-                combo_menu_data: r.combo_menu_data,
-                deleted_note: r.deleted_item_note,
-                order_by: r.order_by,
-                creation: r.creation,
-                modified: r.modified,
-                reference_sale_product: r.reference_sale_product,
-                duration: r.duration,
-                time_stop: (r.time_stop || 0),
-                time_in: r.time_in,
-                time_out_price: r.time_out_price,
-                time_out: r.time_out
-            })
-        });
+    deletedSaleProducts.filter(r => JSON.parse(r.printers).length > 0).forEach( async (r) => {
+
+
+        if(sale.setting.pos_setting.combo_menu_print_captain_by_items_printer && r.is_combo_menu){
+                const combo_data = JSON.parse(r.combo_menu_data)
+                let productCodes = combo_data.map(i => i.product_code);
+                const res = await call.post("epos_restaurant_2023.api.api.get_product_printer_by_products", {
+                     "product_codes":productCodes
+                });    
+                const printers = JSON.parse(r.printers); 
+                const combo_product_printers = res["message"]     
+                for(const pro of combo_data ){
+                    const p_printers = combo_product_printers.filter(r=>r.product_code == pro.product_code)
+                    for(const p of p_printers){ 
+                        ///check combo item is exist printer match
+                        const match_printers =  printers.filter(r=> r.printer == p.printer_name)                        
+                        if( match_printers.length > 0){
+                            productPrinters.push({
+                                sale_product_name: (r.name || "New"),
+                                printer: p.printer,
+                                group_item_type: p.group_item_type,
+                                is_label_printer: p.is_label_printer == 1,
+                                ip_address: p.ip_address,
+                                port: p.port,
+                                usb_printing: p.usb_printing,
+                                product_code: pro.product_code,
+                                product_name_en: pro.product_name,
+                                product_name_kh: pro.product_name_kh,
+                                kitchen_group: pro.kitchen_group||"",
+                                kitchen_group_sort_order: pro.kitchen_group_sort_order || 0,
+                                seat_number: r.seat_number||"",
+                                portion: r.portion,
+                                unit: r.unit,
+                                modifiers: r.modifiers,
+                                note: r.note,
+                                quantity: r.quantity,
+                                is_deleted: true,
+                                is_free: r.is_free == 1,
+                                combo_menu: r.product_name,
+                                combo_menu_data: null,
+                                deleted_note: r.deleted_item_note,
+                                order_by: r.order_by,
+                                creation: r.creation,
+                                modified: r.modified,
+                                reference_sale_product: r.reference_sale_product,
+                                duration: r.duration,
+                                time_stop: (r.time_stop || 0),
+                                time_in: r.time_in,
+                                time_out_price: r.time_out_price,
+                                time_out: r.time_out,
+                                amount: r.amount
+                            }) 
+                        }
+                    }
+                }  
+
+            }else{
+                const pritners = JSON.parse(r.printers);
+                pritners.forEach((p) => {
+                    productPrinters.push({
+                        sale_product_name: (r.name || "New"),
+                        printer: p.printer,
+                        group_item_type: p.group_item_type,
+                        is_label_printer: p.is_label_printer == 1,
+                        ip_address: p.ip_address,
+                        port: p.port,
+                        usb_printing: p.usb_printing,
+                        product_code: r.product_code,
+                        product_name_en: r.product_name,
+                        product_name_kh: r.product_name_kh,
+                        kitchen_group:r.kitchen_group||"",
+                        kitchen_group_sort_order: r.kitchen_group_sort_order || 0,
+                        seat_number: r.seat_number||"",
+                        portion: r.portion,
+                        unit: r.unit,
+                        modifiers: r.modifiers,
+                        note: r.note,
+                        quantity: r.quantity,
+                        is_deleted: true,
+                        is_free: r.is_free == 1,
+                        combo_menu: r.combo_menu,
+                        combo_menu_data: r.combo_menu_data,
+                        deleted_note: r.deleted_item_note,
+                        order_by: r.order_by,
+                        creation: r.creation,
+                        modified: r.modified,
+                        reference_sale_product: r.reference_sale_product,
+                        duration: r.duration,
+                        time_stop: (r.time_stop || 0),
+                        time_in: r.time_in,
+                        time_out_price: r.time_out_price,
+                        time_out: r.time_out,
+                        amount: r.amount
+                    })
+                });
+                
+
+            }
     });
 }
 
 
 function onProcessPrintToKitchen(doc) {
+    let _productPrinters = productPrinters;
     const data = {
         action: "print_to_kitchen",
         setting: setting?.pos_setting,
         sale: doc,
-        product_printers: productPrinters
+        product_printers: productPrinters,
+        station_device_printing: (sale.setting?.device_setting?.station_device_printing) || "",
+        printers: []
     }
 
-    if (localStorage.getItem("is_window") == 1) {
-        window.chrome.webview.postMessage(JSON.stringify(data));
-    } else {
-        socket.emit("PrintReceipt", JSON.stringify(data))
-    }
+    var groupKeys = "{printer:$.printer,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port}"
+    var groupFields = "$.printer+','+$.group_item_type+','+$.ip_address+','+$.port";
+    var printers = Enumerable.from(data.product_printers).groupBy(groupKeys, "", groupKeys, groupFields).toArray();    
+        printers.forEach((p) => {
+        var _printer = data.product_printers.filter((x) => x.printer == p.printer)
+        if (_printer.length > 0) {
+            data.printers.push({
+                "printer_name": _printer[0].printer,
+                "group_item_type": _printer[0].group_item_type,
+                "ip_address": _printer[0].ip_address,
+                "port": _printer[0].port,
+                "is_label_printer": (_printer[0].is_label_printer ?? false) ? 1 : 0,
+                "usb_printing": _printer[0].usb_printing ?? 0,
+                "products": _printer
+            });
 
-    if(productPrinters.length>0){
-        [...new Set(productPrinters.map(r=>r.printer))].forEach(p=>{
-              
-             socket.emit("SubmitKOD",{"screen_name":p})
+
+        }
+
+        // We send this to refresh kitchen order display
+         [...new Set(productPrinters.map(r=>r.printer))].forEach(p=>{              
+            socket.emit("SubmitKOD", { "screen_name": _printer[0].printer })
         })
+
+        
+    });
+
+
+    let kotProducts = {
+            action: "print_to_kitchen",
+            setting: sale.setting?.pos_setting,
+            sale: doc,
+            product_printers: _productPrinters,
+            station_device_printing: (sale.setting?.device_setting?.station_device_printing) || "",
+            printers: [],
+        }
+    let productUSBPrinter = JSON.parse(JSON.stringify(kotProducts));
+    kotProducts.printers = [];
+    productUSBPrinter.printers = []
+
+    let station_printers = (sale.setting?.device_setting?.station_printers);
+    if (station_printers.length <= 0) {
+
+    } else {
+        station_printers.forEach((p) => {                
+            let temp_sale_products = data.product_printers.filter((x) => x.printer == p.printer_name)
+            if (temp_sale_products.length > 0) {
+                if (p.usb_printing == 1) {
+                    productUSBPrinter.printers.push({
+                        "printer_name": p.printer_name,
+                        "group_item_type": p.group_item_type,
+                        "ip_address": p.ip_address,
+                        "port": p.port,
+                        "cashier_printer": p.cashier_printer,
+                        "is_label_printer": p.is_label_printer,
+                        "usb_printing": p.usb_printing,
+                        "products": temp_sale_products
+                    });
+                } else {
+                    kotProducts.printers.push({
+                        "station": this.setting?.device_setting?.name ?? "",
+                        "printer": {
+                            "printer_name": p.printer_name,
+                            "group_item_type": p.group_item_type,
+                            "ip_address": p.ip_address,
+                            "port": p.port,
+                            "cashier_printer": p.cashier_printer,
+                            "is_label_printer": p.is_label_printer,
+                            "usb_printing": p.usb_printing,
+                        },
+                        "products": temp_sale_products
+                    });
+                }
+            }
+        });
     }
+
+
+    if ((sale.setting?.device_setting?.use_server_network_printing || 0) == 1) {
+        //printer network
+        if (kotProducts.printers.length > 0) {
+            call.post("epos_restaurant_2023.api.network_printing_api.print_kot_to_network_printer", { "data": kotProducts })
+        }
+        //trigger print usb print
+        if (productUSBPrinter.printers.length > 0) {
+            socket.emit("PrintReceipt", JSON.stringify(productUSBPrinter))
+        }
+
+    } else {
+        if (localStorage.getItem("is_window") == 1) {
+            if ((data.product_printers ?? []).length > 0) {
+                window.chrome.webview.postMessage(JSON.stringify(data));
+            }
+        }
+        else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
+            if (_productPrinters.length > 0) {
+                //trigger printer network
+                if (kotProducts.printers.length > 0) {
+                    flutterChannel.postMessage(JSON.stringify(kotProducts));
+                }
+                //trigger print usb print
+                if (productUSBPrinter.printers.length > 0) {
+                    socket.emit("PrintReceipt", JSON.stringify(productUSBPrinter))
+                }
+            }
+        }
+        else {
+            socket.emit("PrintReceipt", JSON.stringify(data))
+
+        }
+    }
+
+    // if (localStorage.getItem("is_window") == 1) {
+    //     window.chrome.webview.postMessage(JSON.stringify(data));
+    // } else {
+    //     socket.emit("PrintReceipt", JSON.stringify(data))
+    // }
+
+    // if(productPrinters.length>0){
+    //     [...new Set(productPrinters.map(r=>r.printer))].forEach(p=>{
+              
+    //          socket.emit("SubmitKOD",{"screen_name":p})
+    //     })
+    // }
+    
     
 
     deletedSaleProducts = [];

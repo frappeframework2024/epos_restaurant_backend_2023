@@ -61,7 +61,7 @@ def get_report_data(filters):
 	truncate(abs(sum(actual_amount)),4) actual_amount,
 	count(name) transactions
 	FROM `tabCoupon Transaction` 
-	WHERE transaction_type='Use' {0}
+	WHERE transaction_type='Used' {0}
 	group by {1}
 	""".format(get_conditions(filters),group_by)
 	data = frappe.db.sql(sql,filters, as_dict=1)

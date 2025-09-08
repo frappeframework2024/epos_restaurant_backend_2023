@@ -120,7 +120,7 @@ def get_revenue(data,start_date, end_date,fieldname):
             sum(input_actual_amount*-1) as amount
         from `tabCoupon Transaction` 
         where
-            transaction_type = 'Use'  and 
+            transaction_type = 'Used'  and 
             coalesce(vendor,'') != ''  and 
             posting_date between %(start_date)s and %(end_date)s and 
             vendor in %(vendors)s
