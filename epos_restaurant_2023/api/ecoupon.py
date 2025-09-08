@@ -280,6 +280,7 @@ def daily_scan_coupon_chart(params):
 def check_coupon_code(coupon_number): 
     coupon = """select name,coupon from `tabCoupon Codes` where coupon = %(coupon_number)s and coupon_status = 'Used' limit 1""" 
     coupon_data = frappe.db.sql(coupon, {"coupon_number":coupon_number}, as_dict=1)
+    
     if coupon_data and len(coupon_data) > 0:
        pass
     else:
@@ -288,14 +289,14 @@ def check_coupon_code(coupon_number):
             "msg":"Invalid coupon number",
             "data":None
         }
-
+    coupon_id = coupon_data[0]["name"]
     sql  = """select 
                 coalesce(sum(coupon_amount) , 0) as coupon_amount
             from `tabCoupon Transaction` 
             where `status` = 'Active'
             and coupon_code = %(coupon_code)s 
             and coupon_number = %(coupon_number)s""" 
-    data = frappe.db.sql(sql, {"coupon_number":coupon_number,"coupon_code":coupon_data[0]["name"]}, as_dict=1)    
+    data = frappe.db.sql(sql, {"coupon_number":coupon_number,"coupon_code":coupon_id}, as_dict=1)    
 
 
     if data and len(data) > 0: 
@@ -313,10 +314,11 @@ def check_coupon_code(coupon_number):
         from `tabCoupon Transaction` 
         where transaction_type in ( 'Sale Coupon','Top Up') 
             and coupon_number = %(coupon_number)s 
+            and coupon_code = %(coupon_code)s
             and status = 'Active' 
         order by creation desc 
         limit 1"""
-        cus = frappe.db.sql(cus_sql, {"coupon_number":coupon_number}, as_dict=1) 
+        cus = frappe.db.sql(cus_sql, {"coupon_number":coupon_number, "coupon_code":coupon_id}, as_dict=1) 
         if cus and len(cus) > 0:
             return {
                 "status":True,
