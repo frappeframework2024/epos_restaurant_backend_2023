@@ -1771,7 +1771,8 @@ def update_coupon_codes(coupon_transactions,sale_type):
 				cc.created_by = ct.created_by,
 				cc.customer = ct.customer,
 				cc.customer_name = ct.customer_name,
-				cc.expired_date = ct.expired_date
+				cc.expired_date = ct.expired_date,
+				cc.sale_creation = ct.creation
 
 			where
 				ct.name in %(coupon_transaction_names)s and 
@@ -1836,8 +1837,8 @@ def update_coupon_codes(coupon_transactions,sale_type):
 	# update balance 
 	frappe.db.sql("""
 				update `tabCoupon Codes` 
-			   set balance_amount = (price + top_up_amount) - (redeem_amount + use_amount),
-			   balance_coupon_value = (coupon_value +top_up_coupon_value) - (redeem_coupon_value + use_coupon_value)
+			   set balance_amount = (price + top_up_amount + redeem_amount) -  use_amount,
+			   balance_coupon_value = (coupon_value +top_up_coupon_value  + redeem_coupon_value) - (use_coupon_value)
 			   where 
 			   		name in %(names)s
 			   

@@ -13,6 +13,7 @@
   "coupon_status",
   "sale_date",
   "sale",
+  "sale_creation",
   "working_day",
   "cashier_shift",
   "pos_profile",
@@ -188,11 +189,16 @@
    "fieldname": "balance_coupon_value",
    "fieldtype": "Currency",
    "label": "Balance Coupon Value"
+  },
+  {
+   "fieldname": "sale_creation",
+   "fieldtype": "Datetime",
+   "label": "Sale Creation"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-07 17:16:06.996667",
+ "modified": "2025-09-09 10:06:13.776823",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Codes",

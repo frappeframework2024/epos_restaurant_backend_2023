@@ -60,7 +60,8 @@
    "in_standard_filter": 1,
    "label": "POS Profile",
    "options": "POS Profile",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "pos_station",
@@ -92,7 +93,8 @@
    "default": "Now",
    "fieldname": "transaction_date",
    "fieldtype": "Datetime",
-   "label": "Transaction Date"
+   "label": "Transaction Date",
+   "search_index": 1
   },
   {
    "fieldname": "sale",
@@ -302,7 +304,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-06 09:29:03.301395",
+ "modified": "2025-09-09 09:46:45.139127",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Transaction",

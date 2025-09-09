@@ -293,9 +293,9 @@ def check_coupon_code(coupon_number):
     sql  = """select 
                 coalesce(sum(coupon_amount) , 0) as coupon_amount
             from `tabCoupon Transaction` 
-            where `status` = 'Active'
-            and coupon_code = %(coupon_code)s 
-            and coupon_number = %(coupon_number)s""" 
+            where 
+            coupon_code = %(coupon_code)s and 
+            coupon_number = %(coupon_number)s""" 
     data = frappe.db.sql(sql, {"coupon_number":coupon_number,"coupon_code":coupon_id}, as_dict=1)    
 
 
@@ -512,6 +512,21 @@ def on_scan_use_coupon(params):
 
                 ##update use coupon/amount  to coupon code
                 update_use_coupon_amount(data.get("cardid",None))
+
+
+                ## update to locked transaction
+                sql_update = """select 
+                        coalesce(sum(coupon_amount) , 0) as coupon_amount
+                    from `tabCoupon Transaction` 
+                    where 1= 1
+                    and coupon_number = %(coupon_number)s"""
+                check_for_locked = frappe.db.sql(sql_update, {"coupon_number":params["coupon_number"]}, as_dict=True)
+                if check_for_locked and len(check_for_locked)> 0:
+                    if check_for_locked[0]["coupon_amount"] == 0:
+                        frappe.db.sql("""update `tabCoupon Transaction` 
+                                        set status = 'Locked' 
+                                        where status != 'Locked' and coupon_number = %(coupon_number)s""", {"coupon_number":params["coupon_number"]})
+
                 
                 return return_data
             
