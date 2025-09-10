@@ -293,7 +293,7 @@ def check_coupon_code(coupon_number):
     sql  = """select 
                 coalesce(sum(coupon_amount) , 0) as coupon_amount
             from `tabCoupon Transaction` 
-            where 
+            where `status` not in ('Deleted')
             coupon_code = %(coupon_code)s and 
             coupon_number = %(coupon_number)s""" 
     data = frappe.db.sql(sql, {"coupon_number":coupon_number,"coupon_code":coupon_id}, as_dict=1)    
@@ -362,11 +362,7 @@ def short_hex_uuid(length=12):
     return uuid.uuid4().hex[:length]
 
 @frappe.whitelist()
-def on_scan_use_coupon(params):
-
-
-
-    
+def on_scan_use_coupon(params):    
     import uuid
     transaction_id = short_hex_uuid()  
     # check if valid coupon number
@@ -529,7 +525,7 @@ def on_scan_use_coupon(params):
                     if check_for_locked[0]["coupon_amount"] == 0:
                         frappe.db.sql("""update `tabCoupon Transaction` 
                                         set status = 'Locked' 
-                                        where status != 'Locked' and coupon_number = %(coupon_number)s""", {"coupon_number":params["coupon_number"]})
+                                        where status not in ('Locked','Deleted') and coupon_number = %(coupon_number)s""", {"coupon_number":params["coupon_number"]})
 
                 
                 return return_data

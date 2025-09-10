@@ -1,0 +1,45 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-09-10 17:27:33.592633",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "coupon_number",
+  "coupon_number_encrypt",
+  "coupon_number_url"
+ ],
+ "fields": [
+  {
+   "fieldname": "coupon_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Coupon Number"
+  },
+  {
+   "fieldname": "coupon_number_encrypt",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Coupon Number Encrypt"
+  },
+  {
+   "fieldname": "coupon_number_url",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Coupon Number URL"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-09-10 17:30:02.997502",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "Generate Coupon Code Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

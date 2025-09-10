@@ -213,7 +213,7 @@ onMounted(async () => {
     }); 
 })
 
-async function onCloseShift() {
+async function onCloseShift() { 
     if (await confirm({ title: $t("Close Shift"), text: $t("msg.are you sure to close cashier shift") })) {
         doc.value.cash_float = cashierShiftSummary.value.data;
         cashierShiftResource.value.setValue.submit(doc.value)

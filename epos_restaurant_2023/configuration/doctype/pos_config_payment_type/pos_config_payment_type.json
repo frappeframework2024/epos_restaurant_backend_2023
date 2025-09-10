@@ -18,6 +18,7 @@
   "currency",
   "currency_symbol",
   "pos_currency_format",
+  "sale_type",
   "column_break_wgpz",
   "locale",
   "currency_precision",
@@ -178,12 +179,18 @@
    "fieldname": "is_voucher",
    "fieldtype": "Check",
    "label": "Is Voucher"
+  },
+  {
+   "fieldname": "sale_type",
+   "fieldtype": "Link",
+   "label": "Sale Type",
+   "options": "Sale Type"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-08-15 16:53:32.874437",
+ "modified": "2025-09-10 16:58:31.548367",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config Payment Type",

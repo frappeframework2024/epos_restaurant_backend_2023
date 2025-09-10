@@ -7,14 +7,13 @@ from epos_restaurant_2023.api.account import submit_general_ledger_entry
 
 class CouponShift(Document):
 	def validate(self):	
-
 		## working date
 		self.business_branch
 		working_day = frappe.db.sql("select posting_date from `tabWorking Day` where business_branch = %(business_branch)s and is_closed=0 limit 1", {"business_branch":self.business_branch}, as_dict=1)
 		if len(working_day)>0:
 			self.posting_date = working_day[0]["posting_date"] or self.posting_date
 		else:
-			frappe.thorw("Issue coupon not yet start working day, Please start working day first.")
+			frappe.throw("Working Day not yet start from sale coupon station.")
 
 
 		full_name = frappe.utils.get_fullname(frappe.session.user)

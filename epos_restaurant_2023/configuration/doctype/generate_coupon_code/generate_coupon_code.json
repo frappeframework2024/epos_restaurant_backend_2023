@@ -1,0 +1,108 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-09-10 17:23:22.092813",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_wtl3",
+  "amended_from",
+  "posting_date",
+  "prefix_url",
+  "column_break_yapf",
+  "start_number",
+  "end_number",
+  "generate",
+  "section_break_fcdw",
+  "coupon_codes"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_wtl3",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Generate Coupon Code",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Posting Date"
+  },
+  {
+   "fieldname": "prefix_url",
+   "fieldtype": "Data",
+   "label": "Prefix URL"
+  },
+  {
+   "fieldname": "column_break_yapf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "start_number",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Start Number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "end_number",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "End Number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_fcdw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "coupon_codes",
+   "fieldtype": "Table",
+   "label": "Coupon Codes",
+   "no_copy": 1,
+   "options": "Generate Coupon Code Item",
+   "read_only": 1
+  },
+  {
+   "fieldname": "generate",
+   "fieldtype": "Button",
+   "label": "Generate"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-09-10 17:32:57.279880",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "Generate Coupon Code",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
