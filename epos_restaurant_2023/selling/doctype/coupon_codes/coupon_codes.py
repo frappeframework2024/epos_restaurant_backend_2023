@@ -46,6 +46,13 @@ def check_coupon_code(coupon):
 	
 	if data[0].get("coupon_status") == "Redeemed":
 		frappe.throw(_("Coupon code is already redeem"))
+
+
+	if data[0].get("coupon_register"):
+		if frappe.get_cached_value("Coupon Register",data[0].get("coupon_register"),"docstatus") == 0:
+			frappe.throw(_("This coupon status is <strong>Pending</strong>. Please submit your coupont register number {}".format(data[0].get("coupon_register"))))
+	
+
 	
 	
 	

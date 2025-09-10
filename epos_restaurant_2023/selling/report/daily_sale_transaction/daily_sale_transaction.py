@@ -39,7 +39,7 @@ def validate(filters):
 def get_columns(filters,data):
 	total_commission_amount = Enumerable(data).sum(lambda x: x.commission_amount or 0)
 	columns = []
-	columns.append({"label":"Doc. #", "fieldname":"name","fieldtype":"Link","options":"Sale", "align":"center","width":250})	
+	columns.append({"label":"Doc. #", "fieldname":"name","fieldtype":"Link","options":"Sale", "align":"center","width":150,"url_field":"sale_detail_url"})	
 	columns.append({"label":"Date",  "fieldname":"posting_date","fieldtype":"Date", "align":"center",})
 	columns.append({"label":"Branch", "fieldname":"business_branch","fieldtype":"Data","align":"left","width":120})
 	columns.append({"label":"Outlet", "fieldname":"outlet","fieldtype":"Data","align":"left"})
@@ -131,7 +131,8 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 			a.total_tax,
 			a.created_by,
 			a.guest_cover,
-			if(a.docstatus=1, if(a.is_foc = 1, 'FOC', 'Paid'),'Cancelled') status
+			if(a.docstatus=1, if(a.is_foc = 1, 'FOC', 'Paid'),'Cancelled') status,
+			concat('/sale-detail/', a.name) as sale_detail_url
 	FROM `tabSale` AS a
 		WHERE
 			{}

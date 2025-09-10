@@ -363,6 +363,10 @@ def short_hex_uuid(length=12):
 
 @frappe.whitelist()
 def on_scan_use_coupon(params):
+
+
+
+    
     import uuid
     transaction_id = short_hex_uuid()  
     # check if valid coupon number

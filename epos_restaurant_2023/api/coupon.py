@@ -293,3 +293,42 @@ def check_coupon_code_for_redeem(coupon_code):
 
 def get_coupon_actual_amount_balance(coupon_transactions):
     return sum([d.get("coupon_amount") / (1+(d.get("markup_percentage") or 0)/100) for d in coupon_transactions])
+
+
+
+
+@frappe.whitelist(allow_guest=True)
+def check_coupon_balance(coupon_code):
+    frappe.local.lang = "km"
+    sql = "select name, coupon from `tabCoupon Codes` where coupon = %(coupon_code)s order by creation desc limit 1"
+    coupon_data = frappe.db.sql(sql,{"coupon_code":coupon_code},as_dict = 1)
+    if coupon_data:
+        data = get_coupon_detail(coupon_data[0]["name"])
+        data["coupon_status_kh"]= _(data["coupon_info"].coupon_status)
+        data["coupon_price"]= format_currency(data["coupon_info"].price)
+        data["top_up_amount"]= format_currency(data["coupon_info"].top_up_amount)
+        data["total_coupon_amount"]= format_currency((data["coupon_info"].price or 0) + (data["coupon_info"].top_up_amount or 0))
+        data["redeem_amount"]= format_currency(data["coupon_info"].redeem_amount)
+        data["use_amount"]= format_currency(data["coupon_info"].use_amount)
+        data["balance_amount"]= format_currency(data["coupon_info"].balance_amount)
+        data["sale_date"]= frappe.format(data["coupon_info"].price,{"fieldtype":"Date"})
+        data["expired_date"]= frappe.format(data["coupon_info"].expired_date,{"fieldtype":"Datetime"})
+
+
+        for d in data["coupon_transaction"]:
+            d["transaction_type_kh"] = _(d["transaction_type"])
+            d["transaction_type"] = d["transaction_type"].replace(" ","")
+            d["creation"] = frappe.utils. pretty_date(str(d.get("creation")))
+            d["input_actual_amount"] =  format_currency(d.get("input_actual_amount"),d.get("currency"))
+            
+        # format date and currency
+        return data
+    return None
+
+def format_currency(value, currency=None):
+    if not currency:
+        currency = frappe.get_cached_value("ePOS Settings",None,"currency")
+        
+    precission = frappe.get_cached_value("Currency",currency,"custom_currency_precision")
+    return frappe.utils.fmt_money(value,  currency =  currency, precision = precission )
+
