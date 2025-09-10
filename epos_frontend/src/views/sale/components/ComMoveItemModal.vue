@@ -40,6 +40,7 @@ async function onOk() {
             targetSale.name = null;
             targetSale.sale_products = [];
             targetSale.custom_bill_number = undefined;
+            targetSale.deposit = 0;
             onMoveItem(mt.table, sale.sale, targetSale)
         } else {
             var targetSale = db.getDoc('Sale', mt.sale.new_sale).then((doc) => {
