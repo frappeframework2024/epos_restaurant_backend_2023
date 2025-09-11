@@ -6,6 +6,7 @@ import json
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad
 import base64
+from frappe.model.document import bulk_insert
 
 from frappe.model.document import Document
 
@@ -16,7 +17,7 @@ class GenerateCouponCode(Document):
 		self.encrypt_key = None
 		self.encrypt_iv = None
 	             
-				 
+
 		# 1. Collect all coupon numbers from child table
 		coupons = [c.coupon_number for c in self.coupon_codes]
 
@@ -35,19 +36,26 @@ class GenerateCouponCode(Document):
 		if not new_coupons:
 			frappe.msgprint("No new coupons to insert")
 			return
-		
-		for c in new_coupons:
-			frappe.get_doc({
-				"doctype": "Coupon Codes",
+
+		docs = [] 
+		import uuid
+		for c in new_coupons:			
+			doc = {
+				"doctype":"Coupon Codes",
 				"coupon": c.coupon_number,
-				"coupon_status": "Unused",
-				"coupon_url": c.coupon_number_url or ""
+				"coupon_url":c.coupon_number_url or "",
+				"coupon_status":"Unused",
+				"name": str(uuid.uuid4())
+			}		
+			docs.append(doc)		
+		bulk_insert("Coupon Codes", get_record(docs=docs) , chunk_size=10000)
 
-			}).insert(ignore_permissions=True)
-		frappe.db.commit() 
 
-		
-
+def get_record(docs):  
+    for d in docs:
+        doc = frappe.get_doc(d)      
+        yield doc
+        
 
 
 @frappe.whitelist()
