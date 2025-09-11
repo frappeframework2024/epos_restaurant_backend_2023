@@ -9,9 +9,11 @@
   "amended_from",
   "posting_date",
   "prefix_url",
-  "column_break_yapf",
   "start_number",
   "end_number",
+  "column_break_yapf",
+  "encrypt_key",
+  "encrypt_iv",
   "generate",
   "section_break_fcdw",
   "coupon_codes"
@@ -70,19 +72,28 @@
    "fieldtype": "Table",
    "label": "Coupon Codes",
    "no_copy": 1,
-   "options": "Generate Coupon Code Item",
-   "read_only": 1
+   "options": "Generate Coupon Code Item"
   },
   {
    "fieldname": "generate",
    "fieldtype": "Button",
    "label": "Generate"
+  },
+  {
+   "fieldname": "encrypt_key",
+   "fieldtype": "Data",
+   "label": "Encrypt Key"
+  },
+  {
+   "fieldname": "encrypt_iv",
+   "fieldtype": "Data",
+   "label": "Encrypt IV"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-09-10 17:32:57.279880",
+ "modified": "2025-09-11 09:30:13.553381",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Generate Coupon Code",

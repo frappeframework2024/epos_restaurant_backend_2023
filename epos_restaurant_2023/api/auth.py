@@ -74,9 +74,10 @@ def get_response_user_information(property, property_code=None):
     address =""
     employee_id=""
     position=""
+    home_page=""
     user = frappe.get_doc("User", frappe.session.user)
     
-    sql = "select position,name,phone_number_1,address,pos_permission from `tabEmployee` where user_id = '{}' limit 1".format(frappe.session.user)
+    sql = "select position,name,phone_number_1,address,pos_permission,default_home_page from `tabEmployee` where user_id = '{}' limit 1".format(frappe.session.user)
     data = frappe.db.sql(sql, as_dict=1)
     pos_permission=None
     if data:
@@ -84,6 +85,7 @@ def get_response_user_information(property, property_code=None):
         employee_id = data[0].get("name")
         phone_number = data[0].get("phone_number_1")
         address = data[0].get("address")
+        home_page = data[0].get("default_home_page")
         if data[0].get("pos_permission"):
              pos_permission = frappe.get_cached_doc("POS User Permission", data[0].get("pos_permission"))
 
@@ -103,7 +105,8 @@ def get_response_user_information(property, property_code=None):
         "property_name":property,
         "property_code":property_code, 
         "employee_id":employee_id,
-        "pos_permission":pos_permission
+        "pos_permission":pos_permission,
+        "home_page":home_page
     }
 
      

@@ -43,6 +43,7 @@
   "note",
   "login_information_tab",
   "allow_login",
+  "default_home_page",
   "column_break_jbjg",
   "user_id",
   "pos_pin_code",
@@ -476,12 +477,17 @@
    "fieldname": "allow_change_after_submit",
    "fieldtype": "Check",
    "label": "Allow Change After Submit"
+  },
+  {
+   "fieldname": "default_home_page",
+   "fieldtype": "Data",
+   "label": "Default Home Page"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-22 08:49:45.515103",
+ "modified": "2025-09-11 09:45:28.511183",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee",

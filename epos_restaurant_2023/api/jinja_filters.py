@@ -8,7 +8,9 @@ def unique(value):
 
 @frappe.whitelist()
 def format_currency(value):
-    return frappe.format((value or 0), {"fieldtype": "Currency"})
+    currency =  frappe.get_cached_value("ePOS Settings",None,"currency")
+    precision = frappe.get_cached_value("Currency",currency,"custom_currency_precision")
+    return frappe.utils.fmt_money(value,  currency =  currency, precision = precision )
 
 @frappe.whitelist()
 def format_second_currency(value): 
