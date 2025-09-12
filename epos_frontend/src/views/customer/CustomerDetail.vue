@@ -58,7 +58,7 @@
           <v-tab value="about">{{ $t('About') }}</v-tab>
           <v-tab value="recentOrder">{{ $t('Recent Order') }}</v-tab>
           <v-tab value="topup" v-if="gv.device_setting.show_top_up">{{ $t('Top Up History') }}</v-tab> 
-          <v-tab value="print">{{ $t('Print') }}</v-tab> 
+          <!-- <v-tab value="print">{{ $t('Print') }}</v-tab>  -->
         </v-tabs>
         <v-window v-model="tab">
           <v-window-item value="about">
@@ -181,7 +181,7 @@
               </tbody>
             </v-table>
           </v-window-item>
-         <v-window-item value="print">
+         <!-- <v-window-item value="print">
           
            
                 <v-select 
@@ -197,7 +197,7 @@
             class="mx-1 mb-2 mb-md-0"
             ></v-select>
             <div class="mt-2"> <iframe id="print_iframe" :src="printPreviewUrl" width="100%" height="450px"/></div>
-         </v-window-item>
+         </v-window-item> -->
         </v-window>
       </div>
     </template>
