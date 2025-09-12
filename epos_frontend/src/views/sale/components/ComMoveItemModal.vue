@@ -207,6 +207,8 @@ function generateProductPrinterMoveItem(targetSale, old_sale, old_table) {
 
                 // Map merged array to final structure
                 let finalList = merged.map(item => ({
+                    move_from_table: item.move_from_table,
+                    move_from_sale: item.move_from_sale,
                     sale_product_name: item.sale_product_name,
                     printer: item.printer,
                     group_item_type: item.group_item_type,
@@ -284,7 +286,8 @@ function generateProductPrinterMoveItem(targetSale, old_sale, old_table) {
                             time_stop: (r.time_stop || 0),
                             time_in: r.time_in,
                             time_out_price: r.time_out_price,
-                            time_out: r.time_out
+                            time_out: r.time_out,
+                            amount: r.amount
                         });  
                     }
                 });

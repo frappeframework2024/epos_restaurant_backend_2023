@@ -304,7 +304,8 @@ function generateProductPrinterChangeTable(sale_products, old_sale, old_table) {
                                 time_stop: (r.time_stop || 0),
                                 time_in: r.time_in,
                                 time_out_price: r.time_out_price,
-                                time_out: r.time_out
+                                time_out: r.time_out,
+                                amount: r.amount
                             });
                         } 
                     }
@@ -333,6 +334,8 @@ function generateProductPrinterChangeTable(sale_products, old_sale, old_table) {
 
                 // Map merged array to final structure
                 let finalList = merged.map(item => ({
+                    move_from_table: item.move_from_table,
+                    move_from_sale: item.move_from_sale,
                     sale_product_name: item.sale_product_name,
                     printer: item.printer,
                     group_item_type: item.group_item_type,
@@ -373,7 +376,6 @@ function generateProductPrinterChangeTable(sale_products, old_sale, old_table) {
                 })     
 
             }else{
-
                 const pritners = JSON.parse(r.printers);           
                 pritners.forEach((p) => {
                     sale.changeTableSaleProducts.push({
@@ -390,8 +392,7 @@ function generateProductPrinterChangeTable(sale_products, old_sale, old_table) {
                         product_name_kh: r.product_name_kh,
                         kitchen_group:r.kitchen_group||"",
                         kitchen_group_sort_order: r.kitchen_group_sort_order || 0,
-                        seat_number: r.seat_number||"",
-                        
+                        seat_number: r.seat_number||"",                        
                         portion: r.portion,
                         unit: r.unit,
                         modifiers: r.modifiers,
@@ -410,13 +411,12 @@ function generateProductPrinterChangeTable(sale_products, old_sale, old_table) {
                         time_stop: (r.time_stop || 0),
                         time_in: r.time_in,
                         time_out_price: r.time_out_price,
-                        time_out: r.time_out
+                        time_out: r.time_out,
+                        amount: r.amount
                     });
                 });
             }
-        });
-        
-
+        });   
     }
 }
 

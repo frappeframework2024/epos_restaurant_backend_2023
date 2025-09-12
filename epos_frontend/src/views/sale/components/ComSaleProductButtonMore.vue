@@ -319,7 +319,6 @@ async function onConfirmSelectPrinter() {
 
                 // Group by combo_menu, printer, quantity, is_deleted, is_free
                 let merged = Object.values(
-
                     product_printers.reduce((acc, item) => {
                         // key based on fields you want to merge by
                         const key = `${item.combo_menu}|${item.printer}|${item.quantity}|${item.is_deleted}|${item.is_free}`;
