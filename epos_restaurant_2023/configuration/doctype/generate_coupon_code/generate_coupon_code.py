@@ -39,13 +39,16 @@ class GenerateCouponCode(Document):
 
 		docs = [] 
 		import uuid
+		from frappe.utils import now
 		for c in new_coupons:			
 			doc = {
 				"doctype":"Coupon Codes",
 				"coupon": c.coupon_number,
 				"coupon_url":c.coupon_number_url or "",
 				"coupon_status":"Unused",
-				"name": str(uuid.uuid4())
+				"name": str(uuid.uuid4()),
+				"owner": frappe.session.user,
+				"creation":now()
 			}		
 			docs.append(doc)		
 		bulk_insert("Coupon Codes", get_record(docs=docs) , chunk_size=10000)

@@ -3,8 +3,7 @@
         <template #title>
             {{$t("Re-Send")  }}
         </template>
-        <template #content> 
-
+        <template #content>  
             <span v-if="selectedPrinters.length > 0" v-for="printer, index in  selectedPrinters"  :key="index" >
                 <v-chip size="small" style="margin-right: 5px; margin-bottom: 5px;" >{{ printer }}</v-chip>
             </span> 
@@ -48,7 +47,7 @@ function onClose() {
 
 async function onSend() { 
   if(dataSeletedPrinters.value.length > 0){
-    var resendProductData = []
+    var resendProductData = []   
     for(const r of sale.reSendSaleProductKOT){ 
          if(sale.setting.pos_setting.combo_menu_print_captain_by_items_printer && r.is_combo_menu){
             const combo_data = JSON.parse(r.combo_menu_data)
@@ -57,7 +56,10 @@ async function onSend() {
                     "product_codes":productCodes
             });    
             const printers = (r.temp_printers||[]).filter((x)=>x.selected == true);        
-            const combo_product_printers = res["message"]            
+            const combo_product_printers = res["message"];
+            let product_printers = [];      
+            
+         
 
             for(const pro of combo_data ){
                 const p_printers = combo_product_printers.filter(r=>r.product_code == pro.product_code)
@@ -65,7 +67,7 @@ async function onSend() {
                     ///check combo item is exist printer match
                     const match_printers =  printers.filter(r=> r.printer == p.printer_name)                        
                     if( match_printers.length > 0){
-                        resendProductData.push({
+                        product_printers.push({
                             sale_product_name: r.name,
                             printer: p.printer_name,
                             group_item_type: p.group_item_type,
@@ -75,7 +77,7 @@ async function onSend() {
                             usb_printing:p.usb_printing,
                             product_code: pro.product_code,
                             product_name_en: pro.product_name,
-                            product_name_kh: pro.product_name_kh,
+                            product_name_kh: pro.product_name_kh || pro.product_name,
                             kitchen_group: pro.kitchen_group||"",
                             kitchen_group_sort_order: pro.kitchen_group_sort_order || 0,
                             seat_number: r.seat_number||"",
@@ -104,6 +106,68 @@ async function onSend() {
                     }
                 }
             }
+
+            // Group by combo_menu, printer, quantity, is_deleted, is_free
+                let merged = Object.values(
+                    product_printers.reduce((acc, item) => {
+                        // key based on fields you want to merge by
+                        const key = `${item.combo_menu}|${item.printer}|${item.quantity}|${item.is_deleted}|${item.is_free}`;
+                        if (!acc[key]) {
+                            // copy first item
+                            acc[key] = { ...item };
+                            // initialize array to store product names for combo_menu field
+                            acc[key].combo_menu_list = [item.product_name_en];
+                            acc[key].combo_menu_code_list = [item.product_code]; 
+                        } else {
+                            // collect product names
+                            acc[key].combo_menu_list.push(item.product_name_en);
+                            acc[key].combo_menu_code_list.push(item.product_code);
+                        }
+                        return acc;
+                    }, {})
+                );
+
+                // Map merged array to final structure
+                let finalList = merged.map(item => ({
+                    sale_product_name: item.sale_product_name,
+                    printer: item.printer,
+                    group_item_type: item.group_item_type,
+                    is_label_printer: item.is_label_printer,
+                    ip_address: item.ip_address,
+                    port: item.port,
+                    usb_printing: item.usb_printing,
+                    product_code: r.product_code,
+                    product_name_en: r.product_name,
+                    product_name_kh: r.product_name_kh,
+                    kitchen_group: item.kitchen_group,
+                    kitchen_group_sort_order: item.kitchen_group_sort_order,
+                    seat_number: item.seat_number,
+                    portion: item.portion,
+                    unit: item.unit,
+                    modifiers: item.modifiers,
+                    note: item.note,
+                    quantity: item.quantity,
+                    is_deleted: item.is_deleted,
+                    is_free: item.is_free,
+                    combo_menu: item.combo_menu_list.join("^ "), // merged product names
+                    combo_menu_data: JSON.stringify(combo_data.filter((x)=> item.combo_menu_code_list.includes(x.product_code) )),
+                    order_by: item.order_by,
+                    creation: item.creation,
+                    modified: item.modified,
+                    is_timer_product: item.is_timer_product,
+                    reference_sale_product: r.reference_sale_product,
+                    duration: item.duration,
+                    time_stop: item.time_stop,
+                    time_in: item.time_in,
+                    time_out_price: item.time_out_price,
+                    time_out: item.time_out,
+                    reprint: item.reprint,
+                    amount: item.amount
+                }));
+
+                finalList.forEach((p)=>{ 
+                    resendProductData.push(p);
+                }) ;
 
          }else{
             (r.temp_printers||[]).filter((x)=>x.selected == true).forEach((p)=>{ 
