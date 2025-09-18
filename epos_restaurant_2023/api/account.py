@@ -8,12 +8,14 @@ from functools import lru_cache
 def submit_general_ledger_entry(docs):
     # bulk insert
     bulk_insert("General Ledger", get_general_ledger_entry_record(docs=docs) , chunk_size=10000)
+    
     frappe.db.commit()
 
 
 def get_general_ledger_entry_record(docs):
     for d in docs:
         doc = frappe.get_doc(d)
+        doc.account_type = frappe.get_cached_value("Chart Of Account",doc.account, "account_type")
         if doc.amount and not (doc.credit_amount or doc.debit_amount ):
             root_type = frappe.get_cached_value("Chart Of Account",doc.account,"root_type")
             if root_type in ["Asset","Expenses"]:

@@ -68,6 +68,7 @@
   "default_pos_difference_amount_account",
   "default_cash_transaction_expense_account",
   "default_sale_expense_account",
+  "default_unused_coupon_account",
   "column_break_uwgp",
   "default_income_account",
   "default_receivable_account",
@@ -575,12 +576,18 @@
    "fieldtype": "Link",
    "label": "Default Coupon Payment Expense Account",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_unused_coupon_account",
+   "fieldtype": "Link",
+   "label": "Default Unused Coupon Account",
+   "options": "Chart Of Account"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-12 14:36:24.377070",
+ "modified": "2025-09-15 15:32:24.873510",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",

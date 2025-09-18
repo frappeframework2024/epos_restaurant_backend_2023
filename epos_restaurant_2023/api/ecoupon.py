@@ -2,6 +2,7 @@ import json
 import frappe
 import calendar
 import datetime
+from frappe import _
 
 def get_day_numbers(year, month):
     _, num_days = calendar.monthrange(int( year), int(month))
@@ -70,8 +71,9 @@ def app_settings(params):
         "port":frappe.get_conf().get('socketio_port', 9000),
         "site_name": frappe.local.site
     }
+
+    ##main currency
     default_currency = frappe.db.get_default("currency")
-    exchange_rate_main_currency = frappe.db.get_default("exchange_rate_main_currency")
     main_currency = frappe.get_doc("Currency",default_currency,ignore_permissions=ignore_permissions)
     currency = remove_key(main_currency.as_dict())
     currency["precision"] = currency.pop("custom_currency_precision")
@@ -87,8 +89,19 @@ def app_settings(params):
     del currency["doctype"]
     del currency["custom_locale"]
     del currency["enabled"]
+ 
 
+    second_currency_name = frappe.db.get_default("second_currency")     
+    exchange_rate_main_currency = frappe.db.get_default("exchange_rate_main_currency")
+
+    
     result["main_currency"] =  currency
+    result["exchange_rate_main_currency"] =  exchange_rate_main_currency
+    result["second_currency_name"] =  second_currency_name
+
+    from_currency = exchange_rate_main_currency   
+    to_currency = second_currency_name
+    
 
     currencies = frappe.db.get_list("Currency",
                                     fields=["name","symbol","number_format","symbol_on_right","custom_currency_precision","custom_pos_currency_format"], 
@@ -99,13 +112,23 @@ def app_settings(params):
     for c in currencies:
         exchange_rate = 0
         change_exchange_rate = 0
+        exchange_rate_input = 0
+        change_exchange_rate_input = 0
         if c["name"] == currency["name"]:
             exchange_rate = 1
             change_exchange_rate = 1
+            exchange_rate_input = 1
+            change_exchange_rate_input = 1
         else:
+            to_currency = currency["name"]
+            if c["name"] == to_currency:
+                 to_currency = default_currency
+
             sql_exchange_rate = """select 
                     exchange_rate, 
-                    change_exchange_rate 
+                    change_exchange_rate ,
+                    exchange_rate_input, 
+                    change_exchange_rate_input 
                 from `tabCurrency Exchange` 
                 where from_currency = %(from_currency)s 
                     and to_currency = %(to_currency)s 
@@ -118,19 +141,55 @@ def app_settings(params):
             if exch:
                 exchange_rate = exch[0]["exchange_rate"] 
                 change_exchange_rate = exch[0]["change_exchange_rate"]
+                exchange_rate_input = exch[0]["exchange_rate_input"] 
+                change_exchange_rate_input = exch[0]["change_exchange_rate_input"]
             else:    
                 exchange_rate = 1
                 change_exchange_rate = 1
+                exchange_rate_input = 1
+                change_exchange_rate_input = 1
 
         c["precision"] = c.pop("custom_currency_precision")
         c["format"] = c.pop("custom_pos_currency_format")
         c["is_right"] = c.pop("symbol_on_right")
         c["exchange_rate"] = exchange_rate
         c["change_exchange_rate"] = change_exchange_rate
+        c["exchange_rate_input"] = exchange_rate_input
+        c["change_exchange_rate_input"] = change_exchange_rate_input
 
     result["currencies"] = currencies
 
-    
+
+    ## exchange rate showing
+    exchange_rate_show = 1
+    if to_currency == from_currency:
+        to_currency = default_currency
+
+    sql = """select 
+                exchange_rate,
+                exchange_rate_input,
+                change_exchange_rate,
+                change_exchange_rate_input
+            from `tabCurrency Exchange` 
+            where docstatus = 1
+            and from_currency = %(from_currency)s 
+            and to_currency = %(to_currency)s
+            order by 
+                posting_date desc,
+                creation desc
+            LIMIT 1"""
+        
+    data_sql = frappe.db.sql(sql,{"from_currency":from_currency,"to_currency":to_currency}, as_dict=1)
+    if data_sql and len(data_sql) > 0:
+        exchange_rate_show = data_sql[0]["exchange_rate_input"]
+
+    from_precision =  frappe.get_doc("Currency",exchange_rate_main_currency,ignore_permissions=ignore_permissions)
+    to_precision =  frappe.get_doc("Currency",to_currency,ignore_permissions=ignore_permissions)
+
+    main_rate = frappe.utils.fmt_money(1,currency=exchange_rate_main_currency,precision = from_precision.custom_currency_precision)
+    second_currency_rate = frappe.utils.fmt_money(exchange_rate_show,currency=to_currency, precision = to_precision.custom_currency_precision)
+    result["exchange_rate_show"] = "{} = {}".format(main_rate, second_currency_rate)
+
     return result
 
 @frappe.whitelist(methods=["POST"])
@@ -276,11 +335,10 @@ def daily_scan_coupon_chart(params):
 
 
 
-@frappe.whitelist()
-def check_coupon_code(coupon_number): 
+@frappe.whitelist(allow_guest=True)
+def check_coupon_code(coupon_number):     
     coupon = """select name,coupon from `tabCoupon Codes` where coupon = %(coupon_number)s and coupon_status = 'Used' limit 1""" 
-    coupon_data = frappe.db.sql(coupon, {"coupon_number":coupon_number}, as_dict=1)
-    
+    coupon_data = frappe.db.sql(coupon, {"coupon_number":coupon_number}, as_dict=1)       
     if coupon_data and len(coupon_data) > 0:
        pass
     else:
@@ -306,6 +364,7 @@ def check_coupon_code(coupon_number):
                 "msg":"Current balance is empty",
                 "data":None
             }
+        
          
         cus_sql = """select 
             customer,
@@ -315,7 +374,7 @@ def check_coupon_code(coupon_number):
         where transaction_type in ( 'Sale Coupon','Top Up') 
             and coupon_number = %(coupon_number)s 
             and coupon_code = %(coupon_code)s
-            and status = 'Active' 
+            and status in ( 'Active' ,'Locked')
         order by creation desc 
         limit 1"""
         cus = frappe.db.sql(cus_sql, {"coupon_number":coupon_number, "coupon_code":coupon_id}, as_dict=1) 
@@ -361,9 +420,21 @@ def short_hex_uuid(length=12):
     import uuid
     return uuid.uuid4().hex[:length]
 
+def lock_db(name):
+    
+    lock = frappe.db.sql("SELECT GET_LOCK('_{}', 0)".format(name))[0][0]
+    # print("******************************************LOCK DB{}***********************************".format(lock))
+    if not lock:
+        frappe.throw(_("This coupon is currently in used by other device."))
+
+def unlock_db(name):
+    # print("************************Release ******************************")
+    frappe.db.sql("DO RELEASE_LOCK('_{}')".format(name))
+
+
 @frappe.whitelist()
 def on_scan_use_coupon(params):    
-    import uuid
+    lock_db(params.get("coupon_number"))
     transaction_id = short_hex_uuid()  
     # check if valid coupon number
 
@@ -371,48 +442,55 @@ def on_scan_use_coupon(params):
 
     working_day_sql = """select name,posting_date from `tabWorking Day` where business_branch = %(business_branch)s and is_closed = 0 order by creation desc limit 1"""
     working_days = frappe.db.sql(working_day_sql, {"business_branch": params["business_branch"]}, as_dict=1) 
-    if not working_days or len(working_days) <=0:
+    if not working_days or len(working_days) <=0:         
         frappe.throw("Counter was close working day")
     
     working_day = working_days[0]
-
-
-
     coupon_amount = params["input_coupon_amount"] / (params["exchange_rate"] or 1)
     original_coupon_amount = coupon_amount
 
     check = check_coupon_code(params["coupon_number"])
-
-
-    if not check.get("status",False):
+    if not check.get("status",False):         
         frappe.throw(check.get("msg","Not enough balance"))
 
     data = check.get("data",None)
     if data:
-        if(data["amount"] < coupon_amount):
+        
+        if(data["amount"] < coupon_amount):             
             frappe.throw("Not enough balance")
         else:
+            coupon_id = data["cardid"]
             sql_coupon_transactions = """select 
                     markup_percentage,
                     sum(coupon_amount) as coupon_amount 
             from `tabCoupon Transaction` 
-            where coupon_number = %(coupon_number)s
-            and `status` = 'Active' 
+            where  1 = 1
+            and coupon_number = %(coupon_number)s
+            and coupon_code = %(coupon_code)s
+            -- and `status` = 'Active' 
             group by markup_percentage"""
-            transactions = frappe.db.sql(sql_coupon_transactions, {"coupon_number":params["coupon_number"]}, as_dict=1)
-            result = []
+            transactions = frappe.db.sql(sql_coupon_transactions, {"coupon_number":params["coupon_number"],"coupon_code":coupon_id }, as_dict=1)
+            transactions = [d for d in transactions if d["coupon_amount"] > 0 ]
+            result = []         
             if transactions and len(transactions) > 0: 
                 for t in transactions: 
                     sql_transaction = """select  
                         markup_percentage,
                         sum(coupon_amount) as coupon_amount   
                     from `tabCoupon Transaction` 
-                    where status = 'Active'
+                    where 1 = 1
+                    -- and status = 'Active'
                     and markup_percentage = %(markup_percentage)s
                     and coupon_number = %(coupon_number)s
+                    and coupon_code = %(coupon_code)s
                     group by markup_percentage
                     limit 1"""
-                    transaction = frappe.db.sql(sql_transaction, {"markup_percentage":t["markup_percentage"], "coupon_number":params["coupon_number"]}, as_dict=1)                    
+                    transaction = frappe.db.sql(sql_transaction, {
+                        "markup_percentage":t["markup_percentage"], 
+                        "coupon_number":params["coupon_number"],
+                        "coupon_code":coupon_id
+                        }, as_dict=1)  
+                                      
                     if transaction and len(transaction) > 0:
                         sql_last_sale_or_topup = """
                                             select 
@@ -426,13 +504,19 @@ def on_scan_use_coupon(params):
                                                     customer_photo,
                                                     coupon_code
                                             from `tabCoupon Transaction` 
-                                            where coupon_number = %(coupon_number)s
-                                            and `status` = 'Active' 
+                                            where  1 = 1
+                                            -- and `status` = 'Active' 
+                                            and coupon_number = %(coupon_number)s      
+                                            and coupon_code = %(coupon_code)s
                                             and markup_percentage = %(markup_percentage)s
                                             and transaction_type in ('Sale Coupon', 'Top Up')
                                             order by creation desc
                                             limit 1"""
-                        last_sale_or_topup = frappe.db.sql(sql_last_sale_or_topup, {"markup_percentage":t["markup_percentage"], "coupon_number":params["coupon_number"]}, as_dict=1)
+                        last_sale_or_topup = frappe.db.sql(sql_last_sale_or_topup, {
+                            "markup_percentage":t["markup_percentage"], 
+                            "coupon_number":params["coupon_number"],
+                            "coupon_code":coupon_id
+                            }, as_dict=1)
                         if last_sale_or_topup and len(last_sale_or_topup) > 0: 
                                 item = last_sale_or_topup[0]  
                                 if t["coupon_amount"] - coupon_amount < 0:
@@ -449,11 +533,9 @@ def on_scan_use_coupon(params):
                                     
                                     result.append(item) 
                                     break ## break here to stop loop
-
-
                                 # return {"x":last_sale_or_topup[0],"y":transaction[0]["coupon_amount"]}
-
                         # return {"x": transaction}
+
             # return result
             if result and len(result) > 0:
                 customer = {
@@ -501,7 +583,6 @@ def on_scan_use_coupon(params):
                                         set status = 'Locked' 
                                         where name = %(name)s""", {"name":r["name"]})
 
-
                 return_data = params.copy()
                 return_data["original_used_amount"] = original_coupon_amount
                 return_data["used_transaction_id"] = transaction_id
@@ -509,16 +590,15 @@ def on_scan_use_coupon(params):
                 return_data["customer"] = customer["customer"]
                 return_data["customer_photo"] = customer["photo"]
 
-
                 ##update use coupon/amount  to coupon code
                 update_use_coupon_amount(data.get("cardid",None))
-
 
                 ## update to locked transaction
                 sql_update = """select 
                         coalesce(sum(coupon_amount) , 0) as coupon_amount
                     from `tabCoupon Transaction` 
                     where 1= 1
+                    and status not in ('Deleted')
                     and coupon_number = %(coupon_number)s"""
                 check_for_locked = frappe.db.sql(sql_update, {"coupon_number":params["coupon_number"]}, as_dict=True)
                 if check_for_locked and len(check_for_locked)> 0:
@@ -528,13 +608,16 @@ def on_scan_use_coupon(params):
                                         where status not in ('Locked','Deleted') and coupon_number = %(coupon_number)s""", {"coupon_number":params["coupon_number"]})
 
                 
+                unlock_db(params.get("coupon_number"))
                 return return_data
             
-            else:   
+            else:              
                 frappe.throw("Invalid coupon number")
     
-    else:
+    else:         
         frappe.throw("Invalid coupon number")
+
+    unlock_db(params.get("coupon_number"))
 
 
 @frappe.whitelist(methods=["POST"])
@@ -574,7 +657,7 @@ def get_report(name, show_transaction):
         sql_transactions = """select 
             name,
             coupon_number,
-            creation,
+            transaction_date as creation,
             coupon_amount,
             created_by
         from `tabCoupon Transaction` 

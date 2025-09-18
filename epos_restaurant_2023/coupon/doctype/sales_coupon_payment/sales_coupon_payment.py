@@ -33,20 +33,18 @@ class SalesCouponPayment(Document):
 
 
 def update_payment_balance(self):
-	sql = """update `tabSale Coupon` s
-			inner join (
-				select 
-					%(coupon_number)s as sale_coupon,  
-					coalesce(sum(p.payment_amount) ,0) as total_payment 
-				from `tabSales Coupon Payment` p
-				where docstatus = 1 
-				and p.sale_coupon = %(coupon_number)s 
-			) sp on sp.sale_coupon =  %(coupon_number)s
-			set 
-				s.payment_balance = s.grand_total - sp.total_payment,
-				s.total_payment_amount = sp.total_payment
-			where s.name = %(coupon_number)s"""
-	frappe.db.sql(sql,{"coupon_number":self.sale_coupon})
+	c = frappe.db.get_value('Sale Coupon', self.sale_coupon, ['payment_balance', 'total_payment_amount'], as_dict=1)
+	if self.docstatus == 1:
+		c.payment_balance = c.payment_balance - self.payment_amount
+		c.total_payment_amount = c.total_payment_amount + self.payment_amount
+	else:
+		c.payment_balance = c.payment_balance + self.payment_amount
+		c.total_payment_amount = c.total_payment_amount - self.payment_amount
+	frappe.db.set_value('Sale Coupon',self.sale_coupon, 
+	{
+		'payment_balance': c.payment_balance,
+		'total_payment_amount': c.total_payment_amount
+	})
 
 	## update customer on total sale coupon payment balance
 	sale_coupon = frappe.get_doc("Sale Coupon", self.sale_coupon)

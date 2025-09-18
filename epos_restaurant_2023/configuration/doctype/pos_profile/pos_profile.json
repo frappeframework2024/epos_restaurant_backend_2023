@@ -47,6 +47,7 @@
   "default_redeem_coupon_product",
   "section_break_aezl",
   "default_credit_account",
+  "coupon_use_account",
   "coupon_posting_type",
   "column_break_iwff",
   "default_vendor"
@@ -287,6 +288,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "description": "We use this account to post gl entry in Store Payment Transaction",
    "fieldname": "default_credit_account",
    "fieldtype": "Link",
    "label": "Default Credit Account",
@@ -298,11 +300,19 @@
    "fieldtype": "Select",
    "label": "Coupon Posting Type",
    "options": "Actual Amount\nCoupon Amount"
+  },
+  {
+   "description": "We use this account code to post to gl in use coupon transaction",
+   "fieldname": "coupon_use_account",
+   "fieldtype": "Link",
+   "label": "Coupon Use Account",
+   "link_filters": "[[{\"fieldname\":\"\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0]]",
+   "options": "Chart Of Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-12 16:33:01.216581",
+ "modified": "2025-09-15 12:05:51.033161",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Profile",

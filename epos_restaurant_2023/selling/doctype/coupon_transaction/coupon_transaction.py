@@ -30,6 +30,10 @@ class CouponTransaction(Document):
 		if self.input_coupon_amount == 0 and self.actual_amount > 0:
 			self.input_coupon_amount = self.actual_amount
 		self.coupon_amount = self.input_coupon_amount / self.exchange_rate 
+		if self.transaction_type == "Used":
+			self.transaction_amount = self.actual_amount
+
+
 
 
 		## calculate markup percentage
@@ -39,13 +43,14 @@ class CouponTransaction(Document):
 		#add GL entry
 		unearned_revenue = frappe.get_cached_value("Business Branch",self.business_branch, "default_unearned_revenue_account")
 		income_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_income_account")
-		pos_config = frappe.db.get_value('POS Profile', self.pos_profile, 'pos_config')
+		pos_profile =  frappe.db.get_value("POS Profile",self.pos_profile,["pos_config","coupon_use_account"],as_dict=1)
+		income_account = pos_profile.coupon_use_account if pos_profile.coupon_use_account != "" else income_account
 		pos_config_accounts = (frappe.db.sql("""select 
 											default_unearned_revenue_account,
 											default_income_account 
 									   from `tabPOS Config Default Account` 
 									   where parent = %(pos_config)s and business_branch = %(business_branch)s""",{
-			"pos_config":pos_config,
+			"pos_config":pos_profile.pos_config,
 			"business_branch":self.business_branch
 			}, as_dict=1) or [])
 		
@@ -58,7 +63,6 @@ class CouponTransaction(Document):
 			if self.transaction_type == "Used":
 				general_ledger_debit(self,account = {"account":unearned_revenue,"amount":abs(self.coupon_amount)})
 				general_ledger_credit(self,account = {"account":income_account,"amount":abs(self.coupon_amount)})
-				
 		else:
 			if self.status == "Deleted":
 				tranactions = (frappe.db.sql("""select 
@@ -89,22 +93,34 @@ def general_ledger_debit(self,account):
 		"remark": "Delete Coupon Transaction" if self.status == "Deleted" else "",
 		"is_cancelled":1 if self.status == "Deleted" else 0
 	}
+	if self.transaction_type == "Used":
+		doc["party_type"] ="Vendor"
+		doc["party"] = self.vendor
+		doc["party_name"] = frappe.get_cached_value("Vendor", self.vendor,"vendor_name")
+
 	docs.append(doc)
 	submit_general_ledger_entry(docs = docs)
 
 def general_ledger_credit(self,account):
-    docs = []
-    doc = {
-        "doctype":"General Ledger",
-        "posting_date":self.posting_date,
-        "account":account["account"],
-        "credit_amount":account["amount"],
-        "voucher_type":"Coupon Transaction",
-        "voucher_number":self.name,
-        "business_branch": self.business_branch,
+	docs = []
+	doc = {
+		"doctype":"General Ledger",
+		"posting_date":self.posting_date,
+		"account":account["account"],
+		
+		"credit_amount":account["amount"],
+		"voucher_type":"Coupon Transaction",
+		"voucher_number":self.name,
+		"business_branch": self.business_branch,
 		"remark": "Delete Coupon Transaction" if self.status == "Deleted" else "",
 		"is_cancelled":1 if self.status == "Deleted" else 0
-    }
-    docs.append(doc)
-    submit_general_ledger_entry(docs=docs)
+	}
+	
+	if self.transaction_type == "Used":
+		doc["party_type"] ="Vendor"
+		doc["party"] = self.vendor
+		doc["party_name"] = frappe.get_cached_value("Vendor", self.vendor,"vendor_name")
+
+	docs.append(doc)
+	submit_general_ledger_entry(docs=docs)
 		

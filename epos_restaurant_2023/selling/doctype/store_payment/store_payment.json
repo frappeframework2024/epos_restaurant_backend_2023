@@ -107,7 +107,8 @@
    "fieldname": "account_code",
    "fieldtype": "Link",
    "label": "Account Code",
-   "options": "Chart Of Account"
+   "options": "Chart Of Account",
+   "reqd": 1
   },
   {
    "fieldname": "payment_types_section",
@@ -185,7 +186,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-18 16:52:00.414425",
+ "modified": "2025-09-15 12:07:35.385560",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Store Payment",

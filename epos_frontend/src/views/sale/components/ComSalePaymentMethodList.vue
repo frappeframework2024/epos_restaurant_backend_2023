@@ -29,7 +29,7 @@ if (currency_setting) {
 }
 
 async function onPaymentTypeClick(pt) { 
-    let voucher = {"voucher_amount":0,"voucher_name":0,"customer":0}
+    let voucher = {"voucher_amount":0,"voucher_name":"","customer":""}
     let room = null;
     let folio_transaction_number = null
     let folio_transaction_type=null

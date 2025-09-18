@@ -50,10 +50,11 @@ def get_columns(filters):
 		columns.append({"label":"Device","fieldname":"pos_station","fieldtype":"Data","align":"left",'width':150})
 	columns.append({"label":"Transactions","fieldname":"transactions","fieldtype":"Data","align":"center",'width':120})
 	columns.append({"label":"Amount","fieldname":"actual_amount","fieldtype":"Currency","align":"center",'width':150})
+	columns.append({"label":"Coupon Amount","fieldname":"coupon_amount","fieldtype":"Currency","align":"center",'width':150})
 	return columns
  
 def get_conditions(filters):
-	conditions = " where"
+	conditions = " where "
 	if filters.group_by == "Hour":
 		conditions = " and"
 	conditions += " coalesce(transaction_type,'Used')='Used'"
@@ -65,6 +66,8 @@ def get_conditions(filters):
 		conditions += " AND pos_profile in %(pos_profile)s"
 	if filters.get("pos_station"):
 		conditions += " AND pos_station in %(pos_station)s"
+
+	conditions = conditions + " and coalesce(status,'') <> 'Deleted'"
 	return conditions
 
 def get_report_data(filters):
@@ -76,8 +79,9 @@ def get_report_data(filters):
 	SELECT 
 	{1},
 	coalesce(truncate(abs(sum(a.actual_amount)),4),0) actual_amount,
+	coalesce(truncate(abs(sum(a.coupon_amount)),4),0) coupon_amount,
 	coalesce(count(a.name),0) transactions
-	FROM `tabCoupon Transaction` a
+	FROM `tabCoupon Transaction` a 
 	{2}
 	{0}
 	group by {1}

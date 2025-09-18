@@ -19,9 +19,10 @@ class StorePayment(Document):
 		self.payment_types = ", ".join(set(str(d.payment_type) for d in self.payments))
 
 		get_accounts(self)
+		 
 		self.credit_amount = get_vendor_credit_balance(self.pos_profile)["balance"]
 		self.payment_amount = sum(d.payment_amount for d in self.payments)
-
+		 
 		if self.payment_amount > self.credit_amount:
 			frappe.throw(_("Payment amount is greater than credit amount"))
 		
@@ -59,8 +60,16 @@ def get_accounts(self):
 @frappe.whitelist()
 def get_vendor_credit_balance(pos_profile):
 	pos_profile = frappe.get_doc("POS Profile",pos_profile)
-	sql = "select sum(credit_amount - debit_amount) as total from `tabGeneral Ledger` where account = %(account)s" 
-	data = frappe.db.sql(sql,{"account":pos_profile.default_credit_account},as_dict=1)
+	sql = """
+		select 
+			sum(gl.credit_amount - gl.debit_amount) as total 
+		from `tabGeneral Ledger` gl 
+	 		inner join `tabChart Of Account` c on c.name = gl.account
+	   	where 
+			gl.account = %(account)s and 
+			c.root_type = 'Liabilities'
+	   """ 
+	data = frappe.db.sql(sql,{"account":pos_profile.coupon_use_account},as_dict=1)
 	if data:
 		return {"balance":data[0].get("total") or 0}
 	return {"balance":0} 
@@ -86,6 +95,7 @@ def add_GL_Entry(self):
 			"doctype":"General Ledger",
 			"posting_date":self.posting_date,
 			"account":a,
+			"account_type":frappe.get_cached_value("Chart Of Account", a,"account_type"),
 			"credit_amount":sum([d.payment_amount for d in self.payments if d.account_code == a]),
 			"againt": self.account_code,
 			"voucher_type":"Store Payment",
@@ -101,6 +111,7 @@ def add_GL_Entry(self):
 		"doctype":"General Ledger",
 		"posting_date":self.posting_date,
 		"account":self.account_code,
+		"account_type":frappe.get_cached_value("Chart Of Account", self.account_code,"account_type"),
 		"debit_amount": sum([d.payment_amount for d in self.payments]),
 		"voucher_type":"Store Payment",
 		"voucher_number":self.name,

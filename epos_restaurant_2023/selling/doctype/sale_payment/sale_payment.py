@@ -283,14 +283,11 @@ def update_customer_bill_balance(self,calcel=False):
 	lock_name = f"customer_balance_{self.name}"
 	with filelock(lock_name, timeout=30):
 		sql ="""update `tabCustomer` c 
-				inner join (
-							select 
-								s.customer, 
-								sum(s.balance) as total_balance 
-							from `tabSale` s
-							where s.docstatus = 1 and s.customer = %(customer)s 
-							group by s.customer) _s on _s.customer = c.name
-					set c.balance = _s.total_balance + c.total_coupon_balance + c.membership_balance
+				set c.balance =(select 
+									sum(s.balance)
+								from `tabSale` s 
+									where s.docstatus = 1 and s.customer = c.name) 
+					+ c.total_coupon_balance + c.membership_balance
 				where c.name = %(customer)s"""
 		frappe.db.sql(sql,{"customer":self.customer})
 		frappe.db.commit()

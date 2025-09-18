@@ -5,6 +5,7 @@ import frappe
 from frappe.model.document import Document
 from frappe.model.naming import NamingSeries
 from frappe.utils.print_format import download_pdf
+from epos_restaurant_2023.api.account import submit_general_ledger_entry
 
 class WorkingDay(Document):
     
@@ -67,13 +68,13 @@ class WorkingDay(Document):
 				naming_series.update_counter(0)
 			# self.send_mail_closed_day()
 
+
 		# validte coupon shift opened then foce to close coupon shift first
 		# for business sell coupon
 		if self.is_closed == 1:
 			if frappe.db.exists("Coupon Shift", {"is_closed":0}):
 				frappe.throw(_("Please close all pending coupon shift before closing working day."))
 
-		
 
 	def on_update(self):
 		if 'edoor' in frappe.get_installed_apps():
@@ -85,23 +86,60 @@ class WorkingDay(Document):
 		
 		# this validatation is use for ecoupon when we close working day all coupon must be mark as expired imediatly
 		if self.has_value_changed("is_closed"):
-			sql = "update `tabCoupon Codes` set coupon_status ='Expired' where coupon_status ='Used' and working_day = %(working_day)s"
-			frappe.db.sql(sql,{"working_day":self.name})
+			if self.is_closed == 1:
+				sql = "update `tabCoupon Codes` set coupon_status ='Expired' where coupon_status ='Used' and working_day = %(working_day)s"
+				frappe.db.sql(sql,{"working_day":self.name})
+
+				# submit coupon use balance to gl entry
+				submit_Gl_Entry(self)
 			
   
 
-	# def send_mail_closed_day(self):
-	# 	reports_name = ['Working Day Sale Transaction','Working Day Sale Summary V2','Working Day Sale Product Summary']
-	# 	print_formats=[]
-	# 	for name in reports_name:
-	# 		print_formats.append({'fname':f"{name}_{self.posting_date}.pdf",'fcontent':frappe.get_print(doctype=self.doctype, name=self.name, print_format=name)})
-	# 	download_pdf("Working Day", name, format=None, doc=None, no_letterhead=0)
 
-	# 	frappe.sendmail(
-	# 		recipients='sengho.estc@gmail.com',
-	# 		sender='sengho.kimsea@estccomputer.com',
-	# 		subject=f'Closed Working Day In {self.posting_date}',
-	# 		content='Working Day Was Close',
-	# 		header=[f'Closed Working Day In {self.posting_date}', "green"],
-	# 		attachments=print_formats
-	# 	)
+def get_unuse_coupon_balance(self):
+	sql = "select sum(coupon_amount) as balance from `tabCoupon Transaction` where working_day = %(working_day)s and coalesce(status,'') <> 'Deleted'"
+	data = frappe.db.sql(sql, {"working_day":self.name},as_dict = 1)
+	if data:
+		return data[0]["balance"]
+	return 0
+
+def submit_Gl_Entry(self):
+	from epos_restaurant_2023.utils import math_round
+
+	balance = math_round(abs(get_unuse_coupon_balance(self)))
+ 
+	if balance> 0:
+		from_account,to_account = frappe.get_cached_value("Business Branch",self.business_branch,["default_unearned_revenue_account","default_unused_coupon_account"])
+ 
+
+	
+		docs = []
+		doc = {
+			"doctype":"General Ledger",
+			"posting_date":self.posting_date,
+			"account":from_account,
+			"debit_amount": balance,
+			"againt":to_account,
+			"voucher_type":"Working Day",
+			"voucher_number":self.name,
+			"business_branch": self.business_branch,
+			"remark" : "Transfer unused amount from unearned to " + to_account,
+
+		}
+		docs.append(doc)
+	
+		doc = {
+			"doctype":"General Ledger",
+			"posting_date":self.posting_date,
+			"account":to_account,
+			"credit_amount": balance,
+			"againt": from_account,
+			"voucher_type":"Working Day",
+			"voucher_number":self.name,
+			"business_branch": self.business_branch,
+			"remark" : "Revenue from use use coupon balance"
+			}
+		docs.append(doc)
+		submit_general_ledger_entry(docs=docs)
+  
+ 

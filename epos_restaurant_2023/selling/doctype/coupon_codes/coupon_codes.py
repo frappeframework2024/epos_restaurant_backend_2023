@@ -65,7 +65,7 @@ def get_coupon_info(coupon):
 
 	if not coupon_codes:
 		frappe.throw(_("Coupon code not found"))
-
+		
 	sql="""
 		select 
 			coupon_code,
@@ -84,7 +84,8 @@ def get_coupon_info(coupon):
 
 		from `tabCoupon Transaction` ct
 		where
-			ct.coupon_code in %(coupon_codes)s
+			ct.coupon_code in %(coupon_codes)s and 
+			coalesce(ct.status,'') <> 'Deleted'
 		order by
 			ct.posting_date,
 			ct.creation

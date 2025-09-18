@@ -30,7 +30,8 @@ def check_coupon_code(coupon_code):
         product_code
     from `tabCoupon Transaction` 
     where 
-        coupon_number=%(coupon_number)s and 
+        coupon_number=%(coupon_number)s and  
+        coalesce(status,'') <> 'Deleted' and 
         transaction_type = "Sale Coupon" 
     limit 1
     """
@@ -58,10 +59,11 @@ def check_coupon_code(coupon_code):
         select 
             transaction_type,
             markup_percentage,
-            sum(coupon_amount) as coupon_amount 
+            sum(coupon_amount) as coupon_amount  
         from `tabCoupon Transaction` 
         where 
-        coupon_number=%(coupon_number)s
+        coupon_number=%(coupon_number)s and 
+        coalesce(status,'') <> 'Deleted'
         group by
             transaction_type,
             markup_percentage
@@ -154,7 +156,8 @@ def check_coupon_code_for_top_up(coupon_code):
     from `tabCoupon Transaction` 
     where 
         coupon_code=%(coupon_code)s and  
-        transaction_type = "Sale Coupon" 
+        transaction_type = "Sale Coupon" and 
+        coalesce(status,'') <> 'Deleted'
     limit 1
     """
    
@@ -187,7 +190,8 @@ def check_coupon_code_for_top_up(coupon_code):
             sum(coupon_amount) as coupon_amount 
         from `tabCoupon Transaction` 
         where 
-        coupon_code=%(coupon_code)s
+        coupon_code=%(coupon_code)s and 
+        coalesce(status,'') <> 'Deleted'
         group by
             transaction_type,
             markup_percentage
@@ -231,20 +235,21 @@ def check_coupon_code_for_redeem(coupon_code):
         if   datetime.datetime.now() > data[0].expired_date:
             frappe.throw(_("This coupon code is expired"))   
     
-    
-
+ 
 
     sql = """select 
         coupon_code,
         coupon_number,transaction_date,sale,posting_date,
         input_actual_amount,
         input_coupon_amount,
+        actual_amount,
         currency, 
         product_code
     from `tabCoupon Transaction` 
     where 
         coupon_code=%(coupon_code)s and  
-        transaction_type = "Sale Coupon" 
+        transaction_type = "Sale Coupon"  and 
+        coalesce(status,'') <> 'Deleted'
     limit 1
     """
    
@@ -274,10 +279,14 @@ def check_coupon_code_for_redeem(coupon_code):
             transaction_type,
             markup_percentage,
             sum(input_actual_amount) as input_actual_amount,
-            sum(coupon_amount) as coupon_amount 
+            sum(coupon_amount) as coupon_amount ,
+            sum(actual_amount) as actual_amount
+
+
         from `tabCoupon Transaction` 
         where 
-        coupon_code=%(coupon_code)s
+        coupon_code=%(coupon_code)s and 
+        coalesce(status,'') <> 'Deleted'
         group by
             transaction_type,
             markup_percentage
@@ -287,7 +296,8 @@ def check_coupon_code_for_redeem(coupon_code):
     coupon_info["coupon_transaction"] = data
     coupon_info["coupon_balance"] = sum([d.get("coupon_amount") for d in data])
     coupon_info["actual_amount_balance"] = get_coupon_actual_amount_balance(data)
-    coupon_info["used_coupon_value"] = sum([d.get("coupon_amount") for d in data if d.get("transaction_type") =="Used"])
+  
+    coupon_info["used_coupon_value"] = sum([d.get("actual_amount") for d in data if d.get("transaction_type") =="Used"])
     
     return  coupon_info
 

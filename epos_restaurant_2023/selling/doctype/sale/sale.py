@@ -17,9 +17,7 @@ from decimal import Decimal
 from frappe.utils import add_to_date
 from epos_restaurant_2023.api.exely import cancel_order,submit_order_to_exely
 from epos_restaurant_2023.selling.doctype.sale.general_ledger_entry import submit_sale_to_general_ledger_entry
-
-
-
+ 
 class Sale(Document):
 	def validate(self): 		
 		if not frappe.db.get_default('exchange_rate_main_currency'):
@@ -247,19 +245,7 @@ class Sale(Document):
 		# update default accunt
 		update_default_account(self) 
 
-		
-		### Test socketio client from app server event
-		# from epos_restaurant_2023.custom_socket_client import emit_event
-		# # prepare payload
-		# payload = {
-		#     'type': 'chat',
-		# 	'message': self.doctype,
-		# 	'sender': 'Server',
-		# 	'senderId': "SERVER",
-		# }
-		# # emit to your socket server
-		# emit_event("ePOSMobile", payload)
-
+	 
 
 	@frappe.whitelist()
 	def get_sale_payment_naming_series(self):
@@ -283,17 +269,14 @@ class Sale(Document):
 
 
 	def after_insert(self):
-		
-		
+
 		if self.flags.ignore_after_insert == True:
 			return 
 		#add sale product spa commission
 		if not self.time_in:
 			pass	
 		add_sale_product_spa_commission(self)
-
-		
-
+ 
 	def before_cancel(self):
 		update_status(self)
 		if frappe.get_cached_value("Exely Itegration Setting",None,"enabled")==1:
@@ -308,20 +291,6 @@ class Sale(Document):
 		on_get_revenue_account_code(self)
 		self.append_quantity = None
 		self.scan_barcode = None
-
-
-		# # generate custom bill format
-		# if (self.custom_bill_number or "") == "":
-		# 		if self.pos_profile:
-		# 			pos_config = frappe.get_cached_value("POS Profile",self.pos_profile,"pos_config")
-		# 			bill_number_prefix = frappe.get_cached_value("POS Config",pos_config,"pos_bill_number_prefix")
-		# 			if bill_number_prefix:
-		# 				from frappe.model.naming import make_autoname
-		# 				self.custom_bill_number = make_autoname(bill_number_prefix)
-		# 		else:
-		# 			if self.custom_bill_number_prefix:
-		# 				from frappe.model.naming import make_autoname
-		# 				self.custom_bill_number = make_autoname(self.custom_bill_number_prefix)
 
 
 		## end generate custom bill format
@@ -339,6 +308,26 @@ class Sale(Document):
 					frappe.throw("This folio number {} in room {} is already closed".format(room_payment.folio_number,room_payment.room_number))
 
 		
+		# validate redeem amount  with sale type redeem
+		# check redeem amount with coupon amount remaining
+		if self.sale_type =="Redeem":
+			
+			for sp in self.sale_products:
+				if sp.coupons:
+					coupons = json.loads(sp.coupons)
+					for c in coupons:
+						lock_db(c.get("coupon"))
+						sql = "select sum(actual_amount) as balance from `tabCoupon Transaction` where coupon_code =%(coupon_id)s"
+						data = frappe.db.sql(sql, {"coupon_id":c.get("name")},as_dict=1)
+						
+						if data:
+							# frappe.msgprint(str(math_round(data[0].get("balance"))))
+							# frappe.msgprint(str(math_round(abs(sp.amount) )))
+
+							if(math_round(data[0].get("balance")) != math_round(abs(sp.amount))):
+								frappe.throw(_("Invalid redeem amount. Please check coupon balance again."))
+						else:
+							frappe.throw(_("Invalid  Coupon Code"))
 	
 	def on_submit(self):
 		if self.flags.ignore_on_submit == True:
@@ -398,6 +387,11 @@ class Sale(Document):
 		if self.sale_type in ["Sale Coupon","Top Up","Redeem"]: 
 			update_coupon_transaction(self)
 
+
+
+		# Release Lock
+		if self.sale_type =="Redeem":
+			unlock_db(self)
 		
 
 	def on_cancel(self):
@@ -443,8 +437,30 @@ class Sale(Document):
 	def get_auto_name(self):
 		from frappe.model.naming import make_autoname
 		return  make_autoname(self.custom_bill_number_prefix)
-def math_round(value, precision):
+	
+
+ 
+
+
+def lock_db(name):
+    lock = frappe.db.sql("SELECT GET_LOCK('_{}', 0)".format(name))[0][0]
+    print("****************************************** from redeem {}***********************************".format(lock))
+    if not lock:
+        frappe.throw(_("This coupon code is being use by other transaction. Please try again later."))
+
+def unlock_db(self):
+	for sp in self.sale_products:
+		if sp.coupons:
+			coupons = json.loads(sp.coupons)
+			for c in coupons:
+				print("******************release from sale {}******************".format(c.get("coupon")))
+				frappe.db.sql("DO RELEASE_LOCK('_{}')".format(c.get("coupon")))
+
+
+def math_round(value, precision = None):
 	import math
+	if not precision:
+		precision = int( frappe.get_cached_value("System Settings", None, "currency_precision") or 0)
 	result = math.floor(((value or 0) * math.pow(10, (precision or 0) )) + 0.5) / math.pow(10, (precision or 0))
 	return result
 
@@ -685,6 +701,7 @@ def general_ledger_credit(self,account,is_commission = 1):
 		"remark": "Sale Commission" if is_commission == 1 else "",
 		"party_type": "Employee" if is_commission == 1 else None,
 		"party":account["party"] if is_commission == 1 else None,
+
 		"is_cancelled":1 if self.docstatus == 2 else 0
     }
     docs.append(doc)
@@ -1004,6 +1021,12 @@ def validate_sale_product(self):
 	coupon_expired_duration = frappe.get_cached_value("ePOS Settings",None,"default_coupon_expired")
 
 	for d in self.sale_products:
+		# serve validate get product config to update to sale product config
+		# allow discount is very important for validate chart of account code to post discount amount to GL Entry
+		allow_discount = frappe.get_cached_value("Product",d.product_code,"allow_discount")
+		d.allow_discount = allow_discount
+		 
+
 		d.regular_price = d.regular_price if d.regular_price else d.price
 		# validate product free
 		if(d.is_free and d.price > 0):
@@ -1055,28 +1078,37 @@ def validate_sale_product(self):
 
 def add_coupon_GL_entry(self):
 	def general_ledger(self,account):
-		docs = []
-		doc = {
-			"doctype":"General Ledger",
-			"posting_date":self.posting_date,
-			"account":account["account"],
-			"amount":account["amount"],
-			"voucher_type":"Sale",
-			"voucher_number":self.name,
-			"business_branch": self.business_branch,
-			"remark": "",
-			"party_type": None,
-			"party":account["party"],
-			"remark": "Redeem Coupon" if self.sale_type == "Redeem" else "",
-			"is_cancelled":1 if self.docstatus == 2 else 0
-		}
-		docs.append(doc)
-		submit_general_ledger_entry(docs=docs)
+		if abs(account["amount"]) > 0:
+			docs = []
+			doc = {
+				"doctype":"General Ledger",
+				"posting_date":self.posting_date,
+				"account":account["account"],
+				"amount":account["amount"],
+				"voucher_type":"Sale",
+				"voucher_number":self.name,
+				"business_branch": self.business_branch,
+				"remark": "",
+				"party_type": "Customer",
+				"party":account["party"],
+				"remark": "Redeem Coupon" if self.sale_type == "Redeem" else "",
+				"is_cancelled":1 if self.docstatus == 2 else 0
+			}
+			if account["party"]:
+				doc["party_name"] = self.customer_name
+
+			docs.append(doc)
+			submit_general_ledger_entry(docs=docs)
 	
 	coupons = []
 	for a in self.sale_products:
 		if len((a.coupons or "")) > 0:
-			coupons.append({"amount":a.amount,"coupon_amount":a.coupon_value,"income_account":a.default_income_account,"expense_account":a.default_coupon_expense_account})
+			coupons.append({
+				"amount":a.amount,
+				"coupon_amount":a.total_coupon_value,
+				"income_account":a.default_income_account,
+				"expense_account":a.default_coupon_expense_account
+			})
 	income_account = list(set([d["income_account"] for d in coupons if d.get("income_account","") != ""]))
 	expense_account = list(set([d["expense_account"] for d in coupons if d.get("expense_account","") != ""]))
 	if len(income_account)>0:
@@ -1084,7 +1116,11 @@ def add_coupon_GL_entry(self):
 			general_ledger(self,account = {"account":a,"amount":sum(b.get("coupon_amount") for b in coupons if b.get("income_account","") == a),"party":self.customer})
 	if len(expense_account)>0:
 		for a in expense_account:
+		 
 			general_ledger(self,account = {"account":a,"amount":sum(b.get("coupon_amount")-b.get("amount") for b in coupons if b.get("expense_account","") == a),"party":""})
+
+
+ 
 
 
 def add_sale_product_spa_commission(self):			
@@ -1515,7 +1551,7 @@ def update_default_coupon_expense_account(self):
 	if [x for x in self.sale_products if not x.default_coupon_expense_account]:
 		# get product default account_code from product
 		sql="select distinct parent as product_code, default_coupon_expense_account from `tabProduct Default Account` where parent in %(parents)s and business_branch =%(business_branch)s"
-		product_account_codes = frappe.db.sql(sql, {"parents":[x.product_code for x in self.sale_products if not x.default_coupon_expense_account], "business_branch":self.business_branch},as_dict=1)
+		product_account_codes = frappe.db.sql(sql, {"parents":[x.product_code for x in self.sale_products if not x.default_coupon_expense_account] or [""], "business_branch":self.business_branch},as_dict=1)
 		product_has_default_account = [d["product_code"] for d in product_account_codes]
 
 
@@ -1547,7 +1583,7 @@ def update_default_income_account(self):
 	if [x for x in self.sale_products if not x.default_income_account]:
 		# get product default account_code from product
 		sql="select distinct parent as product_code, default_income_account from `tabProduct Default Account` where parent in %(parents)s and business_branch =%(business_branch)s"
-		product_account_codes = frappe.db.sql(sql, {"parents":[x.product_code for x in self.sale_products if not x.default_income_account], "business_branch":self.business_branch},as_dict=1)
+		product_account_codes = frappe.db.sql(sql, {"parents":[x.product_code for x in self.sale_products if not x.default_income_account] or [""], "business_branch":self.business_branch},as_dict=1)
 		product_has_default_account = [d["product_code"] for d in product_account_codes]
 		for sp in [x for x in self.sale_products if not x.default_income_account and x.product_code in product_has_default_account]:
 			# 1 get from product
@@ -1578,7 +1614,7 @@ def update_default_discount_account(self):
 	if [x for x in self.sale_products if not x.default_discount_account and x.allow_discount==1]:
 		# get product default account_code from product
 		sql="select distinct parent as product_code, default_discount_account from `tabProduct Default Account` where parent in %(parents)s and business_branch =%(business_branch)s"
-		product_account_codes = frappe.db.sql(sql, {"parents":[x.product_code for x in self.sale_products if not x.default_discount_account and x.allow_discount==1], "business_branch":self.business_branch},as_dict=1)
+		product_account_codes = frappe.db.sql(sql, {"parents":[x.product_code for x in self.sale_products if not x.default_discount_account and x.allow_discount==1] or [""], "business_branch":self.business_branch},as_dict=1)
 		product_has_default_account = [d["product_code"] for d in product_account_codes]
 
 
@@ -1603,16 +1639,17 @@ def update_default_discount_account(self):
 				sp.default_discount_account = [d for d in revenue_group_account_codes if d["revenue_group"] == sp.revenue_group][0]["default_discount_account"] 
 
 	# 4 get account code from branch group 
+ 
 	if [x for x in self.sale_products if not x.default_discount_account and x.allow_discount==1]:
 		for sp in [x for x in self.sale_products if not x.default_discount_account and   x.allow_discount==1]:
 			sp.default_discount_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_sale_discount_account")
 
 def update_default_expense_account(self):
 	# 1 get from product
-	if [x for x in self.sale_products if not x.default_expense_account]:
+	if [x for x in self.sale_products]:
 		# get product default account_code from product
 		sql="select distinct parent as product_code, default_expense_account from `tabProduct Default Account` where parent in %(parents)s and business_branch =%(business_branch)s"
-		product_account_codes = frappe.db.sql(sql, {"parents":[x.product_code for x in self.sale_products if not x.default_expense_account], "business_branch":self.business_branch},as_dict=1)
+		product_account_codes = frappe.db.sql(sql, {"parents":[x.product_code for x in self.sale_products if not x.default_expense_account] or [""], "business_branch":self.business_branch},as_dict=1)
 		product_has_default_account = [d["product_code"] for d in product_account_codes]
 
 
@@ -1724,9 +1761,8 @@ def update_coupon_transaction(self):
 						"sale_product":sp.name,
 						"product_code":sp.product_code,
 						"transaction_type":self.sale_type,
-						"input_actual_amount":sp.amount/sp.quantity ,#sale product add input amount
-						"actual_amount":sp.amount/sp.quantity,
-						"markup_percentage":sp.coupon_markup_percentage,
+						"input_actual_amount":sp.total_revenue/sp.quantity ,#sale product add input amount
+						"actual_amount":sp.total_revenue/sp.quantity,
 						"input_coupon_amount":sp.coupon_value,# no field in sale produdft yet
 						"coupon_amount":sp.coupon_value,
 						"currency":frappe.get_cached_value("ePOS Settings",None,"currency"), #no field in sale product yet

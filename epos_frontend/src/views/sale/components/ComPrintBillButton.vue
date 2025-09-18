@@ -48,7 +48,6 @@
 <script setup>
 import { defineProps, defineEmits, createToaster, inject, useRouter, confirm,i18n } from "@/plugin"
 import { useDisplay } from 'vuetify';
-import moment from '@/utils/moment.js';
 
 const { t: $t } = i18n.global;
 

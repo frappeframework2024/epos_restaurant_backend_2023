@@ -307,7 +307,8 @@ def get_coupon_transaction_summary(param):
        
         where 
             posting_date = %(date)s and 
-            (%(business_branch)s = '' or business_branch = %(business_branch)s)  
+            (%(business_branch)s = '' or business_branch = %(business_branch)s)   and 
+            coalesce(status,'') <> 'Deleted'
         group by 
             transaction_type
 
@@ -363,9 +364,40 @@ def get_summary_coupon_used_by_pos_station(param):
         where
             transaction_type = 'Used' and
             posting_date = %(date)s and 
-            (%(business_branch)s = '' or business_branch = %(business_branch)s)  
+            (%(business_branch)s = '' or business_branch = %(business_branch)s)  and 
+            coalesce(status,'') <> 'Deleted'
         group by 
             pos_station
+
+    """
+    filters ={
+        "date":working_date,
+        "business_branch" : business_branch
+    }
+    
+    data = frappe.db.sql(sql,filters,as_dict=1)
+    
+    return data
+
+@frappe.whitelist()
+def get_revenue_summary_by_store(param):
+    p = get_param(param)
+    business_branch  = p["business_branch"]
+    working_date = p["working_date"]
+    
+    sql = """
+       select 
+            pos_profile,
+            count(*) as total_transaction,
+            sum(coupon_amount) as total_amount
+        from `tabCoupon Transaction` 
+        where
+            transaction_type = 'Used' and
+            posting_date = %(date)s and 
+            (%(business_branch)s = '' or business_branch = %(business_branch)s)  and 
+            coalesce(status,'') <> 'Deleted'
+        group by 
+            pos_profile
 
     """
     filters ={

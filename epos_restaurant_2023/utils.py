@@ -59,3 +59,11 @@ def get_room_rate(hotel_name, room_type):
 def change_language(user,lang):
     frappe.db.set_value("User",user,"language",lang)
     return "Done"
+
+
+def math_round(value, precision = None):
+	import math
+	if not precision:
+		precision = int( frappe.get_cached_value("System Settings", None, "currency_precision") or 0)
+	result = math.floor(((value or 0) * math.pow(10, (precision or 0) )) + 0.5) / math.pow(10, (precision or 0))
+	return result

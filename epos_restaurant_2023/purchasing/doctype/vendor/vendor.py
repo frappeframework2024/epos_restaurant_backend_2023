@@ -101,9 +101,9 @@ def get_store_revenue(vendor=None, posting_date=None):
     sql = "select name, vendor_name, 0 as current_revenue, 0 as mtd_revenue, 0 as ytd_revenue from `tabVendor` where name in %(vendors)s"
     data = frappe.db.sql(sql,{"vendors":[d.get("default_vendor") for d in vendors]},as_dict = 1)
     # get current revenue 
-    get_revenue( data , posting_date, posting_date, "current_revenue")
-    get_revenue( data , posting_date.replace(day=1), posting_date, "mtd_revenue")
-    get_revenue( data , posting_date.replace(day=1,month=1), posting_date, "ytd_revenue")
+    get_revenue( data , posting_date, posting_date, "current_revenue","current_coupon_value")
+    get_revenue( data , posting_date.replace(day=1), posting_date, "mtd_revenue","mtd_coupon_value")
+    get_revenue( data , posting_date.replace(day=1,month=1), posting_date, "ytd_revenue","ytd_coupon_value")
 
     if vendor:
         if data: 
@@ -112,18 +112,21 @@ def get_store_revenue(vendor=None, posting_date=None):
 
     return data
 
-def get_revenue(data,start_date, end_date,fieldname):
+def get_revenue(data,start_date, end_date,actural_amount_field, coupon_value_field):
     
     sql = """
         select 
             vendor,
-            sum(input_actual_amount*-1) as amount
+            abs(sum(actual_amount)) as amount,
+            abs(sum(coupon_amount)) as coupon_amount
+
         from `tabCoupon Transaction` 
         where
             transaction_type = 'Used'  and 
             coalesce(vendor,'') != ''  and 
             posting_date between %(start_date)s and %(end_date)s and 
-            vendor in %(vendors)s
+            vendor in %(vendors)s and 
+            coalesce(status,'') <> 'Deleted'
         group by 
             vendor
     """
@@ -134,4 +137,5 @@ def get_revenue(data,start_date, end_date,fieldname):
         vendor = [d for d in data if d.get("name") == rd.get("vendor")]
         
         if vendor:
-            vendor[0][fieldname] = rd.get("amount")
+            vendor[0][actural_amount_field] = rd.get("amount")
+            vendor[0][coupon_value_field] = rd.get("coupon_amount")
