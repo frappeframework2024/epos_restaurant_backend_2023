@@ -14,7 +14,7 @@ value_fields = [
 def get_report_summary(data):
 	total_profits,total_assets,total_liabilities= [],[],[]
 	profits = (sum([d.get("amount",0) for d in data if d.get("account_name","") == "profit"]))
-	assets = (sum([d.get("amount",0) for d in data if d.get("account_name","") == "total_assets"]))
+	assets = (sum([d.get("amount",0) for d in data if d.get("account_name","") == "total_asset"]))
 	liabilities = (sum([d.get("amount",0) for d in data if d.get("account_name","") == "total_liabilities"]))
 	total_profits.append(profits)
 	total_assets.append(assets)
@@ -28,7 +28,7 @@ def get_report_summary(data):
 def get_report_chart(data):
 	total_profits,total_assets,total_liabilities= [],[],[]
 	profits = (sum([d.get("amount",0) for d in data if d.get("account_name","") == "profit"]))
-	assets = (sum([d.get("amount",0) for d in data if d.get("account_name","") == "total_assets"]))
+	assets = (sum([d.get("amount",0) for d in data if d.get("account_name","") == "total_asset"]))
 	liabilities = (sum([d.get("amount",0) for d in data if d.get("account_name","") == "total_liabilities"]))
 	total_profits.append(profits)
 	total_assets.append(assets)
@@ -203,10 +203,10 @@ def get_data(filters):
 						  rgt 
 						  from `tabChart Of Account` 
 						  where root_type in ('Asset','Liabilities','Equity') order by lft""",as_dict=True)
-	accounts.append({"name":"Total Asset","account_code":"","parent_chart_of_account":None,"account_name":"total_asset","root_type":"Asset","is_group":1,"lft":0,"rgt":0})
-	accounts.append({"name":"","account_code":"","parent_chart_of_account":None,"account_name":"","root_type":"Asset","is_group":1,"lft":0,"rgt":0})
-	accounts.append({"name":"Total Liabilities","account_code":"","parent_chart_of_account":None,"account_name":"total_liabilities","root_type":"Liabilities","is_group":1,"lft":0,"rgt":0})
-	accounts.append({"name":"","account_code":"","parent_chart_of_account":None,"account_name":"","root_type":"Liabilities","is_group":1,"lft":0,"rgt":0})
+	# for a in accounts:
+	# 	if not a.get("parent_chart_of_account"):
+	# 		accounts.append({"name":"Total Asset","account_code":"","parent_chart_of_account":None,"account_name":"total_asset","root_type":"Asset","is_group":1,"lft":0,"rgt":0})
+	# 		accounts.append({"name":"","account_code":"","parent_chart_of_account":None,"account_name":"","root_type":"Asset","is_group":1,"lft":0,"rgt":0})
 	if not accounts:
 		return None
 	accounts, accounts_by_name, parent_children_map = filter_accounts(accounts)

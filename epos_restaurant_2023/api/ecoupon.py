@@ -81,6 +81,7 @@ def app_settings(params):
     currency["is_right"] = currency.pop("symbol_on_right")
     currency["exchange_rate"] = 1
     currency["change_exchange_rate"] = 1
+    currency["format"] =  currency["format"].replace(".","") if default_currency == "KHR" else currency["format"]
 
     del currency["currency_name"]
     del currency["fraction"]
@@ -156,6 +157,7 @@ def app_settings(params):
         c["change_exchange_rate"] = change_exchange_rate
         c["exchange_rate_input"] = exchange_rate_input
         c["change_exchange_rate_input"] = change_exchange_rate_input
+        c["format"] = c["format"].replace(".","") if c["name"] == "KHR" else c["format"]
 
     result["currencies"] = currencies
 
@@ -215,6 +217,7 @@ def get_history_coupon_kpi(params):
         and (date(posting_date) between date(%(start_date)s) and date(%(end_date)s))
         and  transaction_type in ('Used')
         and status in ('Active','Locked')"""
+        
    
     if params.get("keyword"):
         sql += " and coupon_number like %(keyword)s"
@@ -253,9 +256,6 @@ def get_coupon_dashboard_kpi(params):
         "mtd_transaction": mtd_data.total_transaction,  
     }
 
-
- 
-
 def coupon_kpi_get_data(property_name, pos_profiles, type="Today"):
     sql = """select 
                     coalesce(sum(coupon_amount),0) as total_amount ,
@@ -281,8 +281,7 @@ def coupon_kpi_get_data(property_name, pos_profiles, type="Today"):
             "start_date": start_date,
             "end_date": now,
         }, as_dict=1)  
-    if data:
-        
+    if data:        
         return data[0]
     else:
         return {
@@ -354,8 +353,7 @@ def check_coupon_code(coupon_number):
             where `status` not in ('Deleted') and 
             coupon_code = %(coupon_code)s and 
             coupon_number = %(coupon_number)s""" 
-    data = frappe.db.sql(sql, {"coupon_number":coupon_number,"coupon_code":coupon_id}, as_dict=1)    
-
+    data = frappe.db.sql(sql, {"coupon_number":coupon_number,"coupon_code":coupon_id}, as_dict=1) 
 
     if data and len(data) > 0: 
         if data[0].get("coupon_amount",0) <= 0:
@@ -363,9 +361,7 @@ def check_coupon_code(coupon_number):
                 "status":False,
                 "msg":"Current balance is empty",
                 "data":None
-            }
-        
-         
+            }  
         cus_sql = """select 
             customer,
             customer_name,
@@ -439,7 +435,6 @@ def on_scan_use_coupon(params):
     # check if valid coupon number
 
     # end change coupon
-
     working_day_sql = """select name,posting_date from `tabWorking Day` where business_branch = %(business_branch)s and is_closed = 0 order by creation desc limit 1"""
     working_days = frappe.db.sql(working_day_sql, {"business_branch": params["business_branch"]}, as_dict=1) 
     if not working_days or len(working_days) <=0:         
@@ -454,8 +449,9 @@ def on_scan_use_coupon(params):
         frappe.throw(check.get("msg","Not enough balance"))
 
     data = check.get("data",None)
-    if data:
-        
+
+   
+    if data:        
         if(data["amount"] < coupon_amount):             
             frappe.throw("Not enough balance")
         else:
@@ -467,10 +463,11 @@ def on_scan_use_coupon(params):
             where  1 = 1
             and coupon_number = %(coupon_number)s
             and coupon_code = %(coupon_code)s
-            -- and `status` = 'Active' 
+            and `status` not in ('Deleted') 
             group by markup_percentage"""
             transactions = frappe.db.sql(sql_coupon_transactions, {"coupon_number":params["coupon_number"],"coupon_code":coupon_id }, as_dict=1)
             transactions = [d for d in transactions if d["coupon_amount"] > 0 ]
+
             result = []         
             if transactions and len(transactions) > 0: 
                 for t in transactions: 
@@ -479,7 +476,7 @@ def on_scan_use_coupon(params):
                         sum(coupon_amount) as coupon_amount   
                     from `tabCoupon Transaction` 
                     where 1 = 1
-                    -- and status = 'Active'
+                    and `status` not in ('Deleted') 
                     and markup_percentage = %(markup_percentage)s
                     and coupon_number = %(coupon_number)s
                     and coupon_code = %(coupon_code)s
@@ -505,7 +502,7 @@ def on_scan_use_coupon(params):
                                                     coupon_code
                                             from `tabCoupon Transaction` 
                                             where  1 = 1
-                                            -- and `status` = 'Active' 
+                                            and `status` not in ('Deleted') 
                                             and coupon_number = %(coupon_number)s      
                                             and coupon_code = %(coupon_code)s
                                             and markup_percentage = %(markup_percentage)s
@@ -590,6 +587,9 @@ def on_scan_use_coupon(params):
                 return_data["customer"] = customer["customer"]
                 return_data["customer_photo"] = customer["photo"]
 
+
+                return_data["current_balance"]  = get_current_balance(coupon_number=params["coupon_number"],coupon_id=coupon_id)
+
                 ##update use coupon/amount  to coupon code
                 update_use_coupon_amount(data.get("cardid",None))
 
@@ -619,6 +619,19 @@ def on_scan_use_coupon(params):
 
     unlock_db(params.get("coupon_number"))
 
+
+def get_current_balance(coupon_number, coupon_id):
+    sql  = """select 
+                coalesce(sum(coupon_amount) , 0) as coupon_amount
+            from `tabCoupon Transaction` 
+            where `status` not in ('Deleted') and 
+            coupon_code = %(coupon_code)s and 
+            coupon_number = %(coupon_number)s""" 
+    data = frappe.db.sql(sql, {"coupon_number":coupon_number,"coupon_code":coupon_id}, as_dict=1)
+    if data and len(data)>0:
+        return data[0]["coupon_amount"]
+    
+    return 0
 
 @frappe.whitelist(methods=["POST"])
 def get_report(name, show_transaction):  
@@ -737,6 +750,7 @@ def get_transaction_detail(name):
             business_branch,
             customer_name,
             coupon_number,
+            coupon_code,
             customer,
             customer_photo,
             currency,
@@ -758,6 +772,7 @@ def get_transaction_detail(name):
     if data and len(data) > 0:
         # data[0]["input_coupon_amoun"] = abs(data[0]["input_coupon_amoun"])
         data[0]["original_used_amount"] = abs(data[0]["original_used_amount"])
+        data[0]["current_balance"]  = get_current_balance(coupon_number=data[0]["coupon_number"],coupon_id=data[0]["coupon_code"])
         return data[0]
     
     frappe.throw("Invalid transaction")

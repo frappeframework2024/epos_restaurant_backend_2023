@@ -5,11 +5,12 @@ from frappe.model.document import bulk_insert
 from frappe.model.naming import make_autoname
 import json
 from functools import lru_cache
-def submit_general_ledger_entry(docs):
+def submit_general_ledger_entry(docs,commit=True):
     # bulk insert
     bulk_insert("General Ledger", get_general_ledger_entry_record(docs=docs) , chunk_size=10000)
     
-    frappe.db.commit()
+    if commit:
+        frappe.db.commit()
 
 
 def get_general_ledger_entry_record(docs):

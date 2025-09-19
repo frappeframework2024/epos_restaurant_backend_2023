@@ -321,8 +321,7 @@ class Sale(Document):
 						data = frappe.db.sql(sql, {"coupon_id":c.get("name")},as_dict=1)
 						
 						if data:
-							# frappe.msgprint(str(math_round(data[0].get("balance"))))
-							# frappe.msgprint(str(math_round(abs(sp.amount) )))
+						
 
 							if(math_round(data[0].get("balance")) != math_round(abs(sp.amount))):
 								frappe.throw(_("Invalid redeem amount. Please check coupon balance again."))
@@ -686,7 +685,7 @@ def general_ledger_debit(self,account,is_commission = 1):
 		"is_cancelled":1 if self.docstatus == 2 else 0
 	}
 	docs.append(doc)
-	submit_general_ledger_entry(docs = docs)
+	submit_general_ledger_entry(docs = docs,commit=False)
 
 def general_ledger_credit(self,account,is_commission = 1):
     docs = []
@@ -705,7 +704,7 @@ def general_ledger_credit(self,account,is_commission = 1):
 		"is_cancelled":1 if self.docstatus == 2 else 0
     }
     docs.append(doc)
-    submit_general_ledger_entry(docs=docs)
+    submit_general_ledger_entry(docs=docs,commit=False)
 
 def update_status(self):
 		status = ""
@@ -1098,13 +1097,14 @@ def add_coupon_GL_entry(self):
 				doc["party_name"] = self.customer_name
 
 			docs.append(doc)
-			submit_general_ledger_entry(docs=docs)
+			submit_general_ledger_entry(docs=docs,commit=False)
 	
 	coupons = []
 	for a in self.sale_products:
 		if len((a.coupons or "")) > 0:
 			coupons.append({
-				"amount":a.amount,
+				"amount":(a.amount or 0),
+				"expense_amount":(a.total_coupon_value or 0) - (a.sub_total or 0),
 				"coupon_amount":a.total_coupon_value,
 				"income_account":a.default_income_account,
 				"expense_account":a.default_coupon_expense_account
@@ -1115,9 +1115,8 @@ def add_coupon_GL_entry(self):
 		for a in income_account:
 			general_ledger(self,account = {"account":a,"amount":sum(b.get("coupon_amount") for b in coupons if b.get("income_account","") == a),"party":self.customer})
 	if len(expense_account)>0:
-		for a in expense_account:
-		 
-			general_ledger(self,account = {"account":a,"amount":sum(b.get("coupon_amount")-b.get("amount") for b in coupons if b.get("expense_account","") == a),"party":""})
+		for a in expense_account:	 
+			general_ledger(self,account = {"account":a,"amount":sum(b.get("expense_amount") for b in coupons if b.get("expense_account","") == a),"party":""})
 
 
  
@@ -1869,7 +1868,7 @@ def update_coupon_codes(coupon_transactions,sale_type):
 			"coupon_codes":[d["coupon_code"] for d in coupon_transactions]
 			 
 		})
-	frappe.db.commit()
+	
 	# update balance 
 	frappe.db.sql("""
 				update `tabCoupon Codes` 
@@ -1879,4 +1878,3 @@ def update_coupon_codes(coupon_transactions,sale_type):
 			   		name in %(names)s
 			   
 	""",{"names":[d["coupon_code"] for d in coupon_transactions]})
-	frappe.db.commit()
