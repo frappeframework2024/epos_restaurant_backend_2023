@@ -228,6 +228,12 @@ def reset_sale_transaction():
                     format_text = replace_format(f,str(n))                            
                     frappe.db.sql("update `tabSeries` set current=  0 where name='{}'".format(format_text) )
 
+            eCoupons = "CPN.YY.-.####"
+            for f in eCoupons.split("\n"):
+                for n in range(2022, 2130):
+                    format_text = replace_format(f,str(n))                            
+                    frappe.db.sql("update `tabSeries` set current=  0 where name='{}'".format(format_text) )
+
             frappe.db.commit()
 
             return {"You was reset sale transaction."}
