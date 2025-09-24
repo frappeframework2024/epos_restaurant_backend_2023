@@ -55,6 +55,7 @@
    "fieldname": "voucher_number",
    "fieldtype": "Data",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Voucher Number"
   },
   {
@@ -87,6 +88,7 @@
    "fieldname": "account",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Account",
    "options": "Chart Of Account",
    "search_index": 1
@@ -135,19 +137,18 @@
    "label": "Party Name"
   },
   {
-   "fetch_from": "account.account_type",
+   "fetch_from": ".",
    "fieldname": "account_type",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Account Type",
-   "options": "Chart Of Account",
    "search_index": 1
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-13 09:54:22.111571",
+ "modified": "2025-09-20 11:19:50.474120",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "General Ledger",

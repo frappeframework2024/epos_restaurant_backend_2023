@@ -6,73 +6,119 @@ frappe.query_reports["Balance Sheet Report"] = {
 		report.page.add_inner_button("Preview Report", function () {
 			frappe.query_report.refresh();
 		});
-		var fiscal_year = report.get_values().fiscal_year;
+		var from_fiscal_year = report.get_values().from_fiscal_year;
+		var to_fiscal_year = report.get_values().to_fiscal_year;
 		frappe.query_report.set_filter_value({
-			from_date: fiscal_year+"-01-01",
-			to_date: fiscal_year+"-12-31",
+			period_start_date: from_fiscal_year+"-01-01",
+			period_end_date: to_fiscal_year+"-12-31",
 		});
 	},
 	filters: [
 		{
-			fieldname: "outlet",
-			label: "Outlet",
+			fieldname: "business_branch",
+			label: "Business Branch",
 			fieldtype: "Link",
-			options:"Outlet",
+			options:"Business Branch",
 			"on_change": function (query_report) {
 
 			},
 		},
 		{
-			"fieldname":"fiscal_year",
-			"label": __("Fiscal Year"),
-			"fieldtype": "Int",
-			"on_change": function (query_report) {},
-			"default": (new Date()).getFullYear(),
-			reqd: 1,
-			on_change: function (query_report) {
-				var fiscal_year = query_report.get_values().fiscal_year;
-				if (!fiscal_year) {
-					return;
-				}
-				frappe.query_report.set_filter_value({
-						from_date: fiscal_year+"-01-01",
-						to_date: fiscal_year+"-12-31",
-					});
+			"fieldname":"filter_based_on",
+			"label": __("Filter Based On"),
+			"fieldtype": "Select",
+			"options": ["Fiscal Year", "Date Range"],
+			"default": ["Fiscal Year"],
+			"reqd": 1,
+			on_change: function() {
+				let filter_based_on = frappe.query_report.get_filter_value('filter_based_on');
+				frappe.query_report.toggle_filter_display('from_fiscal_year', filter_based_on === 'Date Range');
+				frappe.query_report.toggle_filter_display('to_fiscal_year', filter_based_on === 'Date Range');
+				frappe.query_report.toggle_filter_display('period_start_date', filter_based_on === 'Fiscal Year');
+				frappe.query_report.toggle_filter_display('period_end_date', filter_based_on === 'Fiscal Year');
+
+				frappe.query_report.refresh();
 			},
-		},
-		{
-			fieldname: "from_date",
-			label: __("From Date"),
-			fieldtype: "Date",
 			"on_change": function (query_report) {
 
 			},
 		},
 		{
-			fieldname: "to_date",
-			label: __("To Date"),
-			fieldtype: "Date",
+			"fieldname":"period_start_date",
+			"label": __("Start Date"),
+			"fieldtype": "Date",
+			"reqd": 1,
+			"depends_on": "eval:doc.filter_based_on == 'Date Range'",
 			"on_change": function (query_report) {
 
 			},
 		},
 		{
-			fieldname: "show_zero_values",
-			label: __("Show zero values"),
-			fieldtype: "Check",
+			"fieldname":"period_end_date",
+			"label": __("End Date"),
+			"fieldtype": "Date",
+			"reqd": 1,
+			"depends_on": "eval:doc.filter_based_on == 'Date Range'",
 			"on_change": function (query_report) {
 
 			},
 		},
 		{
-			fieldname: "show_group_accounts",
-			label: __("Show Group Accounts"),
-			fieldtype: "Check",
-			default: 1,
+			"fieldname":"from_fiscal_year",
+			"label": __("Start Year"),
+			"fieldtype": "Data",
+			"default": "2025",
+			"reqd": 1,
+			"depends_on": "eval:doc.filter_based_on == 'Fiscal Year'",
 			"on_change": function (query_report) {
 
 			},
 		},
+		{
+			"fieldname":"to_fiscal_year",
+			"label": __("End Year"),
+			"fieldtype": "Data",
+			"default": "2025",
+			"reqd": 1,
+			"depends_on": "eval:doc.filter_based_on == 'Fiscal Year'",
+			"on_change": function (query_report) {
+
+			},
+		},
+		{
+			"fieldname": "periodicity",
+			"label": __("Periodicity"),
+			"fieldtype": "Select",
+			"options": [
+				{ "value": "Monthly", "label": __("Monthly") },
+				{ "value": "Quarterly", "label": __("Quarterly") },
+				{ "value": "Half-Yearly", "label": __("Half-Yearly") },
+				{ "value": "Yearly", "label": __("Yearly") }
+			],
+			"default": "Yearly",
+			"reqd": 1,
+			"on_change": function (query_report) {
+
+			},
+		},
+		{
+			"fieldname": "accumulated_values",
+			"label": __("Accumulated Values"),
+			"fieldtype": "Check",
+			"default": 1,
+			"on_change": function (query_report) {
+
+			},
+		},
+		{
+			"fieldname": "show_zero_values",
+			"label": __("Show Zero Values"),
+			"fieldtype": "Check",
+			"default": 0,
+			"on_change": function (query_report) {
+
+			},
+		}
 	],
 	tree: true,
 	name_field: "account",

@@ -19,7 +19,8 @@ from epos_restaurant_2023.api.exely import cancel_order,submit_order_to_exely
 from epos_restaurant_2023.selling.doctype.sale.general_ledger_entry import submit_sale_to_general_ledger_entry
  
 class Sale(Document):
-	def validate(self): 		
+	def validate(self): 	
+		# frappe.throw(str(self.working_day))	
 		if not frappe.db.get_default('exchange_rate_main_currency'):
 			frappe.throw('Main Exchange Currency not yet config. Please contact to system administrator for solve')
 
@@ -1069,7 +1070,11 @@ def validate_sale_product(self):
 			d.total_coupon_value = (d.coupon_value or 0) * (d.quantity or 0) * (-1 if self.sale_type=="Redeem" else 1)
 			if self.docstatus == 1 and frappe.get_cached_value("Product",d.product_code,"is_coupon")==1:
 				d.coupon_expired_date = add_to_date(datetime.datetime.now(),days=coupon_expired_duration)
+
 			 
+			if d.coupons:
+				if d.quantity != len(json.loads(d.coupons)):
+					frappe.throw(_("Invalid Coupon Quantity"))
 
 			
 			

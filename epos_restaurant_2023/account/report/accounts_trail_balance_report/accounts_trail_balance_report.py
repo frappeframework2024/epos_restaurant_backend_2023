@@ -92,8 +92,8 @@ def get_accounting_entries(
 	query = query.where(gl_entry.is_cancelled == 0)
 	query = query.where(gl_entry.posting_date >= from_date)
 	query = query.where(gl_entry.posting_date <= to_date)
-	if filters.outlet:
-		query = query.where(gl_entry.outlet == filters.outlet)
+	if filters.business_branch:
+		query = query.where(gl_entry.business_branch == filters.business_branch)
 	if (root_lft and root_rgt) or root_type:
 		account_filter_query = get_account_filter_query(root_lft, root_rgt, root_type, gl_entry)
 		query = query.where(ExistsCriterion(account_filter_query))
@@ -204,9 +204,14 @@ def execute(filters=None):
 	report_summary = get_report_summary(data)
 	return columns, data,None,report_chart,report_summary
 
-
+def validate_dates(from_date, to_date):
+	if not from_date or not to_date:
+		frappe.throw("From Date and To Date are mandatory")
+	if from_date > to_date:
+		frappe.throw(_("To Date cannot be less than From Date"))
 
 def get_data(filters):
+	validate_dates(filters.from_date,filters.to_date)
 	accounts = frappe.db.sql("""select name, account_code, parent_chart_of_account, account_name, root_type, is_group, lft, rgt from `tabChart Of Account` order by lft""",as_dict=True)
 	if not accounts:
 		return None
@@ -283,8 +288,8 @@ def get_opening_balance(
 		)
 	else:
 		opening_balance = opening_balance.where(closing_balance.posting_date < filters.from_date)
-	if filters.outlet:
-		opening_balance = opening_balance.where(closing_balance.outlet == filters.outlet)
+	if filters.business_branch:
+		opening_balance = opening_balance.where(closing_balance.business_branch == filters.business_branch)
 	if doctype == "General Ledger":
 		opening_balance = opening_balance.where(closing_balance.is_cancelled == 0)
 	gle = opening_balance.run(as_dict=1)

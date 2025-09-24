@@ -9,15 +9,13 @@
             </span>
             <div class="p-2">
             <v-row>
-
                 <template v-if="params.data.hide_keypad==undefined">
                     <v-col cols="12" :md="params.data.category_note_name ? 5 : 12">
                         <div class="mb-2">
                             <div class="mb-2">
                                 <ComInput v-model="price" type="number" keyboard class="mb-2" :label="params.data.label_input || $t('Enter Number')"
                                     :required-autofocus="true" />
-                                <ComInlineInputNumber :hide-input="true" v-model="price" :disabled="isDeleteNote"
-                                    v-if="!mobile" />
+                                <ComInlineInputNumber :hide-input="true" v-model="price" :disabled="isDeleteNote" v-if="!mobile" />
                             </div>
                         </div>
                     </v-col>

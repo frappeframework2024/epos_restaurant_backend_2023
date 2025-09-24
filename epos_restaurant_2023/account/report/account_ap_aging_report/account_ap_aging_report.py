@@ -99,7 +99,6 @@ def get_general_ledger_data(filters):
 
 		where 
 			b.account_type = 'Payable' and 
-			a.party_type = 'Vendor' and 
 			a.business_branch = %(business_branch)s and 
 			a.posting_date <= %(date)s 
 		

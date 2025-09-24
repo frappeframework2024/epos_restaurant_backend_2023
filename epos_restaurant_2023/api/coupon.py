@@ -184,6 +184,7 @@ def check_coupon_code_for_top_up(coupon_code):
     # get coupon transaction
     sql = """
         select 
+            currency,
             transaction_type,
             markup_percentage,
             sum(input_actual_amount) as input_actual_amount,
@@ -193,6 +194,7 @@ def check_coupon_code_for_top_up(coupon_code):
         coupon_code=%(coupon_code)s and 
         coalesce(status,'') <> 'Deleted'
         group by
+            currency,
             transaction_type,
             markup_percentage
     """

@@ -14,10 +14,10 @@ frappe.query_reports["Accounts Trail Balance Report"] = {
 	},
 	filters: [
 		{
-			fieldname: "outlet",
-			label: "Outlet",
+			fieldname: "business_branch",
+			label: "Business Branch",
 			fieldtype: "Link",
-			options:"Outlet",
+			options:"Business Branch",
 			"on_change": function (query_report) {
 
 			},

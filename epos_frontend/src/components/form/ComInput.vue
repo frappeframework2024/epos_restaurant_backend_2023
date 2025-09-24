@@ -1,7 +1,6 @@
 <template>
     <div>
         <div v-if="type=='textarea'">
-            
             <v-textarea
                 v-if="keyboard && !mobile"
                 :required="required"
@@ -52,13 +51,12 @@
             </v-textarea>
         </div>
         <div v-else>
-            
             <v-text-field
                 :autofocus="validAutofocus"
                 :clearable="!readonly"
                 :required="required"
                 v-if="keyboard && !mobile"
-                :type="type"
+                :type="text"
                 :density="density"
                 :variant="variant"
                 :label="label"
@@ -82,7 +80,7 @@
                 v-else
                 :autofocus="validAutofocus"
                 :required="required"
-                :type="type"
+                :type="text"
                 :density="density"
                 :variant="variant"
                 :label="label"
@@ -195,6 +193,7 @@ const emit = defineEmits(['update:modelValue','focus','text-change', 'onInput', 
 const updateValue = (event) => {
     let value = event.target.value;
     if(props.type == 'number'){
+        value = value.replace(/[^0-9.]/g, '')
         value = parseFloat(value || 0)
     }
     emit('update:modelValue', value)

@@ -431,6 +431,7 @@ def unlock_db(name):
 @frappe.whitelist()
 def on_scan_use_coupon(params):    
     lock_db(params.get("coupon_number"))
+ 
     transaction_id = short_hex_uuid()  
     # check if valid coupon number
 
@@ -458,13 +459,14 @@ def on_scan_use_coupon(params):
             coupon_id = data["cardid"]
             sql_coupon_transactions = """select 
                     markup_percentage,
-                    sum(coupon_amount) as coupon_amount 
+                    sum(coupon_amount) as coupon_amount ,
+                    sum(actual_amount) as actual_amount
             from `tabCoupon Transaction` 
             where  1 = 1
             and coupon_number = %(coupon_number)s
             and coupon_code = %(coupon_code)s
             and `status` not in ('Deleted') 
-            group by markup_percentage"""
+            group by markup_percentage order by creation """
             transactions = frappe.db.sql(sql_coupon_transactions, {"coupon_number":params["coupon_number"],"coupon_code":coupon_id }, as_dict=1)
             transactions = [d for d in transactions if d["coupon_amount"] > 0 ]
 
@@ -473,7 +475,8 @@ def on_scan_use_coupon(params):
                 for t in transactions: 
                     sql_transaction = """select  
                         markup_percentage,
-                        sum(coupon_amount) as coupon_amount   
+                        sum(coupon_amount) as coupon_amount,
+                        sum(actual_amount) as actual_amount
                     from `tabCoupon Transaction` 
                     where 1 = 1
                     and `status` not in ('Deleted') 
@@ -487,7 +490,7 @@ def on_scan_use_coupon(params):
                         "coupon_number":params["coupon_number"],
                         "coupon_code":coupon_id
                         }, as_dict=1)  
-                                      
+         
                     if transaction and len(transaction) > 0:
                         sql_last_sale_or_topup = """
                                             select 
@@ -519,12 +522,14 @@ def on_scan_use_coupon(params):
                                 if t["coupon_amount"] - coupon_amount < 0:
                                     coupon_amount -= t["coupon_amount"]
                                     item["cut_amount"]  = t["coupon_amount"]  
+                                    item["act_amount"]  = t["actual_amount"]  
                                     item["used"]  = True  
                                     result.append(item) 
                                     pass ## pass here to loop again
                                 else: 
                                     item["cut_amount"] = coupon_amount
                                     item["used"] = False
+                                    item["act_amount"]  = t["actual_amount"]  
                                     if t["coupon_amount"] == coupon_amount:
                                         item["used"]  = True  
                                     
@@ -545,7 +550,7 @@ def on_scan_use_coupon(params):
                     customer["customer_name"] = r["customer_name"]  
                     customer["photo"] = r["customer_photo"]
                     ##
-                    actual_amount = r["cut_amount"] / (1+(r["markup_percentage"]/100)) 
+                    actual_amount = 0 if r["act_amount"] == 0 else (r["cut_amount"] / (1+(r["markup_percentage"]/100))) 
                     doc = frappe.get_doc({
                         "doctype":"Coupon Transaction",
                         "business_branch":params["business_branch"],
@@ -816,8 +821,8 @@ def update_use_coupon_amount(coupon_code):
         sql = """update `tabCoupon Codes` set 
                     use_coupon_value = %(coupon_amount)s,
                     use_amount = %(actual_amount)s,
-                    balance_amount = (price + top_up_amount)  -   (%(actual_amount)s + redeem_amount),
-                    balance_coupon_value = (coupon_value + top_up_coupon_value)  -  (%(coupon_amount)s + redeem_coupon_value )
+                    balance_amount = (price + top_up_amount)  -  (%(actual_amount)s + redeem_amount),
+                    balance_coupon_value = (coupon_value + top_up_coupon_value)  -  (%(coupon_amount)s + redeem_coupon_value)
                     where name = %(coupon_code)s"""
         frappe.db.sql(sql,{
             "coupon_code":coupon_code,

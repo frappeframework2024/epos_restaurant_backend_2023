@@ -97,7 +97,7 @@ class WorkingDay(Document):
 
 
 def get_unuse_coupon_balance(self):
-	sql = "select sum(coupon_amount) as balance from `tabCoupon Transaction` where working_day = %(working_day)s and coalesce(status,'') <> 'Deleted'"
+	sql = "select sum(coupon_amount) as balance, sum(actual_amount) as actual_balance from `tabCoupon Transaction` where working_day = %(working_day)s and coalesce(status,'') <> 'Deleted'"
 	data = frappe.db.sql(sql, {"working_day":self.name},as_dict = 1)
 	if data:
 		return data[0]["balance"]
@@ -105,14 +105,9 @@ def get_unuse_coupon_balance(self):
 
 def submit_Gl_Entry(self):
 	from epos_restaurant_2023.utils import math_round
-
 	balance = math_round(abs(get_unuse_coupon_balance(self)))
- 
 	if balance> 0:
 		from_account,to_account = frappe.get_cached_value("Business Branch",self.business_branch,["default_unearned_revenue_account","default_unused_coupon_account"])
- 
-
-	
 		docs = []
 		doc = {
 			"doctype":"General Ledger",
