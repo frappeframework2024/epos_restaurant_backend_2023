@@ -11,6 +11,8 @@
   "prefix_url",
   "start_number",
   "end_number",
+  "qr_background_color",
+  "description",
   "column_break_yapf",
   "encrypt_key",
   "encrypt_iv",
@@ -89,12 +91,22 @@
    "fieldname": "encrypt_iv",
    "fieldtype": "Data",
    "label": "Encrypt IV"
+  },
+  {
+   "fieldname": "qr_background_color",
+   "fieldtype": "Color",
+   "label": "QR Background Color"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-09-11 14:12:37.103413",
+ "modified": "2025-09-24 15:02:39.205883",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Generate Coupon Code",

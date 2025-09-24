@@ -49,7 +49,7 @@ class CouponTransaction(Document):
 			unearned_revenue = frappe.get_cached_value("Business Branch",self.business_branch, "default_unearned_revenue_account")
 			income_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_income_account")
 			pos_profile =  frappe.db.get_value("POS Profile",self.pos_profile,["pos_config","coupon_use_account"],as_dict=1)
-			income_account = pos_profile.coupon_use_account if pos_profile.coupon_use_account != "" else income_account
+			income_account = pos_profile.coupon_use_account if (pos_profile.coupon_use_account or "") != "" else income_account
 			pos_config_accounts = (frappe.db.sql("""select 
 												default_unearned_revenue_account,
 												default_income_account 
@@ -61,9 +61,8 @@ class CouponTransaction(Document):
 			
 			if len(pos_config_accounts) > 0:
 				account = pos_config_accounts[0]
-				unearned_revenue = account.get("default_unearned_revenue_account","") if account.get("default_unearned_revenue_account","") != "" else unearned_revenue
-				income_account = account.get("default_income_account","") if account.get("default_income_account","") != "" else income_account
- 
+				unearned_revenue = account.get("default_unearned_revenue_account","") if account.get("default_unearned_revenue_account","") else unearned_revenue
+				income_account = account.get("default_income_account","") if account.get("default_income_account","") else income_account
 
 			general_ledger_debit(self,account = {"account":unearned_revenue,"amount":abs(self.coupon_amount)})
 			general_ledger_credit(self,account = {"account":income_account,"amount":abs(self.coupon_amount)})
@@ -76,7 +75,7 @@ class CouponTransaction(Document):
 			unearned_revenue = frappe.get_cached_value("Business Branch",self.business_branch, "default_unearned_revenue_account")
 			income_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_income_account")
 			pos_profile =  frappe.db.get_value("POS Profile",self.pos_profile,["pos_config","coupon_use_account"],as_dict=1)
-			income_account = pos_profile.coupon_use_account if pos_profile.coupon_use_account != "" else income_account
+			income_account = pos_profile.coupon_use_account if (pos_profile.coupon_use_account or "") != "" else income_account
 			pos_config_accounts = (frappe.db.sql("""select 
 												default_unearned_revenue_account,
 												default_income_account 
@@ -88,11 +87,9 @@ class CouponTransaction(Document):
 			
 			if len(pos_config_accounts) > 0:
 				account = pos_config_accounts[0]
-				unearned_revenue = account.get("default_unearned_revenue_account","") if account.get("default_unearned_revenue_account","") != "" else unearned_revenue
-				income_account = account.get("default_income_account","") if account.get("default_income_account","") != "" else income_account
+				unearned_revenue = account.get("default_unearned_revenue_account","") if account.get("default_unearned_revenue_account","") else unearned_revenue
+				income_account = account.get("default_income_account","") if account.get("default_income_account","") else income_account
  
- 
-
 			tranactions = (frappe.db.sql("""select 
 							transaction_type
 							from `tabCoupon Transaction` 
@@ -133,6 +130,8 @@ def general_ledger_debit(self,account):
 	submit_general_ledger_entry(docs = docs,commit = False)
 
 def general_ledger_credit(self,account):
+	
+	
 	docs = []
 	doc = {
 		"doctype":"General Ledger",
