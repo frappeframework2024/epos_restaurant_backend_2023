@@ -20,7 +20,7 @@ def check_api_url(property_code):
     frappe.throw("Property {} does not exist".format(property_code))
     
 @frappe.whitelist( allow_guest=True,methods="POST" )
-def login(property,usr, pwd, property_code=None):
+def login(property,usr, pwd, property_code=None, pos_station=None):
     ## check employee
     user = check_user(usr, pwd)  
     username = usr
