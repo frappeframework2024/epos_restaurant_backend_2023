@@ -173,5 +173,5 @@ def get_report_chart(filters,columns,data):
                         "values": [d.get(c) for d in data]
                     } 
 		)
-	frappe.msgprint(str(data))
+	
 	return chart_data
