@@ -60,7 +60,7 @@
   "column_break_cbjy",
   "allow_login_to_edoor",
   "allow_login_to_pos_station_section",
-  "table_sexl",
+  "pos_stations",
   "working_information_tab",
   "department",
   "position",
@@ -491,7 +491,7 @@
    "label": "Allow Login to POS Station"
   },
   {
-   "fieldname": "table_sexl",
+   "fieldname": "pos_stations",
    "fieldtype": "Table",
    "options": "User POS Station"
   }
@@ -499,7 +499,7 @@
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-25 10:27:47.754519",
+ "modified": "2025-09-25 11:55:46.790145",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee",

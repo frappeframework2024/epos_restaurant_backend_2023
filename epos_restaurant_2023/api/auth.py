@@ -20,9 +20,9 @@ def check_api_url(property_code):
     frappe.throw("Property {} does not exist".format(property_code))
     
 @frappe.whitelist( allow_guest=True,methods="POST" )
-def login(property,usr, pwd, property_code=None, pos_station=None):
+def login(property,usr, pwd, property_code=None, device_id=None): 
     ## check employee
-    user = check_user(usr, pwd)  
+    user = check_user(usr, pwd, device_id=device_id)  
     username = usr
     if user:
         if (usr or "") == "":
@@ -41,33 +41,59 @@ def login(property,usr, pwd, property_code=None, pos_station=None):
     else:
         frappe.throw("Usename and password incorrect.")
 
+## check user allow login by device
+def check_user_device(employee, device_id=None):
+    ##check device station
+   
+    if device_id:
+        pos_station = frappe.db.sql("select name,platform,pos_profile,business_branch, device_id from `tabPOS Station` where device_id = %(device_id)s",{"device_id": device_id}, as_dict=True)
+        if pos_station and len(pos_station) > 0:            
+            user_pos_station =  frappe.db.sql("select name,pos_station from `tabUser POS Station` where parent = %(employee)s", {"employee":employee}, as_dict=True)
+            if user_pos_station and len(user_pos_station)> 0:
+                exclude = [d["name"] for d in pos_station]
+                filtered = [item for item in user_pos_station if item["pos_station"] in exclude]
+                if filtered and len(filtered)>0:
+                    pass
+                else:                    
+                    frappe.throw(_("User not allow to login on this device"))
+            else:
+                pass
+        else:
+            frappe.throw(_("Device not yet register to system"))
+
+
 
 ##check user login
-def check_user(usr, pwd):  
+def check_user(usr, pwd, device_id = None):     
     pin_code = pwd
     if pin_code:    
         pin_code = (str( base64.b64encode(pin_code.encode("utf-8")).decode("utf-8")))
         sql = """select 
-                                user_id, 
-                                pos_permission ,
-                                username
-                              from `tabEmployee` 
-                              where (username = %(username)s or %(username)s = '') 
-                                and pos_pin_code = %(pos_pin_code)s 
-                                and allow_login = 1 
-                                and allow_login_to_epos = 1 
-                              limit 1"""
+                name,
+                user_id, 
+                pos_permission ,
+                username
+            from `tabEmployee` 
+            where (username = %(username)s or %(username)s = '') 
+            and pos_pin_code = %(pos_pin_code)s 
+            and allow_login = 1 
+            and allow_login_to_epos = 1 
+            limit 1"""
  
         users = frappe.db.sql(sql, 
                               {
                                    "username":usr or "",
                                    "pos_pin_code":pin_code
                             }, as_dict = 1) 
+        
         if users: 
+            check_user_device(employee= users[0].name, device_id=device_id) 
             data = frappe.db.sql("select name,username,full_name from `tabUser` where name=%(name)s limit 1",{"name":users[0].user_id},as_dict=1)
             return data[0]
     
-    frappe.throw(_("Usename and password incorrect."))
+    else:
+        frappe.throw(_("Usename and password incorrect."))
+    
        
 def get_response_user_information(property, property_code=None):
     phone_number =""

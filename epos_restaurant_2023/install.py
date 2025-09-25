@@ -475,6 +475,7 @@ def reset_data():
             frappe.db.sql("delete from `tabPrint Format`")
             frappe.db.sql("delete from `tabPOS Branding`")
             frappe.db.sql("delete from `tabPOS Station`")
+            frappe.db.sql("delete from `tabUser POS Station`")
 
             #update 
            # frappe.db.sql("update `tabCurrency` set enabled = 1, name='RIEL', currency_name='RIEL' where name='KHR'")
