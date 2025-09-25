@@ -190,6 +190,56 @@ def get_user_menu():
             
     """
     return frappe.db.sql(sql, {"roles":roles},as_dict = 1)
+
+
+@frappe.whitelist()
+def get_mobile_reports():
+    
+    user = frappe.session.user
+    roles = frappe.get_roles(user)
+    roles.append("All")
+    # ["name","parent_mobile_reports","report_title","report_url","filter_options"]
+    sql = """
+        select * from (
+            select 
+                parent_mobile_reports,
+                name,
+                report_title,
+                report_url,
+                filter_options,
+                sort_order
+            from   `tabMobile Reports` 
+            where
+                name not  in (
+                    select distinct parent from `tabHas Role` 
+                    where
+                        parenttype = 'Mobile Reports'
+                ) and 
+                is_active = 1
+            union
+            select 
+                parent_mobile_reports,
+                name,
+                report_title,
+                report_url,
+                filter_options,
+                sort_order
+
+            from `tabMobile Reports` 
+            where
+                name in (
+                    select distinct parenttype from `tabHas Role` 
+                    where
+                        role in %(roles)s and 
+                        parenttype = 'Mobile Reports'
+                )  and 
+                is_active = 1
+        ) x
+        order by sort_order
+        
+            
+    """
+    return frappe.db.sql(sql, {"roles":roles},as_dict = 1)
     
 
 @frappe.whitelist(allow_guest=True)

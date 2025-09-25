@@ -2,9 +2,8 @@
 # For license information, please see license.txt
 
 # import frappe
-from frappe.utils.nestedset import NestedSet
+from frappe.model.document import Document
 
 
-class MobileReports(NestedSet):
+class UserPOSStation(Document):
 	pass
-

@@ -59,6 +59,8 @@
   "pos_permission",
   "column_break_cbjy",
   "allow_login_to_edoor",
+  "allow_login_to_pos_station_section",
+  "table_sexl",
   "working_information_tab",
   "department",
   "position",
@@ -482,12 +484,22 @@
    "fieldname": "default_home_page",
    "fieldtype": "Data",
    "label": "Default Home Page"
+  },
+  {
+   "fieldname": "allow_login_to_pos_station_section",
+   "fieldtype": "Section Break",
+   "label": "Allow Login to POS Station"
+  },
+  {
+   "fieldname": "table_sexl",
+   "fieldtype": "Table",
+   "options": "User POS Station"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-11 09:45:28.511183",
+ "modified": "2025-09-25 10:27:47.754519",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee",

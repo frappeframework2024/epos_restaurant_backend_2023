@@ -9,12 +9,15 @@
   "lft",
   "rgt",
   "is_group",
+  "is_active",
   "old_parent",
   "parent_mobile_reports",
   "report_title",
   "report_url",
   "filter_options",
-  "sort_order"
+  "sort_order",
+  "roles_tab",
+  "roles"
  ],
  "fields": [
   {
@@ -77,12 +80,29 @@
    "fieldname": "sort_order",
    "fieldtype": "Int",
    "label": "Sort Order"
+  },
+  {
+   "fieldname": "roles_tab",
+   "fieldtype": "Tab Break",
+   "label": "Roles"
+  },
+  {
+   "fieldname": "roles",
+   "fieldtype": "Table",
+   "label": "Roles",
+   "options": "Has Role"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Is Active"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2025-05-23 09:07:24.927799",
+ "modified": "2025-09-25 10:31:29.226630",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Mobile Reports",
