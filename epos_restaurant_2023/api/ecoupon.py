@@ -81,7 +81,7 @@ def app_settings(params):
     currency["is_right"] = currency.pop("symbol_on_right")
     currency["exchange_rate"] = 1
     currency["change_exchange_rate"] = 1
-    currency["format"] =  currency["format"].replace(".","") if default_currency == "KHR" else currency["format"]
+    currency["format"] =  currency["format"].replace(". ៛"," ៛") if default_currency == "KHR" else currency["format"]
 
     del currency["currency_name"]
     del currency["fraction"]
@@ -157,7 +157,7 @@ def app_settings(params):
         c["change_exchange_rate"] = change_exchange_rate
         c["exchange_rate_input"] = exchange_rate_input
         c["change_exchange_rate_input"] = change_exchange_rate_input
-        c["format"] = c["format"].replace(".","") if c["name"] == "KHR" else c["format"]
+        c["format"] = c["format"].replace(". ៛"," ៛") if c["name"] == "KHR" else c["format"]
 
     result["currencies"] = currencies
 
@@ -262,6 +262,7 @@ def coupon_kpi_get_data(property_name, pos_profiles, type="Today"):
                     count(*) as total_transaction
             from `tabCoupon Transaction` 
             where 1 = 1
+            and status not in ('Deleted')
             and transaction_type in ('Used')
             and pos_profile = %(pos_profile)s
             and business_branch = %(property_name)s """
@@ -661,6 +662,7 @@ def get_report(name, show_transaction):
         count(`name`) as total_record
     from `tabCoupon Transaction` 
     where 1=1
+    and status not in ('Deleted')
     and transaction_type in ('Used')
     and coupon_shift = %(name)s"""
     summary_data = frappe.db.sql(sql_summary, {"name":name}, as_dict=1)
@@ -680,6 +682,7 @@ def get_report(name, show_transaction):
             created_by
         from `tabCoupon Transaction` 
         where 1=1
+        and status not in ('Deleted')
         and transaction_type in ('Used')
         and coupon_shift = %(name)s
         order by creation desc"""   
@@ -771,6 +774,7 @@ def get_transaction_detail(name):
             sum(input_coupon_amount) as input_coupon_amount
     from `tabCoupon Transaction` 
     where 1 = 1
+    and status not in ('Deleted')
     and used_transaction_id = %(used_transaction_id)s
     GROUP BY used_transaction_id"""
     data = frappe.db.sql(sql, { "used_transaction_id":doc.used_transaction_id}, as_dict=1)

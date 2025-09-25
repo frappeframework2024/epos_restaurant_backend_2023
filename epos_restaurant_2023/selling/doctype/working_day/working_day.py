@@ -100,7 +100,7 @@ def get_unuse_coupon_balance(self):
 	sql = "select sum(coupon_amount) as balance, sum(actual_amount) as actual_balance from `tabCoupon Transaction` where working_day = %(working_day)s and coalesce(status,'') <> 'Deleted'"
 	data = frappe.db.sql(sql, {"working_day":self.name},as_dict = 1)
 	if data:
-		return data[0]["balance"]
+		return data[0]["balance"] or 0
 	return 0
 
 def submit_Gl_Entry(self):

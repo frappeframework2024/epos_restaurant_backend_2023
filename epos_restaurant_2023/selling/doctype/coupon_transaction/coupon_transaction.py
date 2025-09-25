@@ -62,7 +62,8 @@ class CouponTransaction(Document):
 			if len(pos_config_accounts) > 0:
 				account = pos_config_accounts[0]
 				unearned_revenue = account.get("default_unearned_revenue_account","") if account.get("default_unearned_revenue_account","") else unearned_revenue
-				income_account = account.get("default_income_account","") if account.get("default_income_account","") else income_account
+				if not income_account:
+					income_account = account.get("default_income_account","") if account.get("default_income_account","") else income_account
 
 			general_ledger_debit(self,account = {"account":unearned_revenue,"amount":abs(self.coupon_amount)})
 			general_ledger_credit(self,account = {"account":income_account,"amount":abs(self.coupon_amount)})
@@ -88,7 +89,8 @@ class CouponTransaction(Document):
 			if len(pos_config_accounts) > 0:
 				account = pos_config_accounts[0]
 				unearned_revenue = account.get("default_unearned_revenue_account","") if account.get("default_unearned_revenue_account","") else unearned_revenue
-				income_account = account.get("default_income_account","") if account.get("default_income_account","") else income_account
+				if not income_account: 
+					income_account = account.get("default_income_account","") if account.get("default_income_account","") else income_account
  
 			tranactions = (frappe.db.sql("""select 
 							transaction_type
@@ -104,7 +106,6 @@ class CouponTransaction(Document):
 			general_ledger_credit(self,account = {"account":unearned_revenue,"amount":abs(self.coupon_amount)})
 			general_ledger_debit(self,account = {"account":income_account,"amount":abs(self.coupon_amount)})
 			frappe.db.sql("update `tabGeneral Ledger` set is_cancelled=1 where voucher_type='Coupon Transaction' and voucher_number='{}'".format(self.name))
-
 
 def general_ledger_debit(self,account):
 	docs = []

@@ -1023,9 +1023,10 @@ def validate_sale_product(self):
 	for d in self.sale_products:
 		# serve validate get product config to update to sale product config
 		# allow discount is very important for validate chart of account code to post discount amount to GL Entry
+		
 		allow_discount = frappe.get_cached_value("Product",d.product_code,"allow_discount")
 		d.allow_discount = allow_discount
-		 
+		
 
 		d.regular_price = d.regular_price if d.regular_price else d.price
 		# validate product free
@@ -1038,10 +1039,8 @@ def validate_sale_product(self):
 			d.discount_amount = math_round(d.discount_amount  , int(currency_precision))
 		else:
 			d.discount_amount = d.discount or 0
-
 		# check if sale has discount
 		if sale_discount>0 and d.allow_discount and d.discount==0:
-			
 			d.sale_discount_percent = sale_discount  
 			d.sale_discount_amount = (sale_discount/100) * d.sub_total
 			# d.sale_discount_amount=math_round(d.sale_discount_amount  , int(currency_precision)) 
@@ -1073,7 +1072,7 @@ def validate_sale_product(self):
 
 			 
 			if d.coupons:
-				if d.quantity != len(json.loads(d.coupons)):
+				if abs(d.quantity) != len(json.loads(d.coupons)):
 					frappe.throw(_("Invalid Coupon Quantity"))
 
 			
