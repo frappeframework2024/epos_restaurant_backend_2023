@@ -29,6 +29,11 @@
   "receive_by_phone_number",
   "payment_types_section",
   "payments",
+  "section_break_mfbk",
+  "column_break_gapc",
+  "column_break_qzci",
+  "column_break_gnpb",
+  "total_payment_amount",
   "section_break_vzbc",
   "note",
   "amended_from"
@@ -186,12 +191,34 @@
   {
    "fieldname": "section_break_vzbc",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_mfbk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_gapc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_gnpb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_payment_amount",
+   "fieldtype": "Currency",
+   "label": "Total Payment Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_qzci",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-09-25 14:57:34.383327",
+ "modified": "2025-09-26 08:33:22.817695",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Store Payment",
