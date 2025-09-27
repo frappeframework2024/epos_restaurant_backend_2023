@@ -98,6 +98,7 @@ def get_general_ledger_data(filters):
 		inner join `tabChart Of Account` b on b.name = a.account
 
 		where 
+			a.is_cancelled = 0 and 
 			b.account_type = 'Payable' and 
 			a.business_branch = %(business_branch)s and 
 			a.posting_date <= %(date)s 

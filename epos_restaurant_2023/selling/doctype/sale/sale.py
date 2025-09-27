@@ -318,7 +318,7 @@ class Sale(Document):
 					coupons = json.loads(sp.coupons)
 					for c in coupons:
 						lock_db(c.get("coupon"))
-						sql = "select sum(actual_amount) as balance from `tabCoupon Transaction` where coupon_code =%(coupon_id)s"
+						sql = "select sum(actual_amount) as balance from `tabCoupon Transaction` where coalesce(status,'') <> 'Deleted' and  coupon_code =%(coupon_id)s"
 						data = frappe.db.sql(sql, {"coupon_id":c.get("name")},as_dict=1)
 						
 						if data:

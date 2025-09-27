@@ -53,7 +53,7 @@ frappe.ui.form.on("Store Payment", {
 		(frm.doc.payments || []).forEach(row => {
 			total += row.payment_amount || 0;
 		});
-		frm.set_value("total_payment_amount", total);
+		frm.set_value("payment_amount", total);
 	},
 
 	 

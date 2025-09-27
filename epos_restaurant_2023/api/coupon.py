@@ -82,7 +82,7 @@ def get_coupon_detail(coupon_code):
     #coupon code here is primary key
     return_data = {}
 
-    return_data["coupon_info"] = frappe.get_cached_doc("Coupon Codes",coupon_code)
+    return_data["coupon_info"] = frappe.get_doc("Coupon Codes",coupon_code)
     
     if return_data["coupon_info"].customer:
         customer_photo,customer_group,phone_number,customer,customer_name = frappe.get_cached_value("Customer",return_data["coupon_info"].customer,["photo","customer_group","phone_number","name","customer_name_en"])    

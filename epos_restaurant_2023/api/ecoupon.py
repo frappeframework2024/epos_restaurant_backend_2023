@@ -431,6 +431,10 @@ def unlock_db(name):
 
 @frappe.whitelist()
 def on_scan_use_coupon(params):    
+    # VALIDATE cashier shift open
+    if not frappe.db.exists("Cashier Shift",{"is_closed":0}):
+        frappe.throw(_("There's no cashier shift opened."))
+
     lock_db(params.get("coupon_number"))
  
     transaction_id = short_hex_uuid()  
@@ -789,6 +793,10 @@ def get_transaction_detail(name):
 
 @frappe.whitelist(methods=["POST"])
 def delete_transaction(transaction_id): 
+    # VALIDATE cashier shift open
+    if not frappe.db.exists("Cashier Shift",{"is_closed":0}):
+        frappe.throw(_("There's no cashier shift opened."))
+        
     sql = """select coupon_code, name,coupon_shift , used_from_transaction from `tabCoupon Transaction` where used_transaction_id = %(used_transaction_id)s"""
     data = frappe.db.sql(sql, { "used_transaction_id":transaction_id}, as_dict=1)
 
