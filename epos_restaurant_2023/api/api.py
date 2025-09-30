@@ -1247,8 +1247,14 @@ def edit_sale_coupon(name,auth):
     if not sale:
         frappe.throw(_("Sale not found"))
     sale_doc = frappe.get_doc("Sale",name)
+    # check if cashier is already closed
+    if sale_doc.cashier_shift:
+        if frappe.get_value("Cashier Shift",sale_doc.cashier_shift,"is_closed") == 1:
+            frappe.throw(_("Cashier shift is already closed"))
+            
     if sale_doc.docstatus == 2:
         frappe.throw(_("Sale is already deleted"))
+
     sale_coupons = check_coupon_transactions(sale_doc,"edit")
      
     if sale_doc.is_generate_tax_invoice == 1:

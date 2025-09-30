@@ -76,10 +76,9 @@
 
                                 <div v-if="sp.is_combo_menu">
                                     <div v-if="sp.use_combo_group && sp.combo_menu_data">
-                                        <ComSaleProductComboMenuGroupItemDisplay
-                                            :combo-menu-data="sp.combo_menu_data" />
+                                        <ComSaleProductComboMenuGroupItemDisplay :combo-menu-data="sp.combo_menu_data"/>
                                     </div>
-                                    <span v-else>{{ sp.combo_menu }}</span>
+                                    <span style="white-space: pre-line;" v-else>{{get_combo_menu(sp.combo_menu_data)}}</span>
                                 </div>
                                    <!-- combo   -->
                                        <!-- discount   -->
@@ -247,11 +246,27 @@ const props = defineProps({
     saleCustomerDisplay: Object
 });
 
+function get_combo_menu(combo){
+    const mlang = localStorage.getItem('mLang');
+    combo = JSON.parse(combo)
+    let combo_menu = ""
+    if(combo.length>0){
+        let idx = 1
+        combo.forEach(a => {
+        if (mlang == "en") {
+                combo_menu += idx+"."+a.product_name+" X "+a.quantity+"\n"
+            } else {
+                combo_menu += idx+"."+a.product_name_kh+" X "+a.quantity+"\n"
+            }
+            idx++
+        });
+    }
+    return combo_menu
+}
 
 function getMenuName(sp) {
     const mlang = localStorage.getItem('mLang');
     let code = gv.setting.show_item_code_in_sale_screen == 0 ? "" : `${sp.product_code} - `;
-
     if (mlang != null) {
         if (mlang == "en") {
 
