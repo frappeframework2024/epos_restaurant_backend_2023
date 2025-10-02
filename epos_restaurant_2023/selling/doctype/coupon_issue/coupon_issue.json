@@ -1,0 +1,197 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-10-01 17:11:17.955522",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_irmk",
+  "amended_from",
+  "business_branch",
+  "posting_date",
+  "expired_date",
+  "column_break_zwrt",
+  "employee",
+  "employee_name",
+  "customer",
+  "photo",
+  "section_break_dyrp",
+  "coupon_type",
+  "coupon",
+  "column_break_xhsv",
+  "coupon_number",
+  "coupon_amount",
+  "section_break_jhpy",
+  "credit_account",
+  "debit_account",
+  "column_break_ipdz",
+  "note"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_irmk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Coupon Issue",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Posting Date",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Employee Name"
+  },
+  {
+   "default": "Digital Coupon",
+   "fieldname": "coupon_type",
+   "fieldtype": "Select",
+   "label": "Coupon Type",
+   "options": "Digital Coupon\nCoupon Card"
+  },
+  {
+   "depends_on": "eval:doc.coupon_type=='Coupon Card'",
+   "fieldname": "coupon",
+   "fieldtype": "Link",
+   "label": "Coupon",
+   "link_filters": "[[{\"fieldname\":\"coupon\",\"field_option\":\"Coupon Codes\"},\"coupon_status\",\"=\",\"Unused\"]]",
+   "mandatory_depends_on": "eval:doc.coupon_type=='Coupon Card'",
+   "options": "Coupon Codes",
+   "read_only_depends_on": "eval:doc.coupon_type=='Digital Coupon'",
+   "search_index": 1
+  },
+  {
+   "fetch_from": "coupon.coupon",
+   "fetch_if_empty": 1,
+   "fieldname": "coupon_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Coupon Number"
+  },
+  {
+   "fieldname": "column_break_zwrt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "debit_account",
+   "fieldtype": "Link",
+   "label": "Debit Account",
+   "link_filters": "[[{\"fieldname\":\"debit_account\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0],[{\"fieldname\":\"debit_account\",\"field_option\":\"Chart Of Account\"},\"account_type\",\"=\",\"Expense\"]]",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "credit_account",
+   "fieldtype": "Link",
+   "label": "Credit Account",
+   "link_filters": "[[{\"fieldname\":\"credit_account\",\"field_option\":\"Chart Of Account\"},\"is_group\",\"=\",0],[{\"fieldname\":\"credit_account\",\"field_option\":\"Chart Of Account\"},\"account_type\",\"=\",\"Payable\"]]",
+   "options": "Chart Of Account"
+  },
+  {
+   "fetch_from": "employee.customer",
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer",
+   "search_index": 1
+  },
+  {
+   "fieldname": "section_break_jhpy",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_dyrp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_xhsv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "coupon_amount",
+   "fieldtype": "Currency",
+   "label": "Coupon Amount"
+  },
+  {
+   "fieldname": "column_break_ipdz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
+  },
+  {
+   "fetch_from": "employee.photo",
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Photo"
+  },
+  {
+   "fieldname": "business_branch",
+   "fieldtype": "Link",
+   "label": "Business Branch",
+   "options": "Business Branch"
+  },
+  {
+   "fieldname": "expired_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Expired Date",
+   "reqd": 1
+  }
+ ],
+ "image_field": "photo",
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-10-02 17:31:23.840356",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "Coupon Issue",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "employee_name"
+}

@@ -9,7 +9,7 @@ import DraggableResizableVue from 'draggable-resizable-vue3'
 import VueBarcode from '@chenfengyuan/vue-barcode';
 import ConfirmationService from 'primevue/confirmationservice';
 import ToastService from 'primevue/toastservice';
-import moment from "@/utils/moment";
+
 
 const app = createApp(App);
 
@@ -26,7 +26,7 @@ app.use(PrimeVue, {
 
 app.use(ConfirmationService);
 
-app.provide("$moment", moment)
+ 
 app.use(ToastService);
 app.component(VueBarcode.name, VueBarcode);
 

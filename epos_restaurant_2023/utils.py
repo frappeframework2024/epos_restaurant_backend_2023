@@ -2,6 +2,9 @@ import frappe
 from py_linq import Enumerable
 from datetime import datetime
 from frappe.utils import date_diff,today ,add_months, add_days,getdate,add_to_date
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad
+import base64
 
 @frappe.whitelist()
 def get_date_range_by_timespan(timespan):
@@ -67,3 +70,36 @@ def math_round(value, precision = None):
 		precision = int( frappe.get_cached_value("System Settings", None, "currency_precision") or 0)
 	result = math.floor(((value or 0) * math.pow(10, (precision or 0) )) + 0.5) / math.pow(10, (precision or 0))
 	return result
+
+
+
+def encrypt_aes_base64(plain_text: str, key: str = None, iv: str = None) -> str:
+    site_config = frappe.get_site_config()
+    
+    if not key:
+        key = site_config.get("encrypt_key")
+    if not iv:
+        iv = site_config.get("encrypt_iv")
+
+    # convert key and iv from str -> bytes
+    key_bytes = key.encode("utf-8")
+    iv_bytes = iv.encode("utf-8")
+    cipher = AES.new(key_bytes, AES.MODE_CBC, iv_bytes)
+    padded_data = pad(plain_text.encode("utf-8"), AES.block_size)
+    ct_bytes = cipher.encrypt(padded_data)
+    return base64.b64encode(ct_bytes).decode("utf-8")
+
+
+
+
+
+def get_lastweek_to_currentweek():
+    from datetime import datetime, timedelta
+    start_date = datetime.strptime( frappe.utils.today(), "%Y-%m-%d")
+ 
+    weekday = start_date.weekday()   
+    last_week_start = start_date - timedelta(days=weekday + 7)
+ 
+    current_week_end = start_date + timedelta(days=(6 - weekday))
+
+    return frappe.utils.getdate(last_week_start.date()), frappe.utils.getdate(current_week_end.date())

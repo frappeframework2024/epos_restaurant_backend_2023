@@ -344,3 +344,25 @@ def format_currency(value, currency=None):
     precission = frappe.get_cached_value("Currency",currency,"custom_currency_precision")
     return frappe.utils.fmt_money(value,  currency =  currency, precision = precission )
 
+@frappe.whitelist()
+def get_store_cashier_shift_info():
+    working_day = frappe.db.sql("select posting_date from `tabWorking Day` where is_closed = 0 order by creation desc limit 1",as_dict = 1)
+    working_date = frappe.utils.today()
+    if working_day:
+        working_date = working_day[0].get("posting_date")
+    
+    sql = """select 
+        v.name,
+        v.vendor_name,
+        cs.name as cashier_shift_number,
+        cs.creation,
+        cs.is_closed,
+        cs.owner
+       from `tabVendor` v
+       left join `tabCoupon Shift` cs on cs.vendor = v.name and cs.posting_date = %(posting_date)s
+         where v.name in (select default_vendor from `tabPOS Profile`)
+         
+         """
+    data = frappe.db.sql(sql,{"posting_date":working_date},as_dict=1)
+
+    return data

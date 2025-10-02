@@ -21,7 +21,7 @@ def get_context(context):
 
 
 def get_sub_menu(parent_menu):
-    sql = "select name,photo from `tabPOS Menu` where parent_pos_menu = %(parent_menu)s and disabled=0"
+    sql = "select name,pos_menu_name_en,pos_menu_name_kh,if(coalesce(pos_menu_name_etc,'') = '',pos_menu_name_en,pos_menu_name_etc) pos_menu_name_etc,photo from `tabPOS Menu` where parent_pos_menu = %(parent_menu)s and disabled=0"
     data = frappe.db.sql(sql, {"parent_menu": parent_menu}, as_dict=1)
     return data
 
@@ -35,6 +35,7 @@ def get_product(menu):
             product_code,
             product_name_en,
             product_name_kh,
+            coalesce(product_name_etc,product_name_en) product_name_etc,
             price,
             ifnull(photo,'files/no_image.jpg') as photo,
             prices,

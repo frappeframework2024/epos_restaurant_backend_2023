@@ -1,0 +1,246 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "hash",
+ "creation": "2025-10-02 16:39:57.527235",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "coupon",
+  "coupon_register",
+  "reference_doctype",
+  "reference_name",
+  "coupon_url",
+  "coupon_status",
+  "sale_date",
+  "sale",
+  "sale_creation",
+  "working_day",
+  "cashier_shift",
+  "pos_profile",
+  "pos_station",
+  "created_by",
+  "column_break_nqie",
+  "price",
+  "coupon_value",
+  "top_up_amount",
+  "top_up_coupon_value",
+  "redeem_amount",
+  "redeem_coupon_value",
+  "use_amount",
+  "use_coupon_value",
+  "balance_amount",
+  "balance_coupon_value",
+  "column_break_rowa",
+  "customer",
+  "customer_name",
+  "expired_date"
+ ],
+ "fields": [
+  {
+   "fieldname": "coupon",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Coupon",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "coupon_register",
+   "fieldtype": "Link",
+   "label": "Coupon Register",
+   "options": "Coupon Register"
+  },
+  {
+   "fieldname": "column_break_nqie",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_rowa",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reference_doctype",
+   "fieldtype": "Link",
+   "label": "Reference Doctype",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "reference_name",
+   "fieldtype": "Dynamic Link",
+   "label": "Reference Name",
+   "options": "reference_doctype"
+  },
+  {
+   "fieldname": "coupon_url",
+   "fieldtype": "Data",
+   "label": "Coupon URL"
+  },
+  {
+   "default": "Unused",
+   "fieldname": "coupon_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Coupon Status",
+   "options": "Unused\nUsed\nRedeemed\nExpired",
+   "search_index": 1
+  },
+  {
+   "fieldname": "sale_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Sale Date",
+   "search_index": 1
+  },
+  {
+   "fieldname": "sale",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Sale",
+   "options": "Sale",
+   "search_index": 1
+  },
+  {
+   "fieldname": "sale_creation",
+   "fieldtype": "Datetime",
+   "label": "Sale Creation"
+  },
+  {
+   "fieldname": "working_day",
+   "fieldtype": "Link",
+   "label": "Working Day",
+   "options": "Working Day"
+  },
+  {
+   "fieldname": "cashier_shift",
+   "fieldtype": "Link",
+   "label": "Cashier Shift",
+   "options": "Cashier Shift"
+  },
+  {
+   "fieldname": "pos_profile",
+   "fieldtype": "Link",
+   "label": "POS Profile",
+   "options": "POS Profile"
+  },
+  {
+   "fieldname": "pos_station",
+   "fieldtype": "Data",
+   "label": "POS Station"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Data",
+   "label": "Created By"
+  },
+  {
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Price"
+  },
+  {
+   "fieldname": "coupon_value",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Coupon Value"
+  },
+  {
+   "fieldname": "top_up_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Top Up Amount"
+  },
+  {
+   "fieldname": "top_up_coupon_value",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Top Up Coupon Value"
+  },
+  {
+   "fieldname": "redeem_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Redeem Amount"
+  },
+  {
+   "fieldname": "redeem_coupon_value",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Redeem Coupon Value"
+  },
+  {
+   "fieldname": "use_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Use Amount"
+  },
+  {
+   "fieldname": "use_coupon_value",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Use Coupon Value"
+  },
+  {
+   "fieldname": "balance_amount",
+   "fieldtype": "Currency",
+   "label": "Balance Amount"
+  },
+  {
+   "fieldname": "balance_coupon_value",
+   "fieldtype": "Currency",
+   "label": "Balance Coupon Value"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name"
+  },
+  {
+   "fieldname": "expired_date",
+   "fieldtype": "Datetime",
+   "label": "Expired Date"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-10-02 17:16:06.817865",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "Coupon Codes History",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -12,6 +12,8 @@
   "pos_station",
   "posting_date",
   "sale",
+  "reference_doctype",
+  "reference_name",
   "column_break_xvqr",
   "working_day",
   "cashier_shift",
@@ -113,7 +115,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Transaction Type",
-   "options": "Sale Coupon\nTop Up\nRedeem\nUsed",
+   "options": "Sale Coupon\nTop Up\nRedeem\nUsed\nCoupon Issue",
    "search_index": 1
   },
   {
@@ -300,11 +302,23 @@
    "label": "Vendor",
    "options": "Vendor",
    "search_index": 1
+  },
+  {
+   "fieldname": "reference_doctype",
+   "fieldtype": "Link",
+   "label": "Reference Doctype",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "reference_name",
+   "fieldtype": "Dynamic Link",
+   "label": "Reference Name",
+   "options": "reference_doctype"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-16 15:10:47.013600",
+ "modified": "2025-10-02 12:59:37.767029",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Transaction",

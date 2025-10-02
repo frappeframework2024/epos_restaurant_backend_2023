@@ -1,6 +1,9 @@
 <template>
   <div>
+     <component :is="layout">
+      
     <router-view />
+    </component>
   </div>
   <Toast position="top-center">
         <template #message="slotProps">
@@ -16,16 +19,27 @@
 
 <script setup>
 
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted,computed,ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
 import ConfirmDialog from 'primevue/confirmdialog';
+import BlankLayout from "@/layouts/BlankLayout.vue"
+import DigtalCouponLayout from "@/layouts/DigtalCouponLayout.vue"
+import { useRoute } from "vue-router";
+const route = useRoute()
 const toast = useToast();
-
+ 
+const layout = computed(() => {
+  switch (route.meta.layout) {
+    case "DigitalCouponLayout":
+      return DigtalCouponLayout;
+    default:
+      return BlankLayout;  
+  }
+});
 const actionListeningHandler = async function (e) {
 	if (e.isTrusted && e.data.action) {
  
-
     if (e.data.action == "show_alert") {
                 toast.add({ severity: 'warn', summary: e.data.message, detail: '', life: 3000 })
       }

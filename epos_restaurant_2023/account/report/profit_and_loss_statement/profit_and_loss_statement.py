@@ -14,6 +14,7 @@ def execute(filters=None):
  
 	columns = get_report_columns(filters)
 	data  = get_data(filters)
+	
 	report_data = get_report_data(filters,raw_data=data)
 	report_chart = get_report_chart(columns=columns, data=data)
 
@@ -195,8 +196,9 @@ def get_data(filters):
 		column_group_info["sql_expression"],
 		column_group_info["group_by_expression"]
 	)
+	
 	data = frappe.db.sql(sql,filters,as_dict=1)
-
+ 
 
 	return data
 

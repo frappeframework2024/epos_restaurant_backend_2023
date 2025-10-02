@@ -9,31 +9,41 @@
  "field_order": [
   "coupon",
   "coupon_register",
+  "reference_doctype",
+  "reference_name",
   "coupon_url",
   "coupon_status",
-  "sale_date",
-  "sale",
-  "sale_creation",
-  "working_day",
-  "cashier_shift",
-  "pos_profile",
-  "pos_station",
-  "created_by",
   "column_break_bkgy",
-  "price",
-  "coupon_value",
-  "top_up_amount",
-  "top_up_coupon_value",
-  "redeem_amount",
-  "redeem_coupon_value",
-  "use_amount",
-  "use_coupon_value",
-  "balance_amount",
-  "balance_coupon_value",
+  "sale",
+  "sale_date",
+  "sale_creation",
+  "pos_profile",
   "column_break_tfky",
   "customer",
   "customer_name",
-  "expired_date"
+  "expired_date",
+  "section_break_fpdy",
+  "coupon_value",
+  "price",
+  "column_break_pbhy",
+  "top_up_amount",
+  "top_up_coupon_value",
+  "column_break_riam",
+  "use_amount",
+  "use_coupon_value",
+  "column_break_qtps",
+  "redeem_amount",
+  "redeem_coupon_value",
+  "column_break_ymlh",
+  "balance_amount",
+  "balance_coupon_value",
+  "section_break_twst",
+  "working_day",
+  "cashier_shift",
+  "created_by",
+  "pos_station",
+  "column_break_sanw",
+  "note"
  ],
  "fields": [
   {
@@ -194,11 +204,56 @@
    "fieldname": "sale_creation",
    "fieldtype": "Datetime",
    "label": "Sale Creation"
+  },
+  {
+   "fieldname": "reference_doctype",
+   "fieldtype": "Link",
+   "label": "Reference Doctype",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "reference_name",
+   "fieldtype": "Dynamic Link",
+   "label": "Reference Name",
+   "options": "reference_doctype"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
+  },
+  {
+   "fieldname": "section_break_fpdy",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_pbhy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_riam",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_qtps",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_ymlh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_twst",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_sanw",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-09 10:06:13.776823",
+ "modified": "2025-10-02 17:22:28.129677",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Codes",

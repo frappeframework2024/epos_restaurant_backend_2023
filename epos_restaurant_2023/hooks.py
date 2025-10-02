@@ -296,6 +296,7 @@ website_route_rules = [
         {'from_route': '/login/<path:app_path>', 'to_route': 'epos_frontend'},
         {'from_route': '/embed/<path:app_path>', 'to_route': 'embed'},
         {'from_route': '/e-menu/<path:app_path>', 'to_route': 'e-menu'}, 
+       
       
          
 ]

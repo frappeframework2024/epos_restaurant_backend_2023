@@ -12,6 +12,7 @@
   "parent_menu_path",
   "pos_menu_name_en",
   "pos_menu_name_kh",
+  "pos_menu_name_etc",
   "lft",
   "rgt",
   "photo",
@@ -235,6 +236,11 @@
   {
    "fieldname": "column_break_21",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "pos_menu_name_etc",
+   "fieldtype": "Data",
+   "label": "POS Menu Name Etc"
   }
  ],
  "image_field": "photo",
@@ -242,7 +248,7 @@
  "is_tree": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2024-06-14 09:07:34.856271",
+ "modified": "2025-10-02 15:20:36.512964",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Menu",

@@ -28,9 +28,10 @@
   "contact_information_section",
   "phone_number_1",
   "phone_number_2",
-  "column_break_10",
   "email_address",
   "photo",
+  "column_break_10",
+  "customer",
   "address_note",
   "province",
   "district",
@@ -494,12 +495,19 @@
    "fieldname": "pos_stations",
    "fieldtype": "Table",
    "options": "User POS Station"
+  },
+  {
+   "description": "Link this employee to customer for using in internal transaction, such as Sale, Issue Coupon, and Use Coupon Transaction...",
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-25 11:55:46.790145",
+ "modified": "2025-10-02 11:34:43.286881",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee",

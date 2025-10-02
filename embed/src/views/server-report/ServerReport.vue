@@ -6,7 +6,7 @@
             <SplitterPanel :size="80" class="pa-4">
                 
                 <div style="height:100vh" id="main_server_report_viewer_backend" class="flex align-items-center justify-content-center">
-                {{ selectedReport }}
+                
                     <div class="flex flex-column align-items-center gap-5" v-if="!selectedReport">
                         <img :src="reportpng" width="100" />
                         Please select a report to view your report.
@@ -25,11 +25,13 @@ import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
 import ComReportTree from  "@/views/server-report/ComReportTree.vue";
 import reportpng from "@/assets/images/report.png"
+import dayjs from "dayjs";
 const setting =ref({})
 const selectedReport = ref()
 const route = useRoute();
 
-const moment = inject("$moment")
+
+
 
 const root_report =  ref(route.query.root_report)
 function onSelectReport(p) { 
@@ -132,21 +134,21 @@ function get_date_by_timestamp(timestap){
     if (timestap === "current_working_date") {
         return setting.value.working_day.posting_date;
     } else if (timestap === "today") {
-        return moment().format("YYYY-MM-DD");
+        return dayjs().format("YYYY-MM-DD");
     } else if (timestap === "previous_working_day") {
-        return moment(setting.value.working_day.posting_date).add(-1, "days").format("YYYY-MM-DD");
+        return dayjs(setting.value.working_day.posting_date).add(-1, "days").format("YYYY-MM-DD");
     } else if (timestap === "start_mtd") {
-        return moment(setting.value.working_day.posting_date).startOf("month").format("YYYY-MM-DD");
+        return dayjs(setting.value.working_day.posting_date).startOf("month").format("YYYY-MM-DD");
     } else if (timestap === "end_mtd") {
-        return moment(setting.value.working_day.posting_date).endOf("month").format("YYYY-MM-DD");
+        return dayjs(setting.value.working_day.posting_date).endOf("month").format("YYYY-MM-DD");
     } else if (timestap === "start_current_mtd") {
-        return moment().startOf("month").format("YYYY-MM-DD");
+        return dayjs().startOf("month").format("YYYY-MM-DD");
     } else if (timestap === "end_current_mtd") {
-        return moment().endOf("month").format("YYYY-MM-DD");
+        return dayjs().endOf("month").format("YYYY-MM-DD");
     }  else if (timestap === "start_ytd") {
-        return moment(setting.value.working_day.posting_date).startOf("year").format("YYYY-MM-DD");
+        return dayjs(setting.value.working_day.posting_date).startOf("year").format("YYYY-MM-DD");
     } else if (timestap === "end_ytd") {
-        return moment(setting.value.working_day.posting_date).endOf("year").format("YYYY-MM-DD");
+        return dayjs(setting.value.working_day.posting_date).endOf("year").format("YYYY-MM-DD");
     } else {
         return setting.value.working_day.posting_date;
     }

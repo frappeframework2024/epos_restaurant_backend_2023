@@ -12,6 +12,7 @@
   "product_code",
   "product_name_en",
   "product_name_kh",
+  "product_name_etc",
   "revenue_group",
   "unit",
   "price",
@@ -321,11 +322,16 @@
    "fieldtype": "Data",
    "label": "Variant Of",
    "read_only": 1
+  },
+  {
+   "fieldname": "product_name_etc",
+   "fieldtype": "Data",
+   "label": "Product Name Etc"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-19 14:14:50.430023",
+ "modified": "2025-10-02 14:33:27.697318",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Temp Product Menu",

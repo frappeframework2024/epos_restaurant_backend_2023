@@ -3,8 +3,24 @@
         <div class="position-relative">
             <div class="category_item category_list_item position-relative border" style="background: url('{{menu.photo or placeholder_bg}}');background-size: cover;"></div>
             <div class="position-absolute bottom-0 w-100">
-                <div class="mb-2 mx-2 rounded text-center py-1  category-txt text-dark">{{menu.name}}</div>
+                <div class="mb-2 mx-2 rounded text-center py-1  category-txt text-dark product-menu" 
+                data-en="{{ menu.pos_menu_name_en }}"
+                data-kh="{{ menu.pos_menu_name_kh }}"
+                data-cn="{{ menu.pos_menu_name_etc }}">
+            </div>
             </div>
         </div>
     </a>
 </div> 
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        language = localStorage.getItem("language") || "en";
+        document.querySelectorAll(".product-menu").forEach(el => {
+            if (el.dataset[language]) {
+                el.textContent = el.dataset[language];
+            } else {
+                el.textContent = el.dataset['en'];
+            }
+        });
+    });
+    </script>

@@ -8,8 +8,12 @@ export default defineConfig({
 	plugins: [vue()],
 	server: {
 		port: 8080,
-		proxy: proxyOptions
+		proxy: proxyOptions,
+		allowedHosts: [
+      		'webmonitor.inccloudserver.com'
+    	]
 	},
+	
 	resolve: {
 		alias: {
 			'@': path.resolve(__dirname, 'src')

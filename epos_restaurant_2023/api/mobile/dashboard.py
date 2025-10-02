@@ -181,14 +181,35 @@ def daily_sale_chart(param):
     business_branch  = p["business_branch"]
     working_date = p["working_date"]
     pos_profiles = p["pos_profiles"] 
+    plate_form = p.get("plate_form")
 
     result = []
-    for d in get_day_numbers(working_date.year, working_date.month):
-        result.append({
-            "day": d,
-            "date": frappe.utils.formatdate(datetime.date(working_date.year, working_date.month, d), "yyyy-MM-dd"),
-            "value": 0
-        })
+    if plate_form == "desktop":
+        for d in get_day_numbers(working_date.year, working_date.month):
+            result.append({
+                "day": d,
+                "date": frappe.utils.formatdate(datetime.date(working_date.year, working_date.month, d), "yyyy-MM-dd"),
+                "value": 0
+            })
+    else:
+        from epos_restaurant_2023.utils import get_lastweek_to_currentweek
+        from datetime import datetime, timedelta
+        dates = get_lastweek_to_currentweek()
+        start =dates[0]
+        end = dates[1]
+
+        dates = []
+        current = start
+
+        while current <= end:
+            result.append({
+                "day": current.strftime("%d"),
+                "date": current.strftime("%Y-%m-%d"),
+                "value": 0
+            })
+ 
+            current += timedelta(days=1)
+        
 
     sql = """select 	
                 s.posting_date,

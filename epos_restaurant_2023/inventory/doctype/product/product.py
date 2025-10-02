@@ -861,7 +861,8 @@ def add_product_to_temp_menu(self):
 							'discount_type': m.discount_type,
 							'discount_value':m.discount_value,
 							'sort_order':m.sort_order,
-							'pos_note':self.pos_note
+							'pos_note':self.pos_note,
+							'product_name_etc':self.product_name_etc
 						})
 			doc.insert() 
 
