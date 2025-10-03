@@ -7,10 +7,44 @@
  "field_order": [
   "sale_information_section",
   "business_branch",
+  "pos_profile",
+  "vendor",
+  "pos_station",
+  "posting_date",
+  "sale",
+  "reference_doctype",
+  "reference_name",
   "column_break_fqxz",
   "working_day",
+  "cashier_shift",
   "column_break_gemw",
-  "customer"
+  "customer",
+  "customer_name",
+  "customer_photo",
+  "section_break_pyrw",
+  "transaction_type",
+  "coupon_shift",
+  "coupon_code",
+  "coupon_number",
+  "transaction_date",
+  "sale_product",
+  "product_code",
+  "expired_date",
+  "column_break_vywp",
+  "input_actual_amount",
+  "actual_amount",
+  "markup_percentage",
+  "input_coupon_amount",
+  "coupon_amount",
+  "currency",
+  "exchange_rate",
+  "column_break_uvhp",
+  "status",
+  "note",
+  "created_by",
+  "used_from_transaction",
+  "original_used_amount",
+  "used_transaction_id"
  ],
  "fields": [
   {
@@ -46,11 +80,238 @@
    "fieldtype": "Link",
    "label": "Customer",
    "options": "Customer"
+  },
+  {
+   "fieldname": "cashier_shift",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Cashier Shift",
+   "options": "Cashier Shift"
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name"
+  },
+  {
+   "fetch_from": "customer.photo",
+   "fieldname": "customer_photo",
+   "fieldtype": "Attach Image",
+   "label": "Customer Photo"
+  },
+  {
+   "fieldname": "pos_profile",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "POS Profile",
+   "options": "POS Profile",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fetch_from": "pos_profile.default_vendor",
+   "fieldname": "vendor",
+   "fieldtype": "Link",
+   "label": "Vendor",
+   "options": "Vendor",
+   "search_index": 1
+  },
+  {
+   "fieldname": "pos_station",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "POS Station",
+   "options": "POS Station",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date",
+   "search_index": 1
+  },
+  {
+   "fieldname": "sale",
+   "fieldtype": "Link",
+   "label": "Sale",
+   "options": "Sale"
+  },
+  {
+   "fieldname": "reference_doctype",
+   "fieldtype": "Link",
+   "label": "Reference Doctype",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "reference_name",
+   "fieldtype": "Dynamic Link",
+   "label": "Reference Name",
+   "options": "reference_doctype"
+  },
+  {
+   "fieldname": "section_break_pyrw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "transaction_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Transaction Type",
+   "options": "Sale Coupon\nTop Up\nRedeem\nUsed\nCoupon Issue",
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_vywp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_uvhp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "coupon_shift",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Coupon Shift",
+   "options": "Coupon Shift"
+  },
+  {
+   "fieldname": "coupon_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Coupon Code",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "coupon_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Coupon Number",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "default": "Now",
+   "fieldname": "transaction_date",
+   "fieldtype": "Datetime",
+   "label": "Transaction Date",
+   "search_index": 1
+  },
+  {
+   "fieldname": "sale_product",
+   "fieldtype": "Link",
+   "label": "Sale Product",
+   "options": "Sale Product"
+  },
+  {
+   "fieldname": "product_code",
+   "fieldtype": "Link",
+   "label": "Product Code",
+   "options": "Product"
+  },
+  {
+   "fieldname": "expired_date",
+   "fieldtype": "Datetime",
+   "label": "Expired Date"
+  },
+  {
+   "fieldname": "input_actual_amount",
+   "fieldtype": "Currency",
+   "label": "Input Actual Amount"
+  },
+  {
+   "fieldname": "actual_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Actual Amount",
+   "read_only": 1
+  },
+  {
+   "default": "Active",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "no_copy": 1,
+   "options": "Active\nLocked\nInactive\nDeleted",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
+  },
+  {
+   "fieldname": "markup_percentage",
+   "fieldtype": "Percent",
+   "label": "Markup Percentage",
+   "read_only": 1
+  },
+  {
+   "fieldname": "input_coupon_amount",
+   "fieldtype": "Currency",
+   "label": "Input Coupon Amount"
+  },
+  {
+   "fieldname": "coupon_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Coupon Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "exchange_rate",
+   "fieldtype": "Float",
+   "label": "Exchange Rate",
+   "precision": "9"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Data",
+   "label": "Created By"
+  },
+  {
+   "fieldname": "used_from_transaction",
+   "fieldtype": "Link",
+   "label": "Used From Transaction",
+   "options": "Coupon Transaction"
+  },
+  {
+   "fieldname": "original_used_amount",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "label": "Original Used Amount",
+   "print_hide": 1,
+   "print_hide_if_no_value": 1,
+   "read_only": 1,
+   "report_hide": 1
+  },
+  {
+   "fieldname": "used_transaction_id",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Used Transaction ID",
+   "print_hide": 1,
+   "read_only": 1,
+   "report_hide": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-02 17:27:34.337080",
+ "modified": "2025-10-03 08:58:24.766343",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Transaction History",
@@ -65,6 +326,42 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Master Manager",
    "share": 1,
    "write": 1
   }

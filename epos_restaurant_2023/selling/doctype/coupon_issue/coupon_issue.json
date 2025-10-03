@@ -74,14 +74,12 @@
    "options": "Digital Coupon\nCoupon Card"
   },
   {
-   "depends_on": "eval:doc.coupon_type=='Coupon Card'",
    "fieldname": "coupon",
    "fieldtype": "Link",
    "label": "Coupon",
    "link_filters": "[[{\"fieldname\":\"coupon\",\"field_option\":\"Coupon Codes\"},\"coupon_status\",\"=\",\"Unused\"]]",
    "mandatory_depends_on": "eval:doc.coupon_type=='Coupon Card'",
    "options": "Coupon Codes",
-   "read_only_depends_on": "eval:doc.coupon_type=='Digital Coupon'",
    "search_index": 1
   },
   {
@@ -170,7 +168,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-10-02 17:31:23.840356",
+ "modified": "2025-10-02 18:40:58.300606",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Issue",

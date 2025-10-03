@@ -2492,6 +2492,7 @@ def is_safe_sql(query: str) -> bool:
     for keyword in forbidden_keywords:
         if re.search(r'\b' + re.escape(keyword) + r'\b', query):
             return False
+            
 
     return True
 

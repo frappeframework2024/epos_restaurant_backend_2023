@@ -44,7 +44,7 @@ class CouponIssue(Document):
 				"customer":self.customer,
 				"customer_name":self.employee_name,
 				"expired_date":str(self.posting_date) + " 23:59:59",
-				"note":"បញ្ជេញគូប៉ុងអោយផ្នែកគ្រប់គ្រង " + self.employee_name + "។ លេខគូប៉ុង " + self.coupon_number
+				"note":"បញ្ជេញគូប៉ុងអោយផ្នែកគ្រប់គ្រង " + self.employee_name 
 				})
 
 		self.add_coupon_transaction()
@@ -105,13 +105,12 @@ class CouponIssue(Document):
 			if frappe.db.sql(sql,{"coupon_number":self.coupon_number}):
 				frappe.throw(_("This coupon number is already in used."))
 
-			
-
+			 
 
 	def create_coupon_code(self):
 		site_config = frappe.get_site_config()
 		from epos_restaurant_2023.utils import encrypt_aes_base64
-		frappe.get_doc({
+		doc = frappe.get_doc({
 			"doctype":"Coupon Codes",
 			"reference_doctype":"Coupon Issue",
 			"reference_name":self.name,
@@ -122,12 +121,14 @@ class CouponIssue(Document):
 			"price":self.coupon_amount,
 			"coupon_value":self.coupon_amount,
 			"customer":self.customer,
-			"customer_name":self.customer_name,
+			"customer_name":self.employee_name,
 			"expired_date": str(self.expired_date) + " 23:59:59",
 			"balance_amount":self.coupon_amount,
-			"balance_coupon_value":self.coupon_amount
+			"balance_coupon_value":self.coupon_amount,
+			"note":"បញ្ជេញគូប៉ុងអោយមេផ្នែកគ្រប់គ្រង " + self.employee_name 
  
 		}).insert(ignore_permissions=True)
+		self.coupon = doc.name
 
 	def create_customer(self):
 		if not self.customer:

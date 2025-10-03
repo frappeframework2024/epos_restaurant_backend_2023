@@ -56,6 +56,6 @@ def get_product(menu):
 
 
 def get_shortcut_menu():
-    sql = "select name, shortcut_menu, parent_pos_menu from `tabPOS Menu` where shortcut_menu=1 and disabled=0"
+    sql = "select name, shortcut_menu, parent_pos_menu,pos_menu_name_en,pos_menu_name_kh,if(coalesce(pos_menu_name_etc,'') = '',pos_menu_name_en,pos_menu_name_etc) pos_menu_name_etc from `tabPOS Menu` where shortcut_menu=1 and disabled=0"
     data = frappe.db.sql(sql, as_dict=1)
     return data

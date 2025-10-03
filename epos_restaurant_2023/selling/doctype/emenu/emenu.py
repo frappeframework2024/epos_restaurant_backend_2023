@@ -21,6 +21,7 @@ class eMenu(WebsiteGenerator):
 					product_code,
 					product_name_en,
 					product_name_kh,
+                    if(coalesce(product_name_etc,'') = '',product_name_en,product_name_etc) product_name_etc,
 					price,
 					ifnull(photo,'files/no_image.jpg') as photo,
 					prices,
@@ -101,13 +102,13 @@ class eMenu(WebsiteGenerator):
 
 
 def get_menus(parent_menu):
-    sql = "select name, photo, shortcut_menu from `tabPOS Menu` where parent_pos_menu = %(parent_menu)s and disabled=0"
+    sql = "select name, photo, shortcut_menu,pos_menu_name_en,pos_menu_name_kh,if(coalesce(pos_menu_name_etc,'') = '',pos_menu_name_en,pos_menu_name_etc) pos_menu_name_etc from `tabPOS Menu` where parent_pos_menu = %(parent_menu)s and disabled=0"
     data = frappe.db.sql(sql, {"parent_menu": parent_menu}, as_dict=1)
     return data
 
 
 def get_shortcut_menu():
-    sql = "select name, shortcut_menu from `tabPOS Menu` where shortcut_menu=1 and disabled=0"
+    sql = "select name, shortcut_menu,pos_menu_name_en,pos_menu_name_kh,if(coalesce(pos_menu_name_etc,'') = '',pos_menu_name_en,pos_menu_name_etc) pos_menu_name_etc from `tabPOS Menu` where shortcut_menu=1 and disabled=0"
     data = frappe.db.sql(sql, as_dict=1)
     return data
 

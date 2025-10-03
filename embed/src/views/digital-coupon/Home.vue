@@ -1,10 +1,5 @@
 <template>
-    <div>
-        <!-- <h1>Hello this is my home page</h1>
-            <ComDailyUseChart/>
-        {{ homeData }} -->
-    
-    
+    <div> 
         <div class="main w-11	mx-auto flex flex-column gap-4">
             <div>
                 <ComUserProfile/>
@@ -21,12 +16,8 @@
     
             <div class="transaction-wrapper p-4 border-round-xl">
                 <ComCouponRecentTransaction/>
-            </div>
-    
-            <!-- <div class="card flex justify-content-center my-5">
-              <Button label="Submit" />
-          </div> -->
-    
+            </div> 
+
         </div>
     
     </div>
