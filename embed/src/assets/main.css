@@ -235,7 +235,7 @@ table {
   font-style: normal;
 }
 .balance-wrapper {
-  background-color: var(--blue-300);
+  background-color: #075de9b0;
   color: var(--surface-0);
   box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
 }
@@ -246,9 +246,11 @@ table {
 .transaction-item {
   box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
   line-height: 1.2;
+  background-color: #ffffff7a;
 }
 .transaction-item small {
   color: var(--surface-800);
+  font-weight: 600;
 }
 .info-list .list-value {
   font-weight: 700;
@@ -257,12 +259,24 @@ table {
   background: #ff000026;
   border-radius: 50%;
   padding: 10px;
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
 }
 .welcome-label {
   color:var(--blue-300);
 } 
 .tran-price {
   color: var(--green-700);
+}
+
+.main {
+  flex: 1;
+  background: url(@/assets/images/mobile_background.svg) no-repeat center center;
+  background-size: cover;
+  max-width: 28rem;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+.content {
+  margin-bottom: 7rem;
 }

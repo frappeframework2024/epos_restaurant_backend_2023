@@ -366,3 +366,21 @@ def get_store_cashier_shift_info():
     data = frappe.db.sql(sql,{"posting_date":working_date},as_dict=1)
 
     return data
+
+@frappe.whitelist()
+def update_manager_coupon_status():
+    sql = "select name,reference_docname from `tabCoupon Codes` where reference_doctype = 'Coupon Issue' and expired_date<now() and coupon_status = 'Used'"
+    expired_coupon_codes = frappe.db.sql(sql,as_dict = 1)
+
+    # find coupon balance and debit account and credit account to post to GL
+    
+
+    sql="update `tabCoupon Codes` set coupon_status = 'Expired' where reference_doctype = 'Coupon Issue' and expired_date<now() and coupon_status = 'Used'"
+    frappe.db.sql(sql)
+
+    # submit coupon balance to gl entry
+
+
+    frappe.db.commit()
+    
+

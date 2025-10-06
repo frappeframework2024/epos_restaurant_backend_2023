@@ -79,6 +79,7 @@
    "label": "Coupon",
    "link_filters": "[[{\"fieldname\":\"coupon\",\"field_option\":\"Coupon Codes\"},\"coupon_status\",\"=\",\"Unused\"]]",
    "mandatory_depends_on": "eval:doc.coupon_type=='Coupon Card'",
+   "no_copy": 1,
    "options": "Coupon Codes",
    "search_index": 1
   },
@@ -88,7 +89,9 @@
    "fieldname": "coupon_number",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Coupon Number"
+   "label": "Coupon Number",
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "column_break_zwrt",
@@ -157,6 +160,7 @@
    "options": "Business Branch"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "expired_date",
    "fieldtype": "Date",
    "in_list_view": 1,
@@ -168,7 +172,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-10-02 18:40:58.300606",
+ "modified": "2025-10-06 11:34:39.799514",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Issue",

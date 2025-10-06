@@ -311,7 +311,19 @@ class Sale(Document):
 		
 		# validate redeem amount  with sale type redeem
 		# check redeem amount with coupon amount remaining
-		if self.sale_type =="Redeem":
+		if self.sale_type =="Top Up":
+			# server validation for top up check if coupon have sale record
+			if self.sale_products:
+				coupon = self.sale_products[0].coupons
+				if not isinstance(coupon, dict):
+					coupon = json.loads(coupon)[0]
+					sql = "select name from `tabCoupon Transaction` where coupon_code = %(coupon_code)s and transaction_type = 'Sale Coupon' limit 1"
+					if not frappe.db.sql(sql,{"coupon_code":coupon.get("name")}):
+						frappe.throw(_("This coupon number is not a used coupon. Please sale this coupon first."))
+
+			 
+
+		elif self.sale_type =="Redeem":
 			
 			for sp in self.sale_products:
 				if sp.coupons:
@@ -328,6 +340,9 @@ class Sale(Document):
 								frappe.throw(_("Invalid redeem amount. Please check coupon balance again."))
 						else:
 							frappe.throw(_("Invalid  Coupon Code"))
+
+
+	
 	
 	def on_submit(self):
 		if self.flags.ignore_on_submit == True:

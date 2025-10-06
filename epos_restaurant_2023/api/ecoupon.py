@@ -337,8 +337,10 @@ def daily_scan_coupon_chart(params):
 
 @frappe.whitelist(allow_guest=True)
 def check_coupon_code(coupon_number):  
+  
     _coupon_numbers = coupon_number.split("|") 
     coupon_number = _coupon_numbers[0]
+     
     if len(_coupon_numbers)>1:
         from datetime import datetime
         time_obj = datetime.strptime(_coupon_numbers[1], "%H:%M").time()
@@ -350,13 +352,22 @@ def check_coupon_code(coupon_number):
         if now > target_dt:
             return {
                 "status":False,
-                "msg":"QR Code was expired",
+                "msg":"កូដគូប៉ុងត្រូវបានផុតកំណត់",
                 "data":None
             }
+    
 
-    coupon = """select name,coupon from `tabCoupon Codes` where coupon = %(coupon_number)s and coupon_status = 'Used' limit 1""" 
-    coupon_data = frappe.db.sql(coupon, {"coupon_number":coupon_number}, as_dict=1)       
+    coupon = """select name,coupon, coupon_status from `tabCoupon Codes` where coupon = %(coupon_number)s and coupon_status in ('Used','Expired') order by creation desc limit 1""" 
+    coupon_data = frappe.db.sql(coupon, {"coupon_number":coupon_number}, as_dict=1)  
+  
     if coupon_data and len(coupon_data) > 0:
+      
+       if coupon_data[0]["coupon_status"] == "Expired":
+           return {
+               "status":False,
+                "msg":"គូប៉ុងត្រូវបានផុតកំណត់",
+                "data":None
+            }
        pass
     else:
         return {
@@ -373,6 +384,8 @@ def check_coupon_code(coupon_number):
             coupon_number = %(coupon_number)s""" 
     data = frappe.db.sql(sql, {"coupon_number":coupon_number,"coupon_code":coupon_id}, as_dict=1) 
 
+    
+
     if data and len(data) > 0: 
         if data[0].get("coupon_amount",0) <= 0:
             return {
@@ -385,13 +398,15 @@ def check_coupon_code(coupon_number):
             customer_name,
             customer_photo
         from `tabCoupon Transaction` 
-        where transaction_type in ( 'Sale Coupon','Top Up') 
+        where transaction_type in ( 'Sale Coupon','Top Up','Coupon Issue') 
             and coupon_number = %(coupon_number)s 
             and coupon_code = %(coupon_code)s
             and status in ( 'Active' ,'Locked')
         order by creation desc 
         limit 1"""
         cus = frappe.db.sql(cus_sql, {"coupon_number":coupon_number, "coupon_code":coupon_id}, as_dict=1) 
+     
+    
         if cus and len(cus) > 0:
             return {
                 "status":True,
@@ -447,7 +462,10 @@ def unlock_db(name):
 
 
 @frappe.whitelist()
-def on_scan_use_coupon(params):    
+def on_scan_use_coupon(params): 
+    params["coupon_number"] =  params["coupon_number"].split("|")[0]
+   
+
     # VALIDATE cashier shift open
     if not frappe.db.exists("Cashier Shift",{"is_closed":0}):
         frappe.throw(_("There's no cashier shift opened."))
@@ -468,6 +486,7 @@ def on_scan_use_coupon(params):
     original_coupon_amount = coupon_amount
 
     check = check_coupon_code(params["coupon_number"])
+
     if not check.get("status",False):         
         frappe.throw(check.get("msg","Not enough balance"))
 
@@ -531,7 +550,7 @@ def on_scan_use_coupon(params):
                                             and coupon_number = %(coupon_number)s      
                                             and coupon_code = %(coupon_code)s
                                             and markup_percentage = %(markup_percentage)s
-                                            and transaction_type in ('Sale Coupon', 'Top Up')
+                                            and transaction_type in ('Sale Coupon', 'Top Up','Coupon Issue')
                                             order by creation desc
                                             limit 1"""
                         last_sale_or_topup = frappe.db.sql(sql_last_sale_or_topup, {
@@ -636,6 +655,11 @@ def on_scan_use_coupon(params):
 
                 
                 unlock_db(params.get("coupon_number"))
+
+                #send success event to coupon manager app to show payment success message
+                # we should check if the coupon code is manager code so we dont need to send unusfull request to client
+                frappe.enqueue("epos_restaurant_2023.api.ecoupon.alert_use_coupon_successful", queue='short', data=return_data)
+                
                 return return_data
             
             else:              
@@ -647,7 +671,17 @@ def on_scan_use_coupon(params):
     unlock_db(params.get("coupon_number"))
 
 
+@frappe.whitelist()
+def alert_use_coupon_successful(data):
+    # check if it is manager coupon
+    sql = "select reference_doctype from `tabCoupon Codes` where coupon = %(coupon_number)s and coupon_status='Used' limit 1"
+    coupon_data = frappe.db.sql(sql, {"coupon_number":data.get("coupon_number")},as_dict = 1)
+    if coupon_data:
+        from epos_restaurant_2023.custom_socket_client import emit_event
+        emit_event("RefreshData",{"action":"use_coupon_successfully", "data":data})
+    
 def get_current_balance(coupon_number, coupon_id):
+
     sql  = """select 
                 coalesce(sum(coupon_amount) , 0) as coupon_amount
             from `tabCoupon Transaction` 

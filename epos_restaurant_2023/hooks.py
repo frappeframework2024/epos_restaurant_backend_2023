@@ -200,6 +200,9 @@ scheduler_events = {
     "all": [
 		"epos_restaurant_2023.api.custom_reminder.send_reminders"   
 	],
+    "daily":[
+        "epos_restaurant_2023.api.ecoupon.update_manager_coupon_status"
+    ]
 
     
 }

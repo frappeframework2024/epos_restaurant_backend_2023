@@ -33,14 +33,9 @@ class CouponTransaction(Document):
 		if self.transaction_type == "Used":
 			self.transaction_amount = self.actual_amount
 
-
-
-
 		## calculate markup percentage
 		if self.transaction_type != "Used":
 			self.markup_percentage = ((self.coupon_amount - self.actual_amount)/(self.actual_amount or 1)) * 100
-
-		
 
 	def after_insert(self):
 
@@ -122,3 +117,28 @@ def general_ledger_credit(self,account):
 	docs.append(doc)
 	submit_general_ledger_entry(docs=docs,commit=False)
 		
+@frappe.whitelist()
+def move_to_history():
+	from frappe.model.document import bulk_insert
+	from datetime import datetime, timedelta
+	setting = frappe.get_doc("ePOS Settings")
+	cutoff_date = datetime.now() - timedelta(days=(setting.clear_coupon_clear_days or 14))
+	transactions = frappe.db.get_list('Coupon Transaction',filters={'moved_to_history':0},fields=['*'],as_list=False)
+	clear_transactions = frappe.db.get_list('Coupon Transaction',filters={ 'creation': ['<', cutoff_date]},fields=['name'],as_list=False)
+	try:
+		if transactions:
+			bulk_insert("Coupon Transaction History", convert_to_history(transactions) , chunk_size=10000)
+			frappe.db.sql("update `tabCoupon Transaction` set moved_to_history = 1 where name in %(names)s",{'names':[a.name for a in transactions]})
+		if clear_transactions:
+			frappe.db.delete("Coupon Transaction",filters={"name": ["in", [a.name for a in clear_transactions]]})
+		frappe.db.commit()
+		msg = "Moved {0} rows to history".format(len(transactions)) if len(transactions)>0 else "All rows have already been moved to history"
+		return msg
+	except Exception as e:
+		frappe.db.rollback()
+
+def convert_to_history(transactions):
+	for a in transactions:
+		a.doctype = "Coupon Transaction History"
+		doc = frappe.get_doc(a)
+		yield doc

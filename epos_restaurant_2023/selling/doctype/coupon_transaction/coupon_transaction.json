@@ -38,6 +38,7 @@
   "coupon_amount",
   "currency",
   "exchange_rate",
+  "moved_to_history",
   "column_break_xzik",
   "status",
   "note",
@@ -61,8 +62,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "POS Profile",
+   "mandatory_depends_on": "eval:doc.reference_doctype !='Coupon Issue'",
    "options": "POS Profile",
-   "reqd": 1,
    "search_index": 1
   },
   {
@@ -71,8 +72,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "POS Station",
+   "mandatory_depends_on": "eval:doc.reference_doctype !='Coupon Issue'",
    "options": "POS Station",
-   "reqd": 1,
    "search_index": 1
   },
   {
@@ -88,6 +89,7 @@
    "default": "Today",
    "fieldname": "posting_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Posting Date",
    "search_index": 1
   },
@@ -314,11 +316,17 @@
    "fieldtype": "Dynamic Link",
    "label": "Reference Name",
    "options": "reference_doctype"
+  },
+  {
+   "default": "0",
+   "fieldname": "moved_to_history",
+   "fieldtype": "Check",
+   "label": "Moved To History"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-02 12:59:37.767029",
+ "modified": "2025-10-05 10:23:01.809880",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Transaction",

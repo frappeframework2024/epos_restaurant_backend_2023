@@ -8,9 +8,11 @@ from frappe.model.document import Document
 
 class CouponIssue(Document):
 	def validate(self):
+		if self.expired_date<self.posting_date:
+			frappe.throw(_("Expired date must be greater than posting date"))
 		
-		if not self.customer and self.employee:
-			self.create_customer()
+		
+
 
 		self.validate_coupon_code()
 
@@ -27,13 +29,25 @@ class CouponIssue(Document):
 			frappe.throw(_("Please enter coupon amount"))
 
 
-		# create coupon code 
+		if self.customer:
+			# check if employee current active use coupon
+			sql = "select name from `tabCoupon Codes` where customer=%(customer)s  and coupon_status = 'Used'"
+			if frappe.db.sql(sql,{"customer":self.customer, "coupon_number":self.coupon_number}):
+				frappe.throw(_("This employee is already have active use coupon"))
+
+
+		if not self.customer and self.employee:
+			self.create_customer()
+
+		
+		if self.coupon_type=="Digital Coupon":
+			self.create_coupon_code()
+
 
 
 	def on_submit(self):
-		if self.coupon_type=="Digital Coupon":
-			self.create_coupon_code()
-		else:
+		
+		if self.coupon_type=="Coupon Card":
 			frappe.db.set_value("Coupon Codes",self.coupon,{
 				"coupon_status":"Used",
 				"price":self.coupon_amount,
@@ -53,12 +67,14 @@ class CouponIssue(Document):
 
 		self.add_gl_entry()
 		
-
-	def on_cancel(self):
-		# validate coupon use transaction if have use not allow to delete
+	def before_cancel(self):
 		if frappe.db.exists("Coupon Transaction",{"coupon_code":self.coupon,"transaction_type":"Used"}):
 			frappe.throw(_("You cannot cancel this coupon issue. This coupon number have been used in coupon transaction"))
 
+
+	def on_cancel(self):
+		# validate coupon use transaction if have use not allow to delete
+		# frappe.throw(str(frappe.as_json(self)))
 		frappe.db.sql("delete from `tabCoupon Transaction` where coupon_code = %(coupon_code)s and reference_doctype = 'Coupon Issue' and reference_name = %(name)s",{"name":self.name,"coupon_code":self.coupon})
 
 
@@ -83,8 +99,10 @@ class CouponIssue(Document):
 		else:
 			# we check coupon transaction type = Digital Coupon if user cancel issue we delete record from tab Coupon Code
 			frappe.db.sql("delete from `tabCoupon Codes` where name = %(name)s",{"name":self.coupon})
+		
 
  
+		self.coupon = ""
 		
 	def validate_coupon_code(self):
 		
@@ -98,7 +116,8 @@ class CouponIssue(Document):
 		else:
 			# validate on digital coupon
 			if self.coupon:
-				if frappe.get_cached_value("Coupon Codes",self.coupon,"reference_doctype")!="Coupon Register":
+				if frappe.db.get_value("Coupon Codes",self.coupon,"reference_doctype")!="Coupon Issue":
+					frappe.throw("dopme")
 					self.coupon = ""
 			# check coupon existing 
 			sql = "select name from `tabCoupon Codes` where coupon=%(coupon_number)s and coupon_status in ('Used','Unused') limit 1"
@@ -125,7 +144,8 @@ class CouponIssue(Document):
 			"expired_date": str(self.expired_date) + " 23:59:59",
 			"balance_amount":self.coupon_amount,
 			"balance_coupon_value":self.coupon_amount,
-			"note":"បញ្ជេញគូប៉ុងអោយមេផ្នែកគ្រប់គ្រង " + self.employee_name 
+			"note":"បញ្ជេញគូប៉ុងអោយមេផ្នែកគ្រប់គ្រង " + self.employee_name ,
+			"sale_date":self.posting_date
  
 		}).insert(ignore_permissions=True)
 		self.coupon = doc.name
@@ -161,8 +181,6 @@ class CouponIssue(Document):
 		doc =frappe.get_doc( {
 			"doctype":"Coupon Transaction",
 			"business_branch":self.business_branch,
-			"pos_profile":"Main POS Profile",
-			"pos_station":"Cashier Station",
 			"posting_date":self.posting_date,
 			"expired_date":str( self.expired_date) + " 23:59:58" , # will add with houre
 			"transaction_type":"Coupon Issue",

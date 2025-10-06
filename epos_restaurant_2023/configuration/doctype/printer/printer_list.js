@@ -1,8 +1,5 @@
 frappe.listview_settings['Printer'] = {
     onload: function(listview) {
-        
-
-        
         listview.page.add_inner_button(__('Update Printer to Products'), function() {
             
             frappe.confirm(
@@ -16,8 +13,5 @@ frappe.listview_settings['Printer'] = {
                 
             )
         });
-
-       
-
     }
 };

@@ -5,7 +5,9 @@ import ServerReport from '@/views/server-report/ServerReport.vue'
 import DigitalCoupon from '@/views/digital-coupon/Home.vue'
 import Transaction from '@/views/digital-coupon/Transaction.vue'
 import MyAccount from '@/views/digital-coupon/MyAccount.vue'
-
+import ComCouponTransactionDetail from '@/views/digital-coupon/components/ComCouponTransactionDetail.vue'
+import { useAuth } from "@/hooks/useAuth.js";
+const {isAuthorize} = useAuth()
 const routes = [
   {
 	path: "/",
@@ -28,19 +30,25 @@ const routes = [
     path: "/embed/ecoupon",
     name: "DigitalCoupon",
     component: DigitalCoupon,
-    meta: { layout: "DigitalCouponLayout" }
+    meta: { layout: "DigitalCouponLayout",requiresAuth: true }
   },
   {
     path: "/embed/ecoupon/transaction",
     name: "eCouponTransaction",
     component: Transaction,
-    meta: { layout: "DigitalCouponLayout" }
+    meta: { layout: "DigitalCouponLayout",requiresAuth: true }
   },
   {
     path: "/embed/ecoupon/my-account",
     name: "eCouponMyAccopunt",
     component: MyAccount,
-    meta: { layout: "DigitalCouponLayout" }
+    meta: { layout: "DigitalCouponLayout",requiresAuth: true }
+  },
+  {
+    path: "/embed/ecoupon/transaction-detail/:id",
+    name: "eCouponTransactionDetail",
+    component: ComCouponTransactionDetail,
+    meta: { layout: "DigitalCouponLayout",requiresAuth: true }
   }
 ];
 
@@ -48,6 +56,20 @@ const router = createRouter({
   base: "/embed/",
   history: createWebHistory(),
   routes,
+});
+
+
+router.beforeEach(async (to, from, next) => {
+  if(to.meta.requiresAuth){
+    if(   !isAuthorize.value){
+      next("/login")
+    }else {
+      next()
+    }
+  }else {
+next();
+  }
+  
 });
 
 export default router;

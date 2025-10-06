@@ -21,6 +21,7 @@
   "customer",
   "customer_name",
   "customer_photo",
+  "transaction_amount",
   "section_break_pyrw",
   "transaction_type",
   "coupon_shift",
@@ -307,11 +308,16 @@
    "print_hide": 1,
    "read_only": 1,
    "report_hide": 1
+  },
+  {
+   "fieldname": "transaction_amount",
+   "fieldtype": "Currency",
+   "label": "Transaction Amount"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-03 08:58:24.766343",
+ "modified": "2025-10-04 15:33:00.221574",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Transaction History",

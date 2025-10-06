@@ -8,6 +8,7 @@ from frappe import _
 
 class Employee(Document):
 	def validate(self):
+	
 		if self.flags.ignore_validate == True:
 			return
 		if self.password:

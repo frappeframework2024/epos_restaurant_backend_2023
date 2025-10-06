@@ -5,6 +5,11 @@
     <router-view />
     </component>
   </div>
+  <DynamicDialog v-if="isMobile"  :pt="{
+        root: { class: 'p-dialog-maximized' }
+    }"/>
+  <DynamicDialog v-else/>
+
   <Toast position="top-center">
         <template #message="slotProps">
             <div class="flex flex-column" style="flex: 1">
@@ -28,7 +33,7 @@ import DigtalCouponLayout from "@/layouts/DigtalCouponLayout.vue"
 import { useRoute } from "vue-router";
 const route = useRoute()
 const toast = useToast();
- 
+window.toast = toast;
 const layout = computed(() => {
   switch (route.meta.layout) {
     case "DigitalCouponLayout":
