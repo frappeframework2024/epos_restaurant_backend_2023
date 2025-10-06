@@ -47,8 +47,8 @@ const confirmPassword = ref('')
 const getpass = ref('')
 const loading = ref(false)
 const dialogRef = inject('dialogRef')
-async function changePassword(){
 
+async function changePassword(){
     loading.value = true;
    await getApi("management_coupon.change_password", {
         old_password: oldPassword.value,

@@ -10,7 +10,7 @@
                 </div>
             </div>
 
-            <div class="">
+            <div class="" v-if="homeData?.coupon_info">
                 <Button class="w-full py-3" :label="t('Pay Now')" icon="pi pi-credit-card" @click="payNow"/>
             </div>
 

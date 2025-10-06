@@ -40,8 +40,16 @@ class CouponTransaction(Document):
 	def after_insert(self):
 
 		if self.transaction_type == "Used":
+			unearned_revenue = ""
+
+			sql="select  credit_account  from `tabCoupon Transaction` where coupon_code=%(coupon_code)s and coupon_number = %(coupon_number)s and transaction_type in ('Sale Coupon','Coupon Issue') and coalesce(credit_account,'')<> ''"
+
+			account_data = frappe.db.sql(sql,{"coupon_code":self.coupon_code, "coupon_number":self.coupon_number},as_dict = 1)
+			if account_data:
+				unearned_revenue = account_data[0].get("credit_account")
+			 
 			#add GL entry
-			unearned_revenue = frappe.get_cached_value("Business Branch",self.business_branch, "default_unearned_revenue_account")
+		
 			income_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_income_account")
 			pos_profile =  frappe.db.get_value("POS Profile",self.pos_profile,["pos_config","coupon_use_account"],as_dict=1)
 			income_account = pos_profile.coupon_use_account if (pos_profile.coupon_use_account or "") != "" else income_account
@@ -56,9 +64,15 @@ class CouponTransaction(Document):
 			
 			if len(pos_config_accounts) > 0:
 				account = pos_config_accounts[0]
-				unearned_revenue = account.get("default_unearned_revenue_account","") if account.get("default_unearned_revenue_account","") else unearned_revenue
+				if not unearned_revenue:
+					unearned_revenue = account.get("default_unearned_revenue_account","") if account.get("default_unearned_revenue_account","") else unearned_revenue
 				if not income_account:
 					income_account = account.get("default_income_account","") if account.get("default_income_account","") else income_account
+
+			
+			if not unearned_revenue:
+				unearned_revenue = frappe.get_cached_value("Business Branch",self.business_branch, "default_unearned_revenue_account")
+			
 
 			general_ledger_debit(self,account = {"account":unearned_revenue,"amount":abs(self.coupon_amount)})
 			general_ledger_credit(self,account = {"account":income_account,"amount":abs(self.coupon_amount)})
@@ -117,6 +131,7 @@ def general_ledger_credit(self,account):
 	docs.append(doc)
 	submit_general_ledger_entry(docs=docs,commit=False)
 		
+
 @frappe.whitelist()
 def move_to_history():
 	from frappe.model.document import bulk_insert

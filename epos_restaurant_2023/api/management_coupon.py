@@ -17,7 +17,7 @@ def get_home_page_data():
         "user_info": user_info,
         "coupon_info": coupon_info,
         "recent_coupon_transaction": recent_transaction,
-        "chart_data":get_daily_coupon_use_chart_data(coupon_info.get("coupon"))
+        "chart_data":get_daily_coupon_use_chart_data(coupon_info.get("coupon")) if coupon_info else []
     }
 
 @frappe.whitelist()
@@ -93,7 +93,7 @@ def get_managment_qr_for_payment(coupon_number,timespan):
     from datetime import datetime, timedelta
     now = datetime.now()
     # Add 5 minutes
-    new_datetime = now + timedelta(minutes=1)
+    new_datetime = now + timedelta(minutes=3)
     # Extract only hour and minute
     time_str = new_datetime.strftime("%H:%M")
     # return {encrypt_aes_base64(f"{coupon_number}|{time_str}"),f"{coupon_number}|{time_str}"}
@@ -155,6 +155,9 @@ def change_password(old_password, new_password, confirm_password):
 
     if new_password != confirm_password:
         frappe.throw(_("New password and confirm password do not match."))
+        
+    if old_password == new_password:
+        frappe.throw(_("New password cannot be the same as old password."))
 
     # Verify old password
     try:

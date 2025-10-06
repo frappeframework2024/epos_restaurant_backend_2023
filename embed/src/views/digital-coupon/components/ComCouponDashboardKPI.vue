@@ -1,5 +1,7 @@
 <template>   
-        <div>
+    <div>
+        <template v-if="homeData?.coupon_info">
+<div>
             <p>{{t('Available Balance')}}</p>
             <h1 class="font-bold text-5xl"><currencyFormat :value="balance"/></h1>
         </div>
@@ -18,17 +20,29 @@
                 <ComSubCouponSummary :value="`${usedCouponPercent} %`" :label="t('Usage')" icon="couponUsageIcon"/>
             </div>
         </div>
+        </template>
+        <template v-else>
+            <h2>
+{{ t("You do not active coupon") }}
+            </h2>
+            <p>
+                {{ t("Please contact your manager to issue your coupon credit.") }}
+            </p>
+            
+        </template>
+    </div>
+        
 </template>
 <script setup>
-import { useI18n } from 'vue-i18n'
+ 
 import ProgressBar from 'primevue/progressbar';
 import { useHome } from '@/hooks/ecoupon/useHome.js';
 import ComSubCouponSummary from '@/views/digital-coupon/components/ComSubCouponSummary.vue'
 import { computed, ref } from 'vue';
 import dayjs from "dayjs";
 
-const { t,locale } = useI18n()
-const { getHomeData, homeData } = useHome()
+ 
+const {  homeData } = useHome()
 
 const usedCouponPercent = computed(() => {
     const use_amount = homeData?.value?.coupon_info?.use_amount ?? 0

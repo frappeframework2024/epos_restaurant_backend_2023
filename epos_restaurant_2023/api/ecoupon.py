@@ -337,10 +337,10 @@ def daily_scan_coupon_chart(params):
 
 @frappe.whitelist(allow_guest=True)
 def check_coupon_code(coupon_number):  
-  
+
     _coupon_numbers = coupon_number.split("|") 
     coupon_number = _coupon_numbers[0]
-     
+
     if len(_coupon_numbers)>1:
         from datetime import datetime
         time_obj = datetime.strptime(_coupon_numbers[1], "%H:%M").time()
@@ -358,8 +358,9 @@ def check_coupon_code(coupon_number):
     
 
     coupon = """select name,coupon, coupon_status from `tabCoupon Codes` where coupon = %(coupon_number)s and coupon_status in ('Used','Expired') order by creation desc limit 1""" 
+    
     coupon_data = frappe.db.sql(coupon, {"coupon_number":coupon_number}, as_dict=1)  
-  
+    
     if coupon_data and len(coupon_data) > 0:
       
        if coupon_data[0]["coupon_status"] == "Expired":

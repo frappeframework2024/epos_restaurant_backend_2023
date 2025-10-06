@@ -5,7 +5,7 @@
                 <div><ComIcon icon="transactionIcon" height="40px"></ComIcon></div></div>
             <div>
                 <h2>{{ t("Transactions") }}</h2>
-                <p>Your payment history</p>
+                <p>{{t("Your payment history")}}</p>
             </div>
         </div>
     </div> 
@@ -20,7 +20,7 @@
     </div>
 </template>
 <script setup>
-import { ref, } from "@/plugin"
+
 import { useHome } from "@/hooks/ecoupon/useHome.js"
 import { computed, onMounted } from "vue"
 import ComCouponTransactionCard from "@/views/digital-coupon/components/ComCouponTransactionCard.vue"

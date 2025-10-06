@@ -252,9 +252,11 @@ table {
   color: var(--surface-800);
   font-weight: 600;
 }
+
 .info-list .list-value {
   font-weight: 700;
 }
+
 .transaction-icon {
   background: #ff000026;
   border-radius: 50%;
@@ -269,14 +271,16 @@ table {
   color: var(--green-700);
 }
 
+
 .main {
   flex: 1;
   background: url(@/assets/images/mobile_background.svg) no-repeat center center;
   background-size: cover;
-  max-width: 28rem;
+  
   min-height: 100vh;
   overflow-y: auto;
 }
+
 .content {
   margin-bottom: 7rem;
 }

@@ -192,6 +192,9 @@ def reset_sale_transaction():
             frappe.db.sql("delete from `tabPromotion Customer Group`")
             frappe.db.sql("delete from `tabHappy Hours Promotion`")
             frappe.db.sql("delete from `tabPOS Voucher Payment`")
+            frappe.db.sql("delete from `tabCoupon Issue`")
+            frappe.db.sql("delete from `tabCoupon Codes` where reference_doctype = 'Coupon Issue'")
+            
             frappe.db.sql("delete from `tabVoucher`")
             frappe.db.sql("delete from `tabVoucher Payment`")
             frappe.db.sql("delete from `tabVersion`")

@@ -7,20 +7,20 @@ export function handleServerMessage(m){
     ]
     const message = JSON.parse(JSON.stringify(m))
     if(message._error_message){
-        
-        window.postMessage({action:"show_error",message: message._error_message} , '*')
+     
+         app.showError(message._error_message)
     }
 
     if(message._server_messages){
  
+       
         const _server_messages = JSON.parse(message._server_messages)
  
 		 
 			_server_messages.forEach(r => {
                 if(JSON.parse(r).message){
-                    window.postMessage({action:"show_error",message:JSON.parse(r).message.replace("Error: ","")} , '*')
-
                     
+                     app.showError(JSON.parse(r).message.replace("Error: ",""))
                 }
                  
                 
@@ -41,13 +41,13 @@ export function handleServerMessage(m){
             if(arrException[0]){
                 if(arrException[0] == 'frappe.exceptions.ValidationError')
 
-                window.postMessage({action:"show_error",message:arrException[1]} , '*')
+                
+                    app.showError(arrException[1])
 
                 else{
                     const msg = dictionary.find((r)=>r.exception == arrException[0])
                     if(msg.text)
-            
-                    window.postMessage({action:"show_error",message:msg.text} , '*')
+                        app.showError(msg.text)
                 }
                     
             }
@@ -55,6 +55,8 @@ export function handleServerMessage(m){
 
         
     }else{ 
-        window.postMessage({action:"show_error",message:message.httpStatusText} , '*')
+        
+        app.showError(message.httpStatusText)
+
     }
 }

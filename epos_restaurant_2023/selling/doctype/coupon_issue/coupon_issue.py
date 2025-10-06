@@ -196,8 +196,11 @@ class CouponIssue(Document):
 			"coupon_amount":self.coupon_amount,
 			"exchange_rate":1,
 			"reference_doctype":"Coupon Issue",
-			"reference_name":self.name
+			"reference_name":self.name,
+			"debit_account":self.debit_account,
+			"credit_account":self.credit_account
 		})
+ 
 		doc.insert(ignore_permissions=True)
 
 	def add_gl_entry(self):
