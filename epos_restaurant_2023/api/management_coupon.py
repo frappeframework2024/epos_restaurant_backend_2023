@@ -39,7 +39,13 @@ def get_coupon_info(employee_code):
         sql = "select coalesce( sum(coupon_amount),0) as total_use  from `tabCoupon Transaction` where transaction_type = 'Used' and coupon_code = %(coupon_code)s and status !='Deleted'"
         use_amount = frappe.db.sql(sql,{"coupon_code":data[0].get("coupon")},as_dict=1)[0].get("total_use")
         data[0]["use_amount"] = abs( use_amount)
-        
+        data[0]["coupon_status"] = frappe.get_cached_value("Coupon Codes",data[0].get("coupon"),"coupon_status")
+        data[0]["coupon_status"] =  "Active" if data[0]["coupon_status"] =="Used" else "Expired"
+        if frappe.utils.getdate(data[0]["expired_date"])< frappe.utils.getdate(frappe.utils.today()):
+            data[0]["coupon_status"] = "Expired"
+
+
+
         return data[0]
     
     return None

@@ -2,7 +2,7 @@
     <div class="card justify-center">
        
        <form @submit.prevent="changePassword">
-            <div class="field mb-4">
+            <div class="field mb-2">
                 <label class="block mb-2 font-medium">{{t("Current Password")}}</label>
                 <input 
                 v-model="oldPassword"

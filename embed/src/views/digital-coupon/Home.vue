@@ -43,11 +43,16 @@ import ComPaymentSuccess from '@/views/digital-coupon/components/ComPaymentSucce
 
 const { getHomeData, homeData } = useHome()
 const dialog = useDialog()
-const dialogRef = inject('dialogRef');
+
 const t = window.t;
 
 const payNow = () => {
-    const dialogRef = dialog.open(ComPayCardInfo, {
+    if (homeData.value == "Expired"){
+        app.showWarning(t("This coupon code is expired."))
+        return;
+        
+    }
+  dialog.open(ComPayCardInfo, {
         data: homeData,
         props: {
             header: t('Payment'),

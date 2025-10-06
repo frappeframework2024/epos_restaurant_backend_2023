@@ -7,6 +7,7 @@
     <img v-if="icon == 'transactionIcon'" :style="{'height' : height}" :class="class" :src="transactionIcon"/>
     <img v-if="icon == 'myAccountIcon'" :style="{'height' : height}" :class="class" :src="myAccountIcon"/>
     <img v-if="icon == 'qrCodeIcon'" :style="{'height' : height}" :class="class" :src="qrCodeIcon"/>
+    <img v-if="icon == 'emptyDataIcon'" :style="{'height' : height}" :class="class" :src="emptyDataIcon"/>
 </template>
 <script setup>
 const theme =window.theme
@@ -29,5 +30,6 @@ import homeIcon from '@/assets/svg/home_icon.svg'
 import transactionIcon from '@/assets/svg/transaction_icon.svg'
 import myAccountIcon from '@/assets/svg/my_account_icon.svg'
 import qrCodeIcon from '@/assets/svg/qr_code.svg'
+import qrCodeIcon from '@/assets/svg/empty_data.svg'
 
 </script>
