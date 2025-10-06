@@ -54,5 +54,8 @@
   "Thu": "ព្រ",
   "Fri": "ស",
   "Sat": "សៅ",
-  "Change Language":"ប្តូរភាសា"
+  "Change Language":"ប្តូរភាសា",
+  "Current Password":"លេខសម្ងាត់បច្ចុប្បន្ន",
+  "New Password":"លេខសម្ងាត់ថ្មី",
+  "Confirm New Password":"បញ្ជាក់លេខសម្ងាត់ថ្មី"
 }

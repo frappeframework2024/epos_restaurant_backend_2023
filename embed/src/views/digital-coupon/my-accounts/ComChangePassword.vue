@@ -3,7 +3,7 @@
        
        <form @submit.prevent="changePassword">
             <div class="field mb-4">
-                <label class="block mb-2 font-medium">Current Password</label>
+                <label class="block mb-2 font-medium">{{t("Current Password")}}</label>
                 <input 
                 v-model="oldPassword"
                 type="password" 
@@ -12,7 +12,7 @@
                 />
             </div>
             <div class="field mb-4">
-                <label class="block mb-2 font-medium">New Password</label>
+                <label class="block mb-2 font-medium">{{t("New Password")}}</label>
                 <input 
                 v-model="newPassword"
                 type="password" 
@@ -22,7 +22,7 @@
             </div>
 
              <div class="field mb-5">
-                <label class="block mb-2 font-medium">Repeat Password</label>
+                <label class="block mb-2 font-medium">{{t("Confirm New Password")}}</label>
                 <input
                 v-model="confirmPassword"
                 type="password" 
@@ -57,7 +57,7 @@ async function changePassword(){
     })
     .then(result => {
        dialogRef.value.close()
-       
+       app.showSuccess("Change Password Success!!")
     })
     .catch(err => {
         console.error(err);
