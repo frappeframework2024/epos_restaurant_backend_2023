@@ -22,6 +22,7 @@ import socket from './utils/socketio';
 import currencyFormat from '@/components/currencyFormat.vue'
 import ComIcon from '@/components/ComIcon.vue'
 import ComDialogContent from '@/components/ComDialogContent.vue'
+import EmptyTemplate from '@/components/EmptyTemplate.vue'
 import router from "./router";
 import { useAuth } from "./hooks/useAuth";
 
@@ -58,6 +59,7 @@ app.component('DynamicDialog', DynamicDialog);
 app.component('currencyFormat', currencyFormat)
 app.component('ComIcon', ComIcon)
 app.component('ComDialogContent', ComDialogContent)
+app.component('EmptyTemplate', EmptyTemplate)
 
 
 // Configure route gaurds

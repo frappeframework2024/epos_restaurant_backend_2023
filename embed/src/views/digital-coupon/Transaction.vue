@@ -65,7 +65,7 @@ onMounted(async () => {
     top: 0;
     z-index: 1000;
     width: 100%;
-    max-width: 28rem; 
+   
 }
 </style>
  

@@ -1766,6 +1766,8 @@ def update_coupon_transaction(self):
 				for c in coupon:
 					ct_doc = frappe.get_doc({
 						"doctype": "Coupon Transaction",
+						"reference_doctype":"Sale",
+						"reference_name":self.name,
 						"business_branch": self.business_branch,
 						"pos_profile": self.pos_profile, 
 						"pos_station":self.pos_station_name,

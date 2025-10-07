@@ -30,6 +30,6 @@ import homeIcon from '@/assets/svg/home_icon.svg'
 import transactionIcon from '@/assets/svg/transaction_icon.svg'
 import myAccountIcon from '@/assets/svg/my_account_icon.svg'
 import qrCodeIcon from '@/assets/svg/qr_code.svg'
-import qrCodeIcon from '@/assets/svg/empty_data.svg'
+import emptyDataIcon from '@/assets/svg/empty_data.svg'
 
 </script>

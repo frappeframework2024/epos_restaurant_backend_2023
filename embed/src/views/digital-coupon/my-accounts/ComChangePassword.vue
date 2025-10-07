@@ -11,7 +11,7 @@
                 required
                 />
             </div>
-            <div class="field mb-4">
+            <div class="field">
                 <label class="block mb-2 font-medium">{{t("New Password")}}</label>
                 <input 
                 v-model="newPassword"
@@ -21,7 +21,7 @@
                 />
             </div>
 
-             <div class="field mb-5">
+             <div class="field">
                 <label class="block mb-2 font-medium">{{t("Confirm New Password")}}</label>
                 <input
                 v-model="confirmPassword"

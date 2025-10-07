@@ -47,11 +47,11 @@ const dialog = useDialog()
 const t = window.t;
 
 const payNow = () => {
-    if (homeData.value == "Expired"){
+    if (homeData.value?.coupon_info?.coupon_status == "Expired"){
         app.showWarning(t("This coupon code is expired."))
         return;
-        
     }
+
   dialog.open(ComPayCardInfo, {
         data: homeData,
         props: {

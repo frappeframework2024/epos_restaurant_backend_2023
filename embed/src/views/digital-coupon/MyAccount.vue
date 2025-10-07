@@ -82,7 +82,7 @@ const {homeData} = useHome()
 
 const avatarLetter = computed(() => {
   if (homeData.value?.user_info?.full_name){
-    return homeData.value?.user_info?.full_name.charAt(0) || ""
+    return homeData.value?.user_info?.full_name.charAt(0).toUpperCase() || ""
   }
   return "NA"
 }

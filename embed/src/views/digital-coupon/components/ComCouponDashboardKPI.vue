@@ -1,8 +1,19 @@
 <template>   
     <div>
         <template v-if="homeData?.coupon_info">
-<div>
+        <div>
+            
+            <Chip
+                :label="t(homeData?.coupon_info.coupon_status || '')"
+                :style="{
+                    float: 'right',
+                    backgroundColor: homeData?.coupon_info.coupon_status === 'Active' ? '#22c55e' : '#ef4444',
+                    color: 'white'
+                }"
+                />
+       
             <p>{{t('Available Balance')}}</p>
+            
             <h1 class="font-bold text-5xl"><currencyFormat :value="balance"/></h1>
         </div>
         <div>
@@ -40,6 +51,8 @@ import { useHome } from '@/hooks/ecoupon/useHome.js';
 import ComSubCouponSummary from '@/views/digital-coupon/components/ComSubCouponSummary.vue'
 import { computed, ref } from 'vue';
 import dayjs from "dayjs";
+
+import Chip from 'primevue/chip';
 
  
 const {  homeData } = useHome()

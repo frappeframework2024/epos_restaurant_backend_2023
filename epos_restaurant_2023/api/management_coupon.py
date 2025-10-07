@@ -32,7 +32,8 @@ def get_user_info():
 
 
 def get_coupon_info(employee_code):
-    sql = "select posting_date, expired_date,coupon_number,coupon,coupon_amount from `tabCoupon Issue` where coupon_type='Digital Coupon' and employee=%(employee_code)s and docstatus = 1 and expired_date>=date(now()) order by posting_date desc limit 1 "
+    sql = "select posting_date, expired_date,coupon_number,coupon,coupon_amount from `tabCoupon Issue` where coupon_type='Digital Coupon' and employee=%(employee_code)s and docstatus = 1 and expired_date>=date(now()) order by creation desc limit 1 "
+    
     data = frappe.db.sql(sql, {"employee_code":employee_code},as_dict = 1)
     if data:
         # get total use transaction 

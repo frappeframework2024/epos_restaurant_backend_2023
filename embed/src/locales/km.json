@@ -64,5 +64,8 @@
   "Please contact your manager to issue your coupon credit.":"សូមទាក់ទងអ្នកគ្រប់គ្រងរបស់អ្នក ដើម្បីចេញគូប៉ុងថ្មីអោយអ្នក។",
   "This coupon code is expired.":"គូប៉ុងនេះត្រូវបានផុតកំណត់។",
   "Warning":"បញ្ជាក់",
-  "New password cannot be the same as old password.":"ពាក្យសម្ងាត់ថ្មីមិនអាចដូចគ្នានឹងពាក្យសម្ងាត់ចាស់ទេ។"
+  "New password cannot be the same as old password.":"ពាក្យសម្ងាត់ថ្មីមិនអាចដូចគ្នានឹងពាក្យសម្ងាត់ចាស់ទេ។",
+  "Active":"សកម្ម",
+  "Expired":"ផុតកំណត់",
+  "Your Name":"ឈ្មោះរបស់អ្នក"
 }

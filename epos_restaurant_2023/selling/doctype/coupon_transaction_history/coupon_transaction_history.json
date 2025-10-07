@@ -45,7 +45,11 @@
   "created_by",
   "used_from_transaction",
   "original_used_amount",
-  "used_transaction_id"
+  "used_transaction_id",
+  "account_tab",
+  "credit_account",
+  "column_break_ytxo",
+  "debit_account"
  ],
  "fields": [
   {
@@ -313,11 +317,32 @@
    "fieldname": "transaction_amount",
    "fieldtype": "Currency",
    "label": "Transaction Amount"
+  },
+  {
+   "fieldname": "account_tab",
+   "fieldtype": "Tab Break",
+   "label": "Account"
+  },
+  {
+   "fieldname": "credit_account",
+   "fieldtype": "Link",
+   "label": "Credit Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "column_break_ytxo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "debit_account",
+   "fieldtype": "Link",
+   "label": "Debit Account",
+   "options": "Chart Of Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-04 15:33:00.221574",
+ "modified": "2025-10-07 12:28:43.046270",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Transaction History",

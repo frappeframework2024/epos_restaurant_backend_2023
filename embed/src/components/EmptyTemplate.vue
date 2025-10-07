@@ -1,5 +1,5 @@
 <template>
-    
+    <ComIcon icon="emptyDataIcon"/>
     {{t('No Data')}}
 </template>
 <script setup>

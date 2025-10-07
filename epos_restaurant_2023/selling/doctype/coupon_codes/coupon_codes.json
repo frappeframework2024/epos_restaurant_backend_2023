@@ -209,13 +209,15 @@
    "fieldname": "reference_doctype",
    "fieldtype": "Link",
    "label": "Reference Doctype",
-   "options": "DocType"
+   "options": "DocType",
+   "search_index": 1
   },
   {
    "fieldname": "reference_name",
    "fieldtype": "Dynamic Link",
    "label": "Reference Name",
-   "options": "reference_doctype"
+   "options": "reference_doctype",
+   "search_index": 1
   },
   {
    "fieldname": "note",
@@ -253,7 +255,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-02 17:22:28.129677",
+ "modified": "2025-10-07 15:39:06.588461",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Codes",

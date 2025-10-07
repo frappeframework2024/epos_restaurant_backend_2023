@@ -336,7 +336,8 @@
    "fieldname": "credit_account",
    "fieldtype": "Link",
    "label": "Credit Account",
-   "options": "Chart Of Account"
+   "options": "Chart Of Account",
+   "search_index": 1
   },
   {
    "fieldname": "column_break_fllk",
@@ -346,12 +347,13 @@
    "fieldname": "debit_account",
    "fieldtype": "Link",
    "label": "Debit Account",
-   "options": "Chart Of Account"
+   "options": "Chart Of Account",
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-06 16:14:00.375230",
+ "modified": "2025-10-07 11:02:51.327269",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Transaction",

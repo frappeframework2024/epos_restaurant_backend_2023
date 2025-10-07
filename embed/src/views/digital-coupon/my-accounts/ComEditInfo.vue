@@ -2,7 +2,7 @@
     <ComDialogContent>
 
         <div class="mb-4">
-            <label for="employee_name">{{ t("Employee Name") }}</label>
+            <label for="employee_name">{{ t("Your Name") }}</label>
             <InputText id="employee" v-model="doc.employee_name" fluid />
 
         </div>

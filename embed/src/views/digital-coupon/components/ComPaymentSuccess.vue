@@ -5,11 +5,18 @@
         <div class="w-11 mx-auto flex flex-column gap-4">
            
             <div class="amount-card">
-                <i class="pi pi-receipt text-red-500 text-6xl mb-2"></i>
-                <div class="amount text-7xl">
+
+                <!-- <i class="pi pi-receipt text-red-500 text-6xl mb-2"></i> -->
+                 <div class="success-wrapper">
+             <svg :width="size" :height="size" viewBox="0 0 120 120">
+                <circle class="circle" cx="60" cy="60" r="46" :fill="color"/>
+                <path class="check" d="M40 62 L54 76 L80 48" stroke="#fff" stroke-width="8" fill="none"/>
+            </svg>
+            </div>
+                <div class="amount text-7xl text-center">
                     <currencyFormat :value="data?.original_used_amount" />
                 </div>
-                <div class="label text-3xl  ">{{t('Payment Amount')}}</div>
+                <div class="label text-3xl text-center">{{t('Payment Amount')}}</div>
             </div>
     
             <div class="card">
@@ -114,7 +121,10 @@ onMounted(async () => {
   countDownCloseDialog()
 })
 
-
+defineProps({
+  color: { type: String, default: "#10B981" },
+  size: { type: [Number,String], default: 120 }
+});
 
 </script>
 
@@ -265,5 +275,16 @@ onMounted(async () => {
     border-radius: 8px;
     font-family: sans-serif;
     font-size: 14px;
+}
+ .circle { transform-origin:60px 60px; opacity:0; animation:ci 0.6s cubic-bezier(.2,.9,.3,1) forwards;}
+      @keyframes ci {0%{transform:scale(0.6);opacity:0}60%{transform:scale(1.05);opacity:1}100%{transform:scale(1);opacity:1}}
+      .check { stroke-dasharray:100; stroke-dashoffset:100; animation:dc 0.45s cubic-bezier(.2,.9,.3,1) 0.28s forwards; stroke-linecap:round; stroke-linejoin:round;}
+      @keyframes dc { to{stroke-dashoffset:0} }
+
+      .success-wrapper {
+  display: flex;
+  justify-content: center; /* horizontal center */
+  align-items: center;     /* vertical center */
+   
 }
 </style>

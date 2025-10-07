@@ -369,18 +369,113 @@ def get_store_cashier_shift_info():
 
 @frappe.whitelist()
 def update_manager_coupon_status():
-    sql = "select name,reference_docname from `tabCoupon Codes` where reference_doctype = 'Coupon Issue' and expired_date<now() and coupon_status = 'Used'"
+    sql = """
+        select 
+            c.name as coupon_code,
+            cs.debit_account as credit_account,
+            cs.credit_account as debit_account,
+            cs.employee,
+            cs.employee_name,
+            cs.business_branch
+        from `tabCoupon Codes` c 
+        join `tabCoupon Issue` cs on cs.name = c.reference_name
+        where 
+            c.reference_doctype = 'Coupon Issue' and 
+            c.expired_date<=now() and 
+            c.coupon_status = 'Used' 
+    """
     expired_coupon_codes = frappe.db.sql(sql,as_dict = 1)
+    if expired_coupon_codes:
+        # find coupon balance and debit account and credit account to post to GL
+        # we find it in coupon transaction credit and debit account and reverse it
+        
+        # get all expired coupon code that have balance
+        
+        sql = """
+            select 
+                coupon_code,  
+                sum(coupon_amount) as balance 
+            from `tabCoupon Transaction` 
+            where 
+                coupon_code in %(coupon_codes)s  
+                group by coupon_code
+                having sum(coupon_amount)>0
+        """
 
-    # find coupon balance and debit account and credit account to post to GL
-    
+        balance_data = frappe.db.sql(sql,{"coupon_codes":[d.get("coupon_code") for d in expired_coupon_codes]},as_dict=1)
+        je_doc = None
+        if balance_data:
+            # get journal entry doc then submit to gl entry
+            # why we post to journal entry because we need voucher type and voucher number in gl entry
+            je_doc = get_manager_coupon_balance_journal_entry_doc(expired_coupon_codes,balance_data)
+            je_doc.flags.ignore_permissions = True
+            je_doc.insert(ignore_permissions=1)
+            je_doc.submit()
 
-    sql="update `tabCoupon Codes` set coupon_status = 'Expired' where reference_doctype = 'Coupon Issue' and expired_date<now() and coupon_status = 'Used'"
-    frappe.db.sql(sql)
+        sql="update `tabCoupon Codes` set coupon_status = 'Expired' where reference_doctype = 'Coupon Issue'  and name in %(coupon_codes)s"
+        
+        frappe.db.sql(sql,{"coupon_codes":[d.get("coupon_code") for d in expired_coupon_codes]})
 
     # submit coupon balance to gl entry
+        frappe.db.commit()
+        return {
+            "coupon_codes":[d.get("coupon_code") for d in expired_coupon_codes],
+            "coupon_data":expired_coupon_codes,
+            "balance_amount":balance_data,
+            "journentry":je_doc
+        }
+        
 
 
-    frappe.db.commit()
+def get_manager_coupon_balance_journal_entry_doc(coupon_data, balance_data):
+    
+    docs = []
+    # reduce payable account need party employee 
+    # we use reverse account here
+    # debit account get credit account from coupon issue
+    gl_doc={
+        "doctype":"Journal Entry",
+        "posting_date":frappe.utils.today(),
+        "business_branch":coupon_data[0].get("business_branch"),
+        "account_entries":[]
+    }
+
+    
+    debit_accounts = set([
+        (
+            c.get("debit_account"),
+            c.get("employee"),
+            c.get("employee_name"),
+         )
+        for c in coupon_data
+    ])
+    for dr in debit_accounts:
+        coupon_codes = [d.get("coupon_code") for d in coupon_data if d.get("employee") == dr[1] and d.get("debit_account") == dr[0]]
+        dr_amount = sum([d.get("balance") for d in balance_data if d.get("coupon_code") in coupon_codes])
+        dr_amount = dr_amount or 0
+        doc = {
+            "account": dr[0],
+            "debit":abs(dr_amount),
+            "party_type" :"Employee",
+            "party" :dr[1], # index 1 in tuple debit account
+            "party_name" :  dr[2], # index 2 in tuple debit_account
+            "note": "ទឹកប្រាក់សល់គូប៉ុងសម្រាប់អ្នកគ្រប់គ្រង",
+         }
+        gl_doc["account_entries"].append(doc)
+        
+        
+    # credit account get debit account from coupon issue
+    cr_account = set([c.get("credit_account") for c in coupon_data])
+    for cr in cr_account:
+        coupon_codes = [d.get("coupon_code") for d in coupon_data if   d.get("debit_account") == cr]
+        cr_amount = sum([d.get("balance") for d in balance_data if d.get("coupon_code") in coupon_codes])
+        cr_amount = dr_amount or 0
+        doc = {
+            "account": cr,
+            "credit":abs(cr_amount),
+            "note": "ទឹកប្រាក់សល់គូប៉ុងសម្រាប់អ្នកគ្រប់គ្រង",
+         }
+        gl_doc["account_entries"].append(doc)
+    return frappe.get_doc(gl_doc)
     
 

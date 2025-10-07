@@ -16,6 +16,6 @@ const props = defineProps({
     data:Object
 })
 const t = window.t;
-const avatarLetter = computed(() => props.data?.user_info?.full_name.charAt(0) || "")
+const avatarLetter = computed(() => props.data?.user_info?.full_name.charAt(0).toUpperCase() || "")
 
 </script>
