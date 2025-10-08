@@ -47,6 +47,8 @@ class CouponTransaction(Document):
 			frappe.enqueue("epos_restaurant_2023.selling.doctype.coupon_transaction.coupon_transaction.submit_to_gl_entry", queue='short', self = self)
 
 		frappe.enqueue("epos_restaurant_2023.api.supabase.send_coupon_data_to_supabase", queue='short', coupon_code = self.coupon_code, coupon_number=self.coupon_number)
+		# from epos_restaurant_2023.api.supabase import send_coupon_data_to_supabase
+		# send_coupon_data_to_supabase(self.coupon_code,self.coupon_number)
 
  
 	def on_update(self):

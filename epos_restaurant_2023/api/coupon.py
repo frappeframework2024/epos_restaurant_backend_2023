@@ -376,7 +376,8 @@ def update_manager_coupon_status():
             cs.credit_account as debit_account,
             cs.employee,
             cs.employee_name,
-            cs.business_branch
+            cs.business_branch,
+            cs.expired_date
         from `tabCoupon Codes` c 
         join `tabCoupon Issue` cs on cs.name = c.reference_name
         where 
@@ -440,7 +441,7 @@ def get_manager_coupon_balance_journal_entry_doc(coupon_data, balance_data):
     # debit account get credit account from coupon issue
     gl_doc={
         "doctype":"Journal Entry",
-        "posting_date":frappe.utils.today(),
+        "posting_date":coupon_data[0].get("expired_date"),
         "business_branch":coupon_data[0].get("business_branch"),
         "account_entries":[]
     }
