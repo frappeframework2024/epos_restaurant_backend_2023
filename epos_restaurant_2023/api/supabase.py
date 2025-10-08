@@ -27,7 +27,7 @@ def send_coupon_data_to_supabase(coupon_code,coupon_number):
     url = site_config.get("supabase_api_url")
     key = site_config.get("supabase_api_key")
     supabase =  create_client(url, key)
-    res = supabase.table(site_config.get("coupon_code_table_name")).upsert(data).execute()
+    res = supabase.table(site_config.get("supabase_coupon_code_table_name")).upsert(data).execute()
 
 
     frappe.get_doc({
