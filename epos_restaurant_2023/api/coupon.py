@@ -411,9 +411,11 @@ def update_manager_coupon_status():
             # get journal entry doc then submit to gl entry
             # why we post to journal entry because we need voucher type and voucher number in gl entry
             je_doc = get_manager_coupon_balance_journal_entry_doc(expired_coupon_codes,balance_data)
+           
             je_doc.flags.ignore_permissions = True
             je_doc.insert(ignore_permissions=1)
             je_doc.submit()
+
 
         sql="update `tabCoupon Codes` set coupon_status = 'Expired' where reference_doctype = 'Coupon Issue'  and name in %(coupon_codes)s"
         
@@ -469,10 +471,12 @@ def get_manager_coupon_balance_journal_entry_doc(coupon_data, balance_data):
         
     # credit account get debit account from coupon issue
     cr_account = set([c.get("credit_account") for c in coupon_data])
+  
     for cr in cr_account:
-        coupon_codes = [d.get("coupon_code") for d in coupon_data if   d.get("debit_account") == cr]
+        coupon_codes = [d.get("coupon_code") for d in coupon_data if   d.get("credit_account") == cr]
+        
         cr_amount = sum([d.get("balance") for d in balance_data if d.get("coupon_code") in coupon_codes])
-        cr_amount = dr_amount or 0
+        cr_amount = cr_amount or 0
         doc = {
             "account": cr,
             "credit":abs(cr_amount),

@@ -102,6 +102,7 @@ class CouponIssue(Document):
 		
 
  
+ 
 		self.coupon = ""
 		
 	def validate_coupon_code(self):

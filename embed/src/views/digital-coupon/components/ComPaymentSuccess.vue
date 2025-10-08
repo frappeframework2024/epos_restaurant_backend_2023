@@ -13,7 +13,7 @@
                 <path class="check" d="M40 62 L54 76 L80 48" stroke="#fff" stroke-width="8" fill="none"/>
             </svg>
             </div>
-                <div class="amount text-7xl text-center">
+                <div class="amount text-7xl text-center text-red-500">
                     <currencyFormat :value="data?.original_used_amount" />
                 </div>
                 <div class="label text-3xl text-center">{{t('Payment Amount')}}</div>
@@ -39,8 +39,6 @@
                         {{ data?.transaction_date ? dayjs(data?.transaction_date).format('DD-MM-YY h:mm A') : '-' }}
                     </div>
                 </div>
-    
-               
     
                 <hr> 
     

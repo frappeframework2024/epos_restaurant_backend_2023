@@ -51,7 +51,7 @@
                         </div>
                         <div>
                             <div class="label">{{t('Used Amount')}}</div>
-                            <div class="value text-right">
+                            <div class="value text-right text-red-500 font-bold">
                                 <currencyFormat :value="data?.coupon_info?.use_amount" />
                             </div>
                         </div>
