@@ -385,6 +385,7 @@ def update_manager_coupon_status():
             c.coupon_status = 'Used' 
     """
     expired_coupon_codes = frappe.db.sql(sql,as_dict = 1)
+    
     if expired_coupon_codes:
         # find coupon balance and debit account and credit account to post to GL
         # we find it in coupon transaction credit and debit account and reverse it
@@ -397,12 +398,14 @@ def update_manager_coupon_status():
                 sum(coupon_amount) as balance 
             from `tabCoupon Transaction` 
             where 
-                coupon_code in %(coupon_codes)s  
+                coupon_code in %(coupon_codes)s   and 
+                coalesce(status,'') <> 'Deleted'
                 group by coupon_code
                 having sum(coupon_amount)>0
         """
 
         balance_data = frappe.db.sql(sql,{"coupon_codes":[d.get("coupon_code") for d in expired_coupon_codes]},as_dict=1)
+        
         je_doc = None
         if balance_data:
             # get journal entry doc then submit to gl entry

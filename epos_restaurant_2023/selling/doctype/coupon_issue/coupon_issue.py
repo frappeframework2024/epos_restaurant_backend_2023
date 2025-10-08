@@ -117,7 +117,7 @@ class CouponIssue(Document):
 			# validate on digital coupon
 			if self.coupon:
 				if frappe.db.get_value("Coupon Codes",self.coupon,"reference_doctype")!="Coupon Issue":
-					frappe.throw("dopme")
+					
 					self.coupon = ""
 			# check coupon existing 
 			sql = "select name from `tabCoupon Codes` where coupon=%(coupon_number)s and coupon_status in ('Used','Unused') limit 1"
