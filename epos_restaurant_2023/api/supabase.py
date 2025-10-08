@@ -1,14 +1,14 @@
 import frappe
 import time
 @frappe.whitelist()
-def send_coupon_data_to_supabase(coupon_code,coupon_number):
+def send_coupon_data_to_supabase(coupon_code,coupon_number,posting_date):
     time.sleep(1)
     from supabase import create_client, Client
 
     data = {
         "name":coupon_code,
         "coupon_number":coupon_number,
-        "posting_date":frappe.utils.today()
+        "posting_date":posting_date
     }
 
     # get amount
@@ -18,7 +18,7 @@ def send_coupon_data_to_supabase(coupon_code,coupon_number):
     data["top_up_amount"] =sum([d.get("coupon_amount") for d in coupon_data if d.get("transaction_type") == "Top Up"]) or 0
     data["use_amount"] = sum([d.get("coupon_amount") for d in coupon_data if d.get("transaction_type") == "Used"]) or 0
     data["redeem_amount"] = sum([d.get("coupon_amount") for d in coupon_data if d.get("transaction_type") == "Redeem"]) or 0
-    data["balance_amount"] = (data.get("price") + data.get("top_up_amount")) - (data.get("use_amount") - data.get("redeem_amount"))
+    data["balance_amount"] = (data.get("price") + data.get("top_up_amount")) - (data.get("use_amount") + data.get("redeem_amount"))
 
 
 
