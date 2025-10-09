@@ -20,6 +20,7 @@ from epos_restaurant_2023.selling.doctype.sale.general_ledger_entry import submi
  
 class Sale(Document):
 	def validate(self): 	
+		lock_db(self=self)
 		# frappe.throw(str(self.working_day))	
 		if not frappe.db.get_default('exchange_rate_main_currency'):
 			frappe.throw('Main Exchange Currency not yet config. Please contact to system administrator for solve')
@@ -246,6 +247,9 @@ class Sale(Document):
 		# update default accunt
 		update_default_account(self) 
 
+
+		self.validate_coupon_codes()
+
 	 
 
 	@frappe.whitelist()
@@ -285,8 +289,8 @@ class Sale(Document):
 				cancel_order(transaction_id = self.exely_transaction_id, sale = self.name, comment = "ePOS Restaurant Cancel Order")
 
 	def before_submit(self):
+		lock_db(self=self)
 		update_sale_sale_product_cost(self)
-		
 		if self.flags.ignore_before_submit == True:
 			return 
 		on_get_revenue_account_code(self)
@@ -311,40 +315,13 @@ class Sale(Document):
 		
 		# validate redeem amount  with sale type redeem
 		# check redeem amount with coupon amount remaining
-		if self.sale_type =="Top Up":
-			# server validation for top up check if coupon have sale record
-			if self.sale_products:
-				coupon = self.sale_products[0].coupons
-				if not isinstance(coupon, dict):
-					coupon = json.loads(coupon)[0]
-					sql = "select name from `tabCoupon Transaction` where coupon_code = %(coupon_code)s and transaction_type = 'Sale Coupon' limit 1"
-					if not frappe.db.sql(sql,{"coupon_code":coupon.get("name")}):
-						frappe.throw(_("This coupon number is not a used coupon. Please sale this coupon first."))
-
-			 
-
-		elif self.sale_type =="Redeem":
-			
-			for sp in self.sale_products:
-				if sp.coupons:
-					coupons = json.loads(sp.coupons)
-					for c in coupons:
-						lock_db(c.get("coupon"))
-						sql = "select sum(actual_amount) as balance from `tabCoupon Transaction` where coalesce(status,'') <> 'Deleted' and  coupon_code =%(coupon_id)s"
-						data = frappe.db.sql(sql, {"coupon_id":c.get("name")},as_dict=1)
-						
-						if data:
-						
-
-							if(math_round(data[0].get("balance")) != math_round(abs(sp.amount))):
-								frappe.throw(_("Invalid redeem amount. Please check coupon balance again."))
-						else:
-							frappe.throw(_("Invalid  Coupon Code"))
-
 
 	
 	
 	def on_submit(self):
+		lock_db(self=self)
+
+
 		if self.flags.ignore_on_submit == True:
 			return 
 
@@ -405,8 +382,7 @@ class Sale(Document):
 
 
 		# Release Lock
-		if self.sale_type =="Redeem":
-			unlock_db(self)
+		unlock_db(self)
 		
 
 	def on_cancel(self):
@@ -455,20 +431,97 @@ class Sale(Document):
 	
 
  
+	def validate_coupon_codes(self):
+		if self.sale_type =="Sale Coupon":
+			if self.sale_products:
+				coupons = self.sale_products[0].coupons
+				if not isinstance(coupons, dict):
+					coupons = json.loads(coupons)
+			 
+				if coupons:
+					for c in coupons:
+						# lockx_db(c.get("name"))
+						sql = "select coupon_status from `tabCoupon Codes` where name = %(coupon_code)s and coupon_status= 'Unused'"
+						
+						check_coupon_data = frappe.db.sql(sql,{"coupon_code":c.get("name")})
+						if not check_coupon_data:
+							frappe.throw("គូប៉ុងលេខ {} បានប្រើប្រាសសរួចហើយ".format(c.get("coupon")))
+						
+						# check if this coupon code already have in Coupon Transaction with transaction_type= Sale Coupon
+						sql="select name from `tabCoupon Transaction` where coupon_code = %(coupon_code)s and transaction_type='Sale Coupon' limit 1"
+						coupon_already_sold = frappe.db.sql(sql, {"coupon_code":c.get("name")})
+						if coupon_already_sold:
+							frappe.throw("គូប៉ុងលេខ {} បានប្រើប្រាសសរួចហើយ".format(c.get("coupon")))
+
+		if self.sale_type =="Top Up":
+			# server validation for top up check if coupon have sale record
+			if self.sale_products:
+				coupon = self.sale_products[0].coupons
+				if not isinstance(coupon, dict):
+					coupon = json.loads(coupon)[0]
+					
+					# lockx_db(coupon.get("coupon"))
+					sql = "select name from `tabCoupon Transaction` where coupon_code = %(coupon_code)s and transaction_type = 'Sale Coupon' limit 1"
+					if not frappe.db.sql(sql,{"coupon_code":coupon.get("name")}):
+						frappe.throw(_("This coupon number is not a used coupon. Please sale this coupon first."))
+
+					# check last transaction is top_up then check duration of top
+					sql = "select creation from `tabCoupon Transaction` where coupon_code = %(coupon_code)s and transaction_type = 'Top Up' order by creation desc limit 1"
+					last_top_up_data = frappe.db.sql(sql,{"coupon_code":coupon.get("name")},as_dict=1)
+					if last_top_up_data:
+						# frappe.throw("end {} => start {}".format(frappe.utils.getdate(frappe.utils.now())
+						# ,
+						# frappe.utils.getdate(last_top_up_data[0].get("creation"))
+						# ))
+						from frappe.utils import get_datetime
+						diff_seconds = (get_datetime(frappe.utils.now()) -  get_datetime(last_top_up_data[0].get("creation"))).total_seconds()
+						if diff_seconds<=15:
+							frappe.throw("សូមរង់ចាំ១៥វិនាទីមុនពេលបញ្ចូលប្រាក់ក្នុងគូប៉ុងម្តងទៀត។")
 
 
-def lock_db(name):
-    lock = frappe.db.sql("SELECT GET_LOCK('_{}', 0)".format(name))[0][0]
-    print("****************************************** from redeem {}***********************************".format(lock))
-    if not lock:
-        frappe.throw(_("This coupon code is being use by other transaction. Please try again later."))
 
+
+
+		elif self.sale_type =="Redeem":
+			
+			for sp in self.sale_products:
+				if sp.coupons:
+					coupons = json.loads(sp.coupons)
+					for c in coupons:
+						lock_db(name = c.get("coupon"))
+						sql = "select sum(actual_amount) as balance from `tabCoupon Transaction` where coalesce(status,'') <> 'Deleted' and  coupon_code =%(coupon_id)s"
+						data = frappe.db.sql(sql, {"coupon_id":c.get("name")},as_dict=1)
+						
+						if data:
+						
+
+							if(math_round(data[0].get("balance")) != math_round(abs(sp.amount))):
+								frappe.throw(_("Invalid redeem amount. Please check coupon balance again."))
+						else:
+							frappe.throw(_("Invalid  Coupon Code"))
+ 
+
+def lock_db(name=None,self=None):
+	if name:
+		lock = frappe.db.sql("SELECT GET_LOCK('_{}', 0)".format(name))[0][0]
+	
+		if not lock:
+			frappe.throw(_("This coupon code is being use by other transaction. Please try again later."))
+	if self:
+		for sp in self.sale_products:
+			if sp.coupons:
+				coupons = json.loads(sp.coupons)
+				for c in coupons:
+					lock = frappe.db.sql("SELECT GET_LOCK('_{}', 0)".format(c.get("coupon")))[0][0]
+					if not lock:
+						frappe.throw(_("This coupon code is being use by other transaction. Please try again later."))
+						
 def unlock_db(self):
 	for sp in self.sale_products:
 		if sp.coupons:
 			coupons = json.loads(sp.coupons)
 			for c in coupons:
-				print("******************release from sale {}******************".format(c.get("coupon")))
+				
 				frappe.db.sql("DO RELEASE_LOCK('_{}')".format(c.get("coupon")))
 
 

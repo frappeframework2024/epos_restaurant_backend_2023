@@ -182,7 +182,6 @@ scheduler_events = {
             "epos_restaurant_2023.api.schedule_task.generate_audit_trail_from_version",
             "epos_restaurant_2023.api.sync_api.get_all_data_for_sync_from_server",
             "epos_restaurant_2023.configuration.doctype.schedule_job_config.schedule_job_config.check_custom_schedule",
-            "epos_restaurant_2023.api.coupon.update_manager_coupon_status"
         ],
 
         "*/5 * * * *": [
@@ -201,12 +200,14 @@ scheduler_events = {
     "all": [
 		"epos_restaurant_2023.api.custom_reminder.send_reminders"   
 	],
-    "daily":[
-        "epos_restaurant_2023.api.coupon.update_manager_coupon_status"
-    ]
+   
 
     
 }
+
+# "daily":[
+#     "epos_restaurant_2023.api.coupon.update_manager_coupon_status"
+# ]
 
 # Testing
 # -------

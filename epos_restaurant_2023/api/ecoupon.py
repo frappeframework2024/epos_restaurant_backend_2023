@@ -659,7 +659,7 @@ def on_scan_use_coupon(params):
 
                 #send success event to coupon manager app to show payment success message
                 # we should check if the coupon code is manager code so we dont need to send unusfull request to client
-                frappe.enqueue("epos_restaurant_2023.api.ecoupon.alert_use_coupon_successful", queue='short', data=return_data)
+                # frappe.enqueue("epos_restaurant_2023.api.ecoupon.alert_use_coupon_successful", queue='short', data=return_data)
                 
                 return return_data
             

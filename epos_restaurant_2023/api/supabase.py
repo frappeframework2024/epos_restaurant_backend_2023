@@ -30,12 +30,12 @@ def send_coupon_data_to_supabase(coupon_code,coupon_number,posting_date):
     res = supabase.table(site_config.get("supabase_coupon_code_table_name")).upsert(data).execute()
 
 
-    frappe.get_doc({
-        "doctype": "Error Log",
-        "error": str(data),
-        "method": "add data to supabae => " + coupon_number,
+    # frappe.get_doc({
+    #     "doctype": "Error Log",
+    #     "error": str(data),
+    #     "method": "add data to supabae => " + coupon_number,
         
-    }).insert(ignore_permissions=True)
+    # }).insert(ignore_permissions=True)
 
     return res
 
