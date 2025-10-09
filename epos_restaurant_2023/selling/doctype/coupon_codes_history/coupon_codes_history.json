@@ -35,11 +35,8 @@
   "customer",
   "customer_name",
   "expired_date",
-  "allow_sale",
   "is_used",
-  "last_sale_date",
-  "note",
-  "total_sale"
+  "note"
  ],
  "fields": [
   {
@@ -215,35 +212,19 @@
   },
   {
    "default": "0",
-   "fieldname": "allow_sale",
-   "fieldtype": "Check",
-   "label": "Allow Sale"
-  },
-  {
-   "default": "0",
    "fieldname": "is_used",
    "fieldtype": "Check",
    "label": "Is Used"
   },
   {
-   "fieldname": "last_sale_date",
-   "fieldtype": "Datetime",
-   "label": "Last Sale Date"
-  },
-  {
    "fieldname": "note",
    "fieldtype": "Text",
    "label": "Note"
-  },
-  {
-   "fieldname": "total_sale",
-   "fieldtype": "Int",
-   "label": "Total Sale"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-09 09:11:25.100357",
+ "modified": "2025-10-09 09:35:51.283016",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Codes History",

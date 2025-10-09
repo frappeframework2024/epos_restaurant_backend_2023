@@ -21,7 +21,6 @@
   "customer",
   "customer_name",
   "customer_photo",
-  "transaction_amount",
   "section_break_pyrw",
   "transaction_type",
   "coupon_shift",
@@ -314,11 +313,6 @@
    "report_hide": 1
   },
   {
-   "fieldname": "transaction_amount",
-   "fieldtype": "Currency",
-   "label": "Transaction Amount"
-  },
-  {
    "fieldname": "account_tab",
    "fieldtype": "Tab Break",
    "label": "Account"
@@ -342,7 +336,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-07 12:28:43.046270",
+ "modified": "2025-10-09 09:40:57.600810",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Transaction History",
