@@ -23,8 +23,9 @@ def get_table_number_list(txt,table_group='Rooms'):
 
 @frappe.whitelist()
 def download_qr_image(table_name,image_url):
+	frappe.throw(str(frappe.request.url))
 	import requests
-	url = frappe.local.request_ip+"/"+image_url
+	url = frappe.request.url+"/"+image_url
 	filename = "{0}.png".format(table_name)
 	response = requests.get(url)
 	if response.status_code == 200:
