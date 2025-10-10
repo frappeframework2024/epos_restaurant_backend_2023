@@ -1,14 +1,15 @@
 import frappe
 import time
+from supabase import create_client, Client
 @frappe.whitelist()
 def send_coupon_data_to_supabase(coupon_code,coupon_number,posting_date):
     time.sleep(1)
-    from supabase import create_client, Client
+
 
     data = {
         "name":coupon_code,
         "coupon_number":coupon_number,
-        "posting_date":posting_date
+        "posting_date":str(posting_date)
     }
 
     # get amount
@@ -39,6 +40,13 @@ def send_coupon_data_to_supabase(coupon_code,coupon_number,posting_date):
 
     return res
 
+@frappe.whitelist(methods=["POST"])
+def delete_coupon_code_data():
+    site_config = frappe.get_site_config()
+    url = site_config.get("supabase_api_url")
+    key = site_config.get("supabase_api_key")
+    supabase =  create_client(url, key)
+    supabase.table(site_config.get("supabase_coupon_code_table_name")).delete().neq("name", "").execute()
 
 
 

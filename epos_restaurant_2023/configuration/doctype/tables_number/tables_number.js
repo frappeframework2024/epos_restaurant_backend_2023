@@ -72,4 +72,15 @@ frappe.ui.form.on("Tables Number", {
             });
         }
 	},
+    download_qr_image: function(frm) {
+        frappe.call({
+            method: "epos_restaurant_2023.configuration.doctype.tables_number.tables_number.download_qr_image",
+            args: { table_name: frm.doc.tbl_number,image_url: frm.doc.qr_menu_file},
+            callback: function(r) {
+                if (r.message) {
+                    frappe.msgprint(r.message);
+                }
+            }
+        });
+    }
 });

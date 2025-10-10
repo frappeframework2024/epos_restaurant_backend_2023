@@ -20,3 +20,16 @@ def get_table_number_list(txt,table_group='Rooms'):
 		fields=['name','tbl_number', 'tbl_group']
 	)
 	return data
+
+@frappe.whitelist()
+def download_qr_image(table_name,image_url):
+	import requests
+	url = frappe.local.request_ip+"/"+image_url
+	filename = "{0}.png".format(table_name)
+	response = requests.get(url)
+	if response.status_code == 200:
+		with open(filename, "wb") as f:
+			f.write(response.content)
+		print(f"Saved image as {filename}")
+	else:
+		print("Failed to download image:", response.status_code)

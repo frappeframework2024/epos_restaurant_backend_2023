@@ -16,6 +16,7 @@
   "sale_type",
   "is_foc",
   "qr_menu_file",
+  "download_qr_image",
   "column_break_6",
   "shape",
   "discount_type",
@@ -158,12 +159,17 @@
    "fieldtype": "Attach Image",
    "label": "QR Menu File",
    "read_only": 1
+  },
+  {
+   "fieldname": "download_qr_image",
+   "fieldtype": "Button",
+   "label": "Download QR Image"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-09 10:00:16.438460",
+ "modified": "2025-10-10 08:30:36.048704",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Tables Number",

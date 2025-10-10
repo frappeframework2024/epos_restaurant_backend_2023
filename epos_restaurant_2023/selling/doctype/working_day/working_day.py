@@ -92,6 +92,11 @@ class WorkingDay(Document):
 
 				# submit coupon use balance to gl entry
 				submit_Gl_Entry(self)
+
+				site_config = frappe.get_site_config()
+				if site_config.get("supabase_api_url"):
+					frappe.enqueue("epos_restaurant_2023.api.supabase.delete_coupon_code_data", queue='short')
+
 			
   
 
