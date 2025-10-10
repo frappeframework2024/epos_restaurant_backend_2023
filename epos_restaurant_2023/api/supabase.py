@@ -28,17 +28,33 @@ def send_coupon_data_to_supabase(coupon_code,coupon_number,posting_date):
     url = site_config.get("supabase_api_url")
     key = site_config.get("supabase_api_key")
     supabase =  create_client(url, key)
-    res = supabase.table(site_config.get("supabase_coupon_code_table_name")).upsert(data).execute()
+    try:
+        res = supabase.table(site_config.get("supabase_coupon_code_table_name")).upsert(data).execute()
+        frappe.get_doc({
+            "doctype":"Supabase Logs",
+            "posting_date":posting_date,
+            "coupon_number":coupon_number,
+            "coupon_code":coupon_code,
+            "status":"Fail",
+            "data":data
+       }).insert(ignore_permissions=True)
+        return res
+    except Exception as e:
+       frappe.get_doc({
+            "doctype":"Supabase Logs",
+            "posting_date":posting_date,
+            "coupon_number":coupon_number,
+            "coupon_code":coupon_code,
+            "status":"Fail",
+            "data":data
+       }).insert(ignore_permissions=True)
+
+    
 
 
-    # frappe.get_doc({
-    #     "doctype": "Error Log",
-    #     "error": str(data),
-    #     "method": "add data to supabae => " + coupon_number,
-        
-    # }).insert(ignore_permissions=True)
-
-    return res
+@frappe.whitelist()
+def resent_data_to_supabase():
+    pass
 
 @frappe.whitelist(methods=["POST"])
 def delete_coupon_code_data():

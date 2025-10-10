@@ -487,3 +487,5 @@ def get_manager_coupon_balance_journal_entry_doc(coupon_data, balance_data):
     return frappe.get_doc(gl_doc)
     
 
+
+ 

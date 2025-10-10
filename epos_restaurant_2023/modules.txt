@@ -12,3 +12,4 @@ GYM
 Account
 Coupon
 Jewelry Management
+ePOS Integration

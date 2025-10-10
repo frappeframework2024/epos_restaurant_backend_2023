@@ -2438,7 +2438,7 @@ def generate_table_qr_menu(param):
     table_id = urllib.parse.quote(p["table_id"])
     qr_url = "{}?propertyCode={}&posProfile={}&eMenu={}&tableNo={}".format(menu_qr_base_url, property_code, pos_profile, emenu, table_id)
     generate_param =  urllib.parse.quote(qr_url)
-    generate = "https://api.qrserver.com/v1/create-qr-code/?data={}&size=200x200".format(generate_param)
+    generate = "https://api.qrserver.com/v1/create-qr-code/?data={}&size=400x400".format(generate_param)
 
     response = requests.get(generate)
 
