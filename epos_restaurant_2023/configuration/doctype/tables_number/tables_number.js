@@ -73,14 +73,20 @@ frappe.ui.form.on("Tables Number", {
         }
 	},
     download_qr_image: function(frm) {
-        frappe.call({
-            method: "epos_restaurant_2023.configuration.doctype.tables_number.tables_number.download_qr_image",
-            args: { table_name: frm.doc.tbl_number,image_url: frm.doc.qr_menu_file},
-            callback: function(r) {
-                if (r.message) {
-                    frappe.msgprint(r.message);
-                }
-            }
-        });
+        const imageUrl = window.location.origin+"/"+frm.doc.qr_menu_file
+        const fileName = frm.doc.tbl_number+".png";
+        fetch(imageUrl)
+                .then(res => res.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(err => frappe.msgprint("Failed to download image: " + err));
     }
 });
