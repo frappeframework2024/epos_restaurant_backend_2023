@@ -18,17 +18,20 @@
   {
    "fieldname": "payment_type",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Payment Type",
    "options": "Payment Type"
   },
   {
    "fieldname": "input_amount",
    "fieldtype": "Float",
+   "in_list_view": 1,
    "label": "Input Amount"
   },
   {
    "fieldname": "payment_amount",
    "fieldtype": "Currency",
+   "in_list_view": 1,
    "label": "Payment Amount",
    "read_only": 1
   },
@@ -64,7 +67,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-09-25 14:59:20.155605",
+ "modified": "2025-10-11 11:26:45.302992",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Store Payment Type",

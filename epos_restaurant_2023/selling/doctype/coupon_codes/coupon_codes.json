@@ -43,7 +43,8 @@
   "created_by",
   "pos_station",
   "column_break_sanw",
-  "note"
+  "note",
+  "moved_to_history"
  ],
  "fields": [
   {
@@ -251,11 +252,17 @@
   {
    "fieldname": "column_break_sanw",
    "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "moved_to_history",
+   "fieldtype": "Check",
+   "label": "Moved To History"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-07 15:39:06.588461",
+ "modified": "2025-10-10 15:19:15.445054",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Codes",

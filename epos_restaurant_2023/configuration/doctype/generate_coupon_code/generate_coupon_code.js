@@ -22,15 +22,7 @@ frappe.ui.form.on("Generate Coupon Code", {
 			return;
 		}
 
-        if (!frm.doc.encrypt_key) {
-			frappe.throw(__("Encrypt key can not be blank"));
-			return;
-		}
-        if (!frm.doc.encrypt_iv) {
-			frappe.throw(__("Encrypt iv can not be blank"));
-			return;
-		}
-
+        
         
         frappe.call({
 			method: 'epos_restaurant_2023.configuration.doctype.generate_coupon_code.generate_coupon_code.generate_button',

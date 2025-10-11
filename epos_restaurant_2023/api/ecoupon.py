@@ -206,17 +206,37 @@ def get_shift_information(params):
 
 
 @frappe.whitelist(methods=["POST"])
-def get_history_coupon_kpi(params):
-    sql = """select 
+def get_history_coupon_kpi(params):   
+    sql = """with history_kpi as ( 
+            select 
+                coupon_amount,
+                `name`,
+                coupon_number
+            from `tabCoupon Transaction` 
+            where 1 = 1
+                and transaction_type in ('Used')
+                and `status` not in ('Deleted')
+                and pos_profile = %(pos_profile)s
+                and business_branch = %(property_name)s
+                and (date(posting_date) between date(%(start_date)s) and date(%(end_date)s))
+            union
+            select 
+                coupon_amount,
+                `name`,
+                coupon_number
+            from `tabCoupon Transaction History` 
+            where 1 = 1
+                and transaction_type in ('Used')
+                and `status` not in ('Deleted')
+                and pos_profile = %(pos_profile)s
+                and business_branch = %(property_name)s
+                and (date(posting_date) between date(%(start_date)s) and date(%(end_date)s))
+        )
+        select 
             coalesce(sum(coupon_amount),0) as total_amount ,
             count(*) as total_transaction
-        from `tabCoupon Transaction` 
-        where 1 = 1
-        and pos_profile = %(pos_profile)s
-        and business_branch = %(property_name)s
-        and (date(posting_date) between date(%(start_date)s) and date(%(end_date)s))
-        and  transaction_type in ('Used')
-        and status in ('Active','Locked')"""
+        from history_kpi 
+        where 1 = 1 """
         
    
     if params.get("keyword"):
@@ -257,15 +277,35 @@ def get_coupon_dashboard_kpi(params):
     }
 
 def coupon_kpi_get_data(property_name, pos_profiles, type="Today"):
-    sql = """select 
-                    coalesce(sum(coupon_amount),0) as total_amount ,
-                    count(*) as total_transaction
-            from `tabCoupon Transaction` 
-            where 1 = 1
-            and status not in ('Deleted')
-            and transaction_type in ('Used')
-            and pos_profile = %(pos_profile)s
-            and business_branch = %(property_name)s """
+    sql = """with dashboard_kpi as ( 
+                select 
+                    coupon_amount,
+                    `name`,
+                    posting_date
+                from `tabCoupon Transaction` 
+                where 1 = 1
+                    and status not in ('Deleted')
+                    and transaction_type in ('Used')
+                    and pos_profile = %(pos_profile)s
+                    and business_branch = %(property_name)s 
+                union
+                select 
+                    coupon_amount  ,
+                    `name`,
+                    posting_date
+                from `tabCoupon Transaction History` 
+                where 1 = 1
+                    and status not in ('Deleted')
+                    and transaction_type in ('Used')
+                    and pos_profile = %(pos_profile)s
+                    and business_branch = %(property_name)s 	
+            )
+            select 
+                coalesce(sum(coupon_amount),0) as total_amount ,
+                count(*) as total_transaction
+            from dashboard_kpi 
+            where 1 = 1 """
+    
     if type == "Today":
         sql += " and date(posting_date) = date(%(end_date)s)"
     else:
@@ -306,17 +346,33 @@ def daily_scan_coupon_chart(params):
             "value": 0
         })
 
-    sql = """select 
-                    coalesce(sum(coupon_amount),0) as total_amount ,
+    sql = """with daily_chart as ( 
+                select 
+                    `name`,
+                    coupon_amount,
                     posting_date
-            from `tabCoupon Transaction` 
-            where 1 = 1
-            and transaction_type in ('Used')
-            and pos_profile = %(pos_profile)s
-            and business_branch = %(property_name)s 
-            and (date(posting_date) between date(%(start_date)s) and date(%(end_date)s))"""        
-        
-    sql += " group by posting_date"
+                from `tabCoupon Transaction` 
+                where 1 = 1
+                    and transaction_type in ('Used')
+                    and pos_profile = %(pos_profile)s
+                    and business_branch = %(property_name)s 
+                    and (date(posting_date) between date(%(start_date)s) and date(%(end_date)s))            
+                    union                
+                select 
+                    `name`,
+                    coupon_amount,
+                    posting_date
+                from `tabCoupon Transaction History` 
+                where 1 = 1
+                    and transaction_type in ('Used')
+                    and pos_profile = %(pos_profile)s
+                    and business_branch = %(property_name)s 
+                    and (date(posting_date) between date(%(start_date)s) and date(%(end_date)s))                
+            )
+            select 
+                coalesce(sum(coupon_amount),0) as total_amount ,
+                posting_date
+            from daily_chart group by posting_date"""      
     
     data = frappe.db.sql(sql, {
         "property_name": property_name,
@@ -653,7 +709,6 @@ def on_scan_use_coupon(params):
                         frappe.db.sql("""update `tabCoupon Transaction` 
                                         set status = 'Locked' 
                                         where status not in ('Locked','Deleted') and coupon_number = %(coupon_number)s""", {"coupon_number":params["coupon_number"]})
-
                 
                 unlock_db(params.get("coupon_number"))
 
@@ -681,19 +736,33 @@ def alert_use_coupon_successful(data):
         from epos_restaurant_2023.custom_socket_client import emit_event
         emit_event("RefreshData",{"action":"use_coupon_successfully", "data":data})
     
-def get_current_balance(coupon_number, coupon_id):
 
-    sql  = """select 
-                coalesce(sum(coupon_amount) , 0) as coupon_amount
+def get_current_balance(coupon_number, coupon_id):
+    sql = """with coupon as (
+            select 
+                    `name`,
+                    coupon_amount
             from `tabCoupon Transaction` 
-            where `status` not in ('Deleted') and 
-            coupon_code = %(coupon_code)s and 
-            coupon_number = %(coupon_number)s""" 
+            where `status` not in ('Deleted') 
+            and coupon_code = %(coupon_code)s  
+            and coupon_number = %(coupon_number)s
+            union 
+            select 
+                `name`,
+                coupon_amount
+            from `tabCoupon Transaction History`
+            where `status` not in ('Deleted') 
+            and coupon_code = %(coupon_code)s  
+            and coupon_number = %(coupon_number)s
+        )
+        select sum(coalesce(coupon_amount,0)) as coupon_amount from coupon
+        """
     data = frappe.db.sql(sql, {"coupon_number":coupon_number,"coupon_code":coupon_id}, as_dict=1)
     if data and len(data)>0:
-        return data[0]["coupon_amount"]
+        return (data[0]["coupon_amount"] or 0.0)
     
-    return 0
+    return 0.0
+
 
 @frappe.whitelist(methods=["POST"])
 def get_report(name, show_transaction):  
@@ -712,16 +781,7 @@ def get_report(name, show_transaction):
         }
 
     #get summary
-    sql_summary = """select 
-        coalesce(sum(actual_amount) , 0)*(-1) as total_actual_amount,
-        coalesce(sum(coupon_amount) , 0) *(-1)  as total_coupon_amount,
-        count(`name`) as total_record
-    from `tabCoupon Transaction` 
-    where 1=1
-    and status not in ('Deleted')
-    and transaction_type in ('Used')
-    and coupon_shift = %(name)s"""
-    summary_data = frappe.db.sql(sql_summary, {"name":name}, as_dict=1)
+    summary_data = get_report_summary(name=name)
     if summary and len(summary_data) > 0:
         summary_data = summary_data[0]
         summary["key"] = ["Transactions","Coupon Amount","Actual Amount"]
@@ -730,24 +790,10 @@ def get_report(name, show_transaction):
 
     if show_transaction:
         transctions = {"data":{}}
-        sql_transactions = """select 
-            name,
-            coupon_number,
-            transaction_date as creation,
-            coupon_amount,
-            created_by
-        from `tabCoupon Transaction` 
-        where 1=1
-        and status not in ('Deleted')
-        and transaction_type in ('Used')
-        and coupon_shift = %(name)s
-        order by creation desc"""   
-        transction_data = frappe.db.sql(sql_transactions, {"name":name}, as_dict=1) 
-        
+        transction_data = get_report_transactions(name=name)        
         transctions["data"] = {
             "header":[
-                "No","Coupon","Date","Amount","By"
-                    
+                "No","Coupon","Date","Amount","By"                    
             ],
             "type":["int","data","time","currency","data"],
             "align":["center","left","left","right","left"],
@@ -762,9 +808,7 @@ def get_report(name, show_transaction):
             "data":transctions["data"],
             "data_type":"table",
             "sort":99
-        }
-
-    
+        }    
 
     # set info to result
     result["Info"] = {
@@ -801,15 +845,94 @@ def get_report(name, show_transaction):
         "data_type":"label",
         "sort":1
     }
-
     sorted_data = dict(sorted(result.items(), key=lambda x: x[1].get("sort", 99999)))   
- 
  
     return sorted_data
 
+### get report summary
+def get_report_summary(name):
+    sql_summary = """with report_summary as ( 
+        select 
+                `name` ,
+                actual_amount ,
+                coupon_amount
+        from `tabCoupon Transaction` 
+        where 1=1
+        and status not in ('Deleted')
+        and transaction_type in ('Used')
+        and coupon_shift = %(name)s
+        union
+        select 
+                `name` ,
+                actual_amount ,
+                coupon_amount
+        from `tabCoupon Transaction History` 
+        where 1=1
+        and status not in ('Deleted')
+        and transaction_type in ('Used')
+        and coupon_shift = %(name)s        
+    )
+    select 
+        coalesce(sum(actual_amount) , 0)*(-1) as total_actual_amount,
+        coalesce(sum(coupon_amount) , 0) *(-1)  as total_coupon_amount,
+        count(`name`) as total_record
+    from report_summary
+    """
+    summary_data = frappe.db.sql(sql_summary, {"name":name}, as_dict=1)
+    return summary_data 
+
+### get report transaction data
+def get_report_transactions(name):
+    sql_transactions = """
+        with report_transactions as ( 
+            select 
+                    `name`,
+                    coupon_number,
+                    transaction_date ,
+                    coupon_amount,
+                    created_by,
+                    creation
+            from `tabCoupon Transaction` 
+            where 1=1
+            and status not in ('Deleted')
+            and transaction_type in ('Used')
+            and coupon_shift = %(name)s
+            union 
+            select 
+                    `name`,
+                    coupon_number,
+                    transaction_date,
+                    coupon_amount,
+                    created_by,
+                    creation
+            from `tabCoupon Transaction History` 
+            where 1=1
+            and status not in ('Deleted')
+            and transaction_type in ('Used')
+            and coupon_shift = %(name)s	
+        )
+        select 
+            `name`,
+            coupon_number,
+            transaction_date as creation,
+            coupon_amount,
+            created_by
+        from report_transactions
+        order by creation desc"""
+    transction_data = frappe.db.sql(sql_transactions, {"name":name}, as_dict=1)
+    return transction_data
+
+# @frappe.whitelist(allow_guest=True)
 @frappe.whitelist(methods=["POST"])
 def get_transaction_detail(name):
-    doc = frappe.get_doc("Coupon Transaction", name)
+    is_history = False
+    if frappe.db.exists("Coupon Transaction",name):        
+        doc = frappe.get_doc("Coupon Transaction", name)
+    else:
+        is_history = True
+        doc = frappe.get_doc("Coupon Transaction History", name)
+
+    table = "tabCoupon Transaction History" if is_history else "tabCoupon Transaction"    
     sql = """select 
             business_branch,
             customer_name,
@@ -828,12 +951,16 @@ def get_transaction_detail(name):
             original_used_amount,
             used_transaction_id,
             sum(input_coupon_amount) as input_coupon_amount
-    from `tabCoupon Transaction` 
+    from `{}`
     where 1 = 1
     and status not in ('Deleted')
     and used_transaction_id = %(used_transaction_id)s
-    GROUP BY used_transaction_id"""
-    data = frappe.db.sql(sql, { "used_transaction_id":doc.used_transaction_id}, as_dict=1)
+    GROUP BY used_transaction_id""".format(table)
+
+   
+
+
+    data = frappe.db.sql(sql, {"used_transaction_id":doc.used_transaction_id}, as_dict=1)
     if data and len(data) > 0:
         # data[0]["input_coupon_amoun"] = abs(data[0]["input_coupon_amoun"])
         data[0]["original_used_amount"] = abs(data[0]["original_used_amount"])

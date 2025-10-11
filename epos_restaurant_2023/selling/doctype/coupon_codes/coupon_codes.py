@@ -6,6 +6,9 @@ from frappe.model.document import Document
 from frappe import _
 import datetime
 from frappe.utils import get_datetime
+import os, shutil
+import shlex, subprocess
+from frappe.utils import cstr
 class CouponCodes(Document):
 	def validate(self):
 		# validate coupon exist with status Unused
@@ -98,3 +101,63 @@ def get_coupon_info(coupon):
 		"coupon_info":coupon_codes,
 		"coupon_transactions":coupon_transactions
 	}
+
+@frappe.whitelist()
+def move_to_history():
+	from frappe.model.document import bulk_insert
+	from datetime import datetime, timedelta
+	run_backup_command()
+	setting = frappe.get_doc("ePOS Settings")
+	cutoff_date = datetime.now() - timedelta(days=(setting.clear_coupon_clear_days or 14))
+	codes = frappe.db.get_list('Coupon Codes',filters={'moved_to_history':0,'coupon_status':['!=','Unused']},fields=['*'],as_list=False)
+	clear_codes = frappe.db.get_list('Coupon Codes',filters={ 'creation': ['<', cutoff_date],'coupon_status':['!=','Unused']},fields=['name'],as_list=False)
+	try:
+		if codes:
+			bulk_insert("Coupon Codes History", convert_to_history(codes) , chunk_size=10000)
+			frappe.db.sql("update `tabCoupon Codes` set moved_to_history = 1 where name in %(names)s",{'names':[a.name for a in codes]})
+		if clear_codes:
+			frappe.db.delete("Coupon Codes",filters={"name": ["in", [a.name for a in clear_codes]]})
+		frappe.db.commit()
+		msg = "Moved {0} rows to history".format(len(codes)) if len(codes)>0 else "All rows have already been moved to history"
+		return msg
+	except Exception as e:
+		frappe.db.rollback()
+
+def convert_to_history(transactions):
+	for a in transactions:
+		a.doctype = "Coupon Codes History"
+		doc = frappe.get_doc(a)
+		yield doc
+	
+@frappe.whitelist()
+def run_backup_command():
+    """Run site backup and clean old backups (blocking)"""
+    site_name = cstr(frappe.local.site)
+    folder = frappe.utils.get_site_path(frappe.conf.get("backup_path", "private/backups"))
+
+    # Clean old backup files
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            frappe.log_error(f"Failed to delete {file_path}: {e}")
+
+    # Build and run the bench backup command (synchronously)
+    command = f"bench --site {site_name} backup --include 'Coupon Codes'"
+    command = shlex.split(command)
+
+    result = subprocess.run(command, capture_output=True, text=True)
+
+    if result.returncode != 0:
+        frappe.log_error(
+            title="Backup Failed",
+            message=f"Command: {command}\n\nSTDERR:\n{result.stderr}"
+        )
+        raise Exception("Backup failed! Check logs.")
+
+    frappe.logger().info(result.stdout)
+    return "Backup completed successfully."

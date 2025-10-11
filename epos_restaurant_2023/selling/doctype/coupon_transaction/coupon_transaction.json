@@ -1,11 +1,13 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "naming_series:",
  "creation": "2025-06-18 14:00:07.080681",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "sale_information_section",
+  "naming_series",
   "business_branch",
   "pos_profile",
   "vendor",
@@ -38,7 +40,6 @@
   "coupon_amount",
   "currency",
   "exchange_rate",
-  "moved_to_history",
   "column_break_xzik",
   "status",
   "note",
@@ -322,12 +323,6 @@
    "options": "reference_doctype"
   },
   {
-   "default": "0",
-   "fieldname": "moved_to_history",
-   "fieldtype": "Check",
-   "label": "Moved To History"
-  },
-  {
    "fieldname": "accounting_tab",
    "fieldtype": "Tab Break",
    "label": "Accounting"
@@ -349,14 +344,21 @@
    "label": "Debit Account",
    "options": "Chart Of Account",
    "search_index": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "CT.YY.MM.DD.-.####"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-07 11:02:51.327269",
+ "modified": "2025-10-10 15:35:56.771421",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Transaction",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {

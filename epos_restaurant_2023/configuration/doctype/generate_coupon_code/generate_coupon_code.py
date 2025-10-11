@@ -7,7 +7,7 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad
 import base64
 from frappe.model.document import bulk_insert
-
+from epos_restaurant_2023.utils import encrypt_aes_base64
 from frappe.model.document import Document
 
 
@@ -43,6 +43,8 @@ class GenerateCouponCode(Document):
 		for c in new_coupons:			
 			doc = {
 				"doctype":"Coupon Codes",
+				"reference_doctype":"Generate Coupon Code",
+				"reference_name":self.name,
 				"coupon": c.coupon_number,
 				"coupon_url":c.coupon_number_url or "",
 				"coupon_status":"Unused",
@@ -66,7 +68,7 @@ def generate_button(param):
 	p = json.loads(param)
 	data  =[]
 	for number in range(p.get( "start_number",0), p.get("end_number",0)):
-		encrypted_b64 = encrypt_aes_base64(str(number), p.get("key",""), p.get("iv",""))
+		encrypted_b64 = encrypt_aes_base64(str(number))
 		item = {"coupon_number":str(number), "coupon_encrypt":encrypted_b64}
 
 		if  p.get("prefix_url","") != "":
@@ -79,15 +81,4 @@ def generate_button(param):
 
 
 
-
-def encrypt_aes_base64(plain_text: str, key: str, iv: str) -> str:
-    # convert key and iv from str -> bytes
-    key_bytes = key.encode("utf-8")
-    iv_bytes = iv.encode("utf-8")
-
-    cipher = AES.new(key_bytes, AES.MODE_CBC, iv_bytes)
-    padded_data = pad(plain_text.encode("utf-8"), AES.block_size)
-    ct_bytes = cipher.encrypt(padded_data)
-    return base64.b64encode(ct_bytes).decode("utf-8")
-
-
+ 

@@ -1,12 +1,14 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "naming_series:",
  "creation": "2025-10-02 17:22:10.349705",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "sale_information_section",
   "business_branch",
+  "naming_series",
   "pos_profile",
   "vendor",
   "pos_station",
@@ -332,14 +334,21 @@
    "fieldtype": "Link",
    "label": "Debit Account",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "CT.YY.MM.DD.-.####"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-09 09:40:57.600810",
+ "modified": "2025-10-10 15:36:09.635947",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Transaction History",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {

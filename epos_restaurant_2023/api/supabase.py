@@ -35,7 +35,7 @@ def send_coupon_data_to_supabase(coupon_code,coupon_number,posting_date):
             "posting_date":posting_date,
             "coupon_number":coupon_number,
             "coupon_code":coupon_code,
-            "status":"Fail",
+            "status":"Done",
             "data":data
        }).insert(ignore_permissions=True)
         return res

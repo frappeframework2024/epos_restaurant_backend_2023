@@ -62,7 +62,7 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   if(to.meta.requiresAuth){
     if(   !isAuthorize.value){
-      next("/login")
+      window.location = "/login"
     }else {
       next()
     }

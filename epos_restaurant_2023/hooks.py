@@ -195,19 +195,27 @@ scheduler_events = {
         "0 */12 * * *":[
             "epos_restaurant_2023.api.ftp_backup.execute_backup_command",
             "epos_restaurant_2023.api.api.update_summary_to_customers"
-        ]
+        ],
+        
+        "0 1 * * *":[
+            "epos_restaurant_2023.api.archive_data.delete_archive_transaction", # 1 AM every daty
+           
+        ],
+
 	},
     "all": [
 		"epos_restaurant_2023.api.custom_reminder.send_reminders"   
 	],
+    "daily":[
+        "epos_restaurant_2023.api.coupon.update_manager_coupon_status",
+        "epos_restaurant_2023.api.archive_data.archive_transactions"
+    ]
    
 
     
 }
 
-# "daily":[
-#     "epos_restaurant_2023.api.coupon.update_manager_coupon_status"
-# ]
+
 
 # Testing
 # -------

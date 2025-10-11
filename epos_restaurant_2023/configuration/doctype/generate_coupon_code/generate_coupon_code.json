@@ -14,8 +14,6 @@
   "qr_background_color",
   "description",
   "column_break_yapf",
-  "encrypt_key",
-  "encrypt_iv",
   "generate",
   "section_break_fcdw",
   "coupon_codes"
@@ -83,16 +81,6 @@
    "label": "Generate"
   },
   {
-   "fieldname": "encrypt_key",
-   "fieldtype": "Data",
-   "label": "Encrypt Key"
-  },
-  {
-   "fieldname": "encrypt_iv",
-   "fieldtype": "Data",
-   "label": "Encrypt IV"
-  },
-  {
    "allow_on_submit": 1,
    "fieldname": "qr_background_color",
    "fieldtype": "Color",
@@ -108,7 +96,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-09-24 15:24:57.106039",
+ "modified": "2025-10-10 14:43:00.303710",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Generate Coupon Code",

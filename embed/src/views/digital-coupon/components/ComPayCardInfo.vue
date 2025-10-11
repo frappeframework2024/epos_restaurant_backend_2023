@@ -141,7 +141,7 @@ const countDownCloseDialog = () => {
    
 
     if (countdown.value <= 0) {
-        alert("close me")
+        
       stopCountdown()
     dialogRef.value.close();   
     }

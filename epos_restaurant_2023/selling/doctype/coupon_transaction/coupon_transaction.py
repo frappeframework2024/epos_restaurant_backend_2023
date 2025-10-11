@@ -5,6 +5,10 @@ import frappe
 from frappe.model.document import Document
 from epos_restaurant_2023.api.account import submit_general_ledger_entry
 from frappe import _
+import os, shutil
+import shlex, subprocess
+from frappe.utils import cstr
+from frappe import conf
 class CouponTransaction(Document):
 	def validate(self):
 		#validate exhcange rate change 
@@ -38,14 +42,15 @@ class CouponTransaction(Document):
 			self.markup_percentage = ((self.coupon_amount - self.actual_amount)/(self.actual_amount or 1)) * 100
 		
 		if self.transaction_type =="Used":
+			
 			self.validate_account_code()
 			
 
 	def after_insert(self):
 		if self.transaction_type == "Used":
-			frappe.enqueue("epos_restaurant_2023.selling.doctype.coupon_transaction.coupon_transaction.submit_to_gl_entry", queue='short', self = self)
+			frappe.enqueue("epos_restaurant_2023.selling.doctype.coupon_transaction.coupon_transaction.submit_to_gl_entry", queue='default', self = self)
 
-		# frappe.enqueue("epos_restaurant_2023.api.supabase.send_coupon_data_to_supabase", queue='short', coupon_code = self.coupon_code, coupon_number=self.coupon_number,posting_date=self.posting_date)
+		frappe.enqueue("epos_restaurant_2023.api.supabase.send_coupon_data_to_supabase", queue='short', coupon_code = self.coupon_code, coupon_number=self.coupon_number,posting_date=self.posting_date)
 		# from epos_restaurant_2023.api.supabase import send_coupon_data_to_supabase
 		# send_coupon_data_to_supabase(self.coupon_code,self.coupon_number)
 
@@ -148,6 +153,7 @@ def submit_to_gl_entry(self):
 def move_to_history():
 	from frappe.model.document import bulk_insert
 	from datetime import datetime, timedelta
+	run_backup_command()
 	setting = frappe.get_doc("ePOS Settings")
 	cutoff_date = datetime.now() - timedelta(days=(setting.clear_coupon_clear_days or 14))
 	transactions = frappe.db.get_list('Coupon Transaction',filters={'moved_to_history':0},fields=['*'],as_list=False)
@@ -169,3 +175,36 @@ def convert_to_history(transactions):
 		a.doctype = "Coupon Transaction History"
 		doc = frappe.get_doc(a)
 		yield doc
+	
+@frappe.whitelist()
+def run_backup_command():
+    """Run site backup and clean old backups (blocking)"""
+    site_name = cstr(frappe.local.site)
+    folder = frappe.utils.get_site_path(frappe.conf.get("backup_path", "private/backups"))
+
+    # Clean old backup files
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            frappe.log_error(f"Failed to delete {file_path}: {e}")
+
+    # Build and run the bench backup command (synchronously)
+    command = f"bench --site {site_name} backup --include 'Coupon Transaction'"
+    command = shlex.split(command)
+
+    result = subprocess.run(command, capture_output=True, text=True)
+
+    if result.returncode != 0:
+        frappe.log_error(
+            title="Backup Failed",
+            message=f"Command: {command}\n\nSTDERR:\n{result.stderr}"
+        )
+        raise Exception("Backup failed! Check logs.")
+
+    frappe.logger().info(result.stdout)
+    return "Backup completed successfully."

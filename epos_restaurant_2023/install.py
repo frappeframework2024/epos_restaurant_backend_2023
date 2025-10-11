@@ -193,7 +193,9 @@ def reset_sale_transaction():
             frappe.db.sql("delete from `tabHappy Hours Promotion`")
             frappe.db.sql("delete from `tabPOS Voucher Payment`")
             frappe.db.sql("delete from `tabCoupon Issue`")
+            
             frappe.db.sql("delete from `tabCoupon Codes` where reference_doctype = 'Coupon Issue'")
+            frappe.db.sql("delete from `tabCoupon Codes History` where reference_doctype = 'Coupon Issue'")
             
             frappe.db.sql("delete from `tabVoucher`")
             frappe.db.sql("delete from `tabVoucher Payment`")
@@ -206,9 +208,11 @@ def reset_sale_transaction():
             frappe.db.sql("delete from `tabDelivery Note Product`")
             frappe.db.sql("delete from `tabCoupon Shift`")
             frappe.db.sql("delete from `tabCoupon Transaction`")
+            frappe.db.sql("delete from `tabCoupon Transaction History`")
             frappe.db.sql("delete from `tabStore Payment`") 
             frappe.db.sql("delete from `tabStore Payment Type`") 
             frappe.db.sql("update  `tabCoupon Codes` set price= 0,coupon_value= 0,top_up_amount=0,top_up_coupon_value=0,redeem_amount = 0,redeem_coupon_value=0,use_amount = 0,use_coupon_value = 0,balance_amount=0,balance_coupon_value=0, coupon_status='Unused',expired_date=null,sale='',working_day='',cashier_shift=''")
+            frappe.db.sql("update  `tabCoupon Codes History` set price= 0,coupon_value= 0,top_up_amount=0,top_up_coupon_value=0,redeem_amount = 0,redeem_coupon_value=0,use_amount = 0,use_coupon_value = 0,balance_amount=0,balance_coupon_value=0, coupon_status='Unused',expired_date=null,sale='',working_day='',cashier_shift=''")
             frappe.db.sql("UPDATE `tabCashier Notes` SET product_code = ''")
 
 
