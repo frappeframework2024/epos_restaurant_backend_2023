@@ -54,10 +54,7 @@ def get_columns(filters):
 	return columns
  
 def get_conditions(filters):
-	conditions = " where "
-	if filters.group_by == "Hour":
-		conditions = " and"
-	conditions += " coalesce(transaction_type,'Used')='Used'"
+	conditions = " where coalesce(transaction_type,'Used')='Used'"
 	start_date = filters.start_date
 	end_date = filters.end_date
 	conditions += " AND coalesce(posting_date,now()) between '{}' AND '{}'".format(start_date,end_date)
@@ -76,14 +73,17 @@ def get_report_data(filters):
 	if group_by == "number":
 		join = "right join `tabNumbers` b on b.number = hour(a.creation)"
 	sql = """
+	with transactions as(
+	SELECT NAME,coupon_number,pos_profile,pos_station,posting_date,customer_name,business_branch,actual_amount,coupon_amount,creation FROM `tabCoupon Transaction` {0}
+	union
+	SELECT NAME,coupon_number,pos_profile,pos_station,posting_date,customer_name,business_branch,actual_amount,coupon_amount,creation FROM `tabCoupon Transaction History` {0})
 	SELECT 
 	{1},
 	coalesce(truncate(abs(sum(a.actual_amount)),4),0) actual_amount,
 	coalesce(truncate(abs(sum(a.coupon_amount)),4),0) coupon_amount,
 	coalesce(count(a.name),0) transactions
-	FROM `tabCoupon Transaction` a 
+	FROM transactions a 
 	{2}
-	{0}
 	group by {1}
 	""".format(get_conditions(filters),group_by,join)
 	data = frappe.db.sql(sql,filters, as_dict=1)
