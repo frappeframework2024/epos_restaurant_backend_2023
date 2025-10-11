@@ -74,9 +74,31 @@ def get_report_data(filters):
 		join = "right join `tabNumbers` b on b.number = hour(a.creation)"
 	sql = """
 	with transactions as(
-	SELECT NAME,coupon_number,pos_profile,pos_station,posting_date,customer_name,business_branch,actual_amount,coupon_amount,creation FROM `tabCoupon Transaction` {0}
+	SELECT 
+	NAME,
+	coupon_number,
+	pos_profile,
+	pos_station,
+	posting_date,
+	customer_name,
+	business_branch,
+	(actual_amount/exchange_rate) actual_amount,
+	(coupon_amount/exchange_rate) coupon_amount,
+	creation 
+	FROM `tabCoupon Transaction` {0}
 	union
-	SELECT NAME,coupon_number,pos_profile,pos_station,posting_date,customer_name,business_branch,actual_amount,coupon_amount,creation FROM `tabCoupon Transaction History` {0})
+	SELECT 
+	NAME,
+	coupon_number,
+	pos_profile,
+	pos_station,
+	posting_date,
+	customer_name,
+	business_branch,
+	(actual_amount/exchange_rate) actual_amount,
+	(coupon_amount/exchange_rate) coupon_amount,
+	creation 
+	FROM `tabCoupon Transaction History` {0})
 	SELECT 
 	{1},
 	coalesce(truncate(abs(sum(a.actual_amount)),4),0) actual_amount,
