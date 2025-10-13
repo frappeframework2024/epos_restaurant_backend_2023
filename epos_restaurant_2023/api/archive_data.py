@@ -8,13 +8,20 @@ def test_archive():
 
 
 
+
 @frappe.whitelist(methods="POST")
 def archive_transactions():
+    # validate working day 
+    # we we can run this only all working day is closed
+    if frappe.db.exists("Working Day",{"is_closed":0}):
+        frappe.throw("Please close all working day first.")
+    # coupon transactions
     archive_coupon_transaction()
-    
+    # coupoon codes 
+    archive_coupon_codes()
+
 @frappe.whitelist()
 def archive_coupon_transaction():
-
     if  compare_doctype_schema("Coupon Transaction","Coupon Transaction History" ):
         # insert query must be look like this
         # query_look_like = """
@@ -37,22 +44,25 @@ def archive_coupon_transaction():
 @frappe.whitelist(methods="POST")
 def delete_archive_transaction():
     delete_archive_coupon_transaction()
+    delete_archive_coupon_codes()
+
 
 
 def delete_archive_coupon_transaction():
     backup_table("tabCoupon Transaction")
 
-    sql = """delete from `tabCoupon Transaction` ct
-        join `tabCoupon Transaction History` cth on cth.name = ct.name
+    sql = """DELETE ct
+            FROM `tabCoupon Transaction` AS ct
+                JOIN `tabCoupon Transaction History` AS cth ON cth.name = ct.name
     """
     # find skip deleted record
     skip_delete_record_data = frappe.db.sql("""
         select name from `tabCoupon Transaction` ct
         where 
-            ct.name in (
+            ct.coupon_code in (
                 select coupon_code from `tabCoupon Transaction` x where x.transaction_type = 'Coupon Issue'
             )
-    """)
+    """,as_dict = 1)
 
     # manager coupon will delete from transaction table after coupon expired
     if skip_delete_record_data:
@@ -64,6 +74,58 @@ def delete_archive_coupon_transaction():
 
 
 
+@frappe.whitelist()
+def archive_coupon_codes():
+    if  compare_doctype_schema("Coupon Codes","Coupon Codes History" ):
+        # insert query must be look like this
+        # query_look_like = """
+        # insert into `tabCoupon Codes History`  (name,....)
+        # select ct.name, ct..... from `tabCoupon Codes` cc
+        # left join `tabCoupon Codes History` cch on cch.name = cc.name
+        # where  
+        #     cch.name is null and 
+        #      cc.coupon_status <> 'Unused'
+        # """
+
+        insert_qery =  generate_insert_query("Coupon Codes","Coupon Codes History",from_doctype_alias="cc")
+        # add skip query 
+        insert_qery = insert_qery + """"
+             left join `tabCoupon Codes History` cch on cch.name = ch.name 
+             where 
+                cch.name is null  and
+                cc.coupon_status <> 'Unused'
+            """
+ 
+
+        # frappe.throw(insert_qery)
+        frappe.db.sql(insert_qery)
+
+        frappe.db.commit()
+
+
+def delete_archive_coupon_codes():
+    backup_table("tabCoupon Codes")
+
+    sql = """DELETE ct
+            FROM `tabCoupon Codes` AS cc
+                JOIN `tabCoupon Codes History` AS cch ON cth.name = cc.name
+            where
+                coupon_status <> 'Unused'
+            
+    """
+    
+    # skip record for coupon manager by check coupon that still exists in coupon transaction
+    skip_delete_record_data = frappe.db.sql("""
+        select distinct coupon_code from `tabCoupon Transactions`
+    """,as_dict =1)
+
+    # manager coupon will delete from transaction table after coupon expired
+    if skip_delete_record_data:
+        sql = sql + "  and cc.name not in %(skip_coupon_codes)s"
+        frappe.db.sql(sql,{"skip_coupon_codes":[d.get("coupon_code") for d in skip_delete_record_data]})
+    else:
+        frappe.db.sql(sql)
+    frappe.db.commit()
     
 
 

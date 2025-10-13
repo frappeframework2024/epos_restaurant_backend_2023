@@ -49,6 +49,8 @@ class CouponIssue(Document):
 		
 		if self.coupon_type=="Coupon Card":
 			frappe.db.set_value("Coupon Codes",self.coupon,{
+				"reference_doctype":"Coupon Issue",
+				"reference_name":self.name,
 				"coupon_status":"Used",
 				"price":self.coupon_amount,
 				"coupon_value":self.coupon_amount,

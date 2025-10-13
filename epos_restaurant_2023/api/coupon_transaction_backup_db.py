@@ -39,7 +39,7 @@ def backup_table(table_name):
     conn.sql(sql)
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods="POST")
 def delete_last_30_days_data():
     conn=get_conn()
     # coupon transaction

@@ -3,6 +3,7 @@ import frappe
 import calendar
 import datetime
 from frappe import _
+from epos_restaurant_2023.utils import encrypt_aes_base64,decrypt_aes_base64
 
 def get_day_numbers(year, month):
     _, num_days = calendar.monthrange(int( year), int(month))
@@ -257,6 +258,56 @@ def get_history_coupon_kpi(params):
     else:
         return data[0] 
 
+@frappe.whitelist()
+def get_history_coupon_transaction(params):
+    from frappe.utils import cint
+    page = cint(page)
+    page_length = cint(page_length)
+    start = (page - 1) * page_length
+
+    return params
+
+    # Main query with UNION (removes duplicates automatically)
+    query = f"""
+        (
+            SELECT 
+                name, customer, coupon_code, amount, creation
+            FROM `tabCoupon Transaction`
+        )
+        UNION
+        (
+            SELECT 
+                name, customer, coupon_code, amount, creation
+            FROM `tabCoupon Transaction History`
+        )
+        ORDER BY creation DESC
+        LIMIT {start}, {page_length}
+    """
+
+    data = frappe.db.sql(query, as_dict=True)
+
+    # Total count for pager
+    count_query = """
+        SELECT COUNT(*) as total FROM (
+            SELECT name, customer, coupon_code, amount, creation
+            FROM `tabCoupon Transaction`
+            UNION
+            SELECT name, customer, coupon_code, amount, creation
+            FROM `tabCoupon Transaction History`
+        ) as t
+    """
+    total = frappe.db.sql(count_query, as_dict=True)[0].total
+
+    return {
+        "data": data,
+        "total": total,
+        "page": page,
+        "page_length": page_length,
+        "pages": (total + page_length - 1) // page_length
+    }
+
+    return ""
+
 @frappe.whitelist(methods=["POST"])
 def get_coupon_dashboard_kpi(params):
     property_name = params["property_name"]
@@ -389,6 +440,22 @@ def daily_scan_coupon_chart(params):
 
     return result
 
+
+@frappe.whitelist()
+def get_code_value(param):
+    key = "3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6b"
+    iv = "6543210987654321"
+    use_coupon_encrypt = int(frappe.db.get_default("use_coupon_encrypt") or 0)
+    if param.lower().startswith("http"):
+        parts = param.split("?c=")
+        if len(parts) <= 1:
+            return ""
+        else:
+            return decrypt_aes_base64(parts[1],key, iv) if  use_coupon_encrypt == 1 else parts[1]
+    else:
+        return  decrypt_aes_base64(param,key, iv) if  use_coupon_encrypt == 1 else param
+        
+    
 
 
 @frappe.whitelist(allow_guest=True)
@@ -714,7 +781,7 @@ def on_scan_use_coupon(params):
 
                 #send success event to coupon manager app to show payment success message
                 # we should check if the coupon code is manager code so we dont need to send unusfull request to client
-                # frappe.enqueue("epos_restaurant_2023.api.ecoupon.alert_use_coupon_successful", queue='short', data=return_data)
+                frappe.enqueue("epos_restaurant_2023.api.ecoupon.alert_use_coupon_successful", queue='default', data=return_data)
                 
                 return return_data
             

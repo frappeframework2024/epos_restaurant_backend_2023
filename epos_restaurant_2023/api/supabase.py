@@ -58,11 +58,14 @@ def resent_data_to_supabase():
 
 @frappe.whitelist(methods=["POST"])
 def delete_coupon_code_data():
+    from datetime import datetime, timedelta
+    two_days_ago = (datetime.now() - timedelta(days=2)).date()
+
     site_config = frappe.get_site_config()
     url = site_config.get("supabase_api_url")
     key = site_config.get("supabase_api_key")
     supabase =  create_client(url, key)
-    supabase.table(site_config.get("supabase_coupon_code_table_name")).delete().neq("name", "").execute()
+    supabase.table(site_config.get("supabase_coupon_code_table_name")).delete().lte("posting_date", str(two_days_ago)).execute()
 
 
 

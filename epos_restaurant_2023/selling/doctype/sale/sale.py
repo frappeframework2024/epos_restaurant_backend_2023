@@ -39,6 +39,9 @@ class Sale(Document):
 					self.cashier_shift= data[0]["name"]
 				else:
 					frappe.throw(_("Please start shift first"))
+			else:
+				if frappe.get_cached_value("Cashier Shift",self.cashier_shift,"is_closed") == 1:
+					frappe.throw(_("Cashier shift has been closed."))
 		
 		if self.working_day:
 			if not self.cashier_shift: 

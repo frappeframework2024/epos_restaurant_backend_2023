@@ -14,15 +14,7 @@ frappe.query_reports["Store Revenue"] = {
 		
 	},
 	"filters": [
-		{
-			fieldname: "business_branch",
-			label: "Business Branch",
-			fieldtype: "MultiSelectList",
-			get_data: function(txt) {
-				return frappe.db.get_link_options('Business Branch', txt);
-			},
-			"on_change": function (query_report) {},
-		},
+		 
 		{
 			fieldname: "pos_profile",
 			label: "Station",
@@ -32,37 +24,7 @@ frappe.query_reports["Store Revenue"] = {
 			},
 			"on_change": function (query_report) {},
 		},
-		{
-			fieldname: "pos_station",
-			label: "Device",
-			fieldtype: "MultiSelectList",
-			get_data: function(txt) {
-				return frappe.db.get_link_options('POS Station', txt);
-			},
-			"on_change": function (query_report) {},
-		},
-		{
-			"fieldname":"filter_based_on",
-			"label": __("Filter Based On"),
-			"fieldtype": "Select",
-			"options": ["Fiscal Year","This Month", "Date Range"],
-			"default": ["This Month"],
-			"reqd": 1,
-			on_change: function() {
-				let filter_based_on = frappe.query_report.get_filter_value('filter_based_on');
-				if(filter_based_on!="This Month"){ 
-					frappe.query_report.toggle_filter_display('from_fiscal_year', filter_based_on === 'Date Range');
-					frappe.query_report.toggle_filter_display('start_date', filter_based_on === 'Fiscal Year'  );
-					frappe.query_report.toggle_filter_display('end_date', filter_based_on === 'Fiscal Year' );
-
-				
-				}else{
-					frappe.query_report.toggle_filter_display('from_fiscal_year', true);
-					frappe.query_report.toggle_filter_display('start_date', true  );
-					frappe.query_report.toggle_filter_display('end_date', true );
-				}
-			},
-		},
+		  
 		{
 			"fieldname":"start_date",
 			"label": __("Start Date"),
@@ -79,14 +41,7 @@ frappe.query_reports["Store Revenue"] = {
 			"reqd": 1,
 			"on_change": function (query_report) {},
 		},
-		{
-			"fieldname":"from_fiscal_year",
-			"label": __("Start Year"),
-			"fieldtype": "Int",
-			"default": (new Date()).getFullYear(),
-			"hide_in_filter":1,
-			"on_change": function (query_report) {},
-		},
+		 
 		{
 			"fieldname": "group_by",
 			"label": __("Group By"),

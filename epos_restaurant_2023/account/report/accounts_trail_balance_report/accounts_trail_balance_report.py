@@ -16,6 +16,15 @@ value_fields = (
 	"closing_credit",
 )
 
+
+def execute(filters=None):
+	data = get_data(filters)
+	columns = get_columns()
+	report_chart = get_report_chart(data)
+	report_summary = get_report_summary(data)
+	return columns, data,None,report_chart,report_summary
+	
+
 def get_report_summary(data):
 	opening_debit, opening_credit, debit,credit,closing_debit,closing_credit = [],[],[],[],[],[]
 	opening_debit.append(sum([d.get("opening_debit",0) for d in data if d.get("account","") == "Total"]))
@@ -197,12 +206,7 @@ def filter_accounts(accounts, depth=20):
 
 	return filtered_accounts, accounts_by_name, parent_children_map
 
-def execute(filters=None):
-	data = get_data(filters)
-	columns = get_columns()
-	report_chart = get_report_chart(data)
-	report_summary = get_report_summary(data)
-	return columns, data,None,report_chart,report_summary
+
 
 def validate_dates(from_date, to_date):
 	if not from_date or not to_date:

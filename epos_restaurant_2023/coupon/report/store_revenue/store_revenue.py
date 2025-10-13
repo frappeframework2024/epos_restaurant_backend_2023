@@ -4,15 +4,7 @@ from frappe.utils import add_months, add_days
 import datetime
 
 def execute(filters=None): 
-	if filters.filter_based_on =="Fiscal Year":
-		if not filters.from_fiscal_year:
-			filters.from_fiscal_year = datetime.date.today().year
-		
-		filters.start_date = '{}-01-01'.format(filters.from_fiscal_year)
-		filters.end_date = '{}-12-31'.format(filters.from_fiscal_year) 
-	elif filters.filter_based_on =="This Month":
-		filters.start_date = datetime.date.today().replace(day=1)
-		filters.end_date =add_days(  add_months(filters.start_date ,1),-1)
+ 
 		 
 	validate(filters)
 
@@ -23,8 +15,7 @@ def execute(filters=None):
 	return get_columns(filters), report_data, "", report_chart, get_report_summary(report_data,filters),0
  
 def validate(filters):
-	if not filters.business_branch:
-		filters.business_branch = frappe.db.get_list("Business Branch",pluck='name')
+	 
 	if filters.start_date and filters.end_date:
 		if filters.start_date > filters.end_date:
 			frappe.throw("The 'Start Date' ({}) must be before the 'End Date' ({})".format(filters.start_date, filters.end_date))
@@ -58,12 +49,10 @@ def get_conditions(filters):
 	start_date = filters.start_date
 	end_date = filters.end_date
 	conditions += " AND coalesce(posting_date,now()) between '{}' AND '{}'".format(start_date,end_date)
-	conditions += " AND business_branch in %(business_branch)s"
+	
 	if filters.get("pos_profile"):
 		conditions += " AND pos_profile in %(pos_profile)s"
-	if filters.get("pos_station"):
-		conditions += " AND pos_station in %(pos_station)s"
-
+	
 	conditions = conditions + " and coalesce(status,'') <> 'Deleted'"
 	return conditions
 
@@ -82,8 +71,8 @@ def get_report_data(filters):
 	posting_date,
 	customer_name,
 	business_branch,
-	(actual_amount/exchange_rate) actual_amount,
-	(coupon_amount/exchange_rate) coupon_amount,
+	 actual_amount,
+	 coupon_amount,
 	creation 
 	FROM `tabCoupon Transaction` {0}
 	union
@@ -95,8 +84,8 @@ def get_report_data(filters):
 	posting_date,
 	customer_name,
 	business_branch,
-	(actual_amount/exchange_rate) actual_amount,
-	(coupon_amount/exchange_rate) coupon_amount,
+	 actual_amount,
+	 coupon_amount,
 	creation 
 	FROM `tabCoupon Transaction History` {0})
 	SELECT 
@@ -109,6 +98,7 @@ def get_report_data(filters):
 	group by {1}
 	""".format(get_conditions(filters),group_by,join)
 	data = frappe.db.sql(sql,filters, as_dict=1)
+	
 	return data
  
 def get_report_group_data(filters):
@@ -125,7 +115,7 @@ def get_report_summary(data,filters):
 		fields = get_report_field(filters)
 		for f in fields:
 			value = "{:.2f}".format(sum(d[f["fieldname"]] for d in data))
-			report_summary.append({"label":"{}".format(f["label"]),"value":value,"indicator":f["indicator"]})
+			report_summary.append({"label":"{}".format(f["label"]),"value":value,"indicator":f["indicator"],"datatype":f.get("fieldtype")})
 	return  report_summary
 
 def get_report_chart(filters, data):
@@ -177,6 +167,6 @@ def get_field(filters):
 
 def get_report_field(filters):
 	fields = []
-	fields.append({"label":"Transactions","short_label":"Amt.", "fieldname":"transactions","fieldtype":"Data","indicator":"gray","precision":2,"chart_color":"#AF8A10"})
+	fields.append({"label":"Transactions","short_label":"Amt.", "fieldname":"transactions","fieldtype":"Int","indicator":"gray","precision":2,"chart_color":"#AF8A10"})
 	fields.append({"label":"Amounts","short_label":"Amt.", "fieldname":"actual_amount","fieldtype":"Currency","indicator":"gray","precision":2,"chart_color":"#FF8A65"})
 	return fields

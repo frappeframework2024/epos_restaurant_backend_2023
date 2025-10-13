@@ -1,7 +1,7 @@
 <template>  
     <div class="flex gap-1 align-items-center">
         <Avatar v-if="data?.user_info?.photo" :image="data?.user_info?.photo" class="mr-2" size="xlarge" shape="circle" />
-        <Avatar v-else :label="avatarLetter" class="mr-2" size="xlarge" shape="circle" />
+        <Avatar v-else :label="avatarLetter" class="mr-2 bg-blue-500"   style="color: whitesmoke;" size="xlarge" shape="circle" />
         <div>
             <div class="welcome-label">{{t("Welcome Back")}},</div>
             <h1>{{data?.user_info?.full_name}}</h1>

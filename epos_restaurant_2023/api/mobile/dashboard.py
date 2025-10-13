@@ -321,7 +321,7 @@ def get_coupon_transaction_summary(param):
     
     sql = """
         select 
-            transaction_type,
+            if(transaction_type = 'Used' and reference_doctype ='Coupon Issue', 'Manager Used',transaction_type) as transaction_type,
             count(*) as total_transaction,
             sum(coupon_amount) as coupon_value
         from `tabCoupon Transaction`
@@ -331,7 +331,7 @@ def get_coupon_transaction_summary(param):
             (%(business_branch)s = '' or business_branch = %(business_branch)s)   and 
             coalesce(status,'') <> 'Deleted'
         group by 
-            transaction_type
+            if(transaction_type = 'Used' and reference_doctype ='Coupon Issue', 'Manager Used',transaction_type)
 
     """
     filters ={
@@ -341,7 +341,7 @@ def get_coupon_transaction_summary(param):
     
     data = frappe.db.sql(sql,filters,as_dict=1)
     return_data = []
-    transaction_type =  ["Sale Coupon","Top Up","Used","Redeem"]
+    transaction_type =  ["Sale Coupon","Top Up","Used","Manager Used","Redeem"]
     for t in transaction_type:
         exists = [d for d in data if d.get("transaction_type") == t]
         if exists:

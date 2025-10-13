@@ -82,8 +82,6 @@ class WorkingDay(Document):
 				frappe.throw("Your are not allow to close working from POS Station. Please ask your night auditor to run night audit.")
 		frappe.clear_document_cache("Working Day",self.name)
 
-
-		
 		# this validatation is use for ecoupon when we close working day all coupon must be mark as expired imediatly
 		if self.has_value_changed("is_closed"):
 			if self.is_closed == 1:
@@ -102,23 +100,8 @@ class WorkingDay(Document):
 
 
 def get_unuse_coupon_balance(self):
-	sql = """with a as (
-		select distinct coupon_code from `tabCoupon Transaction` 
-		where
-			working_day = %(working_day)s 
-	)
-	select a.* from a join `tabCoupon Issue` ci on ci.coupon = a.coupon_code
-	"""
-	coupon_issue = frappe.db.sql(sql,{"working_day":self.name},as_dict = 1)
-	data = []
-
-	
-	if coupon_issue:
-		sql = "select sum(coupon_amount) as balance, sum(actual_amount) as actual_balance from `tabCoupon Transaction` where working_day = %(working_day)s and coalesce(status,'') <> 'Deleted' and coupon_code not in %(coupon_codes)s"
-		data = frappe.db.sql(sql, {"working_day":self.name,"coupon_codes":[d.get("coupon_code") for d in coupon_issue]},as_dict = 1)
-	else:
-		sql = "select sum(coupon_amount) as balance, sum(actual_amount) as actual_balance from `tabCoupon Transaction` where working_day = %(working_day)s and coalesce(status,'') <> 'Deleted'"
-		data = frappe.db.sql(sql, {"working_day":self.name},as_dict = 1)
+	sql = "select sum(coupon_amount) as balance, sum(actual_amount) as actual_balance from `tabCoupon Transaction` where working_day = %(working_day)s and coalesce(status,'') <> 'Deleted' and reference_doctype <> 'Coupon Issue'"
+	data = frappe.db.sql(sql, {"working_day":self.name},as_dict = 1)
 	
 	
 	if data:

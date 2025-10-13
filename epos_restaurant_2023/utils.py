@@ -3,7 +3,7 @@ from py_linq import Enumerable
 from datetime import datetime
 from frappe.utils import date_diff,today ,add_months, add_days,getdate,add_to_date
 from Crypto.Cipher import AES
-from Crypto.Util.Padding import pad
+from Crypto.Util.Padding import pad,unpad
 import base64
 
 @frappe.whitelist()
@@ -89,6 +89,30 @@ def encrypt_aes_base64(plain_text: str, key: str = None, iv: str = None) -> str:
     ct_bytes = cipher.encrypt(padded_data)
     return base64.b64encode(ct_bytes).decode("utf-8")
 
+def decrypt_aes_base64(cipher_text: str, key: str = None, iv: str = None) -> str:
+
+ 
+    site_config = frappe.get_site_config()
+    if not key:
+        key = site_config.get("encrypt_key")
+    if not iv:
+        iv = site_config.get("encrypt_iv")
+    
+    key_bytes = key.encode("utf-8")
+    iv_bytes = iv.encode("utf-8")
+
+ 
+    
+    # Clean ciphertext
+    cipher_text = cipher_text.strip().replace("\n", "")
+    # Base64 decode
+    ct_bytes = base64.b64decode(cipher_text)
+
+    cipher = AES.new(key_bytes, AES.MODE_CBC, iv_bytes)
+    decrypted_padded = cipher.decrypt(ct_bytes) 
+    # Unpad
+    decrypted = unpad(decrypted_padded, AES.block_size)
+    return decrypted.decode("utf-8")
 
 
 
@@ -103,3 +127,41 @@ def get_lastweek_to_currentweek():
     current_week_end = start_date + timedelta(days=(6 - weekday))
 
     return frappe.utils.getdate(last_week_start.date()), frappe.utils.getdate(current_week_end.date())
+
+
+
+@frappe.whitelist()
+def run_backup_command():
+    import os, shutil
+    import shlex, subprocess
+    from frappe.utils import cstr
+    """Run site backup and clean old backups (blocking)"""
+    site_name = cstr(frappe.local.site)
+    folder = frappe.utils.get_site_path(frappe.conf.get("backup_path", "private/backups"))
+
+    # Clean old backup files
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            frappe.log_error(f"Failed to delete {file_path}: {e}")
+
+    # Build and run the bench backup command (synchronously)
+    command = f"bench --site {site_name} backup --include 'Coupon Transaction'"
+    command = shlex.split(command)
+
+    result = subprocess.run(command, capture_output=True, text=True)
+
+    if result.returncode != 0:
+        frappe.log_error(
+            title="Backup Failed",
+            message=f"Command: {command}\n\nSTDERR:\n{result.stderr}"
+        )
+        raise Exception("Backup failed! Check logs.")
+
+    frappe.logger().info(result.stdout)
+    return "Backup completed successfully."

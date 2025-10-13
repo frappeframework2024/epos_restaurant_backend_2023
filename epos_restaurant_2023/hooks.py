@@ -209,6 +209,9 @@ scheduler_events = {
     "daily":[
         "epos_restaurant_2023.api.coupon.update_manager_coupon_status",
         "epos_restaurant_2023.api.archive_data.archive_transactions"
+    ],
+    "weekly":[
+        "epos_restaurant_2023.api.coupon_transaction_backup_db.delete_last_30_days_data"
     ]
    
 

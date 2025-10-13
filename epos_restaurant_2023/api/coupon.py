@@ -137,13 +137,16 @@ def check_coupon_code_for_top_up(coupon_code):
         'coupon':  coupon_code,
         "coupon_status":"Used"
     },
-    fields=["name","coupon","coupon_status","expired_date"]
+    fields=["name","coupon","coupon_status","expired_date","reference_doctype"]
     )
     if not data:
         frappe.throw(_("This coupon number is not a used coupon number"))
 
     if   datetime.datetime.now() > data[0].expired_date:
         frappe.throw(_("This coupon code is expired"))
+
+    if data[0].reference_doctype =="Coupon Issue":
+        frappe.throw("គូប៉ុងសម្រាប់បុគ្គលិកមិនអាចបញ្ជូលលុយបានទេ។")
 
 
     sql = """select 
@@ -216,12 +219,15 @@ def check_coupon_code_for_redeem(coupon_code):
     },
     order_by='creation desc',
     page_length=1,
-    fields=["name","coupon","coupon_status","expired_date"]
+    fields=["name","coupon","coupon_status","expired_date","reference_doctype"]
     )
  
     # validate expiredate
     if not data:
         frappe.throw(_("This coupon code does not exist in the system"))
+
+    if data[0].reference_doctype =="Coupon Issue":
+        frappe.throw("គូប៉ុងសម្រាប់បុគ្គលិកមិនអាចដកប្រាក់បានទេ។")
 
     if data[0].coupon_status =="Unused":
         frappe.throw(_("This coupon number is not a used coupon number"))
@@ -232,10 +238,12 @@ def check_coupon_code_for_redeem(coupon_code):
     if data[0].coupon_status=="Expired":
         frappe.throw(_("This coupon code is expired"))  
 
-    
+
+
     if data[0].coupon_status=="Used":
         if   datetime.datetime.now() > data[0].expired_date:
             frappe.throw(_("This coupon code is expired"))   
+    
     
  
 

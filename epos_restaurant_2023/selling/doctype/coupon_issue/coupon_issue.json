@@ -161,6 +161,7 @@
   },
   {
    "allow_on_submit": 1,
+   "description": "Coupon will be expired at 23:29:59",
    "fieldname": "expired_date",
    "fieldtype": "Date",
    "in_list_view": 1,
@@ -172,7 +173,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-10-06 11:34:39.799514",
+ "modified": "2025-10-13 15:09:09.626150",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Issue",
