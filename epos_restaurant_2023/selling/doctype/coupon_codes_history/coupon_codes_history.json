@@ -35,7 +35,6 @@
   "customer",
   "customer_name",
   "expired_date",
-  "is_used",
   "note"
  ],
  "fields": [
@@ -211,12 +210,6 @@
    "label": "Expired Date"
   },
   {
-   "default": "0",
-   "fieldname": "is_used",
-   "fieldtype": "Check",
-   "label": "Is Used"
-  },
-  {
    "fieldname": "note",
    "fieldtype": "Small Text",
    "label": "Note"
@@ -224,7 +217,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-13 18:07:09.069843",
+ "modified": "2025-10-13 18:17:35.469645",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Codes History",
