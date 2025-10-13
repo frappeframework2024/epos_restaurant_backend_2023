@@ -19,29 +19,56 @@ def get_columns(filters):
 		{"fieldname":"sold_coupon_amount","label":_("Sale Coupon Amount"),"fieldtype":"Currency"},
 		{"fieldname":"top_up_amount","label":_("Top Up Amount"),"fieldtype":"Currency"},
 		{"fieldname":"used_coupon_amount","label":_("Used Amount"),"fieldtype":"Currency"},
+		
 		{"fieldname":"redeem_amount","label":_("Redeem Amount"),"fieldtype":"Currency"},
-		{"fieldname":"unused_amount","label":_("Unused Amount"),"fieldtype":"Currency"}
+		{"fieldname":"unused_amount","label":_("Unused Amount"),"fieldtype":"Currency"},
+		{"fieldname":"manager_coupon_amount","label":_("Manager Coupon Amt"),"fieldtype":"Currency"},
+		{"fieldname":"manager_used_coupon_amount","label":_("Manager Used Amt"),"fieldtype":"Currency"},
 	]
 	return columns
 
 def get_report_data(filters):
 	sql = """
+		with a as ( 
+				select 
+					posting_date,
+					if(reference_doctype ='Coupon Issue' and transaction_type='Used' ,'Manager Used', transaction_type) as transaction_type,
+					coupon_amount
+				from `tabCoupon Transaction` 
+				where
+					posting_date between %(start_date)s and %(end_date)s and 
+					coalesce(status,'') <> 'Deleted'    
+					{additional_filter}	
+			UNION
+			select 
+					posting_date,
+					if(reference_doctype ='Coupon Issue' and transaction_type='Used' ,'Manager Used', transaction_type) as transaction_type,
+					coupon_amount
+				from `tabCoupon Transaction History` 
+				where
+					posting_date between %(start_date)s and %(end_date)s and 
+					coalesce(status,'') <> 'Deleted'    
+					{additional_filter}	
+		)
+		
 		select 
 			 DATE_FORMAT(posting_date, '%%d-%%m-%%Y') as posting_date,
 			sum(transaction_type = 'Sale Coupon') as total_coupon_sold,
 			sum(if(transaction_type='Sale Coupon', coupon_amount,0)) as sold_coupon_amount,
 			sum(if(transaction_type='Top Up', coupon_amount,0)) as top_up_amount,
 			sum(if(transaction_type = 'Used', coupon_amount,0)) as used_coupon_amount,
+			sum(if(transaction_type = 'Manager Used', coupon_amount,0)) as manager_used_coupon_amount,
+			sum(if(transaction_type = 'Coupon Issue', coupon_amount,0)) as manager_coupon_amount,
 			sum(if(transaction_type='Redeem', coupon_amount,0)) as redeem_amount
-		from `tabCoupon Transaction` 
-		where
-			posting_date between %(start_date)s and %(end_date)s and 
-			coalesce(status,'') <> 'Deleted'    
-			{additional_filter}		
+		from  a
+
 		group by 
 			posting_date
 		order by posting_date
+
+
 	"""
+	 
 
 	additional_filter = ""
 	if filters.pos_profile:
@@ -53,8 +80,9 @@ def get_report_data(filters):
 
 	sql = sql.format(additional_filter = additional_filter)
  
-	
+ 
 	data =  frappe.db.sql(sql,filters, as_dict = 1)
+	
  
 	unused_amount_data = get_unused_coupon_amount(filters)
 	for d in data:
@@ -68,8 +96,11 @@ def get_report_data(filters):
 			"posting_date":"Total",
 			"is_total_row":1,
 		}
-	for c in ["total_coupon_sold","sold_coupon_amount","top_up_amount","used_coupon_amount","redeem_amount","unused_amount"]:
-		total_row[c] = sum([d.get(c) for d in data])
+
+	
+	for c in ["total_coupon_sold","sold_coupon_amount","top_up_amount","used_coupon_amount","redeem_amount","unused_amount","manager_coupon_amount","manager_used_coupon_amount"]:
+		
+		total_row[c] = sum([(d.get(c) or 0) for d in data])
 	data.append(total_row)
 
 	return data

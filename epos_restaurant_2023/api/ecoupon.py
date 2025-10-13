@@ -258,55 +258,92 @@ def get_history_coupon_kpi(params):
     else:
         return data[0] 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_history_coupon_transaction(params):
     from frappe.utils import cint
-    page = cint(page)
-    page_length = cint(page_length)
+    import math
+
+    page = cint(params.get("page", 1))
+    page_length = cint(params.get("limit_page_length", 20))
     start = (page - 1) * page_length
+    now = datetime.datetime.now().date()
 
-    return params
+    filter_dict = {f[0]: f[2] for f in params.get("filters",[])}
 
-    # Main query with UNION (removes duplicates automatically)
+   
+    keyword = filter_dict.get("coupon_number", "").strip()
+
+    # Base condition
+    condition = """
+        AND business_branch = %(business_branch)s
+        AND pos_profile = %(pos_profile)s
+        AND posting_date BETWEEN %(start_date)s AND %(end_date)s
+        AND status IN ('Locked','Active')
+        AND transaction_type = 'Used'
+    """
+
+    sql_params = {
+        "business_branch": filter_dict.get("business_branch", ""),
+        "pos_profile": filter_dict.get("pos_profile", ""),
+        "start_date": filter_dict.get("posting_date", [])[0],
+        "end_date":  filter_dict.get("posting_date", [])[1],
+        "start": start,
+        "page_length": page_length
+    }
+
+ 
+
+    # Add keyword only if present
+    if keyword:
+        condition += " AND coupon_number LIKE %(keyword)s"
+        sql_params["keyword"] = f"{keyword}"
+
+
+    # Main query with UNION
     query = f"""
-        (
+        SELECT * FROM (
             SELECT 
-                name, customer, coupon_code, amount, creation
+                name, coupon_number, coupon_shift, input_actual_amount, actual_amount,
+                input_coupon_amount, coupon_amount, pos_station, pos_profile,
+                posting_date, currency, exchange_rate, transaction_date,
+                creation, created_by, used_transaction_id
             FROM `tabCoupon Transaction`
-        )
-        UNION
-        (
-            SELECT 
-                name, customer, coupon_code, amount, creation
-            FROM `tabCoupon Transaction History`
-        )
-        ORDER BY creation DESC
-        LIMIT {start}, {page_length}
-    """
+            WHERE 1=1 {condition}
 
-    data = frappe.db.sql(query, as_dict=True)
-
-    # Total count for pager
-    count_query = """
-        SELECT COUNT(*) as total FROM (
-            SELECT name, customer, coupon_code, amount, creation
-            FROM `tabCoupon Transaction`
             UNION
-            SELECT name, customer, coupon_code, amount, creation
+
+            SELECT 
+                name, coupon_number, coupon_shift, input_actual_amount, actual_amount,
+                input_coupon_amount, coupon_amount, pos_station, pos_profile,
+                posting_date, currency, exchange_rate, transaction_date,
+                creation, created_by, used_transaction_id
             FROM `tabCoupon Transaction History`
-        ) as t
+            WHERE 1=1 {condition}
+        ) AS t
+        ORDER BY transaction_date DESC
+        LIMIT %(start)s, %(page_length)s
     """
-    total = frappe.db.sql(count_query, as_dict=True)[0].total
+
+    data = frappe.db.sql(query, sql_params, as_dict=True)
+
+    # Total count
+    count_query = f"""
+        SELECT COUNT(*) as total FROM (
+            SELECT name FROM `tabCoupon Transaction` WHERE 1=1 {condition}
+            UNION
+            SELECT name FROM `tabCoupon Transaction History` WHERE 1=1 {condition}
+        ) AS t
+    """
+    total = frappe.db.sql(count_query, sql_params, as_dict=True)[0].total
 
     return {
         "data": data,
-        "total": total,
+        "total_records": total,
         "page": page,
-        "page_length": page_length,
-        "pages": (total + page_length - 1) // page_length
+        "limit_page_length": page_length,
+        "total_pages": math.ceil(total / page_length)
     }
 
-    return ""
 
 @frappe.whitelist(methods=["POST"])
 def get_coupon_dashboard_kpi(params):

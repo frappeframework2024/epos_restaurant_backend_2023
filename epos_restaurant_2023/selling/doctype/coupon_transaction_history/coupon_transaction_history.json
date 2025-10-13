@@ -293,7 +293,7 @@
    "fieldname": "used_from_transaction",
    "fieldtype": "Link",
    "label": "Used From Transaction",
-   "options": "Coupon Transaction"
+   "options": "Coupon Transaction History"
   },
   {
    "fieldname": "original_used_amount",
@@ -344,7 +344,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-10 15:36:09.635947",
+ "modified": "2025-10-13 16:48:40.961352",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Coupon Transaction History",

@@ -4,6 +4,7 @@ from frappe.utils import add_months, add_days
 import datetime
 
 def execute(filters=None): 
+	frappe.throw("hello")
 	if filters.filter_based_on =="Fiscal Year":
 		if not filters.from_fiscal_year:
 			filters.from_fiscal_year = datetime.date.today().year
@@ -65,6 +66,7 @@ def get_report_data(filters):
 	group by {1}
 	""".format(get_conditions(filters),group_by)
 	data = frappe.db.sql(sql,filters, as_dict=1)
+	frappe.msgprint(sql)
 	return data
  
 def get_report_group_data(filters):
