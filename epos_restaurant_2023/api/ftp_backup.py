@@ -26,7 +26,8 @@ def execute_repair_table():
     frappe.enqueue(method=repair_table,queue="long",show_msg=1)
 
 def repair_table(show_msg=0):
-    frappe.publish_realtime("repair_database", {"message": "Repairing Database"},user=frappe.session.user)
+    if show_msg == 1:
+        frappe.publish_realtime("repair_database", {"message": "Repairing Database"},user=frappe.session.user)
     data = frappe.db.sql("SELECT concat('REPAIR Table `',TABLE_NAME,'`;') script FROM information_schema.TABLES WHERE table_schema='{0}' AND table_type='BASE TABLE'".format(frappe.conf.get("db_name")),as_dict=1)
     for a in data:
         frappe.db.sql(a.script)
