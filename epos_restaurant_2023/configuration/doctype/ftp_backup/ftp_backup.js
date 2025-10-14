@@ -10,7 +10,14 @@ frappe.ui.form.on("FTP Backup", {
             });
 		});
        
-         frappe.realtime.on("backup_database", (data) => {
+        frappe.realtime.on("backup_database", (data) => {
+            frappe.show_alert({
+                message: data.message,
+                indicator: 'green'
+            });
+		});
+
+        frappe.realtime.on("check_database", (data) => {
             frappe.show_alert({
                 message: data.message,
                 indicator: 'green'

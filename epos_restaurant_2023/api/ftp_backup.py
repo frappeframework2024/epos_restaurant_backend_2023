@@ -18,6 +18,7 @@ def get_current_site_name():
 
 @frappe.whitelist()
 def execute_backup_command(): 
+    frappe.publish_realtime("backup_database", {"message": "Backing Up Database"},user=frappe.session.user)
     frappe.enqueue(run_backup_command,queue="long")
 
 @frappe.whitelist()
@@ -25,6 +26,7 @@ def execute_repair_table():
     frappe.enqueue(method=repair_table,queue="long",show_msg=1)
 
 def repair_table(show_msg=0):
+    frappe.publish_realtime("repair_database", {"message": "Repairing Database"},user=frappe.session.user)
     data = frappe.db.sql("SELECT concat('REPAIR Table `',TABLE_NAME,'`;') script FROM information_schema.TABLES WHERE table_schema='{0}' AND table_type='BASE TABLE'".format(frappe.conf.get("db_name")),as_dict=1)
     for a in data:
         frappe.db.sql(a.script)
@@ -34,6 +36,7 @@ def repair_table(show_msg=0):
 
 @frappe.whitelist()
 def check_table():
+    frappe.publish_realtime("check_database", {"message": "Checking Database"},user=frappe.session.user)
     site = frappe.conf.get("db_name")
     corrupt_table = ""
     tables = ""
