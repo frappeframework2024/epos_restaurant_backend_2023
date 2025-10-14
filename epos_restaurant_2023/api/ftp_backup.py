@@ -19,12 +19,10 @@ def get_current_site_name():
 @frappe.whitelist()
 def execute_backup_command(): 
     frappe.enqueue(run_backup_command,queue="long")
-    return "Added To Queue"
 
 @frappe.whitelist()
 def execute_repair_table():
     frappe.enqueue(method=repair_table,queue="long",show_msg=1)
-    return 'Repairing Database, Check RQ Job'
 
 def repair_table(show_msg=0):
     data = frappe.db.sql("SELECT concat('REPAIR Table `',TABLE_NAME,'`;') script FROM information_schema.TABLES WHERE table_schema='{0}' AND table_type='BASE TABLE'".format(frappe.conf.get("db_name")),as_dict=1)
@@ -32,7 +30,7 @@ def repair_table(show_msg=0):
         frappe.db.sql(a.script)
     frappe.db.commit()
     if show_msg == 1:
-        frappe.publish_realtime("repair_database", {"message": "Database Repaired"})
+        frappe.publish_realtime("repair_database", {"message": "Database Repaired"},user=frappe.session.user)
 
 @frappe.whitelist()
 def check_table():
@@ -99,8 +97,6 @@ def run_backup_command():
     
     frappe.enqueue(upload_to_ftp,timeout=3600)
 
-    return "Backup In Queue"
-
 async def run_bench_command(command, kwargs=None):
     site = {"site": frappe.local.site}
     cmd_input = None
@@ -155,4 +151,4 @@ def upload_to_ftp():
         with open(file_path, 'rb') as file:
             session.storbinary(f'STOR {filename}', file, blocksize=8192)
     session.quit()
-    return "Backup Completed"
+    frappe.publish_realtime("backup_database", {"message": "Database Backup Successfully"},user=frappe.session.user)

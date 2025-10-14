@@ -2,15 +2,15 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("FTP Backup", {
-    onload(frm){
-        frappe.call({
-            method: 'epos_restaurant_2023.api.ftp_backup.get_current_site_name', 
-            callback: function(r) { 
-               console.log(r.message)
-            }
-        })
+    setup(frm){
         frappe.realtime.on("repair_database", (data) => {
-            console.log("triggered")
+            frappe.show_alert({
+                message: data.message,
+                indicator: 'green'
+            });
+		});
+       
+         frappe.realtime.on("backup_database", (data) => {
             frappe.show_alert({
                 message: data.message,
                 indicator: 'green'
@@ -21,7 +21,7 @@ frappe.ui.form.on("FTP Backup", {
         frappe.call({
             method: 'epos_restaurant_2023.api.ftp_backup.execute_backup_command', 
             callback: function(r) { 
-               frappe.msgprint("Backup Added To Queue")
+               
             }
         })
 	},
@@ -29,7 +29,7 @@ frappe.ui.form.on("FTP Backup", {
         frappe.call({
             method: 'epos_restaurant_2023.api.ftp_backup.execute_repair_table', 
             callback: function(r) { 
-               frappe.msgprint(r.message)
+                
             }
         })
 	},
