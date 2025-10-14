@@ -23,15 +23,16 @@ def execute_backup_command():
 
 @frappe.whitelist()
 def execute_repair_table():
-    frappe.enqueue(method=repair_table,queue="long")
+    frappe.enqueue(method=repair_table,queue="long",show_msg=1)
     return 'Repairing Database, Check RQ Job'
 
-def repair_table():
+def repair_table(show_msg=0):
     data = frappe.db.sql("SELECT concat('REPAIR Table `',TABLE_NAME,'`;') script FROM information_schema.TABLES WHERE table_schema='{0}' AND table_type='BASE TABLE'".format(frappe.conf.get("db_name")),as_dict=1)
     for a in data:
         frappe.db.sql(a.script)
     frappe.db.commit()
-    frappe.publish_realtime("repair_database", {"message": "Database Repaired"})
+    if show_msg == 1:
+        frappe.publish_realtime("repair_database", {"message": "Database Repaired"})
 
 @frappe.whitelist()
 def check_table():
@@ -69,7 +70,7 @@ def run_backup_command():
     site_name = cstr(frappe.local.site)
     folder = setting.ftp_backup_path
     backup_type = setting.backup_type
-
+    repair_table()
     try:
         clear_logs(setting)
     except:
