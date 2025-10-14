@@ -6,21 +6,21 @@ frappe.ui.form.on("FTP Backup", {
         frappe.realtime.on("repair_database", (data) => {
             frappe.show_alert({
                 message: data.message,
-                indicator: 'green'
+                indicator: 'blue'
             });
 		});
        
         frappe.realtime.on("backup_database", (data) => {
             frappe.show_alert({
                 message: data.message,
-                indicator: 'green'
+                indicator: 'blue'
             });
 		});
 
         frappe.realtime.on("check_database", (data) => {
             frappe.show_alert({
                 message: data.message,
-                indicator: 'green'
+                indicator: 'blue'
             });
 		});
     },
