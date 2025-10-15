@@ -153,3 +153,4 @@ export const MoveItemSelectOrderDialog = createPromiseDialog<params, object>(Com
 export const UnpaidBillListDialog = createPromiseDialog<params, object>(ComUnpaidBillList);
 export const ComSelectPaymentTypeQuickPaymentDialog = createPromiseDialog<params, object>(ComSelectPaymentTypeQuickPayment);
 export const ComChangeTableNumberDialog = createPromiseDialog<params, object>(ComChangeTableNumber);
+export const ComSubmitTermAndConditionDialog = createPromiseDialog<params, object>(ComSubmitTermAndCondition);

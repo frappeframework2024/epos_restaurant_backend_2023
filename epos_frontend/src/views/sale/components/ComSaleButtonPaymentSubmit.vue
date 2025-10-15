@@ -41,7 +41,7 @@
   </div>
 </template>
 <script setup>
-import { inject,ref ,useRouter, paymentDialog, searchSaleDialog, createToaster, i18n,comPopupDialog } from '@/plugin';
+import { inject,ref ,useRouter, paymentDialog, searchSaleDialog, createToaster, i18n,ComSubmitTermAndConditionDialog } from '@/plugin';
 import ComExchangeRate from './ComExchangeRate.vue';
 import { whenever, useMagicKeys } from '@vueuse/core';
 const { t: $t } = i18n.global;
@@ -117,8 +117,7 @@ async function onSubmit() {
       return
     }
   }
-  const result = await comPopupDialog({
-       });
+  const result = await ComSubmitTermAndConditionDialog({ business_branch:sale.setting?.business_branch });
         
 
     const action = sale.action;

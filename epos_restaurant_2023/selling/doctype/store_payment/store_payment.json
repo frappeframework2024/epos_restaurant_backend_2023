@@ -43,6 +43,8 @@
   {
    "fieldname": "pos_profile",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Store Name",
    "options": "POS Profile",
    "reqd": 1
@@ -50,24 +52,26 @@
   {
    "fieldname": "posting_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Posting Date",
    "reqd": 1
   },
   {
    "fieldname": "working_day",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Working Day",
    "link_filters": "[[{\"fieldname\":\"working_day\",\"field_option\":\"Working Day\"},\"is_closed\",\"=\",0]]",
-   "options": "Working Day",
-   "reqd": 1
+   "options": "Working Day"
   },
   {
    "fieldname": "cashier_shift",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Cashier Shift",
    "link_filters": "[[{\"fieldname\":\"cashier_shift\",\"field_option\":\"Cashier Shift\"},\"is_closed\",\"=\",0]]",
-   "options": "Cashier Shift",
-   "reqd": 1
+   "options": "Cashier Shift"
   },
   {
    "fetch_from": "pos_profile.default_vendor",
@@ -82,6 +86,7 @@
   {
    "fieldname": "payment_amount",
    "fieldtype": "Currency",
+   "in_list_view": 1,
    "label": "Payment Amount",
    "read_only": 1
   },
@@ -193,7 +198,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-09-27 11:06:30.112490",
+ "modified": "2025-10-15 14:40:36.344712",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Store Payment",

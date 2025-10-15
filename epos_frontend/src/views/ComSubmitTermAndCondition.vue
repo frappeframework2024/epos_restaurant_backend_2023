@@ -3,19 +3,11 @@
 
         <v-card>
             <v-card-text>
-
-                <h1>{{ params.text }}</h1>
-
-                <div class="grid">
-                    <v-btn @click="onOpen">Open Dialog box 2</v-btn>
-                </div>
-
-
-                <button @click="confirm">{{ params.confirmButtonText || 'Yes' }}</button>
-                <v-btn color="error" @click="decline">{{ params.declineButtonText || 'Close Me' }}</v-btn>
+                <h1>{{ term }}</h1>
             </v-card-text>
             <v-card-actions>
-
+                <v-btn color="error" @click="decline">{{ 'Reject' }}</v-btn>
+                <v-btn color="success" @click="confirm">{{ 'Accept' }}</v-btn>
             </v-card-actions>
         </v-card>
 
@@ -23,16 +15,22 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref } from '@/plugin'
+import { defineProps, defineEmits, ref,onMounted ,inject} from '@/plugin'
 import { comPopup2Dialog } from '../utils/dialog.ts';
 const open = ref(true)
-
-
+const frappe = inject("$frappe")
+const db = frappe.db();
+let term = ref("")
 const props = defineProps({
     params: {
         type: Object,
-        required: true,
+        required: true
     },
+})
+
+onMounted(async () => { 
+    let doc = await db.getDoc("Business Branch",props.params.business_branch)
+    term.value = doc.term_and_condition
 })
 
 const emit = defineEmits(["resolve"])

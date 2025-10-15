@@ -367,7 +367,6 @@ function getSaleProducts(groupByKey,order_by="creation") {
         } else {
            let desc = order_by.endsWith("_desc")
             order_by = order_by.replace("_desc", "")
-
             let query = Enumerable.from(this.sale.sale_products)
             query = desc 
             ? query.orderByDescending(x => x[order_by])

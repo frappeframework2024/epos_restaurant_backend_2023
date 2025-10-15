@@ -2,37 +2,6 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Store Payment", {
-	business_branch(frm) {
-		// change_branch(frm)
-		// auto load working day when branch changes
-		if (frm.doc.business_branch) {
-			frappe.call({
-				method: "frappe.client.get_list",
-				args: {
-					doctype: "Working Day",
-					filters: {
-						is_closed: 0,
-						business_branch: frm.doc.business_branch
-					},
-					fields: ["name"],
-					order_by: "creation desc",
-					
-				},
-				callback: function(r) {
-					if (r.message && r.message.length > 0) {
-						let working_day = r.message[0].name;
-						frm.set_value("working_day", working_day);
-
-						// after setting working day → auto load cashier shift
-						set_default_cashier_shift(frm, working_day);
-					} else {
-						frm.set_value("working_day", "");
-						frm.set_value("cashier_shift", "");
-					}
-				}
-			});
-		} 
-	},
 
 	pos_profile(frm) {
 		// alert(frm.doc.pos_profile)
