@@ -20,10 +20,12 @@
             ]" item-title="title" item-value="key" label="Sort Menu Item By">
         </v-select>
          <v-select v-model="gv.itemMenuSetting.sort_sale_menu_by" :items="[
-              { key: 'product_name', title: 'Product Name (EN)' },
-              { key: 'product_name_kh', title: 'Product Name (KH)' },
-              { key: 'product_code', title: 'Product Code' },
-              { key: 'creation', title: 'Order Time' }
+              { key: 'product_name', title: 'Product Name (ASC)' },
+              { key: 'product_name_desc', title: 'Product Name (DESC)' },
+              { key: 'creation', title: 'Order Time (ASC)' },
+              { key: 'creation_desc', title: 'Order Time (DESC)' },
+              { key: 'price', title: 'Price (ASC)' },
+              { key: 'price_desc', title: 'Price (DESC)' }
             ]" item-title="title" item-value="key" label="Sort Sale Item By">
         </v-select>
 

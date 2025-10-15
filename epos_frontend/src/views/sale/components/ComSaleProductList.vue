@@ -241,7 +241,6 @@ const dialog = useDialog()
 const dialogRef = inject('dialogRef');
 let setting = localStorage.getItem("item_menu_setting")
 setting = JSON.parse(setting)
-console.log(setting)
 const props = defineProps({
     groupKey: Object,
     readonly: Boolean,
