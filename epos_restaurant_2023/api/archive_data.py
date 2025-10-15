@@ -65,7 +65,15 @@ def delete_archive_coupon_transaction():
         select name from `tabCoupon Transaction` ct
         where 
             ct.coupon_code in (
-                select coupon_code from `tabCoupon Transaction` x where x.transaction_type = 'Coupon Issue'
+                select 
+                    x.coupon_code 
+                from `tabCoupon Transaction` x 
+                    join `tabCoupon Codes` cc on cc.name = x.coupon_code 
+
+                where 
+                    x.transaction_type = 'Coupon Issue' and 
+                    cc.coupon_status = 'Used'
+
             )
     """,as_dict = 1)
 
@@ -81,7 +89,7 @@ def delete_archive_coupon_transaction():
 
 @frappe.whitelist()
 def archive_coupon_codes():
-    
+     
     if  compare_doctype_schema("Coupon Codes","Coupon Codes History" ):
         # insert query must be look like this
         # query_look_like = """
@@ -95,22 +103,47 @@ def archive_coupon_codes():
 
         insert_qery =  generate_insert_query("Coupon Codes","Coupon Codes History",from_doctype_alias="cc")
         # add skip query 
-        insert_qery = insert_qery + """"
-             left join `tabCoupon Codes History` cch on cch.name = ch.name 
+        insert_qery = insert_qery + """
+             left join `tabCoupon Codes History` cch on cch.name = cc.name 
              where 
                 cch.name is null  and
-                cc.coupon_status <> 'Unused'
-            """
+                cc.coupon_status <> 'Unused'"""
  
 
         # frappe.throw(insert_qery)
         frappe.db.sql(insert_qery)
+
+
+
+        # update coupon issue use amount and status to coupon history bedore deleted
+        # update coupon use amount before delete 
+        sql = """
+                UPDATE `tabCoupon Codes History` cch
+                    JOIN `tabCoupon Codes` cc ON cc.name = cch.name
+                SET 
+                    cch.use_amount = cc.use_amount,
+                    cch.use_coupon_value = cc.use_coupon_value,
+                    cch.top_up_amount = cc.top_up_amount,
+                    cch.top_up_coupon_value = cc.top_up_coupon_value,
+                    cch.redeem_amount = cc.redeem_amount,
+                    cch.redeem_coupon_value = cc.redeem_coupon_value,
+                    cch.balance_amount = cc.balance_amount,
+                    cch.coupon_status = cc.coupon_status
+                WHERE
+                    cc.reference_doctype = 'Coupon Issue';
+        """
+        frappe.db.sql(sql)
+        
 
         frappe.db.commit()
 
 
 def delete_archive_coupon_codes():
     backup_table("tabCoupon Codes")
+
+
+    
+
 
     sql = """DELETE cc
             FROM `tabCoupon Codes` AS cc

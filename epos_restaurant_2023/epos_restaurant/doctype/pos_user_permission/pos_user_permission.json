@@ -43,6 +43,7 @@
   "park_item",
   "allow_apply_tax_include_rate",
   "allow_overwrite_voucher_minimum_amount",
+  "allow_click_menu_after_sale_sumitted",
   "section_break_7",
   "discount_codes"
  ],
@@ -259,11 +260,17 @@
    "fieldname": "allow_overwrite_voucher_minimum_amount",
    "fieldtype": "Check",
    "label": "Allow Overwrite Voucher Minimum Amount"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_click_menu_after_sale_sumitted",
+   "fieldtype": "Check",
+   "label": "Allow Click Menu After Sale Sumitted"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-16 09:41:49.070406",
+ "modified": "2025-10-15 09:03:35.781197",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "POS User Permission",

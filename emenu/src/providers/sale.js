@@ -9,7 +9,6 @@ export default class Sale {
         this.table_id = null; 
         this.sale_type = ''; 
         this.setting = {}
-
         this.sale = {
             sale_products: []
         };
@@ -29,6 +28,8 @@ export default class Sale {
 
             table_id: this.table_id,
             tbl_number: this.tbl_number,
+            new_sale_default_pos_menu: this.new_sale_default_pos_menu,
+            submitted_sale_default_pos_menu: this.submitted_sale_default_pos_menu,
             pos_profile: this.setting.pos_profile.name,
             // pos_station_name: localStorage.getItem("device_name"),
             customer: this.default_customer.name,

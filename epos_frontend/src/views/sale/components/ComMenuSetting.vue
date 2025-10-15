@@ -12,12 +12,20 @@
         <v-select v-model="gv.itemMenuSetting.show_menu_language" label="Menu Language" :items="['kh','en']"></v-select>
         <v-select v-model="gv.itemMenuSetting.sort_order_by" :items="[
               { key: 'sort_order', title: 'Sort Order' },
-    { key: 'product_name_en', title: 'Product Name (EN)' },
-    { key: 'product_name_kh', title: 'Product Name (KH)' },
-    { key: 'product_code', title: 'Product Code' },
-    { key: 'creation', title: 'Creation Date' },
-    { key: 'modified', title: 'Last Modified Date' }
-            ]" item-title="title" item-value="key" label="Sort Menu Item By"></v-select>
+              { key: 'product_name_en', title: 'Product Name (EN)' },
+              { key: 'product_name_kh', title: 'Product Name (KH)' },
+              { key: 'product_code', title: 'Product Code' },
+              { key: 'creation', title: 'Creation Date' },
+              { key: 'modified', title: 'Last Modified Date' }
+            ]" item-title="title" item-value="key" label="Sort Menu Item By">
+        </v-select>
+         <v-select v-model="gv.itemMenuSetting.sort_sale_menu_by" :items="[
+              { key: 'product_name', title: 'Product Name (EN)' },
+              { key: 'product_name_kh', title: 'Product Name (KH)' },
+              { key: 'product_code', title: 'Product Code' },
+              { key: 'creation', title: 'Order Time' }
+            ]" item-title="title" item-value="key" label="Sort Sale Item By">
+        </v-select>
 
 
         <div class="px-3 mt-2">

@@ -39,7 +39,8 @@ export default class Gv {
 			show_column_item:6,
 			height_item:150,
 			width_sale_summary:400,
-			shortcut_menu_font_size:16
+			shortcut_menu_font_size:16,
+			sort_sale_menu_by:"product_name"
         }
 		
 	}

@@ -71,6 +71,7 @@ const sale = inject("$sale");
 const frappe = inject("$frappe");
 const moment = inject("$moment");
 const router = useRouter();
+const product = inject("$product");
 const props = defineProps({
     tableStatusColor: Boolean
 });
@@ -112,6 +113,7 @@ async function  validateNewtowkSaleLock(table){
 
 
 function onTableClick(table, guest_cover) {
+    product.loading_default_menu_from_table = 1
     if(is_processing.value){
         toaster.warning($t("Sale network lock processing"))
         return
@@ -167,6 +169,14 @@ function onTableClick(table, guest_cover) {
     });
 }
 
+async function getDefaultTableMenu(table) {
+        const db = frappe.db();
+        await db.getDoc('Tables Number',table).then((doc) => {
+          sale.sale.new_sale_default_pos_menu = doc.new_sale_default_pos_menu;
+          sale.sale.submitted_default_pos_menu = doc.submitted_default_pos_menu;
+        }).catch((error) => { console.log(error) });
+    }
+
 async function newSale(table) {
     
     if(await validateNewtowkSaleLock(table)){ 
@@ -197,7 +207,7 @@ async function newSale(table) {
         sale.sale.customer_name = table.customer_name;
         sale.sale.customer_group = table.customer_group;
     }
-
+    getDefaultTableMenu(table.id)
     let cust = await db.getDoc("Customer", sale.sale.customer)
     if(cust.default_discount > 0){
         sale.sale.discount_type = "Percent";

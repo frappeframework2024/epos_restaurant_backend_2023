@@ -308,6 +308,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "percentage_of_bill_amount_to_claim_crypto":pos_config.percentage_of_bill_amount_to_claim_crypto,
         "open_order_required_password":pos_config.open_order_required_password,
         "order_station_open_order_required_password":pos_config.order_station_open_order_required_password,
+        "require_password_for_submitted_sale":0,
         "change_price_rule_require_password":pos_config.change_price_rule_require_password,
         "open_cashdrawer_require_password":pos_config.open_cashdrawer_require_password,
         "edit_closed_receipt_required_password":pos_config.edit_closed_receipt_required_password,
@@ -570,7 +571,9 @@ def get_tables_number(table_group,device_name, pos_profile):
                             0 as y_percent,
                             price_rule,
                             tbl_group,
-                            discount_type 
+                            discount_type,
+                            new_sale_default_pos_menu,
+                            submitted_default_pos_menu
                          from `tabTables Number` 
 
                          where tbl_group=%(group)s

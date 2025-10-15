@@ -76,7 +76,7 @@
                     </v-menu>
                 </div>
             </div>
-
+            
             <div class="p-1 rounded-md absolute bottom-1 right-1 left-1 bg-gray-50 bg-opacity-90 text-sm text-center">
 
                 <span v-if="!sale.load_menu_lang" :style="{fontSize:gv.itemMenuSetting.item_font_size+ 'px' }">{{ getMenuName(data, true) }}</span> <span
@@ -172,14 +172,31 @@ function getTotalQuantityOrder(data) {
 // end price menu
 
 function onClickMenu(menu) {
-    if (sale.setting.pos_menus.length > 0) {
-        product.parentMenu = menu.name;
-        _onPriceRuleChanged(menu);
-    } else {
-     
-        product.getProductMenuByProductCategory(menu.name)
+    if(menu.require_password_for_submitted_sale == 1 && (sale.sale.name || "") != ""){
+        gv.setting.pos_setting.require_password_for_submitted_sale = 1
+        gv.authorize("require_password_for_submitted_sale","allow_click_menu_after_sale_sumitted").then(async (v) => {
+            if (v) {
+               if (sale.setting.pos_menus.length > 0) {
+                    product.loading_default_menu_from_table = 0;
+                    product.parentMenu = menu.name;
+                    _onPriceRuleChanged(menu);
+                } else {
+                
+                    product.getProductMenuByProductCategory(menu.name)
+                }
+            }
+        })
     }
-
+    else{
+        if (sale.setting.pos_menus.length > 0) {
+            product.loading_default_menu_from_table = 0;
+            product.parentMenu = menu.name;
+            _onPriceRuleChanged(menu);
+        } else {
+        
+            product.getProductMenuByProductCategory(menu.name)
+        }
+    }
 }
 
 const { files, open, reset, onCancel, onChange } = useFileDialog({
@@ -234,6 +251,7 @@ function onBack(menu) {
     const parent_name = product.posMenuResource.data?.find(r => r.name == menu.parent).parent;
     const parent_menu = product.posMenuResource.data?.find(r => r.name == parent_name);
     product.parentMenu = parent_name;
+    product.loading_default_menu_from_table = 0;
     if (parent_menu != undefined){
         _onPriceRuleChanged(parent_menu);
     }

@@ -12,6 +12,7 @@ export default class Product {
     constructor() {
         this.setting = null;
         this.parentMenu = "";
+        this.loading_default_menu_from_table = 1;
         this.searchProductKeyword = "";
         this.searchProductKeywordStore = "";
         this.is_open_price = 0;
@@ -74,27 +75,26 @@ export default class Product {
         this.posMenuResource.reload();
     }
 
-    getPOSMenu() {
-      
+    getPOSMenu(default_menu = "") {
         if (this.getString(this.searchProductKeyword) == "") {
-            if (this.parentMenu) {
-                const data =     this.posMenuResource.data?.filter(r => r.parent == this.parentMenu)
-                
-                return data
-               
+            if(default_menu && this.loading_default_menu_from_table == 1){
+                 const data =  Enumerable.from(this.posMenuResource.data?.filter(r => r.parent == default_menu))
+                 return data
             }
-            else {
-                
-                let defaultMenu = this.currentRootPOSMenu ? this.currentRootPOSMenu : this.setting?.default_pos_menu;
-                if (localStorage.getItem('default_menu')) {
-                    defaultMenu = localStorage.getItem('default_menu')
+            else{
+                 if (this.parentMenu) {
+                    const data = this.posMenuResource.data?.filter(r => r.parent == this.parentMenu)
+                    return data
                 }
-                const data =  Enumerable.from(this.posMenuResource.data?.filter(r => r.parent == defaultMenu))
-               
-                return data
-
-                // return   Enumerable.from(this.posMenuResource.data?.filter(r => r.parent == defaultMenu)).orderBy("$.type_index").orderBy("$.sort_order").thenBy("$.name_en");
-
+                else {
+                    let defaultMenu = this.currentRootPOSMenu ? this.currentRootPOSMenu : this.setting?.default_pos_menu;
+                    if (localStorage.getItem('default_menu')) {
+                        defaultMenu = localStorage.getItem('default_menu')
+                    }
+                    const data =  Enumerable.from(this.posMenuResource.data?.filter(r => r.parent == defaultMenu))
+                    return data
+                    // return   Enumerable.from(this.posMenuResource.data?.filter(r => r.parent == defaultMenu)).orderBy("$.type_index").orderBy("$.sort_order").thenBy("$.name_en");
+                }
             }
         } else {
             // sort is from db

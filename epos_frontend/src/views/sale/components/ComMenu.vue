@@ -15,9 +15,7 @@
                             :style="!mobile ? 'grid-template-columns: repeat('+ gv.itemMenuSetting.show_column_item +' , 1fr);' : ''"
                            >
                             <template v-if="product.setting.pos_menus.length > 0">
-                               
-                                <div v-for="(m, index) in product.getPOSMenu()" :key="index" :style="'height:' + gv.itemMenuSetting.height_item + 'px'" class="h-36">
-                                    
+                                <div v-for="(m, index) in product.getPOSMenu(sale.sale.name ? sale.sale.submitted_default_pos_menu:sale.sale.new_sale_default_pos_menu)" :key="index" :style="'height:' + gv.itemMenuSetting.height_item + 'px'" class="h-36">
                                     <ComMenuItem :data="m" />
                                 </div>
                             </template>
@@ -68,9 +66,8 @@
     
     const { mobile } = useDisplay()
     const product = inject("$product")
-    const frappe = inject("$frappe")
     const gv = inject("$gv");
-    const db = frappe.db();
+    const sale = inject("$sale");
 
     const props = defineProps({
         backgroundImage: String

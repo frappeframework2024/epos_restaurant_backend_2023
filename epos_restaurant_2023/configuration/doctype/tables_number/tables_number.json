@@ -10,25 +10,34 @@
  "field_order": [
   "tbl_number",
   "tbl_group",
-  "photo",
+  "shape",
   "width",
   "height",
-  "sale_type",
-  "is_foc",
-  "qr_menu_file",
-  "download_qr_image",
   "column_break_6",
-  "shape",
-  "discount_type",
-  "default_discount",
+  "photo",
+  "sale_type",
   "price_rule",
-  "require_check_in",
   "sort_order",
+  "is_foc",
+  "require_check_in",
+  "disabled",
+  "section_break_dhsk",
+  "download_qr_image",
+  "qr_menu_file",
+  "section_break_jbmp",
+  "discount_type",
+  "column_break_ogbj",
+  "default_discount",
+  "section_break_shhc",
   "default_customer",
-  "customer_photo",
   "customer_name",
+  "column_break_oqgo",
+  "customer_photo",
   "customer_group",
-  "disabled"
+  "section_break_fhlo",
+  "new_sale_default_pos_menu",
+  "column_break_maim",
+  "submitted_default_pos_menu"
  ],
  "fields": [
   {
@@ -164,12 +173,52 @@
    "fieldname": "download_qr_image",
    "fieldtype": "Button",
    "label": "Download QR Image"
+  },
+  {
+   "fieldname": "section_break_dhsk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_jbmp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_ogbj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_shhc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_oqgo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_fhlo",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "new_sale_default_pos_menu",
+   "fieldtype": "Link",
+   "label": "New Sale Default POS Menu",
+   "options": "POS Menu"
+  },
+  {
+   "fieldname": "column_break_maim",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "submitted_default_pos_menu",
+   "fieldtype": "Link",
+   "label": "Submitted Default POS Menu",
+   "options": "POS Menu"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-10 08:30:36.048704",
+ "modified": "2025-10-14 11:31:31.362585",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Tables Number",

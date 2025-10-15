@@ -184,6 +184,8 @@ export default class Sale {
             commission_note: '',
             commission_amount: 0,
             created_by: make_order_auth?.name || "",
+            new_sale_default_pos_menu: "",
+            submitted_default_pos_menu: ""
 
         } 
         this.onSaleApplyTax(tax_rule, this.sale);  
@@ -242,7 +244,7 @@ export default class Sale {
             await this.saleResource.get.fetch().then(async (doc) => {
                 this.onLoadDeleteSaleProducts(doc.name);
                 this.sale = doc;
-
+                this.getDefaultTableMenu(doc.table_id)
                 //add sale product to temp resend sale product to kitchen order
                 this.reSendSaleProductKOT = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "" && ((r.printers || "[]") != "[]"))));
 
@@ -279,12 +281,21 @@ export default class Sale {
         })
     }
 
+    async getDefaultTableMenu(table) {
+        const db = frappe.db();
+        await db.getDoc('Tables Number',table).then((doc) => {
+          this.sale.new_sale_default_pos_menu = doc.new_sale_default_pos_menu;
+          this.sale.submitted_default_pos_menu = doc.submitted_default_pos_menu;
+        }).catch((error) => { console.log(error) });
+    }
+
     getSaleProductGroupByKey() {
         if (!this.sale.sale_products) {
             return []
         } else {
+            console.log(this.sale.sale_products)
             const group = Enumerable.from(this.sale.sale_products).groupBy("{order_by:$.order_by,order_time:$.order_time}", "", "{order_by:$.order_by,order_time:$.order_time}", "$.order_by+','+$.order_time");
-            return group.orderByDescending("$.order_time").toArray();
+            return group.orderBy("$.price").toArray();
         }
     }
 
