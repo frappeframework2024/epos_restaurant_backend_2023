@@ -15,20 +15,20 @@
                         <ComSaleProductDeletedList :group-key="g" />
                 </span>
             </template>
-            
-            <span v-for="(g, index) in sale.getSaleProductGroupByKey()" :key="index">     
+            <template v-if="(gv.itemMenuSetting.sort_sale_menu_by == 'creation' || gv.itemMenuSetting.sort_sale_menu_by == 'creation_desc')" >
+                <span v-for="(g, index) in sale.getSaleProductGroupByKey(gv.itemMenuSetting.sort_sale_menu_by)" :key="index">     
                     <div class="bg-red-700 text-white flex items-center justify-between" style="font-size: 10px; padding: 2px;">
                         <div><v-icon icon="mdi-clock" size="small" class="mr-1"></v-icon>{{
                             moment(g.order_time).format('DD-MM-YYYY hh:mm:ss A')
                         }}</div>
                         <div><v-icon icon="mdi-account-outline" size="small" class="mr-1"></v-icon>{{ g.order_by }}</div>
                     </div>
-                    {{ g }}
                     <ComSaleProductList :group-key="g" />
-            </span>
-
-          
-
+                </span>
+            </template>
+            <template v-else>
+                 <ComSaleProductList :sort_sale_menu_by="gv.itemMenuSetting.sort_sale_menu_by"/>
+            </template>
         </div>
     </ComPlaceholder>
 </template>
@@ -39,7 +39,14 @@ import ComSaleProductList from './ComSaleProductList.vue';
 import ComSaleProductDeletedList from './ComSaleProductDeletedList.vue';
 const sale = inject('$sale')
 const gv = inject('$gv')
-
+let setting = localStorage.getItem("item_menu_setting")
+if (setting){
+    setting = JSON.parse(setting)
+}else {
+    setting = {
+        sort_sale_menu_by:"creation",
+    }
+}
 </script>
 
 

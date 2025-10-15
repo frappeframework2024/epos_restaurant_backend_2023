@@ -31,6 +31,7 @@ def get_report_data(filters):
 	sql = """
 		with a as ( 
 				select 
+					name,
 					posting_date,
 					if(reference_doctype ='Coupon Issue' and transaction_type='Used' ,'Manager Used', transaction_type) as transaction_type,
 					coupon_amount
@@ -41,6 +42,7 @@ def get_report_data(filters):
 					{additional_filter}	
 			UNION
 			select 
+					name,
 					posting_date,
 					if(reference_doctype ='Coupon Issue' and transaction_type='Used' ,'Manager Used', transaction_type) as transaction_type,
 					coupon_amount
@@ -79,17 +81,19 @@ def get_report_data(filters):
 
 
 	sql = sql.format(additional_filter = additional_filter)
- 
+	
  
 	data =  frappe.db.sql(sql,filters, as_dict = 1)
 	
  
-	unused_amount_data = get_unused_coupon_amount(filters)
+	# unused_amount_data = get_unused_coupon_amount(filters)
+	# for d in data:
+	# 	unused_amount =  next((item for item in unused_amount_data if item.get("posting_date") == d.get("posting_date")), None)
+	# 	if unused_amount:
+	# 		d["unused_amount"] = unused_amount.get("unused_amount") or 0
+	
 	for d in data:
-		unused_amount =  next((item for item in unused_amount_data if item.get("posting_date") == d.get("posting_date")), None)
-		if unused_amount:
-			d["unused_amount"] = unused_amount.get("unused_amount") or 0
-
+		d["unused_amount"] = (d.get("sold_coupon_amount") or 0) + (d.get("top_up_amount") or 0)  + (d.get("redeem_amount") or 0) + (d.get("used_coupon_amount") or 0)
 
 	# add total row
 	total_row = {

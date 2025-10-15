@@ -5,7 +5,7 @@ from html2image import Html2Image
 import numpy as np
 import os
 from epos_restaurant_2023.www.printview import get_print_format_doc, set_link_titles,get_rendered_template,get_print_style
-from escpos.printer import Network
+
 from epos_restaurant_2023.api.print_report_css.custom_style import get_css_boostrap
 import base64
 import uuid

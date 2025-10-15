@@ -2,7 +2,7 @@
     
     <v-list class="!p-0">
         <v-list-item
-            v-for="sp, index in (readonly == true ? getSaleProducts(groupKey) : sale.getSaleProducts(groupKey))"
+            v-for="sp, index in (readonly == true ? getSaleProducts(groupKey,sort_sale_menu_by) : sale.getSaleProducts(groupKey,sort_sale_menu_by))"
             :key="index" @click="!readonly ? { click: sale.onSelectSaleProduct(sp) } : {}"
             class="!border-t !border-gray-300 !mb-0 !p-2"
             :class="{ 'selected': (sp.selected && !readonly), 'submitted relative': sp.sale_product_status == 'Submitted', 'item-list': !readonly }">
@@ -244,7 +244,8 @@ setting = JSON.parse(setting)
 const props = defineProps({
     groupKey: Object,
     readonly: Boolean,
-    saleCustomerDisplay: Object
+    saleCustomerDisplay: Object,
+    sort_sale_menu_by: String
 });
 
 function get_combo_menu(combo){
@@ -360,16 +361,21 @@ function onReorder(sp) {
     }
 }
 
-function getSaleProducts(groupByKey) {
-    if (props.saleCustomerDisplay && props.saleCustomerDisplay.sale_products) {
+function getSaleProducts(groupByKey,order_by="creation") {
         if (groupByKey) {
-            return Enumerable.from(props.saleCustomerDisplay.sale_products).where(`$.order_by=='${groupByKey.order_by}' && $.order_time=='${groupByKey.order_time}'`).orderByDescending("$.modified").toArray()
+            return Enumerable.from(this.sale.sale_products).where(`$.order_by=='${groupByKey.order_by}' && $.order_time=='${groupByKey.order_time}'`).orderByDescending("$.modified").toArray()
         } else {
-            return Enumerable.from(props.saleCustomerDisplay.sale_products).orderByDescending("$.modified").toArray();
+           let desc = order_by.endsWith("_desc")
+            order_by = order_by.replace("_desc", "")
+
+            let query = Enumerable.from(this.sale.sale_products)
+            query = desc 
+            ? query.orderByDescending(x => x[order_by])
+            : query.orderBy(x => x[order_by])
+            this.sale = this.sale
+            return query.toArray()
         }
     }
-    return [];
-}
 
  
 function getEmployees(data) {

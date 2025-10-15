@@ -8,7 +8,6 @@ import { createToaster } from "@meforma/vue-toaster";
 import socket from '@/utils/socketio';
 import { FrappeApp } from 'frappe-js-sdk';
 import NumberFormat from 'number-format.js';
-
 const frappe = new FrappeApp();
 const db = frappe.db()
 const call = frappe.call()
@@ -289,13 +288,16 @@ export default class Sale {
         }).catch((error) => { console.log(error) });
     }
 
-    getSaleProductGroupByKey() {
+    getSaleProductGroupByKey(sort_order_type="asc") {
         if (!this.sale.sale_products) {
             return []
         } else {
-            console.log(this.sale.sale_products)
-            const group = Enumerable.from(this.sale.sale_products).groupBy("{order_by:$.order_by,order_time:$.order_time}", "", "{order_by:$.order_by,order_time:$.order_time}", "$.order_by+','+$.order_time");
-            return group.orderBy("$.price").toArray();
+            let type = sort_order_type.endsWith("_desc")
+            let query = Enumerable.from(this.sale.sale_products).groupBy("{order_by:$.order_by,order_time:$.order_time}", "", "{order_by:$.order_by,order_time:$.order_time}", "$.order_by+','+$.order_time");
+            query = type
+            ? query.orderByDescending("$.order_time")
+            : query.orderBy("$.order_time")
+            return query.toArray()
         }
     }
 
@@ -338,11 +340,18 @@ export default class Sale {
     }
 
 
-    getSaleProducts(groupByKey) {
+    getSaleProducts(groupByKey,order_by="creation") {
         if (groupByKey) {
             return Enumerable.from(this.sale.sale_products).where(`$.order_by=='${groupByKey.order_by}' && $.order_time=='${groupByKey.order_time}'`).orderByDescending("$.modified").toArray()
         } else {
-            return Enumerable.from(this.sale.sale_products).orderByDescending("$.modified").toArray()
+           let desc = order_by.endsWith("_desc")
+            order_by = order_by.replace("_desc", "")
+
+            let query = Enumerable.from(this.sale.sale_products)
+            query = desc 
+            ? query.orderByDescending(x => x[order_by])
+            : query.orderBy(x => x[order_by])
+            return query.toArray()
         }
     }
 

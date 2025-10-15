@@ -1,6 +1,7 @@
 import { createPromiseDialog } from "vue-promise-dialogs"
 import ComPopup from '@/views/ComPopup.vue';
 import ComPopup2 from '@/views/ComPopup2.vue';
+import ComSubmitTermAndCondition from '@/views/ComSubmitTermAndCondition.vue';
 import ComPrintPreview from '@/components/ComPrintPreview.vue'
 import ComSaleDetail from '@/views/receipt_list/components/ComSaleDetail.vue';
 import CustomerDetail from '@/views/customer/CustomerDetail.vue';
