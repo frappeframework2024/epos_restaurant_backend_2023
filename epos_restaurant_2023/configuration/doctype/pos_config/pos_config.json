@@ -156,6 +156,8 @@
   "overwrite_voucher_minimum_amount_required_password",
   "column_break_gezq",
   "show_voucher_minimum_overwrite",
+  "section_break_qkin",
+  "show_term_on_submit",
   "accounting_tab",
   "default_tip_account",
   "column_break_mcmi",
@@ -977,12 +979,22 @@
    "fieldname": "combo_menu_print_captain_by_items_printer",
    "fieldtype": "Check",
    "label": "Combo Menu Print Captain By Items Printer"
+  },
+  {
+   "fieldname": "section_break_qkin",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_term_on_submit",
+   "fieldtype": "Check",
+   "label": "Show Term On Submit"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-15 09:02:48.682730",
+ "modified": "2025-10-15 14:59:58.103355",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

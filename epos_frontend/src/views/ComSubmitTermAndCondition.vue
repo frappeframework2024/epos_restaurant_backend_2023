@@ -1,16 +1,15 @@
 <template>
-    <v-dialog fullscreen v-model="open">
+    <v-dialog v-model="open">
 
         <v-card>
             <v-card-text>
-                <h1>{{ term }}</h1>
+                <pre>{{ term }}</pre>
             </v-card-text>
-            <v-card-actions>
-                <v-btn color="error" @click="decline">{{ 'Reject' }}</v-btn>
-                <v-btn color="success" @click="confirm">{{ 'Accept' }}</v-btn>
+            <v-card-actions class="justify-end">
+                <v-btn @click="decline" style="background-color: #b00020;color: white;">{{ 'Reject' }}</v-btn>
+                <v-btn @click="confirm" style="background-color: #16a34a;color: white;">{{ 'Accept' }}</v-btn>
             </v-card-actions>
         </v-card>
-
     </v-dialog>
 </template>
 
@@ -40,14 +39,5 @@ function confirm() {
 }
 function decline() {
     emit('resolve',false);
-}
-async function onOpen() {
-    const result = await comPopup2Dialog({
-        text: "Do you like my name is pheakdey?"
-    });
-    if (result) { 
-        // const data =JSON.parse(result.toString()) 
-        // alert(data.name)
-    }
 }
 </script>

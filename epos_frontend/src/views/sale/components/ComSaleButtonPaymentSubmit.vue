@@ -117,8 +117,13 @@ async function onSubmit() {
       return
     }
   }
-  const result = await ComSubmitTermAndConditionDialog({ business_branch:sale.setting?.business_branch });
-        
+
+  if(gv.setting.pos_setting.show_term_on_submit == 1){
+     const result = await ComSubmitTermAndConditionDialog({ business_branch:sale.setting?.business_branch });
+    if(!result){
+      return;
+    }
+  }
 
     const action = sale.action;
     const message = sale.message;

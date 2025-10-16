@@ -341,6 +341,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "show_system_closed_amount": pos_config.show_system_closed_amount,
         "combo_menu_print_captain_by_items_printer": pos_config.combo_menu_print_captain_by_items_printer,
         "overwrite_voucher_minimum_amount_required_password": pos_config.overwrite_voucher_minimum_amount_required_password,
+        "show_term_on_submit": pos_config.show_term_on_submit,
         "show_voucher_minimum_overwrite": pos_config.show_voucher_minimum_overwrite,
         }
     def create_default_customer():
