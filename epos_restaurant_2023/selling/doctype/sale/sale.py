@@ -1959,7 +1959,7 @@ def update_coupon_codes(coupon_transactions,sale_type):
 	""",{"names":[d["coupon_code"] for d in coupon_transactions]})
 
 @frappe.whitelist(methods="POST")
-def change_payment_type(data):
+def change_payment_type(data,old_data):
 	if not data.get("note"):
 		frappe.throw(_("Please enter note"))
 	
@@ -1979,7 +1979,10 @@ def change_payment_type(data):
 			default_account = %(default_account)s
 		where name=%(name)s
 	"""
-	business_branch = frappe.get_cached_value("Sale",data.get("parent"),"business_branch")
+	sale_doc = frappe.get_cached_doc("Sale",data.get("parent"))
+
+	business_branch =sale_doc.business_branch
+
 	payment_type_doc = frappe.get_cached_doc("Payment Type",data.get("payment_type"))
 	
 	data["default_account"] = [d for d in payment_type_doc.default_account if d.business_branch == business_branch ][0].account
@@ -1987,7 +1990,48 @@ def change_payment_type(data):
 
 
 	# update data to sale payment
-	
+	sql = """
+		update 
+		`tabSale Payment`
+		SET
+			payment_type = %(payment_type)s,
+			payment_type_group = %(payment_type_group)s,
+			input_amount = %(input_amount)s,
+			payment_amount = %(input_amount)s / %(exchange_rate)s,
+			currency = %(currency)s,
+			exchange_rate = %(exchange_rate)s,
+			symbol = %(currency_symbol)s,
+			currency_precision = %(currency_precision)s,
+			payment_type_group = %(payment_type_group)s,
+			account_paid_to = %(default_account)s
+		where
+			sale = %(parent)s and transaction_type = 'Payment' 
+
+	"""
+	frappe.db.sql(sql,data)
+
+	# update gl
+	sql = """
+		update `tabGeneral Ledger`
+			set 
+				account = %(new_account)s,
+				account_type = %(account_type)s
+		where
+			voucher_type = 'Sale' and 
+			voucher_number = %(sale)s and 
+			account = %(old_account)s
+	"""
+	frappe.db.sql(sql, {
+		"new_account":data.get("default_account"),
+		"account_type": frappe.get_cached_value("Chart Of Account",data.get("default_account"),"account_type"),
+		"old_account":old_data.get("default_account"),
+		"sale":data.get("parent"),
+	})
+
+
 
 	frappe.db.commit()
+
+	sale_doc.add_comment("Comment", "បានផ្លាស់ប្តូរប្រភេទទូទាត់ប្រាក់ ពី <strong>{}</strong> ទៅ <strong>{}</strong>។ <br/>មូលហេតុ៖ {}".format(old_data.get("payment_type"),data.get("payment_type"),data.get("note"))) 
+
 	frappe.msgprint(_("Change payment type successfully"))
