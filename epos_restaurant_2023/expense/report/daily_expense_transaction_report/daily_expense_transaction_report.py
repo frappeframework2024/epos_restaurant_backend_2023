@@ -17,6 +17,13 @@ def execute(filters=None):
 	return get_report_columns(),data,None,None, get_report_summary(data)
 
 def get_report_data(filters):
+	str_filters = "posting_date between %(start_date)s and %(end_date)s and docstatus = 1 and "
+	if filters.get("business_branch"):
+			str_filters += "business_branch in %(business_branch)s and "
+	if filters.get("expense_by"):
+			str_filters += "expense_by in %(expense_by)s and "
+	if filters.get("vendor_code"):
+			str_filters += "vendor_code = %(vendor_code)s "
 	sql="""
 		select 
 			name,
@@ -29,13 +36,8 @@ def get_report_data(filters):
 			balance
 		from `tabExpense` po
 		where
-			business_branch in %(business_branch)s and 
-			posting_date between %(start_date)s and %(end_date)s and
-			expense_by in %(expense_by)s and
-			vendor_code = if(%(vendor_code)s='All',vendor_code,%(vendor_code)s) and
-			docstatus = 1 
-	"""
-
+			{0}
+	""".format(str_filters)
 	data = frappe.db.sql(sql,filters , as_dict=1)
 	return data
 def get_report_columns():
@@ -55,5 +57,4 @@ def get_report_summary(data,):
     report_summary.append({"label":_("Total Amount"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.total_amount or 0)),"indicator":"green"})
     report_summary.append({"label":_("Total Paid"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.total_paid or 0)),"indicator":"blue"})
     report_summary.append({"label":_("Balance"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.balance or 0)),"indicator":"red"})
-   
     return report_summary
