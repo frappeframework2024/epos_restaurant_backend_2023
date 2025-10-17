@@ -324,7 +324,6 @@ class Sale(Document):
 	def on_submit(self):
 		lock_db(self=self)
 
-
 		if self.flags.ignore_on_submit == True:
 			return 
 
@@ -1034,7 +1033,8 @@ def add_payment_to_sale_payment(self):
 							"account_code":p.account_code,
 							"fee_amount":p.fee_amount,
 							"fee_percentage":p.fee_percentage,
-							"issue_gift_voucher":p.issue_gift_voucher
+							"issue_gift_voucher":p.issue_gift_voucher,
+							"pos_sale_payment":p.name
 						})
 					doc.flags.ignore_post_general_ledger_entry = True
 					doc.flags.ignore_update_sale = True
@@ -1957,3 +1957,37 @@ def update_coupon_codes(coupon_transactions,sale_type):
 			   		name in %(names)s
 			   
 	""",{"names":[d["coupon_code"] for d in coupon_transactions]})
+
+@frappe.whitelist(methods="POST")
+def change_payment_type(data):
+	if not data.get("note"):
+		frappe.throw(_("Please enter note"))
+	
+	sql = """
+		update `tabPOS Sale Payment`
+		set
+			payment_type = %(payment_type)s,
+			payment_type_group = %(payment_type_group)s,
+			input_amount = %(input_amount)s,
+			amount = %(input_amount)s / %(exchange_rate)s,
+			currency = %(currency)s,
+			exchange_rate = %(exchange_rate)s,
+			currency_symbol = %(currency_symbol)s,
+			currency_precision = %(currency_precision)s,
+			currency_format = %(currency_format)s,
+			payment_type_group = %(payment_type_group)s,
+			default_account = %(default_account)s
+		where name=%(name)s
+	"""
+	business_branch = frappe.get_cached_value("Sale",data.get("parent"),"business_branch")
+	payment_type_doc = frappe.get_cached_doc("Payment Type",data.get("payment_type"))
+	
+	data["default_account"] = [d for d in payment_type_doc.default_account if d.business_branch == business_branch ][0].account
+	frappe.db.sql(sql,data)
+
+
+	# update data to sale payment
+	
+
+	frappe.db.commit()
+	frappe.msgprint(_("Change payment type successfully"))

@@ -19,8 +19,7 @@
                             </div>
                         </div>
                     </v-col>
-                </template>                
-
+                </template>              
 
                 <v-col cols="12" :md="params.data.hide_keypad==undefined?'7':'12'" v-if="params.data.category_note_name">
                     <v-card :title="$t('Note')">
@@ -29,8 +28,8 @@
                                 :label="$t('Search or Add Note')" />
                             <v-alert class="mt-4" v-if="getSelectedNote() != ''" :text="getSelectedNote()"></v-alert>
                             <div class="-mx-1">
-                                <template v-for="(item, index) in getNote()" :key="index">
-                                    <v-chip :closable="isDeleteNote" v-if="item.chip" @click:close="item.chip = false" class="m-1"
+                                <template v-for="(item, index) in getNote()" >
+                                    <v-chip :key="index" :closable="isDeleteNote" v-if="item.chip" @click:close="item.chip = false" class="m-1"
                                         @click="onSelected(item)">
                                         <v-icon start icon="mdi-checkbox-marked-circle-outline" v-if="item.selected"
                                             color="orange"></v-icon>
@@ -72,14 +71,12 @@ import ComInlineInputNumber from '../ComInlineInputNumber.vue';
 import Enumerable from 'linq';
 import { useDisplay } from 'vuetify';
 const { t: $t } = i18n.global;
-
-
 const { mobile } = useDisplay()
 const emit = defineEmits(['resolve'])
 const props = defineProps({
     params: Object
 })
-const toast = createToaster({ position: "top" })
+const toast = createToaster({ position: "top-right" })
 let search = ref()
 const isDeleteNote = ref(false);
 let selectedNotes = ref([]);

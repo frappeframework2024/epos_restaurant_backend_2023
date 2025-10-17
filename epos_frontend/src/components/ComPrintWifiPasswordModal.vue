@@ -17,7 +17,7 @@ const gv = inject('$gv')
 const frappe = inject('$frappe')
 const call = frappe.call();
 const { t: $t } = i18n.global;
-const toaster = createToaster({position:"top"});
+const toaster = createToaster({position:"top-right"});
 
 const wifi_password = ref("")
   const emit = defineEmits(["resolve"])

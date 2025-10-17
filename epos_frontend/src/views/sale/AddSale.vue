@@ -1,51 +1,52 @@
 <template>
-    <ComLoadingDialog
-        v-if="sale.loading || sale.newSaleResource?.loading || (sale.saleResource != null && sale.saleResource?.get.loading) || (sale.saleResource != null && sale.saleResource?.setValue.loading)" />
-    <ComSmallAddSale v-if="mobile" />
+    <div>
+        <ComLoadingDialog
+            v-if="sale.loading || sale.newSaleResource?.loading || (sale.saleResource != null && sale.saleResource?.get.loading) || (sale.saleResource != null && sale.saleResource?.setValue.loading)" />
+        <ComSmallAddSale v-if="mobile" />
 
-    <ComAddSaleRetail v-if="!mobile && sale.setting.use_retail_ui == 1" />
-    <div v-if="!mobile && sale.setting.use_retail_ui == 0" style="height: calc(100vh - 64px)" id="tst">
+        <ComAddSaleRetail v-if="!mobile && sale.setting.use_retail_ui == 1" />
+        <div v-if="!mobile && sale.setting.use_retail_ui == 0" style="height: calc(100vh - 64px)" id="tst">
 
-        <div class="h-full ma-0 flex w-full">
-            <div class="flex-auto pa-0 h-full d-none d-sm-block" style="width: calc(100vw - 450px);">
-                <ComMenu :background-image="gv.setting.pos_sale_order_background_image" />
-            </div>
-            <div :style="'width:' +  gv.itemMenuSetting.width_sale_summary + 'px;'" class="h-full pa-0">
-                <div class="h-full flex-col flex px-1">
-                    <div class="mb-1">
-                        <div class="flex justify-between items-center">
-                            <div class="flex-grow">
-                                <ComSaleInformation />
+            <div class="h-full ma-0 flex w-full">
+                <div class="flex-auto pa-0 h-full d-none d-sm-block" style="width: calc(100vw - 450px);">
+                    <ComMenu :background-image="gv.setting.pos_sale_order_background_image" />
+                </div>
+                <div :style="'width:' +  gv.itemMenuSetting.width_sale_summary + 'px;'" class="h-full pa-0">
+                    <div class="h-full flex-col flex px-1">
+                        <div class="mb-1">
+                            <div class="flex justify-between items-center">
+                                <div class="flex-grow">
+                                    <ComSaleInformation />
+                                </div>
+                                <div class="flex-none d-block d-sm-none">
+                                    <v-btn color="primary" type="button" @click="onSearchProduct(true)">
+                                        <v-icon icon="mdi-filter-outline"></v-icon>
+                                    </v-btn>
+                                </div>
                             </div>
-                            <div class="flex-none d-block d-sm-none">
-                                <v-btn color="primary" type="button" @click="onSearchProduct(true)">
-                                    <v-icon icon="mdi-filter-outline"></v-icon>
-                                </v-btn>
+                            <ComSelectCustomer />
+                            <div class="w-full bg-cyan-50 justify-between px-3 flex flex-wrap p-1 rounded-md mt-1"
+                                v-if="sale.sale?.tbl_number">
+                                <div class="font-bold"> {{ $t('Table #') }} <span v-if="sale.sale.seat_number"> |  <span style="color: green;">{{ $t("Seat") }}# </span></span> :</div>
+                                <div> {{ sale.sale.tbl_number }} <span v-if="sale.sale.seat_number" > | <span style="color: green;"> {{sale.sale.seat_number}}</span></span> </div>
                             </div>
                         </div>
-                        <ComSelectCustomer />
-                        <div class="w-full bg-cyan-50 justify-between px-3 flex flex-wrap p-1 rounded-md mt-1"
-                            v-if="sale.sale?.tbl_number">
-                            <div class="font-bold"> {{ $t('Table #') }} <span v-if="sale.sale.seat_number"> |  <span style="color: green;">{{ $t("Seat") }}# </span></span> :</div>
-                            <div> {{ sale.sale.tbl_number }} <span v-if="sale.sale.seat_number" > | <span style="color: green;"> {{sale.sale.seat_number}}</span></span> </div>
+                        <div class="overflow-auto h-full " :class="getCustomerScrollWidth()">
+                            <ComGroupSaleProductList />
                         </div>
-                    </div>
-                    <div class="overflow-auto h-full " :class="getCustomerScrollWidth()">
-                        <ComGroupSaleProductList />
-                    </div>
-                    <div class="mt-auto">
-                        <div class="-mx-1 bg-blue-100 rounded-tl-md rounded-tr-md text-xs">
-                            <ComSaleSummaryList />
-                            
-                            <ComSaleKeyPad v-if="gv.device_setting.show_keypad_in_sale_screen == 1" />
-                            <ComSaleButtonPaymentSubmit />
+                        <div class="mt-auto">
+                            <div class="-mx-1 bg-blue-100 rounded-tl-md rounded-tr-md text-xs">
+                                <ComSaleSummaryList />
+                                
+                                <ComSaleKeyPad v-if="gv.device_setting.show_keypad_in_sale_screen == 1" />
+                                <ComSaleButtonPaymentSubmit />
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 </template>
 <script setup>
 import { inject, useRoute, useRouter, ref, onMounted, onUnmounted, onBeforeRouteLeave, createResource, ShortCutKeyHelpDialog, i18n } from '@/plugin';

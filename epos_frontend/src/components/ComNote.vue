@@ -11,8 +11,11 @@
                     <v-alert class="mt-4 !p-2" v-if="getSelectedNote() != ''" :text="getSelectedNote()"></v-alert>
                 </div>
                 <div class="-m-1">
-                    <template v-for="(item, index) in getNote()" :key="index">
-                        <v-chip :closable="isDeleteNote" v-if="item.chip" @click:close="item.chip = false" class="m-1"
+                    <template v-for="(item, index) in getNote()">
+                        <v-chip v-if="item.chip" :key="index" :closable="isDeleteNote" 
+                        
+                         @click:close="item.chip = false" 
+                         class="m-1"
                             @click="onSelected(item)">
                             <v-icon start icon="mdi-checkbox-marked-circle-outline" v-if="item.selected"
                                 color="orange"></v-icon>
@@ -61,7 +64,7 @@ const { mobile } = useDisplay()
 const props = defineProps({
     params: Object
 })
-const toast = createToaster({position:"top"})
+const toast = createToaster({position:"top-right"})
 let open = true;
 let search = ref()
 const isDeleteNote = ref(false);

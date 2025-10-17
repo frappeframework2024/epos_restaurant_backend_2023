@@ -5,7 +5,7 @@
       </template>
       <template #content>
         <template v-if="posProfiles">
-          <v-btn v-for="pos in posProfiles" class="my-2" height="80px" color="primary" elevated variant="flat" @click="onPOSProfileClick(pos.name)" block
+          <v-btn v-for="pos in posProfiles" :key="pos.name" class="my-2" height="80px" color="primary" elevated variant="flat" @click="onPOSProfileClick(pos.name)" block
            prepend-icon="mdi-network-pos"  elevation="2" 
            size="x-large" >
             {{pos.name}}
@@ -29,7 +29,7 @@ const auth = inject("$auth");
 const { t: $t } = i18n.global;
 const emit = defineEmits(["resolve"]);
 const router = useRouter();
-const toaster = createToaster({position:"top"});
+const toaster = createToaster({position:"top-right"});
 
 const props = defineProps({
   params: {

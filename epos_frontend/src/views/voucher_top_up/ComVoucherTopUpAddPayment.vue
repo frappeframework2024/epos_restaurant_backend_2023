@@ -27,23 +27,23 @@
                             </thead>
                             <tbody>
                                 <template  v-if="payments.length > 0">
-                                    <tr v-for="payment in payments">
-                                    <td class="text-center">{{ moment(payment.posting_date).format("DD-MM-YYYY") }}</td>
-                                    <td>
-                                        <ComInput :readonly="voucherTopup.docstatus==1" v-model="payment.reference_no" :label="$t('Reference No')" />
-                                    </td>
-                                    <td >
-                                        <ComAutoComplete :label="$t('Payment Type')" v-model="payment.payment_type"
-                                            :placeholder="$t('Payment Type')" doctype="Payment Type" variant="solo" />
-                                    </td>
-                                    <td class="text-right">
-                                        <ComInput :readonly="voucherTopup.docstatus==1" type="number" v-model="payment.input_amount" :label="$t('Payment Amount')" />
-                                        
-                                    </td>
-                                    <td >
-                                        <v-btn v-if="voucherTopup.docstatus==0" icon="mdi-delete" size="small" color="error" variant="text" type="button" @click="deletePayment(payment)"/>
-                                    </td>
-                                </tr>
+                                    <tr v-for="payment in payments" :key="payment.name" >
+                                        <td class="text-center">{{ moment(payment.posting_date).format("DD-MM-YYYY") }}</td>
+                                        <td>
+                                            <ComInput :readonly="voucherTopup.docstatus==1" v-model="payment.reference_no" :label="$t('Reference No')" />
+                                        </td>
+                                        <td >
+                                            <ComAutoComplete :label="$t('Payment Type')" v-model="payment.payment_type"
+                                                :placeholder="$t('Payment Type')" doctype="Payment Type" variant="solo" />
+                                        </td>
+                                        <td class="text-right">
+                                            <ComInput :readonly="voucherTopup.docstatus==1" type="number" v-model="payment.input_amount" :label="$t('Payment Amount')" />
+                                            
+                                        </td>
+                                        <td >
+                                            <v-btn v-if="voucherTopup.docstatus==0" icon="mdi-delete" size="small" color="error" variant="text" type="button" @click="deletePayment(payment)"/>
+                                        </td>
+                                    </tr>
                                 </template>
                                 <template v-else>
                                     <tr>

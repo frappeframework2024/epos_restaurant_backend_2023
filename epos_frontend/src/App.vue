@@ -1,18 +1,19 @@
 <template>
-
-	<SplashScreen v-if="state.isLoading" />
-	
-	<v-sheet v-else id="app-container" v-resize="onResize">
-		 
-	 
-		<v-progress-linear class="progress_bar" v-if="isLoading" indeterminate color="teal"></v-progress-linear>
-		<MainLayout v-if="layout=='main_layout'" />
-		<SaleLayout v-else-if="layout=='sale_layout'" />
-		<KitchenOrderDisplayLayout v-else-if="layout=='kitchen_order_display_layout'" />
-		<BlankLayout v-else />
-		<PromiseDialogsWrapper />
-	</v-sheet>
-	<DynamicDialog />
+	<div>
+		<SplashScreen v-if="state.isLoading" />
+		
+		<v-sheet v-else id="app-container" v-resize="onResize">
+			
+		
+			<v-progress-linear class="progress_bar" v-if="isLoading" indeterminate color="teal"></v-progress-linear>
+			<MainLayout v-if="layout=='main_layout'" />
+			<SaleLayout v-else-if="layout=='sale_layout'" />
+			<KitchenOrderDisplayLayout v-else-if="layout=='kitchen_order_display_layout'" />
+			<BlankLayout v-else />
+			<PromiseDialogsWrapper />
+		</v-sheet>
+		<DynamicDialog />
+	</div>
 </template>
 <script setup>
 import { useRouter, useRoute, routeLocationKey} from 'vue-router'
@@ -42,7 +43,7 @@ const frappe = inject('$frappe');
 const call = frappe.call();
 const { t: $t } = i18n.global; 
 
-const toast = createToaster({position:'top'});
+const toast = createToaster({position:'top-right'});
 const gv = inject("$gv");
 const sale = inject("$sale");
 const pos_license = inject("$pos_license");

@@ -67,6 +67,18 @@ def app_settings(params):
     result["pos_station"] = station_doc
     result["pos_station"]["use_coupon_encrypt"] = int(frappe.db.get_default("use_coupon_encrypt") or 0)
 
+
+    ##get business information
+    bus = frappe.get_doc("Business Branch",station.business_branch)
+    result["business_info"] = {
+        "code": bus.property_code,
+        "name_kh": bus.business_banch_name_kh,
+        "name_en": bus.business_banch_name_en,
+        "vattin": bus.vattin_number,
+        "banner": bus.property_background_banner,
+        "photo": bus.photo,
+    } 
+
     result["shift_types"] = _shift_types
     result["socketio"] = {
         "port":frappe.get_conf().get('socketio_port', 9000),

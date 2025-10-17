@@ -26,7 +26,7 @@ def submit_sale_to_general_ledger_entry(self):
 			"voucher_number":self.name,
 			"business_branch": self.business_branch,
 			"party_type":"Customer",
-			"party":self.name,
+			"party":self.customer,
 			"party_name":self.customer_name,
 			"type":"Income"
 		}
@@ -52,7 +52,7 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
 				"party_type":"Customer",
-				"party":self.name,
+				"party":self.customer,
 				"party_name":self.customer_name,
 				"type":"Income"#not use in db
 
@@ -86,7 +86,7 @@ def submit_sale_to_general_ledger_entry(self):
 				"business_branch": self.business_branch,
 				"type":"Income",
 				"party_type":"Customer",
-				"party":self.name,
+				"party":self.customer,
 				"party_name":self.customer_name,
 				"remark": "Redeem Coupon" if self.sale_type == "Redeem" else "",
 			}
@@ -133,7 +133,7 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
 				"party_type":"Customer",
-				"party":self.name,
+				"party":self.customer,
 				"party_name":self.customer_name,
 			}
 		docs.append(doc)
@@ -153,7 +153,7 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
 				"party_type":"Customer",
-				"party":self.name,
+				"party":self.customer,
 				"party_name":self.customer_name
 			}
 		docs.append(doc)
@@ -175,7 +175,7 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
 				"party_type":"Customer",
-				"party":self.name,
+				"party":self.customer,
 				"party_name":self.customer_name,
 			}
 		docs.append(doc)
@@ -198,7 +198,7 @@ def submit_sale_to_general_ledger_entry(self):
 					"voucher_number":self.name,
 					"business_branch": self.business_branch,
 					"party_type":"Customer",
-					"party":self.name,
+					"party":self.customer,
 					"party_name":self.customer_name,
 					"type":"Asset"#not use in db
 				}
@@ -220,7 +220,7 @@ def submit_sale_to_general_ledger_entry(self):
 					"voucher_number":self.name,
 					"business_branch": self.business_branch,
 					"party_type":"Customer",
-					"party":self.name,
+					"party":self.customer,
 					"party_name":self.customer_name,
 					"type":"Asset"#not use in db
 				}
@@ -256,7 +256,7 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
 				"party_type":"Customer",
-				"party":self.name,
+				"party":self.customer,
 				"party_name":self.customer_name,
 				"type":"Asset"
 			}
@@ -273,7 +273,7 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
 				"party_type":"Customer",
-				"party":self.name,
+				"party":self.customer,
 				"party_name":self.customer_name,
 				"type":"Asset"
 			}
@@ -294,7 +294,7 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
 				"party_type":"Customer",
-				"party":self.name,
+				"party":self.customer,
 				"party_name":self.customer_name,
 				"business_branch": self.business_branch,
 			}
@@ -315,7 +315,7 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
 				"party_type":"Customer",
-			"party":self.name,
+			"party":self.customer,
 			"party_name":self.customer_name,
 				"business_branch": self.business_branch,
 			}
@@ -335,7 +335,7 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
 				"party_type":"Customer",
-				"party":self.name,
+				"party":self.customer,
 				"party_name":self.customer_name,
 				"business_branch": self.business_branch,
 			}
@@ -356,7 +356,7 @@ def submit_sale_to_general_ledger_entry(self):
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
 				"party_type":"Customer",
-				"party":self.name,
+				"party":self.customer,
 				"party_name":self.customer_name,
 				"business_branch": self.business_branch,
 			}
@@ -376,7 +376,7 @@ def submit_sale_to_general_ledger_entry(self):
 					"voucher_type":"Sale",
 					"voucher_number":self.name,
 					"party_type":"Customer",
-					"party":self.name,
+					"party":self.customer,
 					"party_name":self.customer_name,
 					"business_branch": self.business_branch,
 				}
@@ -396,7 +396,7 @@ def submit_sale_to_general_ledger_entry(self):
 					"voucher_type":"Sale",
 					"voucher_number":self.name,
 					"party_type":"Customer",
-					"party":self.name,
+					"party":self.customer,
 					"party_name":self.customer_name,
 					"business_branch": self.business_branch,
 				}
