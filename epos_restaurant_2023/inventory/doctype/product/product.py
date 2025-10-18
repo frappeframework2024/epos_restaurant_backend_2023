@@ -51,8 +51,8 @@ class Product(Document):
 			self.product_name_kh = strip(self.product_name_en)
 
 		#validate uom conversion product price
-		for d in self.product_price:
-			local_check_uom_conversion(d.unit, self.unit)
+		# for d in self.product_price:
+		# 	local_check_uom_conversion(d.unit, self.unit)
 
 		#validate uom product recipe
 		for d in self.product_recipe:
