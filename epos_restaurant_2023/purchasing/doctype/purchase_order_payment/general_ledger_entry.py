@@ -30,7 +30,7 @@ def submit_purchase_payment_to_general_ledger_entry_on_submit(self):
         "credit_amount":self.payment_amount,
         "party_type":"Vendor",
         "party":"{}-{}".format(vendor,vendor_name),
-        "againt":self.account_paid_to,
+        "againt":"",
         "against_voucher_type":"Purchase Order",
         "againt_voucher_number":self.purchase_order,
         "voucher_type":"Purchase Order Payment",
