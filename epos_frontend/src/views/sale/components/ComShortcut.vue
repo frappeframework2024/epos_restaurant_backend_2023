@@ -59,7 +59,8 @@
     })
   
     function onClick(menu) {
-            product.searchProductKeyword="";
+            product.searchProductKeyword = "";
+            product.loading_default_menu_from_table = 0;
             product.parentMenu = menu.name;
             _onPriceRuleChanged(menu)
         }
