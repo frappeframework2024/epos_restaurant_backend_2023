@@ -98,9 +98,9 @@ def get_coupon_detail(coupon_code):
 
     #coupon code here is primary key
     return_data = {}
-    coupon_doc = frappe.get_doc("Coupon Codes",coupon_code)
-    if not coupon_doc:
-        coupon_doc = frappe.get_doc("Coupon Codes History",coupon_code)
+    
+    coupon_doc = frappe.get_doc("Coupon Codes",coupon_code) if frappe.db.exists("Coupon Codes", coupon_code) else frappe.get_doc("Coupon Codes History",coupon_code)
+    
 
     return_data["coupon_info"] = coupon_doc
     
