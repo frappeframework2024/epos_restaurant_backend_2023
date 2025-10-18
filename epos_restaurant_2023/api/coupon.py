@@ -78,11 +78,31 @@ def check_coupon_code(coupon_code):
 
 
 @frappe.whitelist()
+def validate_coupon_code_exists(coupon):
+    
+    sql = "select name from `tabCoupon Codes` where coupon = %(coupon)s order by creation desc limit 1"
+    data = frappe.db.sql(sql,{"coupon":coupon},as_dict = 1)
+    if data:
+        return data[0].get("name")
+    
+    # check in history
+    sql = "select name from `tabCoupon Codes History` where coupon = %(coupon)s order by creation desc limit 1"
+    data = frappe.db.sql(sql,{"coupon":coupon},as_dict = 1)
+    if data:
+        return data[0].get("name")
+    
+    return ""
+
+@frappe.whitelist()
 def get_coupon_detail(coupon_code):
+
     #coupon code here is primary key
     return_data = {}
+    coupon_doc = frappe.get_doc("Coupon Codes",coupon_code)
+    if not coupon_doc:
+        coupon_doc = frappe.get_doc("Coupon Codes History",coupon_code)
 
-    return_data["coupon_info"] = frappe.get_doc("Coupon Codes",coupon_code)
+    return_data["coupon_info"] = coupon_doc
     
     if return_data["coupon_info"].customer:
         customer_photo,customer_group,phone_number,customer,customer_name = frappe.get_cached_value("Customer",return_data["coupon_info"].customer,["photo","customer_group","phone_number","name","customer_name_en"])    
@@ -97,26 +117,48 @@ def get_coupon_detail(coupon_code):
  
     # get balance data
     sql = """
-        select 
-            sale,
-            creation,
-            posting_date,
-            created_by,
-            transaction_date,
-            note,
-            transaction_type,
-            markup_percentage,
-            input_actual_amount,
-            coupon_amount ,
-            pos_station,
-            pos_profile,
-            currency,
-            exchange_rate
-        from `tabCoupon Transaction` 
-        where 
-        coupon_code=%(coupon_code)s and 
-        status not in ('Deleted')
-        order by creation
+        with a as (
+            select 
+                sale,
+                creation,
+                posting_date,
+                created_by,
+                transaction_date,
+                note,
+                transaction_type,
+                markup_percentage,
+                input_actual_amount,
+                coupon_amount ,
+                pos_station,
+                pos_profile,
+                currency,
+                exchange_rate
+            from `tabCoupon Transaction` 
+            where 
+                coupon_code=%(coupon_code)s and 
+                status not in ('Deleted')
+            union
+            select 
+                sale,
+                creation,
+                posting_date,
+                created_by,
+                transaction_date,
+                note,
+                transaction_type,
+                markup_percentage,
+                input_actual_amount,
+                coupon_amount ,
+                pos_station,
+                pos_profile,
+                currency,
+                exchange_rate
+            from `tabCoupon Transaction History` 
+            where 
+                coupon_code=%(coupon_code)s and 
+                status not in ('Deleted')
+        )
+        select * from a  order by creation
     """
     data = frappe.db.sql(sql,{"coupon_code":coupon_code},as_dict=1)
 
