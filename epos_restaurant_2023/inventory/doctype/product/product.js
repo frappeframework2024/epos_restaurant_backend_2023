@@ -24,9 +24,7 @@ frappe.ui.form.on('Product Price', {
                 to_uom:doc.base_unit
             },
             callback: function (r) {
-                if (r.message) {
-                    frappe.model.set_value(cdt, cdn, "conversion_factor", r.message);
-                }
+                frappe.model.set_value(cdt, cdn, "conversion_factor", r.message);
             }
         });
     },
@@ -40,9 +38,7 @@ frappe.ui.form.on('Product Price', {
                     to_uom:doc.base_unit
                 },
                 callback: function (r) {
-                    if (r.message) {
-                        frappe.model.set_value(cdt, cdn, "conversion_factor", r.message);
-                    }
+                    frappe.model.set_value(cdt, cdn, "conversion_factor", r.message);
                 }
             });
         }

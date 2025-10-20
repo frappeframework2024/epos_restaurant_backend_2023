@@ -46,13 +46,6 @@ class Product(Document):
 					frappe.throw(_("Please select stock location"))
 			else:
 				self.opening_quantity = 0
-			
-		if strip(self.product_name_kh or "")=="":
-			self.product_name_kh = strip(self.product_name_en)
-
-		#validate uom conversion product price
-		# for d in self.product_price:
-		# 	local_check_uom_conversion(d.unit, self.unit)
 
 		#validate uom product recipe
 		for d in self.product_recipe:
@@ -92,6 +85,66 @@ class Product(Document):
 		if (self.last_purchase_cost or 0) == 0:
 			self.last_purchase_cost = self.cost
 
+	def before_save(self):
+		if self.flags.ignore_before_save==True:
+			return 
+		
+		if self.disabled == 1:
+			self.status = "Disabled"
+		else:
+			if self.has_variants == 1:
+				self.status = "Template"
+			else:
+				self.status = "Enabled"
+
+		if strip(self.product_name_kh or "")=="":
+			self.product_name_kh = strip(self.product_name_en)
+
+		add_base_unit_to_product_prices(self)
+
+		if len(self.product_variants or [])>0:
+			for a in self.product_variants:
+				variant = frappe.db.sql("select count(name) count from `tabProduct` where product_code = '{0}'".format(a.current_variant_code),as_dict=1)
+				if len(variant or [])>0:
+					if variant[0].count > 0:
+						insert_update_rename_variant(self,a,"update")
+					else:
+						insert_update_rename_variant(self,a,"insert")
+			frappe.msgprint(_("Add New Or Update Variant Will Be In The Background, It Can Take A Few Minutes."), alert=True)
+		
+		if len(self.produce_products or []) >0 :
+			total_amount = 0
+			for d in self.produce_products:
+				d.total_amount = d.quantity * d.base_cost
+				total_amount += d.total_amount
+			self.material_cost = total_amount
+			update_bom(self)
+			
+		if len(self.product_price or [])>0:
+			prices = []
+			for p in self.product_price:
+				p.portion = p.portion if p.portion else p.unit
+				prices.append({
+					"name":p.name,
+					"price":p.price,
+					'branch':p.business_branch or "",
+					'price_rule':p.price_rule, 
+					'portion':p.portion,
+					'unit':p.unit, 
+					'price_rule' : p.price_rule,
+					"default_discount":p.default_discount
+				})
+				update_uom_conversion(self,p)
+			self.prices = json.dumps(prices)
+			default_price_rule = (frappe.db.sql("select name from `tabPrice Rule` where is_default = 1 and disabled = 0",as_dict=1) or [])
+			if len(default_price_rule)>0:
+				self.price = Enumerable(self.product_price).where(lambda x: x.price_rule == default_price_rule[0].name).select(lambda x: x.price).first_or_default()
+			else:
+				self.price = Enumerable(self.product_price).min(lambda x: x.price)
+		else:
+			self.prices = "[]"
+		sort_product_price(self)
+
 	def autoname(self):
 		if self.flags.ignore_autoname==True:
 			return 
@@ -126,63 +179,6 @@ class Product(Document):
 				}
 			)
 			opening_general_ledger_entry(self)
-
-	def before_save(self):
-		if self.flags.ignore_before_save==True:
-			return 
-		
-		if self.disabled == 1:
-			self.status = "Disabled"
-		else:
-			if self.has_variants == 1:
-				self.status = "Template"
-			else:
-				self.status = "Enabled"
-				
-		add_base_unit_to_product_prices(self)
-
-		if len(self.product_variants or [])>0:
-			for a in self.product_variants:
-				variant = frappe.db.sql("select count(name) count from `tabProduct` where product_code = '{0}'".format(a.current_variant_code),as_dict=1)
-				if len(variant or [])>0:
-					if variant[0].count > 0:
-						insert_update_rename_variant(self,a,"update")
-					else:
-						insert_update_rename_variant(self,a,"insert")
-			frappe.msgprint(_("Add New Or Update Variant Will Be In The Background, It Can Take A Few Minutes."), alert=True)
-		
-		if len(self.produce_products or []) >0 :
-			total_amount = 0
-			for d in self.produce_products:
-				d.total_amount = d.quantity * d.base_cost
-				total_amount += d.total_amount
-			self.material_cost = total_amount
-			update_bom(self)
-			
-		if len(self.product_price or [])>0:
-			for item in self.product_price:
-				update_uom_conversion(self,item)
-
-			prices = []
-			for p in self.product_price:
-				prices.append({
-					"name":p.name,
-					"price":p.price,
-					'branch':p.business_branch or "",
-					'price_rule':p.price_rule, 
-					'portion':p.portion,
-					'unit':p.unit, 
-					'price_rule' : p.price_rule,
-					"default_discount":p.default_discount
-				})
-			self.prices = json.dumps(prices)
-			default_price_rule = (frappe.db.sql("select name from `tabPrice Rule` where is_default = 1 and disabled = 0",as_dict=1) or [])
-			if len(default_price_rule)>0:
-				self.price = Enumerable(self.product_price).where(lambda x: x.price_rule == default_price_rule[0].name).select(lambda x: x.price).first_or_default()
-			else:
-				self.price = Enumerable(self.product_price).min(lambda x: x.price)
-		else:
-			self.prices = "[]"
 
 	def on_update(self):
 		if self.flags.ignore_on_update==True:
@@ -366,11 +362,13 @@ def add_base_unit_to_product_prices(self):
 				'portion': self.unit,
 				'conversion_factor': 1
 			})
-		sorted_prices = sorted(self.product_price, key=lambda x: x.conversion_factor)
-		for new_index, price in enumerate(sorted_prices):
-			price.idx = new_index + 1
-		self.product_price = []
-		self.product_price = sorted_prices
+
+def sort_product_price(self):
+	sorted_prices = sorted(self.product_price, key=lambda x: x.conversion_factor)
+	for new_index, price in enumerate(sorted_prices):
+		price.idx = new_index + 1
+	self.product_price = []
+	self.product_price = sorted_prices
 
 @frappe.whitelist()
 def custom_rename_doc(doctype, old, new, merge=False):
