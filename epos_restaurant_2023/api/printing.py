@@ -192,6 +192,10 @@ def get_pdf_from_print_format(data):
 ### print report from print format 
 @frappe.whitelist(allow_guest=True,methods="POST")
 def print_from_print_format(data, is_html=False):
+    # ensure dummy request for background jobs
+    if not getattr(frappe.local, "request", None):
+        from types import SimpleNamespace
+        frappe.local.request = SimpleNamespace(method="POST")
  
     width, height = frappe.get_value("POS Print Format Setting",data["print_format"],["printing_fixed_width","printing_fixed_height"] )
     document = frappe.get_doc(data["doc"], data["name"])
