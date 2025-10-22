@@ -4,6 +4,7 @@
 import frappe
 from frappe import _
 from frappe.utils.nestedset import NestedSet
+import json
 
 class POSMenu(NestedSet):
     def validate(self):
@@ -33,6 +34,13 @@ class POSMenu(NestedSet):
                 self.title_en = self.pos_menu_name_kh
                 if not self.title_kh:                   
                     self.title_kh = self.title_en
+
+    def before_save(self):
+        shift_availability = []
+        if self.pos_menu_shift_availability:
+            for a in set([r.get("shift_type") for r in self.pos_menu_shift_availability]):
+                shift_availability.append(a)
+        self.shift_availability = json.dumps(shift_availability)
 
     def on_trash(self):
         if self.flags.ignore_on_trash == True:
@@ -79,3 +87,31 @@ def update_pos_menu(self):
 
     frappe.db.sql("update `tabProduct Menu` a set root_menu = '{}' where pos_menu = '{}'".format(pos_menu_paths[0], self.name))  
     frappe.db.commit()  
+
+@frappe.whitelist()
+def remove_available_shift(menus,shift_type):
+	for p in menus.split(","):
+		menu = frappe.get_doc("POS Menu",p)
+		shifts = menu.get('pos_menu_shift_availability' or [])
+		for row in shifts:
+			if row.shift_type == shift_type:
+				shifts.remove(row)
+		menu.save()
+	frappe.db.commit()
+
+@frappe.whitelist()
+def assign_available_shift(menus,shift_type):
+	for p in menus.split(","):
+		p = frappe.get_doc("POS Menu",p)
+		if len(p.get('pos_menu_shift_availability' or [])) == 0:
+			c = frappe.new_doc("POS Menu Shift Availability")
+			c.shift_type = shift_type 
+			p.append("pos_menu_shift_availability", c)
+		else:
+			result = [d for d in p.pos_menu_shift_availability if d.shift_type == shift_type]
+			if not result:
+				c = frappe.new_doc("POS Menu Shift Availability")
+				c.shift_type = shift_type 
+				p.append("pos_menu_shift_availability", c)
+		p.save()
+	frappe.db.commit()

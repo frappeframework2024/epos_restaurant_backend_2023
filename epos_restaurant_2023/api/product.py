@@ -26,7 +26,10 @@ def convert_to_safe_key(text):
 
 
 @frappe.whitelist(allow_guest=True)
-def get_product_by_menu(root_menu="",mobile = 0,sort_order_by="product_name_en",sort_menu_order_by='name' ):
+def get_product_by_menu(root_menu="",mobile = 0,sort_order_by="product_name_en",sort_menu_order_by='name',shift_name=""):
+    shift_filter = ""
+    if shift_name != "":
+        shift_filter += """ and (JSON_LENGTH(coalesce(shift_availability,'[]')) = 0 or JSON_CONTAINS(coalesce(shift_availability,'[]'), '"{0}"'))""".format(shift_name)
     if root_menu=="":
         return []
     else:
@@ -48,31 +51,35 @@ def get_product_by_menu(root_menu="",mobile = 0,sort_order_by="product_name_en",
                     require_password_for_submitted_sale
                 from `tabPOS Menu` 
                 where 
-                    parent_pos_menu='{}' and
+                    parent_pos_menu='{0}' and
                     disabled = 0 
-                order by {}
-                """.format(root_menu,sort_menu_order_by)
+                    {2}
+                order by {1}
+                """.format(root_menu,sort_menu_order_by,shift_filter)
         data = frappe.db.sql(sql,as_dict=1)
         
         for d in data:
             menus.append(d)
-            child_menus = get_child_menus(d.name, mobile=mobile,sort_menu_order_by=sort_menu_order_by,sort_order_by = sort_order_by)
+            child_menus = get_child_menus(d.name, mobile=mobile,sort_menu_order_by=sort_menu_order_by,sort_order_by = sort_order_by,shift_name = shift_name)
             
             for m in child_menus:
                 menus.append(m)
             
-            menu_products = get_temp_menu_products(d.name,mobile=mobile,sort_order_by = sort_order_by)
+            menu_products = get_temp_menu_products(d.name,mobile=mobile,sort_order_by = sort_order_by,shift_name=shift_name)
             for m in menu_products:
                 menus.append(m)
         
-        menu_products = get_temp_menu_products(root_menu,mobile=mobile,sort_order_by = sort_order_by)
+        menu_products = get_temp_menu_products(root_menu,mobile=mobile,sort_order_by = sort_order_by,shift_name=shift_name)
         for m in menu_products:
                 menus.append(m)
              
       
         return menus
 
-def get_child_menus(parent_menu, mobile= 0,sort_menu_order_by="name",sort_order_by = "product_name_en"):
+def get_child_menus(parent_menu, mobile= 0,sort_menu_order_by="name",sort_order_by = "product_name_en",shift_name=""):
+    shift_filter = ""
+    if shift_name != "":
+        shift_filter += """ and (JSON_LENGTH(coalesce(shift_availability,'[]')) = 0 or JSON_CONTAINS(coalesce(shift_availability,'[]'), '"{0}"'))""".format(shift_name)
     menus = []
     menus.append({"type":"back","parent":parent_menu})
     sql = """select 
@@ -91,24 +98,28 @@ def get_child_menus(parent_menu, mobile= 0,sort_menu_order_by="name",sort_order_
                 require_password_for_submitted_sale
             from `tabPOS Menu` 
             where 
-                parent_pos_menu='{}' and
+                parent_pos_menu='{0}' and
                 disabled = 0 
-            order by {}
-            """.format(parent_menu,sort_menu_order_by)
+                {2}
+            order by {1}
+            """.format(parent_menu,sort_menu_order_by,shift_filter)
     data = frappe.db.sql(sql,as_dict=1)
     for d in data:        
         menus.append(d)
-        child_menus = get_child_menus(d.name,mobile=mobile,sort_menu_order_by=sort_menu_order_by,sort_order_by=sort_order_by)
+        child_menus = get_child_menus(d.name,mobile=mobile,sort_menu_order_by=sort_menu_order_by,sort_order_by=sort_order_by,shift_name=shift_name)
         for m in child_menus:
             menus.append(m)
         
-        for m in get_temp_menu_products(d.name,mobile=mobile,sort_order_by=sort_order_by):
+        for m in get_temp_menu_products(d.name,mobile=mobile,sort_order_by=sort_order_by,shift_name=shift_name):
             menus.append(m)       
         
     return menus
 
 @frappe.whitelist(allow_guest=True)
-def get_temp_menu_products(parent_menu,mobile=0,sort_order_by="product_name_en"):     
+def get_temp_menu_products(parent_menu,mobile=0,sort_order_by="product_name_en",shift_name = ""):   
+    shift_filter = ""
+    if shift_name != "":
+        shift_filter += """ and (JSON_LENGTH(coalesce(shift_availability,'[]')) = 0 or JSON_CONTAINS(coalesce(shift_availability,'[]'), '"{0}"'))""".format(shift_name)
     sql = """select 
                 a.name as menu_product_name,
                 a.product_code as name,
@@ -153,12 +164,11 @@ def get_temp_menu_products(parent_menu,mobile=0,sort_order_by="product_name_en")
             inner join `tabProduct` b on b.name = a.product_code
             where 
                 coalesce(b.variant_of,'') = ''  
-                and a.pos_menu='{0}' 
+                and a.pos_menu='{0}'
+                {2}
             order by a.{1}
-            """.format(parent_menu, sort_order_by)
-    
+            """.format(parent_menu, sort_order_by,shift_filter)
     data = frappe.db.sql(sql,as_dict=1)
-   
     return data
 
 
@@ -167,7 +177,6 @@ def get_product_variants(parent):
     data  = frappe.db.sql("select name from `tabProduct Variants` where parent='{}'".format(parent),as_dict=1)
     if data :
         return data
-
 
 @frappe.whitelist()
 def get_product_by_barcode(barcode):

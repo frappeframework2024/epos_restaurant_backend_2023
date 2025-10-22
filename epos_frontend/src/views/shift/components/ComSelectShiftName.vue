@@ -25,6 +25,7 @@ const shift_type = ref(props.params.data.shift_name)
 
 
 function onOK(){
+    localStorage.setItem("current_shift_name",shift_type.value)
     db.updateDoc('Cashier Shift', props.params.data.name, {
         shift_name:shift_type.value,
     })

@@ -161,7 +161,7 @@ def update_inventory_on_submit(self):
 			'in_quantity': 0 if p.difference<0 else  abs( p.difference) / uom_conversion,
 			'out_quantity': 0 if p.difference>0 else  abs(p.difference) / uom_conversion,
 			"uom_conversion":uom_conversion,
-			"price":calculate_average_cost(p.product_code,self.stock_location,(p.difference / uom_conversion),p.cost*uom_conversion),
+			"price":calculate_average_cost(p.product_code,self.stock_location,(p.difference / uom_conversion),((p.difference / uom_conversion) * p.cost)),
 			'note': 'New Inventory Check submitted. {}'.format(p.note or ""),
 			"has_expired_date":p.has_expired_date,
 			"expired_date":p.expired_date,

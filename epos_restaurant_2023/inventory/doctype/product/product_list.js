@@ -108,7 +108,61 @@ frappe.listview_settings['Product'] = {
             })
             d.show();           
         });
+         me.page.add_action_item('Assign Shift Availability', function() {
+            let d = new frappe.ui.Dialog({
+                title: 'Assign Shift Availability',
+                fields: [
+                    {'fieldname': 'shift_type', 'fieldtype': 'Link', 'options': 'Shift Type'},
+                ],
+                primary_action_label: 'Save',
+                primary_action(values) {
+                    const selected =  me.get_checked_items() ;
+                    const result = selected.map(item => item.name).join(',');
+                    d.freeze= true;
+                    frappe.call({
+                        method: "epos_restaurant_2023.inventory.doctype.product.product.assign_available_shift",
+                        args: {
+                            "products": result,
+                            "shift_type": values.shift_type
+                        },
+                        callback: function(r) {
+                            frappe.msgprint("Available Shift Updated")                            
+                        }
+                    });
+                    d.freeze= false;
+                    d.hide();
+                },              
+            })
+            d.show();           
+        });
 
+        me.page.add_action_item('Remove Shift Availability', function() {
+            let d = new frappe.ui.Dialog({
+                title: 'Remove Shift Availability',
+                fields: [
+                    {'fieldname': 'shift_type', 'fieldtype': 'Link', 'options': 'Shift Type'},
+                ],
+                primary_action_label: 'Save',
+                primary_action(values) {
+                    const selected =  me.get_checked_items() ;
+                    const result = selected.map(item => item.name).join(',');
+                    d.freeze= true;
+                    frappe.call({
+                        method: "epos_restaurant_2023.inventory.doctype.product.product.remove_available_shift",
+                        args: {
+                            "products": result,
+                            "shift_type": values.shift_type
+                        },
+                        callback: function(r) {
+                            frappe.msgprint("Available Shift Removed")                            
+                        }
+                    });
+                    d.freeze= false;
+                    d.hide();
+                },              
+            })
+            d.show();           
+        });
     
         //remove printer from product
         me.page.add_action_item('Remove Printer', function() {

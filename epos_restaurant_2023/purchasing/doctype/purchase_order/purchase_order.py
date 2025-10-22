@@ -94,43 +94,47 @@ def validate_discount(self):
 
 def update_inventory_on_submit(self):
 	for p in self.purchase_order_products:
-		uom_conversion = (1 if (get_uom_conversion(p.base_unit, p.unit) or 0) == 0 else get_uom_conversion(p.base_unit, p.unit))
-		add_to_inventory_transaction({
-			'doctype': 'Inventory Transaction',
-			'transaction_type':"Purchase Order",
-			'transaction_date':self.posting_date,
-			'transaction_number':self.name,
-			'product_code': p.product_code,
-			'unit':p.unit,
-			'previous_cost': p.base_cost*uom_conversion,
-			'stock_location':self.stock_location,
-			'in_quantity':p.quantity / uom_conversion,
-			"uom_conversion":uom_conversion,
-			"price":calculate_average_cost(p.product_code,self.stock_location,(p.quantity / uom_conversion),(p.sub_total - p.total_discount)),
-			'note': 'New purchase order submitted.',
-			"has_expired_date":p.has_expired_date,
-			"expired_date":p.expired_date,
-			'action': 'Submit'
-		})
+		is_inventory = frappe.get_doc("Product", p.product_code ).is_inventory_product or 0
+		if is_inventory:
+			uom_conversion = (1 if (get_uom_conversion(p.base_unit, p.unit) or 0) == 0 else get_uom_conversion(p.base_unit, p.unit))
+			add_to_inventory_transaction({
+				'doctype': 'Inventory Transaction',
+				'transaction_type':"Purchase Order",
+				'transaction_date':self.posting_date,
+				'transaction_number':self.name,
+				'product_code': p.product_code,
+				'unit':p.unit,
+				'previous_cost': p.base_cost*uom_conversion,
+				'stock_location':self.stock_location,
+				'in_quantity':p.quantity / uom_conversion,
+				"uom_conversion":uom_conversion,
+				"price":calculate_average_cost(p.product_code,self.stock_location,(p.quantity / uom_conversion),(p.sub_total - p.total_discount)),
+				'note': 'New purchase order submitted.',
+				"has_expired_date":p.has_expired_date,
+				"expired_date":p.expired_date,
+				'action': 'Submit'
+			})
 		
 def update_inventory_on_cancel(self):
 	for p in self.purchase_order_products:
-		uom_conversion = (1 if (get_uom_conversion(p.base_unit, p.unit) or 0) == 0 else get_uom_conversion(p.base_unit, p.unit))
-		add_to_inventory_transaction({
-			'doctype': 'Inventory Transaction',
-			'transaction_type':"Purchase Order",
-			'transaction_date':self.posting_date,
-			'transaction_number':self.name,
-			'product_code': p.product_code,
-			'unit':p.unit,
-			'previous_cost': p.base_cost*uom_conversion,
-			'stock_location':self.stock_location,
-			'out_quantity':p.quantity / uom_conversion,
-			"price": calculate_average_cost(p.product_code,self.stock_location,(p.quantity / uom_conversion),(p.sub_total - p.total_discount),self.name),
-			'note': 'Purchase order cancelled.',
-			'action': 'Cancel'
-		})
-		update_inventory_transaction_status(self.name)
+		is_inventory = frappe.get_doc("Product", p.product_code ).is_inventory_product or 0
+		if is_inventory:
+			uom_conversion = (1 if (get_uom_conversion(p.base_unit, p.unit) or 0) == 0 else get_uom_conversion(p.base_unit, p.unit))
+			add_to_inventory_transaction({
+				'doctype': 'Inventory Transaction',
+				'transaction_type':"Purchase Order",
+				'transaction_date':self.posting_date,
+				'transaction_number':self.name,
+				'product_code': p.product_code,
+				'unit':p.unit,
+				'previous_cost': p.base_cost*uom_conversion,
+				'stock_location':self.stock_location,
+				'out_quantity':p.quantity / uom_conversion,
+				"price": calculate_average_cost(p.product_code,self.stock_location,(p.quantity / uom_conversion),(p.sub_total - p.total_discount),self.name),
+				'note': 'Purchase order cancelled.',
+				'action': 'Cancel'
+			})
+			update_inventory_transaction_status(self.name)
 
 def validate_account(self):
 	if not self.default_credit_account:
@@ -141,7 +145,12 @@ def validate_account(self):
  
 	for p in self.purchase_order_products:
 		if not p.stock_account:
-			p.stock_account = frappe.get_cached_value("Business Branch", self.business_branch,"default_inventory_account")
+			is_inventory = frappe.get_doc("Product", p.product_code ).is_inventory_product or 0
+			default_inventory_account = frappe.get_cached_value("Business Branch", self.business_branch,"default_inventory_account")
+			if is_inventory:
+				p.stock_account = default_inventory_account
+			else:
+				p.stock_account = frappe.get_cached_value("Business Branch", self.business_branch,"default_none_inventory_account") or default_inventory_account
 
 @frappe.whitelist(allow_guest=True) 
 def get_accounts(branch,product):
@@ -153,7 +162,13 @@ def get_accounts(branch,product):
 			expense_account = expense_account[0].default_expense_account
 	if not expense_account:
 		expense_account = frappe.get_cached_value("Business Branch", branch,"default_cost_of_good_sold_account")
-	stock_account = frappe.db.get_value("Business Branch", branch,"default_inventory_account")
+
+	is_inventory = doc.is_inventory_product or 0
+	default_inventory_account = frappe.get_cached_value("Business Branch", branch,"default_inventory_account")
+	if is_inventory:
+		stock_account = default_inventory_account
+	else:
+		stock_account = frappe.get_cached_value("Business Branch", branch,"default_none_inventory_account") or default_inventory_account	
 	return {"stock_account":stock_account,"expense_account":expense_account}
 
 @frappe.whitelist()

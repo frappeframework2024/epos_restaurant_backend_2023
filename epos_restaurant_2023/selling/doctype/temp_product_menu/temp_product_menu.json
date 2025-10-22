@@ -23,6 +23,7 @@
   "modifiers",
   "combo_menu_data",
   "tax_rule_data",
+  "shift_availability",
   "column_break_jpvf",
   "append_quantity",
   "allow_discount",
@@ -327,11 +328,16 @@
    "fieldname": "product_name_etc",
    "fieldtype": "Data",
    "label": "Product Name Etc"
+  },
+  {
+   "fieldname": "shift_availability",
+   "fieldtype": "Text",
+   "label": "Shift Availability"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-02 14:33:27.697318",
+ "modified": "2025-10-21 15:09:30.308418",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Temp Product Menu",

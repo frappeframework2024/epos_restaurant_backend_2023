@@ -36,7 +36,6 @@ export default class Product {
             limit:10,
             page:1
         }
- 
         this.posMenuResource = createResource({
             url: 'epos_restaurant_2023.api.product.get_product_by_menu',
             params: {
@@ -46,7 +45,6 @@ export default class Product {
             cache: ["pos_menu"]
         })
     }
-
     onClearKeyword() {
         this.parentMenu = "";
         this.searchProductKeyword = "";
@@ -54,7 +52,6 @@ export default class Product {
         this.selectedProduct = {};
     }
     loadPOSMenu() {
-        
         let setting = localStorage.getItem("item_menu_setting")
         if (setting){
             setting = JSON.parse(setting)
@@ -64,12 +61,13 @@ export default class Product {
                 sort_order_by:product_name_en
             }
         }
-      
+        let shift_name = localStorage.getItem("current_shift_name")
         this.posMenuResource.update({
             params: {
                 root_menu: this.currentRootPOSMenu ? this.currentRootPOSMenu : this.setting?.default_pos_menu,
                 sort_menu_order_by:setting?.sort_menu_order_by || "name",
                 sort_order_by:setting?.sort_order_by || "product_name_en",
+                shift_name: shift_name || ""
             }
         });
         this.posMenuResource.reload();

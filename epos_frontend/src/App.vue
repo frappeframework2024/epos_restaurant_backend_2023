@@ -174,11 +174,7 @@ if (!localStorage.getItem("pos_profile")) {
 		cache: "get_system_settings",
 		auto: true,
 		onSuccess(doc) { 
-
-			
 			const customer_display_key = `${doc.business_branch}_${pos_profile}_${doc.device_setting.device_id}`;
-			console.log({"key_cds": customer_display_key})
-
 			state.isLoading = false;
 			localStorage.setItem("setting", JSON.stringify(doc)); 
 			gv.setting = doc;
@@ -202,6 +198,7 @@ if (!localStorage.getItem("pos_profile")) {
 					onSuccess(data) {
 						gv.workingDay = data.wroking_day;
 						gv.cashierShift = data.cashier_shift;
+						localStorage.setItem("current_shift_name",data.cashier_shift.shift_name)
 					},
 					auto: true,
 				})

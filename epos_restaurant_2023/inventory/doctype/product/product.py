@@ -835,6 +835,10 @@ def add_product_to_temp_menu(self):
 						"is_multiple":doc_category.is_multiple,
 						"items":modifier_items
 					})
+		shift_availability = []
+		if self.product_shift_availability:
+			for a in set([r.get("shift_type") for r in self.product_shift_availability]):
+				shift_availability.append(a)
 			
 		## end get modifier data  
 		for m in self.pos_menus:	 
@@ -860,7 +864,8 @@ def add_product_to_temp_menu(self):
 							'discount_value':m.discount_value,
 							'sort_order':m.sort_order,
 							'pos_note':self.pos_note,
-							'product_name_etc':self.product_name_etc
+							'product_name_etc':self.product_name_etc,
+							'shift_availability':json.dumps(shift_availability)
 						})
 			doc.insert() 
 
@@ -947,6 +952,23 @@ def assign_printer(products,printer):
 	frappe.db.commit()
 
 @frappe.whitelist()
+def assign_available_shift(products,shift_type):
+	for p in products.split(","):
+		p = frappe.get_doc("Product",p)
+		if len(p.product_shift_availability or []) ==0:
+			c = frappe.new_doc("Product Shift Availability")
+			c.shift_type = shift_type 
+			p.append("product_shift_availability", c)
+		else:
+			result = [d for d in p.product_shift_availability if d.shift_type == shift_type]
+			if not result:
+				c = frappe.new_doc("Product Shift Availability")
+				c.shift_type = shift_type 
+				p.append("product_shift_availability", c)
+		p.save()
+	frappe.db.commit()
+
+@frappe.whitelist()
 def remove_printer(products,printer):
 	for p in products.split(","):
 		product = frappe.get_doc("Product",p)
@@ -954,6 +976,17 @@ def remove_printer(products,printer):
 		for row in printers:
 			if row.printer == printer:
 				printers.remove(row)
+		product.save()
+	frappe.db.commit()
+
+@frappe.whitelist()
+def remove_available_shift(products,shift_type):
+	for p in products.split(","):
+		product = frappe.get_doc("Product",p)
+		shifts = product.get('product_shift_availability' or [])
+		for row in shifts:
+			if row.shift_type == shift_type:
+				shifts.remove(row)
 		product.save()
 	frappe.db.commit()
 

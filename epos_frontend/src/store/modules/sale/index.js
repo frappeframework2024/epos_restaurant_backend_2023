@@ -103,7 +103,8 @@ const state = {
             url: 'epos_restaurant_2023.api.product.get_product_by_menu',
             auto: true,
             params:{
-                root_menu: defaultMenu
+                root_menu: defaultMenu,
+                shift_name: localStorage.getItem("pos_profile")
             },
             auto:true,
             async onSuccess(doc) {

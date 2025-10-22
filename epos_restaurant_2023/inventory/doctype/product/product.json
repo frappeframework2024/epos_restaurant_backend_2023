@@ -153,7 +153,9 @@
   "column_break_qpuh",
   "qb_product_id",
   "accounting_tab",
-  "default_account"
+  "default_account",
+  "shift_availability_tab",
+  "product_shift_availability"
  ],
  "fields": [
   {
@@ -1013,13 +1015,24 @@
    "fieldname": "product_name_etc",
    "fieldtype": "Data",
    "label": "Product Name Etc"
+  },
+  {
+   "fieldname": "shift_availability_tab",
+   "fieldtype": "Tab Break",
+   "label": "Shift Availability"
+  },
+  {
+   "fieldname": "product_shift_availability",
+   "fieldtype": "Table",
+   "label": "Product Shift Availability",
+   "options": "Product Shift Availability"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2025-10-02 14:26:29.554748",
+ "modified": "2025-10-21 14:58:51.605060",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Product",
