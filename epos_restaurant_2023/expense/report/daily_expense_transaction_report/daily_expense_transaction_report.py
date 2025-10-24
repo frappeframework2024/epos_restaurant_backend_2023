@@ -6,24 +6,17 @@ from frappe import _
 from py_linq import Enumerable
 
 def execute(filters=None):
-	if not filters.vendor_code:
-		filters.vendor_code ="All"
-	if not filters.expense_by:
-		filters.expense_by= frappe.db.get_list("Employee",pluck='name')
-	if not filters.business_branch:
-		filters.business_branch= frappe.db.get_list("Business Branch",pluck='name')
-  
 	data =  get_report_data(filters)
 	return get_report_columns(),data,None,None, get_report_summary(data)
 
 def get_report_data(filters):
-	str_filters = "posting_date between %(start_date)s and %(end_date)s and docstatus = 1 and "
-	if filters.get("business_branch"):
-			str_filters += "business_branch in %(business_branch)s and "
-	if filters.get("expense_by"):
-			str_filters += "expense_by in %(expense_by)s and "
-	if filters.get("vendor_code"):
-			str_filters += "vendor_code = %(vendor_code)s "
+	str_filters = "posting_date between %(start_date)s and %(end_date)s and docstatus = 1"
+	if filters.business_branch:
+			str_filters += " and business_branch in %(business_branch)s"
+	if filters.expense_by:
+			str_filters += " and expense_by in %(expense_by)s"
+	if filters.vendor_code:
+			str_filters += " and vendor_code = %(vendor_code)s "
 	sql="""
 		select 
 			name,

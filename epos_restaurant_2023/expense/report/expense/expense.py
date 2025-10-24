@@ -6,17 +6,17 @@ from frappe import _
 from py_linq import Enumerable
 
 def execute(filters=None):
-	if not filters.vendor_code:
-		filters.vendor_code ="All"
-	if not filters.expense_by:
-		filters.expense_by= frappe.db.get_list("Employee",pluck='name')
-	if not filters.business_branch:
-		filters.business_branch= frappe.db.get_list("Business Branch",pluck='name')
-  
 	data =  get_report_data(filters)
 	return get_report_columns(),data,None,None, get_report_summary(data)
 
 def get_report_data(filters):
+	str_filter = "docstatus = 1 and posting_date between %(start_date)s and %(end_date)s"
+	if filters.business_branch:
+		str_filter += " and business_branch in %(business_branch)s"
+	if filters.expense_by:
+		str_filter += " and expense_by in %(expense_by)s "
+	if filters.vendor_code:
+		str_filter += " and vendor_code in %(vendor_code)s"
 	sql="""
 		select 
 			name,
@@ -29,12 +29,8 @@ def get_report_data(filters):
 			balance
 		from `tabExpense` po
 		where
-			business_branch in %(business_branch)s and 
-			posting_date between %(start_date)s and %(end_date)s and
-			expense_by in %(expense_by)s and
-			vendor_code = if(%(vendor_code)s='All',vendor_code,%(vendor_code)s) and
-			docstatus = 1 
-	"""
+			{0}
+	""".format(str_filter)
 
 	data = frappe.db.sql(sql,filters , as_dict=1)
 	return data
