@@ -44,12 +44,12 @@
   </div>
 </template>
 <script setup>
-import { inject, useRouter, paymentDialog,i18n } from '@/plugin';
+import { inject, useRouter, paymentDialog,i18n ,ComSubmitTermAndConditionDialog,watchEffect,ref } from '@/plugin';
 import { createToaster } from '@meforma/vue-toaster';
 import ComExchangeRate from '../ComExchangeRate.vue';
 import ComSaleButtonActions from '../ComSaleButtonActions.vue';
 import ComSaleSummaryList from '../ComSaleSummaryList.vue';
-
+import isEqual from 'lodash.isequal' 
 const { t: $t } = i18n.global;  
 
 const emit = defineEmits(["onClose",'onSubmitAndNew'])
@@ -59,9 +59,25 @@ const gv = inject("$gv")
 const setting = gv.setting;
 const toaster = createToaster({ position: "top-right" })
 const device_setting = JSON.parse(localStorage.getItem("device_setting"))
+let originalSale = ref("")
+let block = ref(0)
+
+watchEffect(async () => {
+  if(block.value <= 1){
+    let storedsale = sale.sale
+    originalSale.value  = JSON.stringify(storedsale)
+    block.value = block.value + 1
+  }
+});
+
 async function onSubmit() {
   if (!sale.isBillRequested()) {
-
+    if(gv.setting.pos_setting.show_term_on_submit == 1 && !isEqual(JSON.stringify(sale.sale),originalSale.value)){
+     const result = await ComSubmitTermAndConditionDialog({ business_branch:sale.setting?.business_branch });
+    if(!result){
+      return;
+    }
+  }
     const action = sale.action
     const message = sale.message;
     const sale_status = sale.sale.sale_status;

@@ -41,9 +41,11 @@
   </div>
 </template>
 <script setup>
-import { inject,ref ,useRouter, paymentDialog, searchSaleDialog, createToaster, i18n,ComSubmitTermAndConditionDialog } from '@/plugin';
+import { inject,ref ,useRouter, paymentDialog, searchSaleDialog, createToaster, i18n,ComSubmitTermAndConditionDialog,onMounted,watchEffect } from '@/plugin';
 import ComExchangeRate from './ComExchangeRate.vue';
 import { whenever, useMagicKeys } from '@vueuse/core';
+import isEqual from 'lodash.isequal' 
+
 const { t: $t } = i18n.global;
 const hoverEffect = ref(false);
 const hoverEffectsub = ref(false);
@@ -56,8 +58,8 @@ const toaster = createToaster({ position: 'top-right' });
 const device_setting = JSON.parse(localStorage.getItem("device_setting"))
 const frappe = inject("$frappe")
 const call = frappe.call();
-
-
+let originalSale = ref("")
+let block = ref(0)
 sale.vue.$onKeyStroke('F12', (e) => {
   e.preventDefault();
   if (gv.device_setting.show_option_payment == 0) {
@@ -87,9 +89,6 @@ const { ctrl_s } = useMagicKeys({
 whenever(ctrl_o, () => onSearchSale())
 whenever(ctrl_s, () => onSubmit())
 
-
-
-
 const setting = JSON.parse(localStorage.getItem("setting"))
 async function onSearchSale() {
   sale.dialogActiveState = true;
@@ -110,15 +109,21 @@ async function onSearchSale() {
   }
 }
 
-async function onSubmit() {
-  
+watchEffect(async () => {
+  if(block.value <= 5){
+    let storedsale = sale.sale
+    originalSale.value  = JSON.stringify(storedsale)
+    block.value = block.value + 1
+  }
+});
+
+async function onSubmit() { 
   if (setting.allow_change_table_after_print_bill == 0){
     if (sale.isBillRequested()) {
       return
     }
   }
-
-  if(gv.setting.pos_setting.show_term_on_submit == 1){
+  if(gv.setting.pos_setting.show_term_on_submit == 1 && !isEqual(JSON.stringify(sale.sale),originalSale.value)){
      const result = await ComSubmitTermAndConditionDialog({ business_branch:sale.setting?.business_branch });
     if(!result){
       return;

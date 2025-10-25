@@ -1,14 +1,6 @@
 <template>
-     
-    <v-overlay
-      :model-value="open"
-      class="align-center justify-center"
-    >
-      <v-progress-circular
-        color="primary"
-        indeterminate
-        size="64"
-      ></v-progress-circular>
+    <v-overlay :model-value="open" style="z-index: 9999;" class="align-center justify-center">
+      <v-progress-circular color="primary" indeterminate size="64"></v-progress-circular>
     </v-overlay>
     </template>
     <script setup>
