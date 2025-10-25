@@ -1,5 +1,7 @@
 <template>
-    <ComModal :fullscreen="true" :hideCloseButton="true" :hideOkButton="true" :fill="true" :isShowBarMoreButton="false" @onClose="onClose()">
+    <div>
+        <ComLoadingDialog v-if="sale.loading"/>
+        <ComModal :fullscreen="true" :hideCloseButton="true" :hideOkButton="true" :fill="true" :isShowBarMoreButton="false" @onClose="onClose()">
         <template #title>
             {{ $t('Bill') }}# {{ params.title }}
         </template>
@@ -26,7 +28,7 @@
             <ComSmallSaleSummary @onClose="onGoHome()" @onSubmitAndNew="onSubmitAndNew()"/> 
         </template>
     </ComModal>
-    
+    </div>
 </template>
 <script setup>
 import { defineProps, defineEmits, inject,useRouter,onUnmounted,onMounted } from '@/plugin'
@@ -34,7 +36,7 @@ import ComGroupSaleProductList from '../ComGroupSaleProductList.vue';
 import ComPrintBillButton from '../ComPrintBillButton.vue';
 import ComSelectCustomer from '../ComSelectCustomer.vue';
 import ComSmallSaleSummary from './ComSmallSaleSummary.vue'; 
-
+import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 const props = defineProps({
     params: Object
 })
