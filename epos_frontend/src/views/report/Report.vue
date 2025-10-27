@@ -9,14 +9,14 @@
             </template>
         </template>
     <v-row> 
-        <v-navigation-drawer v-model="drawer" location="left" temporary style="width:90%">
+        <v-navigation-drawer  v-model="drawer" location="left" temporary style="width:90%;">
             <v-card :subtitle="$t('Working Day and Cashier Shift Report')">
                 <v-card-text class="report-list-container"> 
                     <ComPlaceholder :loading="workingDayReports === null " :is-not-empty="workingDayReports?.length > 0">
                         <template v-for="(c, index) in workingDayReports" :key="index">
                             <v-card :color="activeReport.report_id == c.name ? 'info' : 'default'" :variant="activeReport.report_id == c.name || c.cashier_shifts.find(r=>r.name == activeReport.report_id) ? 'tonal' : 'text'" class="bg-gray-200 my-2 subtitle-opacity-1" @click="onWorkingDay(c)">
                                 <template v-slot:title>
-                                    <div class="flex justify-between">
+                                    <div  class="flex justify-between">
                                         <div>{{ c.name }}</div>
                                         <div>
                                             <v-chip v-if="c.is_closed" color="error" size="small"
@@ -62,7 +62,7 @@
         </v-navigation-drawer> 
 
         <v-col md="3" class="d-none d-md-block"> 
-            <v-card :subtitle="$t('Working Day and Cashier Shift Report')">
+            <v-card style="font-family: Khmer OS Battambang;" :subtitle="$t('Working Day and Cashier Shift Report')">
                 <v-card-text class="report-list-container"> 
                     <ComPlaceholder :loading="workingDayReports === null " :is-not-empty="workingDayReports?.length > 0">
                         <template v-for="(c, index) in workingDayReports" :key="index">
@@ -121,7 +121,7 @@
                 
             </div>
             <!-- Hamburger Nav -->
-            <v-card>
+            <v-card style="font-family: Khmer OS Battambang;">
                 <template #title>
                     <div class="px-1 py-2 -m-1">
                         <v-row>

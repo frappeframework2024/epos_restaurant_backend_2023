@@ -16,7 +16,7 @@
             <div v-else>
                 <div class="p-6 text-center" :class="classColor">
                     <div><v-icon :icon="icon" :style="{ 'font-size': iconSize }"></v-icon></div>
-                    <div class="text-sm italic">{{ text }}</div>
+                    <div class="text-sm italic" style="font-family: Khmer OS Battambang;">{{ text }}</div>
                 </div>
             </div>
         </template>

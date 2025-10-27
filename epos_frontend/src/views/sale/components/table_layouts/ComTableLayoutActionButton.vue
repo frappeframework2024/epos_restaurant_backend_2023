@@ -11,12 +11,12 @@
         </div>
     </v-btn>
     <template v-if="!mobile">
-        <v-btn @click="onViewPendingOrder">
+        <v-btn style="font-family: Khmer OS Battambang;" @click="onViewPendingOrder">
             {{ $t('Pending Order') }}
         </v-btn> 
     </template> 
     {{ isShowTableStatus() }}
-    <v-btn :loading="tableLayout.saveTablePositionResource.loading" v-if="tableLayout.canArrangeTable"
+    <v-btn style="font-family: Khmer OS Battambang;" :loading="tableLayout.saveTablePositionResource.loading" v-if="tableLayout.canArrangeTable"
         @click="onSaveTablePosition">
         {{ $t('Save Table Position') }}
     </v-btn>
@@ -28,37 +28,39 @@
         </template>
         <v-card>
             <v-list v-if="gv.setting?.pos_setting?.sale_types && gv.setting?.pos_setting?.sale_types.filter(r=>r.is_order_use_table == false).length > 0">
-                <v-list-subheader>{{ $t('Change Sale Type') }}</v-list-subheader>
+                <v-list-subheader>
+                    <div style="font-family: Khmer OS Battambang;">{{ $t('Change Sale Type') }}</div>
+                </v-list-subheader>
                 <template  v-for="(st, index) in gv.setting?.pos_setting.sale_types.filter(r=>r.is_order_use_table == false)" :key="index">
                     <v-list-item @click="onSaleType(st.name)">
-                        <v-list-item-title>{{ st.sale_type_name }}</v-list-item-title>
+                        <v-list-item-title><div style="font-family: Khmer OS Battambang;">{{ st.sale_type_name }}</div></v-list-item-title>
                     </v-list-item>
                 </template>
             </v-list>
             <v-list>
                 <template  v-if="device_setting?.allow_switch_pos_profile==1"> 
-                    <v-list-subheader>{{ $t('POS Config') }}</v-list-subheader>
+                    <v-list-subheader><div style="font-family: Khmer OS Battambang;">{{ $t('POS Config') }}</div></v-list-subheader>
                     <v-list-item @click="onSwitchPOSProfile">
-                        <v-list-item-title>{{ $t('Switch POS Profile') }}</v-list-item-title>
+                        <v-list-item-title><div style="font-family: Khmer OS Battambang;">{{ $t('Switch POS Profile') }}</div></v-list-item-title>
                     </v-list-item>
                 </template>
 
                 <template  v-if="!mobile">
-                    <v-list-subheader>{{ $t('Table Position') }}</v-list-subheader>
+                    <v-list-subheader><div style="font-family: Khmer OS Battambang;">{{ $t('Table Position') }}</div></v-list-subheader>
                     <v-list-item @click="onEnableArrageTable">
-                        <v-list-item-title>{{ $t('Arrange Table') }}</v-list-item-title>
+                        <v-list-item-title><div style="font-family: Khmer OS Battambang;">{{ $t('Arrange Table') }}</div></v-list-item-title>
                     </v-list-item>
                 </template>
 
                 <template v-if="mobile">
                     <v-list-item @click="onViewPendingOrder">
-                        <v-list-item-title>{{$t('Pending Order')}}</v-list-item-title>
+                        <v-list-item-title><div style="font-family: Khmer OS Battambang;">{{$t('Pending Order')}}</div></v-list-item-title>
                     </v-list-item>
                    
                 </template>
                 
                 <v-list-item @click="onShowHideSaleStatus">
-                        <v-list-item-title>   {{ !status ? $t('Show Status'):$t("Hide Status") }}</v-list-item-title>
+                        <v-list-item-title><div style="font-family: Khmer OS Battambang;">{{ !status ? $t('Show Status'):$t("Hide Status") }}</div></v-list-item-title>
                 </v-list-item>
                     
             </v-list>

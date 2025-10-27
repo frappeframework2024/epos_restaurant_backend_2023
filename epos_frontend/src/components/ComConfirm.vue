@@ -1,16 +1,16 @@
 <template>
   <v-dialog v-model="open" persistent>
-      <v-card 
+      <v-card style="font-family: Khmer OS Battambang;"
         class="mx-auto my-2 py-2"
         :title="params.title"
         :subtitle="params.text"
         >
         <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn variant="flat" @click="onClose" color="error" v-if="!params.hide_cancel">
+            <v-btn variant="flat" @click="onClose" color="error" v-if="!params.hide_cancel" style="font-family: Khmer OS Battambang;">
               {{ $t('Cancel') }}
             </v-btn>
-            <v-btn variant="flat" @click="onOk"  ref="okBtn" color="primary">
+            <v-btn variant="flat" @click="onOk"  ref="okBtn" color="primary" style="font-family: Khmer OS Battambang;">
                 {{ $t('Ok') }}
             </v-btn>
         </v-card-actions>

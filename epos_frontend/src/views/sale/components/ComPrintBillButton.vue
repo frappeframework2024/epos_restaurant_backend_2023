@@ -7,7 +7,7 @@
  
           <v-btn v-else  :stacked="!mobile" color="printbillbtn" size="small" class="m-0-1 grow"
           :prepend-icon="mobile ? '' : 'mdi-printer'" :variant="mobile ? 'tonal' : 'elevated'"
-          @click="onPrintPressed(gv.setting.reports.filter(r => r.doc_type == doctype && r.show_in_pos == 1)[0])">
+          @click="onPrintPressed(gv.setting.reports.filter(r => r.doc_type == doctype && r.show_in_pos == 1)[0])" style="font-family: Khmer OS Battambang;">
           {{ $t('Print Bill') }}</v-btn> 
       </template>
       <v-menu v-else>
@@ -15,7 +15,7 @@
           <v-btn v-if="mobile" :stacked="!mobile" color="default" @click="$emit('onClose')" icon="mdi-printer"
             v-bind="props" />
           <v-btn v-else stacked color="info" size="small" class="m-0-1 grow" prepend-icon="mdi-printer"
-            @click="$emit('onClose')" v-bind="props">
+            @click="$emit('onClose')" v-bind="props" style="font-family: Khmer OS Battambang;">
             {{ $t('Print Bill') }}
           </v-btn>
         </template>

@@ -20,7 +20,7 @@
                             <div class="flex justify-between">
                                 <div class="pb-2 -mr-2">
                                     <v-tabs show-arrows>
-                                        <v-tab
+                                        <v-tab style="font-family: Khmer OS Battambang;"
                                         v-for="(r, index) in gv.setting.reports.filter(r => r.show_in_pos_closed_sale == 1 && r.doc_type == 'POS Profile')"
                                         :key="index" @click="onReportClick(r)">
                                         {{ $t(r.title) }}</v-tab>

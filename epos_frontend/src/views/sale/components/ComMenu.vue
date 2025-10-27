@@ -24,7 +24,7 @@
                                     <div v-ripple class="relative p-2 w-full h-full flex justify-center items-center" @click="onBack">
                                     <div>
                                     <v-icon color="white" size="large">mdi-reply</v-icon>
-                                    <div class="text-white">{{ $t('Back') }}</div>
+                                    <div class="text-white" >{{ $t('Back') }}</div>
                                     </div>
                                     </div>
                                 </div>

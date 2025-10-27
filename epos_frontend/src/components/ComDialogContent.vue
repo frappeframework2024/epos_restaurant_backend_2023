@@ -23,10 +23,10 @@
                     </div>
                     <div class="flex gap-2">
                         <slot name="footer-right"></slot>
-                        <v-btn class="text-white" v-if="!hideButtonClose"  rounded="lg" color="red-lighten-1" @click="close()" :loading="loading">
+                        <v-btn style="font-family: Khmer OS Battambang;" class="text-white" v-if="!hideButtonClose"  rounded="lg" color="red-lighten-1" @click="close()" :loading="loading">
                             {{ titleButtonClose ?? 'Cancel' }}
                         </v-btn>            
-                        <v-btn class="text-white" :disabled="disabledBtnOk" rounded="lg" color="green-lighten-1" v-if="!hideButtonOK" @click="onOK()" :loading="loading">
+                        <v-btn style="font-family: Khmer OS Battambang;" class="text-white" :disabled="disabledBtnOk" rounded="lg" color="green-lighten-1" v-if="!hideButtonOK" @click="onOK()" :loading="loading">
                             {{ titleButtonOK ?? 'Save' }}
                         </v-btn>
                     </div>

@@ -8,7 +8,7 @@
     </v-list-item>
     <template v-else>
       <v-btn v-if="!mobile" stacked variant="elevated" size="small" class="m-0-1 grow"
-        :prepend-icon="'mdi-keyboard-return'" @click="onToTableLayout()">
+        :prepend-icon="'mdi-keyboard-return'" @click="onToTableLayout()" style="font-family: Khmer OS Battambang;">
         {{ $t('Back') }}
       </v-btn>
       <v-btn v-else variant="tonal" size="small" :height="mobile ? '35px' : undefined" class="m-0-1 grow"
@@ -28,7 +28,7 @@
     </v-list-item>
     <template v-else>
       <v-btn v-if="!mobile" stacked variant="elevated" size="small" class="m-0-1 grow"
-        :prepend-icon="'mdi-keyboard-return'" @click="onToHomePage()">
+        :prepend-icon="'mdi-keyboard-return'" @click="onToHomePage()" style="font-family: Khmer OS Battambang;">
         {{ $t('Back') }}
       </v-btn>
       <v-btn v-else variant="tonal" size="small" :height="mobile ? '35px' : undefined" class="m-0-1 grow"
