@@ -44,7 +44,7 @@
   </div>
 </template>
 <script setup>
-import { inject, useRouter, paymentDialog,i18n ,ComSubmitTermAndConditionDialog,watchEffect,ref } from '@/plugin';
+import { inject, useRouter, paymentDialog,i18n ,ComSubmitTermAndConditionDialog } from '@/plugin';
 import { createToaster } from '@meforma/vue-toaster';
 import ComExchangeRate from '../ComExchangeRate.vue';
 import ComSaleButtonActions from '../ComSaleButtonActions.vue';
@@ -59,20 +59,23 @@ const gv = inject("$gv")
 const setting = gv.setting;
 const toaster = createToaster({ position: "top-right" })
 const device_setting = JSON.parse(localStorage.getItem("device_setting"))
-let originalSale = ref("")
-let block = ref(0)
 
-watchEffect(async () => {
-  if(block.value <= 1){
-    let storedsale = sale.sale
-    originalSale.value  = JSON.stringify(storedsale)
-    block.value = block.value + 1
+function has_changes(){
+  let has_value_changes = 0
+  let previous = JSON.parse(localStorage.getItem("originalSale"))
+  let current = sale.sale
+  if(previous.sale_products.length != current.sale_products.length){
+    has_value_changes = 1
   }
-});
+  if(previous.grand_total != current.grand_total){
+    has_value_changes = 1
+  }
+  return has_value_changes
+}
 
 async function onSubmit() {
   if (!sale.isBillRequested()) {
-    if(gv.setting.pos_setting.show_term_on_submit == 1 && !isEqual(JSON.stringify(sale.sale),originalSale.value)){
+    if(gv.setting.pos_setting.show_term_on_submit == 1 && has_changes() == 1){
      const result = await ComSubmitTermAndConditionDialog({ business_branch:sale.setting?.business_branch });
     if(!result){
       return;

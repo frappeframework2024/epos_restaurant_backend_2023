@@ -9,6 +9,4 @@ const props = defineProps({
     isLoading:Boolean
 })
 const open = ref(true)
-//open.value=props.isLoading;
-
 </script>

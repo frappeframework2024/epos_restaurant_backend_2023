@@ -10,7 +10,6 @@
             <div  class="text-white text-sm px-2 py-1 fixed left-0 right-0 bottom-0" :class="((lastProduct?'':'h-20')+(checkNewSaleNoSaleProducts?' bg-red-200':' bg-red-500') )"  v-ripple @click="onViewDetail">
                 <div>
                     <div class="text-xs" v-if="lastProduct">{{ lastProduct.product_code }} - {{ lastProduct.product_name }} ({{ lastProduct.quantity }})</div>
-                    
                     <div class="flex items-center justify-between">                        
                         <div>{{ $t('Total Qty') }}</div>
                         <div>{{ sale.sale.total_quantity||0 }}</div>                    

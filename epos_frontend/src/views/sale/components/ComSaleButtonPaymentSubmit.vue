@@ -41,7 +41,7 @@
   </div>
 </template>
 <script setup>
-import { inject,ref ,useRouter, paymentDialog, searchSaleDialog, createToaster, i18n,ComSubmitTermAndConditionDialog,onMounted,watchEffect } from '@/plugin';
+import { inject,ref ,useRouter, paymentDialog, searchSaleDialog, createToaster, i18n,ComSubmitTermAndConditionDialog } from '@/plugin';
 import ComExchangeRate from './ComExchangeRate.vue';
 import { whenever, useMagicKeys } from '@vueuse/core';
 import isEqual from 'lodash.isequal' 
@@ -58,8 +58,6 @@ const toaster = createToaster({ position: 'top-right' });
 const device_setting = JSON.parse(localStorage.getItem("device_setting"))
 const frappe = inject("$frappe")
 const call = frappe.call();
-let originalSale = ref("")
-let block = ref(0)
 sale.vue.$onKeyStroke('F12', (e) => {
   e.preventDefault();
   if (gv.device_setting.show_option_payment == 0) {
@@ -109,13 +107,18 @@ async function onSearchSale() {
   }
 }
 
-watchEffect(async () => {
-  if(block.value <= 5){
-    let storedsale = sale.sale
-    originalSale.value  = JSON.stringify(storedsale)
-    block.value = block.value + 1
+function has_changes(){
+  let has_value_changes = 0
+  let previous = JSON.parse(localStorage.getItem("originalSale"))
+  let current = sale.sale
+  if(previous.sale_products.length != current.sale_products.length){
+    has_value_changes = 1
   }
-});
+  if(previous.grand_total != current.grand_total){
+    has_value_changes = 1
+  }
+  return has_value_changes
+}
 
 async function onSubmit() { 
   if (setting.allow_change_table_after_print_bill == 0){
@@ -123,7 +126,7 @@ async function onSubmit() {
       return
     }
   }
-  if(gv.setting.pos_setting.show_term_on_submit == 1 && !isEqual(JSON.stringify(sale.sale),originalSale.value)){
+  if(gv.setting.pos_setting.show_term_on_submit == 1 && has_changes() == 1){
      const result = await ComSubmitTermAndConditionDialog({ business_branch:sale.setting?.business_branch });
     if(!result){
       return;

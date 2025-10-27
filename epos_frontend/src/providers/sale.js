@@ -212,7 +212,6 @@ export default class Sale {
     }
 
     async LoadSaleData(name) { 
-        
         this.auditTrailLogs = [];
         this.changeTableSaleProducts = [];
         this.moveItemSaleProducts = [];
@@ -256,8 +255,9 @@ export default class Sale {
                     this.getTableSaleList();
                 }
                 resolve(doc);
+                 
             });
-
+            localStorage.setItem('originalSale', JSON.stringify(this.sale))
             resolve(false);
         })
     }
@@ -1728,6 +1728,7 @@ export default class Sale {
                 //refresh tabl 
                 resolve(_sale);
             }
+             localStorage.removeItem('originalSale')
              this.loading = false;
         })
     }

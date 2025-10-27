@@ -12,13 +12,12 @@
             <ComPrintBillButton doctype="Sale" :title="$t('Print Bill')" :isMobile="true" />
         </template>
         <template #content>
-            
             <template v-if="!gv.device_setting.is_order_station"> 
                 <div class="m-1">
                     <ComSelectCustomer/>
                     <div class="w-full saletable justify-between px-3 flex flex-wrap p-1 rounded-md mt-1" v-if="sale.sale?.tbl_number"> 
-                            <div class="font-bold" > {{$t('Table #')}} :</div>
-                            <div> {{ sale.sale.tbl_number }} </div>
+                        <div class="font-bold" > {{$t('Table #')}} :</div>
+                        <div> {{ sale.sale.tbl_number }} </div>
                     </div>
                 </div>
             </template>
@@ -68,6 +67,7 @@ function onGoHome(){
         }
     }
 }
+
 function onRedirectSaleType(){
     const redirect_sale_type = localStorage.getItem("redirect_sale_type") || null
     if(redirect_sale_type){
@@ -78,6 +78,7 @@ function onRedirectSaleType(){
     }
     return true;
 }
+
 function onSubmitAndNew(){
     onRedirectSaleType()
 }
@@ -99,7 +100,6 @@ function onAddNewOrder(){
     }
 }
 
-
 const onEventListener = async function (e) {
     if (e.isTrusted && typeof (e.data) == 'string') {
         if(e.data == "close_modal"){
@@ -109,12 +109,10 @@ const onEventListener = async function (e) {
     }
 };
 
- 
 window.addEventListener('message', onEventListener, false);
 
 onUnmounted(() => {
     window.removeEventListener('message', onEventListener, false);
 }) 
- 
 
 </script>

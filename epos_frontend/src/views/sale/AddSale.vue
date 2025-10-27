@@ -80,8 +80,6 @@ const router = useRouter();
 
 const toaster = createToaster({ position: "top-right" });
 
-  
-
 sale.vueInstance = getCurrentInstance();
 sale.vue = sale.vueInstance.appContext.config.globalProperties;
 
@@ -103,7 +101,6 @@ if (product.posMenuResource.data?.length == 0) {
     if (product.setting.pos_menus.length > 0) {
         product.loadPOSMenu();
     } else {
-
         product.getProductMenuByProductCategory( "All Product Categories")
         product.loadPOSMenu();
     }
@@ -119,7 +116,6 @@ const handleHashChange = () => {
     const hash = window.location.hash.substring(1); // Remove the `#` from the hash
     if (hash) {
         if(product.selectedProductCategory!=decodeURIComponent(hash)){
-         
             product.getProductMenuByProductCategory(decodeURIComponent(hash))
         }
     }
