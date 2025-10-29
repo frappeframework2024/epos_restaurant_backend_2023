@@ -110,7 +110,6 @@ onMounted(async () => {
         pos_profile: localStorage.getItem("pos_profile")}
     ).then((r)=>{
         localStorage.setItem("current_shift_name",r.message.shift_name)
-        console.log(r.message.shift_name)
     })
     call.get("epos_restaurant_2023.api.api.get_current_working_day",{business_branch: gv.setting?.business_branch})
     .then((_res)=>{
