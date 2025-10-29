@@ -29,7 +29,6 @@ const current_open_shift = createResource({
     onSuccess(data) {
         if(data){ 
         gv.cashierShift = data.name
-        localStorage.setItem("current_shift_name",data.shift_name)
         }
     },
     auto: true,

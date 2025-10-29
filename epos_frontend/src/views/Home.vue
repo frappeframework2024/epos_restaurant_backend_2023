@@ -105,6 +105,13 @@ const device_name = computed(() => {
 //on init
 onMounted(async () => { 
     localStorage.removeItem('make_order_auth');    
+    call.get("epos_restaurant_2023.api.api.get_current_cashier_shift",
+    {
+        pos_profile: localStorage.getItem("pos_profile")}
+    ).then((r)=>{
+        localStorage.setItem("current_shift_name",r.message.shift_name)
+        console.log(r.message.shift_name)
+    })
     call.get("epos_restaurant_2023.api.api.get_current_working_day",{business_branch: gv.setting?.business_branch})
     .then((_res)=>{
         if(!already_load_confirm_close_working_day){
