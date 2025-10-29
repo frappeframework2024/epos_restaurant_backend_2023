@@ -72,6 +72,9 @@ function has_changes(){
       has_value_changes = 1
     }
   }
+  else{
+    has_value_changes = 1
+  }
   return has_value_changes
 }
 
