@@ -111,11 +111,13 @@ function has_changes(){
   let has_value_changes = 0
   let previous = JSON.parse(localStorage.getItem("originalSale"))
   let current = sale.sale
-  if(previous.sale_products.length != current.sale_products.length){
+  if(previous){
+    if(previous.sale_products.length != current.sale_products.length){
     has_value_changes = 1
-  }
-  if(previous.grand_total != current.grand_total){
-    has_value_changes = 1
+    }
+    if(previous.grand_total != current.grand_total){
+      has_value_changes = 1
+    }
   }
   return has_value_changes
 }
