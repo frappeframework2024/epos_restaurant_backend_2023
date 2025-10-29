@@ -198,7 +198,6 @@ if (!localStorage.getItem("pos_profile")) {
 					onSuccess(data) {
 						gv.workingDay = data.wroking_day;
 						gv.cashierShift = data.cashier_shift;
-						localStorage.setItem("current_shift_name",data.cashier_shift.shift_name)
 					},
 					auto: true,
 				})
