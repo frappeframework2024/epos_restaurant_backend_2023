@@ -92,6 +92,7 @@
   "column_break_hrxs",
   "inventory_section",
   "default_inventory_account",
+  "default_none_inventory_account",
   "default_bank_fee_account",
   "column_break_rvvy",
   "stock_adjustment_account",
@@ -591,14 +592,20 @@
   },
   {
    "fieldname": "term_and_condition",
-   "fieldtype": "Long Text",
+   "fieldtype": "Text Editor",
    "label": "Term And Condition"
+  },
+  {
+   "fieldname": "default_none_inventory_account",
+   "fieldtype": "Link",
+   "label": "Default None Inventory Account",
+   "options": "Chart Of Account"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-15 14:06:19.811326",
+ "modified": "2025-10-24 16:51:33.416782",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",
