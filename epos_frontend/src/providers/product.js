@@ -51,7 +51,7 @@ export default class Product {
         this.searchProductKeywordStore = "";
         this.selectedProduct = {};
     }
-    loadPOSMenu() {
+    async loadPOSMenu() {
         let setting = localStorage.getItem("item_menu_setting")
         if (setting){
             setting = JSON.parse(setting)
@@ -61,13 +61,13 @@ export default class Product {
                 sort_order_by:product_name_en
             }
         }
-        let shift_name = localStorage.getItem("current_shift_name")
+        let resp = await call.get("epos_restaurant_2023.api.api.get_current_cashier_shift",{pos_profile: localStorage.getItem("pos_profile")})
         this.posMenuResource.update({
             params: {
                 root_menu: this.currentRootPOSMenu ? this.currentRootPOSMenu : this.setting?.default_pos_menu,
                 sort_menu_order_by:setting?.sort_menu_order_by || "name",
                 sort_order_by:setting?.sort_order_by || "product_name_en",
-                shift_name: shift_name || ""
+                shift_name: (resp?.message?.shift_name || "")
             }
         });
         this.posMenuResource.reload();
