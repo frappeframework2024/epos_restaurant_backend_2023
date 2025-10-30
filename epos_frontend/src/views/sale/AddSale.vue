@@ -97,14 +97,11 @@ sale.vue.$onKeyStroke('F1', (e) => {
 
 
 sale.orderTime = "";
-if (product.posMenuResource.data?.length == 0) {
-    if (product.setting.pos_menus.length > 0) {
-        product.loadPOSMenu();
-    } else {
-        product.getProductMenuByProductCategory( "All Product Categories")
-        product.loadPOSMenu();
-    }
-
+if (product.setting.pos_menus.length > 0) {
+    product.loadPOSMenu();
+} else {
+    product.getProductMenuByProductCategory( "All Product Categories")
+    product.loadPOSMenu();
 }
 
 // small device

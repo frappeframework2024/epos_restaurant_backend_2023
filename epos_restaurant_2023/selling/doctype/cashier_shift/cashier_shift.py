@@ -8,6 +8,7 @@ from frappe.model.naming import NamingSeries
 # from epos_restaurant_2023.api.quickbook_intergration.qb_invoice import (create_invoice)
 class CashierShift(Document):
 	def validate(self):
+		data = None
 		# #if close shift check current bill open 
 		# if self.is_closed==1:
 		# 	pending_orders = frappe.db.sql("select name from `tabSale` where docstatus = 0 and cashier_shift = '{}'".format(self.name), as_dict=1)
@@ -71,6 +72,10 @@ class CashierShift(Document):
 			##delete sale network lock
 			frappe.db.sql("delete from `tabSale Network Lock` where pos_profile = %(pos_profile)s",{"pos_profile":self.pos_profile})
 			frappe.db.commit()
+
+
+		from epos_restaurant_2023.custom_socket_client import emit_event
+		emit_event("ePOSMobile",{"action":"use_coupon_successfully", "data":data})
 
 	def after_insert(self):	
 		if self.flags.ignore_after_insert == True:
@@ -239,7 +244,7 @@ def validate_pos_account_code_config(self):
 		if (d["discount"] or 0)> 0:
 			discount_account_code = [x.discount_account for x in  config.pos_revenue_account_codes if x.revenue==d["revenue_group"] and x.discount_account]
 			if not discount_account_code:
-				frappe.throw("There is no account code confiuration for discount amount of revenue group {}".format(d["revenue_group"]))
+				frappe.throw("There is no account code configuration for discount amount of revenue group {}".format(d["revenue_group"]))
 
 	
 

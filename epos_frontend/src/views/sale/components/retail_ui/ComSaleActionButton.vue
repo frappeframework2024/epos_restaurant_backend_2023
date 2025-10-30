@@ -205,7 +205,6 @@
               }else{
                   product.getProductMenuByProductCategory("All Product Categories")
               }
-              
               window.postMessage("close_modal","*");
               toaster.success($t('msg.Change price rule successfully'));
           }

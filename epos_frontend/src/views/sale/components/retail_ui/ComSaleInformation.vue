@@ -76,7 +76,6 @@ async function onChangePriceRule() {
                 product.loadPOSMenu()
                 product.getProductMenuByProductCategory( "All Product Categories")
             }
-
             toaster.success("msg.Change price rule successfully");
         }
     }

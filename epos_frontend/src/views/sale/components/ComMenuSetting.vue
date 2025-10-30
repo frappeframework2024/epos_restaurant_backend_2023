@@ -97,7 +97,6 @@
       if (product.setting.pos_menus.length == 0) {
         product.getProductMenuByProductCategory()
       }else {
-        
         product.loadPOSMenu()
       }
     }
