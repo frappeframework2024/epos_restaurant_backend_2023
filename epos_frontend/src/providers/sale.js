@@ -215,6 +215,7 @@ export default class Sale {
         this.auditTrailLogs = [];
         this.changeTableSaleProducts = [];
         this.moveItemSaleProducts = [];
+        localStorage.removeItem('originalSale')
         return new Promise(async (resolve) => {
             const parent = this;
             this.saleResource = createDocumentResource({
