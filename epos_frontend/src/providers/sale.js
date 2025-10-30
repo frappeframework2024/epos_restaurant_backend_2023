@@ -215,7 +215,6 @@ export default class Sale {
         this.auditTrailLogs = [];
         this.changeTableSaleProducts = [];
         this.moveItemSaleProducts = [];
-        localStorage.removeItem('originalSale')
         return new Promise(async (resolve) => {
             const parent = this;
             this.saleResource = createDocumentResource({
@@ -258,7 +257,6 @@ export default class Sale {
                 resolve(doc);
                  
             });
-            localStorage.setItem('originalSale', JSON.stringify(this.sale))
             resolve(false);
         })
     }
@@ -1729,7 +1727,6 @@ export default class Sale {
                 //refresh tabl 
                 resolve(_sale);
             }
-             localStorage.removeItem('originalSale')
              this.loading = false;
         })
     }

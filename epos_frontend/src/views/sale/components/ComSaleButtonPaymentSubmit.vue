@@ -109,18 +109,12 @@ async function onSearchSale() {
 
 function has_changes(){
   let has_value_changes = 0
-  let previous = JSON.parse(localStorage.getItem("originalSale"))
-  let current = sale.sale
-  if (previous){
-    if(previous.sale_products.length != current.sale_products.length){
-      has_value_changes = 1
-    }
-    if(previous.grand_total != current.grand_total){
-      has_value_changes = 1
-    }
-  }
-  else{
-    has_value_changes = 1
+  let sale_products = (sale.sale.sale_products || [])
+  if(sale_products.length > 0){
+      let news = sale_products.filter(r => r.sale_product_status == "New").length
+      if (news>0){
+          has_value_changes = 1
+      }
   }
   return has_value_changes
 }
@@ -146,9 +140,6 @@ async function onSubmit() {
     if (sale.sale.sale_status!="Bill Requested"){
       sale.sale.sale_status = "Submitted";
     }
-    
-    
-
     await sale.onSubmit().then((doc) => {
       product.onClearKeyword();
       if (doc) {
@@ -161,7 +152,6 @@ async function onSubmit() {
             sale.newSale()
             router.push({ name: "AddSale" });
             sale.tableSaleListResource.fetch();
-
             call.get('epos_restaurant_2023.api.api.get_current_shift_information', {
               business_branch: sale.setting?.business_branch,
               pos_profile: localStorage.getItem("pos_profile")
@@ -174,10 +164,8 @@ async function onSubmit() {
                 router.push({ name: "StartWorkingDay" });
               } else {
                 sale.sale.working_day = data.message.working_day.name;
-                
                 sale.sale.posting_date = data.working_day.posting_date;
                 sale.posting_date = data.working_day.posting_date;
-
                 sale.sale.cashier_shift = data.message.cashier_shift.name;
                 sale.sale.shift_name = data.message.cashier_shift.shift_name;
                 gv.confirm_close_working_day(data.message.working_day.posting_date);

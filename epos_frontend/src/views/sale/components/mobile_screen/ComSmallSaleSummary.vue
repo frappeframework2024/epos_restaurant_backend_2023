@@ -62,18 +62,12 @@ const device_setting = JSON.parse(localStorage.getItem("device_setting"))
 
 function has_changes(){
   let has_value_changes = 0
-  let previous = JSON.parse(localStorage.getItem("originalSale"))
-  let current = sale.sale
-  if (previous){
-     if(previous.sale_products.length != current.sale_products.length){
-    has_value_changes = 1
-    }
-    if(previous.grand_total != current.grand_total){
-      has_value_changes = 1
-    }
-  }
-  else{
-    has_value_changes = 1
+  let sale_products = (sale.sale.sale_products || [])
+  if(sale_products.length > 0){
+      let news = sale_products.filter(r => r.sale_product_status == "New").length
+      if (news>0){
+          has_value_changes = 1
+      }
   }
   return has_value_changes
 }
