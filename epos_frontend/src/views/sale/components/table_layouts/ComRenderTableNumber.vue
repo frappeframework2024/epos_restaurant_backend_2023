@@ -12,7 +12,7 @@
                         v-if="t.sales?.length > 1"></v-badge>
                     <div class="flex items-center justify-center h-full">
                         <div>
-                            <div style="font-size: 18px;"><span class="font-bold">{{ t.tbl_no }}</span><span v-if="t.guest_cover">({{
+                            <div style="font-size: 20px;"><span class="font-bold">{{ t.tbl_no }}</span><span v-if="t.guest_cover">({{
                                 t.guest_cover
                                     }})</span></div>
                             <div v-if="t.grand_total && gv.setting.show_total_amount_on_table">
