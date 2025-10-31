@@ -38,6 +38,8 @@
   "close_business_day_on",
   "alert_close_working_day_after",
   "park_item_days_expiry",
+  "menu_waiting_time",
+  "maximum_order_per_guest",
   "column_break_eikq",
   "print_cashier_shift_summary_after_close_shift",
   "print_cashier_shift_sale_product_summary_after_close_shift",
@@ -989,12 +991,22 @@
    "fieldname": "show_term_on_submit",
    "fieldtype": "Check",
    "label": "Show Term On Submit"
+  },
+  {
+   "fieldname": "menu_waiting_time",
+   "fieldtype": "Int",
+   "label": "Menu Waiting Time(Minute)"
+  },
+  {
+   "fieldname": "maximum_order_per_guest",
+   "fieldtype": "Int",
+   "label": "Maximum Order Per Guest"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-15 14:59:58.103355",
+ "modified": "2025-10-31 15:55:16.485076",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",

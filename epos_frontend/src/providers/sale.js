@@ -1690,11 +1690,38 @@ export default class Sale {
     
     async onSubmit() {
         this.loading = true;
+        if(this.setting.maximum_order_per_guest>0){
+            if(this.sale.guest_cover == 0){
+                toaster.error($t('Please add guest cover.'));
+                this.loading = false;
+                return
+            }
+            let maximum_order_per_guest = this.setting.maximum_order_per_guest
+            let new_orders = this.sale?.sale_products?.filter(r=>r.sale_product_status == "New")?.length
+            let guest_cover = this.sale.guest_cover
+            let allow_orders = maximum_order_per_guest * guest_cover
+            let current_new_orders = new_orders * guest_cover
+            if(allow_orders<current_new_orders && has_changes(this.sale) == 1){
+                toaster.error($t('You can only order '+maximum_order_per_guest+' dishes at a time.'));
+                this.loading = false;
+                return
+            }
+        }
+        if(this.setting.menu_waiting_time > 0){
+            const start = new Date(this.sale.modified);
+            const end = new Date();
+            let diff = ((end-start)/60000)
+            let minimum = this.setting.menu_waiting_time
+            if(diff < minimum && has_changes(this.sale) == 1){
+                toaster.error($t('Please wait '+minimum+' minute before try again'));
+                this.loading = false;
+                return
+            }
+        }
         const resp = await Ping(this.setting)
         if(resp == 0){
             toaster.error($t('Please check your network connection'));
             this.loading = false;
-            resolve(false);
             return
         }
         return new Promise(async (resolve) => {
@@ -2765,6 +2792,18 @@ export default class Sale {
         let data =  await call.get("epos_restaurant_2023.api.api.scan_coupon_number",{"code":code})
         return data["message"]
     }
+}
+
+function has_changes(sale){
+  let has_value_changes = 0
+  let sale_products = (sale.sale_products || [])
+  if(sale_products.length > 0){
+      let news = sale_products.filter(r => r.sale_product_status == "New").length
+      if (news>0){
+          has_value_changes = 1
+      }
+  }
+  return has_value_changes
 }
 
 async function delay(ms) {
