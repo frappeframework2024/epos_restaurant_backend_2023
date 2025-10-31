@@ -1690,6 +1690,7 @@ export default class Sale {
     
     async onSubmit() {
         this.loading = true;
+        let is_new = this.sale.creation == this.sale.modified
         if(this.setting.maximum_order_per_guest>0){
             if(this.sale.guest_cover == 0){
                 toaster.error($t('Please add guest cover.'));
@@ -1707,7 +1708,7 @@ export default class Sale {
                 return
             }
         }
-        if(this.setting.menu_waiting_time > 0){
+        if(this.setting.menu_waiting_time > 0 && !is_new){
             const start = new Date(this.sale.modified);
             const end = new Date();
             let diff = ((end-start)/60000)
