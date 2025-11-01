@@ -21,6 +21,7 @@
   "add_voucher_top_up",
   "delete_voucher_top_up",
   "allow_return_product",
+  "allow_overwrite_max_order_per_guest",
   "column_break_6",
   "free_item",
   "change_item_price",
@@ -32,6 +33,7 @@
   "change_item_time_out",
   "allow_manual_percent_discount",
   "allow_apply_foc",
+  "allow_overwrite_waiting_time",
   "column_break_13",
   "start_working_day",
   "close_working_day",
@@ -266,11 +268,23 @@
    "fieldname": "allow_click_menu_after_sale_sumitted",
    "fieldtype": "Check",
    "label": "Allow Click Menu After Sale Sumitted"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_overwrite_max_order_per_guest",
+   "fieldtype": "Check",
+   "label": "Allow Overwrite Max Order Per Guest"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_overwrite_waiting_time",
+   "fieldtype": "Check",
+   "label": "Allow Overwrite Waiting Time"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-15 09:03:35.781197",
+ "modified": "2025-11-01 09:00:39.379747",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "POS User Permission",

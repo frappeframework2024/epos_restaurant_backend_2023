@@ -360,22 +360,16 @@ export default class Sale {
         //product code, allow_append_qty,price, unit,modifier, portion, is_free,sale_product_status
         //and check system have feature to send to kitchen
         let strFilter = `$.is_timer_product == 0 && $.is_require_employee==0  && $.product_code=='${p.name}' && $.append_quantity ==1 && $.price==${p.price} && $.portion=='${this.getString(p.portion)}'  && $.modifiers=='${(p.modifiers || '')=='[]'?'':(p.modifiers || '')}'   && $.unit=='${p.unit}' && $.is_free==0 && $.note==''`
- 
         if (!this.setting?.pos_setting?.allow_append_quantity_after_submit) {
             strFilter = strFilter + ` && $.sale_product_status == 'New'`
         }
-
         if (p.is_combo_menu && p.use_combo_group) {
             strFilter = strFilter + ` && $.combo_menu_data == '${p.combo_group_data}'`
         }
-
         if (p.is_open_product == 1) {
             strFilter = strFilter + ` && $.product_name== '${p.name_en}'`
         }
-
         let sp = Enumerable.from(this.sale.sale_products).where(strFilter).firstOrDefault()
-     
-        
         let is_new_sale_product = true;
         let new_sale_product;
         let prev_sale_product;
@@ -387,7 +381,6 @@ export default class Sale {
             sp.selected = true;
             this.updateSaleProduct(sp);
             is_new_sale_product = false;
-
             if (this.setting.table_groups.length == 0) {
                 this.getSelectedProduct(sp)
                 this.selected_sale_product = sp
@@ -397,7 +390,6 @@ export default class Sale {
             // add new record to sale product
             this.clearSelected();
             let tax_rule = "";
-
             if ((p.tax_rule || "") == "" || p.tax_rule == "None") {
                 if (this.sale.name == undefined) {
                     tax_rule = JSON.parse(JSON.stringify(this.setting.tax_rule));
@@ -421,8 +413,6 @@ export default class Sale {
             else {
                 tax_rule = JSON.parse(p.tax_rule_data);
             }
-
-
             const make_order_auth = JSON.parse(localStorage.getItem('make_order_auth'));
             const now = new Date();
             const _now_format = moment(now).format('yyyy-MM-DD HH:mm:ss.SSSSSS');
@@ -480,11 +470,9 @@ export default class Sale {
                 selected_variant : p.selected_variant,
                 variant_of:p.variant_of,
                 is_variant:p.is_variant,
-                pos_note:p.pos_note
+                pos_note:p.pos_note,
+                is_newly_added: 1
             }
-
-           
-            
             if (p.is_timer_product) {
                 if (p.time_in) {
                     saleProduct.time_in = moment(p.time_in).format('yyyy-MM-DD HH:mm:ss');
@@ -496,16 +484,10 @@ export default class Sale {
                 this.getSelectedProduct(saleProduct)
                 this.selected_sale_product = saleProduct
             }
-
             this.updateSaleProduct(saleProduct);
-
-
             new_sale_product = saleProduct;
-
         }
 
-
-        
         this.updateSaleSummary();
 
         const u = JSON.parse(localStorage.getItem('make_order_auth'));
@@ -1691,6 +1673,8 @@ export default class Sale {
     async onSubmit() {
         this.loading = true;
         let is_new = this.sale.creation == this.sale.modified
+        let allow_overwrite_max_order_per_guest = JSON.parse(localStorage.getItem("current_user")).permission["allow_overwrite_max_order_per_guest"]
+        let allow_overwrite_waiting_time = JSON.parse(localStorage.getItem("current_user")).permission["allow_overwrite_waiting_time"]
         if(this.setting.maximum_order_per_guest>0){
             if(this.sale.guest_cover == 0){
                 toaster.error($t('Please add guest cover.'));
@@ -1702,18 +1686,21 @@ export default class Sale {
             let guest_cover = this.sale.guest_cover
             let allow_orders = maximum_order_per_guest * guest_cover
             let current_new_orders = new_orders * guest_cover
-            if(allow_orders<current_new_orders && has_changes(this.sale) == 1){
+            if(allow_orders<current_new_orders && has_changes(this.sale) == 1 && allow_overwrite_max_order_per_guest == 0){
                 toaster.error($t('You can only order '+maximum_order_per_guest+' dishes at a time.'));
                 this.loading = false;
                 return
             }
         }
         if(this.setting.menu_waiting_time > 0 && !is_new){
-            const start = new Date(this.sale.modified);
+            const top = this.sale.sale_products.filter(r=>(r.is_newly_added || 0) == 0).reduce((maxObj, obj) => 
+                obj.order_time > maxObj.order_time ? obj : maxObj
+            );
+            const start = new Date(top.order_time);
             const end = new Date();
             let diff = ((end-start)/60000)
             let minimum = this.setting.menu_waiting_time
-            if(diff < minimum && has_changes(this.sale) == 1){
+            if(diff < minimum && has_changes(this.sale) == 1 && allow_overwrite_waiting_time == 0){
                 toaster.error($t('Please wait '+minimum+' minute before try again'));
                 this.loading = false;
                 return
