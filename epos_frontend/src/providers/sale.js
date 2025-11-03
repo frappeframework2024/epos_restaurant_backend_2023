@@ -1674,6 +1674,7 @@ export default class Sale {
     async onSubmit() {
         this.loading = true;
         let is_new = this.sale.creation == this.sale.modified
+         console.log(this.setting.maximum_order_per_guest +"||"+ is_new)
         if(this.setting.maximum_order_per_guest>0){
             if(this.sale.guest_cover == 0){
                 toaster.error($t('Please add guest cover.'));
@@ -1691,6 +1692,7 @@ export default class Sale {
                 return
             }
         }
+         console.log(this.setting.menu_waiting_time +"||"+ is_new)
         if(this.setting.menu_waiting_time > 0 && !is_new){
             const top = this.sale.sale_products.filter(r=>(r.is_newly_added || 0) == 0).reduce((maxObj, obj) => 
                 obj.order_time > maxObj.order_time ? obj : maxObj
