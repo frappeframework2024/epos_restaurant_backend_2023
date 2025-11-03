@@ -318,13 +318,11 @@ function onReorder(sp) {
         const u = JSON.parse(localStorage.getItem('make_order_auth'));
         let is_append = false;
         let prev_sale_product = JSON.parse(JSON.stringify(sp));
-
         if ((sp.sale_product_status == "New" && sp.append_quantity == 1) || sale.setting.pos_setting.allow_change_quantity_after_submit == 1) {
             sale.updateQuantity(sp, sp.quantity + 1);
             is_append = true;
         } else {
             let strFilter = `$.product_code=='${sp.product_code}' && $.append_quantity ==1 && $.price==${sp.price} && $.portion=='${sp.portion}'  && $.modifiers=='${sp.modifiers}'  && $.unit=='${sp.unit}'  && $.is_free==0`
-
             if (!gv.setting?.pos_setting?.allow_change_quantity_after_submit) {
                 strFilter = strFilter + ` && $.sale_product_status == 'New'`
             }

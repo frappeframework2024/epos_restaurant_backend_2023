@@ -538,6 +538,7 @@ export default class Sale {
 
     cloneSaleProduct(sp, quantity) {
         const u = JSON.parse(localStorage.getItem('make_order_auth'));
+        const now = new Date();
         this.clearSelected();
         const sp_copy = JSON.parse(JSON.stringify(sp));
         sp_copy.selected = true;
@@ -547,10 +548,10 @@ export default class Sale {
         sp_copy.deleted_quantity = 0;
         sp_copy.order_by = u.name;
         sp_copy.order_time = this.getOrderTime();
-        sp_copy.creation = sp_copy.order_time;
-        sp_copy.modified = sp_copy.order_time;
+        sp_copy.creation = moment(now).format('yyyy-MM-DD HH:mm:ss.SSS')
+        sp_copy.modified = moment(now).format('yyyy-MM-DD HH:mm:ss.SSS')
         sp_copy.pos_reservation = "";
-
+        sp_copy.is_newly_added = 1
         this.updateSaleProduct(sp_copy);
         this.sale.sale_products.push(sp_copy);
         this.updateSaleSummary();
@@ -1682,11 +1683,10 @@ export default class Sale {
                 return
             }
             let maximum_order_per_guest = this.setting.maximum_order_per_guest
-            let new_orders = this.sale?.sale_products?.filter(r=>r.sale_product_status == "New")?.length
+            let new_orders_qty = this.sale?.sale_products?.filter(r=>r.is_newly_added == 1)?.reduce((sum, a) => sum + (a.quantity || 0), 0);
             let guest_cover = this.sale.guest_cover
-            let allow_orders = maximum_order_per_guest * guest_cover
-            let current_new_orders = new_orders * guest_cover
-            if(allow_orders<current_new_orders && has_changes(this.sale) == 1 && allow_overwrite_max_order_per_guest == 0){
+            let average_orders_per_guest = new_orders_qty/guest_cover
+            if(maximum_order_per_guest<average_orders_per_guest && has_changes(this.sale) == 1 && allow_overwrite_max_order_per_guest == 0){
                 toaster.error($t('You can only order '+maximum_order_per_guest+' dishes at a time.'));
                 this.loading = false;
                 return
@@ -2786,7 +2786,7 @@ function has_changes(sale){
   let has_value_changes = 0
   let sale_products = (sale.sale_products || [])
   if(sale_products.length > 0){
-      let news = sale_products.filter(r => r.sale_product_status == "New").length
+      let news = sale_products.filter(r => r.is_newly_added == 1).length
       if (news>0){
           has_value_changes = 1
       }
