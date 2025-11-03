@@ -2,11 +2,12 @@ import Enumerable from 'linq'
 import moment from '@/utils/moment.js';
 import {
     ref, noteDialog, changeTaxSettingModal, SaleProductComboMenuGroupModal, keyboardDialog, keypadWithNoteDialog, createResource,
-    createDocumentResource, addModifierDialog, useRouter, confirmDialog, selectEmployeeDialog, saleProductDiscountDialog, i18n
+    createDocumentResource, addModifierDialog, useRouter, confirmDialog, selectEmployeeDialog, saleProductDiscountDialog, i18n,ComOrderLimitDialog
 } from "@/plugin"
 import { createToaster } from "@meforma/vue-toaster";
 import socket from '@/utils/socketio';
 import { FrappeApp } from 'frappe-js-sdk';
+
 import NumberFormat from 'number-format.js';
 const frappe = new FrappeApp();
 const db = frappe.db()
@@ -1687,8 +1688,9 @@ export default class Sale {
             let guest_cover = this.sale.guest_cover
             let average_orders_per_guest = new_orders_qty/guest_cover
             if(maximum_order_per_guest<average_orders_per_guest && has_changes(this.sale) == 1 && allow_overwrite_max_order_per_guest == 0){
-                toaster.error($t('You can only order '+maximum_order_per_guest+' dishes at a time.'));
                 this.loading = false;
+                console.log(this.setting?.business_branch)
+                const result = await ComOrderLimitDialog({ business_branch:this.setting?.business_branch,order_limit:1 });
                 return
             }
         }
@@ -1701,8 +1703,8 @@ export default class Sale {
             let diff = ((end-start)/60000)
             let minimum = this.setting.menu_waiting_time
             if(diff < minimum && has_changes(this.sale) == 1 && allow_overwrite_waiting_time == 0){
-                toaster.error($t('Please wait '+minimum+' minute before try again'));
                 this.loading = false;
+                const result = await ComOrderLimitDialog({ business_branch:this.setting?.business_branch,time_limit:1 });
                 return
             }
         }

@@ -2,6 +2,7 @@ import { createPromiseDialog } from "vue-promise-dialogs"
 import ComPopup from '@/views/ComPopup.vue';
 import ComPopup2 from '@/views/ComPopup2.vue';
 import ComSubmitTermAndCondition from '@/views/ComSubmitTermAndCondition.vue';
+import ComOrderLimit from '@/views/ComOrderLimit.vue';
 import ComPrintPreview from '@/components/ComPrintPreview.vue'
 import ComSaleDetail from '@/views/receipt_list/components/ComSaleDetail.vue';
 import CustomerDetail from '@/views/customer/CustomerDetail.vue';
@@ -154,3 +155,4 @@ export const UnpaidBillListDialog = createPromiseDialog<params, object>(ComUnpai
 export const ComSelectPaymentTypeQuickPaymentDialog = createPromiseDialog<params, object>(ComSelectPaymentTypeQuickPayment);
 export const ComChangeTableNumberDialog = createPromiseDialog<params, object>(ComChangeTableNumber);
 export const ComSubmitTermAndConditionDialog = createPromiseDialog<params, object>(ComSubmitTermAndCondition);
+export const ComOrderLimitDialog = createPromiseDialog<params, object>(ComOrderLimit);

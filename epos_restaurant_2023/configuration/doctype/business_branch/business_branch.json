@@ -27,6 +27,8 @@
   "google_sheet_file",
   "section_break_axcn",
   "term_and_condition",
+  "order_limit_message",
+  "order_timer_limit_mesaage",
   "section_break_mitm",
   "province",
   "district",
@@ -600,12 +602,22 @@
    "fieldtype": "Link",
    "label": "Default None Inventory Account",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "order_limit_message",
+   "fieldtype": "Text Editor",
+   "label": "Order Limit Message"
+  },
+  {
+   "fieldname": "order_timer_limit_mesaage",
+   "fieldtype": "Text Editor",
+   "label": "Order Timer Limit Mesaage"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-24 16:51:33.416782",
+ "modified": "2025-11-03 14:59:07.076391",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",
