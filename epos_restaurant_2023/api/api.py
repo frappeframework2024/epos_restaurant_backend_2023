@@ -476,7 +476,7 @@ def get_system_settings(pos_profile="", device_name=''):
     exely= frappe.get_doc("Exely Itegration Setting")
     
     point_setting = frappe.get_doc("Loyalty Point Settings")
-    
+    socket_port =  frappe.get_conf().get('websocket_port', 3000)    
     data={
         "app_name":doc.epos_app_name,
         "specific_business_branch":doc.specific_business_branch,
@@ -492,6 +492,8 @@ def get_system_settings(pos_profile="", device_name=''):
         "base_unit_popup":profile.base_unit_popup,
         "close_business_day_on":pos_config.close_business_day_on,
         "alert_close_working_day_after":pos_config.alert_close_working_day_after,
+        "menu_waiting_time":pos_config.menu_waiting_time,
+        "maximum_order_per_guest":pos_config.maximum_order_per_guest,
         "price_rule":profile.price_rule,
         "stock_location":profile.stock_location,
         "tax_rules":tax_rules,
@@ -542,6 +544,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "reports":reports,
         "letter_heads":letter_heads,
         "device_setting":pos_station, 
+        "socket_port":socket_port,
         "shortcut_key":shortcut_keys,
         "exely":{
             "enabled":exely.enabled, "default_general_customer_id":exely.default_general_customer_id, "guest_api_endpoint":exely.guest_api_endpoint,"api_key":exely.api_key

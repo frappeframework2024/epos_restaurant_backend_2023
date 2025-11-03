@@ -1674,7 +1674,8 @@ export default class Sale {
     async onSubmit() {
         this.loading = true;
         let is_new = this.sale.creation == this.sale.modified
-         console.log(this.setting.maximum_order_per_guest +"||"+ is_new)
+        let allow_overwrite_max_order_per_guest = JSON.parse(localStorage.getItem("current_user")).permission["allow_overwrite_max_order_per_guest"]
+        let allow_overwrite_waiting_time = JSON.parse(localStorage.getItem("current_user")).permission["allow_overwrite_waiting_time"]
         if(this.setting.maximum_order_per_guest>0){
             if(this.sale.guest_cover == 0){
                 toaster.error($t('Please add guest cover.'));
@@ -1685,14 +1686,12 @@ export default class Sale {
             let new_orders_qty = this.sale?.sale_products?.filter(r=>r.is_newly_added == 1)?.reduce((sum, a) => sum + (a.quantity || 0), 0);
             let guest_cover = this.sale.guest_cover
             let average_orders_per_guest = new_orders_qty/guest_cover
-            console.log(maximum_order_per_guest + " || "+ average_orders_per_guest)
-            if(maximum_order_per_guest<average_orders_per_guest && has_changes(this.sale) == 1){
+            if(maximum_order_per_guest<average_orders_per_guest && has_changes(this.sale) == 1 && allow_overwrite_max_order_per_guest == 0){
                 toaster.error($t('You can only order '+maximum_order_per_guest+' dishes at a time.'));
                 this.loading = false;
                 return
             }
         }
-         console.log(this.setting.menu_waiting_time +"||"+ is_new)
         if(this.setting.menu_waiting_time > 0 && !is_new){
             const top = this.sale.sale_products.filter(r=>(r.is_newly_added || 0) == 0).reduce((maxObj, obj) => 
                 obj.order_time > maxObj.order_time ? obj : maxObj
@@ -1701,8 +1700,7 @@ export default class Sale {
             const end = new Date();
             let diff = ((end-start)/60000)
             let minimum = this.setting.menu_waiting_time
-            console.log(minimum + " || "+diff)
-            if(diff < minimum && has_changes(this.sale) == 1){
+            if(diff < minimum && has_changes(this.sale) == 1 && allow_overwrite_waiting_time == 0){
                 toaster.error($t('Please wait '+minimum+' minute before try again'));
                 this.loading = false;
                 return
