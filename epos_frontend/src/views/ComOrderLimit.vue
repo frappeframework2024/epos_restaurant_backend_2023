@@ -12,7 +12,6 @@
 
 <script setup>
 import { defineProps, defineEmits, ref,onMounted ,inject} from '@/plugin'
-import { comPopup2Dialog } from '../utils/dialog.ts';
 const open = ref(true)
 const frappe = inject("$frappe")
 const db = frappe.db();
