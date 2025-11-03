@@ -1689,8 +1689,7 @@ export default class Sale {
             let average_orders_per_guest = new_orders_qty/guest_cover
             if(maximum_order_per_guest<average_orders_per_guest && has_changes(this.sale) == 1 && allow_overwrite_max_order_per_guest == 0){
                 this.loading = false;
-                console.log(this.setting?.business_branch)
-                const result = await ComOrderLimitDialog({ business_branch:this.setting?.business_branch,order_limit:1 });
+                ComOrderLimitDialog({ business_branch:this.setting?.business_branch,order_limit:1 });
                 return
             }
         }
@@ -1704,7 +1703,7 @@ export default class Sale {
             let minimum = this.setting.menu_waiting_time
             if(diff < minimum && has_changes(this.sale) == 1 && allow_overwrite_waiting_time == 0){
                 this.loading = false;
-                const result = await ComOrderLimitDialog({ business_branch:this.setting?.business_branch,time_limit:1 });
+                ComOrderLimitDialog({ business_branch:this.setting?.business_branch,time_limit:1 });
                 return
             }
         }
