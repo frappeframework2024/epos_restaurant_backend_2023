@@ -993,13 +993,13 @@ def remove_available_shift(products,shift_type):
 @frappe.whitelist()
 def clear_all_printer_from_product(products):
 	for p in products.split(","):
-		frappe.db.set_value("Product",p,"printers",[])
+		frappe.db.set_value("Product",p,"printers","[]")
 	frappe.db.commit()
 
 @frappe.whitelist()
 def clear_all_menus_from_product(products):
 	for p in products.split(","):
-		frappe.db.set_value("Product",p,"pos_menus",[])
+		frappe.db.set_value("Product",p,"pos_menus","[]")
 	frappe.db.commit()
 
 @frappe.whitelist()
