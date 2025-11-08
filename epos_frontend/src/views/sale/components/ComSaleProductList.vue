@@ -256,9 +256,9 @@ function get_combo_menu(combo){
         let idx = 1
         combo.forEach(a => {
         if (mlang == "en") {
-                combo_menu += idx+"."+a.product_name+" X "+a.quantity+"\n"
+                combo_menu += idx+"."+a.product_name+" x "+a.quantity+"\n"
             } else {
-                combo_menu += idx+"."+a.product_name_kh+" X "+a.quantity+"\n"
+                combo_menu += idx+"."+a.product_name_kh+" x "+a.quantity+"\n"
             }
             idx++
         });
