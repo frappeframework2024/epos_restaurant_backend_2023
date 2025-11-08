@@ -995,14 +995,14 @@ def clear_all_printer_from_product(products):
 	for p in products.split(","):
 		doc = frappe.get_doc("Product",p)
 		doc.printers = []
-	frappe.db.commit()
+		doc.save()
 
 @frappe.whitelist()
 def clear_all_menus_from_product(products):
 	for p in products.split(","):
 		doc = frappe.get_doc("Product",p)
 		doc.pos_menus = []
-	frappe.db.commit()
+		doc.save()
 
 @frappe.whitelist()
 def update_expire_date(data):
