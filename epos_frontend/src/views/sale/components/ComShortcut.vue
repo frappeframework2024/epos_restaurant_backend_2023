@@ -59,15 +59,27 @@
     })
   
     function onClick(menu) {
-         if(menu.require_password_for_submitted_sale == 1 && (sale.sale.name || "") != ""){
+         if(menu.require_password == 1){
+            gv.setting.pos_setting.require_password = 1
+            gv.authorize("require_password","allow_to_order_menu").then(async (v) => {
+            if (v) {
+                    loadMenu(menu)
+                    }
+                })
+        }
+        else{
+            loadMenu(menu)
+        }
+        function loadMenu(menu){
+            if(menu.require_password_for_submitted_sale == 1 && (sale.sale.name || "") != ""){
             gv.setting.pos_setting.require_password_for_submitted_sale = 1
             gv.authorize("require_password_for_submitted_sale","allow_click_menu_after_sale_sumitted").then(async (v) => {
                 if (v) {
-                    product.searchProductKeyword = "";
-                    product.loading_default_menu_from_table = 0;
-                    product.parentMenu = menu.name;
-                    _onPriceRuleChanged(menu)
-                }
+                        product.searchProductKeyword = "";
+                        product.loading_default_menu_from_table = 0;
+                        product.parentMenu = menu.name;
+                        _onPriceRuleChanged(menu)
+                    }
                 })
             }
             else{
@@ -77,7 +89,9 @@
                 _onPriceRuleChanged(menu)
             }
         }
-        function _onPriceRuleChanged(menu){ 
+    }
+
+    function _onPriceRuleChanged(menu){ 
         if((menu.price_rule||"")!="")
         {
             sale.price_rule = menu.price_rule; 

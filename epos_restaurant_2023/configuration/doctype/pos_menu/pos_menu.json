@@ -24,6 +24,7 @@
   "shortcut_menu",
   "is_standard",
   "disabled",
+  "require_password",
   "require_password_for_submitted_sale",
   "price_rule",
   "sort_order",
@@ -268,6 +269,12 @@
    "fieldtype": "Text",
    "hidden": 1,
    "label": "Shift Availability"
+  },
+  {
+   "default": "0",
+   "fieldname": "require_password",
+   "fieldtype": "Check",
+   "label": "Require Password"
   }
  ],
  "image_field": "photo",
@@ -275,7 +282,7 @@
  "is_tree": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2025-10-22 09:19:43.243733",
+ "modified": "2025-11-08 13:55:55.357748",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Menu",

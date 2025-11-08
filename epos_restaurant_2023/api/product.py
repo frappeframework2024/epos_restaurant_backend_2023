@@ -48,7 +48,8 @@ def get_product_by_menu(root_menu="",mobile = 0,sort_order_by="product_name_en",
                     'menu' as type,
                     1 as type_index,
                     sort_order,
-                    require_password_for_submitted_sale
+                    require_password_for_submitted_sale,
+                    require_password
                 from `tabPOS Menu` 
                 where 
                     parent_pos_menu='{0}' and
@@ -95,7 +96,8 @@ def get_child_menus(parent_menu, mobile= 0,sort_menu_order_by="name",sort_order_
                 'menu' as type,
                 2 as type_index,
                 sort_order,
-                require_password_for_submitted_sale
+                require_password_for_submitted_sale,
+                require_password
             from `tabPOS Menu` 
             where 
                 parent_pos_menu='{0}' and

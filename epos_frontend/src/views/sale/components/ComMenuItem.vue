@@ -172,31 +172,40 @@ function getTotalQuantityOrder(data) {
 // end price menu
 
 function onClickMenu(menu) {
-    if(menu.require_password_for_submitted_sale == 1 && (sale.sale.name || "") != ""){
-        gv.setting.pos_setting.require_password_for_submitted_sale = 1
-        gv.authorize("require_password_for_submitted_sale","allow_click_menu_after_sale_sumitted").then(async (v) => {
+      if(menu.require_password == 1){
+            gv.setting.pos_setting.require_password = 1
+            gv.authorize("require_password","allow_to_order_menu").then(async (v) => {
             if (v) {
-               if (sale.setting.pos_menus.length > 0) {
+                loadMenu(menu)
+            }
+      })}
+      else{
+        loadMenu(menu)
+      }
+      function loadMenu(menu){
+        if(menu.require_password_for_submitted_sale == 1 && (sale.sale.name || "") != ""){
+            gv.setting.pos_setting.require_password_for_submitted_sale = 1
+            gv.authorize("require_password_for_submitted_sale","allow_click_menu_after_sale_sumitted").then(async (v) => {
+                if (v) {
+                    if (sale.setting.pos_menus.length > 0) {
+                            product.loading_default_menu_from_table = 0;
+                            product.parentMenu = menu.name;
+                            _onPriceRuleChanged(menu);
+                    } else {
+                        product.getProductMenuByProductCategory(menu.name)
+                    }
+                }
+            })}
+            else{
+                if (sale.setting.pos_menus.length > 0) {
                     product.loading_default_menu_from_table = 0;
                     product.parentMenu = menu.name;
                     _onPriceRuleChanged(menu);
                 } else {
-                
                     product.getProductMenuByProductCategory(menu.name)
                 }
             }
-        })
-    }
-    else{
-        if (sale.setting.pos_menus.length > 0) {
-            product.loading_default_menu_from_table = 0;
-            product.parentMenu = menu.name;
-            _onPriceRuleChanged(menu);
-        } else {
-        
-            product.getProductMenuByProductCategory(menu.name)
-        }
-    }
+      }
 }
 
 const { files, open, reset, onCancel, onChange } = useFileDialog({

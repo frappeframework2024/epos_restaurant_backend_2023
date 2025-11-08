@@ -309,6 +309,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "open_order_required_password":pos_config.open_order_required_password,
         "order_station_open_order_required_password":pos_config.order_station_open_order_required_password,
         "require_password_for_submitted_sale":0,
+        "require_password":0,
         "change_price_rule_require_password":pos_config.change_price_rule_require_password,
         "open_cashdrawer_require_password":pos_config.open_cashdrawer_require_password,
         "edit_closed_receipt_required_password":pos_config.edit_closed_receipt_required_password,

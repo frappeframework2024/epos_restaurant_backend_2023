@@ -46,6 +46,7 @@
   "allow_apply_tax_include_rate",
   "allow_overwrite_voucher_minimum_amount",
   "allow_click_menu_after_sale_sumitted",
+  "allow_to_order_menu",
   "section_break_7",
   "discount_codes"
  ],
@@ -280,11 +281,17 @@
    "fieldname": "allow_overwrite_waiting_time",
    "fieldtype": "Check",
    "label": "Allow Overwrite Waiting Time"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_to_order_menu",
+   "fieldtype": "Check",
+   "label": "Allow To Order Menu"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-11-01 09:00:39.379747",
+ "modified": "2025-11-08 14:00:36.764160",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "POS User Permission",
