@@ -50,9 +50,6 @@ frappe.listview_settings['Product'] = {
                         args: {
                             "products": result,
                             "menu": values.pos_menu
-                        },
-                        callback: function(r) {
-                            frappe.msgprint("Products were assigned to menu successfully")                            
                         }
                     });
                     d.freeze= false;
@@ -78,9 +75,6 @@ frappe.listview_settings['Product'] = {
                         args: {
                             "products": result,
                             "menu": values.menu
-                        },
-                        callback: function(r) {
-                            frappe.msgprint("Menu Removed")                            
                         }
                     });
                     d.freeze= false;
@@ -99,9 +93,6 @@ frappe.listview_settings['Product'] = {
                         method: "epos_restaurant_2023.inventory.doctype.product.product.clear_all_menus_from_product",
                         args: {
                             "products": result,
-                        },
-                        callback: function(r) {
-                            frappe.msgprint("Remove all menu successfully")                    
                         }
                     });
                 }
@@ -125,9 +116,6 @@ frappe.listview_settings['Product'] = {
                         args: {
                             "products": result,
                             "printer": values.printer
-                        },
-                        callback: function(r) {
-                            frappe.msgprint("Update printer to product successfully")                            
                         }
                     });
                     d.freeze= false;
@@ -153,9 +141,6 @@ frappe.listview_settings['Product'] = {
                         args: {
                             "products": result,
                             "printer": values.printer
-                        },
-                        callback: function(r) {
-                            frappe.msgprint("Remove printer successfully")                            
                         }
                     });
                     d.freeze= false;
@@ -173,9 +158,6 @@ frappe.listview_settings['Product'] = {
                         method: "epos_restaurant_2023.inventory.doctype.product.product.clear_all_printer_from_product",
                         args: {
                             "products": result,
-                        },
-                        callback: function(r) {
-                            frappe.msgprint("Remove all printers successfully")                    
                         }
                     });
                 }
@@ -197,9 +179,6 @@ frappe.listview_settings['Product'] = {
                         args: {
                             "products": result,
                             "shift_type": values.shift_type
-                        },
-                        callback: function(r) {
-                            frappe.msgprint("Available Shift Updated")                            
                         }
                     });
                     d.freeze= false;
@@ -225,9 +204,6 @@ frappe.listview_settings['Product'] = {
                         args: {
                             "products": result,
                             "shift_type": values.shift_type
-                        },
-                        callback: function(r) {
-                            frappe.msgprint("Available Shift Removed")                            
                         }
                     });
                     d.freeze= false;
@@ -245,9 +221,6 @@ frappe.listview_settings['Product'] = {
                         method: "epos_restaurant_2023.inventory.doctype.product.product.clear_all_avaialble_shifts_from_product",
                         args: {
                             "products": result,
-                        },
-                        callback: function(r) {
-                            frappe.msgprint("Remove all available shifts successfully")                    
                         }
                     });
                 }

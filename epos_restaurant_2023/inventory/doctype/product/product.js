@@ -221,13 +221,29 @@ frappe.ui.form.on("Product", {
         }; 
     },
     setup(frm) {
+        frappe.realtime.on("product_available_shifts", (data) => {
+            frappe.show_alert({
+                message: data.message,
+                indicator: 'blue'
+            });
+        });
+        frappe.realtime.on("product_menus", (data) => {
+            frappe.show_alert({
+                message: data.message,
+                indicator: 'blue'
+            });
+        });
+        frappe.realtime.on("product_printers", (data) => {
+            frappe.show_alert({
+                message: data.message,
+                indicator: 'blue'
+            });
+        });
         for (const key in frm.fields_dict) {
             if (["Currency", "Data", "Int", "Link", "Date", "Datetime", "Float", "Select"].includes(frm.fields_dict[key].df.fieldtype)) {
                 frm.fields_dict[key].$wrapper.addClass('custom_control');
             }
-        }
-
-    
+        }    
         // set form to public to reload when change photo from google search
         myForm = frm
         window.addEventListener('message', savePhoto, false);
