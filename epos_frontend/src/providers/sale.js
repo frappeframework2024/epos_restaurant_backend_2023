@@ -1748,14 +1748,6 @@ export default class Sale {
     }
 
     async onSubmitQuickPay() {
-        this.loading = true;
-        const resp = await Ping(this.setting)
-        if(resp == 0){
-            toaster.error($t('Please check your network connection'));
-            this.loading = false;
-            resolve(false);
-            return
-        }
         if (this.sale.sale_products.filter(r => !r.time_out_price && r.is_timer_product).length > 0) {
             toaster.warning($t('msg.Please stop timer on timer product'));
             return;
@@ -1772,6 +1764,14 @@ export default class Sale {
                 }
                 else {
                     if (await confirmDialog({ title: $t("Quick Pay"), text: $t('msg.are you sure to process quick pay and close order') })) {
+                        this.loading = true;
+                        const resp = await Ping(this.setting)
+                        if(resp == 0){
+                            toaster.error($t('Please check your network connection'));
+                            this.loading = false;
+                            resolve(false);
+                            return
+                        }
                         this.sale.payment = [];
                         this.sale.payment.push({
                             payment_type: this.setting?.default_payment_type,

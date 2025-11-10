@@ -12,6 +12,7 @@
   "table_group",
   "device_name",
   "pos_profile",
+  "font_size",
   "column_break_icyy",
   "x",
   "y",
@@ -96,11 +97,16 @@
    "fieldname": "y_percent",
    "fieldtype": "Float",
    "label": "y Percent"
+  },
+  {
+   "fieldname": "font_size",
+   "fieldtype": "Int",
+   "label": "Font Size"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-06 10:42:25.057930",
+ "modified": "2025-11-10 10:56:44.096647",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "ePOS Table Position",

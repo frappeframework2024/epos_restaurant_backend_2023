@@ -40,8 +40,8 @@ class SalePayment(Document):
 		
 		self.payment_amount = round(self.payment_amount,int(currency_precision))
 		
-   		
-		if (self.payment_amount or 0) ==0:
+		grand_total = frappe.db.get_value("Sale",self.sale,"grand_total")
+		if (self.payment_amount or 0) == 0 and (grand_total or 0) > 0:
 			frappe.throw(_("Please enter payment amount"))
    
 		if self.sale:

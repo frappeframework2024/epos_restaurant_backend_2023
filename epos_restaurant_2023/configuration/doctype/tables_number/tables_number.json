@@ -13,6 +13,7 @@
   "shape",
   "width",
   "height",
+  "font_size",
   "column_break_6",
   "photo",
   "sale_type",
@@ -213,12 +214,18 @@
    "fieldtype": "Link",
    "label": "Submitted Default POS Menu",
    "options": "POS Menu"
+  },
+  {
+   "default": "10",
+   "fieldname": "font_size",
+   "fieldtype": "Int",
+   "label": "Font size"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-14 11:31:31.362585",
+ "modified": "2025-11-10 10:55:11.408067",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Tables Number",

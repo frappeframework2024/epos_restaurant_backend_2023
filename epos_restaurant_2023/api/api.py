@@ -578,7 +578,8 @@ def get_tables_number(table_group,device_name, pos_profile):
                             tbl_group,
                             discount_type,
                             new_sale_default_pos_menu,
-                            submitted_default_pos_menu
+                            submitted_default_pos_menu,
+                            font_size
                          from `tabTables Number` 
 
                          where tbl_group=%(group)s
@@ -800,6 +801,7 @@ def save_table_position(device_name,pos_profile, table_group):
                         'tbl_number': t['tbl_no'],
                         'table_group':g["table_group"],
                         'table_id':t['id'],
+                        'font_size':t['font_size'],
                         'x':x,
                         'y':y,
                         'h':h,

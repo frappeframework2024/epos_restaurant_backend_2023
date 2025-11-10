@@ -12,7 +12,7 @@
                         v-if="t.sales?.length > 1"></v-badge>
                     <div class="flex items-center justify-center h-full">
                         <div>
-                            <div style="font-size: 20px;"><span class="font-bold">{{ t.tbl_no }}</span><span v-if="t.guest_cover">({{
+                            <div :style="{ fontSize: (t.font_size || 15) + 'px' }"><span class="font-bold">{{ t.tbl_no }}</span><span v-if="t.guest_cover">({{
                                 t.guest_cover
                                     }})</span></div>
                             <div v-if="t.grand_total && gv.setting.show_total_amount_on_table">
@@ -31,15 +31,16 @@
         <v-window-item v-else :value="g.key" v-bind:style="{ 'min-height': 'auto' }" class="mt-2 mb-4">
             <v-row>
                 <v-col cols="6" v-for="(t, index) in g.tables" :key="index">
-
                     <div v-bind:style="{ 'height': '75px', 'background-color': t.background_color }"
                         class="text-center text-gray-100 cursor-pointer  rounded-lg" @click="onTableClick(t)">
                         <v-badge :content="t.sales?.length" color="error" style="float:right;" class="mr-2"
                             v-if="t.sales?.length > 1"></v-badge>
                         <div class="flex items-center justify-center h-full">
                             <div>
-                                <div><span class="font-bold">{{ t.tbl_no }}</span><span v-if="t.guest_cover">({{
-                                    t.guest_cover }})</span></div> 
+                                <div :style="{ fontSize: (t.font_size || 15) + 'px' }">
+                                    <span class="font-bold">{{ t.tbl_no }}</span>
+                                    <span v-if="t.guest_cover">({{ t.guest_cover }})</span>
+                                </div> 
                                 <div v-if="t.grand_total && gv.setting.show_total_amount_on_table">
                                     <CurrencyFormat :value="t.grand_total"></CurrencyFormat>
                                 </div>
