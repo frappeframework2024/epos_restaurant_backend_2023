@@ -78,22 +78,17 @@ const props = defineProps({
 });
 const call = frappe.call();
 const db = frappe.db();
-
 const is_processing = ref(false)
-
 tableLayout.tab = localStorage.getItem("__tblLayoutIndex")
-
-
 
 function getTimeDifference(date) {
     const now = Date.now();
     const diff = now - moment(date).toDate();
     const hours = Math.floor(diff / 3600000);
     const minutes = Math.floor((diff % 3600000) / 60000);
-
-    if (minutes <= 0 && hours <= 0) {
+    if (minutes <= 0 && hours <= 0){
         return "just now"
-    } else {
+    }else{
         if (hours == 0) {
             return `${minutes} mn`;
         }
@@ -107,11 +102,9 @@ async function  validateNewtowkSaleLock(table){
     {
         is_processing.value = false;   
     });
-
     is_processing.value = false;   
     return value 
 }
-
 
 function onTableClick(table, guest_cover) {
     product.loading_default_menu_from_table = 1
@@ -127,11 +120,9 @@ function onTableClick(table, guest_cover) {
                 newSale(table);
             }
             else if (table.sales.length == 1) {
-                //check sale network lock
-                if(await validateNewtowkSaleLock (table)){ 
-                        return 
+                if(await validateNewtowkSaleLock(table)){ 
+                    return 
                 }
-
                 if (mobile.value) {
                     await sale.LoadSaleData(table.sales[0].name).then(async (_sale) => {
                         localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth));
@@ -154,7 +145,6 @@ function onTableClick(table, guest_cover) {
                 }
             }
             else {
-                
                 sale.sale.table_id = table.id;
                 sale.sale.tbl_number = table.tbl_no;
                 const result = await selectSaleOrderDialog({ data: table.sales, table: table, make_order_auth: make_order_auth });
@@ -171,12 +161,12 @@ function onTableClick(table, guest_cover) {
 }
 
 async function getDefaultTableMenu(table) {
-        const db = frappe.db();
-        await db.getDoc('Tables Number',table).then((doc) => {
-          sale.sale.new_sale_default_pos_menu = doc.new_sale_default_pos_menu;
-          sale.sale.submitted_default_pos_menu = doc.submitted_default_pos_menu;
-        }).catch((error) => { console.log(error) });
-    }
+    const db = frappe.db();
+    await db.getDoc('Tables Number',table).then((doc) => {
+        sale.sale.new_sale_default_pos_menu = doc.new_sale_default_pos_menu;
+        sale.sale.submitted_default_pos_menu = doc.submitted_default_pos_menu;
+    }).catch((error) => { console.log(error) });
+}
 
 async function newSale(table) {
     

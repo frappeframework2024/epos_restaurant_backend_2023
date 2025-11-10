@@ -27,13 +27,14 @@ frappe.listview_settings['Product'] = {
         frappe.route_options = {
             status: ['!=',"Variant"],
             disabled: ['=',0]
-          };
+        };
     },
     onload(me) { 
         frappe.route_options = {
             status: ['!=',"Variant"],
             disabled: ['=',0]
-          };
+        };
+
         me.page.add_action_item('Assign Menu', function() {
             let d = new frappe.ui.Dialog({
                 title: 'Assign Menu',
@@ -99,7 +100,6 @@ frappe.listview_settings['Product'] = {
             );
         });
 
-        //assign Printer
         me.page.add_action_item('Assign Printer', function() {
             let d = new frappe.ui.Dialog({
                 title: 'Assign Printer',
@@ -124,7 +124,7 @@ frappe.listview_settings['Product'] = {
             })
             d.show();           
         });   
-        //remove printer from product
+
         me.page.add_action_item('Remove Printer', function() {
             let d = new frappe.ui.Dialog({
                 title: 'Remove Printer',
@@ -149,6 +149,7 @@ frappe.listview_settings['Product'] = {
             })
             d.show();
         });
+
         me.page.add_action_item('Remove All Printers', function() {
             frappe.confirm("Are you sure you want to remove all printers from the selected products?",
                 function(){
@@ -163,6 +164,7 @@ frappe.listview_settings['Product'] = {
                 }
             );
         });
+
         me.page.add_action_item('Assign Shift Availability', function() {
             let d = new frappe.ui.Dialog({
                 title: 'Assign Shift Availability',
@@ -212,6 +214,7 @@ frappe.listview_settings['Product'] = {
             })
             d.show();           
         });
+
         me.page.add_action_item('Remove All Available Shifts', function() {
             frappe.confirm("Are you sure you want to remove all available shifts from the selected products?",
                 function(){
@@ -227,6 +230,4 @@ frappe.listview_settings['Product'] = {
             );
         });
     },
-    
-   
 }
