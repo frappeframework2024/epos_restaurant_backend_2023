@@ -990,6 +990,18 @@ def remove_available_shift(products,shift_type):
 		product.save()
 	frappe.db.commit()
 
+
+@frappe.whitelist()
+def remove_menu(products,menu):
+	for p in products.split(","):
+		product = frappe.get_doc("Product",p)
+		menus = product.get('pos_menus' or [])
+		for row in menus:
+			if row.menu == menu:
+				menus.remove(row)
+		product.save()
+	frappe.db.commit()
+
 @frappe.whitelist()
 def clear_all_printer_from_product(products):
 	for p in products.split(","):
@@ -1002,6 +1014,13 @@ def clear_all_menus_from_product(products):
 	for p in products.split(","):
 		doc = frappe.get_doc("Product",p)
 		doc.pos_menus = []
+		doc.save()
+	
+@frappe.whitelist()
+def clear_all_avaialble_shifts_from_product(products):
+	for p in products.split(","):
+		doc = frappe.get_doc("Product",p)
+		doc.product_shift_availability = []
 		doc.save()
 
 @frappe.whitelist()

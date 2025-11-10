@@ -62,6 +62,34 @@ frappe.listview_settings['Product'] = {
             d.show();          
         });
 
+        me.page.add_action_item('Remove Menu', function() {
+            let d = new frappe.ui.Dialog({
+                title: 'Remove Menu',
+                fields: [
+                    {'fieldname': 'menu', 'fieldtype': 'Link', 'options': 'POS Menu'},
+                ],
+                primary_action_label: 'Save',
+                primary_action(values) {
+                    const selected =  me.get_checked_items() ;
+                    const result = selected.map(item => item.name).join(',');
+                    d.freeze= true;
+                    frappe.call({
+                        method: "epos_restaurant_2023.inventory.doctype.product.product.remove_menu",
+                        args: {
+                            "products": result,
+                            "menu": values.menu
+                        },
+                        callback: function(r) {
+                            frappe.msgprint("Menu Removed")                            
+                        }
+                    });
+                    d.freeze= false;
+                    d.hide();
+                },              
+            })
+            d.show();           
+        });
+
         me.page.add_action_item('Remove All Menus', function() {
             frappe.confirm("Are you sure you want to remove all menus from the selected products?",
                 function(){
@@ -107,8 +135,53 @@ frappe.listview_settings['Product'] = {
                 },              
             })
             d.show();           
+        });   
+        //remove printer from product
+        me.page.add_action_item('Remove Printer', function() {
+            let d = new frappe.ui.Dialog({
+                title: 'Remove Printer',
+                fields: [
+                    {'fieldname': 'printer', 'fieldtype': 'Link', 'options': 'Printer'},
+                ],
+                primary_action_label: 'Save',
+                primary_action(values) {
+                    const selected =  me.get_checked_items() ;
+                    const result = selected.map(item => item.name).join(',');
+                    d.freeze= true;
+                    frappe.call({
+                        method: "epos_restaurant_2023.inventory.doctype.product.product.remove_printer",
+                        args: {
+                            "products": result,
+                            "printer": values.printer
+                        },
+                        callback: function(r) {
+                            frappe.msgprint("Remove printer successfully")                            
+                        }
+                    });
+                    d.freeze= false;
+                    d.hide();
+                },            
+            })
+            d.show();
         });
-         me.page.add_action_item('Assign Shift Availability', function() {
+        me.page.add_action_item('Remove All Printers', function() {
+            frappe.confirm("Are you sure you want to remove all printers from the selected products?",
+                function(){
+                    const selected =  me.get_checked_items() ;
+                    const result = selected.map(item => item.name).join(',');                
+                    frappe.call({
+                        method: "epos_restaurant_2023.inventory.doctype.product.product.clear_all_printer_from_product",
+                        args: {
+                            "products": result,
+                        },
+                        callback: function(r) {
+                            frappe.msgprint("Remove all printers successfully")                    
+                        }
+                    });
+                }
+            );
+        });
+        me.page.add_action_item('Assign Shift Availability', function() {
             let d = new frappe.ui.Dialog({
                 title: 'Assign Shift Availability',
                 fields: [
@@ -163,53 +236,24 @@ frappe.listview_settings['Product'] = {
             })
             d.show();           
         });
-    
-        //remove printer from product
-        me.page.add_action_item('Remove Printer', function() {
-            let d = new frappe.ui.Dialog({
-                title: 'Remove Printer',
-                fields: [
-                    {'fieldname': 'printer', 'fieldtype': 'Link', 'options': 'Printer'},
-                ],
-                primary_action_label: 'Save',
-                primary_action(values) {
-                    const selected =  me.get_checked_items() ;
-                    const result = selected.map(item => item.name).join(',');
-                    d.freeze= true;
-                    frappe.call({
-                        method: "epos_restaurant_2023.inventory.doctype.product.product.remove_printer",
-                        args: {
-                            "products": result,
-                            "printer": values.printer
-                        },
-                        callback: function(r) {
-                            frappe.msgprint("Remove printer successfully")                            
-                        }
-                    });
-                    d.freeze= false;
-                    d.hide();
-                },            
-            })
-            d.show();
-        });
-
-        me.page.add_action_item('Remove All Printers', function() {
-            frappe.confirm("Are you sure you want to remove all printers from the selected products?",
+        me.page.add_action_item('Remove All Available Shifts', function() {
+            frappe.confirm("Are you sure you want to remove all available shifts from the selected products?",
                 function(){
                     const selected =  me.get_checked_items() ;
                     const result = selected.map(item => item.name).join(',');                
                     frappe.call({
-                        method: "epos_restaurant_2023.inventory.doctype.product.product.clear_all_printer_from_product",
+                        method: "epos_restaurant_2023.inventory.doctype.product.product.clear_all_avaialble_shifts_from_product",
                         args: {
                             "products": result,
                         },
                         callback: function(r) {
-                            frappe.msgprint("Remove all printers successfully")                    
+                            frappe.msgprint("Remove all available shifts successfully")                    
                         }
                     });
                 }
             );
         });
     },
+    
    
 }
