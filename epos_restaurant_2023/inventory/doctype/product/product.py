@@ -879,7 +879,6 @@ def add_product_to_temp_menu(self):
 					'prices': json.dumps(prices),
 					'modifiers': json.dumps(modifiers),				
 				})
-
 				product_menu = [ m for m in self.pos_menus if m.root_menu ==  emenu.default_root_menu ] 
 				if len(product_menu or [])>0:
 					m = product_menu[0] 
@@ -888,11 +887,9 @@ def add_product_to_temp_menu(self):
 						'discount_type': m.discount_type,	
 						'discount_value':m.discount_value		
 					})				
-
 		frappe.db.commit()
 	update_fetch_from_field(self)
 
-   
 @frappe.whitelist()
 def update_product_to_temp_product_menu():
 	products = frappe.db.sql("select name from `tabProduct`", as_dict=1)
@@ -908,20 +905,19 @@ def assign_menu(products,menu):
 	pos_menu_doc = frappe.db.get_value("POS Menu",menu, ["name", "pos_menu_name_kh"], as_dict=1)
 	for p in products.split(","):
 		product = frappe.get_doc("Product",p)	 
-		if len(product.pos_menus) ==0:
+		if len(product.pos_menus) == 0:
 			# Create a new child document
 			child_doc = frappe.new_doc("Product Menu")
-			child_doc.pos_menu =menu 
-			child_doc.pos_menu_name_kh= pos_menu_doc.pos_menu_name_kh
+			child_doc.pos_menu = menu 
+			child_doc.pos_menu_name_kh = pos_menu_doc.pos_menu_name_kh
 			# Add the child document to the parent document
 			product.append("pos_menus", child_doc)
 		else:
-			result = [d for d in product.pos_menus if d.pos_menu== menu]
-			
+			result = [d for d in product.pos_menus if d.pos_menu == menu]
 			if not result:				
 				child_doc = frappe.new_doc("Product Menu")
-				child_doc.pos_menu =menu 
-				child_doc.pos_menu_name_kh= pos_menu_doc.pos_menu_name_kh
+				child_doc.pos_menu = menu 
+				child_doc.pos_menu_name_kh = pos_menu_doc.pos_menu_name_kh
 				# Add the child document to the parent document
 				product.append("pos_menus", child_doc)	
 		product.save()

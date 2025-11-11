@@ -85,7 +85,6 @@ export default class TableLayout {
                     }) 
                 })
             } 
-
             this.saleList = data;
             this.saleLoading = false;
         }) 
@@ -98,7 +97,6 @@ export default class TableLayout {
         }else{
             this.tempTableGroups = table_groups
         }
-
     }
 
     getTableGroups() { 
@@ -124,7 +122,6 @@ export default class TableLayout {
 
 
    async validateNewtowkSaleLock(table,sale=undefined){ 
- 
         if(this.setting.device_setting.use_sale_network_lock == 1){      
             let param = {
                 "table_id":table.id, 
@@ -143,7 +140,6 @@ export default class TableLayout {
         }
         return false
     }
-
 }
 
 

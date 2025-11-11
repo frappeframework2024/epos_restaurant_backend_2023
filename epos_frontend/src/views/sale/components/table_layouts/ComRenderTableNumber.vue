@@ -59,11 +59,7 @@
 <script setup>
 import { inject, useRouter, createToaster, selectSaleOrderDialog, keyboardDialog, smallViewSaleProductListModal, i18n,ref } from '@/plugin';
 import { useDisplay } from 'vuetify';
-
-
-
 const { t: $t } = i18n.global;
-
 const { mobile, platform } = useDisplay()
 const toaster = createToaster({ position: "top-right" });
 const tableLayout = inject("$tableLayout");
@@ -169,12 +165,9 @@ async function getDefaultTableMenu(table) {
 }
 
 async function newSale(table) {
-    
     if(await validateNewtowkSaleLock(table)){ 
         return 
     }
-    
-
     let guest_cover = 0;
     if (gv.setting.use_guest_cover == 1) {
         const result = await keyboardDialog({ title: $t('Guest Cover'), type: 'number', value: guest_cover });
@@ -187,7 +180,6 @@ async function newSale(table) {
             return;
         }
     }
-    
     sale.newSale();
     sale.sale.guest_cover = guest_cover;
     sale.sale.table_id = table.id
@@ -214,8 +206,6 @@ async function newSale(table) {
             }
         }
     }
-
-
     if (table.sale_type) {
         sale.sale.sale_type = table.sale_type
     }  
@@ -227,15 +217,11 @@ async function newSale(table) {
         sale.price_rule = gv.setting?.price_rule;
         sale.sale.price_rule = gv.setting?.price_rule;
     }
-
-    //
     if (gv.setting.price_rule != sale.sale.price_rule) {
         toaster.info($t('msg.Your current price rule is', [sale.sale.price_rule]));
     } 
-
     router.push({ name: "AddSale" });
 }
-
 
 </script>
 <style scoped>
