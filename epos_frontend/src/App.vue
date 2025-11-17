@@ -3,14 +3,14 @@
 		<SplashScreen v-if="state.isLoading" />
 		
 		<v-sheet v-else id="app-container" v-resize="onResize">
-			
-		
-			<v-progress-linear class="progress_bar" v-if="isLoading" indeterminate color="teal"></v-progress-linear>
-			<MainLayout v-if="layout=='main_layout'" />
-			<SaleLayout v-else-if="layout=='sale_layout'" />
-			<KitchenOrderDisplayLayout v-else-if="layout=='kitchen_order_display_layout'" />
-			<BlankLayout v-else />
-			<PromiseDialogsWrapper />
+			<div v-if="allow_access==1">
+				<v-progress-linear class="progress_bar" v-if="isLoading" indeterminate color="teal"></v-progress-linear>
+				<MainLayout v-if="layout=='main_layout'" />
+				<SaleLayout v-else-if="layout=='sale_layout'" />
+				<KitchenOrderDisplayLayout v-else-if="layout=='kitchen_order_display_layout'" />
+				<BlankLayout v-else />
+				<PromiseDialogsWrapper />
+			</div>
 		</v-sheet>
 		<DynamicDialog />
 	</div>
@@ -31,7 +31,7 @@ import { FrappeApp } from 'frappe-js-sdk';
 import { useDisplay } from 'vuetify'; 
 import DynamicDialog from 'primevue/dynamicdialog';
 import WebSocketPrinter from "@/utils/websocket-printer.js"
-
+import { ref } from 'vue';
 const router = useRouter()
 const route = useRoute()
 
@@ -49,9 +49,6 @@ const sale = inject("$sale");
 const pos_license = inject("$pos_license");
 const product = inject("$product");
 const tableLayout = inject("$tableLayout");
-
-
-
 const socket = inject("$socket");
 const auth = inject("$auth");
 const store = useStore();
@@ -59,11 +56,7 @@ const screen = inject('$screen');
 let state = reactive({
 	isLoading: false
 }); 
-
-
-
- 
- 
+let allow_access = ref(1)
 const { mobile } = useDisplay();
 const licenseToaster = createToaster({ position: "top", duration: 1000*60*60, type: "error" });
 
@@ -100,27 +93,16 @@ socket.on("OnPrintReport", async (arg) => {
 	}
 })
 
-
-
 let printService  = null;
-
 const isLoading = computed(() => {
 	const value = store.state.isLoading;
 	if(!value){	 
-		 /// wss://192.168.1.125:12212/printer/
-		 
 		 if(gv.setting?.device_setting?.web_socket_print_url){
 			printService = new WebSocketPrinter(null, gv.setting.device_setting.web_socket_print_url);
 		 }
 	}
-	
 	return value;
 });
-
-
-
-
-
 
 const is_window = localStorage.getItem("is_window");
 const is_apk_ipa = localStorage.getItem("apkipa");
@@ -131,20 +113,16 @@ if((is_window||0) == 0 && (is_apk_ipa||0)==0){
 	if((_webuid||0)==0){
 		localStorage.removeItem("device_name");
 	}else{ 		
- 
-			pos_license.onPOSLicenseCheck(_webuid).then((_res)=>{
-				if(_res.status == false){
-					onLogout();			
-					localStorage.clear();
-					router.reload();
-				}else if(_res.status == true && _res.expired == true){
-					onLogout();		  	
-				}
-			}); 
-		 
+		pos_license.onPOSLicenseCheck(_webuid).then((_res)=>{
+			if(_res.status == false){
+				onLogout();			
+				localStorage.clear();
+				router.reload();
+			}else if(_res.status == true && _res.expired == true){
+				onLogout();		  	
+			}
+		}); 
 	};
-
-	
 }
 
 
@@ -223,7 +201,6 @@ if (!localStorage.getItem("pos_profile")) {
 	});
 }
 
-
 //get user info 
 let current_user = localStorage.getItem('current_user')
 if(current_user!=null){
@@ -286,7 +263,14 @@ const actionListeningHandler = async function (e) {
 	}
 }
 
-onMounted(() => {
+onMounted(async () => {
+	let resp = await allow_access_from_server()
+	if(resp == "blocked"){
+		allow_access.value = 0
+	}
+	else{
+		allow_access.value = 1
+	}
 	window.mobile = mobile.value
 	window.addEventListener('message', actionListeningHandler, false);
 	setTimeout(()=>{
@@ -313,11 +297,14 @@ onMounted(() => {
 	if (!localStorage.getItem("item_menu_setting")){
 		localStorage.setItem("item_menu_setting", JSON.stringify( gv.itemMenuSetting) )
 	}
-
-
 	onResize()
 
 })
+
+async function allow_access_from_server() {
+	let resp = await call.get("epos_restaurant_2023.api.api.check_allow_access")
+	return resp.message
+}
 
 onUnmounted(()=>{
 	window.removeEventListener('message', actionListeningHandler, false);

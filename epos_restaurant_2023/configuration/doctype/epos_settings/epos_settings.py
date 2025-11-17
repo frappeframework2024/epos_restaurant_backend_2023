@@ -15,6 +15,13 @@ class ePOSSettings(Document):
 		for df in self.meta.get("fields"):
 			if df.fieldtype not in no_value_fields and self.has_value_changed(df.fieldname):
 				frappe.db.set_default(df.fieldname, self.get(df.fieldname))
+	
+	@frappe.whitelist()
+	def get_site_id(self):
+		import hashlib
+		site_name = frappe.local.site
+		site_name =  hashlib.sha256(site_name.encode()).hexdigest()
+		return site_name
 
 @frappe.whitelist(allow_guest=True)
 def main_currency():

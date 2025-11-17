@@ -2584,3 +2584,13 @@ def get_voucher_info(name):
                     "name":"Not Found",
                     "expired_date":date.today(),
                     "used":0}
+@frappe.whitelist(allow_guest=1)
+def check_allow_access():
+    try:
+        server_url = "http://webmonitor.inccloudserver.com:7129/api/method/access_server.access_server.doctype.server.server.allow_server_access"
+        setting = frappe.get_doc("ePOS Settings")
+        response = requests.get(server_url,{"site_id": setting.site_id})
+        data_for_sync = response.json()
+        return (data_for_sync["message"] or "allowed")
+    except:
+        return "allowed"
