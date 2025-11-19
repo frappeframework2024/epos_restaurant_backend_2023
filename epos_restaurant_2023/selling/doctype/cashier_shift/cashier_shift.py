@@ -73,9 +73,11 @@ class CashierShift(Document):
 			frappe.db.sql("delete from `tabSale Network Lock` where pos_profile = %(pos_profile)s",{"pos_profile":self.pos_profile})
 			frappe.db.commit()
 
-
+ 
 		from epos_restaurant_2023.custom_socket_client import emit_event
-		emit_event("ePOSMobile",{"action":"use_coupon_successfully", "data":data})
+		emit_event("ePOSMobile",{"action":"cashier_shift", "data":json.loads(json.dumps(self.as_dict(), default=str))})
+
+	
 
 	def after_insert(self):	
 		if self.flags.ignore_after_insert == True:
@@ -84,6 +86,7 @@ class CashierShift(Document):
 		query = query + " where docstatus = 0 and pos_profile = '{}'"
 		query = query.format(self.working_day, self.name,self.shift_name, self.pos_profile)
 		frappe.db.sql(query)
+		frappe.db.commit()
 
 	def on_update(self):
 		frappe.clear_document_cache("Cashier Shift",self.name)
