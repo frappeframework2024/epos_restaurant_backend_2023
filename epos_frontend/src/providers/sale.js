@@ -1734,10 +1734,30 @@ export default class Sale {
                     if (this.newSaleResource == null) {
                         this.createNewSaleResource();
                     }
-                    _sale = await this.newSaleResource.submit({ doc: doc });
+                    try{
+                         _sale = await this.newSaleResource.submit({ doc: doc });
+                    }
+                    catch(error){
+                        if(this.sale.sale_status == "Bill Requested"){
+                            this.sale.sale_status = "Submitted";
+                        }
+                        this.loading = false;
+                        console.log(error)
+                        return;
+                    }
                 }
                 else {
-                    _sale = await this.saleResource.setValue.submit(doc);
+                    try{
+                         _sale = await this.saleResource.setValue.submit(doc);
+                    }
+                    catch(error){
+                        if(this.sale.sale_status == "Bill Requested"){
+                            this.sale.sale_status = "Submitted";
+                        }
+                        this.loading = false;
+                        console.log(error)
+                        return;
+                    }
                 }
                 this.submitToAuditTrail(doc);
                 //refresh tabl 

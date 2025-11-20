@@ -41,7 +41,7 @@ class Sale(Document):
 					frappe.throw(_("Please start shift first"))
 			else:
 				if frappe.get_cached_value("Cashier Shift",self.cashier_shift,"is_closed") == 1:
-					frappe.throw(_("Cashier shift has been closed."))
+					frappe.throw(_("Cashier shift has been closed or You're trying to close bill from a different POS Profile."))
 		
 		if self.working_day:
 			if not self.cashier_shift: 

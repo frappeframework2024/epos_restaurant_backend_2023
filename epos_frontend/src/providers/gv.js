@@ -40,7 +40,7 @@ export default class Gv {
 			height_item:150,
 			width_sale_summary:400,
 			shortcut_menu_font_size:16,
-			sort_sale_menu_by:"product_name"
+			sort_sale_menu_by:"creation_desc"
         }
 		
 	}

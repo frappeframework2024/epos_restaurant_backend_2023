@@ -70,8 +70,8 @@
     const state = reactive({
         valid: true,
         device_name: '',
-        uid:'Demo',
-        pos_profile: 'POS Restaurant Profile',
+        uid:'',
+        pos_profile: 'Main POS Profile',
         loading: true
     });
 
