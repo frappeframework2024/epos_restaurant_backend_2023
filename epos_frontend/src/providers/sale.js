@@ -339,7 +339,6 @@ export default class Sale {
         }
     }
 
-
     getSaleProducts(groupByKey,order_by="creation") {
         if (groupByKey) {
             return Enumerable.from(this.sale.sale_products).where(`$.order_by=='${groupByKey.order_by}' && $.order_time=='${groupByKey.order_time}'`).orderByDescending("$.modified").toArray()
@@ -356,7 +355,7 @@ export default class Sale {
     }
 
  
-    addSaleProduct(p) {
+    async addSaleProduct(p) {
         //check for append quantity rule
         //product code, allow_append_qty,price, unit,modifier, portion, is_free,sale_product_status
         //and check system have feature to send to kitchen
@@ -380,6 +379,7 @@ export default class Sale {
             sp.quantity = parseFloat(sp.quantity) + 1;
             this.clearSelected();
             sp.selected = true;
+            await this.applyPromotions(sp)
             this.updateSaleProduct(sp);
             is_new_sale_product = false;
             if (this.setting.table_groups.length == 0) {
@@ -480,13 +480,14 @@ export default class Sale {
                 }
             }
             this.onSaleProductApplyTax(tax_rule, saleProduct);
+            await this.applyPromotions(saleProduct)
+            this.updateSaleProduct(saleProduct);
+            new_sale_product = saleProduct;
             this.sale.sale_products.push(saleProduct);
             if (this.setting.table_groups.length == 0) {
                 this.getSelectedProduct(saleProduct)
                 this.selected_sale_product = saleProduct
             }
-            this.updateSaleProduct(saleProduct);
-            new_sale_product = saleProduct;
         }
 
         this.updateSaleSummary();
@@ -598,7 +599,7 @@ export default class Sale {
         Enumerable.from(this.sale.sale_products).where(`$.selected==true`).forEach("$.selected=false");
     }
 
-    updateSaleProduct(sp) {
+    async updateSaleProduct(sp) {
         const precision = (this.setting.pos_setting.main_currency_precision||2) // newline
         this.onRateIncludeTax(sp,false,false,false);
         //set property for re render comhappyhour check
@@ -618,16 +619,13 @@ export default class Sale {
             sp.discount_amount = 0;
             //check if sale have discount then add discount to sale
         }
-
         sp.discount_amount = parseFloat((sp.discount_amount + Number.EPSILON).toFixed(precision)); //new
-
         sp.discount_amount = Math.abs(sp.discount_amount || 0) * (sp.is_return ? -1 : 1)
         if (sp.sale_discount_percent) {
             sp.sale_discount_amount = (sp.sub_total * sp.sale_discount_percent / 100);
             // sp.sale_discount_amount =    Number((sp.sale_discount_amount + Number.EPSILON).toFixed(precision)); 
         }
         sp.total_discount = sp.discount_amount + sp.sale_discount_amount; 
-
         this.onCalculateTax(sp);
         sp.amount = sp.sub_total - sp.discount_amount ;
         sp.total_revenue = (sp.sub_total - sp.total_discount);
@@ -641,57 +639,70 @@ export default class Sale {
         }else{
             sp.crypto_able_amount = sp.amount
         }
+        //set property for re render comhappyhour check
+    }
+
+    async applyPromotions(sp){
         let product_checks=[]
         product_checks.push({
             product_code: sp.product_code,
             order_time: sp.order_time
         })
-        createResource({
-            url: 'epos_restaurant_2023.api.promotion.get_promotion_products',
-            auto: true,
-            params: {
-                products: product_checks,
-                promotions: this.getPromotionByCustomerGroup()
-            },
-            onSuccess(doc) {
-                if (doc) {
-                   if (sp.happy_hour_promotion) {
-                        sp.discount_type = ''
-                        sp.discount = 0
-                        sp.happy_hours_promotion_title = ''
-                        sp.happy_hour_promotion = ''
-                    }
-                    doc.product_promotions.forEach(r => {
-                        if (moment(sp.order_time).format('HH:mm:ss') == r.order_time && sp.is_free == false) {
-                            sp.discount_type = 'Percent'
-                            sp.discount = r.percentage_discount
-                            sp.happy_hours_promotion_title = r.promotion_title
-                            sp.happy_hour_promotion = r.promotion_name
-                        }
-                    })
-                }
+        let doc = await this.getPromotionProducts(product_checks,this.getPromotionByCustomerGroup())
+        if (doc) {
+            if (sp.happy_hour_promotion) {
+                sp.discount_type = ''
+                sp.discount = 0
+                sp.happy_hours_promotion_title = ''
+                sp.happy_hour_promotion = ''
             }
+            doc.product_promotions.forEach(r => {
+                if (moment(sp.order_time).format('HH:mm:ss') == r.order_time && sp.is_free == false) {
+                    sp.discount_type = 'Percent'
+                    sp.discount = r.percentage_discount
+                    sp.happy_hours_promotion_title = r.promotion_title
+                    sp.happy_hour_promotion = r.promotion_name
+                }
+            })
+        }
+    }
+
+    getPromotionProducts(product_checks, promotionGroups) {
+        return new Promise((resolve, reject) => {
+            createResource({
+                url: 'epos_restaurant_2023.api.promotion.get_promotion_products',
+                auto: true,
+                params: {
+                    products: product_checks,
+                    promotions: promotionGroups
+                },
+                onSuccess(doc) {
+                    resolve(doc)
+                },
+                onError(err) {
+                    reject(err)
+                }
+            });
         });
-        //set property for re render comhappyhour check
     }
 
     getPromotionByCustomerGroup(){
-		let promotions = []
-		if(this.promotion && this.promotion.length > 0){
-			this.promotion.forEach(r => {
-				if(r.customer_groups.length > 0){
-					r.customer_groups.forEach(g=>{
-						if(g.customer_group_name_en == this.sale.customer_group){
-							promotions.push(r)
-						}
-					})
-				}else{
-					promotions.push(r)
-				}
-			});
-			return promotions
-		}
-		return promotions
+    let promotions = []
+    if(this.promotion && this.promotion.length > 0){
+        this.promotion.forEach(r => {
+            if(r.customer_groups.length > 0){
+                r.customer_groups.forEach(g=>{
+                    if(g.customer_group_name_en == this.sale.customer_group){
+                        promotions.push(r)
+                    }
+                })
+            }else{
+                promotions.push(r)
+            }
+        });
+        return promotions
+    }
+    return promotions
 	}
 
     //on sale product apply tax setting
