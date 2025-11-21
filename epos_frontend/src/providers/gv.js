@@ -160,9 +160,7 @@ export default class Gv {
 
 	getPromotionByCustomerGroup(customer_group){
 		let promotions = []
-
 		if(this.promotion && this.promotion.length > 0){
-			
 			this.promotion.forEach(r => {
 				if(r.customer_groups.length > 0){
 					r.customer_groups.forEach(g=>{
@@ -173,13 +171,9 @@ export default class Gv {
 				}else{
 					promotions.push(r)
 				}
-				
 			});
-			
 			return promotions
 		}
-	
-		
 		return promotions
 	}
 

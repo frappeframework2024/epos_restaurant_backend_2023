@@ -181,9 +181,7 @@ function assignCustomerToOrder(result, is_membership = false) {
     } else {
         current_customer_point.value = 0
     }
-
     sale.sale.discount = 0;
-
     if (!is_membership) {
         sale.sale.customer_default_discount = result.default_discount;
         applyPromotion()
@@ -281,7 +279,6 @@ function updateProductAfterSelectCustomer(pro) {
                                 sale.promotion.splice(index, 1);
                             }
                         })
-
                     }
                 } else {
                     gv.promotion = null

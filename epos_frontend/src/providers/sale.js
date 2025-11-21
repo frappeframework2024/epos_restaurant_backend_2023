@@ -641,9 +641,58 @@ export default class Sale {
         }else{
             sp.crypto_able_amount = sp.amount
         }
-
+        let product_checks=[]
+        product_checks.push({
+            product_code: sp.product_code,
+            order_time: sp.order_time
+        })
+        createResource({
+            url: 'epos_restaurant_2023.api.promotion.get_promotion_products',
+            auto: true,
+            params: {
+                products: product_checks,
+                promotions: this.getPromotionByCustomerGroup()
+            },
+            onSuccess(doc) {
+                if (doc) {
+                   if (sp.happy_hour_promotion) {
+                        sp.discount_type = ''
+                        sp.discount = 0
+                        sp.happy_hours_promotion_title = ''
+                        sp.happy_hour_promotion = ''
+                    }
+                    doc.product_promotions.forEach(r => {
+                        if (moment(sp.order_time).format('HH:mm:ss') == r.order_time && sp.is_free == false) {
+                            sp.discount_type = 'Percent'
+                            sp.discount = r.percentage_discount
+                            sp.happy_hours_promotion_title = r.promotion_title
+                            sp.happy_hour_promotion = r.promotion_name
+                        }
+                    })
+                }
+            }
+        });
         //set property for re render comhappyhour check
     }
+
+    getPromotionByCustomerGroup(){
+		let promotions = []
+		if(this.promotion && this.promotion.length > 0){
+			this.promotion.forEach(r => {
+				if(r.customer_groups.length > 0){
+					r.customer_groups.forEach(g=>{
+						if(g.customer_group_name_en == this.sale.customer_group){
+							promotions.push(r)
+						}
+					})
+				}else{
+					promotions.push(r)
+				}
+			});
+			return promotions
+		}
+		return promotions
+	}
 
     //on sale product apply tax setting
     onSaleProductApplyTax(tax_rule, sp) {
@@ -839,10 +888,7 @@ export default class Sale {
     //update sale summary
     updateSaleSummary(sale_status = '') {
         const precision = (this.setting.pos_setting.main_currency_precision||2) //newline
-        if(this.sale.discount> 0){
-            this.onUpdateSaleDiscount(this.sale.discount, this.sale.discount_type, this.sale.discount_note)
-        }
-
+        this.onUpdateSaleDiscount(this.sale.discount, this.sale.discount_type, this.sale.discount_note)
         const sp = Enumerable.from(this.sale.sale_products);
         this.sale.total_quantity = this.getNumber(sp.where("$.is_timer_product == 0").sum("$.quantity"));
         this.sale.sub_total = this.getNumber(sp.sum("$.sub_total"));
