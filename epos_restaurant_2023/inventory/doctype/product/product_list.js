@@ -30,6 +30,24 @@ frappe.listview_settings['Product'] = {
         };
     },
     onload(me) { 
+        frappe.realtime.on("product_available_shifts", (data) => {
+            frappe.show_alert({
+                message: data.message,
+                indicator: 'blue'
+            });
+        });
+        frappe.realtime.on("product_menus", (data) => {
+            frappe.show_alert({
+                message: data.message,
+                indicator: 'blue'
+            });
+        });
+        frappe.realtime.on("product_printers", (data) => {
+            frappe.show_alert({
+                message: data.message,
+                indicator: 'blue'
+            });
+        });
         frappe.route_options = {
             status: ['!=',"Variant"],
             disabled: ['=',0]
