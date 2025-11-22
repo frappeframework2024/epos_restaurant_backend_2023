@@ -221,19 +221,7 @@ frappe.ui.form.on("Product", {
         }; 
     },
     setup(frm) {
-        frappe.realtime.on("product_available_shifts", (data) => {
-            frappe.show_alert({
-                message: data.message,
-                indicator: 'blue'
-            });
-        });
-        frappe.realtime.on("product_menus", (data) => {
-            frappe.show_alert({
-                message: data.message,
-                indicator: 'blue'
-            });
-        });
-        frappe.realtime.on("product_printers", (data) => {
+        frappe.realtime.on("product_notification", (data) => {
             frappe.show_alert({
                 message: data.message,
                 indicator: 'blue'

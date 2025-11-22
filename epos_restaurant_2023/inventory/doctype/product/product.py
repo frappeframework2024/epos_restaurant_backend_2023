@@ -901,7 +901,7 @@ def update_product_to_temp_product_menu():
 
 @frappe.whitelist()
 def assign_menu(products,menu):
-	frappe.publish_realtime("product_menus", {"message": "Assigning selcted menu"},user=frappe.session.user)
+	frappe.publish_realtime("product_notification", {"message": "Assigning selcted menu"},user=frappe.session.user)
 	pos_menu_doc = frappe.db.get_value("POS Menu",menu, ["name", "pos_menu_name_kh"], as_dict=1)
 	for p in products.split(","):
 		product = frappe.get_doc("Product",p)	 
@@ -922,11 +922,11 @@ def assign_menu(products,menu):
 				product.append("pos_menus", child_doc)	
 		product.save()
 	frappe.db.commit()
-	frappe.publish_realtime("product_menus", {"message": "Selected menu is assigned"},user=frappe.session.user)
+	frappe.publish_realtime("product_notification", {"message": "Selected menu is assigned"},user=frappe.session.user)
 
 @frappe.whitelist()
 def assign_printer(products,printer):
-	frappe.publish_realtime("product_printers", {"message": "Assigning selected printer"},user=frappe.session.user)
+	frappe.publish_realtime("product_notification", {"message": "Assigning selected printer"},user=frappe.session.user)
 	printer_doc = frappe.db.get_value("Printer",printer, ["name", "printer_name"], as_dict=1)
 	for p in products.split(","):
 		product = frappe.get_doc("Product",p)
@@ -947,11 +947,11 @@ def assign_printer(products,printer):
 				product.append("printers", child_doc)
 		product.save()
 	frappe.db.commit()
-	frappe.publish_realtime("product_printers", {"message": "Selected printer is assigned"},user=frappe.session.user)
+	frappe.publish_realtime("product_notification", {"message": "Selected printer is assigned"},user=frappe.session.user)
 
 @frappe.whitelist()
 def assign_available_shift(products,shift_type):
-	frappe.publish_realtime("product_available_shifts", {"message": "Assigning selected available shift"},user=frappe.session.user)
+	frappe.publish_realtime("product_notification", {"message": "Assigning selected available shift"},user=frappe.session.user)
 	for p in products.split(","):
 		p = frappe.get_doc("Product",p)
 		if len(p.product_shift_availability or []) ==0:
@@ -966,11 +966,11 @@ def assign_available_shift(products,shift_type):
 				p.append("product_shift_availability", c)
 		p.save()
 	frappe.db.commit()
-	frappe.publish_realtime("product_available_shifts", {"message": "Selected available shift is assigned"},user=frappe.session.user)
+	frappe.publish_realtime("product_notification", {"message": "Selected available shift is assigned"},user=frappe.session.user)
 
 @frappe.whitelist()
 def remove_printer(products,printer):
-	frappe.publish_realtime("product_printers", {"message": "Clearing selected printers"},user=frappe.session.user)
+	frappe.publish_realtime("product_notification", {"message": "Clearing selected printers"},user=frappe.session.user)
 	for p in products.split(","):
 		product = frappe.get_doc("Product",p)
 		printers = product.get('printers' or [])
@@ -979,11 +979,11 @@ def remove_printer(products,printer):
 				printers.remove(row)
 		product.save()
 	frappe.db.commit()
-	frappe.publish_realtime("product_printers", {"message": "Selected printers is cleared"},user=frappe.session.user)
+	frappe.publish_realtime("product_notification", {"message": "Selected printers is cleared"},user=frappe.session.user)
 
 @frappe.whitelist()
 def remove_available_shift(products,shift_type):
-	frappe.publish_realtime("product_available_shifts", {"message": "Clearing available shift"},user=frappe.session.user)
+	frappe.publish_realtime("product_notification", {"message": "Clearing available shift"},user=frappe.session.user)
 	for p in products.split(","):
 		product = frappe.get_doc("Product",p)
 		shifts = product.get('product_shift_availability' or [])
@@ -992,11 +992,11 @@ def remove_available_shift(products,shift_type):
 				shifts.remove(row)
 		product.save()
 	frappe.db.commit()
-	frappe.publish_realtime("product_available_shifts", {"message": "Selected available shifts is cleared"},user=frappe.session.user)
+	frappe.publish_realtime("product_notification", {"message": "Selected available shifts is cleared"},user=frappe.session.user)
 
 @frappe.whitelist()
 def remove_menu(products,menu):
-	frappe.publish_realtime("product_menus", {"message": "Clearing selcted menus"},user=frappe.session.user)
+	frappe.publish_realtime("product_notification", {"message": "Clearing selcted menus"},user=frappe.session.user)
 	for p in products.split(","):
 		product = frappe.get_doc("Product",p)
 		menus = product.get('pos_menus' or [])
@@ -1005,34 +1005,34 @@ def remove_menu(products,menu):
 				menus.remove(row)
 		product.save()
 	frappe.db.commit()
-	frappe.publish_realtime("product_menus", {"message": "Selected menu is cleared"},user=frappe.session.user)
+	frappe.publish_realtime("product_notification", {"message": "Selected menu is cleared"},user=frappe.session.user)
 
 @frappe.whitelist()
 def clear_all_printer_from_product(products):
-	frappe.publish_realtime("product_printers", {"message": "Clearing all printers"},user=frappe.session.user)
+	frappe.publish_realtime("product_notification", {"message": "Clearing all printers"},user=frappe.session.user)
 	for p in products.split(","):
 		doc = frappe.get_doc("Product",p)
 		doc.printers = []
 		doc.save()
-	frappe.publish_realtime("product_printers", {"message": "All printers are cleared"},user=frappe.session.user)
+	frappe.publish_realtime("product_notification", {"message": "All printers are cleared"},user=frappe.session.user)
 
 @frappe.whitelist()
 def clear_all_menus_from_product(products):
-	frappe.publish_realtime("product_menus", {"message": "Clearing all menus"},user=frappe.session.user)
+	frappe.publish_realtime("product_notification", {"message": "Clearing all menus"},user=frappe.session.user)
 	for p in products.split(","):
 		doc = frappe.get_doc("Product",p)
 		doc.pos_menus = []
 		doc.save()
-	frappe.publish_realtime("product_menus", {"message": "All menus are cleared"},user=frappe.session.user)
+	frappe.publish_realtime("product_notification", {"message": "All menus are cleared"},user=frappe.session.user)
 	
 @frappe.whitelist()
 def clear_all_avaialble_shifts_from_product(products):
-	frappe.publish_realtime("product_available_shifts", {"message": "Clearing all available shifts"},user=frappe.session.user)
+	frappe.publish_realtime("product_notification", {"message": "Clearing all available shifts"},user=frappe.session.user)
 	for p in products.split(","):
 		doc = frappe.get_doc("Product",p)
 		doc.product_shift_availability = []
 		doc.save()
-	frappe.publish_realtime("product_available_shifts", {"message": "All available shifts are cleared"},user=frappe.session.user)
+	frappe.publish_realtime("product_notification", {"message": "All available shifts are cleared"},user=frappe.session.user)
 
 @frappe.whitelist()
 def update_expire_date(data):
