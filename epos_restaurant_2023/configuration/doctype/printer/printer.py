@@ -8,10 +8,10 @@ import json
 class Printer(Document):
 	def validate(self):
 		self.business_branch_printer = "{} > {}".format(self.business_branch, self.printer_name)
-
-		## update relate print setting
 		
+	def on_update(self):
 		update_product_printer_and_temp_menu_printer(self)
+		enqueue_update_product()
 
 @lru_cache(maxsize=128,typed=False)	
 def update_product_printer_and_temp_menu_printer(self):
@@ -61,6 +61,10 @@ def update_product_printer_and_temp_menu_printer(self):
 		update_temp_menu_product(pp["parent"])
 	frappe.db.commit()
 
+@frappe.whitelist()
+def enqueue_update_product():
+	frappe.publish_realtime("update_printer_to_products", {"message": "Updating Products"},user=frappe.session.user)
+	frappe.enqueue("epos_restaurant_2023.configuration.doctype.printer.printer.update_printer_to_product", queue='long')
 
 @lru_cache(maxsize=128,typed=False)
 def update_temp_menu_product(product):
@@ -77,10 +81,11 @@ def update_temp_menu_product(product):
 def update_printer_to_product():
 	update_pos_station_printer()
 	update_to_product()
-	data =frappe.db.sql( "select name from `tabProduct`",as_dict=1)
+	data =frappe.db.sql("select name from `tabProduct`",as_dict=1)
 	for d in data:
 		update_temp_menu_product(d["name"])
 	frappe.db.commit()
+	frappe.publish_realtime("update_printer_to_products", {"message": "Product Updated"},user=frappe.session.user)
     
 @lru_cache(maxsize=128,typed=False)
 def update_pos_station_printer():
