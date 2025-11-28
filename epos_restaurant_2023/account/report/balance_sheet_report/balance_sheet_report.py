@@ -45,6 +45,9 @@ def get_period_list(
 	"""Get a list of dict {"from_date": from_date, "to_date": to_date, "key": key, "label": label}
 	Periodicity can be (Yearly, Quarterly, Monthly)"""
 	from datetime import date
+	current_fiscal_year = date.today()
+	year_start_date = current_fiscal_year
+	year_end_date = current_fiscal_year
 	if filter_based_on == "Fiscal Year":
 		current_fiscal_year = date.today()
 		from_fiscal_year =  datetime.strptime((filters.from_fiscal_year+"-01-01"), "%Y-%m-%d").date()
@@ -206,10 +209,13 @@ def calculate_values(
 	for entries in gl_entries_by_account.values():
 		for entry in entries:
 			d = accounts_by_name.get(entry.account)
-			for period in period_list:
-				if entry.posting_date <= period.to_date:
-					if (accumulated_values or (entry.posting_date >= period.from_date)) and (int(entry.fiscal_year) == int(period.to_date_fiscal_year)):
-						d[period.key] = d.get(period.key, 0.0) + flt(entry.debit_amount) - flt(entry.credit_amount)
+			try:
+				for period in period_list:
+					if entry.posting_date <= period.to_date:
+						if (accumulated_values or (entry.posting_date >= period.from_date)) and (int(entry.fiscal_year) == int(period.to_date_fiscal_year)):
+							d[period.key] = d.get(period.key, 0.0) + flt(entry.debit_amount) - flt(entry.credit_amount)
+			except:
+				frappe.throw(str(entry.account))
 
 def get_data(
 	root_type="",
