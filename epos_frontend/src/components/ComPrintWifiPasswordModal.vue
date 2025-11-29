@@ -35,7 +35,7 @@ const wifi_password = ref("")
       if (localStorage.key('wifi')){
         localStorage.setItem('wifi',wifi_password.value)
       }
-      let printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+      let printer = (gv.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
       let _printer = undefined;
       if(printer.length>0){
         _printer = {
@@ -49,7 +49,7 @@ const wifi_password = ref("")
       }
 
 
-      if((gv.setting?.device_setting?.use_server_network_printing||0)==1){ 
+      if((gv.device_setting?.use_server_network_printing||0)==1){ 
           if (printer.length <= 0) {
               toaster.warning($t("Printer not yet config for this device"))
               return // not printer

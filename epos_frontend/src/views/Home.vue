@@ -115,15 +115,26 @@ onMounted(async () => {
         } 
     });
     await check_customer_display_status();
-    window.chrome.webview.addEventListener("message", event => {
-        const data = event.data;
-        if (data === "customer_display_opened") {
-            customer_display_opened.value = "opened";
-        }else{
-            customer_display_opened.value = "closed";
-        }
-    });
+    attachWebviewListener();
 })
+
+function attachWebviewListener() {
+  const wv = window.chrome?.webview;
+  if (!wv) {
+    setTimeout(attachWebviewListener, 200);
+    return;
+  }
+
+  wv.addEventListener("message", event => {
+    const data = event.data;
+
+    if (data === "customer_display_opened") {
+      customer_display_opened.value = "opened";
+    } else {
+      customer_display_opened.value = "closed";
+    }
+  });
+}
 
 async function check_customer_display_status(){
     let doc = await call.get("epos_restaurant_2023.api.api.customer_display_logs",{station_id:device_name.value,posting_type:"get"})

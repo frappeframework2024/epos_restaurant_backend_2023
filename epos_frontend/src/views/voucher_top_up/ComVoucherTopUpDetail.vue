@@ -118,10 +118,10 @@ async function onPrintVoucher( action, doc) {
         action: action,
         setting: gv.setting?.pos_setting,
         voucher: doc,
-        station_device_printing:(gv.setting?.device_setting?.station_device_printing)||"",
-        station: (gv.setting?.device_setting?.name) || "",
+        station_device_printing:(gv.device_setting?.station_device_printing)||"",
+        station: (gv.device_setting?.name) || "",
     }
-    let printer = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+    let printer = (gv.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
     let _printer = undefined;
     if(printer.length>0){
         _printer = {
@@ -134,7 +134,7 @@ async function onPrintVoucher( action, doc) {
         }
     }
 
-    if((gv.setting?.device_setting?.use_server_network_printing||0)==1){
+    if((gv.device_setting?.use_server_network_printing||0)==1){
         if (printer.length <= 0) {
             return // not printer
         } 

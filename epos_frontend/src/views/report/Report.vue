@@ -487,11 +487,11 @@ function onPrint(){
             outlet:gv.setting.outlet,
             letterhead:activeReport.value.letterhead,
             sale: {pos_profile:pos_profile},
-            station: (gv.setting?.device_setting?.name) || "",
-            station_device_printing: (gv.setting?.device_setting?.station_device_printing) || ""
+            station: (gv.device_setting?.name) || "",
+            station_device_printing: (gv.device_setting?.station_device_printing) || ""
     }
 
-    let printers = (gv.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+    let printers = (gv.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
     let _printer = undefined;
     if(printers.length>0){
         _printer = {
@@ -504,7 +504,7 @@ function onPrint(){
         }
     }
 
-    if ((gv.setting?.device_setting?.use_server_network_printing||0)==1) {        
+    if ((gv.device_setting?.use_server_network_printing||0)==1) {        
         if (printers.length <= 0) {
             // pass
         } else { 

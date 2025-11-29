@@ -97,7 +97,7 @@ let printService  = null;
 const isLoading = computed(() => {
 	const value = store.state.isLoading;
 	if(!value){	 
-		 if(gv.setting?.device_setting?.web_socket_print_url){
+		 if(gv.device_setting?.web_socket_print_url){
 			printService = new WebSocketPrinter(null, gv.setting.device_setting.web_socket_print_url);
 		 }
 	}
