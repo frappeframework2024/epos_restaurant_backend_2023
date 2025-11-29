@@ -57,8 +57,8 @@ export default class Product {
             setting = JSON.parse(setting)
         }else {
             setting = {
-                sort_menu_order_by:name,
-                sort_order_by:product_name_en
+                sort_menu_order_by:"name",
+                sort_order_by:"product_name_en"
             }
         }
         let resp = await call.get("epos_restaurant_2023.api.api.get_current_cashier_shift",{pos_profile: localStorage.getItem("pos_profile")})

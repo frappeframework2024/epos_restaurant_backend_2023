@@ -183,6 +183,13 @@ function onSearch() {
                 seen.add(doc.name);
                 return true;
             });
+            filtered_data.forEach(a => {
+                let prices = JSON.parse(a.prices)
+                if((prices || []).length>0){
+                    let c = prices.find(b => b.price_rule === sale.setting.price_rule);
+                    a.price = c.price
+                }
+            });
             data.value = filtered_data
             loading.value = false
 
