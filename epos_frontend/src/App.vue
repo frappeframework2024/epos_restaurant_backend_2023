@@ -156,6 +156,7 @@ if (!localStorage.getItem("pos_profile")) {
 			state.isLoading = false;
 			localStorage.setItem("setting", JSON.stringify(doc)); 
 			gv.setting = doc;
+			gv.device_setting = doc.device_setting;
 			gv.customer_display_key = customer_display_key;
 			sale.customer_display_key = customer_display_key;
 			sale.setting = doc;
