@@ -1,13 +1,41 @@
 
 {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/header_logo.html", {"doc":doc}) }}
+{{frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/header_title_description.html",{"doc":doc}) }}
+<div class="py-3 my-3 nav-pro-wrapper border border-start-0 border-end-0 border-bottom-0 bg-white el-shadow"
+    style="top:0;">
+    <nav class="container">
+        <div class="position-relative">
+            <div class="tab-bar">
+                <div class="navigt tabs">
+                    <div class="d-flex mb-0">
+                        {% if (doc.popular_product | length) >0 %}
+                        <a class="bg-white px-3 py-1 rounded-pill main-color nav-pro tab active mt-1"
+                            href="#popular_product">
+                            <h5 class="fs-6 mb-0">Popular Products</h5>
+                        </a>
+                        {%endif%}
+                        {% for m in doc.pos_menu_selections %}
+                        <a class="bg-white px-3 py-1 rounded-pill main-color nav-pro tab mt-1 menu_categories"
+                            href="#{{m.name}}">
+                            <h5 class="fs-6 mb-0">{{m.menu}} {{'/' if m.menu!=m.menu_kh}} {{'' if m.menu==m.menu_kh else
+                                m.menu_kh }}</h5>
+                        </a>
+                        {%endfor%}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="search-container w-100 mt-3 px-2">
+        <input type="text" id="searchBox" placeholder="Search products..." class="search-box w-100">
+    </div>
+</div>
 <div class="container sections-content-1">
     <div class="sections sections-content">
     
-        {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/header_title_description.html", {"doc":doc}) }}
-        {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/promotion_slideshow.html", {"doc":doc,"promotion":promotion}) }}
-        {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/popular_product.html", {"doc":doc,"popular_products":popular_products}) }}
-        {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/navigation_menu.html", {"shortcut_menu":shortcut_menu}) }}
-        {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/emenu_layout_2/menu_list.html", {"pos_menus":pos_menus, "placeholder_bg":doc.category_placeholder_background}) }}
+        
+        {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/emenu_layout_3/menu_list.html", {"doc":doc,"products":products,"popular_products":popular_products}) }}
         <br/>
     </div>
 </div>
+

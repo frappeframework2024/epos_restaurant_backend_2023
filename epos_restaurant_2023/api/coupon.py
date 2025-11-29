@@ -362,7 +362,24 @@ def get_coupon_actual_amount_balance(coupon_transactions):
 @frappe.whitelist(allow_guest=True)
 def check_coupon_balance(coupon_code):
     frappe.local.lang = "km"
-    sql = "select name, coupon from `tabCoupon Codes` where coupon = %(coupon_code)s order by creation desc limit 1"
+    sql = """
+        with a as (
+            select 
+                name, 
+                coupon,
+                creation 
+            from `tabCoupon Codes` 
+            where coupon = %(coupon_code)s 
+            union
+            select 
+                name, 
+                coupon ,
+                creation
+            from `tabCoupon Codes History` 
+            where coupon = %(coupon_code)s 
+        )
+        select * from a order by creation desc limit 1
+    """
     coupon_data = frappe.db.sql(sql,{"coupon_code":coupon_code},as_dict = 1)
     if coupon_data:
         data = get_coupon_detail(coupon_data[0]["name"])

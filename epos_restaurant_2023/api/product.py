@@ -502,6 +502,7 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
         product_prices = json.loads(d.get("prices") or "[]")
         if product_prices:
             default_price =  get_default_product_price(price_rule, product_prices)
+            frappe.msgprint(price_rule)
             d["unit"] = default_price["unit"]
             d["portion"] = default_price["portion"]
             d["price"] = default_price["price"]

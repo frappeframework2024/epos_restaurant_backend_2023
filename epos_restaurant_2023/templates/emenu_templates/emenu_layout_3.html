@@ -22,8 +22,11 @@
 		href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap"
 		rel="stylesheet">
 	<style type="text/css">
+		@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
 		:root {
-    		--main-color: #db3b76;
+    		--main-color: #b07a08;
+			--title-text-color: 28 20% 25%;
+			--border-card-color: 28 20% 25%;
 		}
 		.main-color {
 			color: var(--main-color);
@@ -50,16 +53,22 @@
 		h4,
 		h5,
 		h6 {
-			font-weight: 600;
-			font-family: 'Open Sans', sans-serif;
+			/* font-weight: 600; */
+			/* font-family: 'Open Sans', sans-serif; */
+			color: hsl(var(--title-text-color));
 		}
 
 		body {
+			background: #faf8f3;
 			font-family: 'Open Sans', sans-serif;
 		 
 		}
 		body, html{
 			height: unset;
+			font-family: "Rubik", sans-serif;
+  			font-optical-sizing: auto;
+			font-weight: 400;
+  			font-style: normal;
 		}
 		h2{
 			font-size: 24px;
@@ -275,9 +284,9 @@
 			z-index: 100000;
 		}
 		.nav-pro-wrapper{
-			position: sticky;
-			/* top: var(--top); */
+			position: sticky; 
 			z-index: 10000;
+			margin: 0 -.7rem;
 		}
 		ul.pt-si{
 			columns: 2;
@@ -335,7 +344,7 @@
 			text-align: center;
 		}
 		.scroll-section {
-			scroll-margin-top: 180px;
+			scroll-margin-top: 210px;
 		}
 		.right-arrow.active i,
 		.left-arrow.active i{
@@ -345,7 +354,7 @@
 		.nav-pro-wrapper .tab-bar {
 		background: #fff;
 		overflow: hidden;
-		padding-right: 25px;
+		/* padding-right: 25px; */
 		}
 		.nav-pro-wrapper .left-arrow,
 		.nav-pro-wrapper .right-arrow {
@@ -411,7 +420,7 @@
 		border: 1px solid var(--main-color);
 		background: #fff;
 		}
-		.nav-pro-wrapper a.tab.active p{
+		.nav-pro-wrapper a.tab.active h5{
 			color: var(--main-color);
 		}
 		.logo img{
@@ -454,6 +463,7 @@
 		border-bottom-left-radius: 20px;
 		border-bottom-right-radius: 20px;
 	}
+	
 	/* New Style */
 		@media (max-width: 1199.98px) {
 			.item-tt-txt{
@@ -549,6 +559,88 @@
 				height: 234px !important;
 			}
 		}
+		@media (max-width: 767.97px) { 
+			.menu-img { 
+				height: 120px !important;
+			} 
+		}
+
+
+	.menu-card {
+      	border: none;
+      	border-radius: 18px;
+      	overflow: hidden;
+      	background: #ffffff;
+      	box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      	transition: 0.2s;
+	  	border: 1px solid hsl(28deg 20% 25% / 12%);
+		height: -webkit-fill-available;
+    }
+
+    .menu-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .menu-img {
+      height: 260px;
+      width: 100%;
+      object-fit: cover;
+    }
+
+    .badge-popular {
+		background: #fff7e6;
+		color: #a66b00;
+		padding: 4px 12px;
+		border-radius: 20px;
+		font-size: 12px;
+		box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+		
+    }
+	.badge-popular.absolute{
+		position: absolute;
+      	top: 12px;
+      	right: 12px;
+		z-index: 1;
+	}
+
+
+    .item-title {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .item-desc {
+      font-size: 14px;
+      color: #6c6c6c;
+    }
+
+    .item-price {
+      font-weight: 600;
+      color: #b07a00;
+      font-size: 16px;
+    }
+
+	.search-container {
+    display: flex;
+    align-items: center;
+}
+
+.search-box {
+    padding: 6px 16px;
+    border-radius: 50px;
+    border: 1px solid #ddd;
+    background: #fafafa;
+    font-size: 14px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.search-box:focus {
+    border-color: var(--main-color); /* Pinkish like your example */
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(255, 77, 135, 0.15);
+}
+
 
 		{%- block style -%}{%- endblock -%}
 	</style>
@@ -780,20 +872,8 @@
 				removeActiveClasses();
 				tab.classList.add("active");
 			});
-		});
+		}); 
 
-
-		// Scroll the tab list to the right
-		scrollRightArrow.addEventListener("click", () => {
-			tabList.scrollLeft += 300;
-			manageLeftbtn();
-		});
-
-		// Scroll the tab list to the left
-		scrollLeftArrow.addEventListener("click", () => {
-			tabList.scrollLeft -= 300;
-			manageLeftbtn();
-		});
 
 		// Listen to scroll event to activate the buttons
 		tabList.addEventListener("scroll", manageLeftbtn);
@@ -874,10 +954,38 @@
 			}) 
 		}
 
-		
-		
+		//search item 
+		function runSearch () {
+    		const keyword = document.getElementById("searchBox").value.toLowerCase().trim();
+			const items = document.querySelectorAll(".product-item");
+
+			items.forEach(card => {
+				const title = card.querySelector(".item-title")?.textContent.toLowerCase() || "";
+				const desc  = card.querySelector(".item-desc")?.textContent.toLowerCase() || "";
+
+				// If less than 3 characters, show everything
+				if (keyword.length < 3) {
+						card.parentElement.style.display = "";
+					return;
+				}
+
+				// Match title or description
+				if (title.includes(keyword) || desc.includes(keyword)) {
+					card.parentElement.style.display = "block !important"; // show
+					const topParent = card.closest(".scroll-section")
+					topParent.querySelector(".cate-title").style.display = "block";
+				} else {
+					card.parentElement.style.display = "none"; // hide
+					const topParent = card.closest(".scroll-section")
+					
+					cateTitle = topParent.querySelector(".cate-title");
+					if (cateTitle) cateTitle.style.display = "none";
+				}
+			});
+		};
+
+ 
+		document.getElementById("searchBox").addEventListener("keyup", runSearch);
 	</script>
-
 </body>
-
 </html>

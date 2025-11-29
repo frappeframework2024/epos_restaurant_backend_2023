@@ -1,0 +1,35 @@
+<div class="row m-0">
+    {% for p in products | selectattr('pos_menu', 'equalto', m.menu) | sort(attribute='product_code') | list %}
+    <div class="col-md-6 col-lg-3 gy-1 gy-md-2 p-0 p-md-2">
+        <div class="position-relative menu-card product-item">
+            <div class="row m-0">
+                <div class="image-wrapper col-4 col-md-12 p-0">
+                    <img src="{{p.photo or " /files/food_bg_image.jpg"}}" class="menu-img" alt="Latte">
+                </div>
+                <div class="p-3 col-8 col-md-12 p-0">
+                    <div class="d-none d-md-block">
+                        <div class="d-flex justify-content-between">
+                            <span class="item-title">{{p.product_name_en}}</span>
+                            {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/emenu_layout_3/product_price.html",{"p":p,"doc":doc}) }}
+                        </div>
+                        <div class="item-desc mb-0">
+                            {{p.description or ''}}
+                        </div>
+                    </div>
+                    <div class="d-block d-md-none h-100">
+                        <div class="d-flex flex-column h-100 justify-content-center">
+                            <div>
+                                <span class="item-title">{{p.product_name_en}}</span>
+                                <div class="item-desc mb-0">
+                                    {{p.description or ''}}
+                                </div>
+                            </div>
+                            <div>{{frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/emenu_layout_3/product_price.html",{"p":p,"doc":doc}) }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>

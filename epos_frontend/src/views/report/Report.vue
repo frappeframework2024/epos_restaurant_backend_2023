@@ -312,9 +312,9 @@ const showPrintPopUp = computed(()=>{
 });
 
 
-onMounted(()=>{
+onMounted(async()=>{
     // init data
-    _onInit()
+   await _onInit()
 });
 
 

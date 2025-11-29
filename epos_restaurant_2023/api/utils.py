@@ -359,21 +359,16 @@ def re_run_fail_jobs():
     if enabled == 1:
         server_url = frappe.db.get_single_value('ePOS Sync Setting','server_url')
         response = requests.post(f"{server_url}/api/method/epos_restaurant_2023.api.utils.ping")
-        
         if response.status_code == 200:
             args = {'doctype': 'RQ Job', 'fields': ['`tabRQ Job`.`name`', '`tabRQ Job`.`owner`', '`tabRQ Job`.`creation`', '`tabRQ Job`.`modified`', '`tabRQ Job`.`modified_by`', '`tabRQ Job`.`_user_tags`', '`tabRQ Job`.`_comments`', '`tabRQ Job`.`_assign`', '`tabRQ Job`.`_liked_by`', '`tabRQ Job`.`docstatus`', '`tabRQ Job`.`idx`', '`tabRQ Job`.`queue`', '`tabRQ Job`.`status`', '`tabRQ Job`.`job_name`'], 'filters': [['RQ Job', 'status', '=', 'failed']], 'order_by': '`tabRQ Job`.`modified` desc', 'start': '0', 'page_length': '20', 'group_by': '`tabRQ Job`.`name`', 'with_comment_count': '1', 'save_user_settings': True, 'strict': None}
             start = cint(args.get("start"))
             page_length = cint(args.get("page_length")) or 20
-
             order_desc = "desc" in args.get("order_by", "")
-
             matched_job_ids = get_matching_job_ids(args)[start : start + page_length]
-
             conn = get_redis_conn()
             jobs = [
                 serialize_job(job) for job in Job.fetch_many(job_ids=matched_job_ids, connection=conn) if job
             ]
-
             jobs =  sorted(jobs, key=lambda j: j.modified, reverse=order_desc)
             jobs = [d for d in jobs if "exc_info" in d]
             job_names=["epos_restaurant_2023.api.utils."]
@@ -390,7 +385,6 @@ def re_run_fail_jobs():
                 except Exception as e:
                     frappe.throw(str(e))
             return []
-
 
 def serialize_job(job: Job) -> frappe._dict:
 	modified = job.last_heartbeat or job.ended_at or job.started_at or job.created_at

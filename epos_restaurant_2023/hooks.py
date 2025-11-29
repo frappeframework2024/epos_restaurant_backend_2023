@@ -172,6 +172,13 @@ doc_events = {
 }
 
 
+def after_request(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    response.headers["Cache-Control"] = "no-cache"
+    return response
+
+
 
 #Scheduled Tasks
 #---------------

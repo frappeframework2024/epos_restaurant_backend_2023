@@ -18,11 +18,42 @@ from epos_restaurant_2023.api.printing import (
     print_from_print_format
     )
 import frappe
+from frappe import _
 from escpos.printer import Network
 
 @frappe.whitelist(allow_guest=True)
 def on_check_url():  
     return True
+
+
+@frappe.whitelist(allow_guest=True)
+def stream_sse():
+    import time
+    """
+    Simple SSE test endpoint: streams 5 messages then ends.
+    """
+    frappe.local.flags.allow_response_streaming = True
+
+    def event_stream():
+        for i in range(1, 2):
+            yield f"data: Server is working! Message {i}\n\n"
+            time.sleep(1)
+
+    # Set HTTP headers for SSE
+    frappe.local.response.status_code = 200
+    frappe.local.response.headers = {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive"
+    }
+
+    # Assign the generator to stream
+    frappe.local.response.stream = event_stream()
+
+    # DO NOT return frappe.local.response (this triggers circular reference)
+    return
+
+
 
 ## use POST method to get system config data
 @frappe.whitelist(allow_guest=True) 
@@ -40,6 +71,7 @@ def on_get_pos_configure(pos_profile="", device_name=''):
 
     return get_system_settings(pos_profile,device_name) 
 
+
 ## use POST method to get user and permission to login
 @frappe.whitelist(allow_guest=True) 
 def on_get_user_for_login(pin):
@@ -49,8 +81,7 @@ def on_get_user_for_login(pin):
 def get_menu_product(root_menu=""):
     if root_menu == "":
         return []
-    menus  = get_menu(root_menu,root_menu)
-    
+    menus  = get_menu(root_menu,root_menu)    
     return menus
     #return get_product_by_menu(root_menu,mobile=1)
 
@@ -128,7 +159,6 @@ def get_base64_image(image_name):
     except OSError as e:
         pass
     return encoded_data
-
 
 ### get product by menu
 @frappe.whitelist(allow_guest=True,methods='POST') 

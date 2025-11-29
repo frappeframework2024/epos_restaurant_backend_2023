@@ -2,62 +2,103 @@ import frappe
 from epos_restaurant_2023.api.api import get_workspace_sidebar_items
 from functools import lru_cache
 
+
 @frappe.whitelist()
 def clear_cache():
     get_sidebar_menu_template_cached.cache_clear()
-    
+
+
 @frappe.whitelist()
 def get_sidebar_menu_template():
-    
+
     return get_sidebar_menu_template_cached(frappe.session.user, frappe.local.site)
 
-def get_sidebar_menu_template_cached(user,site= frappe.local.site):
+
+def get_sidebar_menu_template_cached(user, site=frappe.local.site):
     data = get_workspace_sidebar_items()
-    menus = [d for d in data["pages"] if  not d["parent_page"] and d["is_hidden"]==0]
+    menus = [d for d in data["pages"] if not d["parent_page"] and d["is_hidden"] == 0]
     # return [d["name"] for d in data["pages"]]
-    
-    
-    shortcut_menus = frappe.db.sql("select parent,  type,link_to,label, doc_view,stats_filter from `tabWorkspace Shortcut` where parent in %(parent_menu)s and custom_show_in_app_menu = 1 order by idx",{"parent_menu":[d["name"] for d in  data["pages"]]}, as_dict=1)
+
+    shortcut_menus = frappe.db.sql(
+        "select parent,  type,link_to,label, doc_view,stats_filter from `tabWorkspace Shortcut` where parent in %(parent_menu)s and custom_show_in_app_menu = 1 order by idx",
+        {"parent_menu": [d["name"] for d in data["pages"]]},
+        as_dict=1,
+    )
     for s in shortcut_menus:
         s["stats_filter"] = str(s["stats_filter"])
-    
-    
-    shortcut_menus =  get_list_with_permission(shortcut_menus) 
-    workspace_links = frappe.db.sql("select name,idx, parent,link_to,link_type,label,link_count,type from `tabWorkspace Link` where parent in %(parents)s and custom_show_in_app_menu = 1   order by custom_sort_order, idx ",{"parents":[d["name"] for d in  data["pages"]]},as_dict=1)
-    workspace_links =  get_list_with_permission(workspace_links)
- 
+
+    shortcut_menus = get_list_with_permission(shortcut_menus)
+    workspace_links = frappe.db.sql(
+        "select name,idx, parent,link_to,link_type,label,link_count,type from `tabWorkspace Link` where parent in %(parents)s and custom_show_in_app_menu = 1   order by custom_sort_order, idx ",
+        {"parents": [d["name"] for d in data["pages"]]},
+        as_dict=1,
+    )
+    workspace_links = get_list_with_permission(workspace_links)
+
     for d in menus:
-        d["sub_menus"] = {"shortcut_menu":[],"workspace_links":[]}
-        
-        d["id"] = str(d["name"]).lower().replace(" ","_")
-        
+        d["sub_menus"] = {"shortcut_menu": [], "workspace_links": []}
+
+        d["id"] = str(d["name"]).lower().replace(" ", "_")
+
         # sub menu from sub workspace
-        if len([x for x in data["pages"] if x['parent_page'] == d["name"] and x["is_hidden"]==0] ):
-            d["sub_menus"]["shortcut_menu"] =  [x for x in data["pages"] if x['parent_page'] == d["name"] and x["is_hidden"]==0]
-    
+        if len(
+            [
+                x
+                for x in data["pages"]
+                if x["parent_page"] == d["name"] and x["is_hidden"] == 0
+            ]
+        ):
+            d["sub_menus"]["shortcut_menu"] = [
+                x
+                for x in data["pages"]
+                if x["parent_page"] == d["name"] and x["is_hidden"] == 0
+            ]
+
         # get sub from shourt cut
-        sub_menu = [s for s in shortcut_menus if s["parent"]==d["name"]]
+        sub_menu = [s for s in shortcut_menus if s["parent"] == d["name"]]
         if sub_menu:
             if "sub_menus" in d:
-                d["sub_menus"]["shortcut_menu"] = d["sub_menus"]["shortcut_menu"]  + [{"name":x["label"],"link_to":x["link_to"],'type':x["type"],"doc_view":x["doc_view"],"stats_filter":x["stats_filter"] } for x in  sub_menu ]
-                
+                d["sub_menus"]["shortcut_menu"] = d["sub_menus"]["shortcut_menu"] + [
+                    {
+                        "name": x["label"],
+                        "link_to": x["link_to"],
+                        "type": x["type"],
+                        "doc_view": x["doc_view"],
+                        "stats_filter": x["stats_filter"],
+                    }
+                    for x in sub_menu
+                ]
+
         # workspace link
-        if d["name"] in [x["parent"] for x  in workspace_links]:
-            sub_workspace_links = [x for x in workspace_links if x["parent"]==d["name"] and x["type"]=="Card Break" and x["link_count"]>0]
+        if d["name"] in [x["parent"] for x in workspace_links]:
+            sub_workspace_links = [
+                x
+                for x in workspace_links
+                if x["parent"] == d["name"]
+                and x["type"] == "Card Break"
+                and x["link_count"] > 0
+            ]
             if sub_workspace_links:
                 sub_workspace_links[0]["show"] = True
-            
 
             for c in sub_workspace_links:
-                c["links"] = [x for x in workspace_links if x["parent"]==d["name"] and x["idx"] in range(c["idx"] + 1, c["idx"] + c["link_count"] + 1)]
-                
-                d["sub_menus"]["workspace_links"].append( c)
+                c["links"] = [
+                    x
+                    for x in workspace_links
+                    if x["parent"] == d["name"]
+                    and x["idx"] in range(c["idx"] + 1, c["idx"] + c["link_count"] + 1)
+                ]
+
+                d["sub_menus"]["workspace_links"].append(c)
         # end get workspace link
-   
+
     for d in menus:
-        if not d["sub_menus"]["shortcut_menu"] and not d["sub_menus"]["workspace_links"]:
+        if (
+            not d["sub_menus"]["shortcut_menu"]
+            and not d["sub_menus"]["workspace_links"]
+        ):
             del d["sub_menus"]
- 
+
     # return data
     template = """
     <div class="render-element">
@@ -317,26 +358,50 @@ def get_sidebar_menu_template_cached(user,site= frappe.local.site):
     </div>
     """
     user = {
-        "username":frappe.get_cached_value("User",frappe.session.user,"full_name"),
-        "profile" : frappe.get_cached_value("User",frappe.session.user,"user_image"),
-        "name" : frappe.get_cached_value("User",frappe.session.user,"name"),
-        "email" : frappe.get_cached_value("User",frappe.session.user,"email")
+        "username": frappe.get_cached_value("User", frappe.session.user, "full_name"),
+        "profile": frappe.get_cached_value("User", frappe.session.user, "user_image"),
+        "name": frappe.get_cached_value("User", frappe.session.user, "name"),
+        "email": frappe.get_cached_value("User", frappe.session.user, "email"),
     }
-    
-    
-    return frappe.render_template(template,{"data":menus,"app_logo":frappe.get_cached_value("Navbar Settings",None,"app_logo"),"user":user})
 
+    return frappe.render_template(
+        template,
+        {
+            "data": menus,
+            "app_logo": frappe.get_cached_value("Navbar Settings", None, "app_logo"),
+            "user": user,
+        },
+    )
 
 
 def get_list_with_permission(data):
-    return_data = [d for d in data if d["type"] not in ["DocType","Report","Page"]]
+    return_data = [d for d in data if d["type"] not in ["DocType", "Report", "Page"]]
     # doctype
-    return_data = return_data + [d for d in data if d["type"]=="DocType" and frappe.has_permission(doctype=d["link_to"], ptype='read', user=frappe.session.user)]
+    return_data = return_data + [
+        d
+        for d in data
+        if d["type"] == "DocType"
+        and frappe.has_permission(
+            doctype=d["link_to"], ptype="read", user=frappe.session.user
+        )
+    ]
     # report
-    return_data = return_data + [d for d in data if d["type"]=="Report" and frappe.has_permission('Report', ptype='read', doc=d["link_to"], user=frappe.session.user)]
+    return_data = return_data + [
+        d
+        for d in data
+        if d["type"] == "Report"
+        and frappe.has_permission(
+            "Report", ptype="read", doc=d["link_to"], user=frappe.session.user
+        )
+    ]
     # page
-    return_data = return_data + [d for d in data if d["type"]=="Page" and frappe.has_permission('Page', ptype='read', doc=d["link_to"], user=frappe.session.user)]
-    
+    return_data = return_data + [
+        d
+        for d in data
+        if d["type"] == "Page"
+        and frappe.has_permission(
+            "Page", ptype="read", doc=d["link_to"], user=frappe.session.user
+        )
+    ]
+
     return return_data
-    
-    

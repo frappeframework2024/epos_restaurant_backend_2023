@@ -3,11 +3,11 @@
 
 frappe.ui.form.on("Printer", {
 	setup(frm) {
-    frappe.realtime.on("update_printer_to_products", (data) => {
-                frappe.show_alert({
-                    message: data.message,
-                    indicator: 'blue'
-                });
+        frappe.realtime.on("update_printer_to_products", (data) => {
+            frappe.show_alert({
+                message: data.message,
+                indicator: 'blue'
+            });
         });
 	},
 });
