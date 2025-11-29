@@ -77,10 +77,7 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                 }
                 else {
                     const portions = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule);
-                    console.log(p.prices+"||"+JSON.stringify(portions))
                     const check_modifiers = product.onCheckModifier(JSON.parse(p.modifiers || "[]"));
-                   
-                    
                     if (portions?.length == 1) {
                         p.portion = portions[0].portion
                         p.price = portions[0].price
@@ -178,7 +175,13 @@ async function get_base_unit(product_code){
 }
 
 async function AddProductTotalSaleOrderForRetailPOS(product_data,sale,product,dialog){
-
+    const portions = JSON.parse(product_data.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule);
+    if (portions?.length == 1) {
+        product_data.portion = portions[0].portion
+        product_data.price = portions[0].price
+        product_data.unit = portions[0].unit
+        product_data.discount = portions[0].default_discount || 0
+    }
     if (product_data.has_variants){
         product_data = await selectVariant(product_data.name,dialog)
        
