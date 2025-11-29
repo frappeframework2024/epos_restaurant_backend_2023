@@ -77,6 +77,7 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                 }
                 else {
                     const portions = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule);
+                    console.log(p.prices+"||"+portions)
                     const check_modifiers = product.onCheckModifier(JSON.parse(p.modifiers || "[]"));
                    
                     
