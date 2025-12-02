@@ -29,7 +29,15 @@ frappe.query_reports["Vendor Balance Detail Report"] = {
 			},
 			"on_change": function (query_report) {}
 		},
-		
+		{
+			fieldname: "stock_location",
+			label: __("Stock Location"),
+			fieldtype: "MultiSelectList",
+			get_data: function(txt) {
+				return frappe.db.get_link_options('Stock Location', txt);
+			},
+			"on_change": function (query_report) {}
+		},
 		{
 			"fieldname":"start_date",
 			"label": __("Start Date"),

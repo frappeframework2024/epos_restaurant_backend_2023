@@ -28,6 +28,12 @@ frappe.listview_settings['Product'] = {
             status: ['!=',"Variant"],
             disabled: ['=',0]
         };
+         frappe.realtime.on("product_notification", (data) => {
+            frappe.show_alert({
+                message: data.message,
+                indicator: 'blue'
+            });
+        });
     },
     onload(me) { 
         frappe.realtime.on("product_notification", (data) => {

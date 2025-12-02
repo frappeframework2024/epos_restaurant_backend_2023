@@ -6,59 +6,39 @@ import frappe
 
 def execute(filters=None):
 	validate(filters)
-
 	report_data = get_report_data(filters)
-
 	report_summary  = None
-
 	skip_total_row = False
-	 
 	return columns(), report_data,None, None, report_summary,skip_total_row
 
 
 def validate(filters):
 	if not filters.business_branch:
 		filters.business_branch = frappe.db.get_list("Business Branch",pluck='name')
-
 	if not filters.vendor:
 		filters.vendor = frappe.db.get_list("Vendor",pluck='name')
-  
-
 	if filters.start_date and filters.end_date:
 		if filters.start_date > filters.end_date:
-
 			frappe.throw("The 'Start Date' ({}) must be before the 'End Date' ({})".format(filters.start_date, filters.end_date))
 
-
 def get_vendor(opening_data, current_transaction_data):
-	 
 	vendor_data = []
 	if opening_data:
-		
 		vendor_data = [{"vendor":d["vendor"], "vendor_name":d["vendor_name"],"indent":0} for d in opening_data]
-		
-		
 	if current_transaction_data:
-	 
 		vendor_data = vendor_data +  [{"vendor":d["vendor"], "vendor_name":d["vendor_name"],"indent":0} for d in current_transaction_data]
-
 	unique_vendor = list(set(str(d) for d in vendor_data))
-
-	 
 	return [eval(d) for d in unique_vendor]
-
 
 def get_report_data(filters):
 	current_transaction_data= get_current_transaction(filters)
 	opening_data = get_opening_balance(filters)
-	 
 	vendor_data = get_vendor(opening_data,current_transaction_data)
 	report_data = []
 	ending_balance = 0
 	for v in sorted(vendor_data, key=lambda x: x['vendor']):
 		opening_balance = [d for d in opening_data or [] if d["vendor"]==v["vendor"] ]
 		ending_balance = ending_balance + (0 if not opening_balance else opening_balance[0]["amount"])
-
 		report_data.append({
 			"indent":0,
 			"transaction_number": v["vendor_name"],
@@ -68,7 +48,6 @@ def get_report_data(filters):
 		})
 		#render transaction
 		for t in [d for d in current_transaction_data if d["vendor"] == v["vendor"]]:
-				 
 				ending_balance = ending_balance +  t["operation_balance"]
 				report_data.append({
 							"indent":1,
@@ -78,6 +57,7 @@ def get_report_data(filters):
 							"transaction_type": t["transaction_type"],
 							"begining_balance":0,
 							"operation_balance": t["operation_balance"],
+							"stock_location":t["stock_location"],
 							"last_balance":ending_balance
 						})
 
@@ -96,7 +76,9 @@ def get_report_data(filters):
 
 
 def get_opening_balance(filters):
-	 
+	conditions = """where docstatus=1 and  posting_date < %(start_date)s and business_branch in %(business_branch)s and vendor in %(vendor)s """
+	if filters.stock_location:
+		conditions += " and stock_location in %(stock_location)s"
 	sql = """
 			with a as (
 				select 
@@ -104,10 +86,7 @@ def get_opening_balance(filters):
 					concat(vendor, '-',vendor_name) as vendor_name ,
 					sum(grand_total) as amount   
 				from `tabPurchase Order` 
-				where docstatus=1 
-					and  posting_date < %(start_date)s 
-					and business_branch in %(business_branch)s 
-					and vendor in %(vendor)s 
+				{0}
 				group by 
 					vendor,
 					vendor_name				
@@ -117,22 +96,19 @@ def get_opening_balance(filters):
 					concat(vendor, '-',vendor_name) as vendor_name,
 					sum(payment_amount*-1) as amount   
 				from `tabPurchase Order Payment`
-				where docstatus=1 
-					and posting_date < %(start_date)s    
-					and business_branch in %(business_branch)s 
-					and vendor in %(vendor)s 
+				{0}
 				group by 
 					vendor,
 					vendor_name
 			)
 			select vendor,vendor_name, sum(amount) as amount from a group by vendor,vendor_name 			
-		"""
+		""".format(conditions)
 	return frappe.db.sql(sql, filters,as_dict=1)
 
 def get_current_transaction(filters):
-	condition = "where docstatus=1  and business_branch in %(business_branch)s  and vendor in %(vendor)s and posting_date between %(start_date)s and %(end_date)s"
-
-
+	condition = "where a.docstatus=1  and a.business_branch in %(business_branch)s  and a.vendor in %(vendor)s and a.posting_date between %(start_date)s and %(end_date)s"
+	if filters.stock_location:
+		condition += " and a.stock_location in %(stock_location)s"
 	sql = """
 				select 
 					vendor, 
@@ -143,8 +119,9 @@ def get_current_transaction(filters):
 					'Purchase' as transaction_type, 
 					0 as begining_balance,
 					grand_total as operation_balance,
-					0 as last_balance 
-					from `tabPurchase Order`
+					0 as last_balance ,
+					stock_location
+					from `tabPurchase Order` a
 						{0}
 				union
 				select 
@@ -156,8 +133,9 @@ def get_current_transaction(filters):
 					'Payment' as transaction_type,
 					0 as begining_balance,
 					payment_amount * -1 as operation_balance,
-					0 as last_balance 
-					from `tabPurchase Order Payment`
+					0 as last_balance ,
+					stock_location
+					from `tabPurchase Order Payment` a
 						{0}
 		""".format(condition)	
 	data = frappe.db.sql(sql,filters, as_dict=1)
@@ -171,6 +149,7 @@ def columns():
 		{"fieldname":"reference_number", "label":"Ref. #" },
 		{"fieldname":"transaction_date", "label":"Date","fieldtype":"Date","width": 120},
 		{"fieldname":"transaction_type", "label":"Transaction Type" },
+		{"fieldname":"stock_location", "label":"Stock Location","width":180},
 		{"fieldname":"begining_balance", "label":"Begining Balance","fieldtype":"Currency"},
 		{"fieldname":"operation_balance", "label":"Operation Balance","fieldtype":"Currency"},
 		{"fieldname":"last_balance", "label":"Last Balance","fieldtype":"Currency"},
