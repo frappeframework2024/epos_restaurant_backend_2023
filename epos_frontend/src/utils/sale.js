@@ -21,30 +21,20 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                     return
                 }
             }
-            
             if (p.is_empty_stock_warning == 1) { 
                 let emptyConfirm = await EmptyStockProductDialog();
                 if (!emptyConfirm) {
                     return
                 }
             }  
-            
-                        
             if(p.has_variants==1){
-               
                 p  = await selectVariant(p.name,dialog);
-                
                 if(!p){
                     return
                 }            
             }
-
-         
-        
             if (!p.is_timer_product) {
-                
                 if (p.is_open_product == 1) {
-
                     let productPrices = await keypadWithNoteDialog({
                         data: {
                             title: `${p.name_en}`,
@@ -55,7 +45,6 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                             product_code: p.name
                         }
                     });
-
                     if (productPrices) {
                         p.name_en = productPrices.note;
                         p.name_kh = productPrices.note;
@@ -66,11 +55,9 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                     } else {
                         return
                     }
-
                 }
                 else if (p.is_combo_menu) {
                     await onComboMenu(p,product)
-                     
                     p.modifiers = "";
                     p.portion = "";
                     p.modifiers_data = "[]";
@@ -84,17 +71,14 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                         p.unit = portions[0].unit
                         p.discount = portions[0].default_discount || 0
                     }
-                    
                     if (check_modifiers || portions?.length > 1 || p.is_open_price) {
                         const pro_data = product_data;
                         if (p.is_open_price && portions.length == 0) {
                             pro_data.prices = JSON.stringify([{ "price": p.price, "branch": "", "price_rule": sale.sale.price_rule, "portion": "Normal", "unit": p.unit, "default_discount": 0 }])
                         }
-                        
                         product.setSelectedProduct(pro_data,sale.sale.price_rule);
                         let productPrices = null
                         let base_unit = ""
-                        
                         if(sale.setting.use_menu_retail == 1){
                             await get_base_unit(p.name).then((res)=>{base_unit = res})
                             if(unit == "" || unit == null || unit == undefined){
@@ -104,7 +88,6 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                                 const portion = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule && decodeURIComponent(r.unit) == unit);
                                 const modifiers = JSON.parse((p.modifiers || "[]"))?.filter(r => (r.branch == sale.sale.business_branch || r.branch == ''));
                                 productPrices = { "portion":(portion[0] || []),"modifiers":(modifiers[0] || [])}
-                        
                             }
                             else if(unit == base_unit && sale.setting.base_unit_popup == 1){
                                 productPrices = await addModifierDialog();
@@ -113,14 +96,12 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                                 const portion = JSON.parse(p.prices)?.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule && decodeURIComponent(r.unit) == unit);
                                 const modifiers = JSON.parse((p.modifiers || ""))?.filter(r => (r.branch == sale.sale.business_branch || r.branch == ''));
                                 productPrices = { "portion":(portion[0] || []),"modifiers":(modifiers[0] || [])}
-                            
                             }
                         }
                         else{
                             productPrices = await addModifierDialog();
                         }
                         if (productPrices) {
-                        
                             if (productPrices.portion != undefined) {
                                 p.price = productPrices.portion.price;
                                 p.portion = productPrices.portion.portion;
@@ -130,7 +111,6 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                             p.modifiers = (productPrices.modifiers.modifiers || "");
                             p.modifiers_data = (productPrices.modifiers.modifiers_data || "[]");
                             p.modifiers_price = (productPrices.modifiers.price || 0)
-
                         } else {
                             return;
                         }
@@ -140,7 +120,6 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                         p.portion = p.portion=="Normal"?"":p.portion; 
                     }
                 }
-
             } else {
                 let selectdatetime = await SelectDateTime();
                 if (selectdatetime) {
@@ -153,16 +132,12 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                     return
                 }
             }
-            
             sale.addSaleProduct(p);
         }
     } else {
         // for retail
         AddProductTotalSaleOrderForRetailPOS(product_data,sale,product,dialog)
-
     }
-
-
 }
 
 async function get_base_unit(product_code){
@@ -184,11 +159,9 @@ async function AddProductTotalSaleOrderForRetailPOS(product_data,sale,product,di
     }
     if (product_data.has_variants){
         product_data = await selectVariant(product_data.name,dialog)
-       
     }
     sale.addSaleProduct(product_data);
 }
-
 
 function selectVariant(product_code,dialog){
     return new Promise((resolve) => {
@@ -209,7 +182,6 @@ function selectVariant(product_code,dialog){
             },
             onClose: (options) => {
                 const data = options.data;
-                
                 if (data != undefined) {
                     resolve(data.product)
                 }else {
@@ -217,7 +189,6 @@ function selectVariant(product_code,dialog){
                 }
             }
         });
-      
     })
 }
 
@@ -226,12 +197,10 @@ async function onComboMenu(p,product) {
         product.setSelectedComboMenu(p)
         const result = await SaleProductComboMenuGroupModal();
         if (result) {
-
             if (result.combo_groups.length > 0) {
                 p.combo_menu = getSeperateNameComboGroup(p, result.combo_groups)
 
                 p.combo_group_data = JSON.stringify(result.combo_groups)
-
             } else {
                 p.combo_menu = ''
                 p.combo_group_data = "[]"
@@ -255,12 +224,10 @@ function getSeperateNameComboGroup(p, list) {
         combo_menu_items.push('***' + x.pos_title + '***')
         let combo_menus = []
         list.forEach(r => {
-
             if (r.group == x.combo_group) {
                 combo_menus.push(r.product_name + ' x' + r.quantity)
             }
         })
-
         combo_menu_items.push(combo_menus.join(", "))
     })
     return combo_menu_items.join("|")
