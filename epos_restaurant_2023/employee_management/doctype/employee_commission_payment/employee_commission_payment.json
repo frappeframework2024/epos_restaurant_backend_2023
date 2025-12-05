@@ -10,6 +10,7 @@
   "employee",
   "sale_start_date",
   "naming_series",
+  "outlet",
   "column_break_tlzf",
   "posting_date",
   "sale_end_date",
@@ -99,12 +100,18 @@
   {
    "fieldname": "section_break_wdog",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "outlet",
+   "fieldtype": "Link",
+   "label": "Outlet",
+   "options": "Outlet"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-02-17 16:18:46.917156",
+ "modified": "2025-12-05 09:16:32.421243",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee Commission Payment",
