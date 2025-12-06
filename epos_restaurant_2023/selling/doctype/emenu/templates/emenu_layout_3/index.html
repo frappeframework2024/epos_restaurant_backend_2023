@@ -1,11 +1,14 @@
-
-{{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/header_logo.html", {"doc":doc}) }}
-{{frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/header_title_description.html",{"doc":doc}) }}
+<div class="mt-3">
+    {{frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/header_title_description.html",{"doc":doc}) }}
+</div>
 <div class="py-3 my-3 nav-pro-wrapper border border-start-0 border-end-0 border-bottom-0 bg-white el-shadow"
     style="top:0;">
     <nav class="container">
         <div class="position-relative">
             <div class="tab-bar">
+                <div class="left-arrow">
+                    <p><i class="fas fa-chevron-left"></i></p>
+                </div>
                 <div class="navigt tabs">
                     <div class="d-flex mb-0">
                         {% if (doc.popular_product | length) >0 %}
@@ -23,17 +26,20 @@
                         {%endfor%}
                     </div>
                 </div>
+                <div class="right-arrow active">
+                    <p><i class="fas fa-chevron-right"></i></p>
+                </div>
             </div>
         </div>
     </nav>
-    <div class="search-container w-100 mt-3 px-2">
-        <input type="text" id="searchBox" placeholder="Search products..." class="search-box w-100">
-    </div>
+    <!-- <div class="container">
+        <div class="search-container w-100 mt-3 px-2">
+            <input type="text" id="searchBox" placeholder="Search Products..." class="search-box w-100">
+        </div>
+    </div> -->
 </div>
 <div class="container sections-content-1">
-    <div class="sections sections-content">
-    
-        
+    <div class="sections sections-content">    
         {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/emenu_layout_3/menu_list.html", {"doc":doc,"products":products,"popular_products":popular_products}) }}
         <br/>
     </div>

@@ -529,10 +529,21 @@ def unlock_db(self):
 
 def math_round(value, precision = None):
 	import math
+	import decimal
 	if not precision:
 		precision = int( frappe.get_cached_value("System Settings", None, "currency_precision") or 0)
-	result = math.floor(((value or 0) * math.pow(10, (precision or 0) )) + 0.5) / math.pow(10, (precision or 0))
-	return result
+	
+	# 1. Define the precision context (e.g., 1E-2 for 2 decimal places)
+	power = decimal.Decimal('1E-' + str(precision))
+	# 2. Convert value to a string first to ensure accurate Decimal representation
+	dec_value = decimal.Decimal(str(value)) 
+	# 3. Quantize (round) using the standard ROUND_HALF_UP rule
+	result = dec_value.quantize(power, rounding=decimal.ROUND_HALF_UP)
+	# Return as a float for consistency with your original function signature
+	return float(result)
+
+	# result = math.floor(((value or 0) * math.pow(10, (precision or 0) )) + 0.5) / math.pow(10, (precision or 0))
+	# return result
 
 def update_sales_order_and_delivery_note_status(self):
 	if self.sales_order:
@@ -1114,11 +1125,13 @@ def validate_sale_product(self):
 		if sale_discount>0 and d.allow_discount and d.discount==0:
 			d.sale_discount_percent = sale_discount  
 			d.sale_discount_amount = (sale_discount/100) * d.sub_total
-			# d.sale_discount_amount=math_round(d.sale_discount_amount  , int(currency_precision)) 
 		else:
 			d.sale_discount_percent = 0  
 			d.sale_discount_amount = 0
 
+		
+		d.sale_discount_amount=math_round(d.sale_discount_amount  , int(currency_precision)) 
+		
 		d.total_discount = (d.sale_discount_amount or 0) + (d.discount_amount or 0)
 
 		validate_tax(d)

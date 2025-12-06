@@ -286,7 +286,7 @@
 		.nav-pro-wrapper{
 			position: sticky; 
 			z-index: 10000;
-			margin: 0 -.7rem;
+			/* margin: 0 -.7rem; */
 		}
 		ul.pt-si{
 			columns: 2;
@@ -873,6 +873,18 @@
 				tab.classList.add("active");
 			});
 		}); 
+
+		// Scroll the tab list to the right
+		scrollRightArrow.addEventListener("click", () => {
+			tabList.scrollLeft += 300;
+			manageLeftbtn();
+		});
+
+		// Scroll the tab list to the left
+		scrollLeftArrow.addEventListener("click", () => {
+			tabList.scrollLeft -= 300;
+			manageLeftbtn();
+		});
 
 
 		// Listen to scroll event to activate the buttons
