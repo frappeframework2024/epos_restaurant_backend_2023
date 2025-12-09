@@ -78,7 +78,7 @@ def update_inventory(self):
 					'stock_location':self.stock_location,
 					'in_quantity':(p.quantity / uom_conversion) if entry_type == 'Stock In' else 0,
 					'out_quantity':(p.quantity / uom_conversion) if entry_type == 'Stock Out' else 0,
-					"price":calculate_average_cost(p.product_code,self.stock_location,(p.quantity / uom_conversion),((p.quantity / uom_conversion) * p.cost)),
+					"price":calculate_average_cost(p.product_code,self.stock_location,(p.quantity / uom_conversion),(p.amount)),
 					'note': 'New stock Entry submitted.',
 					"stock_entry_type":self.entry_type,
 					"action": "Submit"
@@ -97,7 +97,7 @@ def update_inventory(self):
 					'stock_location':self.stock_location,
 					'out_quantity':(p.quantity / uom_conversion) if entry_type == 'Stock In' else 0,
 					'in_quantity':(p.quantity / uom_conversion) if entry_type == 'Stock Out' else 0,
-					"price":calculate_average_cost(p.product_code,self.stock_location,((p.quantity*-1) / uom_conversion),(((p.quantity*-1) / uom_conversion) * p.cost),self.name),
+					"price":calculate_average_cost(p.product_code,self.stock_location,((p.quantity*-1) / uom_conversion),(p.amount),self.name),
 					'note': 'Stock Entry cancelled.',
 					"stock_entry_type":self.entry_type,
 					"action": "Cancel"
