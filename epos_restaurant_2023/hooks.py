@@ -116,8 +116,7 @@ after_migrate = [
 # Permissions evaluated in scripted ways
 
 permission_query_conditions = {
-	"Employee": "epos_restaurant_2023.query_permission.get_employee_permission",
-	"Product": "epos_restaurant_2023.query_permission.product_filters",
+	"Employee": "epos_restaurant_2023.query_permission.get_employee_permission"
 }
 #
 # has_permission = {
