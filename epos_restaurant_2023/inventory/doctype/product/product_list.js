@@ -24,10 +24,6 @@ frappe.listview_settings['Product'] = {
         }
     },
     refresh(me) { 
-        frappe.route_options = {
-            status: ['!=',"Variant"],
-            disabled: ['=',0]
-        };
          frappe.realtime.on("product_notification", (data) => {
             frappe.show_alert({
                 message: data.message,
@@ -42,10 +38,10 @@ frappe.listview_settings['Product'] = {
                 indicator: 'blue'
             });
         });
-        frappe.route_options = {
-            status: ['!=',"Variant"],
-            disabled: ['=',0]
-        };
+        // frappe.route_options = {
+        //     status: ['!=',"Variant"],
+        //     disabled: ['=',0]
+        // };
 
         me.page.add_action_item('Assign Menu', function() {
             let d = new frappe.ui.Dialog({
