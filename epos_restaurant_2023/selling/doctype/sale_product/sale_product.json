@@ -12,6 +12,7 @@
   "product_name",
   "product_name_kh",
   "portion",
+  "vendor",
   "column_break_4",
   "product_group",
   "product_category",
@@ -1282,12 +1283,20 @@
    "fieldname": "input_currency",
    "fieldtype": "Data",
    "label": "Input Currency"
+  },
+  {
+   "fetch_from": "product_code.vendor",
+   "fieldname": "vendor",
+   "fieldtype": "Link",
+   "label": "Vendor",
+   "options": "Vendor",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-09-16 15:56:26.388733",
+ "modified": "2025-12-11 09:01:51.725019",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",

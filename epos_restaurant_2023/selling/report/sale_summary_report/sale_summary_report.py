@@ -249,7 +249,6 @@ def get_conditions(filters,group_filter=None):
 	start_date = filters.start_date
 	end_date = filters.end_date
 
-
 	if(group_filter!=None):
 		 
 		conditions += " and {} ='{}'".format(group_filter["field"],group_filter["value"].replace("'","''").replace("%","%%"))
@@ -282,6 +281,9 @@ def get_conditions(filters,group_filter=None):
 	
 	if filters.cashier_shift:
 		conditions += " AND b.cashier_shift  in %(cashier_shifts)s"
+
+	if filters.vendor:
+		conditions += " AND a.vendor  in %(vendor)s"
   
 	return conditions
 
@@ -520,6 +522,12 @@ def get_row_groups():
 			"label":"Bill No",
 			"parent_row_group_filter_field":"row_group",
 			"show_commission":True
+		},
+		{
+			"fieldname":"coalesce(a.vendor,'Not Set')",
+			"label":"Vendor",
+			"parent_row_group_filter_field":"row_group",
+			"show_commission":False
 		},
 		{
 			"fieldname":"a.product_category",

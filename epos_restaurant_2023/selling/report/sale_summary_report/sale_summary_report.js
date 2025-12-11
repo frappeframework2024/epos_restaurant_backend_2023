@@ -232,10 +232,11 @@ frappe.query_reports["Sale Summary Report"] = {
 			"fieldname": "parent_row_group",
 			"label": __("Parent Group By"),
 			"fieldtype": "Select",
-			"options": "\nCategory\nProduct Group\nRevenue Group\nBusiness Branch\nOutlet\nTable Group\nTable\nPOS Profile\nCustomer\nCustomer Group\nStock Location\nDate\n\Month\nYear\nSale Invoice\nWorking Day\nCashier Shift\nSale Type",
+			"options": "\nCategory\nProduct Group\nRevenue Group\nBusiness Branch\nOutlet\nTable Group\nTable\nPOS Profile\nCustomer\nCustomer Group\nStock Location\nDate\n\Month\nYear\nSale Invoice\nWorking Day\nCashier Shift\nSale Type\nVendor",
 			on_change: function() { 
 				filter = frappe.query_report.get_filter_value('parent_row_group')
 				frappe.query_report.toggle_filter_display('table',filter !== 'Table');
+				frappe.query_report.toggle_filter_display('vendor',filter !== 'Vendor');
 			},
 			
 		},
@@ -243,11 +244,12 @@ frappe.query_reports["Sale Summary Report"] = {
 			"fieldname": "row_group",
 			"label": __("Row Group By"),
 			"fieldtype": "Select",
-			"options": "Product Code\nProduct And Price\nCategory\nProduct Group\nRevenue Group\nBusiness Branch\nOutlet\nTable Group\nTable\nPOS Profile\nCustomer\nCustomer Group\nStock Location\nDate\n\Month\nYear\nSale Invoice\nWorking Day\nCashier Shift\nSale Type\nSeller",
+			"options": "Product Code\nProduct And Price\nCategory\nProduct Group\nRevenue Group\nBusiness Branch\nOutlet\nTable Group\nTable\nPOS Profile\nCustomer\nCustomer Group\nStock Location\nDate\n\Month\nYear\nSale Invoice\nWorking Day\nCashier Shift\nSale Type\nSeller\nVendor",
 			"default":"Category",
 			on_change: function() { 
 				filter = frappe.query_report.get_filter_value('row_group')
 				frappe.query_report.toggle_filter_display('table',filter !== 'Table');
+				frappe.query_report.toggle_filter_display('vendor',filter !== 'Vendor');
 			},
 		},
 		{
@@ -286,6 +288,15 @@ frappe.query_reports["Sale Summary Report"] = {
 			hide_in_filter:1,
 			"on_change": function (query_report) {},
 		},
+		{
+            fieldname: "vendor",
+            label: __("Vendor"),
+            fieldtype: "MultiSelectList",
+            get_data: function(txt) {
+                return frappe.db.get_link_options('Vendor', txt);
+            },
+			"on_change": function (query_report) {},
+        },
 		{
 			"fieldname": "chart_type",
 			"label": __("Chart Type"),
@@ -363,7 +374,7 @@ function update_row_group_options(default_sale_type) {
         "Product Code","Product And Price","Category", "Product Group", "Revenue Group", "Business Branch", 
         "Outlet", "Table Group", "Table", "POS Profile", "Customer", 
         "Customer Group", "Stock Location", "Date", "Month", "Year", 
-        "Sale Invoice", "Working Day", "Cashier Shift", "Sale Type"
+        "Sale Invoice", "Working Day", "Cashier Shift", "Sale Type","Vendor"
     ];
 
     let hideOptions = [];
@@ -382,7 +393,7 @@ function update_parent_row_group_options(default_sale_type) {
         "Revenue Group", "Business Branch", "Outlet", "Table Group", 
         "Table", "POS Profile", "Customer", "Customer Group", 
         "Stock Location", "Date", "Month", "Year", "Sale Invoice", 
-        "Working Day", "Cashier Shift", "Sale Type", "Seller"
+        "Working Day", "Cashier Shift", "Sale Type", "Seller","Vendor"
     ];
 
     let hideOptions = [];
