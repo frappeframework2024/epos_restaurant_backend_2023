@@ -252,7 +252,7 @@ frappe.query_reports["Sale Summary Report"] = {
 			on_change: function() { 
 				filter = frappe.query_report.get_filter_value('row_group')
 				frappe.query_report.toggle_filter_display('table',filter !== 'Table');
-				frappe.query_report.toggle_filter_display('vendor',filter == 'Vendor');
+				frappe.query_report.toggle_filter_display('vendor',filter !== 'Vendor');
 			},
 		},
 		{
