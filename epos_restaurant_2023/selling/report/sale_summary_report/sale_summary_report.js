@@ -13,6 +13,9 @@ frappe.query_reports["Sale Summary Report"] = {
 		if(frappe.query_report.get_filter_value('parent_row_group')!=="Table"){
 			frappe.query_report.toggle_filter_display('table', true);
 		}
+		if(frappe.query_report.get_filter_value('parent_row_group')!=="Vendor"){
+			frappe.query_report.toggle_filter_display('vendor', true);
+		}
 		if(frappe.query_report.get_filter_value('row_group')!=="Table"){
 			frappe.query_report.toggle_filter_display('table', true);
 		}
@@ -249,7 +252,7 @@ frappe.query_reports["Sale Summary Report"] = {
 			on_change: function() { 
 				filter = frappe.query_report.get_filter_value('row_group')
 				frappe.query_report.toggle_filter_display('table',filter !== 'Table');
-				frappe.query_report.toggle_filter_display('vendor',filter !== 'Vendor');
+				frappe.query_report.toggle_filter_display('vendor',filter == 'Vendor');
 			},
 		},
 		{
