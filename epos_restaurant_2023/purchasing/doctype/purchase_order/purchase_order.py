@@ -145,10 +145,13 @@ def validate_account(self):
  
 	for p in self.purchase_order_products:
 		if not p.stock_account:
-			is_inventory = frappe.get_doc("Product", p.product_code ).is_inventory_product or 0
+			product = frappe.get_doc("Product", p.product_code )
 			default_inventory_account = frappe.get_cached_value("Business Branch", self.business_branch,"default_inventory_account")
-			if is_inventory:
-				p.stock_account = default_inventory_account
+			if (product.is_inventory_product or 0):
+				if product.default_account:
+					p.stock_account = [a.default_stock_account for a in product.default_account if a.business_branch == self.business_branch][0]
+				else:
+					p.stock_account = default_inventory_account
 			else:
 				p.stock_account = frappe.get_cached_value("Business Branch", self.business_branch,"default_none_inventory_account") or default_inventory_account
 
@@ -165,8 +168,12 @@ def get_accounts(branch,product):
 
 	is_inventory = doc.is_inventory_product or 0
 	default_inventory_account = frappe.get_cached_value("Business Branch", branch,"default_inventory_account")
+	stock_account = ""
 	if is_inventory:
-		stock_account = default_inventory_account
+		if doc.default_account:
+			stock_account = [a.default_stock_account for a in doc.default_account if a.business_branch == branch][0]
+		else:
+			stock_account = default_inventory_account
 	else:
 		stock_account = frappe.get_cached_value("Business Branch", branch,"default_none_inventory_account") or default_inventory_account	
 	return {"stock_account":stock_account,"expense_account":expense_account}

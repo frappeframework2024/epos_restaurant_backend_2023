@@ -186,49 +186,56 @@ def submit_sale_to_general_ledger_entry(self):
 		for acc in set([d.default_expense_account for d in sale_products]):
 			if not acc:
 				frappe.throw(_("Please enter expense account"))
-			doc = {
-					"doctype":"General Ledger",
-					"posting_date":self.posting_date,
-					"account": acc,
-					"amount":sum([d.quantity* (d.cost or 0) for d in sale_products if (d.is_inventory_product==1 and d.default_expense_account==acc)]),
-					"againt":self.default_inventory_account,
-					"againt_voucher_type":"Sale",
-					"againt_voucher_number": self.name,
-					"voucher_type":"Sale",
-					"voucher_number":self.name,
-					"business_branch": self.business_branch,
-					"party_type":"Customer",
-					"party":self.customer,
-					"party_name":self.customer_name,
-					"type":"Asset"#not use in db
-				}
-			docs.append(doc)
+			for inv in set([d.default_inventory_account for d in sale_products]):
+				goods_sold_amount = sum([d.quantity* (d.cost or 0) for d in sale_products if (d.is_inventory_product==1 and d.default_expense_account==acc and d.default_inventory_account == inv)])
+				if goods_sold_amount != 0:
+					doc = {
+							"doctype":"General Ledger",
+							"posting_date":self.posting_date,
+							"account": acc,
+							"amount":goods_sold_amount,
+							"againt": inv,
+							"againt_voucher_type":"Sale",
+							"againt_voucher_number": self.name,
+							"voucher_type":"Sale",
+							"voucher_number":self.name,
+							"business_branch": self.business_branch,
+							"party_type":"Customer",
+							"party":self.customer,
+							"party_name":self.customer_name,
+							"type":"Asset"#not use in db
+						}
+					docs.append(doc)
 	if sum([d.quantity*(d.cost or 0)  for d in sale_products if d.is_inventory_product==1]):
 	# deduct stock in hand
 		for acc in set([d.default_expense_account for d in sale_products]):
 			if not acc:
 				frappe.throw(_("Please enter expense account"))
-			doc = {
-					"doctype":"General Ledger",
-					"posting_date":self.posting_date,
-					"account":self.default_inventory_account,
-					"amount":sum([d.quantity*(d.cost or 0)  for d in sale_products if (d.is_inventory_product==1 and d.default_expense_account==acc)])*-1,
-					"againt":acc,
-					"againt_voucher_type":"Sale",
-					"againt_voucher_number": self.name,
-					"voucher_type":"Sale",
-					"voucher_number":self.name,
-					"business_branch": self.business_branch,
-					"party_type":"Customer",
-					"party":self.customer,
-					"party_name":self.customer_name,
-					"type":"Asset"#not use in db
-				}
-			docs.append(doc)
+			for inv in set([d.default_inventory_account for d in sale_products]):
+				stock_in_hand_amount = sum([d.quantity*(d.cost or 0)  for d in sale_products if (d.is_inventory_product==1 and d.default_expense_account==acc and d.default_inventory_account == inv)])
+				if stock_in_hand_amount != 0:
+					doc = {
+							"doctype":"General Ledger",
+							"posting_date":self.posting_date,
+							"account":inv,
+							"amount":stock_in_hand_amount*-1,
+							"againt":acc,
+							"againt_voucher_type":"Sale",
+							"againt_voucher_number": self.name,
+							"voucher_type":"Sale",
+							"voucher_number":self.name,
+							"business_branch": self.business_branch,
+							"party_type":"Customer",
+							"party":self.customer,
+							"party_name":self.customer_name,
+							"type":"Asset"#not use in db
+						}
+					docs.append(doc)
 	
 	
 	# cost of good sold for product have recipes
 	recipe_acc = []
+	recipe_inventory_acc = []
 	for sp in sale_products:
 		if (sp.is_inventory_product or 0) == 0:
 			product = frappe.get_cached_doc("Product",sp.product_code)
@@ -240,44 +247,50 @@ def submit_sale_to_general_ledger_entry(self):
 						cost = get_product_cost(self.stock_location,r.product)
 						uom_conversion = get_uom_conversion(recipe.unit,r.unit)
 						total_amount = (cost / uom_conversion * r.quantity)
-						recipe_acc.append({"account":get_expense_account(self,recipe),"total_amount":total_amount})
+						stock_acc = get_recipe_defalt_inventory_account(self,recipe)
+						recipe_acc.append({"account":get_expense_account(self,recipe),"stock_account":stock_acc,"total_amount":total_amount})
+						recipe_inventory_acc.append({"account":stock_acc})
 	group_recipe_acc = set([d["account"] for d in recipe_acc])
+	recipe_inventory_acc = set([d["account"] for d in recipe_inventory_acc])
 	if len(group_recipe_acc) > 0:
 		for acc in group_recipe_acc:
-			doc = {
-				"doctype":"General Ledger",
-				"posting_date":self.posting_date,
-				"account": acc,
-				"amount":sum([d["total_amount"] for d in recipe_acc if d["account"]==acc]),
-				"againt":self.default_inventory_account,
-				"againt_voucher_type":"Sale",
-				"againt_voucher_number": self.name,
-				"voucher_type":"Sale",
-				"voucher_number":self.name,
-				"business_branch": self.business_branch,
-				"party_type":"Customer",
-				"party":self.customer,
-				"party_name":self.customer_name,
-				"type":"Asset"
-			}
-			docs.append(doc)
-			doc = {
-				"doctype":"General Ledger",
-				"posting_date":self.posting_date,
-				"account": self.default_inventory_account,
-				"amount": sum([d["total_amount"] for d in recipe_acc if d["account"]==acc])*-1,
-				"againt": acc,
-				"againt_voucher_type":"Sale",
-				"againt_voucher_number": self.name,
-				"voucher_type":"Sale",
-				"voucher_number":self.name,
-				"business_branch": self.business_branch,
-				"party_type":"Customer",
-				"party":self.customer,
-				"party_name":self.customer_name,
-				"type":"Asset"
-			}
-			docs.append(doc)
+			for inventory_acc in recipe_inventory_acc:
+				recipe_amount = sum([d["total_amount"] for d in recipe_acc if d["account"]==acc and d["stock_account"] == inventory_acc])
+				if recipe_amount != 0:
+					doc = {
+						"doctype":"General Ledger",
+						"posting_date":self.posting_date,
+						"account": acc,
+						"amount":recipe_amount,
+						"againt": inventory_acc,
+						"againt_voucher_type":"Sale",
+						"againt_voucher_number": self.name,
+						"voucher_type":"Sale",
+						"voucher_number":self.name,
+						"business_branch": self.business_branch,
+						"party_type":"Customer",
+						"party":self.customer,
+						"party_name":self.customer_name,
+						"type":"Asset"
+					}
+					docs.append(doc)
+					doc = {
+						"doctype":"General Ledger",
+						"posting_date":self.posting_date,
+						"account": inventory_acc,
+						"amount": recipe_amount*-1,
+						"againt": acc,
+						"againt_voucher_type":"Sale",
+						"againt_voucher_number": self.name,
+						"voucher_type":"Sale",
+						"voucher_number":self.name,
+						"business_branch": self.business_branch,
+						"party_type":"Customer",
+						"party":self.customer,
+						"party_name":self.customer_name,
+						"type":"Asset"
+					}
+					docs.append(doc)
 		
 	# cash coupon claim
 	if self.total_cash_coupon_claim> 0:
@@ -430,4 +443,13 @@ def get_expense_account(self,recipe):
 		if acc:
 			account = acc
 	
+	return account
+
+def get_recipe_defalt_inventory_account(self,recipe):
+	account = ""
+	acc = [d.default_stock_account for d in recipe.default_account if d.business_branch == self.business_branch]
+	if acc:
+		account = acc[0]
+	else:
+		account = frappe.get_cached_value("Business Branch",self.business_branch,"default_inventory_account")
 	return account
