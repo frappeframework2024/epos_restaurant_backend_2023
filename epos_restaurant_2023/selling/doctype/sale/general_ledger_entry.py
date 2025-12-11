@@ -278,7 +278,7 @@ def submit_sale_to_general_ledger_entry(self):
 						"doctype":"General Ledger",
 						"posting_date":self.posting_date,
 						"account": inventory_acc,
-						"amount": recipe_amount*-1,
+						"amount": (recipe_amount*-1),
 						"againt": acc,
 						"againt_voucher_type":"Sale",
 						"againt_voucher_number": self.name,
@@ -424,25 +424,21 @@ def get_expense_account(self,recipe):
 	acc = frappe.db.sql(sql, {"parents":recipe.name, "business_branch":self.business_branch},as_dict=1)
 	if len(acc) > 0:
 		account = acc[0]["default_expense_account"]
-  
 	# 2 get from pos_config
-	if account == "":
+	if not account:
 		acc = get_default_account_from_pos_config(json.dumps({"business_branch": self.business_branch, "pos_config":self.pos_config, "revenue_groups" : list([recipe.revenue_group])}))
 		if len(acc)>0:
 			account = acc[0]["default_expense_account"]
-
 	# 3 get account code from revenue group 
-	if account == "":
+	if not account:
 		acc = get_default_account_from_revenue_group(json.dumps( {"business_branch": self.business_branch, "revenue_groups": list([recipe.revenue_group])}))
 		if len(acc)>0:
 			account = acc[0]["default_expense_account"]
-	
 	# 4 get account code from revenue group 
-	if account == "":
+	if not account:
 		acc = frappe.get_cached_value("Business Branch",self.business_branch, "default_cost_of_good_sold_account")
 		if acc:
 			account = acc
-	
 	return account
 
 def get_recipe_defalt_inventory_account(self,recipe):
