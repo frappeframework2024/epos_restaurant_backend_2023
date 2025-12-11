@@ -1637,9 +1637,12 @@ def update_default_inventory_account(self):
 	for a in self.sale_products:
 		default_inventory_account = frappe.get_cached_value("Business Branch", self.business_branch,"default_inventory_account")
 		p = frappe.get_doc("Product",a.product_code)
-		acc = [b.default_stock_account for b in p.default_account if b.business_branch == self.business_branch][0]
-		if acc:
-			a.default_inventory_account = acc
+		if p.default_account:
+			acc = [b.default_stock_account for b in p.default_account if b.business_branch == self.business_branch][0]
+			if acc:
+				a.default_inventory_account = acc
+			else:
+				a.default_inventory_account = self.default_inventory_account if self.default_inventory_account else default_inventory_account
 		else:
 			a.default_inventory_account = self.default_inventory_account if self.default_inventory_account else default_inventory_account
 
