@@ -360,6 +360,8 @@ async function onDeleteBill() {
                 const _sale = JSON.parse(JSON.stringify(sale.sale));
                 generateSaleProductPrintToKitchen(_sale, v.note);
 
+
+
                 const deleteSaleResource = createResource({
                     url: "epos_restaurant_2023.api.api.delete_sale",
                     params: {
@@ -376,6 +378,13 @@ async function onDeleteBill() {
                     toaster.success($t("msg.Delete sale order successfully"));
                     //print to kitchen
                     onProcessPrintToKitchen(_sale);
+                        ///print bill on deleted
+
+                    if(sale.setting?.pos_setting?.allow_print_bill_on_sale_deleted){
+                        sale.pos_receipt = gv.setting.default_pos_receipt;
+                        sale.onPrintReceipt(sale.pos_receipt, "print_invoice", _sale);
+                    }
+
                     sale.newSale();
                     if (sale.setting.table_groups.length > 0) {
                         router.push({ name: 'TableLayout' });
@@ -383,6 +392,9 @@ async function onDeleteBill() {
                         router.push({ name: "AddSale" });
                     }
                 })
+
+
+                
             }
         })
     }
