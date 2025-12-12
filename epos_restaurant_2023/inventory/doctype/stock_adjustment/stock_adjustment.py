@@ -10,10 +10,9 @@ from frappe.model.document import Document
 from py_linq import Enumerable
 
 class StockAdjustment(Document):
-	def before_insert(self):
-		update_current_product_info(self)
-
 	def validate(self):
+		update_current_product_info(self)
+		update_default_inventory_account(self)
 		epos_setting = frappe.get_doc('ePOS Settings')
 		error = ""
 		for p in self.products:
@@ -51,10 +50,25 @@ class StockAdjustment(Document):
 	def before_cancel(self):
 		frappe.throw(_("Stock adjustment transaction is not allow to cancel."))
 
+
+def update_default_inventory_account(self):
+	for a in self.products:
+		default_inventory_account = frappe.get_cached_value("Business Branch", self.business_branch,"default_inventory_account")
+		p = frappe.get_doc("Product",a.product_code)
+		if p.default_account:
+			acc = [b.default_stock_account for b in p.default_account if b.business_branch == self.business_branch][0]
+			if acc:
+				a.stock_account = acc
+			else:
+				a.stock_account = self.inventory_account if self.inventory_account else default_inventory_account
+		else:
+			a.stock_account = self.inventory_account if self.inventory_account else default_inventory_account
+
 def update_current_product_info(self):
 	for a in self.products:
 		p = get_currenct_cost(a.product_code,self.stock_location,a.unit)
 		a.current_quantity = p["quantity"]
+		a.current_cost = p["cost"]
 		a.total_current_cost = a.current_quantity * a.current_cost
 		a.total_secondary_cost = a.quantity * a.secondary_cost
 
@@ -79,13 +93,16 @@ def update_inventory_on_submit(self):
 
 
 def general_ledger(self):
-	stock_in_hand = frappe.db.get_value("Business Branch",self.business_branch,"default_inventory_account")
+	for acc in set([d.stock_account for d in self.products]):
+		amount = sum([a.difference_amount for a in self.products if a.stock_account == acc])
+		if amount > 0:
+			general_ledger_debit(self,{"account":acc,"amount":abs(amount)})
+		else:
+			general_ledger_credit(self,{"account":acc,"amount":abs(amount)})
 	if self.difference_amount > 0:
-		general_ledger_debit(self,{"account":stock_in_hand,"amount":abs(self.difference_amount)})
 		general_ledger_credit(self,{"account":self.difference_account,"amount":abs(self.difference_amount)})
 	else:
 		general_ledger_debit(self,{"account":self.difference_account,"amount":abs(self.difference_amount)})
-		general_ledger_credit(self,{"account":stock_in_hand,"amount":abs(self.difference_amount)})
 
 def general_ledger_debit(self,account):
 	docs = []

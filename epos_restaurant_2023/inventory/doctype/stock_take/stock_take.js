@@ -100,6 +100,7 @@ function get_currenct_cost(frm,doc){
 			if(doc!=undefined){
 				doc.cost = r.message.cost;
 				doc.base_cost = r.message.cost;
+				doc.stock_account = r.message.stock_account
 				doc.amount = doc.quantity * doc.cost;
 			}
 			frm.refresh_field('stock_take_products');

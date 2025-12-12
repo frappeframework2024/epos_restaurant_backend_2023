@@ -95,7 +95,8 @@ function get_product(frm, doc){
                 doc.current_quantity = r.message.quantity;
 				doc.current_cost = r.message.cost;
 				doc.total_current_cost=doc.current_quantity * doc.current_cost;  
-				doc.difference_account = frm.doc.difference_account
+				doc.difference_account = frm.doc.difference_account;
+				doc.stock_account = r.message.stock_account;
 				doc.cost = r.message.cost;
 				doc.quantity = doc.current_quantity;
 				doc.total_amount = doc.quantity * doc.cost;

@@ -3,10 +3,10 @@
 
 import frappe
 from py_linq import Enumerable
-from epos_restaurant_2023.inventory.inventory import add_to_inventory_transaction, get_product_cost, get_stock_location_product, get_uom_conversion, update_product_quantity
-from epos_restaurant_2023.inventory.inventory import check_uom_conversion
+from epos_restaurant_2023.inventory.inventory import add_to_inventory_transaction,get_uom_conversion,check_uom_conversion
 from frappe.model.document import Document
 from epos_restaurant_2023.inventory.inventory import get_product_qty
+from epos_restaurant_2023.api.account import submit_general_ledger_entry
 
 class StockTransfer(Document):
 	def validate(self):
@@ -96,3 +96,45 @@ def update_from_stock(cancel = False, self=None, p=None):
 		'note': "New stock transfer from {} to {} submitted.".format(self.from_stock_location,self.to_stock_location),
   		"action": "Cancel" if cancel else "Submit"
 	})
+
+def general_ledger(self):
+	for acc in set([d.stock_account for d in self.products]):
+		amount = sum([a.difference_amount for a in self.products if a.stock_account == acc])
+		if amount > 0:
+			general_ledger_debit(self,{"account":acc,"amount":abs(amount)})
+		else:
+			general_ledger_credit(self,{"account":acc,"amount":abs(amount)})
+	if self.difference_amount > 0:
+		general_ledger_credit(self,{"account":self.difference_account,"amount":abs(self.difference_amount)})
+	else:
+		general_ledger_debit(self,{"account":self.difference_account,"amount":abs(self.difference_amount)})
+
+def general_ledger_debit(self,account):
+	docs = []
+	doc = {
+		"doctype":"General Ledger",
+		"posting_date":self.posting_date,
+		"account":account["account"],
+		"debit_amount":account["amount"],
+		"voucher_type":"Stock Adjustment",
+		"voucher_number":self.name,
+		"business_branch": self.business_branch,
+		"remark": "Accounting For Stock Adjustment"
+	}
+	docs.append(doc)
+	submit_general_ledger_entry(docs = docs)
+
+def general_ledger_credit(self,account):
+    docs = []
+    doc = {
+        "doctype":"General Ledger",
+        "posting_date":self.posting_date,
+        "account":account["account"],
+        "credit_amount":account["amount"],
+        "voucher_type":"Stock Adjustment",
+        "voucher_number":self.name,
+        "business_branch": self.business_branch,
+		"remark": "Accounting For Stock Adjustment"
+    }
+    docs.append(doc)
+    submit_general_ledger_entry(docs=docs)

@@ -13,19 +13,21 @@
   {
    "fieldname": "shift_type",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Shift Type",
    "options": "Shift Type"
   },
   {
    "fieldname": "note",
    "fieldtype": "Text",
+   "in_list_view": 1,
    "label": "Note"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-10-22 08:55:00.836261",
+ "modified": "2025-12-12 09:07:59.008525",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "POS Menu Shift Availability",

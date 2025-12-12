@@ -10,10 +10,9 @@ from frappe.model.document import Document
 from epos_restaurant_2023.inventory.inventory import get_product_qty
 
 class StockTake(Document):
-	def before_insert(self):
-		update_current_product_info(self)
-
 	def validate(self): 
+		update_current_product_info(self)
+		update_default_inventory_account(self)
 		epos_setting = frappe.get_doc('ePOS Settings')
 		error = ""
 		for p in self.stock_take_products:
@@ -55,6 +54,19 @@ class StockTake(Document):
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			GL_Entry(self)
 		update_inventory_on_cancel(self)
+
+def update_default_inventory_account(self):
+	for a in self.stock_take_products:
+		default_inventory_account = frappe.get_cached_value("Business Branch", self.business_branch,"default_inventory_account")
+		p = frappe.get_doc("Product",a.product_code)
+		if p.default_account:
+			acc = [b.default_stock_account for b in p.default_account if b.business_branch == self.business_branch][0]
+			if acc:
+				a.stock_account = acc
+			else:
+				a.stock_account = self.default_inventory_account if self.default_inventory_account else default_inventory_account
+		else:
+			a.stock_account = self.default_inventory_account if self.default_inventory_account else default_inventory_account
 
 def update_inventory_on_submit(self):
 	for p in self.stock_take_products:
@@ -106,31 +118,39 @@ def update_current_product_info(self):
 		a.total_secondary_cost = a.quantity * a.secondary_cost
 
 def GL_Entry(self):
-    docs = [] 
-    if self.total_amount > 0:
-        doc_expenses = {
-            "doctype": "General Ledger",
-            "posting_date": self.posting_date,
-            "account": self.default_inventory_account if self.docstatus == 1 else self.difference_account,
-            "credit_amount": self.total_amount,
-            "againt": self.difference_account if self.docstatus == 1 else self.default_inventory_account,
-            "voucher_type": "Stock Take",
-            "voucher_number": self.name,
-            "business_branch": self.business_branch,
-            "remark": "Accounting adjustment for Stock"
-        }
-        docs.append(doc_expenses)
-        doc_assets = {
-            "doctype": "General Ledger",
-            "posting_date": self.posting_date,
-            "account": self.difference_account if self.docstatus == 1 else self.default_inventory_account,
-            "debit_amount": self.total_amount,
-            "againt": self.default_inventory_account if self.docstatus == 1 else self.difference_account,
-            "voucher_type": "Stock Take",
-            "voucher_number": self.name,
-            "business_branch": self.business_branch,
-            "remark": "Accounting adjustment for Stock"
-        }
-        docs.append(doc_assets)
-
-    submit_general_ledger_entry(docs=docs)
+	docs = [] 
+	for acc in set([d.stock_account for d in self.stock_take_products]):
+		amount = sum([a.amount for a in self.stock_take_products if a.stock_account == acc])
+		if amount > 0:
+			doc = {
+				"doctype": "General Ledger",
+				"posting_date": self.posting_date,
+				"account": acc,
+				"againt": self.difference_account,
+				"voucher_type": "Stock Take",
+				"voucher_number": self.name,
+				"business_branch": self.business_branch,
+				"remark": "Accounting adjustment for Stock"
+			}
+			if self.docstatus == 1:
+				doc["credit_amount"] = amount
+			else:
+				doc["debit_amount"] = amount
+			docs.append(doc)
+		
+	doc = {
+		"doctype": "General Ledger",
+		"posting_date": self.posting_date,
+		"account": self.difference_account,
+		"againt": acc,
+		"voucher_type": "Stock Take",
+		"voucher_number": self.name,
+		"business_branch": self.business_branch,
+		"remark": "Accounting adjustment for Stock"
+	}
+	if self.docstatus == 1:
+		doc["debit_amount"] = self.total_amount
+	else:
+		doc["credit_amount"] = self.total_amount
+	docs.append(doc)
+	submit_general_ledger_entry(docs=docs)

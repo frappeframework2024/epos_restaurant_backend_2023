@@ -24,9 +24,9 @@
   "total_current_cost",
   "differenct_section",
   "difference_account",
+  "stock_account",
   "column_break_16",
   "difference_quantity",
-  "column_break_odug",
   "difference_amount",
   "section_break_18",
   "note"
@@ -141,10 +141,6 @@
    "label": "Is Inventory Product"
   },
   {
-   "fieldname": "column_break_odug",
-   "fieldtype": "Column Break"
-  },
-  {
    "default": "0",
    "fieldname": "difference_amount",
    "fieldtype": "Currency",
@@ -178,12 +174,19 @@
    "fieldtype": "Currency",
    "label": "Total Secondary Cost",
    "read_only": 1
+  },
+  {
+   "fieldname": "stock_account",
+   "fieldtype": "Link",
+   "label": "Stock Account",
+   "options": "Chart Of Account",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-11-05 14:51:48.256146",
+ "modified": "2025-12-12 08:32:44.997018",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Adjustment Product",

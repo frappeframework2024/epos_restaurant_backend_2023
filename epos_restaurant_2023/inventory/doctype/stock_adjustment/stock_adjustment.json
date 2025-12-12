@@ -32,6 +32,7 @@
   "difference_cost",
   "section_break_revm",
   "difference_account",
+  "inventory_account",
   "column_break_sykv",
   "difference_amount"
  ],
@@ -199,12 +200,20 @@
    "fieldtype": "Currency",
    "label": "Difference Amount",
    "read_only": 1
+  },
+  {
+   "fetch_from": "business_branch.default_inventory_account",
+   "fieldname": "inventory_account",
+   "fieldtype": "Link",
+   "label": "Inventory Account",
+   "options": "Chart Of Account",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-31 09:36:29.580633",
+ "modified": "2025-12-12 10:18:37.533334",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Adjustment",
