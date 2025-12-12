@@ -53,8 +53,6 @@ frappe.ui.form.on("Stock Transfer", {
 		}
 		frm.doc.scan_barcode = "";
 		frm.refresh_field('scan_barcode'); 
-	
-		 
 	},
     from_stock_location(frm, cdt, cdn){
         frm.set_query("to_stock_location", function() {
@@ -121,10 +119,8 @@ function update_stock_transfer_products_amount(frm,cdt, cdn)  {
 }
 
 function updateSumTotal(frm) {
-    
     let sum_total = 0;
 	let total_qty = 0;
-  
     $.each(frm.doc.stock_transfer_products, function(i, d) {
         sum_total += flt(d.amount);
 		total_qty +=flt(d.quantity);
@@ -170,25 +166,22 @@ function get_currenct_cost(frm,doc){
 				doc.cost = r.message.cost;
 				doc.base_cost = r.message.cost;
 				doc.amount = doc.cost * doc.quantity;
+				doc.stock_account = r.message.stock_account
 			}
 			frm.refresh_field('stock_transfer_products');
 		}
 	});
-	
 }
 
 function add_product_to_po_product(frm,p){
-	
 	let all_rows = frm.fields_dict["stock_transfer_products"].grid.grid_rows.filter(function(d) { return  d.doc.product_code==undefined});
 	let row =undefined;
-	
 	if (all_rows.length>0){
 		if ( all_rows[0].doc.product_code == undefined){ 
 			row = all_rows[0];
 		}
 	}
 	let doc = undefined;
-
 	if(row==undefined){
 		 doc = frm.add_child("stock_transfer_products");
 	}else {
@@ -207,7 +200,6 @@ function add_product_to_po_product(frm,p){
 		if (p.expired_date){
 			doc.expired_date = p.expired_date
 		}
-		
 		product_by_scan(frm,doc)
 	} 
 }
@@ -230,8 +222,6 @@ async function update_stock_from(frm){
 			});
 		}
 	});
-	
-
 }
 
 function product_code(frm,cdt,cdn){

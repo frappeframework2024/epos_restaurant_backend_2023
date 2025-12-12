@@ -31,6 +31,10 @@
   "append_quantity",
   "section_break_16",
   "stock_transfer_products",
+  "section_break_swee",
+  "from_account",
+  "column_break_asvi",
+  "to_account",
   "section_break_14",
   "note",
   "column_break_15",
@@ -76,8 +80,9 @@
    "depends_on": "eval:doc.from_stock_location",
    "fetch_from": "from_stock_location.business_branch",
    "fieldname": "from_business_branch",
-   "fieldtype": "Data",
-   "label": "From Business Branch"
+   "fieldtype": "Link",
+   "label": "From Business Branch",
+   "options": "Business Branch"
   },
   {
    "fieldname": "to_stock_location",
@@ -92,8 +97,9 @@
    "depends_on": "eval:doc.to_stock_location",
    "fetch_from": "to_stock_location.business_branch",
    "fieldname": "to_business_branch",
-   "fieldtype": "Data",
-   "label": "To Business Branch"
+   "fieldtype": "Link",
+   "label": "To Business Branch",
+   "options": "Business Branch"
   },
   {
    "fieldname": "stock_transfer_products",
@@ -215,12 +221,37 @@
    "fieldtype": "Data",
    "label": "Phone Number",
    "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_swee",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fetch_from": "from_business_branch.default_inventory_account",
+   "fetch_if_empty": 1,
+   "fieldname": "from_account",
+   "fieldtype": "Link",
+   "label": "From Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "column_break_asvi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "to_business_branch.default_inventory_account",
+   "fetch_if_empty": 1,
+   "fieldname": "to_account",
+   "fieldtype": "Link",
+   "label": "To Account",
+   "options": "Chart Of Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-01 08:35:16.015766",
+ "modified": "2025-12-12 10:38:50.867984",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Stock Transfer",
