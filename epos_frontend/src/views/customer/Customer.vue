@@ -1,7 +1,7 @@
 <template>
     <PageLayout :title="$t('Customer')" icon="mdi-account-multiple" full>
         <template #action>
-            <v-btn style="font-family: Khmer OS Battambang;" prepend-icon="mdi-account-plus" type="button" @click="onAddCustomer">
+            <v-btn style="font-family: Khmer OS Siemreap;" prepend-icon="mdi-account-plus" type="button" @click="onAddCustomer">
               {{ $t("Add New") }}
             </v-btn>
         </template>

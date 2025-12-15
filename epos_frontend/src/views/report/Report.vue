@@ -62,7 +62,7 @@
         </v-navigation-drawer> 
 
         <v-col md="3" class="d-none d-md-block"> 
-            <v-card style="font-family: Khmer OS Battambang;" :subtitle="$t('Working Day and Cashier Shift Report')">
+            <v-card style="font-family: Khmer OS Siemreap;" :subtitle="$t('Working Day and Cashier Shift Report')">
                 <v-card-text class="report-list-container"> 
                     <ComPlaceholder :loading="workingDayReports === null " :is-not-empty="workingDayReports?.length > 0">
                         <template v-for="(c, index) in workingDayReports" :key="index">
@@ -121,7 +121,7 @@
                 
             </div>
             <!-- Hamburger Nav -->
-            <v-card style="font-family: Khmer OS Battambang;">
+            <v-card style="font-family: Khmer OS Siemreap;">
                 <template #title>
                     <div class="px-1 py-2 -m-1">
                         <v-row>

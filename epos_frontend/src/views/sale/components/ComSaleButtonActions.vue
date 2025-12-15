@@ -12,7 +12,7 @@
 
         <template v-else>
           <template v-if="!mobile">
-            <v-btn  style="font-family: Khmer OS Battambang;" v-if="gv.device_setting.show_button_cancel_print_bill==1" color="error" size="small" class="m-0-1 grow" :variant="mobile ? 'tonal' : 'elevated'"  :stacked="!mobile" :prepend-icon="mobile ? '' : 'mdi-printer'" @click="onCancelPrintBill">
+            <v-btn  style="font-family: Khmer OS Siemreap;" v-if="gv.device_setting.show_button_cancel_print_bill==1" color="error" size="small" class="m-0-1 grow" :variant="mobile ? 'tonal' : 'elevated'"  :stacked="!mobile" :prepend-icon="mobile ? '' : 'mdi-printer'" @click="onCancelPrintBill">
               {{ $t('Cancel Print Bill') }}
             </v-btn>               
         </template>
@@ -23,7 +23,7 @@
         <template v-if="(gv.setting.reports.filter(r => r.doc_type == 'Sale' && r.show_in_pos == 1).length == 1)">
             <v-btn   :stacked="!mobile" color="print_bill_by_seat" size="small" class="m-0-1 grow"
                     :prepend-icon="mobile ? '' : 'mdi-printer'" :variant="mobile ? 'tonal' : 'elevated'" :height="mobile ? '35px' : undefined" 
-                    @click="onPrintPressed(gv.setting.reports.filter(r => r.doc_type == 'Sale' && r.show_in_pos == 1)[0])" style="font-family: Khmer OS Battambang;">
+                    @click="onPrintPressed(gv.setting.reports.filter(r => r.doc_type == 'Sale' && r.show_in_pos == 1)[0])" style="font-family: Khmer OS Siemreap;">
                     {{ $t('Print by Seat') }}</v-btn> 
           </template>
       </template>
@@ -32,19 +32,19 @@
       
       <v-btn v-if="setting.table_groups && setting.table_groups.length > 0 && !mobile" :variant="mobile ? 'tonal' : 'elevated'"
         :color="mobile ? 'primary' : ''" :stacked="!mobile" size="small" class="m-0-1 grow"
-        :prepend-icon="mobile ? '' : 'mdi-plus'" @click="onSubmitAndNew" style="font-family: Khmer OS Battambang;">
+        :prepend-icon="mobile ? '' : 'mdi-plus'" @click="onSubmitAndNew" style="font-family: Khmer OS Siemreap;">
         {{ $t('Submit and New') }}
       </v-btn>
       
       <v-btn v-if="setting.table_groups && setting.table_groups.length > 0 && mobile"  :height="mobile ? '35px' : undefined" :variant="mobile ? 'tonal' : 'elevated'"
         :color="mobile ? 'primary' : ''" :stacked="!mobile" size="small" class="m-0-1 grow" 
-        :prepend-icon="mobile ? '' : 'mdi-plus'" @click="onSubmitAndNew" style="font-family: Khmer OS Battambang;">
+        :prepend-icon="mobile ? '' : 'mdi-plus'" @click="onSubmitAndNew" style="font-family: Khmer OS Siemreap;">
         {{$t('Submit and New')}}
       </v-btn>
 
 
       <v-btn v-if="device_setting.show_option_quick_pay ==1" :stacked="!mobile" size="small" color="error" class="m-0-1 grow" :height="mobile ? '35px' : undefined" :variant="mobile ? 'tonal' : 'elevated'"
-        :prepend-icon="mobile ? '' : 'mdi-currency-usd'" @click="onQuickPay" style="font-family: Khmer OS Battambang;">
+        :prepend-icon="mobile ? '' : 'mdi-currency-usd'" @click="onQuickPay" style="font-family: Khmer OS Siemreap;">
         {{ $t('Quick Pay') }}
       </v-btn>
       

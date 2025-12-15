@@ -100,8 +100,8 @@
                 type="textarea" keyboard>
             </ComInput>
             <div class="flex justify-between items-center mx-4">
-                <v-btn @click="onCloseShift" color="primary" :loading="(cashierShiftResource.setValue && cashierShiftResource.setValue.loading) ? cashierShiftResource.setValue.loading : false" style="font-family: Khmer OS Battambang;">{{ $t('Close Shift') }}</v-btn>
-                <v-btn  @click="router.push({ name: 'Home' })" color="error" class="ml-4" style="font-family: Khmer OS Battambang;">{{ $t("Cancel") }}</v-btn>
+                <v-btn @click="onCloseShift" color="primary" :loading="(cashierShiftResource.setValue && cashierShiftResource.setValue.loading) ? cashierShiftResource.setValue.loading : false" style="font-family: Khmer OS Siemreap;">{{ $t('Close Shift') }}</v-btn>
+                <v-btn  @click="router.push({ name: 'Home' })" color="error" class="ml-4" style="font-family: Khmer OS Siemreap;">{{ $t("Cancel") }}</v-btn>
             </div>
         </template>
     </PageLayout>

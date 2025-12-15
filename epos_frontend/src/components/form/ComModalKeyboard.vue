@@ -21,10 +21,10 @@
                 </div>
                 <div>
                     <div class="text-right pt-4">
-                        <v-btn style="font-family: Khmer OS Battambang;" class="mr-2" variant="flat" @click="onClose(false)" color="error" size="large">
+                        <v-btn style="font-family: Khmer OS Siemreap;" class="mr-2" variant="flat" @click="onClose(false)" color="error" size="large">
                             {{$t('Close')}}
                         </v-btn>
-                        <v-btn style="font-family: Khmer OS Battambang;" variant="flat" @click="onKeyPress('{enter}')" color="primary" size="large">
+                        <v-btn style="font-family: Khmer OS Siemreap;" variant="flat" @click="onKeyPress('{enter}')" color="primary" size="large">
                             {{$t('Ok')}}
                         </v-btn>
                     </div>

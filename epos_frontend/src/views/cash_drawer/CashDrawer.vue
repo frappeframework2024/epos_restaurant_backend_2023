@@ -2,7 +2,7 @@
     <PageLayout class="pb-4" :title="$t('Cash Drawer')" icon="mdi-currency-usd">
         <v-container class="!py-0">
         <div>
-            <div style="font-family: Khmer OS Battambang;" class="mb-4 grid grid-cols-2 gap-2">
+            <div style="font-family: Khmer OS Siemreap;" class="mb-4 grid grid-cols-2 gap-2">
                 <ComCashDrawerKPI backgroundColor="primary" :title="$t('Opening Amount')" :value="cashDrawerShiftBalance.total_opening_amount"/>
                 <ComCashDrawerKPI backgroundColor="secondary" :title="$t('Cash Sale Amount')" :value="cashDrawerShiftBalance.total_amount_cash"/>
                 <ComCashDrawerKPI backgroundColor="success" :title="$t('Cash In Amount')" :value="cashDrawerShiftBalance.total_amount_cash_in"/>
@@ -10,7 +10,7 @@
                 <ComCashDrawerKPI class="col-span-2" backgroundColor="info" :title="$t('Cash Drawer Balance')" :value="cashDrawerShiftBalance.total_balance"/>
             </div>
         </div>
-        <div style="font-family: Khmer OS Battambang;">
+        <div style="font-family: Khmer OS Siemreap;">
             <div class="font-bold py-2">
                 <div :class="mobile ? '' : 'flex justify-between'">
                     <div>{{$t('Today Cash Transaction')}}</div>

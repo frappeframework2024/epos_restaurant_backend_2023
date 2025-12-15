@@ -2,7 +2,7 @@
     <div v-if="sale.sale.total_paid > 0 || balance > 0 || sale.sale.changed_amount > 0" class="mt-auto bg-green-600 border border-gray-500 text-white rounded-sm px-1 pt-1" :class="mobile ? 'mx-1' : ''">
         
         <div class="mb-1 flex justify-between" v-if="sale.sale.tip_amount > 0">
-            <div style="font-family: Khmer OS Battambang;">{{ $t('TIP') }}:</div>
+            <div style="font-family: Khmer OS Siemreap;">{{ $t('TIP') }}:</div>
             <div>
                 <CurrencyFormat :value="(sale.sale.tip_amount)" />
             </div>
@@ -10,7 +10,7 @@
         <hr v-if="(sale.sale.tip_amount ||0) > 0"/>
 
         <div class="mb-1 flex justify-between" v-if="sale.sale.deposit > 0">
-            <div style="font-family: Khmer OS Battambang;">{{ $t('Deposit') }}:</div>
+            <div style="font-family: Khmer OS Siemreap;">{{ $t('Deposit') }}:</div>
             <div>
                 <CurrencyFormat :value="(sale.sale.deposit)" />
             </div>
@@ -20,7 +20,7 @@
 
 
         <div class="mb-1 flex justify-between text-sm" v-if="(sale.sale.total_fee ||0) > 0">
-            <div style="font-family: Khmer OS Battambang;">{{ $t('Fee') }}:</div>
+            <div style="font-family: Khmer OS Siemreap;">{{ $t('Fee') }}:</div>
             <div>
                 <CurrencyFormat :value="(sale.sale.total_fee ||0)" />
             </div>
@@ -30,21 +30,21 @@
         
 
         <div class="mb-1 flex justify-between" v-if="sale.sale.total_paid > 0">
-            <div style="font-family: Khmer OS Battambang;">{{ $t('Total Payment') }}:</div>
+            <div style="font-family: Khmer OS Siemreap;">{{ $t('Total Payment') }}:</div>
             <div>
                 <CurrencyFormat :value="(sale.sale.total_paid + (sale.sale.total_fee ||0) + (sale.sale.tip_amount ||0))" />
             </div>
         </div>
         
         <div class="mb-1 flex justify-between text-sm" v-if="balance > 0">
-            <div style="font-family: Khmer OS Battambang;">{{$t('Balance')  }} ({{sale.setting.pos_setting.main_currency_name}}):</div>
+            <div style="font-family: Khmer OS Siemreap;">{{$t('Balance')  }} ({{sale.setting.pos_setting.main_currency_name}}):</div>
             <div>
                 <CurrencyFormat :value="balance" />
             </div>
         </div>
 
         <div class="mb-1 flex justify-between text-sm" v-if="balance > 0">
-            <div style="font-family: Khmer OS Battambang;">{{ $t('Balance') }} ({{sale.setting.pos_setting.second_currency_name}}):</div>
+            <div style="font-family: Khmer OS Siemreap;">{{ $t('Balance') }} ({{sale.setting.pos_setting.second_currency_name}}):</div>
             <div>
                 <CurrencyFormat :value="balance * sale.sale.exchange_rate" :currency="sale.setting.pos_setting.second_currency_name"/>                
             </div>
@@ -52,13 +52,13 @@
 
         <hr v-if="sale.sale.changed_amount > 0"/>
         <div class="mb-1 flex justify-between text-sm" v-if="sale.sale.changed_amount > 0">
-            <div style="font-family: Khmer OS Battambang;">{{ $t('Change Amount') }}({{ gv.setting.pos_setting.main_currency_name }}):</div>
+            <div style="font-family: Khmer OS Siemreap;">{{ $t('Change Amount') }}({{ gv.setting.pos_setting.main_currency_name }}):</div>
             <div>
                 <CurrencyFormat :value="sale.sale.changed_amount" />
             </div>
         </div>
         <div class="mb-1 flex justify-between text-sm" v-if="sale.sale.changed_amount > 0">
-            <div style="font-family: Khmer OS Battambang;">{{ $t('Change Amount') }}({{ gv.setting.pos_setting.second_currency_name }}):</div>
+            <div style="font-family: Khmer OS Siemreap;">{{ $t('Change Amount') }}({{ gv.setting.pos_setting.second_currency_name }}):</div>
             <div>
                 <CurrencyFormat :value="sale.sale.second_changed_amount"
                     :currency="gv.setting.pos_setting.second_currency_name" />

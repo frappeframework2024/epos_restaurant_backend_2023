@@ -1,6 +1,6 @@
 <template>
     <div class="">
-        <div class="flex items-end" style="font-family: Khmer OS Battambang;" :class="mobile ? 'justify-end' : 'justify-between'" v-if="resource?.data">
+        <div class="flex items-end" style="font-family: Khmer OS Siemreap;" :class="mobile ? 'justify-end' : 'justify-between'" v-if="resource?.data">
             {{  onSearch() }}
             <div v-if="!mobile">
                 <div class="flex flex-wrap items-end">

@@ -7,10 +7,10 @@
       <div class="d-flex flex-row justify-space-between my-4">
             <ComInput  style="width:372px"  type="date" v-model="filter_date" :label="`${$t('Arrival Date')}:`"></ComInput>
             <div>
-              <v-btn class="mr-1" prepend-icon="mdi-close" @click="onClearSearch" color="error" style="font-family: Khmer OS Battambang;">
+              <v-btn class="mr-1" prepend-icon="mdi-close" @click="onClearSearch" color="error" style="font-family: Khmer OS Siemreap;">
                 {{$t('Clear')}}
             </v-btn>
-              <v-btn class="ml-1" prepend-icon="mdi-magnify" @click="onSearch" color="searchbtn" style="font-family: Khmer OS Battambang;">
+              <v-btn class="ml-1" prepend-icon="mdi-magnify" @click="onSearch" color="searchbtn" style="font-family: Khmer OS Siemreap;">
                 {{$t('Search')}}
             </v-btn>
             </div>

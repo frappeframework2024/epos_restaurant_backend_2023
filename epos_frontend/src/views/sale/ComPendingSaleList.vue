@@ -26,52 +26,52 @@
                 <v-list :lines="false" density="compact" class="pa-0">
 
                   <v-list-item v-if="s.tbl_number">
-                    <div style="font-family: Khmer OS Battambang;font-size: 16px;">{{ $t('Table')+ ' #' }}</div>
+                    <div style="font-family: Khmer OS Siemreap;font-size: 16px;">{{ $t('Table')+ ' #' }}</div>
                     <template v-slot:append>
                       {{ s.tbl_number }}
                     </template>
                   </v-list-item>
                   <v-list-item v-else>
-                    <div style="font-family: Khmer OS Battambang;font-size: 16px;">{{$t('Sale Type') }}</div>
+                    <div style="font-family: Khmer OS Siemreap;font-size: 16px;">{{$t('Sale Type') }}</div>
                     <template v-slot:append>
                       <v-chip size="x-small" :color="s.sale_type_color">{{ s.sale_type }}</v-chip>
                     </template>
                   </v-list-item>
                   
                   <v-list-item v-if="s.guest_cover">
-                     <div style="font-family: Khmer OS Battambang;font-size: 16px;">{{$t('Guest Cover')}}</div>
+                     <div style="font-family: Khmer OS Siemreap;font-size: 16px;">{{$t('Guest Cover')}}</div>
                     <template v-slot:append>
                       {{ s.guest_cover }}
                     </template>
                   </v-list-item>
                   <v-list-item>
-                    <div style="font-family: Khmer OS Battambang;font-size: 16px;">{{$t('Customer Code')}}</div>
+                    <div style="font-family: Khmer OS Siemreap;font-size: 16px;">{{$t('Customer Code')}}</div>
                     <template v-slot:append>
                       {{ s.customer }}
                     </template>
                   </v-list-item>
 
                   <v-list-item>
-                     <div style="font-family: Khmer OS Battambang;font-size: 16px;">{{$t('Customer Name')}}</div>
+                     <div style="font-family: Khmer OS Siemreap;font-size: 16px;">{{$t('Customer Name')}}</div>
                     <template v-slot:append>
                       {{ s.customer_name }}
                     </template>
                   </v-list-item>
                   <v-list-item>
-                     <div style="font-family: Khmer OS Battambang;font-size: 16px;">{{$t('Tota Qty')}}</div>
+                     <div style="font-family: Khmer OS Siemreap;font-size: 16px;">{{$t('Tota Qty')}}</div>
                     <template v-slot:append>
                       {{ s.total_quantity }}
                     </template>
                   </v-list-item>
                   <v-list-item>
-                     <div style="font-family: Khmer OS Battambang;font-size: 16px;">{{$t('Grand Total')}}</div>
+                     <div style="font-family: Khmer OS Siemreap;font-size: 16px;">{{$t('Grand Total')}}</div>
                     <template v-slot:append>
                       <CurrencyFormat :value="s.grand_total" />
                     </template>
                   </v-list-item>
                 </v-list>
               </v-card-text>
-              <v-card-actions style="font-family: Khmer OS Battambang;" class="pt-0 flex items-center justify-between absolute bottom-0 w-full">
+              <v-card-actions style="font-family: Khmer OS Siemreap;" class="pt-0 flex items-center justify-between absolute bottom-0 w-full">
                 <v-btn variant="tonal" color="primary" @click="onViewSaleOrder(s.name)">
                   {{ $t('Sale Detail') }}
                 </v-btn>

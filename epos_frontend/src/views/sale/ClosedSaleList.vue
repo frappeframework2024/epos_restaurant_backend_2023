@@ -20,10 +20,10 @@
                             <div class="flex justify-between">
                                 <div class="pb-2 -mr-2">
                                     <v-tabs show-arrows>
-                                        <v-tab style="font-family: Khmer OS Battambang;"
-                                        v-for="(r, index) in gv.setting.reports.filter(r => r.show_in_pos_closed_sale == 1 && r.doc_type == 'POS Profile')"
+                                        <v-tab v-for="(r, index) in gv.setting.reports.filter(r => r.show_in_pos_closed_sale == 1 && r.doc_type == 'POS Profile')"
                                         :key="index" @click="onReportClick(r)">
-                                        {{ $t(r.title) }}</v-tab>
+                                            <span style="font-family: 'Khmer OS Siemreap';">{{ $t(r.title) }} </span>
+                                        </v-tab>
                                     </v-tabs>
                                 </div>
                                 <div>
@@ -32,6 +32,7 @@
                             </div>
                             <ComClosedSaleSelectedFilter  :currentFilter="resultFilter"  :reportOption="reportOption"  @onSearch="onSearch"/>
                             <div style="height: calc(100vh - 202px);">
+                                
                                 <iframe @load="onIframeLoaded"  @error="onIframeError" id="report-view" height="100%" width="100%" :src="reportUrl"></iframe>
                             </div>
                         </v-col>
@@ -114,8 +115,9 @@ const reportOption = computed(() => {
 function getReportUrl() {
     isLoading.value = true;
     let profile = encodeURIComponent(localStorage.getItem("pos_profile"));
+    const lang = localStorage.getItem('lang')
     let report_name = encodeURIComponent(activeReport.value.name);
-    let url = `${serverUrl}/printview?doctype=${activeReport.value.doc_type}&name=${profile}&format=${report_name}&no_letterhead=1&show_toolbar=0&view=ui`;
+    let url = `${serverUrl}/printview?doctype=${activeReport.value.doc_type}&name=${profile}&format=${report_name}&no_letterhead=1&show_toolbar=0&view=ui&_lang=${lang}`;
 
     if (filter.value.keyword && reportOption.value.show_keyword) {
         url += "&keyword=" + filter.value.keyword;
@@ -156,7 +158,7 @@ function getReportUrl() {
 
     if (filter.value.order_by_type && reportOption.value.show_order_by) {
         url += "&order_by_type=" + filter.value.order_by_type;
-    } 
+    }  
     return url;
 }
 

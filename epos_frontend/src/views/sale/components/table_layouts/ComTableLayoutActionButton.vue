@@ -11,12 +11,12 @@
         </div>
     </v-btn>
     <template v-if="!mobile">
-        <v-btn style="font-family: Khmer OS Battambang;" @click="onViewPendingOrder">
+        <v-btn style="font-family: Khmer OS Siemreap;" @click="onViewPendingOrder">
             {{ $t('Pending Order') }}
         </v-btn> 
     </template> 
     {{ isShowTableStatus() }}
-    <v-btn style="font-family: Khmer OS Battambang;" :loading="tableLayout.saveTablePositionResource.loading" v-if="tableLayout.canArrangeTable"
+    <v-btn style="font-family: Khmer OS Siemreap;" :loading="tableLayout.saveTablePositionResource.loading" v-if="tableLayout.canArrangeTable"
         @click="onSaveTablePosition">
         {{ $t('Save Table Position') }}
     </v-btn>
@@ -29,38 +29,38 @@
         <v-card>
             <v-list v-if="gv.setting?.pos_setting?.sale_types && gv.setting?.pos_setting?.sale_types.filter(r=>r.is_order_use_table == false).length > 0">
                 <v-list-subheader>
-                    <div style="font-family: Khmer OS Battambang;">{{ $t('Change Sale Type') }}</div>
+                    <div style="font-family: Khmer OS Siemreap;">{{ $t('Change Sale Type') }}</div>
                 </v-list-subheader>
                 <template  v-for="(st, index) in gv.setting?.pos_setting.sale_types.filter(r=>r.is_order_use_table == false)" :key="index">
                     <v-list-item @click="onSaleType(st.name)">
-                        <v-list-item-title><div style="font-family: Khmer OS Battambang;">{{ st.sale_type_name }}</div></v-list-item-title>
+                        <v-list-item-title><div style="font-family: Khmer OS Siemreap;">{{ st.sale_type_name }}</div></v-list-item-title>
                     </v-list-item>
                 </template>
             </v-list>
             <v-list>
                 <template  v-if="device_setting?.allow_switch_pos_profile==1"> 
-                    <v-list-subheader><div style="font-family: Khmer OS Battambang;">{{ $t('POS Config') }}</div></v-list-subheader>
+                    <v-list-subheader><div style="font-family: Khmer OS Siemreap;">{{ $t('POS Config') }}</div></v-list-subheader>
                     <v-list-item @click="onSwitchPOSProfile">
-                        <v-list-item-title><div style="font-family: Khmer OS Battambang;">{{ $t('Switch POS Profile') }}</div></v-list-item-title>
+                        <v-list-item-title><div style="font-family: Khmer OS Siemreap;">{{ $t('Switch POS Profile') }}</div></v-list-item-title>
                     </v-list-item>
                 </template>
 
                 <template  v-if="!mobile">
-                    <v-list-subheader><div style="font-family: Khmer OS Battambang;">{{ $t('Table Position') }}</div></v-list-subheader>
+                    <v-list-subheader><div style="font-family: Khmer OS Siemreap;">{{ $t('Table Position') }}</div></v-list-subheader>
                     <v-list-item @click="onEnableArrageTable">
-                        <v-list-item-title><div style="font-family: Khmer OS Battambang;">{{ $t('Arrange Table') }}</div></v-list-item-title>
+                        <v-list-item-title><div style="font-family: Khmer OS Siemreap;">{{ $t('Arrange Table') }}</div></v-list-item-title>
                     </v-list-item>
                 </template>
 
                 <template v-if="mobile">
                     <v-list-item @click="onViewPendingOrder">
-                        <v-list-item-title><div style="font-family: Khmer OS Battambang;">{{$t('Pending Order')}}</div></v-list-item-title>
+                        <v-list-item-title><div style="font-family: Khmer OS Siemreap;">{{$t('Pending Order')}}</div></v-list-item-title>
                     </v-list-item>
                    
                 </template>
                 
                 <v-list-item @click="onShowHideSaleStatus">
-                        <v-list-item-title><div style="font-family: Khmer OS Battambang;">{{ !status ? $t('Show Status'):$t("Hide Status") }}</div></v-list-item-title>
+                        <v-list-item-title><div style="font-family: Khmer OS Siemreap;">{{ !status ? $t('Show Status'):$t("Hide Status") }}</div></v-list-item-title>
                 </v-list-item>
                     
             </v-list>

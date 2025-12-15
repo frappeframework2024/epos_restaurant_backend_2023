@@ -5,7 +5,7 @@
         <v-card-title>{{ params.title }}</v-card-title>
     </v-card-item>
       <v-card-text>
-        <v-text-field  :label="$t('Enter Number')" variant="solo" v-model="number" clearable maxlength="10" style="font-family: Khmer OS Battambang;"></v-text-field>
+        <v-text-field  :label="$t('Enter Number')" variant="solo" v-model="number" clearable maxlength="10" style="font-family: Khmer OS Siemreap;"></v-text-field>
         <div>
           <div class="grid grid-cols-3 gap-3">
             <v-btn @click="numpad_click('1')" size="x-large">
@@ -44,8 +44,8 @@
             <v-btn color="error" @click="number = ''" size="x-large">
               {{$t('Clear')}}
             </v-btn>
-            <v-btn style="font-family: Khmer OS Battambang;" color="primary" @click="onCancel" size="x-large">{{$t('Cancel')}}</v-btn>
-            <v-btn style="font-family: Khmer OS Battambang;" color="success" @click="onOk" size="x-large">{{$t('Ok')}}</v-btn>
+            <v-btn style="font-family: Khmer OS Siemreap;" color="primary" @click="onCancel" size="x-large">{{$t('Cancel')}}</v-btn>
+            <v-btn style="font-family: Khmer OS Siemreap;" color="success" @click="onOk" size="x-large">{{$t('Ok')}}</v-btn>
           </div>
         </div>
       </v-card-text>

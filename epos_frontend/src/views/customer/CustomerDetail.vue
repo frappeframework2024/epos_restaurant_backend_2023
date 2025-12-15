@@ -24,7 +24,7 @@
           <v-col cols="6" :sm="(gv.device_setting.show_top_up ? '3':'4')">
             <v-card class="pa-2 ma-2" elevation="2" color="primary">
               <div class="text-h6 text-center">{{ orderSummary.data?.total_visit||0 }}</div>
-              <div class="text-body-1 text-center mt-2  text-sm">{{ $t('Total Visit') }}</div>
+              <div class="text-body-1 text-center mt-2  text-sm"><span style="font-family: 'Khmer OS Siemreap';"> {{ $t('Total Visit') }}</span></div>
             </v-card>
           </v-col>
           <v-col cols="6" :sm="(gv.device_setting.show_top_up ? '3':'4')">
@@ -32,7 +32,7 @@
               <div class="text-h6 text-center">
                 <CurrencyFormat :value="orderSummary.data?.total_annual_order" />
               </div>
-              <div class="text-body-1 text-center mt-2 text-sm">{{ $t('Total Annual Order') }}</div>
+              <div class="text-body-1 text-center mt-2 text-sm"><span style="font-family: 'Khmer OS Siemreap';">{{ $t('Total Annual Order') }}</span></div>
             </v-card>
           </v-col>
           <v-col cols="6" :sm="(gv.device_setting.show_top_up ? '3':'4')" >
@@ -40,7 +40,7 @@
               <div class="text-h6 text-center">
                 <CurrencyFormat :value="orderSummary.data?.total_order" />
               </div>
-              <div class="text-body-1 text-center mt-2 text-sm">{{ $t('Total Order') }}</div>
+              <div class="text-body-1 text-center mt-2 text-sm"><span style="font-family: 'Khmer OS Siemreap';">{{ $t('Total Order') }}</span></div>
             </v-card>
           </v-col>
           <v-col cols="12" sm="3" v-if="gv.device_setting.show_top_up">
@@ -48,7 +48,7 @@
               <div class="text-h6 text-center">
                 <CurrencyFormat :value="orderSummary.data?.voucher_balance" />
               </div>
-              <div class="text-body-1 text-center mt-2 text-sm">{{ $t('Voucher Balance') }}</div>
+              <div class="text-body-1 text-center mt-2 text-sm"><span style="font-family: 'Khmer OS Siemreap';">{{ $t('Voucher Balance') }}</span></div>
             </v-card>
           </v-col>
           
@@ -119,7 +119,7 @@
               <thead>
                 <tr>
                   <th class="text-left">
-                    {{ $t('No') }}
+                    {{ $t('No #') }}
                   </th>
                   <th class="text-left">
                     {{ $t('Qty') }}
@@ -132,15 +132,16 @@
                   </th>
                 </tr>
               </thead>
-              <tbody v-for=" d in recentOrder.data" :key="name">
+              <tbody v-for=" d in recentOrder.data" :key="d.name">
                 <tr>
                   <td @click="onSaleDetail(d.name)">{{ d.name }}</td>
                   <td class="pl-4">{{ d.total_quantity }}</td>
                   <td class="pl-4">
                     <CurrencyFormat :value="d.grand_total" />
                   </td>
-                  <td v-if="d.modified">
-                    <Timeago :long="long" :datetime="d.modified" />
+             
+                  <td v-if="d.posting_date">
+                    {{d.posting_date}} 
                   </td>
                 </tr>
               </tbody>
@@ -151,7 +152,7 @@
               <thead>
                 <tr>
                   <th class="text-left">
-                    {{ $t('No') }}
+                    {{ $t('No #') }}
                   </th>
                   <th class="text-left">
                     {{ $t('Actual Amount') }}
@@ -164,7 +165,7 @@
                   </th>
                 </tr>
               </thead>
-              <tbody v-for=" d in topUpHistory" :key="name">
+              <tbody v-for=" d in topUpHistory" :key="d.name">
                 <tr :class="d.payments.length > 0?'v-align-top':'v-align-middle'" >
                   <td>{{ d.name }}</td>
                   <td class="pl-4"><CurrencyFormat :value="d.actual_amount" /></td>
@@ -205,7 +206,6 @@
 </template>
 <script setup>
 import { ref, defineProps, inject,defineEmits, createDocumentResource, createResource, addCustomerDialog, useRouter, saleDetailDialog, computed,onMounted } from '@/plugin'
-import { Timeago } from 'vue2-timeago';
 import { useDisplay } from 'vuetify'
 import ComModal from '../../components/ComModal.vue';
 
@@ -262,7 +262,7 @@ let recentOrder = createResource(
     url: 'frappe.client.get_list',
     params: {
       doctype: "Sale",
-      fields: ["name", "grand_total", "total_quantity", "modified"],
+      fields: ["name", "grand_total", "total_quantity", "posting_date"],
       filters: { customer: props.params.name, docstatus: 1 },
       order_by: "modified desc",
       limit_page_length: 5
@@ -318,11 +318,14 @@ const printPreviewUrl = computed(()=>{
 })
 
 </script>
-<style>
+<style scoped>
   .v-align-top{
     vertical-align: top;
   }
   .v-align-middle{
     vertical-align: middle;
+  }
+  .card_label{
+    font-family:  "Khmer OS Siempreap" !important;
   }
 </style>

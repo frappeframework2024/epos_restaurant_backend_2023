@@ -1,12 +1,12 @@
 <template>
     <ComLoadingDialog v-if="isLoading" />
     <div class="two-col-list">
-        <v-list-item v-if="device_setting.show_reference_button_in_more_menu == 1" prepend-icon="mdi-format-list-bulleted" style="font-family: Khmer OS Battambang;"
+        <v-list-item v-if="device_setting.show_reference_button_in_more_menu == 1" prepend-icon="mdi-format-list-bulleted" style="font-family: Khmer OS Siemreap;"
             @click="onReferenceNumber()">
-             <div style="font-family: Khmer OS Battambang;">{{ $t('Reference') + ' #' }}</div>
+             <div style="font-family: Khmer OS Siemreap;">{{ $t('Reference') + ' #' }}</div>
         </v-list-item>
         <v-list-item prepend-icon="mdi-eye-outline" @click="onViewBill()" v-if="sale.sale.sale_products.length > 0">
-             <div style="font-family: Khmer OS Battambang;">{{ $t('View Bill')}}</div>
+             <div style="font-family: Khmer OS Siemreap;">{{ $t('View Bill')}}</div>
         </v-list-item>
 
         <v-list-item @click="onRemoveSaleNote()" v-if="sale.sale.note">
@@ -14,104 +14,104 @@
                 <v-icon icon="mdi-note-outline" color="error"></v-icon>
             </template>
             <v-list-item-title class="text-red-700">
-                <div style="font-family: Khmer OS Battambang;">{{ $t('Remove Note') }}</div>
+                <div style="font-family: Khmer OS Siemreap;">{{ $t('Remove Note') }}</div>
             </v-list-item-title>
         </v-list-item>
         <v-list-item prepend-icon="mdi-note-outline" @click="sale.onSaleNote(sale.sale)" v-else>
-            <div style="font-family: Khmer OS Battambang;">{{ $t('Note') }}</div>
+            <div style="font-family: Khmer OS Siemreap;">{{ $t('Note') }}</div>
         </v-list-item>
 
         <v-list-item prepend-icon="mdi-currency-usd" v-if="gv.device_setting.show_button_commission == 1" @click="onAddCommission()">
-            <div style="font-family: Khmer OS Battambang;">{{ $t('Commission') }}</div>
+            <div style="font-family: Khmer OS Siemreap;">{{ $t('Commission') }}</div>
         </v-list-item>
 
         <v-list-item v-if="setting.price_rules.length > 1" prepend-icon="mdi-bulletin-board" @click="onChangePriceRule()">
-            <div style="font-family: Khmer OS Battambang;">{{ $t('Change Price Rule') }}</div>
+            <div style="font-family: Khmer OS Siemreap;">{{ $t('Change Price Rule') }}</div>
         </v-list-item>
 
         <v-list-item v-if="setting.table_groups && setting.table_groups.length > 0" prepend-icon="mdi-silverware" @click="onChangePOSMenu()">
-            <div style="font-family: Khmer OS Battambang;">{{ $t('Change POS Menu') }}</div>
+            <div style="font-family: Khmer OS Siemreap;">{{ $t('Change POS Menu') }}</div>
         </v-list-item>
 
         <v-list-item v-if="isWindow && gv.device_setting.is_order_station == 0" prepend-icon="mdi-cash-100" @click="onOpenCashDrawer()">
-             <div style="font-family: Khmer OS Battambang;">{{ $t('Open Cash Drawer') }}</div>
+             <div style="font-family: Khmer OS Siemreap;">{{ $t('Open Cash Drawer') }}</div>
         </v-list-item>
 
         <v-list-item v-if="setting.table_groups && setting.table_groups.length > 0" prepend-icon="mdi-grid-large" @click="onChangeTable()">
-            <div style="font-family: Khmer OS Battambang;">{{ $t('Change or Merge Table') }}</div>
+            <div style="font-family: Khmer OS Siemreap;">{{ $t('Change or Merge Table') }}</div>
         </v-list-item>
 
         <v-list-item v-if="setting.table_groups && setting.table_groups.length > 0" prepend-icon="mdi-note-text" @click="onSplitBill()">
-            <div style="font-family: Khmer OS Battambang;">{{ $t('Split Bill') }}</div>
+            <div style="font-family: Khmer OS Siemreap;">{{ $t('Split Bill') }}</div>
         </v-list-item>
 
         <v-list-item v-if="device_setting.show_move_item_button" prepend-icon="mdi-folder-move" @click="onMoveItem()">
-             <div style="font-family: Khmer OS Battambang;">{{ $t('Move Item(s)') }}</div>
+             <div style="font-family: Khmer OS Siemreap;">{{ $t('Move Item(s)') }}</div>
         </v-list-item>
 
         <v-list-item v-if="setting.table_groups && setting.table_groups.length > 0 && setting.use_guest_cover == 1" prepend-icon="mdi-account-multiple-outline" @click="onUpdateGuestCover()">
-            <div style="font-family: Khmer OS Battambang;">{{ $t('Change Guest Cover '+'('+sale.sale.guest_cover+')')}}</div>
+            <div style="font-family: Khmer OS Siemreap;">{{ $t('Change Guest Cover '+'('+sale.sale.guest_cover+')')}}</div>
         </v-list-item>
 
         <v-list-item v-if="gv.device_setting.show_button_change_sale_type == 1" prepend-icon="mdi-cart" @click="onChangeSaleType()">
-            <div style="font-family: Khmer OS Battambang;">{{ $t('Change Sale Type') }}</div>
+            <div style="font-family: Khmer OS Siemreap;">{{ $t('Change Sale Type') }}</div>
         </v-list-item>
 
         <v-list-item prepend-icon="mdi-translate" @click="onChangeMenuLanguage()">
-                 <div style="font-family: Khmer OS Battambang;">{{ $t('Menu Language') + '(' + onLoadMenuLabel + ')' }}</div>
+                 <div style="font-family: Khmer OS Siemreap;">{{ $t('Menu Language') + '(' + onLoadMenuLabel + ')' }}</div>
         </v-list-item>
 
         <v-list-item v-if="gv.device_setting.show_seat_number_button == 1 && setting.table_groups && setting.table_groups.length > 0" prepend-icon="mdi-chair-school" @click="onSeatNumber()">
-             <div style="font-family: Khmer OS Battambang;">{{ $t('Seat') + '#' }}</div>
+             <div style="font-family: Khmer OS Siemreap;">{{ $t('Seat') + '#' }}</div>
         </v-list-item>
 
         <v-list-item v-if="(device_setting.show_button_resend || 0) == 1" prepend-icon="mdi-printer-outline" @click="onResend()">
-            <div style="font-family: Khmer OS Battambang;">{{ $t('Re-Send') }}</div>
+            <div style="font-family: Khmer OS Siemreap;">{{ $t('Re-Send') }}</div>
         </v-list-item>
 
         <v-list-item prepend-icon="mdi-apple-keyboard-command" @click="onChangeTaxSetting()" v-if="sale.setting.tax_rules.length > 0">
-            <div style="font-family: Khmer OS Battambang;">{{ $t('Tax Setting') }}</div>
+            <div style="font-family: Khmer OS Siemreap;">{{ $t('Tax Setting') }}</div>
         </v-list-item>
             
         <v-list-item v-if="device_setting.show_park_button == 1" @click="onRedeemClick()">
             <template #prepend>
                 <v-icon icon="mdi-parking"></v-icon>
             </template>
-            <v-list-item-title><div style="font-family: Khmer OS Battambang;">{{ $t('Redeem Item') }} {{ showSplitBill }}</div></v-list-item-title>
+            <v-list-item-title><div style="font-family: Khmer OS Siemreap;">{{ $t('Redeem Item') }} {{ showSplitBill }}</div></v-list-item-title>
         </v-list-item>
 
         <v-list-item v-if="sale.sale.sale_products?.filter(r => r.name == undefined).length > 0" @click="onClearOrder()">
             <template #prepend>
                 <v-icon color="error" icon="mdi-autorenew"></v-icon>
             </template>
-            <v-list-item-title class="text-orange-700"><div style="font-family: Khmer OS Battambang;">{{ $t('Cancel Order') }}</div></v-list-item-title>
+            <v-list-item-title class="text-orange-700"><div style="font-family: Khmer OS Siemreap;">{{ $t('Cancel Order') }}</div></v-list-item-title>
         </v-list-item>
 
         <v-list-item v-if="(device_setting?.show_edit_menu_button || 0) == 1" @click="onEditPOSMenu()">
             <template #prepend>
                 <v-icon icon="mdi-file-edit"></v-icon>
             </template>
-            <v-list-item-title><div style="font-family: Khmer OS Battambang;">{{ $t('Edit Menu Item') }}</div></v-list-item-title>
+            <v-list-item-title><div style="font-family: Khmer OS Siemreap;">{{ $t('Edit Menu Item') }}</div></v-list-item-title>
         </v-list-item>
         <v-list-item  @click="showMenuSetting()">
             <template #prepend>
                 <v-icon icon="mdi-file-edit"></v-icon>
             </template>
-            <v-list-item-title><div style="font-family: Khmer OS Battambang;">{{ $t('Menu Setting') }}</div></v-list-item-title>
+            <v-list-item-title><div style="font-family: Khmer OS Siemreap;">{{ $t('Menu Setting') }}</div></v-list-item-title>
         </v-list-item>
 
         <v-list-item v-if="sale.sale.total_cash_coupon_claim > 0" @click="onClaimCouponClick()">
             <template #prepend>
                 <v-icon icon="mdi-card-bulleted-outline"></v-icon>
             </template>
-            <v-list-item-title><div style="font-family: Khmer OS Battambang;">{{ $t('Claim Coupon')}}</div></v-list-item-title>
+            <v-list-item-title><div style="font-family: Khmer OS Siemreap;">{{ $t('Claim Coupon')}}</div></v-list-item-title>
         </v-list-item>
 
         <v-list-item @click="onRateIncludeOrNotIncludeTaxClick" v-if="gv.device_setting.show_rate_include_button==1">
             <template #prepend>
                 <v-icon :class="sale.sale.rate_include_tax == 1 ? 'text-red-700':''" :icon="sale.sale.rate_include_tax == 1 ? 'mdi-tag-remove' : 'mdi-tag-plus'"></v-icon>
             </template>
-            <v-list-item-title :class="sale.sale.rate_include_tax == 1 ? 'text-red-700':''"><div style="font-family: Khmer OS Battambang;">{{ $t(sale.sale.rate_include_tax == 1 ? 'Remove Rate Include Tax' : 'Rate Include Tax') }}</div></v-list-item-title>
+            <v-list-item-title :class="sale.sale.rate_include_tax == 1 ? 'text-red-700':''"><div style="font-family: Khmer OS Siemreap;">{{ $t(sale.sale.rate_include_tax == 1 ? 'Remove Rate Include Tax' : 'Rate Include Tax') }}</div></v-list-item-title>
         </v-list-item>
 
         <v-divider inset></v-divider>
@@ -119,7 +119,7 @@
             <template #prepend>
                 <v-icon color="error" icon="mdi-delete"></v-icon>
             </template>
-            <v-list-item-title class="text-red-700"><div style="font-family: Khmer OS Battambang;">{{ $t('Delete Bill') }} {{ showSplitBill }}</div></v-list-item-title>
+            <v-list-item-title class="text-red-700"><div style="font-family: Khmer OS Siemreap;">{{ $t('Delete Bill') }} {{ showSplitBill }}</div></v-list-item-title>
         </v-list-item>
     </div>
 </template>

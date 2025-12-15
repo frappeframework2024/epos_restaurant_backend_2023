@@ -18,7 +18,7 @@ export default {
     
 }
 </script>
-<style>
+<style scoped>
 .view_table {
     border-collapse: collapse;
     border-spacing: 0;
