@@ -16,6 +16,9 @@ frappe.query_reports["Sale Summary Report"] = {
 		if(frappe.query_report.get_filter_value('parent_row_group')!=="Vendor"){
 			frappe.query_report.toggle_filter_display('vendor', true);
 		}
+		if(frappe.query_report.get_filter_value('row_group')!=="Vendor"){
+			frappe.query_report.toggle_filter_display('vendor', true);
+		}
 		if(frappe.query_report.get_filter_value('row_group')!=="Table"){
 			frappe.query_report.toggle_filter_display('table', true);
 		}
@@ -121,7 +124,7 @@ frappe.query_reports["Sale Summary Report"] = {
 				if(filter_based_on=="Fiscal Year"){
 					let from_fiscal_year = frappe.query_report.get_filter_value('from_fiscal_year');
 					frappe.query_report.set_filter_value("start_date", start_of_year(from_fiscal_year)); 					
-					frappe.query_report.set_filter_value("end_date", end_of_year(from_fiscal_year));					
+					frappe.query_report.set_filter_value("end_date", end_of_year(from_fiscal_year));
 				}
 			},
 		},
@@ -240,6 +243,9 @@ frappe.query_reports["Sale Summary Report"] = {
 				filter = frappe.query_report.get_filter_value('parent_row_group')
 				frappe.query_report.toggle_filter_display('table',filter !== 'Table');
 				frappe.query_report.toggle_filter_display('vendor',filter !== 'Vendor');
+				if(filter !== "vendor"){
+					frappe.query_report.set_filter_value("vendor", []);
+				}
 			},
 			
 		},
@@ -253,6 +259,9 @@ frappe.query_reports["Sale Summary Report"] = {
 				filter = frappe.query_report.get_filter_value('row_group')
 				frappe.query_report.toggle_filter_display('table',filter !== 'Table');
 				frappe.query_report.toggle_filter_display('vendor',filter !== 'Vendor');
+				if(filter !== "Vendor"){
+					frappe.query_report.set_filter_value("vendor", []);
+				}
 			},
 		},
 		{
