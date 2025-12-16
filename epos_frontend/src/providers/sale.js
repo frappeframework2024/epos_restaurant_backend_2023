@@ -556,7 +556,7 @@ export default class Sale {
         this.clearSelected();
         sp.selected = true;
         // we check if user use retail system when user click on order product we get product information
-        if (this.setting.table_groups.length == 0) {
+        if (this.setting.use_retail_ui == 1) {
             this.getSelectedProduct(sp)
             this.selected_sale_product = sp
         }
@@ -1584,7 +1584,7 @@ export default class Sale {
         let is_new = this.sale.creation == this.sale.modified
         let allow_overwrite_max_order_per_guest = JSON.parse(localStorage.getItem("current_user")).permission["allow_overwrite_max_order_per_guest"]
         let allow_overwrite_waiting_time = JSON.parse(localStorage.getItem("current_user")).permission["allow_overwrite_waiting_time"]
-        if(this.setting.maximum_order_per_guest>0){
+        if(this.setting.maximum_order_per_guest>0 && this.setting.use_retail_ui == 0){
             if(this.sale.guest_cover == 0){
                 toaster.error($t('Please add guest cover.'));
                 this.loading = false;
@@ -1600,7 +1600,7 @@ export default class Sale {
                 return
             }
         }
-        if(this.setting.menu_waiting_time > 0 && !is_new){
+        if(this.setting.menu_waiting_time > 0 && !is_new && this.setting.use_retail_ui == 0){
             const top = this.sale.sale_products.filter(r=>(r.is_newly_added || 0) == 0).reduce((maxObj, obj) => 
                 obj.order_time > maxObj.order_time ? obj : maxObj
             );

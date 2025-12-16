@@ -283,7 +283,7 @@ def get_conditions(filters,group_filter=None):
 		conditions += " AND b.cashier_shift  in %(cashier_shifts)s"
 
 	if filters.vendor:
-		conditions += " AND a.vendor  in %(vendor)s"
+		conditions += " AND a.vendor in %(vendor)s"
   
 	return conditions
 

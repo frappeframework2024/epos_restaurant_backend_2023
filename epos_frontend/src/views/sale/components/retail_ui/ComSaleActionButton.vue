@@ -13,7 +13,7 @@
             <template v-else>
   
               <template v-if="!mobile">
-                <v-btn  v-if="gv.device_setting.show_button_cancel_print_bill==1" color="error" size="small" class="m-0-1 grow" :variant="mobile ? 'tonal' : 'elevated'"  :stacked="!mobile" :prepend-icon="mobile ? '' : 'mdi-printer'" @click="onCancelPrintBill">
+                <v-btn style="font-family: Khmer OS Siemreap;" v-if="gv.device_setting.show_button_cancel_print_bill==1" color="error" size="small" class="m-0-1 grow" :variant="mobile ? 'tonal' : 'elevated'"  :stacked="!mobile" :prepend-icon="mobile ? '' : 'mdi-printer'" @click="onCancelPrintBill">
                   {{ $t('Cancel Print Bill') }}
                 </v-btn> 
                 
@@ -23,18 +23,18 @@
           
         <ComDiscountButton v-if="gv.device_setting?.is_order_station==0"/>
         
-        <v-btn  :variant="mobile ? 'tonal' : 'elevated'"
+        <v-btn  :variant="mobile ? 'tonal' : 'elevated'" style="font-family: Khmer OS Siemreap;"
           :color="mobile ? 'primary' : ''" :stacked="!mobile" size="small" class="m-0-1 grow"
           :prepend-icon="mobile ? '' : 'mdi-content-save'" @click="onSubmitAndNew">
           {{ $t('Save Order') }}
         </v-btn>
         
-        <v-btn v-if="device_setting.show_option_quick_pay ==1" :stacked="!mobile" size="small" color="error" class="m-0-1 grow" :height="mobile ? '35px' : undefined" :variant="mobile ? 'tonal' : 'elevated'"
+        <v-btn style="font-family: Khmer OS Siemreap;" v-if="device_setting.show_option_quick_pay ==1" :stacked="!mobile" size="small" color="error" class="m-0-1 grow" :height="mobile ? '35px' : undefined" :variant="mobile ? 'tonal' : 'elevated'"
           :prepend-icon="mobile ? '' : 'mdi-lightning-bolt'" @click="onQuickPay">
           {{ $t('Quick Pay Cash') }}
         </v-btn>
 
-        <v-btn  :stacked="!mobile" size="small" color="success" class="m-0-1 grow" :height="mobile ? '35px' : undefined" :variant="mobile ? 'tonal' : 'elevated'"
+        <v-btn style="font-family: Khmer OS Siemreap;" :stacked="!mobile" size="small" color="success" class="m-0-1 grow" :height="mobile ? '35px' : undefined" :variant="mobile ? 'tonal' : 'elevated'"
           :prepend-icon="mobile ? '' : 'mdi-currency-usd'" @click="onPayment">
           {{ $t('Payment') }}
         </v-btn>

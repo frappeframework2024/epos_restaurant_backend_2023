@@ -33,12 +33,12 @@
                                         <v-table class="responsive-table" style="border-top: 1px solid #ccc">
                                             <thead>
                                                 <tr>
-                                                    <th class="text-left">{{$t("Photo")}}</th>
-                                                    <th class="text-left">{{ $t("Product Code") }}</th>
-                                                    <th class="text-left">{{$t("Product Name")}}</th>
-                                                    <th class="text-left">{{$t("Category")}}</th>
-                                                    <th class="text-right">{{$t("Price")}}</th>
-                                                    <th class="text-center">{{$t("Unit")}}</th>
+                                                    <th class="text-left" style="font-family: Khmer OS Siemreap;">{{$t("Photo")}}</th>
+                                                    <th class="text-left" style="font-family: Khmer OS Siemreap;">{{ $t("Product Code") }}</th>
+                                                    <th class="text-left" style="font-family: Khmer OS Siemreap;">{{$t("Product Name")}}</th>
+                                                    <th class="text-left" style="font-family: Khmer OS Siemreap;">{{$t("Category")}}</th>
+                                                    <th class="text-right" style="font-family: Khmer OS Siemreap;">{{$t("Price")}}</th>
+                                                    <th class="text-center" style="font-family: Khmer OS Siemreap;">{{$t("Unit")}}</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
@@ -174,7 +174,7 @@ function onSearch() {
             ["Product Price", "barcode", "like", "%" + keyword.value + "%"]
         ],
         orderBy: sortOrder.value,
-        limit:50
+        limit: keyword.value ? 50 : 10
     })
         .then((docs) => {
             const seen = new Set();
@@ -248,7 +248,7 @@ async function onSelectProduct(d){
 
 
 onMounted(() => {
- 
+    onSearch()
     call.get("epos_restaurant_2023.api.api.get_meta", { "doctype": "Product" }).then((data) => {
         meta.value = data.message
     }) 

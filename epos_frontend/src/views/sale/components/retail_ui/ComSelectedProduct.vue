@@ -5,21 +5,19 @@
             <div class="selected-pro">
                 <div class="border p-3 rounded-md searc-pro-res">
                     <div v-if="sale?.selected_sale_product?.product_photo"
-                        class="product-image rounded-md overflow-hidden" style="width: 300px;">
+                        class="product-image rounded-md overflow-hidden" style="width: 300px;height: 300px;">
                         <img class="h-100 w-100" style="object-fit: cover;"
                             :src="sale?.selected_sale_product?.product_photo" />
                     </div>
-                    <div v-else class="product-image rounded-md overflow-hidden" style="width: 300px;">
+                    <div v-else class="product-image rounded-md overflow-hidden" style="width: 300px;height: 300px;">
                         <v-img width="100%" aspect-ratio="16/9" cover :src="placeholderImage"></v-img>
                     </div>
                     <br />
                     <div class="text-center">
-                        <strong>{{ sale?.selected_sale_product?.product_code }} / {{
-                            sale?.selected_sale_product?.product_name
-                            }}
+                        <strong>{{ sale?.selected_sale_product?.product_code }} / {{sale?.selected_sale_product?.product_name}}
                             <template
-                                v-if="sale?.selected_sale_product?.product_name != sale?.selected_sale_product?.product_name_kh">{{
-                                    sale?.selected_sale_product?.product_name_kh }}
+                                v-if="sale?.selected_sale_product?.product_name != sale?.selected_sale_product?.product_name_kh">
+                                {{sale?.selected_sale_product?.product_name_kh }}
                             </template>
                         </strong>
                         <br />
@@ -39,7 +37,6 @@
                         <CurrencyFormat :value="sale?.selected_sale_product?.sub_total" />
                     </ComLabelValue>
                     <ComLabelValue v-if="sale.selected_sale_product.discount_amount > 0">
-                        
                         <template v-slot:label>
                             {{ $t("Discount") }}
                             <span
@@ -56,11 +53,9 @@
                         <ComLabelValue v-for="(inv, index) in sale.selected_product.invenotry" :key="index">
                             <template #label>
                                 {{ inv.stock_location }} <br />
-                                {{ $t("Re-order level") }} : {{ inv.reorder_level }}
                             </template>
                             {{ inv.quantity }} {{ inv.unit }}
                         </ComLabelValue>
-
                     </template>
                 </div>
             </div>
@@ -77,10 +72,6 @@
             </div>
         </template>
     </div>
-
-
-
-
 </template>
 
 <script setup>

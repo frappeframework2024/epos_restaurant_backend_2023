@@ -225,7 +225,7 @@ const numberFormat = inject('$numberFormat');
 const sale = inject('$sale');
 const product = inject('$product');
 const gv = inject('$gv');
-
+const props = null;
 const toaster = createToaster({ position: 'top-right', maxToasts: 2, duration: 3000 });
 const frappe = inject('$frappe');
 const db = frappe.db()
