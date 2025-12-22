@@ -147,12 +147,11 @@ def validate_tax(doc):
 			doc.taxable_amount_3 =0
 			doc.tax_3_amount=0
 			doc.total_tax =0
-
 @frappe.whitelist()
-def make_sales_order(source_name, target_doc=None, ignore_permissions=False):
+def make_sale(source_name, target_doc=None, ignore_permissions=False):
 	from frappe.model.mapper import get_mapped_doc
 	def postprocess(source, target):
-		naming_series_list = get_naming_series("Sales Order")
+		naming_series_list = get_naming_series("Sale")
 		if len(naming_series_list) > 0:
 			target.naming_series = naming_series_list[0]
 		else:
@@ -162,11 +161,11 @@ def make_sales_order(source_name, target_doc=None, ignore_permissions=False):
 		source_name,
 		{
 			"Sale Quotation": {
-				"doctype": "Sales Order",
+				"doctype": "Sale",
 				"validation": {"docstatus": ["=", 1]}
 			},
 			"Sale Quotation Product": {
-				"doctype": "Sales Order Product",
+				"doctype": "Sale Product",
 				"field_map": {
 					"name": "products",
 					"parent": "sale_quotation"

@@ -4,9 +4,9 @@
 frappe.ui.form.on("Sale Quotation", {
 	refresh: function(frm) {
         if(frm.doc.docstatus === 1){
-             frm.add_custom_button(__('Sales Order'), function() {
+		 frm.add_custom_button(__('Sale Invoice'), function() {
                 frappe.model.open_mapped_doc({
-                    method: "epos_restaurant_2023.selling.doctype.sale_quotation.sale_quotation.make_sales_order",
+                    method: "epos_restaurant_2023.selling.doctype.sale_quotation.sale_quotation.make_sale",
                     frm: frm
                 })
         }, __("Create"));
