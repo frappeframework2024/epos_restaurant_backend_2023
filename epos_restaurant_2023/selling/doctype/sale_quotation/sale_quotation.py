@@ -151,6 +151,7 @@ def make_sale(source_name, target_doc=None, ignore_permissions=False):
 	def postprocess(source, target):
 		naming_series_list = get_naming_series("Sale")
 		target.sale_quotation = source_name
+		target.status = "Draft"
 		if len(naming_series_list) > 0:
 			target.naming_series = naming_series_list[0]
 		else:

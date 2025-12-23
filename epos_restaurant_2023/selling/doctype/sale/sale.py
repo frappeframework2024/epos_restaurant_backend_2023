@@ -803,12 +803,13 @@ def update_status(self):
 		else:
 			status = "Unpaid"
 	frappe.db.set_value('Sale', self.name, 'status', status, update_modified=False)
-	if self.self.sale_quotation:
+	if self.sale_quotation:
 		update_sale_quotation(self)
 
 def update_sale_quotation(self):
+	pass
 	status = ""
-	if self.docstatus in (0,1):
+	if self.docstatus == 1:
 		status = "Ordered"
 	else:
 		status = "Open"

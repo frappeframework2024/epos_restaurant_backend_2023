@@ -4,13 +4,13 @@ frappe.listview_settings['Sale Quotation'] = {
     has_indicator_for_draft: false,
     get_indicator(doc) {
        if(doc.status=="Open"){ 
-			return [__(doc.status), "green"];
+			return [__(doc.status), "orange"];
 		}else if(doc.status=="Draft"){
 			return [__(doc.status), "red"];
 		}else if(doc.status=="Cancelled"){
 			return [__(doc.status), "red"];
 		}else if(doc.status=="Ordered"){
-			return [__(doc.status), "red"];
+			return [__(doc.status), "green"];
 		}	
     },
 }
