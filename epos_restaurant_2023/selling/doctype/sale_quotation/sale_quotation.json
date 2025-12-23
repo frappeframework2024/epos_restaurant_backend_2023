@@ -21,6 +21,8 @@
   "stock_location",
   "column_break_9",
   "price_rule",
+  "status",
+  "sale",
   "section_break_6",
   "scan_barcode",
   "column_break_14",
@@ -435,6 +437,19 @@
    "label": "Sale Quotation Product",
    "options": "Sale Quotation Product",
    "reqd": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Open\nDraft\nCancelled\nOrdered"
+  },
+  {
+   "fieldname": "sale",
+   "fieldtype": "Link",
+   "label": "Sale",
+   "options": "Sale",
+   "read_only": 1
   }
  ],
  "image_field": "photo",
@@ -447,7 +462,7 @@
    "link_fieldname": "sale_quotation"
   }
  ],
- "modified": "2023-12-06 14:38:53.180026",
+ "modified": "2025-12-23 09:42:24.938058",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Quotation",

@@ -26,9 +26,7 @@ async function onSearchSale(){
                     name: result.name
                 }
             });
-
             sale.LoadSaleData(result.name)
-
             //
             sale.saleNetworkLock(sale.sale)
         }

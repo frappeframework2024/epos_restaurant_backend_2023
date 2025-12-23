@@ -383,23 +383,17 @@ function checkCashierShift(){
     if (sale.newSaleResource == null) {
       sale.createNewSaleResource();
     }
-  
     if (sale.sale.sale_products.length == 0) {
       toaster.warning($t('msg.There is no item to submit order'));
       return;
     }
-  
     if (sale.sale.sale_status != 'Bill Requested') {
-  
       const action = sale.action;
       const message = sale.message;
       const sale_status = sale.sale.sale_status;
-  
       sale.action = "submit_order";
       sale.message =$t('msg.Submit order successfully');
       sale.sale.sale_status = "Submitted";
-  
-  
       await sale.onSubmit().then((value) => {
         if (value) {
           router.push({ name: "AddSale" });
@@ -415,15 +409,11 @@ function checkCashierShift(){
       router.push({ name: "AddSale" });
       newSale();
     }
-  
     sale.tableSaleListResource.fetch();
-  
     if(mobile){
       window.postMessage("close_modal", "*");
     }
     emit('onSubmitAndNew')
- 
-   
   }
   
   function newSale() {

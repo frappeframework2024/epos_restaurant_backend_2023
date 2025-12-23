@@ -26,6 +26,22 @@ from frappe.model.rename_doc import get_link_fields
 import re
 from urllib.parse import urljoin
 
+
+def remove_key(data, keys= None):
+    if keys is None:
+        keys = ["owner", "creation", "modified", "modified_by", "docstatus", "idx","_user_tags","_comments","_assign","_liked_by"]
+    
+    if isinstance(data, dict):
+        return {
+            k: remove_key(v, keys) if isinstance(v, (dict, list)) else v
+            for k, v in data.items() if k not in keys
+        }
+
+    elif isinstance(data, list):
+        return [remove_key(item, keys) for item in data]
+
+
+
 @frappe.whitelist()
 def test():
     return frappe.format(91.145,{"fieldtype":"Currency"})

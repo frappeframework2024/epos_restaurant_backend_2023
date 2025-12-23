@@ -4,10 +4,11 @@ from frappe import _
 import base64
 from builtins import str
 
+from epos_restaurant_2023.api.api import remove_key
+
 @frappe.whitelist(allow_guest=True)
-def check_api_url(property_code):
-   
-    sql = "select  * from `tabBusiness Branch` where property_code = '{}'".format(property_code)
+def check_api_url(property_code):   
+    sql = "select  photo,name from `tabBusiness Branch` where property_code = '{}'".format(property_code)
     data = frappe.db.sql(sql,as_dict =1)
     if data:
         data =data[0]
@@ -17,10 +18,51 @@ def check_api_url(property_code):
             "photo":data.get("photo") 
         }
 
-    frappe.throw("Property {} does not exist".format(property_code))
+    frappe.throw("Property Code does not exist")
+
+@frappe.whitelist(allow_guest=True, methods="POST")
+def check_device_activated_by_property(params):   
+    p = params
+    bus = check_api_url(p.get("property_code",""))
+
+    app_name = frappe.get_value("ePOS Settings",None,"epos_app_name")
+    bus["app_name"] = app_name
+    
+    ## check activated device
+    sql = """select 
+        name,
+        pos_profile,
+        license,
+        allow_login_multiple_site
+    from `tabPOS Station` 
+    where business_branch = %(business_branch)s 
+        and platform = %(platform)s 
+        and device_id = %(device_id)s 
+        and disabled = 0 
+    limit 1"""
+    
+    docs = frappe.db.sql(sql,{
+        "business_branch": bus.get("property_name"),
+        "platform": p.get("platform"),
+        "device_id": p.get("device_id"),
+
+    },as_dict=1)
+    
+    bus["activated"] = {}
+    if docs:
+        doc = docs[0]
+        bus["activated"].update({
+            "default_pos_profile":doc.get("pos_profile"),
+            "station_name": doc.get("name"),
+            "license":doc.get("license"),
+            "allow_multiple_site":doc.get("allow_login_multiple_site"),
+        })   
+
+    return bus
+
     
 @frappe.whitelist( allow_guest=True,methods="POST" )
-def login(property,usr, pwd, property_code=None, device_id=None): 
+def login(property,usr, pwd, app_menu_included = True,  property_code=None, device_id=None): 
     ## check employee
     user = check_user(usr, pwd, device_id=device_id)  
     username = usr
@@ -36,7 +78,8 @@ def login(property,usr, pwd, property_code=None, device_id=None):
             frappe.throw("Usename and password incorrect.")   
 
         frappe.response["message"] = get_response_user_information(property,property_code )
-        frappe.response["message"]["app_menus"] =get_user_menu()
+        if app_menu_included:
+            frappe.response["message"]["app_menus"] =get_user_menu()
 
     else:
         frappe.throw("Usename and password incorrect.")
@@ -113,7 +156,9 @@ def get_response_user_information(property, property_code=None):
         address = data[0].get("address")
         home_page = data[0].get("default_home_page")
         if data[0].get("pos_permission"):
-             pos_permission = frappe.get_cached_doc("POS User Permission", data[0].get("pos_permission"))
+            pos_permission = frappe.get_cached_doc("POS User Permission", data[0].get("pos_permission"))
+            keys = ["name","owner", "creation", "modified", "modified_by", "docstatus", "idx","_user_tags","_comments","_assign","_liked_by","parent","parentfield","parenttype","doctype"]
+            pos_permission = remove_key(data= pos_permission.as_dict(),keys=keys) 
 
     api_generate = generate_keys(frappe.session.user)
      

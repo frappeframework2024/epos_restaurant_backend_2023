@@ -4,23 +4,11 @@ import calendar
 import datetime
 from frappe import _
 from epos_restaurant_2023.utils import encrypt_aes_base64,decrypt_aes_base64
+from epos_restaurant_2023.api.api import remove_key
 
 def get_day_numbers(year, month):
     _, num_days = calendar.monthrange(int( year), int(month))
     return list(range(1, num_days + 1))
-
-def remove_key(data, keys= None):
-    if   keys is None:
-        keys = ["owner", "creation", "modified", "modified_by", "docstatus", "idx","_user_tags","_comments","_assign","_liked_by"]
-    
-    if isinstance(data, dict):
-        return {
-            k: remove_key(v, keys) if isinstance(v, (dict, list)) else v
-            for k, v in data.items() if k not in keys
-        }
-
-    elif isinstance(data, list):
-        return [remove_key(item, keys) for item in data]
 
 
 @frappe.whitelist(methods=["POST"],allow_guest=True)

@@ -263,6 +263,7 @@ class Sale(Document):
 		if self.flags.ignore_on_update == True:
 			return 
 		#add sale product spa commission
+		update_status(self)
 		add_sale_product_spa_commission(self)
 
 		#delete product that parent_sale_product not exists 
@@ -789,19 +790,29 @@ def general_ledger_credit(self,account,is_commission = 1):
     submit_general_ledger_entry(docs=docs,commit=False)
 
 def update_status(self):
-		status = ""
-		if self.docstatus == 0:
-			status = "Draft"
-		elif self.docstatus == 2:
-			status = "Cancelled"
+	status = ""
+	if self.docstatus == 0:
+		status = "Draft"
+	elif self.docstatus == 2:
+		status = "Cancelled"
+	else:
+		if self.balance == 0:
+			status = "Paid"
+		elif self.balance > 0 and self.total_paid > 0:
+			status = "Partially Paid"
 		else:
-			if self.balance == 0:
-				status = "Paid"
-			elif self.balance > 0 and self.total_paid > 0:
-				status = "Partially Paid"
-			else:
-				status = "Unpaid"
-		frappe.db.set_value('Sale', self.name, 'status', status, update_modified=False)
+			status = "Unpaid"
+	frappe.db.set_value('Sale', self.name, 'status', status, update_modified=False)
+	if self.self.sale_quotation:
+		update_sale_quotation(self)
+
+def update_sale_quotation(self):
+	status = ""
+	if self.docstatus in (0,1):
+		status = "Ordered"
+	else:
+		status = "Open"
+	frappe.db.set_value('Sale Quotation', self.sale_quotation, 'status', status, update_modified=False)
     
 def on_sale_delete_update(self):
 	spa_commission = "update `tabSale Product SPA Commission` set is_deleted = 1  where sale = '{}'".format(self.name)			

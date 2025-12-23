@@ -61,23 +61,21 @@ class SaleQuotation(Document):
 		if not self.created_by:
 			self.created_by = frappe.get_user().doc.full_name
 
-
-	def before_submit(self):
+	def on_submit(self):
+		update_status(self)
 		self.append_quantity = None
 		self.scan_barcode = None
 
-	def on_update(self):
-		pass
+	def on_cancel(self):
+		update_status(self)
 
-	def before_submit(self):
-		for d in self.products:
+def validate_sale_product(self):
+	for d in self.products:
 			if d.is_inventory_product:
 				if d.unit !=d.base_unit:
 					if not check_uom_conversion(d.base_unit, d.unit):
 						frappe.throw(_("There is no UoM conversion for product {}-{} from {} to {}".format(d.product_code, d.product_name, d.base_unit, d.unit)))
 
-
-def validate_sale_product(self):
 	sale_discount = self.discount  
 	if sale_discount>0:
 		if self.discount_type=="Amount":
@@ -152,6 +150,7 @@ def make_sale(source_name, target_doc=None, ignore_permissions=False):
 	from frappe.model.mapper import get_mapped_doc
 	def postprocess(source, target):
 		naming_series_list = get_naming_series("Sale")
+		target.sale_quotation = source_name
 		if len(naming_series_list) > 0:
 			target.naming_series = naming_series_list[0]
 		else:
@@ -181,3 +180,16 @@ def make_sale(source_name, target_doc=None, ignore_permissions=False):
 def get_naming_series(doctype):
     meta = frappe.get_meta(doctype)
     return meta.get_field("naming_series").options.split("\n") if meta.get_field("naming_series") else []
+
+def update_status(self):
+	status = ""
+	if self.docstatus == 0:
+		status = "Draft"
+	elif self.docstatus == 2:
+		status = "Cancelled"
+	else:
+		if self.sale:
+			status = "Ordered"
+		else:
+			status = "Open"
+	frappe.db.set_value('Sale Quotation', self.name, 'status', status, update_modified=False)

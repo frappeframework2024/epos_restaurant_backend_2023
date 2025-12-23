@@ -428,7 +428,7 @@
    "fieldtype": "Link",
    "label": "Sale Quotation",
    "options": "Sale Quotation",
-   "search_index": 1
+   "read_only": 1
   },
   {
    "fieldname": "status",
@@ -1699,7 +1699,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2025-09-16 14:45:59.441275",
+ "modified": "2025-12-23 10:03:03.200764",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",
