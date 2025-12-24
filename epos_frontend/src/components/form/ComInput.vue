@@ -19,7 +19,7 @@
                 append-inner-icon="mdi-keyboard"
                 v-model="value"
                 @click:append-inner="onDialog()"
-                  @click:clear="onClear"
+                @click:clear="onClear"
                 :prepend-inner-icon="prependInnerIcon"
                 style="font-family: 'Kh System'"
                 ref="txtSearch"
@@ -44,7 +44,7 @@
                 ref="txtSearch"
                 style="font-family: 'Kh System'"
                 @click:append-inner="emit('onClickAppendInner')"
-                  @click:clear="onClear"
+                @click:clear="onClear"
                 :prepend-inner-icon="prependInnerIcon"
                 @click:prepend-inner="emit('onClickPrependInner')"
                 @input="updateValue">
@@ -80,7 +80,7 @@
                 v-else
                 :autofocus="validAutofocus"
                 :required="required"
-                :type="text"
+                type="date"
                 :density="density"
                 :variant="variant"
                 :label="label"

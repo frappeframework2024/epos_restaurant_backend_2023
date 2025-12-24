@@ -112,7 +112,7 @@ function onFetch(_filters){
 }
 
 async function onPrint(val){ 
-  
+
   if(!val){
     toaster.warning($t("Please select bill closed to print"));
     return
@@ -127,8 +127,6 @@ async function onPrint(val){
     }) 
     toaster.success($t("Print processing"));
   }
-
-  
 }
 
 async function _onPrintProcess(sale){   //
