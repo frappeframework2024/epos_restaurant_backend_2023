@@ -5,10 +5,10 @@
                 <ComInput :label="$t('Working Day No')" type="text" v-model="working_day.data.name" readonly />
             </v-col>
             <v-col cols="12" md="6">
-                <ComInput :label="$t('Working Day')" v-model="working_date" variant="solo" readonly />
+                <ComInput :label="$t('Working Day')" type="text"  v-model="working_date" variant="solo" readonly />
             </v-col>
             <v-col cols="12" md="6">
-                <ComInput :label="$t('POS Profile')" v-model="pos_profile" readonly />
+                <ComInput :label="$t('POS Profile')" type="text"  v-model="pos_profile" readonly />
             </v-col>
             <v-col cols="12" md="6">
                 <v-select style="font-family: Khmer OS Siemreap;" :label="$t('Shift')" item-title="name" item-value="name" variant="solo" v-model="shift_type"

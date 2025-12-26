@@ -4,9 +4,9 @@
             <v-chip v-bind="props" variant="elevated" color="primary" class="mx-1 grow text-center justify-center"
                 size="small">{{ $t('More') }}</v-chip>
         </template>
-        <v-list>
+        <v-list style="font-family: Khmer OS Siemreap;">
 
-            <v-list-item prepend-icon="mdi-pencil" :title="$t('Edit')" v-if="canEdit"
+            <v-list-item prepend-icon="mdi-pencil" :title="$t('Edit')" v-if="canEdit" 
                 @click="onEditSaleProduct(saleProduct)"></v-list-item>
 
             <v-list-item prepend-icon="mdi-note-text" :title="$t('Split Item')" v-if="gv.device_setting.show_split_item_button==1 && saleProduct.quantity > 1"

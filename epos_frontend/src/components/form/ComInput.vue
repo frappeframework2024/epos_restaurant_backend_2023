@@ -21,7 +21,7 @@
                 @click:append-inner="onDialog()"
                 @click:clear="onClear"
                 :prepend-inner-icon="prependInnerIcon"
-                style="font-family: 'Kh System'"
+                style="font-family: Khmer OS Siemreap;"
                 ref="txtSearch"
                 @input="updateValue">
             </v-textarea>
@@ -42,7 +42,7 @@
                 :append-inner-icon="appendInnerIcon"
                 v-model="value"
                 ref="txtSearch"
-                style="font-family: 'Kh System'"
+                style="font-family: Khmer OS Siemreap;"
                 @click:append-inner="emit('onClickAppendInner')"
                 @click:clear="onClear"
                 :prepend-inner-icon="prependInnerIcon"
@@ -72,7 +72,7 @@
                 @input="updateValue"
                 @click:clear="onClear"
                 :class="type=='date'?'date-input':''"
-                style="font-family: 'Kh System'"
+                style="font-family: Khmer OS Siemreap;"
                 ref="txtSearch"
                 >
             </v-text-field>
@@ -80,7 +80,7 @@
                 v-else
                 :autofocus="validAutofocus"
                 :required="required"
-                type="date"
+                :type="type"
                 :density="density"
                 :variant="variant"
                 :label="label"
@@ -97,7 +97,7 @@
                 @click:clear="onClear"
                 @input="updateValue"
                 ref="txtSearch"
-                style="font-family: 'Kh System'"
+                style="font-family: Khmer OS Siemreap;"
                 :class="type=='date'?'date-input':''">
             </v-text-field>
         </div>

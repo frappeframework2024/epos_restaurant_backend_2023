@@ -17,6 +17,7 @@
       :menu-props="{ maxHeight: 500 }"
       @click:clear="onClear"
       @update:modelValue="onSelected"
+      style="font-family: Khmer OS Siemreap;"
   >
 
   <template v-slot:item="{ props, item }">

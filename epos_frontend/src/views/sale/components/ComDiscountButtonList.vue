@@ -1,11 +1,11 @@
 <template>
-    <v-list-item prepend-icon="mdi-percent" @click="onSaleDiscount('Percent')">
+    <v-list-item style="font-family: Khmer OS Siemreap;" prepend-icon="mdi-percent" @click="onSaleDiscount('Percent')">
         <v-list-item-title>{{ $t('Discount Percent') }}</v-list-item-title>
     </v-list-item>
-    <v-list-item  @click="onSaleDiscount('Amount')" prepend-icon="mdi-currency-usd">
+    <v-list-item style="font-family: Khmer OS Siemreap;" @click="onSaleDiscount('Amount')" prepend-icon="mdi-currency-usd">
         <v-list-item-title>{{ $t('Discount Amount') }}</v-list-item-title>
     </v-list-item>
-    <v-list-item v-if="sale.sale.discount > 0" @click="onSaleCancelDiscount()">
+    <v-list-item style="font-family: Khmer OS Siemreap;" v-if="sale.sale.discount > 0" @click="onSaleCancelDiscount()">
         <template v-slot:prepend>
             <v-icon icon="mdi-tag-multiple" color="error"></v-icon>
         </template>

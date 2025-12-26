@@ -14,7 +14,7 @@
               </div>
               <h1 class="font-bold mb-3">{{ setting?.app_name }}</h1>
               <v-divider></v-divider>
-              <div class="py-3">
+              <div class="py-3" style="font-family: Khmer OS Siemreap;">
                 <v-list lines="one" bg-color="transparent">
                   <v-list-item class="mb-2" :title="setting?.business_branch" :subtitle="$t('Business')"></v-list-item>
                   <v-list-item class="mb-2" :title="setting?.pos_profile" :subtitle='$t("POS Profile")'></v-list-item>
@@ -51,7 +51,7 @@
               <div class="mb-3">
                 <div class="relative">
                   <v-text-field :readonly="mobile" type="password" density="compact" variant="solo" autofocus
-                    :label="$t('Password')" append-inner-icon="mdi-arrow-left" single-line hide-details
+                    :label="$t('Password')" append-inner-icon="mdi-arrow-left" single-line hide-details style="font-family: Khmer OS Siemreap;"
                     v-model="state.password" height="200" @click:append-inner="onDeleteBack()"></v-text-field>
                 </div>
               </div>

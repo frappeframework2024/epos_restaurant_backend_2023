@@ -14,7 +14,7 @@
                                 :items="paymentTypeCash"
                                 item-value="payment_method"
                                 item-title="payment_method" hide-details hide-no-data variant="solo"
-                                @update:modelValue="updateAmount"
+                                @update:modelValue="updateAmount"  style="font-family: Khmer OS Siemreap;"
                                 ></v-select>
                         </v-col>
                         <v-col cols="12" md="6">
@@ -27,7 +27,7 @@
                             @click:append-inner="OpenKeyboard()"
                             v-debounce="updateAmount" 
                             type="number"
-                            hide-details
+                            hide-details  style="font-family: Khmer OS Siemreap;"
                             ></v-text-field>
 
                         </v-col> 
@@ -35,7 +35,7 @@
                             <v-select height="100%" density="comfortable" :label="$t('Transaction Type')"
                                 v-model="cash.transaction_type"
                                 :items="transaction_type"
-                                hide-details hide-no-data variant="solo"
+                                hide-details hide-no-data variant="solo"  style="font-family: Khmer OS Siemreap;"
                                 ></v-select>
                         </v-col>
                         <v-col cols="12" md="6">
