@@ -82,6 +82,9 @@ def login(property,usr, pwd, app_menu_included = True,  property_code=None, devi
             frappe.response["message"]["app_menus"] =get_user_menu()
 
     else:
+        if (usr or "") == "":
+            frappe.throw("Invalid PIN Code")
+
         frappe.throw("Usename and password incorrect.")
 
 ## check user allow login by device
@@ -135,6 +138,9 @@ def check_user(usr, pwd, device_id = None):
             return data[0]
     
     else:
+        if not (usr or ""):
+            frappe.throw("Invalid PIN Code")
+            
         frappe.throw(_("Usename and password incorrect."))
     
        
