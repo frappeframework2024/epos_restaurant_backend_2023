@@ -29,7 +29,7 @@ class InventoryTransaction(Document):
 			self.stock_location_product_name = data[0]["name"]
 		else:
 			self.product_has_in_stock_location = 0
-			self.balance = self.in_quantity - self.out_quantity
+			self.balance = (self.in_quantity or 0) - (self.out_quantity or 0)
 			if (self.price or 0)==0:
 				p = frappe.get_doc("Product",self.product_code, "cost")
 				self.price = p.cost or 0
