@@ -19,11 +19,11 @@ class InventoryTransaction(Document):
 			
 			self.beginning_stock_value = current_qty * current_cost
 			self.quantity_on_hand = current_qty
-			self.balance = self.quantity_on_hand + self.in_quantity - self.out_quantity
+			self.balance = self.quantity_on_hand + (self.in_quantity or 0) - (self.out_quantity or 0)
 			if self.transaction_type =='Stock Adjustment' and self.action =="Submit":
 				self.ending_stock_value = self.balance * self.price
 			else:
-				self.ending_stock_value = self.beginning_stock_value + (self.in_quantity - self.out_quantity) * (self.price or current_cost)
+				self.ending_stock_value = self.beginning_stock_value + ((self.in_quantity or 0) - (self.out_quantity or 0)) * (self.price or current_cost)
 			
 			self.product_has_in_stock_location = 1
 			self.stock_location_product_name = data[0]["name"]
@@ -37,7 +37,7 @@ class InventoryTransaction(Document):
 			if self.transaction_type =='Stock Adjustment' and self.action =="Submit":
 				self.ending_stock_value = self.balance * self.price
 			else:
-				self.ending_stock_value =  (self.in_quantity - self.out_quantity) * (self.price or 0 )
+				self.ending_stock_value =  ((self.in_quantity or 0) - (self.out_quantity or 0)) * (self.price or 0 )
 		
 		
 
