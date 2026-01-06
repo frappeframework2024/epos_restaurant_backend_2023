@@ -23,7 +23,7 @@ def get_param(param):
         working_day_sql = """
             select 
                 max(posting_date) as posting_date 
-            from `tabWorking Day` where 1=1 
+            from `tabWorking Day` where 1=1 and
                 (%(business_branch)s = '' or business_branch = %(business_branch)s)  
             limit 1
         """
@@ -171,7 +171,129 @@ def get_total_sale_coupon_bill(business_branch, pos_profiles,working_date, type=
         return 0
 
 
+@frappe.whitelist()
+def daily_sale_amount_and_cost_chart(param):
+    def get_local_param(param):
+        if  type(param) is str:
+            param = json.loads(param)
+        keys = param.keys()
+        business_branch = ""
+        if "business_branch" in keys:
+            business_branch = param["business_branch"]
+        pos_profiles = []
+        if "pos_profiles" in keys:
+            pos_profiles = param["pos_profiles"]
+        if "start_date" in keys:
+            start_date = param["start_date"]
+        if "end_date" in keys:
+            end_date = param["end_date"]
+        if "working_date" in keys:
+            working_date = param["working_date"]
+        return {"business_branch":business_branch,"pos_profiles":pos_profiles,"start_date":start_date,"end_date":end_date,"working_date":working_date}
+    p = get_local_param(param)
+    business_branch  = p["business_branch"]
+    pos_profiles = p["pos_profiles"]
+    start_date = p["start_date"]
+    end_date = p["end_date"]
+    working_date = p["working_date"]
+    from datetime import timedelta,datetime
+    result = []
+    current = datetime.strptime(start_date, "%Y-%m-%d").date()
+    while current <= datetime.strptime(end_date, "%Y-%m-%d").date():
+        result.append({
+            "day": current.strftime("%d"),
+            "date": current.strftime("%Y-%m-%d")
+        })
+        current += timedelta(days=1)
+    sql = """select 	
+                s.posting_date,
+                sum(s.grand_total) as total_amount,
+                sum(s.total_cost) as total_cost
+            from `tabSale` s 
+            where 1=1
+            and s.docstatus = 1
+            and s.posting_date between %(start_date)s and %(end_date)s """
+    
+    if (business_branch or "") != "":
+        sql += " and s.business_branch = %(business_branch)s"
+
+    if len(pos_profiles) > 0:
+        sql += " and (s.pos_profile in %(pos_profile)s or s.pos_profile is null)"
+    sql += " group by s.posting_date"
+    data = frappe.db.sql(sql, {
+        "business_branch": business_branch,
+        "pos_profile": pos_profiles,
+        "start_date":result[0]["date"] ,
+        "end_date": result[-1]["date"] ,
+        }, as_dict=1)
+    for d in data:
+      value =  [r for r in result if str(r["date"]) == str(d["posting_date"])] 
+      if value:
+        value[0]["total_amount"] = d["total_amount"]
+        value[0]["total_cost"] = d["total_cost"]
+    return result
  
+@frappe.whitelist()
+def total_sale_amount_and_cost(param):
+    def get_local_param(param):
+        if  type(param) is str:
+            param = json.loads(param)
+        keys = param.keys()
+        business_branch = ""
+        if "business_branch" in keys:
+            business_branch = param["business_branch"]
+        pos_profiles = []
+        if "pos_profiles" in keys:
+            pos_profiles = param["pos_profiles"]
+        if "start_date" in keys:
+            start_date = param["start_date"]
+        if "end_date" in keys:
+            end_date = param["end_date"]
+        if "working_date" in keys:
+            working_date = param["working_date"]
+        return {"business_branch":business_branch,"pos_profiles":pos_profiles,"start_date":start_date,"end_date":end_date,"working_date":working_date}
+    p = get_local_param(param)
+    business_branch  = p["business_branch"]
+    pos_profiles = p["pos_profiles"]
+    start_date = p["start_date"]
+    end_date = p["end_date"]
+    working_date = p["working_date"]
+    def get_sql(type):
+        sql = """select 
+                        coalesce(sum(s.grand_total),0) as total_amount ,
+                        coalesce(sum(s.total_cost),0) as total_cost
+                    from `tabSale` s 
+                    where 
+                    s.docstatus = 1 and 
+                    (%(business_branch)s = '' or business_branch = %(business_branch)s)  
+                    """
+        if type == "Today":
+            sql += " and s.posting_date = %(working_date)s"
+        else:
+            sql += " and s.posting_date between %(start_date)s and %(end_date)s"
+
+        if len(pos_profiles) > 0:
+            sql += " and (s.pos_profile in %(pos_profile)s or s.pos_profile is null)"
+        return sql
+    today_query = get_sql("Today")
+    mtd_query = get_sql("mtd")
+    today_data = frappe.db.sql(today_query, {
+            "business_branch": business_branch,
+            "pos_profile": pos_profiles,
+            "working_date":working_date
+        }, as_dict=1)  
+    mtd_data = frappe.db.sql(mtd_query, {
+        "business_branch": business_branch,
+        "pos_profile": pos_profiles,
+        "start_date": start_date,
+        "end_date": end_date,
+        }, as_dict=1)  
+    return {
+        "today_total_amount": today_data[0].total_amount or 0,
+        "today_total_cost": today_data[0].total_cost or 0,
+        "mtd_total_amount": mtd_data[0].total_amount or 0,
+        "mtd_total_cost": mtd_data[0].total_cost or 0
+    } 
 
 # param: {"param": {"pos_profiles":["POS Profile 01","POS Profile 02"], "business_branch":""}}
 # @frappe.whitelist(allow_guest=True)
