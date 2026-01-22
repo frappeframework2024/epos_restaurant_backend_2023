@@ -60,48 +60,28 @@
                 </v-window>
             </template>
         </template>
-
     </ComModal>
-    <!-- <v-dialog :scrollable="false" :loading="loading" v-model="open" :fullscreen="mobile"
-        :style="mobile ? '' : 'width: 100%;max-width:800px'">
-        <v-card>
-            
-
-            
-        </v-card>
-    </v-dialog> -->
 </template>
 
 <script setup>
-import { confirm, ref, useRoute, useRouter, defineEmits, inject, changeTableSelectSaleOrderDialog, i18n, onMounted } from '@/plugin'
-import ComToolbar from '@/components/ComToolbar.vue';
+import { confirm, ref, useRouter, defineEmits, inject, changeTableSelectSaleOrderDialog, i18n, onMounted } from '@/plugin'
 import { createToaster } from '@meforma/vue-toaster';
 import ComInput from '../../../components/form/ComInput.vue';
 import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 import { useDisplay } from 'vuetify';
 import { computed } from 'vue';
-const route = useRoute();
 const router = useRouter();
-
 const { t: $t } = i18n.global;
 const frappe = inject('$frappe');
-
 const call = frappe.call();
-
 const gv = inject('$gv')
-
-const { mobile } = useDisplay()
 const socket = inject("$socket")
 const switch_pos_station = ref([])
-
 const tableLayout = inject("$tableLayout");
 const sale = inject("$sale");
 const toaster = createToaster({ position: "top-right" })
-
 const _pos_profile = ref('')
-
 const loading = ref(false)
-
 const props = defineProps({
     params: {
         type: Object,
@@ -110,9 +90,6 @@ const props = defineProps({
 })
 
 const emit = defineEmits(["resolve", "reject"])
-
-let open = ref(true);
-
 
 function onClose() {
     emit("resolve", false)
@@ -248,137 +225,18 @@ function addKODQueueMessage(screens, old_table, new_table) {
             }
         )
     })
-
-
 }
 
 function generateProductPrinterChangeTable(sale_products, old_sale, old_table) {
     if (sale.setting.pos_setting.print_sale_product_change_table) {
         sale_products?.forEach( async(r) => {
-
-            if(sale.setting.pos_setting.combo_menu_print_captain_by_items_printer && r.is_combo_menu){
-
-                const combo_data = JSON.parse(r.combo_menu_data)
-                let productCodes = combo_data.map(i => i.product_code);
-                const res = await call.post("epos_restaurant_2023.api.api.get_product_printer_by_products", {
-                     "product_codes":productCodes
-                });    
-                const printers = JSON.parse(r.printers); 
-                const combo_product_printers = res["message"]   
-                let product_printers = [];  
-                for(const pro of combo_data ){
-                    const p_printers = combo_product_printers.filter(r=>r.product_code == pro.product_code)
-                    for(const p of p_printers){ 
-                        const match_printers =  printers.filter(r=> r.printer == p.printer_name)       
-                        if( match_printers.length > 0){
-                            product_printers.push({
-                                move_from_table: old_table,
-                                move_from_sale: old_sale,
-                                printer: p.printer_name,
-                                group_item_type: p.group_item_type,
-                                is_label_printer: p.is_label_printer == 1,
-                                ip_address: p.ip_address,
-                                port: p.port,
-                                usb_printing: p.usb_printing,
-                                product_code: pro.product_code,
-                                product_name_en: pro.product_name,
-                                product_name_kh: pro.product_name_kh || pro.product_name,
-                                kitchen_group:pro.kitchen_group||"",
-                                kitchen_group_sort_order: pro.kitchen_group_sort_order || 0,
-                                seat_number: r.seat_number||"",                                
-                                portion: r.portion,
-                                unit: r.unit,
-                                modifiers: r.modifiers,
-                                note: r.note,
-                                quantity: r.quantity * (pro.quantity||1),
-                                is_deleted: false,
-                                is_free: r.is_free == 1,
-                                combo_menu: r.product_name,
-                                combo_menu_data: null,
-                                order_by: r.order_by,
-                                creation: r.creation,
-                                modified: r.modified,
-                                is_timer_product: (r.is_timer_product || 0),
-                                reference_sale_product: r.reference_sale_product,
-                                duration: r.duration,
-                                time_stop: (r.time_stop || 0),
-                                time_in: r.time_in,
-                                time_out_price: r.time_out_price,
-                                time_out: r.time_out,
-                                amount: r.amount
-                            });
-                        } 
-                    }
-                }
-
-                
-                // Group by combo_menu, printer, quantity, is_deleted, is_free
-                let merged = Object.values(
-                    product_printers.reduce((acc, item) => {
-                        // key based on fields you want to merge by
-                        const key = `${item.combo_menu}|${item.printer}|${item.quantity}|${item.is_deleted}|${item.is_free}`;
-                        if (!acc[key]) {
-                            // copy first item
-                            acc[key] = { ...item };
-                            // initialize array to store product names for combo_menu field
-                            acc[key].combo_menu_list = [item.product_name_en];
-                            acc[key].combo_menu_code_list = [item.product_code]; 
-                        } else {
-                            // collect product names
-                            acc[key].combo_menu_list.push(item.product_name_en);
-                            acc[key].combo_menu_code_list.push(item.product_code);
-                        }
-                        return acc;
-                    }, {})
-                );
-
-                // Map merged array to final structure
-                let finalList = merged.map(item => ({
-                    move_from_table: item.move_from_table,
-                    move_from_sale: item.move_from_sale,
-                    sale_product_name: item.sale_product_name,
-                    printer: item.printer,
-                    group_item_type: item.group_item_type,
-                    is_label_printer: item.is_label_printer,
-                    ip_address: item.ip_address,
-                    port: item.port,
-                    usb_printing: item.usb_printing,
-                    product_code: r.product_code,
-                    product_name_en: r.product_name,
-                    product_name_kh: r.product_name_kh,
-                    kitchen_group: item.kitchen_group,
-                    kitchen_group_sort_order: item.kitchen_group_sort_order,
-                    seat_number: item.seat_number,
-                    portion: item.portion,
-                    unit: item.unit,
-                    modifiers: item.modifiers,
-                    note: item.note,
-                    quantity: item.quantity,
-                    is_deleted: item.is_deleted,
-                    is_free: item.is_free,
-                    combo_menu: item.combo_menu_list.join("^ "), // merged product names
-                    combo_menu_data: JSON.stringify(combo_data.filter((x)=> item.combo_menu_code_list.includes(x.product_code) )),
-                    order_by: item.order_by,
-                    creation: item.creation,
-                    modified: item.modified,
-                    is_timer_product: item.is_timer_product,
-                    reference_sale_product: r.reference_sale_product,
-                    duration: item.duration,
-                    time_stop: item.time_stop,
-                    time_in: item.time_in,
-                    time_out_price: item.time_out_price,
-                    time_out: item.time_out,
-                    amount: item.amount
-                }));
-
-                finalList.forEach((p)=>{ 
-                     sale.changeTableSaleProducts.push(p);
-                })     
-
-            }else{
+            let comboItemPrinters = await sale.getProductPrinterOfComboItem(r,false,old_table,old_sale);
+            ///check if combo print KOT by combo items
+            if(!comboItemPrinters){
                 const pritners = JSON.parse(r.printers);           
                 pritners.forEach((p) => {
                     sale.changeTableSaleProducts.push({
+                        sale_product_name: (r.name || "New"),
                         move_from_table: old_table,
                         move_from_sale: old_sale,
                         printer: p.printer,
@@ -416,6 +274,11 @@ function generateProductPrinterChangeTable(sale_products, old_sale, old_table) {
                     });
                 });
             }
+            else{
+                comboItemPrinters.forEach((p)=>{
+                    sale.changeTableSaleProducts.push(p);
+                });
+            } 
         });   
     }
 }
@@ -443,19 +306,7 @@ onMounted(() => {
     }
 
     switch_pos_station.value = pos_profiles;
-
     loading.value = false;
-
-    // call
-    //     .get("epos_restaurant_2023.api.api.get_pos_profiles")
-    //     .then((result) => {
-
-    //         switch_pos_station.value = result.message
-    //         loading.value = false
-    //     })
-    //     .catch((error) => {
-    //         loading.value = false
-    //     });
 })
 
 

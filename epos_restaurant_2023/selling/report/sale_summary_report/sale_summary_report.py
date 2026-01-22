@@ -478,11 +478,11 @@ def get_report_field(filters):
 	
 	if len(row_group)>0:
 		if row_group[0]['show_commission'] :
-			fields.append({"label":"Commission", "short_label":"Commission", "fieldname":"commission","fieldtype":"Currency","indicator":"gray","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(b.commission_amount)"})
-			fields.append({"label":"Net Sale", "short_label":"Net Sale", "fieldname":"net_sale","fieldtype":"Currency","indicator":"Blue","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.sub_total - a.total_discount - b.commission_amount)"})
+			fields.append({"label":"Commission", "short_label":"Commission", "fieldname":"commission","fieldtype":"Currency","indicator":"gray","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"ROUND( SUM((a.sub_total - a.total_discount) / b.grand_total  * b.commission_amount ), 2)"})
+			fields.append({"label":"Net Sale", "short_label":"Net Sale", "fieldname":"net_sale","fieldtype":"Currency","indicator":"Blue","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.sub_total - a.total_discount) - ROUND( SUM((a.sub_total - a.total_discount) / b.grand_total  * b.commission_amount ), 2)"})
 			
 		else:
-			fields.append({"label":"Net Sale", "short_label":"Net Sale", "fieldname":"net_sale","fieldtype":"Currency","indicator":"Blue","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.sub_total - a.total_discount)"})
+			fields.append({"label":"Net Sale", "short_label":"Net Sale", "fieldname":"net_sale","fieldtype":"Currency","indicator":"Blue","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.sub_total - a.total_discount) - ROUND( SUM((a.sub_total - a.total_discount) / b.grand_total  * b.commission_amount ), 2)"})
 		
 	
 	fields.append({"label":"Tax", "short_label":"Tax", "fieldname":"total_tax","fieldtype":"Currency","indicator":"gray","precision":None, "align":"right","chart_color":"#dd5574","sql_expression":"SUM(a.total_tax)"})
@@ -491,7 +491,7 @@ def get_report_field(filters):
 
 	if len(row_group)>0:
 		if row_group[0]['show_commission']:
-			fields.append({"label":"Gross Profit", "short_label":"Profit", "fieldname":"profit","fieldtype":"Currency","indicator":"Green","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue - (a.cost*a.quantity) - b.commission_amount)"})
+			fields.append({"label":"Gross Profit", "short_label":"Profit", "fieldname":"profit","fieldtype":"Currency","indicator":"Green","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue - (a.cost*a.quantity)) - b.commission_amount"})
 		else:
 			fields.append({"label":"Gross Profit", "short_label":"Profit", "fieldname":"profit","fieldtype":"Currency","indicator":"Green","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue - (a.cost*a.quantity))"})
 

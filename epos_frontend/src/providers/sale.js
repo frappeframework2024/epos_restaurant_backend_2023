@@ -231,7 +231,19 @@ export default class Sale {
                 this.sale = doc;
                 this.getDefaultTableMenu(doc.table_id)
                 //add sale product to temp resend sale product to kitchen order
-                this.reSendSaleProductKOT = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "" && ((r.printers || "[]") != "[]"))));
+                let re_send_sale_product_kot = []
+                this.reSendSaleProductKOT = []
+                re_send_sale_product_kot = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "")));
+                re_send_sale_product_kot.forEach((r)=>{
+                    if(this.setting.pos_setting.combo_menu_print_captain_by_items_printer && r.is_combo_menu){
+                        this.reSendSaleProductKOT.push(r);
+                    }else{
+                        if(((r.printers || "[]") != "[]")){
+                            this.reSendSaleProductKOT.push(r);
+                        }
+                    } 
+                }); 
+                
                 //add sale to move item
                 this.moveItemSaleProduct = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "")));
                 this.action = "";
@@ -881,7 +893,18 @@ export default class Sale {
         this.orderChanged = true;
         socket.emit("ShowOrderInCustomerDisplay", this.sale, sale_status, this.customer_display_key);
         //add sale product to temp resend sale product to kitchen order
-        this.reSendSaleProductKOT = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "" && ((r.printers || "[]") != "[]"))));
+        let re_send_sale_product_kot = []
+        this.reSendSaleProductKOT = []
+        re_send_sale_product_kot = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "")));
+        re_send_sale_product_kot.forEach((r)=>{
+            if(this.setting.pos_setting.combo_menu_print_captain_by_items_printer && r.is_combo_menu){
+                this.reSendSaleProductKOT.push(r);
+            }else{
+                if(((r.printers || "[]") != "[]")){
+                     this.reSendSaleProductKOT.push(r);
+                }
+            } 
+        });
         //add sale to move item
         this.moveItemSaleProduct = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "")));
     }
@@ -2022,27 +2045,27 @@ export default class Sale {
         })
     }
 
-    generateProductPrinters() {
-        this.productPrinters = [];
-        this.sale.sale_products.filter(r => r.sale_product_status == 'New' &&  JSON.parse(r.printers).length > 0).forEach(async (r) => {  
-            ///check if combo print KOT by combo items
-            if(this.setting.pos_setting.combo_menu_print_captain_by_items_printer && r.is_combo_menu){ 
-                const combo_data = JSON.parse(r.combo_menu_data)
+    //get combo print KOT by combo items
+    async getProductPrinterOfComboItem(saleProduct, isDeleted = false,moveFromTable=undefined, moveFromSale=undefined){
+        let saleProductPrinters = []
+        const r = saleProduct;
+        if(this.setting.pos_setting.combo_menu_print_captain_by_items_printer && r.is_combo_menu){
+
+            const combo_data = JSON.parse(r.combo_menu_data)
                 let productCodes = combo_data.map(i => i.product_code);
                 const res = await call.post("epos_restaurant_2023.api.api.get_product_printer_by_products", {
                      "product_codes":productCodes
                 });    
-                const printers = JSON.parse(r.printers); 
+                // const printers = JSON.parse(r.printers); 
                 const combo_product_printers = res["message"]     
                 let product_printers = [];     
                 for(const pro of combo_data ){
                     const p_printers = combo_product_printers.filter(r=>r.product_code == pro.product_code)
-                    for(const p of p_printers){ 
-                        ///check combo item is exist printer match
-                        const match_printers =  printers.filter(r=> r.printer == p.printer_name)                        
-                        if( match_printers.length > 0){
+                    for(const p of p_printers){                    
                             product_printers.push({
                                 sale_product_name: (r.name || "New"),
+                                move_from_table: moveFromTable,
+                                move_from_sale: moveFromSale,
                                 printer: p.printer_name,
                                 group_item_type: p.group_item_type,
                                 is_label_printer: p.is_label_printer == 1,
@@ -2059,8 +2082,9 @@ export default class Sale {
                                 unit: r.unit,
                                 modifiers: r.modifiers,
                                 note: r.note,
-                                quantity: r.quantity * (pro.quantity||1),
-                                is_deleted: false,
+                                quantity: r.quantity ,
+                                combo_quantity : (pro.quantity||1),
+                                is_deleted: isDeleted,
                                 is_free: r.is_free == 1,
                                 combo_menu: r.product_name,
                                 combo_menu_data: null,
@@ -2076,25 +2100,33 @@ export default class Sale {
                                 time_out: r.time_out,
                                 amount: r.amount
                             })
-                        }
                     }
                 }  
+                
                 // Group by combo_menu, printer, quantity, is_deleted, is_free
                 let merged = Object.values(
                     product_printers.reduce((acc, item) => {
                         // key based on fields you want to merge by
-                        const key = `${item.combo_menu}|${item.printer}|${item.quantity}|${item.is_deleted}|${item.is_free}`;
+                        let key = `${item.combo_menu}|${item.printer}`;
+                        if(item.group_item_type != "Printer cut by order"){
+                            key += `|${item.product_code}`
+                        }
+                        // const key = `${item.combo_menu}|${item.printer}|${item.quantity}|${item.is_deleted}|${item.is_free}`;
+                        const item_display = item.product_name_en 
+                      
                         if (!acc[key]) {
                             // copy first item
                             acc[key] = { ...item };
                             // initialize array to store product names for combo_menu field
-                            acc[key].combo_menu_list = [item.product_name_en];
+                           
+                            acc[key].combo_menu_list = [item_display];
                             acc[key].combo_menu_code_list = [item.product_code]; 
                         } else {
                             // collect product names
-                            acc[key].combo_menu_list.push(item.product_name_en);
+                            acc[key].combo_menu_list.push(item_display);
                             acc[key].combo_menu_code_list.push(item.product_code);
                         }
+
                         return acc;
                     }, {})
                 );
@@ -2133,52 +2165,76 @@ export default class Sale {
                     time_out_price: item.time_out_price,
                     time_out: item.time_out,
                     amount: item.amount
-                }));
-                finalList.forEach((p)=>{ 
-                     this.productPrinters.push(p);
-                })                
-                //
-            }else{                
+                })); 
+
+                 finalList.forEach((p)=>{ 
+                    saleProductPrinters.push(p)
+                 });
+
+                return saleProductPrinters
+
+
+        }else{
+            return false
+        }
+    }
+
+    generateProductPrinters() {
+        this.productPrinters = [];
+        this.sale.sale_products.filter(r => r.sale_product_status == 'New').forEach(async (r) => {  
+            let comboItemPrinters = await this.getProductPrinterOfComboItem(r);
+            ///check if combo print KOT by combo items
+            if(!comboItemPrinters){
                 const printers = JSON.parse(r.printers);
-                printers.forEach((p) => { 
-                    this.productPrinters.push({
-                        sale_product_name: (r.name || "New"),
-                        printer: p.printer,
-                        group_item_type: p.group_item_type,
-                        is_label_printer: p.is_label_printer == 1,
-                        ip_address: p.ip_address,
-                        port: p.port,
-                        usb_printing: p.usb_printing,
-                        product_code: r.product_code,
-                        product_name_en: r.product_name,
-                        product_name_kh: r.product_name_kh,
-                        kitchen_group:r.kitchen_group||"",
-                        kitchen_group_sort_order: r.kitchen_group_sort_order || 0,
-                        seat_number: r.seat_number||"",
-                        portion: r.portion,
-                        unit: r.unit,
-                        modifiers: r.modifiers,
-                        note: r.note,
-                        quantity: r.quantity,
-                        is_deleted: false,
-                        is_free: r.is_free == 1,
-                        combo_menu: r.combo_menu,
-                        combo_menu_data: r.combo_menu_data,
-                        order_by: r.order_by,
-                        creation: r.creation,
-                        modified: r.modified,
-                        is_timer_product: (r.is_timer_product || 0),
-                        reference_sale_product: r.reference_sale_product,
-                        duration: r.duration,
-                        time_stop: (r.time_stop || 0),
-                        time_in: r.time_in,
-                        time_out_price: r.time_out_price,
-                        time_out: r.time_out,
-                        amount: r.amount
-                    })
+                if(printers.length > 0){
+                    printers.forEach((p) => { 
+                        this.productPrinters.push({
+                            sale_product_name: (r.name || "New"),
+                            printer: p.printer,
+                            group_item_type: p.group_item_type,
+                            is_label_printer: p.is_label_printer == 1,
+                            ip_address: p.ip_address,
+                            port: p.port,
+                            usb_printing: p.usb_printing,
+                            product_code: r.product_code,
+                            product_name_en: r.product_name,
+                            product_name_kh: r.product_name_kh,
+                            kitchen_group:r.kitchen_group||"",
+                            kitchen_group_sort_order: r.kitchen_group_sort_order || 0,
+                            seat_number: r.seat_number||"",
+                            portion: r.portion,
+                            unit: r.unit,
+                            modifiers: r.modifiers,
+                            note: r.note,
+                            quantity: r.quantity,
+                            is_deleted: false,
+                            is_free: r.is_free == 1,
+                            combo_menu: r.combo_menu,
+                            combo_menu_data: r.combo_menu_data,
+                            order_by: r.order_by,
+                            creation: r.creation,
+                            modified: r.modified,
+                            is_timer_product: (r.is_timer_product || 0),
+                            reference_sale_product: r.reference_sale_product,
+                            duration: r.duration,
+                            time_stop: (r.time_stop || 0),
+                            time_in: r.time_in,
+                            time_out_price: r.time_out_price,
+                            time_out: r.time_out,
+                            amount: r.amount
+                        })
+                    });
+                }
+
+            }
+            else{
+                comboItemPrinters.forEach((p)=>{
+                    this.productPrinters.push(p);
                 });
-            }        
+            } 
         });
+
+
         //generate sale product print when change table
         if ((this.changeTableSaleProducts?.length || 0) > 0) {
             this.changeTableSaleProducts.forEach(x => {
@@ -2190,47 +2246,56 @@ export default class Sale {
                 this.productPrinters.push(x);
             })
         }
+
+
         if (this.setting.pos_setting.print_new_deleted_sale_product) {
             //generate deleted product to product printer list
-            this.deletedSaleProducts.filter(r => JSON.parse(r.printers).length > 0).forEach((r) => {
-                const printers = JSON.parse(r.printers);
-                printers.forEach((p) => {
-                    this.productPrinters.push({
-                        printer: p.printer,
-                        group_item_type: p.group_item_type,
-                        is_label_printer: p.is_label_printer == 1,
-                        ip_address: p.ip_address,
-                        port: p.port,
-                        usb_printing: p.usb_printing,
-                        product_code: r.product_code,
-                        product_name_en: r.product_name,
-                        product_name_kh: r.product_name_kh,
-                        kitchen_group: r.kitchen_group||"",
-                        kitchen_group_sort_order: r.kitchen_group_sort_order || 0,
-                        seat_number: r.seat_number||"",
-                        portion: r.portion,
-                        unit: r.unit,
-                        modifiers: r.modifiers,
-                        note: r.note,
-                        quantity: r.quantity,
-                        is_deleted: true,
-                        is_free: r.is_free == 1,
-                        combo_menu: r.combo_menu,
-                        combo_menu_data: r.combo_menu_data,
-                        deleted_note: r.deleted_item_note,
-                        order_by: r.order_by,
-                        creation: r.creation,
-                        modified: r.modified,
-                        reference_sale_product: r.reference_sale_product,
-                        duration: r.duration,
-                        time_stop: (r.time_stop || 0),
-                        time_in: r.time_in,
-                        time_out_price: r.time_out_price,
-                        time_out: r.time_out
-                    })
-                });
+            this.deletedSaleProducts.forEach(async (r) => {
+                let comboItemPrinters = await this.getProductPrinterOfComboItem(r, true);
+                 if(!comboItemPrinters){
+                    const printers = JSON.parse(r.printers);
+                    printers.forEach((p) => {
+                        this.productPrinters.push({
+                            printer: p.printer,
+                            group_item_type: p.group_item_type,
+                            is_label_printer: p.is_label_printer == 1,
+                            ip_address: p.ip_address,
+                            port: p.port,
+                            usb_printing: p.usb_printing,
+                            product_code: r.product_code,
+                            product_name_en: r.product_name,
+                            product_name_kh: r.product_name_kh,
+                            kitchen_group: r.kitchen_group||"",
+                            kitchen_group_sort_order: r.kitchen_group_sort_order || 0,
+                            seat_number: r.seat_number||"",
+                            portion: r.portion,
+                            unit: r.unit,
+                            modifiers: r.modifiers,
+                            note: r.note,
+                            quantity: r.quantity,
+                            is_deleted: true,
+                            is_free: r.is_free == 1,
+                            combo_menu: r.combo_menu,
+                            combo_menu_data: r.combo_menu_data,
+                            deleted_note: r.deleted_item_note,
+                            order_by: r.order_by,
+                            creation: r.creation,
+                            modified: r.modified,
+                            reference_sale_product: r.reference_sale_product,
+                            duration: r.duration,
+                            time_stop: (r.time_stop || 0),
+                            time_in: r.time_in,
+                            time_out_price: r.time_out_price,
+                            time_out: r.time_out
+                        })
+                    });
+                }else{
+                    comboItemPrinters.forEach((p)=>{
+                        this.productPrinters.push(p);
+                    });
+                }
             }); 
-        }
+        } 
     }
 
 

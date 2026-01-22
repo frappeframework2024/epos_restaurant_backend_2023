@@ -145,21 +145,19 @@ import socket from '@/utils/socketio';
 import Enumerable from 'linq';
 
 const { t: $t } = i18n.global;
-const moment = inject("$moment")
-const { mobile } = useDisplay()
-const toaster = createToaster({ position: 'top-right' })
+const moment = inject("$moment");
+const toaster = createToaster({ position: 'top-right' });
 const router = useRouter();
-const sale = inject('$sale')
-const gv = inject('$gv')
-const product = inject('$product')
-const frappe = inject("$frappe")
+const sale = inject('$sale');
+const gv = inject('$gv');
+const product = inject('$product');
+const frappe = inject("$frappe");
 const db = frappe.db();
 const call = frappe.call();
-const setting = JSON.parse(localStorage.getItem("setting"))
-const isWindow = localStorage.getItem('is_window') == 1
+const setting = JSON.parse(localStorage.getItem("setting"));
+const isWindow = localStorage.getItem('is_window') == 1;
 const isLoading = ref(false);
-const device_setting = JSON.parse(localStorage.getItem("device_setting"))
-
+const device_setting = JSON.parse(localStorage.getItem("device_setting"));
 let deletedSaleProducts = [];
 let productPrinters = [];
 
@@ -211,14 +209,13 @@ function onRateIncludeOrNotIncludeTaxClick(){
       if (v) {
         sale.onRateIncludeOrNotIncludeTaxClick()
       }
-    });
-    
+    });    
 }
-
 
 async function onViewBill() {
     const result = await viewBillModelModel({})
 }
+
 async function onUpdateGuestCover() {
     if (!sale.isBillRequested()) {
         if (setting.use_guest_cover == 1) {
@@ -247,14 +244,13 @@ async function onChangeMenuLanguage() {
 async function onChangeTable() {
     if (setting.allow_change_table_after_print_bill == 0){
         if (!sale.isBillRequested()) {
-
-        const result = await changeTableDialog({ pos_profile: localStorage.getItem('pos_profile') });
-        if (result) {
-            if (result.action == "reload_sale") {
-                await sale.LoadSaleData(result.name);
+            const result = await changeTableDialog({ pos_profile: localStorage.getItem('pos_profile') });
+            if (result) {
+                if (result.action == "reload_sale") {
+                    await sale.LoadSaleData(result.name);
+                }
             }
         }
-    }
     }else {
         const result = await changeTableDialog({ pos_profile: localStorage.getItem('pos_profile') });
         if (result) {
@@ -262,8 +258,7 @@ async function onChangeTable() {
                 await sale.LoadSaleData(result.name);
             }
         }
-    }
-    
+    }    
 }
 async function onChangePriceRule() {
     if (sale.sale.sale_status != 'New') {
@@ -278,7 +273,6 @@ async function onChangePriceRule() {
             } else {
                 product.getProductMenuByProductCategory( "All Product Categories")
             }
-
             window.postMessage("close_modal", "*");
             toaster.success($t("msg.Change price rule successfully"));
         }
@@ -296,7 +290,6 @@ async function onChangePOSMenu() {
         window.postMessage("close_modal", "*");
         toaster.success($t("msg.Change POS Menu successfully"));
     }
-
 }
 function onRemoveSaleNote() {
     if (!sale.isBillRequested()) {
@@ -305,7 +298,7 @@ function onRemoveSaleNote() {
 }
 async function onChangeSaleType() {
     if (!sale.isBillRequested()) {
-    const result = await changeSaleTypeModalDialog({})
+        const result = await changeSaleTypeModalDialog({})
     }
 }
 
@@ -326,7 +319,6 @@ async function onSeatNumber() {
             if (sale.sale.seat_number == undefined || isNaN(sale.sale.seat_number)) {
                 sale.sale.seat_number = 0;
             }
-
         } else {
             return;
         }
@@ -337,8 +329,9 @@ async function onReferenceNumber() {
         const reference_number = await ComSaleReferenceNumberDialog({
             data: sale.sale
         })
-        if (typeof (reference_number) != 'boolean')
+        if (typeof (reference_number) != 'boolean'){
             sale.sale.reference_number = reference_number
+        }
     }
 }
 async function onDeleteBill() {
@@ -351,17 +344,12 @@ async function onDeleteBill() {
                         // window.postMessage("close_modal", "*");
                         return;
                     }
-                }
-            
+                }            
                 //cancel payment first
                 isLoading.value = true;
-
                 //send deleted sale product to temp deleted
                 const _sale = JSON.parse(JSON.stringify(sale.sale));
                 generateSaleProductPrintToKitchen(_sale, v.note);
-
-
-
                 const deleteSaleResource = createResource({
                     url: "epos_restaurant_2023.api.api.delete_sale",
                     params: {
@@ -378,23 +366,18 @@ async function onDeleteBill() {
                     toaster.success($t("msg.Delete sale order successfully"));
                     //print to kitchen
                     onProcessPrintToKitchen(_sale);
-                        ///print bill on deleted
-
+                    ///print bill on deleted
                     if(sale.setting?.pos_setting?.allow_print_bill_on_sale_deleted){
                         sale.pos_receipt = gv.setting.default_pos_receipt;
                         sale.onPrintReceipt(sale.pos_receipt, "print_invoice", _sale);
                     }
-
                     sale.newSale();
                     if (sale.setting.table_groups.length > 0) {
                         router.push({ name: 'TableLayout' });
                     } else {
                         router.push({ name: "AddSale" });
                     }
-                })
-
-
-                
+                });                
             }
         })
     }
@@ -413,127 +396,9 @@ async function onDeleteBill() {
     });
 
     //generate deleted product to product printer list
-    deletedSaleProducts.filter(r => JSON.parse(r.printers).length > 0).forEach( async (r) => {
-        if(sale.setting.pos_setting.combo_menu_print_captain_by_items_printer && r.is_combo_menu){
-            const combo_data = JSON.parse(r.combo_menu_data)
-            let productCodes = combo_data.map(i => i.product_code);
-            const res = await call.post("epos_restaurant_2023.api.api.get_product_printer_by_products", {
-                    "product_codes":productCodes
-            });  
-            
-            const printers = JSON.parse(r.printers); 
-            const combo_product_printers = res["message"]; 
-            let product_printers = []; 
-            
-            for(const pro of combo_data ){
-                const p_printers = combo_product_printers.filter(r=>r.product_code == pro.product_code)
-                for(const p of p_printers){ 
-                    ///check combo item is exist printer match
-                    const match_printers =  printers.filter(r=> r.printer == p.printer_name)                        
-                    if( match_printers.length > 0){
-                        product_printers.push({
-                            sale_product_name: (r.name || "New"),
-                            printer: p.printer_name,
-                            group_item_type: p.group_item_type,
-                            is_label_printer: p.is_label_printer == 1,
-                            ip_address: p.ip_address,
-                            port: p.port,
-                            usb_printing: p.usb_printing,
-                            product_code: pro.product_code,
-                            product_name_en: pro.product_name,
-                            product_name_kh: pro.product_name_kh || pro.product_name,
-                            kitchen_group: pro.kitchen_group||"",
-                            kitchen_group_sort_order: pro.kitchen_group_sort_order || 0,
-                            seat_number: r.seat_number||"",
-                            portion: r.portion,
-                            unit: r.unit,
-                            modifiers: r.modifiers,
-                            note: r.note,
-                            quantity: r.quantity,
-                            is_deleted: true,
-                            is_free: r.is_free == 1,
-                            combo_menu: r.product_name,
-                            combo_menu_data: null,
-                            deleted_note: r.deleted_item_note,
-                            order_by: r.order_by,
-                            creation: r.creation,
-                            modified: r.modified,
-                            reference_sale_product: r.reference_sale_product,
-                            duration: r.duration,
-                            time_stop: (r.time_stop || 0),
-                            time_in: r.time_in,
-                            time_out_price: r.time_out_price,
-                            time_out: r.time_out,
-                            amount: r.amount
-                        }) 
-                    }
-                }
-            }  
-
-
-            // Group by combo_menu, printer, quantity, is_deleted, is_free
-            let merged = Object.values(
-                product_printers.reduce((acc, item) => {
-                    // key based on fields you want to merge by
-                    const key = `${item.combo_menu}|${item.printer}|${item.quantity}|${item.is_deleted}|${item.is_free}`;
-                    console.log({"key":key})
-                    if (!acc[key]) {
-                        // copy first item
-                        acc[key] = { ...item };
-                        // initialize array to store product names for combo_menu field
-                        acc[key].combo_menu_list = [item.product_name_en];
-                        acc[key].combo_menu_code_list = [item.product_code]; 
-                    } else {
-                        // collect product names
-                        acc[key].combo_menu_list.push(item.product_name_en);
-                        acc[key].combo_menu_code_list.push(item.product_code);
-                    }
-                    return acc;
-                }, {})
-            );
-
-            // Map merged array to final structure
-            let finalList = merged.map(item => ({
-                sale_product_name: item.sale_product_name,
-                printer: item.printer,
-                group_item_type: item.group_item_type,
-                is_label_printer: item.is_label_printer,
-                ip_address: item.ip_address,
-                port: item.port,
-                usb_printing: item.usb_printing,
-                product_code: r.product_code,
-                product_name_en: r.product_name,
-                product_name_kh: r.product_name_kh,
-                kitchen_group: item.kitchen_group,
-                kitchen_group_sort_order: item.kitchen_group_sort_order,
-                seat_number: item.seat_number,
-                portion: item.portion,
-                unit: item.unit,
-                modifiers: item.modifiers,
-                note: item.note,
-                quantity: item.quantity,
-                is_deleted: item.is_deleted,
-                is_free: item.is_free,
-                combo_menu: item.combo_menu_list.join("^ "), // merged product names
-                combo_menu_data: JSON.stringify(combo_data.filter((x)=> item.combo_menu_code_list.includes(x.product_code) )),
-                order_by: item.order_by,
-                creation: item.creation,
-                modified: item.modified,
-                is_timer_product: item.is_timer_product,
-                reference_sale_product: r.reference_sale_product,
-                duration: item.duration,
-                time_stop: item.time_stop,
-                time_in: item.time_in,
-                time_out_price: item.time_out_price,
-                time_out: item.time_out,
-                amount: item.amount
-            }));
-
-            finalList.forEach((p)=>{ 
-                productPrinters.push(p);
-            })   
-        }
-        else{
+    deletedSaleProducts.forEach( async (r) => {
+        let comboItemPrinters = await sale.getProductPrinterOfComboItem(r,true);
+        if(!comboItemPrinters){
             const pritners = JSON.parse(r.printers);
             pritners.forEach((p) => {
                 productPrinters.push({
@@ -570,10 +435,12 @@ async function onDeleteBill() {
                     time_out_price: r.time_out_price,
                     time_out: r.time_out,
                     amount: r.amount
-                })
+                });
             });
-            
-
+        }else{
+            comboItemPrinters.forEach((p)=>{
+                productPrinters.push(p);
+            });
         }
     });
 }
@@ -593,7 +460,7 @@ function onProcessPrintToKitchen(doc) {
     var groupKeys = "{printer:$.printer,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port}"
     var groupFields = "$.printer+','+$.group_item_type+','+$.ip_address+','+$.port";
     var printers = Enumerable.from(data.product_printers).groupBy(groupKeys, "", groupKeys, groupFields).toArray();    
-        printers.forEach((p) => {
+    printers.forEach((p) => {
         var _printer = data.product_printers.filter((x) => x.printer == p.printer)
         if (_printer.length > 0) {
             data.printers.push({
@@ -605,18 +472,12 @@ function onProcessPrintToKitchen(doc) {
                 "usb_printing": _printer[0].usb_printing ?? 0,
                 "products": _printer
             });
-
-
         }
-
         // We send this to refresh kitchen order display
          [...new Set(productPrinters.map(r=>r.printer))].forEach(p=>{              
             socket.emit("SubmitKOD", { "screen_name": _printer[0].printer })
-        })
-
-        
+        });        
     });
-
 
     let kotProducts = {
             action: "print_to_kitchen",
@@ -628,11 +489,10 @@ function onProcessPrintToKitchen(doc) {
         }
     let productUSBPrinter = JSON.parse(JSON.stringify(kotProducts));
     kotProducts.printers = [];
-    productUSBPrinter.printers = []
-
+    productUSBPrinter.printers = [];
     let station_printers = (sale.setting?.device_setting?.station_printers);
     if (station_printers.length <= 0) {
-
+        //
     } else {
         station_printers.forEach((p) => {                
             let temp_sale_products = data.product_printers.filter((x) => x.printer == p.printer_name)
@@ -667,17 +527,15 @@ function onProcessPrintToKitchen(doc) {
         });
     }
 
-
     if ((sale.setting?.device_setting?.use_server_network_printing || 0) == 1) {
         //printer network
         if (kotProducts.printers.length > 0) {
-            call.post("epos_restaurant_2023.api.network_printing_api.print_kot_to_network_printer", { "data": kotProducts })
+            call.post("epos_restaurant_2023.api.network_printing_api.print_kot_to_network_printer", { "data": kotProducts });
         }
         //trigger print usb print
         if (productUSBPrinter.printers.length > 0) {
-            socket.emit("PrintReceipt", JSON.stringify(productUSBPrinter))
+            socket.emit("PrintReceipt", JSON.stringify(productUSBPrinter));
         }
-
     } else {
         if (localStorage.getItem("is_window") == 1) {
             if ((data.product_printers ?? []).length > 0) {
@@ -692,31 +550,14 @@ function onProcessPrintToKitchen(doc) {
                 }
                 //trigger print usb print
                 if (productUSBPrinter.printers.length > 0) {
-                    socket.emit("PrintReceipt", JSON.stringify(productUSBPrinter))
+                    socket.emit("PrintReceipt", JSON.stringify(productUSBPrinter));
                 }
             }
         }
         else {
-            socket.emit("PrintReceipt", JSON.stringify(data))
-
+            socket.emit("PrintReceipt", JSON.stringify(data));
         }
     }
-
-    // if (localStorage.getItem("is_window") == 1) {
-    //     window.chrome.webview.postMessage(JSON.stringify(data));
-    // } else {
-    //     socket.emit("PrintReceipt", JSON.stringify(data))
-    // }
-
-    // if(productPrinters.length>0){
-    //     [...new Set(productPrinters.map(r=>r.printer))].forEach(p=>{
-              
-    //          socket.emit("SubmitKOD",{"screen_name":p})
-    //     })
-    // }
-    
-    
-
     deletedSaleProducts = [];
     productPrinters = [];
 }
@@ -727,13 +568,8 @@ async function onClearOrder() {
             const sale_products = JSON.parse(JSON.stringify(sale.sale.sale_products.filter(r => r.name != undefined)));
             sale.sale.sale_products = sale_products || [];
             sale.updateSaleSummary();
-            //add to audit trail log 
-            //future update
-
         }
     }
-
-
 }
 
 async function onAddCommission() {
@@ -761,9 +597,7 @@ async function onSplitBill() {
                 sale.getTableSaleList()
             }
         }
-
     }
-
 }
 
 async function onChangeTaxSetting() {
@@ -819,13 +653,10 @@ async function onMoveItem() {
     }
 }
 async function onEditPOSMenu() {
-
-
     const res = await EditPOSMenuDialog({ title: $t('Edit Menu Item') });
 }
 
-async function onClaimCouponClick(){ 
- 
+async function onClaimCouponClick(){  
     if (!sale.isBillRequested()) {
         if (sale.sale.sale_products.length == 0) {
             toaster.warning($t("msg.Please select a menu item to continue"));

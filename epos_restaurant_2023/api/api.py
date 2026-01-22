@@ -1578,6 +1578,8 @@ def edit_sale_order(name,auth=None,note=None):
     # check if sale have excely integration then submit cancell order
     if sale_doc.exely_transaction_id:
        cancel_order(transaction_id = sale_doc.exely_transaction_id, sale = sale_doc.name, comment = auth["note"])
+
+    
     
 @frappe.whitelist()
 def get_filter_for_close_sale_list(business_branch,pos_profile): 
