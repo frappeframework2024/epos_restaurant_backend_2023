@@ -65,6 +65,39 @@ def trim(file_path):
 
 
 @frappe.whitelist(allow_guest=True)
+def capture_fast(html,css, width, height):
+    from playwright.sync_api import sync_playwright
+    css += """body{
+        background:white !important;
+    }"""  
+
+    full_html = f"""
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="utf-8">
+            <style>{css}</style>
+        </head>
+    <body>{html}</body>
+    </html>
+    """
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page(viewport={"width": width, "height": 100})
+        page.set_content(full_html, wait_until="networkidle")
+
+        # 🔥 Let page auto-grow vertically
+        height = page.evaluate("document.body.scrollHeight")
+        page.set_viewport_size({"width": width, "height": height})
+
+        image_bytes = page.screenshot(type="png", full_page=True)
+        browser.close()
+
+    return base64.b64encode(image_bytes).decode()
+
+
+@frappe.whitelist(allow_guest=True)
 def capture(height,width,html,css,image):
     chrome_path = "/usr/bin/google-chrome"
     # Set the CHROME_PATH environment variable
@@ -118,7 +151,8 @@ def print_bill(station, name,template, reprint ):
         height += len(doc.sale_products) * 75
 
     hash_generate = frappe.generate_hash(length=15)
-    return capture(html=html,css=css,height=height,width=width,image='{}_invoice_{}.png'.format(station,hash_generate))
+    # return capture(html=html,css=css,height=height,width=width,image='{}_invoice_{}.png'.format(station,hash_generate))
+    return capture_fast(html= html,css=css,height=height,width=width)
 
 ## print waiting slip
 @frappe.whitelist(allow_guest=True)
@@ -134,7 +168,8 @@ def print_voucher_invoice(station, name):
     height = fixed_height + item_height
 
     hash_generate = frappe.generate_hash(length=15)
-    return capture(html=html,css=css,height=height,width=width,image='{}_voucher_slip_{}.png'.format(station,hash_generate))
+    # return capture(html=html,css=css,height=height,width=width,image='{}_voucher_slip_{}.png'.format(station,hash_generate))
+    return capture_fast(html= html,css=css,height=height,width=width)
 
 
 ## print waiting slip
@@ -148,7 +183,8 @@ def print_waiting_slip(station, name):
         height += len(doc.sale_products) * 75
         
     hash_generate = frappe.generate_hash(length=15)
-    return capture(html=html,css=css,height=height,width=width,image='{}_waiting_slip_{}.png'.format(station,hash_generate))
+    # return capture(html=html,css=css,height=height,width=width,image='{}_waiting_slip_{}.png'.format(station,hash_generate))
+    return capture_fast(html= html,css=css,height=height,width=width)
        
 
 ## print kitchen order
@@ -165,7 +201,8 @@ def print_kitchen_order(station, sale, products,printer):
         height += len(products) * item_height 
 
     hash_generate = frappe.generate_hash(length=15)
-    return capture(html=html,css=css,height=height,width=width,image='{}_{}_kitchen_order_{}.png'.format(station,printer,hash_generate))
+    # return capture(html=html,css=css,height=height,width=width,image='{}_{}_kitchen_order_{}.png'.format(station,printer,hash_generate))
+    return capture_fast(html= html,css=css,height=height,width=width)
 
 
 @frappe.whitelist(allow_guest=True)
@@ -208,11 +245,11 @@ def print_from_print_format(data, is_html=False):
         from frappe.translate import set_default_language
         set_default_language(data["_lang"])
         html = get_rendered_template(
-            doc=document,
-            letterhead=data['letterhead'] or "",
-            print_format=print_format,
-            meta=document.meta,
-            pos_profile= data["pos_profile"],
+                doc=document,
+                letterhead=data.get('letterhead',None) or "",
+                print_format=print_format,
+                meta=document.meta,
+                pos_profile= data.get("pos_profile",None) or "",
             )
         set_default_language(frappe.local.lang)
     except frappe.TemplateNotFoundError:
@@ -234,7 +271,8 @@ def print_from_print_format(data, is_html=False):
         return {"html":html,"css":css,"width":width, "height":height}
     else: 
         hash_generate =  frappe.generate_hash(length=15)
-        return capture(html=html,css=css,height=height,width=width,image='report_{}.png'.format(hash_generate))
+        # return capture(html=html,css=css,height=height,width=width,image='report_{}.png'.format(hash_generate))
+        return capture_fast(html= html,css=css,height=height,width=width)
 
 
 

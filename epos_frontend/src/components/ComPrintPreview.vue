@@ -248,6 +248,7 @@ function onPrint(){
     if(localStorage.getItem("is_window")==1){
         window.chrome.webview.postMessage(JSON.stringify(data));
     }else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
+        data.printer = _printer;
         flutterChannel.postMessage(JSON.stringify(data));
     }
     else{
