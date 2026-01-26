@@ -59,7 +59,7 @@
                                                         <template v-if="p.product_code_3"> <br/> {{ p.product_code_3 }}</template>
                                                     </td>
                                                     <td style="max-width: 30rem;" class="overflow-hidden">
-                                                        <div class="">
+                                                        <div style="font-family: Khmer OS Siemreap;" class="">
                                                             <v-tooltip location="top" v-if="p.product_name_en != p.product_name_kh"
                                                                 :text="`${p.product_name_en} ${p.product_name_kh}`">
                                                                 <template v-slot:activator="{ props }">
