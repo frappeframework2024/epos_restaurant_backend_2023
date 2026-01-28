@@ -2102,9 +2102,7 @@ export default class Sale {
                                 amount: r.amount
                             })
                     }
-                }  
-
-                console.log(product_printers)
+                }   
                 
                 // Group by combo_menu, printer, quantity, is_deleted, is_free
                 let merged = Object.values(
@@ -2137,8 +2135,7 @@ export default class Sale {
                         return acc;
                     }, {})
                 );
-
-                console.log(merged)
+ 
                 // Map merged array to final structure
                 let finalList = merged.map(item => ({
                     sale_product_name: item.sale_product_name,
