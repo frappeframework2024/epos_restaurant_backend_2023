@@ -2084,6 +2084,7 @@ export default class Sale {
                                 note: r.note,
                                 quantity: r.quantity ,
                                 combo_quantity : (pro.quantity||1),
+                                combo_id : pro.menu_name,
                                 is_deleted: isDeleted,
                                 is_free: r.is_free == 1,
                                 combo_menu: r.product_name,
@@ -2102,6 +2103,8 @@ export default class Sale {
                             })
                     }
                 }  
+
+                console.log(product_printers)
                 
                 // Group by combo_menu, printer, quantity, is_deleted, is_free
                 let merged = Object.values(
@@ -2109,7 +2112,11 @@ export default class Sale {
                         // key based on fields you want to merge by
                         let key = `${item.combo_menu}|${item.printer}`;
                         if(item.group_item_type != "Printer cut by order"){
-                            key += `|${item.product_code}`
+                            key += `|${item.product_code}|${item.combo_id}`
+                        }
+
+                        if(item.is_label_printer == 1){
+                            item.quantity = item.quantity * item.combo_quantity
                         }
                         // const key = `${item.combo_menu}|${item.printer}|${item.quantity}|${item.is_deleted}|${item.is_free}`;
                         const item_display = item.product_name_en 
@@ -2130,6 +2137,8 @@ export default class Sale {
                         return acc;
                     }, {})
                 );
+
+                console.log(merged)
                 // Map merged array to final structure
                 let finalList = merged.map(item => ({
                     sale_product_name: item.sale_product_name,
