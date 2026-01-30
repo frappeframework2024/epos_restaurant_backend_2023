@@ -35,9 +35,7 @@
                         <v-expansion-panel-text>
                           
                             <div class="flex flex-wrap">
-                                <div class="m-1"
-                                    v-for="(item, i) in product.prices.filter(r => r.price_rule == sale.sale.price_rule)"
-                                    :key="i">
+                                <div class="m-1" v-for="(item, i) in product.prices.sort((a, b) => a.name - b.name).filter(r => r.price_rule == sale.sale.price_rule)" :key="i">
                                     <ComPortionItem :showUnit="sale.show_unit_in_select_portion" :portion="item" @click="product.onSelectPortion(item)" />
                                 </div>
                             </div>
