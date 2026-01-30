@@ -1,7 +1,7 @@
 <template lang=""> 
     <div class="h-full flex-col flex">
         <ComCustomerDisplayCustomerProfile :data="data" />
-        <div class="product-list overflow-auto h-full">  
+        <div class="product-list overflow-auto h-full">   
             <ComPlaceholder :isNotEmpty="getSaleProducts.length > 0" text="Please sale order" icon="mdi-cart-outline" iconSize="80px">
                 <template v-if="getSaleProducts.length > 0">
                     <div v-for="(g, index) in getSaleProductGroupByKey" :key="index">
@@ -11,6 +11,7 @@
                             }}</div>
                             <div><v-icon icon="mdi-account-outline" size="small" class="mr-1"></v-icon>{{ g.order_by }}</div>
                         </div>
+ 
                         <ComSaleProductList :saleCustomerDisplay="data" :group-key="g" :readonly="true"/>
                     </div>
                 </template>

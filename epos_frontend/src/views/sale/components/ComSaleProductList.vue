@@ -1,6 +1,6 @@
 <template>
     
-    <v-list class="!p-0">
+    <v-list class="!p-0"> 
         <v-list-item
             v-for="sp, index in (readonly == true ? getSaleProducts(groupKey,sort_sale_menu_by) : sale.getSaleProducts(groupKey,sort_sale_menu_by))"
             :key="index" @click="!readonly ? { click: sale.onSelectSaleProduct(sp) } : {}"
@@ -235,7 +235,7 @@ const tableLayout = inject("$tableLayout");
 const gv = inject('$gv');
 const moment = inject('$moment');
 const toaster = createToaster({ position: 'top-right' });
-const frappe = inject("$frappe")
+const frappe = inject("$frappe");
 const call = frappe.call()
 const dialog = useDialog()
 const dialogRef = inject('dialogRef');
@@ -360,16 +360,21 @@ function onReorder(sp) {
 }
 
 function getSaleProducts(groupByKey,order_by="creation") {
-        if (groupByKey) {
-            return Enumerable.from(this.sale.sale_products).where(`$.order_by=='${groupByKey.order_by}' && $.order_time=='${groupByKey.order_time}'`).orderByDescending("$.modified").toArray()
+        let temp_sale = sale.sale; 
+        if(props.saleCustomerDisplay) {
+             temp_sale = props.saleCustomerDisplay;
+        }
+       
+        if (groupByKey) {             
+            return Enumerable.from(temp_sale.sale_products).where(`$.order_by=='${groupByKey.order_by}' && $.order_time=='${groupByKey.order_time}'`).orderByDescending("$.modified").toArray()
         } else {
            let desc = order_by.endsWith("_desc")
             order_by = order_by.replace("_desc", "")
-            let query = Enumerable.from(this.sale.sale_products)
+            let query = Enumerable.from(temp_sale.sale_products)
             query = desc 
             ? query.orderByDescending(x => x[order_by])
             : query.orderBy(x => x[order_by])
-            this.sale = this.sale
+            sale.sale = temp_sale
             return query.toArray()
         }
     }

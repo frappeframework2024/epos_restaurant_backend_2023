@@ -215,6 +215,7 @@ def get_system_settings(pos_profile="", device_name=''):
             "is_single_payment_type":p.is_single_payment_type,
             "is_voucher":p.is_voucher,
             "allow_cash_float":p.allow_cash_float, 
+            "allow_aba_pay_with_qr_scan":p.allow_aba_pay_with_qr_scan, 
             "input_amount":0.0,
             "exchange_rate":p.exchange_rate if p.currency != main_currency.name else 1.0,
             "change_exchange_rate":p.change_exchange_rate if p.currency != main_currency.name else 1.0,

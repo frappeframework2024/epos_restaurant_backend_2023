@@ -29,7 +29,7 @@ const show_thankyou = ref(false)
 
 
 /// key = business branch + pos profile + device id
-socket.on("ShowOrderInCustomerDisplay", async (arg, show, key) => {
+socket.on("ShowOrderInCustomerDisplay", async (arg, show, key) => { 
     const device_setting = JSON.parse(localStorage.getItem("device_setting"));
 	const device_id = device_setting?.device_id||"";
     const pos_profile = localStorage.getItem("pos_profile");
