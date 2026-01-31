@@ -195,7 +195,8 @@ export default class Product {
         });
 
         if (this.prices.length > 0) {
-            this.prices[0].selected = true
+            const price = prices.find(u => u.unit === this.selectedProduct.unit);
+            price.selected = true
         }
 
         let modifiers = JSON.parse(p.modifiers);
