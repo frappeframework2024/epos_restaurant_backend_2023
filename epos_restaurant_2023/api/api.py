@@ -108,10 +108,11 @@ def search_image_from_google(keyword):
             urls.append(img_url)
     return urls
 
-@frappe.whitelist(allow_guest=True)
-def get_product():
-    datas = frappe.db.sql("select name from `tabProduct`",as_dict=1)
-    return datas
+@frappe.whitelist()
+def get_product(name):
+    datas = frappe.db.sql("select unit from `tabProduct` where name = '{0}'".format(name),as_dict=1)
+    if datas:
+        return datas[0]
 
 
 @frappe.whitelist(allow_guest=True)

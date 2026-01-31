@@ -176,7 +176,7 @@ export default class Product {
         this.getProductFromDB({limit:20,keyword:keyword, category:"All Product Categories"})
     }
 
-    setSelectedProduct(p,price_rule='') {
+    async setSelectedProduct(p,price_rule='') {
        
         
         this.selectedProduct = p;
@@ -193,12 +193,12 @@ export default class Product {
             p.selected = false;
             this.prices.push(p)
         });
-
+        let resp = await call.get("epos_restaurant_2023.api.api.get_product",{name: this.selectedProduct.name})
         if (this.prices.length > 0) {
-            const price = this.prices.find(u => u.unit === this.selectedProduct.unit);
+            const price = this.prices.find(u => u.unit === resp.message?.unit);
             price.selected = true
         }
-        this.prices = this.prices.sort((a, b) => a.name - b.name)
+
         let modifiers = JSON.parse(p.modifiers);
 
         modifiers.forEach((r) => {
