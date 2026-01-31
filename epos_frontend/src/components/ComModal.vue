@@ -1,5 +1,4 @@
 <template>
-
     <v-dialog v-model="open" v-bind:style="{ 'width': '100%', 'max-width': fullscreen ? 'auto' : width }"
         :fullscreen="mobileFullscreen ? mobile : fullscreen" :scrollable="scrollable" :persistent="persistent"
         @update:modelValue="onAction()">

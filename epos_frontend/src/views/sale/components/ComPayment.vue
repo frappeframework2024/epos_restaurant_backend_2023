@@ -85,7 +85,7 @@ import ComSalePaymentList from './ComSalePaymentList.vue';
 import ComSelectPaymentPrinter from './ComSelectPaymentPrinter.vue';
 import ComPaymentSummaryInformation from './ComPaymentSummaryInformation.vue';
 import { createToaster } from '@meforma/vue-toaster';
-
+import socket from '@/utils/socketio';
 const { t: $t } = i18n.global;  
 const { mobile } = useDisplay();
 const sale = inject("$sale");
@@ -122,7 +122,10 @@ function onClose() {
     sale.sale.sale_status = backup.value.sale_status;
     sale.sale.docstatus = backup.value.docstatus;
 
+    socket.emit("ShowOrderInCustomerDisplay", sale.sale,"", sale.customer_display_key);
     emit("resolve", false);
+
+
 }
 
 async function onPayment() { 

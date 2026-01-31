@@ -1,17 +1,23 @@
 <template>
     <div class="wrap h-screen">
-        <template v-if="!show_thankyou">
-            <v-row class="h-full !m-0">
-                <v-col class="h-full !p-0 a" cols="hide" xs="12" sm="7" md="7" lg="7" xl="7">
-                    <ComCustomerDisplaySliceshow />
-                </v-col>
-                <v-col class="h-full !p-0" cols="12" xs="12" sm="5" md="5" lg="5" xl="5    ">
-                    <ComCustomerDisplayOrderList :data="data" />
-                </v-col>
-            </v-row>
-        </template>
-        <template v-else>
-            <ComCustomerDisplayThankyou :data="dataThankYou" />
+         <template v-if="show_aba_khqr">
+           <ComCustomerDisplayScanQR :data="data" :aba_data="aba_qr_data"/>
+        </template>           
+        <template v-else>  
+            <template v-if="!show_thankyou">
+                <v-row class="h-full !m-0">
+                    <v-col class="h-full !p-0 a" cols="hide" xs="12" sm="7" md="7" lg="7" xl="7">
+                        <ComCustomerDisplaySliceshow />
+                    </v-col>
+                    <v-col class="h-full !p-0" cols="12" xs="12" sm="5" md="5" lg="5" xl="5    ">
+                        <ComCustomerDisplayOrderList :data="data" />
+                    </v-col>
+                </v-row>
+            </template>
+        
+            <template v-else>
+                <ComCustomerDisplayThankyou :data="dataThankYou" />
+            </template>
         </template>
     </div>
 </template>
@@ -21,13 +27,14 @@ import { ref } from 'vue';
 import ComCustomerDisplaySliceshow from './ComCustomerDisplaySliceshow.vue';
 import ComCustomerDisplayThankyou from './ComCustomerDisplayThankyou.vue';
 import ComCustomerDisplayOrderList from './ComCustomerDisplayOrderList.vue';
+import ComCustomerDisplayScanQR from './ComCustomerDisplayScanQR.vue';
 const data = ref({})
 const dataThankYou = ref({})
 const socket = inject("$socket")
 const gv = inject("$gv");
 const show_thankyou = ref(false)
-
-
+const show_aba_khqr = ref(false)
+const aba_qr_data = ref({})
 /// key = business branch + pos profile + device id
 socket.on("ShowOrderInCustomerDisplay", async (arg, show, key) => { 
     const device_setting = JSON.parse(localStorage.getItem("device_setting"));
@@ -35,6 +42,14 @@ socket.on("ShowOrderInCustomerDisplay", async (arg, show, key) => {
     const pos_profile = localStorage.getItem("pos_profile");
     const business_branch = decodeURIComponent(gv.setting?.business_branch);
     const _key = `${business_branch}_${pos_profile}_${device_id}`;
+    aba_qr_data.value = {}
+    if (arg.show_aba_khqr){
+        show_aba_khqr.value = true
+        aba_qr_data.value = arg.aba_khqr_data
+    }else{
+         show_aba_khqr.value = false
+    }
+
     if(key == _key){
         data.value = arg;
         if (Object.entries(data.value).length > 0) {
@@ -48,7 +63,6 @@ socket.on("ShowOrderInCustomerDisplay", async (arg, show, key) => {
             onHideThankYou()
         }
     }
-
 })
 
 function onHideThankYou() {

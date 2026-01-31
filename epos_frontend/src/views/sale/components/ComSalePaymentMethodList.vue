@@ -10,11 +10,13 @@
     </div>
 </template>
 <script setup>
-import { inject , payToRoomDialog,createToaster,payToCityLedgerDialog,payDeskfolioDialog,i18n ,computed,keyboardDialog,ref,vouhcerDialog} from '@/plugin';
-import { useDisplay } from 'vuetify'
+import { inject , payToRoomDialog,createToaster,payToCityLedgerDialog,payDeskfolioDialog,i18n ,computed,keyboardDialog,ref,scanqrDialog,vouhcerDialog} from '@/plugin';
+import { useDisplay } from 'vuetify';
+import socket from '@/utils/socketio';
 const {mobile} = useDisplay()
 const gv = inject("$gv")
 const sale = inject("$sale")
+
 const frappe = inject("$frappe")
 const { t: $t } = i18n.global;  
 const toaster = createToaster({ position: "top-right" });
@@ -37,6 +39,14 @@ async function onPaymentTypeClick(pt) {
     let city_ledger_name = null
     let desk_folio = null
     let reservation_stay = null
+
+    if(pt.allow_aba_pay_with_qr_scan == 1){      
+        const result = await scanqrDialog({
+            
+        });
+        return
+    }
+
     if(pt.is_voucher){
         const result = await vouhcerDialog({})
         if(result != false){
