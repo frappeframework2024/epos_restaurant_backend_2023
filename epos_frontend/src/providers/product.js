@@ -195,10 +195,10 @@ export default class Product {
         });
 
         if (this.prices.length > 0) {
-            const price = prices.find(u => u.unit === this.selectedProduct.unit);
+            const price = this.prices.find(u => u.unit === this.selectedProduct.unit);
             price.selected = true
         }
-
+        this.prices = this.prices.sort((a, b) => a.name - b.name)
         let modifiers = JSON.parse(p.modifiers);
 
         modifiers.forEach((r) => {
