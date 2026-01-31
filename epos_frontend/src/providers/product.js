@@ -186,9 +186,8 @@ export default class Product {
         this.is_open_price = p.is_open_price;
         let prices = []
         if (p.prices) {
-            prices = JSON.parse(p.prices)
+            prices = JSON.parse(p.prices).sort((a, b) => a.name - b.name)
         }
-        prices = prices.sort((a, b) => a.name - b.name)
         prices.filter(r => (r.branch == this.setting?.business_branch || r.branch == "") && ((r.price_rule||"")== "" || (r.price_rule)==price_rule) ).forEach((p) => {
             p.selected = false;
             this.prices.push(p)
