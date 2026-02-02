@@ -21,6 +21,7 @@ def run_on_startup():
     site_name = cstr(frappe.local.site)
     command = "bench --site " + site_name + " backup"
     asyncio.run(run_bench_command(command))
+    frappe.enqueue(upload_to_ftp,timeout=3600)
     return "run"
 
 
