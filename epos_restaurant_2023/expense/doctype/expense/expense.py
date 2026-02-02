@@ -12,17 +12,17 @@ from frappe.utils import get_link_to_form
 class Expense(Document):
 	def validate(self):
 		account_validation(self)
-		
+		currency_precision = frappe.db.get_single_value('System Settings', 'currency_precision')
 		total_amount = 0
 		total_quantity = 0
 		for d in self.expense_items:
-			d.amount = d.price * d.quantity
+			d.amount =d.price * d.quantity
 			total_quantity += d.quantity
 			total_amount += d.amount
-
 		self.total_quantity = total_quantity
-		self.total_amount = total_amount
-		self.balance = self.total_amount - self.total_paid
+		self.total_amount = round(total_amount,int(currency_precision))
+		self.balance = round(self.total_amount - self.total_paid,int(currency_precision))
+		self.remaining_cash_float = round(self.remaining_cash_float,int(currency_precision))
 
 	def on_submit(self):
 		GLEntry(self)
@@ -45,10 +45,10 @@ def account_validation(self):
 	if invalid_modes:
 		msg = _("Please Set Default Account For Payment Type {}")
 		frappe.throw(msg.format(", ".join(invalid_modes)), title=_("Missing Account"))
-
+	currency_precision = frappe.db.get_single_value('System Settings', 'currency_precision')
 	expense = sum((a.amount or 0) for a in self.expense_items)
 	payment = sum((b.amount or 0) for b in self.payments)
-	if abs(expense - payment) != 0:
+	if abs(round(expense,int(currency_precision)) -  round(payment,int(currency_precision))) != 0:
 		frappe.throw("Expense Amount Must Be The Same As Payment Amount")
   
 @frappe.whitelist()
