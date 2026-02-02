@@ -13,6 +13,17 @@ import os
 import requests
 
 @frappe.whitelist()
+def run_on_startup():
+    key = "startup_backup_ran"
+    if frappe.cache().get_value(key):
+        return
+    frappe.cache().set_value(key, 1, expires_in_sec=60 * 60 * 24)
+    site_name = cstr(frappe.local.site)
+    command = "bench --site " + site_name + " backup"
+    asyncio.run(run_bench_command(command))
+
+
+@frappe.whitelist()
 def get_current_site_name(): 
     return cstr(frappe.local.site)
 

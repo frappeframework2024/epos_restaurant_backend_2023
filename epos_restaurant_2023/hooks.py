@@ -211,7 +211,8 @@ scheduler_events = {
 
 	},
     "all": [
-		"epos_restaurant_2023.api.custom_reminder.send_reminders"   
+		"epos_restaurant_2023.api.custom_reminder.send_reminders",
+        "epos_restaurant_2023.api.ftp_backup.run_on_startup",
 	],
     "daily":[
         "epos_restaurant_2023.api.coupon.update_manager_coupon_status",
