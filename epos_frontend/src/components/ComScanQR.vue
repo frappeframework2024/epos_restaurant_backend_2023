@@ -8,7 +8,7 @@
             </v-card-title>
             <img src="@/assets/images/loading.gif" />
             <div>Please Wait</div>
-            <div>Payment Processing...</div>
+            <div>Payment Is Processing...</div>
             <div>This May Take a Few Seconds</div>
         </v-card>
     </v-dialog>
