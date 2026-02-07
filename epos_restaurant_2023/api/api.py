@@ -496,13 +496,19 @@ def get_system_settings(pos_profile="", device_name=''):
     exely= frappe.get_doc("Exely Itegration Setting")
     
     point_setting = frappe.get_doc("Loyalty Point Settings")
-    socket_port =  frappe.get_conf().get('websocket_port', 3000)    
+    socket_port =  frappe.get_conf().get('websocket_port', 3000)   
+
+    bus = frappe.get_doc("Business Branch", p["business_branch"])
+    property_code = bus.property_code
+
     data={
         "app_name":doc.epos_app_name,
         "specific_business_branch":doc.specific_business_branch,
         "specific_pos_profile":doc.specific_pos_profile,
         "business_branch":profile.business_branch,
+        "pos_config":pos_config.name,
         "address":pos_config.address,
+        "property_code":property_code,
         "logo":pos_branding.logo,
         "phone_number":pos_config.phone_number,
         "pos_profile":pos_profile,
@@ -575,6 +581,9 @@ def get_system_settings(pos_profile="", device_name=''):
         "allow_change_table_after_print_bill":pos_config.allow_change_table_after_print_bill
     }
 
+    estc_connecton = get_estc_connection()
+    data = {**data, **estc_connecton }
+ 
     return  data
 
 
@@ -875,6 +884,13 @@ def get_pos_letter_head(doctype):
         for d in data:
             arr.append(d.name)
         return arr
+
+@frappe.whitelist()
+def get_allow_cash_float_payment_type(pos_profile):
+    profile = frappe.get_doc("POS Profile",pos_profile)
+    data = frappe.db.sql("select payment_type from `tabPOS Config Payment Type` where parent = '{}' and allow_cash_float = 1".format(profile.pos_config),as_dict=1)
+    return [a["payment_type"] for a in data]
+
 
 @frappe.whitelist()
 def get_close_shift_summary(cashier_shift="", show_system_closed_amount = 1):
@@ -2616,3 +2632,22 @@ def check_allow_access():
         return (data_for_sync["message"] or "allowed")
     except:
         return "allowed"
+
+
+
+
+@frappe.whitelist(allow_guest=True)
+def get_estc_connection():
+    site_path = frappe.local.site_path
+    site_config_path = os.path.join(site_path, "site_config.json")
+    with open(site_config_path, "r") as f:
+        data = json.load(f)
+    
+    estc_connection = {
+        "estc_central_rul": data.get("estc_central_rul",None) or "",
+        "estc_payway_socket_server_url":data.get("estc_payway_socket_server_url", None) or "",
+    }
+
+    
+    return estc_connection
+

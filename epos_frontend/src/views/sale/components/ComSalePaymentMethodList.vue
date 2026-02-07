@@ -11,8 +11,7 @@
 </template>
 <script setup>
 import { inject , payToRoomDialog,createToaster,payToCityLedgerDialog,payDeskfolioDialog,i18n ,computed,keyboardDialog,ref,scanqrDialog,vouhcerDialog} from '@/plugin';
-import { useDisplay } from 'vuetify';
-import socket from '@/utils/socketio';
+import { useDisplay } from 'vuetify'; 
 const {mobile} = useDisplay()
 const gv = inject("$gv")
 const sale = inject("$sale")
@@ -42,7 +41,8 @@ async function onPaymentTypeClick(pt) {
 
     if(pt.allow_aba_pay_with_qr_scan == 1){      
         const result = await scanqrDialog({
-            
+            "payment_amount":sale.paymentInputNumber,
+            "currency":pt.currency,
         });
         return
     }

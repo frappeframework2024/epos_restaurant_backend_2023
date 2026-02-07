@@ -32,6 +32,9 @@ import { useDisplay } from 'vuetify';
 import DynamicDialog from 'primevue/dynamicdialog';
 import WebSocketPrinter from "@/utils/websocket-printer.js"
 import { ref } from 'vue';
+
+import createPaywaySocket from './utils/paywaysocketio';
+
 const router = useRouter()
 const route = useRoute()
 
@@ -61,6 +64,7 @@ const { mobile } = useDisplay();
 const licenseToaster = createToaster({ position: "top", duration: 1000*60*60, type: "error" });
 
 socket.on("PrintReceipt", (arg) => {	
+ 
 	
 	if(localStorage.getItem("is_window")=="1"){
 		const device_setting = JSON.parse(localStorage.getItem("device_setting"));
@@ -92,6 +96,12 @@ socket.on("OnPrintReport", async (arg) => {
 		}
 	}
 })
+
+
+
+
+
+
 
 let printService  = null;
 const isLoading = computed(() => {
@@ -151,7 +161,7 @@ if (!localStorage.getItem("pos_profile")) {
 		},
 		cache: "get_system_settings",
 		auto: true,
-		onSuccess(doc) { 
+		onSuccess(doc)  { 
 			const customer_display_key = `${doc.business_branch}_${pos_profile}_${doc.device_setting.device_id}`;
 			state.isLoading = false;
 			localStorage.setItem("setting", JSON.stringify(doc)); 
@@ -181,6 +191,12 @@ if (!localStorage.getItem("pos_profile")) {
 					auto: true,
 				})
 			}  
+
+			if(doc.estc_payway_socket_server_url ||"" != ""){
+				onPayWaySocketSetup(doc);
+			}
+			
+			
 		},
 		onError(x) {
 			if (x.error_text == undefined) {
@@ -200,6 +216,25 @@ if (!localStorage.getItem("pos_profile")) {
 			state.isLoading = false;
 		}
 	});
+}
+
+async function onPayWaySocketSetup(doc) {	 
+	const payway_socket = createPaywaySocket(doc.estc_payway_socket_server_url);
+	// ABA Socket Client Join Room
+	const myRoom = doc.property_code; // unique per client
+
+	// payway_socket.emit('joinRoom', myRoom);
+	await payway_socket.joinRoom(myRoom);
+	// ABA PayWay Listening payment callback 
+	await payway_socket.on("ABAPayCallback", async (arg) => { 
+		handlePaymentCallback(arg)
+	});
+
+}
+function handlePaymentCallback(data) {
+  // Process payment data
+  socket.emit("ShowOrderInCustomerDisplay", sale.sale,"", sale.customer_display_key);
+  console.log('Processing payment:', data); 
 }
 
 //get user info 

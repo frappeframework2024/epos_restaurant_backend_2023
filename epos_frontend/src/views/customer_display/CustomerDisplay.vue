@@ -1,9 +1,9 @@
 <template>
     <div class="wrap h-screen">
          <template v-if="show_aba_khqr">
-           <ComCustomerDisplayScanQR :data="data" :aba_data="aba_qr_data"/>
+           <ComCustomerDisplayScanQRDialog :data="data" :aba_data="aba_qr_data"/>
         </template>           
-        <template v-else>  
+        <!-- <template>   -->
             <template v-if="!show_thankyou">
                 <v-row class="h-full !m-0">
                     <v-col class="h-full !p-0 a" cols="hide" xs="12" sm="7" md="7" lg="7" xl="7">
@@ -18,7 +18,7 @@
             <template v-else>
                 <ComCustomerDisplayThankyou :data="dataThankYou" />
             </template>
-        </template>
+        <!-- </template> -->
     </div>
 </template>
 <script setup>
@@ -28,6 +28,7 @@ import ComCustomerDisplaySliceshow from './ComCustomerDisplaySliceshow.vue';
 import ComCustomerDisplayThankyou from './ComCustomerDisplayThankyou.vue';
 import ComCustomerDisplayOrderList from './ComCustomerDisplayOrderList.vue';
 import ComCustomerDisplayScanQR from './ComCustomerDisplayScanQR.vue';
+import ComCustomerDisplayScanQRDialog from './ComCustomerDisplayScanQRDialog.vue';
 const data = ref({})
 const dataThankYou = ref({})
 const socket = inject("$socket")

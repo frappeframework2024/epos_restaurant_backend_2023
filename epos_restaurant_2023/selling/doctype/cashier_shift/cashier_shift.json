@@ -9,17 +9,15 @@
  "engine": "InnoDB",
  "field_order": [
   "naming_series",
-  "business_branch",
-  "outlet",
-  "pos_profile",
   "working_day",
+  "business_branch",
+  "pos_profile",
+  "outlet",
   "column_break_5",
   "posting_date",
   "pos_station_opened",
   "pos_station_closed",
   "shift_name",
-  "column_break_izvc",
-  "opened_note",
   "is_closed",
   "is_edoor_shift",
   "section_break_7",
@@ -32,11 +30,14 @@
   "total_different_amount",
   "close_shift_information_section",
   "closed_by",
-  "closed_date",
   "is_run_night_audit",
   "column_break_10",
-  "closed_note",
+  "closed_date",
   "is_synced",
+  "section_break_dsoo",
+  "opened_note",
+  "column_break_sqqy",
+  "closed_note",
   "cash_count_tab",
   "cash_count"
  ],
@@ -91,12 +92,14 @@
    "default": "0",
    "fieldname": "is_closed",
    "fieldtype": "Check",
-   "label": "Is Closed"
+   "label": "Is Closed",
+   "no_copy": 1
   },
   {
    "fieldname": "closed_date",
    "fieldtype": "Datetime",
-   "label": "Closed Date"
+   "label": "Closed Date",
+   "mandatory_depends_on": "eval:doc.is_closed == 1"
   },
   {
    "fieldname": "column_break_10",
@@ -155,7 +158,8 @@
    "fetch_if_empty": 1,
    "fieldname": "outlet",
    "fieldtype": "Data",
-   "label": "Outlet"
+   "label": "Outlet",
+   "read_only": 1
   },
   {
    "default": "Morning Shift",
@@ -201,10 +205,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "column_break_izvc",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "column_break_utze",
    "fieldtype": "Column Break"
   },
@@ -212,7 +212,6 @@
    "default": "0",
    "fieldname": "is_run_night_audit",
    "fieldtype": "Check",
-   "hidden": 1,
    "label": "Is Run Night Audit"
   },
   {
@@ -220,11 +219,19 @@
    "fieldname": "is_synced",
    "fieldtype": "Check",
    "label": "Is Synced"
+  },
+  {
+   "fieldname": "section_break_dsoo",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_sqqy",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-04-19 14:41:57.657156",
+ "modified": "2026-02-06 16:47:23.792624",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Cashier Shift",

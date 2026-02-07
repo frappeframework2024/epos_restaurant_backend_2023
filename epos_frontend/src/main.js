@@ -23,6 +23,7 @@ import ComChip from './components/ComChip.vue'
 import ComModal from './components/ComModal.vue'
 import Avatar from "vue3-avatar";
 import socket from './utils/socketio';
+
 import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura';
 
@@ -142,8 +143,7 @@ app.provide("$kod", kod);
 app.provide("$tableLayout", tableLayout);
 app.provide("$product", product);
 app.provide("$numberFormat", NumberFormat)
-app.provide("$socket", socket)
-
+app.provide("$socket", socket);
 app.provide("$screen", screen);
 app.provide("$auth", auth);
 app.provide("$call", call);
@@ -156,8 +156,6 @@ app.config.globalProperties.$filter = {
 		return (!str || str.trim().length === 0);
 	}
 }
-
-
 //app.use(VueNumberFormat, {prefix: '$ ', decimal: '.', thousand: ',',precision:2})
 
 
@@ -165,9 +163,7 @@ app.directive('debounce', vue3Debounce({ lock: true }))
 
 // Configure route gaurds
 
-router.beforeEach(async (to, from, next) => {
-
-	 
+router.beforeEach(async (to, from, next) => {	 
 		if (!localStorage.getItem("pos_profile")) {
 			if (to.matched.some((record) => !record.meta.isStartupConfig)) {
 

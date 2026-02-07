@@ -5,6 +5,7 @@ from py_linq import Enumerable
 import frappe
 from frappe.model.document import Document
 from frappe.model.naming import NamingSeries
+from epos_restaurant_2023.api.api import get_close_shift_summary
 # from epos_restaurant_2023.api.quickbook_intergration.qb_invoice import (create_invoice)
 class CashierShift(Document):
 	def validate(self):
@@ -20,12 +21,32 @@ class CashierShift(Document):
 			data = frappe.get_list("Cashier Shift",filters={"pos_profile":self.pos_profile,"business_branch":self.business_branch, "is_closed":0})
 			if data:
 				frappe.throw("Cashier shift is already opened")
-
-
+		if (self.is_new() or 0) == 0:
+			cash_float = get_close_shift_summary(self.name,1)
+			if not self.cash_float:
+				for a in cash_float:
+					row = self.append("cash_float")
+					row.payment_method = a["payment_method"]
+					row.input_amount = a["input_amount"]
+					row.input_system_close_amount = a["input_system_close_amount"]
+					row.input_close_amount = a["input_close_amount"]
+					row.input_different_amount = a["input_system_close_amount"]-a["input_close_amount"]
+					row.opening_amount = a["opening_amount"]
+					row.system_close_amount = a["system_close_amount"]
+					row.different_amount = a["different_amount"]
+		else:
+			if self.cash_float:
+				for a in self.cash_float:
+					a.input_system_close_amount = a.input_amount
+					a.input_close_amount = 0
+					a.input_different_amount = a.input_close_amount - a.input_system_close_amount
+					a.opening_amount = a.input_amount
+					a.system_close_amount = a.input_amount
+					a.different_amount = a.input_close_amount - a.input_system_close_amount
+		
 		for c in self.cash_float:
 			exchange_rate = (frappe.get_value("Payment Type", c.payment_method,"exchange_rate") or 1)
 			c.exchange_rate = exchange_rate
-			 
 			c.opening_amount = float((c.input_amount or 0))  / exchange_rate
 			c.close_amount = float((c.input_close_amount or 0))  / exchange_rate 
 			c.system_close_amount = float((c.input_system_close_amount or 0)) / exchange_rate
