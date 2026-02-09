@@ -47,10 +47,20 @@ def aba_generate_qr(**params):
         data = {}  
 
     #success request
-    if(response.status_code in [200,201]):    
-        frappe.local.response.update({
-            **data,
-        }) 
+    if(response.status_code in [200,201]):  
+        from epos_restaurant_2023.api.qr import generate_qr
+        _data =  data.get("message") or {}
+        qr_string = _data.get("qr_string",None) or ""
+        currency = p.get("currency",None) or ""
+        qr_image_custom = generate_qr(data= qr_string,size=6, use_logo=True,currency=currency, image_base64=True)
+        
+
+        _data.pop("qr_string", None)       
+        response = {
+            **_data, 
+            "qr_image_custom": qr_image_custom
+        }   
+        frappe.local.response.update(response) 
         return
     
 

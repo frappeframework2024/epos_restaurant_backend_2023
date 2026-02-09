@@ -1,5 +1,5 @@
 <template lang="">
-    <v-dialog v-model="open" width="40rem">
+    <v-dialog v-model="open" width="40rem" persistent>
    
             <div class="card">
                 <div class="top"> 
@@ -11,7 +11,7 @@
                     </div>
                 </div>
 
-                <div class="title">{{$t('Scan. Pay')}}</div>
+                <div class="title">{{$t('Scan to Pay')}}</div>
 
                 <div class="qr-wrap">
                     <div class="qr-frame">
@@ -51,7 +51,8 @@
     </v-dialog>
 </template>
 <script setup>
-  import { inject,computed, ref,onMounted,watch } from '@/plugin';
+  import { inject, ref,onMounted,i18n } from '@/plugin';
+  const { t: $t } = i18n.global; 
   const sale = inject('$sale')
   const frappe = inject('$frappe')
   const call = frappe.call()
@@ -61,32 +62,11 @@
       aba_data: Object
   })
 
-
-
-  
   const qrImage = ref(null)
-
-  const loadQR = async () => {
-    const resp = await call.get(
-      "epos_restaurant_2023.api.qr.generate_qr",
-      { 
-        data: props.aba_data.qr_string,
-        use_logo:1,
-        size:3,
-        image_base64:1
-      }
-    )
-    if(resp){
-      qrImage.value = `data:${resp.message.mime};base64,${resp.message.image}`
-    }else{
-      qrImage.value =null
-    }
-  }
-
-  onMounted(loadQR)
-
-  // optional: auto refresh when data changes
-  watch(() => props.aba_data.qr_tring, loadQR)
+  onMounted(()=>{
+    qrImage.value = props.aba_data.qr_image_custom
+  })
+ 
 
 
 </script>
@@ -171,15 +151,15 @@
 
     .qr-frame{
       position:relative;
-      width:255px;
-      height:255px;
+      width:220px;
+      height:220px;
       display:grid;
       place-items:center;
     }
 
     .qr-box{
-      width:254px;
-      height:257px;
+      width:170px;
+      height:170px;
       background:#ffffff;
       border-radius:10px;
       box-shadow:0 10px 22px rgba(10,20,60,.22);
@@ -189,8 +169,7 @@
     }
 
     .qr-box img{
-      width:92%;
-      height:92%;
+      width:90%;
       object-fit:contain;
       image-rendering:pixelated;
     }

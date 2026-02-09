@@ -27,7 +27,6 @@ import { ref } from 'vue';
 import ComCustomerDisplaySliceshow from './ComCustomerDisplaySliceshow.vue';
 import ComCustomerDisplayThankyou from './ComCustomerDisplayThankyou.vue';
 import ComCustomerDisplayOrderList from './ComCustomerDisplayOrderList.vue';
-import ComCustomerDisplayScanQR from './ComCustomerDisplayScanQR.vue';
 import ComCustomerDisplayScanQRDialog from './ComCustomerDisplayScanQRDialog.vue';
 const data = ref({})
 const dataThankYou = ref({})

@@ -6,7 +6,7 @@ from werkzeug.wrappers import Response
 
 
 @frappe.whitelist(allow_guest=True)
-def generate_qr(data: str, size: int = 4, border: int = 1, use_logo=False, image_base64=False):
+def generate_qr(data: str, size: int = 4, border: int = 1, use_logo=False, currency=None, image_base64=False):
     """
     Generate QR code with optional center logo (PNG, inline response)
     """
@@ -35,18 +35,26 @@ def generate_qr(data: str, size: int = 4, border: int = 1, use_logo=False, image
         # directory of api.py
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
+        filename ="qr_center_log.png"
+        if currency:
+            filename = f"{currency.lower()}_icon.png"
+
         # path to files/my_file_name.pgn
-        logo_path = os.path.join(current_dir, "files", "qr_center_log.png")
+        logo_path = os.path.join(current_dir, "files", filename)
+        
+        if not os.path.isfile(logo_path):
+            logo_path = os.path.join(current_dir, "files", "qr_center_log.png")
+
 
         # optional: normalize path
         logo_path = os.path.normpath(logo_path)
         logo_img = Image.open(logo_path).convert("RGBA")
-        # Resize logo (25% of QR)
+        # Resize logo (15% of QR)
         qr_w, qr_h = qr_img.size
-        logo_size = int(qr_w * 0.25)
+        logo_size = int(qr_w * 0.15)
         logo_img = logo_img.resize((logo_size, logo_size), Image.LANCZOS)
         # Optional: white background for logo (recommended)
-        padding = 5
+        padding = 4
         bg_size = (logo_size + padding*2, logo_size + padding*2)
         bg = Image.new("RGBA", bg_size, (255, 255, 255, 255))
         bg.paste(logo_img, (padding, padding), logo_img)
@@ -69,7 +77,4 @@ def generate_qr(data: str, size: int = 4, border: int = 1, use_logo=False, image
     
     import base64
     img_base64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
-    return {
-        "image": img_base64,
-        "mime": "image/png"
-    }
+    return f"data:image/png;base64,{img_base64}"
