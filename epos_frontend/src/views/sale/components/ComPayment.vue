@@ -104,7 +104,6 @@ sale.paymentInputNumber = ((sale.sale?.grand_total||0) - (sale.sale?.deposit||0)
 
 
 watch(() => sale.close_payment_form,(newVal) => { 
-    console.log({"Close Payment Form =>":newVal})
     if (newVal === true) {
        onPayment(true)
     }

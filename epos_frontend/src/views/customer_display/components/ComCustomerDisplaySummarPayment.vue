@@ -9,6 +9,7 @@
         </div>
         <div v-for="(p, index) in data.payment" :key="index" style="margin-bottom: 0px!important;" class="flex justify-between mb-2 text-lg">
             <div style="font-size: 22px;">{{p.payment_type}}</div>
+           
             <div style="margin: 0px; padding: 0px; font-size: 26px; font-weight: bold;">
                 <CurrencyFormat :value="p.input_amount" :currency="p.currency" />
             </div>

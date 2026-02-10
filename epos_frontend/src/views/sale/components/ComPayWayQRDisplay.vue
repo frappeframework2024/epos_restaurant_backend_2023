@@ -29,18 +29,19 @@
                     </div>
                 </div>
 
-                <div class="code">{{$t('Account Name')}}: <b>Long Saroth</b></div>
+                <!-- <div class="code">{{$t('Account Name')}}: <b>Long Saroth</b></div> -->
+                <div class="code">{{$t('PAY ME NOW')}}</div>
                 
                 <div class="bottom">
                     <div class="col left">
-                        <p class="label">{{$t('Transaction Date')}}</p>
-                        <p class="value">15-10-2025</p>
+                        <p class="label">{{$t('Posting Date')}}</p>
+                        <p class="value">{{qrData.invoice_date}}</p>
                     </div>
  
                     <div class="col right flex justify-end gap-3">
                         <div>
-                            <!-- <p class="label">{{$t('Balance')  }} ({{sale.setting.pos_setting.main_currency_name}})</p>
-                            <p class="value white"><CurrencyFormat :value="props.data.balance" /></p> -->
+                            <p class="label">{{$t('Balance')  }} ({{qrData.currency}})</p>
+                            <p class="value white"><CurrencyFormat :value="qrData.amount" :currency="qrData.currency" /></p>
                         </div>
                         <div>
                             <!-- <p class="label">{{ $t('Balance') }} ({{sale.setting.pos_setting.second_currency_name}})</p>

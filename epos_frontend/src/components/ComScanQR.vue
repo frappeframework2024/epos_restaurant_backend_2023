@@ -77,11 +77,16 @@
         try{
         const resp = await call.post("epos_restaurant_2023.api.payway.aba_generate_qr", request_params); 
             if(resp){   
-                sale.sale.show_aba_khqr = true
-                sale.sale.aba_khqr_data = resp;
+                sale.sale.show_aba_khqr = true ;
                 qrData.value = {
-                    "qr_image_custom":resp.qr_image_custom
+                    "tran_id":resp.tran_id,
+                    "qr_image_custom":resp.qr_image_custom,
+                    "currency": param.currency,
+                    "amount":Number(param.payment_amount),
+                    "invoice_date": sale.sale.posting_date
                 };
+                sale.sale.aba_khqr_data =  qrData.value ;  
+                
                 socket.emit("ShowOrderInCustomerDisplay", sale.sale,"", sale.customer_display_key);
             }
 
@@ -89,7 +94,7 @@
            setTimeout(()=>{
             toaster.warning($t(`${err.message} (status code: ${err.staus_code})`));
             onClose();    
-           },2000)
+           },1500)
         }
        
     });
