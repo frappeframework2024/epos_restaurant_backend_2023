@@ -26,6 +26,24 @@ class ePOSSettings(Document):
 	
 	@frappe.whitelist()
 	def generate_sale_general_ledger(self):
+		if not self.business_branch:
+			frappe.throw("Please Selecte Business Branch")
+
+		frappe.db.sql("""UPDATE `tabPOS Sale Payment` a 
+						inner JOIN `tabPayment Type Account` b ON b.parent = a.payment_type
+						SET a.default_account = b.account
+						WHERE b.business_branch = '{0}'""".format(self.business_branch))
+		
+		frappe.db.sql("""UPDATE `tabSale Product` a 
+						inner JOIN `tabRevenue Group Default Account` b ON b.parent = a.revenue_group
+						SET a.default_income_account = b.default_income_account,
+						a.default_discount_account = b.default_discount_account
+						WHERE b.business_branch = '{0}'""".format(self.business_branch))
+		
+		frappe.db.sql("""UPDATE `tabSale` a
+						INNER JOIN `tabBusiness Branch` b ON b.name = a.business_branch
+						SET a.default_change_account = b.default_change_account WHERE business_branch = '{0}';""".format(self.business_branch))
+
 		frappe.publish_realtime("generate_sales_general_ledger", {"message": "Start Generating General Ledger"},user=frappe.session.user)
 		sales = frappe.db.sql("select name from `tabSale` where name not in (SELECT voucher_number FROM `tabGeneral Ledger` WHERE voucher_type='Sale' AND is_cancelled=0 GROUP BY voucher_number)",as_dict=1)
 		for a in sales:
