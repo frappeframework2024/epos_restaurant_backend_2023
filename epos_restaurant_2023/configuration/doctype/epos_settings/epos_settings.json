@@ -52,7 +52,8 @@
   "column_break_jfpn",
   "use_coupon_encrypt",
   "accounting_tab",
-  "use_basic_accounting_feature"
+  "use_basic_accounting_feature",
+  "generate_sale_general_ledger"
  ],
  "fields": [
   {
@@ -313,6 +314,11 @@
    "fieldname": "get_site_id",
    "fieldtype": "Button",
    "label": "Get Site ID"
+  },
+  {
+   "fieldname": "generate_sale_general_ledger",
+   "fieldtype": "Button",
+   "label": "Generate Sale General Ledger"
   }
  ],
  "image_field": "epos_logo",
@@ -320,7 +326,7 @@
  "issingle": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2025-11-12 14:04:16.276583",
+ "modified": "2026-02-10 14:39:20.753001",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "ePOS Settings",

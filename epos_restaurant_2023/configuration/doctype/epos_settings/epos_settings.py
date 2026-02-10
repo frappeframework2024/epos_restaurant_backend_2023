@@ -4,6 +4,7 @@ from frappe.model import no_value_fields
 import frappe
 from frappe.model.document import Document
 from py_linq import Enumerable
+from epos_restaurant_2023.selling.doctype.sale.general_ledger_entry import submit_sale_to_general_ledger_entry
 
 class ePOSSettings(Document):
 	def validate(self):
@@ -22,6 +23,14 @@ class ePOSSettings(Document):
 		site_name = frappe.local.site
 		site_name =  hashlib.sha256(site_name.encode()).hexdigest()
 		return site_name
+	
+
+	def generate_sale_general_ledger(self):
+		sales = frappe.db.sql("select name from `tabSale` where name not in (SELECT voucher_number FROM `tabGeneral Ledger` WHERE voucher_type='Sale' AND is_cancelled=0 GROUP BY voucher_number)",as_dict=1)
+		for a in sales:
+			doc = frappe.get_doc("Sale",a["name"])
+			submit_sale_to_general_ledger_entry(doc)
+		frappe.publish_realtime("generate_sales_general_ledger", {"message": "General Ledger Generated"},user=frappe.session.user)
 
 @frappe.whitelist(allow_guest=True)
 def main_currency():

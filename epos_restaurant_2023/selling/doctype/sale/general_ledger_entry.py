@@ -8,6 +8,7 @@ from epos_restaurant_2023.inventory.inventory import (
 	get_uom_conversion
 )
 
+@frappe.whitelist()
 def submit_sale_to_general_ledger_entry(self):
 	from epos_restaurant_2023.api.account import submit_general_ledger_entry
 	sale_products = [a for a in self.sale_products if (a.coupons or "") == ""]
