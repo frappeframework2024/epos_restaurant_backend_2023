@@ -75,7 +75,7 @@
 </template>
 <script setup>
 
-import { inject, ref, onUnmounted,onMounted,i18n } from '@/plugin';
+import { inject, ref, onUnmounted,onMounted,i18n,watch } from '@/plugin';
 import ComPaymentInputNumber from "./ComPaymentInputNumber.vue"
 import ComSmallSalePayment from "./mobile_screen/ComSmallSalePayment.vue"
 import { useDisplay } from 'vuetify'
@@ -102,12 +102,23 @@ const selectedReceipt = ref({});
 selectedReceipt.value = gv.setting.default_pos_receipt;
 sale.paymentInputNumber = ((sale.sale?.grand_total||0) - (sale.sale?.deposit||0) - ((sale.sale?.total_cash_coupon_claim||0))).toFixed(sale.setting.pos_setting.main_currency_precision);
 
+
+watch(() => sale.close_payment_form,(newVal) => { 
+    console.log({"Close Payment Form =>":newVal})
+    if (newVal === true) {
+       onPayment(true)
+    }
+});
+
+
 function onSelectedReceipt(r) {
     selectedReceipt.value = r;
 }
 
 onMounted(() => { 
     sale.is_payment_first_load = true;
+    sale.pos_receipt = selectedReceipt.value;
+
     backup.value = JSON.parse(JSON.stringify(sale.sale));
 })
 
@@ -128,11 +139,13 @@ function onClose() {
 
 }
 
-async function onPayment() { 
-    if (sale.sale.payment.filter(r => r.required_customer == 1).length > 0) {
-        if (sale.sale.customer == sale.setting.customer) {
-            toaster.warning($t("msg.Please select customer for payment type")+" " + sale.sale.payment.filter(r => r.required_customer == 1)[0].payment_type);
-            return;
+async function onPayment(ignore=false) { 
+    if(ignore == false){
+        if (sale.sale.payment.filter(r => r.required_customer == 1).length > 0  ) {
+            if (sale.sale.customer == sale.setting.customer) {
+                toaster.warning($t("msg.Please select customer for payment type")+" " + sale.sale.payment.filter(r => r.required_customer == 1)[0].payment_type);
+                return;
+            }
         }
     }
     sale.pos_receipt = selectedReceipt.value;
@@ -140,7 +153,7 @@ async function onPayment() {
 
     onPaymentAudit()  ;
 
-    sale.onSubmitPayment(true).then((v) => {
+    sale.onSubmitPayment(true,ignore ).then((v) => {
         if (v) {            
             emit("resolve", true);
         }
@@ -182,6 +195,7 @@ async function onPaymentWithoutPrint() {
     })
 }
 
+
 function onPaymentAudit(){
     const u = JSON.parse(localStorage.getItem('make_order_auth')); 
     let msg = `${u.name} process payment `; 
@@ -209,6 +223,7 @@ function onPaymentAudit(){
 onUnmounted(() => {
     sale.sale.payment = [];
     sale.is_payment_first_load = false;
+    sale.close_payment_form = false;
 })
 
 </script>

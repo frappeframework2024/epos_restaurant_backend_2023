@@ -509,6 +509,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "pos_config":pos_config.name,
         "address":pos_config.address,
         "property_code":property_code,
+        "payway_prefix_code":pos_config.payway_prefix_code or "",
         "logo":pos_branding.logo,
         "phone_number":pos_config.phone_number,
         "pos_profile":pos_profile,

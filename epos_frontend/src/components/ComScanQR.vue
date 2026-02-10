@@ -1,73 +1,104 @@
 <template>
-    <v-dialog v-model="open" width="70%" @update:modelValue="onAction()" persistent>
-        <v-card height="500" class="d-flex align-center justify-center">
+    <v-dialog v-model="open" :width="mobile ? '100%' : '40%'" persistent>
+
+        <v-card height="500" class="d-flex align-center justify-center" v-if="!sale.sale.show_aba_khqr" >
             <v-card-title>
                 <v-btn icon @click="onClose()" style="position: absolute; top: 8px; right: 8px;">
                     <v-icon>mdi-close</v-icon>
                 </v-btn>
-            </v-card-title>
-            <img src="@/assets/images/loading.gif" />
-            <div>{{ $t('Please Wait') }}</div>
-            <div>{{$t("Payment Is Processing")}}...</div>
-            <div>{{ $t("This May Take a Few Seconds") }}</div>
-            
+            </v-card-title> 
+                <img width="50" src="@/assets/images/loading.gif" />
+                <div>{{ $t('Please Wait') }}</div>
+                <div>{{$t("Payment Is Processing")}}...</div>
+                <div>{{ $t("This May Take a Few Seconds") }}</div> 
         </v-card>
+        <template v-else>
+             <ComPayWayQRDisplay :qrData="qrData" :showClose="true" @onClose="onClose()" />
+        </template>
+
     </v-dialog>
 </template>
 <script setup>
-import { defineEmits, ref, i18n,inject,createToaster} from '@/plugin'
-import { onMounted } from 'vue';
-const { t: $t } = i18n.global; 
-const emit = defineEmits(['resolve'])
-const sale = inject("$sale")
-const gv = inject('$gv')
-const frappe = inject("$frappe")
-const call = frappe.call()
-const open = ref(true)
-import socket from '@/utils/socketio';
-const toaster = createToaster({ position: "top-right" });
-const props = defineProps({
-    params: Object
-})
+    import { defineEmits, ref, i18n,inject,createToaster,onMounted,onUnmounted ,watch} from '@/plugin';
+    import { useDisplay } from 'vuetify'
+    import socket from '@/utils/socketio';
+    import ComPayWayQRDisplay from '@/views/sale/components/ComPayWayQRDisplay.vue';
+    const { mobile } = useDisplay();
+    const { t: $t } = i18n.global; 
+    const emit = defineEmits(['resolve'])
+    const sale = inject("$sale")
+    const gv = inject('$gv')
+    const frappe = inject("$frappe")
+    const call = frappe.call()
+    const open = ref(true)
+    const toaster = createToaster({ position: "top-right" });
 
-function onClose(){
-    open.value = false
-    onAction(open.value)
-}
-function onAction(val) {
-    if (!val) {
-        socket.emit("ShowOrderInCustomerDisplay", sale.sale,"", sale.customer_display_key);
-    }
-}
+    const qrData = ref(null); 
+    const props = defineProps({
+        params: Object
+    });
 
-onMounted(async ()=>{
-    let param = props.params;
-    let request_params = {
-        "property_code":gv.setting.property_code, //required
-        "pos_config":gv.setting.pos_config, //required
-        "payment_amount": Number( param.payment_amount), //required
-        "currency":param.currency, // required
-        "lifetime":6,  //default None mean 30days
-        // "deeplink":false, //default false
-        // "image":false, //default false
-        "response":{ //this custom data callback when ABA success payment
-            "pos_profile": gv.setting.pos_profile,
-            "station_name":gv.device_setting.name,
-            "invoice_id": sale.sale.name,
+ 
+
+    watch(() => sale.payway_complete_payment,(newVal) => {
+        if (newVal === true) {
+            onClose(true)
         }
-    }
-     const resp = await call.post("epos_restaurant_2023.api.payway.aba_generate_qr", request_params);
+    });
 
-    if(resp){      
-        sale.sale.show_aba_khqr = true
-        sale.sale.aba_khqr_data = resp;
-        socket.emit("ShowOrderInCustomerDisplay", sale.sale,"", sale.customer_display_key);
-        sale.sale.show_aba_khqr = undefined;
+    function onClose(success=false){
+        open.value = false;
+        sale.sale.show_aba_khqr = undefined
         sale.sale.aba_khqr_data = undefined;
-    }else{
-        toaster.warning($t(resp.message));
-        onClose();
+        qrData.value = null;
+        socket.emit("ShowOrderInCustomerDisplay", sale.sale,"", sale.customer_display_key);
+        emit('resolve',success);
     }
 
-})
+    onMounted(async ()=>{
+        let param = props.params;
+        let request_params = {
+            "tran_id": sale.getUniqueKey(gv.setting.payway_prefix_code),
+            "property_code":gv.setting.property_code, //required
+            "pos_config":gv.setting.pos_config, //required
+            "payment_amount": Number( param.payment_amount), //required
+            "currency":param.currency, // required
+            "lifetime":60*24, //1day ~ default None mean 30days
+            // "deeplink":false, //default false
+            // "image":false, //default false
+            "response":{ //this custom data callback when ABA success payment
+                "pos_profile": gv.setting.pos_profile,
+                "station_name":gv.device_setting.name,
+                "invoice_id": param.sale_id,
+                "temp_tran_id":param.temp_tran_id
+            }
+        }
+        
+        try{
+        const resp = await call.post("epos_restaurant_2023.api.payway.aba_generate_qr", request_params); 
+            if(resp){   
+                sale.sale.show_aba_khqr = true
+                sale.sale.aba_khqr_data = resp;
+                qrData.value = {
+                    "qr_image_custom":resp.qr_image_custom
+                };
+                socket.emit("ShowOrderInCustomerDisplay", sale.sale,"", sale.customer_display_key);
+            }
+
+        } catch (err){
+           setTimeout(()=>{
+            toaster.warning($t(`${err.message} (status code: ${err.staus_code})`));
+            onClose();    
+           },2000)
+        }
+       
+    });
+
+    onUnmounted(() => {
+        sale.payway_complete_payment = false;
+    });
+
 </script>
+
+
+

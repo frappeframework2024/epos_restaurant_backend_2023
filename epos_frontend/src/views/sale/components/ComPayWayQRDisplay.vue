@@ -1,16 +1,68 @@
 <template lang="">
-    <v-dialog v-model="open" width="40rem" persistent>
-            <ComPayWayQRDisplay :qrData="props.qrData" />             
-    </v-dialog>
+ 
+   
+            <div class="card">
+                <div class="top"> 
+                    <!-- small QR icon (top-right) -->
+                    <div class="mini-qr" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M3 3h7v7H3V3Zm2 2v3h3V5H5Zm9-2h7v7h-7V3Zm2 2v3h3V5h-3ZM3 14h7v7H3v-7Zm2 2v3h3v-3H5Zm11 0h2v2h-2v-2Zm-2-2h2v2h-2v-2Zm6 0h1v3h-1v-3Zm-2 3h3v1h-3v-1Zm-4 2h2v2h-2v-2Zm3 0h4v2h-1v-1h-3v-1Z" fill="rgba(255,255,255,.95)"/>
+                        </svg>
+                    </div> 
+                        <v-btn v-if="showClose" icon @click="onClose()" style="position: absolute; top: 8px; right: 8px;">
+                            <v-icon>mdi-close</v-icon>
+                        </v-btn> 
+                </div>
+
+                <div class="title">{{$t('Scan to Pay')}}</div>
+                <div class="qr-wrap">
+                    <div class="qr-frame">
+                        <span class="corner c-tl"></span>
+                        <span class="corner c-tr"></span>
+                        <span class="corner c-bl"></span>
+                        <span class="corner c-br"></span>
+
+                        <div class="qr-box" v-if="qrData"> 
+                        <!-- Put your real QR image here -->
+                        <img width="250px"  v-if="qrData.qr_image_custom" :src="qrData.qr_image_custom" alt="QR Code"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="code">{{$t('Account Name')}}: <b>Long Saroth</b></div>
+                
+                <div class="bottom">
+                    <div class="col left">
+                        <p class="label">{{$t('Transaction Date')}}</p>
+                        <p class="value">15-10-2025</p>
+                    </div>
+ 
+                    <div class="col right flex justify-end gap-3">
+                        <div>
+                            <!-- <p class="label">{{$t('Balance')  }} ({{sale.setting.pos_setting.main_currency_name}})</p>
+                            <p class="value white"><CurrencyFormat :value="props.data.balance" /></p> -->
+                        </div>
+                        <div>
+                            <!-- <p class="label">{{ $t('Balance') }} ({{sale.setting.pos_setting.second_currency_name}})</p>
+                            <p class="value white"><CurrencyFormat :value="props.data.balance * props.data.exchange_rate" :currency="sale.setting.pos_setting.second_currency_name"/></p> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
 </template>
 <script setup>
-  import ComPayWayQRDisplay from '@/views/sale/components/ComPayWayQRDisplay.vue';
-  import { inject, ref,i18n } from '@/plugin'; 
-  const open = ref(true);
-  const props = defineProps({
-      qrData: Object
-  })
- 
+    import { inject, ref,i18n ,computed} from '@/plugin'; 
+    const emit = defineEmits(["onClose"])
+    const props = defineProps({
+        qrData:Object,
+        showClose:false
+    });
+
+    function onClose() { 
+        emit('onClose',false);
+    }
+
+
 </script>
 <style scoped>
     .card{

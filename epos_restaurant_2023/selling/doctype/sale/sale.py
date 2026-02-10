@@ -1057,7 +1057,9 @@ def add_payment_to_sale_payment(self):
 							"fee_amount":p.fee_amount,
 							"fee_percentage":p.fee_percentage,
 							"issue_gift_voucher":p.issue_gift_voucher,
-							"pos_sale_payment":p.name
+							"pos_sale_payment":p.name,
+							"is_generate_qr":p.is_generate_qr,
+							"aba_pay_transaction":p.aba_pay_transaction,
 						})
 					doc.flags.ignore_post_general_ledger_entry = True
 					doc.flags.ignore_update_sale = True
@@ -1218,8 +1220,6 @@ def add_coupon_GL_entry(self):
 		for a in expense_account:	 
 			general_ledger(self,account = {"account":a,"amount":sum(b.get("expense_amount") for b in coupons if b.get("expense_account","") == a),"party":""})
 
-
- 
 
 
 def add_sale_product_spa_commission(self):			

@@ -66,6 +66,11 @@
   "bulk_sale_payment_name",
   "issue_gift_voucher",
   "pos_sale_payment",
+  "integrations_tab",
+  "aba_payway_section",
+  "is_generate_qr",
+  "aba_pay_transaction",
+  "column_break_rzuj",
   "accounting_tab",
   "account_paid_to",
   "account_paid_from"
@@ -278,7 +283,7 @@
    "fieldname": "check_valid_payment_amount",
    "fieldtype": "Check",
    "hidden": 1,
-   "label": "check_valid_payment_amount"
+   "label": "Check Valid Payment Amount"
   },
   {
    "default": "Payment",
@@ -489,12 +494,42 @@
    "fieldname": "pos_sale_payment",
    "fieldtype": "Data",
    "label": "POS Sale Payment"
+  },
+  {
+   "fieldname": "integrations_tab",
+   "fieldtype": "Tab Break",
+   "label": "Integrations"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_generate_qr",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Is Generate QR",
+   "print_hide": 1,
+   "read_only": 1,
+   "report_hide": 1
+  },
+  {
+   "fieldname": "column_break_rzuj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "aba_pay_transaction",
+   "fieldtype": "Data",
+   "label": "ABA Pay Transaction",
+   "read_only": 1
+  },
+  {
+   "fieldname": "aba_payway_section",
+   "fieldtype": "Section Break",
+   "label": "ABA PayWay"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-10-16 16:36:27.637703",
+ "modified": "2026-02-10 10:00:07.547803",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Payment",

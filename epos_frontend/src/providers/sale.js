@@ -2,7 +2,8 @@ import Enumerable from 'linq'
 import moment from '@/utils/moment.js';
 import {
     ref, noteDialog, changeTaxSettingModal, SaleProductComboMenuGroupModal, keyboardDialog, keypadWithNoteDialog, createResource,
-    createDocumentResource, addModifierDialog, useRouter, confirmDialog, selectEmployeeDialog, saleProductDiscountDialog, i18n,ComOrderLimitDialog
+    createDocumentResource, addModifierDialog, useRouter, confirmDialog, selectEmployeeDialog, saleProductDiscountDialog, i18n,
+    ComOrderLimitDialog, scanqrDialog
 } from "@/plugin"
 import { createToaster } from "@meforma/vue-toaster";
 import socket from '@/utils/socketio';
@@ -17,6 +18,8 @@ const toaster = createToaster({ position: "top-right" });
 
 export default class Sale {
     constructor() {
+        this.payway_complete_payment = false;
+        this.close_payment_form = false;
         this.is_payment_first_load = false;
         this.load_menu_lang = false;
         this.loading = false;
@@ -1778,15 +1781,19 @@ export default class Sale {
         })
     }
 
-    async onSubmitPayment(isPrint = true) {
+    async onSubmitPayment(isPrint = true, ignore = false) {
         this.isPrintReceipt = isPrint;
         return new Promise(async (resolve) => {
             let balance = Number((this.sale.balance + Number.EPSILON).toFixed(this.setting.pos_setting.main_currency_precision));
-            if (balance > 0) {
+            if (balance > 0 && ignore == false) {
                 toaster.error($t('Please enter all payment amount'));
                 resolve(false);
             } else {
-                if (await confirmDialog({ title: $t("Payment"), text: $t("msg.are you sure to process payment and close order") })) {
+                let conf = true;
+                if(!ignore){
+                    conf = await confirmDialog({ title: $t("Payment"), text: $t("msg.are you sure to process payment and close order") });
+                }
+                if (conf) {
                     this.loading = true;
                     const resp = await Ping(this.setting)
                     if(resp == 0){
@@ -2407,7 +2414,7 @@ export default class Sale {
                 return
             }
         }
-        if (receipt.pos_receipt_file_name && localStorage.getItem("is_window")) {
+        if (receipt?.pos_receipt_file_name && localStorage.getItem("is_window")) {
             window.chrome.webview.postMessage(JSON.stringify(data));
         } else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
             if (printer.length <= 0) {
@@ -2417,7 +2424,7 @@ export default class Sale {
                 flutterChannel.postMessage(JSON.stringify(data));
             }
         } else {
-            if (receipt.pos_receipt_file_name) {
+            if (receipt?.pos_receipt_file_name) {
                 data.printer = _printer;
                 socket.emit('PrintReceipt', JSON.stringify(data));
             }
@@ -2503,22 +2510,59 @@ export default class Sale {
         }
     }
 
-    onAddPayment(data) {
+    handlePayWayPaymentCallback(data) {
+    // Process payment data
+        const resp = data.response;
+        if(resp.invoice_id == this.sale.name && 
+            this.setting.pos_config == resp.pos_config &&
+            this.setting.property_code == resp.property_code        
+        ){    
+            
+            this.sale.payment.forEach((p)=>{
+                if(p._temp_payway_tran_id == resp.temp_tran_id && p.is_generate_qr == 1){
+                    p.aba_pay_transaction = data.tran_id
+                }
+            });
+
+            this.payway_complete_payment = true; //trigger to close dialog scan qr            
+            this.sale.show_aba_khqr = undefined;
+            this.sale.aba_khqr_data = undefined;
+            setInterval(()=>{ //print & ignore valide
+                 socket.emit("ShowOrderInCustomerDisplay", this.sale,"", this.customer_display_key);     
+            },500);
+            
+            this.close_payment_form = true;
+        }
+    }
+
+    async   onRemovePayment(p) { 
+        this.sale.payment.splice(this.sale.payment.indexOf(p), 1);
+        this.updatePaymentAmount();
+        this.paymentInputNumber = this.sale.balance.toFixed(this.setting.pos_setting.main_currency_precision);  
+        if( this.sale.payment.length<=0){
+            this.is_payment_first_load = true;
+        }             
+    }
+
+
+    async onAddPayment(data) {
         // data {paymentType: , amount:,fee_amount:0,room:null, folio = null, folio_transaction_type=null,folio_transaction_number}     
         const single_payment_type = this.sale.payment.find(r => r.is_single_payment_type == 1);
         if (single_payment_type) {
             toaster.warning($t('msg.You cannot add other payment type with', [single_payment_type.payment_type]));
+            return false
         } else {
             const precision = this.setting.pos_setting.main_currency_precision;
-            if (data.paymentType.is_single_payment_type == 1) {
+            if (data.paymentType.is_single_payment_type == 1 ||  data.paymentType.allow_aba_pay_with_qr_scan == 1) {
                 this.sale.payment = [];
-                data.amount = parseFloat((parseFloat(this.sale.grand_total * data.paymentType.exchange_rate) + Number.EPSILON).toFixed(precision));
+                data.amount = parseFloat((parseFloat(this.sale.grand_total * data.paymentType.exchange_rate) + Number.EPSILON).toFixed(precision)); 
             }
             if (!this.getNumber(data.amount) == 0) {
                 if ((data.fee_amount || 0) == 0) {
                     data.fee_amount = parseFloat((parseFloat(data.amount / data.paymentType.exchange_rate) +  Number.EPSILON).toFixed(precision)) * (data.paymentType.fee_percentage / 100);
                 }
-                this.sale.payment.push({
+
+                let payment = {
                     payment_type: data.paymentType.payment_method,
                     payment_type_group:data.paymentType.payment_type_group,
                     input_amount: parseFloat(data.amount),
@@ -2539,12 +2583,35 @@ export default class Sale {
                     folio_transaction_number: data.folio_transaction_number,
                     city_ledger_name: data.city_ledger_name,
                     reservation_stay:data.reservation_stay,
-                    issue_gift_voucher:data.voucher_name
-                });
+                    issue_gift_voucher:data.voucher_name,
+                    is_generate_qr: data.paymentType.allow_aba_pay_with_qr_scan,
+                    _temp_payway_tran_id : data.temp_payway_tran_id
+                }
+
+                this.sale.payment.push(payment);
+                
                 this.updatePaymentAmount();
                 this.paymentInputNumber = (this.sale.balance + Number.EPSILON).toFixed(precision);
+
+
+
+                //generate payway qr
+                if(data.paymentType.allow_aba_pay_with_qr_scan ==  1){      
+                    const result = await scanqrDialog({
+                        "temp_tran_id": data.temp_payway_tran_id,
+                        "sale_id":this.sale.name,
+                        "payment_amount": data.paymentType.currency == "KHR" ? parseFloat(data.amount).toFixed(0) :data.amount ,
+                        "currency":data.paymentType.currency,
+                    });
+                    if(!result){
+                        this.onRemovePayment(payment)
+                    }
+                }
+
+                return true
             } else {
                 toaster.warning($t("msg.Please enter payment amount"));
+                return false
             }
         }
     }
@@ -2691,6 +2758,21 @@ export default class Sale {
     async onRequestCouponCode(code)  { 
         let data =  await call.get("epos_restaurant_2023.api.api.scan_coupon_number",{"code":code})
         return data["message"]
+    }
+
+    getUniqueKey(prefix) {
+        const d = new Date()
+        const pad = (n, l = 2) => String(n).padStart(l, '0')
+        return (
+            (prefix||"") +
+            d.getFullYear() +
+            pad(d.getMonth() + 1) +
+            pad(d.getDate()) +
+            pad(d.getHours()) +
+            pad(d.getMinutes()) +
+            pad(d.getSeconds()) +
+            pad(d.getMilliseconds(), 2)
+        )
     }
 }
 

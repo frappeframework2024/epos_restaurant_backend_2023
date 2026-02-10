@@ -10,7 +10,7 @@
     </div>
 </template>
 <script setup>
-import { inject , payToRoomDialog,createToaster,payToCityLedgerDialog,payDeskfolioDialog,i18n ,computed,keyboardDialog,ref,scanqrDialog,vouhcerDialog} from '@/plugin';
+import { inject , payToRoomDialog,createToaster,payToCityLedgerDialog,payDeskfolioDialog,i18n ,computed,keyboardDialog,ref,vouhcerDialog} from '@/plugin';
 import { useDisplay } from 'vuetify'; 
 const {mobile} = useDisplay()
 const gv = inject("$gv")
@@ -29,6 +29,8 @@ if (currency_setting) {
     format.value = currency_setting.pos_currency_format
 }
 
+
+
 async function onPaymentTypeClick(pt) { 
     let voucher = {"voucher_amount":0,"voucher_name":"","customer":""}
     let room = null;
@@ -37,15 +39,14 @@ async function onPaymentTypeClick(pt) {
     let folio = null
     let city_ledger_name = null
     let desk_folio = null
-    let reservation_stay = null
+    let reservation_stay = null;
 
-    if(pt.allow_aba_pay_with_qr_scan == 1){      
-        const result = await scanqrDialog({
-            "payment_amount":sale.paymentInputNumber,
-            "currency":pt.currency,
-        });
+    if(pt.allow_aba_pay_with_qr_scan == 1 && !sale.sale.name){
+        toaster.warning( $t('msg.please save or submit your current order first', [$t('Submit') + " " + $t('or') + " " + $t('Save')]));
         return
     }
+
+
 
     if(pt.is_voucher){
         const result = await vouhcerDialog({})
@@ -170,8 +171,17 @@ async function onPaymentTypeClick(pt) {
          sale.paymentInputNumber = voucher.voucher_amount
          sale.sale.customer = (voucher.voucher_customer || "") == "" ?  sale.sale.customer : voucher.voucher_customer
     }
+
+   
+
+
     const payment_obj={paymentType: pt, amount:sale.paymentInputNumber,fee_amount:fee_amount,room:room, folio : folio, folio_transaction_type:folio_transaction_type,folio_transaction_number:folio_transaction_number,city_ledger_name:city_ledger_name,reservation_stay:reservation_stay,voucher_name:voucher.voucher_name}
-    sale.onAddPayment(payment_obj);
+     //generate temp payway tran id 
+    if(pt.allow_aba_pay_with_qr_scan == 1){
+        payment_obj.temp_payway_tran_id = sale.getUniqueKey()        
+    }
+    const allowAdd = sale.onAddPayment(payment_obj);
+   
 }
 
 const balance = computed(()=>{

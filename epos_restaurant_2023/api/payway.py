@@ -24,6 +24,8 @@ def aba_generate_qr(**params):
     p = {k.strip(): v for k, v in params.items()}  
     p.pop("cmd",None)
 
+
+
     conn =  get_estc_connection() 
     if not conn.get("estc_central_rul", None) :
         staus_code = 422
@@ -44,7 +46,7 @@ def aba_generate_qr(**params):
     try:
         data = response.json() 
     except Exception:
-        data = {}  
+        data = {}   
 
     #success request
     if(response.status_code in [200,201]):  

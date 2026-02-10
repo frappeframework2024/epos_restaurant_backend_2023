@@ -13,18 +13,18 @@
   "currency",
   "exchange_rate",
   "change_exchange_rate",
+  "is_foc",
   "is_pay_to_room",
+  "use_room_offline",
   "column_break_pzmx",
   "currency_symbol",
   "currency_precision",
   "currency_format",
-  "is_foc",
   "payment_type_group",
   "room_number",
   "folio_number",
   "account_code",
   "cancel_order_adjustment_account_code",
-  "use_room_offline",
   "fee_percentage",
   "fee_amount",
   "folio_transaction_type",
@@ -32,6 +32,10 @@
   "reservation_stay",
   "guest",
   "issue_gift_voucher",
+  "section_break_uoud",
+  "is_generate_qr",
+  "aba_pay_transaction",
+  "column_break_zvtq",
   "accounting_section",
   "default_account"
  ],
@@ -204,12 +208,36 @@
    "fieldtype": "Link",
    "label": "Issue Gift Voucher",
    "options": "Issue Gift Voucher"
+  },
+  {
+   "fieldname": "section_break_uoud",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_generate_qr",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Is Generate QR",
+   "print_hide": 1,
+   "read_only": 1,
+   "report_hide": 1
+  },
+  {
+   "fieldname": "column_break_zvtq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "aba_pay_transaction",
+   "fieldtype": "Data",
+   "label": "ABA Pay Transaction",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-08-16 11:07:27.037184",
+ "modified": "2026-02-10 10:00:42.738737",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Sale Payment",

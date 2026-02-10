@@ -1,7 +1,7 @@
 <template>
     <div class="wrap h-screen">
          <template v-if="show_aba_khqr">
-           <ComCustomerDisplayScanQRDialog :data="data" :aba_data="aba_qr_data"/>
+           <ComCustomerDisplayScanQRDialog :qrData="aba_qr_data"/>
         </template>           
         <!-- <template>   -->
             <template v-if="!show_thankyou">

@@ -227,15 +227,11 @@ async function onPayWaySocketSetup(doc) {
 	await payway_socket.joinRoom(myRoom);
 	// ABA PayWay Listening payment callback 
 	await payway_socket.on("ABAPayCallback", async (arg) => { 
-		handlePaymentCallback(arg)
+		sale.handlePayWayPaymentCallback(arg)
 	});
 
 }
-function handlePaymentCallback(data) {
-  // Process payment data
-  socket.emit("ShowOrderInCustomerDisplay", sale.sale,"", sale.customer_display_key);
-  console.log('Processing payment:', data); 
-}
+
 
 //get user info 
 let current_user = localStorage.getItem('current_user')

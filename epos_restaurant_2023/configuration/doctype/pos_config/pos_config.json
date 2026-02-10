@@ -16,6 +16,7 @@
   "address",
   "address_kh",
   "pos_bill_number_prefix",
+  "payway_prefix_code",
   "column_break_8",
   "phone_number",
   "email",
@@ -1008,12 +1009,19 @@
    "fieldname": "allow_print_bill_on_sale_deleted",
    "fieldtype": "Check",
    "label": "Allow Print Bill on Sale Deleted"
+  },
+  {
+   "description": "Prefix for generate transaction id request",
+   "fieldname": "payway_prefix_code",
+   "fieldtype": "Data",
+   "label": "PayWay Prefix Code",
+   "length": 4
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-05 15:36:42.022916",
+ "modified": "2026-02-10 09:46:41.222029",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",
