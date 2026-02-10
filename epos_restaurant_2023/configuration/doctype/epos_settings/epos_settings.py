@@ -24,8 +24,9 @@ class ePOSSettings(Document):
 		site_name =  hashlib.sha256(site_name.encode()).hexdigest()
 		return site_name
 	
-
+	@frappe.whitelist()
 	def generate_sale_general_ledger(self):
+		frappe.publish_realtime("generate_sales_general_ledger", {"message": "Start Generating General Ledger"},user=frappe.session.user)
 		sales = frappe.db.sql("select name from `tabSale` where name not in (SELECT voucher_number FROM `tabGeneral Ledger` WHERE voucher_type='Sale' AND is_cancelled=0 GROUP BY voucher_number)",as_dict=1)
 		for a in sales:
 			doc = frappe.get_doc("Sale",a["name"])
