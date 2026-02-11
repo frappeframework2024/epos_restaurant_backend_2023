@@ -29,7 +29,9 @@ class ePOSSettings(Document):
 	def generate_sale_general_ledger(self):
 		if not self.business_branch:
 			frappe.throw("Please Selecte Business Branch")
+
 		frappe.publish_realtime("generate_sales_general_ledger", {"message": "Start Generating General Ledger"},user=frappe.session.user)
+
 		frappe.db.sql("""UPDATE `tabPOS Sale Payment` a 
 						inner JOIN `tabPayment Type Account` b ON b.parent = a.payment_type
 						SET a.default_account = if(coalesce(a.default_account,'')='',b.account,a.default_account)
@@ -46,13 +48,23 @@ class ePOSSettings(Document):
 						SET a.default_change_account = if(coalesce(a.default_change_account,'')='',b.default_change_account,a.default_change_account)
 						WHERE business_branch = '{0}';""".format(self.business_branch))
 
-		sales = frappe.db.sql("select name from `tabSale` where business_branch = '{0}' and name not in (SELECT voucher_number FROM `tabGeneral Ledger` WHERE voucher_type='Sale' GROUP BY voucher_number)".format(self.specific_business_branch),as_dict=1)
+		sales = frappe.db.sql("""select 
+									name 
+									from `tabSale` 
+									where business_branch = '{0}' and 
+									name not in (SELECT 
+										voucher_number 
+										FROM `tabGeneral Ledger` 
+										WHERE voucher_type='Sale' 
+										GROUP BY voucher_number)""".format(self.business_branch),as_dict=1)
 		for a in sales:
 			doc = frappe.get_doc("Sale",a["name"])
 			submit_sale_to_general_ledger_entry(doc)
-		cancelled_sales = frappe.db.sql("select name from `tabSale` where business_branch = '{0}' and docstatus = 2",as_dict=1)
+
+		cancelled_sales = frappe.db.sql("select name from `tabSale` where business_branch = '{0}' and docstatus = 2".format(self.business_branch),as_dict=1)
 		for a in cancelled_sales:
 			cancel_general_ledger_entery("Sale", a["name"])	
+			
 		frappe.publish_realtime("generate_sales_general_ledger", {"message": "General Ledger Generated"},user=frappe.session.user)
 
 @frappe.whitelist(allow_guest=True)

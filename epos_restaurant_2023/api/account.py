@@ -33,7 +33,7 @@ def get_general_ledger_entry_record(docs):
         doc.name  = make_autoname("GLE.YYYY.-.#####")
         yield doc
         
-        
+@frappe.whitelist()
 def cancel_general_ledger_entery(doctype,docname):
     sql = "select * from `tabGeneral Ledger` where voucher_type='{}' and voucher_number= '{}'".format( doctype,docname)
     data = frappe.db.sql(sql,as_dict=1)
