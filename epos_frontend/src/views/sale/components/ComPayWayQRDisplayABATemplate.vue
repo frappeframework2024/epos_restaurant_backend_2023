@@ -46,7 +46,8 @@
       color:#ffffff;
       border-radius:18px;
       /* background: linear-gradient(135deg, #2d69af 0%, #3c5fd1 55%, #b8c2f6 140%); */
-      background: linear-gradient(135deg, #10dfff 0%, #00475f 55%, #000000ba 140%);
+      background: #e8e9ec;
+      /* background: linear-gradient(135deg, #10dfff 0%, #00475f 55%, #000000ba 140%); */
       
       box-shadow:0 18px 40px rgba(20,30,70,.18);
       position:relative;
