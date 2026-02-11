@@ -1,7 +1,7 @@
 import frappe
 import qrcode
 from io import BytesIO
-from PIL import Image
+from PIL import Image, ImageDraw
 from werkzeug.wrappers import Response
 
 
@@ -32,40 +32,50 @@ def generate_qr(data: str, size: int = 4, border: int = 1, use_logo=False, curre
     # 2️⃣ Add logo if provided
     if use_logo:
         import os
-        # directory of api.py
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        filename ="qr_center_log.png"
-        if currency:
-            filename = f"{currency.lower()}_icon.png"
-
-        # path to files/my_file_name.pgn
+        filename = "khqr_icon.png"
         logo_path = os.path.join(current_dir, "files", filename)
-        
+
         if not os.path.isfile(logo_path):
-            logo_path = os.path.join(current_dir, "files", "qr_center_log.png")
+            logo_path = os.path.join(current_dir, "files", "khqr_icon.png")
 
-
-        # optional: normalize path
-        logo_path = os.path.normpath(logo_path)
         logo_img = Image.open(logo_path).convert("RGBA")
-        # Resize logo (15% of QR)
+
+        # QR size
         qr_w, qr_h = qr_img.size
-        logo_size = int(qr_w * 0.15)
+        logo_size = int(qr_w * 0.20)
+
+        # Resize logo
         logo_img = logo_img.resize((logo_size, logo_size), Image.LANCZOS)
-        # Optional: white background for logo (recommended)
-        padding = 4
-        bg_size = (logo_size + padding*2, logo_size + padding*2)
-        bg = Image.new("RGBA", bg_size, (255, 255, 255, 255))
-        bg.paste(logo_img, (padding, padding), logo_img)
+
+        # 🔵 Create circular mask
+        mask = Image.new("L", (logo_size, logo_size), 0)
+        draw = ImageDraw.Draw(mask)
+        draw.ellipse((0, 0, logo_size, logo_size), fill=255)
+
+        # Apply mask to logo
+        logo_circle = Image.new("RGBA", (logo_size, logo_size))
+        logo_circle.paste(logo_img, (0, 0), mask)
+
+        # ⚪ Optional white circular background (recommended)
+        padding = 6
+        bg_size = logo_size + padding * 2
+        bg = Image.new("RGBA", (bg_size, bg_size), (255, 255, 255, 255))
+
+        bg_mask = Image.new("L", (bg_size, bg_size), 0)
+        bg_draw = ImageDraw.Draw(bg_mask)
+        bg_draw.ellipse((0, 0, bg_size, bg_size), fill=255)
+
+        bg.paste(logo_circle, (padding, padding), logo_circle)
 
         # Center position
         pos = (
-            (qr_w - bg_size[0]) // 2,
-            (qr_h - bg_size[1]) // 2
+            (qr_w - bg_size) // 2,
+            (qr_h - bg_size) // 2
         )
 
-        qr_img.paste(bg, pos, bg)
+        qr_img.paste(bg, pos, bg_mask)
 
     # 3️⃣ Output PNG (inline)
     buffer = BytesIO()

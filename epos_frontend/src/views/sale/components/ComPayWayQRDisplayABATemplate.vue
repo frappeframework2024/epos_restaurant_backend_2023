@@ -1,60 +1,27 @@
-<template lang="">
- 
-   
-            <div class="card">
-                <div class="top"> 
-                    <!-- small QR icon (top-right) -->
-                    <div class="mini-qr" aria-hidden="true" style="position: absolute; top:-10px; left:-10px ">
-                        <svg  xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24"  width="24"  height="24"  fill="none">
-                          <path
-                            d="M3 3h7v7H3V3Zm2 2v3h3V5H5Zm9-2h7v7h-7V3Zm2 2v3h3V5h-3ZM3 14h7v7H3v-7Zm2 2v3h3v-3H5Zm11 0h2v2h-2v-2Zm-2-2h2v2h-2v-2Zm6 0h1v3h-1v-3Zm-2 3h3v1h-3v-1Zm-4 2h2v2h-2v-2Zm3 0h4v2h-1v-1h-3v-1Z"
-                            fill="#ffffff"
-                          />
-                        </svg>
-                    </div> 
-                        <v-btn v-if="showClose" icon @click="onClose()" style="position: absolute; top: -10px; right: -10px;">
-                            <v-icon>mdi-close</v-icon>
-                        </v-btn> 
-                </div> 
-
-
-                <div class="screen">
-    <div class="brand">
-       <img width="200"  src="@/assets/images/aba-payway-logo.png" alt="ABA Pay"/>     
-    </div>
-    <div class="page-sub-card">
-      <div class="sub-card">
-        <div class="card-header">
-          <img  width="70" src="@/assets/images/khqr-logo.png" alt="KHQR"/>
-        </div>
-
-        <div class="card-body">
-          <div class="merchant"><b>{{qrData.bank_acc_name}}</b></div>
-          <div class="amount">
-            <CurrencyFormat :value="qrData.amount" :currency="qrData.currency" />
-          </div>
-
-          <div class="divider"></div>
-
-          <div class="qr-wrap">
-            <div class="qr">
-              <!-- Replace with your QR image -->
-              <img width="270"  v-if="qrData.qr_image_custom" :src="qrData.qr_image_custom" alt="QR Code"/>
+<template lang="">   
+  <div class="card">
+      <div class="top"> 
+          <!-- small QR icon (top-right) -->
+          <div class="mini-qr" aria-hidden="true" style="position: absolute; top:-10px; left:-10px ">
+              <svg  xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24"  width="24"  height="24"  fill="none">
+                <path
+                  d="M3 3h7v7H3V3Zm2 2v3h3V5H5Zm9-2h7v7h-7V3Zm2 2v3h3V5h-3ZM3 14h7v7H3v-7Zm2 2v3h3v-3H5Zm11 0h2v2h-2v-2Zm-2-2h2v2h-2v-2Zm6 0h1v3h-1v-3Zm-2 3h3v1h-3v-1Zm-4 2h2v2h-2v-2Zm3 0h4v2h-1v-1h-3v-1Z"
+                  fill="#ffffff"
+                />
+              </svg>
+          </div> 
+          <v-btn v-if="showClose" icon @click="onClose()" style="position: absolute; top: -10px; right: -10px;">
+              <v-icon>mdi-close</v-icon>
+          </v-btn> 
+      </div>  
+      <div class="screen"> 
+        <div class="page-sub-card"> 
+            <div class="sub-card">
+              <img  v-if="qrData.qr_image" :src="qrData.qr_image" alt="QR Code"/>
             </div>
-          </div>
-        </div>
-
-       
+        </div> 
       </div>
-    </div>
-    <div class="page-hint">
-      <div class="hint">
-        {{$t("Scan with ABA Mobile or any KHQR supported banking app")}}
-      </div>
-    </div>
-    
   </div>
-            </div>
 </template>
 <script setup>
     import { i18n } from '@/plugin'; 
@@ -140,19 +107,13 @@
       justify-content: center;
     }
       
-     .sub-card{
-      box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-      border-radius:25px;
-       width: 230px !important;
-       background: #ffffff; 
-       
-      padding-bottom: 20px;
-       
+    .sub-card{ 
+      width: 230px !important; 
     }
 
 
 
-     .screen { 
+    .screen { 
      
       padding: 18px 14px 22px;
       background: transparent;

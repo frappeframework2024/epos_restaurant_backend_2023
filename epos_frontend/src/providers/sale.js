@@ -1616,6 +1616,7 @@ export default class Sale {
                 this.loading = false;
                 return
             }
+
             let maximum_order_per_guest = this.setting.maximum_order_per_guest
             let new_orders_qty = this.sale?.sale_products?.filter(r=>r.is_newly_added == 1)?.reduce((sum, a) => sum + (a.quantity || 0), 0);
             let guest_cover = this.sale.guest_cover
@@ -2510,13 +2511,14 @@ export default class Sale {
         }
     }
 
-    handlePayWayPaymentCallback(data) {
+   async handlePayWayPaymentCallback(data) {
     // Process payment data
         const resp = data.response;
         if(resp.invoice_id == this.sale.name && 
             this.setting.pos_config == resp.pos_config &&
             this.setting.property_code == resp.property_code        
-        ){    
+        ){               
+           
             
             this.sale.payment.forEach((p)=>{
                 if(p._temp_payway_tran_id == resp.temp_tran_id && p.is_generate_qr == 1){
@@ -2527,11 +2529,19 @@ export default class Sale {
             this.payway_complete_payment = true; //trigger to close dialog scan qr            
             this.sale.show_aba_khqr = undefined;
             this.sale.aba_khqr_data = undefined;
+            this.sale.payment_transaction = data;
             setInterval(()=>{ //print & ignore valide
                  socket.emit("ShowOrderInCustomerDisplay", this.sale,"", this.customer_display_key);     
             },500);
             
             this.close_payment_form = true;
+
+            try{
+              call.post("epos_restaurant_2023.api.payway.update_payway_tranaction_id_on_callback_success", {
+                "tran": data
+              });
+            } catch (err){}
+           
         }
     }
 

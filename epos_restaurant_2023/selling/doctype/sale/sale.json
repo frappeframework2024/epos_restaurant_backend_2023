@@ -237,6 +237,8 @@
   "inventory_transacton_tab",
   "inventory_transaction",
   "integration_tab",
+  "aba_payway_section",
+  "payment_transaction",
   "qb_integrate_section",
   "qb_customer_id",
   "qb_invoice_id",
@@ -1577,6 +1579,7 @@
    "options": "<div id=\"inventory_transaction\">Inventory Product Include in this Sale Invoice</div>"
   },
   {
+   "depends_on": "eval: frappe.session.user == \"Administrator\"",
    "fieldname": "integration_tab",
    "fieldtype": "Tab Break",
    "label": "Integration"
@@ -1677,6 +1680,17 @@
    "fieldname": "coupon_expired_date",
    "fieldtype": "Datetime",
    "label": "Coupon Expired Date"
+  },
+  {
+   "fieldname": "aba_payway_section",
+   "fieldtype": "Section Break",
+   "label": "ABA PayWay"
+  },
+  {
+   "fieldname": "payment_transaction",
+   "fieldtype": "JSON",
+   "label": "Payment Transaction",
+   "read_only": 1
   }
  ],
  "image_field": "photo",
@@ -1699,7 +1713,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2025-12-23 10:03:03.200764",
+ "modified": "2026-02-10 15:14:11.425508",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

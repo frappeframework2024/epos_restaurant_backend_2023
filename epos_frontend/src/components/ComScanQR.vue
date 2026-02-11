@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="open" :width="mobile ? '100%' : '40%'" persistent>
+    <v-dialog v-model="open" :width="mobile ? '100%' : '50%'" persistent>
 
         <v-card height="500" class="d-flex align-center justify-center" v-if="!sale.sale.show_aba_khqr" >
             <v-card-title>
@@ -13,7 +13,7 @@
                 <div>{{ $t("This May Take a Few Seconds") }}</div> 
         </v-card>
         <template v-else>
-             <ComPayWayQRDisplay :qrData="qrData" :showClose="true" @onClose="onClose()" />
+             <ComPayWayQRDisplayABATemplate :qrData="qrData" :showClose="true" @onClose="onClose()" />
         </template>
 
     </v-dialog>
@@ -23,6 +23,7 @@
     import { useDisplay } from 'vuetify'
     import socket from '@/utils/socketio';
     import ComPayWayQRDisplay from '@/views/sale/components/ComPayWayQRDisplay.vue';
+    import ComPayWayQRDisplayABATemplate from '../views/sale/components/ComPayWayQRDisplayABATemplate.vue';
     const { mobile } = useDisplay();
     const { t: $t } = i18n.global; 
     const emit = defineEmits(['resolve'])
@@ -65,22 +66,23 @@
             "currency":param.currency, // required
             "lifetime":60*24, //1day ~ default None mean 30days
             // "deeplink":false, //default false
-            // "image":false, //default false
+            "image":true, //default false
             "response":{ //this custom data callback when ABA success payment
                 "pos_profile": gv.setting.pos_profile,
                 "station_name":gv.device_setting.name,
                 "invoice_id": param.sale_id,
                 "temp_tran_id":param.temp_tran_id
             }
-        }
-        
+        }        
         try{
         const resp = await call.post("epos_restaurant_2023.api.payway.aba_generate_qr", request_params); 
             if(resp){   
                 sale.sale.show_aba_khqr = true ;
                 qrData.value = {
                     "tran_id":resp.tran_id,
+                    "bank_acc_name":resp.bank_acc_name,
                     "qr_image_custom":resp.qr_image_custom,
+                    "qr_image":resp.qr_image,
                     "currency": param.currency,
                     "amount":Number(param.payment_amount),
                     "invoice_date": sale.sale.posting_date
