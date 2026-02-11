@@ -498,7 +498,7 @@ def get_system_settings(pos_profile="", device_name=''):
     point_setting = frappe.get_doc("Loyalty Point Settings")
     socket_port =  frappe.get_conf().get('websocket_port', 3000)   
 
-    bus = frappe.get_doc("Business Branch", pos_station["business_branch"])
+    bus = frappe.get_doc("Business Branch", pos_station.business_branch)
     property_code = bus.property_code or ""
 
     data={
