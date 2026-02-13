@@ -26,9 +26,7 @@ frappe.ui.form.on("ePOS Settings", {
             method: "generate_sale_general_ledger",
             doc: frm.doc,
             callback: function (r) {
-				frm.set_value("site_id",r.message)
-                frm.refresh_field('site_id');
-				frm.save()
+				
             },
         });
     }

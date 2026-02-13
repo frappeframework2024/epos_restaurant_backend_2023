@@ -25,10 +25,34 @@ class Expense(Document):
 		self.remaining_cash_float = round(self.remaining_cash_float,int(currency_precision))
 
 	def on_submit(self):
-		GLEntry(self)
+		GLEntry(self,"submit")
 
 	def on_cancel(self):
-		GLEntry(self)
+		GLEntry(self,"cancel")
+		update_cancelled_gl(self.name)
+
+@frappe.whitelist()
+def generate_expense_gl():
+	expenses = frappe.db.sql("""select 
+						  name 
+						  from `tabExpense` 
+						  where docstatus in (1,2) and 
+						  name not in (SELECT 
+						  voucher_number 
+						  FROM `tabGeneral Ledger` 
+						  WHERE voucher_type='Expense' 
+						  GROUP BY voucher_number)""",as_dict=1)
+	for a in expenses:
+		manual_generate_expense_gl(a["name"])
+
+@frappe.whitelist()
+def manual_generate_expense_gl(name):
+	doc = frappe.get_doc("Expense",name)
+	GLEntry(doc,"submit")
+	if doc.docstatus == 2:
+		GLEntry(doc,"cancel")
+		update_cancelled_gl(name)
+		return "done"
 
 def account_validation(self):
 	invalid_modes=[]
@@ -73,19 +97,19 @@ def get_payment_type_account(payment_type,branch):
 		accounts = "no_record"
 	return accounts
 
-def GLEntry(self):
+def GLEntry(self,status):
 	expense_accounts = defaultdict(int)
 	for a in self.expense_items:
 		category = a.expense_account
 		value = a.amount
 		expense_accounts[category] += value
 	expense_accounts = dict(expense_accounts)
-	if self.docstatus == 1:
+	if status == "submit":
 		for a in expense_accounts:
-			expense_general_ledger_debit(self,account = {"account":a,"amount":expense_accounts[a]})
+			expense_general_ledger_debit(self,account = {"account":a,"amount":expense_accounts[a]},status=status)
 	else:
 		for a in expense_accounts:
-			expense_general_ledger_credit(self,account = {"account":a,"amount":expense_accounts[a]})
+			expense_general_ledger_credit(self,account = {"account":a,"amount":expense_accounts[a]},status=status)
 	
 	payment_accounts = defaultdict(int)
 	for a in self.payments:
@@ -93,14 +117,14 @@ def GLEntry(self):
 		value = a.amount
 		payment_accounts[category] += value
 	payment_accounts = dict(payment_accounts)
-	if self.docstatus == 1:
+	if status == "submit":
 		for a in payment_accounts:
-			expense_general_ledger_credit(self,account = {"account":a,"amount":payment_accounts[a]})
+			expense_general_ledger_credit(self,account = {"account":a,"amount":payment_accounts[a]},status=status)
 	else:
 		for a in payment_accounts:
-			expense_general_ledger_debit(self,account = {"account":a,"amount":payment_accounts[a]})
+			expense_general_ledger_debit(self,account = {"account":a,"amount":payment_accounts[a]},status=status)
 
-def expense_general_ledger_debit(self,account):
+def expense_general_ledger_debit(self,account,status):
 	docs = []
 	doc = {
 		"doctype":"General Ledger",
@@ -110,22 +134,28 @@ def expense_general_ledger_debit(self,account):
 		"voucher_type":"Expense",
 		"voucher_number":self.name,
 		"business_branch": self.business_branch,
+		"is_cancelled": (1 if status == "cancel" else 0),
 		"remark": "Expense {} On Account {}".format(self.name,account["account"]) if self.docstatus == 1 else "Cancel Expense {} On Account {}".format(self.name,account["account"])
 	}
 	docs.append(doc)
 	submit_general_ledger_entry(docs = docs)
-
-def expense_general_ledger_credit(self,account):
-    docs = []
-    doc = {
-        "doctype":"General Ledger",
-        "posting_date":self.posting_date,
-        "account":account["account"],
-        "credit_amount":account["amount"],
-        "voucher_type":"Expense",
-        "voucher_number":self.name,
-        "business_branch": self.business_branch,
+	
+def expense_general_ledger_credit(self,account,status):
+	docs = []
+	doc = {
+		"doctype":"General Ledger",
+		"posting_date":self.posting_date,
+		"account":account["account"],
+		"credit_amount":account["amount"],
+		"voucher_type":"Expense",
+		"voucher_number":self.name,
+		"business_branch": self.business_branch,
+		"is_cancelled":(1 if status == "cancel" else 0),
 		"remark": "Expense Payment {} On Account {}".format(self.name,account["account"]) if self.docstatus == 1 else "Cancel Expense Payment {} On Account {}".format(self.name,account["account"])
-    }
-    docs.append(doc)
-    submit_general_ledger_entry(docs=docs)
+	}
+	docs.append(doc)
+	submit_general_ledger_entry(docs=docs)
+
+def update_cancelled_gl(name):
+	frappe.db.sql("update `tabGeneral Ledger` set is_cancelled=1 where voucher_type='Expense' and voucher_number='{}'".format(name))
+	frappe.db.commit()

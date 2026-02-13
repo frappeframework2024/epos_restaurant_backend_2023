@@ -49,14 +49,14 @@ class ePOSSettings(Document):
 						WHERE business_branch = '{0}';""".format(self.business_branch))
 
 		sales = frappe.db.sql("""select 
-									name 
+										name 
 									from `tabSale` 
 									where business_branch = '{0}' and 
 									name not in (SELECT 
-										voucher_number 
-										FROM `tabGeneral Ledger` 
-										WHERE voucher_type='Sale' 
-										GROUP BY voucher_number)""".format(self.business_branch),as_dict=1)
+														voucher_number 
+													FROM `tabGeneral Ledger` 
+													WHERE voucher_type='Sale' 
+													GROUP BY voucher_number)""".format(self.business_branch),as_dict=1)
 		for a in sales:
 			doc = frappe.get_doc("Sale",a["name"])
 			submit_sale_to_general_ledger_entry(doc)
