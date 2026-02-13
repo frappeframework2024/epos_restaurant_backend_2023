@@ -75,15 +75,14 @@ socket.on("PrintReceipt", (arg) => {
 	} 
 });
 
-socket.on("ABAPayWaySuccess", async (arg,key) => {
-		
+socket.on("ABAPayWaySuccess", async (arg,key) => {		
 		const device_setting = JSON.parse(localStorage.getItem("device_setting"));
 		const device_id = device_setting?.device_id||"";
 		const pos_profile = localStorage.getItem("pos_profile");
 		const business_branch = decodeURIComponent(gv.setting?.business_branch);
 		const _key = `${business_branch}_${pos_profile}_${device_id}`;
-		if(key == _key){ 
-			// console.log(`ABAPayWaySuccess => ${key} Show Success screen`)
+		const endpoint = window.location.pathname.replace(/^\/+/, '');
+		if(key == _key && endpoint != "epos_frontend/customer-display"){ 
 			await payWaySuccessDialog();
 		}
 	 

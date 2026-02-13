@@ -57,7 +57,7 @@ socket.on("ShowOrderInCustomerDisplay", async (arg, show, key) => {
         }
         if (show == 'paid') {
             show_thankyou.value = true
-            await setTimeout(onHideThankYou, 50000)
+            await setTimeout(onHideThankYou, 1000*10)
         }
         else if (show == "new") {
             onHideThankYou()
