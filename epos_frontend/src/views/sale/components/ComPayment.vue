@@ -55,7 +55,7 @@
                     <v-row class="!m-0">
                         <v-col class="!p-0" cols="6">
                             <div class="p-1" >
-                                <v-btn size="small" class="w-full" color="primary" @click="onPayment" stacked
+                                <v-btn size="small" class="w-full" color="primary" @click="onPayment()" stacked
                                     prepend-icon="mdi-printer">
                                     <span style="font-family: Khmer OS Siemreap;">{{ $t('Payment with Print') }}</span>
                                 </v-btn>
@@ -63,7 +63,7 @@
                         </v-col>
                         <v-col class="!p-0" cols="6">
                             <div class="p-1">
-                                <v-btn size="small" class="w-full" color="primary" @click="onPaymentWithoutPrint" stacked
+                                <v-btn size="small" class="w-full" color="primary" @click="onPaymentWithoutPrint()" stacked
                                     prepend-icon="mdi-currency-usd" style="font-family: Khmer OS Siemreap;">{{ $t('Payment') }}</v-btn>
                             </div>
                         </v-col>

@@ -1789,9 +1789,9 @@ export default class Sale {
             if (balance > 0 && ignore == false) {
                 toaster.error($t('Please enter all payment amount'));
                 resolve(false);
-            } else {
+            } else { 
                 let conf = true;
-                if(!ignore){
+                if(ignore == false ){
                     conf = await confirmDialog({ title: $t("Payment"), text: $t("msg.are you sure to process payment and close order") });
                 }
                 if (conf) {
@@ -1831,7 +1831,7 @@ export default class Sale {
                     }
                     this.submitToAuditTrail(this.sale);
 
-                    if(ignore){
+                    if(ignore==true){
                         socket.emit("ABAPayWaySuccess", {}, this.customer_display_key);
                     }
 
