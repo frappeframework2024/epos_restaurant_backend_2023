@@ -11,7 +11,7 @@ import json
 from epos_restaurant_2023.api.api import get_estc_connection
 ## status code = 422  is invalid data
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def aba_generate_qr(**params):
     if  frappe.request.method != "POST":        
         frappe.local.response.update({

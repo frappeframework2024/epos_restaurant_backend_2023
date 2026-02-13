@@ -66,8 +66,9 @@ import ComChangePrice from "@/views/setting/ComChangePrice.vue";
 import ComMoveItemSelectOrder from "@/views/sale/components/ComMoveItemSelectOrder.vue";
 import ComUnpaidBillList from "@/views/credit_balance/UnpaidBillDialog.vue";
 import ComScanCouponDialog from "@/views/sale/components/coupon/ComScanCouponDialog.vue"
-import ComSelectPaymentTypeQuickPayment from "@/views/sale/components/ComSelectPaymentTypeQuickPayment.vue"
-import ComChangeTableNumber from "@/views/receipt_list/components/ComChangeTableNumber.vue"
+import ComSelectPaymentTypeQuickPayment from "@/views/sale/components/ComSelectPaymentTypeQuickPayment.vue";
+import ComChangeTableNumber from "@/views/receipt_list/components/ComChangeTableNumber.vue";
+import ComPayWaySuccessDialog from "@/views/sale/components/ComPayWaySuccessDialog.vue";
 import ComVoucher from "../components/ComVoucher.vue";
 import ComScanQR from "../components/ComScanQR.vue";
 interface params {
@@ -158,3 +159,4 @@ export const ComSelectPaymentTypeQuickPaymentDialog = createPromiseDialog<params
 export const ComChangeTableNumberDialog = createPromiseDialog<params, object>(ComChangeTableNumber);
 export const ComSubmitTermAndConditionDialog = createPromiseDialog<params, object>(ComSubmitTermAndCondition);
 export const ComOrderLimitDialog = createPromiseDialog<params, object>(ComOrderLimit);
+export const payWaySuccessDialog = createPromiseDialog<params, object>(ComPayWaySuccessDialog);

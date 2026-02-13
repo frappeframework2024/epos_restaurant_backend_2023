@@ -6,7 +6,7 @@
               <svg  xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24"  width="24"  height="24"  fill="none">
                 <path
                   d="M3 3h7v7H3V3Zm2 2v3h3V5H5Zm9-2h7v7h-7V3Zm2 2v3h3V5h-3ZM3 14h7v7H3v-7Zm2 2v3h3v-3H5Zm11 0h2v2h-2v-2Zm-2-2h2v2h-2v-2Zm6 0h1v3h-1v-3Zm-2 3h3v1h-3v-1Zm-4 2h2v2h-2v-2Zm3 0h4v2h-1v-1h-3v-1Z"
-                  fill="#ffffff"
+                  fill="#00475f"
                 />
               </svg>
           </div> 
@@ -14,18 +14,36 @@
               <v-icon>mdi-close</v-icon>
           </v-btn> 
       </div>  
-      <div class="screen"> 
+    
+      <div class="screen" :class="[isMobile?'screen-mobile-aba':'']"> 
         <div class="page-sub-card"> 
-            <div class="sub-card">
+            <div :class="[isMobile?'':'sub-card']">
               <img  v-if="qrData.qr_image" :src="qrData.qr_image" alt="QR Code"/>
             </div>
         </div> 
-      </div>
+      </div> 
   </div>
 </template>
-<script setup>
-    import { i18n } from '@/plugin'; 
-     const { t: $t } = i18n.global; 
+<script setup> 
+    import { i18n,ref,onBeforeUnmount ,onMounted } from '@/plugin'; 
+    const { t: $t } = i18n.global; 
+    const isMobile = ref(false);
+    const checkMobile = () => {
+      isMobile.value = window.matchMedia("(max-width: 500px)").matches;
+    }
+
+    let mediaQuery;
+
+    onMounted(() => {
+      mediaQuery = window.matchMedia("(max-width: 500px)");
+      isMobile.value = mediaQuery.matches;
+      mediaQuery.addEventListener("change", checkMobile);
+    });
+
+    onBeforeUnmount(() => {
+      mediaQuery.removeEventListener("change", checkMobile);
+});
+    
     const emit = defineEmits(["onClose"])
     const props = defineProps({
         qrData:Object,
@@ -39,6 +57,8 @@
 
 </script>
 <style scoped>
+
+
     .card{
       width:100%;
       height:100% !important;
@@ -53,6 +73,18 @@
       position:relative;
       overflow:hidden;
       font-family: "Khmer OS Siemreap";
+    }
+        /* 📱 Mobile */
+    @media (max-width: 500px) {
+      .card{
+        background:  #e8e9ec;
+        border: #ffffff solid 6px;
+        border-radius: 18px;
+        margin: 10px;
+        width: 95%;
+        /* or solid color */
+        /* background: #00475f; */
+      }
     }
 
     .card::before{
@@ -106,9 +138,23 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      
+      
     }
       
     .sub-card{ 
+      display: flex;
+      width: 400px !important; 
+       background: #e8e9ec;
+      background: "#e8e9ec";
+      border: #ffffff solid 6px;
+      border-radius: 18px;
+      padding: 24px;
+      align-items: center;
+      justify-content: center;
+      
+    }
+    .sub-card::after{ 
       width: 230px !important; 
     }
 
@@ -250,4 +296,10 @@
       padding: 10px 12px 14px;
       width: 230px;
     }
+    .screen-mobile-aba {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    } 
 </style>

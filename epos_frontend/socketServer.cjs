@@ -228,10 +228,11 @@ io.on('connection', (socket) => {
     // io.emit("ePOSMobile", arg);
   })
 
-  //server socket for ABA PayWay Response callback and emit to client request
-  socket.on("ABAPayWay",(arg)=>{
-    socket.broadcast.emit('ABAPayWay', arg);
-    // io.emit("ePOSMobile", arg);
+  //server socket for ABA PayWay Response callback and emit to client request 
+  
+  //socket for show success screen after payway success
+  socket.on("ABAPayWaySuccess",(arg, key)=>{  
+    io.emit("ABAPayWaySuccess",arg,key);
   })
   
 });

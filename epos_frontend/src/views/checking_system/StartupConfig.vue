@@ -75,6 +75,15 @@
         loading: true
     });
 
+    onMounted(()=>{
+        // const is_apk_ipa = localStorage.getItem("apkipa");
+        // if(!is_apk_ipa){
+        //     state.uid = "Demo";
+        //     state.device_name = "Demo";
+        //     onSave();
+        // }
+    })
+
     const is_startup_device = ref(false); 
     function onExitWindow() {
         const data = {

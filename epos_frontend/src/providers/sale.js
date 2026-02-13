@@ -1830,6 +1830,11 @@ export default class Sale {
                         await this.saleResource.setValue.submit(this.sale);
                     }
                     this.submitToAuditTrail(this.sale);
+
+                    if(ignore){
+                        socket.emit("ABAPayWaySuccess", {}, this.customer_display_key);
+                    }
+
                     resolve(true);
                 }
             }
@@ -1884,10 +1889,13 @@ export default class Sale {
         this.deletedSaleProducts.forEach((r) => {
             this.onCreateDeletedSaleProduct(r);
         });
+
         this.submitToAuditTrail(doc);
         this.sale = {};
         this.orderTime = "";
         socket.emit("RefreshTable");
+
+        
     }
 
     submitToAuditTrail(d) {
@@ -2511,7 +2519,7 @@ export default class Sale {
         }
     }
 
-   async handlePayWayPaymentCallback(data) {
+   async handlePayWayPaymentCallback(paywaysocket, data) {
     // Process payment data
         const resp = data.response;
         if(resp.invoice_id == this.sale.name && 
@@ -2519,7 +2527,7 @@ export default class Sale {
             this.setting.property_code == resp.property_code        
         ){               
            
-            
+            // console.log("PayWay Sucess")
             this.sale.payment.forEach((p)=>{
                 if(p._temp_payway_tran_id == resp.temp_tran_id && p.is_generate_qr == 1){
                     p.aba_pay_transaction = data.tran_id
@@ -2541,6 +2549,7 @@ export default class Sale {
                 "tran": data
               });
             } catch (err){}
+         
            
         }
     }

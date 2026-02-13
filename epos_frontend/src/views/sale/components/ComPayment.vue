@@ -104,8 +104,13 @@ sale.paymentInputNumber = ((sale.sale?.grand_total||0) - (sale.sale?.deposit||0)
 
 
 watch(() => sale.close_payment_form,(newVal) => { 
+    const is_apk_ipa = localStorage.getItem("apkipa");
     if (newVal === true) {
-       onPayment(true)
+        if(!is_apk_ipa){
+            onPayment(true)
+        }else{
+            onPaymentWithoutPrint(true);
+        }
     }
 });
 
@@ -174,20 +179,23 @@ function onTipPressed(){
     }
 }
 
-async function onPaymentWithoutPrint() {
-    if (sale.sale.payment.filter(r => r.required_customer == 1).length > 0) {
-        if (sale.sale.customer == sale.setting.customer) {
+async function onPaymentWithoutPrint(ignore = false) {
+    if(ignore == false){
+        if (sale.sale.payment.filter(r => r.required_customer == 1).length > 0) {
+            if (sale.sale.customer == sale.setting.customer) {
 
-            toaster.warning($t('msg.Please select customer for payment type')+" " + sale.sale.payment.filter(r => r.required_customer == 1)[0].payment_type);
-            return;
+                toaster.warning($t('msg.Please select customer for payment type')+" " + sale.sale.payment.filter(r => r.required_customer == 1)[0].payment_type);
+                return;
+            }
         }
     }
+    
     sale.pos_receipt = undefined;
     sale.message = $t("msg.Payment successfully");
 
     onPaymentAudit();
    
-    sale.onSubmitPayment(false).then((v) => {
+    sale.onSubmitPayment(false,ignore ).then((v) => {
         if (v) {
             emit("resolve", true);
         }

@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="open" :width="mobile ? '100%' : '50%'" persistent>
+    <v-dialog v-model="open" :width="mobile ? '100%' : '50%'" persistent :fullscreen="mobile">
 
         <v-card height="500" class="d-flex align-center justify-center" v-if="!sale.sale.show_aba_khqr" >
             <v-card-title>
@@ -8,9 +8,9 @@
                 </v-btn>
             </v-card-title> 
                 <img width="50" src="@/assets/images/loading.gif" />
-                <div>{{ $t('Please Wait') }}</div>
-                <div>{{$t("Payment Is Processing")}}...</div>
-                <div>{{ $t("This May Take a Few Seconds") }}</div> 
+                <div>{{ $t('Please wait') }}</div>
+                <div>{{$t("Payment is processing QR")}}...</div>
+                <div>{{ $t("This may be take a few seconds") }}</div> 
         </v-card>
         <template v-else>
              <ComPayWayQRDisplayABATemplate :qrData="qrData" :showClose="true" @onClose="onClose()" />
@@ -21,8 +21,7 @@
 <script setup>
     import { defineEmits, ref, i18n,inject,createToaster,onMounted,onUnmounted ,watch} from '@/plugin';
     import { useDisplay } from 'vuetify'
-    import socket from '@/utils/socketio';
-    import ComPayWayQRDisplay from '@/views/sale/components/ComPayWayQRDisplay.vue';
+    import socket from '@/utils/socketio'; 
     import ComPayWayQRDisplayABATemplate from '../views/sale/components/ComPayWayQRDisplayABATemplate.vue';
     const { mobile } = useDisplay();
     const { t: $t } = i18n.global; 
@@ -94,7 +93,11 @@
 
         } catch (err){
            setTimeout(()=>{
-            toaster.warning($t(`${err.message} (status code: ${err.staus_code})`));
+            let status_code = "";
+            if(err.staus_code){
+                status_code = `(status code: ${err.staus_code})`;
+            }
+            toaster.warning($t(`${err.message} ${status_code}`));
             onClose();    
            },1500)
         }

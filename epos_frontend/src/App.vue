@@ -24,7 +24,7 @@ import SplashScreen from './components/SplashScreen.vue';
 import SaleLayout from './components/layout/SaleLayout.vue';
 import { PromiseDialogsWrapper } from 'vue-promise-dialogs';
 import { createResource } from '@/resource.js'
-import { reactive, computed, onMounted, inject, i18n,onUnmounted,postApi } from '@/plugin'
+import { reactive, computed, onMounted, inject, i18n,onUnmounted,postApi,payWaySuccessDialog } from '@/plugin'
 import { useStore } from 'vuex'
 import { createToaster } from '@meforma/vue-toaster';
 import { FrappeApp } from 'frappe-js-sdk';
@@ -64,8 +64,6 @@ const { mobile } = useDisplay();
 const licenseToaster = createToaster({ position: "top", duration: 1000*60*60, type: "error" });
 
 socket.on("PrintReceipt", (arg) => {	
- 
-	
 	if(localStorage.getItem("is_window")=="1"){
 		const device_setting = JSON.parse(localStorage.getItem("device_setting"));
 		const station_device_printing = device_setting?.station_device_printing||"";
@@ -75,6 +73,20 @@ socket.on("PrintReceipt", (arg) => {
 			window.chrome.webview.postMessage(arg);
 		}
 	} 
+});
+
+socket.on("ABAPayWaySuccess", async (arg,key) => {
+		
+		const device_setting = JSON.parse(localStorage.getItem("device_setting"));
+		const device_id = device_setting?.device_id||"";
+		const pos_profile = localStorage.getItem("pos_profile");
+		const business_branch = decodeURIComponent(gv.setting?.business_branch);
+		const _key = `${business_branch}_${pos_profile}_${device_id}`;
+		if(key == _key){ 
+			// console.log(`ABAPayWaySuccess => ${key} Show Success screen`)
+			await payWaySuccessDialog();
+		}
+	 
 });
 
 // print from emenu order
@@ -227,7 +239,7 @@ async function onPayWaySocketSetup(doc) {
 	await payway_socket.joinRoom(myRoom);
 	// ABA PayWay Listening payment callback 
 	await payway_socket.on("ABAPayCallback", async (arg) => { 
-		sale.handlePayWayPaymentCallback(arg)
+		sale.handlePayWayPaymentCallback(payway_socket, arg);
 	});
 
 }

@@ -374,6 +374,7 @@ async function onDeleteBill() {
                     sale.newSale();
                     if (sale.setting.table_groups.length > 0) {
                         router.push({ name: 'TableLayout' });
+                        socket.emit("RefreshTable");
                     } else {
                         router.push({ name: "AddSale" });
                     }

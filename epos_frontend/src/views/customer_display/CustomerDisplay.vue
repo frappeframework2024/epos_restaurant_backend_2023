@@ -42,15 +42,15 @@ socket.on("ShowOrderInCustomerDisplay", async (arg, show, key) => {
     const pos_profile = localStorage.getItem("pos_profile");
     const business_branch = decodeURIComponent(gv.setting?.business_branch);
     const _key = `${business_branch}_${pos_profile}_${device_id}`;
-    aba_qr_data.value = {}
-    if (arg.show_aba_khqr){
-        show_aba_khqr.value = true
-        aba_qr_data.value = arg.aba_khqr_data
-    }else{
-         show_aba_khqr.value = false
-    }
+
 
     if(key == _key){
+        aba_qr_data.value = {}
+        show_aba_khqr.value = arg.show_aba_khqr
+        if (arg.show_aba_khqr){           
+            aba_qr_data.value = arg.aba_khqr_data
+        }
+
         data.value = arg;
         if (Object.entries(data.value).length > 0) {
             dataThankYou.value = JSON.parse(JSON.stringify(data.value))
