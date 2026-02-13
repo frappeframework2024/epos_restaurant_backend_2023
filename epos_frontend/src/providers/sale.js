@@ -2538,9 +2538,10 @@ export default class Sale {
             this.sale.show_aba_khqr = undefined;
             this.sale.aba_khqr_data = undefined;
             this.sale.payment_transaction = data;
-            setInterval(()=>{ //print & ignore valide
-                 socket.emit("ShowOrderInCustomerDisplay", this.sale,"", this.customer_display_key);     
-            },500);
+            await setTimeout(()=>{
+                socket.emit("ShowOrderInCustomerDisplay", this.sale,"", this.customer_display_key);   
+            }, 500)
+          
             
             this.close_payment_form = true;
 
