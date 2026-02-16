@@ -2616,11 +2616,13 @@ export default class Sale {
 
 
                 //generate payway qr
-                if(data.paymentType.allow_aba_pay_with_qr_scan ==  1){      
+                if(data.paymentType.allow_aba_pay_with_qr_scan ==  1){                       
+                    let payway_payment_amount = data.amount;                    
+                    payway_payment_amount += (data.fee_amount ||0) * data.paymentType.exchange_rate ;
                     const result = await scanqrDialog({
                         "temp_tran_id": data.temp_payway_tran_id,
                         "sale_id":this.sale.name,
-                        "payment_amount": data.paymentType.currency == "KHR" ? parseFloat(data.amount).toFixed(0) :data.amount ,
+                        "payment_amount": data.paymentType.currency == "KHR" ?  Math.round(parseFloat(payway_payment_amount).toFixed(0) / 100) * 100  : payway_payment_amount ,
                         "currency":data.paymentType.currency,
                     });
                     if(!result){
