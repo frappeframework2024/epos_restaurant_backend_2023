@@ -2645,7 +2645,7 @@ def get_estc_connection():
         data = json.load(f)
     
     estc_connection = {
-        "estc_central_rul": data.get("estc_central_rul",None) or "",
+        "estc_central_url": data.get("estc_central_url",None) or "",
         "estc_payway_socket_server_url":data.get("estc_payway_socket_server_url", None) or "",
     }
 

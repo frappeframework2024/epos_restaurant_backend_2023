@@ -15,7 +15,7 @@ from epos_restaurant_2023.api.api import get_estc_connection
 def aba_generate_qr(**params):
     if  frappe.request.method != "POST":        
         frappe.local.response.update({
-            "staus_code":"405",
+            "status_code":"405",
             "message": _("Invalid request method"),
             "http_status_code": 405 
         }) 
@@ -27,18 +27,18 @@ def aba_generate_qr(**params):
 
 
     conn =  get_estc_connection() 
-    if not conn.get("estc_central_rul", None) :
-        staus_code = 422
+    if not conn.get("estc_central_url", None) :
+        status_code = 422
         frappe.local.response.update({
-            "staus_code":f"{staus_code}",
+            "status_code":f"{status_code}",
             "message": _("The 'estc_central_url' is not configured in site settings. Please contact your system administrator."),
-            "http_status_code": staus_code 
+            "http_status_code": status_code 
         }) 
         return
     
 
-    estc_central_rul = conn.get("estc_central_rul", None) or ""
-    url = f"{estc_central_rul}/api/method/estc.api.payway.aba_generate_qr"
+    estc_central_url = conn.get("estc_central_url", None) or ""
+    url = f"{estc_central_url}/api/method/estc.api.payway.aba_generate_qr"
 
     # Make POST request
     ## verify=False is equivalent to CURLOPT_SSL_VERIFYPEER=false
@@ -78,7 +78,7 @@ def aba_generate_qr(**params):
     status_code = data.get("status_code",None) or response.status_code
 
     update_response = {
-        "staus_code":status_code,
+        "status_code":status_code,
         **data,
         "http_status_code": response.status_code
     }

@@ -94,8 +94,8 @@
         } catch (err){
            setTimeout(()=>{
             let status_code = "";
-            if(err.staus_code){
-                status_code = `(status code: ${err.staus_code})`;
+            if(err.status_code){
+                status_code = `(status code: ${err.status_code})`;
             }
             toaster.warning($t(`${err.message} ${status_code}`));
             onClose();    
