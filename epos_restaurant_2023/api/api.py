@@ -2652,3 +2652,48 @@ def get_estc_connection():
     
     return estc_connection
 
+
+def has_internet(timeout=3):
+    try:
+        requests.get("https://www.google.com", timeout=timeout)
+        return True
+    except requests.RequestException:
+        return False
+
+
+@frappe.whitelist(allow_guest=1)
+def run_get_update_pos_station_license():
+    if not has_internet():
+        frappe.throw(_("The server is not connected to the internet."))
+
+    sql = """select 
+            s.name,
+            b.property_code,
+            s.platform, 
+            s.device_id ,
+            s.license,
+            s.disabled
+        from `tabPOS Station` s
+        inner join `tabBusiness Branch` b on b.name = s.business_branch 
+        where 1 = 1
+        -- and s.disabled = 0 
+        and s.device_id != '' """
+    stations = frappe.db.sql(sql, as_dict = 1)
+
+    conn = get_estc_connection()
+    estc_central_url = conn.get("estc_central_url", None) or ""
+    url = f"{estc_central_url}/api/method/estc.api.api.get_license_all_devices"
+
+    request_param = {
+        "devices": stations
+    }
+
+    response = requests.post(url, json=request_param, verify=False)  
+    try:
+        resp = response.json() 
+    except Exception:
+        resp = {}   
+
+    return resp
+
+

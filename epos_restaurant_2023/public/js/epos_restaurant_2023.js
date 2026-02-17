@@ -792,4 +792,52 @@ function ViewDocDetailModal(doctype,docname){
 
     dialogGoogleSearch.show()
 }
+
+frappe.onRunDocMethod = async function (
+    frm,
+    method_name,
+    freeze_message = null,
+    args = {}
+) {
+    try {
+        if (freeze_message) {
+            frappe.dom.freeze(__(freeze_message));
+        }
+
+        const r = await frm.call(method_name, {
+            doc: frm.doc,
+            ...args
+        });
+
+        return r?.message ?? null;
+
+    } catch (err) {
+        console.error("onRunDocMethod error:", err);
+        return false; // or throw err if you want upstream handling
+    } finally {
+        frappe.dom.unfreeze();
+    }
+};
+
+frappe.onRunDocMethodToast = async function (frm, method_name, args = {}) {
+    try {
+        frappe.show_progress(__('Processing'), 50, 100);
+
+        const r = await frm.call(method_name, {
+            doc: frm.doc,
+            ...args
+        }); 
+
+        return r?.message;
+    } catch (e) {
+        console.error(e);
+        return false;
+    } finally {
+        frappe.hide_progress();
+    }
+};
+
+
+
+
  

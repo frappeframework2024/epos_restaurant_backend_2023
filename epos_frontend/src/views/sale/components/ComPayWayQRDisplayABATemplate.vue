@@ -78,10 +78,10 @@
     @media (max-width: 500px) {
       .card{
         background:  #e8e9ec;
-        border: #ffffff solid 6px;
-        border-radius: 18px;
-        margin: 10px;
-        width: 95%;
+        /* border: #ffffff solid 6px; */
+        border-radius: 0px;
+        /* margin: 10px;
+        width: 95%; */
         /* or solid color */
         /* background: #00475f; */
       }

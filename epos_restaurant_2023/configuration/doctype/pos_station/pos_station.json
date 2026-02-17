@@ -19,6 +19,7 @@
   "disabled",
   "column_break_uutk",
   "device_id",
+  "refresh_license",
   "license",
   "station_device_printing",
   "web_socket_print_url",
@@ -217,6 +218,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "depends_on": "eval: frappe.session.user == \"Administrator\" && !doc.__islocal",
    "fieldname": "license",
    "fieldtype": "Small Text",
    "label": "License"
@@ -424,11 +426,17 @@
    "fieldname": "web_socket_print_url",
    "fieldtype": "Data",
    "label": "Web Socket Print Url"
+  },
+  {
+   "depends_on": "eval: frappe.session.user == \"Administrator\" && !doc.__islocal",
+   "fieldname": "refresh_license",
+   "fieldtype": "Button",
+   "label": "Refresh License"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-23 11:31:54.011983",
+ "modified": "2026-02-16 16:44:37.666131",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

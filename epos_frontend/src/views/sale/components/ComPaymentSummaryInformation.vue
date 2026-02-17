@@ -37,14 +37,14 @@
         </div>
         
         <div class="mb-1 flex justify-between text-sm" v-if="balance > 0">
-            <div style="font-family: Khmer OS Siemreap;">{{$t('Balance')  }} ({{sale.setting.pos_setting.main_currency_name}}):</div>
+            <div style="font-family: Khmer OS Siemreap; text-align: right;min-width: 150px;">{{$t('Amount to Pay')  }} ({{sale.setting.pos_setting.main_currency_name}}):</div>
             <div>
                 <CurrencyFormat :value="balance" />
             </div>
         </div>
 
         <div class="mb-1 flex justify-between text-sm" v-if="balance > 0">
-            <div style="font-family: Khmer OS Siemreap;">{{ $t('Balance') }} ({{sale.setting.pos_setting.second_currency_name}}):</div>
+            <div style="font-family: Khmer OS Siemreap;text-align: right;min-width: 150px;">({{sale.setting.pos_setting.second_currency_name}}):</div>
             <div>
                 <CurrencyFormat :value="balance * sale.sale.exchange_rate" :currency="sale.setting.pos_setting.second_currency_name"/>                
             </div>
