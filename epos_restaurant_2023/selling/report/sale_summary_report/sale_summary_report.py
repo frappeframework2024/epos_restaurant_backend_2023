@@ -5,20 +5,7 @@ from frappe.utils.data import strip
 import datetime
 
 def execute(filters=None): 
-	if filters.filter_based_on =="Fiscal Year":
-		if not filters.from_fiscal_year:
-			filters.from_fiscal_year = datetime.date.today().year
-		
-		filters.start_date = '{}-01-01'.format(filters.from_fiscal_year)
-		filters.end_date = '{}-12-31'.format(filters.from_fiscal_year) 
-	elif filters.filter_based_on =="This Month":
-		filters.start_date = datetime.date.today().replace(day=1)
-		filters.end_date =add_days(  add_months(filters.start_date ,1),-1)
-		 
-
 	validate(filters)
-	#run this to update parent_product_group in table sales invoice item
-
 	report_data = []
 	skip_total_row=False
 	message=None
@@ -34,19 +21,27 @@ def execute(filters=None):
 	return get_columns(filters), report_data, message, report_chart, get_report_summary(report_data,filters),skip_total_row
  
 def validate(filters):
+	if filters.filter_based_on =="Fiscal Year":
+		if not filters.from_fiscal_year:
+			filters.from_fiscal_year = datetime.date.today().year
+		filters.start_date = '{}-01-01'.format(filters.from_fiscal_year)
+		filters.end_date = '{}-12-31'.format(filters.from_fiscal_year) 
+	elif filters.filter_based_on =="This Month":
+		filters.start_date = datetime.date.today().replace(day=1)
+		filters.end_date =add_days(add_months(filters.start_date ,1),-1)
+	else:
+		pass
+
 	if not filters.business_branch:
 		filters.business_branch = frappe.db.get_list("Business Branch",pluck='name')
   
 	if not filters.outlet:
 		filters.outlet = frappe.db.get_list("Outlet",pluck='name')
   
-
 	if filters.start_date and filters.end_date:
 		if filters.start_date > filters.end_date:
+			frappe.throw("Start Date must be smaller than End Date")
 
-			frappe.throw("The 'Start Date' ({}) must be before the 'End Date' ({})".format(filters.start_date, filters.end_date))
-
-	
 	if filters.column_group=="Daily":
 		n = date_diff(filters.end_date, filters.start_date)
 		if n>30:
@@ -56,10 +51,6 @@ def validate(filters):
 		if(filters.row_group == filters.parent_row_group):
 			frappe.throw("Parent row group and row group can not be the same")
  
-
-
-				
-
 def get_columns(filters):	
 	columns = []
 	row_group = [d for d in get_row_groups() if d["label"]==filters.row_group][0]
@@ -71,28 +62,18 @@ def get_columns(filters):
 			columns.append({'fieldname':'row_group','label':"Product Code",'fieldtype':'Data','align':'left','width':150})
 		else:
 			columns.append({'fieldname':'row_group','label':filters.row_group,'fieldtype':'Data','align':'left','width':250})
-		
 	if filters.row_group == "Product Code" or filters.row_group == "Product And Price":
 		columns.append({"label":"Product Name","fieldname":"product_name","fieldtype":"Data","align":"left",'width':300})
-
 		if  filters.row_group == "Product And Price":
 			columns.append({"label":"Portion","fieldname":"portion","fieldtype":"Data","align":"left",'width':300})
 			columns.append({"label":"Modifiers","fieldname":"modifiers","fieldtype":"Data","align":"left",'width':300})
-
 		columns.append({"label":"Unit","fieldname":"unit","fieldtype":"Data","align":"center",'width':100})
-	
 	if filters.row_group == "Product And Price":
 		columns.append({"label":"Price","fieldname":"price","fieldtype":"Currency","align":"right",'width':100})
-	
 	hide_columns = filters.get("hide_columns")
-	 
 	if filters.column_group !="None" and filters.row_group not in ["Date","Month","Year"]:
-		 
 		for c in get_dynamic_columns(filters):
 			columns.append(c)
-
-	#add total to last column
-
 	fields = get_report_field(filters)
 	for f in fields:
 		if (not hide_columns or  f["label"] not in hide_columns)  :
@@ -136,9 +117,7 @@ def get_columns(filters):
  
 def get_dynamic_columns(filters):
 	hide_columns = filters.get("hide_columns")
-	#dynmic report file
 	fields = get_fields(filters)
-	#static report field
 	report_fields = get_report_field(filters)
 	columns=[]
 	for f in fields:
@@ -151,13 +130,10 @@ def get_dynamic_columns(filters):
 					'precision': rf["precision"],
 					'align':rf["align"]}
 				)
-
-		
 	return columns
 
 def get_fields(filters):
 	sql=""
-	
 	if filters.column_group=="Daily":
 		sql = """
 			select 
@@ -236,25 +212,18 @@ def get_fields(filters):
 				concat('col_',date_format(date,'%Y')),
 				date_format(date,'%Y')
 		""".format(filters.start_date, filters.end_date)
-
 	fields = frappe.db.sql(sql,as_dict=1)
-	 
 	return fields
  
 def get_conditions(filters,group_filter=None):
-	conditions = " 1 = 1 "
+	conditions = " 1 =1 "
 	if not filters.include_foc:
 		conditions = conditions + " and b.is_foc=0 "
-
 	start_date = filters.start_date
 	end_date = filters.end_date
-
 	if(group_filter!=None):
-		 
 		conditions += " and {} ='{}'".format(group_filter["field"],group_filter["value"].replace("'","''").replace("%","%%"))
-
 	conditions += " AND b.posting_date between '{}' AND '{}'".format(start_date,end_date)
-
 	if filters.get("product_group"):
 		conditions += " AND a.product_group in %(product_group)s"
 
@@ -284,7 +253,6 @@ def get_conditions(filters,group_filter=None):
 
 	if filters.vendor:
 		conditions += " AND a.vendor in %(vendor)s"
-  
 	return conditions
 
 def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
@@ -295,34 +263,25 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 		row_group = row_groups[0]
 	else:
 		row_group = "a.product_category"
-	
 	if(parent_row_group!=None):
 		row_groups = [d["fieldname"] for d in get_row_groups() if d["label"]==parent_row_group]
 		if len(row_groups)>0:
 			row_group = row_groups[0]
-		
 	report_fields = get_report_field(filters)
-
 	if(filters.row_group == "Sale Invoice"):
 		sql = "select {0} as row_group,b.guest_cover, {1} as indent ".format(row_group, indent)
 	else:
 		sql = "select {} as row_group, {} as indent ".format(row_group, indent)
 	if filters.column_group != "None":
 		fields = get_fields(filters) 
-		# frappe.throw(str(report_fields))
 		for f in fields:
 			sql = strip(sql)
 			if sql[-1]!=",":
 				sql = sql + ','
-			
 			for rf in report_fields:
 				if not hide_columns or  rf["label"] not in hide_columns:
 					sql_expression = str(rf["sql_expression"]).lower().replace("sum","")
 					sql = sql +	"sum(if(b.posting_date between '{}' AND '{}',{},0)) as '{}_{}',".format(f["start_date"],f["end_date"],sql_expression,f["fieldname"],rf["fieldname"])
-					# else:
-					# 	sql = sql +	"{} as '{}_{}',".format(rf["sql_expression"],f["fieldname"],rf["fieldname"])
-			#end for
-	# total last column
 	extra_columns = ""
 	extra_columns_group_by = ""
 	groupdocstatus = ""
@@ -331,26 +290,21 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 		if (filters.row_group == "Product Code" or filters.row_group == "Product And Price"):
 			extra_columns = ",a.product_name,a.unit"
 			extra_columns_group_by = extra_columns
-
 		if filters.row_group == "Product And Price":
 			extra_columns +=  ",a.price,a.total_discount,if(coalesce(a.portion,'') = '' or coalesce(a.portion,'')='Normal','', coalesce(a.portion,'')) as `portion`, coalesce(a.modifiers,'') as modifiers"
 			extra_columns_group_by += ",a.price,a.total_discount,coalesce(a.portion,''), coalesce(a.modifiers,'')"
-	
 	for rf in report_fields:
-		#check sql variable if last character is , then remove it
 		sql = strip(sql)
 		if sql[-1]==",":
 			sql = sql[0:len(sql)-1]
 		if not hide_columns or  rf["label"] not in hide_columns:
 			sql = sql + " ,{} AS 'total_{}' ".format(rf["sql_expression"],rf["fieldname"])
-
 	_row_group = row_group
 	if row_group == "if(ifnull(b.custom_bill_number,'')='',a.parent,concat(b.custom_bill_number,' (',a.parent,')'))":
 		_row_group = "a.parent, coalesce(b.custom_bill_number,'-'),b.sale_type"
 	else:
 		if ((indent == 1 and filters.parent_row_group) or (indent == 0 and (filters.parent_row_group or "") == "")) and filters.row_group=="Product And Price":
 			_row_group = "concat(a.product_code,'-',a.product_name,' ', if(coalesce(a.`portion`,'')='' or coalesce(a.`portion`,'') = 'Normal','',coalesce(a.`portion`,'')), coalesce(a.modifiers,'')),a.price"
-
 	sql = sql + """ {2}
 		FROM `tabSale Product` AS a
 			INNER JOIN `tabSale` b on b.name = a.parent
@@ -361,9 +315,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 		GROUP BY 
 		{1} {3} {4}
 	""".format(get_conditions(filters,group_filter), _row_group,extra_columns,extra_columns_group_by,groupdocstatus,normal_filter)
- 
 	data = frappe.db.sql(sql,filters, as_dict=1)
- 
 	return data
  
 def get_report_group_data(filters):
@@ -393,22 +345,18 @@ def get_report_summary(data,filters):
 					if row_group["show_commission"] == True:
 						value=sum(d["total_" + f["fieldname"]] for d in data if d["indent"]==0)
 						if f["fieldtype"] == "Currency":
-							
 							value = frappe.utils.fmt_money(value)
 						elif f["fieldtype"] =="Float":
 							value = "{:.2f}".format(value)
+						else:
+							pass
 						report_summary.append({"label":"{}".format(f["label"]),"value":value,"indicator":f["indicator"]})
 				elif f["fieldname"] == 'sub_total':
-					
 					value=sum(d["total_" + f["fieldname"]] for d in data if d["indent"]==0)
-					
 					report_summary.append({"label":"{}".format(f["label"]),"value":value,"datatype": f["fieldtype"],"indicator":f["indicator"]})
 				else:
 					value=sum(d["total_" + f["fieldname"]] for d in data if d["indent"]==0)
-				
-
 					report_summary.append({"label":"{}".format(f["label"]),"value":value,"datatype": f["fieldtype"],"indicator":f["indicator"]})
-
 	return  report_summary
 
 def get_report_chart(filters,data):
@@ -416,29 +364,22 @@ def get_report_chart(filters,data):
 	hide_columns = filters.get("hide_columns")
 	dataset = []
 	colors = []
-
 	report_fields = get_report_field(filters)
-
 	if filters.column_group != "None":
 		fields = get_fields(filters)
 		for f in fields:
 			columns.append(f["label"])
 		for rf in report_fields:
 			if not hide_columns or  rf["label"] not in hide_columns:
-				#loop sum dynamic column data data set value
 				dataset_values = []
 				for f in fields:
 					dataset_values.append(sum(d["{}_{}".format(f["fieldname"],rf["fieldname"])] for d in data if d["indent"]==0))
-					
 				dataset.append({'name':rf["label"],'values':dataset_values})
 				colors.append(rf["chart_color"])
-
-	else: # if column group is none
+	else:
 		for d in data:
 			if d["indent"] ==0:
 				columns.append(d["row_group"])
-
-	
 		for rf in report_fields:
 			if not hide_columns or  rf["label"] not in hide_columns:
 				fieldname = 'total_'+rf["fieldname"]
@@ -452,9 +393,6 @@ def get_report_chart(filters,data):
 					dataset.append({'name':rf["label"],'values':[d["total_amount"] for d in data if d["indent"]==0]})
 				elif(fieldname=="total_profit"):
 					dataset.append({'name':rf["label"],'values':[d["total_profit"] for d in data if d["indent"]==0]})
-
-		 
-
 	chart = {
 		'data':{
 			'labels':columns,
@@ -471,43 +409,24 @@ def get_report_chart(filters,data):
 def get_report_field(filters):
 	row_group = [d for d in get_row_groups() if d["label"]==filters.row_group]
 	fields = []
-
 	fields.append({"label":"Quantity","short_label":"Qty", "fieldname":"quantity","fieldtype":"Float","indicator":"gray","precision":2, "align":"center","chart_color":"#FF8A65","sql_expression":"SUM(a.quantity)"})
 	fields.append({"label":"Sub Total", "short_label":"Sub To.", "fieldname":"sub_total","fieldtype":"Currency","indicator":"gray","precision":None, "align":"right","chart_color":"#dd5574","sql_expression":"SUM(a.sub_total)"})
-	fields.append({"label":"Discount", "short_label":"Disc.", "fieldname":"discount_amount","fieldtype":"Currency","indicator":"gray","precision":None, "align":"right","chart_color":"#dd5574","sql_expression":"SUM(a.total_discount)"})
-	
+	fields.append({"label":"Discount", "short_label":"Disc.", "fieldname":"discount_amount","fieldtype":"Currency","indicator":"gray","precision":None, "align":"right","chart_color":"#dd5574","sql_expression":"SUM(a.total_discount)"})	
 	if len(row_group)>0:
 		if row_group[0]['show_commission'] :
 			fields.append({"label":"Commission", "short_label":"Commission", "fieldname":"commission","fieldtype":"Currency","indicator":"gray","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"ROUND( SUM((a.sub_total - a.total_discount) / b.grand_total  * b.commission_amount ), 2)"})
 			fields.append({"label":"Net Sale", "short_label":"Net Sale", "fieldname":"net_sale","fieldtype":"Currency","indicator":"Blue","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.sub_total - a.total_discount) - ROUND( SUM((a.sub_total - a.total_discount) / b.grand_total  * b.commission_amount ), 2)"})
-			
 		else:
 			fields.append({"label":"Net Sale", "short_label":"Net Sale", "fieldname":"net_sale","fieldtype":"Currency","indicator":"Blue","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.sub_total - a.total_discount) - ROUND( SUM((a.sub_total - a.total_discount) / b.grand_total  * b.commission_amount ), 2)"})
-		
-	
 	fields.append({"label":"Tax", "short_label":"Tax", "fieldname":"total_tax","fieldtype":"Currency","indicator":"gray","precision":None, "align":"right","chart_color":"#dd5574","sql_expression":"SUM(a.total_tax)"})
 	fields.append({"label":"Revenue", "short_label":"Revenue", "fieldname":"amount","fieldtype":"Currency","indicator":"Red","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue)"})
 	fields.append({"label":"Cost", "short_label":"Cost", "fieldname":"cost","fieldtype":"Currency","indicator":"Red","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.cost*a.quantity)"})
-
 	if len(row_group)>0:
 		if row_group[0]['show_commission']:
 			fields.append({"label":"Gross Profit", "short_label":"Profit", "fieldname":"profit","fieldtype":"Currency","indicator":"Green","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue - (a.cost*a.quantity)) - b.commission_amount"})
 		else:
 			fields.append({"label":"Gross Profit", "short_label":"Profit", "fieldname":"profit","fieldtype":"Currency","indicator":"Green","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue - (a.cost*a.quantity))"})
-
-	# return [
-	# 	{"label":"Quantity","short_label":"Qty", "fieldname":"quantity","fieldtype":"Float","indicator":"Grey","precision":2, "align":"center","chart_color":"#FF8A65","sql_expression":"SUM(a.quantity)"},
-	# 	{"label":"Sub Total", "short_label":"Sub To.", "fieldname":"sub_total","fieldtype":"Currency","indicator":"Grey","precision":None, "align":"right","chart_color":"#dd5574","sql_expression":"SUM(a.sub_total)"},
-	# 	{"label":"Discount", "short_label":"Disc.", "fieldname":"discount_amount","fieldtype":"Currency","indicator":"Grey","precision":None, "align":"right","chart_color":"#dd5574","sql_expression":"SUM(a.total_discount)"},
-	# 	{"label":"Tax", "short_label":"Tax", "fieldname":"total_tax","fieldtype":"Currency","indicator":"Grey","precision":None, "align":"right","chart_color":"#dd5574","sql_expression":"SUM(a.total_tax)"},
-	# 	{"label":"Amount", "short_label":"Amt", "fieldname":"amount","fieldtype":"Currency","indicator":"Red","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue)"},
-	# 	{"label":"Commission", "short_label":"commission", "fieldname":"commission","fieldtype":"Currency","indicator":"Red","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(b.commission_amount)/Count(a.name)"},
-	# 	{"label":"Net Sale", "short_label":"net_sale", "fieldname":"net_sale","fieldtype":"Currency","indicator":"Red","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue)"},
-	# 	{"label":"Cost", "short_label":"Cost", "fieldname":"cost","fieldtype":"Currency","indicator":"Red","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.cost*a.quantity)"},
-	# 	{"label":"Profit", "short_label":"Profit", "fieldname":"profit","fieldtype":"Currency","indicator":"Green","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"SUM(a.total_revenue - (a.cost*a.quantity))"},
-	# ]
 	return fields
- 
 
 def get_row_groups():
 	return [
