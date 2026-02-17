@@ -2672,12 +2672,12 @@ def run_get_update_pos_station_license():
             s.platform, 
             s.device_id ,
             s.license,
+            s.is_order_station,
             s.disabled
         from `tabPOS Station` s
         inner join `tabBusiness Branch` b on b.name = s.business_branch 
         where 1 = 1
-        -- and s.disabled = 0 
-        and s.device_id != '' """
+        and coalesce(s.device_id,'') != '' """
     stations = frappe.db.sql(sql, as_dict = 1)
 
     conn = get_estc_connection()
@@ -2694,6 +2694,28 @@ def run_get_update_pos_station_license():
     except Exception:
         resp = {}   
 
-    return resp
+    devices = (resp.get("devices",None) or [])        
+
+    i = 0
+    for d in devices:
+        try:
+            frappe.db.set_value(
+                "POS Station",
+                d.get("name"),
+                {
+                    "license": d.get("license"),
+                    "is_order_station": d.get("is_order_station"),
+                    "disabled": d.get("disabled"),
+                },
+                update_modified=False
+            )
+            i +=1
+            
+        except Exception as e:
+            pass
+    if i>0:
+        frappe.db.commit()
+
+    return f"{i} device(s) were updated"
 
 
