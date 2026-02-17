@@ -18,7 +18,7 @@
       <div class="screen" :class="[isMobile?'screen-mobile-aba':'']"> 
         <div class="page-sub-card"> 
             <div :class="[isMobile?'':'sub-card']">
-              <img  v-if="qrData.qr_image" :src="qrData.qr_image" alt="QR Code"/>
+              <img :style="[isMobile?'width:270px':'']" v-if="qrData.qr_image" :src="qrData.qr_image" alt="QR Code"/>
             </div>
         </div> 
       </div> 
