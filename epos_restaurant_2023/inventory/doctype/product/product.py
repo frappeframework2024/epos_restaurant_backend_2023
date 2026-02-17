@@ -46,14 +46,11 @@ class Product(Document):
 		if strip(self.product_name_kh or "")=="":
 			self.product_name_kh = strip(self.product_name_en)
 
+		add_base_unit_to_product_prices(self)
 		add_and_update_variants(self)
 		update_produce(self)
 		add_update_and_generate_json_prices(self)
-		generate_barcode_for_product_price(self)
 
-	def update(self):
-		add_base_unit_to_product_prices(self)
-		
 	def autoname(self):
 		if self.flags.ignore_autoname==True:
 			return 
@@ -369,8 +366,12 @@ def add_base_unit_to_product_prices(self):
 			else:
 				frappe.throw(_("No Default Price Rule Found, Please Create Default Price Rule First"))
 		if existed == 0:
+			counter = 1; name = self.name
+			while frappe.db.exists('Product Price', {"barcode":name}):
+				counter += 1
+				name = self.name + "-" + str(counter)
 			self.append('product_price', {
-				'barcode': self.name,
+				'barcode': name,
 				'price_rule': default_price_rule[0]["name"],
 				'unit': self.unit,
 				'base_unit': self.unit,
@@ -379,14 +380,6 @@ def add_base_unit_to_product_prices(self):
 				'portion': self.unit,
 				'conversion_factor': 1
 			})
-
-def generate_barcode_for_product_price(self):
-	import random
-	for a in self.product_price:
-		if not a.barcode:
-			number = random.randint(1000, 9999)
-			a.barcode = self.name + "-" + str(number)
-			frappe.msgprint(a.barcode)
 
 def sort_product_price(self):
 	sorted_prices = sorted(self.product_price, key=lambda x: x.conversion_factor)
