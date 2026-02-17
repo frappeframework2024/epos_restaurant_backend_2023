@@ -2690,8 +2690,11 @@ def run_get_update_pos_station_license():
 
     conn = get_estc_connection()
     estc_central_url = conn.get("estc_central_url", None) or ""
-    url = f"{estc_central_url}/api/method/estc.api.api.get_license_all_devices"
+    if estc_central_url == "":
+        return "Not found central url"
+    
 
+    url = f"{estc_central_url}/api/method/estc.api.api.get_license_all_devices"
     request_param = {
         "devices": stations
     }
