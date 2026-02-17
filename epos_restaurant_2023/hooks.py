@@ -209,6 +209,10 @@ scheduler_events = {
            
         ],
 
+        "0 */3 * * *":[ ##Every 3 hours at minute 0
+            "epos_restaurant_2023.api.api.run_get_update_pos_station_license_enqueue"
+        ]
+
 	},
     "all": [
 		"epos_restaurant_2023.api.custom_reminder.send_reminders",

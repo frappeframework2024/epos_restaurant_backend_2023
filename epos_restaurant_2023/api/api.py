@@ -2660,6 +2660,14 @@ def has_internet(timeout=3):
     except requests.RequestException:
         return False
 
+@frappe.whitelist(allow_guest=1)
+def run_get_update_pos_station_license_enqueue():
+    frappe.enqueue(
+        "epos_restaurant_2023.api.api.run_get_update_pos_station_license", # python function or a module path as string
+        queue="short", # one of short, default, long
+        job_name="get_update_pos_license", # specify a job name
+    )
+
 
 @frappe.whitelist(allow_guest=1)
 def run_get_update_pos_station_license():
@@ -2717,5 +2725,6 @@ def run_get_update_pos_station_license():
         frappe.db.commit()
 
     return f"{i} device(s) were updated"
+
 
 
