@@ -2546,7 +2546,7 @@ export default class Sale {
             this.close_payment_form = true;
 
             try{
-              call.post("epos_restaurant_2023.api.payway.update_payway_tranaction_id_on_callback_success", {
+              call.post("epos_restaurant_2023.helpers.payway_helper.update_payway_tranaction_id_on_callback_success_enqueue", {
                 "tran": data
               });
             } catch (err){}

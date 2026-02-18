@@ -2,15 +2,12 @@
 from frappe import _
 import frappe
 import requests
-import time
-import hashlib
-import hmac
-import base64
 from datetime import datetime, timezone
-import json
 from epos_restaurant_2023.api.api import get_estc_connection
-## status code = 422  is invalid data
+from epos_restaurant_2023.helpers.payway_helper import (create_error_log_enqueue)
 
+
+## status code = 422  is invalid data
 @frappe.whitelist()
 def aba_generate_qr(**params):
     if  frappe.request.method != "POST":        
@@ -24,7 +21,8 @@ def aba_generate_qr(**params):
     p = {k.strip(): v for k, v in params.items()}  
     p.pop("cmd",None)
 
-
+    # "lifetime":5, //5min ~ default None mean 30days
+    p["lifetime"] = 5
 
     conn =  get_estc_connection() 
     if not conn.get("estc_central_url", None) :
@@ -34,8 +32,7 @@ def aba_generate_qr(**params):
             "message": _("The 'estc_central_url' is not configured in site settings. Please contact your system administrator."),
             "http_status_code": status_code 
         }) 
-        return
-    
+        return    
 
     estc_central_url = conn.get("estc_central_url", None) or ""
     url = f"{estc_central_url}/api/method/estc.api.payway.aba_generate_qr"
@@ -69,10 +66,7 @@ def aba_generate_qr(**params):
             response.pop("qr_image_custom",None)
 
         frappe.local.response.update(response) 
-
-
-        return
-    
+        return    
 
     #fails request
     status_code = data.get("status_code",None) or response.status_code
@@ -84,66 +78,7 @@ def aba_generate_qr(**params):
     }
     frappe.local.response.update(update_response) 
 
-    create_error_log(params=p, error=update_response)
+    #create error log enqueue
+    create_error_log_enqueue(params=p, error=update_response)
     return 
-     
-
-def create_error_log(params, error):
-    frappe.enqueue(
-            "epos_restaurant_2023.api.payway.create_error_log_enqueue", # python function or a module path as string
-            queue="short", # one of short, default, long
-            job_name="create_payway_integration_log", # specify a job name
-            # enqueue_after_commit=True,
-            params = params,
-            error = error
-        )
-
-@frappe.whitelist()   
-def create_error_log_enqueue(params, error):
-    try: 
-        #remove key
-        error.pop("http_status_code",None)
-
-        #create logs
-        doc = frappe.new_doc("PayWay Error Logs")
-        doc.request_params =frappe.as_json(params)
-        doc.error_message = frappe.as_json(error)
-        doc.insert(ignore_permissions=True)
-        frappe.db.commit()
-    except Exception:
-        frappe.log_error(
-            title="PayWay Error Logs",
-            message=frappe.get_traceback()
-        )
-
-
-
-
-
-@frappe.whitelist(allow_guest=True) 
-def update_payway_tranaction_id_on_callback_success(tran):
-    frappe.enqueue(
-            "epos_restaurant_2023.api.payway.update_payway_tranaction_id_on_callback_success_enqueue", # python function or a module path as string
-            queue="short", # one of short, default, long
-            job_name="update_payway_tranaction_id_on_callback_success_enqueue", # specify a job name
-            enqueue_after_commit=True,
-            tran = tran
-        )
-    # return update_payway_tranaction_id_on_callback_success_enqueue(tran)
-
-@frappe.whitelist() 
-def update_payway_tranaction_id_on_callback_success_enqueue(tran):
-    (tran.get("response") or {}).pop("temp_tran_id",None)
-    update_sql = """
-        UPDATE `tabSale`
-        SET payment_transaction = CONCAT(
-            IFNULL(payment_transaction, ''),
-            %(tran)s
-        )
-        WHERE name = %(invoice_id)s
-    """
-    filters = {"tran":frappe.as_json(tran), "invoice_id":  (tran.get("response") or {}).get("invoice_id") }
-    frappe.db.sql(update_sql,filters)
-    frappe.db.commit()
-
-    return "update success"
+   

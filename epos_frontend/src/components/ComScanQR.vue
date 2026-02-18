@@ -63,7 +63,7 @@
             "pos_config":gv.setting.pos_config, //required
             "payment_amount": Number( param.payment_amount), //required
             "currency":param.currency, // required
-            "lifetime":60*24, //1day ~ default None mean 30days
+            // "lifetime":5, //5min ~ default None mean 30days
             // "deeplink":false, //default false
             "image":true, //default false
             "response":{ //this custom data callback when ABA success payment
