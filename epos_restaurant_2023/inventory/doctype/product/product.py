@@ -232,12 +232,10 @@ class Product(Document):
 def validate_product_price_barcode(self):
 	msg = ""
 	for a in self.product_price:
-		sql = "select name from `tabProduct Price` where barcode = '{}'".format(a.barcode)
-		data = frappe.db.sql(sql,as_dict=1)
-		if data:
-			existed = [b for b in data if b["name"] == a.name]
-			if len(existed) == 0:
-				msg = msg + "Barcode <b>{}</b> Already Exist in Row <b>{}</b></br>".format(a.barcode,a.idx)
+		sql = "select name from `tabProduct Price` where barcode = '{}' and name != '{}'".format(a.barcode,a.name)
+		data = (frappe.db.sql(sql,as_dict=1) or [])
+		if len(data) == 1:
+			msg = msg + "Row# <b>{}</b> Barcode <b>{}</b> Already Exist</br>".format(a.idx,a.barcode)
 		if msg:
 			frappe.throw(msg)
 
