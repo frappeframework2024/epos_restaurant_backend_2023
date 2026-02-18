@@ -27,7 +27,7 @@ class Product(Document):
 		validate_opening_qty(self)
 		validate_recipe_uom(self)
 		generate_combo_and_group_to_json(self)
-		
+		validate_product_price_barcode(self)
 		if (self.last_purchase_cost or 0) == 0:
 			self.last_purchase_cost = self.cost
 
@@ -50,6 +50,7 @@ class Product(Document):
 		add_and_update_variants(self)
 		update_produce(self)
 		add_update_and_generate_json_prices(self)
+		generate_barcode_for_product_price(self)
 
 	def autoname(self):
 		if self.flags.ignore_autoname==True:
@@ -228,6 +229,18 @@ class Product(Document):
 		else:
 			return self.product_variants
 
+def validate_product_price_barcode(self):
+	msg = ""
+	for a in self.product_price:
+		sql = "select name from `tabProduct Price` where barcode = '{}'".format(a.barcode)
+		data = frappe.db.sql(sql,as_dict=1)
+		if data:
+			existed = [b for b in data if b["name"] == a.name]
+			if len(existed) == 0:
+				msg = msg + "Barcode <b>{}</b> Already Exist in Row <b>{}</b></br>".format(a.barcode,a.idx)
+		if msg:
+			frappe.throw(msg)
+
 def add_update_and_generate_json_prices(self):
 	if len(self.product_price or [])>0:
 		prices = []
@@ -366,12 +379,8 @@ def add_base_unit_to_product_prices(self):
 			else:
 				frappe.throw(_("No Default Price Rule Found, Please Create Default Price Rule First"))
 		if existed == 0:
-			counter = 1; name = self.name
-			while frappe.db.exists('Product Price', {"barcode":name}):
-				counter += 1
-				name = self.name + "-" + str(counter)
 			self.append('product_price', {
-				'barcode': name,
+				'barcode': self.name,
 				'price_rule': default_price_rule[0]["name"],
 				'unit': self.unit,
 				'base_unit': self.unit,
@@ -380,6 +389,13 @@ def add_base_unit_to_product_prices(self):
 				'portion': self.unit,
 				'conversion_factor': 1
 			})
+
+def generate_barcode_for_product_price(self):
+	import random
+	for a in self.product_price:
+		if not a.barcode:
+			number = random.randint(1000, 9999)
+			a.barcode = self.name + "-" + str(number)
 
 def sort_product_price(self):
 	sorted_prices = sorted(self.product_price, key=lambda x: x.conversion_factor)
