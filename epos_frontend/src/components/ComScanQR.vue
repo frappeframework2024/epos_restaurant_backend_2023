@@ -127,9 +127,7 @@
                 },1000);
 
                 //
-                startCheckTransaction();
-
-            
+                startCheckTransaction();            
  
             }
 
@@ -180,7 +178,7 @@
             }
            
         }       
-        timer = setTimeout(poll, 3000);
+        timer = setTimeout(poll, 3000); //wait 3sec after request 
     }
 
     function startCheckTransaction() {
