@@ -24,7 +24,7 @@ import SplashScreen from './components/SplashScreen.vue';
 import SaleLayout from './components/layout/SaleLayout.vue';
 import { PromiseDialogsWrapper } from 'vue-promise-dialogs';
 import { createResource } from '@/resource.js'
-import { reactive, computed, onMounted, inject, i18n,onUnmounted,postApi,payWaySuccessDialog } from '@/plugin'
+import {provide, reactive, computed, onMounted, inject, i18n,onUnmounted,postApi,payWaySuccessDialog } from '@/plugin'
 import { useStore } from 'vuex'
 import { createToaster } from '@meforma/vue-toaster';
 import { FrappeApp } from 'frappe-js-sdk';
@@ -35,8 +35,18 @@ import { ref } from 'vue';
 
 import createPaywaySocket from './utils/paywaysocketio';
 
+
+import Sale from "./providers/sale"; 
+
 const router = useRouter()
 const route = useRoute()
+ 
+const provideSale = reactive(new Sale(router));
+provide("$sale", provideSale);
+const sale = provideSale;
+
+
+
 
 const layout = computed(() => {
 	return route.meta.layout  || "blank_layout"
@@ -47,8 +57,9 @@ const call = frappe.call();
 const { t: $t } = i18n.global; 
 
 const toast = createToaster({position:'top-right'});
-const gv = inject("$gv");
-const sale = inject("$sale");
+const gv = inject("$gv"); 
+
+
 const pos_license = inject("$pos_license");
 const product = inject("$product");
 const tableLayout = inject("$tableLayout");
@@ -205,9 +216,7 @@ if (!localStorage.getItem("pos_profile")) {
 
 			if(doc.estc_payway_socket_server_url ||"" != ""){
 				onPayWaySocketSetup(doc);
-			}
-			
-			
+			}	
 		},
 		onError(x) {
 			if (x.error_text == undefined) {

@@ -303,7 +303,7 @@ function onRedirectSaleType(){
     }
     return true
 }
-function closeModel() {
+function closeModel() { 
   emit('onClose')
 }
 async function onCancelPrintBill() {

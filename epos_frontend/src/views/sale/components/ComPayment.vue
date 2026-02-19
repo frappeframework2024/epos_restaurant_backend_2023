@@ -123,6 +123,8 @@ onMounted(() => {
     sale.is_payment_first_load = true;
     sale.pos_receipt = selectedReceipt.value;
 
+    sale.__open_payment_form = true;
+
     backup.value = JSON.parse(JSON.stringify(sale.sale));
 })
 
@@ -231,6 +233,7 @@ onUnmounted(() => {
     sale.sale.payment = [];
     sale.is_payment_first_load = false;
     sale.close_payment_form = false;
+    sale.__open_payment_form = false;
 })
 
 </script>

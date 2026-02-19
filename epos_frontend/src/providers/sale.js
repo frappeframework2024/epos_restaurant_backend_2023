@@ -17,7 +17,8 @@ const { t: $t } = i18n.global;
 const toaster = createToaster({ position: "top-right" });
 
 export default class Sale {
-    constructor() {
+    
+    constructor(router) {
         this.payway_complete_payment = false;
         this.close_payment_form = false;
         this.is_payment_first_load = false;
@@ -43,7 +44,7 @@ export default class Sale {
         this.change_exchange_rate = 1;
         this.guest_cover = 0;
         this.orderTime = undefined;
-        this.router = useRouter();
+        this.router=router;
         this.name = "";
         this.action = "";
         this.customer_display_key = "",
@@ -101,6 +102,7 @@ export default class Sale {
         this.kod_messages = [] //key, screen, message
         this.createNewSaleResource();
     }
+ 
 
     createNewSaleResource()  {
         const parent = this;
@@ -232,6 +234,16 @@ export default class Sale {
             await this.saleResource.get.fetch().then(async (doc) => {
                 this.onLoadDeleteSaleProducts(doc.name);
                 this.sale = doc;
+                this.__backup_sale = JSON.parse(JSON.stringify(doc))
+                //aba PayWay set closed / cancel qr (expired)
+                if (this.sale.name){
+                    call.post("epos_restaurant_2023.api.payway.aba_close_transaction", { 
+                        "property_code": this.setting.property_code,
+                        "pos_config": this.setting.pos_config,
+                        "invoice_id": this.sale.name
+                    }); 
+                }
+
                 this.getDefaultTableMenu(doc.table_id)
                 //add sale product to temp resend sale product to kitchen order
                 let re_send_sale_product_kot = []
@@ -1682,7 +1694,14 @@ export default class Sale {
                 }
                 else {
                     try{
-                         _sale = await this.saleResource.setValue.submit(doc);
+                        _sale = await this.saleResource.setValue.submit(doc);  
+                        if (_sale.name && _sale.grand_total !=  this.__backup_sale.grand_total){
+                            call.post("epos_restaurant_2023.api.payway.aba_close_transaction", { 
+                                "property_code": this.setting.property_code,
+                                "pos_config": this.setting.pos_config,
+                                "invoice_id": _sale.name
+                            }); 
+                        }
                     }
                     catch(error){
                         if(this.sale.sale_status == "Bill Requested"){
@@ -2525,9 +2544,11 @@ export default class Sale {
         if(resp.invoice_id == this.sale.name && 
             this.setting.pos_config == resp.pos_config &&
             this.setting.property_code == resp.property_code        
-        ){               
+        ){     
+            console.log(data)          
            
             // console.log("PayWay Sucess")
+            this.sale.payment = (data.sale_payment || this.sale.payment);
             this.sale.payment.forEach((p)=>{
                 if(p._temp_payway_tran_id == resp.temp_tran_id && p.is_generate_qr == 1){
                     p.aba_pay_transaction = data.tran_id
@@ -2538,12 +2559,33 @@ export default class Sale {
             this.sale.show_aba_khqr = undefined;
             this.sale.aba_khqr_data = undefined;
             this.sale.payment_transaction = data;
+
             await setTimeout(()=>{
                 socket.emit("ShowOrderInCustomerDisplay", this.sale,"", this.customer_display_key);   
             }, 500)
-          
-            
-            this.close_payment_form = true;
+
+            console.log(this.__open_payment_form )
+
+            if(this.__open_payment_form ==true){
+                this.close_payment_form = true;
+            }else{
+
+                const is_apk_ipa = localStorage.getItem("apkipa");
+                
+                this.pos_receipt = undefined;
+                let is_print = false;
+                if(!is_apk_ipa){
+                    this.pos_receipt = this.setting.default_pos_receipt;
+                    is_print = true;
+                }
+                   
+                this.onSubmitPayment(is_print,true ).then((v) => {
+                    if (v) {
+                        this.message = $t("msg.Payment successfully");  
+                        this.onPayWaySuccessPayment();
+                    }
+                });
+            }
 
             try{
               call.post("epos_restaurant_2023.helpers.payway_helper.update_payway_tranaction_id_on_callback_success_enqueue", {
@@ -2552,6 +2594,37 @@ export default class Sale {
             } catch (err){}
          
            
+        }
+    }
+
+    onPayWaySuccessPayment(){
+        if (this.setting.table_groups.length > 0) {
+            this.router.push({ name: "TableLayout" });
+        } else {
+            this.newSale();
+            this.tableSaleListResource.fetch();
+            this.router.push({ name: "AddSale" });
+            call.get('epos_restaurant_2023.api.api.get_current_shift_information', {
+                business_branch: this.setting?.business_branch,
+                pos_profile: localStorage.getItem("pos_profile")
+            }).then((data) => {
+                if (this.message.cashier_shift == null) {
+                    toaster.warning($t("msg.Please start shift first"));
+                    this.router.push({ name: "OpenShift" });
+                } else if (data.message.working_day == null) {
+                    toaster.warning($t('msg.Please start working day first'));
+                    this.router.push({ name: "StartWorkingDay" });
+                } else {
+                    this.sale.working_day = data.message.working_day.name;
+                    this.sale.posting_date = data.working_day.posting_date;
+                    this.posting_date = data.working_day.posting_date;
+
+                    this.sale.cashier_shift = data.message.cashier_shift.name;
+                    this.sale.shift_name = data.message.cashier_shift.shift_name;
+                    // gv.confirm_close_working_day(data.message.working_day.posting_date);
+                    // onCheckExpireHappyHoursPromotion();
+                }
+            });
         }
     }
 

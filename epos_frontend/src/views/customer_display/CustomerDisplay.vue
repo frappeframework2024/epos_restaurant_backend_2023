@@ -1,7 +1,7 @@
 <template>
     <div class="wrap h-screen">
          <template v-if="show_aba_khqr">
-           <ComCustomerDisplayScanQRDialog :qrData="aba_qr_data"/>
+           <ComCustomerDisplayScanQRDialog :qrData="aba_qr_data" :remaining="autoClose"/>
         </template>           
         <!-- <template>   -->
             <template v-if="!show_thankyou">
@@ -22,7 +22,7 @@
     </div>
 </template>
 <script setup>
-import { inject } from '@/plugin';
+import { inject,watch,onUnmounted } from '@/plugin';
 import { ref } from 'vue';
 import ComCustomerDisplaySliceshow from './ComCustomerDisplaySliceshow.vue';
 import ComCustomerDisplayThankyou from './ComCustomerDisplayThankyou.vue';
@@ -35,8 +35,11 @@ const gv = inject("$gv");
 const show_thankyou = ref(false)
 const show_aba_khqr = ref(false)
 const aba_qr_data = ref({})
+const autoClose = ref(90)
 /// key = business branch + pos profile + device id
-socket.on("ShowOrderInCustomerDisplay", async (arg, show, key) => { 
+socket.on("ShowOrderInCustomerDisplay", async (arg, show, key) => {  
+    autoClose.value = 90 ;
+    
     const device_setting = JSON.parse(localStorage.getItem("device_setting"));
 	const device_id = device_setting?.device_id||"";
     const pos_profile = localStorage.getItem("pos_profile");
@@ -67,6 +70,33 @@ socket.on("ShowOrderInCustomerDisplay", async (arg, show, key) => {
         }
     }
 })
+
+let countdown = null; // ⬅ store interval id
+watch(show_aba_khqr, (val) => {
+  if (val) {
+    countdown = setInterval(() => {
+      autoClose.value--;
+      if (autoClose.value <= 0) {
+        clearInterval(countdown);
+        countdown = null;
+      }
+    }, 1000);
+  } else {
+    // clear when dialog hidden
+    if (countdown) {
+      clearInterval(countdown);
+      countdown = null;
+    }
+  }
+});
+
+onUnmounted(() => {
+  if (countdown) {
+    clearInterval(countdown);
+    countdown = null;
+  }
+});
+
 
 function onHideThankYou() {
     show_thankyou.value = false

@@ -10,17 +10,33 @@
                 />
               </svg>
           </div> 
-          <v-btn v-if="showClose" icon @click="onClose()" style="position: absolute; top: -10px; right: -10px;">
+        
+          <div style="position: absolute; top: -10px; right: -10px;">
+ <v-btn v-if="showClose" icon @click="onClose()" >
               <v-icon>mdi-close</v-icon>
+              
           </v-btn> 
+          </div>
+         
       </div>  
     
-      <div class="screen" :class="[isMobile?'screen-mobile-aba':'']"> 
+     
+      <div class="screen" :class="[isMobile?'screen-mobile-aba':'']">  
         <div class="page-sub-card"> 
-            <div :class="[isMobile?'':'sub-card']">
+            <div :class="[isMobile?'':'sub-card']"> 
               <img :style="[isMobile?'width:270px':'']" v-if="qrData.qr_image" :src="qrData.qr_image" alt="QR Code"/>
+              
+             
+
             </div>
+        </div>  
+         <div class="countdown" v-if="!isMobile">
+          {{$t('Returning in')}} <span> {{remaining}} </span> {{$t('seconds')}}
         </div> 
+      </div> 
+
+       <div class="countdown" v-if="isMobile" style="position: absolute; bottom:34px; transform: translateX(50%);">
+        {{$t('Returning in')}} <span> {{remaining}} </span> {{$t('seconds')}}
       </div> 
   </div>
 </template>
@@ -47,7 +63,8 @@
     const emit = defineEmits(["onClose"])
     const props = defineProps({
         qrData:Object,
-        showClose:false
+        showClose:false,
+        remaining:0,
     });
 
     function onClose() { 
@@ -302,4 +319,20 @@
       align-items: center;
       justify-content: center;
     } 
+
+  .countdown {
+    font-size: 14px;
+    color: #a7a8a9;
+    margin-top:24px;
+    margin-bottom:-24px;
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+  }
+
+  .countdown span {
+    font-weight: 600;
+    margin: 0px 5px;
+    color: #ff0000;
+  }
 </style>

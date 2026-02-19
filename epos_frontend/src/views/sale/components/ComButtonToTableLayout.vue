@@ -146,7 +146,10 @@ async function onToTableLayout() {
     } else {
       router.push({ name: "TableLayout" }).then(() => {
         emit('closeModel')
-      })
+      });
+
+
+      
     }
   }
 }

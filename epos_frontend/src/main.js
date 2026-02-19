@@ -41,7 +41,7 @@ import router from './router';
 import call from "./utils/call";
 
 import Auth from "./utils/auth";
-import Sale from "./providers/sale";
+// import Sale from "./providers/sale";
 import KOD from "./providers/kod";
 import POSLicense from "./providers/pos_license";
 import TableLayout from "./providers/table_layout";
@@ -56,6 +56,7 @@ import { resourcesPlugin } from "./resources"
 import { FrappeApp } from 'frappe-js-sdk';
 import { setConfig, frappeRequest } from './resource';
 import MasonryWall from '@yeger/vue-masonry-wall'
+	
 setConfig('resourceFetcher', frappeRequest)
 
 
@@ -70,7 +71,7 @@ const app = createApp(App);
 const frappe = new FrappeApp();
 const auth = reactive(new Auth());
 const gv = reactive(new Gv());
-const sale = reactive(new Sale());
+
 const kod = reactive(new KOD());
 const pos_license = reactive(new POSLicense());
 const tableLayout = reactive(new TableLayout());
@@ -138,7 +139,7 @@ app.use(MasonryWall)
 // components can inject this
 app.provide("$gv", gv);
 app.provide("$pos_license", pos_license);
-app.provide("$sale", sale);
+// app.provide("$sale", sale);
 app.provide("$kod", kod);
 app.provide("$tableLayout", tableLayout);
 app.provide("$product", product);
