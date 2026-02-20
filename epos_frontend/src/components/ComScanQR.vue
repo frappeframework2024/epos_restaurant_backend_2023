@@ -33,7 +33,7 @@
     const open = ref(true);
 
     const timerCount = ref(5);
-    const autoClose = ref(90); //close in 90sec
+    const autoClose = ref(300); //close in 90sec
 
     const toaster = createToaster({ position: "top-right" });
 
