@@ -2538,15 +2538,19 @@ export default class Sale {
         }
     }
 
+
+
    async handlePayWayPaymentCallback(paywaysocket, data) {
     // Process payment data
         const resp = data.response;
         if(resp.invoice_id == this.sale.name && 
             this.setting.pos_config == resp.pos_config &&
             this.setting.property_code == resp.property_code        
-        ){     
-            console.log(data)          
-           
+        ){    
+            const check = await this.onPayWayCallbackReCheckTransaction(data);
+            if(check == true){
+                return;
+            } 
             // console.log("PayWay Sucess")
             this.sale.payment = (data.sale_payment || this.sale.payment);
             this.sale.payment.forEach((p)=>{
@@ -2564,14 +2568,12 @@ export default class Sale {
                 socket.emit("ShowOrderInCustomerDisplay", this.sale,"", this.customer_display_key);   
             }, 500)
 
-            console.log(this.__open_payment_form )
 
             if(this.__open_payment_form ==true){
                 this.close_payment_form = true;
             }else{
 
-                const is_apk_ipa = localStorage.getItem("apkipa");
-                
+                const is_apk_ipa = localStorage.getItem("apkipa");                
                 this.pos_receipt = undefined;
                 let is_print = false;
                 if(!is_apk_ipa){
@@ -2625,6 +2627,39 @@ export default class Sale {
                     // onCheckExpireHappyHoursPromotion();
                 }
             });
+        }
+    }
+
+
+    async onPayWayCallbackReCheckTransaction(param){
+        if((param.type || "") == "Check Transaction"){
+            return false;
+        }
+        const p = param;
+
+        const request_params = { 
+            "tran_id": p.tran_id,//required
+            "property_code":p.response.property_code, //required
+            "pos_config":p.response.pos_config, //required
+            "response":{ //required
+                "pos_profile": p.response.pos_profile,
+                "station_name":p.response.station_name,
+                "invoice_id": p.response.invoice_id,
+                "temp_tran_id":p.response.temp_tran_id
+            }
+        }
+        try{
+            const resp = await call.post("epos_restaurant_2023.api.payway.aba_check_transaction", request_params)
+            if(resp){
+                if((resp.message ||"") != "" && (resp.message ||"").toLowerCase() != "pending"){                       
+                    return true;
+                }
+            } 
+            return false;           
+        }
+        catch (err) {
+            console.log({"aba_check_transaction": err})
+            return false;
         }
     }
 
