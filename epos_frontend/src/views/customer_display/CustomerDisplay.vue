@@ -35,10 +35,12 @@ const gv = inject("$gv");
 const show_thankyou = ref(false)
 const show_aba_khqr = ref(false)
 const aba_qr_data = ref({})
-const autoClose = ref(300)
+
+const totalTimeAutoClose = 300; //300sec = 5min
+const autoClose = ref(totalTimeAutoClose)
 /// key = business branch + pos profile + device id
 socket.on("ShowOrderInCustomerDisplay", async (arg, show, key) => {  
-    autoClose.value = 300 ;
+    autoClose.value = totalTimeAutoClose ;
 
     const device_setting = JSON.parse(localStorage.getItem("device_setting"));
 	const device_id = device_setting?.device_id||"";

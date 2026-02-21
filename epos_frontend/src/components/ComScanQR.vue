@@ -33,8 +33,7 @@
     const open = ref(true);
 
     const timerCount = ref(5);
-    const autoClose = ref(300); //close in 90sec
-
+    const autoClose = ref(300); //close in 300sec = 5min
     const toaster = createToaster({ position: "top-right" });
 
     const qrData = ref(null); 
@@ -43,8 +42,17 @@
     });
 
     const requestParam = ref({})
-
  
+
+    watch(() => autoClose.value,(newVal) => {
+        if (newVal <= 0) {
+            _onResetInterval();
+            if(open.value ===true){
+                onClose();    
+            }
+        }
+    });
+
 
     watch(() => sale.payway_complete_payment,(newVal) => {
         if (newVal === true) {
@@ -194,14 +202,18 @@
 
     onUnmounted(() => {
         sale.payway_complete_payment = false;
+        _onResetInterval();
+       
+    });
 
+
+    function _onResetInterval(){
         if (countdown) {
             clearInterval(countdown);
             countdown = null;
         }
-
         stopCheckTransaction();
-    });
+    }
 
 </script>
 
