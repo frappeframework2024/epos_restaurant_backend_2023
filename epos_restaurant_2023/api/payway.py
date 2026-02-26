@@ -207,3 +207,19 @@ def aba_check_transaction(**param):
     }) 
     return
 
+
+
+# refund payment
+@frappe.whitelist()
+def aba_refund_payment(**param):
+    # param = {
+    #     "tran_id": "",
+    #     "property_code": ""
+    # }
+    if  frappe.request.method != "POST":        
+        frappe.local.response.update({
+            "status_code":"405",
+            "message": _("Invalid request method"),
+            "http_status_code": 405 
+        }) 
+        return

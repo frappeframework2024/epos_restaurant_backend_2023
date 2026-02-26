@@ -66,6 +66,7 @@
   "bulk_sale_payment_name",
   "issue_gift_voucher",
   "pos_sale_payment",
+  "add_from_sale",
   "integrations_tab",
   "aba_payway_section",
   "is_generate_qr",
@@ -524,12 +525,19 @@
    "fieldname": "aba_payway_section",
    "fieldtype": "Section Break",
    "label": "ABA PayWay"
+  },
+  {
+   "default": "0",
+   "fieldname": "add_from_sale",
+   "fieldtype": "Check",
+   "label": "Add From Sale",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-02-10 10:00:07.547803",
+ "modified": "2026-02-26 08:48:48.003545",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Payment",

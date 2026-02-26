@@ -359,7 +359,7 @@ class Sale(Document):
 			update_inventory_on_submit(self)
 		#end update inventory
 
-		update_customer_bill_balance(self)
+		update_customer_bill_balance(self.customer)
 
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.create_folio_transaction_from_pos_trnasfer", queue='short', self=self)
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit", queue='short', self=self)
@@ -405,7 +405,7 @@ class Sale(Document):
 		# frappe.throw(sql_delete_bulk)
 		frappe.db.sql(sql_delete_bulk)		
 
-		update_customer_bill_balance(self)
+		update_customer_bill_balance(self.customer)
 
 		# update to folio transaction
 		
@@ -1060,6 +1060,7 @@ def add_payment_to_sale_payment(self):
 							"pos_sale_payment":p.name,
 							"is_generate_qr":p.is_generate_qr,
 							"aba_pay_transaction":p.aba_pay_transaction,
+							"add_from_sale":1
 						})
 					doc.flags.ignore_post_general_ledger_entry = True
 					doc.flags.ignore_update_sale = True
@@ -1095,7 +1096,8 @@ def add_payment_to_sale_payment(self):
 					"working_day":self.working_day,
 					"cashier_shift":self.cashier_shift,
 					"note": "Changed amount in sale order {}".format(self.name),
-					"account_code":account_code
+					"account_code":account_code,
+					"add_from_sale":1
 				})
 			doc.flags.ignore_post_general_ledger_entry = True
 			doc.insert()
@@ -1817,19 +1819,23 @@ def update_default_change_account(self):
 			self.default_change_account = frappe.get_cached_value("POS Config",self.pos_config,"default_change_account" )
 		if not self.default_change_account:
 			self.default_change_account = frappe.get_cached_value("Business Branch",self.business_branch,"default_change_account" )
-  
-def update_customer_bill_balance(self):
-	sql ="""update `tabCustomer` c 
-			inner join (
-						select 
-							s.customer, 
-							coalesce(sum(s.balance),0) as total_balance 
-						from `tabSale` s
-						where s.docstatus = 1 and s.customer = %(customer)s 
-						group by s.customer) _s on _s.customer = c.name
-				set c.balance = _s.total_balance + c.total_coupon_balance + c.membership_balance
-			where c.name = %(customer)s"""
-	frappe.db.sql(sql,{"customer":self.customer})
+
+def update_customer_bill_balance(customer):
+	sql ="""UPDATE `tabCustomer` c
+			LEFT JOIN (
+				SELECT 
+					SUM(balance) AS total_sale_balance
+				FROM `tabSale`
+				WHERE docstatus = 1 
+				AND customer = %(customer)s
+			) s ON 1=1
+			SET c.balance = 
+				COALESCE(s.total_sale_balance, 0)
+				+ COALESCE(c.total_coupon_balance, 0)
+				+ COALESCE(c.membership_balance, 0)
+			WHERE c.name = %(customer)s"""
+	frappe.db.sql(sql,{"customer":customer})
+	frappe.db.commit()
 
 @frappe.whitelist()
 def change_table_number(data):

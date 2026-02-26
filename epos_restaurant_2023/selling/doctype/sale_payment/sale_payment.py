@@ -6,6 +6,7 @@ from frappe import _
 from frappe.model.document import Document
 from epos_restaurant_2023.selling.doctype.sale_payment.general_ledger_entry import submit_payment_to_general_ledger_entry_on_submit
 from epos_restaurant_2023.api.account import cancel_general_ledger_entery
+from epos_restaurant_2023.selling.doctype.sale.sale import update_customer_bill_balance
 class SalePayment(Document):
 	def validate(self):
 		if self.flags.ignore_validate==True:
@@ -275,22 +276,8 @@ def update_sale(self):
 				})
 				frappe.db.commit()
 	if self.sale:	
-		# update customer balance
-		update_customer_bill_balance(self)
-
-def update_customer_bill_balance(self,calcel=False):
-	from frappe.utils.synchronization import filelock
-	lock_name = f"customer_balance_{self.name}"
-	with filelock(lock_name, timeout=30):
-		sql ="""update `tabCustomer` c 
-				set c.balance =(select 
-									sum(s.balance)
-								from `tabSale` s 
-									where s.docstatus = 1 and s.customer = c.name) 
-					+ c.total_coupon_balance + c.membership_balance
-				where c.name = %(customer)s"""
-		frappe.db.sql(sql,{"customer":self.customer})
-		frappe.db.commit()
+		if not self.add_from_sale:
+			update_customer_bill_balance(self.customer)
 
 def update_customer_saving_crypto(self):
 	if self.payment_type_group == "Crypto":
