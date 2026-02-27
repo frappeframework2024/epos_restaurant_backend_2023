@@ -2,7 +2,40 @@
 
 from frappe import _
 import frappe
-from datetime import datetime, timezone
+from datetime import datetime, timezone,timedelta
+from frappe.utils import now_datetime,pretty_date
+
+
+
+@frappe.whitelist()
+def validate_on_refund_transaction(param):
+    p = param
+    tran_id = p.get("tran_id")
+    sql = """select name from `tabSale Payment` where aba_pay_transaction = %(tran_id)s"""
+    docs = frappe.db.sql(sql,{"tran_id":tran_id}, as_dict=True)
+    #Check if the transaction is older than 1 hour
+    transactions = []
+    for d in docs:
+        doc = frappe.get_doc("Sale Payment", d.name)
+        if not (doc.creation + timedelta(hours=1) < now_datetime()):
+            transactions.append({
+                "tran_id": doc.aba_pay_transaction,
+                "timeago":pretty_date(doc.creation),
+                "creation":doc.creation,
+                "now":now_datetime()
+            })  
+            
+    if len(transactions)  <= 0:
+        frappe.local.response.update({
+            "status_code":f"{404}",
+            "message": "The transaction is more than 1 hour not allow to refund",
+            "http_status_code": 404
+        })
+        return       
+        
+    
+    return transactions
+
 
 @frappe.whitelist()
 def create_error_log_enqueue(params, error):

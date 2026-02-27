@@ -21,6 +21,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import quote_plus
 from epos_restaurant_2023.api.security import aes_encrypt,get_aes_key,encode_base64,decode_base64,aes_decrypt
 from epos_restaurant_2023.api.exely import cancel_order,submit_order_to_exely
+
 from frappe.model.rename_doc import get_link_fields
 
 import re
@@ -1545,6 +1546,22 @@ def edit_sale_order(name,auth=None,note=None):
     payments = frappe.get_list("Sale Payment",fields=["name"], filters={"sale":name,"docstatus":1})
     for p in payments:
         sale_payment = frappe.get_doc("Sale Payment", p.name)
+        if sale_payment.aba_pay_transaction:
+            bus = frappe.get_doc("Business Branch", sale_doc.business_branch)
+            profile = frappe.get_doc("POS Profile", sale_doc.pos_profile)
+            property_code = bus.property_code
+            if property_code:
+                from epos_restaurant_2023.api.payway import aba_refund_payment
+                refund_param = {
+                    "tran_id":sale_payment.aba_pay_transaction,
+                    "property_code":property_code,
+                    "pos_config":profile.pos_config,
+                    "refunded_by":auth['full_name'],
+                    "refunded_note":auth["note"],
+                    "refunded_type":"Edit Invoice"
+                }
+                aba_refund_payment(**refund_param)
+    
         sale_payment.cancel()
         sale_payment.delete()
         from epos_restaurant_2023.api.utils import sync_data_to_server_on_delete

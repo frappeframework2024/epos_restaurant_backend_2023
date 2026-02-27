@@ -4,7 +4,10 @@ import frappe
 import requests
 from datetime import datetime, timezone
 from epos_restaurant_2023.api.api import get_estc_connection
-from epos_restaurant_2023.helpers.payway_helper import (create_error_log_enqueue)
+from epos_restaurant_2023.helpers.payway_helper import (
+    create_error_log_enqueue,
+    validate_on_refund_transaction
+)
 
 
 ## status code = 422  is invalid data
@@ -117,7 +120,7 @@ def aba_close_transaction(**param):
 
     conn =  get_estc_connection() 
     if not conn.get("estc_payway_socket_server_url",None):
-        return "his feature is currently unavailable."
+        return "This feature is currently unavailable."
     
     if not conn.get("estc_central_url", None) :
         status_code = 422
@@ -178,7 +181,7 @@ def aba_check_transaction(**param):
     p.pop("cmd", None)
     conn =  get_estc_connection() 
     if not conn.get("estc_payway_socket_server_url",None):
-        return "his feature is currently unavailable."
+        return "This feature is currently unavailable."
     
     if not conn.get("estc_central_url", None) :
         status_code = 422
@@ -212,14 +215,66 @@ def aba_check_transaction(**param):
 # refund payment
 @frappe.whitelist()
 def aba_refund_payment(**param):
-    # param = {
-    #     "tran_id": "",
-    #     "property_code": ""
+# **param =
+#    {
+    #     "tran_id":"" , //required
+    #     "property_code":"", //required
+    #     "pos_config":"", //required
+    #     "refunded_by":"Mr.ABC", //optional
+    #     "refunded_note":"Wrong Payment", //optional
+    #     "refunded_type":"Manual" //reqired:  Manual, Edit Invoice, Delete Invoice
     # }
-    if  frappe.request.method != "POST":        
-        frappe.local.response.update({
-            "status_code":"405",
-            "message": _("Invalid request method"),
-            "http_status_code": 405 
-        }) 
+    # if  frappe.request.method != "POST":        
+    #     frappe.local.response.update({
+    #         "status_code":"405",
+    #         "message": _("Invalid request method"),
+    #         "http_status_code": 405 
+    #     }) 
+    #     return
+
+    p = {k.strip(): v for k, v in param.items()}  
+    p.pop("cmd", None)   
+    
+    transtions = validate_on_refund_transaction(param=p)
+    if not transtions:
         return
+    
+    conn =  get_estc_connection() 
+    if not conn.get("estc_payway_socket_server_url",None):
+        return "This feature is currently unavailable."
+    
+    if not conn.get("estc_central_url", None) :
+        status_code = 422
+        frappe.local.response.update({
+            "status_code":f"{status_code}",
+            "message": _("The 'estc_central_url' is not configured in site settings. Please contact your system administrator."),
+            "http_status_code": status_code 
+        }) 
+        return  
+    
+    
+    estc_central_url = conn.get("estc_central_url", None) or ""
+    url = f"{estc_central_url}/api/method/estc.api.payway.aba_refund_payment"
+    
+    
+    t = transtions[0]
+    # Make POST request
+    ## verify=False is equivalent to CURLOPT_SSL_VERIFYPEER=false
+    p["tran_id"] = t.get("tran_id")
+    response = requests.post(url, json=p, verify=False)
+    try:
+        data = response.json()
+    except Exception :
+        data = {}
+    
+    status_code = response.status_code
+    if status_code not in [200,201]:
+        frappe.local.response.update({
+            "status_code":f"{status_code}",
+            "message": data.get("message"),
+            "http_status_code": status_code
+        })
+        return
+            
+    return data
+

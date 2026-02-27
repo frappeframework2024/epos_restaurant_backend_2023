@@ -171,7 +171,7 @@ function getTotalQuantityOrder(data) {
 
 // end price menu
 
-function onClickMenu(menu) {
+ function onClickMenu(menu) {
       if(menu.require_password == 1){
             gv.setting.pos_setting.require_password = 1
             gv.authorize("require_password","allow_to_order_menu").then(async (v) => {
@@ -182,7 +182,8 @@ function onClickMenu(menu) {
       else{
         loadMenu(menu)
       }
-      function loadMenu(menu){
+
+      async function loadMenu(menu){
         if(menu.require_password_for_submitted_sale == 1 && (sale.sale.name || "") != ""){
             gv.setting.pos_setting.require_password_for_submitted_sale = 1
             gv.authorize("require_password_for_submitted_sale","allow_click_menu_after_sale_sumitted").then(async (v) => {
@@ -303,8 +304,14 @@ function get_price_rule(){
     sale.sale.price_rule = sale.price_rule; 
 }
 
-async function onClickProduct() {
-    onSelectProduct(props.data,sale,product,dialog)
+let isProcessing = false;
+async function onClickProduct() { 
+    if(isProcessing){
+        return
+    }
+    isProcessing = true;
+    await onSelectProduct(props.data,sale,product,dialog)
+    isProcessing = false;
     
 }
 
