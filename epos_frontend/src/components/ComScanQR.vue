@@ -106,7 +106,9 @@
         try{
             const resp = await call.post("epos_restaurant_2023.api.payway.aba_generate_qr", request_params); 
             if(resp){   
-                sale.sale.show_aba_khqr = true ;
+                sale.sale.show_aba_khqr = true ;                
+                sale.sale.aba_transaction_id = resp.tran_id;
+                
                 qrData.value = {
                     "tran_id":resp.tran_id,
                     "bank_acc_name":resp.bank_acc_name,
@@ -195,6 +197,10 @@
     }
 
     function stopCheckTransaction() {
+        if(open.value){
+            sale.payway_complete_payment = true;
+        }
+
         stopped = true;
         clearTimeout(timer);
     }

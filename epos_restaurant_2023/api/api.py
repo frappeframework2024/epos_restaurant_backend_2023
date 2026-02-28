@@ -1463,9 +1463,28 @@ def delete_sale(name,auth):
     #check if sale already have payment then cancel sale payment first
     payments = frappe.get_list("Sale Payment",fields=["name"], filters={"sale":name,"docstatus":1})
     for p in payments:
-        sale_payment = frappe.get_doc("Sale Payment", p.name)
+        sale_payment = frappe.get_doc("Sale Payment", p.name)     
+           
+        #refund aba pay
+        if sale_payment.aba_pay_transaction:
+            bus = frappe.get_doc("Business Branch", sale_doc.business_branch)
+            profile = frappe.get_doc("POS Profile", sale_doc.pos_profile)
+            property_code = bus.property_code
+            if property_code:
+                from epos_restaurant_2023.helpers.payway_helper import aba_refund_payment_enqueue
+                refund_param = {
+                    "tran_id":sale_payment.aba_pay_transaction,
+                    "property_code":property_code,
+                    "pos_config":profile.pos_config,
+                    "refunded_by":auth['full_name'],
+                    "refunded_note":auth["note"],
+                    "refunded_type":"Delete Invoice"
+                }
+                aba_refund_payment_enqueue(param=refund_param,sale_doc=sale_doc)
+                
+        
         # check  if reservation deposit
-        if sale_payment.is_reservation_deposit:
+        if sale_payment.is_reservation_deposit: 
             sale_payment.sale = ""
             sale_payment.save()
         else:
@@ -1551,7 +1570,7 @@ def edit_sale_order(name,auth=None,note=None):
             profile = frappe.get_doc("POS Profile", sale_doc.pos_profile)
             property_code = bus.property_code
             if property_code:
-                from epos_restaurant_2023.api.payway import aba_refund_payment
+                from epos_restaurant_2023.helpers.payway_helper import aba_refund_payment_enqueue
                 refund_param = {
                     "tran_id":sale_payment.aba_pay_transaction,
                     "property_code":property_code,
@@ -1560,7 +1579,7 @@ def edit_sale_order(name,auth=None,note=None):
                     "refunded_note":auth["note"],
                     "refunded_type":"Edit Invoice"
                 }
-                aba_refund_payment(**refund_param)
+                aba_refund_payment_enqueue(param=refund_param,sale_doc=sale_doc)
     
         sale_payment.cancel()
         sale_payment.delete()

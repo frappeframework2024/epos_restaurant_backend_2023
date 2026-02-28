@@ -238,6 +238,7 @@
   "inventory_transaction",
   "integration_tab",
   "aba_payway_section",
+  "aba_transaction_id",
   "payment_transaction",
   "qb_integrate_section",
   "qb_customer_id",
@@ -1691,6 +1692,12 @@
    "fieldtype": "JSON",
    "label": "Payment Transaction",
    "read_only": 1
+  },
+  {
+   "fieldname": "aba_transaction_id",
+   "fieldtype": "Data",
+   "label": "ABA Transaction ID",
+   "read_only": 1
   }
  ],
  "image_field": "photo",
@@ -1713,7 +1720,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2026-02-10 15:14:11.425508",
+ "modified": "2026-02-28 09:55:24.872017",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

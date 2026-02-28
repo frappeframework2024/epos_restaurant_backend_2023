@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from epos_restaurant_2023.api.api import get_estc_connection
 from epos_restaurant_2023.helpers.payway_helper import (
     create_error_log_enqueue,
-    validate_on_refund_transaction
+    on_aba_refund_payment
 )
 
 
@@ -23,13 +23,54 @@ def aba_generate_qr(**params):
 
     p = {k.strip(): v for k, v in params.items()}  
     p.pop("cmd",None)
+    status_code = 422
+    
+    # check if sale already close
+    sale_name = (p.get("response",None) or  {}).get("invoice_id",None) or ""
+    if not frappe.db.exists("Sale", sale_name):
+        frappe.local.response.update({
+            "status_code":f"{status_code}",
+            "message": _("This sale is invalid. Please reload the system and generate the QR code again."),
+            "http_status_code": status_code
+        })
+        
+        return
+    doc_sale = frappe.get_doc("Sale",sale_name)
+    if doc_sale.docstatus == 1:
+        frappe.local.response.update({
+            "status_code":f"{status_code}",
+            "message": _("Payment for this sale has already been settled. Please leave this screen and reload the system."),
+            "http_status_code": status_code
+        })
+        return 
+    if (doc_sale.aba_transaction_id or "") != "" and (doc_sale.aba_transaction_id or "") != p.get("tran_id"):
+        frappe.local.response.update({
+            "status_code":f"{status_code}",
+            "message": _("A KHQR is already being generated for this sale. Please reload the system and try again."),
+            "http_status_code": status_code
+        })
+        return 
+    
+    
+    doc_sale.db_set("aba_transaction_id", p.get("tran_id"),update_modified=False)       
+    doc_comment = frappe.get_doc({
+        'doctype': 'Comment',
+        'subject': 'ABA generate KHQR',
+        "comment_type":"Info",
+        "reference_doctype":"Sale",
+        "reference_name":doc_sale.name,
+        "comment_by":"",
+        "custom_note":"ABA generate KHQR",
+        "content":"ABA generate KHQR with amount {} {} on PayWay transaction id: {}".format(p.get("payment_amount"), p.get("currency"), p.get("tran_id"))
+    })
+    doc_comment.insert(ignore_permissions=True)       
+        
 
     # "lifetime":5, //5min ~ default None mean 30days
     p["lifetime"] = 5 ## overrride lifetime of qr
 
     ## validate sale payment
-    if len(p.get("sale_payments",None) or []) <=0:
-        status_code = 422
+    if len(p.get("sale_payments",None) or []) <=0:        
         frappe.local.response.update({
             "status_code":f"{status_code}",
             "message": _("Payment must not be empty."),
@@ -116,6 +157,11 @@ def aba_close_transaction(**param):
     
     p = {k.strip(): v for k, v in param.items()}  
     p.pop("cmd",None)
+    
+    sale_name = p.get("invoice_id",None) or ""
+    doc_sale = frappe.get_doc("Sale",sale_name)
+    if doc_sale.docstatus == 0: 
+        doc_sale.db_set("aba_transaction_id", "",update_modified=False)
 
 
     conn =  get_estc_connection() 
@@ -212,69 +258,96 @@ def aba_check_transaction(**param):
 
 
 
-# refund payment
+
 @frappe.whitelist()
-def aba_refund_payment(**param):
-# **param =
-#    {
-    #     "tran_id":"" , //required
-    #     "property_code":"", //required
-    #     "pos_config":"", //required
+def aba_refund_payment(**param):      
+    # **param = {
+    #     "invoice_id":"" , //required
     #     "refunded_by":"Mr.ABC", //optional
     #     "refunded_note":"Wrong Payment", //optional
     #     "refunded_type":"Manual" //reqired:  Manual, Edit Invoice, Delete Invoice
-    # }
-    # if  frappe.request.method != "POST":        
-    #     frappe.local.response.update({
-    #         "status_code":"405",
-    #         "message": _("Invalid request method"),
-    #         "http_status_code": 405 
-    #     }) 
-    #     return
-
-    p = {k.strip(): v for k, v in param.items()}  
-    p.pop("cmd", None)   
+    # }  
+   
     
-    transtions = validate_on_refund_transaction(param=p)
-    if not transtions:
+    if  frappe.request.method != "POST":
+        frappe.local.response.update({
+                "status_code":"405",
+                "message": _("Invalid request method"),
+                "http_status_code": 405
+            })
         return
     
-    conn =  get_estc_connection() 
-    if not conn.get("estc_payway_socket_server_url",None):
-        return "This feature is currently unavailable."
+    p = {k.strip(): v for k, v in param.items()}
+    p.pop("cmd", None)
     
-    if not conn.get("estc_central_url", None) :
-        status_code = 422
+    
+    if not p.get("invoice_id"):
         frappe.local.response.update({
-            "status_code":f"{status_code}",
-            "message": _("The 'estc_central_url' is not configured in site settings. Please contact your system administrator."),
-            "http_status_code": status_code 
-        }) 
-        return  
-    
-    
-    estc_central_url = conn.get("estc_central_url", None) or ""
-    url = f"{estc_central_url}/api/method/estc.api.payway.aba_refund_payment"
-    
-    
-    t = transtions[0]
-    # Make POST request
-    ## verify=False is equivalent to CURLOPT_SSL_VERIFYPEER=false
-    p["tran_id"] = t.get("tran_id")
-    response = requests.post(url, json=p, verify=False)
-    try:
-        data = response.json()
-    except Exception :
-        data = {}
-    
-    status_code = response.status_code
-    if status_code not in [200,201]:
-        frappe.local.response.update({
-            "status_code":f"{status_code}",
-            "message": data.get("message"),
-            "http_status_code": status_code
+            "status_code":"405",
+            "message": _("Invalid Sale"),
+            "http_status_code": 405
         })
         return
-            
-    return data
+    sale_name = p.get("invoice_id")
+    if not frappe.db.exists("Sale",sale_name):
+        frappe.local.response.update({
+            "status_code":"405",
+            "message": _("Invalid Sale"),
+            "http_status_code": 405
+        })
+        return 
+    
+    sale_doc = frappe.get_doc("Sale",sale_name)
+    if not sale_doc.aba_transaction_id or sale_doc.sale_status == "Closed - Refunded":
+        frappe.local.response.update({
+            "status_code":"404",
+            "message": _("No payment transaction available to refund."),
+            "http_status_code": 404
+        })
+        return
+    
+    
+        
+    property_code = frappe.get_value("Business Branch", sale_doc.business_branch,"property_code") or ""
+    if property_code:
+        pos_config = frappe.get_value("POS Profile", sale_doc.pos_profile,"pos_config") or ""   
+        refund_param = {
+            "tran_id":sale_doc.aba_transaction_id,
+            "property_code":property_code, 
+            "pos_config":pos_config, 
+            "refunded_by":p.get("refunded_by"), 
+            "refunded_note":p.get("refunded_note"), 
+            "refunded_type":p.get("refunded_type",None) or "Manual"
+        }
+        
+        # p = {
+        #     "tran_id":"" , //required
+        #     "property_code":"", //required
+        #     "pos_config":"", //required
+        #     "refunded_by":"Mr.ABC", //optional
+        #     "refunded_note":"Wrong Payment", //optional
+        #     "refunded_type":"Manual" //reqired:  Manual, Edit Invoice, Delete Invoice
+        # }  
+        
+        data = on_aba_refund_payment(param=refund_param, sale_doc=sale_doc)
+        if not data:
+            return
+        
+        frappe.local.response.update({
+            "status_code":"200",
+            "message": data.get("message"),
+            "http_status_code": 200
+        })
+        return 
+    
+
+    frappe.local.response.update({
+        "status_code":"200",
+        "message": _("No payment transaction available to refund."),
+        "http_status_code": 200
+    })
+    return
+
+
+    
 

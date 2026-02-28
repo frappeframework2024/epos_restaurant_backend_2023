@@ -129,7 +129,10 @@ const handleBeforeUnload = (event) => {
 onMounted(() => { 
     window.addEventListener('beforeunload', handleBeforeUnload)
     window.addEventListener('hashchange', handleHashChange);
-    if (sale.getString(route.params.name) == "") {
+
+    //check user 
+    const make_order_auth = JSON.parse(localStorage.getItem('make_order_auth'));
+    if (sale.getString(route.params.name) == "" || make_order_auth == undefined) {
         if (sale.sale.sale_status == undefined) {
             if (sale.setting.table_groups.length > 0) {
                 router.push({ name: 'TableLayout' })

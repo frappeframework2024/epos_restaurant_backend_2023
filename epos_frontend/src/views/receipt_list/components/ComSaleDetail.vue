@@ -12,9 +12,10 @@
                     </template>
                     <v-list-item-title>{{ $t('Open Order') }}</v-list-item-title>
                 </v-list-item>
+           
                 <v-list-item @click="onEditOrder()" v-if="canEdit">
                     <template v-slot:prepend>
-                        <v-icon>mdi-checkbox-marked-outline</v-icon>
+                       <v-icon color="blue">mdi-file-edit</v-icon>
                     </template>
                     <v-list-item-title>{{ $t('Edit Order') }}</v-list-item-title>
                 </v-list-item>
@@ -24,6 +25,14 @@
                     </template>
                     <v-list-item-title>{{ $t('Change Table') }}</v-list-item-title>
                 </v-list-item>
+
+                <v-list-item @click="onRefundPayment()" v-if="canRefundPayment">
+                    <template v-slot:prepend>
+                        <v-icon color="orange">mdi-cash-refund</v-icon>
+                    </template>
+                    <v-list-item-title>{{ $t('Refund Payment') }}</v-list-item-title>
+                </v-list-item>
+
                 <v-list-item @click="OnDeleteOrder()" v-if="canDelete">
                     <template v-slot:prepend>
                         <v-icon color="error">mdi-delete</v-icon>
@@ -92,7 +101,7 @@
 
 <script setup>
 
-import { inject, ref, computed, onUnmounted, createDocumentResource, useRouter, createResource, confirm,ComChangeTableNumberDialog, smallViewSaleProductListModal, i18n } from '@/plugin';
+import { inject, ref, computed, onUnmounted, createDocumentResource, useRouter, createResource,confirmDialog, confirm,ComChangeTableNumberDialog, smallViewSaleProductListModal, i18n } from '@/plugin';
 import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 import { useDisplay } from 'vuetify';
 import { FrappeApp } from 'frappe-js-sdk';
@@ -174,6 +183,11 @@ const canOpenOrder = computed(() => {
 })
 const canDelete = computed(() => {
     return (sale.doc?.docstatus == 1 || sale.doc?.docstatus == 0) && sale.doc?.cashier_shift == cashierShiftInfo?.data?.name;
+})
+
+const canRefundPayment = computed(()=>{
+    let check_sale  = (sale.doc?.docstatus == 1) && sale.doc?.cashier_shift == cashierShiftInfo?.data?.name && (sale.doc.aba_transaction_id||"") != ""  && sale.doc.sale_status != "Closed - Refunded";
+    return check_sale;
 })
 
 
@@ -330,37 +344,83 @@ function onOpenOrder() {
     });
 }
 
-function onEditOrder() {
+async function onEditOrder() { 
     //check authorize and     check reason
     gv.authorize("edit_closed_receipt_required_password", "edit_closed_receipt", "edit_closed_receipt_required_note", "Edit Closed Receipt").then(async (v) => {
         if (v) {
             const make_order_auth = { "username": v.username, "name": v.user, discount_codes: v.discount_codes };
             localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth));
+            if( await onRefundPayment(true, v)){
+                //cancel payment first
+                isLoading.value = true;
+                const cancelSaleResource = createResource({
+                    url: "epos_restaurant_2023.api.api.edit_sale_order",
+                    params: {
+                        name: props.params.name,
+                        auth: { full_name: v.user, username: v.username, note: v.note }
+                    },
+                    onError(err) {
+                        isLoading.value = false;
+                    }
+                });
 
-            //cancel payment first
-            isLoading.value = true;
-            const cancelSaleResource = createResource({
-                url: "epos_restaurant_2023.api.api.edit_sale_order",
-                params: {
-                    name: props.params.name,
-                    auth: { full_name: v.user, username: v.username, note: v.note }
-                },
-                onError(err) {
+                await cancelSaleResource.fetch().then((v) => {
+                    router.push({ name: "AddSale", params: { name: props.params.name } });
                     isLoading.value = false;
-                }
-            });
-
-            await cancelSaleResource.fetch().then((v) => {
-                router.push({ name: "AddSale", params: { name: props.params.name } });
-                isLoading.value = false;
-                emit('resolve', "open_order");
-            })
+                    emit('resolve', "open_order");
+                });
+            }
         }
     });
 
 }
 
-function OnDeleteOrder() {
+async function onRefundPayment(ignoreAuth=false, auth=undefined){ 
+    if(!canRefundPayment.value) return true;
+    let is_continue = true;
+    const currentUser = JSON.parse(localStorage.getItem("current_user"));	
+    localStorage.setItem('make_order_auth', JSON.stringify(currentUser));
+
+    if(!ignoreAuth)
+    {
+       const v = await gv.authorize("edit_closed_receipt_required_password", "edit_closed_receipt", "edit_closed_receipt_required_note", "Edit Closed Receipt") 
+        if (v) {
+            const make_order_auth = { "username": v.username, "name": v.user, discount_codes: v.discount_codes };
+            localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth));
+        }else{
+            is_continue = false;
+        }     
+    }
+
+    if(!is_continue) return true;
+
+    const _auth = auth??JSON.parse(localStorage.getItem('make_order_auth')); 
+    if(await confirmDialog({ title: $t("Refund"), text: $t('This payment will be refunded to the customer. Do you want to continue?') })){
+        const refund_body ={ 
+            "invoice_id":sale.doc.name, //required
+            "refunded_by":_auth.user, //optional
+            "refunded_note":_auth.note, //optional
+            "refunded_type":"Manual" //reqired:  Manual, Edit Invoice, Delete Invoice    
+        }  
+        isLoading.value = true;
+        try{
+            const resp = await call.post("epos_restaurant_2023.api.payway.aba_refund_payment",refund_body);
+            toaster.success($t(resp.message));   
+        }catch (e) {
+            console.error("Refund failed:", e);            
+            toaster.error(e.message);   
+        } finally {
+            isLoading.value = false;   // ✅ always executed
+        }
+       
+        return true;
+
+    }else{
+        return false;
+    } 
+}
+
+async function OnDeleteOrder() { 
     //check authorize and     check reason
     gv.authorize("delete_bill_required_password", "delete_bill", "delete_bill_required_note", "Delete Bill Note").then(async (v) => {
         if (v) {
@@ -369,6 +429,9 @@ function OnDeleteOrder() {
                     return;
                 }
             }
+            
+            await onRefundPayment(true, v);
+
             isLoading.value = true;
             const _sale = JSON.parse(JSON.stringify(sale.doc));
             generateSaleProductPrintToKitchen(_sale, v.note);

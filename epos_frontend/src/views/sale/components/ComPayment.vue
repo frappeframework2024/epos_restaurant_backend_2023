@@ -207,7 +207,7 @@ async function onPaymentWithoutPrint(ignore = false) {
 
 function onPaymentAudit(){
     const u = JSON.parse(localStorage.getItem('make_order_auth')); 
-    let msg = `${u.name} process payment `; 
+    let msg = `${u?.name} process payment `; 
     let _payment_type ="";
     sale.sale.payment.forEach(sp => {
         _payment_type += `${sp.payment_type }: ${sp.input_amount}\n`
@@ -220,7 +220,7 @@ function onPaymentAudit(){
         comment_type:"Info",
         reference_doctype:"Sale",
         reference_name:"New",
-        comment_by:u.name,
+        comment_by:u?.name,
         content:msg,
         custom_item_description: "",
         custom_note:"",

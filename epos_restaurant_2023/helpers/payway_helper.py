@@ -2,12 +2,13 @@
 
 from frappe import _
 import frappe
+import requests
+from epos_restaurant_2023.api.api import get_estc_connection
 from datetime import datetime, timezone,timedelta
 from frappe.utils import now_datetime,pretty_date
 
 
 
-@frappe.whitelist()
 def validate_on_refund_transaction(param):
     p = param
     tran_id = p.get("tran_id")
@@ -31,10 +32,104 @@ def validate_on_refund_transaction(param):
             "message": "The transaction is more than 1 hour not allow to refund",
             "http_status_code": 404
         })
-        return       
-        
+        return  
     
     return transactions
+
+#method refund payment enqueue job
+def aba_refund_payment_enqueue(param,sale_doc):
+    frappe.enqueue(
+        "epos_restaurant_2023.helpers.payway_helper.on_aba_refund_payment", # python function or a module path as string
+        queue="short", # one of short, default, long
+        job_name="aba_refund_payment", # specify a job name
+        param = param,
+        sale_doc = sale_doc
+    )
+    
+    return {
+        "status": "queued",
+        "message": "Refund is being processed"
+    }
+    
+
+# refund payment
+def on_aba_refund_payment(param, sale_doc=None):
+    p =  param
+    transtions = validate_on_refund_transaction(param=p)
+    if not transtions:
+        return
+
+    conn =  get_estc_connection()
+    if not  conn.get("estc_payway_socket_server_url",None):
+        status_code = 404
+        frappe.local.response.update({
+            "status_code":f"{status_code}",
+            "message":"This feature is currently unavailable.",
+            "http_status_code": status_code
+        })
+        return
+
+    if not conn.get("estc_central_url", None) :
+        status_code = 422
+        frappe.local.response.update({
+            "status_code":f"{status_code}",
+            "message": "The 'estc_central_url' is not configured in site settings. Please contact your system administrator.",
+            "http_status_code": status_code
+        })
+        return
+
+
+    estc_central_url = conn.get("estc_central_url", None) or ""
+    url = f"{estc_central_url}/api/method/estc.api.payway.aba_refund_payment"
+
+
+    t = transtions[0]
+    # Make POST request
+    ## verify=False is equivalent to CURLOPT_SSL_VERIFYPEER=false
+    p["tran_id"] = t.get("tran_id")
+    response = requests.post(url, json=p, verify=False)
+    try:
+        data = response.json()
+    except Exception :
+        data = {}
+
+    status_code = response.status_code
+    if status_code not in [200,201]:
+        frappe.log_error(
+            frappe.as_json(data),
+            "REFUND FAILED"
+        )
+        frappe.local.response.update({
+            "status_code":f"{status_code}",
+            "message": data.get("message"),
+            "http_status_code": status_code
+        })
+        return
+    
+    if sale_doc:  
+        if p.get("refunded_type",None) == "Manual":
+            sale_doc.db_set({
+                "sale_status":"Closed - Refunded",
+                "sale_status_color":"#EC864B"
+            },update_modified=False)
+         
+        note = "{}: {}".format((p.get("refunded_type",None) or ""), (p.get("refunded_note",None) or ""))
+        doc_comment = frappe.get_doc({
+            'doctype': 'Comment',
+            'subject': 'ABA generate KHQR',
+            "comment_type":"Info",
+            "reference_doctype":"Sale",
+            "reference_name":sale_doc.name,
+            "comment_by":p.get("refunded_by"),
+            "custom_note":note,
+            "content":note
+        })
+        doc_comment.insert(ignore_permissions=True)
+
+    return data
+
+
+    
 
 
 @frappe.whitelist()
