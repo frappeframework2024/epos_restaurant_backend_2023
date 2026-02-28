@@ -1821,7 +1821,9 @@ def update_default_change_account(self):
 			self.default_change_account = frappe.get_cached_value("Business Branch",self.business_branch,"default_change_account" )
 
 def update_customer_bill_balance(customer):
-	sql ="""UPDATE `tabCustomer` c
+	import time
+	from pymysql.err import OperationalError
+	sql = """UPDATE `tabCustomer` c
 			LEFT JOIN (
 				SELECT 
 					SUM(balance) AS total_sale_balance
@@ -1834,8 +1836,25 @@ def update_customer_bill_balance(customer):
 				+ COALESCE(c.total_coupon_balance, 0)
 				+ COALESCE(c.membership_balance, 0)
 			WHERE c.name = %(customer)s"""
-	frappe.db.sql(sql,{"customer":customer})
-	frappe.db.commit()
+	max_retries=4
+	for attempt in range(max_retries):
+		try:
+			frappe.db.sql(sql, {"customer": customer})
+			frappe.db.commit()
+			return 
+
+		except OperationalError as e:
+			if e.args[0] in (1213, 1205):
+				frappe.db.rollback()
+				if attempt < max_retries - 1:
+					time.sleep(0.2 * (2 ** attempt))
+					continue
+				else:
+					frappe.log_error(f"Deadlock after {max_retries} retries for {customer}","Customer Balance Update Deadlock")
+					raise
+			else:
+				frappe.db.rollback()
+				raise
 
 @frappe.whitelist()
 def change_table_number(data):
