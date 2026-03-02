@@ -8,15 +8,13 @@ class InventoryTransaction(Document):
 		data = frappe.db.sql("select name, quantity, cost from `tabStock Location Product` where product_code ='{}' and stock_location = '{}' limit 1".format(self.product_code, self.stock_location), as_dict=1)
 		if data:
 			current_qty = data[0]["quantity"]
-
 			current_cost = data[0]["cost"]
 			if (current_cost or 0) == 0:
 				#get cost from product
 				p = frappe.get_doc("Product",self.product_code, "cost")
-				current_cost = p.cost or 0
+				current_cost = (p.cost or p.last_purchase_cost) or 0
 			
 			self.price = self.price or current_cost
-			
 			self.beginning_stock_value = current_qty * current_cost
 			self.quantity_on_hand = current_qty
 			self.balance = self.quantity_on_hand + (self.in_quantity or 0) - (self.out_quantity or 0)
