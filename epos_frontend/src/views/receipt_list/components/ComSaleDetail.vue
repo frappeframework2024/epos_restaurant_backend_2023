@@ -405,6 +405,7 @@ async function onRefundPayment(ignoreAuth=false, auth=undefined){
         isLoading.value = true;
         try{
             const resp = await call.post("epos_restaurant_2023.api.payway.aba_refund_payment",refund_body);
+            onRefresh();
             toaster.success($t(resp.message));   
         }catch (e) {
             console.error("Refund failed:", e);            
