@@ -261,7 +261,8 @@ def total_sale_amount_and_cost(param):
     def get_sql(type):
         sql = """select 
                         coalesce(sum(s.grand_total),0) as total_amount ,
-                        coalesce(sum(s.total_cost),0) as total_cost
+                        coalesce(sum(s.total_cost),0) as total_cost,
+                        coalesce(count(s.name),0) as total_bill
                     from `tabSale` s 
                     where 
                     s.docstatus = 1 and 
@@ -291,8 +292,10 @@ def total_sale_amount_and_cost(param):
     return {
         "today_total_amount": today_data[0].total_amount or 0,
         "today_total_cost": today_data[0].total_cost or 0,
+        "today_total_bill": today_data[0].total_bill or 0,
         "mtd_total_amount": mtd_data[0].total_amount or 0,
-        "mtd_total_cost": mtd_data[0].total_cost or 0
+        "mtd_total_cost": mtd_data[0].total_cost or 0,
+        "mtd_total_bill": mtd_data[0].total_bill or 0
     } 
 
 # param: {"param": {"pos_profiles":["POS Profile 01","POS Profile 02"], "business_branch":""}}
