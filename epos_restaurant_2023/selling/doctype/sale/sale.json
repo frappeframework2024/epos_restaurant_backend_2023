@@ -311,6 +311,7 @@
    "label": "Photo"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "custom_bill_number_prefix",
    "fieldtype": "Data",
    "label": "Custom Bill Number Prefix",
@@ -1720,7 +1721,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2026-02-28 09:55:24.872017",
+ "modified": "2026-03-06 11:14:24.087611",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",
