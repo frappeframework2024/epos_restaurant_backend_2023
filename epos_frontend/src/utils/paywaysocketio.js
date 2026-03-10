@@ -28,8 +28,8 @@ class PaywaySocket {
       transports: ['websocket', 'polling'],
       autoConnect: true, // Auto connect when instance is created
       reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
+      // reconnectionAttempts: 5,
+      // reconnectionDelay: 1000,
     });
     
     this.setupDefaultListeners();

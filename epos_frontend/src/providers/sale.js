@@ -2681,11 +2681,17 @@ export default class Sale {
             return false
         } else {
             const precision = this.setting.pos_setting.main_currency_precision;
-            if (data.paymentType.is_single_payment_type == 1 ||  data.paymentType.allow_aba_pay_with_qr_scan == 1) {
+            if (data.paymentType.is_single_payment_type == 1) {
                 this.sale.payment = [];
                 data.amount = parseFloat((parseFloat(this.sale.grand_total * data.paymentType.exchange_rate) + Number.EPSILON).toFixed(precision)); 
             }
+            else if( data.paymentType.allow_aba_pay_with_qr_scan == 1){
+                 data.amount = parseFloat((parseFloat((this.sale.balance + Number.EPSILON).toFixed(precision) * data.paymentType.exchange_rate) + Number.EPSILON).toFixed(precision)); 
+            }
+
+
             if (!this.getNumber(data.amount) == 0) {
+
                 if ((data.fee_amount || 0) == 0) {
                     data.fee_amount = parseFloat((parseFloat(data.amount / data.paymentType.exchange_rate) +  Number.EPSILON).toFixed(precision)) * (data.paymentType.fee_percentage / 100);
                 }

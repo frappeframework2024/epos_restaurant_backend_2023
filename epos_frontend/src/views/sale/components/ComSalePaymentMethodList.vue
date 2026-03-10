@@ -45,6 +45,11 @@ async function onPaymentTypeClick(pt) {
         toaster.warning( $t('msg.please save or submit your current order first', [$t('Submit') + " " + $t('or') + " " + $t('Save')]));
         return
     }
+    
+    if(pt.allow_aba_pay_with_qr_scan == 1 && !gv.estc_socket_connected){
+        toaster.warning($t("Unable to generate QR code. Please check your server connection."));
+        return
+    }
 
 
 

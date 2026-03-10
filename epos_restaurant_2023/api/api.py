@@ -1751,7 +1751,7 @@ def get_current_stay_room(stays,working_date):
     return   frappe.db.sql("select reservation_stay, room_type,room_number from `tabRoom Occupy` where date=%(date)s and reservation_stay in %(stays)s",{"stays":stays,"date":working_date},as_dict=1)
 
 def get_guest_name_with_addition_name(stays):
-    return   frappe.db.sql("select parent as reservation_stay, concat(guest_name,if(coalesce(additional_guest_name,'')='','',concat(' / ',additional_guest_name))) as guest_name from `tabReservation Stay Room` where coalesce(additional_guest_name,'') <> '' and parent in %(stays)s",{"stays":stays},as_dict=1)
+    return   frappe.db.sql("select parent as reservation_stay, concat(guest_name,if(coalesce(additional_guest_name,'')='','',concat(' / ',additional_guest_name))) as guest_name from `tabReservation Stay Room` where parent in %(stays)s",{"stays":stays},as_dict=1)
 
 @frappe.whitelist()
 def get_inhouse_reservation(property):

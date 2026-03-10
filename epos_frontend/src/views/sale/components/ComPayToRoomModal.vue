@@ -171,7 +171,6 @@ function onRoomTypeSelected(type) {
 }
 
 function onGetReservationFolio(){
-    console.log(sale.sale)
     call.get('epos_restaurant_2023.api.api.get_reservation_folio', {
         "property":gv.setting?.business_branch,
         "working_date":sale.sale.posting_date
