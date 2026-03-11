@@ -15,14 +15,13 @@
                             <div :style="{ fontSize: (t.font_size || 15) + 'px' }"><span class="font-bold">{{ t.tbl_no }}</span><span v-if="t.guest_cover">({{
                                 t.guest_cover
                                     }} )
-                                   
-                              
+                                    
                             </span></div>
                             <div v-if="t.grand_total && gv.setting.show_total_amount_on_table">
                                 <CurrencyFormat :value="t.grand_total"></CurrencyFormat>
                             </div>
 
-                            <div class="text-xs" v-if="t.customer_name && t.customer_name != 'General'">
+                            <div class="text-xs" v-if="t.customer_name && t.customer_name != 'General' && t.sales?.length > 0">
                                  {{ t.customer_name }}
                             </div>
 
