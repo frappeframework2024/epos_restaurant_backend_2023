@@ -4,7 +4,7 @@
             <v-row>
                 <v-col cols="12" sm="6">
                     
-                    <v-text-field v-if="gv.setting.pos_setting.allow_change_date_when_start_working_day=='0'" :label="$t('Working Date')" v-model="current_date" variant="solo" readonly :hide-details="true"></v-text-field>
+                    <v-text-field v-if="gv.setting.allow_change_date_on_start_working_day=='0'" :label="$t('Working Date')" v-model="current_date" variant="solo" readonly :hide-details="true"></v-text-field>
                     <ComInput v-else type="date" v-model="open_date"  class="m-1" :label="$t('Working Day')"></ComInput>
 
                 </v-col>

@@ -67,6 +67,7 @@
   "allow_change_table_after_print_bill",
   "show_system_closed_amount",
   "combo_menu_print_captain_by_items_printer",
+  "allow_change_date_on_start_working_day",
   "permission_and_note_tab",
   "delete_bill_required_password",
   "column_break_17",
@@ -1016,12 +1017,18 @@
    "fieldtype": "Data",
    "label": "PayWay Prefix Code",
    "length": 4
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_change_date_on_start_working_day",
+   "fieldtype": "Check",
+   "label": "Allow Change Date On Start Working Day"
   }
  ],
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-10 09:46:41.222029",
+ "modified": "2026-03-11 09:33:39.980572",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Config",
