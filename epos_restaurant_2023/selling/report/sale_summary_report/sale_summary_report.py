@@ -70,6 +70,8 @@ def get_columns(filters):
 		columns.append({"label":"Unit","fieldname":"unit","fieldtype":"Data","align":"center",'width':100})
 	if filters.row_group == "Product And Price":
 		columns.append({"label":"Price","fieldname":"price","fieldtype":"Currency","align":"right",'width':100})
+	if filters.row_group == "Customer" or filters.row_group == "Customer Group":
+		columns.append({"label":"Guest Cover","fieldname":"guest_cover","fieldtype":"Int","align":"left",'width':140})
 	hide_columns = filters.get("hide_columns")
 	if filters.column_group !="None" and filters.row_group not in ["Date","Month","Year"]:
 		for c in get_dynamic_columns(filters):
@@ -293,6 +295,8 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 		if filters.row_group == "Product And Price":
 			extra_columns +=  ",a.price,a.total_discount,if(coalesce(a.portion,'') = '' or coalesce(a.portion,'')='Normal','', coalesce(a.portion,'')) as `portion`, coalesce(a.modifiers,'') as modifiers"
 			extra_columns_group_by += ",a.price,a.total_discount,coalesce(a.portion,''), coalesce(a.modifiers,'')"
+		if filters.row_group == "Customer" or filters.row_group == "Customer Group":
+			extra_columns = ",sum(coalesce(b.guest_cover,0)) as guest_cover"
 	for rf in report_fields:
 		sql = strip(sql)
 		if sql[-1]==",":
