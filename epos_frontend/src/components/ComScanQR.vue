@@ -176,11 +176,26 @@
             }
             try{
                 const resp = await call.post("epos_restaurant_2023.api.payway.aba_check_transaction", request_params)
-                if(resp){
-                    if((resp.message ||"") != "" && (resp.message ||"").toLowerCase() != "pending"){
-                        stopCheckTransaction();
-                        return;
-                    }
+               
+                if(resp){ 
+                    let msg = resp.message;
+                    if (typeof msg === "string") {
+                         if((msg ||"") != "" && (msg ||"").toLowerCase() != "pending"){
+                            stopCheckTransaction();
+                            return;
+                        }
+                    } else if (typeof msg === "object") {
+                        try{
+                            sale.handlePayWayPaymentCallback(undefined,msg.data )
+                            stopCheckTransaction();
+                            return;
+                        }
+                        catch (err) {
+                            console.error("PayWay manaul callback", err);
+                        }
+                       
+                      
+                    }                   
                 } 
             }
             catch (err) {

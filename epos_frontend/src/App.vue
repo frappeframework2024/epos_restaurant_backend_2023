@@ -239,7 +239,7 @@ if (!localStorage.getItem("pos_profile")) {
 }
 
 async function onPayWaySocketSetup(doc) {	
-	console.log({"estc socket":doc.estc_payway_socket_server_url}) 
+	// console.log({"estc socket":doc.estc_payway_socket_server_url}) 
 	const payway_socket = createPaywaySocket(doc.estc_payway_socket_server_url);
 	// ABA Socket Client Join Room
 	const myRoom = doc.property_code; // unique per client

@@ -14,10 +14,18 @@
                         <div>
                             <div :style="{ fontSize: (t.font_size || 15) + 'px' }"><span class="font-bold">{{ t.tbl_no }}</span><span v-if="t.guest_cover">({{
                                 t.guest_cover
-                                    }})</span></div>
+                                    }} )
+                                   
+                              
+                            </span></div>
                             <div v-if="t.grand_total && gv.setting.show_total_amount_on_table">
                                 <CurrencyFormat :value="t.grand_total"></CurrencyFormat>
                             </div>
+
+                            <div class="text-xs" v-if="t.customer_name && t.customer_name != 'General'">
+                                 {{ t.customer_name }}
+                            </div>
+
                             <div v-if="t.creation && gv.setting.show_time_ago_on_table" class="text-xs">
                                 <v-icon icon="mdi-clock" size="x-small"></v-icon>
                                 {{ getTimeDifference(t.creation) }}

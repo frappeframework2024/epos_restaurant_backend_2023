@@ -53,10 +53,13 @@ export default class TableLayout {
             parent.table_groups.forEach(function (g) {
                 g.tables.forEach(function (t) { 
                     t.sales = data.filter(r => r.tbl_group == g.table_group && r.table_id == t.id)
+
                     if (t.sales.length > 0) {
+                        let priority =  t.sales.sort((a, b) => a.sale_status_priority - b.sale_status_priority)[0];
                         t.guest_cover = t.sales.reduce((n, r) => n + r.guest_cover, 0)
                         t.grand_total = t.sales.reduce((n, r) => n + r.grand_total, 0)
-                        t.background_color = t.sales.sort((a, b) => a.sale_status_priority - b.sale_status_priority)[0].sale_status_color;
+                        t.background_color = priority.sale_status_color;
+                        t.customer_name = priority.customer_name;
                         t.creation = Enumerable.from(t.sales).orderBy("$.creation").select("$.creation").toArray()[0]
                     } else {
                         t.guest_cover = 0;
