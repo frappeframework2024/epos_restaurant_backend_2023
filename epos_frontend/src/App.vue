@@ -212,8 +212,7 @@ if (!localStorage.getItem("pos_profile")) {
 					},
 					auto: true,
 				})
-			}  
-
+			}   
 			if(doc.estc_payway_socket_server_url ||"" != ""){
 				onPayWaySocketSetup(doc);
 			}	
@@ -244,13 +243,13 @@ async function onPayWaySocketSetup(doc) {
 	// ABA Socket Client Join Room
 	const myRoom = doc.property_code; // unique per client
 
+	
+
 
 	// Listen to connection and disconnection explicitly
     payway_socket.on('connect', () => {
 		gv.estc_socket_connected = true;
         console.log('✅ Connected to Payway server:', payway_socket.getId());
-
-
     });
 
     payway_socket.on('disconnect', (reason) => {
@@ -258,6 +257,8 @@ async function onPayWaySocketSetup(doc) {
         console.log('❌ Disconnected from Payway server:', reason);
     });
 
+
+	
 
 
 	// payway_socket.emit('joinRoom', myRoom);

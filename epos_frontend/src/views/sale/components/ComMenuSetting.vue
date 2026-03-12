@@ -92,15 +92,6 @@
   const dialogRef = inject('dialogRef');
   
   function onSaveSetting() { 
-    
-    if (gv.itemMenuSetting.sort_order_by != backup_setting.value.sort_order_by || gv.itemMenuSetting.sort_menu_order_by != backup_setting.value.sort_menu_order_by ) {
-      if (product.setting.pos_menus.length == 0) {
-        product.getProductMenuByProductCategory()
-      }else {
-        product.loadPOSMenu()
-      }
-    }
-
     if(gv.itemMenuSetting.show_menu_language !=backup_setting.value.show_menu_language ){
       sale.load_menu_lang = true;  
       localStorage.setItem("mLang",gv.itemMenuSetting.show_menu_language);   
@@ -108,6 +99,14 @@
     }
     
     localStorage.setItem("item_menu_setting", JSON.stringify(gv.itemMenuSetting));
+
+    if (gv.itemMenuSetting.sort_order_by != backup_setting.value.sort_order_by || gv.itemMenuSetting.sort_menu_order_by != backup_setting.value.sort_menu_order_by ) {
+      if (product.setting.pos_menus.length == 0) {
+        product.getProductMenuByProductCategory()
+      }else {
+        product.loadPOSMenu()
+      }
+    }
     dialogRef.value.close()
   }
 
