@@ -2,6 +2,14 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Stock Adjustment", {
+	 onload(me) { 
+        frappe.realtime.on("product_notification", (data) => {
+            frappe.show_alert({
+                message: data.message,
+                indicator: 'blue'
+            });
+        });
+	},
 	refresh(frm) {
 		frm.set_query("product_code","products", function() {
             return {
@@ -10,7 +18,12 @@ frappe.ui.form.on("Stock Adjustment", {
                 ]
             }
         });
-		
+		 frappe.realtime.on("product_notification", (data) => {
+            frappe.show_alert({
+                message: data.message,
+                indicator: 'blue'
+            });
+        });
 	},
 	setup(frm) {
 		for (const key in frm.fields_dict) {

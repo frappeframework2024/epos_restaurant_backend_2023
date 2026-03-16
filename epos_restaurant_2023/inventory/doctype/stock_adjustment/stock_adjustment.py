@@ -41,7 +41,8 @@ class StockAdjustment(Document):
 		if len(self.products)<=10:
 			update_inventory_on_submit(self)
 		else:
-			frappe.enqueue("epos_restaurant_2023.inventory.doctype.stock_adjustment.stock_adjustment.update_inventory_on_submit", queue='short', self=self)
+			frappe.publish_realtime("product_notification", {"message": "Updating inventory"},user=frappe.session.user)
+			frappe.enqueue("epos_restaurant_2023.inventory.doctype.stock_adjustment.stock_adjustment.update_inventory_on_submit", queue='long', self=self)
 		
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			if self.difference_amount != 0 or self.difference_quantity != 0:
@@ -92,6 +93,7 @@ def update_inventory_on_submit(self):
 				'note': 'New Stock adjustment submitted.',
 				"action":"Submit"
 			})
+	frappe.publish_realtime("product_notification", {"message": "Inventory updated successfully."},user=frappe.session.user)
 
 
 def general_ledger(self):
