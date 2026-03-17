@@ -33,7 +33,8 @@
 <script setup>
 import { ref, inject, i18n } from "@/plugin"
 const props = defineProps({
-    sale_product: Object
+    sale_product: Object,
+    sale: Object
 })
 import { createToaster } from '@meforma/vue-toaster';
 const toaster = createToaster({ position: "top-right" });
@@ -51,8 +52,14 @@ function getProductUnit() {
     loading.value = true
     db.getDoc("Product", props.sale_product.product_code).then((doc) => {
         loading.value = false
-        prices.value = doc.product_price
-
+        doc.product_price.forEach(p => {
+        if(p.price_rule == props.sale.price_rule){
+                prices.value.push({
+                    unit: p.unit,
+                    price: p.price
+                })
+            }
+        })
         if (prices.value.length == 0) {
             prices.value.push({
                 unit: doc.unit,

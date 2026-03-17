@@ -100,7 +100,12 @@ function generateFilter() {
 
     resource.data.fields.filter(r => r.in_standard_filter == 1).forEach((r) => {
         if (r.value) {
-            filter[r.fieldname] = ["like", getFiltervalue(r,"like")]
+            if(r.fieldtype == 'Date' || r.fieldtype == 'Datetime'){
+                 filter[r.fieldname] = ["=", getFiltervalue(r,"=")]
+            }
+            else{
+                 filter[r.fieldname] = ["like", getFiltervalue(r,"like")]
+            }
         }
     });
     

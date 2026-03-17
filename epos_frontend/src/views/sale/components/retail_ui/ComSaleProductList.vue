@@ -99,7 +99,7 @@
                   <CurrencyFormat :value="sp.price" />
                 </span>
                 <span>
-                  <ComProductUnit :sale_product="sp" />
+                  <ComProductUnit :sale_product="sp" :sale="sale.sale"/>
                 </span>
               </template>
               <template v-else>
