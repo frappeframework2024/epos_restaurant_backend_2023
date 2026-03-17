@@ -29,6 +29,15 @@ frappe.query_reports["Product Quantity"] = {
 			"on_change": function (query_report) {},
 		},
 		{
+			fieldname: "vendor",
+			label: __("Vendor"),
+			fieldtype: "MultiSelectList",
+			get_data: function(txt) {
+				return frappe.db.get_link_options('Vendor', txt);
+			},
+			"on_change": function (query_report) {},
+		},
+		{
 			"fieldname": "product_group",
 			"label": __("Product Group"),
 			"fieldtype": "Link",
@@ -36,7 +45,6 @@ frappe.query_reports["Product Quantity"] = {
 			"get_query": function() {
                 return {
                     filters: {
-                        // Define the filter conditions here
                         "parent_product_category": 'All Product Categories', // Example: only show active product categories
                     }
                 };
@@ -99,6 +107,13 @@ frappe.query_reports["Product Quantity"] = {
 			"options": "ASC\nDesc",
 			"default":"ASC",
 			hide_in_filter:1,
+			"on_change": function (query_report) {},
+		},
+		{
+			"fieldname": "show_none_stock_product",
+			"label": __("Show None Stock Product"),
+			"fieldtype": "Check",
+			"default": 0,
 			"on_change": function (query_report) {},
 		}
 	],
