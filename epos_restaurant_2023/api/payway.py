@@ -179,14 +179,16 @@ def aba_close_transaction(**param):
 
     estc_central_url = conn.get("estc_central_url", None) or ""
     url = f"{estc_central_url}/api/method/estc.api.payway.aba_close_transaction"
+ 
 
     # Make POST request
     ## verify=False is equivalent to CURLOPT_SSL_VERIFYPEER=false
     response = requests.post(url, json=p, verify=False) 
+     
     try:
         data = response.json() 
     except Exception:
-        data = {}   
+        data = {}  
     
     status_code = response.status_code
     if status_code not in [200,201]:

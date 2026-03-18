@@ -25,8 +25,6 @@ additional_print_settings =["compact_item_print"]
 
 
 
-
-
 # include js, css files in header of web template
 # web_include_css = "/assets/epos_restaurant_2023/css/epos_restaurant_2023.css"
 # web_include_js = "/assets/epos_restaurant_2023/js/epos_restaurant_2023.js"
@@ -232,6 +230,7 @@ scheduler_events = {
 
 
 
+
 # Testing
 # -------
 
@@ -243,8 +242,7 @@ scheduler_events = {
 override_whitelisted_methods = {
 	# "frappe.desk.doctype.event.event.get_events": "epos_restaurant_2023.event.get_events"
     "frappe.desk.desktop.get_workspace_sidebar_items" : "epos_restaurant_2023.api.api.get_workspace_sidebar_items",
-    "frappe.desk.query_report.export_query" : "epos_restaurant_2023.api.data_export.data_export_override.export_to_excel",
-    
+    "frappe.desk.query_report.export_query" : "epos_restaurant_2023.api.data_export.data_export_override.export_to_excel"
 }
  
 #

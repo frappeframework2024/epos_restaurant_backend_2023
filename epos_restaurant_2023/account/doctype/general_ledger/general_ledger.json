@@ -5,24 +5,30 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "business_branch",
   "posting_date",
   "account",
   "account_type",
   "credit_amount",
   "debit_amount",
+  "column_break_wlvg",
   "againt",
   "againt_voucher_type",
   "againt_voucher_number",
+  "column_break_xrka",
   "voucher_type",
   "voucher_subtype",
   "voucher_number",
-  "business_branch",
-  "remark",
   "is_cancelled",
+  "qb_synced",
+  "section_break_xczp",
   "party_type",
   "party",
+  "column_break_kjjm",
   "party_name",
-  "amount"
+  "amount",
+  "section_break_xcjr",
+  "remark"
  ],
  "fields": [
   {
@@ -143,12 +149,38 @@
    "in_list_view": 1,
    "label": "Account Type",
    "search_index": 1
+  },
+  {
+   "fieldname": "column_break_wlvg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_xrka",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_xczp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_kjjm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_xcjr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "qb_synced",
+   "fieldtype": "Check",
+   "label": "QB Synced"
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-20 11:19:50.474120",
+ "modified": "2026-03-18 14:05:39.058983",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "General Ledger",

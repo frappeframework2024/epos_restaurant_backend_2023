@@ -1,0 +1,115 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-03-17 15:53:47.905551",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sync_mode",
+  "qb_tax_account_code",
+  "qb_discount_account_code",
+  "enabled",
+  "column_break_cvlf",
+  "sync_based_on",
+  "available_branch",
+  "data_mapping_section",
+  "tbl_chart_of_account_mapping",
+  "tbl_payment_types_mapping",
+  "tbl_categories_mapping",
+  "tbl_customers_mapping"
+ ],
+ "fields": [
+  {
+   "default": "Journal entry by revenue group",
+   "fieldname": "sync_mode",
+   "fieldtype": "Select",
+   "label": "Sync Mode",
+   "options": "By Invoice\n1 Invoice all sale product\n1 Invoice by revenue group\nJournal entry by revenue group"
+  },
+  {
+   "fieldname": "qb_tax_account_code",
+   "fieldtype": "Data",
+   "label": "QB Tax Account Code"
+  },
+  {
+   "fieldname": "qb_discount_account_code",
+   "fieldtype": "Data",
+   "label": "QB Discount Account Code"
+  },
+  {
+   "fieldname": "column_break_cvlf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  },
+  {
+   "fieldname": "data_mapping_section",
+   "fieldtype": "Section Break",
+   "label": "Data Mapping"
+  },
+  {
+   "fieldname": "tbl_payment_types_mapping",
+   "fieldtype": "Table",
+   "label": "Payment Types Mapping",
+   "options": "Quickbooks Mapping"
+  },
+  {
+   "fieldname": "tbl_categories_mapping",
+   "fieldtype": "Table",
+   "label": "Categories Mapping",
+   "options": "Quickbooks Mapping"
+  },
+  {
+   "fieldname": "tbl_customers_mapping",
+   "fieldtype": "Table",
+   "label": "Customers Mapping",
+   "options": "Quickbooks Mapping"
+  },
+  {
+   "depends_on": "eval:doc.sync_mode != \"By Invoice\"",
+   "fieldname": "sync_based_on",
+   "fieldtype": "Select",
+   "label": "Sync Based On",
+   "options": "\nClose Cashier Shift\nClose Working Day"
+  },
+  {
+   "fieldname": "available_branch",
+   "fieldtype": "Table",
+   "label": "Available Branch",
+   "options": "Quickbooks Available Branch"
+  },
+  {
+   "fieldname": "tbl_chart_of_account_mapping",
+   "fieldtype": "Table",
+   "label": "Chart of Account Mapping",
+   "options": "Quickbooks Mapping"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-03-18 16:12:09.828668",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "Quickbooks Desktop Integration",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

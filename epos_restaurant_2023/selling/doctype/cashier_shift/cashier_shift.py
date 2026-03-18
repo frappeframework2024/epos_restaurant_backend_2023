@@ -113,14 +113,20 @@ class CashierShift(Document):
 		frappe.clear_document_cache("Cashier Shift",self.name)
 		if self.flags.ignore_on_update == True:
 			return
+		
 		query ="update `tabSale` set  shift_name='{}' where cashier_shift='{}'".format(self.shift_name,self.name)
 		frappe.db.sql(query)
+
+		if self.has_value_changed("is_closed"):
+			if self.is_closed == 1:
+				from epos_restaurant_2023.api.qb.controller import add_quickbooks_sync_queue
+				add_quickbooks_sync_queue(self.name,"Cashier Shift",self.posting_date)
+
 		if 'edoor' in frappe.get_installed_apps():
 			old_doc = self.get_doc_before_save()
 			if old_doc:
 				if old_doc.is_closed ==0 and self.is_closed ==1:
 					current_sort = frappe.db.get_value("Shift Type",self.shift_name, "sort")
-					 
 					if self.is_edoor_shift==1 and  self.is_run_night_audit==0:
 						if frappe.get_cached_value("eDoor Setting", None, "create_next_cashier_shift_after_close_shift"):
 							if current_sort != 3:

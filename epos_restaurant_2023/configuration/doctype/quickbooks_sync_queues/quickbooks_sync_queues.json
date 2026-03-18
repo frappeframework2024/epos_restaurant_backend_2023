@@ -1,0 +1,83 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-03-18 11:32:28.872327",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "action",
+  "status",
+  "column_break_zjtw",
+  "action_type",
+  "reference_name",
+  "section_break_myrj",
+  "payload",
+  "reference_gl_entries"
+ ],
+ "fields": [
+  {
+   "fieldname": "action",
+   "fieldtype": "Select",
+   "label": "Action",
+   "options": "Add\nUpdate\nDelete"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Pending\nProcessing\nCompleted"
+  },
+  {
+   "fieldname": "column_break_zjtw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "action_type",
+   "fieldtype": "Data",
+   "label": "Action Type"
+  },
+  {
+   "fieldname": "reference_name",
+   "fieldtype": "Data",
+   "label": "Reference Name"
+  },
+  {
+   "fieldname": "section_break_myrj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "payload",
+   "fieldtype": "Long Text",
+   "label": "Payload"
+  },
+  {
+   "fieldname": "reference_gl_entries",
+   "fieldtype": "Long Text",
+   "label": "Reference GL Entries"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-03-18 16:22:08.350256",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "Quickbooks Sync Queues",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

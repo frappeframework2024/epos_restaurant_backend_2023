@@ -104,20 +104,15 @@ onMounted(async () => {
                 await printPreviewDialog(
                     { title: $t('Working Day Report') + " #" + doc.name, doctype: "Working Day", name: doc.name }
                 )
-
                 router.push({ name: "Home" });
                 gv.cashierShift = "";
                 gv.workingDay = "";
-
             },
-
         },
-
     });
 })
 
 async function onCloseWorkingDay() {
-    
     if (gv.setting.pos_setting.allow_closed_working_day_when_has_pending_order == 0) {
         if (pendingOrder.value == 0) {
             if (await confirm({ title: $t("Close Working Day"), text: $t("msg.are you sure to close working day") })) {

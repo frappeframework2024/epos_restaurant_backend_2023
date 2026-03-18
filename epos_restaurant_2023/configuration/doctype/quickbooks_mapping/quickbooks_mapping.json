@@ -1,0 +1,57 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-03-17 16:06:02.595164",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "qb_name",
+  "qb_description",
+  "reference_type",
+  "reference_name"
+ ],
+ "fields": [
+  {
+   "fieldname": "qb_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "QB Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "reference_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Reference Type",
+   "options": "Payment Type\nRevenue Group\nCustomer\nProduct\nChart Of Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "reference_name",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "label": "Reference Name",
+   "options": "reference_type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "qb_description",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "QB Description"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-03-18 15:58:57.530814",
+ "modified_by": "Administrator",
+ "module": "Configuration",
+ "name": "Quickbooks Mapping",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
