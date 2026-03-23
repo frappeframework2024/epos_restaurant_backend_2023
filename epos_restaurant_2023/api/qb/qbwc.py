@@ -6,7 +6,18 @@ from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
 
 from wsgiref.simple_server import make_server 
-from .qbwc_helper import qbxml_to_json
+from .qbwc_helper import  qbxml_to_json
+from .qbwc_handle_response import  (
+    handle_qb_response,
+    handle_qb_company_response,
+)
+from epos_restaurant_2023.api.qb.request.qbwc_journal_entry import add_journal_xml
+from epos_restaurant_2023.api.qb.request.qbwc_invoice import add_ar_invoice_xml
+from epos_restaurant_2023.api.qb.request.qbwc_get_data import ( 
+        get_qb_chart_of_account_xml,
+        get_qb_payment_type_xml,
+        get_qb_customer_xml
+    )
 
 # ────────── Frappe Context Helpers ──────────
 def init_frappe():
@@ -56,157 +67,164 @@ class QuickBooksService(ServiceBase):
     @srpc(Unicode, Unicode, _returns=Iterable(Unicode))
     def authenticate(strUserName, strPassword):
         print(f"authenticate called → user: {strUserName}, pass: {strPassword[:4]}...")
-        if strUserName == "Admin" and strPassword == "Admin@123":
-            ticket = f"session_{strUserName}_{int(time.time()*1000)}"
-            sessions[ticket] = {"username": strUserName, "created": time.time(), "last_seen": time.time()}
-            print(f"Authentication SUCCESS → ticket = {ticket}")
-            yield ticket
-            yield ""  # use currently open company file
-        else:
-            print("Authentication FAILED")
-            yield "nvu"
+        
+        
+        try:
+            init_frappe()
+            conf = frappe.db.sql("""
+                                 select 
+                                    business_branch 
+                                 from `tabQuickbooks Available Branch` 
+                                 where 1=1
+                                 and web_connecter_username = %(usr)s 
+                                 and web_connecter_password = %(pwd)s""", 
+                                {
+                                    "usr":strUserName,
+                                    "pwd":strPassword
+                                }, as_dict= True)
+            
+            
+            if len(conf) > 0:
+                ticket = f"session_{strUserName}_{int(time.time()*1000)}"
+                sessions[ticket] = {"username": strUserName, "companies":conf, "created": time.time(), "last_seen": time.time()}
+                
+                print(f"Branchs=> {conf}")
+                print(f"Authentication SUCCESS → ticket = {ticket}")
+                yield ticket
+                yield ""  # use currently open company file
+            else:
+                print("Authentication FAILED")
+                yield "nvu"
+                
+                
+        finally:
+            close_frappe()
 
     # ─── Send requests to QuickBooks (QBXML) ───
     @rpc(Unicode, Unicode, Unicode, Unicode, Unicode, Unicode, _returns=Unicode) 
     def sendRequestXML(ctx, ticket, strHCPResponse, strCompanyFileName, qbXMLCountry, qbXMLMajorVers, qbXMLMinorVers):
- 
         try:
             init_frappe()
             if ticket not in sessions:
-                return ""     
+                return ""    
             
-            return """<?xml version="1.0"?>
-            <?qbxml version="13.0"?>
-            <QBXML>
-            <QBXMLMsgsRq onError="continueOnError">
-                <CustomerTypeQueryRq requestID="CustomerTypesAll" >
-                <MaxReturned>1000</MaxReturned>
-                </CustomerTypeQueryRq>
-                
-                <VendorTypeQueryRq requestID="VendorTypesAll" >
-                <MaxReturned>1000</MaxReturned>
-                </VendorTypeQueryRq>
+            companies = tuple(
+                d['business_branch'] 
+                for d in (sessions[ticket].get("companies", None) or [])
+            )
 
-                <ClassQueryRq requestID="ClassesAll">
-                <MaxReturned>1000</MaxReturned>
-                </ClassQueryRq>
+            if not companies:
+                queues = []
+            else:
+                queues = frappe.db.sql(""" 
+                    SELECT 
+                        name, 
+                        business_branch,
+                        request_id,
+                        action, 
+                        action_type,
+                        payload,
+                        reference_name,
+                        code 
+                    FROM `tabQuickbooks Sync Queues` 
+                    WHERE business_branch IN %(companies)s 
+                    AND status IN ('Pending', 'Error')
+                """, {
+                    "companies": companies
+                }, as_dict=1)
                             
-                <AccountQueryRq requestID="AccountsAll">
-                <MaxReturned>1000</MaxReturned>
-                <ActiveStatus>All</ActiveStatus>
-                </AccountQueryRq>
+            add_journal_xmls =[]
+            add_invoice_xmls = [] # add invoice as credit (pos pay on-account)
+            get_coa_xml = "" #get chart of account
+            get_pt_xml = "" # get payment type / payment method           
+            get_cus_xml = "" # get customer        
+           
+            
+            for q in queues :
+                action_type = q.get("action_type",None)
+                action = q.get("action",None)   
+                requestID = q.get("request_id",None) or q.get("name",None)
+                if action_type == "GL Entry":                    
+                    # pass
+                    if action == "Add":                                            
+                        val = add_journal_xml(
+                                queuesData= q.get("payload",None),
+                                RefNumber=q.get("code",None),
+                                requestID= requestID,
+                                JEMemo=q.get("reference_name",None)
+                            )                        
+                        if val:
+                            add_journal_xmls.append(val)
+                            
+                        pass    
+                elif  action_type == "Sale":
+                     if action == "Add":
+                        val = add_ar_invoice_xml(                            
+                            queuesData= q.get("payload",None),
+                            RefNumber=q.get("code",None),
+                            requestID= requestID
+                        )
+                        if val:
+                            add_invoice_xmls.append(val)
+                        
+                    
+                elif action_type == "Chart Of Account":
+                    if action == "Get":
+                        get_coa_xml = get_qb_chart_of_account_xml(requestID=requestID)
+                        
+                elif action_type == "Payment Type":
+                    if action == "Get":
+                        get_pt_xml = get_qb_payment_type_xml(requestID= requestID)
+                        
+                elif action_type == "Customer":
+                    if action == "Get":
+                        get_cus_xml = get_qb_customer_xml(requestID= requestID)
+                        
+                else:
+                    pass 
                 
-                <PaymentMethodQueryRq requestID="PaymentMethodsAll">
-                <MaxReturned>100</MaxReturned>
-                </PaymentMethodQueryRq>
-                
-                <CustomerQueryRq requestID="CustomerAll" >
-                <MaxReturned>1000</MaxReturned>
-                <ActiveStatus>All</ActiveStatus>
-                </CustomerQueryRq>
-
-            </QBXMLMsgsRq>
-            </QBXML>"""
-            
-            ## get 1000 customers
-            # return """<?xml version="1.0"?>
-            # <?qbxml version="13.0"?>
-            # <QBXML>
-            # <QBXMLMsgsRq onError="continueOnError">
-            #     <CustomerQueryRq requestID="1" >
-            #     <MaxReturned>1000</MaxReturned>
-            #     <ActiveStatus>All</ActiveStatus>
-            #     </CustomerQueryRq>
-            # </QBXMLMsgsRq>
-            # </QBXML>"""
-            
-            
-            
-            
-            
-            customer_list = frappe.db.sql("select name from `tabCustomer` where coalesce(note,'') = '' ", as_dict= True)
-            print(f"Customers: {len( customer_list)}")
-            if len( customer_list) <=0:
-                print("No pending customers to sync")
-                return ""
-
-            msgs = ""
-            for c in customer_list:
-                doc = frappe.get_doc("Customer", c.get("name"))
-                msgs += f"""
-                <CustomerAddRq requestID="{doc.name}">
-                    <CustomerAdd>
-                        <Name>{doc.name}</Name>
-                    </CustomerAdd>
-                </CustomerAddRq>
-                """ 
-                
-            qbxml = f"""<?xml version="1.0"?>
-                <?qbxml version="13.0"?>
-                <QBXML>
+            qbxmls = f"""
+            <?xml version="1.0" encoding="utf-8"?>
+            <?qbxml version="15.0"?>
+            <QBXML>
                 <QBXMLMsgsRq onError="continueOnError">
-                    {msgs}
+                    <CompanyQueryRq requestID="getCompany"/>
+                    {get_coa_xml}
+                    {get_cus_xml}
+                    {get_pt_xml}
+                    {''.join(add_invoice_xmls)}
+                    {''.join(add_journal_xmls)}
                 </QBXMLMsgsRq>
-                </QBXML>"""
+            </QBXML>
+            """ 
+            
+            #print(f"Request XML: {qbxmls.strip()}")   
+            return qbxmls.strip()
+            
         
-            #onError: continueOnError,stopOnError
-            print(f"Sending QBXML for {len(customer_list)} customers")
-            return qbxml.strip()
+        
         finally:
             close_frappe()
 
     # ─── Receive responses from QuickBooks ───
     @rpc(Unicode, Unicode, Unicode, Unicode, _returns=Integer)
     def receiveResponseXML(ctx, ticket, response, hresult, message):
-        
-        
-       
-        print("=== receiveResponseXML called ===")        
-        json_output = qbxml_to_json(response)
-        print(json_output)
-        return 100
-
-        try:
-            init_frappe()
-            import xml.etree.ElementTree as ET
-            root = ET.fromstring(response)
-            print(root)
-            
-            
-            # Find all CustomerAddRs elements
-            for cust_rs in root.findall(".//CustomerAddRs"):
-                status_code = cust_rs.attrib.get("statusCode", "")
-                status_message = cust_rs.attrib.get("statusMessage", "")
-                request_id = cust_rs.attrib.get("requestID")
-                if status_code == "0":
-                    # Success → mark customer as synced
-                    print(f"Customer added successfully: {status_message}")
-                    doc = frappe.get_doc("Customer", request_id)
-                    doc.db_set("note","Synced")
-                    
-                elif status_code == "3100":   
-                    # Duplicate → ignore and mark as synced
-                    doc = frappe.get_doc("Customer", request_id)
-                    doc.db_set("note","Synced (duplicate in QB)")                    
-                    print(f"{request_id} already exists in QB, marked as Synced")
+        print("=== receiveResponseXML called ===") 
+        if response:  
+            print(response)
+            try:
+                init_frappe()
+                company_name = handle_qb_company_response(xml_string=response)   
                 
-                else:
-                    # Error → log for review or retry
-                    print(f"Customer add ERROR: {status_code} → {status_message}")
-                    # Optional: update customer note for error tracking
-                    
-                    if request_id:
-                        print(f"{request_id} => Error: {status_message}")
-                        
-                        # frappe.db.set_value("Customer", request_id, "note", f"Error: {status_message}")
-            frappe.db.commit()
-        except ET.ParseError as e:
-            print("Failed to parse QBXML response:", e)
-        
-        finally:
-            close_frappe()
-
-        return 100
+                handle_qb_response(xml_string=response, company_name = company_name )  
+                return 100
+                
+            finally:
+                close_frappe()
+        else:
+            print(f"There're response data xml: {message}")
+            return 100
+            
 
     @rpc(Unicode, _returns=Unicode)
     def getLastError(ctx, ticket):
@@ -245,32 +263,20 @@ def run_server():
     while True:
         time.sleep(10)
 
-
-
-
 # -----------------------------
 # Frappe endpoint to wrap Spyne WSGI app
 # -----------------------------
 
 
 @frappe.whitelist(allow_guest=True)
-def qbwc():
-    from werkzeug.wrappers import Response
+def test_me(queues_id):
     
-    environ = frappe.request.environ
-    response = []
-
-    def start_response(status, headers):
-        response.append((status, headers))
-
-    result = wsgi_application(environ, start_response)
-
-    status, headers = response[0]
-
-    body = b"".join(result)
-
-    return Response(
-        body,
-        status=int(status.split()[0]),
-        headers=dict(headers)
+    q = frappe.get_doc("Quickbooks Sync Queues",queues_id)
+    
+    return add_ar_invoice_xml(
+        queuesData= q.get("payload",None),
+        RefNumber=q.get("code",None),
+        requestID= q.get("request_id",None)
     )
+    
+    

@@ -415,7 +415,9 @@ def submit_sale_to_general_ledger_entry(self):
 					"business_branch": self.business_branch,
 				}
 			docs.append(doc)
-   
+	for a in docs:
+		a["working_day"] = self.working_day
+		a["cashier_shift"] = self.cashier_shift
 	submit_general_ledger_entry(docs=docs)
 
 def get_expense_account(self,recipe):

@@ -184,6 +184,13 @@ if (!localStorage.getItem("pos_profile")) {
 		cache: "get_system_settings",
 		auto: true,
 		onSuccess(doc)  { 
+
+			//connect estc-socket-server
+			if((doc.estc_payway_socket_server_url ||"") != ""){
+				onPayWaySocketSetup(doc);
+			}	
+
+
 			const customer_display_key = `${doc.business_branch}_${pos_profile}_${doc.device_setting.device_id}`;
 			state.isLoading = false;
 			localStorage.setItem("setting", JSON.stringify(doc)); 
@@ -213,9 +220,7 @@ if (!localStorage.getItem("pos_profile")) {
 					auto: true,
 				})
 			}   
-			if(doc.estc_payway_socket_server_url ||"" != ""){
-				onPayWaySocketSetup(doc);
-			}	
+			
 		},
 		onError(x) {
 			if (x.error_text == undefined) {

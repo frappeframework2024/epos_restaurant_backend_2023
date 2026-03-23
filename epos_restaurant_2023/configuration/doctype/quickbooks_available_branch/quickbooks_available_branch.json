@@ -7,18 +7,12 @@
  "engine": "InnoDB",
  "field_order": [
   "business_branch",
-  "column_break_gpeh",
+  "column_break_wdlj",
   "web_connecter_username",
-  "column_break_fquz",
+  "column_break_gpeh",
   "web_connecter_password"
  ],
  "fields": [
-  {
-   "fieldname": "business_branch",
-   "fieldtype": "Link",
-   "label": "Business Branch",
-   "options": "Business Branch"
-  },
   {
    "fieldname": "column_break_gpeh",
    "fieldtype": "Column Break"
@@ -26,22 +20,35 @@
   {
    "fieldname": "web_connecter_username",
    "fieldtype": "Data",
-   "label": "Web Connecter Username"
-  },
-  {
-   "fieldname": "column_break_fquz",
-   "fieldtype": "Column Break"
+   "in_list_view": 1,
+   "label": "QBWC usr",
+   "reqd": 1
   },
   {
    "fieldname": "web_connecter_password",
    "fieldtype": "Data",
-   "label": "Web Connecter Password"
+   "in_list_view": 1,
+   "label": "QBWC pwd",
+   "reqd": 1
+  },
+  {
+   "fieldname": "business_branch",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Business Branch",
+   "options": "Business Branch",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_wdlj",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-03-18 14:57:08.127848",
+ "modified": "2026-03-23 09:11:54.094037",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Quickbooks Available Branch",

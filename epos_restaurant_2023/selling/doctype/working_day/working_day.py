@@ -86,7 +86,7 @@ class WorkingDay(Document):
 		if self.has_value_changed("is_closed"):
 			if self.is_closed == 1:
 				from epos_restaurant_2023.api.qb.controller import add_quickbooks_sync_queue
-				add_quickbooks_sync_queue(self.name,"Working Day",self.posting_date)
+				add_quickbooks_sync_queue(self.name,self.doctype,self.posting_date)
 				sql = "update `tabCoupon Codes` set coupon_status ='Expired' where coupon_status ='Used' and working_day = %(working_day)s"
 				frappe.db.sql(sql,{"working_day":self.name})
 

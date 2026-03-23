@@ -27,6 +27,9 @@
   "column_break_kjjm",
   "party_name",
   "amount",
+  "column_break_mnpj",
+  "working_day",
+  "cashier_shift",
   "section_break_xcjr",
   "remark"
  ],
@@ -175,12 +178,28 @@
    "fieldname": "qb_synced",
    "fieldtype": "Check",
    "label": "QB Synced"
+  },
+  {
+   "fieldname": "column_break_mnpj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "working_day",
+   "fieldtype": "Link",
+   "label": "Working Day",
+   "options": "Working Day"
+  },
+  {
+   "fieldname": "cashier_shift",
+   "fieldtype": "Link",
+   "label": "Cashier Shift",
+   "options": "Cashier Shift"
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-03-18 14:05:39.058983",
+ "modified": "2026-03-20 10:37:29.725918",
  "modified_by": "Administrator",
  "module": "Account",
  "name": "General Ledger",

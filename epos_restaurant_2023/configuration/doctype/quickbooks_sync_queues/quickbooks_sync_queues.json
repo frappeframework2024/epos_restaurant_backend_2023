@@ -5,27 +5,45 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "business_branch",
+  "code",
   "action",
   "status",
   "column_break_zjtw",
   "action_type",
+  "reference_doctype",
   "reference_name",
+  "request_id",
+  "iterator_id",
   "section_break_myrj",
   "payload",
-  "reference_gl_entries"
+  "column_break_gwui",
+  "reference_gl_entries",
+  "section_break_doty",
+  "qb_txn_id",
+  "column_break_pvtl",
+  "qb_txn_number",
+  "column_break_vxsf",
+  "qb_edit_sequence",
+  "section_break_yjhe",
+  "response_message"
  ],
  "fields": [
   {
    "fieldname": "action",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Action",
-   "options": "Add\nUpdate\nDelete"
+   "options": "Get\nAdd\nUpdate\nDelete",
+   "read_only": 1
   },
   {
    "fieldname": "status",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Status",
-   "options": "Pending\nProcessing\nCompleted"
+   "options": "Pending\nProcessing\nCompleted\nError",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_zjtw",
@@ -34,12 +52,18 @@
   {
    "fieldname": "action_type",
    "fieldtype": "Data",
-   "label": "Action Type"
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Action Type",
+   "read_only": 1
   },
   {
    "fieldname": "reference_name",
    "fieldtype": "Data",
-   "label": "Reference Name"
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Reference Name",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_myrj",
@@ -48,17 +72,100 @@
   {
    "fieldname": "payload",
    "fieldtype": "Long Text",
-   "label": "Payload"
+   "label": "Payload",
+   "read_only": 1
   },
   {
    "fieldname": "reference_gl_entries",
    "fieldtype": "Long Text",
-   "label": "Reference GL Entries"
+   "label": "Reference GL Entries",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reference_doctype",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Reference Doctype",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_gwui",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_doty",
+   "fieldtype": "Section Break",
+   "label": "QB Response"
+  },
+  {
+   "fieldname": "code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Code",
+   "length": 10,
+   "read_only": 1
+  },
+  {
+   "fieldname": "qb_txn_id",
+   "fieldtype": "Data",
+   "label": "QB Txn Id",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_pvtl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "response_message",
+   "fieldtype": "Long Text",
+   "label": "Response Message",
+   "read_only": 1
+  },
+  {
+   "fieldname": "qb_txn_number",
+   "fieldtype": "Data",
+   "label": "QB Txn Number",
+   "read_only": 1
+  },
+  {
+   "fieldname": "qb_edit_sequence",
+   "fieldtype": "Data",
+   "label": "QB Edit Sequence",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_vxsf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_yjhe",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "business_branch",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Business Branch",
+   "options": "Business Branch"
+  },
+  {
+   "description": "For qb get next record",
+   "fieldname": "iterator_id",
+   "fieldtype": "Data",
+   "label": "Iterator ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "request_id",
+   "fieldtype": "Data",
+   "label": "Request ID",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-03-18 16:22:08.350256",
+ "modified": "2026-03-21 11:09:35.452688",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Quickbooks Sync Queues",

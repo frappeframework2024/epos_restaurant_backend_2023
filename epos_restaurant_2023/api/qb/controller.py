@@ -5,13 +5,16 @@ def add_quickbooks_sync_queue(name,doctype,posting_date):
     config = frappe.get_doc("Quickbooks Desktop Integration")
     if config.enabled :
         if config.sync_mode == "By Invoice":
-            pass
+            if doctype == config.sync_based_on.replace("Close ", ""):
+                pass
         elif config.sync_mode == "1 Invoice all sale product":
-            pass
+            if doctype == config.sync_based_on.replace("Close ", ""):
+                pass
         elif config.sync_mode == "1 Invoice by revenue group":
-            pass
+            if doctype == config.sync_based_on.replace("Close ", ""):
+                pass
         elif config.sync_mode == "Journal entry by revenue group":
             if doctype == config.sync_based_on.replace("Close ", ""):
-                add_gl_entries_to_sync_queue(name,posting_date)
+                add_gl_entries_to_sync_queue(name,doctype,posting_date)
         else:
             pass

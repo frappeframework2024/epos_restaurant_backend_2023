@@ -2686,7 +2686,8 @@ export default class Sale {
                 data.amount = parseFloat((parseFloat(this.sale.grand_total * data.paymentType.exchange_rate) + Number.EPSILON).toFixed(precision)); 
             }
             else if( data.paymentType.allow_aba_pay_with_qr_scan == 1){
-                 data.amount = parseFloat((parseFloat((this.sale.balance + Number.EPSILON).toFixed(precision) * data.paymentType.exchange_rate) + Number.EPSILON).toFixed(precision)); 
+                let current_precision = data.paymentType.exchange_rate == 1? precision : this.setting.pos_setting.second_currency_precision
+                 data.amount = parseFloat((parseFloat((this.sale.balance + Number.EPSILON).toFixed(current_precision) * data.paymentType.exchange_rate) + Number.EPSILON).toFixed(current_precision)); 
             }
 
 

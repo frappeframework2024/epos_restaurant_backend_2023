@@ -61,17 +61,15 @@ const props = defineProps({
     params: Object
 })
 
-const transaction_type = ref(['Cash Float', 'Expense'])
+const transaction_type = props.params.data.cash_type == 'Cash In' ? ['Cash Float'] : ['Expense'];
 
 const toaster = createToaster({ position: 'top-right' })
 const payment_types = JSON.parse(localStorage.getItem('setting')).payment_types;
 const default_payment_type = JSON.parse(localStorage.getItem('setting')).default_payment_type;
-const current_date = moment(new Date).format('DD-MM-YYYY');
 const setting  = JSON.parse( localStorage.getItem("setting"));
 const paymentTypeCash =computed(()=>  {
     return setting.payment_types.filter(r=>r.allow_cash_float == 1);
 });
-
 const cashierShiftResource = ref({});
 let cash = ref({
         transaction_status: props.params.data.cash_type,
@@ -79,9 +77,9 @@ let cash = ref({
         pos_profile: props.params.data.cashier_shift_info.pos_profile,
         cashier_shift: props.params.data.cashier_shift_info.name,
         working_day: props.params.data.cashier_shift_info.working_day,
-        post_date: current_date,
+        posting_date: props.params.data.cashier_shift_info.posting_date,
         business_branch: props.params.data.cashier_shift_info.business_branch,
-        transaction_type: 'Cash Float',
+        transaction_type: props.params.data.cash_type == 'Cash In' ? 'Cash Float' : 'Expense',
         created_by: '',
         input_amount: 0,
         amount: 0

@@ -1,8 +1,33 @@
+import frappe
 import xml.etree.ElementTree as ET
+from xml.dom import minidom
 import json
 
+def is_json(data):
+    try:
+        json.loads(data)
+        return True
+    except:
+        return False
+
+def pretty_xml(element):
+    rough = ET.tostring(element, encoding="utf-8") 
+    reparsed = minidom.parseString(rough)
+    return reparsed.toprettyxml(indent="  ")
 
 
+def qb_amount(val):
+    """Format amount for QuickBooks (2 decimal places as string)"""
+    return "{:.2f}".format(round(float(val), 2))
+
+def get_company_name(xml_string):
+    root = ET.fromstring(xml_string)
+    company = root.find(".//CompanyRet/CompanyName")
+    if company is not None:
+        return company.text
+    return None
+
+  
 def qbxml_to_json(xml_string):
     root = ET.fromstring(xml_string)
     result = {

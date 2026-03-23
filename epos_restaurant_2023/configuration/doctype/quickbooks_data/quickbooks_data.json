@@ -6,16 +6,26 @@
  "engine": "InnoDB",
  "field_order": [
   "code",
+  "column_break_eqvh",
+  "qb_company",
+  "chart_of_account_full_name",
   "column_break_idol",
   "data_type",
   "section_break_lwzs",
-  "descriptions"
+  "column_break_vesc",
+  "qb_list_id",
+  "qb_edit_sequence",
+  "qb_raw_xml",
+  "column_break_alfg",
+  "description"
  ],
  "fields": [
   {
    "fieldname": "code",
    "fieldtype": "Data",
-   "label": "Code"
+   "in_list_view": 1,
+   "label": "Code",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_idol",
@@ -24,21 +34,72 @@
   {
    "fieldname": "data_type",
    "fieldtype": "Data",
-   "label": "Data Type"
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Data Type",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_lwzs",
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "descriptions",
+   "fieldname": "column_break_eqvh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "chart_of_account_full_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Chart of Account Full Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_vesc",
+   "fieldtype": "Column Break",
+   "read_only": 1
+  },
+  {
+   "fieldname": "qb_list_id",
+   "fieldtype": "Data",
+   "label": "QB List ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Description",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_alfg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "qb_raw_xml",
    "fieldtype": "Long Text",
-   "label": "Descriptions"
+   "label": "QB Raw XML",
+   "read_only": 1
+  },
+  {
+   "description": "*Required for updates to QB",
+   "fieldname": "qb_edit_sequence",
+   "fieldtype": "Data",
+   "label": "QB Edit Sequence",
+   "read_only": 1
+  },
+  {
+   "fieldname": "qb_company",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "QB Company",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-03-18 14:56:46.977939",
+ "modified": "2026-03-21 15:52:19.627519",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Quickbooks Data",
@@ -55,9 +116,24 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
   }
  ],
+ "search_fields": "code,description",
+ "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "code"
 }

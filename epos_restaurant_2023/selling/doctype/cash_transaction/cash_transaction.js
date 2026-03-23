@@ -2,14 +2,14 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Cash Transaction", {
+    refresh(frm) {
+        set_transaction_type(frm)
+    },
 	setup(frm) {
-        frm.set_query('payment_type', () => {
-            // return {
-            //     filters: {
-            //         payment_type_group: ['=', 'Cash']
-            //     }
-            // }
-        }) 
+       set_transaction_type(frm)
+    },
+    transaction_status(frm){
+       set_transaction_type(frm)
     },
     input_amount(frm){ 
         update_amount(frm)
@@ -25,4 +25,15 @@ function update_amount(frm) {
         frm.set_value('amount', amount);
     }
     
+}
+function set_transaction_type(frm){
+    let options;
+    if (frm.doc.transaction_status === "Cash In") {
+        options = ["Cash Float"];
+        frm.set_value('transaction_type', 'Cash Float');
+    } else {
+        options = ["Expense"];
+        frm.set_value('transaction_type', 'Expense');
+    }
+    frm.set_df_property('transaction_type', 'options', options.join("\n"));
 }

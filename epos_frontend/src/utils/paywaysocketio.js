@@ -6,7 +6,7 @@
 // export default payway_socket;
 
 // utils/paywaysocketio.js
-import { io } from 'socket.io-client';
+import io from 'socket.io-client';
 
 class PaywaySocket {
   constructor(serverUrl) {

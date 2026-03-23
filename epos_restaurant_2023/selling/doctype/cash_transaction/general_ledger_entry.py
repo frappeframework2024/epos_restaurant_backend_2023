@@ -2,10 +2,7 @@ import frappe
 
 def submit_cash_transaction_expense_general_entry(self):
     from epos_restaurant_2023.api.account import submit_general_ledger_entry
- 
-
     docs = []
- ##
     doc = {
         "doctype":"General Ledger",
         "posting_date":self.posting_date,
@@ -15,13 +12,9 @@ def submit_cash_transaction_expense_general_entry(self):
         "voucher_type":"Cash Transaction",
         "voucher_number":self.name,
         "business_branch": self.business_branch,       
-
     }
     doc["remark"] = "{} {}".format(self.transaction_status, frappe.format(self.amount,{"fieldtype":"Currency"}))
-    docs.append(doc)
-
-
-      ##   
+    docs.append(doc) 
     doc = {
         "doctype":"General Ledger",
         "posting_date":self.posting_date,
@@ -31,11 +24,12 @@ def submit_cash_transaction_expense_general_entry(self):
         "voucher_type":"Cash Transaction",
         "voucher_number":self.name,
         "business_branch": self.business_branch,
-
     }
     doc["remark"] = "{} {}".format(self.transaction_status, frappe.format(self.amount,{"fieldtype":"Currency"}))
     docs.append(doc)
-
+    for a in docs:
+        a["working_day"] = self.working_day
+        a["cashier_shift"] = self.cashier_shift
     submit_general_ledger_entry(docs=docs)
 
     

@@ -7,6 +7,13 @@ import json
 import frappe
 
 class QuickbooksSyncQueues(Document):
+    
+	def validate(self):
+		if not self.request_id:
+			hash_18 = frappe.generate_hash(length=18)
+			self.request_id = hash_18
+	
+ 
 	def on_update(self):
 		previous_doc = self.get_doc_before_save()
 		if self.status == "Completed" and previous_doc.status != "Completed":
@@ -14,3 +21,4 @@ class QuickbooksSyncQueues(Document):
 				gl_entries = json.loads(self.reference_gl_entries)
 				sql = "update `tabGeneral Ledger` set qb_synced = 1 where name in ({0})".format(",".join(["'{}'".format(d["name"]) for d in gl_entries]))
 				frappe.db.sql(sql)
+				frappe.db.commit()

@@ -13,35 +13,31 @@ class CashTransaction(Document):
 		if not self.created_by:
 			self.created_by = frappe.get_user().doc.full_name
 
-		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature") and self.transaction_type == "Expense":			
-			if self.transaction_status == "Cash In":
+		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):			
+			if self.transaction_type =="Cash Float":
 				if not self.expense_from:
-					default_cash_transaction_expense_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_cash_transaction_expense_account")		
-					self.expense_from = default_cash_transaction_expense_account
-				
+					self.expense_from = frappe.get_cached_value("Business Branch",self.business_branch, "default_cash_transaction_cash_float_account")		
 				if not self.expense_to: 
 					sql = "select account from `tabPayment Type Account` where business_branch=%(business_branch)s and parent=%(payment_type)s limit 1"
 					data = frappe.db.sql(sql,{"business_branch":self.business_branch,"payment_type":self.payment_type},as_dict=1)
 					if data: 
 						self.expense_to =  data[0]["account"]
-					
+				if not self.expense_to:
+					branch = frappe.db.get_value('Business Branch', self.business_branch,  ['default_cash_account'], as_dict=1)
+					self.expense_to = branch.default_cash_account
+			elif self.transaction_type =="Expense":
+				if not self.expense_from:
+					self.expense_from = frappe.get_cached_value("Business Branch",self.business_branch, "default_cash_transaction_expense_account")			
+				if not self.expense_to: 
+					sql = "select account from `tabPayment Type Account` where business_branch=%(business_branch)s and parent=%(payment_type)s limit 1"
+					data = frappe.db.sql(sql,{"business_branch":self.business_branch,"payment_type":self.payment_type},as_dict=1)
+					if data: 
+						self.expense_to =  data[0]["account"]
 				if not self.expense_to:
 					branch = frappe.db.get_value('Business Branch', self.business_branch,  ['default_cash_account'], as_dict=1)
 					self.expense_to = branch.default_cash_account
 			else:
-				if not self.expense_to:
-					default_cash_transaction_expense_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_cash_transaction_expense_account")		
-					self.expense_to = default_cash_transaction_expense_account
-				
-				if not self.expense_from: 
-					sql = "select account from `tabPayment Type Account` where business_branch=%(business_branch)s and parent=%(payment_type)s limit 1"
-					data = frappe.db.sql(sql,{"business_branch":self.business_branch,"payment_type":self.payment_type},as_dict=1)
-					if data: 
-						self.expense_from =  data[0]["account"]
-					
-				if not self.expense_from:
-					branch = frappe.db.get_value('Business Branch', self.business_branch,  ['default_cash_account'], as_dict=1)
-					self.expense_from = branch.default_cash_account
+				pass
 
 			submit_cash_transaction_expense_general_entry(self)
 

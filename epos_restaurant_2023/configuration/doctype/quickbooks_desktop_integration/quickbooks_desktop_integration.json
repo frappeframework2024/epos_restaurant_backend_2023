@@ -6,11 +6,9 @@
  "engine": "InnoDB",
  "field_order": [
   "sync_mode",
-  "qb_tax_account_code",
-  "qb_discount_account_code",
-  "enabled",
-  "column_break_cvlf",
   "sync_based_on",
+  "column_break_cvlf",
+  "enabled",
   "available_branch",
   "data_mapping_section",
   "tbl_chart_of_account_mapping",
@@ -25,16 +23,6 @@
    "fieldtype": "Select",
    "label": "Sync Mode",
    "options": "By Invoice\n1 Invoice all sale product\n1 Invoice by revenue group\nJournal entry by revenue group"
-  },
-  {
-   "fieldname": "qb_tax_account_code",
-   "fieldtype": "Data",
-   "label": "QB Tax Account Code"
-  },
-  {
-   "fieldname": "qb_discount_account_code",
-   "fieldtype": "Data",
-   "label": "QB Discount Account Code"
   },
   {
    "fieldname": "column_break_cvlf",
@@ -92,7 +80,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-03-18 16:12:09.828668",
+ "modified": "2026-03-21 09:00:10.782577",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Quickbooks Desktop Integration",

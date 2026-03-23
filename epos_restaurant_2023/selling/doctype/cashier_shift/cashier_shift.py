@@ -120,7 +120,7 @@ class CashierShift(Document):
 		if self.has_value_changed("is_closed"):
 			if self.is_closed == 1:
 				from epos_restaurant_2023.api.qb.controller import add_quickbooks_sync_queue
-				add_quickbooks_sync_queue(self.name,"Cashier Shift",self.posting_date)
+				add_quickbooks_sync_queue(self.name,self.doctype,self.posting_date)
 
 		if 'edoor' in frappe.get_installed_apps():
 			old_doc = self.get_doc_before_save()

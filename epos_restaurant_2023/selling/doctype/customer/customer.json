@@ -25,6 +25,7 @@
   "customer_code",
   "customer_name_en",
   "customer_name_kh",
+  "cm_customer_id",
   "customer_code_name",
   "company_name",
   "market_source",
@@ -785,6 +786,13 @@
   {
    "fieldname": "column_break_ecoz",
    "fieldtype": "Column Break"
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "cm_customer_id",
+   "fieldtype": "Data",
+   "label": "CM Customer ID",
+   "search_index": 1
   }
  ],
  "image_field": "photo",
@@ -797,7 +805,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2025-07-09 10:27:35.257615",
+ "modified": "2026-03-21 16:59:41.867165",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

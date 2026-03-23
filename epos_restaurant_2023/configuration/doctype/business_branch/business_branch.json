@@ -71,6 +71,7 @@
   "default_bank_account",
   "default_pos_difference_amount_account",
   "default_cash_transaction_expense_account",
+  "default_cash_transaction_cash_float_account",
   "default_sale_expense_account",
   "default_unused_coupon_account",
   "column_break_uwgp",
@@ -80,6 +81,7 @@
   "default_sale_cash_coupon_claim_account",
   "default_tip_account",
   "default_coupon_expense_account",
+  "default_other_income",
   "column_break_oqmw",
   "default_credit_account",
   "default_purchase_discount_account",
@@ -612,12 +614,24 @@
    "fieldname": "order_timer_limit_mesaage",
    "fieldtype": "Text Editor",
    "label": "Order Timer Limit Mesaage"
+  },
+  {
+   "fieldname": "default_cash_transaction_cash_float_account",
+   "fieldtype": "Link",
+   "label": "Default Cash Transaction Cash Float Account",
+   "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_other_income",
+   "fieldtype": "Link",
+   "label": "Default Other Income",
+   "options": "Chart Of Account"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-11-03 14:59:07.076391",
+ "modified": "2026-03-19 10:44:00.215380",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",

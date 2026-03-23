@@ -217,7 +217,6 @@
    "label": "Payment Type Group"
   },
   {
-   "default": "Cash Float",
    "fieldname": "transaction_type",
    "fieldtype": "Select",
    "label": "Transaction Type",
@@ -247,7 +246,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-01 16:31:14.779400",
+ "modified": "2026-03-19 11:03:48.079402",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Cash Transaction",
