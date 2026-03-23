@@ -6,7 +6,7 @@ from frappe.model.naming import make_autoname
 def get_qb_chart_of_account():
     
     doc = frappe.get_single("Quickbooks Desktop Integration") 
-    branch_usernames = [d.web_connecter_username for d in doc.available_branch]
+    branch_usernames = [d.business_branch for d in doc.available_branch]
     branches = frappe.get_all("Business Branch",fields=["name"], filters={"name":["in", branch_usernames ]})
     for b in branches:
         doc = frappe.new_doc("Quickbooks Sync Queues")
@@ -21,7 +21,7 @@ def get_qb_chart_of_account():
 @frappe.whitelist()
 def get_qb_payment_type():
     doc = frappe.get_single("Quickbooks Desktop Integration") 
-    branch_usernames = [d.web_connecter_username for d in doc.available_branch]
+    branch_usernames = [d.business_branch for d in doc.available_branch]
     branches = frappe.get_all("Business Branch",fields=["name"], filters={"name":["in", branch_usernames ]})
     
     for b in branches:
@@ -38,7 +38,7 @@ def get_qb_payment_type():
 @frappe.whitelist()
 def get_qb_customer():
     doc = frappe.get_single("Quickbooks Desktop Integration") 
-    branch_usernames = [d.web_connecter_username for d in doc.available_branch]
+    branch_usernames = [d.business_branch for d in doc.available_branch]
     branches = frappe.get_all("Business Branch",fields=["name"], filters={"name":["in", branch_usernames ]})
     
     for b in branches:
