@@ -1648,17 +1648,24 @@ def update_default_account(self):
 	update_default_inventory_account(self)
 
 def update_default_inventory_account(self):
-	for a in self.sale_products:
-		default_inventory_account = frappe.get_cached_value("Business Branch", self.business_branch,"default_inventory_account")
-		p = frappe.get_doc("Product",a.product_code)
-		if p.default_account:
-			acc = [b.default_stock_account for b in p.default_account if b.business_branch == self.business_branch][0]
-			if acc:
-				a.default_inventory_account = acc
-			else:
-				a.default_inventory_account = self.default_inventory_account if self.default_inventory_account else default_inventory_account
-		else:
-			a.default_inventory_account = self.default_inventory_account if self.default_inventory_account else default_inventory_account
+	default_inventory_account = frappe.get_cached_value("Business Branch", self.business_branch,"default_inventory_account")
+	if [x for x in self.sale_products if not x.default_inventory_account]:
+		sql="select distinct parent as product_code, default_stock_account from `tabProduct Default Account` where parent in %(parents)s and business_branch =%(business_branch)s"
+		product_account_codes = frappe.db.sql(sql, {"parents":[x.product_code for x in self.sale_products if not x.default_inventory_account] or [""], "business_branch":self.business_branch},as_dict=1)
+		product_has_default_account = [d["product_code"] for d in product_account_codes]
+		for sp in [x for x in self.sale_products if not x.default_inventory_account and x.product_code in product_has_default_account]:
+			sp.default_inventory_account = [d for d in product_account_codes if d["product_code"] == sp.product_code][0]["default_stock_account"] 
+	
+	if [x for x in self.sale_products if not x.default_inventory_account]:
+		sql="select distinct parent as product_category, default_inventory_account from `tabProduct Category Default Account` where parent in %(parents)s and business_branch =%(business_branch)s"
+		category_account_codes = frappe.db.sql(sql, {"parents":[x.product_category for x in self.sale_products if not x.default_inventory_account] or [""], "business_branch":self.business_branch},as_dict=1)
+		category_has_default_account = [d["product_category"] for d in category_account_codes]
+		for sp in [x for x in self.sale_products if not x.default_inventory_account and x.product_category in category_has_default_account]:
+			sp.default_inventory_account = [d for d in category_account_codes if d["product_category"] == sp.product_category][0]["default_inventory_account"] 
+
+	if [x for x in self.sale_products if not x.default_inventory_account]:
+		for sp in [x for x in self.sale_products if not x.default_inventory_account]:
+			sp.default_inventory_account = default_inventory_account
 
 def update_default_coupon_expense_account(self):
 	# 1 get from product
@@ -1710,6 +1717,15 @@ def update_default_income_account(self):
 		for sp in [x for x in self.sale_products if not x.default_income_account and x.revenue_group in revenue_group_has_default_account]:
 				sp.default_income_account = [d for d in revenue_group_account_codes if d["revenue_group"] == sp.revenue_group][0]["default_income_account"] 
 
+	if [x for x in self.sale_products if not x.default_income_account]:
+		# get product default account_code from product
+		sql="select distinct parent as product_category, default_income_account from `tabProduct Category Default Account` where parent in %(parents)s and business_branch =%(business_branch)s"
+		category_account_codes = frappe.db.sql(sql, {"parents":[x.product_category for x in self.sale_products if not x.default_income_account] or [""], "business_branch":self.business_branch},as_dict=1)
+		category_has_default_account = [d["product_category"] for d in category_account_codes]
+		for sp in [x for x in self.sale_products if not x.default_income_account and x.product_category in category_has_default_account]:
+			# 1 get from product
+			sp.default_income_account = [d for d in category_account_codes if d["product_category"] == sp.product_category][0]["default_income_account"]
+
 	# 3 get account code from revenue group 
 	if [x for x in self.sale_products if not x.default_income_account]:
 		revenue_group_account_codes = get_default_account_from_revenue_group(json.dumps( {"business_branch": self.business_branch, "revenue_groups": list(set([d.revenue_group for d in self.sale_products if not d.default_income_account]))}))
@@ -1724,27 +1740,29 @@ def update_default_income_account(self):
  
 def update_default_discount_account(self):
 	# 1 get from product
-	
 	if [x for x in self.sale_products if not x.default_discount_account and x.allow_discount==1]:
 		# get product default account_code from product
 		sql="select distinct parent as product_code, default_discount_account from `tabProduct Default Account` where parent in %(parents)s and business_branch =%(business_branch)s"
 		product_account_codes = frappe.db.sql(sql, {"parents":[x.product_code for x in self.sale_products if not x.default_discount_account and x.allow_discount==1] or [""], "business_branch":self.business_branch},as_dict=1)
 		product_has_default_account = [d["product_code"] for d in product_account_codes]
-
-
 		for sp in [x for x in self.sale_products if not x.default_discount_account and x.product_code in product_has_default_account and  x.allow_discount==1]:
 			# 1 get from product
 			sp.default_discount_account = [d for d in product_account_codes if d["product_code"] == sp.product_code][0]["default_discount_account"] 
   
 	# 2 get from pos_config
 	if [x for x in self.sale_products if not x.default_discount_account and x.allow_discount==1]:
-		
 		revenue_group_account_codes = get_default_account_from_pos_config( json.dumps( {"business_branch": self.business_branch, "pos_config":self.pos_config, "revenue_groups" : list(set([d.revenue_group for d in self.sale_products if not d.default_discount_account and d.allow_discount==1] ))}))
 		revenue_group_has_default_account = [d["revenue_group"] for d in revenue_group_account_codes]
-		
 		for sp in [x for x in self.sale_products if not x.default_discount_account and x.revenue_group in revenue_group_has_default_account and  x.allow_discount==1]:
 			sp.default_discount_account = [d for d in revenue_group_account_codes if d["revenue_group"] == sp.revenue_group][0]["default_discount_account"] 
 	
+	if [x for x in self.sale_products if not x.default_discount_account and x.allow_discount==1]:
+		sql="select distinct parent as product_category, default_discount_account from `tabProduct Category Default Account` where parent in %(parents)s and business_branch =%(business_branch)s"
+		category_account_codes = frappe.db.sql(sql, {"parents":[x.product_category for x in self.sale_products if not x.default_discount_account and x.allow_discount==1] or [""], "business_branch":self.business_branch},as_dict=1)
+		category_has_default_account = [d["product_category"] for d in category_account_codes]
+		for sp in [x for x in self.sale_products if not x.default_discount_account and x.product_category in category_has_default_account and  x.allow_discount==1]:
+			sp.default_discount_account = [d for d in category_account_codes if d["product_category"] == sp.product_category][0]["default_discount_account"]
+
 	# 3 get account code from revenue group 
 	if [x for x in self.sale_products if not x.default_discount_account and x.allow_discount==1]:
 		revenue_group_account_codes = get_default_account_from_revenue_group(json.dumps( {"business_branch": self.business_branch, "revenue_groups": list(set([d.revenue_group for d in self.sale_products if not d.default_discount_account and d.allow_discount==1 ]))}))
@@ -1765,8 +1783,6 @@ def update_default_expense_account(self):
 		sql="select distinct parent as product_code, default_expense_account from `tabProduct Default Account` where parent in %(parents)s and business_branch =%(business_branch)s"
 		product_account_codes = frappe.db.sql(sql, {"parents":[x.product_code for x in self.sale_products if not x.default_expense_account] or [""], "business_branch":self.business_branch},as_dict=1)
 		product_has_default_account = [d["product_code"] for d in product_account_codes]
-
-
 		for sp in [x for x in self.sale_products if not x.default_expense_account and x.product_code in product_has_default_account]:
 			# 1 get from product
 			sp.default_expense_account = [d for d in product_account_codes if d["product_code"] == sp.product_code][0]["default_expense_account"] 
@@ -1777,6 +1793,13 @@ def update_default_expense_account(self):
 		revenue_group_has_default_account = [d["revenue_group"] for d in revenue_group_account_codes]
 		for sp in [x for x in self.sale_products if not x.default_expense_account and x.revenue_group in revenue_group_has_default_account]:
 				sp.default_expense_account = [d for d in revenue_group_account_codes if d["revenue_group"] == sp.revenue_group][0]["default_expense_account"] 
+
+	if [x for x in self.sale_products]:
+		sql="select distinct parent as product_category, default_expense_account from `tabProduct Category Default Account` where parent in %(parents)s and business_branch =%(business_branch)s"
+		category_account_codes = frappe.db.sql(sql, {"parents":[x.product_category for x in self.sale_products if not x.default_expense_account] or [""], "business_branch":self.business_branch},as_dict=1)
+		category_has_default_account = [d["product_category"] for d in category_account_codes]
+		for sp in [x for x in self.sale_products if not x.default_expense_account and x.product_category in category_has_default_account]:
+			sp.default_expense_account = [d for d in category_account_codes if d["product_category"] == sp.product_category][0]["default_expense_account"] 
 
 	# 3 get account code from revenue group 
 	if [x for x in self.sale_products if not x.default_expense_account]:
