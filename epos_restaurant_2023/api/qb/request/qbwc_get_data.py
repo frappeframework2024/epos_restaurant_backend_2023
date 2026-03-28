@@ -4,7 +4,7 @@ from frappe.model.naming import make_autoname
 ### API Create Queues
 @frappe.whitelist()
 def get_qb_chart_of_account():
-    
+    frappe.publish_realtime("product_notification", {"message": "Getting QB Chart of Accounts"},user=frappe.session.user)
     doc = frappe.get_single("Quickbooks Desktop Integration") 
     branch_usernames = [d.business_branch for d in doc.available_branch]
     branches = frappe.get_all("Business Branch",fields=["name"], filters={"name":["in", branch_usernames ]})
@@ -17,13 +17,14 @@ def get_qb_chart_of_account():
         doc.code = make_autoname("QBCoA.-.####")
         doc.insert()
     frappe.db.commit()
+    frappe.publish_realtime("product_notification", {"message": "Finsh Getting QB Chart of Accounts"},user=frappe.session.user)
     
 @frappe.whitelist()
 def get_qb_payment_type():
+    frappe.publish_realtime("product_notification", {"message": "Getting QB Payment Types"},user=frappe.session.user)
     doc = frappe.get_single("Quickbooks Desktop Integration") 
     branch_usernames = [d.business_branch for d in doc.available_branch]
     branches = frappe.get_all("Business Branch",fields=["name"], filters={"name":["in", branch_usernames ]})
-    
     for b in branches:
         doc = frappe.new_doc("Quickbooks Sync Queues")
         doc.action = "Get"
@@ -33,14 +34,14 @@ def get_qb_payment_type():
         doc.code = make_autoname("QBPT.-.#####")
         doc.insert()
     frappe.db.commit()
- 
+    frappe.publish_realtime("product_notification", {"message": "Finsh Getting QB Payment Types"},user=frappe.session.user)
     
 @frappe.whitelist()
 def get_qb_customer():
+    frappe.publish_realtime("product_notification", {"message": "Getting QB Customers"},user=frappe.session.user)
     doc = frappe.get_single("Quickbooks Desktop Integration") 
     branch_usernames = [d.business_branch for d in doc.available_branch]
     branches = frappe.get_all("Business Branch",fields=["name"], filters={"name":["in", branch_usernames ]})
-    
     for b in branches:
         doc = frappe.new_doc("Quickbooks Sync Queues")
         doc.action = "Get"
@@ -49,8 +50,8 @@ def get_qb_customer():
         doc.business_branch = b.name
         doc.code = make_autoname("QBC.-.#####")
         doc.insert()
-        
     frappe.db.commit()
+    frappe.publish_realtime("product_notification", {"message": "Finsh Getting QB Customers"},user=frappe.session.user)
     
 ### End API Create Queues
 

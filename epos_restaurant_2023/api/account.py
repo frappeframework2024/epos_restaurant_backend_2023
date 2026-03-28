@@ -35,7 +35,7 @@ def get_general_ledger_entry_record(docs):
         
 @frappe.whitelist()
 def cancel_general_ledger_entery(doctype,docname):
-    sql = "select * from `tabGeneral Ledger` where voucher_type='{}' and voucher_number= '{}'".format( doctype,docname)
+    sql = "select * from `tabGeneral Ledger` where voucher_type='{}' and voucher_number= '{}'".format(doctype,docname)
     data = frappe.db.sql(sql,as_dict=1)
     docs = []
     for r in data:
@@ -46,7 +46,7 @@ def cancel_general_ledger_entery(doctype,docname):
                 "credit_amount":r["debit_amount"],
                 "debit_amount":r["credit_amount"],
                 "againt":r["againt"],
-                "againt_voucher_type":"Sale",
+                "againt_voucher_type":r["againt_voucher_type"],
                 "againt_voucher_number": r["againt_voucher_number"],
                 "voucher_type":doctype,
                 "voucher_number":docname,
@@ -54,6 +54,8 @@ def cancel_general_ledger_entery(doctype,docname):
                 "remark": r["remark"],
                 "party_type": r["party_type"],
                 "party": r["party"],
+                "working_day": r["working_day"],
+                "cashier_shift": r["cashier_shift"],
                 "is_cancelled":1,
             }
         docs.append(doc)

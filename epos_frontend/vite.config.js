@@ -21,5 +21,8 @@ export default defineConfig({
 		emptyOutDir: true,
 		target: 'esnext'
 		// target: 'es2015',
+	},
+	optimizeDeps: {
+		force: true
 	}
 });

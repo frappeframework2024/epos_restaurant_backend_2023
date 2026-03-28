@@ -21,6 +21,7 @@
   "reference_gl_entries",
   "section_break_doty",
   "qb_txn_id",
+  "account_ref_list_id",
   "column_break_pvtl",
   "qb_txn_number",
   "column_break_vxsf",
@@ -161,11 +162,17 @@
    "fieldtype": "Data",
    "label": "Request ID",
    "read_only": 1
+  },
+  {
+   "fieldname": "account_ref_list_id",
+   "fieldtype": "Data",
+   "label": "Account Ref List ID",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-03-21 11:09:35.452688",
+ "modified": "2026-03-27 14:02:38.202774",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Quickbooks Sync Queues",

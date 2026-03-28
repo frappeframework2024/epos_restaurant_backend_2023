@@ -48,8 +48,11 @@
   {
    "fieldname": "tbl_categories_mapping",
    "fieldtype": "Table",
+   "hidden": 1,
    "label": "Categories Mapping",
-   "options": "Quickbooks Mapping"
+   "options": "Quickbooks Mapping",
+   "print_hide": 1,
+   "report_hide": 1
   },
   {
    "fieldname": "tbl_customers_mapping",
@@ -80,7 +83,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-03-21 09:00:10.782577",
+ "modified": "2026-03-27 08:45:06.200051",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Quickbooks Desktop Integration",

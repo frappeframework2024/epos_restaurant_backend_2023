@@ -7,19 +7,21 @@ from epos_restaurant_2023.api.qb.rs_handle.payment_type import handle_payment_me
 from epos_restaurant_2023.api.qb.rs_handle.company import handle_company_query 
 from epos_restaurant_2023.api.qb.rs_handle.customer import handle_customer_query 
 from epos_restaurant_2023.api.qb.rs_handle.invoice import handle_invoice_query 
+from epos_restaurant_2023.api.qb.rs_handle.receive_payment import handle_receive_payment_query 
 
 def handle_qb_response(company_name, xml_string):
     root = ET.fromstring(xml_string)
     if xml_string:
         for res in root.findall(".//QBXMLMsgsRs/*"):
             tag = res.tag  
-            print(tag)
-                
             if tag == "JournalEntryAddRs":
                 handle_journal_entry_add(res)
 
             elif tag == "InvoiceAddRs":
                 handle_invoice_query(res=res)
+                
+            elif tag == "ReceivePaymentAddRs":
+                handle_receive_payment_query(res=res)
                 
             elif tag == "AccountQueryRs":
                 handle_account_query(res=res, company_name = company_name)

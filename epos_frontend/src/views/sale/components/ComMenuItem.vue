@@ -38,7 +38,7 @@
 
             <avatar class="!h-full !w-full" :name="data.name_en" :rounded="false" background="#f1f1f1"></avatar>
         </div>
-        <div class="block relative p-2 w-full h-full">
+        <div class="block relative p-2 w-full h-full"> 
             <div>
                 <div :style="{fontSize:gv.itemMenuSetting.font_price_size+ 'px' }" class="absolute left-0 top-0 bg-red-700 text-white p-1 rounded-tl-lg rounded-br-lg text-sm">
                     <div>
@@ -53,7 +53,8 @@
                     </div>
 
                 </div>
-                <div class="menu-dropdown-icon">
+                
+                <div class="menu-dropdown-icon "> 
                     <v-menu transition="scale-transition">
                         <template v-slot:activator="{ props }">
                             <v-btn size="small" variant="text" :id="data.menu_product_name" v-bind="props"

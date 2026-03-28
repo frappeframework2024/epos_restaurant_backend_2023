@@ -3,7 +3,7 @@ import json
 from collections import defaultdict
 from epos_restaurant_2023.api.qb.qbwc_helper import (is_json,qb_amount)
 
-def add_ar_invoice_xml(requestID, queuesData, RefNumber):
+def add_ar_invoice_xml(requestID, queuesData, companyName):
     
     # Parse JSON if needed
     if isinstance(queuesData, str) and is_json(queuesData):
@@ -61,7 +61,6 @@ def add_ar_invoice_xml(requestID, queuesData, RefNumber):
         
       
     if itemLine:
-        return xml
-    
+        return xml    
     
     return ""

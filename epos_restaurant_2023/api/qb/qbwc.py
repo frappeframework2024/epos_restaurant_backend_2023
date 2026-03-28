@@ -13,6 +13,7 @@ from .qbwc_handle_response import  (
 )
 from epos_restaurant_2023.api.qb.request.qbwc_journal_entry import add_journal_xml
 from epos_restaurant_2023.api.qb.request.qbwc_invoice import add_ar_invoice_xml
+from epos_restaurant_2023.api.qb.request.qbwc_receive_payment import add_receive_payment_xml
 from epos_restaurant_2023.api.qb.request.qbwc_get_data import ( 
         get_qb_chart_of_account_xml,
         get_qb_payment_type_xml,
@@ -73,7 +74,8 @@ class QuickBooksService(ServiceBase):
             init_frappe()
             conf = frappe.db.sql("""
                                  select 
-                                    business_branch 
+                                    business_branch ,
+                                    qb_company_name
                                  from `tabQuickbooks Available Branch` 
                                  where 1=1
                                  and web_connecter_username = %(usr)s 
@@ -124,6 +126,7 @@ class QuickBooksService(ServiceBase):
                         action, 
                         action_type,
                         payload,
+                        account_ref_list_id,
                         reference_name,
                         code 
                     FROM `tabQuickbooks Sync Queues` 
@@ -135,15 +138,29 @@ class QuickBooksService(ServiceBase):
                             
             add_journal_xmls =[]
             add_invoice_xmls = [] # add invoice as credit (pos pay on-account)
+            add_receive_payment_xmls = [] # add receive payment of invoice as credit
+            
             get_coa_xml = "" #get chart of account
             get_pt_xml = "" # get payment type / payment method           
             get_cus_xml = "" # get customer        
            
             
+            
+            config = frappe.get_doc("Quickbooks Desktop Integration")
+                
             for q in queues :
                 action_type = q.get("action_type",None)
                 action = q.get("action",None)   
-                requestID = q.get("request_id",None) or q.get("name",None)
+                requestID = q.get("request_id",None) 
+                queueID =  q.get("name",None) 
+                
+                
+                qbCompanyName = ""
+                available_branchs  = [x for x in config.available_branch if x.business_branch == q.get("business_branch",None)]
+                if len(available_branchs)>0:
+                    qbCompanyName = available_branchs[0].get("qb_company_name",None) or ""
+                
+                
                 if action_type == "GL Entry":                    
                     # pass
                     if action == "Add":                                            
@@ -151,21 +168,36 @@ class QuickBooksService(ServiceBase):
                                 queuesData= q.get("payload",None),
                                 RefNumber=q.get("code",None),
                                 requestID= requestID,
-                                JEMemo=q.get("reference_name",None)
+                                JEMemo=q.get("reference_name",None),
+                                companyName = qbCompanyName,
                             )                        
                         if val:
                             add_journal_xmls.append(val)
                             
                         pass    
+                    
                 elif  action_type == "Sale":
-                     if action == "Add":
+                    if action == "Add":
                         val = add_ar_invoice_xml(                            
                             queuesData= q.get("payload",None),
-                            RefNumber=q.get("code",None),
+                            companyName= qbCompanyName,
                             requestID= requestID
                         )
                         if val:
                             add_invoice_xmls.append(val)
+                            
+                            
+                elif  action_type == "Sale Payment":
+                    ARListID = q.get("account_ref_list_id",None)                     
+                    if action == "Add":
+                        val = add_receive_payment_xml(      
+                            queueID = queueID,
+                            invTxnID = requestID,
+                            ARListID= ARListID,
+                            queuesData= q.get("payload",None),
+                        )
+                        if val:
+                            add_receive_payment_xmls.append(val)
                         
                     
                 elif action_type == "Chart Of Account":
@@ -193,12 +225,26 @@ class QuickBooksService(ServiceBase):
                     {get_cus_xml}
                     {get_pt_xml}
                     {''.join(add_invoice_xmls)}
+                    {''.join(add_receive_payment_xmls)}
                     {''.join(add_journal_xmls)}
                 </QBXMLMsgsRq>
             </QBXML>
             """ 
             
-            #print(f"Request XML: {qbxmls.strip()}")   
+            # return f"""<?xml version="1.0" encoding="utf-8"?>
+            #             <?qbxml version="15.0"?>
+            #         <QBXML>
+            #         <QBXMLMsgsRq onError="stopOnError">
+            #             <InvoiceQueryRq requestID="1">
+            #             <TxnID>1495D-1774587672</TxnID>
+            #             </InvoiceQueryRq>
+            #             <InvoiceQueryRq requestID="2">
+            #             <TxnID>14965-1774587672</TxnID>
+            #             </InvoiceQueryRq>
+            #         </QBXMLMsgsRq>
+            #         </QBXML>""".strip()
+            
+            # print(f"Request XML: {qbxmls.strip()}")   
             return qbxmls.strip()
             
         
@@ -211,7 +257,7 @@ class QuickBooksService(ServiceBase):
     def receiveResponseXML(ctx, ticket, response, hresult, message):
         print("=== receiveResponseXML called ===") 
         if response:  
-            print(response)
+            # print(response)
             try:
                 init_frappe()
                 company_name = handle_qb_company_response(xml_string=response)   

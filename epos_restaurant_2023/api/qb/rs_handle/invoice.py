@@ -1,6 +1,7 @@
 import frappe
 from epos_restaurant_2023.api.qb.qbwc_helper import pretty_xml
 from frappe.model.naming import make_autoname
+import json
 
 ## handle response invoice add
 def handle_invoice_query(res):
@@ -38,6 +39,7 @@ def handle_invoice_query(res):
         return
     
     txn_id = invoice.findtext("TxnID")
+    ar_list_id = invoice.findtext("ARAccountRef/ListID")
     balance_remaining = float(invoice.findtext("BalanceRemaining") or 0)
 
     ## update currency queues
@@ -47,18 +49,28 @@ def handle_invoice_query(res):
     
     
     # If invoice has balance, create ReceivePayment queue
-    if balance_remaining > 0 :                
-        doc = frappe.new_doc("Quickbooks Sync Queues")
-        doc.action = "Add"
-        doc.request_id = txn_id
-        doc.status = "Pending"
-        doc.action_type = "Sale Payment"
-        doc.business_branch = queue.business_branch
-        doc.code = make_autoname("QBRP.-.#####")
-        doc.insert()
+    if balance_remaining > 0 :
+        payload = json.loads(queue.payload)
+        data = (payload.get("data") or [])
+        new_data = [d for d in data if d.get("account_type") in ["Cash","Bank"]] 
+        
+        for d in new_data:    
+            payload["data"] = [d]              
+            doc = frappe.new_doc("Quickbooks Sync Queues")
+            doc.action = "Add"
+            doc.request_id = txn_id
+            doc.status = "Pending"
+            doc.action_type = "Sale Payment"            
+            doc.business_branch = queue.business_branch
+            doc.payload = json.dumps(payload)
+            doc.account_ref_list_id = ar_list_id
+            doc.code = make_autoname("QBRP.-.#####")
+            doc.insert()
     
     frappe.db.commit()
         
 
 
 
+
+    
