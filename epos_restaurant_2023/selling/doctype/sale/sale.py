@@ -287,6 +287,7 @@ class Sale(Document):
 		add_sale_product_spa_commission(self)
  
 	def before_cancel(self):
+		self.docstatus = 2
 		update_status(self)
 		if frappe.get_cached_value("Exely Itegration Setting",None,"enabled")==1:
 			if self.exely_transaction_id:
@@ -1718,12 +1719,10 @@ def update_default_income_account(self):
 				sp.default_income_account = [d for d in revenue_group_account_codes if d["revenue_group"] == sp.revenue_group][0]["default_income_account"] 
 
 	if [x for x in self.sale_products if not x.default_income_account]:
-		# get product default account_code from product
 		sql="select distinct parent as product_category, default_income_account from `tabProduct Category Default Account` where parent in %(parents)s and business_branch =%(business_branch)s"
 		category_account_codes = frappe.db.sql(sql, {"parents":[x.product_category for x in self.sale_products if not x.default_income_account] or [""], "business_branch":self.business_branch},as_dict=1)
 		category_has_default_account = [d["product_category"] for d in category_account_codes]
 		for sp in [x for x in self.sale_products if not x.default_income_account and x.product_category in category_has_default_account]:
-			# 1 get from product
 			sp.default_income_account = [d for d in category_account_codes if d["product_category"] == sp.product_category][0]["default_income_account"]
 
 	# 3 get account code from revenue group 

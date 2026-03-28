@@ -39,7 +39,7 @@ def submit_payment_to_general_ledger_entry_on_submit(self):
         "party_type":"Customer",
         "party":customer.name,
         "againt":self.account_paid_to,
-        "against_voucher_type":"Sale",
+        "againt_voucher_type":"Sale",
         "againt_voucher_number":self.sale,
         "voucher_type":"Sale Payment",
         "voucher_number":self.name,

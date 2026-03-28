@@ -13,11 +13,10 @@ frappe.ui.form.on("Sale", {
 		});
 		 
 	},
-	 
-
+	before_cancel(frm) {
+        frm._isCancelling = true;
+    },
 	refresh(frm) { 
-		 
-
 		frm.set_query("commission_01_account","sale_products", function() {
             return {
                 filters: [["is_group","=",0],["root_type","=","Liabilities"]]
@@ -42,15 +41,17 @@ frappe.ui.form.on("Sale", {
             return {
                 filters: [["is_group","=",0],["root_type","=","Liabilities"]]
             }
-        });
-		frappe.call({
-            method: "get_sale_payment_naming_series",
-            doc: frm.doc,
-            callback: function (r) {
-                frm.set_df_property('sale_payment_naming_series', 'options', r.message);
-                frm.refresh_field('sale_payment_naming_series');
-            },
-        });
+        })
+		if (frm.doc.docstatus == 1 && !frm._isCancelling){
+			frappe.call({
+				method: "get_sale_payment_naming_series",
+				doc: frm.doc,
+				callback: function (r) {
+					frm.set_df_property('sale_payment_naming_series', 'options', r.message);
+					frm.refresh_field('sale_payment_naming_series');
+				},
+			});
+		}
 		
 		if (!frm.doc.__islocal && frm.doc.docstatus == 1) {
 			frm.dashboard.add_indicator(__("Total Quantity: {0}", [frm.doc.total_quantity]), "blue");
