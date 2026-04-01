@@ -393,8 +393,7 @@ frappe.ui.form.on('Sale Product', {
 	},
 	product_code(frm, cdt, cdn) {
 		let doc = locals[cdt][cdn];
-		get_product_code(frm, doc);
-		console.log("product code change")
+		product_code(frm, doc);
 	},
 	price(frm, cdt, cdn) {
 
@@ -752,21 +751,17 @@ function calculate_sale_product_tax(doc) {
 }
 
 
-function get_product_code(frm, doc) {
+function product_code(frm, doc) {
+	get_product_price(frm, doc).then((v) => {
+		doc.price = v;
+		update_sale_product_amount(frm, doc)
+	});
 	if (doc.product_tax_rule) {
 		frappe.model.with_doc('Tax Rule', doc.product_tax_rule, function () {
 			let tax_rule = frappe.model.get_doc('Tax Rule', doc.product_tax_rule);
-
 			set_product_tax(doc, tax_rule)
-
-			get_product_price(frm, doc).then((v) => {
-				doc.price = v;
-				update_sale_product_amount(frm, doc)
-
-			});
 		});
 	}
-
 }
 
 function set_product_tax(doc, tax_rule) {
