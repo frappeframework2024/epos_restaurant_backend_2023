@@ -394,6 +394,7 @@ frappe.ui.form.on('Sale Product', {
 	product_code(frm, cdt, cdn) {
 		let doc = locals[cdt][cdn];
 		get_product_code(frm, doc);
+		console.log("product code change")
 	},
 	price(frm, cdt, cdn) {
 
