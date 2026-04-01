@@ -2,6 +2,7 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Sale", {
+	
 	onload(frm) { 
 		
 		frm.set_query("tip_account_code", function () {
@@ -17,6 +18,13 @@ frappe.ui.form.on("Sale", {
         frm._isCancelling = true;
     },
 	refresh(frm) { 
+		frm.set_query("payment_type","payment", function() {
+			return {
+				filters: [
+					["disabled", "=", 0]
+				]
+			}
+		});
 		frm.set_query("commission_01_account","sale_products", function() {
             return {
                 filters: [["is_group","=",0],["root_type","=","Liabilities"]]
@@ -385,7 +393,7 @@ frappe.ui.form.on('Sale Product', {
 	},
 	product_code(frm, cdt, cdn) {
 		let doc = locals[cdt][cdn];
-		product_code(frm, doc);
+		get_product_code(frm, doc);
 	},
 	price(frm, cdt, cdn) {
 
@@ -420,9 +428,6 @@ frappe.ui.form.on('Sale Product', {
 		let row = locals[cdt][cdn];
 		update_sale_product_amount(frm, row);
 
-	},
-	product_code(frm, cdt, cdn) {
-		let row = locals[cdt][cdn];
 	}
 })
 
@@ -746,7 +751,7 @@ function calculate_sale_product_tax(doc) {
 }
 
 
-function product_code(frm, doc) {
+function get_product_code(frm, doc) {
 	if (doc.product_tax_rule) {
 		frappe.model.with_doc('Tax Rule', doc.product_tax_rule, function () {
 			let tax_rule = frappe.model.get_doc('Tax Rule', doc.product_tax_rule);
