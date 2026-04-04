@@ -17,7 +17,8 @@ from epos_restaurant_2023.api.qb.request.qbwc_receive_payment import add_receive
 from epos_restaurant_2023.api.qb.request.qbwc_get_data import ( 
         get_qb_chart_of_account_xml,
         get_qb_payment_type_xml,
-        get_qb_customer_xml
+        get_qb_customer_xml,
+        get_qb_product_xml,
     )
 
 # ────────── Frappe Context Helpers ──────────
@@ -143,6 +144,7 @@ class QuickBooksService(ServiceBase):
             get_coa_xml = "" #get chart of account
             get_pt_xml = "" # get payment type / payment method           
             get_cus_xml = "" # get customer        
+            get_pro_xml = "" # get product        
            
             
             
@@ -160,8 +162,25 @@ class QuickBooksService(ServiceBase):
                 if len(available_branchs)>0:
                     qbCompanyName = available_branchs[0].get("qb_company_name",None) or ""
                 
-                
-                if action_type == "GL Entry":                    
+                if action_type == "Chart Of Account":
+                    if action == "Get":
+                        get_coa_xml = get_qb_chart_of_account_xml(requestID=requestID)
+                        
+                elif action_type == "Payment Type":
+                    if action == "Get":
+                        get_pt_xml = get_qb_payment_type_xml(requestID= requestID)
+                        
+                elif action_type == "Customer":
+                    if action == "Get":
+                        get_cus_xml = get_qb_customer_xml(requestID= requestID)
+                        
+                        
+                elif action_type == "Product":
+                    if action == "Get":
+                        get_pro_xml = get_qb_product_xml(requestID= requestID)
+                        
+                        
+                elif action_type == "GL Entry":                    
                     # pass
                     if action == "Add":                                            
                         val = add_journal_xml(
@@ -197,20 +216,7 @@ class QuickBooksService(ServiceBase):
                             queuesData= q.get("payload",None),
                         )
                         if val:
-                            add_receive_payment_xmls.append(val)
-                        
-                    
-                elif action_type == "Chart Of Account":
-                    if action == "Get":
-                        get_coa_xml = get_qb_chart_of_account_xml(requestID=requestID)
-                        
-                elif action_type == "Payment Type":
-                    if action == "Get":
-                        get_pt_xml = get_qb_payment_type_xml(requestID= requestID)
-                        
-                elif action_type == "Customer":
-                    if action == "Get":
-                        get_cus_xml = get_qb_customer_xml(requestID= requestID)
+                            add_receive_payment_xmls.append(val) 
                         
                 else:
                     pass 
@@ -224,6 +230,7 @@ class QuickBooksService(ServiceBase):
                     {get_coa_xml}
                     {get_cus_xml}
                     {get_pt_xml}
+                    {get_pro_xml}
                     {''.join(add_invoice_xmls)}
                     {''.join(add_receive_payment_xmls)}
                     {''.join(add_journal_xmls)}

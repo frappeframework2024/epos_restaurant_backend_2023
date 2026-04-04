@@ -349,7 +349,9 @@ async function onDeleteBill() {
                 isLoading.value = true;
                 //send deleted sale product to temp deleted
                 const _sale = JSON.parse(JSON.stringify(sale.sale));
-                generateSaleProductPrintToKitchen(_sale, v.note);
+                if(sale.setting?.pos_setting?.allow_print_bill_on_sale_deleted){
+                    generateSaleProductPrintToKitchen(_sale, v.note);
+                }
                 const deleteSaleResource = createResource({
                     url: "epos_restaurant_2023.api.api.delete_sale",
                     params: {

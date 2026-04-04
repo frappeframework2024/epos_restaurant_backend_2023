@@ -14,7 +14,8 @@
   "tbl_chart_of_account_mapping",
   "tbl_payment_types_mapping",
   "tbl_categories_mapping",
-  "tbl_customers_mapping"
+  "tbl_customers_mapping",
+  "tbl_products_mapping"
  ],
  "fields": [
   {
@@ -78,12 +79,18 @@
    "fieldtype": "Table",
    "label": "Chart of Account Mapping",
    "options": "Quickbooks Mapping"
+  },
+  {
+   "fieldname": "tbl_products_mapping",
+   "fieldtype": "Table",
+   "label": "Products Mapping",
+   "options": "Quickbooks Mapping"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-03-27 08:45:06.200051",
+ "modified": "2026-04-04 10:14:43.499970",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Quickbooks Desktop Integration",

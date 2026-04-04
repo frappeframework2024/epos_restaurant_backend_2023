@@ -26,7 +26,9 @@ import CustomerDisplay from "@/views/customer_display/CustomerDisplay.vue"
 import KitchenOrderDisplay from "@/views/kitchen_order_display/KitchenOrderDisplay.vue"
 import authRoutes from './auth';
 import Setting from '@/views/setting/Setting.vue';
-// import BarcodeBuilder from '@/views/barcode_builder/BarcodeBuilder.vue';
+import SaleOrder from '@/views/sale_page/SaleOrder.vue';
+// import BarcodeBuilder from '@/views/barcode_builder/BarcodeBuilder.vue';er
+
 
 const routes = [
   { path: "/", redirect: '/epos_frontend' },
@@ -35,6 +37,9 @@ const routes = [
   { path: '/epos_frontend/startup-config', name: 'StartupConfig', component: StartupConfig, meta: { isStartupConfig: true }, props: true },
   { path: '/epos_frontend/landing:name?', name: 'Landing', component: Landing, meta: { isStartupConfig: true }, props: true },
   { path: "/epos_frontend/add-sale/:name?", name: "AddSale", component: AddSale, meta: { layout: 'sale_layout' } },
+
+  { path: "/epos_frontend/sale-order/:name?", name: "SaleOrder", component: SaleOrder, meta: { layout: 'sale_layout' } },
+
   { path: "/epos_frontend/customer-detail/:name?", name: "CustomerDetail", component: CustomerDetail, },
   { path: "/epos_frontend/customer", name: "Customer", component: Customer, meta: { layout: 'main_layout' } },
   { path: "/epos_frontend/sale", name: "Sale", component: Sale, },

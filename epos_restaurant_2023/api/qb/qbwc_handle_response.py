@@ -6,6 +6,7 @@ from epos_restaurant_2023.api.qb.rs_handle.chart_of_account import handle_accoun
 from epos_restaurant_2023.api.qb.rs_handle.payment_type import handle_payment_method_query 
 from epos_restaurant_2023.api.qb.rs_handle.company import handle_company_query 
 from epos_restaurant_2023.api.qb.rs_handle.customer import handle_customer_query 
+from epos_restaurant_2023.api.qb.rs_handle.product import handle_item_query 
 from epos_restaurant_2023.api.qb.rs_handle.invoice import handle_invoice_query 
 from epos_restaurant_2023.api.qb.rs_handle.receive_payment import handle_receive_payment_query 
 
@@ -31,6 +32,9 @@ def handle_qb_response(company_name, xml_string):
                 
             elif tag == "CustomerQueryRs":
                 handle_customer_query(res=res, company_name = company_name)
+                
+            elif tag == "ItemQueryRs":
+                handle_item_query(res=res, company_name = company_name)
                 
             else:
                 frappe.log_error(f"Unhandled QB Response: {tag}")

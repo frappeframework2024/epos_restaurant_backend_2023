@@ -1709,19 +1709,9 @@
    "group": "Payment",
    "link_doctype": "Sale Payment",
    "link_fieldname": "sale"
-  },
-  {
-   "group": "Expense",
-   "link_doctype": "Expense",
-   "link_fieldname": "sale"
-  },
-  {
-   "group": "Payment",
-   "link_doctype": "Payment Entry",
-   "link_fieldname": "reference_name"
   }
  ],
- "modified": "2026-03-06 11:14:24.087611",
+ "modified": "2026-04-02 08:55:47.242093",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",

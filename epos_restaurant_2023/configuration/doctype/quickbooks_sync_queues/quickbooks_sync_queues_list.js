@@ -25,5 +25,8 @@ frappe.listview_settings['Quickbooks Sync Queues'] = {
         listview.page.add_inner_button("Get Customer", function() {
             frappe.call({method: "epos_restaurant_2023.api.qb.request.qbwc_get_data.get_qb_customer"});
         }, __("Get QB Data"));
+        listview.page.add_inner_button("Get Product", function() {
+            frappe.call({method: "epos_restaurant_2023.api.qb.request.qbwc_get_data.get_qb_product"});
+        }, __("Get QB Data"));
     },
 };

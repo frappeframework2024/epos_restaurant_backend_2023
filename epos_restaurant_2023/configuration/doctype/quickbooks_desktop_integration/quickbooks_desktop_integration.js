@@ -43,8 +43,15 @@ frappe.ui.form.on("Quickbooks Desktop Integration", {
             };
         });
 
-
-
+        //data customer filter
+        frm.set_query('qb_data', 'tbl_products_mapping', function(doc, cdt, cdn) {
+            return {
+                filters: {
+                    data_type: "Product"
+                }
+            };
+        });
+        
 	},
 });
 
@@ -75,8 +82,13 @@ frappe.ui.form.on('Quickbooks Mapping', {
     // Trigger when a new row is added to tbl_customers_mapping
     tbl_customers_mapping_add(frm, cdt, cdn) {
         let row = locals[cdt][cdn];
-        frappe.model.set_value(cdt, cdn, 'reference_type', "Customer");
-        console.log(row)
+        frappe.model.set_value(cdt, cdn, 'reference_type', "Customer"); 
+    },
+
+    // Trigger when a new row is added to tbl_customers_mapping
+    tbl_products_mapping_add(frm, cdt, cdn) {
+        let row = locals[cdt][cdn];
+        frappe.model.set_value(cdt, cdn, 'reference_type', "Product"); 
     },
     
 

@@ -1,4 +1,5 @@
 from epos_restaurant_2023.api.qb.qb_post_journal_entry import add_gl_entries_to_sync_queue
+from epos_restaurant_2023.api.qb. qb_post_sale import add_sales_to_sync_queue
 import frappe
 
 def add_quickbooks_sync_queue(name,doctype,posting_date):
@@ -6,7 +7,7 @@ def add_quickbooks_sync_queue(name,doctype,posting_date):
     if config.enabled :
         if config.sync_mode == "By Invoice":
             if doctype == config.sync_based_on.replace("Close ", ""):
-                pass
+                add_sales_to_sync_queue(name,doctype,posting_date)
         elif config.sync_mode == "1 Invoice all sale product":
             if doctype == config.sync_based_on.replace("Close ", ""):
                 pass

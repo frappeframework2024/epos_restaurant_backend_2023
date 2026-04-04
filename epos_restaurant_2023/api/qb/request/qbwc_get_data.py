@@ -53,6 +53,24 @@ def get_qb_customer():
     frappe.db.commit()
     frappe.publish_realtime("product_notification", {"message": "Finsh Getting QB Customers"},user=frappe.session.user)
     
+    
+@frappe.whitelist()
+def get_qb_product():
+    frappe.publish_realtime("product_notification", {"message": "Getting QB Product"},user=frappe.session.user)
+    doc = frappe.get_single("Quickbooks Desktop Integration") 
+    branch_usernames = [d.business_branch for d in doc.available_branch]
+    branches = frappe.get_all("Business Branch",fields=["name"], filters={"name":["in", branch_usernames ]})
+    for b in branches:
+        doc = frappe.new_doc("Quickbooks Sync Queues")
+        doc.action = "Get"
+        doc.status = "Pending"
+        doc.action_type = "Product"
+        doc.business_branch = b.name
+        doc.code = make_autoname("QBP.-.#####")
+        doc.insert()
+    frappe.db.commit()
+    frappe.publish_realtime("product_notification", {"message": "Finsh Getting QB Product"},user=frappe.session.user)
+    
 ### End API Create Queues
 
 ### XML Builder  
@@ -88,7 +106,7 @@ def get_qb_payment_type_xml(requestID):
     return qbxml
 
 
-# get payment type
+# get customer
 def get_qb_customer_xml(requestID):
     iterator = "Start"
     iterator_id = ""        
@@ -104,6 +122,27 @@ def get_qb_customer_xml(requestID):
                 <MaxReturned>5000</MaxReturned>
                 <ActiveStatus>ActiveOnly</ActiveStatus>
             </CustomerQueryRq>
+        """
+        return qbxml
+    
+    return ""
+
+# get product
+def get_qb_product_xml(requestID):
+    iterator = "Start"
+    iterator_id = ""        
+    existing = frappe.db.exists("Quickbooks Sync Queues",  {"request_id": requestID})
+    if existing:    
+        queue_doc = frappe.get_doc("Quickbooks Sync Queues", existing)        
+        if queue_doc.iterator_id:
+            iterator = 'Continue'
+            iterator_id = f' iteratorID="{queue_doc.iterator_id}"'        
+        
+        qbxml = f"""
+            <ItemQueryRq  requestID="{requestID}" >
+                <MaxReturned>5000</MaxReturned>
+                <ActiveStatus>ActiveOnly</ActiveStatus>
+            </ItemQueryRq >
         """
         return qbxml
     
