@@ -12,7 +12,7 @@
                 {{ cat.name_en }}
             </button>
             </div>
-            <div class="cart-icon" @click="onViewDetail">
+            <div class="cart-icon" @click="showCart = true">
             <v-badge :content="totalItems" :model-value="totalItems > 0" color="#b91c1c">
                 <v-icon size="28">mdi-cart-plus</v-icon>
             </v-badge>
@@ -40,7 +40,7 @@
 </template>
 
 <script setup>
-import { ref,inject, computed, nextTick,onMounted,smallViewSaleProductListModal} from '@/plugin';
+import { ref,inject, computed, nextTick,onMounted} from '@/plugin';
 import ComSmallAddSale from "@/views/sale/components/mobile_screen/ComSmallAddSale.vue";
 import ComProductCard from "@/views/sale_page/components/ComProductCard.vue";
 import { useDialog } from 'primevue/usedialog';
@@ -68,7 +68,6 @@ const screenWidth = ref(window.innerWidth);
  
 const activeCategory = ref("");
 const containerRef = ref(null);
-
 
 
 // Flag to suppress onScroll updates while a programmatic scroll is in flight
@@ -173,22 +172,6 @@ const totalItems = computed(() =>
   cart.value.reduce((sum, item) => sum + item.qty, 0)
 )
 
-const checkNewSaleNoSaleProducts = computed(()=>{
-    if((sale.sale.name||'')=='' && (sale.sale.sale_products||[]).length <=0){
-        return true;
-    } 
-    return false;
-    
-})
-
-async function onViewDetail(){
-    if(checkNewSaleNoSaleProducts.value){
-        toaster.warning( $t('msg.Please select a menu item to continue'));
-       
-        return;
-    }
-    const result = await smallViewSaleProductListModal ({title: sale.sale.name, value:  ''});
-}
 
 </script>
 
