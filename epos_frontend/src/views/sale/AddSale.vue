@@ -48,227 +48,227 @@
     </div>
 </template>
 <script setup>
-import { inject, useRoute, useRouter, ref, onMounted, onUnmounted, onBeforeRouteLeave, createResource, ShortCutKeyHelpDialog, i18n } from '@/plugin';
-import { getCurrentInstance } from 'vue';
-import ComMenu from './components/ComMenu.vue';
-import ComSelectCustomer from './components/ComSelectCustomer.vue';
-import ComAddSaleRetail from './components/ComAddSaleRetail.vue';
-import ComSaleInformation from '@/views/sale/components/ComSaleInformation.vue';
-import ComLoadingDialog from '../../components/ComLoadingDialog.vue';
-import ComSmallAddSale from './components/mobile_screen/ComSmallAddSale.vue';
-import ComGroupSaleProductList from './components/ComGroupSaleProductList.vue';
-import ComSaleSummaryList from './components/ComSaleSummaryList.vue';
-import ComSaleButtonPaymentSubmit from './components/ComSaleButtonPaymentSubmit.vue';
-import ComSaleKeyPad from './components/ComSaleKeypad.vue';
-import { createToaster } from '@meforma/vue-toaster';
-import { useDisplay } from 'vuetify';
+    import { inject, useRoute, useRouter, ref, onMounted, onUnmounted, onBeforeRouteLeave, createResource, ShortCutKeyHelpDialog, i18n } from '@/plugin';
+    import { getCurrentInstance } from 'vue';
+    import ComMenu from './components/ComMenu.vue';
+    import ComSelectCustomer from './components/ComSelectCustomer.vue';
+    import ComAddSaleRetail from './components/ComAddSaleRetail.vue';
+    import ComSaleInformation from '@/views/sale/components/ComSaleInformation.vue';
+    import ComLoadingDialog from '../../components/ComLoadingDialog.vue';
+    import ComSmallAddSale from './components/mobile_screen/ComSmallAddSale.vue';
+    import ComGroupSaleProductList from './components/ComGroupSaleProductList.vue';
+    import ComSaleSummaryList from './components/ComSaleSummaryList.vue';
+    import ComSaleButtonPaymentSubmit from './components/ComSaleButtonPaymentSubmit.vue';
+    import ComSaleKeyPad from './components/ComSaleKeypad.vue';
+    import { createToaster } from '@meforma/vue-toaster';
+    import { useDisplay } from 'vuetify';
 
-const { t: $t } = i18n.global;
+    const { t: $t } = i18n.global;
 
-const { mobile } = useDisplay();
+    const { mobile } = useDisplay();
 
-const sale = inject("$sale");
-const gv = inject("$gv");
-const socket = inject("$socket");
+    const sale = inject("$sale");
+    const gv = inject("$gv");
+    const socket = inject("$socket");
 
-const product = inject("$product");
- 
-let openSearch = ref(false);
-const route = useRoute();
-const router = useRouter();
+    const product = inject("$product");
+    
+    let openSearch = ref(false);
+    const route = useRoute();
+    const router = useRouter();
 
-const toaster = createToaster({ position: "top-right" });
+    const toaster = createToaster({ position: "top-right" });
 
-sale.vueInstance = getCurrentInstance();
-sale.vue = sale.vueInstance.appContext.config.globalProperties;
+    sale.vueInstance = getCurrentInstance();
+    sale.vue = sale.vueInstance.appContext.config.globalProperties;
 
-sale.orderTime = null;
-sale.deletedSaleProducts = [];
+    sale.orderTime = null;
+    sale.deletedSaleProducts = [];
 
-sale.vue.$onKeyStroke('F1', (e) => {
-    e.preventDefault();
-    if (localStorage.getItem('dialogstate') === null) {
-        localStorage.setItem('dialogstate', 1)
-        ShortCutKeyHelpDialog()
-    }
-});
-
-
-
-sale.orderTime = "";
-if (product.setting.pos_menus.length > 0) {
-    product.loadPOSMenu();
-} else {
-    product.getProductMenuByProductCategory( "All Product Categories")
-    product.loadPOSMenu();
-}
-
-// small device
-function onSearchProduct(open) {
-    openSearch.value = open
-}
-
-const handleHashChange = () => {
-    const hash = window.location.hash.substring(1); // Remove the `#` from the hash
-    if (hash) {
-        if(product.selectedProductCategory!=decodeURIComponent(hash)){
-            product.getProductMenuByProductCategory(decodeURIComponent(hash))
-        }
-    }
-    product.canBack = (hash && decodeURIComponent(hash)!="All Product Categories")
-};
-
-const handleBeforeUnload = (event) => {
-	const device_setting  = JSON.parse(localStorage.getItem("device_setting"));	
-	if (route.path.toLowerCase().includes('/epos_frontend/add-sale') && device_setting.show_warning_before_reload_in_order_screen == 1) {
-		event.preventDefault()
-		event.returnValue = ''
-	}
-}
-
-onMounted(() => { 
-    window.addEventListener('beforeunload', handleBeforeUnload)
-    window.addEventListener('hashchange', handleHashChange);
-
-    //check user 
-    const make_order_auth = JSON.parse(localStorage.getItem('make_order_auth'));
-    if (sale.getString(route.params.name) == "" || make_order_auth == undefined) {
-        if (sale.sale.sale_status == undefined) {
-            if (sale.setting.table_groups.length > 0) {
-                router.push({ name: 'TableLayout' })
-            }
-            else {
-                sale.newSale(); 
-            }
-        }
-    }
-
-    let backup_sale = JSON.parse(JSON.stringify(sale.sale))  
-
-    //check working day and cashier shift
-    createResource({
-        url: "epos_restaurant_2023.api.api.get_current_shift_information",
-        params: {
-            business_branch: sale.setting?.business_branch,
-            pos_profile: localStorage.getItem("pos_profile")
-        },
-        auto: true,
-        onSuccess(data) {
-            if (data.cashier_shift == null) {
-                toaster.warning($t("msg.Please start shift first"));
-                router.push({ name: "OpenShift" });
-            } else if (data.working_day == null) {
-                toaster.warning($t('msg.Please start working day first'));
-                router.push({ name: "StartWorkingDay" });
-            } else {
-
-                sale.sale.working_day = data.working_day.name;
-                sale.sale.posting_date = data.working_day.posting_date;
-                sale.posting_date = data.working_day.posting_date;
-                sale.sale.cashier_shift = data.cashier_shift.name;
-                sale.sale.shift_name = data.cashier_shift.shift_name;
-
-
-                // sale.working_day = data.working_day.name;
-                // sale.cashier_shift = data.cashier_shift.name;
-                // sale.shift_name = data.cashier_shift.shift_name;
-                product.getProductMenuByProductCategory( 'All Product Categories')
-                gv.confirm_close_working_day(data.working_day.posting_date);
-
-                onCheckExpireHappyHoursPromotion();
-            }
-        }
-    })
-
-    //load sale data
-    if (!sale.getString(route.params.name) == "" && !sale.no_loading) {
-        sale.LoadSaleData(route.params.name).then((v) => { 
-            if (v) {
-                if (v.docstatus == 1 || v.docstatus == 2) {
-
-                    if (v.docstatus == 1) {
-                        toaster.warning($t('msg.This bill is already closed'));
-
-                    } else {
-                        toaster.warning($t('msg.This bill is already cancelled'));
-                    }
-                    if (gv.setting.table_groups.length > 0) {
-                        router.push({ name: 'TableLayout' });
-                    }
-                    else {
-                        router.push({ name: 'Home' });
-                    }
-                }else{           
-                    sale.saleNetworkLock(sale.sale)
-                }
-                //
-                socket.emit("ShowOrderInCustomerDisplay", sale.sale,"", sale.customer_display_key);
-                sale.getTableSaleList();
-            }
-
-        });
-    } else { 
-        sale.getTableSaleList()
-
-        sale.saleNetworkLock(backup_sale)
-    }
-    socket.emit("ShowOrderInCustomerDisplay", sale.sale, "new", sale.customer_display_key);
-
-})
-
-function onCheckExpireHappyHoursPromotion() {
-    createResource({
-        url: 'epos_restaurant_2023.api.promotion.check_promotion',
-        auto: true,
-        params: {
-            check_time: 1,
-            business_branch: gv.setting.business_branch || ''
-        },
-        onSuccess(doc) {
-            gv.promotion = doc
-            sale.promotion = doc
+    sale.vue.$onKeyStroke('F1', (e) => {
+        e.preventDefault();
+        if (localStorage.getItem('dialogstate') === null) {
+            localStorage.setItem('dialogstate', 1)
+            ShortCutKeyHelpDialog()
         }
     });
 
-}
-onBeforeRouteLeave(() => {
-    return !sale.isOrdered()
-});
 
-onUnmounted(() => {
-    window.removeEventListener('beforeunload', handleBeforeUnload)
-    if (sale.kod_messages.length>0){
-        sale.kod_messages.forEach(s=>{
-            socket.emit("SubmitKOD",{screen_name:s.screen_name,message:s.message})
+
+    sale.orderTime = "";
+    if (product.setting.pos_menus.length > 0) {
+        product.loadPOSMenu();
+    } else {
+        product.getProductMenuByProductCategory( "All Product Categories")
+        product.loadPOSMenu();
+    }
+
+    // small device
+    function onSearchProduct(open) {
+        openSearch.value = open
+    }
+
+    const handleHashChange = () => {
+        const hash = window.location.hash.substring(1); // Remove the `#` from the hash
+        if (hash) {
+            if(product.selectedProductCategory!=decodeURIComponent(hash)){
+                product.getProductMenuByProductCategory(decodeURIComponent(hash))
+            }
+        }
+        product.canBack = (hash && decodeURIComponent(hash)!="All Product Categories")
+    };
+
+    const handleBeforeUnload = (event) => {
+        const device_setting  = JSON.parse(localStorage.getItem("device_setting"));	
+        if (route.path.toLowerCase().includes('/epos_frontend/add-sale') && device_setting.show_warning_before_reload_in_order_screen == 1) {
+            event.preventDefault()
+            event.returnValue = ''
+        }
+    }
+
+    onMounted(() => { 
+        window.addEventListener('beforeunload', handleBeforeUnload)
+        window.addEventListener('hashchange', handleHashChange);
+
+        //check user 
+        const make_order_auth = JSON.parse(localStorage.getItem('make_order_auth'));
+        if (sale.getString(route.params.name) == "" || make_order_auth == undefined) {
+            if (sale.sale.sale_status == undefined) {
+                if (sale.setting.table_groups.length > 0) {
+                    router.push({ name: 'TableLayout' })
+                }
+                else {
+                    sale.newSale(); 
+                }
+            }
+        }
+
+        let backup_sale = JSON.parse(JSON.stringify(sale.sale))  
+
+        //check working day and cashier shift
+        createResource({
+            url: "epos_restaurant_2023.api.api.get_current_shift_information",
+            params: {
+                business_branch: sale.setting?.business_branch,
+                pos_profile: localStorage.getItem("pos_profile")
+            },
+            auto: true,
+            onSuccess(data) {
+                if (data.cashier_shift == null) {
+                    toaster.warning($t("msg.Please start shift first"));
+                    router.push({ name: "OpenShift" });
+                } else if (data.working_day == null) {
+                    toaster.warning($t('msg.Please start working day first'));
+                    router.push({ name: "StartWorkingDay" });
+                } else {
+
+                    sale.sale.working_day = data.working_day.name;
+                    sale.sale.posting_date = data.working_day.posting_date;
+                    sale.posting_date = data.working_day.posting_date;
+                    sale.sale.cashier_shift = data.cashier_shift.name;
+                    sale.sale.shift_name = data.cashier_shift.shift_name;
+
+
+                    // sale.working_day = data.working_day.name;
+                    // sale.cashier_shift = data.cashier_shift.name;
+                    // sale.shift_name = data.cashier_shift.shift_name;
+                    product.getProductMenuByProductCategory( 'All Product Categories')
+                    gv.confirm_close_working_day(data.working_day.posting_date);
+
+                    onCheckExpireHappyHoursPromotion();
+                }
+            }
         })
-        
+
+        //load sale data
+        if (!sale.getString(route.params.name) == "" && !sale.no_loading) {
+            sale.LoadSaleData(route.params.name).then((v) => { 
+                if (v) {
+                    if (v.docstatus == 1 || v.docstatus == 2) {
+
+                        if (v.docstatus == 1) {
+                            toaster.warning($t('msg.This bill is already closed'));
+
+                        } else {
+                            toaster.warning($t('msg.This bill is already cancelled'));
+                        }
+                        if (gv.setting.table_groups.length > 0) {
+                            router.push({ name: 'TableLayout' });
+                        }
+                        else {
+                            router.push({ name: 'Home' });
+                        }
+                    }else{           
+                        sale.saleNetworkLock(sale.sale)
+                    }
+                    //
+                    socket.emit("ShowOrderInCustomerDisplay", sale.sale,"", sale.customer_display_key);
+                    sale.getTableSaleList();
+                }
+
+            });
+        } else { 
+            sale.getTableSaleList()
+
+            sale.saleNetworkLock(backup_sale)
+        }
+        socket.emit("ShowOrderInCustomerDisplay", sale.sale, "new", sale.customer_display_key);
+
+    })
+
+    function onCheckExpireHappyHoursPromotion() {
+        createResource({
+            url: 'epos_restaurant_2023.api.promotion.check_promotion',
+            auto: true,
+            params: {
+                check_time: 1,
+                business_branch: gv.setting.business_branch || ''
+            },
+            onSuccess(doc) {
+                gv.promotion = doc
+                sale.promotion = doc
+            }
+        });
+
     }
-    sale.sale = {}
-    sale.working_day_resource = null;
-    sale.cashier_shift_resource = null;
-    sale.newSaleResource = null;
-    sale.saleResource = null;
-    sale.tableSaleListResource = null;
-    sale.kod_messages = [];
 
-    socket.emit("ShowOrderInCustomerDisplay", {}, true,  sale.customer_display_key);
-    window.removeEventListener('hashchange', handleHashChange);
-})
+    onBeforeRouteLeave(() => {
+        return !sale.isOrdered()
+    });
 
+    onUnmounted(() => {
+        window.removeEventListener('beforeunload', handleBeforeUnload)
+        if (sale.kod_messages.length>0){
+            sale.kod_messages.forEach(s=>{
+                socket.emit("SubmitKOD",{screen_name:s.screen_name,message:s.message})
+            })
+            
+        }
+        sale.sale = {}
+        sale.working_day_resource = null;
+        sale.cashier_shift_resource = null;
+        sale.newSaleResource = null;
+        sale.saleResource = null;
+        sale.tableSaleListResource = null;
+        sale.kod_messages = [];
 
-function getCustomerScrollWidth() {
-    const is_window = localStorage.getItem('is_window');
-    if (is_window == 1) {
-        return 'scrollbar';
+        socket.emit("ShowOrderInCustomerDisplay", {}, true,  sale.customer_display_key);
+        window.removeEventListener('hashchange', handleHashChange);
+    })
+
+    function getCustomerScrollWidth() {
+        const is_window = localStorage.getItem('is_window');
+        if (is_window == 1) {
+            return 'scrollbar';
+        }
+        return '';
     }
-    return '';
-}
 
 </script>
 
 
 <style>
-.scrollbar::-webkit-scrollbar {
-    width: 17px;
-}
+    .scrollbar::-webkit-scrollbar {
+        width: 17px;
+    }
 </style>

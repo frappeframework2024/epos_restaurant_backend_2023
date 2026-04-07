@@ -172,22 +172,23 @@ function getTotalQuantityOrder(data) {
 
 // end price menu
 
- function onClickMenu(menu) {
-      if(menu.require_password == 1){
-            gv.setting.pos_setting.require_password = 1
-            gv.authorize("require_password","allow_to_order_menu").then(async (v) => {
-            if (v) {
-                loadMenu(menu)
-            }
-      })}
-      else{
+ async function onClickMenu(menu) {
+    let password_already_typed = ref(0);
+    if(menu.require_password == 1){
+        gv.setting.pos_setting.require_password = 1
+        await gv.authorize("require_password","allow_to_order_menu").then(async (v) => {
+        if (v) {
+            loadMenu(menu)
+            password_already_typed.value = 1;
+        }
+    })}
+    else{
         loadMenu(menu)
-      }
-
-      async function loadMenu(menu){
-        if(menu.require_password_for_submitted_sale == 1 && (sale.sale.name || "") != ""){
+    }
+    async function loadMenu(menu){
+        if(menu.require_password_for_submitted_sale == 1 && (sale.sale.name || "") != "" && password_already_typed.value == 0){
             gv.setting.pos_setting.require_password_for_submitted_sale = 1
-            gv.authorize("require_password_for_submitted_sale","allow_click_menu_after_sale_sumitted").then(async (v) => {
+            await gv.authorize("require_password_for_submitted_sale","allow_click_menu_after_sale_sumitted").then(async (v) => {
                 if (v) {
                     if (sale.setting.pos_menus.length > 0) {
                             product.loading_default_menu_from_table = 0;
@@ -198,16 +199,16 @@ function getTotalQuantityOrder(data) {
                     }
                 }
             })}
-            else{
-                if (sale.setting.pos_menus.length > 0) {
-                    product.loading_default_menu_from_table = 0;
-                    product.parentMenu = menu.name;
-                    _onPriceRuleChanged(menu);
-                } else {
-                    product.getProductMenuByProductCategory(menu.name)
-                }
+        else{
+            if (sale.setting.pos_menus.length > 0) {
+                product.loading_default_menu_from_table = 0;
+                product.parentMenu = menu.name;
+                _onPriceRuleChanged(menu);
+            } else {
+                product.getProductMenuByProductCategory(menu.name)
             }
-      }
+        }
+    }
 }
 
 const { files, open, reset, onCancel, onChange } = useFileDialog({
@@ -310,9 +311,13 @@ async function onClickProduct() {
     if(isProcessing){
         return
     }
-    isProcessing = true;
-    await onSelectProduct(props.data,sale,product,dialog)
-    isProcessing = false;
+    
+    try{
+        isProcessing = true;
+        await onSelectProduct(props.data,sale,product,dialog)
+    }finally{
+        isProcessing = false;
+    }
     
 }
 

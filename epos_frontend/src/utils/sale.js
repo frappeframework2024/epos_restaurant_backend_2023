@@ -4,6 +4,7 @@ import ComEditSaleProduct from '@/views/sale/components/ComEditSaleProduct.vue'
 import { FrappeApp } from 'frappe-js-sdk';
 const frappe = new FrappeApp();
 const call = frappe.call()
+const db = frappe.db();
 const toaster = createToaster({ position: "top-right" });
 const { t: $t } = i18n.global;
 
@@ -15,9 +16,21 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
         product.is_open_price = p.is_open_price
         if (!sale.isBillRequested(p)) {
             if(sale.setting?.pos_setting?.allow_negative_stock == 0 && p.is_inventory_product == 1){
-                let data =  await call.get("epos_restaurant_2023.inventory.inventory.get_product_qty",{"product":p.name,"stock_location":sale.sale.stock_location})
-                if(data.message <= 0){
-                    toaster.error($t('Product out of stock'));
+                let show_error = 1
+                const stocks = await db.getDocList("Stock Location Product", {
+                    fields: ["quantity"],
+                    filters: [
+                        ["product_code", "=", p.name],
+                        ["stock_location", "=", sale.sale.stock_location]
+                    ]
+                });
+                if((stocks || []).length > 0){
+                    if(stocks[0].quantity > 0){
+                        show_error = 0
+                    }
+                }
+                if(show_error == 1){
+                    toaster.error($t("This product is out of stock"));
                     return
                 }
             }

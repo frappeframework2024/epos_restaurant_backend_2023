@@ -112,7 +112,6 @@ def add_gl_entries_to_sync_queue(name,doctype,posting_date):
                 grouped_gl_entries = get_gl_entries(1,transaction_type,doctype,name,branch["name"])
                 gl_entries = get_gl_entries(0,transaction_type,doctype,name,branch["name"])
                 account_mapping = config.tbl_chart_of_account_mapping                
-                
                 for a in account_mapping:
                     for b in grouped_gl_entries:
                         if a.reference_name == b["account"] and a.qb_company == qb_company_name:

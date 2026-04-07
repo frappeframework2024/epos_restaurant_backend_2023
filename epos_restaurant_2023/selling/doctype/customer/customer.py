@@ -12,7 +12,6 @@ from epos_restaurant_2023.api.api import get_default_price_rule
 from epos_restaurant_2023.selling.doctype.customer.utils import update_fetch_from_fields
 class Customer(Document):
 	def validate(self):
-		
 		if self.flags.ignore_validate == True:
 			return
 		if self.date_of_birth:

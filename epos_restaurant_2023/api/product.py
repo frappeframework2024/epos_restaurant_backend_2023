@@ -77,6 +77,42 @@ def get_product_by_menu(root_menu="",mobile = 0,sort_order_by="product_name_en",
       
         return menus
 
+@frappe.whitelist(allow_guest=True)
+def get_product_by_menu_1_level(**param):
+    if  frappe.request.method != "POST":        
+        frappe.local.response.update({
+            "message": "Invalid request method",
+            "http_status_code": 405 
+        }) 
+        return
+    
+    p = {k.strip(): v for k, v in param.items()}  
+    p.pop("cmd",None)
+    
+    root_menu = p.get("root_menu",None) or ""
+    mobile = p.get("mobile",None) or 0
+    sort_order_by = p.get("sort_order_by",None) or "product_name_en"
+    sort_menu_order_by = p.get("sort_menu_order_by",None) or "name"
+    
+    menus = get_product_by_menu(root_menu=root_menu, mobile=mobile,sort_order_by=sort_order_by, sort_menu_order_by=sort_menu_order_by,shift_name="")
+    menu_categories = [m for m in menus if m.get("type",None) == "menu"]
+    menu_products = [m for m in menus if m.get("type",None) == "product"]
+    
+    new_menu_categories = []
+    for m in menu_categories:
+        products = [p  for p in menu_products if p.get("parent",None) == m.get("name",None)]        
+        if products:  # cleaner than len(products) > 0
+            new_menu_categories.append(m)
+    #         new_menus.extend(products)  # better than loop append
+        
+    
+    # return new_menus 
+    return {
+        "menu_categories":new_menu_categories,
+        "menu_products":menu_products
+    }
+    
+
 def get_child_menus(parent_menu, mobile= 0,sort_menu_order_by="name",sort_order_by = "product_name_en",shift_name=""):
     shift_filter = ""
     if shift_name != "":
