@@ -212,6 +212,7 @@ export default class Sale {
         this.moveItemSaleProducts = [];
         return new Promise(async (resolve) => {
             const parent = this;
+
             this.saleResource = createDocumentResource({
                 url: "frappe.client.get",
                 doctype: "Sale",
@@ -231,6 +232,7 @@ export default class Sale {
                     },
                 },
             });
+
             await this.saleResource.get.fetch().then(async (doc) => {
                 this.onLoadDeleteSaleProducts(doc.name);
                 this.sale = doc;
@@ -266,6 +268,11 @@ export default class Sale {
                 if (!this.tableSaleListResource?.data) {
                     this.getTableSaleList();
                 }
+
+
+                //
+                socket.emit("ShowOrderInCustomerDisplay", this.sale,"", this.customer_display_key);
+
                 resolve(doc);
                  
             });

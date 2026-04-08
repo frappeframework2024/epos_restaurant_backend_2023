@@ -209,7 +209,6 @@
             });
         } else { 
             sale.getTableSaleList()
-
             sale.saleNetworkLock(backup_sale)
         }
         socket.emit("ShowOrderInCustomerDisplay", sale.sale, "new", sale.customer_display_key);

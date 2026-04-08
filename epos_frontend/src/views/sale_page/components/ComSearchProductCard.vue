@@ -1,37 +1,30 @@
 <template>
-<div class="products-grid">
-      <div
-        v-for="prod in productsByCategory"
-        :key="prod.name"
-        class="product-card"
-        @click="onProductClick(prod)"
-      >
-        <div class="eye-icon" @click.stop="previewProduct = prod">
-          <v-icon>mdi-eye</v-icon>
+    <div class="products-grid">
+        <div v-for="prod in products" :key="prod.name" class="product-card">
+            <div class="eye-icon" @click.stop="previewProduct = prod">
+                <v-icon>mdi-eye</v-icon>
+            </div>
+            <div class="product-image"> 
+                <img v-if="prod.photo" :src="prod.photo" :alt="prod.name"  @error="onImageError" loading="lazy"/>
+                <img v-else :src="getImage" :alt="prod.name" style="width: 100%;height: 100%; object-fit: cover;" @error="onImageError" loading="lazy"  />
+            </div>
+            <div class="product-info">
+                
+                <div class="product-name"> {{ getProductName(prod) }}<span style="color: red;">{{ getTotalQuantityOrder(prod) }}</span></div>
+                <div class="product-price flex items-center">
+                    <span v-if="productPrices(prod).length > 1">
+                        <span>
+                            <CurrencyFormat :value="minPrice(prod)" />
+                        </span> <v-icon icon="mdi-arrow-right" size="x-small" /> <span>
+                            <CurrencyFormat :value="maxPrice(prod)" />
+                        </span>
+                    </span>
+                    <CurrencyFormat v-else :value="showPrice(prod)" />
+                </div>
+            </div>
         </div>
-        <div class="product-image"> 
-          <img v-if="prod.photo" :src="prod.photo" :alt="prod.name"  @error="onImageError" loading="lazy"/>
-          <img v-else :src="getImage" :alt="prod.name" style="width: 100%;height: 100%; object-fit: cover;" @error="onImageError" loading="lazy"  />
-        </div>
-            
-        <div class="product-info">
-          <div class="product-name"> {{ getProductName(prod) }}<span style="color: red;">{{ getTotalQuantityOrder(prod) }}</span></div>
-          
-          <div class="product-price flex items-center">
-              <span v-if="productPrices(prod).length > 1">
-                  <span>
-                      <CurrencyFormat :value="minPrice(prod)" />
-                  </span> <v-icon icon="mdi-arrow-right" size="x-small" /> <span>
-                      <CurrencyFormat :value="maxPrice(prod)" />
-                  </span>
-              </span>
-              <CurrencyFormat v-else :value="showPrice(prod)" />
-          </div>
-        </div>
-      </div>
     </div>
-
-    <div v-if="previewProduct" class="image-overlay" @click="previewProduct = null">
+ <div v-if="previewProduct" class="image-overlay" @click="previewProduct = null">
   <div
     class="image-popup"
     @click.stop
@@ -69,20 +62,13 @@
 </template>
 
 <script setup>
-import { ref,watch, reactive, inject,computed } from '@/plugin';
-import Enumerable from 'linq';
-
+const props = defineProps({
+  products: Array
+})
+import { ref,inject,reactive,watch } from '@/plugin';
 const sale = inject("$sale");
-const product = inject("$product");
 const previewProduct = ref(null)
 
-const props = defineProps({
-  productsByCategory: {
-    type: Array,
-    required: true
-  },
-  onProductClick: Function
-})
 
 const zoom = ref(1)
 const pan = reactive({ x: 0, y: 0 })
@@ -161,6 +147,29 @@ function onTouchMove(e) {
 
 function onTouchEnd() { lastTouchDist = null; isDragging.value = false }
 
+
+const productPrices = (p) => {
+    if (props.products.prices) {
+        const r = JSON.parse(p.prices)
+        return r.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule)
+    }
+    return []
+}
+
+const showPrice = (p) => {
+   let prices = productPrices(p);
+  if (p.is_combo_menu) {
+      return p.price || 0
+  }
+  if (prices.length == 1) {
+      return prices[0].price
+  }
+  else if (prices.length == 0) {
+      return p.price || 0
+  }
+  return 0
+}
+
 const placeholder = 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' // your default image
 const getImage = (img) => {
   if (!img) return placeholder
@@ -184,7 +193,6 @@ function getProductName(p){
   return `${p.name} - ${p.name_en}`
 }
 
-
 function getTotalQuantityOrder(data) {  
     const qty = sale.sale?.sale_products?.filter(r => r.product_code == data.name).reduce((n, d) => n + (d.quantity || 0), 0);
     if (qty == undefined) {
@@ -195,31 +203,6 @@ function getTotalQuantityOrder(data) {
     } else {
         return " (" + qty + ")"
     } 
-}
-
-
-// price menu
-const productPrices = (p) => {
-    if (product.prices) {
-        const r = JSON.parse(p.prices)
-        return r.filter(r => (r.branch == sale.sale.business_branch || r.branch == '') && r.price_rule == sale.sale.price_rule)
-    }
-    return []
-}
-
-
-const showPrice = (p) => {
-   let prices = productPrices(p);
-  if (p.is_combo_menu) {
-      return p.price || 0
-  }
-  if (prices.length == 1) {
-      return prices[0].price
-  }
-  else if (prices.length == 0) {
-      return p.price || 0
-  }
-  return 0
 }
 
 const maxPrice = (p) => {
@@ -237,14 +220,13 @@ const minPrice = (p) => {
   }
   return 0
 }
-
-
 </script>
 
 <style scoped>
 
 /* Grid */
 .products-grid {
+    margin: 5px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 14px;
@@ -256,6 +238,7 @@ const minPrice = (p) => {
 
 /* Card */
 .product-card {
+  display: inline-block;
   position: relative;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
@@ -287,15 +270,6 @@ const minPrice = (p) => {
 }
 .product-card:hover .product-image img {
   transform: scale(1.06);
-}
-.image-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 48px;
-  background: linear-gradient(135deg, #fee2e2, #fef2f2);
 }
 
 /* Info */
@@ -416,13 +390,4 @@ const minPrice = (p) => {
   min-width: 40px;
   text-align: center;
 }
-
-@media (max-width: 768px) {
-  
-}
-
-@media (min-width: 1024px) {
-  
-}
-
 </style>

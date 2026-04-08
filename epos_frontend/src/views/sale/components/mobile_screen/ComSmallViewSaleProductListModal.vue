@@ -36,13 +36,16 @@ import ComPrintBillButton from '../ComPrintBillButton.vue';
 import ComSelectCustomer from '../ComSelectCustomer.vue';
 import ComSmallSaleSummary from './ComSmallSaleSummary.vue'; 
 import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
+
+const router = useRouter();
+
 const props = defineProps({
     params: Object
 })
-const sale = inject('$sale')
-const gv = inject('$gv')
-const emit = defineEmits(['resolve'])
-const router = useRouter();
+const socket = inject('$socket');
+const sale = inject('$sale');
+const gv = inject('$gv');
+const emit = defineEmits(['resolve']);
 const tableLayout = inject("$tableLayout");
 
 onMounted(()=>{
@@ -53,11 +56,11 @@ onMounted(()=>{
 function onGoHome(){
     if(onRedirectSaleType()){
         if (gv.setting.table_groups.length > 0) {
-        sale.sale = {};
-        router.push({ name: 'TableLayout' }).then(()=>{
-            tableLayout.getSaleList();
-            emit('resolve', true)
-        });
+            sale.sale = {};
+            router.push({ name: 'TableLayout' }).then(()=>{
+                tableLayout.getSaleList();
+                emit('resolve', true)
+            });
         }
         else {
             sale.newSale()
@@ -65,6 +68,8 @@ function onGoHome(){
                 emit('resolve', true);
             });
         }
+
+        socket.emit("ShowOrderInCustomerDisplay", {},"", sale.customer_display_key);
     }
 }
 
@@ -89,14 +94,30 @@ function onClose() {
 
 function onAddNewOrder(){
     if (!sale.isBillRequested()) {
-        sale.no_loading = true        
-        router.push({
-            name: "AddSale", params: {
-                name: sale.sale.name
-            }
-        }).then(()=>{
-            emit('resolve', true)
-        });
+        sale.no_loading = true;
+        let template = (gv.device_setting?.main_sale_screen??"Default") ;
+        if(template == "Default"){
+            router.push({ 
+                name: "AddSale",
+                params: {
+                    name: sale.sale.name
+                }
+            }).then(()=>{
+                emit('resolve', true)
+            });
+
+        }else {
+           let _template = template == "Top Menu"?"top":"left";
+            router.push({ 
+                name: "SaleOrder",
+                params: {
+                    name: sale.sale.name
+                },
+                query: { menu: _template }
+            }).then(()=>{
+                emit('resolve', true)
+            });
+        }  
     }
 }
 

@@ -67,15 +67,16 @@
 import { inject, useRouter, createToaster, selectSaleOrderDialog, keyboardDialog, smallViewSaleProductListModal, i18n,ref } from '@/plugin';
 import { useDisplay } from 'vuetify';
 const { t: $t } = i18n.global;
+const router = useRouter();
 const { mobile, platform } = useDisplay()
 const toaster = createToaster({ position: "top-right" });
 const tableLayout = inject("$tableLayout");
 const gv = inject("$gv");
 const sale = inject("$sale");
+const socket = inject("$socket");
 const frappe = inject("$frappe");
 const moment = inject("$moment");
-const router = useRouter();
-const product = inject("$product");
+const product = inject("$product"); 
 const props = defineProps({
     tableStatusColor: Boolean
 });
@@ -126,7 +127,7 @@ function onTableClick(table, guest_cover) {
                 if(await validateNewtowkSaleLock(table)){ 
                     return 
                 }
-                if (mobile.value) {
+                if (mobile.value) { 
                     await sale.LoadSaleData(table.sales[0].name).then(async (_sale) => {
                         localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth));
                         const result = await smallViewSaleProductListModal({ title: sale.sale.name ? sale.sale.name : $t('New Sale'), data: { from_table: true } });
@@ -134,6 +135,8 @@ function onTableClick(table, guest_cover) {
                             tableLayout.getSaleList();
                         } else {
                             localStorage.removeItem('make_order_auth');
+                            
+                            socket.emit("ShowOrderInCustomerDisplay",{},"", sale.customer_display_key);
                         }
                     });
                 }

@@ -49,7 +49,7 @@ import { createToaster } from '@meforma/vue-toaster';
 import ComExchangeRate from '../ComExchangeRate.vue';
 import ComSaleButtonActions from '../ComSaleButtonActions.vue';
 import ComSaleSummaryList from '../ComSaleSummaryList.vue';
-import isEqual from 'lodash.isequal' 
+
 const { t: $t } = i18n.global;  
 
 const emit = defineEmits(["onClose",'onSubmitAndNew'])

@@ -1,6 +1,5 @@
 <template>  
     <div class="category-wrapper">  
-        <!-- Categories Pills + Cart -->
         <div class="category-row">
             <div class="category-bar">
             <button
@@ -13,25 +12,35 @@
             </button>
             </div>
             <div class="cart-icon" @click="showCart = true">
-            <v-badge :content="totalItems" :model-value="totalItems > 0" color="#b91c1c">
+            <v-badge :content="(sale.sale.total_quantity||0)" :model-value="(sale.sale.total_quantity||0) > 0" color="#b91c1c" @click="onViewDetail">
                 <v-icon size="28">mdi-cart-plus</v-icon>
             </v-badge>
             </div>
         </div>
     </div>
 
+    
   <div class="products-container" ref="containerRef" @scroll="onScroll">
-    <div
-      v-for="menu in categories"
-      :key="menu.name"
-      :id="'section-' + menu.name"
-      class="category-section"
-    >
-      <h2 class="section-title">{{ menu.name_en }}</h2>
-      <!-- Product Cards -->  
-      <ComProductCard :productsByCategory ="productsByCategory(menu.name)" :onProductClick="onMenuProductClick"/>
-      
-    </div>
+    <template v-if="!product.searchProductKeyword">
+      <div
+        v-for="menu in categories"
+        :key="menu.name"
+        :id="'section-' + menu.name"
+        class="category-section"
+      >
+        <h2 class="section-title">{{ menu.name_en }}</h2>
+        <!-- Product Cards -->  
+        <ComProductCard :productsByCategory ="productsByCategory(menu.name)" :onProductClick="onMenuProductClick"/>  
+      </div>
+    </template>
+
+    <template v-else>
+      <div class="mt-5">
+      <ComSearchProductCard class="" :products="searchedProducts" :onProductClick="onMenuProductClick" />
+      </div>
+    </template>
+
+    <ComScrollToTop :target="containerRef" />
   </div>
 
   <div v-if="screenWidth < 768" class="footer-payment">
@@ -40,16 +49,18 @@
 </template>
 
 <script setup>
-import { ref,inject, computed, nextTick,onMounted} from '@/plugin';
+import { ref,inject, computed, nextTick,onMounted,smallViewSaleProductListModal} from '@/plugin';
 import ComSmallAddSale from "@/views/sale/components/mobile_screen/ComSmallAddSale.vue";
 import ComProductCard from "@/views/sale_page/components/ComProductCard.vue";
 import { useDialog } from 'primevue/usedialog';
 import {onSelectProduct} from "@/utils/sale.js";
+import ComScrollToTop from "../../views/sale_page/components/ComScrollToTop.vue"
+
+import ComSearchProductCard from "../../views/sale_page/components/ComSearchProductCard.vue"
 
 
 const sale = inject("$sale");
 const product = inject("$product");
-
 
 const props = defineProps({
     menu_categories: Object,
@@ -70,9 +81,17 @@ const activeCategory = ref("");
 const containerRef = ref(null);
 
 
+const searchedProducts = computed(() => {
+  return categories.value
+    .filter(c => c.name !== 'All')
+    .flatMap(cat => productsByCategory(cat.name))
+})
+
+
 // Flag to suppress onScroll updates while a programmatic scroll is in flight
 let isScrollingProgrammatically = false
-const CATEGORY_BAR_HEIGHT = 56 // px — height of .category-bar
+// const CATEGORY_BAR_HEIGHT = 56 // px — height of .category-bar
+const CATEGORY_BAR_HEIGHT = 0 // px — height of .category-bar
 let isMenuItemClick = false;
 
 onMounted(()=>{ 
@@ -82,13 +101,50 @@ onMounted(()=>{
     window.addEventListener("resize", () => {
         screenWidth.value = window.innerWidth;
     });
+
+    const bar = document.querySelector('.category-bar')
+  if (!bar) return
+
+  // --- Mouse drag (desktop) ---
+  let isDown = false
+  let startX, scrollLeft
+
+  bar.addEventListener('mousedown', (e) => {
+    isDown = true
+    startX = e.pageX - bar.offsetLeft
+    scrollLeft = bar.scrollLeft
+  })
+  bar.addEventListener('mouseleave', () => isDown = false)
+  bar.addEventListener('mouseup', () => isDown = false)
+  bar.addEventListener('mousemove', (e) => {
+    if (!isDown) return
+    e.preventDefault()
+    const x = e.pageX - bar.offsetLeft
+    bar.scrollLeft = scrollLeft - (x - startX)
+  })
+
+  // --- Touch drag (mobile) ---
+  let touchStartX = 0
+  let touchScrollLeft = 0
+
+  bar.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].pageX
+    touchScrollLeft = bar.scrollLeft
+  }, { passive: true })
+
+  bar.addEventListener('touchmove', (e) => {
+    const x = e.touches[0].pageX
+    bar.scrollLeft = touchScrollLeft - (x - touchStartX)
+  }, { passive: true })
 })
 
- 
-
-
-
-const productsByCategory = (menu) => products.value.filter(p => p.parent === menu);
+const productsByCategory = (menu) =>{
+  if(product.searchProductKeyword){
+    let k = product.searchProductKeyword.toLowerCase()
+    return products.value.filter(p => p.parent === menu  &&  [p.name_en, p.name_kh, p.name].some(name => name?.toLowerCase().includes(k))) 
+  }
+  return products.value.filter(p => p.parent === menu)
+} 
 
 const scrollToCategory = (menu) => {
   activeCategory.value = menu
@@ -118,7 +174,8 @@ const onScroll = () => {
   // Threshold: a section is "active" once its top edge reaches within
   // header (64px) + category bar (56px) = 120px from viewport top
   // const THRESHOLD = 120
-  const THRESHOLD = 80
+  // const THRESHOLD = 80
+  const THRESHOLD = 0
 
   let current = props.menu_categories[0].value
 
@@ -154,8 +211,6 @@ const onScroll = () => {
   })
 }
 
-
-
 async function onMenuProductClick(data) { 
     if(isMenuItemClick){
         return
@@ -167,18 +222,27 @@ async function onMenuProductClick(data) {
     
 }
 
+const checkNewSaleNoSaleProducts = computed(()=>{
+    if((sale.sale.name||'')=='' && (sale.sale.sale_products||[]).length <=0){
+        return true;
+    } 
+    return false;    
+})
 
-const totalItems = computed(() =>
-  cart.value.reduce((sum, item) => sum + item.qty, 0)
-)
-
+async function onViewDetail(){
+    if(checkNewSaleNoSaleProducts.value){
+        toaster.warning( $t('msg.Please select a menu item to continue'));
+        return;
+    }
+    const result = await smallViewSaleProductListModal ({title: sale.sale.name, value:  ''});
+}
 
 </script>
 
 <style scoped>
 .category-pill {
   flex-shrink: 0;
-   white-space: nowrap;
+  white-space: nowrap;
   padding: 6px 18px;
   border-radius: 9999px;
   border: 1px solid #d1d5db;
@@ -200,17 +264,16 @@ const totalItems = computed(() =>
 
 /* Scrollable products area — sits below POS header (64px) + category bar (56px) */
 .products-container {
-  margin-top: 60px;
-  height: calc(100vh - 60px);
+  margin-top: 60px ;
+  height: calc(100vh - 125px);
   overflow-y: auto;
-  padding: 0 16px 110px;
-  /* padding: 0 16px 120px; */
+  padding: 0 16px 30px;
 }
 
 /* Section */
 .category-section {
   padding-top: 24px;
-  scroll-margin-top: 120px;
+  scroll-margin-top: 10px;
   user-select: none;
 }
 .section-title {
@@ -228,7 +291,7 @@ const totalItems = computed(() =>
 @media (max-width: 768px)  {
 
   .products-container {
-    margin-top: 60px;
+  
   height: calc(100vh - 60px);
   padding: 0 16px 100px;
 }
@@ -258,22 +321,35 @@ const totalItems = computed(() =>
   background: white;
   border-bottom: 1px solid #e5e7eb;
   z-index: 40;
+  touch-action: pan-x;
+  overflow: hidden;
 }
 
 .category-row {
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
-  height: 56px;
+  padding: 10px 0px 15px 0px;
+  overflow: hidden;   /* add this to prevent bleed */
+  min-width: 0;     
+  touch-action: pan-x;  
 }
 
 .category-bar {
+  /* background-color: green!important; */
   display: flex;
   gap: 10px;
   overflow-x: auto;
+   overflow-y: hidden;
   padding-left: 16px;
   scrollbar-width: none;
   user-select: none;
+   cursor: grab;             /* add this */
+  -webkit-overflow-scrolling: touch; /* smooth on iOS */
+  touch-action: pan-x; 
+}
+.category-bar:active {
+  cursor: grabbing;         /* add this */
 }
 
 .category-bar::-webkit-scrollbar {
@@ -283,5 +359,6 @@ const totalItems = computed(() =>
 .cart-icon {
   padding: 0 16px;
   cursor: pointer;
+  margin-right: 10px;
 }
 </style>
