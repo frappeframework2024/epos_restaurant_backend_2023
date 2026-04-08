@@ -15,8 +15,8 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
         let p = JSON.parse(JSON.stringify(product_data))
         product.is_open_price = p.is_open_price
         if (!sale.isBillRequested(p)) {
-            if(sale.setting?.pos_setting?.allow_negative_stock == 0 && p.is_inventory_product == 1){
-                let show_error = 1
+            if(p.is_inventory_product == 1){
+                let quantity = 0
                 const stocks = await db.getDocList("Stock Location Product", {
                     fields: ["quantity"],
                     filters: [
@@ -25,21 +25,23 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                     ]
                 });
                 if((stocks || []).length > 0){
-                    if(stocks[0].quantity > 0){
-                        show_error = 0
-                    }
+                   quantity = stocks[0].quantity
                 }
-                if(show_error == 1){
-                    toaster.error($t("This product is out of stock"));
-                    return
+                if(quantity <= 0){
+                    let skip_empty_stock_warning = 0
+                    if(sale.setting?.pos_setting?.allow_negative_stock == 0){
+                        skip_empty_stock_warning = 1
+                        toaster.error($t("This product is out of stock"));
+                        return
+                    }
+                    if (p.is_empty_stock_warning == 1 && skip_empty_stock_warning == 0) { 
+                        let emptyConfirm = await EmptyStockProductDialog();
+                        if (!emptyConfirm) {
+                            return
+                        }
+                    }  
                 }
             }
-            if (p.is_empty_stock_warning == 1) { 
-                let emptyConfirm = await EmptyStockProductDialog();
-                if (!emptyConfirm) {
-                    return
-                }
-            }  
             if(p.has_variants==1){
                 p  = await selectVariant(p.name,dialog);
                 if(!p){
