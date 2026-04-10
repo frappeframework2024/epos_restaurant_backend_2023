@@ -335,38 +335,45 @@ async function onPayment() {
 }
 
 function checkCashierShift(){
-  router.push({ name: "AddSale" });
-        call.get('epos_restaurant_2023.api.api.get_current_shift_information',{
-              business_branch: sale.setting?.business_branch,
-              pos_profile: localStorage.getItem("pos_profile")
-              }).then((data)=>{
 
-               
+  let template = (gv.device_setting?.main_sale_screen??"Default");
+  if(template == "Default"){
+      router.push({  name: "AddSale"});
+  }else {
+    let _template = template == "Top Menu"?"top":"left";
+    router.push({ 
+        name: "SaleOrder",
+        query: { menu: _template }
+    });
+  }
 
-                if (data.message.cashier_shift == null) {
-                  toaster.warning($t("msg.Please start shift first"));
-                  router.push({ name: "OpenShift" });
-              } else if (data.message.working_day == null) {
-                  toaster.warning($t('msg.Please start working day first'));
-                  router.push({ name: "StartWorkingDay" });
-              } else {
-                  sale.sale.working_day = data.message.working_day.name;
-                  sale.sale.posting_date = data.working_day.posting_date;
-                  sale.posting_date = data.working_day.posting_date;
+  call.get('epos_restaurant_2023.api.api.get_current_shift_information',{
+        business_branch: sale.setting?.business_branch,
+        pos_profile: localStorage.getItem("pos_profile")
+        }).then((data)=>{
 
-                  sale.sale.cashier_shift = data.message.cashier_shift.name;
-                  sale.sale.shift_name = data.message.cashier_shift.shift_name;
-               
-                  gv.confirm_close_working_day(data.message.working_day.posting_date);
-                  
-              }
-            })
+          
 
+          if (data.message.cashier_shift == null) {
+            toaster.warning($t("msg.Please start shift first"));
+            router.push({ name: "OpenShift" });
+        } else if (data.message.working_day == null) {
+            toaster.warning($t('msg.Please start working day first'));
+            router.push({ name: "StartWorkingDay" });
+        } else {
+            sale.sale.working_day = data.message.working_day.name;
+            sale.sale.posting_date = data.working_day.posting_date;
+            sale.posting_date = data.working_day.posting_date;
+
+            sale.sale.cashier_shift = data.message.cashier_shift.name;
+            sale.sale.shift_name = data.message.cashier_shift.shift_name;
+          
+            gv.confirm_close_working_day(data.message.working_day.posting_date);
+            
+        }
+      })
 }
 
-  
-  
-  
   async function onSubmitAndNew() {
  
     //check if newsale recource3 is null then 
@@ -395,8 +402,18 @@ function checkCashierShift(){
       sale.message =$t('msg.Submit order successfully');
       sale.sale.sale_status = "Submitted";
       await sale.onSubmit().then((value) => {
-        if (value) {
-          router.push({ name: "AddSale" });
+        if (value) {          
+          let template = (gv.device_setting?.main_sale_screen??"Default");
+          if(template == "Default"){
+              router.push({  name: "AddSale"});
+          }else {
+              let _template = template == "Top Menu"?"top":"left";
+              router.push({ 
+                  name: "SaleOrder",
+                  query: { menu: _template }
+              });
+          }
+
           newSale();
         }
         else{
@@ -406,7 +423,18 @@ function checkCashierShift(){
         }
       });
     } else {
-      router.push({ name: "AddSale" });
+
+      let template = (gv.device_setting?.main_sale_screen??"Default");
+      if(template == "Default"){
+          router.push({  name: "AddSale"});
+      }else {
+          let _template = template == "Top Menu"?"top":"left";
+          router.push({ 
+              name: "SaleOrder",
+              query: { menu: _template }
+          });
+      }
+
       newSale();
     }
     sale.tableSaleListResource.fetch();

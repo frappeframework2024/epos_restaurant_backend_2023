@@ -11,23 +11,20 @@
    </template>
    <template v-else>
     <div v-if="template_menu=='top'">
-        <SaleOrderTemplate1 :menu_categories="menu_categories" :menu_products="menu_products" />
+        <SaleOrderTemplate1 :menu_categories="menu_categories" :menu_products="menu_products"  />
     </div>
     <div v-else-if="template_menu=='left'">
-        <SaleOrderTemplate2 :menu_categories="menu_categories" :menu_products="menu_products" />
+        <SaleOrderTemplate2 :menu_categories="menu_categories"  :menu_products="menu_products" />
     </div>
     </template>
 </template>
 
 <script setup>
-  import { ref, inject, onMounted,i18n, useRoute, useRouter} from   '@/plugin';
+  import { ref, inject,computed, onMounted,i18n, useRoute, useRouter} from   '@/plugin';
   import SaleOrderTemplate1 from "@/views/sale_page/SaleOrderTemplate1.vue";
   import SaleOrderTemplate2 from "@/views/sale_page/SaleOrderTemplate2.vue";
-  import { createToaster } from '@meforma/vue-toaster';
-  import { useDisplay } from 'vuetify'; 
-
+  import { createToaster } from '@meforma/vue-toaster'; 
   const { t: $t } = i18n.global;
-  const { mobile } = useDisplay();
   const sale = inject("$sale");
   const gv = inject("$gv");
   const socket = inject("$socket");
@@ -49,18 +46,36 @@
   const is_loading = ref(true); 
   const template_menu = ref("left");
 
+  const setting = computed(()=>{
+    let data = localStorage.getItem("item_menu_setting")
+    if (data){
+        data = JSON.parse(data)
+    }else {
+        data = {
+            sort_menu_order_by:"name",
+            sort_order_by:"product_name_en"
+        }
+    } 
+    return data;
+  })
+
+  gv.itemMenuSetting = setting; 
+
   onMounted(async ()=>{      
     is_loading.value = true;
     if(route.query.menu){ 
       template_menu.value = route.query.menu;        
     } 
-
+   
+   
+ 
     const resp = await call.post("epos_restaurant_2023.api.product.get_product_by_menu_1_level", {
-      root_menu:"ePOS Menu",
-      mobile : 0,
-      sort_order_by : "product_name_en",
-      sort_menu_order_by:"name"
+      root_menu: product.currentRootPOSMenu ? product.currentRootPOSMenu : product.setting?.default_pos_menu,
+      sort_menu_order_by: gv.itemMenuSetting?.sort_menu_order_by || "name",
+      sort_order_by :gv.itemMenuSetting?.sort_order_by || "product_name_en",
     }); 
+
+
     if(resp.message){
       const data = resp.message;  
       menu_categories.value = data.menu_categories
@@ -204,7 +219,7 @@
       border-width:3px;
       border-color: rgba(255, 255, 255, 0.05);
       border-top-color: rgb(176 0 32) !important;
-      
+
       animation: spin 1s infinite linear;
       border-radius: 100%;
       border-style: solid;

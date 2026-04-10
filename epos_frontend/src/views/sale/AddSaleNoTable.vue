@@ -101,9 +101,21 @@ function onOpenOrder(sale_id) {
             }else{
                 if (sale_id) {
                     localStorage.setItem('make_order_auth',JSON.stringify(make_order_auth));
-                    router.push({ name: "AddSale", params: { name: sale_id } }).then(()=>{
-                        localStorage.setItem('redirect_sale_type', selected.value)
-                    })
+                    let template = (gv.device_setting?.main_sale_screen??"Default");
+                    if(template == "Default"){
+                        router.push({  name: "AddSale", params: { name: sale_id }}).then(()=>{
+                            localStorage.setItem('redirect_sale_type', selected.value)
+                        });
+                    }else {
+                        let _template = template == "Top Menu"?"top":"left";
+                        router.push({ 
+                            name: "SaleOrder",
+                            params: { name: sale_id },
+                            query: { menu: _template }
+                        }).then(()=>{
+                            localStorage.setItem('redirect_sale_type', selected.value)
+                        });
+                    }
                 }
                 else {
                     toaster.error($t("msg.System can not get sale name"));
@@ -166,10 +178,21 @@ async function newSale() {
                     return;
                 }
 
-                router.push({ name: "AddSale" }).then(()=>{
-                    localStorage.setItem('redirect_sale_type', selected.value)
-                });           
-               
+
+                let template = (gv.device_setting?.main_sale_screen??"Default");
+                if(template == "Default"){
+                    router.push({  name: "AddSale"}).then(()=>{
+                        localStorage.setItem('redirect_sale_type', selected.value)
+                    });           
+                }else {
+                    let _template = template == "Top Menu"?"top":"left";
+                    router.push({ 
+                        name: "SaleOrder",
+                        query: { menu: _template }
+                    }).then(()=>{
+                        localStorage.setItem('redirect_sale_type', selected.value)
+                    });           
+                } 
                 return;
             }
         })

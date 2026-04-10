@@ -135,13 +135,14 @@ function onTableClick(table, guest_cover) {
                             tableLayout.getSaleList();
                         } else {
                             localStorage.removeItem('make_order_auth');
-                            
+
                             socket.emit("ShowOrderInCustomerDisplay",{},"", sale.customer_display_key);
                         }
                     });
                 }
                 else { 
                     localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth)); 
+                    
                     if((gv.device_setting?.main_sale_screen??"Default") == "Default"){
                         router.push({ 
                             name: "AddSale",

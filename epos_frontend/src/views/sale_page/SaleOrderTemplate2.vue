@@ -7,7 +7,7 @@
           padding: '8px 10px',
           margin: '8px 6px 0px 8px',
           borderRadius: '8px',
-          fontSize: '13px',
+         fontSize: gv.itemMenuSetting.shortcut_menu_font_size+ 'px' ,
           cursor: 'pointer',
           textAlign: 'center',
           background: activeCat === 'All' ? '#c0392b' : '#f5f5f5',
@@ -26,12 +26,12 @@
       v-for="cat in categories.filter(c => c.name !== 'All')"
       :key="cat.name"
       :data-cat="cat.name"
-      @click="filterCat(cat.name)"
+      @click="filterCat(cat)"
       :style="{
         padding: '8px 10px',
         margin: '4px 6px 0px 8px',
         borderRadius: '8px',
-        fontSize: '13px',
+        fontSize: gv.itemMenuSetting.shortcut_menu_font_size+ 'px' ,
         cursor: 'pointer',
         textAlign: 'center',
         background: activeCat === cat.name ? '#c0392b' : (activeCat === 'All' && scrollCat === cat.name) ? 'rgba(192,57,43,0.15)' : 'transparent',
@@ -65,23 +65,31 @@
           class="p-3"
           >
           <div>
-            {{scrollCat }}
+            {{getMenuName(menuTitle) }}
           </div>
-
-          <div>
-            <div class="cart-icon" @click="onViewDetail">
-            <v-badge :content="(sale.sale.total_quantity||0)" :model-value="(sale.sale.total_quantity||0) > 0" color="#b91c1c">
+ 
+          <div class="flex">
+            <div class="cart-icon" :style="{
+              color: (sale.sale.total_quantity||0) > 0 ? '#282828':'#969696',
+              cursor:  (sale.sale.total_quantity||0) >0? 'pointer':'not-allowed',
+               }" @click="onViewDetail">
+            <v-badge :content="(sale.sale.total_quantity||0)" :model-value="(sale.sale.total_quantity||0) > 0" color="#ff0000">
                 <v-icon size="28">mdi-cart-plus</v-icon>
             </v-badge>
             </div>
-          </div>                
+            <div>
+                  <v-icon size="28">mdi-cog</v-icon>
+              </div>
+          </div>     
+                     
         </div>
       
-      <template v-if="!product.searchProductKeyword">
+      <template v-if="!product.searchProductKeyword"> 
         <div v-for="cat in filteredCategories" :key="cat.name" :id="'section-' + cat.name" style="margin-bottom: 0px;padding: 12px;">       
           <div
-            v-if="cat.name !== 'all' && cat.name != scrollCat && !product.searchProductKeyword"
+            v-if="cat.name !== 'all' && cat.name != menuTitle.name && !product.searchProductKeyword"
             style="font-size: 18px; font-weight: bold; color: #888; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid #e0e0e0;"
+
           >
             {{getMenuName(cat) }}
           </div> 
@@ -89,8 +97,13 @@
         </div>
       </template>
       <template v-else>
-        <div style="margin-bottom: 0px;padding: 12px;">
-         <ComProductCard :productsByCategory="searchedProducts" :onProductClick="onMenuProductClick" /> 
+        <div style="margin-bottom: 0px;padding: 12px;"> 
+          <template v-if="searchedProducts.length>0">
+            <ComProductCard :productsByCategory="searchedProducts" :onProductClick="onMenuProductClick" /> 
+          </template>
+          <template v-else>
+            <EmptyData/>
+          </template>
         </div> 
       </template>
 
@@ -99,32 +112,33 @@
   </div>
 
  <div v-if="screenWidth < 768" class="footer-payment">
-    <ComSmallAddSale />
+     <SaleOrderSammary/>
   </div>
 </template>
 
 <script setup>
 import { ref, i18n,computed,inject,onMounted,smallViewSaleProductListModal } from '@/plugin'
 import ComProductCard from "@/views/sale_page/components/ComProductCard.vue"
-import ComSmallAddSale from "@/views/sale/components/mobile_screen/ComSmallAddSale.vue";
+import SaleOrderSammary from "@/views/sale/components/mobile_screen/ComSmallSaleOrderSammary.vue";
 import { useDialog } from 'primevue/usedialog';
 import {onSelectProduct} from "@/utils/sale.js";
 import ScrollToTop from "@/views/sale_page/components/ComScrollToTop.vue"
-
-import ComSearchProductCard from "@/views/sale_page/components/ComSearchProductCard.vue"
-
-const { t: $t } = i18n.global;
-const dialog = useDialog();
-const activeCat = ref('All')
-const contentRef = ref(null)
-const sidebarScrollRef = ref(null)
-const scrollCat = ref('All')
-const categories = ref([])
-const products = ref([])
-const screenWidth = ref(window.innerWidth);
+import EmptyData from "@/views/sale_page/components/ComEmptyData.vue"
 const sale = inject("$sale");
+const gv = inject("$gv");
 const product = inject("$product");
+const { t: $t } = i18n.global;
 
+const dialog = useDialog();
+const activeCat = ref('All');
+const contentRef = ref(null)
+const sidebarScrollRef = ref(null);
+const scrollCat = ref('All');
+const menuTitle = ref({});
+
+const categories = ref([]);
+const products = ref([]);
+const screenWidth = ref(window.innerWidth);
 const props = defineProps({
   menu_categories: Object,
   menu_products: Object,
@@ -134,11 +148,13 @@ let isMenuItemClick = false;
 
 // filterCategory
 const filteredCategories = computed(() => {
+  let cat = []
   if (activeCat.value === 'All') {
-    return categories.value.filter(c => c.name !== 'All')
-  }
-
-  return categories.value.filter(c => c.name === activeCat.value)
+    cat = categories.value.filter(c => c.name !== 'All')
+  }else{
+    cat = categories.value.filter(c => c.name === activeCat.value)
+  } 
+  return cat
 })
 
 const searchedProducts = computed(() => {
@@ -156,16 +172,19 @@ function onScroll() {
   const THRESHOLD = 80
   const containerTop = container.getBoundingClientRect().top
   let current = ''
+  
 
   for (const cat of categories.value.filter(c => c.name !== 'All')) {
     const el = document.getElementById('section-' + cat.name)
     if (!el) continue
     const elTop = el.getBoundingClientRect().top - containerTop
-    if (elTop <= THRESHOLD) current = cat.name
+    if (elTop <= THRESHOLD) {
+      current = cat.name;
+       menuTitle.value = cat;
+    }
   }
 
-  scrollCat.value = current
-
+  scrollCat.value = current 
   const sidebar = sidebarScrollRef.value
   const activeEl = sidebar?.querySelector(`[data-cat="${current}"]`)
  
@@ -182,7 +201,14 @@ const productsByCategory = (menu) =>{
   }
   return products.value.filter(p => p.parent === menu)
 } 
-function filterCat(val) {
+
+function filterCat(param) {
+  let val = "All"; 
+  menuTitle.value = categories.value[0]
+  if(val != param ){
+    val = param.name   ;     
+    menuTitle.value = param;
+  }
   activeCat.value = val;  
   scrollCat.value = val;
   
@@ -196,16 +222,15 @@ function filterCat(val) {
   } else {
     contentRef.value?.scrollTo({ top: 0, behavior: 'smooth' })
   }
-}
-
+} 
 onMounted(() => {
   categories.value =  props.menu_categories.map(c => ({
       ...c,
       emoji: '🍽️'
-    }))
- 
-
-  products.value = [...props.menu_products]
+    }));
+  products.value = [...props.menu_products];
+  
+  menuTitle.value = categories.value[0]
 
   window.addEventListener("resize", () => {
         screenWidth.value = window.innerWidth;
@@ -226,9 +251,14 @@ async function onMenuProductClick(data) {
     } 
 }
 
-function getMenuName(menu){
+function getMenuName(menu){ 
+  if(gv.itemMenuSetting.show_menu_language=="kh"){
+    return menu.name_kh
+  }
   return menu.name_en
 }
+
+ 
 
 const checkNewSaleNoSaleProducts = computed(()=>{
     if((sale.sale.name||'')=='' && (sale.sale.sale_products||[]).length <=0){
@@ -244,6 +274,8 @@ async function onViewDetail(){
     }
     const result = await smallViewSaleProductListModal ({title: sale.sale.name, value:  ''});
 }
+
+
 </script>
 
 <style scoped>
@@ -321,5 +353,10 @@ async function onViewDetail(){
 
 .cart-icon{
   margin-right: 10px;
+  cursor: pointer;
 }
+ 
+
+
+
 </style>

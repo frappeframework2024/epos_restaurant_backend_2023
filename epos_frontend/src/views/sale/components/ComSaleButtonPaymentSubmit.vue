@@ -96,11 +96,18 @@ async function onSearchSale() {
     const result = await searchSaleDialog({})
     sale.dialogActiveState = false;
     if (result != false) {
-      router.push({
-        name: "AddSale", params: {
-          name: result.name
-        }
-      });
+
+      let template = (gv.device_setting?.main_sale_screen??"Default");
+      if(template == "Default"){
+          router.push({  name: "AddSale", params: { name: result.name }});
+      }else {
+        let _template = template == "Top Menu"?"top":"left";
+        router.push({ 
+            name: "SaleOrder",
+            params: { name: result.name },
+            query: { menu: _template }
+        });
+      }
 
       sale.LoadSaleData(result.name)
     }
@@ -150,7 +157,19 @@ async function onSubmit() {
           }
           else {
             sale.newSale()
-            router.push({ name: "AddSale" });
+            
+
+            let template = (gv.device_setting?.main_sale_screen??"Default");
+            if(template == "Default"){
+                router.push({  name: "AddSale"});
+            }else {
+                let _template = template == "Top Menu"?"top":"left";
+                router.push({ 
+                    name: "SaleOrder",
+                    query: { menu: _template }
+                });
+            }
+
             sale.tableSaleListResource.fetch();
             call.get('epos_restaurant_2023.api.api.get_current_shift_information', {
               business_branch: sale.setting?.business_branch,
@@ -228,7 +247,17 @@ async function onPayment() {
         router.push({ name: "TableLayout" });
       } else {
         sale.tableSaleListResource.fetch();
-        router.push({ name: "AddSale" });
+
+        let template = (gv.device_setting?.main_sale_screen??"Default");
+        if(template == "Default"){
+            router.push({  name: "AddSale"});
+        }else {
+            let _template = template == "Top Menu"?"top":"left";
+            router.push({ 
+                name: "SaleOrder",
+                query: { menu: _template }
+            });
+        }
 
         call.get('epos_restaurant_2023.api.api.get_current_shift_information', {
           business_branch: sale.setting?.business_branch,

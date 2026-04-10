@@ -1,7 +1,7 @@
 <template>
     <div>
         <ComLoadingDialog v-if="sale.loading"/>
-        <ComModal :fullscreen="true" :hideCloseButton="true" :hideOkButton="true" :fill="true" :isShowBarMoreButton="false" @onClose="onClose()">
+        <ComModal :saleOrderListCustom="!isDefaultTeplate" :fullscreen="true" :hideCloseButton="true" :hideOkButton="true" :fill="true" :isShowBarMoreButton="false" @onClose="onClose()">
         <template #title>
             {{ $t('Bill') }}# {{ params.title }}
         </template>
@@ -9,7 +9,7 @@
             <v-btn v-if="params.data?.from_table" icon @click="onAddNewOrder()" v-bind="props">
                 <v-icon>mdi-plus</v-icon>
             </v-btn>
-            <ComPrintBillButton doctype="Sale" :title="$t('Print Bill')" :isMobile="true" />
+            <ComPrintBillButton doctype="Sale" :title="$t('Print Bill')" :isMobile="true" :isToolbar="true" />
         </template>
         <template #content>
             <template v-if="!gv.device_setting.is_order_station"> 
@@ -30,7 +30,7 @@
     </div>
 </template>
 <script setup>
-import { defineProps, defineEmits, inject,useRouter,onUnmounted,onMounted } from '@/plugin'
+import { defineProps, defineEmits, inject,useRouter,onUnmounted,onMounted ,computed} from '@/plugin'
 import ComGroupSaleProductList from '../ComGroupSaleProductList.vue';
 import ComPrintBillButton from '../ComPrintBillButton.vue';
 import ComSelectCustomer from '../ComSelectCustomer.vue';
@@ -53,6 +53,10 @@ onMounted(()=>{
     sale.saleNetworkLock(backup_sale)
 });
 
+const isDefaultTeplate = computed(()=>{
+    return (gv.device_setting?.main_sale_screen??"Default") == "Default";
+})
+
 function onGoHome(){
     if(onRedirectSaleType()){
         if (gv.setting.table_groups.length > 0) {
@@ -64,11 +68,21 @@ function onGoHome(){
         }
         else {
             sale.newSale()
-            router.push({ name: "AddSale" }).then(()=>{
-                emit('resolve', true);
-            });
+            let template = (gv.device_setting?.main_sale_screen??"Default");
+            if(template == "Default"){
+                router.push({  name: "AddSale"}).then(()=>{
+                    emit('resolve', true);
+                });
+            }else {
+                let _template = template == "Top Menu"?"top":"left";
+                router.push({ 
+                    name: "SaleOrder",
+                    query: { menu: _template }
+                }).then(()=>{
+                    emit('resolve', true);
+                });
+            }            
         }
-
         socket.emit("ShowOrderInCustomerDisplay", {},"", sale.customer_display_key);
     }
 }

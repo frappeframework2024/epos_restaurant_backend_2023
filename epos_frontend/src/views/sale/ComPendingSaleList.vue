@@ -173,14 +173,22 @@ function onOpenOrder(sale_id) {
                 } 
                 else{
                     localStorage.setItem('make_order_auth',JSON.stringify(make_order_auth));
-                    router.push({ 
-                        name: "AddSale", 
-                        params: {
-                            name:sale_id
-                        }
-                    }).then(()=>{
-                      onClose();
-                    });
+
+                    let template = (gv.device_setting?.main_sale_screen??"Default");
+                    if(template == "Default"){
+                        router.push({  name: "AddSale", params: { name:  sale_id }}).then(()=>{
+                          onClose();
+                        });
+                    }else {
+                        let _template = template == "Top Menu"?"top":"left";
+                        router.push({ 
+                            name: "SaleOrder",
+                            params: { name:sale_id },
+                            query: { menu: _template }
+                        }).then(()=>{
+                          onClose();
+                        });
+                    }    
                 }
               }
           });

@@ -21,11 +21,26 @@ async function onSearchSale(){
     if(isOrdered == false) {
         const result = await searchSaleDialog({ })
         if(result != false){ 
-            router.push({
-                name: "AddSale", params: {
-                    name: result.name
-                }
-            });
+
+            let template = (gv.device_setting?.main_sale_screen??"Default");
+            if(template == "Default"){
+                router.push({  
+                    name: "AddSale",
+                    params: {
+                        name: result.name
+                    },
+                });
+            }else {
+                let _template = template == "Top Menu"?"top":"left";
+                router.push({ 
+                    name: "SaleOrder",
+                    params: {
+                        name: result.name
+                    },
+                    query: { menu: _template }
+                });
+            }   
+            
             sale.LoadSaleData(result.name)
             //
             sale.saleNetworkLock(sale.sale)

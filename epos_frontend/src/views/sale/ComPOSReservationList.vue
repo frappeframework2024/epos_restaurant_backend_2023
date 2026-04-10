@@ -309,12 +309,22 @@ async function onConvertToSale(reservation) {
                     reservation_status: "Dine-in",
                     sale: value.name
                   }).then(() => {
-                    router.push({
-                      name: "AddSale",
-                      params: { name: value.name }
-                    }).then(() => {
-                      onClose();
-                    });
+                    
+                    let template = (gv.device_setting?.main_sale_screen??"Default");
+                    if(template == "Default"){
+                      router.push({  name: "AddSale", params: { name: value.name }}).then(() => {
+                        onClose();
+                      });
+                    }else {
+                      let _template = template == "Top Menu"?"top":"left";
+                      router.push({ 
+                        name: "SaleOrder",
+                        params: { name: value.name },
+                        query: { menu: _template }
+                      }).then(() => {
+                        onClose();
+                      });
+                    } 
 
                   }).catch((err) => {
                     _onInit()

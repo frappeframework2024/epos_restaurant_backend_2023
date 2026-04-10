@@ -29,6 +29,7 @@ import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 const { t: $t } = i18n.global;
 const emit = defineEmits(["resolve", "reject"])
 const sale = inject("$sale");
+const gv = inject("$gv");
 
 const router = useRouter();
 const isLoading = ref(false);
@@ -86,11 +87,19 @@ async function onSaleOrderClick(s) {
                 if (res.message.alert != "") {
                     toaster.success($t(`msg.${res.message.alert}`, [res.message.data.name]))
                 }
-                router.push({
-                    name: "AddSale", params: {
-                        name: res.message.data.name
-                    }
-                });
+                
+                let template = (gv.device_setting?.main_sale_screen??"Default");
+                if(template == "Default"){
+                    router.push({  name: "AddSale", params: { name: res.message.data.name }});
+                }else {
+                    let _template = template == "Top Menu"?"top":"left";
+                    router.push({ 
+                        name: "SaleOrder",
+                        params: { name: res.message.data.name },
+                        query: { menu: _template }
+                    });
+                }
+
                 isLoading.value = false;
                 emit("resolve", { action: "reload_sale", name: res.message.data.name })
                 // check if print items merge bill

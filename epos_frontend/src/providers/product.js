@@ -36,6 +36,7 @@ export default class Product {
             limit:10,
             page:1
         }
+        
         this.posMenuResource = createResource({
             url: 'epos_restaurant_2023.api.product.get_product_by_menu',
             params: {

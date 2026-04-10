@@ -372,10 +372,20 @@ async function onSubmitAndNew() {
 
     await sale.onSubmit().then((value) => { 
       if (value) { 
-          //sale network lock
-          saleNetworkLock(backup_sale.name, backup_sale)
+        //sale network lock
+        saleNetworkLock(backup_sale.name, backup_sale);
 
-        router.push({ name: "AddSale" });
+        let template = (gv.device_setting?.main_sale_screen??"Default");
+        if(template == "Default"){
+            router.push({  name: "AddSale"});
+        }else {
+            let _template = template == "Top Menu"?"top":"left";
+            router.push({ 
+                name: "SaleOrder",
+                query: { menu: _template }
+            });
+        }
+
         newSale(); 
       }
       else{
@@ -385,7 +395,17 @@ async function onSubmitAndNew() {
       }
     });
   } else {
-    router.push({ name: "AddSale" });
+    let template = (gv.device_setting?.main_sale_screen??"Default");
+    if(template == "Default"){
+        router.push({  name: "AddSale"});
+    }else {
+        let _template = template == "Top Menu"?"top":"left";
+        router.push({ 
+            name: "SaleOrder",
+            query: { menu: _template }
+        });
+    }
+
     newSale();
   }
 

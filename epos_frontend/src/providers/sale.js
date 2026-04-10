@@ -2612,7 +2612,19 @@ export default class Sale {
         } else {
             this.newSale();
             this.tableSaleListResource.fetch();
-            this.router.push({ name: "AddSale" });
+            
+            let template = (this.setting.device_setting?.main_sale_screen??"Default");
+            if(template == "Default"){
+                this.router.push({  name: "AddSale"});
+            }else {
+                let _template = template == "Top Menu"?"top":"left";
+                this.router.push({ 
+                    name: "SaleOrder",
+                    query: { menu: _template }
+                });
+            }
+
+
             call.get('epos_restaurant_2023.api.api.get_current_shift_information', {
                 business_branch: this.setting?.business_branch,
                 pos_profile: localStorage.getItem("pos_profile")

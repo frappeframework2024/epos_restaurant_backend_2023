@@ -1,21 +1,32 @@
 <template>  
     <div class="category-wrapper">  
         <div class="category-row">
-            <div class="category-bar">
-            <button
-                v-for="cat in categories"
-                :key="cat.name"
-                @click="scrollToCategory(cat.name)"
-                :class="['category-pill', activeCategory === cat.name ? 'active' : '']"
-            >
-                {{ cat.name_en }}
-            </button>
+              <div class="category-bar">
+              <button
+                  v-for="cat in categories"
+                  :key="cat.name"
+                  @click="scrollToCategory(cat.name)"
+                  :class="['category-pill', activeCategory === cat.name ? 'active' : '']"
+              >
+                <div class="flex gap-2">
+                  <img v-if="cat.photo" class="w-5 h-5 border rounded-full " :src="cat.photo" @error="onImageError" loading="lazy" />
+                  <img v-else class="popup-placeholder" :src="getImage" @error="onImageError" loading="lazy"/>
+                  <p>{{ cat.name_en }}</p>
+                </div>
+                
+              </button>
             </div>
-            <div class="cart-icon" @click="showCart = true">
-            <v-badge :content="(sale.sale.total_quantity||0)" :model-value="(sale.sale.total_quantity||0) > 0" color="#b91c1c" @click="onViewDetail">
-                <v-icon size="28">mdi-cart-plus</v-icon>
-            </v-badge>
+            <div class="cart-icon">
+              <div @click="showCart = true">
+                <v-badge :content="(sale.sale.total_quantity||0)" :model-value="(sale.sale.total_quantity||0) > 0" color="#b91c1c" @click="onViewDetail">
+                  <v-icon size="28">mdi-cart-plus</v-icon>
+                </v-badge>
+              </div>
+              <div>
+                  <v-icon size="28">mdi-cog</v-icon>
+              </div>
             </div>
+            
         </div>
     </div>
 
@@ -36,7 +47,12 @@
 
     <template v-else>
       <div class="mt-5">
-      <ComSearchProductCard class="" :products="searchedProducts" :onProductClick="onMenuProductClick" />
+        <template v-if="searchedProducts.length>0">
+          <ComProductCard :productsByCategory ="searchedProducts" :onProductClick="onMenuProductClick"/>   
+        </template>
+         <template v-else>
+            <EmptyData/>
+          </template>
       </div>
     </template>
 
@@ -54,10 +70,8 @@ import ComSmallAddSale from "@/views/sale/components/mobile_screen/ComSmallAddSa
 import ComProductCard from "@/views/sale_page/components/ComProductCard.vue";
 import { useDialog } from 'primevue/usedialog';
 import {onSelectProduct} from "@/utils/sale.js";
-import ComScrollToTop from "../../views/sale_page/components/ComScrollToTop.vue"
-
-import ComSearchProductCard from "../../views/sale_page/components/ComSearchProductCard.vue"
-
+import ComScrollToTop from "@/views/sale_page/components/ComScrollToTop.vue"
+import EmptyData from "@/views/sale_page/components/ComEmptyData.vue"
 
 const sale = inject("$sale");
 const product = inject("$product");
@@ -72,21 +86,17 @@ const dialog = useDialog();
 
 const categories = ref([])
 const products = ref([])
-
 const cart = ref([])
 const showCart = ref(false)
-const screenWidth = ref(window.innerWidth);
- 
+const screenWidth = ref(window.innerWidth); 
 const activeCategory = ref("");
 const containerRef = ref(null);
-
 
 const searchedProducts = computed(() => {
   return categories.value
     .filter(c => c.name !== 'All')
     .flatMap(cat => productsByCategory(cat.name))
 })
-
 
 // Flag to suppress onScroll updates while a programmatic scroll is in flight
 let isScrollingProgrammatically = false
@@ -215,11 +225,9 @@ async function onMenuProductClick(data) {
     if(isMenuItemClick){
         return
     }
-
     isMenuItemClick = true;
     await onSelectProduct(data,sale,product,dialog)
     isMenuItemClick = false;
-    
 }
 
 const checkNewSaleNoSaleProducts = computed(()=>{
@@ -235,7 +243,29 @@ async function onViewDetail(){
         return;
     }
     const result = await smallViewSaleProductListModal ({title: sale.sale.name, value:  ''});
+ 
 }
+
+
+const placeholder = 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' // your default image
+const getImage = (img) => {
+  if (!img) return placeholder
+
+  // if it's private, try API route
+  if (img.startsWith('/private/')) {
+    return `/api/method/frappe.utils.file_manager.download_file?file_url=${img}`
+  }
+  return img
+}
+
+const onImageError = (e) => {
+  e.target.src = placeholder 
+
+   // force cover style on error
+  e.target.style.objectFit = 'cover'
+}
+
+
 
 </script>
 
@@ -357,8 +387,17 @@ async function onViewDetail(){
 }
 
 .cart-icon {
+  display: flex;
+  gap:10px;
   padding: 0 16px;
   cursor: pointer;
-  margin-right: 10px;
 }
+
+.popup-placeholder {
+  
+  width: 20px;
+  height: 20px;
+  border-radius: 12px 12px 12px 12px;
+}
+
 </style>

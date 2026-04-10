@@ -417,7 +417,19 @@ async function openOrder(s) {
         })
     } else {
         localStorage.setItem('make_order_auth', JSON.stringify(props.params.make_order_auth));
-        router.push({ name: "AddSale", params: { name: s.name } });
+
+        let template = (gv.device_setting?.main_sale_screen??"Default");
+        if(template == "Default"){
+            router.push({  name: "AddSale", params: { name: s.name}});
+        }else {
+            let _template = template == "Top Menu"?"top":"left";
+            router.push({ 
+                name: "SaleOrder",
+                params: { name: s.name },
+                query: { menu: _template }
+            });
+        }
+        
     }
     emit('resolve', false);
 }

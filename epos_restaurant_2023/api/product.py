@@ -72,7 +72,7 @@ def get_product_by_menu(root_menu="",mobile = 0,sort_order_by="product_name_en",
         
         menu_products = get_temp_menu_products(root_menu,mobile=mobile,sort_order_by = sort_order_by,shift_name=shift_name)
         for m in menu_products:
-                menus.append(m)
+            menus.append(m)
              
       
         return menus
@@ -95,19 +95,33 @@ def get_product_by_menu_1_level(**param):
     sort_menu_order_by = p.get("sort_menu_order_by",None) or "name"
     
     menus = get_product_by_menu(root_menu=root_menu, mobile=mobile,sort_order_by=sort_order_by, sort_menu_order_by=sort_menu_order_by,shift_name="")
+    
     menu_categories = [m for m in menus if m.get("type",None) == "menu"]
     menu_products = [m for m in menus if m.get("type",None) == "product"]
     
     new_menu_categories = []
+    def _get_product_by_parent(parent):
+        products = [p  for p in menu_products if p.get("parent",None) == parent]    
+        return products    
+    
+    products = _get_product_by_parent(parent=root_menu)
+    if products:
+        new_menu_categories.append({
+            "name":root_menu,
+            "name_en":"Main",
+            "name_kh":"Main",
+            "parent":root_menu
+        }) 
+    
     for m in menu_categories:
-        products = [p  for p in menu_products if p.get("parent",None) == m.get("name",None)]        
+        products = _get_product_by_parent(parent=m.get("name",None))
         if products:  # cleaner than len(products) > 0
             new_menu_categories.append(m)
     #         new_menus.extend(products)  # better than loop append
         
     
     # return new_menus 
-    return {
+    return { 
         "menu_categories":new_menu_categories,
         "menu_products":menu_products
     }

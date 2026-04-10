@@ -1,8 +1,55 @@
 <template>
     <v-dialog v-model="open" v-bind:style="{ 'width': '100%', 'max-width': fullscreen ? 'auto' : width }"
         :fullscreen="mobileFullscreen ? mobile : fullscreen" :scrollable="scrollable" :persistent="persistent"
-        @update:modelValue="onAction()">
-        <v-card>
+        @update:modelValue="onAction()">     
+
+        <v-card v-if="!mobile &&  saleOrderListCustom" class="h-screen">
+            <div class="grid grid-cols-12 h-full overflow-hidden">
+                <div class="col-span-5 h-full overflow-hidden">
+                    <img style="object-fit: cover; width: 100%; height:100%;" :src="gv.setting.login_background"/>
+                </div>
+                <div class="col-span-7 grid overflow-hidden" style="grid-template-rows: auto 1fr auto">
+                <ComToolbar @onPrint="onPrint()" @onExport="onExport()"
+                    @onPrintWithChoosePrinter="onPrintWithChoosePrinter()" :showChoosePrinter="showChoosePrinter"
+                    :isPrint="isPrint" :isExport="isExport" :isMoreMenu="isShowBarMoreButton" @onClose="onClose()"
+                    :disabled="loading">
+                    <template #title>
+                        <slot name="title"></slot>
+                    </template>
+                    <template #action>
+                        <slot name="bar_custom"></slot>
+                    </template>
+                    <template #more_menu>
+                        <slot name="bar_more_button"></slot>
+                    </template>
+                </ComToolbar>
+
+                <v-card-text :class="fill ? '!p-0' : '!p-2'" class="!overflow-x-hidden">
+                    <slot name="content"></slot>
+                </v-card-text>
+                <v-card-actions v-if="$slots.action || !hideCloseButton || !hideOkButton" class="justify-end flex-wrap"
+                    :class="{ '!p-0': fill }">
+
+                    <template v-if="!customActions">
+                        <v-btn variant="flat" @click="onClose()" color="error" :disabled="loading" v-if="!hideCloseButton">
+                            {{ titleCloseButton == "" ? $t("Close") : $t(titleCloseButton) }}
+                        </v-btn>
+                        <slot name="action"></slot>
+
+                        <v-btn variant="flat" :loading="loading" type="button" color="primary" :disabled="loading"
+                            v-if="!hideOkButton" @click="onOK()">
+                            {{ titleOKButton == "" ? $t("Save") : $t(titleOKButton) }}
+                        </v-btn>
+                    </template>
+                    <template v-else>
+                        <slot name="action"></slot>
+                    </template>
+                </v-card-actions>
+                </div>
+            </div>
+        </v-card>
+        
+            <v-card v-else>
             <ComToolbar @onPrint="onPrint()" @onExport="onExport()"
                 @onPrintWithChoosePrinter="onPrintWithChoosePrinter()" :showChoosePrinter="showChoosePrinter"
                 :isPrint="isPrint" :isExport="isExport" :isMoreMenu="isShowBarMoreButton" @onClose="onClose()"
@@ -17,6 +64,7 @@
                     <slot name="bar_more_button"></slot>
                 </template>
             </ComToolbar>
+
             <v-card-text :class="fill ? '!p-0' : '!p-2'" class="!overflow-x-hidden">
                 <slot name="content"></slot>
             </v-card-text>
@@ -38,23 +86,23 @@
                     <slot name="action"></slot>
                 </template>
             </v-card-actions>
-
         </v-card>
+       
+       
     </v-dialog>
 
 </template>
 <script setup>
-import { defineEmits, ref, defineProps, i18n } from '@/plugin'
+import {defineEmits, ref, defineProps, i18n, inject } from '@/plugin'
 import ComToolbar from './ComToolbar.vue'
-import { useDisplay } from 'vuetify';
-
-
-
-
+import { useDisplay } from 'vuetify';  
 const { t: $t } = i18n.global;
 const { mobile } = useDisplay()
 const open = ref(true)
 const emit = defineEmits(["onClose", "onOK"])
+
+const gv = inject("$gv");
+
 const props = defineProps({
     loading: {
         type: Boolean,
@@ -128,6 +176,10 @@ const props = defineProps({
     customActions: {
         type: Boolean,
         default: false
+    },
+    saleOrderListCustom:{
+        type: Boolean,
+        default: false
     }
 })
 
@@ -156,5 +208,8 @@ function onAction($event) {
     }
 
 }
+
+
+
 
 </script>

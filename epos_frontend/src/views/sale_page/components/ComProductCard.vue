@@ -15,9 +15,11 @@
         </div>
             
         <div class="product-info">
-          <div class="product-name"> {{ getProductName(prod) }}<span style="color: red;">{{ getTotalQuantityOrder(prod) }}</span></div>
+          <div class="product-name" :style="{fontSize:gv.itemMenuSetting.item_font_size+ 'px' }"> {{ getProductName(prod) }}<span style="color: red;">{{ getTotalQuantityOrder(prod) }}</span></div>
+
+       
           
-          <div class="product-price flex items-center">
+          <div class="product-price flex items-center" :style="{fontSize:gv.itemMenuSetting.font_price_size+ 'px' }">
               <span v-if="productPrices(prod).length > 1">
                   <span>
                       <CurrencyFormat :value="minPrice(prod)" />
@@ -70,8 +72,8 @@
 
 <script setup>
 import { ref,watch, reactive, inject,computed } from '@/plugin';
-import Enumerable from 'linq';
-
+import Enumerable from 'linq'; 
+const gv = inject("$gv");
 const sale = inject("$sale");
 const product = inject("$product");
 const previewProduct = ref(null)
@@ -181,7 +183,18 @@ const onImageError = (e) => {
 
 
 function getProductName(p){
-  return `${p.name} - ${p.name_en}`
+
+
+  // :style="{fontSize:gv.itemMenuSetting.item_font_size+ 'px' }"
+  let product_name = p.name_en;
+  if(gv.itemMenuSetting.show_menu_language == "kh"){
+     product_name = p.name_kh;
+  }
+
+  if(gv.itemMenuSetting.show_item_code){
+    product_name = `${p.name} ${product_name}`;
+  } 
+  return product_name;
 }
 
 

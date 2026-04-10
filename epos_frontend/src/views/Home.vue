@@ -178,7 +178,17 @@ function onPOS() {
                         if(v){  
                             const make_order_auth = {"username":v.username,"name":v.user,discount_codes:v.discount_codes }; 
                             localStorage.setItem('make_order_auth',JSON.stringify(make_order_auth));
-                            router.push({ name: 'AddSale' })                            
+
+                            let template = (gv.device_setting?.main_sale_screen??"Default");
+                            if(template == "Default"){
+                                router.push({  name: "AddSale"});
+                            }else {
+                                let _template = template == "Top Menu"?"top":"left";
+                                router.push({ 
+                                    name: "SaleOrder",
+                                    query: { menu: _template }
+                                });
+                            }                      
                         }
                     })                    
                 }

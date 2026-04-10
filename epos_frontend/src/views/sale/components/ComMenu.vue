@@ -112,9 +112,9 @@
         if (scrollContainer.value && product.setting.default_pos_menu!="" ) {
             scrollContainer.value.addEventListener('scroll', onScroll);
         } 
-        const item_menu_setting = JSON.parse(localStorage.getItem("item_menu_setting"))
+        const item_menu_setting = JSON.parse(localStorage.getItem("item_menu_setting")) 
         if (item_menu_setting) {
-            gv.itemMenuSetting = item_menu_setting
+            gv.itemMenuSetting.value = item_menu_setting
         }
     });
 
