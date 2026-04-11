@@ -11,7 +11,7 @@
    </template>
    <template v-else>
     <div v-if="template_menu=='top'">
-        <SaleOrderTemplate1 :menu_categories="menu_categories" :menu_products="menu_products"  />
+        <SaleOrderTemplate1 :menu_categories="menu_categories" :menu_products="menu_products"  :onSettingClick="onSettingClick"/>
     </div>
     <div v-else-if="template_menu=='left'">
         <SaleOrderTemplate2 :menu_categories="menu_categories"  :menu_products="menu_products" :onSettingClick="onSettingClick"/>
@@ -182,7 +182,7 @@
 const onSettingClick= () => {
     dialog.open(ComMenuSetting, {
         props: {
-            header: 'Menu Setting',
+            header: $t("Menu Setting"),
             style: {
                 width: '50vw',
             },

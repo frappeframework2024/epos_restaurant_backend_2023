@@ -100,9 +100,9 @@ const scrollToTop = () => {
   transform: translateY(0) scale(1);
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .MainScroll {
-    bottom: calc(60px + 40px);
+    bottom: calc(90px);
   }
 }
 </style>

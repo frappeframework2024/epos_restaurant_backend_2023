@@ -1,6 +1,5 @@
 <template>
-    <div class="bg-white" :class="mobile ? 'px-2' : 'p-2'" id="shortcut_menu" v-if="shortcut?.length > 0"> 
-        
+    <div class="bg-white" :class="mobile ? 'px-2' : 'p-2'" id="shortcut_menu" v-if="shortcut?.length > 0">  
         <div :class="'flex-wrap flex -my-1 justify-center'" v-if="mobile === false && shortcut">
          
             <v-btn 

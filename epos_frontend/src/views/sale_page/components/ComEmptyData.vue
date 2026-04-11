@@ -4,10 +4,16 @@
     mdi-package-variant-closed
     </v-icon>
 
-    <h2>No Products Found</h2>
-    <p>Try adjusting your search or check back later.</p>
+    <h2>{{ $t("No Products Found") }}</h2>
+    <p>{{ $t("Try adjusting your search or check back later.") }}</p>
 </div>
 </template>
+
+<script setup>
+  import {i18n} from   '@/plugin';
+  const { t: $t } = i18n.global;
+
+</script>
 
 <style scoped>
 
@@ -15,7 +21,7 @@
     /* Center perfectly */
     .empty-state {
     height: 100%;
-    min-height: calc(100vh - 200px); /* account for padding */
+    min-height: calc(100vh - 300px); /* account for padding */
     
     display: flex;
     flex-direction: column;

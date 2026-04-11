@@ -7,7 +7,7 @@
                 :autofocus="!getIsMobile()"
                 keyboard
                 variant="outlined"
-                :placeholder="$t('Search...') + 'Press ESC'"
+                :placeholder="$t('Search...') + (mobile?'' : 'Press ESC')"
                 prepend-inner-icon="mdi-magnify"
                 v-model="product.searchProductKeywordStore"
                 v-debounce="onSearch"
@@ -26,13 +26,10 @@
 </template>
 
 <script setup>
-import { inject, ref, defineProps, createResource, addModifierDialog, onUnmounted, onMounted,nextTick,getApi } from '@/plugin';
-import { onKeyStroke } from '@vueuse/core'
+import { inject, ref, defineProps, onUnmounted, onMounted,getApi } from '@/plugin';
 import ComInput from '../../../components/form/ComInput.vue';
 import { createToaster } from '@meforma/vue-toaster';
-import ComAutoComplete from '@/components/form/ComAutoComplete.vue';
 import { useDisplay } from 'vuetify';
-import { computed } from 'vue';
 import { useDialog } from 'primevue/usedialog';
 const dialog = useDialog()
 const product = inject("$product")
@@ -40,9 +37,7 @@ const sale = inject("$sale")
 import {onSelectProduct} from "@/utils/sale.js"
 
 
-const { mobile } = useDisplay();
-
-let control = ref(null)
+const { mobile } = useDisplay(); 
 
 const toaster = createToaster({ position: 'top-right', maxToasts: 2, duration: 1000 });
 const props = defineProps({
@@ -52,8 +47,6 @@ const props = defineProps({
     }
 });
 const txtSearch = ref(null);
-
-const selected_product = ref()
 
 const doSearch = ref(true)
 const disableLoadProduct = ref(false)

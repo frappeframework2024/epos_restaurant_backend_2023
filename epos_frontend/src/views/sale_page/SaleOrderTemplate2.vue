@@ -64,13 +64,16 @@
           "
           class="p-3"
           >
-          <div class="w-full flex flex-wrap">  
-            <span class="flex flex-wrap mr-2" v-if="sale.sale?.tbl_number">
+          <div class="w-full flex flex-wrap" :style="{
+            fontSize: gv.itemMenuSetting.shortcut_menu_font_size + 2+ 'px',
+           alignItems: 'center'   
+          }">  
+            <!-- <span class="flex flex-wrap mr-2" v-if="sale.sale?.tbl_number">
                 <div class="font-bold"> {{ $t('Table #') }} <span v-if="sale.sale.seat_number"> |  <span style="color: green;">{{ $t("Seat") }}# </span></span> :</div>
                 <div class="ml-1"> {{ sale.sale.tbl_number }} <span v-if="sale.sale.seat_number" > | <span style="color: green;"> {{sale.sale.seat_number}}</span></span> </div>
             
               <span class=" ml-2">~</span>
-            </span>
+            </span> -->
             <span  class="font-bold">{{getMenuName(menuTitle) }}</span>
 
           </div>

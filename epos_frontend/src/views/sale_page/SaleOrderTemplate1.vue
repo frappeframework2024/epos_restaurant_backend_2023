@@ -1,42 +1,50 @@
 <template>  
     <div class="category-wrapper">  
-        <div class="category-row">
-              <div class="category-bar">
-              <button
-                  v-for="cat in categories"
-                  :key="cat.name"
-                  @click="scrollToCategory(cat.name)"
-                  :class="['category-pill', activeCategory === cat.name ? 'active' : '']"
-              >
-                <div class="flex gap-2">
-                  <img v-if="cat.photo" class="w-5 h-5 border rounded-full " :src="cat.photo" @error="onImageError" loading="lazy" />
-                  <img v-else class="popup-placeholder" :src="getImage" @error="onImageError" loading="lazy"/>
-                  <p>{{ cat.name_en }}</p>
-                </div>
-                
-              </button>
-            </div>
-            <div class="cart-icon">
-              <div 
-              :style="{
-              color:  (sale.sale.total_quantity||0) > 0 || (sale.sale.name||'') !='' ? '#282828':'#969696',
-              cursor:  (sale.sale.total_quantity||0) > 0 || (sale.sale.name||'') !=''? 'pointer':'not-allowed',
-               }"
-              @click="onViewDetail" >
-                <v-badge :content="(sale.sale.total_quantity||0)" :model-value="(sale.sale.total_quantity||0) > 0" color="#ff0000">
-                  <v-icon size="28">mdi-cart-plus</v-icon>
-                </v-badge>
+      <div v-if="mobile" class="p-1">
+        <ComProductSearch  :small="true" />
+      </div>
+      <div class="category-row">
+            <div class="category-bar">
+            <button
+                v-for="cat in categories"
+                :key="cat.name"
+                @click="scrollToCategory(cat.name)"
+                :class="['category-pill', activeCategory === cat.name ? 'active' : '']"
+            >
+              <div class="flex gap-2">
+                <img v-if="cat.photo" class="w-5 h-5 border rounded-full " :src="cat.photo" @error="onImageError" loading="lazy" />
+                <img v-else class="popup-placeholder" :src="getImage" @error="onImageError" loading="lazy"/>
+                <p>{{ cat.name_en }}</p>
               </div>
-               <div @click="onSettingClick" style="cursor:pointer">
-                  <v-icon size="28">mdi-cog</v-icon>
-              </div>
+              
+            </button>
+          </div>
+          <div class="cart-icon">
+            <div 
+            :style="{
+            color:  (sale.sale.total_quantity||0) > 0 || (sale.sale.name||'') !='' ? '#282828':'#969696',
+            cursor:  (sale.sale.total_quantity||0) > 0 || (sale.sale.name||'') !=''? 'pointer':'not-allowed',
+              }"
+            @click="onViewDetail" >
+              <v-badge :content="(sale.sale.total_quantity||0)" :model-value="(sale.sale.total_quantity||0) > 0" color="#ff0000">
+                <v-icon size="28">mdi-cart-plus</v-icon>
+              </v-badge>
             </div>
-            
-        </div>
+              <div @click="onSettingClick" style="cursor:pointer">
+                <v-icon size="28">mdi-cog</v-icon>
+            </div>
+          </div>          
+      </div>
     </div>
 
     
-  <div class="products-container" ref="containerRef" @scroll="onScroll">
+  <div class="products-container" 
+    :style="{ 
+      marginTop: mobile ? '115px':'60px' , 
+      height: mobile ? 'calc(100vh - 185px)' : 'calc(100vh - 125px)' 
+    }" 
+    ref="containerRef" 
+    @scroll="onScroll">
     <template v-if="!product.searchProductKeyword">
       <div
         v-for="menu in categories"
@@ -77,6 +85,9 @@ import { useDialog } from 'primevue/usedialog';
 import {onSelectProduct} from "@/utils/sale.js";
 import ComScrollToTop from "@/views/sale_page/components/ComScrollToTop.vue"
 import EmptyData from "@/views/sale_page/components/ComEmptyData.vue"
+import ComProductSearch from '@/views/sale/components/ComProductSearch.vue';
+import { useDisplay } from 'vuetify'
+
 
 const sale = inject("$sale");
 const product = inject("$product");
@@ -89,10 +100,10 @@ const props = defineProps({
 
 //variables
 const dialog = useDialog();
+const { mobile } = useDisplay();
 
 const categories = ref([])
 const products = ref([])
-const cart = ref([])
 const screenWidth = ref(window.innerWidth); 
 const activeCategory = ref("");
 const containerRef = ref(null);
