@@ -21,35 +21,35 @@
     {{ $t("All") }}
   </div>
    
-  <div ref="sidebarScrollRef" style="overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 4px;">
-    <div
-      v-for="cat in categories.filter(c => c.name !== 'All')"
-      :key="cat.name"
-      :data-cat="cat.name"
-      @click="filterCat(cat)"
-      :style="{
-        padding: '8px 10px',
-        margin: '4px 6px 0px 8px',
-        borderRadius: '8px',
-        fontSize: gv.itemMenuSetting.shortcut_menu_font_size+ 'px' ,
-        cursor: 'pointer',
-        textAlign: 'center',
-        background: activeCat === cat.name ? '#c0392b' : (activeCat === 'All' && scrollCat === cat.name) ? 'rgba(192,57,43,0.15)' : 'transparent',
-        color: activeCat === cat.name ? '#fff' : (activeCat === 'All' && scrollCat === cat.name) ? '#c0392b' : '#555',
-        fontWeight: activeCat === cat.name ? '500' : '400',
-        transition: 'background 0.15s'
-      }"
-    > 
-      <img
-        v-if="cat.photo"
-        :src="cat.photo || cat.emoji"
-        :alt="cat.name"
-        style="width: 40px; height: 40px; object-fit: contain; border-radius: 50%; margin-bottom: 4px; display: block; margin-left: auto; margin-right: auto;"
-      />
-      <div v-else style="font-size: 22px; margin-bottom: 4px;">{{ cat.emoji }}</div>
-      {{getMenuName(cat)}}
-    </div>
-  </div>
+      <div ref="sidebarScrollRef" style="overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 4px;">
+        <div
+          v-for="cat in categories.filter(c => c.name !== 'All')"
+          :key="cat.name"
+          :data-cat="cat.name"
+          @click="filterCat(cat)"
+          :style="{
+            padding: '8px 10px',
+            margin: '4px 6px 0px 8px',
+            borderRadius: '8px',
+            fontSize: gv.itemMenuSetting.shortcut_menu_font_size+ 'px' ,
+            cursor: 'pointer',
+            textAlign: 'center',
+            background: activeCat === cat.name ? '#c0392b' : (activeCat === 'All' && scrollCat === cat.name) ? 'rgba(192,57,43,0.15)' : 'transparent',
+            color: activeCat === cat.name ? '#fff' : (activeCat === 'All' && scrollCat === cat.name) ? '#c0392b' : '#555',
+            fontWeight: activeCat === cat.name ? '500' : '400',
+            transition: 'background 0.15s'
+          }"
+        > 
+          <img
+            v-if="cat.photo"
+            :src="cat.photo || cat.emoji"
+            :alt="cat.name"
+            style="width: 40px; height: 40px; object-fit: contain; border-radius: 50%; margin-bottom: 4px; display: block; margin-left: auto; margin-right: auto;"
+          />
+          <div v-else style="font-size: 22px; margin-bottom: 4px;">{{ cat.emoji }}</div>
+          {{getMenuName(cat)}}
+        </div>
+      </div>
     </div>
     <div ref="contentRef" @scroll="onScroll" style="flex: 1; overflow-y: auto;  min-width: 0; padding-bottom: 5px;">
         <div 
@@ -64,22 +64,29 @@
           "
           class="p-3"
           >
-          <div>
-            {{getMenuName(menuTitle) }}
+          <div class="w-full flex flex-wrap">  
+            <span class="flex flex-wrap mr-2" v-if="sale.sale?.tbl_number">
+                <div class="font-bold"> {{ $t('Table #') }} <span v-if="sale.sale.seat_number"> |  <span style="color: green;">{{ $t("Seat") }}# </span></span> :</div>
+                <div class="ml-1"> {{ sale.sale.tbl_number }} <span v-if="sale.sale.seat_number" > | <span style="color: green;"> {{sale.sale.seat_number}}</span></span> </div>
+            
+              <span class=" ml-2">~</span>
+            </span>
+            <span  class="font-bold">{{getMenuName(menuTitle) }}</span>
+
           </div>
  
           <div class="flex">
             <div class="cart-icon" :style="{
-              color: (sale.sale.total_quantity||0) > 0 ? '#282828':'#969696',
-              cursor:  (sale.sale.total_quantity||0) >0? 'pointer':'not-allowed',
+              color: (sale.sale.total_quantity||0) > 0 || (sale.sale.name||'') !='' ? '#282828':'#969696',
+              cursor:  (sale.sale.total_quantity||0) >0 || (sale.sale.name||'') !='' ? 'pointer':'not-allowed',
                }" @click="onViewDetail">
             <v-badge :content="(sale.sale.total_quantity||0)" :model-value="(sale.sale.total_quantity||0) > 0" color="#ff0000">
                 <v-icon size="28">mdi-cart-plus</v-icon>
             </v-badge>
             </div>
-            <div>
+            <div @click="onSettingClick" style="cursor:pointer">
                   <v-icon size="28">mdi-cog</v-icon>
-              </div>
+            </div>
           </div>     
                      
         </div>
@@ -122,8 +129,10 @@ import ComProductCard from "@/views/sale_page/components/ComProductCard.vue"
 import SaleOrderSammary from "@/views/sale/components/mobile_screen/ComSmallSaleOrderSammary.vue";
 import { useDialog } from 'primevue/usedialog';
 import {onSelectProduct} from "@/utils/sale.js";
-import ScrollToTop from "@/views/sale_page/components/ComScrollToTop.vue"
-import EmptyData from "@/views/sale_page/components/ComEmptyData.vue"
+import ScrollToTop from "@/views/sale_page/components/ComScrollToTop.vue";
+import EmptyData from "@/views/sale_page/components/ComEmptyData.vue";
+
+
 const sale = inject("$sale");
 const gv = inject("$gv");
 const product = inject("$product");
@@ -142,6 +151,7 @@ const screenWidth = ref(window.innerWidth);
 const props = defineProps({
   menu_categories: Object,
   menu_products: Object,
+  onSettingClick: Function
 });
 
 let isMenuItemClick = false;
@@ -223,6 +233,7 @@ function filterCat(param) {
     contentRef.value?.scrollTo({ top: 0, behavior: 'smooth' })
   }
 } 
+
 onMounted(() => {
   categories.value =  props.menu_categories.map(c => ({
       ...c,
@@ -273,7 +284,7 @@ async function onViewDetail(){
         return;
     }
     const result = await smallViewSaleProductListModal ({title: sale.sale.name, value:  ''});
-}
+} 
 
 
 </script>

@@ -3,7 +3,7 @@
 		<SplashScreen v-if="state.isLoading" />
 		
 		<v-sheet v-else id="app-container" v-resize="onResize">
-			<div v-if="allow_access==1">
+			<div >
 				<v-progress-linear class="progress_bar" v-if="isLoading" indeterminate color="teal"></v-progress-linear>
 				<MainLayout v-if="layout=='main_layout'" />
 				<SaleLayout v-else-if="layout=='sale_layout'" />
@@ -70,7 +70,7 @@ const screen = inject('$screen');
 let state = reactive({
 	isLoading: false
 }); 
-let allow_access = ref(1)
+
 const { mobile } = useDisplay();
 const licenseToaster = createToaster({ position: "top", duration: 1000*60*60, type: "error" });
 
@@ -339,13 +339,6 @@ const actionListeningHandler = async function (e) {
 }
 
 onMounted(async () => {
-	let resp = await allow_access_from_server()
-	if(resp == "blocked"){
-		allow_access.value = 0
-	}
-	else{
-		allow_access.value = 1
-	}
 	window.mobile = mobile.value
 	window.addEventListener('message', actionListeningHandler, false);
 	setTimeout(()=>{
@@ -366,20 +359,20 @@ onMounted(async () => {
 			onLogout();
 		}		 
 	}
+
 	gv.device_setting  = JSON.parse(localStorage.getItem("device_setting"));	
 	
 	// get pos local setting and set global
 	if (!localStorage.getItem("item_menu_setting")){
 		localStorage.setItem("item_menu_setting", JSON.stringify( gv.itemMenuSetting) )
 	}
+
+	
 	onResize()
 
 })
 
-async function allow_access_from_server() {
-	let resp = await call.get("epos_restaurant_2023.api.api.check_allow_access")
-	return resp.message
-}
+
 
 onUnmounted(()=>{
 	window.removeEventListener('message', actionListeningHandler, false);

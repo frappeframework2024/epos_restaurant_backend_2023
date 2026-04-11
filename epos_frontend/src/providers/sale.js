@@ -136,6 +136,7 @@ export default class Sale {
     }
 
     async newSale() { 
+ 
         const now = new Date();
         const _now_format = moment(now).format('yyyy-MM-DD HH:mm:ss.SSSSSS');
         this.auditTrailLogs = [];

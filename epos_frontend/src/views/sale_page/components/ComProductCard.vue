@@ -71,7 +71,7 @@
 </template>
 
 <script setup>
-import { ref,watch, reactive, inject,computed } from '@/plugin';
+import { ref,watch, reactive, inject } from '@/plugin';
 import Enumerable from 'linq'; 
 const gv = inject("$gv");
 const sale = inject("$sale");

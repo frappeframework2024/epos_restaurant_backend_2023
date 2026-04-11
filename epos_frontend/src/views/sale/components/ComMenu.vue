@@ -113,8 +113,8 @@
             scrollContainer.value.addEventListener('scroll', onScroll);
         } 
         const item_menu_setting = JSON.parse(localStorage.getItem("item_menu_setting")) 
-        if (item_menu_setting) {
-            gv.itemMenuSetting.value = item_menu_setting
+        if (item_menu_setting) { 
+            Object.assign(gv.itemMenuSetting, item_menu_setting) 
         }
     });
 

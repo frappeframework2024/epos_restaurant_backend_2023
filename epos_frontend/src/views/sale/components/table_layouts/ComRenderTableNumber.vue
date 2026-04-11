@@ -247,7 +247,7 @@ async function newSale(table) {
     if((gv.device_setting?.main_sale_screen??"Default") == "Default"){
         router.push({ name: "AddSale" });
     }else {
-
+        
         let template = (gv.device_setting?.main_sale_screen??"Default") == "Top Menu"?"top":"left";
         router.push({ 
             name: "SaleOrder",

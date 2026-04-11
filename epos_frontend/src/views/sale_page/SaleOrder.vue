@@ -14,16 +14,20 @@
         <SaleOrderTemplate1 :menu_categories="menu_categories" :menu_products="menu_products"  />
     </div>
     <div v-else-if="template_menu=='left'">
-        <SaleOrderTemplate2 :menu_categories="menu_categories"  :menu_products="menu_products" />
+        <SaleOrderTemplate2 :menu_categories="menu_categories"  :menu_products="menu_products" :onSettingClick="onSettingClick"/>
     </div>
     </template>
 </template>
 
 <script setup>
-  import { ref, inject,computed, onMounted,i18n, useRoute, useRouter} from   '@/plugin';
+  import { ref, inject, onMounted,i18n, useRoute, useRouter} from   '@/plugin';
+  import { useDialog } from 'primevue/usedialog';
+  import ComMenuSetting from '@/views/sale/components/ComMenuSetting.vue';
   import SaleOrderTemplate1 from "@/views/sale_page/SaleOrderTemplate1.vue";
   import SaleOrderTemplate2 from "@/views/sale_page/SaleOrderTemplate2.vue";
+
   import { createToaster } from '@meforma/vue-toaster'; 
+
   const { t: $t } = i18n.global;
   const sale = inject("$sale");
   const gv = inject("$gv");
@@ -36,7 +40,7 @@
 
   const route = useRoute();
   const router = useRouter();
-
+  const dialog = useDialog();
   const toaster = createToaster({ position: "top-center" });
   
 
@@ -44,43 +48,20 @@
   const menu_categories = ref([]);
   const menu_products = ref([]);
   const is_loading = ref(true); 
-  const template_menu = ref("left");
+  const template_menu = ref("left"); 
 
-  const setting = computed(()=>{
-    let data = localStorage.getItem("item_menu_setting")
-    if (data){
-        data = JSON.parse(data)
-    }else {
-        data = {
-            sort_menu_order_by:"name",
-            sort_order_by:"product_name_en"
-        }
-    } 
-    return data;
-  })
-
-  gv.itemMenuSetting = setting; 
+    if (!localStorage.getItem("item_menu_setting")){
+        localStorage.setItem("item_menu_setting", JSON.stringify( gv.itemMenuSetting) )
+    }
 
   onMounted(async ()=>{      
     is_loading.value = true;
     if(route.query.menu){ 
       template_menu.value = route.query.menu;        
-    } 
-   
+    }   
    
  
-    const resp = await call.post("epos_restaurant_2023.api.product.get_product_by_menu_1_level", {
-      root_menu: product.currentRootPOSMenu ? product.currentRootPOSMenu : product.setting?.default_pos_menu,
-      sort_menu_order_by: gv.itemMenuSetting?.sort_menu_order_by || "name",
-      sort_order_by :gv.itemMenuSetting?.sort_order_by || "product_name_en",
-    }); 
-
-
-    if(resp.message){
-      const data = resp.message;  
-      menu_categories.value = data.menu_categories
-      menu_products.value = data.menu_products 
-    }   
+    await _onLoadMenu();
     
     
     //private on mouted
@@ -94,9 +75,7 @@
           //check user 
     const make_order_auth = JSON.parse(localStorage.getItem('make_order_auth'));
     if (sale.getString(route.params.name) == "" || make_order_auth == undefined) {
-      if(sale.getString(route.params.name) == ""){
-        sale.newSale(); 
-      }else{
+
         if (sale.sale.sale_status == undefined) {
             if (sale.setting.table_groups.length > 0) {
                 router.push({ name: 'TableLayout' });
@@ -105,7 +84,6 @@
                 sale.newSale(); 
             }
         }
-      }
     }
 
     let backup_sale = JSON.parse(JSON.stringify(sale.sale))  
@@ -159,7 +137,7 @@
           }
 
       });
-    } else { 
+    } else {  
         sale.getTableSaleList()
         sale.saleNetworkLock(backup_sale)
     }
@@ -168,6 +146,24 @@
 
     //CDS
     socket.emit("ShowOrderInCustomerDisplay", sale.sale, "new", sale.customer_display_key);
+  }
+
+
+
+  async function _onLoadMenu() {
+    const resp = await call.post("epos_restaurant_2023.api.product.get_product_by_menu_1_level", {
+      root_menu: product.currentRootPOSMenu ? product.currentRootPOSMenu : product.setting?.default_pos_menu,
+      sort_menu_order_by: gv.itemMenuSetting?.sort_menu_order_by || "name",
+      sort_order_by :gv.itemMenuSetting?.sort_order_by || "product_name_en",
+    }); 
+
+
+    if(resp.message){
+      const data = resp.message;  
+      menu_categories.value = data.menu_categories
+      menu_products.value = data.menu_products 
+    }   
+    
   }
 
   async function onCheckExpireHappyHoursPromotion() {
@@ -180,6 +176,31 @@
       gv.promotion = doc;
       sale.promotion = doc;
     }
+}
+
+
+const onSettingClick= () => {
+    dialog.open(ComMenuSetting, {
+        props: {
+            header: 'Menu Setting',
+            style: {
+                width: '50vw',
+            },
+            breakpoints:{
+                '960px': '75vw',
+                '640px': '90vw'
+            },
+            modal: true,
+            closable: false 
+        },
+        onClose: async (options)=>{ 
+            if(options.data?.reload_menu){
+                is_loading.value = true;
+                await _onLoadMenu();
+                is_loading.value = false;
+            } 
+        }
+    });
 }
 
 

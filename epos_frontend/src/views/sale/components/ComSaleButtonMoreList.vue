@@ -137,7 +137,6 @@ import {
     EditPOSMenuDialog,
     scanCouponDialog
 } from "@/plugin"
-import { useDisplay } from 'vuetify'
 import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 import ComMenuSetting from '@/views/sale/components/ComMenuSetting.vue';
 
@@ -164,6 +163,7 @@ let productPrinters = [];
 let count_sale_type = ref({})
 import { useDialog } from 'primevue/usedialog';
 const dialog = useDialog();
+
 const showMenuSetting = () => {
     dialog.open(ComMenuSetting, {
         props: {
@@ -175,7 +175,8 @@ const showMenuSetting = () => {
                 '960px': '75vw',
                 '640px': '90vw'
             },
-            modal: true
+            modal: true,
+             closable: false 
         }
     });
 }

@@ -17,12 +17,17 @@
               </button>
             </div>
             <div class="cart-icon">
-              <div @click="showCart = true">
-                <v-badge :content="(sale.sale.total_quantity||0)" :model-value="(sale.sale.total_quantity||0) > 0" color="#b91c1c" @click="onViewDetail">
+              <div 
+              :style="{
+              color:  (sale.sale.total_quantity||0) > 0 || (sale.sale.name||'') !='' ? '#282828':'#969696',
+              cursor:  (sale.sale.total_quantity||0) > 0 || (sale.sale.name||'') !=''? 'pointer':'not-allowed',
+               }"
+              @click="onViewDetail" >
+                <v-badge :content="(sale.sale.total_quantity||0)" :model-value="(sale.sale.total_quantity||0) > 0" color="#ff0000">
                   <v-icon size="28">mdi-cart-plus</v-icon>
                 </v-badge>
               </div>
-              <div>
+               <div @click="onSettingClick" style="cursor:pointer">
                   <v-icon size="28">mdi-cog</v-icon>
               </div>
             </div>
@@ -79,6 +84,7 @@ const product = inject("$product");
 const props = defineProps({
     menu_categories: Object,
     menu_products:Object,
+    onSettingClick: Function
 });  
 
 //variables
@@ -87,7 +93,6 @@ const dialog = useDialog();
 const categories = ref([])
 const products = ref([])
 const cart = ref([])
-const showCart = ref(false)
 const screenWidth = ref(window.innerWidth); 
 const activeCategory = ref("");
 const containerRef = ref(null);
