@@ -1,7 +1,7 @@
 import socketio
 
 # Point this to your Node.js Socket.IO server
-SOCKET_SERVER_URL = "http://localhost:3000"
+SOCKET_SERVER_URL = "http://localhost:3001"
 sio = socketio.Client()
 
 def connect_socket():

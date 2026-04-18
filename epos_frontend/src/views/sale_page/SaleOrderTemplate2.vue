@@ -319,7 +319,7 @@ async function onViewDetail(){
 }
 
 /* Mobile: exactly 2 columns */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
 
   .main-layout{ 
     height: calc(100vh - 150px);  

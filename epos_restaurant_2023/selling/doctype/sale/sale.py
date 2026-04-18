@@ -1845,38 +1845,40 @@ def update_default_change_account(self):
 def update_customer_bill_balance(customer):
 	import time
 	from pymysql.err import OperationalError
-	sql = """UPDATE `tabCustomer` c
-			LEFT JOIN (
-				SELECT 
-					SUM(balance) AS total_sale_balance
-				FROM `tabSale`
-				WHERE docstatus = 1 
-				AND customer = %(customer)s
-			) s ON 1=1
-			SET c.balance = 
-				COALESCE(s.total_sale_balance, 0)
-				+ COALESCE(c.total_coupon_balance, 0)
-				+ COALESCE(c.membership_balance, 0)
-			WHERE c.name = %(customer)s"""
-	max_retries=4
-	for attempt in range(max_retries):
-		try:
-			frappe.db.sql(sql, {"customer": customer})
-			frappe.db.commit()
-			return 
+	is_system_customer = frappe.db.get_value('Customer', customer, 'is_system_customer')
+	if is_system_customer == 0:
+		sql = """UPDATE `tabCustomer` c
+				LEFT JOIN (
+					SELECT 
+						SUM(balance) AS total_sale_balance
+					FROM `tabSale`
+					WHERE docstatus = 1 
+					AND customer = %(customer)s
+				) s ON 1=1
+				SET c.balance = 
+					COALESCE(s.total_sale_balance, 0)
+					+ COALESCE(c.total_coupon_balance, 0)
+					+ COALESCE(c.membership_balance, 0)
+				WHERE c.name = %(customer)s and c.is_system_customer = 0"""
+		max_retries=4
+		for attempt in range(max_retries):
+			try:
+				frappe.db.sql(sql, {"customer": customer})
+				frappe.db.commit()
+				return 
 
-		except OperationalError as e:
-			if e.args[0] in (1213, 1205):
-				frappe.db.rollback()
-				if attempt < max_retries - 1:
-					time.sleep(0.2 * (2 ** attempt))
-					continue
+			except OperationalError as e:
+				if e.args[0] in (1213, 1205):
+					frappe.db.rollback()
+					if attempt < max_retries - 1:
+						time.sleep(0.2 * (2 ** attempt))
+						continue
+					else:
+						frappe.log_error(f"Deadlock after {max_retries} retries for {customer}","Customer Balance Update Deadlock")
+						raise
 				else:
-					frappe.log_error(f"Deadlock after {max_retries} retries for {customer}","Customer Balance Update Deadlock")
+					frappe.db.rollback()
 					raise
-			else:
-				frappe.db.rollback()
-				raise
 
 @frappe.whitelist()
 def change_table_number(data):

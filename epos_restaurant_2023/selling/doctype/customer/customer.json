@@ -36,6 +36,7 @@
   "gender",
   "date_of_birth",
   "jobs",
+  "is_system_customer",
   "is_disabled",
   "keyword",
   "column_break_4",
@@ -793,6 +794,12 @@
    "fieldtype": "Data",
    "label": "CM Customer ID",
    "search_index": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_system_customer",
+   "fieldtype": "Check",
+   "label": "Is System Customer"
   }
  ],
  "image_field": "photo",
@@ -805,7 +812,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2026-03-21 16:59:41.867165",
+ "modified": "2026-04-17 08:44:55.778604",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

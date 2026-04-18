@@ -167,7 +167,7 @@ class SalePayment(Document):
 					GROUP BY customer
 				) sale ON c.name = sale.customer
 				SET c.total_point_earn = sale.total_point_earn
-				WHERE NAME = '{0}'
+				WHERE NAME = '{0}' and c.is_system_customer = 0
 			""".format(self.customer))
 		frappe.db.commit()
 
@@ -296,7 +296,7 @@ def update_customer_saving_crypto(self):
 					) _c on c.name = _c.customer
 					set c.total_crypto_claim = _c.total_claim_amount,
 					c.total_crypto_balance = c.total_crypto_amount - (_c.total_claim_amount + c.total_crypto_balance_expired )
-					where c.name = %(customer)s"""
+					where c.name = %(customer)s and c.is_system_customer = 0"""
 			frappe.db.sql(sql,{"customer":self.customer})
 			frappe.db.commit()
 		
