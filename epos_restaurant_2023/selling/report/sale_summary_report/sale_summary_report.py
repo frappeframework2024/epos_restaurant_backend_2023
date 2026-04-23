@@ -9,6 +9,7 @@ def execute(filters=None):
 	report_data = []
 	skip_total_row=False
 	message=None
+	update_vendor(filters)
 	if filters.get("parent_row_group"):
 		report_data = get_report_group_data(filters)
 		message="Enable <strong>Parent Row Group</strong> making report loading slower. Please try  to select some report filter to reduce record from database "
@@ -20,6 +21,14 @@ def execute(filters=None):
 		report_chart = get_report_chart(filters,report_data) 
 	return get_columns(filters), report_data, message, report_chart, get_report_summary(report_data,filters),skip_total_row
  
+def update_vendor(filters):
+	if filters.vendor:
+		frappe.db.sql("""update `tabSale Product` a
+				inner join `tabProduct` b on b.name = a.product_code
+				set a.vendor = b.vendor
+				where coalesce(a.vendor,'') = '' and coalesce(a.vendor,'') != coalesce(b.vendor,'') """)
+		frappe.db.commit()
+
 def validate(filters):
 	if filters.filter_based_on =="Fiscal Year":
 		if not filters.from_fiscal_year:
