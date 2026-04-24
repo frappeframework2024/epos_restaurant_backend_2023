@@ -22,11 +22,13 @@ def execute(filters=None):
 	return get_columns(filters), report_data, message, report_chart, get_report_summary(report_data,filters),skip_total_row
  
 def update_vendor(filters):
-	if filters.vendor:
+	if filters.parent_row_group == "Vendor" or filters.row_group == "Vendor":
+		frappe.msgprint("Updating vendor information...")
 		frappe.db.sql("""update `tabSale Product` a
 				inner join `tabProduct` b on b.name = a.product_code
-				set a.vendor = b.vendor
-				where coalesce(a.vendor,'') = '' and coalesce(a.vendor,'') != coalesce(b.vendor,'') """)
+				inner join `tabVendor` c on c.name = b.vendor
+				set a.vendor = b.vendor, a.vendor_name = c.vendor_name
+				where coalesce(a.vendor,'') = '' or coalesce(a.vendor,'') != coalesce(b.vendor,'') or coalesce(a.vendor_name,'') = '' or coalesce(a.vendor_name,'') != coalesce(c.vendor_name,'') """)
 		frappe.db.commit()
 
 def validate(filters):
@@ -457,7 +459,7 @@ def get_row_groups():
 			"show_commission":True
 		},
 		{
-			"fieldname":"coalesce(a.vendor,'Not Set')",
+			"fieldname":"concat(coalesce(a.vendor,'Not Set'),'-',coalesce(a.vendor_name,'Not Set'))",
 			"label":"Vendor",
 			"parent_row_group_filter_field":"row_group",
 			"show_commission":False
