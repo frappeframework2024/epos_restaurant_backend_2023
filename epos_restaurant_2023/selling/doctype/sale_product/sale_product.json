@@ -13,6 +13,7 @@
   "product_name_kh",
   "portion",
   "vendor",
+  "vendor_name",
   "column_break_4",
   "product_group",
   "product_category",
@@ -1299,12 +1300,19 @@
    "fieldtype": "Link",
    "label": "Default Inventory Account",
    "options": "Chart Of Account"
+  },
+  {
+   "fetch_from": "vendor.vendor_name",
+   "fieldname": "vendor_name",
+   "fieldtype": "Data",
+   "label": "Vendor Name",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-02-19 16:17:06.984201",
+ "modified": "2026-04-23 09:18:04.590483",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",
