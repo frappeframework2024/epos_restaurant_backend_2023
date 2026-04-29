@@ -38,9 +38,7 @@ def get_period_list(
 	filter_based_on,
 	periodicity,
 	filters=None,
-	accumulated_values=False,
-	reset_period_on_fy_change=True,
-	ignore_fiscal_year=False,
+	accumulated_values=False
 ):
 	"""Get a list of dict {"from_date": from_date, "to_date": to_date, "key": key, "label": label}
 	Periodicity can be (Yearly, Quarterly, Monthly)"""
@@ -75,9 +73,8 @@ def get_period_list(
 			period.to_date = to_date
 		else:
 			period.to_date = year_end_date
-		if not ignore_fiscal_year:
-			period.to_date_fiscal_year = "2025"
-			period.from_date_fiscal_year_start_date = "2025"
+		period.to_date_fiscal_year = filters.period_end_date[:4]
+		period.from_date_fiscal_year_start_date = filters.period_start_date[:4]
 		period_list.append(period)
 		if period.to_date == year_end_date:
 			break
@@ -89,10 +86,8 @@ def get_period_list(
 			if not accumulated_values:
 				label = get_label(periodicity, opts["from_date"], opts["to_date"])
 			else:
-				if reset_period_on_fy_change:
-					label = get_label(periodicity, opts.from_date_fiscal_year_start_date, opts["to_date"])
-				else:
-					label = get_label(periodicity, period_list[0].from_date, opts["to_date"])
+				from_year = int(opts["from_date"].strftime("%Y"))-1
+				label = get_label(periodicity, str(from_year), opts["to_date"])
 		opts.update(
 			{
 				"key": key.replace(" ", "_").replace("-", "_"),
@@ -378,7 +373,8 @@ def execute(filters=None):
 		filters.period_end_date,
 		filters.filter_based_on,
 		filters.periodicity,
-		filters
+		filters,
+		filters.accumulated_values
 	)
 	currency = frappe.get_doc("ePOS Settings").currency
 	asset = get_data(

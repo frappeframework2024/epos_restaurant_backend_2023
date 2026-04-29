@@ -4,14 +4,12 @@
 frappe.query_reports["Balance Sheet Report"] = {
 	onload: function(report) {
 		report.page.add_inner_button("Preview Report", function () {
-			frappe.query_report.refresh();
+			validate_date(report);
+			setTimeout(() => {
+				frappe.query_report.refresh();
+			}, 100);
 		});
-		var from_fiscal_year = report.get_values().from_fiscal_year;
-		var to_fiscal_year = report.get_values().to_fiscal_year;
-		frappe.query_report.set_filter_value({
-			period_start_date: from_fiscal_year+"-01-01",
-			period_end_date: to_fiscal_year+"-12-31",
-		});
+		validate_date(report);
 	},
 	filters: [
 		{
@@ -67,7 +65,7 @@ frappe.query_reports["Balance Sheet Report"] = {
 			"fieldname":"from_fiscal_year",
 			"label": __("Start Year"),
 			"fieldtype": "Data",
-			"default": "2025",
+			"default": get_current_fiscal_year(),
 			"reqd": 1,
 			"depends_on": "eval:doc.filter_based_on == 'Fiscal Year'",
 			"on_change": function (query_report) {
@@ -78,7 +76,7 @@ frappe.query_reports["Balance Sheet Report"] = {
 			"fieldname":"to_fiscal_year",
 			"label": __("End Year"),
 			"fieldtype": "Data",
-			"default": "2025",
+			"default": get_current_fiscal_year(),
 			"reqd": 1,
 			"depends_on": "eval:doc.filter_based_on == 'Fiscal Year'",
 			"on_change": function (query_report) {
@@ -127,4 +125,18 @@ frappe.query_reports["Balance Sheet Report"] = {
 	initial_depth: 3
 };
 
+function get_current_fiscal_year() {
+	var current_date = new Date();
+	var current_year = current_date.getFullYear();
+	return current_year;
+}
+
+function validate_date(report){
+	if (report.get_values().filter_based_on == "Fiscal Year") {
+		var from_fiscal_year = report.get_values().from_fiscal_year;
+		var to_fiscal_year = report.get_values().to_fiscal_year;
+		frappe.query_report.get_filter('period_start_date').set_value(from_fiscal_year + "-01-01");
+		frappe.query_report.get_filter('period_end_date').set_value(to_fiscal_year + "-12-31");
+	}
+}
 
