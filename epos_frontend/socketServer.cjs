@@ -235,12 +235,25 @@ io.on('connection', (socket) => {
     io.emit("ABAPayWaySuccess",arg,key);
   })
 
+  // Channel Manager Task
   socket.on("ChannelManagerUpdate",(arg)=>{  
     io.emit("ChannelManagerUpdate",arg);
   })
   
+  // update rate
+  socket.on("ChannelManagerUpdateRatePlan",(arg)=>{  
+    io.emit("ChannelManagerUpdateRatePlan",arg);
+  })
+
+  socket.on("ChannelManagerStartStopSync",(arg)=>{  
+    io.emit("ChannelManagerStartStopSync",arg);
+  })
+
+ 
+
+  
 });
 
-server.listen(3001, () => {
+server.listen(3000, () => {
   console.log('Server started on port 3000');
 });
