@@ -557,7 +557,7 @@ def get_system_settings(pos_profile="", device_name=''):
         "shift_types":shift_types,
         "currencies":currencies,
         "default_currency":frappe.db.get_default("currency"),
-        "currency_exchange":exchange_rate[0],
+        "currency_exchange":exchange_rate[0] if exchange_rate else None,
         "pos_setting":pos_setting,
         "customer":default_customer.name,
         "customer_name":default_customer.customer_name_en,

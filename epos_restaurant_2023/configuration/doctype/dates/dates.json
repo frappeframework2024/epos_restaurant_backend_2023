@@ -11,12 +11,13 @@
   {
    "fieldname": "date",
    "fieldtype": "Date",
-   "label": "Date"
+   "label": "Date",
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-18 10:06:15.795626",
+ "modified": "2026-04-30 11:54:33.103029",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Dates",

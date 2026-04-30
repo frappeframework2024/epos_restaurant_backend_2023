@@ -101,7 +101,8 @@ async function onSearchSale() {
       if(template == "Default"){
           router.push({  name: "AddSale", params: { name: result.name }});
       }else {
-        let _template = template == "Top Menu"?"top":"left";
+        const result = template.toLowerCase().replace(/\s+/g, '-');
+                let _template = result;
         router.push({ 
             name: "SaleOrder",
             params: { name: result.name },
@@ -163,7 +164,8 @@ async function onSubmit() {
             if(template == "Default"){
                 router.push({  name: "AddSale"});
             }else {
-                let _template = template == "Top Menu"?"top":"left";
+                const result = template.toLowerCase().replace(/\s+/g, '-');
+                let _template = result;
                 router.push({ 
                     name: "SaleOrder",
                     query: { menu: _template }
@@ -252,7 +254,8 @@ async function onPayment() {
         if(template == "Default"){
             router.push({  name: "AddSale"});
         }else {
-            let _template = template == "Top Menu"?"top":"left";
+           const result = template.toLowerCase().replace(/\s+/g, '-');
+                let _template = result;
             router.push({ 
                 name: "SaleOrder",
                 query: { menu: _template }

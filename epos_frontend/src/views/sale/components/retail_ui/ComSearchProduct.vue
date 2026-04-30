@@ -178,29 +178,26 @@ function onSearch() {
         ],
         orderBy: sortOrder.value,
         limit: keyword.value ? 50 : 10
-    })
-        .then((docs) => {
-            const seen = new Set();
-            const filtered_data = docs.filter(doc => {
-                if (seen.has(doc.name)) return false;
-                seen.add(doc.name);
-                return true;
-            });
-            filtered_data.forEach(a => {
-                let prices = JSON.parse(a.prices)
-                if((prices || []).length>0){
-                    let c = prices.find(b => b.price_rule === sale.setting.price_rule);
-                    a.price = c.price
-                }
-            });
-            data.value = filtered_data
-            loading.value = false
-
-        })
-        .catch((error) => {
-            loading.value = false
+    }).then((docs) => {
+        const seen = new Set();
+        const filtered_data = docs.filter(doc => {
+            if (seen.has(doc.name)) return false;
+            seen.add(doc.name);
+            return true;
         });
-
+        filtered_data.forEach(a => {
+            let prices = JSON.parse(a.prices)
+            if((prices || []).length>0){
+                let c = prices.find(b => b.price_rule === sale.setting.price_rule);
+                a.price = c.price
+            }
+        });
+        data.value = filtered_data
+        loading.value = false
+    })
+    .catch((error) => {
+        loading.value = false
+    });
 }
 
 function onClose(isClose) {

@@ -75,6 +75,12 @@ def get_product_by_menu(root_menu="",mobile = 0,sort_order_by="product_name_en",
             menus.append(m)
              
       
+        # menus = sorted(menus, key=lambda x: (
+        #         x.get("type_index") or 0,
+        #         x.get("sort_order") or 0,
+        #         x.get("name_en") or ""
+        #     )
+        # )
         return menus
 
 @frappe.whitelist(allow_guest=True)

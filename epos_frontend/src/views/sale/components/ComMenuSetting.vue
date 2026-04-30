@@ -88,7 +88,7 @@
   const dialogRef = inject('dialogRef');
 
   const defaultUI = computed(()=>{
-    let template = (gv.device_setting?.main_sale_screen??"Default") == "Top Menu"?"top":"left";
+    let template = (gv.device_setting?.main_sale_screen??"Default");
       return template == "Default";
   });
 

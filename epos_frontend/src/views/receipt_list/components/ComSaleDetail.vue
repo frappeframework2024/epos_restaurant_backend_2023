@@ -342,12 +342,13 @@ function onOpenOrder() {
                   if(template == "Default"){
                       router.push({  name: "AddSale", params: { name: props.params.name }});
                   }else {
-                      let _template = template == "Top Menu"?"top":"left";
-                      router.push({ 
-                          name: "SaleOrder",
-                           params: { name: props.params.name },
-                          query: { menu: _template }
-                      });
+                        const result = template.toLowerCase().replace(/\s+/g, '-');
+                        let _template = result;
+                        router.push({ 
+                            name: "SaleOrder",
+                            params: { name: props.params.name },
+                            query: { menu: _template }
+                        });
                   }    
                 emit('resolve', "open_order");
             }
@@ -380,7 +381,9 @@ async function onEditOrder() {
                     if(template == "Default"){
                         router.push({  name: "AddSale", params: { name: props.params.name }});
                     }else {
-                        let _template = template == "Top Menu"?"top":"left";
+                        const result = template.toLowerCase().replace(/\s+/g, '-');
+                        let _template = result;
+                        
                         router.push({ 
                             name: "SaleOrder",
                             params: { name: props.params.name },

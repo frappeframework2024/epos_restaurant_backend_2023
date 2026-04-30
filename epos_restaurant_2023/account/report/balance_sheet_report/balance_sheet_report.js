@@ -103,7 +103,7 @@ frappe.query_reports["Balance Sheet Report"] = {
 			"fieldname": "accumulated_values",
 			"label": __("Accumulated Values"),
 			"fieldtype": "Check",
-			"default": 1,
+			"default": 0,
 			"on_change": function (query_report) {
 
 			},

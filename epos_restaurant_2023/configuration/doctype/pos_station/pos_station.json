@@ -440,12 +440,12 @@
    "fieldname": "main_sale_screen",
    "fieldtype": "Select",
    "label": "Main Sale Screen",
-   "options": "Default\nTop Menu\nLeft Menu"
+   "options": "Default\nTop Menu\nLeft Menu\nLeft Menu 2"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-04-06 15:21:52.533497",
+ "modified": "2026-04-28 09:03:39.960629",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

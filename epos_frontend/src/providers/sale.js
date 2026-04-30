@@ -3,7 +3,9 @@ import moment from '@/utils/moment.js';
 import {
     ref, noteDialog, changeTaxSettingModal, SaleProductComboMenuGroupModal, keyboardDialog, keypadWithNoteDialog, createResource,
     createDocumentResource, addModifierDialog, useRouter, confirmDialog, selectEmployeeDialog, saleProductDiscountDialog, i18n,
-    ComOrderLimitDialog, scanqrDialog
+    ComOrderLimitDialog, scanqrDialog,
+    postApi
+
 } from "@/plugin"
 import { createToaster } from "@meforma/vue-toaster";
 import socket from '@/utils/socketio';
@@ -1667,6 +1669,7 @@ export default class Sale {
             this.loading = false;
             return
         }
+
         return new Promise(async (resolve) => {
             if (this.sale.sale_products.length == 0 && this.sale.name == undefined && (this.sale.from_reservation || "") == "") {
                 toaster.warning($t('msg.Please select a menu item to submit order'));
@@ -1690,19 +1693,21 @@ export default class Sale {
                     }
                     try{
                          _sale = await this.newSaleResource.submit({ doc: doc });
+                         console.log(doc)
                     }
                     catch(error){
                         if(this.sale.sale_status == "Bill Requested"){
                             this.sale.sale_status = "Submitted";
                         }
                         this.loading = false;
-                        console.log(error)
+                   
                         return;
                     }
                 }
                 else {
                     try{
                         _sale = await this.saleResource.setValue.submit(doc);  
+                        console.log(doc)
                         if (_sale.name && _sale.grand_total !=  this.__backup_sale.grand_total){
                             call.post("epos_restaurant_2023.api.payway.aba_close_transaction", { 
                                 "property_code": this.setting.property_code,
@@ -1716,7 +1721,7 @@ export default class Sale {
                             this.sale.sale_status = "Submitted";
                         }
                         this.loading = false;
-                        console.log(error)
+                     
                         return;
                     }
                 }
@@ -1726,7 +1731,10 @@ export default class Sale {
             }
              this.loading = false;
         })
+
     }
+
+
 
     async onSubmitQuickPay() {
         if (this.sale.sale_products.filter(r => !r.time_out_price && r.is_timer_product).length > 0) {
@@ -2345,6 +2353,8 @@ export default class Sale {
                 }
             }); 
         } 
+
+        console.log(this.productPrinters)
     }
 
 
@@ -2618,7 +2628,8 @@ export default class Sale {
             if(template == "Default"){
                 this.router.push({  name: "AddSale"});
             }else {
-                let _template = template == "Top Menu"?"top":"left";
+                const result = template.toLowerCase().replace(/\s+/g, '-');
+                let _template = result;
                 this.router.push({ 
                     name: "SaleOrder",
                     query: { menu: _template }

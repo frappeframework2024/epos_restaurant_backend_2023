@@ -142,8 +142,9 @@ function onTableClick(table, guest_cover) {
                 }
                 else { 
                     localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth)); 
-                    
-                    if((gv.device_setting?.main_sale_screen??"Default") == "Default"){
+                    let template = (gv.device_setting?.main_sale_screen??"Default") ;
+
+                    if(template  == "Default"){
                         router.push({ 
                             name: "AddSale",
                             params: {
@@ -151,14 +152,14 @@ function onTableClick(table, guest_cover) {
                             }
                          });
                     }else {
-
-                        let template = (gv.device_setting?.main_sale_screen??"Default") == "Top Menu"?"top":"left";
+                        const result = template.toLowerCase().replace(/\s+/g, '-');
+                        let _template = result;
                         router.push({ 
                             name: "SaleOrder",
                             params: {
                                 name: table.sales[0].name
                             },
-                            query: { menu: template }
+                            query: { menu: _template }
                         });
                     } 
                 }
@@ -243,15 +244,17 @@ async function newSale(table) {
     if (gv.setting.price_rule != sale.sale.price_rule) {
         toaster.info($t('msg.Your current price rule is', [sale.sale.price_rule]));
     } 
-    // 
-    if((gv.device_setting?.main_sale_screen??"Default") == "Default"){
+
+    let template = gv.device_setting?.main_sale_screen??"Default";
+    if( template == "Default"){
         router.push({ name: "AddSale" });
     }else {
-        
-        let template = (gv.device_setting?.main_sale_screen??"Default") == "Top Menu"?"top":"left";
+        const result = template.toLowerCase().replace(/\s+/g, '-'); 
+        let _template = result;
+
         router.push({ 
             name: "SaleOrder",
-            query: { menu: template }
+            query: { menu: _template }
         });
     }
 }

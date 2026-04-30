@@ -168,14 +168,17 @@ def get_conditions(filters,group_filter=None):
 	end_date = filters.end_date
 	if(group_filter!=None):
 		conditions += " and {} ='{}'".format(group_filter["field"],group_filter["value"].replace("'","''").replace("%","%%"))
-	conditions += " AND b.posting_date between '{}' AND '{}'".format(start_date,end_date)
+	if conditions != "":
+		conditions += " AND "
+	conditions += "b.posting_date between '{}' AND '{}'".format(start_date,end_date)
 	if filters.get("expense_category"):
 		conditions += " AND a.expense_category in %(expense_category)s"
 	if filters.get("vendor_code"):
 		conditions += " AND b.vendor_code in %(vendor_code)s"
 	if filters.get("vendor_group"):
 		conditions += " AND b.vendor_group in %(vendor_group)s"
-	conditions += " AND b.business_branch in %(business_branch)s"
+	if filters.get("business_branch"):
+		conditions += " AND b.business_branch in %(business_branch)s"
 	return conditions
 
 def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):

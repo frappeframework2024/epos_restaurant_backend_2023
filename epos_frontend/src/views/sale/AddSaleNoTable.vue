@@ -107,7 +107,8 @@ function onOpenOrder(sale_id) {
                             localStorage.setItem('redirect_sale_type', selected.value)
                         });
                     }else {
-                        let _template = template == "Top Menu"?"top":"left";
+                        const result = template.toLowerCase().replace(/\s+/g, '-');
+                let _template = result;
                         router.push({ 
                             name: "SaleOrder",
                             params: { name: sale_id },
@@ -185,7 +186,8 @@ async function newSale() {
                         localStorage.setItem('redirect_sale_type', selected.value)
                     });           
                 }else {
-                    let _template = template == "Top Menu"?"top":"left";
+                    const result = template.toLowerCase().replace(/\s+/g, '-');
+                let _template = result;
                     router.push({ 
                         name: "SaleOrder",
                         query: { menu: _template }

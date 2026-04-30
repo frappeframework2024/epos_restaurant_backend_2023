@@ -33,7 +33,7 @@ class Sale(Document):
 				else:
 					frappe.throw(_("Please start working day first"))
 
-			if not self.cashier_shift: 
+			if not self.cashier_shift: 		
 				data = (frappe.db.sql("select name from `tabCashier Shift` where business_branch=%(business_branch)s and pos_profile=%(pos_profile)s and is_closed = 0 order by posting_date limit 1",{"business_branch":self.business_branch,"pos_profile":self.pos_profile},as_dict=1) or [])
 				if len(data)>0:
 					self.cashier_shift= data[0]["name"]
