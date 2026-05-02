@@ -1,0 +1,87 @@
+<span class="item-price">
+    {% if p.prices != [] %}
+        {% set _prices = p.prices | selectattr('price_rule', 'equalto', doc.default_price_rule) | list %}
+        {% for price in _prices %}
+            {% if p.discount_value > 0 %}
+                <div class="d-flex gap-2 align-items-center">
+                    <div>
+                        {% if p.discount_type == 'Percent' %}
+                        <div class="text-start text-nowrap" style="line-height: .7;">
+                            <sup>
+                                <del style="color:#ccc">
+                                    {{ frappe.format(price.price or 0, {"fieldtype": "Currency"}) }}
+                                </del>
+                            </sup>
+                            <div>
+                                {{ frappe.format(
+                                (price.price or 0) - ((price.price or 0) * (p.discount_value / 100)),
+                                {"fieldtype": "Currency"}
+                                ) }}
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="text-start text-nowrap" style="line-height: .7;">
+                            <div>
+                                {{ frappe.format(
+                                (price.price or 0) - p.discount_value,
+                                {"fieldtype": "Currency"}
+                                ) }}
+                            </div>
+                            <sup>
+                                <del style="color:#ccc">
+                                    {{ frappe.format(price.price or 0, {"fieldtype": "Currency"}) }}
+                                </del>
+                            </sup>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="text-start text-nowrap">
+                    {% if price.portion != "Normal" %}
+                    <span>{{ price.portion }}:</span>
+                    {% endif %}
+                    {{ frappe.format(price.price or 0, {"fieldtype": "Currency"}) }}
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+    <div class="flex gap-2 text-start">
+        {% if p.discount_value > 0 %}
+            {% if p.discount_type == 'Percent' %}
+            <div class="text-start text-nowrap" style="line-height: .7;">
+                <sup>
+                    <del style="color: #ccc;">
+                        {{ frappe.format(p.price, {"fieldtype": "Currency"}) }}
+                    </del>
+                </sup>
+                <div>
+                    {{ frappe.format(
+                    (p.price or 0) - ((p.price or 0) * (p.discount_value / 100)),
+                    {"fieldtype": "Currency"}
+                    ) }}
+                </div>
+            </div>
+            {% else %}
+                <div class="text-start text-nowrap" style="line-height: .7;">
+                    <sup>
+                        <del style="color: #ccc;">
+                            {{ frappe.format(p.price, {"fieldtype": "Currency"}) }}
+                        </del>
+                    </sup>
+                    <div>
+                        {{ frappe.format(
+                        (p.price or 0) - p.discount_value,
+                        {"fieldtype": "Currency"}
+                        ) }}
+                    </div>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="text-start text-nowrap">
+                {{ frappe.format(p.price, {"fieldtype": "Currency"}) }}
+            </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</span>

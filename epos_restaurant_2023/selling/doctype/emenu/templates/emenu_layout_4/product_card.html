@@ -1,0 +1,15 @@
+<div class="grid">
+    {% for p in products | selectattr('pos_menu', 'equalto', m.menu) | sort(attribute='product_code') | list %}
+    <div class="p-card">
+        <div class="image-wrapper">
+            <img src="{{p.photo or " /files/food_bg_image.jpg"}}" width="100"/>
+        </div>
+        <div class="card-body">
+            <div class="title">{{p.product_name_en}}</div>
+            <div class="price">
+                {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/emenu_layout_4/product_price.html",{"p":p,"doc":doc}) }}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>

@@ -248,12 +248,8 @@ io.on('connection', (socket) => {
   socket.on("ChannelManagerStartStopSync",(arg)=>{  
     io.emit("ChannelManagerStartStopSync",arg);
   })
-
- 
-
-  
 });
 
-server.listen(3000,"0.0.0.0", () => {
+server.listen(3001,"0.0.0.0", () => {
   console.log('Server started on port 3000');
 });

@@ -1,0 +1,34 @@
+<div class="emenu-template-4">
+  <div class="sidebar">
+    <h3>Categories</h3> 
+    <div class="menu-cate">
+    {% for m in doc.pos_menu_selections %}
+        <div class="menu-item" data-target="{{m.menu}}">
+            {{m.menu}} {{'/' if m.menu!=m.menu_kh}} {{'' if m.menu==m.menu_kh else m.menu_kh }}
+        </div> 
+    {% endfor %}
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="header-p">
+      <!-- <div class="logo" ><img src="{{doc.logo or ''}}" style="height: 40px;"/></div> -->
+      <h4 class="emenu-title mb-0">  
+        {{doc.emenu_app_name or 'Emenu'}} 
+      </h4>  
+    </div>
+
+    <div class="content" id="item_content">
+        {% for m in doc.pos_menu_selections %}
+        {% set title = m.menu %}
+        <div class="product_items" id="{{m.menu}}">
+          <div class="section-title">{{title.split('(')[0]}}</div>
+          {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/emenu_layout_4/product_card.html",
+                    {"products":products,"m":m,"doc":doc}) }}
+        </div>
+        {% endfor %} 
+      
+    </div> 
+    </div>
+  </div>
+</div>

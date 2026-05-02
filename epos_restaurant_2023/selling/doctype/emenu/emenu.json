@@ -254,7 +254,7 @@
    "fieldname": "template_name",
    "fieldtype": "Select",
    "label": "Template Name",
-   "options": "emenu_layout_1\nemenu_layout_2\nemenu_layout_3"
+   "options": "emenu_layout_1\nemenu_layout_2\nemenu_layout_3\nemenu_layout_4"
   },
   {
    "fieldname": "section_break_ivmw",
@@ -293,7 +293,7 @@
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-11-17 13:42:05.851096",
+ "modified": "2026-05-01 14:18:32.565339",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu",
