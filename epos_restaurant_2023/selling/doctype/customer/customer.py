@@ -17,7 +17,7 @@ class Customer(Document):
 		if self.date_of_birth:
 			if datetime.strptime(str(self.date_of_birth), "%Y-%m-%d").date() >datetime.strptime(utils.today(), "%Y-%m-%d").date():
 				frappe.throw(_("Date of birth cannot be greater than the current time"))
-
+		check_max_referral(self)
 		if not self.customer_name_kh:
 			self.customer_name_kh = self.customer_name_en
 
@@ -56,7 +56,15 @@ class Customer(Document):
 
 
 
- 
+def check_max_referral(self):
+	settings = frappe.get_doc("ePOS Settings")
+	if self.referral_by:
+		if self.referral_by == self.name:
+			frappe.throw(_("Referral by cannot be the same as customer"))
+		else:
+			referral_count = frappe.db.count("Customer",{"referral_by":self.referral_by})
+			if referral_count >= settings.max_referral_per_customer:
+				frappe.throw(_("Referral by {} has reached the maximum number of referrals".format(self.referral_by_name)))
    
    
 @frappe.whitelist()

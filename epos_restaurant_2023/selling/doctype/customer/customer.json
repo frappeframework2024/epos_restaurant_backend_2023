@@ -32,6 +32,8 @@
   "market_segment",
   "vattin_number",
   "column_break_5",
+  "referral_by",
+  "referral_by_name",
   "customer_group",
   "gender",
   "date_of_birth",
@@ -800,6 +802,18 @@
    "fieldname": "is_system_customer",
    "fieldtype": "Check",
    "label": "Is System Customer"
+  },
+  {
+   "fieldname": "referral_by",
+   "fieldtype": "Link",
+   "label": "Referral By",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "referral_by_name",
+   "fieldtype": "Data",
+   "label": "Referral By Name",
+   "fetch_from": "referral_by.customer_name_en"
   }
  ],
  "image_field": "photo",
@@ -812,7 +826,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2026-04-17 08:44:55.778604",
+ "modified": "2026-05-02 10:38:26.837435",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

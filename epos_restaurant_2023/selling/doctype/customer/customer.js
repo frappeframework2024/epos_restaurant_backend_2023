@@ -25,6 +25,11 @@ frappe.ui.form.on("Customer", {
         }
     },
     refresh(frm){
+        frm.set_query("referral_by", function() {
+            return {
+                filters: [["name","!=",frm.doc.name]]
+            }
+        });
         frm.set_query("district", function() {
             return {
                 filters: [["province","=",frm.doc.province]]

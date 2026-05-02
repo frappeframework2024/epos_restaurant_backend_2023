@@ -42,7 +42,7 @@ def get_purchase_order_by_vendor(vendor,stock_location=""):
 
 def add_purchase_order_payment(doc):
 	p = frappe.new_doc("Purchase Order Payment")
-	p.purchase_order_date = doc.posting_date
+	p.posting_date = doc.posting_date
 	p.payment_type = doc.payment_type
 	p.currency = doc.currency
 	p.exchange_rate = doc.exchange_rate
