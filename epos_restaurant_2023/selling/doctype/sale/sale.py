@@ -120,7 +120,7 @@ class Sale(Document):
 			frappe.throw("Please select a customer for park")
 		#update default accounts
 		update_default_account(self) 
-		
+
 		#validate sale product 
 		validate_sale_product(self)
 
@@ -128,8 +128,6 @@ class Sale(Document):
 		validate_cash_coupon_claim(self)
   
 		validate_pos_payment(self)
-		#validate sale summary
-		self.validate_coupon_codes()
 		#set is foc by check payment pyment if have is_foc payment type
 		self.is_foc = 0
 
@@ -249,6 +247,8 @@ class Sale(Document):
 		
 		# update total coupon value to sale
 		self.total_coupon_value = sum([(d.total_coupon_value or 0) for d in self.sale_products])	 
+		#validate sale summary
+		self.validate_coupon_codes()
 
 	@frappe.whitelist()
 	def get_sale_payment_naming_series(self):
