@@ -118,7 +118,9 @@ class Sale(Document):
 		default_customer = frappe.get_cached_value("POS Profile",self.pos_profile,'default_customer')
 		if len([d for d in self.sale_products if d.is_park == 1]) > 0 and self.customer == default_customer:
 			frappe.throw("Please select a customer for park")
-
+		#update default accounts
+		update_default_account(self) 
+		
 		#validate sale product 
 		validate_sale_product(self)
 
@@ -127,7 +129,7 @@ class Sale(Document):
   
 		validate_pos_payment(self)
 		#validate sale summary
-
+		self.validate_coupon_codes()
 		#set is foc by check payment pyment if have is_foc payment type
 		self.is_foc = 0
 
@@ -246,14 +248,7 @@ class Sale(Document):
 			self.sale_status_color = frappe.get_value("Sale Status","Closed","background_color")
 		
 		# update total coupon value to sale
-		self.total_coupon_value = sum([(d.total_coupon_value or 0) for d in self.sale_products])
-		# update default accunt
-		update_default_account(self) 
-
-
-		self.validate_coupon_codes()
-
-	 
+		self.total_coupon_value = sum([(d.total_coupon_value or 0) for d in self.sale_products])	 
 
 	@frappe.whitelist()
 	def get_sale_payment_naming_series(self):
@@ -1347,12 +1342,16 @@ def on_get_revenue_account_code(self):
 			sp.tax_3_account = data[0].tax_3_account
 
 def validate_pos_payment(self):
+	error = ""
 	currency = frappe.db.get_default("currency")
-	
 	for d in self.payment:
+		if not d.default_account:
+			error += "Please set default account for payment type <b>{}</b>. ".format(d.payment_type)
 		d.exchange_rate = d.exchange_rate if d.currency != currency else 1
 		d.change_exchange_rate = d.change_exchange_rate if d.currency != currency else 1		
 		d.amount = (d.input_amount or 0 ) / (d.exchange_rate or 1)
+	if error != "":
+		frappe.throw(error)
 
 def validate_cash_coupon_claim(self):
 	for cc in self.cash_coupon_items:

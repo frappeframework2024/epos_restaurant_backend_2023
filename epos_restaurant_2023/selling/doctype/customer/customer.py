@@ -58,13 +58,16 @@ class Customer(Document):
 
 def check_max_referral(self):
 	settings = frappe.get_doc("ePOS Settings")
-	if self.referral_by:
-		if self.referral_by == self.name:
-			frappe.throw(_("Referral by cannot be the same as customer"))
-		else:
-			referral_count = frappe.db.count("Customer",{"referral_by":self.referral_by})
-			if referral_count >= settings.max_referral_per_customer:
-				frappe.throw(_("Referral by {} has reached the maximum number of referrals".format(self.referral_by_name)))
+	if settings.max_referral_per_customer == 0:
+		return
+	else:
+		if self.referral_by:
+			if self.referral_by == self.name:
+				frappe.throw(_("Referral by cannot be the same as customer"))
+			else:
+				referral_count = frappe.db.count("Customer",{"referral_by":self.referral_by})
+				if referral_count >= settings.max_referral_per_customer:
+					frappe.throw(_("Referral by {} has reached the maximum number of referrals".format(self.referral_by_name)))
    
    
 @frappe.whitelist()
