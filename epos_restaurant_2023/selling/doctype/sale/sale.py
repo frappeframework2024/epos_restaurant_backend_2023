@@ -118,8 +118,6 @@ class Sale(Document):
 		default_customer = frappe.get_cached_value("POS Profile",self.pos_profile,'default_customer')
 		if len([d for d in self.sale_products if d.is_park == 1]) > 0 and self.customer == default_customer:
 			frappe.throw("Please select a customer for park")
-		#update default accounts
-		update_default_account(self) 
 
 		#validate sale product 
 		validate_sale_product(self)
@@ -127,7 +125,9 @@ class Sale(Document):
 		# validate sale cash coupon claim
 		validate_cash_coupon_claim(self)
   
-		validate_pos_payment(self)
+		validate_pos_payment(self,skip_check=1)
+		#validate sale summary
+
 		#set is foc by check payment pyment if have is_foc payment type
 		self.is_foc = 0
 
@@ -246,9 +246,13 @@ class Sale(Document):
 			self.sale_status_color = frappe.get_value("Sale Status","Closed","background_color")
 		
 		# update total coupon value to sale
-		self.total_coupon_value = sum([(d.total_coupon_value or 0) for d in self.sale_products])	 
-		#validate sale summary
+		self.total_coupon_value = sum([(d.total_coupon_value or 0) for d in self.sale_products])
+		# update default accunt
+		update_default_account(self) 
+		validate_pos_payment(self,skip_check=0)
 		self.validate_coupon_codes()
+
+	 
 
 	@frappe.whitelist()
 	def get_sale_payment_naming_series(self):
@@ -1341,16 +1345,16 @@ def on_get_revenue_account_code(self):
 			sp.tax_2_account = data[0].tax_2_account
 			sp.tax_3_account = data[0].tax_3_account
 
-def validate_pos_payment(self):
+def validate_pos_payment(self,skip_check):
 	error = ""
 	currency = frappe.db.get_default("currency")
 	for d in self.payment:
-		if not d.default_account:
+		if not d.default_account and skip_check == 0:
 			error += "Please set default account for payment type <b>{}</b>. ".format(d.payment_type)
 		d.exchange_rate = d.exchange_rate if d.currency != currency else 1
 		d.change_exchange_rate = d.change_exchange_rate if d.currency != currency else 1		
 		d.amount = (d.input_amount or 0 ) / (d.exchange_rate or 1)
-	if error != "":
+	if error != "" and skip_check == 0:
 		frappe.throw(error)
 
 def validate_cash_coupon_claim(self):
@@ -1812,7 +1816,6 @@ def update_default_expense_account(self):
 			sp.default_expense_account = frappe.get_cached_value("Business Branch",self.business_branch, "default_cost_of_good_sold_account")
 
 def update_default_sale_cash_coupon_claim_account(self):
-	
 	if self.total_cash_coupon_claim > 0: 		
 		if not self.default_cash_coupon_claim_account: 
 			self.default_cash_coupon_claim_account = frappe.get_cached_value("Business Branch",self.business_branch,"default_sale_cash_coupon_claim_account" )
@@ -1820,10 +1823,9 @@ def update_default_sale_cash_coupon_claim_account(self):
 def update_default_payment_account(self):
 	for p in [d for d in self.payment]:
 		default_account = frappe.get_cached_value("Payment Type",p.payment_type, "default_account")
-		
 		if default_account:
 			default_account = [d for d in default_account if d.business_branch == self.business_branch]
-			if default_account:
+			if default_account and not p.default_account:
 				p.default_account = default_account[0].account
 	 
 
