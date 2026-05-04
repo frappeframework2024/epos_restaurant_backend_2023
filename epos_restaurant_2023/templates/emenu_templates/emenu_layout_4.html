@@ -43,20 +43,20 @@
                 }
 
                 /* Sidebar */
-                .sidebar{
+                .sidebar, .sidebar-mobile{
                   width:240px;
                   background:#047575c7;
                   color:#fff;
                   /* padding:15px; */
                   overflow-y:auto;
                 }
-                .sidebar h3{
+                .sidebar h3, .sidebar-mobile h3{
                   padding: 15px 0 0 15px;
                 }
                 .menu-cate {
                   padding:15px;
                 }
-                .sidebar h3{
+                .sidebar h3, .sidebar-mobile h3{
                   margin-bottom:10px;
                   color:#fff;
                 }
@@ -162,7 +162,7 @@
                   background-image: url("/files/purty_wood.png");
                   width: 40%;
                   height: 120px;
-                  overflow: hidden; 
+                  overflow: hidden;
                   display: flex;
                   align-items: center;
                   justify-content: center;
@@ -183,7 +183,7 @@
                 .content .product_items:not(:first-child) {
                   margin-top: 30px;
                 }
-                .emenu-title { 
+                .emenu-title {
                   font-size: 20px;
                   color: #fff;
                   letter-spacing: 1px;
@@ -191,6 +191,34 @@
                 .menu-cate {
                   height: calc(100vh - 74px);
                   overflow: auto;
+                }
+                .sidebar-mobile {
+                  display: none;
+                  position: fixed;
+                  top: 0;
+                  left: 0;
+                  z-index: 999;
+                  background-color: #047575;
+                  transform: translateX(-240px); /* hidden */
+                  transition: transform 0.3s ease-in-out;
+                  will-change: transform;
+                }
+                .sidebar-mobile.open {
+                  transform: translateX(0); /* visible */
+                }
+                #toggle_btn, #close_btn {
+                  display: none;
+                }
+                @media (max-width: 767.98px) {
+                  .sidebar-mobile {
+                    display: block;
+                  }
+                  .sidebar {
+                    display: none;
+                  }
+                  #toggle_btn, #close_btn {
+                    display: block;
+                  }
                 }
 
                 /* width of scrollbar */
@@ -362,6 +390,30 @@
       window.addEventListener("load", () => {
         // small delay helps if content renders dynamically (Frappe)
         setTimeout(setInitialActive, 50);
+      });
+
+      const btn = document.getElementById("toggle_btn");
+      const btn_close = document.getElementById("close_btn");
+      const sidebarMobile = document.querySelector(".sidebar-mobile");
+
+      btn.addEventListener("click", (e) => {
+        sidebarMobile.classList.toggle("open");
+        e.stopPropagation(); // prevent triggering document click
+      });
+
+      btn_close.addEventListener("click", () => {
+        sidebarMobile.classList.remove("open");
+      });
+
+      // click outside
+      document.addEventListener("click", (e) => {
+        if (
+          sidebarMobile.classList.contains("open") &&
+          !sidebarMobile.contains(e.target) &&
+          e.target !== btn
+        ) {
+          sidebarMobile.classList.remove("open");
+        }
       });
     </script>
   </body>

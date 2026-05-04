@@ -1391,14 +1391,15 @@ export default class Sale {
     }
 
     async onDiscount(gv, title, amount, discount_value, discount_type, discount_codes, discount_note, sp, category_note_name) {
-       
+        const branch = this.setting?.business_branch
+        console
         const result = await saleProductDiscountDialog({
             title: title,
             value: amount,
             data: {
                 discount_value: discount_value,
                 discount_type: discount_type,
-                discount_codes: discount_codes,
+                discount_codes: discount_codes.filter(d=> d.branch == branch),
                 discount_note: discount_note,
                 sale_product: sp,
                 category_note_name: category_note_name
