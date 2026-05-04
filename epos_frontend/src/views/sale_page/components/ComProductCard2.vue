@@ -288,16 +288,19 @@ const minPrice = (p) => {
 
 /* Image area */
 .product-image {
+  background-image: url("@/assets/patterns/purty_wood.png");
   width: 40%;
   height: 120px;
-  overflow: hidden;
-  background: #f9fafb;
+  overflow: hidden; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .product-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
   transition: transform 0.3s;
 }
 

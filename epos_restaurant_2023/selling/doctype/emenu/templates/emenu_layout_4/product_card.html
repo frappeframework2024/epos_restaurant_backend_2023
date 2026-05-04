@@ -2,7 +2,11 @@
     {% for p in products | selectattr('pos_menu', 'equalto', m.menu) | sort(attribute='product_code') | list %}
     <div class="p-card">
         <div class="image-wrapper">
-            <img src="{{p.photo or " /files/food_bg_image.jpg"}}" width="100"/>
+            {% if p.photo %}
+            <img src="{{p.photo}}"/>
+            {% else %}
+            <img class="image-ph" src="/files/food_bg_image.jpg" width="100" height="100"/>
+            {% endif %}
         </div>
         <div class="card-body">
             <div class="title">{{p.product_name_en}}</div>

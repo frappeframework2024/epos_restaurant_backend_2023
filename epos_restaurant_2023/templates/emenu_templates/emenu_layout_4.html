@@ -32,182 +32,190 @@
       rel="stylesheet"
     />
     <style type="text/css">
-            @import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+                  @import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
 
 
-          	  /* ====================== */
-          .emenu-template-4{
-            display:flex;
-            height:100vh;
-            background: linear-gradient(to bottom, #1f9a9a 0%, #6faeb0 40%, #cfd6d8 75%, #f2f2f2 100%);
-          }
+                	  /* ====================== */
+                .emenu-template-4{
+                  display:flex;
+                  height:100vh;
+                  background: linear-gradient(to bottom, #1f9a9a 0%, #6faeb0 40%, #cfd6d8 75%, #f2f2f2 100%);
+                }
 
-          /* Sidebar */
-          .sidebar{
-            width:240px;
-            background:#047575c7;
-            color:#fff;
-            /* padding:15px; */
-            overflow-y:auto;
-          }
-          .sidebar h3{
-            padding: 15px 0 0 15px;
-          }
-          .menu-cate {
-            padding:15px;
-          }
-          .sidebar h3{
-            margin-bottom:10px;
-            color:#fff;
-          }
-          .menu-item{
-            padding:10px;
-            border-radius:8px;
-            margin-bottom:6px;
-            cursor:pointer;
-          }
-          .menu-item.active{background:rgb(4, 117, 117)}
-          .menu-item:hover{background:rgba(255,255,255,0.15)}
+                /* Sidebar */
+                .sidebar{
+                  width:240px;
+                  background:#047575c7;
+                  color:#fff;
+                  /* padding:15px; */
+                  overflow-y:auto;
+                }
+                .sidebar h3{
+                  padding: 15px 0 0 15px;
+                }
+                .menu-cate {
+                  padding:15px;
+                }
+                .sidebar h3{
+                  margin-bottom:10px;
+                  color:#fff;
+                }
+                .menu-item{
+                  padding:10px;
+                  border-radius:8px;
+                  margin-bottom:6px;
+                  cursor:pointer;
+                }
+                .menu-item.active{background:rgb(4, 117, 117)}
+                .menu-item:hover{background:rgba(255,255,255,0.15)}
 
-          /* Main */
-          .main{flex:1;display:flex;flex-direction:column}
-          .header-p{
-            height:55px;
-            background:rgb(4, 117, 117);
-            color:#fff;
-            display:flex;
-            align-items:center; 
-            padding:0 20px;
-            gap: 10px;
-          }
-          /* .product_items {
-            margin-top: 75px;
-          } */
+                /* Main */
+                .main{flex:1;display:flex;flex-direction:column}
+                .header-p{
+                  height:55px;
+                  background:rgb(4, 117, 117);
+                  color:#fff;
+                  display:flex;
+                  align-items:center;
+                  padding:0 20px;
+                  gap: 10px;
+                }
+                /* .product_items {
+                  margin-top: 75px;
+                } */
 
-          .content{
-            padding:15px;
-            overflow:auto;
-            height: -webkit-fill-available;
-          }
-          .section-title{
-            color:#fff;
-            margin:10px 0;
-            font-weight:600;
-          }
+                .content{
+                  padding:15px;
+                  overflow:auto;
+                  height: -webkit-fill-available;
+                }
+                .section-title{
+                  color:#fff;
+                  margin:10px 0;
+                  font-weight:600;
+                }
 
-          .grid{
-            display:grid;
-            grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
-            gap:14px;
-          }
+                .grid{
+                  display:grid;
+                  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+                  gap:14px;
+                }
 
-          .p-card{
-            display:flex;
-            background:#fff;
-            border-radius:12px;
-            overflow:hidden;
-            box-shadow:0 4px 10px rgba(0,0,0,0.1);
-          }
-          .card img{
-            width:110px;
-            height:90px;
-            object-fit:cover;
-          }
-          .card-body{
-            flex:1;
-            padding:10px;
-            display:flex;
-            flex-direction:column;
-          }
-          .title{font-size:14px;color:#333}
-          .price{color:#d32f2f;font-weight:600;margin-top:4px}
+                .p-card{
+                  display:flex;
+                  background:#fff;
+                  border-radius:12px;
+                  overflow:hidden;
+                  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+                }
+                .card img{
+                  width:110px;
+                  height:90px;
+                  object-fit:cover;
+                }
+                .card-body{
+                  flex:1;
+                  padding:10px;
+                  display:flex;
+                  flex-direction:column;
+                }
+                .title{font-size:14px;color:#333}
+                .price{color:#d32f2f;font-weight:600;margin-top:4px}
 
-          .add-btn{
-            width:28px;
-            height:28px;
-            border-radius:50%;
-            background:#2b8a86;
-            color:#fff;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            margin-right:10px;
-            font-weight:bold;
-          }
+                .add-btn{
+                  width:28px;
+                  height:28px;
+                  border-radius:50%;
+                  background:#2b8a86;
+                  color:#fff;
+                  display:flex;
+                  align-items:center;
+                  justify-content:center;
+                  margin-right:10px;
+                  font-weight:bold;
+                }
 
-          /* Footer */
-          .footer{
-            height:55px;
-            background:#1f7a76;
-            color:#fff;
-            display:flex;
-            justify-content:flex-end;
-            align-items:center;
-            gap:20px;
-            padding:0 20px;
-      position: fixed;
-      bottom: 0;
-      right: 0;
-      left: 240px;
-          }
-          .btn{
-            background:#2b8a86;
-            border:none;
-            padding:10px 16px;
-            color:#fff;
-            border-radius:6px;
-            cursor:pointer;
-          }
-          .image-wrapper {
-            width: 40%;
-            height: 120px;
-            overflow: hidden;
-            background: #f9fafb;
-          }
-          .image-wrapper img {
-            width: 100%;
-            height: 100%;
-            -o-object-fit: contain;
-            object-fit: contain;
-            transition: transform .3s;
-          }
-          .content .product_items:not(:first-child) {
-            margin-top: 30px;
-          }
-          .emenu-title {
-            /* font-family: 'Rubik', sans-serif; */
-            font-size: 20px;
-            color: #fff;
-            letter-spacing: 1px;
-          }
-          .menu-cate {
-            height: calc(100vh - 74px);
-            overflow: auto;
-          }
+                /* Footer */
+                .footer{
+                  height:55px;
+                  background:#1f7a76;
+                  color:#fff;
+                  display:flex;
+                  justify-content:flex-end;
+                  align-items:center;
+                  gap:20px;
+                  padding:0 20px;
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            left: 240px;
+                }
+                .btn{
+                  background:#2b8a86;
+                  border:none;
+                  padding:10px 16px;
+                  color:#fff;
+                  border-radius:6px;
+                  cursor:pointer;
+                }
+                .image-wrapper {
+                  background-image: url("/files/purty_wood.png");
+                  width: 40%;
+                  height: 120px;
+                  overflow: hidden; 
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                }
+                .image-wrapper img {
+                  width: 80%;
+                  height: 80%;
+                  -o-object-fit: contain;
+                  object-fit: contain;
+                  transition: transform .3s;
+                }
+                .image-ph {
+                  width: 100% !important;
+                  height: 100% !important;
+                  -o-object-fit: cover !important;
+                  object-fit: cover !important;
+                }
+                .content .product_items:not(:first-child) {
+                  margin-top: 30px;
+                }
+                .emenu-title { 
+                  font-size: 20px;
+                  color: #fff;
+                  letter-spacing: 1px;
+                }
+                .menu-cate {
+                  height: calc(100vh - 74px);
+                  overflow: auto;
+                }
 
-          /* width of scrollbar */
-::-webkit-scrollbar {
-  width: 4px;
-}
+                /* width of scrollbar */
+      ::-webkit-scrollbar {
+        width: 4px;
+      }
 
-/* track (background) */
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
+      /* track (background) */
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
 
-/* handle (the draggable part) */
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 10px;
-}
+      /* handle (the draggable part) */
+      ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+      }
 
-/* hover effect */
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
+      /* hover effect */
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
 
-                		{%- block style -%}{%- endblock -%}
+                      		{%- block style -%}{%- endblock -%}
     </style>
 
     <script>
@@ -241,7 +249,10 @@
 
     <script>
       $(function () {});
- 
+
+      // ===============================
+      // ELEMENTS
+      // ===============================
       const menuItem = document.querySelectorAll(".menu-item");
       const content = document.getElementById("item_content");
       const sections = document.querySelectorAll(".product_items");
@@ -250,7 +261,7 @@
       const OFFSET_ACTIVE = 100; // when switching active while scrolling
 
       // ===============================
-      // CLICK → SCROLL
+      // CLICK → SCROLL TO SECTION
       // ===============================
       menuItem.forEach((cat) => {
         cat.addEventListener("click", () => {
@@ -265,8 +276,25 @@
             top: target.offsetTop - OFFSET_CLICK,
             behavior: "smooth",
           });
+
+          // also ensure sidebar follows
+          scrollSidebarToActive();
         });
       });
+
+      // ===============================
+      // AUTO SCROLL SIDEBAR
+      // ===============================
+      function scrollSidebarToActive() {
+        const active = document.querySelector(".menu-item.active");
+        if (!active) return;
+
+        active.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest", // prevent jumping
+          inline: "nearest",
+        });
+      }
 
       // ===============================
       // SCROLL → ACTIVE CATEGORY
@@ -278,12 +306,11 @@
         const scrollHeight = content.scrollHeight;
         const clientHeight = content.clientHeight;
 
-        // ✅ Fix: when reach bottom → last category active
+        // ✅ Fix: last section activation
         if (scrollTop + clientHeight >= scrollHeight - 5) {
           current = sections[sections.length - 1]?.id;
         } else {
           sections.forEach((section) => {
-            // safer position calculation inside scroll container
             const sectionTop = section.offsetTop - content.offsetTop;
 
             if (scrollTop >= sectionTop - OFFSET_ACTIVE) {
@@ -292,10 +319,22 @@
           });
         }
 
-        // apply active
+        let changed = false;
+
         menuItem.forEach((cat) => {
-          cat.classList.toggle("active", cat.dataset.target === current);
+          const isActive = cat.dataset.target === current;
+
+          if (isActive && !cat.classList.contains("active")) {
+            changed = true;
+          }
+
+          cat.classList.toggle("active", isActive);
         });
+
+        // ✅ Only scroll sidebar when active actually changes
+        if (changed) {
+          scrollSidebarToActive();
+        }
       }
 
       // attach scroll listener
@@ -308,16 +347,18 @@
         if (!menuItem.length || !sections.length) return;
 
         if (content.scrollTop === 0) {
-          // at top → first category active
+          // top → first category
           menuItem.forEach((c) => c.classList.remove("active"));
           menuItem[0].classList.add("active");
+
+          scrollSidebarToActive();
         } else {
-          // if reloaded at scroll position
+          // reload at scroll position
           updateActiveOnScroll();
         }
       }
 
-      // run after DOM ready
+      // wait for DOM fully loaded
       window.addEventListener("load", () => {
         // small delay helps if content renders dynamically (Frappe)
         setTimeout(setInitialActive, 50);

@@ -147,7 +147,7 @@ export default class Gv {
 			}
 	
 			if(new Date() > new Date(check_date)){
-				await confirm({title:`${$t('Current Working Day')} (${moment(working_day).format('DD-MM-yyyy')})`, text:$t('msg.Your working day is to long please close your working day'),hide_cancel:true});		
+				await confirm({title:`${$t('Current Working Day')} (${moment(working_day).format('DD-MM-yyyy')})`, text:$t('msg.Your working day is too long please close your working day'),hide_cancel:true});		
 				
 			}
 		}
