@@ -148,8 +148,7 @@ class SalePayment(Document):
 					customer_point = frappe.db.get_value("Customer",self.customer,['total_point_earn','allow_earn_point'],as_dict=1)
 					total_point_redeem = (self.payment_amount * point_setting.to_point_sale) / point_setting.from_amount_sale
 					if float(customer_point.total_point_earn) < float(total_point_redeem):
-						frappe.throw(_("Point for {} not enough.".format(self.customer_name)))
-						
+						frappe.throw(_("Point for customer {} are not enough.".format(self.customer_name)))
 					frappe.db.sql("Update `tabCustomer` set total_point_earn = total_point_earn - {} where name = '{}'".format(total_point_redeem,self.customer))
 					frappe.db.commit()
 	

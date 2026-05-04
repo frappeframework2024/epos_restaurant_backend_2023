@@ -74,23 +74,15 @@ import ComInlineNote from '../../../components/ComInlineNote.vue';
 import { useDisplay } from 'vuetify';
 const gv = inject("$gv")
 const { t: $t } = i18n.global; 
-
 const sale = inject("$sale")
 const selectedGroup = ref([])
-
 const props = defineProps({
     params:Object
 })
 
-
 const revenueGroups = ref([...new Set(sale.sale.sale_products.map(item => item.revenue_group))])
-
-
 const emit = defineEmits(['resolve'])
- 
 const { mobile } = useDisplay()
-
-
 const toaster = createToaster({ position: "top-right" })
 
 let discount_note = ref(props.params.data.discount_note)

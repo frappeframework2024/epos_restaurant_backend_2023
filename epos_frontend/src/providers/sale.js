@@ -1392,14 +1392,13 @@ export default class Sale {
 
     async onDiscount(gv, title, amount, discount_value, discount_type, discount_codes, discount_note, sp, category_note_name) {
         const branch = this.setting?.business_branch
-        console
         const result = await saleProductDiscountDialog({
             title: title,
             value: amount,
             data: {
                 discount_value: discount_value,
                 discount_type: discount_type,
-                discount_codes: discount_codes.filter(d=> d.branch == branch),
+                discount_codes: discount_codes.filter(d=> (d.branch || branch) == branch),
                 discount_note: discount_note,
                 sale_product: sp,
                 category_note_name: category_note_name
@@ -1694,7 +1693,6 @@ export default class Sale {
                     }
                     try{
                          _sale = await this.newSaleResource.submit({ doc: doc });
-                         console.log(doc)
                     }
                     catch(error){
                         if(this.sale.sale_status == "Bill Requested"){
@@ -1708,7 +1706,6 @@ export default class Sale {
                 else {
                     try{
                         _sale = await this.saleResource.setValue.submit(doc);  
-                        console.log(doc)
                         if (_sale.name && _sale.grand_total !=  this.__backup_sale.grand_total){
                             call.post("epos_restaurant_2023.api.payway.aba_close_transaction", { 
                                 "property_code": this.setting.property_code,
@@ -1861,9 +1858,21 @@ export default class Sale {
                             this.createNewSaleResource();
                         }
                         this.printWaitingOrderAfterPayment = true;
-                        await this.newSaleResource.submit({ doc: this.sale });
+                        try{
+                             await this.newSaleResource.submit({ doc: this.sale });
+                        }
+                        catch(error){
+                            this.loading = false;
+                            return;
+                        }
                     } else {
-                        await this.saleResource.setValue.submit(this.sale);
+                        try{
+                            await this.saleResource.setValue.submit(this.sale);
+                        }
+                        catch(error){
+                            this.loading = false;
+                            return;
+                        }
                     }
                     this.submitToAuditTrail(this.sale);
 
@@ -2354,8 +2363,6 @@ export default class Sale {
                 }
             }); 
         } 
-
-        console.log(this.productPrinters)
     }
 
 
@@ -2570,7 +2577,6 @@ export default class Sale {
             if(check == true){
                 return;
             } 
-            // console.log("PayWay Sucess")
             this.sale.payment = (data.sale_payment || this.sale.payment);
             this.sale.payment.forEach((p)=>{
                 if(p._temp_payway_tran_id == resp.temp_tran_id && p.is_generate_qr == 1){
