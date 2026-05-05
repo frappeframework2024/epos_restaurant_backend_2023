@@ -38,6 +38,7 @@
   "gender",
   "date_of_birth",
   "jobs",
+  "allow_earn_point",
   "is_system_customer",
   "is_disabled",
   "keyword",
@@ -121,7 +122,6 @@
   "exely_guest_mapping_section",
   "exely_guest_id",
   "other_tab",
-  "allow_earn_point",
   "pos_print_format"
  ],
  "fields": [
@@ -349,7 +349,6 @@
    "depends_on": "eval:!doc.__islocal",
    "fieldname": "billing_section",
    "fieldtype": "Section Break",
-   "hidden": 1,
    "label": "Billing"
   },
   {
@@ -433,7 +432,7 @@
   },
   {
    "default": "0",
-   "depends_on": "eval:doc.total_point_earn > 0",
+   "depends_on": "eval:doc.allow_earn_point == 1",
    "fieldname": "total_point_earn",
    "fieldtype": "Data",
    "label": "Total Point Earn",
@@ -824,7 +823,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2026-05-04 17:03:12.683291",
+ "modified": "2026-05-05 10:24:33.559667",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

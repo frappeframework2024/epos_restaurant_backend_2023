@@ -89,6 +89,7 @@
   "default_commission_expense_account",
   "default_unearned_revenue_account",
   "default_coupon_payment_expense_account",
+  "default_loyalty_point_account",
   "profit_and_loss_statement_report_head_account_section",
   "income_head_account",
   "column_break_rfra",
@@ -626,12 +627,18 @@
    "fieldtype": "Link",
    "label": "Default Other Income",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "default_loyalty_point_account",
+   "fieldtype": "Link",
+   "label": "Default Loyalty Point Account",
+   "options": "Chart Of Account"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-03-19 10:44:00.215380",
+ "modified": "2026-05-05 09:42:22.355570",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",

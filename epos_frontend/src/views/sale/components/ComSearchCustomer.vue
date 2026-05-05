@@ -44,7 +44,7 @@
                           <CurrencyFormat :value="parseFloat(c.total_crypto_balance)" />
                           {{ $t("Crypto") }}</v-chip>
 
-                        <v-chip v-if="c.allow_earn_point == 1 && c.total_point_earn > 0" color="success">{{Number(c.total_point_earn).toFixed(2)}} {{ $t("Point(s)") }}</v-chip>
+                        <v-chip v-if="c.allow_earn_point == 1 && c.total_point_earn > 0" color="success">{{Number(c.total_point_earn).toFixed(2)}} {{ $t("Points") }}</v-chip>
                      
                         
                         <ComCustomerPromotionChip :customer="c"></ComCustomerPromotionChip>

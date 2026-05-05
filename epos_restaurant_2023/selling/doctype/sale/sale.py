@@ -426,6 +426,9 @@ class Sale(Document):
 		if is_update_inventory:
 			update_inventory_on_cancel(self)
 		update_sales_order_and_delivery_note_status(self)
+		if len(self.payment) == 1 :
+			if self.payment[0].payment_type_group == "On Account":
+				update_customer_point_on_cancel_sale(self.name,self.customer,self.customer_name)
 		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel", queue='short', self=self)
 
 	def get_auto_name(self):
@@ -1064,9 +1067,9 @@ def add_payment_to_sale_payment(self):
 						})
 					doc.flags.ignore_post_general_ledger_entry = True
 					doc.flags.ignore_update_sale = True
-     
 					doc.insert()
-   
+			else:
+				update_customer_point(self.customer,p.payment_type_group,p.amount,None,self.name,self.customer_name)
 		if (self.changed_amount or 0)>0:
 			payment_type = frappe.get_cached_value("ePOS Settings",None,"changed_payment_type")		
 			account_code = "" 
@@ -2115,11 +2118,58 @@ def change_payment_type(data,old_data):
 		"old_account":old_data.get("default_account"),
 		"sale":data.get("parent"),
 	})
+	frappe.db.commit()
+	sale_doc.add_comment("Comment", "បានផ្លាស់ប្តូរប្រភេទទូទាត់ប្រាក់ ពី <strong>{}</strong> ទៅ <strong>{}</strong>។ <br/>មូលហេតុ៖ {}".format(old_data.get("payment_type"),data.get("payment_type"),data.get("note"))) 
+	frappe.msgprint(_("Change payment type successfully"))
 
 
+# Update Customer Point When Pay with Point
+def update_customer_point(customer,payment_type_group,payment_amount,name,sale,customer_name):
+	point_setting = frappe.get_doc("Loyalty Point Settings")
+	if point_setting.enabled==1:
+		customer_doc = frappe.db.get_value('Customer', customer, ['allow_earn_point', 'total_point_earn'], as_dict=1)
+		if customer_doc.allow_earn_point==1:
+			if payment_type_group != 'Point':
+				total_point_get = (point_setting.to_point_earn * (payment_amount))/point_setting.from_amount_earn
+				add_point_history_on_cancel_sale(sale,total_point_get,customer,customer_name,"Earning")
+				frappe.db.sql("""Update `tabCustomer` set total_point_earn = total_point_earn + {0} where name = '{1}'""".format(total_point_get,customer))
+				frappe.db.sql("""UPDATE `tabSale` set total_point_earn = {0} WHERE NAME = '{1}'""".format(total_point_get,sale))
+				frappe.db.commit()
+			# Customer Use Point
+			if payment_type_group == "Point":
+				customer_point = frappe.db.get_value("Customer",customer,['total_point_earn','allow_earn_point'],as_dict=1)
+				total_point_redeem = (payment_amount * point_setting.to_point_sale) / point_setting.from_amount_sale
+				add_point_history_on_cancel_sale(sale,total_point_redeem,customer,customer_name,"Redeeming")
+				if name:
+					frappe.db.set_value('Sale Payment',name,{'spent_point': total_point_redeem})
+				if float(customer_point.total_point_earn) < float(total_point_redeem):
+					frappe.throw(_("Point for customer {} are not enough.".format(customer_name)))
+				frappe.db.sql("Update `tabCustomer` set total_point_earn = round((total_point_earn - {}),6) where name = '{}'".format(total_point_redeem,customer))
+				frappe.db.commit()
 
+def update_customer_point_on_cancel_sale(sale,customer,customer_name):
+	point_spent = frappe.db.sql("""SELECT COALESCE(SUM(spent_point), 0)FROM `tabSale Payment` WHERE sale = '{0}' AND payment_type_group = 'Point' """.format(sale))[0][0]
+	add_point_history_on_cancel_sale(sale,point_spent,customer,customer_name,"Cancel Earning")
+	frappe.db.sql("""UPDATE `tabCustomer` c SET c.total_point_earn = c.total_point_earn + {0} WHERE NAME = '{1}'""".format(point_spent,customer))
 	frappe.db.commit()
 
-	sale_doc.add_comment("Comment", "បានផ្លាស់ប្តូរប្រភេទទូទាត់ប្រាក់ ពី <strong>{}</strong> ទៅ <strong>{}</strong>។ <br/>មូលហេតុ៖ {}".format(old_data.get("payment_type"),data.get("payment_type"),data.get("note"))) 
-
-	frappe.msgprint(_("Change payment type successfully"))
+def add_point_history_on_cancel_sale(sale,transaction_point,customer,customer_name,transaction_type="Earning"):
+	from datetime import datetime
+	point_history = frappe.new_doc("Loyalty Point History")
+	point_history.sale = sale
+	point_history.customer = customer
+	point_history.customer_name = customer_name
+	point_history.posting_date = datetime.now().date()
+	point_history.transaction_type = transaction_type
+	point_history.previous_point = float(frappe.db.get_value("Customer",customer,'total_point_earn'))
+	point_history.transaction_point = float(transaction_point) if transaction_type in ["Earning","Cancel Earning"] else float(transaction_point) * -1
+	point_history.current_point = point_history.previous_point + point_history.transaction_point
+	note = "" 
+	if transaction_type == "Earning":
+		note = "Earning point from sale"
+	elif transaction_type == "Cancel Earning":
+		note = "Cancel earning point from sale"
+	else:
+		note = "Redeem point for sale"
+	point_history.note = note
+	point_history.save()

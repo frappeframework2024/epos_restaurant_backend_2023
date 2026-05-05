@@ -76,16 +76,18 @@ def submit_sale_to_general_ledger_entry(self):
 			frappe.throw(error)
 
 		for acc in set([d.default_account for d in self.payment if not d.payment_type_group=="On Account"]):
+			root_type = frappe.get_cached_value("Chart Of Account",acc,"root_type")
+			amount = sum([d.amount + (d.fee_amount or 0) for d in self.payment  if d.default_account==acc])
 			doc = {
 				"doctype":"General Ledger",
 				"posting_date":self.posting_date,
 				"account":acc  ,
-				"amount":sum([d.amount + (d.fee_amount or 0) for d in self.payment  if d.default_account==acc]),
+				"amount": amount * -1 if root_type in ["Liabilities"] else amount,
 				"againt":self.customer + " - " + self.customer_name,
 				"voucher_type":"Sale",
 				"voucher_number":self.name,
 				"business_branch": self.business_branch,
-				"type":"Income",
+				"type":root_type,
 				"party_type":"Customer",
 				"party":self.customer,
 				"party_name":self.customer_name,
@@ -416,8 +418,44 @@ def submit_sale_to_general_ledger_entry(self):
 				}
 			docs.append(doc)
 	for a in docs:
+		a["root_type"] = frappe.get_cached_value("Chart Of Account",a["account"],"root_type")
 		a["working_day"] = self.working_day
 		a["cashier_shift"] = self.cashier_shift
+	used_point = len([d for d in self.payment if d.payment_type_group == "Point"])
+	point_setting = frappe.get_doc("Loyalty Point Settings")
+	allow_earn_point = frappe.get_cached_value("Customer",self.customer,'allow_earn_point')
+	if point_setting.enabled==1 and used_point == 0 and allow_earn_point == 1:
+		total_revenue = sum([d["amount"] for d in docs if d["root_type"]=="Income"])
+		total_point_in_amount_earned = total_revenue * (point_setting.from_amount_earn * point_setting.to_point_earn) * (point_setting.from_amount_sale / point_setting.to_point_sale)
+		for d in docs:
+			if d["root_type"] == "Income":
+				d["revenue_ratio"] = d["amount"] / total_revenue if total_revenue or d["amount"] else 0
+				d["allocated_point"] = total_point_in_amount_earned * d["revenue_ratio"]
+				d["amount"] = d["amount"] - d["allocated_point"]
+			else:
+				d["revenue_ratio"] = 0
+				d["allocated_point"] = 0
+		total_allocated_point = sum([d["allocated_point"] for d in docs])
+		if total_allocated_point > 0:
+			doc = {
+					"doctype":"General Ledger",
+					"posting_date":self.posting_date,
+					"account":frappe.get_cached_value("Business Branch",self.business_branch,"default_loyalty_point_account"),
+					"amount":total_allocated_point,
+					"againt_voucher_type":"Sale",
+					"againt_voucher_number": self.name,
+					"voucher_type":"Sale",
+					"voucher_number":self.name,
+					"party_type":"Customer",
+					"party":self.customer,
+					"party_name":self.customer_name,
+					"business_branch": self.business_branch,
+				}
+			docs.append(doc)
+		for d in docs:
+			d.pop("revenue_ratio",None)
+			d.pop("allocated_point",None)
+			d.pop("root_type",None)
 	submit_general_ledger_entry(docs=docs)
 
 def get_expense_account(self,recipe):

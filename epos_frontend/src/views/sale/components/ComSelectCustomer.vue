@@ -67,8 +67,8 @@
                         customer.default_discount }}
                     % OFF</ComChip>
 
-                <ComChip v-if="customer.total_point_earn > 0" :tooltip="$t('Current Point(s)')" color="success">{{
-                    Number(customer.total_point_earn).toFixed(2) }}</ComChip>
+                <ComChip v-if="customer.total_point_earn > 0" :tooltip="$t('Current Points')" color="success">{{
+                    Number(customer.total_point_earn).toFixed(2) }} Points</ComChip>
                 <ComChip v-if="customer.total_crypto_balance > 0" :tooltip="$t('Crypto Amount')" color="primary">
                     <CurrencyFormat :value="parseFloat(customer.total_crypto_balance)" />
                 </ComChip>

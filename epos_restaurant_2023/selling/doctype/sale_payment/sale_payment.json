@@ -20,8 +20,7 @@
   "is_pay_to_room",
   "section_break_11",
   "input_amount",
-  "total_point_earn",
-  "allow_earn_point",
+  "spent_point",
   "column_break_18",
   "exchange_rate",
   "change_exchange_rate",
@@ -426,19 +425,6 @@
    "label": "Folio Transaction Number"
   },
   {
-   "fieldname": "total_point_earn",
-   "fieldtype": "Float",
-   "label": "Total Point Earn",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "fieldname": "allow_earn_point",
-   "fieldtype": "Check",
-   "label": "Allow Earn Point",
-   "read_only": 1
-  },
-  {
    "fieldname": "bulk_sale_payment_name",
    "fieldtype": "Data",
    "hidden": 1,
@@ -532,12 +518,18 @@
    "fieldtype": "Check",
    "label": "Add From Sale",
    "read_only": 1
+  },
+  {
+   "fieldname": "spent_point",
+   "fieldtype": "Float",
+   "label": "Spent Point",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-02-26 08:48:48.003545",
+ "modified": "2026-05-05 15:06:01.622435",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Payment",

@@ -12,9 +12,7 @@
   "to_point_earn",
   "column_break_sjrc",
   "from_amount_sale",
-  "to_point_sale",
-  "section_break_qcac",
-  "payment_type"
+  "to_point_sale"
  ],
  "fields": [
   {
@@ -59,22 +57,12 @@
    "fieldname": "to_point_sale",
    "fieldtype": "Float",
    "label": "To Point"
-  },
-  {
-   "fieldname": "section_break_qcac",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "payment_type",
-   "fieldtype": "Table",
-   "label": "Payment Type",
-   "options": "Point Setting Payment Type"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-06-19 08:49:48.686351",
+ "modified": "2026-05-05 10:21:23.879897",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Loyalty Point Settings",

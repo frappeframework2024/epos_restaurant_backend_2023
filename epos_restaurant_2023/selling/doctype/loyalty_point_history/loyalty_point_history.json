@@ -1,0 +1,107 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-05-05 14:02:07.069995",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_otsf",
+  "sale",
+  "customer",
+  "customer_name",
+  "posting_date",
+  "column_break_xhbs",
+  "transaction_type",
+  "previous_point",
+  "transaction_point",
+  "current_point",
+  "section_break_lsou",
+  "note"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_otsf",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "sale",
+   "fieldtype": "Link",
+   "label": "Sale",
+   "options": "Sale"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name"
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date"
+  },
+  {
+   "fieldname": "column_break_xhbs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "transaction_type",
+   "fieldtype": "Select",
+   "label": "Transaction Type",
+   "options": "Earning\nRedeeming\nCancel Earning"
+  },
+  {
+   "fieldname": "section_break_lsou",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "previous_point",
+   "fieldtype": "Float",
+   "label": "Previous Point"
+  },
+  {
+   "fieldname": "transaction_point",
+   "fieldtype": "Float",
+   "label": "Transaction Point"
+  },
+  {
+   "fieldname": "current_point",
+   "fieldtype": "Float",
+   "label": "Current Point"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Long Text",
+   "label": "Note"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-05-05 14:49:48.845558",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "Loyalty Point History",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

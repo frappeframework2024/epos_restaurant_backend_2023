@@ -143,8 +143,8 @@
                     <div class="product_detail_mobile col-12 col-lg-6 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
                         <div class="col-inner-ml"> 
                             <a href="/product_detail?emenu_name={{doc.name}}&product_code={{p.product_code}}&category={{p.name}}" style="text-decoration: none;">
-                                <div class="row p-0 p-lg-3 items-inner-1 m-0 h-100">
-                                    <div class="col-12 col-lg-4 p-0 wrapper-image mobile_img" style="background: url('/files/food_bg_image.jpg');">
+                                <div class="p-0 p-lg-3 items-inner-1 m-0 h-100">
+                                    <div class="p-0 wrapper-image mobile_img" style="background: url('/files/food_bg_image.jpg');">
                                         <img loading="lazy" class="img pro-img-it mobile_img" src="{{p.photo or " /files/food_bg_image.jpg"}}"/>
                                         <div class="promo_dis" style="bottom: 5px; background: #db3c76;right: 5px;">
                                             <p class="text-white" style="font-size:12px;">{{p.product_code}}</p>
@@ -186,7 +186,7 @@
                                             {% endif %}
                                         
                                     </div>
-                                    <div class="col-12 col-lg-8 d-flex flex-column flex-lg-column py-2 px-2 ps-lg-3 py-lg-0 content-custom-ml">
+                                    <div class="d-flex flex-column flex-lg-column py-2 px-2 ps-lg-3 py-lg-0 content-custom-ml">
                                         <div class="text-start"> 
                                             <div class="mb-lg-0">
                                                 {% if p.product_name_en == p.product_name_kh %}
@@ -266,18 +266,16 @@
                 <div class="row p-2">
                     {%for p in products|selectattr('pos_menu', 'equalto', m.menu)|list %}
  
-                    <div class="product_detail col-6 col-lg-6 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
+                    <div class="product_detail col-6 col-lg-4 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
                         <div class="col-inner"> 
                             <a href="/product_detail?emenu_name={{doc.name}}&product_code={{p.product_code}}&category={{p.name}}" style="text-decoration: none;">
-                                <div class="row p-0 p-lg-3 items-inner-1 m-0 h-100">
-                                    <div class="col-12 col-lg-4 p-0 wrapper-image" style="background: url('/files/food_bg_image.jpg');">
+                                <div class="flex p-0 p-lg-3 items-inner-1 m-0 h-100">
+                                    <div class="p-0 wrapper-image" style="background: url('/files/food_bg_image.jpg');">
                                         <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/food_bg_image.jpg"}}"/>
-                                        <div class="position-absolute rounded p-1" style="bottom: 5px; background: #db3c76;right: 5px;">
-                                            <p class="text-white" style="font-size:12px;">{{p.product_code}}</p>
-                                        </div>
+                                        
                                             {% if p.is_empty_stock_warning == 1%}
                                                 <div class="position-absolute rounded p-1" style="bottom: 5px; background: #db3c76;left: 5px;">
-                                                        <p class="text-white" style="font-size:12px;">* Out of Order</p>
+                                                    <p class="text-white" style="font-size:12px;">* Out of Order</p>
                                                 </div>
                                             {% endif %}
                                        
@@ -312,20 +310,24 @@
                                             {% endif %}
                                         
                                     </div>
-                                    <div class="col-12 col-lg-8 d-flex flex-column flex-lg-column py-3 ps-lg-3 py-lg-0 content-custom">
-                                        <div class=""> 
+                                    <div class="d-flex flex-column flex-lg-column py-3 ps-lg-3 py-lg-0 content-custom">
+                                        <div> 
                                             <div class="mb-3 mb-lg-0">
                                                 {% if p.product_name_en == p.product_name_kh %}
-                                                <div class="item-tt-txt" style="color: {{doc.kh_title_color}};">{{p.product_name_kh}}</div>
+                                                <div class="item-tt-txtt" style="color: {{doc.kh_title_color}};">{{p.product_name_kh}}</div>
                                                 {%else%}
-                                                <div title="{{p.product_name_kh}}" class="item-tt-txt" style="color: {{doc.kh_title_color}};">{{p.product_name_kh}}</div>
-                                                <div title="{{p.product_name_en}}" class="item-tt-txt en" style="color: {{doc.en_title_color}};">{{p.product_name_en}} </div>
+                                                <div title="{{p.product_name_kh}}" class="item-tt-txtt" style="color: {{doc.kh_title_color}};">{{p.product_name_kh}}</div>
+                                                <div title="{{p.product_name_en}}" class="item-tt-txtt en" style="color: {{doc.en_title_color}};">{{p.product_name_en}} </div>
                                                 {%endif%} 
                                             </div>
                                             {% if p.description %}
                                                 <div class="description-cs">{{p.description}}</div>
                                             {% endif %}
+                                            <div class="rounded px-1" style="background: #db3c76;width: fit-content;">
+                                                <p class="text-white" style="font-size:12px;">{{p.product_code}}</p>
+                                            </div>
                                         </div>
+                                        
                                         <div class="d-block d-xl-flex justify-between">
                                             <div class="cnter-txt mt-3 mt-lg-0">
                                                 {% if p.prices != [] %}

@@ -9,7 +9,7 @@
                         <div class="font-bold">{{ p.payment_type }} </div>
                         <div class="text-xs text-gray-500" v-if="((p.room_number||'') !='')">{{ $t('Room') }}#:   {{ p.room_number }}</div>       
                         <div class="text-xs text-gray-500" v-if="((p.reservation_stay||'') !='')">{{ $t('Stay ') }}#:   {{ p.reservation_stay }}</div>
-                        <div class="text-xs text-gray-500" v-if="get_point_to_reduct(p.input_amount) > 0 && p.payment_type_group == 'Point'">{{ $t('Reduct') }}: {{get_point_to_reduct(p.input_amount)}}{{ $t('Point(s)') }}</div>       
+                        <div class="text-xs text-gray-500" v-if="get_point_to_reduct(p.input_amount) > 0 && p.payment_type_group == 'Point'">{{ $t('Reduct') }}: {{get_point_to_reduct(p.input_amount)}} {{ $t('Points') }}</div>       
                        
 
                         <div class="text-xs text-gray-500" v-if="((p.folio_transaction_number||'') !='')">
