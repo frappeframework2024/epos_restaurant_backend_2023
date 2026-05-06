@@ -54,7 +54,7 @@ watch(sale.sale.payment, async (newPayment, oldNewPayment) => {
 const is_removing = ref(false);
 
 function get_point_to_reduct(input_amount){
-    let total_point = (input_amount - sale.sale.total_tax ) * gv.setting.point_setting.to_point_sale
+    let total_point = (input_amount - sale.sale.total_tax ) * gv.setting.point_setting.to_point_redeeming
     return Number(total_point || 0).toFixed(2)
 }
 async function  onRemovePayment(p) {

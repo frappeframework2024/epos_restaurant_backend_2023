@@ -2132,8 +2132,8 @@ def update_customer_point(customer,payment_type_group,payment_amount,name,sale,c
 			if payment_type_group != 'Point':
 				total_point_get = (point_setting.to_point_earning * (payment_amount))/point_setting.from_amount_earning
 				add_point_history(sale,total_point_get,customer,customer_name,"Earning")
-				frappe.db.sql("""Update `tabCustomer` set total_point_earn = total_point_earn + {0} where name = '{1}'""".format(total_point_get,customer))
-				frappe.db.sql("""UPDATE `tabSale` set total_point_earn = {0} WHERE NAME = '{1}'""".format(total_point_get,sale))
+				frappe.db.sql("""Update `tabCustomer` set total_point_earn = round((total_point_earn + {0}),6) where name = '{1}'""".format(total_point_get,customer))
+				frappe.db.sql("""UPDATE `tabSale` set total_point_earn = round({0},6) WHERE NAME = '{1}'""".format(total_point_get,sale))
 				frappe.db.commit()
 			# Customer Use Point
 			if payment_type_group == "Point":
@@ -2158,7 +2158,7 @@ def update_customer_point_on_cancel_sale(sale,customer,customer_name):
 			add_point_history(sale,point_spent,customer,customer_name,"Cancel Earning")
 		if (point_earn or 0) != 0:
 			add_point_history(sale,point_earn,customer,customer_name,"Cancel Redeeming")
-		frappe.db.sql("""UPDATE `tabCustomer` c SET c.total_point_earn = c.total_point_earn + {0} - {1} WHERE NAME = '{2}'""".format((point_spent or 0),(point_earn or 0),customer))
+		frappe.db.sql("""UPDATE `tabCustomer` c SET c.total_point_earn = round((c.total_point_earn + {0} - {1}),6) WHERE NAME = '{2}'""".format((point_spent or 0),(point_earn or 0),customer))
 		frappe.db.commit()
 
 def add_point_history(sale,transaction_point,customer,customer_name,transaction_type="Earning"):
