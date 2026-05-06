@@ -32,15 +32,13 @@
   },
   {
    "fieldname": "sale",
-   "fieldtype": "Link",
-   "label": "Sale",
-   "options": "Sale"
+   "fieldtype": "Data",
+   "label": "Sale"
   },
   {
    "fieldname": "customer",
-   "fieldtype": "Link",
-   "label": "Customer",
-   "options": "Customer"
+   "fieldtype": "Data",
+   "label": "Customer"
   },
   {
    "fieldname": "customer_name",
@@ -127,7 +125,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-06 09:00:50.820199",
+ "modified": "2026-05-06 09:35:21.589165",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Loyalty Point History",

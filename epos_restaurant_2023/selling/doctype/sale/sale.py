@@ -2142,20 +2142,24 @@ def update_customer_point(customer,payment_type_group,payment_amount,name,sale,c
 				add_point_history(sale,total_point_redeem,customer,customer_name,"Redeeming")
 				if name:
 					frappe.db.set_value('Sale Payment',name,{'spent_point': total_point_redeem})
+				frappe.db.set_value('Sale',sale,{'total_point_spent': total_point_redeem})
 				if float(customer_point.total_point_earn) < float(total_point_redeem):
 					frappe.throw(_("Point for customer {} are not enough.".format(customer_name)))
 				frappe.db.sql("Update `tabCustomer` set total_point_earn = round((total_point_earn - {}),6) where name = '{}'".format(total_point_redeem,customer))
 				frappe.db.commit()
 
 def update_customer_point_on_cancel_sale(sale,customer,customer_name):
-	point_spent = frappe.db.sql("""SELECT COALESCE(SUM(spent_point), 0)FROM `tabSale Payment` WHERE sale = '{0}' AND payment_type_group = 'Point' """.format(sale))[0][0]
-	point_earn = frappe.db.sql("""SELECT total_point_earn FROM `tabSale` WHERE name = '{0}' """.format(sale))[0][0]
-	if (point_spent or 0) != 0:
-		add_point_history(sale,point_spent,customer,customer_name,"Cancel Earning")
-	if (point_earn or 0) != 0:
-		add_point_history(sale,point_earn,customer,customer_name,"Cancel Redeeming")
-	frappe.db.sql("""UPDATE `tabCustomer` c SET c.total_point_earn = c.total_point_earn + {0} - {1} WHERE NAME = '{2}'""".format((point_spent or 0),(point_earn or 0),customer))
-	frappe.db.commit()
+	sale = frappe.db.sql("""SELECT sum(coalesce(total_point_earn, 0)) total_point_earn, sum(coalesce(total_point_spent, 0)) total_point_spent FROM `tabSale` WHERE name = '{0}' """.format(sale),as_dict=1)
+	if sale:
+		sale = sale[0]
+		point_earn = sale["total_point_earn"]
+		point_spent = sale["total_point_spent"]
+		if (point_spent or 0) != 0:
+			add_point_history(sale,point_spent,customer,customer_name,"Cancel Earning")
+		if (point_earn or 0) != 0:
+			add_point_history(sale,point_earn,customer,customer_name,"Cancel Redeeming")
+		frappe.db.sql("""UPDATE `tabCustomer` c SET c.total_point_earn = c.total_point_earn + {0} - {1} WHERE NAME = '{2}'""".format((point_spent or 0),(point_earn or 0),customer))
+		frappe.db.commit()
 
 def add_point_history(sale,transaction_point,customer,customer_name,transaction_type="Earning"):
 	from datetime import datetime

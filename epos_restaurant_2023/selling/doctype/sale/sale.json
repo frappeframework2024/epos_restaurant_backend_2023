@@ -114,8 +114,11 @@
   "payments_tab",
   "sale_payment_naming_series",
   "payment",
-  "allow_earn_point",
+  "section_break_tjfu",
   "total_point_earn",
+  "column_break_efyy",
+  "total_point_spent",
+  "allow_earn_point",
   "tax_tab",
   "tax_rule",
   "column_break_fjyx",
@@ -1699,6 +1702,19 @@
    "fieldtype": "Data",
    "label": "ABA Transaction ID",
    "read_only": 1
+  },
+  {
+   "fieldname": "total_point_spent",
+   "fieldtype": "Float",
+   "label": "Total Point Spent"
+  },
+  {
+   "fieldname": "section_break_tjfu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_efyy",
+   "fieldtype": "Column Break"
   }
  ],
  "image_field": "photo",
@@ -1711,7 +1727,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2026-04-02 08:55:47.242093",
+ "modified": "2026-05-06 09:11:15.644740",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",
