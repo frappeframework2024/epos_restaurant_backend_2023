@@ -15,6 +15,13 @@
   "previous_point",
   "transaction_point",
   "current_point",
+  "section_break_apxj",
+  "earning_column",
+  "from_amount_earning",
+  "to_point_earning",
+  "redeeming_column",
+  "from_amount_redeeming",
+  "to_point_redeeming",
   "section_break_lsou",
   "note"
  ],
@@ -53,7 +60,7 @@
    "fieldname": "transaction_type",
    "fieldtype": "Select",
    "label": "Transaction Type",
-   "options": "Earning\nRedeeming\nCancel Earning"
+   "options": "Earning\nRedeeming\nCancel Earning\nCancel Redeeming"
   },
   {
    "fieldname": "section_break_lsou",
@@ -78,11 +85,49 @@
    "fieldname": "note",
    "fieldtype": "Long Text",
    "label": "Note"
+  },
+  {
+   "fieldname": "section_break_apxj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "earning_column",
+   "fieldtype": "Column Break",
+   "label": "Earning"
+  },
+  {
+   "fieldname": "from_amount_earning",
+   "fieldtype": "Float",
+   "label": "From Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "to_point_earning",
+   "fieldtype": "Float",
+   "label": "To Point",
+   "read_only": 1
+  },
+  {
+   "fieldname": "redeeming_column",
+   "fieldtype": "Column Break",
+   "label": "Redeeming"
+  },
+  {
+   "fieldname": "from_amount_redeeming",
+   "fieldtype": "Float",
+   "label": "From Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "to_point_redeeming",
+   "fieldtype": "Float",
+   "label": "To Point",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-05 14:49:48.845558",
+ "modified": "2026-05-06 09:00:50.820199",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Loyalty Point History",

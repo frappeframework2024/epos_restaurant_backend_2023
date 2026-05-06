@@ -2130,16 +2130,16 @@ def update_customer_point(customer,payment_type_group,payment_amount,name,sale,c
 		customer_doc = frappe.db.get_value('Customer', customer, ['allow_earn_point', 'total_point_earn'], as_dict=1)
 		if customer_doc.allow_earn_point==1:
 			if payment_type_group != 'Point':
-				total_point_get = (point_setting.to_point_earn * (payment_amount))/point_setting.from_amount_earn
-				add_point_history_on_cancel_sale(sale,total_point_get,customer,customer_name,"Earning")
+				total_point_get = (point_setting.to_point_earning * (payment_amount))/point_setting.from_amount_earning
+				add_point_history(sale,total_point_get,customer,customer_name,"Earning")
 				frappe.db.sql("""Update `tabCustomer` set total_point_earn = total_point_earn + {0} where name = '{1}'""".format(total_point_get,customer))
 				frappe.db.sql("""UPDATE `tabSale` set total_point_earn = {0} WHERE NAME = '{1}'""".format(total_point_get,sale))
 				frappe.db.commit()
 			# Customer Use Point
 			if payment_type_group == "Point":
 				customer_point = frappe.db.get_value("Customer",customer,['total_point_earn','allow_earn_point'],as_dict=1)
-				total_point_redeem = (payment_amount * point_setting.to_point_sale) / point_setting.from_amount_sale
-				add_point_history_on_cancel_sale(sale,total_point_redeem,customer,customer_name,"Redeeming")
+				total_point_redeem = (payment_amount * point_setting.to_point_redeeming) / point_setting.from_amount_redeeming
+				add_point_history(sale,total_point_redeem,customer,customer_name,"Redeeming")
 				if name:
 					frappe.db.set_value('Sale Payment',name,{'spent_point': total_point_redeem})
 				if float(customer_point.total_point_earn) < float(total_point_redeem):
@@ -2149,12 +2149,17 @@ def update_customer_point(customer,payment_type_group,payment_amount,name,sale,c
 
 def update_customer_point_on_cancel_sale(sale,customer,customer_name):
 	point_spent = frappe.db.sql("""SELECT COALESCE(SUM(spent_point), 0)FROM `tabSale Payment` WHERE sale = '{0}' AND payment_type_group = 'Point' """.format(sale))[0][0]
-	add_point_history_on_cancel_sale(sale,point_spent,customer,customer_name,"Cancel Earning")
-	frappe.db.sql("""UPDATE `tabCustomer` c SET c.total_point_earn = c.total_point_earn + {0} WHERE NAME = '{1}'""".format(point_spent,customer))
+	point_earn = frappe.db.sql("""SELECT total_point_earn FROM `tabSale` WHERE name = '{0}' """.format(sale))[0][0]
+	if (point_spent or 0) != 0:
+		add_point_history(sale,point_spent,customer,customer_name,"Cancel Earning")
+	if (point_earn or 0) != 0:
+		add_point_history(sale,point_earn,customer,customer_name,"Cancel Redeeming")
+	frappe.db.sql("""UPDATE `tabCustomer` c SET c.total_point_earn = c.total_point_earn + {0} - {1} WHERE NAME = '{2}'""".format((point_spent or 0),(point_earn or 0),customer))
 	frappe.db.commit()
 
-def add_point_history_on_cancel_sale(sale,transaction_point,customer,customer_name,transaction_type="Earning"):
+def add_point_history(sale,transaction_point,customer,customer_name,transaction_type="Earning"):
 	from datetime import datetime
+	point_setting = frappe.get_doc("Loyalty Point Settings")
 	point_history = frappe.new_doc("Loyalty Point History")
 	point_history.sale = sale
 	point_history.customer = customer
@@ -2164,12 +2169,18 @@ def add_point_history_on_cancel_sale(sale,transaction_point,customer,customer_na
 	point_history.previous_point = float(frappe.db.get_value("Customer",customer,'total_point_earn'))
 	point_history.transaction_point = float(transaction_point) if transaction_type in ["Earning","Cancel Earning"] else float(transaction_point) * -1
 	point_history.current_point = point_history.previous_point + point_history.transaction_point
+	point_history.from_amount_earning = point_setting.from_amount_earning
+	point_history.to_point_earning = point_setting.to_point_earning
+	point_history.from_amount_redeeming = point_setting.from_amount_redeeming
+	point_history.to_point_redeeming = point_setting.to_point_redeeming
 	note = "" 
 	if transaction_type == "Earning":
-		note = "Earning point from sale"
+		note = "Earning {0} points from sale {1}".format(transaction_point,sale)
 	elif transaction_type == "Cancel Earning":
-		note = "Cancel earning point from sale"
+		note = "Cancel sale {0} paid with {1} points".format(sale, transaction_point)
+	elif transaction_type == "Cancel Redeeming":
+		note = "Sale {0} Cancelled".format(sale)
 	else:
-		note = "Redeem point for sale"
+		note = "Sale {0} Redeem {1} points".format(sale, transaction_point)
 	point_history.note = note
 	point_history.save()

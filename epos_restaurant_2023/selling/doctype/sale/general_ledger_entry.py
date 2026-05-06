@@ -426,7 +426,7 @@ def submit_sale_to_general_ledger_entry(self):
 	allow_earn_point = frappe.get_cached_value("Customer",self.customer,'allow_earn_point')
 	if point_setting.enabled==1 and used_point == 0 and allow_earn_point == 1:
 		total_revenue = sum([d["amount"] for d in docs if d["root_type"]=="Income"])
-		total_point_in_amount_earned = total_revenue * (point_setting.from_amount_earn * point_setting.to_point_earn) * (point_setting.from_amount_sale / point_setting.to_point_sale)
+		total_point_in_amount_earned = total_revenue * (point_setting.from_amount_earning * point_setting.to_point_earning) * (point_setting.from_amount_redeeming / point_setting.to_point_redeeming)
 		for d in docs:
 			if d["root_type"] == "Income":
 				d["revenue_ratio"] = d["amount"] / total_revenue if total_revenue or d["amount"] else 0

@@ -8,11 +8,11 @@
   "enabled",
   "section_break_wtwx",
   "earning_column",
-  "from_amount_earn",
-  "to_point_earn",
+  "from_amount_earning",
+  "to_point_earning",
   "column_break_sjrc",
-  "from_amount_sale",
-  "to_point_sale"
+  "from_amount_redeeming",
+  "to_point_redeeming"
  ],
  "fields": [
   {
@@ -20,16 +20,6 @@
    "fieldname": "enabled",
    "fieldtype": "Check",
    "label": "Enabled"
-  },
-  {
-   "fieldname": "from_amount_earn",
-   "fieldtype": "Currency",
-   "label": "From Amount"
-  },
-  {
-   "fieldname": "to_point_earn",
-   "fieldtype": "Float",
-   "label": "To Point"
   },
   {
    "depends_on": "eval:doc.enabled==1",
@@ -40,7 +30,7 @@
    "description": "Having 100 Points get $1",
    "fieldname": "column_break_sjrc",
    "fieldtype": "Column Break",
-   "label": "Sale"
+   "label": "Redeeming"
   },
   {
    "description": "Buy $1 get 1 Point(s)",
@@ -49,12 +39,22 @@
    "label": "Earning"
   },
   {
-   "fieldname": "from_amount_sale",
+   "fieldname": "from_amount_redeeming",
    "fieldtype": "Currency",
    "label": "From Amount"
   },
   {
-   "fieldname": "to_point_sale",
+   "fieldname": "to_point_redeeming",
+   "fieldtype": "Float",
+   "label": "To Point"
+  },
+  {
+   "fieldname": "from_amount_earning",
+   "fieldtype": "Currency",
+   "label": "From Amount"
+  },
+  {
+   "fieldname": "to_point_earning",
    "fieldtype": "Float",
    "label": "To Point"
   }
@@ -62,7 +62,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-05-05 10:21:23.879897",
+ "modified": "2026-05-06 09:03:02.190707",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Loyalty Point Settings",
