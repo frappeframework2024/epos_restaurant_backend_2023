@@ -569,13 +569,18 @@ function add_search_image_from_google_button(frm) {
                         fieldname: 'keyword',
                         fieldtype: 'Data',
                         default: frm.doc.product_name_en,
-                        onchange: function (e) {
-
-                            frappe.call({ method: "epos_restaurant_2023.api.api.search_image_from_google", args: { keyword: this.value } }).then(result => {
-                                const html = frappe.render_template("search_image", { images: result.message })
-                                dialogGoogleSearch.set_value("result", html);
-
-                            })
+                        onchange: function (e) { 
+                            frappe.call({ 
+                                method: "epos_restaurant_2023.api.api.search_image_from_google", 
+                                args: { 
+                                    keyword: this.value 
+                                },
+                                freeze: true,   // optional UI loading overlay
+                                freeze_message: "Please wait...",
+                            }).then(result => {
+                                const html = frappe.render_template("search_image", { images: result.message})
+                                dialogGoogleSearch.set_value("result", html); 
+                            });
                         }
                     },
                     {
@@ -595,12 +600,17 @@ function add_search_image_from_google_button(frm) {
             dialogGoogleSearch.show()
 
             setTimeout(function () {
-                frappe.call({ method: "epos_restaurant_2023.api.api.search_image_from_google", args: { keyword: frm.doc.product_name_en } }).then(result => {
-                    const html = frappe.render_template("search_image", { images: result.message })
-                    dialogGoogleSearch.set_value("result", html);
+                frappe.call({ method: "epos_restaurant_2023.api.api.search_image_from_google",
+                     args: { keyword: frm.doc.product_name_en } ,
+                     freeze: true,   // optional UI loading overlay
+                     freeze_message: "Please wait...",
+                    }).then(result => {
+                        const html = frappe.render_template("search_image", { images: result.message})
+
+                        dialogGoogleSearch.set_value("result", html);
 
                 })
-            }, 1000)
+            }, 100)
 
 
         });
@@ -659,11 +669,30 @@ function change_expired_date(frm) {
 
 function savePhoto(e) {
     if((e.data.action || "")=="update_product_photo"){
-        if (e.isTrusted) {
-            frappe.db.set_value("Product", myForm.doc.name, "photo", e.data.url).then(r => {
-                myForm.reload_doc()
-            })
-            dialogGoogleSearch.hide()
+        if (e.isTrusted) { 
+
+            console.log( myForm.docname)
+
+            frappe.call({ method: "epos_restaurant_2023.api.api.save_product_image_from_google",
+                args: { 
+                    image:e.data.url,
+                    docname: myForm.docname,
+                } ,
+                freeze: true,   // optional UI loading overlay
+                freeze_message: "Uploading...",
+                callback: (r) => {
+                    dialogGoogleSearch.hide();
+
+                    myForm.reload_doc();
+                    frappe.msgprint("Success!");
+                    
+                },
+                error: (r) => {
+                    dialogGoogleSearch.hide()
+                    frappe.msgprint("Failed!");
+                }
+            }) 
+           
         };
     }
 }

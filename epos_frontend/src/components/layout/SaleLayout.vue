@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <v-app-bar :elevation="2" color="appbar">
+        <v-app-bar :elevation="2" style="background: linear-gradient(135deg, #c56d1f, #e79845);color: #fff;">
             <template #prepend>
                 <v-app-bar-nav-icon size="small" variant="text" @click.stop="onDrawer()" style="margin-left: -5px;"></v-app-bar-nav-icon>
                 <template v-if="mobile || !defaultUI">

@@ -101,6 +101,7 @@ const product = inject("$product");
 const toaster = createToaster({ position: 'top-right' })
 const frappe = inject("$frappe")
 const db = frappe.db();
+const call = frappe.call();
 import { useFileDialog } from '@vueuse/core'
 const dialog = useDialog()
 
@@ -238,13 +239,16 @@ async function uploadImage(data) {
         keyword: data.name_en
     })
     if (res) {
-        db.updateDoc('Product', data.name, {
-            photo: res.image,
-        }).then((doc) => {
-                data.photo = res.image
+        call.post("epos_restaurant_2023.api.api.save_product_image_from_google", {
+            image: res.image,
+            docname: data.name
+        }).then((r) => {
+            if (r.message) {
+                data.photo = r.message
+                console.log(r.message)
                 toaster.success($t("msg.Update successfully"))
             }
-        )
+        })
     }
 }
 

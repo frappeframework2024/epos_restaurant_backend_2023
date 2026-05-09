@@ -7,6 +7,8 @@ from rq.job import Job
 from rq.queue import Queue
 import re
 import time
+import base64
+from frappe.utils.file_manager import save_file
 
 from frappe.model.document import Document
 from frappe.utils import (
@@ -115,6 +117,7 @@ def generate_data_for_sync_record(doc, method=None, *args, **kwargs):
                     frappe.enqueue("epos_restaurant_2023.api.utils.sync_data_to_server", queue='short', doc=doc,action="update")
             
                 # frappe.db.commit()
+
 @frappe.whitelist()
 def generate_data_for_sync_record_on_delete(doc, method=None, *args, **kwargs):
     if not frappe.db.exists("DocType","ePOS Sync Setting"):
@@ -293,10 +296,7 @@ def sync_data_to_server(doc,extra_action=None,action="update"):
         else:
             frappe.throw(str(response.text))
      
-    
-    
-    
-
+ 
 @frappe.whitelist(methods="POST")
 def save_sync_data(doc,extra_action=None,action="update"):
     
@@ -548,12 +548,29 @@ def add_years(start_date, years):
     return new_date
 
 
-
-
-
 def round_half_up(value, digits=2):
     try:
         return float(Decimal(str(value)).quantize(Decimal(f'1.{"0"*digits}'), rounding=ROUND_HALF_UP))
     except:
         return value  
 
+ 
+
+def save_base64_image(base64_str, file_name, doctype=None, docname=None):
+    # Remove base64 header if exists
+    if "," in base64_str:
+        base64_str = base64_str.split(",")[1]
+
+    # Decode base64
+    file_content = base64.b64decode(base64_str)
+
+    # Save file into Frappe (public folder)
+    file_doc = save_file(
+        fname=file_name,
+        content=file_content,
+        dt=doctype,
+        dn=docname,
+        is_private=0  # 0 = public, 1 = private
+    )
+
+    return file_doc.file_url

@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <v-app-bar :elevation="2" color="appbar">
+        <v-app-bar :elevation="2" style="background: linear-gradient(135deg, #c56d1f, #e79845);color: #fff;">
             <v-app-bar-title>{{ appTitle }}</v-app-bar-title>
             <template #prepend>
                 <v-app-bar-nav-icon variant="text" @click.stop="onDrawer"></v-app-bar-nav-icon>
