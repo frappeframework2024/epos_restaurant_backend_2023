@@ -3,6 +3,7 @@
 
 frappe.ui.form.on("Customer Group", {
 	onload(frm) {
+         frappe.realtime.off("update_allow_earn_point");
          frappe.realtime.on("update_allow_earn_point", (data) => {
             frappe.show_alert({
                 message: data.message,
