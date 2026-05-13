@@ -15,4 +15,3 @@ class ChartOfAccount(NestedSet):
 		# update root type
 		if not self.root_type and self.parent_chart_of_account:
 			self.root_tye = frappe.db.get_value("Chart Of Account",self.parent_chart_of_account,"root_type")
-   
