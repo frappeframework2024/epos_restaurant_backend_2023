@@ -25,6 +25,8 @@
   "phone_number",
   "hotel_room_call_number",
   "address",
+  "working_hour",
+  "slogan",
   "welcome_description",
   "section_break_8",
   "footer_description",
@@ -40,6 +42,7 @@
   "category_placeholder_background",
   "section_break_wicy",
   "kh_title_color",
+  "main_color_code",
   "column_break_gezs",
   "en_title_color",
   "section_break_clsj",
@@ -287,13 +290,28 @@
    "fieldname": "web_socket_print_url",
    "fieldtype": "Data",
    "label": "Web Socket Print Url"
+  },
+  {
+   "fieldname": "main_color_code",
+   "fieldtype": "Data",
+   "label": "Main Color Code"
+  },
+  {
+   "fieldname": "working_hour",
+   "fieldtype": "Data",
+   "label": "Working Hour"
+  },
+  {
+   "fieldname": "slogan",
+   "fieldtype": "Data",
+   "label": "Slogan"
   }
  ],
  "has_web_view": 1,
  "image_field": "logo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-01 14:18:32.565339",
+ "modified": "2026-05-13 13:45:41.135420",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "eMenu",

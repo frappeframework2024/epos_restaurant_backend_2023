@@ -130,97 +130,33 @@ def save_product_image_from_google(image:str, docname:str):
         
 @frappe.whitelist(allow_guest=True)
 def search_image_from_google(keyword):
-    from epos_restaurant_2023.api.google.scrape import get_google_image
-    result = get_google_image(keyword) 
     urls = []
-    for d in result:
-        if d.get("image"):
-            urls.append(d.get("image"))
+    params = {
+        "q": keyword
+    }
+    url = "https://google-image.inccloudserver.com/google/image/search"
     
-    return urls
-
-@frappe.whitelist(allow_guest=True)
-def search_image_from_google2(keyword):
-    import requests
-    import time
-    urls = []
-    API_KEY = "55781112-370c1f5535232ff95d0de0c94"
-    BASE_URL = "https://pixabay.com/api/"
-    def fetch_with_retry(params, max_retries=5):
-        wait_time = 1  # start with 1 second
-        for attempt in range(max_retries):
-            response = requests.get(BASE_URL, params=params)
-            if response.status_code == 200:
-                return response.json()
-            if response.status_code == 429:
-                time.sleep(wait_time)
-                wait_time *= 2  # exponential backoff
-                continue
-            response.raise_for_status()
-        raise Exception("Max retries reached. Request failed.")
-    params = {
-        "key": API_KEY,
-        "q": keyword,
-        "image_type": "photo",
-        "per_page": 8
-    }
-    data = fetch_with_retry(params)
-    for item in data["hits"]:
-        urls.append(item["largeImageURL"])
-    url = "https://api.openverse.org/v1/images/"
-    params = {
-        "q": keyword,
-        "page": 1,
-        "page_size": 8
-    }
+    
     data = requests.get(url, params=params).text
     data = data.replace('null','0')
     data = json.loads(data)
-    for a in data["results"]:
-        urls.append(a["url"])
-    url = "https://commons.wikimedia.org/w/api.php"
-    headers = {
-        "User-Agent": "ImageSearchApp/1.0 (contact: dev@example.com)"
-    }
-    params = {
-        "action": "query",
-        "format": "json",
-        # IMPORTANT: file namespace only
-        "generator": "search",
-        "gsrsearch": keyword,
-        "gsrnamespace": 6,   # 👈 THIS IS KEY (FILES ONLY)
-        "gsrlimit": 10,
-        "prop": "imageinfo",
-        "iiprop": "url"
-    }
-    r = requests.get(url, params=params, headers=headers)
-    data = r.json()
-    pages = data.get("query", {}).get("pages", {})
-    for p in pages.values():
-        info = p.get("imageinfo")
-        if info:
-            urls.append(info[0]["url"])
-    return urls
-
-@frappe.whitelist(allow_guest=True)
-def search_image_from_google_old(keyword):
-
-    # url = f"https://www.google.com/search?q={quote_plus(keyword)}&tbm=isch"
-    url = f"https://www.google.com/search?q={quote_plus(keyword)}&udm=2"
-    response = requests.get(url)
-
-
-    # Parse the HTML content
-    soup = BeautifulSoup(response.content, "html.parser")
-    image_tags = soup.find_all("img")
-    urls=[]
+    if data.get("data"):
+        for d in data.get("data"):
+            if d.get("image"):
+                urls.append(d.get("image"))
+        
+    return urls 
+    
+    
+    # from epos_restaurant_2023.api.google.scrape import get_google_image
+    # result = get_google_image(keyword) 
+    # urls = []
+    # for d in result:
+    #     if d.get("image"):
+    #         urls.append(d.get("image"))
+    
+    # return urls
  
-    for i, img in enumerate(image_tags):
-        img_url = img.get("src")
-
-        if img_url and "https" in img_url:
-            urls.append(img_url)
-    return urls
 
 @frappe.whitelist()
 def get_product(name):

@@ -10,121 +10,106 @@
             <div class="logo">
                 <img loading="lazy" src="{{doc.logo or " /files/no_image.jpg"}}" alt="">
             </div>
+            <h3>QR Menu</h3>
         </div>
     </div>
 </div>
 {% else %}
-<div class="header">
-    <div class="container">
-        <div class="d-flex justify-center py-2">
-            <div class="logo">
-                <img loading="lazy" src="{{doc.logo or " /files/no_image.jpg"}}" alt="">
-               
-            </div>
+<header class="menu-header header">
+
+    <!-- <div class="top-nav">
+        <button class="nav-btn">☰</button> 
+    </div> -->
+
+    <div class="menu-brand">
+        <h1 class="text-white">{{doc.emenu_app_name}}</h1>
+        <p>{{doc.slogan}}</p>
+
+        <div class="menu-badge">
+            <span></span>
+            {{doc.working_hour}}
         </div>
     </div>
-</div>
+
+</header>
 {%endif%}
-<div class="section-main-wraper mt-3">
-    <div class="container">
-        <div class="into-section">
-            <h1 class="text-center">
-                {% if doc.welcome_title %}
-                {{doc.welcome_title}}
-                {%endif%}
-            </h1>
-            <div class="dsc-header">
-                {% if doc.welcome_description %}
-                {{doc.welcome_description}}
-                {%endif%}
 
-            </div>
-        </div>
-    </div>
-    
+<div class="screen-overlay"></div>
 
-    {% if doc.is_mobile_show_1_column == 1%}
-    <div class="py-3 my-3 nav-pro-wrapper border border-start-0 border-end-0 border-bottom-0 bg-white el-shadow" style="top:0;">
-        <nav class="container">
+<div class="small-scx-cate">
+    <div class="p-3 position-relative">
+        <nav class="">
             <div class="position-relative">
-                <div class="tab-bar">
-                    <div class="left-arrow">
-                        <p><i class="fas fa-chevron-left"></i></p>
-                    </div>
-                    <div class="navigt tabs">
-                        <div class="d-flex mb-0" style="flex-wrap: wrap;min-width: 46rem;">
-                            {% if (doc.popular_product | length) >0 %}
-                            <a class="bg-white px-3 py-1 rounded-pill main-color nav-pro tab active mt-1"
-                                href="#popular_product">
-                                <p>Popular Products</p>
-                            </a>
-                            {%endif%}
-                            {% for m in doc.pos_menu_selections %}
-                            <a class="bg-white px-3 py-1 rounded-pill main-color nav-pro tab mt-1 menu_categories" href="#{{m.name}}">
-                                <p>{{m.menu}} {{'/' if m.menu!=m.menu_kh}} {{'' if m.menu==m.menu_kh else m.menu_kh }}</p>
-                            </a>
-                            {%endfor%}
-                        </div>
-                    </div>
-                    <div class="right-arrow active">
-                        <p><i class="fas fa-chevron-right"></i></p>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </div>
-    {%else%}
-    <div class="py-3 my-3 nav-pro-wrapper border border-start-0 border-end-0 border-bottom-0 bg-white el-shadow">
-        <nav class="container">
-            <div class="position-relative">
-                <div class="tab-bar">
-                    <div class="left-arrow">
-                        <p><i class="fas fa-chevron-left"></i></p>
-                    </div>
-
-                    <div class="d-flex gap-2 mb-0 navigt tabs">
+                <div class="tab-bar">  
+                    <div class="d-flex flex-wrap gap-2 mb-0 navigt tabs" id="cateWrapper_mobile">
                         {% if (doc.popular_product | length) >0 %}
                         <a class="bg-white px-3 py-1 rounded-pill main-color nav-pro tab active"
-                            href="#popular_product">
+                            href="#popular_product" data-target="popular_product">
                             <p>Popular Products</p>
                         </a>
                         {%endif%}
 
                         {% for m in doc.pos_menu_selections %}
-                        <a class="bg-white px-3 py-1 rounded-pill main-color nav-pro tab" href="#{{m.name}}">
+                        <a class="bg-white px-3 py-1 rounded-pill main-color nav-pro tab" href="#{{m.name}}" data-target="{{m.name}}">
+                            <p>{{m.menu}}</p>
+                        </a>
+                        {%endfor%}
+                    </div> 
+                </div>
+            </div>
+        </nav> 
+
+        <div class="position-absolute hamburger-nav-mlx" id="hamburgerNavHideMenu">
+            <div>
+                <svg fill="#fff" width="25px" height="25px" viewBox="0 0 52 52" data-name="Layer 1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M28.94,26,51.39,3.55A2.08,2.08,0,0,0,48.45.61L26,23.06,3.55.61A2.08,2.08,0,0,0,.61,3.55L23.06,26,.61,48.45A2.08,2.08,0,0,0,2.08,52a2.05,2.05,0,0,0,1.47-.61L26,28.94,48.45,51.39a2.08,2.08,0,0,0,2.94-2.94Z"></path></g></svg>
+            </div>
+        </div>
+    </div> 
+</div>
+
+<div class="position-fixed hamburger-nav-ml" id="hamburgerNav">
+    <div>
+        <svg fill="#fff" width="30px" height="30px" viewBox="0 0 52 52" data-name="Layer 1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M50,12.5H2a2,2,0,0,1,0-4H50a2,2,0,0,1,0,4Z"></path><path d="M50,28H2a2,2,0,0,1,0-4H50a2,2,0,0,1,0,4Z"></path><path d="M50,43.5H2a2,2,0,0,1,0-4H50a2,2,0,0,1,0,4Z"></path></g></svg>
+    </div>
+</div>
+
+
+<div class="section-main-wraper mt-3">
+      
+    <div class="py-3 my-3 nav-pro-wrapper border border-start-0 border-end-0 border-bottom-0 large-scx-cate">
+        <nav class="container">
+            <div class="position-relative">
+                <div class="tab-bar">
+                    <div class="left-arrow" id="scrollLeft">
+                        <p><i class="fas fa-chevron-left"></i></p>
+                    </div>
+
+                    <div class="d-flex gap-2 mb-0 navigt tabs" id="cateWrapper">
+                        {% if (doc.popular_product | length) >0 %}
+                        <a class="bg-white px-3 py-1 rounded-pill main-color nav-pro tab active"
+                            href="#popular_product" data-target="popular_product">
+                            <p>Popular Products</p>
+                        </a>
+                        {%endif%}
+
+                        {% for m in doc.pos_menu_selections %}
+                        <a class="bg-white px-3 py-1 rounded-pill main-color nav-pro tab" href="#{{m.name}}" data-target="{{m.name}}">
                             <p>{{m.menu}}</p>
                         </a>
                         {%endfor%}
                     </div>
 
-                    <div class="right-arrow active">
+                    <div class="right-arrow active" id="scrollRight">
                         <p><i class="fas fa-chevron-right"></i></p>
                     </div>
                 </div>
             </div>
         </nav>
-    </div>
-    {%endif%}
-    
-    
+    </div>   
+
+
     <div class="container sections-content-1">
-        <div class="sections sections-content">
-            <div class="scroll-section" id="promo_section">
-                {% if (promotion|length) > 0 %}
-                    <div class="promo-section mt-4 mb-3">
-                        <h1 class="text-center">Promotion</h1> 
-                    </div>
-                    <div class="justify-center p-4 w-100" style="background: url({{doc.promo_image}});border-radius: 20px;background-repeat: no-repeat;background-size: cover;"> 
-                        <div class="owl-carousel owl-theme mb-3" id="slid_banner">
-                            {% for p in promotion %}
-                                <div class="item d-flex justify-center">
-                                    <img class="lazy promo-st" src="{{p.photo or " /files/no_image.jpg"}}"/>
-                                </div>
-                            {% endfor %} 
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
+        <div class="sections sections-content"> 
 
 
             {{ frappe.render_template("epos_restaurant_2023/selling/doctype/emenu/templates/components/popular_product.html", {"doc":doc,"popular_products":popular_products}) }}
@@ -133,23 +118,23 @@
             {% for m in doc.pos_menu_selections %}
              
             <div class="scroll-section" id="{{m.name}}">
-                <div class="mt-4 mb-3">
+                <div class="mt-4 mb-3 section-title">
                     {% set title = m.menu %}
                     <h2>{{title.split('(')[0]}}</h2>
                 </div>
                 <div class="row p-2">
                     {%for p in products|selectattr('pos_menu', 'equalto', m.menu)|list %}
  
-                    <div class="product_detail col-6 col-lg-4 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
+                    <div class="product_detail col-6 col-md-6 col-lg-4 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
                         <div class="col-inner"> 
                             <a href="/product_detail?emenu_name={{doc.name}}&product_code={{p.product_code}}&category={{p.name}}" style="text-decoration: none;">
-                                <div class="flex p-0 p-lg-3 items-inner-1 m-0 h-100">
+                                <div class="flex p-0 p-md-3 items-inner-1 m-0 h-100">
                                     <div class="p-0 wrapper-image" style="background: url('/files/food_bg_image.jpg');">
                                         <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/food_bg_image.jpg"}}"/>
                                     </div>
-                                    <div class="d-flex flex-column flex-lg-column py-3 ps-lg-3 py-lg-0 content-custom">
-                                        <div> 
-                                            <div class="mb-3 mb-lg-0">
+                                    <div class="d-flex flex-column flex-lg-column py-3 ps-lg-3 py-lg-0 content-custom gap-2">
+                                        <div class="title-x-code"> 
+                                            <div class="mb-md-3 mb-lg-0">
                                                 {% if p.product_name_en == p.product_name_kh %}
                                                 <div class="item-tt-txtt" style="color: {{doc.kh_title_color}};">{{p.product_name_kh}}</div>
                                                 {%else%}
@@ -165,9 +150,9 @@
                                             </div>
                                         </div>
                                         
-                                        <div>
+                                        <div class="product-price-x">
                                         <div class="d-block d-xl-flex justify-between">
-                                            <div class="cnter-txt mt-3 mt-lg-0">
+                                            <div class="cnter-txt mt-md-3 mt-lg-0">
                                                 {% if p.prices != [] %}
                                                     {%set _prices = p.prices |selectattr('price_rule', 'equalto', doc.default_price_rule) | list  %}
                                                     {% if p.discount_value > 0 %}
@@ -212,7 +197,7 @@
                                                         {% endif %}
                                                     {% endif %} 
                                                 {% else %}
-                                                    <div class="flex gap-2 justify-center">
+                                                    <div class="flex gap-2 price-prox">
                                                             {% if p.discount_value > 0 %}
                                                                 <del class="price-cus" style="color: #ccc;">{{frappe.format(p.price,{"fieldtype":"Currency"})}}</del>
                                                                 {% if p.discount_type=='Percent' %}

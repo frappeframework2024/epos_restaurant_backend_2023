@@ -2,7 +2,7 @@
 <hr/>
 <div class="scroll-section" id="popular_product">
     <div class="mt-4 mb-3">
-        <h2><i class="fas fa-fire main-color"></i> Popular Products</h2>
+        <h2>Popular Products</h2>
         <p>Our signature dishes</p>
     </div>
 
@@ -122,15 +122,15 @@
     {%else%}
     <div class="row p-2">
         {% for p in popular_products %}
-        <div class="product_detail col-6 col-lg-4 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
+        <div class="product_detail col-6 col-md-6 col-lg-4 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
             <div class="col-inner"> 
                 <a href="/product_detail?emenu_name={{doc.name}}&product_code={{p.product_code}}&category={{p.name}}" style="text-decoration: none;">
-                    <div class="flex p-0 p-lg-3 items-inner-1 m-0 h-100">
+                    <div class="flex p-0 p-md-3 items-inner-1 m-0 h-100">
                         <div class="p-0 wrapper-image" style="background: url('/files/food_bg_image.jpg');">
                             <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/food_bg_image.jpg"}}"/>
                         </div>
                         <div class="d-flex flex-column flex-lg-column py-3 ps-lg-3 py-lg-0 content-custom">
-                            <div> 
+                            <div class="title-x-code"> 
                                 <div class="mb-3 mb-lg-0">
                                     {% if p.product_name_en == p.product_name_kh %}
                                     <div class="item-tt-txtt" style="color: {{doc.kh_title_color}};">{{p.product_name_kh}}</div>
@@ -147,7 +147,7 @@
                                 </div>
                             </div>
                             
-                            <div>
+                            <div class="product-price-x">
                             <div class="d-block d-xl-flex justify-between">
                                 <div class="cnter-txt mt-3 mt-lg-0">
                                     {% if p.prices != [] %}
