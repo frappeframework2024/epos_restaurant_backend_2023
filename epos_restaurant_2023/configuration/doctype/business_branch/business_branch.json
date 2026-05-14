@@ -18,6 +18,7 @@
   "photo",
   "property_background_banner",
   "pattern_background",
+  "chart_of_account_prefix",
   "data_9",
   "note",
   "disabled",
@@ -633,12 +634,17 @@
    "fieldtype": "Link",
    "label": "Default Loyalty Point Account",
    "options": "Chart Of Account"
+  },
+  {
+   "fieldname": "chart_of_account_prefix",
+   "fieldtype": "Data",
+   "label": "Chart Of Account Prefix"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-05 09:42:22.355570",
+ "modified": "2026-05-14 10:31:12.441548",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",
