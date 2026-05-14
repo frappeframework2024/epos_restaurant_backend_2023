@@ -6,11 +6,18 @@ from frappe.utils.nestedset import NestedSet
 
 class ChartOfAccount(NestedSet):
 	def validate(self):
+		prefix = frappe.db.get_value("Business Branch",self.business_branch,"chart_of_account_prefix")
 		if self.is_new():
 			if self.account_code:
-				self.name = self.account_code + " - " + self.account_name
+				if prefix:
+					self.name = prefix + "-" +self.account_code + " - " + self.account_name
+				else:
+					self.name = self.account_code + " - " + self.account_name
 			else:
-				self.name = self.account_name
+				if prefix:
+					self.name = prefix + "-" + self.account_name
+				else:
+					self.name = self.account_name
 
 		# update root type
 		if not self.root_type and self.parent_chart_of_account:
