@@ -10,15 +10,13 @@ class ChartOfAccount(NestedSet):
 		if self.is_new():
 			if self.account_code:
 				if prefix:
-					self.name = prefix + "-" +self.account_code + " - " + self.account_name
+					self.name = prefix + " - " +self.account_code + " - " + self.account_name
 				else:
 					self.name = self.account_code + " - " + self.account_name
 			else:
 				if prefix:
-					self.name = prefix + "-" + self.account_name
+					self.name = prefix + " - " + self.account_name
 				else:
 					self.name = self.account_name
-
-		# update root type
-		if not self.root_type and self.parent_chart_of_account:
+		if self.parent_chart_of_account:
 			self.root_tye = frappe.db.get_value("Chart Of Account",self.parent_chart_of_account,"root_type")
