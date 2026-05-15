@@ -1,15 +1,11 @@
 import frappe
-from frappe.utils import date_diff,today 
-from frappe.utils.data import strip
-from frappe import _
-from py_linq import Enumerable
 
 def execute(filters=None): 
 	validate(filters)
 	report_data = []
 	skip_total_row=False
 	report_data = get_report_data(filters) 
-	return get_columns(filters), report_data, None, None, get_report_summary(report_data,filters),skip_total_row
+	return get_columns(filters), report_data, None, None, None,skip_total_row
  
 def validate(filters):
 	if filters.start_date and filters.end_date:
@@ -21,57 +17,40 @@ def validate(filters):
  
 def get_columns(filters):
 	return [
-		{"label":"Doc. #", "fieldname":"name","fieldtype":"Link","options":"Expense Payments", "align":"center"},
-		{"label":"Date",  "fieldname":"posting_date","fieldtype":"Date", "align":"center",},
-		{"label":"Reference", "fieldname":"reference_no","fieldtype":"Data","align":"left"},
-  		{"label":"Expense", "fieldname":"expense","fieldtype":"Link","options":"Expense","align":"left"},
-		{"label":"Branch", "fieldname":"business_branch","fieldtype":"Data","align":"left","width":120},
-		{"label":"Vendor", "fieldname":"vendor_name","fieldtype":"Data","align":"left","width":100},
-		{"label":"Payment Type", "fieldname":"payment_type","fieldtype":"Data","align":"left","width":100},
-		{"label":"Expense Amt", "fieldname":"expense_amount","fieldtype":"Currency","align":"right","width":100},
-		{"label":"Balance", "fieldname":"balance","fieldtype":"Currency","align":"right","width":100},
-  		{"label":"Payment Amount", "fieldname":"payment_amount","fieldtype":"Currency","align":"right","width":100}
+		{"label":"Expense", "fieldname":"expense","fieldtype":"Link","options":"Expense","align":"left","width":200},
+		{"label":"Date",  "fieldname":"posting_date","fieldtype":"Date", "align":"center","width":150},
+		{"label":"Branch", "fieldname":"business_branch","fieldtype":"Data","align":"center","width":150},
+		{"label":"Payment Type", "fieldname":"payment_type","fieldtype":"Data","align":"center","width":200},
+		{"label":"Expense Amount", "fieldname":"expense_amount","fieldtype":"Currency","align":"right","width":150},
+		{"label":"Payment Amount", "fieldname":"payment_amount","fieldtype":"Currency","align":"right","width":150}
 	]
  
 def get_conditions(filters):
-	conditions = " a.docstatus = 1 "
-	conditions += " AND a.posting_date between '{}' AND '{}'".format(filters.start_date,filters.end_date)
+	conditions = " b.docstatus = 1 "
+	conditions += " AND b.posting_date between '{}' AND '{}'".format(filters.start_date,filters.end_date)
 	if filters.get("payment_type_group"):
-		conditions += " AND a.payment_type_group in %(payment_type_group)s"
+		conditions += " AND c.payment_type_group in %(payment_type_group)s"
 	if filters.get("payment_type"):
 		conditions += " AND a.payment_type in %(payment_type)s"
-	if filters.get("vendor_group"):
-		conditions += " AND a.vendor_group in %(vendor_group)s"
-	if filters.get("vendor"):
-		conditions += " AND a.vendor = %(vendor)s"
 	if filters.get("expense"):
-		conditions += " AND a.expense = %(expense)s"
-	conditions += " AND a.business_branch in %(business_branch)s"
+		conditions += " AND a.parent = %(expense)s"
+	if filters.get("business_branch"):
+		conditions += " AND b.business_branch in %(business_branch)s"
 	return conditions
 
 def get_report_data(filters):
 	sql = """select  
-			name,
-			a.posting_date,
-			a.business_branch,
-			a.reference_no,
-			a.expense,
-			concat(a.vendor ,'-',a.vendor_name) as vendor_name,
-			a.expense_amount,
+			b.posting_date,
+			b.business_branch,
+			a.parent as expense,
 			a.payment_type,
-			a.total_paid,
-			a.balance,
-   			a.payment_amount
+			b.total_amount as expense_amount,
+			(a.amount * a.exchange_rate) as payment_amount
 		FROM `tabExpense Payments` AS a
+		inner join `tabExpense` as b on a.parent = b.name
+		inner join `tabPayment Type` as c on a.payment_type = c.name
 		WHERE
 			{}
 	""".format(get_conditions(filters))	
 	data = frappe.db.sql(sql,filters, as_dict=1)
 	return data
-
-def get_report_summary(data,filters):
-	report_summary = []
-	report_summary.append({"label":_("Expense Amount"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.expense_amount or 0)),"indicator":"blue"})	
-	report_summary.append({"label":_("Total Balance"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.balance or 0)),"indicator":"red"})
-	report_summary.append({"label":_("Total Payment Amount"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.payment_amount or 0)),"indicator":"green"})		
-	return report_summary

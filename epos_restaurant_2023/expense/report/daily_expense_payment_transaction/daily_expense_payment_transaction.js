@@ -48,22 +48,6 @@ frappe.query_reports["Daily Expense Payment Transaction"] = {
 			}
 		},		
 		{
-			"fieldname": "vendor_group",
-			"label": __("Vendor Group"),
-			"fieldtype": "MultiSelectList",
-			get_data: function(txt) {
-				
-				return frappe.db.get_link_options('Vendor Group', txt);
-			}
-		},
-		{
-			"fieldname": "vendor",
-			"label": __("Vendor"),
-			"fieldtype": "Link",
-			"options":"Vendor",
-			
-		},
-		{
 			"fieldname": "expense",
 			"label": __("Expense"),
 			"fieldtype": "Link",
