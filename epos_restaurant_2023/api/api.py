@@ -2712,22 +2712,32 @@ def get_voucher_info(name):
             
 @frappe.whitelist(allow_guest=1)
 def check_allow_access():    
-    import requests
+    def update_check_status(status):
+        last_id_check_existed = frappe.db.sql("select count(*) count from tabSingles where doctype = 'ePOS Settings' and field = 'last_id_check'", as_dict=1)
+        if last_id_check_existed[0]["count"] == 0:
+             frappe.db.sql("insert into tabSingles (doctype, field, value) values ('ePOS Settings', 'last_id_check', %(value)s)",{"value":datetime.now()})
+        else:
+            frappe.db.sql("update tabSingles set value = %(value)s where doctype = 'ePOS Settings' and field = 'last_id_check'",{"value":datetime.now()})
+        last_id_check_status_existed = frappe.db.sql("select count(*) count from tabSingles where doctype = 'ePOS Settings' and field = 'last_id_check_status'", as_dict=1)
+        if last_id_check_status_existed[0]["count"] == 0:
+             frappe.db.sql("insert into tabSingles (doctype, field, value) values ('ePOS Settings', 'last_id_check_status', %(value)s)",{"value":status})
+        else:
+            frappe.db.sql("update tabSingles set value = %(value)s where doctype = 'ePOS Settings' and field = 'last_id_check_status'",{"value":status})
+        frappe.db.commit()
     def is_url_online(url):
         try:
             response = requests.head(url, allow_redirects=True, timeout=5)
             return response.ok
         except requests.RequestException:
             return False
+    import requests
     settings = frappe.get_doc("ePOS Settings")
     url = "http://175.100.97.220:3121"
     if is_url_online(url):
         url = url + "/api/method/frappe.custom.doctype.allowed_access_customers.allowed_access_customers.get_allowed_access_customers?business_id={0}".format(settings.business_id)
         response = requests.get(url)
         resp = response.json().get("message","") or 0
-        frappe.db.sql("update tabSingles set value = %(value)s where doctype = 'ePOS Settings' and field = 'last_id_check'",{"value":datetime.now()})
-        frappe.db.sql("update tabSingles set value = %(value)s where doctype = 'ePOS Settings' and field = 'last_id_check_status'",{"value":resp})
-        frappe.db.commit()
+        update_check_status(resp)
         return resp
     else:
         last_check = datetime.strptime(settings.last_id_check, "%Y-%m-%d %H:%M:%S.%f")
@@ -2739,9 +2749,7 @@ def check_allow_access():
                 else:
                     return 0
             else:
-                frappe.db.sql("update tabSingles set value = %(value)s where doctype = 'ePOS Settings' and field = 'last_id_check'",{"value":datetime.now()})
-                frappe.db.sql("update tabSingles set value = %(value)s where doctype = 'ePOS Settings' and field = 'last_id_check_status'",{"value":1})
-                frappe.db.commit()
+                update_check_status(1)
                 return 1
         else:
             if last_check:
@@ -2753,13 +2761,11 @@ def get_estc_connection():
     site_config_path = os.path.join(site_path, "site_config.json")
     with open(site_config_path, "r") as f:
         data = json.load(f)
-    
     estc_connection = {
         "estc_central_url": data.get("estc_central_url",None) or "",
         "estc_payway_socket_server_url":data.get("estc_payway_socket_server_url", None) or "",
     }
     return estc_connection
-
 
 def has_internet(timeout=3):
     try:
@@ -2776,12 +2782,10 @@ def run_get_update_pos_station_license_enqueue():
         job_name="get_update_pos_license", # specify a job name
     )
 
-
 @frappe.whitelist(allow_guest=1)
 def run_get_update_pos_station_license():
     if not has_internet():
         frappe.throw(_("The server is not connected to the internet."))
-
     sql = """select 
             s.name,
             b.property_code,
