@@ -150,12 +150,9 @@
 import { reactive, inject, computed, useStore, useRouter, createResource, createToaster, i18n, ref,getApi } from '@/plugin';
 import { onMounted } from 'vue';
 import { useDisplay } from 'vuetify';
-
 const frappe = inject("$frappe");
 const db = frappe.db();
-
 const { t: $t } = i18n.global;
-
 const auth = inject("$auth");
 const pos_license = inject("$pos_license");
 const gv = inject('$gv');
@@ -167,11 +164,7 @@ const store = useStore();
 const languages = ref()
 const languageDisplay = ref('')
 let allowed = ref(true);
-
-// console.log(navigator.userAgent)
-
 store.state.isLoading = false;
-
 let state = reactive({
   username: "",
   password: "",
@@ -187,7 +180,6 @@ const isLoading = computed(() => {
 const device_name = computed(() => {
   return localStorage.getItem("device_name");
 });
-
 
 //on init
 onMounted(async () => {
@@ -277,9 +269,6 @@ const onLogin = async () => {
   }).catch((error)=>{
     store.dispatch('endLoading');
   })
-
-  
-
 }
 
 function getCurrentUserInfo(user) {
@@ -313,6 +302,7 @@ function checkPromotionDay() {
     }
   });
 }
+
 function onExitWindow() {
   const data = {
     action: "exit",

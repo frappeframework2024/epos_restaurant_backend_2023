@@ -1,5 +1,6 @@
 <template>
-    <v-app>
+   
+    <v-app v-if="allowed">
         <v-app-bar :elevation="2" style="background: linear-gradient(135deg, #c56d1f, #e79845);color: #fff;">
             <v-app-bar-title>{{ appTitle }}</v-app-bar-title>
             <template #prepend>
@@ -64,6 +65,12 @@
             <router-view />
         </v-main>
     </v-app>
+     <div v-else class="h-screen flex items-center justify-center">
+        <div class="text-center">
+            <h1 class="text-2xl font-bold mb-4" style="font-family: Khmer OS Siemreap;">Something went wrong</h1>
+            <p class="text-lg" style="font-family: Khmer OS Siemreap;">Please contact system support.</p>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -72,10 +79,7 @@ import MainLayoutDrawer from './MainLayoutDrawer.vue';
 import ComCurrentUserAvatar from './components/ComCurrentUserAvatar.vue';
 import ComToolbar from '../ComToolbar.vue';
 import ComTimeUpdate from './components/ComTimeUpdate.vue';
-
-
-
-
+import { ref,getApi } from '@/plugin';
 export default {
     inject: ["$auth", "$gv"],
     name: "MainLayout",
@@ -88,12 +92,13 @@ export default {
         },
         isWindow() {
             return localStorage.getItem('is_window') == '1';
-        }
+        },
     },
     data() {
         return {
             drawer: false,
-            isFullscreen: true
+            isFullscreen: true,
+            allowed: true
         }
     },
     components: {
@@ -103,8 +108,14 @@ export default {
         ComToolbar,
         ComTimeUpdate
     },
+    async mounted() {
+        await this.checkAllowed();
+    },
     methods: {
-
+        async checkAllowed() {
+            const result = await getApi("api.check_allow_access");
+            this.allowed = result.message == 1;
+        },
         onHome() {
             this.$router.push({ name: 'Home' })
         },
