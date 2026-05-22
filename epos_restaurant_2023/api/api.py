@@ -2729,10 +2729,15 @@ def check_allow_access():
         return response.json().get("message","") or 0
     else:
         last_check = datetime.strptime(settings.last_id_check, "%Y-%m-%d %H:%M:%S.%f")
-        if last_check and (datetime.now() - last_check).days < 7:
-            return 1
+        if last_check:
+            if (datetime.now() - last_check).days < 7:
+                return 1
+            else:
+                return 0
         else:
-            return 0
+            frappe.db.sql("update tabSingles set value = %(value)s where doctype = 'ePOS Settings' and field = 'last_id_check'",{"value":datetime.now()})
+            frappe.db.commit()
+            return 1
 
 @frappe.whitelist(allow_guest=True)
 def get_estc_connection():
