@@ -1,5 +1,5 @@
 <template>
-  <v-row class="mt-0 mb-0 h-screen">
+  <v-row v-if="allowed" class="mt-0 mb-0 h-screen">
     <v-col md="6" lg="8" class="pa-0 d-sm-none d-none d-md-block">
       <div class="h-screen bg-cover bg-no-repeat bg-center"
         v-bind:style="{ 'background-image': 'url(' + setting?.login_background + ')' }">
@@ -139,12 +139,18 @@
       </div>
     </v-col>
   </v-row>
-
+  <div v-else class="h-screen flex items-center justify-center">
+    <div class="text-center">
+      <h1 class="text-2xl font-bold mb-4" style="font-family: Khmer OS Siemreap;">Something went wrong</h1>
+      <p class="text-lg" style="font-family: Khmer OS Siemreap;">Please contact system support.</p>
+    </div>
+  </div>
 </template>
 <script setup>
 import { reactive, inject, computed, useStore, useRouter, createResource, createToaster, i18n, ref,getApi } from '@/plugin';
 import { onMounted } from 'vue';
 import { useDisplay } from 'vuetify';
+
 const frappe = inject("$frappe");
 const db = frappe.db();
 
@@ -160,6 +166,7 @@ const router = useRouter();
 const store = useStore();
 const languages = ref()
 const languageDisplay = ref('')
+let allowed = ref(true);
 
 // console.log(navigator.userAgent)
 
@@ -183,10 +190,17 @@ const device_name = computed(() => {
 
 
 //on init
-onMounted(() => {
+onMounted(async () => {
   localStorage.removeItem('current_user');
   localStorage.removeItem('make_order_auth');
-
+  await getApi("api.check_allow_access").then(result=>{
+      if(result.message == 1){
+          allowed.value = true; 
+      }
+      else{
+          allowed.value = false;
+      }
+  })
   db.getDocList("POS Translation", {
     fields: ["name", "language_name", "flag"]
   }).then((r) => {

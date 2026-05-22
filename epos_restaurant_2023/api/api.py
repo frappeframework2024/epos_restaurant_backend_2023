@@ -2712,10 +2712,27 @@ def get_voucher_info(name):
             
 @frappe.whitelist(allow_guest=1)
 def check_allow_access():    
-    return "allowed"
-
-
-
+    import requests
+    def is_url_online(url):
+        try:
+            response = requests.head(url, allow_redirects=True, timeout=5)
+            return response.ok
+        except requests.RequestException:
+            return False
+    settings = frappe.get_doc("ePOS Settings")
+    url = "http://175.100.97.220:3121"
+    if is_url_online(url):
+        url = url + "/api/method/frappe.custom.doctype.allowed_access_customers.allowed_access_customers.get_allowed_access_customers?business_id={0}".format(settings.business_id)
+        response = requests.get(url)
+        frappe.db.sql("update tabSingles set value = %(value)s where doctype = 'ePOS Settings' and field = 'last_id_check'",{"value":datetime.now()})
+        frappe.db.commit()
+        return response.json().get("message","") or 0
+    else:
+        last_check = datetime.strptime(settings.last_id_check, "%Y-%m-%d %H:%M:%S.%f")
+        if last_check and (datetime.now() - last_check).days < 7:
+            return 1
+        else:
+            return 0
 
 @frappe.whitelist(allow_guest=True)
 def get_estc_connection():

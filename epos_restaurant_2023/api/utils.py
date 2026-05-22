@@ -80,7 +80,6 @@ def create_custom_field():
 
 @frappe.whitelist()
 def validate_queue_job_status(doc, method=None, *args, **kwargs):
-    
     if not frappe.local.conf.maintenance_mode and frappe.session.user !="Administrator":
         status =  get_scheduler_status()
         if status["status"]!="active":
@@ -88,9 +87,10 @@ def validate_queue_job_status(doc, method=None, *args, **kwargs):
             frappe.throw("Schedule job status is not running. Please contact your system administrator.")
 
 def successful_login(login_manager):
-    # frappe.msgprint("login success")
-    pass
-    
+    from epos_restaurant_2023.api.api import check_allow_access
+    if not check_allow_access():
+        frappe.msgprint("<center><div style='font-size: 24px;'><b>Something went wrong</b></div> </br> Please contact system support.</center>")
+        raise frappe.AuthenticationError    
 
 @frappe.whitelist()
 def generate_data_for_sync_record(doc, method=None, *args, **kwargs):

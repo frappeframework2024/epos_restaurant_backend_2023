@@ -51,13 +51,13 @@ def get_report_data(filters):
         sql= sql + " and business_branch in %(business_branch)s "
     
     if filters.stock_location:
-        sql= sql + " and  stock_location in %(stock_location)s "
+        sql= sql + " and  slp.stock_location in %(stock_location)s "
     
     if filters.vendor:
-        sql= sql + " and  vendor in %(vendor)s "
+        sql= sql + " and  p.vendor in %(vendor)s "
 
     if filters.product_category:
-        sql= sql + " and  product_category = %(product_category)s "
+        sql= sql + " and  slp.product_category = %(product_category)s "
         
     if filters.product_group and not filters.product_category:
         filters.product_groups = get_product_category_by_product_group(filters.product_group)
@@ -77,23 +77,15 @@ def get_report_data(filters):
         if (filters.expired_day or 0) ==0:
             frappe.throw("Please enter expired within day")
         sql = sql + " and coalesce(expired_date,'')!='' and has_expired_date = 1 and datediff(expired_date,now()) between 0 and %(expired_day)s"
-        
-        
     data = frappe.db.sql(sql,filters,as_dict=1)
-   
-    
     if filters.order_by:
         sql= sql + " order by {} {}".format( get_order_by_field(filters), filters.order_by_type)
-            
-  
     return data
 
 def get_order_by_field(fitlers):
     data = ["Product Name","Product Code","Category","Quantity","Expired Date"]
     key = ["product_name","product_code","product_category","quantity","expired_date"]
     return key[data.index(fitlers.order_by)]
-
-
 
 def  get_product_category_by_product_group(parent):
     sql="""
@@ -109,12 +101,10 @@ def  get_product_category_by_product_group(parent):
             SELECT
                 t.name as account,
                 t.parent_product_category
-                
             FROM
                 `tabProduct Category` t
             JOIN
-                hierarchy h ON t.parent_product_category = h.name
-           
+                hierarchy h ON t.parent_product_category = h.name  
         )
         SELECT
             name
@@ -124,6 +114,3 @@ def  get_product_category_by_product_group(parent):
     """
     data = frappe.db.sql(sql,{"parent":parent},as_dict=1)
     return [d.get("name") for d in data]
-
-    
-    
