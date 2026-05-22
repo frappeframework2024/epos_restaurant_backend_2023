@@ -19,10 +19,7 @@ app_include_js = [
     "/assets/epos_restaurant_2023/js/echarts.min.js",
     "/assets/epos_restaurant_2023/js/html2canvas.min.js",
 ]
- 
-
 additional_print_settings =["compact_item_print"]
-
 
 
 # include js, css files in header of web template
@@ -94,7 +91,8 @@ before_migrate =[
 ]
 after_migrate = [
     "epos_restaurant_2023.migrate.after_migrate",
-    "epos_restaurant_2023.store_procedures.execute.execute"
+    "epos_restaurant_2023.store_procedures.execute.execute",
+    "epos_restaurant_2023.patches.report_override.apply_patch",
 ]
  
 # Uninstallation
@@ -175,9 +173,6 @@ def after_request(response):
     response.headers["Access-Control-Allow-Headers"] = "Content-Type"
     response.headers["Cache-Control"] = "no-cache"
     return response
-
-
-
 #Scheduled Tasks
 #---------------
 
@@ -204,13 +199,11 @@ scheduler_events = {
         
         "0 1 * * *":[
             "epos_restaurant_2023.api.archive_data.delete_archive_transaction", # 1 AM every daty
-           
         ],
 
         "0 */3 * * *":[ ##Every 3 hours at minute 0
             "epos_restaurant_2023.api.api.run_get_update_pos_station_license_enqueue"
         ]
-
 	},
     "all": [
 		"epos_restaurant_2023.api.custom_reminder.send_reminders",
@@ -223,14 +216,7 @@ scheduler_events = {
     "weekly":[
         "epos_restaurant_2023.api.coupon_transaction_backup_db.delete_last_30_days_data"
     ]
-   
-
-    
 }
-
-
-
-
 # Testing
 # -------
 
