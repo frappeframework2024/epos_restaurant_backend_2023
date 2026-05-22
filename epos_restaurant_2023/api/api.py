@@ -2724,20 +2724,28 @@ def check_allow_access():
     if is_url_online(url):
         url = url + "/api/method/frappe.custom.doctype.allowed_access_customers.allowed_access_customers.get_allowed_access_customers?business_id={0}".format(settings.business_id)
         response = requests.get(url)
+        resp = response.json().get("message","") or 0
         frappe.db.sql("update tabSingles set value = %(value)s where doctype = 'ePOS Settings' and field = 'last_id_check'",{"value":datetime.now()})
+        frappe.db.sql("update tabSingles set value = %(value)s where doctype = 'ePOS Settings' and field = 'last_id_check_status'",{"value":resp})
         frappe.db.commit()
-        return response.json().get("message","") or 0
+        return resp
     else:
         last_check = datetime.strptime(settings.last_id_check, "%Y-%m-%d %H:%M:%S.%f")
-        if last_check:
-            if (datetime.now() - last_check).days < 7:
-                return 1
+        last_status = settings.last_id_check_status
+        if last_status == 1:
+            if last_check:
+                if (datetime.now() - last_check).days < 7:
+                    return 1
+                else:
+                    return 0
             else:
-                return 0
+                frappe.db.sql("update tabSingles set value = %(value)s where doctype = 'ePOS Settings' and field = 'last_id_check'",{"value":datetime.now()})
+                frappe.db.sql("update tabSingles set value = %(value)s where doctype = 'ePOS Settings' and field = 'last_id_check_status'",{"value":1})
+                frappe.db.commit()
+                return 1
         else:
-            frappe.db.sql("update tabSingles set value = %(value)s where doctype = 'ePOS Settings' and field = 'last_id_check'",{"value":datetime.now()})
-            frappe.db.commit()
-            return 1
+            if last_check:
+                return 0
 
 @frappe.whitelist(allow_guest=True)
 def get_estc_connection():
@@ -2750,8 +2758,6 @@ def get_estc_connection():
         "estc_central_url": data.get("estc_central_url",None) or "",
         "estc_payway_socket_server_url":data.get("estc_payway_socket_server_url", None) or "",
     }
-
-    
     return estc_connection
 
 
