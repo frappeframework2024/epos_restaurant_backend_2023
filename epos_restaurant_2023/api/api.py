@@ -2732,7 +2732,7 @@ def check_allow_access():
             return False
     import requests
     settings = frappe.get_doc("ePOS Settings")
-    url = "http://175.100.97.220:3121"
+    url = "http://webmonitor.inccloudserver.com:3121"
     if is_url_online(url):
         url = url + "/api/method/frappe.custom.doctype.allowed_access_customers.allowed_access_customers.get_allowed_access_customers?business_id={0}".format(settings.business_id)
         response = requests.get(url)
