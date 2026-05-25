@@ -540,7 +540,7 @@ def math_round(value, precision = None):
 	# 1. Define the precision context (e.g., 1E-2 for 2 decimal places)
 	power = decimal.Decimal('1E-' + str(precision))
 	# 2. Convert value to a string first to ensure accurate Decimal representation
-	dec_value = decimal.Decimal(str(value)) 
+	dec_value = decimal.Decimal(str(value or 0)) 
 	# 3. Quantize (round) using the standard ROUND_HALF_UP rule
 	result = dec_value.quantize(power, rounding=decimal.ROUND_HALF_UP)
 	# Return as a float for consistency with your original function signature
@@ -1494,67 +1494,6 @@ def on_update_coupon_information(self):
 
 			frappe.db.sql(update_sale_coupon_sql, {"sale":self.name,"coupon_codes": [c.coupon_code for c in sale_coupons ]})
 
-def validate_tax(doc):
-		
-		if doc.tax_rule:
-			amount = doc.sub_total
-			if (doc.rate_include_tax == 1) :
-				priceBefore = get_ratebefore_tax(doc.sub_total - doc.total_discount,doc.tax_rule, doc.tax_1_rate, doc.tax_2_rate, doc.tax_3_rate)
-				amount =  priceBefore + doc.total_discount  
-			
-			doc.selling_price = 0 if doc.quantity == 0 else   ((amount / doc.quantity) or 0) - (doc.modifiers_price or 0)
-
-
-			#Tax 1
-			doc.taxable_amount_1 = amount
-			#cal tax1 taxable after disc.
-			if doc.calculate_tax_1_after_discount == 1:
-				doc.taxable_amount_1 =   amount - doc.total_discount			 
-				
-			doc.taxable_amount_1 *= (doc.percentage_of_price_to_calculate_tax_1/100)
-			doc.tax_1_amount =  (doc.taxable_amount_1 or 0) * ((doc.tax_1_rate or 0)/100)
-
-			#Tax 2
-			doc.taxable_amount_2 = amount
-			#cal tax2 taxable after disc.
-			if doc.calculate_tax_2_after_discount==1:
-				doc.taxable_amount_2 = amount  - doc.total_discount
-
-			#cal tax2 taxable after add tax1
-			if doc.calculate_tax_2_after_adding_tax_1==1:
-				doc.taxable_amount_2 +=  doc.tax_1_amount
-
-			doc.taxable_amount_2 *= (doc.percentage_of_price_to_calculate_tax_2/100)
-			doc.tax_2_amount =  (doc.taxable_amount_2 or 0) *  ((doc.tax_2_rate or 0) /100)
-
-			#tax 3
-			doc.taxable_amount_3 =  amount
-			#cal tax3 taxable after disc.
-			if doc.calculate_tax_3_after_discount==1:
-				doc.taxable_amount_3 = amount - doc.total_discount 
-			
-			#cal tax3 taxable after add tax1
-			if doc.calculate_tax_3_after_adding_tax_1==1:
-				doc.taxable_amount_3 =   doc.taxable_amount_3 +  doc.tax_1_amount 
-			
-			#cal tax3 taxable after add tax2
-			if doc.calculate_tax_3_after_adding_tax_2==1:
-				doc.taxable_amount_3 = doc.taxable_amount_3 +  doc.tax_2_amount 
-			
-			doc.taxable_amount_3 *= (doc.percentage_of_price_to_calculate_tax_3/100)
-			doc.tax_3_amount =  (doc.taxable_amount_3 or 0) *  ((doc.tax_3_rate or 0) /100)
-			
-			#total tax
-			doc.total_tax = doc.tax_1_amount + doc.tax_2_amount + doc.tax_3_amount
-		else:
-			doc.taxable_amount_1 =0
-			doc.tax_1_amount=0
-			doc.taxable_amount_2 =0
-			doc.tax_2_amount=0
-			doc.taxable_amount_3 =0
-			doc.tax_3_amount=0
-			doc.total_tax =0
-		
 def get_ratebefore_tax(amount, t_rule, tax_1_rate, tax_2_rate, tax_3_rate):
 	tax_rule = frappe.get_cached_doc("Tax Rule",t_rule)
 	amount=amount or 0
@@ -1593,6 +1532,81 @@ def get_ratebefore_tax(amount, t_rule, tax_1_rate, tax_2_rate, tax_3_rate):
 	price = amount /  (tax_rate_con or 1)
 
 	return  price
+
+
+def validate_tax(doc):
+		
+		if doc.tax_rule:
+			# amount = doc.sub_total
+			amount = _price_for_calc_tax(doc,1)
+			# if (doc.rate_include_tax == 1) :
+			# 	priceBefore = get_ratebefore_tax(doc.sub_total - doc.total_discount,doc.tax_rule, doc.tax_1_rate, doc.tax_2_rate, doc.tax_3_rate)
+			# 	amount =  priceBefore + doc.total_discount  
+			
+			doc.selling_price = 0 if doc.quantity == 0 else   ((amount / doc.quantity) or 0) - (doc.modifiers_price or 0)
+
+
+			#Tax 1
+			# doc.taxable_amount_1 = amount
+			doc.taxable_amount_1 = _price_for_calc_tax(doc, doc.calculate_tax_1_after_discount)
+			# #cal tax1 taxable after disc.
+			# if doc.calculate_tax_1_after_discount == 1:
+			# 	doc.taxable_amount_1 =   amount - doc.total_discount			 
+				
+			doc.taxable_amount_1 *= (doc.percentage_of_price_to_calculate_tax_1/100)
+			doc.tax_1_amount =  (doc.taxable_amount_1 or 0) * ((doc.tax_1_rate or 0)/100)
+
+			#Tax 2
+			doc.taxable_amount_2 = _price_for_calc_tax(doc, doc.calculate_tax_2_after_discount)
+			# doc.taxable_amount_2 = amount
+			# #cal tax2 taxable after disc.
+			# if doc.calculate_tax_2_after_discount==1:
+			# 	doc.taxable_amount_2 = amount  - doc.total_discount
+
+			#cal tax2 taxable after add tax1
+			if doc.calculate_tax_2_after_adding_tax_1==1:
+				doc.taxable_amount_2 +=  doc.tax_1_amount
+
+			doc.taxable_amount_2 *= (doc.percentage_of_price_to_calculate_tax_2/100)
+			doc.tax_2_amount =  (doc.taxable_amount_2 or 0) *  ((doc.tax_2_rate or 0) /100)
+
+			#tax 3
+			doc.taxable_amount_3 =  _price_for_calc_tax(doc, doc.calculate_tax_3_after_discount)
+			# doc.taxable_amount_3 =  amount
+			# #cal tax3 taxable after disc.
+			# if doc.calculate_tax_3_after_discount==1:
+			# 	doc.taxable_amount_3 = amount - doc.total_discount 
+			
+			#cal tax3 taxable after add tax1
+			if doc.calculate_tax_3_after_adding_tax_1==1:
+				doc.taxable_amount_3 =   doc.taxable_amount_3 +  doc.tax_1_amount 
+			
+			#cal tax3 taxable after add tax2
+			if doc.calculate_tax_3_after_adding_tax_2==1:
+				doc.taxable_amount_3 = doc.taxable_amount_3 +  doc.tax_2_amount 
+			
+			doc.taxable_amount_3 *= (doc.percentage_of_price_to_calculate_tax_3/100)
+			doc.tax_3_amount =  (doc.taxable_amount_3 or 0) *  ((doc.tax_3_rate or 0) /100)
+			
+			#total tax
+			doc.total_tax = doc.tax_1_amount + doc.tax_2_amount + doc.tax_3_amount
+		else:
+			doc.taxable_amount_1 =0
+			doc.tax_1_amount=0
+			doc.taxable_amount_2 =0
+			doc.tax_2_amount=0
+			doc.taxable_amount_3 =0
+			doc.tax_3_amount=0
+			doc.total_tax =0
+
+def _price_for_calc_tax(doc, calc_after_tax):
+	amount = doc.sub_total
+	if (doc.rate_include_tax == 1) :
+		priceBefore = get_ratebefore_tax(doc.sub_total - (0 if calc_after_tax == 0  else doc.total_discount),doc.tax_rule, doc.tax_1_rate, doc.tax_2_rate, doc.tax_3_rate)
+		amount =  priceBefore + (0 if calc_after_tax == 0  else doc.total_discount)
+
+	return amount
+
 
 def update_pos_reservation_status(self):
 	if self.from_reservation:

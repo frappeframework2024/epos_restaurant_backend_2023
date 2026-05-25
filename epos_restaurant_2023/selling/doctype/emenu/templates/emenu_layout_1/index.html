@@ -126,7 +126,7 @@
                     {%for p in products|selectattr('pos_menu', 'equalto', m.menu)|list %}
  
                     <div class="product_detail col-6 col-md-6 col-lg-4 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
-                        <div class="col-inner"> 
+                        <div class="col-inner">   
                             <a href="/product_detail?emenu_name={{doc.name}}&product_code={{p.product_code}}&category={{p.name}}" style="text-decoration: none;">
                                 <div class="flex p-0 p-md-3 items-inner-1 m-0 h-100">
                                     <div class="p-0 wrapper-image" style="background: url('/files/food_bg_image.jpg');">

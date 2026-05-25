@@ -1,18 +1,74 @@
 {% if doc.template_name  %}
     {% extends "templates/emenu_templates/{}.html".format(doc.template_name) %}
 {%endif%}
+
+{% block header %}
+<head>
+    <title>{{doc.product_name_en}}</title>
+
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="/assets/epos_restaurant_2023/images/favicon.ico"
+    />
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />   
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap"
+      rel="stylesheet"
+    />
+	<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+
+</head>
+{% endblock %}
+
 {% block style%}
 <style>
   {{emenu.css}}  
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-weight: 600;
+        font-family: 'Sora', sans-serif;
+        font-optical-sizing: auto; 
+        font-style: normal;
+    }
+
+    body {
+        font-family: 'Outfit', sans-serif; 
+
+    }
 </style>
     
 {% endblock %}
 
 {% block page_content %}
-
-
-<div class=" overflow-hidden modal-pp-items contain-all">    
-    <div class="modal-img px-3" style="background: #fff;">
+ 
+<div class="modal-pp-items contain-all">    
+    <div class="modal-img" style="background: #fff;">
         
         <div class="position-relative" style="position: relative;">
             <div class="position-relative d-flex image-content">
@@ -30,7 +86,7 @@
             </div>
         {% endif %}
             </div>
-            {% if doc.discount_value > 0 %}
+            <!-- {% if doc.discount_value > 0 %}
                 <div class="position-absolute rounded p-1" style="top: 5px; background: #db3c76;left: 5px;">
                     {% if (doc.prices|length) > 0 %}
                         {%set _prices = doc.prices |selectattr('price_rule', 'equalto', emenu.default_price_rule) | list  %}
@@ -53,7 +109,7 @@
                         {% endif %}
                     {% endif %}
                 </div>
-            {% endif %} 
+            {% endif %}  -->
             <div class="container-dis">
                 <div class="content-on-image">
                     <div class="promotion-card bg-theme-color">{{doc.product_code}}</div>
@@ -80,27 +136,27 @@
                                 <div class="row-price">
                                     {% if doc.discount_value > 0 %}
                                     {%if price.portion != "Normal" %} <div>
-                                        <span class="price-cus portion">{{price.portion}}</span></div>
+                                        <span class="price-cus-xx portion">{{price.portion}}</span></div>
                                     {%endif%}
                                     -
                                         <div class="content-portion">    
                                             
                                             {% if doc.discount_type=='Percent' %}
-                                                <div class="price-cus">{{frappe.format((price.price or 0) - ((price.price or 0)* (doc.discount_value/100) ),{"fieldtype":"Currency"})}}</div>
+                                                <div class="price-cus-xx">{{frappe.format((price.price or 0) - ((price.price or 0)* (doc.discount_value/100) ),{"fieldtype":"Currency"})}}</div>
                                             {% else %}
-                                                <div class="price-cus">{{frappe.format((price.price or 0) - (doc.discount_value) ,{"fieldtype":"Currency"})}}</div>
+                                                <div class="price-cus-xx">{{frappe.format((price.price or 0) - (doc.discount_value) ,{"fieldtype":"Currency"})}}</div>
                                             {%endif%}
                                             <del  style="color:#ccc">{{frappe.format(price.price or 0,{"fieldtype":"Currency"})}}</del>
                                         </div>
-                                        <div class="content-dis">
+                                        <!-- <div class="content-dis">
                                             {% if doc.discount_type=='Percent' %}
                                             <div >{{doc.discount_value}} %</div>
                                         {% else %}
                                             <div>{{(doc.discount_value ,{"fieldtype":"Currency"})}}</div>
                                         {%endif%}
-                                        </div>
+                                        </div> -->
                                     {% else %}
-                                        <div class="price-cus portion">
+                                        <div class="price-cus-xx portion">
                                             {%if price.portion != "Normal" %} <span>{{price.portion}}:</span> {%endif%}
                                             {{frappe.format(price.price or 0,{"fieldtype":"Currency"})}}
                                         </div>
@@ -112,13 +168,13 @@
                                     {% if doc.discount_value > 0 %}
                                       
                                         {% if doc.discount_type=='Percent' %}
-                                            <div class="price-cus">{{frappe.format((doc.price or  0) - ((doc.price or 0)* (doc.discount_value/100) ),{"fieldtype":"Currency"})}}</div>
+                                            <div class="price-cus-xx">{{frappe.format((doc.price or  0) - ((doc.price or 0)* (doc.discount_value/100) ),{"fieldtype":"Currency"})}}</div>
                                         {%else%}
-                                            <div class="price-cus">{{frappe.format((doc.price or 0) - (doc.discount_value) ,{"fieldtype":"Currency"})}}</div>
+                                            <div class="price-cus-xx">{{frappe.format((doc.price or 0) - (doc.discount_value) ,{"fieldtype":"Currency"})}}</div>
                                         {%endif%}
                                         <del  style="color: #ccc;">{{frappe.format(doc.price,{"fieldtype":"Currency"})}}</del>
                                     {% else %}
-                                        <div class="price-cus">{{frappe.format(doc.price,{"fieldtype":"Currency"})}}</div>
+                                        <div class="price-cus-xx">{{frappe.format(doc.price,{"fieldtype":"Currency"})}}</div>
                                     {% endif %}
 
                                 </div>
@@ -175,7 +231,7 @@
         </div> -->
     </div>
 
-    <div class="p-3">
+    <!-- <div class="p-3">
         <div class="content-footer">
             {% if emenu.hotel_room_call_number %}
                 <div style="color:#ff5959" class="text-center">From Hotel Room: Please Deal {{emenu.hotel_room_call_number}}</div>
@@ -187,7 +243,7 @@
             <div style="font-weight: 500;" class="text-center">{{emenu.address}} </div>
             {% endif %}
         </div>
-    </div>
+    </div> -->
 </div>
 <script>
     function goBack (p) {

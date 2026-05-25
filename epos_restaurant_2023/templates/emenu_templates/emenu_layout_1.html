@@ -760,6 +760,11 @@
 			height: 100%;
 			    transition: transform 0.4s ease;
 			opacity: 0;
+			visibility: hidden;
+		}
+		.screen-overlay.show {
+			opacity: 1;
+			visibility: visible;
 		}
 
 
@@ -1208,9 +1213,11 @@
       			const hamburgerNav = document.getElementById("hamburgerNav");
       const smallScxCate = document.querySelector(".small-scx-cate");
       const hamburgerNavHideMenu = document.getElementById("hamburgerNavHideMenu");
+	  const screenOverlay = document.querySelector(".screen-overlay");
 
       hamburgerNav.addEventListener("click", function () {
           smallScxCate.classList.add("show");
+			screenOverlay.classList.add("show");
 
           // optional fade button
           this.style.opacity = "0";
@@ -1219,6 +1226,7 @@
 
       hamburgerNavHideMenu.addEventListener("click", function () {
           smallScxCate.classList.remove("show");
+			screenOverlay.classList.remove("show");
 
           hamburgerNav.style.opacity = "1";
           hamburgerNav.style.pointerEvents = "auto";

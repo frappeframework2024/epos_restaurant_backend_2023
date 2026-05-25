@@ -633,8 +633,11 @@ export default class Sale {
         sp.sale_discount_amount = Number((sp.sale_discount_amount + Number.EPSILON).toFixed(precision)); 
         sp.total_discount = sp.discount_amount + sp.sale_discount_amount; 
         this.onCalculateTax(sp);
+
         sp.amount = sp.sub_total - sp.discount_amount ;
+
         sp.total_revenue = (sp.sub_total - sp.total_discount);
+        
         if(sp.rate_include_tax==0){
             sp.amount = sp.sub_total - sp.discount_amount + sp.total_tax ;
             sp.total_revenue = (sp.sub_total - sp.total_discount) + sp.total_tax;
@@ -731,35 +734,54 @@ export default class Sale {
         this.updateSaleProduct(sp);
     }
 
-    //on calculate tax
-    onCalculateTax(sp) {
-
+    _priceForCalcTax(sp, cal_after_disc){
         let amount = sp.sub_total
         if (sp.rate_include_tax == 1) { 
-            if(sp.tax_rule_data != undefined){
-
-                let priceBefore = this.getRateBeforeTax(sp.sub_total - sp.total_discount,JSON.parse(sp.tax_rule_data), sp.tax_1_rate, sp.tax_2_rate, sp.tax_3_rate)
-                amount =  priceBefore + sp.total_discount  
+            if(sp.tax_rule_data != undefined){ 
+                let priceBefore = this.getRateBeforeTax( sp.sub_total - (cal_after_disc==0?0: sp.total_discount),JSON.parse(sp.tax_rule_data), sp.tax_1_rate, sp.tax_2_rate, sp.tax_3_rate)
+                amount =  priceBefore +  (cal_after_disc==0?0: sp.total_discount)
             }
-        }  
-        sp.selling_price = (amount/sp.quantity) - (sp.modifiers_price||0)
-        //tax 1
-        sp.taxable_amount_1 = amount;
-        //tax 1 taxable amount
-        //if cal tax1 taxable after disc.
-        if (sp.calculate_tax_1_after_discount) {
-            sp.taxable_amount_1 = (amount - sp.total_discount);
-        }
+        } 
+        return   amount;       
+    }
+
+    //on calculate tax
+    onCalculateTax(sp) {
+ 
+        let amount = this._priceForCalcTax(sp,1)
+        // let amount = sp.sub_total
+        // if (sp.rate_include_tax == 1) { 
+        //     if(sp.tax_rule_data != undefined){
+        //         // let priceBefore = this.getRateBeforeTax(sp.sub_total - sp.total_discount,JSON.parse(sp.tax_rule_data), sp.tax_1_rate, sp.tax_2_rate, sp.tax_3_rate)
+        //         let priceBefore = this.getRateBeforeTax(sp.sub_total- sp.total_discount,JSON.parse(sp.tax_rule_data), sp.tax_1_rate, sp.tax_2_rate, sp.tax_3_rate)
+        //         amount =  priceBefore   + sp.total_discount
+        //     }
+        // }   
+
+        sp.selling_price = (amount/sp.quantity) - (sp.modifiers_price||0) 
+
+        // //tax 1
+        sp.taxable_amount_1 =   this._priceForCalcTax(sp,sp.calculate_tax_1_after_discount);
+        // sp.taxable_amount_1 = amount;
+        // //tax 1 taxable amount
+        // //if cal tax1 taxable after disc.
+        // if (sp.calculate_tax_1_after_discount) {
+        //     sp.taxable_amount_1 = (amount - sp.total_discount);
+        // }
+
         sp.taxable_amount_1 *= ((sp.percentage_of_price_to_calculate_tax_1 || 0) / 100);
         //cal tax 1 amount
         sp.tax_1_amount = sp.taxable_amount_1 * ((sp.tax_1_rate || 0) / 100);
+
+
         //tax 2
-        //tax 2 taxable amount
-        sp.taxable_amount_2 =amount;
-        //if cal tax2 taxable after disc.
-        if (sp.calculate_tax_2_after_discount) {
-            sp.taxable_amount_2 = (amount - sp.total_discount);
-        }
+        // //tax 2 taxable amount
+        sp.taxable_amount_2 =this._priceForCalcTax(sp,sp.calculate_tax_2_after_discount);
+        // sp.taxable_amount_2 =amount;
+        // //if cal tax2 taxable after disc.
+        // if (sp.calculate_tax_2_after_discount) {
+        //     sp.taxable_amount_2 = (amount - sp.total_discount);
+        // }
         sp.taxable_amount_2 *= ((sp.percentage_of_price_to_calculate_tax_2 || 0) / 100);
         //if cal tax2 taxable after add tax1
         if (sp.calculate_tax_2_after_adding_tax_1) {
@@ -767,13 +789,15 @@ export default class Sale {
         }
         //cal tax2 amount
         sp.tax_2_amount = sp.taxable_amount_2 * ((sp.tax_2_rate || 0) / 100);
+        
         //tax 3
-        //tax 3 taxable amount
-        sp.taxable_amount_3 = amount;
-        //if cal tax3 taxable after disc.
-        if (sp.calculate_tax_3_after_discount) {
-            sp.taxable_amount_3 = (amount - sp.total_discount);
-        }
+        // //tax 3 taxable amount
+        sp.taxable_amount_3 = this._priceForCalcTax(sp,sp.calculate_tax_3_after_discount);
+        // sp.taxable_amount_3 = amount;
+        // //if cal tax3 taxable after disc.
+        // if (sp.calculate_tax_3_after_discount) {
+        //     sp.taxable_amount_3 = (amount - sp.total_discount);
+        // }
         sp.taxable_amount_3 *= ((sp.percentage_of_price_to_calculate_tax_3 || 0) / 100);
         //if cal tax3 taxable after add tax1
         if (sp.calculate_tax_3_after_adding_tax_1) {
@@ -785,7 +809,7 @@ export default class Sale {
         }
         //cal tax3 amount
         sp.tax_3_amount = sp.taxable_amount_3 * ((sp.tax_3_rate || 0) / 100);
-        sp.total_tax = sp.tax_1_amount + sp.tax_2_amount + sp.tax_3_amount;
+        sp.total_tax = sp.tax_1_amount + sp.tax_2_amount + sp.tax_3_amount; 
     }
 
     onRateIncludeOrNotIncludeTaxClick(){ 
@@ -816,8 +840,8 @@ export default class Sale {
     }
 
     getRateBeforeTax(amount, tax_rule, tax_1_rate, tax_2_rate, tax_3_rate){
-		amount=amount || 0
-	 
+		amount= (amount || 0)
+
 		const t1_r = (tax_1_rate || 0) / 100
 		const t2_r = (tax_2_rate ||  0)  / 100
 		const t3_r = (tax_3_rate || 0)  / 100
@@ -843,9 +867,11 @@ export default class Sale {
 							+ (t1_r * t2_af_add_t1 * t2_r) 
 							+ t3_r + (t1_r * t3_af_add_t1 * t3_r) 
 							+ (t2_r * t3_af_add_t2 * t3_r)
-							+ (t1_r * t2_af_add_t1 * t2_r * t3_af_add_t2 * t3_r))
+							+ (t1_r * t2_af_add_t1 * t2_r * t3_af_add_t2 * t3_r))  
 		tax_rate_con = tax_rate_con || 1
+ 
 		price = amount /  (tax_rate_con ==0?1:tax_rate_con)
+        
 		return  price
 	}
 
@@ -889,6 +915,7 @@ export default class Sale {
         } else {
             this.sale.sale_discount = this.sale.discount;
         } 
+
         this.sale.sale_discount = parseFloat((this.sale.sale_discount + Number.EPSILON).toFixed(precision)); //new 
         this.sale.product_discount = this.getNumber(sp.sum("$.discount_amount"));
         this.sale.product_discount = Number( (this.sale.product_discount +Number.EPSILON).toFixed(precision)) //new

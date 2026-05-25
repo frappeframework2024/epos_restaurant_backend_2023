@@ -10,7 +10,7 @@
     <div class="d-flex justify-content-around owl-carousel owl-theme p-2" id="popular_product_carousel">
         {% for p in popular_products %}
         <div class="product_detail_mobile text-dark">
-            <div class="col-inner-ml">
+            <div class="col-inner-ml"> 
                 <a href="/product_detail?emenu_name={{doc.name}}&product_code={{p.product_code}}&category=populars" style="text-decoration: none;">
                     <div class="p-0 items-inner-1 m-0 h-100">
                         <div class="p-0 wrapper-image position-relative mobile_img" style="background: url('/files/food_bg_image.jpg');">
@@ -123,8 +123,8 @@
     <div class="row p-2">
         {% for p in popular_products %}
         <div class="product_detail col-6 col-md-6 col-lg-4 mb-3 text-dark" style="padding-left:5px;padding-right:5px">
-            <div class="col-inner"> 
-                <a href="/product_detail?emenu_name={{doc.name}}&product_code={{p.product_code}}&category={{p.name}}" style="text-decoration: none;">
+            <div class="col-inner">  
+                <a href="/product_detail?emenu_name={{doc.name}}&product_code={{p.product_code}}&category=populars" style="text-decoration: none;">
                     <div class="flex p-0 p-md-3 items-inner-1 m-0 h-100">
                         <div class="p-0 wrapper-image" style="background: url('/files/food_bg_image.jpg');">
                             <img loading="lazy" class="img pro-img-it" src="{{p.photo or " /files/food_bg_image.jpg"}}"/>
