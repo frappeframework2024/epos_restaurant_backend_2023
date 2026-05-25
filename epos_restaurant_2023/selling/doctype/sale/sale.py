@@ -139,19 +139,23 @@ class Sale(Document):
 
 
 		currency_precision = frappe.db.get_single_value('System Settings', 'currency_precision')
+  
 		if currency_precision=='':
 			currency_precision = "2"
 		
 		if Enumerable(self.payment).where(lambda x: (x.is_foc or 0) ==1).count()>=1:
 			self.is_foc = 1
 
+		total_rate_include_tax  = Enumerable(self.sale_products).where(lambda x:x.tax_rule and x.rate_include_tax == 1).sum(lambda x: x.total_tax)
+
 		total_quantity = Enumerable(self.sale_products).where(lambda x:(x.is_timer_product or 0) == 0).sum(lambda x: x.quantity or 0)
 		sub_total = Enumerable(self.sale_products).sum(lambda x: (x.quantity or 0)* (x.price or  0) + ((x.quantity or 0)*(x.modifiers_price or 0)) )
   
-		sale_discountable_amount =Enumerable(self.sale_products).where(lambda x:x.allow_discount ==1 and (x.discount_amount or 0)==0).sum(lambda x: (x.quantity or 0)* (x.price or  0) + + ((x.quantity or 0)*(x.modifiers_price or 0)))
+		sale_discountable_amount = Enumerable(self.sale_products).where(lambda x:x.allow_discount ==1 and (x.discount_amount or 0)==0).sum(lambda x: (x.quantity or 0)* (x.price or  0) + + ((x.quantity or 0)*(x.modifiers_price or 0)))
 
 		self.total_quantity = total_quantity
 		self.sale_discountable_amount = math_round(sale_discountable_amount  , int(currency_precision)) 
+		self.sale_discountable_amount = self.sale_discountable_amount - total_rate_include_tax
 		
 		# calculate sale discount
 		if self.discount:
@@ -164,11 +168,14 @@ class Sale(Document):
 				self.sale_discount = self.discount or 0
 				if self.discount > self.sale_discountable_amount:
 					frappe.throw("Discount amount cannot greater than discountable amount")
+     
 		self.sale_discount = math_round(self.sale_discount, int(currency_precision))
 
 		self.product_discount = Enumerable(self.sale_products).where(lambda x:x.allow_discount ==1).sum(lambda x: x.discount_amount)		
 		self.product_discount=math_round(self.product_discount  , int(currency_precision)) 
 		self.total_discount = (self.product_discount or 0) + (self.sale_discount or 0)  
+  
+  
 		#tax 
 		self.taxable_amount_1  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.taxable_amount_1)
 		self.taxable_amount_2  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.taxable_amount_2)
@@ -177,7 +184,8 @@ class Sale(Document):
 		self.tax_2_amount  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.tax_2_amount)
 		self.tax_3_amount  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.tax_3_amount)
 		self.total_tax  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.total_tax)
-		total_rate_include_tax  = Enumerable(self.sale_products).where(lambda x:x.tax_rule and x.rate_include_tax == 1).sum(lambda x: x.total_tax)
+		
+  
 		# total_rate_include_tax  = 0
 		self.sub_total = sub_total	- total_rate_include_tax
 		self.grand_total =( sub_total - (self.total_discount or 0))  + self.total_tax - total_rate_include_tax
@@ -1156,9 +1164,35 @@ def validate_sale_product(self):
 		validate_tax(d)
 		d.amount = (d.sub_total - d.discount_amount) 
 		d.total_revenue = (d.sub_total - d.total_discount) 
+  
+  
 		if d.rate_include_tax == 0:
 			d.amount += d.total_tax
 			d.total_revenue += d.total_tax
+   
+		else:
+			#recalculate discount if rate included tax   
+			## sale discount
+			re_calc_sale_discount_amount = 0
+			price_before_tax = d.sub_total - d.total_tax
+			math_round(price_before_tax  , int(currency_precision)) 
+			
+			if d.sale_discount_percent > 0:
+				re_calc_sale_discount_amount =  price_before_tax* (d.sale_discount_percent/100)
+				re_calc_sale_discount_amount =math_round(re_calc_sale_discount_amount  , int(currency_precision)) 
+
+				d.sale_discount_amount = re_calc_sale_discount_amount 
+                 
+
+			# ## sale product discount
+			re_calc_sale_product_discount_amount = 0
+			if d.discount > 0 and  d.discount_type=="Percent" :
+				re_calc_sale_product_discount_amount = price_before_tax * (d.discount/100)
+				re_calc_sale_product_discount_amount = math_round(re_calc_sale_product_discount_amount  , int(currency_precision)) 
+				d.discount_amount = re_calc_sale_product_discount_amount
+
+			## sum total discount
+			d.total_discount = d.discount_amount + d.sale_discount_amount   
 
 		## update cryto able amount
 		if d.total_discount > 0 or d.allow_crypto_claim == 0 :
@@ -1543,7 +1577,7 @@ def validate_tax(doc):
 			# 	priceBefore = get_ratebefore_tax(doc.sub_total - doc.total_discount,doc.tax_rule, doc.tax_1_rate, doc.tax_2_rate, doc.tax_3_rate)
 			# 	amount =  priceBefore + doc.total_discount  
 			
-			doc.selling_price = 0 if doc.quantity == 0 else   ((amount / doc.quantity) or 0) - (doc.modifiers_price or 0)
+			
 
 
 			#Tax 1
@@ -1590,6 +1624,8 @@ def validate_tax(doc):
 			
 			#total tax
 			doc.total_tax = doc.tax_1_amount + doc.tax_2_amount + doc.tax_3_amount
+   
+			doc.selling_price = 0 if doc.quantity == 0 else   (((doc.sub_total - doc.total_tax) / doc.quantity) or 0) - (doc.modifiers_price or 0)
 		else:
 			doc.taxable_amount_1 =0
 			doc.tax_1_amount=0

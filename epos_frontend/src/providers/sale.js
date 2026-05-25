@@ -631,8 +631,14 @@ export default class Sale {
         
         
         sp.sale_discount_amount = Number((sp.sale_discount_amount + Number.EPSILON).toFixed(precision)); 
+
         sp.total_discount = sp.discount_amount + sp.sale_discount_amount; 
+
+
         this.onCalculateTax(sp);
+ 
+
+        //re
 
         sp.amount = sp.sub_total - sp.discount_amount ;
 
@@ -641,7 +647,29 @@ export default class Sale {
         if(sp.rate_include_tax==0){
             sp.amount = sp.sub_total - sp.discount_amount + sp.total_tax ;
             sp.total_revenue = (sp.sub_total - sp.total_discount) + sp.total_tax;
-        } 
+        } else{
+            //recalculate discount if rate include tax
+            let re_calc_sale_discount_amount = 0;
+            let price_before_tax = sp.sub_total - sp.total_tax;
+            price_before_tax =Number((price_before_tax + Number.EPSILON).toFixed(precision)); 
+
+            if (sp.sale_discount_percent > 0){
+                re_calc_sale_discount_amount = price_before_tax * (sp.sale_discount_percent/100)
+                re_calc_sale_discount_amount = Number((re_calc_sale_discount_amount + Number.EPSILON).toFixed(precision)); 
+                sp.sale_discount_amount = re_calc_sale_discount_amount;
+            }
+
+            let re_calc_sale_product_discount_amount = 0;
+            if(sp.discount > 0 && sp.discount_type=="Percent"){
+                re_calc_sale_product_discount_amount = price_before_tax * (sp.discount/100);
+                re_calc_sale_product_discount_amount = Number((re_calc_sale_product_discount_amount + Number.EPSILON).toFixed(precision)); 
+                sp.discount_amount = re_calc_sale_product_discount_amount
+            } 
+            sp.total_discount = sp.discount_amount + sp.sale_discount_amount;
+
+        }
+        
+        //
         if(sp.total_discount > 0 || sp.allow_crypto_claim == 0  || this.sale.sale_discount > 0){
             sp.crypto_able_amount = 0;
         }else{
@@ -758,7 +786,6 @@ export default class Sale {
         //     }
         // }   
 
-        sp.selling_price = (amount/sp.quantity) - (sp.modifiers_price||0) 
 
         // //tax 1
         sp.taxable_amount_1 =   this._priceForCalcTax(sp,sp.calculate_tax_1_after_discount);
@@ -810,6 +837,8 @@ export default class Sale {
         //cal tax3 amount
         sp.tax_3_amount = sp.taxable_amount_3 * ((sp.tax_3_rate || 0) / 100);
         sp.total_tax = sp.tax_1_amount + sp.tax_2_amount + sp.tax_3_amount; 
+        
+        sp.selling_price = ((sp.sub_total - sp.total_tax) /sp.quantity) - (sp.modifiers_price||0) 
     }
 
     onRateIncludeOrNotIncludeTaxClick(){ 
@@ -902,11 +931,15 @@ export default class Sale {
         this.onUpdateSaleDiscount(this.sale.discount, this.sale.discount_type, this.sale.discount_note)
         const sp = Enumerable.from(this.sale.sale_products);
         this.sale.total_quantity = this.getNumber(sp.where("$.is_timer_product == 0").sum("$.quantity"));
-        this.sale.sub_total = this.getNumber(sp.sum("$.sub_total"));
+        this.sale.sub_total = this.getNumber(sp.sum("$.sub_total"));        
+        let total_tax_exclude = this.getNumber(sp.where("$.rate_include_tax == 1").sum("$.total_tax"))
+
         this.changed = 1
         //calculate sale discount
         this.sale.sale_discountable_amount = this.getNumber(sp.where("$.allow_discount==1 && $.discount==0").sum("$.sub_total"));
-        this.sale.sale_discountable_amount =  Number((this.sale.sale_discountable_amount + Number.EPSILON).toFixed(precision)) //new
+        this.sale.sale_discountable_amount =  Number((this.sale.sale_discountable_amount + Number.EPSILON).toFixed(precision)); //new
+        this.sale.sale_discountable_amount = this.sale.sale_discountable_amount - total_tax_exclude; //new
+
         this.sale.discount = this.getNumber(this.sale.discount);
         this.sale.sale_discount = 0;
        
@@ -920,13 +953,16 @@ export default class Sale {
         this.sale.product_discount = this.getNumber(sp.sum("$.discount_amount"));
         this.sale.product_discount = Number( (this.sale.product_discount +Number.EPSILON).toFixed(precision)) //new
         this.sale.total_discount = (Number(this.sale.sale_discount) || 0) + (Number(this.sale.product_discount) || 0); 
+
+
         //tax
         this.sale.tax_1_amount = this.getNumber(sp.sum("$.tax_1_amount"));
         this.sale.tax_2_amount = this.getNumber(sp.sum("$.tax_2_amount"));
         this.sale.tax_3_amount = this.getNumber(sp.sum("$.tax_3_amount"));
         this.sale.total_tax = this.getNumber(sp.sum("$.total_tax"));
-        let total_tax_exclude = this.getNumber(sp.where("$.rate_include_tax == 1").sum("$.total_tax"))
+
         this.sale.sub_total -= total_tax_exclude;
+
         //grand_total
         this.sale.grand_total = ((this.sale.sub_total || 0) - (this.sale.total_discount || 0)) + ((this.sale.total_tax || 0));
         this.sale.grand_total =   parseFloat((this.sale.grand_total + Number.EPSILON).toFixed(precision)); //new
