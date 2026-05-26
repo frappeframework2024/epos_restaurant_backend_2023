@@ -34,10 +34,10 @@ def get_filters(filters):
 
 def get_report_data(filters):
 	columns = get_columns(filters)
+	ranges = (filters.ranges if filters.ranges != "Custom" else filters.custom_ranges) or 30
 	str_col = ''
 	for c in columns:
 		str_col += c['sql']
-
 	sql="""select 
 		{3}
 	from `tabSale Product` sp
@@ -46,8 +46,8 @@ def get_report_data(filters):
 	group by product_code,
 			sp.product_name,
 			sp.product_category
-	having DATEDIFF('{1}',  max(s.posting_date)) >= {2}
+	having DATEDIFF('{1}',  max(coalesce(s.posting_date,now()))) >= {2}
 	order by sp.product_name,product_code
-		""".format(get_filters(filters),getdate(),filters.ranges if filters.ranges != "Custom" else filters.custom_ranges,str_col)
+		""".format(get_filters(filters),getdate(),ranges,str_col)
 	data =  frappe.db.sql(sql,filters,as_dict=1)
 	return data
