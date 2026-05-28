@@ -55,6 +55,21 @@
   "default_walk_in_business_source",
   "column_break_aeku",
   "edoor_letterhead",
+  "restriction_setting_section",
+  "closed",
+  "fullpatternlos",
+  "column_break_khqc",
+  "cta",
+  "ctd",
+  "column_break_ylng",
+  "minlos",
+  "maxlos",
+  "column_break_xgkv",
+  "minlosarrival",
+  "maxlosarrival",
+  "column_break_xbgu",
+  "minadvbooking",
+  "maxadvbooking",
   "tax_invoice_setting_section",
   "allow_generate_tax_invoice",
   "tax_invoice_number_format",
@@ -639,12 +654,94 @@
    "fieldname": "chart_of_account_prefix",
    "fieldtype": "Data",
    "label": "Chart Of Account Prefix"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "restriction_setting_section",
+   "fieldtype": "Section Break",
+   "label": "Restriction Setting"
+  },
+  {
+   "default": "1",
+   "fieldname": "closed",
+   "fieldtype": "Check",
+   "label": "Closed"
+  },
+  {
+   "default": "1",
+   "fieldname": "fullpatternlos",
+   "fieldtype": "Check",
+   "label": "FullPatternLos"
+  },
+  {
+   "fieldname": "column_break_khqc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "cta",
+   "fieldtype": "Check",
+   "label": "Cta"
+  },
+  {
+   "default": "1",
+   "fieldname": "ctd",
+   "fieldtype": "Check",
+   "label": "Ctd"
+  },
+  {
+   "fieldname": "column_break_ylng",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "minlos",
+   "fieldtype": "Check",
+   "label": "MinLos"
+  },
+  {
+   "default": "1",
+   "fieldname": "maxlos",
+   "fieldtype": "Check",
+   "label": "MaxLos"
+  },
+  {
+   "fieldname": "column_break_xgkv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "minlosarrival",
+   "fieldtype": "Check",
+   "label": "MinLosArrival"
+  },
+  {
+   "default": "1",
+   "fieldname": "maxlosarrival",
+   "fieldtype": "Check",
+   "label": "MaxLosArrival"
+  },
+  {
+   "fieldname": "column_break_xbgu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "minadvbooking",
+   "fieldtype": "Check",
+   "label": "MinAdvBooking"
+  },
+  {
+   "default": "1",
+   "fieldname": "maxadvbooking",
+   "fieldtype": "Check",
+   "label": "MaxAdvBooking"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-14 10:31:12.441548",
+ "modified": "2026-05-26 11:52:11.096984",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",

@@ -96,7 +96,7 @@ watch(() => props.saleProduct.time_out, (newValue, oldValue) => {
 //Add Key stroke
  if(sale.vau){
 
-    sale.vue.$onKeyStroke('PageUp', (e) => {
+    sale.vue?.$onKeyStroke('PageUp', (e) => {
         e.preventDefault()
         if (props.saleProduct.selected && props.saleProduct.is_require_employee == 0) {
             sale.updateQuantity(props.saleProduct, props.saleProduct.quantity + 1)
@@ -104,7 +104,7 @@ watch(() => props.saleProduct.time_out, (newValue, oldValue) => {
     })
 }
 if(sale.vau){
-    sale.vue.$onKeyStroke('PageDown', (e) => {
+    sale.vue?.$onKeyStroke('PageDown', (e) => {
         e.preventDefault()
         if (props.saleProduct.selected && props.saleProduct.quantity > 1 && props.saleProduct.is_require_employee == 0) {
             sale.updateQuantity(props.saleProduct, props.saleProduct.quantity - 1)
@@ -114,7 +114,7 @@ if(sale.vau){
 //
 if (props.saleProduct.selected) {
     if(sale.vue){
-        sale.vue.$onKeyStroke('F3', (e) => {
+        sale.vue?.$onKeyStroke('F3', (e) => {
             e.preventDefault()
             if (props.saleProduct.selected && sale.dialogActiveState == false) {
                 sale.dialogActiveState = true;
@@ -135,7 +135,7 @@ const allow_change_price = computed(() => {
     return false;
 });
 if(sale.vau){
-    sale.vue.$onKeyStroke('F4', (e) => {
+    sale.vue?.$onKeyStroke('F4', (e) => {
         e.preventDefault();
         if (!allow_change_price) {
             return;
@@ -148,7 +148,7 @@ if(sale.vau){
     })
 }
 if(sale.vau){
-    sale.vue.$onKeyStroke('F5', (e) => {
+    sale.vue?.$onKeyStroke('F5', (e) => {
         e.preventDefault();
 
         if (gv.device_setting.is_order_station == 1) {
@@ -160,7 +160,7 @@ if(sale.vau){
 }
 
 if(sale.vau){
-    sale.vue.$onKeyStroke('F6', (e) => {
+    sale.vue?.$onKeyStroke('F6', (e) => {
         e.preventDefault();
         if (gv.device_setting.is_order_station == 1) {
             return;
@@ -171,7 +171,7 @@ if(sale.vau){
 }
 
 if(sale.vau){
-    sale.vue.$onKeyStroke('F7', (e) => {
+    sale.vue?.$onKeyStroke('F7', (e) => {
         e.preventDefault();
         if (gv.device_setting.is_order_station == 1) {
             return;

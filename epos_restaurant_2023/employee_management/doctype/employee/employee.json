@@ -507,7 +507,7 @@
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-02 11:34:43.286881",
+ "modified": "2026-05-27 09:28:25.645702",
  "modified_by": "Administrator",
  "module": "Employee Management",
  "name": "Employee",
@@ -581,5 +581,6 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "employee_name"
+ "title_field": "employee_name",
+ "track_changes": 1
 }

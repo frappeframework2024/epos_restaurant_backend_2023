@@ -144,7 +144,7 @@ const _customer = computed(() => {
 })
 
 
-sale.vue.$onKeyStroke('F9', (e) => {
+sale.vue?.$onKeyStroke('F9', (e) => {
     e.preventDefault()
     if (sale.dialogActiveState == false) {
         onSearchCustomer();

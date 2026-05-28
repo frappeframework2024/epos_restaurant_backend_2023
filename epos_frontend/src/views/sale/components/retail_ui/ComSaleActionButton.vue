@@ -125,7 +125,7 @@
   
   })
   
-  sale.vue.$onKeyStroke('F12', (e) => {
+  sale.vue?.$onKeyStroke('F12', (e) => {
     e.preventDefault();
     
     if(gv.device_setting.show_option_payment==0){
@@ -138,7 +138,7 @@
 })
 
   
-  sale.vue.$onKeyStroke('F10',(e)=>{ 
+  sale.vue?.$onKeyStroke('F10',(e)=>{ 
     e.preventDefault();
       if(gv.device_setting.is_order_station==1){
           return;
@@ -150,7 +150,7 @@
     
   })
   
-  sale.vue.$onKeyStroke('F11',(e)=>{
+  sale.vue?.$onKeyStroke('F11',(e)=>{
     e.preventDefault();
       if(gv.device_setting.is_order_station==1){
           return;
@@ -262,7 +262,7 @@
     });
   }
   
-  sale.vue.$onKeyStroke('Insert', (e)=>{
+  sale.vue?.$onKeyStroke('Insert', (e)=>{
     e.preventDefault();
     if (sale.dialogActiveState === false) {
       sale.onSaleNote(sale.sale);

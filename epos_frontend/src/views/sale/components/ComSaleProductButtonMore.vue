@@ -356,7 +356,7 @@ function onSaleProductPark() {
     }
 }
 
-sale.vue.$onKeyStroke('F8', (e) => {
+sale.vue?.$onKeyStroke('F8', (e) => {
     e.preventDefault()
     if (sale.dialogActiveState == false && props.saleProduct.selected == true) {
         sale.onSaleProductNote(props.saleProduct)

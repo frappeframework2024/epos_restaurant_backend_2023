@@ -58,7 +58,7 @@ const toaster = createToaster({ position: 'top-right' });
 const device_setting = JSON.parse(localStorage.getItem("device_setting"))
 const frappe = inject("$frappe")
 const call = frappe.call();
-sale.vue.$onKeyStroke('F12', (e) => {
+sale.vue?.$onKeyStroke('F12', (e) => {
   e.preventDefault();
   if (gv.device_setting.show_option_payment == 0) {
     return;

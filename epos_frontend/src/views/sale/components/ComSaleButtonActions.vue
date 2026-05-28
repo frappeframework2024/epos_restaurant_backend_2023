@@ -137,7 +137,7 @@ whenever(ctrl_q, () =>{
 
 
 if(sale.vau){
-  sale.vue.$onKeyStroke('F10',(e)=>{ 
+  sale.vue?.$onKeyStroke('F10',(e)=>{ 
     e.preventDefault();
       if(gv.device_setting.is_order_station==1){
           return;
@@ -152,7 +152,7 @@ if(sale.vau){
 
 
 if(sale.vau){
-  sale.vue.$onKeyStroke('F11',(e)=>{
+  sale.vue?.$onKeyStroke('F11',(e)=>{
     e.preventDefault();
       if(gv.device_setting.is_order_station==1){
           return;
@@ -285,7 +285,7 @@ async function onQuickPay() {
 }
 
 if(sale.vau){
-  sale.vue.$onKeyStroke('Insert', (e)=>{
+  sale.vue?.$onKeyStroke('Insert', (e)=>{
     e.preventDefault();
     if (sale.dialogActiveState === false) {
       sale.onSaleNote(sale.sale);

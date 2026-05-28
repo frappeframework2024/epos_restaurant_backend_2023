@@ -85,7 +85,7 @@
     sale.orderTime = null;
     sale.deletedSaleProducts = [];
 
-    sale.vue.$onKeyStroke('F1', (e) => {
+    sale.vue?.$onKeyStroke('F1', (e) => {
         e.preventDefault();
         if (localStorage.getItem('dialogstate') === null) {
             localStorage.setItem('dialogstate', 1)
