@@ -239,15 +239,7 @@ let dataResource = createResource({
     }
 })
 
-function renderTemplate(template) {
-    return template.replace(/{\s*([^}]+)\s*}/g, (match, p1) => {
-        return eval(p1);
-    });
-}
 function getDataResourceParams() {
-     
- 
-
     return {
         doctype: props.doctype,
         fields: getFieldName(),
