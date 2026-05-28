@@ -2541,12 +2541,18 @@ export default class Sale {
                 flutterChannel.postMessage(JSON.stringify(data));
             }
         } else {
-            if (receipt?.pos_receipt_file_name) {
-                data.printer = _printer;
-                socket.emit('PrintReceipt', JSON.stringify(data));
-            }
-            else {
+            let print_from_android_preview = (this.setting?.device_setting?.print_from_android_preview || 0);
+            if(print_from_android_preview == 1){
                 this.onOpenBrowserPrint("Sale", doc.name, receipt.name)
+            }
+            else{
+                if (receipt?.pos_receipt_file_name) {
+                    data.printer = _printer;
+                    socket.emit('PrintReceipt', JSON.stringify(data));
+                }
+                else {
+                    this.onOpenBrowserPrint("Sale", doc.name, receipt.name)
+                }
             }
         }
     }

@@ -202,7 +202,7 @@ if (!localStorage.getItem("pos_profile")) {
 			product.setting = doc;
 			tableLayout.setting = doc;
 			tableLayout.table_groups = doc.table_groups || '';
-			localStorage.setItem("device_setting",JSON.stringify(  doc.device_setting))
+			localStorage.setItem("device_setting",JSON.stringify(doc.device_setting))
 			localStorage.setItem("table_groups", JSON.stringify(doc.table_groups || null))			
 			checkPromotionDay(gv.setting.business_branch)
 			let current_user = localStorage.getItem("current_user");

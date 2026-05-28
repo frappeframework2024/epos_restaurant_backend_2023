@@ -12,6 +12,7 @@
   "business_branch",
   "pos_profile",
   "platform",
+  "print_from_android_preview",
   "is_used",
   "is_order_station",
   "allow_login_multiple_site",
@@ -441,11 +442,18 @@
    "fieldtype": "Select",
    "label": "Main Sale Screen",
    "options": "Default\nTop Menu\nLeft Menu\nLeft Menu 2"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.platform == \"Web\"",
+   "fieldname": "print_from_android_preview",
+   "fieldtype": "Check",
+   "label": "Print From Android Preview"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-04-28 09:03:39.960629",
+ "modified": "2026-05-28 11:54:39.938594",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",
