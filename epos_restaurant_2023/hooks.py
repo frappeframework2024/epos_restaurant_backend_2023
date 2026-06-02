@@ -196,7 +196,9 @@ scheduler_events = {
             "epos_restaurant_2023.api.ftp_backup.execute_backup_command",
             "epos_restaurant_2023.api.api.update_summary_to_customers"
         ],
-        
+        "0 */6 * * *":[
+            "epos_restaurant_2023.api.api.add_record_to_expired_and_low_stock_products"
+        ],
         "0 1 * * *":[
             "epos_restaurant_2023.api.archive_data.delete_archive_transaction", # 1 AM every daty
         ],

@@ -2187,6 +2187,36 @@ def update_cash_coupon_summary_to_customer(members):
     frappe.db.sql(sql,{"member":members})
 
 @frappe.whitelist()
+def add_record_to_expired_and_low_stock_products()
+    sql = """with excluded as(select 
+            a.product_code
+        from `tabStock Location Product` a
+        inner join `tabExpired Products` b on b.product_code = a.product_code and b.stock_location = a.stock_location and b.expired_date = a.expired_date
+        where a.has_expired_date = 1 or (a.quantity <= a.reorder_level and a.reorder_level > 0))
+        select 
+            cast(expired_date as varchar(20)) expired_date,
+            stock_location,
+            product_code,
+            product_name,
+            unit,
+            quantity,
+            reorder_level
+        from `tabStock Location Product`
+        where (has_expired_date = 1 and DATEDIFF(expired_date, CURRENT_DATE()) <=30) or (quantity <= reorder_level and reorder_level > 0) and product_code not in (select product_code from excluded)"""
+    data = frappe.db.sql(sql,as_dict=1)
+    for a in data:
+        doc = frappe.new_doc("Expired Products")
+        doc.expired_date = a["expired_date"]
+        doc.product_code = a["product_code"]
+        doc.product_name = a["product_name"]
+        doc.unit = a["unit"]
+        doc.quantity = a["quantity"]
+        doc.stock_location = a["stock_location"]
+        doc.notification_type = "Expired Product" if a["quantity"] > a["reorder_level"] else "Low Stock Product"
+        doc.insert()
+    frappe.db.commit()
+
+@frappe.whitelist()
 def update_summary_to_customers():
     ## update expired crypto balance
     frappe.db.sql("""update `tabCustomer` c
