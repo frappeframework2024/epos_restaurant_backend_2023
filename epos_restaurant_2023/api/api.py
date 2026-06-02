@@ -2187,7 +2187,7 @@ def update_cash_coupon_summary_to_customer(members):
     frappe.db.sql(sql,{"member":members})
 
 @frappe.whitelist()
-def add_record_to_expired_and_low_stock_products()
+def add_record_to_expired_and_low_stock_products():
     sql = """with excluded as(select 
             a.product_code
         from `tabStock Location Product` a
