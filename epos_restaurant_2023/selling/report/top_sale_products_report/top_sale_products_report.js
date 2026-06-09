@@ -238,7 +238,7 @@ frappe.query_reports["Top Sale Products Report"] = {
 			"fieldname": "top",
 			"label": __("Top"),
 			"fieldtype": "Int",
-			"default":10,
+			"default":50,
 			"on_change": function (query_report) {},
 			hide_in_filter:1,
 		},

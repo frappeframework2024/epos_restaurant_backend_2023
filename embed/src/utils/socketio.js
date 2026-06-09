@@ -9,11 +9,7 @@ if (protocol=="http:"){
     port = ":" +  websocket_port;
 }else  {
     port = ":" +  window.location.port;
-}
- 
-
- 
+} 
 let socket = io(protocol + "//" + host + port, { path: '/socketserver/socket.io' });
 
 export default socket;
-

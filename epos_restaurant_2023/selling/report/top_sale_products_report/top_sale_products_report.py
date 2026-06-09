@@ -34,28 +34,19 @@ def execute(filters=None):
 	return get_columns(filters), report_data, message, report_chart, get_report_summary(report_data,filters),skip_total_row
  
 def validate(filters):
+	if not filters.top or filters.top <= 0:
+		filters.top = 50
 	if not filters.business_branch:
 		filters.business_branch = frappe.db.get_list("Business Branch",pluck='name')
-  
 	if not filters.outlet:
 		filters.outlet = frappe.db.get_list("Outlet",pluck='name')
-  
-
 	if filters.start_date and filters.end_date:
 		if filters.start_date > filters.end_date:
-
 			frappe.throw("The 'Start Date' ({}) must be before the 'End Date' ({})".format(filters.start_date, filters.end_date))
-
-	
- 
 	if filters.row_group and filters.parent_row_group:
 		if(filters.row_group == filters.parent_row_group):
 			frappe.throw("Parent row group and row group can not be the same")
  
-
-
-				
-
 def get_columns(filters):	
 	columns = []
 	row_group = [d for d in get_row_groups() if d["label"]==filters.row_group][0]

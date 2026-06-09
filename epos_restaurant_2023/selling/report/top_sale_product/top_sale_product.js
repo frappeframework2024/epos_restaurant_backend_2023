@@ -6,7 +6,6 @@
 /* eslint-disable */
  
 frappe.query_reports["Top Sale Product"] = {
-	
 	"filters": [
 		{
 			fieldname: "business_branch",
@@ -17,7 +16,6 @@ frappe.query_reports["Top Sale Product"] = {
 			},
 			"reqd": 1,
 			"on_change": function (query_report) {},
-			 
 		},
 		{
 			"fieldname":"start_date",
@@ -46,6 +44,7 @@ frappe.query_reports["Top Sale Product"] = {
 			"fieldtype": "Int",
 			"default":50,
 			"on_change": function (query_report) {},
+			"reqd": 1,
 		},
 		{
 			"fieldname": "order_by",
@@ -55,30 +54,21 @@ frappe.query_reports["Top Sale Product"] = {
 			"options":"Sale Amount\nQuantity Sold",
 			"on_change": function (query_report) {},
 		},
-		
 	],
 	"formatter": function(value, row, column, data, default_formatter) {
-	
 		value = default_formatter(value, row, column, data);
-
 		if (data && data.is_group==1) {
 			value = $(`<span>${value}</span>`);
-
 			var $value = $(value).css("font-weight", "bold");
-			
-
 			value = $value.wrap("<p></p>").parent().html();
 		}
-		
 		return value;
 	},
 	onload: function(report) {
 		report.page.add_inner_button("Preview Report", function () {
 			frappe.query_report.refresh();
-		});
-		
+		});	
 	},
-	
 };
 
  
