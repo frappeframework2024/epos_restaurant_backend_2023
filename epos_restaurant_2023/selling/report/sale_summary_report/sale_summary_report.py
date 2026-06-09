@@ -359,7 +359,7 @@ def get_report_summary(data,filters):
 			if not hide_columns or  f["label"] not in hide_columns:
 				if f["fieldname"] == 'commission':
 					if row_group["show_commission"] == True:
-						value=sum(d["total_" + f["fieldname"]] for d in data if d["indent"]==0)
+						value=sum(((d["total_" + f["fieldname"]] for d in data if d["indent"]==0) or 0))
 						if f["fieldtype"] == "Currency":
 							value = frappe.utils.fmt_money(value)
 						elif f["fieldtype"] =="Float":
