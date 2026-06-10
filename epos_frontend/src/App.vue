@@ -207,6 +207,7 @@ if (!localStorage.getItem("pos_profile")) {
 			checkPromotionDay(gv.setting.business_branch)
 			let current_user = localStorage.getItem("current_user");
 			if (current_user) {
+				
 				createResource({
 					url: "epos_restaurant_2023.api.api.get_current_shift_information",
 					params: {

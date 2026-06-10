@@ -75,6 +75,10 @@
   "tax_invoice_number_format",
   "cancellation_policy_section",
   "cancellation_policy",
+  "door_log_integration_setting_section",
+  "door_lock_server_ip_address",
+  "column_break_duyk",
+  "door_log_port",
   "report_header_sting_tab",
   "report_header_sub_line_section",
   "report_header_en",
@@ -255,6 +259,7 @@
    "options": "Letter Head"
   },
   {
+   "collapsible": 1,
    "fieldname": "cancellation_policy_section",
    "fieldtype": "Section Break",
    "label": "Cancellation Policy"
@@ -288,7 +293,6 @@
    "depends_on": "eval:frappe.user.has_role(\"Administrator\")",
    "fieldname": "google_account_credentials",
    "fieldtype": "Code",
-   "hidden": 1,
    "label": "Google Account Credentials",
    "options": "JSON",
    "permlevel": 2
@@ -305,10 +309,10 @@
    "depends_on": "eval:frappe.user.has_role(\"Administrator\")",
    "fieldname": "google_sheet_file",
    "fieldtype": "Data",
-   "hidden": 1,
    "label": "Google Sheet File"
   },
   {
+   "collapsible": 1,
    "fieldname": "tax_invoice_setting_section",
    "fieldtype": "Section Break",
    "label": "Tax Invoice Setting"
@@ -736,12 +740,32 @@
    "fieldname": "maxadvbooking",
    "fieldtype": "Check",
    "label": "MaxAdvBooking"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "door_log_integration_setting_section",
+   "fieldtype": "Section Break",
+   "label": "Door Log Integration Setting"
+  },
+  {
+   "fieldname": "door_lock_server_ip_address",
+   "fieldtype": "Data",
+   "label": "Door Lock Server IP Address"
+  },
+  {
+   "fieldname": "column_break_duyk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "door_log_port",
+   "fieldtype": "Int",
+   "label": "Door Log Port"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-26 11:52:11.096984",
+ "modified": "2026-06-09 15:20:13.872269",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",

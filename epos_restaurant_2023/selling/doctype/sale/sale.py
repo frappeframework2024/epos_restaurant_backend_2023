@@ -1386,8 +1386,11 @@ def validate_pos_payment(self,skip_check):
 	error = ""
 	currency = frappe.db.get_default("currency")
 	for d in self.payment:
-		if not d.default_account and skip_check == 0:
-			error += "Please set default account for payment type <b>{}</b>. ".format(d.payment_type)
+     
+		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
+			if not d.default_account and skip_check == 0:
+				error += "Please set default account for payment type <b>{}</b>. ".format(d.payment_type)
+    
 		d.exchange_rate = d.exchange_rate if d.currency != currency else 1
 		d.change_exchange_rate = d.change_exchange_rate if d.currency != currency else 1		
 		d.amount = (d.input_amount or 0 ) / (d.exchange_rate or 1)

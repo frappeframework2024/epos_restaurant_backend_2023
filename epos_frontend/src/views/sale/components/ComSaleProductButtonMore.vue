@@ -27,7 +27,7 @@
             </template>
             <!-- end free -->
 
-            <template >
+            <template v-if="gv.device_setting.is_order_station == 0">
             
                 <template v-if="!saleProduct.is_free && (saleProduct.allow_discount || 0) == 1">
                     <template v-if="!saleProduct.happy_hour_promotion">
