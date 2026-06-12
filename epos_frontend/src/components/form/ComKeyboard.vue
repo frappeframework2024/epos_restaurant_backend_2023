@@ -45,13 +45,13 @@ export default {
           '« ១ ២ ៣ ៤ ៥ ៦ ៧ ៨ ៩ ០ ឥ ឲ {bksp}',
           '{tab} ឆ ឹ េ រ ត យ ុ ិ ោ ផ ៀ ឪ ឮ',
           '{lock} ា ស ដ ថ ង ហ ្ ក ល ើ ់ {enter}',
-          '{shift} ឋ ខ ច វ ប ន ម​ ុំ​ ។ ៊ {shift}',
+          '{shift} ឋ ខ ច វ ប ន ម ុំ​ ។ ៊ {shift}',
           '{English} @ {space}'],
         'shift':[
           '» ៗ @ " ៑ $ € ៙ ៚ * { } x ៎ ៛ % ៍ ័ ៏ () ៌ = {bksp}',
           '{tab} ឈ ឺ ែ ឬ ទ ួ ូ ី ៅ ភ ឿ ឧ ឭ ៜ ៝ ឯ ឫ ឨ ឦ ឱ ឰ ឩ ឳ​',
           '{lock} ាំ គ ្ ៖ ៈ ៃ ឌ ធ អ ះ ញ គ ឡ ោះ ៉ {enter}',
-          '{shift} ឍ ឞ , . / ឃ ជ​ េះ ព ណ ំ ុះ ៕ ? {shift}',
+          '{shift} ឍ ឞ , . / ឃ ជ េះ ព ណ ំ ុះ ៕ ? {shift}',
           '{English} @ {space}']
       }
   }),

@@ -567,6 +567,27 @@ def get_products(category ='All Product Categories',product_code=None,keyword=No
             d["unit"] = default_price["unit"]
             d["portion"] = default_price["portion"]
             d["price"] = default_price["price"]
+            
+            #check if scan product
+            if product_code:
+                _query_product_price = """ select 
+                    name,
+                    price,
+                    business_branch as branch,
+                    price_rule,
+                    `portion`,
+                    unit,
+                    default_discount 
+                from `tabProduct Price` where parent = %(product)s and barcode = %(product_code)s"""
+                
+                _product_prices = frappe.db.sql(_query_product_price, {"product": d["name"], "product_code":product_code }, as_dict=1)
+                if _product_prices:
+                    d["prices"] = json.dumps(_product_prices)
+                                        
+                    default_price = get_default_product_price(price_rule, _product_prices) 
+                    d["unit"] = default_price["unit"]
+                    d["portion"] = default_price["portion"]
+                    d["price"] = default_price["price"]
     
     if int(include_product_category) ==1:
         return {"products":data,"categories":get_product_category(category),"unit":product_price_unit}
