@@ -350,7 +350,7 @@ async function onDeleteBill() {
                 isLoading.value = true;
                 //send deleted sale product to temp deleted
                 const _sale = JSON.parse(JSON.stringify(sale.sale));
-                if(sale.setting?.pos_setting?.allow_print_bill_on_sale_deleted){
+                if(sale.setting?.pos_setting?.print_new_deleted_sale_product){
                     generateSaleProductPrintToKitchen(_sale, v.note);
                 }
                 const deleteSaleResource = createResource({
@@ -375,16 +375,19 @@ async function onDeleteBill() {
                         sale.onPrintReceipt(sale.pos_receipt, "print_invoice", _sale);
                     }
                     sale.newSale();
+                    
                     if (sale.setting.table_groups.length > 0) {
                         router.push({ name: 'TableLayout' });
                         socket.emit("RefreshTable");
+                        window.postMessage("close_modal", "*"); 
+                        //
                     } else {
                         let template = (gv.device_setting?.main_sale_screen??"Default");
                         if(template == "Default"){
                             router.push({  name: "AddSale"});
                         }else {
                             const result = template.toLowerCase().replace(/\s+/g, '-');
-                let _template = result;
+                            let _template = result;
                             router.push({ 
                                 name: "SaleOrder",
                                 query: { menu: _template }
