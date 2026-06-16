@@ -11,7 +11,7 @@
         </div>
         <div class="product-image"> 
           <img v-if="prod.photo" :src="prod.photo" :alt="prod.name"  @error="onImageError" loading="lazy"/>
-          <img v-else :src="getImage" :alt="prod.name" style="width: 100%;height: 100%; object-fit: cover;" @error="onImageError" loading="lazy"  />
+          <img v-else :src="getImage(prod.photo)" :alt="prod.name" style="width: 100%;height: 100%; object-fit: cover;" @error="onImageError" loading="lazy"  />
         </div>
             
         <div class="product-info">

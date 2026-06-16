@@ -119,12 +119,6 @@ socket.on("OnPrintReport", async (arg) => {
 	}
 })
 
-
-
-
-
-
-
 let printService  = null;
 const isLoading = computed(() => {
 	const value = store.state.isLoading;
@@ -177,87 +171,78 @@ if (!localStorage.getItem("pos_profile")) {
 	const pos_profile = localStorage.getItem("pos_profile");
 	localStorage.removeItem("__startup_device");
 	state.isLoading = true;
-
-
-
-
-	createResource({
-		url: 'epos_restaurant_2023.api.api.get_system_settings',
-		params: {
+	let get_system_settings = call.post("epos_restaurant_2023.api.api.get_system_settings",
+		{
 			pos_profile: pos_profile,
 			device_name: localStorage.getItem("device_name")
-		},
-		cache: "get_system_settings",
-		auto: true,
-		onSuccess(doc)  { 
-
-			//connect estc-socket-server
-			if((doc.estc_payway_socket_server_url ||"") != ""){
-				onPayWaySocketSetup(doc);
-			}	
-
-
-			const customer_display_key = `${doc.business_branch}_${pos_profile}_${doc.device_setting.device_id}`;
-			state.isLoading = false;
-			localStorage.setItem("setting", JSON.stringify(doc)); 
-			gv.setting = doc;
-			gv.device_setting = doc.device_setting;
-			gv.customer_display_key = customer_display_key;
-			sale.customer_display_key = customer_display_key;
-			sale.setting = doc;
-			product.setting = doc;
-			tableLayout.setting = doc;
-			tableLayout.table_groups = doc.table_groups || '';
-			localStorage.setItem("device_setting",JSON.stringify(doc.device_setting))
-			localStorage.setItem("table_groups", JSON.stringify(doc.table_groups || null))			
-			checkPromotionDay(gv.setting.business_branch);
-
-			
-			
-			let current_user = localStorage.getItem("current_user");
-			if (current_user) {
-				//init menu product 
-				product.onInit();
-				
-				createResource({
-					url: "epos_restaurant_2023.api.api.get_current_shift_information",
-					params: {
-						business_branch: gv.setting?.business_branch,
-						pos_profile: pos_profile
-					},
-					onSuccess(data) {
-						gv.workingDay = data.wroking_day;
-						gv.cashierShift = data.cashier_shift;
-					},
-					auto: true,
-				})
-			} 
-			// set print socket url
-			
-		 if(gv.device_setting?.web_socket_print_url){
-			
-			window.printService = new WebSocketPrinter(null, gv.setting.device_setting.web_socket_print_url);
-		 }
-			
-		},
-		onError(x) {
-			if (x.error_text == undefined) {
-				//localStorage.removeItem("pos_profile")
-			} else {
-				if (x.error_text[0] === 'Invalid POS Profile name') {
-					localStorage.removeItem("pos_profile")
-				}
-				else if(x.error_text[0] === 'Internal Server Error'){	
-					//router.push({ name: 'ServerError' })
-					state.isLoading = false;
-				}
-				else{
-					toast.error(JSON.stringify(x))
-				}
-			}
-			state.isLoading = false;
 		}
-	});
+	);
+
+	get_system_settings.then((_doc)=>{
+		let doc = _doc.message;
+
+		//connect estc-socket-server
+		if((doc.estc_payway_socket_server_url ||"") != ""){
+			onPayWaySocketSetup(doc);
+		}	
+		const customer_display_key = `${doc.business_branch}_${pos_profile}_${doc.device_setting.device_id}`;
+		state.isLoading = false;
+		localStorage.setItem("setting", JSON.stringify(doc)); 
+		gv.setting = doc;
+		gv.device_setting = doc.device_setting;
+		gv.customer_display_key = customer_display_key;
+		sale.customer_display_key = customer_display_key;
+		sale.setting = doc;
+		product.setting = doc;
+		tableLayout.setting = doc;
+		tableLayout.table_groups = doc.table_groups || '';
+		localStorage.setItem("device_setting",JSON.stringify(doc.device_setting))
+		localStorage.setItem("table_groups", JSON.stringify(doc.table_groups || null))			
+		checkPromotionDay(gv.setting.business_branch);	
+		
+		let current_user = localStorage.getItem("current_user");
+		if (current_user) {
+
+			//init menu product 
+			product.onInit();				
+			createResource({
+				url: "epos_restaurant_2023.api.api.get_current_shift_information",
+				params: {
+					business_branch: gv.setting?.business_branch,
+					pos_profile: pos_profile
+				},
+				onSuccess(data) {
+					gv.workingDay = data.wroking_day;
+					gv.cashierShift = data.cashier_shift;
+				},
+				auto: true,
+			})
+		} 
+
+		// set print socket url			
+		if(gv.device_setting?.web_socket_print_url){			
+			window.printService = new WebSocketPrinter(null, gv.setting.device_setting.web_socket_print_url);
+		}
+		
+
+	}).catch((x) => {
+		if (x.error_text == undefined) {
+				//localStorage.removeItem("pos_profile")
+		} else {
+			if (x.error_text[0] === 'Invalid POS Profile name') {
+				localStorage.removeItem("pos_profile")
+			}
+			else if(x.error_text[0] === 'Internal Server Error'){	
+				//router.push({ name: 'ServerError' })
+			}
+			else{
+				toast.error(JSON.stringify(x))
+			}
+		}
+
+	}).finally(() => {
+		state.isLoading = false;
+	});  
 }
 
 async function onPayWaySocketSetup(doc) {	
@@ -265,24 +250,16 @@ async function onPayWaySocketSetup(doc) {
 	const payway_socket = createPaywaySocket(doc.estc_payway_socket_server_url);
 	// ABA Socket Client Join Room
 	const myRoom = doc.property_code; // unique per client
-
 	
-
-
 	// Listen to connection and disconnection explicitly
     payway_socket.on('connect', () => {
-		gv.estc_socket_connected = true;
-        
+		gv.estc_socket_connected = true;        
     });
 
     payway_socket.on('disconnect', (reason) => {
 		gv.estc_socket_connected = false;
         
-    });
-
-
-	
-
+    }); 
 
 	// payway_socket.emit('joinRoom', myRoom);
 	await payway_socket.joinRoom(myRoom);
@@ -323,7 +300,9 @@ function checkPromotionDay(business_branch){
 		const resp = call.post("epos_restaurant_2023.api.promotion.check_promotion",{
 			business_branch: business_branch
 		});
-		resp.then((doc)=>{ 
+		resp.then((_doc)=>{ 
+			let doc = _doc.message;
+			
 			gv.promotion = doc;
 			sale.promotion = doc;
 		}) ;

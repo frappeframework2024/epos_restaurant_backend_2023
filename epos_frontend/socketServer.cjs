@@ -252,6 +252,11 @@ io.on('connection', (socket) => {
   socket.on("PrintKitchenOrderOnDesktop",(arg)=>{  
     io.emit("PrintKitchenOrderOnDesktop",arg);
   })
+  
+  socket.on("ConfirmPrintJob",(arg)=>{  
+    io.emit("ConfirmPrintJob",arg);
+  })
+
 
   
 });

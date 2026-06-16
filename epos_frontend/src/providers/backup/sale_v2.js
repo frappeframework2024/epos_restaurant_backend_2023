@@ -7,7 +7,7 @@ import {
     postApi
 
 } from "@/plugin"
-import { onSubmitOrder } from './helpers/sale';
+
 
 import { createToaster } from "@meforma/vue-toaster";
 import socket from '@/utils/socketio';
@@ -681,27 +681,29 @@ export default class Sale {
     }
 
     async applyPromotions(sp){
-        let product_checks=[]
-        product_checks.push({
-            product_code: sp.product_code,
-            order_time: sp.order_time
-        })
-        let doc = await this.getPromotionProducts(product_checks,this.getPromotionByCustomerGroup())
-        if (doc) {
-            if (sp.happy_hour_promotion) {
-                sp.discount_type = ''
-                sp.discount = 0
-                sp.happy_hours_promotion_title = ''
-                sp.happy_hour_promotion = ''
-            }
-            doc.product_promotions.forEach(r => {
-                if (moment(sp.order_time).format('HH:mm:ss') == r.order_time && sp.is_free == false) {
-                    sp.discount_type = 'Percent'
-                    sp.discount = r.percentage_discount
-                    sp.happy_hours_promotion_title = r.promotion_title
-                    sp.happy_hour_promotion = r.promotion_name
-                }
+        if(this.promotion && this.promotion.length > 0){
+            let product_checks=[]
+            product_checks.push({
+                product_code: sp.product_code,
+                order_time: sp.order_time
             })
+            let doc = await this.getPromotionProducts(product_checks,this.getPromotionByCustomerGroup())
+            if (doc) {
+                if (sp.happy_hour_promotion) {
+                    sp.discount_type = ''
+                    sp.discount = 0
+                    sp.happy_hours_promotion_title = ''
+                    sp.happy_hour_promotion = ''
+                }
+                doc.product_promotions.forEach(r => {
+                    if (moment(sp.order_time).format('HH:mm:ss') == r.order_time && sp.is_free == false) {
+                        sp.discount_type = 'Percent'
+                        sp.discount = r.percentage_discount
+                        sp.happy_hours_promotion_title = r.promotion_title
+                        sp.happy_hour_promotion = r.promotion_name
+                    }
+                })
+            }
         }
     }
 
@@ -741,7 +743,7 @@ export default class Sale {
         return promotions
     }
     return promotions
-	}
+    }
 
     //on sale product apply tax setting
     onSaleProductApplyTax(tax_rule, sp) {
@@ -871,40 +873,40 @@ export default class Sale {
     }
 
     getRateBeforeTax(amount, tax_rule, tax_1_rate, tax_2_rate, tax_3_rate){
-		amount= (amount || 0)
+        amount= (amount || 0)
 
-		const t1_r = (tax_1_rate || 0) / 100
-		const t2_r = (tax_2_rate ||  0)  / 100
-		const t3_r = (tax_3_rate || 0)  / 100
-		
-		let tax_1_amount = 0
-		let tax_2_amount = 0
-		let tax_3_amount = 0
-		let price = 0
-
-		let t1_af_disc = tax_rule.calculate_tax_1_after_discount
-		let t2_af_disc = tax_rule.calculate_tax_2_after_discount
-
-		let t2_af_add_t1 = tax_rule.calculate_tax_2_after_adding_tax_1
+        const t1_r = (tax_1_rate || 0) / 100
+        const t2_r = (tax_2_rate ||  0)  / 100
+        const t3_r = (tax_3_rate || 0)  / 100
         
-		let t3_af_disc	= tax_rule.calculate_tax_3_after_discount
+        let tax_1_amount = 0
+        let tax_2_amount = 0
+        let tax_3_amount = 0
+        let price = 0
 
-		let t3_af_add_t1 =  tax_rule.calculate_tax_3_after_adding_tax_1
-		let t3_af_add_t2 =   tax_rule.calculate_tax_3_after_adding_tax_2
+        let t1_af_disc = tax_rule.calculate_tax_1_after_discount
+        let t2_af_disc = tax_rule.calculate_tax_2_after_discount
+
+        let t2_af_add_t1 = tax_rule.calculate_tax_2_after_adding_tax_1
+        
+        let t3_af_disc	= tax_rule.calculate_tax_3_after_discount
+
+        let t3_af_add_t1 =  tax_rule.calculate_tax_3_after_adding_tax_1
+        let t3_af_add_t2 =   tax_rule.calculate_tax_3_after_adding_tax_2
 
 
-		let tax_rate_con = 0
-		tax_rate_con = (1 + t1_r + t2_r 
-							+ (t1_r * t2_af_add_t1 * t2_r) 
-							+ t3_r + (t1_r * t3_af_add_t1 * t3_r) 
-							+ (t2_r * t3_af_add_t2 * t3_r)
-							+ (t1_r * t2_af_add_t1 * t2_r * t3_af_add_t2 * t3_r))  
-		tax_rate_con = tax_rate_con || 1
+        let tax_rate_con = 0
+        tax_rate_con = (1 + t1_r + t2_r 
+                            + (t1_r * t2_af_add_t1 * t2_r) 
+                            + t3_r + (t1_r * t3_af_add_t1 * t3_r) 
+                            + (t2_r * t3_af_add_t2 * t3_r)
+                            + (t1_r * t2_af_add_t1 * t2_r * t3_af_add_t2 * t3_r))  
+        tax_rate_con = tax_rate_con || 1
  
-		price = amount /  (tax_rate_con ==0?1:tax_rate_con)
+        price = amount /  (tax_rate_con ==0?1:tax_rate_con)
         
-		return  price
-	}
+        return  price
+    }
 
     //on sale apply  tax setting
     onSaleApplyTax(tax_rule, s) {
@@ -1752,70 +1754,49 @@ export default class Sale {
             return new Promise(async (resolve) => {
             let doc = JSON.parse(JSON.stringify(this.sale));
             let _sale = undefined;
-            this.generateProductPrinters();
+            
             if (this.sale.sale_status != "Hold Order") {
                 doc.sale_products.filter(r => r.sale_product_status == "New").forEach(x => {
                     x.sale_product_status = "Submitted";
                 })
+    }
+    
+            const response = await  app.postApi("sale.submit_order",{
+                data:{
+                    doc:doc,
+                    audit_trail_logs:this.auditTrailLogs
+            }})
+
+            if (response.data){
+                _sale = response.data.doc
+                console.log(response.data.doc);
+                console.log(_sale);
+                
+                if (response.name && _sale.grand_total  !=  this.__backup_sale.grand_total){
+                call.post("epos_restaurant_2023.api.payway.aba_close_transaction", { 
+                    "property_code": this.setting.property_code,
+                    "pos_config": this.setting.pos_config,
+                    "invoice_id": _sale.name
+                }); 
             }
-            if (this.getString(this.sale.name) == "") {
-                if (1==1){
-                    
-                    const result = await    onSubmitOrder({doc:doc,audit_trail_logs:this.auditTrailLogs})
-                    
-                    this.loading = false;
+            }else {
+                if(this.sale.sale_status == "Bill Requested"){
+                this.sale.sale_status = "Submitted";
+            }
+            }
+            
+            this.loading = false;
                     
 
-                }else {
-                     // ********************old code ********************
-                    if (this.newSaleResource == null) {
-                        this.createNewSaleResource();
-                    }
-                    try{
-                            _sale = await this.newSaleResource.submit({ doc: doc });
-                    }
-                    catch(error){
-                        if(this.sale.sale_status == "Bill Requested"){
-                            this.sale.sale_status = "Submitted";
-                        }
-                        this.loading = false;
-                    
-                        return;
-                    }
-                // ********************end old code ********************
-
-                }
+                
                
                 
 
                
-            }
-            else {
-             
-                try{
-                    
-                    _sale = await this.saleResource.setValue.submit(doc);  
-                    if (_sale.name && _sale.grand_total !=  this.__backup_sale.grand_total){
-                        call.post("epos_restaurant_2023.api.payway.aba_close_transaction", { 
-                            "property_code": this.setting.property_code,
-                            "pos_config": this.setting.pos_config,
-                            "invoice_id": _sale.name
-                        }); 
-                    }
-                }
-                catch(error){
-                    if(this.sale.sale_status == "Bill Requested"){
-                        this.sale.sale_status = "Submitted";
-                    }
-                    this.loading = false;
-                    
-                    return;
-                }
-            }
-            // this.submitToAuditTrail(doc);
-            //refresh tabl 
+            
+         
             resolve(_sale);
-            this.loading = false;
+    
 
         })
         }

@@ -38,12 +38,18 @@ export default class Product {
             page:1
         }
         this.posMenuData ; 
+
+        //
+        this.posMenu1LevelData = {
+            menu_categories:[],
+            menu_products:[]
+        };
     }
 
     async onInit(){ 
-        console.log("Product Inint")
-        await this.onInitMenu();
-        await  this.loadPOSMenu();
+        // console.log("Product Inint") 
+        // await this.onInitMenu();
+        await  this.loadPOSMenu(); 
     }
 
     async onInitMenu(params){
@@ -84,12 +90,38 @@ export default class Product {
         });
         
         if(this.setting.pos_menus.length > 0){
-            this.onInitMenu({
-                root_menu: this.currentRootPOSMenu ? this.currentRootPOSMenu : this.setting?.default_pos_menu,
-                sort_menu_order_by:setting?.sort_menu_order_by || "name",
-                sort_order_by:setting?.sort_order_by || "product_name_en",
-                shift_name: (resp?.message?.shift_name || "")
-            });
+
+            if((this.setting?.device_setting?.main_sale_screen??"Default")=="Default"){
+                this.onInitMenu({
+                    root_menu: this.currentRootPOSMenu ? this.currentRootPOSMenu : this.setting?.default_pos_menu,
+                    sort_menu_order_by:setting?.sort_menu_order_by || "name",
+                    sort_order_by:setting?.sort_order_by || "product_name_en",
+                    shift_name: (resp?.message?.shift_name || "")
+                });
+            }else{
+                ///
+                const resp = await call.post("epos_restaurant_2023.api.product.get_product_by_menu_1_level", {
+                    root_menu: this.currentRootPOSMenu ? this.currentRootPOSMenu : this.setting?.default_pos_menu,
+                    sort_menu_order_by: setting?.sort_menu_order_by || "name",
+                    sort_order_by: setting?.sort_order_by || "product_name_en",
+                });
+
+                if (resp.message) {
+                    const data = resp.message;
+                    this.posMenu1LevelData={
+                        menu_categories:data.menu_categories,
+                        menu_products:data.menu_products
+                    } 
+
+                }else{
+                    this.posMenu1LevelData = {
+                        menu_categories:[],
+                        menu_products:[]
+                    }
+                }
+
+                console.log("this.posMenu1LevelData", this.posMenu1LevelData)
+            }
         }
     }
 

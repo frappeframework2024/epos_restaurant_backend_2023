@@ -1,7 +1,7 @@
 import socketio
 
 # Point this to your Node.js Socket.IO server
-SOCKET_SERVER_URL = "http://localhost:3001"
+SOCKET_SERVER_URL = "http://localhost:3000"
 sio = socketio.Client()
 
 def connect_socket():
@@ -11,6 +11,10 @@ def connect_socket():
             print("✅ Connected to Socket.IO server")
         except Exception as e:
             print("❌ Socket.IO connection failed:", e)
+
+@sio.on("confirm_print_job")
+def on_confirm_print_job(data):
+    print("🖨️ Received print job:", data)
 
 def emit_event(event, data):
     try:

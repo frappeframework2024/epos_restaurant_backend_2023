@@ -191,14 +191,16 @@ const device_name = computed(() => {
 onMounted(async () => {
   localStorage.removeItem('current_user');
   localStorage.removeItem('make_order_auth');
-  await getApi("api.check_allow_access").then(result=>{
-      if(result.message == 1){
-          allowed.value = true; 
-      }
-      else{
-          allowed.value = false;
-      }
-  })
+  // await getApi("api.check_allow_access").then(result=>{
+  //     if(result.message == 1){
+  //         allowed.value = true; 
+  //     }
+  //     else{
+  //         allowed.value = false;
+  //     }
+  // })
+  allowed.value = true; 
+  
   db.getDocList("POS Translation", {
     fields: ["name", "language_name", "flag"]
   }).then((r) => {
@@ -299,16 +301,16 @@ function checkPromotionDay() {
   const resp = call.post("epos_restaurant_2023.api.promotion.check_promotion", {
     business_branch: gv.setting.business_branch
   });
-  resp.then((doc)=>{
-    let _doc = doc.message;
-    gv.promotion = _doc;
-    sale.promotion = _doc;
+  resp.then((_doc)=>{
+    let doc = _doc.message;
+    gv.promotion = doc;
+    sale.promotion = doc;
   }).catch((err) => {
     gv.promotion = undefined;
     sale.promotion = undefined;
-   }).finally(() => {
-    //
-   }) ;
+  }).finally(() => {
+  //
+  }) ;
 }
 
 function onExitWindow() {

@@ -679,27 +679,29 @@ export default class Sale {
     }
 
     async applyPromotions(sp){
-        let product_checks=[]
-        product_checks.push({
-            product_code: sp.product_code,
-            order_time: sp.order_time
-        })
-        let doc = await this.getPromotionProducts(product_checks,this.getPromotionByCustomerGroup())
-        if (doc) {
-            if (sp.happy_hour_promotion) {
-                sp.discount_type = ''
-                sp.discount = 0
-                sp.happy_hours_promotion_title = ''
-                sp.happy_hour_promotion = ''
-            }
-            doc.product_promotions.forEach(r => {
-                if (moment(sp.order_time).format('HH:mm:ss') == r.order_time && sp.is_free == false) {
-                    sp.discount_type = 'Percent'
-                    sp.discount = r.percentage_discount
-                    sp.happy_hours_promotion_title = r.promotion_title
-                    sp.happy_hour_promotion = r.promotion_name
-                }
+        if(this.promotion && this.promotion.length > 0){
+            let product_checks=[]
+            product_checks.push({
+                product_code: sp.product_code,
+                order_time: sp.order_time
             })
+            let doc = await this.getPromotionProducts(product_checks,this.getPromotionByCustomerGroup())
+            if (doc) {
+                if (sp.happy_hour_promotion) {
+                    sp.discount_type = ''
+                    sp.discount = 0
+                    sp.happy_hours_promotion_title = ''
+                    sp.happy_hour_promotion = ''
+                }
+                doc.product_promotions.forEach(r => {
+                    if (moment(sp.order_time).format('HH:mm:ss') == r.order_time && sp.is_free == false) {
+                        sp.discount_type = 'Percent'
+                        sp.discount = r.percentage_discount
+                        sp.happy_hours_promotion_title = r.promotion_title
+                        sp.happy_hour_promotion = r.promotion_name
+                    }
+                })
+            }
         }
     }
 

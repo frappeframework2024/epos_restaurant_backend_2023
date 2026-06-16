@@ -149,9 +149,6 @@ async function _onMounted() {
         sale.getTableSaleList()
         sale.saleNetworkLock(backup_sale)
     }
-
-
-
     //CDS
     socket.emit("ShowOrderInCustomerDisplay", sale.sale, "new", sale.customer_display_key);
 }
@@ -159,30 +156,33 @@ async function _onMounted() {
 
 
 async function _onLoadMenu() {
-    const resp = await call.post("epos_restaurant_2023.api.product.get_product_by_menu_1_level", {
-        root_menu: product.currentRootPOSMenu ? product.currentRootPOSMenu : product.setting?.default_pos_menu,
-        sort_menu_order_by: gv.itemMenuSetting?.sort_menu_order_by || "name",
-        sort_order_by: gv.itemMenuSetting?.sort_order_by || "product_name_en",
-    });
+    menu_categories.value = product.posMenu1LevelData["menu_categories"]??[];
+    menu_products.value = product.posMenu1LevelData["menu_products"]??[];
+    // const resp = await call.post("epos_restaurant_2023.api.product.get_product_by_menu_1_level", {
+    //     root_menu: product.currentRootPOSMenu ? product.currentRootPOSMenu : product.setting?.default_pos_menu,
+    //     sort_menu_order_by: gv.itemMenuSetting?.sort_menu_order_by || "name",
+    //     sort_order_by: gv.itemMenuSetting?.sort_order_by || "product_name_en",
+    // });
 
-
-    if (resp.message) {
-        const data = resp.message;
-        menu_categories.value = data.menu_categories
-        menu_products.value = data.menu_products
-    }
+    // if (resp.message) {
+    //     const data = resp.message;
+    //     menu_categories.value = data.menu_categories
+    //     menu_products.value = data.menu_products
+    // }
 
 }
 
 async function onCheckExpireHappyHoursPromotion() {
-    const valid_promotion = await call.post("epos_restaurant_2023.api.promotion.check_promotion", {
-        check_time: 1,
-        business_branch: gv.setting.business_branch || ''
-    })
-    if (valid_promotion.message) {
-        let doc = valid_promotion.message;
-        gv.promotion = doc;
-        sale.promotion = doc;
+    if(sale.promotion){
+        const valid_promotion = await call.post("epos_restaurant_2023.api.promotion.check_promotion", {
+            check_time: 1,
+            business_branch: gv.setting.business_branch || ''
+        })
+        if (valid_promotion.message) {
+            let doc = valid_promotion.message;
+            gv.promotion = doc;
+            sale.promotion = doc;
+        }
     }
 }
 

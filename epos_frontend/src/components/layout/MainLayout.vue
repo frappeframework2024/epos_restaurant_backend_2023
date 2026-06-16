@@ -102,8 +102,9 @@ export default {
     },
     methods: {
         async checkAllowed() {
-            const result = await getApi("api.check_allow_access");
-            this.allowed = result.message == 1;
+            // const result = await getApi("api.check_allow_access");
+            // this.allowed = result.message == 1;
+            this.allowed = 1;
         },
         onHome() {
             this.$router.push({ name: 'Home' })

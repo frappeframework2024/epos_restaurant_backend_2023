@@ -70,6 +70,8 @@
     const sale = inject("$sale");
     const gv = inject("$gv");
     const socket = inject("$socket");
+    const frappe = inject("$frappe");
+    const call = frappe.call();
 
     const product = inject("$product");
     
@@ -148,46 +150,10 @@
                 }
             }
         }
-
         let backup_sale = JSON.parse(JSON.stringify(sale.sale))  
 
         //check working day and cashier shift
-        createResource({
-            url: "epos_restaurant_2023.api.api.get_current_shift_information",
-            params: {
-                business_branch: sale.setting?.business_branch,
-                pos_profile: localStorage.getItem("pos_profile")
-            },
-            auto: true,
-            onSuccess(data) {
-                if (data.cashier_shift == null) {
-                    toaster.warning($t("msg.Please start shift first"));
-                    router.push({ name: "OpenShift" });
-                } else if (data.working_day == null) {
-                    toaster.warning($t('msg.Please start working day first'));
-                    router.push({ name: "StartWorkingDay" });
-                } else {
-
-                    sale.sale.working_day = data.working_day.name;
-                    sale.sale.posting_date = data.working_day.posting_date;
-                    sale.posting_date = data.working_day.posting_date;
-                    sale.sale.cashier_shift = data.cashier_shift.name;
-                    sale.sale.shift_name = data.cashier_shift.shift_name;
-
-
-                    // sale.working_day = data.working_day.name;
-                    // sale.cashier_shift = data.cashier_shift.name;
-                    // sale.shift_name = data.cashier_shift.shift_name;
-                    if (product.setting.pos_menus.length <= 0){
-                        product.getProductMenuByProductCategory( 'All Product Categories'); 
-                    }
-
-                    gv.confirm_close_working_day(data.working_day.posting_date);
-
-                    onCheckExpireHappyHoursPromotion();
-                }
-            }
-        })
+        getCurrentShiftInformation();
 
         //load sale data
         if (!sale.getString(route.params.name) == "" && !sale.no_loading) {
@@ -224,20 +190,54 @@
 
     })
 
-    function onCheckExpireHappyHoursPromotion() {
-        createResource({
-            url: 'epos_restaurant_2023.api.promotion.check_promotion',
-            auto: true,
-            params: {
+
+    function getCurrentShiftInformation(){ 
+        const resp = call.post("epos_restaurant_2023.api.api.get_current_shift_information",{
+            business_branch: sale.setting?.business_branch,
+            pos_profile: localStorage.getItem("pos_profile")
+        });
+        
+        resp.then((_doc)=>{
+            let data = _doc.message;
+            if (data.cashier_shift == null) {
+                toaster.warning($t("msg.Please start shift first"));
+                router.push({ name: "OpenShift" });
+            } else if (data.working_day == null) {
+                toaster.warning($t('msg.Please start working day first'));
+                router.push({ name: "StartWorkingDay" });
+            } else {
+                sale.sale.working_day = data.working_day.name;
+                sale.sale.posting_date = data.working_day.posting_date;
+                sale.posting_date = data.working_day.posting_date;
+                sale.sale.cashier_shift = data.cashier_shift.name;
+                sale.sale.shift_name = data.cashier_shift.shift_name; 
+                
+                if (product.setting.pos_menus.length <= 0){
+                    product.getProductMenuByProductCategory( 'All Product Categories'); 
+                }
+                gv.confirm_close_working_day(data.working_day.posting_date);
+                onCheckExpireHappyHoursPromotion();
+            }    
+        });
+    }
+
+    function onCheckExpireHappyHoursPromotion() {         
+        if(sale.promotion){
+            const resp = call.post("epos_restaurant_2023.api.promotion.check_promotion",{
                 check_time: 1,
                 business_branch: gv.setting.business_branch || ''
-            },
-            onSuccess(doc) {
+            });
+            resp.then((_doc)=>{
+                let doc = _doc.message;
                 gv.promotion = doc
                 sale.promotion = doc
-            }
-        });
-
+            }).catch((err) => {
+                gv.promotion = undefined;
+                sale.promotion = undefined;
+            }).finally(() => {
+            //
+            }) ; 
+        } 
     }
 
     onBeforeRouteLeave(() => {
