@@ -21,7 +21,7 @@
             <div  class="grid  gap-3 w-full" style="max-height: 80vh;overflow: auto;"> 
 
                 <table>
-<template v-for="item in product.posMenuResource.data.filter(r=>r.parent==selectedNode.name && r.type == 'product')" :key="item.menu_product_name" >
+                    <template v-for="item in product.posMenuData?.filter(r=>r.parent==selectedNode.name && r.type == 'product')" :key="item.menu_product_name" >
 
                     <tr  class="bg-blue-50 rounded-lg shadow-lg border cursor-move p-2">
                         <td class="w-20"> 
@@ -50,6 +50,7 @@
                     <tr v-if="prices(item).length>0">
                         <td colspan="3">
                             <table>
+                                <tbody>
                                 <tr>
                                     <th style="width: 20%;">{{ $t("Price Rule") }}</th>
                                     <th style="width: 20%;">{{ $t("Portion") }}</th>
@@ -61,6 +62,7 @@
 
                                     <td> <input style="text-align: center;"  @change="onUpdate(item,p)"  type="number" class="border-2 input_text_style w-full"  v-model="p.price" /></td>
                                 </tr>
+                                </tbody>
                             </table>
                         </td>
                     </tr>
@@ -158,7 +160,7 @@ onMounted(async () => {
 
 
 function getPOSMenuData(){
-    const pos_menus =  product.posMenuResource.data.filter(r=>r.type!='back').map((item, index)  => ({
+    const pos_menus =  product.posMenuData?.filter(r=>r.type!='back').map((item, index)  => ({
         name: item.name,
         text: item.name_en,
         name_kh: item.name_kh,

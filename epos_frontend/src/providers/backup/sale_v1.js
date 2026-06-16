@@ -7,8 +7,6 @@ import {
     postApi
 
 } from "@/plugin"
-
-
 import { createToaster } from "@meforma/vue-toaster";
 import socket from '@/utils/socketio';
 import { FrappeApp } from 'frappe-js-sdk';
@@ -741,7 +739,7 @@ export default class Sale {
         return promotions
     }
     return promotions
-    }
+	}
 
     //on sale product apply tax setting
     onSaleProductApplyTax(tax_rule, sp) {
@@ -871,40 +869,40 @@ export default class Sale {
     }
 
     getRateBeforeTax(amount, tax_rule, tax_1_rate, tax_2_rate, tax_3_rate){
-        amount= (amount || 0)
+		amount= (amount || 0)
 
-        const t1_r = (tax_1_rate || 0) / 100
-        const t2_r = (tax_2_rate ||  0)  / 100
-        const t3_r = (tax_3_rate || 0)  / 100
+		const t1_r = (tax_1_rate || 0) / 100
+		const t2_r = (tax_2_rate ||  0)  / 100
+		const t3_r = (tax_3_rate || 0)  / 100
+		
+		let tax_1_amount = 0
+		let tax_2_amount = 0
+		let tax_3_amount = 0
+		let price = 0
+
+		let t1_af_disc = tax_rule.calculate_tax_1_after_discount
+		let t2_af_disc = tax_rule.calculate_tax_2_after_discount
+
+		let t2_af_add_t1 = tax_rule.calculate_tax_2_after_adding_tax_1
         
-        let tax_1_amount = 0
-        let tax_2_amount = 0
-        let tax_3_amount = 0
-        let price = 0
+		let t3_af_disc	= tax_rule.calculate_tax_3_after_discount
 
-        let t1_af_disc = tax_rule.calculate_tax_1_after_discount
-        let t2_af_disc = tax_rule.calculate_tax_2_after_discount
-
-        let t2_af_add_t1 = tax_rule.calculate_tax_2_after_adding_tax_1
-        
-        let t3_af_disc	= tax_rule.calculate_tax_3_after_discount
-
-        let t3_af_add_t1 =  tax_rule.calculate_tax_3_after_adding_tax_1
-        let t3_af_add_t2 =   tax_rule.calculate_tax_3_after_adding_tax_2
+		let t3_af_add_t1 =  tax_rule.calculate_tax_3_after_adding_tax_1
+		let t3_af_add_t2 =   tax_rule.calculate_tax_3_after_adding_tax_2
 
 
-        let tax_rate_con = 0
-        tax_rate_con = (1 + t1_r + t2_r 
-                            + (t1_r * t2_af_add_t1 * t2_r) 
-                            + t3_r + (t1_r * t3_af_add_t1 * t3_r) 
-                            + (t2_r * t3_af_add_t2 * t3_r)
-                            + (t1_r * t2_af_add_t1 * t2_r * t3_af_add_t2 * t3_r))  
-        tax_rate_con = tax_rate_con || 1
+		let tax_rate_con = 0
+		tax_rate_con = (1 + t1_r + t2_r 
+							+ (t1_r * t2_af_add_t1 * t2_r) 
+							+ t3_r + (t1_r * t3_af_add_t1 * t3_r) 
+							+ (t2_r * t3_af_add_t2 * t3_r)
+							+ (t1_r * t2_af_add_t1 * t2_r * t3_af_add_t2 * t3_r))  
+		tax_rate_con = tax_rate_con || 1
  
-        price = amount /  (tax_rate_con ==0?1:tax_rate_con)
+		price = amount /  (tax_rate_con ==0?1:tax_rate_con)
         
-        return  price
-    }
+		return  price
+	}
 
     //on sale apply  tax setting
     onSaleApplyTax(tax_rule, s) {
@@ -1728,76 +1726,73 @@ export default class Sale {
                 return
             }
         }
-        if (this.sale.sale_products.length == 0 && this.sale.name == undefined && (this.sale.from_reservation || "") == "") {
-            toaster.warning($t('msg.Please select a menu item to submit order'));
-            this.loading = false;
-            resolve(false);
-            return
-        }
-        else if (this.onCheckPriceSmallerThanZero()) {
-            this.loading = false;
-            resolve(false);
-            return
-        }
-        else{
-            
-        }
         const resp = await Ping(this.setting)
         if(resp == 0){
             toaster.error($t('Please check your network connection'));
             this.loading = false;
             return
         }
-        else{
-            return new Promise(async (resolve) => {
-            let doc = JSON.parse(JSON.stringify(this.sale));
-            let _sale = undefined;
-            
-            if (this.sale.sale_status != "Hold Order") {
-                doc.sale_products.filter(r => r.sale_product_status == "New").forEach(x => {
-                    x.sale_product_status = "Submitted";
-                })
-    }
-    
-            const response = await  app.postApi("sale.submit_order",{
-                data:{
-                    doc:doc,
-                    audit_trail_logs:this.auditTrailLogs
-            }})
 
-            if (response.data){
-                _sale = response.data.doc
-                console.log(response.data.doc);
-                console.log(_sale);
-                
-                if (response.name && _sale.grand_total  !=  this.__backup_sale.grand_total){
-                call.post("epos_restaurant_2023.api.payway.aba_close_transaction", { 
-                    "property_code": this.setting.property_code,
-                    "pos_config": this.setting.pos_config,
-                    "invoice_id": _sale.name
-                }); 
+        return new Promise(async (resolve) => {
+            if (this.sale.sale_products.length == 0 && this.sale.name == undefined && (this.sale.from_reservation || "") == "") {
+                toaster.warning($t('msg.Please select a menu item to submit order'));
+                resolve(false);
             }
-            }else {
-                if(this.sale.sale_status == "Bill Requested"){
-                this.sale.sale_status = "Submitted";
+            else if (this.onCheckPriceSmallerThanZero()) {
+                resolve(false);
             }
+            else {
+                let doc = JSON.parse(JSON.stringify(this.sale));
+                let _sale = undefined;
+                this.generateProductPrinters();
+                if (this.sale.sale_status != "Hold Order") {
+                    doc.sale_products.filter(r => r.sale_product_status == "New").forEach(x => {
+                        x.sale_product_status = "Submitted";
+                    })
+                }
+                if (this.getString(this.sale.name) == "") {
+                    if (this.newSaleResource == null) {
+                        this.createNewSaleResource();
+                    }
+                    try{
+                         _sale = await this.newSaleResource.submit({ doc: doc });
+                    }
+                    catch(error){
+                        if(this.sale.sale_status == "Bill Requested"){
+                            this.sale.sale_status = "Submitted";
+                        }
+                        this.loading = false;
+                   
+                        return;
+                    }
+                }
+                else {
+                    try{
+                        _sale = await this.saleResource.setValue.submit(doc);  
+                        if (_sale.name && _sale.grand_total !=  this.__backup_sale.grand_total){
+                            call.post("epos_restaurant_2023.api.payway.aba_close_transaction", { 
+                                "property_code": this.setting.property_code,
+                                "pos_config": this.setting.pos_config,
+                                "invoice_id": _sale.name
+                            }); 
+                        }
+                    }
+                    catch(error){
+                        if(this.sale.sale_status == "Bill Requested"){
+                            this.sale.sale_status = "Submitted";
+                        }
+                        this.loading = false;
+                     
+                        return;
+                    }
+                }
+                this.submitToAuditTrail(doc);
+                //refresh tabl 
+                resolve(_sale);
             }
-            
-            this.loading = false;
-                    
-
-                
-               
-                
-
-               
-            
-         
-            resolve(_sale);
-    
-
+             this.loading = false;
         })
-        }
+
     }
 
 
@@ -1899,7 +1894,7 @@ export default class Sale {
                     this.loading = true;
                     const resp = await Ping(this.setting)
                     if(resp == 0){
-                        toaster.error($t('msg.Please check your network connection'));
+                        toaster.warning($t('msg.Please check your network connection'));
                         this.loading = false;
                         resolve(false);
                         return
@@ -2315,7 +2310,6 @@ export default class Sale {
     }
 
     generateProductPrinters() {
-        return
         this.productPrinters = [];
         this.sale.sale_products.filter(r => r.sale_product_status == 'New').forEach(async (r) => {  
             let comboItemPrinters = await this.getProductPrinterOfComboItem(r);

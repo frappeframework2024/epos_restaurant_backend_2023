@@ -48,7 +48,7 @@
         return (gv.itemMenuSetting.shortcut_menu_font_size * 28) / 16
     })
     const shortcut = computed(()=>{
-        let  data = product.posMenuResource.data?.filter(r=>r.shortcut_menu == 1) 
+        let  data = product.posMenuData?.filter(r=>r.shortcut_menu == 1) 
         if((gv.itemMenuSetting?.sort_menu_order_by || "name") == "name"){
             data = Enumerable.from(data).orderBy("$.name").toArray()
         }else {
@@ -98,7 +98,7 @@
         } 
         else
         {
-            const parent_menu = product.posMenuResource.data?.find(r => r.name == menu.parent);
+            const parent_menu = product.posMenuData?.find(r => r.name == menu.parent);
             if(parent_menu != undefined){
                 if((parent_menu.price_rule||"")!=""){
                     sale.price_rule = parent_menu.price_rule

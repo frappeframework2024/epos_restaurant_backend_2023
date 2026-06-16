@@ -75,6 +75,7 @@
                             </div>
 
                             <table style="width:100%">
+                                <tbody>
                                 <tr>
                                     <td class=" px-3 py-1">{{ $t("Grand Total") }}</td>
                                     <td class="text-right px-3 py-1">
@@ -93,6 +94,7 @@
                                         <CurrencyFormat :value="s.balance" />
                                     </td>
                                 </tr>
+                                </tbody>
                             </table>
                         </v-card>
                     </v-col>

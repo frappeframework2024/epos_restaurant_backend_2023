@@ -1,9 +1,13 @@
 
 import {handleServerMessage} from './handle-server-message'
 import { FrappeApp } from 'frappe-js-sdk';
-export function getDoc(doctype, name){
-    const frappe = new FrappeApp()
+  const frappe = new FrappeApp()
     const db = frappe.db()
+    const call = frappe.call()
+
+export function getDoc(doctype, name){
+  
+
     return  new Promise((resolve, reject)=>{
         db.getDoc(doctype, name)
         .then((doc) => { 
@@ -16,8 +20,7 @@ export function getDoc(doctype, name){
     })
 }
 export function getDocList(doctype, option){
-    const frappe = new FrappeApp()
-    const db = frappe.db()
+ 
     return new Promise((resolve, reject)=>{
         db.getDocList(doctype, option)
         .then((doc) => {
@@ -32,8 +35,7 @@ export function getDocList(doctype, option){
 }
  
 export function getCount(doctype, filters){
-    const frappe = new FrappeApp()
-    const db = frappe.db()
+ 
     return new Promise((resolve, reject)=>{
         db.getCount(doctype, filters,false,false)
         .then((doc) => {
@@ -46,8 +48,7 @@ export function getCount(doctype, filters){
     })
 }
 export function updateDoc(doctype, name, data, message){
-    const frappe = new FrappeApp()
-    const db = frappe.db()
+ 
     return new Promise((resolve, reject)=>{
         db.updateDoc(doctype, name, data)
         .then((doc) => {
@@ -63,8 +64,7 @@ export function updateDoc(doctype, name, data, message){
 }
 export function createUpdateDoc(doctype, data, message, rename=null,show_error_message=true){ 
  
-    const frappe = new FrappeApp()
-    const db = frappe.db() 
+ 
  
     return new Promise((resolve, reject)=>{
         if(data.name){
@@ -116,8 +116,7 @@ export function createUpdateDoc(doctype, data, message, rename=null,show_error_m
 }
 export function deleteDoc(doctype, name, message){
  
-    const frappe = new FrappeApp()
-    const db = frappe.db()
+ 
     return new Promise((resolve, reject)=>{
         db.deleteDoc(doctype, name)
         .then((doc) => {
@@ -133,8 +132,7 @@ export function deleteDoc(doctype, name, message){
     })
 }
 export function getApi(api, params = Object,base_url="epos_restaurant_2023.api."){
-    const frappe = new FrappeApp()
-    const call = frappe.call()
+ 
     return new Promise((resolve, reject)=>{
         call.get(`${base_url}${api}`, params).then((result) => {
             resolve(result)
@@ -171,6 +169,54 @@ export function postApi(api, params = Object, message,show_message=true,base_url
         })
     })
 }
+
+
+export async function postData(api, params = Object, message="",show_message=true,base_url="epos_restaurant_2023.api."){
+      let api_url = ""
+        if (api.startsWith("epos_restaurant_2023.")){
+            
+            api_url = api
+        }else {
+            api_url = `${base_url}${api}`
+        }
+
+      return call.post( api_url, params)
+      .then((result) => {
+        if(show_message == true){
+            if(show_message && !result.hasOwnProperty("_server_messages")){
+                window.postMessage('show_success|' + `${message ? message : 'Update successful'}`, '*')
+            }else{
+                if(result.hasOwnProperty("_server_messages")){
+                    const _server_messages = JSON.parse(result._server_messages)
+                    _server_messages.forEach(r => {
+                            // window.postMessage('show_success|' + JSON.parse(r).message, '*')
+                            let _message = JSON.parse(r)
+                            
+                            if (!_message.indicator){
+                                
+                            //  window.postMessage('show_success|' + _message.message, '*')
+                             showSuccess(_message.title || _message.message,_message.title?_message.message:"")
+                            }
+                            else {
+                                if (_message.indicator=="info"){
+                                    showInfo(_message.title || _message.message,_message.title?_message.message:"",10000,"tr")
+                                }
+                            }
+                            
+                        });
+                }
+               
+            }
+        }
+       return  { data: result.message, error: null }
+    
+      })
+      .catch((error) => {
+        handleServerMessage(error)
+        return { data: null, error }
+    });
+}
+
 export function postReservationStay(docname,data,update_docs){
     let doc = {
         docname: docname,
@@ -190,8 +236,7 @@ export function postReservationStay(docname,data,update_docs){
     
 }
 export function deleteApi(api, params = Object, message){
-    const frappe = new FrappeApp()
-    const call = frappe.call()
+ 
     return new Promise((resolve, reject)=>{
         call.delete(`epos_restaurant_2023.api.${api}`, params).then((result) => {
             window.postMessage('show_success|' + `${message ? message : 'Deleted successful'}`, '*')
@@ -221,7 +266,7 @@ export function renameDoc(doctype, old_name,new_name){
 }
 export function uploadFiles(files, fileArgs = Object){
 
-    const frappe = new FrappeApp()
+ 
     const file = frappe.file();
     return new Promise((resolve, reject)=>{
         let countFile = 0

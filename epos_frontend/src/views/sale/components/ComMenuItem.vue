@@ -264,8 +264,8 @@ function activate_menu(event) {
 }
 
 function onBack(menu) {
-    const parent_name = product.posMenuResource.data?.find(r => r.name == menu.parent).parent;
-    const parent_menu = product.posMenuResource.data?.find(r => r.name == parent_name);
+    const parent_name = product.posMenuData?.find(r => r.name == menu.parent).parent;
+    const parent_menu = product.posMenuData?.find(r => r.name == parent_name);
     product.parentMenu = parent_name;
     product.loading_default_menu_from_table = 0;
     if (parent_menu != undefined){
@@ -284,7 +284,7 @@ function _onPriceRuleChanged(menu){
     } 
     else
     {
-        const parent_menu = product.posMenuResource.data?.find(r => r.name == menu.parent);
+        const parent_menu = product.posMenuData?.find(r => r.name == menu.parent);
         if(parent_menu != undefined){
             if((parent_menu.price_rule||"")!=""){
                 sale.price_rule = parent_menu.price_rule

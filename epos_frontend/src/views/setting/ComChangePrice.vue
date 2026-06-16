@@ -29,6 +29,7 @@
             <tr v-if="params.prices.length>0">
                 <td colspan="3">
                     <table>
+                        <tbody>
                         <tr>
                             <th style="width: 20%;">{{ $t("Price Rule") }}</th>
                             <th style="width: 20%;">{{ $t("Portion") }}</th>
@@ -40,6 +41,7 @@
 
                             <td> <input style="text-align: center;"  @change="onUpdate(p)" type="number" class="border-2 input_text_style w-full"  v-model="p.price" /></td>
                         </tr>
+                        </tbody>
                     </table>
                 </td>
             </tr>         

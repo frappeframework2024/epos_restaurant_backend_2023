@@ -375,6 +375,37 @@ def get_mobile_order_to_kitchen_pdf(template = "Online Order Kitchen Ticket",doc
     return result_base64
 
 
+@frappe.whitelist()
+def get_kitchen_order_template(template = "Kitchen Order PDF",doc=None):
+    template =frappe.get_cached_doc("POS Receipt Template",template)
+    
+    
+    
+    html_template = """
+    <html>
+    <head>
+        <style>
+        {css}
+        </style>
+    </head>
+    <body>
+    {template}
+    </body>
+    </html>
+    """.format(css=template.style,template=template.template)
+   
+    
+    rendered_html = frappe.render_template(html_template, {"doc":doc,"data":doc.get("data")})
+    return rendered_html
+ 
+    
+
+
+
+
+
+
+
 @frappe.whitelist(allow_guest=True)
 def get_print_data(doctype,docname,template,return_type="base64",lang="en",options={}):
 

@@ -152,18 +152,24 @@ import { onMounted } from 'vue';
 import { useDisplay } from 'vuetify';
 const frappe = inject("$frappe");
 const db = frappe.db();
+const call = frappe.call();
 const { t: $t } = i18n.global;
 const auth = inject("$auth");
 const pos_license = inject("$pos_license");
 const gv = inject('$gv');
 const sale = inject('$sale');
+const product = inject('$product');
+
 const { mobile } = useDisplay();
 const toast = createToaster({ position: "top-right" })
 const router = useRouter();
 const store = useStore();
+
+
 const languages = ref()
 const languageDisplay = ref('')
 let allowed = ref(true);
+
 store.state.isLoading = false;
 let state = reactive({
   username: "",
@@ -256,6 +262,9 @@ const onLogin = async () => {
         if (res) {
           getCurrentUserInfo(result.message)
           checkPromotionDay()
+          //init menu product 
+				product.onInit();
+
         } else {  
           toast.warning(`Login fail Invalid username or password`);
           store.dispatch('endLoading');
@@ -272,35 +281,34 @@ const onLogin = async () => {
 }
 
 function getCurrentUserInfo(user) {
-  createResource({
-    url: 'epos_restaurant_2023.api.api.get_user_information',
-    auto: true,
-    async onSuccess(doc) {
-      doc.permission = user.permission;
-      localStorage.setItem('current_user', JSON.stringify(doc));
-      router.push({ name: "Home" });
-      store.dispatch('endLoading');
-    },
-    onError(x) {
-      store.dispatch('endLoading');
-    }
-  })
+  const resp = call.post("epos_restaurant_2023.api.api.get_user_information");
+  resp.then((doc)=>{
+    let _doc =  doc.message; 
+    _doc.permission = user.permission;
+    localStorage.setItem('current_user', JSON.stringify(_doc));
+    router.push({ name: "Home" });
+    store.dispatch('endLoading');
+  }).catch((err) => {
+    store.dispatch('endLoading');    
+  }).finally(() => {
+    store.dispatch('endLoading');
+  }); 
 }
 
-function checkPromotionDay() {
-  // check promotion 
-  createResource({
-    url: 'epos_restaurant_2023.api.promotion.check_promotion',
-    cache: "check_promotion",
-    auto: true,
-    params: {
-      business_branch: gv.setting.business_branch
-    },
-    onSuccess(doc) {
-      gv.promotion = doc;
-      sale.promotion = doc;
-    }
+function checkPromotionDay() { 
+  const resp = call.post("epos_restaurant_2023.api.promotion.check_promotion", {
+    business_branch: gv.setting.business_branch
   });
+  resp.then((doc)=>{
+    let _doc = doc.message;
+    gv.promotion = _doc;
+    sale.promotion = _doc;
+  }).catch((err) => {
+    gv.promotion = undefined;
+    sale.promotion = undefined;
+   }).finally(() => {
+    //
+   }) ;
 }
 
 function onExitWindow() {

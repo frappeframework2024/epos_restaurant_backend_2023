@@ -10,6 +10,7 @@ const call = frappe.call()
 
 export default class Product {
     constructor() {
+        this.isInit = false;
         this.setting = null;
         this.parentMenu = "";
         this.loading_default_menu_from_table = 1;
@@ -36,22 +37,38 @@ export default class Product {
             limit:10,
             page:1
         }
-        
-        this.posMenuResource = createResource({
-            url: 'epos_restaurant_2023.api.product.get_product_by_menu',
-            params: {
-                root_menu: this.setting?.default_pos_menu
-            },
-            auto: true,
-            cache: ["pos_menu"]
-        })
+        this.posMenuData ; 
     }
+
+    async onInit(){ 
+        console.log("Product Inint")
+        await this.onInitMenu();
+        await  this.loadPOSMenu();
+    }
+
+    async onInitMenu(params){
+        if(this.setting &&  this.setting.pos_menus.length > 0){
+            let _params ={
+                root_menu: this.setting?.default_pos_menu
+            }
+            if(params){
+                _params = params;
+            }
+            const resp = await call.post("epos_restaurant_2023.api.product.get_product_by_menu", params); 
+            if(resp.message){
+                this.posMenuData = resp.message;           
+            }
+        } 
+    }
+
+
     onClearKeyword() {
         this.parentMenu = "";
         this.searchProductKeyword = "";
         this.searchProductKeywordStore = "";
         this.selectedProduct = {};
     }
+
     async loadPOSMenu() {
         let setting = localStorage.getItem("item_menu_setting")
         if (setting){
@@ -62,27 +79,29 @@ export default class Product {
                 sort_order_by:"product_name_en"
             }
         }
-        let resp = await call.get("epos_restaurant_2023.api.api.get_current_cashier_shift",{pos_profile: localStorage.getItem("pos_profile")})
-        this.posMenuResource.update({
-            params: {
+        let resp = await call.get("epos_restaurant_2023.api.api.get_current_cashier_shift",{
+            pos_profile: localStorage.getItem("pos_profile")
+        });
+        
+        if(this.setting.pos_menus.length > 0){
+            this.onInitMenu({
                 root_menu: this.currentRootPOSMenu ? this.currentRootPOSMenu : this.setting?.default_pos_menu,
                 sort_menu_order_by:setting?.sort_menu_order_by || "name",
                 sort_order_by:setting?.sort_order_by || "product_name_en",
                 shift_name: (resp?.message?.shift_name || "")
-            }
-        });
-        this.posMenuResource.reload();
+            });
+        }
     }
 
     getPOSMenu(default_menu = "") {
         if (this.getString(this.searchProductKeyword) == "") {
             if(default_menu && this.loading_default_menu_from_table == 1){
-                 const data =  Enumerable.from(this.posMenuResource.data?.filter(r => r.parent == default_menu))
+                 const data =  Enumerable.from(this.posMenuData?.filter(r => r.parent == default_menu)); 
                  return data
             }
             else{
                  if (this.parentMenu) {
-                    const data = this.posMenuResource.data?.filter(r => r.parent == this.parentMenu)
+                    const data = this.posMenuData?.filter(r => r.parent == this.parentMenu);
                     return data
                 }
                 else {
@@ -90,26 +109,22 @@ export default class Product {
                     if (localStorage.getItem('default_menu')) {
                         defaultMenu = localStorage.getItem('default_menu')
                     }
-                    const data =  Enumerable.from(this.posMenuResource.data?.filter(r => r.parent == defaultMenu))
-                    return data
-                    // return   Enumerable.from(this.posMenuResource.data?.filter(r => r.parent == defaultMenu)).orderBy("$.type_index").orderBy("$.sort_order").thenBy("$.name_en");
+                    const data =  Enumerable.from(this.posMenuData?.filter(r => r.parent == defaultMenu));
+                    return data 
                 }
             }
         } else {
-            // sort is from db
+            // sort is from db 
 
-            return this.posMenuResource.data?.filter((r) => {
+            let result =  this.posMenuData?.filter((r) => {
                 return String(r.name_en + ' ' + r.product_code_2 + ' ' + r.product_code_3 + ' ' + r.name_kh + ' ' + r.name).toLocaleLowerCase().includes(this.searchProductKeyword.toLocaleLowerCase()) && r.type == "product"
-            })
-
-            // return this.posMenuResource.data?.filter((r) => {
-            //     return String(r.name_en + ' ' + r.name_kh + ' ' + r.name).toLocaleLowerCase().includes(this.searchProductKeyword.toLocaleLowerCase()) && r.type == "product"
-            // }).sort((a, b)=>a.sort_order-b.sort_order)
+            });
+            return result; 
         }
     }
 
     getProductMenuByProductCategory(product_category) {
-     
+ 
         if((typeof product_category ) =="object"){
             product_category = product_category.name
         }
@@ -221,15 +236,14 @@ export default class Product {
 
     }
 
-    setSelectedProductByMenuID(id) {       
-        let p = Enumerable.from(this.posMenuResource.data ?? []).where(`$.menu_product_name=='${id}'`).firstOrDefault();      
-   
+    setSelectedProductByMenuID(id) {         
+        let p = Enumerable.from(this.posMenuData ?? []).where(`$.menu_product_name=='${id}'`).firstOrDefault();   
         if (p) {
             this.setSelectedProduct(p);
             return true;
         }
         else {
-            p = Enumerable.from(this.posMenuResource.data ?? []).where(`$.name=='${id}'`).firstOrDefault();
+            p = Enumerable.from(this.posMenuData ?? []).where(`$.name=='${id}'`).firstOrDefault();
             if(p){
                 this.setSelectedProduct(p);
                 return true;

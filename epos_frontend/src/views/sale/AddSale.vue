@@ -96,26 +96,32 @@
 
 
     sale.orderTime = "";
-    if (product.setting.pos_menus.length > 0) {
-        product.loadPOSMenu();
-    } else {
-        product.getProductMenuByProductCategory( "All Product Categories")
-        product.loadPOSMenu();
-    }
+    
+    // if (product.setting.pos_menus.length > 0) {
+    //     product.loadPOSMenu();
+    // } else {
+        
+    //     product.getProductMenuByProductCategory( "All Product Categories")
+    //     product.loadPOSMenu();
+    // }
 
     // small device
     function onSearchProduct(open) {
         openSearch.value = open
     }
 
-    const handleHashChange = () => {
-        const hash = window.location.hash.substring(1); // Remove the `#` from the hash
-        if (hash) {
-            if(product.selectedProductCategory!=decodeURIComponent(hash)){
-                product.getProductMenuByProductCategory(decodeURIComponent(hash))
+
+    const handleHashChange = () => { 
+        if (product.setting.pos_menus.length <= 0) {
+            const hash = window.location.hash.substring(1); // Remove the `#` from the hash
+
+            if (hash) {
+                if(product.selectedProductCategory!=decodeURIComponent(hash)){
+                    product.getProductMenuByProductCategory(decodeURIComponent(hash))
+                }
             }
-        }
-        product.canBack = (hash && decodeURIComponent(hash)!="All Product Categories")
+            product.canBack = (hash && decodeURIComponent(hash)!="All Product Categories")
+        } 
     };
 
     const handleBeforeUnload = (event) => {
@@ -172,7 +178,10 @@
                     // sale.working_day = data.working_day.name;
                     // sale.cashier_shift = data.cashier_shift.name;
                     // sale.shift_name = data.cashier_shift.shift_name;
-                    product.getProductMenuByProductCategory( 'All Product Categories')
+                    if (product.setting.pos_menus.length <= 0){
+                        product.getProductMenuByProductCategory( 'All Product Categories'); 
+                    }
+
                     gv.confirm_close_working_day(data.working_day.posting_date);
 
                     onCheckExpireHappyHoursPromotion();

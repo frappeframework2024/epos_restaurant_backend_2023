@@ -7,7 +7,7 @@ import 'vuetify/styles';
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
-
+import "@/utils/global-function.js"
 import '@mdi/font/css/materialdesignicons.css'
 import { vue3Debounce } from 'vue-debounce'
 //import VueNumberFormat from 'vue-number-format'

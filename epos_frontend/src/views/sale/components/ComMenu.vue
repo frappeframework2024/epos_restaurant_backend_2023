@@ -5,8 +5,8 @@
             <ComShortcut v-if="product.setting.pos_menus.length > 0" />
             <ComShortcurMenuFromProductGroup v-else />
             <div ref="scrollContainer" class="pa-2 h-full overflow-y-auto" :class="getCustomerScrollWidth()" id="wrap_menu">
-                <ComPlaceholder :loading="product.posMenuResource.loading"
-                    :is-not-empty="(product.posMenuResource.data?.length > 0 || product.setting.default_pos_menu =='')" class-color="text-white"
+                <ComPlaceholder
+                    :is-not-empty="((product.posMenuData?.length??0) > 0 || product.setting.default_pos_menu =='')" class-color="text-white"
                     :is-placeholder="true">
                     <template #default>
                         
@@ -90,7 +90,7 @@
 
     function onMenuRefresh() {
         if (product.setting.pos_menus.length > 0) {
-            product.loadPOSMenu()
+            product.loadPOSMenu();
         } else {
             product.getProductMenuByProductCategory( "All Product Categories")
             product.loadPOSMenu();

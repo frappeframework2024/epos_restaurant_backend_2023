@@ -16,7 +16,9 @@
   "business_branch_printer",
   "is_label_printer",
   "usb_printing",
-  "is_standard"
+  "is_standard",
+  "column_break_swut",
+  "actual_printer_name"
  ],
  "fields": [
   {
@@ -82,11 +84,20 @@
    "fieldname": "usb_printing",
    "fieldtype": "Check",
    "label": "USB Printing"
+  },
+  {
+   "fieldname": "column_break_swut",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "actual_printer_name",
+   "fieldtype": "Data",
+   "label": "Actual Printer Name"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-30 08:30:42.155992",
+ "modified": "2026-06-15 23:16:42.653938",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Printer",

@@ -128,7 +128,9 @@ socket.on("OnPrintReport", async (arg) => {
 let printService  = null;
 const isLoading = computed(() => {
 	const value = store.state.isLoading;
-	if(!value){	 
+	if(!value){
+		
+
 		 if(gv.device_setting?.web_socket_print_url){
 			printService = new WebSocketPrinter(null, gv.setting.device_setting.web_socket_print_url);
 		 }
@@ -175,6 +177,10 @@ if (!localStorage.getItem("pos_profile")) {
 	const pos_profile = localStorage.getItem("pos_profile");
 	localStorage.removeItem("__startup_device");
 	state.isLoading = true;
+
+
+
+
 	createResource({
 		url: 'epos_restaurant_2023.api.api.get_system_settings',
 		params: {
@@ -204,9 +210,14 @@ if (!localStorage.getItem("pos_profile")) {
 			tableLayout.table_groups = doc.table_groups || '';
 			localStorage.setItem("device_setting",JSON.stringify(doc.device_setting))
 			localStorage.setItem("table_groups", JSON.stringify(doc.table_groups || null))			
-			checkPromotionDay(gv.setting.business_branch)
+			checkPromotionDay(gv.setting.business_branch);
+
+			
+			
 			let current_user = localStorage.getItem("current_user");
 			if (current_user) {
+				//init menu product 
+				product.onInit();
 				
 				createResource({
 					url: "epos_restaurant_2023.api.api.get_current_shift_information",
@@ -220,7 +231,13 @@ if (!localStorage.getItem("pos_profile")) {
 					},
 					auto: true,
 				})
-			}   
+			} 
+			// set print socket url
+			
+		 if(gv.device_setting?.web_socket_print_url){
+			
+			window.printService = new WebSocketPrinter(null, gv.setting.device_setting.web_socket_print_url);
+		 }
 			
 		},
 		onError(x) {
@@ -255,12 +272,12 @@ async function onPayWaySocketSetup(doc) {
 	// Listen to connection and disconnection explicitly
     payway_socket.on('connect', () => {
 		gv.estc_socket_connected = true;
-        console.log('✅ Connected to Payway server:', payway_socket.getId());
+        
     });
 
     payway_socket.on('disconnect', (reason) => {
 		gv.estc_socket_connected = false;
-        console.log('❌ Disconnected from Payway server:', reason);
+        
     });
 
 
@@ -302,21 +319,15 @@ if(current_user!=null){
 }
 
 function checkPromotionDay(business_branch){
-	if(auth.isLoggedIn){ 
-	// check promotion
-	createResource({
-		url: 'epos_restaurant_2023.api.promotion.check_promotion',
-		// cache: "check_promotion",
-		auto: true,
-		params: {
+	if(auth.isLoggedIn){  
+		const resp = call.post("epos_restaurant_2023.api.promotion.check_promotion",{
 			business_branch: business_branch
-		},
-		onSuccess(doc) { 
+		});
+		resp.then((doc)=>{ 
 			gv.promotion = doc;
 			sale.promotion = doc;
-		}
-	});
-}
+		}) ;
+	}
 }
 
 function onResize() {
