@@ -243,7 +243,7 @@ export default class Sale {
                 this.sale = doc;
                 this.__backup_sale = JSON.parse(JSON.stringify(doc))
                 //aba PayWay set closed / cancel qr (expired)
-                if (this.sale.name){
+                if (this.sale.name && (this.sale.aba_transaction_id||"") != ""){
                     call.post("epos_restaurant_2023.api.payway.aba_close_transaction", { 
                         "property_code": this.setting.property_code,
                         "pos_config": this.setting.pos_config,
@@ -1752,53 +1752,39 @@ export default class Sale {
         }
         else{
             return new Promise(async (resolve) => {
-            let doc = JSON.parse(JSON.stringify(this.sale));
-            let _sale = undefined;
-            
-            if (this.sale.sale_status != "Hold Order") {
-                doc.sale_products.filter(r => r.sale_product_status == "New").forEach(x => {
-                    x.sale_product_status = "Submitted";
-                })
-    }
-    
-            const response = await  app.postApi("sale.submit_order",{
-                data:{
-                    doc:doc,
-                    audit_trail_logs:this.auditTrailLogs
-            }})
-
-            if (response.data){
-                _sale = response.data.doc
-                console.log(response.data.doc);
-                console.log(_sale);
+                let doc = JSON.parse(JSON.stringify(this.sale));
+                let _sale = undefined;
                 
-                if (response.name && _sale.grand_total  !=  this.__backup_sale.grand_total){
-                call.post("epos_restaurant_2023.api.payway.aba_close_transaction", { 
-                    "property_code": this.setting.property_code,
-                    "pos_config": this.setting.pos_config,
-                    "invoice_id": _sale.name
-                }); 
-            }
-            }else {
-                if(this.sale.sale_status == "Bill Requested"){
-                this.sale.sale_status = "Submitted";
-            }
-            }
+                if (this.sale.sale_status != "Hold Order") {
+                    doc.sale_products.filter(r => r.sale_product_status == "New").forEach(x => {
+                        x.sale_product_status = "Submitted";
+                    });
+                }
+        
+                const response = await  app.postApi("sale.submit_order",{
+                    data:{
+                        doc:doc,
+                        audit_trail_logs:this.auditTrailLogs
+                }})
+
+                if (response.data){
+                    _sale = response.data.doc     
+                    if (response.data && _sale.grand_total  !=  this.__backup_sale.grand_total && (_sale.aba_transaction_id||"")!="" ){
+                        call.post("epos_restaurant_2023.api.payway.aba_close_transaction", { 
+                            "property_code": this.setting.property_code,
+                            "pos_config": this.setting.pos_config,
+                            "invoice_id": _sale.name
+                        }); 
+                    }
+                }else {
+                    if(this.sale.sale_status == "Bill Requested"){
+                        this.sale.sale_status = "Submitted";
+                    }
+                }
             
-            this.loading = false;
-                    
-
-                
-               
-                
-
-               
-            
-         
-            resolve(_sale);
-    
-
-        })
+                this.loading = false;
+                resolve(_sale); 
+            })
         }
     }
 

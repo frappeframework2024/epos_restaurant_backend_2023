@@ -254,6 +254,7 @@ io.on('connection', (socket) => {
   })
   
   socket.on("ConfirmPrintJob",(arg)=>{  
+   
     io.emit("ConfirmPrintJob",arg);
   })
 

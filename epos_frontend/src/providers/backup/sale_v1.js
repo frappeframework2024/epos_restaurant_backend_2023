@@ -241,7 +241,7 @@ export default class Sale {
                 this.sale = doc;
                 this.__backup_sale = JSON.parse(JSON.stringify(doc))
                 //aba PayWay set closed / cancel qr (expired)
-                if (this.sale.name){
+                 if (this.sale.name && (this.sale.aba_transaction_id||"") != ""){
                     call.post("epos_restaurant_2023.api.payway.aba_close_transaction", { 
                         "property_code": this.setting.property_code,
                         "pos_config": this.setting.pos_config,
@@ -1770,8 +1770,8 @@ export default class Sale {
                 }
                 else {
                     try{
-                        _sale = await this.saleResource.setValue.submit(doc);  
-                        if (_sale.name && _sale.grand_total !=  this.__backup_sale.grand_total){
+                        _sale = await this.saleResource.setValue.submit(doc);   
+                        if (_sale.name && _sale.grand_total !=  this.__backup_sale.grand_total && (_sale.aba_transaction_id||"") != ""){
                             call.post("epos_restaurant_2023.api.payway.aba_close_transaction", { 
                                 "property_code": this.setting.property_code,
                                 "pos_config": this.setting.pos_config,

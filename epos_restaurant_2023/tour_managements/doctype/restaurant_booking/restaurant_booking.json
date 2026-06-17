@@ -65,7 +65,9 @@
   "payment_tab",
   "payments",
   "section_break_31",
-  "total_payment"
+  "total_payment",
+  "other_info_tab",
+  "device_uuid"
  ],
  "fields": [
   {
@@ -399,11 +401,22 @@
    "fieldtype": "Link",
    "label": "Branch",
    "options": "Business Branch"
+  },
+  {
+   "fieldname": "other_info_tab",
+   "fieldtype": "Tab Break",
+   "label": "Other Info"
+  },
+  {
+   "description": "Client UUID",
+   "fieldname": "device_uuid",
+   "fieldtype": "Data",
+   "label": "Device ID"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-05-02 11:55:52.638195",
+ "modified": "2026-06-17 12:43:31.999730",
  "modified_by": "Administrator",
  "module": "Tour Managements",
  "name": "Restaurant Booking",

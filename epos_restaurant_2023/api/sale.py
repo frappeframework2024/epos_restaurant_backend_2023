@@ -6,7 +6,8 @@ from epos_restaurant_2023.custom_socket_client import emit_event
             
 @frappe.whitelist()
 def runme():
-    
+    emit_event("ConfirmPrintJob",{"jobname":"Hello World"})
+    return
     doc = frappe.as_json(frappe.get_cached_doc("Sale","SINV2026-0527"))
     doc = json.loads(doc)
     
@@ -28,7 +29,7 @@ def submit_order(data):
         for sp in [x for x in doc.get("sale_products") if  not x.get("name") or x.get("sale_product_status") == 'New']:
             sp["order_time"] = str(frappe.utils.now_datetime())
 
-        if doc.get("name"):
+        if not doc.get("name"):
             doc = frappe.get_doc(doc)
             doc.insert()
         else:

@@ -26,7 +26,7 @@
 </template>
 
 <script setup>
-import { ref, inject, onMounted, i18n, useRoute, useRouter } from '@/plugin';
+import { ref, inject, onMounted, i18n, useRoute, useRouter,watch } from '@/plugin';
 import { useDialog } from 'primevue/usedialog';
 import ComMenuSetting from '@/views/sale/components/ComMenuSetting.vue';
 import SaleOrderTemplate1 from "@/views/sale_page/SaleOrderTemplate1.vue";
@@ -68,15 +68,23 @@ onMounted(async () => {
         template_menu.value = route.query.menu;
     }
 
-
-    await _onLoadMenu();
-
-
     //private on mouted
     await _onMounted();
-
-    is_loading.value = false;
+    
+ 
 });
+
+
+watch(
+    () => product.posMenu1LevelData,
+    async (data) => {
+        if (!data)  return
+        is_loading.value = true;
+        await _onLoadMenu();
+         is_loading.value = false;
+    },
+    { immediate: true }
+)
 
 
 async function _onMounted() {
@@ -155,21 +163,9 @@ async function _onMounted() {
 
 
 
-async function _onLoadMenu() {
+async function _onLoadMenu() { 
     menu_categories.value = product.posMenu1LevelData["menu_categories"]??[];
     menu_products.value = product.posMenu1LevelData["menu_products"]??[];
-    // const resp = await call.post("epos_restaurant_2023.api.product.get_product_by_menu_1_level", {
-    //     root_menu: product.currentRootPOSMenu ? product.currentRootPOSMenu : product.setting?.default_pos_menu,
-    //     sort_menu_order_by: gv.itemMenuSetting?.sort_menu_order_by || "name",
-    //     sort_order_by: gv.itemMenuSetting?.sort_order_by || "product_name_en",
-    // });
-
-    // if (resp.message) {
-    //     const data = resp.message;
-    //     menu_categories.value = data.menu_categories
-    //     menu_products.value = data.menu_products
-    // }
-
 }
 
 async function onCheckExpireHappyHoursPromotion() {
