@@ -25,7 +25,7 @@ frappe.ui.form.on("POS Reservation", {
 
             if(frm.doc.reservation_status == "Reserved"){
                 set_query(frm,"reservation_status",[
-                    ["POS Reservation Status","reservation_status","in","Confirmed,Reserved"]
+                    ["POS Reservation Status","reservation_status","in","Confirmed,Reserved,Reject"]
                 ]); 
             }
             else if(frm.doc.reservation_status == "Confirmed"){
@@ -36,6 +36,11 @@ frappe.ui.form.on("POS Reservation", {
             else if(frm.doc.reservation_status == "No Show"){
                 set_query(frm,"reservation_status",[
                     ["POS Reservation Status","reservation_status","in","No Show,Void"]
+                ]); 
+            }
+            else if(frm.doc.reservation_status == "Pending"){
+                set_query(frm,"reservation_status",[
+                    ["POS Reservation Status","reservation_status","in","Confirmed,Reject"]
                 ]); 
             }
             else{
