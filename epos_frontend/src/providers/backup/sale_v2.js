@@ -1752,50 +1752,39 @@ export default class Sale {
         }
         else{
             return new Promise(async (resolve) => {
-            let doc = JSON.parse(JSON.stringify(this.sale));
-            let _sale = undefined;
-            
-            if (this.sale.sale_status != "Hold Order") {
-                doc.sale_products.filter(r => r.sale_product_status == "New").forEach(x => {
-                    x.sale_product_status = "Submitted";
-                })
-    }
-    
-            const response = await  app.postApi("sale.submit_order",{
-                data:{
-                    doc:doc,
-                    audit_trail_logs:this.auditTrailLogs
-            }})
-
-            if (response.data){
-                _sale = response.data.doc 
-                if (response.data && _sale.grand_total  !=  this.__backup_sale.grand_total && (_sale.aba_transaction_id||"") != ""){
-                    call.post("epos_restaurant_2023.api.payway.aba_close_transaction", { 
-                        "property_code": this.setting.property_code,
-                        "pos_config": this.setting.pos_config,
-                        "invoice_id": _sale.name
-                    }); 
+                let doc = JSON.parse(JSON.stringify(this.sale));
+                let _sale = undefined;
+                
+                if (this.sale.sale_status != "Hold Order") {
+                    doc.sale_products.filter(r => r.sale_product_status == "New").forEach(x => {
+                        x.sale_product_status = "Submitted";
+                    });
                 }
-            }else {
-                if(this.sale.sale_status == "Bill Requested"){
-                this.sale.sale_status = "Submitted";
-            }
-            }
+        
+                const response = await  app.postApi("sale.submit_order",{
+                    data:{
+                        doc:doc,
+                        audit_trail_logs:this.auditTrailLogs
+                }})
+
+                if (response.data){
+                    _sale = response.data.doc     
+                    if (response.data && _sale.grand_total  !=  this.__backup_sale.grand_total && (_sale.aba_transaction_id||"")!="" ){
+                        call.post("epos_restaurant_2023.api.payway.aba_close_transaction", { 
+                            "property_code": this.setting.property_code,
+                            "pos_config": this.setting.pos_config,
+                            "invoice_id": _sale.name
+                        }); 
+                    }
+                }else {
+                    if(this.sale.sale_status == "Bill Requested"){
+                        this.sale.sale_status = "Submitted";
+                    }
+                }
             
-            this.loading = false;
-                    
-
-                
-               
-                
-
-               
-            
-         
-            resolve(_sale);
-    
-
-        })
+                this.loading = false;
+                resolve(_sale); 
+            })
         }
     }
 
@@ -2801,14 +2790,10 @@ export default class Sale {
                 let current_precision = data.paymentType.exchange_rate == 1? precision : this.setting.pos_setting.second_currency_precision
                  data.amount = parseFloat((parseFloat((this.sale.balance + Number.EPSILON).toFixed(current_precision) * data.paymentType.exchange_rate) + Number.EPSILON).toFixed(current_precision)); 
             }
-
-
             if (!this.getNumber(data.amount) == 0) {
-
                 if ((data.fee_amount || 0) == 0) {
                     data.fee_amount = parseFloat((parseFloat(data.amount / data.paymentType.exchange_rate) +  Number.EPSILON).toFixed(precision)) * (data.paymentType.fee_percentage / 100);
                 }
-
                 let payment = {
                     payment_type: data.paymentType.payment_method,
                     payment_type_group:data.paymentType.payment_type_group,
@@ -2832,16 +2817,13 @@ export default class Sale {
                     reservation_stay:data.reservation_stay,
                     issue_gift_voucher:data.voucher_name,
                     is_generate_qr: data.paymentType.allow_aba_pay_with_qr_scan,
-                    _temp_payway_tran_id : data.temp_payway_tran_id
+                    _temp_payway_tran_id : data.temp_payway_tran_id,
+                    coupon_code: data.coupon_code
                 }
 
                 this.sale.payment.push(payment);
-                
                 this.updatePaymentAmount();
                 this.paymentInputNumber = (this.sale.balance + Number.EPSILON).toFixed(precision);
-
-
-
                 //generate payway qr
                 if(data.paymentType.allow_aba_pay_with_qr_scan ==  1){                       
                     let payway_payment_amount = data.amount;                    
@@ -2856,7 +2838,6 @@ export default class Sale {
                         this.onRemovePayment(payment)
                     }
                 }
-
                 return true
             } else {
                 toaster.warning($t("msg.Please enter payment amount"));

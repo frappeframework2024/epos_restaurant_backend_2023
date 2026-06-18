@@ -70,6 +70,7 @@ import ComSelectPaymentTypeQuickPayment from "@/views/sale/components/ComSelectP
 import ComChangeTableNumber from "@/views/receipt_list/components/ComChangeTableNumber.vue";
 import ComPayWaySuccessDialog from "@/views/sale/components/ComPayWaySuccessDialog.vue";
 import ComVoucher from "../components/ComVoucher.vue";
+import ComCoupon from "../components/ComCoupon.vue";
 import ComScanQR from "../components/ComScanQR.vue";
 interface params {
     doctype?: String,
@@ -107,6 +108,7 @@ export const scanCouponDialog = createPromiseDialog<params, object>(ComScanCoupo
 export const authorizeDialog = createPromiseDialog<params, object>(ComAuthorize);
 export const noteDialog = createPromiseDialog<params, object>(ComNote);
 export const vouhcerDialog = createPromiseDialog<params, object>(ComVoucher);
+export const couponDialog = createPromiseDialog<params, object>(ComCoupon);
 export const scanqrDialog = createPromiseDialog<params, object>(ComScanQR);
 export const saleProductDiscountDialog = createPromiseDialog<params, object>(ComSaleProductDiscountModal);
 export const paymentDialog = createPromiseDialog<params, object>(ComPayment);

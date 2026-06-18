@@ -2829,7 +2829,8 @@ export default class Sale {
                     reservation_stay:data.reservation_stay,
                     issue_gift_voucher:data.voucher_name,
                     is_generate_qr: data.paymentType.allow_aba_pay_with_qr_scan,
-                    _temp_payway_tran_id : data.temp_payway_tran_id
+                    _temp_payway_tran_id : data.temp_payway_tran_id,
+                    coupon_code: data.coupon_code
                 }
 
                 this.sale.payment.push(payment);

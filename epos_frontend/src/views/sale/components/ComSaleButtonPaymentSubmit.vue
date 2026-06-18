@@ -25,12 +25,12 @@
         <div style="width: 120px;">
           <div
             class="w-full h-full cursor-pointer flex justify-center items-center  text-white p-3 text-center"
-            @click="onSubmit()" @mouseover="hoverEffectsub = true" @mouseleave="hoverEffectsub = false" :class="[hoverEffectsub ? 'bg-submitorderhover' : 'bg-submitorder']" >
-            <div v-if="gv.setting.table_groups && gv.setting.table_groups.length > 0">
+            @mouseover="hoverEffectsub = true" @mouseleave="hoverEffectsub = false" :class="[hoverEffectsub ? 'bg-submitorderhover' : 'bg-submitorder']" >
+            <div @click="onSubmit()" v-if="gv.setting.table_groups && gv.setting.table_groups.length > 0">
               <v-icon icon="mdi-arrow-right-thick"></v-icon>
               <div>{{ $t('Submit Order') }}</div>
             </div>
-            <div v-else>
+            <div @click="onSubmit(false)" v-else>
               <v-icon icon="mdi-content-save"></v-icon>
               <div>{{ $t('Save Order') }}</div>
             </div>
@@ -127,7 +127,8 @@ function has_changes(){
   return has_value_changes
 }
 
-async function onSubmit() { 
+async function onSubmit(clear_screen=true) { 
+
   if (setting.allow_change_table_after_print_bill == 0){
     if (sale.isBillRequested()) {
       return
@@ -151,6 +152,10 @@ async function onSubmit() {
     await sale.onSubmit().then((doc) => {
       product.onClearKeyword();
       if (doc) {
+        if(clear_screen == false){
+          sale.LoadSaleData(doc.name)
+          return;
+        }
         if (onRedirectSaleType()) {
           if (tableLayout.table_groups.length > 0) {
             sale.sale = {};
@@ -158,8 +163,6 @@ async function onSubmit() {
           }
           else {
             sale.newSale()
-            
-
             let template = (gv.device_setting?.main_sale_screen??"Default");
             if(template == "Default"){
                 router.push({  name: "AddSale"});
@@ -171,7 +174,6 @@ async function onSubmit() {
                     query: { menu: _template }
                 });
             }
-
             sale.tableSaleListResource.fetch();
             call.get('epos_restaurant_2023.api.api.get_current_shift_information', {
               business_branch: sale.setting?.business_branch,

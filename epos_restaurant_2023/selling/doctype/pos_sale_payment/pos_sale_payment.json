@@ -32,6 +32,7 @@
   "reservation_stay",
   "guest",
   "issue_gift_voucher",
+  "coupon_code",
   "section_break_uoud",
   "is_generate_qr",
   "aba_pay_transaction",
@@ -232,12 +233,18 @@
    "fieldtype": "Data",
    "label": "ABA Pay Transaction",
    "read_only": 1
+  },
+  {
+   "fieldname": "coupon_code",
+   "fieldtype": "Data",
+   "label": "Coupon Code",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-05-05 15:02:44.725640",
+ "modified": "2026-06-18 15:02:53.568127",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "POS Sale Payment",

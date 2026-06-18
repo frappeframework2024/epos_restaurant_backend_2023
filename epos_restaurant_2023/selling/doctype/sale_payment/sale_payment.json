@@ -66,6 +66,7 @@
   "issue_gift_voucher",
   "pos_sale_payment",
   "add_from_sale",
+  "coupon_code",
   "integrations_tab",
   "aba_payway_section",
   "is_generate_qr",
@@ -524,12 +525,18 @@
    "fieldtype": "Float",
    "label": "Spent Point",
    "read_only": 1
+  },
+  {
+   "fieldname": "coupon_code",
+   "fieldtype": "Data",
+   "label": "Coupon Code",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-05-05 15:06:01.622435",
+ "modified": "2026-06-18 15:02:42.564953",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Payment",

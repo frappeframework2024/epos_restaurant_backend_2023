@@ -10,7 +10,7 @@
     </div>
 </template>
 <script setup>
-import { inject , payToRoomDialog,createToaster,payToCityLedgerDialog,payDeskfolioDialog,i18n ,computed,keyboardDialog,ref,vouhcerDialog} from '@/plugin';
+import { inject , payToRoomDialog,createToaster,payToCityLedgerDialog,payDeskfolioDialog,i18n ,computed,keyboardDialog,ref,vouhcerDialog,couponDialog} from '@/plugin';
 import { useDisplay } from 'vuetify'; 
 const {mobile} = useDisplay()
 const gv = inject("$gv")
@@ -40,6 +40,7 @@ async function onPaymentTypeClick(pt) {
     let city_ledger_name = null
     let desk_folio = null
     let reservation_stay = null;
+    let coupon_code = "";
 
     if(pt.allow_aba_pay_with_qr_scan == 1 && !sale.sale.name){
         toaster.warning( $t('msg.please save or submit your current order first', [$t('Submit') + " " + $t('or') + " " + $t('Save')]));
@@ -51,8 +52,6 @@ async function onPaymentTypeClick(pt) {
         return
     }
 
-
-
     if(pt.is_voucher){
         const result = await vouhcerDialog({})
         if(result != false){
@@ -62,6 +61,7 @@ async function onPaymentTypeClick(pt) {
             return
         }
     }
+    
     if(pt.payment_type_group=="Pay to Room" ){ 
         if(sale.paymentInputNumber<=0){
             toaster.warning($t("msg.Please enter payment amount"));
@@ -151,7 +151,23 @@ async function onPaymentTypeClick(pt) {
             return;
         }
     }
+    else if(pt.payment_type_group == "Coupon"){
+       const result = await couponDialog({})
+        if(result != false){
+            let coupon = result
+            coupon_code = coupon.coupon_code;
+            let remaining_amount = coupon.remaining_amount;
+            if(sale.paymentInputNumber > remaining_amount){
+                sale.paymentInputNumber = remaining_amount;
+            }
+        }
+        else{
+            return
+        }
+    }
+    else{
 
+    }
     //check if payment exist manual fee
     let fee_amount = 0;
     if(pt.is_manual_fee==1){
@@ -176,14 +192,13 @@ async function onPaymentTypeClick(pt) {
          sale.paymentInputNumber = voucher.voucher_amount
          sale.sale.customer = (voucher.voucher_customer || "") == "" ?  sale.sale.customer : voucher.voucher_customer
     }
-
-   
-
-
     const payment_obj={paymentType: pt, amount:sale.paymentInputNumber,fee_amount:fee_amount,room:room, folio : folio, folio_transaction_type:folio_transaction_type,folio_transaction_number:folio_transaction_number,city_ledger_name:city_ledger_name,reservation_stay:reservation_stay,voucher_name:voucher.voucher_name}
      //generate temp payway tran id 
     if(pt.allow_aba_pay_with_qr_scan == 1){
         payment_obj.temp_payway_tran_id = sale.getUniqueKey()        
+    }
+    if(pt.payment_type_group == "Coupon"){
+        payment_obj.coupon_code = coupon_code;
     }
     const allowAdd = sale.onAddPayment(payment_obj);
    

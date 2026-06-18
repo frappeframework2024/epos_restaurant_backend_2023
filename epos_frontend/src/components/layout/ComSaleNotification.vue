@@ -11,7 +11,8 @@ import {searchSaleDialog, inject,useRouter,i18n} from '@/plugin';
 const { t: $t } = i18n.global;
 
 const { mobile } = useDisplay()
-const sale = inject('$sale')
+const sale = inject('$sale');
+const gv = inject('$gv');
 const router = useRouter();
 
 const setting = JSON.parse(localStorage.getItem("setting"))

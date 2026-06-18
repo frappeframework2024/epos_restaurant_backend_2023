@@ -1071,7 +1071,8 @@ def add_payment_to_sale_payment(self):
 							"pos_sale_payment":p.name,
 							"is_generate_qr":p.is_generate_qr,
 							"aba_pay_transaction":p.aba_pay_transaction,
-							"add_from_sale":1
+							"add_from_sale":1,
+							"coupon_code":p.coupon_code
 						})
 					doc.flags.ignore_post_general_ledger_entry = True
 					doc.flags.ignore_update_sale = True

@@ -30,7 +30,7 @@
 
       <ComDiscountButton v-if="gv.device_setting.is_order_station==0"/>
       
-      <v-btn v-if="setting.table_groups && setting.table_groups.length > 0 && !mobile" :variant="mobile ? 'tonal' : 'elevated'"
+      <v-btn :variant="mobile ? 'tonal' : 'elevated'"
         :color="mobile ? 'primary' : ''" :stacked="!mobile" size="small" class="m-0-1 grow"
         :prepend-icon="mobile ? '' : 'mdi-plus'" @click="onSubmitAndNew" style="font-family: Khmer OS Siemreap;">
         {{ $t('Submit and New') }}

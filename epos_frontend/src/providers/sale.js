@@ -7,8 +7,6 @@ import {
     postApi
 
 } from "@/plugin"
-
-
 import { createToaster } from "@meforma/vue-toaster";
 import socket from '@/utils/socketio';
 import { FrappeApp } from 'frappe-js-sdk';
@@ -243,7 +241,7 @@ export default class Sale {
                 this.sale = doc;
                 this.__backup_sale = JSON.parse(JSON.stringify(doc))
                 //aba PayWay set closed / cancel qr (expired)
-                if (this.sale.name && (this.sale.aba_transaction_id||"") != ""){
+                 if (this.sale.name && (this.sale.aba_transaction_id||"") != ""){
                     call.post("epos_restaurant_2023.api.payway.aba_close_transaction", { 
                         "property_code": this.setting.property_code,
                         "pos_config": this.setting.pos_config,
@@ -1730,62 +1728,73 @@ export default class Sale {
                 return
             }
         }
-        if (this.sale.sale_products.length == 0 && this.sale.name == undefined && (this.sale.from_reservation || "") == "") {
-            toaster.warning($t('msg.Please select a menu item to submit order'));
-            this.loading = false;
-            resolve(false);
-            return
-        }
-        else if (this.onCheckPriceSmallerThanZero()) {
-            this.loading = false;
-            resolve(false);
-            return
-        }
-        else{
-            
-        }
         const resp = await Ping(this.setting)
         if(resp == 0){
             toaster.error($t('Please check your network connection'));
             this.loading = false;
             return
         }
-        else{
-            return new Promise(async (resolve) => {
+
+        return new Promise(async (resolve) => {
+            if (this.sale.sale_products.length == 0 && this.sale.name == undefined && (this.sale.from_reservation || "") == "") {
+                toaster.warning($t('msg.Please select a menu item to submit order'));
+                resolve(false);
+            }
+            else if (this.onCheckPriceSmallerThanZero()) {
+                resolve(false);
+            }
+            else {
                 let doc = JSON.parse(JSON.stringify(this.sale));
                 let _sale = undefined;
-                
+                this.generateProductPrinters();
                 if (this.sale.sale_status != "Hold Order") {
                     doc.sale_products.filter(r => r.sale_product_status == "New").forEach(x => {
                         x.sale_product_status = "Submitted";
-                    });
+                    })
                 }
-        
-                const response = await  app.postApi("sale.submit_order",{
-                    data:{
-                        doc:doc,
-                        audit_trail_logs:this.auditTrailLogs
-                }})
+                if (this.getString(this.sale.name) == "") {
+                    if (this.newSaleResource == null) {
+                        this.createNewSaleResource();
+                    }
+                    try{
+                         _sale = await this.newSaleResource.submit({ doc: doc });
+                    }
+                    catch(error){
+                        if(this.sale.sale_status == "Bill Requested"){
+                            this.sale.sale_status = "Submitted";
+                        }
+                        this.loading = false;
+                   
+                        return;
+                    }
+                }
+                else {
+                    try{
+                        _sale = await this.saleResource.setValue.submit(doc);   
+                        if (_sale.name && _sale.grand_total !=  this.__backup_sale.grand_total && (_sale.aba_transaction_id||"") != ""){
+                            call.post("epos_restaurant_2023.api.payway.aba_close_transaction", { 
+                                "property_code": this.setting.property_code,
+                                "pos_config": this.setting.pos_config,
+                                "invoice_id": _sale.name
+                            }); 
+                        }
+                    }
+                    catch(error){
+                        if(this.sale.sale_status == "Bill Requested"){
+                            this.sale.sale_status = "Submitted";
+                        }
+                        this.loading = false;
+                     
+                        return;
+                    }
+                }
+                this.submitToAuditTrail(doc);
+                //refresh tabl 
+                resolve(_sale);
+            }
+             this.loading = false;
+        })
 
-                if (response.data){
-                    _sale = response.data.doc     
-                    if (response.data && _sale.grand_total  !=  this.__backup_sale.grand_total && (_sale.aba_transaction_id||"")!="" ){
-                        call.post("epos_restaurant_2023.api.payway.aba_close_transaction", { 
-                            "property_code": this.setting.property_code,
-                            "pos_config": this.setting.pos_config,
-                            "invoice_id": _sale.name
-                        }); 
-                    }
-                }else {
-                    if(this.sale.sale_status == "Bill Requested"){
-                        this.sale.sale_status = "Submitted";
-                    }
-                }
-            
-                this.loading = false;
-                resolve(_sale); 
-            })
-        }
     }
 
 
@@ -1887,7 +1896,7 @@ export default class Sale {
                     this.loading = true;
                     const resp = await Ping(this.setting)
                     if(resp == 0){
-                        toaster.error($t('msg.Please check your network connection'));
+                        toaster.warning($t('msg.Please check your network connection'));
                         this.loading = false;
                         resolve(false);
                         return
@@ -2303,7 +2312,6 @@ export default class Sale {
     }
 
     generateProductPrinters() {
-        return
         this.productPrinters = [];
         this.sale.sale_products.filter(r => r.sale_product_status == 'New').forEach(async (r) => {  
             let comboItemPrinters = await this.getProductPrinterOfComboItem(r);
@@ -2821,7 +2829,8 @@ export default class Sale {
                     reservation_stay:data.reservation_stay,
                     issue_gift_voucher:data.voucher_name,
                     is_generate_qr: data.paymentType.allow_aba_pay_with_qr_scan,
-                    _temp_payway_tran_id : data.temp_payway_tran_id
+                    _temp_payway_tran_id : data.temp_payway_tran_id,
+                    coupon_code: data.coupon_code
                 }
 
                 this.sale.payment.push(payment);
