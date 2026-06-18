@@ -10,10 +10,9 @@ frappe.ui.form.on("POS Reservation", {
             frm.refresh_field("status");
             set_df_propert(frm,"confirmed","hidden",1);
             set_query(frm,"reservation_status",[
-                ["POS Reservation Status","reservation_status","=","Reserved"]
+                ["POS Reservation Status","reservation_status","in",["Reserved,Pending"]]
             ]); 
 
-          
 
             // Button action sc
         }else{

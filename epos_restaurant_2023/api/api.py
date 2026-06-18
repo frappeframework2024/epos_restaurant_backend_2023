@@ -163,7 +163,77 @@ def get_product(name):
     datas = frappe.db.sql("select unit from `tabProduct` where name = '{0}'".format(name),as_dict=1)
     if datas:
         return datas[0]
+    
+@frappe.whitelist(allow_guest=1)
+def check_valid_sale_product_as_coupon(**args):
+    p = {k.strip(): v for k, v in args.items()}  
+    p.pop("cmd",None)
+    
+    sale_date = getdate(p.get("date"))     
+    coupon_code = p.get("coupon_code")
+    payment_amount = p.get("payment_amount") or 0
+    total_coupon_payment =  p.get("total_coupon_payment") or 0
+     
+    sql = """    
+        WITH a AS (
+            SELECT 
+                s.posting_date,
+                sp.amount AS coupon_amount
+            FROM `tabSale Product` sp
+            INNER JOIN `tabSale` s on s.name = sp.parent
+            WHERE 1 = 1
+                and s.docstatus = 1
+                and sp.`name` = %(coupon_code)s
+        ),
+        b AS (
+            SELECT 
+                COALESCE(SUM(payment_amount), 0) AS coupon_used_amount
+            FROM `tabSale Payment`                
+            WHERE 1 = 1
+                and docstatus = 1
+                and issue_gift_voucher = %(coupon_code)s
+        )
+        SELECT 
+            *, 
+            a.coupon_amount - b.coupon_used_amount as remaining_amount
+        FROM a, b;
+    """
+    
+    data = frappe.db.sql(sql,{"coupon_code":coupon_code}, as_dict=1)  
+    response = {
+        "data":None,
+        "error":None,
+    }  
 
+    if not data:
+        response["error"]  = "Invalid coupon"
+        return response
+    
+    result = data[0]
+    
+    
+    #check expired after one day  
+    if result.get("posting_date") < sale_date:
+        response["error"] = "Coupon was expired"
+        return response
+
+    total_remaining_amount = (result.get("remaining_amount") or 0) + total_coupon_payment
+    
+    if total_remaining_amount  < payment_amount and payment_amount > 0:  
+        
+        currency = frappe.db.get_single_value("ePOS Settings", "currency")        
+        formatted = frappe.utils.fmt_money(
+            total_remaining_amount,
+            currency=currency
+        )
+        
+        response["error"] = f"Coupon remaining balance: {formatted}"
+        return response
+    
+    return {
+        "data":result,
+        "error":None
+    }
 
 @frappe.whitelist(allow_guest=True)
 def check_username(pin_code):    
