@@ -11,7 +11,9 @@
   "document_name",
   "printer_name",
   "data",
-  "status"
+  "status",
+  "error_text",
+  "retry"
  ],
  "fields": [
   {
@@ -56,11 +58,21 @@
    "fieldtype": "Select",
    "label": "Naming Series",
    "options": "KOD.YY.MM.DD.-.####"
+  },
+  {
+   "fieldname": "error_text",
+   "fieldtype": "Small Text",
+   "label": "Error Text"
+  },
+  {
+   "fieldname": "retry",
+   "fieldtype": "Int",
+   "label": "Retry"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-06-16 14:21:11.116547",
+ "modified": "2026-06-19 11:40:23.268203",
  "modified_by": "Administrator",
  "module": "ePOS Restaurant",
  "name": "Print Queue",

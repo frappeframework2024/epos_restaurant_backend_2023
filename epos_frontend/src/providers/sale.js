@@ -1744,6 +1744,14 @@ export default class Sale {
                 resolve(false);
             }
             else {
+                
+                //generate uuid to sale product if new item
+                this.sale.sale_products.filter(r => r.sale_product_status == 'New' && !r.name).forEach((r) => {                     
+                    r.__islocal = 1; 
+                    r.name = uuidv4(); 
+                });
+
+
                 let doc = JSON.parse(JSON.stringify(this.sale));
                 let _sale = undefined;
                 this.generateProductPrinters();
@@ -2117,7 +2125,8 @@ export default class Sale {
                     }
                     //trigger print usb print
                     if (productUSBPrinter.printers.length > 0) {
-                        socket.emit("PrintReceipt", JSON.stringify(productUSBPrinter))
+                         flutterChannel.postMessage(JSON.stringify(productUSBPrinter));
+                        // socket.emit("PrintReceipt", JSON.stringify(productUSBPrinter))
                     }
                 }
             }

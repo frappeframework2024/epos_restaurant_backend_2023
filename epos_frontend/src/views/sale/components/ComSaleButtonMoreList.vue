@@ -567,7 +567,8 @@ function onProcessPrintToKitchen(doc) {
                 }
                 //trigger print usb print
                 if (productUSBPrinter.printers.length > 0) {
-                    socket.emit("PrintReceipt", JSON.stringify(productUSBPrinter));
+                    flutterChannel.postMessage(JSON.stringify(productUSBPrinter));
+                    // socket.emit("PrintReceipt", JSON.stringify(productUSBPrinter));
                 }
             }
         }

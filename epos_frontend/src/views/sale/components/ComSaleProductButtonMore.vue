@@ -25,26 +25,21 @@
                     <v-list-item-title class="text-red-700">{{ $t('Cancel Free') }}</v-list-item-title>
                 </v-list-item>
             </template>
-            <!-- end free -->
-
-            <template v-if="gv.device_setting.is_order_station == 0">
-            
-                <template v-if="!saleProduct.is_free && (saleProduct.allow_discount || 0) == 1">
-                    <template v-if="!saleProduct.happy_hour_promotion">
-                        <v-list-item prepend-icon="mdi-percent" :title="$t('Discount Percent')"
-                            @click="onSaleProductDiscount('Percent')"></v-list-item>
-                        <v-list-item prepend-icon="mdi-currency-usd" :title="$t('Discount Amount')"
-                            @click="onSaleProductDiscount('Amount')"></v-list-item>
-                    </template>
-                    <v-list-item v-if="saleProduct.discount > 0" @click="onSaleProductCancelDiscount()">
-                        <template v-slot:prepend>
-                            <v-icon icon="mdi-tag-multiple" color="error"></v-icon>
-                        </template>
-                        <v-list-item-title class="text-red-700">{{ $t('Cancel Discount') }}</v-list-item-title>
-                    </v-list-item>
+            <!-- end free --> 
+            <template v-if="!saleProduct.is_free && (saleProduct.allow_discount || 0) == 1">
+                <template v-if="!saleProduct.happy_hour_promotion">
+                    <v-list-item prepend-icon="mdi-percent" :title="$t('Discount Percent')"
+                        @click="onSaleProductDiscount('Percent')"></v-list-item>
+                    <v-list-item prepend-icon="mdi-currency-usd" :title="$t('Discount Amount')"
+                        @click="onSaleProductDiscount('Amount')"></v-list-item>
                 </template>
-
-            </template>
+                <v-list-item v-if="saleProduct.discount > 0" @click="onSaleProductCancelDiscount()">
+                    <template v-slot:prepend>
+                        <v-icon icon="mdi-tag-multiple" color="error"></v-icon>
+                    </template>
+                    <v-list-item-title class="text-red-700">{{ $t('Cancel Discount') }}</v-list-item-title>
+                </v-list-item>
+            </template> 
 
             <!-- <template v-if="!(saleProduct.is_require_employee || false) && !saleProduct.is_timer_product">
                 <v-list-item v-if="tableLayout.table_groups && tableLayout.table_groups.length > 0"

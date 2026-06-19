@@ -240,8 +240,7 @@ export default class Product {
          
         if (this.prices.length > 0) {
             const price = this.prices.find(u => u.unit === this.selectedProduct.unit);
-            price.selected = true;
-            console.log(price)
+            price.selected = true; 
         }
 
         let modifiers = JSON.parse(p.modifiers);

@@ -3,7 +3,8 @@ import json
 from collections import defaultdict
 from epos_restaurant_2023.api.printing import get_kitchen_order_template
 from epos_restaurant_2023.custom_socket_client import emit_event
-            
+from  epos_restaurant_2023.api.print_server import process_print
+
 @frappe.whitelist()
 def runme():
  
@@ -16,7 +17,7 @@ def runme():
     return submit_order(data = { "doc": doc})
 
 @frappe.whitelist(methods="POST")
-def submit_order(data):
+def submit_order(data=None):
     doc = data.get("doc")
     
     # get submited product 
@@ -34,28 +35,18 @@ def submit_order(data):
         else:
             doc = frappe.get_doc(doc)
             doc.save()
-    # return "done"
-  
     
-    pdf_data  = []
-    print_docs= None
     
     if _new_products:
-        
+        # generate_print_queue(doc=doc, products=_new_products,run_commit=False)
+    
         frappe.enqueue(
             "epos_restaurant_2023.api.sale.generate_print_queue",
             queue="short",
             doc=doc,
-            products=_new_products
+            products=_new_products,
+            
         )
-        
-        # print_docs =  generate_print_queue(doc,_new_products)
-        # for p in print_docs:
-        #     pdf_data.append({
-        #         "printer":p.get("printer_name"),
-        #         "base64_data":get_kitchen_order_pdf(doc = p)
-        #     })
-
 
     
     frappe.db.commit()
@@ -86,20 +77,29 @@ def generate_print_queue(doc,products,run_commit = True):
         
         if pp.get("group_item_type") == "Printer cut by order":
             print_data["sale_products"] = printer_proucts
+
             queue_doc =  add_print_queue(doc.get("name"),print_data)
-            # print_docs.append(print_data)
-            emit_event("PrintKitchenOrderOnDesktop",{**queue_doc.data,"html":get_kitchen_order_template(doc=queue_doc)})
+            print_docs.append(
+                {
+                    **queue_doc.data,
+                    "print_queue": queue_doc.name,
+                    "html":get_kitchen_order_template(doc=queue_doc),
 
-            
-
+                }
+            )
             
         elif pp.get("group_item_type") == "Printer cut by order line":
             for p in printer_proucts:
                 print_data["sale_products"] = [p]
                 queue_doc =  add_print_queue(doc.get("name"),print_data)
-                # print_docs.append(print_data)
-                emit_event("PrintKitchenOrderOnDesktop",{**queue_doc.data,"html":get_kitchen_order_template(doc=queue_doc)})
+                print_docs.append(
+                    {
+                        **queue_doc.data,
+                        "print_queue": queue_doc.name,
+                        "html":get_kitchen_order_template(doc=queue_doc),
 
+                    }
+                )
                 
         else:
             for p in printer_proucts:
@@ -107,13 +107,23 @@ def generate_print_queue(doc,products,run_commit = True):
                     print_data["index"] = n
                     print_data["sale_products"] = [p]
                     queue_doc =  add_print_queue(doc.get("name"),print_data)
-                    # print_docs.append(print_data)
-                    emit_event("PrintKitchenOrderOnDesktop",{**queue_doc.data,"html":get_kitchen_order_template(doc=queue_doc)})
+                    print_docs.append(
+                        {
+                            **queue_doc.data,
+                            "print_queue": queue_doc.name,
+                            "html":get_kitchen_order_template(doc=queue_doc),
 
+                        }
+                    )
                     
 
     if run_commit:
         frappe.db.commit()
+    
+ 
+    process_print(print_docs,run_commit = run_commit)
+
+    return print_docs
 
 
 def add_print_queue(sale, data):

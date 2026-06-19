@@ -31,6 +31,8 @@ import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 
 import { ref, onMounted, defineEmits, createToaster, createResource, inject, i18n } from '@/plugin'
 import ComSplitBillList from './split_bill/ComSplitBillList.vue';
+import { v4 as uuidv4 } from "uuid";
+
 const socket = inject("$socket")
 const { t: $t } = i18n.global;
 
@@ -155,12 +157,7 @@ function onCreateNew() {
   onDownloadPressed(_newGroup);
 }
 
-function uuidv4() {
-  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-  );
-}
-
+ 
 function onDownloadPressed(group) {
   //
   const result = groupSales.value.flatMap(a => (a.sale.sale_products || []).filter((r) => (r.total_selected || 0) > 0));
