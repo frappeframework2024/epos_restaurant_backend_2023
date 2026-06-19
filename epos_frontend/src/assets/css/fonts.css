@@ -1,0 +1,13 @@
+@font-face {
+  font-family: 'Khmer OS Battambang';
+  src: url('@/assets/fonts/KHMEROSBATTAMBANG.TTF') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+html,
+body,
+#app {
+  font-family: 'Khmer OS Battambang', sans-serif;
+}

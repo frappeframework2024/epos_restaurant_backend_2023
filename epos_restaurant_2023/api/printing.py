@@ -14,10 +14,11 @@ from frappe.utils import (
 )
 from escpos import *
 
-from epos_restaurant_2023.api.pdf import get_pdf
- 
- 
+from epos_restaurant_2023.api.pdf import get_pdf 
+
 import io
+import qrcode
+from io import BytesIO
  
  
 
@@ -194,6 +195,14 @@ def print_kitchen_order(station, sale, products,printer):
         return ""    
     doc_sale = frappe.get_doc("Sale", sale)
     data_template,css,width,fixed_height,item_height = frappe.db.get_value("POS Receipt Template","Kitchen Order",["template","style","width","fixed_height","item_height"])   
+    
+    for _p in products: 
+        _p["qr_code_base64"] =  ""  
+        
+        if _p.get("sale_product_name"):
+            _p["qr_code_base64"] = _generate_qrcode_base64(_p["sale_product_name"])
+            
+            
     html = frappe.render_template(data_template, get_print_context(doc=doc_sale,sale_products =  products))
     # return products  
     height = fixed_height
@@ -457,4 +466,28 @@ def get_print_data(doctype,docname,template,return_type="base64",lang="en",optio
     else:
         pdf_base64 = base64.b64encode(pdfDoc)
         return pdf_base64.decode()
+     
+     
+     
+     
+
+def _generate_qrcode_base64(data):
+    qr = qrcode.QRCode(
+        version=1,
+        box_size=7,
+        border=4
+    )
+
+    qr.add_data(data)
+    qr.make(fit=True)
+
+    img = qr.make_image(fill_color="black", back_color="white")
+
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+
+    return base64.b64encode(buffer.getvalue()).decode("utf-8")
+
+
+     
      

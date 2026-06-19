@@ -23,7 +23,7 @@ import ComChip from './components/ComChip.vue'
 import ComModal from './components/ComModal.vue'
 import Avatar from "vue3-avatar";
 import socket from './utils/socketio';
-
+import './assets/css/fonts.css'
 import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura';
 

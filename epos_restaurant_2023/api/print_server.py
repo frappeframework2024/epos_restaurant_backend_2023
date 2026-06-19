@@ -3,10 +3,12 @@ import frappe
 import socket
 import ipaddress
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import time
 
 PRINT_SERVER_PORT = 19100
 PRINT_SERVER_CACHE_KEY = "epos_restaurant_print_server_url"
 PRINT_SERVER_CACHE_SECONDS = 24 * 60 * 60
+RETRY_TIMEOUT =[5,15,30]
 
 
 def _normalize_print_server_url(url):
@@ -124,16 +126,28 @@ def _get_print_queue_names(data):
     return [x.get("print_queue") for x in data if x.get("print_queue")]
 
 
-def _mark_success_jobs(success_jobs):
+def _mark_success_jobs(success_jobs,retry= 0):
     if len(success_jobs)>0:
-        sql="update `tabPrint Queue` set status = 'Success' where name in %(names)s"
-        frappe.db.sql(sql,{"names":success_jobs})
+        sql="update `tabPrint Queue` set status = 'Success',retry = %(retry)s where name in %(names)s"
+        frappe.db.sql(sql,{"names":success_jobs,"retry":retry})
 
 
-def _mark_failed_jobs(failed_jobs):
+def _mark_failed_jobs(failed_jobs, retry = 0, failed_jobs_data=None):
     for j in failed_jobs:
-        sql="update `tabPrint Queue` set status = 'Fail', error_text=%(error)s where name = %(name)s"
-        frappe.db.sql(sql,{"name":j.get("print_queue"),"error":j.get("error")})
+        sql="update `tabPrint Queue` set status = 'Fail',retry=%(retry)s, error_text=%(error)s where name = %(name)s"
+        frappe.db.sql(sql,{"name":j.get("print_queue"),"retry":retry,"error":j.get("error")})
+    
+    if failed_jobs_data and retry<3:
+        time.sleep(RETRY_TIMEOUT[retry])
+
+        frappe.enqueue(
+            "epos_restaurant_2023.api.print_server.process_print",
+            queue="long",
+            data=failed_jobs_data,
+            retry=retry + 1
+        )
+
+
 
 
 def _get_error_jobs(data, error):
@@ -156,18 +170,28 @@ def _request_print(data):
 
     success_jobs = [x.get("print_queue") for x in results if x.get("ok") == True]
     failed_jobs = [x for x in results if x.get("ok") == False]
+
     return success_jobs, failed_jobs
 
 
-def process_print(data=None, run_commit = True):
+def process_print(data=None,retry = 0, run_commit = True):
     
         try:
             success_jobs, failed_jobs = _request_print(data)
-            _mark_success_jobs(success_jobs)
-            _mark_failed_jobs(failed_jobs)
+            _mark_success_jobs(success_jobs,retry)
+            
+            fail_jobs_names = [x.get("print_queue") for x in failed_jobs]
+            failed_jobs_data = [x for x in data if x.get("print_queue") in fail_jobs_names ]
+            _mark_failed_jobs(failed_jobs,retry,failed_jobs_data)
+
+
+
         except Exception as e:
             failed_jobs = _get_error_jobs(data, str(e))
-            _mark_failed_jobs(failed_jobs)
+            fail_jobs_names = [x.get("print_queue") for x in failed_jobs]
+            failed_jobs_data = [x for x in data if x.get("print_queue") in fail_jobs_names ]
+            _mark_failed_jobs(failed_jobs,retry,failed_jobs_data)
+            
 
         finally:
             if run_commit:

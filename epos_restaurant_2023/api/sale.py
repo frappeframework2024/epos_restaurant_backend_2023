@@ -38,14 +38,12 @@ def submit_order(data=None):
     
     
     if _new_products:
-        # generate_print_queue(doc=doc, products=_new_products,run_commit=False)
-    
         frappe.enqueue(
             "epos_restaurant_2023.api.sale.generate_print_queue",
             queue="short",
             doc=doc,
             products=_new_products,
-            
+            at_front=True
         )
 
     

@@ -1744,13 +1744,12 @@ export default class Sale {
                 resolve(false);
             }
             else {
-                
+
                 //generate uuid to sale product if new item
                 this.sale.sale_products.filter(r => r.sale_product_status == 'New' && !r.name).forEach((r) => {                     
                     r.__islocal = 1; 
                     r.name = uuidv4(); 
                 });
-
 
                 let doc = JSON.parse(JSON.stringify(this.sale));
                 let _sale = undefined;
@@ -1855,6 +1854,14 @@ export default class Sale {
                         this.sale.pos_profile = this.setting?.pos_profile;
                         this.sale.outlet = this.setting?.outlet;
                         this.action = "quick_pay";
+
+                        //generate uuid to sale product if new item
+                        this.sale.sale_products.filter(r => r.sale_product_status == 'New' && !r.name).forEach((r) => {                     
+                            r.__islocal = 1; 
+                            r.name = uuidv4(); 
+                        });
+
+
                         let doc = JSON.parse(JSON.stringify(this.sale));
                         this.generateProductPrinters();
                         let msg = `${u.name} quick pay`;
@@ -1910,6 +1917,12 @@ export default class Sale {
                         return
                     }
                     socket.emit("ShowOrderInCustomerDisplay", this.sale, "paid", this.customer_display_key);
+                    //generate uuid to sale product if new item
+                    this.sale.sale_products.filter(r => r.sale_product_status == 'New' && !r.name).forEach((r) => {                     
+                        r.__islocal = 1; 
+                        r.name = uuidv4(); 
+                    });
+
                     this.generateProductPrinters();
                     const now = new Date();
                     const u = JSON.parse(localStorage.getItem('make_order_auth'));

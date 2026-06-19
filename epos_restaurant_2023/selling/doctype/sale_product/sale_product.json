@@ -187,7 +187,8 @@
   "employees",
   "selected_variant",
   "return_note",
-  "redeem_coupon_info"
+  "redeem_coupon_info",
+  "temp_id"
  ],
  "fields": [
   {
@@ -1307,12 +1308,20 @@
    "fieldtype": "Data",
    "label": "Vendor Name",
    "read_only": 1
+  },
+  {
+   "fieldname": "temp_id",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Temp ID",
+   "print_hide": 1,
+   "report_hide": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-04-23 09:18:04.590483",
+ "modified": "2026-06-19 16:51:55.751685",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",
