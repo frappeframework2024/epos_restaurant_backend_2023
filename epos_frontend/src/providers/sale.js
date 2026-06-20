@@ -10,6 +10,7 @@ import {
 import { createToaster } from "@meforma/vue-toaster";
 import socket from '@/utils/socketio';
 import { FrappeApp } from 'frappe-js-sdk';
+import { v4 as uuidv4 } from "uuid";
 
 import NumberFormat from 'number-format.js';
 const frappe = new FrappeApp();

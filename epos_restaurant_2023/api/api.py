@@ -181,7 +181,7 @@ def check_valid_sale_product_as_coupon(**args):
                 sp.amount AS coupon_amount
             FROM `tabSale Product` sp
             INNER JOIN `tabSale` s on s.name = sp.parent
-            WHERE s.docstatus = 1 and sp.`name` = %(coupon_code)s
+            WHERE s.docstatus = 1 and sp.`temp_id` = %(coupon_code)s
         ),
         b AS (
             SELECT 
