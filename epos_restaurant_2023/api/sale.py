@@ -16,27 +16,39 @@ def runme():
 
     return submit_order(data = { "doc": doc})
 
+
+
+@frappe.whitelist(methods=["POST"])
+def get_sale_detail(sale_name):
+    return frappe.get_doc("Sale",sale_name)
+
+
 @frappe.whitelist(methods="POST")
 def submit_order(data=None):
     doc = data.get("doc")
     
     # get submited product 
+    
     _new_products = [d for d in doc.get("sale_products") if not d.get("name") or d.get("sale_product_status") == 'New']
     
-
-    
     if doc:
-        for sp in [x for x in doc.get("sale_products") if  not x.get("name") or x.get("sale_product_status") == 'New']:
+        for sp in _new_products:
+            
             sp["order_time"] = str(frappe.utils.now_datetime())
+
+            sp["order_by"] = sp.get("order_by") or get_full_name() 
+            sp["sale_product_status"] =  "Submited" if sp.get("sale_product_status") == "New" else sp.get("sale_product_status") 
+
 
         if not doc.get("name"):
             doc = frappe.get_doc(doc)
             doc.insert()
         else:
             doc = frappe.get_doc(doc)
+            
             doc.save()
     
-    
+             
     if _new_products:
         frappe.enqueue(
             "epos_restaurant_2023.api.sale.generate_print_queue",
@@ -44,12 +56,14 @@ def submit_order(data=None):
             doc=doc,
             products=_new_products,
             at_front=True
-        )
+        )   
 
     
     frappe.db.commit()
 
-    
+    if data.get("print_bill_request"):
+        frappe.throw("Print bill request")
+
     return {"doc":doc}
     
 @frappe.whitelist(methods=["POST"])
@@ -162,8 +176,9 @@ def get_product_pritners(product_codes):
     return frappe.db.sql(sql,{"product_codes":product_codes},as_dict=1)
 
 def get_full_name():
-    return frappe.cached_value("User",frappe.session.user,"full_name")
+    return frappe.get_cached_value("User",frappe.session.user,"full_name")
 
+    
 def get_products(sale_products):
     products =[] 
     for sp in sale_products:
@@ -193,8 +208,8 @@ def get_products(sale_products):
                 })  
     return products
 
-
- 
-
+@frappe.whitelist(methods="POST")
+def bulk_request_print_bill(sale_names):
+    frappe.msgprint("u print bill")
     
 

@@ -32,7 +32,22 @@ def generate_keys(user):
 	return api_secret
 
 @frappe.whitelist( methods="POST", allow_guest=True )
+def login_with_pin_code(pin_code):
+     user = check_username(pin_code)
+     if user:
+          login_data = login(user.get("username"),pin_code)
+          return {
+               **user,
+               **login_data
+          }
+
+     frappe.throw("Invaild pin code")
+
+     
+
+@frappe.whitelist( methods="POST", allow_guest=True )
 def login(usr, pwd): 
+
     try:
         login_manager = frappe.auth.LoginManager()
         login_manager.authenticate(user=usr, pwd=pwd)

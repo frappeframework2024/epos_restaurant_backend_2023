@@ -1729,12 +1729,12 @@ export default class Sale {
                 return
             }
         }
-        const resp = await Ping(this.setting)
-        if(resp == 0){
-            toaster.error($t('Please check your network connection'));
-            this.loading = false;
-            return
-        }
+        // const resp = await Ping(this.setting)
+        // if(resp == 0){
+        //     toaster.error($t('Please check your network connection'));
+        //     this.loading = false;
+        //     return
+        // }
 
         return new Promise(async (resolve) => {
             if (this.sale.sale_products.length == 0 && this.sale.name == undefined && (this.sale.from_reservation || "") == "") {
@@ -3069,7 +3069,7 @@ async function Ping(setting) {
     const controller = new AbortController();
     const timer = setTimeout(() => {
         controller.abort();
-    }, 3000)
+    }, 10000)
     try {
         const start = performance.now();
         let status = 0
