@@ -175,24 +175,25 @@ def _request_print(data):
 
 
 def process_print(data=None,retry = 0, run_commit = True):
-    
-        try:
-            success_jobs, failed_jobs = _request_print(data)
-            _mark_success_jobs(success_jobs,retry)
-            
-            fail_jobs_names = [x.get("print_queue") for x in failed_jobs]
-            failed_jobs_data = [x for x in data if x.get("print_queue") in fail_jobs_names ]
-            _mark_failed_jobs(failed_jobs,retry,failed_jobs_data)
+    if isinstance(data,dict):
+        data = [data]
+    try:
+        success_jobs, failed_jobs = _request_print(data)
+        _mark_success_jobs(success_jobs,retry)
+        
+        fail_jobs_names = [x.get("print_queue") for x in failed_jobs]
+        failed_jobs_data = [x for x in data if x.get("print_queue") in fail_jobs_names ]
+        _mark_failed_jobs(failed_jobs,retry,failed_jobs_data)
 
 
 
-        except Exception as e:
-            failed_jobs = _get_error_jobs(data, str(e))
-            fail_jobs_names = [x.get("print_queue") for x in failed_jobs]
-            failed_jobs_data = [x for x in data if x.get("print_queue") in fail_jobs_names ]
-            _mark_failed_jobs(failed_jobs,retry,failed_jobs_data)
-            
+    except Exception as e:
+        failed_jobs = _get_error_jobs(data, str(e))
+        fail_jobs_names = [x.get("print_queue") for x in failed_jobs]
+        failed_jobs_data = [x for x in data if x.get("print_queue") in fail_jobs_names ]
+        _mark_failed_jobs(failed_jobs,retry,failed_jobs_data)
+        
 
-        finally:
-            if run_commit:
-                frappe.db.commit()
+    finally:
+        if run_commit:
+            frappe.db.commit()

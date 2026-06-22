@@ -13,7 +13,7 @@
             </div>
         </template>
         <template #action>
-            <v-btn :disabled="disable" variant="flat" @click="onOK()" color="primary" style="font-family: Arial;">
+            <v-btn :disabled="disable === true && overwrite_disable === false" variant="flat" @click="onOK()" color="primary" style="font-family: Arial;">
                 {{ $t('Ok') }}
             </v-btn>
         </template>
@@ -29,6 +29,7 @@ let search = ref()
 let error_msg = ref()
 let voucher_data = ref()
 let disable = ref(true)
+let overwrite_disable = ref(false)
 let msg = ref()
 const sale = inject("$sale")
 const gv = inject('$gv')
@@ -44,6 +45,7 @@ onMounted(() => {
     if (currency_setting) {
         format.value = currency_setting.pos_currency_format
     }
+    overwrite_disable.value = props.params?.overwrite_disable ?? false
 })
 function onSearch(keyword) {
     search.value = keyword;
@@ -81,6 +83,12 @@ function onClose() {
     emit('resolve', false)
 }
 function onOK() {
-    emit('resolve', {"coupon_code":search.value,"remaining_amount":voucher_data.value.data.remaining_amount})
+    if (overwrite_disable.value == true) {
+        emit('resolve');
+    }
+    else{
+         emit('resolve', {"coupon_code":search.value,"remaining_amount":voucher_data.value.data.remaining_amount})
+    }
 }
+   
 </script>

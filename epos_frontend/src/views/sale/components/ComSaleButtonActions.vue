@@ -29,7 +29,12 @@
       </template>
 
       <ComDiscountButton v-if="gv.device_setting.is_order_station==0"/>
-      
+      <v-btn v-if="0 === 1" :variant="mobile ? 'tonal' : 'elevated'"
+        :color="mobile ? 'primary' : ''" :stacked="!mobile" size="small" class="m-0-1 grow"
+        :prepend-icon="mobile ? '' : 'mdi-magnify'" @click="onCheckCoupon" style="font-family: Khmer OS Siemreap;">
+        {{ $t('Check Coupon') }}
+      </v-btn>
+
       <v-btn :variant="mobile ? 'tonal' : 'elevated'"
         :color="mobile ? 'primary' : ''" :stacked="!mobile" size="small" class="m-0-1 grow"
         :prepend-icon="mobile ? '' : 'mdi-plus'" @click="onSubmitAndNew" style="font-family: Khmer OS Siemreap;">
@@ -43,7 +48,7 @@
       </v-btn>
 
 
-      <v-btn v-if="device_setting.show_option_quick_pay ==1" :stacked="!mobile" size="small" color="error" class="m-0-1 grow" :height="mobile ? '35px' : undefined" :variant="mobile ? 'tonal' : 'elevated'"
+      <v-btn v-if="device_setting.show_option_quick_pay == 1" :stacked="!mobile" size="small" color="error" class="m-0-1 grow" :height="mobile ? '35px' : undefined" :variant="mobile ? 'tonal' : 'elevated'"
         :prepend-icon="mobile ? '' : 'mdi-currency-usd'" @click="onQuickPay" style="font-family: Khmer OS Siemreap;">
         {{ $t('Quick Pay') }}
       </v-btn>
@@ -54,7 +59,7 @@
   </div>
 </template>
 <script setup>
-import { inject,computed, useRouter,ref,changePriceRuleDialog,changeSaleTypeModalDialog,ComSaleReferenceNumberDialog,addCommissionDialog,i18n } from '@/plugin';
+import { inject,computed, useRouter,ref,changePriceRuleDialog,changeSaleTypeModalDialog,ComSaleReferenceNumberDialog,addCommissionDialog,i18n,couponDialog } from '@/plugin';
 import ComDiscountButton from './ComDiscountButton.vue';
 import ComPrintBillButton from './ComPrintBillButton.vue';
 import { createToaster } from '@meforma/vue-toaster';
@@ -133,20 +138,15 @@ whenever(ctrl_q, () =>{
   }
     onQuickPay();
 })
-
-
-
 if(sale.vau){
   sale.vue?.$onKeyStroke('F10',(e)=>{ 
     e.preventDefault();
       if(gv.device_setting.is_order_station==1){
           return;
       }
-
     if(sale.dialogActiveState==false){
       onSaleDiscount('Percent')
     }
-    
   })
 }
 
@@ -157,7 +157,6 @@ if(sale.vau){
       if(gv.device_setting.is_order_station==1){
           return;
       }
-
     if(sale.dialogActiveState==false){
       onSaleDiscount('Amount')
     }
@@ -258,13 +257,10 @@ function onSaleDiscount(discount_type) {
                 );
             }
         });
-
     }
 }
 
-
 async function onQuickPay() {
- 
   await sale.onSubmitQuickPay().then((value) => {
     if (value) {
       product.onClearKeyword()
@@ -279,7 +275,6 @@ async function onQuickPay() {
       //this code is send message to modal saleproduct list in mobile view
       //we use this below code to send signal close modal when complete task
       window.postMessage("close_modal", "*");
-
     }
   });
 }
@@ -294,7 +289,6 @@ if(sale.vau){
   })
 }
 
-
 function onRedirectSaleType(){
     const redirect_sale_type = localStorage.getItem("redirect_sale_type") || null
     if(redirect_sale_type){
@@ -303,11 +297,11 @@ function onRedirectSaleType(){
     }
     return true
 }
+
 function closeModel() { 
-
-
   emit('onClose')
 }
+
 async function onCancelPrintBill() {
   gv.authorize("cancel_print_bill_required_password", "cancel_print_bill", "cancel_print_bill_required_note", "Cancel Print Bill Note").then((v) => {
     if (v) {
@@ -329,19 +323,18 @@ async function onCancelPrintBill() {
       })  ; 
     }
   })
-
 }
 
+async function onCheckCoupon() {
+    const result = await couponDialog({overwrite_disable:true})
 
-
+}
 
 async function onSubmitAndNew() {
   //check if newsale recource3 is null then 
   //reinitalize newsaleresxource
   // backup old sale
-
   let backup_sale = JSON.parse(JSON.stringify(sale.sale))
-
   sale.table_id = sale.sale.table_id
   sale.tbl_number = sale.sale.tbl_number
   sale.customer = sale.sale.customer
@@ -353,28 +346,22 @@ async function onSubmitAndNew() {
   if (sale.newSaleResource == null) {
     sale.createNewSaleResource();
   }
-
   if (sale.sale.sale_products.length == 0) {
     toaster.warning($t('msg.There is no item to submit order'));
     return;
   }
 
   if (sale.sale.sale_status != 'Bill Requested') {
-
     const action = sale.action;
     const message = sale.message;
     const sale_status = sale.sale.sale_status;
-
     sale.action = "submit_order";
     sale.message =$t('msg.Submit order successfully');
     sale.sale.sale_status = "Submitted";
-
-
     await sale.onSubmit().then((value) => { 
       if (value) { 
         //sale network lock
         saleNetworkLock(backup_sale.name, backup_sale);
-
         let template = (gv.device_setting?.main_sale_screen??"Default");
         if(template == "Default"){
             router.push({  name: "AddSale"});
@@ -386,7 +373,6 @@ async function onSubmitAndNew() {
                 query: { menu: _template }
             });
         }
-
         newSale(); 
       }
       else{
@@ -407,26 +393,16 @@ async function onSubmitAndNew() {
             query: { menu: _template }
         });
     }
-
     newSale();
   }
-
   sale.getTableSaleList();
-
-
-
-
   if(mobile){
     window.postMessage("close_modal", "*");
   }
   emit('onSubmitAndNew')
-
- 
 }
 
 function newSale() {
-
-
   if (sale.newSaleResource == null) {
     sale.createNewSaleResource();
   }
@@ -443,9 +419,7 @@ function newSale() {
   let table = tables.filter(r => r.id == sale.sale.table_id);
   if (table) {
     table = table[0];
-
     if (parseFloat(table.default_discount) > 0) {
-
       sale.sale.discount_type = table.discount_type;
       sale.sale.discount = parseFloat(table.default_discount);
       if (table.discount_type == "Percent") {
@@ -455,15 +429,9 @@ function newSale() {
       }
     }
   }
-
-
-
   sale.updateSaleSummary();
-  
   socket.emit("ShowOrderInCustomerDisplay",sale.sale, "new",  sale.customer_display_key);
-
 }
-
 
 async function saleNetworkLock(old_sale_name, new_sale_data){
   if(gv.setting.device_setting.use_sale_network_lock == 1 && (old_sale_name||"" != "")){   
@@ -477,8 +445,6 @@ async function saleNetworkLock(old_sale_name, new_sale_data){
       await call.post("epos_restaurant_2023.api.api.reset_sale_network_lock_by_sale",{"old_sale": old_sale_name, "new_sale":new_sale})   
   }  
 }
-
-
 </script>
 <style>
 .m-0-1 {

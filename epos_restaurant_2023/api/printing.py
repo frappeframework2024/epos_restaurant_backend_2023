@@ -132,13 +132,29 @@ def capture(height,width,html,css,image):
 
 ## print invoice or receipt
 @frappe.whitelist(allow_guest=True)
-def get_receipt_html(name,template ):
+def get_receipt_html(name,template, include_css=False ):
      
     doc = frappe.get_doc("Sale", name) 
   
-    data_template = frappe.db.get_value("POS Receipt Template",template,["template"])
+    data_template,style = frappe.db.get_value("POS Receipt Template",template,["template","style"])
     html= frappe.render_template(data_template, get_print_context(doc,0))
-    return html
+    if not include_css:
+        return html
+    else:
+        _html = """
+            <html>
+            <head>
+                <style>
+                {css}
+                </style>
+            </head>
+            <body>
+            {template}
+            </body>
+            </html>
+            """.format(css=style,template=html)
+        return _html
+
    
 
 ## print invoice or receipt
@@ -196,14 +212,20 @@ def print_kitchen_order(station, sale, products,printer):
     doc_sale = frappe.get_doc("Sale", sale)
     data_template,css,width,fixed_height,item_height = frappe.db.get_value("POS Receipt Template","Kitchen Order",["template","style","width","fixed_height","item_height"])   
     
+    product_query = """select name from `tabProduct` where is_coupon = 1 and name in %(product_codes)s"""
+    product_data = frappe.db.sql(product_query, {"product_codes": [_p["product_code"] for _p in products]}, as_dict=1)
+    
+    coupon_products = [d["name"] for d in product_data] 
     for _p in products: 
-        _p["qr_code_base64"] =  ""  
-        
-        if _p.get("sale_product_name"):
-            _p["qr_code_base64"] = _generate_qrcode_base64(_p["sale_product_name"])
+        if _p["product_code"] in coupon_products:
+            _p["is_coupon"] = 1
+            _p["qr_code_base64"] =  ""  
             
+            if _p.get("sale_product_name"):
+                _p["qr_code_base64"] = _generate_qrcode_base64(_p["sale_product_name"])            
             
-    html = frappe.render_template(data_template, get_print_context(doc=doc_sale,sale_products =  products))
+    html = frappe.render_template(data_template, get_print_context(doc=doc_sale,sale_products =  products,printer_name=printer))
+    
     # return products  
     height = fixed_height
     if len(products) > 0:

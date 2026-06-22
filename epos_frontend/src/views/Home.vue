@@ -53,7 +53,7 @@
 
                         <ComButton v-if="isWindow() && device_setting?.show_wifi_button==1"  @click="onPrintWifiPassword" :title="$t('Wifi Password')" icon="mdi-wifi" icon-color="defaulticonColor" class="bg-brandcolor"/> 
                         <ComButton v-if="device_setting?.allow_switch_pos_profile==1"  @click="onSwitchPOSProfile" :title="$t('Switch POS Profile')" icon="mdi-home-switch-outline" icon-color="defaulticonColor" class="bg-brandcolor"/> 
-                        
+                        <ComButton v-if="device_setting?.show_button_for_checking_coupon_balance==1"  @click="onCheckCoupon" :title="$t('Check Coupon')" icon="mdi-magnify" icon-color="defaulticonColor" class="bg-brandcolor" />
                         <ComButton @click="onLogout()" text-color="#fff" icon-color="#fff" :title="$t('Logout')" icon="mdi-logout" background-color="#b00020" />
                         
                     </div>
@@ -64,7 +64,7 @@
     
 </template>
 <script setup>
-import { ref, useRouter,computed, posReservationDialog, createToaster,pendingSaleListDialog,inject,onMounted,printWifiPasswordModal,SwitchPosProfileModal,i18n } from '@/plugin'
+import { ref, useRouter,computed, posReservationDialog, createToaster,pendingSaleListDialog,inject,onMounted,printWifiPasswordModal,SwitchPosProfileModal,i18n,couponDialog } from '@/plugin'
 import ComButton from '../components/ComButton.vue';
 import WorkingDayButton from './shift/components/WorkingDayButton.vue';
 import OpenShiftButton from './shift/components/OpenShiftButton.vue';
@@ -307,7 +307,9 @@ async function onSwitchPOSProfile(){
 }
 
 
-
+async function onCheckCoupon() {
+    const result = await couponDialog({overwrite_disable:true})
+}
 
 //open cashdrawer
 function onOpenCashDrawer(){

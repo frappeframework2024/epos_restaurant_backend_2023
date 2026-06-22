@@ -138,14 +138,14 @@ def generate_print_queue(doc,products,run_commit = True):
     return print_docs
 
 
-def add_print_queue(sale, data):
+def add_print_queue(sale, data = None):
     
     queue_doc = {
             "doctype":"Print Queue",
             "document_type":"Sale",
             "document_name":sale,
             "printer_name":data.get("printer_name"),
-            "data":data
+            "data":data or "{}"
     }
     
     doc = frappe.get_doc(queue_doc).insert(ignore_permissions = True)
@@ -208,8 +208,21 @@ def get_products(sale_products):
                 })  
     return products
 
+
 @frappe.whitelist(methods="POST")
 def bulk_request_print_bill(sale_names):
+
     frappe.msgprint("u print bill")
+
+
+
+@frappe.whitelist(methods=["POST","GET"])
+def print_bill(sale_name="SINV2026-0790",printer_name="Cashier Printer"):
+    from epos_restaurant_2023.api.printing import get_receipt_html
+    html = get_receipt_html(sale_name, "Receipt En Test",include_css=True)
+    
+    process_print({"printer_name":printer_name,"copies":2, "html":html,})
+
+
     
 
