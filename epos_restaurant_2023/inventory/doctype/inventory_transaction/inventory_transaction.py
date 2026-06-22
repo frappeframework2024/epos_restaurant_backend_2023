@@ -76,10 +76,9 @@ def add_stock_location_product(self):
 
 def update_stock_location_product(self):
 	fields = ""
-	balance = 1 if self.balance == 0 else self.balance
 	fields += "cost = cast({} as decimal(16,4)),".format(self.price)
-	fields += "quantity = cast({} as decimal(16,4)),".format(balance)
-	fields += "total_cost = cast({} as decimal(16,4))".format(self.price * (balance or 0))
+	fields += "quantity = cast({} as decimal(16,4)),".format(self.balance)
+	fields += "total_cost = cast({} as decimal(16,4))".format(self.price * (self.balance or 0))
 	if self.has_expired_date:
 		fields += ",expired_date = {}".format(self.expired_date)
 		fields += ",has_expired_date = {}".format(self.has_expired_date)
