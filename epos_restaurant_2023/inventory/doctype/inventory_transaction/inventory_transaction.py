@@ -75,11 +75,18 @@ def add_stock_location_product(self):
 	doc.insert(ignore_permissions=True)
 
 def update_stock_location_product(self):
-	frappe.db.set_value('Stock Location Product', self.stock_location_product_name, {
-	"cost": self.price,
-	"quantity": self.balance,
-	"total_cost": self.price * (self.balance or 0),
-	"expired_date": self.expired_date if self.has_expired_date else None,
-	"has_expired_date": self.has_expired_date if self.has_expired_date else 0
-	})
-	frappe.db.commit()
+	values = {
+		"cost": self.price,
+		"quantity": self.balance,
+		"total_cost": self.price * (self.balance or 0)
+	}
+	if self.has_expired_date:
+		values.update({
+			"expired_date": self.expired_date,
+			"has_expired_date": self.has_expired_date
+		})
+	frappe.db.set_value(
+		"Stock Location Product",
+		self.stock_location_product_name,
+		values
+	)
