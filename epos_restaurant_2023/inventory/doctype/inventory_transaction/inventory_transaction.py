@@ -75,14 +75,11 @@ def add_stock_location_product(self):
 	doc.insert(ignore_permissions=True)
 
 def update_stock_location_product(self):
-	fields = ""
-	fields += "cost = cast({} as decimal(16,4)),".format(self.price)
-	fields += "quantity = cast({} as decimal(16,4)),".format(self.balance)
-	fields += "total_cost = cast({} as decimal(16,4))".format(self.price * (self.balance or 0))
-	if self.has_expired_date:
-		fields += ",expired_date = {}".format(self.expired_date)
-		fields += ",has_expired_date = {}".format(self.has_expired_date)
-	sql = "update `tabStock Location Product` set {} where name = '{}'".format(fields, self.stock_location_product_name)
-	frappe.db.sql(sql)
+	frappe.db.set_value('Stock Location Product', self.stock_location_product_name, {
+	"cost": self.price,
+	"quantity": self.balance,
+	"total_cost": self.price * (self.balance or 0),
+	"expired_date": self.expired_date if self.has_expired_date else None,
+	"has_expired_date": self.has_expired_date if self.has_expired_date else 0
+	})
 	frappe.db.commit()
-
