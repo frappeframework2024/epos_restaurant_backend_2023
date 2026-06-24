@@ -1,7 +1,7 @@
 import frappe 
 import json
 from collections import defaultdict
-from epos_restaurant_2023.api.printing import get_kitchen_order_template
+from epos_restaurant_2023.api.printing import get_receipt_html,get_kitchen_order_template
 from epos_restaurant_2023.custom_socket_client import emit_event
 from  epos_restaurant_2023.api.print_server import process_print
 
@@ -24,27 +24,32 @@ def get_sale_detail(sale_name):
 
 
 @frappe.whitelist(methods="POST")
-def submit_order(data=None):
+def submit_order(data=None,print_bill=False):
     doc = data.get("doc")
     
-    # get submited product 
+    
+    # get Submitted product 
     
     _new_products = [d for d in doc.get("sale_products") if not d.get("name") or d.get("sale_product_status") == 'New']
     
     if doc:
         for sp in _new_products:
-            
             sp["order_time"] = str(frappe.utils.now_datetime())
 
             sp["order_by"] = sp.get("order_by") or get_full_name() 
-            sp["sale_product_status"] =  "Submited" if sp.get("sale_product_status") == "New" else sp.get("sale_product_status") 
+            sp["sale_product_status"] =  "Submitted" if sp.get("sale_product_status") == "New" else sp.get("sale_product_status") 
 
 
         if not doc.get("name"):
             doc = frappe.get_doc(doc)
+            if print_bill:
+                doc.sale_status = "Bill Requested"
+                
             doc.insert()
         else:
             doc = frappe.get_doc(doc)
+            if print_bill:
+                doc.sale_status = "Bill Requested"
             
             doc.save()
     
@@ -63,6 +68,19 @@ def submit_order(data=None):
 
     if data.get("print_bill_request"):
         frappe.throw("Print bill request")
+
+    # enqueue add deleted product to Sale Product Deleted
+    deleted_products = data.get("deleted_products") or []
+    
+    if len(deleted_products)>0:
+        frappe.enqueue(
+            "epos_restaurant_2023.api.sale.add_deleted_sale_products",
+            queue="short",
+            sale_doc=doc,
+            deleted_products=deleted_products,
+        )
+
+    
 
     return {"doc":doc}
     
@@ -175,6 +193,8 @@ def get_product_pritners(product_codes):
     """
     return frappe.db.sql(sql,{"product_codes":product_codes},as_dict=1)
 
+
+
 def get_full_name():
     return frappe.get_cached_value("User",frappe.session.user,"full_name")
 
@@ -208,6 +228,35 @@ def get_products(sale_products):
                 })  
     return products
 
+def add_deleted_sale_products(sale_doc,deleted_products,run_commit=True):
+    for sp in deleted_products:
+        frappe.get_doc({
+            "doctype":"Sale Product Deleted",
+            "sale_doc":sale_doc.name,
+            "sale_date":sale_doc.posting_date,
+            "sale_product_id": sp.get("name"),
+            "product_name":sp.get("product_name"),
+            "product_name_kh":sp.get("product_name_kh"),
+            "quantity":sp.get("quantity"),
+            "amount":sp.get("amount"),
+            "deleted_by":sp.get("deleted_by"),
+            "deleted_note":sp.get("deleted_note"),
+            "sale_product":sp,
+            "order_by":sp.get("order_by"),
+            "order_time":sp.get("order_time") or frappe.utils.now_datetime(),
+            "hide_in_kod":sp.get("hide_in_kod"),
+            "kod_status": sp.get("kod_status"),
+            "printers":sp.get("printers"),
+            "portion":sp.get("portion"),
+            "modifiers":sp.get("modifiers"),
+            "combo_menu_data":sp.get("combo_menu_data"),
+            "combo_menu":sp.get("combo_menu"),
+            "note":sp.get("note"),
+            "is_free":sp.get("is_free") or 0
+        }).insert(ignore_permissions = True)
+    
+    if run_commit:
+        frappe.db.commit()
 
 @frappe.whitelist(methods="POST")
 def bulk_request_print_bill(sale_names):
@@ -218,10 +267,11 @@ def bulk_request_print_bill(sale_names):
 
 @frappe.whitelist(methods=["POST","GET"])
 def print_bill(sale_name="SINV2026-0790",printer_name="Cashier Printer"):
-    from epos_restaurant_2023.api.printing import get_receipt_html
     html = get_receipt_html(sale_name, "Receipt En Test",include_css=True)
-    
     process_print({"printer_name":printer_name,"copies":2, "html":html,})
+
+
+
 
 
     

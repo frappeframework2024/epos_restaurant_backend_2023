@@ -133,7 +133,8 @@ def check_user(usr, pwd, device_id = None):
                             }, as_dict = 1) 
         
         if users: 
-            check_user_device(employee= users[0].name, device_id=device_id) 
+            if device_id:
+                check_user_device(employee= users[0].name, device_id=device_id) 
             data = frappe.db.sql("select name,username,full_name from `tabUser` where name=%(name)s limit 1",{"name":users[0].user_id},as_dict=1)
             return data[0]
     

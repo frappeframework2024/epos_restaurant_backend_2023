@@ -2,7 +2,13 @@
 // For license information, please see license.txt
 
 frappe.query_reports["Gym Check In by Hour Report"] = {
-	"filters": [
-
-	]
+    filters: [
+        {
+            fieldname: "check_in_date",
+            label: __("Check-in Date"),
+            fieldtype: "Date",
+            default: frappe.datetime.get_today(),
+            reqd: 1
+        }
+    ]
 };

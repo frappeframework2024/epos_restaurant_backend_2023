@@ -191,14 +191,16 @@ const device_name = computed(() => {
 onMounted(async () => {
   localStorage.removeItem('current_user');
   localStorage.removeItem('make_order_auth');
-  await getApi("api.check_allow_access").then(result=>{
-      if(result.message == 1){
-          allowed.value = true; 
-      }
-      else{
-          allowed.value = false;
-      }
-  })
+  // await getApi("api.check_allow_access").then(result=>{
+  //     if(result.message == 1){
+  //         allowed.value = true; 
+  //     }
+  //     else{
+  //         allowed.value = false;
+  //     }
+  // })
+  allowed.value = true; 
+  
   db.getDocList("POS Translation", {
     fields: ["name", "language_name", "flag"]
   }).then((r) => {

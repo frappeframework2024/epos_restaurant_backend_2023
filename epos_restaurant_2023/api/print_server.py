@@ -126,16 +126,16 @@ def _get_print_queue_names(data):
     return [x.get("print_queue") for x in data if x.get("print_queue")]
 
 
-def _mark_success_jobs(success_jobs,retry= 0):
+def _mark_success_jobs(success_jobs,retry= 0,print_server_url=""):
     if len(success_jobs)>0:
-        sql="update `tabPrint Queue` set status = 'Success',retry = %(retry)s where name in %(names)s"
-        frappe.db.sql(sql,{"names":success_jobs,"retry":retry})
+        sql="update `tabPrint Queue` set status = 'Success',retry = %(retry)s,print_server_url=%(print_server_url)s where name in %(names)s"
+        frappe.db.sql(sql,{"names":success_jobs,"retry":retry,"print_server_url":print_server_url})
 
 
-def _mark_failed_jobs(failed_jobs, retry = 0, failed_jobs_data=None):
+def _mark_failed_jobs(failed_jobs, retry = 0, failed_jobs_data=None,print_server_url=""):
     for j in failed_jobs:
-        sql="update `tabPrint Queue` set status = 'Fail',retry=%(retry)s, error_text=%(error)s where name = %(name)s"
-        frappe.db.sql(sql,{"name":j.get("print_queue"),"retry":retry,"error":j.get("error")})
+        sql="update `tabPrint Queue` set status = 'Fail',retry=%(retry)s, error_text=%(error)s,print_server_url=%(print_server_url)s where name = %(name)s"
+        frappe.db.sql(sql,{"name":j.get("print_queue"),"retry":retry,"error":j.get("error"),"print_server_url":print_server_url})
     
     if failed_jobs_data and retry<3:
         time.sleep(RETRY_TIMEOUT[retry])
@@ -154,8 +154,10 @@ def _get_error_jobs(data, error):
     return [{"print_queue": name, "error": error} for name in _get_print_queue_names(data)]
 
 
-def _request_print(data):
-    print_server_url = get_print_server_url()
+def _request_print(data,print_server_url=None):
+    if not print_server_url:
+        print_server_url = get_print_server_url()
+    
     response = requests.post(
         f"{print_server_url}/print",
         json=data,
@@ -177,13 +179,16 @@ def _request_print(data):
 def process_print(data=None,retry = 0, run_commit = True):
     if isinstance(data,dict):
         data = [data]
+    print_server_url = get_print_server_url()
     try:
-        success_jobs, failed_jobs = _request_print(data)
-        _mark_success_jobs(success_jobs,retry)
+        
+        success_jobs, failed_jobs = _request_print(data,print_server_url)
+     
+        _mark_success_jobs(success_jobs,retry,print_server_url)
         
         fail_jobs_names = [x.get("print_queue") for x in failed_jobs]
         failed_jobs_data = [x for x in data if x.get("print_queue") in fail_jobs_names ]
-        _mark_failed_jobs(failed_jobs,retry,failed_jobs_data)
+        _mark_failed_jobs(failed_jobs,retry,failed_jobs_data, print_server_url)
 
 
 
@@ -191,7 +196,7 @@ def process_print(data=None,retry = 0, run_commit = True):
         failed_jobs = _get_error_jobs(data, str(e))
         fail_jobs_names = [x.get("print_queue") for x in failed_jobs]
         failed_jobs_data = [x for x in data if x.get("print_queue") in fail_jobs_names ]
-        _mark_failed_jobs(failed_jobs,retry,failed_jobs_data)
+        _mark_failed_jobs(failed_jobs,retry,failed_jobs_data,print_server_url)
         
 
     finally:
