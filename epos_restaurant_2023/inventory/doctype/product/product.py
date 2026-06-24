@@ -1014,7 +1014,7 @@ def remove_menu(products,menu):
 		product = frappe.get_doc("Product",p)
 		menus = product.get('pos_menus' or [])
 		for row in menus:
-			if row.menu == menu:
+			if row.pos_menu == menu:
 				menus.remove(row)
 		product.save()
 	frappe.db.commit()
