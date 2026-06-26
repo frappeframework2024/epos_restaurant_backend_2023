@@ -61,13 +61,20 @@
   "personal_trainer",
   "trainer_name_en",
   "trainer_name_kh",
-  "trainer_phone",
-  "trainer_gender",
-  "trainer_email",
   "time_training",
   "trainer_fee_percentage",
-  "trainer_photo",
   "column_break_ojpw",
+  "trainer_photo",
+  "trainer_gender",
+  "trainer_phone",
+  "trainer_email",
+  "section_break_ipwa",
+  "training_duration_in_second",
+  "column_break_azct",
+  "start_time",
+  "column_break_thjc",
+  "end_time",
+  "section_break_limt",
   "trainer_note",
   "other_tab",
   "default_discount",
@@ -601,6 +608,46 @@
    "label": "Select Discount",
    "print_hide": 1,
    "report_hide": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fetch_from": "time_training.duration_in_second",
+   "fieldname": "training_duration_in_second",
+   "fieldtype": "Float",
+   "label": "Training Duration In Second",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_ipwa",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_azct",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fetch_from": "time_training.start_time",
+   "fieldname": "start_time",
+   "fieldtype": "Time",
+   "label": "Start Time",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_thjc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fetch_from": "time_training.end_time",
+   "fieldname": "end_time",
+   "fieldtype": "Time",
+   "label": "End Time",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_limt",
+   "fieldtype": "Section Break"
   }
  ],
  "image_field": "photo",
@@ -613,7 +660,7 @@
    "link_fieldname": "membership"
   }
  ],
- "modified": "2024-12-09 11:50:08.347513",
+ "modified": "2026-06-25 15:20:48.081968",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership",

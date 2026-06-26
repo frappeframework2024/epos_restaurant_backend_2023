@@ -1,0 +1,36 @@
+{
+ "add_total_row": 0,
+ "columns": [],
+ "creation": "2026-06-25 15:54:44.719179",
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": "Default Letterhead",
+ "letterhead": null,
+ "modified": "2026-06-25 15:54:44.719179",
+ "modified_by": "Administrator",
+ "module": "GYM",
+ "name": "Expired Member Report",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "Membership",
+ "report_name": "Expired Member Report",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Sales User"
+  },
+  {
+   "role": "GYM Admin"
+  },
+  {
+   "role": "GYM User"
+  }
+ ]
+}

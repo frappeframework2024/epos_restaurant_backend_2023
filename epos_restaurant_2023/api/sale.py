@@ -24,35 +24,37 @@ def get_sale_detail(sale_name):
 
 
 @frappe.whitelist(methods="POST")
-def submit_order(data=None,print_bill=False):
+def submit_order(data=None,print_request_bill=False):
     doc = data.get("doc")
-    
     
     # get Submitted product 
     
     _new_products = [d for d in doc.get("sale_products") if not d.get("name") or d.get("sale_product_status") == 'New']
     
+    
     if doc:
         for sp in _new_products:
-            sp["order_time"] = str(frappe.utils.now_datetime())
-
+            if doc.get("sale_staus") not in ["Hold Order"]:
+                sp["order_time"] = str(frappe.utils.now_datetime())
             sp["order_by"] = sp.get("order_by") or get_full_name() 
-            sp["sale_product_status"] =  "Submitted" if sp.get("sale_product_status") == "New" else sp.get("sale_product_status") 
+            sp["sale_product_status"] =  "Submitted" if sp.get("sale_product_status") == "New" and doc.get("sale_status") != 'Hold Order' else sp.get("sale_product_status") 
 
 
         if not doc.get("name"):
             doc = frappe.get_doc(doc)
-            if print_bill:
+            if print_request_bill:
                 doc.sale_status = "Bill Requested"
                 
             doc.insert()
         else:
             doc = frappe.get_doc(doc)
-            if print_bill:
+            if print_request_bill:
                 doc.sale_status = "Bill Requested"
             
             doc.save()
-    
+    if doc.sale_status == "Hold Order":
+        _new_products = []
+
              
     if _new_products:
         frappe.enqueue(
@@ -63,12 +65,18 @@ def submit_order(data=None,print_bill=False):
             at_front=True
         )   
 
-    
+
     frappe.db.commit()
+    
+    if print_request_bill:
+        frappe.enqueue(
+            "epos_restaurant_2023.api.sale.print_bill",
+            queue="short",
+            now=True,
+            sale_name= doc.name
 
-    if data.get("print_bill_request"):
-        frappe.throw("Print bill request")
-
+        )
+        
     # enqueue add deleted product to Sale Product Deleted
     deleted_products = data.get("deleted_products") or []
     
@@ -114,7 +122,6 @@ def generate_print_queue(doc,products,run_commit = True):
                     **queue_doc.data,
                     "print_queue": queue_doc.name,
                     "html":get_kitchen_order_template(doc=queue_doc),
-
                 }
             )
             
@@ -193,6 +200,18 @@ def get_product_pritners(product_codes):
     """
     return frappe.db.sql(sql,{"product_codes":product_codes},as_dict=1)
 
+def get_printer_by_product(product_codes):
+    sql = """
+        SELECT
+            GROUP_CONCAT(DISTINCT pp.printer ORDER BY pp.parent SEPARATOR ',') AS printer_ids,
+            pp.parent as product_code
+        FROM `tabProduct Printer` pp
+        WHERE pp.parent IN %(product_codes)s
+        GROUP BY
+           pp.parent
+    """
+    return frappe.db.sql(sql,{"product_codes":product_codes},as_dict=1)
+
 
 
 def get_full_name():
@@ -211,19 +230,23 @@ def get_products(sale_products):
             "note":sp.get("note"),
             "portion":sp.get("note"),
             "modifiers":sp.get("modifiers"),
-            
-
-            
+            "order_by":sp.get("order_by"),
+            "order_time":sp.get("order_time")
+             
         })
 
         if sp.get("combo_menu_data"):
-            combo_data = json.loads(sp.get("combo_menu_data"))
+            combo_menu_data = sp.get("combo_menu_data").replace(":None", ":null")
+            combo_data = json.loads(combo_menu_data )
+  
             for c in combo_data:
                 products.append({
                     "product_code":c.get("product_code"),
                     "product_name":c.get("product_name"),
-                    "quantity":c.get("quantity"),
+                    "quantity":c.get("quantity") * (sp.get("quantity") or 1),
                     "price":c.get("price"),
+                    "order_by": sp.get("order_by"),
+                    "order_time": sp.get("order_time"),
                     
                 })  
     return products
@@ -269,6 +292,102 @@ def bulk_request_print_bill(sale_names):
 def print_bill(sale_name="SINV2026-0790",printer_name="Cashier Printer"):
     html = get_receipt_html(sale_name, "Receipt En Test",include_css=True)
     process_print({"printer_name":printer_name,"copies":2, "html":html,})
+
+
+def submit_resend_product_to_printer(doc,data):
+    print_docs = []
+    printer_names  = set({
+        printer.strip()
+        for item in data
+        for printer in item["printers"].split(",")
+    })
+    
+
+    def expand_printers():
+        result = []
+        for d in data:
+            printers = d.get("printers", "").split(",")
+            for printer in printers:
+                item = d.copy()
+                item.pop("printers", None)
+                item["printer"] = printer.strip()
+                result.append(item)
+        return result
+    
+    data_expand_printer =  expand_printers()
+
+
+    def get_print_data(printer,products):
+
+        data = {
+            "actual_printer_name": printer.actual_printer_name,
+            "is_reprint":1,
+            "ip_address": printer.ip_address,
+            "order_by": products[0].get("order_by"),
+            "order_time": products[0].get("order_time"),
+            "port": printer.port,
+            "pos_profile": doc.get("pos_profile"),
+            "pos_station_name": doc.get("pos_station_name"),
+            "printer_name": printer.printer_name,
+            "sale": doc.get("name"),
+            "sale_products":  products,
+            "tbl_number": doc.get("tbl_number")
+        }
+        return data
+        
+
+    def print_by_order(printer):
+        print_docs.append( get_print_data(printer, [x for x in data_expand_printer if x.get("printer") == printer.name]))
+
+
+    def print_by_order_line(printer):
+        _products = [x for x in data_expand_printer if x.get("printer") == printer.name]
+        for _p in _products:
+            print_docs.append( get_print_data(printer, [_p]))
+
+
+    def print_by_order_quantity(printer):
+        _products = [x for x in data_expand_printer if x.get("printer") == printer.name]
+        for _p in _products:
+            for n in range(1,int(_p.get("quantity") or 1) + 1):
+                _print_doc = get_print_data(printer, [{**_p,"quantity":1}])
+                _print_doc["index"] = n
+            print_docs.append( _print_doc)
+
+
+
+    for _p in printer_names:
+        _printer = frappe.get_cached_doc("Printer", _p)
+        if _printer.group_item_type == "Printer cut by order":
+            print_by_order(printer=_printer)
+        elif _printer.group_item_type == "Printer cut by order line":
+            print_by_order_line( printer=_printer)
+        else:
+            print_by_order_quantity(printer=_printer)
+
+    print_jobs = []
+    for pd in print_docs:
+        queue_doc  = add_print_queue(doc.get("name"), pd)
+        print_jobs.append(
+            {
+                **queue_doc.data,
+                "print_queue": queue_doc.name,
+                "html":get_kitchen_order_template(doc=queue_doc),
+            }
+        )
+
+    frappe.db.commit()
+    frappe.enqueue("epos_restaurant_2023.api.print_server.process_print",
+        queue="short",
+       
+        at_front=True,
+        data=print_jobs
+
+    )
+    
+
+    
+    return print_jobs
 
 
 

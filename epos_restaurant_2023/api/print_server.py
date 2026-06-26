@@ -177,6 +177,8 @@ def _request_print(data,print_server_url=None):
 
 
 def process_print(data=None,retry = 0, run_commit = True):
+    # data is list of print queue
+    
     if isinstance(data,dict):
         data = [data]
     print_server_url = get_print_server_url()

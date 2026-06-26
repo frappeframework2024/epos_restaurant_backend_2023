@@ -10,6 +10,7 @@
   "title",
   "start_time",
   "end_time",
+  "duration_in_second",
   "column_break_sgha",
   "sort_order",
   "note",
@@ -72,11 +73,16 @@
    "fieldname": "note",
    "fieldtype": "Small Text",
    "label": "Note"
+  },
+  {
+   "fieldname": "duration_in_second",
+   "fieldtype": "Float",
+   "label": "Duration In Second"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-02 13:39:24.260072",
+ "modified": "2026-06-25 14:34:03.495572",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "GYM Training Time",
