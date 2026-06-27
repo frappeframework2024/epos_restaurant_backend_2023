@@ -6,7 +6,10 @@
  "engine": "InnoDB",
  "field_order": [
   "allow_manual_entry_discount",
-  "allow_scan_auto_check_in_or_out"
+  "allow_scan_auto_check_in_or_out",
+  "column_break_kffr",
+  "vat",
+  "service_charge"
  ],
  "fields": [
   {
@@ -20,12 +23,26 @@
    "fieldname": "allow_scan_auto_check_in_or_out",
    "fieldtype": "Check",
    "label": "Allow Scan Auto Check In or Out"
+  },
+  {
+   "fieldname": "vat",
+   "fieldtype": "Float",
+   "label": "VAT"
+  },
+  {
+   "fieldname": "service_charge",
+   "fieldtype": "Float",
+   "label": "Service Charge"
+  },
+  {
+   "fieldname": "column_break_kffr",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-12-10 15:03:50.989682",
+ "modified": "2026-06-26 10:28:57.567298",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "GYM Setting",

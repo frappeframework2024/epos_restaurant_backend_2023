@@ -272,7 +272,11 @@ def get_system_settings(pos_profile="", device_name=''):
     pos_station = frappe.get_doc("POS Station",device_name)
     
     profile = frappe.get_doc("POS Profile",pos_profile)
+    
+    
     pos_config = frappe.get_doc("POS Config",profile.pos_config)
+    
+    
     pos_branding = frappe.get_doc("POS Branding", profile.pos_branding)
 
     sale_types = frappe.get_list("Sale Type",fields=['name', 'sale_type_name','color','is_order_use_table','sort_order','inactive'],order_by="sort_order",filters={"inactive":0})

@@ -1,6 +1,7 @@
 import frappe
 from epos_restaurant_2023.api import sale
 from epos_restaurant_2023.api.api import get_sale_list_table_badge
+from epos_restaurant_2023.api.change_merge_table import on_merge_order 
 
 @frappe.whitelist(methods=["POST"])
 def get_sale_detail(sale_name):
@@ -215,3 +216,8 @@ def submit_resend_to_printer(doc=None,data=None):
             ]
     return sale.submit_resend_product_to_printer(doc,data)
     
+@frappe.whitelist(methods=["POST"])
+def merge_bill(source_doc_name,target_doc_name):
+    data = on_merge_order(old_sale = source_doc_name, new_sale = target_doc_name)
+    return data.get("data")
+

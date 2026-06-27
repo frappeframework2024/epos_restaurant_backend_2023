@@ -1,5 +1,6 @@
 import frappe
 from epos_restaurant_2023.api.mobile.api import login_with_pin_code as _login_with_pin_code
+from epos_restaurant_2023.api.api import remove_key
 import base64
 from frappe import _
 
@@ -10,7 +11,7 @@ def login_with_pin_code(pin_code):
 
 
 @frappe.whitelist(methods=["POST"])
-def check_pos_permission(pin_code, permission_name):
+def check_pos_permission(pin_code):
     if not pin_code:
         frappe.throw(_("Please enter pin code"))
     pin_code = (str( base64.b64encode(pin_code.encode("utf-8")).decode("utf-8")))
@@ -30,10 +31,14 @@ def check_pos_permission(pin_code, permission_name):
     if not data:
         frappe.throw(_("Invalid pin code"))
     
-    if frappe.get_cached_value("POS User Permission",data[0].get("pos_permission"),permission_name) == 0:
-        frappe.throw(_("You are not allow to perform this action."))
+    d = data[0]
+    pos_permission = frappe.get_cached_doc("POS User Permission", d.get("pos_permission"))     
+    keys = ["name","owner", "creation", "modified", "modified_by", "docstatus", "idx","_user_tags","_comments","_assign","_liked_by","parent","parentfield","parenttype","doctype"]
+    pos_permission = remove_key(data= pos_permission.as_dict(), keys=keys)
     
-    
+        
     return {
-        "authorize_by": data[0].get("employee_name") 
+        "authorize_by": d.get("employee_name") ,
+        "username":d.get("user_id"),
+        "permission":pos_permission
     }

@@ -4,6 +4,7 @@
 import frappe
 from frappe import _
 from epos_restaurant_2023.api.cache_function import get_default_account_from_pos_config
+from frappe.utils import cache
 from frappe.model.document import Document
 
 class POSConfig(Document):
@@ -13,11 +14,15 @@ class POSConfig(Document):
 
 	def on_update(self):
 		self.validate_form()
-		frappe.clear_document_cache("POS Config",self.name)
-		get_default_account_from_pos_config.cache_clear()  
+		frappe.clear_document_cache("POS Config",self.name) 
+		cache = frappe.cache()
+    	cache.delete_keys("system_settings:*")
+    
+		get_default_account_from_pos_config.cache_clear() 
 
 	def validate_form(self):
 		if self.enable_aba_integration and (
 			(self.merchant_id or "") == ""  
 			or (self.api_key or "") == "" ):
 			frappe.throw(_("Fields of integration not allow blank"))
+    
