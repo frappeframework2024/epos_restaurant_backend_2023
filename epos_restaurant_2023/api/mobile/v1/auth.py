@@ -4,6 +4,27 @@ from epos_restaurant_2023.api.api import remove_key
 import base64
 from frappe import _
 
+@frappe.whitelist(allow_guest=True)
+def test():
+    
+    cutoff = frappe.utils.add_to_date(
+        frappe.utils.now_datetime(), minutes=-60
+    )
+
+    return frappe.db.sql("""
+        SELECT s.user, s.sid, s.lastupdate
+        FROM `tabSessions` s
+        INNER JOIN (
+            SELECT user, MAX(lastupdate) AS lastupdate
+            FROM `tabSessions`
+            WHERE lastupdate >= %s
+            GROUP BY user
+        ) t
+        ON s.user = t.user
+        AND s.lastupdate = t.lastupdate
+        ORDER BY s.lastupdate DESC
+    """, (cutoff,), as_dict=True)
+
 
 @frappe.whitelist(methods=["POST"], allow_guest=True)
 def login_with_pin_code(pin_code):

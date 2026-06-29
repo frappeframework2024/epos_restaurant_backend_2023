@@ -16,8 +16,8 @@ class POSConfig(Document):
 		self.validate_form()
 		frappe.clear_document_cache("POS Config",self.name) 
 		cache = frappe.cache()
-    	cache.delete_keys("system_settings:*")
-    	
+		cache.delete_keys("system_settings:*")
+		
 		get_default_account_from_pos_config.cache_clear() 
 
 	def validate_form(self):
