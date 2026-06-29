@@ -181,7 +181,9 @@ def process_print(data=None,retry = 0, run_commit = True):
     
     if isinstance(data,dict):
         data = [data]
-    print_server_url = get_print_server_url()
+    print_server_url = data[0].get("print_server_url") or get_print_server_url()
+   
+    
     try:
         
         success_jobs, failed_jobs = _request_print(data,print_server_url)

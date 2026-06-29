@@ -9,11 +9,12 @@ def get_sale_detail(sale_name):
 
 
 @frappe.whitelist(methods="POST")
-def submit_order(data=None,print_request_bill=False):
-    return sale.submit_order(data=data,print_request_bill=print_request_bill)
+def submit_order(data=None,print_request_bill=False,print_server_url=None,print_setting=None):
+    return sale.submit_order(data=data,print_request_bill=print_request_bill,print_server_url=print_server_url,print_setting = print_setting)
+
 
 @frappe.whitelist(methods="POST")
-def get_pending_order(data):
+def get_pending_order(data): 
     return get_sale_list_table_badge(data)
 
 @frappe.whitelist(methods=["POST","GET"])
@@ -220,4 +221,32 @@ def submit_resend_to_printer(doc=None,data=None):
 def merge_bill(source_doc_name,target_doc_name):
     data = on_merge_order(old_sale = source_doc_name, new_sale = target_doc_name)
     return data.get("data")
+
+@frappe.whitelist(methods="POST")
+def bulk_request_print_bill(sale_names, print_server_url=None, print_setting=None):
+    can_print_sales = []
+    for s in sale_names:
+        if frappe.db.get_value("Sale",s,"sale_status") == "Submitted":
+            can_print_sales.append(s)
+            sale_status= frappe.get_cached_doc("Sale Status","Bill Requested")
+            frappe.db.set_value("Sale",s,"sale_status_color",sale_status.background_color)
+            frappe.db.set_value("Sale",s,"sale_status","Bill Requested")
+            frappe.db.set_value("Sale",s,"sale_status_priority",sale_status.priority)
+
+
+    if len(can_print_sale)>0:
+            frappe.enqueue(
+                "epos_restaurant_2023.api.sale.print_bill",
+                queue="short",
+                as_front=True,
+                sale_name= can_print_sale,
+                print_server_url=print_server_url,
+                print_setting = print_setting
+            )
+            
+            
+
+    return "Done"
+
+
 

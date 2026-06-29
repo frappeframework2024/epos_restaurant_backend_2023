@@ -53,6 +53,7 @@
                         <v-btn type="sumbit" class="w-full" color="primary" :loading="store.state.isLoading">Save</v-btn>
                     </div>
                    
+                   
                 </form>
               
             </v-card-text>
@@ -75,6 +76,7 @@
         loading: true
     });
 
+ 
     onMounted(()=>{
         // const is_apk_ipa = localStorage.getItem("apkipa");
         // if(!is_apk_ipa){

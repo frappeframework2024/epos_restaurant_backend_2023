@@ -24,7 +24,7 @@ def get_sale_detail(sale_name):
 
 
 @frappe.whitelist(methods="POST")
-def submit_order(data=None,print_request_bill=False):
+def submit_order(data=None,print_request_bill=False,print_server_url=None,print_setting=None):
     doc = data.get("doc")
     
     # get Submitted product 
@@ -35,7 +35,7 @@ def submit_order(data=None,print_request_bill=False):
     if doc:
         for sp in _new_products:
             if doc.get("sale_staus") not in ["Hold Order"]:
-                sp["order_time"] = str(frappe.utils.now_datetime())
+                sp["order_time"] = str(frappe.utils.now_datetime()) 
             sp["order_by"] = sp.get("order_by") or get_full_name() 
             sp["sale_product_status"] =  "Submitted" if sp.get("sale_product_status") == "New" and doc.get("sale_status") != 'Hold Order' else sp.get("sale_product_status") 
 
@@ -44,7 +44,7 @@ def submit_order(data=None,print_request_bill=False):
             doc = frappe.get_doc(doc)
             if print_request_bill:
                 doc.sale_status = "Bill Requested"
-                
+                    
             doc.insert()
         else:
             doc = frappe.get_doc(doc)
@@ -72,8 +72,9 @@ def submit_order(data=None,print_request_bill=False):
         frappe.enqueue(
             "epos_restaurant_2023.api.sale.print_bill",
             queue="short",
-            now=True,
-            sale_name= doc.name
+            sale_name= doc.name,
+            print_server_url = print_server_url,
+            print_setting=print_setting
 
         )
         
@@ -86,6 +87,7 @@ def submit_order(data=None,print_request_bill=False):
             queue="short",
             sale_doc=doc,
             deleted_products=deleted_products,
+
         )
 
     
@@ -281,17 +283,51 @@ def add_deleted_sale_products(sale_doc,deleted_products,run_commit=True):
     if run_commit:
         frappe.db.commit()
 
-@frappe.whitelist(methods="POST")
-def bulk_request_print_bill(sale_names):
-
-    frappe.msgprint("u print bill")
 
 
 
 @frappe.whitelist(methods=["POST","GET"])
-def print_bill(sale_name="SINV2026-0790",printer_name="Cashier Printer"):
-    html = get_receipt_html(sale_name, "Receipt En Test",include_css=True)
-    process_print({"printer_name":printer_name,"copies":2, "html":html,})
+def print_bill(sale_name="SINV2026-0790", print_server_url=None, print_setting=None ):
+    
+    if not print_setting:
+        print_setting = get_default_receipt_print_setting(frappe.get_cached_value("Sale", sale_name, "pos_profile"))
+        
+    if isinstance(sale_name,str):
+        sale_name = [sale_name]
+
+    
+    print_data = []
+    for s in sale_name:
+        html = get_receipt_html(sale_name, print_setting.get("print_template") or "Default POS Receipt",include_css=True)
+        print_data.append({
+               "print_server_url":print_server_url,
+                    "printer_name":print_setting.get("printer") or "Cashier Printer",
+                    "copies": print_setting.get("copies") or 1, 
+                    "html":html
+        })
+    if print_data:
+        process_print(data = print_data, retry = 4) #retry > 3 disable retry
+
+
+
+
+def get_default_receipt_print_setting(pos_profile):
+    cache = frappe.cache()
+    key = f"api.sale.get_default_print_template::{pos_profile}"
+    if not frappe.conf.developer_mode:
+        cached = cache.get_value(key)
+        if cached:
+            return cached
+    
+
+    pos_config =  frappe.get_cached_value("POS Profile",pos_profile,"pos_config")
+    sql = "select a.print_template,b.printer_name as printer, a.copies from `tabPOS Config Print Setting` a join `tabPrinter` b where a.parent = %(pos_config)s and a.print_type='Sale' limit 1"
+    data = frappe.db.sql(sql,{"pos_config":pos_config},as_dict = 1)
+    if data:
+        data = data[0]
+    cache.set_value(key, data, expires_in_sec=86400)
+    return data
+
 
 
 def submit_resend_product_to_printer(doc,data):

@@ -10,11 +10,14 @@ def login_with_pin_code(pin_code):
     return _login_with_pin_code(pin_code)
 
 
-@frappe.whitelist(methods=["POST"])
-def check_pos_permission(pin_code):
+@frappe.whitelist(methods=["POST"],allow_guest=True)
+def check_pos_permission(pin_code,permission_name= None, switch_authorize=False):
     if not pin_code:
         frappe.throw(_("Please enter pin code"))
+    _pin_code_plantext = pin_code
     pin_code = (str( base64.b64encode(pin_code.encode("utf-8")).decode("utf-8")))
+    
+
 
     sql = """select 
                 name,
@@ -32,13 +35,20 @@ def check_pos_permission(pin_code):
         frappe.throw(_("Invalid pin code"))
     
     d = data[0]
-    pos_permission = frappe.get_cached_doc("POS User Permission", d.get("pos_permission"))     
+    _pos_permission = frappe.get_cached_doc("POS User Permission", d.get("pos_permission"))     
     keys = ["name","owner", "creation", "modified", "modified_by", "docstatus", "idx","_user_tags","_comments","_assign","_liked_by","parent","parentfield","parenttype","doctype"]
-    pos_permission = remove_key(data= pos_permission.as_dict(), keys=keys)
-    
+    _pos_permission = remove_key(data= _pos_permission.as_dict(), keys=keys)   
+    if permission_name:
+        if _pos_permission[permission_name] == 0:
+            frappe.throw(_("You are not allow to perform this action.")) 
+        else:
+            if switch_authorize:
+                return _login_with_pin_code(_pin_code_plantext)
         
+
+    
     return {
         "authorize_by": d.get("employee_name") ,
         "username":d.get("user_id"),
-        "permission":pos_permission
+        "permission":_pos_permission
     }

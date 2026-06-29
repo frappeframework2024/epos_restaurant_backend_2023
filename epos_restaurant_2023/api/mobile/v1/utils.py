@@ -54,6 +54,7 @@ def save_note(note_category="",product_code = '',note=""):
         }).save(ignore_permissions=True)
     
     frappe.db.commit()
+    get_predefine_note.clear_cache()
 
     return "Success"
 
@@ -79,7 +80,7 @@ def delete_notes(note_category="",product_code = '',notes=None):
     exist = frappe.db.sql(sql, { "note_category":note_category,"product_code":product_code,"notes":notes})
      
     frappe.db.commit()
-
+    get_predefine_note.clear_cache()
     return "Success"
 
 
@@ -88,4 +89,21 @@ def delete_notes(note_category="",product_code = '',notes=None):
 def check_pos_profile(pos_profile_name, device_name, is_used_validate=True):
     return _check_pos_profile(pos_profile_name = pos_profile_name,device_name = device_name,is_used_validate= is_used_validate)
 
-     
+
+
+@frappe.whitelist(methods=["POST","GET"])
+def get_pos_receipt_list(pos_profile="Main POS Profile"):
+    cache = frappe.cache()
+    key = f"system_settings:get_pos_receipt_list:{pos_profile}"
+    if not frappe.conf.developer_mode:
+        cached = cache.get_value(key)
+        if cached:
+            return cached
+
+
+    pos_config =  frappe.get_cached_value("POS Profile",pos_profile,"pos_config")
+    sql = "select a.print_template,b.printer_name as printer, a.copies from `tabPOS Config Print Setting` a join `tabPrinter` b on a.printer = b.name where a.parent = %(pos_config)s and a.print_type='Sale'"
+    data = frappe.db.sql(sql,{"pos_config":pos_config},as_dict=1)
+
+    cache.set_value(key, data, expires_in_sec=86400)
+    return data
