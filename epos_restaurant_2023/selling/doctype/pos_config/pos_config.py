@@ -4,7 +4,6 @@
 import frappe
 from frappe import _
 from epos_restaurant_2023.api.cache_function import get_default_account_from_pos_config
-from frappe.utils import cache
 from frappe.model.document import Document
 
 class POSConfig(Document):
