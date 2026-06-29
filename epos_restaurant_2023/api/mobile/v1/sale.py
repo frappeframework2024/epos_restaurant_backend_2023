@@ -234,17 +234,18 @@ def bulk_request_print_bill(sale_names, print_server_url=None, print_setting=Non
             frappe.db.set_value("Sale",s,"sale_status_priority",sale_status.priority)
 
 
-    if len(can_print_sale)>0:
+    if len(can_print_sales)>0:
             frappe.enqueue(
                 "epos_restaurant_2023.api.sale.print_bill",
                 queue="short",
-                as_front=True,
-                sale_name= can_print_sale,
+                at_front=True,
+                sale_name= can_print_sales,
                 print_server_url=print_server_url,
                 print_setting = print_setting
             )
             
             
+    frappe.db.commit()
 
     return "Done"
 

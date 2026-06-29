@@ -10,7 +10,7 @@ def login_with_pin_code(pin_code):
     return _login_with_pin_code(pin_code)
 
 
-@frappe.whitelist(methods=["POST"],allow_guest=True)
+@frappe.whitelist(methods=["POST"])
 def check_pos_permission(pin_code,permission_name= None, switch_authorize=False):
     if not pin_code:
         frappe.throw(_("Please enter pin code"))
@@ -24,7 +24,8 @@ def check_pos_permission(pin_code,permission_name= None, switch_authorize=False)
                 user_id, 
                 pos_permission ,
                 username,
-                employee_name
+                employee_name,
+                photo
             from `tabEmployee` 
             where  
                 pos_pin_code = %(pos_pin_code)s  and 
@@ -42,13 +43,18 @@ def check_pos_permission(pin_code,permission_name= None, switch_authorize=False)
         if _pos_permission[permission_name] == 0:
             frappe.throw(_("You are not allow to perform this action.")) 
         else:
-            if switch_authorize:
-                return _login_with_pin_code(_pin_code_plantext)
+            if switch_authorize:   
+                current_user = frappe.session.user
+                if current_user != d.get("user_id") :                           
+                    return _login_with_pin_code(_pin_code_plantext)
         
 
     
     return {
+        "not_switch_auth":1,
         "authorize_by": d.get("employee_name") ,
         "username":d.get("user_id"),
-        "permission":_pos_permission
+        "permission":_pos_permission,
+        "full_name":d.get("employee_name"),
+        "user_image":d.get("photo")
     }
