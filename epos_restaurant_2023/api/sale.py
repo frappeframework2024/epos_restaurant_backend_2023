@@ -59,13 +59,19 @@ def submit_order(data=None,print_request_bill=False,print_server_url=None,print_
     if sale_doc.sale_status == "Hold Order":
         _new_products = []
 
-             
-    if _new_products:
+    deleted_products = data.get("deleted_products") or []
+    if deleted_products:
+        for x in deleted_products:
+            x["is_deleted"] = 1
+    
+
+
+    if _new_products or len(deleted_products)>0:
         frappe.enqueue(
             "epos_restaurant_2023.api.sale.generate_print_queue",
             queue="short",
             doc=sale_doc,
-            products=_new_products,
+            products=(_new_products or []) + (deleted_products or []) ,
             at_front=True
         )   
 
@@ -83,7 +89,7 @@ def submit_order(data=None,print_request_bill=False,print_server_url=None,print_
         )
         
     # enqueue add deleted product to Sale Product Deleted
-    deleted_products = data.get("deleted_products") or []
+    
     
     if len(deleted_products)>0:
         frappe.enqueue(
@@ -93,6 +99,7 @@ def submit_order(data=None,print_request_bill=False,print_server_url=None,print_
             deleted_products=deleted_products,
 
         )
+       
 
     
 
@@ -117,6 +124,7 @@ def generate_print_queue(doc,products,print_server_url=None,run_commit = True):
             "pos_profile":doc.get("pos_profile"),
             "order_time": products[0].get("order_time"),
             "order_by": products[0].get("order_by") or get_full_name()
+
         }
         
         if pp.get("group_item_type") == "Printer cut by order":
@@ -231,14 +239,18 @@ def get_products(sale_products):
             "sale_product_id":sp.get("name"),
             "product_code":sp.get("product_code"),
             "product_name":sp.get("product_name"),
+            "product_name_kh":sp.get("product_name_kh") or sp.get("product_name"),
             "quantity":sp.get("quantity"),
             "price":sp.get("price"),
             "unit":sp.get("unit"),
             "note":sp.get("note"),
-            "portion":sp.get("note"),
+            "portion":sp.get("portion"),
             "modifiers":sp.get("modifiers"),
             "order_by":sp.get("order_by"),
-            "order_time":sp.get("order_time")
+            "order_time":sp.get("order_time"),
+            "is_deleted": sp.get("is_deleted") or 0,
+            "deleted_by": sp.get("deleted_by") if sp.get("deleted_by") else get_full_name(),
+            "deleted_note": sp.get("deleted_note") or "",
              
         })
 
@@ -251,10 +263,14 @@ def get_products(sale_products):
                     "sale_product_id":sp.get("name"),
                     "product_code":c.get("product_code"),
                     "product_name":c.get("product_name"),
+                    "product_name_kh":sp.get("product_name_kh") or sp.get("product_name"),
                     "quantity":c.get("quantity") * (sp.get("quantity") or 1),
                     "price":c.get("price"),
                     "order_by": sp.get("order_by"),
                     "order_time": sp.get("order_time"),
+                    "is_deleted": sp.get("is_deleted") or 0,
+                    "deleted_by": sp.get("deleted_by") if sp.get("deleted_by") else get_full_name(),
+                    "deleted_note": sp.get("deleted_note") or "",
                     
                 })  
     return products
