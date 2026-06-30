@@ -31,7 +31,7 @@ def submit_order(data=None,print_request_bill=False,print_server_url=None,print_
     
     _new_products = [d for d in doc.get("sale_products") if not d.get("name") or d.get("sale_product_status") == 'New']
     
-    
+    sale_doc=None
     if doc:
         for sp in _new_products:
             if doc.get("sale_staus") not in ["Hold Order"]:
@@ -41,18 +41,22 @@ def submit_order(data=None,print_request_bill=False,print_server_url=None,print_
 
 
         if not doc.get("name"):
-            doc = frappe.get_doc(doc)
+            sale_doc = frappe.get_doc(doc)
             if print_request_bill:
-                doc.sale_status = "Bill Requested"
+                sale_doc.sale_status = "Bill Requested"
                     
-            doc.insert()
+            sale_doc.insert()
         else:
-            doc = frappe.get_doc(doc)
+            sale_doc = frappe.get_doc("Sale", doc["name"])
+            sale_doc.update(doc)
+
             if print_request_bill:
-                doc.sale_status = "Bill Requested"
+                sale_doc.sale_status = "Bill Requested"
             
-            doc.save()
-    if doc.sale_status == "Hold Order":
+            sale_doc.save()
+            
+            
+    if sale_doc.sale_status == "Hold Order":
         _new_products = []
 
              
@@ -60,7 +64,7 @@ def submit_order(data=None,print_request_bill=False,print_server_url=None,print_
         frappe.enqueue(
             "epos_restaurant_2023.api.sale.generate_print_queue",
             queue="short",
-            doc=doc,
+            doc=sale_doc,
             products=_new_products,
             at_front=True
         )   
@@ -72,7 +76,7 @@ def submit_order(data=None,print_request_bill=False,print_server_url=None,print_
         frappe.enqueue(
             "epos_restaurant_2023.api.sale.print_bill",
             queue="short",
-            sale_name= doc.name,
+            sale_name= sale_doc.name,
             print_server_url = print_server_url,
             print_setting=print_setting
 
@@ -85,17 +89,17 @@ def submit_order(data=None,print_request_bill=False,print_server_url=None,print_
         frappe.enqueue(
             "epos_restaurant_2023.api.sale.add_deleted_sale_products",
             queue="short",
-            sale_doc=doc,
+            sale_doc=sale_doc,
             deleted_products=deleted_products,
 
         )
 
     
 
-    return {"doc":doc}
+    return {"doc":sale_doc}
     
 @frappe.whitelist(methods=["POST"])
-def generate_print_queue(doc,products,run_commit = True):
+def generate_print_queue(doc,products,print_server_url=None,run_commit = True):
     print_docs = []
 
     new_products = get_products(products)
@@ -160,7 +164,7 @@ def generate_print_queue(doc,products,run_commit = True):
         frappe.db.commit()
     
  
-    process_print(print_docs,run_commit = run_commit)
+    process_print(print_docs,print_server_url=print_server_url,run_commit = run_commit)
 
     return print_docs
 
@@ -224,6 +228,7 @@ def get_products(sale_products):
     products =[] 
     for sp in sale_products:
         products.append({
+            "sale_product_id":sp.get("name"),
             "product_code":sp.get("product_code"),
             "product_name":sp.get("product_name"),
             "quantity":sp.get("quantity"),
@@ -243,6 +248,7 @@ def get_products(sale_products):
   
             for c in combo_data:
                 products.append({
+                    "sale_product_id":sp.get("name"),
                     "product_code":c.get("product_code"),
                     "product_name":c.get("product_name"),
                     "quantity":c.get("quantity") * (sp.get("quantity") or 1),
@@ -300,13 +306,13 @@ def print_bill(sale_name="SINV2026-0790", print_server_url=None, print_setting=N
     for s in sale_name:
         html = get_receipt_html(sale_name, print_setting.get("print_template") or "Default POS Receipt",include_css=True)
         print_data.append({
-               "print_server_url":print_server_url,
+               
                     "printer_name":print_setting.get("printer") or "Cashier Printer",
                     "copies": print_setting.get("copies") or 1, 
                     "html":html
         })
     if print_data:
-        process_print(data = print_data, retry = 4) #retry > 3 disable retry
+        process_print(data = print_data,print_server_url=print_server_url, retry = 4) #retry > 3 disable retry
 
 
 
@@ -330,7 +336,7 @@ def get_default_receipt_print_setting(pos_profile):
 
 
 
-def submit_resend_product_to_printer(doc,data):
+def submit_resend_product_to_printer(doc,data,print_server_url=None):
     print_docs = []
     printer_names  = set({
         printer.strip()
@@ -415,9 +421,9 @@ def submit_resend_product_to_printer(doc,data):
     frappe.db.commit()
     frappe.enqueue("epos_restaurant_2023.api.print_server.process_print",
         queue="short",
-       
         at_front=True,
-        data=print_jobs
+        data=print_jobs,
+        print_server_url=print_server_url
 
     )
     

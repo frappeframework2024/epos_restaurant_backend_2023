@@ -5,6 +5,10 @@ from frappe.utils.caching import redis_cache
 import base64
 from frappe import _
 
+@frappe.whitelist()
+def get_meta(doctype):
+    data =  frappe.get_meta(doctype)
+    return data
  
 @frappe.whitelist(methods=["POST"],allow_guest=True) 
 def get_system_settings(pos_profile="", device_name=''):

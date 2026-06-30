@@ -611,7 +611,8 @@
    "fieldname": "product_photo",
    "fieldtype": "Data",
    "hidden": 1,
-   "label": "Product Photo"
+   "label": "Product Photo",
+   "length": 500
   },
   {
    "default": "1",
@@ -1321,7 +1322,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-06-19 16:51:55.751685",
+ "modified": "2026-06-29 19:40:08.649838",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",

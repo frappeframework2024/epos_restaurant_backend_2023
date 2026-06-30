@@ -8,9 +8,10 @@ from epos_restaurant_2023.api.api import (
     save_table_position as _save_table_position,
 ) 
 import frappe
-from builtins import str 
+
 import base64 
 import json
+from frappe.utils.caching import redis_cache
 
 
 def generate_keys(user):
@@ -33,7 +34,9 @@ def generate_keys(user):
 
 @frappe.whitelist( methods="POST", allow_guest=True )
 def login_with_pin_code(pin_code):
+
      user = check_username(pin_code)
+    
      if user:
           login_data = login(user.get("username"),pin_code)
           return {
@@ -53,12 +56,13 @@ def login(usr, pwd):
         login_manager.authenticate(user=usr, pwd=pwd)
         login_manager.post_login()
 
-        user = frappe.get_doc("User", frappe.session.user)
+        user = frappe.get_cached_doc("User", frappe.session.user)
 
         api_generate = generate_keys(frappe.session.user)
         token = base64.b64encode(str("{}:{}".format(user.api_key,api_generate)).encode("utf-8")).decode('utf-8') 
 
         return  {"token": "Basic {}".format(token),"cookie":frappe.local.session}
+        
     
     except frappe.exceptions.AuthenticationError:
         frappe.clear_messages()
@@ -78,6 +82,7 @@ def validate_sale_network_lock(param):
 
 
 @frappe.whitelist(methods="POST")
+@redis_cache(ttl=86400)  
 def check_username(pin_code):
     return  _check_username(pin_code=pin_code) 
 
