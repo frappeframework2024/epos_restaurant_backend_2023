@@ -34,7 +34,7 @@ def get_general_ledger_entry_record(docs):
         yield doc
         
 @frappe.whitelist()
-def cancel_general_ledger_entery(doctype,docname):
+def cancel_general_ledger_entery(doctype,docname, commit = True):
     sql = "select * from `tabGeneral Ledger` where voucher_type='{}' and voucher_number= '{}'".format(doctype,docname)
     data = frappe.db.sql(sql,as_dict=1)
     docs = []
@@ -60,14 +60,22 @@ def cancel_general_ledger_entery(doctype,docname):
             }
         docs.append(doc)
         
-    submit_general_ledger_entry(docs)
+    submit_general_ledger_entry(docs = docs,commit=False)   
+     
     # update submited record is cancelled = 1
-    frappe.db.sql("update `tabGeneral Ledger` set is_cancelled=1 where voucher_type='{}' and voucher_number='{}'".format(doctype,docname))
-    frappe.db.commit()
+    frappe.db.sql("""update `tabGeneral Ledger` 
+                  set is_cancelled = 1 
+                  where voucher_type=%(voucher_type)s 
+                  and voucher_number=%(voucher_number)s""",{
+                    "voucher_type":doctype,
+                    "voucher_number":docname,
+                  })
+    
+    if commit:
+        frappe.db.commit()
      
 
 @lru_cache(maxsize=128)
-
 def  get_hierarchy_account_for_report_by_parent(parent,business_branch):
     sql="""
         WITH RECURSIVE hierarchy AS (

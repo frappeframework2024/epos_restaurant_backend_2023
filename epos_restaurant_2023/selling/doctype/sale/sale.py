@@ -15,7 +15,7 @@ import datetime
 from copy import deepcopy
 from decimal import Decimal
 from frappe.utils import add_to_date
-from epos_restaurant_2023.api.exely import cancel_order,submit_order_to_exely
+from epos_restaurant_2023.api.exely import cancel_order as _exely_cancel_order, submit_order_to_exely
 from epos_restaurant_2023.selling.doctype.sale.general_ledger_entry import submit_sale_to_general_ledger_entry
  
 class Sale(Document):
@@ -62,12 +62,10 @@ class Sale(Document):
 		if self.is_new():
 			if self.waiting_number_prefix:
 				from frappe.model.naming import make_autoname
-				self.waiting_number = make_autoname(self.waiting_number_prefix)
- 
+				self.waiting_number = make_autoname(self.waiting_number_prefix) 
 
 		if self.discount_type =="Percent" and self.discount > 100:
 			frappe.throw(_("discount percent cannot greater than 100 percent"))
-
 			   
 		if self.docstatus ==0:
 			if self.working_day:
@@ -92,7 +90,6 @@ class Sale(Document):
 			if frappe.get_value("Stock Location",self.stock_location,"business_branch") != self.business_branch:
 				frappe.throw(_("The stock location {} is not belong to business branch {}".format(self.stock_location, self.business_branch)))
 		
-
 		#validate exhcange rate change
 		to_currency = frappe.db.get_default("second_currency")
 		if( frappe.db.get_default("exchange_rate_main_currency") !=frappe.db.get_default("currency") ):
@@ -110,11 +107,11 @@ class Sale(Document):
 		exch = frappe.db.sql(sql_exchange_rate,as_dict=1) 
 		if exch:
 			self.exchange_rate = exch[0].exchange_rate
-			self.change_exchange_rate = exch[0].change_exchange_rate	
-
+			self.change_exchange_rate = exch[0].change_exchange_rate
 		else:
 			self.exchange_rate = 1
 			self.change_exchange_rate  = 1
+   
 		default_customer = frappe.get_cached_value("POS Profile",self.pos_profile,'default_customer')
 		if len([d for d in self.sale_products if d.is_park == 1]) > 0 and self.customer == default_customer:
 			frappe.throw("Please select a customer for park")
@@ -137,9 +134,7 @@ class Sale(Document):
 			if _table.is_foc and self.discount==100 and self.discount_type =="Percent":
 				self.is_foc = 1
 
-
-		currency_precision = frappe.db.get_single_value('System Settings', 'currency_precision')
-  
+		currency_precision = frappe.db.get_single_value('System Settings', 'currency_precision')  
 		if currency_precision=='':
 			currency_precision = "2"
 		
@@ -162,7 +157,6 @@ class Sale(Document):
 			if self.discount_type =="Percent":
 				# self.sale_discount = self.sale_discountable_amount * self.discount / 100
 				# self.sale_discount = round(self.sale_discount  , int(currency_precision)) 
-
 				self.sale_discount = Enumerable(self.sale_products).sum(lambda x:  (x.sale_discount_amount or 0))
 			else:
 				self.sale_discount = self.discount or 0
@@ -170,11 +164,9 @@ class Sale(Document):
 					frappe.throw("Discount amount cannot greater than discountable amount")
      
 		self.sale_discount = math_round(self.sale_discount, int(currency_precision))
-
 		self.product_discount = Enumerable(self.sale_products).where(lambda x:x.allow_discount ==1).sum(lambda x: x.discount_amount)		
 		self.product_discount=math_round(self.product_discount  , int(currency_precision)) 
-		self.total_discount = (self.product_discount or 0) + (self.sale_discount or 0)  
-  
+		self.total_discount = (self.product_discount or 0) + (self.sale_discount or 0)   
   
 		#tax 
 		self.taxable_amount_1  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.taxable_amount_1)
@@ -183,8 +175,7 @@ class Sale(Document):
 		self.tax_1_amount  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.tax_1_amount)
 		self.tax_2_amount  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.tax_2_amount)
 		self.tax_3_amount  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.tax_3_amount)
-		self.total_tax  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.total_tax)
-		
+		self.total_tax  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.total_tax)		
   
 		# total_rate_include_tax  = 0
 		self.sub_total = sub_total	- total_rate_include_tax
@@ -196,7 +187,6 @@ class Sale(Document):
 
 		self.total_fee =  Enumerable(self.payment).sum(lambda x: x.fee_amount or 0)
 		self.total_paid_with_fee = math_round(( self.total_paid + (self.total_fee or 0)), int(currency_precision))
-
 		if self.grand_total <0 and self.grand_total != self.total_paid:
 			frappe.throw("Return payment amount must be the same as grand total")
 
@@ -210,10 +200,8 @@ class Sale(Document):
 
 			_balance -= _total_claim_coupon
 		
-		_balance = _balance - (self.total_trade_in_amount or 0)
-  
+		_balance = _balance - (self.total_trade_in_amount or 0)  
 		self.balance = _balance		
-
 		if (self.sale_discount or 0) > 0:
 			self.crypto_able_amount =  0	
 		else:
@@ -224,10 +212,8 @@ class Sale(Document):
 		if math_round(self.changed_amount,int(currency_precision)) <= generate_decimal(int(currency_precision)):
 			self.changed_amount = 0
 
-
 		if self.balance<0:
-			self.balance = 0
-			
+			self.balance = 0			
 
 		if not self.created_by:
 			self.created_by = frappe.get_user().doc.full_name
@@ -235,7 +221,6 @@ class Sale(Document):
 		if not self.closed_by and self.docstatus==1:
 			self.closed_by = frappe.get_doc("User",self.modified_by).full_name
 			self.closed_date = datetime.datetime.now()
-
 
 		if self.sale_status:
 			sale_status_doc = frappe.get_cached_doc("Sale Status", self.sale_status)
@@ -255,12 +240,11 @@ class Sale(Document):
 		
 		# update total coupon value to sale
 		self.total_coupon_value = sum([(d.total_coupon_value or 0) for d in self.sale_products])
+  
 		# update default accunt
 		update_default_account(self) 
 		validate_pos_payment(self,skip_check=0)
-		self.validate_coupon_codes()
-
-	 
+		self.validate_coupon_codes()	 
 
 	@frappe.whitelist()
 	def get_sale_payment_naming_series(self):
@@ -269,31 +253,42 @@ class Sale(Document):
 	def on_update(self): 
 		if self.flags.ignore_on_update == True:
 			return 
+
 		#add sale product spa commission
 		update_status(self)
 		add_sale_product_spa_commission(self)
 
 		#delete product that parent_sale_product not exists 
-		frappe.db.sql("delete from `tabSale Product` where parent='{0}' and ifnull(reference_sale_product,'')!='' and  ifnull(reference_sale_product,'') not in (select name from `tabSale Product` where parent='{0}')".format(self.name))
+		_query = """delete 
+  					from `tabSale Product` sp
+					where sp.parent=%(sale)s
+						and ifnull(sp.reference_sale_product,'') != '' 
+						and ifnull(sp.reference_sale_product,'') not in (
+          					select 
+               					_sp.name 
+                			from `tabSale Product` _sp 
+                   			where parent=%(sale)s )"""
+  
+		frappe.db.sql(_query, {"sale":self.name})
 		
 		## update cash coupon information
 		on_update_coupon_information(self)
 	
 	def before_save(self):
 		update_sale_sale_product_cost(self)
-		on_generate_custom_bill_number(self)
-
+  
 	def before_insert(self):
 		for row in self.sale_products:
 			row.temp_id = row.name
    
 	def after_insert(self):
-
 		if self.flags.ignore_after_insert == True:
 			return 
+
 		#add sale product spa commission
 		if not self.time_in:
 			pass	
+
 		add_sale_product_spa_commission(self)
  
 	def before_cancel(self):
@@ -301,17 +296,17 @@ class Sale(Document):
 		update_status(self)
 		if frappe.get_cached_value("Exely Itegration Setting",None,"enabled")==1:
 			if self.exely_transaction_id:
-				cancel_order(transaction_id = self.exely_transaction_id, sale = self.name, comment = "ePOS Restaurant Cancel Order")
+				_exely_cancel_order(transaction_id = self.exely_transaction_id, sale = self.name, comment = "ePOS Restaurant Cancel Order")
 
 	def before_submit(self):
 		lock_db(self=self)
 		update_sale_sale_product_cost(self)
 		if self.flags.ignore_before_submit == True:
 			return 
+
 		on_get_revenue_account_code(self)
 		self.append_quantity = None
 		self.scan_barcode = None
-
 
 		## end generate custom bill format
 		for d in self.sale_products:
@@ -319,23 +314,20 @@ class Sale(Document):
 				if d.unit !=d.base_unit:
 					if not check_uom_conversion(d.base_unit, d.unit):
 						frappe.throw(_("There is no UoM conversion for product {}-{} from {} to {}".format(d.product_code, d.product_name, d.base_unit, d.unit)))
-		# chekc if user pay to room we need to check if folio is still open
+		
+  		# chekc if user pay to room we need to check if folio is still open
 		if "edoor" in frappe.get_installed_apps():
 			room_payment = [x for x in self.payment if x.payment_type == "Pay to Room"]
 			if room_payment:
 				room_payment = room_payment[0] 
 				if frappe.db.get_value("Reservation Folio",room_payment.folio_number,"status") =="Closed":
 					frappe.throw("This folio number {} in room {} is already closed".format(room_payment.folio_number,room_payment.room_number))
-
-		
+	
 		# validate redeem amount  with sale type redeem
 		# check redeem amount with coupon amount remaining
-
-	
 	
 	def on_submit(self):
 		lock_db(self=self)
-
 		if self.flags.ignore_on_submit == True:
 			return 
 
@@ -343,41 +335,35 @@ class Sale(Document):
 			pass
 
 		if "edoor" in frappe.get_installed_apps():
-			create_folio_transaction_from_pos_trnasfer(self) 
-		
+			create_folio_transaction_from_pos_trnasfer(self) 		
 
-		# update_inventory_on_submit(self)			
+	 	
 		add_payment_to_sale_payment(self) 
-
 		## update cash coupon information
 		on_update_coupon_information(self)		
-
 		update_status(self)
-
 		## set pos reservation status to checked out
 		update_pos_reservation_status(self)
-
 		#update inventory
 		is_update_inventory = False
 		if self.pos_profile:
 			enable_calculate_inventory_on_sale = frappe.get_cached_value("POS Profile",self.pos_profile,"enable_calculate_inventory_on_sale")
 			if enable_calculate_inventory_on_sale:
 				is_update_inventory = True
+    
 		else:
 			is_update_inventory = True
 		
 		if is_update_inventory:
-			update_inventory_on_submit(self)
+			# update_inventory_on_submit(self)
+			frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit", queue='short',job_name= "update-inventory", self=self)
 		#end update inventory
-
-		update_customer_bill_balance(self.customer)
-
-		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.create_folio_transaction_from_pos_trnasfer", queue='short', self=self)
-		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit", queue='short', self=self)
-		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.add_payment_to_sale_payment", queue='short', self=self)
-		
+  
+		# update_customer_bill_balance(customer= self.customer, commit=False) 
+		frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_customer_bill_balance", queue='short', job_name="update-customer-balance", customer=self.customer, commit=False )
+  
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
-			add_coupon_GL_entry(self)
+			add_coupon_gl_entry(self)
 			submit_sale_to_general_ledger_entry(self)
 			commission_general_ledger_entry(self)
 
@@ -388,12 +374,10 @@ class Sale(Document):
 					submit_order_to_exely(self.name)
 				else:
 					frappe.enqueue("epos_restaurant_2023.api.exely.submit_order_to_exely", queue='long', doc_name = self.name)
+     
 		update_sales_order_and_delivery_note_status(self)
-
 		if self.sale_type in ["Sale Coupon","Top Up","Redeem"]: 
 			update_coupon_transaction(self)
-
-
 
 		# Release Lock
 		unlock_db(self)
@@ -416,7 +400,7 @@ class Sale(Document):
 		# frappe.throw(sql_delete_bulk)
 		frappe.db.sql(sql_delete_bulk)		
 
-		update_customer_bill_balance(self.customer)
+		update_customer_bill_balance( customer = self.customer, commit=False)
 
 		# update to folio transaction
 		
@@ -475,8 +459,7 @@ class Sale(Document):
 			if self.sale_products:
 				coupon = self.sale_products[0].coupons
 				if not isinstance(coupon, dict):
-					coupon = json.loads(coupon)[0]
-					
+					coupon = json.loads(coupon)[0]					
 					# lockx_db(coupon.get("coupon"))
 					sql = "select name from `tabCoupon Transaction` where coupon_code = %(coupon_code)s and transaction_type = 'Sale Coupon' limit 1"
 					if not frappe.db.sql(sql,{"coupon_code":coupon.get("name")}):
@@ -495,25 +478,18 @@ class Sale(Document):
 						if diff_seconds<=15:
 							frappe.throw("សូមរង់ចាំ១៥វិនាទីមុនពេលបញ្ចូលប្រាក់ក្នុងគូប៉ុងម្តងទៀត។")
 
-
-
-
-
-		elif self.sale_type =="Redeem":
-			
+		elif self.sale_type =="Redeem":			
 			for sp in self.sale_products:
 				if sp.coupons:
 					coupons = json.loads(sp.coupons)
 					for c in coupons:
 						lock_db(name = c.get("coupon"))
 						sql = "select sum(actual_amount) as balance from `tabCoupon Transaction` where coalesce(status,'') <> 'Deleted' and  coupon_code =%(coupon_id)s"
-						data = frappe.db.sql(sql, {"coupon_id":c.get("name")},as_dict=1)
-						
-						if data:
-						
-
+						data = frappe.db.sql(sql, {"coupon_id":c.get("name")},as_dict=1)						
+						if data:	
 							if(math_round(data[0].get("balance")) != math_round(abs(sp.amount))):
 								frappe.throw(_("Invalid redeem amount. Please check coupon balance again."))
+        
 						else:
 							frappe.throw(_("Invalid  Coupon Code"))
  
@@ -639,21 +615,7 @@ def update_sales_order_and_delivery_note_status(self):
 				frappe.db.set_value("Delivery Note",a.name,"status","To Bill" if sales_order_status == "To Deliver and Bill" else sales_order_status)
 		frappe.db.commit()
 
-## generate custom bill number
-def on_generate_custom_bill_number(self):
-	return
-	if (self.custom_bill_number or "") == "":
-		if self.pos_profile:
-			pos_config_name = frappe.get_cached_value("POS Profile",self.pos_profile,"pos_config")
-			pos_config = frappe.get_cached_value("POS Config",pos_config_name,["pos_bill_number_prefix","generate_bill_number_on_create"], as_dict=1)
-			if pos_config.generate_bill_number_on_create == 1 and  self.is_new():
-				if pos_config.pos_bill_number_prefix:
-					from frappe.model.naming import make_autoname
-					self.custom_bill_number = make_autoname(pos_config.pos_bill_number_prefix)
-		else:
-			if self.custom_bill_number_prefix:
-				from frappe.model.naming import make_autoname
-				self.custom_bill_number = make_autoname(self.custom_bill_number_prefix)
+
 
 #update sale and sale product cost / cross profit
 def update_sale_sale_product_cost(self):
@@ -671,6 +633,7 @@ def update_sale_sale_product_cost(self):
 		total_cost += (((cost or 0) * (p.quantity or 0)) or 0)
 		if p_second_cost != 0:
 			total_second_cost += ((p_second_cost/uom_conversion)* (p.quantity or 0))
+   
 	self.sale_grand_total = self.grand_total
 	self.sale_profit = self.grand_total - total_cost
 	self.total_secondary_cost = total_second_cost
@@ -816,27 +779,27 @@ def update_status(self):
 			status = "Partially Paid"
 		else:
 			status = "Unpaid"
+   
 	frappe.db.set_value('Sale', self.name, 'status', status, update_modified=False)
 	if self.sale_quotation:
 		update_sale_quotation(self)
 
 def update_sale_quotation(self):
-	pass
 	status = ""
 	if self.docstatus == 1:
 		status = "Ordered"
 	else:
 		status = "Open"
+  
 	frappe.db.set_value('Sale Quotation', self.sale_quotation, 'status', status, update_modified=False)
     
 def on_sale_delete_update(self):
-	spa_commission = "update `tabSale Product SPA Commission` set is_deleted = 1  where sale = '{}'".format(self.name)			
-	frappe.db.sql(spa_commission)
+	spa_commission = "update `tabSale Product SPA Commission` set is_deleted = 1  where sale = %(sale)s"		
+	frappe.db.sql(spa_commission, {"sale":self.name})
 
 	if self.from_reservation:
-		if frappe.db.exists("POS Reservation", self.from_reservation):
-			
-			frappe.db.sql("update `tabPOS Reservation` set workflow_state='Confirmed' where name='{0}'".format(self.from_reservation))
+		if frappe.db.exists("POS Reservation", self.from_reservation):			
+			frappe.db.sql("update `tabPOS Reservation` set workflow_state='Confirmed' where name=%(from_reservation)s",{"from_reservation":self.from_reservation})
 			reservation = frappe.get_doc("POS Reservation", self.from_reservation)
 			if reservation:
 				reservation.reservation_status = "Confirmed"
@@ -1082,6 +1045,7 @@ def add_payment_to_sale_payment(self):
 					doc.insert()
 			else:
 				update_customer_point(self.customer,p.payment_type_group,p.amount,None,self.name,self.customer_name)
+    
 		if (self.changed_amount or 0)>0:
 			payment_type = frappe.get_cached_value("ePOS Settings",None,"changed_payment_type")		
 			account_code = "" 
@@ -1093,6 +1057,7 @@ def add_payment_to_sale_payment(self):
 				if pos_config_payment_type:
 					account_code = pos_config_payment_type[0].account_code
 					exchange_rate = pos_config_payment_type[0].change_exchange_rate		
+     
 			else:
 				pt = frappe.get_cached_doc('Payment Type', payment_type)
 				exchange_rate = pt.change_exchange_rate or 1
@@ -1114,6 +1079,7 @@ def add_payment_to_sale_payment(self):
 					"account_code":account_code,
 					"add_from_sale":1
 				})
+   
 			doc.flags.ignore_post_general_ledger_entry = True
 			doc.insert()
 
@@ -1221,7 +1187,7 @@ def validate_sale_product(self):
 			
 
 
-def add_coupon_GL_entry(self):
+def add_coupon_gl_entry(self):
 	def general_ledger(self,account):
 		if abs(account["amount"]) > 0:
 			docs = []
@@ -1255,16 +1221,16 @@ def add_coupon_GL_entry(self):
 				"income_account":a.default_income_account,
 				"expense_account":a.default_coupon_expense_account
 			})
+   
 	income_account = list(set([d["income_account"] for d in coupons if d.get("income_account","") != ""]))
 	expense_account = list(set([d["expense_account"] for d in coupons if d.get("expense_account","") != ""]))
 	if len(income_account)>0:
 		for a in income_account:
 			general_ledger(self,account = {"account":a,"amount":sum(b.get("coupon_amount") for b in coupons if b.get("income_account","") == a),"party":self.customer})
+
 	if len(expense_account)>0:
 		for a in expense_account:	 
 			general_ledger(self,account = {"account":a,"amount":sum(b.get("expense_amount") for b in coupons if b.get("expense_account","") == a),"party":""})
-
-
 
 def add_sale_product_spa_commission(self):			
 	frappe.db.sql("delete from `tabSale Product SPA Commission` where sale = '{}'".format(self.name))
@@ -1379,6 +1345,7 @@ def on_get_revenue_account_code(self):
 				and shift = %(shift)s
 				and revenue_group=%(revenue_group)s
 			""",values=values, as_dict=1)
+  
 		if data:
 			sp.revenue_code = data[0].code
 			sp.account_code = data[0].account_code
@@ -1390,8 +1357,7 @@ def on_get_revenue_account_code(self):
 def validate_pos_payment(self,skip_check):
 	error = ""
 	currency = frappe.db.get_default("currency")
-	for d in self.payment:
-     
+	for d in self.payment:     
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			if not d.default_account and skip_check == 0:
 				error += "Please set default account for payment type <b>{}</b>. ".format(d.payment_type)
@@ -1399,6 +1365,7 @@ def validate_pos_payment(self,skip_check):
 		d.exchange_rate = d.exchange_rate if d.currency != currency else 1
 		d.change_exchange_rate = d.change_exchange_rate if d.currency != currency else 1		
 		d.amount = (d.input_amount or 0 ) / (d.exchange_rate or 1)
+  
 	if error != "" and skip_check == 0:
 		frappe.throw(error)
 
@@ -1414,9 +1381,6 @@ def validate_cash_coupon_claim(self):
 		coupons = frappe.db.sql(sql,{
 			"name":[d.coupon_code for d in self.cash_coupon_items]
 		}, as_dict= 1) 
-
-		
-
 
 		## check invalite coupon code
 		invalid_coupon = [c for c in  coupons if not c["docstatus"] is 1]
@@ -1437,8 +1401,7 @@ def validate_cash_coupon_claim(self):
 			coupon_codes = coupon_codes + [sc["name"] for sc in sale_coupons]
 
 		## remove sale cash coupon item not exist db
-		[self.cash_coupon_items.remove(d) for d in self.get('cash_coupon_items') if not d.coupon_code in coupon_codes]
- 
+		[self.cash_coupon_items.remove(d) for d in self.get('cash_coupon_items') if not d.coupon_code in coupon_codes] 
 		
 		## set value and check expired, balance
 		claim_amount = 0
@@ -1454,7 +1417,6 @@ def validate_cash_coupon_claim(self):
 						frappe.throw("The coupon {} was expired".format(d["name"]))
 
 		
-
 		sale_coupon_claim_amount = 0
 		if len (sale_coupons) > 0:
 			for sc in sale_coupons:
@@ -1575,73 +1537,68 @@ def get_ratebefore_tax(amount, t_rule, tax_1_rate, tax_2_rate, tax_3_rate):
 
 	return  price
 
+def validate_tax(doc):		
+	if doc.tax_rule:
+		# amount = doc.sub_total
+		amount = _price_for_calc_tax(doc,1)
+		# if (doc.rate_include_tax == 1) :
+		# 	priceBefore = get_ratebefore_tax(doc.sub_total - doc.total_discount,doc.tax_rule, doc.tax_1_rate, doc.tax_2_rate, doc.tax_3_rate)
+		# 	amount =  priceBefore + doc.total_discount   
 
-def validate_tax(doc):
+		#Tax 1
+		# doc.taxable_amount_1 = amount
+		doc.taxable_amount_1 = _price_for_calc_tax(doc, doc.calculate_tax_1_after_discount)
+		# #cal tax1 taxable after disc.
+		# if doc.calculate_tax_1_after_discount == 1:
+		# 	doc.taxable_amount_1 =   amount - doc.total_discount			 
+			
+		doc.taxable_amount_1 *= (doc.percentage_of_price_to_calculate_tax_1/100)
+		doc.tax_1_amount =  (doc.taxable_amount_1 or 0) * ((doc.tax_1_rate or 0)/100)
+
+		#Tax 2
+		doc.taxable_amount_2 = _price_for_calc_tax(doc, doc.calculate_tax_2_after_discount)
+		# doc.taxable_amount_2 = amount
+		# #cal tax2 taxable after disc.
+		# if doc.calculate_tax_2_after_discount==1:
+		# 	doc.taxable_amount_2 = amount  - doc.total_discount
+
+		#cal tax2 taxable after add tax1
+		if doc.calculate_tax_2_after_adding_tax_1==1:
+			doc.taxable_amount_2 +=  doc.tax_1_amount
+
+		doc.taxable_amount_2 *= (doc.percentage_of_price_to_calculate_tax_2/100)
+		doc.tax_2_amount =  (doc.taxable_amount_2 or 0) *  ((doc.tax_2_rate or 0) /100)
+
+		#tax 3
+		doc.taxable_amount_3 =  _price_for_calc_tax(doc, doc.calculate_tax_3_after_discount)
+		# doc.taxable_amount_3 =  amount
+		# #cal tax3 taxable after disc.
+		# if doc.calculate_tax_3_after_discount==1:
+		# 	doc.taxable_amount_3 = amount - doc.total_discount 
 		
-		if doc.tax_rule:
-			# amount = doc.sub_total
-			amount = _price_for_calc_tax(doc,1)
-			# if (doc.rate_include_tax == 1) :
-			# 	priceBefore = get_ratebefore_tax(doc.sub_total - doc.total_discount,doc.tax_rule, doc.tax_1_rate, doc.tax_2_rate, doc.tax_3_rate)
-			# 	amount =  priceBefore + doc.total_discount  
-			
-			
+		#cal tax3 taxable after add tax1
+		if doc.calculate_tax_3_after_adding_tax_1==1:
+			doc.taxable_amount_3 =   doc.taxable_amount_3 +  doc.tax_1_amount 
+		
+		#cal tax3 taxable after add tax2
+		if doc.calculate_tax_3_after_adding_tax_2==1:
+			doc.taxable_amount_3 = doc.taxable_amount_3 +  doc.tax_2_amount 
+		
+		doc.taxable_amount_3 *= (doc.percentage_of_price_to_calculate_tax_3/100)
+		doc.tax_3_amount =  (doc.taxable_amount_3 or 0) *  ((doc.tax_3_rate or 0) /100)
+		
+		#total tax
+		doc.total_tax = doc.tax_1_amount + doc.tax_2_amount + doc.tax_3_amount
 
-
-			#Tax 1
-			# doc.taxable_amount_1 = amount
-			doc.taxable_amount_1 = _price_for_calc_tax(doc, doc.calculate_tax_1_after_discount)
-			# #cal tax1 taxable after disc.
-			# if doc.calculate_tax_1_after_discount == 1:
-			# 	doc.taxable_amount_1 =   amount - doc.total_discount			 
-				
-			doc.taxable_amount_1 *= (doc.percentage_of_price_to_calculate_tax_1/100)
-			doc.tax_1_amount =  (doc.taxable_amount_1 or 0) * ((doc.tax_1_rate or 0)/100)
-
-			#Tax 2
-			doc.taxable_amount_2 = _price_for_calc_tax(doc, doc.calculate_tax_2_after_discount)
-			# doc.taxable_amount_2 = amount
-			# #cal tax2 taxable after disc.
-			# if doc.calculate_tax_2_after_discount==1:
-			# 	doc.taxable_amount_2 = amount  - doc.total_discount
-
-			#cal tax2 taxable after add tax1
-			if doc.calculate_tax_2_after_adding_tax_1==1:
-				doc.taxable_amount_2 +=  doc.tax_1_amount
-
-			doc.taxable_amount_2 *= (doc.percentage_of_price_to_calculate_tax_2/100)
-			doc.tax_2_amount =  (doc.taxable_amount_2 or 0) *  ((doc.tax_2_rate or 0) /100)
-
-			#tax 3
-			doc.taxable_amount_3 =  _price_for_calc_tax(doc, doc.calculate_tax_3_after_discount)
-			# doc.taxable_amount_3 =  amount
-			# #cal tax3 taxable after disc.
-			# if doc.calculate_tax_3_after_discount==1:
-			# 	doc.taxable_amount_3 = amount - doc.total_discount 
-			
-			#cal tax3 taxable after add tax1
-			if doc.calculate_tax_3_after_adding_tax_1==1:
-				doc.taxable_amount_3 =   doc.taxable_amount_3 +  doc.tax_1_amount 
-			
-			#cal tax3 taxable after add tax2
-			if doc.calculate_tax_3_after_adding_tax_2==1:
-				doc.taxable_amount_3 = doc.taxable_amount_3 +  doc.tax_2_amount 
-			
-			doc.taxable_amount_3 *= (doc.percentage_of_price_to_calculate_tax_3/100)
-			doc.tax_3_amount =  (doc.taxable_amount_3 or 0) *  ((doc.tax_3_rate or 0) /100)
-			
-			#total tax
-			doc.total_tax = doc.tax_1_amount + doc.tax_2_amount + doc.tax_3_amount
-   
-			doc.selling_price = 0 if doc.quantity == 0 else   (((doc.sub_total - doc.total_tax) / doc.quantity) or 0) - (doc.modifiers_price or 0)
-		else:
-			doc.taxable_amount_1 =0
-			doc.tax_1_amount=0
-			doc.taxable_amount_2 =0
-			doc.tax_2_amount=0
-			doc.taxable_amount_3 =0
-			doc.tax_3_amount=0
-			doc.total_tax =0
+		doc.selling_price = 0 if doc.quantity == 0 else   (((doc.sub_total - doc.total_tax) / doc.quantity) or 0) - (doc.modifiers_price or 0)
+	else:
+		doc.taxable_amount_1 =0
+		doc.tax_1_amount=0
+		doc.taxable_amount_2 =0
+		doc.tax_2_amount=0
+		doc.taxable_amount_3 =0
+		doc.tax_3_amount=0
+		doc.total_tax =0
 
 def _price_for_calc_tax(doc, calc_after_tax):
 	amount = doc.sub_total
@@ -1650,7 +1607,6 @@ def _price_for_calc_tax(doc, calc_after_tax):
 		amount =  priceBefore + (0 if calc_after_tax == 0  else doc.total_discount)
 
 	return amount
-
 
 def update_pos_reservation_status(self):
 	if self.from_reservation:
@@ -1663,8 +1619,6 @@ def update_pos_reservation_status(self):
 				"reservation_status_background_color": status.background_color,
 				"workflow_state": "Checked Out",
 			})
-
-
 
 @frappe.whitelist()
 def get_park_item_to_redeem(business_branch):
@@ -1904,7 +1858,7 @@ def update_default_change_account(self):
 		if not self.default_change_account:
 			self.default_change_account = frappe.get_cached_value("Business Branch",self.business_branch,"default_change_account" )
 
-def update_customer_bill_balance(customer):
+def update_customer_bill_balance(customer, commit=True ):
 	import time
 	from pymysql.err import OperationalError
 	is_system_customer = frappe.db.get_value('Customer', customer, 'is_system_customer')
@@ -1926,7 +1880,9 @@ def update_customer_bill_balance(customer):
 		for attempt in range(max_retries):
 			try:
 				frappe.db.sql(sql, {"customer": customer})
-				frappe.db.commit()
+				if commit:
+					frappe.db.commit()
+     
 				return 
 
 			except OperationalError as e:

@@ -220,6 +220,7 @@ def cancel_order(transaction_id,sale,comment):
         grand_total = frappe.db.get_value('Sale', sale, 'grand_total')
         doc.grand_total = grand_total
         doc.submit()
+        
     except:
         pass
     

@@ -7,7 +7,7 @@ from PIL import Image
 import frappe
 import json
 import time
-from escpos.printer import Network
+
 from epos_restaurant_2023.api.printing import (
     get_print_context, 
     print_from_print_format,
@@ -49,17 +49,7 @@ def trim(file_path):
 def on_print(file_path, printer, delete_file = 1):
     if printer:   
         try:
-            printer = Network(printer["ip_address"])
-            for img in split_image(file_path,350):
-                printer.image(img)
-                time.sleep(0.1)
-              
-            printer.text(" ")
-            printer.cut()
-            printer.close()
-            if delete_file == 1:
-                if os.path.isfile(file_path):
-                    os.remove(file_path)
+            pass
         except OSError as e:
             frappe.throw(str(e))
 

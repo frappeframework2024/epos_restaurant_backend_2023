@@ -111,3 +111,14 @@ def get_pos_receipt_list(pos_profile="Main POS Profile"):
 
     cache.set_value(key, data, expires_in_sec=86400)
     return data
+
+@frappe.whitelist(methods=["POST"])
+def print_test(print_server_url,printer_name):
+    from epos_restaurant_2023.api.print_server import process_print
+    process_print(data = {
+        "printer_name":printer_name,
+        "html":f"<center><h1> Print Test <br/> Pinter {printer_name}</h1></center>"
+    },
+    print_server_url=print_server_url
+    )
+

@@ -11,6 +11,7 @@ class SalePayment(Document):
 	def validate(self):
 		if self.flags.ignore_validate==True:
 			return
+
 		if frappe.db.get_single_value("ePOS Settings","use_basic_accounting_feature"):
 			validate_account(self)
   

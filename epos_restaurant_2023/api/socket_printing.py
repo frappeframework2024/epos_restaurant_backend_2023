@@ -10,7 +10,7 @@ from pathlib import Path
 
 import frappe
 from escpos.exceptions import DeviceNotFoundError
-from escpos.printer import Network
+
 from html2image import Html2Image
 from PIL import Image, ImageChops
 
@@ -235,38 +235,7 @@ def print_image(
     cut: bool,
     pulse: bool,
 ) -> None:
-    with printer_lock(printer_ip, lock_timeout):
-        for attempt in range(1, retries + 1):
-            printer = Network(printer_ip, port=port, timeout=20)
-            try:
-                printer.open()
-                printer.image(
-                    str(image_path),
-                    impl="bitImageRaster",
-                    fragment_height=fragment_height,
-                )
-                if pulse:
-                    printer.cashdraw(2)
-                if cut:
-                    printer.cut()
-
-                time.sleep(after_print_delay)
-                return
-            except (OSError, DeviceNotFoundError) as error:
-                logging.warning(
-                    "PRINT_RETRY ip=%s port=%s attempt=%s/%s error=%r",
-                    printer_ip,
-                    port,
-                    attempt,
-                    retries,
-                    error,
-                )
-                if attempt == retries:
-                    raise
-                time.sleep(retry_delay)
-            finally:
-                printer.close()
-
+    pass
 
 def main() -> None:
     print_me()

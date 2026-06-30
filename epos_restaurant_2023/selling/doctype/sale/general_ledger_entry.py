@@ -94,6 +94,7 @@ def submit_sale_to_general_ledger_entry(self):
 				"remark": "Redeem Coupon" if self.sale_type == "Redeem" else "",
 			}
 			docs.append(doc)
+   
 	if self.balance:
 		# post gl entry to default recivable account from business branch setting
 		if not self.default_receivable_account:
@@ -115,9 +116,7 @@ def submit_sale_to_general_ledger_entry(self):
 			"party_name":self.customer_name
 
 		}
-		docs.append(doc)
-
- 
+		docs.append(doc) 
 
 	# tax account
 	# tax 1 
@@ -209,6 +208,7 @@ def submit_sale_to_general_ledger_entry(self):
 							"type":"Asset"#not use in db
 						}
 					docs.append(doc)
+     
 	if sum([d.quantity*(d.cost or 0)  for d in sale_products if d.is_inventory_product==1]):
 	# deduct stock in hand
 		for acc in set([d.default_expense_account for d in sale_products]):
@@ -253,6 +253,7 @@ def submit_sale_to_general_ledger_entry(self):
 						stock_acc = get_recipe_defalt_inventory_account(self,recipe)
 						recipe_acc.append({"account":get_expense_account(self,recipe),"stock_account":stock_acc,"total_amount":total_amount})
 						recipe_inventory_acc.append({"account":stock_acc})
+      
 	group_recipe_acc = set([d["account"] for d in recipe_acc])
 	recipe_inventory_acc = set([d["account"] for d in recipe_inventory_acc])
 	if len(group_recipe_acc) > 0:
@@ -456,7 +457,8 @@ def submit_sale_to_general_ledger_entry(self):
 			d.pop("revenue_ratio",None)
 			d.pop("allocated_point",None)
 			d.pop("root_type",None)
-	submit_general_ledger_entry(docs=docs)
+   
+	submit_general_ledger_entry(docs=docs, commit=False)
 
 def get_expense_account(self,recipe):
 	account = ""

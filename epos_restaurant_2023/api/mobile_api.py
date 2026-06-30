@@ -19,7 +19,7 @@ from epos_restaurant_2023.api.printing import (
     )
 import frappe
 from frappe import _
-from escpos.printer import Network
+
 
 @frappe.whitelist(allow_guest=True)
 def on_check_url():  

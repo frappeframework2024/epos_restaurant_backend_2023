@@ -18,7 +18,7 @@ from frappe.utils import (
 	create_batch,
 	make_filter_dict,
 )
-from escpos.printer import Network
+
 from frappe.utils.background_jobs import get_queues, get_redis_conn
 import math
 from frappe.utils.scheduler import get_scheduler_status

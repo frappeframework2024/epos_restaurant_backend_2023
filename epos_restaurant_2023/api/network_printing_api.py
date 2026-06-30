@@ -9,7 +9,7 @@ from PIL import Image
 import frappe
 import json
 import time
-from escpos.printer import Network
+
 from epos_restaurant_2023.api.printing import (
     get_print_context, 
     print_from_print_format,
@@ -64,44 +64,7 @@ def on_print(file_path, printer, delete_file = 1):
     if printer: 
         if ping(printer["ip_address"]):         
             try:
-                printer_obj = Network(printer["ip_address"]) 
-                printer_obj.open()
-                ## crop image base on height buffer size  
-                im = Image.open(file_path)
-                _image = im
-                # printer_obj.image(im) 
-                _width,_height = im.size
-                # _width = 590
-    
-                crop_height = 200
-                init_crop_height = 0 
-                h = _height 
-                while _height > crop_height: 
-                    im = _image
-                    box = (0, init_crop_height, _width, int( crop_height+init_crop_height))
-                    crop_image = im.crop(box)
-                    printer_obj.image(crop_image)                 
-                    init_crop_height += int(crop_height)
-                    _height -= crop_height
-                    time.sleep(0.1)
-                    if _height <=  crop_height: 
-
-
-                        break
-
-                if _height>0:
-                    box = (0, int(init_crop_height), _width, int(_height+init_crop_height)) 
-                    crop_image = im.crop(box)
-                    printer_obj.image(crop_image) 
-                    time.sleep(0.1)
-
-                printer_obj.text(" ")           
-                printer_obj.cut()
-                printer_obj.close()
-
-                if delete_file == 1:
-                    if os.path.isfile(file_path):
-                        os.remove(file_path)
+                pass
 
             except OSError as e:
                 frappe.throw(str(e))

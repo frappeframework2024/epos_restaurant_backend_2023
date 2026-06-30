@@ -3,8 +3,7 @@ import json
 
 import frappe
 
-def add_to_inventory_transaction(data):
-    
+def add_to_inventory_transaction(data):    
     doc = frappe.get_doc(data)
     doc.insert()
 
@@ -15,6 +14,7 @@ def get_stock_location_by_pos_profile(product_code,pos_profile,stock_location):
         data = frappe.get_value('Product Inventory Location', {'parent':product_code,'pos_profile':pos_profile}, ['stock_location'], as_dict=1)
         if data:
             current_stock_location = data.stock_location
+            
     return current_stock_location
 
 @frappe.whitelist()
@@ -23,6 +23,7 @@ def get_product_qty(product,stock_location):
     data = frappe.db.get_value('Stock Location Product', {'product_code':product,'stock_location':stock_location}, ['quantity'], as_dict=1)
     if data:
         qty = data.quantity
+        
     return qty
 
 def update_product_quantity(stock_location,product_code, quantity,cost,doc):
