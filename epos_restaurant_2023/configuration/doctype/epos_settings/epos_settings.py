@@ -28,28 +28,28 @@ class ePOSSettings(Document):
 		frappe.db.sql("""UPDATE `tabPOS Sale Payment` a 
 						inner JOIN `tabPayment Type Account` b ON b.parent = a.payment_type
 						SET a.default_account = if(coalesce(a.default_account,'')='',b.account,a.default_account)
-						WHERE b.business_branch = '{0}'""".format(self.business_branch))
+						WHERE b.business_branch = %(business_branch)s""", {"business_branch":self.business_branch})
 		
 		frappe.db.sql("""UPDATE `tabSale Product` a 
 						inner JOIN `tabRevenue Group Default Account` b ON b.parent = a.revenue_group
 						SET a.default_income_account = if(coalesce(a.default_income_account,'')='',b.default_income_account,a.default_income_account),
 						a.default_discount_account = if(coalesce(a.default_discount_account,'')='',b.default_discount_account,a.default_discount_account)
-						WHERE b.business_branch = '{0}'""".format(self.business_branch))
+						WHERE b.business_branch = %(business_branch)s""",{"business_branch":self.business_branch})
 		
 		frappe.db.sql("""UPDATE `tabSale` a
 						INNER JOIN `tabBusiness Branch` b ON b.name = a.business_branch
 						SET a.default_change_account = if(coalesce(a.default_change_account,'')='',b.default_change_account,a.default_change_account)
-						WHERE business_branch = '{0}';""".format(self.business_branch))
+						WHERE business_branch = %(business_branch)s;""",{"business_branch":self.business_branch})
 
 		sales = frappe.db.sql("""select 
 										name 
-									from `tabSale` 
-									where business_branch = '{0}' and 
-									name not in (SELECT 
-														voucher_number 
-													FROM `tabGeneral Ledger` 
-													WHERE voucher_type='Sale' 
-													GROUP BY voucher_number)""".format(self.business_branch),as_dict=1)
+									from `tabSale` s
+									where s.business_branch = %(business_branch)s and 
+										s.name not in (SELECT 
+														g.voucher_number 
+													FROM `tabGeneral Ledger` g
+													WHERE g.voucher_type='Sale' 
+													GROUP BY g.voucher_number)""",{"business_branch":self.business_branch},as_dict=1)
 		for a in sales:
 			doc = frappe.get_doc("Sale",a["name"])
 			submit_sale_to_general_ledger_entry(doc)

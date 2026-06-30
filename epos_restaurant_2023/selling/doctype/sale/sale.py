@@ -259,15 +259,16 @@ class Sale(Document):
 		add_sale_product_spa_commission(self)
 
 		#delete product that parent_sale_product not exists 
-		_query = """delete 
-  					from `tabSale Product` sp
-					where sp.parent=%(sale)s
-						and ifnull(sp.reference_sale_product,'') != '' 
-						and ifnull(sp.reference_sale_product,'') not in (
-          					select 
-               					_sp.name 
-                			from `tabSale Product` _sp 
-                   			where parent=%(sale)s )"""
+		_query = """
+			DELETE FROM `tabSale Product`
+			WHERE parent = %(sale)s
+			AND IFNULL(reference_sale_product, '') != ''
+			AND IFNULL(reference_sale_product, '') NOT IN (
+				SELECT name
+				FROM `tabSale Product`
+				WHERE parent = %(sale)s
+			)
+			"""
   
 		frappe.db.sql(_query, {"sale":self.name})
 		
@@ -337,7 +338,6 @@ class Sale(Document):
 		if "edoor" in frappe.get_installed_apps():
 			create_folio_transaction_from_pos_trnasfer(self) 		
 
-	 	
 		add_payment_to_sale_payment(self) 
 		## update cash coupon information
 		on_update_coupon_information(self)		
@@ -355,8 +355,8 @@ class Sale(Document):
 			is_update_inventory = True
 		
 		if is_update_inventory:
-			# update_inventory_on_submit(self)
-			frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit", queue='short',job_name= "update-inventory", self=self)
+			update_inventory_on_submit_enqueue(self)
+			
 		#end update inventory
   
 		# update_customer_bill_balance(customer= self.customer, commit=False) 
@@ -364,7 +364,7 @@ class Sale(Document):
   
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			add_coupon_gl_entry(self)
-			submit_sale_to_general_ledger_entry(self)
+			submit_sale_to_general_ledger_entry(self=self,commit = False)
 			commission_general_ledger_entry(self)
 
 		if frappe.get_cached_value("Exely Itegration Setting",None,"enabled")==1:
@@ -375,7 +375,7 @@ class Sale(Document):
 				else:
 					frappe.enqueue("epos_restaurant_2023.api.exely.submit_order_to_exely", queue='long', doc_name = self.name)
      
-		update_sales_order_and_delivery_note_status(self)
+		update_sales_order_and_delivery_note_status(self=self,commit=False)
 		if self.sale_type in ["Sale Coupon","Top Up","Redeem"]: 
 			update_coupon_transaction(self)
 
@@ -388,7 +388,7 @@ class Sale(Document):
 			return 
 
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
-			cancel_general_ledger_entery("Sale", self.name)	
+			cancel_general_ledger_entery(doctype="Sale",docname=self.name, commit = False )	
 			commission_general_ledger_entry(self)
 		
 
@@ -407,8 +407,10 @@ class Sale(Document):
 		update_pos_pay_to_room_adjustment(self)
 
 		# delete payment from POS Sale Payment
-		frappe.db.sql("delete from `tabPOS Sale Payment` where parent = '{}'".format(self.name))
-		frappe.db.commit()
+		# frappe.db.sql("delete from `tabPOS Sale Payment` where parent = %(sale)s",{"sale":self.name})	
+		frappe.db.delete("POS Sale Payment",{"parent": self.name})
+		self.reload()
+				
 
 		is_update_inventory = False
 		if self.pos_profile:
@@ -419,12 +421,13 @@ class Sale(Document):
 			is_update_inventory = True
 		
 		if is_update_inventory:
-			update_inventory_on_cancel(self)
-		update_sales_order_and_delivery_note_status(self)
+			update_inventory_on_cancel_enqueue(self)
+   
+		update_sales_order_and_delivery_note_status(self=self,commit=False)
 		if len(self.payment) == 1 :
 			if self.payment[0].payment_type_group == "On Account":
 				update_customer_point_on_cancel_sale(self.name,self.customer,self.customer_name)
-		# frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel", queue='short', self=self)
+		
 
 	def get_auto_name(self):
 		from frappe.model.naming import make_autoname
@@ -536,38 +539,46 @@ def math_round(value, precision = None):
 	# result = math.floor(((value or 0) * math.pow(10, (precision or 0) )) + 0.5) / math.pow(10, (precision or 0))
 	# return result
 
-def update_sales_order_and_delivery_note_status(self):
+def update_sales_order_and_delivery_note_status(self,commit=True):
 	if self.sales_order:
 		sales_order_product = frappe.db.sql("""
 						select
-						a.product_code,
-						a.base_unit,
-						a.unit,
-						a.quantity,
-						0 as converted_qty
+							a.product_code,
+							a.base_unit,
+							a.unit,
+							a.quantity,
+							0 as converted_qty
 						from `tabSales Order Product` a
 						inner join `tabSales Order` b on b.name = a.parent
-						where b.name = '{}' and b.docstatus = 1""".format(self.sales_order),as_dict=1)
+						where b.name = '%(sales_order)s 
+      						and b.docstatus = 1""",{"sales_order":self.sales_order},as_dict=1)
+  
 		delivery_note_product = frappe.db.sql("""
 						select
-						a.product_code,
-						a.base_unit,
-						a.unit,
-						a.quantity,
-						0 as converted_qty
+							a.product_code,
+							a.base_unit,
+							a.unit,
+							a.quantity,
+							0 as converted_qty
 						from `tabDelivery Note Product` a
 						inner join `tabDelivery Note` b on b.name = a.parent
-						where {0} = '{1}' and b.docstatus = 1""".format(("b.name" if self.delivery_note else "b.sales_order"),self.delivery_note if self.delivery_note else self.sales_order),as_dict=1)
+						where {0} = %(value)s 
+							and b.docstatus = 1
+						""".format("b.name" if self.delivery_note else "b.sales_order"),
+      					{"value":self.delivery_note if self.delivery_note else self.sales_order},as_dict=1)
+  
 		sale_products = frappe.db.sql("""
 						select 
-						a.product_code,
-						a.unit,
-						a.base_unit,
-						a.quantity,
-						0 as converted_qty
+							a.product_code,
+							a.unit,
+							a.base_unit,
+							a.quantity,
+							0 as converted_qty
 						from `tabSale Product` a
 						inner join `tabSale` b on b.name = a.parent
-						where b.sales_order = '{}' and b.docstatus = 1""".format(self.sales_order),as_dict=1)
+						where b.sales_order = %(sales_order)s 
+      						and b.docstatus = 1""",{"sales_order":self.sales_order},as_dict=1)
+  
 		if len(sales_order_product) > 0:
 			for a in sales_order_product:
 				uom_conversion = get_uom_conversion(a.base_unit,a.unit)
@@ -598,6 +609,7 @@ def update_sales_order_and_delivery_note_status(self):
 				sales_order_status = "To Deliver and Bill"
 		else:
 			sales_order_status = "To Bill"
+   
 		frappe.db.set_value("Sales Order",self.sales_order,"status",sales_order_status)
 		
 		delivery_status = ""
@@ -613,7 +625,9 @@ def update_sales_order_and_delivery_note_status(self):
 			delivery_note = frappe.get_all("Delivery Note",filters={"sales_order":self.sales_order,"docstatus":1},fields=["name"])
 			for a in delivery_note:
 				frappe.db.set_value("Delivery Note",a.name,"status","To Bill" if sales_order_status == "To Deliver and Bill" else sales_order_status)
-		frappe.db.commit()
+    
+		if commit:
+			frappe.db.commit()
 
 
 
@@ -745,6 +759,7 @@ def general_ledger_debit(self,account,is_commission = 1):
 		"is_cancelled":1 if self.docstatus == 2 else 0
 	}
 	docs.append(doc)
+ 
 	submit_general_ledger_entry(docs = docs,commit=False)
 
 def general_ledger_credit(self,account,is_commission = 1):
@@ -809,7 +824,11 @@ def on_sale_delete_update(self):
 def generate_decimal(precision: int) -> Decimal:
     return Decimal('0.1') ** precision
 
-def update_inventory_on_submit(self):
+def update_inventory_on_submit_enqueue(self):
+    frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_submit", queue='short',job_name= "update-inventory-on-submit", self=self)
+    pass
+
+def update_inventory_on_submit(self): 
 	cost = 0 
 	for p in self.sale_products:
 		pos_profile = p.pos_profile if p.pos_profile else self.pos_profile
@@ -942,7 +961,10 @@ def update_combo_menu_to_inventory_transaction(self,product,action,combo_menu_da
 			#check if product have receipt then update to stock
 			# base qty here is = sale product quantity * combo product quantity
 			update_product_recipe_to_inventory(self,doc,product.quantity * p["quantity"], action,product,pos_profile)
-					
+
+def update_inventory_on_cancel_enqueue(self):
+	frappe.enqueue("epos_restaurant_2023.selling.doctype.sale.sale.update_inventory_on_cancel", queue='short',job_name= "update-inventory-on-cancel", self=self)
+ 	
 def update_inventory_on_cancel(self):
 	for p in self.sale_products:
 		pos_profile = p.pos_profile if p.pos_profile else self.pos_profile
@@ -1842,7 +1864,6 @@ def update_default_payment_account(self):
 			default_account = [d for d in default_account if d.business_branch == self.business_branch]
 			if default_account and not p.default_account:
 				p.default_account = default_account[0].account
-	 
 
 def update_default_tip_account(self):
 	if self.tip_amount>0:
@@ -2004,6 +2025,7 @@ def update_coupon_codes(coupon_transactions,sale_type):
 			"coupon_codes":[d["coupon_code"] for d in coupon_transactions]
 			 
 		})
+  
 	elif  sale_type=="Top Up":
 		# frappe.throw(str([d["coupon_code"] for d in coupon_transactions]))
 		sql ="""
@@ -2173,7 +2195,7 @@ def update_customer_point_on_cancel_sale(sale,customer,customer_name):
 		if (point_earn or 0) != 0:
 			add_point_history(sale,point_earn,customer,customer_name,"Cancel Redeeming")
 		frappe.db.sql("""UPDATE `tabCustomer` c SET c.total_point_earn = round((c.total_point_earn + {0} - {1}),6) WHERE NAME = '{2}'""".format((point_spent or 0),(point_earn or 0),customer))
-		frappe.db.commit()
+		# frappe.db.commit()
 
 def add_point_history(sale,transaction_point,customer,customer_name,transaction_type="Earning"):
 	from datetime import datetime

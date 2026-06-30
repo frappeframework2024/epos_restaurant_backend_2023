@@ -9,7 +9,7 @@ from epos_restaurant_2023.inventory.inventory import (
 )
 
 @frappe.whitelist()
-def submit_sale_to_general_ledger_entry(self):
+def submit_sale_to_general_ledger_entry(self, commit = True):
 	from epos_restaurant_2023.api.account import submit_general_ledger_entry
 	sale_products = [a for a in self.sale_products if (a.coupons or "") == ""]
 	docs = []
@@ -300,6 +300,7 @@ def submit_sale_to_general_ledger_entry(self):
 	if self.total_cash_coupon_claim> 0:
 		if not self.default_cash_coupon_claim_account:
 			frappe.throw(_("Please select default cash coupon account"))
+   
 		doc = {
 				"doctype":"General Ledger",
 				"posting_date":self.posting_date,
@@ -321,6 +322,7 @@ def submit_sale_to_general_ledger_entry(self):
 	if self.changed_amount> 0:
 		if not self.default_change_account:
 			frappe.throw(_("Please select default change account"))
+   
 		doc = {
 				"doctype":"General Ledger",
 				"posting_date":self.posting_date,
@@ -337,7 +339,8 @@ def submit_sale_to_general_ledger_entry(self):
 				"business_branch": self.business_branch,
 			}
 		docs.append(doc)
-	# tip
+	
+ 	# tip
 	if self.tip_amount> 0:
 		if not self.default_tip_account:
 			frappe.throw(_("Please select default tip account"))
@@ -418,10 +421,12 @@ def submit_sale_to_general_ledger_entry(self):
 					"business_branch": self.business_branch,
 				}
 			docs.append(doc)
+	
 	for a in docs:
 		a["root_type"] = frappe.get_cached_value("Chart Of Account",a["account"],"root_type")
 		a["working_day"] = self.working_day
 		a["cashier_shift"] = self.cashier_shift
+
 	used_point = len([d for d in self.payment if d.payment_type_group == "Point"])
 	point_setting = frappe.get_doc("Loyalty Point Settings")
 	allow_earn_point = frappe.get_cached_value("Customer",self.customer,'allow_earn_point')
@@ -458,7 +463,7 @@ def submit_sale_to_general_ledger_entry(self):
 			d.pop("allocated_point",None)
 			d.pop("root_type",None)
    
-	submit_general_ledger_entry(docs=docs, commit=False)
+	submit_general_ledger_entry(docs=docs, commit=commit)
 
 def get_expense_account(self,recipe):
 	account = ""
@@ -482,6 +487,7 @@ def get_expense_account(self,recipe):
 		acc = frappe.get_cached_value("Business Branch",self.business_branch, "default_cost_of_good_sold_account")
 		if acc:
 			account = acc
+   
 	return account
 
 def get_recipe_defalt_inventory_account(self,recipe):

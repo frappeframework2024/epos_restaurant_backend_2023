@@ -1,7 +1,8 @@
 import frappe
 from frappe import _
 from epos_restaurant_2023.api.account import submit_general_ledger_entry
-def submit_sale_to_general_ledger_entry(self):
+
+def submit_sale_to_general_ledger_entry(self, commit=True):
 	
 	docs = []
 	# income account
@@ -23,7 +24,7 @@ def submit_sale_to_general_ledger_entry(self):
 	
 		docs.append(doc)
   
-	submit_general_ledger_entry(docs=docs)
+	submit_general_ledger_entry(docs=docs,commit=commit)
 
 
  
