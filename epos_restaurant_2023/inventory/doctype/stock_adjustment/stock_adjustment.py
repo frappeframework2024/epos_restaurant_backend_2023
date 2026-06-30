@@ -68,12 +68,12 @@ def update_default_inventory_account(self):
 def update_current_product_info(self):
 	for a in self.products:
 		p = get_currenct_cost(a.product_code,self.stock_location,a.unit)
-		a.current_quantity = p["quantity"]
-		a.current_cost = p["cost"]
+		a.current_quantity = float(p["quantity"])
+		a.current_cost = float(p["cost"])
 		a.total_current_cost = a.current_quantity * a.current_cost
 		a.total_secondary_cost = a.quantity * a.secondary_cost
 		a.difference_quantity =  a.quantity - a.current_quantity
-		a.difference_amount =  (a.cost * a.quantity) - (a.current_cost * a.current_quantity)
+		a.difference_amount =  float(a.cost * a.quantity) - float(a.current_cost * a.current_quantity)
 
 def update_inventory_on_submit(self):
 	for p in self.products:
