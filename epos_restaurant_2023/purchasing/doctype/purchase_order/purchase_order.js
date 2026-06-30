@@ -192,7 +192,7 @@ function product_by_scan(frm,doc){
 }
 
 function validate_filters(frm){
-	if (frm.doc.stock_location == undefined){
+	if (frm.doc.stock_location == undefined || frm.doc.stock_location == ""){
 		frappe.throw("Please Select Stock Location First")
 		return
 	}
