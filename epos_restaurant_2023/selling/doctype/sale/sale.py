@@ -2160,7 +2160,7 @@ def change_payment_type(data,old_data):
 
 
 # Update Customer Point When Pay with Point
-def update_customer_point(customer,payment_type_group,payment_amount,name,sale,customer_name):
+def update_customer_point(customer,payment_type_group,payment_amount,name,sale,customer_name, commit=False):
 	point_setting = frappe.get_doc("Loyalty Point Settings")
 	if point_setting.enabled==1:
 		customer_doc = frappe.db.get_value('Customer', customer, ['allow_earn_point', 'total_point_earn'], as_dict=1)
@@ -2170,7 +2170,8 @@ def update_customer_point(customer,payment_type_group,payment_amount,name,sale,c
 				add_point_history(sale,total_point_get,customer,customer_name,"Earning")
 				frappe.db.sql("""Update `tabCustomer` set total_point_earn = round((total_point_earn + {0}),6) where name = '{1}'""".format(total_point_get,customer))
 				frappe.db.sql("""UPDATE `tabSale` set total_point_earn = round({0},6) WHERE NAME = '{1}'""".format(total_point_get,sale))
-				frappe.db.commit()
+				if commit:
+					frappe.db.commit()
 			# Customer Use Point
 			if payment_type_group == "Point":
 				customer_point = frappe.db.get_value("Customer",customer,['total_point_earn','allow_earn_point'],as_dict=1)
@@ -2182,7 +2183,8 @@ def update_customer_point(customer,payment_type_group,payment_amount,name,sale,c
 				if float(customer_point.total_point_earn) < float(total_point_redeem):
 					frappe.throw(_("Point for customer {} are not enough.".format(customer_name)))
 				frappe.db.sql("Update `tabCustomer` set total_point_earn = round((total_point_earn - {}),6) where name = '{}'".format(total_point_redeem,customer))
-				frappe.db.commit()
+				if commit:
+					frappe.db.commit()
 
 def update_customer_point_on_cancel_sale(sale,customer,customer_name):
 	sale = frappe.db.sql("""SELECT sum(coalesce(total_point_earn, 0)) total_point_earn, sum(coalesce(total_point_spent, 0)) total_point_spent FROM `tabSale` WHERE name = '{0}' """.format(sale),as_dict=1)

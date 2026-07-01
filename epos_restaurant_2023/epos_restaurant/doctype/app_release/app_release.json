@@ -1,0 +1,82 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "hash",
+ "creation": "2026-06-30 23:15:55.390212",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "app_name",
+  "plateform",
+  "version_name",
+  "version_number",
+  "apk_file",
+  "release_note",
+  "is_force_update"
+ ],
+ "fields": [
+  {
+   "fieldname": "app_name",
+   "fieldtype": "Select",
+   "label": "App Name",
+   "options": "Mobile Order\nPOS\nCustomer Display"
+  },
+  {
+   "fieldname": "plateform",
+   "fieldtype": "Select",
+   "label": "Plateform",
+   "options": "Android"
+  },
+  {
+   "fieldname": "version_name",
+   "fieldtype": "Data",
+   "label": "Version Name"
+  },
+  {
+   "fieldname": "version_number",
+   "fieldtype": "Int",
+   "label": "Version Number"
+  },
+  {
+   "fieldname": "apk_file",
+   "fieldtype": "Attach",
+   "label": "Apk File"
+  },
+  {
+   "fieldname": "release_note",
+   "fieldtype": "Small Text",
+   "label": "Release Note"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_force_update",
+   "fieldtype": "Check",
+   "label": "Is Force Update"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-06-30 23:22:35.106024",
+ "modified_by": "Administrator",
+ "module": "ePOS Restaurant",
+ "name": "App Release",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

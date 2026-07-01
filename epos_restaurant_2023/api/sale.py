@@ -47,8 +47,15 @@ def submit_order(data=None,print_request_bill=False,print_server_url=None,print_
                     
             sale_doc.insert()
         else:
+            
             sale_doc = frappe.get_doc("Sale", doc["name"])
+            
+            _new_sale_products = [x for x in doc.get("sale_products") if not x.get("name")]
+            doc["sale_products"] = [x for x in doc.get("sale_products") if x.get("name")]
+            
             sale_doc.update(doc)
+            for sp in _new_sale_products:
+                sale_doc.append("sale_products",sp)
 
             if print_request_bill:
                 sale_doc.sale_status = "Bill Requested"
@@ -73,7 +80,8 @@ def submit_order(data=None,print_request_bill=False,print_server_url=None,print_
             doc=sale_doc,
             products=(_new_products or []) + (deleted_products or []) ,
             at_front=True
-        )   
+        )
+        
 
 
     frappe.db.commit()
@@ -156,7 +164,9 @@ def generate_print_queue(doc,products,print_server_url=None,run_commit = True):
             for p in printer_proucts:
                 for n in range(1,int(p.get("quantity") or 1) + 1):
                     print_data["index"] = n
-                    print_data["sale_products"] = [p]
+                    
+                    print_data["sale_products"] = [{**p,"quantity":1}]
+
                     queue_doc =  add_print_queue(doc.get("name"),print_data)
                     print_docs.append(
                         {

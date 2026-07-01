@@ -1,6 +1,6 @@
 import frappe
 
-def submit_payment_to_general_ledger_entry_on_submit(self):
+def submit_payment_to_general_ledger_entry_on_submit(self, commit=True):
     from epos_restaurant_2023.api.account import submit_general_ledger_entry
     docs = []
     # payment acocunt
@@ -49,6 +49,7 @@ def submit_payment_to_general_ledger_entry_on_submit(self):
     doc["remark"] = "Amount {} received from {}".format(frappe.format(self.payment_amount,{"fieldtype":"Currency"}), doc["againt"])
     docs.append(doc)
 
-    submit_general_ledger_entry(docs=docs)
+    submit_general_ledger_entry(docs=docs,commit=commit)
+    
 
     

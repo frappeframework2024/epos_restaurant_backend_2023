@@ -122,3 +122,37 @@ def print_test(print_server_url,printer_name):
     print_server_url=print_server_url
     )
 
+
+@frappe.whitelist(allow_guest=True)
+def check_app_update(app_name,current_version):
+    current_version = int(current_version)
+    release = frappe.get_all(
+        "App Release",
+        filters={
+            "app_name": app_name,
+        },
+        fields=[
+            "version_name",
+            "version_number",
+            "apk_file",
+            "release_note",
+            "is_force_update"
+        ],
+        order_by="version_number desc",
+        limit=1
+    )
+
+    if not release:
+        return {"update_available": False}
+
+    r = release[0]
+
+    return {
+        "update_available": r.version_number > current_version,
+        "version_name": r.version_name,
+        "version_number": r.version_number,
+        "apk_url": frappe.utils.get_url(r.apk_file),
+        "release_note": r.release_note,
+        "force_update": r.is_force_update
+    }
+    

@@ -65,7 +65,7 @@ class SalePayment(Document):
 		# run enque
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
 			if not self.flags.ignore_post_general_ledger_entry:
-				submit_payment_to_general_ledger_entry_on_submit(self)
+				submit_payment_to_general_ledger_entry_on_submit(self=self,commit=False)
 
 		if self.flags.ignore_on_submit==True:
 			return
@@ -76,7 +76,7 @@ class SalePayment(Document):
 		update_customer_point(self.customer,self.payment_type_group,self.payment_amount,self.name,self.sale,self.customer_name)
 
 		## update crypto
-		update_customer_saving_crypto(self)
+		update_customer_saving_crypto(self=self,commit=False )
 		update_voucher(self)
 	
 	def on_cancel(self):
@@ -93,7 +93,7 @@ class SalePayment(Document):
 		update_customer_point_on_cancel_sale(self.sale,self.customer,self.customer_name)
 
 		## cancel crypto
-		update_customer_saving_crypto(self)
+		update_customer_saving_crypto(self=self,commit=False)
 		 
 
 	def before_update_after_submit(self):
@@ -207,19 +207,19 @@ def update_sale(self):
 				if balance<0:
 					balance = 0
 				
-				update_sale_status = "Update `tabSale` set total_paid = %(total_paid)s , balance = %(balance)s,status=%(status)s where name = %(sale)s"
+				update_sale_status = "update `tabSale` set total_paid = %(total_paid)s , balance = %(balance)s,status=%(status)s where name = %(sale)s"
 				frappe.db.sql(update_sale_status,{
 					'total_paid': round(data[0].total_paid,int(currency_precision)),
 					'balance': balance,
 					'status': status,
 					'sale':self.sale
 				})
-				frappe.db.commit()
+				# frappe.db.commit()
 	if self.sale:	
 		if not self.add_from_sale:
-			update_customer_bill_balance(self.customer)
+			update_customer_bill_balance(customer=self.customer,commit=False)
 
-def update_customer_saving_crypto(self):
+def update_customer_saving_crypto(self, commit=True):
 	if self.payment_type_group == "Crypto":
 		from frappe.utils.synchronization import filelock
 		lock_name = f"customer_crypto_balance_{self.name}"
@@ -238,5 +238,7 @@ def update_customer_saving_crypto(self):
 					c.total_crypto_balance = c.total_crypto_amount - (_c.total_claim_amount + c.total_crypto_balance_expired )
 					where c.name = %(customer)s and c.is_system_customer = 0"""
 			frappe.db.sql(sql,{"customer":self.customer})
-			frappe.db.commit()
+   
+			if commit:
+				frappe.db.commit()
 		
