@@ -179,10 +179,16 @@ async function _onPrintProcess(sale){   //
       }
   }
 
-  //
-  if (localStorage.getItem("is_window") == "1") {  
-    window.chrome.webview.postMessage(JSON.stringify(data));
-    return;
+  let isWindows = localStorage.getItem("is_window")=="1";
+  let isElectron= localStorage.getItem("electronWrapper") == "1";
+  if (isWindows || isElectron) {  
+    if(isWindows){
+      window.chrome.webview.postMessage(JSON.stringify(data));
+    }
+    else if(isElectron){
+        console.info("electron message action => ",data.action)
+				window.electronAPI.send('vue-message', _message_data);   
+    }
   }
   else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
     if (printer.length <= 0) {

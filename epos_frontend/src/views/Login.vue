@@ -101,7 +101,7 @@
               <template v-if="languages?.length <= 2">
                 <div class="mt-2" style="font-family: Khmer OS Siemreap;">
                   <v-btn size="x-large" class="w-full" color="light" @click="(() => {
-                     $i18n.locale = ($i18n.locale == 'km' || $i18n.locale == 'kh' ? 'en' : 'km');
+                     $i18n.locale = ($i18n.locale == 'kh' || $i18n.locale == 'kh' ? 'en' : 'kh');
                      onChangeLang($i18n.locale, $i18n.locale == 'en' ? 'English':'Khmer' )
                   })">{{ $i18n.locale == "en" ? "ខ្មែរ" : "English" }}</v-btn>
                 </div>
@@ -126,11 +126,12 @@
               <div class="mt-4 text-center">
                 <p class="text-sm text-green-700">{{ setting?.pos_profile }}</p>
                 <p class="text-sm text-red-700">{{ device_name }}</p>
+                
+                <v-btn  class="w-full" color="primary" @click="test()">Test</v-btn> 
               </div>
             </div>
           </div>
         </form>
-
         <div class="fixed bottom-8 " v-if="isWindow()">
           <v-btn block class="w-full" prepend-icon="mdi-window-close" size="x-large" color="error"
             @click="onExitWindow()"> {{
@@ -150,6 +151,8 @@
 import { reactive, inject, computed, useStore, useRouter, createResource, createToaster, i18n, ref,getApi } from '@/plugin';
 import { onMounted } from 'vue';
 import { useDisplay } from 'vuetify';
+import socket from '@/utils/socketio';
+
 const frappe = inject("$frappe");
 const db = frappe.db();
 const call = frappe.call();
@@ -186,6 +189,12 @@ const isLoading = computed(() => {
 const device_name = computed(() => {
   return localStorage.getItem("device_name");
 });
+
+function test() {
+    socket.emit('PrintReceipt', JSON.stringify({"action":"test","station_device_printing":"DOM"}));
+}
+
+
 
 //on init
 onMounted(async () => {

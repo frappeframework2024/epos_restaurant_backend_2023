@@ -533,10 +533,16 @@ function onPrint(){
         } 
     }
     
-
-    if(localStorage.getItem("is_window")==1){
+    let isWindows = localStorage.getItem("is_window")=="1";
+    let isElectron= localStorage.getItem("electronWrapper") == "1";
+    if(isWindows || isElectron ){
         gv.onPrintWorkingDayAndCashierShift(activeReport.value.report_id,pos_profile, activeReport.value.doc_type)
-        window.chrome.webview.postMessage(JSON.stringify(data));
+        if(isWindows){
+            window.chrome.webview.postMessage(JSON.stringify(data));
+        }else if(isElectron){
+            console.info("electron message action => ",data.action)
+            window.electronAPI.send('vue-message', _message_data);
+        }        
     }else  if((localStorage.getItem("flutterWrapper") || 0) == 1){
         data.printer = _printer;
         flutterChannel.postMessage(JSON.stringify(data));

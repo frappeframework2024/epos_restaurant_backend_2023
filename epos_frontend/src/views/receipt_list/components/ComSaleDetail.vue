@@ -282,11 +282,18 @@ async function onPrint() {
         }
     }
 
-    //
-    if (localStorage.getItem("is_window") == "1") {
+    let isWindows = localStorage.getItem("is_window")=="1";
+	let isElectron= localStorage.getItem("electronWrapper") == "1";
+
+    if (isWindows || isElectron) {
         if (activeReport.value.pos_receipt_file_name != "" && activeReport.value.pos_receipt_file_name != null) {
             if (await confirm({ title: $t("Print Receipt"), text: $t("msg.Are you sure to print receipt") })) {
-                window.chrome.webview.postMessage(JSON.stringify(data));
+                if(isWindows){
+                    window.chrome.webview.postMessage(JSON.stringify(data));
+                }else if(isElectron){
+                    console.info("electron message action => ",data.action)
+                    window.electronAPI.send('vue-message', _message_data);
+                }
             }
             return;
         }
@@ -542,9 +549,17 @@ function onProcessPrintToKitchen(doc) {
         sale: doc,
         product_printers: productPrinters
     }
+    let isWindows = localStorage.getItem("is_window")=="1";
+    let isElectron= localStorage.getItem("electronWrapper") == "1";
 
-    if (localStorage.getItem("is_window") == 1) {
-        window.chrome.webview.postMessage(JSON.stringify(data));
+    if (isWindows || isElectron) {
+        let _message_data = JSON.stringify(data);
+        if(isWindows){
+            window.chrome.webview.postMessage(_message_data);
+        }else if(isElectron){
+            console.info("electron message action => ",data.action)
+            window.electronAPI.send('vue-message', _message_data);
+        }        
     } else {
         socket.emit("PrintReceipt", JSON.stringify(data))
     }

@@ -50,19 +50,18 @@
                         keyboard
                     ></ComInput>
                     <div class="text-right">
-                        <v-btn type="sumbit" class="w-full" color="primary" :loading="store.state.isLoading">Save</v-btn>
+                        <v-btn type="sumbit" class="w-full" color="primary" :loading="store.state.isLoading">Save</v-btn> 
+          
                     </div>
-                   
-                   
                 </form>
-              
             </v-card-text>
         </v-card>
     </v-container>
 </template>
 <script setup>
     import {reactive, createResource, createToaster, useStore, inject,onMounted,ref,computed} from '@/plugin';
-    import ComToolbar from '@/components/ComToolbar.vue';  
+    import ComToolbar from '@/components/ComToolbar.vue';   
+
     const pos_license = inject('$pos_license'); 
     const auth = inject('$auth');
     const toast = createToaster();
@@ -84,7 +83,8 @@
         //     state.device_name = "Demo";
         //     onSave();
         // }
-    })
+    });
+
 
     const is_startup_device = ref(false); 
     function onExitWindow() {
@@ -99,6 +99,7 @@
     }
 
     const is_window = localStorage.getItem("is_window");
+
     const is_apk_ipa = localStorage.getItem("apkipa");
     const check = computed(()=>{
         pos_license.web_platform  = false;

@@ -246,6 +246,9 @@ def get_products(sale_products):
     products =[] 
     for sp in sale_products:
         products.append({
+            "parent_product_name":sp.get("product_name"),
+            "parent_product_kh":sp.get("product_name_kh"),
+            "parent_quantity":sp.get("quantity"),
             "sale_product_id":sp.get("name"),
             "product_code":sp.get("product_code"),
             "product_name":sp.get("product_name"),
@@ -273,8 +276,8 @@ def get_products(sale_products):
                     "sale_product_id":sp.get("name"),
                     "product_code":c.get("product_code"),
                     "product_name":c.get("product_name"),
-                    "product_name_kh":sp.get("product_name_kh") or sp.get("product_name"),
-                    "quantity":c.get("quantity") * (sp.get("quantity") or 1),
+                    "product_name_kh": c.get("product_name_kh") or c.get("product_name"),
+                    "quantity":(c.get("quantity") or 1) * (sp.get("quantity") or 1),
                     "price":c.get("price"),
                     "order_by": sp.get("order_by"),
                     "order_time": sp.get("order_time"),

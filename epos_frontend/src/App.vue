@@ -75,13 +75,21 @@ const { mobile } = useDisplay();
 const licenseToaster = createToaster({ position: "top", duration: 1000*60*60, type: "error" });
 
 socket.on("PrintReceipt", (arg) => {	
-	if(localStorage.getItem("is_window")=="1"){
+	let isWindows = localStorage.getItem("is_window")=="1";
+	let isElectron= localStorage.getItem("electronWrapper") == "1";
+	if( isWindows || isElectron){
 		const device_setting = JSON.parse(localStorage.getItem("device_setting"));
 		const station_device_printing = device_setting?.station_device_printing||"";
-		const data = JSON.parse(arg) ;	
+		const data = JSON.parse(arg) ;	 
 		//data.sale.pos_profile == localStorage.getItem("pos_profile")
 		if( station_device_printing == data.station_device_printing){
-			window.chrome.webview.postMessage(arg);
+			if(isWindows){
+				window.chrome.webview.postMessage(arg);
+			}
+			else if(isElectron){ 
+				console.info("electron message action => ",data.action)
+				window.electronAPI.send('vue-message', arg);
+			}
 		}
 	} 
 });
@@ -117,7 +125,10 @@ socket.on("OnPrintReport", async (arg) => {
 			});			
 		}
 	}
-})
+});
+
+
+
 
 let printService  = null;
 const isLoading = computed(() => {

@@ -554,9 +554,17 @@ function onProcessPrintToKitchen(doc) {
             socket.emit("PrintReceipt", JSON.stringify(productUSBPrinter));
         }
     } else {
-        if (localStorage.getItem("is_window") == 1) {
+        let isWindows = localStorage.getItem("is_window")=="1";
+	    let isElectron= localStorage.getItem("electronWrapper") == "1";        
+        if (isWindows || isElectron) {
+            let _message_data = JSON.stringify(data);
             if ((data.product_printers ?? []).length > 0) {
-                window.chrome.webview.postMessage(JSON.stringify(data));
+                if(isWindows){
+                    window.chrome.webview.postMessage(JSON.stringify(data));
+                }else if(isElectron){
+                    console.info("electron message action => ",data.action)
+                    window.electronAPI.send('vue-message', _message_data);
+                }                
             }
         }
         else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {

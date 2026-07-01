@@ -244,10 +244,18 @@ function onPrint(){
         }       
     }   
     
- 
-    if(localStorage.getItem("is_window")==1){
-        window.chrome.webview.postMessage(JSON.stringify(data));
-    }else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
+    let isWindows = localStorage.getItem("is_window")=="1";
+    let isElectron= localStorage.getItem("electronWrapper") == "1";
+    let _message_data = JSON.stringify(data);
+    if(isWindows || isElectron){ 
+        if(isWindows){
+            window.chrome.webview.postMessage(_message_data);
+        }else{
+            console.info("electron message action => ",data.action)
+            window.electronAPI.send('vue-message', _message_data);
+        }       
+    }
+    else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
         data.printer = _printer;
         flutterChannel.postMessage(JSON.stringify(data));
     }
