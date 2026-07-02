@@ -78,6 +78,7 @@ def submit_order(data=None,print_request_bill=False,print_server_url=None,print_
             "epos_restaurant_2023.api.sale.generate_print_queue",
             queue="short",
             doc=sale_doc,
+            print_server_url = print_server_url,
             products=(_new_products or []) + (deleted_products or []) ,
             at_front=True
         )

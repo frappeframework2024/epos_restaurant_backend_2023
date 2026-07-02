@@ -407,10 +407,8 @@ def get_mobile_order_to_kitchen_pdf(template = "Online Order Kitchen Ticket",doc
 
 
 @frappe.whitelist()
-def get_kitchen_order_template(template = "Kitchen Order PDF",doc=None):
+def get_kitchen_order_template(template = "Default Kitchen Order",doc=None):
     template =frappe.get_cached_doc("POS Receipt Template",template)
-    
-    
     
     html_template = """
     <html>

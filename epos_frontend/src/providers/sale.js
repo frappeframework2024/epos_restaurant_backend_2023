@@ -256,6 +256,7 @@ export default class Sale {
                 this.reSendSaleProductKOT = []
                 re_send_sale_product_kot = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "")));
                 re_send_sale_product_kot.forEach((r)=>{
+
                     if(this.setting.pos_setting.combo_menu_print_captain_by_items_printer && r.is_combo_menu){
                         this.reSendSaleProductKOT.push(r);
                     }else{
