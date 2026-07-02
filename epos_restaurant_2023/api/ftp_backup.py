@@ -2,6 +2,7 @@
 # For license information, please see license.txt
 
 import ftplib, frappe
+from ftplib import FTP
 import os, shutil
 import shlex, subprocess
 from frappe.model.document import Document
@@ -131,41 +132,74 @@ async def run_bench_command(command, kwargs=None):
     subprocess.run(command, input=cmd_input, capture_output=True)
 
 def upload_to_ftp():
-    folder_name = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
+    folder_name = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     setting = frappe.get_doc('FTP Backup')
     site_name = setting.ftp_folder_name if setting.ftp_folder_name != '' else cstr(frappe.local.site)
     backup_folder = setting.ftp_backup_path
     if backup_folder is None or backup_folder == '' :
         backup_folder = frappe.utils.get_site_path(conf.get("backup_path", "private/backups"))
     ftp_password = password.get_decrypted_password("FTP Backup", "FTP Backup", fieldname="ftp_password",raise_exception=False)
-    session = ftplib.FTP_TLS(setting.ftp_url,setting.ftp_user,ftp_password)
-    session.prot_p()
-    session.encoding = 'latin-1'
-    if site_name in session.nlst():
-        session.cwd(site_name)
-        for folder in session.nlst():
-            if folder != "." and folder != "..":
-                created_date = folder.split('_', 1)[0]
-                if(len(created_date) >= 10 ):
-                    d1 = datetime.strptime(created_date, "%Y-%m-%d")
-                    d2 = datetime.today()
-                    if (d2-d1).days >= setting.delete_after:
-                        session.cwd(folder)
-                        for file in session.nlst():
-                            if file != "." and file != "..":
-                                session.delete(file)
-                        session.cwd("../")
-                        session.rmd(folder)
-        session.mkd(folder_name)
-        session.cwd(folder_name)
-    else : 
-        session.mkd(site_name)
-        session.cwd(site_name)
-        session.mkd(folder_name)
-        session.cwd(folder_name)
-    for filename in os.listdir(backup_folder):
-        file_path = os.path.join(backup_folder, filename)
-        with open(file_path, 'rb') as file:
-            session.storbinary(f'STOR {filename}', file, blocksize=8192)
-    session.quit()
+    if setting.mode == "FTP_TLS":
+        session = ftplib.FTP_TLS(setting.ftp_url,setting.ftp_user,ftp_password)
+        session.prot_p()
+        session.encoding = 'latin-1'
+        if site_name in session.nlst():
+            session.cwd(site_name)
+            for folder in session.nlst():
+                if folder != "." and folder != "..":
+                    created_date = folder.split('_', 1)[0]
+                    if(len(created_date) >= 10 ):
+                        d1 = datetime.strptime(created_date, "%Y-%m-%d")
+                        d2 = datetime.today()
+                        if (d2-d1).days >= setting.delete_after:
+                            session.cwd(folder)
+                            for file in session.nlst():
+                                if file != "." and file != "..":
+                                    session.delete(file)
+                            session.cwd("../")
+                            session.rmd(folder)
+            session.mkd(folder_name)
+            session.cwd(folder_name)
+        else : 
+            session.mkd(site_name)
+            session.cwd(site_name)
+            session.mkd(folder_name)
+            session.cwd(folder_name)
+        for filename in os.listdir(backup_folder):
+            file_path = os.path.join(backup_folder, filename)
+            with open(file_path, 'rb') as file:
+                session.storbinary(f'STOR {filename}', file, blocksize=8 * 1024 * 1024)
+        session.quit()
+    else:
+        session = FTP()
+        session.connect(setting.ftp_url, 21)
+        session.login(setting.ftp_user, ftp_password)
+        session.encoding = "latin-1"
+        if site_name in session.nlst():
+            session.cwd(site_name)
+            for folder in session.nlst():
+                if folder != "." and folder != "..":
+                    created_date = folder.split('_', 1)[0]
+                    if(len(created_date) >= 10 ):
+                        d1 = datetime.strptime(created_date, "%Y-%m-%d")
+                        d2 = datetime.today()
+                        if (d2-d1).days >= setting.delete_after:
+                            session.cwd(folder)
+                            for file in session.nlst():
+                                if file != "." and file != "..":
+                                    session.delete(file)
+                            session.cwd("../")
+                            session.rmd(folder)
+            session.mkd(folder_name)
+            session.cwd(folder_name)
+        else : 
+            session.mkd(site_name)
+            session.cwd(site_name)
+            session.mkd(folder_name)
+            session.cwd(folder_name)
+        for filename in os.listdir(backup_folder):
+            file_path = os.path.join(backup_folder, filename)
+            with open(file_path, 'rb') as file:
+                session.storbinary(f'STOR {filename}', file, blocksize=8 * 1024 * 1024)
+        session.quit()
     frappe.publish_realtime("backup_database", {"message": "Database Backup Successfully"},user=frappe.session.user)
