@@ -58,6 +58,7 @@ async function onSend() {
                 resendProductData.push({
                     sale_product_name: r.name,
                     printer: p.printer,
+                    actual_printer_name: p.actual_printer_name || p.printer,
                     group_item_type: p.group_item_type,
                     is_label_printer: p.is_label_printer == 1,
                     ip_address: p.ip_address,

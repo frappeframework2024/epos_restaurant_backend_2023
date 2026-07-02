@@ -113,6 +113,7 @@ async function onSaleOrderClick(s) {
                                     sale_product_name: r.name,
                                     move_from_sale_printed: 1,
                                     printer: p.printer,
+                                    actual_printer_name: P.actual_printer_name || p.printer,
                                     group_item_type: p.group_item_type,
                                     is_label_printer: p.is_label_printer == 1,
                                     ip_address: p.ip_address,

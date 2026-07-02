@@ -133,6 +133,7 @@ function generateProductPrinterMoveItem(targetSale, old_sale, old_table) {
                                 move_from_table: old_table,
                                 move_from_sale: old_sale,
                                 printer: p.printer,
+                                actual_printer_name: p.actual_printer_name || p.printer,
                                 group_item_type: p.group_item_type,
                                 is_label_printer: p.is_label_printer == 1,
                                 ip_address: p.ip_address,

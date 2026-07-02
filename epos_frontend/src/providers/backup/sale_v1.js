@@ -2049,6 +2049,7 @@ export default class Sale {
     }
 
     onPrintToKitchen(doc, products = null) {
+     
         var _productPrinters = products ?? this.productPrinters; 
         const data = {
             action: "print_to_kitchen",
@@ -2057,13 +2058,14 @@ export default class Sale {
             product_printers: _productPrinters,
             station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
             printers: []
-        }
+        } 
+
         var groupKeys = "{printer:$.printer,actual_printer_name:$.actual_printer_name,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port}"
         var groupFields = "$.printer+','+$.actual_printer_name+','+$.group_item_type+','+$.ip_address+','+$.port";
         var printers = Enumerable.from(data.product_printers).groupBy(groupKeys, "", groupKeys, groupFields).toArray();
         printers.forEach((p) => {
             var _printer = data.product_printers.filter((x) => x.printer == p.printer)
-            if (_printer.length > 0) {
+            if (_printer.length > 0) { 
                 data.printers.push({
                     "printer_name": _printer[0].printer,
                     "actual_printer_name": _printer[0].actual_printer_name || _printer[0].printer,
