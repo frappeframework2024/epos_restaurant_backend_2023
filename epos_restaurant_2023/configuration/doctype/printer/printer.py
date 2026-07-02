@@ -19,6 +19,7 @@ def update_product_printer_and_temp_menu_printer(self):
 	frappe.db.sql("""update `tabProduct Printer` 
 					set 
 					printer_name=%(printer_name)s,
+					actual_printer_name=%(actual_printer_name)s,
 					group_item_type=%(group_item_type)s,
 					ip_address=%(ip_address)s,
 					port=%(port)s,
@@ -28,6 +29,7 @@ def update_product_printer_and_temp_menu_printer(self):
 						printer=%(name)s
 					""",{
 						"printer_name":self.printer_name,
+      					"actual_printer_name":actual_printer_name,
 						"group_item_type":self.group_item_type,
 						"ip_address":self.ip_address,
 						"port":self.port,
@@ -39,6 +41,7 @@ def update_product_printer_and_temp_menu_printer(self):
 	frappe.db.sql("""update `tabStation Printers` 
 					set 
 					printer_name=%(printer_name)s,
+					actual_printer_name = %(actual_printer_name)s,
 					group_item_type=%(group_item_type)s,
 					ip_address=%(ip_address)s,
 					port=%(port)s,
@@ -48,6 +51,7 @@ def update_product_printer_and_temp_menu_printer(self):
 						printer=%(name)s
 					""",{
 						"printer_name":self.printer_name,
+						"actual_printer_name":self.actual_printer_name,
 						"group_item_type":self.group_item_type,
 						"ip_address":self.ip_address,
 						"port":self.port,
@@ -141,10 +145,11 @@ def get_printer(doc):
 	for p in doc.printers:
 		printers.append({
 				"printer":p.printer_name,
+    			"actual_printer_name": p.actual_printer_name or p.printer_name,
 				"group_item_type":p.group_item_type,
 				"ip_address":p.ip_address,
 				"port":int(p.port or 0),
 				"is_label_printer":p.is_label_printer,
 				"usb_printing":p.usb_printing,
-	})
+		})
 	return printers

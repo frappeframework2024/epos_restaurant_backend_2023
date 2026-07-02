@@ -217,7 +217,8 @@ def get_temp_menu_products(parent_menu,mobile=0,sort_order_by="product_name_en",
                 a.is_empty_stock_warning,
                 a.kitchen_group,
                 a.kitchen_group_sort_order,
-                a.rate_include_tax
+                a.rate_include_tax,
+                b.is_favorite
             from  `tabTemp Product Menu` a
             inner join `tabProduct` b on b.name = a.product_code
             where 
@@ -270,7 +271,16 @@ def get_product_by_barcode(barcode):
                     "is_timer_product":p.is_timer_product,
                     "is_open_price":p.is_open_price,
                     "prices":p.prices,
-                    "printers":json.dumps(([pr.printer,pr.group_item_type] for pr in p.printers),default=json_handler),
+                    "printers":json.dumps((
+                        { 
+                            "printer":pr.printer_name,
+                            "actual_printer_name":pr.actual_printer_name or pr.printer_name,
+                            "group_item_type":pr.group_item_type,
+                            "ip_address":pr.ip_address,
+                            "port":int(pr.port or 0),
+                            "is_label_printer":pr.is_label_printer,
+                            "usb_printing":pr.usb_printing
+                        } for pr in p.printers),default=json_handler),
                     "modifiers": "[]",
                     "photo": p.photo,
                     "type": "product",
@@ -308,7 +318,17 @@ def get_product_by_barcode(barcode):
                         "is_timer_product": product.is_timer_product,
                         "is_inventory_product": product.is_inventory_product,
                         "prices":'[]',#we return empty array because tis barcode is product price barcode
-                        "printers":json.dumps(([pr.printer,pr.group_item_type] for pr in product.printers),default=json_handler),
+                        "printers":json.dumps((
+                                               { 
+                            "printer":pr.printer_name,
+                            "actual_printer_name":pr.actual_printer_name or pr.printer_name,
+                            "group_item_type":pr.group_item_type,
+                            "ip_address":pr.ip_address,
+                            "port":int(pr.port or 0),
+                            "is_label_printer":pr.is_label_printer,
+                            "usb_printing":pr.usb_printing
+                        }
+                                               for pr in product.printers),default=json_handler),
                         "modifiers": "[]",
                         "photo": product.photo,
                         "type": "product",
@@ -674,6 +694,7 @@ def get_product_printers(product_code):
     for p in doc.printers:
             printers.append({
                     "printer":p.printer_name,
+                    "actual_printer_name":p.actual_printer_name or p.printer_name,
                     "group_item_type":p.group_item_type,
                     "ip_address":p.ip_address,
                     "port":int(p.port or 0),

@@ -766,11 +766,13 @@ def add_product_to_temp_menu(self):
 			for p in self.printers:
 				printers.append({
 						"printer":p.printer_name,
+      					"actual_printer_name":p.actual_printer_name or p.printer_name,
 						"group_item_type":p.group_item_type,
 						"ip_address":p.ip_address,
 						"port":int(p.port or 0),
 						"is_label_printer":p.is_label_printer,
 						"usb_printing":p.usb_printing,
+      
 					})
 		prices = []
 		if len(self.product_price or [])>0:
@@ -784,7 +786,7 @@ def add_product_to_temp_menu(self):
 						'unit':p.unit, 
 						'price_rule' : p.price_rule,
 						'default_discount':p.default_discount
-						})
+					})
 		
 		mc0 = []
 		mc1 = Enumerable(self.product_modifiers).select(lambda x: x.modifier_category).distinct()

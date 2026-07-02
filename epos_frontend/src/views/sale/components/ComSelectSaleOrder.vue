@@ -114,6 +114,7 @@ async function _onNetworkPrintAll(action, receipt,printer){
         "template_name":receipt["pos_receipt_template"],
         "printer" : {
             "printer_name": printer[0].printer_name,
+            "actual_printer_name": printer[0].actual_printer_name || printer[0].printer_name,
             "ip_address": printer[0].ip_address,
             "port": printer[0].port,
             "cashier_printer": printer[0].cashier_printer,
@@ -313,6 +314,7 @@ async function onPrintProcess(action, receipt,doc){
     if(printer.length>0){
         _printer = {
             "printer_name": printer[0].printer_name,
+            "actual_printer_name": printer[0].actual_printer_name || printer[0].printer_name,
             "ip_address": printer[0].ip_address,
             "port": printer[0].port,
             "cashier_printer": printer[0].cashier_printer,

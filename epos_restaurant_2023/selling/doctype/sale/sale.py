@@ -290,7 +290,7 @@ class Sale(Document):
 		if not self.time_in:
 			pass	
 
-		add_sale_product_spa_commission(self)
+		
  
 	def before_cancel(self):
 		self.docstatus = 2
@@ -1574,7 +1574,7 @@ def validate_tax(doc):
 		# if doc.calculate_tax_1_after_discount == 1:
 		# 	doc.taxable_amount_1 =   amount - doc.total_discount			 
 			
-		doc.taxable_amount_1 *= (doc.percentage_of_price_to_calculate_tax_1/100)
+		doc.taxable_amount_1 *= ((doc.percentage_of_price_to_calculate_tax_1 or 100)/100)
 		doc.tax_1_amount =  (doc.taxable_amount_1 or 0) * ((doc.tax_1_rate or 0)/100)
 
 		#Tax 2
@@ -1588,7 +1588,7 @@ def validate_tax(doc):
 		if doc.calculate_tax_2_after_adding_tax_1==1:
 			doc.taxable_amount_2 +=  doc.tax_1_amount
 
-		doc.taxable_amount_2 *= (doc.percentage_of_price_to_calculate_tax_2/100)
+		doc.taxable_amount_2 *= ((doc.percentage_of_price_to_calculate_tax_2 or 100)/100)
 		doc.tax_2_amount =  (doc.taxable_amount_2 or 0) *  ((doc.tax_2_rate or 0) /100)
 
 		#tax 3
@@ -1606,7 +1606,7 @@ def validate_tax(doc):
 		if doc.calculate_tax_3_after_adding_tax_2==1:
 			doc.taxable_amount_3 = doc.taxable_amount_3 +  doc.tax_2_amount 
 		
-		doc.taxable_amount_3 *= (doc.percentage_of_price_to_calculate_tax_3/100)
+		doc.taxable_amount_3 *= ((doc.percentage_of_price_to_calculate_tax_3 or 100)/100)
 		doc.tax_3_amount =  (doc.taxable_amount_3 or 0) *  ((doc.tax_3_rate or 0) /100)
 		
 		#total tax

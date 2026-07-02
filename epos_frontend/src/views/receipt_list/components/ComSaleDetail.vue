@@ -245,6 +245,7 @@ async function onPrint() {
     if (printer.length > 0) {
         _printer = {
             "printer_name": printer[0].printer_name,
+            "actual_printer_name": printer[0].actual_printer_name || printer[0].printer_name,
             "ip_address": printer[0].ip_address,
             "port": printer[0].port,
             "cashier_printer": printer[0].cashier_printer,
@@ -288,8 +289,9 @@ async function onPrint() {
     if (isWindows || isElectron) {
         if (activeReport.value.pos_receipt_file_name != "" && activeReport.value.pos_receipt_file_name != null) {
             if (await confirm({ title: $t("Print Receipt"), text: $t("msg.Are you sure to print receipt") })) {
+                let _message_data = JSON.stringify(data);
                 if(isWindows){
-                    window.chrome.webview.postMessage(JSON.stringify(data));
+                    window.chrome.webview.postMessage(_message_data);
                 }else if(isElectron){
                     console.info("electron message action => ",data.action)
                     window.electronAPI.send('vue-message', _message_data);
@@ -528,6 +530,7 @@ function generateSaleProductPrintToKitchen(doc, note) {
                 combo_menu_data:r.combo_menu_data,
                 deleted_note: r.deleted_item_note,
                 order_by: r.order_by,
+                order_time:r.order_time,
                 creation: r.creation,
                 modified: r.modified,
                 reference_sale_product: r.reference_sale_product,

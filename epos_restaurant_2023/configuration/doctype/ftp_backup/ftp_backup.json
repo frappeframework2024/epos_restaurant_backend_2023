@@ -12,6 +12,7 @@
   "ftp_user",
   "ftp_password",
   "backup_type",
+  "mode",
   "column_break_mojg",
   "ftp_url",
   "delete_after",
@@ -114,12 +115,19 @@
    "fieldname": "enabled_clear_logs",
    "fieldtype": "Check",
    "label": "Enabled Clear Logs"
+  },
+  {
+   "default": "FTP_TLS",
+   "fieldname": "mode",
+   "fieldtype": "Select",
+   "label": "Mode",
+   "options": "FTP_TLS\nFTP"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-01-29 09:12:17.192010",
+ "modified": "2026-07-02 11:07:58.396790",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "FTP Backup",

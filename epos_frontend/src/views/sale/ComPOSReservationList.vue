@@ -360,10 +360,15 @@ async function reservationProductConvert(reservation) {
     _p.printers.forEach(_printer => {
       printers.push({
         "printer": _printer.printer_name,
+        "actual_printer_name": _printer.actual_printer_name || _printer.printer_name,
         "group_item_type": _printer.group_item_type,
-        "is_label_printer": _printer.is_label_printer
+        "ip_address": _printer.ip_address,
+        "port": _printer.port,
+        "is_label_printer": _printer.is_label_printer,
+        "usb_printing":_printer.usb_printing
       })
-    })
+    });
+    
     var saleProduct = {
       product_code: p.product_code,
       product_name: p.product_name,

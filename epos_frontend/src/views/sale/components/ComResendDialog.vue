@@ -79,6 +79,7 @@ async function onSend() {
                     combo_menu: r.combo_menu,
                     combo_menu_data:r.combo_menu_data,
                     order_by: r.order_by,
+                    order_time:r.order_time,
                     creation: r.creation,
                     modified: r.modified,
                     is_timer_product: (r.is_timer_product || 0),

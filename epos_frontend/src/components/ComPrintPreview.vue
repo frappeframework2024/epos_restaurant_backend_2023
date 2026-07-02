@@ -205,6 +205,7 @@ function onPrint(){
     if (printers.length>0){
         _printer = {
             "printer_name": printers[0].printer_name,
+            "actual_printer_name": printers[0].actual_printer_name || printers[0].printer_name,
             "ip_address": printers[0].ip_address,
             "port": printers[0].port,
             "cashier_printer": printers[0].cashier_printer,

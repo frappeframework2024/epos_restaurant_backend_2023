@@ -443,6 +443,7 @@ async function onDeleteBill() {
                     combo_menu_data: r.combo_menu_data,
                     deleted_note: r.deleted_item_note,
                     order_by: r.order_by,
+                    order_time:r.order_time,
                     creation: r.creation,
                     modified: r.modified,
                     reference_sale_product: r.reference_sale_product,
@@ -474,14 +475,15 @@ function onProcessPrintToKitchen(doc) {
         printers: []
     }
 
-    var groupKeys = "{printer:$.printer,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port}"
-    var groupFields = "$.printer+','+$.group_item_type+','+$.ip_address+','+$.port";
+    var groupKeys = "{printer:$.printer,actual_printer_name:$.actual_printer_name,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port}"
+    var groupFields = "$.printer+','+$.actual_printer_name+','+$.group_item_type+','+$.ip_address+','+$.port";
     var printers = Enumerable.from(data.product_printers).groupBy(groupKeys, "", groupKeys, groupFields).toArray();    
     printers.forEach((p) => {
         var _printer = data.product_printers.filter((x) => x.printer == p.printer)
         if (_printer.length > 0) {
             data.printers.push({
                 "printer_name": _printer[0].printer,
+                "actual_printer_name": _printer[0].actual_printer_name || _printer[0].printer,
                 "group_item_type": _printer[0].group_item_type,
                 "ip_address": _printer[0].ip_address,
                 "port": _printer[0].port,
@@ -517,6 +519,7 @@ function onProcessPrintToKitchen(doc) {
                 if (p.usb_printing == 1) {
                     productUSBPrinter.printers.push({
                         "printer_name": p.printer_name,
+                        "actual_printer_name": p.actual_printer_name || p.printer_name,
                         "group_item_type": p.group_item_type,
                         "ip_address": p.ip_address,
                         "port": p.port,
@@ -530,6 +533,7 @@ function onProcessPrintToKitchen(doc) {
                         "station": this.setting?.device_setting?.name ?? "",
                         "printer": {
                             "printer_name": p.printer_name,
+                            "actual_printer_name": p.actual_printer_name || p.printer_name,
                             "group_item_type": p.group_item_type,
                             "ip_address": p.ip_address,
                             "port": p.port,
@@ -560,7 +564,7 @@ function onProcessPrintToKitchen(doc) {
             let _message_data = JSON.stringify(data);
             if ((data.product_printers ?? []).length > 0) {
                 if(isWindows){
-                    window.chrome.webview.postMessage(JSON.stringify(data));
+                    window.chrome.webview.postMessage(_message_data);
                 }else if(isElectron){
                     console.info("electron message action => ",data.action)
                     window.electronAPI.send('vue-message', _message_data);

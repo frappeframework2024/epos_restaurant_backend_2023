@@ -10,6 +10,7 @@ import {
 import { createToaster } from "@meforma/vue-toaster";
 import socket from '@/utils/socketio';
 import { FrappeApp } from 'frappe-js-sdk';
+import { v4 as uuidv4 } from "uuid";
 
 import NumberFormat from 'number-format.js';
 const frappe = new FrappeApp();
@@ -741,7 +742,7 @@ export default class Sale {
         return promotions
     }
     return promotions
-	}
+    }
 
     //on sale product apply tax setting
     onSaleProductApplyTax(tax_rule, sp) {
@@ -871,40 +872,40 @@ export default class Sale {
     }
 
     getRateBeforeTax(amount, tax_rule, tax_1_rate, tax_2_rate, tax_3_rate){
-		amount= (amount || 0)
+        amount= (amount || 0)
 
-		const t1_r = (tax_1_rate || 0) / 100
-		const t2_r = (tax_2_rate ||  0)  / 100
-		const t3_r = (tax_3_rate || 0)  / 100
-		
-		let tax_1_amount = 0
-		let tax_2_amount = 0
-		let tax_3_amount = 0
-		let price = 0
-
-		let t1_af_disc = tax_rule.calculate_tax_1_after_discount
-		let t2_af_disc = tax_rule.calculate_tax_2_after_discount
-
-		let t2_af_add_t1 = tax_rule.calculate_tax_2_after_adding_tax_1
+        const t1_r = (tax_1_rate || 0) / 100
+        const t2_r = (tax_2_rate ||  0)  / 100
+        const t3_r = (tax_3_rate || 0)  / 100
         
-		let t3_af_disc	= tax_rule.calculate_tax_3_after_discount
+        let tax_1_amount = 0
+        let tax_2_amount = 0
+        let tax_3_amount = 0
+        let price = 0
 
-		let t3_af_add_t1 =  tax_rule.calculate_tax_3_after_adding_tax_1
-		let t3_af_add_t2 =   tax_rule.calculate_tax_3_after_adding_tax_2
+        let t1_af_disc = tax_rule.calculate_tax_1_after_discount
+        let t2_af_disc = tax_rule.calculate_tax_2_after_discount
+
+        let t2_af_add_t1 = tax_rule.calculate_tax_2_after_adding_tax_1
+        
+        let t3_af_disc	= tax_rule.calculate_tax_3_after_discount
+
+        let t3_af_add_t1 =  tax_rule.calculate_tax_3_after_adding_tax_1
+        let t3_af_add_t2 =   tax_rule.calculate_tax_3_after_adding_tax_2
 
 
-		let tax_rate_con = 0
-		tax_rate_con = (1 + t1_r + t2_r 
-							+ (t1_r * t2_af_add_t1 * t2_r) 
-							+ t3_r + (t1_r * t3_af_add_t1 * t3_r) 
-							+ (t2_r * t3_af_add_t2 * t3_r)
-							+ (t1_r * t2_af_add_t1 * t2_r * t3_af_add_t2 * t3_r))  
-		tax_rate_con = tax_rate_con || 1
+        let tax_rate_con = 0
+        tax_rate_con = (1 + t1_r + t2_r 
+                            + (t1_r * t2_af_add_t1 * t2_r) 
+                            + t3_r + (t1_r * t3_af_add_t1 * t3_r) 
+                            + (t2_r * t3_af_add_t2 * t3_r)
+                            + (t1_r * t2_af_add_t1 * t2_r * t3_af_add_t2 * t3_r))  
+        tax_rate_con = tax_rate_con || 1
  
-		price = amount /  (tax_rate_con ==0?1:tax_rate_con)
+        price = amount /  (tax_rate_con ==0?1:tax_rate_con)
         
-		return  price
-	}
+        return  price
+    }
 
     //on sale apply  tax setting
     onSaleApplyTax(tax_rule, s) {
@@ -1728,12 +1729,12 @@ export default class Sale {
                 return
             }
         }
-        const resp = await Ping(this.setting)
-        if(resp == 0){
-            toaster.error($t('Please check your network connection'));
-            this.loading = false;
-            return
-        }
+        // const resp = await Ping(this.setting)
+        // if(resp == 0){
+        //     toaster.error($t('Please check your network connection'));
+        //     this.loading = false;
+        //     return
+        // }
 
         return new Promise(async (resolve) => {
             if (this.sale.sale_products.length == 0 && this.sale.name == undefined && (this.sale.from_reservation || "") == "") {
@@ -1744,11 +1745,16 @@ export default class Sale {
                 resolve(false);
             }
             else {
-                
-                 //generate uuid to sale product if new item
-                this.sale.sale_products.filter(r => r.sale_product_status == 'New' && !r.name).forEach((r) => {                     
-                    r.__islocal = 1; 
-                    r.name = uuidv4(); 
+                const now = new Date();
+                const _now_format = moment(now).format('yyyy-MM-DD HH:mm:ss.SSSSSS');
+
+                //generate uuid to sale product if new item
+                this.sale.sale_products.filter(r => r.sale_product_status == 'New' ).forEach((r) => {    
+                    if(!r.name){                 
+                        r.__islocal = 1; 
+                        r.name = uuidv4(); 
+                    }
+                    r.order_time = _now_format
                 });
 
                 let doc = JSON.parse(JSON.stringify(this.sale));
@@ -1854,6 +1860,14 @@ export default class Sale {
                         this.sale.pos_profile = this.setting?.pos_profile;
                         this.sale.outlet = this.setting?.outlet;
                         this.action = "quick_pay";
+
+                        //generate uuid to sale product if new item
+                        this.sale.sale_products.filter(r => r.sale_product_status == 'New' && !r.name).forEach((r) => {                     
+                            r.__islocal = 1; 
+                            r.name = uuidv4(); 
+                        });
+
+
                         let doc = JSON.parse(JSON.stringify(this.sale));
                         this.generateProductPrinters();
                         let msg = `${u.name} quick pay`;
@@ -1909,6 +1923,12 @@ export default class Sale {
                         return
                     }
                     socket.emit("ShowOrderInCustomerDisplay", this.sale, "paid", this.customer_display_key);
+                    //generate uuid to sale product if new item
+                    this.sale.sale_products.filter(r => r.sale_product_status == 'New' && !r.name).forEach((r) => {                     
+                        r.__islocal = 1; 
+                        r.name = uuidv4(); 
+                    });
+
                     this.generateProductPrinters();
                     const now = new Date();
                     const u = JSON.parse(localStorage.getItem('make_order_auth'));
@@ -1991,9 +2011,14 @@ export default class Sale {
         }
         else if (this.action == "payment") {  
             //open cashdrawer
-            if (localStorage.getItem("is_window") == "1") {
+            let isWindows = localStorage.getItem("is_window")=="1";
+            let isElectron= localStorage.getItem("electronWrapper") == "1";
+            if (isWindows) {
                 window.chrome.webview.postMessage(JSON.stringify({ action: "open_cashdrawer" }));
+            }else if (isElectron){
+                ///
             }
+
             this.onPrintToKitchen(doc); 
             if (this.printWaitingOrderAfterPayment) {
                     this.onPrintWaitingOrder(doc);
@@ -2033,14 +2058,15 @@ export default class Sale {
             station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
             printers: []
         }
-        var groupKeys = "{printer:$.printer,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port}"
-        var groupFields = "$.printer+','+$.group_item_type+','+$.ip_address+','+$.port";
+        var groupKeys = "{printer:$.printer,actual_printer_name:$.actual_printer_name,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port}"
+        var groupFields = "$.printer+','+$.actual_printer_name+','+$.group_item_type+','+$.ip_address+','+$.port";
         var printers = Enumerable.from(data.product_printers).groupBy(groupKeys, "", groupKeys, groupFields).toArray();
         printers.forEach((p) => {
             var _printer = data.product_printers.filter((x) => x.printer == p.printer)
             if (_printer.length > 0) {
                 data.printers.push({
                     "printer_name": _printer[0].printer,
+                    "actual_printer_name": _printer[0].actual_printer_name || _printer[0].printer,
                     "group_item_type": _printer[0].group_item_type,
                     "ip_address": _printer[0].ip_address,
                     "port": _printer[0].port,
@@ -2072,6 +2098,7 @@ export default class Sale {
                     if (p.usb_printing == 1) {
                         productUSBPrinter.printers.push({
                             "printer_name": p.printer_name,
+                            "actual_printer_name": p.actual_printer_name || p.printer_name,
                             "group_item_type": p.group_item_type,
                             "ip_address": p.ip_address,
                             "port": p.port,
@@ -2081,12 +2108,12 @@ export default class Sale {
                             "products": temp_sale_products
                         });
 
-
                     } else {
                         kotProducts.printers.push({
                             "station": this.setting?.device_setting?.name ?? "",
                             "printer": {
                                 "printer_name": p.printer_name,
+                                "actual_printer_name": p.actual_printer_name || p.printer_name,
                                 "group_item_type": p.group_item_type,
                                 "ip_address": p.ip_address,
                                 "port": p.port,
@@ -2112,7 +2139,7 @@ export default class Sale {
             }
         } else {
             let isWindows = localStorage.getItem("is_window")=="1";
-	        let isElectron= localStorage.getItem("electronWrapper") == "1";
+            let isElectron= localStorage.getItem("electronWrapper") == "1";
             if (isWindows || isElectron ) {
                 if ((data.product_printers ?? []).length > 0) {
                     let _message_data = JSON.stringify(data);
@@ -2120,7 +2147,7 @@ export default class Sale {
                         window.chrome.webview.postMessage(_message_data);
                     }else{
                         console.info("electron message action => ",data.action)
-				        window.electronAPI.send('vue-message', _message_data);
+                        window.electronAPI.send('vue-message', _message_data);
                     }                    
                 }
             }
@@ -2133,7 +2160,7 @@ export default class Sale {
                     //trigger print usb print
                     if (productUSBPrinter.printers.length > 0) {
                          flutterChannel.postMessage(JSON.stringify(productUSBPrinter));
-                        // socket.emit("PrintReceipt", JSON.stringify(productUSBPrinter));
+                        // socket.emit("PrintReceipt", JSON.stringify(productUSBPrinter))
                     }
                 }
             }
@@ -2209,6 +2236,7 @@ export default class Sale {
                                 move_from_table: moveFromTable,
                                 move_from_sale: moveFromSale,
                                 printer: p.printer_name,
+                                actual_printer_name: p.actual_printer_name ||  p.printer_name,
                                 group_item_type: p.group_item_type,
                                 is_label_printer: p.is_label_printer == 1,
                                 ip_address: p.ip_address,
@@ -2232,6 +2260,7 @@ export default class Sale {
                                 combo_menu: r.product_name,
                                 combo_menu_data: null,
                                 order_by: r.order_by,
+                                order_time: r.order_time,
                                 creation: r.creation,
                                 modified: r.modified,
                                 is_timer_product: (r.is_timer_product || 0),
@@ -2360,6 +2389,7 @@ export default class Sale {
                             combo_menu: r.combo_menu,
                             combo_menu_data: r.combo_menu_data,
                             order_by: r.order_by,
+                            order_time:r.order_time,
                             creation: r.creation,
                             modified: r.modified,
                             is_timer_product: (r.is_timer_product || 0),
@@ -2427,6 +2457,7 @@ export default class Sale {
                             combo_menu_data: r.combo_menu_data,
                             deleted_note: r.deleted_item_note,
                             order_by: r.order_by,
+                            order_time: r.order_time,
                             creation: r.creation,
                             modified: r.modified,
                             reference_sale_product: r.reference_sale_product,
@@ -2517,6 +2548,7 @@ export default class Sale {
         if(printer.length>0){
             _printer = {
                 "printer_name": printer[0].printer_name,
+                "actual_printer_name": printer[0].actual_printer_name || printer[0].printer_name,
                 "ip_address": printer[0].ip_address,
                 "port": printer[0].port,
                 "cashier_printer": printer[0].cashier_printer,
@@ -2550,15 +2582,16 @@ export default class Sale {
             }
         }
         let isWindows = localStorage.getItem("is_window")=="1";
-	    let isElectron= localStorage.getItem("electronWrapper") == "1";
+        let isElectron= localStorage.getItem("electronWrapper") == "1";
         if (receipt?.pos_receipt_file_name && (isWindows || isElectron)) {
             let _message_data = JSON.stringify(data);
             if(isWindows){
                 window.chrome.webview.postMessage(_message_data);
             }else if(isElectron){
                 console.info("electron message action => ",data.action)
-				window.electronAPI.send('vue-message', _message_data);
-            }     
+                window.electronAPI.send('vue-message', _message_data);
+            }
+            
         } else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
             if (printer.length <= 0) {
                 toaster.warning($t("Printer not yet config for this device"))
@@ -2598,6 +2631,7 @@ export default class Sale {
                 if(printer.length>0){
                     _printer = {
                         "printer_name": printer[0].printer_name,
+                        "actual_printer_name": printer[0].actual_printer_name || printer[0].printer_name,
                         "ip_address": printer[0].ip_address,
                         "port": printer[0].port,
                         "cashier_printer": printer[0].cashier_printer,
@@ -2624,8 +2658,9 @@ export default class Sale {
                         return
                     }
                 }
+
                 let isWindows = localStorage.getItem("is_window")=="1";
-	            let isElectron= localStorage.getItem("electronWrapper") == "1";
+                let isElectron= localStorage.getItem("electronWrapper") == "1";
                 if (isWindows || isElectron) {
                     let _message_data = JSON.stringify(data);
                     if(isWindows){
@@ -3079,7 +3114,7 @@ async function Ping(setting) {
     const controller = new AbortController();
     const timer = setTimeout(() => {
         controller.abort();
-    }, 3000)
+    }, 10000)
     try {
         const start = performance.now();
         let status = 0

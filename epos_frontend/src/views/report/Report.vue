@@ -496,6 +496,7 @@ function onPrint(){
     if(printers.length>0){
         _printer = {
             "printer_name": printers[0].printer_name,
+            "actual_printer_name": printers[0].actual_printer_name || printers[0].printer_name,
             "ip_address": printers[0].ip_address,
             "port": printers[0].port,
             "cashier_printer": printers[0].cashier_printer,
@@ -536,9 +537,10 @@ function onPrint(){
     let isWindows = localStorage.getItem("is_window")=="1";
     let isElectron= localStorage.getItem("electronWrapper") == "1";
     if(isWindows || isElectron ){
-        gv.onPrintWorkingDayAndCashierShift(activeReport.value.report_id,pos_profile, activeReport.value.doc_type)
+        gv.onPrintWorkingDayAndCashierShift(activeReport.value.report_id,pos_profile, activeReport.value.doc_type);
+        let _message_data = JSON.stringify(data);
         if(isWindows){
-            window.chrome.webview.postMessage(JSON.stringify(data));
+            window.chrome.webview.postMessage(_message_data);
         }else if(isElectron){
             console.info("electron message action => ",data.action)
             window.electronAPI.send('vue-message', _message_data);

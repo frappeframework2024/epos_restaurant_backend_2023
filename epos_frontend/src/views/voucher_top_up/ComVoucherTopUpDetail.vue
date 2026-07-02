@@ -126,6 +126,7 @@ async function onPrintVoucher( action, doc) {
     if(printer.length>0){
         _printer = {
             "printer_name": printer[0].printer_name,
+            "actual_printer_name": printer[0].actual_printer_name || printer[0].printer_name,
             "ip_address": printer[0].ip_address,
             "port": printer[0].port,
             "cashier_printer": printer[0].cashier_printer,
@@ -157,8 +158,9 @@ async function onPrintVoucher( action, doc) {
     let isWindows = localStorage.getItem("is_window")=="1";
 	let isElectron= localStorage.getItem("electronWrapper") == "1";
     if (isWindows || isElectron) {
+         let _message_data = JSON.stringify(data);
         if(isWindows){
-            window.chrome.webview.postMessage(JSON.stringify(data));
+            window.chrome.webview.postMessage(_message_data);
         }else if(isElectron){
             console.info("electron message action => ",data.action)
             window.electronAPI.send('vue-message', _message_data);
