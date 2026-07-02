@@ -139,7 +139,8 @@ def upload_to_ftp():
     if backup_folder is None or backup_folder == '' :
         backup_folder = frappe.utils.get_site_path(conf.get("backup_path", "private/backups"))
     ftp_password = password.get_decrypted_password("FTP Backup", "FTP Backup", fieldname="ftp_password",raise_exception=False)
-    if setting.mode == "FTP_TLS":
+    ftp_mode = setting.mode if setting.mode else "FTP_TLS"
+    if ftp_mode == "FTP_TLS":
         session = ftplib.FTP_TLS(setting.ftp_url,setting.ftp_user,ftp_password)
         session.prot_p()
         session.encoding = 'latin-1'
