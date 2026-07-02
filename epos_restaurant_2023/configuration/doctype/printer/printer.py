@@ -29,7 +29,7 @@ def update_product_printer_and_temp_menu_printer(self):
 						printer=%(name)s
 					""",{
 						"printer_name":self.printer_name,
-      					"actual_printer_name":actual_printer_name,
+      					"actual_printer_name":self.actual_printer_name,
 						"group_item_type":self.group_item_type,
 						"ip_address":self.ip_address,
 						"port":self.port,
@@ -96,16 +96,18 @@ def update_pos_station_printer():
 	pritners = frappe.db.sql("select * from `tabPrinter`",as_dict=1)
 	for p in pritners:
 		frappe.db.sql("""update `tabStation Printers` set 
-		printer_name=%(printer_name)s,
-		group_item_type=%(group_item_type)s,
-		ip_address=%(ip_address)s,
-		port=%(port)s,
-		is_label_printer=%(is_label_printer)s,
-		usb_printing=%(usb_printing)s
+			printer_name=%(printer_name)s,
+			actual_printer_name=%(actual_printer_name)s,
+			group_item_type=%(group_item_type)s,
+			ip_address=%(ip_address)s,
+			port=%(port)s,
+			is_label_printer=%(is_label_printer)s,
+			usb_printing=%(usb_printing)s
 		where 
 			printer=%(name)s
 		""",{
 			"printer_name":p["printer_name"],
+			"actual_printer_name":p["actual_printer_name"],
 			"group_item_type":p["group_item_type"],
 			"ip_address":p["ip_address"],
 			"port":p["port"],
@@ -118,18 +120,19 @@ def update_pos_station_printer():
 def update_to_product():
     pritners = frappe.db.sql("select * from `tabPrinter`",as_dict=1)
     for p in pritners:
-        frappe.db.sql("""update `tabProduct Printer` 
-                      	set 
-                       printer_name=%(printer_name)s,
-                       group_item_type=%(group_item_type)s,
-                       ip_address=%(ip_address)s,
-                       port=%(port)s,
-                       is_label_printer=%(is_label_printer)s,
-                       usb_printing=%(usb_printing)s
+        frappe.db.sql("""update `tabProduct Printer` set 
+						printer_name=%(printer_name)s,
+      					actual_printer_name=%(actual_printer_name)s,
+						group_item_type=%(group_item_type)s,
+						ip_address=%(ip_address)s,
+						port=%(port)s,
+						is_label_printer=%(is_label_printer)s,
+						usb_printing=%(usb_printing)s
                        where 
 							printer=%(name)s
                        """,{
 						   "printer_name":p["printer_name"],
+						   "actual_printer_name":p["actual_printer_name"],
 						   "group_item_type":p["group_item_type"],
 						   "ip_address":p["ip_address"],
 						   "port":p["port"],
