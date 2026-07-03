@@ -102,34 +102,73 @@ def get_kot_template(sale, printer_name, products, version = "v1"):
     _products = products
     if type(products) is str:
         _products  = json.loads(products)
-    
-    result = {}   
+     
     if version == "v1":
         data_template,css = frappe.db.get_value("POS Receipt Template","Kitchen Order",["template","style"])   
         html = frappe.render_template(data_template, get_print_context(doc=doc_sale,sale_products = _products,printer_name=printer_name))    
         result =  {"html":html,"css":css}
+        return result
     
     elif version == "v2":
-        d = _products[0] 
-        data = {
-            "actual_printer_name": d.get("actual_printer_name"),
-            "ip_address": d.get("ip_address"),
-            "is_reprint": 0,
-            "order_by": d.get("order_by"),
-            "order_time": d.get("order_time"),
-            "port": str(d.get("port")),
-            "pos_profile": doc_sale.pos_profile,
-            "pos_station_name": doc_sale.pos_station_name,
-            "printer_name": d.get("printer"),
-            "sale": sale,
-            "tbl_number": doc_sale.tbl_number,
-            "sale_products":[{**_p,"product_name":_p.get("product_name_en") } for _p in  _products]
-        }  
-        print_data = add_print_queue(sale=sale, data= data)    
-        data_template,css = frappe.db.get_value("POS Receipt Template","Default Kitchen Order",["template","style"])   
-        html = frappe.render_template(data_template, {"doc":print_data,"data":print_data.get("data")})          
-        result = {"html":html,"css":css}        
-    return result 
+        def parse_combo(combo_menu, combo_menu_data):
+            if not combo_menu:
+                return None
+
+            if not combo_menu_data:
+                return ["zzz"]
+                return None
+
+            try:
+                if isinstance(combo_menu_data, str):
+                    return json.loads(combo_menu_data)
+                return combo_menu_data
+            except Exception:
+                
+                return None
+        
+        def get_kot_html_template(doc_sale, products ):
+            d =  products[0]
+            data = {
+                "actual_printer_name": d.get("actual_printer_name"),
+                "ip_address": d.get("ip_address"),
+                "is_reprint": 0,
+                "order_by": d.get("order_by"),
+                "order_time": d.get("order_time"),
+                "port": str(d.get("port")),
+                "pos_profile": doc_sale.pos_profile,
+                "pos_station_name": doc_sale.pos_station_name,
+                "printer_name": d.get("printer"),
+                "sale": doc_sale.name,
+                "tbl_number": doc_sale.tbl_number,
+                "sale_products": [
+                    {
+                        **_p,
+                        "product_name": _p.get("product_name_en"),
+                        "combo_menu_data": parse_combo(
+                            _p.get("combo_menu"),
+                            _p.get("combo_menu_data")
+                        )
+                    }
+                    for _p in products
+                ]
+            }                
+            print_data = add_print_queue(sale=doc_sale.name, data= data)    
+            data_template,css = frappe.db.get_value("POS Receipt Template","Default Kitchen Order",["template","style"])   
+            html = frappe.render_template(data_template, {"doc":print_data,"data":print_data.get("data")})          
+            result = {"print_queue_id": print_data.name, "printer_name": data.get("actual_printer_name"), "html":html,"css":css}        
+            
+            return result
+    
+        template_data = []
+        for pro in _products:
+            product_printers = pro.get("products") or []
+            if product_printers:
+                doc_queue = get_kot_html_template(doc_sale= doc_sale, products=product_printers )
+                if doc_queue:
+                    template_data.append(doc_queue)  
+                
+                
+        return template_data 
         
         
 def add_print_queue(sale, data = None):    
@@ -137,7 +176,7 @@ def add_print_queue(sale, data = None):
         "doctype":"Print Queue",
         "document_type":"Sale",
         "document_name":sale,
-        "printer_name":data.get("printer_name"),
+        "printer_name":data.get("actual_printer_name"),
         "data":data or "{}"
     }
     
@@ -147,16 +186,21 @@ def add_print_queue(sale, data = None):
 
 ## get Sticker Lable 
 @frappe.whitelist(allow_guest=True,methods='POST')
-def get_lable_order_template(sale, printer_name, products): 
-    if not frappe.db.exists("Sale",sale):
-        return ""    
-    doc_sale = frappe.get_doc("Sale", sale)
-    _products = products
-    if type(products) is str:
-        _products  = json.loads(products)
-    data_template,css = frappe.db.get_value("POS Receipt Template","Lable Sticker",["template","style"])   
-    html = frappe.render_template(data_template, get_print_context(doc=doc_sale,sale_products = _products,printer_name=printer_name))    
-    return {"html":html,"css":css}
+def get_lable_order_template(sale, printer_name, products, version="v1"): 
+    if version == "v1":
+        if not frappe.db.exists("Sale",sale):
+            return ""    
+        doc_sale = frappe.get_doc("Sale", sale)
+        _products = products
+        if type(products) is str:
+            _products  = json.loads(products)
+            
+        data_template,css = frappe.db.get_value("POS Receipt Template","Lable Sticker",["template","style"])   
+        html = frappe.render_template(data_template, get_print_context(doc=doc_sale,sale_products = _products,printer_name=printer_name))    
+        return {"html":html,"css":css}
+    
+    elif version == "v2":
+        return get_kot_template(sale=sale, printer_name=printer_name, products=products, version= version)
 
 ## print waiting slip
 @frappe.whitelist(allow_guest=True,methods='POST')

@@ -6,7 +6,7 @@
         <template #content>  
             <span v-if="selectedPrinters.length > 0" v-for="printer, index in  selectedPrinters"  :key="index" >
                 <v-chip size="small" style="margin-right: 5px; margin-bottom: 5px;" >{{ printer }}</v-chip>
-            </span> 
+            </span>  
             <ComResendGroupSaleProductList />
         </template>
     </ComModal>
@@ -99,8 +99,7 @@ async function onSend() {
             });
         } 
     }
-
-    if(resendProductData.length>0){
+    if(resendProductData.length>0){ 
         await sale.onPrintToKitchen(sale.sale,resendProductData)
     }
     toaster.success($t("Product was re-send"));

@@ -427,13 +427,27 @@ def get_kitchen_order_template(template = "Default Kitchen Order",doc=None):
     rendered_html = frappe.render_template(html_template, {"doc":doc,"data":doc.get("data")})
     return rendered_html
  
+@frappe.whitelist()
+def update_print_queue_status_from_electron_print(**args):
+    data = args.get("data", [])
+
+    for row in data:
+        name = row.get("name")
+        status = row.get("status")
+        error_text = row.get("error_text")
+        if not name or not status:
+            continue
+        
+        if frappe.db.exists("Print Queue", name):
+            frappe.db.set_value("Print Queue", name,  
+                                {
+                                    "status": status,
+                                    "error_text": error_text,
+                                },   
+                                update_modified=False  # Optional
+                            )
+    frappe.db.commit()
     
-
-
-
-
-
-
 
 @frappe.whitelist(allow_guest=True)
 def get_print_data(doctype,docname,template,return_type="base64",lang="en",options={}):

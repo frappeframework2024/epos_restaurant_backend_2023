@@ -2730,7 +2730,7 @@ def sql(sql_command,params=None):
 def get_product_printer_by_products(product_codes):
     result = []
     result = frappe.db.sql("""
-        SELECT printer_name, port, is_label_printer, ip_address, group_item_type, usb_printing, parent as product_code
+        SELECT printer_name, actual_printer_name, port, is_label_printer, ip_address, group_item_type, usb_printing, parent as product_code
         FROM `tabProduct Printer`
         WHERE parent IN %(product_codes)s
     """, {"product_codes": product_codes}, as_dict=True)

@@ -2149,7 +2149,7 @@ export default class Sale {
                     if(isWindows){
                         window.chrome.webview.postMessage(_message_data);
                     }else{
-                        console.info("electron message action => ",data.action)
+                        console.info("electron message action => ",data.action) 
 				        window.electronAPI.send('vue-message', _message_data);
                     }                    
                 }
@@ -2314,6 +2314,7 @@ export default class Sale {
                 let finalList = merged.map(item => ({
                     sale_product_name: item.sale_product_name,
                     printer: item.printer,
+                    actual_printer_name: item.actual_printer_name || item.printer,
                     group_item_type: item.group_item_type,
                     is_label_printer: item.is_label_printer,
                     ip_address: item.ip_address,
@@ -2335,6 +2336,7 @@ export default class Sale {
                     combo_menu: item.combo_menu_list.join("^ "), // merged product names
                     combo_menu_data: JSON.stringify(combo_data.filter((x)=> item.combo_menu_code_list.includes(x.product_code) )),
                     order_by: item.order_by,
+                    order_time: item.order_time,
                     creation: item.creation,
                     modified: item.modified,
                     is_timer_product: item.is_timer_product,
@@ -2371,6 +2373,7 @@ export default class Sale {
                         this.productPrinters.push({
                             sale_product_name: (r.name || "New"),
                             printer: p.printer,
+                            actual_printer_name: p.actual_printer_name || p.printer,
                             group_item_type: p.group_item_type,
                             is_label_printer: p.is_label_printer == 1,
                             ip_address: p.ip_address,
@@ -2438,6 +2441,7 @@ export default class Sale {
                     printers.forEach((p) => {
                         this.productPrinters.push({
                             printer: p.printer,
+                            actual_printer_name: p.actual_printer_name || p.actual_printer_name,
                             group_item_type: p.group_item_type,
                             is_label_printer: p.is_label_printer == 1,
                             ip_address: p.ip_address,
