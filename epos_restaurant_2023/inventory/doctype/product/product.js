@@ -80,6 +80,9 @@ frappe.ui.form.on("Product", {
         if(!frm.is_new() && frm.doc.is_inventory_product == 1){
             frm.set_df_property("is_inventory_product", "read_only", 1)
         }
+        if(frm.doc.is_inventory_product == 1){
+            frm.set_df_property("cost", "hidden", 1)
+        }
         frm.set_query("product", "product_recipe", function () {
             return {
                 filters: [

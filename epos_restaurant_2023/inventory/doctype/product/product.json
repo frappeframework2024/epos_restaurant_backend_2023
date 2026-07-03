@@ -256,8 +256,7 @@
    "default": "0",
    "fieldname": "cost",
    "fieldtype": "Currency",
-   "label": "Cost",
-   "read_only_depends_on": "eval:!doc.__islocal && doc.is_inventory_product == 1"
+   "label": "Cost"
   },
   {
    "fieldname": "vendor",
@@ -1054,7 +1053,7 @@
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2026-07-01 23:27:25.491315",
+ "modified": "2026-07-03 08:55:20.330738",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Product",
