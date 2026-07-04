@@ -2,6 +2,7 @@ import frappe
 from epos_restaurant_2023.api.api import get_system_settings as get_settings , check_pos_profile as _check_pos_profile
 from epos_restaurant_2023.api.product import get_product_by_menu_1_level
 from frappe.utils.caching import redis_cache
+
 import base64
 from frappe import _
 
@@ -156,3 +157,56 @@ def check_app_update(app_name,current_version):
         "force_update": r.is_force_update
     }
     
+
+def get_working_day_info(business_branch):
+    cache = frappe.cache()
+    key = f"mobile.v1.utils.get_working_day_{business_branch}"
+
+    cached = cache.get_value(key)
+    if cached:
+        return cached
+    sql = "select creation,  posting_date, name,is_closed from `tabWorking Day` where business_branch = %(business_branch)s order by creation desc limit 1"
+    data = frappe.db.sql(sql,{"business_branch":business_branch},as_dict=1)
+    if data:
+        data = data[0]
+    else:
+        data = {
+            "posting_date":frappe.utils.today(),
+            "name":"",
+            "is_closed": None,
+
+        }
+        
+
+
+    
+    cache.set_value(key, data, expires_in_sec=86400)
+    return data
+
+
+def get_cashier_shift_info(pos_profile):
+    cache = frappe.cache()
+    key = f"mobile.v1.utils.get_cashier_shift_info_{pos_profile}"
+
+    cached = cache.get_value(key)
+    if cached:
+        return cached
+    sql = "select creation,  posting_date, name,is_closed,owner from `tabCashier Shift` where pos_profile = %(pos_profile)s order by creation desc limit 1"
+    data = frappe.db.sql(sql,{"pos_profile":pos_profile},as_dict=1)
+    if data:
+        data = data[0]
+    else:
+        data = {
+            "posting_date":frappe.utils.today(),
+            "name":"",
+            "is_closed": None,
+            "owner":"",
+            "creation":None
+
+        }
+        
+
+
+    
+    cache.set_value(key, data, expires_in_sec=86400)
+    return data

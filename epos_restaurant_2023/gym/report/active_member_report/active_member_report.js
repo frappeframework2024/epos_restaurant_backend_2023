@@ -7,21 +7,16 @@ frappe.query_reports["Active Member Report"] = {
 			frappe.query_report.refresh();
 		});
 	},
-	"filters": [
-		{
-			"fieldname":"start_date",
-			"label": __("Start Date"),
-			"fieldtype": "Date",
-			default:frappe.datetime.get_today(),
-			"reqd": 1,
-			"on_change": function (query_report) {},
-		},
-		{
-			"fieldname":"end_date",
-			"label": __("End Date"),
-			"fieldtype": "Date",
-			default:frappe.datetime.get_today(),
-			"reqd": 1,
+ "filters": [
+	{
+			"fieldname": "member_types",
+			"label": __("Member Type"),
+			"fieldtype": "MultiSelectList",
+			get_data: function(txt) {	
+				return frappe.db.get_link_options('Customer Group', txt,filters={
+					disabled: ['=', 0]
+				});
+			},
 			"on_change": function (query_report) {},
 		},
 	]

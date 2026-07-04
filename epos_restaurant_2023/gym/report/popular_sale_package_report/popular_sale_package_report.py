@@ -15,15 +15,15 @@ def get_columns(filters):
 		"label": _("Membership Option"),
 		"fieldname": "membership_option",
 		"fieldtype": "Data",
-		"width": 250,
+		"width": 350,
 		"align": "left"
 	})
 	while current <= end:
 		columns.append({
-			"label": _(current.strftime("%Y-%m-%d")),
+			"label": _(current.strftime("%d-%b")),
 			"fieldname": current.strftime("%Y_%m_%d"),
 			"fieldtype": "Data",
-			"width": 120,
+			"width": 80,
 			"align": "center"
 		})
 		current += timedelta(days=1)

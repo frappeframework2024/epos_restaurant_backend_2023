@@ -12,18 +12,18 @@ def get_columns(filters):
     current = datetime.strptime(filters.get("start_date"), "%Y-%m-%d")
     end = datetime.strptime(filters.get("end_date"), "%Y-%m-%d")
     columns.append({
-        "label": _("Hour"),
+        "label": _("Populary Time"),
         "fieldname": "hour",
         "fieldtype": "Data",
-        "width": 80,
+        "width": 120,
         "align": "center"
     })
     while current <= end:
         columns.append({
-            "label": _(current.strftime("%Y-%m-%d")),
+            "label": _(current.strftime("%d-%b")),
             "fieldname": current.strftime("%Y_%m_%d"),
             "fieldtype": "Data",
-            "width": 120,
+            "width": 80,
             "align": "center"
         })
         current += timedelta(days=1)
@@ -53,6 +53,7 @@ def get_data(filters):
         SELECT d.d AS date, h.h+1 AS hour
         FROM days d
         CROSS JOIN hours h
+        Where h > 3 and h < 22
     )
     SELECT
         REPLACE(DATE_FORMAT(g.date, '%Y-%m-%d'),'-','_') AS date,
@@ -72,8 +73,10 @@ def get_data(filters):
     lookup = {}
     for r in rows:
         lookup[(r["hour"], r["date"])] = r["total"]
+        
     result = []
     for h in hours:
+        
         total_sum = 0
         row = {"hour": h}
         for d in dates:

@@ -45,6 +45,7 @@ def get_data(filters):
 				SELECT a.h AS hour,personal_trainer,trainer_name_en
 				FROM hours a
 				CROSS JOIN trainer b
+				WHERE a.h > 4 and a.h <= 22 
 				),
 				membership AS(
 				SELECT

@@ -14,13 +14,15 @@ def get_data(filters):
 	filter += " AND a.end_date between '{0}' and '{1}'".format(start_date, end_date)
 	sql = """
 			select 
-			customer,
-			member_name,
-			gender,
-			start_date,
-			end_date,
-			membership
+				a.customer,
+				a.member_name,
+				c.customer_group,
+				a.gender,
+				a.start_date,
+				a.end_date,
+				a.membership
 			from `tabMembership` a
+			inner join `tabCustomer` c on a.customer = c.name
 			WHERE {0}
 			""".format(filter)
 	data = frappe.db.sql(sql,as_dict=1)
@@ -62,15 +64,23 @@ def get_date_range(filters):
 def get_columns(filters):
 	columns = [
 		{
-			"label": _("Customer"),
+			"label": _("ID"),
 			"fieldname": "customer",
-			"fieldtype": "Data",
+			"fieldtype": "Link",
+			"options":"Customer",
 			"width": 100,
 			"align": "center"
 		},
 		{
 			"label": _("Member Name"),
 			"fieldname": "member_name",
+			"fieldtype": "Data",
+			"width": 200,
+			"align": "left"
+		},
+		{
+			"label": _("Member Type"),
+			"fieldname": "customer_group",
 			"fieldtype": "Data",
 			"width": 200,
 			"align": "left"
@@ -90,17 +100,17 @@ def get_columns(filters):
 			"align": "center"
 		},
 		{
-			"label": _("Membership Start Date"),
+			"label": _("Start Date"),
 			"fieldname": "start_date",
 			"fieldtype": "Data",
-			"width": 180,
+			"width": 120,
 			"align": "center"
 		},
 		{
-			"label": "Membership End Date",
+			"label": "Expiry Date",
 			"fieldname": "end_date",
 			"fieldtype": "Data",
-			"width": 180,
+			"width": 120,
 			"align": "center"
 		},
 	]

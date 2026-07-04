@@ -3,39 +3,53 @@
 
 import frappe
 from frappe import _
+from frappe.utils import today
+
 
 def execute(filters=None):
 	return get_columns(filters), get_data(filters)
 
 def get_data(filters):
-	filter  = "a.docstatus = 1"
-	filter += " AND a.start_date <= '{0}' AND a.end_date >= '{1}'".format(filters.get("end_date"),filters.get("start_date"))
+	current_date = today() 
 	sql = """
-			select 
-			customer,
-			member_name,
-			gender,
-			start_date,
-			end_date,
-			membership
-			from `tabMembership` a
-			WHERE {0}
-			""".format(filter)
-	data = frappe.db.sql(sql,as_dict=1)
+		select 
+			a.customer,
+			a.member_name,
+			c.customer_group,
+			a.gender,
+			a.start_date,
+			a.end_date,
+			a.membership
+		from `tabMembership` a
+		inner join `tabCustomer` c on a.customer = c.name
+		WHERE a.docstatus = 1
+			and a.end_date > %(now)s
+		"""
+	if filters.member_types:
+		sql += "and c.customer_group in %(member_types)s"
+	data = frappe.db.sql(sql,{ "now" :  current_date,"member_types":filters.member_types    },as_dict=1)
 	return data
 
 def get_columns(filters):
 	columns = [
 		{
-			"label": _("Customer"),
+			"label": _("ID"),
 			"fieldname": "customer",
-			"fieldtype": "Data",
+			"fieldtype": "Link",
+			"options": "Customer",
 			"width": 100,
 			"align": "center"
 		},
 		{
 			"label": _("Member Name"),
 			"fieldname": "member_name",
+			"fieldtype": "Data",
+			"width": 200,
+			"align": "left"
+		},
+		{
+			"label": _("Member Type"),
+			"fieldname": "customer_group",
 			"fieldtype": "Data",
 			"width": 200,
 			"align": "left"
@@ -52,17 +66,17 @@ def get_columns(filters):
 			"fieldname": "membership",
 			"fieldtype": "Data",
 			"width": 250,
-			"align": "center"
+			"align": "left"
 		},
 		{
-			"label": _("Membership Start Date"),
+			"label": _("Start Date"),
 			"fieldname": "start_date",
 			"fieldtype": "Data",
 			"width": 180,
 			"align": "center"
 		},
 		{
-			"label": "Membership End Date",
+			"label": "Expiry Date",
 			"fieldname": "end_date",
 			"fieldtype": "Data",
 			"width": 180,

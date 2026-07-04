@@ -115,7 +115,6 @@ def get_kot_template(sale, printer_name, products, version = "v1"):
                 return None
 
             if not combo_menu_data:
-                return ["zzz"]
                 return None
 
             try:
