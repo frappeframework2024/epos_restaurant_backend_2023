@@ -23,6 +23,8 @@ def get_columns(filters):
 	columns.append({"label":"Price", "fieldname":"price","fieldtype":"Currency","align":"right","width":100})
 	columns.append({"label":"Discount", "fieldname":"total_discount","fieldtype":"Currency","align":"right","width":100})
 	columns.append({"label":"Grand Total", "fieldname":"grand_total","fieldtype":"Currency","align":"right","width":100})
+	columns.append({"label":"Start", "fieldname":"start_date","fieldtype":"Date","align":"center","width":100})
+	columns.append({"label":"Expiry", "fieldname":"expiry_date","fieldtype":"Date","align":"center","width":100})
 	columns.append({"label":"Payment Term", "fieldname":"payment_term","fieldtype":"Long Text","align":"left","width":350})
 
 	return columns
