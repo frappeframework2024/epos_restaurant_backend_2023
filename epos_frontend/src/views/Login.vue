@@ -126,8 +126,7 @@
               <div class="mt-4 text-center">
                 <p class="text-sm text-green-700">{{ setting?.pos_profile }}</p>
                 <p class="text-sm text-red-700">{{ device_name }}</p>
-                
-                <v-btn  class="w-full" color="primary" @click="test()">Test</v-btn> 
+                 
               </div>
             </div>
           </div>
@@ -190,9 +189,7 @@ const device_name = computed(() => {
   return localStorage.getItem("device_name");
 });
 
-function test() {
-    socket.emit('PrintReceipt', JSON.stringify({"action":"test","station_device_printing":"DOM"}));
-}
+
 
 
 
