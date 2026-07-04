@@ -85,6 +85,7 @@ def get_columns(filters):
 	columns.append({"label":"Register",  "fieldname":"posting_date","fieldtype":"Date", "align":"center","width":120})
 	columns.append({"label":"Code", "fieldname":"customer","fieldtype":"Data","align":"left","width":100})
 	columns.append({"label":"Member", "fieldname":"member","fieldtype":"Data","align":"left","width":150})
+	columns.append({"label":"Member Type", "fieldname":"customer_group","fieldtype":"Data","align":"left","width":150})
 	columns.append({"label":"Gender", "fieldname":"gender","fieldtype":"Data","align":"center","width":70})
 	columns.append({"label":"Phone", "fieldname":"phone_number","fieldtype":"Data","align":"left","width":150})
 	if not filters.group_by_reference_no:
@@ -180,6 +181,7 @@ def get_data(filters):
 				m.name,
 				m.customer,
 				m.member_name as member,
+				c.customer_group ,
 				case when coalesce(m.gender,'-') = 'Not Set' then '-' else  (case when coalesce(m.gender,'-') = 'Male' then 'M' else 'F' end) end as gender,
 				concat(coalesce(m.phone_number_1,''),' / ',coalesce(m.phone_number_2,'')) as phone_number,
 				m.membership,
@@ -200,10 +202,14 @@ def get_data(filters):
 				m.total_paid,
 				m.balance
 			from `tabMembership`   as m
-			where m.docstatus != 2
-			{0}
-			{1}""".format(get_conditions(filters), get_sort_order(filters),indent)	
+			inner join `tabCustomer` c on m.customer = c.name
+			where m.docstatus != 2 
+			{0} """	   
+	if filters.customer_group:
+		sql += " and c.customer_group in %(customer_group)s"  
 	
+	sql += "{1}"
+	sql = sql.format(get_conditions(filters), get_sort_order(filters),indent)  
 	data = frappe.db.sql(sql,filters, as_dict=1)
 
 	return data

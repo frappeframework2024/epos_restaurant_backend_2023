@@ -76,6 +76,9 @@
   "end_time",
   "section_break_limt",
   "trainer_note",
+  "payment_term_tab",
+  "total_amount_to_pay",
+  "payment_terms",
   "other_tab",
   "default_discount",
   "column_break_agfy",
@@ -648,6 +651,27 @@
   {
    "fieldname": "section_break_limt",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "payment_term_tab",
+   "fieldtype": "Tab Break",
+   "label": "Payment Term"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "payment_terms",
+   "fieldtype": "Table",
+   "label": "Payment Terms",
+   "options": "Membership Payment Term"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "total_amount_to_pay",
+   "fieldtype": "Currency",
+   "is_virtual": 1,
+   "label": "Total Amount to Pay",
+   "read_only": 1
   }
  ],
  "image_field": "photo",
@@ -660,7 +684,7 @@
    "link_fieldname": "membership"
   }
  ],
- "modified": "2026-06-25 15:20:48.081968",
+ "modified": "2026-07-04 15:56:12.046873",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership",

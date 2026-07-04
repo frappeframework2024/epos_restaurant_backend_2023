@@ -20,6 +20,16 @@ frappe.query_reports["Membership Register Report"] = {
 			"reqd": 1
 		},
 		{
+			"fieldname": "customer_group",
+			"label": __("Member Type"), 
+			"fieldtype": "MultiSelectList",
+			get_data: function(txt) {
+				return frappe.db.get_link_options('Customer Group', txt);
+			},
+			"on_change": function (query_report) { },
+			
+		},
+		{
 			"fieldname": "customer",
 			"label": __("Member"),
 			// "fieldtype": "Link",

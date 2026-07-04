@@ -89,7 +89,8 @@ frappe.ui.form.on("Membership", {
         } 
 
         on_check_setting_allow_entry_discount(frm);
-	},
+	    frm.doc.total_amount_to_pay = frm.doc.grand_total;
+    },
     onload(frm){
         if((frm.doc.end_date||"")!=""){           
             if((frm.doc.regular_end_date||"")==""){
@@ -101,6 +102,7 @@ frappe.ui.form.on("Membership", {
         on_membership_value_changed(frm)   
 
         on_check_setting_allow_entry_discount(frm);
+        frm.doc.total_amount_to_pay = frm.doc.grand_total;
     },
     is_delay_access:function(frm){
         on_is_delay_access_value_changed(frm,true)
