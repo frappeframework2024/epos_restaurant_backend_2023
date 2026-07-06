@@ -52,7 +52,9 @@ def sale_kpi(param):
     working_date = p["working_date"]
     pos_profiles = p["pos_profiles"] 
 
+    
     today_data = sale_kpi_get_data(business_branch, pos_profiles, working_date)
+
     mtd_data = sale_kpi_get_data(business_branch, pos_profiles, working_date,type="MTD")
 
     return {

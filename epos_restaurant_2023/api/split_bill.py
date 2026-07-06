@@ -10,13 +10,19 @@ from frappe import _
 
 @frappe.whitelist()
 def on_save(data,current_sale_id ):
+    
     current_user_full_name =frappe.db.get_value("User",frappe.session.user,"full_name")
     
-    for d in [ r for r in data if not r["temp_deleted"]]:       
+    for d in [ r for r in data if not r.get("temp_deleted") ]:       
             doc = frappe.get_doc(d)
+            # rebuild idx number
+            if doc.get("name"):
+                for i, row in enumerate(doc.get("sale_products"), start=1):
+                    row.idx = i
+
             doc.save() 
 
-    for d in [ r for r in data if r["temp_deleted"]]:  
+    for d in [ r for r in data if r.get("temp_deleted")]:  
         if d["name"]: 
             # frappe.delete_doc("Sale", str(d["name"]))
 

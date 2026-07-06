@@ -1135,10 +1135,10 @@ export default class Sale {
                     if (result != false || result == 0 ) {
                         const price = sp.price;
                         sp.change_price_note = v.note;
-                        if (result == false) {
-                            sp.price = parseFloat(this.getNumber(sp.price));
-                        }else{
+                        if (result != false || result == 0) {
                             sp.price = parseFloat(this.getNumber(result));
+                        }else{
+                            sp.price = parseFloat(this.getNumber(sp.price));
                         }
                         this.updateSaleProduct(sp);
                         this.updateSaleSummary();
