@@ -100,6 +100,7 @@ def get_product_by_menu_1_level(**param):
     sort_order_by = p.get("sort_order_by",None) or "product_name_en"
     sort_menu_order_by = p.get("sort_menu_order_by",None) or "name"
     
+    
     menus = get_product_by_menu(root_menu=root_menu, mobile=mobile,sort_order_by=sort_order_by, sort_menu_order_by=sort_menu_order_by,shift_name="")
     
     menu_categories = [m for m in menus if m.get("type",None) == "menu"]

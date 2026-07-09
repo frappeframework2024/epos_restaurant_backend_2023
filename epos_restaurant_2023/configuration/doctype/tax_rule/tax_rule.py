@@ -41,4 +41,5 @@ class TaxRule(Document):
 		frappe.db.sql("update `tabTemp Product Menu` set tax_rule_data=%(tax_rule_data)s where tax_rule=%(tax_rule)s",{"tax_rule": self.name,"tax_rule_data":self.tax_rule_data})
 		frappe.db.sql("update `tabPOS Profile Tax Rule` set tax_rule_data=%(tax_rule_data)s where tax_rule=%(tax_rule)s",{"tax_rule": self.name,"tax_rule_data":self.tax_rule_data})
 		frappe.clear_document_cache("Tax Rule", self.name)
+		frappe.cache.delete_keys("system_settings:*")
 	

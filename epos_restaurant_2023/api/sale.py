@@ -24,20 +24,32 @@ def get_sale_detail(sale_name):
 
 
 @frappe.whitelist(methods="POST")
-def submit_order(data=None,print_request_bill=False,print_server_url=None,print_setting=None):
+def submit_order(data=None,print_request_bill=False,print_bill=False,print_server_url=None,print_setting={"printer":"Cashier Printer"}):
+    # data = {"doc":sale_doc_object,"audit_trail_logs":audit_trail list, "deleted_products":[list of sale product]}
     doc = data.get("doc")
+    
+    # frappe.throw(str(data.get("audit_trail_logs")))
     
     # get Submitted product 
     
     _new_products = [d for d in doc.get("sale_products") if not d.get("name") or d.get("sale_product_status") == 'New']
     
     sale_doc=None
+    order_time = str(frappe.utils.now_datetime())
     if doc:
         for sp in _new_products:
+
             if doc.get("sale_staus") not in ["Hold Order"]:
-                sp["order_time"] = str(frappe.utils.now_datetime()) 
+                sp["order_time"] = order_time 
             sp["order_by"] = sp.get("order_by") or get_full_name() 
             sp["sale_product_status"] =  "Submitted" if sp.get("sale_product_status") == "New" and doc.get("sale_status") != 'Hold Order' else sp.get("sale_product_status") 
+
+            # check if sale tax rule and sale product no tax rule then apply tax rule from sale to sale product
+            if not sp.get("tax_rule") and doc.get("tax_rule"):
+                sp["tax_rule"] = doc.get("tax_rule")
+                sp["tax_1_rate"] = doc.get("tax_1_rate") or 0
+                sp["tax_2_rate"] = doc.get("tax_2_rate") or 0
+                sp["tax_3_rate"] = doc.get("tax_3_rate") or 0
 
 
         if not doc.get("name"):
@@ -87,16 +99,27 @@ def submit_order(data=None,print_request_bill=False,print_server_url=None,print_
 
     frappe.db.commit()
     
-    if print_request_bill:
+    if print_request_bill or print_bill:
+        
         frappe.enqueue(
             "epos_restaurant_2023.api.sale.print_bill",
             queue="short",
             sale_name= sale_doc.name,
             print_server_url = print_server_url,
-            print_setting=print_setting
+            print_setting=print_setting,
+            at_front=True
+
 
         )
         
+    if data.get("audit_trail_logs"):
+        frappe.enqueue(
+            "epos_restaurant_2023.api.sale.add_audit_trail_log",
+            queue="short",
+            sale_name= sale_doc.name,
+            audit_trail_logs= data.get("audit_trail_logs")
+        )
+
     # enqueue add deleted product to Sale Product Deleted
     
     
@@ -247,9 +270,6 @@ def get_products(sale_products):
     products =[] 
     for sp in sale_products:
         products.append({
-            "parent_product_name":sp.get("product_name"),
-            "parent_product_kh":sp.get("product_name_kh"),
-            "parent_quantity":sp.get("quantity"),
             "sale_product_id":sp.get("name"),
             "product_code":sp.get("product_code"),
             "product_name":sp.get("product_name"),
@@ -274,6 +294,9 @@ def get_products(sale_products):
   
             for c in combo_data:
                 products.append({
+                    "parent_product_name":sp.get("product_name"),
+                    "parent_product_kh":sp.get("product_name_kh"),
+                    "parent_quantity":sp.get("quantity"),
                     "sale_product_id":sp.get("name"),
                     "product_code":c.get("product_code"),
                     "product_name":c.get("product_name"),
@@ -467,3 +490,49 @@ def submit_resend_product_to_printer(doc,data,print_server_url=None):
 
     
 
+def add_audit_trail_log(sale_name, audit_trail_logs):
+    for  a in audit_trail_logs:
+        doc = frappe.get_doc({
+            **a,
+            "reference_name": sale_name
+        })
+        doc.insert(ignore_permissions=True)
+    frappe.db.commit()
+
+
+
+@frappe.whitelist(methods=["GET"])
+def get_print_html_test(sale_name,print_setting=None):
+    import time
+
+    start_time = time.perf_counter()
+
+    if not print_setting:
+        print_setting = get_default_receipt_print_setting(
+            frappe.get_cached_value("Sale", sale_name, "pos_profile")
+        )
+
+    if isinstance(sale_name, str):
+        sale_name = [sale_name]
+
+    print_data = []
+
+    for s in sale_name:
+        html = get_receipt_html(
+            s,
+            print_setting.get("print_template") or "Default POS Receipt",
+            include_css=True,
+        )
+
+        print_data.append({
+            "printer_name": print_setting.get("printer") or "Cashier Printer",
+            "copies": print_setting.get("copies") or 1,
+            "html": html,
+        })
+
+    duration = time.perf_counter() - start_time
+
+    return {
+        "duration": round(duration, 3),  # seconds
+        "print_data": print_data,
+    }

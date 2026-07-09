@@ -15,6 +15,7 @@ def create_booking(data):
     data["doctype"] = "POS Reservation"
     data["reservation_status"] = "Pending"
     data["guest"] = get_customer_id(data)
+    data["property"] =  "ESTC HOTEL 6"
 
     doc = frappe.get_doc(data)
     doc.insert(ignore_permissions=True)

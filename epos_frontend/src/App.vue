@@ -13,7 +13,9 @@
 			</div>
 		</v-sheet>
 		<DynamicDialog />
+	<loading/>
 	</div>
+
 </template>
 <script setup>
 import { useRouter, useRoute, routeLocationKey} from 'vue-router'
@@ -22,6 +24,7 @@ import BlankLayout from './components/layout/BlankLayout.vue';
 import KitchenOrderDisplayLayout from '@/components/layout/KitchenOrderDisplayLayout.vue';
 import SplashScreen from './components/SplashScreen.vue';
 import SaleLayout from './components/layout/SaleLayout.vue';
+import loading from '@/components/loading.vue';
 import { PromiseDialogsWrapper } from 'vue-promise-dialogs';
 import { createResource } from '@/resource.js'
 import {provide, reactive, computed, onMounted, inject, i18n,onUnmounted,postApi,payWaySuccessDialog } from '@/plugin'
@@ -31,6 +34,7 @@ import { FrappeApp } from 'frappe-js-sdk';
 import { useDisplay } from 'vuetify'; 
 import DynamicDialog from 'primevue/dynamicdialog';
 import WebSocketPrinter from "@/utils/websocket-printer.js"
+
 import { ref } from 'vue';
 
 import createPaywaySocket from './utils/paywaysocketio';
@@ -79,7 +83,9 @@ socket.on("PrintReceipt", (arg) => {
 	let isElectron= localStorage.getItem("electronWrapper") == "1";
 	if( isWindows || isElectron){
 		const device_setting = JSON.parse(localStorage.getItem("device_setting"));
+		
 		const station_device_printing = device_setting?.station_device_printing||"";
+		
 		const data = JSON.parse(arg) ;	 
 		//data.sale.pos_profile == localStorage.getItem("pos_profile")
 		if( station_device_printing == data.station_device_printing){

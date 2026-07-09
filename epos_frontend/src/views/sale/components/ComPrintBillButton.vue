@@ -82,7 +82,7 @@ const toaster = createToaster({ position: 'top-right' });
 async function onPrintPressed(r) {
   await sale.onPrintPressed(r).then(async(resp)=>{
     if(resp){
-      await sale.onSubmit().then(async (value) => {
+      await sale.onSubmit({"print_request_bill":true}).then(async (value) => {
         if (value) {
           router.push({ name: "TableLayout" });
           window.postMessage("close_modal", "*"); 

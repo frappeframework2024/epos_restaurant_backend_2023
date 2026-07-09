@@ -604,6 +604,12 @@ def get_system_settings(pos_profile="", device_name=''):
 
     bus = frappe.get_doc("Business Branch", pos_station.business_branch)
     property_code = bus.property_code or ""
+    print_server_url = frappe.conf.get("print_server_url")
+    if print_server_url:
+        pos_station =json.loads( frappe.as_json(pos_station))
+        pos_station["print_server_url"] = pos_station.get("web_socket_print_url") or print_server_url
+        del pos_station["web_socket_print_url"]
+
 
     data={
         "app_name":doc.epos_app_name,
@@ -689,6 +695,8 @@ def get_system_settings(pos_profile="", device_name=''):
 
     estc_connecton = get_estc_connection()
     data = {**data, **estc_connecton }
+    data["print_server_url"] =  print_server_url 
+    
  
     return  data
 

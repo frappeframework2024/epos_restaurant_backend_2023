@@ -20,7 +20,7 @@ const { t: $t } = i18n.global;
 const toaster = createToaster({ position: "top-right" });
 
 export default class Sale {
-    
+
     constructor(router) {
         this.payway_complete_payment = false;
         this.close_payment_form = false;
@@ -47,11 +47,11 @@ export default class Sale {
         this.change_exchange_rate = 1;
         this.guest_cover = 0;
         this.orderTime = undefined;
-        this.router=router;
+        this.router = router;
         this.name = "";
         this.action = "";
         this.customer_display_key = "",
-        this.pos_receipt = undefined;
+            this.pos_receipt = undefined;
         this.no_loading = false;
         this.sale = {
             sale_products: []
@@ -105,14 +105,14 @@ export default class Sale {
         this.kod_messages = [] //key, screen, message
         this.createNewSaleResource();
     }
- 
 
-    createNewSaleResource()  {
+
+    createNewSaleResource() {
         const parent = this;
         this.newSaleResource = createResource({
             url: "frappe.client.insert",
-           async onSuccess(doc)  {
-             await  parent.onProcessTaskAfterSubmit(doc);
+            async onSuccess(doc) {
+                await parent.onProcessTaskAfterSubmit(doc);
                 parent.action = "";
                 if (parent.message != undefined) {
                     toaster.success(parent.message);
@@ -125,21 +125,21 @@ export default class Sale {
         })
     }
 
-   async saleNetworkLock(_sale){
-        if(this.setting.device_setting.use_sale_network_lock == 1 && _sale.table_id != undefined){ 
+    async saleNetworkLock(_sale) {
+        if (this.setting.device_setting.use_sale_network_lock == 1 && _sale.table_id != undefined) {
             let param = {
-                "sale":_sale.name,
-                "table_id":_sale.table_id,
-                "table_name":_sale.tbl_number, 
-                "pos_station":localStorage.getItem("device_name"), 
+                "sale": _sale.name,
+                "table_id": _sale.table_id,
+                "table_name": _sale.tbl_number,
+                "pos_station": localStorage.getItem("device_name"),
                 "pos_profile": this.setting.pos_profile
             }
-          await  call.post("epos_restaurant_2023.api.api.create_sale_network_lock",{"param": param})    
+            await call.post("epos_restaurant_2023.api.api.create_sale_network_lock", { "param": param })
         }
     }
 
-    async newSale() { 
- 
+    async newSale() {
+
         const now = new Date();
         const _now_format = moment(now).format('yyyy-MM-DD HH:mm:ss.SSSSSS');
         this.auditTrailLogs = [];
@@ -149,7 +149,7 @@ export default class Sale {
         this.orderChanged = false;
         this.selected_product = null
         this.selected_sale_product = null
-        this.price_rule = (this.price_rule || this.table_price_rule) || this.setting?.price_rule; 
+        this.price_rule = (this.price_rule || this.table_price_rule) || this.setting?.price_rule;
         this.sale = {
             doctype: "Sale",
             modified: _now_format,
@@ -170,7 +170,7 @@ export default class Sale {
             customer_photo: this.customer_photo || this.customer_name ? this.customer_photo : this.setting?.customer_photo,
             customer_name: this.customer_name || this.setting?.customer_name,
             customer_group: this.customer_group || this.setting?.customer_group,
-            price_rule:  this.price_rule ,
+            price_rule: this.price_rule,
             business_branch: decodeURIComponent(this.setting?.business_branch),
             sale_products: [],
             product_variants: [],
@@ -190,8 +190,8 @@ export default class Sale {
             created_by: make_order_auth?.name || "",
             new_sale_default_pos_menu: "",
             submitted_default_pos_menu: ""
-        } 
-        this.onSaleApplyTax(tax_rule, this.sale);  
+        }
+        this.onSaleApplyTax(tax_rule, this.sale);
         //audit-trail 
         if ((this.name || "") == "") {
             const u = make_order_auth;
@@ -207,10 +207,10 @@ export default class Sale {
                 custom_item_description: '',
                 custom_note: ''
             });
-        }        
+        }
     }
 
-    async LoadSaleData(name) { 
+    async LoadSaleData(name) {
         this.auditTrailLogs = [];
         this.changeTableSaleProducts = [];
         this.moveItemSaleProducts = [];
@@ -222,9 +222,9 @@ export default class Sale {
                 doctype: "Sale",
                 name: name,
                 setValue: {
-                  async  onSuccess(doc) {
+                    async onSuccess(doc) {
                         parent.sale = doc;
-                        await   parent.onProcessTaskAfterSubmit(doc);
+                        await parent.onProcessTaskAfterSubmit(doc);
                         parent.action = "";
                         if (parent.message != undefined) {
                             toaster.success(parent.message);
@@ -242,12 +242,12 @@ export default class Sale {
                 this.sale = doc;
                 this.__backup_sale = JSON.parse(JSON.stringify(doc))
                 //aba PayWay set closed / cancel qr (expired)
-                 if (this.sale.name && (this.sale.aba_transaction_id||"") != ""){
-                    call.post("epos_restaurant_2023.api.payway.aba_close_transaction", { 
+                if (this.sale.name && (this.sale.aba_transaction_id || "") != "") {
+                    call.post("epos_restaurant_2023.api.payway.aba_close_transaction", {
                         "property_code": this.setting.property_code,
                         "pos_config": this.setting.pos_config,
                         "invoice_id": this.sale.name
-                    }); 
+                    });
                 }
 
                 this.getDefaultTableMenu(doc.table_id)
@@ -255,17 +255,17 @@ export default class Sale {
                 let re_send_sale_product_kot = []
                 this.reSendSaleProductKOT = []
                 re_send_sale_product_kot = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "")));
-                re_send_sale_product_kot.forEach((r)=>{
+                re_send_sale_product_kot.forEach((r) => {
 
-                    if(this.setting.pos_setting.combo_menu_print_captain_by_items_printer && r.is_combo_menu){
+                    if (this.setting.pos_setting.combo_menu_print_captain_by_items_printer && r.is_combo_menu) {
                         this.reSendSaleProductKOT.push(r);
-                    }else{
-                        if(((r.printers || "[]") != "[]")){
+                    } else {
+                        if (((r.printers || "[]") != "[]")) {
                             this.reSendSaleProductKOT.push(r);
                         }
-                    } 
-                }); 
-                
+                    }
+                });
+
                 //add sale to move item
                 this.moveItemSaleProduct = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "")));
                 this.action = "";
@@ -276,10 +276,10 @@ export default class Sale {
 
 
                 //
-                socket.emit("ShowOrderInCustomerDisplay", this.sale,"", this.customer_display_key);
+                socket.emit("ShowOrderInCustomerDisplay", this.sale, "", this.customer_display_key);
 
                 resolve(doc);
-                 
+
             });
             resolve(false);
         })
@@ -291,7 +291,7 @@ export default class Sale {
             url: "frappe.client.get_list",
             params: {
                 doctype: "Sale",
-                fields: ["name", "creation", "grand_total", "total_quantity","seat_number", "tbl_group","table_id", "tbl_number", "guest_cover", "grand_total", "sale_status", "sale_status_color", "sale_status_priority", "customer", "customer_name", "phone_number", "customer_photo"],
+                fields: ["name", "creation", "grand_total", "total_quantity", "seat_number", "tbl_group", "table_id", "tbl_number", "guest_cover", "grand_total", "sale_status", "sale_status_color", "sale_status_priority", "customer", "customer_name", "phone_number", "customer_photo"],
                 filters: {
                     pos_profile: localStorage.getItem("pos_profile"),
                     table_id: JSON.parse(localStorage.getItem("table_groups")) && JSON.parse(localStorage.getItem("table_groups")).length > 0 ? parent.sale.table_id : '',
@@ -305,21 +305,21 @@ export default class Sale {
 
     async getDefaultTableMenu(table) {
         const db = frappe.db();
-        await db.getDoc('Tables Number',table).then((doc) => {
-          this.sale.new_sale_default_pos_menu = doc.new_sale_default_pos_menu;
-          this.sale.submitted_default_pos_menu = doc.submitted_default_pos_menu;
+        await db.getDoc('Tables Number', table).then((doc) => {
+            this.sale.new_sale_default_pos_menu = doc.new_sale_default_pos_menu;
+            this.sale.submitted_default_pos_menu = doc.submitted_default_pos_menu;
         }).catch((error) => { console.log(error) });
     }
 
-    getSaleProductGroupByKey(sort_order_type="asc") {
+    getSaleProductGroupByKey(sort_order_type = "asc") {
         if (!this.sale.sale_products) {
             return []
         } else {
             let type = sort_order_type.endsWith("_desc")
             let query = Enumerable.from(this.sale.sale_products).groupBy("{order_by:$.order_by,order_time:$.order_time}", "", "{order_by:$.order_by,order_time:$.order_time}", "$.order_by+','+$.order_time");
             query = type
-            ? query.orderByDescending("$.order_time")
-            : query.orderBy("$.order_time")
+                ? query.orderByDescending("$.order_time")
+                : query.orderBy("$.order_time")
             return query.toArray()
         }
     }
@@ -362,17 +362,17 @@ export default class Sale {
         }
     }
 
-    getSaleProducts(groupByKey,order_by="creation") {
+    getSaleProducts(groupByKey, order_by = "creation") {
         if (groupByKey) {
             return Enumerable.from(this.sale.sale_products).where(`$.order_by=='${groupByKey.order_by}' && $.order_time=='${groupByKey.order_time}'`).orderByDescending("$.modified").toArray()
         } else {
-           let desc = order_by.endsWith("_desc")
+            let desc = order_by.endsWith("_desc")
             order_by = order_by.replace("_desc", "")
 
             let query = Enumerable.from(this.sale.sale_products)
-            query = desc 
-            ? query.orderByDescending(x => x[order_by])
-            : query.orderBy(x => x[order_by])
+            query = desc
+                ? query.orderByDescending(x => x[order_by])
+                : query.orderBy(x => x[order_by])
             return query.toArray()
         }
     }
@@ -381,7 +381,7 @@ export default class Sale {
         //check for append quantity rule
         //product code, allow_append_qty,price, unit,modifier, portion, is_free,sale_product_status
         //and check system have feature to send to kitchen
-        let strFilter = `$.is_timer_product == 0 && $.is_require_employee==0  && $.product_code=='${p.name}' && $.append_quantity ==1 && $.price==${p.price} && $.portion=='${this.getString(p.portion)}'  && $.modifiers=='${(p.modifiers || '')=='[]'?'':(p.modifiers || '')}'   && $.unit=='${p.unit}' && $.is_free==0 && $.note==''`
+        let strFilter = `$.is_timer_product == 0 && $.is_require_employee==0  && $.product_code=='${p.name}' && $.append_quantity ==1 && $.price==${p.price} && $.portion=='${this.getString(p.portion)}'  && $.modifiers=='${(p.modifiers || '') == '[]' ? '' : (p.modifiers || '')}'   && $.unit=='${p.unit}' && $.is_free==0 && $.note==''`
         if (!this.setting?.pos_setting?.allow_append_quantity_after_submit) {
             strFilter = strFilter + ` && $.sale_product_status == 'New'`
         }
@@ -429,7 +429,7 @@ export default class Sale {
             const now = new Date();
             const _now_format = moment(now).format('yyyy-MM-DD HH:mm:ss.SSSSSS');
             const saleProduct = {
-                pos_profile:this.setting?.pos_profile,
+                pos_profile: this.setting?.pos_profile,
                 menu_product_name: p.menu_product_name,
                 product_code: p.name,
                 product_name: p.name_en,
@@ -454,9 +454,9 @@ export default class Sale {
                 allow_discount: p.allow_discount || 0,
                 allow_free: p.allow_free || 0,
                 allow_change_price: p.allow_change_price || 0,
-                allow_crypto_claim : p.allow_crypto_claim || 0,
+                allow_crypto_claim: p.allow_crypto_claim || 0,
                 is_open_product: p.is_open_product || 0,
-                kitchen_group:p.kitchen_group||"",
+                kitchen_group: p.kitchen_group || "",
                 kitchen_group_sort_order: p.kitchen_group_sort_order || 0,
                 portion: this.getString(p.portion),
                 modifiers: (p.modifiers || '') == "[]" ? "" : (p.modifiers || ''),
@@ -478,11 +478,11 @@ export default class Sale {
                 is_timer_product: p.is_timer_product || 0,
                 time_stop: 0,
                 kod_status: "Pending",
-                rate_include_tax : p.rate_include_tax||0,
-                selected_variant : p.selected_variant,
-                variant_of:p.variant_of,
-                is_variant:p.is_variant,
-                pos_note:p.pos_note,
+                rate_include_tax: p.rate_include_tax || 0,
+                selected_variant: p.selected_variant,
+                variant_of: p.variant_of,
+                is_variant: p.is_variant,
+                pos_note: p.pos_note,
                 is_newly_added: 1
             }
             if (p.is_timer_product) {
@@ -606,8 +606,8 @@ export default class Sale {
     }
 
     async updateSaleProduct(sp) {
-        const precision = (this.setting.pos_setting.main_currency_precision||2) // newline
-        this.onRateIncludeTax(sp,false,false,false);
+        const precision = (this.setting.pos_setting.main_currency_precision || 2) // newline
+        this.onRateIncludeTax(sp, false, false, false);
         //set property for re render comhappyhour check
         sp.is_render = false;
         //end
@@ -629,65 +629,65 @@ export default class Sale {
         sp.discount_amount = Math.abs(sp.discount_amount || 0) * (sp.is_return ? -1 : 1)
         if (sp.sale_discount_percent) {
             sp.sale_discount_amount = (sp.sub_total * sp.sale_discount_percent / 100);
-        }    
-        
-        
-        sp.sale_discount_amount = Number((sp.sale_discount_amount + Number.EPSILON).toFixed(precision)); 
+        }
 
-        sp.total_discount = sp.discount_amount + sp.sale_discount_amount; 
+
+        sp.sale_discount_amount = Number((sp.sale_discount_amount + Number.EPSILON).toFixed(precision));
+
+        sp.total_discount = sp.discount_amount + sp.sale_discount_amount;
 
 
         this.onCalculateTax(sp);
- 
+
 
         //re
 
-        sp.amount = sp.sub_total - sp.discount_amount ;
+        sp.amount = sp.sub_total - sp.discount_amount;
 
         sp.total_revenue = (sp.sub_total - sp.total_discount);
-        
-        if(sp.rate_include_tax==0){
-            sp.amount = sp.sub_total - sp.discount_amount + sp.total_tax ;
+
+        if (sp.rate_include_tax == 0) {
+            sp.amount = sp.sub_total - sp.discount_amount + sp.total_tax;
             sp.total_revenue = (sp.sub_total - sp.total_discount) + sp.total_tax;
-        } else{
+        } else {
             //recalculate discount if rate include tax
             let re_calc_sale_discount_amount = 0;
             let price_before_tax = sp.sub_total - sp.total_tax;
-            price_before_tax =Number((price_before_tax + Number.EPSILON).toFixed(precision)); 
+            price_before_tax = Number((price_before_tax + Number.EPSILON).toFixed(precision));
 
-            if (sp.sale_discount_percent > 0){
-                re_calc_sale_discount_amount = price_before_tax * (sp.sale_discount_percent/100)
-                re_calc_sale_discount_amount = Number((re_calc_sale_discount_amount + Number.EPSILON).toFixed(precision)); 
+            if (sp.sale_discount_percent > 0) {
+                re_calc_sale_discount_amount = price_before_tax * (sp.sale_discount_percent / 100)
+                re_calc_sale_discount_amount = Number((re_calc_sale_discount_amount + Number.EPSILON).toFixed(precision));
                 sp.sale_discount_amount = re_calc_sale_discount_amount;
             }
 
             let re_calc_sale_product_discount_amount = 0;
-            if(sp.discount > 0 && sp.discount_type=="Percent"){
-                re_calc_sale_product_discount_amount = price_before_tax * (sp.discount/100);
-                re_calc_sale_product_discount_amount = Number((re_calc_sale_product_discount_amount + Number.EPSILON).toFixed(precision)); 
+            if (sp.discount > 0 && sp.discount_type == "Percent") {
+                re_calc_sale_product_discount_amount = price_before_tax * (sp.discount / 100);
+                re_calc_sale_product_discount_amount = Number((re_calc_sale_product_discount_amount + Number.EPSILON).toFixed(precision));
                 sp.discount_amount = re_calc_sale_product_discount_amount
-            } 
+            }
             sp.total_discount = sp.discount_amount + sp.sale_discount_amount;
 
         }
-        
+
         //
-        if(sp.total_discount > 0 || sp.allow_crypto_claim == 0  || this.sale.sale_discount > 0){
+        if (sp.total_discount > 0 || sp.allow_crypto_claim == 0 || this.sale.sale_discount > 0) {
             sp.crypto_able_amount = 0;
-        }else{
+        } else {
             sp.crypto_able_amount = sp.amount
         }
         //set property for re render comhappyhour check
     }
 
-    async applyPromotions(sp){
-        if(this.promotion && this.promotion.length > 0){
-            let product_checks=[]
+    async applyPromotions(sp) {
+        if (this.promotion && this.promotion.length > 0) {
+            let product_checks = []
             product_checks.push({
                 product_code: sp.product_code,
                 order_time: sp.order_time
             })
-            let doc = await this.getPromotionProducts(product_checks,this.getPromotionByCustomerGroup())
+            let doc = await this.getPromotionProducts(product_checks, this.getPromotionByCustomerGroup())
             if (doc) {
                 if (sp.happy_hour_promotion) {
                     sp.discount_type = ''
@@ -726,29 +726,29 @@ export default class Sale {
         });
     }
 
-    getPromotionByCustomerGroup(){
-    let promotions = []
-    if(this.promotion && this.promotion.length > 0){
-        this.promotion.forEach(r => {
-            if(r.customer_groups.length > 0){
-                r.customer_groups.forEach(g=>{
-                    if(g.customer_group_name_en == this.sale.customer_group){
-                        promotions.push(r)
-                    }
-                })
-            }else{
-                promotions.push(r)
-            }
-        });
+    getPromotionByCustomerGroup() {
+        let promotions = []
+        if (this.promotion && this.promotion.length > 0) {
+            this.promotion.forEach(r => {
+                if (r.customer_groups.length > 0) {
+                    r.customer_groups.forEach(g => {
+                        if (g.customer_group_name_en == this.sale.customer_group) {
+                            promotions.push(r)
+                        }
+                    })
+                } else {
+                    promotions.push(r)
+                }
+            });
+            return promotions
+        }
         return promotions
-    }
-    return promotions
     }
 
     //on sale product apply tax setting
     onSaleProductApplyTax(tax_rule, sp) {
         sp.tax_rule = tax_rule.name || "";
-        sp.rate_include_tax = tax_rule.rate_include_tax||0;
+        sp.rate_include_tax = tax_rule.rate_include_tax || 0;
         sp.tax_1_rate = tax_rule.tax_1_rate || 0;
         sp.percentage_of_price_to_calculate_tax_1 = tax_rule.percentage_of_price_to_calculate_tax_1 || 100;
         sp.calculate_tax_1_after_discount = tax_rule.calculate_tax_1_after_discount || false;
@@ -766,21 +766,21 @@ export default class Sale {
         this.updateSaleProduct(sp);
     }
 
-    _priceForCalcTax(sp, cal_after_disc){
+    _priceForCalcTax(sp, cal_after_disc) {
         let amount = sp.sub_total
-        if (sp.rate_include_tax == 1) { 
-            if(sp.tax_rule_data != undefined){ 
-                let priceBefore = this.getRateBeforeTax( sp.sub_total - (cal_after_disc==0?0: sp.total_discount),JSON.parse(sp.tax_rule_data), sp.tax_1_rate, sp.tax_2_rate, sp.tax_3_rate)
-                amount =  priceBefore +  (cal_after_disc==0?0: sp.total_discount)
+        if (sp.rate_include_tax == 1) {
+            if (sp.tax_rule_data != undefined) {
+                let priceBefore = this.getRateBeforeTax(sp.sub_total - (cal_after_disc == 0 ? 0 : sp.total_discount), JSON.parse(sp.tax_rule_data), sp.tax_1_rate, sp.tax_2_rate, sp.tax_3_rate)
+                amount = priceBefore + (cal_after_disc == 0 ? 0 : sp.total_discount)
             }
-        } 
-        return   amount;       
+        }
+        return amount;
     }
 
     //on calculate tax
     onCalculateTax(sp) {
- 
-        let amount = this._priceForCalcTax(sp,1)
+
+        let amount = this._priceForCalcTax(sp, 1)
         // let amount = sp.sub_total
         // if (sp.rate_include_tax == 1) { 
         //     if(sp.tax_rule_data != undefined){
@@ -792,7 +792,7 @@ export default class Sale {
 
 
         // //tax 1
-        sp.taxable_amount_1 =   this._priceForCalcTax(sp,sp.calculate_tax_1_after_discount);
+        sp.taxable_amount_1 = this._priceForCalcTax(sp, sp.calculate_tax_1_after_discount);
         // sp.taxable_amount_1 = amount;
         // //tax 1 taxable amount
         // //if cal tax1 taxable after disc.
@@ -807,7 +807,7 @@ export default class Sale {
 
         //tax 2
         // //tax 2 taxable amount
-        sp.taxable_amount_2 =this._priceForCalcTax(sp,sp.calculate_tax_2_after_discount);
+        sp.taxable_amount_2 = this._priceForCalcTax(sp, sp.calculate_tax_2_after_discount);
         // sp.taxable_amount_2 =amount;
         // //if cal tax2 taxable after disc.
         // if (sp.calculate_tax_2_after_discount) {
@@ -820,10 +820,10 @@ export default class Sale {
         }
         //cal tax2 amount
         sp.tax_2_amount = sp.taxable_amount_2 * ((sp.tax_2_rate || 0) / 100);
-        
+
         //tax 3
         // //tax 3 taxable amount
-        sp.taxable_amount_3 = this._priceForCalcTax(sp,sp.calculate_tax_3_after_discount);
+        sp.taxable_amount_3 = this._priceForCalcTax(sp, sp.calculate_tax_3_after_discount);
         // sp.taxable_amount_3 = amount;
         // //if cal tax3 taxable after disc.
         // if (sp.calculate_tax_3_after_discount) {
@@ -840,45 +840,45 @@ export default class Sale {
         }
         //cal tax3 amount
         sp.tax_3_amount = sp.taxable_amount_3 * ((sp.tax_3_rate || 0) / 100);
-        sp.total_tax = sp.tax_1_amount + sp.tax_2_amount + sp.tax_3_amount; 
-        
-        sp.selling_price = ((sp.sub_total - sp.total_tax) /sp.quantity) - (sp.modifiers_price||0) 
+        sp.total_tax = sp.tax_1_amount + sp.tax_2_amount + sp.tax_3_amount;
+
+        sp.selling_price = ((sp.sub_total - sp.total_tax) / sp.quantity) - (sp.modifiers_price || 0)
     }
 
-    onRateIncludeOrNotIncludeTaxClick(){ 
+    onRateIncludeOrNotIncludeTaxClick() {
         if (!this.isBillRequested()) {
-            this.sale.rate_include_tax = ((this.sale.rate_include_tax||0)==1?0:1) 
-            this.sale.sale_products.forEach((sp)=>{
+            this.sale.rate_include_tax = ((this.sale.rate_include_tax || 0) == 1 ? 0 : 1)
+            this.sale.sale_products.forEach((sp) => {
                 sp.rate_include_tax = this.sale.rate_include_tax;
-                this.onRateIncludeTax(sp, false,true,  false)
+                this.onRateIncludeTax(sp, false, true, false)
             })
-            this.updateSaleSummary()  
+            this.updateSaleSummary()
         }
     }
 
-    onRateIncludeTax(sp, update_rate = true, update_sale_product=true, update_sale=true){
-        let _tax_rule = JSON.parse(JSON.stringify(this.setting.tax_rules)).filter((r)=>r.tax_rule == sp.tax_rule||this.sale.tax_rule )
-        if(_tax_rule.length > 0){
+    onRateIncludeTax(sp, update_rate = true, update_sale_product = true, update_sale = true) {
+        let _tax_rule = JSON.parse(JSON.stringify(this.setting.tax_rules)).filter((r) => r.tax_rule == sp.tax_rule || this.sale.tax_rule)
+        if (_tax_rule.length > 0) {
             sp.tax_rule_data = _tax_rule[0].tax_rule_data;
-            if(update_rate){
-                sp.rate_include_tax = ((sp.rate_include_tax||0)==1?0:1)
+            if (update_rate) {
+                sp.rate_include_tax = ((sp.rate_include_tax || 0) == 1 ? 0 : 1)
             }
-            if(update_sale_product){
+            if (update_sale_product) {
                 this.updateSaleProduct(sp)
             }
-            if(update_sale){
+            if (update_sale) {
                 this.updateSaleSummary();
             }
         }
     }
 
-    getRateBeforeTax(amount, tax_rule, tax_1_rate, tax_2_rate, tax_3_rate){
-        amount= (amount || 0)
+    getRateBeforeTax(amount, tax_rule, tax_1_rate, tax_2_rate, tax_3_rate) {
+        amount = (amount || 0)
 
         const t1_r = (tax_1_rate || 0) / 100
-        const t2_r = (tax_2_rate ||  0)  / 100
-        const t3_r = (tax_3_rate || 0)  / 100
-        
+        const t2_r = (tax_2_rate || 0) / 100
+        const t3_r = (tax_3_rate || 0) / 100
+
         let tax_1_amount = 0
         let tax_2_amount = 0
         let tax_3_amount = 0
@@ -888,32 +888,32 @@ export default class Sale {
         let t2_af_disc = tax_rule.calculate_tax_2_after_discount
 
         let t2_af_add_t1 = tax_rule.calculate_tax_2_after_adding_tax_1
-        
-        let t3_af_disc	= tax_rule.calculate_tax_3_after_discount
 
-        let t3_af_add_t1 =  tax_rule.calculate_tax_3_after_adding_tax_1
-        let t3_af_add_t2 =   tax_rule.calculate_tax_3_after_adding_tax_2
+        let t3_af_disc = tax_rule.calculate_tax_3_after_discount
+
+        let t3_af_add_t1 = tax_rule.calculate_tax_3_after_adding_tax_1
+        let t3_af_add_t2 = tax_rule.calculate_tax_3_after_adding_tax_2
 
 
         let tax_rate_con = 0
-        tax_rate_con = (1 + t1_r + t2_r 
-                            + (t1_r * t2_af_add_t1 * t2_r) 
-                            + t3_r + (t1_r * t3_af_add_t1 * t3_r) 
-                            + (t2_r * t3_af_add_t2 * t3_r)
-                            + (t1_r * t2_af_add_t1 * t2_r * t3_af_add_t2 * t3_r))  
+        tax_rate_con = (1 + t1_r + t2_r
+            + (t1_r * t2_af_add_t1 * t2_r)
+            + t3_r + (t1_r * t3_af_add_t1 * t3_r)
+            + (t2_r * t3_af_add_t2 * t3_r)
+            + (t1_r * t2_af_add_t1 * t2_r * t3_af_add_t2 * t3_r))
         tax_rate_con = tax_rate_con || 1
- 
-        price = amount /  (tax_rate_con ==0?1:tax_rate_con)
-        
-        return  price
+
+        price = amount / (tax_rate_con == 0 ? 1 : tax_rate_con)
+
+        return price
     }
 
     //on sale apply  tax setting
     onSaleApplyTax(tax_rule, s) {
-        if(tax_rule.rate_include_tax == undefined ){
-            tax_rule.rate_include_tax = tax_rule.is_rate_include_tax||0;
+        if (tax_rule.rate_include_tax == undefined) {
+            tax_rule.rate_include_tax = tax_rule.is_rate_include_tax || 0;
         }
-        s.rate_include_tax = tax_rule.rate_include_tax||0;
+        s.rate_include_tax = tax_rule.rate_include_tax || 0;
         s.tax_rule = tax_rule.name || "";
         s.tax_1_rate = tax_rule.tax_1_rate || 0;
         s.percentage_of_price_to_calculate_tax_1 = tax_rule.percentage_of_price_to_calculate_tax_1 || 100;
@@ -931,32 +931,32 @@ export default class Sale {
 
     //update sale summary
     updateSaleSummary(sale_status = '') {
-        const precision = (this.setting.pos_setting.main_currency_precision||2) //newline
+        const precision = (this.setting.pos_setting.main_currency_precision || 2) //newline
         this.onUpdateSaleDiscount(this.sale.discount, this.sale.discount_type, this.sale.discount_note)
         const sp = Enumerable.from(this.sale.sale_products);
         this.sale.total_quantity = this.getNumber(sp.where("$.is_timer_product == 0").sum("$.quantity"));
-        this.sale.sub_total = this.getNumber(sp.sum("$.sub_total"));        
+        this.sale.sub_total = this.getNumber(sp.sum("$.sub_total"));
         let total_tax_exclude = this.getNumber(sp.where("$.rate_include_tax == 1").sum("$.total_tax"))
 
         this.changed = 1
         //calculate sale discount
         this.sale.sale_discountable_amount = this.getNumber(sp.where("$.allow_discount==1 && $.discount==0").sum("$.sub_total"));
-        this.sale.sale_discountable_amount =  Number((this.sale.sale_discountable_amount + Number.EPSILON).toFixed(precision)); //new
+        this.sale.sale_discountable_amount = Number((this.sale.sale_discountable_amount + Number.EPSILON).toFixed(precision)); //new
         this.sale.sale_discountable_amount = this.sale.sale_discountable_amount - total_tax_exclude; //new
 
         this.sale.discount = this.getNumber(this.sale.discount);
         this.sale.sale_discount = 0;
-       
+
         if (this.sale.discount_type == "Percent") {
             this.sale.sale_discount = sp.sum("$.sale_discount_amount")
         } else {
             this.sale.sale_discount = this.sale.discount;
-        } 
+        }
 
         this.sale.sale_discount = parseFloat((this.sale.sale_discount + Number.EPSILON).toFixed(precision)); //new 
         this.sale.product_discount = this.getNumber(sp.sum("$.discount_amount"));
-        this.sale.product_discount = Number( (this.sale.product_discount +Number.EPSILON).toFixed(precision)) //new
-        this.sale.total_discount = (Number(this.sale.sale_discount) || 0) + (Number(this.sale.product_discount) || 0); 
+        this.sale.product_discount = Number((this.sale.product_discount + Number.EPSILON).toFixed(precision)) //new
+        this.sale.total_discount = (Number(this.sale.sale_discount) || 0) + (Number(this.sale.product_discount) || 0);
 
 
         //tax
@@ -969,33 +969,33 @@ export default class Sale {
 
         //grand_total
         this.sale.grand_total = ((this.sale.sub_total || 0) - (this.sale.total_discount || 0)) + ((this.sale.total_tax || 0));
-        this.sale.grand_total =   parseFloat((this.sale.grand_total + Number.EPSILON).toFixed(precision)); //new
+        this.sale.grand_total = parseFloat((this.sale.grand_total + Number.EPSILON).toFixed(precision)); //new
         // crypto able amount
-        this.sale.crypto_able_amount = (this.sale.sale_discount > 0 ? 0 : this.getNumber(sp.sum("$.crypto_able_amount")));        
+        this.sale.crypto_able_amount = (this.sale.sale_discount > 0 ? 0 : this.getNumber(sp.sum("$.crypto_able_amount")));
         //
-        this.sale.balance = this.sale.grand_total - (this.sale.deposit || 0) - (this.sale.total_cash_coupon_claim||0);
-        this.sale.balance =  parseFloat((this.sale.balance + Number.EPSILON).toFixed(precision)); //new
+        this.sale.balance = this.sale.grand_total - (this.sale.deposit || 0) - (this.sale.total_cash_coupon_claim || 0);
+        this.sale.balance = parseFloat((this.sale.balance + Number.EPSILON).toFixed(precision)); //new
         // commission
         if (this.sale.commission_type == "Percent") {
             this.sale.commission_amount = (this.sale.grand_total * this.sale.commission / 100);
         } else {
             this.sale.commission_amount = this.sale.commission;
         }
-        this.sale.commission_amount =  parseFloat((this.sale.commission_amount + Number.EPSILON).toFixed(precision)); //new
+        this.sale.commission_amount = parseFloat((this.sale.commission_amount + Number.EPSILON).toFixed(precision)); //new
         this.orderChanged = true;
         socket.emit("ShowOrderInCustomerDisplay", this.sale, sale_status, this.customer_display_key);
         //add sale product to temp resend sale product to kitchen order
         let re_send_sale_product_kot = []
         this.reSendSaleProductKOT = []
         re_send_sale_product_kot = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "")));
-        re_send_sale_product_kot.forEach((r)=>{
-            if(this.setting.pos_setting.combo_menu_print_captain_by_items_printer && r.is_combo_menu){
+        re_send_sale_product_kot.forEach((r) => {
+            if (this.setting.pos_setting.combo_menu_print_captain_by_items_printer && r.is_combo_menu) {
                 this.reSendSaleProductKOT.push(r);
-            }else{
-                if(((r.printers || "[]") != "[]")){
-                     this.reSendSaleProductKOT.push(r);
+            } else {
+                if (((r.printers || "[]") != "[]")) {
+                    this.reSendSaleProductKOT.push(r);
                 }
-            } 
+            }
         });
         //add sale to move item
         this.moveItemSaleProduct = JSON.parse(JSON.stringify(this.sale.sale_products.filter((r) => (r.name ?? "") != "")));
@@ -1085,7 +1085,7 @@ export default class Sale {
                 });
             } else {
                 const u = JSON.parse(localStorage.getItem('make_order_auth'));
-                if ((sp.name || "") != "") {                  
+                if ((sp.name || "") != "") {
                     this.onRemoveSaleProduct(sp, sp.quantity, u.name);
                     let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion || "") == "" ? "" : `(${sp.portion})`} ${sp.modifiers}`
                     let msg = `${u.name} delete item: ${item_description}`;
@@ -1104,16 +1104,16 @@ export default class Sale {
                         custom_amount: sp.amount
                     });
                 } else {
-                   if(input!= (-99999)){
-                        if(sp.quantity <= input){
+                    if (input != (-99999)) {
+                        if (sp.quantity <= input) {
                             this.sale.sale_products.splice(this.sale.sale_products.indexOf(sp), 1);
                         }
-                        else{
-                            this.onRemoveSaleProduct(sp, input, u.name); 
+                        else {
+                            this.onRemoveSaleProduct(sp, input, u.name);
                         }
-                   }else{
-                    this.sale.sale_products.splice(this.sale.sale_products.indexOf(sp), 1);
-                   }
+                    } else {
+                        this.sale.sale_products.splice(this.sale.sale_products.indexOf(sp), 1);
+                    }
                     this.updateSaleSummary();
                 }
             }
@@ -1132,12 +1132,12 @@ export default class Sale {
                     else {
                         result = input;
                     }
-                    if (result != false || result == 0 ) {
+                    if (result != false || result == 0) {
                         const price = sp.price;
                         sp.change_price_note = v.note;
                         if (result != false || result == 0) {
                             sp.price = parseFloat(this.getNumber(result));
-                        }else{
+                        } else {
                             sp.price = parseFloat(this.getNumber(sp.price));
                         }
                         this.updateSaleProduct(sp);
@@ -1177,7 +1177,7 @@ export default class Sale {
                     if (quantity == 0) {
                         quantity = 1
                     }
-                    if (sp.is_return == 1){
+                    if (sp.is_return == 1) {
                         quantity = quantity * -1
                     }
                     const u = JSON.parse(localStorage.getItem('make_order_auth'));
@@ -1244,7 +1244,7 @@ export default class Sale {
             const result = await noteDialog({ title: $t("Note"), name: 'Items Note', data: sp });
             if (result != false) {
                 sp.note = result
-                socket.emit("ShowOrderInCustomerDisplay", this.sale,"", this.customer_display_key);
+                socket.emit("ShowOrderInCustomerDisplay", this.sale, "", this.customer_display_key);
             }
         }
     }
@@ -1258,23 +1258,23 @@ export default class Sale {
         }
     }
 
-    async onSplitSaleProduct( sp){
-        if(!this.isBillRequested()){
-            const currentQty = sp.quantity ;
-            if(currentQty <=1){
+    async onSplitSaleProduct(sp) {
+        if (!this.isBillRequested()) {
+            const currentQty = sp.quantity;
+            if (currentQty <= 1) {
                 return;
             }
-            const result =  await keyboardDialog({ title: `${$t("Split Item")}`, type: 'number', value: 1 });
-            if(result){
+            const result = await keyboardDialog({ title: `${$t("Split Item")}`, type: 'number', value: 1 });
+            if (result) {
                 let splipQty = parseFloat(this.getNumber(result));
-                if(splipQty >= currentQty){
+                if (splipQty >= currentQty) {
                     toaster.warning($t("Item cannot split equal or over current quantity"))
                     return;
                 }
                 let splitItemProduct = JSON.parse(JSON.stringify(sp));
                 splitItemProduct.name = "";
                 splitItemProduct.quantity = splipQty;
-                splitItemProduct.selected = false; 
+                splitItemProduct.selected = false;
                 this.updateSaleProduct(splitItemProduct);
                 this.sale.sale_products.push(splitItemProduct);
                 //update old sale product  
@@ -1436,7 +1436,7 @@ export default class Sale {
     async onSaleProductChangeTaxSetting(sp, gv) {
         await this.onChangeTaxSetting($t('Change Tax Setting'), sp.product_tax_rule, sp.change_tax_setting_note, gv, sp);
     }
-    onUpdateSaleDiscount(discount,discount_type, discount_note){
+    onUpdateSaleDiscount(discount, discount_type, discount_note) {
         this.sale.discount = discount;
         this.sale.discount_type = discount_type;
         this.sale.discount_note = discount_note;
@@ -1445,7 +1445,7 @@ export default class Sale {
             if (sale_discount > 0 && _sp.allow_discount && _sp.discount == 0) {
                 _sp.sale_discount_percent = sale_discount;
                 const temp_sale_discount_amount = (sale_discount / 100) * _sp.sub_total;
-                const sale_discount_amount =  Number((temp_sale_discount_amount + Number.EPSILON).toFixed(this.setting.pos_setting.main_currency_precision))
+                const sale_discount_amount = Number((temp_sale_discount_amount + Number.EPSILON).toFixed(this.setting.pos_setting.main_currency_precision))
                 _sp.sale_discount_amount = sale_discount_amount
             }
             else {
@@ -1465,7 +1465,7 @@ export default class Sale {
             data: {
                 discount_value: discount_value,
                 discount_type: discount_type,
-                discount_codes: discount_codes.filter(d=> (d.branch || branch) == branch),
+                discount_codes: discount_codes.filter(d => (d.branch || branch) == branch),
                 discount_note: discount_note,
                 sale_product: sp,
                 category_note_name: category_note_name
@@ -1497,7 +1497,7 @@ export default class Sale {
                     });
                 }
                 else {
-                    this.onUpdateSaleDiscount(result.discount, result.discount_type,result.discount_note);
+                    this.onUpdateSaleDiscount(result.discount, result.discount_type, result.discount_note);
                     //sale discount audit
                     let discount = this.sale.discount_type == "Percent" ? `${this.sale.discount} %` : NumberFormat(gv.getCurrnecyFormat, this.sale.discount);                //audit trail
                     let msg = `${this.sale.temp_discount_by} discount (${discount}) on Bill`;
@@ -1548,7 +1548,7 @@ export default class Sale {
                 sp.seat_number = parseInt(result);
                 if (sp.seat_number == undefined || isNaN(sp.seat_number)) {
                     sp.seat_number = 0;
-                    socket.emit("ShowOrderInCustomerDisplay", this.sale,"", this.customer_display_key);
+                    socket.emit("ShowOrderInCustomerDisplay", this.sale, "", this.customer_display_key);
                 }
             } else {
                 return;
@@ -1693,49 +1693,50 @@ export default class Sale {
             return false
         }
     }
+
     
-    async onSubmit() {
-        this.loading = true;
+    async onSubmit(options={}) {
+        // options={"print_request_bill":false}
+
+        const l = await app.showLoading();
+        
         let is_new = this.sale.creation == this.sale.modified
         let allow_overwrite_max_order_per_guest = JSON.parse(localStorage.getItem("current_user")).permission["allow_overwrite_max_order_per_guest"]
         let allow_overwrite_waiting_time = JSON.parse(localStorage.getItem("current_user")).permission["allow_overwrite_waiting_time"]
-        if(this.setting.maximum_order_per_guest>0 && this.setting.use_retail_ui == 0){
-            if(this.sale.guest_cover == 0){
+        if (this.setting.maximum_order_per_guest > 0 && this.setting.use_retail_ui == 0) {
+            if (this.sale.guest_cover == 0) {
                 toaster.error($t('Please add guest cover.'));
-                this.loading = false;
+                l.close();
                 return
             }
 
             let maximum_order_per_guest = this.setting.maximum_order_per_guest
-            let new_orders_qty = this.sale?.sale_products?.filter(r=>r.is_newly_added == 1)?.reduce((sum, a) => sum + (a.quantity || 0), 0);
+            let new_orders_qty = this.sale?.sale_products?.filter(r => r.is_newly_added == 1)?.reduce((sum, a) => sum + (a.quantity || 0), 0);
             let guest_cover = this.sale.guest_cover
-            let average_orders_per_guest = new_orders_qty/guest_cover
-            if(maximum_order_per_guest<average_orders_per_guest && has_changes(this.sale) == 1 && allow_overwrite_max_order_per_guest == 0){
+            let average_orders_per_guest = new_orders_qty / guest_cover
+            if (maximum_order_per_guest < average_orders_per_guest && has_changes(this.sale) == 1 && allow_overwrite_max_order_per_guest == 0) {
                 this.loading = false;
-                ComOrderLimitDialog({ business_branch:this.setting?.business_branch,order_limit:1 });
+                ComOrderLimitDialog({ business_branch: this.setting?.business_branch, order_limit: 1 });
+                l.close();
                 return
             }
         }
-        if(this.setting.menu_waiting_time > 0 && !is_new && this.setting.use_retail_ui == 0){
-            const top = this.sale.sale_products.filter(r=>(r.is_newly_added || 0) == 0).reduce((maxObj, obj) => 
+        if (this.setting.menu_waiting_time > 0 && !is_new && this.setting.use_retail_ui == 0) {
+            const top = this.sale.sale_products.filter(r => (r.is_newly_added || 0) == 0).reduce((maxObj, obj) =>
                 obj.order_time > maxObj.order_time ? obj : maxObj
             );
             const start = new Date(top.order_time);
             const end = new Date();
-            let diff = ((end-start)/60000)
+            let diff = ((end - start) / 60000)
             let minimum = this.setting.menu_waiting_time
-            if(diff < minimum && has_changes(this.sale) == 1 && allow_overwrite_waiting_time == 0){
+            if (diff < minimum && has_changes(this.sale) == 1 && allow_overwrite_waiting_time == 0) {
                 this.loading = false;
-                ComOrderLimitDialog({ business_branch:this.setting?.business_branch,time_limit:1 });
+                ComOrderLimitDialog({ business_branch: this.setting?.business_branch, time_limit: 1 });
+                l.close();
                 return
             }
         }
-        // const resp = await Ping(this.setting)
-        // if(resp == 0){
-        //     toaster.error($t('Please check your network connection'));
-        //     this.loading = false;
-        //     return
-        // }
+
 
         return new Promise(async (resolve) => {
             if (this.sale.sale_products.length == 0 && this.sale.name == undefined && (this.sale.from_reservation || "") == "") {
@@ -1750,70 +1751,126 @@ export default class Sale {
                 const _now_format = moment(now).format('yyyy-MM-DD HH:mm:ss.SSSSSS');
 
                 //generate uuid to sale product if new item
-                this.sale.sale_products.filter(r => r.sale_product_status == 'New' ).forEach((r) => {    
-                    if(!r.name){                 
-                        r.__islocal = 1; 
-                        r.name = uuidv4(); 
+                this.sale.sale_products.filter(r => r.sale_product_status == 'New').forEach((r) => {
+                    if (!r.name) {
+                        r.__islocal = 1;
+                        // r.name = uuidv4();
                     }
                     r.order_time = _now_format
                 });
 
                 let doc = JSON.parse(JSON.stringify(this.sale));
                 let _sale = undefined;
-                this.generateProductPrinters();
-                if (this.sale.sale_status != "Hold Order") {
-                    doc.sale_products.filter(r => r.sale_product_status == "New").forEach(x => {
-                        x.sale_product_status = "Submitted";
+                //  ***************************this option will send sale using api.sale.submit_order *********
+                //  *************************** this block update by Pheakdey *********
+                if (this.getPrintServerUrl()) {
+
+                    if (this.sale.sale_status != "Hold Order") {
+                        doc.sale_products.filter(r => r.sale_product_status == "New").forEach(x => {
+                            x.sale_product_status = "Submitted";
+                        });
+                    }
+
+                    const response = await app.postApi("sale.submit_order", {
+                        data: {
+                            doc: doc,
+                            audit_trail_logs: this.auditTrailLogs,
+                            deleted_products:this.deletedSaleProducts
+                           
+                        },
+                         print_request_bill:options.print_request_bill, 
+                            print_server_url:this.getPrintServerUrl()
                     })
-                }
-                if (this.getString(this.sale.name) == "") {
-                    if (this.newSaleResource == null) {
-                        this.createNewSaleResource();
-                    }
-                    try{
-                         _sale = await this.newSaleResource.submit({ doc: doc });
-                    }
-                    catch(error){
-                        if(this.sale.sale_status == "Bill Requested"){
-                            this.sale.sale_status = "Submitted";
-                        }
-                        this.loading = false;
-                   
-                        return;
-                    }
-                }
-                else {
-                    try{
-                        _sale = await this.saleResource.setValue.submit(doc);   
-                        if (_sale.name && _sale.grand_total !=  this.__backup_sale.grand_total && (_sale.aba_transaction_id||"") != ""){
-                            call.post("epos_restaurant_2023.api.payway.aba_close_transaction", { 
+
+                    if (response.data) {
+
+                        _sale = response.data.doc
+                        if (response.data && _sale?.grand_total  != this.__backup_sale?.grand_total && (_sale?.aba_transaction_id || "") != "") {
+                            call.post("epos_restaurant_2023.api.payway.aba_close_transaction", {
                                 "property_code": this.setting.property_code,
                                 "pos_config": this.setting.pos_config,
-                                "invoice_id": _sale.name
-                            }); 
+                                "invoice_id": _sale.name,
+                            });
                         }
-                    }
-                    catch(error){
-                        if(this.sale.sale_status == "Bill Requested"){
+
+                        // reset sale doc  to enable go back
+
+                        this.newSale();
+
+                    } else {
+                        if (this.sale.sale_status == "Bill Requested") {
                             this.sale.sale_status = "Submitted";
                         }
-                        this.loading = false;
-                     
-                        return;
                     }
+                
+                    
+                    this.loading = false;
+                    resolve(_sale);
+                    // end submit sale with api 
+
+                } else {
+                    this.generateProductPrinters();
+                    if (this.sale.sale_status != "Hold Order") {
+                        doc.sale_products.filter(r => r.sale_product_status == "New").forEach(x => {
+                            x.sale_product_status = "Submitted";
+                        })
+                    }
+                    if (this.getString(this.sale.name) == "") {
+                        if (this.newSaleResource == null) {
+                            this.createNewSaleResource();
+                        }
+                        try {
+                            _sale = await this.newSaleResource.submit({ doc: doc });
+                        }
+                        catch (error) {
+                            if (this.sale.sale_status == "Bill Requested") {
+                                this.sale.sale_status = "Submitted";
+                            }
+                            l.close();
+
+                            return;
+                        }
+                    }
+                    else {
+                        try {
+                            _sale = await this.saleResource.setValue.submit(doc);
+                            if (_sale.name && _sale.grand_total != this.__backup_sale.grand_total && (_sale.aba_transaction_id || "") != "") {
+                                call.post("epos_restaurant_2023.api.payway.aba_close_transaction", {
+                                    "property_code": this.setting.property_code,
+                                    "pos_config": this.setting.pos_config,
+                                    "invoice_id": _sale.name
+                                });
+                            }
+                        }
+                        catch (error) {
+                            if (this.sale.sale_status == "Bill Requested") {
+                                this.sale.sale_status = "Submitted";
+                            }
+                            l.close();
+
+                            return;
+                        }
+                    }
+                    this.submitToAuditTrail(doc);
                 }
-                this.submitToAuditTrail(doc);
+
+
+
+
+
                 //refresh tabl 
                 resolve(_sale);
             }
-             this.loading = false;
+           l.close();
         })
 
     }
 
 
 
+
     async onSubmitQuickPay() {
+        
         if (this.sale.sale_products.filter(r => !r.time_out_price && r.is_timer_product).length > 0) {
             toaster.warning($t('msg.Please stop timer on timer product'));
             return;
@@ -1830,11 +1887,14 @@ export default class Sale {
                 }
                 else {
                     if (await confirmDialog({ title: $t("Quick Pay"), text: $t('msg.are you sure to process quick pay and close order') })) {
-                        this.loading = true;
+                        const l = await app.showLoading("Quick Pay")
+
+
                         const resp = await Ping(this.setting)
-                        if(resp == 0){
+                        
+                        if (resp == 0) {
                             toaster.error($t('Please check your network connection'));
-                            this.loading = false;
+                            l.close()
                             resolve(false);
                             return
                         }
@@ -1863,42 +1923,82 @@ export default class Sale {
                         this.action = "quick_pay";
 
                         //generate uuid to sale product if new item
-                        this.sale.sale_products.filter(r => r.sale_product_status == 'New' && !r.name).forEach((r) => {                     
-                            r.__islocal = 1; 
-                            r.name = uuidv4(); 
+                        this.sale.sale_products.filter(r => r.sale_product_status == 'New' && !r.name).forEach((r) => {
+                            r.__islocal = 1;
+                            // r.name = uuidv4();
                         });
 
 
                         let doc = JSON.parse(JSON.stringify(this.sale));
-                        this.generateProductPrinters();
-                        let msg = `${u.name} quick pay`;
-                        this.auditTrailLogs.push({
-                            doctype: "Comment",
-                            subject: "Quick Payment",
-                            comment_type: "Info",
-                            reference_doctype: "Sale",
-                            reference_name: "New",
-                            comment_by: u.name,
-                            content: msg,
-                            custom_item_description: "",
-                            custom_note: "",
-                            custom_amount: ((this.sale.total_paid || 0) - (this.sale.changed_amount || 0))
-                        });
-                        if (this.getString(this.sale.name) == "") {
-                            if (this.newSaleResource == null) {
-                                this.createNewSaleResource();
+                          let msg = `${u.name} quick pay`;
+
+                        if (this.getPrintServerUrl()){
+                            // this code block update by Pheakdey for submit sale using sale.submit_order
+                            
+                                this.auditTrailLogs.push({
+                                    doctype: "Comment",
+                                    subject: "Quick Payment",
+                                    comment_type: "Info",
+                                    reference_doctype: "Sale",
+                                    reference_name: "New",
+                                    comment_by: u.name,
+                                    content: msg,
+                                    custom_item_description: "",
+                                    custom_note: "",
+                                    custom_amount: ((this.sale.total_paid || 0) - (this.sale.changed_amount || 0))
+                                });
+
+
+                            const response = await app.postApi("sale.submit_order", {
+                                data: {
+                                    doc: doc,
+                                    audit_trail_logs: this.auditTrailLogs,
+                                    deleted_products:this.deletedSaleProducts,
+                                   
+                                
+                                },
+                                print_bill:true ,
+                                print_server_url:this.getPrintServerUrl()
+                            })
+                             l.close();
+                        
+ resolve(true);
+                        
+
+                        }else {
+                            this.generateProductPrinters();
+                            
+                            this.auditTrailLogs.push({
+                                doctype: "Comment",
+                                subject: "Quick Payment",
+                                comment_type: "Info",
+                                reference_doctype: "Sale",
+                                reference_name: "New",
+                                comment_by: u.name,
+                                content: msg,
+                                custom_item_description: "",
+                                custom_note: "",
+                                custom_amount: ((this.sale.total_paid || 0) - (this.sale.changed_amount || 0))
+                            });
+                            if (this.getString(this.sale.name) == "") {
+                                if (this.newSaleResource == null) {
+                                    this.createNewSaleResource();
+                                }
+                                await this.newSaleResource.submit({ doc: doc });
                             }
-                            await this.newSaleResource.submit({ doc: doc });
+                            else {
+                                await this.saleResource.setValue.submit(doc);
+                            }
+                            this.submitToAuditTrail(doc);
                         }
-                        else {
-                            await this.saleResource.setValue.submit(doc);
-                        }
-                        this.submitToAuditTrail(doc);
+                        
                         resolve(true);
                     }
                 }
             }
-            this.loading = false;
+
+            l.close();
+
         })
     }
 
@@ -1909,15 +2009,17 @@ export default class Sale {
             if (balance > 0 && ignore == false) {
                 toaster.error($t('Please enter all payment amount'));
                 resolve(false);
-            } else { 
+            } else {
                 let conf = true;
-                if(ignore == false ){
+                if (ignore == false) {
                     conf = await confirmDialog({ title: $t("Payment"), text: $t("msg.are you sure to process payment and close order") });
                 }
                 if (conf) {
-                    this.loading = true;
+                    
+                    const l = await app.showLoading($t("Payment..."));
+
                     const resp = await Ping(this.setting)
-                    if(resp == 0){
+                    if (resp == 0) {
                         toaster.warning($t('msg.Please check your network connection'));
                         this.loading = false;
                         resolve(false);
@@ -1925,9 +2027,9 @@ export default class Sale {
                     }
                     socket.emit("ShowOrderInCustomerDisplay", this.sale, "paid", this.customer_display_key);
                     //generate uuid to sale product if new item
-                    this.sale.sale_products.filter(r => r.sale_product_status == 'New' && !r.name).forEach((r) => {                     
-                        r.__islocal = 1; 
-                        r.name = uuidv4(); 
+                    this.sale.sale_products.filter(r => r.sale_product_status == 'New' && !r.name).forEach((r) => {
+                        r.__islocal = 1;
+                        // r.name = uuidv4();
                     });
 
                     this.generateProductPrinters();
@@ -1946,44 +2048,68 @@ export default class Sale {
                     this.sale.pos_profile = this.setting?.pos_profile;
                     this.sale.outlet = this.setting?.outlet;
                     this.action = "payment";
-                    if (this.getString(this.sale.name) == "") {
+                    // this block code is use for submit order using sale.submit_order
+                    // update by pheakdey
+                    if (this.getPrintServerUrl()){
+                        this.printWaitingOrderAfterPayment = true;
+                        const response = await app.postApi("sale.submit_order", {
+                            data: {
+                                doc: this.sale,
+                                audit_trail_logs: this.auditTrailLogs,
+                                deleted_products:this.deletedSaleProducts
+                            },
+                         print_bill:isPrint, 
+                        print_server_url:this.getPrintServerUrl()
+                    })
+                 
+                    if (ignore == true) {
+                        socket.emit("ABAPayWaySuccess", {}, this.customer_display_key);
+                    }
+                    l.close();
+                    resolve(true);
+
+                    } else {
+                        if (this.getString(this.sale.name) == "") {
                         if (this.newSaleResource == null) {
                             this.createNewSaleResource();
                         }
                         this.printWaitingOrderAfterPayment = true;
-                        try{
-                             await this.newSaleResource.submit({ doc: this.sale });
+                        try {
+                            await this.newSaleResource.submit({ doc: this.sale });
                         }
-                        catch(error){
-                            this.loading = false;
+                        catch (error) {
+                              l.close();
                             return;
                         }
                     } else {
-                        try{
+                        try {
                             await this.saleResource.setValue.submit(this.sale);
                         }
-                        catch(error){
-                            this.loading = false;
+                        catch (error) {
+                              l.close();
                             return;
                         }
                     }
                     this.submitToAuditTrail(this.sale);
 
-                    if(ignore==true){
+                    if (ignore == true) {
                         socket.emit("ABAPayWaySuccess", {}, this.customer_display_key);
                     }
 
                     resolve(true);
+                    }
+
+                    
                 }
             }
-            this.loading = false;
+            l.close();
         });
     }
 
-    async onProcessTaskAfterSubmit(doc) { 
+    async onProcessTaskAfterSubmit(doc) {
         if (this.action == "submit_order") {
-            this.onPrintToKitchen(doc); 
-            if(this.setting?.device_setting?.print_invoice_on_submit == 1 && this.changed == 1){
+            this.onPrintToKitchen(doc);
+            if (this.setting?.device_setting?.print_invoice_on_submit == 1 && this.changed == 1) {
                 if (this.pos_receipt == undefined || this.pos_receipt == null) {
                     this.pos_receipt = this.setting?.default_pos_receipt;
                 }
@@ -1995,37 +2121,37 @@ export default class Sale {
                 this.onPrintWaitingOrder(doc);
             }
         }
-        else if (this.action == "print_bill" || this.action =="print_invoice_by_seat") {
+        else if (this.action == "print_bill" || this.action == "print_invoice_by_seat") {
             if (this.pos_receipt == undefined || this.pos_receipt == null) {
                 this.pos_receipt = this.setting?.default_pos_receipt;
             }
             this.onPrintToKitchen(doc);
-            this.onPrintReceipt(this.pos_receipt, `${this.action == "print_invoice_by_seat"? "print_invoice_by_seat": "print_invoice" }`, doc);
+            this.onPrintReceipt(this.pos_receipt, `${this.action == "print_invoice_by_seat" ? "print_invoice_by_seat" : "print_invoice"}`, doc);
         }
         else if (this.action == "quick_pay") {
-            
+
             this.onPrintToKitchen(doc);
             if (this.printWaitingOrderAfterPayment) {
                 this.onPrintWaitingOrder(doc);
             }
             this.onPrintReceipt(this.setting?.default_pos_receipt, "print_receipt", doc);
         }
-        else if (this.action == "payment") {  
+        else if (this.action == "payment") {
             //open cashdrawer
-            let isWindows = localStorage.getItem("is_window")=="1";
-	        let isElectron= localStorage.getItem("electronWrapper") == "1";
+            let isWindows = localStorage.getItem("is_window") == "1";
+            let isElectron = localStorage.getItem("electronWrapper") == "1";
             if (isWindows) {
                 window.chrome.webview.postMessage(JSON.stringify({ action: "open_cashdrawer" }));
-            }else if (isElectron){
+            } else if (isElectron) {
                 ///
             }
 
-            this.onPrintToKitchen(doc); 
+            this.onPrintToKitchen(doc);
             if (this.printWaitingOrderAfterPayment) {
-                    this.onPrintWaitingOrder(doc);
-            }  
+                this.onPrintWaitingOrder(doc);
+            }
             if (this.isPrintReceipt == true) {
-                await  this.onPrintReceipt(this.pos_receipt, "print_receipt", doc);
+                await this.onPrintReceipt(this.pos_receipt, "print_receipt", doc);
             }
         }
         //create deleted sale product to database;
@@ -2038,7 +2164,7 @@ export default class Sale {
         this.orderTime = "";
         socket.emit("RefreshTable");
 
-        
+
     }
 
     submitToAuditTrail(d) {
@@ -2050,8 +2176,8 @@ export default class Sale {
     }
 
     onPrintToKitchen(doc, products = null) {
-     
-        var _productPrinters = products ?? this.productPrinters; 
+
+        var _productPrinters = products ?? this.productPrinters;
         const data = {
             action: "print_to_kitchen",
             setting: this.setting?.pos_setting,
@@ -2059,14 +2185,14 @@ export default class Sale {
             product_printers: _productPrinters,
             station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
             printers: []
-        } 
+        }
 
         var groupKeys = "{printer:$.printer,actual_printer_name:$.actual_printer_name,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port}"
         var groupFields = "$.printer+','+$.actual_printer_name+','+$.group_item_type+','+$.ip_address+','+$.port";
         var printers = Enumerable.from(data.product_printers).groupBy(groupKeys, "", groupKeys, groupFields).toArray();
         printers.forEach((p) => {
             var _printer = data.product_printers.filter((x) => x.printer == p.printer)
-            if (_printer.length > 0) { 
+            if (_printer.length > 0) {
                 data.printers.push({
                     "printer_name": _printer[0].printer,
                     "actual_printer_name": _printer[0].actual_printer_name || _printer[0].printer,
@@ -2141,17 +2267,17 @@ export default class Sale {
                 socket.emit("PrintReceipt", JSON.stringify(productUSBPrinter))
             }
         } else {
-            let isWindows = localStorage.getItem("is_window")=="1";
-	        let isElectron= localStorage.getItem("electronWrapper") == "1";
-            if (isWindows || isElectron ) {
+            let isWindows = localStorage.getItem("is_window") == "1";
+            let isElectron = localStorage.getItem("electronWrapper") == "1";
+            if (isWindows || isElectron) {
                 if ((data.product_printers ?? []).length > 0) {
                     let _message_data = JSON.stringify(data);
-                    if(isWindows){
+                    if (isWindows) {
                         window.chrome.webview.postMessage(_message_data);
-                    }else{
-                        console.info("electron message action => ",data.action) 
-				        window.electronAPI.send('vue-message', _message_data);
-                    }                    
+                    } else {
+                        console.info("electron message action => ", data.action)
+                        window.electronAPI.send('vue-message', _message_data);
+                    }
                 }
             }
             else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
@@ -2162,7 +2288,7 @@ export default class Sale {
                     }
                     //trigger print usb print
                     if (productUSBPrinter.printers.length > 0) {
-                         flutterChannel.postMessage(JSON.stringify(productUSBPrinter));
+                        flutterChannel.postMessage(JSON.stringify(productUSBPrinter));
                         // socket.emit("PrintReceipt", JSON.stringify(productUSBPrinter))
                     }
                 }
@@ -2175,11 +2301,11 @@ export default class Sale {
         //reset product printer
         if (products == null) {
             this.productPrinters = [];
-        } 
+        }
     }
 
     //p = printer, r = sale product
-    onAddToProductPrinters(p, r){
+    onAddToProductPrinters(p, r) {
         this.productPrinters.push({
             sale_product_name: (r.name || "New"),
             printer: p.printer,
@@ -2191,9 +2317,9 @@ export default class Sale {
             product_code: r.product_code,
             product_name_en: r.product_name,
             product_name_kh: r.product_name_kh,
-            kitchen_group:r.kitchen_group||"",
+            kitchen_group: r.kitchen_group || "",
             kitchen_group_sort_order: r.kitchen_group_sort_order || 0,
-            seat_number: r.seat_number||"",
+            seat_number: r.seat_number || "",
             portion: r.portion,
             unit: r.unit,
             modifiers: r.modifiers,
@@ -2218,158 +2344,158 @@ export default class Sale {
     }
 
     //get combo print KOT by combo items
-    async getProductPrinterOfComboItem(saleProduct, isDeleted = false,moveFromTable=undefined, moveFromSale=undefined){
+    async getProductPrinterOfComboItem(saleProduct, isDeleted = false, moveFromTable = undefined, moveFromSale = undefined) {
         let saleProductPrinters = []
         const r = saleProduct;
-        if(this.setting.pos_setting.combo_menu_print_captain_by_items_printer && r.is_combo_menu){
+        if (this.setting.pos_setting.combo_menu_print_captain_by_items_printer && r.is_combo_menu) {
 
             const combo_data = JSON.parse(r.combo_menu_data)
-                let productCodes = combo_data.map(i => i.product_code);
-                const res = await call.post("epos_restaurant_2023.api.api.get_product_printer_by_products", {
-                     "product_codes":productCodes
-                });    
-                // const printers = JSON.parse(r.printers); 
-                const combo_product_printers = res["message"]     
-                let product_printers = [];     
-                for(const pro of combo_data ){
-                    const p_printers = combo_product_printers.filter(r=>r.product_code == pro.product_code)
-                    for(const p of p_printers){                    
-                            product_printers.push({
-                                sale_product_name: (r.name || "New"),
-                                move_from_table: moveFromTable,
-                                move_from_sale: moveFromSale,
-                                printer: p.printer_name,
-                                actual_printer_name: p.actual_printer_name ||  p.printer_name,
-                                group_item_type: p.group_item_type,
-                                is_label_printer: p.is_label_printer == 1,
-                                ip_address: p.ip_address,
-                                port: p.port,
-                                usb_printing: p.usb_printing,
-                                product_code: pro.product_code,
-                                product_name_en: pro.product_name,
-                                product_name_kh: pro.product_name_kh || pro.product_name,
-                                kitchen_group:pro.kitchen_group||"",
-                                kitchen_group_sort_order: pro.kitchen_group_sort_order || 0,
-                                seat_number: r.seat_number||"",
-                                portion: r.portion,
-                                unit: r.unit,
-                                modifiers: r.modifiers,
-                                note: r.note,
-                                quantity: r.quantity ,
-                                combo_quantity : (pro.quantity||1),
-                                combo_id : pro.menu_name,
-                                is_deleted: isDeleted,
-                                is_free: r.is_free == 1,
-                                combo_menu: r.product_name,
-                                combo_menu_data: null,
-                                order_by: r.order_by,
-                                order_time: r.order_time,
-                                creation: r.creation,
-                                modified: r.modified,
-                                is_timer_product: (r.is_timer_product || 0),
-                                reference_sale_product: r.reference_sale_product,
-                                duration: r.duration,
-                                time_stop: (r.time_stop || 0),
-                                time_in: r.time_in,
-                                time_out_price: r.time_out_price,
-                                time_out: r.time_out,
-                                amount: r.amount
-                            })
+            let productCodes = combo_data.map(i => i.product_code);
+            const res = await call.post("epos_restaurant_2023.api.api.get_product_printer_by_products", {
+                "product_codes": productCodes
+            });
+            // const printers = JSON.parse(r.printers); 
+            const combo_product_printers = res["message"]
+            let product_printers = [];
+            for (const pro of combo_data) {
+                const p_printers = combo_product_printers.filter(r => r.product_code == pro.product_code)
+                for (const p of p_printers) {
+                    product_printers.push({
+                        sale_product_name: (r.name || "New"),
+                        move_from_table: moveFromTable,
+                        move_from_sale: moveFromSale,
+                        printer: p.printer_name,
+                        actual_printer_name: p.actual_printer_name || p.printer_name,
+                        group_item_type: p.group_item_type,
+                        is_label_printer: p.is_label_printer == 1,
+                        ip_address: p.ip_address,
+                        port: p.port,
+                        usb_printing: p.usb_printing,
+                        product_code: pro.product_code,
+                        product_name_en: pro.product_name,
+                        product_name_kh: pro.product_name_kh || pro.product_name,
+                        kitchen_group: pro.kitchen_group || "",
+                        kitchen_group_sort_order: pro.kitchen_group_sort_order || 0,
+                        seat_number: r.seat_number || "",
+                        portion: r.portion,
+                        unit: r.unit,
+                        modifiers: r.modifiers,
+                        note: r.note,
+                        quantity: r.quantity,
+                        combo_quantity: (pro.quantity || 1),
+                        combo_id: pro.menu_name,
+                        is_deleted: isDeleted,
+                        is_free: r.is_free == 1,
+                        combo_menu: r.product_name,
+                        combo_menu_data: null,
+                        order_by: r.order_by,
+                        order_time: r.order_time,
+                        creation: r.creation,
+                        modified: r.modified,
+                        is_timer_product: (r.is_timer_product || 0),
+                        reference_sale_product: r.reference_sale_product,
+                        duration: r.duration,
+                        time_stop: (r.time_stop || 0),
+                        time_in: r.time_in,
+                        time_out_price: r.time_out_price,
+                        time_out: r.time_out,
+                        amount: r.amount
+                    })
+                }
+            }
+
+            // Group by combo_menu, printer, quantity, is_deleted, is_free
+            let merged = Object.values(
+                product_printers.reduce((acc, item) => {
+                    // key based on fields you want to merge by
+                    let key = `${item.combo_menu}|${item.printer}`;
+                    if (item.group_item_type != "Printer cut by order") {
+                        key += `|${item.product_code}|${item.combo_id}`
                     }
-                }   
-                
-                // Group by combo_menu, printer, quantity, is_deleted, is_free
-                let merged = Object.values(
-                    product_printers.reduce((acc, item) => {
-                        // key based on fields you want to merge by
-                        let key = `${item.combo_menu}|${item.printer}`;
-                        if(item.group_item_type != "Printer cut by order"){
-                            key += `|${item.product_code}|${item.combo_id}`
-                        }
 
-                        if(item.is_label_printer == 1){
-                            item.quantity = item.quantity * item.combo_quantity
-                        }
-                        // const key = `${item.combo_menu}|${item.printer}|${item.quantity}|${item.is_deleted}|${item.is_free}`;
-                        const item_display = item.product_name_en 
-                      
-                        if (!acc[key]) {
-                            // copy first item
-                            acc[key] = { ...item };
-                            // initialize array to store product names for combo_menu field
-                           
-                            acc[key].combo_menu_list = [item_display];
-                            acc[key].combo_menu_code_list = [item.product_code]; 
-                        } else {
-                            // collect product names
-                            acc[key].combo_menu_list.push(item_display);
-                            acc[key].combo_menu_code_list.push(item.product_code);
-                        }
+                    if (item.is_label_printer == 1) {
+                        item.quantity = item.quantity * item.combo_quantity
+                    }
+                    // const key = `${item.combo_menu}|${item.printer}|${item.quantity}|${item.is_deleted}|${item.is_free}`;
+                    const item_display = item.product_name_en
 
-                        return acc;
-                    }, {})
-                );
- 
-                // Map merged array to final structure
-                let finalList = merged.map(item => ({
-                    sale_product_name: item.sale_product_name,
-                    printer: item.printer,
-                    actual_printer_name: item.actual_printer_name || item.printer,
-                    group_item_type: item.group_item_type,
-                    is_label_printer: item.is_label_printer,
-                    ip_address: item.ip_address,
-                    port: item.port,
-                    usb_printing: item.usb_printing,
-                    product_code: r.product_code,
-                    product_name_en: r.product_name,
-                    product_name_kh: r.product_name_kh,
-                    kitchen_group: item.kitchen_group,
-                    kitchen_group_sort_order: item.kitchen_group_sort_order,
-                    seat_number: item.seat_number,
-                    portion: item.portion,
-                    unit: item.unit,
-                    modifiers: item.modifiers,
-                    note: item.note,
-                    quantity: item.quantity,
-                    is_deleted: item.is_deleted,
-                    is_free: item.is_free,
-                    combo_menu: item.combo_menu_list.join("^ "), // merged product names
-                    combo_menu_data: JSON.stringify(combo_data.filter((x)=> item.combo_menu_code_list.includes(x.product_code) )),
-                    order_by: item.order_by,
-                    order_time: item.order_time,
-                    creation: item.creation,
-                    modified: item.modified,
-                    is_timer_product: item.is_timer_product,
-                    reference_sale_product: r.reference_sale_product,
-                    duration: item.duration,
-                    time_stop: item.time_stop,
-                    time_in: item.time_in,
-                    time_out_price: item.time_out_price,
-                    time_out: item.time_out,
-                    amount: item.amount
-                })); 
+                    if (!acc[key]) {
+                        // copy first item
+                        acc[key] = { ...item };
+                        // initialize array to store product names for combo_menu field
 
-                 finalList.forEach((p)=>{ 
-                    saleProductPrinters.push(p)
-                 });
+                        acc[key].combo_menu_list = [item_display];
+                        acc[key].combo_menu_code_list = [item.product_code];
+                    } else {
+                        // collect product names
+                        acc[key].combo_menu_list.push(item_display);
+                        acc[key].combo_menu_code_list.push(item.product_code);
+                    }
 
-                return saleProductPrinters
+                    return acc;
+                }, {})
+            );
+
+            // Map merged array to final structure
+            let finalList = merged.map(item => ({
+                sale_product_name: item.sale_product_name,
+                printer: item.printer,
+                actual_printer_name: item.actual_printer_name || item.printer,
+                group_item_type: item.group_item_type,
+                is_label_printer: item.is_label_printer,
+                ip_address: item.ip_address,
+                port: item.port,
+                usb_printing: item.usb_printing,
+                product_code: r.product_code,
+                product_name_en: r.product_name,
+                product_name_kh: r.product_name_kh,
+                kitchen_group: item.kitchen_group,
+                kitchen_group_sort_order: item.kitchen_group_sort_order,
+                seat_number: item.seat_number,
+                portion: item.portion,
+                unit: item.unit,
+                modifiers: item.modifiers,
+                note: item.note,
+                quantity: item.quantity,
+                is_deleted: item.is_deleted,
+                is_free: item.is_free,
+                combo_menu: item.combo_menu_list.join("^ "), // merged product names
+                combo_menu_data: JSON.stringify(combo_data.filter((x) => item.combo_menu_code_list.includes(x.product_code))),
+                order_by: item.order_by,
+                order_time: item.order_time,
+                creation: item.creation,
+                modified: item.modified,
+                is_timer_product: item.is_timer_product,
+                reference_sale_product: r.reference_sale_product,
+                duration: item.duration,
+                time_stop: item.time_stop,
+                time_in: item.time_in,
+                time_out_price: item.time_out_price,
+                time_out: item.time_out,
+                amount: item.amount
+            }));
+
+            finalList.forEach((p) => {
+                saleProductPrinters.push(p)
+            });
+
+            return saleProductPrinters
 
 
-        }else{
+        } else {
             return false
         }
     }
 
     generateProductPrinters() {
         this.productPrinters = [];
-        this.sale.sale_products.filter(r => r.sale_product_status == 'New').forEach(async (r) => {  
+        this.sale.sale_products.filter(r => r.sale_product_status == 'New').forEach(async (r) => {
             let comboItemPrinters = await this.getProductPrinterOfComboItem(r);
             ///check if combo print KOT by combo items
-            if(!comboItemPrinters){
+            if (!comboItemPrinters) {
                 const printers = JSON.parse(r.printers);
-                if(printers.length > 0){
-                    printers.forEach((p) => { 
+                if (printers.length > 0) {
+                    printers.forEach((p) => {
                         this.productPrinters.push({
                             sale_product_name: (r.name || "New"),
                             printer: p.printer,
@@ -2382,9 +2508,9 @@ export default class Sale {
                             product_code: r.product_code,
                             product_name_en: r.product_name,
                             product_name_kh: r.product_name_kh,
-                            kitchen_group:r.kitchen_group||"",
+                            kitchen_group: r.kitchen_group || "",
                             kitchen_group_sort_order: r.kitchen_group_sort_order || 0,
-                            seat_number: r.seat_number||"",
+                            seat_number: r.seat_number || "",
                             portion: r.portion,
                             unit: r.unit,
                             modifiers: r.modifiers,
@@ -2395,7 +2521,7 @@ export default class Sale {
                             combo_menu: r.combo_menu,
                             combo_menu_data: r.combo_menu_data,
                             order_by: r.order_by,
-                            order_time:r.order_time,
+                            order_time: r.order_time,
                             creation: r.creation,
                             modified: r.modified,
                             is_timer_product: (r.is_timer_product || 0),
@@ -2411,11 +2537,11 @@ export default class Sale {
                 }
 
             }
-            else{
-                comboItemPrinters.forEach((p)=>{
+            else {
+                comboItemPrinters.forEach((p) => {
                     this.productPrinters.push(p);
                 });
-            } 
+            }
         });
 
 
@@ -2436,7 +2562,7 @@ export default class Sale {
             //generate deleted product to product printer list
             this.deletedSaleProducts.forEach(async (r) => {
                 let comboItemPrinters = await this.getProductPrinterOfComboItem(r, true);
-                 if(!comboItemPrinters){
+                if (!comboItemPrinters) {
                     const printers = JSON.parse(r.printers);
                     printers.forEach((p) => {
                         this.productPrinters.push({
@@ -2450,9 +2576,9 @@ export default class Sale {
                             product_code: r.product_code,
                             product_name_en: r.product_name,
                             product_name_kh: r.product_name_kh,
-                            kitchen_group: r.kitchen_group||"",
+                            kitchen_group: r.kitchen_group || "",
                             kitchen_group_sort_order: r.kitchen_group_sort_order || 0,
-                            seat_number: r.seat_number||"",
+                            seat_number: r.seat_number || "",
                             portion: r.portion,
                             unit: r.unit,
                             modifiers: r.modifiers,
@@ -2475,13 +2601,13 @@ export default class Sale {
                             time_out: r.time_out
                         })
                     });
-                }else{
-                    comboItemPrinters.forEach((p)=>{
+                } else {
+                    comboItemPrinters.forEach((p) => {
                         this.productPrinters.push(p);
                     });
                 }
-            }); 
-        } 
+            });
+        }
     }
 
 
@@ -2497,62 +2623,62 @@ export default class Sale {
         return url;
     }
 
-    async  onPrintPressed(r, action = "print_bill") {
-        if(this.sale.sale_products.filter(r=>!r.time_out_price && r.is_timer_product).length>0){
-                toaster.warning($t('msg.Please stop timer on timer product'));
-                return false;
+    async onPrintPressed(r, action = "print_bill") {
+        if (this.sale.sale_products.filter(r => !r.time_out_price && r.is_timer_product).length > 0) {
+            toaster.warning($t('msg.Please stop timer on timer product'));
+            return false;
         }
         if (this.sale.sale_products?.length == 0) {
             toaster.warning($t("msg.Please select a menu item to submit order"));
             return false
         } else {
-            const now = new Date();     
-            const u = JSON.parse(localStorage.getItem('make_order_auth'));    
+            const now = new Date();
+            const u = JSON.parse(localStorage.getItem('make_order_auth'));
             this.sale.printed_by = u.name;
             this.sale.printed_date = moment(now).format('yyyy-MM-DD HH:mm:ss.SSS');
             this.sale.sale_status = "Bill Requested";
             this.action = action;
-            this.pos_receipt = r; 
-            let msg = `${u.name} was ${action=="print_bill"?"Printed Bill":"Printed Bill by Seat"}`; 
+            this.pos_receipt = r;
+            let msg = `${u.name} was ${action == "print_bill" ? "Printed Bill" : "Printed Bill by Seat"}`;
             this.auditTrailLogs.push({
-                doctype:"Comment",
-                subject:"Print Bill",
-                comment_type:"Info",
-                reference_doctype:"Sale",
-                reference_name:"New",
-                comment_by:u.name,
-                content:msg,
+                doctype: "Comment",
+                subject: "Print Bill",
+                comment_type: "Info",
+                reference_doctype: "Sale",
+                reference_name: "New",
+                comment_by: u.name,
+                content: msg,
                 custom_item_description: "",
-                custom_note:"",
-                custom_amount: (this.sale.grand_total ||0) 
-            })  ; 
-            return true; 
+                custom_note: "",
+                custom_amount: (this.sale.grand_total || 0)
+            });
+            return true;
         }
     }
 
     async onPrintReceipt(receipt, action, doc) {
         let seat_numbers = []
         // if(action == "print_invoice_by_seat"){
-            var groupKeys = "{seat_number:$.seat_number}"
-            var groupFields = "$.seat_number";
-            var _seat_numbers = Enumerable.from(doc.sale_products).groupBy(groupKeys, "", groupKeys, groupFields).toArray();
-            seat_numbers = []
-            _seat_numbers.forEach((sn)=>{
-                seat_numbers.push(sn.seat_number||"")
-            })
+        var groupKeys = "{seat_number:$.seat_number}"
+        var groupFields = "$.seat_number";
+        var _seat_numbers = Enumerable.from(doc.sale_products).groupBy(groupKeys, "", groupKeys, groupFields).toArray();
+        seat_numbers = []
+        _seat_numbers.forEach((sn) => {
+            seat_numbers.push(sn.seat_number || "")
+        })
         // }  
         let data = {
             action: action,
             print_setting: receipt,
             setting: this.setting?.pos_setting,
             sale: doc,
-            seat_numbers:seat_numbers,
+            seat_numbers: seat_numbers,
             station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
             station: (this.setting?.device_setting?.name) || "",
         }
         let printer = (this.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
         let _printer = undefined
-        if(printer.length>0){
+        if (printer.length > 0) {
             _printer = {
                 "printer_name": printer[0].printer_name,
                 "actual_printer_name": printer[0].actual_printer_name || printer[0].printer_name,
@@ -2563,7 +2689,7 @@ export default class Sale {
                 "usb_printing": printer[0].usb_printing,
             }
         }
-        if ((this.setting?.device_setting?.use_server_network_printing || 0) == 1) {            
+        if ((this.setting?.device_setting?.use_server_network_printing || 0) == 1) {
             if (printer.length <= 0) {
                 toaster.warning($t("Printer not yet config for this device"))
                 return // not printer
@@ -2572,7 +2698,7 @@ export default class Sale {
                 const body = {
                     "data": {
                         "name": data["sale"]["name"],
-                        "seat_numbers":data["seat_numbers"],
+                        "seat_numbers": data["seat_numbers"],
                         "reprint": 0,
                         "action": data["action"],
                         "print_setting": data["print_setting"],
@@ -2582,23 +2708,23 @@ export default class Sale {
                 }
                 call.post("epos_restaurant_2023.api.network_printing_api.print_bill_to_network_printer", body)
                 return // print network
-            }else if((localStorage.getItem("flutterWrapper") || 0) == 1){
+            } else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
                 data.printer = _printer;
                 socket.emit('PrintReceipt', JSON.stringify(data));
                 return
             }
         }
-        let isWindows = localStorage.getItem("is_window")=="1";
-	    let isElectron= localStorage.getItem("electronWrapper") == "1";
+        let isWindows = localStorage.getItem("is_window") == "1";
+        let isElectron = localStorage.getItem("electronWrapper") == "1";
         if (receipt?.pos_receipt_file_name && (isWindows || isElectron)) {
             let _message_data = JSON.stringify(data);
-            if(isWindows){
+            if (isWindows) {
                 window.chrome.webview.postMessage(_message_data);
-            }else if(isElectron){
-                console.info("electron message action => ",data.action)
-				window.electronAPI.send('vue-message', _message_data);
+            } else if (isElectron) {
+                console.info("electron message action => ", data.action)
+                window.electronAPI.send('vue-message', _message_data);
             }
-            
+
         } else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
             if (printer.length <= 0) {
                 toaster.warning($t("Printer not yet config for this device"))
@@ -2608,10 +2734,10 @@ export default class Sale {
             }
         } else {
             let print_from_android_preview = (this.setting?.device_setting?.print_from_android_preview || 0);
-            if(print_from_android_preview == 1){
+            if (print_from_android_preview == 1) {
                 this.onOpenBrowserPrint("Sale", doc.name, receipt.name)
             }
-            else{
+            else {
                 if (receipt?.pos_receipt_file_name) {
                     data.printer = _printer;
                     socket.emit('PrintReceipt', JSON.stringify(data));
@@ -2635,7 +2761,7 @@ export default class Sale {
                 }
                 let printer = (this.setting?.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
                 let _printer = undefined;
-                if(printer.length>0){
+                if (printer.length > 0) {
                     _printer = {
                         "printer_name": printer[0].printer_name,
                         "actual_printer_name": printer[0].actual_printer_name || printer[0].printer_name,
@@ -2646,7 +2772,7 @@ export default class Sale {
                         "usb_printing": printer[0].usb_printing,
                     }
                 }
-                if ((this.setting?.device_setting?.use_server_network_printing || 0) == 1) {                    
+                if ((this.setting?.device_setting?.use_server_network_printing || 0) == 1) {
                     if (printer.length <= 0) {
                         return // not printer
                     }
@@ -2659,23 +2785,23 @@ export default class Sale {
                         }
                         call.post("epos_restaurant_2023.api.network_printing_api.print_waiting_number_to_network_printer", body)
                         return // print network
-                    }else if ((localStorage.getItem("flutterWrapper") || 0) == 1){
+                    } else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
                         data.printer = _printer;
-                        socket.emit('PrintReceipt', JSON.stringify(data)); 
+                        socket.emit('PrintReceipt', JSON.stringify(data));
                         return
                     }
                 }
 
-                let isWindows = localStorage.getItem("is_window")=="1";
-	            let isElectron= localStorage.getItem("electronWrapper") == "1";
+                let isWindows = localStorage.getItem("is_window") == "1";
+                let isElectron = localStorage.getItem("electronWrapper") == "1";
                 if (isWindows || isElectron) {
                     let _message_data = JSON.stringify(data);
-                    if(isWindows){
+                    if (isWindows) {
                         window.chrome.webview.postMessage(_message_data);
-                    }else if (isElectron){
-                        console.info("electron message action => ",data.action)
+                    } else if (isElectron) {
+                        console.info("electron message action => ", data.action)
                         window.electronAPI.send('vue-message', _message_data);
-                    }                   
+                    }
                 }
                 else if ((localStorage.getItem("flutterWrapper") || 0) == 1) {
                     if (printer.length <= 0) {
@@ -2712,20 +2838,20 @@ export default class Sale {
 
 
 
-   async handlePayWayPaymentCallback(paywaysocket, data) {
-    // Process payment data
+    async handlePayWayPaymentCallback(paywaysocket, data) {
+        // Process payment data
         const resp = data.response;
-        if(resp.invoice_id == this.sale.name && 
+        if (resp.invoice_id == this.sale.name &&
             this.setting.pos_config == resp.pos_config &&
-            this.setting.property_code == resp.property_code        
-        ){    
+            this.setting.property_code == resp.property_code
+        ) {
             const check = await this.onPayWayCallbackReCheckTransaction(data);
-            if(check == true){
+            if (check == true) {
                 return;
-            } 
+            }
             this.sale.payment = (data.sale_payment || this.sale.payment);
-            this.sale.payment.forEach((p)=>{
-                if(p._temp_payway_tran_id == resp.temp_tran_id && p.is_generate_qr == 1){
+            this.sale.payment.forEach((p) => {
+                if (p._temp_payway_tran_id == resp.temp_tran_id && p.is_generate_qr == 1) {
                     p.aba_pay_transaction = data.tran_id
                 }
             });
@@ -2735,55 +2861,55 @@ export default class Sale {
             this.sale.aba_khqr_data = undefined;
             this.sale.payment_transaction = data;
 
-            await setTimeout(()=>{
-                socket.emit("ShowOrderInCustomerDisplay", this.sale,"", this.customer_display_key);   
+            await setTimeout(() => {
+                socket.emit("ShowOrderInCustomerDisplay", this.sale, "", this.customer_display_key);
             }, 500)
 
 
-            if(this.__open_payment_form ==true){
+            if (this.__open_payment_form == true) {
                 this.close_payment_form = true;
-            }else{
+            } else {
 
-                const is_apk_ipa = localStorage.getItem("apkipa");                
+                const is_apk_ipa = localStorage.getItem("apkipa");
                 this.pos_receipt = undefined;
                 let is_print = false;
-                if(!is_apk_ipa){
+                if (!is_apk_ipa) {
                     this.pos_receipt = this.setting.default_pos_receipt;
                     is_print = true;
                 }
-                   
-                this.onSubmitPayment(is_print,true ).then((v) => {
+
+                this.onSubmitPayment(is_print, true).then((v) => {
                     if (v) {
-                        this.message = $t("msg.Payment successfully");  
+                        this.message = $t("msg.Payment successfully");
                         this.onPayWaySuccessPayment();
                     }
                 });
             }
 
-            try{
-              call.post("epos_restaurant_2023.helpers.payway_helper.update_payway_tranaction_id_on_callback_success_enqueue", {
-                "tran": data
-              });
-            } catch (err){}
-         
-           
+            try {
+                call.post("epos_restaurant_2023.helpers.payway_helper.update_payway_tranaction_id_on_callback_success_enqueue", {
+                    "tran": data
+                });
+            } catch (err) { }
+
+
         }
     }
 
-    onPayWaySuccessPayment(){
+    onPayWaySuccessPayment() {
         if (this.setting.table_groups.length > 0) {
             this.router.push({ name: "TableLayout" });
         } else {
             this.newSale();
             this.tableSaleListResource.fetch();
-            
-            let template = (this.setting.device_setting?.main_sale_screen??"Default");
-            if(template == "Default"){
-                this.router.push({  name: "AddSale"});
-            }else {
+
+            let template = (this.setting.device_setting?.main_sale_screen ?? "Default");
+            if (template == "Default") {
+                this.router.push({ name: "AddSale" });
+            } else {
                 const result = template.toLowerCase().replace(/\s+/g, '-');
                 let _template = result;
-                this.router.push({ 
+                this.router.push({
                     name: "SaleOrder",
                     query: { menu: _template }
                 });
@@ -2815,45 +2941,45 @@ export default class Sale {
     }
 
 
-    async onPayWayCallbackReCheckTransaction(param){
-        if((param.type || "") == "Check Transaction"){
+    async onPayWayCallbackReCheckTransaction(param) {
+        if ((param.type || "") == "Check Transaction") {
             return false;
         }
         const p = param;
 
-        const request_params = { 
+        const request_params = {
             "tran_id": p.tran_id,//required
-            "property_code":p.response.property_code, //required
-            "pos_config":p.response.pos_config, //required
-            "response":{ //required
+            "property_code": p.response.property_code, //required
+            "pos_config": p.response.pos_config, //required
+            "response": { //required
                 "pos_profile": p.response.pos_profile,
-                "station_name":p.response.station_name,
+                "station_name": p.response.station_name,
                 "invoice_id": p.response.invoice_id,
-                "temp_tran_id":p.response.temp_tran_id
+                "temp_tran_id": p.response.temp_tran_id
             }
         }
-        try{
+        try {
             const resp = await call.post("epos_restaurant_2023.api.payway.aba_check_transaction", request_params)
-            if(resp){
-                if((resp.message ||"") != "" && (resp.message ||"").toLowerCase() != "pending"){                       
+            if (resp) {
+                if ((resp.message || "") != "" && (resp.message || "").toLowerCase() != "pending") {
                     return true;
                 }
-            } 
-            return false;           
+            }
+            return false;
         }
         catch (err) {
-            console.log({"aba_check_transaction": err})
+            console.log({ "aba_check_transaction": err })
             return false;
         }
     }
 
-    async   onRemovePayment(p) { 
+    async onRemovePayment(p) {
         this.sale.payment.splice(this.sale.payment.indexOf(p), 1);
         this.updatePaymentAmount();
-        this.paymentInputNumber = this.sale.balance.toFixed(this.setting.pos_setting.main_currency_precision);  
-        if( this.sale.payment.length<=0){
+        this.paymentInputNumber = this.sale.balance.toFixed(this.setting.pos_setting.main_currency_precision);
+        if (this.sale.payment.length <= 0) {
             this.is_payment_first_load = true;
-        }             
+        }
     }
 
 
@@ -2867,25 +2993,25 @@ export default class Sale {
             const precision = this.setting.pos_setting.main_currency_precision;
             if (data.paymentType.is_single_payment_type == 1) {
                 this.sale.payment = [];
-                data.amount = parseFloat((parseFloat(this.sale.grand_total * data.paymentType.exchange_rate) + Number.EPSILON).toFixed(precision)); 
+                data.amount = parseFloat((parseFloat(this.sale.grand_total * data.paymentType.exchange_rate) + Number.EPSILON).toFixed(precision));
             }
-            else if( data.paymentType.allow_aba_pay_with_qr_scan == 1){
-                let current_precision = data.paymentType.exchange_rate == 1? precision : this.setting.pos_setting.second_currency_precision
-                 data.amount = parseFloat((parseFloat((this.sale.balance + Number.EPSILON).toFixed(current_precision) * data.paymentType.exchange_rate) + Number.EPSILON).toFixed(current_precision)); 
+            else if (data.paymentType.allow_aba_pay_with_qr_scan == 1) {
+                let current_precision = data.paymentType.exchange_rate == 1 ? precision : this.setting.pos_setting.second_currency_precision
+                data.amount = parseFloat((parseFloat((this.sale.balance + Number.EPSILON).toFixed(current_precision) * data.paymentType.exchange_rate) + Number.EPSILON).toFixed(current_precision));
             }
 
 
             if (!this.getNumber(data.amount) == 0) {
 
                 if ((data.fee_amount || 0) == 0) {
-                    data.fee_amount = parseFloat((parseFloat(data.amount / data.paymentType.exchange_rate) +  Number.EPSILON).toFixed(precision)) * (data.paymentType.fee_percentage / 100);
+                    data.fee_amount = parseFloat((parseFloat(data.amount / data.paymentType.exchange_rate) + Number.EPSILON).toFixed(precision)) * (data.paymentType.fee_percentage / 100);
                 }
 
                 let payment = {
                     payment_type: data.paymentType.payment_method,
-                    payment_type_group:data.paymentType.payment_type_group,
+                    payment_type_group: data.paymentType.payment_type_group,
                     input_amount: parseFloat(data.amount),
-                    amount: parseFloat((parseFloat(data.amount / data.paymentType.exchange_rate) + Number.EPSILON ).toFixed(precision)),
+                    amount: parseFloat((parseFloat(data.amount / data.paymentType.exchange_rate) + Number.EPSILON).toFixed(precision)),
                     exchange_rate: data.paymentType.exchange_rate,
                     change_exchange_rate: data.paymentType.change_exchange_rate,
                     currency: data.paymentType.currency,
@@ -2901,31 +3027,31 @@ export default class Sale {
                     folio_transaction_type: data.folio_transaction_type,
                     folio_transaction_number: data.folio_transaction_number,
                     city_ledger_name: data.city_ledger_name,
-                    reservation_stay:data.reservation_stay,
-                    issue_gift_voucher:data.voucher_name,
+                    reservation_stay: data.reservation_stay,
+                    issue_gift_voucher: data.voucher_name,
                     is_generate_qr: data.paymentType.allow_aba_pay_with_qr_scan,
-                    _temp_payway_tran_id : data.temp_payway_tran_id,
+                    _temp_payway_tran_id: data.temp_payway_tran_id,
                     coupon_code: data.coupon_code
                 }
 
                 this.sale.payment.push(payment);
-                
+
                 this.updatePaymentAmount();
                 this.paymentInputNumber = (this.sale.balance + Number.EPSILON).toFixed(precision);
 
 
 
                 //generate payway qr
-                if(data.paymentType.allow_aba_pay_with_qr_scan ==  1){                       
-                    let payway_payment_amount = data.amount;                    
-                    payway_payment_amount += (data.fee_amount ||0) * data.paymentType.exchange_rate ;
+                if (data.paymentType.allow_aba_pay_with_qr_scan == 1) {
+                    let payway_payment_amount = data.amount;
+                    payway_payment_amount += (data.fee_amount || 0) * data.paymentType.exchange_rate;
                     const result = await scanqrDialog({
                         "temp_tran_id": data.temp_payway_tran_id,
-                        "sale_id":this.sale.name,
-                        "payment_amount": data.paymentType.currency == "KHR" ?  Math.round(parseFloat(payway_payment_amount).toFixed(0) / 100) * 100  : payway_payment_amount ,
-                        "currency":data.paymentType.currency,
+                        "sale_id": this.sale.name,
+                        "payment_amount": data.paymentType.currency == "KHR" ? Math.round(parseFloat(payway_payment_amount).toFixed(0) / 100) * 100 : payway_payment_amount,
+                        "currency": data.paymentType.currency,
                     });
-                    if(!result){
+                    if (!result) {
                         this.onRemovePayment(payment)
                     }
                 }
@@ -2939,17 +3065,17 @@ export default class Sale {
     }
 
     updatePaymentAmount() {
-        const claim_amount = (this.sale.total_cash_coupon_claim||0);
+        const claim_amount = (this.sale.total_cash_coupon_claim || 0);
         const payments = Enumerable.from(this.sale.payment);
         const total_payment = payments.sum("$.amount") + (this.sale.deposit || 0);
         const total_fee = payments.sum("$.fee_amount");
         this.sale.total_paid = total_payment;
         this.sale.total_fee = total_fee;
-        this.sale.balance = (this.sale.grand_total || 0) - this.sale.total_paid -claim_amount;
+        this.sale.balance = (this.sale.grand_total || 0) - this.sale.total_paid - claim_amount;
         if (this.sale.balance < 0) {
             this.sale.balance = 0;
         }
-        let change_amount =( total_payment + claim_amount) - this.sale.grand_total;
+        let change_amount = (total_payment + claim_amount) - this.sale.grand_total;
         this.sale.changed_amount = change_amount;
         this.sale.second_changed_amount = change_amount * this.sale.change_exchange_rate;
         this.sale.second_changed_amount = Number((this.sale.second_changed_amount + Number.EPSILON).toFixed(this.setting.pos_setting.second_currency_precision));
@@ -3031,10 +3157,10 @@ export default class Sale {
                 order_by: data.order_by,
                 is_free: data.is_free
             })
-            .then((doc) => { })
-            .catch((error) => {
+                .then((doc) => { })
+                .catch((error) => {
 
-            });
+                });
         }
     }
 
@@ -3077,8 +3203,8 @@ export default class Sale {
         return [...new Set(printers)]
     }
 
-    async onRequestCouponCode(code)  { 
-        let data =  await call.get("epos_restaurant_2023.api.api.scan_coupon_number",{"code":code})
+    async onRequestCouponCode(code) {
+        let data = await call.get("epos_restaurant_2023.api.api.scan_coupon_number", { "code": code })
         return data["message"]
     }
 
@@ -3086,7 +3212,7 @@ export default class Sale {
         const d = new Date()
         const pad = (n, l = 2) => String(n).padStart(l, '0')
         return (
-            (prefix||"") +
+            (prefix || "") +
             d.getFullYear() +
             pad(d.getMonth() + 1) +
             pad(d.getDate()) +
@@ -3096,27 +3222,38 @@ export default class Sale {
             pad(d.getMilliseconds(), 2)
         )
     }
+
+    getPrintServerUrl() {
+
+        let print_server_url = this.setting.device_setting.print_server_url;
+        if (!print_server_url) {
+            print_server_url = this.setting.print_server_url
+        }
+        return print_server_url || "";
+
+    }
 }
 
-function has_changes(sale){
-  let has_value_changes = 0
-  let sale_products = (sale.sale_products || [])
-  if(sale_products.length > 0){
-      let news = sale_products.filter(r => r.is_newly_added == 1).length
-      if (news>0){
-          has_value_changes = 1
-      }
-  }
-  return has_value_changes
+
+function has_changes(sale) {
+    let has_value_changes = 0
+    let sale_products = (sale.sale_products || [])
+    if (sale_products.length > 0) {
+        let news = sale_products.filter(r => r.is_newly_added == 1).length
+        if (news > 0) {
+            has_value_changes = 1
+        }
+    }
+    return has_value_changes
 }
 
 async function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function Ping(setting) {
     await delay(500)
-    let port =  setting?.pos_setting?.use_backend_port == 0 ? `:${window.location.port}` : (window.location.protocol == "https:" ? "" : `:${setting?.pos_setting?.backend_port}`)
+    let port = setting?.pos_setting?.use_backend_port == 0 ? `:${window.location.port}` : (window.location.protocol == "https:" ? "" : `:${setting?.pos_setting?.backend_port}`)
     const url = `${window.location.protocol}//${window.location.hostname}${port}/api/method/epos_restaurant_2023.api.utils.ping`;
     const controller = new AbortController();
     const timer = setTimeout(() => {
@@ -3125,17 +3262,17 @@ async function Ping(setting) {
     try {
         const start = performance.now();
         let status = 0
-        const resp = await fetch(url, {signal: controller.signal});
+        const resp = await fetch(url, { signal: controller.signal });
         const end = performance.now();
-        if(resp.status != 200){
+        if (resp.status != 200) {
             status = 0
         }
-        else{
+        else {
             const responseTime = end - start;
-            if(responseTime>2000){
+            if (responseTime > 2000) {
                 status = 0
             }
-            else{
+            else {
                 status = 1
             }
         }
@@ -3145,4 +3282,8 @@ async function Ping(setting) {
         clearTimeout(timer);
         return 0
     }
+
+
 }
+
+
