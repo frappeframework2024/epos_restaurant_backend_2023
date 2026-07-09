@@ -1135,11 +1135,7 @@ export default class Sale {
                     if (result != false || result == 0) {
                         const price = sp.price;
                         sp.change_price_note = v.note;
-                        if (result != false || result == 0) {
-                            sp.price = parseFloat(this.getNumber(result));
-                        } else {
-                            sp.price = parseFloat(this.getNumber(sp.price));
-                        }
+                        sp.price = parseFloat(this.getNumber(result));
                         this.updateSaleProduct(sp);
                         this.updateSaleSummary();
                         let item_description = `${sp.product_code}-${sp.product_name}${(sp.portion || "") == "" ? "" : `(${sp.portion})`} ${sp.modifiers}`;
@@ -1959,10 +1955,11 @@ export default class Sale {
                                 },
                                 print_bill:true ,
                                 print_server_url:this.getPrintServerUrl()
-                            })
-                             l.close();
+                            });
+                            
+                            l.close();
                         
- resolve(true);
+                            resolve(true);
                         
 
                         }else {
@@ -2058,7 +2055,7 @@ export default class Sale {
                                 audit_trail_logs: this.auditTrailLogs,
                                 deleted_products:this.deletedSaleProducts
                             },
-                         print_bill:isPrint, 
+                        print_bill:isPrint, 
                         print_server_url:this.getPrintServerUrl()
                     })
                  
@@ -2090,6 +2087,7 @@ export default class Sale {
                             return;
                         }
                     }
+                    
                     this.submitToAuditTrail(this.sale);
 
                     if (ignore == true) {
@@ -2143,7 +2141,8 @@ export default class Sale {
             if (isWindows) {
                 window.chrome.webview.postMessage(JSON.stringify({ action: "open_cashdrawer" }));
             } else if (isElectron) {
-                ///
+                console.info("electron message action => ",{ action: "open_cashdrawer" })
+				window.electronAPI.send('vue-message', { action: "open_cashdrawer" });
             }
 
             this.onPrintToKitchen(doc);

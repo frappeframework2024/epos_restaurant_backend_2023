@@ -2013,11 +2013,12 @@ export default class Sale {
         else if (this.action == "payment") {  
             //open cashdrawer
             let isWindows = localStorage.getItem("is_window")=="1";
-            let isElectron= localStorage.getItem("electronWrapper") == "1";
+            let isElectron = localStorage.getItem("electronWrapper") == "1";
             if (isWindows) {
                 window.chrome.webview.postMessage(JSON.stringify({ action: "open_cashdrawer" }));
             }else if (isElectron){
-                ///
+                console.info("electron message action => ",{ action: "open_cashdrawer" })
+				window.electronAPI.send('vue-message', { action: "open_cashdrawer" });
             }
 
             this.onPrintToKitchen(doc); 

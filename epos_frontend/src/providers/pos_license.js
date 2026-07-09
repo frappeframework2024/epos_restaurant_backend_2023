@@ -51,7 +51,7 @@ export default class POSLicense {
                 }else{ 
                     let response = { "status":false,"invalid_license": true,"show_license_msg":true, "device_name":res_data.name,"message":`Invalid license on ${res_data.name}`};
                     const _license =  this.decryptAES(this.decryptAES(res_data.license));
-                    let arr = _license.split('|'); 
+                    let arr = _license.split('|');  
                     if(arr.length>0){
                         if(arr[0]== device_id){
                             if(arr.length > 1){

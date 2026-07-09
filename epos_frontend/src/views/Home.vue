@@ -313,7 +313,14 @@ async function onCheckCoupon() {
 
 //open cashdrawer
 function onOpenCashDrawer(){
-    window.chrome.webview.postMessage(JSON.stringify({action:"open_cashdrawer"}));
+    let isWindows = localStorage.getItem("is_window")=="1";
+    let isElectron= localStorage.getItem("electronWrapper") == "1";
+    if(isWindows){
+        window.chrome.webview.postMessage(JSON.stringify({action:"open_cashdrawer"}));
+    }else if(isElectron){
+        console.info("electron message action => ",open_cashdrawer)
+        window.electronAPI.send('vue-message', {action:"open_cashdrawer"});
+    } 
 } 
 
 </script>

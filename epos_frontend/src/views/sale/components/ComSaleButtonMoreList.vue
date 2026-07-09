@@ -307,7 +307,15 @@ function onOpenCashDrawer() {
     if (!sale.isBillRequested()) {
     gv.authorize("open_cashdrawer_require_password", "open_cashdrawer").then((v) => {
         if (v) {
-            window.chrome.webview.postMessage(JSON.stringify({ action: "open_cashdrawer" }));
+            let isWindows = localStorage.getItem("is_window")=="1";
+            let isElectron= localStorage.getItem("electronWrapper") == "1";
+            if(isWindows){
+                window.chrome.webview.postMessage(JSON.stringify({action:"open_cashdrawer"}));
+            }else if(isElectron){
+                console.info("electron message action => ",open_cashdrawer)
+                window.electronAPI.send('vue-message', {action:"open_cashdrawer"});
+            } 
+
         }
     });
 }
