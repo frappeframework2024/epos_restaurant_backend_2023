@@ -357,7 +357,7 @@ def print_bill(sale_name="SINV2026-0790", print_server_url=None, print_setting=N
     
     print_data = []
     for s in sale_name:
-        html = get_receipt_html(sale_name, print_setting.get("print_template") or "Default POS Receipt",include_css=True)
+        html = get_receipt_html(s, print_setting.get("print_template") or "Default POS Receipt",include_css=True)
         print_data.append({
                
                     "printer_name":print_setting.get("printer") or "Cashier Printer",

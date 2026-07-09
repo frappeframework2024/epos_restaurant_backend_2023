@@ -1774,8 +1774,8 @@ export default class Sale {
                             deleted_products:this.deletedSaleProducts
                            
                         },
-                         print_request_bill:options.print_request_bill, 
-                            print_server_url:this.getPrintServerUrl()
+                        print_request_bill:options.print_request_bill, 
+                        print_server_url:this.getPrintServerUrl()
                     })
 
                     if (response.data) {
