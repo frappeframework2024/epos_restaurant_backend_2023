@@ -49,6 +49,7 @@ if (localStorage.getItem("__tblLayoutIndex") == null) {
 }
  
 socket.on("RefreshTable", () => {
+    
     tableLayout.getSaleList();
 })
 

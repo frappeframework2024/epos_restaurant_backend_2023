@@ -5,6 +5,8 @@ from epos_restaurant_2023.api.printing import get_receipt_html,get_kitchen_order
 from epos_restaurant_2023.custom_socket_client import emit_event
 from  epos_restaurant_2023.api.print_server import process_print
 
+
+
 @frappe.whitelist()
 def runme():
  
@@ -133,15 +135,8 @@ def submit_order(data=None,print_request_bill=False,print_bill=False,print_serve
         )
        
 
-    # emit_event("RefreshTable",{"refresh table"})     
-      
+    emit_event("RefreshTable")     
 
-    try:
-        from epos_restaurant_2023.custom_socket_client import emit_event
-        emit_event("RefreshTable",{"refresh table"})               
-    except Exception as e:
-        pass
-        
     return {"doc":sale_doc}
     
 @frappe.whitelist(methods=["POST"])

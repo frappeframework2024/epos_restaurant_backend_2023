@@ -13,7 +13,7 @@ def connect_socket():
             print("❌ Socket.IO connection failed:", e)
  
     
-def emit_event(event, data):
+def emit_event(event, data={}):
     try:
         connect_socket()
         sio.emit(event, data)
