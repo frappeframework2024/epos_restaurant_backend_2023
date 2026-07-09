@@ -2086,9 +2086,9 @@ export default class Sale {
                               l.close();
                             return;
                         }
-                    }
-                    
-                    this.submitToAuditTrail(this.sale);
+
+                        this.submitToAuditTrail(this.sale);
+                    }   
 
                     if (ignore == true) {
                         socket.emit("ABAPayWaySuccess", {}, this.customer_display_key);
