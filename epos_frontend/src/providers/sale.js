@@ -112,6 +112,7 @@ export default class Sale {
         this.newSaleResource = createResource({
             url: "frappe.client.insert",
             async onSuccess(doc) {
+        
                 await parent.onProcessTaskAfterSubmit(doc);
                 parent.action = "";
                 if (parent.message != undefined) {
@@ -1693,6 +1694,7 @@ export default class Sale {
     
     async onSubmit(options={}) {
         // options={"print_request_bill":false}
+ 
 
         const l = await app.showLoading();
         
@@ -1798,9 +1800,10 @@ export default class Sale {
                             this.sale.sale_status = "Submitted";
                         }
                     }
+                    l.close();
                 
                     
-                    this.loading = false;
+                    this.loading = false; 
                     resolve(_sale);
                     // end submit sale with api 
 
@@ -1929,8 +1932,7 @@ export default class Sale {
                           let msg = `${u.name} quick pay`;
 
                         if (this.getPrintServerUrl()){
-                            // this code block update by Pheakdey for submit sale using sale.submit_order
-                            
+                            // this code block update by Pheakdey for submit sale using sale.submit_order                            
                                 this.auditTrailLogs.push({
                                     doctype: "Comment",
                                     subject: "Quick Payment",
@@ -1944,23 +1946,18 @@ export default class Sale {
                                     custom_amount: ((this.sale.total_paid || 0) - (this.sale.changed_amount || 0))
                                 });
 
-
                             const response = await app.postApi("sale.submit_order", {
                                 data: {
                                     doc: doc,
                                     audit_trail_logs: this.auditTrailLogs,
                                     deleted_products:this.deletedSaleProducts,
-                                   
-                                
                                 },
                                 print_bill:true ,
                                 print_server_url:this.getPrintServerUrl()
                             });
                             
-                            l.close();
-                        
-                            resolve(true);
-                        
+                            l.close();                    
+                            resolve(true);                        
 
                         }else {
                             this.generateProductPrinters();
@@ -2055,15 +2052,15 @@ export default class Sale {
                                 audit_trail_logs: this.auditTrailLogs,
                                 deleted_products:this.deletedSaleProducts
                             },
-                        print_bill:isPrint, 
-                        print_server_url:this.getPrintServerUrl()
-                    })
-                 
-                    if (ignore == true) {
-                        socket.emit("ABAPayWaySuccess", {}, this.customer_display_key);
-                    }
-                    l.close();
-                    resolve(true);
+                            print_bill:isPrint, 
+                            print_server_url:this.getPrintServerUrl()
+                        })
+                    
+                        if (ignore == true) {
+                            socket.emit("ABAPayWaySuccess", {}, this.customer_display_key);
+                        }
+                        l.close(); 
+                        resolve(true);
 
                     } else {
                         if (this.getString(this.sale.name) == "") {
@@ -2075,7 +2072,7 @@ export default class Sale {
                             await this.newSaleResource.submit({ doc: this.sale });
                         }
                         catch (error) {
-                              l.close();
+                            l.close();
                             return;
                         }
                     } else {

@@ -4,6 +4,7 @@ from epos_restaurant_2023.api.api import get_sale_list_table_badge
 from epos_restaurant_2023.api.change_merge_table import on_merge_order 
 from epos_restaurant_2023.api.split_bill import on_save as on_split_bill ,get_sales as _get_split_sub_bill_list
 
+
 @frappe.whitelist(methods=["POST"])
 def get_sale_detail(sale_name):
     return sale.get_sale_detail(sale_name)
@@ -11,7 +12,8 @@ def get_sale_detail(sale_name):
 
 @frappe.whitelist(methods="POST")
 def submit_order(data=None,print_request_bill=False,print_server_url=None,print_setting=None):
-    return sale.submit_order(data=data,print_request_bill=print_request_bill,print_server_url=print_server_url,print_setting = print_setting)
+    result = sale.submit_order(data=data,print_request_bill=print_request_bill,print_server_url=print_server_url,print_setting = print_setting)
+    return result
 
 
 @frappe.whitelist(methods="POST")

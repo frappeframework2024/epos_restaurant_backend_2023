@@ -85,6 +85,7 @@ async function onPrintPressed(r) {
       await sale.onSubmit({"print_request_bill":true}).then(async (value) => {
         if (value) {
           router.push({ name: "TableLayout" });
+    
           window.postMessage("close_modal", "*"); 
         }
       });

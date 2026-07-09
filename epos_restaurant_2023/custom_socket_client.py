@@ -11,11 +11,7 @@ def connect_socket():
             print("✅ Connected to Socket.IO server")
         except Exception as e:
             print("❌ Socket.IO connection failed:", e)
-
-
-@sio.on("ConfirmPrintJob")
-def on_confirm_print_job(data):
-    print("🖨️ Received:", data)
+ 
     
 def emit_event(event, data):
     try:

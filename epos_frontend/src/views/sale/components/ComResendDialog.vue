@@ -4,6 +4,8 @@
             {{$t("Re-Send")  }}
         </template>
         <template #content>  
+
+            
             <span v-if="selectedPrinters.length > 0" v-for="printer, index in  selectedPrinters"  :key="index" >
                 <v-chip size="small" style="margin-right: 5px; margin-bottom: 5px;" >{{ printer }}</v-chip>
             </span>  
@@ -103,9 +105,7 @@ async function onSend() {
         await sale.onPrintToKitchen(sale.sale,resendProductData)
     }
     toaster.success($t("Product was re-send"));
-//   }else{
-//     toaster.warning($t("Select printer for re-send"));
-//   }
+
 }
 
 

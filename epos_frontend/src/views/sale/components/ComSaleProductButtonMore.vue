@@ -98,7 +98,7 @@
     </v-menu>
     <v-dialog v-model="showDialogSelectPrinter" width="auto">
         <v-card :title="$t('Select Printers')">
-
+            
             <v-card-text>
 
                 <v-btn class="mr-2" :color="p.selected ? 'red' : 'default'" v-for="(p, index) in printerList" :key="index"

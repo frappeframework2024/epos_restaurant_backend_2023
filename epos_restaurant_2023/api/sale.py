@@ -133,8 +133,15 @@ def submit_order(data=None,print_request_bill=False,print_bill=False,print_serve
         )
        
 
-    
+    # emit_event("RefreshTable",{"refresh table"})     
+      
 
+    try:
+        from epos_restaurant_2023.custom_socket_client import emit_event
+        emit_event("RefreshTable",{"refresh table"})               
+    except Exception as e:
+        pass
+        
     return {"doc":sale_doc}
     
 @frappe.whitelist(methods=["POST"])
@@ -187,9 +194,8 @@ def generate_print_queue(doc,products,print_server_url=None,run_commit = True):
         else:
             for p in printer_proucts:
                 for n in range(1,int(p.get("quantity") or 1) + 1):
-                    print_data["index"] = n
-                    
-                    print_data["sale_products"] = [{**p,"quantity":1}]
+                    print_data["index"] = n                    
+                    print_data["sale_products"] = [{**p,"quantity":1,"parent_quantity":1}]
 
                     queue_doc =  add_print_queue(doc.get("name"),print_data)
                     print_docs.append(
@@ -302,6 +308,7 @@ def get_products(sale_products):
                     "product_name":c.get("product_name"),
                     "product_name_kh": c.get("product_name_kh") or c.get("product_name"),
                     "quantity":(c.get("quantity") or 1) * (sp.get("quantity") or 1),
+                    "combo_item_quantity":c.get("quantity") or 1,
                     "price":c.get("price"),
                     "order_by": sp.get("order_by"),
                     "order_time": sp.get("order_time"),

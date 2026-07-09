@@ -20,9 +20,11 @@ io.on('connection', (socket) => {
     io.emit("PrintReceipt",arg)
   })
 
-  socket.on("RefreshTable",()=>{
-    io.emit("RefreshTable")
+  socket.on("RefreshTable",(arg = {})=>{
+    io.emit("RefreshTable",arg)
   })
+
+   
 
 
   socket.on("ShowOrderInCustomerDisplay",(arg,show_thank_you = "", key)=>{
@@ -262,6 +264,6 @@ io.on('connection', (socket) => {
   
 });
 
-server.listen(3001,"0.0.0.0", () => {
+server.listen(3000,"0.0.0.0", () => {
   console.log('Server started on port 3000');
 });
