@@ -35,7 +35,7 @@
         {{ $t('Check Coupon') }}
       </v-btn>
 
-      <v-btn :variant="mobile ? 'tonal' : 'elevated'"
+      <v-btn v-if="!mobile " :variant="mobile ? 'tonal' : 'elevated'"
         :color="mobile ? 'primary' : ''" :stacked="!mobile" size="small" class="m-0-1 grow"
         :prepend-icon="mobile ? '' : 'mdi-plus'" @click="onSubmitAndNew" style="font-family: Khmer OS Siemreap;">
         {{ $t('Submit and New') }}

@@ -1,7 +1,7 @@
 <template>
     <ComModal :fullscreen="mobile" @onClose="onClose" width="1200px" :hideOkButton="true" :hideCloseButton="true">
         <template #title>
-            {{ $t('Table') }}#: {{ params.table.tbl_no }}
+            {{ $t('Table') }}#: {{ params.table.tbl_no }}  
         </template>
         <template #content>
             <ComLoadingDialog v-if="isLoading" />
@@ -170,7 +170,7 @@ async function _onNetworkPrintAll(action, receipt,printer){
 }
 
 async function onQuickPay(isPrint = true) {
- 
+    
     if (props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").length == 0) {
         toaster.warning($t("msg.There are no bills to settle"));
         return;
@@ -197,16 +197,24 @@ async function onQuickPay(isPrint = true) {
                     payment_type: sale.setting?.default_payment_type
                 })
             });
+
+
             Promise.all(payment_promises.value).then(async () => {
+                const print_setting = {
+                    copies:sale.setting?.default_pos_receipt.pos_receipt_template?.print_receipt_copies ?? 1
+                }
                 await call.get('epos_restaurant_2023.api.api.on_sale_quick_pay', {
-                    data: JSON.stringify(payment_promises.value)
+                    data: JSON.stringify(payment_promises.value),
+                    print_server_url:sale.getPrintServerUrl(),
+                    print_setting:print_setting
                 }).then((res) => {
                     props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").forEach(async (d) => {
                         const _sale = res.message.filter((r) => r.name == d.name)
                         if (_sale.length > 0) {
                             d.sale_status = "Closed";
                             d.sale_status_color = sale.setting.sale_status.find(r => r.name == 'Closed').background_color; 
-                            if(isPrint){
+                          
+                            if(isPrint && !sale.getPrintServerUrl()){
                                 onPrintProcess("print_receipt",sale.setting?.default_pos_receipt,_sale[0])      
                             }                  
                         }
@@ -231,7 +239,7 @@ async function onQuickPayOtherPaymentType(isPrint = true) {
      return;
  }
  const dialog_response = await ComSelectPaymentTypeQuickPaymentDialog({data:props.params.data})
-
+ 
  if (dialog_response != false) {
      isLoading.value = true;
      let other_printing = true
@@ -260,15 +268,21 @@ async function onQuickPayOtherPaymentType(isPrint = true) {
              })
          });
          Promise.all(payment_promises.value).then(async () => {
+            const print_setting = {
+                    copies:sale.setting?.default_pos_receipt.pos_receipt_template?.print_receipt_copies ?? 1
+                }
+
              await call.get('epos_restaurant_2023.api.api.on_sale_quick_pay_payment_type', {
-                 data: JSON.stringify(payment_promises.value)
+                 data: JSON.stringify(payment_promises.value),
+                 print_server_url: sale.getPrintServerUrl(),
+                 print_setting:print_setting
              }).then((res) => {
                  props.params.data.filter(r => r.sale_status == "Submitted" || r.sale_status == "Bill Requested").forEach(async (d) => {
                      const _sale = res.message.filter((r) => r.name == d.name)
                      if (_sale.length > 0) {
                          d.sale_status = "Closed";
                          d.sale_status_color = sale.setting.sale_status.find(r => r.name == 'Closed').background_color; 
-                         if(isPrint){
+                         if(isPrint && !sale.getPrintServerUrl()){
                              onPrintProcess("print_receipt",sale.setting?.default_pos_receipt,_sale[0])      
                          }                  
                      }

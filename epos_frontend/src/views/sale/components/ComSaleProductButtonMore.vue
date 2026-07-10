@@ -97,10 +97,8 @@
         </v-list>
     </v-menu>
     <v-dialog v-model="showDialogSelectPrinter" width="auto">
-        <v-card :title="$t('Select Printers')">
-            
+        <v-card :title="$t('Resend to Printer')">
             <v-card-text>
-
                 <v-btn class="mr-2" :color="p.selected ? 'red' : 'default'" v-for="(p, index) in printerList" :key="index"
                     @click="onSelectPritnerForPrint(p)">{{ p.printer }}</v-btn>
             </v-card-text>
@@ -135,6 +133,8 @@ const props = defineProps({
 
 const showDialogSelectPrinter = ref(false);
 const printerList = ref([]);
+
+const comboItemResend = ref([])
 
 const toaster = createToaster({ position: "top-right" });
 function onRemoveNote() {
@@ -193,6 +193,7 @@ const canEdit = computed(() => {
     return false
 
 })
+
 const canEditVariant = computed(() => {
 
     if (props.saleProduct.is_timer_product) {
@@ -224,8 +225,21 @@ function onReturn(sp) {
    
 }
 
-function onSelectPrinter() {
+async function onSelectPrinter() {
     if (!sale.isBillRequested()) {
+        // const p = props.saleProduct;
+        // // comboItemResend.value = []
+        // // if(p.is_combo_menu){
+        // //     const comboItemPrinters = await sale.getProductPrinterOfComboItem(p);
+            
+        // //     comboItemPrinters.forEach((item)=>{
+        // //         comboItemResend.value.push(item)
+        // //     })
+        // //     console.log(comboItemResend.value)
+        // // } 
+      
+
+
         if (props.saleProduct.backup_printers) {
             printerList.value = JSON.parse(props.saleProduct.backup_printers)
         }

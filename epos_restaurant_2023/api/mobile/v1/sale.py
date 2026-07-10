@@ -52,72 +52,10 @@ def get_sale_product_printers_by_sale_name(sale_name):
         result[sp.name] = get_sale_product_printers(sp)
 
     return result
-
-    
-
     
 
 @frappe.whitelist(methods=["POST","GET"])
-def submit_resend_to_printer(doc=None,data=None,print_server_url=None):
-    if not doc:
-        doc = frappe.get_cached_doc("Sale","SINV2026-0895")
-    if not data:
-        data = [
-            {
-                "printer_ids": "8f07b425c5,8018f3cb27",
-                "product_code": "108",
-                "printers": "8f07b425c5,8018f3cb27",
-                "product_name": "PUMPKIN CUSTARD",
-                "quantity": 1.0,
-                "price": 3,
-                "order_by": "Pheakdey",
-                "order_time": "2026-06-25 15:48:34.123778"
-            },
-            {
-                "printer_ids": "9cbb0df8a3,7c240a1581,bd0509fedc",
-                "product_code": "COM001",
-                "printers": "9cbb0df8a3,7c240a1581,bd0509fedc",
-                "product_name": "Test Combo",
-                "quantity": 1.0,
-                "price": 0.0,
-                "unit": "Unit",
-                "note": None,
-                "portion": None,
-                "modifiers": "",
-                "order_by": "Pheakdey",
-                "order_time": "2026-06-25 15:48:34.123778"
-            },
-            {
-                "printer_ids": "8018f3cb27,7c240a1581",
-                "product_code": "P0001",
-                "printers": "8018f3cb27,7c240a1581",
-                "product_name": "Screen",
-                "quantity": 1.0,
-                "price": 100,
-                "order_by": "Pheakdey",
-                "order_time": "2026-06-25 15:48:34.123778"
-            },
-            {
-                "printer_ids": "8018f3cb27,7c240a1581",
-                "product_code": "P0002",
-                "printers": "8018f3cb27,7c240a1581",
-                "product_name": "Frame",
-                "quantity": 1.0,
-                "price": 50,
-                "order_by": "Pheakdey",
-                "order_time": "2026-06-25 15:48:34.123778"
-            },
-            {
-                "printer_ids": "7c240a1581,bd0509fedc",
-                "product_code": "P0003",
-                "printers": "7c240a1581,bd0509fedc",
-                "product_name": "Motherboard",
-                "quantity": 1.0,
-                "price": 80,
-                "order_by": "Pheakdey",
-                "order_time": "2026-06-25 15:48:34.123778"
-            }
-            ]
+def submit_resend_to_printer(doc=None,data=None,print_server_url=None):    
     return sale.submit_resend_product_to_printer(doc = doc,data = data,print_server_url=print_server_url)
     
 @frappe.whitelist(methods=["POST"])
@@ -135,7 +73,7 @@ def bulk_request_print_bill(sale_names, print_server_url=None, print_setting=Non
             frappe.db.set_value("Sale",s,"sale_status_color",sale_status.background_color)
             frappe.db.set_value("Sale",s,"sale_status","Bill Requested")
             frappe.db.set_value("Sale",s,"sale_status_priority",sale_status.priority)
-
+    frappe.throw(str(can_print_sales))
 
     if len(can_print_sales)>0:
             frappe.enqueue(

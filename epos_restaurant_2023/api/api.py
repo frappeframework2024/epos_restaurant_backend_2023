@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 from frappe import _
 from frappe.desk.query_report import run
 import ast
+from epos_restaurant_2023.custom_socket_client import emit_event
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -696,6 +697,7 @@ def get_system_settings(pos_profile="", device_name=''):
     estc_connecton = get_estc_connection()
     data = {**data, **estc_connecton }
     data["print_server_url"] =  print_server_url 
+    data["websocket_port"] = frappe.conf.get("websocket_port") or 3000
     
  
     return  data
@@ -1902,8 +1904,9 @@ def update_customer_bill_counter(pos_profile, counter):
 
 
 @frappe.whitelist()
-def on_sale_quick_pay(data):
+def on_sale_quick_pay(data,print_server_url=None, print_setting=None):
     sales = json.loads(data)
+    print_setting = json.loads(print_setting or "{}")
     result = []
     for s in sales:
         doc =  frappe.get_doc('Sale',s['sale'])
@@ -1918,7 +1921,18 @@ def on_sale_quick_pay(data):
         doc.save()
         result.append(doc)
     frappe.db.commit()
-    
+    # raise print from server to print service url
+    if result and print_server_url:
+        frappe.enqueue(
+            "epos_restaurant_2023.api.sale.print_bill",
+            queue="short",
+            at_front=True,
+            sale_name= [d.get("name") for d in result],
+            print_server_url=print_server_url,
+            print_setting = print_setting
+        )
+    # refersh table layout
+    emit_event("RefreshTable")     
     return result
 
 @frappe.whitelist()
