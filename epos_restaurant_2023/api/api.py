@@ -1936,8 +1936,9 @@ def on_sale_quick_pay(data,print_server_url=None, print_setting=None):
     return result
 
 @frappe.whitelist()
-def on_sale_quick_pay_payment_type(data):
+def on_sale_quick_pay_payment_type(data,print_server_url=None, print_setting=None):
     sales = json.loads(data)
+    print_setting = json.loads(print_setting or "{}")
 
     result = []
     for s in sales:
@@ -1961,6 +1962,19 @@ def on_sale_quick_pay_payment_type(data):
         doc.save()
         result.append(doc)
     frappe.db.commit()
+    
+    # raise print from server to print service url
+    if result and print_server_url:
+        frappe.enqueue(
+            "epos_restaurant_2023.api.sale.print_bill",
+            queue="short",
+            at_front=True,
+            sale_name= [d.get("name") for d in result],
+            print_server_url=print_server_url,
+            print_setting = print_setting
+        )
+    # refersh table layout
+    emit_event("RefreshTable")     
     
     return result
 
