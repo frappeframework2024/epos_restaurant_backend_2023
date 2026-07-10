@@ -98,6 +98,9 @@
     </v-menu>
     <v-dialog v-model="showDialogSelectPrinter" width="auto">
         <v-card :title="$t('Resend to Printer')">
+            <!-- <template v-if="comboItemResend.length>0">
+
+            </template> -->
             <v-card-text>
                 <v-btn class="mr-2" :color="p.selected ? 'red' : 'default'" v-for="(p, index) in printerList" :key="index"
                     @click="onSelectPritnerForPrint(p)">{{ p.printer }}</v-btn>
@@ -227,18 +230,6 @@ function onReturn(sp) {
 
 async function onSelectPrinter() {
     if (!sale.isBillRequested()) {
-        // const p = props.saleProduct;
-        // // comboItemResend.value = []
-        // // if(p.is_combo_menu){
-        // //     const comboItemPrinters = await sale.getProductPrinterOfComboItem(p);
-            
-        // //     comboItemPrinters.forEach((item)=>{
-        // //         comboItemResend.value.push(item)
-        // //     })
-        // //     console.log(comboItemResend.value)
-        // // } 
-      
-
 
         if (props.saleProduct.backup_printers) {
             printerList.value = JSON.parse(props.saleProduct.backup_printers)

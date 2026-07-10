@@ -9,6 +9,13 @@ from  epos_restaurant_2023.api.print_server import process_print
 
 
 @frappe.whitelist()
+def testme():
+    return print_bill(print_server_url =  "http://192.168.10.173:19100/",
+        sale_name = [
+        "SINV2026-1383"
+        ])
+
+@frappe.whitelist()
 def runme():
  
     doc = frappe.as_json(frappe.get_cached_doc("Sale","SINV2026-0682"))
@@ -353,7 +360,7 @@ def print_bill(sale_name="SINV2026-0790", print_server_url=None, print_setting=N
     
     if not print_setting:
         print_setting = get_default_receipt_print_setting(frappe.get_cached_value("Sale", sale_name, "pos_profile"))
-        
+    
     if isinstance(sale_name,str):
         sale_name = [sale_name]
 
@@ -367,6 +374,7 @@ def print_bill(sale_name="SINV2026-0790", print_server_url=None, print_setting=N
                     "copies": print_setting.get("copies") or 1, 
                     "html":html
         })
+    
     if print_data:
         process_print(data = print_data,print_server_url=print_server_url, retry = 4) #retry > 3 disable retry
 
@@ -383,7 +391,7 @@ def get_default_receipt_print_setting(pos_profile):
     
 
     pos_config =  frappe.get_cached_value("POS Profile",pos_profile,"pos_config")
-    sql = "select a.print_template,b.printer_name as printer, a.copies from `tabPOS Config Print Setting` a join `tabPrinter` b where a.parent = %(pos_config)s and a.print_type='Sale' limit 1"
+    sql = "select a.print_template,b.printer_name as printer, a.copies from `tabPOS Config Print Setting` a join `tabPrinter` b on b.name = a.printer where a.parent = %(pos_config)s and a.print_type='Sale' limit 1"
     data = frappe.db.sql(sql,{"pos_config":pos_config},as_dict = 1)
     if data:
         data = data[0]

@@ -609,7 +609,8 @@ def get_system_settings(pos_profile="", device_name=''):
     if print_server_url:
         pos_station =json.loads( frappe.as_json(pos_station))
         pos_station["print_server_url"] = pos_station.get("web_socket_print_url") or print_server_url
-        del pos_station["web_socket_print_url"]
+        if pos_station.get("web_socket_print_url"):
+            del pos_station["web_socket_print_url"]
 
 
     data={
@@ -1251,11 +1252,22 @@ def test_get_meta():
     return data
 
 @frappe.whitelist()
-def update_print_bill_requested(name):
+def update_print_bill_requested(name,print_server_url=None):
     doc = frappe.get_doc("Sale",name)
     doc.sale_status = 'Bill Requested'
     doc.save()
     frappe.db.commit()
+    if len(doc.sale_products)>0 and print_server_url:
+        frappe.enqueue(
+            "epos_restaurant_2023.api.sale.print_bill",
+            queue="short",
+            at_front=True,
+            sale_name= [doc.name],
+            print_server_url=print_server_url
+        )
+    # refersh table layout
+    emit_event("RefreshTable")     
+    
     return doc
 @frappe.whitelist( methods="POST")
 def update_cancel_print_request(data):

@@ -16,6 +16,7 @@ class POSConfig(Document):
 		frappe.clear_document_cache("POS Config",self.name) 
 		cache = frappe.cache()
 		cache.delete_keys("system_settings:*")
+		cache.delete_keys("api.sale.get_default_print_template:*")
 		
 		get_default_account_from_pos_config.cache_clear() 
 

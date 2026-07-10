@@ -302,9 +302,9 @@ async function onQuickPayOtherPaymentType(isPrint = true) {
 }
 
 async function PrintReceipt(d, receipt) { 
-   await call.get("epos_restaurant_2023.api.api.update_print_bill_requested", {name: d.name}).then((resp)=>{
+   await call.get("epos_restaurant_2023.api.api.update_print_bill_requested", {name: d.name,print_server_url:sale.getPrintServerUrl()}).then((resp)=>{
         let doc = resp.message;
-        if((doc.sale_products.length||0)>0){
+        if((doc.sale_products.length||0)>0 && !sale.getPrintServerUrl()){
             onPrintProcess("print_invoice",receipt,doc);
         }
         d.sale_status = doc.sale_status;

@@ -119,7 +119,8 @@ def get_kot_template(sale, printer_name, products, version = "v1"):
 
             try:
                 if isinstance(combo_menu_data, str):
-                    return json.loads(combo_menu_data)
+                    _data = json.loads(combo_menu_data)
+                    return _data
                 return combo_menu_data
             except Exception:
                 

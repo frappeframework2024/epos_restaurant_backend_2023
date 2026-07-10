@@ -324,51 +324,52 @@ let a = ref({})
 async function _onInit() {
     // const param = {business_branch:gv.setting.business_branch, pos_profile:pos_profile}; 
     const param = {business_branch:gv.setting.business_branch, pos_profile:""}; 
-    const result = await  call.get("epos_restaurant_2023.api.api.get_working_day_list_report",param).then((wd)=>{  
-        if (wd.message.length > 0){
-            let _reports = Enumerable.from(wd.message).orderByDescending("$.posting_date").thenByDescending("$.creation").toArray();  
-            let _report_data = []
-            _reports.forEach((_r)=>{
-                let _report_by_pos_profiles = _r.cashier_shifts.filter((r)=>r.pos_profile==pos_profile);
-                if((_report_by_pos_profiles?.length??0)>0){
-                    _r.cashier_shifts = _report_by_pos_profiles;
-                    _report_data.push(_r);
-                }
-                
-            }) ;
-            workingDayReports.value =    _report_data;
-            activeReport.value.report_id = workingDayReports.value[0].name;
+    const wd = await  call.get("epos_restaurant_2023.api.api.get_working_day_list_report",param);
+    let result = []
+    if (wd.message.length > 0){
+        let _reports = Enumerable.from(wd.message).orderByDescending("$.posting_date").thenByDescending("$.creation").toArray();  
+        let _report_data = []
+        _reports.forEach((_r)=>{
+            let _report_by_pos_profiles = _r.cashier_shifts.filter((r)=>r.pos_profile==pos_profile);
+            if((_report_by_pos_profiles?.length??0)>0){
+                _r.cashier_shifts = _report_by_pos_profiles;
+                _report_data.push(_r);
+            }
+            
+        }) ;
+        workingDayReports.value =    _report_data;
+        activeReport.value.report_id = workingDayReports.value[0].name;
+        let pf = await  db.getDocList("POS Print Format Setting",
+        {
+            fields: ['name', 'print_format_doc_type','sort_order','print_report_name','title'],
+            filters: [
+                ["print_format_doc_type","in",["Working Day","Cashier Shift"]],
+                ["show_in_pos_report","=",1]
+        ],
+            orderBy: {
+                field: 'sort_order',
+                order: 'asc',
+            }
+        });
+        let _filters = []
+        pf.forEach((p)=>{
+            _filters.push(p.name)
+        });
 
-          return  db.getDocList("POS Print Format Setting",
-            {
-                fields: ['name', 'print_format_doc_type','sort_order','print_report_name','title'],
-                filters: [
-                    ["print_format_doc_type","in",["Working Day","Cashier Shift"]],
-                    ["show_in_pos_report","=",1]
-            ],
-                orderBy: {
-                    field: 'sort_order',
-                    order: 'asc',
-                }
-            }).then(async (pf)=>{ 
-                let _filters = []
-                pf.forEach((p)=>{
-                    _filters.push(p.name)
-                });
-                const print_format = await  db.getDocList("Print Format",{
-                    fields:["*"],
-                    filters: [["name","in",_filters]],
-                }) 
-                print_format.forEach((p)=>{
-                    const _pf = pf.filter(x=>x.name==p.name);
-                    p.print_report_name = _pf[0]?.print_report_name??"";
-                    p.title = _pf[0]?.title??"";
-                    p.sort_order = _pf[0]?.sort_order??0;
-                })
-                return print_format 
-            })
-        } 
-    });
+        const print_format = await  db.getDocList("Print Format",{
+            fields:["*"],
+            filters: [["name","in",_filters]],
+        }) 
+
+        print_format.forEach((p)=>{
+            const _pf = pf.filter(x=>x.name==p.name);
+            p.print_report_name = _pf[0]?.print_report_name??"";
+            p.title = _pf[0]?.title??"";
+            p.sort_order = _pf[0]?.sort_order??0;
+        })
+        result =  print_format 
+      
+    }  
     (result || []).forEach((r)=>{
         if(r.doc_type=="Working Day"){
             working_day_print_format.push(r);
@@ -377,26 +378,22 @@ async function _onInit() {
         }
     }); 
 
+
     //check if working day print format have value     
     if(working_day_print_format.length > 0){
         working_day_print_format = working_day_print_format.sort((a, b) => a.sort_order - b.sort_order )
-
         activeReport.value.preview_report = working_day_print_format[0].name;
         activeReport.value.name = "Working Day";
         activeReport.value.doc_type = working_day_print_format[0].doc_type;
         activeReport.value.print_report_name = working_day_print_format[0].print_report_name || working_day_print_format[0].name;
         workingDay.value = working_day_print_format; 
-
         isTransactionClosed.value = working_day_print_format[0]?.is_closed??0
 
-    }
-
+    } 
 
     //check if cashier shift print format have value
     if(cashier_shift_print_format.length>0){
-
         cashier_shift_print_format = cashier_shift_print_format.sort((a, b) => a.sort_order - b.sort_order );
-
         cashier_shift_print_format.forEach((cs)=>{
            const _data = {
                 "name":cs.name,
@@ -476,7 +473,7 @@ function onExport(){
 }
 
 
-function onPrint(){ 
+function onPrint(){  
     let data ={
             action : "print_report",                
             doc: activeReport.value.doc_type,
