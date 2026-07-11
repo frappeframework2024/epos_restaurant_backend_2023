@@ -10,8 +10,10 @@
   "qb_company_name",
   "column_break_wdlj",
   "web_connecter_username",
+  "qb_journal_entry_class",
   "column_break_gpeh",
-  "web_connecter_password"
+  "web_connecter_password",
+  "qb_journal_entry_class_id"
  ],
  "fields": [
   {
@@ -51,12 +53,25 @@
    "in_list_view": 1,
    "label": "QB Company Name",
    "reqd": 1
+  },
+  {
+   "fieldname": "qb_journal_entry_class",
+   "fieldtype": "Link",
+   "label": "QB Journal Entry Class",
+   "options": "Quickbooks Data"
+  },
+  {
+   "fetch_from": "qb_journal_entry_class.qb_list_id",
+   "fieldname": "qb_journal_entry_class_id",
+   "fieldtype": "Data",
+   "label": "QB Journal Entry Class ID",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-03-28 15:02:11.071991",
+ "modified": "2026-07-11 17:00:11.714355",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Quickbooks Available Branch",

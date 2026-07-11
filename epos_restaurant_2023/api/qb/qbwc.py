@@ -19,6 +19,7 @@ from epos_restaurant_2023.api.qb.request.qbwc_get_data import (
         get_qb_payment_type_xml,
         get_qb_customer_xml,
         get_qb_product_xml,
+        get_qb_journal_entry_classes_xml
     )
 
 # ────────── Frappe Context Helpers ──────────
@@ -144,7 +145,8 @@ class QuickBooksService(ServiceBase):
             get_coa_xml = "" #get chart of account
             get_pt_xml = "" # get payment type / payment method           
             get_cus_xml = "" # get customer        
-            get_pro_xml = "" # get product        
+            get_pro_xml = "" # get product      
+            get_jec_xml = "" # get journal entry classes  
            
             
             
@@ -174,12 +176,14 @@ class QuickBooksService(ServiceBase):
                     if action == "Get":
                         get_cus_xml = get_qb_customer_xml(requestID= requestID)
                         
-                        
                 elif action_type == "Product":
                     if action == "Get":
                         get_pro_xml = get_qb_product_xml(requestID= requestID)
-                        
-                        
+
+                elif action_type == "Journal Entry Classes":
+                    if action == "Get":
+                        get_jec_xml = get_qb_journal_entry_classes_xml(requestID= requestID)        
+                
                 elif action_type == "GL Entry":                    
                     # pass
                     if action == "Add":                                            
@@ -231,6 +235,7 @@ class QuickBooksService(ServiceBase):
                     {get_cus_xml}
                     {get_pt_xml}
                     {get_pro_xml}
+                    {get_jec_xml}
                     {''.join(add_invoice_xmls)}
                     {''.join(add_receive_payment_xmls)}
                     {''.join(add_journal_xmls)}

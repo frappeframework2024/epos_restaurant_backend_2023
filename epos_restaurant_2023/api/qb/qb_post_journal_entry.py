@@ -4,7 +4,7 @@ from collections import defaultdict
 from frappe.model.naming import make_autoname
 
 @frappe.whitelist()
-def get_gl_entries(is_grouped,transaction_type,doctype,voucher_number,business_branch=""):
+def get_gl_entries(is_grouped,transaction_type,doctype,voucher_number, business_branch=""):
     fields = "name,voucher_number sale_id"
     filters = ""
     operator = ""
@@ -88,9 +88,7 @@ def todo():
         available_branchs  = [x for x in config.available_branch if x.business_branch == branch["name"]]
         if len(available_branchs)>0:
             qb_company_name = available_branchs[0].get("qb_company_name",None) or ""
-        
         result.append({"qb_company_name":qb_company_name}) 
-        
     return result
     
 
@@ -104,10 +102,11 @@ def add_gl_entries_to_sync_queue(name,doctype,posting_date):
         gl_entries = None
         for branch in branches:            
             qb_company_name = ""
+            qb_class_list_id = ""
             available_branchs  = [x for x in config.available_branch if x.business_branch == branch["name"]]
             if len(available_branchs)>0:
                 qb_company_name = available_branchs[0].get("qb_company_name",None) or ""
-            
+                qb_class_list_id = available_branchs[0].get("qb_journal_entry_class_id",None) or ""
             for transaction_type in transaction_types:
                 grouped_gl_entries = get_gl_entries(1,transaction_type,doctype,name,branch["name"])
                 gl_entries = get_gl_entries(0,transaction_type,doctype,name,branch["name"])
@@ -117,6 +116,8 @@ def add_gl_entries_to_sync_queue(name,doctype,posting_date):
                         if a.reference_name == b["account"] and a.qb_company == qb_company_name:
                             b["qb_account"] = a.qb_name
                             b["qb_acc_list_id"] = a.qb_list_id
+                            if qb_class_list_id != "":
+                                b["qb_class_list_id"] = qb_class_list_id
                 
                 customer_mapping = config.tbl_customers_mapping
                 for a in customer_mapping:
@@ -124,6 +125,8 @@ def add_gl_entries_to_sync_queue(name,doctype,posting_date):
                         if a.reference_name == b["name"] and a.qb_company == qb_company_name:
                             b["qb_cust_name"] = a.qb_name
                             b["qb_cust_list_id"] = a.qb_list_id
+                            if qb_class_list_id != "":
+                                b["qb_class_list_id"] = qb_class_list_id
                  
                 if transaction_type == "Sale": 
                     sales = list(set([d["sale_id"] for d in grouped_gl_entries]))

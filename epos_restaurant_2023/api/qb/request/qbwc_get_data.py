@@ -70,7 +70,24 @@ def get_qb_product():
         doc.insert()
     frappe.db.commit()
     frappe.publish_realtime("product_notification", {"message": "Finsh Getting QB Product"},user=frappe.session.user)
-    
+
+@frappe.whitelist()
+def get_qb_journal_entry_classes():
+    frappe.publish_realtime("product_notification", {"message": "Getting QB Journal Entry Classes"},user=frappe.session.user)
+    doc = frappe.get_single("Quickbooks Desktop Integration") 
+    branch_usernames = [d.business_branch for d in doc.available_branch]
+    branches = frappe.get_all("Business Branch",fields=["name"], filters={"name":["in", branch_usernames ]})
+    for b in branches:
+        doc = frappe.new_doc("Quickbooks Sync Queues")
+        doc.action = "Get"
+        doc.status = "Pending"
+        doc.action_type = "Journal Entry Classes"
+        doc.business_branch = b.name
+        doc.code = make_autoname("QBJC.-.#####")
+        doc.insert()
+    frappe.db.commit()
+    frappe.publish_realtime("product_notification", {"message": "Finsh Getting QB Journal Entry Classes"},user=frappe.session.user)
+
 ### End API Create Queues
 
 ### XML Builder  
@@ -143,6 +160,27 @@ def get_qb_product_xml(requestID):
                 <MaxReturned>5000</MaxReturned>
                 <ActiveStatus>ActiveOnly</ActiveStatus>
             </ItemQueryRq >
+        """
+        return qbxml
+    
+    return ""
+
+# get journal entry classes
+def get_qb_journal_entry_classes_xml(requestID):
+    iterator = "Start"
+    iterator_id = ""        
+    existing = frappe.db.exists("Quickbooks Sync Queues",  {"request_id": requestID})
+    if existing:    
+        queue_doc = frappe.get_doc("Quickbooks Sync Queues", existing)        
+        if queue_doc.iterator_id:
+            iterator = 'Continue'
+            iterator_id = f' iteratorID="{queue_doc.iterator_id}"'        
+        
+        qbxml = f"""
+            <ClassQueryRq  requestID="{requestID}" >
+                <MaxReturned>5000</MaxReturned>
+                <ActiveStatus>ActiveOnly</ActiveStatus>
+            </ClassQueryRq >
         """
         return qbxml
     

@@ -51,7 +51,13 @@ frappe.ui.form.on("Quickbooks Desktop Integration", {
                 }
             };
         });
-        
+        frm.set_query('qb_journal_entry_class', 'available_branch', function(doc, cdt, cdn) {
+            return {
+                filters: {
+                    data_type: "Class"
+                }
+            };
+        });
 	},
 });
 

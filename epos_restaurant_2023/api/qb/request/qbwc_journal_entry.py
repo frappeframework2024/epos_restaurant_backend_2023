@@ -18,8 +18,6 @@ def add_journal_xml(requestID, queuesData, RefNumber,JEMemo, companyName):
         
         config = frappe.get_doc("Quickbooks Desktop Integration")
         account_mapping = config.tbl_chart_of_account_mapping
-        print(companyName)
-        
         for row in lines:
             account = row.get("account")
             qb_accounts = [x for x in account_mapping if  x.reference_name == row.get("account") and  x.qb_company == companyName]            
@@ -32,7 +30,7 @@ def add_journal_xml(requestID, queuesData, RefNumber,JEMemo, companyName):
             
             debit = float(row.get("debit", 0) or 0)
             credit = float(row.get("credit", 0) or 0)
-            key = (row["qb_account"], row["qb_acc_list_id"], row["name"])
+            key = (row["qb_account"], row["qb_acc_list_id"], row["name"], row["qb_class_list_id"])
             if debit > 0:
                 debit_map[key] += debit
             elif credit > 0:
@@ -50,7 +48,7 @@ def add_journal_xml(requestID, queuesData, RefNumber,JEMemo, companyName):
         # 🔹 Build XML lines
         xml_lines = ""
         # Debit lines
-        for (acc,acc_list_id,name), amt in debit_map.items():                
+        for (acc,acc_list_id,name,class_list_id), amt in debit_map.items():                
             xml_lines += f"""
             <JournalDebitLine>
                 <AccountRef>
@@ -58,10 +56,13 @@ def add_journal_xml(requestID, queuesData, RefNumber,JEMemo, companyName):
                 </AccountRef>
                 <Amount>{qb_amount(amt)}</Amount>
                 <Memo> {JEMemo} ~ Debit </Memo> 
+                <ClassRef>
+                    <ListID>{class_list_id}</ListID>
+                </ClassRef>
             </JournalDebitLine>"""
 
         # Credit lines
-        for (acc,acc_list_id,name), amt in credit_map.items():   
+        for (acc,acc_list_id,name,class_list_id), amt in credit_map.items():   
             xml_lines += f"""
             <JournalCreditLine>
                 <AccountRef>
@@ -69,6 +70,9 @@ def add_journal_xml(requestID, queuesData, RefNumber,JEMemo, companyName):
                 </AccountRef>
                 <Amount>{qb_amount(amt)}</Amount>
                 <Memo> {JEMemo} ~ Credit </Memo>
+                <ClassRef>
+                    <ListID>{class_list_id}</ListID>
+                </ClassRef>
             </JournalCreditLine>"""
 
         # 🔹 Final XML
