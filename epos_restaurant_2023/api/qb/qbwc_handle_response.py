@@ -9,7 +9,7 @@ from epos_restaurant_2023.api.qb.rs_handle.customer import handle_customer_query
 from epos_restaurant_2023.api.qb.rs_handle.product import handle_item_query 
 from epos_restaurant_2023.api.qb.rs_handle.invoice import handle_invoice_query 
 from epos_restaurant_2023.api.qb.rs_handle.receive_payment import handle_receive_payment_query 
-from epos_restaurant_2023.api.api import handle_journal_entry_classes_query
+from epos_restaurant_2023.api.qb.rs_handle.journal_entry_classes import handle_journal_entry_classes_query
 
 def handle_qb_response(company_name, xml_string):
     root = ET.fromstring(xml_string)
