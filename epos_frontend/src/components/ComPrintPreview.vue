@@ -93,7 +93,9 @@ const props = defineProps({
         type: Object,
         require: true
     }
-})
+});
+ 
+
 const selectedLetterhead = ref(getDefaultLetterHead());
 const selectedLang = ref(gv.setting.lang[0].language_code);
 const activeReport = ref(gv.setting.reports.filter(r=>r.doc_type==props.params.doctype && r.show_in_pos == 1)[0]) ;
@@ -103,7 +105,8 @@ const isLoading = ref(true)
 let filter = reactive({
     product_category: 'All Product Categories',
     product_category_filter: ''
-})
+});
+
 const printPreviewUrl = computed(()=>{
     isLoading.value = true;
     let  letterhead = "";
@@ -114,16 +117,18 @@ const printPreviewUrl = computed(()=>{
     }
     const url =`${serverUrl}/printview?doctype=${activeReport.value.doc_type}&name=${props.params.name}&format=${activeReport.value.name}&product_category=${activeReport.value.filter?.product_category || ''}&no_letterhead=0&show_toolbar=0&letterhead=${letterhead}&settings=%7B%7D&_lang=${selectedLang.value}`;
     return url;
-})
+});
+
+
+
 
 
 function getDefaultLetterHead(){
     let  letterhead = "";
-
-           letterhead = gv.setting.letter_heads.filter(r=>r.is_default==1)[0]?.name;
-        if(!letterhead){
-            letterhead = "No Letterhead";
-        }
+    letterhead = gv.setting.letter_heads.filter(r=>r.is_default==1)[0]?.name;
+    if(!letterhead){
+        letterhead = "No Letterhead";
+    }
    return letterhead;
 }
 
@@ -183,7 +188,6 @@ function onExport(){
 
 function onPrint(){
     let _print_format = (activeReport.value.print_report_name||"")==""? activeReport.value.name : (activeReport.value.print_report_name||"")
-
 
     let data ={
         action : "print_report",

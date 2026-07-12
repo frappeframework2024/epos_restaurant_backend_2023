@@ -1,0 +1,232 @@
+<style>
+    .status-tag{
+    display:inline-block;
+    padding:3px 10px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:700;
+    white-space:nowrap;
+}
+.table-box-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px;
+    background: #fff;
+}
+
+
+/* TABLE CARD */
+.table-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    position: relative;
+    cursor: pointer;
+
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+
+    transition: .15s;
+    overflow: hidden;
+}
+
+
+.table-box:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0,0,0,.25);
+}
+
+
+/* TABLE NUMBER */
+.table-number {
+    font-size: 16px;
+    font-weight: 900;
+}
+
+
+/* GUEST */
+.guest {
+    margin-top: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 15px;
+}
+
+
+/* BOOKING COUNT */
+.booking-badge {
+    position: absolute;
+
+    top: 5px;
+    left: 5px;
+
+    min-width: 22px;
+    height: 22px;
+
+    padding: 0 6px;
+
+    border-radius: 20px;
+
+    background: #ef4444;
+    color: #fff;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow: 0 2px 5px rgba(0,0,0,.25);
+}
+
+
+/* STATUS */
+.status-dot {
+    position: absolute;
+
+    top: 8px;
+    right: 8px;
+
+    width: 9px;
+    height: 9px;
+
+    border-radius: 50%;
+
+    background: #22c55e;
+}
+
+
+.status-dot.booking {
+    background: #ef4444;
+}
+
+
+/* GROUP STYLE */
+.table-group {
+    margin-bottom: 10px;
+
+    border: 1px solid #dbe3ef;
+
+    border-radius: 8px;
+
+    overflow: hidden;
+
+    background: #fff;
+}
+
+
+.group-header {
+    height: 38px;
+
+    padding: 0 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background: #f8fafc;
+
+    color: #334155;
+
+    cursor: pointer;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    border-bottom: 1px solid #e2e8f0;
+}
+
+
+.group-header:hover {
+    background: #eef2ff;
+}
+
+
+.group-count {
+    background: #e2e8f0;
+
+    padding: 3px 8px;
+
+    border-radius: 12px;
+
+    font-size: 11px;
+
+    color: #475569;
+}
+
+
+.group-content {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    padding: 10px;
+}
+
+</style>
+
+
+<div class="table-box-container">
+
+{% for(var i = 0; i < tables.length; i++){ %}
+{% var table = tables[i]; %}
+
+
+<div class="table-box"
+    data-name="{{table.name}}"
+    style="
+        width:{{table.width}}px;
+        height:{{table.height}}px;
+        border-radius:20px;
+        background:{{table?.bookings[0]?.sale_status_color || table.background_color}};
+        color:{{table.text_color}};
+    ">
+
+    {% if(table.booking_count > 0){ %}
+
+    <div class="booking-badge">
+        {{table.booking_count}}
+    </div>
+
+    {% } %}
+
+
+
+    <div class="status-dot {{table.status}}"></div>
+
+
+
+    <div class="table-number">
+        {{table.tbl_number}}
+    </div>
+
+
+
+    {% if(table.booking){ %}
+
+    <div class="guest">
+        {{table.booking.guest_name}}
+        <br>
+        {{table.booking.total_guest}} Pax
+    </div>
+
+    {% }else{ %}
+
+    <div class="guest">
+    </div>
+
+    {% } %}
+
+
+</div>
+
+
+{% } %}
+
+</div>

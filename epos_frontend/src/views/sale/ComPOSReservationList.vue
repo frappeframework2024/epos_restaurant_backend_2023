@@ -55,15 +55,24 @@
                       {{ s.total_guest }} {{$t('Pax')}}
                     </template>
                   </v-list-item>
-                  <v-list-item v-if="s.guest" :title="`${$t('Guest Code')}:`">
-                    <template v-slot:append>
-                      {{ s.guest }}
-                    </template>
-                  </v-list-item>
 
-                  <v-list-item :title="`${$t('Guest Name')}:`">
+                  <v-list-item v-if="s.guest">
+                    <v-list-item-content style="display: flex; justify-content: space-between; align-items: flex-start;">
+                      <!-- Title on the left -->
+                      <div style="font-size: 16px; margin-right: 16px; white-space: nowrap;">
+                        {{ $t('Guest') }}:
+                      </div>
+
+                      <!-- Guest text on the right, wraps -->
+                      <div style="white-space: normal; word-break: break-word; max-width: 60%; text-align: left;">
+                        {{ s.guest }} - {{s.guest_name}}
+                      </div>
+                    </v-list-item-content>
+                  </v-list-item> 
+
+                  <v-list-item v-if="s.phone_number" :title="`${$t('Phone')}:`">
                     <template v-slot:append>
-                      {{ s.guest_name }}
+                      {{ s.phone_number }}
                     </template>
                   </v-list-item>
 
@@ -165,47 +174,19 @@ onMounted(() => {
   _onInit()
 });
 
-function _onInit() {
+async function _onInit() {
   isLoading.value = true;
-  call.get("epos_restaurant_2023.api.pos_reservation.get_pos_reservation_list",
+  const res = await call.get("epos_restaurant_2023.api.pos_reservation.get_pos_reservation_list",
   {
     "property":gv.setting.business_branch,
     "arrival_date":filter_date.value
-  }).then((res)=>{
-    reservationData.value = [];
-    if(res.message){
-      reservationData.value = res.message;
-    }else{
-
-    }
-    isLoading.value = false;
-  }).catch((err)=>  isLoading.value = false);
-
-  // db.getDocList("POS Reservation",
-  //   {
-  //     fields: ["name"],
-  //     filters: [
-  //       ["property", "=", gv.setting.business_branch],
-  //       ["arrival_date", "=", filter_date.value],
-  //       ["reservation_status", "in", "Confirmed"]
-  //     ],
-  //     limit: 50,
-  //     orderBy: {
-  //       field: 'arrival_date',
-  //       order: 'desc',
-  //     },
-  //   }).then(doc => {
-  //     reservationData.value = [];
-  //     doc.forEach(d => {
-  //       db.getDoc("POS Reservation", d.name).then(r => {
-  //         reservationData.value.push(r);
-  //       })
-  //     });
-
-  //     isLoading.value = false;
-  //   }).catch(err => {
-  //     isLoading.value = false;
-  //   });
+  });
+  reservationData.value = [];
+  if(res.message){
+    reservationData.value = res.message;
+  }
+  isLoading.value = false;
+  
 }
 
 function onClearSearch(){
@@ -259,7 +240,6 @@ async function onConvertToSale(reservation) {
 
             
               sale.sale.from_reservation = reservation.name;
-
               sale.sale.working_day = _data.working_day.name;
               sale.sale.posting_date = _data.working_day.posting_date;
               sale.posting_date = _data.working_day.posting_date;
@@ -317,7 +297,7 @@ async function onConvertToSale(reservation) {
                       });
                     }else {
                       const result = template.toLowerCase().replace(/\s+/g, '-');
-                let _template = result;
+                      let _template = result;
                       router.push({ 
                         name: "SaleOrder",
                         params: { name: value.name },

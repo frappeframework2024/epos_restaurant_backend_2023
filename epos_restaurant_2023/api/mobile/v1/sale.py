@@ -90,6 +90,10 @@ def bulk_request_print_bill(sale_names, print_server_url=None, print_setting=Non
 
     return "Done"
 
+@frappe.whitelist(methods="POST")
+def print_bill(sale_name="SINV2026-0790", print_server_url=None, print_setting=None,additional_info={} ):
+    sale.print_bill(sale_name=sale_name, print_server_url = print_server_url, print_setting = print_setting,additional_info=additional_info)
+    return "Success"
 
 @frappe.whitelist(methods=["POST","GET"])
 def split_bill(data,current_sale_id):

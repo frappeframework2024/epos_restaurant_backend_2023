@@ -131,21 +131,16 @@ showHiddentTable();
 
 
 function showHiddentTable() {
-
     const container = document.getElementsByClassName("v-window__container");
-
     tableLayout.table_groups.forEach(function (g) {
         g.tables.forEach(function (t) {
-
             if (t.x < 0) {
                 t.x = 0;
             }
-
             if (t.y < 0) {
                 t.y = 0
             }
-
-        })
+        });
     })
 }
 

@@ -1,0 +1,25 @@
+{
+ "content": null,
+ "creation": "2026-07-11 11:43:29.865301",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2026-07-11 11:43:29.865301",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "table-booking-box-vi",
+ "owner": "Administrator",
+ "page_name": "table-booking-box-vi",
+ "roles": [
+  {
+   "role": "Sales Manager"
+  },
+  {
+   "role": "Sales User"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 1
+}

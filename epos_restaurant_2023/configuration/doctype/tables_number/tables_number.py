@@ -11,6 +11,9 @@ class TablesNumber(Document):
    		# 	frappe.throw("Table number {} is already exist in group {}".format(self.tbl_number, self.tbl_group))
 	def on_update(self):
 		frappe.clear_document_cache("Tables Number",self.name)
+		frappe.cache.delete_keys("table_list:*")
+
+	
 
 @frappe.whitelist()
 def get_table_number_list(txt,table_group='Rooms'):

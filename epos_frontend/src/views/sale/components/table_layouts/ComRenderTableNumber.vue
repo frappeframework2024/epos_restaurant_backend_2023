@@ -5,6 +5,7 @@
             class="bg-center overflow-auto relative table-bg" v-if="!mobile">
             <!-- <v-img :src="g.background" alt="Table Plan Background" aspect-ratio="16/9" class="elevation-3" :lazy-src="g.background"></v-img> -->
             <template v-for="(t, index) in g.tables" :key="index">
+           
                 <div   v-bind:style="{ 'height': t.h + 'px', 'width': t.w + 'px', 'left': t.x + 'px', 'top': t.y + 'px', 'background-color': t.background_color, 'position': 'absolute', 'box-sizing': 'border-box','border-radius':t.shape == 'Circle' ? '' : '10px' }"
                     class="text-center text-gray-100 cursor-pointer" :class="t.shape == 'Circle' ? 'shape-circle' : ''"
                     @click="onTableClick(t)">
@@ -12,23 +13,32 @@
                         v-if="t.sales?.length > 1"></v-badge>
                     <div class="flex items-center justify-center h-full">
                         <div>
-                            <div :style="{ fontSize: (t.font_size || 15) + 'px' }"><span class="font-bold">{{ t.tbl_no }}</span><span v-if="t.guest_cover">({{
-                                t.guest_cover
-                                    }} )
-                                    
-                            </span></div>
+                            <div :style="{ fontSize: (t.font_size || 15) + 'px' }">
+                                <span class="font-bold">{{ t.tbl_no }}</span>
+                                <span v-if="t.guest_cover">({{t.guest_cover }} )</span>
+                            </div>
                             <div v-if="t.grand_total && gv.setting.show_total_amount_on_table">
                                 <CurrencyFormat :value="t.grand_total"></CurrencyFormat>
                             </div>
-
                             <div class="text-xs" v-if="t.customer_name && t.customer_name != 'General' && t.sales?.length > 0">
                                  {{ t.customer_name }}
-                            </div>
+                                 <template v-if="t.phone_number">
+                                    <br/>
+                                    {{ (t.phone_number ||"") != "" ? (t.phone_number ||"")  : "" }}
+                                 </template>
+                            </div> 
 
-                            <div v-if="t.creation && gv.setting.show_time_ago_on_table" class="text-xs">
-                                <v-icon icon="mdi-clock" size="x-small"></v-icon>
-                                {{ getTimeDifference(t.creation) }}
+                             <div v-if="t.creation && gv.setting.show_time_ago_on_table" class="text-xs">                                
+                                <template v-if="t.is_reservation">                                    
+                                    
+                                    {{ getTimeFormat(t.creation) }}
+                                </template>
+                                <template v-else><v-icon icon="mdi-clock" size="x-small"></v-icon>
+                                    {{ getTimeDifference(t.creation) }}
+                                </template> 
+                                
                             </div>
+                           
                         </div>
                     </div>
                 </div>
@@ -38,7 +48,8 @@
         <v-window-item v-else :value="g.key" v-bind:style="{ 'min-height': 'auto' }" class="mt-2 mb-4">
             <v-row>
                 <v-col cols="6" v-for="(t, index) in g.tables" :key="index">
-                    <div v-bind:style="{ 'height': '75px', 'background-color': t.background_color }"
+                   
+                    <div v-bind:style="{ 'height': '100px', 'background-color': t.background_color }"
                         class="text-center text-gray-100 cursor-pointer  rounded-lg" @click="onTableClick(t)">
                         <v-badge :content="t.sales?.length" color="error" style="float:right;" class="mr-2"
                             v-if="t.sales?.length > 1"></v-badge>
@@ -51,9 +62,24 @@
                                 <div v-if="t.grand_total && gv.setting.show_total_amount_on_table">
                                     <CurrencyFormat :value="t.grand_total"></CurrencyFormat>
                                 </div>
-                                <div v-if="t.creation && gv.setting.show_time_ago_on_table" class="text-xs">
-                                    <v-icon icon="mdi-clock" size="x-small"></v-icon>
-                                    {{ getTimeDifference(t.creation) }}
+
+                                 <div class="text-xs" v-if="t.customer_name && t.customer_name != 'General' && t.sales?.length > 0">
+                                    {{ t.customer_name }}
+                                    <template v-if="t.phone_number">
+                                        <br/>
+                                        {{ (t.phone_number ||"") != "" ? (t.phone_number ||"")  : "" }}
+                                    </template>
+                                </div> 
+
+                                <div v-if="t.creation && gv.setting.show_time_ago_on_table" class="text-xs">                                
+                                    <template v-if="t.is_reservation">                                    
+                                        
+                                        {{ getTimeFormat(t.creation) }}
+                                    </template>
+                                    <template v-else><v-icon icon="mdi-clock" size="x-small"></v-icon>
+                                        {{ getTimeDifference(t.creation) }}
+                                    </template> 
+                                    
                                 </div>
                             </div>
                         </div>
@@ -64,7 +90,7 @@
     </template>
 </template>
 <script setup>
-import { inject, useRouter, createToaster, selectSaleOrderDialog, keyboardDialog, smallViewSaleProductListModal, i18n,ref } from '@/plugin';
+import { inject, useRouter, createToaster, selectSaleOrderDialog, keyboardDialog,tableReservationDialog, smallViewSaleProductListModal, i18n,ref } from '@/plugin';
 import { useDisplay } from 'vuetify';
 const { t: $t } = i18n.global;
 const router = useRouter();
@@ -100,6 +126,11 @@ function getTimeDifference(date) {
     }
 }
 
+function getTimeFormat(date) {
+    return moment(date, "HH:mm").format("hh:mm A");
+ 
+}
+
 async function  validateNewtowkSaleLock(table){ 
     is_processing.value = true;  
     const value = await tableLayout.validateNewtowkSaleLock(table).catch((r)=> 
@@ -124,47 +155,57 @@ function onTableClick(table, guest_cover) {
                 newSale(table);
             }
             else if (table.sales.length == 1) {
-                if(await validateNewtowkSaleLock(table)){ 
-                    return 
-                }
-                if (mobile.value) { 
-                    await sale.LoadSaleData(table.sales[0].name).then(async (_sale) => {
-                        localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth));
-                        const result = await smallViewSaleProductListModal({ title: sale.sale.name ? sale.sale.name : $t('New Sale'), data: { from_table: true } });
-                        if (result) {
-                            tableLayout.getSaleList();
-                        } else {
-                            localStorage.removeItem('make_order_auth');
+                if(table.sales[0].is_reservation){     
+                         
+                    await tableReservationDialog({"sale":table.sales[0]});
+                    // localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth));
+                    // newSale(table);
 
-                            socket.emit("ShowOrderInCustomerDisplay",{},"", sale.customer_display_key);
-                        }
-                    });
-                }
-                else { 
-                    localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth)); 
-                    let template = (gv.device_setting?.main_sale_screen??"Default") ;
+                }else{
+                    if(await validateNewtowkSaleLock(table)){ 
+                        return 
+                    }
+                    if (mobile.value) { 
+                        await sale.LoadSaleData(table.sales[0].name).then(async (_sale) => {
+                            localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth));
+                            const result = await smallViewSaleProductListModal({ title: sale.sale.name ? sale.sale.name : $t('New Sale'), data: { from_table: true } });
+                            if (result) {
+                                tableLayout.getSaleList();
+                            } else {
+                                localStorage.removeItem('make_order_auth');
 
-                    if(template  == "Default"){
-                        router.push({ 
-                            name: "AddSale",
-                            params: {
-                                name: table.sales[0].name
+                                socket.emit("ShowOrderInCustomerDisplay",{},"", sale.customer_display_key);
                             }
-                         });
-                    }else {
-                        const result = template.toLowerCase().replace(/\s+/g, '-');
-                        let _template = result;
-                        router.push({ 
-                            name: "SaleOrder",
-                            params: {
-                                name: table.sales[0].name
-                            },
-                            query: { menu: _template }
                         });
-                    } 
-                }
+                    }
+                    else { 
+                        localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth)); 
+                        let template = (gv.device_setting?.main_sale_screen??"Default") ;
+
+                        if(template  == "Default"){
+                            router.push({ 
+                                name: "AddSale",
+                                params: {
+                                    name: table.sales[0].name
+                                }
+                            });
+                        }else {
+                            const result = template.toLowerCase().replace(/\s+/g, '-');
+                            let _template = result;
+                            router.push({ 
+                                name: "SaleOrder",
+                                params: {
+                                    name: table.sales[0].name
+                                },
+                                query: { menu: _template }
+                            });
+                        } 
+                    }
+                } 
+
             }
             else {
+                
                 sale.sale.table_id = table.id;
                 sale.sale.tbl_number = table.tbl_no;
                 const result = await selectSaleOrderDialog({ data: table.sales, table: table, make_order_auth: make_order_auth });

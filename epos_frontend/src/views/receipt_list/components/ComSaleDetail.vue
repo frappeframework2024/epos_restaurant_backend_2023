@@ -231,6 +231,7 @@ function onRefresh() {
 }
 
 async function onPrint() {
+    
     let data = {
         action: "print_receipt",
         print_setting: activeReport.value,
@@ -241,6 +242,7 @@ async function onPrint() {
         reprint: 1
     } 
     let printer = (gv.device_setting?.station_printers).filter((e) => e.cashier_printer == 1);
+    
     let _printer = undefined
     if (printer.length > 0) {
         _printer = {
@@ -253,6 +255,28 @@ async function onPrint() {
             "usb_printing": printer[0].usb_printing,
         }
     } 
+
+    if(inject_sale.getPrintServerUrl()){
+        if (await confirm({ title: $t("Print Receipt"), text: $t("msg.Are you sure to print receipt") })) { 
+                const l = await app.showLoading($t("Reprint receipt..."));
+                const res = await app.postApi("sale.print_bill",{
+                    sale_name:sale.doc.name,
+                    print_server_url:inject_sale.getPrintServerUrl(),
+                    additional_info:{
+                        reprint:true
+                    }
+                })
+            
+
+                if (res.data){
+                    toaster.success($t("Print bill sucessfully"))
+                }else {
+                    toaster.warning($t("Print bill fail"))
+                }
+                l.close();
+        }
+        return;
+    }
 
     if((gv.device_setting?.use_server_network_printing||0)==1){
        

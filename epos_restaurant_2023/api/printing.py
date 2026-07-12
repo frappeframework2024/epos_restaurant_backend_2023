@@ -23,12 +23,23 @@ from io import BytesIO
  
 
 
-def get_print_context(doc, seat_number = "", reprint=0, sale_products= [],printer_name=None):
+def get_print_context(doc, seat_number = "", reprint=0, sale_products= [],printer_name=None,additional_info={}):
     setting = frappe.get_cached_doc("POS Config", frappe.get_cached_value("POS Profile",doc.pos_profile, "pos_config"))
     
     for sp in [d for d in sale_products if "combo_menu_data" in d and d["combo_menu_data"]]:
         sp["combo_menu_data"] = json.loads(sp["combo_menu_data"])
-    return {"doc": doc,"seat_number":seat_number, "reprint":reprint,"printer_name":printer_name, "sale_products": sale_products,"nowdate": nowdate, "frappe.utils": frappe.utils,"setting":setting,"frappe":frappe}
+    return {
+            "doc": doc,
+            "seat_number":seat_number, 
+            "reprint":reprint,
+            "printer_name":printer_name, 
+            "sale_products": sale_products,
+            "nowdate": nowdate, 
+            "frappe.utils": frappe.utils,
+            "setting":setting,
+            "frappe":frappe,
+            **(additional_info or {})
+        }
 
 
  
@@ -132,12 +143,14 @@ def capture(height,width,html,css,image):
 
 ## print invoice or receipt
 @frappe.whitelist(allow_guest=True)
-def get_receipt_html(name,template, include_css=False ):
-     
+def get_receipt_html(name,template, additional_info={}, include_css=False ):
+    # additional_info is use for send extra field to get template context
+    # for example when reprint we send is_reprint to additional_info
+
     doc = frappe.get_doc("Sale", name) 
   
     data_template,style = frappe.db.get_value("POS Receipt Template",template,["template","style"])
-    html= frappe.render_template(data_template, get_print_context(doc,0))
+    html= frappe.render_template(data_template, get_print_context(doc=doc,additional_info=additional_info))
     if not include_css:
         return html
     else:
@@ -162,7 +175,7 @@ def get_receipt_html(name,template, include_css=False ):
 def print_bill(station, name,template, reprint ):
     doc = frappe.get_doc("Sale", name) 
     data_template,css,width,fixed_height = frappe.db.get_value("POS Receipt Template",template,["template","style","width","fixed_height"])
-    html= frappe.render_template(data_template, get_print_context(doc,reprint))
+    html= frappe.render_template(data_template, get_print_context(doc=doc,reprint = reprint))
     height = fixed_height
     if len(doc.sale_products) > 0:
         height += len(doc.sale_products) * 75
@@ -321,7 +334,7 @@ def get_print_bill_pdf(
     ): 
     doc = frappe.get_doc("Sale", name) 
     data_template,css= frappe.db.get_value("POS Receipt Template",template,["template","style"])
-    html= frappe.render_template(data_template, get_print_context(doc,reprint))
+    html= frappe.render_template(data_template, get_print_context(doc=doc,reprint=reprint))
     html_template = """
     <html>
     <head>

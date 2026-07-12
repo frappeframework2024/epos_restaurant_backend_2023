@@ -1,0 +1,128 @@
+<style>
+	.active-booking-list {
+		max-height: 68vh;
+		overflow: auto;
+		color: #25324b;
+		font-size: 13px;
+	}
+
+	.active-booking-empty {
+		padding: 28px;
+		text-align: center;
+		color: #7b8da8;
+		font-weight: 700;
+		border: 1px solid #d8e1ee;
+		background: #fff;
+	}
+
+	.active-booking-date {
+		position: sticky;
+		top: 0;
+		z-index: 2;
+		padding: 9px 10px;
+		background: #f3f7fb;
+		border: 1px solid #dfe7f2;
+		font-weight: 800;
+		color: #334b68;
+	}
+
+	.active-booking-row {
+		display: grid;
+		grid-template-columns: minmax(130px, 1.1fr) minmax(150px, 1.3fr) 92px 128px 82px 72px;
+		gap: 10px;
+		align-items: center;
+		padding: 10px;
+		border-left: 1px solid #e4ebf5;
+		border-right: 1px solid #e4ebf5;
+		border-bottom: 1px solid #edf2f7;
+		background: #fff;
+	}
+
+	.active-booking-row:nth-of-type(even) {
+		background: #f8fbff;
+	}
+
+	.active-booking-row:nth-of-type(odd) {
+		background: #ffffff;
+	}
+
+	.active-booking-main {
+		font-weight: 800;
+	}
+
+	.active-booking-sub {
+		margin-top: 3px;
+		font-size: 11px;
+		font-weight: 700;
+		color: #7b8da8;
+	}
+
+	.active-booking-status {
+		display: inline-flex;
+		justify-content: center;
+		border-radius: 4px;
+		padding: 4px 8px;
+		font-size: 11px;
+		font-weight: 800;
+	}
+
+	.active-booking-view {
+		padding: 4px 10px;
+		border-radius: 4px;
+		border: 1px solid #cfd9e8;
+		background: #ffffff;
+		color: #334b68;
+		font-size: 12px;
+		font-weight: 800;
+	}
+
+	.active-booking-note {
+		grid-column: 1 / -1;
+		font-size: 12px;
+		color: #7184a3;
+	}
+
+	@media (max-width: 900px) {
+		.active-booking-row {
+			grid-template-columns: 1fr;
+		}
+
+		.active-booking-note {
+			grid-column: auto;
+		}
+	}
+</style>
+
+{% if (!has_reservations) { %}
+	<div class="active-booking-empty">No active reservations.</div>
+{% } else { %}
+	<div class="active-booking-list">
+		{% for (var g = 0; g < groups.length; g++) { %}
+			<div class="active-booking-date">{{ groups[g].date_label }}</div>
+			{% for (var r = 0; r < groups[g].reservations.length; r++) { %}
+				{% var reservation = groups[g].reservations[r]; %}
+				<div class="active-booking-row">
+					<div>
+						<div class="active-booking-main">{{ reservation.booking_number }}</div>
+						<div class="active-booking-sub">Table {{ reservation.table_number }}</div>
+					</div>
+					<div>
+						<div class="active-booking-main">{{ reservation.guest_name }}</div>
+						<div class="active-booking-sub">{{ reservation.phone_number }}</div>
+					</div>
+					<div>
+						<div class="active-booking-main">{{ reservation.total_guest }} pax</div>
+						<div class="active-booking-sub">A {{ reservation.adult }} / C {{ reservation.child }} / E {{ reservation.elderly }}</div>
+					</div>
+					<div>
+						<div class="active-booking-main">{{ reservation.arrival_time }}</div>
+						<div class="active-booking-sub">to {{ reservation.check_out_time }}</div>
+					</div>
+					<div><span class="active-booking-status" style="background: {{ reservation.background_color }}; color: {{ reservation.text_color }};">{{ reservation.reservation_status }}</span></div>
+					<div><button type="button" class="active-booking-view" data-booking-number="{{ reservation.booking_number }}">View</button></div>
+					<div class="active-booking-note">{{ reservation.note }}</div>
+				</div>
+			{% } %}
+		{% } %}
+	</div>
+{% } %}

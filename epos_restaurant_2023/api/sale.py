@@ -356,7 +356,7 @@ def add_deleted_sale_products(sale_doc,deleted_products,run_commit=True):
 
 
 @frappe.whitelist(methods=["POST","GET"])
-def print_bill(sale_name="SINV2026-0790", print_server_url=None, print_setting=None ):
+def print_bill(sale_name="SINV2026-0790", print_server_url=None, print_setting=None ,additional_info={}):
     
     if not print_setting:
         print_setting = get_default_receipt_print_setting(frappe.get_cached_value("Sale", sale_name, "pos_profile"))
@@ -367,7 +367,7 @@ def print_bill(sale_name="SINV2026-0790", print_server_url=None, print_setting=N
     
     print_data = []
     for s in sale_name:
-        html = get_receipt_html(s, print_setting.get("print_template") or "Default POS Receipt",include_css=True)
+        html = get_receipt_html(s, print_setting.get("print_template") or "Default POS Receipt",include_css=True,additional_info=additional_info)
         print_data.append({
                
                     "printer_name":print_setting.get("printer") or "Cashier Printer",
@@ -379,6 +379,7 @@ def print_bill(sale_name="SINV2026-0790", print_server_url=None, print_setting=N
         process_print(data = print_data,print_server_url=print_server_url, retry = 4) #retry > 3 disable retry
 
 
+    return "Success"
 
 
 def get_default_receipt_print_setting(pos_profile):

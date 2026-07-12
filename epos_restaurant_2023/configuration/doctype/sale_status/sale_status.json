@@ -10,7 +10,8 @@
  "field_order": [
   "sale_status",
   "background_color",
-  "priority"
+  "priority",
+  "sort_order"
  ],
  "fields": [
   {
@@ -35,11 +36,16 @@
    "fieldtype": "Int",
    "in_list_view": 1,
    "label": "Priority"
+  },
+  {
+   "fieldname": "sort_order",
+   "fieldtype": "Int",
+   "label": "Sort Order"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-03-26 21:26:04.438168",
+ "modified": "2026-07-11 17:51:41.341444",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Sale Status",

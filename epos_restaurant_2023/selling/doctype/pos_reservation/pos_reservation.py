@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import json
 
 class POSReservation(Document):
-	def validate(self):
+	def validate(self): 
 		#check if new
 		if self.is_new():
 			if self.reservation_status and self.reservation_status not in ["Pending","Reserved"]:
@@ -15,6 +15,7 @@ class POSReservation(Document):
 		
 		self.status = self.reservation_status
 		self.total_guest = (self.adult or 0) +  (self.child or 0) + (self.elderly or 0)
+		self.update_table_number()
 		
 
 	def before_cancel(self): 
@@ -26,6 +27,8 @@ class POSReservation(Document):
 	
 
 	def on_update_after_submit(self):
+		self.update_table_number()
+  
 		if self.reservation_status == "Dine-in" or self.reservation_status == "Checked Out":
 			status = frappe.get_doc("POS Reservation Status",self.reservation_status) 
 			self.reservation_status_color = status.color
@@ -38,6 +41,17 @@ class POSReservation(Document):
 			sale_payment = frappe.get_doc("Sale Payment", p.name)
 			sale_payment.cancel()
 			sale_payment.delete()
+   
+	def update_table_number(self):
+		pass
+    	# doc = frappe.get_doc("POS Reservation", self.name)
+		# xx = doc.meta.get_field("table_number")
+		# frappe.throw(xx)
+		# if self.table_id:
+		# 	table_name = frappe.get_cached_value("Tables Number", self.table_id, "tbl_number")
+
+		# 	self.table_number = table_name
+		# 	frappe.msgprint(table_name)
 
 			
 		

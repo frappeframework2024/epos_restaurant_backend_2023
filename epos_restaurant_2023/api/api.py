@@ -1280,6 +1280,48 @@ def update_cancel_print_request(data):
 
     return True
 
+def get_pos_reservations(date = None):
+    current_date = frappe.utils.nowdate()
+    if  date:
+        current_date = date
+    ## reseravtion table status
+    sql = """
+    select 
+        rs.`name` ,
+        TIMESTAMP(rs.arrival_date, rs.arrival_time) AS creation,
+        0 as grand_total,
+        0 as total_quantity,
+        t.tbl_group,
+        t.tbl_number as tbl_number,
+        rs.table_id,
+        0 as seat_number,
+        rs.total_guest as guest_cover,
+        'Booked' as sale_status,
+        rs.status as rs_sale_status,
+        'Booked' as sale_type_status,
+        rs.arrival_time ,
+        rs.check_out_time,
+        ss.background_color as sale_status_color,
+        ss.priority as sale_status_priority,
+        rs.guest as customer,
+        rs.guest_name as customer_name,
+        rs.phone_number as phone_number,
+        '' as customer_photo,						
+        1 as is_reservation
+        
+    from `tabPOS Reservation` rs
+    inner join `tabTables Number` t on rs.table_id = t.`name`
+    left join `tabSale Status` ss on ss.name = 'Booked'
+    where 1 = 1
+        and rs.docstatus = 1
+        and rs.reservation_status in ('Confirmed')
+        and coalesce(rs.table_id ,'') != ''
+        and date(rs.arrival_date) = %(working_date)s
+    """
+   
+    reservations = frappe.db.sql(sql,{"working_date": current_date}, as_dict=1)
+    return  reservations
+
 @frappe.whitelist(methods="POST")
 def get_sale_list_table_badge(data):
     pos_profile = frappe.get_doc("POS Profile",data["pos_profile"])
@@ -1297,6 +1339,8 @@ def get_sale_list_table_badge(data):
             guest_cover,
             grand_total,
             sale_status,
+            sale_status as rs_sale_status,
+            sale_type as sale_type_status,
             sale_status_color,
             sale_status_priority,
             customer,
@@ -1307,9 +1351,14 @@ def get_sale_list_table_badge(data):
         where pos_profile in %(pos_profiles)s
         and docstatus = 0"""
         result = frappe.db.sql(sql,{"pos_profiles":data["pos_profile"]},as_dict=1)
-        return result
-    
+        reservations = get_pos_reservations(data.get("date"))
+        if reservations:
+            result.extend(reservations)               
+       
+        return result    
+      
     else:
+        
         sql = """select 
             `name`,
             creation,
@@ -1322,6 +1371,7 @@ def get_sale_list_table_badge(data):
             guest_cover,
             grand_total,
             sale_status,
+            sale_type as sale_type_status,
             sale_status_color,
             sale_status_priority,
             customer,
@@ -1332,6 +1382,11 @@ def get_sale_list_table_badge(data):
         where pos_profile = %(pos_profile)s
         and docstatus = 0"""
         result = frappe.db.sql(sql,{"pos_profile":data["pos_profile"]},as_dict=1)
+        
+        reservations = get_pos_reservations()
+        if reservations:
+            result.extend(reservations)       
+            
         return result
 
 @frappe.whitelist(methods="POST")
@@ -2014,10 +2069,15 @@ def get_exchange_rate():
 # update sale payment of pos reservation 
 @frappe.whitelist()
 def update_pos_reservation_and_sale_payment(reservation_name,reservation_status,sale):
+   
     ## update pos reservation
     _reservation = frappe.get_doc("POS Reservation",reservation_name)
     _reservation.reservation_status = reservation_status
-    _reservation.status = reservation_status
+    _reservation.status = reservation_status    
+    
+    if _reservation.arrival_time:
+        _reservation.check_out_time = _reservation.arrival_time + timedelta(hours=1)
+
     _reservation.save()
 
     # ## update sale payment
@@ -2973,6 +3033,4 @@ def run_get_update_pos_station_license():
         frappe.db.commit()
 
     return f"{i} device(s) were updated"
-
-
 
