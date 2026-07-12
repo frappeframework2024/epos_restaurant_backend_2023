@@ -184,7 +184,7 @@ def get_pending_sales(table_group=None,date=None):
     return frappe.db.sql(sql, {"table_group":table_group or "","date":date},as_dict=1)
 
 @frappe.whitelist()
-@redis_cache(ttl=1000*60*24)  
+# @redis_cache(ttl=1000*60*24)  
 def get_legend_color():
     sql = """
         select 
@@ -194,7 +194,7 @@ def get_legend_color():
             sort_order
         from `tabPOS Reservation Status`
         where
-            name in ('Confirmed', 'Dine-in')
+            name in ('Confirmed', 'Dine-in','Pending')
        
     """
     reservation_status = frappe.db.sql(sql,as_dict=1)
@@ -206,7 +206,7 @@ def get_legend_color():
             coalesce(sort_order,0) as sort_order
         from `tabSale Status`
         where
-            name in ('Hold Order', 'Submitted','Bill Request')
+            name in ('Hold Order', 'Submitted','Bill Requested')
         order by sort_order
        
     """

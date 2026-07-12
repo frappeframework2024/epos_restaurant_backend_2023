@@ -1,0 +1,69 @@
+<style>
+	.table-booking-legend {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 10px 18px;
+		padding: 10px 14px;
+		margin-bottom: 10px;
+		border: 1px solid #d8e1ee;
+		border-radius: 6px;
+		background: #ffffff;
+		color: #25324b;
+		font-size: 12px;
+	}
+
+	.table-booking-legend-title {
+		font-weight: 800;
+	}
+
+	.table-booking-legend-group,
+	.table-booking-legend-item {
+		display: inline-flex;
+		align-items: center;
+	}
+
+	.table-booking-legend-group {
+		flex-wrap: wrap;
+		gap: 8px 12px;
+	}
+
+	.table-booking-legend-item {
+		gap: 6px;
+		font-weight: 700;
+	}
+
+	.table-booking-legend-circle {
+		width: 11px;
+		height: 11px;
+		flex: 0 0 11px;
+		border-radius: 50%;
+		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .08);
+	}
+</style>
+
+{% if (has_items) { %}
+	<div class="table-booking-legend">
+		<span class="table-booking-legend-title">Legend</span>
+		{% if (reservation_status.length) { %}
+			<div class="table-booking-legend-group">
+				{% for (var r = 0; r < reservation_status.length; r++) { %}
+					<div class="table-booking-legend-item">
+						<span class="table-booking-legend-circle" style="background-color: {{ reservation_status[r].background_color }};"></span>
+						<span>{{ reservation_status[r].name }}</span>
+					</div>
+				{% } %}
+			</div>
+		{% } %}
+		{% if (sale_status.length) { %}
+			<div class="table-booking-legend-group">
+				{% for (var s = 0; s < sale_status.length; s++) { %}
+					<div class="table-booking-legend-item">
+						<span class="table-booking-legend-circle" style="background-color: {{ sale_status[s].background_color }};"></span>
+						<span>{{ sale_status[s].name }}</span>
+					</div>
+				{% } %}
+			</div>
+		{% } %}
+	</div>
+{% } %}

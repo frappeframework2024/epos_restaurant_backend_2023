@@ -165,7 +165,7 @@ MyPage = Class.extend({
 						this.load_unassigned_reservations(date, data);
 					} else {
 						data.unassigned_bookings = [];
-						this.render_map(this.prepare_timeline_data(data, date));
+						this.load_legend_info(data, date);
 					}
 				},
 				error: () => {
@@ -182,14 +182,45 @@ MyPage = Class.extend({
                 },
                 callback: (r) => {
                     data.unassigned_bookings = this.normalize_unassigned_bookings(r.message);
-                    this.render_map(this.prepare_timeline_data(data, date));
+                    this.load_legend_info(data, date);
                 },
                 error: () => {
                     data.unassigned_bookings = [];
-                    this.render_map(this.prepare_timeline_data(data, date));
+                    this.load_legend_info(data, date);
                 }
             });
         },
+
+	load_legend_info: function(data, date) {
+		frappe.call({
+			method: "epos_restaurant_2023.selling.page.table_booking_availa.table_booking_availa.get_legend_color",
+			callback: (r) => {
+				data.legend = this.prepare_legend_data(r.message || {});
+				this.render_map(this.prepare_timeline_data(data, date));
+			},
+			error: () => {
+				data.legend = this.prepare_legend_data({});
+				this.render_map(this.prepare_timeline_data(data, date));
+			}
+		});
+	},
+
+	prepare_legend_data: function(value) {
+		let reservation_status = Array.isArray(value.reservation_status) ? value.reservation_status : [];
+		let sale_status = Array.isArray(value.sale_status) ? value.sale_status : [];
+		let normalize = (items) => items.map((item) => ({
+			name: item.name || "-",
+			background_color: this.get_valid_color(item.background_color, "#d8e1ee"),
+			color: this.get_valid_color(item.color, "#25324b")
+		}));
+
+		return {
+			reservation_status: normalize(reservation_status),
+			sale_status: this.get_time_setting().show_occupy_card ? normalize(sale_status) : [],
+			has_items: reservation_status.length > 0 ||
+				(this.get_time_setting().show_occupy_card && sale_status.length > 0)
+		};
+	},
 
         normalize_unassigned_bookings: function(value) {
             if (!value) {
@@ -696,6 +727,7 @@ MyPage = Class.extend({
 
 		return {
 			date: date,
+			legend: data.legend || this.prepare_legend_data({}),
 			hours: this.get_hours(start_minute, end_minute),
 			hour_count: hour_count,
 			quarter_count: hour_count * 4,

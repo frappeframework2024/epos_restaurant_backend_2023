@@ -1,4 +1,7 @@
 <style>
+	.awesomplete ul {
+		z-index: 99999!important;
+	}
 	.table-booking-map {
 		--left-width: 218px;
 		--row-height: 66px;
@@ -333,6 +336,7 @@
 {% if (!has_tables) { %}
 	<div class="table-booking-empty">No tables found for {{ date }}.</div>
 {% } else { %}
+	{{ frappe.render_template("legend_info", legend) }}
 	<div class="table-booking-map">
 		<div class="table-booking-grid" style="--hour-count: {{ hour_count }}; --quarter-count: {{ quarter_count }}; --timeline-width: {{ timeline_width }}px;">
 			<div class="table-booking-corner">
