@@ -7,6 +7,64 @@
             <ComLoadingDialog v-if="isLoading" />
             <ComPlaceholder :is-not-empty="params.data.length > 0">
                 <v-row class="!-m-1">
+                    <!-- Booking Information -->  
+                    <v-col cols="12" md="6" v-if="booking">
+                        <v-card class="pa-4" elevation="3" rounded="lg">
+                            <div class="d-flex justify-space-between align-center mb-3">
+                                <div>
+                                    <div class="text-h6 font-weight-bold">
+                                        {{ booking.customer_name }}
+                                    </div>
+                                    <div class="text-caption text-grey">
+                                        {{ booking.name }}
+                                    </div>
+                                </div>
+
+                                <v-chip :color="booking.sale_status_color" text-color="white" >
+                                    {{ booking.sale_type_status }} - {{ booking.rs_sale_status }}
+                                </v-chip>
+                            </div>
+
+                            <v-divider class="mb-3" />
+                            <v-row dense>
+                                <v-col cols="6">
+                                    <div class="text-caption text-grey">{{ $t("Arrival Time") }}</div>
+                                    <div class="font-weight-medium">
+                                        <v-icon size="16">mdi-clock-outline</v-icon>
+                                        {{ moment(booking.creation).format("hh:mm A") }}
+                                    </div>
+                                </v-col>
+
+                                <v-col cols="6">
+                                    <div class="text-caption text-grey">{{ $t("Guests") }}</div>
+                                    <div class="font-weight-medium">
+                                        <v-icon size="16">mdi-account-group</v-icon>
+                                        {{ booking.guest_cover }}
+                                    </div>
+                                </v-col>
+
+                                <v-col cols="12">
+                                    <div class="text-caption text-grey">{{ $t("Phone") }}</div>
+                                    <div class="font-weight-medium">
+                                        <v-icon size="16">mdi-phone</v-icon>
+                                        {{ booking.phone_number }}
+                                    </div>
+                                </v-col>
+                            </v-row>
+
+                            <v-btn
+                                color="success"
+                                size="large"
+                                block
+                                class="mt-4"
+                                prepend-icon="mdi-door-open"
+                                @click="checkedIn(booking)"
+                            >
+                                {{ $t('Checked-In') }}
+                            </v-btn>
+                        </v-card>
+                        </v-col>
+
                     <v-col class="!p-0" cols="12" md="6" v-for="(s, index) in params.data" :key="index">
                         <ComSaleListItem :sale="s" @click="openOrder(s)" />
                     </v-col>
@@ -23,12 +81,14 @@
 
 </template>
 <script setup>
-import { inject, ref, useRouter, confirmDialog,  smallViewSaleProductListModal, i18n,ComSelectPaymentTypeQuickPaymentDialog } from '@/plugin'
+import { computed, inject, ref, useRouter, confirmDialog,  smallViewSaleProductListModal, i18n,ComSelectPaymentTypeQuickPaymentDialog } from '@/plugin'
+import { confirm } from '@/utils/dialog';
 import { useDisplay } from 'vuetify'
 import ComSaleListItem from './ComSaleListItem.vue';
 import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 import { createToaster } from "@meforma/vue-toaster";
 import ComSelectSaleOrderAction from './ComSelectSaleOrderAction.vue';
+const moment = inject("$moment");
 
 const socket = inject("$socket")
 const { t: $t } = i18n.global;
@@ -54,6 +114,8 @@ const props = defineProps({
         require: true
     }
 });
+
+const booking = computed(() => { return props.params.reservation;    });
 
 
 
@@ -464,6 +526,14 @@ async function openOrder(s) {
 async function onNewOrder() {
     emit('resolve', { action: "new_sale" });
 }
+
+const checkedIn = async (booking) => {  
+   if(await confirm({ title: $t("Checked In"), text: $t("msg.are you sure to checked in this reservation") })){
+        const doc = await db.getDoc("POS Reservation", booking.name)
+        emit('resolve',{"action":"checked_in","doc":doc});
+    }
+}
+
 function onClose() {
     emit("resolve", false);
 }

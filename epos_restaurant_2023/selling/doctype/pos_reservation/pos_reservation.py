@@ -18,6 +18,9 @@ class POSReservation(Document):
 		self.update_table_number()
 		if not self.check_out_time and self.arrival_time:
 			self.check_out_time = add_hours(self.arrival_time,1)
+		
+		if not self.guest and self.phone_number: 
+			self.guest = get_customer_id(self)
 
 
 		
@@ -62,9 +65,21 @@ class POSReservation(Document):
 
 
 def add_hours(time_str: str, hours: int) -> str:
-   
-    t = datetime.strptime(time_str, "%H:%M:%S")
-    t += timedelta(hours=hours)
-    return t.strftime("%H:%M:%S")
 
- 
+	t = datetime.strptime(time_str, "%H:%M:%S")
+	t += timedelta(hours=hours)
+	return t.strftime("%H:%M:%S")
+
+def get_customer_id(self):  
+	customer = frappe.db.exists("Customer",{"phone_number":self.phone_number})
+	if customer:
+		return
+
+	doc = frappe.get_doc({
+		"doctype":"Customer",
+		"customer_group": "Online Customer",
+		"customer_name_en": self.get("guest_name"),
+		"phone_number":self.get("phone_number")
+	}).insert(ignore_permissions=True)
+
+	return doc.name

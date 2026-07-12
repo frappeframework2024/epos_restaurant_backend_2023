@@ -29,27 +29,23 @@
                                     </div>
                                 </div>
 
-                                <v-chip
-                                    :color="booking.sale_status_color"
-                                    text-color="white"
-                                >
-                                    Reserved
+                                <v-chip :color="booking.sale_status_color" text-color="white" >
+                                    {{ booking.sale_type_status }} - {{ booking.rs_sale_status }}
                                 </v-chip>
                             </div>
 
                             <v-divider class="mb-3" />
-
                             <v-row dense>
                                 <v-col cols="6">
-                                    <div class="text-caption text-grey">Arrival Time</div>
+                                    <div class="text-caption text-grey">{{ $t("Arrival Time") }}</div>
                                     <div class="font-weight-medium">
                                         <v-icon size="16">mdi-clock-outline</v-icon>
-                                        {{ booking.arrival_time }}
+                                        {{ moment(booking.creation).format("hh:mm A") }}
                                     </div>
                                 </v-col>
 
                                 <v-col cols="6">
-                                    <div class="text-caption text-grey">Guests</div>
+                                    <div class="text-caption text-grey">{{ $t("Guests") }}</div>
                                     <div class="font-weight-medium">
                                         <v-icon size="16">mdi-account-group</v-icon>
                                         {{ booking.guest_cover }}
@@ -57,7 +53,7 @@
                                 </v-col>
 
                                 <v-col cols="12">
-                                    <div class="text-caption text-grey">Phone</div>
+                                    <div class="text-caption text-grey">{{ $t("Phone") }}</div>
                                     <div class="font-weight-medium">
                                         <v-icon size="16">mdi-phone</v-icon>
                                         {{ booking.phone_number }}
@@ -73,7 +69,7 @@
                                 prepend-icon="mdi-door-open"
                                 @click="checkedIn(booking)"
                             >
-                                Checked-In
+                                {{ $t('Checked-In') }}
                             </v-btn>
                         </v-card>
                         </v-col>
@@ -115,6 +111,9 @@
 
 <script setup>
     import { ref,defineEmits,createToaster,confirmDialog,onMounted, computed, inject,i18n } from '@/plugin';  
+    import { confirm } from '@/utils/dialog';
+    const frappe = inject("$frappe");
+    const moment = inject("$moment");
     const { t: $t } = i18n.global;  
     const toaster = createToaster({ position: 'top-right' });
     const props = defineProps({
@@ -122,49 +121,32 @@
             type: Object,
             require: true
         }
-    })
+    });
+    const db = frappe.db();
+    const emit = defineEmits(["resolve","reject"]);
 
-    const emit = defineEmits(["resolve","reject"])
+    const booking = computed(() => { return props.params.sale;    });
 
    
      
 
-    const newOrder = () => {
-       
-        console.log("New Order");
-        // router.push(...)
-    };
-
-    const bookingInfo = () => {
-        
-        console.log("Booking Information");
-        // router.push(...)
-    };
-
+    const newOrder = () => {       
+         emit('resolve',{"action":"new_order"});
+    }; 
 
     function onClose() {
         emit('resolve',false);
     }
 
 
-    const booking = ref({
-    name: "PRes2026-0052",
-    creation: "2026-07-11 15:30:00",
-    guest_cover: 4,
-    arrival_time: "15:30:00",
-    sale_status_color: "#CB2929",
-    customer: "C2026-0524",
-    customer_name: "Phalla",
-    phone_number: "098465652"
-})
+ 
 
-const checkedIn = (booking) => {
-    console.log("Checked In", booking)
-
-    // Example:
-    // await frappe.call(...)
-    // dialog.value = false
-    // router.push(...)
+const checkedIn = async (booking) => {  
+    if(await confirm({ title: $t("Checked In"), text: $t("msg.are you sure to checked in this reservation") })){
+        const doc = await db.getDoc("POS Reservation", booking.name)
+        emit('resolve',{"action":"checked_in","doc":doc});
+    }
+    
 }
 </script>
 
