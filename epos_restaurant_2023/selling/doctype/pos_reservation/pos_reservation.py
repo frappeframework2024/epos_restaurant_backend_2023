@@ -5,7 +5,7 @@ import frappe
 from frappe.model.document import Document
 from datetime import datetime, timedelta
 import json
-
+from datetime import datetime, timedelta
 class POSReservation(Document):
 	def validate(self): 
 		#check if new
@@ -16,6 +16,10 @@ class POSReservation(Document):
 		self.status = self.reservation_status
 		self.total_guest = (self.adult or 0) +  (self.child or 0) + (self.elderly or 0)
 		self.update_table_number()
+		if not self.check_out_time and self.arrival_time:
+			self.check_out_time = add_hours(self.arrival_time,1)
+
+
 		
 
 	def before_cancel(self): 
@@ -55,3 +59,12 @@ class POSReservation(Document):
 
 			
 		
+
+
+def add_hours(time_str: str, hours: int) -> str:
+   
+    t = datetime.strptime(time_str, "%H:%M:%S")
+    t += timedelta(hours=hours)
+    return t.strftime("%H:%M:%S")
+
+ 
