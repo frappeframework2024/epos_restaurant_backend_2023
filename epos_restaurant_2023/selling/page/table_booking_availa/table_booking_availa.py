@@ -12,8 +12,8 @@ def get_data(date,table_group=None):
        
         if reservations:
             for t in tables:
-                t["reservations"] = [x for x in reservations if x.get("table_id") == t.get("name")]
-                t["occupy"] = [x for x in pending_sales if x.get("table_id") == t.get("name")]
+                t["reservations"] = [x for x in reservations if x.get("table_id") == t.get("table_id")]
+                t["occupy"] = [x for x in pending_sales if x.get("table_id") == t.get("table_id")]
 
     
     return {
@@ -176,7 +176,7 @@ def get_pending_sales(table_group=None,date=None):
 
         where
             s.docstatus = 0 and 
-            s.sale_status in ('Draft','Submitted','Bill Requested') and 
+            s.sale_status in ('Draft','Submitted','Bill Requested', 'Hold Order') and 
             (%(table_group)s = '' or s.tbl_group = %(table_group)s) and 
             s.posting_date = %(date)s
 
