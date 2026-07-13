@@ -10,7 +10,7 @@ def get_data(date,table_group=None):
         reservations = get_reservations(date, [x.get("name") for x in tables]) 
         pending_sales =get_pending_sales(table_group,date=date)
        
-        if reservations:
+        if reservations or pending_sales:
             for t in tables:
                 t["reservations"] = [x for x in reservations if x.get("table_id") == t.get("name")]
                 t["occupy"] = [x for x in pending_sales if x.get("table_id") == t.get("name")]
