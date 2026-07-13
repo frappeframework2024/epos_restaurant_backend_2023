@@ -12,8 +12,8 @@ def get_data(date,table_group=None):
        
         if reservations:
             for t in tables:
-                t["reservations"] = [x for x in reservations if x.get("table_id") == t.get("table_id")]
-                t["occupy"] = [x for x in pending_sales if x.get("table_id") == t.get("table_id")]
+                t["reservations"] = [x for x in reservations if x.get("table_id") == t.get("name")]
+                t["occupy"] = [x for x in pending_sales if x.get("table_id") == t.get("name")]
 
     
     return {
