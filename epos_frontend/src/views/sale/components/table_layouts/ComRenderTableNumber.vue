@@ -216,8 +216,8 @@ function onTableClick(table, guest_cover) {
                 sale.sale.table_id = table.id;
                 sale.sale.tbl_number = table.tbl_no;
                 const saleList = table.sales.filter(r=>(r.is_reservation||0)===0);
-                const reservation = table.sales.filter(r=>(r.is_reservation||0)===1);
-                const result = await selectSaleOrderDialog({reservation: reservation.length >0 ? reservation[0]:undefined, data: saleList, table: table, make_order_auth: make_order_auth });
+                const reservations = table.sales.filter(r=>(r.is_reservation||0)===1);
+                const result = await selectSaleOrderDialog({reservation: reservations, data: saleList, table: table, make_order_auth: make_order_auth });
                 if (result) {
                     localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth));
                     if (result.action == "new_sale") {

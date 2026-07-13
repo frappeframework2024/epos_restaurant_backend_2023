@@ -5,10 +5,10 @@
         </template>
         <template #content>
             <ComLoadingDialog v-if="isLoading" />
-            <ComPlaceholder :is-not-empty="params.data.length > 0">
+            <ComPlaceholder :is-not-empty="params.data.length > 0 || reservations.length >0">
                 <v-row class="!-m-1">
-                    <!-- Booking Information -->  
-                    <v-col cols="12" md="6" v-if="booking">
+                    <!-- Booking Information -->    
+                    <v-col cols="12" md="6" v-if="reservations.length>0"  v-for="(booking, index) in reservations" :key="index">
                         <v-card class="pa-4" elevation="3" rounded="lg">
                             <div class="d-flex justify-space-between align-center mb-3">
                                 <div>
@@ -115,7 +115,7 @@ const props = defineProps({
     }
 });
 
-const booking = computed(() => { return props.params.reservation;    });
+const reservations = computed(() => { return props.params.reservation;    });
 
 
 
