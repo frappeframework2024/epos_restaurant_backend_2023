@@ -15,8 +15,30 @@
 	}
 
 	.booking-detail-title {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 8px;
 		font-size: 16px;
 		font-weight: 800;
+	}
+
+	.booking-detail-table-number {
+		display: inline-flex;
+		align-items: center;
+		padding: 3px 8px;
+		border: 1px solid #d8e1ee;
+		border-radius: 4px;
+		background: #f3f7fb;
+		color: #51647f;
+		font-size: 12px;
+		font-weight: 800;
+	}
+
+	.booking-detail-table-number.is-unassigned {
+		border-color: #fdba74;
+		background: #fff7ed;
+		color: #9a3412;
 	}
 
 	.booking-detail-status {
@@ -26,6 +48,38 @@
 		color: #3654a4;
 		font-size: 12px;
 		font-weight: 800;
+	}
+
+	.booking-detail-header-actions {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.booking-detail-call,
+	.booking-detail-phone-link {
+		color: #16794d;
+		font-weight: 700;
+		text-decoration: none;
+	}
+
+	.booking-detail-call {
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
+		padding: 4px 9px;
+		border: 1px solid #b7e4cf;
+		border-radius: 4px;
+		background: #eefbf5;
+		font-size: 12px;
+	}
+
+	.booking-detail-call:hover,
+	.booking-detail-call:focus,
+	.booking-detail-phone-link:hover,
+	.booking-detail-phone-link:focus {
+		color: #0f5f3b;
+		text-decoration: underline;
 	}
 
 	.booking-detail-grid {
@@ -52,6 +106,33 @@
 		word-break: break-word;
 	}
 
+	.booking-detail-time-value {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.booking-detail-time-edit {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 24px;
+		height: 24px;
+		padding: 0;
+		border: 0;
+		border-radius: 4px;
+		background: transparent;
+		color: #7184a3;
+		cursor: pointer;
+	}
+
+	.booking-detail-time-edit:hover,
+	.booking-detail-time-edit:focus {
+		background: #eef3ff;
+		color: #3654a4;
+		outline: none;
+	}
+
 	.booking-detail-full {
 		grid-column: 1 / -1;
 	}
@@ -68,21 +149,26 @@
 
 <div class="booking-detail">
 	<div class="booking-detail-header">
-		<div class="booking-detail-title"> <a href="/app/pos-reservation/{{booking_number}}">{{ booking_number }}</a></div>
-		<div class="booking-detail-status" style="background: {{ reservation_status_background_color }}; color: {{ reservation_status_color }};">{{ status }}</div>
+		<div class="booking-detail-title"><a href="/app/pos-reservation/{{booking_number}}">{{ booking_number }}</a>{% if (has_table) { %}<span class="booking-detail-table-number">Table {{ table_number }}</span>{% } else { %}<span class="booking-detail-table-number is-unassigned">Table Unassigned</span>{% } %}</div>
+		<div class="booking-detail-header-actions">
+			{% if (has_phone_number) { %}
+				<a class="booking-detail-call" href="{{ phone_href }}" title="Call {{ guest_name }}"><i class="fa fa-phone"></i><span>Call Customer</span></a>
+			{% } %}
+			<div class="booking-detail-status" style="background: {{ reservation_status_background_color }}; color: {{ reservation_status_color }};">{{ status }}</div>
+		</div>
 	</div>
 
 	<div class="booking-detail-grid">
 		<div class="booking-detail-item"><div class="booking-detail-label">Reservation Date</div><div class="booking-detail-value">{{ reservation_date }}</div></div>
 		<div class="booking-detail-item"><div class="booking-detail-label">Arrival Date</div><div class="booking-detail-value">{{ arrival_date }}</div></div>
-		<div class="booking-detail-item"><div class="booking-detail-label">Arrival Time</div><div class="booking-detail-value">{{ arrival_time }}</div></div>
-		<div class="booking-detail-item"><div class="booking-detail-label">Check Out Time</div><div class="booking-detail-value">{{ check_out_time }}</div></div>
+		<div class="booking-detail-item"><div class="booking-detail-label">Arrival Time</div><div class="booking-detail-value booking-detail-time-value"><span>{{ arrival_time }}</span><button type="button" class="booking-detail-time-edit" data-time-field="arrival_time" title="Edit arrival time" aria-label="Edit arrival time"><i class="fa fa-pencil"></i></button></div></div>
+		<div class="booking-detail-item"><div class="booking-detail-label">Check Out Time</div><div class="booking-detail-value booking-detail-time-value"><span>{{ check_out_time }}</span><button type="button" class="booking-detail-time-edit" data-time-field="check_out_time" title="Edit check out time" aria-label="Edit check out time"><i class="fa fa-pencil"></i></button></div></div>
 		<div class="booking-detail-item"><div class="booking-detail-label">Adult</div><div class="booking-detail-value">{{ adult }}</div></div>
 		<div class="booking-detail-item"><div class="booking-detail-label">Child</div><div class="booking-detail-value">{{ child }}</div></div>
 		<div class="booking-detail-item"><div class="booking-detail-label">Elderly</div><div class="booking-detail-value">{{ elderly }}</div></div>
 		<div class="booking-detail-item"><div class="booking-detail-label">Total Guest</div><div class="booking-detail-value">{{ total_guest }}</div></div>
 		<div class="booking-detail-item"><div class="booking-detail-label">Guest Name</div><div class="booking-detail-value">{{ guest_name }}</div></div>
-		<div class="booking-detail-item"><div class="booking-detail-label">Phone Number</div><div class="booking-detail-value">{{ phone_number }}</div></div>
+		<div class="booking-detail-item"><div class="booking-detail-label">Phone Number</div><div class="booking-detail-value">{% if (has_phone_number) { %}<a class="booking-detail-phone-link" href="{{ phone_href }}">{{ phone_number }}</a>{% } else { %}{{ phone_number }}{% } %}</div></div>
 		<div class="booking-detail-item booking-detail-full"><div class="booking-detail-label">Email Address</div><div class="booking-detail-value">{{ email_address }}</div></div>
 		<div class="booking-detail-item booking-detail-full"><div class="booking-detail-label">Note</div><div class="booking-detail-value">{{ note }}</div></div>
 	</div>

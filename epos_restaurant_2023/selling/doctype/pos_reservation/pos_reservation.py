@@ -10,12 +10,16 @@ class POSReservation(Document):
 	def validate(self): 
 		#check if new
 		if self.is_new():
+			if self.arrival_time:
+				self.check_out_time = add_hours(self.arrival_time,1)
+   
 			if self.reservation_status and self.reservation_status not in ["Pending","Reserved"]:
 				self.reservation_status = "Reserved" 
 		
 		self.status = self.reservation_status
 		self.total_guest = (self.adult or 0) +  (self.child or 0) + (self.elderly or 0)
 		self.update_table_number()
+		 
 		if not self.check_out_time and self.arrival_time:
 			self.check_out_time = add_hours(self.arrival_time,1)
 		

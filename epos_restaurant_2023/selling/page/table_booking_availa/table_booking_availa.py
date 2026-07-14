@@ -90,15 +90,17 @@ def get_unasign_table_reservations(date=None):
 
 
 @frappe.whitelist()
-def get_active_reservation():
+def get_active_reservation(keyword=None):
+    keyword = (keyword or "").strip()
+    search_value = f"%{keyword}%" if keyword else ""
     sql = """
-        select 
+        select
             a.name as booking_number,
             a.arrival_date,
             a.table_id,
             a.table_number,
             a.total_guest,
-             a.adult,
+            a.adult,
             a.child,
             a.elderly,
             a.note,
@@ -107,22 +109,27 @@ def get_active_reservation():
             a.arrival_time,
             a.check_out_time,
             a.reservation_status,
-            b.background_color, 
+            b.background_color,
             b.color as text_color
-        from `tabPOS Reservation` a 
+        from `tabPOS Reservation` a
         join `tabPOS Reservation Status` b on b.name = a.reservation_status
-
         where
-            arrival_date>=CURDATE() and 
-            a.reservation_status in ('Confirmed','Reserved',"Pending") 
-        order by 
-            arrival_date
-
-        
-
+            a.arrival_date >= CURDATE()
+            and a.reservation_status in ('Confirmed', 'Reserved', 'Pending')
+            and (
+                %(keyword)s = ''
+                or a.name like %(keyword)s
+                or a.guest_name like %(keyword)s
+                or a.phone_number like %(keyword)s
+            )
+        order by
+            a.arrival_date,
+            a.arrival_time
     """
-    data = frappe.db.sql(sql,as_dict = 1)
-    return data
+    if keyword:
+        sql += " limit 20"
+
+    return frappe.db.sql(sql, {"keyword": search_value}, as_dict=1)
 
     
 def get_table_list(table_group):
@@ -169,7 +176,9 @@ def get_pending_sales(table_group=None,date=None):
             customer_name as guest_name,
             guest_cover as total_guest,
             sale_status_color as background_color,
-            '#ffffff' as text_color
+            '#000000' as text_color,
+            sale_status,
+            creation
 
 
         from `tabSale` s
@@ -181,7 +190,14 @@ def get_pending_sales(table_group=None,date=None):
             s.posting_date = %(date)s
 
     """
-    return frappe.db.sql(sql, {"table_group":table_group or "","date":date},as_dict=1)
+    
+    data =  frappe.db.sql(sql, {"table_group":table_group or "","date":date},as_dict=1)
+    for d in [x for x in data if x.get("sale_status") == 'Hold Order']:
+        d["background_color"] = frappe.get_cached_value("Sale Status","Submitted","background_color")
+        d["text_color"] = "#000000"
+
+
+    return data
 
 @frappe.whitelist()
 # @redis_cache(ttl=1000*60*24)  
@@ -200,13 +216,13 @@ def get_legend_color():
     reservation_status = frappe.db.sql(sql,as_dict=1)
     sql = """
         select 
-            name,
+            if(name = 'Submitted','Walk-In',name) as name,
             background_color,
             '#ffffff' as color,
             coalesce(sort_order,0) as sort_order
         from `tabSale Status`
         where
-            name in ('Hold Order', 'Submitted','Bill Requested')
+            name in ('Submitted','Bill Requested')
         order by sort_order
        
     """
@@ -217,3 +233,11 @@ def get_legend_color():
         "reservation_status": reservation_status,
         "sale_status":sale_status
     }
+
+
+@frappe.whitelist()
+def get_date_has_reservation():
+    sql="select distinct arrival_date from `tabPOS Reservation` where arrival_date>=CURDATE() order by arrival_date"
+    
+    return frappe.db.sql(sql,as_dict)
+    

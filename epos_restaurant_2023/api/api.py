@@ -2074,10 +2074,6 @@ def update_pos_reservation_and_sale_payment(reservation_name,reservation_status,
     _reservation = frappe.get_doc("POS Reservation",reservation_name)
     _reservation.reservation_status = reservation_status
     _reservation.status = reservation_status    
-    
-    if _reservation.arrival_time:
-        _reservation.check_out_time = _reservation.arrival_time + timedelta(hours=1)
-
     _reservation.save()
 
     # ## update sale payment

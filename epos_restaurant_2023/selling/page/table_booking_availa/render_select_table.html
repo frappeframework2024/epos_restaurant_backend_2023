@@ -1,0 +1,252 @@
+<style>
+	.booking-table-selector {
+		color: #25324b;
+	}
+
+	.booking-table-selector-note {
+		margin-bottom: 12px;
+		padding: 9px 11px;
+		border: 1px solid #d8e1ee;
+		border-radius: 6px;
+		background: #f8fafc;
+		color: #5f718c;
+		font-size: 12px;
+	}
+
+	.booking-table-group-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 7px;
+		margin-bottom: 12px;
+	}
+
+	.booking-table-group-chip {
+		padding: 6px 11px;
+		border: 1px solid #d7e0ec;
+		border-radius: 999px;
+		background: #ffffff;
+		color: #51647f;
+		font-size: 12px;
+		font-weight: 700;
+		cursor: pointer;
+	}
+
+	.booking-table-group-chip.is-active {
+		border-color: #5576d1;
+		background: #eef3ff;
+		color: #3654a4;
+	}
+
+	.booking-table-group-panel {
+		display: none;
+	}
+
+	.booking-table-group-panel.is-active {
+		display: block;
+	}
+
+	.booking-table-card-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+		gap: 9px;
+		overflow: visible;
+		padding: 2px;
+	}
+
+	.booking-table-card {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 5px;
+		min-height: 72px;
+		padding: 10px 11px;
+		border: 1px solid #d8e1ee;
+		border-radius: 7px;
+		background: #ffffff;
+		color: #25324b;
+		text-align: left;
+		cursor: pointer;
+		transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease;
+	}
+
+	.booking-table-card:hover:not(:disabled) {
+		border-color: #3654a4;
+		background: #d8e3ff !important;
+		box-shadow: 0 4px 12px rgba(54, 84, 164, .28);
+	}
+
+	.booking-table-card:hover,
+	.booking-table-card:focus {
+		z-index: 60;
+	}
+
+	.booking-table-card.is-selected {
+		border-color: #3654a4;
+		background: #eef3ff;
+		box-shadow: 0 0 0 2px rgba(54, 84, 164, .12);
+	}
+
+	.booking-table-card:disabled {
+		cursor: not-allowed;
+		opacity: .58;
+	}
+
+	.booking-table-card-name {
+		font-size: 14px;
+		font-weight: 800;
+	}
+
+	.booking-table-card-single-booking {
+		display: flex;
+		flex-direction: column;
+		gap: 1px;
+		width: 100%;
+		font-size: 11px;
+		font-weight: 700;
+		line-height: 1.25;
+	}
+
+	.booking-table-card-single-booking span {
+		display: block;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.booking-table-card-status {
+		font-size: 11px;
+		font-weight: 700;
+		color: #16794d;
+	}
+
+	.booking-table-card-status.is-booked {
+		color: #000000;
+	}
+
+	.booking-table-card-status.is-occupied {
+		color: #000000;
+	}
+
+	.booking-table-reservation-popover {
+		display: none;
+		position: absolute;
+		left: 0;
+		top: calc(100% + 7px);
+		z-index: 50;
+		width: 290px;
+		max-height: 260px;
+		overflow-y: auto;
+		padding: 10px;
+		border: 1px solid #142a49;
+		border-radius: 7px;
+		background: #17345c;
+		color: #ffffff;
+		box-shadow: 0 12px 28px rgba(17, 35, 63, .38);
+		text-align: left;
+		white-space: normal;
+	}
+
+	.booking-table-card:hover .booking-table-reservation-popover,
+	.booking-table-card:focus .booking-table-reservation-popover {
+		display: block;
+	}
+
+	.booking-table-reservation-popover-title {
+		margin-bottom: 7px;
+		font-size: 12px;
+		font-weight: 800;
+	}
+
+	.booking-table-reservation-row {
+		padding: 7px 0;
+		border-top: 1px solid rgba(255, 255, 255, .18);
+	}
+
+	.booking-table-reservation-row:first-of-type {
+		border-top: 0;
+	}
+
+	.booking-table-reservation-primary {
+		display: flex;
+		justify-content: space-between;
+		gap: 10px;
+		font-size: 12px;
+		font-weight: 800;
+	}
+
+	.booking-table-reservation-meta {
+		margin-top: 3px;
+		color: #d9e6f7;
+		font-size: 11px;
+		font-weight: 700;
+	}
+
+	.booking-table-selector-selection {
+		margin-top: 12px;
+		font-size: 12px;
+		font-weight: 700;
+		color: #51647f;
+	}
+
+	.booking-table-selector-empty {
+		padding: 20px;
+		border: 1px dashed #d8e1ee;
+		border-radius: 6px;
+		color: #7184a3;
+		text-align: center;
+	}
+</style>
+
+<div class="booking-table-selector">
+	<div class="booking-table-selector-note">Available, booked, and occupied tables can be selected.</div>
+	{% if (has_groups) { %}
+		<div class="booking-table-group-chips">
+			{% for (var g = 0; g < groups.length; g++) { %}
+				<button type="button" class="booking-table-group-chip{% if (groups[g].is_active) { %} is-active{% } %}" data-group-index="{{ g }}">{{ groups[g].name }} ({{ groups[g].selectable_count }}/{{ groups[g].table_count }})</button>
+			{% } %}
+		</div>
+
+		{% for (var g = 0; g < groups.length; g++) { %}
+			<div class="booking-table-group-panel{% if (groups[g].is_active) { %} is-active{% } %}" data-group-index="{{ g }}">
+				{% if (groups[g].tables.length) { %}
+					<div class="booking-table-card-grid">
+						{% for (var t = 0; t < groups[g].tables.length; t++) { %}
+							{% var table = groups[g].tables[t]; %}
+							<button type="button" class="booking-table-card" data-table-key="{{ table.selector_key }}"{% if (table.has_status_background) { %} style="background: {{ table.background_color }}; color: {{ table.text_color }};"{% } %}{% if (!table.is_selectable) { %} disabled{% } %}>
+								<span class="booking-table-card-name">{{ table.table_number }}</span>
+								{% if (table.reservation_count === 1) { %}
+									<div class="booking-table-card-single-booking">
+										<span>{{ table.reservations[0].guest_name }}</span>
+										<span>{{ table.reservations[0].phone_number }}</span>
+									</div>
+								{% } %}
+								<span class="booking-table-card-status {{ table.status_class }}">{{ table.status_label }}</span>
+								{% if (table.has_reservations && table.is_occupied) { %}<span class="booking-table-card-status is-occupied">{{ table.occupy_label }}</span>{% } %}
+								{% if (table.has_reservations) { %}
+									<div class="booking-table-reservation-popover">
+										<div class="booking-table-reservation-popover-title">Reservations ({{ table.reservation_count }})</div>
+										{% for (var b = 0; b < table.reservations.length; b++) { %}
+											{% var booking = table.reservations[b]; %}
+											<div class="booking-table-reservation-row">
+												<div class="booking-table-reservation-primary"><span>{{ booking.guest_name }}</span><span>{{ booking.phone_number }}</span></div>
+												<div class="booking-table-reservation-meta">Adult {{ booking.adult }} / Child {{ booking.child }} / Elderly {{ booking.elderly }}</div>
+												<div class="booking-table-reservation-meta">{{ booking.arrival_time }} - {{ booking.check_out_time }}</div>
+											</div>
+										{% } %}
+									</div>
+								{% } %}
+							</button>
+						{% } %}
+					</div>
+				{% } else { %}
+					<div class="booking-table-selector-empty">No tables in this group.</div>
+				{% } %}
+			</div>
+		{% } %}
+
+		<div class="booking-table-selector-selection">Selected table: <span class="booking-table-selected-label">None</span></div>
+	{% } else { %}
+		<div class="booking-table-selector-empty">No table groups or tables found.</div>
+	{% } %}
+</div>

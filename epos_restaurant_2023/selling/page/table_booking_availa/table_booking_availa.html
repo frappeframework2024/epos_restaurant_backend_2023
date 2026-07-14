@@ -186,6 +186,7 @@
 
 	.table-booking-reservation.is-booking {
 		cursor: pointer;
+		padding: 4px 8px;
 	}
 
 	.table-booking-reservation {
@@ -200,18 +201,14 @@
 		z-index: 1;
 	}
 
-        .table-booking-reservation.is-unassigned {
-            height: 30px;
-            padding: 6px 10px;
-        }
+	        .table-booking-reservation.is-unassigned {
+	            height: 48px;
+	            padding: 4px 8px;
+	        }
 
         .table-booking-reservation.is-unassigned .table-booking-reservation-name span:first-child {
             overflow: hidden;
             text-overflow: ellipsis;
-        }
-
-        .table-booking-reservation.is-unassigned .table-booking-reservation-time {
-            display: none;
         }
 
 	.table-booking-reservation.is-confirmed {
@@ -236,6 +233,32 @@
 		color: inherit;
 	}
 
+	.table-booking-reservation.is-booking .table-booking-reservation-name {
+		font-size: 11px;
+		line-height: 12px;
+	}
+
+	.table-booking-reservation.is-booking .table-booking-reservation-name span:first-child {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.table-booking-reservation.is-booking .table-booking-reservation-name span:last-child {
+		flex: 0 0 auto;
+	}
+
+	.table-booking-reservation-detail-line {
+		margin-top: 1px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		font-size: 10px;
+		font-weight: 700;
+		line-height: 11px;
+		color: inherit;
+		opacity: .86;
+	}
+
 
 	.table-booking-reservation-time {
 		margin-top: 6px;
@@ -243,6 +266,12 @@
 		font-weight: 700;
 		color: inherit;
 		opacity: .86;
+	}
+
+	.table-booking-reservation.is-booking .table-booking-reservation-time {
+		margin-top: 1px;
+		font-size: 10px;
+		line-height: 11px;
 	}
 
 	.table-booking-reservation-phone {
@@ -377,20 +406,36 @@
 						{% for (var r = 0; r < table.reservations.length; r++) { %}
 							{% var reservation = table.reservations[r]; %}
 							<div class="table-booking-reservation {{ reservation.card_class }}" data-booking-number="{{ reservation.booking_number }}" style="left: {{ reservation.left }}%; width: {{ reservation.width }}%; top: {{ 9 + reservation.stack_top }}px; background: {{ reservation.background_color }}; color: {{ reservation.text_color }}; border-color: {{ reservation.background_color }}; border-left-color: {{ reservation.background_color }};">
-								<div class="table-booking-reservation-name">
-									<span>{{ reservation.guest_name }}</span>
-									<span>{{ reservation.total_guest }} pax</span>
-								</div>
-								<div class="table-booking-reservation-time">
-									<strong>{{ reservation.card_label }}</strong>{% if (reservation.reservation_status) { %} - {{ reservation.reservation_status }}{% } %} 
+									<div class="table-booking-reservation-name">
+										{% if (reservation.card_label === "Booking") { %}
+											<span>{{ reservation.phone_number_display }}</span>
+										{% } else { %}
+											<span>{{ reservation.guest_name }}</span>
+										{% } %}
+										<span>{{ reservation.total_guest }} pax</span>
+									</div>
+									{% if (reservation.card_label === "Booking") { %}
+										<div class="table-booking-reservation-detail-line">{{ reservation.guest_name }}</div>
+									{% } %}
+									<div class="table-booking-reservation-time">
+										{% if (reservation.card_label === "Booking") { %}
+											<strong>{{ reservation.arrival_time }} - {{ reservation.check_out_time }}</strong>
+									{% } else { %}
+										<strong>{{ reservation.card_label }}</strong>{% if (reservation.reservation_status) { %} - {{ reservation.reservation_status }}{% } %}
+										{% if (reservation.duration_ago) { %}
+											<span class="table-booking-occupy-duration"> / {{ reservation.duration_ago }}</span>
+										{% } %}
 									{% if (reservation.phone_number) { %}
 										<span class="table-booking-reservation-phone"> / {{ reservation.phone_number }}</span>
+									{% } %}
 									{% } %}
 								</div>
 									<div class="table-booking-popover">
 									<div class="table-booking-popover-row"><span class="table-booking-popover-label">Booking #:</span><span class="table-booking-popover-value">{{ reservation.booking_number_display }}</span></div>
 									<div class="table-booking-popover-row"><span class="table-booking-popover-label">Guest Name:</span><span class="table-booking-popover-value">{{ reservation.guest_name }}</span></div>
 									<div class="table-booking-popover-row"><span class="table-booking-popover-label">Phone:</span><span class="table-booking-popover-value">{{ reservation.phone_number_display }}</span></div>
+									<div class="table-booking-popover-row"><span class="table-booking-popover-label">Arrival Time:</span><span class="table-booking-popover-value">{{ reservation.arrival_time }}</span></div>
+									<div class="table-booking-popover-row"><span class="table-booking-popover-label">Check Out Time:</span><span class="table-booking-popover-value">{{ reservation.check_out_time }}</span></div>
 									<div class="table-booking-popover-row"><span class="table-booking-popover-label">Adult:</span><span class="table-booking-popover-value">{{ reservation.adult }}</span></div>
 									<div class="table-booking-popover-row"><span class="table-booking-popover-label">Child:</span><span class="table-booking-popover-value">{{ reservation.child }}</span></div>
 									<div class="table-booking-popover-row"><span class="table-booking-popover-label">Elderly:</span><span class="table-booking-popover-value">{{ reservation.elderly }}</span></div>

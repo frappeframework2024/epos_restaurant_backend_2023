@@ -2180,8 +2180,10 @@ export default class Sale {
             sale: doc,
             product_printers: _productPrinters,
             station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
+
             printers: []
         }
+   
 
         var groupKeys = "{printer:$.printer,actual_printer_name:$.actual_printer_name,group_item_type:$.group_item_type,ip_address:$.ip_address,port:$.port}"
         var groupFields = "$.printer+','+$.actual_printer_name+','+$.group_item_type+','+$.ip_address+','+$.port";
