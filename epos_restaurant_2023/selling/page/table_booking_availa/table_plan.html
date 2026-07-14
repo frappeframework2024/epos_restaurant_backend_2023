@@ -1,0 +1,243 @@
+<style>
+	.table-plan {
+		padding: 14px;
+		border: 1px solid #d8e1ee;
+		background: #ffffff;
+		color: #25324b;
+	}
+
+	.table-plan-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		margin-bottom: 14px;
+	}
+
+	.table-plan-title {
+		font-size: 16px;
+		font-weight: 800;
+	}
+
+	.table-plan-date {
+		color: #7184a3;
+		font-size: 12px;
+		font-weight: 700;
+	}
+
+	.table-plan-group-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 7px;
+		margin-bottom: 14px;
+	}
+
+	.table-plan-group-chip {
+		padding: 6px 11px;
+		border: 1px solid #d7e0ec;
+		border-radius: 999px;
+		background: #ffffff;
+		color: #51647f;
+		font-size: 12px;
+		font-weight: 700;
+		cursor: pointer;
+	}
+
+	.table-plan-group-chip.is-active {
+		border-color: #5576d1;
+		background: #eef3ff;
+		color: #3654a4;
+	}
+
+	.table-plan-group-panel {
+		display: none;
+	}
+
+	.table-plan-group-panel.is-active {
+		display: block;
+	}
+
+	.table-plan-card-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+		gap: 10px;
+	}
+
+	.table-plan-card {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 5px;
+		min-height: 82px;
+		padding: 11px 12px;
+		border: 1px solid #d8e1ee;
+		border-radius: 8px;
+		background: #ffffff;
+		color: #25324b;
+		box-shadow: 0 1px 3px rgba(34, 54, 88, .08);
+		transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease;
+	}
+
+	.table-plan-card:hover {
+		z-index: 60;
+		border-color: #3654a4;
+		background: #d8e3ff !important;
+		box-shadow: 0 5px 14px rgba(54, 84, 164, .24);
+	}
+
+	.table-plan-card.has-single-reservation {
+		cursor: pointer;
+	}
+
+	.table-plan-card-name {
+		font-size: 15px;
+		font-weight: 800;
+	}
+
+	.table-plan-card-single-booking {
+		display: flex;
+		flex-direction: column;
+		gap: 1px;
+		width: 100%;
+		font-size: 11px;
+		font-weight: 700;
+		line-height: 1.25;
+	}
+
+	.table-plan-card-single-booking span {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.table-plan-card-status {
+		font-size: 11px;
+		font-weight: 800;
+		color: #16794d;
+	}
+
+	.table-plan-card-status.is-booked,
+	.table-plan-card-status.is-occupied {
+		color: #000000;
+	}
+
+	.table-plan-reservation-popover {
+		display: none;
+		position: absolute;
+		left: 0;
+		top: calc(100% + 7px);
+		z-index: 70;
+		width: 300px;
+		max-height: 280px;
+		overflow-y: auto;
+		padding: 10px;
+		border: 1px solid #142a49;
+		border-radius: 7px;
+		background: #17345c;
+		color: #ffffff;
+		box-shadow: 0 12px 28px rgba(17, 35, 63, .38);
+	}
+
+	.table-plan-card:hover .table-plan-reservation-popover {
+		display: block;
+	}
+
+	.table-plan-popover-title {
+		margin-bottom: 7px;
+		font-size: 12px;
+		font-weight: 800;
+	}
+
+	.table-plan-reservation-row {
+		padding: 7px 0;
+		border-top: 1px solid rgba(255, 255, 255, .18);
+		cursor: pointer;
+	}
+
+	.table-plan-reservation-row:hover {
+		background: rgba(255, 255, 255, .14);
+	}
+
+	.table-plan-reservation-primary {
+		display: flex;
+		justify-content: space-between;
+		gap: 10px;
+		font-size: 12px;
+		font-weight: 800;
+	}
+
+	.table-plan-reservation-meta {
+		margin-top: 3px;
+		color: #d9e6f7;
+		font-size: 11px;
+		font-weight: 700;
+	}
+
+	.table-plan-empty {
+		padding: 26px;
+		border: 1px dashed #d8e1ee;
+		border-radius: 7px;
+		color: #7184a3;
+		text-align: center;
+		font-weight: 700;
+	}
+</style>
+
+{{ frappe.render_template("legend_info", legend) }}
+{{ frappe.render_template("reservation_unassign_table_list", unassigned_reservations) }}
+<div class="table-plan">
+	<div class="table-plan-header">
+		<div class="table-plan-title">Table Plan</div>
+		<div class="table-plan-date">{{ date_label }}</div>
+	</div>
+
+	{% if (has_groups) { %}
+		<div class="table-plan-group-chips">
+			{% for (var g = 0; g < groups.length; g++) { %}
+				<button type="button" class="table-plan-group-chip{% if (groups[g].is_active) { %} is-active{% } %}" data-group-index="{{ g }}">{{ groups[g].name }} ({{ groups[g].table_count }})</button>
+			{% } %}
+		</div>
+
+		{% for (var g = 0; g < groups.length; g++) { %}
+			<div class="table-plan-group-panel{% if (groups[g].is_active) { %} is-active{% } %}" data-group-index="{{ g }}">
+				{% if (groups[g].tables.length) { %}
+					<div class="table-plan-card-grid">
+						{% for (var t = 0; t < groups[g].tables.length; t++) { %}
+							{% var table = groups[g].tables[t]; %}
+							<div class="table-plan-card{% if (table.reservation_count === 1) { %} has-single-reservation{% } %}"{% if (table.reservation_count === 1) { %} data-booking-number="{{ table.reservations[0].booking_number }}"{% } %}{% if (table.has_status_background) { %} style="background: {{ table.background_color }}; color: {{ table.text_color }};"{% } %}>
+								<div class="table-plan-card-name">{{ table.table_number }}</div>
+								{% if (table.reservation_count === 1) { %}
+									<div class="table-plan-card-single-booking">
+										<span>{{ table.reservations[0].guest_name }}</span>
+										<span>{{ table.reservations[0].phone_number }}</span>
+									</div>
+								{% } %}
+								<div class="table-plan-card-status {{ table.status_class }}">{{ table.status_label }}</div>
+								{% if (table.has_reservations && table.is_occupied) { %}<div class="table-plan-card-status is-occupied">{{ table.occupy_label }}</div>{% } %}
+
+								{% if (table.has_reservations) { %}
+									<div class="table-plan-reservation-popover">
+										<div class="table-plan-popover-title">Reservations ({{ table.reservation_count }})</div>
+										{% for (var b = 0; b < table.reservations.length; b++) { %}
+											{% var booking = table.reservations[b]; %}
+											<div class="table-plan-reservation-row" data-booking-number="{{ booking.booking_number }}">
+												<div class="table-plan-reservation-primary"><span>{{ booking.guest_name }}</span><span>{{ booking.phone_number }}</span></div>
+												<div class="table-plan-reservation-meta">Adult {{ booking.adult }} / Child {{ booking.child }} / Elderly {{ booking.elderly }}</div>
+												<div class="table-plan-reservation-meta">{{ booking.arrival_time }} - {{ booking.check_out_time }}</div>
+											</div>
+										{% } %}
+									</div>
+								{% } %}
+							</div>
+						{% } %}
+					</div>
+				{% } else { %}
+					<div class="table-plan-empty">No tables in this group.</div>
+				{% } %}
+			</div>
+		{% } %}
+	{% } else { %}
+		<div class="table-plan-empty">No tables found for this date and filter.</div>
+	{% } %}
+</div>

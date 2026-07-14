@@ -774,6 +774,10 @@ export default class Sale {
                 let priceBefore = this.getRateBeforeTax(sp.sub_total - (cal_after_disc == 0 ? 0 : sp.total_discount), JSON.parse(sp.tax_rule_data), sp.tax_1_rate, sp.tax_2_rate, sp.tax_3_rate)
                 amount = priceBefore + (cal_after_disc == 0 ? 0 : sp.total_discount)
             }
+        }else {
+            if (cal_after_disc ==1){
+                amount = amount  - (sp.total_discount || 0)
+            }
         }
         return amount;
     }

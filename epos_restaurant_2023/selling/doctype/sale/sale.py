@@ -21,7 +21,7 @@ from epos_restaurant_2023.selling.doctype.sale.general_ledger_entry import submi
 class Sale(Document):
 	def validate(self): 	
 		lock_db(self=self)
-		# frappe.throw(str(self.working_day))	
+		 
 		if not frappe.db.get_default('exchange_rate_main_currency'):
 			frappe.throw('Main Exchange Currency not yet config. Please contact to system administrator for solve')
 
@@ -172,6 +172,9 @@ class Sale(Document):
 		self.taxable_amount_1  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.taxable_amount_1)
 		self.taxable_amount_2  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.taxable_amount_2)
 		self.taxable_amount_3  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.taxable_amount_3)
+		
+		
+
 		self.tax_1_amount  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.tax_1_amount)
 		self.tax_2_amount  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.tax_2_amount)
 		self.tax_3_amount  = Enumerable(self.sale_products).where(lambda x:x.tax_rule).sum(lambda x: x.tax_3_amount)
@@ -1560,6 +1563,7 @@ def get_ratebefore_tax(amount, t_rule, tax_1_rate, tax_2_rate, tax_3_rate):
 	return  price
 
 def validate_tax(doc):		
+	
 	if doc.tax_rule:
 		# amount = doc.sub_total
 		amount = _price_for_calc_tax(doc,1)
@@ -1570,6 +1574,7 @@ def validate_tax(doc):
 		#Tax 1
 		# doc.taxable_amount_1 = amount
 		doc.taxable_amount_1 = _price_for_calc_tax(doc, doc.calculate_tax_1_after_discount)
+	 
 		# #cal tax1 taxable after disc.
 		# if doc.calculate_tax_1_after_discount == 1:
 		# 	doc.taxable_amount_1 =   amount - doc.total_discount			 
@@ -1592,22 +1597,32 @@ def validate_tax(doc):
 		doc.tax_2_amount =  (doc.taxable_amount_2 or 0) *  ((doc.tax_2_rate or 0) /100)
 
 		#tax 3
+		
 		doc.taxable_amount_3 =  _price_for_calc_tax(doc, doc.calculate_tax_3_after_discount)
+		 
+	 
+		
 		# doc.taxable_amount_3 =  amount
 		# #cal tax3 taxable after disc.
 		# if doc.calculate_tax_3_after_discount==1:
 		# 	doc.taxable_amount_3 = amount - doc.total_discount 
 		
 		#cal tax3 taxable after add tax1
+		
 		if doc.calculate_tax_3_after_adding_tax_1==1:
 			doc.taxable_amount_3 =   doc.taxable_amount_3 +  doc.tax_1_amount 
+		
 		
 		#cal tax3 taxable after add tax2
 		if doc.calculate_tax_3_after_adding_tax_2==1:
 			doc.taxable_amount_3 = doc.taxable_amount_3 +  doc.tax_2_amount 
 		
+		
 		doc.taxable_amount_3 *= ((doc.percentage_of_price_to_calculate_tax_3 or 100)/100)
+		
+
 		doc.tax_3_amount =  (doc.taxable_amount_3 or 0) *  ((doc.tax_3_rate or 0) /100)
+	
 		
 		#total tax
 		doc.total_tax = doc.tax_1_amount + doc.tax_2_amount + doc.tax_3_amount
@@ -1627,7 +1642,10 @@ def _price_for_calc_tax(doc, calc_after_tax):
 	if (doc.rate_include_tax == 1) :
 		priceBefore = get_ratebefore_tax(doc.sub_total - (0 if calc_after_tax == 0  else doc.total_discount),doc.tax_rule, doc.tax_1_rate, doc.tax_2_rate, doc.tax_3_rate)
 		amount =  priceBefore + (0 if calc_after_tax == 0  else doc.total_discount)
-
+	else:
+		
+		amount = amount - (  (doc.total_discount or 0) if calc_after_tax == 1  else 0)
+		
 	return amount
 
 def update_pos_reservation_status(self):
@@ -2027,7 +2045,7 @@ def update_coupon_codes(coupon_transactions,sale_type):
 		})
   
 	elif  sale_type=="Top Up":
-		# frappe.throw(str([d["coupon_code"] for d in coupon_transactions]))
+		
 		sql ="""
 			update `tabCoupon Codes` cc
 			join (

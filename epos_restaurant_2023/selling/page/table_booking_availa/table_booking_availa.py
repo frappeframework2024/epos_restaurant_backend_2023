@@ -57,8 +57,7 @@ def get_reservations(date,table_names):
 
 
 @frappe.whitelist()
-def get_unasign_table_reservations(date=None):
-    
+def get_unasign_table_reservations(date=None):   
     sql = """
         select 
             a.name as booking_number,
@@ -93,6 +92,7 @@ def get_unasign_table_reservations(date=None):
 def get_active_reservation(keyword=None):
     keyword = (keyword or "").strip()
     search_value = f"%{keyword}%" if keyword else ""
+
     sql = """
         select
             a.name as booking_number,
@@ -238,6 +238,6 @@ def get_legend_color():
 @frappe.whitelist()
 def get_date_has_reservation():
     sql="select distinct arrival_date from `tabPOS Reservation` where arrival_date>=CURDATE() order by arrival_date"
-    
+
     return frappe.db.sql(sql,as_dict)
     

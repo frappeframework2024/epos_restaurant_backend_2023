@@ -4,6 +4,7 @@ frappe.pages['table-booking-availa'].on_page_load = function(wrapper) {
 
 MyPage = Class.extend({
 	setting_storage_key: "table_booking_availa_time_setting",
+	view_storage_key: "table_booking_availa_view_mode",
 
 	init: function(wrapper) {
 		this.page = frappe.ui.make_app_page({
@@ -13,8 +14,11 @@ MyPage = Class.extend({
 		});
 		this.page.set_secondary_action('Refresh', () => this.onReload(), 'octicon octicon-sync')
 			this.page.add_inner_button('Active Reservation', () => this.show_active_reservation_dialog());
+		this.page.add_menu_item('View Booking Calendar', () => this.set_view_mode('booking_calendar'));
+		this.page.add_menu_item('View Table Plan', () => this.set_view_mode('table_plan'));
 		this.page.add_menu_item('Setting', () => this.show_setting_dialog());
 
+		this.view_mode = this.get_saved_view_mode();
 		this.time_setting = this.get_time_setting();
 		this.filter_container = $('<div class="filter-container"></div>').appendTo(this.page.main);
 		this.content_container = $('<div class="content-container"></div>').appendTo(this.page.main);
@@ -50,6 +54,31 @@ MyPage = Class.extend({
 		})
 
 		this.make();
+	},
+
+	set_view_mode: function(view_mode) {
+		if (["table_plan", "booking_calendar"].indexOf(view_mode) === -1 || this.view_mode === view_mode) {
+			return;
+		}
+		this.view_mode = view_mode;
+		try {
+			localStorage.setItem(this.view_storage_key, view_mode);
+		} catch (e) {
+			// Continue switching views when browser storage is unavailable.
+		}
+		this.make();
+	},
+
+	get_saved_view_mode: function() {
+		try {
+			let view_mode = localStorage.getItem(this.view_storage_key);
+			if (["table_plan", "booking_calendar"].indexOf(view_mode) !== -1) {
+				return view_mode;
+			}
+		} catch (e) {
+			// Use the default view when browser storage is unavailable.
+		}
+		return "booking_calendar";
 	},
 
 	get_time_setting: function() {
@@ -159,9 +188,13 @@ MyPage = Class.extend({
 					date: date,
 					table_group: table_group
 				},
-				callback: (r) => {
-					let data = r.message || {};
-					if (this.get_time_setting().show_unassigned_reservations) {
+					callback: (r) => {
+						let data = r.message || {};
+						if (this.view_mode === "table_plan") {
+							this.load_table_plan_unassigned_reservations(data, date);
+							return;
+						}
+						if (this.get_time_setting().show_unassigned_reservations) {
 						this.load_unassigned_reservations(date, data);
 					} else {
 						data.unassigned_bookings = [];
@@ -258,6 +291,104 @@ MyPage = Class.extend({
 		$(this.content_container).empty();
 		$(frappe.render_template("table_booking_availa", data)).appendTo(this.content_container);
 		this.bind_booking_card_events();
+	},
+
+	load_table_plan_unassigned_reservations: function(data, date) {
+		frappe.call({
+			method: "epos_restaurant_2023.selling.page.table_booking_availa.table_booking_availa.get_unasign_table_reservations",
+			args: { date: date },
+			callback: (r) => {
+				if (this.view_mode !== "table_plan") return;
+				data.unassigned_bookings = this.normalize_unassigned_bookings(r.message);
+				this.load_table_plan_legend(data, date);
+			},
+			error: () => {
+				if (this.view_mode !== "table_plan") return;
+				data.unassigned_bookings = [];
+				this.load_table_plan_legend(data, date);
+			}
+		});
+	},
+
+	load_table_plan_legend: function(data, date) {
+		frappe.call({
+			method: "epos_restaurant_2023.selling.page.table_booking_availa.table_booking_availa.get_legend_color",
+			callback: (r) => {
+				if (this.view_mode !== "table_plan") return;
+				this.render_table_plan(data, date, this.prepare_legend_data(r.message || {}));
+			},
+			error: () => {
+				if (this.view_mode !== "table_plan") return;
+				this.render_table_plan(data, date, this.prepare_legend_data({}));
+			}
+		});
+	},
+
+	render_table_plan: function(data, date, legend) {
+		let tables = Array.isArray(data.tables) ? data.tables : [];
+		tables = this.filter_tables_by_status(tables, this.table_status ? this.table_status.get_value() : "");
+		let plan_data = this.prepare_confirm_table_selector({
+			table_groups: data.table_groups || [],
+			tables: tables
+		});
+		plan_data.date_label = this.format_date(date) || date;
+		plan_data.legend = legend || this.prepare_legend_data({});
+		plan_data.unassigned_reservations = this.prepare_unassigned_reservation_data(data.unassigned_bookings);
+
+		$(this.content_container).empty();
+		$(frappe.render_template("table_plan", plan_data)).appendTo(this.content_container);
+		this.bind_table_plan_events();
+	},
+
+	bind_table_plan_events: function() {
+		let wrapper = $(this.content_container);
+		wrapper.find(".table-plan-group-chip").off("click").on("click", (e) => {
+			let group_index = $(e.currentTarget).attr("data-group-index");
+			wrapper.find(".table-plan-group-chip").removeClass("is-active");
+			wrapper.find(".table-plan-group-panel").removeClass("is-active");
+			$(e.currentTarget).addClass("is-active");
+			wrapper.find('.table-plan-group-panel[data-group-index="' + group_index + '"]').addClass("is-active");
+		});
+		wrapper.find(".reservation-unassign-card").off("click").on("click", (e) => {
+			let booking_number = $(e.currentTarget).attr("data-booking-number");
+			if (booking_number) this.open_booking_detail(booking_number);
+		});
+		wrapper.find(".table-plan-card.has-single-reservation").off("click").on("click", (e) => {
+			let booking_number = $(e.currentTarget).attr("data-booking-number");
+			if (booking_number) this.open_booking_detail(booking_number);
+		});
+		wrapper.find(".table-plan-reservation-row[data-booking-number]").off("click").on("click", (e) => {
+			e.stopPropagation();
+			let booking_number = $(e.currentTarget).attr("data-booking-number");
+			if (booking_number) this.open_booking_detail(booking_number);
+		});
+	},
+
+	prepare_unassigned_reservation_data: function(rows) {
+		rows = this.normalize_unassigned_bookings(rows).slice();
+		rows.sort((a, b) => String(a.arrival_time || "").localeCompare(String(b.arrival_time || "")));
+
+		let reservations = rows.map((row) => ({
+			booking_number: row.booking_number || row.name || "",
+			booking_number_display: row.booking_number || row.name || "-",
+			guest_name: row.guest_name || "Guest",
+			phone_number: row.phone_number || "-",
+			total_guest: row.total_guest || 0,
+			adult: row.adult || 0,
+			child: row.child || 0,
+			elderly: row.elderly || 0,
+			arrival_time: this.format_time(row.arrival_time) || "-",
+			check_out_time: row.check_out_time ? this.format_time(row.check_out_time) : "Open",
+			reservation_status: row.reservation_status || "-",
+			background_color: this.get_valid_color(row.background_color, "#fff7ed"),
+			text_color: this.get_valid_color(row.text_color, "#9a3412")
+		}));
+
+		return {
+			reservations: reservations,
+			reservation_count: reservations.length,
+			has_reservations: reservations.length > 0
+		};
 	},
 
 	bind_booking_card_events: function() {
@@ -797,6 +928,7 @@ MyPage = Class.extend({
 	                        let is_available = !has_booking && !has_occupy;
 	                        let is_selectable = true;
 	                        let reservation_list = reservations.map((reservation) => ({
+	                            booking_number: reservation.booking_number || reservation.booking_no || reservation.name || "",
 	                            guest_name: reservation.guest_name || "Guest",
 	                            phone_number: reservation.phone_number || "-",
 	                            adult: reservation.adult || reservation.total_adult || 0,

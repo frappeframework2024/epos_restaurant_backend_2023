@@ -1,0 +1,131 @@
+<style>
+	.reservation-unassign-section {
+		margin: 12px 0 14px;
+		padding: 10px;
+		border: 1px solid #fed7aa;
+		border-radius: 8px;
+		background: #fffaf5;
+	}
+
+	.reservation-unassign-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 10px;
+		margin-bottom: 7px;
+	}
+
+	.reservation-unassign-title {
+		color: #9a3412;
+		font-size: 14px;
+		font-weight: 800;
+	}
+
+	.reservation-unassign-count {
+		padding: 3px 8px;
+		border-radius: 999px;
+		background: #ffedd5;
+		color: #9a3412;
+		font-size: 11px;
+		font-weight: 800;
+	}
+
+	.reservation-unassign-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+		gap: 6px;
+	}
+
+	.reservation-unassign-card {
+		min-width: 0;
+		padding: 7px 8px;
+		border: 1px solid rgba(0, 0, 0, .14);
+		border-radius: 7px;
+		box-shadow: 0 1px 3px rgba(34, 54, 88, .1);
+		cursor: pointer;
+		transition: transform .15s ease, box-shadow .15s ease;
+	}
+
+	.reservation-unassign-card:hover {
+		transform: translateY(-1px);
+		box-shadow: 0 5px 13px rgba(34, 54, 88, .22);
+	}
+
+	.reservation-unassign-card-top,
+	.reservation-unassign-card-time {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+	}
+
+	.reservation-unassign-phone {
+		overflow: hidden;
+		font-size: 12px;
+		font-weight: 900;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.reservation-unassign-status {
+		flex: 0 0 auto;
+		font-size: 10px;
+		font-weight: 800;
+		text-transform: uppercase;
+	}
+
+	.reservation-unassign-guest {
+		overflow: hidden;
+		margin-top: 2px;
+		font-size: 11px;
+		font-weight: 800;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.reservation-unassign-card-time {
+		margin-top: 3px;
+		font-size: 11px;
+		font-weight: 800;
+	}
+
+	.reservation-unassign-empty {
+		padding: 14px;
+		border: 1px dashed #fdba74;
+		border-radius: 7px;
+		color: #9a3412;
+		text-align: center;
+		font-size: 12px;
+		font-weight: 700;
+	}
+</style>
+
+<section class="reservation-unassign-section">
+	<div class="reservation-unassign-header">
+		<div class="reservation-unassign-title">Unassigned Table Reservations</div>
+		<div class="reservation-unassign-count">{{ reservation_count }} reservation{% if (reservation_count !== 1) { %}s{% } %}</div>
+	</div>
+
+	{% if (has_reservations) { %}
+		<div class="reservation-unassign-grid">
+			{% for (var i = 0; i < reservations.length; i++) { %}
+				{% var reservation = reservations[i]; %}
+				<div class="reservation-unassign-card"
+					data-booking-number="{{ reservation.booking_number }}"
+					style="background: {{ reservation.background_color }}; color: {{ reservation.text_color }};">
+					<div class="reservation-unassign-card-top">
+						<span class="reservation-unassign-phone">{{ reservation.phone_number }}</span>
+						<span class="reservation-unassign-status">{{ reservation.reservation_status }}</span>
+					</div>
+					<div class="reservation-unassign-guest">{{ reservation.guest_name }}</div>
+					<div class="reservation-unassign-card-time">
+						<span>{{ reservation.arrival_time }} - {{ reservation.check_out_time }}</span>
+						<span>{{ reservation.total_guest }} pax</span>
+					</div>
+				</div>
+			{% } %}
+		</div>
+	{% } else { %}
+		<div class="reservation-unassign-empty">No unassigned table reservations for this date.</div>
+	{% } %}
+</section>
