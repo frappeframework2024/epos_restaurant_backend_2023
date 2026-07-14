@@ -18,5 +18,22 @@ globalThis.app.postData =  async function (api_url,param,message="",show_message
 }
 
 
+globalThis.app.print_to_print_server = async function (print_server_url, html) {
+  const payload = {
+    html: html,
+    printer_name: 'Cashier Printer'
+  };
+
+  // Execute the POST request
+  fetch(print_server_url + "/print", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  })
+}
+
+
 globalThis.app.showLoading =  showLoading
  

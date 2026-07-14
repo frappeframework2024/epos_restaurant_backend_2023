@@ -80,9 +80,11 @@ const toaster = createToaster({ position: 'top-right' });
 
 
 async function onPrintPressed(r) {
+  
   await sale.onPrintPressed(r).then(async(resp)=>{
     if(resp){
-      await sale.onSubmit({"print_request_bill":true}).then(async (value) => {
+     
+      await sale.onSubmit({"print_request_bill":true, print_queue:false}).then(async (value) => {
         if (value) {
           router.push({ name: "TableLayout" });
     

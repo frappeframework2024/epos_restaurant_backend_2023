@@ -34,7 +34,14 @@ def get_sale_detail(sale_name):
 
 
 @frappe.whitelist(methods="POST")
-def submit_order(data=None,print_request_bill=False,print_bill=False,print_server_url=None,print_setting={"printer":"Cashier Printer"}):
+def submit_order(
+    data=None,
+    print_request_bill=False,
+    print_bill=False,
+    print_queue = True,
+    print_server_url=None,
+    print_setting={"printer":"Cashier Printer"}
+    ):
     # data = {"doc":sale_doc_object,"audit_trail_logs":audit_trail list, "deleted_products":[list of sale product]}
     doc = data.get("doc")
     
@@ -105,23 +112,21 @@ def submit_order(data=None,print_request_bill=False,print_bill=False,print_serve
             at_front=True
         )
         
-
-
     frappe.db.commit()
-    
+    html = ""
     if print_request_bill or print_bill:
-        
-        frappe.enqueue(
-            "epos_restaurant_2023.api.sale.print_bill",
-            queue="short",
-            sale_name= sale_doc.name,
-            print_server_url = print_server_url,
-            print_setting=print_setting,
-            at_front=True
-
-
-        )
-        
+        if print_queue:
+            frappe.enqueue(
+                "epos_restaurant_2023.api.sale.print_bill",
+                queue="short",
+                sale_name= sale_doc.name,
+                print_server_url = print_server_url,
+                print_setting=print_setting,
+                at_front=True
+            )
+        else:
+            html = _get_receipt_html(sale_name = sale_doc.name, print_setting=print_setting )
+            
     if data.get("audit_trail_logs"):
         frappe.enqueue(
             "epos_restaurant_2023.api.sale.add_audit_trail_log",
@@ -145,7 +150,7 @@ def submit_order(data=None,print_request_bill=False,print_bill=False,print_serve
 
     emit_event("RefreshTable")     
 
-    return {"doc":sale_doc}
+    return {"doc":sale_doc,"html":html}
     
 @frappe.whitelist(methods=["POST"])
 def generate_print_queue(doc,products,print_server_url=None,run_commit = True):
@@ -381,6 +386,13 @@ def print_bill(sale_name="SINV2026-0790", print_server_url=None, print_setting=N
 
     return "Success"
 
+
+def _get_receipt_html(sale_name="SINV2026-0790",  print_setting=None ,additional_info={}):
+    if not print_setting:
+        print_setting = get_default_receipt_print_setting(frappe.get_cached_value("Sale", sale_name, "pos_profile"))
+    
+    html = get_receipt_html(sale_name, print_setting.get("print_template") or "Default POS Receipt",include_css=True,additional_info=additional_info)
+    return html
 
 def get_default_receipt_print_setting(pos_profile):
     cache = frappe.cache()

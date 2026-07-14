@@ -1696,7 +1696,7 @@ export default class Sale {
     }
 
     
-    async onSubmit(options={}) {
+    async onSubmit(options={print_queue:true}) {
         // options={"print_request_bill":false}
  
 
@@ -1766,13 +1766,12 @@ export default class Sale {
                 //  ***************************this option will send sale using api.sale.submit_order *********
                 //  *************************** this block update by Pheakdey *********
                 if (this.getPrintServerUrl()) {
-
                     if (this.sale.sale_status != "Hold Order") {
                         doc.sale_products.filter(r => r.sale_product_status == "New").forEach(x => {
                             x.sale_product_status = "Submitted";
                         });
                     }
-
+                 
                     const response = await app.postApi("sale.submit_order", {
                         data: {
                             doc: doc,
@@ -1781,7 +1780,9 @@ export default class Sale {
                            
                         },
                         print_request_bill:options.print_request_bill, 
-                        print_server_url:this.getPrintServerUrl()
+                        print_queue:options.print_queue, 
+                        print_server_url:this.getPrintServerUrl(),
+                        
                     })
 
                     if (response.data) {
@@ -1793,6 +1794,10 @@ export default class Sale {
                                 "pos_config": this.setting.pos_config,
                                 "invoice_id": _sale.name,
                             });
+                        }
+                        if (response.data?.html){
+                         
+                            app.print_to_print_server(this.getPrintServerUrl(),response.data?.html)
                         }
 
                         // reset sale doc  to enable go back
