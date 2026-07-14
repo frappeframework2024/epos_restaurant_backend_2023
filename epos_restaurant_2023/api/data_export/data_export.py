@@ -147,7 +147,7 @@ def export_excel(report_name="Reservation List Report",report_data=None,chart_im
     xlsx_file.seek(0)
 
     # Create a file name with today's date
-    filename = f"Exported_Data.xlsx"
+    filename = f"{report_name}.xlsx"
 
     # Create a response to download the Excel file
     frappe.local.response.filecontent = xlsx_file.getvalue()
@@ -257,31 +257,60 @@ def render_report_summary_kpi(ws1,  report_summary):
     row_index = 7
     ws1.row_dimensions[row_index+1].height =25
     ws1.row_dimensions[row_index+1].height =30
-    # color = [{"red":"FF0000"},{"blue":"0000FF"},{"orange":"FFA500"},{"green":"00FF00"}]
-    if report_summary:
-        index = 1
-        for   d in report_summary:
-            label_cell = ws1.cell(row= row_index, column=index + 1, value=d.get("label"))
-            value_cell = ws1.cell(row= row_index + 1, column=index + 1, value=d.get("value"))
-            label_cell.alignment = Alignment(vertical='center',horizontal= "center",wrap_text=True)
-            value_cell.alignment = Alignment(vertical='center',horizontal= "center" )
-            value_color = ""
-            if d.get("indicator","") =='blue':
-                value_color = "0000FF"
-            elif d.get("indicator","") =='red':
-                 value_color = "FF0000"
-                
-            elif d.get("indicator","") =='green':
-                 value_color = "228B22"
-            elif d.get("indicator","") =='orange':
-                 value_color = "FFA500"
+    if not report_summary:
+        return
+    
+   
+    index = 1
+    for   d in report_summary:        
+        label = d.get("label")
+        value = d.get("value")
+        
+        # Convert unsupported values to Excel-compatible values
+        if isinstance(value, (list, tuple)):
+            if len(value) == 0:
+                value = None
+            elif len(value) == 1:
+                value = value[0]
             else:
-                value_color = "000000"
-                
-                
-            value_cell.font = Font(size=13, color=value_color)  
-            
-            index = index + 1
+                value = ", ".join(map(str, value))
+
+        label_cell = ws1.cell(
+            row=row_index,
+            column=index + 1,
+            value=label
+        )
+
+        value_cell = ws1.cell(
+            row=row_index + 1,
+            column=index + 1,
+            value=value
+        )
+
+        label_cell.alignment = Alignment(
+            vertical="center",
+            horizontal="center",
+            wrap_text=True,
+        )
+
+        value_cell.alignment = Alignment(
+            vertical="center",
+            horizontal="center",
+        )
+
+        color_map = {
+            "blue": "0000FF",
+            "red": "FF0000",
+            "green": "228B22",
+            "orange": "FFA500",
+        }
+
+        value_cell.font = Font(
+            size=13,
+            color=color_map.get(d.get("indicator"), "000000"),
+        )
+
+        index += 1
 
 
 def render_report_data(ws1,columns,data,report_data_row=25):
