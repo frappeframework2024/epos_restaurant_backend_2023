@@ -104,6 +104,11 @@ def get_product_by_menu_1_level(**param):
     menus = get_product_by_menu(root_menu=root_menu, mobile=mobile,sort_order_by=sort_order_by, sort_menu_order_by=sort_menu_order_by,shift_name="")
     
     menu_categories = [m for m in menus if m.get("type",None) == "menu"]
+    if sort_menu_order_by == "sort_order":
+        menu_categories = sorted(menu_categories, key=lambda x: (
+                x.get("sort_order") or 0
+            )
+        )
     menu_products = [m for m in menus if m.get("type",None) == "product"]
     
     new_menu_categories = []
