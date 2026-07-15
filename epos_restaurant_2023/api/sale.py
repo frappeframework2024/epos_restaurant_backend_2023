@@ -387,12 +387,34 @@ def print_bill(sale_name="SINV2026-0790", print_server_url=None, print_setting=N
     return "Success"
 
 
-def _get_receipt_html(sale_name="SINV2026-0790",  print_setting=None ,additional_info={}):
-    if not print_setting:
-        print_setting = get_default_receipt_print_setting(frappe.get_cached_value("Sale", sale_name, "pos_profile"))
-    
-    html = get_receipt_html(sale_name, print_setting.get("print_template") or "Default POS Receipt",include_css=True,additional_info=additional_info)
+def _get_receipt_html(sale_name="SINV2026-0790", print_setting=None, additional_info=None):
+    html = ""
+
+    if additional_info is None:
+        additional_info = {}
+
+    try:
+        if not print_setting:
+            print_setting = get_default_receipt_print_setting(
+                frappe.get_cached_value("Sale", sale_name, "pos_profile")
+            )
+
+        html = get_receipt_html(
+            sale_name,
+            print_setting.get("print_template") or "Default POS Receipt",
+            include_css=True,
+            additional_info=additional_info
+        )
+
+    except Exception:
+        pass
+
+    finally:
+        # put cleanup code here if needed
+        pass
+
     return html
+    
 
 def get_default_receipt_print_setting(pos_profile):
     cache = frappe.cache()

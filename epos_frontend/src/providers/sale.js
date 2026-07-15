@@ -1962,8 +1962,14 @@ export default class Sale {
                                     deleted_products:this.deletedSaleProducts,
                                 },
                                 print_bill:true ,
+                                print_queue: false,
                                 print_server_url:this.getPrintServerUrl()
                             });
+                            if (response.data?.html){
+                                
+                                app.print_to_print_server(this.getPrintServerUrl(),response.data?.html)
+                            }
+
                             
                             l.close();                    
                             resolve(true);                        
@@ -2062,8 +2068,14 @@ export default class Sale {
                                 deleted_products:this.deletedSaleProducts
                             },
                             print_bill:isPrint, 
+                            print_queue: false,
                             print_server_url:this.getPrintServerUrl()
-                        })
+                        });
+                        
+                        if (response.data?.html){                                
+                            app.print_to_print_server(this.getPrintServerUrl(),response.data?.html)
+                        }
+
                     
                         if (ignore == true) {
                             socket.emit("ABAPayWaySuccess", {}, this.customer_display_key);
