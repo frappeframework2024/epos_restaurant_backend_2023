@@ -1877,13 +1877,11 @@ export default class Sale {
         
         if (this.sale.sale_products.filter(r => !r.time_out_price && r.is_timer_product).length > 0) {
             toaster.warning($t('msg.Please stop timer on timer product'));
-
             return;
         }
         return new Promise(async (resolve) => {
             if (this.sale.sale_products.length == 0) {
-                toaster.warning($t('msg.Please select a menu item to process payment'));
-               
+                toaster.warning($t('msg.Please select a menu item to process payment'));               
                 resolve(false);
             } else {
                 const check_employee = this.sale.sale_products.filter((sp) => sp.is_require_employee && (JSON.parse(sp.employees || "[]")).length <= 0)
