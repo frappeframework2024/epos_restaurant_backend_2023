@@ -1743,9 +1743,11 @@ export default class Sale {
         return new Promise(async (resolve) => {
             if (this.sale.sale_products.length == 0 && this.sale.name == undefined && (this.sale.from_reservation || "") == "") {
                 toaster.warning($t('msg.Please select a menu item to submit order'));
+                l.close();
                 resolve(false);
             }
             else if (this.onCheckPriceSmallerThanZero()) {
+                l.close();
                 resolve(false);
             }
             else {
@@ -1809,10 +1811,8 @@ export default class Sale {
                             this.sale.sale_status = "Submitted";
                         }
                     }
-                    l.close();
-                
-                    
                     this.loading = false; 
+                    l.close();
                     resolve(_sale);
                     // end submit sale with api 
 
@@ -1860,16 +1860,12 @@ export default class Sale {
                         }
                     }
                     this.submitToAuditTrail(doc);
-                }
-
-
-
-
-
+                } 
                 //refresh tabl 
+                
+                l.close();
                 resolve(_sale);
             }
-           l.close();
         })
 
     }
@@ -1881,25 +1877,25 @@ export default class Sale {
         
         if (this.sale.sale_products.filter(r => !r.time_out_price && r.is_timer_product).length > 0) {
             toaster.warning($t('msg.Please stop timer on timer product'));
+
             return;
         }
         return new Promise(async (resolve) => {
             if (this.sale.sale_products.length == 0) {
                 toaster.warning($t('msg.Please select a menu item to process payment'));
+               
                 resolve(false);
             } else {
                 const check_employee = this.sale.sale_products.filter((sp) => sp.is_require_employee && (JSON.parse(sp.employees || "[]")).length <= 0)
                 if (check_employee.length > 0) {
                     toaster.warning($t('msg.Please assign employee to items'));
+                  
                     resolve(false);
                 }
                 else {
                     if (await confirmDialog({ title: $t("Quick Pay"), text: $t('msg.are you sure to process quick pay and close order') })) {
-                        const l = await app.showLoading("Quick Pay")
-
-
-                        const resp = await Ping(this.setting)
-                        
+                        const l = await app.showLoading("Quick Pay");
+                        const resp = await Ping(this.setting)                        
                         if (resp == 0) {
                             toaster.error($t('Please check your network connection'));
                             l.close()
@@ -2000,13 +1996,12 @@ export default class Sale {
                             }
                             this.submitToAuditTrail(doc);
                         }
-                        
+
+                        l.close();                        
                         resolve(true);
                     }
                 }
             }
-
-            l.close();
 
         })
     }
@@ -2031,6 +2026,7 @@ export default class Sale {
                     if (resp == 0) {
                         toaster.warning($t('msg.Please check your network connection'));
                         this.loading = false;
+                        l.close(); 
                         resolve(false);
                         return
                     }
@@ -2074,9 +2070,7 @@ export default class Sale {
                         
                         if (response.data?.html){                                
                             app.print_to_print_server(this.getPrintServerUrl(),response.data?.html)
-                        }
-
-                    
+                        }                    
                         if (ignore == true) {
                             socket.emit("ABAPayWaySuccess", {}, this.customer_display_key);
                         }
@@ -2087,38 +2081,36 @@ export default class Sale {
                         if (this.getString(this.sale.name) == "") {
                         if (this.newSaleResource == null) {
                             this.createNewSaleResource();
-                        }
-                        this.printWaitingOrderAfterPayment = true;
-                        try {
-                            await this.newSaleResource.submit({ doc: this.sale });
-                        }
-                        catch (error) {
-                            l.close();
-                            return;
-                        }
-                    } else {
-                        try {
-                            await this.saleResource.setValue.submit(this.sale);
-                        }
-                        catch (error) {
-                              l.close();
-                            return;
+                            }
+                            this.printWaitingOrderAfterPayment = true;
+                            try {
+                                await this.newSaleResource.submit({ doc: this.sale });
+                            }
+                            catch (error) {
+                                l.close();
+                                return;
+                            }
+                        } else {
+                            try {
+                                await this.saleResource.setValue.submit(this.sale);
+                            }
+                            catch (error) {
+                                l.close();
+                                return;
+                            }
+
+                            this.submitToAuditTrail(this.sale);
+                        }   
+
+                        if (ignore == true) {
+                            socket.emit("ABAPayWaySuccess", {}, this.customer_display_key);
                         }
 
-                        this.submitToAuditTrail(this.sale);
-                    }   
-
-                    if (ignore == true) {
-                        socket.emit("ABAPayWaySuccess", {}, this.customer_display_key);
-                    }
-
-                    resolve(true);
-                    }
-
-                    
+                        l.close();
+                        resolve(true);
+                    }                    
                 }
             }
-            l.close();
         });
     }
 
