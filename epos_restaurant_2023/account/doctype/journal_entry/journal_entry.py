@@ -9,8 +9,8 @@ from frappe.model.document import Document
 
 class JournalEntry(Document):
 	def validate(self):
-		self.total_credit = sum(d.credit for d in self.get("account_entries"))
-		self.total_debit = sum(d.debit for d in self.get("account_entries"))
+		self.total_credit = sum(float(d.credit) for d in self.get("account_entries"))
+		self.total_debit = sum(float(d.debit) for d in self.get("account_entries"))
 		if len([d for d in self.account_entries if d.debit==d.credit and d.debit>0 and d.credit>0]):
 			frappe.throw(_("You cannot credit and debit same account at the same time"))
 		
