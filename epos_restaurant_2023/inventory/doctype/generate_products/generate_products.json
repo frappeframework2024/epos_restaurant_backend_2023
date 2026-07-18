@@ -8,15 +8,23 @@
  "field_order": [
   "generate_for_product",
   "parent_product_code",
-  "category",
-  "column_break_lkrd",
   "product_code",
+  "column_break_lkrd",
+  "category",
+  "revenue_group",
+  "series",
+  "column_break_xlot",
+  "price",
+  "unit",
+  "is_inventory_product",
   "section_break_smgw",
   "option_1",
   "column_break_rkrm",
   "option_2",
   "column_break_kqmd",
-  "option_3"
+  "option_3",
+  "section_break_clua",
+  "products"
  ],
  "fields": [
   {
@@ -72,11 +80,57 @@
   {
    "fieldname": "column_break_lkrd",
    "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "category.revenue_group",
+   "fetch_if_empty": 1,
+   "fieldname": "revenue_group",
+   "fieldtype": "Link",
+   "label": "Revenue Group",
+   "options": "Revenue Group"
+  },
+  {
+   "fieldname": "column_break_xlot",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "unit",
+   "fieldtype": "Link",
+   "label": "Unit",
+   "options": "Unit Of Measurement"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_inventory_product",
+   "fieldtype": "Check",
+   "label": "Is Inventory Product"
+  },
+  {
+   "fetch_from": "category.product_code_prefix",
+   "fetch_if_empty": 1,
+   "fieldname": "series",
+   "fieldtype": "Select",
+   "label": "Series"
+  },
+  {
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "label": "Price"
+  },
+  {
+   "fieldname": "section_break_clua",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "products",
+   "fieldtype": "Table",
+   "label": "Products",
+   "options": "Generate Products Item"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-07-17 18:31:29.656966",
+ "modified": "2026-07-18 09:46:16.406306",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Generate Products",

@@ -1,0 +1,87 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-07-18 09:34:08.978499",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "product_category",
+  "revenue_group",
+  "product_code",
+  "product_name_en",
+  "product_name_kh",
+  "unit",
+  "option_1",
+  "option_2",
+  "option_3",
+  "price"
+ ],
+ "fields": [
+  {
+   "fieldname": "product_category",
+   "fieldtype": "Link",
+   "label": "Product Category",
+   "options": "Product Category"
+  },
+  {
+   "fieldname": "revenue_group",
+   "fieldtype": "Link",
+   "label": "Revenue Group",
+   "options": "Revenue Group"
+  },
+  {
+   "fieldname": "product_code",
+   "fieldtype": "Data",
+   "label": "Product Code"
+  },
+  {
+   "fieldname": "product_name_en",
+   "fieldtype": "Data",
+   "label": "Product Name EN"
+  },
+  {
+   "fieldname": "product_name_kh",
+   "fieldtype": "Data",
+   "label": "Product Name KH"
+  },
+  {
+   "fieldname": "unit",
+   "fieldtype": "Link",
+   "label": "Unit",
+   "options": "Unit Of Measurement"
+  },
+  {
+   "fieldname": "option_1",
+   "fieldtype": "Data",
+   "label": "Option 1"
+  },
+  {
+   "fieldname": "option_2",
+   "fieldtype": "Data",
+   "label": "Option 2"
+  },
+  {
+   "fieldname": "option_3",
+   "fieldtype": "Data",
+   "label": "Option 3"
+  },
+  {
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "label": "Price"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-07-18 09:41:44.687684",
+ "modified_by": "Administrator",
+ "module": "Inventory",
+ "name": "Generate Products Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
