@@ -7,6 +7,8 @@ from epos_restaurant_2023.api.split_bill import on_save as on_split_bill ,get_sa
 
 @frappe.whitelist(methods=["POST"])
 def get_sale_detail(sale_name):
+    if frappe.get_cached_value("Sale",sale_name,"sale_status") =="Closed":
+        frappe.throw("This sales order has already been closed. Please refresh your pending orders list.")
     return sale.get_sale_detail(sale_name)
 
 

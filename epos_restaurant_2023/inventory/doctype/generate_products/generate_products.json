@@ -1,0 +1,102 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "hash",
+ "creation": "2026-07-17 16:25:59.804274",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "generate_for_product",
+  "parent_product_code",
+  "category",
+  "column_break_lkrd",
+  "product_code",
+  "section_break_smgw",
+  "option_1",
+  "column_break_rkrm",
+  "option_2",
+  "column_break_kqmd",
+  "option_3"
+ ],
+ "fields": [
+  {
+   "fieldname": "parent_product_code",
+   "fieldtype": "Data",
+   "label": "Parent Product Code"
+  },
+  {
+   "fieldname": "section_break_smgw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "option_1",
+   "fieldtype": "Small Text",
+   "label": "Option 1"
+  },
+  {
+   "fieldname": "column_break_rkrm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "option_2",
+   "fieldtype": "Small Text",
+   "label": "Option 2"
+  },
+  {
+   "fieldname": "column_break_kqmd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "option_3",
+   "fieldtype": "Small Text",
+   "label": "Option 3"
+  },
+  {
+   "fieldname": "generate_for_product",
+   "fieldtype": "Select",
+   "label": "Generate For Product",
+   "options": "New Product\nExisting Product"
+  },
+  {
+   "fieldname": "product_code",
+   "fieldtype": "Link",
+   "label": "Product Code",
+   "options": "Product"
+  },
+  {
+   "fieldname": "category",
+   "fieldtype": "Link",
+   "label": "Category",
+   "options": "Product Category"
+  },
+  {
+   "fieldname": "column_break_lkrd",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-07-17 18:31:29.656966",
+ "modified_by": "Administrator",
+ "module": "Inventory",
+ "name": "Generate Products",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

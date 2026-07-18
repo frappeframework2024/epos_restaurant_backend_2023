@@ -2,18 +2,15 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("POS Reservation", {
+    onload(frm){
+       
+        if(frm.doc.__islocal){
+            on_load(frm); 
+        }
+    },
 	refresh(frm) { 
         if(frm.doc.__islocal){
-            frm.doc.reservation_status = "Reserved";
-            frm.refresh_field("reservation_status");
-            frm.doc.status = "Reserved";
-            frm.refresh_field("status");
-            set_df_propert(frm,"confirmed","hidden",1);
-            set_query(frm,"reservation_status",[
-                ["POS Reservation Status","reservation_status","in",["Reserved,Pending"]]
-            ]); 
-
-
+            on_load(frm);
             // Button action sc
         }else{
              
@@ -68,6 +65,18 @@ frappe.ui.form.on("POS Reservation", {
     }, 
     
 });
+
+function on_load(frm){
+    
+        frm.doc.reservation_status = "Pending";
+        frm.refresh_field("reservation_status");
+        frm.doc.status = "Pending";
+        frm.refresh_field("status");
+        set_df_propert(frm,"confirmed","hidden",1);
+        set_query(frm,"reservation_status",[
+            ["POS Reservation Status","reservation_status","in",["Reserved,Pending"]]
+        ]);  
+}
 
 function set_query(frm,field_name, filters){	 
     frm.set_query(field_name, function() {

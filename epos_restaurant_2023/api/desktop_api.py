@@ -110,6 +110,7 @@ def get_kot_template(sale, printer_name, products, version = "v1"):
         return result
     
     elif version == "v2":
+        return []
         def parse_combo(combo_menu, combo_menu_data):
             if not combo_menu:
                 return None

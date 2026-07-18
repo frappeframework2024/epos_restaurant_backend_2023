@@ -2113,6 +2113,15 @@ export default class Sale {
     }
 
     async onProcessTaskAfterSubmit(doc) {
+        
+        if(this.getPrintServerUrl()){
+            this.sale = {};
+            this.orderTime = "";
+            socket.emit("RefreshTable");
+            return;
+        }
+
+
         if (this.action == "submit_order") {
             this.onPrintToKitchen(doc);
             if (this.setting?.device_setting?.print_invoice_on_submit == 1 && this.changed == 1) {
