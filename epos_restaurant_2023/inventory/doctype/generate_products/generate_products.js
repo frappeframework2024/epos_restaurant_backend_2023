@@ -9,6 +9,14 @@ frappe.ui.form.on("Generate Products", {
 			make_generate_product_tag_input(frm, fieldname);
 		});
 	},
+	setup(frm){
+        frappe.realtime.on("generate_product", (data) => {
+            frappe.show_alert({
+                message: data.message,
+                indicator: 'blue'
+            });
+		});
+    },
 });
 
 function make_generate_product_tag_input(frm, fieldname) {

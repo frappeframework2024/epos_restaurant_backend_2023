@@ -200,6 +200,7 @@ scheduler_events = {
             "epos_restaurant_2023.api.api.add_record_to_expired_and_low_stock_products"
         ],
         "0 1 * * *":[
+            "epos_restaurant_2023.api.schedule_task.delete_print_queues", # 1 AM every daty
             "epos_restaurant_2023.api.archive_data.delete_archive_transaction", # 1 AM every daty
         ],
 

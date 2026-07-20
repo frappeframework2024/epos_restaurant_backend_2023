@@ -108,8 +108,6 @@ def submit_update_audit_trail_from_version(doc):
             })
             # frappe.enqueue("edoor.api.utils.add_audit_trail", queue='long', data=comment_doc)
             add_audit_trail(comment_doc, update_creation_date=True)
-
-
     
 def add_audit_trail(data,update_creation_date=False):
     for d in data:    
@@ -132,4 +130,10 @@ def add_audit_trail(data,update_creation_date=False):
         doc = frappe.get_doc(d).insert(ignore_permissions=True)
         if update_creation_date:
             frappe.db.sql("update `tabComment` set creation=%(creation)s where name=%(name)s",{"name":doc.name, "creation":d["creation"]})
+
+@frappe.whitelist()
+def delete_print_queues():
+    sql = "delete from `tabPrint Queue` where status != 'Pending'"
+    frappe.db.sql(sql)
+    frappe.db.commit()
 

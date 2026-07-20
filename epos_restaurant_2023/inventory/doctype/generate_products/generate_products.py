@@ -5,10 +5,12 @@ import json
 import re
 from frappe.model.document import bulk_insert
 import frappe
- 
+from collections.abc import Callable
 from frappe.model.document import Document
 from itertools import product
-
+from frappe.query_builder import DocType
+from frappe.utils import cint, cstr, now_datetime
+import re
 
 class GenerateProducts(Document):
 	def validate(self):
@@ -16,35 +18,147 @@ class GenerateProducts(Document):
 			tags = _parse_tags(self.get(fieldname))
 			self.set(fieldname, json.dumps(tags, ensure_ascii=False) if tags else "")
 
-	def on_update(self):
-		self.generate_product()
+	def before_save(self):
+		global counter
+		counter = 1
+		if self.show_generated_products:
+			if self.has_value_changed("option_1") or self.has_value_changed("option_2") or self.has_value_changed("option_3"):
+				self.products = []
+				generate_products(self)
+		else:
+			self.products = []
+		
+	def on_submit(self):
+		frappe.publish_realtime("generate_product", {"message": "Generating Products"},user=frappe.session.user)
+		last_row = bulk_insert_products(self)
+		if not self.parent_product_code:
+			update_series_counter(self.series.split(".")[0], int(re.sub(r"\D", "", last_row.product_code)))
 
-	def generate_product(self):
-		options =  get_new_products(self)
-		def get_product_docs():
+def bulk_insert_products(self):
+	def get_product_docs():
+		if self.show_generated_products:
+			for p in self.products:
+				doc = frappe.new_doc("Product")
+				doc.name = p.product_code
+				doc.product_code = p.product_code
+				doc.product_name_en = p.product_name_en
+				doc.product_name_kh = p.product_name_kh
+				doc.product_category = p.product_category
+				doc.unit = p.unit
+				doc.is_inventory_product = p.is_inventory_product
+				doc.revenue_group = p.revenue_group
+				doc.price = p.price
+				doc.option_1 = p.option_1
+				doc.option_2 = p.option_2
+				doc.option_3 = p.option_3
+				doc.parent_product_code = self.parent_product_code
+				yield doc
+		else:
+			options = get_new_products(self)
 			for index, d in enumerate(options):
 				doc = frappe.new_doc("Product")
-				doc.name = f"{self.product_code}-{index+1}"
-				doc.product_code = doc.name
-				doc.product_name = f"{self.parent_product}-{d}"
-				doc.description = f"{self.parent_product}-{d}"
-				doc.product_category = self.category
-				doc.unit = "Unit"
-				doc.is_inventory_product =1
-
-
-				doc.product_name = "" 
+				generate_product(self, doc, index, d)
 				yield doc
+	bulk_insert("Product", get_product_docs(), chunk_size=10_000)
+	frappe.publish_realtime("generate_product", {"message": "Products Generated"},user=frappe.session.user)
+	return list(get_product_docs())[-1]
 
-		bulk_insert("Product", get_product_docs(), chunk_size=10_000)
-	
+def generate_products(self):
+	options =  get_new_products(self)
+	for index, d in enumerate(options):
+		p = frappe.new_doc("Generate Products Item")
+		generate_product(self, p, index, d)
+		self.append("products", p)
 
+def generate_product(self, p, index, d):
+	parent_product_code = self.parent_product_code or local_make_autoname(self.series)
+	if p.doctype == "Product":
+		p.name = f"{parent_product_code}-{index+1}" if self.parent_product_code else f"{parent_product_code}"
+	p.product_code = f"{parent_product_code}-{index+1}" if self.parent_product_code else f"{parent_product_code}"
+	option_1 = str(d.split("-")[0]) if len(d.split("-")) > 0 else ""
+	option_2 = str(d.split("-")[1]) if len(d.split("-")) > 1 else ""
+	option_3 = str(d.split("-")[2]) if len(d.split("-")) > 2 else ""
+	p.option_1 = "" if option_1 == "None" else option_1
+	p.option_2 = "" if option_2 == "None" else option_2
+	p.option_3 = "" if option_3 == "None" else option_3
+	option_1_prefix = self.option_1_prefix + ": "+ p.option_1 if self.option_1_prefix and p.option_1 else p.option_1
+	option_2_prefix = ", "+self.option_2_prefix + ": "+ p.option_2 if self.option_2_prefix and p.option_2 else p.option_2
+	option_3_prefix = ", "+self.option_3_prefix + ": "+ p.option_3 if self.option_3_prefix and p.option_3 else p.option_3
+	product_name_en = self.product_name_en if self.product_name_en else parent_product_code
+	product_name_kh = self.product_name_kh if self.product_name_kh else parent_product_code
+	p.product_name_en = product_name_en+" "+option_1_prefix+option_2_prefix+option_3_prefix
+	p.product_name_kh = product_name_kh+" "+option_1_prefix+option_2_prefix+option_3_prefix
+	p.product_category = self.category
+	p.unit = self.unit
+	p.is_inventory_product = self.is_inventory_product
+	p.revenue_group = self.revenue_group
+	p.price = self.price
+
+def local_make_autoname(key=""):
+	parts = key.split(".")
+	return parse_naming_series(parts)
+
+def parse_naming_series(parts: list[str] | str) -> str:
+	name = ""
+	_sentinel = object()
+	if isinstance(parts, str):
+		parts = parts.split(".")
+	series_set = False
+	today = now_datetime()
+	for e in parts:
+		if not e:
+			continue
+		part = ""
+		if e.startswith("#"):
+			if not series_set:
+				digits = len(e)
+				part = getseries(name, digits)
+				series_set = True
+		elif e == "YY":
+			part = today.strftime("%y")
+		elif e == "MM":
+			part = today.strftime("%m")
+		elif e == "DD":
+			part = today.strftime("%d")
+		elif e == "YYYY":
+			part = today.strftime("%Y")
+		elif e == "WW":
+			part = determine_consecutive_week_number(today)
+		elif e == "timestamp":
+			part = str(today)
+		elif method := frappe.get_hooks("naming_series_variables", {}).get(e):
+			part = frappe.get_attr(method[0])(doc, e)
+		else:
+			part = e
+		if isinstance(part, str):
+			name += part
+		elif isinstance(part, NAMING_SERIES_PART_TYPES):
+			name += cstr(part).strip()
+	return name
+
+counter = 0
+def getseries(key, digits):
+	global counter
+	series = DocType("Series")
+	current = (frappe.qb.from_(series).where(series.name == key).for_update().select("current")).run()
+	current = current[0][0] if current and current[0][0] is not None else 0
+	current = cint(current) + cint(counter)
+	counter = counter + 1
+	return ("%0" + str(digits) + "d") % current
+
+def update_series_counter(key,counter):
+	series = DocType("Series")
+	current = (frappe.qb.from_(series).where(series.name == key).for_update().select("current")).run()
+	if current and current[0][0] is not None:
+		frappe.db.sql("UPDATE `tabSeries` SET `current` = `current` + %s WHERE `name`=%s", (counter, key))
+	else:
+		frappe.db.sql("INSERT INTO `tabSeries` (`name`, `current`) VALUES (%s, %s)", (key, counter))
+	frappe.db.commit()
 
 def _parse_tags(value):
 	"""Return unique, trimmed tags and accept legacy comma/newline text."""
 	if not value:
 		return []
-
 	if isinstance(value, list):
 		parsed = value
 	else:
@@ -52,10 +166,8 @@ def _parse_tags(value):
 			parsed = json.loads(value)
 		except (TypeError, json.JSONDecodeError):
 			parsed = re.split(r"[,\r\n]+", str(value))
-
 	if not isinstance(parsed, list):
 		parsed = [parsed]
-
 	tags = []
 	seen = set()
 	for item in parsed:
@@ -64,24 +176,17 @@ def _parse_tags(value):
 		if tag and key not in seen:
 			tags.append(tag)
 			seen.add(key)
-
 	return tags
-
-
-
-	
 
 def get_new_products(self):
 	option_lists = [
-		json.loads(self.option_1 or "[]"),
-		json.loads(self.option_2 or "[]"),
-		json.loads(self.option_3 or "[]"),
+		json.loads(self.option_1 or '["None"]'),
+		json.loads(self.option_2 or '["None"]'),
+		json.loads(self.option_3 or '["None"]'),
 	]
-
 	active_options = [values for values in option_lists if values]
 	if not active_options:
 		return []
-
 	return [
 		"-".join(option_values)
 		for option_values in product(*active_options)

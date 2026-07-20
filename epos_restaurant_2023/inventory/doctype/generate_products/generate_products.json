@@ -8,23 +8,30 @@
  "field_order": [
   "generate_for_product",
   "parent_product_code",
-  "product_code",
+  "product_name_en",
+  "product_name_kh",
   "column_break_lkrd",
   "category",
   "revenue_group",
   "series",
+  "product_code",
   "column_break_xlot",
   "price",
   "unit",
   "is_inventory_product",
+  "show_generated_products",
   "section_break_smgw",
+  "option_1_prefix",
   "option_1",
   "column_break_rkrm",
+  "option_2_prefix",
   "option_2",
   "column_break_kqmd",
+  "option_3_prefix",
   "option_3",
-  "section_break_clua",
-  "products"
+  "section_break_lekn",
+  "products",
+  "amended_from"
  ],
  "fields": [
   {
@@ -66,6 +73,7 @@
    "options": "New Product\nExisting Product"
   },
   {
+   "depends_on": "eval:doc.generate_for_product == \"Existing Product\"",
    "fieldname": "product_code",
    "fieldtype": "Link",
    "label": "Product Code",
@@ -74,8 +82,10 @@
   {
    "fieldname": "category",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Category",
-   "options": "Product Category"
+   "options": "Product Category",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_lkrd",
@@ -96,8 +106,10 @@
   {
    "fieldname": "unit",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Unit",
-   "options": "Unit Of Measurement"
+   "options": "Unit Of Measurement",
+   "reqd": 1
   },
   {
    "default": "0",
@@ -109,7 +121,7 @@
    "fetch_from": "category.product_code_prefix",
    "fetch_if_empty": 1,
    "fieldname": "series",
-   "fieldtype": "Select",
+   "fieldtype": "Data",
    "label": "Series"
   },
   {
@@ -118,19 +130,62 @@
    "label": "Price"
   },
   {
-   "fieldname": "section_break_clua",
+   "fieldname": "section_break_lekn",
    "fieldtype": "Section Break"
   },
   {
+   "depends_on": "eval:doc.show_generated_products == 1",
    "fieldname": "products",
    "fieldtype": "Table",
    "label": "Products",
    "options": "Generate Products Item"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Generate Products",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "product_name_en",
+   "fieldtype": "Data",
+   "label": "Product Name EN"
+  },
+  {
+   "fieldname": "product_name_kh",
+   "fieldtype": "Data",
+   "label": "Product Name KH"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_generated_products",
+   "fieldtype": "Check",
+   "label": "Show Generated Products"
+  },
+  {
+   "fieldname": "option_1_prefix",
+   "fieldtype": "Data",
+   "label": "Option 1 Prefix"
+  },
+  {
+   "fieldname": "option_2_prefix",
+   "fieldtype": "Data",
+   "label": "Option 2 Prefix"
+  },
+  {
+   "fieldname": "option_3_prefix",
+   "fieldtype": "Data",
+   "label": "Option 3 Prefix"
   }
  ],
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2026-07-18 09:46:16.406306",
+ "modified": "2026-07-18 16:30:14.219547",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Generate Products",
