@@ -1,7 +1,7 @@
 // Copyright (c) 2026, Tes Pheakdey and contributors
 // For license information, please see license.txt
 
-const GENERATE_PRODUCT_OPTION_FIELDS = ["option_1", "option_2", "option_3"];
+const GENERATE_PRODUCT_OPTION_FIELDS = ["option_1_html", "option_2_html", "option_3_html"];
 
 frappe.ui.form.on("Generate Products", {
 	refresh(frm) {
@@ -22,13 +22,13 @@ frappe.ui.form.on("Generate Products", {
 function make_generate_product_tag_input(frm, fieldname) {
 	const field = frm.fields_dict[fieldname];
 	if (!field || !field.$wrapper) return;
-
+	
 	field.$wrapper.find(".generate-product-tag-editor").remove();
 	if (field.$input_area) field.$input_area.hide();
 	if (field.$disp_area) field.$disp_area.hide();
 	field.$wrapper.find(".control-value").hide();
 
-	let tags = parse_generate_product_tags(frm.doc[fieldname]);
+	let tags = parse_generate_product_tags(frm.doc[fieldname.toString().replace("_html","")]);
 	let dragged_index = null;
 	const can_write = frm.perm && frm.perm[0] && frm.perm[0].write;
 	const read_only = Boolean(field.df.read_only || frm.read_only || !can_write);
@@ -59,10 +59,10 @@ function make_generate_product_tag_input(frm, fieldname) {
 	});
 
 	field.$wrapper.append($editor);
-
+	
 	function save_and_render() {
 		const value_update = frm.set_value(
-			fieldname,
+			fieldname.toString().replace("_html",""),
 			tags.length ? JSON.stringify(tags) : ""
 		);
 		render();
@@ -82,7 +82,6 @@ function make_generate_product_tag_input(frm, fieldname) {
 	function add_values(value) {
 		const existing = new Set(tags.map((tag) => tag.toLocaleLowerCase()));
 		let changed = false;
-
 		String(value || "")
 			.split(/[,\n\r]+/)
 			.map((tag) => tag.trim())
@@ -95,11 +94,10 @@ function make_generate_product_tag_input(frm, fieldname) {
 					changed = true;
 				}
 			});
-
 		$input.val("");
 		if (changed) save_and_render();
 	}
-
+	
 	function render() {
 		$input.detach();
 		$editor.empty();
@@ -201,7 +199,7 @@ function make_generate_product_tag_input(frm, fieldname) {
 			$editor.append($input);
 		}
 	}
-
+	
 	$editor.on("click", () => $input.trigger("focus"));
 	$input.on("keydown", (event) => {
 		if (["Enter", ",", "Tab"].includes(event.key) && $input.val().trim()) {
@@ -218,7 +216,7 @@ function make_generate_product_tag_input(frm, fieldname) {
 			if (/[,\n\r]/.test($input.val())) add_values($input.val());
 		}, 0);
 	});
-
+	
 	render();
 }
 

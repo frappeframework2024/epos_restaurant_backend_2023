@@ -6,7 +6,6 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "generate_for_product",
   "parent_product_code",
   "product_name_en",
   "product_name_kh",
@@ -14,7 +13,6 @@
   "category",
   "revenue_group",
   "series",
-  "product_code",
   "column_break_xlot",
   "price",
   "unit",
@@ -23,12 +21,15 @@
   "section_break_smgw",
   "option_1_prefix",
   "option_1",
+  "option_1_html",
   "column_break_rkrm",
   "option_2_prefix",
   "option_2",
+  "option_2_html",
   "column_break_kqmd",
   "option_3_prefix",
   "option_3",
+  "option_3_html",
   "section_break_lekn",
   "products",
   "amended_from"
@@ -46,6 +47,7 @@
   {
    "fieldname": "option_1",
    "fieldtype": "Small Text",
+   "hidden": 1,
    "label": "Option 1"
   },
   {
@@ -55,6 +57,7 @@
   {
    "fieldname": "option_2",
    "fieldtype": "Small Text",
+   "hidden": 1,
    "label": "Option 2"
   },
   {
@@ -64,20 +67,8 @@
   {
    "fieldname": "option_3",
    "fieldtype": "Small Text",
+   "hidden": 1,
    "label": "Option 3"
-  },
-  {
-   "fieldname": "generate_for_product",
-   "fieldtype": "Select",
-   "label": "Generate For Product",
-   "options": "New Product\nExisting Product"
-  },
-  {
-   "depends_on": "eval:doc.generate_for_product == \"Existing Product\"",
-   "fieldname": "product_code",
-   "fieldtype": "Link",
-   "label": "Product Code",
-   "options": "Product"
   },
   {
    "fieldname": "category",
@@ -180,12 +171,27 @@
    "fieldname": "option_3_prefix",
    "fieldtype": "Data",
    "label": "Option 3 Prefix"
+  },
+  {
+   "fieldname": "option_1_html",
+   "fieldtype": "HTML",
+   "label": "Option 1 HTML"
+  },
+  {
+   "fieldname": "option_2_html",
+   "fieldtype": "HTML",
+   "label": "Option 2 HTML"
+  },
+  {
+   "fieldname": "option_3_html",
+   "fieldtype": "HTML",
+   "label": "Option 3 HTML"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-07-18 16:30:14.219547",
+ "modified": "2026-07-20 11:33:02.196333",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Generate Products",
