@@ -57,11 +57,11 @@ def bulk_insert_products(self):
 				generate_product(self, doc, index, d)
 				yield doc
 	bulk_insert("Product", get_product_docs(), chunk_size=10000)
-	update_series(self.series.split(".")[0],int(re.sub(r"\D", "", list(get_product_docs())[-1])))
+	update_series(self.parent_product_code,self.series.split(".")[0],int(re.sub(r"\D", "",list(get_product_docs())[-1].product_code)))
 	frappe.publish_realtime("generate_product", {"message": "Products Generated"},user=frappe.session.user)
 
-def update_series(key,counter):
-	if not self.parent_product_code:
+def update_series(parent_product_code,key,counter):
+	if not parent_product_code:
 		series = DocType("Series")
 		current = (frappe.qb.from_(series).where(series.name == key).for_update().select("current")).run()
 		if current and current[0][0] is not None:

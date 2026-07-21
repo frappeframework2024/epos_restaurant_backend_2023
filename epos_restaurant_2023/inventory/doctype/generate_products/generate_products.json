@@ -160,17 +160,20 @@
   {
    "fieldname": "option_1_prefix",
    "fieldtype": "Data",
-   "label": "Option 1 Prefix"
+   "label": "Option 1 Prefix",
+   "reqd": 1
   },
   {
    "fieldname": "option_2_prefix",
    "fieldtype": "Data",
-   "label": "Option 2 Prefix"
+   "label": "Option 2 Prefix",
+   "reqd": 1
   },
   {
    "fieldname": "option_3_prefix",
    "fieldtype": "Data",
-   "label": "Option 3 Prefix"
+   "label": "Option 3 Prefix",
+   "reqd": 1
   },
   {
    "fieldname": "option_1_html",
@@ -191,7 +194,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-07-20 11:33:02.196333",
+ "modified": "2026-07-21 10:04:14.639293",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Generate Products",
