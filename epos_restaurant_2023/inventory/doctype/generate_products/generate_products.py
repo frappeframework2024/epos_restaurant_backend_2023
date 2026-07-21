@@ -22,17 +22,14 @@ class GenerateProducts(Document):
 		global counter
 		counter = 1
 		if self.show_generated_products:
-			if self.has_value_changed("option_1") or self.has_value_changed("option_2") or self.has_value_changed("option_3"):
-				self.products = []
-				generate_products(self)
+			self.products = []
+			generate_products(self)
 		else:
 			self.products = []
 		
 	def on_submit(self):
 		frappe.publish_realtime("generate_product", {"message": "Generating Products"},user=frappe.session.user)
-		last_row = bulk_insert_products(self)
-		if not self.parent_product_code:
-			update_series_counter(self.series.split(".")[0], int(re.sub(r"\D", "", last_row.product_code)))
+		frappe.enqueue("epos_restaurant_2023.inventory.doctype.generate_products.generate_products.bulk_insert_products",self=self,queue="long",enqueue_after_commit=True,job_name=f"Generate Products {self.name}")
 
 def bulk_insert_products(self):
 	def get_product_docs():
@@ -59,9 +56,19 @@ def bulk_insert_products(self):
 				doc = frappe.new_doc("Product")
 				generate_product(self, doc, index, d)
 				yield doc
-	bulk_insert("Product", get_product_docs(), chunk_size=10_000)
+	bulk_insert("Product", get_product_docs(), chunk_size=10000)
+	update_series(self.series.split(".")[0],int(re.sub(r"\D", "", list(get_product_docs())[-1])))
 	frappe.publish_realtime("generate_product", {"message": "Products Generated"},user=frappe.session.user)
-	return list(get_product_docs())[-1]
+
+def update_series(key,counter):
+	if not self.parent_product_code:
+		series = DocType("Series")
+		current = (frappe.qb.from_(series).where(series.name == key).for_update().select("current")).run()
+		if current and current[0][0] is not None:
+			frappe.db.sql("UPDATE `tabSeries` SET `current` = `current` + %s WHERE `name`=%s", (counter, key))
+		else:
+			frappe.db.sql("INSERT INTO `tabSeries` (`name`, `current`) VALUES (%s, %s)", (key, counter))
+		frappe.db.commit()
 
 def generate_products(self):
 	options =  get_new_products(self)
@@ -145,15 +152,6 @@ def getseries(key, digits):
 	current = cint(current) + cint(counter)
 	counter = counter + 1
 	return ("%0" + str(digits) + "d") % current
-
-def update_series_counter(key,counter):
-	series = DocType("Series")
-	current = (frappe.qb.from_(series).where(series.name == key).for_update().select("current")).run()
-	if current and current[0][0] is not None:
-		frappe.db.sql("UPDATE `tabSeries` SET `current` = `current` + %s WHERE `name`=%s", (counter, key))
-	else:
-		frappe.db.sql("INSERT INTO `tabSeries` (`name`, `current`) VALUES (%s, %s)", (key, counter))
-	frappe.db.commit()
 
 def _parse_tags(value):
 	"""Return unique, trimmed tags and accept legacy comma/newline text."""
