@@ -52,9 +52,8 @@
   "sale_products",
   "section_break_8",
   "column_break_glqa",
-  "note",
-  "column_break_10",
   "foc_note",
+  "note",
   "html_summary",
   "hide_section_section",
   "tip_account_code",
@@ -553,10 +552,6 @@
    "fieldname": "note",
    "fieldtype": "Small Text",
    "label": "Note"
-  },
-  {
-   "fieldname": "column_break_10",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "foc_note",
@@ -1727,7 +1722,7 @@
    "link_fieldname": "sale"
   }
  ],
- "modified": "2026-05-06 09:11:15.644740",
+ "modified": "2026-07-21 10:21:53.451025",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale",
