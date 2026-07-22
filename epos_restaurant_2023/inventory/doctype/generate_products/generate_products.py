@@ -126,8 +126,8 @@ def generate_product(self, p, index, d):
 	p.option_2 = "" if option_2 == "None" else option_2
 	p.option_3 = "" if option_3 == "None" else option_3
 	option_1_prefix = self.option_1_prefix + ": "+ p.option_1 if self.option_1_prefix and p.option_1 else p.option_1
-	option_2_prefix = ", "+self.option_2_prefix + ": "+ p.option_2 if self.option_2_prefix and p.option_2 else p.option_2
-	option_3_prefix = ", "+self.option_3_prefix + ": "+ p.option_3 if self.option_3_prefix and p.option_3 else p.option_3
+	option_2_prefix = ", "+self.option_2_prefix + ": "+ p.option_2 if self.option_2_prefix and p.option_2 else ", "+p.option_2 if p.option_2 else ""
+	option_3_prefix = ", "+self.option_3_prefix + ": "+ p.option_3 if self.option_3_prefix and p.option_3 else ", "+p.option_3 if p.option_3 else ""
 	product_name_en = self.product_name_en if self.product_name_en else parent_product_code
 	product_name_kh = self.product_name_kh if self.product_name_kh else parent_product_code
 	p.product_name_en = product_name_en+" "+option_1_prefix+option_2_prefix+option_3_prefix
