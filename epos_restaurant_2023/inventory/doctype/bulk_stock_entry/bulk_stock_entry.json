@@ -1,0 +1,216 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-07-20 10:49:43.599118",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_hbul",
+  "naming_series",
+  "transaction_type",
+  "vendor",
+  "column_break_ubsr",
+  "posting_date",
+  "stock_location",
+  "business_branch",
+  "amended_from",
+  "search_product_code_section",
+  "search_product_code",
+  "get_product",
+  "column_break_oqgu",
+  "option_1_html",
+  "column_break_jgqw",
+  "option_2_html",
+  "column_break_qsuk",
+  "option_3_html",
+  "section_break_hxxi",
+  "products",
+  "section_break_anwc",
+  "note",
+  "column_break_rlzg",
+  "total_product",
+  "total_quantity",
+  "total_cost"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_hbul",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Bulk Stock Entry",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "BSE.YYYY.-.####"
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Posting Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "transaction_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Transaction Type",
+   "options": "Purchase Order\nStock Adjustment"
+  },
+  {
+   "depends_on": "eval:doc.transaction_type == \"Purchase Order\"",
+   "fieldname": "vendor",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Vendor",
+   "options": "Vendor"
+  },
+  {
+   "fieldname": "column_break_ubsr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "stock_location",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Stock Location",
+   "options": "Stock Location",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "stock_location.business_branch",
+   "fieldname": "business_branch",
+   "fieldtype": "Link",
+   "label": "Business Branch",
+   "options": "Business Branch",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_hxxi",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "products",
+   "fieldtype": "Table",
+   "label": "Products",
+   "options": "Bulk Stock Entry Product"
+  },
+  {
+   "fieldname": "section_break_anwc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
+  },
+  {
+   "fieldname": "column_break_rlzg",
+   "fieldtype": "Column Break",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "total_product",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Total Product"
+  },
+  {
+   "fieldname": "total_quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Total Quantity"
+  },
+  {
+   "fieldname": "total_cost",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Total Cost"
+  },
+  {
+   "depends_on": "eval:doc.docstatus == 0",
+   "fieldname": "search_product_code_section",
+   "fieldtype": "Section Break",
+   "label": "Search Product Code"
+  },
+  {
+   "fieldname": "search_product_code",
+   "fieldtype": "Autocomplete",
+   "label": "Search Product Code"
+  },
+  {
+   "fieldname": "column_break_oqgu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_jgqw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_qsuk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "option_1_html",
+   "fieldtype": "HTML",
+   "label": "Option 1"
+  },
+  {
+   "fieldname": "option_2_html",
+   "fieldtype": "HTML",
+   "label": "Option 2"
+  },
+  {
+   "fieldname": "option_3_html",
+   "fieldtype": "HTML",
+   "label": "Option 3"
+  },
+  {
+   "fieldname": "get_product",
+   "fieldtype": "Button",
+   "label": "Get Product"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-07-21 15:17:47.136387",
+ "modified_by": "Administrator",
+ "module": "Inventory",
+ "name": "Bulk Stock Entry",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
