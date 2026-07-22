@@ -78,6 +78,7 @@ def bulk_insert_products(self,generated_products):
 		else:
 			index = get_last_index(self)
 			for d in (generated_products):
+				index = index + 1
 				doc = frappe.new_doc("Product")
 				generate_product(self, doc, index, d)
 				yield doc
@@ -99,6 +100,7 @@ def update_series(parent_product_code,key,counter):
 def generate_products(self):
 	options =  get_new_products(self)
 	index = get_last_index(self)
+	frappe.msgprint(str(index))
 	for d in (options):
 		index = index + 1
 		p = frappe.new_doc("Generate Products Item")
