@@ -109,9 +109,9 @@ def generate_products(self):
 def get_last_index(self):
 	last_index = frappe.db.sql("SELECT REGEXP_REPLACE(name, '[^0-9]', '') as `index` FROM `tabProduct` where parent_product_code = '{0}' ORDER BY cast(REGEXP_REPLACE(name, '[^0-9]', '') as int) desc limit 1".format(self.parent_product_code),as_dict=1)
 	if last_index:
-		return int(last_index[0]["index"]) or 1
+		return int(last_index[0]["index"]) or 0
 	else:
-		return 1
+		return 0
 
 def generate_product(self, p, index, d):
 	parent_product_code = self.parent_product_code or local_make_autoname(self.series)
