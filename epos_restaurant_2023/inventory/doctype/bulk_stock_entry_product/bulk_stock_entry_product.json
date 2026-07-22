@@ -8,15 +8,20 @@
  "field_order": [
   "product_code",
   "product_name",
-  "option_1",
-  "option_2",
-  "option_3",
   "unit",
-  "current_quantity",
-  "current_cost",
+  "column_break_fmrg",
   "quantity",
   "cost",
-  "total_cost"
+  "total_cost",
+  "column_break_iezk",
+  "current_quantity",
+  "current_cost",
+  "section_break_albe",
+  "option_1",
+  "column_break_pqng",
+  "option_2",
+  "column_break_eaik",
+  "option_3"
  ],
  "fields": [
   {
@@ -92,12 +97,32 @@
    "in_list_view": 1,
    "label": "Current Cost",
    "read_only": 1
+  },
+  {
+   "fieldname": "column_break_fmrg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_iezk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_albe",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_pqng",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_eaik",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-07-21 16:04:24.552522",
+ "modified": "2026-07-22 14:21:09.220844",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Bulk Stock Entry Product",
