@@ -78,9 +78,9 @@ def bulk_insert_products(self,generated_products):
 		else:
 			index = get_last_index(self)
 			for d in (generated_products):
-				index = index + 1
 				doc = frappe.new_doc("Product")
 				generate_product(self, doc, index, d)
+				index = index + 1
 				yield doc
 	bulk_insert("Product", get_product_docs(), chunk_size=10000)
 	update_series(self.parent_product_code,self.series.split(".")[0],int(re.sub(r"\D", "",list(get_product_docs())[-1].product_code)))
@@ -100,12 +100,11 @@ def update_series(parent_product_code,key,counter):
 def generate_products(self):
 	options =  get_new_products(self)
 	index = get_last_index(self)
-	frappe.msgprint(str(index))
 	for d in (options):
-		index = index + 1
 		p = frappe.new_doc("Generate Products Item")
 		generate_product(self, p, index, d)
 		self.append("products", p)
+		index = index + 1
 
 def get_last_index(self):
 	last_index = frappe.db.sql("SELECT REGEXP_REPLACE(name, '[^0-9]', '') as `index` FROM `tabProduct` where parent_product_code = '{0}' ORDER BY cast(REGEXP_REPLACE(name, '[^0-9]', '') as int) desc limit 1".format(self.parent_product_code),as_dict=1)
