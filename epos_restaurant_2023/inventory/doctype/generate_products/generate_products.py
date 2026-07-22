@@ -70,6 +70,7 @@ def bulk_insert_products(self,generated_products):
 				doc.is_inventory_product = p.is_inventory_product
 				doc.revenue_group = p.revenue_group
 				doc.price = p.price
+				doc.cost = p.cost
 				doc.option_1 = p.option_1
 				doc.option_2 = p.option_2
 				doc.option_3 = p.option_3
@@ -136,6 +137,7 @@ def generate_product(self, p, index, d):
 	p.is_inventory_product = self.is_inventory_product
 	p.revenue_group = self.revenue_group
 	p.price = self.price
+	p.cost = self.cost
 
 def local_make_autoname(key=""):
 	parts = key.split(".")
