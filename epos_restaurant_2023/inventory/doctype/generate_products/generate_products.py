@@ -89,8 +89,9 @@ def update_series(parent_product_code,key,counter):
 	if not parent_product_code:
 		series = DocType("Series")
 		current = (frappe.qb.from_(series).where(series.name == key).for_update().select("current")).run()
-		if current and current[0][0] is not None:
-			frappe.db.sql("UPDATE `tabSeries` SET `current` = `current` + %s WHERE `name`=%s", (counter, key))
+		if current:
+			if current[0][0] is not None:
+				frappe.db.sql("UPDATE `tabSeries` SET `current` = `current` + %s WHERE `name`=%s", (counter, key))
 		else:
 			frappe.db.sql("INSERT INTO `tabSeries` (`name`, `current`) VALUES (%s, %s)", (key, counter))
 		frappe.db.commit()
