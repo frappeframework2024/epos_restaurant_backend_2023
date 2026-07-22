@@ -52,7 +52,7 @@ class GenerateProducts(Document):
 			new_products = [d for d in generated_products if (str(d.split("-")[0]),str(d.split("-")[1]),str(d.split("-")[2])) not in lookup]
 			show_msg = 1 if len(generated_products) != len(new_products) else 0
 		if show_msg == 1:
-			frappe.msgprint("Existing Product Will Be Remove")
+			frappe.msgprint("Products with the same options as existing products will be removed")
 		frappe.publish_realtime("generate_product", {"message": "Generating Products"},user=frappe.session.user)
 		frappe.enqueue("epos_restaurant_2023.inventory.doctype.generate_products.generate_products.bulk_insert_products",self=self,generated_products=new_products,queue="long",enqueue_after_commit=True,job_name=f"Generate Products {self.name}")
 
