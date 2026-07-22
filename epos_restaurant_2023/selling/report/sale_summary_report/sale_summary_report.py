@@ -373,6 +373,24 @@ def get_report_summary(data,filters):
 				else:
 					value=sum((d["total_" + f["fieldname"]] or 0) for d in data if d["indent"]==0)
 					report_summary.append({"label":"{}".format(f["label"]),"value":value,"datatype": f["fieldtype"],"indicator":f["indicator"]})
+    
+		summary_by_shift_query = """
+								select
+									sum(a.total_revenue) as total_revenue,
+									b.shift_name
+								from `tabSale` b
+								inner join `tabSale Product` a on b.name = a.parent
+        						inner join `tabShift Type` st on b.shift_name = st.name
+								where 1 = 1 and 
+									{0}
+								group by 
+									b.shift_name
+								order by st.sort
+								""".format(get_conditions(filters))
+        
+		summary_by_shift_data = frappe.db.sql(summary_by_shift_query,filters, as_dict=1)
+		for sh in summary_by_shift_data:
+			report_summary.append({"label":_(sh["shift_name"]),"value":sh["total_revenue"],"datatype": "Currency","indicator":"orange"})
 	return  report_summary
 
 def get_report_chart(filters,data):

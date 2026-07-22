@@ -21,17 +21,42 @@ class GenerateProducts(Document):
 	def before_save(self):
 		global counter
 		counter = 1
-		if self.show_generated_products:
-			self.products = []
-			generate_products(self)
+		if not self.is_new():
+			old_doc = frappe.get_doc("Generate Products",self.name)
+			changed_fields = [
+				df.fieldname
+				for df in frappe.get_meta(self.doctype).fields
+				if self.get(df.fieldname) != old_doc.get(df.fieldname) and df.fieldname != "products"
+			]
+			fieldnames = [df.fieldname for df in frappe.get_meta(self.doctype).fields if df.fieldname != "products"]
+			if self.show_generated_products:
+				if any(f in fieldnames for f in changed_fields):
+					self.products = []
+					generate_products(self)
+			else:
+				self.products = []
 		else:
-			self.products = []
+			generate_products(self)
 		
-	def on_submit(self):
+	def before_submit(self):
+		existing_products = frappe.db.sql("select option_1,option_2,option_3 from `tabProduct` where parent_product_code = '{0}'".format(self.parent_product_code),as_dict=1)
+		lookup = [(d["option_1"], d["option_2"],d["option_3"]) for d in existing_products]
+		show_msg = 0
+		new_products=[]
+		if self.show_generated_products:
+			new_products = [d for d in self.products if (d.option_1, d.option_2,d.option_3) not in lookup]
+			show_msg = 1 if len(self.products) != len(new_products) else 0
+			self.products = new_products
+		else:
+			generated_products = get_new_products(self)
+			new_products = [d for d in generated_products if (str(d.split("-")[0]),str(d.split("-")[1]),str(d.split("-")[2])) not in lookup]
+			show_msg = 1 if len(generated_products) != len(new_products) else 0
+		if show_msg == 1:
+			frappe.msgprint("Existing Product Will Be Remove")
 		frappe.publish_realtime("generate_product", {"message": "Generating Products"},user=frappe.session.user)
-		frappe.enqueue("epos_restaurant_2023.inventory.doctype.generate_products.generate_products.bulk_insert_products",self=self,queue="long",enqueue_after_commit=True,job_name=f"Generate Products {self.name}")
+		frappe.enqueue("epos_restaurant_2023.inventory.doctype.generate_products.generate_products.bulk_insert_products",self=self,generated_products=new_products,queue="long",enqueue_after_commit=True,job_name=f"Generate Products {self.name}")
 
-def bulk_insert_products(self):
+def bulk_insert_products(self,generated_products):
 	def get_product_docs():
 		if self.show_generated_products:
 			for p in self.products:
@@ -51,8 +76,8 @@ def bulk_insert_products(self):
 				doc.parent_product_code = self.parent_product_code
 				yield doc
 		else:
-			options = get_new_products(self)
-			for index, d in enumerate(options):
+			index = get_last_index(self)
+			for d in (generated_products):
 				doc = frappe.new_doc("Product")
 				generate_product(self, doc, index, d)
 				yield doc
@@ -72,10 +97,16 @@ def update_series(parent_product_code,key,counter):
 
 def generate_products(self):
 	options =  get_new_products(self)
-	for index, d in enumerate(options):
+	index = get_last_index(self)
+	for d in (options):
+		index = index + 1
 		p = frappe.new_doc("Generate Products Item")
 		generate_product(self, p, index, d)
 		self.append("products", p)
+
+def get_last_index(self):
+	last_index = frappe.db.sql("SELECT REGEXP_REPLACE(name, '[^0-9]', '') as `index` FROM `tabProduct` where parent_product_code = '{0}' ORDER BY NAME desc limit 1".format(self.parent_product_code),as_dict=1)
+	return int(last_index[0]["index"]) or 1
 
 def generate_product(self, p, index, d):
 	parent_product_code = self.parent_product_code or local_make_autoname(self.series)

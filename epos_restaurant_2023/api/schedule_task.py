@@ -133,7 +133,19 @@ def add_audit_trail(data,update_creation_date=False):
 
 @frappe.whitelist()
 def delete_print_queues():
-    sql = "delete from `tabPrint Queue` where status != 'Pending'"
-    frappe.db.sql(sql)
+    frappe.db.sql("""
+        DELETE FROM `tabSeries`
+        WHERE name IN (
+            SELECT CONCAT('KO', document_name, '-')
+            FROM `tabPrint Queue`
+            WHERE status != 'Pending'
+        )
+    """)
+
+    frappe.db.sql("""
+        DELETE FROM `tabPrint Queue`
+        WHERE status != 'Pending'
+    """)
+
     frappe.db.commit()
 

@@ -21,6 +21,7 @@ def get_stock_location_by_pos_profile(product_code,pos_profile,stock_location):
 def get_product_qty(product,stock_location):
     qty = 0
     data = frappe.db.get_value('Stock Location Product', {'product_code':product,'stock_location':stock_location}, ['quantity'], as_dict=1)
+   
     if data:
         qty = data.quantity
         

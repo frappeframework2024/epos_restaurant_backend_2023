@@ -111,10 +111,17 @@ class BulkStockEntry(Document):
 			as_dict=True,
 		)
 		# remove product that dont have enter qty 
-		self.set(
-			"products",
-			[row for row in self.products if flt(row.quantity) != 0 or flt(row.cost) != 0],
-		)
+		if self.transaction_type == "Purchase Order":
+			self.set(
+				"products",
+				[row for row in self.products if flt(row.quantity) != 0],
+			)
+
+		else:
+			self.set(
+				"products",
+				[row for row in self.products if flt(row.quantity) != 0 or flt(row.cost) != 0],
+			)
 
 
 		# check if product code not have in self.products then add data to child table products

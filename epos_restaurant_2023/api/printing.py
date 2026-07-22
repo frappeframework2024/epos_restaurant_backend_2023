@@ -426,6 +426,7 @@ def get_kitchen_order_template(template = "Default Kitchen Order",doc=None):
     html_template = """
     <html>
     <head>
+        <title>{title}</title>
         <style>
         {css}
         </style>
@@ -434,7 +435,7 @@ def get_kitchen_order_template(template = "Default Kitchen Order",doc=None):
     {template}
     </body>
     </html>
-    """.format(css=template.style,template=template.template)
+    """.format(css=template.style,template=template.template,title=doc.name or "")
    
     
     rendered_html = frappe.render_template(html_template, {"doc":doc,"data":doc.get("data")})

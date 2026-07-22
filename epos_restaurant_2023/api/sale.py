@@ -101,8 +101,9 @@ def submit_order(
             x["is_deleted"] = 1
     
 
-
+    
     if _new_products or len(deleted_products)>0:
+ 
         frappe.enqueue(
             "epos_restaurant_2023.api.sale.generate_print_queue",
             queue="short",

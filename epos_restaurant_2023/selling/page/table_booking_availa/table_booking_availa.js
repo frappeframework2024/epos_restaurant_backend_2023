@@ -83,8 +83,8 @@ MyPage = Class.extend({
 
 	get_time_setting: function() {
 		let default_setting = {
-			min_hour: 9,
-			max_hour: 18,
+			min_hour: 10,
+			max_hour: 24,
 			show_occupy_card: 1,
 			show_unassigned_reservations: 1
 		};
