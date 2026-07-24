@@ -1,8 +1,7 @@
 # Copyright (c) 2023, ratha and contributors
 # For license information, please see license.txt
 
-import ftplib, frappe
-from ftplib import FTP
+import frappe
 import os, shutil
 import shlex, subprocess
 from frappe.model.document import Document

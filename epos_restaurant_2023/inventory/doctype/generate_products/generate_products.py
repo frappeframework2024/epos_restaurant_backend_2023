@@ -49,7 +49,7 @@ class GenerateProducts(Document):
 			self.products = new_products
 		else:
 			generated_products = get_new_products(self)
-			new_products = [d for d in generated_products if (str(d.split("-")[0]),str(d.split("-")[1]),str(d.split("-")[2])) not in lookup]
+			new_products = [d for d in generated_products if (str(d.split(":")[0]),str(d.split(":")[1]),str(d.split(":")[2])) not in lookup]
 			show_msg = 1 if len(generated_products) != len(new_products) else 0
 		if show_msg == 1:
 			frappe.msgprint("Products with the same options as existing products will be removed")
@@ -119,9 +119,9 @@ def generate_product(self, p, index, d):
 	if p.doctype == "Product":
 		p.name = f"{parent_product_code}-{index+1}" if self.parent_product_code else f"{parent_product_code}"
 	p.product_code = f"{parent_product_code}-{index+1}" if self.parent_product_code else f"{parent_product_code}"
-	option_1 = str(d.split("-")[0]) if len(d.split("-")) > 0 else ""
-	option_2 = str(d.split("-")[1]) if len(d.split("-")) > 1 else ""
-	option_3 = str(d.split("-")[2]) if len(d.split("-")) > 2 else ""
+	option_1 = str(d.split(":")[0]) if len(d.split(":")) > 0 else ""
+	option_2 = str(d.split(":")[1]) if len(d.split(":")) > 1 else ""
+	option_3 = str(d.split(":")[2]) if len(d.split(":")) > 2 else ""
 	p.option_1 = "" if option_1 == "None" else option_1
 	p.option_2 = "" if option_2 == "None" else option_2
 	p.option_3 = "" if option_3 == "None" else option_3
@@ -224,7 +224,7 @@ def get_new_products(self):
 	if not active_options:
 		return []
 	return [
-		"-".join(option_values)
+		":".join(option_values)
 		for option_values in product(*active_options)
 	]
 
