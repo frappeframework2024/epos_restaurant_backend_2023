@@ -17,8 +17,6 @@ class GenerateProducts(Document):
 		for fieldname in ("option_1", "option_2", "option_3"):
 			tags = _parse_tags(self.get(fieldname))
 			self.set(fieldname, json.dumps(tags, ensure_ascii=False) if tags else "")
-
-	def before_save(self):
 		global counter
 		counter = 1
 		if not self.is_new():
