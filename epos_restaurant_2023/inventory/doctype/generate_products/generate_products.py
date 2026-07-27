@@ -20,7 +20,10 @@ class GenerateProducts(Document):
 		global counter
 		counter = 1
 		if not self.is_new():
-			old_doc = frappe.get_doc("Generate Products",self.name)
+			all_fields = frappe.get_meta("Generate Products").get_valid_columns()
+			exclude = ["products"]
+			fields_to_fetch = [f for f in all_fields if f not in exclude]
+			old_doc = frappe.db.get_value("Generate Products", self.name, fields_to_fetch, as_dict=True)
 			changed_fields = [
 				df.fieldname
 				for df in frappe.get_meta(self.doctype).fields
