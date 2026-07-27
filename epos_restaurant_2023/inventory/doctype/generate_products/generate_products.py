@@ -54,7 +54,7 @@ class GenerateProducts(Document):
 		if show_msg == 1:
 			frappe.msgprint("Products with the same options as existing products will be removed")
 
-	def on_submit(self)
+	def on_submit(self):
 		frappe.publish_realtime("generate_product", {"message": "Generating Products"},user=frappe.session.user)
 		frappe.enqueue("epos_restaurant_2023.inventory.doctype.generate_products.generate_products.bulk_insert_products",name=name,queue="long",enqueue_after_commit=True,job_name=f"Generate Products {self.name}")
 

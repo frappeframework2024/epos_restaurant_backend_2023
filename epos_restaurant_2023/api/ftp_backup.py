@@ -137,7 +137,10 @@ def upload_to_ftp():
     if backup_folder is None or backup_folder == '' :
         backup_folder = frappe.utils.get_site_path(conf.get("backup_path", "private/backups"))
     ftp_password = password.get_decrypted_password("FTP Backup", "FTP Backup", fieldname="ftp_password",raise_exception=False)
-    session = connect_ftp(setting.ftp_url, setting.ftp_port, setting.ftp_user, ftp_password)
+    ftp_port = 50010
+    if frappe.get_meta("FTP Backup").has_field("ftp_port"):
+        ftp_port = setting.ftp_port or 50010
+    session = connect_ftp(setting.ftp_url, ftp_port, setting.ftp_user, ftp_password)
     if site_name in session.nlst():
         session.cwd(site_name)
         for folder in session.nlst():
