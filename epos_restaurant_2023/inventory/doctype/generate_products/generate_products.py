@@ -34,7 +34,8 @@ class GenerateProducts(Document):
 			else:
 				self.products = []
 		else:
-			generate_products(self)
+			if self.show_generated_products:
+				generate_products(self)
 		
 	def before_submit(self):
 		existing_products = frappe.db.sql("select option_1,option_2,option_3 from `tabProduct` where parent_product_code = '{0}'".format(self.parent_product_code),as_dict=1)
