@@ -53,13 +53,16 @@ class GenerateProducts(Document):
 			show_msg = 1 if len(generated_products) != len(new_products) else 0
 		if show_msg == 1:
 			frappe.msgprint("Products with the same options as existing products will be removed")
-		frappe.publish_realtime("generate_product", {"message": "Generating Products"},user=frappe.session.user)
-		frappe.enqueue("epos_restaurant_2023.inventory.doctype.generate_products.generate_products.bulk_insert_products",self=self,generated_products=new_products,queue="long",enqueue_after_commit=True,job_name=f"Generate Products {self.name}")
 
-def bulk_insert_products(self,generated_products):
+	def on_submit(self)
+		frappe.publish_realtime("generate_product", {"message": "Generating Products"},user=frappe.session.user)
+		frappe.enqueue("epos_restaurant_2023.inventory.doctype.generate_products.generate_products.bulk_insert_products",name=name,queue="long",enqueue_after_commit=True,job_name=f"Generate Products {self.name}")
+
+def bulk_insert_products(name):
+	doc = frappe.get_doc("Generate Products",name)
 	def get_product_docs():
-		if self.show_generated_products:
-			for p in self.products:
+		if doc.show_generated_products:
+			for p in doc.products:
 				doc = frappe.new_doc("Product")
 				doc.name = p.product_code
 				doc.product_code = p.product_code
@@ -74,17 +77,17 @@ def bulk_insert_products(self,generated_products):
 				doc.option_1 = p.option_1
 				doc.option_2 = p.option_2
 				doc.option_3 = p.option_3
-				doc.parent_product_code = self.parent_product_code
+				doc.parent_product_code = doc.parent_product_code
 				yield doc
 		else:
-			index = get_last_index(self)
+			index = get_last_index(doc)
 			for d in (generated_products):
 				doc = frappe.new_doc("Product")
-				generate_product(self, doc, index, d)
+				generate_product(doc, doc, index, d)
 				index = index + 1
 				yield doc
 	bulk_insert("Product", get_product_docs(), chunk_size=10000)
-	update_series(self.parent_product_code,self.series.split(".")[0],int(re.sub(r"\D", "",list(get_product_docs())[-1].product_code)))
+	update_series(doc.parent_product_code,doc.series.split(".")[0],int(re.sub(r"\D", "",list(get_product_docs())[-1].product_code)))
 	frappe.publish_realtime("generate_product", {"message": "Products Generated"},user=frappe.session.user)
 
 def update_series(parent_product_code,key,counter):
