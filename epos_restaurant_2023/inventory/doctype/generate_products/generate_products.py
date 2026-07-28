@@ -33,11 +33,19 @@ class GenerateProducts(Document):
 			if self.show_generated_products:
 				if any(f in fieldnames for f in changed_fields):
 					self.products = []
-					generate_products(self)
+					if check_product_rows(self) == 1:
+						self.show_generated_products = 0
+						frappe.msgprint("Show Generated Products Option Will Be Disable When Row Is Above 1000")
+					else:
+						generate_products(self)
 			else:
 				self.products = []
 		else:
-			if self.show_generated_products:
+			if self.show_generated_products and check_product_rows(self) == 1:
+				self.products = []
+				self.show_generated_products = 0
+				frappe.msgprint("Show Generated Products Option Will Be Disable When Row Is Above 1000")
+			else:
 				generate_products(self)
 		
 	def before_submit(self):
@@ -103,8 +111,15 @@ def update_series(parent_product_code,key,counter):
 			frappe.db.sql("INSERT INTO `tabSeries` (`name`, `current`) VALUES (%s, %s)", (key, counter))
 		frappe.db.commit()
 
+def check_product_rows(self):
+	options = get_new_products(self)
+	if len(options)>1000:
+		return 1
+	else:
+		return 0
+
 def generate_products(self):
-	options =  get_new_products(self)
+	options = get_new_products(self)
 	index = get_last_index(self)
 	for d in (options):
 		p = frappe.new_doc("Generate Products Item")
