@@ -69,10 +69,10 @@ class GenerateProducts(Document):
 		frappe.enqueue("epos_restaurant_2023.inventory.doctype.generate_products.generate_products.bulk_insert_products",name=self.name,queue="long",enqueue_after_commit=True,job_name=f"Generate Products {self.name}")
 
 def bulk_insert_products(name):
-	doc = frappe.get_doc("Generate Products",name)
+	generated_doc = frappe.get_doc("Generate Products",name)
 	def get_product_docs():
-		if doc.show_generated_products:
-			for p in doc.products:
+		if generated_doc.show_generated_products:
+			for p in generated_doc.products:
 				doc = frappe.new_doc("Product")
 				doc.name = p.product_code
 				doc.product_code = p.product_code
@@ -90,14 +90,14 @@ def bulk_insert_products(name):
 				doc.parent_product_code = doc.parent_product_code
 				yield doc
 		else:
-			index = get_last_index(doc)
+			index = get_last_index(generated_doc)
 			for d in (generated_products):
 				doc = frappe.new_doc("Product")
 				generate_product(doc, doc, index, d)
 				index = index + 1
 				yield doc
 	bulk_insert("Product", get_product_docs(), chunk_size=10000)
-	update_series(doc.parent_product_code,doc.series.split(".")[0],int(re.sub(r"\D", "",list(get_product_docs())[-1].product_code)))
+	update_series(generated_doc.parent_product_code,generated_doc.series.split(".")[0],int(re.sub(r"\D", "",list(get_product_docs())[-1].product_code)))
 	frappe.publish_realtime("generate_product", {"message": "Products Generated"},user=frappe.session.user)
 
 def update_series(parent_product_code,key,counter):
