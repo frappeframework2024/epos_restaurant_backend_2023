@@ -48,7 +48,6 @@
   {
    "fieldname": "option_1",
    "fieldtype": "Small Text",
-   "hidden": 1,
    "label": "Option 1"
   },
   {
@@ -58,7 +57,6 @@
   {
    "fieldname": "option_2",
    "fieldtype": "Small Text",
-   "hidden": 1,
    "label": "Option 2"
   },
   {
@@ -68,7 +66,6 @@
   {
    "fieldname": "option_3",
    "fieldtype": "Small Text",
-   "hidden": 1,
    "label": "Option 3"
   },
   {
@@ -198,7 +195,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-07-22 14:32:01.758366",
+ "modified": "2026-07-28 08:22:47.504216",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Generate Products",
