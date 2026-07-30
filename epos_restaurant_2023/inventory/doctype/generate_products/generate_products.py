@@ -87,13 +87,13 @@ def bulk_insert_products(name):
 				doc.option_1 = p.option_1
 				doc.option_2 = p.option_2
 				doc.option_3 = p.option_3
-				doc.parent_product_code = doc.parent_product_code
+				doc.parent_product_code = generated_doc.parent_product_code
 				yield doc
 		else:
 			index = get_last_index(generated_doc)
 			for d in (generated_products):
 				doc = frappe.new_doc("Product")
-				generate_product(doc, doc, index, d)
+				generate_product(generated_doc, doc, index, d)
 				index = index + 1
 				yield doc
 	bulk_insert("Product", get_product_docs(), chunk_size=10000)
@@ -158,6 +158,7 @@ def generate_product(self, p, index, d):
 	p.revenue_group = self.revenue_group
 	p.price = self.price
 	p.cost = self.cost
+	p.parent_product_code = self.parent_product_code
 
 def local_make_autoname(key=""):
 	parts = key.split(".")
