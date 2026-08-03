@@ -89,6 +89,7 @@ class Sale(Document):
 		if self.stock_location and self.business_branch:
 			if frappe.get_value("Stock Location",self.stock_location,"business_branch") != self.business_branch:
 				frappe.throw(_("The stock location {} is not belong to business branch {}".format(self.stock_location, self.business_branch)))
+		set_missing_stock_location_in_products(self)
 		
 		#validate exhcange rate change
 		to_currency = frappe.db.get_default("second_currency")
@@ -499,6 +500,10 @@ class Sale(Document):
 						else:
 							frappe.throw(_("Invalid  Coupon Code"))
  
+def set_missing_stock_location_in_products(self):
+	for a in self.sale_products:
+		if not a.stock_location:
+			a.stock_location = self.stock_location
 
 def lock_db(name=None,self=None):
 	if name:
@@ -641,7 +646,7 @@ def update_sale_sale_product_cost(self):
 	total_second_cost = 0
 	for p in self.sale_products:
 		pos_profile = p.pos_profile if p.pos_profile else self.pos_profile
-		sale_product_stock_location = get_stock_location_by_pos_profile(p.product_code,pos_profile,self.stock_location)
+		sale_product_stock_location = p.stock_location if p.stock_location else get_stock_location_by_pos_profile(p.product_code,pos_profile,self.stock_location)
 		uom_conversion = get_uom_conversion(p.base_unit, p.unit)
 		cost = get_product_cost(sale_product_stock_location, p.product_code)/uom_conversion
 		## update sale product cost 
@@ -837,7 +842,7 @@ def update_inventory_on_submit(self):
 		pos_profile = p.pos_profile if p.pos_profile else self.pos_profile
 		if p.is_inventory_product:			
 			uom_conversion = get_uom_conversion(p.base_unit, p.unit)
-			sale_product_stock_location = get_stock_location_by_pos_profile(p.product_code,pos_profile,self.stock_location)
+			sale_product_stock_location = p.stock_location if p.stock_location else get_stock_location_by_pos_profile(p.product_code,pos_profile,self.stock_location)
 			cost = get_product_cost(sale_product_stock_location, p.product_code) / uom_conversion
 			add_to_inventory_transaction({
 				'doctype': 'Inventory Transaction',
@@ -980,7 +985,7 @@ def update_inventory_on_cancel(self):
 				'transaction_date':self.posting_date,
 				'product_code': p.product_code,
 				'unit':p.unit,
-				'stock_location':get_stock_location_by_pos_profile(p.product_code,pos_profile,self.stock_location),
+				'stock_location': p.stock_location if p.stock_location else get_stock_location_by_pos_profile(p.product_code,pos_profile,self.stock_location),
 				'in_quantity':p.quantity / uom_conversion,
 				"uom_conversion":uom_conversion,
 				"price":p.cost,

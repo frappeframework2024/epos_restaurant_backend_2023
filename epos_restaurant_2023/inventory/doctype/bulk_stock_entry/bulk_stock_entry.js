@@ -8,6 +8,34 @@ const BULK_STOCK_PRODUCT_OPTION_FIELDS = [
 ];
 
 frappe.ui.form.on("Bulk Stock Entry", {
+	onload(frm) {
+        frm.original_cost = frm.doc.cost;
+    	frm.original_quantity = frm.doc.quantity;
+    },
+	before_save(frm) {
+		if ((frm.doc.cost !== frm.original_cost) || (frm.doc.quantity !== frm.original_quantity)) {
+			if(frm.doc.cost>=0 || frm.doc.quantity>=0){
+				if (frm.doc.__confirmed) {
+					return;
+				}
+				frappe.validated = false;
+				frappe.confirm(
+					"This will replace all products cost or quantity. Continue?",
+					() => {
+						frm.doc.__confirmed = true;
+						frm.save();
+					},
+					() => {
+						frappe.show_alert("Cancelled");
+					}
+				);
+			}
+			else{
+				frappe.validated = false;
+				frappe.msgprint("Cost or Quantity must be greater than or equal to 0");
+			}
+		}
+    },
 	setup(frm) {
 		frm.fields_dict.search_product_code.get_query = () => ({
 			query:

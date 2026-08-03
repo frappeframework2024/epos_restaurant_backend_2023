@@ -22,6 +22,7 @@
   "kitchen_group_sort_order",
   "pos_reservation",
   "pos_profile",
+  "stock_location",
   "column_break_9",
   "unit",
   "base_unit",
@@ -1317,12 +1318,18 @@
    "label": "Temp ID",
    "print_hide": 1,
    "report_hide": 1
+  },
+  {
+   "fieldname": "stock_location",
+   "fieldtype": "Link",
+   "label": "Stock Location",
+   "options": "Stock Location"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-06-29 19:40:08.649838",
+ "modified": "2026-08-03 15:08:05.919543",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",

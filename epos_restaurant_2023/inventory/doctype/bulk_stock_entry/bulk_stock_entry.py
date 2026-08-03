@@ -15,6 +15,17 @@ from epos_restaurant_2023.inventory.inventory import get_product_qty,get_product
 
 
 class BulkStockEntry(Document):
+	def validate(self):
+		if (self.cost or 0) > 0:
+			for a in self.products:
+				a.cost = self.cost
+				a.total_cost = flt(a.quantity) * flt(a.cost)
+		if (self.quantity or 0) > 0:
+			for a in self.products:
+				a.quantity = self.quantity
+				a.total_cost = flt(a.quantity) * flt(a.cost)
+		self.update_summary()
+
 	def before_submit(self):
 		
 		if self.transaction_type == "Purchase Order":

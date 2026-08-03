@@ -24,6 +24,10 @@
   "option_2_html",
   "column_break_qsuk",
   "option_3_html",
+  "section_break_mjyb",
+  "cost",
+  "column_break_zkkg",
+  "quantity",
   "section_break_hxxi",
   "products",
   "section_break_anwc",
@@ -185,12 +189,30 @@
    "fieldname": "get_product",
    "fieldtype": "Button",
    "label": "Get Product"
+  },
+  {
+   "fieldname": "section_break_mjyb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "cost",
+   "fieldtype": "Float",
+   "label": "Cost"
+  },
+  {
+   "fieldname": "column_break_zkkg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "quantity",
+   "fieldtype": "Float",
+   "label": "Quantity"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-07-22 14:14:56.332489",
+ "modified": "2026-08-03 11:52:56.272509",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Bulk Stock Entry",
