@@ -38,6 +38,7 @@ export default class Gv {
             font_size:14,
             show_item_code:false,
 			show_short_cut_chip:true,
+			show_item_avatar:true,
 			show_column_item:6,
 			height_item:150,
 			width_sale_summary:450,

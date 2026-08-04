@@ -295,31 +295,159 @@ class QuickBooksService(ServiceBase):
         return "OK"
 
 # ────────── Spyne SOAP setup ──────────
+# ============================================================
+# Spyne SOAP Application
+# ============================================================
 application = Application(
     [QuickBooksService],
     tns='http://developer.intuit.com/',
     in_protocol=Soap11(validator='lxml'),
     out_protocol=Soap11()
 )
-wsgi_application = WsgiApplication(application)
 
+# ============================================================
+# Spyne WSGI Application
+# ============================================================
+
+spyne_application = WsgiApplication(
+    application
+)
+
+# ============================================================
+# QBWC HTTP / WSGI Wrapper
+# ============================================================
+
+def wsgi_application(
+    environ,
+    start_response
+):
+    """
+    HTTP wrapper around Spyne.
+
+    QuickBooks Web Connector performs:
+
+        GET /
+
+    before adding the QWC application to verify
+    the application server certificate.
+
+    Spyne normally expects SOAP POST requests,
+    therefore GET / must be handled separately.
+    """
+
+    method = environ.get(
+        "REQUEST_METHOD",
+        "GET"
+    )
+
+    path = environ.get(
+        "PATH_INFO",
+        "/"
+    )
+
+    # --------------------------------------------------------
+    # QBWC certificate verification
+    # --------------------------------------------------------
+
+    if method == "GET" and path == "/":
+
+        body = (
+            b"ePOS 2023 QBWC SOAP Service "
+            b"QB Web Connector Service"
+        )
+
+        start_response(
+            "200 OK",
+            [
+                (
+                    "Content-Type",
+                    "text/plain; charset=utf-8"
+                ),
+                (
+                    "Content-Length",
+                    str(len(body))
+                ),
+                (
+                    "Cache-Control",
+                    "no-cache"
+                ),
+            ],
+        )
+
+        return [body]
+
+    # --------------------------------------------------------
+    # WSDL / SOAP requests
+    # --------------------------------------------------------
+    #
+    # Everything else goes to Spyne.
+    #
+
+    return spyne_application(
+        environ,
+        start_response
+    )
+    
+
+# wsgi_application = WsgiApplication(application)
+
+# ============================================================
+# Start QBWC Server
+# ============================================================
 def start_qbwc_server():
-    """Start SOAP server on port from site config or default 8001"""
+    """
+    Start QBWC SOAP server.
+    Port is loaded from site configuration:
+        qbwc_port = 8001
+    Default:
+        8001
+    """
+
     init_frappe()
-    port = frappe.get_conf().get("qbwc_port", 8001)
-    print(f"Starting QBWC SOAP server at http://0.0.0.0:{port}")
-    server = make_server('0.0.0.0', port, wsgi_application)
-    server.serve_forever()
+    port = frappe.get_conf().get("qbwc_port",8001)
+
+    print("==========================================")
+    print("QBWC SERVER")
+    print(f"Listening on: 0.0.0.0:{port}")
+    print("GET /  -> QBWC certificate verification")
+    print("POST / -> SOAP Web Connector")
+    print("==========================================")
+
+    server = make_server("0.0.0.0",port, wsgi_application)
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print("QBWC server stopped.")
+    finally:
+
+        server.server_close()
 
 def run_server():
-    thread = threading.Thread(target=start_qbwc_server, daemon=True)
-    thread.start()
-    print("QBWC server thread started")
+    """
+    Start QBWC server in background thread.
 
-    # Keep main thread alive so daemon thread doesn't die
-    import time
+    Used with:
+
+        bench --site <site> execute \
+        epos_restaurant_2023.api.qb.qbwc.run_server
+    """
+
+    thread = threading.Thread(
+        target=start_qbwc_server,
+        daemon=True
+    )
+
+    thread.start()
+
+    print(
+        "QBWC server thread started."
+    )
+
+    # Keep main thread alive
     while True:
+
         time.sleep(10)
+
 
 # -----------------------------
 # Frappe endpoint to wrap Spyne WSGI app

@@ -7,6 +7,8 @@
         <v-checkbox v-model="gv.itemMenuSetting.show_item_code" :label="$t('Show Product Code')" hide-details></v-checkbox>
         <v-checkbox v-if="defaultUI" v-model="gv.itemMenuSetting.show_short_cut_chip" :label="$t('Show Shortcut Chip')"
           hide-details></v-checkbox>
+        <v-checkbox v-if="defaultUI" v-model="gv.itemMenuSetting.show_item_avatar" :label="$t('Show Items Avatar')"
+          hide-details></v-checkbox>
       </div>
       <div class="grid gap-2 grid-cols-2">
         <v-select v-model="gv.itemMenuSetting.show_menu_language" :label="$t('Menu Language')" :items="['kh','en']"></v-select>

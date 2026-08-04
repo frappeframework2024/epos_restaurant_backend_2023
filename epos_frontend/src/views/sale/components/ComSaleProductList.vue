@@ -6,7 +6,7 @@
             :key="index" @click="!readonly ? { click: sale.onSelectSaleProduct(sp) } : {}"
             class="!border-t !border-gray-300 !mb-0 !p-2"
             :class="{ 'selected': (sp.selected && !readonly), 'submitted relative': sp.sale_product_status == 'Submitted', 'item-list': !readonly }">
-            <template v-slot:prepend>
+            <template v-if="gv.itemMenuSetting.show_item_avatar" v-slot:prepend>
                 <v-avatar v-if="sp.product_photo">
                     <v-img :src="sp.product_photo"></v-img>
                 </v-avatar>
