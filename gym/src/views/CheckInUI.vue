@@ -150,10 +150,9 @@ const handleKeyDown = (event) => {
 
     if (!code) {
       return;
-    }
-
-    checkInCode.value = "";
+    } 
     onCheckInClick();
+    checkInCode.value = "";
   }
 };
 
