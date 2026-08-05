@@ -117,24 +117,45 @@ const currentTab = (index) => {
   is_search_name.value = index == 1 
   curTap.value = index
 }
-
-let keyInputValue = '';
+ 
 
 const handleKeyDown = (event) => {
-  if (event.key.length === 1) {
-    keyInputValue += event.key
+  const target = event.target;
+
+  // If user is typing in an input/textarea,
+  // don't handle ANY global keyboard input.
+  if (
+    target.tagName === "INPUT" ||
+    target.tagName === "TEXTAREA" ||
+    target.isContentEditable
+  ) {
+    return;
   }
 
-  if (event.key === 'Enter') {
-    keyInputValue = '';
+  // Number / character
+  if (event.key.length === 1) {
+    checkInCode.value += event.key;
+    return;
+  }
+
+  // Backspace
+  if (event.key === "Backspace") {
+    checkInCode.value = checkInCode.value.slice(0, -1);
+    return;
+  }
+
+  // Enter
+  if (event.key === "Enter") {
+    const code = checkInCode.value;
+
+    if (!code) {
+      return;
+    }
+
+    checkInCode.value = "";
     onCheckInClick();
   }
-
-  if (event.key === 'Backspace') {
-    keyInputValue = keyInputValue.slice(0, -1)
-  }
-  checkInCode.value = keyInputValue;
-}
+};
 
 
 
