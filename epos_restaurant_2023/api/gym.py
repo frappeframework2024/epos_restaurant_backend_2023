@@ -91,18 +91,18 @@ def membership_check_in(code,check_in_date, is_search_name=0):
     }
  
     if allow_scan_auto_check_in_or_out and  is_search_name=="0":
-        now_check = datetime.strptime(check_in_date, "%Y-%m-%d").date() 
-        
+        now_check = datetime.strptime(check_in_date, "%Y-%m-%d").date()        
         _membership = [m for m in memberships if m["locked"] == False and (m["end_date"] >= now_check or m["duration_type"]=="Ongoin")]
-        if len(_membership)>0:
-            check_in_out_sql = """select 
+        
+        check_in_out_sql = """select 
                 c.`name` as membership_check_in,
                 i.name as membsership_check_in_item
-            from `tabMembership Check In Items` i
-            inner join `tabMembership Check In` c on i.parent = c.name and c.is_check_out = 0 and c.member = %(member)s
-            where i.membership = %(membership)s """ 
-
-            check_in_out = frappe.db.sql(check_in_out_sql, {"membership": _membership[0]["name"],"member":member["name"]}, as_dict = 1)
+        from `tabMembership Check In Items` i
+        inner join `tabMembership Check In` c on i.parent = c.name and c.is_check_out = 0 and c.member = %(member)s
+        where i.membership = %(membership)s """ 
+        check_in_out = frappe.db.sql(check_in_out_sql, {"membership": memberships[0]["name"],"member":member["name"]}, as_dict = 1)
+        
+        if len(_membership)>0 or len(check_in_out or []) > 0:           
             if len(check_in_out or []) > 0: ## check out
                 for c in check_in_out:
                     doc = frappe.get_doc("Membership Check In", c["membership_check_in"])
