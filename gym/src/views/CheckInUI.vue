@@ -90,7 +90,7 @@
 <script setup>
 
 import moment from 'moment';
-import { ref, onMounted } from 'vue'
+import { ref, onMounted,onUnmounted } from 'vue'
 import Calendar from 'primevue/calendar';
 import InputText from 'primevue/inputtext';
 import ComCheckInMembership from '@/views/components/ComCheckInMembership.vue';
@@ -98,6 +98,8 @@ import ComAutoComplete from '@/components/ComAutoComplete.vue';
 import ComRecentCheckIn from '@/views/components/ComRecentCheckIn.vue';
 import { useDialog } from 'primevue/usedialog';
 import { useToast } from "primevue/usetoast";
+
+ 
 
 const dialog = useDialog();
 const toast = useToast();
@@ -116,6 +118,26 @@ const currentTab = (index) => {
   curTap.value = index
 }
 
+let keyInputValue = '';
+
+const handleKeyDown = (event) => {
+  if (event.key.length === 1) {
+    keyInputValue += event.key
+  }
+
+  if (event.key === 'Enter') {
+    keyInputValue = '';
+    onCheckInClick();
+  }
+
+  if (event.key === 'Backspace') {
+    keyInputValue = keyInputValue.slice(0, -1)
+  }
+  checkInCode.value = keyInputValue;
+}
+
+
+
 
 onMounted(()=>{ 
   window.parent.postMessage("full_screen","*")
@@ -126,7 +148,14 @@ onMounted(()=>{
             elem?.classList.add("p-dialog-maximized"); // adds the maximized class
         }
     }
-})
+
+  window.addEventListener('keydown', handleKeyDown)
+});
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyDown)
+});
+
 
 function onKeyDialClick(n){
   if(n=="backspace"){

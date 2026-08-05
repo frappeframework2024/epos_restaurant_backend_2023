@@ -93,7 +93,7 @@ def membership_check_in(code,check_in_date, is_search_name=0):
     if allow_scan_auto_check_in_or_out and  is_search_name=="0":
         now_check = datetime.strptime(check_in_date, "%Y-%m-%d").date() 
         
-        _membership = [m for m in memberships if m["locked"] == False and m["end_date"] > now_check]
+        _membership = [m for m in memberships if m["locked"] == False and (m["end_date"] >= now_check or m["duration_type"]=="Ongoin")]
         if len(_membership)>0:
             check_in_out_sql = """select 
                 c.`name` as membership_check_in,

@@ -1,3 +1,4 @@
+import frappe
 from epos_restaurant_2023.api.qb.qbwc_helper import pretty_xml
 def handle_journal_entry_classes_query(res,company_name):
     request_id = res.get("requestID")

@@ -24,7 +24,15 @@ from io import BytesIO
 
 
 def get_print_context(doc, seat_number = "", reprint=0, sale_products= [],printer_name=None,additional_info={}):
-    setting = frappe.get_cached_doc("POS Config", frappe.get_cached_value("POS Profile",doc.pos_profile, "pos_config"))
+    pos_profile = doc.pos_profile
+    if not doc.pos_profile:
+        pos_profile  = frappe.db.get_value(
+            "POS Profile",
+            {},
+            "name",
+            order_by="creation desc"
+        )
+    setting = frappe.get_cached_doc("POS Config", frappe.get_cached_value("POS Profile",pos_profile, "pos_config"))
     
     for sp in [d for d in sale_products if "combo_menu_data" in d and d["combo_menu_data"]]:
         sp["combo_menu_data"] = json.loads(sp["combo_menu_data"])
