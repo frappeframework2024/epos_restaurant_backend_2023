@@ -99,7 +99,7 @@ def membership_check_in(code,check_in_date, is_search_name=0):
                 i.name as membsership_check_in_item
         from `tabMembership Check In Items` i
         inner join `tabMembership Check In` c on i.parent = c.name and c.is_check_out = 0 and c.member = %(member)s
-        where i.membership = %(membership)s """ 
+        where i.membership = %(membership)s AND TIMESTAMPDIFF(MINUTE, c.creation, NOW()) < 3""" 
         check_in_out = frappe.db.sql(check_in_out_sql, {"membership": memberships[0]["name"],"member":member["name"]}, as_dict = 1)
         
         if len(_membership)>0 or len(check_in_out or []) > 0:           

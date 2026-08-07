@@ -3,6 +3,7 @@
 
 frappe.ui.form.on("Customer", { 
     onload(frm) {
+        alert("xxxxx")
         if (window.self !== window.top) { 
             setTimeout(() => {
                 const tabParents = document.querySelector('#form-tabs')
@@ -24,7 +25,7 @@ frappe.ui.form.on("Customer", {
             }, 100)
         }
     },
-    refresh(frm){
+    refresh(frm){ 
         frm.set_query("referral_by", function() {
             return {
                 filters: [["name","!=",frm.doc.name]]

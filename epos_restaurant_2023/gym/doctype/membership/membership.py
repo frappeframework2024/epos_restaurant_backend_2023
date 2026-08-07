@@ -49,17 +49,12 @@ class Membership(Document):
 
 	def on_submit(self):
 		update_customer_membership_summary(self)
-
- 
-		
-		
-
+		validate_payment(self)
 
 	def before_update_after_submit(self):
-		self.crypto_balance = self.crypto_amount - self.crypto_claim
-		
+		validate_payment(self)
+		self.crypto_balance = self.crypto_amount - self.crypto_claim		
 		self.flags.old_customer = None
-
 		old_member_sql = "select customer from `tabMembership` where name = %(membership)s"
 		doc = frappe.db.sql(old_member_sql,{"membership":self.name}, as_dict=1)
 		if len(doc)>0:
@@ -76,6 +71,45 @@ class Membership(Document):
 	def on_cancel(self):
 		_update_customer_membership_summary(self.customer,default_discount=self.default_discount, cancel=True )
 
+	@frappe.whitelist()
+	def on_add_payment_list(self):
+		total_paid =  sum([d.payment_amount or 0 for d in self.payments])
+		self.total_paid = total_paid
+		self.balance = self.grand_total - total_paid
+  
+	@frappe.whitelist()
+	def update_membership_summary(self):
+		total_paid =  sum([d.payment_amount or 0 for d in self.payments])
+		self.total_paid = total_paid
+		self.balance = self.grand_total - total_paid
+
+
+def validate_payment(self):
+	total_paid =  sum([d.payment_amount or 0 for d in self.payments])
+	if total_paid > self.grand_total:
+		frappe.throw(_("Total paid amount cannot allow more than grand total"))
+	for d in self.payments:
+		doc = frappe.get_doc({
+				"posting_date": self.posting_date,
+				"payment_type": d.payment_type,
+				"input_amount": d.input_amount,
+				"exchange_rate": d.exchange_rate,
+				"payment_amount": d.payment_amount,
+				"membership": d.parent,
+				"membership_date":self.posting_date,
+				"member": self.customer,
+				"membership_amount": self.grand_total,
+				"total_paid": 0,
+				"balance":  self.grand_total ,
+				"is_foc": 0,
+				"doctype": "Membership Payment"
+			})
+		doc.flags.payment_ignore_validate = True
+  
+		doc.insert(ignore_permissions=True)
+		doc.submit() 
+  
+		doc.flags.payment_ignore_validate = False
 	
 def update_customer_membership_summary(self, old_customer=None):
 	_update_customer_membership_summary(self.customer , default_discount=self.default_discount)

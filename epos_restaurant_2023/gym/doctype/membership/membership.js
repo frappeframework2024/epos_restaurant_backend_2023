@@ -526,4 +526,47 @@ function render_discount_code(data, dialog) {
 
 
 
+frappe.ui.form.on('Membership Payment List', {
+	form_render:function(frm, cdt,cdn){        
+		// const doc = locals[cdt][cdn];
+		// const element = document.querySelector('[data-name="' + doc.name + '"]');			 
+	},   
+
+	payments_remove: function (frm) {
+       update_membership_summary(frm);               
+	},
+	payments_add: function (frm,cdt, cdn) { 
+        const row = locals[cdt][cdn]; 
+        row.input_amount = row.payment_amount = frm.doc.balance;
+        frm.refresh_field("payments"); 
+         update_membership_summary(frm);             
+	},
+
+    payment_type(frm, cdt, cdn){
+        const row = locals[cdt][cdn]; 
+        if(row.input_amount){
+            row.payment_amount = row.input_amount / (row.exchange_rate || 1);
+            frm.refresh_field("payments"); 
+            update_membership_summary(frm);                
+        } 
+    },
+    input_amount(frm, cdt, cdn){
+        const row = locals[cdt][cdn];
+        if(row.payment_type){
+            row.payment_amount = row.input_amount / (row.exchange_rate || 1);
+            frm.refresh_field("payments");  
+            update_membership_summary(frm);
+        }
+    }
+});
+
+function update_membership_summary(frm){
+    frm.call('update_membership_summary').then((r)=>{  
+    });
+
+}
+
+
+
+
 

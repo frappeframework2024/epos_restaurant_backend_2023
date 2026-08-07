@@ -29,4 +29,9 @@ def get_pos_reservation_list(property,arrival_date):
     
     else:
         return False
+
+
+@frappe.whitelist()
+def pos_reservation_check_in(reservation_id, pos_profile):
+    pass
     

@@ -7,6 +7,8 @@ from frappe.model.document import Document
 
 class MembershipPayment(Document):
 	def validate(self):	
+		if self.flags.payment_ignore_validate:
+			return
 
 		if frappe.db.exists("Membership",{"name":self.membership,"docstatus":0}):
 			frappe.throw("Please submit membership (#{}) first.".format(self.membership))

@@ -47,6 +47,8 @@
   "grand_total",
   "total_paid",
   "balance",
+  "payment_section",
+  "payments",
   "access_to_training_section",
   "access_type",
   "column_break_sogc",
@@ -655,7 +657,10 @@
   {
    "fieldname": "payment_term_tab",
    "fieldtype": "Tab Break",
-   "label": "Payment Term"
+   "hidden": 1,
+   "label": "Payment Term",
+   "print_hide": 1,
+   "report_hide": 1
   },
   {
    "allow_on_submit": 1,
@@ -672,6 +677,16 @@
    "is_virtual": 1,
    "label": "Total Amount to Pay",
    "read_only": 1
+  },
+  {
+   "fieldname": "payment_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "payments",
+   "fieldtype": "Table",
+   "label": "Payments",
+   "options": "Membership Payment List"
   }
  ],
  "image_field": "photo",
@@ -684,7 +699,7 @@
    "link_fieldname": "membership"
   }
  ],
- "modified": "2026-07-04 15:56:12.046873",
+ "modified": "2026-08-07 09:12:07.922057",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership",

@@ -1,0 +1,79 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-08-07 09:03:55.568620",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "payment_type",
+  "currency",
+  "input_amount",
+  "payment_amount",
+  "column_break_hlna",
+  "payment_type_group",
+  "exchange_rate"
+ ],
+ "fields": [
+  {
+   "fieldname": "payment_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Payment Type",
+   "options": "Payment Type",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "payment_type.currency",
+   "fieldname": "currency",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "input_amount",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Input Amount"
+  },
+  {
+   "default": "0",
+   "fieldname": "payment_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Payment Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_hlna",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "payment_type.payment_type_group",
+   "fieldname": "payment_type_group",
+   "fieldtype": "Data",
+   "label": "Payment Type Group",
+   "print_hide": 1,
+   "report_hide": 1
+  },
+  {
+   "fetch_from": "payment_type.exchange_rate",
+   "fieldname": "exchange_rate",
+   "fieldtype": "Float",
+   "label": "Exchange Rate"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-08-07 09:12:53.303970",
+ "modified_by": "Administrator",
+ "module": "GYM",
+ "name": "Membership Payment List",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
