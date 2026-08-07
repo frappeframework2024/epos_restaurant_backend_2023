@@ -114,7 +114,7 @@ class BulkStockEntry(Document):
 				FROM `tabProduct` p 
 				left join  `tabStock Location Product` l on l.product_code = p.name and l.stock_location = %(stock_location)s
 				WHERE coalesce(p.disabled,0) = 0 and  {" AND ".join(conditions)}
-				
+				order by REGEXP_REPLACE(name, '[0-9]', ''),cast(SUBSTRING_INDEX(name, '-', -1) as float)
 			"""
 		products =  frappe.db.sql(
 			sql,
