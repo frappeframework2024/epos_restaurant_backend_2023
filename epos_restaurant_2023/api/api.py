@@ -606,6 +606,7 @@ def get_system_settings(pos_profile="", device_name=''):
     bus = frappe.get_doc("Business Branch", pos_station.business_branch)
     property_code = bus.property_code or ""
     print_server_url = frappe.conf.get("print_server_url")
+    
     if print_server_url:
         pos_station =json.loads( frappe.as_json(pos_station))
         pos_station["print_server_url"] = pos_station.get("web_socket_print_url") or print_server_url
@@ -2068,7 +2069,7 @@ def get_exchange_rate():
 
 # update sale payment of pos reservation 
 @frappe.whitelist()
-def update_pos_reservation_and_sale_payment(reservation_name,reservation_status,sale):
+def update_pos_reservation_and_sale_payment(reservation_name,reservation_status,sale, is_commit=True):
    
     ## update pos reservation
     _reservation = frappe.get_doc("POS Reservation",reservation_name)
@@ -2089,7 +2090,9 @@ def update_pos_reservation_and_sale_payment(reservation_name,reservation_status,
         _sale_payment = frappe.get_doc("Sale Payment",_sp["name"])
         _sale_payment.sale = sale
         _sale_payment.save()
-    frappe.db.commit()
+        
+    if is_commit:
+        frappe.db.commit()
 
 
 

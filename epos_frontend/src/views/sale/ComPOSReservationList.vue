@@ -214,118 +214,161 @@ async function onCheckIn(reservation) {
 
 
 async function onConvertToSale(reservation) {
-  const params = {
-    business_branch: gv.setting?.business_branch,
-    pos_profile: localStorage.getItem("pos_profile")
-  };
+  const v = await gv.authorize("open_order_required_password", "make_order");
+  if (!v) {
+      return;
+  }
+  
+  try{
+      isLoading.value = true;
+      const resp = await call.post("epos_restaurant_2023.api.pos_reservation.pos_reservation_check_in",
+      {
+          "business_branch": gv.setting?.business_branch,
+          "pos_profile": localStorage.getItem("pos_profile"),
+          "device_name": localStorage.getItem("device_name"),
+          "reservation_id": reservation.name
+      }); 
+      sale.sale = resp.message;        
+      const make_order_auth = { "username": v.username, "name": v.user, discount_codes: v.discount_codes };
+      localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth));
 
-  call.get('epos_restaurant_2023.api.api.get_current_shift_information', params)
-    .then(async (_res) => {
-      const _data = _res.message;
-      if (_data.cashier_shift == null) {
-        toaster.warning($t("msg.Please start shift first"));
-      } else if (_data.working_day == null) {
-        toaster.warning($t("msg.Please start working day first"));
-      } else {
-        gv.authorize("open_order_required_password", "make_order").then(async (v) => {
-          if (v) {
-            isLoading.value = true;
-            const make_order_auth = { "username": v.username, "name": v.user, discount_codes: v.discount_codes };
-            localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth));
+       isLoading.value = false;
 
-            await db.getDoc("Tables Number", reservation.table_id).then(async (table) => {
+      let template = (gv.device_setting?.main_sale_screen??"Default");
+      if(template == "Default"){
+        router.push({  name: "AddSale", params: { name: sale.sale.name }}).then(() => {
+          onClose();
+        });
+      }else {
+        const result = template.toLowerCase().replace(/\s+/g, '-');
+        let _template = result;
+        router.push({ 
+          name: "SaleOrder",
+          params: { name: sale.sale.name },
+          query: { menu: _template }
+        }).then(() => {
+          onClose();
+        });
+      }  
+  }catch (err) { 
+       isLoading.value = false;
+      const message = err.message;  
+      toaster.warning($t(message));
+  }
+
+  return;
+  // const params = {
+  //   business_branch: gv.setting?.business_branch,
+  //   pos_profile: localStorage.getItem("pos_profile")
+  // };
+
+  // call.get('epos_restaurant_2023.api.api.get_current_shift_information', params)
+  //   .then(async (_res) => {
+  //     const _data = _res.message;
+  //     if (_data.cashier_shift == null) {
+  //       toaster.warning($t("msg.Please start shift first"));
+  //     } else if (_data.working_day == null) {
+  //       toaster.warning($t("msg.Please start working day first"));
+  //     } else {
+  //       gv.authorize("open_order_required_password", "make_order").then(async (v) => {
+  //         if (v) {
+  //           isLoading.value = true;
+  //           const make_order_auth = { "username": v.username, "name": v.user, discount_codes: v.discount_codes };
+  //           localStorage.setItem('make_order_auth', JSON.stringify(make_order_auth));
+
+  //           await db.getDoc("Tables Number", reservation.table_id).then(async (table) => {
 
               
-             await sale.newSale();
+  //            await sale.newSale();
 
             
-              sale.sale.from_reservation = reservation.name;
-              sale.sale.working_day = _data.working_day.name;
-              sale.sale.posting_date = _data.working_day.posting_date;
-              sale.posting_date = _data.working_day.posting_date;
+  //             sale.sale.from_reservation = reservation.name;
+  //             sale.sale.working_day = _data.working_day.name;
+  //             sale.sale.posting_date = _data.working_day.posting_date;
+  //             sale.posting_date = _data.working_day.posting_date;
 
-              sale.sale.cashier_shift = _data.cashier_shift.name;
-              sale.sale.shift_name = _data.cashier_shift.shift_name;
+  //             sale.sale.cashier_shift = _data.cashier_shift.name;
+  //             sale.sale.shift_name = _data.cashier_shift.shift_name;
 
-              sale.sale.guest_cover = (reservation.total_guest || 0);
-              sale.sale.table_id = reservation.table_id;
-              sale.sale.tbl_number = reservation.table_number;
+  //             sale.sale.guest_cover = (reservation.total_guest || 0);
+  //             sale.sale.table_id = reservation.table_id;
+  //             sale.sale.tbl_number = reservation.table_number;
 
-              sale.sale.customer = reservation.guest;
-              sale.sale.customer_photo = reservation.guest_photo;
-              sale.sale.customer_name = reservation.guest_name;
-              sale.sale.customer_group = reservation.guest_type;
-              sale.sale.deposit = reservation.total_deposit;
+  //             sale.sale.customer = reservation.guest;
+  //             sale.sale.customer_photo = reservation.guest_photo;
+  //             sale.sale.customer_name = reservation.guest_name;
+  //             sale.sale.customer_group = reservation.guest_type;
+  //             sale.sale.deposit = reservation.total_deposit;
              
-              if (table.sale_type) {
-                sale.sale.sale_type = table.sale_type
-              }
-              if (table.price_rule) {
-                sale.table_price_rule = table.price_rule;
-                sale.price_rule = table.price_rule;
+  //             if (table.sale_type) {
+  //               sale.sale.sale_type = table.sale_type
+  //             }
+  //             if (table.price_rule) {
+  //               sale.table_price_rule = table.price_rule;
+  //               sale.price_rule = table.price_rule;
 
-                sale.sale.price_rule = table.price_rule;
-              }
-              else{  
-                sale.table_price_rule = gv.setting?.price_rule;
-                sale.price_rule = gv.setting?.price_rule;
-                sale.sale.price_rule = gv.setting?.price_rule;
-              }
-              if (gv.setting.price_rule != sale.sale.price_rule) {
-                toaster.info($t('msg.Your current price rule is', [sale.sale.price_rule]));
-              }
+  //               sale.sale.price_rule = table.price_rule;
+  //             }
+  //             else{  
+  //               sale.table_price_rule = gv.setting?.price_rule;
+  //               sale.price_rule = gv.setting?.price_rule;
+  //               sale.sale.price_rule = gv.setting?.price_rule;
+  //             }
+  //             if (gv.setting.price_rule != sale.sale.price_rule) {
+  //               toaster.info($t('msg.Your current price rule is', [sale.sale.price_rule]));
+  //             }
 
-              sale.sale.sale_status = "Hold Order";
-              sale.action = "hold_order";
+  //             sale.sale.sale_status = "Hold Order";
+  //             sale.action = "hold_order";
 
-              await reservationProductConvert(reservation);
+  //             await reservationProductConvert(reservation);
 
 
-              await sale.onSubmit().then(async (value) => {
-                if (value) {
-                  sale.sale = value;
-                  call.get("epos_restaurant_2023.api.api.update_pos_reservation_and_sale_payment", {
-                    reservation_name: reservation.name,
-                    reservation_status: "Dine-in",
-                    sale: value.name
-                  }).then(() => {
+  //             await sale.onSubmit().then(async (value) => {
+  //               if (value) {
+  //                 sale.sale = value;
+  //                 call.get("epos_restaurant_2023.api.api.update_pos_reservation_and_sale_payment", {
+  //                   reservation_name: reservation.name,
+  //                   reservation_status: "Dine-in",
+  //                   sale: value.name
+  //                 }).then(() => {
                     
-                    let template = (gv.device_setting?.main_sale_screen??"Default");
-                    if(template == "Default"){
-                      router.push({  name: "AddSale", params: { name: value.name }}).then(() => {
-                        onClose();
-                      });
-                    }else {
-                      const result = template.toLowerCase().replace(/\s+/g, '-');
-                      let _template = result;
-                      router.push({ 
-                        name: "SaleOrder",
-                        params: { name: value.name },
-                        query: { menu: _template }
-                      }).then(() => {
-                        onClose();
-                      });
-                    } 
+  //                   let template = (gv.device_setting?.main_sale_screen??"Default");
+  //                   if(template == "Default"){
+  //                     router.push({  name: "AddSale", params: { name: value.name }}).then(() => {
+  //                       onClose();
+  //                     });
+  //                   }else {
+  //                     const result = template.toLowerCase().replace(/\s+/g, '-');
+  //                     let _template = result;
+  //                     router.push({ 
+  //                       name: "SaleOrder",
+  //                       params: { name: value.name },
+  //                       query: { menu: _template }
+  //                     }).then(() => {
+  //                       onClose();
+  //                     });
+  //                   } 
 
-                  }).catch((err) => {
-                    _onInit()
-                  });
-                }
-              }).catch(() => {
-                isLoading.value = false;
-              });
-            }).catch((err) => {
-              console.log(err)
-              isLoading.value = false;
-            })
+  //                 }).catch((err) => {
+  //                   _onInit()
+  //                 });
+  //               }
+  //             }).catch(() => {
+  //               isLoading.value = false;
+  //             });
+  //           }).catch((err) => {
+  //             console.log(err)
+  //             isLoading.value = false;
+  //           })
 
-          }
-        });
-      }
-    })
-    .catch((error) => {
-      isLoading.value = false;
-    });
+  //         }
+  //       });
+  //     }
+  //   })
+  //   .catch((error) => {
+  //     isLoading.value = false;
+  //   });
 }
 
 
