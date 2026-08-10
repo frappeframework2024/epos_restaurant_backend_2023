@@ -198,9 +198,9 @@
    "fieldtype": "Section Break"
   },
   {
-   "depends_on": "eval:doc.duplicated_products != \"\"",
    "fieldname": "duplicated_products",
    "fieldtype": "Long Text",
+   "hidden": 1,
    "label": "Duplicated Products",
    "no_copy": 1
   }
@@ -208,7 +208,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-08-10 11:35:11.931949",
+ "modified": "2026-08-10 11:56:15.925333",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Generate Products",
