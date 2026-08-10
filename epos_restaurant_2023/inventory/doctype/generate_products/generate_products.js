@@ -12,6 +12,8 @@ frappe.ui.form.on("Generate Products", {
 	setup(frm){
         frappe.realtime.on("generate_product", (data) => {
 			if (data.message === "Products Generated") {
+				frm.set_df_property("duplicated_products", "hidden", 0);
+				frm.refresh_field("duplicated_products");
 				frm.reload_doc();
 			}
 			frappe.show_alert({
