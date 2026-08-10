@@ -195,6 +195,7 @@
    "fieldtype": "Section Break"
   },
   {
+   "default": "0",
    "fieldname": "cost",
    "fieldtype": "Float",
    "label": "Cost"
@@ -204,6 +205,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "default": "0",
    "fieldname": "quantity",
    "fieldtype": "Float",
    "label": "Quantity"
@@ -212,7 +214,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-08-03 11:52:56.272509",
+ "modified": "2026-08-10 15:18:23.221657",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Bulk Stock Entry",

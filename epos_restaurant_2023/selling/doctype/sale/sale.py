@@ -4,7 +4,7 @@
 import json
 from  epos_restaurant_2023.api.cache_function import get_default_account_from_pos_config, get_default_account_from_revenue_group, get_doctype_value_cache
 from epos_restaurant_2023.api.account import cancel_general_ledger_entery,submit_general_ledger_entry
-from epos_restaurant_2023.inventory.inventory import add_to_inventory_transaction, get_stock_location_by_pos_profile,check_uom_conversion, get_product_cost, get_stock_location_product, get_uom_conversion, update_product_quantity
+from epos_restaurant_2023.inventory.inventory import get_product_qty,add_to_inventory_transaction, get_stock_location_by_pos_profile,check_uom_conversion, get_product_cost, get_stock_location_product, get_uom_conversion, update_product_quantity
 import frappe
 from frappe import utils
 from frappe import _
@@ -248,6 +248,7 @@ class Sale(Document):
 		# update default accunt
 		update_default_account(self) 
 		validate_pos_payment(self,skip_check=0)
+		check_allow_negative_stock(self)
 		self.validate_coupon_codes()	 
 
 	@frappe.whitelist()
@@ -499,7 +500,22 @@ class Sale(Document):
         
 						else:
 							frappe.throw(_("Invalid  Coupon Code"))
- 
+
+def check_allow_negative_stock(self):
+	doc = frappe.get_doc('ePOS Settings')
+	msg = ""
+	if doc.allow_negative_stock == 0:
+		for p in self.sale_products:
+			if p.is_inventory_product == 1:
+				uom_conversion = get_uom_conversion(p.base_unit, p.unit)
+				current_qty = get_product_qty(p.product_code, self.stock_location)
+				current_qty = current_qty * uom_conversion
+				sale_qty = p.quantity * uom_conversion
+				if sale_qty > current_qty:
+					msg += "<b>{0}</b>: Insufficient stock at <b>{1}</b> (Qty: <b>{2} {3}</b>) for sale <b>{4} {5}</b></br>".format(p.product_code, self.stock_location,float(current_qty), p.unit, float(p.quantity), p.unit)
+		if msg:
+			frappe.throw(msg)
+
 def set_missing_stock_location_in_products(self):
 	for a in self.sale_products:
 		if not a.stock_location:

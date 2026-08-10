@@ -153,6 +153,7 @@ class BulkStockEntry(Document):
 					"product_code": product_code,
 					"product_name": product.get("product_name"),
 					"current_quantity": product.get("current_quantity") or 0,
+					"quantity": product.get("current_quantity") or 0,
 					"current_cost": product.get("cost") or 0,
 					"cost": product.get("cost") or 0,
 					"option_1":product.get("option_1"),
