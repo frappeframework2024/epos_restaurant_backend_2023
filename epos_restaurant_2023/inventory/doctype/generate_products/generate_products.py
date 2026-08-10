@@ -114,7 +114,7 @@ def bulk_insert_products(name):
 	bulk_insert("Product", filter_products, chunk_size=10000)
 	if filter_products:
 		update_series(generated_doc.parent_product_code,generated_doc.series.split(".")[0],int(re.sub(r"\D", "",list(filter_products)[-1].product_code)))
-	frappe.db.set_value("Generate Products", name, "duplicated_products", str(duplicated_products))
+	frappe.db.set_value("Generate Products", name, "duplicated_products", str(duplicated_products).replace("{","").replace("}","").replace("'",""))
 	frappe.publish_realtime("generate_product", {"message": "Products Generated"},user=frappe.session.user)
 	
 
