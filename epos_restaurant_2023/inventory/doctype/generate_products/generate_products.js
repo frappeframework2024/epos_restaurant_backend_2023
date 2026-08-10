@@ -11,7 +11,10 @@ frappe.ui.form.on("Generate Products", {
 	},
 	setup(frm){
         frappe.realtime.on("generate_product", (data) => {
-            frappe.show_alert({
+			if (data.message === "Products Generated") {
+				frm.reload_doc();
+			}
+			frappe.show_alert({
                 message: data.message,
                 indicator: 'blue'
             });

@@ -96,6 +96,7 @@ def bulk_insert_products(name):
 				generate_product(generated_doc, doc, index, d)
 				index = index + 1
 				yield doc
+				
 	def filter_existing_product(products):
 		names = [a.name for a in products]
 		existing = set()
@@ -108,12 +109,14 @@ def bulk_insert_products(name):
 				)
 			)
 		data = [row for row in products if row.name not in existing]
-		return data
-	filter_products = filter_existing_product(list(get_product_docs()))
+		return data,existing
+	filter_products, duplicated_products = filter_existing_product(list(get_product_docs()))
 	bulk_insert("Product", filter_products, chunk_size=10000)
 	if filter_products:
 		update_series(generated_doc.parent_product_code,generated_doc.series.split(".")[0],int(re.sub(r"\D", "",list(filter_products)[-1].product_code)))
+	frappe.db.set_value("Generate Products", name, "duplicated_products", str(duplicated_products))
 	frappe.publish_realtime("generate_product", {"message": "Products Generated"},user=frappe.session.user)
+	
 
 def chunks(lst, size):
     for i in range(0, len(lst), size):
