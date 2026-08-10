@@ -91,14 +91,33 @@ def bulk_insert_products(name):
 				yield doc
 		else:
 			index = get_last_index(generated_doc)
-			for d in (generated_products):
+			for d in (get_new_products(generated_doc)):
 				doc = frappe.new_doc("Product")
 				generate_product(generated_doc, doc, index, d)
 				index = index + 1
 				yield doc
-	bulk_insert("Product", get_product_docs(), chunk_size=10000)
-	update_series(generated_doc.parent_product_code,generated_doc.series.split(".")[0],int(re.sub(r"\D", "",list(get_product_docs())[-1].product_code)))
+	def filter_existing_product(products):
+		names = [a.name for a in products]
+		existing = set()
+		for chunk in chunks(names, 5000):
+			existing.update(
+				frappe.get_all(
+					"Product",
+					filters={"name": ["in", chunk]},
+					pluck="name"
+				)
+			)
+		data = [row for row in products if row.name not in existing]
+		return data
+	filter_products = filter_existing_product(list(get_product_docs()))
+	bulk_insert("Product", filter_products, chunk_size=10000)
+	if filter_products:
+		update_series(generated_doc.parent_product_code,generated_doc.series.split(".")[0],int(re.sub(r"\D", "",list(filter_products)[-1].product_code)))
 	frappe.publish_realtime("generate_product", {"message": "Products Generated"},user=frappe.session.user)
+
+def chunks(lst, size):
+    for i in range(0, len(lst), size):
+        yield lst[i:i + size]
 
 def update_series(parent_product_code,key,counter):
 	if not parent_product_code:
