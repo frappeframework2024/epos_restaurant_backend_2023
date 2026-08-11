@@ -100,7 +100,7 @@ def run_backup_command():
             elif os.path.isdir(file_path):
                 shutil.rmtree(file_path)
         except Exception as e:
-            print('Failed to delete %s. Reason: %s' % (file_path, e))
+            frappe.throw('Failed to delete %s. Reason: %s' % (file_path, e))
     command = ""
     if backup_type == "Simple":
         command = "bench --site " + site_name + " backup"
@@ -108,9 +108,7 @@ def run_backup_command():
         command = "bench --site " + site_name + " backup --with-files"
     else:
         command = "bench --site " + site_name + " backup"
-
     asyncio.run(run_bench_command(command))
-    
     frappe.enqueue(upload_to_ftp,timeout=3600)
 
 async def run_bench_command(command, kwargs=None):
@@ -137,9 +135,9 @@ def upload_to_ftp():
     if backup_folder is None or backup_folder == '' :
         backup_folder = frappe.utils.get_site_path(conf.get("backup_path", "private/backups"))
     ftp_password = password.get_decrypted_password("FTP Backup", "FTP Backup", fieldname="ftp_password",raise_exception=False)
-    ftp_port = 50010
+    ftp_port = 21
     if frappe.get_meta("FTP Backup").has_field("ftp_port"):
-        ftp_port = setting.ftp_port or 50010
+        ftp_port = setting.ftp_port or 21
     session = connect_ftp(setting.ftp_url, ftp_port, setting.ftp_user, ftp_password)
     if site_name in session.nlst():
         session.cwd(site_name)

@@ -2,6 +2,15 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("FTP Backup", {
+    refresh(frm){
+         frm.set_query("log","clear_logs", function() {
+           return {
+                filters: [
+                    ["name", "in", "Error Log,Scheduled Job Log,Access Log,Console Log,Activity Log,Webhook Request Log"]
+                ]
+            }
+        });
+    },
     setup(frm){
         frappe.realtime.on("repair_database", (data) => {
             frappe.show_alert({
