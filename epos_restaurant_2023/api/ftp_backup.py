@@ -175,13 +175,12 @@ def upload_to_ftp():
 
 def connect_ftp(host, port, user, password):
     from ftplib import FTP, FTP_TLS, error_perm
-    timeout = 1800
+    timeout = 120
     try:
         ftps = FTP_TLS()
         ftps.connect(host, port, timeout=timeout)
         ftps.login(user, password)
-        ftps.prot_p()
-        ftps.set_pasv(True)
+        ftps.prot_c()
         ftps.encoding = "latin-1"
         return ftps
     except (error_perm, OSError):
@@ -189,5 +188,4 @@ def connect_ftp(host, port, user, password):
         ftp.connect(host, port, timeout=timeout)
         ftp.login(user, password)
         ftp.encoding = "latin-1"
-        ftp.set_pasv(True)
         return ftp
