@@ -175,7 +175,7 @@ def upload_to_ftp():
 
 def connect_ftp(host, port, user, password):
     from ftplib import FTP, FTP_TLS, error_perm
-    timeout = 600
+    timeout = 1800
     try:
         ftps = FTP_TLS()
         ftps.connect(host, port, timeout=timeout)
