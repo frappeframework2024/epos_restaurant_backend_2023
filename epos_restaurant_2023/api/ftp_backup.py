@@ -164,7 +164,7 @@ def upload_to_ftp():
     for filename in os.listdir(backup_folder):
         file_path = os.path.join(backup_folder, filename)
         with open(file_path, 'rb') as file:
-            session.storbinary(f'STOR {filename}', file, blocksize=8 * 1024 * 1024)
+            session.storbinary(f'STOR {filename}', file, blocksize=8 * 1024)
     session.quit()
     frappe.publish_realtime("backup_database", {"message": "Database Backup Successfully"},user=frappe.session.user)
 
