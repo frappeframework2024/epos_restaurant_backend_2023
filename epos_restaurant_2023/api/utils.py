@@ -87,6 +87,7 @@ def validate_queue_job_status(doc, method=None, *args, **kwargs):
             frappe.throw("Schedule job status is not running. Please contact your system administrator.")
 
 def successful_login(login_manager):
+    return
     from epos_restaurant_2023.api.api import check_allow_access
     if not check_allow_access():
         frappe.msgprint("<center><div style='font-size: 24px;'><b>Something went wrong</b></div> </br> Please contact system support.</center>")
