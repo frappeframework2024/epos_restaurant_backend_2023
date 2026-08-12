@@ -508,11 +508,11 @@ def check_allow_negative_stock(self):
 		for p in self.sale_products:
 			if p.is_inventory_product == 1:
 				uom_conversion = get_uom_conversion(p.base_unit, p.unit)
-				current_qty = get_product_qty(p.product_code, self.stock_location)
+				current_qty = get_product_qty(p.product_code, p.stock_location)
 				current_qty = current_qty * uom_conversion
 				sale_qty = p.quantity * uom_conversion
 				if sale_qty > current_qty:
-					msg += "<b>{0}</b>: Insufficient stock at <b>{1}</b> (Qty: <b>{2} {3}</b>) for sale <b>{4} {5}</b></br>".format(p.product_code, self.stock_location,float(current_qty), p.unit, float(p.quantity), p.unit)
+					msg += "<b>{0}</b>: Insufficient stock at <b>{1}</b> (Qty: <b>{2} {3}</b>) for sale <b>{4} {5}</b></br>".format(p.product_code, p.stock_location,float(current_qty), p.unit, float(p.quantity), p.unit)
 		if msg:
 			frappe.throw(msg)
 
