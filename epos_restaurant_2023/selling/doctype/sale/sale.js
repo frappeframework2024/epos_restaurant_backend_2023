@@ -866,9 +866,7 @@ function update_sale_discount_to_sale_product(frm) {
 }
 
 let get_product_price = function (frm, doc) {
-
 	return new Promise(function (resolve, reject) {
-
 		frappe.call({
 			method: "epos_restaurant_2023.inventory.doctype.product.product.get_product_price",
 			args: {
@@ -879,7 +877,6 @@ let get_product_price = function (frm, doc) {
 				portion: doc.portion
 			},
 			callback: function (r) {
-
 				resolve(r.message.price)
 			},
 			error: function (r) {

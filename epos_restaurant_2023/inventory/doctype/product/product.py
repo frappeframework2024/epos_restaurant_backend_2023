@@ -729,8 +729,9 @@ def get_product_price(product=None,barcode=None,unit=None, business_branch=None,
 					price= data[0].price or 0
 					cost= data[0].cost or 0
 	else:
-		p = frappe.get_doc("Product",{"product_code":barcode,"disabled":0},["*"])
-		return get_product_price (product=p, unit=unit, business_branch=business_branch,portion=portion,price_rule=price_rule)
+		if frappe.db.exists("Product",{"product_code":barcode,"disabled":0}):
+			p = frappe.get_doc("Product",{"product_code":barcode,"disabled":0},["*"])
+			return get_product_price (product=p, unit=unit, business_branch=business_branch,portion=portion,price_rule=price_rule)
 	return {"price":price,"cost":cost}
 
 def get_product_annual_sale(self):
