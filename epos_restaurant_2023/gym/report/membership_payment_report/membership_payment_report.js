@@ -47,5 +47,14 @@ frappe.query_reports["Membership Payment Report"] = {
 		frappe.query_report.toggle_filter_display('start_date', filter_based_on === 'Fiscal Year');
 		frappe.query_report.toggle_filter_display('end_date', filter_based_on === 'Fiscal Year');
 		frappe.query_report.refresh();
+		const custom_css = `
+            <style>
+                .datatable .dt-row .dt-cell:first-child .dt-cell__content{
+					min-width: 100px !important;
+					width: 100px !important;
+					align-content: center !important;
+				}
+            </style>`;
+        $(custom_css).appendTo("head");
     },
 };

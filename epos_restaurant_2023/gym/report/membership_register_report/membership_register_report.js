@@ -118,7 +118,15 @@ frappe.query_reports["Membership Register Report"] = {
 		report.page.add_inner_button("Preview Report", function () {
 			report.refresh();
 		});
-		
+		const custom_css = `
+            <style>
+                .datatable .dt-row .dt-cell:first-child .dt-cell__content{
+					min-width: 100px !important;
+					width: 100px !important;
+					align-content: center !important;
+				}
+            </style>`;
+        $(custom_css).appendTo("head");
 	},
 	"formatter": function(value, row, column, data, default_formatter) {
 	

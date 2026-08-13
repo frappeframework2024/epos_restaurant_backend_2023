@@ -10,6 +10,15 @@ frappe.query_reports["Expired Member Report"] = {
 			frappe.query_report.toggle_filter_display('start_date', true  );
 			frappe.query_report.toggle_filter_display('end_date', true );
 		}
+		const custom_css = `
+            <style>
+                .datatable .dt-row .dt-cell:first-child .dt-cell__content{
+					min-width: 100px !important;
+					width: 100px !important;
+					align-content: center !important;
+				}
+            </style>`;
+        $(custom_css).appendTo("head");
 	},
 	"filters": [
 		{

@@ -1,5 +1,5 @@
 {
- "add_total_row": 0,
+ "add_total_row": 1,
  "columns": [],
  "creation": "2026-07-04 16:28:38.782617",
  "disabled": 0,
@@ -10,7 +10,7 @@
  "is_standard": "Yes",
  "letter_head": "",
  "letterhead": null,
- "modified": "2026-07-04 16:28:38.782617",
+ "modified": "2026-08-13 16:16:22.905632",
  "modified_by": "Administrator",
  "module": "GYM",
  "name": "Membership Payment Term Report",
