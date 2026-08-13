@@ -143,9 +143,9 @@ def upload_to_ftp():
         if site_name in session.nlst():
             session.cwd(site_name)
             for folder in session.nlst():
-                if folder != "." and folder != "..":
+                if folder != "." and folder != ".." and "_" in folder:
                     created_date = folder.split('_', 1)[0]
-                    if(len(created_date) >= 10 ):
+                    if(len(created_date) == 10 ):
                         d1 = datetime.strptime(created_date, "%Y-%m-%d")
                         d2 = datetime.today()
                         if (d2-d1).days >= setting.delete_after:
