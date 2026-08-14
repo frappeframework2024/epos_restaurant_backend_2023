@@ -17,6 +17,7 @@ class GenerateProducts(Document):
 		for fieldname in ("option_1", "option_2", "option_3"):
 			tags = _parse_tags(self.get(fieldname))
 			self.set(fieldname, json.dumps(tags, ensure_ascii=False) if tags else "")
+		check_max_rows(self)
 		global counter
 		counter = 1
 		if not self.is_new():
@@ -132,6 +133,11 @@ def update_series(parent_product_code,key,counter):
 		else:
 			frappe.db.sql("INSERT INTO `tabSeries` (`name`, `current`) VALUES (%s, %s)", (key, counter))
 		frappe.db.commit()
+
+def check_max_rows(self):
+	options = get_new_products(self)
+	if len(options)>2000:
+		frappe.throw("Maximum 2000 rows are allowed to generate products. Please reduce the number of options.")
 
 def check_product_rows(self):
 	options = get_new_products(self)
