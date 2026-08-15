@@ -75,15 +75,14 @@ function make_generate_product_tag_input(frm, fieldname) {
 		Promise.resolve(value_update).then(focus_input);
 	}
 
-
 	function focus_input() {
 		if (read_only) return;
-
 		$input.trigger("focus");
 		const input = $input.get(0);
 		const cursor_position = input.value.length;
 		input.setSelectionRange(cursor_position, cursor_position);
 	}
+
 	function add_values(value) {
 		const existing = new Set(tags.map((tag) => tag.toLocaleLowerCase()));
 		let changed = false;
@@ -122,7 +121,6 @@ function make_generate_product_tag_input(frm, fieldname) {
 			});
 			$tag.attr("data-tag-index", index);
 			$("<span>", { text: tag }).appendTo($tag);
-
 			if (!read_only) {
 				$tag.attr("draggable", "true");
 				$tag.on("dragstart", (event) => {
@@ -198,13 +196,11 @@ function make_generate_product_tag_input(frm, fieldname) {
 			}
 			$editor.append($tag);
 		});
-
 		if (!read_only) {
 			$input.attr("placeholder", tags.length ? "" : __("Type a value and press Enter"));
 			$editor.append($input);
 		}
 	}
-	
 	$editor.on("click", () => $input.trigger("focus"));
 	$input.on("keydown", (event) => {
 		if (["Enter", ",", "Tab"].includes(event.key) && $input.val().trim()) {

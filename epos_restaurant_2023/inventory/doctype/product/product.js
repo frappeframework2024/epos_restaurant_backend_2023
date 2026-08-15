@@ -754,11 +754,12 @@ function set_product_indicator(frm) {
                         indicator = "red";
                     }
                     total_total_quantity = total_total_quantity + d.quantity;
+                    cost =(format_currency(d.cost) + " x ");
                     if (d.expired_date) {
-                        frm.dashboard.add_indicator(d.stock_location + ": " + d.quantity.toFixed(r.message.precision) + " " + d.unit + ' (Exp. On ' + d.expired_date + ')', indicator);
+                        frm.dashboard.add_indicator(d.stock_location + ": " + cost + d.quantity.toFixed(r.message.precision) + " " + d.unit + ' (Exp. On ' + d.expired_date + ')', indicator);
 
                     } else {
-                        frm.dashboard.add_indicator(d.stock_location + ": " + d.quantity.toFixed(r.message.precision) + " " + d.unit, indicator);
+                        frm.dashboard.add_indicator(d.stock_location + ": " + cost + d.quantity.toFixed(r.message.precision) + " " + d.unit, indicator);
                     }
 
                 });

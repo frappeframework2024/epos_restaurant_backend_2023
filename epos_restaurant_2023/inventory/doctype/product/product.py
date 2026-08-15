@@ -109,13 +109,13 @@ class Product(Document):
 					filters={
 						'product_code': self.name
 					},
-					fields=['name','stock_location', 'quantity','unit',"expired_date", "has_expired_date"],
+					fields=['name','stock_location', 'quantity','cost','unit',"expired_date", "has_expired_date"],
 				)
 
 		if stock_data:
 			for d in stock_data:
 				expired_date = "" if not d.has_expired_date  or not d.expired_date else frappe.format(d.expired_date,{"fieldtype":"Date"})
-				stock_information.append({"name":d.name, "stock_location": d.stock_location, "quantity":d.quantity,"unit":d.unit,"expired_date":expired_date})
+				stock_information.append({"name":d.name, "stock_location": d.stock_location, "quantity":d.quantity,"unit":d.unit,"expired_date":expired_date,"cost":d.cost})
 	
 		return {
 			"total_annual_sale":get_product_annual_sale(self),

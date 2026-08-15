@@ -32,17 +32,6 @@ frappe.listview_settings['Product'] = {
         });
     },
     onload(me) { 
-        frappe.realtime.on("product_notification", (data) => {
-            frappe.show_alert({
-                message: data.message,
-                indicator: 'blue'
-            });
-        });
-        // frappe.route_options = {
-        //     status: ['!=',"Variant"],
-        //     disabled: ['=',0]
-        // };
-
         me.page.add_action_item('Assign Menu', function() {
             let d = new frappe.ui.Dialog({
                 title: 'Assign Menu',

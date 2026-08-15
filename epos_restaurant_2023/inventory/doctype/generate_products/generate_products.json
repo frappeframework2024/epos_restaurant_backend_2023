@@ -19,6 +19,7 @@
   "unit",
   "is_inventory_product",
   "show_generated_products",
+  "add_bulk_option",
   "section_break_smgw",
   "option_1_prefix",
   "option_1",
@@ -48,6 +49,7 @@
    "fieldtype": "Section Break"
   },
   {
+   "depends_on": "eval:doc.add_bulk_option == 1",
    "fieldname": "option_1",
    "fieldtype": "Small Text",
    "label": "Option 1"
@@ -57,6 +59,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "depends_on": "eval:doc.add_bulk_option == 1",
    "fieldname": "option_2",
    "fieldtype": "Small Text",
    "label": "Option 2"
@@ -66,6 +69,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "depends_on": "eval:doc.add_bulk_option == 1",
    "fieldname": "option_3",
    "fieldtype": "Small Text",
    "label": "Option 3"
@@ -203,12 +207,18 @@
    "hidden": 1,
    "label": "Duplicated Products",
    "no_copy": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "add_bulk_option",
+   "fieldtype": "Check",
+   "label": "Add bulk Option"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-08-10 11:56:15.925333",
+ "modified": "2026-08-15 10:53:44.189747",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Generate Products",
