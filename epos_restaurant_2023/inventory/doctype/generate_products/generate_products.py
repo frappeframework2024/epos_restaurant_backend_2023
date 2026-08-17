@@ -88,6 +88,9 @@ def bulk_insert_products(name):
 				doc.option_1 = p.option_1
 				doc.option_2 = p.option_2
 				doc.option_3 = p.option_3
+				doc.option_1_prefix = generated_doc.option_1_prefix
+				doc.option_2_prefix = generated_doc.option_2_prefix
+				doc.option_3_prefix = generated_doc.option_3_prefix
 				doc.parent_product_code = generated_doc.parent_product_code
 				yield doc
 		else:
@@ -173,6 +176,9 @@ def generate_product(self, p, index, d):
 	p.option_1 = "" if option_1 == "None" else option_1
 	p.option_2 = "" if option_2 == "None" else option_2
 	p.option_3 = "" if option_3 == "None" else option_3
+	p.option_1_prefix = self.option_1_prefix
+	p.option_2_prefix = self.option_2_prefix
+	p.option_3_prefix = self.option_3_prefix
 	option_1_prefix = self.option_1_prefix + ": "+ p.option_1 if self.option_1_prefix and p.option_1 else p.option_1
 	option_2_prefix = ", "+self.option_2_prefix + ": "+ p.option_2 if self.option_2_prefix and p.option_2 else ", "+p.option_2 if p.option_2 else ""
 	option_3_prefix = ", "+self.option_3_prefix + ": "+ p.option_3 if self.option_3_prefix and p.option_3 else ", "+p.option_3 if p.option_3 else ""
