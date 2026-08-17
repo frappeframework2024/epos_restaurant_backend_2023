@@ -124,6 +124,15 @@
   "column_break_mert",
   "default_discount_account",
   "default_coupon_expense_account",
+  "section_break_xvex",
+  "option_1_prefix",
+  "option_1",
+  "column_break_qbmq",
+  "option_2_prefix",
+  "option_2",
+  "column_break_zyuu",
+  "option_3_prefix",
+  "option_3",
   "section_break_54",
   "allow_discount",
   "allow_free",
@@ -1324,12 +1333,66 @@
    "fieldtype": "Link",
    "label": "Stock Location",
    "options": "Stock Location"
+  },
+  {
+   "fieldname": "section_break_xvex",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fetch_from": "product_code.option_1",
+   "fieldname": "option_1",
+   "fieldtype": "Data",
+   "label": "Option 1",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "product_code.option_2",
+   "fieldname": "option_2",
+   "fieldtype": "Data",
+   "label": "Option 2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_qbmq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "product_code.option_3",
+   "fieldname": "option_3",
+   "fieldtype": "Data",
+   "label": "Option 3",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "product_code.option_1_prefix",
+   "fieldname": "option_1_prefix",
+   "fieldtype": "Data",
+   "label": "Option 1 Prefix",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "product_code.option_2_prefix",
+   "fieldname": "option_2_prefix",
+   "fieldtype": "Data",
+   "label": "Option 2 Prefix",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_zyuu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "product_code.option_3_prefix",
+   "fieldname": "option_3_prefix",
+   "fieldtype": "Data",
+   "label": "Option 3 Prefix",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-08-03 15:08:05.919543",
+ "modified": "2026-08-17 10:14:32.945816",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sale Product",
