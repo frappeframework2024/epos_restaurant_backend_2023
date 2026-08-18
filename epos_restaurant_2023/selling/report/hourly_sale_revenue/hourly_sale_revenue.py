@@ -140,7 +140,6 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 		order by
 			n.number
 	""".format(get_conditions(filters,group_filter))	
-	frappe.msgprint(sql)
 	data = frappe.db.sql(sql,filters, as_dict=1)
 
 	return data
