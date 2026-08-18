@@ -3,23 +3,11 @@
 
 frappe.query_reports["Sale Summary With Product Options"] = {
 	onload: function(report) {
-		getPosProfileAndUpdateOptions();
-
-        // Add event listener for the POS Profile filter
-        frappe.query_report.get_filter('pos_profile').on_change = function() {
-            getPosProfileAndUpdateOptions();
-        };
-		if(frappe.query_report.get_filter_value('parent_row_group')!=="Table"){
-			frappe.query_report.toggle_filter_display('table', true);
-		}
 		if(frappe.query_report.get_filter_value('parent_row_group')!=="Vendor"){
 			frappe.query_report.toggle_filter_display('vendor', true);
 		}
 		if(frappe.query_report.get_filter_value('row_group')!=="Vendor"){
 			frappe.query_report.toggle_filter_display('vendor', true);
-		}
-		if(frappe.query_report.get_filter_value('row_group')!=="Table"){
-			frappe.query_report.toggle_filter_display('table', true);
 		}
 		if(frappe.query_report.get_filter_value('filter_based_on')=="This Month"){
 			frappe.query_report.toggle_filter_display('from_fiscal_year', true);
@@ -128,56 +116,6 @@ frappe.query_reports["Sale Summary With Product Options"] = {
 			},
 		},
 		{
-			"fieldname": "working_days",
-			"label": __("Working Day"),
-			"fieldtype": "MultiSelectList",
-			 get_data: function(txt) {
-				let filter_based_on = frappe.query_report.get_filter_value("filter_based_on");
-				let start_date = frappe.query_report.get_filter_value("start_date");
-				let end_date = frappe.query_report.get_filter_value("end_date");
-				let date = new Date()
-				if (filter_based_on=="Fiscal Year"){
-					start_date = start_of_year(date);
-					end_date = end_of_year(date);
-				}
-				else if (filter_based_on=="This Month"){
-					start_date = start_of_month(date);
-					end_date = end_of_month(date);
-				}
-				else{
-					start_date = start_date
-					end_date = end_date
-				}
-                return frappe.db.get_link_options('Working Day', txt,filters={
-					posting_date: ['between', [start_date, end_date]]
-				});
-            },
-			"on_change": function (query_report) {},
-		},
-		{
-			"fieldname": "cashier_shifts",
-			"label": __("Cashier Shift"),
-			"fieldtype": "MultiSelectList",
-			get_data: function(txt) {
-				working_days = frappe.query_report.get_filter_value("working_days");
-				if(working_days != ""){
-					return frappe.db.get_link_options('Cashier Shift', txt,filters={
-						working_day: ['in', working_days]
-					});
-				}
-			},
-			"on_change": function (query_report) {},
-		},
-		{
-            fieldname: "pos_profile",
-            label: __("POS Profile"),
-            fieldtype: "MultiSelectList",
-            get_data: function(txt) {
-                return frappe.db.get_link_options('POS Profile', txt);
-            },
-            on_change: getPosProfileAndUpdateOptions, // Attach the change handler
-        },
-		{
 			"fieldname": "outlet",
 			"label": __("Outlet"),
 			"fieldtype": "MultiSelectList",
@@ -237,10 +175,9 @@ frappe.query_reports["Sale Summary With Product Options"] = {
 			"fieldname": "parent_row_group",
 			"label": __("Parent Group By"),
 			"fieldtype": "Select",
-			"options": "\nCategory\nProduct Group\nRevenue Group\nBusiness Branch\nOutlet\nTable Group\nTable\nPOS Profile\nCustomer\nCustomer Group\nStock Location\nDate\n\Month\nYear\nSale Invoice\nWorking Day\nCashier Shift\nSale Type\nVendor",
+			"options": "\nCategory\nProduct Group\nRevenue Group\nBusiness Branch\nOutlet\nCustomer\nCustomer Group\nStock Location\nDate\n\Month\nYear\nSale Invoice\nVendor",
 			on_change: function() { 
 				filter = frappe.query_report.get_filter_value('parent_row_group')
-				frappe.query_report.toggle_filter_display('table',filter !== 'Table');
 				frappe.query_report.toggle_filter_display('vendor',filter !== 'Vendor');
 				if(filter !== "vendor"){
 					frappe.query_report.set_filter_value("vendor", []);
@@ -252,11 +189,10 @@ frappe.query_reports["Sale Summary With Product Options"] = {
 			"fieldname": "row_group",
 			"label": __("Row Group By"),
 			"fieldtype": "Select",
-			"options": "Product Code\nProduct And Price\nCategory\nProduct Group\nRevenue Group\nBusiness Branch\nOutlet\nTable Group\nTable\nPOS Profile\nCustomer\nCustomer Group\nStock Location\nDate\n\Month\nYear\nSale Invoice\nWorking Day\nCashier Shift\nSale Type\nSeller\nVendor",
+			"options": "Product Code\nProduct And Price\nCategory\nProduct Group\nRevenue Group\nBusiness Branch\nOutlet\nCustomer\nCustomer Group\nStock Location\nDate\n\Month\nYear\nSale Invoice\nSeller\nVendor",
 			"default":"Category",
 			on_change: function() { 
 				filter = frappe.query_report.get_filter_value('row_group')
-				frappe.query_report.toggle_filter_display('table',filter !== 'Table');
 				frappe.query_report.toggle_filter_display('vendor',filter !== 'Vendor');
 				if(filter !== "Vendor"){
 					frappe.query_report.set_filter_value("vendor", []);
@@ -287,16 +223,6 @@ frappe.query_reports["Sale Summary With Product Options"] = {
 					{"value":"Gross Profit","description":"Gross Pofit"},
 					{"value":"Revenue","description":"Revenue"},
 				]
-			},
-			hide_in_filter:1,
-			"on_change": function (query_report) {},
-		},
-		{
-			fieldname: "table",
-			label: "Table",
-			fieldtype: "MultiSelectList",
-			get_data: function(txt) {
-				return frappe.db.get_link_options('Tables Number', txt);
 			},
 			hide_in_filter:1,
 			"on_change": function (query_report) {},
@@ -369,12 +295,10 @@ function end_of_year(year)
     return new Date(year, 11, 31);// December 31st
 }
 
-function update_filter_options(filter_name, options, hideOptions) {
+function update_filter_options(filter_name, options) {
     let filter = frappe.query_report.get_filter(filter_name);
-
     if (filter) {
-        // Filter out options based on hideOptions array
-        let updatedOptions = options.filter(option => !hideOptions.includes(option));
+        let updatedOptions = options;
         filter.df.options = updatedOptions.join("\n");
         filter.refresh();
     } else {
@@ -385,67 +309,20 @@ function update_filter_options(filter_name, options, hideOptions) {
 function update_row_group_options(default_sale_type) {
     let options = [
         "Product Code","Product And Price","Category", "Product Group", "Revenue Group", "Business Branch", 
-        "Outlet", "Table Group", "Table", "POS Profile", "Customer", 
+        "Outlet", "POS Profile", "Customer", 
         "Customer Group", "Stock Location", "Date", "Month", "Year", 
-        "Sale Invoice", "Working Day", "Cashier Shift", "Sale Type","Vendor"
+        "Sale Invoice","Vendor"
     ];
-
-    let hideOptions = [];
-    if (default_sale_type === 'Retail Sale') {
-        hideOptions = ["Table", "Table Group", "Sale Type"];
-    }
-
-    
-
-    update_filter_options('row_group', options, hideOptions);
+    update_filter_options('row_group', options);
 }
 
 function update_parent_row_group_options(default_sale_type) {
     let options = [
         "", "Category", "Product Group", 
-        "Revenue Group", "Business Branch", "Outlet", "Table Group", 
-        "Table", "POS Profile", "Customer", "Customer Group", 
+        "Revenue Group", "Business Branch", "Outlet", 
+        "POS Profile", "Customer", "Customer Group", 
         "Stock Location", "Date", "Month", "Year", "Sale Invoice", 
-        "Working Day", "Cashier Shift", "Sale Type", "Seller","Vendor"
+        "Seller","Vendor"
     ];
-
-    let hideOptions = [];
-    if (default_sale_type === 'Retail Sale') {
-        hideOptions = ["Table", "Table Group", "Sale Type"];
-    }
-
-    
-
-    update_filter_options('parent_row_group', options, hideOptions);
-}
-
-function getPosProfileAndUpdateOptions() {
-    let selectedPosProfiles = frappe.query_report.get_filter_value('pos_profile');
-    
-    if (selectedPosProfiles && selectedPosProfiles.length > 0) {
-        // Assuming you need to work with the first selected POS Profile for simplicity
-        let posProfile = selectedPosProfiles[0];
-        
-        // Fetch default_sale_type from the POS Profile
-        frappe.call({
-            method: "frappe.client.get",
-            args: {
-                doctype: "POS Profile",
-                name: posProfile
-            },
-            callback: function(response) {
-                if (response.message) {
-                    let default_sale_type = response.message.default_sale_type || [];
-                    update_row_group_options(default_sale_type);
-                    update_parent_row_group_options(default_sale_type);
-                } else {
-                    console.error(`POS Profile ${posProfile} not found`);
-                }
-            }
-        });
-    } else {
-        // Handle the case where no POS Profile is selected
-        update_row_group_options(''); // or any default value
-        update_parent_row_group_options(''); // or any default value
-    }
+    update_filter_options('parent_row_group', options);
 }

@@ -68,7 +68,6 @@ def get_columns(filters):
 	row_group = [d for d in get_row_groups() if d["label"]==filters.row_group][0]
 	if filters.row_group == 'Sale Invoice':
 		columns.append({'fieldname':'row_group','label':filters.row_group,'fieldtype':'Data',"options":"Sale",'align':'left','width':250})
-		columns.append({'fieldname':'guest_cover','label':"Guest Cover",'fieldtype':'Int','align':'left','width':150})
 	else:
 		if filters.row_group == "Product And Price" or filters.row_group == "Product Code":
 			columns.append({'fieldname':'row_group','label':"Product Code",'fieldtype':'Data','align':'left','width':150})
@@ -83,10 +82,7 @@ def get_columns(filters):
 		columns.append({'fieldname':'option_2','label':"Option 2",'fieldtype':'Data','align':'center','width':100})
 		columns.append({'fieldname':'option_3','label':"Option 3",'fieldtype':'Data','align':'center','width':100})
 		columns.append({"label":"Unit","fieldname":"unit","fieldtype":"Data","align":"center",'width':100})
-	if filters.row_group == "Product And Price":
 		columns.append({"label":"Price","fieldname":"price","fieldtype":"Currency","align":"right",'width':100})
-	if filters.row_group == "Customer" or filters.row_group == "Customer Group":
-		columns.append({"label":"Guest Cover","fieldname":"guest_cover","fieldtype":"Int","align":"left",'width':140})
 	hide_columns = filters.get("hide_columns")
 	if filters.column_group !="None" and filters.row_group not in ["Date","Month","Year"]:
 		for c in get_dynamic_columns(filters):
@@ -94,7 +90,6 @@ def get_columns(filters):
 	fields = get_report_field(filters)
 	for f in fields:
 		if (not hide_columns or  f["label"] not in hide_columns)  :
-			 
 			if f['fieldname'] =='commission' or f['fieldname'] =='net_sale' :
 				if  row_group["show_commission"]:
 					columns.append({
@@ -107,7 +102,6 @@ def get_columns(filters):
 						}
 					)
 			elif f['fieldname'] =='sub_total' :
-				
 				columns.append({
 					'fieldname':"total_" +  f['fieldname'],
 					'label': f["label"],
@@ -119,15 +113,14 @@ def get_columns(filters):
 				)
 			else:
 				columns.append({
-						'fieldname':"total_" +  f['fieldname'],
-						'label':"Total " + f["label"],
-						'fieldtype':f['fieldtype'],
-						'precision': f["precision"],
-						'align':f['align'],
-						'width':150
-						}
-					)
-    
+					'fieldname':"total_" +  f['fieldname'],
+					'label':"Total " + f["label"],
+					'fieldtype':f['fieldtype'],
+					'precision': f["precision"],
+					'align':f['align'],
+					'width':150
+					}
+				)
 	if (filters.row_group == "Sale Invoice" or filters.parent_row_group == "Sale Invoice") and filters.get("include_cancelled") == True:
 		columns.append({"label":"Status","fieldname":"docstatus","fieldtype":"Data","align":"center",'width':100})
 	return columns
@@ -150,97 +143,55 @@ def get_dynamic_columns(filters):
 	return columns
 
 def get_fields(filters):
-	sql=""
+	field=""
+	group_by=""
 	if filters.column_group=="Daily":
-		sql = """
-			select 
-				concat('col_',date_format(date,'%d_%m')) as fieldname, 
-				date_format(date,'%d') as label ,
-				min(date) as start_date,
-				max(date) as end_date
-			from `tabDates` 
-			where date between '{}' and '{}'
-			group by
-				concat('col_',date_format(date,'%d_%m')) , 
-				date_format(date,'%d')  	
-		""".format(filters.start_date, filters.end_date)
+		field = """concat('col_',date_format(date,'%d_%m')) as fieldname, date_format(date,'%d') as label"""
+		group_by = """concat('col_',date_format(date,'%d_%m')),date_format(date,'%d')"""
 	elif filters.column_group =="Monthly":
-		sql = """
-			select 
-				concat('col_',date_format(date,'%m_%Y')) as fieldname, 
-				date_format(date,'%b %y') as label ,
-				min(date) as start_date,
-				max(date) as end_date
-			from `tabDates` 
-			where date between '{}' and '{}'
-			group by
-				concat('col_',date_format(date,'%m_%Y')) , 
-				date_format(date,'%b %y')  	
-		""".format(filters.start_date, filters.end_date)
+		field = """concat('col_',date_format(date,'%m_%Y')) as fieldname, date_format(date,'%b %y') as label"""
+		group_by = """concat('col_',date_format(date,'%m_%Y')),date_format(date,'%b %y')"""
 	elif filters.column_group=="Weekly":
-		sql = """
-			select 
-				concat('col_',date_format(date,'%v_%Y')) as fieldname, 
-				concat('WK ',date_format(date,'%v %y')) as label ,
-				min(date) as start_date,
-				max(date) as end_date
-			from `tabDates` 
-			where date between '{}' and '{}'
-			group by
-				concat('col_',date_format(date,'%v_%Y')), 
-				concat('WK ',date_format(date,'%v %y')) 
-		""".format(filters.start_date, filters.end_date)
+		field = """concat('col_',date_format(date,'%v_%Y')) as fieldname, concat('WK ',date_format(date,'%v %y')) as label"""
+		group_by = """concat('col_',date_format(date,'%v_%Y')),concat('WK ',date_format(date,'%v %y'))"""
 	elif filters.column_group=="Quarterly":
-		sql = """
-			select 
-				concat('col_',QUARTER(date)) as fieldname, 
-				concat('Q',QUARTER(date),' ',date_format(date,'%y')) as label ,
-				min(date) as start_date,
-				max(date) as end_date
-			from `tabDates` 
-			where date between '{}' and '{}'
-			group by
-				concat('col_',QUARTER(date)),
-				concat('Q',QUARTER(date),' ',date_format(date,'%y')) 
-		""".format(filters.start_date, filters.end_date)
+		field = """concat('col_',QUARTER(date)) as fieldname, concat('Q',QUARTER(date),' ',date_format(date,'%y')) as label"""
+		group_by = """concat('col_',QUARTER(date)),concat('Q',QUARTER(date),' ',date_format(date,'%y'))"""
 	elif filters.column_group=="Half Yearly":
-		sql = """
-			select 
-				concat('col_',if(month(date) between 1 and 6,'jan_jun','jul_dec'),date_format(date,'%y')) as fieldname, 
-				concat(if(month(date) between 1 and 6,'Jan-Jun','Jul-Dec'),' ',date_format(date,'%y')) as label ,
-				min(date) as start_date,
-				max(date) as end_date
-			from `tabDates` 
-			where date between '{}' and '{}'
-			group by
-				concat('col_',if(month(date) between 1 and 6,'jan_jun','jul_dec'),date_format(date,'%y')), 
-				concat(if(month(date) between 1 and 6,'Jan-Jun','Jul-Dec'),' ',date_format(date,'%y')) 
-		""".format(filters.start_date, filters.end_date)
+		field = """concat('col_',if(month(date) between 1 and 6,'jan_jun','jul_dec'),date_format(date,'%y')) as fieldname, 
+				   concat(if(month(date) between 1 and 6,'Jan-Jun','Jul-Dec'),' ',date_format(date,'%y')) as label"""
+		group_by = """concat('col_',if(month(date) between 1 and 6,'jan_jun','jul_dec'),date_format(date,'%y')), 
+					  concat(if(month(date) between 1 and 6,'Jan-Jun','Jul-Dec'),' ',date_format(date,'%y')) """
 	elif filters.column_group=="Yearly":
-		sql = """
+		field = """concat('col_',date_format(date,'%Y')) as fieldname,date_format(date,'%Y') as label"""
+		group_by = """concat('col_',date_format(date,'%Y')),date_format(date,'%Y')"""
+	else:
+		field = """concat('col_',date_format(date,'%Y')) as fieldname,date_format(date,'%Y') as label"""
+		group_by = """concat('col_',date_format(date,'%Y')),date_format(date,'%Y')"""
+	sql = """
 			select 
-				concat('col_',date_format(date,'%Y')) as fieldname, 
-				date_format(date,'%Y') as label ,
+				{0},
 				min(date) as start_date,
 				max(date) as end_date
 			from `tabDates` 
-			where date between '{}' and '{}'
+			where date between '{1}' and '{2}'
 			group by
-				concat('col_',date_format(date,'%Y')),
-				date_format(date,'%Y')
-		""".format(filters.start_date, filters.end_date)
+				{3}
+		""".format(field,filters.start_date, filters.end_date, group_by)
 	fields = frappe.db.sql(sql,as_dict=1)
 	return fields
  
 def get_conditions(filters,group_filter=None):
-	conditions = " 1 =1 "
-	if not filters.include_foc:
-		conditions = conditions + " and b.is_foc=0 "
 	start_date = filters.start_date
 	end_date = filters.end_date
-	if(group_filter!=None):
+	conditions = " 1 = 1 "
+	if not filters.include_foc:
+		conditions = conditions + " and b.is_foc=0 "
+
+	if group_filter != None:
 		conditions += " and {} ='{}'".format(group_filter["field"],group_filter["value"].replace("'","''").replace("%","%%"))
 	conditions += " AND b.posting_date between '{}' AND '{}'".format(start_date,end_date)
+
 	if filters.get("product_group"):
 		conditions += " AND a.product_group in %(product_group)s"
 
@@ -250,23 +201,14 @@ def get_conditions(filters,group_filter=None):
 	if filters.get("customer_group"):
 		conditions += " AND b.customer_group in %(customer_group)s"
  
-	conditions += " AND b.business_branch in %(business_branch)s"
-	conditions += " AND b.outlet in %(outlet)s"
+	if filters.get("business_branch"):
+		conditions += " AND b.business_branch in %(business_branch)s"
 
-	if filters.get("pos_profile"):
-		conditions += " AND b.pos_profile in %(pos_profile)s"
+	if filters.get("outlet"):
+		conditions += " AND b.outlet in %(outlet)s"
   
 	if filters.customer:
 		conditions += " AND b.customer  = %(customer)s"
-
-	if filters.table:
-		conditions += " AND b.table_id  in %(table)s"
-
-	if filters.working_day:
-		conditions += " AND b.working_day  in %(working_days)s"
-	
-	if filters.cashier_shift:
-		conditions += " AND b.cashier_shift  in %(cashier_shifts)s"
 
 	if filters.vendor:
 		conditions += " AND a.vendor in %(vendor)s"
@@ -320,14 +262,13 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 			sql = sql + " ,{} AS 'total_{}' ".format(rf["sql_expression"],rf["fieldname"])
 	_row_group = row_group
 	if row_group == "if(ifnull(b.custom_bill_number,'')='',a.parent,concat(b.custom_bill_number,' (',a.parent,')'))":
-		_row_group = "a.parent, coalesce(b.custom_bill_number,'-'),b.sale_type"
+		_row_group = "a.parent, coalesce(b.custom_bill_number,'-')"
 	else:
 		if ((indent == 1 and filters.parent_row_group) or (indent == 0 and (filters.parent_row_group or "") == "")) and filters.row_group=="Product And Price":
 			_row_group = "concat(a.product_code,'-',a.product_name,' ', if(coalesce(a.`portion`,'')='' or coalesce(a.`portion`,'') = 'Normal','',coalesce(a.`portion`,'')), coalesce(a.modifiers,'')),a.price"
 	sql = sql + """ {2}
 		FROM `tabSale Product` AS a
 			INNER JOIN `tabSale` b on b.name = a.parent
-			left join `tabTables Number` c on c.name = b.table_id
 		WHERE
 			{5}
 			{0}
@@ -376,21 +317,19 @@ def get_report_summary(data,filters):
 				else:
 					value=sum((d["total_" + f["fieldname"]] or 0) for d in data if d["indent"]==0)
 					report_summary.append({"label":"{}".format(f["label"]),"value":value,"datatype": f["fieldtype"],"indicator":f["indicator"]})
-    
 		summary_by_shift_query = """
 								select
 									sum(a.total_revenue) as total_revenue,
 									b.shift_name
 								from `tabSale` b
 								inner join `tabSale Product` a on b.name = a.parent
-        						inner join `tabShift Type` st on b.shift_name = st.name
+								inner join `tabShift Type` st on b.shift_name = st.name
 								where 1 = 1 and 
 									{0}
 								group by 
 									b.shift_name
 								order by st.sort
 								""".format(get_conditions(filters))
-        
 		summary_by_shift_data = frappe.db.sql(summary_by_shift_query,filters, as_dict=1)
 		for sh in summary_by_shift_data:
 			report_summary.append({"label":_(sh["shift_name"]),"value":sh["total_revenue"],"datatype": "Currency","indicator":"orange"})
@@ -510,26 +449,8 @@ def get_row_groups():
 			"show_commission":False
 		},
 		{
-			"fieldname":"if(ifnull(b.tbl_group,'')='','Not Set',b.tbl_group)",
-			"label":_("Table Group"),
-			"parent_row_group_filter_field":"row_group",
-			"show_commission":False
-		},
-		{
-			"fieldname":"if(ifnull(b.tbl_number,'')='','Not Set',b.tbl_number)",
-			"label":_("Table"),
-			"parent_row_group_filter_field":"row_group",
-			"show_commission":False
-		},
-		{
 			"fieldname":"b.business_branch",
 			"label":"Business Branch",
-			"parent_row_group_filter_field":"row_group",
-			"show_commission":False
-		},
-		{
-			"fieldname":"if(ifnull(b.pos_profile,'')='','Not Set',b.pos_profile)",
-			"label":"POS Profile",
 			"parent_row_group_filter_field":"row_group",
 			"show_commission":False
 		},
@@ -570,12 +491,6 @@ def get_row_groups():
 			"show_commission":False
 		},
 		{
-			"fieldname":"tbl_number",
-			"label":"Table",
-			"parent_row_group_filter_field":"row_group",
-			"show_commission":False
-		},
-		{
 			"fieldname":"a.product_code",
 			"label":"Product Code",
 			"show_commission":False
@@ -583,24 +498,6 @@ def get_row_groups():
 		{
 			"fieldname":"a.product_code",
 			"label":"Product And Price",
-			"show_commission":False
-		},
-  		{
-			"fieldname":"if(ifnull(b.working_day,'')='','Not Set',b.working_day)",
-			"label":_("Working Day"),
-			"parent_row_group_filter_field":"row_group",
-			"show_commission":False
-		},
-		{
-			"fieldname":"if(ifnull(b.cashier_shift,'')='','Not Set',b.cashier_shift)",
-			"label":_("Cashier Shift"),
-			"parent_row_group_filter_field":"row_group",
-			"show_commission":False
-		},
-		{
-			"fieldname":"if(ifnull(b.sale_type,'')='','Not Set',b.sale_type)",
-			"label":_("Sale Type"),
-			"parent_row_group_filter_field":"row_group",
 			"show_commission":False
 		},
 		{
