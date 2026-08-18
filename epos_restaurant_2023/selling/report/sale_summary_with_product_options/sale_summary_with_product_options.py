@@ -75,9 +75,6 @@ def get_columns(filters):
 			columns.append({'fieldname':'row_group','label':filters.row_group,'fieldtype':'Data','align':'left','width':250})
 	if filters.row_group == "Product Code" or filters.row_group == "Product And Price":
 		columns.append({"label":"Product Name","fieldname":"product_name","fieldtype":"Data","align":"left",'width':300})
-		if  filters.row_group == "Product And Price" and epos_settings.is_using_retail == 0:
-			columns.append({"label":"Portion","fieldname":"portion","fieldtype":"Data","align":"left",'width':300})
-			columns.append({"label":"Modifiers","fieldname":"modifiers","fieldtype":"Data","align":"left",'width':300})
 		columns.append({'fieldname':'option_1','label':"Option 1",'fieldtype':'Data','align':'center','width':100})
 		columns.append({'fieldname':'option_2','label':"Option 2",'fieldtype':'Data','align':'center','width':100})
 		columns.append({'fieldname':'option_3','label':"Option 3",'fieldtype':'Data','align':'center','width':100})
