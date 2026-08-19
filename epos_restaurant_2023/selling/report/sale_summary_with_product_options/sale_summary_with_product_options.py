@@ -464,7 +464,7 @@ def get_row_groups():
 			"show_commission":False
 		},		
 		{
-			"fieldname":"ifnull(b.stock_location,'Not Set')",
+			"fieldname":"ifnull(a.stock_location,'Not Set')",
 			"label":"Stock Location",
 			"parent_row_group_filter_field":"row_group",
 			"show_commission":False
