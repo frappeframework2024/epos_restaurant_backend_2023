@@ -133,10 +133,11 @@ import {
     createToaster,
     changePOSMenuDialog,
     i18n, ResendDialog,
+    ResendDialogV1,
     MoveItemModal,
     EditPOSMenuDialog,
     scanCouponDialog
-} from "@/plugin"
+} from "@/plugin";
 import ComLoadingDialog from '@/components/ComLoadingDialog.vue';
 import ComMenuSetting from '@/views/sale/components/ComMenuSetting.vue';
 
@@ -163,6 +164,7 @@ let productPrinters = [];
 let count_sale_type = ref({})
 import { useDialog } from 'primevue/usedialog';
 const dialog = useDialog();
+const printServerUrl = sale.getPrintServerUrl();
 
 const showMenuSetting = () => {
     dialog.open(ComMenuSetting, {
@@ -659,7 +661,11 @@ function onResend() {
         else if (sale.sale.sale_status != 'Submitted' || sale.sale.sale_products.find(r => r.sale_product_status != 'Submitted')) {
             toaster.warning($t('msg.please save or submit your current order first', [$t('Submit')]))
         } else {
-            ResendDialog($t('Re-Send'));
+            if(printServerUrl){
+                ResendDialogV1($t('Re-Send'));
+            }else{
+                ResendDialog($t('Re-Send'));
+            }          
         }
     }
 }

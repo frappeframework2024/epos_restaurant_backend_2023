@@ -3,9 +3,7 @@
         <template #title>
             {{$t("Re-Send")  }}
         </template>
-        <template #content>  
-
-            
+        <template #content>              
             <span v-if="selectedPrinters.length > 0" v-for="printer, index in  selectedPrinters"  :key="index" >
                 <v-chip size="small" style="margin-right: 5px; margin-bottom: 5px;" >{{ printer }}</v-chip>
             </span>  
@@ -15,8 +13,7 @@
 </template>
 <script setup>
 import ComResendGroupSaleProductList from "@/views/sale/components/ComResendGroupSaleProductList.vue";
-import {  inject,i18n ,ref} from '@/plugin'
-import { computed } from "vue"; 
+import {  inject,i18n ,ref,computed} from '@/plugin'; 
 import {createToaster} from '@meforma/vue-toaster'; 
 const toaster = createToaster({ position: "top-right" });
 
