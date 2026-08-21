@@ -104,7 +104,18 @@ def get_kot_template(sale, printer_name, products, version = "v1"):
         _products  = json.loads(products)
      
     if version == "v1":
-        data_template,css = frappe.db.get_value("POS Receipt Template","Kitchen Order",["template","style"])   
+        data_template,css = frappe.db.get_value("POS Receipt Template","Kitchen Order",["template","style"])           
+        product_query = """select name from `tabProduct` where is_coupon = 1 and name in %(product_codes)s"""
+        product_data = frappe.db.sql(product_query, {"product_codes": [_p["product_code"] for _p in _products]}, as_dict=1)    
+        coupon_products = [d["name"] for d in product_data] 
+        for _p in _products: 
+            if _p["product_code"] in coupon_products:
+                _p["is_coupon"] = 1
+                _p["qr_code_base64"] =  ""              
+                if _p.get("sale_product_name"):
+                    _p["qr_code_base64"] = generate_qrcode_base64(_p["sale_product_name"])       
+                    
+                
         html = frappe.render_template(data_template, get_print_context(doc=doc_sale,sale_products = _products,printer_name=printer_name))    
         result =  {"html":html,"css":css}
         return result
@@ -170,7 +181,8 @@ def get_kot_template(sale, printer_name, products, version = "v1"):
                 
                 
         return template_data 
-        
+
+
         
 def add_print_queue(sale, data = None):    
     queue_doc = {

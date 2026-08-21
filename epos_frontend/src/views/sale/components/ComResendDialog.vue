@@ -43,6 +43,7 @@ const selectedPrinters = computed(()=>{
     });  
     return printers;  
 }); 
+
 function onClose() {
     emit("resolve", false);
 }

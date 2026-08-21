@@ -158,9 +158,8 @@ function get_reference_detail(frm,cdt,cdn){
 
 function update_total_amount(frm){
     total_amount = 0
-    frm.doc.payment_entry_reference.forEach(a => {
-        total_amount += a.total_amount
-    });
+    
+    
     frm.doc.total_amount = total_amount
     frm.refresh_field("total_amount")
 }

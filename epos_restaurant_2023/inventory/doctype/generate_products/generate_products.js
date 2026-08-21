@@ -2,7 +2,6 @@
 // For license information, please see license.txt
 
 const GENERATE_PRODUCT_OPTION_FIELDS = ["option_1_html", "option_2_html", "option_3_html"];
-
 frappe.ui.form.on("Generate Products", {
 	refresh(frm) {
 		GENERATE_PRODUCT_OPTION_FIELDS.forEach((fieldname) => {

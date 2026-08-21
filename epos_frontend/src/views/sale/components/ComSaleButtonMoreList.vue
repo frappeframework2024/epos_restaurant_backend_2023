@@ -198,7 +198,7 @@ const onLoadMenuLabel = computed(() => {
     } else {
         return $t("Second");
     }
-})
+});
 
 function onRateIncludeOrNotIncludeTaxClick(){
     gv.authorize(
@@ -261,6 +261,7 @@ async function onChangeTable() {
         }
     }    
 }
+
 async function onChangePriceRule() {
     if (sale.sale.sale_status != 'New') {
         toaster.warning($t('msg.This bill is not new order'));
@@ -279,6 +280,7 @@ async function onChangePriceRule() {
         }
     }
 }
+
 async function onChangePOSMenu() {
     const result = await changePOSMenuDialog({})
     if (result == true) {
@@ -292,11 +294,13 @@ async function onChangePOSMenu() {
         toaster.success($t("msg.Change POS Menu successfully"));
     }
 }
+
 function onRemoveSaleNote() {
     if (!sale.isBillRequested()) {
         sale.sale.note = ''
     }
 }
+
 async function onChangeSaleType() {
     if (!sale.isBillRequested()) {
         const result = await changeSaleTypeModalDialog({})
@@ -320,6 +324,7 @@ function onOpenCashDrawer() {
     });
 }
 }
+
 async function onSeatNumber() {
     if (!sale.isBillRequested()) { 
         const result = await keyboardDialog({ title: $t('Change Seat Number'), type: 'number', value: sale.sale.seat_number }); 
@@ -333,6 +338,7 @@ async function onSeatNumber() {
         }
     }
 }
+
 async function onReferenceNumber() {
     if (!sale.isBillRequested()) {
         const reference_number = await ComSaleReferenceNumberDialog({
@@ -343,6 +349,7 @@ async function onReferenceNumber() {
         }
     }
 }
+
 async function onDeleteBill() {
     if (!sale.isBillRequested()) {
         //check authorize and     check reason 
@@ -407,7 +414,6 @@ async function onDeleteBill() {
         })
     }
 }
-
 
 // generate print kot when delete bill 
  function generateSaleProductPrintToKitchen(doc, note) {
@@ -690,6 +696,7 @@ async function onMoveItem() {
         }
     }
 }
+
 async function onEditPOSMenu() {
     const res = await EditPOSMenuDialog({ title: $t('Edit Menu Item') });
 }

@@ -243,7 +243,7 @@ def print_kitchen_order(station, sale, products,printer):
             _p["qr_code_base64"] =  ""  
             
             if _p.get("sale_product_name"):
-                _p["qr_code_base64"] = _generate_qrcode_base64(_p["sale_product_name"])            
+                _p["qr_code_base64"] = generate_qrcode_base64(_p["sale_product_name"])            
             
     html = frappe.render_template(data_template, get_print_context(doc=doc_sale,sale_products =  products,printer_name=printer))
     
@@ -527,7 +527,7 @@ def get_print_data(doctype,docname,template,return_type="base64",lang="en",optio
      
      
 
-def _generate_qrcode_base64(data):
+def generate_qrcode_base64(data):
     qr = qrcode.QRCode(
         version=1,
         box_size=7,
