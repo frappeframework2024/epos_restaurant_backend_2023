@@ -107,7 +107,7 @@
    "reqd": 1
   },
   {
-   "default": "0",
+   "default": "1",
    "fieldname": "is_inventory_product",
    "fieldtype": "Check",
    "label": "Is Inventory Product"
@@ -157,7 +157,7 @@
    "label": "Product Name KH"
   },
   {
-   "default": "0",
+   "default": "1",
    "fieldname": "show_generated_products",
    "fieldtype": "Check",
    "label": "Show Generated Products"
@@ -218,7 +218,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-08-15 10:53:44.189747",
+ "modified": "2026-08-21 08:34:56.171450",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Generate Products",
