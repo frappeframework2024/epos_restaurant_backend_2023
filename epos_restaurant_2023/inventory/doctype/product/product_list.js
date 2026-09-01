@@ -23,13 +23,25 @@ frappe.listview_settings['Product'] = {
             return [__("Enabled"), "blue"];
         }
     },
-    refresh(me) { 
-         frappe.realtime.on("product_notification", (data) => {
+   refresh(me) {
+        if (me.product_notification_handler) {
+            frappe.realtime.off(
+                "product_notification",
+                me.product_notification_handler
+            );
+        }
+
+        me.product_notification_handler = (data) => {
             frappe.show_alert({
                 message: data.message,
-                indicator: 'blue'
+                indicator: "blue"
             });
-        });
+        };
+
+        frappe.realtime.on(
+            "product_notification",
+            me.product_notification_handler
+        );
     },
     onload(me) { 
         me.page.add_action_item('Assign Menu', function() {
