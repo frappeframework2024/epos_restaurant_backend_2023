@@ -20,11 +20,8 @@ frappe.ui.form.on("Bulk Purchase Order Payment", {
 	refresh(frm) {
         updatetotal(frm);
 	},
-    vendor(frm){
-        get_purchase_order(frm)
-    },
-    stock_location(frm){
-        get_purchase_order(frm)
+    get_purchase_orders(frm){
+        get_filtered_purchase_orders(frm)
     },
     payment_type(frm){ 
         if((frm.doc.purchase_order_list || []).length > 0){
@@ -102,14 +99,16 @@ function update_allocated_amount(frm){
     }
 }
 
-function get_purchase_order(frm){
+function get_filtered_purchase_orders(frm){
     if (frm.doc.vendor) {
         frm.set_value('purchase_order_list', []);
         frappe.call({
             method: "epos_restaurant_2023.purchasing.doctype.bulk_purchase_order_payment.bulk_purchase_order_payment.get_purchase_order_by_vendor",
             args: {
                 vendor:frm.doc.vendor,
-                stock_location:frm.doc.stock_location
+                stock_location:frm.doc.stock_location,
+                start_date:frm.doc.start_date,
+                end_date:frm.doc.end_date
             },
             callback: function(r){
                 r.message.forEach((r => {

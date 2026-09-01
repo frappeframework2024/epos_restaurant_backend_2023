@@ -9,13 +9,18 @@
   "section_break_poji",
   "naming_series",
   "posting_date",
-  "vendor",
-  "stock_location",
   "column_break_tlkk",
   "payment_type",
   "currency",
   "exchange_rate",
   "amended_from",
+  "section_break_jmye",
+  "stock_location",
+  "vendor",
+  "get_purchase_orders",
+  "column_break_koov",
+  "start_date",
+  "end_date",
   "section_break_abcp",
   "payment_amount",
   "purchase_order_list",
@@ -150,12 +155,35 @@
    "fieldtype": "Float",
    "label": "Balance",
    "read_only": 1
+  },
+  {
+   "fieldname": "section_break_jmye",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "get_purchase_orders",
+   "fieldtype": "Button",
+   "label": "Get Purchase Orders"
+  },
+  {
+   "fieldname": "column_break_koov",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "label": "Start Date"
+  },
+  {
+   "fieldname": "end_date",
+   "fieldtype": "Date",
+   "label": "End Date"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-06-07 15:13:50.669922",
+ "modified": "2026-09-01 10:22:18.864171",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Bulk Purchase Order Payment",

@@ -41,12 +41,9 @@ frappe.ui.form.on("Bulk Sale Payment", {
         });
         updatetotal(frm);
 	},
-    customer(frm){
-        get_sales(frm)
+    get_sales(frm){
+        get_filtered_sales(frm)
     },
-    stock_location(frm) {
-        get_sales(frm)
-	},
     payment_type(frm){ 
         if(frm.doc.sale_list){
             frappe.db.get_value("Payment Type",frm.doc.payment_type,["default_fee_amount"]).then((fee_response)=>{
@@ -139,7 +136,7 @@ function update_allocated_amount(frm){
     }
 }
 
-function get_sales(frm){
+function get_filtered_sales(frm){
     if (frm.doc.customer) {
         frm.set_value('sale_list', []);
             frappe.db.get_value("Payment Type",frm.doc.payment_type,["default_fee_amount"]).then((fee_response)=>{
@@ -147,7 +144,9 @@ function get_sales(frm){
                     method: "epos_restaurant_2023.selling.doctype.bulk_sale_payment.bulk_sale_payment.get_sale_by_customer",
                     args: {
                         customer:frm.doc.customer,
-                        stock_location:frm.doc.stock_location
+                        stock_location:frm.doc.stock_location,
+                        start_date:frm.doc.start_date,
+                        end_date:frm.doc.end_date
                     },
                     callback: function(r){
                         r.message.forEach((r => {

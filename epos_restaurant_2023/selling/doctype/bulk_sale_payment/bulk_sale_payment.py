@@ -36,12 +36,16 @@ def cancel_sale_payment(d):
 	doc.cancel()
 
 @frappe.whitelist()
-def get_sale_by_customer(customer,stock_location=""):
+def get_sale_by_customer(customer,start_date="",end_date="",stock_location=""):
+	if not customer:
+		frappe.throw("Please select customer first")
+	filters = " where customer = '{0}' and docstatus = 1 and balance > 0.01".format(customer)
 	if stock_location != "":
-		sales = frappe.db.sql("select name sale,grand_total amount,total_paid payment_amount,balance,stock_location,business_branch from `tabSale` where customer = '{0}' and stock_location = '{1}' and docstatus = 1 and balance > 0".format(customer,stock_location),as_dict=1)
-	else:
-		sales = frappe.db.sql("select name sale,grand_total amount,total_paid payment_amount,balance,stock_location,business_branch from `tabSale` where customer = '{0}' and docstatus = 1 and balance > 0".format(customer),as_dict=1)
-	return sales
+		filters += " and stock_location = '{1}'".format(customer,stock_location)
+	if start_date and end_date:
+		filters += " and posting_date between '{0}' and '{1}'".format(start_date,end_date)
+	sales = frappe.db.sql("select name sale,grand_total amount,total_paid payment_amount,balance,stock_location,business_branch from `tabSale` {0}".format(filters),as_dict=1)
+	return sales or []
 
 def add_sale_payment(doc,self):
 	p = frappe.new_doc("Sale Payment")

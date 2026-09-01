@@ -32,13 +32,16 @@ def cancel_purchase_order_payment(d):
 	doc.cancel()
 
 @frappe.whitelist()
-def get_purchase_order_by_vendor(vendor,stock_location=""):
-	purhase_order = []
+def get_purchase_order_by_vendor(vendor,start_date="",end_date="",stock_location=""):
+	if not vendor:
+		frappe.throw("Please select vendor first")
+	filters = " where vendor = '{0}' and docstatus = 1 and balance > 0.01".format(vendor)
 	if stock_location != "":
-		purhase_order = frappe.db.sql("select name purchase_order,grand_total amount,total_paid payment_amount,balance,stock_location from `tabPurchase Order` where vendor = '{0}' and stock_location='{1}' and docstatus = 1 and balance > 0.01".format(vendor,stock_location),as_dict=1)
-	else:
-		purhase_order = frappe.db.sql("select name purchase_order,grand_total amount,total_paid payment_amount,balance,stock_location from `tabPurchase Order` where vendor = '{0}' and docstatus = 1 and balance > 0.01".format(vendor),as_dict=1)
-	return purhase_order
+		filters += " and stock_location = '{1}'".format(vendor,stock_location)
+	if start_date and end_date:
+		filters += " and posting_date between '{0}' and '{1}'".format(start_date,end_date)
+	purhase_order = frappe.db.sql("select name purchase_order,grand_total amount,total_paid payment_amount,balance,stock_location from `tabPurchase Order` {0}".format(filters),as_dict=1)
+	return purhase_order or []
 
 def add_purchase_order_payment(doc):
 	p = frappe.new_doc("Purchase Order Payment")
