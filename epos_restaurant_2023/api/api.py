@@ -3041,3 +3041,25 @@ def get_draft_sale():
             doc = frappe.new_doc("Sale Alert")
             doc.sale = a["name"]
             doc.save()
+
+
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def get_products(doctype:str, txt:str, searchfield:str, start:int, page_len:int, filters: dict | None = None):
+    data = frappe.db.sql("""
+    select 
+    a.name,
+    a.product_name_en,
+    a.product_name_kh
+    from `tabProduct` a
+    where a.name LIKE %(txt)s OR a.product_name_en LIKE %(txt)s OR a.product_name_kh LIKE %(txt)s
+    ORDER BY
+    CAST(
+        IF(
+            INSTR(a.name, '-') > 0,
+            SUBSTRING_INDEX(a.name, '-', -1),
+            0
+        ) AS UNSIGNED
+    )
+    LIMIT %(start)s, %(page_len)s""",{"txt":f"%{txt}%", "start": start, "page_len": page_len})
+    return data

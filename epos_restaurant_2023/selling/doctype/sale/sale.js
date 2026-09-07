@@ -10,7 +10,7 @@ frappe.ui.form.on("Sale", {
 				]
 			}
 		});
-		 
+		get_products(frm);
 	},
 	before_cancel(frm) {
         frm._isCancelling = true;
@@ -598,6 +598,14 @@ function set_query_cashier_shift(frm) {
 	} else {
 		set_query(frm, "cashier_shift", [["Cashier Shift", "is_closed", "=", 0]]);
 	}
+}
+
+async function get_products(frm){
+  frm.set_query("product_code", "sale_products", function(doc, cdt, cdn) {
+      return {
+          query: "epos_restaurant_2023.api.api.get_products"
+      };
+  });
 }
 
 async function update_product_price(frm) {
