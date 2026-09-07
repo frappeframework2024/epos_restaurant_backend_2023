@@ -203,9 +203,11 @@ scheduler_events = {
             "epos_restaurant_2023.api.schedule_task.delete_print_queues", # 1 AM every daty
             "epos_restaurant_2023.api.archive_data.delete_archive_transaction", # 1 AM every daty
         ],
-
         "0 */3 * * *":[ ##Every 3 hours at minute 0
             "epos_restaurant_2023.api.api.run_get_update_pos_station_license_enqueue"
+        ],
+        "0 12 * * *":[
+            "epos_restaurant_2023.api.api.get_draft_sale"
         ]
 	},
     "all": [

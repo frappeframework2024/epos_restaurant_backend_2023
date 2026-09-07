@@ -32,6 +32,14 @@
   "option_3_prefix",
   "option_3",
   "option_3_html",
+  "column_break_klkr",
+  "option_4_prefix",
+  "option_4",
+  "option_4_html",
+  "column_break_yipv",
+  "option_5_prefix",
+  "option_5",
+  "option_5_html",
   "section_break_lekn",
   "products",
   "amended_from",
@@ -213,12 +221,52 @@
    "fieldname": "add_bulk_option",
    "fieldtype": "Check",
    "label": "Add bulk Option"
+  },
+  {
+   "fieldname": "column_break_klkr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "option_4_prefix",
+   "fieldtype": "Data",
+   "label": "Option 4 Prefix"
+  },
+  {
+   "depends_on": "eval:doc.add_bulk_option == 1",
+   "fieldname": "option_4",
+   "fieldtype": "Small Text",
+   "label": "Option 4"
+  },
+  {
+   "fieldname": "option_4_html",
+   "fieldtype": "HTML",
+   "label": "Option 4 HTML"
+  },
+  {
+   "fieldname": "column_break_yipv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "option_5_prefix",
+   "fieldtype": "Data",
+   "label": "Option 5 Prefix"
+  },
+  {
+   "depends_on": "eval:doc.add_bulk_option == 1",
+   "fieldname": "option_5",
+   "fieldtype": "Small Text",
+   "label": "Option 5"
+  },
+  {
+   "fieldname": "option_5_html",
+   "fieldtype": "HTML",
+   "label": "Option 5 HTML"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-08-21 08:34:56.171450",
+ "modified": "2026-09-05 16:08:34.086089",
  "modified_by": "Administrator",
  "module": "Inventory",
  "name": "Generate Products",

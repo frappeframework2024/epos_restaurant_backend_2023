@@ -3033,3 +3033,11 @@ def run_get_update_pos_station_license():
 
     return f"{i} device(s) were updated"
 
+@frappe.whitelist()
+def get_draft_sale():
+    if frappe.get_meta("Sale").has_field("custom_alert_date"):
+        data = frappe.db.sql("select name from `tabSale` where docstatus = 0 and custom_alert_date is not null and custom_alert_date = %s", frappe.utils.nowdate(), as_dict=1)
+        for a in data:
+            doc = frappe.new_doc("Sale Alert")
+            doc.sale = a["name"]
+            doc.save()

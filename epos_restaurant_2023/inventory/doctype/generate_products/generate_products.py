@@ -14,7 +14,7 @@ import re
 
 class GenerateProducts(Document):
 	def validate(self):
-		for fieldname in ("option_1", "option_2", "option_3"):
+		for fieldname in ("option_1", "option_2", "option_3","option_4","option_5"):
 			tags = _parse_tags(self.get(fieldname))
 			self.set(fieldname, json.dumps(tags, ensure_ascii=False) if tags else "")
 		check_max_rows(self)
@@ -50,17 +50,17 @@ class GenerateProducts(Document):
 				generate_products(self)
 		
 	def before_submit(self):
-		existing_products = frappe.db.sql("select option_1,option_2,option_3 from `tabProduct` where parent_product_code = '{0}'".format(self.parent_product_code),as_dict=1)
-		lookup = [(d["option_1"], d["option_2"],d["option_3"]) for d in existing_products]
+		existing_products = frappe.db.sql("select option_1,option_2,option_3,option_4,option_5 from `tabProduct` where parent_product_code = '{0}'".format(self.parent_product_code),as_dict=1)
+		lookup = [(d.get("option_1"), d.get("option_2"),d.get("option_3"),d.get("option_4"),d.get("option_5")) for d in existing_products]
 		show_msg = 0
 		new_products=[]
 		if self.show_generated_products:
-			new_products = [d for d in self.products if (d.option_1, d.option_2,d.option_3) not in lookup]
+			new_products = [d for d in self.products if (d.option_1, d.option_2,d.option_3,d.option_4,d.option_5) not in lookup]
 			show_msg = 1 if len(self.products) != len(new_products) else 0
 			self.products = new_products
 		else:
 			generated_products = get_new_products(self)
-			new_products = [d for d in generated_products if (str(d.split(":")[0]),str(d.split(":")[1]),str(d.split(":")[2])) not in lookup]
+			new_products = [d for d in generated_products if (str(d.split(":")[0]),str(d.split(":")[1]),str(d.split(":")[2]),str(d.split(":")[3]),str(d.split(":")[4])) not in lookup]
 			show_msg = 1 if len(generated_products) != len(new_products) else 0
 		if show_msg == 1:
 			frappe.msgprint("Products with the same options as existing products will be removed")
@@ -88,9 +88,13 @@ def bulk_insert_products(name):
 				doc.option_1 = p.option_1
 				doc.option_2 = p.option_2
 				doc.option_3 = p.option_3
+				doc.option_4 = p.option_4
+				doc.option_5 = p.option_5
 				doc.option_1_prefix = generated_doc.option_1_prefix
 				doc.option_2_prefix = generated_doc.option_2_prefix
 				doc.option_3_prefix = generated_doc.option_3_prefix
+				doc.option_4_prefix = generated_doc.option_4_prefix
+				doc.option_5_prefix = generated_doc.option_5_prefix
 				doc.parent_product_code = generated_doc.parent_product_code
 				yield doc
 		else:
@@ -173,19 +177,27 @@ def generate_product(self, p, index, d):
 	option_1 = str(d.split(":")[0]) if len(d.split(":")) > 0 else ""
 	option_2 = str(d.split(":")[1]) if len(d.split(":")) > 1 else ""
 	option_3 = str(d.split(":")[2]) if len(d.split(":")) > 2 else ""
+	option_4 = str(d.split(":")[3]) if len(d.split(":")) > 3 else ""
+	option_5 = str(d.split(":")[4]) if len(d.split(":")) > 4 else ""
 	p.option_1 = "" if option_1 == "None" else option_1
 	p.option_2 = "" if option_2 == "None" else option_2
 	p.option_3 = "" if option_3 == "None" else option_3
+	p.option_4 = "" if option_4 == "None" else option_4
+	p.option_5 = "" if option_5 == "None" else option_5
 	p.option_1_prefix = self.option_1_prefix
 	p.option_2_prefix = self.option_2_prefix
 	p.option_3_prefix = self.option_3_prefix
+	p.option_4_prefix = self.option_4_prefix
+	p.option_5_prefix = self.option_5_prefix
 	option_1_prefix = self.option_1_prefix + ": "+ p.option_1 if self.option_1_prefix and p.option_1 else p.option_1
 	option_2_prefix = ", "+self.option_2_prefix + ": "+ p.option_2 if self.option_2_prefix and p.option_2 else ", "+p.option_2 if p.option_2 else ""
 	option_3_prefix = ", "+self.option_3_prefix + ": "+ p.option_3 if self.option_3_prefix and p.option_3 else ", "+p.option_3 if p.option_3 else ""
+	option_4_prefix = ", "+self.option_4_prefix + ": "+ p.option_4 if self.option_4_prefix and p.option_4 else ", "+p.option_4 if p.option_4 else ""
+	option_5_prefix = ", "+self.option_5_prefix + ": "+ p.option_5 if self.option_5_prefix and p.option_5 else ", "+p.option_5 if p.option_5 else ""
 	product_name_en = self.product_name_en if self.product_name_en else parent_product_code
 	product_name_kh = self.product_name_kh if self.product_name_kh else parent_product_code
-	p.product_name_en = product_name_en+" "+option_1_prefix+option_2_prefix+option_3_prefix
-	p.product_name_kh = product_name_kh+" "+option_1_prefix+option_2_prefix+option_3_prefix
+	p.product_name_en = product_name_en+" "+option_1_prefix+option_2_prefix+option_3_prefix+option_4_prefix+option_5_prefix
+	p.product_name_kh = product_name_kh+" "+option_1_prefix+option_2_prefix+option_3_prefix+option_4_prefix+option_5_prefix
 	p.product_category = self.category
 	p.unit = self.unit
 	p.is_inventory_product = self.is_inventory_product
@@ -274,6 +286,8 @@ def get_new_products(self):
 		json.loads(self.option_1 or '["None"]'),
 		json.loads(self.option_2 or '["None"]'),
 		json.loads(self.option_3 or '["None"]'),
+		json.loads(self.option_4 or '["None"]'),
+		json.loads(self.option_5 or '["None"]'),
 	]
 	active_options = [values for values in option_lists if values]
 	if not active_options:
