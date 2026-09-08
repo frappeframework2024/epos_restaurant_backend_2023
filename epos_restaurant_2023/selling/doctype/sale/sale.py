@@ -1004,7 +1004,6 @@ def update_inventory_on_cancel(self):
 				'stock_location': p.stock_location if p.stock_location else get_stock_location_by_pos_profile(p.product_code,pos_profile,self.stock_location),
 				'in_quantity':p.quantity / uom_conversion,
 				"uom_conversion":uom_conversion,
-				"price":p.cost,
 				'note': 'Sale invoice cancelled.',
 				'action': 'Cancel'
 			})
