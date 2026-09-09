@@ -90,6 +90,33 @@ frappe.ui.form.on("Product", {
                 ]
             }
         });
+        let fields = ["default_expense_account","default_adjustment_account","default_coupon_expense_account","default_discount_account"]
+        fields.forEach((fieldname) => {
+            frm.set_query(fieldname, "default_account", function () {
+                return {
+                    filters: [
+                        ["Chart Of Account", "is_group", "=", 0],
+                        ["Chart Of Account", "root_type", "=", "Expenses"]
+                    ]
+                }
+            });
+        })
+         frm.set_query("default_income_account", "default_account", function () {
+            return {
+                filters: [
+                    ["Chart Of Account", "is_group", "=", 0],
+                    ["Chart Of Account", "root_type", "=", "Income"]
+                ]
+            }
+        });
+         frm.set_query("default_stock_account", "default_account", function () {
+            return {
+                filters: [
+                    ["Chart Of Account", "is_group", "=", 0],
+                    ["Chart Of Account", "root_type", "=", "Asset"]
+                ]
+            }
+        });
         frm.set_query("product", "product_combo_menus", function () {
             return {
                 filters: [
