@@ -22,7 +22,7 @@ class StockTransfer(Document):
 						frappe.throw("There is no UoM conversion from {} to {}".format(p.base_unit, p.unit))
 				if epos_setting.allow_negative_stock == 0:
 					available_qty = get_product_qty(p.product_code, self.from_stock_location) * get_uom_conversion(p.unit, p.base_unit)
-					if p.quantity >= available_qty:
+					if p.quantity > available_qty:
 						error = error + ("Product <b>{0}</b> QTY In Stock Location <b>{1}</b> Are Not Enough</br>".format(p.product_code, self.from_stock_location))
 		if error != "":
 			frappe.throw(error)
