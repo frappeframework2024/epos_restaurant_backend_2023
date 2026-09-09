@@ -47,7 +47,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Vendor Type",
-   "options": "General\nIndividual\nCompany\nInternal\nMicro\nSmall\nMedieum, Large, Agricultural Cooperative"
+   "options": "General\nIndividual\nCompany\nInternal\nMicro\nSmall\nMedieum\nLarge\nAgricultural Cooperative"
   },
   {
    "fieldname": "company",
@@ -169,7 +169,7 @@
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-09 08:16:33.056514",
+ "modified": "2026-09-09 11:26:32.975963",
  "modified_by": "Administrator",
  "module": "Purchasing",
  "name": "Vendor",
