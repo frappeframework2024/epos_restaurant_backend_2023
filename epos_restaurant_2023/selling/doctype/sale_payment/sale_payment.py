@@ -5,7 +5,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from epos_restaurant_2023.selling.doctype.sale_payment.general_ledger_entry import submit_payment_to_general_ledger_entry_on_submit
-from epos_restaurant_2023.api.account import cancel_general_ledger_entery
+from epos_restaurant_2023.api.account import cancel_general_ledger_entry
 from epos_restaurant_2023.selling.doctype.sale.sale import update_customer_bill_balance, update_customer_point, update_customer_point_on_cancel_sale
 class SalePayment(Document):
 	def validate(self):
@@ -84,7 +84,7 @@ class SalePayment(Document):
 		# submit to general ledger entry
 		# run this in enqueue
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
-			cancel_general_ledger_entery('Sale Payment',self.name)
+			cancel_general_ledger_entry('Sale Payment',self.name)
 		if self.flags.ignore_on_cancel==True:
 			return
 		update_sale(self)

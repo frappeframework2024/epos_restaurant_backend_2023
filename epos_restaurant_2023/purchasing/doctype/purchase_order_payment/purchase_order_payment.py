@@ -6,7 +6,7 @@ from frappe import _
 from frappe.model.document import Document
 from epos_restaurant_2023.configuration.doctype.epos_settings.epos_settings import main_currency
 from epos_restaurant_2023.purchasing.doctype.purchase_order_payment.general_ledger_entry import submit_purchase_payment_to_general_ledger_entry_on_submit
-from epos_restaurant_2023.api.account import cancel_general_ledger_entery
+from epos_restaurant_2023.api.account import cancel_general_ledger_entry
 class PurchaseOrderPayment(Document):
 	def validate(self):
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
@@ -41,7 +41,7 @@ class PurchaseOrderPayment(Document):
 
 	def on_cancel(self):
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
-			cancel_general_ledger_entery('Purchase Order Payment',self.name)
+			cancel_general_ledger_entry('Purchase Order Payment',self.name)
    
 		update_purchase_order(self)
 def validate_account(self):

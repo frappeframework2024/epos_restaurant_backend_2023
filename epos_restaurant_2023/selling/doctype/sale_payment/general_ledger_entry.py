@@ -1,5 +1,11 @@
 import frappe
 
+@frappe.whitelist()
+def manual_submit_payment_to_general_ledger_entry(name):
+    doc = frappe.get_doc("Sale Payment",name)
+    submit_payment_to_general_ledger_entry_on_submit(doc, commit = True)
+
+
 def submit_payment_to_general_ledger_entry_on_submit(self, commit=True):
     from epos_restaurant_2023.api.account import submit_general_ledger_entry
     docs = []

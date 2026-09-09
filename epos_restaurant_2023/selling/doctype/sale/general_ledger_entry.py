@@ -9,6 +9,11 @@ from epos_restaurant_2023.inventory.inventory import (
 )
 
 @frappe.whitelist()
+def manual_submit_sale_to_general_ledger_entry(name):
+	doc = frappe.get_doc("Sale",name)
+	submit_sale_to_general_ledger_entry(doc, commit = True)
+
+@frappe.whitelist()
 def submit_sale_to_general_ledger_entry(self, commit = True):
 	from epos_restaurant_2023.api.account import submit_general_ledger_entry
 	sale_products = [a for a in self.sale_products if (a.coupons or "") == ""]

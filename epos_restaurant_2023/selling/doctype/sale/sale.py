@@ -3,7 +3,7 @@
 
 import json
 from  epos_restaurant_2023.api.cache_function import get_default_account_from_pos_config, get_default_account_from_revenue_group, get_doctype_value_cache
-from epos_restaurant_2023.api.account import cancel_general_ledger_entery,submit_general_ledger_entry
+from epos_restaurant_2023.api.account import cancel_general_ledger_entry,submit_general_ledger_entry
 from epos_restaurant_2023.inventory.inventory import get_product_qty,add_to_inventory_transaction, get_stock_location_by_pos_profile,check_uom_conversion, get_product_cost, get_stock_location_product, get_uom_conversion, update_product_quantity
 import frappe
 from frappe import utils
@@ -393,7 +393,7 @@ class Sale(Document):
 			return 
 
 		if frappe.get_cached_value("ePOS Settings",None,"use_basic_accounting_feature"):
-			cancel_general_ledger_entery(doctype="Sale",docname=self.name, commit = False )	
+			cancel_general_ledger_entry(doctype="Sale",docname=self.name, commit = False )	
 			commission_general_ledger_entry(self)
 		
 

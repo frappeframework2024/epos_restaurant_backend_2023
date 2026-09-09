@@ -32,6 +32,6 @@ class JournalEntry(Document):
 		submit_sale_to_general_ledger_entry( self=self, commit = False)	
   
 	def on_cancel(self):
-		from epos_restaurant_2023.api.account import cancel_general_ledger_entery
-		cancel_general_ledger_entery("Journal Entry", self.name, commit=False)
+		from epos_restaurant_2023.api.account import cancel_general_ledger_entry
+		cancel_general_ledger_entry("Journal Entry", self.name, commit=False)
   

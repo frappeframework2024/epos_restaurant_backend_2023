@@ -5,7 +5,7 @@ import frappe
 from frappe.model.document import Document
 from py_linq import Enumerable
 from epos_restaurant_2023.selling.doctype.sale.general_ledger_entry import submit_sale_to_general_ledger_entry
-from epos_restaurant_2023.api.account import cancel_general_ledger_entery
+from epos_restaurant_2023.api.account import cancel_general_ledger_entry
 
 class ePOSSettings(Document):
 	def validate(self):
@@ -56,7 +56,7 @@ class ePOSSettings(Document):
 
 		cancelled_sales = frappe.db.sql("select name from `tabSale` where business_branch = '{0}' and docstatus = 2".format(self.business_branch),as_dict=1)
 		for a in cancelled_sales:
-			cancel_general_ledger_entery("Sale", a["name"])	
+			cancel_general_ledger_entry("Sale", a["name"])	
 			
 		frappe.publish_realtime("generate_sales_general_ledger", {"message": "General Ledger Generated"},user=frappe.session.user)
 
