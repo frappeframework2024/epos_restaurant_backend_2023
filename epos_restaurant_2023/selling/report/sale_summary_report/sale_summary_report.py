@@ -302,7 +302,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 	normal_filter = "b.docstatus in (1) AND"
 	if (indent == 1 and filters.parent_row_group) or (indent == 0 and (filters.parent_row_group or "") == ""):
 		if (filters.row_group == "Product Code" or filters.row_group == "Product And Price"):
-			extra_columns = ",a.product_name,a.unit"
+			extra_columns = ",a.price,a.product_name,a.unit"
 			extra_columns_group_by = extra_columns
 		if filters.row_group == "Product And Price":
 			extra_columns +=  ",a.price,a.total_discount,if(coalesce(a.portion,'') = '' or coalesce(a.portion,'')='Normal','', coalesce(a.portion,'')) as `portion`, coalesce(a.modifiers,'') as modifiers"
