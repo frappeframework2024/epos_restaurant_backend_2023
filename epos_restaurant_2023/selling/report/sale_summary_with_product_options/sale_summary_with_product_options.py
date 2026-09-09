@@ -79,6 +79,7 @@ def get_columns(filters):
 		columns.append({'fieldname':'option_2','label':"Option 2",'fieldtype':'Data','align':'center','width':100})
 		columns.append({'fieldname':'option_3','label':"Option 3",'fieldtype':'Data','align':'center','width':100})
 		columns.append({"label":"Unit","fieldname":"unit","fieldtype":"Data","align":"center",'width':100})
+	if filters.row_group == "Product And Price":
 		columns.append({"label":"Price","fieldname":"price","fieldtype":"Currency","align":"right",'width':100})
 	hide_columns = filters.get("hide_columns")
 	if filters.column_group !="None" and filters.row_group not in ["Date","Month","Year"]:
