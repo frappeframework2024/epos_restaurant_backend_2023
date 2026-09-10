@@ -522,7 +522,12 @@ def get_column_width(column):
         column["cell_width"] = w[0]
         return w[0]
     
+    if str(column.get("width",125)).isnumeric():
+        column["cell_width"] = float(column.get("width",125))/7
+    else:
+         column["cell_width"] = 125/7
 
-    column["cell_width"] = column.get("width",125)/7
-
-    return column.get("width",100)/7
+    if str(column.get("width",100)).isnumeric():
+        return float(column.get("width",100))/7
+    else:
+        return 100/7
