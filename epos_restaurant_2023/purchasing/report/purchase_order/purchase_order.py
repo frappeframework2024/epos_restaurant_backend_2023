@@ -4,14 +4,11 @@
 import frappe
 from frappe import _
 from py_linq import Enumerable
-
+from epos_restaurant_2023.api.api import get_report_field_perm
 
 def execute(filters=None):
 	if not filters.vendor_name:
 		filters.vendor_name ="All"
-	
- 
-
 	if not filters.stock_location:
 		filters.stock_location= frappe.db.get_list("Stock Location",pluck='name')
 	if not filters.business_branch:
@@ -47,21 +44,22 @@ def get_report_data(filters):
 	return data
 
 def get_report_columns():
-    return [
+	fields = [
 		{"label":"Name", "fieldname":"name", "fieldtype":"Link","options":"Purchase Order","width":150},
-  		{"label":"Date", "fieldname":"posting_date", "fieldtype":"Date","align":"center","width":120},
+		{"label":"Date", "fieldname":"posting_date", "fieldtype":"Date","align":"center","width":120},
 		{"label":"Branch", "fieldname":"business_branch","fieldtype":"Data","align":"left","width":120},
-  		{"label":"Stock Location","fieldname":"stock_location","fieldtype":"Data","align":"left","width":150},
-    	{"label":"Vendor", "fieldname":"vendor_name", "fieldtype":"Data","align":"left","width":120},
-    	{"label":"QTY", "fieldname":"total_quantity", "fieldtype":"Data","align":"center","width":100},
-    	{"label":"Sub Total", "fieldname":"sub_total", "fieldtype":"Currency","align":"center","width":120},
-     	{"label":"Total Discount", "fieldname":"total_discount", "fieldtype":"Currency","align":"center","width":120},
+		{"label":"Stock Location","fieldname":"stock_location","fieldtype":"Data","align":"left","width":150},
+		{"label":"Vendor", "fieldname":"vendor_name", "fieldtype":"Data","align":"left","width":120},
+		{"label":"QTY", "fieldname":"total_quantity", "fieldtype":"Data","align":"center","width":100}]
+	if get_report_field_perm("Purchase Order","sub_total") or get_report_field_perm("Purchase Order Products","cost"):
+		fields = fields + [
+		{"label":"Sub Total", "fieldname":"sub_total", "fieldtype":"Currency","align":"center","width":120},
+		{"label":"Total Discount", "fieldname":"total_discount", "fieldtype":"Currency","align":"center","width":120}]
+	fields = fields + [
 		{"label":"Grand Total", "fieldname":"grand_total", "fieldtype":"Currency","align":"center","width":120},
 		{"label":"Total Paid", "fieldname":"total_paid", "fieldtype":"Currency","align":"center","width":120},
-  		{"label":"Balance", "fieldname":"balance", "fieldtype":"Currency","align":"right","width":120},
-
-		
-	]
+		{"label":"Balance", "fieldname":"balance", "fieldtype":"Currency","align":"right","width":120}]
+	return fields
 def get_report_summary(data,):
     report_summary = []
     report_summary.append({"label":_("QTY"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.total_quantity or 0)),"indicator":"green"})

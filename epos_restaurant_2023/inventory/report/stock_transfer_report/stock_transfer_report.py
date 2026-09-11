@@ -2,6 +2,7 @@
 import frappe
 from frappe import _
 from py_linq import Enumerable
+from epos_restaurant_2023.api.api import get_report_field_perm
 
 
 def execute(filters=None):
@@ -44,23 +45,21 @@ def get_report_data(filters):
     return data
 
 def get_report_columns():
-    return [
+	fields = [
 		{"label":"Name", "fieldname":"name", "fieldtype":"Link","options":"Stock Transfer","width":150},
-  		{"label":"Date", "fieldname":"posting_date", "fieldtype":"Date","align":"center","width":120},
+		{"label":"Date", "fieldname":"posting_date", "fieldtype":"Date","align":"center","width":120},
 		{"label":"From Business Branch", "fieldname":"from_business_branch","fieldtype":"Data","align":"left","width":170},
 		{"label":"From Stock Location", "fieldname":"from_stock_location","fieldtype":"Data","align":"left","width":170},
 		{"label":"To Business Branch", "fieldname":"to_business_branch","fieldtype":"Data","align":"left","width":150},
-  		{"label":"To Stock Location", "fieldname":"to_stock_location","fieldtype":"Data","align":"left","width":150},
-		{"label":"QTY", "fieldname":"total_quantity","fieldtype":"Data","align":"center","width":70},
-		{"label":"Total Amount", "fieldname":"total_amount","fieldtype":"Currency","align":"right","width":110},
+		{"label":"To Stock Location", "fieldname":"to_stock_location","fieldtype":"Data","align":"left","width":150},
+		{"label":"QTY", "fieldname":"total_quantity","fieldtype":"Data","align":"center","width":70}]
+	if get_report_field_perm("Stock Transfer","total_amount") or get_report_field_perm("Stock Transfer Products","cost"):
+		fields.append({"label":"Total Amount", "fieldname":"total_amount","fieldtype":"Currency","align":"right","width":110})
+	return fields
   		
-		
-	]
 def get_report_summary(data,):
     report_summary = []
     report_summary.append({"label":_("QTY"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.total_quantity or 0)),"indicator":"green"})
-    report_summary.append({"label":_("Total Amount"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.total_amount or 0)),"indicator":"red"})
-    
-    
-    
+	if get_report_field_perm("Stock Transfer","total_amount") or get_report_field_perm("Stock Transfer Products","cost"):
+    	report_summary.append({"label":_("Total Amount"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.total_amount or 0)),"indicator":"red"})
     return report_summary

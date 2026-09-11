@@ -3063,3 +3063,19 @@ def get_products(doctype:str, txt:str, searchfield:str, start:int, page_len:int,
     )
     LIMIT %(start)s, %(page_len)s""",{"txt":f"%{txt}%", "start": start, "page_len": page_len})
     return data
+
+@frappe.whitelist()
+def get_report_field_perm(doctype,fieldname):
+	meta = frappe.get_meta(doctype)
+	field = meta.get_field(fieldname)
+	if not field:
+		return False
+	if field.permlevel == 0:
+		return True
+	roles = frappe.get_roles(frappe.session.user)
+	return frappe.db.exists("DocPerm", {
+		"parent": doctype,
+		"role": ["in", roles],
+		"permlevel": field.permlevel,
+		"read": 1
+	})

@@ -3,6 +3,7 @@ from frappe import _
 from frappe.utils import date_diff,today ,add_months, add_days
 from frappe.utils.data import strip
 import datetime
+from epos_restaurant_2023.api.api import get_report_field_perm
 
 def execute(filters=None):
     
@@ -359,11 +360,12 @@ def get_report_chart(filters,data):
 	return chart
   
 def get_report_field(filters):
-	return [
-		{"label":"Quantity","short_label":"Qty", "fieldname":"quantity","fieldtype":"Float","indicator":"Grey","precision":2, "align":"center","chart_color":"#FF8A65","sql_expression":"a.quantity"},
-		{"label":"Amount", "short_label":"Amt", "fieldname":"amount","fieldtype":"Currency","indicator":"Red","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"a.amount"}
-	]
- 
+	fields = [
+		{"label":"Quantity","short_label":"Qty", "fieldname":"quantity","fieldtype":"Float","indicator":"Grey","precision":2, "align":"center","chart_color":"#FF8A65","sql_expression":"a.quantity"}]
+	if get_report_field_perm("Purchase Order","total_amount") or get_report_field_perm("Purchase Order Products","cost"):
+		fields.append(
+		{"label":"Amount", "short_label":"Amt", "fieldname":"amount","fieldtype":"Currency","indicator":"Red","precision":None, "align":"right","chart_color":"#2E7D32","sql_expression":"a.amount"})
+	return fields
 
 def get_row_groups():
 	return [

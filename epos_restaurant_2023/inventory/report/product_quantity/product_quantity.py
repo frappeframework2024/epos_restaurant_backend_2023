@@ -3,7 +3,7 @@
 
 
 import frappe
-
+from epos_restaurant_2023.api.api import get_report_field_perm
 
 def execute(filters=None):
 	columns = get_report_columns(filters)
@@ -25,9 +25,12 @@ def get_report_columns(filters):
     columns = columns +[
 		{"fieldname":"quantity","label":"Quantity", "fieldtype":"Float","align":"center","width":"80"},
 		{"fieldname":"reorder_level","label":"Re-order Level", "fieldtype":"Float","align":"center"},
-		{"fieldname":"unit","label":"Unit","width":"80"},
+		{"fieldname":"unit","label":"Unit","width":"80"}]
+    if get_report_field_perm("Product","cost") or get_report_field_perm("Stock Location Product","cost"):
+        columns = columns + [
 		{"fieldname":"cost","label":"Cost", "fieldtype":"Currency","width":100},
-		{"fieldname":"total_cost","label":"Total Cost", "fieldtype":"Currency","width":"150"},
+		{"fieldname":"total_cost","label":"Total Cost", "fieldtype":"Currency","width":"150"}]
+    columns = columns + [
 		{"fieldname":"expired_date","label":"Expired Date", "fieldtype":"Date"},
 		{"fieldname":"expired_date_in_day","label":"Expired In", "fieldtype":"Int","align":"center"}
 	]
