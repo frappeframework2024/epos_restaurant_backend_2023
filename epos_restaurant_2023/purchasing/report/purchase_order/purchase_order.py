@@ -51,7 +51,7 @@ def get_report_columns():
 		{"label":"Stock Location","fieldname":"stock_location","fieldtype":"Data","align":"left","width":150},
 		{"label":"Vendor", "fieldname":"vendor_name", "fieldtype":"Data","align":"left","width":120},
 		{"label":"QTY", "fieldname":"total_quantity", "fieldtype":"Data","align":"center","width":100}]
-	if get_report_field_perm("Purchase Order","sub_total") or get_report_field_perm("Purchase Order Products","cost"):
+	if get_report_field_perm("Purchase Order Products","cost"):
 		fields = fields + [
 		{"label":"Sub Total", "fieldname":"sub_total", "fieldtype":"Currency","align":"center","width":120},
 		{"label":"Total Discount", "fieldname":"total_discount", "fieldtype":"Currency","align":"center","width":120}]

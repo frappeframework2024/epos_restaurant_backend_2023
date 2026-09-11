@@ -42,13 +42,13 @@ def get_report_columns():
 		{"label":"Branch", "fieldname":"business_branch","fieldtype":"Data","align":"left","width":120},
 		{"label":"Stock Location","fieldname":"stock_location","field":"Stock Location","align":"left","width":150},	
 		{"label":"QTY", "fieldname":"total_quantity", "fieldtype":"data","align":"center","width":90}]
-	if get_report_field_perm("Stock Take","total_amount") or get_report_field_perm("Stock Take Products","cost"):
+	if get_report_field_perm("Stock Take Products","cost"):
 		fields.append({"label":"Total Amount", "fieldname":"total_amount", "fieldtype":"Currency","align":"right","width":150})
 	return fields
 
 def get_report_summary(data,):
 	report_summary = []
 	report_summary.append({"label":_("Total Quantity"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.total_quantity or 0)),"indicator":"green"})
-	if get_report_field_perm("Stock Take","total_amount") or get_report_field_perm("Stock Take Products","cost"):
+	if get_report_field_perm("Stock Take Products","cost"):
 		report_summary.append({"label":_("Total Amount"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.total_amount or 0)),"indicator":"red"})
 	return report_summary

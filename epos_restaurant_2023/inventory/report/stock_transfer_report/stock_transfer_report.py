@@ -53,13 +53,13 @@ def get_report_columns():
 		{"label":"To Business Branch", "fieldname":"to_business_branch","fieldtype":"Data","align":"left","width":150},
 		{"label":"To Stock Location", "fieldname":"to_stock_location","fieldtype":"Data","align":"left","width":150},
 		{"label":"QTY", "fieldname":"total_quantity","fieldtype":"Data","align":"center","width":70}]
-	if get_report_field_perm("Stock Transfer","total_amount") or get_report_field_perm("Stock Transfer Products","cost"):
+	if get_report_field_perm("Stock Transfer Products","cost"):
 		fields.append({"label":"Total Amount", "fieldname":"total_amount","fieldtype":"Currency","align":"right","width":110})
 	return fields
   		
 def get_report_summary(data,):
     report_summary = []
     report_summary.append({"label":_("QTY"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.total_quantity or 0)),"indicator":"green"})
-	if get_report_field_perm("Stock Transfer","total_amount") or get_report_field_perm("Stock Transfer Products","cost"):
+	if get_report_field_perm("Stock Transfer Products","cost"):
     	report_summary.append({"label":_("Total Amount"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.total_amount or 0)),"indicator":"red"})
     return report_summary

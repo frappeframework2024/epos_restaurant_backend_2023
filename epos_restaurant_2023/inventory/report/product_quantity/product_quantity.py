@@ -26,7 +26,7 @@ def get_report_columns(filters):
 		{"fieldname":"quantity","label":"Quantity", "fieldtype":"Float","align":"center","width":"80"},
 		{"fieldname":"reorder_level","label":"Re-order Level", "fieldtype":"Float","align":"center"},
 		{"fieldname":"unit","label":"Unit","width":"80"}]
-    if get_report_field_perm("Product","cost") or get_report_field_perm("Stock Location Product","cost"):
+    if get_report_field_perm("Product","cost"):
         columns = columns + [
 		{"fieldname":"cost","label":"Cost", "fieldtype":"Currency","width":100},
 		{"fieldname":"total_cost","label":"Total Cost", "fieldtype":"Currency","width":"150"}]
