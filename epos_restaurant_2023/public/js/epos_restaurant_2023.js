@@ -654,8 +654,6 @@ $(document).ready(function(){
      
  })
 
-
-
 function removeHeaderSticky(){
     var page_head = document.querySelector(".page-head")
     if (page_head){
@@ -670,6 +668,7 @@ function removeHeaderSticky(){
          
     }
 }
+
 function ClearUI(){
     //reset width to 100%
     var main_container = document.querySelector(".container")
