@@ -1,5 +1,4 @@
 <template>
-    
     <v-list class="!p-0"> 
         <v-list-item
             v-for="sp, index in (readonly == true ? getSaleProducts(groupKey,sort_sale_menu_by) : sale.getSaleProducts(groupKey,sort_sale_menu_by))"

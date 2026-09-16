@@ -1080,6 +1080,7 @@ MyPage = Class.extend({
 	prepare_booking_detail_data: function(doc) {
 		let status = doc.status || doc.reservation_status || "";
 		let cancelled_note = doc.cancelled_note || doc.cancel_note || "";
+		let note = String(doc.note || "").trim();
 		let phone_number = String(doc.phone_number || "").trim();
 		let callable_phone_number = phone_number.replace(/[^\d+*#,;]/g, "");
 
@@ -1100,7 +1101,8 @@ MyPage = Class.extend({
 			phone_href: callable_phone_number ? "tel:" + callable_phone_number : "",
 			has_phone_number: !!callable_phone_number,
 			email_address: doc.email_address || "-",
-			note: doc.note || "-",
+			note: note || "No note provided.",
+			has_note: !!note,
 			status: status || "-",
 				reservation_status_color: this.get_valid_color(doc.reservation_status_color || doc.text_color, '#3654a4'),
 				reservation_status_background_color: this.get_valid_color(doc.reservation_status_background_color || doc.background_color, '#eef3ff'),

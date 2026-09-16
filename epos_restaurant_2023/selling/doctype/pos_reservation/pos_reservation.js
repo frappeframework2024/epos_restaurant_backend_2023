@@ -101,9 +101,9 @@ frappe.ui.form.on('POS Reservation Item', {
 	},
 	price(frm,cdt, cdn) {	
 		const row = locals[cdt][cdn];
-		if (row.allow_change_price==0 && row.price != row.base_price){
+		if (row.allow_change_price==0 && flt(row.price) != flt(row.base_price)){
 			frappe.msgprint(__("This is not allow to change price"));
-			row.price = row.base_price;
+			row.price = flt(row.base_price);
 		}
 		update_reservation_product_amount(frm,row);
 		
@@ -117,8 +117,8 @@ frappe.ui.form.on('POS Reservation Item', {
 			let row = locals[cdt][cdn];
 			if(row.product_code){ 				
 				get_product_price(frm,row).then((v)=>{
-					row.price = v;
-                    row.regular_price = v;
+					row.price = flt(v);
+					row.regular_price = flt(v);
 					update_reservation_product_amount(frm,row)
 				});
 			}
@@ -131,8 +131,8 @@ function updateSumTotal(frm) {
         return false;
     }
     
-    frm.set_value('total_amount', products.reduce((n, d) => n + (d.price * d.quantity),0));
-    frm.set_value('total_quantity', products.reduce((n, d) => n + d.quantity,0));  
+	frm.set_value('total_amount', products.reduce((n, d) => n + (flt(d.price) * flt(d.quantity)), 0));
+	frm.set_value('total_quantity', products.reduce((n, d) => n + flt(d.quantity), 0));
 
     frm.refresh_field('total_amount'); 
 }
@@ -148,7 +148,7 @@ let get_product_price = function (frm,doc) {
 				unit:doc.unit
 			},
 			callback: function(r){		
-				resolve(r.message.price)
+				resolve(flt(r.message && r.message.price))
 			},
 			error: function(r) {
 				reject("error")
@@ -158,17 +158,18 @@ let get_product_price = function (frm,doc) {
 }
 
 function get_product_code(frm,doc){
-    get_product_price(frm,doc).then((v)=>{
-        doc.price = v;
-        doc.regular_price = v;
-        update_reservation_product_amount(frm,doc);        
+	get_product_price(frm,doc).then((v)=>{
+		doc.price = flt(v);
+		doc.regular_price = flt(v);
+		update_reservation_product_amount(frm,doc);
     });
 
 }
 
 function update_reservation_product_amount(frm,doc){
-    doc.total_amount = doc.price * doc.quantity;
+	doc.price = flt(doc.price);
+	doc.quantity = flt(doc.quantity);
+	doc.total_amount = doc.price * doc.quantity;
     updateSumTotal(frm)
 	frm.refresh_field('reservation_product');
 }
-
