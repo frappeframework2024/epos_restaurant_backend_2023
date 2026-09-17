@@ -2203,7 +2203,6 @@ export default class Sale {
             sale: doc,
             product_printers: _productPrinters,
             station_device_printing: (this.setting?.device_setting?.station_device_printing) || "",
-
             printers: []
         }
    
@@ -2277,6 +2276,7 @@ export default class Sale {
                 }
             });
         }
+        console.log(data);
 
         if ((this.setting?.device_setting?.use_server_network_printing || 0) == 1) {
             //printer network
@@ -2292,6 +2292,7 @@ export default class Sale {
             let isElectron = localStorage.getItem("electronWrapper") == "1";
             if (isWindows || isElectron) {
                 if ((data.product_printers ?? []).length > 0) {
+                    
                     let _message_data = JSON.stringify(data);
                     if (isWindows) {
                         window.chrome.webview.postMessage(_message_data);
