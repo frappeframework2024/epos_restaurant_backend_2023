@@ -2276,8 +2276,7 @@ export default class Sale {
                 }
             });
         }
-        console.log(data);
-
+        
         if ((this.setting?.device_setting?.use_server_network_printing || 0) == 1) {
             //printer network
             if (kotProducts.printers.length > 0) {
