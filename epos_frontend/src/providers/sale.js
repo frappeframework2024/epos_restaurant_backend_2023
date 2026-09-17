@@ -1758,6 +1758,7 @@ export default class Sale {
                 this.sale.sale_products.filter(r => r.sale_product_status == 'New').forEach((r) => {
                     if (!r.name) {
                         r.__islocal = 1;
+                        r.temp_id = undefined;
                         // r.name = uuidv4();
                     }
                     r.order_time = _now_format
@@ -1927,6 +1928,7 @@ export default class Sale {
                         //generate uuid to sale product if new item
                         this.sale.sale_products.filter(r => r.sale_product_status == 'New' && !r.name).forEach((r) => {
                             r.__islocal = 1;
+                            r.temp_id = undefined;
                             // r.name = uuidv4();
                         });
 
@@ -2032,6 +2034,7 @@ export default class Sale {
                     //generate uuid to sale product if new item
                     this.sale.sale_products.filter(r => r.sale_product_status == 'New' && !r.name).forEach((r) => {
                         r.__islocal = 1;
+                        r.temp_id = undefined;
                         // r.name = uuidv4();
                     });
 

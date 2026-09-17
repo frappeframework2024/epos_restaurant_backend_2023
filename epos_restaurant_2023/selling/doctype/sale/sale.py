@@ -285,8 +285,9 @@ class Sale(Document):
   
 	def before_insert(self):
 		for row in self.sale_products:
-			row.temp_id = row.name
-   
+			if not row.temp_id:
+				row.temp_id = row.name
+
 	def after_insert(self):
 		if self.flags.ignore_after_insert == True:
 			return 
