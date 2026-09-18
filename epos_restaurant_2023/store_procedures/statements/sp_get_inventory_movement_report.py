@@ -85,7 +85,7 @@ BEGIN
 			0 AS prev_on_hand
 		FROM `tabInventory Transaction` a 
 		where 1 = 1
-			and a.transaction_date between p_start_date and p_end_date
+			and date(a.transaction_date) between date(p_start_date) and date(p_end_date)
 			and (FIND_IN_SET(a.business_branch , p_property))
 			and (FIND_IN_SET(a.stock_location, p_stock_location))
 			and (FIND_IN_SET(a.product_category, p_product_category))
@@ -141,7 +141,7 @@ BEGIN
 		ON a.product_code = pd.product_code 
 		and a.stock_location = pd.stock_location
 	where 1 = 1
-		and a.transaction_date between p_start_date and p_end_date
+		and date(a.transaction_date) between date(p_start_date) and date(p_end_date)
 		and (FIND_IN_SET(a.business_branch , p_property))
 		and (FIND_IN_SET(a.stock_location, p_stock_location))
 		and (FIND_IN_SET(a.product_category, p_product_category))

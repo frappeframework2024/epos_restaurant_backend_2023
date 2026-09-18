@@ -17,7 +17,7 @@ from decimal import Decimal
 from frappe.utils import add_to_date
 from epos_restaurant_2023.api.exely import cancel_order as _exely_cancel_order, submit_order_to_exely
 from epos_restaurant_2023.selling.doctype.sale.general_ledger_entry import submit_sale_to_general_ledger_entry
- 
+
 class Sale(Document):
 	def validate(self): 	
 		lock_db(self=self)
