@@ -9,7 +9,8 @@ from epos_restaurant_2023.api.printing import (
     print_kitchen_order,
     print_waiting_slip,
     print_voucher_invoice,
-    print_from_print_format
+    print_from_print_format,
+    generate_qrcode_base64
     )
 import frappe
 @frappe.whitelist()
