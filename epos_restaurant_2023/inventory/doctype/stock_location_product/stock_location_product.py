@@ -5,7 +5,10 @@ import frappe
 from frappe.model.document import Document
 
 class StockLocationProduct(Document):
-	pass
+	def validate(self):
+        existed = frappe.db.sql("select name from `tabStock Location Product` where product_code = %(code)s and stock_location = %(stock)s and business_branch = %(branch)s",{"code":self.product_code,"stock":self.stock_location,"branch":self.business_branch},as_dict=1)
+        if existed:
+            frappe.throw("Product for this stock location already existed")
 
 @frappe.whitelist()
 def get_stock_location_product(stock_location=None, product_code = None):
