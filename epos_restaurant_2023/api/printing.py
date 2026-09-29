@@ -535,7 +535,7 @@ def generate_qrcode_base64(data):
     )
 
     qr.add_data(data)
-    qr.make(fit=True)00000000000..0021010000010221111111111141
+    qr.make(fit=True)
 
     img = qr.make_image(fill_color="black", back_color="white")
 
