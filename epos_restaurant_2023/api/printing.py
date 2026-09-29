@@ -528,7 +528,7 @@ def get_print_data(doctype,docname,template,return_type="base64",lang="en",optio
      
 
 def generate_qrcode_base64(data):
-0    qr = qrcode.QRCode(
+    qr = qrcode.QRCode(
         version=1,
         box_size=7,
         border=4
