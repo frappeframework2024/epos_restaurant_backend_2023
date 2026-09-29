@@ -528,14 +528,14 @@ def get_print_data(doctype,docname,template,return_type="base64",lang="en",optio
      
 
 def generate_qrcode_base64(data):
-    qr = qrcode.QRCode(
+0    qr = qrcode.QRCode(
         version=1,
         box_size=7,
         border=4
     )
 
     qr.add_data(data)
-    qr.make(fit=True)
+    qr.make(fit=True)00000000000..0021010000010221111111111141
 
     img = qr.make_image(fill_color="black", back_color="white")
 
