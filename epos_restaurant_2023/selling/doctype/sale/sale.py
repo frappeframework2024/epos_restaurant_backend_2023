@@ -1146,7 +1146,8 @@ def validate_sale_product(self):
 	coupon_expired_duration = frappe.get_cached_value("ePOS Settings",None,"default_coupon_expired")
 
 	for d in self.sale_products: 
-		d.temp_id = d.temp_id or d.name
+		if not d.temp_id:
+			d.temp_id = d.name
 		# serve validate get product config to update to sale product config
 		# allow discount is very important for validate chart of account code to post discount amount to GL Entry
 		
