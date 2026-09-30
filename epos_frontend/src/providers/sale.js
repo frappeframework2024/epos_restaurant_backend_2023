@@ -1757,9 +1757,9 @@ export default class Sale {
                 //generate uuid to sale product if new item
                 this.sale.sale_products.filter(r => r.sale_product_status == 'New').forEach((r) => {
                     if (!r.name) {
-                        r.__islocal = 1;
-                        r.temp_id = undefined;
+                        r.__islocal = 1; 
                         r.name = uuidv4();
+                        r.temp_id = r.name;
                     }
                     r.order_time = _now_format
                 });
@@ -1926,10 +1926,10 @@ export default class Sale {
                         this.action = "quick_pay";
 
                         //generate uuid to sale product if new item
-                        this.sale.sale_products.filter(r => r.sale_product_status == 'New' && !r.name).forEach((r) => {
+                        this.sale.sale_products.filter(r => r.sale_product_status == 'New' && !r.name).forEach((r) => {                            
                             r.__islocal = 1;
-                            r.temp_id = undefined;
                             r.name = uuidv4();
+                            r.temp_id = r.name;
                         });
 
 
@@ -2034,8 +2034,8 @@ export default class Sale {
                     //generate uuid to sale product if new item
                     this.sale.sale_products.filter(r => r.sale_product_status == 'New' && !r.name).forEach((r) => {
                         r.__islocal = 1;
-                        r.temp_id = undefined;
                         r.name = uuidv4();
+                        r.temp_id = r.name;
                     });
 
                     this.generateProductPrinters();
