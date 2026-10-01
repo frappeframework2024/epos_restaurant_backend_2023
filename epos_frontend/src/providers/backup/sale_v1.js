@@ -1753,7 +1753,8 @@ export default class Sale {
                 this.sale.sale_products.filter(r => r.sale_product_status == 'New' ).forEach((r) => {    
                     if(!r.name){                 
                         r.__islocal = 1; 
-                        r.name = uuidv4(); 
+                        r.name =  uuidv4().split("-")[0];
+                        r.temp_id = r.name;
                     }
                     r.order_time = _now_format
                 });
@@ -1862,10 +1863,15 @@ export default class Sale {
                         this.sale.outlet = this.setting?.outlet;
                         this.action = "quick_pay";
 
+                        const _now_format = moment(now).format('yyyy-MM-DD HH:mm:ss.SSSSSS');
                         //generate uuid to sale product if new item
-                        this.sale.sale_products.filter(r => r.sale_product_status == 'New' && !r.name).forEach((r) => {                     
-                            r.__islocal = 1; 
-                            r.name = uuidv4(); 
+                        this.sale.sale_products.filter(r => r.sale_product_status == 'New').forEach((r) => {                     
+                           if(!r.name){                 
+                                r.__islocal = 1; 
+                                r.name =  uuidv4().split("-")[0];
+                                r.temp_id = r.name;
+                            }
+                            r.order_time = _now_format
                         });
 
 
@@ -1924,14 +1930,20 @@ export default class Sale {
                         return
                     }
                     socket.emit("ShowOrderInCustomerDisplay", this.sale, "paid", this.customer_display_key);
+                    const now = new Date();
+                    const _now_format = moment(now).format('yyyy-MM-DD HH:mm:ss.SSSSSS');
+
                     //generate uuid to sale product if new item
-                    this.sale.sale_products.filter(r => r.sale_product_status == 'New' && !r.name).forEach((r) => {                     
-                        r.__islocal = 1; 
-                        r.name = uuidv4(); 
+                    this.sale.sale_products.filter(r => r.sale_product_status == 'New').forEach((r) => {                     
+                        if(!r.name){                 
+                            r.__islocal = 1; 
+                            r.name =  uuidv4().split("-")[0];
+                            r.temp_id = r.name;
+                        }
+                        r.order_time = _now_format
                     });
 
-                    this.generateProductPrinters();
-                    const now = new Date();
+                    this.generateProductPrinters(); 
                     const u = JSON.parse(localStorage.getItem('make_order_auth'));
                     this.sale.paid_by = u.name;
                     this.sale.paid_date = moment(now).format('yyyy-MM-DD HH:mm:ss.SSS');
