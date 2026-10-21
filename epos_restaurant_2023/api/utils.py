@@ -26,10 +26,48 @@ import calendar
 from datetime import datetime, timedelta
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from epos_restaurant_2023.inventory.inventory import get_product_cost, get_uom_conversion
+from epos_restaurant_2023.api.api import get_exchange_rate
 
 QUEUES = ["default", "long", "short"]
 JOB_STATUSES = ["queued", "started", "failed", "finished", "deferred", "scheduled", "canceled"]
 
+
+@frappe.whitelist()
+def get_cash_count_setting():
+    base_currency = frappe.db.get_single_value("ePOS Settings", "currency")
+    base_currency_doc = frappe.get_doc("Currency", base_currency)
+    data =  frappe.get_doc("ePOS Settings").cash_count_setting
+    return_data = []
+    exchange_rate_data = []
+    currencies = set([d.currency for d in data if d.currency != base_currency])
+    for c in currencies:
+        to_currency_doc =  frappe.get_doc("Currency", c)
+        exchange_rate_data.append({
+            "base_currency": base_currency,
+            "to_currency": c,
+            "exchange_rate":  get_exchange_rate(),
+            "precision":to_currency_doc.custom_currency_precision,
+            "locale": to_currency_doc.custom_locale,
+            "pos_currency_format": to_currency_doc.custom_pos_currency_format
+        })
+
+    for d in data:
+     
+        return_data.append({
+            "currency": d.currency,
+            "currency_precision":base_currency_doc.custom_currency_precision if   d.currency == base_currency else [c for c in exchange_rate_data if c["to_currency"] == d.currency][0]["precision"],
+            "pos_currency_format": base_currency_doc.custom_pos_currency_format if   d.currency == base_currency else  [c for c in exchange_rate_data if c["to_currency"] == d.currency][0]["pos_currency_format"],
+            "label": d.label,
+            "value": d.value,
+            "exchange_rate":  1 if d.currency == base_currency else [c for c in exchange_rate_data if c["to_currency"] == d.currency][0]["exchange_rate"]
+        })
+      
+    return {
+        "cash_count_setting":return_data,
+        "exchange_rate_data": exchange_rate_data,
+        "main_currency": base_currency,
+        "second_currency": frappe.db.get_single_value("ePOS Settings", "second_currency")
+    }
 
 @frappe.whitelist(allow_guest=True)
 def get_sid():

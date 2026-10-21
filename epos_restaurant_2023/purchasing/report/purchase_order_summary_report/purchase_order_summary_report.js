@@ -109,7 +109,7 @@ frappe.query_reports["Purchase Order Summary Report"] = {
 			"fieldname": "row_group",
 			"label": __("Row Group By"),
 			"fieldtype": "Select",
-			"options": "Product\nCategory\nProduct Group\nBusiness Branch\nVendor\nVendor Group\nDate\nMonth\nYear\nPO Transaction",
+			"options": "Product Code\nCategory\nProduct Group\nBusiness Branch\nVendor\nVendor Group\nDate\nMonth\nYear\nPO Transaction",
 			"default":"Category"
 		},
 		{

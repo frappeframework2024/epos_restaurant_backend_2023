@@ -56,7 +56,9 @@
   "accounting_tab",
   "use_basic_accounting_feature",
   "business_branch",
-  "generate_sale_general_ledger"
+  "generate_sale_general_ledger",
+  "cash_count_tab",
+  "cash_count_setting"
  ],
  "fields": [
   {
@@ -345,6 +347,16 @@
    "fieldname": "last_id_check_status",
    "fieldtype": "Check",
    "label": "Last ID Check Status"
+  },
+  {
+   "fieldname": "cash_count_tab",
+   "fieldtype": "Tab Break",
+   "label": "Cash Count"
+  },
+  {
+   "fieldname": "cash_count_setting",
+   "fieldtype": "Table",
+   "options": "Cash Count Setting"
   }
  ],
  "image_field": "epos_logo",
@@ -352,7 +364,7 @@
  "issingle": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2026-05-22 13:59:51.351011",
+ "modified": "2026-10-19 10:13:32.540119",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "ePOS Settings",

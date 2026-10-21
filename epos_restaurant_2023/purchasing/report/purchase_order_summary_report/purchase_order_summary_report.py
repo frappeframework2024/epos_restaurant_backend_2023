@@ -44,7 +44,6 @@ def validate(filters):
 
 			frappe.throw("The 'Start Date' ({}) must be before the 'End Date' ({})".format(filters.start_date, filters.end_date))
 
-	
 	if filters.column_group=="Daily":
 		n = date_diff(filters.end_date, filters.start_date)
 		if n>30:
@@ -54,16 +53,12 @@ def validate(filters):
 		if(filters.row_group == filters.parent_row_group):
 			frappe.throw("Parent row group and row group can not be the same")
  
-
-
-				
-
 def get_columns(filters):
 	
 	columns = []
 	columns.append({'fieldname':'row_group','label':filters.row_group,'fieldtype':'Data','align':'left','width':250})
-	# if filters.row_group == "Product":
-	# 	columns.append({"label":"Item Code","fieldname":"item_code","fieldtype":"Data","align":"left",'width':130})
+	if filters.row_group == "Product Code"  or filters.parent_row_group == "Product Code":
+		columns.append({"label":"Product Name","fieldname":"product_name","fieldtype":"Data","align":"left",'width':350})
 	
 	hide_columns = filters.get("hide_columns")
 	 
@@ -244,11 +239,11 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 					sql = sql +	"SUM(if(b.posting_date between '{}' AND '{}',{},0)) as '{}_{}',".format(f["start_date"],f["end_date"],rf["sql_expression"],f["fieldname"],rf["fieldname"])
 			#end for
 	# total last column
-	item_code = ""
+	extra_field = ""
 	groupdocstatus = ""
 	normal_filter = "b.docstatus in (1) AND"
-	# if ((indent > 0) and ( filters.row_group == "Product" or filters.parent_row_group == "Product")):
-	# 	item_code = ",a.item_code"
+	if filters.row_group == "Product Code" or filters.parent_row_group == "Product Code":
+		extra_field = ",a.product_name"
 	
 	for rf in report_fields:
 		#check sql variable if last character is , then remove it
@@ -266,7 +261,7 @@ def get_report_data(filters,parent_row_group=None,indent=0,group_filter=None):
 			{0}
 		GROUP BY 
 		{1} {2} {3}
-	""".format(get_conditions(filters,group_filter), row_group,item_code,groupdocstatus,normal_filter)	
+	""".format(get_conditions(filters,group_filter), row_group,extra_field,groupdocstatus,normal_filter)	
 
 	data = frappe.db.sql(sql,filters, as_dict=1)
 	
@@ -385,8 +380,8 @@ def get_row_groups():
 			"parent_row_group_filter_field":"row_group"
 		},
   		{
-			"fieldname":"concat(a.product_code,' - ',a.product_name)",
-			"label":"Product",
+			"fieldname":"a.product_code",
+			"label":"Product Code",
 			"parent_row_group_filter_field":"row_group"
 		},
 		{
