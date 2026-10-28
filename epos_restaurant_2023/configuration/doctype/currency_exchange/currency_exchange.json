@@ -11,6 +11,7 @@
   "posting_date",
   "from_currency",
   "to_currency",
+  "get_current_exchange_rate",
   "exchange_rate_input",
   "change_exchange_rate_input",
   "column_break_hpkp",
@@ -90,12 +91,17 @@
    "label": "Change Exchange Rate",
    "precision": "9",
    "read_only": 1
+  },
+  {
+   "fieldname": "get_current_exchange_rate",
+   "fieldtype": "Button",
+   "label": "Get Current Exchange Rate"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-12-13 10:59:39.223600",
+ "modified": "2026-10-28 10:09:13.457756",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Currency Exchange",

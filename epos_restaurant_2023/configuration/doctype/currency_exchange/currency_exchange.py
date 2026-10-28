@@ -38,4 +38,22 @@ class CurrencyExchange(Document):
 		sql_config_payment_type = "update `tabPOS Config Payment Type` set exchange_rate = {},change_exchange_rate = {} where currency='{}'".format(self.exchange_rate,self.change_exchange_rate,currency)
 		frappe.db.sql(sql_config_payment_type)
 
-
+@frappe.whitelist()
+def get_current_exchange_rate(posting_date="",base="",quotes=""):
+	from datetime import datetime
+	settings = frappe.get_doc("ePOS Settings")
+	now = datetime.now()
+	diff = (now - datetime.strptime(settings.last_get_exchange_rate, "%Y-%m-%d %H:%M:%S.%f")).seconds
+	if diff > 10:
+		settings.last_get_exchange_rate = now
+		settings.save()
+		if (posting_date or "") != "" and (base or "") != "" and (quotes or "") != "":
+			import requests
+			url = "https://api.frankfurter.dev/v2/rates?date={0}&base={1}&quotes={2}".format(posting_date,base,quotes)
+			response = requests.get(url)
+			result = response.json()
+			return {"rate":result[0].get("rate")}
+		else:
+			return {"rate":0}
+	else:
+		frappe.throw("Please wait 10 second")

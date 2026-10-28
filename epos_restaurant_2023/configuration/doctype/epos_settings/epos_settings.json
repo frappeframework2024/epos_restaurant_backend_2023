@@ -38,6 +38,7 @@
   "server_report_setting_section",
   "report_server_url",
   "report_service_url",
+  "last_get_exchange_rate",
   "column_break_ykhx",
   "server_report_token",
   "number_and_currency_setting_tab",
@@ -357,6 +358,12 @@
    "fieldname": "cash_count_setting",
    "fieldtype": "Table",
    "options": "Cash Count Setting"
+  },
+  {
+   "default": "Now",
+   "fieldname": "last_get_exchange_rate",
+   "fieldtype": "Datetime",
+   "label": "Last Get Exchange Rate"
   }
  ],
  "image_field": "epos_logo",
@@ -364,7 +371,7 @@
  "issingle": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2026-10-19 10:13:32.540119",
+ "modified": "2026-10-28 10:38:53.102386",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "ePOS Settings",
