@@ -1,11 +1,14 @@
-"""Bounded optimization of already validated static images before R2 upload."""
+"""Resize and optimize validated images before R2 upload."""
 
 import io
 import math
 
-from PIL import Image, ImageOps, features
+from PIL import ExifTags, Image, ImageOps, features
 
 from .config import fail
+
+MAX_UPLOAD_WIDTH = 500
+MAX_RESIZED_ANIMATION_PIXELS = 32_000_000
 
 
 def prepare_image(image):
@@ -38,9 +41,15 @@ def encode_webp(image, quality):
 	return stream.getvalue()
 
 
-def static_webp(image, config):
+def resize_image(image, config):
 	image = prepare_image(image)
-	image.thumbnail((config.optimize_max_dimension, config.optimize_max_dimension), Image.Resampling.LANCZOS)
+	max_dimension = config.optimize_max_dimension
+	image.thumbnail((min(MAX_UPLOAD_WIDTH, max_dimension), max_dimension), Image.Resampling.LANCZOS)
+	return image
+
+
+def static_webp(image, config):
+	image = resize_image(image, config)
 	quality_floor = min(config.optimize_quality, 65)
 	qualities = sorted(
 		{config.optimize_quality, max(quality_floor, config.optimize_quality - 10), quality_floor},
@@ -71,21 +80,60 @@ def static_webp(image, config):
 	return best
 
 
+def animated_webp(image, config):
+	Image.init()
+	if "WEBP" not in Image.SAVE_ALL:
+		raise OSError("Animated WebP encoder unavailable")
+	loop = image.info.get("loop", 1)
+	if image.format == "GIF" and image.info.get("loop"):
+		# GIF counts repeats after the first play. WebP counts all plays.
+		loop = min(loop + 1, 65535)
+	# The optional APNG poster is outside the animation timeline.
+	first_frame = int(bool(image.info.get("default_image")))
+	frames = []
+	durations = []
+	remaining_pixels = MAX_RESIZED_ANIMATION_PIXELS
+	for index in range(first_frame, image.n_frames):
+		image.seek(index)
+		frame = resize_image(image, config)
+		remaining_pixels -= frame.width * frame.height
+		if remaining_pixels < 0:
+			fail("This animation has too many pixels to resize safely. Upload a shorter or smaller image.")
+		frames.append(frame)
+		durations.append(round(image.info.get("duration", 0)))
+
+	stream = io.BytesIO()
+	frames[0].save(
+		stream,
+		format="WEBP",
+		save_all=True,
+		append_images=frames[1:],
+		duration=durations,
+		loop=loop,
+		quality=config.optimize_quality,
+	)
+	return stream.getvalue()
+
+
 def optimize_image(content, image_format, config):
-	if not config.optimize_images or len(content) < config.optimize_threshold_bytes:
-		return content, image_format
+	should_optimize = config.optimize_images and len(content) >= config.optimize_threshold_bytes
 	failed = False
 	try:
 		with Image.open(io.BytesIO(content)) as image:
-			if getattr(image, "n_frames", 1) > 1:
+			orientation = image.getexif().get(ExifTags.Base.Orientation)
+			display_width = image.height if orientation in (5, 6, 7, 8) else image.width
+			# Enforce the cap on the stored raster even if EXIF would rotate it later.
+			must_resize = max(image.width, display_width) > MAX_UPLOAD_WIDTH
+			is_animated = getattr(image, "is_animated", False)
+			if not must_resize and (is_animated or not should_optimize):
 				return content, image_format
 			if not features.check("webp"):
 				raise OSError("WebP encoder unavailable")
-			optimized = static_webp(image, config)
+			optimized = animated_webp(image, config) if is_animated else static_webp(image, config)
 	except (OSError, ValueError, ImportError):
 		failed = True
 	if failed:
 		fail("Image optimization failed. Check the image and Pillow WebP encoder support.")
-	if len(optimized) >= len(content):
+	if not must_resize and len(optimized) >= len(content):
 		return content, image_format
 	return optimized, ("webp", "image/webp")

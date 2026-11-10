@@ -23,6 +23,12 @@ def large_png(alpha=False):
 	return stream.getvalue()
 
 
+def png_at_size(size):
+	stream = io.BytesIO()
+	Image.new("RGB", size, "blue").save(stream, format="PNG")
+	return stream.getvalue()
+
+
 class OptimizerTests(unittest.TestCase):
 	def setUp(self):
 		storage_tests.R2Tests.setUp(self)
@@ -39,7 +45,7 @@ class OptimizerTests(unittest.TestCase):
 		self.assertLess(len(content), len(original))
 		self.assertLessEqual(len(content), 300 * 1024)
 		with Image.open(io.BytesIO(content)) as image:
-			self.assertLessEqual(max(image.size), 1600)
+			self.assertEqual(image.width, 500)
 			self.assertAlmostEqual(image.width / image.height, 1.5, places=2)
 
 	def test_small_image_bytes_are_preserved(self):
@@ -48,11 +54,29 @@ class OptimizerTests(unittest.TestCase):
 		self.assertIs(content, original)
 		self.assertEqual(kind, ("png", "image/png"))
 
-	def test_optimization_disabled_preserves_large_image(self):
+	def test_width_limit_still_applies_when_optional_optimization_is_disabled(self):
 		self.settings.optimize_images = False
-		content, kind = self.optimize(large_png())
-		self.assertIs(content, large_png())
-		self.assertEqual(kind, ("png", "image/png"))
+		original = png_at_size((800, 400))
+		content, kind = self.optimize(original)
+		self.assertEqual(kind, ("webp", "image/webp"))
+		with Image.open(io.BytesIO(content)) as image:
+			self.assertEqual(image.size, (500, 250))
+
+	def test_width_limit_applies_below_optimization_threshold(self):
+		original = png_at_size((501, 300))
+		self.assertLess(len(original), 1024 * 1024)
+		content, kind = self.optimize(original)
+		self.assertEqual(kind, ("webp", "image/webp"))
+		with Image.open(io.BytesIO(content)) as image:
+			self.assertEqual(image.size, (500, 299))
+
+	def test_narrow_and_tall_images_below_threshold_keep_original_bytes(self):
+		for size in ((499, 900), (500, 900)):
+			with self.subTest(size=size):
+				original = png_at_size(size)
+				content, kind = self.optimize(original)
+				self.assertIs(content, original)
+				self.assertEqual(kind, ("png", "image/png"))
 
 	def test_threshold_is_inclusive(self):
 		original = storage_tests.image_bytes()
@@ -86,6 +110,18 @@ class OptimizerTests(unittest.TestCase):
 		with Image.open(io.BytesIO(content)) as image:
 			self.assertEqual(image.size, (160, 300))
 			self.assertFalse(image.getexif())
+
+	def test_width_limit_uses_stored_and_exif_oriented_width(self):
+		for size, resized in (((400, 800), (500, 250)), ((800, 400), (400, 800))):
+			with self.subTest(size=size):
+				exif = Image.Exif()
+				exif[274] = 6
+				stream = io.BytesIO()
+				Image.new("RGB", size, "blue").save(stream, format="JPEG", exif=exif)
+				content, kind = self.optimize(stream.getvalue(), ("jpg", "image/jpeg"))
+				self.assertEqual(kind, ("webp", "image/webp"))
+				with Image.open(io.BytesIO(content)) as image:
+					self.assertEqual(image.size, resized)
 
 	def test_supported_icc_profile_is_converted_to_srgb(self):
 		self.settings.optimize_threshold_mb = 1 / 1048576
@@ -123,6 +159,33 @@ class OptimizerTests(unittest.TestCase):
 				with Image.open(io.BytesIO(content)) as image:
 					self.assertEqual(image.n_frames, 2)
 
+	def test_wide_animations_are_resized_with_frame_timing(self):
+		for format, kind, loop in (
+			("GIF", ("gif", "image/gif"), 3),
+			("WEBP", ("webp", "image/webp"), 2),
+			("PNG", ("png", "image/png"), 2),
+		):
+			with self.subTest(format=format):
+				stream = io.BytesIO()
+				Image.new("RGB", (800, 400), "red").save(
+					stream,
+					format=format,
+					save_all=True,
+					append_images=[Image.new("RGB", (800, 400), "blue")],
+					duration=[70, 130],
+					loop=2,
+				)
+				content, result_kind = self.optimize(stream.getvalue(), kind)
+				self.assertEqual(result_kind, ("webp", "image/webp"))
+				with Image.open(io.BytesIO(content)) as image:
+					self.assertEqual(image.size, (500, 250))
+					self.assertEqual(image.n_frames, 2)
+					self.assertEqual(image.info["loop"], loop)
+					for index, duration in enumerate((70, 130)):
+						image.seek(index)
+						image.load()
+						self.assertEqual(image.info["duration"], duration)
+
 	def test_larger_encoding_is_discarded(self):
 		self.settings.optimize_threshold_mb = 1 / 1048576
 		original = storage_tests.image_bytes()
@@ -130,6 +193,14 @@ class OptimizerTests(unittest.TestCase):
 			content, kind = self.optimize(original)
 		self.assertIs(content, original)
 		self.assertEqual(kind, ("png", "image/png"))
+
+	def test_larger_encoding_is_kept_when_original_is_too_wide(self):
+		original = png_at_size((800, 400))
+		encoded = b"x" * (len(original) + 1)
+		with patch.object(image_optimizer, "static_webp", return_value=encoded):
+			content, kind = self.optimize(original)
+		self.assertIs(content, encoded)
+		self.assertEqual(kind, ("webp", "image/webp"))
 
 	def test_encoder_failure_stops_upload(self):
 		file = storage_tests.File(content=large_png())
@@ -143,6 +214,8 @@ class OptimizerTests(unittest.TestCase):
 		file = storage_tests.File(content=large_png(), file_name="product.png")
 		file.save_file()
 		body = self.s3.put_object.call_args.kwargs["Body"]
+		with Image.open(io.BytesIO(body)) as image:
+			self.assertEqual(image.width, 500)
 		self.assertEqual(self.s3.put_object.call_args.kwargs["ContentType"], "image/webp")
 		self.assertTrue(file.file_url.endswith(".webp"))
 		self.assertEqual(file.file_name, "product.webp")
