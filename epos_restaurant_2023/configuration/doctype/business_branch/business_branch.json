@@ -122,7 +122,9 @@
   "column_break_rvvy",
   "stock_adjustment_account",
   "column_break_uize",
-  "default_cost_of_good_sold_account"
+  "default_cost_of_good_sold_account",
+  "integration_tab",
+  "integration_id"
  ],
  "fields": [
   {
@@ -760,12 +762,22 @@
    "fieldname": "door_log_port",
    "fieldtype": "Int",
    "label": "Door Log Port"
+  },
+  {
+   "fieldname": "integration_tab",
+   "fieldtype": "Tab Break",
+   "label": "Integration"
+  },
+  {
+   "fieldname": "integration_id",
+   "fieldtype": "Data",
+   "label": "Integration ID"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-06-09 15:20:13.872269",
+ "modified": "2026-11-09 11:03:16.894670",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Business Branch",

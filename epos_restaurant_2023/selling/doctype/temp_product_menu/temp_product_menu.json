@@ -35,6 +35,7 @@
   "is_require_employee",
   "is_timer_product",
   "is_open_price",
+  "is_open_quantity",
   "rate_include_tax",
   "is_combo_menu",
   "use_combo_group",
@@ -333,11 +334,18 @@
    "fieldname": "shift_availability",
    "fieldtype": "Text",
    "label": "Shift Availability"
+  },
+  {
+   "default": "0",
+   "fetch_from": "product_code.is_open_quantity",
+   "fieldname": "is_open_quantity",
+   "fieldtype": "Check",
+   "label": "Is Open Quantity"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-09 11:04:23.352759",
+ "modified": "2026-10-23 09:20:54.179686",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Temp Product Menu",

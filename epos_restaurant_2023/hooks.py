@@ -123,9 +123,17 @@ permission_query_conditions = {
 # ---------------
 # Override standard doctype classes
 
-# override_doctype_class = {
-#	"ToDo": "custom_app.overrides.CustomToDo"
-# }
+# Frappe 15 uses override_doctype_class to extend the File controller.
+override_doctype_class = {
+    "File": "epos_restaurant_2023.r2_storage.file_handler.R2File",
+}
+
+# Public image attachments only. Attachment fields are detected from metadata.
+r2_upload_doctypes = {
+    "Product": {"folder": "products"},
+    "POS Menu": {"folder": "pos_menu"},
+    "Product Category": {"folder": "product_category"},
+}
 
 # Document Events
 # ---------------
@@ -134,6 +142,7 @@ permission_query_conditions = {
 doc_events = {
 	"*": {
 		"on_update": [
+            "epos_restaurant_2023.r2_storage.file_handler.sync_parent_attachments",
             "epos_restaurant_2023.api.utils.generate_data_for_sync_record",
             "epos_restaurant_2023.api.utils.sync_data_to_server_on_submit",
               "epos_restaurant_2023.api.override.set_custom_timestamps"
@@ -159,11 +168,33 @@ doc_events = {
                 "epos_restaurant_2023.api.override.set_custom_timestamps"
         ]
 	},
+    "File": {
+        "after_insert": "epos_restaurant_2023.file_attachment.after_insert",
+        "on_update": "epos_restaurant_2023.file_attachment.on_update",
+        "on_trash": "epos_restaurant_2023.file_attachment.on_trash",
+    },
     "Comment":{
         "after_insert":"epos_restaurant_2023.api.utils.sync_comment_to_server"
     },
     "Module Profile":{
         "on_update":"epos_restaurant_2023.override_methods.module_profile.on_update"
+    },
+    "Product": {
+        "before_save": "epos_restaurant_2023.api.emenu_integration.sync.set_emenu_integration_id",
+        "on_update": "epos_restaurant_2023.api.emenu_integration.sync.enqueue_product_emenu_sync",
+    },
+    "Product Category": {
+        "before_save": "epos_restaurant_2023.api.emenu_integration.sync.set_emenu_integration_id",
+    },
+    "Table Group": {
+        "before_save": "epos_restaurant_2023.api.emenu_integration.sync.set_emenu_integration_id",
+        "on_update": "epos_restaurant_2023.api.emenu_integration.sync.enqueue_table_emenu_sync",
+        "after_delete": "epos_restaurant_2023.api.emenu_integration.sync.enqueue_table_emenu_archive",
+    },
+    "Tables Number": {
+        "before_save": "epos_restaurant_2023.api.emenu_integration.sync.set_emenu_integration_id",
+        "on_update": "epos_restaurant_2023.api.emenu_integration.sync.enqueue_table_emenu_sync",
+        "after_delete": "epos_restaurant_2023.api.emenu_integration.sync.enqueue_table_emenu_archive",
     },
 }
 
@@ -177,6 +208,7 @@ def after_request(response):
 #---------------
 
 scheduler_events = {
+    "hourly": ["epos_restaurant_2023.r2_storage.storage.recover_pending"],
     "cron": {
       "*/1 * * * *": [
             "epos_restaurant_2023.api.schedule_task.generate_audit_trail_from_version",

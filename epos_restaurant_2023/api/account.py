@@ -8,10 +8,8 @@ from functools import lru_cache
 def submit_general_ledger_entry(docs,commit=True):
     # bulk insert
     bulk_insert("General Ledger", get_general_ledger_entry_record(docs=docs) , chunk_size=10000)
-    
     if commit:
         frappe.db.commit()
-
 
 def get_general_ledger_entry_record(docs):
     for d in docs:
@@ -29,7 +27,6 @@ def get_general_ledger_entry_record(docs):
                     doc.credit_amount = abs(doc.amount)
                 else:
                     doc.debit_amount =abs(doc.amount)
-      
         doc.name  = make_autoname("GLE.YYYY.-.#####")
         yield doc
         
@@ -59,9 +56,7 @@ def cancel_general_ledger_entry(doctype,docname, commit = True):
                 "is_cancelled":1,
             }
         docs.append(doc)
-        
     submit_general_ledger_entry(docs = docs,commit=False)   
-     
     # update submited record is cancelled = 1
     frappe.db.sql("""update `tabGeneral Ledger` 
                   set is_cancelled = 1 
@@ -74,7 +69,6 @@ def cancel_general_ledger_entry(doctype,docname, commit = True):
     if commit:
         frappe.db.commit()
      
-
 @lru_cache(maxsize=128)
 def  get_hierarchy_account_for_report_by_parent(parent,business_branch):
     sql="""
@@ -113,11 +107,8 @@ def  get_hierarchy_account_for_report_by_parent(parent,business_branch):
     """
     return frappe.db.sql(sql,{"parent":parent,"business_branch":business_branch},as_dict=1)
 
-    
-    
 @lru_cache(maxsize=128)
 def  get_accounts_by_root_types(filters):
     filters = json.loads(filters)
-  
     data = frappe.db.sql("select name from `tabChart Of Account` where business_branch=%(business_branch)s and root_type in %(root_types)s and is_group=0",filters,as_dict=1)
     return [d["name"] for d in data]

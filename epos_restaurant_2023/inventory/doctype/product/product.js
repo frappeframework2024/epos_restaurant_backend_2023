@@ -344,7 +344,8 @@ function show_camera_dialog(frm) {
               frappe.call({
                 method: "epos_restaurant_2023.inventory.doctype.product.product.upload_photo",
                 args: {
-                    base64_image: imageData
+                    base64_image: imageData,
+                    product: frm.doc.name
                 },
                 callback: function(r) {
                   if (!r.exc) {

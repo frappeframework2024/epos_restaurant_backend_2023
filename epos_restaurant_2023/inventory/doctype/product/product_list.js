@@ -1,6 +1,6 @@
 frappe.listview_settings['Product'] = {
-    hide_name_column: true, 
-    add_fields: ['photo',"status",'price'],
+    hide_name_column: true,
+    add_fields: ['photo', "status", 'price'],
     formatters: {
         photo: function (value, field, doc) {
             const encodedPhoto = encodeURI(doc.photo) || ''
@@ -9,21 +9,21 @@ frappe.listview_settings['Product'] = {
         },
     },
     get_indicator(doc) {
-        if(doc.status=="Enabled"){ 
+        if (doc.status == "Enabled") {
             return [__("Enabled"), "blue"];
-        }else if(doc.status == "Disabled"){
+        } else if (doc.status == "Disabled") {
             return [__("Disabled"), "red"];
-        }else if(doc.status == "Variant"){
+        } else if (doc.status == "Variant") {
             return [__("Variant"), "orange"];
         }
         else if (doc.status == "Template") {
             return [__("Template"), "green"];
         }
-        else{
+        else {
             return [__("Enabled"), "blue"];
         }
     },
-    onload(me) { 
+    onload(me) {
         if (me.product_notification_listener_added) {
             return;
         }
@@ -34,17 +34,17 @@ frappe.listview_settings['Product'] = {
                 indicator: "blue"
             });
         });
-        me.page.add_action_item('Assign Menu', function() {
+        me.page.add_action_item('Assign Menu', function () {
             let d = new frappe.ui.Dialog({
                 title: 'Assign Menu',
                 fields: [
-                    {'fieldname': 'pos_menu', 'fieldtype': 'Link', 'options': 'POS Menu'},
+                    { 'fieldname': 'pos_menu', 'fieldtype': 'Link', 'options': 'POS Menu' },
                 ],
                 primary_action_label: 'Save',
                 primary_action(values) {
-                    const selected =  me.get_checked_items() ;
+                    const selected = me.get_checked_items();
                     const result = selected.map(item => item.name).join(',');
-                    d.freeze= true;
+                    d.freeze = true;
                     frappe.call({
                         method: "epos_restaurant_2023.inventory.doctype.product.product.assign_menu",
                         args: {
@@ -52,24 +52,24 @@ frappe.listview_settings['Product'] = {
                             "menu": values.pos_menu
                         }
                     });
-                    d.freeze= false;
+                    d.freeze = false;
                     d.hide();
-                },              
+                },
             })
-            d.show();          
+            d.show();
         });
 
-        me.page.add_action_item('Remove Menu', function() {
+        me.page.add_action_item('Remove Menu', function () {
             let d = new frappe.ui.Dialog({
                 title: 'Remove Menu',
                 fields: [
-                    {'fieldname': 'menu', 'fieldtype': 'Link', 'options': 'POS Menu'},
+                    { 'fieldname': 'menu', 'fieldtype': 'Link', 'options': 'POS Menu' },
                 ],
                 primary_action_label: 'Save',
                 primary_action(values) {
-                    const selected =  me.get_checked_items() ;
+                    const selected = me.get_checked_items();
                     const result = selected.map(item => item.name).join(',');
-                    d.freeze= true;
+                    d.freeze = true;
                     frappe.call({
                         method: "epos_restaurant_2023.inventory.doctype.product.product.remove_menu",
                         args: {
@@ -77,18 +77,18 @@ frappe.listview_settings['Product'] = {
                             "menu": values.menu
                         }
                     });
-                    d.freeze= false;
+                    d.freeze = false;
                     d.hide();
-                },              
+                },
             })
-            d.show();           
+            d.show();
         });
 
-        me.page.add_action_item('Remove All Menus', function() {
+        me.page.add_action_item('Remove All Menus', function () {
             frappe.confirm("Are you sure you want to remove all menus from the selected products?",
-                function(){
-                    const selected =  me.get_checked_items() ;
-                    const result = selected.map(item => item.name).join(',');                
+                function () {
+                    const selected = me.get_checked_items();
+                    const result = selected.map(item => item.name).join(',');
                     frappe.call({
                         method: "epos_restaurant_2023.inventory.doctype.product.product.clear_all_menus_from_product",
                         args: {
@@ -99,17 +99,17 @@ frappe.listview_settings['Product'] = {
             );
         });
 
-        me.page.add_action_item('Assign Printer', function() {
+        me.page.add_action_item('Assign Printer', function () {
             let d = new frappe.ui.Dialog({
                 title: 'Assign Printer',
                 fields: [
-                    {'fieldname': 'printer', 'fieldtype': 'Link', 'options': 'Printer'},
+                    { 'fieldname': 'printer', 'fieldtype': 'Link', 'options': 'Printer' },
                 ],
                 primary_action_label: 'Save',
                 primary_action(values) {
-                    const selected =  me.get_checked_items() ;
+                    const selected = me.get_checked_items();
                     const result = selected.map(item => item.name).join(',');
-                    d.freeze= true;
+                    d.freeze = true;
                     frappe.call({
                         method: "epos_restaurant_2023.inventory.doctype.product.product.assign_printer",
                         args: {
@@ -117,24 +117,24 @@ frappe.listview_settings['Product'] = {
                             "printer": values.printer
                         }
                     });
-                    d.freeze= false;
+                    d.freeze = false;
                     d.hide();
-                },              
+                },
             })
-            d.show();           
-        });   
+            d.show();
+        });
 
-        me.page.add_action_item('Remove Printer', function() {
+        me.page.add_action_item('Remove Printer', function () {
             let d = new frappe.ui.Dialog({
                 title: 'Remove Printer',
                 fields: [
-                    {'fieldname': 'printer', 'fieldtype': 'Link', 'options': 'Printer'},
+                    { 'fieldname': 'printer', 'fieldtype': 'Link', 'options': 'Printer' },
                 ],
                 primary_action_label: 'Save',
                 primary_action(values) {
-                    const selected =  me.get_checked_items() ;
+                    const selected = me.get_checked_items();
                     const result = selected.map(item => item.name).join(',');
-                    d.freeze= true;
+                    d.freeze = true;
                     frappe.call({
                         method: "epos_restaurant_2023.inventory.doctype.product.product.remove_printer",
                         args: {
@@ -142,18 +142,18 @@ frappe.listview_settings['Product'] = {
                             "printer": values.printer
                         }
                     });
-                    d.freeze= false;
+                    d.freeze = false;
                     d.hide();
-                },            
+                },
             })
             d.show();
         });
 
-        me.page.add_action_item('Remove All Printers', function() {
+        me.page.add_action_item('Remove All Printers', function () {
             frappe.confirm("Are you sure you want to remove all printers from the selected products?",
-                function(){
-                    const selected =  me.get_checked_items() ;
-                    const result = selected.map(item => item.name).join(',');                
+                function () {
+                    const selected = me.get_checked_items();
+                    const result = selected.map(item => item.name).join(',');
                     frappe.call({
                         method: "epos_restaurant_2023.inventory.doctype.product.product.clear_all_printer_from_product",
                         args: {
@@ -164,17 +164,17 @@ frappe.listview_settings['Product'] = {
             );
         });
 
-        me.page.add_action_item('Assign Shift Availability', function() {
+        me.page.add_action_item('Assign Shift Availability', function () {
             let d = new frappe.ui.Dialog({
                 title: 'Assign Shift Availability',
                 fields: [
-                    {'fieldname': 'shift_type', 'fieldtype': 'Link', 'options': 'Shift Type'},
+                    { 'fieldname': 'shift_type', 'fieldtype': 'Link', 'options': 'Shift Type' },
                 ],
                 primary_action_label: 'Save',
                 primary_action(values) {
-                    const selected =  me.get_checked_items() ;
+                    const selected = me.get_checked_items();
                     const result = selected.map(item => item.name).join(',');
-                    d.freeze= true;
+                    d.freeze = true;
                     frappe.call({
                         method: "epos_restaurant_2023.inventory.doctype.product.product.assign_available_shift",
                         args: {
@@ -182,24 +182,24 @@ frappe.listview_settings['Product'] = {
                             "shift_type": values.shift_type
                         }
                     });
-                    d.freeze= false;
+                    d.freeze = false;
                     d.hide();
-                },              
+                },
             })
-            d.show();           
+            d.show();
         });
 
-        me.page.add_action_item('Remove Shift Availability', function() {
+        me.page.add_action_item('Remove Shift Availability', function () {
             let d = new frappe.ui.Dialog({
                 title: 'Remove Shift Availability',
                 fields: [
-                    {'fieldname': 'shift_type', 'fieldtype': 'Link', 'options': 'Shift Type'},
+                    { 'fieldname': 'shift_type', 'fieldtype': 'Link', 'options': 'Shift Type' },
                 ],
                 primary_action_label: 'Save',
                 primary_action(values) {
-                    const selected =  me.get_checked_items() ;
+                    const selected = me.get_checked_items();
                     const result = selected.map(item => item.name).join(',');
-                    d.freeze= true;
+                    d.freeze = true;
                     frappe.call({
                         method: "epos_restaurant_2023.inventory.doctype.product.product.remove_available_shift",
                         args: {
@@ -207,18 +207,18 @@ frappe.listview_settings['Product'] = {
                             "shift_type": values.shift_type
                         }
                     });
-                    d.freeze= false;
+                    d.freeze = false;
                     d.hide();
-                },              
+                },
             })
-            d.show();           
+            d.show();
         });
 
-        me.page.add_action_item('Remove All Available Shifts', function() {
+        me.page.add_action_item('Remove All Available Shifts', function () {
             frappe.confirm("Are you sure you want to remove all available shifts from the selected products?",
-                function(){
-                    const selected =  me.get_checked_items() ;
-                    const result = selected.map(item => item.name).join(',');                
+                function () {
+                    const selected = me.get_checked_items();
+                    const result = selected.map(item => item.name).join(',');
                     frappe.call({
                         method: "epos_restaurant_2023.inventory.doctype.product.product.clear_all_avaialble_shifts_from_product",
                         args: {
@@ -228,5 +228,58 @@ frappe.listview_settings['Product'] = {
                 }
             );
         });
+
+
+
+
+        me.page.add_action_item(__('Transfer to Report'), () => {
+            const selected = me.get_checked_items();
+
+            if (!selected.length) {
+                frappe.msgprint(__('Please select at least one product to transfer.'));
+                return;
+            }
+
+            frappe.confirm(
+                __('Are you sure you want to transfer {0} selected products to the report site?', [
+                    selected.length
+                ]),
+                () => {
+                    const product_ids = selected.map(row => row.name);
+
+                    frappe.call({
+                        method: 'epos_restaurant_2023.api.sync_product.send_product_to_report_site',
+                        args: {
+                            product_ids: product_ids
+                        },
+                        freeze: true,
+                        freeze_message: __('Sending products to report site...'),
+                        callback(r) {
+                            if (!r.exc) {
+                                me.refresh();
+                                frappe.show_alert({
+                                    message: __('Products successfully transferred!'),
+                                    indicator: 'green'
+                                });
+                            }
+                        }
+                    });
+                },
+                () => {
+                    // User clicked No
+                }
+            );
+        });
+
+
+
+
+
+
     },
+
+
+
+
+
 }

@@ -22,6 +22,7 @@
   "is_foc",
   "require_check_in",
   "disabled",
+  "allow_in_emenu",
   "section_break_dhsk",
   "download_qr_image",
   "qr_menu_file",
@@ -38,7 +39,9 @@
   "section_break_fhlo",
   "new_sale_default_pos_menu",
   "column_break_maim",
-  "submitted_default_pos_menu"
+  "submitted_default_pos_menu",
+  "integration_id_tab",
+  "integration_id"
  ],
  "fields": [
   {
@@ -220,12 +223,28 @@
    "fieldname": "font_size",
    "fieldtype": "Int",
    "label": "Font size"
+  },
+  {
+   "fieldname": "integration_id_tab",
+   "fieldtype": "Tab Break",
+   "label": "Integration ID"
+  },
+  {
+   "fieldname": "integration_id",
+   "fieldtype": "Data",
+   "label": "Integration ID"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_in_emenu",
+   "fieldtype": "Check",
+   "label": "Allow in eMenu"
   }
  ],
  "image_field": "photo",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-11-10 10:55:11.408067",
+ "modified": "2026-11-09 15:34:27.507980",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Tables Number",

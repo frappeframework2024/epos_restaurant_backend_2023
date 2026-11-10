@@ -42,6 +42,8 @@
                         <ComButton @click="onRoute('KitchenOrderDisplay')" :title="$t('KOD Screen')" v-if="device_setting?.show_button_kod_screen==1" icon="mdi-monitor"  icon-color="defaulticonColor" class="bg-brandcolor" />
 
                         <ComButton @click="onRoute('Customer')" :title="$t('Customer')" v-if="device_setting?.is_order_station==0" icon-color="defaulticonColor"  icon="mdi-account-multiple-outline" class="bg-brandcolor" />
+                       <ComButton @click="onRoute('OnlineOrder')" :title="$t('Online Order')" v-if="device_setting?.is_order_station==0" icon-color="defaulticonColor"  icon="mdi-store-outline" class="bg-brandcolor" />
+                       
                         <!-- <ComButton :title="$t('Park Item')" @click="onRedeemClick()" v-if="device_setting.show_park_button==1" icon-color="#e99417"  icon="mdi-parking" /> -->
                         <ComButton @click="onVoucherTopUp()"  :title="$t('Top-Up Voucher')" v-if="gv.device_setting?.show_top_up" icon-color="defaulticonColor"  icon="mdi-wallet-plus" class="bg-brandcolor" />
                         <ComButton @click="onCashInCashOut" :title="$t('Cash Drawer')" v-if="device_setting?.is_order_station==0" icon-color="defaulticonColor" icon="mdi-currency-usd" class="bg-brandcolor" />

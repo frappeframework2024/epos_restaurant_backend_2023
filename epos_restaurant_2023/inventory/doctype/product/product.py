@@ -413,11 +413,18 @@ def custom_rename_doc(doctype, old, new, merge=False):
 	return rename_doc(doctype, old, new, merge=merge)
 
 @frappe.whitelist()
-def upload_photo(base64_image):
+def upload_photo(base64_image, product=None):
 	import base64
 	import re
-	from frappe.utils.file_manager import save_file
 	from frappe.utils import now_datetime
+
+	if product:
+		try:
+			frappe.get_doc("Product", product).check_permission("write")
+		except frappe.DoesNotExistError:
+			if not product.startswith("new-product-"):
+				raise
+			frappe.has_permission("Product", "create", throw=True)
 
 	match = re.match(r"data:image\/\w+;base64,(.*)", base64_image)
 	if not match:
@@ -427,16 +434,15 @@ def upload_photo(base64_image):
 	image_bytes = base64.b64decode(image_data)
 
 	timestamp = now_datetime().strftime("%Y%m%d-%H%M%S")
-	docname = f"{timestamp}.png"
-
-	file_doc = save_file(
-		fname=docname,
-		content=image_bytes,
-		dt="File",
-		dn=docname,
-		decode=False,
-		is_private=0
-	)
+	file_doc = frappe.get_doc({
+		"doctype": "File",
+		"file_name": f"{timestamp}.png",
+		"content": image_bytes,
+		"is_private": 0,
+		"attached_to_doctype": "Product" if product else None,
+		"attached_to_name": product,
+		"attached_to_field": "photo" if product else None,
+	}).insert(ignore_permissions=True)
 	return file_doc.file_url
 
 @frappe.whitelist(methods="POST")

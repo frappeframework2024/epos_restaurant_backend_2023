@@ -1,4 +1,4 @@
-import { computed, addModifierDialog, SelectDateTime, i18n, inject, keypadWithNoteDialog, SelectGoogleImageDialog, SaleProductComboMenuGroupModal, EmptyStockProductDialog } from '@/plugin'
+import { computed,keyboardDialog, addModifierDialog, SelectDateTime, i18n, inject, keypadWithNoteDialog, SelectGoogleImageDialog, SaleProductComboMenuGroupModal, EmptyStockProductDialog } from '@/plugin'
 import { createToaster } from "@meforma/vue-toaster";
 import ComEditSaleProduct from '@/views/sale/components/ComEditSaleProduct.vue'
 import { FrappeApp } from 'frappe-js-sdk';
@@ -146,6 +146,19 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                 } else {
                     return
                 }
+            }
+//  open Quantity
+console.log(p)
+            if(p.is_open_quantity==1){
+                const qty = 1;
+                const result = await keyboardDialog({
+                    title: $t("Change Quantity"),
+                    type: "number",
+                    value: qty
+                });
+                p.quantity = result
+                console.log(p)
+// 
             }
             sale.addSaleProduct(p);
         }

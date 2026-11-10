@@ -437,7 +437,7 @@ export default class Sale {
                 product_name_kh: p.name_kh,
                 revenue_group: p.revenue_group,
                 unit: p.unit,
-                quantity: 1,
+                quantity: p.quantity || 1,
                 sub_total: 0,
                 total_discount: 0,
                 total_tax: 0,

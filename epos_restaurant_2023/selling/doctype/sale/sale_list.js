@@ -18,27 +18,85 @@ frappe.listview_settings['Sale'] = {
         }
     },
     refresh: function(listview) {
-        // pls use client script to add this button
-        // or other metod that can show and hide this button 
+       
+    },
+    onload(listview) {
+        listview.page.add_action_item(__('POS Transfer'), () => {
+            const selected = listview.get_checked_items();
+            if (!selected.length) {
+                frappe.msgprint(__('Please select at least one sale.'));
+                return;
+            }
+            frappe.confirm(
+                __('Are you sure you want to transfer {0} selected sales?', [
+                    selected.length
+                ]),
+                () => {
+                    // User confirms
+                    frappe.call({
+                        method: 'epos_restaurant_2023.api.pos_transfer.pos_transfer',
+                        args: {
+                            sales: selected.map(row => row.name)
+                        },
+                        freeze: true,
+                        freeze_message: __('Transferring...'),
+                        callback(r) {
+                            if (!r.exc) {
+                                listview.refresh();
+                            }
+                        }
+                    });
+                },
+                () => {
+                    // User cancels; do nothing
+                }
+            );
+        });
 
         
-        // listview.page.add_inner_button("Sync Sales", function() {
-        //     frappe.call('epos_restaurant_2023.api.utils.sync_sale_to_server').then(r => {
-        //         frappe.show_alert(r.message)
-        //     })
+        // listview.page.add_action_item(__('Transfer to Report'), () => {
+        //     const selected = listview.get_checked_items();
+            
+        //     if (!selected.length) {
+        //         frappe.msgprint(__('Please select at least one sale to transfer.'));
+        //         return;
+        //     }
+
+        //     frappe.confirm(
+        //         __('Are you sure you want to transfer {0} selected sales to the report site?', [
+        //             selected.length
+        //         ]),
+        //         () => {
+        //             const sale_ids = selected.map(row => row.name);
+                    
+        //             frappe.call({
+        //                 method: 'epos_restaurant_2023.api.sale_report.send_sale_to_report_site',
+        //                 args: {
+        //                     sale_ids: sale_ids
+        //                 },
+        //                 freeze: true,
+        //                 freeze_message: __('Sending sale to report site...'),
+        //                 callback(r) {
+        //                     if (!r.exc) {
+        //                         listview.refresh();
+        //                         frappe.show_alert({
+        //                             message: __('Sales successfully transferred!'),
+        //                             indicator: 'green'
+        //                         });
+        //                     }
+        //                 }
+        //             });
+        //         },
+        //         () => {
+        //             // User clicked No
+        //         }
+        //     );
         // });
-    },
+    }
 }
 
-
-
-
-
 if (frappe.is_mobile()){
-
-
     frappe.views.ListView = class ListView extends frappe.views.ListView {
-
         get_mobile_row(left = "", doc) { 
             if (this.doctype === "Sale") {
                 return frappe.render_template("mobile_list_view_row_template",{left:left,doc:doc,modified:comment_when(doc.modified,true)})           
@@ -51,7 +109,6 @@ if (frappe.is_mobile()){
                 doc
             );
         }
-
     }
  
     setTimeout(() =>{
