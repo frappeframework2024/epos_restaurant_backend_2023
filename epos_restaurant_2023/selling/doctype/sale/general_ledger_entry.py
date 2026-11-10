@@ -9,6 +9,15 @@ from epos_restaurant_2023.inventory.inventory import (
 )
 
 @frappe.whitelist()
+def manually_generate_gl_entry(name):
+	gl_entries = frappe.db.sql("select name from `tabGeneral Ledger` where voucher_number = '{0}'".format(name),as_dict=1)
+	if gl_entries:
+		return "GL entry already existed"
+	else:
+		manual_submit_sale_to_general_ledger_entry(name)
+		return "GL entry generated for sale"
+
+@frappe.whitelist()
 def manual_submit_sale_to_general_ledger_entry(name):
 	doc = frappe.get_doc("Sale",name)
 	submit_sale_to_general_ledger_entry(doc, commit = True)
@@ -41,13 +50,9 @@ def submit_sale_to_general_ledger_entry(self, commit = True):
 	# Discount Account
 	if self.total_discount:
 		discount_sale_products = [d for d in self.sale_products if d.allow_discount==1]
- 
-
 		if  set([d.default_discount_account for d in discount_sale_products if not d.default_discount_account and d.allow_discount==1]):
 			frappe.throw(_("Please enter default discount"))
-
 		for  acc in set([d.default_discount_account for d in discount_sale_products if d.default_discount_account and d.allow_discount==1]):
-
 			doc = {
 				"doctype":"General Ledger",
 				"posting_date":self.posting_date,
@@ -76,10 +81,14 @@ def submit_sale_to_general_ledger_entry(self, commit = True):
 		error = ""
 		for a in self.payment:
 			if (a.default_account or "") == "":
-				error += ("Please enter default account for payment type '{0}'</br>".format(a.payment_type))
+				if self.docstatus == 1:
+					acc = frappe.db.sql("select account from `tabPayment Type Account` where parent='{0}' and business_branch='{1}' limit 1".format(a.payment_type,self.business_branch),as_dict=1)
+					if acc:
+						a.default_account = acc[0].get("account")
+				else:
+					error += ("Please enter default account for payment type '{0}'</br>".format(a.payment_type))
 		if error:
 			frappe.throw(error)
-
 		for acc in set([d.default_account for d in self.payment if not d.payment_type_group=="On Account"]):
 			root_type = frappe.get_cached_value("Chart Of Account",acc,"root_type")
 			amount = sum([d.amount + (d.fee_amount or 0) for d in self.payment  if d.default_account==acc])

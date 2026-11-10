@@ -4,7 +4,6 @@ from frappe import _
 from py_linq import Enumerable
 from epos_restaurant_2023.api.api import get_report_field_perm
 
-
 def execute(filters=None):
 	if not filters.from_stock_location:
 		filters.from_stock_location= frappe.db.get_list("Stock Location",pluck='name')
@@ -14,7 +13,6 @@ def execute(filters=None):
 		filters.from_business_branch= frappe.db.get_list("Business Branch",pluck='name')
 	if not filters.to_business_branch:
 		filters.to_business_branch= frappe.db.get_list("Business Branch",pluck='name')
-	
 	data =  get_report_data(filters)
 	return get_report_columns(),data,None,None, get_report_summary(data)
 
@@ -40,7 +38,6 @@ def get_report_data(filters):
 			docstatus = 1
 
     """
-    	
     data = frappe.db.sql(sql,filters , as_dict=1)
     return data
 
@@ -57,7 +54,7 @@ def get_report_columns():
 		fields.append({"label":"Total Amount", "fieldname":"total_amount","fieldtype":"Currency","align":"right","width":110})
 	return fields
   		
-def get_report_summary(data,):
+def get_report_summary(data):
 	report_summary = []
 	report_summary.append({"label":_("QTY"),"value":frappe.utils.fmt_money(Enumerable(data).sum(lambda x: x.total_quantity or 0)),"indicator":"green"})
 	if get_report_field_perm("Stock Transfer Products","cost"):

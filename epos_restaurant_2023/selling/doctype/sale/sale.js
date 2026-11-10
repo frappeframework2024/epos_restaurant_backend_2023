@@ -113,9 +113,7 @@ frappe.ui.form.on("Sale", {
 			frappe.db.get_value("POS Config", frm.doc.pos_config,"edit_closed_receipt_required_note",(r) => {
 				if (r.edit_closed_receipt_required_note === 1){
 					frm.add_custom_button(__('Edit Bill'), function () {
-						frappe.prompt([
-							{ 'fieldname': 'note', 'fieldtype': 'Data', 'label': 'Note',"reqd": 1,},
-						],
+						frappe.prompt([{ 'fieldname': 'note', 'fieldtype': 'Data', 'label': 'Note',"reqd": 1,}],
 							function (d) {
 								frappe.call({
 									method: "epos_restaurant_2023.api.api.edit_sale_order",
@@ -138,12 +136,34 @@ frappe.ui.form.on("Sale", {
 						)
 						
 					}, __("Actions"));
-				}else{
-					
+					frm.add_custom_button(__('Generate GL Entry'), function () {
+						frappe.prompt([{ 'fieldname': 'note', 'fieldtype': 'Data', 'label': 'Note',"reqd": 1,}],
+							function (d) {
+								frappe.call({
+									method: "epos_restaurant_2023.api.api.edit_sale_order",
+									args: {
+										name: frm.doc.name,
+										note:d.note,
+										
+									}, callback: function (r) { 
+										frm.reload_doc()
+										frappe.show_alert({
+											message:__('You can change document now.'),
+											indicator:'green'
+										}, 5);
+									}
+								})
+							},
+							'Generate GL Entry',
+							"Generate GL Entry"
+						)
+						
+					}, __("Actions"));
+				}
+				else{
 					frm.add_custom_button(__('Edit Bill'), function () {
 						frappe.call({
 							method: "epos_restaurant_2023.api.api.edit_sale_order",
-			
 							args: {
 								name: frm.doc.name
 							}, callback: function (r) { 
@@ -155,14 +175,29 @@ frappe.ui.form.on("Sale", {
 	
 							}
 						})
-						
+					}, __("Actions"));
+					frm.add_custom_button(__('Generate GL Entry'), function () {
+						 frappe.confirm(
+								__('are you sure you want to generate GL Entry?'),() => {
+									frappe.call({
+										method: 'epos_restaurant_2023.selling.doctype.sale.general_ledger_entry.manually_generate_gl_entry',
+										args: {
+											name: frm.doc.name
+										},
+										freeze: true,
+										freeze_message: __('Generating...'),
+										callback(r) {
+											if (r.message) {
+												frappe.msgprint(r.message)
+											}
+										}
+									});
+								},
+							);
 					}, __("Actions"));
 				}
-				
 			});
 		}
-		 
-		
 	},
 	setup(frm) {
 		set_query(frm, "working_day", [["Working Day", "is_closed", "=", 0]]);
