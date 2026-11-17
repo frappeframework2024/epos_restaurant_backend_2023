@@ -20,6 +20,10 @@ io.on('connection', (socket) => {
     io.emit("PrintReceipt",arg)
   })
 
+  socket.on("NotifyOnlineOrder",(arg = {})=>{
+    io.emit("NotifyOnlineOrder",arg)
+  })
+
   socket.on("RefreshTable",(arg = {})=>{
     io.emit("RefreshTable",arg)
   })

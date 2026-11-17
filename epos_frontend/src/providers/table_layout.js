@@ -10,7 +10,9 @@ const { t: $t } = i18n.global;
 
 
 const toaster = createToaster({ position: "top-right" });
+
 export default class TableLayout {
+    
     constructor() {
         this.isLoading = false;
         this.setting = null;
@@ -23,7 +25,8 @@ export default class TableLayout {
         this.saleList = [];
         this.saleLoading = true;
         this.saveTablePositionResource = null;
-        this.initSaveTablePositionResource()
+        this.initSaveTablePositionResource();
+        this.submittedOnlineOrderCount =0;
     }
 
     //end constructor
@@ -127,6 +130,41 @@ export default class TableLayout {
     onEnableArrangeTable(status) {
         this.canArrangeTable = status;
     }
+    
+    getTodayIsoDate() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    async  fetchSubmittedOnlineOrderCount() {
+         this.submittedOnlineOrderCount = 0;
+        try {
+            const res = await app.postApi(
+            'emenu_integration.order.get_order',
+            {
+                context: {
+                status: 'submitted',
+                posting_date: this.getTodayIsoDate(),
+                page: 1,
+                page_size: 1,
+                },
+            },
+            '',
+            false
+            );
+
+            const result = res?.data ?? res?.message ?? res;
+            if (Number.isInteger(result?.total_record) && result.total_record >= 0) {
+                this.submittedOnlineOrderCount = result.total_record;
+            }
+        } catch {
+             this.submittedOnlineOrderCount = 0
+            // Keep existing badge count if silent fetch fails
+        }
+}
 
 
    async validateNewtowkSaleLock(table,sale=undefined){ 

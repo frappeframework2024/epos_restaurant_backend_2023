@@ -8,7 +8,19 @@ const db = frappe.db();
 const toaster = createToaster({ position: "top-right" });
 const { t: $t } = i18n.global;
 
-export async function onSelectProduct(product_data,sale,product,dialog,unit = ""){
+export async function onSelectProduct(product_data,sale,product,dialog,unit = "", weight = 0, price = 0,isWeightedBarcode = false){
+    if(isWeightedBarcode == true){
+        weight = parseFloat(weight) == 0 ? 0 : parseFloat(weight)/1000
+        price = parseFloat(price) == 0 ? 0 : parseFloat(price)/100
+        if(weight <= 0 || price <= 0){
+            return toaster.error($t("Weight or Price must be greater than 0 for weighted product"));
+        }
+        let product = JSON.parse(JSON.stringify(product_data))
+        let existing = sale.sale.sale_products.filter(p => p.product_code == product.name && p.quantity == weight && p.price == price);
+        if (existing.length > 0) {
+            return toaster.error($t("Cannot add weigted product with same weight and price again"));
+        }
+    }
     if (sale.setting.pos_menus.length>0 || sale.setting.use_menu_retail == 1){
         // sale is sale from inject 
         // product is product from inject 
@@ -147,8 +159,6 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
                     return
                 }
             }
-//  open Quantity
-console.log(p)
             if(p.is_open_quantity==1){
                 const qty = 1;
                 const result = await keyboardDialog({
@@ -157,8 +167,10 @@ console.log(p)
                     value: qty
                 });
                 p.quantity = result
-                console.log(p)
-// 
+            }
+            if(isWeightedBarcode == true){
+                p.quantity = weight
+                p.price = price
             }
             sale.addSaleProduct(p);
         }

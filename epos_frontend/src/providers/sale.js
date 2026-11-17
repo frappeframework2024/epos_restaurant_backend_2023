@@ -950,7 +950,7 @@ export default class Sale {
         this.sale.sale_discountable_amount = this.sale.sale_discountable_amount - total_tax_exclude; //new
 
         this.sale.discount = this.getNumber(this.sale.discount);
-        this.sale.sale_discount = 0;
+        this.sale.sale_discount = 0; 
 
         if (this.sale.discount_type == "Percent") {
             this.sale.sale_discount = sp.sum("$.sale_discount_amount")
@@ -1437,15 +1437,20 @@ export default class Sale {
     async onSaleProductChangeTaxSetting(sp, gv) {
         await this.onChangeTaxSetting($t('Change Tax Setting'), sp.product_tax_rule, sp.change_tax_setting_note, gv, sp);
     }
+
     onUpdateSaleDiscount(discount, discount_type, discount_note) {
         this.sale.discount = discount;
         this.sale.discount_type = discount_type;
         this.sale.discount_note = discount_note;
         const sale_discount = this.sale.discount;
+        
         (this.sale.sale_products ?? []).forEach(_sp => {
             if (sale_discount > 0 && _sp.allow_discount && _sp.discount == 0) {
-                _sp.sale_discount_percent = sale_discount;
-                const temp_sale_discount_amount = (sale_discount / 100) * _sp.sub_total;
+                 _sp.sale_discount_percent =  sale_discount;
+                if(discount_type != "Percent"){
+                    _sp.sale_discount_percent =  (sale_discount*100/this.sale.sale_discountable_amount);                
+                }               
+                const temp_sale_discount_amount =  _sp.sub_total *  _sp.sale_discount_percent /100;
                 const sale_discount_amount = Number((temp_sale_discount_amount + Number.EPSILON).toFixed(this.setting.pos_setting.main_currency_precision))
                 _sp.sale_discount_amount = sale_discount_amount
             }
@@ -1697,9 +1702,7 @@ export default class Sale {
 
     
     async onSubmit(options={print_queue:true}) {
-        // options={"print_request_bill":false}
- 
-
+        // options={"print_request_bill":false} 
         const l = await app.showLoading();
         
         let is_new = this.sale.creation == this.sale.modified

@@ -74,6 +74,8 @@ import ComVoucher from "../components/ComVoucher.vue";
 import ComCoupon from "../components/ComCoupon.vue";
 import ComScanQR from "../components/ComScanQR.vue";
 import ComTableReservationDialog from "../views/sale/components/table_layouts/ComTableReservationDialog.vue";
+import ComOrderOnlineDialog from "@/views/online_order/components/ComOrderOnlineDialog.vue"
+
 interface params {
     doctype?: String,
     name?: String,
@@ -166,3 +168,4 @@ export const ComSubmitTermAndConditionDialog = createPromiseDialog<params, objec
 export const ComOrderLimitDialog = createPromiseDialog<params, object>(ComOrderLimit);
 export const payWaySuccessDialog = createPromiseDialog<params, object>(ComPayWaySuccessDialog);
 export const tableReservationDialog = createPromiseDialog<params, object>(ComTableReservationDialog);
+export const OrderOnlineDialog = createPromiseDialog<params, object>(ComOrderOnlineDialog);

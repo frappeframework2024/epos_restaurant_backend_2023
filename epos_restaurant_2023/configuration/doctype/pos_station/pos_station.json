@@ -64,6 +64,7 @@
   "print_invoice_on_submit",
   "show_warning_before_reload_in_order_screen",
   "show_button_for_checking_coupon_balance",
+  "show_online_order",
   "switch_pos_profile_tab",
   "pos_profiles_section",
   "switch_pos_profiles",
@@ -456,11 +457,17 @@
    "fieldname": "show_button_for_checking_coupon_balance",
    "fieldtype": "Check",
    "label": "Show Button For Checking Coupon Balance"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_online_order",
+   "fieldtype": "Check",
+   "label": "Show Online Order"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-06-22 15:25:29.513545",
+ "modified": "2026-11-13 09:53:19.607293",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

@@ -1,7 +1,8 @@
 <template>
     <div>
-        <ComLoadingDialog
-            v-if="sale.loading  || (sale.saleResource != null && sale.saleResource?.get.loading) || (sale.saleResource != null && sale.saleResource?.setValue.loading)" />
+        <!-- <ComLoadingDialog
+            v-if="sale.loading  || (sale.saleResource != null && sale.saleResource?.get.loading) || (sale.saleResource != null && sale.saleResource?.setValue.loading)" /> -->
+        
         <ComSmallAddSale v-if="mobile" />
 
         <ComAddSaleRetail v-if="!mobile && sale.setting.use_retail_ui == 1" />

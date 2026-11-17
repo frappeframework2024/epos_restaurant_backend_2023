@@ -27,7 +27,7 @@ import './assets/css/fonts.css'
 import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura';
 
- 
+ import ConfirmationService from 'primevue/confirmationservice';
 
 
 import DialogService from 'primevue/dialogservice';
@@ -121,6 +121,7 @@ app.use(resourcesPlugin);
 app.use(vuetify);
 app.use(store);
 app.use(Vue3DraggableResizable)
+app.use(ConfirmationService);
 app.use(createBottomSheet())
 app.use(PrimeVue, {
     theme: {

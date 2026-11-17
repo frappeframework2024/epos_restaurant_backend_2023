@@ -7,25 +7,39 @@
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14v3m4-6V7a3 3 0 1 1 6 0v4M5 11h10a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z"/>
         </svg>
         <div v-else>
-            Unlock Table
+            {{ $t('Unlock Table') }}
         </div>
     </v-btn>
+    <v-btn v-if="gv.setting.device_setting?.show_online_order==1" style="font-family: Khmer OS Siemreap;" @click="onViewOrderOnline">
+        <v-badge
+            :model-value="tableLayout.submittedOnlineOrderCount > 0"
+            color="error"
+            :content="tableLayout.submittedOnlineOrderCount"
+            :offset-x="-5"
+            :offset-y="-8"
+        >
+            {{ $t('Order Online') }}
+        </v-badge>
+    </v-btn> 
     <template v-if="!mobile">
         <v-btn style="font-family: Khmer OS Siemreap;" @click="onViewPendingOrder">
             {{ $t('Pending Order') }}
         </v-btn> 
+      
     </template> 
     {{ isShowTableStatus() }}
     <v-btn style="font-family: Khmer OS Siemreap;" :loading="tableLayout.saveTablePositionResource.loading" v-if="tableLayout.canArrangeTable"
         @click="onSaveTablePosition">
         {{ $t('Save Table Position') }}
     </v-btn>
+
     <v-menu>
         <template v-slot:activator="{ props }">
             <v-btn v-bind="props">
                 <v-icon>mdi-dots-vertical</v-icon>  
             </v-btn>
         </template>
+        
         <v-card>
             <v-list v-if="gv.setting?.pos_setting?.sale_types && gv.setting?.pos_setting?.sale_types.filter(r=>r.is_order_use_table == false).length > 0">
                 <v-list-subheader>
@@ -38,6 +52,13 @@
                 </template>
             </v-list>
             <v-list>
+                <template v-if="mobile">
+                    <v-list-subheader><div style="font-family: Khmer OS Siemreap;">{{ $t('Order') }}</div></v-list-subheader>
+                    <v-list-item @click="onViewPendingOrder">
+                        <v-list-item-title><div style="font-family: Khmer OS Siemreap;">{{$t('Pending Order')}}</div></v-list-item-title>
+                    </v-list-item>
+                </template>
+
                 <template  v-if="device_setting?.allow_switch_pos_profile==1"> 
                     <v-list-subheader><div style="font-family: Khmer OS Siemreap;">{{ $t('POS Config') }}</div></v-list-subheader>
                     <v-list-item @click="onSwitchPOSProfile">
@@ -50,15 +71,8 @@
                     <v-list-item @click="onEnableArrageTable">
                         <v-list-item-title><div style="font-family: Khmer OS Siemreap;">{{ $t('Arrange Table') }}</div></v-list-item-title>
                     </v-list-item>
-                </template>
+                </template> 
 
-                <template v-if="mobile">
-                    <v-list-item @click="onViewPendingOrder">
-                        <v-list-item-title><div style="font-family: Khmer OS Siemreap;">{{$t('Pending Order')}}</div></v-list-item-title>
-                    </v-list-item>
-                   
-                </template>
-                
                 <v-list-item @click="onShowHideSaleStatus">
                         <v-list-item-title><div style="font-family: Khmer OS Siemreap;">{{ !status ? $t('Show Status'):$t("Hide Status") }}</div></v-list-item-title>
                 </v-list-item>
@@ -68,8 +82,9 @@
     </v-menu>
 </template>
 <script setup>
-import {inject, pendingSaleListDialog,createToaster, useRouter,ref,SwitchPosProfileModal ,i18n} from '@/plugin';
+import {inject, pendingSaleListDialog,OrderOnlineDialog,createToaster, useRouter,ref,SwitchPosProfileModal ,i18n,onMounted,onBeforeUnmount} from '@/plugin';
 import { useDisplay } from 'vuetify';
+
 const { t: $t } = i18n.global;
 
 const gv = inject('$gv');
@@ -138,6 +153,20 @@ async function onViewPendingOrder() {
     }
 } 
 
+async function onViewOrderOnline() {
+    const workingDay = await getWorkingDay(); 
+    const cashierShift = await getCashierShift();
+    if(workingDay.name && cashierShift.name){
+        const result = await OrderOnlineDialog({data:{working_day:workingDay.name, cashier_shift: cashierShift.name}});
+        await fetchSubmittedOnlineOrderCount();
+    }
+    else{
+        toaster.error($t("msg.System can not get current working day or cashier shift"))
+    }
+} 
+
+
+
 async function onShowHideSaleStatus() { 
     status.value = !status.value;
     localStorage.setItem('table_status_color', status.value)
@@ -189,4 +218,14 @@ async function  getCashierShift(){
 function onSaleType(name){
     router.push({name:'AddSaleNoTable',params:{sale_type: name}})
 }
+
+async function fetchSubmittedOnlineOrderCount() {
+  if (gv.setting.device_setting?.show_online_order != 1) return;
+   await  tableLayout.fetchSubmittedOnlineOrderCount();
+}
+
+
+onMounted(() => {
+  fetchSubmittedOnlineOrderCount();
+});
 </script>

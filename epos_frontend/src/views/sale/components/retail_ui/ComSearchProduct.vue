@@ -7,7 +7,7 @@
 
         <template #content>
             <div class="search-box my-0 mx-auto w-full">
-                <ComInput autofocus keyboard variant="outlined" :placeholder="$t('Search...')"
+                <ComInput autofocus keyboard variant="outlined" :placeholder="$t('Search')"
                     prepend-inner-icon="mdi-magnify" v-model="keyword" v-debounce="onSearch" /> <br />
                
                     <v-row>

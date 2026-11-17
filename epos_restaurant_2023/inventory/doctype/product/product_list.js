@@ -272,6 +272,29 @@ frappe.listview_settings['Product'] = {
         });
 
 
+        me.page.add_menu_item(__('Sync Product to Emenu'), () => {
+            frappe.confirm(
+                __('Are you sure you want to sync products to Emenu?'),
+                () => {
+                    frappe.call({
+                        method: 'epos_restaurant_2023.api.emenu_integration.sync.sync_product_to_emenu',
+                        freeze: true,
+                        freeze_message: __('Syncing products to Emenu, please wait...'),
+                        callback(r) {
+                            if (!r.exc) {
+                                me.refresh();
+                                frappe.show_alert({
+                                    message: __('Products successfully synced to Emenu!'),
+                                    indicator: 'green'
+                                });
+                            }
+                        }
+                    });
+                }
+            );
+        });
+
+
 
 
 

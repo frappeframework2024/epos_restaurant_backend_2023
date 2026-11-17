@@ -15,6 +15,7 @@ from frappe.model.document import Document
 from PIL import Image
 from botocore.config import Config as BotocoreConfig
 
+from epos_restaurant_2023.hooks import r2_upload_doctypes
 from epos_restaurant_2023.r2_storage import client, config, file_handler, storage, utils
 
 SETTINGS = {
@@ -28,7 +29,7 @@ SETTINGS = {
 	"max_file_size_mb": 10,
 	"delete_on_file_delete": False,
 }
-HOOKS = {"Product": {"folder": ["products"]}}
+HOOKS = {doctype: {"folder": [settings["folder"]]} for doctype, settings in r2_upload_doctypes.items()}
 REAL_GET_CLIENT = client.get_client
 
 
@@ -129,7 +130,7 @@ class R2Tests(unittest.TestCase):
 			patch.object(
 				frappe,
 				"get_hooks",
-				lambda key, default=None: HOOKS if key == "r2_upload_doctypes" else default,
+				lambda key, default=None, app_name=None: HOOKS if key == "r2_upload_doctypes" else default,
 			),
 			patch.object(frappe, "get_site_path", lambda *parts: str(Path(self.temp.name, *parts))),
 			patch.object(frappe, "_", lambda text: text),
@@ -198,18 +199,61 @@ class R2Tests(unittest.TestCase):
 				with self.assertRaises(ValidationFailure):
 					config.get_config()
 
-	def test_product_upload_uses_configured_folder_and_prefix(self):
+	def test_allowlisted_uploads_use_configured_folders_and_prefix(self):
 		self.settings.key_prefix = "files"
-		file = File()
-		original = file.content
-		file.save_file()
-		self.assertIn("/files/2026-10/products/", file.file_url)
-		self.assertNotIn("PRODUCT-1", file.file_url)
-		args = self.s3.put_object.call_args.kwargs
-		self.assertEqual(args["Body"], original)
-		self.assertEqual(args["ContentType"], "image/png")
-		self.assertNotIn("ACL", args)
-		self.assertEqual(file.file_size, len(original))
+		for doctype, folder in (
+			("Product", "products"),
+			("POS Menu", "pos_menu"),
+			("Product Category", "product_category"),
+		):
+			with self.subTest(doctype=doctype):
+				file = File(attached_to_doctype=doctype)
+				original = file.content
+				file.save_file()
+				self.assertIn(f"/files/2026-10/{folder}/", file.file_url)
+				self.assertNotIn(file.attached_to_name, file.file_url)
+				args = self.s3.put_object.call_args.kwargs
+				self.assertEqual(args["Body"], original)
+				self.assertEqual(args["ContentType"], "image/png")
+				self.assertNotIn("ACL", args)
+				self.assertEqual(file.file_size, len(original))
+		self.assertEqual(self.s3.put_object.call_count, 3)
+
+	def test_parent_hook_uploads_allowlisted_attachments(self):
+		for doctype, settings in HOOKS.items():
+			with self.subTest(doctype=doctype):
+				file = File(attached_to_doctype=doctype, file_url="/files/picture.png")
+				file.save = MagicMock()
+				parent = MagicMock(doctype=doctype, name=file.attached_to_name)
+				with (
+					patch.object(frappe, "get_all", return_value=[file.name]) as get_files,
+					patch.object(frappe, "get_doc", return_value=file),
+				):
+					file_handler.sync_parent_attachments(parent)
+				self.assertEqual(get_files.call_args.kwargs["filters"]["attached_to_doctype"], doctype)
+				self.assertIn(f"/{settings['folder'][0]}/", file.file_url)
+				file.save.assert_called_once_with(ignore_permissions=True)
+		self.assertEqual(self.s3.put_object.call_count, len(HOOKS))
+
+	def test_another_apps_hook_cannot_allow_r2_uploads(self):
+		merged_hooks = {**HOOKS, "Sales Invoice": {"folder": ["invoices"]}}
+
+		def get_hooks(key, default=None, app_name=None):
+			return HOOKS if app_name == "epos_restaurant_2023" else merged_hooks
+
+		with (
+			patch.object(frappe, "get_hooks", side_effect=get_hooks),
+			patch.object(frappe, "get_all") as get_files,
+		):
+			file = File(attached_to_doctype="Sales Invoice", attached_to_name="INV-1")
+			self.assertEqual(file.save_file(), "local-storage")
+			file.file_url = "/files/picture.png"
+			self.assertFalse(file.upload_local_image())
+			parent = MagicMock(doctype="Sales Invoice", name="INV-1")
+			file_handler.sync_parent_attachments(parent)
+
+		get_files.assert_not_called()
+		self.s3.put_object.assert_not_called()
 
 	def test_guest_upload_stays_local(self):
 		frappe.session.user = "Guest"

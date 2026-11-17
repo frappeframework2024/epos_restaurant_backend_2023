@@ -28,6 +28,7 @@ import authRoutes from './auth';
 import Setting from '@/views/setting/Setting.vue';
 import SaleOrder from '@/views/sale_page/SaleOrder.vue';
 import OnlineOrder from "@/views/online_order/OnlineOrder.vue"
+import OnlineOrderDetail from "@/views/online_order/OnlineOrderDetail.vue"
 // import BarcodeBuilder from '@/views/barcode_builder/BarcodeBuilder.vue';er
 
 
@@ -64,6 +65,7 @@ const routes = [
   { path: "/epos_frontend/kod", name: "KitchenOrderDisplay", component: KitchenOrderDisplay, meta: { layout: 'kitchen_order_display_layout' } },
   { path: "/epos_frontend/add-quite-sale/:sale_type?", name: "AddSaleNoTable", component: AddSaleNoTable, meta: { layout: "main_layout" } },
    { path: "/epos_frontend/online-order", name: "OnlineOrder", component: OnlineOrder, meta: { layout: "main_layout" } },
+   { path: "/epos_frontend/confirm-online-order/:order_id", name: "OnlineOrderDetail", component: OnlineOrderDetail, meta: { layout: "blank_layout" } },
   // { path: "/epos_frontend/barcode-builder", name: "BarcodeBuilder", component: BarcodeBuilder, },
   ...authRoutes,
 ];

@@ -4,6 +4,7 @@
 		
 		<v-sheet v-else id="app-container" v-resize="onResize">
 			<div >
+		 
 				<v-progress-linear class="progress_bar" v-if="isLoading" indeterminate color="teal"></v-progress-linear>
 				<MainLayout v-if="layout=='main_layout'" />
 				<SaleLayout v-else-if="layout=='sale_layout'" />
@@ -13,6 +14,8 @@
 			</div>
 		</v-sheet>
 		<DynamicDialog />
+		
+<ConfirmDialog></ConfirmDialog>
 	<loading/>
 	</div>
 
@@ -34,7 +37,7 @@ import { FrappeApp } from 'frappe-js-sdk';
 import { useDisplay } from 'vuetify'; 
 import DynamicDialog from 'primevue/dynamicdialog';
 import WebSocketPrinter from "@/utils/websocket-printer.js"
-
+import ConfirmDialog from 'primevue/confirmdialog';
 import { ref } from 'vue';
 
 import createPaywaySocket from './utils/paywaysocketio';

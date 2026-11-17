@@ -42,8 +42,20 @@
                         <ComButton @click="onRoute('KitchenOrderDisplay')" :title="$t('KOD Screen')" v-if="device_setting?.show_button_kod_screen==1" icon="mdi-monitor"  icon-color="defaulticonColor" class="bg-brandcolor" />
 
                         <ComButton @click="onRoute('Customer')" :title="$t('Customer')" v-if="device_setting?.is_order_station==0" icon-color="defaulticonColor"  icon="mdi-account-multiple-outline" class="bg-brandcolor" />
-                       <ComButton @click="onRoute('OnlineOrder')" :title="$t('Online Order')" v-if="device_setting?.is_order_station==0" icon-color="defaulticonColor"  icon="mdi-store-outline" class="bg-brandcolor" />
-                       
+                  
+                        <v-badge
+                            v-if="device_setting?.show_online_order == 1"
+                            :model-value="submittedOnlineOrderCount > 0"
+                            color="error"
+                            :content="submittedOnlineOrderCount"
+                            :offset-x="0"
+                            :offset-y="0"
+                            class="w-full h-full oo-tile-badge"
+                        >
+                            <ComButton @click="onRoute('OnlineOrder')" :title="$t('Online Order')" v-if="device_setting?.show_online_order==1" icon-color="defaulticonColor"  icon="mdi-store-outline" class="bg-brandcolor bg-brandcolor w-full h-full" />
+                        </v-badge>
+                        
+
                         <!-- <ComButton :title="$t('Park Item')" @click="onRedeemClick()" v-if="device_setting.show_park_button==1" icon-color="#e99417"  icon="mdi-parking" /> -->
                         <ComButton @click="onVoucherTopUp()"  :title="$t('Top-Up Voucher')" v-if="gv.device_setting?.show_top_up" icon-color="defaulticonColor"  icon="mdi-wallet-plus" class="bg-brandcolor" />
                         <ComButton @click="onCashInCashOut" :title="$t('Cash Drawer')" v-if="device_setting?.is_order_station==0" icon-color="defaulticonColor" icon="mdi-currency-usd" class="bg-brandcolor" />
@@ -66,7 +78,7 @@
     
 </template>
 <script setup>
-import { ref, useRouter,computed, posReservationDialog, createToaster,pendingSaleListDialog,inject,onMounted,printWifiPasswordModal,SwitchPosProfileModal,i18n,couponDialog } from '@/plugin'
+import { ref, useRouter,computed, posReservationDialog, createToaster,pendingSaleListDialog,inject,onMounted,printWifiPasswordModal,SwitchPosProfileModal,i18n,couponDialog,onBeforeUnmount } from '@/plugin'
 import ComButton from '../components/ComButton.vue';
 import WorkingDayButton from './shift/components/WorkingDayButton.vue';
 import OpenShiftButton from './shift/components/OpenShiftButton.vue';
@@ -325,10 +337,72 @@ function onOpenCashDrawer(){
     } 
 } 
 
+
+// Badge Order Online 
+const submittedOnlineOrderCount = ref(0);
+function getTodayIsoDate() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+async function fetchSubmittedOnlineOrderCount() {
+  if (device_setting?.show_online_order != 1) return;
+
+  try {
+    const res = await app.postApi(
+      'emenu_integration.order.get_order',
+      {
+        context: {
+          status: 'submitted',
+          posting_date: getTodayIsoDate(),
+          page: 1,
+          page_size: 1,
+        },
+      },
+      '',
+      false
+    );
+
+    const result = res?.data ?? res?.message ?? res;
+    if (Number.isInteger(result?.total_record) && result.total_record >= 0) {
+      submittedOnlineOrderCount.value = result.total_record;
+    }
+  } catch {
+    // Keep existing count if silent fetch fails
+  }
+}
+
+onMounted(() => {
+  fetchSubmittedOnlineOrderCount();
+
+  const appSocket = window.socket || window.app?.socket;
+  if (typeof appSocket?.on === 'function') {
+    appSocket.on('NotifyOnlineOrder', fetchSubmittedOnlineOrderCount);
+  }
+});
+
+onBeforeUnmount(() => {
+  const appSocket = window.socket || window.app?.socket;
+  if (typeof appSocket?.off === 'function') {
+    appSocket.off('NotifyOnlineOrder', fetchSubmittedOnlineOrderCount);
+  }
+});
+
 </script>
 <style scoped>
 .wrap-overlay {
     background: rgb(0, 0, 0);
     background: linear-gradient(7deg, rgba(0, 0, 0, 1) 0%, rgba(0, 212, 255, 0) 100%);
+}
+
+ /* Badge */
+:deep(.oo-tile-badge),
+:deep(.oo-tile-badge .v-badge__wrapper) {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 </style>

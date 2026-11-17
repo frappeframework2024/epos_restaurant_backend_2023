@@ -90,10 +90,8 @@ function onClear(){
 }
  
 function onKeyDown(event) {
-    
     if (event.key == "Enter") {
         disableLoadProduct.value = true
-        
         if (!sale.isBillRequested()) {
             onSearchProductByBarcode(product.searchProductKeywordStore)
         }
@@ -101,14 +99,24 @@ function onKeyDown(event) {
 }
 
 function onSearchProductByBarcode(barcode){
+    let weight = 0
+    let price = 0
+    let code = barcode
+    let isWeightedBarcode = false
+    if((barcode.split("|").length - 1)  == 2){
+        code = barcode.split("|")[0]
+        weight = barcode.split("|")[1]
+        price = barcode.split("|")[2]
+        isWeightedBarcode = true
+    }
     getApi("product.get_products",{
         limit:1,
         page:1,
-        product_code: barcode,
+        product_code: code,
         include_product_category:0
     }).then(result=>{
         if(result.message.products.length>0){
-            onSelectProduct(result.message.products[0],sale,product,dialog,result.message.unit)
+            onSelectProduct(result.message.products[0],sale,product,dialog,result.message.unit,weight,price,isWeightedBarcode)
         }else{
             toaster.warning("Product code is not exist in the system")
         }
@@ -116,14 +124,11 @@ function onSearchProductByBarcode(barcode){
     }).catch(error=>{
         disableLoadProduct.value = false
     })
-    
-
     product.searchProductKeywordStore = ""
 }
 
 
 const actionClickHandler = async function (e) {
-
     if (e.isTrusted) {
         if (e.data.action == "set_focus_in_search_product") {
             const el = document.querySelector(".search-box input");

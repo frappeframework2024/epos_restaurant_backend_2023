@@ -141,7 +141,8 @@ def get_config():
 
 
 def doctype_folder(doctype):
-	settings = frappe.get_hooks("r2_upload_doctypes", {}).get(doctype)
+	allowlist = frappe.get_hooks("r2_upload_doctypes", {}, app_name="epos_restaurant_2023")
+	settings = allowlist.get(doctype)
 	if not settings:
 		return None
 	folder = settings.get("folder")

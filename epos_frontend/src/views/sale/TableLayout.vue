@@ -5,6 +5,8 @@
             <ComTableGroupTabHeader :tableSaleColor="table_status_color" />
         </template>
         <template #action>
+
+            
             <ComTableLayoutActionButton @onShowHide="onTableStatusHidden" />
             {{ isShowTableStatus() }}
         </template>
@@ -20,7 +22,7 @@
 </template>
 <script setup>
 import PageLayout from '../../components/layout/PageLayout.vue';
-import { inject, createResource, useRouter, createToaster, onMounted, onUnmounted, ref, i18n } from "@/plugin";
+import { inject, createResource, useRouter,OrderOnlineDialog, createToaster, onMounted, onUnmounted, ref, i18n } from "@/plugin";
 import ComTableGroupTabHeader from './components/table_layouts/ComTableGroupTabHeader.vue';
 import ComTableLayoutActionButton from './components/table_layouts/ComTableLayoutActionButton.vue';
 import ComArrangeTable from './components/table_layouts/ComArrangeTable.vue';
@@ -40,6 +42,8 @@ const call = frappe.call();
 
 const getKeyIndex = ref(false)
 
+const haveOrderDialog = ref(false);
+
 const table_status_color = ref(false);
 const router = useRouter();
 if (localStorage.getItem("__tblLayoutIndex") == null) {
@@ -49,9 +53,31 @@ if (localStorage.getItem("__tblLayoutIndex") == null) {
 }
  
 socket.on("RefreshTable", () => {
-    
+    console.log("RefreshTable: ")  
     tableLayout.getSaleList();
 })
+
+
+
+socket.on("NotifyOnlineOrder", async (arg) => { 
+    fetchSubmittedOnlineOrderCount();
+
+    if(haveOrderDialog.value) return;
+
+    haveOrderDialog.value = true;
+    await OrderOnlineDialog({
+        params: {
+            order_id: arg.order_id
+        }
+    });
+
+
+    haveOrderDialog.value = false;    
+
+})
+
+
+
 
 
 onMounted(async () => {
@@ -105,6 +131,13 @@ onMounted(async () => {
     });
 })
 
+
+async function fetchSubmittedOnlineOrderCount() {
+  if (gv.setting.device_setting?.show_online_order != 1) return;
+   await  tableLayout.fetchSubmittedOnlineOrderCount();
+}
+
+
 function onTableStatusHidden(value) {
     localStorage.setItem('table_status_color', value)
     table_status_color.value = value;
@@ -148,6 +181,7 @@ function showHiddentTable() {
 
 onUnmounted(() => {
     socket.off('RefreshTable');
+    socket.off('NotifyOnlineOrder');
 });
 
 if (localStorage.getItem('redirect_sale_type')) {

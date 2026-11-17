@@ -105,6 +105,7 @@ class Sale(Document):
 								order by 
 								posting_date desc, 
 								modified desc limit 1""".format(to_currency)
+        
 		exch = frappe.db.sql(sql_exchange_rate,as_dict=1) 
 		if exch:
 			self.exchange_rate = exch[0].exchange_rate
@@ -1053,6 +1054,13 @@ def update_inventory_on_cancel(self):
 		
 def add_payment_to_sale_payment(self):
 	if self.payment:
+		if sum(x.amount for x in self.payment) < (
+				self.grand_total
+				- (self.deposit or 0)
+				- (self.total_cash_coupon_claim or 0)
+			): 
+			frappe.throw(_("Total payment amount cannot be less than grand total."))
+
 		for p in self.payment:		 
 			if p.payment_type_group !='On Account':
 					doc = frappe.get_doc({
@@ -1139,12 +1147,12 @@ def validate_sale_product(self):
 		if self.discount_type=="Amount":
 			discountable_amount = Enumerable(self.sale_products).where(lambda x: x.allow_discount==1 and x.discount==0).sum(lambda x: (x.quantity or 0)* (x.price or  0))
 			if discountable_amount>0:
-				sale_discount= math_round( (sale_discount / discountable_amount ),int(currency_precision)) * 100
+				sale_discount= (sale_discount / discountable_amount ) *100
+				sale_discount = math_round( sale_discount,int(currency_precision)) 
 			sale_discount = sale_discount or 0
 	# coupon expired date duration
 
 	coupon_expired_duration = frappe.get_cached_value("ePOS Settings",None,"default_coupon_expired")
-
 	for d in self.sale_products: 
 		d.temp_id = d.temp_id or d.name
 		# serve validate get product config to update to sale product config
@@ -1160,13 +1168,15 @@ def validate_sale_product(self):
 			frappe.throw(_("Cannot set price becouse this product is free"))
 		
 		d.sub_total = (d.quantity or 0) * (d.price or 0) + (d.quantity or 0) * (d.modifiers_price or 0)
-		if (d.discount_type or "Percent")=="Percent":
-			d.discount_amount = d.sub_total * (d.discount or 0) / 100
-			d.discount_amount = math_round(d.discount_amount  , int(currency_precision))
-		else:
-			d.discount_amount = d.discount or 0
+  
+		if d.allow_discount:     
+			if (d.discount_type or "Percent")=="Percent":
+				d.discount_amount = d.sub_total * (d.discount or 0) / 100
+				d.discount_amount = math_round(d.discount_amount  , int(currency_precision))
+			else:
+				d.discount_amount = d.discount or 0
 		# check if sale has discount
-		if sale_discount>0 and d.allow_discount and d.discount==0:
+		if sale_discount>0 and d.allow_discount and d.discount==0:      
 			d.sale_discount_percent = sale_discount  
 			d.sale_discount_amount = (sale_discount/100) * d.sub_total
 		else:
