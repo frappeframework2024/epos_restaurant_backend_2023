@@ -1124,7 +1124,7 @@ export default class Sale {
             }
         }
     }
-
+    
     async onChangePrice(sp, gv, numberFormat, input = (-99999)) {
         if (!this.isBillRequested()) {
             gv.authorize("change_item_price_required_password", "change_item_price", "change_item_price_required_note", "Change Item Price Note", sp.product_code).then(async (v) => {
@@ -1132,10 +1132,10 @@ export default class Sale {
                     let result = false;
                     if (input == (-99999)) {
                         input = await keyboardDialog({ title: $t("Change Price"), type: 'number', value: sp.price });
-                        result = input;
+                        result = isNumeric(input) ? input : sp.price;
                     }
                     else {
-                        result = input;
+                        result = sp.price;
                     }
                     if (result != false || result == 0) {
                         const price = sp.price;
@@ -3320,4 +3320,10 @@ async function Ping(setting) {
 
 }
 
-
+function isNumeric(value) {
+    return typeof value !== "boolean" &&
+        value !== "" &&
+        value !== null &&
+        value !== undefined &&
+        Number.isFinite(Number(value));
+}

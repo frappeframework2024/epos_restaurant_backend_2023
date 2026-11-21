@@ -100,13 +100,13 @@ function onKeyDown(event) {
 
 function onSearchProductByBarcode(barcode){
     let weight = 0
-    let price = 0
+    let total = 0
     let code = barcode
     let isWeightedBarcode = false
     if((barcode.split("|").length - 1)  == 2){
         code = barcode.split("|")[0]
         weight = barcode.split("|")[1]
-        price = barcode.split("|")[2]
+        total = barcode.split("|")[2]
         isWeightedBarcode = true
     }
     getApi("product.get_products",{
@@ -116,7 +116,7 @@ function onSearchProductByBarcode(barcode){
         include_product_category:0
     }).then(result=>{
         if(result.message.products.length>0){
-            onSelectProduct(result.message.products[0],sale,product,dialog,result.message.unit,weight,price,isWeightedBarcode)
+            onSelectProduct(result.message.products[0],sale,product,dialog,result.message.unit,weight,total,isWeightedBarcode)
         }else{
             toaster.warning("Product code is not exist in the system")
         }

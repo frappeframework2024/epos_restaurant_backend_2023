@@ -61,9 +61,10 @@
    "allow_in_quick_entry": 1,
    "fetch_from": "outlet.business_branch",
    "fieldname": "business_branch",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Business Branch"
+   "label": "Business Branch",
+   "options": "Business Branch"
   },
   {
    "default": "0",
@@ -96,7 +97,7 @@
  "index_web_pages_for_search": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2026-11-09 15:33:56.953379",
+ "modified": "2026-11-17 15:09:12.145383",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "Table Group",

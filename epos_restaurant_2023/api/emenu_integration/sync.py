@@ -185,7 +185,7 @@ def prepare_table_sync(business_branch=None, *, group_name=None, table_name=None
         filters.append("(t.name = %(table_name)s OR COALESCE(g.disabled, 0) <> 0)")
     table_filter = "WHERE " + " AND ".join(filters) if filters else ""
     # Frappe keeps a renamed field's old database column after schema sync.
-    legacy_id = ", t.integration AS legacy_id" if frappe.db.has_column("Tables Number", "integration") else ""
+    legacy_id = ", t.integration AS legacy_id" if frappe.db.has_column("Tables Number", "integration_id") else ""
     table_rows = frappe.db.sql(f"""
         SELECT t.name AS source_name, t.integration_id, g.name AS group_name,
             t.tbl_number, COALESCE(t.sort_order, 0) AS sort_order,

@@ -42,7 +42,8 @@
         fields:["name","background_color","text_color"],
         filters:[
         ["show_in_pos_shortcut_menu","=","1"],
-        ["allow_sale","=","1"]
+        ["allow_sale","=","1"],
+        ["disabled","=","0"]
     ]
     })
     .then((docs)=>{

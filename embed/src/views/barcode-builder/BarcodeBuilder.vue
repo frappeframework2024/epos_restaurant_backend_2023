@@ -100,8 +100,7 @@
                         height: e.height + 'px', width: e.width + 'px',
                         overflow: 'hidden'
                       }">
-                        <img style="width: 100%;height: 100%"
-                          :src="`http://bwipjs-api.metafloor.com/?bcid=code128&text=` + getValueFromPath(doc, e.fieldname)" />
+                        <img style="width: 100%; height: 100%" :src="`/api/method/epos_restaurant_2023.api.barcode.generate_barcode?bcid=code128&text=${(getValueFromPath(doc, e.fieldname))}&show_text=false`"/>
                       </div>
                     </template>
                     <template v-else>
@@ -129,8 +128,7 @@
                     }">
                       <template v-if="e.fieldtype === 'Barcode'">
                         <div style="height: 100%; width: 100%; overflow: hidden">
-                          <img style="width: 100%; height: 100%"
-                            :src="`http://bwipjs-api.metafloor.com/?bcid=code128&text=` + getValueFromPath(doc, e.fieldname)" />
+                          <img style="width: 100%; height: 100%" :src="`/api/method/epos_restaurant_2023.api.barcode.generate_barcode?bcid=code128&text=${(getValueFromPath(doc, e.fieldname))}&show_text=false`"/>
                         </div>
                       </template>
                       <template v-else>

@@ -8,10 +8,12 @@ const db = frappe.db();
 const toaster = createToaster({ position: "top-right" });
 const { t: $t } = i18n.global;
 
-export async function onSelectProduct(product_data,sale,product,dialog,unit = "", weight = 0, price = 0,isWeightedBarcode = false){
+export async function onSelectProduct(product_data,sale,product,dialog,unit = "", weight = 0, total = 0,isWeightedBarcode = false){
+    let price = 0
     if(isWeightedBarcode == true){
         weight = parseFloat(weight) == 0 ? 0 : parseFloat(weight)/1000
-        price = parseFloat(price) == 0 ? 0 : parseFloat(price)/100
+        total = parseFloat(total) == 0 ? 0 : parseFloat(total)/100
+        price = total/weight
         if(weight <= 0 || price <= 0){
             return toaster.error($t("Weight or Price must be greater than 0 for weighted product"));
         }
@@ -171,6 +173,7 @@ export async function onSelectProduct(product_data,sale,product,dialog,unit = ""
             if(isWeightedBarcode == true){
                 p.quantity = weight
                 p.price = price
+                p.append_quantity = 0
             }
             sale.addSaleProduct(p);
         }
