@@ -1054,11 +1054,16 @@ def update_inventory_on_cancel(self):
 		
 def add_payment_to_sale_payment(self):
 	if self.payment:
-		if sum(x.amount for x in self.payment) < (
-				self.grand_total
-				- (self.deposit or 0)
-				- (self.total_cash_coupon_claim or 0)
-			): 
+		currency_precision = frappe.db.get_single_value('System Settings', 'currency_precision')
+		if currency_precision=='':
+			currency_precision = "2"
+		total_payment_amount = sum(x.amount for x in self.payment)
+		total_payment_amount = math_round(total_payment_amount,int(currency_precision))
+  
+		amount_to_pay = self.grand_total - (self.deposit or 0) - (self.total_cash_coupon_claim or 0)
+		amount_to_pay = math_round(amount_to_pay,int(currency_precision))
+  
+		if total_payment_amount < amount_to_pay: 
 			frappe.throw(_("Total payment amount cannot be less than grand total."))
 
 		for p in self.payment:		 

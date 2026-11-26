@@ -64,7 +64,9 @@
   "print_invoice_on_submit",
   "show_warning_before_reload_in_order_screen",
   "show_button_for_checking_coupon_balance",
+  "section_break_zyog",
   "show_online_order",
+  "notify_online_order_key",
   "switch_pos_profile_tab",
   "pos_profiles_section",
   "switch_pos_profiles",
@@ -463,11 +465,21 @@
    "fieldname": "show_online_order",
    "fieldtype": "Check",
    "label": "Show Online Order"
+  },
+  {
+   "fieldname": "section_break_zyog",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "This is a key for socket room key of emenu integration notify",
+   "fieldname": "notify_online_order_key",
+   "fieldtype": "Data",
+   "label": "Notify Online Order Key"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-11-13 09:53:19.607293",
+ "modified": "2026-11-26 12:45:42.442995",
  "modified_by": "Administrator",
  "module": "Configuration",
  "name": "POS Station",

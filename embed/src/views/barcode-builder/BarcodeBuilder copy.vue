@@ -66,7 +66,7 @@
           >
             <template v-if="e.fieldtype == 'Barcode'">
               <img
-                :src="`http://bwipjs-api.metafloor.com/?bcid=code128&text=${
+                :src="`https://bwipjs-api.metafloor.com/?bcid=code128&text=${
                   doc[e.fieldname]
                 }`"
               />
@@ -89,7 +89,7 @@
           >
             <template v-if="e.fieldtype == 'Barcode'">
               <img
-                :src="`http://bwipjs-api.metafloor.com/?bcid=code128&text=${
+                :src="`https://bwipjs-api.metafloor.com/?bcid=code128&text=${
                   doc[e.fieldname]
                 }`"
               />

@@ -218,11 +218,12 @@ def cancell_order(order_id,reason = None):
 
 
 @frappe.whitelist(allow_guest=True)
-def notify_online_order(order_id):    
-    emit_event("NotifyOnlineOrder",{"order_id":order_id})
-
-
-
+def notify_online_order(order_id,room=None):   
+    if not room:
+        room = frappe.site_config.get("notify_online_order_key") or None
+        
+    if room:    
+        emit_event("NotifyOnlineOrder",{"order_id":order_id,"room":room})
 
 
 

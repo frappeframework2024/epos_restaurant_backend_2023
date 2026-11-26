@@ -349,7 +349,7 @@ const setting = ref({
 const url = computed(() => {
   const encodedCode = encodeURIComponent(setting.value.code);
   const includeTextParam = setting.value.include_text ? "&includetext" : "";
-  return `http://bwipjs-api.metafloor.com/?bcid=${setting.value.barcodeType.value}&text=${encodedCode}&rotate${includeTextParam}&textxalign=${setting.value.text_align_x.value}&textyalign=${setting.value.text_align_y.value}`;
+  return `https://bwipjs-api.metafloor.com/?bcid=${setting.value.barcodeType.value}&text=${encodedCode}&rotate${includeTextParam}&textxalign=${setting.value.text_align_x.value}&textyalign=${setting.value.text_align_y.value}`;
 });
 
 function onPrint() {

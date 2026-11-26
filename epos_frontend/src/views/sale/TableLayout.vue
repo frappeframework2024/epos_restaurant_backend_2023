@@ -53,28 +53,24 @@ if (localStorage.getItem("__tblLayoutIndex") == null) {
 }
  
 socket.on("RefreshTable", () => {
-    console.log("RefreshTable: ")  
     tableLayout.getSaleList();
 })
 
 
 
 socket.on("NotifyOnlineOrder", async (arg) => { 
-    fetchSubmittedOnlineOrderCount();
-
-    if(haveOrderDialog.value) return;
-
-    haveOrderDialog.value = true;
-    await OrderOnlineDialog({
-        params: {
-            order_id: arg.order_id
-        }
-    });
-
-
-    haveOrderDialog.value = false;    
-
-})
+   if(gv.setting.device_setting?.show_online_order==1 &&  (gv.setting.device_setting?.notify_online_order_key||"") != "" &&  arg?.room == gv.setting.device_setting?.notify_online_order_key  ){
+        fetchSubmittedOnlineOrderCount();
+        if(haveOrderDialog.value) return;
+        haveOrderDialog.value = true;
+        await OrderOnlineDialog({
+            params: {
+                order_id: arg.order_id
+            }
+        });
+        haveOrderDialog.value = false;    
+    }
+});
 
 
 

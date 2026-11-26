@@ -378,17 +378,17 @@ async function fetchSubmittedOnlineOrderCount() {
 onMounted(() => {
   fetchSubmittedOnlineOrderCount();
 
-  const appSocket = window.socket || window.app?.socket;
-  if (typeof appSocket?.on === 'function') {
-    appSocket.on('NotifyOnlineOrder', fetchSubmittedOnlineOrderCount);
-  }
+//   const appSocket = window.socket || window.app?.socket;
+//   if (typeof appSocket?.on === 'function') {
+//     appSocket.on('NotifyOnlineOrder', fetchSubmittedOnlineOrderCount);
+//   }
 });
 
 onBeforeUnmount(() => {
-  const appSocket = window.socket || window.app?.socket;
-  if (typeof appSocket?.off === 'function') {
-    appSocket.off('NotifyOnlineOrder', fetchSubmittedOnlineOrderCount);
-  }
+//   const appSocket = window.socket || window.app?.socket;
+//   if (typeof appSocket?.off === 'function') {
+//     appSocket.off('NotifyOnlineOrder', fetchSubmittedOnlineOrderCount);
+//   }
 });
 
 </script>
